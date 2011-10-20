@@ -1,0 +1,139 @@
+!!! 5
+
+%html{ :class => "#{HeaderParser.device_type(request.headers['user-agent'])} device mobile no-os no-touch no-hd" }
+  %head
+    %meta{ 'http-equiv' => 'Content-Type', :content => 'text/html; charset=utf-8' }
+    %meta{ 'name' => 'viewport', 'content' => 'width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=no;' }
+    %meta{ 'name' => 'apple-mobile-web-app-status-bar-style', 'content' => 'black' }
+
+    %link{ :rel => 'shortcut icon', :href => '/favicon-tjgames.ico', :content => 'image/vnd.microsoft.icon' }
+    %link{ :rel => 'apple-touch-icon-precomposed', :href => '/images/tjgames-114x114.png' }
+
+    %title= @page_title.blank? ? 'Tapjoy Games' : "#{@page_title} - Tapjoy Games"
+
+    =# stylesheet_link_tag("games/style_v1")
+    = stylesheet_link_tag("games/style")
+    = stylesheet_link_tag("games/images")
+    = stylesheet_link_tag("games/style-768", :media => "only screen and (max-width: 768px)")
+    = stylesheet_link_tag("games/style-480", :media => "only screen and (max-width: 480px)")
+    = stylesheet_link_tag("games/style-320", :media => "only screen and (max-width: 320px)")
+    = stylesheet_link_tag("games/images-hd", :media => "(-webkit-min-device-pixel-ratio: 2)")
+
+    = yield :page_head
+
+  %body
+    %noscript
+      %style{:type => "text/css", :media => "screen"}
+        :plain
+          #jqt {display:none;}
+      .noscript_msg
+        Please go into your browser settings and enable JavaScript to continue using Tapjoy Games.
+
+    = yield
+
+    #register_device.dialog_wrapper.hide
+      .close_dialog
+        .close_button
+      .dialog
+        .dialog_header_wrapper
+          .dialog_header_wrapper
+          .dialog_header_right
+          .dialog_header_left
+          .dialog_title.title_2 Hooray!
+        .dialog_header Your device has been linked to your Tapjoy Games account
+        .dialog_content Now close this box and start earning currency in your favorite games!
+
+    #bad_news.dialog_wrapper.hide
+      .close_dialog
+        .close_button
+      .dialog
+        .dialog_header_wrapper
+          .dialog_header_right
+          .dialog_header_left
+          .dialog_title.title_2 Bad News
+        .dialog_header Incompatible Device
+        .dialog_content To complete account registration please visit us on a supported mobile device.
+
+    #how_works_dialog.dialog_wrapper.hide
+      .close_dialog
+        .close_button
+      .dialog
+        .dialog_header_wrapper
+          .dialog_header_right
+          .dialog_header_left
+          .dialog_title.title_2 How's it work?
+        .dialog_header Using Tapjoy games couldn't be easier!
+        .dialog_content All your games are listed in <span class="bold">My Apps</span>. From there, you can start earning currency and discovering new, cool games to play!
+
+    #link_device_dialog.dialog_wrapper.hide
+      .close_dialog
+        .close_button
+      .dialog
+        .dialog_header_wrapper
+          .dialog_header_right
+          .dialog_header_left
+          .dialog_title.title_2 Personalize your experience
+        .dialog_header On the next screen you will see this:
+        .dialog_content
+          .link_device_image
+          .link_device_content.clearfix
+            .clearfix
+              %span Click
+              %span.link_device_install_icon
+              %span to add your device.
+            %div Don't worry, your device won't be altered in any way.
+          %a{ :href => new_games_gamer_device_path }
+            .link_device_btn.button.grey
+              Personalize my account!
+
+    #loader.dialog_wrapper.hide
+      #progress.dialog
+        .dialog_title.title_2
+          Loading
+        .dialog_image
+
+    #sender.dialog_wrapper.hide
+      #progress.dialog
+        .dialog_title.title_2
+          Sending
+        .dialog_image
+
+    - [:notice, :error, :success].each do |key|
+      - unless flash[key].blank?
+        #flash_error.dialog_wrapper.hide
+          .close_dialog
+            .close_button
+          .dialog
+            .dialog_content
+              %div{ :class => "#{key}" }= flash[key]
+    -#
+    -# Until this task is automated for production build, please run this task: $ rake javascript:games_minify
+    -#
+
+    - if Rails.env.production?
+      = javascript_include_tag "games/#{GAMES_CONFIG['js_compile_out_file']}-#{ }"
+    - else
+      - files = GAMES_CONFIG['js_files']
+      - files.each do |f|
+        = javascript_include_tag "games/src/#{f}"
+
+    = yield :included_javascripts
+    %script{ :type => 'text/javascript', :charset => 'utf-8' }
+      = yield :page_javascript
+
+    :javascript
+      TJG.path =  "#{games_root_path}";
+      TJG.logout_path = "#{games_logout_path}"
+      TJG.blank_img = "#{CLOUDFRONT_URL}/images/blank.png";
+
+    - if Rails.env.production?
+      :javascript
+        var _gaq = _gaq || [];
+        _gaq.push(['_setAccount', 'UA-25098478-1']);
+        _gaq.push(['_trackPageview']);
+
+        (function() {
+          var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+          ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+          var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+        })();

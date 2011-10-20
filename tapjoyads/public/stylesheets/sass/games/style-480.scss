@@ -1,3 +1,4 @@
+/*--------------------*/
 $main-title-font-size: 1.2em;
 $main-font-size: 1em;
 $main-font-color: #505F6D;
@@ -10,24 +11,107 @@ $nav-bg-color: #E9E5DA;
 
 $logo-bottom-margin: 16px;
 
+@mixin rounded-corners($radius: 6px) {
+  border-radius: $radius;
+  -moz-border-radius-: $radius;
+  -webkit-border-radius: $radius;
+}
+
+@mixin button ($radius: 6px, $padding: 8px 8px) {
+  padding: $padding;
+  text-align: center;
+  @include rounded-corners($radius)
+}
+
+@mixin inset-button ($radius: 6px, $padding: 8px 8px) {
+  background-image: -moz-linear-gradient(top,rgba(160,150,145,.1)0%,rgba(160,150,145,0)30%,rgba(160,150,145,.2)100%);
+  background-image: -webkit-gradient(linear,left top,left bottom,color-stop(0%,rgba(160,150,145,0.1)),color-stop(30%,rgba(160,150,145,0)),color-stop(100%,rgba(160,150,145,.2)));
+  background-image: -webkit-linear-gradient(top,rgba(160,150,145,.1)0%,rgba(160,150,145,0)30%,rgba(160,150,145,.2)100%);
+  background-image: -o-linear-gradient(top,rgba(160,150,145,.1)0%,rgba(160,150,145,0)30%,rgba(160,150,145,.2)100%);
+  background-image: linear-gradient(top,rgba(160,150,145,.1)0%,rgba(160,150,145,0)30%,rgba(160,150,145,.2)100%);
+  @include button($radius, $padding)
+}
+
+@mixin gradient($from, $to){
+  background: -moz-linear-gradient(top, $from 0%, $to 100%);
+  background: -webkit-gradient(linear, 0 0, 0 100%, color-stop(0, $from), color-stop(1, $to));
+}
+
+@mixin shadow($distance: 6px, $color: #555) {
+  box-shadow: 0 0 $distance $color;
+  -moz-box-shadow: 0 0 $distance $color;
+  -webkit-box-shadow: 0 0 $distance $color;
+}
+
+@mixin inset-shadow($distance: 8px, $color: #000) {
+  -moz-box-shadow: inset 0 0 $distance $color;
+  -webkit-box-shadow: inset 0 0 $distance $color;
+  box-shadow: inset 0 0 $distance $color;
+}
+
+@mixin box-shadow($color: #9D9990){
+  -box-shadow: 0 4px 2px -2px $color;
+  -moz-box-shadow: 0 4px 2px -2px $color;
+  -webkit-box-shadow: 0 4px 2px -2px $color;
+}
+
+@mixin rotate45 {
+  -webkit-transform: rotate(45deg);
+  -moz-transform: rotate(45deg);
+  -o-transform: rotate(45deg);
+  -ms-transform: rotate(45deg);
+  transform: rotate(45deg);
+}
+
+
+/*--------------------*/
+
 .nav {
   padding: $nav-padding-v/2 $nav-padding-h/2;
-  
-  .aside_nav {
-    top: 12px;
-  }
-  .logo {
-    background: transparent url('/images/games/v2/logo_mobile.png') no-repeat;
-    height: 38px;
-    margin: 0 auto;
-    margin-bottom: $logo-bottom-margin/2;
-    width: 84px;
-  }
-  .nav_buttons {
-    width: 450px;
-  }
-  .nav_buttons li {
-    font-size: 0.8em;
-    width: 110px;
+
+  .nav_container {
+    width: 100%;
+    .aside_nav {
+      top: 12px;
+    }
+    .logo {
+      background: transparent url('/images/games/v2/logo_mobile.png') no-repeat;
+      float: none;
+      height: 38px;
+      margin: 0 auto !important;
+      margin-bottom: $logo-bottom-margin/2;
+      width: 84px;
+    }
+    
+    .nav_buttons {
+      float: none;
+    }
+    .nav_buttons, .nav_buttons ul {
+      float: none;
+    }
+    .nav_buttons ul, .nav_buttons ul ul.pair {
+      float: left;
+    }
+    .nav_buttons ul li {
+      font-size: 0.8em;
+      margin-bottom: 0;
+      width: 110px;
+    }
+    .nav_buttons ul li {
+      font-size: 0.8em;
+       width: 80px;
+    }
   }
 }
+
+.content_wrapper {
+  margin: 0 auto;
+  padding: 8px 8px;
+  width: 480px;
+
+  .content {
+
+    
+    
+  } // . content
+} //.content_wrapper
