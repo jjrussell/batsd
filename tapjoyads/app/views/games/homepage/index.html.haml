@@ -19,9 +19,13 @@
                 More Apps
             %ul.pair
               %a{ :href => edit_games_gamer_path }
-                %li.my_acct.odd
+                %li.my_acct
                   My Account
               %li.share
+                .share_arrow
+                  Share
+                
+              
         
     - if current_gamer.devices.empty?
       .content_wrapper

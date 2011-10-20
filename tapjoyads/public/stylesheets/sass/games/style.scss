@@ -141,6 +141,9 @@ a, a:visited {
     .nav_buttons ul ul.pair {
       float: left;
     }
+    .nav_buttons a {
+      color: $main-font-color;
+    }
     .nav_buttons li {
       cursor: pointer;
       font-weight: bold;
@@ -185,14 +188,11 @@ a, a:visited {
       cursor: default;
     }
     .nav_buttons li.share {
-      height: 16px;
-      width: 16px;
+
     }
     .nav_buttons .share {
-      background: transparent url('/images/games/v2/share_hd.png') no-repeat center center;
     }
     .nav_buttons li.share:active {
-      background: #EA1927 url('/images/games/v2/share_active_hd.png') no-repeat center center;
     }
   } // .nav_container
 } // .nav
@@ -203,7 +203,7 @@ a, a:visited {
   width: 980px;  
     
   .content {
-      
+    
     
     
   } // . content
