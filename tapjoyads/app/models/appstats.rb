@@ -347,13 +347,13 @@ class Appstats
   end
 
   def self.parse_dates(start_time_string, end_time_string, granularity_string)
-    start_time, end_time = set_times(start_time_string, end_time_string)
+    start_time, end_time = get_times(start_time_string, end_time_string)
 
     if granularity_string == 'daily' || end_time - start_time >= 7.days
       granularity = :daily
     else
       granularity = :hourly
-      start_time, end_time = set_times(start_time_string, end_time_string, false)
+      start_time, end_time = get_times(start_time_string, end_time_string, false)
     end
 
     if (end_time - start_time < 1.day) && granularity == :daily
@@ -366,7 +366,7 @@ class Appstats
 
 private
 
-  def self.set_times(start_time_string, end_time_string, use_utc = true)
+  def self.get_times(start_time_string, end_time_string, use_utc = true)
     now = use_utc ? Time.now.utc : Time.zone.now
     if start_time_string.blank?
       start_time = now.beginning_of_hour - 23.hours
