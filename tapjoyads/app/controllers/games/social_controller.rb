@@ -135,7 +135,7 @@ private
   
   def handle_oauth_exception(e)
     @error_msg = "Please authorize us before sending out an invite."
-    dissociate_and_redirect and return
+    dissociate_and_redirect
   end
 
   def require_gamer
