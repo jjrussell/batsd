@@ -422,41 +422,37 @@ TJG.ui = {
       }
     });
   },
-
-  showUpdateDob : function () {
+  
+  showAcceptTos : function () {
     var animateSpd = "fast";
-    $("#update_dob_dialog_content").parent().css("height", "180px");
-    $("#update_dob_dialog_content").html($('#update_dob_dialog_content_placeholder').html());
+    $("#accept_tos_dialog_content").parent().css("height", "190px");
+    $("#accept_tos_dialog_content").html($('#accept_tos_dialog_content_placeholder').html());
     setTimeout(function() {
-      TJG.utils.centerDialog("#update_dob_dialog");
-      TJG.repositionDialog = ["#update_dob_dialog"];
+      TJG.utils.centerDialog("#accept_tos_dialog");
+      TJG.repositionDialog = ["#accept_tos_dialog"];
       $(".container").hide();
-      $("#update_dob_dialog").fadeIn();
+      $("#accept_tos_dialog").fadeIn();
     }, 50);
 
-    $('#update_dob_dialog form').submit(function(e){
+    $('#accept_tos_dialog form').submit(function(e){
       e.preventDefault();
-      var rurl, inputs, values = {}, hasError = false;
+      var rurl, hasError = false;
       rurl = $(this).attr('action');
-      inputs = $('#update_dob_dialog form :input');
-      inputs.each(function() {
-        values[this.name] = $(this).val();
-      });
-      $(".dob_error").hide();
-      if(values['date[day]'] == '' || values['date[month]'] == '' || values['date[year]'] == '') {
-        $(".dob_error").html('Please enter your birthdate');
+      $(".tos_error").hide();
+      if(!$('#gamer_terms_of_service').attr('checked')) {
+        $(".tos_error").html('Please agree to the terms and conditions');
         hasError = true;
       }
       if (hasError) {
-        $(".dob_error").show();
+        $(".tos_error").show();
       }
       else if (hasError != true) {
         var loader = [
-          '<div class="dialog_title title_2">Registering</div>',
+          '<div class="dialog_title title_2">Updating</div>',
           '<div class="dialog_image"></div>'
         ].join('');
-        $("#update_dob_dialog_content").html(loader);
-        $("#update_dob_dialog_content").parent().animate({ height: "100px", }, animateSpd);
+        $("#accept_tos_dialog_content").html(loader);
+        $("#accept_tos_dialog_content").parent().animate({ height: "100px", }, animateSpd);
         $.ajax({
           type: 'POST',
           url: rurl,
@@ -465,10 +461,8 @@ TJG.ui = {
           dataType: 'json',
           data: {
             '_method': 'put',
-            'authenticity_token': values['authenticity_token'],
-            'date[day]': values['date[day]'],
-            'date[month]': values['date[month]'],
-            'date[year]': values['date[year]']
+            'authenticity_token': $('#authenticity_token').val(),
+            'tos_version': $('#tos_version').val()
           },
           success: function(d) {
             var msg;
@@ -476,43 +470,31 @@ TJG.ui = {
               document.location.href = TJG.path;
             }
             else {
-              var error = 'There was an issue while updating your profile.';
-              var underage_account_blocked = false;
+              var error = 'There was an issue processing your request';
               if (d.error && d.error[0]) {
-                if (d.error[0][0] == 'birthdate') {
-                  error = 'Sorry, this service is currently unavailable'
-                  underage_account_blocked = true
-                }
-                else if (d.error[0][0] && d.error[0][1]) {
+                if (d.error[0][0] && d.error[0][1]) {
                   error = 'The ' + d.error[0][0] + ' ' + d.error[0][1];
                 }
               }
               msg = [
                 '<div class="dialog_header_wrapper"><div class="dialog_header_right"></div><div class="dialog_header_left"></div><div class="dialog_title title_2">Oops!</div></div>',
-                '<div class="dialog_content"><div>', error ,'.</div> <div id="update_dob_again"><div class="button grey dialog_button">Try Again</div></div></div>',
+                '<div class="dialog_content"><div>', error ,'.</div> <div id="accept_tos_again"><div class="button grey dialog_button">Try Again</div></div></div>',
               ].join('');
-              $("#update_dob_dialog_content").html(msg);
+              $("#accept_tos_dialog_content").html(msg);
             }
-            if (underage_account_blocked) {
-              $('#update_dob_again .dialog_button').html('OK');
-              $('#update_dob_again').click(function(){
-                document.location.href = TJG.logout_path;
-              });
-            } else {
-              $('#update_dob_again').click(function(){
-                TJG.ui.showUpdateDob();
-              });
-            }
+            $('#accept_tos_again').click(function(){
+              TJG.ui.showAcceptTos();
+            });
           },
           error: function() {
             var error = 'There was an issue';
             msg = [
               '<div class="dialog_header_wrapper"><div class="dialog_header_right"></div><div class="dialog_header_left"></div><div class="dialog_title title_2">Oops!</div></div>',
-              '<div class="dialog_content"><div>', error ,'.</div><div id="update_dob_again"><div class="button grey dialog_button">Try Again</div></div></div>',
+              '<div class="dialog_content"><div>', error ,'.</div><div id="accept_tos_again"><div class="button grey dialog_button">Try Again</div></div></div>',
             ].join('');
-            $("#update_dob_dialog_content").html(msg);
-            $('#update_dob_again').click(function(){
-               TJG.ui.showUpdateDob();
+            $("#accept_tos_dialog_content").html(msg);
+            $('#accept_tos_again').click(function(){
+               TJG.ui.showAcceptTos();
             });
           }
         });
