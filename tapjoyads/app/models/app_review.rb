@@ -25,8 +25,8 @@ class AppReview < ActiveRecord::Base
     Mc.get_and_put("featured_app_review.#{platform}", false, 1.hour) do
       now = Time.now.utc
       review =  AppReview.featured_on(now).for_platform(platform).first ||
-                AppReview.by_employees.not_featured.for_platform(platform) ||
-                AppReview.featured_before(now).for_platform(platform)
+                AppReview.by_employees.not_featured.for_platform(platform).first ||
+                AppReview.featured_before(now).for_platform(platform).first
 
       if review.nil?
         Notifier.alert_new_relic(AppReviewEmptyError, "Platform #{platform}, Time #{now}")
