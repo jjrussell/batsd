@@ -24,13 +24,6 @@ class Games::Social::TwitterController < GamesController
         session[:authhash] = authhash
         current_gamer.gamer_profile.update_twitter_info!(authhash)
         redirect_to games_social_invite_twitter_friends_path
-        
-        # if authhash[:twitter_id] == current_gamer.twitter_id
-        #   current_gamer.update_twitter_info!(authhash)
-        #   redirect_to games_social_invite_twitter_friends_path
-        # else
-        #   redirect_to edit_games_gamer_path(:question => "You are currently login Twitter as #{authhash[:twitter_name]}, do you want to use this account")
-        # end
       else
         flash[:error] =  'Error while authenticating via TWITTER. The service did not return valid data.'
         redirect_to edit_games_gamer_path
@@ -47,8 +40,4 @@ class Games::Social::TwitterController < GamesController
     session[:twitter_id] = nil
     redirect_to edit_games_gamer_path
   end
-  
-private
-
-  
 end
