@@ -1,19 +1,18 @@
 class Games::HomepageController < GamesController
-  
+
   before_filter :require_gamer, :except => [ :tos, :privacy ]
 
   def index
     @device = Device.new(:key => current_device_id) if current_device_id
     @external_publishers = ExternalPublisher.load_all_for_device(@device) if @device.present?
-    @featured_review = AppReview.featured_review
-    #@gamer_profile = current_gamer.gamer_profile || GamerProfile.new
+    @featured_review = AppReview.featured_review(@device.try(:platform))
   end
-  
+
   def tos
   end
-  
+
   def privacy
-  end   
+  end
 
 private
 

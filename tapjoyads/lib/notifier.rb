@@ -3,6 +3,7 @@ class FailedToDownloadError < RuntimeError; end
 class AppStatsVerifyError < RuntimeError; end
 class GetStoreInfoError < RuntimeError; end
 class AppDataFetchError < RuntimeError; end
+class AppReviewEmptyError < RuntimeError; end
 class GenericOfferCallbackError < RuntimeError; end
 class DeviceCountryChanged < RuntimeError; end
 class JailbrokenInstall < RuntimeError; end
