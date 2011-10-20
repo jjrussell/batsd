@@ -101,12 +101,12 @@ private
     if current_gamer.facebook_id.blank? && params[:valid_login] && current_facebook_user
       current_gamer.gamer_profile.update_facebook_info!(current_facebook_user)
       unless has_permissions?
-        dissociate_and_redirect and return
+        dissociate_and_redirect
       end
     elsif current_gamer.facebook_id?
       fb_create_user_and_client(current_gamer.fb_access_token, '', current_gamer.facebook_id)
       unless has_permissions?
-        dissociate_and_redirect and return
+        dissociate_and_redirect
       end
     else
       flash[:error] = 'Please connect Facebook with Tapjoy.'
@@ -118,13 +118,11 @@ private
     begin
       unless current_facebook_user.has_permission?(:offline_access) && current_facebook_user.has_permission?(:publish_stream)
         @error_msg = "Please grant us both permissions before sending out an invite."
-        return false
       end
-    rescue => e
+    rescue
       @error_msg = "Please authorize us before sending out an invite."
-      return false
     end
-    true
+    @error_msg.blank?
   end
 
   def dissociate_and_redirect
