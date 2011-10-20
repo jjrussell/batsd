@@ -2,8 +2,9 @@
   - link_to(get_click_url(@offer), :class => 'image-link') do
     %img{ :src => "#{CLOUDFRONT_URL}/images/blank.png", :class => 'creative', :id => 'creative' }
   .clear
-  = link_to('Skip', 'dismiss', :class => 'skip')
-  = link_to("#{@offer.item_type == 'App' ? 'Download' : 'Earn now'}", get_click_url(@offer), :class => 'download')
+  #buttons
+    = link_to('Skip', 'dismiss', :class => 'skip')
+    = link_to("#{@offer.item_type == 'App' ? 'Download' : 'Earn now'}", get_click_url(@offer), :class => 'download')
 
   - content_for :page_javascript do
     :plain
@@ -15,8 +16,19 @@
       var availableCreatives = [];
 
       // Info about creative to be displayed
-      var preferredCreative = -1;
-      var preferredCreativeOrientation = '';
+      var preferredCreative;
+
+      // Info about target device
+      var client = new Object();
+
+      var startY = startX = 0,
+      options = {
+        animationIn: 'fade',
+        animationOut: 'fade',
+        startDelay: 2000,
+        bottomOffset: 0
+      },
+      buttonsDiv = document.getElementById('buttons');
 
       function init() {
     - # Provide available custom creative sizes to javascript
@@ -28,110 +40,148 @@
     :plain
         // Determine target screen size and orientation
         if(#{@height.present? && @width.present?}) {
-          var clientWidth = parseInt('#{@width}');
-          var clientHeight = parseInt('#{@height}');
+          client.width = parseInt('#{@width}');
+          client.height = parseInt('#{@height}');
         } else {
-          var clientWidth = window.innerWidth;
-          var clientHeight = window.innerHeight;
+          client.width = window.innerWidth;
+          client.weight = window.innerHeight;
         }
-        var clientOrientation = (clientHeight > clientWidth) ? 'portrait' : 'landscape';
+        client.orientation = (client.height > client.width) ? 'portrait' : 'landscape';
 
         var minHorizMarginPercent = -1;
         var minVertMarginPercent = -1;
 
+        showButtons();
+
         // If a creative hasn't already been selected, scan through all available creatives to determine best screen fit
-        if(preferredCreative < 0) {
-          for(i = 0; i < availableCreativeSizes.length; i++ ) {
+        if(preferredCreative == null) {
+          for(var i = 0; i < availableCreativeSizes.length; i++ ) {
             // Get info about this creative
-            var creativeWidth = parseInt(availableCreativeSizes[i][0]);
-            var creativeHeight = parseInt(availableCreativeSizes[i][1]);
-            var creativeOrientation = (creativeHeight > creativeWidth) ? 'portrait' : 'landscape';
-            var horizMargin = clientWidth - creativeWidth;
-            var vertMargin = clientHeight - creativeHeight;
-            var horizMarginPercent = horizMargin / creativeWidth;
-            var vertMarginPercent = vertMargin / creativeHeight;
+            var creative = new Object();
+            creative.name = availableCreatives[i];
+            creative.width = parseInt(availableCreativeSizes[i][0]);
+            creative.height = parseInt(availableCreativeSizes[i][1]);
+            creative.orientation = (creative.height > creative.width) ? 'portrait' : 'landscape';
+            creative.horizMargin = client.width - creative.width;
+            creative.vertMargin = client.height - creative.height;
+            creative.horizMarginPercent = creative.horizMargin / creative.width;
+            creative.vertMarginPercent = creative.vertMargin / creative.height;
 
             // Determine if this creative is a better option than our current 'favorite'
             if(i == 0) {
               // If this is the first creative being considered, set it as the current 'favorite'
-              preferredCreative = i;
-            } else if(horizMargin == 0 && vertMargin == 0) {
+              preferredCreative = creative;
+            } else if(creative.horizMargin == 0 && creative.vertMargin == 0) {
               // If this creative is a perfect fit, use it
-              preferredCreative = i;
-            } else if(creativeOrientation == clientOrientation && preferredCreativeOrientation != clientOrientation) {
+              preferredCreative = creative;
+              break;
+            } else if(creative.orientation == client.orientation && preferredCreative.orientation != client.orientation) {
               // If this creative's orientation is a better match than what we have, use it
-              preferredCreative = i;
-            } else if(creativeOrientation == clientOrientation) {
+              preferredCreative = creative;
+            } else if(creative.orientation == client.orientation) {
               // If the creative's orientation matches the client's, calculate how good of a fit this creative is
               // and compare its fit with the current favorite
-              if(Math.abs(horizMarginPercent) <= Math.abs(minHorizMarginPercent) &&
-                 Math.abs(vertMarginPercent) <= Math.abs(minVertMarginPercent)) {
-                preferredCreative = i;
+              if(Math.abs(creative.horizMarginPercent) <= Math.abs(creative.minHorizMarginPercent) &&
+                 Math.abs(creative.vertMarginPercent) <= Math.abs(creative.minVertMarginPercent)) {
+                preferredCreative = creative;
               }
-            } else if(preferredCreativeOrientation != clientOrientation) {
+            } else if(preferredCreative.orientation != client.orientation) {
               // If we haven't found a creative whose orientation matches the client, find the best
               // fitting creative to show in the 'wrong' orientation
               if((creativeOrientation == 'portrait' && Math.abs(vertMarginPercent) <= Math.abs(minVertMarginPercent)) ||
                  (creativeOrientation == 'landscape' && Math.abs(horizMarginPercent) <= Math.abs(minHorizMarginPercent))) {
-                preferredCreative = i;
+                preferredCreative = creative;
               }
             }
-
-            // If this creative is our current favorite, save some of its info
-            if(preferredCreative == i) {
-              preferredCreativeOrientation = creativeOrientation;
-              minHorizMarginPercent = horizMarginPercent;
-              minVertMarginPercent = vertMarginPercent;
-
-              // If this is a perfect fit, search no more!
-              if(horizMargin == 0 && vertMargin == 0)
-                break;
-            }
           }
-        } else {
-          // Otherwise, recalculate the margins for the current creative
-          var creativeWidth = parseInt(availableCreativeSizes[preferredCreative][0]);
-          var creativeHeight = parseInt(availableCreativeSizes[preferredCreative][1]);
-          var horizMargin = clientWidth - creativeWidth;
-          var vertMargin = clientHeight - creativeHeight;
-          minHorizMarginPercent = horizMargin / creativeWidth;
-          minVertMarginPercent = vertMargin / creativeHeight;
         }
 
-        alert("Screen size: " + clientWidth + "x" + clientHeight + " (" + clientOrientation + ")\n" +
-              "");
+        //alert("Screen size: " + clientWidth + "x" + clientHeight + " (" + clientOrientation + ")\n" +
+        //      "");
 
         // If we've found creative to use, then tweak the styling and download the image
-        if(preferredCreative >= 0) {
+        if(preferredCreative != null) {
           var baseCreativeUrl = "#{CLOUDFRONT_URL}";
-          var creative = document.getElementById('creative');
+          var creativeImg = document.getElementById('creative');
           var main = document.getElementById('main');
 
           // Calculate which dimension can be maximized without the image being cropped
-          var adjustPercent = Math.min(minHorizMarginPercent, minVertMarginPercent);
+          var adjustPercent = Math.min(preferredCreative.horizMarginPercent, preferredCreative.vertMarginPercent);
 
           // Calculate adjusted image dimensions
-          var newWidth = parseInt(availableCreativeSizes[preferredCreative][0]) + Math.round(adjustPercent * parseInt(availableCreativeSizes[preferredCreative][0]));
-          var newHeight = parseInt(availableCreativeSizes[preferredCreative][1]) + Math.round(adjustPercent * parseInt(availableCreativeSizes[preferredCreative][1]));
+          var newWidth = parseInt(preferredCreative.width) + Math.round(adjustPercent * preferredCreative.width);
+          var newHeight = parseInt(preferredCreative.height) + Math.round(adjustPercent * preferredCreative.height);
 
           // Calculate margins for main div
           var horizMargin = 0;
           var vertMargin = 0;
-          if(clientWidth != newWidth) {
-            horizMargin = Math.round((clientWidth - newWidth) / 2);
+          if(client.width != newWidth) {
+            horizMargin = Math.round((client.width - newWidth) / 2);
           }
-          if(clientHeight != newHeight) {
-            vertMargin = Math.round((clientHeight - newHeight) / 2);
+          if(client.height != newHeight) {
+            vertMargin = Math.round((client.height - newHeight) / 2);
           }
 
           // Apply size constraints to image tag in markup
-          creative.setAttribute('style', 'width: ' + newWidth + 'px; height: ' + newHeight + 'px;');
+          creativeImg.setAttribute('style', 'width: ' + newWidth + 'px; height: ' + newHeight + 'px;');
           main.setAttribute('style', 'height: ' + newHeight + 'px; ' +
                                      'margin: ' + vertMargin + 'px ' + horizMargin + 'px;');
 
-         // Set the image url if this is the initial drawing
-         creative.src = baseCreativeUrl + "/" + availableCreatives[preferredCreative];
+          // Set the image url if this is the initial drawing
+          creativeImg.src = baseCreativeUrl + "/" + preferredCreative.name;
+
+          setButtonsPosition(buttonsDiv.id);
         }
+      }
+
+      function setButtonsPosition(id) {
+        var element = document.getElementById(id);
+        posY = window.scrollY + window.innerHeight - startY,
+        posX = window.scrollX + Math.round((window.innerWidth - element.offsetWidth)/2) - startX;
+
+        //alert(posX + " " + posY);
+
+        // If we have a WebKit-enabled device, use CSS matrix
+        if(typeof WebKitCSSMatrix != 'undefined') {
+          var matrix = new WebKitCSSMatrix(window.getComputedStyle(element, null).webkitTransform);
+          if (posY == matrix.m42 && posX == matrix.m41) return;
+          element.style.webkitTransform = 'translate3d(' + posX + 'px,' + posY + 'px,0)';
+        } else {
+          //alert("I'm not a webkit browser");
+        }
+      }
+
+      function showButtons() {
+        // Scale the buttons to fit this screen size
+
+        // Place buttons div in the correct position
+        setButtonsPosition(buttonsDiv.id);
+
+
+        setTimeout(function () {
+          var duration;
+          startY = window.innerHeight + window.scrollY;
+          startX = Math.round((window.innerWidth - buttonsDiv.offsetWidth)/2) + window.scrollX;
+          buttonsDiv.style.top = startY - buttonsDiv.offsetHeight - options.bottomOffset + 'px';
+          buttonsDiv.style.left = startX + 'px';
+          switch (options.animationIn) {
+            case 'drop':
+              duration = '0.9s';
+              el.style.webkitTransform = 'translate3d(0,' + -(startY + options.bottomOffset) + 'px,0)';
+            break;
+            case 'bubble':
+              duration = '0.6s';
+              el.style.webkitTransform = 'translate3d(0,' + (el.offsetHeight + options.bottomOffset + 50) + 'px,0)';
+            break;
+            default:
+              duration = '1s';
+              buttonsDiv.style.opacity = '0';
+          }
+
+          buttonsDiv.style.webkitTransitionDuration = duration;
+          buttonsDiv.style.opacity = '1';
+          buttonsDiv.style.webkitTransform = 'translate3d(0,0,0)';
+        }, options.startDelay);
       }
 
   - content_for :page_styles do
@@ -149,6 +199,12 @@
         margin: auto;
         height: #{@height}px;
         width: #{@width}px;
+      }
+
+      #buttons {
+        background-color: rgba(0,0,0,0.8);
+        left: -9999px;
+        position: absolute;
       }
 
       .image-link {
