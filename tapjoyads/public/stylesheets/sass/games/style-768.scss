@@ -87,19 +87,9 @@ $logo-bottom-margin: 16px;
     }
     .nav_buttons {
     }
-    .nav_buttons li {
-      font-size: 0.8em;
+    .nav_buttons ul li {
+      font-size: 0.85em;
       width: 90px;
     }
   }
 }
-
-.content_wrapper {
-  margin: 0 auto;
-  padding: 16px 40px;
-  width: 768px !important;
-  
-  .content {
-    
-  } // . content
-} //.content_wrapper

@@ -89,21 +89,10 @@ $logo-bottom-margin: 16px;
     }
     .nav_buttons {
     }
-    .nav_buttons li {
-      @include inset-button(16px, 8px 4px);
-      font-size: 0.7em;
-      width: 70px;
+    .nav_buttons ul li {
+      @include inset-button(16px, 6px 2px);
+      font-size: 0.65em;
+      width: 65px;
     }
   }
 }
-
-.content_wrapper {
-  
-  .content {
-    margin: 0 auto;
-    padding: 8px 8px;
-    width: 320px !important;
-    
-    
-  } // . content
-} //.content_wrapper
