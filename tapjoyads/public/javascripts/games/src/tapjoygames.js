@@ -1078,7 +1078,7 @@ TJG.social = {
     var currentFilter = '';
     var hasNext = false;
     var pageSize = options.pageSize;
-    var fbFriends = options.fbFriends;
+    var socialFriends = options.socialFriends;
     var inviteUrl = options.inviteUrl;
     var channel = options.channel;
 
@@ -1110,9 +1110,9 @@ TJG.social = {
           counterMax  = currentPage * pageSize,
           counterMin  = counterMax - pageSize;
         var search = function(regex, text) {
-          for (var i in fbFriends) {
+          for (var i in socialFriends) {
             if (counter > counterMax) { break; }
-            var friend = fbFriends[i];
+            var friend = socialFriends[i];
             var included = $.inArray(friend, friends) != -1;
             var matched = regex ?
               friend.name.match(regex) :
@@ -1143,11 +1143,11 @@ TJG.social = {
         for (var i in friends) {
           var friend = friends[i];
           var liClass = '';
-          if ($.inArray(friend.fb_id, selectedFriends) != -1) {
+          if ($.inArray(friend.social_id, selectedFriends) != -1) {
             liClass = ' checked';
           }
-          text.push('<li class="fb_select',liClass,'" id="', friend.fb_id, '">');
-          text.push('<img src="http://graph.facebook.com/', friend.fb_id, '/picture" width="50" height="50"/>');
+          text.push('<li class="fb_select',liClass,'" id="', friend.social_id, '">');
+          text.push('<img src="', friend.image_url, '" width="50" height="50"/>');
           text.push('<span>', friend.name, '</span>');
           text.push('</li>');
         }
@@ -1183,7 +1183,7 @@ TJG.social = {
       });
     }; // showFriendList
 
-    var submitFbInvitation = function(url) {
+    var submitSocialInvitation = function(url) {
       loading();
 
       $.ajax({
@@ -1233,7 +1233,7 @@ TJG.social = {
           showErrorDialog(error, TJG.ui.hideLoader());
         }
       });
-    }; // submitFbInvitation
+    }; // submitSocialInvitation
 
     var submitEmailInvitation = function(rurl, recipients){
       sending();
@@ -1330,14 +1330,14 @@ TJG.social = {
       event.preventDefault();
       var url = $('form#invite_friends').attr('action');
 
-      if(channel == 'FB'){
+      if(channel == 'EMAIL'){
+        submitEmailInvitation(url, $('#recipients').val());
+      } else {
         if(selectedFriends.length == 0) {
           showErrorDialog('Please select at least one friend before sending out an invite', TJG.ui.hideLoader());
         } else {
-          submitFbInvitation(url);
+          submitSocialInvitation(url);
         }
-      }else if(channel == 'EMAIL'){
-        submitEmailInvitation(url, $('#recipients').val());
       }
     }; // sendInvite
 

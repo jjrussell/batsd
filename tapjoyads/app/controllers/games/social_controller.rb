@@ -12,8 +12,9 @@ class Games::SocialController < GamesController
     @page_size = 25
     @fb_friends = current_facebook_user.friends.map do |friend|
       {
-        :fb_id => friend.id,
-        :name => friend.name
+        :social_id => friend.id,
+        :name => friend.name,
+        :image_url => friend.square_image_url
       }
     end.sort_by do |friend|
       friend[:name].downcase
@@ -29,6 +30,8 @@ class Games::SocialController < GamesController
       posts = []
       gamers = []
       non_gamers = []
+      
+      current_facebook_user.fetch
 
       friends.each do |friend_id|
         exist_gamers = Gamer.find_all_gamer_based_on_channel(Invitation::FACEBOOK, friend_id)
@@ -111,9 +114,9 @@ class Games::SocialController < GamesController
     
     @twitter_friends = @twitter_complete_friends.map do |friend|
       {
-        :twitter_id => friend.id,
+        :social_id => friend.id,
         :name => friend.name,
-        :image_url => friend.profile_image_url_https #profile_image_url
+        :image_url => friend.profile_image_url_https
       }
     end.sort_by do |friend|
       friend[:name].downcase
