@@ -1,14 +1,14 @@
 class Games::Gamers::GamerProfilesController < GamesController
 
-  before_filter :set_profile, :only => [ :update, :update_birthdate, :dissociate_account ]
+  before_filter :set_profile, :only => [ :update, :update_birthdate, :update_prefs, :dissociate_account ]
 
   def update
     @gamer_profile.safe_update_attributes(params[:gamer_profile], [ :name, :nickname, :gender, :city, :country, :postal_code, :favorite_game, :favorite_category ])
     if @gamer_profile.save
       redirect_to edit_games_gamer_path
     else
-      flash.now[:error] = 'Error updating profile'
-      render :action => :edit
+      flash[:error] = 'Error updating profile'
+      redirect_to :controller => '/games/gamers', :action => :edit
     end
   end
 
@@ -43,6 +43,16 @@ class Games::Gamers::GamerProfilesController < GamesController
         flash[:error] = 'Please try dissociate later.'
         redirect_to edit_games_gamer_path and return
       end
+    end
+  end
+
+  def update_prefs
+    @gamer_profile.allow_marketing_emails = params[:gamer_profile][:allow_marketing_emails]
+    if @gamer_profile.save
+      redirect_to edit_games_gamer_path
+    else
+      flash[:error] = 'Error updating preferences'
+      redirect_to :controller => '/games/gamers', :action => :prefs
     end
   end
 

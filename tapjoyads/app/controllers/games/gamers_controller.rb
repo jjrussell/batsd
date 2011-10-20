@@ -1,6 +1,6 @@
 class Games::GamersController < GamesController
 
-  before_filter :set_profile, :only => [ :edit, :password, :update_password ]
+  before_filter :set_profile, :only => [ :edit, :accept_tos, :password, :update_password, :prefs ]
 
   def create
     @gamer = Gamer.new do |g|
@@ -46,6 +46,14 @@ class Games::GamersController < GamesController
     end
   end
 
+  def accept_tos
+    @gamer.accepted_tos_version = TAPJOY_GAMES_CURRENT_TOS_VERSION
+    if @gamer.save
+      render(:json => { :success => true }) and return
+    else
+      render(:json => { :success => false, :error => @gamer.errors }) and return
+    end
+  end
 private
   def set_profile
     if current_gamer.present?
