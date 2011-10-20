@@ -1,4 +1,4 @@
-# This file is auto-generated from the current state of the database. Instead of editing this file, 
+# This file is auto-generated from the current state of the database. Instead of editing this file,
 # please use the migrations feature of Active Record to incrementally modify your database, and
 # then regenerate this schema definition.
 #
@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20111018003119) do
+ActiveRecord::Schema.define(:version => 20111020070044) do
 
   create_table "action_offers", :id => false, :force => true do |t|
     t.string   "id",                    :limit => 36,                    :null => false
@@ -81,10 +81,11 @@ ActiveRecord::Schema.define(:version => 20111018003119) do
     t.date     "featured_on"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "platform"
   end
 
   add_index "app_reviews", ["app_id", "author_id"], :name => "index_app_reviews_on_app_id_and_author_id", :unique => true
-  add_index "app_reviews", ["featured_on"], :name => "index_app_reviews_on_featured_on", :unique => true
+  add_index "app_reviews", ["featured_on", "platform"], :name => "index_app_reviews_on_featured_on_and_platform", :unique => true
   add_index "app_reviews", ["id"], :name => "index_app_reviews_on_id", :unique => true
 
   create_table "apps", :id => false, :force => true do |t|
@@ -218,6 +219,7 @@ ActiveRecord::Schema.define(:version => 20111018003119) do
     t.datetime "expired_at"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "platform"
   end
 
   add_index "editors_picks", ["activated_at"], :name => "index_editors_picks_on_activated_at"
@@ -300,15 +302,15 @@ ActiveRecord::Schema.define(:version => 20111018003119) do
     t.string   "favorite_game"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "facebook_id"
+    t.string   "fb_access_token"
+    t.string   "referred_by",       :limit => 36
+    t.integer  "referral_count",                  :default => 0
     t.string   "name"
     t.string   "nickname"
     t.string   "postal_code"
     t.string   "favorite_category"
     t.boolean  "use_gravatar",                    :default => false
-    t.string   "facebook_id"
-    t.string   "fb_access_token"
-    t.string   "referred_by",       :limit => 36
-    t.integer  "referral_count",                  :default => 0
   end
 
   add_index "gamer_profiles", ["facebook_id"], :name => "index_gamer_profiles_on_facebook_id"
@@ -331,14 +333,21 @@ ActiveRecord::Schema.define(:version => 20111018003119) do
     t.datetime "updated_at"
     t.string   "udid"
     t.string   "confirmation_token",               :default => "",    :null => false
+    t.string   "facebook_id"
+    t.string   "access_token"
+    t.string   "fb_access_token"
+    t.integer  "referral_count",                   :default => 0
+    t.string   "referred_by",        :limit => 36
     t.boolean  "blocked",                          :default => false
   end
 
   add_index "gamers", ["confirmation_token"], :name => "index_gamers_on_confirmation_token", :unique => true
   add_index "gamers", ["email"], :name => "index_gamers_on_email", :unique => true
+  add_index "gamers", ["facebook_id"], :name => "index_gamers_on_facebook_id"
   add_index "gamers", ["id"], :name => "index_gamers_on_id", :unique => true
   add_index "gamers", ["perishable_token"], :name => "index_gamers_on_perishable_token"
   add_index "gamers", ["persistence_token"], :name => "index_gamers_on_persistence_token"
+  add_index "gamers", ["referred_by"], :name => "index_gamers_on_referred_by"
 
   create_table "generic_offers", :id => false, :force => true do |t|
     t.string   "id",               :limit => 36,                    :null => false
@@ -546,8 +555,8 @@ ActiveRecord::Schema.define(:version => 20111018003119) do
     t.string   "min_os_version",                                                                :default => "",    :null => false
     t.text     "screen_layout_sizes",                                                                              :null => false
     t.integer  "interval",                                                                      :default => 0,     :null => false
-    t.boolean  "url_overridden",                                                                :default => false, :null => false
     t.text     "banner_creatives"
+    t.boolean  "url_overridden",                                                                :default => false, :null => false
   end
 
   add_index "offers", ["id"], :name => "index_offers_on_id", :unique => true

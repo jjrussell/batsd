@@ -4,7 +4,7 @@ class AppReview < ActiveRecord::Base
   belongs_to :author, :polymorphic => true
   belongs_to :app
 
-  validates_uniqueness_of :featured_on, :allow_nil => true
+  validates_uniqueness_of [:featured_on, :platform], :allow_nil => true
   validates_uniqueness_of :author_id, :scope => :app_id, :message => "has already reviewed this app"
   validates_presence_of :author, :app, :text
 
