@@ -2,36 +2,48 @@
 
 #previews
   - publisher_app_id = "2349536b-c810-47d7-836c-2cd47cd3a796" # TapDefense
+  - unable_to_show = []
   - if @offer.featured?
-    Featured ad:
-    %div.img320x480
-      - if @show_generated_ads
+    - if @show_generated_ads
+      Featured ad:
+      %div.img320x480
         = image_tag(@offer.fullscreen_ad_image_url(publisher_app_id, true), :class => 'preview', :alt => '')
-      - else
-        = render :partial => "no_icon"
+    - else
+      - unable_to_show << "Featured"
   - else
     - if @offer.rewarded? # show offer wall ad
-      Marketplace ad:
-      %div.img320x76
-        - if @show_generated_ads
+      - if @show_generated_ads
+        Marketplace ad:
+        %div.img320x76
           = image_tag(@offer.get_offers_image_url(publisher_app_id, true), :class => 'preview', :alt => '')
-        - else
-          = render :partial => "no_icon"
+      - else
+        - unable_to_show << "Marketplace"
 
     - if @offer.display_banner_ads?
-      - Offer::DISPLAY_AD_SIZES.each_with_index do |size, index|
-        = "#{size} banner ad:"
-        %div{:class => "img#{size}"}
-          - if @show_generated_ads
+      - Offer::DISPLAY_AD_SIZES.each do |size|
+        - if @show_generated_ads || @offer.banner_creatives.include?(size)
+          = "#{size} banner ad:"
+          %div{:class => "img#{size}"}
             - width, height = size.split("x").collect{|x|x.to_i}
             = image_tag(@offer.display_ad_image_url(publisher_app_id, width, height, nil, nil, true), :class => 'preview', :alt => '')
-          - else
-            = render :partial => "no_icon"
+        - else
+          - unable_to_show << "#{size} banner"
 
+  - if unable_to_show.any?
+    #unable_to_show
+      = "Unable to show the following ad#{unable_to_show.length == 1 ? '' : 's'}:"
+      %div
+        = unable_to_show.join(", ")
+      %div
+        %i
+          Please
+          = link_to('find your app', app_path(@app))
+          = "in the app store so we can generate #{unable_to_show.length == 1 ? 'this ad' : 'these ads'} using your app's icon."
+
+  - if !@offer.featured?
     - if @offer.rewarded?
       .banner_ad_notes
         *Banner ads for rewarded installs are only displayed for free apps where the app name is 30 characters or less, and where the conversion rate is 30% or more.
-
     - else
       .banner_ad_notes
         *To provide custom creatives for your non-rewarded ads, please contact
@@ -51,6 +63,12 @@
   :plain
     #previews {
       text-align: center;
+    }
+
+    #unable_to_show {
+      color: red;
+      width: 640px;
+      margin-bottom: 15px;
     }
 
     .banner_ad_notes {
