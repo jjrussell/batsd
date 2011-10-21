@@ -321,7 +321,10 @@ TJG.ui = {
           values[this.name] = $(this).val();
         }
       });
+      var form_height = $('.register_form').outerHeight();
+
       $(".email_error").hide();
+      /*
       emailReg = /^([\w-\.+]+@([\w-]+\.)+[\w-]{2,4})?$/;
       if(values['date[day]'] == '' || values['date[month]'] == '' || values['date[year]'] == '') {
         $(".email_error").html('Please enter your birthdate');
@@ -343,16 +346,21 @@ TJG.ui = {
         $(".email_error").html('Please agree to the terms and conditions above');
         hasError = true;
       }
+      */
       if (hasError) {
         $(".email_error").show();
       }
       else if (hasError != true) {
         var loader = [
-          '<div class="dialog_title title_2">Registering</div>',
+          '<div class="title_2 center">Registering</div>',
           '<div class="dialog_image"></div>'
         ].join('');
-        $("#sign_up_dialog_content").html(loader);
-        $("#sign_up_dialog_content").parent().animate({ height: "100px", }, animateSpd);
+        console.log(form_height);
+        $('.register_form').animate({ height: "0px" }, animateSpd, function() {
+          $('.register_progess').html(loader);
+        });
+        //$("#sign_up_dialog_content").html(loader);
+        //$("#sign_up_dialog_content").parent().animate({ height: "100px", }, animateSpd);
         $.ajax({
           type: 'POST',
           url: rurl,
@@ -385,9 +393,9 @@ TJG.ui = {
                  '<div class="dialog_content"><div class="continue_link_device"><div class="button grey dialog_button">Continue</div></div></div>'
                 ].join('');
               }
-              $('.close_dialog').unbind('click');
-              $("#sign_up_dialog_content").parent().animate({ height: "140px", }, animateSpd);
-              $("#sign_up_dialog_content").html(msg);
+              //$('.close_dialog').unbind('click');
+              //$("#sign_up_dialog_content").parent().animate({ height: "140px", }, animateSpd);
+              //$("#sign_up_dialog_content").html(msg);
               if (d.linked) {
                 $('.close_dialog,.continue_link_device').click(function(){
                   if (TJG.path) {
@@ -461,11 +469,11 @@ TJG.ui = {
               '<div class="dialog_header_wrapper"><div class="dialog_header_right"></div><div class="dialog_header_left"></div><div class="dialog_title title_2">Oops!</div></div>',
               '<div class="dialog_content"><div>', error ,'.</div><div id="sign_up_again"><div class="button grey dialog_button">Try Again</div></div></div>',
             ].join('');
-            $(".close_dialog").hide();
-            $("#sign_up_dialog_content").html(msg);
-            $('#sign_up_again').click(function(){
-               TJG.ui.showRegister();
-            });
+            //$(".close_dialog").hide();
+            //$("#sign_up_dialog_content").html(msg);
+            //$('#sign_up_again').click(function(){
+            //   TJG.ui.showRegister();
+            //});
           }
         });
       }

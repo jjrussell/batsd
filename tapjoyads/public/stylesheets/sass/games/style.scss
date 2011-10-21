@@ -182,39 +182,44 @@ a, a:visited {
     @include rounded-corners;
   }
   
-  form#new_gamer  label {
+  .sign_up_icon {
+    background: transparent url('/images/games/v2/sign_up_hd.png') no-repeat;
+    height: 30px;
     margin: 0 auto;
-    margin-top: 8px;
-  }
-  
-  form#new_gamer input[type=text],
-  form#new_gamer input[type=email],
-  form#new_gamer input[type=password] {
-
-  }
-  
-  form#new_gamer input[type=email],
-  form#new_gamer input[type=password] {
-    border: 1px solid #C1C1C1;
-    padding: 4px;
-    width: 92%;
-    @include rounded-corners(10px);
-    @include inset-shadow;
-  }
-  
-  form#new_gamer input[type=submit] {
-    border: 1px solid #B0B0B0;
-    border-color: #B0131D;
-    color: #FFF;
-    cursor: pointer;
-    font-size: 0.9em;
-    position: relative;
-    margin: 8px auto 0;
-    text-shadow: 0 1px 1px #444;
     width: 100px;
-    @include inset-button(16px, 8px 10px);
-    @include inset-shadow;
-    @include gradient(#CF1623, #EA1927);
+  }
+    
+  .register_form {
+    overflow: hidden;
+    
+    form#new_gamer label {
+      margin: 0 auto;
+      margin-top: 8px;
+    }
+    
+    form#new_gamer input[type=email],
+    form#new_gamer input[type=password] {
+      border: 1px solid #C1C1C1;
+      padding: 4px;
+      width: 92%;
+      @include rounded-corners(10px);
+      @include inset-shadow;
+    }
+    
+    form#new_gamer input[type=submit] {
+      border: 1px solid #B0B0B0;
+      border-color: #B0131D;
+      color: #FFF;
+      cursor: pointer;
+      font-size: 0.9em;
+      position: relative;
+      margin: 8px auto 0;
+      text-shadow: 0 1px 1px #444;
+      width: 100px;
+      @include inset-button(16px, 8px 10px);
+      @include inset-shadow;
+      @include gradient(#CF1623, #EA1927);
+    }
   }
   
 } //.content_wrapper

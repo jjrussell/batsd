@@ -225,6 +225,7 @@ form#new_gamer input[type=password] {
   width: 244px;
 }
 form#new_gamer .field_tos {
+  height: 36px;
   margin-top: 8px;
   text-align: center;
 }
@@ -529,12 +530,16 @@ form#new_gamer input {
 form#new_gamer input[type=checkbox] {
   float: left;
   position: relative;
-  top: 6px;
+  top: 10px;
 }
 form#new_gamer label[for=gamer_terms_of_service] {
   float: left;
-  font-size: 10px;
-  width: 240px;
+  font-size: 11px;
+  margin-left: 12px;
+  width: 90%;
+}
+form#new_gamer label[for=gamer_terms_of_service] a {
+  color: #333;
 }
 form#new_gamer_session {
   color: #7E7E7E;
@@ -1316,7 +1321,6 @@ form#new_gamer_session .login_pass input[type=submit] {
   text-overflow: ellipsis;
 }
 .web .app_review .app_info, .ipad .app_review .app_info {
-  height: 110px;
 }
 .mobile .app_review .app_info {
   height: 55px;
