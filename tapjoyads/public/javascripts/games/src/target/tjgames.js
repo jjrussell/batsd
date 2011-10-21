@@ -954,10 +954,14 @@ TJG.utils = {
       }
     });
 <<<<<<< HEAD
+<<<<<<< HEAD
     
 =======
 
 >>>>>>> 4147bfc8cd099cd64b6a867b4f2fb78253a31ae4
+=======
+
+>>>>>>> 04738fc15cb6109f65e00c4eeb059d46e7209dd1
     if (!TJG.vars.imageLoaderInit) {
       $(window).scroll( function() {
         if (!TJG.vars.scrolling) {
@@ -990,10 +994,14 @@ $.utils = TJG.utils;
 
 TJG.ui = {
 <<<<<<< HEAD
+<<<<<<< HEAD
   
 =======
 
 >>>>>>> 4147bfc8cd099cd64b6a867b4f2fb78253a31ae4
+=======
+
+>>>>>>> 04738fc15cb6109f65e00c4eeb059d46e7209dd1
   hideLoader : function(delay,fn) {
     TJG.repositionDialog = [];
     delay = $.utils.or(delay, "fast");
@@ -1235,7 +1243,10 @@ TJG.ui = {
                       document.location.href = document.domain;
                     }
                   }
+<<<<<<< HEAD
 =======
+=======
+>>>>>>> 04738fc15cb6109f65e00c4eeb059d46e7209dd1
                   $('.close_dialog').unbind('click');
                   $("#sign_up_dialog_content").html($("#link_device_dialog .dialog").html());
                   $("#sign_up_dialog_content .dialog_header_wrapper").css("padding", "6px 12px");
@@ -1243,7 +1254,10 @@ TJG.ui = {
                   $('.close_dialog,.link_device_url').click(function(){
                     document.location.href = d.link_device_url;
                   });
+<<<<<<< HEAD
 >>>>>>> 4147bfc8cd099cd64b6a867b4f2fb78253a31ae4
+=======
+>>>>>>> 04738fc15cb6109f65e00c4eeb059d46e7209dd1
                 });
               }
               else {
@@ -1295,12 +1309,17 @@ TJG.ui = {
     });
   },
 <<<<<<< HEAD
+<<<<<<< HEAD
 
   showUpdateDob : function () {
 =======
   
   showAcceptTos : function () {
 >>>>>>> 4147bfc8cd099cd64b6a867b4f2fb78253a31ae4
+=======
+  
+  showAcceptTos : function () {
+>>>>>>> 04738fc15cb6109f65e00c4eeb059d46e7209dd1
     var animateSpd = "fast";
     $("#accept_tos_dialog_content").parent().css("height", "190px");
     $("#accept_tos_dialog_content").html($('#accept_tos_dialog_content_placeholder').html());
@@ -1707,11 +1726,15 @@ TJG.ui = {
     }
 <<<<<<< HEAD
     
+<<<<<<< HEAD
     function showIntro () {
 =======
 
     function showInto () {
 >>>>>>> 4147bfc8cd099cd64b6a867b4f2fb78253a31ae4
+=======
+    function showIntro() {
+>>>>>>> 04738fc15cb6109f65e00c4eeb059d46e7209dd1
       var div = document.createElement('div'), close;
       var id = "newUser";
       var obj = "#" + id;
@@ -2417,19 +2440,6 @@ TJG.social = {
 (function(window, document) {
 >>>>>>> 4147bfc8cd099cd64b6a867b4f2fb78253a31ae4
 
-RegExp.escape = function(text) {
-  if (!arguments.callee.sRE) {
-    var specials = [
-      '/', '.', '*', '+', '?', '|',
-      '(', ')', '[', ']', '{', '}', '\\'
-    ];
-    arguments.callee.sRE = new RegExp(
-      '(\\' + specials.join('|\\') + ')', 'g'
-    );
-  }
-  return text.replace(arguments.callee.sRE, '\\$1');
-};
-
 TJG.social = {
   setup: function(options){
     // local variables
@@ -2763,6 +2773,18 @@ TJG.social = {
   },
 };
 
+RegExp.escape = function(text) {
+  if (!arguments.callee.sRE) {
+    var specials = [
+      '/', '.', '*', '+', '?', '|',
+      '(', ')', '[', ']', '{', '}', '\\'
+    ];
+    arguments.callee.sRE = new RegExp(
+      '(\\' + specials.join('|\\') + ')', 'g'
+    );
+  }
+  return text.replace(arguments.callee.sRE, '\\$1');
+};
 
 (function(window, document) {
   

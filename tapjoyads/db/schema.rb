@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20111018003119) do
+ActiveRecord::Schema.define(:version => 20111020070044) do
 
   create_table "action_offers", :id => false, :force => true do |t|
     t.string   "id",                    :limit => 36,                    :null => false
@@ -81,10 +81,11 @@ ActiveRecord::Schema.define(:version => 20111018003119) do
     t.date     "featured_on"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "platform"
   end
 
   add_index "app_reviews", ["app_id", "author_id"], :name => "index_app_reviews_on_app_id_and_author_id", :unique => true
-  add_index "app_reviews", ["featured_on"], :name => "index_app_reviews_on_featured_on", :unique => true
+  add_index "app_reviews", ["featured_on", "platform"], :name => "index_app_reviews_on_featured_on_and_platform", :unique => true
   add_index "app_reviews", ["id"], :name => "index_app_reviews_on_id", :unique => true
 
   create_table "apps", :id => false, :force => true do |t|

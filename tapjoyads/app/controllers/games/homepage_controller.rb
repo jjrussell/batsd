@@ -1,5 +1,5 @@
 class Games::HomepageController < GamesController
-  
+
   before_filter :require_gamer, :except => [ :tos, :privacy ]
 
   def index
@@ -27,7 +27,7 @@ class Games::HomepageController < GamesController
     @device_name = device_info.name if device_info
     @device = Device.new(:key => device_id) if device_id.present?
     @external_publishers = ExternalPublisher.load_all_for_device(@device) if @device.present?
-    @featured_review = AppReview.featured_review
+    @featured_review = AppReview.featured_review(@device.try(:platform))
   end
   
   def switch_device
@@ -40,10 +40,10 @@ class Games::HomepageController < GamesController
       redirect_to games_root_path(:switch => false)
     end
   end
-  
+
   def tos
   end
-  
+
   def privacy
   end
   

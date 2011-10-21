@@ -6,20 +6,43 @@ blockquote, q { quotes: none; }
 blockquote:before, blockquote:after, q:before, q:after { content: ''; content: none; }
 table { border-collapse: collapse; border-spacing: 0; }
 html { -webkit-text-size-adjust:none; }
+article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, section {
+  display: block;
+}
+body {
+  line-height: 1;
+}
+ol, ul {
+  list-style: none;
+}
+blockquote, q {
+  quotes: none;
+}
+blockquote:before, blockquote:after, q:before, q:after {
+  content: '';
+  content: none;
+}
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+html {
+  -webkit-text-size-adjust: none;
+}
 @font-face {
   font-family: 'Cooper';
   font-style: normal;
   font-weight: bold;
-  src: local('Cooper'), url('/fonts/CooperStd.ttf') format('truetype');
+  src: local("Cooper"), url("/fonts/CooperStd.ttf") format("truetype");
 }
 @font-face {
   font-family: 'AmericanTypewriter';
   font-style: normal;
   font-weight: bold;
-  src: local('AmericanTypewriter'), url('/fonts/AmericanTypewriter.ttf') format('truetype');
+  src: local("AmericanTypewriter"), url("/fonts/AmericanTypewriter.ttf") format("truetype");
 }
-.web body,.ipad body {
-  background: #434343 url('/images/games/bg_web.jpg');
+.web body, .ipad body {
+  background: #434343 url("/images/games/bg_web.jpg");
   font-size: 16px;
 }
 .mobile body {
@@ -33,11 +56,11 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 .web body .tan, .ipad body .tan {
-  background: #F6E9C7 url('/images/games/bg_tan_web.jpg');
+  background: #f6e9c7 url("/images/games/bg_tan_web.jpg");
   color: #573D27;
 }
 .mobile body .tan {
-  background: #F6E9C7 url(data:image/jpeg;base64,/9j/4QAYRXhpZgAASUkqAAgAAAAAAAAAAAAAAP/sABFEdWNreQABAAQAAAAyAAD/4QMraHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wLwA8P3hwYWNrZXQgYmVnaW49Iu+7vyIgaWQ9Ilc1TTBNcENlaGlIenJlU3pOVGN6a2M5ZCI/PiA8eDp4bXBtZXRhIHhtbG5zOng9ImFkb2JlOm5zOm1ldGEvIiB4OnhtcHRrPSJBZG9iZSBYTVAgQ29yZSA1LjAtYzA2MCA2MS4xMzQ3NzcsIDIwMTAvMDIvMTItMTc6MzI6MDAgICAgICAgICI+IDxyZGY6UkRGIHhtbG5zOnJkZj0iaHR0cDovL3d3dy53My5vcmcvMTk5OS8wMi8yMi1yZGYtc3ludGF4LW5zIyI+IDxyZGY6RGVzY3JpcHRpb24gcmRmOmFib3V0PSIiIHhtbG5zOnhtcD0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wLyIgeG1sbnM6eG1wTU09Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9tbS8iIHhtbG5zOnN0UmVmPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VSZWYjIiB4bXA6Q3JlYXRvclRvb2w9IkFkb2JlIFBob3Rvc2hvcCBDUzUgTWFjaW50b3NoIiB4bXBNTTpJbnN0YW5jZUlEPSJ4bXAuaWlkOjJENzAxMDk1QkU3NjExRTBBMDkxQTE5NkEwRjhDMEY0IiB4bXBNTTpEb2N1bWVudElEPSJ4bXAuZGlkOjJENzAxMDk2QkU3NjExRTBBMDkxQTE5NkEwRjhDMEY0Ij4gPHhtcE1NOkRlcml2ZWRGcm9tIHN0UmVmOmluc3RhbmNlSUQ9InhtcC5paWQ6MkQ3MDEwOTNCRTc2MTFFMEEwOTFBMTk2QTBGOEMwRjQiIHN0UmVmOmRvY3VtZW50SUQ9InhtcC5kaWQ6MkQ3MDEwOTRCRTc2MTFFMEEwOTFBMTk2QTBGOEMwRjQiLz4gPC9yZGY6RGVzY3JpcHRpb24+IDwvcmRmOlJERj4gPC94OnhtcG1ldGE+IDw/eHBhY2tldCBlbmQ9InIiPz7/7gAOQWRvYmUAZMAAAAAB/9sAhAAIBgYGBgYIBgYIDAgHCAwOCggICg4QDQ0ODQ0QEQwODQ0ODBEPEhMUExIPGBgaGhgYIyIiIiMnJycnJycnJycnAQkICAkKCQsJCQsOCw0LDhEODg4OERMNDQ4NDRMYEQ8PDw8RGBYXFBQUFxYaGhgYGhohISAhIScnJycnJycnJyf/wAARCABLAEsDASIAAhEBAxEB/8QAYQABAQEBAAAAAAAAAAAAAAAAAAECBwEBAQEBAAAAAAAAAAAAAAAAAAEDBBAAAQMCBwADAQEAAAAAAAAAAAERQSEx8FFhcYGRsaHB0eHxEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwDtNbhv4VVG5yNkvYv6BSwELluCeAWaE5C31zE1Abcl4BGAOiXKqqqAlr4QC8kxQBlpnIAP0HYP8gGQqCVRCQARnDejvYU+iCkoWSeFAq4YmpW6AkuKW6Euo4ATWAzF1UiJVwEldMZDUOuMwJLDwNMi+mgFgIhBhgKRVfQI+QuBcVE1GFF7BE1X4D/tgxf8CjZ1CbMECBE+yiJ5AVAFtxI6AMXwgS4ClXK6ZlUwEf/Z);
+  background: #f6e9c7 url(data:image/jpeg;base64,/9j/4QAYRXhpZgAASUkqAAgAAAAAAAAAAAAAAP/sABFEdWNreQABAAQAAAAyAAD/4QMraHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wLwA8P3hwYWNrZXQgYmVnaW49Iu+7vyIgaWQ9Ilc1TTBNcENlaGlIenJlU3pOVGN6a2M5ZCI/PiA8eDp4bXBtZXRhIHhtbG5zOng9ImFkb2JlOm5zOm1ldGEvIiB4OnhtcHRrPSJBZG9iZSBYTVAgQ29yZSA1LjAtYzA2MCA2MS4xMzQ3NzcsIDIwMTAvMDIvMTItMTc6MzI6MDAgICAgICAgICI+IDxyZGY6UkRGIHhtbG5zOnJkZj0iaHR0cDovL3d3dy53My5vcmcvMTk5OS8wMi8yMi1yZGYtc3ludGF4LW5zIyI+IDxyZGY6RGVzY3JpcHRpb24gcmRmOmFib3V0PSIiIHhtbG5zOnhtcD0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wLyIgeG1sbnM6eG1wTU09Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9tbS8iIHhtbG5zOnN0UmVmPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VSZWYjIiB4bXA6Q3JlYXRvclRvb2w9IkFkb2JlIFBob3Rvc2hvcCBDUzUgTWFjaW50b3NoIiB4bXBNTTpJbnN0YW5jZUlEPSJ4bXAuaWlkOjJENzAxMDk1QkU3NjExRTBBMDkxQTE5NkEwRjhDMEY0IiB4bXBNTTpEb2N1bWVudElEPSJ4bXAuZGlkOjJENzAxMDk2QkU3NjExRTBBMDkxQTE5NkEwRjhDMEY0Ij4gPHhtcE1NOkRlcml2ZWRGcm9tIHN0UmVmOmluc3RhbmNlSUQ9InhtcC5paWQ6MkQ3MDEwOTNCRTc2MTFFMEEwOTFBMTk2QTBGOEMwRjQiIHN0UmVmOmRvY3VtZW50SUQ9InhtcC5kaWQ6MkQ3MDEwOTRCRTc2MTFFMEEwOTFBMTk2QTBGOEMwRjQiLz4gPC9yZGY6RGVzY3JpcHRpb24+IDwvcmRmOlJERj4gPC94OnhtcG1ldGE+IDw/eHBhY2tldCBlbmQ9InIiPz7/7gAOQWRvYmUAZMAAAAAB/9sAhAAIBgYGBgYIBgYIDAgHCAwOCggICg4QDQ0ODQ0QEQwODQ0ODBEPEhMUExIPGBgaGhgYIyIiIiMnJycnJycnJycnAQkICAkKCQsJCQsOCw0LDhEODg4OERMNDQ4NDRMYEQ8PDw8RGBYXFBQUFxYaGhgYGhohISAhIScnJycnJycnJyf/wAARCABLAEsDASIAAhEBAxEB/8QAYQABAQEBAAAAAAAAAAAAAAAAAAECBwEBAQEBAAAAAAAAAAAAAAAAAAEDBBAAAQMCBwADAQEAAAAAAAAAAAERQSEx8FFhcYGRsaHB0eHxEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwDtNbhv4VVG5yNkvYv6BSwELluCeAWaE5C31zE1Abcl4BGAOiXKqqqAlr4QC8kxQBlpnIAP0HYP8gGQqCVRCQARnDejvYU+iCkoWSeFAq4YmpW6AkuKW6Euo4ATWAzF1UiJVwEldMZDUOuMwJLDwNMi+mgFgIhBhgKRVfQI+QuBcVE1GFF7BE1X4D/tgxf8CjZ1CbMECBE+yiJ5AVAFtxI6AMXwgS4ClXK6ZlUwEf/Z);
   color: #573D27;
 }
 a, a:visited {
@@ -108,12 +131,19 @@ a, a:visited {
   top: -9px;
 }
 @-webkit-keyframes spin {
-  from {-webkit-transform: rotate(0deg);}
-  to {-webkit-transform: rotate(360deg);}
+  from {
+    -webkit-transform: rotate(0deg);
+}
+  to {
+    -webkit-transform: rotate(360deg); }
 }
 @-moz-keyframes spin {
-  from {-moz-transform: rotate(0deg);}
-  to {-moz-transform: rotate(360deg);}
+  from {
+    -moz-transform: rotate(0deg);
+  }
+  to {
+    -moz-transform: rotate(360deg);
+  }
 }
 #loader.dialog_wrapper {
   width: 200px;
@@ -143,7 +173,7 @@ a, a:visited {
 #flash_error .dialog {
   height: 60px;
 }
-#register_device .dialog  {
+#register_device .dialog {
   height: 150px;
 }
 #sign_up_dialog .dialog {
@@ -170,7 +200,7 @@ a, a:visited {
 }
 .dialog_header_left,
 .dialog_header_right {
-  background:transparent url('/images/games/dialog_decoration.png') no-repeat;
+  background: transparent url("/images/games/dialog_decoration.png") no-repeat;
   position: relative;
   height: 15px;
   top: 6px;
@@ -224,7 +254,7 @@ form#new_gamer input[type=password] {
 form#new_gamer .field_tos {
   margin-top: 8px;
 }
-form#new_gamer input[type=submit]{
+form#new_gamer input[type=submit] {
   font-size: 13px;
   padding: 6px 14px;
   opacity: 1;
@@ -233,6 +263,18 @@ form#new_gamer label,
 form#new_gamer input {
   display: block;
   padding: 3px 0;
+}
+#accept_tos_dialog label {
+  font-size: 12px;
+}
+#accept_tos_dialog .dialog_header a, #accept_tos_dialog .dialog_header a:visited {
+  color: red;
+}
+#accept_tos_dialog input[type=submit] {
+  margin-top: 10px;
+}
+#accept_tos_again {
+  margin-top: 6px;
 }
 #accept_tos_dialog label {
   font-size: 12px;
@@ -256,21 +298,21 @@ form#new_gamer input {
   width: 100%;
 }
 .nav_profile {
-  background: transparent url('/images/games/my_account.png') no-repeat;
+  background: transparent url("/images/games/my_account.png") no-repeat;
   cursor: pointer;
   float: left;
   height: 32px;
   width: 32px;
 }
 .nav_device_info {
-  background: transparent url('/images/games/device_bg.png') repeat-x;
+  background: transparent url("/images/games/device_bg.png") repeat-x;
   float: right;
   height: 32px;
   overflow: hidden;
   text-align: center;
 }
 .nav_device {
-  background: transparent url('/images/games/device.png') no-repeat;
+  background: transparent url("/images/games/device.png") no-repeat;
   cursor: pointer;
   float: right;
   height: 32px;
@@ -286,7 +328,7 @@ form#new_gamer input {
   width: 24px;
 }
 .device_icon .mobile {
-  background: transparent url('/images/games/mobile_icon.png') no-repeat center center;
+  background: transparent url("/images/games/mobile_icon.png") no-repeat center center;
   left: 14px;
   height: 22px;
   top: 2px;
@@ -307,15 +349,15 @@ form#new_gamer input {
 /* Page */
 .web .page,
 .ipad .page {
-  background: transparent url('/images/games/header_bg_web.jpg') repeat-x;
+  background: transparent url("/images/games/header_bg_web.jpg") repeat-x;
 }
 .web .tan .page,
 .ipad .tan .page {
-  background: transparent url('/images/games/header_bg_tan_web_hd_p.jpg') repeat-x;
+  background: transparent url("/images/games/header_bg_tan_web_hd_p.jpg") repeat-x;
 }
 .web .page,
 .ipad .page {
-   padding-bottom: 120px;
+  padding-bottom: 120px;
 }
 .mobile .page {
   padding-bottom: 60px;
@@ -332,7 +374,7 @@ form#new_gamer input {
 }
 .web .logo,
 .ipad .logo {
-  background: transparent url('/images/games/logo_web.jpg') no-repeat;
+  background: transparent url("/images/games/logo_web.jpg") no-repeat;
   height: 240px;
   margin: 0 auto;
   width: 640px;
@@ -403,13 +445,13 @@ form#new_gamer input {
 .ipad .slide_nav div.slider {
   padding: 8px 12px;
 }
-.mobile .slide_nav  div.slider {
+.mobile .slide_nav div.slider {
   padding: 6px 8px;
 }
-.mobile .slide_nav  div.slider.more_games {
+.mobile .slide_nav div.slider.more_games {
   padding: 8px;
 }
-.mobile .slide_nav  div.slider.back {
+.mobile .slide_nav div.slider.back {
   padding: 6px 12px;
 }
 .slide_nav .slider.slider_active,
@@ -481,7 +523,7 @@ form#new_gamer input {
   top: -8px;
 }
 .web .slide_arrow_wrapper.left_arrow .slide_arrow,
-.ipad .slide_arrow_wrapper.left_arrow .slide_arrow  {
+.ipad .slide_arrow_wrapper.left_arrow .slide_arrow {
   top: 12px;
 }
 .mobile .slide_arrow_wrapper.left_arrow .slide_arrow {
@@ -555,13 +597,13 @@ form#new_gamer input {
 }
 .web #earn_paper,
 .ipad #earn_paper {
-  background: transparent url('/images/games/earn_paper_web.jpg') no-repeat;
+  background: transparent url("/images/games/earn_paper_web.jpg") no-repeat;
   height: 208px;
   margin: 0 auto;
   width: 616px;
 }
 .mobile #earn_paper {
-  background: transparent url('/images/games/earn_paper_mobile.jpg') no-repeat;
+  background: transparent url("/images/games/earn_paper_mobile.jpg") no-repeat;
   height: 104px;
   margin: 0 auto;
   width: 308px;
@@ -664,7 +706,7 @@ form#new_gamer input {
   top: 1px;
 }
 .web .tan .content .forgot_pass a,
-.ipad .tan .content .forgot_pass a{
+.ipad .tan .content .forgot_pass a {
   font-size: 14px;
 }
 form#new_gamer input[type=checkbox] {
@@ -759,7 +801,7 @@ form#new_gamer_session .login_pass {
   width: 100%;
 }
 .info_expand {
-  background: transparent url('/images/games/dark_bg.png') repeat;
+  background: transparent url("/images/games/dark_bg.png") repeat;
   width: 100%;
 }
 .web #profile_info_display .center_container,
@@ -801,7 +843,7 @@ form#new_gamer_session .login_pass {
   width: 16px;
 }
 .info_expand_bottom_arrow {
-  background: transparent url('/images/games/dark_bg.png') repeat;
+  background: transparent url("/images/games/dark_bg.png") repeat;
   display: block;
   left: 38px;
   position: relative;
@@ -914,12 +956,12 @@ form#new_gamer_session .login_pass {
 }
 .web #invite_friends .social_btn,
 .ipad #invite_friends .social_btn {
-  background: transparent url('/images/games/friends_sprites_web.png');
+  background: transparent url("/images/games/friends_sprites_web.png");
   height: 78px;
   width: 78px;
 }
 .mobile #invite_friends .social_btn {
-  background: transparent url('/images/games/friends_sprites_mobile.png');
+  background: transparent url("/images/games/friends_sprites_mobile.png");
   height: 39px;
   width: 39px;
 }
@@ -949,13 +991,13 @@ form#new_gamer_session .login_pass {
 }
 .web .profile_arrow,
 .ipad .profile_arrow {
-  background: transparent url('/images/games/caret-web.jpg') no-repeat center center;
+  background: transparent url("/images/games/caret-web.jpg") no-repeat center center;
   height: 35px;
   top: 4px;
   width: 20px;
 }
 .mobile .profile_arrow {
-  background: transparent url('/images/games/caret-mobile.jpg') no-repeat center center;
+  background: transparent url("/images/games/caret-mobile.jpg") no-repeat center center;
   height: 18px;
   top: 3px;
   width: 10px;
@@ -1149,6 +1191,14 @@ form#new_gamer_session .login_pass {
 .formError .pad, .email_error .pad, .account_error .pad, .login_error .pad, .form_error .pad, .tos_error .pad {
   padding: 6px;
 }
+.formError, .email_error, .account_error, .login_error, .form_error, .tos_error {
+  color: #F21C1A;
+  font-size: 13px;
+  padding: 4px;
+}
+.formError .pad, .email_error .pad, .account_error .pad, .login_error .pad, .form_error .pad, .tos_error .pad {
+  padding: 6px;
+}
 .mobile .tab_wrapper {
   width: 100%;
 }
@@ -1180,12 +1230,12 @@ form#new_gamer_session .login_pass {
 }
 /* Featured */
 .web .feat_review, .ipad .feat_review {
-  background: transparent url('/images/games/paper_web.png') no-repeat center top;
+  background: transparent url("/images/games/paper_web.png") no-repeat center top;
   height: 280px;
   width: 640px;
 }
 .web .feat_review.min, .ipad .feat_review.min {
-  background: transparent url('/images/games/paper_min_web.png') no-repeat center top;
+  background: transparent url("/images/games/paper_min_web.png") no-repeat center top;
   height: 130px;
   width: 640px;
 }
@@ -1208,7 +1258,7 @@ form#new_gamer_session .login_pass {
   margin: 12px auto;
 }
 .feat_toggle {
-  background: transparent url('/images/games/feat_open_web.png') no-repeat center center;
+  background: transparent url("/images/games/feat_open_web.png") no-repeat center center;
   cursor: pointer;
   float: right;
   height: 50px;
@@ -1226,7 +1276,7 @@ form#new_gamer_session .login_pass {
   width: 25px;
 }
 .feat_toggle.collaspe {
-  background: transparent url('/images/games/feat_close_web.png') no-repeat center center;
+  background: transparent url("/images/games/feat_close_web.png") no-repeat center center;
 }
 .mobile .feat_toggle.collaspe {
   background: transparent url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABkAAAAZCAYAAADE6YVjAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyJpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNSBNYWNpbnRvc2giIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6QTg0Q0I3QzRDQjVFMTFFMEE3MUFDRkFGNTE2RkQyMDQiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6QTg0Q0I3QzVDQjVFMTFFMEE3MUFDRkFGNTE2RkQyMDQiPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDo3Mjg4MTQ2QkNCNUUxMUUwQTcxQUNGQUY1MTZGRDIwNCIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDo3Mjg4MTQ2Q0NCNUUxMUUwQTcxQUNGQUY1MTZGRDIwNCIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/Ps/LTEkAAAXMSURBVHjadJVtaJVlGMfv8+xs52xu7v3VzW1uLW1rUTlBhGJQH4qgwMAPJcoqgySCIsopFYaLIidBUkaWveyb2UqQlD4VKhIo6GTbaW7Ovb+d7eztbGc75+n3f3zOWLluuM+5n/u+7uvlf/2v6/bs27fPxEc0GjVJSUlm8+bNJjc318RiMbO0tOS1LKtsamrqUf7rZ2ZmorZt+zMyMv7iyh/r1q0LJCQkLIdCIePxeExaWppJTEw0yBm/32+QNV7znyHBhYUFGbC4+PzAwMBOvutxIIOzIIYm5ubmrImJiWe9Xq+dl5fXtn79+h+42sL5olljrGkkEomUtLe3H75z585ePAmlp6f/ilcn8XAIr0dSUlISEM1DbvvY2NhL4+PjJ4hgL8bexYlL9xhZXl5e+UDA4OWWjo6OU0SxLScn5wwGDuJxh86ByPh8PqM7s7OzQe1jvCUrK+tp4PySvXPJycmNGDwh9FeMlJWVOd5rTE5OlgYCgdahoaGq6urqL4qKig6gMCT4Nm3aZCoqKhSlGR4eTge+aaKygTWC0lZydwsHLgSDwePkNRmdR1eM6LIGsCQMDg5+OD8/X0XiTxUWFr6FgrCST0SmoKBABh4h0if5jxFBM8qiMirCYPAGJNjJ/llgPpSdnf0bUd1U4i1CloDp7+9/pqurazd43yopKXkbu2GHGZwTkVlcXBRjtofD4Y9Y1xOhLeViUlwOBy+xbgDiVM6Op6am+jCsNFgKJKezs7NJxkpLS5v5HlcEGkTk5Ao45HEiMHhQKFo7zsXPBLmMYfwXHD2C7OPA+hjsvBsJHtxHsh/gwg1wbcFb56KUTE9P69yhNdOjbyDLYG1pT2eSlR5NGaPGjgHlAPsvq+Ycj/r6+nbIczh/BqEQnjgGNFVUgsUdKWKWChS8Ld3RfSnWlBHlDraFyNV3PT09Bzg/YglreL5V1IQl51WlJM2hqsLXZSlzGbigH/LgR2HEJcxKCWgNjR15HP0T5zy3b98u8nLgY7OaGujBu+tSjsIaZikzz3N3LKLYIrIn5C1eZiL7PpSPchZjhpk2XqvoLsHSq8A6hRFbJPCCnRduZyPQi+C8ImG9BVYcB6pcHIgRraWepiG28F2AoQ/iMCqHMg6UMe42wqprQO8n6SJJhtfF14fCCNZtNTiSeRXdn/PvR1keESQTcQEOVGGsmMSr+QXkPffn+V5mPck6SqeI1dbWWkBeLAfIUdSL4mloehm6PYSCVBTPAk03Rg5LKOHuiAouPt9BYROR/A0M2/B6kbMYZzZGonzbIob+GVvdPHY7X7DhNIkqZnOXksa0V/U3tXYlW1Xep4us+/EthDERIcL5kqDCSbumpsYuLy83JLwYuSn03vAKVy6LVWPw/hDQtYLxhBTHC5I9Z825LTYyh0VvyYgoovzGjRvNhg0bDBGqt+VT3HXstWI8aAlflA7l5+cfxWAZ60YpzszMdKishKvYVHjkR0xUO5nXe6O+JSLU1dU5RmQYfX4K+zMcK+T+MVW80+rlEZB9DRQvkJM3UHwagctxvGTELTwbRR7Wo4JZfUsVrWgkw70UlDZztIvu/h7n1517+nExn4AAewg3SPhfYbBaUEoBj5FT2ciMwr5RzheEvxonCDhR8p74MPBJb2/vq+xfYP9T3RG1rdXVisJrKHkTOtdQaD+zt0P7yokLXS+G9xN9i4xXVlYat4unQ4SPMbKfdTsyr5O3sEuifz+/bov4Ec+TRkZGmmn/Z2n7r7F/nhxNkq82omlTHtynOh9n9vB+vIgDD9IYr9CiXuHRC7jdfe033n0bviHkYTpBE2/49xRYD1BeAaaLRNCNt2mc3Q9NnwOqbYoK2n6L1wcxOiQdq5rqvUY03AZ3jtZwEQMNGGoAiqeIYrfqRF6SuxjKB2HVSSL/iVbyO81xKd4w40/6/xqJR4SxEJePoewk0eVQSw+zX0NOenmSR1F0k3wpT4786o68evwjwAAzPb2GnYZ37QAAAABJRU5ErkJggg==) no-repeat center center;
@@ -1242,8 +1292,6 @@ form#new_gamer_session .login_pass {
 }
 .mobile .feat_content {
   padding: 20px 16px 0px;
-}
-.staff_info {
 }
 .web .staff_info, .ipad .staff_info {
   height: 72px;
@@ -1290,13 +1338,13 @@ form#new_gamer_session .login_pass {
   margin: 2px 0 0 8px;
 }
 .web .staff_info .staff_title, .ipad .staff_info .staff_title {
-  background: transparent url('/images/games/staff_pick_web.png') no-repeat center center;
+  background: transparent url("/images/games/staff_pick_web.png") no-repeat center center;
   height: 24px;
   margin-bottom: 6px;
   width: 154px;
 }
 .mobile .staff_info .staff_title {
-  background: transparent url('/images/games/staff_pick_mobile.png') no-repeat center center;
+  background: transparent url("/images/games/staff_pick_mobile.png") no-repeat center center;
   height: 12px;
   margin-bottom: 3px;
   width: 77px;
@@ -1328,14 +1376,14 @@ form#new_gamer_session .login_pass {
   top: 7px;
 }
 .web .feat_arrow, .ipad .feat_arrow {
-  background: transparent url('/images/games/feat_arrow_web.png') no-repeat center center;
+  background: transparent url("/images/games/feat_arrow_web.png") no-repeat center center;
   height: 45px;
   position: relative;
   top: 40px;
   width: 25px;
 }
 .mobile .feat_arrow {
-  background: transparent url('/images/games/feat_arrow_mobile.png') no-repeat center center;
+  background: transparent url("/images/games/feat_arrow_mobile.png") no-repeat center center;
   height: 22px;
   position: relative;
   top: 20px;
@@ -1358,6 +1406,8 @@ form#new_gamer_session .login_pass {
   margin-top: 3px;
 }
 .offer_image, .app_review .app_image  {
+.offer_image, .app_review .app_image {
+  border-radius: 6px;
   float: left;
   height: 57px;
   overflow: hidden !important;
@@ -1432,7 +1482,7 @@ form#new_gamer_session .login_pass {
   padding-right: 6px;
   width: 460px;
 }
-.mobile .app_review .app_text{
+.mobile .app_review .app_text {
   padding-right: 3px;
   width: 210px;
 }
@@ -1588,7 +1638,7 @@ form#new_gamer_session .login_pass {
 }
 .offer_button.my_apps .cost.free {
   color: #23840C;
-}we
+}
 .offer_button.more_games .get_it, .offer_button.top_games .get_it {
   color: #444;
 }
@@ -1603,8 +1653,9 @@ form#new_gamer_session .login_pass {
   padding-right: 6px;
 }
 .get_more_apps, .grey_button, .tab_button.grey {
-  background: -moz-linear-gradient(top, #E7E7E7 0%, #A6A6A6 100%);
-  background: -webkit-gradient(linear, 0 0, 0 100%, color-stop(0, #E7E7E7), color-stop(1, #A6A6A6));
+  background: -moz-linear-gradient(top, #e7e7e7 0%, #a6a6a6 100%);
+  background: -webkit-gradient(linear, 0 0, 0 100%, color-stop(0, #e7e7e7), color-stop(1, #a6a6a6));
+  border-radius: 6px;
   cursor: pointer;
   height: 40px;
   margin: 8px auto;
@@ -1624,8 +1675,8 @@ form#new_gamer_session .login_pass {
 }
 .get_more_apps:hover, .get_more_apps:active, .grey_button:hover, .grey_button:active {
   color: #444;
-  background: -webkit-gradient(linear, left top, left bottom, from(#D6D6D6), to(#C4C4C4));
-  background: -moz-linear-gradient(top,  #D6D6D6,  #c4c4c4);
+  background: -webkit-gradient(linear, left top, left bottom, from(#d6d6d6), to(#c4c4c4));
+  background: -moz-linear-gradient(top, #d6d6d6, #c4c4c4);
   position: relative;
   top: 1px;
   -moz-box-shadow: 0 1px #4E4E4E;
@@ -1638,7 +1689,7 @@ form#new_gamer_session .login_pass {
   color: #6C6C6C;
 }
 .tab_button.dark_grey, .tab_button_bottom_arrrow {
-  background:#2A2A2A url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAIAAACRXR/mAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyJpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNSBNYWNpbnRvc2giIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6RUI5N0I4REZBRjZEMTFFMEFGNTc5RTY4N0ExMDA2M0YiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6RUI5N0I4RTBBRjZEMTFFMEFGNTc5RTY4N0ExMDA2M0YiPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDpFQjk3QjhEREFGNkQxMUUwQUY1NzlFNjg3QTEwMDYzRiIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDpFQjk3QjhERUFGNkQxMUUwQUY1NzlFNjg3QTEwMDYzRiIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/PuDRi2UAAAXsSURBVHjarFhbjtww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);
+  background: #2a2a2a url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAIAAACRXR/mAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyJpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNSBNYWNpbnRvc2giIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6RUI5N0I4REZBRjZEMTFFMEFGNTc5RTY4N0ExMDA2M0YiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6RUI5N0I4RTBBRjZEMTFFMEFGNTc5RTY4N0ExMDA2M0YiPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDpFQjk3QjhEREFGNkQxMUUwQUY1NzlFNjg3QTEwMDYzRiIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDpFQjk3QjhERUFGNkQxMUUwQUY1NzlFNjg3QTEwMDYzRiIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/PuDRi2UAAAXsSURBVHjarFhbjtww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);
 }
 .tab_button.dark_grey {
   border: 1px solid #141414;
@@ -1701,12 +1752,12 @@ form#new_gamer_session .login_pass {
   padding: 0 1px;
 }
 .tab_button_bottom_arrrow {
-   border: 1px solid #141414;
-   height: 12px;
-   position: relative;
-   top: -7px;
-   left: 92px;
-   width: 12px;
+  border: 1px solid #141414;
+  height: 12px;
+  position: relative;
+  top: -7px;
+  left: 92px;
+  width: 12px;
   -moz-box-shadow: 1px 1px #4E4E4E;
   -webkit-box-shadow: 1px 1px #4E4E4E;
   -webkit-transform: rotate(45deg);
@@ -1741,8 +1792,8 @@ input.button {
   border: none;
 }
 .button.grey {
-  background: -moz-linear-gradient(top, #E7E7E7 0%, #C4C4C4 100%);
-  background: -webkit-gradient(linear, 0 0, 0 100%, color-stop(0, #E7E7E7), color-stop(1, #C4C4C4));
+  background: -moz-linear-gradient(top, #e7e7e7 0%, #c4c4c4 100%);
+  background: -webkit-gradient(linear, 0 0, 0 100%, color-stop(0, #e7e7e7), color-stop(1, #c4c4c4));
   color: #3F3F3F;
   text-shadow: 0 0px 1px #FFF;
   -moz-box-shadow: inset 1px 1px 1px #FFF;
@@ -1751,8 +1802,8 @@ input.button {
   -webkit-box-shadow: 1px 1px 1px #303030;
 }
 .button.blue, .button.grey:hover, .button.grey:active {
-  background: -moz-linear-gradient(top, #1D81E9 0%, #0C62BA 100%);
-  background: -webkit-gradient(linear, 0 0, 0 100%, color-stop(0, #1D81E9), color-stop(1, #0C62BA));
+  background: -moz-linear-gradient(top, #1d81e9 0%, #0c62ba 100%);
+  background: -webkit-gradient(linear, 0 0, 0 100%, color-stop(0, #1d81e9), color-stop(1, #0c62ba));
   color: #FFF;
   text-shadow: 0 0px 1px #0C62BA;
 }
@@ -1763,12 +1814,12 @@ input.button {
   color: #FFF;
 }
 .button.lt_blue {
-  background: -moz-linear-gradient(top, #40A7C0 0%, #218BAD 100%);
-  background: -webkit-gradient(linear, 0 0, 0 100%, color-stop(0, #40A7C0), color-stop(1, #218BAD));
+  background: -moz-linear-gradient(top, #40a7c0 0%, #218bad 100%);
+  background: -webkit-gradient(linear, 0 0, 0 100%, color-stop(0, #40a7c0), color-stop(1, #218bad));
   -moz-box-shadow: none;
   -webkit-box-shadow: none;
 }
-.button.lt_blue:hover, .button.lt_blue:active{
+.button.lt_blue:hover, .button.lt_blue:active {
   -moz-box-shadow: inset 0px 0px 6px #15566B;
   -webkit-box-shadow: inset 0px 0px 6px #15566B;
 }
@@ -1791,7 +1842,8 @@ input.button {
   color: #FFF;
 }
 .message_content .button.grey.arrow .arrow_bg {
-  background: transparent url('/images/games/button_right_arrow.png') no-repeat 2px right;
+  background: transparent url("/images/games/button_right_arrow.png") no-repeat right;
+  display: block;
   padding-right: 16px;
 }
 .message_content.find_games, .message_content.link_device {
@@ -1806,12 +1858,12 @@ input.button {
   display: block;
 }
 .link_device_image {
-  background: transparent url('/images/games/link_device.png') no-repeat center center;
+  background: transparent url("/images/games/link_device.png") no-repeat center center;
   height: 84px;
   width: 250px;
 }
 .link_device_install_icon {
-  background: transparent url('/images/games/install_device.png') no-repeat center center;
+  background: transparent url("/images/games/install_device.png") no-repeat center center;
   float: left;
   height: 20px;
   margin: 0 3px;
@@ -1847,7 +1899,7 @@ input.button {
   padding: 0px 8px;
 }
 #static li {
-   margin: 6px 0 0 10px;
+  margin: 6px 0 0 10px;
 }
 #static .content_box div, .account .content_box div {
   padding: 6px 12px 6px 12px;
@@ -1908,6 +1960,9 @@ h2.title {
 .hidden, .hide {
   display: none;
 }
+.hidden, .hide {
+  display: none;
+}
 .notvisible {
   visibility: hidden;
 }
@@ -1932,7 +1987,7 @@ h2.title {
 .noscript_msg {
   font-size: 18px;
   padding: 50px 20px;
-  text-align:center;
+  text-align: center;
 }
 .clearfix:after {
   content: ".";
@@ -1952,10 +2007,10 @@ html[xmlns] .clearfix {
   height: 1%;
 }
 a {
-  -webkit-tap-highlight-color: rgba(0,0,0,0);
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
 }
 body {
-  -webkit-tap-highlight-color: rgba(0,0,0,0);
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
   -webkit-touch-callout: none;
 }
 #jqt {
@@ -2018,18 +2073,18 @@ body {
 }
 @-webkit-keyframes slideLeftInFade {
   0% {
-      opacity: 0;
+    opacity: 0;
   }
   100% {
-      opacity: 1;
+    opacity: 1;
   }
 }
 @-webkit-keyframes slideLeftOutFade {
   0% {
-      opacity: 1;
+    opacity: 1;
   }
   100% {
-      opacity: 0;
+    opacity: 0;
   }
 }
 #jqt .slideright.in {
@@ -2081,7 +2136,7 @@ body {
 #deviceSelect li a {
   color: #333;
 }
-#deviceSelect li a:hover, #deviceSelect li a:active{
+#deviceSelect li a:hover, #deviceSelect li a:active {
   color: #FFF;
 }
 
@@ -2089,7 +2144,7 @@ body {
   display: none;
 }
 #newUser .close_button {
-  background: transparent url('/images/games/close_btn_m.png') no-repeat;
+  background: transparent url("/images/games/close_btn_m.png") no-repeat;
   cursor: pointer;
   float: right;
   height: 30px;
@@ -2138,13 +2193,13 @@ body {
   display: block;
 }
 .bookmark_icon {
-  background: transparent url('/images/games/bookmark_icon_mobile.png') no-repeat;
+  background: transparent url("/images/games/bookmark_icon_mobile.png") no-repeat;
   height: 22px;
   margin: 0 2px;
   width: 22px;
 }
 .bookmark_btn {
-  background: transparent url('/images/games/bookmark_btn_mobile.png') no-repeat;
+  background: transparent url("/images/games/bookmark_btn_mobile.png") no-repeat;
   height: 20px;
   margin: 0 2px;
   width: 125px;

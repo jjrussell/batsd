@@ -1,0 +1,74 @@
+$main-title-font-size: 1.2em;
+$main-font-size: 1em;
+$main-font-color: #505F6D;
+$main-font-name: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+
+$nav-height: 200px;
+$nav-padding-v: 16px;
+$nav-padding-h: 8px;
+$nav-bg-color: #E9E5DA;
+
+$logo-bottom-margin: 16px;
+
+@mixin rounded-corners($radius: 6px) {
+  border-radius: $radius;
+  -moz-border-radius-: $radius;
+  -webkit-border-radius: $radius;
+}
+
+@mixin button ($radius: 6px, $padding: 8px 8px) {
+  padding: $padding;
+  text-align: center;
+  @include rounded-corners($radius)
+}
+
+@mixin inset-button ($radius: 6px, $padding: 8px 8px) {
+  background-image: -moz-linear-gradient(top,rgba(160,150,145,.1)0%,rgba(160,150,145,0)30%,rgba(160,150,145,.2)100%);
+  background-image: -webkit-gradient(linear,left top,left bottom,color-stop(0%,rgba(160,150,145,0.1)),color-stop(30%,rgba(160,150,145,0)),color-stop(100%,rgba(160,150,145,.2)));
+  background-image: -webkit-linear-gradient(top,rgba(160,150,145,.1)0%,rgba(160,150,145,0)30%,rgba(160,150,145,.2)100%);
+  background-image: -o-linear-gradient(top,rgba(160,150,145,.1)0%,rgba(160,150,145,0)30%,rgba(160,150,145,.2)100%);
+  background-image: linear-gradient(top,rgba(160,150,145,.1)0%,rgba(160,150,145,0)30%,rgba(160,150,145,.2)100%);
+  @include button($radius, $padding)
+}
+
+@mixin gradient($from, $to){
+  background: -moz-linear-gradient(top, $from 0%, $to 100%);
+  background: -webkit-gradient(linear, 0 0, 0 100%, color-stop(0, $from), color-stop(1, $to));
+}
+
+@mixin shadow($distance: 6px, $color: #555) {
+  box-shadow: 0 0 $distance $color;
+  -moz-box-shadow: 0 0 $distance $color;
+  -webkit-box-shadow: 0 0 $distance $color;
+}
+
+@mixin inset-shadow($distance: 8px, $color: #000) {
+  -moz-box-shadow: inset 0 0 $distance $color;
+  -webkit-box-shadow: inset 0 0 $distance $color;
+  box-shadow: inset 0 0 $distance $color;
+}
+
+@mixin box-shadow($color: #9D9990){
+  -box-shadow: 0 4px 2px -2px $color;
+  -moz-box-shadow: 0 4px 2px -2px $color;
+  -webkit-box-shadow: 0 4px 2px -2px $color;
+}
+
+@mixin content-box() {
+  @include box-shadow;
+  @include rounded-corners;
+  @include inset-button;
+}
+
+@mixin rotate45 {
+  -webkit-transform: rotate(45deg);
+  -moz-transform: rotate(45deg);
+  -o-transform: rotate(45deg);
+  -ms-transform: rotate(45deg);
+  transform: rotate(45deg);
+}
+
+@mixin form-field {
+  @include inset-button;
+  background-color: #FFF;
+}
