@@ -24,6 +24,28 @@ class GamerDevice < ActiveRecord::Base
   }
   PRODUCT_NAMES.default = 'My Device'
   
+  PRODUCT_TYPES = {
+    'iPod1,1'    => 'ipod',
+    'iPod2,1'    => 'ipod',
+    'iPod3,1'    => 'ipod',
+    'iPod4,1'    => 'ipod',
+    'iPhone1,1'  => 'iphone',
+    'iPhone1,2'  => 'iphone',
+    'iPhone1,2*' => 'iphone',
+    'iPhone2,1'  => 'iphone',
+    'iPhone2,1*' => 'iphone',
+    'iPhone3,1'  => 'iphone',
+    'iPhone3,3'  => 'iphone',
+    'iPad1,1'    => 'ipad',
+    'iPad2,1'    => 'ipad',
+    'iPad2,2'    => 'ipad',
+    'iPad2,3'    => 'ipad',
+    'iPhone'     => 'iphone',
+    'iPad'       => 'ipad',
+    'iPod'       => 'ipod',
+    'android'    => 'android'
+  }
+  
   belongs_to :gamer
   
   validates_presence_of :gamer, :device_id, :name
@@ -31,10 +53,12 @@ class GamerDevice < ActiveRecord::Base
   
   def device=(new_device)
     self.device_id = new_device.id
-    if new_device.platform == 'android' && new_device.product.present?
-      self.name = "Android (#{new_device.product})"
+    if new_device.platform == 'android'
+      self.name = "Android (#{new_device.product})" if new_device.product.present?
+      self.device_type = PRODUCT_TYPES[new_device.platform]
     else
       self.name = PRODUCT_NAMES[new_device.product]
+      self.device_type = PRODUCT_TYPES[new_device.product]
     end
   end
 end
