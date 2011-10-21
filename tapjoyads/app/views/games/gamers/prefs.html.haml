@@ -1,19 +1,39 @@
 #jqt
-  #manage_account.tan.account.current
-    .container
-      .page.no_top_nav_bar
-        = render(:partial => 'header', :locals => { :back_button => edit_games_gamer_path })
-        .content.narrow
-          .header_wrapper
-            .title_2
-              Preferences
-            - form_for([ :games, :gamer, @gamer_profile ], :url => update_prefs_games_gamer_gamer_profile_path, :html => { :method => "put" }) do |f|
-              .content_box_wrapper
-                .content_box.clearfix
-                  #edit_preferences
-                    .slider.clearfix
-                      .field.clearfix
-                        = f.check_box :allow_marketing_emails
-                        = f.label :allow_marketing_emails, "Allow Tapjoy to send me marketing emails"
-              .button_bar
-                = submit_tag('Save', :class => 'button lt_blue')
+  #home.current
+    .nav
+      .nav_container.clearfix
+        .aside_nav
+          %span
+            Help
+          %span
+            |
+          %span
+            Logout
+        .logo
+        .nav_buttons
+          %ul.nav_list.clearfix
+            %ul.pair
+              %li.active
+                My Apps
+              %li.more_games_url
+                More Apps
+            %ul.pair
+              %a{ :href => edit_games_gamer_path }
+                %li
+                  My Account
+              %li.share
+                Share
+    .content_wrapper
+      = render(:partial => 'header')
+      .title_2
+        Preferences
+      - form_for([ :games, :gamer, @gamer_profile ], :url => update_prefs_games_gamer_gamer_profile_path, :html => { :method => "put" }) do |f|
+        .content_box_wrapper
+          .content_box.clearfix
+            #edit_preferences
+              .slider.clearfix
+                .field.clearfix
+                  = f.check_box :allow_marketing_emails
+                  = f.label :allow_marketing_emails, "Allow Tapjoy to send me marketing emails"
+        .button_bar
+          = submit_tag('Save', :class => 'button lt_blue')
