@@ -81,10 +81,21 @@ a, a:visited {
 .dialog_content a, .dialog_content a:visited {
   color: #C1C1C1;
 }
+
+.image_loader_wrapper {
+  background-color: #333;
+  margin: 6px auto;
+  height: 43px;
+  padding: 2px;
+  opacity: 0.8;
+  width: 43px;
+  -moz-border-radius: 12px;
+  -webkit-border-radius: 12px;
+}
 .dialog_image, .image_loader {
   background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACMAAAAjBAMAAADs965qAAAAA3NCSVQICAjb4U/gAAAAMFBMVEX////x8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHvvEhiAAAAEHRSTlMAESIzRFVmd4iZqrvM3e7/dpUBFQAAAAlwSFlzAAAK6wAACusBgosNWgAAABx0RVh0U29mdHdhcmUAQWRvYmUgRmlyZXdvcmtzIENTNXG14zYAAAEaSURBVCiRY2AgATCapaUqoIiIzN5z5syZJiQRltW7gUJ3705C6OraDRG6GwATkli1evdusNBTuKJVq3c4MjBX3733DqqMfdWqFWDbau+9ewIRspy5KgHMYL737g1EX+fMaVAjbN+9KwDLzZxZAHPMu3cXwEbNnAl397p3YDslOmD6GBjs/v8AURodzXAh3v+/QZRHRyNciPP/f4hQA1yIHVMICtzLC9CFzMuL0IXEy0vQhdjK0+BsRqgv0tIMYEKCggJgmbS0QJgiQUEIwy0tVQCmCCokmhYaCFMElWMKDQ01BIkoKcKEGFRDQ1yMlISUgEIwe5iAQi7GxkpKSjBFwMh2cXEGCSkiOVcFLIQswsAgZGxshCpCBgAA0FNYp5zwDegAAAAASUVORK5CYII=) no-repeat;
   height: 35px;
-  margin: 10px auto;
+  margin: 4px auto;
   width: 35px;
   -webkit-animation: spin .8s infinite linear;
   -moz-animation: spin .8s infinite linear;
@@ -540,6 +551,7 @@ form#new_gamer label[for=gamer_terms_of_service] {
 }
 form#new_gamer label[for=gamer_terms_of_service] a {
   color: #333;
+  text-decoration: underline;
 }
 form#new_gamer_session {
   color: #7E7E7E;
@@ -1535,7 +1547,7 @@ form#new_gamer_session .login_pass input[type=submit] {
   -webkit-border-radius: 6px;
 }
 .mobile .tab_button.grey {
-  color: #000;
+  color: #222;
   font-size: 11px;
   height: 26px;
   margin: 0;
@@ -1550,7 +1562,7 @@ form#new_gamer_session .login_pass input[type=submit] {
 }
 .web .tab_button.grey,
 .ipad .tab_button.grey {
-  color: #000;
+  color: #222;
   height: 34px;
   margin: 0;
   width: 200px;
