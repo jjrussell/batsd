@@ -27,7 +27,7 @@ class DisplayAdControllerTest < ActionController::TestCase
         setup do
           @offer.banner_creatives = %w(320x50)
           @offer.rewarded = false
-          
+
           object = @bucket.objects[@offer.banner_creative_path('320x50')]
           @custom_banner = File.read("#{RAILS_ROOT}/test/assets/banner_ads/custom_320x50.png")
           object.stubs(:read).returns(@custom_banner)
@@ -51,7 +51,7 @@ class DisplayAdControllerTest < ActionController::TestCase
           td_icon = File.read("#{RAILS_ROOT}/test/assets/icons/tap_defense.jpg")
           round_mask = File.read("#{RAILS_ROOT}/test/assets/display/round_mask.png")
           icon_shadow = File.read("#{RAILS_ROOT}/test/assets/display/icon_shadow.png")
-          
+
           obj_ad_bg = @bucket.objects["display/self_ad_bg_320x50.png"]
           obj_td_icon = @bucket.objects["icons/src/#{Offer.hashed_icon_id(@offer.icon_id)}.jpg"]
           obj_round_mask = @bucket.objects["display/round_mask.png"]
@@ -62,6 +62,7 @@ class DisplayAdControllerTest < ActionController::TestCase
             "display/round_mask.png" => obj_round_mask,
             "display/icon_shadow.png" => obj_icon_shadow,
           }
+
           @bucket.stubs(:objects).returns(objects)
           obj_ad_bg.stubs(:read).returns(ad_bg)
           obj_td_icon.stubs(:read).returns(td_icon)

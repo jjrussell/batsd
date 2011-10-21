@@ -12,7 +12,7 @@ class ExternalPublisher
     self.currencies ||= []
     self.currencies << { :id => currency.id, :name => currency.name, :udid_for_user_id => currency.udid_for_user_id, :tapjoy_managed => currency.tapjoy_managed? }
   end
-  
+
   def primary_currency_name
     currencies.each { |c| return c[:name] if c[:id] == app_id }
   end
@@ -43,7 +43,7 @@ class ExternalPublisher
 
     "#{API_URL}/get_offers?data=#{SymmetricCrypto.encrypt_object(data, SYMMETRIC_CRYPTO_SECRET)}"
   end
-  
+
   def self.load_all_for_device(device)
     external_publishers = []
     self.load_all.each do |app_id, external_publisher|

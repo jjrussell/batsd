@@ -11,7 +11,7 @@ Delete all clicks and all records of which apps a device has run.
   = label_tag :udid, "Device id:"
   = text_field_tag :udid, nil, :size => 50
   = submit_tag "Reset"
-  
+
 - content_for :page_javascript do
   :plain
     $('form').submit(function() {

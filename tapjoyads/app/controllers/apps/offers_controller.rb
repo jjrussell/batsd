@@ -116,7 +116,7 @@ class Apps::OffersController < WebsiteController
     end
   end
 
-  def percentile	
+  def percentile
     @offer.bid = sanitize_currency_param(params[:bid])
     estimate = @offer.percentile
     render :json => { :percentile => estimate, :ordinalized_percentile => estimate.ordinalize }

@@ -16,6 +16,7 @@ class Job::SqsReaderController < Job::JobController
       count += 1
 
       message = queue.receive_message
+
       if message.nil?
         @break_on_nil_message ? break : next
       end

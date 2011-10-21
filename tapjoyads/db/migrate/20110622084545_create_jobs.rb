@@ -10,7 +10,7 @@ class CreateJobs < ActiveRecord::Migration
       t.integer :seconds, :null => false
       t.timestamps
     end
-    
+
     add_index :jobs, :id, :unique => true
   end
 

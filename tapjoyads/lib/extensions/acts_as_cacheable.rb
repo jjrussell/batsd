@@ -1,21 +1,21 @@
 module ActsAsCacheable
-  
+
   def self.included(base)
     base.extend ActsAsCacheable::ClassMethods
   end
-  
+
   module ClassMethods
     def acts_as_cacheable
       extend ActiveSupport::Memoizable
       include ActsAsCacheable::InstanceMethods
       include ActiveSupport::Callbacks
-      
+
       define_callbacks :before_cache, :after_cache, :before_cache_clear, :after_cache_clear
-      
+
       after_commit_on_create :cache
       after_commit_on_update :cache
       after_commit_on_destroy :clear_cache
-      
+
       class << self
         def cache_all
           find_each(&:cache)
@@ -38,9 +38,9 @@ module ActsAsCacheable
       end
     end
   end
-  
+
   module InstanceMethods
-    
+
     def cache
       run_callbacks(:before_cache)
       clear_association_cache

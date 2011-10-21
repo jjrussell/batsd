@@ -32,7 +32,7 @@ ja:
       download_action: "こちら"
       download_link: "このアプリをインストールするには %{download_action} をクリックしてください"
       continue_link: "続くにはクリックしてください"
-      
+
     support:
       title: "%{currency}が受取れない場合?"
       instructions_1: "%{currency}が受取れなかったオファー広告を選択し、メールアドレスを記入してください"

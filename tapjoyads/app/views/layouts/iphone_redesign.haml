@@ -43,13 +43,13 @@
         .hd .bl { background: url('/images/box/bl-2x.png'); float: left; }
         .hd .b { background: url('/images/box/b-2x.png'); background-size: 19px 19px; float: left; }
         .hd .br { background: url('/images/box/br-2x.png'); float: right; }
-      
+
       = yield :page_styles
     %meta{ 'http-equiv' => 'Content-Type', :content => 'text/html; charset=utf-8' }
     %meta{ 'name' => 'viewport', :content => 'width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=no;' }
   %body
     = yield
-      
+
     = yield :included_javascripts
     %script{ :type => 'text/javascript', :charset => 'utf-8' }
       -# master-class v0.1

@@ -55,7 +55,7 @@ class PartnersController < WebsiteController
     @partner.contact_name = params[:partner][:contact_name]
     @partner.contact_phone = params[:partner][:contact_phone]
     @partner.users << current_user
-    
+
     if @partner.save
       flash[:notice] = 'Partner successfully created.'
       redirect_to partners_path
@@ -63,13 +63,13 @@ class PartnersController < WebsiteController
       render :action => :new
     end
   end
-  
+
   def edit
   end
 
   def update
     log_activity(@partner)
-    
+
     params[:partner][:account_managers] = User.find_all_by_id(params[:partner][:account_managers])
 
     safe_attributes = [ :name, :account_managers, :account_manager_notes, :rev_share, :transfer_bonus, :disabled_partners, :direct_pay_share, :approved_publisher, :billing_email, :accepted_publisher_tos ]

@@ -1,19 +1,19 @@
 class TapjoyMailer < ActionMailer::Base
-  
+
   def newrelic_alert(error)
     from 'Tapjoy <noreply@tapjoy.com>'
     recipients "dev@tapjoy.com"
     subject "NewRelic Error: #{error.inspect}"
     body(:error => error)
   end
-  
+
   def sms_sent(phone, message)
     from 'Tapjoy <noreply@tapjoy.com>'
     recipients "dev@tapjoy.com"
     subject "An SMS has been sent"
     body :text => "An sms has been sent to #{phone}, with the message: #{message}"
   end
-  
+
   def email_signup(to_email, confirm_code, currency_name, publisher_app_name, amount)
     from 'Tapjoy <noreply@tapjoy.com>'
     recipients to_email
@@ -44,7 +44,7 @@ class TapjoyMailer < ActionMailer::Base
     content_type 'text/html'
     body(:reset_link => reset_link)
   end
-  
+
   def new_secondary_account(user_email, reset_link)
     from 'Tapjoy Support <support@tapjoy.com>'
     recipients user_email
@@ -126,7 +126,7 @@ class TapjoyMailer < ActionMailer::Base
     subject "Tapjoy Campaign Status for #{partner.name || partner.contact_name}"
     content_type 'text/html'
     account_manager_email = nil if account_manager_email == 'oso@tapjoy.com'
-    body(:low_balance => low_balance, :account_balance => account_balance, :account_manager_email => account_manager_email, 
+    body(:low_balance => low_balance, :account_balance => account_balance, :account_manager_email => account_manager_email,
       :offers_not_meeting_budget => offers_not_meeting_budget, :offers_needing_higher_bids => offers_needing_higher_bids, :premier => premier, :premier_discount => premier_discount)
   end
 
@@ -138,7 +138,7 @@ class TapjoyMailer < ActionMailer::Base
     content_type 'text/html'
     body(:earnings => earnings)
   end
-  
+
   def email_offer_confirmation(email_address, click_key)
     from 'Tapjoy <noreply@tapjoy.com>'
     recipients email_address
@@ -146,7 +146,7 @@ class TapjoyMailer < ActionMailer::Base
     content_type 'text/html'
     body(:click_key => click_key)
   end
-  
+
   def support_request(description, email_address, app, currency, udid, publisher_user_id, device_type, language_code, offer)
     from 'Online Support Request <noreply@tapjoy.com>'
     reply_to email_address
@@ -156,7 +156,7 @@ class TapjoyMailer < ActionMailer::Base
     body(:description => description, :app => app, :currency => currency, :udid => udid, :publisher_user_id => publisher_user_id,
       :device_type => device_type, :email_address => email_address, :language_code => language_code, :offer => offer)
   end
-  
+
   def approve_device(email_address, verification_link, password_reset_link, location, timestamp)
     from 'Tapjoy <noreply@tapjoy.com>'
     recipients email_address
@@ -164,7 +164,7 @@ class TapjoyMailer < ActionMailer::Base
     subject 'Approve Unknown Computer or Device'
     body(:verification_link => verification_link, :password_reset_link => password_reset_link, :location => location, :timestamp => timestamp)
   end
-  
+
   def partner_name_change_notification(partner, name_was, acct_mgr_email, partner_link)
     from 'Tapjoy <noreply@tapjoy.com>'
     if Rails.env == 'production'

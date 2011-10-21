@@ -1,48 +1,48 @@
 require 'test_helper'
 
 class DeviceTest < ActiveSupport::TestCase
-  
+
   context "A Device" do
     setup do
      @device = Device.new
      @device.save!
      @key = @device.id
     end
-    
+
     should "be correctly found when searched by id" do
       assert_equal @device, Device.find(@key, :consistent => true)
       assert_equal @device, Device.find_by_id(@key, :consistent => true)
       assert_equal @device, Device.find_all_by_id(@key, :consistent => true).first
     end
-    
+
     should "be correctly found when searched by where conditions" do
       assert_equal @device, Device.find(:first, :where => "itemname() = '#{@key}'", :consistent => true)
       assert_equal @device, Device.find(:all, :where => "itemname() = '#{@key}'", :consistent => true).first
     end
   end
-  
+
   context "A Device" do
     setup do
       @device = Device.new
       @key = @device.id
     end
-    
+
     should "not be found when it doesn't exist" do
       assert_nil Device.find(:first, :where => "itemname() = '#{@key}'")
     end
   end
-  
+
   context "Multiple new Devices" do
     setup do
       @count = Device.count(:consistent => true)
       @num = 5
       @num.times { Device.new.save! }
     end
-    
+
     should "be counted correctly" do
       assert_equal @count + @num, Device.count(:consistent => true)
     end
-    
+
     should "be counted correctly per-domain" do
       sum = 0
       Device.all_domain_names.each do |name|
@@ -51,7 +51,7 @@ class DeviceTest < ActiveSupport::TestCase
       assert_equal @count + @num, sum
     end
   end
-  
+
 
   context "Jailbreak detection" do
     setup do
