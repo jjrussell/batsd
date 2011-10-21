@@ -40,18 +40,18 @@
     $('#account_manager_id').change(function(){
       $(this).parent().submit();
     });
-    
-    $.tablesorter.addParser({  
-      id: "nested-float",  
-      is: function(s) {  
-        return false;  
-      },  
-      format: function(s) {  
-        return $(s).first().text();  
-      },  
-      type: "numeric"  
+
+    $.tablesorter.addParser({
+      id: "nested-float",
+      is: function(s) {
+        return false;
+      },
+      format: function(s) {
+        return $(s).first().text();
+      },
+      type: "numeric"
     });
-  
+
     $('#partners').tablesorter({
       widgets: ['zebra'],
       headers: {
@@ -60,7 +60,7 @@
       },
       sortList: [ [ 0, 0 ] ]
     });
-    
+
 - content_for :page_styles do
   :plain
     #partners .discount, #partners .sources {

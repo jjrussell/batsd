@@ -50,14 +50,14 @@ class PartnerTest < ActiveSupport::TestCase
       assert_equal 10300, @partner.pending_earnings
       assert_equal 10100, Partner.calculate_next_payout_amount(@partner.id)
     end
-    
+
     context "with MonthlyAccoutings" do
       setup do
         reference_time = Conversion.archive_cutoff_time - 1
         monthly_accounting = MonthlyAccounting.new(:partner => @partner, :month => reference_time.month, :year => reference_time.year)
         monthly_accounting.calculate_totals!
       end
-      
+
       should "verify balances" do
         assert_equal 10300, @partner.pending_earnings
         assert_equal 10000, @partner.balance
@@ -65,7 +65,7 @@ class PartnerTest < ActiveSupport::TestCase
         assert_equal 300, p.pending_earnings
         assert_equal 0, p.balance
       end
-    
+
       should "reset balances" do
         assert_equal 10300, @partner.pending_earnings
         assert_equal 10000, @partner.balance
@@ -74,12 +74,12 @@ class PartnerTest < ActiveSupport::TestCase
         assert_equal 0, @partner.balance
       end
     end
-    
+
     context "with monthly payouts" do
       setup do
         @partner.update_attributes({:payout_frequency => 'monthly'})
       end
-      
+
       should "determine payout cutoff dates from a reference date" do
         assert_equal Time.zone.parse('2010-01-01'), @partner.payout_cutoff_date(Time.zone.parse('2010-02-02'))
         assert_equal Time.zone.parse('2010-01-01'), @partner.payout_cutoff_date(Time.zone.parse('2010-02-03'))
@@ -87,12 +87,12 @@ class PartnerTest < ActiveSupport::TestCase
         assert_equal Time.zone.parse('2010-02-01'), @partner.payout_cutoff_date(Time.zone.parse('2010-02-05'))
       end
     end
-    
+
     context "with semimonthly payouts" do
       setup do
         @partner.update_attributes({:payout_frequency => 'semimonthly'})
       end
-      
+
       should "determine payout cutoff dates from a reference date" do
         assert_equal Time.zone.parse('2010-02-01'), @partner.payout_cutoff_date(Time.zone.parse('2010-02-17'))
         assert_equal Time.zone.parse('2010-02-01'), @partner.payout_cutoff_date(Time.zone.parse('2010-02-18'))
@@ -100,107 +100,107 @@ class PartnerTest < ActiveSupport::TestCase
         assert_equal Time.zone.parse('2010-02-16'), @partner.payout_cutoff_date(Time.zone.parse('2010-02-20'))
       end
     end
-    
+
     context "with currencies" do
       setup do
         @currency1 = Factory(:currency, :partner => @partner)
         @currency2 = Factory(:currency, :partner => @partner)
       end
-      
+
       should "update its currencies's spend_share when saved" do
         @partner.rev_share = 0.42
         @partner.save!
-        
+
         @currency1.reload
         @currency2.reload
         assert_equal 0.42, @currency1.spend_share
         assert_equal 0.42, @currency2.spend_share
       end
-      
+
       should "update its currencies's direct_pay_share when saved" do
         @partner.direct_pay_share = 0.42
         @partner.save!
-        
+
         @currency1.reload
         @currency2.reload
         assert_equal 0.42, @currency1.direct_pay_share
         assert_equal 0.42, @currency2.direct_pay_share
       end
     end
-    
+
     context "without an ExclusivityLevel" do
       context "who is assigned a ThreeMonth ExclusivityLevel" do
         setup do
           @partner.set_exclusivity_level! "ThreeMonth"
         end
-        
+
         should "be switched to a ThreeMonth ExclusivityLevel" do
           assert_equal ThreeMonth, @partner.exclusivity_level.class
         end
-        
+
         should "have an expires_on three months in the future" do
           assert_equal Date.today + 3.months, @partner.exclusivity_expires_on
         end
       end
-      
+
       should "raise a InvalidExclusivityLevelError when assigned a NotReal ExclusivityLevel" do
         assert_raise(InvalidExclusivityLevelError) do
           @partner.set_exclusivity_level! "NotReal"
         end
       end
-      
+
       should "not be able to set exclusivity_level_type without exclusivity_expires_on" do
         @partner.exclusivity_level_type = "ThreeMonth"
         assert !@partner.valid?
       end
-      
+
       should "not be able to set exclusivity_expires_on without exclusivity_level_type" do
         @partner.exclusivity_expires_on = 3.months.from_now
         assert !@partner.valid?
       end
-      
+
     end
-    
+
     context "with a SixMonth ExclusivityLevel" do
       setup do
         @partner.set_exclusivity_level! "SixMonth"
       end
-      
+
       should "not be able to switch to a ThreeMonth ExclusivityLevel" do
         assert !@partner.set_exclusivity_level!("ThreeMonth")
         @partner.reload
         assert_equal SixMonth, @partner.exclusivity_level.class
         assert_equal Date.today + 6.months, @partner.exclusivity_expires_on
       end
-      
+
       should "be able to switch to a NineMonth ExclusivityLevel" do
         assert @partner.set_exclusivity_level!("NineMonth")
         @partner.reload
         assert_equal NineMonth, @partner.exclusivity_level.class
         assert_equal Date.today + 9.months, @partner.exclusivity_expires_on
       end
-      
+
       should "have exclusivity_level and exclusivity_expires_on set to nil when expired" do
         @partner.expire_exclusivity_level!
         @partner.reload
         assert_nil @partner.exclusivity_level
         assert_nil @partner.exclusivity_expires_on
       end
-      
+
       should "not need its exclusivity expired" do
         assert !@partner.needs_exclusivity_expired?
       end
-      
+
       context "with exclusivity_expires_on in the past" do
         setup do
           @partner.exclusivity_expires_on = 1.month.ago
         end
-        
+
         should "need its exclusivity expired" do
           assert @partner.needs_exclusivity_expired?
         end
       end
     end
-    
+
   end
 end

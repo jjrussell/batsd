@@ -13,20 +13,20 @@ xml.MarketingData do
       xml.Name offer.name_with_suffix
       xml.AppKey offer.id
       xml.Platform offer.get_platform
-      
+
       xml.PaidInstalls appstats.stats['paid_installs'].sum
       xml.PaidInstallsHourly appstats.stats['paid_installs'].join(',')
       xml.PaidClicks appstats.stats['paid_clicks'].sum
       xml.PaidClicksHourly appstats.stats['paid_clicks'].join(',')
       xml.Spend appstats.stats['installs_spend'].sum
       xml.SpendHourly appstats.stats['installs_spend'].join(',')
-      
+
       xml.Sessions appstats.stats['logins'].sum
       xml.SessionsHourly appstats.stats['logins'].join(',')
       xml.NewUsers appstats.stats['new_users'].sum
       xml.NewUsersHourly appstats.stats['new_users'].join(',')
       xml.DailyActiveUsers appstats.stats['daily_active_users'].sum
-      
+
       xml.OfferwallRevenue appstats.stats['rewards_revenue'].sum
       xml.OfferwallRevenueHourly appstats.stats['rewards_revenue'].join(',')
       xml.OfferwallImpressions appstats.stats['offerwall_views'].sum
@@ -35,7 +35,7 @@ xml.MarketingData do
       xml.OfferwallClicksHourly appstats.stats['rewards_opened'].join(',')
       xml.OfferwallConversions appstats.stats['rewards'].sum
       xml.OfferwallConversionsHourly appstats.stats['rewards'].join(',')
-      
+
       xml.FeaturedOfferRevenue appstats.stats['featured_revenue'].sum
       xml.FeaturedOfferRevenueHourly appstats.stats['featured_revenue'].join(',')
       xml.FeaturedOfferRequests appstats.stats['featured_offers_requested'].sum
@@ -46,7 +46,7 @@ xml.MarketingData do
       xml.FeaturedOfferClicksHourly appstats.stats['featured_offers_opened'].join(',')
       xml.FeaturedOfferConversions appstats.stats['featured_published_offers'].sum
       xml.FeaturedOfferConversionsHourly appstats.stats['featured_published_offers'].join(',')
-      
+
       xml.DisplayRevenue appstats.stats['display_revenue'].sum
       xml.DisplayRevenueHourly appstats.stats['display_revenue'].join(',')
       xml.DisplayRequests appstats.stats['display_ads_requested'].sum

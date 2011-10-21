@@ -26,4 +26,5 @@ class Job::MasterFailedSqsWritesController < Job::JobController
 
     render :text => 'OK'
   end
+
 end

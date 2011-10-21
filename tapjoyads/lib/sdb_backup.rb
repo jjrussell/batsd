@@ -1,7 +1,7 @@
 class SdbBackup
   ##
   # Backs up the specified domain to s3.
-  # Each line of the file represents a single item. The contents of the line are 
+  # Each line of the file represents a single item. The contents of the line are
   # determined by calling SimpledbResource.serialize.
   # The file is then gzipped using the system `gzip` command.
   # Finally, the gzipped file is uploaded to s3.
@@ -100,4 +100,5 @@ class SdbBackup
     end
     raise "Failed to save #{local_name} to s3 after #{num_retries} attempts."
   end
+
 end

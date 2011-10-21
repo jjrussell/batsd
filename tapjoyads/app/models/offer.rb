@@ -324,8 +324,8 @@ class Offer < ActiveRecord::Base
         object.exists? ? get_icon_url({:source => :cloudfront}.merge(options)) : "#{CLOUDFRONT_URL}/videos/assets/default.png"
       rescue AWS::Errors::Base
         "#{CLOUDFRONT_URL}/videos/assets/default.png"
-      end 
-    end 
+      end
+    end
   end
   memoize :get_video_icon_url
 

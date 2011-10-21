@@ -203,7 +203,7 @@ private
   end
 
   def get_spend_share_ratio
-    Mc.distributed_get_and_put('currency.spend_share_ratio') do 
+    Mc.distributed_get_and_put('currency.spend_share_ratio') do
       orders = Order.created_since(1.month.ago.to_date)
 
       sum_all_orders = orders.collect(&:amount).sum

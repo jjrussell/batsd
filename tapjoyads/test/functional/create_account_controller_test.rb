@@ -1,12 +1,12 @@
 require 'test_helper'
 
 class CreateAccountControllerTest < ActionController::TestCase
-  
+
   context "on GET to :index" do
     setup do
       @agency_user = Factory(:agency_user)
     end
-    
+
     context "with missing params" do
       setup do
         @response = get(:index)
@@ -17,7 +17,7 @@ class CreateAccountControllerTest < ActionController::TestCase
         assert_equal({ :error => "missing required parameters" }.to_json, @response.body)
       end
     end
-    
+
     context "with an invalid agency_id" do
       setup do
         @response = get(:index, { :agency_id => 'foo', :app_name => 'foo', :email => 'foo', :password => 'foobaz' })
@@ -28,7 +28,7 @@ class CreateAccountControllerTest < ActionController::TestCase
         assert_equal({ :error => "unknown or invalid agency_id" }.to_json, @response.body)
       end
     end
-    
+
     context "with an invalid email address" do
       setup do
         @response = get(:index, { :agency_id => @agency_user.id, :app_name => 'foo', :email => 'foo', :password => 'foobaz' })
@@ -39,7 +39,7 @@ class CreateAccountControllerTest < ActionController::TestCase
         assert_equal({ :error => [ [ :email, 'is too short (minimum is 6 characters)' ], [ :email, 'should look like an email address.' ] ] }.to_json, @response.body)
       end
     end
-    
+
     context "with an existing email address" do
       setup do
         @response = get(:index, { :agency_id => @agency_user.id, :app_name => 'foo', :email => @agency_user.email, :password => 'foobaz' })
@@ -50,7 +50,7 @@ class CreateAccountControllerTest < ActionController::TestCase
         assert_equal({ :error => [ [ :email, 'has already been taken' ], [ :username, 'has already been taken' ] ] }.to_json, @response.body)
       end
     end
-    
+
     context "with an invalid password" do
       setup do
         @response = get(:index, { :agency_id => @agency_user.id, :app_name => 'foo', :email => Factory.next(:email), :password => 'foo' })
@@ -61,7 +61,7 @@ class CreateAccountControllerTest < ActionController::TestCase
         assert_equal({ :error => [ [ :password, 'is too short (minimum is 4 characters)' ], [ :password_confirmation, 'is too short (minimum is 4 characters)' ] ] }.to_json, @response.body)
       end
     end
-    
+
     context "with valid parameters" do
       setup do
         @email_address = Factory.next(:email)
@@ -91,5 +91,5 @@ class CreateAccountControllerTest < ActionController::TestCase
       end
     end
   end
-  
+
 end

@@ -1,8 +1,8 @@
 class Device < SimpledbShardedResource
   self.num_domains = NUM_DEVICES_DOMAINS
-  
+
   attr_reader :parsed_apps
-  
+
   self.sdb_attr :apps, :type => :json, :default_value => {}
   self.sdb_attr :is_jailbroken, :type => :bool, :default_value => false
   self.sdb_attr :country
@@ -15,12 +15,12 @@ class Device < SimpledbShardedResource
   self.sdb_attr :version
   self.sdb_attr :mac_address
   self.sdb_attr :platform
-  
+
   def dynamic_domain_name
     domain_number = @key.matz_silly_hash % NUM_DEVICES_DOMAINS
     "devices_#{domain_number}"
   end
-  
+
   def after_initialize
     begin
       @parsed_apps = apps
@@ -28,19 +28,19 @@ class Device < SimpledbShardedResource
       fix_parser_error
     end
   end
-  
+
   def handle_connect!(app_id, params)
     return [] unless app_id =~ APP_ID_FOR_DEVICES_REGEX
-    
+
     now = Time.zone.now
     path_list = []
-    
+
     self.mac_address = params[:mac_address]
-    
+
     is_jailbroken_was = is_jailbroken
     country_was = country
     last_run_time_was = last_run_time(app_id)
-    
+
     if last_run_time_was.nil?
       path_list.push('new_user')
       last_run_time_was = Time.zone.at(0)
@@ -50,17 +50,17 @@ class Device < SimpledbShardedResource
         self.is_jailbroken = true
       end
     end
-    
+
     if now.year != last_run_time_was.year || now.yday != last_run_time_was.yday
       path_list.push('daily_user')
     end
     if now.year != last_run_time_was.year || now.month != last_run_time_was.month
       path_list.push('monthly_user')
     end
-    
+
     @parsed_apps[app_id] = "%.5f" % now.to_f
     self.apps = @parsed_apps
-    
+
     if params[:lad].present?
       if params[:lad] == '0'
         self.is_jailbroken = false
@@ -68,18 +68,18 @@ class Device < SimpledbShardedResource
         self.is_jailbroken = true unless app_id == 'f4398199-6316-4680-9acf-d6dbf7f8104a' # Feed Al has inaccurate jailbroken detection
       end
     end
-    
+
     if params[:country].present?
       if self.country.present? && self.country != params[:country]
         Notifier.alert_new_relic(DeviceCountryChanged, "Country for udid: #{@key} changed from #{self.country} to #{params[:country]}", nil, params)
       end
       self.country = params[:country]
     end
-    
+
     if (last_run_time_tester? || is_jailbroken_was != is_jailbroken || country_was != country || path_list.include?('daily_user'))
       save
     end
-    
+
     path_list
   end
 
@@ -96,17 +96,17 @@ class Device < SimpledbShardedResource
   def has_app?(app_id)
     @parsed_apps[app_id].present?
   end
-  
+
   def last_run_time(app_id)
     last_run_timestamp = @parsed_apps[app_id]
-    
+
     if last_run_timestamp.is_a?(Array)
       last_run_timestamp = last_run_timestamp[0]
     end
-    
+
     last_run_timestamp.present? ? Time.zone.at(last_run_timestamp.to_f) : nil
   end
-  
+
   def unset_last_run_time!(app_id)
     @parsed_apps.delete(app_id)
     self.apps = @parsed_apps
@@ -116,12 +116,12 @@ class Device < SimpledbShardedResource
   def set_publisher_user_id!(app_id, publisher_user_id)
     parsed_publisher_user_ids = publisher_user_ids
     return if parsed_publisher_user_ids[app_id] == publisher_user_id
-    
+
     parsed_publisher_user_ids[app_id] = publisher_user_id
     self.publisher_user_ids = parsed_publisher_user_ids
     save
   end
-  
+
   def self.normalize_device_type(device_type_param)
     if device_type_param =~ /iphone/i
       'iphone'
@@ -139,9 +139,9 @@ class Device < SimpledbShardedResource
       nil
     end
   end
-  
+
 private
-  
+
   def fix_parser_error
     str = get('apps')
     pos = str.index('}')
@@ -155,5 +155,5 @@ private
     @parsed_apps = JSON.parse(str)
     self.apps = @parsed_apps
   end
-  
+
 end

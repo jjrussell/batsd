@@ -8,7 +8,7 @@
   - form_tag(surveys_path) do
     = hidden_field_tag(:udid, params[:udid])
     = hidden_field_tag(:click_key, params[:click_key])
-    
+
     .field
       .question
         What is your gender?
@@ -35,7 +35,7 @@
       var isGenderChecked = document.getElementById('gender_male').checked || document.getElementById('gender_female').checked;
       var birthYear = document.getElementById('birth_year').value;
       var postalCode = document.getElementById('postal_code').value;
-      
+
       if (!isGenderChecked || !birthYear || !postalCode) {
         document.getElementById('error').style.display = "block";
         return false;
@@ -43,7 +43,7 @@
         return true;
       }
     }
-  
+
 - content_for :page_styles do
   :plain
     .message {

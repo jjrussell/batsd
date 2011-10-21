@@ -7,18 +7,18 @@ class StoreRank
     error_count = 0
     known_store_ids = {}
     s3_rows = {}
-    
+
     ranks_file_name = "ranks.#{time.beginning_of_hour.to_s(:db)}.json"
     ranks_file = open("tmp/#{ranks_file_name}", 'w')
-    
+
     log_progress "Populate store rankings for iTunes. Task starting."
-    
+
     App.find_each(:conditions => "platform = 'iphone' AND store_id IS NOT NULL") do |app|
       known_store_ids[app.store_id] ||= []
       known_store_ids[app.store_id] += app.offer_ids
     end
     log_progress "Finished loading known_store_ids."
-    
+
     ITUNES_CATEGORY_IDS.each do |category_key, category_id|
       ITUNES_POP_IDS.each do |pop_key, pop_id|
         ITUNES_COUNTRY_IDS.each do |country_key, country_id|
@@ -26,7 +26,7 @@ class StoreRank
           url = "http://ax.itunes.apple.com/WebObjects/MZStore.woa/wa/viewTop?id=#{category_id}&popId=#{pop_id}"
           headers = { 'X-Apple-Store-Front' => "#{country_id}-1,12", 'Host' => 'ax.itunes.apple.com' }
           user_agent = 'iTunes/10.1 (Macintosh; Intel Mac OS X 10.6.5) AppleWebKit/533.18.1'
-          
+
           request = Typhoeus::Request.new(url, :headers => headers, :user_agent => user_agent)
           request.on_complete do |response|
             if response.code != 200
@@ -59,10 +59,10 @@ class StoreRank
       end
     end
     log_progress "Finished queuing requests."
-    
+
     hydra.run
     log_progress "Finished making requests."
-    
+
     ranks_file.close
     `gzip -f 'tmp/#{ranks_file_name}'`
 
@@ -74,7 +74,7 @@ class StoreRank
     end
 
     log_progress "Finished saving ranks_rows."
-    
+
   ensure
     `rm 'tmp/#{ranks_file_name}'`
     `rm 'tmp/#{ranks_file_name}.gz'`

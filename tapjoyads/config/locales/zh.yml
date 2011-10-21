@@ -34,7 +34,7 @@ zh:
       download_action: "这里"
       download_link: "如果您没有这个程序, 点击 %{download_action} 下载"
       continue_link: "点击这里继续"
-      
+
     support:
       title: "没得到 %{currency}?"
       instructions_1: "如果您没得到 %{currency}, 请您让我们知道你下载了哪款APP, 并且留下您的电子邮箱."

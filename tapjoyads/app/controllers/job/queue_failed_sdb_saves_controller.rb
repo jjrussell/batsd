@@ -13,7 +13,7 @@ class Job::QueueFailedSdbSavesController < Job::SqsReaderController
     @options         = json['options'].symbolize_keys
     @incomplete_path = "incomplete/#{uuid}"
     @complete_path   = "complete/#{uuid}"
-    
+
     if @bucket.objects[@incomplete_path].exists?
       save_to_sdb
     elsif @bucket.objects[@complete_path].exists?

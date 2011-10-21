@@ -6,9 +6,9 @@ xml.TapjoyConnectReturnObject do
     xml.Image @tapjoy_ad.image
     xml.AdImpressionID @tapjoy_ad.ad_impression_id
     xml.AdID @tapjoy_ad.ad_id
-    xml.OpenIn @tapjoy_ad.open_in 
+    xml.OpenIn @tapjoy_ad.open_in
     xml.GameID @tapjoy_ad.game_id if @tapjoy_ad.game_id
-    xml.AdMessage @tapjoy_ad.ad_message unless @tapjoy_ad.ad_message.nil? 
+    xml.AdMessage @tapjoy_ad.ad_message unless @tapjoy_ad.ad_message.nil?
     xml.AdHTML @tapjoy_ad.ad_html unless @tapjoy_ad.ad_html.nil?
   end
 end
