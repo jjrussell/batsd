@@ -29,7 +29,7 @@
 
 #offers.box
   = render :partial => 'top_corners'
-  
+
   - @offer_list.each_with_index do |offer, index|
     - link_class = index == 0 ? 'offer first' : index == @offer_list.size - 1 ? 'offer last' : 'offer'
     - link_to(get_click_url(offer), :class => link_class, :onclick => "this.className += ' clicked';") do
@@ -40,7 +40,7 @@
               .content
                 .icon
                   %img{ :src => "#{CLOUDFRONT_URL}/images/blank.png", :s => offer.get_icon_url(:source => :cloudfront, :size => '57') }
-                .offer-text    
+                .offer-text
                   - if @currency.conversion_rate > 0
                     %span
                       - amount = capture_haml do
@@ -51,7 +51,7 @@
                 .ribbon
                   %span= visual_cost(offer)
                 .load
-    
+
   = render :partial => 'bottom_corners'
 
 - if @start_index > 0 || @more_data_available > 0
@@ -94,11 +94,11 @@
         image.src = image.getAttribute('s');
       }
     }
-  
+
 - content_for :page_styles do
   :plain
     .hidden { display: none; }
-  
+
     .offer { display: block; float: left; text-decoration: none; width: 100%; }
     .content { margin-top: 10px; }
     .explanation { color: #0c429b; font-weight: bold; font-size: 13px; margin: 0px 10px 0 10px; text-align: center; min-height: 14px; }
@@ -130,7 +130,7 @@
     .next .arrow { background: url('/images/arrows.png') no-repeat -19px; float: right;  width: 19px; height: 19px; }
     .hd .prev .arrow { background: url('/images/arrows-2x.png') no-repeat; background-size: 38px 19px; }
     .hd .next .arrow { background: url('/images/arrows-2x.png') no-repeat -19px; background-size: 38px 19px; }
-    
+
     .pagination .clicked .arrow { background: transparent url(/images/load-circle.gif) no-repeat; width: 16px; height: 16px; background-size: 16px 16px; }
     .hd .pagination .clicked .arrow { background: transparent url(/images/load-circle.gif) no-repeat; width: 16px; height: 16px; background-size: 16px 16px; }
 

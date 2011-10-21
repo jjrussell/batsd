@@ -59,7 +59,7 @@ class App < ActiveRecord::Base
 
   TRADEDOUBLER_COUNTRIES = Set.new(%w( GB FR DE IT IE ES NL AT CH BE DK FI NO SE LU PT GR ))
   MAXIMUM_INSTALLS_PER_PUBLISHER = 4000
-  
+
   has_many :offers, :as => :item
   has_one :primary_offer, :class_name => 'Offer', :as => :item, :conditions => 'id = item_id'
   has_many :publisher_conversions, :class_name => 'Conversion', :foreign_key => :publisher_app_id
@@ -74,21 +74,21 @@ class App < ActiveRecord::Base
   has_many :app_metadata_mappings
   has_many :app_metadatas, :through => :app_metadata_mappings
   has_many :app_reviews
-  
+
   belongs_to :partner
 
   validates_presence_of :partner, :name, :secret_key
   validates_inclusion_of :platform, :in => PLATFORMS.keys
 
   before_validation_on_create :generate_secret_key
-  
+
   after_create :create_primary_offer
   after_create :create_app_metadata
   after_update :update_offers
   after_update :update_rating_offer
   after_update :update_action_offers
   after_update :update_app_metadata
-  
+
   named_scope :visible, :conditions => { :hidden => false }
   named_scope :by_platform, lambda { |platform| { :conditions => ["platform = ?", platform] } }
 
@@ -113,7 +113,7 @@ class App < ActiveRecord::Base
   def platform_name
     PLATFORMS[platform]
   end
-  
+
   def store_name
     PLATFORM_DETAILS[platform][:store_name]
   end
@@ -121,7 +121,7 @@ class App < ActiveRecord::Base
   def virtual_goods
     VirtualGood.select(:where => "app_id = '#{self.id}'")[:items]
   end
-  
+
   def has_virtual_goods?
     VirtualGood.count(:where => "app_id = '#{self.id}'") > 0
   end
@@ -181,7 +181,7 @@ class App < ActiveRecord::Base
 
   def download_icon(url)
     return if url.blank?
-    
+
     begin
       icon_src_blob = Downloader.get(url, :timeout => 30)
     rescue Exception => e
@@ -195,7 +195,7 @@ class App < ActiveRecord::Base
   def get_icon_url(options = {})
     Offer.get_icon_url({:icon_id => Offer.hashed_icon_id(id)}.merge(options))
   end
-  
+
   def can_have_new_currency?
     currencies.empty? || !currencies.any? { |c| Currency::SPECIAL_CALLBACK_URLS.include?(c.callback_url) }
   end
@@ -226,7 +226,7 @@ class App < ActiveRecord::Base
     end
     file_output
   end
-  
+
   def offers_with_last_run_time
     [ primary_offer ] + action_offers.collect(&:primary_offer).sort { |a, b| a.name <=> b.name }
   end
@@ -238,20 +238,20 @@ class App < ActiveRecord::Base
   def sdk_url(type)
     PLATFORM_DETAILS[platform][:sdk][type]
   end
-  
+
   def os_versions
     PLATFORM_DETAILS[platform][:versions]
   end
-  
+
   def screen_layout_sizes
     PLATFORM_DETAILS[platform][:screen_layout_sizes].nil? ? [] : PLATFORM_DETAILS[platform][:screen_layout_sizes].sort{ |a,b| a[1] <=> b[1] }
   end
 
 private
-  
+
   def generate_secret_key
     return if secret_key.present?
-    
+
     alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890'
     new_secret_key = ''
     20.times do
@@ -259,7 +259,7 @@ private
     end
     self.secret_key = new_secret_key
   end
-  
+
   def create_primary_offer
     offer = Offer.new(:item => self)
     offer.id = id
@@ -303,7 +303,7 @@ private
       rating_offer.save!
     end
   end
-  
+
   def update_action_offers
     if store_id_changed?
       action_offers.each do |action_offer|

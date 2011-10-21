@@ -4,15 +4,15 @@ class Apps::ActionOffersController < WebsiteController
   before_filter :setup
   filter_access_to :all
   after_filter :save_activity_logs, :only => [ :create, :update, :toggle ]
-  
+
   def index
     @action_offers = @app.action_offers
   end
-  
+
   def new
     @action_offer = @app.action_offers.build :partner => current_partner
   end
-  
+
   def create
     action_offer_params = params[:action_offer].merge(:partner => current_partner, :prerequisite_offer => @app.primary_offer, :instructions => 'Enter your instructions here.')
     @action_offer = @app.action_offers.build action_offer_params
@@ -22,28 +22,28 @@ class Apps::ActionOffersController < WebsiteController
       render :new
     end
   end
-  
+
   def edit
     if !@action_offer.tapjoy_enabled? && !@action_offer.integrated?
       flash.now[:notice] = "When you are ready to go live with this action, please click the button below to submit an enable offer request."
     end
-    
+
     if @offer.enable_offer_requests.pending.present?
       @enable_request = @offer.enable_offer_requests.pending.first
     else
       @enable_request = @offer.enable_offer_requests.build
     end
   end
-  
+
   def update
     params[:action_offer][:primary_offer_attributes].delete(:payment)
     params[:action_offer][:primary_offer_attributes][:daily_budget].gsub!(',', '') if params[:action_offer][:primary_offer_attributes][:daily_budget].present?
     params[:action_offer][:primary_offer_attributes][:daily_budget] = 0 if params[:daily_budget] == 'off'
     params[:action_offer][:primary_offer_attributes] = sanitize_currency_params(params[:action_offer][:primary_offer_attributes], [ :bid, :min_bid_override ])
-    
+
     safe_attributes = [ :name, :prerequisite_offer_id, :instructions, :primary_offer_attributes_id, :primary_offer_attributes_bid, :primary_offer_attributes_user_enabled,
       :primary_offer_attributes_daily_budget, :primary_offer_attributes_min_os_version, :primary_offer_attributes_screen_layout_sizes ]
-    
+
     if permitted_to? :edit, :statz
       safe_attributes += [
         :primary_offer_attributes_tapjoy_enabled,
@@ -74,7 +74,7 @@ class Apps::ActionOffersController < WebsiteController
       render :edit
     end
   end
-  
+
   def toggle
     if @action_offer.toggle_user_enabled
       render :json => { :success => true, :user_enabled => @action_offer.user_enabled? }
@@ -82,7 +82,7 @@ class Apps::ActionOffersController < WebsiteController
       render :json => { :success => false }
     end
   end
-  
+
   def TJCPPA
     respond_to do |format|
       format.h do
@@ -90,7 +90,7 @@ class Apps::ActionOffersController < WebsiteController
       end
     end
   end
-  
+
   def TapjoyPPA
     respond_to do |format|
       format.java do
@@ -107,7 +107,7 @@ private
     else
       @app = current_partner.apps.find(params[:app_id])
     end
-    
+
     if params[:id]
       @action_offer = @app.action_offers.find(params[:id])
       @offer = @action_offer.primary_offer

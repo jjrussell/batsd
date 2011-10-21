@@ -39,14 +39,14 @@
           = link_to "Edit", edit_tools_rank_boost_path(rb)
           - if rb.active?
             = link_to "Deactivate", deactivate_tools_rank_boost_path(rb), :method => :post, :confirm => 'Are you sure?'
-          
+
 - content_for :page_javascript do
   :plain
     $(function() {
       $('select#filter').change(function() {
         $('#filter-form').submit();
       });
-      
+
       $('#search_box').autocomplete({
         source: '#{search_offers_path}',
         delay: 250,
@@ -56,7 +56,7 @@
           $('#filter-form').submit();
         }
       });
-      
+
       $.tablesorter.addParser({
         id: 'date-column',
         is: function(s) { return false; },
@@ -65,7 +65,7 @@
           return new Date(s).getTime();
         }
       });
-      
+
       $("#rank_boosts").tablesorter({
         widgets: ['zebra'],
         headers: {
@@ -76,7 +76,7 @@
         sortList: [ [2, 1] ]
       });
     });
-  
+
 - content_for :page_styles do
   :plain
     .filters {

@@ -2,7 +2,7 @@
   .field
     = label_tag :offer_id, t('text.support.specify_offer_label')
     = select_tag :offer_id, options_for_select(@incomplete_offers.collect { |o| [ o.name, o.id ] } << [ t('text.support.another_offer'), nil ], params[:offer_id].present? ? params[:offer_id] : params[:offer_name].present? ? nil : @incomplete_offers.first.id)
-  
+
 #offer_name_field.field{ :class => @incomplete_offers.empty? ? '' : 'hidden'}
   = label_tag :offer_name, t('text.support.offer_name_label')
   = text_field_tag :offer_name, params[:offer_name]

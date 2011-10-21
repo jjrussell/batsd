@@ -140,7 +140,7 @@ private
     else
       @app = current_partner.apps.find(params[:app_id])
     end
-    
+
     @virtual_good_types = {}
     @app.virtual_goods.each do |vg|
       @virtual_good_types[vg.title] ||= vg.extra_attributes.keys

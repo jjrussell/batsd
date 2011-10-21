@@ -5,7 +5,7 @@ class Job::MasterUpdateRevShareController < Job::JobController
       currency.set_values_from_partner_and_reseller
       currency.save!
     end
-    
+
     render :text => 'ok'
   end
 end

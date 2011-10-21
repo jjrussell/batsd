@@ -14,14 +14,14 @@ class Order < ActiveRecord::Base
   }
 
   belongs_to :partner
-  
+
   validates_presence_of :partner
   validates_presence_of :billing_email, :on => :create, :if => :billable?, :message => "Partner needs a billing email for invoicing"
   validates_inclusion_of :status, :in => STATUS_CODES.keys
   validates_inclusion_of :payment_method, :in => PAYMENT_METHODS.keys
   validates_uniqueness_of :invoice_id, :allow_nil => true
   validates_numericality_of :amount, :only_integer => true, :allow_nil => false
-  
+
   after_create :update_balance, :create_spend_discount
 
   delegate :billing_email, :freshbooks_client_id, :to => :partner
@@ -30,11 +30,11 @@ class Order < ActiveRecord::Base
   named_scope :created_since, lambda { |date| { :conditions => [ "created_at > ?", date ] } }
   named_scope :created_between, lambda { |start_time, end_time| { :conditions => [ "created_at >= ? AND created_at < ?", start_time, end_time ] } }
   named_scope :for_discount, lambda { created_since(3.months.ago.to_date).scoped(:order => 'created_at DESC').scope(:find) }
-  
+
   def <=> other
     created_at <=> other.created_at
   end
-  
+
   def status_string
     STATUS_CODES[status]
   end
@@ -98,7 +98,7 @@ private
     return true if amount == 0
     Partner.connection.execute("UPDATE partners SET balance = (balance + #{amount}) WHERE id = '#{partner_id}'")
   end
-  
+
   def create_spend_discount
     sum = 0
     partner.orders.for_discount.each do |order|
@@ -109,5 +109,5 @@ private
       end
     end
   end
-  
+
 end

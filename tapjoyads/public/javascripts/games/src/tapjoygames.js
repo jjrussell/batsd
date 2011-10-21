@@ -91,7 +91,7 @@ TJG.utils = {
     }
     return localStorage[k];
   },
-  
+
   setCookie: function(name, value, days, years) {
     if (days) {
       var date = new Date();
@@ -108,7 +108,7 @@ TJG.utils = {
     else var expires = "";
     document.cookie = name + "=" + value+ expires + "; path=/";
   },
-  
+
   getCookie: function(name) {
     var nameEQ = name + "=";
     var ca = document.cookie.split(';');
@@ -119,11 +119,11 @@ TJG.utils = {
     }
     return null;
   },
-  
+
   deleteCookie: function(name) {
     setCookie(name, "", -1);
   },
-  
+
   scrollTop : function (delay){
     if (delay == null) {
       delay = "slow";
@@ -150,6 +150,7 @@ TJG.utils = {
         });
       }
     });
+
     if (!TJG.vars.imageLoaderInit) {
       $(window).scroll( function() {
         if (!TJG.vars.scrolling) {
@@ -416,6 +417,13 @@ TJG.ui = {
                       document.location.href = document.domain;
                     }
                   }
+                  $('.close_dialog').unbind('click');
+                  $("#sign_up_dialog_content").html($("#link_device_dialog .dialog").html());
+                  $("#sign_up_dialog_content .dialog_header_wrapper").css("padding", "6px 12px");
+                  $("#sign_up_dialog_content").parent().animate({ height: "300px", }, animateSpd);
+                  $('.close_dialog,.link_device_url').click(function(){
+                    document.location.href = d.link_device_url;
+                  });
                 });
               }
               else {
@@ -468,7 +476,7 @@ TJG.ui = {
       }
     });
   },
-  
+
   showAcceptTos : function () {
     var animateSpd = "fast";
     $("#accept_tos_dialog_content").parent().css("height", "200px");
@@ -700,7 +708,7 @@ TJG.ui = {
     }, options.startDelay);
     window.addToHomeClose = addToHomeClose;
   },
-  
+
   showDeviceSelection : function(devices, showClose) {
     var fadeSpd = 350, fadeSpdFast = 250, fadeSpdSlow = 700;
     var div = document.createElement('div');
@@ -712,11 +720,11 @@ TJG.ui = {
     var a = [];
     var path;
     if (TJG.path) {
-      path = TJG.path;
+      path = TJG.path.replace(/\/$/, '');
     }
     else {
       path = location.pathname.replace(/\/$/, '');
-    }    
+    }
     var device_found = false, device_count = 0, device_data, matched_data;
     $.each(devices, function(i,v){
       var device_type = v.device_type;
@@ -825,14 +833,14 @@ TJG.ui = {
       });
     });
   },
-  
+
   homeInit : function () {
     var jQT = new $.jQTouch({
       slideSelector: '#jqt',
     });
     var fadeSpd = 350, fadeSpdFast = 250, fadeSpdSlow = 700;
     var install = TJG.utils.getParam("register_device");
-    
+
     // Enable bookmarking modal
     if (TJG.vars.isIos || TJG.vars.hasHomescreen) {
       TJG.ui.showAddHomeDialog();
@@ -870,7 +878,7 @@ TJG.ui = {
         TJG.ui.showDeviceSelection(TJG.select_device, true);
       });
     }
-    
+
     function showIntro() {
       var div = document.createElement('div'), close;
       var id = "newUser";
@@ -1225,19 +1233,6 @@ TJG.ui = {
 
 };
 
-RegExp.escape = function(text) {
-  if (!arguments.callee.sRE) {
-    var specials = [
-      '/', '.', '*', '+', '?', '|',
-      '(', ')', '[', ']', '{', '}', '\\'
-    ];
-    arguments.callee.sRE = new RegExp(
-      '(\\' + specials.join('|\\') + ')', 'g'
-    );
-  }
-  return text.replace(arguments.callee.sRE, '\\$1');
-};
-
 TJG.social = {
   setup: function(options){
     // local variables
@@ -1362,7 +1357,8 @@ TJG.social = {
         timeout: 35000,
         dataType: 'json',
         data: {
-          friends: selectedFriends
+          friends: selectedFriends,
+          ajax: true
         },
         success: function(d) {
           var existDiv = '', notExistDiv = '';
@@ -1393,6 +1389,8 @@ TJG.social = {
             $('.close_dialog, .continue_invite').click(function(){
               document.location.href = location.protocol + '//' + location.host + inviteUrl;
             });
+          } else if(d.error_redirect) {
+            window.setTimeout('location.reload()', 1000);
           } else {
             showErrorDialog(d.error, TJG.ui.hideLoader());
           }
@@ -1571,8 +1569,21 @@ TJG.social = {
   },
 };
 
+RegExp.escape = function(text) {
+  if (!arguments.callee.sRE) {
+    var specials = [
+      '/', '.', '*', '+', '?', '|',
+      '(', ')', '[', ']', '{', '}', '\\'
+    ];
+    arguments.callee.sRE = new RegExp(
+      '(\\' + specials.join('|\\') + ')', 'g'
+    );
+  }
+  return text.replace(arguments.callee.sRE, '\\$1');
+};
+
 (function(window, document) {
-  
+
     TJG.onload = {
 
       removeLoader : function () {
@@ -1580,7 +1591,7 @@ TJG.social = {
            $('#jqt').fadeTo(250,1);
         });
       },
-      
+
       checkDeviceData: function() {
         var d = new Date();
         var t = d.getTime();
@@ -1588,12 +1599,12 @@ TJG.social = {
         TJG.vars.ls_data = TJG.utils.getLocalStorage('data');
         TJG.vars.link_ts = TJG.utils.getLocalStorage('link_ts');
         TJG.vars.data_ts = TJG.utils.getLocalStorage('data_ts');
-        
+
         // Set localStorage timestamp for previous registrations
-        if (TJG.vars.ls_data && TJG.vars.isIos 
-          && !TJG.utils.isNull(TJG.select_device) 
-            && (TJG.select_device.length == 1) 
-              && TJG.utils.isNull(TJG.vars.link_ts) 
+        if (TJG.vars.ls_data && TJG.vars.isIos
+          && !TJG.utils.isNull(TJG.select_device)
+            && (TJG.select_device.length == 1)
+              && TJG.utils.isNull(TJG.vars.link_ts)
                 && TJG.utils.isNull(TJG.vars.data_ts)) {
           TJG.utils.setLocalStorage('data_ts', t);
           TJG.utils.setLocalStorage('link_ts', t);
@@ -1617,15 +1628,15 @@ TJG.social = {
           TJG.utils.setCookie('data', data_p, 365, 1);
         }
       },
-      
+
       loadEvents : function () {
         $('.close_dialog').click(function(){
           TJG.ui.removeDialogs();
           TJG.repositionDialog = [];
         });
-        
+
         TJG.ui.showRegister();
-        
+
         $('#how_works').click(function(){
           TJG.utils.centerDialog("#how_works_dialog");
           TJG.repositionDialog = ["#how_works_dialog"];

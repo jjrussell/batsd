@@ -1,8 +1,8 @@
 ##
-# Reads messages from failed-sqs-writes bucket, and writes them back to the queue that 
+# Reads messages from failed-sqs-writes bucket, and writes them back to the queue that
 # they orignially failed to write to.
 class Job::MasterFailedSqsWritesController < Job::JobController
-  
+
   def index
     bucket = S3.bucket(BucketNames::FAILED_SQS_WRITES)
     bucket.keys.each do |key|
@@ -14,10 +14,10 @@ class Job::MasterFailedSqsWritesController < Job::JobController
         Notifier.alert_new_relic(e.class, e.message, request, params)
         next
       end
-      
+
       message = json['message']
       queue_name = json['queue_name']
-      
+
       begin
         Sqs.send_message(queue_name, message, false)
       rescue
@@ -26,7 +26,7 @@ class Job::MasterFailedSqsWritesController < Job::JobController
         bucket.delete_folder(key.to_s)
       end
     end
-    
+
     render :text => 'OK'
   end
 end

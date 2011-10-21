@@ -8,7 +8,7 @@ class CreateVideoOffers < ActiveRecord::Migration
       t.string  :video_url
       t.timestamps
     end
-    
+
     add_index :video_offers, :id, :unique => true
     add_index :video_offers, :partner_id
   end

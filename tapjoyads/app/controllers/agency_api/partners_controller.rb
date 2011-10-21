@@ -1,39 +1,39 @@
 class AgencyApi::PartnersController < AgencyApiController
-  
+
   def index
     return unless verify_request
-    
+
     partners = @agency_user.partners.map do |partner|
-      { 
-        :partner_id       => partner.id, 
-        :name             => partner.name, 
-        :balance          => partner.balance, 
+      {
+        :partner_id       => partner.id,
+        :name             => partner.name,
+        :balance          => partner.balance,
         :pending_earnings => partner.pending_earnings,
         :contact_email    => partner.contact_name,
       }
     end
-    
-    render_success({ :partners => partners })  
+
+    render_success({ :partners => partners })
   end
-  
+
   def show
     return unless verify_request
     return unless verify_partner(params[:id])
-    
-    result = { 
-      :partner_id       => @partner.id, 
-      :name             => @partner.name, 
-      :balance          => @partner.balance, 
+
+    result = {
+      :partner_id       => @partner.id,
+      :name             => @partner.name,
+      :balance          => @partner.balance,
       :pending_earnings => @partner.pending_earnings,
       :contact_email    => @partner.contact_name,
     }
-    
+
     render_success(result)
   end
-  
+
   def create
     return unless verify_request([ :name, :email ])
-    
+
     user = User.new
     log_activity(user)
     user.username = params[:email]
@@ -45,7 +45,7 @@ class AgencyApi::PartnersController < AgencyApiController
       render_error(user.errors, 400)
       return
     end
-    
+
     partner = Partner.new
     log_activity(partner)
     partner.name = params[:name]
@@ -56,19 +56,19 @@ class AgencyApi::PartnersController < AgencyApiController
       return
     end
     partner.save!
-    
+
     user.current_partner = partner
     user.save!
-    
+
     PartnerAssignment.create!(:user => user, :partner => partner)
     PartnerAssignment.create!(:user => @agency_user, :partner => partner)
-    
+
     TapjoyMailer.deliver_new_secondary_account(user.email, edit_password_reset_url(user.perishable_token))
-    
+
     save_activity_logs
     render_success({ :partner_id => partner.id })
   end
-  
+
   def update
     return unless verify_request([ :id ])
     return unless verify_partner(params[:id])
@@ -80,33 +80,33 @@ class AgencyApi::PartnersController < AgencyApiController
       return
     end
     @partner.save!
-    
+
     save_activity_logs
     render_success
   end
-  
+
   def link
     return unless verify_request([ :email, :user_api_key ])
-    
+
     user = User.find_by_email(params[:email])
     unless user.present?
       render_error('user not found', 400)
       return
     end
-    
+
     unless user.api_key == params[:user_api_key]
       render_error('invalid api_key for user', 403)
       return
     end
-    
+
     unless user.partners.size == 1
       render_error('ambiguous partner', 400)
       return
     end
-    
+
     PartnerAssignment.create(:user => @agency_user, :partner => user.partners.first)
-    
+
     render_success({ :partner_id => user.partners.first.id })
   end
-  
+
 end
