@@ -32,13 +32,14 @@ class EditorsPick < ActiveRecord::Base
     editors_picks = EditorsPick.quoted_table_name
     apps = App.quoted_table_name
     sql = [
-      "SELECT * from #{editors_picks}, #{apps}",
-      "WHERE #{editors_picks}.offer_id = #{apps}.id",
-        "AND platform = ?",
-        "AND activated_at IS NOT NULL",
-        "AND expired_at IS NULL",
-      "ORDER BY display_order DESC",
-      "LIMIT ?"
+      "SELECT #{editors_picks}.offer_id, #{editors_picks}.description",
+        "FROM #{editors_picks}, #{apps}",
+        "WHERE #{editors_picks}.offer_id = #{apps}.id",
+          "AND platform = ?",
+          "AND activated_at IS NOT NULL",
+          "AND expired_at IS NULL",
+        "ORDER BY display_order DESC",
+        "LIMIT ?"
     ].join(' ')
 
     Mc.distributed_get_and_put("cached_apps.active_editors_picks.#{platform}", false, 1.minute) do
@@ -46,12 +47,13 @@ class EditorsPick < ActiveRecord::Base
       if picks.empty?
         # go through expired ones
         sql = [
-          "SELECT * from #{editors_picks}, #{apps}",
-          "WHERE #{editors_picks}.offer_id = #{apps}.id",
-            "AND platform = ?",
-            "AND activated_at IS NOT NULL",
-          "ORDER BY display_order DESC",
-          "LIMIT ?"
+          "SELECT #{editors_picks}.offer_id, #{editors_picks}.description",
+            "FROM #{editors_picks}, #{apps}",
+            "WHERE #{editors_picks}.offer_id = #{apps}.id",
+              "AND platform = ?",
+              "AND activated_at IS NOT NULL",
+            "ORDER BY display_order DESC",
+            "LIMIT ?"
         ].join(' ')
         picks = EditorsPick.find_by_sql [sql, platform, 10]
       end
