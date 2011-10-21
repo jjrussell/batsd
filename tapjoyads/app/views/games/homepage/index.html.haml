@@ -17,13 +17,13 @@
           = render 'my_apps'
 
   #feat_app
-    = render :partial => 'nav_bar', :locals => { :active => 'back' }
+    = render :partial => 'nav_bar', :locals => { :active => 'back', :back_button_destination => '#home' }
     .content_wrapper
       #feat_app.content
         = render 'featured_review'
 
   #earn
-    = render :partial => 'nav_bar', :locals => { :active => 'back' }
+    = render :partial => 'nav_bar', :locals => { :active => 'back', :back_button_destination => '#home' }
     .content_wrapper
       .content
         #app_title
@@ -31,7 +31,7 @@
         #earn_content.hide
 
   #more_games
-    = render :partial => 'nav_bar', :locals => { :active => 'back' }
+    = render :partial => 'nav_bar', :locals => { :active => 'back', :back_button_destination => '#home' }
     .content_wrapper
       .content
         .tab_wrapper.clearfix
