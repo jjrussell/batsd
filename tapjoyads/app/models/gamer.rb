@@ -13,6 +13,7 @@ class Gamer < ActiveRecord::Base
 
   before_create :generate_confirmation_token
   before_create :check_referrer
+  before_create :set_tos_version
 
   alias_method :devices, :gamer_devices
 
@@ -120,5 +121,9 @@ private
 
   def generate_confirmation_token
     self.confirmation_token = Authlogic::Random.friendly_token
+  end
+
+  def set_tos_version
+    self.accepted_tos_version = TAPJOY_GAMES_CURRENT_TOS_VERSION
   end
 end

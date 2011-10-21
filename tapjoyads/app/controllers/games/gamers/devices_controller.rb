@@ -50,6 +50,8 @@ class Games::Gamers::DevicesController < GamesController
       device.version = data[:version]
       device.mac_address = data[:mac_address] if data[:mac_address].present?
       device.platform = data[:platform]
+      
+      cookies[:data] = { :value => params[:data], :expires => 1.year.from_now } if params[:data].present?
 
       if current_gamer.devices.create(:device => device)
         device.set_last_run_time!(TAPJOY_GAMES_REGISTRATION_OFFER_ID)
