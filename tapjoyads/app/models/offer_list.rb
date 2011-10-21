@@ -1,6 +1,6 @@
 class OfferList
   attr_reader :offers
-  
+
   def initialize(options = {})
     @publisher_app              = options.delete(:publisher_app)
     @device                     = options.delete(:device)
@@ -14,16 +14,16 @@ class OfferList
     @os_version                 = options.delete(:os_version)
     @screen_layout_size         = options.delete(:screen_layout_size)
     @source                     = options.delete(:source)
-    @exp                        = options.delete(:exp)  
+    @exp                        = options.delete(:exp)
     @include_rating_offer       = options.delete(:include_rating_offer) { false }
     @platform_name              = options.delete(:platform_name)
     @video_offer_ids            = options.delete(:video_offer_ids) { [] }
-    
+
     @hide_rewarded_app_installs = @currency ? @currency.hide_rewarded_app_installs_for_version?(@app_version, @source) : false
     @normalized_device_type     = Device.normalize_device_type(@device_type)
-    
+
     if @publisher_app
-      @platform_name            = @publisher_app.platform_name   
+      @platform_name            = @publisher_app.platform_name
       @normalized_device_type ||=
         case @publisher_app.platform
         when 'android', 'windows'
@@ -32,9 +32,9 @@ class OfferList
           'itouch'
         end
     end
-    
+
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
-    
+
     if @hide_rewarded_app_installs
       @type = case @type
       when Offer::FEATURED_OFFER_TYPE
@@ -47,7 +47,7 @@ class OfferList
         @type
       end
     end
-    
+
     if (@device && @device.opted_out?) || (@currency && !@currency.tapjoy_enabled?)
       @offers = []
     else
@@ -55,14 +55,14 @@ class OfferList
         OfferCacher.get_unsorted_offers_prerejected(@type, @platform_name, @hide_rewarded_app_installs, @normalized_device_type)
       end.value
     end
-    
+
     if @currency
       @offers.each do |o|
         o.postcache_rank_score(@currency)
       end
     end
   end
-  
+
   def weighted_rand
     offers = @offers.clone
     while offers.any?
@@ -77,14 +77,14 @@ class OfferList
       end
     end
   end
-  
+
   def get_offers(start, max_offers)
     return [ [], 0 ] if @device && @device.opted_out?
     @offers.sort! { |a,b| b.rank_score <=> a.rank_score }
     returned_offers = []
     offers_to_find  = start + max_offers
     found_offers    = 0
-    
+
     if start == 0 && @include_rating_offer && @publisher_app.enabled_rating_offer_id.present?
       rate_app_offer = Offer.find_in_cache(enabled_rating_offer_id)
       if rate_app_offer.present? && rate_app_offer.accepting_clicks? && !rate_app_offer.postcache_reject?(@publisher_app, @device, @currency, @device_type, @geoip_data, @app_version, @direct_pay_providers, @type, @hide_rewarded_app_installs, @library_version, @os_version, @screen_layout_size, @video_offer_ids, @source)
@@ -92,17 +92,17 @@ class OfferList
         found_offers += 1
       end
     end
-    
+
     @offers.each_with_index do |offer, i|
       return [ returned_offers, @offers.length - i ] if found_offers >= offers_to_find
-      
+
       unless offer.postcache_reject?(@publisher_app, @device, @currency, @device_type, @geoip_data, @app_version, @direct_pay_providers, @type, @hide_rewarded_app_installs, @library_version, @os_version, @screen_layout_size, @video_offer_ids, @source)
         returned_offers << offer if found_offers >= start
         found_offers += 1
       end
     end
-    
+
     [ returned_offers, 0 ]
   end
-  
+
 end

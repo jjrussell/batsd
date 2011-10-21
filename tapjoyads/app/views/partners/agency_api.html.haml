@@ -6,40 +6,40 @@
   Your Agency ID:
   %span.code= current_user.id
 %div
-  Your API Key: 
+  Your API Key:
   %span.code= current_user.api_key
 
 %h3 Base URL
 %p https://api.tapjoy.com
 
-%h3 
+%h3
   Global Required Parameters
   %span (required by all API actions)
 %ul
   %li agency_id: your agency user’s id
   %li api_key: you agency user’s API key
-  
+
 %h3 JSON Responses
 %ul
   %li Error: 400/403 - { “success” : false, “error” : whatever }
   %li Success: 200 - { “success” : true [, “return_value” : whatever, ...] }
 
-  
+
 %h3 Common Errors
 %ul
   %li not authorized: wrong agency_id or api_key doesn’t match
   %li access denied: you are not permitted to access the requested resource
   %li missing required parameters: you’re missing a required parameter
-  
-  
+
+
 %h2 Actions
 
 %h3 Create Partner Account
-%ul 
-  %li 
+%ul
+  %li
     Path:
     %p POST /agency_api/partners
-  %li   
+  %li
     Required Parameters:
     %p name: company name
     %p email: primary contact’s email address
@@ -52,7 +52,7 @@
   %li
     Errors:
     %p duplicate email address
-  
+
 %h3 Update Partner Account
 %ul
   %li
@@ -93,7 +93,7 @@
   %li
     Errors:
     %p user not found, invalid api_key for user, ambiguous partner
-      
+
 %h3 Create App
 %ul
   %li
@@ -117,7 +117,7 @@
   %li
     Errors:
     %p invalid platform
-      
+
 %h3 Update App
 %ul
   %li
@@ -139,7 +139,7 @@
     %p app_id: the newly created app’s id
     %p app_secret_key: the newly created app’s secret key
   %li
-    Errors: 
+    Errors:
     %p invalid platform
 
 %h3 Create Currency
@@ -159,7 +159,7 @@
     %p callback_url: a callback url to call when the user earns currency, or the constant 'TAP_POINTS_CURRENCY' if the currency is to be managed by Tapjoy
     %p secret_key: a secret key used to sign the callback url
   %li
-    Action: 
+    Action:
     %p create a new currency for the given app with the same id as the app_id
   %li
     Returns:
@@ -167,7 +167,7 @@
   %li
     Errors:
     %p app not found, currency exists, invalid conversion rate/initial balance
-      
+
 %h3 Update Currency
 %ul
   %li
@@ -193,10 +193,10 @@
   %li
     Errors:
     %p currency not found, invalid conversion rate/initial balance
-    
+
 %h3 Get Apps for Partner
 %ul
-  %li 
+  %li
     Path:
     %p GET /agency_api/apps
   %li
@@ -208,7 +208,7 @@
   %li
     Returns:
     %p apps: an array of hashes with app_id, name, platform, and store_id
-    
+
 %h3 Get Currencies for App
 %ul
   %li
@@ -249,7 +249,7 @@
   %li
     Errors:
     %p app not found
-    
+
 %h3 Get Currency Details
 %ul
   %li
@@ -306,8 +306,8 @@
     %p contact_email: the partner's primary contact email address
   %li
     Errors:
-    %p partner not found 
-      
+    %p partner not found
+
 - content_for :page_styles do
   :plain
     .title {
@@ -323,33 +323,33 @@
     h3 {
       font-size: 16px;
     }
-    
+
     h3 span {
       text-decoration: none;
       font-weight: normal;
       font-size: smaller;
     }
-    
+
     ul {
       margin-top: 0;
     }
-    
+
     li {
       margin-top: 5px;
     }
-    
+
     p {
       padding-left: 40px;
       margin-top: 0;
       margin-bottom: 0;
     }
-    
+
     .code {
       font-family: courier;
     }
-    
+
     form {
       display: inline-block;
       margin-left: 10px;
     }
-    
+

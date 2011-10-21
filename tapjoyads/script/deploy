@@ -4,15 +4,15 @@ require 'yaml'
 require 'optparse'
 
 class Deploy
-  
+
   VERSION_FILENAME = '../server/version.yaml'
-  
+
   def initialize(args)
     @options = {
       :environment => 'test',
       :server_groups => 'testserver'
     }
-    
+
     option_parser = OptionParser.new do |opts|
       opts.on('-e', '--environment [ENVIRONMENT]') do |environment|
         if environment == 'production'
@@ -22,28 +22,28 @@ class Deploy
           print_usage_and_exit
         end
       end
-      
+
       opts.on('-v', '--version [VERSION]') do |version|
         @options[:version] = version
       end
-      
+
       opts.on_tail('-h', '--help') do
         print_usage_and_exit
       end
     end
-    
+
     unless option_parser.parse!(args).empty?
       puts "Unknown options given."
       print_usage_and_exit
     end
-    
+
     if @options[:environment] == 'production' && !@options[:version].nil? && @options[:version] !~ /^[0-9]+$/
       puts "invalid version for production deploy, must be a version number"
       print_usage_and_exit
     end
     @options[:version] = 'master' if @options[:environment] == 'test' && @options[:version].nil?
   end
-  
+
   def deploy
     puts "#{@options[:environment].upcase} deploy"
     update_working_copy
@@ -54,23 +54,23 @@ class Deploy
     execute_cloudrun
     puts "Done deploying: #{Time.now}"
   end
-  
+
 private
-  
+
   def print_usage_and_exit
     puts "USAGE: script/deploy [options]"
     puts "    -e, --environment (optional): The environment to deploy to. Can be 'test' or 'production'. Default is 'test'."
     puts "    -v, --version (optional): The version to deploy. Defaults to 'master' for test deploys, creates a new tag for production deploys."
     exit
   end
-  
+
   def prompt_and_exit_if_not_yes
     answer = STDIN.gets
     if answer !~ /^(y|yes)$/i
       exit
     end
   end
-  
+
   def check_syntax
     unless system("script/runner 'Utils.check_syntax'")
       puts "Syntax Check: FAILED"
@@ -78,7 +78,7 @@ private
     end
     puts "Syntax Check: PASSED"
   end
-  
+
   def update_working_copy
     puts "Updating working copy"
     git_status = `git status`
@@ -92,21 +92,21 @@ private
     end
     system("git pull tapjoy master")
   end
-  
+
   def create_deploy_tag
     yaml_version = YAML::load_file(VERSION_FILENAME)
     @options[:version] = (yaml_version['current'].to_i + 1).to_s
-    
+
     print "No deploy tag specified. Create new deploy tag #{@options[:version]}? [y/N] "
     prompt_and_exit_if_not_yes
-    
+
     puts "Updating webserver.sqlite file."
     unless system("script/runner 'Utils.update_sqlite_schema' > /dev/null")
       puts "Failed to update webserver.sqlite!"
       exit
     end
     system("git add db/webserver.sqlite")
-    
+
     puts "Incrementing version file."
     yaml_version['current'] = @options[:version]
     File.open(VERSION_FILENAME, 'w') do |f|
@@ -114,19 +114,19 @@ private
     end
     system("git add #{VERSION_FILENAME}")
     system("git commit -m 'Incrementing version number to #{@options[:version]}'")
-    
+
     puts "Creating new deploy tag."
     system("git tag -a -m 'Creating deploy tag #{@options[:version]}' #{@options[:version]}")
-    
+
     puts "Pushing new version."
     system("git push --tags tapjoy master")
   end
-  
+
   def execute_cloudrun
     command = "script/cloudrun '#{@options[:server_groups]}' 'cd /home/webuser/tapjoyserver && server/deploy.rb #{@options[:version]}' 'webuser' 'remove_from_lb'"
     system(command)
   end
-  
+
 end
 
 Deploy.new(ARGV).deploy

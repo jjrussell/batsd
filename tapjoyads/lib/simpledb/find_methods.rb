@@ -1,7 +1,7 @@
 module Simpledb
   def self.included(base)
     class << base
-      
+
       public
 
       def find(*args)
@@ -12,12 +12,12 @@ module Simpledb
           else find_by_id(args.first, options)
         end
       end
-      
+
       def find_by_id(id, options = {})
         result = self.new(options.merge({:key => id}))
         result.new_record? ? nil : result
       end
-      
+
       private
 
       def find_initial(options)

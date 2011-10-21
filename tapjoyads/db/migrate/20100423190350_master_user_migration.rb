@@ -13,7 +13,7 @@ class MasterUserMigration < ActiveRecord::Migration
     end
     add_index :users, :id, :unique => true
     add_index :users, :username, :unique => true
-    
+
     # user_roles
     drop_table :user_roles
     create_table :user_roles, :id => false do |t|
@@ -23,7 +23,7 @@ class MasterUserMigration < ActiveRecord::Migration
     end
     add_index :user_roles, :id, :unique => true
     add_index :user_roles, :name, :unique => true
-    
+
     # role_assignments
     drop_table :role_assignments
     create_table :role_assignments, :id => false do |t|
@@ -33,7 +33,7 @@ class MasterUserMigration < ActiveRecord::Migration
     end
     add_index :role_assignments, :id, :unique => true
     add_index :role_assignments, [ :user_id, :user_role_id ], :unique => true
-    
+
     # partner_assignments
     create_table :partner_assignments, :id => false do |t|
       t.column :id, 'char(36) binary', :null => false
@@ -44,7 +44,7 @@ class MasterUserMigration < ActiveRecord::Migration
     add_index :partner_assignments, [ :user_id, :partner_id ], :unique => true
     add_index :partner_assignments, :partner_id
   end
-  
+
   def self.down
     drop_table :users
     drop_table :user_roles

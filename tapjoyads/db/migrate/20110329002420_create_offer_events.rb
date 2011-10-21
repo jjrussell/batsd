@@ -12,7 +12,7 @@ class CreateOfferEvents < ActiveRecord::Migration
       t.timestamp :disabled_at
       t.timestamps
     end
-    
+
     add_index :offer_events, :id, :unique => true
     add_index :offer_events, :offer_id
   end

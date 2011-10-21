@@ -3,13 +3,13 @@ class Tools::AgencyUsersController < WebsiteController
   current_tab :tools
   filter_access_to :all
   before_filter :get_account_managers, :only => [ :show ]
-  
+
   def index
     @agency_users = UserRole.find_by_name("agency").users
   end
 
   def show
-    @agency_user = User.find(params[:id])    
+    @agency_user = User.find(params[:id])
   end
 
 private

@@ -17,7 +17,7 @@ class CreateCurrencies < ActiveRecord::Migration
       t.text :test_devices, :null => false, :default => ''
       t.timestamps
     end
-    
+
     add_index :currencies, :id, :unique => true
     add_index :currencies, :app_id
   end

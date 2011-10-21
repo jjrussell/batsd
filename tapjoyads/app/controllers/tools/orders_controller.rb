@@ -8,7 +8,7 @@ class Tools::OrdersController < WebsiteController
     @partner = Partner.find(params[:partner_id])
     @order = Order.new
   end
-  
+
   def create
     order_params = sanitize_currency_params(params[:order], [ :amount ])
     billing_email = params.delete(:billing_email)

@@ -7,10 +7,10 @@ class CreateEarningsAdjustments < ActiveRecord::Migration
       t.string :notes
       t.timestamps
     end
-    
+
     add_index :earnings_adjustments, :id, :unique => true
     add_index :earnings_adjustments, :partner_id
-    
+
     add_column :monthly_accountings, :earnings_adjustments, :integer, :null => false
   end
 

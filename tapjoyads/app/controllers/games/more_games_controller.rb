@@ -5,7 +5,7 @@ class Games::MoreGamesController < GamesController
   def editor_picks
     @editors_picks = EditorsPick.cached_active
   end
-  
+
   def popular
     if HeaderParser.device_type(request.headers['user-agent']) == 'android'
       @popular_apps = PopularApp.get_android

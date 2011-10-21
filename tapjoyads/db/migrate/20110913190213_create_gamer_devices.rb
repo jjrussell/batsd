@@ -7,7 +7,7 @@ class CreateGamerDevices < ActiveRecord::Migration
       t.string :name,      :null => false
       t.timestamps
     end
-    
+
     add_index :gamer_devices, :id, :unique => true
     add_index :gamer_devices, :gamer_id
     add_index :gamer_devices, :device_id
