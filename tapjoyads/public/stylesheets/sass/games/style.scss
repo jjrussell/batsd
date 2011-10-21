@@ -33,7 +33,6 @@ a, a:visited {
 /*--------------------*/
 
 #login {
-  background-color: #FDFDFD;
 }
 /*------ Top Nav -----*/
 .nav {
@@ -60,11 +59,28 @@ a, a:visited {
     .aside_login {
       top: 8px;
       
-      form#new_gamer_session input[type=email], form#new_gamer_session input[type=password] {
+      form#new_gamer_session input {
         border: 1px solid #C1C1C1;
         width: 110px;
         @include rounded-corners(10px);
         @include inset-shadow;
+      }
+      form#new_gamer_session input[type=submit] {
+        border: 1px solid #B0B0B0;
+        border-color: #B0131D;
+        color: #FFF;
+        font-size: 0.7em;
+        position: relative;
+        margin-left: 6px;
+        text-shadow: 0 1px 1px #444;
+        top: -2px;
+        width: 80px;
+        @include inset-button(16px, 6px 4px);
+        @include inset-shadow;
+        @include gradient(#CF1623, #EA1927);
+      }
+      .fieldWithErrors{
+        float: left;
       }
     }
     .logo {
@@ -111,7 +127,7 @@ a, a:visited {
         float: none;
       }
     }
-    @media screen and (max-width: 700px) {
+    @media screen and (max-width: 680px) {
       .aside_login {
         form#new_gamer_session input {
           float: none;
@@ -148,17 +164,57 @@ a, a:visited {
   } // .nav_container
 } // .nav
 
+#login .content_box {
+  margin: 0 auto;
+  padding: 20px;
+  width: 460px;
+}
+
 .content_wrapper {
   
   .content {
   }
+  
   .feat_review {
     background-color: #FFF;
     border: 1px solid #DEDEDE;
     border-bottom: 1px solid #9D9990;
-
     @include rounded-corners;
-    //@include box-shadow;
+  }
+  
+  form#new_gamer  label {
+    margin: 0 auto;
+    margin-top: 8px;
+  }
+  
+  form#new_gamer input[type=text],
+  form#new_gamer input[type=email],
+  form#new_gamer input[type=password] {
+
+  }
+  
+  form#new_gamer input[type=email],
+  form#new_gamer input[type=password] {
+    border: 1px solid #C1C1C1;
+    padding: 4px;
+    width: 92%;
+    @include rounded-corners(10px);
+    @include inset-shadow;
+  }
+  
+  form#new_gamer input[type=submit] {
+    border: 1px solid #B0B0B0;
+    border-color: #B0131D;
+    color: #FFF;
+    cursor: pointer;
+    font-size: 0.9em;
+    position: relative;
+    margin: 8px auto 0;
+    text-shadow: 0 1px 1px #444;
+    width: 100px;
+    @include inset-button(16px, 8px 10px);
+    @include inset-shadow;
+    @include gradient(#CF1623, #EA1927);
   }
   
 } //.content_wrapper

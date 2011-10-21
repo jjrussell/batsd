@@ -16,45 +16,35 @@
               = f.password_field :password
             .field.login_btn.clearfix
               = f.submit 'Login!', :class => 'right button'
-            .login_error.center
+            .login_error
               = error_message_on @gamer_session, :email, :prepend_text => "Email "
               = error_message_on @gamer_session, :password, :prepend_text => "Password "
-                
-#sign_up_dialog.dialog_wrapper.hide
-  .close_dialog
-    .close_button
-  .dialog
-    #sign_up_dialog_content
-#sign_up_dialog_content_placeholder.hide
-  .dialog_header_wrapper
-    .dialog_header_right
-    .dialog_header_left
-    .dialog_title.title_2
-      Sign Up!
-  .dialog_header
-    Creating an account is too easy!
-  .dialog_content
-    - form_for([ :games, @gamer ], :url => games_gamer_path ) do |f|
-      .field
-        = label_tag :birthdate
-        = select_date nil, { :order => [:month, :day, :year], :start_year => Time.now.year, :end_year => (Time.now.year - 100), :include_blank => false, :prompt => {:day => 'Day', :month => 'Month', :year => 'Year'} }
-      .field
-        = f.label :email
-        = f.email_field :email, "autocorrect" => "off", "autocapitalize" => "off"
-      .field
-        = f.label :password
-        = f.password_field :password
-      .field_row.clearfix
-        .field.field_tos
-          = f.check_box :terms_of_service
-          = f.label :terms_of_service, "By checking this box I assert that I agree to the #{ link_to('terms of services', games_tos_path, :target => '_blank') } & #{ link_to('privacy policy', games_privacy_path, :target => '_blank') }"
-        .field
-          = f.hidden_field :referrer, :value => params[:referrer]
-          = f.submit 'Do it!', :class => 'right button m_width lt_blue'
-      .email_error.center
-        = error_message_on @gamer, :email
-        = error_message_on @gamer, :password
-        = error_message_on @gamer, :terms_of_service
+            .forgot_pass.right
+              = link_to('Forgot password?', new_games_password_reset_path)
+            
+    .content_wrapper
+      .content
+        .content_box
+          - form_for([ :games, @gamer ], :url => games_gamer_path ) do |f|
+            .field
+              = label_tag :birthdate
+              = select_date nil, { :order => [:month, :day, :year], :start_year => Time.now.year, :end_year => (Time.now.year - 100), :include_blank => false, :prompt => {:day => 'Day', :month => 'Month', :year => 'Year'} }
+            .field
+              = f.label :email
+              = f.email_field :email, "autocorrect" => "off", "autocapitalize" => "off"
+            .field
+              = f.label :password
+              = f.password_field :password
+            .field.field_tos.clearfix
+              = f.check_box :terms_of_service
+              = f.label :terms_of_service, "By checking this box I assert that I agree to the #{ link_to('terms of services', games_tos_path, :target => '_blank') } & #{ link_to('privacy policy', games_privacy_path, :target => '_blank') }"
+            .field
+              = f.hidden_field :referrer, :value => params[:referrer]
+              = f.submit 'Sign Up', :class => 'button'
+            .email_error.center
+              = error_message_on @gamer, :email
+              = error_message_on @gamer, :password
+              = error_message_on @gamer, :terms_of_service
 
 - content_for :page_javascript do
   :plain

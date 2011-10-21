@@ -17,6 +17,9 @@
       position: relative;
       top: 24px;
     }
+    .aside_login {
+      width: 300px;
+    }
     .logo {
       background: transparent url('/images/games/v2/logo_mobile.png') no-repeat;
       height: 38px;
@@ -31,3 +34,19 @@
     }
   }
 }
+
+#login .content_box{
+  margin: 0 auto;
+  padding: 10px;
+  width: 280px;
+}
+
+.content_wrapper {
+  
+  .content {
+  }
+  
+  form#new_gamer {
+  }
+  
+} //.content_wrapper

@@ -16,7 +16,18 @@
     .aside_login {
       float: none;
       margin: 0 auto;
-      width: 320px;
+      text-align: center;
+      width: 460px;
+      
+      form#new_gamer_session input {
+        width: 130px;
+      }
+      form#new_gamer_session input[type=submit] {
+        margin-top: 6px;
+      }
+      .fieldWithErrors{
+        float: none;
+      }
     }
     .logo {
       background: transparent url('/images/games/v2/logo_mobile.png') no-repeat;
@@ -42,3 +53,18 @@
     }
   }
 }
+
+#login .content_box{
+  margin: 0 auto;
+  padding: 10px;
+  width: 440px;
+}
+.content_wrapper {
+  
+  .content {
+  }
+  
+  form#new_gamer {
+  }
+  
+} //.content_wrapper

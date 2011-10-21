@@ -223,11 +223,10 @@ form#new_gamer input[type=email],
 form#new_gamer input[type=password] {
   padding: 4px;
   width: 244px;
-  -moz-border-radius: 3px;
-  -webkit-border-radius: 3px;
 }
 form#new_gamer .field_tos {
   margin-top: 8px;
+  text-align: center;
 }
 form#new_gamer input[type=submit] {
   font-size: 13px;
@@ -376,13 +375,11 @@ form#new_gamer input {
 }
 .web .content,
 .ipad .content {
-  color: #FFF;
   margin: 0 auto;
   width: 640px;
   padding: 16px 40px;
 }
 .mobile .content {
-  color: #FFF;
   margin: 0 auto;
   min-height: 480px;
   padding: 8px 7px;
@@ -537,7 +534,7 @@ form#new_gamer input[type=checkbox] {
 form#new_gamer label[for=gamer_terms_of_service] {
   float: left;
   font-size: 10px;
-  width: 160px;
+  width: 240px;
 }
 form#new_gamer_session {
   color: #7E7E7E;

@@ -299,14 +299,6 @@ TJG.ui = {
     else {
       path = location.pathname.replace(/\/$/, '');
     }
-    $("#sign_up_dialog_content").parent().css("height", "270px");
-    $("#sign_up_dialog_content").html($('#sign_up_dialog_content_placeholder').html());
-    setTimeout(function() {
-      TJG.utils.centerDialog("#sign_up_dialog");
-      TJG.repositionDialog = ["#sign_up_dialog"];
-      $(".close_dialog").show();
-      $("#sign_up_dialog").fadeIn();
-    }, 50);
 
     $('form#new_gamer').submit(function(e){
       e.preventDefault();
@@ -1629,9 +1621,9 @@ TJG.social = {
           TJG.ui.removeDialogs();
           TJG.repositionDialog = [];
         });
-        $('#sign_up, #sign_up_form').click(function() {
-          TJG.ui.showRegister();
-        });
+        
+        TJG.ui.showRegister();
+        
         $('#how_works').click(function(){
           TJG.utils.centerDialog("#how_works_dialog");
           TJG.repositionDialog = ["#how_works_dialog"];
