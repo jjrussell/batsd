@@ -170,7 +170,7 @@ private
     end
 
     completed = @device.has_app?(app_id_for_device)
-    unless completed
+    unless completed || @offer.item_type == 'VideoOffer'
       publisher_user = PublisherUser.new(:key => "#{params[:publisher_app_id]}.#{params[:publisher_user_id]}")
       other_udids = publisher_user.udids - [ @device.key ]
       other_udids.each do |udid|
