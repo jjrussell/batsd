@@ -1,11 +1,11 @@
 class PasswordResetsController < WebsiteController
-  
+
   before_filter :require_no_user
   before_filter :find_user_using_perishable_token, :only => [ :edit, :update ]
-  
+
   def new
   end
-  
+
   def create
     @user = User.find_by_email(params[:email])
     if @user
@@ -17,10 +17,10 @@ class PasswordResetsController < WebsiteController
     end
     render :action => :new
   end
-  
+
   def edit
   end
-  
+
   def update
     if @user.safe_update_attributes(params[:user], [ :password, :password_confirmation ])
       flash[:notice] = "Password successfully updated."
@@ -29,16 +29,16 @@ class PasswordResetsController < WebsiteController
       render :action => :edit
     end
   end
-  
+
 private
-  
+
   def require_no_user
     unless current_user.nil?
       flash[:error] = "You must be logged out to reset passwords."
       redirect_to users_path
     end
   end
-  
+
   def find_user_using_perishable_token
     @user = User.find_using_perishable_token(params[:id])
     if @user.nil?
@@ -46,5 +46,5 @@ private
       redirect_to login_path
     end
   end
-  
+
 end

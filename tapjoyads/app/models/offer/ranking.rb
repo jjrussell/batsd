@@ -1,12 +1,12 @@
 module Offer::Ranking
-  
+
   def self.included(base)
     base.class_eval do
       attr_accessor :rank_score
       before_save :calculate_ranking_fields
     end
   end
-  
+
   def calculate_ranking_fields
     return if Rails.env == 'test' # We need to be seeding the test environment with enabled offers for these calculations to work
     stats                       = OfferCacher.get_offer_stats
@@ -17,12 +17,12 @@ module Offer::Ranking
     self.over_threshold         = bid >= 40 ? 1 : 0
     self.rank_boost             = rank_boosts.active.sum(:amount)
   end
-  
+
   def calculate_ranking_fields!
     calculate_ranking_fields
     save!
   end
-  
+
   def precache_rank_scores
     rank_scores = {}
     CurrencyGroup.find_each do |currency_group|
@@ -43,15 +43,15 @@ module Offer::Ranking
     self.rank_score += (categories & currency.categories).length.to_f / currency.categories.length * (currency.postcache_weights[:category_match] || 0) if currency.categories.any?
     rank_score
   end
-  
+
   def bid_for_ranks
     [ bid, 500 ].min
   end
-  
+
   def avg_revenue
     conversion_rate * bid_for_ranks
   end
-  
+
   def percentile
     self.conversion_rate = is_paid? ? (0.05 / (0.01 * price)) : 0.50 if conversion_rate == 0
     calculate_ranking_fields

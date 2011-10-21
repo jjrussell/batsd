@@ -7,19 +7,19 @@ class RailsCacheValue
 end
 
 class RailsCache
-  
+
   @@rails_cache = Hash.new
-  
+
   class << self
-    
+
     def put(key, value)
       @@rails_cache[key] = RailsCacheValue.new(value)
     end
-    
+
     def get(key)
       @@rails_cache[key]
     end
-    
+
     def get_and_put(key, max_age = 5.minutes, &block)
       result = get(key)
       if result.nil? || (Time.now - result.cached_at) > max_age
@@ -29,7 +29,7 @@ class RailsCache
         result
       end
     end
-    
+
   end
-  
+
 end

@@ -25,12 +25,12 @@
   :plain
     $(function($){
       toggle_other_forms(false);
-    
+
       $('.view_link').click(function() {
         parent.$.facebox({ajax: parent.$('#preview_link')[0].href});
         return false;
       });
-      
+
       $('#remove_link').click(function() {
         if(confirm('Are you sure? This will remove the #{@size} creative entirely.')) {
           $('#spinner').show();
@@ -39,13 +39,13 @@
         }
         return false;
       });
-      
+
       $('#upload_form').submit(function() {
         $('#spinner').show();
         toggle_other_forms(true);
         return true;
       });
-      
+
       function toggle_other_forms(disabled) {
         var iframes = $(parent.document).find('iframe');
         for(var i = 0; i<iframes.length; i++) {

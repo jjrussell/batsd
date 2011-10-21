@@ -1,21 +1,23 @@
 :javascript
   var noMessage = false;
 #jqt
-  #reset_password.tan.account.current 
+  #reset_password.tan.account.current
     .container
       .page.no_top_nav_bar
         .logo
+          %a{ :href => games_root_path, :class => "slideright" }
+            .logo_top
         .content.narrow.pad
           .header_wrapper
             .title_2
-              Reset Password 
+              Reset Password
             .content_box_top_arrow_wrapper
               .content_box_top_arrow
             .content_box_wrapper
               .content_box.clearfix
                 %div
                   - if @gamer
-                    %p 
+                    %p
                       You should receive an email with instructions to reset your password in the next few minutes.
                     %p
                       If you are still having problems logging in, you can
@@ -25,7 +27,7 @@
                       :javascript
                         var noMessage = true;
                   - else
-                    %p 
+                    %p
                       Enter the email address associated with your account and we will send you a link to reset your password.
                     %p
                       - form_tag(games_password_resets_path) do
@@ -36,7 +38,7 @@
                           = submit_tag('Submit', :class => 'button lt_blue')
                       .formError.hide
                         .email_error
-                            
+
 - content_for :page_javascript do
   :plain
     $(window).load(function() {
@@ -66,8 +68,8 @@
             $(".email_error").html('Enter a valid email address');
             $(".formError").show();
             e.preventDefault();
-          }  
+          }
         });
       });
     });
-    
+

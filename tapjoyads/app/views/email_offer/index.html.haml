@@ -3,7 +3,7 @@
 #offers
   #header
     %h1= @page_title
-  
+
   - if flash[:error].present?
     %p.error= flash[:error]
 
@@ -15,21 +15,21 @@
     = hidden_field_tag(:click_key, params[:click_key])
     = label_tag(:email_address, 'Email:')
     = text_field_tag(:email_address, params[:email_address])
-  
+
     %p
       Check your email for a link to verify your email address in order to receive your
       = @currency.name + "."
-      
+
     = check_box_tag(:agreed_to_privacy)
     = label_tag(:agreed_to_privacy, "I have reviewed and acknowledged #{link_to("Tapjoy's privacy policy.", "#{WEBSITE_URL}/site/privacy_mobile")}")
-    
+
     %p
       Your email address will be associated with your phone’s ID and some app usage history. However, we have a clear privacy policy that explains how we protect this information. Please see our privacy policy here:
       = link_to("#{WEBSITE_URL}/site/privacy_mobile", "#{WEBSITE_URL}/site/privacy_mobile")
-  
+
     %p
       = submit_tag('Submit')
-  
+
 - content_for :page_styles do
   :plain
     * {
@@ -52,7 +52,7 @@
     h1 {
       font-size: 24px;
     }
-    
+
     p {
       margin: 1em 0;
     }
@@ -69,8 +69,8 @@
     #header {
       border-bottom: 2px solid;
     }
-    
+
     .error {
       color: #dd0000;
     }
-    
+

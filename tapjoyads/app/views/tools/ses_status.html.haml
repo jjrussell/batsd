@@ -46,7 +46,7 @@ As of: #{Time.zone.now.to_s(:pub_ampm_sec)}
         %td= number_with_delimiter(stat[:rejects])
         %td= number_with_delimiter(stat[:bounces])
         %td= number_with_delimiter(stat[:complaints])
-        
+
 - content_for :page_javascript do
   :plain
     $(function() {
@@ -88,11 +88,11 @@ As of: #{Time.zone.now.to_s(:pub_ampm_sec)}
     table.tablesorter thead tr .header {
       background-position: right bottom;
     }
-    
+
     .flex {
       width: auto !important;
     }
-    
+
     h2 {
       font-size: 16px;
       margin-bottom: 4px;

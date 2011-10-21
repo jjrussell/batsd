@@ -15,7 +15,7 @@
           background-color: yellow;
         }
     = yield :page_head
-  
+
   %body
     #main
       #top_nav
@@ -53,11 +53,13 @@
           - if premier_enabled?
             = mail_to "premiersupport@tapjoy.com", "Support", :subject => "Premier Support"
             |
+          = link_to('Knowledge Center', KNOWLEDGE_CENTER_URL)
+          |
           = link_to('Dev forum', DEV_FORUM_URL)
           |
           = link_to('Logout', logout_path)
         .clear
-    
+
       #tabs
         - tabs = []
         - tabs << { :apps      => apps_path }            if permitted_to?(:index, :apps)
@@ -104,7 +106,7 @@
             closeImage   : '/images/closelabel.png'
           });
         });
-      
+
       - unless Rails.env == 'development'
         :plain
           var _gaq = _gaq || [];

@@ -1,6 +1,6 @@
 class EmailSignup < SimpledbResource
   self.domain_name = 'email_signup'
-  
+
   self.sdb_attr :udid
   self.sdb_attr :publisher_app_id
   self.sdb_attr :advertiser_app_id

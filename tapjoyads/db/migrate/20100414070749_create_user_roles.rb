@@ -4,9 +4,9 @@ class CreateUserRoles < ActiveRecord::Migration
       t.string :name, :null => false
       t.timestamps
     end
-    
+
     add_index :user_roles, :name, :unique => true
-    
+
     UserRole.create(:name => 'admin')
     UserRole.create(:name => 'offerpal')
   end

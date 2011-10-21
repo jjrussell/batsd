@@ -1,5 +1,5 @@
 class ActionMailer::Base
-  
+
   def deliver_with_rescue_errors!(mail = @mail)
     begin
       deliver_without_rescue_errors!(mail)
@@ -10,9 +10,9 @@ class ActionMailer::Base
     end
   end
   alias_method_chain :deliver!, :rescue_errors
-  
+
   def self.deliver_without_rescue_errors(mail)
     new.deliver_without_rescue_errors!(mail)
   end
-  
+
 end

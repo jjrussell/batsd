@@ -24,7 +24,7 @@ class CreateOffers < ActiveRecord::Migration
       t.boolean :tapjoy_enabled, :default => false
       t.timestamps
     end
-    
+
     add_index :offers, :id, :unique => true
     add_index :offers, :partner_id
     add_index :offers, :item_id, :unique => true

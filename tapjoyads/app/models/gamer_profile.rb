@@ -12,7 +12,7 @@ class GamerProfile < ActiveRecord::Base
       errors.add(:birthdate, "is less than thirteen years ago") if (turns_thirteen.future?)
     end
   end
-  
+
   def update_facebook_info!(facebook_user)
     if facebook_id != facebook_user.id
       self.facebook_id = facebook_user.id
