@@ -11,7 +11,7 @@
         .app_rating_wrapper
           .app_rating.hide{ :rating => @featured_review.app.user_rating }
       %div
-      - link_to(@featured_review.app.info_url) do
+      - link_to(@featured_review.app.info_url, :target => '_blank') do
         .button.grey  
           Download now!
 
