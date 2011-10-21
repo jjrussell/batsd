@@ -3,6 +3,8 @@ ActionController::Routing::Routes.draw do |map|
     m.root :controller => 'games/homepage', :action => :index
     m.tos 'tos', :controller => 'games/homepage', :action => :tos
     m.privacy 'privacy', :controller => 'games/homepage', :action => :privacy
+    m.switch_device 'switch_device', :controller => 'games/homepage', :action => :switch_device
+    m.send_device_link 'send_device_link', :controller => 'games/homepage', :action => :send_device_link
     
     m.more_games_editor_picks 'editor_picks', :controller => 'games/more_games', :action => :editor_picks
     m.more_games_popular 'popular', :controller => 'games/more_games', :action => :popular
@@ -11,9 +13,9 @@ ActionController::Routing::Routes.draw do |map|
     m.login 'login', :controller => 'games/gamer_sessions', :action => :new
     m.logout 'logout', :controller => 'games/gamer_sessions', :action => :destroy
     
-    m.resource :gamer, :controller => 'games/gamers', :only => [ :create, :edit, :update ], :member => { :password => :get, :update_password => :put } do |gamer|
+    m.resource :gamer, :controller => 'games/gamers', :only => [ :create, :edit, :update ], :member => { :password => :get, :prefs => :get, :update_password => :put, :accept_tos => :put } do |gamer|
       gamer.resource :device, :controller => 'games/gamers/devices', :only => [ :new, :create ], :member => { :finalize => :get }
-      gamer.resource :gamer_profile, :controller => 'games/gamers/gamer_profiles', :only => [ :update ], :member => { :update_birthdate => :put }
+      gamer.resource :gamer_profile, :controller => 'games/gamers/gamer_profiles', :only => [ :update ], :member => { :update_birthdate => :put, :update_prefs => :put }
     end
     m.register 'register', :controller => 'games/gamers', :action => :new
     
