@@ -3,26 +3,24 @@
     .nav
       .nav_container.clearfix
         .aside_nav
-          %span
-            Help
-          %span
-            |
+          //%span
+          //  Help
+          //%span
+          //  |
           %span
             Logout
         .logo
         .nav_buttons
           %ul.nav_list.clearfix
             %ul.pair
-              %li.active
-                My Apps
-              %li.more_games_url
-                More Apps
+              %a{ :href => games_root_path }
+                %li
+                  Back
             %ul.pair
               %a{ :href => edit_games_gamer_path }
-                %li
+                %li.active_button
                   My Account
-              %li.share
-                Share
+
     .content_wrapper
       = render(:partial => 'header')
       - if params[:show_social]

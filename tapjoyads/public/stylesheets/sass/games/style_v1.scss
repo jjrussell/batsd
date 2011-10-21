@@ -598,15 +598,13 @@ form#new_gamer input {
 }
 .content_box {
   background-color: #FFF;
-  border: 1px solid #CEC7B1;
-  color: #7E7E7E;
+  border: 1px solid #505F6D;
+  color: #505F6D;
   height: 100%;
-  padding: 2px 0;
+  padding: 4px;
   width: 100%;
   -moz-border-radius: 4px;
   -webkit-border-radius: 4px;
-  -moz-box-shadow: 0px 1px 1px #AEA693;
-  -webkit-box-shadow: 0px 1px 1px #AEA693;
 }
 .content_box_top_arrow_wrapper {
   height: 9px;
@@ -618,7 +616,7 @@ form#new_gamer input {
 }
 .content_box_top_arrow {
   background-color: #FFF;
-  border: 1px solid #CEC7B1;
+  border: 1px solid #505F6D;
   height: 12px;
   display: block;
   position: relative;
@@ -655,7 +653,7 @@ form#new_gamer label[for=gamer_terms_of_service] {
   width: 160px;
 }
 form#new_gamer_session {
-  color: #7E7E7E;
+  color: #505F6D;
   font-size: 12px;
 }
 .web form#new_gamer_session,
@@ -811,6 +809,9 @@ form#new_gamer_session .login_pass {
 .mobile .gamer_name {
   font-size: 18px;
 }
+.gamer_email {
+  color: #FFF;
+}
 .web .gamer_email,
 .ipad .gamer_email {
   font-size: 18px;
@@ -820,6 +821,9 @@ form#new_gamer_session .login_pass {
 }
 .gamer_name, .gamer_email {
   font-weight: bold;
+}
+.gamer_signup_date {
+  color: #FFF;
 }
 .web .gamer_signup_date,
 .ipad .gamer_signup_date {
@@ -977,7 +981,7 @@ form#new_gamer_session .login_pass {
 #edit_profile select {
   border: none;
   bottom: 0px;
-  color: #7E7E7E;
+  color: #505F6D;
   font-size: 16px;
   margin: 0;
   outline: none;
@@ -1023,7 +1027,7 @@ form#new_gamer_session .login_pass {
   font-size: 12px;
 }
 #edit_preferences label {
-  color: #7E7E7E;
+  color: #505F6D;
 }
 #edit_preferences input[type=checkbox] {
   margin: 0 0 0 12px;
@@ -1693,7 +1697,7 @@ form#new_gamer_session .login_pass {
   margin: 4px 6px 0 0;
 }
 .button {
-  @include inset-button(16px, 8px 4px);
+  @include inset-button(16px, 8px 8px);
 }
 input.button {
   border: none;
@@ -1842,6 +1846,7 @@ input.button {
 .title_2 {
   font-family: 'AmericanTypewriter';
   font-weight: bold;
+  margin-bottom: 6px;
 }
 h1 {
   font-size: 22px;
