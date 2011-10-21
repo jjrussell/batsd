@@ -1,0 +1,43 @@
+- active = defined?(active) ? active : ""
+.nav
+  .nav_container.clearfix
+    .aside_nav
+      //%span
+      //  Help
+      //%span
+      //  |
+      %a{ :href => games_logout_path }
+        %span
+          Logout
+    .logo
+    .nav_buttons
+      %ul.nav_list.clearfix
+        %ul.pair
+          - if active == 'my_apps'
+            %li.my_apps.active_button
+              My Apps
+          - else
+            %a{ :href => "#home", :class => "slideright" }
+              %li.my_apps
+                My Apps
+          - if active == 'more_apps'
+            %li.more_apps.more_apps_path.active_button
+              More Apps
+          - else
+            %li.more_apps.more_apps_path
+              More Apps
+        %ul.pair
+          %a{ :href => edit_games_gamer_path }
+          - if active == 'my_account'
+            %li.my_account.active_button
+              My Account
+          - else
+            %a{ :href => edit_games_gamer_path }
+              %li.my_account
+                My Account
+        - if active == 'share'
+          %li.share.active_button
+            Share
+        - else
+          %li.share
+            Share

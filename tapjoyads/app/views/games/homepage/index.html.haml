@@ -1,7 +1,6 @@
 #jqt
   #home.current
-    = render 'nav_bar', :locals => { :active => 'my_apps' }
-              
+    = render :partial => 'nav_bar', :locals => { :active => 'my_apps' }
     - if current_gamer.devices.empty?
       .content_wrapper
         .content
@@ -10,8 +9,6 @@
       .content_wrapper
         = render 'featured_review_preview'
         .content
-          .myform
-            test
           = render 'no_games'
     - else
       .content_wrapper
@@ -20,62 +17,13 @@
           = render 'my_apps'
             
   #feat_app
-    .nav
-      .nav_container.clearfix
-        .aside_nav
-          %span
-            Help
-          %span
-            |
-          %a{ :href => games_logout_path }
-            %span
-              Logout
-        .logo
-        .nav_buttons
-          %ul.nav_list.clearfix
-            %ul.pair
-              %a{ :href => "#home", :class => "slideright" }
-                %li
-                  My Apps
-              %li.more_games_url
-                More Apps
-            %ul.pair
-              %a{ :href => edit_games_gamer_path }
-                %li
-                  My Account
-              %li.share
-                Share
+    = render :partial => 'nav_bar'
     .content_wrapper
       #feat_app.content
         = render 'featured_review'
 
   #earn
-    .nav
-      .nav_container.clearfix
-        .aside_nav
-          //%span
-          //  Help
-          //%span
-          // |
-          %a{ :href => games_logout_path }
-            %span
-              Logout
-        .logo
-        .nav_buttons
-          %ul.nav_list.clearfix
-            %ul.pair
-              %a{ :href => "#home", :class => "slideright" }
-                %li
-                  My Apps
-              %li.more_games_url
-                More Apps
-            %ul.pair
-              %a{ :href => edit_games_gamer_path }
-                %li
-                  My Account
-              %li.share
-                Share
-                
+    = render :partial => 'nav_bar'
     .content_wrapper
       .content
         #app_title
@@ -83,31 +31,7 @@
         #earn_content.hide
 
   #more_games
-    .nav
-      .nav_container.clearfix
-        .aside_nav
-          //%span
-          //  Help
-          //%span
-          //  |
-          %a{ :href => games_logout_path }
-            %span
-              Logout
-        .logo
-        .nav_buttons
-          %ul.nav_list.clearfix
-            %ul.pair
-              %a{ :href => "#home", :class => "slideright" }
-                %li
-                  My Apps
-              %li.active_button.more_games_url
-                More Apps
-            %ul.pair
-              %a{ :href => edit_games_gamer_path }
-                %li
-                  My Account
-              %li.share
-                Share
+    = render :partial => 'nav_bar', :locals => { :active => 'more_apps' }
     .content_wrapper
       .content
         .tab_wrapper.clearfix
