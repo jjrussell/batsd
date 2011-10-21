@@ -1,7 +1,7 @@
 class Click < SimpledbShardedResource
   self.key_format = 'udid.advertiser_app_id'
   self.num_domains = NUM_CLICK_DOMAINS
-  
+
   self.sdb_attr :udid
   self.sdb_attr :publisher_app_id
   self.sdb_attr :advertiser_app_id
@@ -27,21 +27,21 @@ class Click < SimpledbShardedResource
   self.sdb_attr :block_reason
   self.sdb_attr :manually_resolved_at, :type => :time
   self.sdb_attr :device_name,          :cgi_escape => :true
-  
+
   def initialize(options = {})
     super({ :load_from_memcache => false }.merge(options))
   end
-  
+
   def dynamic_domain_name
     domain_number = @key.matz_silly_hash % NUM_CLICK_DOMAINS
-    
+
     return "clicks_#{domain_number}"
   end
-  
+
   def serial_save(options = {})
     super({ :write_to_memcache => false }.merge(options))
   end
-  
+
   def self.select_all(options = {}, &block)
     clicks = []
     NUM_CLICK_DOMAINS.times do |i|

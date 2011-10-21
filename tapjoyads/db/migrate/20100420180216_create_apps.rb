@@ -18,7 +18,7 @@ class CreateApps < ActiveRecord::Migration
       t.datetime :enabled_at
       t.timestamps
     end
-    
+
     add_index :apps, :id, :unique => true
     add_index :apps, :partner_id
     add_index :apps, :name

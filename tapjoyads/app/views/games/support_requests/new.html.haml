@@ -4,6 +4,8 @@
       .scroller.with-scrollbar
         .page
           .logo
+            %a{ :href => games_root_path, :class => "slideright" }
+              .logo_top
             .slide_nav
               %a{ :href => edit_games_gamer_path, :class => "slideright"}
                 .slider_btn.left
@@ -33,7 +35,7 @@
                 - else
                   = hidden_field_tag :type, "contact_support"
                 = f.text_area :content, :rows => 5, :value => params[:content]
-                = f.submit 'Submit', :class => 'button lt_blue'      
+                = f.submit 'Submit', :class => 'button lt_blue'
                 .form_error.center
 
 
@@ -42,9 +44,9 @@
   #progress.dialog
     .dialog_title
       Loading
-    .dialog_image 
-    
-    
+    .dialog_image
+
+
 - content_for :page_javascript do
   :plain
     $(window).load(function() {
@@ -65,4 +67,4 @@
           }
         });
       });
-    });                        
+    });

@@ -36,14 +36,14 @@
             - if event.editable?
               = link_to('Edit', :action => :edit, :id => event)
               = link_to('Disable', { :action => :destroy, :id => event }, :method => :delete, :confirm => 'Are you sure?')
-       
+
 - content_for :page_javascript do
   :plain
     $(function() {
       $('#filter').change(function() {
         $('#filter-form').submit();
       });
-      
+
       $('#offer_events').tablesorter({
         widgets: ['zebra'],
         headers: {

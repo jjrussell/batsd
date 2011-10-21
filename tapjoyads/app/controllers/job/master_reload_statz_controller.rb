@@ -1,16 +1,16 @@
 class Job::MasterReloadStatzController < Job::JobController
   include ActionView::Helpers::NumberHelper
-  
+
   def index
     cache_stats('24_hours')
-    
+
     render :text => 'ok'
   end
-  
+
   def daily
     cache_stats('7_days')
     cache_stats('1_month')
-    
+
     render :text => 'ok'
   end
 
@@ -26,9 +26,9 @@ class Job::MasterReloadStatzController < Job::JobController
 
     render :text => 'ok'
   end
-  
+
 private
-  
+
   def cache_stats(timeframe)
     now, granularity, start_time = get_times(timeframe)
 
@@ -40,7 +40,7 @@ private
       published_offers = appstats['rewards'].sum + appstats['featured_published_offers'].sum + appstats['display_conversions'].sum
       connects = appstats['logins'].sum
       next unless conversions > 0 || published_offers > 0 || (offer.item_type == 'ActionOffer' && connects > 0)
-      
+
       this_apps_stats = {}
       this_apps_stats['icon_url'] = offer.get_icon_url
       this_apps_stats['offer_name'] = offer.name_with_suffix
@@ -59,14 +59,14 @@ private
       this_apps_stats['featured'] = offer.featured?
       this_apps_stats['rewarded'] = offer.rewarded?
       this_apps_stats['offer_type'] = offer.item_type
-      
+
       cached_stats[offer.id] = this_apps_stats
     end
-    
+
     cached_stats = cached_stats.sort do |s1, s2|
       s2[1]['conversions'].gsub(',', '').to_i <=> s1[1]['conversions'].gsub(',', '').to_i
     end
-    
+
     Mc.distributed_put("statz.cached_stats.#{timeframe}", cached_stats)
     Mc.put("statz.last_updated.#{timeframe}", now.to_f)
   end

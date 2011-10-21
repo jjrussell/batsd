@@ -32,7 +32,7 @@ en:
       download_action: "here"
       download_link: "If you don't have this app, click %{download_action} to download it."
       continue_link: "Click here to continue."
-      
+
     support:
       title: "Missing %{currency}?"
       instructions_1: "Please select the offer you completed without receiving %{currency} and enter your email address."

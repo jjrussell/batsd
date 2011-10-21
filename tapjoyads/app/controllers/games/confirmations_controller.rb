@@ -1,5 +1,5 @@
 class Games::ConfirmationsController < GamesController
-  
+
   def create
     @gamer = Gamer.find_by_confirmation_token(params[:token])
     if @gamer.present? && (@gamer.confirmed_at? || @gamer.confirm!)
@@ -10,5 +10,5 @@ class Games::ConfirmationsController < GamesController
       redirect_to games_root_path
     end
   end
-  
+
 end

@@ -1,8 +1,8 @@
 class Appstats
   include ActionView::Helpers::NumberHelper
-  
+
   attr_accessor :app_key, :stats, :granularity, :start_time, :end_time, :x_labels, :intervals
-  
+
   def initialize(app_key, options = {})
     @now = Time.zone.now
     @start_time = options.delete(:start_time) { @now.beginning_of_hour - 23.hours }
@@ -51,7 +51,7 @@ class Appstats
         end
       end
     end
-    
+
     # rewards
     if @stats['published_installs'] and @stats['offers']
       @stats['rewards'] = []
@@ -59,7 +59,7 @@ class Appstats
         @stats['rewards'][i] = @stats['published_installs'][i] + @stats['offers'][i] - @stats['display_conversions'][i]
       end
     end
-    
+
     # rewards_opened
     if @stats['offers_opened']
       @stats['rewards_opened'] = []
@@ -67,7 +67,7 @@ class Appstats
         @stats['rewards_opened'][i] = @stats['offers_opened'][i] - @stats['display_clicks'][i]
       end
     end
-    
+
     # rewards_revenue
     if @stats['installs_revenue'] and @stats['offers_revenue']
       @stats['rewards_revenue'] = []
@@ -75,7 +75,7 @@ class Appstats
         @stats['rewards_revenue'][i] = @stats['installs_revenue'][i] + @stats['offers_revenue'][i]
       end
     end
-    
+
     # rewards_ctr
     if @stats['offerwall_views'] and @stats['rewards_opened']
       @stats['rewards_ctr'] = []
@@ -87,7 +87,7 @@ class Appstats
         end
       end
     end
-    
+
     # rewards_cvr
     if @stats['rewards_opened'] and @stats['rewards']
       @stats['rewards_cvr'] = []
@@ -99,7 +99,7 @@ class Appstats
         end
       end
     end
-    
+
     # offerwall_ecpm
     if @stats['offerwall_views'] and @stats['rewards_revenue']
       @stats['offerwall_ecpm'] = []
@@ -111,7 +111,7 @@ class Appstats
         end
       end
     end
-    
+
     # featured_ctr
     if @stats['featured_offers_shown'] and @stats['featured_offers_opened']
       @stats['featured_ctr'] = []
@@ -123,7 +123,7 @@ class Appstats
         end
       end
     end
-    
+
     # featured_cvr
     if @stats['featured_offers_opened'] and @stats['featured_published_offers']
       @stats['featured_cvr'] = []
@@ -135,7 +135,7 @@ class Appstats
         end
       end
     end
-    
+
     # featured_fill_rate
     if @stats['featured_offers_requested'] and @stats['featured_offers_shown']
       @stats['featured_fill_rate'] = []
@@ -147,7 +147,7 @@ class Appstats
         end
       end
     end
-    
+
     # featured_ecpm
     if @stats['featured_offers_shown'] and @stats['featured_revenue']
       @stats['featured_ecpm'] = []
@@ -159,7 +159,7 @@ class Appstats
         end
       end
     end
-    
+
     # display_fill_rate
     if @stats['display_ads_requested'] and @stats['display_ads_shown']
       @stats['display_fill_rate'] = []
@@ -171,7 +171,7 @@ class Appstats
         end
       end
     end
-    
+
     # display_ctr
     if @stats['display_ads_shown'] and @stats['display_clicks']
       @stats['display_ctr'] = []
@@ -183,7 +183,7 @@ class Appstats
         end
       end
     end
-    
+
     # display_cvr
     if @stats['display_clicks'] and @stats['display_conversions']
       @stats['display_cvr'] = []
@@ -195,7 +195,7 @@ class Appstats
         end
       end
     end
-    
+
     # display_ecpm
     if @stats['display_ads_shown'] and @stats['display_revenue']
       @stats['display_ecpm'] = []
@@ -207,7 +207,7 @@ class Appstats
         end
       end
     end
-    
+
     # non_display_revenue
     if @stats['rewards_revenue'] and @stats['featured_revenue']
       @stats['non_display_revenue'] = []
@@ -235,7 +235,7 @@ class Appstats
         end
       end
     end
-    
+
     get_labels_and_intervals if @include_labels
   end
 
@@ -373,14 +373,14 @@ class Appstats
 
     return start_time, end_time, granularity
   end
-  
+
 private
 
   ##
   # Returns the hourly stats for stat_name.
   # If stat_name corresponds to a single stat, then the returned object will be an array with each
   # value representing a single hour's worth of stats.
-  # If stat_name corresponds to a set of stats (e.g. 'ranks'), then the returned object will be a 
+  # If stat_name corresponds to a set of stats (e.g. 'ranks'), then the returned object will be a
   # hash, with the values of the hash being arrays of hourly stats.
   def get_hourly_stats(stat_name, start_time, end_time, cache_hours)
     time = start_time
@@ -396,7 +396,7 @@ private
         populate_hourly_stats_from_memcached(stat, stat_name, cache_hours)
         hourly_stats = stat.get_hourly_count(stat_name)
       end
-      
+
       if hourly_stats.is_a?(Hash)
         hourly_stats_over_range = {} if hourly_stats_over_range.blank?
         hourly_stats.each do |key, values|
@@ -409,7 +409,7 @@ private
       else
         hourly_stats_over_range[index] = hourly_stats[time.hour]
       end
-      
+
       time = time + 1.hour
       index += 1
     end
@@ -431,7 +431,7 @@ private
         stat = load_stat_row(date)
         daily_stats = stat.get_daily_count(stat_name)
       end
-      
+
       if time + 38.hours > @now
         hourly_stat = load_stat_row("#{date}-#{time.strftime("%d")}")
         populate_hourly_stats_from_memcached(hourly_stat, stat_name, cache_hours)
@@ -451,23 +451,23 @@ private
       else
         daily_stats_over_range[index] = daily_stats[time.day - 1]
       end
-      
+
       time = time + 1.day
       index += 1
     end
     return daily_stats_over_range
   end
-  
+
   def load_stat_row(date_string)
     key = "#{@stat_prefix}.#{date_string}"
     key << ".#{@app_key}" if @app_key
 
     @stat_rows[key] ||= Stats.new(:key => key)
   end
-  
+
   def populate_hourly_stats_from_memcached(stat_row, stat_name, cache_hours)
     return if cache_hours == 0
-    
+
     prefix, date, app_id = stat_row.parse_key
     if stat_name == 'virtual_goods'
       vg_keys = Mc.get("virtual_good_list.keys.#{app_id}") || []
@@ -502,24 +502,24 @@ private
       end
     end
   end
-  
+
   def get_labels_and_intervals
     @intervals = []
     @x_labels = []
     this_time = @start_time
-    
+
     while this_time < @end_time
       @intervals << this_time
-      
+
       if @granularity == :daily
         @x_labels << this_time.strftime('%m-%d')
       else
         @x_labels << this_time.to_s(:time)
       end
-      
+
       this_time += (@granularity == :daily ? 1.day : 1.hour)
     end
-    
+
     if @x_labels.size > 30
       skip_every = @x_labels.size / 30
       @x_labels.size.times do |i|
@@ -528,7 +528,7 @@ private
         end
       end
     end
-    
+
     @intervals << this_time
   end
 
