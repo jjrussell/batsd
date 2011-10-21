@@ -724,7 +724,7 @@ TJG.ui = {
     var a = [];
     var path;
     if (TJG.path) {
-      path = TJG.path;
+      path = TJG.path.replace(/\/$/, '');
     }
     else {
       path = location.pathname.replace(/\/$/, '');
