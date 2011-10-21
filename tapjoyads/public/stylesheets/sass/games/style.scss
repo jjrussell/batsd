@@ -70,6 +70,11 @@ $logo-bottom-margin: 16px;
   transform: rotate(45deg);
 }
 
+@mixin form-field {
+  @include inset-button;
+  background-color: #FFF;
+}
+
 /*--------------------*/
 
 html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, big, cite, code, del, dfn, em, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var, b, u, i, center, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td, article, aside, canvas, details, embed,  figure, figcaption, footer, header, hgroup, menu, a, output, ruby, section, summary, time, mark, audio, video { margin: 0; padding: 0; border: 0; font-size: 100%; font: inherit; vertical-align: baseline; }
@@ -174,7 +179,7 @@ a, a:visited {
         width: 80px;
       }
     }
-    .nav_buttons ul li.active_button, .nav_buttons ul li:active {
+    .nav_buttons ul li.active_button, .nav_buttons ulli:active {
       border-color: #B0131D;
       color: #FFF;
       text-shadow: 0 1px 1px #444;

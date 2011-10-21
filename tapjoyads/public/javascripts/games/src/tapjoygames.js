@@ -1101,7 +1101,7 @@ TJG.ui = {
     }
 
     function getMoreGames() {
-      $(".more_games_url").click(function() {
+      $(".more_apps_path").click(function() {
         slidePage("#more_games", "left");
         $("#recommended_games_button").addClass("dark_grey").removeClass("grey");
         $("#top_grossing_games_button").addClass("grey").removeClass("dark_grey");

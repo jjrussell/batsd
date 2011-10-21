@@ -1,0 +1,31 @@
+.nav
+  .nav_container.clearfix
+    .aside_nav
+      //%span
+      //  Help
+      //%span
+      //  |
+      %a{ :href => games_logout_path }
+        %span
+          Logout
+    .logo
+    .nav_buttons
+      %ul.nav_list.clearfix
+        %ul.pair
+          - if locals['active'] == 'my_apps'
+            %li.my_apps.active_button
+          - else
+            %li.my_apps.active_button
+              My Apps
+          - if locals['active'] == 'my_apps'
+            %li.my_apps.active_button
+          - else
+            %li.my_apps.active_button
+          %li.more_apps.more_apps_path
+            More Apps
+        %ul.pair
+          %a{ :href => edit_games_gamer_path }
+            %li.my_account
+              My Account
+          %li.share
+            Share

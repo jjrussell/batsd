@@ -1,28 +1,6 @@
 #jqt
   #home.current
-    .nav
-      .nav_container.clearfix
-        .aside_nav
-          %span
-            Help
-          %span
-            |
-          %span
-            Logout
-        .logo
-        .nav_buttons
-          %ul.nav_list.clearfix
-            %ul.pair
-              %li.active_button
-                My Apps
-              %li.more_games_url
-                More Apps
-            %ul.pair
-              %a{ :href => edit_games_gamer_path }
-                %li
-                  My Account
-              %li.share
-                Share
+    = render 'nav_bar', :locals => { :active => 'my_apps' }
               
     - if current_gamer.devices.empty?
       .content_wrapper
@@ -32,6 +10,8 @@
       .content_wrapper
         = render 'featured_review_preview'
         .content
+          .myform
+            test
           = render 'no_games'
     - else
       .content_wrapper
@@ -47,8 +27,9 @@
             Help
           %span
             |
-          %span
-            Logout
+          %a{ :href => games_logout_path }
+            %span
+              Logout
         .logo
         .nav_buttons
           %ul.nav_list.clearfix
@@ -72,12 +53,13 @@
     .nav
       .nav_container.clearfix
         .aside_nav
-          %span
-            Help
-          %span
-            |
-          %span
-            Logout
+          //%span
+          //  Help
+          //%span
+          // |
+          %a{ :href => games_logout_path }
+            %span
+              Logout
         .logo
         .nav_buttons
           %ul.nav_list.clearfix
@@ -104,12 +86,13 @@
     .nav
       .nav_container.clearfix
         .aside_nav
-          %span
-            Help
-          %span
-            |
-          %span
-            Logout
+          //%span
+          //  Help
+          //%span
+          //  |
+          %a{ :href => games_logout_path }
+            %span
+              Logout
         .logo
         .nav_buttons
           %ul.nav_list.clearfix
