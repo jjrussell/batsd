@@ -17,7 +17,7 @@ xml.TapjoyConnectReturnObject do
         xml.StoreID offer.store_id_for_feed
         xml.Currency @currency.name
       end
-      
+
     end
   end
   xml << render(:partial => "footer")

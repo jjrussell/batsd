@@ -90,7 +90,7 @@
           %td
             = primary_offer_form.select(:min_os_version, @app.os_versions, :include_blank => 'No Minimum')
             = error_message_on(@offer, :min_os_version)
-            
+
       %tr
         %th
           = f.label :action_id, 'Action ID'
@@ -103,7 +103,7 @@
           #help_integrated.help ?
         %td{ :class => @action_offer.integrated? ? "integrated" : "not_integrated" }
           = @action_offer.integrated? ? "Yes" : "No"
-      
+
       %tr
         %th
           = f.label :tapjoy_enabled, "Tapjoy Enabled?"
@@ -122,7 +122,7 @@
       - if permitted_to? :edit, :statz
         - f.fields_for :primary_offer do |primary_offer_form|
           = render('apps/offers_shared/admin_fields', :f => primary_offer_form)
-            
+
       %tr
         %td{ :colspan => 2 }= f.submit 'Save Action'
 
@@ -163,7 +163,7 @@
   #help_min_os_version_content{:name => 'Minimum OS Version'}
     Your offer will only be shown to devices with an OS at this version or higher.
   #help_screen_layout_sizes_content{ :name => 'Screen Layout Sizes' } Targets this offer to these screen sizes. If no specific screen sizes are selected, all screen sizes will be targeted.
-  
+
 - if !@offer.tapjoy_enabled? && @enable_request.new_record?
   - form_for(@enable_request, :html => { :class => 'tjform' }) do |f|
     = f.hidden_field(:offer_id)
@@ -173,7 +173,7 @@
     var requestAppEnable = $.noop;
     $(function($){
       var originalBidValue = stringToNumber($('#action_offer_primary_offer_attributes_bid').val());
-    
+
       $('#request_app_enable').attr('disabled', '');
       requestAppEnable = function() {
         $('#new_enable_offer_request').submit();
@@ -192,7 +192,7 @@
         $('#action_offer_primary_offer_attributes_bid').val(numberToCurrency(currentBid));
         $('#action_offer_primary_offer_attributes_payment').val(numberToCurrency(currentBid * #{(100.0 - @action_offer.partner.premier_discount) / 100.0}));
       };
-    
+
       var setEstimatedBudget = function() {
         checkValidBudget();
         var payment = stringToNumber($('#action_offer_primary_offer_attributes_payment').val());
@@ -200,7 +200,7 @@
         var budget = numberToCurrency(payment * installLimit);
         $('#estimated_budget .value').text(budget);
       };
-    
+
       var checkValidBudget = function(){
         if ($('#daily_budget_on').is(':checked')) {
           var installLimit = stringToNumber($('#action_offer_primary_offer_attributes_daily_budget').val(), true);
@@ -213,44 +213,44 @@
         }
         return true;
       }
-    
+
       var toggleDailyBudget = function() {
         if ($('#primary_offer_attributes_daily_budget').val() == 0) {
           $('#primary_offer_attributes_daily_budget').val('');
         }
       };
-    
+
       $('#action_offer_primary_offer_attributes_daily_budget').change(function() {
         var installsLimit = Math.floor(stringToNumber($(this).val(), true));
         $('#action_offer_primary_offer_attributes_daily_budget').val(addCommaSeparators(installsLimit));
         setEstimatedBudget();
       });
-    
+
       if ($('#daily_budget_on').is(':checked')) {
         $('#action_offer_primary_offer_attributes_daily_budget').val(addCommaSeparators(stringToNumber($('#action_offer_primary_offer_attributes_daily_budget').val(), true)));
       }
-    
+
       $('#daily_budget_on').click(function(){
         $('#daily_budget_fields').slideDown();
         toggleDailyBudget();
       });
-    
+
       $('#daily_budget_off').click(function(){
         $('#daily_budget_fields').slideUp();
         toggleDailyBudget();
       });
-    
+
       toggleDailyBudget();
       toggleUserEnabled();
       setEstimatedBudget();
-    
+
       $('#action_offer_primary_offer_attributes_user_enabled').change(toggleUserEnabled);
-    
+
       $('#action_offer_primary_offer_attributes_bid').change(function(){
         updateBidAndPayment();
         setEstimatedBudget();
       });
-    
+
       $('#action_offer_submit').click(function() {
         var currentBid = $('#action_offer_primary_offer_attributes_bid').val();
         var currentBidValue = stringToNumber(currentBid);
@@ -258,12 +258,12 @@
           return confirm('Are you sure you want to change your bid to ' + currentBid + '?');
         }
       });
-    
+
       $('form').submit(function() {
         updateBidAndPayment();
         return checkValidBudget();
       });
-    
+
     });
 
 - content_for :page_styles do

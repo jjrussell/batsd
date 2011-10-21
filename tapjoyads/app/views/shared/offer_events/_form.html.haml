@@ -51,9 +51,9 @@
           #estimated_budget.daily_budget{ :class => selected_option == 'Limited' ? '' : 'hidden' }
             Estimated daily budget:
             %span.value
-    
+
   = f.submit 'Save Event' if @offer_event.editable?
-  
+
 .hidden
   #help_offer_content{:name => 'Offer Name'}
     The name of the offer.
@@ -71,7 +71,7 @@
   :plain
     $(function() {
       var currentPayment = #{@offer_event.offer.present? ? @offer_event.offer.payment : 0};
-      
+
       var checkValidBudget = function() {
         var installLimit = stringToNumber($('#offer_event_daily_budget').val(), true);
         if (installLimit < 1 ) {
@@ -82,7 +82,7 @@
         }
         return true;
       }
-      
+
       var setEstimatedBudget = function() {
         if ($('#offer_event_daily_budget').is(':visible')) {
           checkValidBudget();
@@ -91,11 +91,11 @@
           $('#estimated_budget .value').text(budget);
         }
       };
-    
-      $('#search_box').autocomplete({ 
-        source: '#{search_offers_path}', 
-        delay: 250, 
-        minLength: 2, 
+
+      $('#search_box').autocomplete({
+        source: '#{search_offers_path}',
+        delay: 250,
+        minLength: 2,
         select: function(event, ui) {
           var currentUserEnabled = ui.item.user_enabled ? 'Enabled' : 'Disabled';
           var currentDailyBudget = ui.item.daily_budget == 0 ? 'Unlimited' : ui.item.daily_budget;
@@ -104,14 +104,14 @@
           $('#offer_event_offer_id').val(ui.item.id);
           setEstimatedBudget();
           $('#current').html('Current Enable Installs: <span>' + currentUserEnabled + '</span><br/>Current Bid: <span>' + currentBid + '</span><br/>Current Payment: <span>' + numberToCurrency(currentPayment * 0.01) + '</span><br/>Current Daily Budget: <span>' + currentDailyBudget + '</span>');
-        } 
+        }
       });
-      
+
       $('#offer_event_scheduled_for').datetimepicker({
       	ampm: true,
       	timeFormat: 'h:mm TT'
       });
-      
+
       $('#daily_budget_selector').change(function() {
         if ($(this).val() == 'Limited') {
           if ($('#offer_event_daily_budget').val() == '0') {
@@ -123,14 +123,14 @@
           $('.daily_budget').hide();
         }
       });
-      
+
       $('#offer_event_daily_budget').change(function() {
         setEstimatedBudget();
       });
-      
+
       setEstimatedBudget();
     });
-    
+
 - content_for :page_styles do
   :plain
     #current, #estimated_budget {

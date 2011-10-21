@@ -1,6 +1,6 @@
 class Reward < SimpledbShardedResource
   self.num_domains = NUM_REWARD_DOMAINS
-  
+
   self.sdb_attr :publisher_app_id
   self.sdb_attr :advertiser_app_id
   self.sdb_attr :displayer_app_id
@@ -25,25 +25,25 @@ class Reward < SimpledbShardedResource
   self.sdb_attr :sent_money_txn,    :type => :time
   self.sdb_attr :send_currency_status
   self.sdb_attr :customer_support_username
-  
+
   def initialize(options = {})
     super({:load_from_memcache => false}.merge(options))
     put('created', Time.zone.now.to_f.to_s) unless get('created')
   end
-  
+
   def dynamic_domain_name
     domain_number = @key.matz_silly_hash % NUM_REWARD_DOMAINS
-    
+
     return "rewards_#{domain_number}"
   end
-  
+
   def serial_save(options = {})
     super({ :write_to_memcache => false }.merge(options))
   end
-  
+
   def build_conversions
     conversions = []
-    
+
     conversions << Conversion.new do |c|
       c.id                  = key
       c.reward_id           = key
@@ -56,7 +56,7 @@ class Reward < SimpledbShardedResource
       c.created_at          = created
       c.country             = country
     end
-    
+
     if displayer_app_id.present? && source == 'display_ad' # TO REMOVE: the source check when we fix our data corruption issues
       conversions << Conversion.new do |c|
         c.id                               = reward_key_2
@@ -71,14 +71,14 @@ class Reward < SimpledbShardedResource
         c.country                          = country
       end
     end
-    
+
     conversions
   end
-  
+
   def update_realtime_stats
     build_conversions.each do |c|
       c.update_realtime_stats
     end
   end
-  
+
 end

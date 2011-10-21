@@ -17,10 +17,10 @@ class TapulousMarketingController < ApplicationController
       appstats = Appstats.new(offer.id, {
         :start_time => start_time,
         :end_time => start_time + 24.hours})
-        
+
       @appstats_list << [ offer, appstats ]
     end
-    
+
     render 'shared/publisher_data'
   end
 end

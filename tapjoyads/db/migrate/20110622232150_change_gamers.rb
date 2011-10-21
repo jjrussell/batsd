@@ -1,7 +1,7 @@
 class ChangeGamers < ActiveRecord::Migration
   def self.up
     drop_table :gamers
-    
+
     create_table :gamers, :id => false do |t|
       t.guid :id, :null => false
       t.string :email, :null => false
@@ -15,7 +15,7 @@ class ChangeGamers < ActiveRecord::Migration
       t.datetime :confirmed_at
       t.timestamps
     end
-    
+
     add_index :gamers, :id, :unique => true
     add_index :gamers, :email, :unique => true
     add_index :gamers, :persistence_token
@@ -24,7 +24,7 @@ class ChangeGamers < ActiveRecord::Migration
 
   def self.down
     drop_table :gamers
-    
+
     create_table :gamers, :id => false do |t|
       t.guid :id, :null => false
       t.string :username, :null => false
@@ -38,7 +38,7 @@ class ChangeGamers < ActiveRecord::Migration
       t.datetime :last_login_at
       t.timestamps
     end
-    
+
     add_index :gamers, :id, :unique => true
     add_index :gamers, :username, :unique => true
     add_index :gamers, :persistence_token

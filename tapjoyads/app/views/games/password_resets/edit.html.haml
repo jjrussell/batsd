@@ -1,16 +1,18 @@
 #jqt
-  #update_password.tan.account.current 
+  #update_password.tan.account.current
     .container
       .page.no_top_nav_bar
         .logo
+          %a{ :href => games_root_path, :class => "slideright" }
+            .logo_top
         .content.narrow.pad
           .header_wrapper
             .title_2
-              Update Password 
+              Update Password
             .content_box_top_arrow_wrapper
               .content_box_top_arrow
             .content_box_wrapper
-              .content_box.clearfix 
+              .content_box.clearfix
                 %div
                   - form_for(:gamer, @gamer, :url => { :action => :update }, :html => { :method => :put }) do |f|
                     .field
@@ -25,7 +27,7 @@
                       = error_message_on @gamer, :password
                   .formError.hide
                     .account_error
-                     
+
 - content_for :page_javascript do
   :plain
     $(window).load(function() {

@@ -12,7 +12,7 @@
           .app_rating.hide{ :rating => @featured_review.app.user_rating }
       %div
       - link_to(@featured_review.app.info_url) do
-        .button.grey  
+        .button.grey
           Download now!
 
   .review.clearfix
@@ -26,4 +26,4 @@
 
     .review_text
       -# TODO: Escape this text once we start supporting user reviews.
-      = "&#8220;#{@featured_review.text.gsub("\n", "<br>")}&#8221"   
+      = "&#8220;#{@featured_review.text.gsub("\n", "<br>")}&#8221"

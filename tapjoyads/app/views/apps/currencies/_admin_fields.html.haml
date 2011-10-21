@@ -35,19 +35,19 @@
   %td
     = f.select :max_age_rating, options_for_select(%w(17+ 12+ 9+ 4+).zip(%w(4 3 2 1)), :selected => @currency.max_age_rating.to_s)
 %tr.admin
-  %th 
+  %th
     = f.label :only_free_offers, 'Only free offers'
     #help_only_free_offers.help ?
   %td
     = f.check_box :only_free_offers
 %tr.admin
-  %th 
+  %th
     = f.label :ordinal, 'Ordinal'
     #help_ordinal.help ?
   %td
     = f.text_field :ordinal
 %tr.admin
-  %th 
+  %th
     = f.label :rev_share_override, 'Rev share override'
     #help_rev_share_override.help ?
   %td
@@ -74,7 +74,7 @@
       = link_to('Edit partner', edit_partner_path(@app.partner_id))
   %td
     = @currency.get_disabled_partners.map { |p| link_to(p.name, partner_path(p)) }.join(', ')
-    
+
 .hidden
   #help_tapjoy_enabled_content{:name => 'Tapjoy Enabled'}
     Tapjoy approval status. If this is unchecked, the offerwall will be blank and no featured/display ads will be shown.
@@ -114,7 +114,7 @@
         $('.hide_rewarded_app_installs').toggle($(this).attr('checked'));
       });
     });
-  
+
 - content_for :page_styles do
   :plain
     .admin td {

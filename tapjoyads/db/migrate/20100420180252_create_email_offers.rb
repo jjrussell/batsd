@@ -8,7 +8,7 @@ class CreateEmailOffers < ActiveRecord::Migration
       t.string :third_party_id
       t.timestamps
     end
-    
+
     add_index :email_offers, :id, :unique => true
     add_index :email_offers, :partner_id
     add_index :email_offers, :name

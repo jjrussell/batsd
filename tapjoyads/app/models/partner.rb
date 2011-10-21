@@ -1,6 +1,6 @@
 class Partner < ActiveRecord::Base
   include UuidPrimaryKey
-  
+
   has_many :orders
   has_many :payouts
   has_many :currencies
@@ -21,7 +21,7 @@ class Partner < ActiveRecord::Base
   has_many :app_offers, :class_name => 'Offer', :conditions => "item_type = 'App'"
   has_one :payout_info
   has_many :earnings_adjustments
-  
+
   belongs_to :reseller
 
   validates_presence_of :reseller, :if => Proc.new { |partner| partner.reseller_id? }
@@ -53,19 +53,19 @@ class Partner < ActiveRecord::Base
     if record.exclusivity_level_type? && record.exclusivity_expires_on.blank?
       record.errors.add(attribute, "cannot be blank if the Partner has exclusivity_level_type set")
     elsif record.exclusivity_level_type.blank? && record.exclusivity_expires_on?
-      record.errors.add(attribute, "must be blank if the Partner does not have exclusivity_level_type set") 
+      record.errors.add(attribute, "must be blank if the Partner does not have exclusivity_level_type set")
     end
   end
-  
+
   before_validation :remove_whitespace_from_attributes, :update_rev_share
   before_save :check_billing_email
   after_save :update_currencies, :update_offers
-  
+
   cattr_reader :per_page
   attr_protected :exclusivity_level_type, :exclusivity_expires_on, :premier_discount
-  
+
   @@per_page = 20
-  
+
   named_scope :to_calculate_next_payout_amount, :conditions => 'pending_earnings >= 10000'
   named_scope :to_payout, :conditions => 'pending_earnings != 0', :order => 'name ASC, contact_name ASC'
   named_scope :to_payout_by_earnings, :conditions => 'pending_earnings != 0', :order => 'pending_earnings DESC'
@@ -80,7 +80,7 @@ class Partner < ActiveRecord::Base
   def applied_offer_discounts
     offer_discounts.select { |discount| discount.active? && discount.amount == premier_discount }
   end
-  
+
   def discount_expires_on
     active_offer_discount = applied_offer_discounts.max { |a,b| a.expires_on <=> b.expires_on }
     active_offer_discount ? active_offer_discount.expires_on : nil
@@ -97,7 +97,7 @@ class Partner < ActiveRecord::Base
       Partner.slave_connection.execute("COMMIT")
     end
   end
-  
+
   def self.verify_balances(partner_id, alert_on_mismatch = false)
     Partner.using_slave_db do
       Partner.slave_connection.execute("BEGIN")
@@ -156,27 +156,27 @@ class Partner < ActiveRecord::Base
   def get_disabled_partner_ids
     Set.new(disabled_partners.split(';'))
   end
-  
+
   def get_disabled_partners
     Partner.find_all_by_id(disabled_partners.split(';'))
   end
-  
+
   def get_offer_whitelist
     Set.new(offer_whitelist.split(';'))
   end
-  
+
   def add_to_whitelist(offer_id)
     unless offer_id.blank?
       self.offer_whitelist = offer_whitelist.split(';').push(offer_id).uniq.join(';')
     end
   end
-  
+
   def remove_from_whitelist(offer_id)
     unless offer_whitelist.blank? && offer_id.blank?
       self.offer_whitelist = offer_whitelist.split(';').reject { |offer| offer == offer_id}.join(';')
     end
   end
-  
+
   def payout_cutoff_date(reference_date = nil)
     reference_date ||= Time.zone.now
     reference_date -= 3.days
@@ -187,7 +187,7 @@ class Partner < ActiveRecord::Base
       reference_date.beginning_of_month
     end
   end
-  
+
   def reset_balances
     Partner.transaction do
       reload(:lock => 'FOR UPDATE')
@@ -210,21 +210,21 @@ class Partner < ActiveRecord::Base
   # and Partner.verify_balances for examples.
   def recalculate_balance_and_pending_earnings
     accounting_cutoff = Conversion.accounting_cutoff_time
-    
+
     publisher_conversions_sum = monthly_accountings.prior_to(accounting_cutoff).sum(:earnings)
     publisher_conversions_sum += Conversion.created_since(accounting_cutoff).sum(:publisher_amount, :conditions => [ "publisher_app_id IN (?)", app_ids ])
-    
+
     advertiser_conversions_sum = monthly_accountings.prior_to(accounting_cutoff).sum(:spend)
     advertiser_conversions_sum += Conversion.created_since(accounting_cutoff).sum(:advertiser_amount, :conditions => [ "advertiser_offer_id IN (?)", offer_ids ])
-    
+
     orders_sum = orders.sum(:amount)
     payouts_sum = payouts.sum(:amount, :conditions => 'status = 1')
     earnings_adjustments_sum = earnings_adjustments.sum(:amount)
-    
+
     self.balance = orders_sum + advertiser_conversions_sum
     self.pending_earnings = publisher_conversions_sum - payouts_sum + earnings_adjustments_sum
   end
-  
+
   def name_or_contact_name
     name.present? ? name : contact_name
   end
@@ -232,11 +232,11 @@ class Partner < ActiveRecord::Base
   def has_publisher_offer?
     offers.any?{|offer| offer.is_publisher_offer?}
   end
-  
+
   def exclusivity_level
     exclusivity_level_type? ? exclusivity_level_type.constantize.new : nil
   end
-  
+
   def set_exclusivity_level!(new_exclusivity_level_name)
     new_exclusivity_level_name = new_exclusivity_level_name.to_s
     if ExclusivityLevel::TYPES.include?(new_exclusivity_level_name)
@@ -253,26 +253,26 @@ class Partner < ActiveRecord::Base
       raise InvalidExclusivityLevelError.new("#{new_exclusivity_level_name} is not a valid exclusivity level.")
     end
   end
-  
+
   def expire_exclusivity_level
     self.exclusivity_level_type = nil
     self.exclusivity_expires_on = nil
   end
-  
+
   def expire_exclusivity_level!
     expire_exclusivity_level
     save!
   end
-  
+
   def recalculate_premier_discount
     self.premier_discount = offer_discounts.active.collect(&:amount).max || 0
   end
-  
+
   def recalculate_premier_discount!
     recalculate_premier_discount
     save!
   end
-  
+
   def needs_exclusivity_expired?
     exclusivity_expires_on && exclusivity_expires_on <= Date.today
   end
@@ -291,7 +291,7 @@ private
       end
     end
   end
-  
+
   def update_offers
     return true if !(premier_discount_changed? || reseller_id_changed?)
     if premier_discount_changed?
@@ -302,24 +302,24 @@ private
     end
     offers.each(&:save!)
   end
-  
+
   def update_rev_share
     self.rev_share = reseller.rev_share if reseller_id_changed? && reseller_id?
   end
-  
+
   def exclusivity_level_legal
     old_exclusivity_level = exclusivity_level_type_was.present? ? exclusivity_level_type_was.constantize.new : nil
-    
+
     if old_exclusivity_level && exclusivity_level && old_exclusivity_level.months > exclusivity_level.months
       errors.add :exclusivity_level_type, "is illegal for a Partner with a current exclusivity level of #{exclusivity_level_type}"
     end
   end
-  
+
   def remove_whitespace_from_attributes
     self.disabled_partners = disabled_partners.gsub(/\s/, '')
     self.offer_whitelist   = offer_whitelist.gsub(/\s/, '')
   end
-  
+
   def check_billing_email
     self.freshbooks_client_id = nil if billing_email_changed?
   end

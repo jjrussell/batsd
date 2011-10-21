@@ -11,11 +11,11 @@ class CreateGenericOffers < ActiveRecord::Migration
       t.boolean :hidden, :null => false, :default => false
       t.timestamps
     end
-    
+
     add_index :generic_offers, :id, :unique => true
     add_index :generic_offers, :partner_id
     add_index :generic_offers, :third_party_data
-    
+
     add_column :offers, :payment_range_low, :integer
     add_column :offers, :payment_range_high, :integer
   end
@@ -23,7 +23,7 @@ class CreateGenericOffers < ActiveRecord::Migration
   def self.down
     remove_column :offers, :payment_range_high
     remove_column :offers, :payment_range_low
-    
+
     drop_table :generic_offers
   end
 end

@@ -330,8 +330,8 @@ class Offer < ActiveRecord::Base
         bucket.key("icons/src/#{Offer.hashed_icon_id(icon_id)}.jpg").exists? ? get_icon_url({:source => :cloudfront}.merge(options)) : "#{CLOUDFRONT_URL}/videos/assets/default.png"
       rescue RightAws::AwsError
         "#{CLOUDFRONT_URL}/videos/assets/default.png"
-      end 
-    end 
+      end
+    end
   end
   memoize :get_video_icon_url
 

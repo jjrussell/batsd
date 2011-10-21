@@ -1,7 +1,7 @@
 module Simpledb
   class DynamicFinderMatch
     attr_reader :finder
-  
+
     def self.match(method)
       df_match = self.new(method)
       df_match.finder ? df_match : nil
@@ -18,7 +18,7 @@ module Simpledb
       end
       @attribute_names = names && names.split('_and_')
     end
-  
+
     def attribute_names
       @attribute_names.collect(&:to_s)
     end

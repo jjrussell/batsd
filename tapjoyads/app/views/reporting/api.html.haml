@@ -2,7 +2,7 @@
 
 %h2 Reporting API
 
-Your API Key: 
+Your API Key:
 
 %span.code
   #{current_user.api_key}
@@ -142,9 +142,9 @@ Your API Key:
           "DisplayConversions"             : 0,
           "DisplayConversionsHourly"       : [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
         },
-        
+
         ...
-        
+
       ]
     }
 
@@ -183,7 +183,7 @@ Your API Key:
       %td The app's name.
     %tr
       %td AppKey
-      %td The app's Tapjoy key. 
+      %td The app's Tapjoy key.
     %tr
       %td Platform
       %td The app's platform, either 'iOS' or 'Android'.
@@ -207,7 +207,7 @@ Your API Key:
       %td The hourly breakdown of Spend.
     %tr
       %td Sessions
-      %td The total number of sessions for the specified date. 
+      %td The total number of sessions for the specified date.
     %tr
       %td SessionsHourly
       %td The hourly breakdown of Sessions.
@@ -230,7 +230,7 @@ Your API Key:
       %td OfferwallImpressions
       %td The total number of offerwall views served for the specified date.
     %tr
-      %td OfferwallImpressionsHourly 
+      %td OfferwallImpressionsHourly
       %td The hourly breakdown for OfferwallImpressions.
     %tr
       %td OfferwallClicks
@@ -313,18 +313,18 @@ Your API Key:
 %h4 Time zone
 
 %p
-  Unless 
+  Unless
   %span.code timezone
-  is specified in your request URL, the data returned will be in the time zone specified for your account. 
-  (Your account timezone can be configured on the 
+  is specified in your request URL, the data returned will be in the time zone specified for your account.
+  (Your account timezone can be configured on the
   =link_to("change account details page", edit_user_path(current_user)) + '.)  The'
   %span.code timezone
   parameter expects an integer specifying the UTC offset of the desired time zone in hours
-  %i (i.e. 
+  %i (i.e.
   %span.code 'timezone=-8'
   %i for Pacific Time)
   or seconds
-  %i (i.e. 
+  %i (i.e.
   %span.code 'timezone=-28800'
   %i for Pacific Time).
 
@@ -332,7 +332,7 @@ Your API Key:
 
 %p
   This feed will return data on a maximum of 100 offers at once. In order to see data about additional offers, provide the
-  %span.code page 
+  %span.code page
   parameter to the request.
 
 - content_for :page_javascript do
@@ -349,21 +349,21 @@ Your API Key:
       background-color: #eee;
       overflow: auto;
     }
-    
+
     form {
       display: inline-block;
       margin-left: 10px;
     }
-    
+
     .tablesorter td {
       font-size: 120%;
     }
-    
+
     .tablesorter tr td:first-child,
     .code {
       font-family: courier;
     }
-    
+
     .tablesorter tr:nth-child(2n) td {
       background-color: #f0f0f6;
     }

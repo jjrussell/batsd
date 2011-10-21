@@ -2,7 +2,7 @@ xml.instruct!
 xml.TapjoyConnectReturnObject do
   xml.PurchasedVGStoreItemsArray do
     unless @virtual_good_list.empty?
-      xml << render(:partial => "virtual_good", :collection => @virtual_good_list, 
+      xml << render(:partial => "virtual_good", :collection => @virtual_good_list,
           :locals => {:point_purchases => @point_purchases})
     end
   end

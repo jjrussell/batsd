@@ -1,19 +1,21 @@
 #jqt
-  #faq.tan.current 
+  #faq.tan.current
     #static.container
       .page.no_top_nav_bar
         .logo
+          %a{ :href => games_root_path, :class => "slideright" }
+            .logo_top
         .content.narrow.pad
           .content_box
 
-          
-          
+
+
 #loader.dialog_wrapper.hide
   #progress.dialog
     .dialog_title
       Loading
-    .dialog_image 
-    
-    
+    .dialog_image
+
+
 - content_for :page_javascript do
-  :plain                        
+  :plain

@@ -52,7 +52,7 @@ class Tools::EmployeesController < WebsiteController
     flash[:notice] = 'Employee photo was successfully removed.'
     redirect_to(edit_tools_employee_url(@employee))
   end
-  
+
 private
 
   def clear_photo(employee)
