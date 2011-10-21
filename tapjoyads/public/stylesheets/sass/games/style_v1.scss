@@ -74,6 +74,7 @@ a, a:visited {
 }
 .dialog {
   background-color: #222;
+  color: #FFF;
   padding-top: 15px;
   z-index: 999;
   -moz-border-radius: 10px;
@@ -598,15 +599,13 @@ form#new_gamer input {
 }
 .content_box {
   background-color: #FFF;
-  border: 1px solid #CEC7B1;
-  color: #7E7E7E;
+  border: 1px solid #505F6D;
+  color: #505F6D;
   height: 100%;
-  padding: 2px 0;
+  padding: 4px;
   width: 100%;
   -moz-border-radius: 4px;
   -webkit-border-radius: 4px;
-  -moz-box-shadow: 0px 1px 1px #AEA693;
-  -webkit-box-shadow: 0px 1px 1px #AEA693;
 }
 .content_box_top_arrow_wrapper {
   height: 9px;
@@ -618,7 +617,7 @@ form#new_gamer input {
 }
 .content_box_top_arrow {
   background-color: #FFF;
-  border: 1px solid #CEC7B1;
+  border: 1px solid #505F6D;
   height: 12px;
   display: block;
   position: relative;
@@ -655,7 +654,7 @@ form#new_gamer label[for=gamer_terms_of_service] {
   width: 160px;
 }
 form#new_gamer_session {
-  color: #7E7E7E;
+  color: #505F6D;
   font-size: 12px;
 }
 .web form#new_gamer_session,
@@ -811,6 +810,9 @@ form#new_gamer_session .login_pass {
 .mobile .gamer_name {
   font-size: 18px;
 }
+.gamer_email {
+  color: #FFF;
+}
 .web .gamer_email,
 .ipad .gamer_email {
   font-size: 18px;
@@ -820,6 +822,9 @@ form#new_gamer_session .login_pass {
 }
 .gamer_name, .gamer_email {
   font-weight: bold;
+}
+.gamer_signup_date {
+  color: #FFF;
 }
 .web .gamer_signup_date,
 .ipad .gamer_signup_date {
@@ -977,7 +982,7 @@ form#new_gamer_session .login_pass {
 #edit_profile select {
   border: none;
   bottom: 0px;
-  color: #7E7E7E;
+  color: #505F6D;
   font-size: 16px;
   margin: 0;
   outline: none;
@@ -1023,7 +1028,7 @@ form#new_gamer_session .login_pass {
   font-size: 12px;
 }
 #edit_preferences label {
-  color: #7E7E7E;
+  color: #505F6D;
 }
 #edit_preferences input[type=checkbox] {
   margin: 0 0 0 12px;
@@ -1555,7 +1560,6 @@ form#new_gamer_session .login_pass {
   border-left: 1px solid #EEE;
   color: #006C94;
   padding-left: 8px;
-  text-shadow: 0 1px 1px #F2F2F2;
 }
 .offer_button.my_apps .cost.free {
   color: #23840C;
@@ -1591,7 +1595,6 @@ form#new_gamer_session .login_pass {
   color: #444;
   padding: 12px 0px 40px;
   text-align: center;
-  text-shadow: 1px 1px 0px #F2F2F2;
 }
 .get_more_apps:hover, .get_more_apps:active, .grey_button:hover, .grey_button:active {
   color: #444;
@@ -1613,6 +1616,7 @@ form#new_gamer_session .login_pass {
 }
 .tab_button.dark_grey {
   border: 1px solid #141414;
+  color: #FFF;
   cursor: pointer;
   height: 40px;
   margin: 8px auto;
@@ -1656,11 +1660,9 @@ form#new_gamer_session .login_pass {
 }
 .tab_button.grey {
   font-weight: bold;
-  text-shadow: 1px 1px 0px #F2F2F2;
 }
 .tab_button.dark_grey {
   font-weight: bold;
-  text-shadow: 1px 1px 0px #121212;
 }
 .tab_button_bottom_arrrow_wrapper {
   height: 10px;
@@ -1693,7 +1695,8 @@ form#new_gamer_session .login_pass {
   margin: 4px 6px 0 0;
 }
 .button {
-  @include inset-button(16px, 8px 4px);
+  @include inset-button(16px, 8px 12px);
+  font-weight: bold;
 }
 input.button {
   border: none;
@@ -1702,7 +1705,6 @@ input.button {
   background: -moz-linear-gradient(top, #E7E7E7 0%, #C4C4C4 100%);
   background: -webkit-gradient(linear, 0 0, 0 100%, color-stop(0, #E7E7E7), color-stop(1, #C4C4C4));
   color: #3F3F3F;
-  text-shadow: 0 0px 1px #FFF;
   -moz-box-shadow: inset 1px 1px 1px #FFF;
   -webkit-box-shadow: inset 1px 1px #FFF;
   -moz-box-shadow: 1px 1px 1px #303030;
@@ -1712,7 +1714,6 @@ input.button {
 .button.blue, .button.grey:hover, .button.grey:active {
   background: -moz-linear-gradient(top, #1D81E9 0%, #0C62BA 100%);
   background: -webkit-gradient(linear, 0 0, 0 100%, color-stop(0, #1D81E9), color-stop(1, #0C62BA));
-  text-shadow: 0 0px 1px #0C62BA;
 }
 .button.grey .earn {
   color: #6C6C6C;
@@ -1837,11 +1838,12 @@ input.button {
   width: 266px;
 }
 .title {
-  font-family: $main-font-name;
+  font-family: 'AmericanTypewriter';
 }
 .title_2 {
   font-family: 'AmericanTypewriter';
   font-weight: bold;
+  margin-bottom: 6px;
 }
 h1 {
   font-size: 22px;
