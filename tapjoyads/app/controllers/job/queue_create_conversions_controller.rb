@@ -1,19 +1,19 @@
 class Job::QueueCreateConversionsController < Job::SqsReaderController
-  
+
   def initialize
     super QueueNames::CREATE_CONVERSIONS
   end
-  
+
 private
-  
+
   def on_message(message)
     reward = Reward.deserialize(message.to_s)
-    
+
     reward.build_conversions.each do |c|
       save_conversion(c)
     end
   end
-  
+
   def save_conversion(conversion)
     begin
       conversion.save!
@@ -25,5 +25,5 @@ private
       end
     end
   end
-  
+
 end

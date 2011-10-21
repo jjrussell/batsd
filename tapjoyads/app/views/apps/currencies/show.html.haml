@@ -193,12 +193,12 @@
       $('#managed_by_tapjoy').change(toggleManagedByTapjoy);
       $('#currency_name').keyup(copyCurrencyName);
       $('#generate_link').click(generateSecretKey);
-      
+
       toggleManagedByTapjoy();
       copyCurrencyName();
-      
+
     });
-    
+
     function copyCurrencyName() {
       $('#currency_name_text').text($('#currency_name').val());
     }
@@ -225,12 +225,12 @@
       for (var i = 0; i < 26; i++) {
         values.push(String.fromCharCode(97 + i));
       }
-      
+
       key = [];
       for (var i = 0; i < 20; i++) {
         key.push(values[Math.floor(Math.random() * values.length)])
       }
-      
+
       $('#currency_secret_key').val(key.join(''));
     }
 
@@ -239,43 +239,43 @@
     textarea {
       height: 34px;
     }
-    
+
     textarea,
     input[type=text] {
       width: 400px;
     }
-    
+
     .managed,
     .unmanaged {
       display: hidden;
     }
-    
+
     .box_with_right_label {
       position: relative;
     }
-    
+
     .right_label {
       position: absolute;
       left: 100%;
       top: 4px;
       margin-left: 3px;
     }
-    
+
     #generate_link {
       white-space: nowrap;
     }
-    
+
     .tapjoy-enabled {
       color: #328F0D;
     }
     .tapjoy-disabled {
       color: #AF1515;
     }
-    
+
     .currency_form {
       width: 680px;
     }
-    
+
     .details {
       font-size: 12px;
     }

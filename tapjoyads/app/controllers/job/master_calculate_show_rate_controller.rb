@@ -4,13 +4,13 @@ class Job::MasterCalculateShowRateController < Job::JobController
   def index
     offers = Offer.enabled_offers
     count = offers.length
-    
+
     offers.each do |offer|
       next if offer.payment == 0
-      
+
       Sqs.send_message(QueueNames::CALCULATE_SHOW_RATE, offer.id)
     end
-    
+
     render :text => 'ok'
   end
 end

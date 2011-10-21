@@ -3,14 +3,14 @@
 %h3 Actions
 
 %p
-  Integrate your actions into your app using the ActionIDs listed below. You can edit any action by selecting the action, or create new actions by clicking on the Create New Action button. 
+  Integrate your actions into your app using the ActionIDs listed below. You can edit any action by selecting the action, or create new actions by clicking on the Create New Action button.
 %p
   Once you've integrated the code, contact
   = mail_to "support@tapjoy.com"
   to test the integration and enable your action for Pay-Per-Action. Each action needs to be individually tested and enabled by Tapjoy.
 %p
   To help you integrate these actions, you can include the following file in your project and use the constants defined within instead of the ActionIDs.
-  
+
 .code
   .code-header
     = @app.default_actions_file_name
@@ -55,7 +55,7 @@
         var form = checkBox.closest('form');
         var spinner = form.next();
         var postUrl = form.attr('action');
-      
+
         $.ajax({
           type: "POST",
           url:  postUrl,
@@ -83,11 +83,11 @@
 
         return false;
       });
-    
+
       $('.show_file_contents').click(function(){
         var link = $(this);
         var code = $('.code-content');
-      
+
         if (code.is(':visible')){
           code.hide();
           link.text('Show file contents');
@@ -96,11 +96,11 @@
           code.show();
           link.text('Hide file contents');
         }
-      
+
         return false;
       });
     });
-  
+
 - content_for :page_styles do
   :plain
     table.actions tbody td {
@@ -108,15 +108,15 @@
       padding-top: 6px;
       padding-bottom: 6px;
     }
-  
+
     table.actions tbody {
       font-size: 13px;
     }
-  
+
     table.actions tbody tr.even {
       background-color: #f0f0f6;
     }
-  
+
     .code-content {
       padding: 0 16px;
       border: 1px solid #ccc;

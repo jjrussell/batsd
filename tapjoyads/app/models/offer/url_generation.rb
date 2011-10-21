@@ -1,5 +1,5 @@
 module Offer::UrlGeneration
-  
+
   def destination_url(options)
     if instructions.present?
       instructions_url(options)
@@ -163,10 +163,10 @@ module Offer::UrlGeneration
     ad_url += "&exp=#{exp}" if exp.present?
     ad_url
   end
-  
+
   def get_ad_image_url(publisher_app_id, width, height, currency_id = nil, display_multiplier = nil, bust_cache = false)
     size_str = "#{width}x#{height}"
-    
+
     if display_custom_banner_for_size?(size_str)
       url = "#{CLOUDFRONT_URL}/#{banner_creative_path(size_str)}"
       delim = '?'
@@ -179,5 +179,5 @@ module Offer::UrlGeneration
     url << "#{delim}ts=#{Time.now.to_i}" if bust_cache
     url
   end
-  
+
 end

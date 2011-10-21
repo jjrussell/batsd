@@ -39,7 +39,7 @@ module RightAws
         request = Net::HTTP::Get.new("#{service}?#{service_params}")
       end
       # prepare output hash
-      { :request  => request, 
+      { :request  => request,
         :server   => @params[:server],
         :port     => @params[:port],
         :protocol => @params[:protocol] }
@@ -114,9 +114,9 @@ module RightAws
     #  }
     #  replace = :replace | any other value to skip replacement
     #
-    # Returns a hash: { :box_usage, :request_id } on success or an exception on error. 
+    # Returns a hash: { :box_usage, :request_id } on success or an exception on error.
     #
-    # see: http://docs.amazonwebservices.com/AmazonSimpleDB/2007-11-07/DeveloperGuide/SDB_API_BatchPutAttributes.html 
+    # see: http://docs.amazonwebservices.com/AmazonSimpleDB/2007-11-07/DeveloperGuide/SDB_API_BatchPutAttributes.html
     def batch_put_attributes(domain_name, items, replace = false)
       params = { 'DomainName' => domain_name }
       item_count = 0
@@ -190,9 +190,9 @@ module RightAws
         when 'ItemCount'                then @result[:item_count]                  =  @text.to_i
         when 'ItemNamesSizeBytes'       then @result[:item_name_size_bytes]        =  @text.to_i
         when 'AttributeNameCount'       then @result[:attribute_name_count]        =  @text.to_i
-        when 'AttributeNamesSizeBytes'  then @result[:attribute_names_size_bytes]  =  @text.to_i  
+        when 'AttributeNamesSizeBytes'  then @result[:attribute_names_size_bytes]  =  @text.to_i
         when 'AttributeValueCount'      then @result[:attribute_value_count]       =  @text.to_i
-        when 'AttributeValuesSizeBytes' then @result[:attribute_values_size_bytes] =  @text.to_i 
+        when 'AttributeValuesSizeBytes' then @result[:attribute_values_size_bytes] =  @text.to_i
         when 'Timestamp'                then @result[:timestamp]                   =  Time.zone.at(@text.to_i)
         end
       end
@@ -254,10 +254,10 @@ module RightAws
 
       service_params = signed_service_params(@aws_secret_access_key, service_hash, :post, @params[:server], service)
       request        = Net::HTTP::Post.new(AwsUtils::URLencode(service))
-      request['Content-Type'] = 'application/x-www-form-urlencoded; charset=utf-8' 
+      request['Content-Type'] = 'application/x-www-form-urlencoded; charset=utf-8'
       request.body = service_params
         # prepare output hash
-      { :request  => request, 
+      { :request  => request,
         :server   => @params[:server],
         :port     => @params[:port],
         :protocol => @params[:protocol] }

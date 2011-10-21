@@ -4,9 +4,9 @@
   .description= 'Signup for the email list'
 
   .instructions
-    Earn 
+    Earn
     %span.amount #{@currency.get_reward_amount(@offer)} #{@publisher_app.name} #{@currency.name}
-    when you signup for this email list. 
+    when you signup for this email list.
     Once you've confirmed your email address, you'll receive your #{@currency.name}.
 
   - form_tag(:controller => 'list_signup', :action => 'signup') do

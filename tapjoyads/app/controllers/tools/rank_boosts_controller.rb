@@ -2,7 +2,7 @@ class Tools::RankBoostsController < WebsiteController
   layout 'tabbed'
   current_tab :tools
   filter_access_to :all
-  
+
   before_filter :setup
   after_filter :save_activity_logs, :only => [ :create, :update, :deactivate ]
 
@@ -17,12 +17,12 @@ class Tools::RankBoostsController < WebsiteController
       @rank_boosts = RankBoost.all
     end
   end
-  
+
   def new
     @rank_boost = RankBoost.new
     @rank_boost.offer = @offer if @offer.present?
   end
-  
+
   def create
     @rank_boost = RankBoost.new(params[:rank_boost])
     log_activity(@rank_boost)
@@ -33,10 +33,10 @@ class Tools::RankBoostsController < WebsiteController
       render :new
     end
   end
-  
+
   def edit
   end
-  
+
   def update
     log_activity(@rank_boost)
     if @rank_boost.update_attributes(params[:rank_boost])
@@ -46,7 +46,7 @@ class Tools::RankBoostsController < WebsiteController
       render :edit
     end
   end
-  
+
   def deactivate
     log_activity(@rank_boost)
     if @rank_boost.deactivate!
@@ -56,9 +56,9 @@ class Tools::RankBoostsController < WebsiteController
     end
     redirect_to statz_path(@rank_boost.offer_id)
   end
-  
+
 private
-  
+
   def setup
     @rank_boost = RankBoost.find(params[:id]) if params[:id]
     if @rank_boost
@@ -71,5 +71,5 @@ private
       @offer = nil
     end
   end
-  
+
 end

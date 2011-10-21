@@ -18,7 +18,7 @@ class HeaderParser
 
   def self.os_version(user_agent)
     match = user_agent.match(/\((.*?)\)/)
-    os_version = match[1].match(/(Android|iPhone OS) (.*?)[;|\s]/)[2].gsub('_', '.')
+    os_version = match[1].match(/(Android|iPhone OS|CPU OS) (.*?)[;|\s]/)[2].gsub('_', '.')
     os_version
   rescue Exception => e
     Rails.logger.info "Unable to parse os_version from user_agent: '#{user_agent}'"
