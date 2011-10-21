@@ -12,7 +12,7 @@ class OneOffs
           puts "total: #{count}, num_correct: #{num_correct}, num_moved: #{num_moved}, num_already_moved: #{num_already_moved}"
         end
         count += 1
-        correct_domain_name = "game_states_#{gs.key.matz_silly_hash % NUM_GAME_STATE_DOMAINS}"
+        correct_domain_name = "#{RUN_MODE_PREFIX}game_states_#{gs.key.matz_silly_hash % NUM_GAME_STATE_DOMAINS}"
         if gs.this_domain_name == correct_domain_name
           num_correct += 1
           next
@@ -27,6 +27,7 @@ class OneOffs
         gs.delete_all(false)
       end
     end
+    puts "total: #{count}, num_correct: #{num_correct}, num_moved: #{num_moved}, num_already_moved: #{num_already_moved}"
   end
 
 end
