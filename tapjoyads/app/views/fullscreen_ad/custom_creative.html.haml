@@ -23,14 +23,7 @@
 
     function init() {
       // Determine target screen size and orientation
-      if(#{@height.present? && @width.present?}) {
-        client.width = parseInt('#{@width}');
-        client.height = parseInt('#{@height}');
-      } else {
-        client.width = window.innerWidth;
-        client.weight = window.innerHeight;
-      }
-      client.orientation = (client.height > client.width) ? 'portrait' : 'landscape';
+      inspectScreen();
 
       // If a creative hasn't already been selected, scan through all available creatives to determine best screen fit
       if(preferredCreative == null) {
@@ -51,11 +44,7 @@
           creative.name = availableCreatives[i];
           creative.width = parseInt(availableCreativeSizes[i][0]);
           creative.height = parseInt(availableCreativeSizes[i][1]);
-          creative.orientation = (creative.height > creative.width) ? 'portrait' : 'landscape';
-          creative.horizMargin = client.width - creative.width;
-          creative.vertMargin = client.height - creative.height;
-          creative.horizMarginPercent = creative.horizMargin / creative.width;
-          creative.vertMarginPercent = creative.vertMargin / creative.height;
+          calcCreativeMargins(creative);
 
           // Determine if this creative is a better option than our current 'favorite'
           if(i == 0) {
@@ -78,8 +67,8 @@
           } else if(preferredCreative.orientation != client.orientation) {
             // If we haven't found a creative whose orientation matches the client, find the best
             // fitting creative to show in the 'wrong' orientation
-            if((creativeOrientation == 'portrait' && Math.abs(vertMarginPercent) <= Math.abs(minVertMarginPercent)) ||
-               (creativeOrientation == 'landscape' && Math.abs(horizMarginPercent) <= Math.abs(minHorizMarginPercent))) {
+            if((creative.orientation == 'portrait' && Math.abs(vertMarginPercent) <= Math.abs(minVertMarginPercent)) ||
+               (creative.orientation == 'landscape' && Math.abs(horizMarginPercent) <= Math.abs(minHorizMarginPercent))) {
               preferredCreative = creative;
             }
           }
@@ -89,15 +78,36 @@
       // If we've found creative to use, then tweak the styling and download the image
       setupCreative(preferredCreative);
       setupButtons();
-      setTimeout("addWekbitDirectives()", (animOptions.startDelay/2));
+      setTimeout("addWebkitDirectives()", (animOptions.startDelay/2));
       setTimeout("moveButtons()", (animOptions.startDelay));
     }
 
     function addWebkitDirectives() {
+      var creativeImg = document.getElementById('creative');
+
       // Add webkit transition directives to our attributes of interest to enable animations for future modifications
       webkitStyle(buttonsDiv, 'transition-property', 'top,width');
       webkitStyle(buttonsDiv, 'transition-duration', animOptions.duration + ', ' + animOptions.duration);
       webkitStyle(buttonsDiv, 'transition-timing-function', animOptions.timingFunction + ', ' + animOptions.timingFunction);
+      webkitStyle(creativeImg, 'transition', 'all ' + animOptions.duration + ' ' + animOptions.timingFunction);
+    }
+
+    function calcCreativeMargins(creative) {
+      creative.horizMargin = client.width - creative.width;
+      creative.vertMargin = client.height - creative.height;
+      creative.horizMarginPercent = creative.horizMargin / creative.width;
+      creative.vertMarginPercent = creative.vertMargin / creative.height;
+    }
+
+    function inspectScreen() {
+      if(#{@height.present? && @width.present?}) {
+        client.width = parseInt('#{@width}');
+        client.height = parseInt('#{@height}');
+      } else {
+        client.width = window.innerWidth;
+        client.height = window.innerHeight;
+      }
+      client.orientation = (client.height > client.width) ? 'portrait' : 'landscape';
     }
 
     function moveButtons() {
@@ -107,9 +117,9 @@
     }
 
     function rearrange() {
-      alert("Rearranging...");
+      inspectScreen();
       setupCreative(preferredCreative);
-      moveButtons(buttonsDiv);
+      moveButtons();
     }
 
     function setupButtons() {
@@ -119,13 +129,13 @@
       // Scale the buttons to fit this screen size
       if(Math.max(client.width, client.height) <= 480) {
         var presetSize = 480;
-        buttonsHeight = 40;
+        buttonsHeight = 50;
       } else if (Math.max(client.width, client.height) <= 640) {
         var presetSize = 640;
-        buttonsHeight = 60;
+        buttonsHeight = 75;
       } else {
         var presetSize = 960;
-        buttonsHeight = 80;
+        buttonsHeight = 100;
       }
 
       buttonsDiv.style.height = buttonsHeight + 'px';
@@ -142,6 +152,10 @@
       var baseCreativeUrl = "#{CLOUDFRONT_URL}";
       var creativeImg = document.getElementById('creative');
       var main = document.getElementById('main');
+
+      calcCreativeMargins(preferredCreative);
+
+      //alert("Screen size: " + client.width + "x" + client.height + " (" + client.orientation + ")");
 
       // Calculate which dimension can be maximized without the image being cropped
       var adjustPercent = Math.min(creative.horizMarginPercent, creative.vertMarginPercent);
@@ -165,6 +179,8 @@
       creativeImg.style.height = newHeight + 'px';
       main.style.margin = vertMargin + 'px ' + horizMargin + 'px';
       main.style.height = newHeight + 'px';
+
+      alert("New Size: " + newWidth + "x" + newHeight + "(Margins: " + horizMargin + " horiz, " + vertMargin + " vert)");
 
       // Set the image url if this is the initial drawing
       creativeImg.src = baseCreativeUrl + "/" + creative.name;
