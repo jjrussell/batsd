@@ -10,6 +10,11 @@ class EditorsPick < ActiveRecord::Base
   named_scope :to_activate, lambda { { :conditions => [ 'scheduled_for <= ? AND activated_at IS NULL AND expired_at IS NULL', Time.zone.now ], :order => 'scheduled_for' } }
   named_scope :active, :conditions => [ 'activated_at IS NOT NULL AND expired_at IS NULL' ], :order => 'display_order desc'
   named_scope :expired, :conditions => 'expired_at', :order => 'expired_at desc'
+  named_scope :by_platform, lambda { |platform| {
+    :conditions => ["apps.platform = ? AND activated_at IS NOT NULL", platform],
+    :joins => "join apps ON editors_picks.offer_id = apps.id",
+    :order => "display_order DESC", :limit => 10
+  } }
 
   def activate!
     self.expired_at = nil
@@ -29,34 +34,9 @@ class EditorsPick < ActiveRecord::Base
   def self.cached_active(platform)
     platform = 'iphone' unless platform == 'android'
 
-    editors_picks = EditorsPick.quoted_table_name
-    apps = App.quoted_table_name
-    sql = [
-      "SELECT #{editors_picks}.offer_id, #{editors_picks}.description",
-        "FROM #{editors_picks}, #{apps}",
-        "WHERE #{editors_picks}.offer_id = #{apps}.id",
-          "AND platform = ?",
-          "AND activated_at IS NOT NULL",
-          "AND expired_at IS NULL",
-        "ORDER BY display_order DESC",
-        "LIMIT ?"
-    ].join(' ')
-
     Mc.distributed_get_and_put("cached_apps.active_editors_picks.#{platform}", false, 1.minute) do
-      picks = EditorsPick.find_by_sql [sql, platform, 10]
-      if picks.empty?
-        # go through expired ones
-        sql = [
-          "SELECT #{editors_picks}.offer_id, #{editors_picks}.description",
-            "FROM #{editors_picks}, #{apps}",
-            "WHERE #{editors_picks}.offer_id = #{apps}.id",
-              "AND platform = ?",
-              "AND activated_at IS NOT NULL",
-            "ORDER BY display_order DESC",
-            "LIMIT ?"
-        ].join(' ')
-        picks = EditorsPick.find_by_sql [sql, platform, 10]
-      end
+      picks = EditorsPick.active.by_platform(platform)
+      picks = EditorsPick.by_platform(platform) if picks.empty?
       picks.map { |p| CachedApp.new(p.offer, p.description) }
     end
   end
