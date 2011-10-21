@@ -202,7 +202,7 @@
             = error_message_on @offer, :url
           %span{:id => 'default_url', :class => (@offer.url_overridden? ? 'hidden' : '')}
             = h(@offer.item.store_url)
-          
+
       - if @offer.item.screen_layout_sizes.any?
         %tr
           %th

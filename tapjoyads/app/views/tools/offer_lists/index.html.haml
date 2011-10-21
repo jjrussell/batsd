@@ -16,10 +16,10 @@
     %tr
       %td= label_tag :currency_group_id, 'Currency Group'
       %td= select_tag :currency_group_id, options_for_select(CurrencyGroup.all.collect { |cg| [ cg.name, cg.id ] })
-      
+
     %tr
       %td{ :colspan => 2 }= submit_tag('Submit')
-      
+
 - if @offers
   %table#offers.tablesorter
     %thead
@@ -62,7 +62,7 @@
           return s;
         }
       });
-      
+
       $('#offers').tablesorter({
         widgets: ['zebra'],
         headers: {
