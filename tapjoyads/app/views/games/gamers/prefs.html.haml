@@ -4,15 +4,12 @@
 
     .content_wrapper
       = render(:partial => 'header')
-      .title_2
-        Preferences
-      - form_for([ :games, :gamer, @gamer_profile ], :url => update_prefs_games_gamer_gamer_profile_path, :html => { :method => "put" }) do |f|
-        .content_box_wrapper
-          .content_box.clearfix
-            #edit_preferences
-              .slider.clearfix
-                .field.clearfix
-                  = f.check_box :allow_marketing_emails
-                  = f.label :allow_marketing_emails, "Allow Tapjoy to send me marketing emails"
-        .button_bar
-          = submit_tag('Save', :class => 'button lt_blue')
+      #edit_preferences.profile
+        .content
+          .content_box
+            - form_for([ :games, :gamer, @gamer_profile ], :url => update_prefs_games_gamer_gamer_profile_path, :html => { :method => "put" }) do |f|
+              .field
+                = f.check_box :allow_marketing_emails
+                = f.label :allow_marketing_emails, "Allow Tapjoy to send me marketing emails"
+              .field
+                = f.submit 'Save', :class => 'button'

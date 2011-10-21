@@ -588,22 +588,6 @@ form#new_gamer_session .login_pass input[type=submit] {
 .mobile form#new_gamer_session .login_pass input[type=submit] {
   font-size: 12px;
 }
-#manage_account .title_2 {
-  padding: 8px 0 12px 8px;
-}
-.web #manage_account .center_contact,
-.ipad #manage_account .center_contact {
-  padding: 12px 0;
-}
-.mobile #manage_account .center_contact {
-  padding: 8px 0;
-  font-size: 14px;
-}
-#manage_account .center_contact {
-  font-weight: bold;
-  text-align: center;
-  width: 100%;
-}
 #profile_info_display {
   width: 100%;
 }
@@ -813,103 +797,6 @@ form#new_gamer_session .login_pass input[type=submit] {
 }
 .profile_arrow {
   padding: 0;
-  position: relative;
-}
-#edit_profile {
-  padding: 0;
-}
-#edit_profile .bottom_line {
-  border-bottom: 1px solid #DEDEDE;
-}
-#edit_profile .slider {
-  padding: 0;
-  vertical-align: middle;
-  width: 100%;
-}
-#edit_profile .field {
-  margin: 12px 0;
-  padding: 0;
-  position: relative;
-  width: 100%;
-}
-.mobile #edit_profile label {
-  font-size: 12px;
-}
-#edit_profile label {
-  color: #4B4B4B;
-  float: left;
-  font-weight: bold;
-  position: relative;
-  text-align: right;
-  width: 30%;
-}
-.mobile #edit_profile input[type=text],
-.mobile #edit_profile input[type=password],
-.mobile #edit_profile select {
-  font-size: 10px;
-}
-#edit_profile input[type=text],
-#edit_profile input[type=password],
-#edit_profile select {
-  border: none;
-  bottom: 0px;
-  color: #7E7E7E;
-  font-size: 16px;
-  margin: 0;
-  outline: none;
-  padding: 0;
-  position: absolute;
-  right: 0px;
-  width: 69%;
-  -webkit-appearance: none;
-}
-#edit_profile .fieldWithErrors {
-  bottom: 0px;
-  margin: 0;
-  padding: 0;
-  position: absolute;
-  right: 0px;
-  width: 69%;
-}
-#edit_profile .fieldWithErrors input[type=password] {
-  float: left;
-  position: relative;
-}
-#edit_profile .formError {
-  padding: 0 0 0 2px;
-}
-#edit_preferences {
-  padding: 0;
-}
-#edit_preferences .bottom_line {
-  border-bottom: 1px solid #DEDEDE;
-}
-#edit_preferences .slider {
-  padding: 0;
-  vertical-align: middle;
-  width: 100%;
-}
-#edit_preferences .field {
-  margin: 12px 0;
-  padding: 0;
-  position: relative;
-  width: 100%;
-}
-.mobile #edit_preferences label {
-  font-size: 12px;
-}
-#edit_preferences label {
-  color: #7E7E7E;
-}
-#edit_preferences input[type=checkbox] {
-  margin: 0 0 0 12px;
-}
-.button_bar {
-  width: 100%;
-}
-.button_bar input[type=submit] {
-  float: right;
-  margin: 0 16px 10px 0;
   position: relative;
 }
 #sign_up_form {
@@ -1766,6 +1653,7 @@ input.button {
 .title_2 {
   font-family: 'AmericanTypewriter';
   font-weight: bold;
+  padding: 20px 0 12px 8px;
 }
 h1 {
   font-size: 22px;

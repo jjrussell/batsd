@@ -1,40 +1,31 @@
-.title_2
-  My Profile
-- form_for([ :games, :gamer, @gamer_profile ], :url => games_gamer_gamer_profile_path, :html => { :method => "put" }) do |f|
-  .content_box_wrapper
-    .content_box.clearfix
-      #edit_profile
-        .slider.bottom_line.clearfix
-          .field.clearfix
-            = f.label :name, 'Name: '
-            = f.text_field :name
-        .slider.bottom_line.clearfix
-          .field.clearfix
-            = f.label :nickname, 'Nickname: '
-            = f.text_field :nickname
-        .slider.bottom_line.clearfix
-          .field.clearfix
-            = f.label :gender, 'Gender: '
-            = f.select :gender, { 'Male' => 'male', 'Female' => 'female' }, :include_blank => true
-        .slider.bottom_line.clearfix
-          .field.clearfix
-            = f.label :country, 'Country: '
-            = f.select :country, Countries.country_names
-        .slider.bottom_line.clearfix
-          .field.clearfix
-            = f.label :city, 'City: '
-            = f.text_field :city
-        .slider.bottom_line.clearfix
-          .field.clearfix
-            = f.label :postal_code, 'Zip/Postal Code: '
-            = f.text_field :postal_code
-        .slider.bottom_line.clearfix
-          .field.clearfix
-            = f.label :favorite_game, 'Favorite App: '
-            = f.text_field :favorite_game
-        .slider.clearfix
-          .field.clearfix
-            = f.label :favorite_category, 'Favorite Category: '
-            = f.text_field :favorite_category
-  .button_bar.clearfix
-    = submit_tag('Save', :class => 'button lt_blue')
+#edit_profile.profile
+  .title_2
+    My Profile
+  .content_box
+    - form_for([ :games, :gamer, @gamer_profile ], :url => games_gamer_gamer_profile_path, :html => { :method => "put" }) do |f|
+      .field
+        = f.label :name, 'Name: '
+        = f.text_field :name
+      .field
+        = f.label :nickname, 'Nickname: '
+        = f.text_field :nickname
+      .field
+        = f.label :gender, 'Gender: '
+        = f.select :gender, { 'Male' => 'male', 'Female' => 'female' }, :include_blank => true
+      .field
+        = f.label :country, 'Country: '
+        = f.select :country, Countries.country_names
+      .field
+        = f.label :city, 'City: '
+        = f.text_field :city
+      .field
+        = f.label :postal_code, 'Zip/Postal Code: '
+        = f.text_field :postal_code
+      .field
+        = f.label :favorite_game, 'Favorite App: '
+        = f.text_field :favorite_game
+      .field
+        = f.label :favorite_category, 'Favorite Category: '
+        = f.text_field :favorite_category
+      .field
+        = f.submit 'Save', :class => 'button'

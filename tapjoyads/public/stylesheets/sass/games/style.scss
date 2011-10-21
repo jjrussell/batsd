@@ -170,6 +170,17 @@ a, a:visited {
   width: 460px;
 }
 
+.web .profile .content_box,
+.ipad .profile .content_box {
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.mobile .profile .content_box {
+  margin: 0 auto;
+  padding: 10px;
+}
+
 .content_wrapper {
   
   .content {
@@ -182,7 +193,7 @@ a, a:visited {
     @include rounded-corners;
   }
   
-  form#new_gamer  label {
+  form#new_gamer label {
     margin: 0 auto;
     margin-top: 8px;
   }
@@ -212,6 +223,50 @@ a, a:visited {
     margin: 8px auto 0;
     text-shadow: 0 1px 1px #444;
     width: 100px;
+    @include inset-button(16px, 8px 10px);
+    @include inset-shadow;
+    @include gradient(#CF1623, #EA1927);
+  }
+
+  .profile .field {
+    margin: 8px 0;
+  }
+  
+  .profile input[type=text],
+  .profile input[type=password],
+  .profile select {
+    border: 1px solid #C1C1C1;
+    padding: 4px;
+    width: 92%;
+    @include rounded-corners(10px);
+    @include inset-shadow;
+  }
+  
+  .profile input[type=submit] {
+    border: 1px solid #B0B0B0;
+    border-color: #B0131D;
+    color: #FFF;
+    cursor: pointer;
+    font-size: 0.9em;
+    position: relative;
+    margin: 8px auto 0;
+    text-shadow: 0 1px 1px #444;
+    width: 60px;
+    @include inset-button(16px, 8px 10px);
+    @include inset-shadow;
+    @include gradient(#CF1623, #EA1927);
+  }
+  
+  .button {
+    border: 1px solid #B0B0B0;
+    border-color: #B0131D;
+    color: #FFF;
+    cursor: pointer;
+    font-size: 0.9em;
+    position: relative;
+    margin: 20px auto 0;
+    text-shadow: 0 1px 1px #444;
+    width: 180px;
     @include inset-button(16px, 8px 10px);
     @include inset-shadow;
     @include gradient(#CF1623, #EA1927);
