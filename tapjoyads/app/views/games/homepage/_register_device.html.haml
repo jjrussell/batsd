@@ -1,9 +1,52 @@
-.message_title.title
-  Uh oh!
-.message_header
-  Your device must be linked in order to earn currency in your favorite apps.
-.message_content.link_device
-  %a{ :href => "#", :id => "link_device" }
-    .button.grey.arrow
-      .arrow_bg
-        Link Device now!
+#register_message
+  .message_title.title
+    Welcome to Tapjoy Games!
+  .message_header
+    Your device must be linked in order to earn currency in your favorite apps.
+  .message_content.link_device
+    %a{ :href => "#", :id => "link_device" }
+      .button.grey.arrow
+        .arrow_bg
+          Continue
+
+- content_for :page_javascript do
+  :plain
+    if (!TJG.vars.isTouch) {
+      var msg = [
+        "Tapjoy is your one stop shop to discover the hottest apps on iOS and Android while also earning currency in apps you already play. ",
+        'In order to get the full Tapjoy experience, you\'ll need to link your iOS or Android device. Simply return to <a href="https://tapjoygames.com">www.tapjoygames.com</a> on your iOS device or ',
+        '<a href="#{GAMES_ANDROID_MARKET_URL}" target="_blank"> download the Tapjoy app </a>',
+        " on your Android device to get started. In the mean time, feel free to check out the site and create your profile so we can offer you personalized recommendations."
+      ].join('');
+      $('#register_message .message_header').html(msg);
+      $('#register_message .message_content .button .arrow_bg').html('Email device link');
+      $('#register_message .message_content.link_device').css({ 'width' : '160px' });
+      $('#link_device').unbind('click');
+      function sendLinkDevice() {
+        var url = "#{games_send_device_link_path}";
+        $.ajax({
+          type: 'POST',
+          url: url,
+          cache: false,
+          timeout: 15000,
+          dataType: 'json',
+          success: function(d) {
+            if (d.success) {
+              $('#link_device').unbind('click');
+              $('#register_message .message_content .button .arrow_bg').html('Sent!');
+            }
+            else {
+              $('#register_message .message_content .button .arrow_bg').html('Please try again');
+            }
+          },
+          error: function(d) {
+            $('#register_message .message_content .button .arrow_bg').html('Please try again');
+          }
+        });
+      }
+      $('#link_device').click(function() {
+        $('#register_message .message_content .button .arrow_bg').html('Sending...');
+        sendLinkDevice();
+      });
+    }
+

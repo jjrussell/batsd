@@ -1,13 +1,13 @@
 class SubmitClickController < ApplicationController
-  
+
   def store
     render(:template => 'layouts/success')
   end
-  
+
   def offer
     render(:template => 'layouts/success')
   end
-  
+
   def ad
     return unless verify_params([:campaign_id, :app_id, :udid])
 

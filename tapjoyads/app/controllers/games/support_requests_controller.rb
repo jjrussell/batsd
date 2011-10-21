@@ -1,8 +1,8 @@
 class Games::SupportRequestsController < GamesController
-  
+
   def new
   end
-  
+
   def create
     @gamer = Gamer.find_by_email(current_gamer.email)
     data = params[:support_requests]

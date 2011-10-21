@@ -1,5 +1,5 @@
 class S3
-  
+
   def self.bucket(bucket_name, create = false)
     s3 = RightAws::S3.new(nil, nil, { :multi_thread => true, :port => 80, :protocol => 'http' })
     if create
@@ -10,5 +10,5 @@ class S3
     end
     bucket
   end
-  
+
 end

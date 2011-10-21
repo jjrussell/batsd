@@ -32,7 +32,7 @@ all_caps:
       download_action: "HERE"
       download_link: "IF YOU DON'T HAVE THIS APP, CLICK %{download_action} TO DOWNLOAD IT."
       continue_link: "CLICK HERE TO CONTINUE."
-      
+
     support:
       title: "MISSING %{currency}?"
       instructions_1: "PLEASE PROVIDE THE NAME OF THE OFFER YOU COMPLETED WITHOUT RECEIVING %{currency} AND YOUR EMAIL ADDRESS."
