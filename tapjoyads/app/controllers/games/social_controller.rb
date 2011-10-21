@@ -27,9 +27,9 @@ class Games::SocialController < GamesController
       posts = []
       gamers = []
       non_gamers = []
-      
+
       current_facebook_user.fetch
-      
+
       friends.each do |friend_id|
         exist_gamers = Gamer.find_all_gamer_based_on_facebook(friend_id)
         if exist_gamers.any?
