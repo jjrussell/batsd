@@ -48,7 +48,7 @@ class Games::SocialController < GamesController
             message = "#{current_facebook_user.name} has invited you to join Tapjoy."
 
             description = "Experience the best of mobile apps!"
-            post = Mogli::Post.new(:name => name, :link => link, :message => message, :description => description, :caption => " ", :picture => "#{TJGAMES_URL}/images/TapjoyGames_icon_114x114.jpg")
+            post = Mogli::Post.new(:name => name, :link => link, :message => message, :description => description, :caption => " ", :picture => "#{TJGAMES_URL}/images/ic_launcher_96x96.png")
             posts << friend.feed_create(post)
           end
         end
