@@ -1,12 +1,12 @@
 class Stats < SimpledbResource
-  
+
   self.domain_name = 'stats'
 
   self.sdb_attr :values, :type => :json, :default_value => {}
   self.sdb_attr :ranks, :type => :json, :default_value => {}
   self.sdb_attr :virtual_goods, :type => :json, :default_value => {}
   self.sdb_attr :countries, :type => :json, :default_value => {}
-  
+
   attr_reader :parsed_values, :parsed_ranks, :parsed_virtual_goods, :parsed_countries
 
   CONVERSION_STATS  = Conversion::STAT_TO_REWARD_TYPE_MAP.keys
@@ -96,18 +96,18 @@ class Stats < SimpledbResource
   def get_hourly_count(stat_name_or_path)
     get_counts_object(stat_name_or_path, 24)
   end
-  
+
   def get_daily_count(stat_name_or_path)
     get_counts_object(stat_name_or_path, 31)
   end
-  
+
   ##
   # Gets the memcache key for a specific stat_name_or_path and app_id. The key will be unique for the hour.
   def self.get_memcache_count_key(stat_name_or_path, app_id, time)
     stat_name_string = Array(stat_name_or_path).join(',')
     "stats.#{stat_name_string}.#{app_id}.#{(time.to_i / 1.hour).to_i}"
   end
-  
+
   ##
   # Updates the count of a stat for a given hour.
   # stat_name_or_path: Which stat to update
@@ -116,7 +116,7 @@ class Stats < SimpledbResource
   def update_stat_for_hour(stat_name_or_path, hour, count)
     update_stat(stat_name_or_path, hour, count, 24)
   end
-  
+
   ##
   # Updates the count of a stat for a given day.
   # stat_name_or_path: Which stat to update
@@ -140,13 +140,13 @@ class Stats < SimpledbResource
       count = value.sum
       update_stat_for_day(key, day, count)
     end
-    
+
     hourly_stat_row.parsed_ranks.each do |key, value|
       stat_path = ['ranks', key]
       rank = value.reject{ |r| r == 0 }.min
       update_stat_for_day(stat_path, day, rank)
     end
-    
+
     hourly_stat_row.parsed_virtual_goods.each do |key, value|
       stat_path = ['virtual_goods', key]
       count = value.sum
@@ -159,28 +159,28 @@ class Stats < SimpledbResource
       update_stat_for_day(stat_path, day, count)
     end
   end
-  
+
   ##
   # Returns a triplet, the prefix, the date, and the app_id or campaign_id (if any), as parsed from the row key.
   def parse_key
     parts = @key.split('.')
     date_parts = parts[1].split('-')
     date = Time.utc(date_parts[0], date_parts[1], date_parts[2])
-    
+
     return parts[0], date, parts[2]
   end
-  
+
   def serial_save(options = {})
     strip_defaults(@parsed_values)
     strip_defaults(@parsed_ranks)
     strip_defaults(@parsed_virtual_goods)
     strip_defaults(@parsed_countries)
-    
+
     self.values = @parsed_values if self.values != @parsed_values
     self.ranks = @parsed_ranks if self.ranks != @parsed_ranks
     self.virtual_goods = @parsed_virtual_goods if self.virtual_goods != @parsed_virtual_goods
     self.countries = @parsed_countries if self.countries != @parsed_countries
-    
+
     super(options) if changed?
   end
 
@@ -197,7 +197,7 @@ class Stats < SimpledbResource
     daily_stat.populate_daily_from_hourly(self, date.day - 1)
     daily_stat.serial_save
   end
-  
+
 private
 
   def strip_defaults(hash)
@@ -222,9 +222,9 @@ private
     else
       obj = @parsed_values
     end
-    
+
     key = Array(stat_name_or_path).last
-    
+
     obj[key] = Array.new(length, 0) if obj[key].nil?
     obj[key]
   end

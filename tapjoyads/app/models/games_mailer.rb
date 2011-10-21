@@ -39,7 +39,7 @@ class GamesMailer < ActionMailer::Base
     content_type 'text/html'
     body(:content => content, :email => gamer.email, :udid => device_id, :user_agent => user_agent)
   end
-  
+
   def link_device(gamer, ios_link, android_link)
     puts ios_link
     puts android_link
@@ -49,7 +49,7 @@ class GamesMailer < ActionMailer::Base
     content_type 'text/html'
     body(:ios_link => ios_link, :android_link => android_link)
   end
-  
+
   def invite(gamer_name, recipients_email, link)
     from "#{gamer_name} <noreply@tapjoy.com>"
     recipients recipients_email

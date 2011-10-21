@@ -31,7 +31,7 @@ class MonthlyAccounting < ActiveRecord::Base
       self.beginning_balance          = 0
       self.beginning_pending_earnings = 0
     end
-    
+
     # balance components
     orders = {}
     Order.using_slave_db do
@@ -45,7 +45,7 @@ class MonthlyAccounting < ActiveRecord::Base
       self.spend = Conversion.created_between(start_time, end_time).sum(:advertiser_amount, :conditions => [ "advertiser_offer_id IN (?)", partner.offer_ids ])
     end
     self.ending_balance = beginning_balance + website_orders + invoiced_orders + marketing_orders + transfer_orders + spend
-    
+
     # pending earnings components
     payouts = {}
     Payout.using_slave_db do
@@ -60,7 +60,7 @@ class MonthlyAccounting < ActiveRecord::Base
       self.earnings_adjustments = EarningsAdjustment.created_between(start_time, end_time).sum(:amount, :conditions => [ "partner_id = ?", partner.id ])
     end
     self.ending_pending_earnings = beginning_pending_earnings + payment_payouts + transfer_payouts + earnings + earnings_adjustments
-    
+
     save!
   end
 
