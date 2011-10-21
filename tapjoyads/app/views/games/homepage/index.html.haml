@@ -2,16 +2,24 @@
   #home.current
     .container.vertical-scroll
       .scroller.with-scrollbar
-        %a{ :href => edit_games_gamer_path }
-          .top_nav_bar
+        .top_nav_bar
+          %a{ :href => edit_games_gamer_path }
+            .nav_profile
+          .nav_device_info
+            .device_name
+              = @device_name
+            .device_switch
+          .nav_device
+            .device_icon
+              .mobile
         .page
-          .logo_title_preload
           .logo
+            .logo_top
             .slide_nav
               %a{ :href => "#", :class => "more_games_url" }
                 .slider.more_games.slider_right.right
                   %span.title.small
-                    More Games
+                    More Apps
               .slider_btn.left
                 .slider.slider_active.slider_left
                   %span.title
@@ -35,10 +43,20 @@
   #feat_app
     .container.vertical-scroll
       .scroller.with-scrollbar
-        %a{ :href => edit_games_gamer_path }
-          .top_nav_bar
+        .top_nav_bar
+          %a{ :href => edit_games_gamer_path }
+            .nav_profile
+          .nav_device_info
+            .device_name
+              = @device_name
+            .device_switch
+          .nav_device
+            .device_icon
+              .mobile
         .page
           .logo
+            %a{ :href => "#home", :class => "slideright" }
+              .logo_top
             .slide_nav
               %a{ :href => "#home", :class => "slideright" }
                 .left
@@ -54,10 +72,20 @@
   #earn
     .container.vertical-scroll
       .scroller.with-scrollbar
-        %a{ :href => edit_games_gamer_path }
-          .top_nav_bar
+        .top_nav_bar
+          %a{ :href => edit_games_gamer_path }
+            .nav_profile
+          .nav_device_info
+            .device_name
+              = @device_name
+            .device_switch
+          .nav_device
+            .device_icon
+              .mobile
         .page
           .logo
+            %a{ :href => "#home", :class => "slideright"}
+              .logo_top
             .slide_nav
               %a{ :href => "#home", :class => "slideright" }
                 .left
@@ -75,10 +103,20 @@
   #more_games
     .container.vertical-scroll
       .scroller.with-scrollbar
-        %a{ :href => edit_games_gamer_path }
-          .top_nav_bar
+        .top_nav_bar
+          %a{ :href => edit_games_gamer_path }
+            .nav_profile
+          .nav_device_info
+            .device_name
+              = @device_name
+            .device_switch
+          .nav_device
+            .device_icon
+              .mobile
         .page
           .logo
+            %a{ :href => "#home", :class => "slideright"}
+              .logo_top
             .slide_nav
               %a{ :href => "#home", :class => "slideright"}
                 .slider_btn.left
@@ -103,7 +141,8 @@
                       Tapjoy Recommends
                   #recommended_games_button_arrow.tab_button_bottom_arrrow_wrapper
                     .tab_button_bottom_arrrow
-              #more_games_content.hide   
+              #more_games_content.hide
+
 
 #accept_tos_dialog.dialog_wrapper.hide
   .dialog
@@ -133,13 +172,17 @@
 - content_for :page_javascript do
   - if current_gamer.accepted_tos_version < TAPJOY_GAMES_CURRENT_TOS_VERSION
     :plain
-      $(window).load(function() { 
+      $(window).load(function() {
         TJG.ui.showAcceptTos();
       });
   - else
     :plain
       $(window).load(function() {
-        TJG.ui.homeInit();
+        TJG.select_device = #{@device_data.to_json};
+        TJG.require_select_device = #{@require_select_device.to_json};
         TJG.more_games_editor_picks =  "#{games_more_games_editor_picks_path}";
         TJG.more_games_popular =  "#{games_more_games_popular_path}";
+        TJG.ios_link_device_url = "#{new_games_gamer_device_path}";
+        TJG.android_market_url = "#{GAMES_ANDROID_MARKET_URL}";
+        TJG.ui.homeInit();
       });

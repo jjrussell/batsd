@@ -5,11 +5,11 @@ class Apps::OffersController < WebsiteController
   filter_access_to :all
   before_filter :setup, :except => [ :toggle ]
   after_filter :save_activity_logs, :only => [ :create, :update, :toggle ]
-  
+
   def new
-    
+
   end
-  
+
   def create
     if params[:offer_type] == 'featured'
       @offer = @app.primary_featured_offer || @app.primary_offer.create_featured_clone
@@ -18,7 +18,7 @@ class Apps::OffersController < WebsiteController
     end
     redirect_to :action => :edit, :id => @offer.id
   end
-  
+
   def edit
     if !@offer.tapjoy_enabled?
       if @offer.rewarded? && !@offer.featured?
@@ -28,7 +28,7 @@ class Apps::OffersController < WebsiteController
           flash.now[:warning] = "Please note that you must integrate the <a href='#{@offer.item.sdk_url(:connect)}'>Tapjoy advertiser library</a> before we can enable your campaign"
         end
       end
-      
+
       if @offer.enable_offer_requests.pending.present?
         @enable_request = @offer.enable_offer_requests.pending.first
       else
@@ -36,22 +36,22 @@ class Apps::OffersController < WebsiteController
       end
     end
   end
-  
+
   def preview
     bucket = S3.bucket(BucketNames::TAPJOY)
     key = RightAws::S3::Key.create(bucket, "icons/src/#{Offer.hashed_icon_id(@offer.icon_id)}.jpg")
     @show_generated_ads = key.exists?
-    
+
     render :layout => 'simple'
   end
-  
+
   def update
     params[:offer].delete(:payment)
-    
+
     params[:offer][:daily_budget].gsub!(',', '') if params[:offer][:daily_budget].present?
     params[:offer][:daily_budget] = 0 if params[:daily_budget] == 'off'
     offer_params = sanitize_currency_params(params[:offer], [ :bid, :min_bid_override ])
-    
+
     safe_attributes = [:daily_budget, :user_enabled, :bid, :self_promote_only, :min_os_version, :screen_layout_sizes]
     if permitted_to? :edit, :statz
       safe_attributes += [ :tapjoy_enabled, :allow_negative_balance, :pay_per_click,
@@ -72,11 +72,11 @@ class Apps::OffersController < WebsiteController
       render :action => :edit
     end
   end
-  
+
   def upload_creative
     @size = params[:size]
     image_data = params[:offer]["custom_creative_#{@size}".to_sym].read rescue nil
-    
+
     modifying = true
     case request.method
       when :delete
@@ -90,7 +90,7 @@ class Apps::OffersController < WebsiteController
       when :get
         modifying = false
     end
-    
+
     if modifying
       @offer.send("banner_creative_#{@size}_blob=", image_data)
       if @offer.save
@@ -100,11 +100,11 @@ class Apps::OffersController < WebsiteController
         @offer.reload # we want the form to reset back to the way it was
       end
     end
-    
+
     @creative_exists = @offer.banner_creatives.include? @size
     render :layout => 'simple'
   end
-  
+
   def toggle
     @offer = current_partner.offers.find(params[:id])
     log_activity(@offer)
@@ -116,17 +116,17 @@ class Apps::OffersController < WebsiteController
       render :json => {:error => true}
     end
   end
-  
-  def percentile	
+
+  def percentile
     @offer.bid = sanitize_currency_param(params[:bid])
     estimate = @offer.percentile
     render :json => { :percentile => estimate, :ordinalized_percentile => estimate.ordinalize }
   rescue
     render :json => { :percentile => "N/A", :ordinalized_percentile => "N/A" }
   end
-  
+
   private
-  
+
   def setup
     if permitted_to? :edit, :statz
       @app = App.find(params[:app_id])

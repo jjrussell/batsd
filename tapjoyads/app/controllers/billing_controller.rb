@@ -74,7 +74,7 @@ class BillingController < WebsiteController
     @selected_profile   = params[:payment_profile]
     @hideable_row_class = @selected_profile == 'new_card' ? 'hideable' : 'hideable hidden'
     @order              = Order.new(:partner => current_partner, :amount => @credit_card.amount, :status => 1, :payment_method => 0)
-    
+
     if @order.valid? && ((params[:payment_profile] == 'new_card' && @credit_card.valid?) || (params[:payment_profile] != 'new_card' && @credit_card.valid_amount?))
       begin
         if params[:payment_profile] == 'new_card'
@@ -88,13 +88,13 @@ class BillingController < WebsiteController
         flash.now[:error] = 'Unable to charge card. Please try your transaction again.'
         render :action => :add_funds and return
       end
-      
+
       if response.success?
         log_activity(@order)
         @order.payment_txn_id = response.params['transaction_id']
         @order.save!
         flash.now[:notice] = 'Successfully added funds.'
-        
+
         if params[:save_card] == '1' && params[:payment_profile] == 'new_card'
           begin
             Billing.create_customer_profile(current_user)
@@ -103,13 +103,13 @@ class BillingController < WebsiteController
             # do nothing, the card just wont be saved
           end
         end
-        
+
         render :action => :receipt and return
       else
         flash.now[:error] = response.message
       end
     end
-    
+
     render :action => :add_funds
   end
 

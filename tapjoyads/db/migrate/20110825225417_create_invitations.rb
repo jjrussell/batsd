@@ -9,7 +9,7 @@ class CreateInvitations < ActiveRecord::Migration
       t.integer  :status, :default => 0
       t.timestamps
     end
-    
+
     add_index :invitations, :id, :unique => true
     add_index :invitations, :gamer_id
     add_index :invitations, :external_info

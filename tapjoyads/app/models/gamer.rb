@@ -42,7 +42,7 @@ class Gamer < ActiveRecord::Base
   def self.find_all_gamer_based_on_facebook(external)
     gamer_profiles = GamerProfile.find_all_by_facebook_id(external)
     gamers = []
-    
+
     if gamer_profiles.any?
       gamer_profiles.each do |profile|
         gamers << Gamer.find_by_id(profile.gamer_id)

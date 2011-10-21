@@ -1,5 +1,9 @@
 class Games::GamerSessionsController < GamesController
 
+  def index
+    redirect_to games_login_path
+  end
+
   def new
     @gamer_session = GamerSession.new
     @gamer = Gamer.new

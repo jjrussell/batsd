@@ -18,7 +18,7 @@ class StringTest < ActiveSupport::TestCase
         "c9d8090a-8382-4bce-ac65-04e4dd883069" => 41660306,
       }
     end
-    
+
     should "return correct known values" do
       @known_values.each do |k,v|
         assert_equal v, k.matz_silly_hash

@@ -3,9 +3,9 @@
 %h1 Create Transfer for #{@partner.name}
 
 %p
-  Transfer funds from pending earnings to balance. 
+  Transfer funds from pending earnings to balance.
 %p
-  Transfer bonus: #{@partner.transfer_bonus * 100}% 
+  Transfer bonus: #{@partner.transfer_bonus * 100}%
   = link_to("[Edit]", edit_partner_path(@partner))
   %br
   Pending earnings: #{number_to_currency(@partner.pending_earnings / 100.0)}
