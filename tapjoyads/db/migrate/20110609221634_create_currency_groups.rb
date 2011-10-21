@@ -11,7 +11,7 @@ class CreateCurrencyGroups < ActiveRecord::Migration
       t.string :name
       t.timestamps
     end
-    
+
     add_index :currency_groups, :id, :unique => true
     add_column :currencies, :currency_group_id, 'char(36) binary', :null => false
     add_index :currencies, :currency_group_id

@@ -1,9 +1,9 @@
 class Job < ActiveRecord::Base
   include UuidPrimaryKey
-  
+
   JOB_TYPES = %w( master queue )
   FREQUENCIES = %w( interval hourly daily )
-  
+
   validates_presence_of :controller, :action
   validates_inclusion_of :job_type, :in => JOB_TYPES
   validates_inclusion_of :frequency, :in => FREQUENCIES
@@ -17,13 +17,13 @@ class Job < ActiveRecord::Base
     end
   end
   validate :check_job_path
-  
+
   named_scope :active, :conditions => 'active = true'
   named_scope :by_job_type, lambda { |type| { :conditions => [ "job_type = ?", type ] } }
   named_scope :for_index, :order => "job_type, frequency, seconds"
-  
+
   attr_reader :next_run_time
-  
+
   def set_next_run_time
     now = Time.now.utc
     if frequency == 'interval'
@@ -44,7 +44,7 @@ class Job < ActiveRecord::Base
       end
     end
   end
-  
+
   def frequency_in_words
     time = (Time.now.utc.beginning_of_day + seconds).in_time_zone(Time.zone)
     case frequency
@@ -64,13 +64,13 @@ class Job < ActiveRecord::Base
       "daily at #{time.to_s(:ampm)}"
     end
   end
-  
+
   def job_path
     "#{controller}/#{action}"
   end
-  
+
 private
-  
+
   def check_job_path
     if controller_changed? || action_changed?
       begin
@@ -81,5 +81,5 @@ private
       end
     end
   end
-  
+
 end

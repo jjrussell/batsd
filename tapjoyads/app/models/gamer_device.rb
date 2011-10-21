@@ -23,7 +23,7 @@ class GamerDevice < ActiveRecord::Base
     'android'    => 'Android'
   }
   PRODUCT_NAMES.default = 'My Device'
-  
+
   PRODUCT_TYPES = {
     'iPod1,1'    => 'ipod',
     'iPod2,1'    => 'ipod',
@@ -45,12 +45,12 @@ class GamerDevice < ActiveRecord::Base
     'iPod'       => 'ipod',
     'android'    => 'android'
   }
-  
+
   belongs_to :gamer
-  
+
   validates_presence_of :gamer, :device_id, :name
   validates_uniqueness_of :device_id, :scope => [:gamer_id]
-  
+
   def device=(new_device)
     self.device_id = new_device.id
     if new_device.platform == 'android'

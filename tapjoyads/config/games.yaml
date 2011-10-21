@@ -7,10 +7,10 @@ defaults: &defaults
     'tapjoygames'
   ]
   js_compile_out_file: 'tjgames.min'
-  
+
 development:
   <<: *defaults
-  
+
 production:
   <<: *defaults
-  
+

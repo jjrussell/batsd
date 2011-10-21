@@ -1,20 +1,20 @@
 class EmailOffer < ActiveRecord::Base
   include UuidPrimaryKey
-  
+
   has_many :offers, :as => :item
   has_one :primary_offer, :class_name => 'Offer', :as => :item, :conditions => 'id = item_id'
-  
+
   belongs_to :partner
-  
+
   validates_presence_of :partner, :name
-  
+
   after_create :create_primary_offer
   after_update :update_offers
-  
+
   named_scope :visible, :conditions => { :hidden => false }
-  
+
 private
-  
+
   def create_primary_offer
     offer = Offer.new(:item => self)
     offer.id = id
@@ -26,7 +26,7 @@ private
     offer.third_party_data = third_party_id
     offer.save!
   end
-  
+
   def update_offers
     offers.each do |offer|
       offer.partner_id = partner_id if partner_id_changed?
@@ -36,5 +36,5 @@ private
       offer.save! if offer.changed?
     end
   end
-  
+
 end
