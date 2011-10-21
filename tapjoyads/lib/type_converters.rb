@@ -1,5 +1,5 @@
 module TypeConverters
-  
+
   class StringConverter
     def from_string(s)
       s
@@ -8,7 +8,7 @@ module TypeConverters
       s.to_s
     end
   end
-  
+
   class IntConverter
     def from_string(s)
       s.to_i
@@ -17,7 +17,7 @@ module TypeConverters
       i.to_s
     end
   end
-  
+
   class FloatConverter
     def from_string(s)
       s.to_f
@@ -26,7 +26,7 @@ module TypeConverters
       f.to_s
     end
   end
-  
+
   class TimeConverter
     def from_string(s)
       Time.zone.at(s.to_f)
@@ -35,7 +35,7 @@ module TypeConverters
       t.to_f.to_s
     end
   end
-  
+
   class BoolConverter
     def from_string(s)
       s == '1' || s == 'True'
@@ -44,7 +44,7 @@ module TypeConverters
       b ? '1' : '0'
     end
   end
-  
+
   class JsonConverter
     def from_string(s)
       JSON.parse(s)
@@ -53,7 +53,7 @@ module TypeConverters
       j.to_json
     end
   end
-  
+
   TYPES = {
     :string => StringConverter.new,
     :int    => IntConverter.new,
@@ -62,5 +62,5 @@ module TypeConverters
     :bool   => BoolConverter.new,
     :json   => JsonConverter.new,
   }
-  
+
 end
