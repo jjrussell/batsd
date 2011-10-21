@@ -563,22 +563,19 @@ form#new_gamer_session input[type=password] {
   -webkit-appearance: none;
 }
 .web form#new_gamer_session input#gamer_session_email, .ipad form#new_gamer_session input#gamer_session_email {
-  width: 520px;
 }
 .mobile form#new_gamer_session input#gamer_session_email {
-  width: 236px;
+  width: 100px;
 }
 .web form#new_gamer_session input#gamer_session_password, .ipad form#new_gamer_session input#gamer_session_password {
-  width: 410px;
 }
 .mobile form#new_gamer_session input#gamer_session_password {
-  width: 130px;
+  width: 100px;
 }
 form#new_gamer_session label {
   padding: 0 8px 0 12px;
 }
 form#new_gamer_session .login_pass label {
-  padding: 4px 8px 0 12px;
 }
 form#new_gamer_session .login_pass input[type=submit] {
   padding: 7px 18px 3px;
@@ -593,13 +590,6 @@ form#new_gamer_session .login_pass input[type=submit] {
 }
 .mobile form#new_gamer_session .login_pass input[type=submit] {
   font-size: 12px;
-}
-form#new_gamer_session .login_email {
-  border-bottom: 1px solid #DEDEDE;
-  width: 100%;
-}
-form#new_gamer_session .login_pass {
-  width: 100%;
 }
 #manage_account .title_2 {
   padding: 8px 0 12px 8px;
@@ -1110,12 +1100,13 @@ form#new_gamer_session .login_pass {
   color: #4B4B4B;
 }
 .web .feat_content, .ipad .feat_content {
-  padding: 24px 24px 0px;
+  padding: 16px 16px 0px;
 }
 .mobile .feat_content {
-  padding: 12px 12px 0px;
+  padding: 8px 8px 0px;
 }
 .web .staff_info, .ipad .staff_info {
+  height: 72px;
   margin-bottom: 12px;
 }
 .mobile .staff_info {
@@ -1289,6 +1280,7 @@ form#new_gamer_session .login_pass {
 .tap_points {
   background-color: rgba(255, 255, 255, 0.1);
   border-radius: 6px;
+  color: #FFF;
   font-family: "Arial Rounded MT Bold", "Arial Rounded MT", Arial, Helvetica, sans-serif;
   font-size: 11px;
   padding: 4px 6px;
@@ -1313,11 +1305,11 @@ form#new_gamer_session .login_pass {
 .ipad.portrait .app_review .app_text,
 .ipad .app_review .app_text {
   padding-right: 6px;
-  width: 300px;
+  width: 460px;
 }
 .mobile .app_review .app_text {
   padding-right: 3px;
-  width: 210px;
+  width: 200px;
 }
 .offer_install {
   margin: 1px 0 3px;

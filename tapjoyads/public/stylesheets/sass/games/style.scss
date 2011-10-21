@@ -32,6 +32,9 @@ a, a:visited {
 
 /*--------------------*/
 
+#login {
+  background-color: #FDFDFD;
+}
 /*------ Top Nav -----*/
 .nav {
   background-color: $nav-bg-color;
@@ -43,10 +46,7 @@ a, a:visited {
   .nav_container {
     width: 100%;
     
-    .aside_login {
-      
-    }
-    .aside_nav {
+    .aside_nav, .aside_login {
       font-size: 0.8em;
       font-weight: bold;
       float: right;
@@ -57,10 +57,20 @@ a, a:visited {
     .aside_nav span {
       margin-left: $nav-padding-h;
     }
+    .aside_login {
+      top: 8px;
+      
+      form#new_gamer_session input[type=email], form#new_gamer_session input[type=password] {
+        border: 1px solid #C1C1C1;
+        width: 110px;
+        @include rounded-corners(10px);
+        @include inset-shadow;
+      }
+    }
     .logo {
       background: transparent url('/images/games/v2/logo_hd.png') no-repeat;
       height: 76px;
-      margin: 0 24px;
+      margin: 0 12px 0 24px;
       float: left;
       width: 166px;
     }
@@ -101,6 +111,17 @@ a, a:visited {
         float: none;
       }
     }
+    @media screen and (max-width: 700px) {
+      .aside_login {
+        form#new_gamer_session input {
+          float: none;
+        }
+        form#new_gamer_session label {
+          height: 20px;
+          padding: 0 0px 2px 6px;
+        }
+      }
+    }
     @media screen and (max-width: 520px) {
       .logo {
         margin: 0 12px !important;
@@ -108,6 +129,11 @@ a, a:visited {
       .nav_buttons ul li {
         font-size: 0.8em;
         width: 80px;
+      }
+      .aside_login {
+        form#new_gamer_session input {
+          float: none;
+        }
       }
     }
     .nav_buttons li.active_button, .nav_buttons li:active {

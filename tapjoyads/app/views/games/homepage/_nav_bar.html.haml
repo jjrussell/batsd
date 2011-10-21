@@ -15,34 +15,42 @@
       .nav_list.clearfix
         %ul
           %ul.pair
-            - if active == 'my_apps'
-              %li.my_apps.active_button
-                My Apps
-            - elsif active == 'my_account'
-              %a{ :href => games_root_path, :class => "slideright" }
-                %li.my_apps
-                  My Apps
-            - else
+            - if active == 'back'
+            
               %a{ :href => "#home", :class => "slideright" }
                 %li.my_apps
+                  Back
+            
+            - else
+            
+              - if active == 'my_apps'
+                %li.my_apps.active_button
                   My Apps
-            - if active == 'more_apps' && active != 'my_account'
-              %li.more_apps.more_apps_path.active_button
-                More Apps
-            - elsif active != 'my_account'
-              %li.more_apps.more_apps_path
-                More Apps
-          %ul.pair
-            - if active == 'my_account'
-              %li.my_account.active_button
-                My Account
-            - else
-              %a{ :href => edit_games_gamer_path }
-                %li.my_account
-                  My Account
-            - if active == 'share'
-              %li.share.active_button
-                Share
-            - else
-              %li.share
-                Share
+              - elsif active == 'my_account'
+                %a{ :href => games_root_path, :class => "slideright" }
+                  %li.my_apps
+                    My Apps
+              - else
+                %a{ :href => "#home", :class => "slideright" }
+                  %li.my_apps
+                    My Apps
+              - if active == 'more_apps' && active != 'my_account'
+                %li.more_apps.more_apps_path.active_button
+                  More Apps
+              - elsif active != 'my_account'
+                %li.more_apps.more_apps_path
+                  More Apps
+              %ul.pair
+                - if active == 'my_account'
+                  %li.my_account.active_button
+                    My Account
+                - else
+                  %a{ :href => edit_games_gamer_path }
+                    %li.my_account
+                      My Account
+                - if active == 'share'
+                  %li.share.active_button
+                    Share
+                - elsif active != 'my_account'
+                  %li.share
+                    Share

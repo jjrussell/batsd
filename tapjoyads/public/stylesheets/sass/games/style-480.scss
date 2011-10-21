@@ -9,8 +9,14 @@
 
   .nav_container {
     width: 100%;
+    
     .aside_nav {
       top: 12px;
+    }
+    .aside_login {
+      float: none;
+      margin: 0 auto;
+      width: 320px;
     }
     .logo {
       background: transparent url('/images/games/v2/logo_mobile.png') no-repeat;
@@ -20,7 +26,6 @@
       margin-bottom: $logo-bottom-margin/2;
       width: 84px;
     }
-    
     .nav_buttons {
       float: none;
     }

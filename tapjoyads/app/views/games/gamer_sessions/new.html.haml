@@ -2,8 +2,9 @@
   #login.current 
     .nav
       .nav_container.clearfix
-        .aside_nav
-          .login
+        .logo
+        .aside_login
+          .login.clearfix
           - form_for([ :games, @gamer_session ]) do |f|
             - if params[:data].present?
               = hidden_field_tag :data, params[:data]
@@ -12,12 +13,12 @@
               = f.email_field :email, "autocorrect" => "off", "autocapitalize" => "off"
             .field.login_pass.clearfix
               = f.label :password
-              = f.password_field :password, :size => '15'
-              = f.submit 'Login!', :class => 'right button lt_blue title'
+              = f.password_field :password
+            .field.login_btn.clearfix
+              = f.submit 'Login!', :class => 'right button'
             .login_error.center
               = error_message_on @gamer_session, :email, :prepend_text => "Email "
               = error_message_on @gamer_session, :password, :prepend_text => "Password "
-        .logo
                 
 #sign_up_dialog.dialog_wrapper.hide
   .close_dialog

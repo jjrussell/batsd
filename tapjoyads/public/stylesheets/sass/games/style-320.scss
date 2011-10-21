@@ -24,8 +24,6 @@
       margin-bottom: $logo-bottom-margin/2;
       width: 84px;
     }
-    .nav_buttons {
-    }
     .nav_buttons ul li {
       @include inset-button(16px, 6px 2px);
       font-size: 0.60em;
