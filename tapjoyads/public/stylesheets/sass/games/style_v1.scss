@@ -74,6 +74,7 @@ a, a:visited {
 }
 .dialog {
   background-color: #222;
+  color: #FFF;
   padding-top: 15px;
   z-index: 999;
   -moz-border-radius: 10px;
@@ -1559,7 +1560,6 @@ form#new_gamer_session .login_pass {
   border-left: 1px solid #EEE;
   color: #006C94;
   padding-left: 8px;
-  text-shadow: 0 1px 1px #F2F2F2;
 }
 .offer_button.my_apps .cost.free {
   color: #23840C;
@@ -1595,7 +1595,6 @@ form#new_gamer_session .login_pass {
   color: #444;
   padding: 12px 0px 40px;
   text-align: center;
-  text-shadow: 1px 1px 0px #F2F2F2;
 }
 .get_more_apps:hover, .get_more_apps:active, .grey_button:hover, .grey_button:active {
   color: #444;
@@ -1617,6 +1616,7 @@ form#new_gamer_session .login_pass {
 }
 .tab_button.dark_grey {
   border: 1px solid #141414;
+  color: #FFF;
   cursor: pointer;
   height: 40px;
   margin: 8px auto;
@@ -1660,11 +1660,9 @@ form#new_gamer_session .login_pass {
 }
 .tab_button.grey {
   font-weight: bold;
-  text-shadow: 1px 1px 0px #F2F2F2;
 }
 .tab_button.dark_grey {
   font-weight: bold;
-  text-shadow: 1px 1px 0px #121212;
 }
 .tab_button_bottom_arrrow_wrapper {
   height: 10px;
@@ -1697,7 +1695,8 @@ form#new_gamer_session .login_pass {
   margin: 4px 6px 0 0;
 }
 .button {
-  @include inset-button(16px, 8px 8px);
+  @include inset-button(16px, 8px 12px);
+  font-weight: bold;
 }
 input.button {
   border: none;
@@ -1706,7 +1705,6 @@ input.button {
   background: -moz-linear-gradient(top, #E7E7E7 0%, #C4C4C4 100%);
   background: -webkit-gradient(linear, 0 0, 0 100%, color-stop(0, #E7E7E7), color-stop(1, #C4C4C4));
   color: #3F3F3F;
-  text-shadow: 0 0px 1px #FFF;
   -moz-box-shadow: inset 1px 1px 1px #FFF;
   -webkit-box-shadow: inset 1px 1px #FFF;
   -moz-box-shadow: 1px 1px 1px #303030;
@@ -1716,7 +1714,6 @@ input.button {
 .button.blue, .button.grey:hover, .button.grey:active {
   background: -moz-linear-gradient(top, #1D81E9 0%, #0C62BA 100%);
   background: -webkit-gradient(linear, 0 0, 0 100%, color-stop(0, #1D81E9), color-stop(1, #0C62BA));
-  text-shadow: 0 0px 1px #0C62BA;
 }
 .button.grey .earn {
   color: #6C6C6C;
@@ -1841,7 +1838,7 @@ input.button {
   width: 266px;
 }
 .title {
-  font-family: $main-font-name;
+  font-family: 'AmericanTypewriter';
 }
 .title_2 {
   font-family: 'AmericanTypewriter';
