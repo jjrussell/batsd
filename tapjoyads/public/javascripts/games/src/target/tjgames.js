@@ -1658,8 +1658,8 @@ TJG.ui = {
     if (TJG.select_device && (TJG.select_device.length > 1)) {
       $('.device_switch').html("wrong device?");
       $('.device_name').addClass("has_switch");
-      $('.nav_device_info').css('cursor','pointer');
-      $('.nav_device_info').click(function(){
+      $('.device_name').css('cursor','pointer');
+      $('.device_name').click(function(){
         TJG.ui.showDeviceSelection(TJG.select_device, true);
       });
     }
@@ -2474,21 +2474,29 @@ TJG.social = {
             });
           });
         }
-        var w = $('.nav_device_info').width();
-        w = w + 24;
-        $('.device_name,.device_switch').fadeOut(250, function(){
-          $('.nav_device_info').animate({width:"0px"}, 250);
+        var w = $('.device_name').width();
+        $('.device_name,.device_switch').fadeOut(50, function(){
+          $('.device_name,.device_switch').animate({width:"0px"}, 250);
         });
-        $('.nav_device').click(function(){
-          if ($('.nav_device_info').width() == 0) {
-            $('.nav_device_info').animate({width:w + "px"}, 250, function() {
-              $('.device_name,.device_switch').fadeIn(250);
+        TJG.animating = false;
+        $('.plus,.mobile').click(function(){
+          if (TJG.animating) {
+            return;
+          }
+          TJG.animating = true;
+          if ($('.device_name').width() == 0) {
+            $('.device_name,.device_switch').animate({width:w+"px"}, 250, function(){
+              $('.device_name,.device_switch').fadeIn(200);
+              $('.plus').addClass('close');
             });
+            TJG.animating = false;
           }
           else {
-            $('.device_name,.device_switch').fadeOut(250, function(){
-              $('.nav_device_info').animate({width:"0px"}, 250);
+            $('.device_name,.device_switch').fadeOut(50, function() {
+              $('.device_name,.device_switch').animate({width:"0px"}, 250);
+              $('.plus').removeClass('close');
             });
+            TJG.animating = false;
           }
         });
       },

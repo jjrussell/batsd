@@ -1,4 +1,14 @@
 - active = defined?(active) ? active : ""
+
+.device_wrapper
+  .device
+    .mobile
+    .device_name
+      = @device_name
+      .device_switch
+    .plus
+
+
 .nav
   .nav_container.clearfix
     .aside_nav
@@ -49,9 +59,9 @@
                   %a{ :href => edit_games_gamer_path }
                     %li.my_account
                       My Account
-                - if active == 'share'
-                  %li.share.active_button
-                    Share
-                - elsif active != 'my_account'
-                  %li.share
-                    Share
+                //- if active == 'share'
+                //  %li.share.active_button
+                //    Share
+                //- elsif active != 'my_account'
+                //  %li.share
+                //    Share

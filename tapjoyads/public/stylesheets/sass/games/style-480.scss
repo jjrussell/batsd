@@ -11,11 +11,13 @@
     width: 100%;
     
     .aside_nav {
+      margin-top: 6px;
       top: 12px;
     }
     .aside_login {
       float: none;
       margin: 0 auto;
+      
       text-align: center;
       width: 460px;
       
@@ -75,3 +77,9 @@
   }
   
 } //.content_wrapper
+.device_wrapper {
+  
+  .device {
+    margin-right: 6px;
+  }
+}

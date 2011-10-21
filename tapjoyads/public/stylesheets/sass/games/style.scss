@@ -37,6 +37,7 @@ a, a:visited {
   background-color: $nav-bg-color;
   background: $nav-bg-color url('/images/games/v2/nav_bg_hd.png') repeat;
   border-bottom: 1px solid #9D9990;
+  color: $main-font-color;
   //@include box-shadow;
   padding: $nav-padding-v $nav-padding-h;
   
@@ -47,7 +48,7 @@ a, a:visited {
       font-size: 0.8em;
       font-weight: bold;
       float: right;
-      margin-right: 6px;
+      margin: 2px 6px 0 0;
       position: relative;
       top: 24px;
     }
@@ -309,6 +310,57 @@ a, a:visited {
   
 } //.content_wrapper
 
+.device_wrapper {
+  color: $main-font-color;
+  position: absolute;
+  width: 100%;
+  
+  div {
+    float: left;
+  }
+  
+  .device {
+    background: $nav-bg-color url('/images/games/v2/nav_bg_hd.png') repeat;
+    border: 1px solid #C1C1C1;
+    border-top-style: none;
+    float: right;
+    margin-right: 12px;
+    padding: 4px 6px;
+    z-index: 1;
+    @include rounded-corners(10px);
+    -webkit-border-top-right-radius: 0;
+    -webkit-border-top-left-radius: 0;
+    -moz-border-radius-topright: 0;
+    -moz-border-radius-topleft: 0;
+    
+    .plus {
+      cursor: pointer;
+      background: transparent url("/images/games/v2/plus_button.png") no-repeat;
+      height: 24px;
+      width: 23px;
+    }
+    .plus.close {
+      background: transparent url("/images/games/v2/minus_button.png") no-repeat;
+    }
+    .device_name {
+      cursor: pointer;
+      font-size: 0.8em;
+      font-weight: bold;
+      overflow: hidden;
+      text-align: center;
+      
+      .device_switch {
+        text-align: center;
+      }
+    }
+    .mobile {
+      background: transparent url("/images/games/v2/phone.png") no-repeat;
+      cursor: pointer;
+      height: 22px;
+      width: 14px;
+    }
+  }
+}
 
 .forgot_pass {
   font-size: 0.8em;

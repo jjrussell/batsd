@@ -289,30 +289,14 @@ form#new_gamer input {
   width: 32px;
 }
 .nav_device_info {
-  background: transparent url("/images/games/device_bg.png") repeat-x;
   float: right;
   height: 32px;
   overflow: hidden;
   text-align: center;
 }
-.nav_device {
-  background: transparent url("/images/games/device.png") no-repeat;
-  cursor: pointer;
-  float: right;
-  height: 32px;
-  overflow: hidden;
-  position: relative;
-  width: 32px;
-}
-.device_icon div {
-  height: 24px;
-  left: 8px;
-  position: relative;
-  top: 1px;
-  width: 24px;
-}
+
 .device_icon .mobile {
-  background: transparent url("/images/games/mobile_icon.png") no-repeat center center;
+  background: transparent url("/images/games/v2/phone.png") no-repeat;
   left: 14px;
   height: 22px;
   top: 2px;
@@ -328,6 +312,7 @@ form#new_gamer input {
 }
 .device_switch {
   font-size: 10px;
+  line-height: 12px;
   margin-top: 2px;
 }
 /* Page */
