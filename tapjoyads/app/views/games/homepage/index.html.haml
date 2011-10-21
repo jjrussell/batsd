@@ -7,14 +7,12 @@
           = render 'register_device'
     - elsif @external_publishers.blank?
       .content_wrapper
-        .content
-          = render 'featured_review_preview'
+        = render 'featured_review_preview'
         .content
           = render 'no_games'
     - else
       .content_wrapper
-        .content
-          = render 'featured_review_preview'
+        = render 'featured_review_preview'
         .content
           = render 'my_apps'
 

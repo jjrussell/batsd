@@ -9,34 +9,40 @@
       %a{ :href => games_logout_path }
         %span
           Logout
-    .logo
+    %a{ :href => games_root_path, :class => "slideright" }
+      .logo
     .nav_buttons
-      %ul.nav_list.clearfix
-        %ul.pair
-          - if active == 'my_apps'
-            %li.my_apps.active_button
-              My Apps
-          - else
-            %a{ :href => games_root_path, :class => "slideright" }
-              %li.my_apps
+      .nav_list.clearfix
+        %ul
+          %ul.pair
+            - if active == 'my_apps'
+              %li.my_apps.active_button
                 My Apps
-          - if active == 'more_apps'
-            %li.more_apps.more_apps_path.active_button
-              More Apps
-          - else
-            %li.more_apps.more_apps_path
-              More Apps
-        %ul.pair
-          - if active == 'my_account'
-            %li.my_account.active_button
-              My Account
-          - else
-            %a{ :href => edit_games_gamer_path }
-              %li.my_account
+            - elsif active == 'my_account'
+              %a{ :href => games_root_path, :class => "slideright" }
+                %li.my_apps
+                  My Apps
+            - else
+              %a{ :href => "#home", :class => "slideright" }
+                %li.my_apps
+                  My Apps
+            - if active == 'more_apps' && active != 'my_account'
+              %li.more_apps.more_apps_path.active_button
+                More Apps
+            - elsif active != 'my_account'
+              %li.more_apps.more_apps_path
+                More Apps
+          %ul.pair
+            - if active == 'my_account'
+              %li.my_account.active_button
                 My Account
-        -# if active == 'share'
-          //%li.share.active_button
-          //  Share
-        -# else
-          //%li.share
-          //  Share
+            - else
+              %a{ :href => edit_games_gamer_path }
+                %li.my_account
+                  My Account
+            - if active == 'share'
+              %li.share.active_button
+                Share
+            - else
+              %li.share
+                Share

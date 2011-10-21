@@ -15,7 +15,7 @@
       float: right;
       margin-right: 3px;
       position: relative;
-      top: 12px;
+      top: 24px;
     }
     .logo {
       background: transparent url('/images/games/v2/logo_mobile.png') no-repeat;
@@ -28,8 +28,8 @@
     }
     .nav_buttons ul li {
       @include inset-button(16px, 6px 2px);
-      font-size: 0.65em;
-      width: 65px;
+      font-size: 0.60em;
+      width: 60px;
     }
   }
 }

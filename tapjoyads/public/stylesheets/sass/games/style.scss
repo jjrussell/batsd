@@ -17,7 +17,6 @@ body {
   background: #F7F7F7;
   font-family: $main-font-name;
   color: $main-font-color;
-  text-shadow: 0 1px 1px #FFF;
   height: 100%;
   width: 100%;
   -webkit-font-smoothing: antialiased;
@@ -37,7 +36,8 @@ a, a:visited {
 .nav {
   background-color: $nav-bg-color;
   background: $nav-bg-color url('/images/games/v2/nav_bg_hd.png') repeat;
-  @include box-shadow;
+  border-bottom: 1px solid #9D9990;
+  //@include box-shadow;
   padding: $nav-padding-v $nav-padding-h;
   
   .nav_container {
@@ -75,6 +75,7 @@ a, a:visited {
       float: left;
     }
     .nav_buttons li {
+      color: $main-font-color;
       cursor: pointer;
       font-size: 0.9em;
       font-weight: bold;
@@ -118,13 +119,6 @@ a, a:visited {
     .nav_buttoons li.active {
       cursor: default;
     }
-    .nav_buttons li.share {
-
-    }
-    .nav_buttons .share {
-    }
-    .nav_buttons li.share:active {
-    }
   } // .nav_container
 } // .nav
 
@@ -135,8 +129,10 @@ a, a:visited {
   .feat_review {
     background-color: #FFF;
     border: 1px solid #DEDEDE;
+    border-bottom: 1px solid #9D9990;
+
     @include rounded-corners;
-    @include box-shadow;
+    //@include box-shadow;
   }
   
 } //.content_wrapper
