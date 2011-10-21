@@ -12,6 +12,7 @@ blockquote, q { quotes: none; }
 blockquote:before, blockquote:after, q:before, q:after { content: ''; content: none; }
 table { border-collapse: collapse; border-spacing: 0; }
 html { -webkit-text-size-adjust: none; }
+*:focus { outline: none; }
 
 body {
   background: #F7F7F7;
@@ -28,12 +29,9 @@ a, a:visited {
   color: $main-font-color;
   -webkit-tap-highlight-color: rgba(0,0,0,0);
 }
+
 #jqt {}
 
-/*--------------------*/
-
-#login {
-}
 /*------ Top Nav -----*/
 .nav {
   background-color: $nav-bg-color;
@@ -181,51 +179,95 @@ a, a:visited {
   padding: 10px;
 }
 
+.button.red {
+  border-color: #B0131D;
+  color: #FFF;
+  cursor: pointer;
+  text-shadow: 0 1px 1px #444;
+  @include inset-button(16px, 6px 4px);
+  @include inset-shadow;
+  @include gradient(#CF1623, #EA1927);
+}
+.button.red.try_again {
+  margin: 0 auto;
+  width: 120px;
+}
+
+.loading_animation {
+  background: transparent url('/images/games/v2/loader.gif') no-repeat;
+  margin: 12px auto;
+  height: 11px;
+  width: 16px;
+}
+
 .content_wrapper {
   
   .content {
   }
   
   .feat_review {
-    background-color: #FFF;
+    background-color: #FEFEFE;
     border: 1px solid #DEDEDE;
     border-bottom: 1px solid #9D9990;
     @include rounded-corners;
   }
   
-  form#new_gamer label {
+  .sign_up_icon {
+    background: transparent url('/images/games/v2/sign_up_hd.png') no-repeat;
+    height: 30px;
     margin: 0 auto;
-    margin-top: 8px;
-  }
-  
-  form#new_gamer input[type=text],
-  form#new_gamer input[type=email],
-  form#new_gamer input[type=password] {
-
-  }
-  
-  form#new_gamer input[type=email],
-  form#new_gamer input[type=password] {
-    border: 1px solid #C1C1C1;
-    padding: 4px;
-    width: 92%;
-    @include rounded-corners(10px);
-    @include inset-shadow;
-  }
-  
-  form#new_gamer input[type=submit] {
-    border: 1px solid #B0B0B0;
-    border-color: #B0131D;
-    color: #FFF;
-    cursor: pointer;
-    font-size: 0.9em;
-    position: relative;
-    margin: 8px auto 0;
-    text-shadow: 0 1px 1px #444;
     width: 100px;
-    @include inset-button(16px, 8px 10px);
-    @include inset-shadow;
-    @include gradient(#CF1623, #EA1927);
+  }
+
+  .register_header {
+    background: transparent url('/images/games/v2/register_header.png') no-repeat;
+    height: 57px;
+    margin: 0 auto 12px;
+    width: 400px;
+  }
+  .register_form {
+    overflow: hidden;
+    
+    form#new_gamer label {
+      margin: 0 auto;
+      margin-top: 8px;
+    }
+    
+    form#new_gamer input[type=email],
+    form#new_gamer input[type=password] {
+      border: 1px solid #C1C1C1;
+      padding: 4px;
+      width: 92%;
+      -webkit-appearance: none;
+      @include rounded-corners(10px);
+      @include inset-shadow;
+    }
+    
+    form#new_gamer input[type=submit] {
+      border: 1px solid #B0B0B0;
+      border-color: #B0131D;
+      color: #FFF;
+      cursor: pointer;
+      font-size: 0.9em;
+      position: relative;
+      margin: 8px auto 0;
+      text-shadow: 0 1px 1px #444;
+      width: 100px;
+      @include inset-button(16px, 8px 10px);
+      @include inset-shadow;
+      @include gradient(#CF1623, #EA1927);
+    }
+    
+    form#new_gamer {
+      
+      select {
+       border: 1px solid #C1C1C1;
+       padding: 4px;
+       -webkit-appearance: none;
+       @include inset-button(16px, 6px 10px);
+       @include inset-shadow;
+      }
+    }
   }
 
   .profile .field {
@@ -273,3 +315,8 @@ a, a:visited {
   }
   
 } //.content_wrapper
+
+
+.forgot_pass {
+  font-size: 0.8em;
+}

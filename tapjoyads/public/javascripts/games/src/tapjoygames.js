@@ -58,7 +58,7 @@ TJG.utils = {
 
   getParam : function(name) {
     name = name.replace(/[\[]/,"\\\[").replace(/[\]]/,"\\\]");
-    var regexS = "[\\?&]"+name+"=([^&]*)";
+    var regexS = "[\\?&]"+name+"=([^&#]*)";
     var regex = new RegExp( regexS );
     var results = regex.exec( window.location.href );
     if( results == null ) return "";
@@ -321,6 +321,8 @@ TJG.ui = {
           values[this.name] = $(this).val();
         }
       });
+      var form_height = $('.register_form').outerHeight();
+
       $(".email_error").hide();
       emailReg = /^([\w-\.+]+@([\w-]+\.)+[\w-]{2,4})?$/;
       if(values['date[day]'] == '' || values['date[month]'] == '' || values['date[year]'] == '') {
@@ -348,11 +350,13 @@ TJG.ui = {
       }
       else if (hasError != true) {
         var loader = [
-          '<div class="dialog_title title_2">Registering</div>',
-          '<div class="dialog_image"></div>'
+          '<div class="title_2 center">Registering</div>',
+          '<div class="loading_animation"></div>'
         ].join('');
-        $("#sign_up_dialog_content").html(loader);
-        $("#sign_up_dialog_content").parent().animate({ height: "100px", }, animateSpd);
+        console.log(form_height);
+        $('.register_form').animate({ height: "0px" }, animateSpd, function() {
+          $('.register_progess').html(loader);
+        });
         $.ajax({
           type: 'POST',
           url: rurl,
@@ -374,22 +378,20 @@ TJG.ui = {
             if (d.success) {
               hasLinked = false;
               msg = [
-                '<div class="dialog_header_wrapper"><div class="dialog_header_right"></div><div class="dialog_header_left"></div><div class="dialog_title title_2">Success!</div></div>',
-                '<div class="dialog_header">Your Tapjoy Games account was sucessfully created!</div>',
-               '<div class="dialog_content"><div class="continue_link_device"><div class="button grey dialog_button">Connect My Device</div></div></div>'
+                '<div class="title_2 center">Success!</div>',
+                '<div class="dialog_content center">Your Tapjoy Games account was sucessfully created!</div>',
+                '<div class="continue_link_device"><div class="button red try_again">Connect My Device</div></div>',
               ].join('');
               if (!TJG.vars.isTouch) {
                 msg = [
-                  '<div class="dialog_header_wrapper"><div class="dialog_header_right"></div><div class="dialog_header_left"></div><div class="dialog_title title_2">Success!</div></div>',
-                  '<div class="dialog_header">Your Tapjoy Games account was sucessfully created!</div>',
-                 '<div class="dialog_content"><div class="continue_link_device"><div class="button grey dialog_button">Continue</div></div></div>'
+                  '<div class="title_2 center">Success!</div>',
+                  '<div class="dialog_content center">Your Tapjoy Games account was sucessfully created!</div>',
+                  '<div class="continue_link_device"><div class="button red try_again">Continue</div></div>',
                 ].join('');
               }
-              $('.close_dialog').unbind('click');
-              $("#sign_up_dialog_content").parent().animate({ height: "140px", }, animateSpd);
-              $("#sign_up_dialog_content").html(msg);
+              $('.register_progess').html(msg);
               if (d.linked) {
-                $('.close_dialog,.continue_link_device').click(function(){
+                $('.continue_link_device').click(function(){
                   if (TJG.path) {
                     document.location.href = TJG.path;
                   }
@@ -399,7 +401,7 @@ TJG.ui = {
                 });
               }
               else if (d.link_device_url) {
-                $('.close_dialog,.continue_link_device').click(function(){
+                $('.continue_link_device').click(function(){
                   if (TJG.vars.isAndroid &&  TJG.android_market_url) {
                     document.location.href = TJG.android_market_url;
                   }
@@ -414,17 +416,10 @@ TJG.ui = {
                       document.location.href = document.domain;
                     }
                   }
-                  $('.close_dialog').unbind('click');
-                  $("#sign_up_dialog_content").html($("#link_device_dialog .dialog").html());
-                  $("#sign_up_dialog_content .dialog_header_wrapper").css("padding", "6px 12px");
-                  $("#sign_up_dialog_content").parent().animate({ height: "300px", }, animateSpd);
-                  $('.close_dialog,.link_device_url').click(function(){
-                    document.location.href = d.link_device_url;
-                  });
                 });
               }
               else {
-                $('.close_dialog,.continue_link_device').click(function(){
+                $('.continue_link_device').click(function(){
                   if (TJG.path) {
                     document.location.href = TJG.path;
                   }
@@ -445,26 +440,28 @@ TJG.ui = {
                 }
               }
               msg = [
-                '<div class="dialog_header_wrapper"><div class="dialog_header_right"></div><div class="dialog_header_left"></div><div class="dialog_title title_2">Oops!</div></div>',
-                '<div class="dialog_content"><div>', error ,'.</div> <div id="sign_up_again"><div class="button grey dialog_button">Try Again</div></div></div>',
+                '<div class="title_2 center">Oops!</div>',
+                '<div class="dialog_content center">', error ,'.</div>',
+                '<div class="sign_up_again"><div class="button red try_again">Try Again</div></div>',
               ].join('');
-              $("#sign_up_dialog_content").html(msg);
-              $(".close_dialog").hide();
+              $('.register_progess').html(msg);
             }
-            $('#sign_up_again').click(function(){
-              TJG.ui.showRegister();
+            $('.sign_up_again').click(function(){
+              $('.register_progess').html('');
+              $('.register_form').animate({ height: form_height + "px" }, animateSpd);
             });
           },
           error: function() {
             var error = 'There was an issue';
             msg = [
-              '<div class="dialog_header_wrapper"><div class="dialog_header_right"></div><div class="dialog_header_left"></div><div class="dialog_title title_2">Oops!</div></div>',
-              '<div class="dialog_content"><div>', error ,'.</div><div id="sign_up_again"><div class="button grey dialog_button">Try Again</div></div></div>',
+              '<div class="title_2 center">Oops!</div>',
+              '<div class="dialog_content center">', error ,'.</div>',
+              '<div id="sign_up_again"><div class="button red try_again">Try Again</div></div>',
             ].join('');
-            $(".close_dialog").hide();
-            $("#sign_up_dialog_content").html(msg);
-            $('#sign_up_again').click(function(){
-               TJG.ui.showRegister();
+            $('.register_progess').html(msg);
+            $('.sign_up_again').click(function(){
+               $('.register_progess').html('');
+               $('.register_form').animate({ height: form_height + "px" }, animateSpd);
             });
           }
         });
@@ -1613,6 +1610,11 @@ TJG.social = {
         // Sets cookie if localStorage exists
         if (!TJG.vars.c_data && TJG.vars.ls_data) {
           TJG.utils.setCookie('data', TJG.vars.ls_data, 365, 1);
+        }
+        // Set cookie if missing and from android app
+        var data_p = TJG.utils.getParam('data');
+        if (!TJG.vars.c_data && !TJG.utils.isNull(data_p) && (TJG.utils.getParam('src') == 'android_app')) {
+          TJG.utils.setCookie('data', data_p, 365, 1);
         }
       },
       

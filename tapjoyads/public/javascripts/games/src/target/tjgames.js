@@ -49,79 +49,73 @@ TJG.appOfferWall = {};
 TJG.loadedImages = {};
 (function(window, document) {
     var winH, winW;
-    function centerDialog (el) {
-      winH = $(window).height();
-      winW = $(window).width();
-      $(el).css('top',  winH/2-$(el).outerHeight()/2);
-      $(el).css('left', winW/2-$(el).outerWidth()/2);
-      $(el).show();
+    winH = $(window).height();
+    winW = $(window).width();
+    var nav = navigator, classes = [''], classReplaces = {}, device = "", orientationCompute = "";
+    TJG.vars.isIos = (/iphone|ipod|ipad/gi).test(nav.platform);
+    TJG.vars.device_type = nav.platform.toLowerCase();
+    TJG.vars.isIpad = (/ipad/gi).test(nav.userAgent);
+    TJG.vars.isIpod = (/ipod/gi).test(nav.userAgent);
+    TJG.vars.isIphone = (/iphone/gi).test(nav.userAgent);
+    TJG.vars.isAndroid = (/android/gi).test(nav.userAgent);
+    TJG.vars.isMobile = /(ip(od|ad|hone))/gi.test(nav.userAgent);
+    if (TJG.vars.isAndroid) {
+     TJG.vars.device_type = 'android';
+     if ((/mobile/gi).test(nav.userAgent)) {
+       TJG.vars.isMobile = true;
+     }
     }
-    centerDialog("#loader");
-     var nav = navigator, classes = [''], classReplaces = {}, device = "", orientationCompute = "";
-     TJG.vars.isIos = (/iphone|ipod|ipad/gi).test(nav.platform);
-     TJG.vars.device_type = nav.platform.toLowerCase();
-     TJG.vars.isIpad = (/ipad/gi).test(nav.userAgent);
-     TJG.vars.isIpod = (/ipod/gi).test(nav.userAgent);
-     TJG.vars.isIphone = (/iphone/gi).test(nav.userAgent);
-     TJG.vars.isAndroid = (/android/gi).test(nav.userAgent);
-     TJG.vars.isMobile = /(ip(od|ad|hone))/gi.test(nav.userAgent);
-     if (TJG.vars.isAndroid) {
-       TJG.vars.device_type = 'android';
-       if ((/mobile/gi).test(nav.userAgent)) {
-         TJG.vars.isMobile = true;
-       }
+    if (TJG.vars.device_type) {
+     TJG.vars.device_type = '' + TJG.vars.device_type.toLowerCase();
+    }
+    TJG.vars.isIPad = (/ipad/gi).test(nav.platform);
+    TJG.vars.isRetina = 'devicePixelRatio' in window && window.devicePixelRatio > 1;
+    TJG.vars.isSafari = nav.appVersion.match(/Safari/gi);
+    TJG.vars.hasHomescreen = 'standalone' in nav && TJG.vars.isIos;
+    TJG.vars.isStandalone = TJG.vars.hasHomescreen && nav.standalone;
+    TJG.vars.version = nav.appVersion.match(/OS \d+_\d+/g);
+    TJG.vars.platform = nav.platform.split(' ')[0];
+    TJG.vars.language = nav.language.replace('-', '_');
+    if (TJG.vars.isIos || TJG.vars.isMobile) {
+     if (TJG.vars.isIPad) {
+       classReplaces['mobile'] = 'ipad';
      }
-     if (TJG.vars.device_type) {
-       TJG.vars.device_type = '' + TJG.vars.device_type.toLowerCase();
-     }
-     TJG.vars.isIPad = (/ipad/gi).test(nav.platform);
-     TJG.vars.isRetina = 'devicePixelRatio' in window && window.devicePixelRatio > 1;
-     TJG.vars.isSafari = nav.appVersion.match(/Safari/gi);
-     TJG.vars.hasHomescreen = 'standalone' in nav && TJG.vars.isIos;
-     TJG.vars.isStandalone = TJG.vars.hasHomescreen && nav.standalone;
-     TJG.vars.version = nav.appVersion.match(/OS \d+_\d+/g);
-     TJG.vars.platform = nav.platform.split(' ')[0];
-     TJG.vars.language = nav.language.replace('-', '_');
-     if (TJG.vars.isIos || TJG.vars.isMobile) {
-       if (TJG.vars.isIPad) {
-         classReplaces['mobile'] = 'ipad';
-       }
     }
     else {
-      classReplaces['mobile'] = 'web';
+    classReplaces['mobile'] = 'web';
     }
     classes.push(winW + 'x' + winH);
     if ('ontouchend' in document) {
-      classReplaces['no-touch'] = 'touch';
-      TJG.vars.isTouch = true;
+    classReplaces['no-touch'] = 'touch';
+    TJG.vars.isTouch = true;
     }
     if (TJG.vars.isRetina) {
-        classReplaces['no-hd'] = 'hd';
+      classReplaces['no-hd'] = 'hd';
     }
     function getOrientationClass() {
-      return TJG.vars.orientationClasses[window.orientation % 180 ? 0 : 1];
+    return TJG.vars.orientationClasses[window.orientation % 180 ? 0 : 1];
     }
     if ('orientation' in window) {
-      var orientationRe = new RegExp('(' + TJG.vars.orientationClasses.join('|') + ')'),
-        orientationEvent = ('onorientationchange' in window) ? 'orientationchange' : 'resize',
-          currentOrientationClass = classes.push(getOrientationClass());
-      addEventListener(orientationEvent, function() {
-          var orientationClass = getOrientationClass();
-          if (currentOrientationClass != orientationClass) {
-            currentOrientationClass = orientationClass;
-            var className = TJG.doc.className;
-            TJG.doc.className = className ? className.replace(orientationRe, currentOrientationClass) : currentOrientationClass;
-            if (TJG.repositionDialog.length > 0) {
-              for (var i = 0; i < TJG.repositionDialog.length; i++) {
-                centerDialog(TJG.repositionDialog[i]);
-              }
+    var orientationRe = new RegExp('(' + TJG.vars.orientationClasses.join('|') + ')'),
+      orientationEvent = ('onorientationchange' in window) ? 'orientationchange' : 'resize',
+        currentOrientationClass = classes.push(getOrientationClass());
+    addEventListener(orientationEvent, function() {
+        var orientationClass = getOrientationClass();
+        if (currentOrientationClass != orientationClass) {
+          currentOrientationClass = orientationClass;
+          var className = TJG.doc.className;
+          TJG.doc.className = className ? className.replace(orientationRe, currentOrientationClass) : currentOrientationClass;
+          if (TJG.repositionDialog.length > 0) {
+            for (var i = 0; i < TJG.repositionDialog.length; i++) {
+              centerDialog(TJG.repositionDialog[i]);
             }
-         }
-      }, false);
+          }
+       }
+    }, false);
     }
     var className = TJG.doc.className;
     for (replace in classReplaces) {
-        className = className.replace(replace, classReplaces[replace]);
+      className = className.replace(replace, classReplaces[replace]);
     }
     TJG.doc.className = className + classes.join(' ');
 })(this, document);
@@ -857,7 +851,7 @@ TJG.utils = {
 
   getParam : function(name) {
     name = name.replace(/[\[]/,"\\\[").replace(/[\]]/,"\\\]");
-    var regexS = "[\\?&]"+name+"=([^&]*)";
+    var regexS = "[\\?&]"+name+"=([^&#]*)";
     var regex = new RegExp( regexS );
     var results = regex.exec( window.location.href );
     if( results == null ) return "";
@@ -890,7 +884,6 @@ TJG.utils = {
     }
     return localStorage[k];
   },
-<<<<<<< HEAD
   
   setCookie: function(name, value, days, years) {
     if (days) {
@@ -924,9 +917,6 @@ TJG.utils = {
     setCookie(name, "", -1);
   },
   
-=======
-
->>>>>>> 4147bfc8cd099cd64b6a867b4f2fb78253a31ae4
   scrollTop : function (delay){
     if (delay == null) {
       delay = "slow";
@@ -953,15 +943,6 @@ TJG.utils = {
         });
       }
     });
-<<<<<<< HEAD
-<<<<<<< HEAD
-    
-=======
-
->>>>>>> 4147bfc8cd099cd64b6a867b4f2fb78253a31ae4
-=======
-
->>>>>>> 04738fc15cb6109f65e00c4eeb059d46e7209dd1
     if (!TJG.vars.imageLoaderInit) {
       $(window).scroll( function() {
         if (!TJG.vars.scrolling) {
@@ -993,15 +974,7 @@ TJG.utils = {
 $.utils = TJG.utils;
 
 TJG.ui = {
-<<<<<<< HEAD
-<<<<<<< HEAD
-  
-=======
 
->>>>>>> 4147bfc8cd099cd64b6a867b4f2fb78253a31ae4
-=======
-
->>>>>>> 04738fc15cb6109f65e00c4eeb059d46e7209dd1
   hideLoader : function(delay,fn) {
     TJG.repositionDialog = [];
     delay = $.utils.or(delay, "fast");
@@ -1119,14 +1092,6 @@ TJG.ui = {
     else {
       path = location.pathname.replace(/\/$/, '');
     }
-    $("#sign_up_dialog_content").parent().css("height", "270px");
-    $("#sign_up_dialog_content").html($('#sign_up_dialog_content_placeholder').html());
-    setTimeout(function() {
-      TJG.utils.centerDialog("#sign_up_dialog");
-      TJG.repositionDialog = ["#sign_up_dialog"];
-      $(".close_dialog").show();
-      $("#sign_up_dialog").fadeIn();
-    }, 50);
 
     $('form#new_gamer').submit(function(e){
       e.preventDefault();
@@ -1149,6 +1114,8 @@ TJG.ui = {
           values[this.name] = $(this).val();
         }
       });
+      var form_height = $('.register_form').outerHeight();
+
       $(".email_error").hide();
       emailReg = /^([\w-\.+]+@([\w-]+\.)+[\w-]{2,4})?$/;
       if(values['date[day]'] == '' || values['date[month]'] == '' || values['date[year]'] == '') {
@@ -1176,11 +1143,13 @@ TJG.ui = {
       }
       else if (hasError != true) {
         var loader = [
-          '<div class="dialog_title title_2">Registering</div>',
-          '<div class="dialog_image"></div>'
+          '<div class="title_2 center">Registering</div>',
+          '<div class="loading_animation"></div>'
         ].join('');
-        $("#sign_up_dialog_content").html(loader);
-        $("#sign_up_dialog_content").parent().animate({ height: "100px", }, animateSpd);
+        console.log(form_height);
+        $('.register_form').animate({ height: "0px" }, animateSpd, function() {
+          $('.register_progess').html(loader);
+        });
         $.ajax({
           type: 'POST',
           url: rurl,
@@ -1202,22 +1171,20 @@ TJG.ui = {
             if (d.success) {
               hasLinked = false;
               msg = [
-                '<div class="dialog_header_wrapper"><div class="dialog_header_right"></div><div class="dialog_header_left"></div><div class="dialog_title title_2">Success!</div></div>',
-                '<div class="dialog_header">Your Tapjoy Games account was sucessfully created!</div>',
-               '<div class="dialog_content"><div class="continue_link_device"><div class="button grey dialog_button">Connect My Device</div></div></div>'
+                '<div class="title_2 center">Success!</div>',
+                '<div class="dialog_content center">Your Tapjoy Games account was sucessfully created!</div>',
+                '<div class="continue_link_device"><div class="button red try_again">Connect My Device</div></div>',
               ].join('');
               if (!TJG.vars.isTouch) {
                 msg = [
-                  '<div class="dialog_header_wrapper"><div class="dialog_header_right"></div><div class="dialog_header_left"></div><div class="dialog_title title_2">Success!</div></div>',
-                  '<div class="dialog_header">Your Tapjoy Games account was sucessfully created!</div>',
-                 '<div class="dialog_content"><div class="continue_link_device"><div class="button grey dialog_button">Continue</div></div></div>'
+                  '<div class="title_2 center">Success!</div>',
+                  '<div class="dialog_content center">Your Tapjoy Games account was sucessfully created!</div>',
+                  '<div class="continue_link_device"><div class="button red try_again">Continue</div></div>',
                 ].join('');
               }
-              $('.close_dialog').unbind('click');
-              $("#sign_up_dialog_content").parent().animate({ height: "140px", }, animateSpd);
-              $("#sign_up_dialog_content").html(msg);
+              $('.register_progess').html(msg);
               if (d.linked) {
-                $('.close_dialog,.continue_link_device').click(function(){
+                $('.continue_link_device').click(function(){
                   if (TJG.path) {
                     document.location.href = TJG.path;
                   }
@@ -1227,8 +1194,7 @@ TJG.ui = {
                 });
               }
               else if (d.link_device_url) {
-                $('.close_dialog,.continue_link_device').click(function(){
-<<<<<<< HEAD
+                $('.continue_link_device').click(function(){
                   if (TJG.vars.isAndroid &&  TJG.android_market_url) {
                     document.location.href = TJG.android_market_url;
                   }
@@ -1243,25 +1209,10 @@ TJG.ui = {
                       document.location.href = document.domain;
                     }
                   }
-<<<<<<< HEAD
-=======
-=======
->>>>>>> 04738fc15cb6109f65e00c4eeb059d46e7209dd1
-                  $('.close_dialog').unbind('click');
-                  $("#sign_up_dialog_content").html($("#link_device_dialog .dialog").html());
-                  $("#sign_up_dialog_content .dialog_header_wrapper").css("padding", "6px 12px");
-                  $("#sign_up_dialog_content").parent().animate({ height: "300px", }, animateSpd);
-                  $('.close_dialog,.link_device_url').click(function(){
-                    document.location.href = d.link_device_url;
-                  });
-<<<<<<< HEAD
->>>>>>> 4147bfc8cd099cd64b6a867b4f2fb78253a31ae4
-=======
->>>>>>> 04738fc15cb6109f65e00c4eeb059d46e7209dd1
                 });
               }
               else {
-                $('.close_dialog,.continue_link_device').click(function(){
+                $('.continue_link_device').click(function(){
                   if (TJG.path) {
                     document.location.href = TJG.path;
                   }
@@ -1282,51 +1233,43 @@ TJG.ui = {
                 }
               }
               msg = [
-                '<div class="dialog_header_wrapper"><div class="dialog_header_right"></div><div class="dialog_header_left"></div><div class="dialog_title title_2">Oops!</div></div>',
-                '<div class="dialog_content"><div>', error ,'.</div> <div id="sign_up_again"><div class="button grey dialog_button">Try Again</div></div></div>',
+                '<div class="title_2 center">Oops!</div>',
+                '<div class="dialog_content center">', error ,'.</div>',
+                '<div class="sign_up_again"><div class="button red try_again">Try Again</div></div>',
               ].join('');
-              $("#sign_up_dialog_content").html(msg);
-              $(".close_dialog").hide();
+              $('.register_progess').html(msg);
             }
-            $('#sign_up_again').click(function(){
-              TJG.ui.showRegister();
+            $('.sign_up_again').click(function(){
+              $('.register_progess').html('');
+              $('.register_form').animate({ height: form_height + "px" }, animateSpd);
             });
           },
           error: function() {
             var error = 'There was an issue';
             msg = [
-              '<div class="dialog_header_wrapper"><div class="dialog_header_right"></div><div class="dialog_header_left"></div><div class="dialog_title title_2">Oops!</div></div>',
-              '<div class="dialog_content"><div>', error ,'.</div><div id="sign_up_again"><div class="button grey dialog_button">Try Again</div></div></div>',
+              '<div class="title_2 center">Oops!</div>',
+              '<div class="dialog_content center">', error ,'.</div>',
+              '<div id="sign_up_again"><div class="button red try_again">Try Again</div></div>',
             ].join('');
-            $(".close_dialog").hide();
-            $("#sign_up_dialog_content").html(msg);
-            $('#sign_up_again').click(function(){
-               TJG.ui.showRegister();
+            $('.register_progess').html(msg);
+            $('.sign_up_again').click(function(){
+               $('.register_progess').html('');
+               $('.register_form').animate({ height: form_height + "px" }, animateSpd);
             });
           }
         });
       }
     });
   },
-<<<<<<< HEAD
-<<<<<<< HEAD
-
-  showUpdateDob : function () {
-=======
   
   showAcceptTos : function () {
->>>>>>> 4147bfc8cd099cd64b6a867b4f2fb78253a31ae4
-=======
-  
-  showAcceptTos : function () {
->>>>>>> 04738fc15cb6109f65e00c4eeb059d46e7209dd1
     var animateSpd = "fast";
-    $("#accept_tos_dialog_content").parent().css("height", "190px");
+    $("#accept_tos_dialog_content").parent().css("height", "200px");
     $("#accept_tos_dialog_content").html($('#accept_tos_dialog_content_placeholder').html());
     setTimeout(function() {
       TJG.utils.centerDialog("#accept_tos_dialog");
       TJG.repositionDialog = ["#accept_tos_dialog"];
-      $(".container").hide();
+      $("#home").hide();
       $("#accept_tos_dialog").fadeIn();
     }, 50);
 
@@ -1550,7 +1493,6 @@ TJG.ui = {
     }, options.startDelay);
     window.addToHomeClose = addToHomeClose;
   },
-<<<<<<< HEAD
   
   showDeviceSelection : function(devices, showClose) {
     var fadeSpd = 350, fadeSpdFast = 250, fadeSpdSlow = 700;
@@ -1578,14 +1520,14 @@ TJG.ui = {
         device_found = true;
         device_data = v.data;
         matched_data - v.data;
-        d.push('<a href="', path ,'/switch_device?data=', v.data ,'">');
+        d.push('<a href="switch_device?data=', v.data ,'">');
           d.push('<li class="button grey">');
             d.push(v.name);
           d.push('</li>');
         d.push('</a>');
       }
       else if (!TJG.vars.isTouch){ // Web
-        a.push('<a href="', path ,'/switch_device?data=', v.data ,'">');
+        a.push('<a href="switch_device?data=', v.data ,'">');
           a.push('<li class="button grey">');
             a.push(v.name);
           a.push('</li>');
@@ -1677,9 +1619,6 @@ TJG.ui = {
     });
   },
   
-=======
-
->>>>>>> 4147bfc8cd099cd64b6a867b4f2fb78253a31ae4
   homeInit : function () {
     var jQT = new $.jQTouch({
       slideSelector: '#jqt',
@@ -1724,17 +1663,8 @@ TJG.ui = {
         TJG.ui.showDeviceSelection(TJG.select_device, true);
       });
     }
-<<<<<<< HEAD
     
-<<<<<<< HEAD
-    function showIntro () {
-=======
-
-    function showInto () {
->>>>>>> 4147bfc8cd099cd64b6a867b4f2fb78253a31ae4
-=======
     function showIntro() {
->>>>>>> 04738fc15cb6109f65e00c4eeb059d46e7209dd1
       var div = document.createElement('div'), close;
       var id = "newUser";
       var obj = "#" + id;
@@ -1960,7 +1890,7 @@ TJG.ui = {
     }
 
     function getMoreGames() {
-      $(".more_games_url").click(function() {
+      $(".more_apps_path").click(function() {
         slidePage("#more_games", "left");
         $("#recommended_games_button").addClass("dark_grey").removeClass("grey");
         $("#top_grossing_games_button").addClass("grey").removeClass("dark_grey");
@@ -2087,8 +2017,6 @@ TJG.ui = {
   }
 
 };
-<<<<<<< HEAD
-=======
 
 RegExp.escape = function(text) {
   if (!arguments.callee.sRE) {
@@ -2434,356 +2362,6 @@ TJG.social = {
     showFriendList();
     onWindowResize();
   },
-};
-
-
-(function(window, document) {
->>>>>>> 4147bfc8cd099cd64b6a867b4f2fb78253a31ae4
-
-TJG.social = {
-  setup: function(options){
-    // local variables
-    var currentPage = 1;
-    var selectedFriends = [];
-    var animateSpeed = "fast";
-    var currentFilter = '';
-    var hasNext = false;
-    var pageSize = options.pageSize;
-    var fbFriends = options.fbFriends;
-    var inviteUrl = options.inviteUrl;
-    var channel = options.channel;
-
-    // local functions
-    var onWindowResize = function(event) {
-      var viewportWidth = $(window).width();
-      $('#friend_filter').attr('size',(viewportWidth-40)/8);
-    };
-
-    var resetDirectionButtons = function() {
-      if (currentPage == 1) {
-        $('#prev').parent().hide();
-      } else {
-        $('#prev').parent().show();
-      }
-      if (hasNext) {
-        $('#next').show();
-      } else {
-        $('#next').hide();
-      }
-    }; // resetDirectionButtons
-
-    var showFriendList = function() {
-      $('.friend_list').fadeOut(animateSpeed, function() {
-        hasNext = false;
-        var text      = [],
-          friends     = [],
-          counter     = 0,
-          counterMax  = currentPage * pageSize,
-          counterMin  = counterMax - pageSize;
-        var search = function(regex, text) {
-          for (var i in fbFriends) {
-            if (counter > counterMax) { break; }
-            var friend = fbFriends[i];
-            var included = $.inArray(friend, friends) != -1;
-            var matched = regex ?
-              friend.name.match(regex) :
-              friend.name.toLowerCase().match(RegExp.escape(currentFilter));
-            if (!included && matched) {
-              counter++;
-              if (counter > counterMin && counter < counterMax) {
-                friends.push(friend);
-              }
-            }
-          }
-        };
-
-        // match first names
-        var filter = RegExp.escape(currentFilter);
-        search(new RegExp('^' + filter, 'i'));
-
-        if (currentFilter != '') {
-          // then other names
-          search(new RegExp('\\b' + filter, 'i'));
-
-          // then any part of any name
-          search(false)
-        }
-
-        hasNext = counter >= counterMax;
-
-        for (var i in friends) {
-          var friend = friends[i];
-          var liClass = '';
-          if ($.inArray(friend.fb_id, selectedFriends) != -1) {
-            liClass = ' checked';
-          }
-          text.push('<li class="fb_select',liClass,'" id="', friend.fb_id, '">');
-          text.push('<img src="http://graph.facebook.com/', friend.fb_id, '/picture" width="50" height="50"/>');
-          text.push('<span>', friend.name, '</span>');
-          text.push('</li>');
-        }
-
-        // unregister events
-        $('li.fb_select').unbind();
-        $('.friend_list').html(text.join('')).fadeIn(animateSpeed);
-
-        resetDirectionButtons();
-
-        $('li.fb_select').click(function(){
-          var li = $(this);
-          var fbId = li.attr('id');
-          var index = $.inArray(fbId, selectedFriends);
-          var found = index != -1;
-
-          if (found && li.hasClass('checked')) {
-            li.removeClass('checked');
-            selectedFriends.splice(index, 1);
-          } else if (!found && !li.hasClass('checked')) {
-
-
-            li.addClass('checked');
-            selectedFriends.push(fbId);
-          }
-          var text = 'Invite';
-          if (selectedFriends.length > 0) {
-            var plural = selectedFriends.length > 1 ? 's' : '';
-            text = 'Invite ' + selectedFriends.length + ' Friend' + plural;
-          }
-          $('#invite_button').text(text);
-        });
-      });
-    }; // showFriendList
-
-    var submitFbInvitation = function(url) {
-      loading();
-
-      $.ajax({
-        type: 'POST',
-        url: url,
-        cache: false,
-        timeout: 35000,
-        dataType: 'json',
-        data: {
-          friends: selectedFriends
-        },
-        success: function(d) {
-          var existDiv = '', notExistDiv = '';
-
-          if(d.success) {
-            if(d.gamers.length == 1) {
-              existDiv = '<div class="dialog_content">' + d.gamers.toString().replace(/\,/g, ", ") + ' has already registered, you are now following him/her.</div>';
-            }else if(d.gamers.length > 0) {
-              existDiv = '<div class="dialog_content">' + d.gamers.toString().replace(/\,/g, ", ") + ' have already registered, you are now following them.</div>';
-            }
-            if(d.non_gamers.length != 0) {
-              notExistDiv = '<div class="dialog_content">Tapjoy invites have been sent to '+d.non_gamers.toString().replace(/\,/g, ", ")+'</div>';
-            }
-
-            var msg = [
-              '<div class="dialog_header_wrapper"><div class="dialog_header_right"></div><div class="dialog_header_left"></div><div class="dialog_title title_2">Success!</div></div>',
-              '<div style="margin: 5px;"></div>',
-              existDiv,
-              notExistDiv,
-              '<div class="dialog_content"><div class="continue_invite"><div class="button grey dialog_button"  style="margin-bottom: 10px;">Continue</div></div></div>'
-            ].join('');
-            $('#social_dialog_content').parent().animate({}, animateSpeed);
-            $('#social_dialog_content').html(msg);
-
-            TJG.ui.hideLoader();
-            centerDialog($('#social_dialog').height(), '#social_dialog_content', '#social_dialog');
-
-            $('.close_dialog, .continue_invite').click(function(){
-              document.location.href = location.protocol + '//' + location.host + inviteUrl;
-            });
-          } else {
-            showErrorDialog(d.error, TJG.ui.hideLoader());
-          }
-        },
-        error: function(d) {
-          var error = 'There was an issue, please try again later';
-          showErrorDialog(error, TJG.ui.hideLoader());
-        }
-      });
-    }; // submitFbInvitation
-
-    var submitEmailInvitation = function(rurl, recipients){
-      sending();
-
-      $.ajax({
-        type: 'POST',
-        url: rurl,
-        cache: false,
-        timeout: 35000,
-        dataType: 'json',
-        data: {
-          recipients: recipients
-        },
-        success: function(d) {
-          var existDiv = '', notExistDiv = '';
-
-          if(d.success) {
-            if(d.gamers.length == 1) {
-              existDiv = '<div class="dialog_content">' + d.gamers.toString().replace(/\,/g, ", ") + ' has already registered, you are now following him/her.</div>';
-            }else if(d.gamers.length > 1) {
-              existDiv = '<div class="dialog_content">' + d.gamers.toString().replace(/\,/g, ", ") + ' have already registered, you are now following them.</div>';
-            }
-            if(d.non_gamers.length != 0) {
-              notExistDiv = '<div class="dialog_content">Tapjoy invites have been sent to '+d.non_gamers.toString().replace(/\,/g, ", ")+'</div>';
-            }
-            if(d.gamers.length == 0 && d.non_gamers.length == 0){
-              var error = 'Please provide an email other than yourselves';
-              showErrorDialog(error, TJG.ui.hideSender());
-              return;
-            }
-
-            var msg = [
-              '<div class="dialog_header_wrapper"><div class="dialog_header_right"></div><div class="dialog_header_left"></div><div class="dialog_title title_2">Success!</div></div>',
-              '<div style="margin: 5px;"></div>',
-              existDiv,
-              notExistDiv,
-              '<div class="dialog_content"><div class="continue_invite"><div class="button grey dialog_button"  style="margin-bottom: 10px;">Continue</div></div></div>'
-            ].join('');
-            $('#social_dialog_content').parent().animate({}, animateSpeed);
-            $('#social_dialog_content').html(msg);
-
-            TJG.ui.hideSender();
-            centerDialog($('#social_dialog').height(), '#social_dialog_content', '#social_dialog');
-
-            $('.close_dialog, .continue_invite').click(function(){
-              document.location.href = location.protocol + '//' + location.host + inviteUrl;
-            });
-          } else {
-            showErrorDialog(d.error, TJG.ui.hideSender());
-          }
-        },
-        error: function(d) {
-          var error = 'There was an issue, please try again later';
-          showErrorDialog(error, TJG.ui.hideSender());
-        }
-      });
-    }; // submitEmailInvitation
-
-    var loading = function(){
-      $('.close_dialog').hide();
-      TJG.ui.showLoaderAtCenter();
-    };
-
-    var sending = function(){
-      $('.close_dialog').hide();
-      TJG.ui.showSender();
-    }
-
-    var showErrorDialog = function(error, hideTransitionDialog) {
-      var msg = [
-        '<div class="dialog_header_wrapper"><div class="dialog_header_right"></div><div class="dialog_header_left"></div><div class="dialog_title title_2">Oops!</div></div>',
-        '<div class="dialog_content">', error, '. <span id="invite_again"><a href="#">Please click here to try again.</a></span><div style="margin: 5px;"></div></div>',
-      ].join('');
-      $('#social_dialog_content').parent().animate({}, animateSpeed);
-      $('#social_dialog_content').html(msg);
-
-      hideTransitionDialog;
-      centerDialog($('#social_dialog').height(), '#social_dialog_content', '#social_dialog');
-
-      $('#invite_again, .close_dialog').click(function(event){
-        event.preventDefault();
-        $('#social_dialog').fadeOut();
-      });
-    }; // showErrorDialog
-
-    var centerDialog = function(height, dialog_content_selector, dialog_selector) {
-      var scrollTop = $(window).scrollTop();
-      var screenHeight = $(window).height();
-      TJG.utils.centerDialog(dialog_selector);
-      $(dialog_selector).fadeIn(350).css({ top: scrollTop + screenHeight / 2 - height / 2 });
-    }; // centerDialog
-
-    var sendInvite = function(event) {
-      event.preventDefault();
-      var url = $('form#invite_friends').attr('action');
-
-      if(channel == 'FB'){
-        if(selectedFriends.length == 0) {
-          showErrorDialog('Please select at least one friend before sending out an invite', TJG.ui.hideLoader());
-        } else {
-          submitFbInvitation(url);
-        }
-      }else if(channel == 'EMAIL'){
-        submitEmailInvitation(url, $('#recipients').val());
-      }
-    }; // sendInvite
-
-    // bind events
-    window.onresize = onWindowResize;
-
-    $('#prev').click(function(event){
-      event.preventDefault();
-      if(currentPage > 1) {
-        currentPage--;
-        showFriendList();
-      }
-    });
-
-    $('#next').click(function(event){
-      event.preventDefault();
-      if(hasNext) {
-        currentPage++;
-        showFriendList();
-      }
-    });
-
-    $('#top').click(function(event){
-      event.preventDefault();
-      $('html, body').animate({ scrollTop: 0 }, animateSpeed);
-    });
-
-    $('.clear_search_button').click(function(event){
-      $('#friend_filter').val('');
-      currentFilter = '';
-      showFriendList();
-    });
-
-    $('#invite_button').click(function(event){
-      sendInvite(event);
-    });
-
-    $('#back_button').click(function(event){
-      document.location.href = location.protocol + '//' + location.host + inviteUrl;
-    });
-
-    $('#friend_filter').bind('input', function(event){
-      var newFilter = $(this).val().toLowerCase().replace(/^ +/,'').replace(/ +$/,'');
-      if(currentFilter != newFilter){
-        currentFilter = newFilter;
-        currentPage = 1;
-        showFriendList();
-      }
-    });
-
-    $('#recipients').keypress(function(event){
-        code= (event.keyCode ? event.keyCode : event.which);
-        if (code == 13){
-          $('#recipients').blur();
-          sendInvite(event);
-        }
-    });
-
-    // call functions
-    showFriendList();
-    onWindowResize();
-  },
-};
-
-RegExp.escape = function(text) {
-  if (!arguments.callee.sRE) {
-    var specials = [
-      '/', '.', '*', '+', '?', '|',
-      '(', ')', '[', ']', '{', '}', '\\'
-    ];
-    arguments.callee.sRE = new RegExp(
-      '(\\' + specials.join('|\\') + ')', 'g'
-    );
-  }
-  return text.replace(arguments.callee.sRE, '\\$1');
 };
 
 (function(window, document) {
@@ -2826,6 +2404,11 @@ RegExp.escape = function(text) {
         if (!TJG.vars.c_data && TJG.vars.ls_data) {
           TJG.utils.setCookie('data', TJG.vars.ls_data, 365, 1);
         }
+        // Set cookie if missing and from android app
+        var data_p = TJG.utils.getParam('data');
+        if (!TJG.vars.c_data && !TJG.utils.isNull(data_p) && (TJG.utils.getParam('src') == 'android_app')) {
+          TJG.utils.setCookie('data', data_p, 365, 1);
+        }
       },
       
       loadEvents : function () {
@@ -2833,9 +2416,9 @@ RegExp.escape = function(text) {
           TJG.ui.removeDialogs();
           TJG.repositionDialog = [];
         });
-        $('#sign_up, #sign_up_form').click(function() {
-          TJG.ui.showRegister();
-        });
+        
+        TJG.ui.showRegister();
+        
         $('#how_works').click(function(){
           TJG.utils.centerDialog("#how_works_dialog");
           TJG.repositionDialog = ["#how_works_dialog"];

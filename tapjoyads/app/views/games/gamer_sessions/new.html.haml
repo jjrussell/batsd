@@ -25,26 +25,30 @@
     .content_wrapper
       .content
         .content_box
-          - form_for([ :games, @gamer ], :url => games_gamer_path ) do |f|
-            .field
-              = label_tag :birthdate
-              = select_date nil, { :order => [:month, :day, :year], :start_year => Time.now.year, :end_year => (Time.now.year - 100), :include_blank => false, :prompt => {:day => 'Day', :month => 'Month', :year => 'Year'} }
-            .field
-              = f.label :email
-              = f.email_field :email, "autocorrect" => "off", "autocapitalize" => "off"
-            .field
-              = f.label :password
-              = f.password_field :password
-            .field.field_tos.clearfix
-              = f.check_box :terms_of_service
-              = f.label :terms_of_service, "By checking this box I assert that I agree to the #{ link_to('terms of services', games_tos_path, :target => '_blank') } & #{ link_to('privacy policy', games_privacy_path, :target => '_blank') }"
-            .field
-              = f.hidden_field :referrer, :value => params[:referrer]
-              = f.submit 'Sign Up', :class => 'button'
-            .email_error.center
-              = error_message_on @gamer, :email
-              = error_message_on @gamer, :password
-              = error_message_on @gamer, :terms_of_service
+          .register_header
+          .register_form
+            .sign_up_icon
+            - form_for([ :games, @gamer ], :url => games_gamer_path ) do |f|
+              .field
+                = label_tag :birthdate
+                = select_date nil, { :order => [:month, :day, :year], :start_year => Time.now.year, :end_year => (Time.now.year - 100), :include_blank => false, :prompt => {:day => 'Day', :month => 'Month', :year => 'Year'} }
+              .field
+                = f.label :email
+                = f.email_field :email, "autocorrect" => "off", "autocapitalize" => "off"
+              .field
+                = f.label :password
+                = f.password_field :password
+              .field.field_tos
+                = f.check_box :terms_of_service
+                = f.label :terms_of_service, "By checking this box I assert that I agree to the #{ link_to('terms of services', games_tos_path, :target => '_blank') } & #{ link_to('privacy policy', games_privacy_path, :target => '_blank') }"
+              .field
+                = f.hidden_field :referrer, :value => params[:referrer]
+                = f.submit 'Sign Up', :class => 'button'
+              .email_error.center
+                = error_message_on @gamer, :email
+                = error_message_on @gamer, :password
+                = error_message_on @gamer, :terms_of_service
+          .register_progess
 
 - content_for :page_javascript do
   :plain
