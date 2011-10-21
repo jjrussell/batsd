@@ -168,17 +168,6 @@ a, a:visited {
   width: 460px;
 }
 
-.web .profile .content_box,
-.ipad .profile .content_box {
-  margin: 0 auto;
-  padding: 20px;
-}
-
-.mobile .profile .content_box {
-  margin: 0 auto;
-  padding: 10px;
-}
-
 .button.red {
   border-color: #B0131D;
   color: #FFF;
@@ -270,6 +259,10 @@ a, a:visited {
     }
   }
 
+  .profile .interior {
+    padding: 20px;
+  }
+
   .profile .field {
     margin: 8px 0;
   }
@@ -279,7 +272,7 @@ a, a:visited {
   .profile select {
     border: 1px solid #C1C1C1;
     padding: 4px;
-    width: 92%;
+    width: 96%;
     @include rounded-corners(10px);
     @include inset-shadow;
   }
