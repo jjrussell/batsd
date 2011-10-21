@@ -1361,7 +1361,8 @@ TJG.social = {
         timeout: 35000,
         dataType: 'json',
         data: {
-          friends: selectedFriends
+          friends: selectedFriends,
+          ajax: true
         },
         success: function(d) {
           var existDiv = '', notExistDiv = '';
@@ -1392,6 +1393,8 @@ TJG.social = {
             $('.close_dialog, .continue_invite').click(function(){
               document.location.href = location.protocol + '//' + location.host + inviteUrl;
             });
+          } else if(d.error_redirect) {
+            window.setTimeout('location.reload()', 1000); 
           } else {
             showErrorDialog(d.error, TJG.ui.hideLoader());
           }
