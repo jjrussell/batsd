@@ -1,4 +1,35 @@
 class GamesMailer < ActionMailer::Base
+  include SendGrid
+
+  self.delivery_method = :smtp
+  self.smtp_settings = {
+    :address => "smtp.sendgrid.net",
+    :port => 587,
+    :domain => "tapjoy.com",
+    :authentication => :plain,
+    :user_name => "erictipton",
+    :password => "shufflethebits"
+  }
+
+  sendgrid_category :use_subject_lines
+  sendgrid_enable :clicktrack, :opentrack
+
+  def gamer_confirmation(gamer, confirmation_link)
+    from 'Tapjoy <noreply@tapjoy.com>'
+    recipients gamer.email
+    subject "Welcome to Tapjoy Games!"
+    content_type 'text/html'
+    body :confirmation_link => confirmation_link, :linked => gamer.devices.any?
+  end
+
+  def password_reset(gamer, reset_link)
+    from 'Tapjoy Support <support@tapjoy.com>'
+    recipients gamer.email
+    subject "Password Reset Request - Tapjoy Games"
+    content_type 'text/html'
+    body :reset_link => reset_link
+  end
+
   def feedback(gamer, content, user_agent, device_id)
     from 'Tapjoy <noreply@tapjoy.com>'
     reply_to gamer.email
@@ -38,6 +69,13 @@ class GamesMailer < ActionMailer::Base
     from 'Tapjoy <noreply@tapjoy.com>'
     recipients gamer.email
     subject "Tapjoy - Link Device"
+  end
+
+  def invite(gamer_name, recipients_email, link)
+    from "#{gamer_name} <noreply@tapjoy.com>"
+    recipients recipients_email
+    sendgrid_category "Invite"
+    subject "#{gamer_name} has invited you to join Tapjoy"
     content_type 'text/html'
     body(:ios_link => ios_link, :android_link => android_link)
   end
