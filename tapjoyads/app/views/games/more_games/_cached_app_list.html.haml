@@ -16,7 +16,7 @@
           .offer_description
             = truncate cached_app.description, :length => 300
           .offer_button.more_games
-            %a{:href => cached_app.url, :target => '_blank' }
+            - link_to(cached_app.url, :target => '_blank') do
               .button.grey
                 - if cached_app.price == 0
                   %span.amount.free
