@@ -33,7 +33,7 @@ class Job::QueueConversionTrackingController < Job::SqsReaderController
     end
 
     # Do not reward if user has installed this app for the same publisher user id on another device
-    unless offer.multi_complete?
+    unless offer.multi_complete? || offer.item_type == 'VideoOffer'
       other_udids = publisher_user.udids - [ click.udid ]
       other_udids.each do |udid|
         device = Device.new(:key => udid)
