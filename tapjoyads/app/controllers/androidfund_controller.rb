@@ -3,7 +3,7 @@ class AndroidfundController < WebsiteController
 
   def index
   end
-  
+
   def apply
     if params[:info]
       info = params[:info]

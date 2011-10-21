@@ -1,5 +1,5 @@
 class UserSessionsController < WebsiteController
-  
+
   def new
     if current_user
       redirect_to(default_path) and return
@@ -7,7 +7,7 @@ class UserSessionsController < WebsiteController
     @user_session = UserSession.new
     @goto = params[:goto]
   end
-  
+
   def create
     @user_session = UserSession.new(params[:user_session])
     if @user_session.save
@@ -17,7 +17,7 @@ class UserSessionsController < WebsiteController
       render :action => 'new'
     end
   end
-  
+
   def destroy
     user_session = UserSession.find
     unless user_session.nil?
