@@ -172,7 +172,7 @@
 - content_for :page_javascript do
   - if current_gamer.accepted_tos_version < TAPJOY_GAMES_CURRENT_TOS_VERSION
     :plain
-      $(window).load(function() {
+      $(window).load(function() { 
         TJG.ui.showAcceptTos();
       });
   - else
