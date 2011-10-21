@@ -27,16 +27,14 @@ class EditorsPick < ActiveRecord::Base
   end
 
   def self.cached_active(platform)
-    if platform == 'android'
-      Mc.distributed_get_and_put('cached_apps.active_editors_picks.android', false, 1.minute) do
-        picks = self.active.first(10)
-        picks.map { |p| CachedApp.new(p.offer, p.description) }
-      end
-    else
-      Mc.distributed_get_and_put('cached_apps.active_editors_picks.iphone', false, 1.minute) do
-        picks = self.active.first(10)
-        picks.map { |p| CachedApp.new(p.offer, p.description) }
-      end
+    platform = 'iphone' unless platform == 'android'
+
+    editors_picks = EditorsPick.quoted_table_name
+    apps = App.quoted_table_name
+    sql = "SELECT * from #{editors_picks}, #{apps} where #{editors_picks}.offer_id = #{apps}.id and #{apps}.platform = ? limit ?"
+    Mc.distributed_get_and_put("cached_apps.active_editors_picks.#{platform}", false, 1.minute) do
+      picks = EditorsPick.find_by_sql [sql, platform, 10]
+      picks.map { |p| CachedApp.new(p.offer, p.description) }
     end
   end
 private
