@@ -1,3 +1,36 @@
+$main-title-font-size: 1.2em;
+$main-font-size: 1em;
+$main-font-color: #505F6D;
+$main-font-name: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+
+$nav-height: 200px;
+$nav-padding-v: 16px;
+$nav-padding-h: 8px;
+$nav-bg-color: #E9E5DA;
+
+$logo-bottom-margin: 16px;
+
+@mixin rounded-corners($radius: 6px) {
+  border-radius: $radius;
+  -moz-border-radius-: $radius;
+  -webkit-border-radius: $radius;
+}
+
+@mixin button ($radius: 6px, $padding: 8px 8px) {
+  padding: $padding;
+  text-align: center;
+  @include rounded-corners($radius)
+}
+
+@mixin inset-button ($radius: 6px, $padding: 8px 8px) {
+  background-image: -moz-linear-gradient(top,rgba(160,150,145,.1)0%,rgba(160,150,145,0)30%,rgba(160,150,145,.2)100%);
+  background-image: -webkit-gradient(linear,left top,left bottom,color-stop(0%,rgba(160,150,145,0.1)),color-stop(30%,rgba(160,150,145,0)),color-stop(100%,rgba(160,150,145,.2)));
+  background-image: -webkit-linear-gradient(top,rgba(160,150,145,.1)0%,rgba(160,150,145,0)30%,rgba(160,150,145,.2)100%);
+  background-image: -o-linear-gradient(top,rgba(160,150,145,.1)0%,rgba(160,150,145,0)30%,rgba(160,150,145,.2)100%);
+  background-image: linear-gradient(top,rgba(160,150,145,.1)0%,rgba(160,150,145,0)30%,rgba(160,150,145,.2)100%);
+  @include button($radius, $padding)
+}
+
 html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, big, cite, code, del, dfn, em, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var, b, u, i, center, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td, article, aside, canvas, details, embed,  figure, figcaption, footer, header, hgroup, menu, a, output, ruby, section, summary, time, mark, audio, video { margin: 0; padding: 0; border: 0; font-size: 100%; font: inherit; vertical-align: baseline; }
 article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, section { display: block; }
 body { line-height: 1; }
@@ -62,7 +95,6 @@ a, a:visited {
 /* Dialog */
 .dialog_wrapper {
   background-color: #FFF;
-  color: #FFF;
   opacity: 0.95;
   padding: 2px;
   position: absolute;
@@ -76,7 +108,6 @@ a, a:visited {
 }
 .dialog {
   background-color: #222;
-  color: #FFF;
   padding-top: 15px;
   z-index: 999;
   -moz-border-radius: 10px;
@@ -512,9 +543,6 @@ form#new_gamer input {
 .mobile .content.message {
   margin: 6px 0;
 }
-.content a {
-  color: #FFF;
-}
 .tan .content a {
   color: #573D27;
 }
@@ -832,7 +860,6 @@ form#new_gamer_session .login_pass {
   font-size: 16px;
 }
 .gamer_name, .gamer_email {
-  color: #FFFFFF;
   font-weight: bold;
 }
 .web .gamer_signup_date,
@@ -844,7 +871,6 @@ form#new_gamer_session .login_pass {
 }
 .gamer_signup_date {
   margin-top: 3px;
-  color: #FFFFFF;
 }
 #account_options {
   padding: 0;
@@ -1311,7 +1337,6 @@ form#new_gamer_session .login_pass {
   font-weight: bold;
 }
 .staff_info.full .staff_name .author {
-  color: #FFF;
   font-size: 16px;
   font-weight: bold;
   position: relative;
@@ -1406,9 +1431,6 @@ form#new_gamer_session .login_pass {
 .mobile .app_review .app_text {
   font-size: 12px;
 }
-.app_review.full .app_text {
-  color: #FFF;
-}
 .mobile.portrait .offer_text {
   width: 240px;
 }
@@ -1444,10 +1466,9 @@ form#new_gamer_session .login_pass {
   height: 55px;
 }
 .offer_title {
-  color: #FFF;
   font-size: 18px;
   padding: 6px 0 2px;
-  text-shadow: 0 1px 4px #222;
+  font-weight: bold;
 }
 .app_review .app_title {
   color: #4B4B4B;
@@ -1472,9 +1493,6 @@ form#new_gamer_session .login_pass {
 .mobile .app_title {
   font-size: 16px;
   padding: 1px 0;
-}
-.app_review.full .app_title {
-  color: #FFF;
 }
 .app_review .review_text {
   font-size: 15px;
@@ -1659,7 +1677,6 @@ form#new_gamer_session .login_pass {
   width: 130px;
 }
 .mobile .tab_button.dark_grey {
-  color: #FFF;
   font-size: 11px;
   height: 26px;
   margin: 0;
@@ -1674,7 +1691,6 @@ form#new_gamer_session .login_pass {
 }
 .web .tab_button.dark_grey,
 .ipad .tab_button.dark_grey {
-  color: #FFF;
   height: 34px;
   margin: 0;
   width: 200px;
@@ -1718,18 +1734,7 @@ form#new_gamer_session .login_pass {
   margin: 4px 6px 0 0;
 }
 .button {
-  border-radius: 6px;
-  color: #FFF;
-  font-size: 13px;
-  font-weight: bold;
-  padding: 7px 10px 7px 10px;
-  text-decoration: none;
-  text-align: center;
-  text-shadow: 0 1px 1px #1F81A0;
-  white-space: nowrap;
-  -moz-border-radius: 6px;
-  -webkit-border-radius: 6px;
-  -moz-box-shadow: 0 0 4px #222;
+  @include inset-button(16px, 8px 4px);
 }
 input.button {
   border: none;
@@ -1744,17 +1749,14 @@ input.button {
   -moz-box-shadow: 1px 1px 1px #303030;
   -webkit-box-shadow: 1px 1px 1px #303030;
 }
+/*
 .button.blue, .button.grey:hover, .button.grey:active {
   background: -moz-linear-gradient(top, #1D81E9 0%, #0C62BA 100%);
   background: -webkit-gradient(linear, 0 0, 0 100%, color-stop(0, #1D81E9), color-stop(1, #0C62BA));
-  color: #FFF;
   text-shadow: 0 0px 1px #0C62BA;
 }
 .button.grey .earn {
   color: #6C6C6C;
-}
-.button.grey:hover .earn, .button.grey:active .earn {
-  color: #FFF;
 }
 .button.lt_blue {
   background: -moz-linear-gradient(top, #40A7C0 0%, #218BAD 100%);
@@ -1762,7 +1764,7 @@ input.button {
   -moz-box-shadow: none;
   -webkit-box-shadow: none;
 }
-.button.lt_blue:hover, .button.lt_blue:active{
+.button.lt_blue:hover, .button.lt_blue:active {
   -moz-box-shadow: inset 0px 0px 6px #15566B;
   -webkit-box-shadow: inset 0px 0px 6px #15566B;
 }
@@ -1770,19 +1772,14 @@ input.button {
   margin: 0 auto 12px;
   width: 120px;
 }
-.button.lt_blue.logout a {
-  color: #FFF;
-}
 .button.grey.dialog_button {
   cursor: pointer;
   margin: 0 auto;
   width: 100px;
 }
+*/
 .message_content .button.grey.arrow {
   color: #2778A1;
-}
-.message_content:hover .button.grey.arrow, .message_content:active .button.grey.arrow {
-  color: #FFF;
 }
 .message_content .button.grey.arrow .arrow_bg {
   background: transparent url('/images/games/button_right_arrow.png') no-repeat 2px right;
@@ -1881,7 +1878,7 @@ input.button {
   width: 266px;
 }
 .title {
-  font-family: 'Cooper';
+  font-family: $main-font-name;
 }
 .title_2 {
   font-family: 'AmericanTypewriter';
@@ -2052,7 +2049,6 @@ body {
   font-size: 14px;
   background-color: #222;
   border: 3px solid #b6b5b5;
-  color: #FFF;
   line-height: 130%;
   padding: 12px 10px;
   position: absolute;
@@ -2075,10 +2071,6 @@ body {
 #deviceSelect li a {
   color: #333;
 }
-#deviceSelect li a:hover, #deviceSelect li a:active{
-  color: #FFF;
-}
-
 #newUser {
   display: none;
 }
