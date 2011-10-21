@@ -1,5 +1,9 @@
 class UserSessionsController < WebsiteController
   
+  def index
+    redirect_to login_path
+  end
+  
   def new
     if current_user
       redirect_to(default_path) and return
