@@ -5,7 +5,7 @@ class Games::HomepageController < GamesController
   def index
     @require_select_device = false
     if has_multiple_devices?
-      @device_data = [] 
+      @device_data = []
       current_gamer.devices.each do |d|
         data = {
           :udid         => d.device_id,
@@ -29,7 +29,7 @@ class Games::HomepageController < GamesController
     @external_publishers = ExternalPublisher.load_all_for_device(@device) if @device.present?
     @featured_review = AppReview.featured_review(@device.try(:platform))
   end
-  
+
   def switch_device
     if params[:data].nil?
       redirect_to games_root_path
@@ -46,7 +46,7 @@ class Games::HomepageController < GamesController
 
   def privacy
   end
-  
+
   def send_device_link
     ios_link_url = "https://#{request.host}#{games_root_path}"
     GamesMailer.deliver_link_device(current_gamer, ios_link_url, GAMES_ANDROID_MARKET_URL )

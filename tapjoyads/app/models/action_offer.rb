@@ -1,26 +1,26 @@
 class ActionOffer < ActiveRecord::Base
   include UuidPrimaryKey
-  
+
   has_many :offers, :as => :item
   has_one :primary_offer, :class_name => 'Offer', :as => :item, :conditions => 'id = item_id'
-  
+
   belongs_to :partner
   belongs_to :app
   belongs_to :prerequisite_offer, :class_name => 'Offer'
-  
+
   validates_presence_of :partner, :app, :name, :variable_name
   validates_uniqueness_of :variable_name, :scope => :app_id, :case_sensitive => false
   validates_presence_of :instructions
   validates_presence_of :prerequisite_offer, :if => Proc.new { |action_offer| action_offer.prerequisite_offer_id? }
-  
+
   named_scope :visible, :conditions => { :hidden => false }
-  
+
   accepts_nested_attributes_for :primary_offer
-  
+
   before_validation :set_variable_name
   after_create :create_primary_offer
   after_update :update_offers
-  
+
   delegate :user_enabled?, :tapjoy_enabled?, :bid, :min_bid, :daily_budget, :integrated?, :to => :primary_offer
 
   delegate :get_offer_device_types, :store_id, :store_url, :large_download?, :supported_devices, :platform, :get_countries_blacklist, :countries_blacklist, :primary_category, :user_rating, :info_url, :to => :app
@@ -47,7 +47,7 @@ private
     offer.icon_id_override = app_id
     offer.save!
   end
-  
+
   def update_offers
     offers.each do |offer|
       offer.partner_id       = partner_id if partner_id_changed?
@@ -64,7 +64,7 @@ private
       offer.save! if offer.changed?
     end
   end
-  
+
   def set_variable_name
     self.variable_name = 'TJC_' + name.gsub(/[^[:alnum:]]/, '_').upcase
   end

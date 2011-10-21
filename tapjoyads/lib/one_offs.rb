@@ -18,7 +18,7 @@ class OneOffs
       time += incrementer
     end
   end
-  
+
   def self.copy_ranks(date_string)
     Stats.select(:where => "itemName() like 'app.#{date_string}.%'") do |stats|
       puts stats.key
@@ -136,7 +136,7 @@ class OneOffs
       { :job_type => 'master', :controller => 'master_cache_offers',                          :action => 'index',              :frequency => 'interval', :seconds => 1.minute },
       { :job_type => 'master', :controller => 'master_external_publishers',                   :action => 'cache',              :frequency => 'hourly',   :seconds => 6.minutes },
     ]
-    
+
     jobs.each do |job|
       j = Job.new(job)
       j.active = true

@@ -8,7 +8,7 @@ class CreateRankBoosts < ActiveRecord::Migration
       t.integer :amount, :null => false
       t.timestamps
     end
-    
+
     add_index :rank_boosts, :id, :unique => true
     add_index :rank_boosts, :offer_id
   end

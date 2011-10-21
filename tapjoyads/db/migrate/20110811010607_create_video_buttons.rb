@@ -9,7 +9,7 @@ class CreateVideoButtons < ActiveRecord::Migration
       t.boolean :enabled, :default => true
       t.timestamps
     end
-    
+
     add_index :video_buttons, :id, :unique => true
     add_index :video_buttons, :video_offer_id
   end

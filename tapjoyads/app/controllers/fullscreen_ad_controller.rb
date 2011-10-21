@@ -1,7 +1,7 @@
 class FullscreenAdController < ApplicationController
-  
+
   layout 'iphone'
-  
+
   def index
     @publisher_app = App.find_in_cache(params[:publisher_app_id])
     @currency = Currency.find_in_cache(params[:currency_id] || params[:publisher_app_id])
@@ -12,11 +12,11 @@ class FullscreenAdController < ApplicationController
       required_records << @displayer
     end
     return unless verify_records(required_records)
-    
+
     @now = params[:viewed_at].present? ? Time.zone.at(params[:viewed_at].to_f) : Time.zone.now
     @geoip_data = { :country => params[:country_code] }
   end
-  
+
   def test_offer
     @publisher_app = App.find_in_cache(params[:publisher_app_id])
     @currency = Currency.find_in_cache(params[:currency_id] || params[:publisher_app_id])
@@ -26,13 +26,13 @@ class FullscreenAdController < ApplicationController
       required_records << @displayer
     end
     return unless verify_records(required_records)
-    
+
     @offer = build_test_offer(@publisher_app)
     @now = params[:viewed_at].present? ? Time.zone.at(params[:viewed_at].to_f) : Time.zone.now
     @geoip_data = { :country => params[:country_code] }
     render :action => :index
   end
-  
+
   def test_video_offer
     @publisher_app = App.find_in_cache(params[:publisher_app_id])
     @currency = Currency.find_in_cache(params[:currency_id] || params[:publisher_app_id])
@@ -42,7 +42,7 @@ class FullscreenAdController < ApplicationController
       required_records << @displayer
     end
     return unless verify_records(required_records)
-    
+
     @offer = build_test_video_offer(@publisher_app).primary_offer
     @now = params[:viewed_at].present? ? Time.zone.at(params[:viewed_at].to_f) : Time.zone.now
     @geoip_data = { :country => params[:country_code] }

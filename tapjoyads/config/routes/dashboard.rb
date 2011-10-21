@@ -15,7 +15,7 @@ ActionController::Routing::Routes.draw do |map|
   map.namespace :account do |account|
     account.resources :whitelist, :controller => 'whitelist', :only => [ :index ], :collection => [ :enable, :disable ]
   end
-  map.resources :user_sessions, :only => [ :new, :create, :destroy ]
+  map.resources :user_sessions, :only => [ :new, :create, :destroy, :index ]
   map.resources :users, :as => :account, :except => [ :show, :destroy ]
   map.resources :apps, :except => [ :destroy ], :member => { :confirm => :get, :integrate => :get, :publisher_integrate => :get, :archive => :post, :unarchive => :post }, :collection => { :search => :get } do |app|
     app.resources :offers, :only => [ :new, :create, :edit, :update ] , :member => { :toggle => :post, :percentile => :post, :preview => :get, :upload_creative => [:get, :post, :put, :delete] }, :controller => 'apps/offers' do |offer|

@@ -1,42 +1,42 @@
 class S3Resource
-  
+
   superclass_delegating_accessor :bucket_name
   @@attribute_types = {}
   attr_accessor :id
   attr_reader :attributes
-  
+
   def self.attribute(attribute, options = {})
     type    = options.delete(:type) { :string }
     default = options.delete(:default)
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
     raise "Unknown type conversion: #{type}"           unless TypeConverters::TYPES.include?(type)
-    
+
     @@attribute_types[attribute.to_s] = type
-    
+
     module_eval %Q{
       def #{attribute}
         read_attribute('#{attribute}', #{default.inspect})
       end
     }
-    
+
     module_eval %Q{
       def #{attribute}=(value)
         write_attribute('#{attribute}', value)
       end
     }
-    
+
     module_eval %Q{
       def #{attribute}?
         read_attribute('#{attribute}', #{default.inspect}).present?
       end
     }
-    
+
     module_eval %Q{
       def #{attribute}_changed?
         @unsaved_attributes.include?('#{attribute}')
       end
     }
-    
+
     module_eval %Q{
       def #{attribute}_was
         @saved_attributes['#{attribute}']
@@ -45,15 +45,15 @@ class S3Resource
   end
   self.attribute(:created_at, { :type => :time })
   self.attribute(:updated_at, { :type => :time })
-  
+
   def self.find(id, options = {})
     load_from_memcache = options.delete(:load_from_memcache) { true }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
-    
+
     object = self.new(:id => id)
     object.load({ :load_from_memcache => load_from_memcache })
   end
-  
+
   def self.find_by_id(id, options = {})
     begin
       find(id, options)
@@ -65,7 +65,7 @@ class S3Resource
       end
     end
   end
-  
+
   def self.find_or_initialize_by_id(id, options = {})
     object = find_by_id(id, options)
     if object.nil?
@@ -73,33 +73,33 @@ class S3Resource
     end
     object
   end
-  
+
   def initialize(options = {})
     @id = options.delete(:id) { UUIDTools::UUID.random_create.to_s }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
-    
+
     @attributes         = {}
     @saved_attributes   = {}
     @unsaved_attributes = Set.new
   end
-  
+
   def new_record?
     @saved_attributes.empty?
   end
-  
+
   def changed?
     @unsaved_attributes.present?
   end
-  
+
   def load(options = {})
     load_from_memcache = options.delete(:load_from_memcache) { true }
     raw_attributes     = options.delete(:raw_attributes)
     raise "Can't load #{self.class} without a BucketName" unless bucket_name.present?
     raise "Can't load #{self.class} without an ID"        unless id.present?
-    
+
     @saved_attributes.clear
     @unsaved_attributes.clear
-    
+
     if raw_attributes.present?
       @attributes = convert_from_raw_attributes(raw_attributes)
       @unsaved_attributes += @attributes.keys
@@ -115,11 +115,11 @@ class S3Resource
     end
     self
   end
-  
+
   def reload(load_from_memcache = true)
     load({ :load_from_memcache => load_from_memcache })
   end
-  
+
   def save(options = {})
     begin
       save!(options)
@@ -127,14 +127,14 @@ class S3Resource
       false
     end
   end
-  
+
   def save!(options = {})
     save_to_memcache = options.delete(:save_to_memcache) { true }
     retries = options.delete(:retries) { 5 }
     raise "Unknown options #{options.keys.join(', ')}"    unless options.empty?
     raise "Can't save #{self.class} without a BucketName" unless bucket_name.present?
     raise "Can't save #{self.class} without an ID"        unless id.present?
-    
+
     unless @unsaved_attributes.empty?
       now = Time.zone.now
       self.created_at = now if new_record?
@@ -165,7 +165,7 @@ class S3Resource
     end
     true
   end
-  
+
   def destroy
     Mc.delete(get_memcache_key)
     S3.bucket(bucket_name).key(id).delete
@@ -174,13 +174,13 @@ class S3Resource
     @unsaved_attributes += @attributes.keys
     self
   end
-  
+
 private
-  
+
   def read_attribute(attribute, default = nil)
     @attributes[attribute] || default
   end
-  
+
   def write_attribute(attribute, value)
     if value.nil?
       @attributes.delete(attribute)
@@ -190,7 +190,7 @@ private
     @unsaved_attributes << attribute
     @attributes[attribute]
   end
-  
+
   def convert_to_raw_attributes
     string_attributes = {}
     @attributes.each do |k, v|
@@ -199,7 +199,7 @@ private
     end
     string_attributes.to_json
   end
-  
+
   def convert_from_raw_attributes(raw_attributes)
     attributes = {}
     string_attributes = JSON.parse(raw_attributes)
@@ -209,9 +209,9 @@ private
     end
     attributes
   end
-  
+
   def get_memcache_key
     "s3.#{bucket_name}.#{id}"
   end
-  
+
 end
