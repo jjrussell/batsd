@@ -9,7 +9,7 @@ class CreateUsers < ActiveRecord::Migration
       t.string :persistence_token
       t.timestamps
     end
-    
+
     add_index :users, :partner_id
   end
 

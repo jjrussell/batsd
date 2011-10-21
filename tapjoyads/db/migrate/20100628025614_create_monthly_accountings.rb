@@ -19,16 +19,16 @@ class CreateMonthlyAccountings < ActiveRecord::Migration
       t.integer :earnings, :null => false
       t.timestamps
     end
-    
+
     add_index :monthly_accountings, :id, :unique => true
     add_index :monthly_accountings, [:partner_id, :month, :year], :unique => true
     add_index :monthly_accountings, [:month, :year]
     add_index :monthly_accountings, :partner_id
-    
+
   end
 
   def self.down
     drop_table :monthly_accountings
   end
-  
+
 end
