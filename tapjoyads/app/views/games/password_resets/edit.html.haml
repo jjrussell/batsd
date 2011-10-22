@@ -1,32 +1,29 @@
 #jqt
-  #update_password.tan.account.current
-    .container
-      .page.no_top_nav_bar
-        .logo
-          %a{ :href => games_root_path, :class => "slideright" }
-            .logo_top
-        .content.narrow.pad
+  #update_password.account.current
+    .nav
+      .nav_container.clearfix
+        %a{ :href => games_root_path, :class => "slideright" }
+          .logo
+    #static.container
+      .content.narrow.pad
+        .content_box
           .header_wrapper
             .title_2
               Update Password
-            .content_box_top_arrow_wrapper
-              .content_box_top_arrow
-            .content_box_wrapper
-              .content_box.clearfix
-                %div
-                  - form_for(:gamer, @gamer, :url => { :action => :update }, :html => { :method => :put }) do |f|
-                    .field
-                      = f.label :password, 'New Password'
-                      = f.password_field :password
-                    .field
-                      = f.label :password_confirmation, 'Confirm Password'
-                      = f.password_field :password_confirmation
-                    .field
-                      = submit_tag('Submit', :class => 'button lt_blue')
-                    .field
-                      = error_message_on @gamer, :password
-                  .formError.hide
-                    .account_error
+          %div
+            - form_for(:gamer, @gamer, :url => { :action => :update }, :html => { :method => :put }) do |f|
+              .field
+                = f.label :password, 'New Password'
+                = f.password_field :password
+              .field
+                = f.label :password_confirmation, 'Confirm Password'
+                = f.password_field :password_confirmation
+              .field
+                = submit_tag('Submit', :class => 'button grey')
+              .field
+                = error_message_on @gamer, :password
+            .formError.hide
+              .account_error
 
 - content_for :page_javascript do
   :plain
