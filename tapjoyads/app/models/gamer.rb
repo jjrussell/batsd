@@ -8,7 +8,6 @@ class Gamer < ActiveRecord::Base
 
   validates_associated :gamer_profile, :on => :create
   validates_presence_of :email
-  validates_presence_of :password
   attr_accessor :terms_of_service
   validates_acceptance_of :terms_of_service, :on => :create, :allow_nil => false
 
