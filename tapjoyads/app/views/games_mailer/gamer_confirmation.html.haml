@@ -5,6 +5,7 @@
 - offset = '30px'
 - image_root = 'https://s3.amazonaws.com/tapjoy/images'
 - css = {}
+- css[:a] = "color: #{red}; text-decoration: none;"
 - css[:step] = "border-top: 1px dotted #{light_gray}; padding: 20px 0px;"
 - css[:step_image] = "width: 70px; display: inline-block; vertical-align:top;"
 - css[:step_body] = "max-width: 450px; display: inline-block; padding-left: 15px;"
@@ -13,9 +14,9 @@
 #email{:style => "color: #{gray}; margin: 0px auto; border: 1px solid #{light_gray}; width: 600px; font-family: 'arial'; font-size: 15px; background-color: white;"}
   #header{:style => "color: #{blue}; padding: #{offset}; padding-bottom: 0px; background-image: url('#{image_root}/email/header_bg.png'); height: 71px;"}
     #social-icons{:style => 'float: right;'}
-      - link_to 'https://www.facebook.com/TapjoyGames' do
+      - link_to 'https://www.facebook.com/TapjoyGames', :style => css[:a] do
         = image_tag("#{image_root}/email/facebook_icon.png", :title => 'Facebook', :alt => 'Facebook')
-      - link_to 'https://twitter.com/#!/tapjoygames' do
+      - link_to 'https://twitter.com/#!/tapjoygames', :style => css[:a] do
         = image_tag("#{image_root}/email/twitter_icon.png", :title => 'Twitter', :alt => 'Twitter')
     #social-text{:style => "float: right; padding-top: 10px; padding-right: 10px; font-size: 12px; font-style: italic; color: #{blue};"}
       follow us:
@@ -34,7 +35,7 @@
         .description
           Confirm your email address:
           %br/
-          - link_to @confirmation_link do
+          - link_to @confirmation_link, :style => css[:a] do
             = image_tag("#{image_root}/email/confirm_button.png", :title => 'Confirm', :alt => 'Confirm')
     - unless @linked
       .step{:style => css[:step]}
@@ -60,7 +61,7 @@
       &nbsp;
   #footer{ :style => "padding-top: 20px; padding-bottom: 30px !important; padding: #{offset}; padding-bottom: 0px;" }
     If you have any questions please contact us at
-    = mail_to('feedback@tapjoy.com', 'feedback@tapjoy.com', :style => "color: #{red}; text-decoration: none;")
+    = mail_to('feedback@tapjoy.com', 'feedback@tapjoy.com', :style => css[:a])
     %br/
     and we'll help you with what you need.
     #discovery{:style => "font-weight: bold; font-size: 18px; color: #{blue};"}
@@ -69,4 +70,4 @@
       %p Team Tapjoy
     If the button doesn't work, copy the link below and paste it in your browser
     %br/
-    = link_to @confirmation_link, @confirmation_link, :style => "color: #{red}; text-decoration: none;"
+    = link_to @confirmation_link, @confirmation_link, :style => css[:a]
