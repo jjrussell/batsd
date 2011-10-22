@@ -2,7 +2,7 @@ class GamesController < ApplicationController
   include Facebooker2::Rails::Controller
   include SslRequirement
 
-  layout :select_layout
+  layout 'games_v2'
 
   skip_before_filter :fix_params
 
@@ -65,10 +65,6 @@ private
 
   def valid_device_id(udid)
     current_gamer.devices.find_by_device_id(udid) if current_gamer
-  end
-
-  def select_layout
-    GAMES_CONFIG['layout'].present? ? GAMES_CONFIG['layout'] : 'games'
   end
 
 end
