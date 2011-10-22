@@ -2,6 +2,13 @@ class Games::GamersController < GamesController
 
   before_filter :set_profile, :only => [ :edit, :accept_tos, :password, :update_password, :prefs ]
 
+  def temp
+    @confirmation_link = 'https://www.tapjoygames.com/aiojadfsfaijdsaijadsfasf'
+    @linked = false
+    @device_type = :iphone
+    render 'games_mailer/gamer_confirmation', :layout => false
+  end
+
   def create
     @gamer = Gamer.new do |g|
       g.email                 = params[:gamer][:email]
