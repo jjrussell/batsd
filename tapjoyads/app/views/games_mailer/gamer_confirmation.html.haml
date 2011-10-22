@@ -3,13 +3,15 @@
 - blue = '#505f6d'
 - red  = '#e11826'
 - offset = '30px'
-- image_root = 'http://localtap/images'
+- image_root = 'https://s3.amazonaws.com/tapjoy/images'
 - css = {}
 - css[:step] = "border-top: 1px dotted #{light_gray}; padding: 20px 0px;"
+- css[:step_image] = "width: 70px; display: inline-block; vertical-align:top;"
+- css[:step_body] = "max-width: 450px; display: inline-block; padding-left: 15px;"
 - css[:step_name] = "color: #{blue}; font-weight: bold; font-size: 16px; padding-bottom: 5px;"
 
 #email{:style => "color: #{gray}; margin: 0px auto; border: 1px solid #{light_gray}; width: 600px; font-family: 'arial'; font-size: 15px; background-color: white;"}
-  #header{:style => "color: #{blue}; padding: #{offset}; padding-bottom: 0px; background-image: url('/images/email/header_bg.png'); height: 71px;"}
+  #header{:style => "color: #{blue}; padding: #{offset}; padding-bottom: 0px; background-image: url('#{image_root}/email/header_bg.png'); height: 71px;"}
     #social-icons{:style => 'float: right;'}
       - link_to 'https://www.facebook.com/TapjoyGames' do
         = image_tag("#{image_root}/email/facebook_icon.png", :title => 'Facebook', :alt => 'Facebook')
@@ -24,9 +26,9 @@
     #discover{:style => "padding-top: 5px; padding-bottom: 30px;"}
       Now you can start discovering cool new apps while also earning currency in apps you already play.
     .step{:style => css[:step]}
-      %div{:style => "float: left;"}
+      %div{:style => css[:step_image]}
         = image_tag("#{image_root}/email/check_icon.png", :class => 'icon', :size => '68x68', :title => 'Getting started', :alt => 'Confirm')
-      %div{:style => "float: left;max-width: 450px; padding-left:15px;"}
+      %div{:style => css[:step_body]}
         .name{:style => css[:step_name]}
           Getting started:
         .description
@@ -34,29 +36,26 @@
           %br/
           - link_to @confirmation_link do
             = image_tag("#{image_root}/email/confirm_button.png", :title => 'Confirm', :alt => 'Confirm')
-      .clear{:style => "clear:both;"}
     - unless @linked
       .step{:style => css[:step]}
-        %div{:style => "float: left;"}
+        %div{:style => css[:step_image]}
           = image_tag("#{image_root}/email/connect_icon.png", :class => 'icon', :size => '68x68', :title => 'Connect your device', :alt => 'Connect')
-        %div{:style => "float: left;max-width: 450px; padding-left:15px;"}
+        %div{:style => css[:step_body]}
           .name{:style => css[:step_name]}
             Connect your device
           .description
             By connecting your device we can personalize your Tapjoy
             experience and recommend the best apps just for you. You
             must be on the device you wish to add.
-        .clear{:style => "clear:both;"}
     - unless @device_type == :android
       .step{:style => css[:step]}
-        %div{:style => "float: left;"}
+        %div{:style => css[:step_image]}
           = image_tag("#{image_root}/email/home_icon.png", :class => 'icon', :size => '68x68', :title => 'Add Tapjyo to your Home Screen', :alt => 'Home')
-        %div{:style => "float: left;max-width: 450px; padding-left: 15px;"}
+        %div{:style => css[:step_body]}
           .name{:style => css[:step_name]}
             Add Tapjoy to your Home Screen
           .description
             Engaging with your favorite apps can be just a tap away.
-        .clear{:style => "clear:both;"}
     .step{:style => "border-top: 1px dotted #{light_gray};"}
       &nbsp;
   #footer{ :style => "padding-top: 20px; padding-bottom: 30px !important; padding: #{offset}; padding-bottom: 0px;" }
