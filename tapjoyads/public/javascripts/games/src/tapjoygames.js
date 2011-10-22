@@ -735,14 +735,14 @@ TJG.ui = {
         device_found = true;
         device_data = v.data;
         matched_data - v.data;
-        d.push('<a href="switch_device?data=', v.data ,'">');
+        d.push('<a href="', path ,'/switch_device?data=', v.data ,'">');
           d.push('<li class="button grey">');
             d.push(v.name);
           d.push('</li>');
         d.push('</a>');
       }
       else if (!TJG.vars.isTouch){ // Web
-        a.push('<a href="switch_device?data=', v.data ,'">');
+        a.push('<a href="', path ,'/switch_device?data=', v.data ,'">');
           a.push('<li class="button grey">');
             a.push(v.name);
           a.push('</li>');
@@ -873,8 +873,8 @@ TJG.ui = {
     if (TJG.select_device && (TJG.select_device.length > 1)) {
       $('.device_switch').html("wrong device?");
       $('.device_name').addClass("has_switch");
-      $('.device_name').css('cursor','pointer');
-      $('.device_name').click(function(){
+      $('.device_info').css('cursor','pointer');
+      $('.device_info').click(function(){
         TJG.ui.showDeviceSelection(TJG.select_device, true);
       });
     }
