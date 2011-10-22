@@ -1,0 +1,64 @@
+/*--------------------*/
+
+@import "games_mixins";
+
+/*--------------------*/
+
+.nav {
+  padding: $nav-padding-v/2 $nav-padding-h/2;
+
+  .nav_container {
+    
+    .aside_nav {
+      font-size: 0.7em;
+      font-weight: bold;
+      float: right;
+      margin-right: 3px;
+      position: relative;
+      top: 24px;
+    }
+    .aside_login {
+      width: 300px;
+    }
+    .logo {
+      background: transparent url('/images/games/v2/logo_mobile.png') no-repeat;
+      height: 38px;
+      margin: 0 auto;
+      margin-bottom: $logo-bottom-margin/2;
+      width: 84px;
+    }
+    .nav_buttons ul li {
+      @include inset-button(16px, 6px 2px);
+      font-size: 0.60em;
+      width: 60px;
+    }
+  }
+}
+
+#login .content_box{
+  margin: 0 auto;
+  padding: 10px;
+  width: 280px;
+}
+
+.content_wrapper {
+  
+  .content {
+  }
+  
+  .register_header {
+    background-size: 100%;
+    height: 28px;
+    margin: 0 auto 12px;
+    width: 200px;
+  }
+  .sign_up_icon {
+    background-size: 100%;
+    height: 20px;
+    margin: 0 auto;
+    width: 67px;
+  }
+  form#new_gamer {
+  }
+  
+} //.content_wrapper

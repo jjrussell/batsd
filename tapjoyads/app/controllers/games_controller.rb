@@ -26,8 +26,12 @@ class GamesController < ApplicationController
 
   def current_device_id_cookie
     if cookies[:data]
-      cookie_data = SymmetricCrypto.decrypt_object(cookies[:data], SYMMETRIC_CRYPTO_SECRET)
-      cookie_data[:udid]
+      begin
+        cookie_data = SymmetricCrypto.decrypt_object(cookies[:data], SYMMETRIC_CRYPTO_SECRET)
+        cookie_data[:udid]
+      rescue
+        nil
+      end
     end
   end
 

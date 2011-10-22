@@ -9,10 +9,16 @@
     %link{ :rel => 'shortcut icon', :href => '/favicon-tjgames.ico', :content => 'image/vnd.microsoft.icon' }
     %link{ :rel => 'apple-touch-icon-precomposed', :href => '/images/tjgames-114x114.png' }
 
-    %title= @page_title.blank? ? 'Tapjoy Games' : "#{@page_title} - Tapjoy Games"
+    %title= @page_title.blank? ? 'Tapjoy' : "#{@page_title} - Tapjoy"
+    
+    = stylesheet_link_tag("games/style_v1")
+    = stylesheet_link_tag("games/style")
+    = stylesheet_link_tag("games/images")
+    = stylesheet_link_tag("games/style-768", :media => "only screen and (max-width: 768px)")
+    = stylesheet_link_tag("games/style-480", :media => "only screen and (max-width: 480px)")
+    = stylesheet_link_tag("games/style-320", :media => "only screen and (max-width: 320px)")
+    = stylesheet_link_tag("games/images-hd", :media => "(-webkit-min-device-pixel-ratio: 2)")
 
-    = stylesheet_link_tag("games/tapjoygames")
-    = stylesheet_link_tag("games/tjg.retina", :media => "(-webkit-min-device-pixel-ratio: 2)")
     = yield :page_head
 
   %body
