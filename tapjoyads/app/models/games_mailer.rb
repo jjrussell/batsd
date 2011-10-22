@@ -5,7 +5,12 @@ class GamesMailer < ActionMailer::Base
     recipients gamer.email
     subject "Welcome to Tapjoy Games!"
     content_type 'text/html'
-    body :confirmation_link => confirmation_link, :linked => gamer.devices.any?
+    if gamer.gamer_devices.any? && gamer.gamer_devices.first.device_type == 'android'
+      device_type = :android
+    else
+      device_type = :iphone
+    end
+    body :confirmation_link => confirmation_link, :linked => gamer.gamer_devices.any?, :device_type => device_type
   end
 
   def password_reset(gamer, reset_link)
