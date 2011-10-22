@@ -1,6 +1,6 @@
 #jqt
   #home.current
-    = render :partial => 'nav_bar', :locals => { :active => 'my_apps' }
+    = render :partial => 'nav_bar', :locals => { :show_device => true, :active => 'my_apps' }
     - if current_gamer.devices.empty?
       .content_wrapper
         .content
@@ -17,13 +17,13 @@
           = render 'my_apps'
 
   #feat_app
-    = render :partial => 'nav_bar', :locals => { :active => 'back', :back_button_destination => '#home' }
+    = render :partial => 'nav_bar', :locals => { :show_device => true, :active => 'back', :back_button_destination => '#home' }
     .content_wrapper
       #feat_app.content
         = render 'featured_review'
 
   #earn
-    = render :partial => 'nav_bar', :locals => { :active => 'back', :back_button_destination => '#home' }
+    = render :partial => 'nav_bar', :locals => { :show_device => true, :active => 'back', :back_button_destination => '#home' }
     .content_wrapper
       .content
         #app_title
@@ -31,7 +31,7 @@
         #earn_content.hide
 
   #more_games
-    = render :partial => 'nav_bar', :locals => { :active => 'back', :back_button_destination => '#home' }
+    = render :partial => 'nav_bar', :locals => { :show_device => true, :active => 'back', :back_button_destination => '#home' }
     .content_wrapper
       .content
         .tab_wrapper.clearfix
