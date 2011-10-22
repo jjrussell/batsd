@@ -2,7 +2,8 @@
   #login.current
     .nav
       .nav_container.clearfix
-        .logo
+        %a{ :href => games_root_path, :class => "slideright" }
+          .logo
         .aside_login
           .login.clearfix
           - form_for([ :games, @gamer_session ]) do |f|

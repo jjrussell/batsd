@@ -4,10 +4,11 @@
 - if show_device
   .device_wrapper
     .device
-      .mobile
-      .device_name
-        = @device_name
-        .device_switch
+      .mobile_icon
+      .device_info
+        %span.device_name
+          = @device_name
+        %span.device_switch
       .plus
 
 

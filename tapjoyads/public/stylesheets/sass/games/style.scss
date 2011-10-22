@@ -334,23 +334,37 @@ a, a:visited {
     .plus.close {
       background: transparent url("/images/games/v2/minus_button.png") no-repeat;
     }
+    .device_info {
+      text-align: center;
+    }
     .device_name {
       cursor: pointer;
       font-size: 0.8em;
       font-weight: bold;
+      margin: 0 auto;
       overflow: hidden;
       text-align: center;
-      
-      .device_switch {
-        text-align: center;
-      }
     }
-    .mobile {
+    .device_switch {
+      margin: 0 auto;
+    }
+    .mobile_icon {
       background: transparent url("/images/games/v2/phone.png") no-repeat;
       cursor: pointer;
       height: 22px;
       width: 14px;
     }
+  }
+}
+
+.center_contact {
+  margin: 6px auto;
+  width: 200px;
+}
+
+#reset_password {
+  .content_box {
+    height: 160px; 
   }
 }
 
