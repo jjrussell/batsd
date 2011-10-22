@@ -300,21 +300,6 @@ a, a:visited {
     @include gradient(#CF1623, #EA1927);
   }
   
-  .button {
-    border: 1px solid #B0B0B0;
-    border-color: #B0131D;
-    color: #FFF;
-    cursor: pointer;
-    font-size: 0.9em;
-    position: relative;
-    margin: 20px auto 0;
-    text-shadow: 0 1px 1px #444;
-    width: 180px;
-    @include inset-button(16px, 8px 10px);
-    @include inset-shadow;
-    @include gradient(#CF1623, #EA1927);
-  }
-  
 } //.content_wrapper
 
 .device_wrapper {
