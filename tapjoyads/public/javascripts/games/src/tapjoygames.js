@@ -295,7 +295,7 @@ TJG.ui = {
   showRegister : function () {
     var hasLinked = true, path, animateSpd = "fast";
     if (TJG.path) {
-       path = TJG.path;
+       path = TJG.path.replace(/\/$/, '');
     }
     else {
       path = location.pathname.replace(/\/$/, '');
