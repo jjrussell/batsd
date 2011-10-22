@@ -1692,26 +1692,30 @@ RegExp.escape = function(text) {
             });
           });
         }
-        var w = $('.device_name').width();
-        $('.device_name,.device_switch').fadeOut(50, function(){
-          $('.device_name,.device_switch').animate({width:"0px"}, 250);
+        var w = $('.device_info').width();
+        w = w + 24;
+        if (w < 60) {
+          w = 60;
+        }
+        $('.device_info').fadeOut(50, function(){
+          $('.device_info').animate({width:"0px"}, 250);
         });
         TJG.animating = false;
-        $('.plus,.mobile').click(function(){
+        $('.plus,.mobile_icon').click(function(){
           if (TJG.animating) {
             return;
           }
           TJG.animating = true;
-          if ($('.device_name').width() == 0) {
-            $('.device_name,.device_switch').animate({width:w+"px"}, 250, function(){
-              $('.device_name,.device_switch').fadeIn(200);
+          if ($('.device_info').width() == 0) {
+            $('.device_info').animate({width:w+"px"}, 250, function(){
+              $('.device_info').fadeIn(200);
               $('.plus').addClass('close');
             });
             TJG.animating = false;
           }
           else {
-            $('.device_name,.device_switch').fadeOut(50, function() {
-              $('.device_name,.device_switch').animate({width:"0px"}, 250);
+            $('.device_info').fadeOut(50, function() {
+              $('.device_info').animate({width:"0px"}, 250);
               $('.plus').removeClass('close');
             });
             TJG.animating = false;
