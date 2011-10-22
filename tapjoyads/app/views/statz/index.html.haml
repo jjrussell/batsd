@@ -22,24 +22,24 @@
       %th Payouts
     %tr
       %th Total
-      %td #{@money_stats[@timeframe]['conversions']}
-      %td #{@money_stats[@timeframe]['advertiser_spend']}
-      %td #{@money_stats[@timeframe]['publisher_earnings']}
+      %td= @money_stats[@timeframe]['conversions']
+      %td= @money_stats[@timeframe]['advertiser_spend']
+      %td= @money_stats[@timeframe]['publisher_earnings']
     %tr
       %th Android
-      %td #{@money_stats[@timeframe]['android_conversions']}
-      %td #{@money_stats[@timeframe]['android_adv_spend']}
-      %td #{@money_stats[@timeframe]['android_pub_earnings']}
+      %td= @money_stats[@timeframe]['android_conversions']
+      %td= @money_stats[@timeframe]['android_adv_spend']
+      %td= @money_stats[@timeframe]['android_pub_earnings']
     %tr
       %th iOS
-      %td #{@money_stats[@timeframe]['ios_conversions']}
-      %td #{@money_stats[@timeframe]['ios_adv_spend']}
-      %td #{@money_stats[@timeframe]['ios_pub_earnings']}
+      %td= @money_stats[@timeframe]['ios_conversions']
+      %td= @money_stats[@timeframe]['ios_adv_spend']
+      %td= @money_stats[@timeframe]['ios_pub_earnings']
     %tr
       %th TJ Games
-      %td #{@money_stats[@timeframe]['tjgames_conversions']}
-      %td #{@money_stats[@timeframe]['tjgames_adv_spend']}
-      %td #{@money_stats[@timeframe]['tjgames_pub_earnings']}
+      %td= @money_stats[@timeframe]['tjgames_conversions']
+      %td= @money_stats[@timeframe]['tjgames_adv_spend']
+      %td= @money_stats[@timeframe]['tjgames_pub_earnings']
 %p
   = link_to "Global Network Stats", global_statz_path
   - if permitted_to? :publisher, :statz
