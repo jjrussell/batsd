@@ -479,7 +479,7 @@ TJG.ui = {
 
   showAcceptTos : function () {
     var animateSpd = "fast";
-    $("#accept_tos_dialog_content").parent().css("height", "200px");
+    $("#accept_tos_dialog_content").parent().css("height", "250px");
     $("#accept_tos_dialog_content").html($('#accept_tos_dialog_content_placeholder').html());
     setTimeout(function() {
       TJG.utils.centerDialog("#accept_tos_dialog");
