@@ -1,145 +1,145 @@
 #jqt
-  #privacy.tan.current
-    #static.container
-      .page.no_top_nav_bar
+  #privacy.current
+    .nav
+      .nav_container.clearfix
+        %a{ :href => games_root_path, :class => "slideright" }
         .logo
-          %a{ :href => games_root_path, :class => "slideright" }
-            .logo_top
-        .content.narrow.pad
-          .content_box
+    #static.container
+      .content.narrow.pad
+        .content_box
+          %div
+            %h1
+              Tapjoy Games Privacy Policy
             %div
-              %h1
-                Tapjoy Games Privacy Policy
-              %div
-                %p
-                  We at Tapjoy, Inc. (“Tapjoy,” “we,” “us,” “our”) know that our users (“you,” “your”) care about how your personal information is used and shared, and we take your privacy seriously.  Please read the following Tapjoy Games Privacy Policy (the “Privacy Policy”).
-                  %span.bold
-                    By visiting or using the #{ link_to('www.tapjoygames.com', TJGAMES_URL) } website or application, and any other linked pages, features, content, or any other services we offer from time to time by in connection therewith (collectively, “Tapjoy Games”), you acknowledge that you accept the practices and policies outlined in this Privacy Policy, and you hereby consent that we will collect, use, and share your information in the following ways.  This Privacy Policy only applies to products and services related to Tapjoy Games; other products and services provided by Tapjoy may be governed by separate privacy policies.
-              %h1
-                I. What Does This Privacy Policy Cover?
-              %div
-                %p
-                  This Privacy Policy covers our treatment of personally identifiable information ("Personal Information") that we gather when you are accessing or using Tapjoy Games.  This policy does not apply to the practices of companies that we do not own or control, or to individuals that we do not employ or manage.
-                %p
-                  Tapjoy does not knowingly collect or solicit Personal Information from anyone under the age of 13 or knowingly allow such persons to register. If you are under 13, please do not attempt to register for Tapjoy Games or send any information about yourself to us, including your name, address, telephone number, or email address. No one under age 13 may provide any Personal Information to Tapjoy or through Tapjoy Games. In the event that we learn that we have collected Personal Information from a child under age 13 without verification of parental consent, we will delete that information as quickly as possible. If you believe that we might have any information from or about a child under 13, please contact us at
-                  = succeed "." do
-                    %a{:href => "mailto:privacy@tapjoy.com"} privacy@tapjoy.com
-              %h1
-                II. What Information Does Tapjoy Collect?
-              %div
-                %p
-                  We gather various types of Personal Information from our users, as explained more fully below.  We may use this Personal Information to personalize and improve the Tapjoy Games experience, to allow our users to set up a user account and profile, to contact users, to fulfill your requests for certain products and services, to analyze how users utilize Tapjoy Games, and as otherwise set forth in this Privacy Policy. We may share certain types of Personal Information with third parties (as set forth in this Section and in Section III below).  We collect the following types of information:
-                %h2
-                  A. Information You Provide to Us:
-                %p
-                  During the registration process, we will ask your permission to install a temporary provisioning profile on your mobile device.  We will use this provisioning profile only to obtain your device type and ID (“Device ID”).  Tapjoy Games uses this information to provide you with certain features, such as tracking virtual currency, organizing Tapjoy-related applications, and providing you with additional application recommendations.  Tapjoy may also provide such information to game publishers as necessary for tracking and crediting your virtual currency to such game.  TAPJOY WILL NOT USE YOUR DEVICE ID WITHOUT YOUR CONSENT OR FOR ANY OTHER REASON THAN AS SET FORTH ABOVE, AND WILL NEVER SHARE YOUR DEVICE ID WITH ANY THIRD PARTIES OTHER THAN AS INDICATED.
-                %p
-                  We also receive and store any information you knowingly provide to us.  For example, during the registration process, we collect Personal Information such as your user name, email address, gender, and age.  We may collect other Personal Information you provide us through your use of Tapjoy Games. You can choose not to provide us with certain information, but then you may not be able to take advantage of many of our special features.
-                %h2
-                  B. Information Collected Automatically:
+              %p
+                We at Tapjoy, Inc. (“Tapjoy,” “we,” “us,” “our”) know that our users (“you,” “your”) care about how your personal information is used and shared, and we take your privacy seriously.  Please read the following Tapjoy Games Privacy Policy (the “Privacy Policy”).
+                %span.bold
+                  By visiting or using the #{ link_to('www.tapjoygames.com', TJGAMES_URL) } website or application, and any other linked pages, features, content, or any other services we offer from time to time by in connection therewith (collectively, “Tapjoy Games”), you acknowledge that you accept the practices and policies outlined in this Privacy Policy, and you hereby consent that we will collect, use, and share your information in the following ways.  This Privacy Policy only applies to products and services related to Tapjoy Games; other products and services provided by Tapjoy may be governed by separate privacy policies.
+            %h1
+              I. What Does This Privacy Policy Cover?
+            %div
+              %p
+                This Privacy Policy covers our treatment of personally identifiable information ("Personal Information") that we gather when you are accessing or using Tapjoy Games.  This policy does not apply to the practices of companies that we do not own or control, or to individuals that we do not employ or manage.
+              %p
+                Tapjoy does not knowingly collect or solicit Personal Information from anyone under the age of 13 or knowingly allow such persons to register. If you are under 13, please do not attempt to register for Tapjoy Games or send any information about yourself to us, including your name, address, telephone number, or email address. No one under age 13 may provide any Personal Information to Tapjoy or through Tapjoy Games. In the event that we learn that we have collected Personal Information from a child under age 13 without verification of parental consent, we will delete that information as quickly as possible. If you believe that we might have any information from or about a child under 13, please contact us at
+                = succeed "." do
+                  %a{:href => "mailto:privacy@tapjoy.com"} privacy@tapjoy.com
+            %h1
+              II. What Information Does Tapjoy Collect?
+            %div
+              %p
+                We gather various types of Personal Information from our users, as explained more fully below.  We may use this Personal Information to personalize and improve the Tapjoy Games experience, to allow our users to set up a user account and profile, to contact users, to fulfill your requests for certain products and services, to analyze how users utilize Tapjoy Games, and as otherwise set forth in this Privacy Policy. We may share certain types of Personal Information with third parties (as set forth in this Section and in Section III below).  We collect the following types of information:
+              %h2
+                A. Information You Provide to Us:
+              %p
+                During the registration process, we will ask your permission to install a temporary provisioning profile on your mobile device.  We will use this provisioning profile only to obtain your device type and ID (“Device ID”).  Tapjoy Games uses this information to provide you with certain features, such as tracking virtual currency, organizing Tapjoy-related applications, and providing you with additional application recommendations.  Tapjoy may also provide such information to game publishers as necessary for tracking and crediting your virtual currency to such game.  TAPJOY WILL NOT USE YOUR DEVICE ID WITHOUT YOUR CONSENT OR FOR ANY OTHER REASON THAN AS SET FORTH ABOVE, AND WILL NEVER SHARE YOUR DEVICE ID WITH ANY THIRD PARTIES OTHER THAN AS INDICATED.
+              %p
+                We also receive and store any information you knowingly provide to us.  For example, during the registration process, we collect Personal Information such as your user name, email address, gender, and age.  We may collect other Personal Information you provide us through your use of Tapjoy Games. You can choose not to provide us with certain information, but then you may not be able to take advantage of many of our special features.
+              %h2
+                B. Information Collected Automatically:
+              %ul
+                %li
+                  Whenever you interact with Tapjoy Games, we automatically receive and record information on our server logs, including your IP address, “cookie” information, and certain actions you’ve taken.  Some of this automatically collected information may or may not be Personal Information, depending on whether it is personally identifiable in nature or not.
+                %li
+                  “Cookies” are identifiers we transfer to your computer through your browser that allow us to recognize your browser and tell us how and when pages in our site are visited and by how many people.  You may be able to change the preferences on your browser to prevent or limit your computer’s acceptance of cookies, but this may prevent you from taking advantage of some features. Our advertising partners may also transmit cookies to your computer, when you click on ads that appear on our site.  This Privacy Policy does not cover the use of cookies by any advertisers.
+              %h2
+                C. E-mail and Other Communications:
+              %p
+                We may contact you, by email or other means; for example, we may send you promotional offers on behalf of other businesses, or communicate with you about your use of Tapjoy Games. If you do not want to receive email or other mail from us, please indicate your preference in your profile or by emailing us at
+                = succeed "." do
+                  %a{:href => "mailto:privacy@tapjoy.com"} privacy@tapjoy.com
+                Also, we may receive a confirmation when you open an email from us. This confirmation helps us make emails more interesting and improve our service.
+            %h1
+              III. Will Tapjoy Share Any of the Information It Receives?
+            %div
+              %p
+                We neither rent nor sell your Personal Information to anyone.  We share your Personal Information (in personally identifiable form) with third parties only as described below.
+              %p
+                %span.bold
+                  A. Agents:
+                We employ other companies and people to perform tasks on our behalf and need to share your information with them to provide products or services to you.    Unless we tell you differently, our agents do not have any right to use the Personal Information we share with them beyond what is necessary to assist us.
+              %p
+                %span.bold
+                  B. User Actions:
+                You understand that we cannot control what other users do with any content (including without limitation images, ratings, captions, and comments) you voluntarily disclose for such users to view on Tapjoy Games (“User Submissions”). We cannot control if other users you have allowed access to your User Submissions make such User Submissions publicly available and to be collected and used by others, or to be redistributed through the internet and other media channels.
+              %p
+                %span.bold
+                  C. Business Transfers:
+                We may choose to buy or sell assets.  In these types of transactions, customer information is typically one of the business assets that is transferred.  Also, if we (or substantially all of our assets) are acquired, or if we go out of business or enter bankruptcy, Personal Information would be one of the assets transferred to or acquired by a third party.
+              %p
+                %span.bold
+                  D. Protection of Tapjoy and Others:
+                We may release Personal Information when we believe in good faith that release is necessary to comply with the law; enforce or apply our conditions of use and other agreements; or protect the rights, property, or safety of Tapjoy, our employees, our users, or others.  This includes exchanging information with other companies and organizations for fraud protection and credit risk reduction.
+              %p
+                %span.bold
+                  E. With Your Consent:
+                Except as set forth above, you will be notified when your Personal Information may be shared with third parties, and will be able to prevent the sharing of this information.
+              %p
+                %span.bold
+                  F. Facebook Connect:
+                Tapjoy Games may allow users to access Facebook Connect to interact with friends. If available, by proceeding, you are allowing Tapjoy Games to access your information and you are agreeing to the Facebook Terms of Use. Conversely, if you are not currently registered with Tapjoy Games and you click on "Sign in Using Facebook", you will first be asked to enter your Facebook credentials and then be given the option to register and join Tapjoy Games. Once you register on Tapjoy Games and Connect with Facebook, you will be able to automatically post recent activity back to Facebook (i.e., Facebook WALL). You have the option to disable Facebook Connect at any time by logging into "My Profile" and clicking on "My Facebook Profile".  Further, you can edit privacy settings for the reviews that appear on Facebook or disconnect this service by visiting the Facebook Application Settings page.
+            %h1
+              IV. Is Personal Information About me Secure?
+            %div
+              %p
+                Your account is protected by a password for your privacy and security.  You need to prevent unauthorized access to your account and Personal Information by selecting and protecting your password appropriately and limiting access to your computer and browser by signing off after you have finished accessing your account.
+              %p
+                We endeavor to protect the privacy of your account and other Personal Information we hold in our records, but we cannot guarantee complete security. Unauthorized entry or use, hardware or software failure, and other factors, may compromise the security of user information at any time.
+              %p
+                Tapjoy Games may contain links to other sites. We are not responsible for the privacy policies and/or practices on other sites. When following a link to another site you should read that site’s privacy policy.
+            %h1
+              V. What Personal Information Can I Access?
+            %div
+              %p
+                Through your account settings, you may access and, in some cases, change or delete the following information you’ve provided to us:
+              %p
                 %ul
                   %li
-                    Whenever you interact with Tapjoy Games, we automatically receive and record information on our server logs, including your IP address, “cookie” information, and certain actions you’ve taken.  Some of this automatically collected information may or may not be Personal Information, depending on whether it is personally identifiable in nature or not.
+                    Username and password
                   %li
-                    “Cookies” are identifiers we transfer to your computer through your browser that allow us to recognize your browser and tell us how and when pages in our site are visited and by how many people.  You may be able to change the preferences on your browser to prevent or limit your computer’s acceptance of cookies, but this may prevent you from taking advantage of some features. Our advertising partners may also transmit cookies to your computer, when you click on ads that appear on our site.  This Privacy Policy does not cover the use of cookies by any advertisers.
-                %h2
-                  C. E-mail and Other Communications:
-                %p
-                  We may contact you, by email or other means; for example, we may send you promotional offers on behalf of other businesses, or communicate with you about your use of Tapjoy Games. If you do not want to receive email or other mail from us, please indicate your preference in your profile or by emailing us at
+                    Email Address
+                  %li
+                    User profile information
+              %p
+                The information you can view and update through your account may change as Tapjoy Games changes.  If you have any questions about viewing or updating information we have on file about you, please contact us at
+                = succeed "." do
+                  %a{:href => "mailto:privacy@tapjoy.com"} privacy@tapjoy.com
+            %h1
+              VI. What Choices Do I Have?
+            %div
+              %ul
+                %li
+                  You can always opt not to disclose information to us, but keep in mind some information may be needed to take advantage of some of our special features.
+                %li
+                  You may be able to add or update certain information as explained in Section V above.  When you update information, however, we may maintain a copy of the unrevised information in our records.
+                %li
+                  You may request deletion of your account by sending an e-mail to
                   = succeed "." do
                     %a{:href => "mailto:privacy@tapjoy.com"} privacy@tapjoy.com
-                  Also, we may receive a confirmation when you open an email from us. This confirmation helps us make emails more interesting and improve our service.
-              %h1
-                III. Will Tapjoy Share Any of the Information It Receives?
-              %div
-                %p
-                  We neither rent nor sell your Personal Information to anyone.  We share your Personal Information (in personally identifiable form) with third parties only as described below.
-                %p
-                  %span.bold
-                    A. Agents:
-                  We employ other companies and people to perform tasks on our behalf and need to share your information with them to provide products or services to you.    Unless we tell you differently, our agents do not have any right to use the Personal Information we share with them beyond what is necessary to assist us.
-                %p
-                  %span.bold
-                    B. User Actions:
-                  You understand that we cannot control what other users do with any content (including without limitation images, ratings, captions, and comments) you voluntarily disclose for such users to view on Tapjoy Games (“User Submissions”). We cannot control if other users you have allowed access to your User Submissions make such User Submissions publicly available and to be collected and used by others, or to be redistributed through the internet and other media channels.
-                %p
-                  %span.bold
-                    C. Business Transfers:
-                  We may choose to buy or sell assets.  In these types of transactions, customer information is typically one of the business assets that is transferred.  Also, if we (or substantially all of our assets) are acquired, or if we go out of business or enter bankruptcy, Personal Information would be one of the assets transferred to or acquired by a third party.
-                %p
-                  %span.bold
-                    D. Protection of Tapjoy and Others:
-                  We may release Personal Information when we believe in good faith that release is necessary to comply with the law; enforce or apply our conditions of use and other agreements; or protect the rights, property, or safety of Tapjoy, our employees, our users, or others.  This includes exchanging information with other companies and organizations for fraud protection and credit risk reduction.
-                %p
-                  %span.bold
-                    E. With Your Consent:
-                  Except as set forth above, you will be notified when your Personal Information may be shared with third parties, and will be able to prevent the sharing of this information.
-                %p
-                  %span.bold
-                    F. Facebook Connect:
-                  Tapjoy Games may allow users to access Facebook Connect to interact with friends. If available, by proceeding, you are allowing Tapjoy Games to access your information and you are agreeing to the Facebook Terms of Use. Conversely, if you are not currently registered with Tapjoy Games and you click on "Sign in Using Facebook", you will first be asked to enter your Facebook credentials and then be given the option to register and join Tapjoy Games. Once you register on Tapjoy Games and Connect with Facebook, you will be able to automatically post recent activity back to Facebook (i.e., Facebook WALL). You have the option to disable Facebook Connect at any time by logging into "My Profile" and clicking on "My Facebook Profile".  Further, you can edit privacy settings for the reviews that appear on Facebook or disconnect this service by visiting the Facebook Application Settings page.
-              %h1
-                IV. Is Personal Information About me Secure?
-              %div
-                %p
-                  Your account is protected by a password for your privacy and security.  You need to prevent unauthorized access to your account and Personal Information by selecting and protecting your password appropriately and limiting access to your computer and browser by signing off after you have finished accessing your account.
-                %p
-                  We endeavor to protect the privacy of your account and other Personal Information we hold in our records, but we cannot guarantee complete security. Unauthorized entry or use, hardware or software failure, and other factors, may compromise the security of user information at any time.
-                %p
-                  Tapjoy Games may contain links to other sites. We are not responsible for the privacy policies and/or practices on other sites. When following a link to another site you should read that site’s privacy policy.
-              %h1
-                V. What Personal Information Can I Access?
-              %div
-                %p
-                  Through your account settings, you may access and, in some cases, change or delete the following information you’ve provided to us:
-                %p
-                  %ul
-                    %li
-                      Username and password
-                    %li
-                      Email Address
-                    %li
-                      User profile information
-                %p
-                  The information you can view and update through your account may change as Tapjoy Games changes.  If you have any questions about viewing or updating information we have on file about you, please contact us at
+                  Please note that some information may remain in our private records after deletion of your account.  We may use any aggregated data derived from or incorporating your personal information after you delete your account, but not in a manner that would identify you personally.
+                %li
+                  If you do not wish to receive communications from us, contact us at
                   = succeed "." do
                     %a{:href => "mailto:privacy@tapjoy.com"} privacy@tapjoy.com
-              %h1
-                VI. What Choices Do I Have?
-              %div
-                %ul
-                  %li
-                    You can always opt not to disclose information to us, but keep in mind some information may be needed to take advantage of some of our special features.
-                  %li
-                    You may be able to add or update certain information as explained in Section V above.  When you update information, however, we may maintain a copy of the unrevised information in our records.
-                  %li
-                    You may request deletion of your account by sending an e-mail to
-                    = succeed "." do
-                      %a{:href => "mailto:privacy@tapjoy.com"} privacy@tapjoy.com
-                    Please note that some information may remain in our private records after deletion of your account.  We may use any aggregated data derived from or incorporating your personal information after you delete your account, but not in a manner that would identify you personally.
-                  %li
-                    If you do not wish to receive communications from us, contact us at
-                    = succeed "." do
-                      %a{:href => "mailto:privacy@tapjoy.com"} privacy@tapjoy.com
-                    Please note that if you do not want to receive legal notices from us, such as this Privacy Policy, those legal notices will still govern your use of Tapjoy Games, and you are responsible for reviewing such legal notices for changes.
-              %h1
-                VII. Changes to this Privacy Policy
-              %div
-                %p
-                  We may amend this Privacy Policy from time to time.  Use of information we collect now is subject to the Privacy Policy in effect at the time such information is used.  If we make changes in the way we use Personal Information, we will post the changes to Tapjoy Games website and/or send you an email.  You are bound by any changes to the Privacy Policy when you use Tapjoy Games after such changes have been first posted.
-              %h1
-                VIII. Questions or Concerns
-              %div
-                %p
-                  If you have any questions or concerns regarding our privacy policies, please send us a message to
-                  = succeed "," do
-                    %a{:href => "mailto:privacy@tapjoy.com"} privacy@tapjoy.com
-                  mail us at Tapjoy, Inc., 111 Sutter Street, 13th Floor, San Francisco, CA  94104, Attn: Privacy, or call us at 415-766-6905.  We will make every effort to resolve your concerns.
-              %div
-                .single_spaced
-                  Effective Date: August 1, 2011
-                .single_spaced
-                  Last Updated: October 17, 2011
+                  Please note that if you do not want to receive legal notices from us, such as this Privacy Policy, those legal notices will still govern your use of Tapjoy Games, and you are responsible for reviewing such legal notices for changes.
+            %h1
+              VII. Changes to this Privacy Policy
+            %div
+              %p
+                We may amend this Privacy Policy from time to time.  Use of information we collect now is subject to the Privacy Policy in effect at the time such information is used.  If we make changes in the way we use Personal Information, we will post the changes to Tapjoy Games website and/or send you an email.  You are bound by any changes to the Privacy Policy when you use Tapjoy Games after such changes have been first posted.
+            %h1
+              VIII. Questions or Concerns
+            %div
+              %p
+                If you have any questions or concerns regarding our privacy policies, please send us a message to
+                = succeed "," do
+                  %a{:href => "mailto:privacy@tapjoy.com"} privacy@tapjoy.com
+                mail us at Tapjoy, Inc., 111 Sutter Street, 13th Floor, San Francisco, CA  94104, Attn: Privacy, or call us at 415-766-6905.  We will make every effort to resolve your concerns.
+            %div
+              .single_spaced
+                Effective Date: August 1, 2011
+              .single_spaced
+                Last Updated: October 17, 2011
 
 #loader.dialog_wrapper.hide
   #progress.dialog

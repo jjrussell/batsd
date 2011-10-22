@@ -2,7 +2,7 @@ class GamesController < ApplicationController
   include Facebooker2::Rails::Controller
   include SslRequirement
 
-  layout 'games'
+  layout :select_layout
 
   skip_before_filter :fix_params
 
@@ -26,8 +26,12 @@ class GamesController < ApplicationController
 
   def current_device_id_cookie
     if cookies[:data]
-      cookie_data = SymmetricCrypto.decrypt_object(cookies[:data], SYMMETRIC_CRYPTO_SECRET)
-      cookie_data[:udid]
+      begin
+        cookie_data = SymmetricCrypto.decrypt_object(cookies[:data], SYMMETRIC_CRYPTO_SECRET)
+        cookie_data[:udid]
+      rescue
+        nil
+      end
     end
   end
 
@@ -61,6 +65,10 @@ private
 
   def valid_device_id(udid)
     current_gamer.devices.find_by_device_id(udid) if current_gamer
+  end
+
+  def select_layout
+    GAMES_CONFIG['layout'].present? ? GAMES_CONFIG['layout'] : 'games'
   end
 
 end

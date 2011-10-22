@@ -1,6 +1,6 @@
 class Games::SocialController < GamesController
   rescue_from Mogli::Client::SessionInvalidatedDueToPasswordChange, Mogli::Client::OAuthException, :with => :handle_oauth_exception
-  
+
   before_filter :require_gamer
   before_filter :offline_facebook_authenticate, :only => [ :invite_facebook_friends, :send_facebook_invites ]
   before_filter :validate_recipients, :only => [ :send_email_invites ]
@@ -131,7 +131,7 @@ private
     flash[:error] = @error_msg
     redirect_to edit_games_gamer_path
   end
-  
+
   def handle_oauth_exception
     @error_msg = "Please authorize us before sending out an invite."
     dissociate_and_redirect
