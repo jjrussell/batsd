@@ -169,6 +169,14 @@ a, a:visited {
   width: 460px;
 }
 
+#support_request .content_box {
+  width: 350px;
+}
+
+#support_request .content_box.fixed {
+  height: 200px;
+}
+
 .button.red {
   border-color: #B0131D;
   color: #FFF;
@@ -260,7 +268,7 @@ a, a:visited {
     }
   }
 
-  .profile .interior {
+  .interior {
     padding: 20px;
   }
 
@@ -299,7 +307,22 @@ a, a:visited {
     @include inset-shadow;
     @include gradient(#CF1623, #EA1927);
   }
-  
+
+  #support_request input[type=submit] {
+    border: 1px solid #B0B0B0;
+    border-color: #B0131D;
+    color: #FFF;
+    cursor: pointer;
+    font-size: 0.9em;
+    position: relative;
+    margin: 8px auto 0;
+    text-shadow: 0 1px 1px #444;
+    width: 60px;
+    @include inset-button(16px, 8px 10px);
+    @include inset-shadow;
+    @include gradient(#CF1623, #EA1927);
+  }
+
 } //.content_wrapper
 
 .device_wrapper {
