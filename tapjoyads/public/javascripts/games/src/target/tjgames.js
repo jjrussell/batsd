@@ -1528,14 +1528,14 @@ TJG.ui = {
         device_found = true;
         device_data = v.data;
         matched_data - v.data;
-        d.push('<a href="', path ,'switch_device?data=', v.data ,'">');
+        d.push('<a href="', path ,'/switch_device?data=', v.data ,'">');
           d.push('<li class="button grey">');
             d.push(v.name);
           d.push('</li>');
         d.push('</a>');
       }
       else if (!TJG.vars.isTouch){ // Web
-        a.push('<a href="', path ,'switch_device?data=', v.data ,'">');
+        a.push('<a href="', path ,'/switch_device?data=', v.data ,'">');
           a.push('<li class="button grey">');
             a.push(v.name);
           a.push('</li>');
