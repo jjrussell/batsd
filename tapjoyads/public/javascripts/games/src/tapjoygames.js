@@ -380,13 +380,13 @@ TJG.ui = {
               hasLinked = false;
               msg = [
                 '<div class="title_2 center">Success!</div>',
-                '<div class="dialog_content center">Your Tapjoy Games account was sucessfully created!</div>',
-                '<div class="continue_link_device"><div class="button red try_again">Connect My Device</div></div>',
+                '<div class="dialog_content center">Your Tapjoy account was sucessfully created!</div>',
+                '<div class="continue_link_device"><div class="button red try_again">Continue</div></div>',
               ].join('');
               if (!TJG.vars.isTouch) {
                 msg = [
                   '<div class="title_2 center">Success!</div>',
-                  '<div class="dialog_content center">Your Tapjoy Games account was sucessfully created!</div>',
+                  '<div class="dialog_content center">Your Tapjoy account was sucessfully created!</div>',
                   '<div class="continue_link_device"><div class="button red try_again">Continue</div></div>',
                 ].join('');
               }
@@ -559,7 +559,7 @@ TJG.ui = {
   showAddHomeDialog : function() {
     var startY = startX = 0,
     options = {
-      message: '<div>Add <span class="bold">Tapjoy Games</span> to your home screen.</div><div class="bookmark"><span>Just tap </span><span class="bookmark_icon"></span><span> and select </span><span class="bookmark_btn"></span></div>',
+      message: '<div>Add <span class="bold">Tapjoy</span> to your home screen.</div><div class="bookmark"><span>Just tap </span><span class="bookmark_icon"></span><span> and select </span><span class="bookmark_btn"></span></div>',
       animationIn: 'fade',
       animationOut: 'fade',
       startDelay: 2000,
