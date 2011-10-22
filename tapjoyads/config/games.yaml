@@ -1,4 +1,4 @@
-defaults: &defaultsgames_v2
+defaults: &defaults
   js_version: '1.32'
   js_files: [
     'tjg.jquery-1.6.2.min',
