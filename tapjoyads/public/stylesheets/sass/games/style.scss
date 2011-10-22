@@ -269,8 +269,7 @@ a, a:visited {
   }
   
   .profile input[type=text],
-  .profile input[type=password],
-  .profile select {
+  .profile input[type=password] {
     border: 1px solid #C1C1C1;
     padding: 4px;
     width: 96%;
@@ -278,6 +277,14 @@ a, a:visited {
     @include inset-shadow;
   }
   
+  .profile select {
+    border: 1px solid #C1C1C1;
+    width: 98%;
+    -webkit-appearance: none;
+    @include inset-button(16px, 4px);
+    @include inset-shadow;
+  }
+
   .profile input[type=submit] {
     border: 1px solid #B0B0B0;
     border-color: #B0131D;
