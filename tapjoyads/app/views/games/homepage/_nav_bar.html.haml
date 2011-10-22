@@ -40,18 +40,14 @@
               - if active == 'my_apps'
                 %li.my_apps.active_button
                   My Apps
-              - elsif active == 'my_account'
+              - else
                 %a{ :href => games_root_path, :class => "slideright" }
                   %li.my_apps
                     My Apps
-              - else
-                %a{ :href => "#home", :class => "slideright" }
-                  %li.my_apps
-                    My Apps
-              - if active == 'more_apps' && active != 'my_account'
+              - if active == 'more_apps'
                 %li.more_apps.more_apps_path.active_button
                   More Apps
-              - elsif active != 'my_account'
+              - elsif active == 'my_apps'
                 %li.more_apps.more_apps_path
                   More Apps
               %ul.pair
