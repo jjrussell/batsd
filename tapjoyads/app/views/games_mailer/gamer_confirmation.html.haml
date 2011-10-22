@@ -3,24 +3,30 @@
 - blue = '#505f6d'
 - red  = '#e11826'
 - offset = '30px'
-- image_root = 'https://s3.amazonaws.com/tapjoy/images'
-- css = {}
-- css[:a] = "color: #{red}; text-decoration: none;"
-- css[:step] = "border-top: 1px dotted #{light_gray}; padding: 20px 0px;"
-- css[:step_image] = "width: 70px; display: inline-block; vertical-align:top;"
-- css[:step_body] = "max-width: 450px; display: inline-block; padding-left: 15px;"
-- css[:step_name] = "color: #{blue}; font-weight: bold; font-size: 16px; padding-bottom: 5px;"
+:ruby
+  image_root = 'https://s3.amazonaws.com/tapjoy/images/email'
+  css = {
+    :a => "color: #{red}; text-decoration: none;",
+    :social => "width: 40px;",
+    :step => "border-top: 1px dotted #{light_gray}; padding: 20px 0px;",
+    :step_image => "width: 70px; display: inline-block; vertical-align:top;",
+    :step_body => "max-width: 450px; display: inline-block; padding-left: 15px;",
+    :step_name => "color: #{blue}; font-weight: bold; font-size: 16px; padding-bottom: 5px;",
+  }
 
 #email{:style => "color: #{gray}; margin: 0px auto; border: 1px solid #{light_gray}; width: 600px; font-family: 'arial'; font-size: 15px; background-color: white;"}
-  #header{:style => "color: #{blue}; padding: #{offset}; padding-bottom: 0px; background-image: url('#{image_root}/email/header_bg.png'); height: 71px;"}
-    #social-icons{:style => 'float: right;'}
-      - link_to 'https://www.facebook.com/TapjoyGames', :style => css[:a] do
-        = image_tag("#{image_root}/email/facebook_icon.png", :title => 'Facebook', :alt => 'Facebook')
-      - link_to 'https://twitter.com/#!/tapjoygames', :style => css[:a] do
-        = image_tag("#{image_root}/email/twitter_icon.png", :title => 'Twitter', :alt => 'Twitter')
-    #social-text{:style => "float: right; padding-top: 10px; padding-right: 10px; font-size: 12px; font-style: italic; color: #{blue};"}
-      follow us:
-    = image_tag("#{image_root}/email/logo.png")
+  %table#header{:border => 0, :cellspacing => 0, :cellpadding => 0, :background => "#{image_root}/header_bg.png", :style => "color: #{blue}; padding: 12px #{offset} 12px; height: 101px; width: 100%;"}
+    %tr
+      %td
+        = image_tag("#{image_root}/logo.png")
+      %td{:style => "font-size: 12px; font-style: italic; color: #{blue}; width: 60px;"}
+        follow us:
+      %td{:style => css[:social]}
+        - link_to 'https://www.facebook.com/TapjoyGames', :style => css[:a] do
+          = image_tag("#{image_root}/facebook_icon.png", :title => 'Facebook', :alt => 'Facebook')
+      %td{:style => css[:social]}
+        - link_to 'https://twitter.com/#!/tapjoygames', :style => css[:a] do
+          = image_tag("#{image_root}/twitter_icon.png", :title => 'Twitter', :alt => 'Twitter')
   #content{:style => "padding: #{offset}; padding-bottom: 0px;"}
     #thanks{:style => "font-size: 20px; font-weight: bold; color: #{blue};"}
       Thanks for creating a Tapjoy account!
@@ -28,7 +34,7 @@
       Now you can start discovering cool new apps while also earning currency in apps you already play.
     .step{:style => css[:step]}
       %div{:style => css[:step_image]}
-        = image_tag("#{image_root}/email/check_icon.png", :class => 'icon', :size => '68x68', :title => 'Getting started', :alt => 'Confirm')
+        = image_tag("#{image_root}/check_icon.png", :class => 'icon', :size => '68x68', :title => 'Getting started', :alt => 'Confirm')
       %div{:style => css[:step_body]}
         .name{:style => css[:step_name]}
           Getting started:
@@ -36,11 +42,11 @@
           Confirm your email address:
           %br/
           - link_to @confirmation_link, :style => css[:a] do
-            = image_tag("#{image_root}/email/confirm_button.png", :title => 'Confirm', :alt => 'Confirm')
+            = image_tag("#{image_root}/confirm_button.png", :title => 'Confirm', :alt => 'Confirm')
     - unless @linked
       .step{:style => css[:step]}
         %div{:style => css[:step_image]}
-          = image_tag("#{image_root}/email/connect_icon.png", :class => 'icon', :size => '68x68', :title => 'Connect your device', :alt => 'Connect')
+          = image_tag("#{image_root}/connect_icon.png", :class => 'icon', :size => '68x68', :title => 'Connect your device', :alt => 'Connect')
         %div{:style => css[:step_body]}
           .name{:style => css[:step_name]}
             Connect your device
@@ -51,7 +57,7 @@
     - unless @device_type == :android
       .step{:style => css[:step]}
         %div{:style => css[:step_image]}
-          = image_tag("#{image_root}/email/home_icon.png", :class => 'icon', :size => '68x68', :title => 'Add Tapjyo to your Home Screen', :alt => 'Home')
+          = image_tag("#{image_root}/home_icon.png", :class => 'icon', :size => '68x68', :title => 'Add Tapjyo to your Home Screen', :alt => 'Home')
         %div{:style => css[:step_body]}
           .name{:style => css[:step_name]}
             Add Tapjoy to your Home Screen
