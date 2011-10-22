@@ -42,6 +42,19 @@ private
       start_times.each do |key, start_time|
         stats[key] = {}
 
+        if key == '24_hours'
+          conditions = "path = '[reward]' and source = 'tj_games' and time > '#{(start_time - 1.hour).to_i}' and time < '#{(end_time - 1.hour).to_i}'"
+          select = 'sum(advertiser_amount) as adv_amount, count(*), sum(publisher_amount) as pub_amount'
+          results = WebRequest.select_with_vertica(:select => select, :conditions => conditions).first
+          stats[key]['tjgames_conversions'] = number_with_delimiter(results[:count])
+          stats[key]['tjgames_adv_spend'] = number_to_currency(results[:adv_amount].to_i / -100.0)
+          stats[key]['tjgames_pub_earnings'] = number_to_currency(results[:pub_amount].to_i / 100.0)
+        else
+          stats[key]['tjgames_conversions'] = '-'
+          stats[key]['tjgames_adv_spend'] = '-'
+          stats[key]['tjgames_pub_earnings'] = '-'
+        end
+
         if start_time < accounting_cutoff
           stats[key]['advertiser_spend'] = MonthlyAccounting.since(start_time).prior_to(accounting_cutoff).sum(:spend)
           stats[key]['advertiser_spend'] += Conversion.created_between(accounting_cutoff, end_time).sum(:advertiser_amount)
