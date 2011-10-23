@@ -18,15 +18,15 @@
   %table#header{:border => 0, :cellspacing => 0, :cellpadding => 0, :background => "#{image_root}/header_bg.png", :style => "color: #{blue}; padding: 12px #{offset} 12px; height: 101px; width: 100%;"}
     %tr
       %td
-        = image_tag("#{image_root}/logo.png")
+        = image_tag("#{image_root}/logo.png", :title => 'Tapjoy', :alt => 'Tapjoy', :size => '114x52')
       %td{:style => "font-size: 12px; font-style: italic; color: #{blue}; width: 60px;"}
         follow us:
       %td{:style => css[:social]}
         - link_to 'https://www.facebook.com/TapjoyGames', :style => css[:a] do
-          = image_tag("#{image_root}/facebook_icon.png", :title => 'Facebook', :alt => 'Facebook', :style => "border: none;")
+          = image_tag("#{image_root}/facebook_icon.png", :title => 'Facebook', :alt => 'Facebook', :style => "border: none;", :size => '30x30')
       %td{:style => css[:social]}
         - link_to 'https://twitter.com/#!/tapjoygames', :style => css[:a] do
-          = image_tag("#{image_root}/twitter_icon.png", :title => 'Twitter', :alt => 'Twitter', :style => "border: none;")
+          = image_tag("#{image_root}/twitter_icon.png", :title => 'Twitter', :alt => 'Twitter', :style => "border: none;", :size => '30x30')
   #content{:style => "padding: #{offset}; padding-bottom: 0px;"}
     #thanks{:style => "font-size: 20px; font-weight: bold; color: #{blue};"}
       Thanks for creating a Tapjoy account!
@@ -34,7 +34,7 @@
       Now you can start discovering cool new apps while also earning currency in apps you already play.
     .step{:style => css[:step]}
       %div{:style => css[:step_image]}
-        = image_tag("#{image_root}/check_icon.png", :class => 'icon', :size => '68x68', :title => 'Getting started', :alt => 'Confirm')
+        = image_tag("#{image_root}/check_icon.png", :class => 'icon', :size => '68x68', :title => 'Getting started', :alt => 'Confirm Address')
       %div{:style => css[:step_body]}
         .name{:style => css[:step_name]}
           Getting started:
@@ -42,7 +42,7 @@
           Confirm your email address:
           %br/
           - link_to @confirmation_link, :style => css[:a] do
-            = image_tag("#{image_root}/confirm_button.png", :title => 'Confirm', :alt => 'Confirm', :style => "border: none;")
+            = image_tag("#{image_root}/confirm_button.png", :title => 'Confirm', :alt => 'Confirm', :style => "border: none;", :size => '170x49')
     - unless @linked
       .step{:style => css[:step]}
         %div{:style => css[:step_image]}
