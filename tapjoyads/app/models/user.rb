@@ -14,6 +14,7 @@ class User < ActiveRecord::Base
   has_many :enable_offer_requests
   has_many :admin_devices
   has_many :internal_devices
+  has_many :partners_for_sales, :class_name => 'Partner', :foreign_key => 'sales_rep_id'
   belongs_to :current_partner, :class_name => 'Partner'
   belongs_to :reseller
 
@@ -24,6 +25,12 @@ class User < ActiveRecord::Base
   before_create :regenerate_api_key
   after_create :create_mail_chimp_entry
   after_save :update_auth_net_cim_profile
+
+  named_scope :employees, :conditions => 'users.id IN ' +
+                '(SELECT user_id FROM role_assignments WHERE user_role_id IN' +
+                  '(SELECT id FROM user_roles WHERE user_roles.employee = true)' +
+                ')', :order => 'email'
+
 
   def role_symbols
     user_roles.map do |role|
@@ -59,6 +66,10 @@ class User < ActiveRecord::Base
 
   def employee?
     user_roles.any? { |role| role.employee? }
+  end
+
+  def to_s
+    email
   end
 
 private

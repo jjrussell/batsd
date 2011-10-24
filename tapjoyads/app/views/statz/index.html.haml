@@ -70,6 +70,7 @@
       %th Featured
       %th Rewarded
       %th Offer type
+      %th Sales rep
     %tr
       %td.filter#filters_title{:colspan => 2}
         %b Filters
@@ -87,6 +88,7 @@
       %td.filter= select_tag('featured_filter', options_for_select(filter_options(:featured)))
       %td.filter= select_tag('rewarded_filter', options_for_select(filter_options(:rewarded)))
       %td.filter= select_tag('offer_type_filter', options_for_select(filter_options(:offer_type)))
+      %td
   %tbody#apps_tbody
     - @cached_stats.each do |offer_id, stats|
       :ruby
@@ -119,6 +121,7 @@
         %td= stats['featured']
         %td= stats['rewarded']
         %td= stats['offer_type']
+        %td= stats['sales_rep']
 
 - content_for :page_javascript do
   :plain
