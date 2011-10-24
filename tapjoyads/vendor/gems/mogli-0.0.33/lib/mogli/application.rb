@@ -1,7 +1,7 @@
 module Mogli
   class Application < Model
 
-    define_properties :id, :name, :description, :category, :subcategory, :link, :canvas_name
+    define_properties :id, :name, :description, :category, :subcategory, :link
 
     has_association :feed, "Post"
     has_association :posts, "Post"

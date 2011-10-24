@@ -24,26 +24,17 @@ module Mogli
 
     # 50x50 pixel image url
     def square_image_url
-      sized_image_url("square")
+      "#{image_url}?type=square"
     end
 
     # 50 pixels wide, variable height image url
     def small_image_url
-      sized_image_url("small")
-    end
-    
-    # 64.64 pixel image url
-    def normal_image_url
-      sized_image_url("normal")
+      "#{image_url}?type=small"
     end
 
     # About 200 pixels wide, variable height image url
     def large_image_url
-      sized_image_url("large")
-    end
-    
-    def sized_image_url(size)
-      "#{image_url}?type=#{size}"
+      "#{image_url}?type=large"
     end
 
     def to_s
