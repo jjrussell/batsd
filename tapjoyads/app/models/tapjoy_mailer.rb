@@ -55,7 +55,7 @@ class TapjoyMailer < ActionMailer::Base
 
   def contact_us(info)
     from 'Tapjoy <noreply@tapjoy.com>'
-    if Rails.env.development? || Rails.env.staging?
+    if !Rails.env.production?
       recipients "dev@tapjoy.com"
     else
       recipients "support+contactus@tapjoy.com"
@@ -67,7 +67,7 @@ class TapjoyMailer < ActionMailer::Base
 
   def publisher_application(info)
     from 'Tapjoy <noreply@tapjoy.com>'
-    if Rails.env.development? || Rails.env.staging?
+    if !Rails.env.production?
       recipients "dev@tapjoy.com"
     else
       recipients "publishing@tapjoy.com"
@@ -79,7 +79,7 @@ class TapjoyMailer < ActionMailer::Base
 
   def whitepaper_request(info)
     from 'Tapjoy <noreply@tapjoy.com>'
-    if Rails.env.development? || Rails.env.staging?
+    if !Rails.env.production?
       recipients "dev@tapjoy.com"
     else
       recipients "sunny.cha@tapjoy.com, raghu.nayani@tapjoy.com"
@@ -94,7 +94,7 @@ class TapjoyMailer < ActionMailer::Base
 
   def advertiser_application(info)
     from 'Tapjoy <noreply@tapjoy.com>'
-    if Rails.env.development? || Rails.env.staging?
+    if !Rails.env.production?
       recipients "dev@tapjoy.com"
     else
       if info[:source] == 'performance'
@@ -110,7 +110,7 @@ class TapjoyMailer < ActionMailer::Base
 
   def androidfund_application(info)
     from 'Tapjoy <noreply@tapjoy.com>'
-    if Rails.env.development? || Rails.env.staging?
+    if !Rails.env.production?
       recipients "dev+androidfund@tapjoy.com"
     else
       recipients "marketing@tapjoy.com, publishing@tapjoy.com"
