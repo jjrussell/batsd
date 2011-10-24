@@ -90,35 +90,36 @@
   %tbody#apps_tbody
     - @cached_stats.each do |offer_id, stats|
       :ruby
+        metadata = @cached_metadata[offer_id]
         tr_classes = []
-        tr_classes << (stats['conversions']=='0'         ? 'zero_conversions' : 'nonzero_conversions')
-        tr_classes << (stats['connects']=='0'            ? 'zero_connects'    : 'nonzero_connects')
-        tr_classes << (stats['overall_store_rank']=='-'  ? 'unranked'         : 'ranked')
-        tr_classes << (stats['price']=='$0.00'           ? 'free'             : 'paid')
-        tr_classes << stats['platform'].to_s.downcase
-        tr_classes << (stats['published_offers']=='0'    ? 'zero_published'   : 'nonzero_published')
-        tr_classes << (stats['offers_revenue']=='$0.00'  ? 'zero_revenue'     : 'nonzero_revenue')
-        tr_classes << (stats['featured']                 ? 'featured'         : 'nonfeatured')
-        tr_classes << (stats['rewarded']                 ? 'rewarded'         : 'nonrewarded')
-        tr_classes << stats['offer_type'].to_s.downcase
-        value = stats['balance'].gsub(/[\$,]/,'')
+        tr_classes << (stats['conversions'] == '0'         ? 'zero_conversions' : 'nonzero_conversions')
+        tr_classes << (stats['connects'] == '0'            ? 'zero_connects'    : 'nonzero_connects')
+        tr_classes << (stats['overall_store_rank'] == '-'  ? 'unranked'         : 'ranked')
+        tr_classes << (metadata['price'] == '$0.00'        ? 'free'             : 'paid')
+        tr_classes << metadata['platform'].to_s.downcase
+        tr_classes << (stats['published_offers'] == '0'    ? 'zero_published'   : 'nonzero_published')
+        tr_classes << (stats['offers_revenue'] == '$0.00'  ? 'zero_revenue'     : 'nonzero_revenue')
+        tr_classes << (metadata['featured']                ? 'featured'         : 'nonfeatured')
+        tr_classes << (metadata['rewarded']                ? 'rewarded'         : 'nonrewarded')
+        tr_classes << metadata['offer_type'].to_s.downcase
+        value = metadata['balance'].gsub(/[\$,]/,'')
       %tr{ :class => tr_classes.compact.join(' '), :value => value }
         %td
-          %img.icon.hidden{ :s => stats['icon_url'] }
-        %td= link_to(stats['offer_name'], statz_path(offer_id))
+          %img.icon.hidden{ :s => metadata['icon_url'] }
+        %td= link_to(metadata['offer_name'], statz_path(offer_id))
         %td= stats['conversions']
         %td= stats['connects']
         %td= stats['overall_store_rank']
-        %td= stats['price']
-        %td= stats['payment']
-        %td= stats['balance']
-        %td= stats['platform']
-        %td= stats['conversion_rate']
+        %td= metadata['price']
+        %td= metadata['payment']
+        %td= metadata['balance']
+        %td= metadata['platform']
+        %td= metadata['conversion_rate']
         %td= stats['published_offers']
         %td= stats['offers_revenue']
-        %td= stats['featured']
-        %td= stats['rewarded']
-        %td= stats['offer_type']
+        %td= metadata['featured']
+        %td= metadata['rewarded']
+        %td= metadata['offer_type']
 
 - content_for :page_javascript do
   :plain
