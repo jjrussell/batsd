@@ -6,7 +6,7 @@ class Tools::EditorsPicksController < WebsiteController
   after_filter :save_activity_logs, :only => [ :update, :activate, :expire ]
 
   def index
-    @active_editors_picks   = EditorsPick.active.paginate(:page => params[:active_page], :per_page => 10)
+    @active_editors_picks   = EditorsPick.active.paginate(:page => params[:active_page], :per_page => 20)
     @upcoming_editors_picks = EditorsPick.upcoming.paginate(:page => params[:upcoming_page], :per_page => 10)
     @expired_editors_picks  = EditorsPick.expired.paginate(:page => params[:expired_page], :per_page => 10)
   end

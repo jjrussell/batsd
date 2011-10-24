@@ -1,51 +1,37 @@
 #jqt
-  #contact.tan.current
-    .container.scroll.vertical-scroll
-      .scroller.with-scrollbar
-        .page
-          .logo
-            %a{ :href => games_root_path, :class => "slideright" }
-              .logo_top
-            .slide_nav
-              %a{ :href => edit_games_gamer_path, :class => "slideright"}
-                .slider_btn.left
-                  .left
-                    .slide_arrow_wrapper.left_arrow
-                      .slide_arrow
-                  .slider.back.slider_active.slider_left.left
-                    %span.title
-                      Back
-          .content.narrow.pad
-            .my_account_header_wrapper
-              .my_account_header.title_2
-                - if params[:type] === "feedback"
-                  Feedback
-                - elsif params[:type] === "report_bug"
-                  Report a Bug
-                - elsif params[:type] === "contact_support"
-                  Contact Support
-                - else
-                  Contact Us
-            .content_box_top_arrow_wrapper
-              .content_box_top_arrow
-            .content_box.contact_form.clearfix
+  #support_request.current
+    = render :partial => 'games/homepage/nav_bar', :locals => { :active => 'back', :back_button_destination => games_help_path }
+
+    .content_wrapper
+      #support_request
+        .content
+          .title_2
+            - if params[:type] === "feedback"
+              Feedback
+            - elsif params[:type] === "report_bug"
+              Report a Bug
+            - elsif params[:type] === "contact_support"
+              Contact Support
+            - else
+              Contact Us
+          .content_box
+            .interior
               - form_for('support_requests', :url => { :action => 'create' } ) do |f|
-                - if params[:type].present?
-                  = hidden_field_tag :type, params[:type]
-                - else
-                  = hidden_field_tag :type, "contact_support"
-                = f.text_area :content, :rows => 5, :value => params[:content]
-                = f.submit 'Submit', :class => 'button lt_blue'
+                .field
+                  - if params[:type].present?
+                    = hidden_field_tag :type, params[:type]
+                  - else
+                    = hidden_field_tag :type, "contact_support"
+                  = f.text_area :content, :rows => 5, :value => params[:content]
+                .field
+                  = f.submit 'Save', :class => 'button'
                 .form_error.center
-
-
 
 #loader.dialog_wrapper.hide
   #progress.dialog
     .dialog_title
       Loading
     .dialog_image
-
 
 - content_for :page_javascript do
   :plain
