@@ -6,7 +6,7 @@ class JobRunner
 
   def self.get_active_jobs
     jobs_hash = {}
-    return jobs_hash unless Rails.env == 'production'
+    return jobs_hash unless Rails.env.production?
     if MACHINE_TYPE == 'masterjobs'
       active_jobs = Job.active.by_job_type('master')
     elsif MACHINE_TYPE == 'jobs' || MACHINE_TYPE == 'test'
@@ -60,7 +60,7 @@ class JobRunner
     load_jobs
     Rails.logger.flush
 
-    base_url = Rails.env == 'production' ? 'http://localhost:9898' : ''
+    base_url = Rails.env.production? ? 'http://localhost:9898' : ''
 
     sleep(rand * 5)
     begin

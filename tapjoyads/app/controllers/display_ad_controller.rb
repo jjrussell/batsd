@@ -169,7 +169,7 @@ private
         text = "Earn #{currency.get_visual_reward_amount(offer, display_multiplier)} #{currency.name} download \\n#{offer.name}"
       end
 
-      font = Rails.env == 'production' ? 'Helvetica' : ''
+      font = (Rails.env.production? || Rails.env.staging?) ? 'Helvetica' : ''
       image_label = Magick::Image.read("caption:#{text}") do
         self.size = text_area_size
         self.gravity = Magick::WestGravity

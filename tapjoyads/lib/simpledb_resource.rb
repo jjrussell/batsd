@@ -640,7 +640,7 @@ protected
         sdb_interface.delete_attributes(@this_domain_name, @key, attributes_to_delete, expected_attr)
       end
     rescue RightAws::AwsError => e
-      if e.message.starts_with?("NoSuchDomain") && Rails.env != 'production'
+      if e.message.starts_with?("NoSuchDomain") && !Rails.env.production?
         Rails.logger.info_with_time("Creating new domain: #{@this_domain_name}") do
           sdb_interface.create_domain(@this_domain_name)
         end

@@ -54,7 +54,7 @@ class Currency < ActiveRecord::Base
   delegate :categories, :to => :app
   memoize :postcache_weights, :categories
 
-  def self.find_all_in_cache_by_app_id(app_id, do_lookup = (Rails.env != 'production'))
+  def self.find_all_in_cache_by_app_id(app_id, do_lookup = !Rails.env.production?)
     currencies = Mc.distributed_get("mysql.app_currencies.#{app_id}.#{SCHEMA_VERSION}")
     if currencies.nil?
       if do_lookup

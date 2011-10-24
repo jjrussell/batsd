@@ -14,6 +14,14 @@ test:
   user: dbadmin
   password: tapjoy
 
+staging:
+  hosts:
+    - ec2-50-17-5-126.compute-1.amazonaws.com
+  port: 5433
+  database: tapjoy
+  user: dbadmin
+  password: tapjoy
+
 production:
   hosts:
     - ec2-50-19-59-251.compute-1.amazonaws.com

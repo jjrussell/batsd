@@ -2,7 +2,7 @@ namespace :db do
   desc 'Migrate and cache all versioned records.'
   task :migrate do
     SCHEMA_VERSION = ActiveRecord::Migrator.current_version
-    if Rails.env == 'production'
+    if Rails.env.production?
       threads = []
       Mc::MEMCACHED_ACTIVE_RECORD_MODELS.each do |model|
         t = Thread.new do

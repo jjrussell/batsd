@@ -2,6 +2,13 @@
 
 server_type = `su - webuser -c '/home/webuser/tapjoyserver/server/server_type.rb'`
 
+# testserver-specific config
+if server_type == 'test'
+  `rm -f /home/webuser/.tapjoy_aws_credentials.yaml`
+  `/etc/init.d/memcached start`
+  `start mysql`
+end
+
 # setup ssh keys
 `/home/webuser/tapjoyserver/server/copy_authorized_keys.rb`
 
@@ -29,23 +36,22 @@ server_type = `su - webuser -c '/home/webuser/tapjoyserver/server/server_type.rb
 `rm -rf /home/webuser/tapjoyserver/tapjoyads/data/GeoIPCity.dat`
 `su - webuser -c 'ln -s /home/webuser/GeoIP/GeoIPCity.dat /home/webuser/tapjoyserver/tapjoyads/data/'`
 
+# start apache
+`cp /home/webuser/tapjoyserver/server/apache2.conf /etc/apache2/`
+`cp /home/webuser/tapjoyserver/server/passenger.load /etc/apache2/mods-available/`
+`cp /home/webuser/tapjoyserver/server/passenger.conf /etc/apache2/mods-available/`
+if server_type == 'test'
+  `cp /home/webuser/tapjoyserver/server/tapjoy-staging /etc/apache2/sites-available/tapjoy`
+else
+  `cp /home/webuser/tapjoyserver/server/tapjoy-prod /etc/apache2/sites-available/tapjoy`
+end
+`/etc/init.d/apache2 start`
+
 # deploy the latest code
 if server_type == 'test'
   `su - webuser -c 'cd /home/webuser/tapjoyserver && server/deploy.rb master'`
 else
   `su - webuser -c 'cd /home/webuser/tapjoyserver && server/deploy.rb'`
-end
-
-# start apache
-`cp /home/webuser/tapjoyserver/server/apache2.conf /etc/apache2/`
-`cp /home/webuser/tapjoyserver/server/passenger.conf /etc/apache2/mods-available/`
-`cp /home/webuser/tapjoyserver/server/passenger.load /etc/apache2/mods-available/`
-`/etc/init.d/apache2 start`
-
-# start memcached and mysql on testservers
-if server_type == 'test'
-  `/etc/init.d/memcached start`
-  `start mysql`
 end
 
 # boot the app
