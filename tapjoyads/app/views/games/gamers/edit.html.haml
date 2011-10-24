@@ -1,70 +1,46 @@
 #jqt
-  #manage_account.tan.account.current
-    .container
-      .page.no_top_nav_bar
-        = render(:partial => 'header', :locals => { :back_button => games_root_path })
-        .content.narrow
-          .header_wrapper
-            - if params[:show_social]
-              .title_2
-                Invite Your Friends!
-              #invite_friends.clearfix
-                .social_btn_wrapper
-                  = fb_connect_async_js
-                  - if @gamer.facebook_id.blank?
-                    .social_btn.fb{ :onclick => "doLogin('email,offline_access,create_note');" }
-                  - else
-                    .social_btn.fb{ :onclick => "location.href='#{games_social_invite_facebook_friends_path}';" }
-                .social_btn_wrapper
-                  %a{ :href => games_social_invite_email_friends_path }
-                    .social_btn.email
-            = render(:partial => 'profile')
-            .title_2
-              Options
-            .content_box_wrapper
-              #account_options.content_box.clearfix
-                -# %a{ :href => "#" }
-                  -# .slider.bottom_line.clearfix
-                    -# .profile_arrow.right
-                    -# .field
-                      -# .label
-                        -# Currently Using:
-                      -# .value
-                        -# My iPad
-                %a{ :href => @gamer.get_gravatar_profile_url, :target => '_blank' }
-                  .slider.bottom_line.clearfix
-                    .profile_arrow.right
-                    .field
-                      .label
-                        Icon:
-                      #user_gravatar.image
-                        %img{ :src => @gamer.get_avatar_url(30) }
-                %a{ :href => password_games_gamer_path }
-                  .slider.bottom_line.clearfix
-                    .profile_arrow.right
-                    .field
-                      .label
-                        Reset Password
-                %a{ :href => prefs_games_gamer_path }
-                  .slider.clearfix
-                    .profile_arrow.right
-                    .field
-                      .label
-                        Preferences
-            .title_2
-              Contact Tapjoy
-            .content_box_wrapper
-              %a{ :href => new_games_support_request_path( :type => 'feedback' ) }
-                .content_box.clearfix.center_contact
-                  Give us Feedback
-            .content_box_wrapper
-              %a{ :href => new_games_support_request_path( :type => 'report_bug' ) }
-                .content_box.clearfix.center_contact
-                  Report a Bug
-            .content_box_wrapper
-              %a{ :href => new_games_support_request_path( :type => 'contact_support' ) }
-                .content_box.clearfix.center_contact
-                  Customer Support
+  #home.current
+    = render :partial => 'games/homepage/nav_bar', :locals => { :active => 'my_account' }
+
+    .content_wrapper
+      = render(:partial => 'header')
+      .content
+        .title_2
+          Invite Your Friends!
+        #invite_friends.clearfix
+          .social_btn_wrapper
+            = fb_connect_async_js
+            - if @gamer.facebook_id.blank?
+              .social_btn.fb{ :onclick => "doLogin('offline_access,publish_stream');" }
+            - else
+              .social_btn.fb{ :onclick => "location.href='#{games_social_invite_facebook_friends_path}';" }
+          .social_btn_wrapper
+            %a{ :href => games_social_invite_email_friends_path }
+              .social_btn.email
+        = render(:partial => 'profile')
+        .title_2
+          Options
+        #account_options.content_box.clearfix
+          %a{ :href => @gamer.get_gravatar_profile_url, :target => '_blank' }
+            .slider.bottom_line.clearfix
+              .profile_arrow.right
+              .field
+                .label
+                  Icon:
+                #user_gravatar.image
+                  %img{ :src => @gamer.get_avatar_url(30) }
+          %a{ :href => password_games_gamer_path }
+            .slider.bottom_line.clearfix
+              .profile_arrow.right
+              .field
+                .label
+                  Reset Password
+          %a{ :href => prefs_games_gamer_path }
+            .slider.clearfix
+              .profile_arrow.right
+              .field
+                .label
+                  Preferences
 
 - content_for :page_javascript do
   :plain

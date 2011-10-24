@@ -1,9 +1,9 @@
 class SimpledbShardedResource < SimpledbResource
-  
+
   def self.all_domain_names
     (0...num_domains).collect { |num| "#{name.tableize}_#{num}" }
   end
-  
+
   def self.count(options = {})
     if options[:domain_name]
       super(options)
@@ -11,7 +11,7 @@ class SimpledbShardedResource < SimpledbResource
       where      = options.delete(:where)
       consistent = options.delete(:consistent)
       raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
-      
+
       hydra = Typhoeus::Hydra.new
       count = 0
 
@@ -25,15 +25,15 @@ class SimpledbShardedResource < SimpledbResource
       count
     end
   end
-  
+
   private
-  
-  def self.num_domains  
+
+  def self.num_domains
     @num_domains ||= 0
   end
-  
+
   def self.num_domains=(num)
     @num_domains = num
   end
-  
+
 end

@@ -1,16 +1,16 @@
 class AgencyApi::CurrenciesController < AgencyApiController
-  
+
   def index
     return unless verify_request([ :app_id ])
-    
+
     app = App.find_by_id(params[:app_id])
     unless app.present?
       render_error('app not found', 400)
       return
     end
-    
+
     return unless verify_partner(app.partner_id)
-    
+
     currencies = app.currencies.map do |currency|
       {
         :currency_id     => currency.id,
@@ -22,21 +22,21 @@ class AgencyApi::CurrenciesController < AgencyApiController
         :secret_key      => currency.secret_key,
       }
     end
-    
+
     render_success({ :currencies => currencies })
   end
-  
+
   def show
     return unless verify_request([ :id ])
-    
+
     currency = Currency.find_by_id(params[:id])
     unless currency.present?
       render_error('currency not found', 400)
       return
     end
-    
+
     return unless verify_partner(currency.partner_id)
-    
+
     result = {
       :currency_id     => currency.id,
       :name            => currency.name,
@@ -48,23 +48,23 @@ class AgencyApi::CurrenciesController < AgencyApiController
     }
     render_success(result)
   end
-  
+
   def create
     return unless verify_request([ :app_id, :name, :conversion_rate ])
-    
+
     app = App.find_by_id(params[:app_id])
     unless app.present?
       render_error('app not found', 400)
       return
     end
-    
+
     return unless verify_partner(app.partner_id)
-    
+
     unless app.primary_currency.nil?
       render_error('currency already exists', 400)
       return
     end
-    
+
     currency = Currency.new
     log_activity(currency)
     currency.id = app.id
@@ -86,22 +86,22 @@ class AgencyApi::CurrenciesController < AgencyApiController
       return
     end
     currency.save!
-    
+
     save_activity_logs
     render_success({ :currency_id => currency.id })
   end
-  
+
   def update
     return unless verify_request([ :id ])
-    
+
     currency = Currency.find_by_id(params[:id])
     unless currency.present?
       render_error('currency not found', 400)
       return
     end
-    
+
     return unless verify_partner(currency.partner_id)
-    
+
     log_activity(currency)
     currency.name = params[:name] if params[:name].present?
     currency.conversion_rate = params[:conversion_rate] if params[:conversion_rate].present?
@@ -114,9 +114,9 @@ class AgencyApi::CurrenciesController < AgencyApiController
       return
     end
     currency.save!
-    
+
     save_activity_logs
     render_success
   end
-  
+
 end

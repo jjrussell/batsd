@@ -41,7 +41,7 @@ module WebsiteHelper
   def clippy(text, bgcolor = '#FFFFFF')
     @clippy_id = 0 unless defined?(@clippy_id)
     @clippy_id += 1
-    
+
     html = <<-EOF
       <object classid="clsid:d27cdb6e-ae6d-11cf-96b8-444553540000" width="110" height="14" id="clippy_#{@clippy_id}">
         <param name="movie" value="/clippy.swf" />
@@ -64,7 +64,7 @@ module WebsiteHelper
       </object>
     EOF
   end
-  
+
   def link_to_offer(offer)
     if permitted_to?(:show, :statz)
       link_to(offer.name_with_suffix, statz_path(offer.id))
@@ -72,7 +72,7 @@ module WebsiteHelper
       offer.name_with_suffix
     end
   end
-  
+
   def simple_paragraphs(text)
     text = '' if text.nil?
     start_tag = tag('p', {}, true)
@@ -115,12 +115,12 @@ module WebsiteHelper
       body
     end
   end
-  
+
   def has_permissions_for_one_of?(*roles)
     roles.each { |role| return true if has_role_with_hierarchy?(role) }
     false
   end
-  
+
   def content_for_exists?(content_name)
     instance_variable_get("@content_for_#{content_name}").present?
   end

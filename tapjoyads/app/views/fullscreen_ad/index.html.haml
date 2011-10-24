@@ -25,17 +25,17 @@
     document.ontouchmove = function(e){ e.preventDefault(); }
     window.onload = init;
     window.onorientationchange = init;
-    
+
     function init() {
       icon = document.getElementById('icon');
       main = document.getElementById('main');
-      
+
       if (icon.getAttribute('s') && icon.src != icon.getAttribute('s')) {
         icon.src = icon.getAttribute('s');
       }
-      
+
       document.body.setAttribute('style', 'height: ' + (document.documentElement.clientHeight  - 30) + 'px;');
-      
+
       if (document.documentElement.clientHeight < 480) {
         icon.setAttribute('style', 'width: 96px; height: 96px;');
         main.setAttribute('style', 'height: 294px; margin-top: -147px; top: 50%');
@@ -108,12 +108,12 @@
     .download {
       border: 1px solid #aaa;
       -moz-border-radius: 7px;
-      -webkit-border-radius: 7px; 
+      -webkit-border-radius: 7px;
       text-decoration: none;
     }
 
     .skip {
-      padding: 5px; 
+      padding: 5px;
       margin-right: 20px;
       color: #555;
       background-color: #ccc;

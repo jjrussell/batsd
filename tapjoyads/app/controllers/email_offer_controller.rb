@@ -1,12 +1,12 @@
 class EmailOfferController < ApplicationController
-  
+
   layout 'iphone'
-  
+
   def index
     return unless verify_params([ :udid, :click_key ])
     read_click
   end
-  
+
   def create
     return unless verify_params([ :udid, :click_key ])
     if params[:email_address].blank? || params[:email_address] !~ Authlogic::Regex.email
@@ -21,7 +21,7 @@ class EmailOfferController < ApplicationController
       TapjoyMailer.deliver_email_offer_confirmation(params[:email_address], params[:click_key])
     end
   end
-  
+
   def confirm
     return unless verify_params([ :click_key ])
     read_click
@@ -35,7 +35,7 @@ class EmailOfferController < ApplicationController
       @confirm_text = 'Your email address could not be verified. Please trying clicking the link in your email again.'
     end
   end
-  
+
 private
 
   def read_click
@@ -49,5 +49,5 @@ private
     flash.now[:error] = message
     render(:action => :index) and return
   end
-  
+
 end

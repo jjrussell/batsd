@@ -18,6 +18,7 @@ class Games::SocialControllerTest < ActionController::TestCase
       mogli_post.stubs(:id).returns('a')
       Mogli::User.stubs(:find).returns(mogli_user)
       Mogli::Post.stubs(:new).returns(mogli_post)
+      Mogli::User.any_instance.stubs(:fetch)
 
     end
 

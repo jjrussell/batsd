@@ -7,7 +7,7 @@ xml.TapjoyConnectReturnObject do
     xml.Version @game_state.version
     xml.PublisherUserID params[:publisher_user_id]
     xml.RateLimitTime 60
-    
+
     unless @up_to_date
       xml.Data do
         @game_state.data.each do |k, v|
@@ -15,8 +15,8 @@ xml.TapjoyConnectReturnObject do
         end
       end
     end
-    
+
   end
-  
+
   xml << render("get_vg_store_items/user_account_object")
 end

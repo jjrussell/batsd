@@ -121,7 +121,7 @@ private
     response = request(ANDROID_APP_URL + CGI::escape(id))
     if response.status == 200
       doc         = Hpricot(response.body)
-      title       = (doc/".doc-banner-title-container"/".doc-banner-title"/"span.fn").inner_html
+      title       = (doc/".doc-banner-title-container"/".doc-banner-title").inner_html
       description = (doc/".doc-description"/"#doc-original-text").inner_html
       icon_url    = (doc/".doc-banner-icon"/"img").attr("src")
       publisher   = (doc/".doc-banner-title-container"/"a.doc-header-link").inner_html

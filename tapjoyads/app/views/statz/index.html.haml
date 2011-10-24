@@ -14,20 +14,32 @@
 
 #money_totals
   .last_updated Totals Last Updated: #{@money_last_updated.to_s(:pub_ampm_sec)}
-  %h3
-    %table
-      %tr
-        %td Total conversions: #{@money_stats[@timeframe]['conversions']} &nbsp;
-        %td Total revenue: #{@money_stats[@timeframe]['revenue']} &nbsp;
-        %td Total payouts: #{@money_stats[@timeframe]['publisher_earnings']}
-      %tr
-        %td Android conversions: #{@money_stats[@timeframe]['android_conversions']} &nbsp;
-        %td Android Adv. Spend: #{@money_stats[@timeframe]['android_adv_spend']} &nbsp;
-        %td Android Payouts: #{@money_stats[@timeframe]['android_pub_earnings']}
-      %tr
-        %td iOS conversions: #{@money_stats[@timeframe]['ios_conversions']} &nbsp;
-        %td iOS Adv. Spend: #{@money_stats[@timeframe]['ios_adv_spend']} &nbsp;
-        %td iOS Payouts: #{@money_stats[@timeframe]['ios_pub_earnings']}
+  %table#overall
+    %tr
+      %th
+      %th Conversions
+      %th Adv. Spend
+      %th Payouts
+    %tr
+      %th Total
+      %td= @money_stats[@timeframe]['conversions']
+      %td= @money_stats[@timeframe]['advertiser_spend']
+      %td= @money_stats[@timeframe]['publisher_earnings']
+    %tr
+      %th Android
+      %td= @money_stats[@timeframe]['android_conversions']
+      %td= @money_stats[@timeframe]['android_adv_spend']
+      %td= @money_stats[@timeframe]['android_pub_earnings']
+    %tr
+      %th iOS
+      %td= @money_stats[@timeframe]['ios_conversions']
+      %td= @money_stats[@timeframe]['ios_adv_spend']
+      %td= @money_stats[@timeframe]['ios_pub_earnings']
+    %tr
+      %th TJ Games
+      %td= @money_stats[@timeframe]['tjgames_conversions']
+      %td= @money_stats[@timeframe]['tjgames_adv_spend']
+      %td= @money_stats[@timeframe]['tjgames_pub_earnings']
 %p
   = link_to "Global Network Stats", global_statz_path
   - if permitted_to? :publisher, :statz
@@ -228,6 +240,10 @@
     #main {
       width: 1150px;
     }
+    #overall th {
+      text-align: left;
+      padding-right: 10px;
+    }
     td#filters_title {
       padding-left: 15px;
     }
@@ -235,26 +251,26 @@
     table.tablesorter {
       border-collapse: separate;
     }
-    
+
     table.tablesorter thead tr .header {
       background-position: right bottom;
     }
-    
-    th, 
+
+    th,
     td {
       border: 0;
     }
-    
+
     img.icon {
       width: 57px;
       height: 57px;
     }
-    
+
     .last_updated {
       font-weight: bold;
       font-size: 14px;
     }
-    
+
     ul.timeframes {
       margin: -10px 0 10px;
       padding: 0px;
@@ -268,7 +284,7 @@
     ul.timeframes li:last-child:after {
       content: "";
     }
-    
+
     #money_totals {
       margin-top: 15px;
     }
