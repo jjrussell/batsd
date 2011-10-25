@@ -163,14 +163,14 @@
           = error_message_on @offer, :min_bid_override
       %tr
         %th
-          = f.label(:daily_budget)
+          = f.label(:daily_budget 'Daily Conversions')
           #help_daily_budget.help ?
         %td
           = f.text_field(:daily_budget)
           = error_message_on @offer, :daily_budget
       %tr
         %th
-          = f.label(:overall_budget)
+          = f.label(:overall_budget 'Overall Conversions')
           #help_overall_budget.help ?
         %td
           = f.text_field(:overall_budget)
