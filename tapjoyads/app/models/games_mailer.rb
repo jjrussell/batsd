@@ -19,7 +19,17 @@ class GamesMailer < ActionMailer::Base
     recipients gamer.email
     subject "Welcome to Tapjoy Games!"
     content_type 'text/html'
-    body :confirmation_link => confirmation_link, :linked => gamer.devices.any?
+
+    if gamer.gamer_devices.any? && gamer.gamer_devices.first.device_type == 'android'
+      device_type = :android
+    else
+      device_type = :iphone
+    end
+    offerwall_url = nil
+    if external_publisher = ExternalPublisher.most_recently_run_for_gamer(gamer)
+      offerwall_url = "#{TJGAMES_URL}/games?offers_for_app_id=#{external_publisher.app_id}"
+    end
+    body :confirmation_link => confirmation_link, :linked => gamer.gamer_devices.any?, :device_type => device_type, :offerwall_url => offerwall_url
   end
 
   def password_reset(gamer, reset_link)
