@@ -42,8 +42,20 @@
 - content_for :page_javascript do
   :plain
     var changeFb = function(){
-      FB.logout();
-      location.href='#{dissociate_account_games_gamer_gamer_profile_path(:account_type => Invitation::FACEBOOK)}';
+      FB.getLoginStatus(function(response) {
+        console.log(response.authResponse);
+        if (response.authResponse) {
+          FB.logout(function(response) {
+            <!--
+            window.location = "#{dissociate_account_games_gamer_gamer_profile_path(:account_type => Invitation::FACEBOOK)}"
+            //-->
+          });
+        } else {
+          <!--
+          window.location = "#{dissociate_account_games_gamer_gamer_profile_path(:account_type => Invitation::FACEBOOK)}"
+          //-->
+        }
+      });
     };
 
     var doLogin = function(scope){

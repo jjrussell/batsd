@@ -30,13 +30,8 @@ class Games::Gamers::GamerProfilesController < GamesController
   def dissociate_account
     if params[:account_type].present?
       channel = params[:account_type].to_i
-      case channel
-      when Invitation::FACEBOOK
-        @gamer_profile.facebook_id     = nil
-        @gamer_profile.fb_access_token = nil
-      end
 
-      if @gamer_profile.save!
+      if @gamer_profile.dissociate_account!(channel)
         flash[:notice] = "You've successfully dissociated your #{Invitation::CHANNEL[channel]} account."
         redirect_to edit_games_gamer_path and return
       else

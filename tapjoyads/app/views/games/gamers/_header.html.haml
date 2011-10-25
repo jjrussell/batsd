@@ -16,13 +16,3 @@
               = "Member since #{@gamer.created_at.strftime("%B %d, %Y")}"
   .info_expand_bottom_arrow_wrapper
     .info_expand_bottom_arrow
-
-- content_for :page_javascript do
-  :plain
-    $('#dissociate_facebook').click(function(event){
-      event.preventDefault();
-      FB.logout();
-      <!--
-      window.location = "#{dissociate_account_games_gamer_gamer_profile_path(:account_type => Invitation::FACEBOOK)}"
-      //-->
-    });
