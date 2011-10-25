@@ -17,7 +17,8 @@ class StatzController < WebsiteController
     @money_last_updated = Time.zone.at(Mc.get("money.last_updated") || 0)
 
     @last_updated = Time.zone.at(Mc.get("statz.last_updated.#{@timeframe}") || 0)
-    @cached_stats = Mc.distributed_get("statz.cached_stats.#{@timeframe}") || []
+    @cached_metadata = Mc.distributed_get("statz.metadata.#{@timeframe}") || {}
+    @cached_stats = Mc.distributed_get("statz.stats.#{@timeframe}") || []
   end
 
   def udids
