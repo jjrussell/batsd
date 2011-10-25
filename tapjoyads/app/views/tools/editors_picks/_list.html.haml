@@ -5,6 +5,7 @@
     %tr
       %th.icon &nbsp;
       %th Offer
+      %th.thin Platform
       %th.thin Ordinal
       %th.wide Description
       %th.wide Internal Notes
@@ -31,6 +32,7 @@
           %br/
           %strong URL:
           = link_to(truncate(pick.offer.url, :length => 30), pick.offer.url)
+        %td.thin= pick.offer.get_platform
         %td.thin= pick.display_order
         %td.wide= pick.description
         %td.wide= pick.internal_notes
