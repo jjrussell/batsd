@@ -8,7 +8,7 @@ class Games::SupportRequestsController < GamesController
     data = params[:support_requests]
     case params[:type]
     when "feedback"
-      GamesMailer.deliver_feedback(@gamer, data[:content], request.env["HTTP_USER_AGENT"])
+      GamesMailer.deliver_feedback(@gamer, data[:content], request.env["HTTP_USER_AGENT"], current_device_id)
     when "report_bug"
       GamesMailer.deliver_report_bug(@gamer, data[:content], request.env["HTTP_USER_AGENT"], current_device_id)
     when "contact_support"
