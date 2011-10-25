@@ -33,20 +33,16 @@ class GamerProfile < ActiveRecord::Base
       Invitation.reconcile_pending_invitations(Gamer.find_by_id(self.gamer_id), :external_info => twitter_id)
     end
   end
-  
-  def clear_twitter_info!
-    self.twitter_id            = nil
-    self.twitter_access_token  = nil
-    self.twitter_access_secret = nil
-    
-    save!
-  end
 
   def dissociate_account!(account_type)
     case account_type
     when Invitation::FACEBOOK
       self.facebook_id     = nil
       self.fb_access_token = nil
+    when Invitation::TWITTER
+      self.twitter_id            = nil
+      self.twitter_access_token  = nil
+      self.twitter_access_secret = nil
     end
 
     save!

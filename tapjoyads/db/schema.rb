@@ -299,23 +299,19 @@ ActiveRecord::Schema.define(:version => 20111022082130) do
     t.string   "favorite_game"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "facebook_id"
-    t.string   "fb_access_token"
-    t.string   "referred_by",           :limit => 36
-    t.integer  "referral_count",                      :default => 0
     t.string   "name"
     t.string   "nickname"
     t.string   "postal_code"
     t.string   "favorite_category"
-    t.boolean  "use_gravatar",                        :default => false
-    t.string   "twitter_id"
-    t.string   "twitter_access_token"
-    t.string   "twitter_access_secret"
+    t.boolean  "use_gravatar",                         :default => false
     t.string   "facebook_id"
     t.string   "fb_access_token"
     t.string   "referred_by",            :limit => 36
     t.integer  "referral_count",                       :default => 0
     t.boolean  "allow_marketing_emails",               :default => true
+    t.string   "twitter_id"
+    t.string   "twitter_access_token"
+    t.string   "twitter_access_secret"
   end
 
   add_index "gamer_profiles", ["facebook_id"], :name => "index_gamer_profiles_on_facebook_id"
@@ -338,10 +334,8 @@ ActiveRecord::Schema.define(:version => 20111022082130) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "udid"
-    t.string   "confirmation_token",               :default => "",    :null => false
-    t.boolean  "blocked",                          :default => false
-    t.integer  "referral_count",                   :default => 0
-    t.string   "referred_by",        :limit => 36
+    t.string   "confirmation_token",                 :default => "",    :null => false
+    t.boolean  "blocked",                            :default => false
     t.integer  "accepted_tos_version",               :default => 0
   end
 
@@ -350,7 +344,6 @@ ActiveRecord::Schema.define(:version => 20111022082130) do
   add_index "gamers", ["id"], :name => "index_gamers_on_id", :unique => true
   add_index "gamers", ["perishable_token"], :name => "index_gamers_on_perishable_token"
   add_index "gamers", ["persistence_token"], :name => "index_gamers_on_persistence_token"
-  add_index "gamers", ["referred_by"], :name => "index_gamers_on_referred_by"
 
   create_table "generic_offers", :id => false, :force => true do |t|
     t.string   "id",               :limit => 36,                    :null => false

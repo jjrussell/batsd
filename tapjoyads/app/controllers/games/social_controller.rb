@@ -221,7 +221,7 @@ private
       # return
     when '401'
       # render :json => { :success => false, :error => "For somereason, you\'ve revoke our app in your TWITTER, please re-authenticating us." } and return
-      current_gamer.gamer_profile.clear_twitter_info!
+      current_gamer.gamer_profile.dissociate_account!(Invitation::TWITTER)
       redirect_to games_social_invite_twitter_friends_path
       return
     end
