@@ -13,10 +13,10 @@ ActionController::Routing::Routes.draw do |map|
     m.resources :gamer_sessions, :controller => 'games/gamer_sessions', :only => [ :new, :create, :destroy, :index ]
     m.login 'login', :controller => 'games/gamer_sessions', :action => :new
     m.logout 'logout', :controller => 'games/gamer_sessions', :action => :destroy
-
-    m.resource :gamer, :controller => 'games/gamers', :only => [ :create, :edit, :update ], :member => { :password => :get, :prefs => :get, :update_password => :put, :accept_tos => :put } do |gamer|
+    
+    m.resource :gamer, :controller => 'games/gamers', :only => [ :create, :edit, :update ], :member => { :password => :get, :prefs => :get, :social => :get, :update_password => :put, :accept_tos => :put } do |gamer|
       gamer.resource :device, :controller => 'games/gamers/devices', :only => [ :new, :create ], :member => { :finalize => :get }
-      gamer.resource :gamer_profile, :controller => 'games/gamers/gamer_profiles', :only => [ :update ], :member => { :update_birthdate => :put, :update_prefs => :put, :dissociate_account => :get }
+      gamer.resource :gamer_profile, :controller => 'games/gamers/gamer_profiles', :only => [ :update ], :member => { :update_birthdate => :put, :update_prefs => :put, :update_social => :put, :dissociate_account => :get }
     end
     m.register 'register', :controller => 'games/gamers', :action => :new
 
@@ -34,6 +34,7 @@ ActionController::Routing::Routes.draw do |map|
       social.send_email_invites 'send_email_invites', :action => :send_email_invites
       social.invite_facebook_friends 'invite_facebook_friends', :action => :invite_facebook_friends
       social.send_facebook_invites 'send_facebook_invites', :action => :send_facebook_invites
+      social.connect_facebook_account 'connect_facebook_account', :action => :connect_facebook_account
     end
   end
 end

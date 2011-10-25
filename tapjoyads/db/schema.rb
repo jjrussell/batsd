@@ -290,8 +290,8 @@ ActiveRecord::Schema.define(:version => 20111020070044) do
   add_index "gamer_devices", ["id"], :name => "index_gamer_devices_on_id", :unique => true
 
   create_table "gamer_profiles", :id => false, :force => true do |t|
-    t.string   "id",                     :limit => 36,                    :null => false
-    t.string   "gamer_id",               :limit => 36,                    :null => false
+    t.string   "id",                     :limit => 36,                         :null => false
+    t.string   "gamer_id",               :limit => 36,                         :null => false
     t.string   "gender"
     t.date     "birthdate"
     t.string   "city"
@@ -303,12 +303,12 @@ ActiveRecord::Schema.define(:version => 20111020070044) do
     t.string   "nickname"
     t.string   "postal_code"
     t.string   "favorite_category"
-    t.boolean  "use_gravatar",                         :default => false
     t.string   "facebook_id"
     t.string   "fb_access_token"
     t.string   "referred_by",            :limit => 36
     t.integer  "referral_count",                       :default => 0
     t.boolean  "allow_marketing_emails",               :default => true
+    t.string   "image_source",                         :default => "gravatar"
   end
 
   add_index "gamer_profiles", ["facebook_id"], :name => "index_gamer_profiles_on_facebook_id"

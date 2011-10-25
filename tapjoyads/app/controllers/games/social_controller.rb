@@ -2,7 +2,7 @@ class Games::SocialController < GamesController
   rescue_from Mogli::Client::SessionInvalidatedDueToPasswordChange, Mogli::Client::OAuthException, :with => :handle_oauth_exception
 
   before_filter :require_gamer
-  before_filter :offline_facebook_authenticate, :only => [ :invite_facebook_friends, :send_facebook_invites ]
+  before_filter :offline_facebook_authenticate, :only => [ :invite_facebook_friends, :send_facebook_invites, :connect_facebook_account ]
   before_filter :validate_recipients, :only => [ :send_email_invites ]
 
   def invite_facebook_friends
@@ -60,6 +60,10 @@ class Games::SocialController < GamesController
         render :json => { :success => false, :error => "There was an issue with inviting your friend. Please try again later" }
       end
     end
+  end
+
+  def connect_facebook_account
+    redirect_to social_games_gamer_path
   end
 
   def invite_email_friends

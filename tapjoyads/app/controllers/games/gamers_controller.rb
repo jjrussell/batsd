@@ -1,6 +1,6 @@
 class Games::GamersController < GamesController
 
-  before_filter :set_profile, :only => [ :edit, :accept_tos, :password, :update_password, :prefs ]
+  before_filter :set_profile, :only => [ :edit, :accept_tos, :password, :update_password, :prefs, :social ]
 
   def create
     @gamer = Gamer.new do |g|
@@ -25,14 +25,24 @@ class Games::GamersController < GamesController
   end
 
   def edit
-    @geoip_data = get_geoip_data
     if @gamer_profile.country.blank?
+      @geoip_data = get_geoip_data
       @gamer_profile.country = Countries.country_code_to_name[@geoip_data[:country]]
     end
     
     if @gamer_profile.facebook_id.present?
       fb_create_user_and_client(@gamer_profile.fb_access_token, '', @gamer_profile.facebook_id)
       current_facebook_user.fetch
+    end
+  end
+
+  def social
+    @image_source_options = { 'Gravatar' => 'gravatar'}
+    if @gamer_profile.facebook_id.present?
+      fb_create_user_and_client(@gamer_profile.fb_access_token, '', @gamer_profile.facebook_id)
+      current_facebook_user.fetch
+      logger.debug("current facebook user: #{current_facebook_user.username}, #{current_facebook_user.first_name} #{current_facebook_user.last_name}")
+      @image_source_options['Facebook'] = 'facebook'
     end
   end
 

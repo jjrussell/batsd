@@ -21,14 +21,12 @@
         .title_2
           Options
         #account_options.content_box.clearfix
-          %a{ :href => @gamer.get_gravatar_profile_url, :target => '_blank' }
+          %a{ :href => social_games_gamer_path }
             .slider.bottom_line.clearfix
               .profile_arrow.right
               .field
                 .label
-                  Icon:
-                #user_gravatar.image
-                  %img{ :src => @gamer.get_avatar_url(30) }
+                  Social Settings
           %a{ :href => password_games_gamer_path }
             .slider.bottom_line.clearfix
               .profile_arrow.right

@@ -305,7 +305,7 @@ a, a:visited {
     @include inset-shadow;
   }
 
-  .profile input[type=submit] {
+  .profile .button {
     border: 1px solid #B0B0B0;
     border-color: #B0131D;
     color: #FFF;
