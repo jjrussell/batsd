@@ -8,7 +8,7 @@ class AddFbInfoToGamerProfiles < ActiveRecord::Migration
 
   def self.down
     remove_index :gamer_profiles, :facebook_id
-        
+
     remove_column :gamer_profiles, :facebook_id
     remove_column :gamer_profiles, :fb_access_token
   end

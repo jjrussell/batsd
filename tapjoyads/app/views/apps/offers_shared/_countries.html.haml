@@ -45,7 +45,7 @@
     #change_countries {
       margin-top: 4px;
     }
-    
+
     #change_countries>ul {
       max-height: 300px;
       overflow: auto;
@@ -53,21 +53,21 @@
       padding: 0;
       border-left: 1px dotted black;
     }
-    
+
     #change_countries li {
       list-style: none;
     }
-    
+
     .expander {
       width: 16px;
       height: 16px;
       display: inline-block;
     }
-    
+
     .some-checked {
       font-style: italic;
     }
-  
+
 - content_for :page_javascript do
   :plain
     $(function($){
@@ -90,20 +90,20 @@
           $('#offer_countries').val('["' + countryCodes.join('","') + '"]');
         }
       };
-      
+
       $('.expander').click(function() {
         $(this).parent().find('.inner').toggle();
         $(this).toggleClass('ui-icon-triangle-1-e');
         $(this).toggleClass('ui-icon-triangle-1-s');
       });
-      
+
       $('input.continent').click(function() {
         isChecked = $(this).is(':checked');
         $(this).parent().find('.country').attr('checked', isChecked);
         $(this).parent().find('.continent-label').removeClass('some-checked');
         setCountries();
       });
-      
+
       $('input.country').click(function() {
         allChecked = true;
         noneChecked = true;
@@ -121,7 +121,7 @@
         }
         setCountries();
       });
-      
+
       $('#country_targeting_on').click(function(){
         $('#country_checkboxes').slideDown();
         setCountries();

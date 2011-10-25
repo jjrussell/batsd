@@ -12,7 +12,7 @@ class GamerProfile < ActiveRecord::Base
       errors.add(:birthdate, "is less than thirteen years ago") if (turns_thirteen.future?)
     end
   end
-  
+
   def update_facebook_info!(facebook_user)
     if facebook_id != facebook_user.id
       self.facebook_id = facebook_user.id
@@ -38,6 +38,17 @@ class GamerProfile < ActiveRecord::Base
     self.twitter_id            = nil
     self.twitter_access_token  = nil
     self.twitter_access_secret = nil
+    
+    save!
+  end
+
+  def dissociate_account!(account_type)
+    case account_type
+    when Invitation::FACEBOOK
+      self.facebook_id     = nil
+      self.fb_access_token = nil
+    end
+
     save!
   end
 end

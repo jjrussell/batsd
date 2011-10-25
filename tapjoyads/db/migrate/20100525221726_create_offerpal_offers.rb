@@ -8,7 +8,7 @@ class CreateOfferpalOffers < ActiveRecord::Migration
       t.text :description
       t.timestamps
     end
-    
+
     add_index :offerpal_offers, :id, :unique => true
     add_index :offerpal_offers, :partner_id
     add_index :offerpal_offers, :offerpal_id, :unique => true

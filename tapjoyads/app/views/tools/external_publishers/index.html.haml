@@ -4,7 +4,7 @@
 
 %p
   The below currencies are potential external publishers. If they are enabled, users will be able to earn currency outside the app though Tapjoy Games.
-  
+
 %p
   = "Total currencies: #{@num_tapjoy_enabled}"
   &nbsp;
@@ -36,12 +36,12 @@
     table.with-border {
       border-collapse: collapse;
     }
-    
+
     td.img {
       max-width: 40px;
       overflow: hidden;
     }
-  
+
 - content_for :page_javascript do
   :plain
     $(function($) {
@@ -50,7 +50,7 @@
         is: function(s) { return false; },
         type: 'text',
         format: function(s) {
-          
+
         }
       });
       $(".currencies_table").tablesorter({

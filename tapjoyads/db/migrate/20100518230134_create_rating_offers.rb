@@ -9,7 +9,7 @@ class CreateRatingOffers < ActiveRecord::Migration
       t.text :instructions
       t.timestamps
     end
-    
+
     add_index :rating_offers, :id, :unique => true
     add_index :rating_offers, :partner_id
     add_index :rating_offers, :app_id

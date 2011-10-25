@@ -1,5 +1,5 @@
 class Dashboard::HomepageController < WebsiteController
-  
+
   def index
     if has_role_with_hierarchy?(:admin)
       redirect_to tools_path
@@ -11,5 +11,5 @@ class Dashboard::HomepageController < WebsiteController
       redirect_to login_path
     end
   end
-  
+
 end

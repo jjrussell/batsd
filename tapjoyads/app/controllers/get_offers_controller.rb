@@ -1,12 +1,12 @@
 class GetOffersController < ApplicationController
-  
+
   layout 'iphone', :only => :webpage
-  
+
   prepend_before_filter :decrypt_data_param
   before_filter :choose_experiment, :except => :featured
   before_filter :set_featured_params, :only => :featured
   before_filter :setup
-  
+
   after_filter :save_web_request
 
   DEVICES_FOR_REDESIGN = Set.new([
@@ -18,7 +18,7 @@ class GetOffersController < ApplicationController
     '355031040923092',                          # Linda Nexus S
     'a100000d9833c5',                           # Stephen Evo
     'ade749ccc744336ad81cbcdbf36a5720778c6f13', # Amir iPhone
-    '355031040123271',                          # Kai Nexus S 
+    '355031040123271',                          # Kai Nexus S
   ])
 
   def webpage
@@ -26,7 +26,7 @@ class GetOffersController < ApplicationController
       @test_offers = [ build_test_offer(@publisher_app) ]
       @test_offers << build_test_video_offer(@publisher_app).primary_offer if params[:video_offer_ids].to_s.split(',').include? 'test_video'
     end
-    
+
     set_geoip_data
     @offer_list, @more_data_available = get_offer_list.get_offers(@start_index, @max_items)
 
@@ -48,19 +48,19 @@ class GetOffersController < ApplicationController
       end
     end
     @more_data_available = 0
-    
+
     if @offer_list.any?
       @web_request.offer_id = @offer_list.first.id
       @web_request.path = 'featured_offer_shown'
     end
-    
+
     if params[:json] == '1'
       render :template => 'get_offers/installs_json', :content_type => 'application/json'
     else
       render :template => 'get_offers/installs_redirect'
     end
   end
-  
+
   def index
     is_server_to_server = params[:redirect] == '1' || (params[:json] == '1' && params[:callback].blank?)
     set_geoip_data(is_server_to_server)
@@ -68,7 +68,7 @@ class GetOffersController < ApplicationController
     if @currency.tapjoy_managed? && params[:source] == 'tj_games'
       @tap_points = PointPurchases.new(:key => "#{params[:publisher_user_id]}.#{@currency.id}").points
     end
-    
+
     if params[:type] == Offer::CLASSIC_OFFER_TYPE
       render :template => 'get_offers/offers'
     elsif params[:redirect] == '1'
@@ -79,22 +79,22 @@ class GetOffersController < ApplicationController
       render :template => 'get_offers/installs'
     end
   end
-  
+
 private
-  
+
   def set_featured_params
     params[:type] = Offer::FEATURED_OFFER_TYPE
     params[:source] = 'featured'
     params[:rate_app_offer] = '0'
   end
-  
+
   def setup
     return unless verify_params([ :app_id, :udid, :publisher_user_id ])
-    
+
     @now = Time.zone.now
     @start_index = (params[:start] || 0).to_i
     @max_items = (params[:max] || 25).to_i
-    
+
     params[:currency_id] = params[:app_id] if params[:currency_id].blank?
     if params[:currency_selector] == '1'
       @currencies = Currency.find_all_in_cache_by_app_id(params[:app_id])
@@ -105,18 +105,19 @@ private
     end
     @publisher_app = App.find_in_cache(params[:app_id])
     return unless verify_records([ @currency, @publisher_app ])
-    
+
     @device = Device.new(:key => params[:udid])
-    
+    @device.set_publisher_user_id!(params[:app_id], params[:publisher_user_id])
+
     params[:source] = 'offerwall' if params[:source].blank?
     params[:exp] = nil if params[:type] == Offer::CLASSIC_OFFER_TYPE
-    
+
     wr_path = params[:source] == 'featured' ? 'featured_offer_requested' : 'offers'
     @web_request = WebRequest.new(:time => @now)
     @web_request.put_values(wr_path, params, get_ip_address, get_geoip_data, request.headers['User-Agent'])
     @web_request.viewed_at = @now
   end
-  
+
   def get_offer_list(type = nil)
     OfferList.new(
       :publisher_app        => @publisher_app,
@@ -136,7 +137,7 @@ private
       :video_offer_ids      => params[:video_offer_ids].to_s.split(',')
     )
   end
-  
+
   def set_geoip_data(is_server_to_server = false)
     if is_server_to_server && params[:device_ip].blank?
       @geoip_data = {}
@@ -145,9 +146,9 @@ private
     end
     @geoip_data[:country] = params[:country_code] if params[:country_code].present?
   end
-  
+
   def save_web_request
     @web_request.save
   end
-  
+
 end

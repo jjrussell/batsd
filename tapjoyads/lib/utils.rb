@@ -1,5 +1,5 @@
 class Utils
-  
+
   def self.check_syntax
     Rails::Initializer.run(:load_application_classes)
 
@@ -10,14 +10,14 @@ class Utils
 
     true
   end
-  
+
   def self.update_sqlite_schema
     ActiveRecord::Base.establish_connection('sqlite')
     load('db/schema.rb')
     ActiveRecord::Base.establish_connection(Rails.env)
     true
   end
-  
+
   def self.import_udids(filename, app_id, udid_regex = //)
     counter = 0
     new_udids = 0
@@ -85,7 +85,7 @@ class Utils
     end
     file.close
   end
-  
+
   def self.get_publisher_breakdown_for_campaign(advertiser_app_id, start_time, end_time)
     counts = {}
     NUM_REWARD_DOMAINS.times do |i|
@@ -98,7 +98,7 @@ class Utils
     end
     counts
   end
-  
+
   def self.fix_stuck_send_currency(reward_id, status)
     reward = Reward.find(reward_id, :consistent => true)
     if reward.sent_currency.present? && reward.send_currency_status.present?
@@ -113,7 +113,7 @@ class Utils
     end
     reward
   end
-  
+
   def self.fix_conditional_check_failed(reward_id)
     reward = Reward.find(reward_id, :consistent => true)
     if reward.sent_currency.present? && reward.send_currency_status.present?
@@ -129,7 +129,7 @@ class Utils
     end
     reward
   end
-  
+
   def self.cleanup_orphaned_failed_sdb_saves
     time = Time.zone.now - 24.hours
     count = 0
@@ -144,8 +144,8 @@ class Utils
     end
     puts "moved #{count} orphaned items from #{BucketNames::FAILED_SDB_SAVES}"
   end
-  
-  
+
+
   class Memcache
     # Use these functions to facilitate switching memcache servers.
     #
@@ -156,17 +156,17 @@ class Utils
     # -run Utils::Memcache.aggregate_all_stats
     # -wait until Utils::Memcache.all_stats_aggregated? returns true
     # -run Utils::Memcache.advance_last_stats_aggregation_times
-    # 
+    #
     # shortly after XX:30 (all steps must be completed by XX:59)
     # -run Utils::Memcache.save_state
     # -deploy new config to test server
     # -verify new memcache servers are functioning (Mc.cache.stats)
     # -run Utils::Memcache.restore_state
     # -deploy new config to production servers
-    # 
+    #
     # shortly after XX+1:05
     # -run Utils::Memcache.queue_recount_stats_jobs
-    # 
+    #
     # after recount jobs have completed
     # -enable master hourly app stats job
 
@@ -187,9 +187,12 @@ class Utils
                'money.total_balance',
                'money.total_pending_earnings',
                'money.last_updated' ]
-      distributed_keys = [ 'statz.cached_stats.24_hours',
-                           'statz.cached_stats.7_days',
-                           'statz.cached_stats.1_month',
+      distributed_keys = [ 'statz.metadata.24_hours',
+                           'statz.metadata.7_days',
+                           'statz.metadata.1_month',
+                           'statz.stats.24_hours',
+                           'statz.stats.7_days',
+                           'statz.stats.1_month',
                            'statz.partner.cached_stats.24_hours',
                            'statz.partner.cached_stats.7_days',
                            'statz.partner.cached_stats.1_month',
@@ -210,7 +213,7 @@ class Utils
       end
       true
     end
-    
+
     def self.restore_state
       keys = [ 'statz.last_updated.24_hours',
                'statz.last_updated.7_days',
@@ -228,9 +231,12 @@ class Utils
                'money.total_balance',
                'money.total_pending_earnings',
                'money.last_updated' ]
-      distributed_keys = [ 'statz.cached_stats.24_hours',
-                           'statz.cached_stats.7_days',
-                           'statz.cached_stats.1_month',
+      distributed_keys = [ 'statz.metadata.24_hours',
+                           'statz.metadata.7_days',
+                           'statz.metadata.1_month',
+                           'statz.stats.24_hours',
+                           'statz.stats.7_days',
+                           'statz.stats.1_month',
                            'statz.partner.cached_stats.24_hours',
                            'statz.partner.cached_stats.7_days',
                            'statz.partner.cached_stats.1_month',
@@ -259,19 +265,19 @@ class Utils
       Mc.cache_all
       true
     end
-    
+
     def self.aggregate_all_stats
       cutoff = Time.now.utc.beginning_of_hour
       Offer.find_each(:conditions => ["last_stats_aggregation_time < ?", cutoff]) do |offer|
         Sqs.send_message(QueueNames::APP_STATS_HOURLY, offer.id)
       end
     end
-    
+
     def self.all_stats_aggregated?
       cutoff = Time.now.utc.beginning_of_hour
       Offer.count(:conditions => ["last_stats_aggregation_time < ?", cutoff]) == 0
     end
-    
+
     def self.advance_last_stats_aggregation_times
       last_aggregation_time = Time.now.utc.beginning_of_hour + 1.hour
       Offer.find_each(:conditions => ["last_stats_aggregation_time < ?", last_aggregation_time]) do |offer|
@@ -279,7 +285,7 @@ class Utils
         offer.save(false)
       end
     end
-    
+
     def self.queue_recount_stats_jobs
       end_time = Time.now.utc.beginning_of_hour.to_i
       start_time = end_time - 1.hour
@@ -289,5 +295,5 @@ class Utils
       end
     end
   end
-  
+
 end

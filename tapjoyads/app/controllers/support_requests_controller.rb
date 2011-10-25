@@ -1,8 +1,8 @@
 class SupportRequestsController < ApplicationController
   before_filter :setup
-  
+
   layout 'iphone'
-  
+
   def new
     respond_to do |format|
       format.js do
@@ -12,7 +12,7 @@ class SupportRequestsController < ApplicationController
       format.html
     end
   end
-  
+
   def create
     if @offer.nil? && params[:offer_name].blank?
       render_new_with_error(I18n.t('text.support.missing_offer'))
@@ -24,7 +24,7 @@ class SupportRequestsController < ApplicationController
       support_request = SupportRequest.new
       support_request.fill(params, @app, @currency, @offer)
       support_request.save
-      
+
       TapjoyMailer.deliver_support_request(params[:description], params[:email_address], @app, @currency, params[:udid],
         params[:publisher_user_id], params[:device_type], params[:language_code], @offer || params[:offer_name])
     end
@@ -39,7 +39,7 @@ private
     @offer = Offer.find_in_cache(params[:offer_id]) if params[:offer_id].present?
     return unless verify_records([@currency, @app])
   end
-  
+
   def find_incomplete_offers
     conditions = "udid = '#{params[:udid]}' and currency_id = '#{params[:currency_id]}' and clicked_at > '#{2.weeks.ago.to_f}' and installed_at is null and manually_resolved_at is null"
     advertiser_offer_ids = []
@@ -49,7 +49,7 @@ private
     end
     @incomplete_offers = advertiser_offer_ids.collect { |offer_id| Offer.find_in_cache(offer_id) }
   end
-  
+
   def render_new_with_error(message)
     find_incomplete_offers
     flash.now[:error] = message
