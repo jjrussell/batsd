@@ -25,7 +25,11 @@ class GamesMailer < ActionMailer::Base
     else
       device_type = :iphone
     end
-    body :confirmation_link => confirmation_link, :linked => gamer.gamer_devices.any?, :device_type => device_type
+    offerwall_url = nil
+    if external_publisher = ExternalPublisher.most_recently_run_for_gamer(gamer)
+      offerwall_url = "#{TJGAMES_URL}/games?offers_for_app_id=#{external_publisher.app_id}"
+    end
+    body :confirmation_link => confirmation_link, :linked => gamer.gamer_devices.any?, :device_type => device_type, :offerwall_url => offerwall_url
   end
 
   def password_reset(gamer, reset_link)

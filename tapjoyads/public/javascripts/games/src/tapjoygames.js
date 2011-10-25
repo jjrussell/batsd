@@ -1106,9 +1106,155 @@ TJG.ui = {
 
       $(".get_offerwall_jsonp").each(function() {
         $(this).click(function(){
-          TJG.ui.getAndShowOfferWall($(this).attr("jsonp_url"), $(this).attr("id"), $(this).attr("app_name"), $(this).attr("currency"));
+          getOfferWallClicked($(this));
         });
       });
+    }
+
+    function getOfferWallClicked(offerwallElem) {
+      slidePage("#earn", "left");
+      $("#earn_content").empty();
+      var url = offerwallElem.attr("jsonp_url"), appId = offerwallElem.attr("id"), appName = offerwallElem.attr("app_name"), currencyName = offerwallElem.attr("currency");
+      if (!TJG.appOfferWall[appId]) {
+        TJG.appOfferWall[appId] = {};
+      }
+      TJG.appOfferWall[appId]['jsonp_url'] = url;
+      var title = 'Complete any of the offers below to earn <span class="bold">' + currencyName + '</span> for <span class="bold">' + appName + '</span>';
+      $("#app_title").html(title).show();
+      if (url) {
+        TJG.ui.showLoader();
+        $.ajax({
+          url: url+"&callback=?",
+          dataType: 'json',
+          timeout: 15000,
+          success: function(data) {
+            var i = 0;
+            TJG.ui.hideLoader();
+            if (data.OfferArray) {
+              var offers = data.OfferArray;
+              offerOffset = offers.length;
+              if (data.MoreDataAvailable) {
+                TJG.appOfferWall[appId]['offers_left'] = data.MoreDataAvailable;
+              }
+              else {
+                TJG.appOfferWall[appId]['offers_left'] = 0;
+              }
+              TJG.appOfferWall[appId]['offset'] = offerOffset;
+              var offerRows = TJG.ui.getOfferRow(offers, currencyName);
+              var t = [
+                '<ul id="offerwall_id-', appId ,'">',
+                  offerRows,
+                '</ul>',
+              ];
+              if (TJG.appOfferWall[appId]['offers_left'] > 0) {
+                t.push('<div class="more_button_wrapper"><div class="get_more_apps" app_id="' + appId + '"><div class="get_more_apps_content">Load More</div></div></div>');
+              }
+              else {
+                t.push('<div class="more_button_wrapper"><div class="back_to_top grey_button"><div class="grey_button_content">Back to Top</div></div></div>');
+                $(".back_to_top").click(function(){
+                  TJG.utils.scrollTop();
+                });
+              }
+              t = t.join('');
+              $("#earn_content").html(t).fadeIn(fadeSpd, function(){
+                TJG.utils.loadImages(".offer_image_loader_wrapper");
+              });
+              var isLoading = false;
+              var hasFailed = false;
+              $(".get_more_apps").click(function(){
+                if (isLoading) { return; }
+                $(".get_more_apps_content").html('<div class="image_loader"></div>');
+                var appId = offerwallElem.attr("app_id");
+                $(".load_more_loader").show();
+                if (TJG.appOfferWall[appId]['offers_left'] > 0) {
+                  var url = TJG.appOfferWall[appId]['jsonp_url'];
+                  url = url + "&start=" + TJG.appOfferWall[appId]['offset'] + "&max=25&callback=?";
+                  isLoading = true;
+                  $.ajax({
+                    url: url,
+                    dataType: 'json',
+                    timeout: 15000,
+                    success: function(data) {
+                      if (data.OfferArray) {
+                        var offers = data.OfferArray;
+                        if (data.MoreDataAvailable) {
+                          TJG.appOfferWall[appId]['offers_left'] = data.MoreDataAvailable;
+                        }
+                        else {
+                          TJG.appOfferWall[appId]['offers_left'] = 0;
+                        }
+                        TJG.appOfferWall[appId]['offset'] = TJG.appOfferWall[appId]['offset'] + 25;
+                        var moreOfferRows = TJG.ui.getOfferRow(offers, currencyName, i, true);
+                        $("#offerwall_id-" + appId).append(moreOfferRows);
+                        var el = ".offer_item_" + i;
+                        $.each($(el), function(n,o) {
+                          $(o).fadeIn(fadeSpd);
+                        });
+                        TJG.utils.loadImages(".offer_image_loader_wrapper");
+                        if (TJG.appOfferWall[appId]['offers_left'] > 0) {
+                          $(".get_more_apps_content").html("Load More");
+                        }
+                        else {
+                          $(".more_button_wrapper").html('<div class="back_to_top grey_button"><div class="grey_button_content">Back to Top</div></div>');
+                          $(".back_to_top").click(function(){
+                            TJG.utils.scrollTop();
+                          });
+                        }
+                      }
+                      isLoading = false;
+                    },
+                    error: function () {
+                      var m = [
+                        '<div class="center">There was an issue fetching more offers. Please try again.</div>'
+                      ].join('');
+                      if (!hasFailed) {
+                        $("#offerwall_id-" + appId).append(m).fadeIn(fadeSpd);
+                      }
+                      hasFailed = true;
+                      $(".get_more_apps_content").html("Load More");
+                      $(".load_more_loader").hide();
+                      isLoading = false;
+                    }
+                  });
+                  i++;
+                }
+              });
+            }
+          },
+          error: function() {
+            TJG.ui.hideLoader();
+            var m = [
+             '<div class="center">There was an issue. Please try again</div>'
+            ].join('');
+            $("#earn_content").html(m).fadeIn(fadeSpd);
+            TJG.utils.scrollTop();
+          }
+>>>>>>> link to offer wall for most recently played app from welcome email (not finalized)
+        });
+      }
+      else {
+        var m = [
+          '<div class="center">There was an issue. Please try again</div>'
+        ].join('');
+        $("#earn_content").html(m).fadeIn(fadeSpd);
+        TJG.utils.scrollTop();
+     }
+    }
+
+    function getParameterByName(name) {
+      name = name.replace(/[\[]/, "\\\[").replace(/[\]]/, "\\\]");
+      var regexS = "[\\?&]" + name + "=([^&#]*)";
+      var regex = new RegExp(regexS);
+      var results = regex.exec(window.location.href);
+      if(results == null) {
+        return null;
+      }
+      return decodeURIComponent(results[1].replace(/\+/g, " "));
+    }
+
+    var offers_for_app_id = getParameterByName("offers_for_app_id")
+    if (offers_for_app_id !== null) {
+      getOfferWallClicked($('#' + offers_for_app_id));
     }
 
     function reloadOfferWalls () {
