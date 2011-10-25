@@ -6,9 +6,6 @@ class GameState < SimpledbShardedResource
   self.sdb_attr :version, :type => :int, :default_value => 0
   self.sdb_attr :udids, :force_array => true, :replace => false
 
-  # TO REMOVE: after resharding
-  attr_reader :attributes_to_replace
-
   def dynamic_domain_name
     domain_number = @key.matz_silly_hash % GameState.num_domains
     "game_states_#{domain_number}"
@@ -16,14 +13,6 @@ class GameState < SimpledbShardedResource
 
   def initialize(options = {})
     super({:load_from_memcache => false}.merge(options))
-    # TO REMOVE: after resharding
-    if new_record?
-      correct_domain_name = @this_domain_name
-      old_domain_name = "game_states_#{@key.matz_silly_hash % 2}"
-      super({:load_from_memcache => false, :domain_name => old_domain_name}.merge(options))
-      @this_domain_name = correct_domain_name
-      @attributes_to_replace = @attributes unless new_record?
-    end
   end
 
   def seconds_elapsed
