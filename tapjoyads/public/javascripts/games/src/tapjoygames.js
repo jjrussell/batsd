@@ -170,5 +170,4 @@ RegExp.escape = function(text) {
     };
     window.addEventListener("load", TJG.init, false);
 
-
 })(this, document);
