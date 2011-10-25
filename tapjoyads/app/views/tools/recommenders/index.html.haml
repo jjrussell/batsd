@@ -1,0 +1,85 @@
+
+- @page_title = "Recommenders"
+- unless params[:recommender].blank? 
+  %h1="Recommendations by #{@recommenders[params[:recommender].to_sym]}:"
+- else
+  %h1 Choose a recommender
+- form_tag(tools_recommenders_path) do
+  %table
+    %tbody
+      %tr
+        %th= label_tag :recommender, "Choose a Recommender"
+        - unless params[:recommender].blank?
+          %td= select_tag :recommender, options_for_select(@recommenders.invert, params[:recommender].to_sym)
+        -else
+          %td= select_tag :recommender, options_for_select(@recommenders.invert)
+        
+      %tr
+        %th= label_tag :app_id, "Enter An App ID"
+        %td= text_field_tag :app_id, params[:app_id], :size => 60
+      %tr
+        %th= label_tag :udid, "Enter A Device ID"
+        %td= text_field_tag :udid, params[:udid] , :size => 60
+      %tr
+        %td{ :colspan => 2 }= submit_tag('Get Recommendations')
+
+
+- unless @recs_for_app.nil?
+  = render :partial => 'recommendations', :locals => {:recs_for => "#{@recommender.app_name(params[:app_id])} (#{params[:app_id]})", :collection=>@recs_for_app}
+- unless @recs_for_udid.nil?
+  = render :partial => 'recommendations', :locals => {:recs_for => "udid #{params[:udid]}", :collection=>@recs_for_udid}
+  
+
+- content_for :page_javascript do
+  :plain
+    $(function() {
+      $.tablesorter.addParser({
+        id: 'currency-column',
+        is: function(s) { return false; },
+        type: 'numeric',
+        format: function(s) {
+          return s.replace(/\$/g, '').replace(/,/g, '');
+        }
+      });
+      $("#recommendations_table").tablesorter({
+        widgets: ['zebra'],
+        headers: {
+          0:  { sorter: false },
+          3:  { sorter: 'currency-column' },
+          4:  { sorter: false },
+          5:  { sorter: 'usLongDate' }
+        },
+        sortList: [[1,0], [5,0]]
+      });
+    });
+
+- content_for :page_styles do
+  :plain
+    table.tablesorter {
+      border-collapse: separate;
+    }
+    table.tablesorter th.up_arrow {
+      background-position: 100% 50%;
+      background-repeat: no-repeat;
+      background-image: url(/stylesheets/themes/blue/asc.gif);
+      background-color: #8DBDD8;
+    }
+    .offer {
+      display: inline-block;
+      padding-right: 10px;
+      padding-top: 5px;
+    }
+    .nowrap {
+      white-space: nowrap;
+    }
+    .act_as_button {
+      font-size: 10px!important;
+      padding:2px!important;
+    }
+    .agency {
+      color: red;
+    }
+    .icon {
+      max-width: 60px;
+      overflow: hidden;
+    }

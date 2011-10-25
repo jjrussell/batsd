@@ -1,0 +1,9 @@
+- if recommendation.is_a? Array
+  %tr 
+    %td=@recommender.app_name(recommendation.first)
+    %td=recommendation.first
+    %td=recommendation.last
+- else
+  %tr
+    %td=@recommender.app_name(recommendation)
+    %td=recommendation
