@@ -19,6 +19,7 @@
     %tr
       %th App Name
       %th Reviewer
+      %th Platform
       %th Review Text
       %th Featured On
       %th
@@ -28,6 +29,7 @@
       %tr
         %td= link_to(app_review.app_name, tools_app_reviews_path(:app_id => app_review.app_id))
         %td= link_to(app_review.author_full_name, tools_app_reviews_path(:author_id => app_review.author_id))
+        %td= app_review.platform
         %td= app_review.text
         %td
           - form_for([:tools, app_review], :url => update_featured_tools_app_review_path(app_review)) do |f|
@@ -55,9 +57,9 @@
       $("#app_reviews_table").tablesorter({
         widgets: ['zebra'],
         headers: {
-          3: { sorter: 'date-field-column' },
-          4: { sorter: false },
-          5: { sorter: false }
+          4: { sorter: 'date-field-column' },
+          5: { sorter: false },
+          6: { sorter: false }
         }
       });
 
