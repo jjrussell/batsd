@@ -5,7 +5,7 @@ class RemoveUnusedColumns < ActiveRecord::Migration
     remove_column :apps, :approved_by_store_at
     remove_column :apps, :approved_by_tapjoy_at
     remove_column :apps, :enabled_at
-    
+
     remove_column :offers, :description
     remove_column :offers, :instructions
     remove_column :offers, :time_delay
@@ -19,7 +19,7 @@ class RemoveUnusedColumns < ActiveRecord::Migration
     add_column :apps, :approved_by_store_at, :datetime
     add_column :apps, :approved_by_tapjoy_at, :datetime
     add_column :apps, :enabled_at, :datetime
-    
+
     add_column :offers, :description, :text
     add_column :offers, :instructions, :text
     add_column :offers, :time_delay, :string

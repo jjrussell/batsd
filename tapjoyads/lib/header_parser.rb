@@ -15,17 +15,16 @@ class HeaderParser
       nil
     end
   end
-  
+
   def self.os_version(user_agent)
     match = user_agent.match(/\((.*?)\)/)
-    os_string = match[1].split(';')[2]
-    os_version = os_string.match(/(Android|iPhone OS) (\S*)/)[2].gsub('_', '.')
+    os_version = match[1].match(/(Android|iPhone OS|CPU OS) (.*?)[;|\s]/)[2].gsub('_', '.')
     os_version
   rescue Exception => e
     Rails.logger.info "Unable to parse os_version from user_agent: '#{user_agent}'"
     nil
   end
-  
+
   def self.locale(accept_language)
     locale = accept_language.to_s.split(',').first
     language_code, country_code = locale.split(';').first.split('-') if locale.present?

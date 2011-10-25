@@ -1,14 +1,14 @@
 require 'test_helper'
 
 class AgencyApi::PartnersControllerTest < ActionController::TestCase
-  
+
   context "on GET to :index" do
     setup do
       @agency_user = Factory(:agency_user)
       @partner = Factory(:partner, :balance => 10, :pending_earnings => 11, :name => 'name', :contact_name => 'contact_name')
       PartnerAssignment.create!(:user => @agency_user, :partner => @partner)
     end
-    
+
     context "with missing params" do
       setup do
         @response = get(:index)
@@ -53,7 +53,7 @@ class AgencyApi::PartnersControllerTest < ActionController::TestCase
       end
     end
   end
-  
+
   context "on GET to :show" do
     setup do
       @agency_user = Factory(:agency_user)
@@ -127,12 +127,12 @@ class AgencyApi::PartnersControllerTest < ActionController::TestCase
       end
     end
   end
-  
+
   context "on POST to :create" do
     setup do
       @agency_user = Factory(:agency_user)
     end
-    
+
     context "with missing params" do
       setup do
         @response = post(:create)
@@ -187,7 +187,7 @@ class AgencyApi::PartnersControllerTest < ActionController::TestCase
       end
     end
   end
-  
+
   context "on POST to :link" do
     setup do
       @agency_user = Factory(:agency_user)
@@ -195,7 +195,7 @@ class AgencyApi::PartnersControllerTest < ActionController::TestCase
       @partner = Factory(:partner)
       PartnerAssignment.create!(:user => @user, :partner => @partner)
     end
-    
+
     context "with missing params" do
       setup do
         @response = post(:link)
@@ -271,7 +271,7 @@ class AgencyApi::PartnersControllerTest < ActionController::TestCase
       end
     end
   end
-  
+
   context "on PUT to :update" do
     setup do
       @agency_user = Factory(:agency_user)

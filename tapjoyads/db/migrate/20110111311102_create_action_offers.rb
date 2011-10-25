@@ -9,7 +9,7 @@ class CreateActionOffers < ActiveRecord::Migration
       t.boolean :hidden, :default => false, :null => false
       t.timestamps
     end
-    
+
     add_index :action_offers, :id, :unique => true
     add_index :action_offers, :partner_id
     add_index :action_offers, :app_id

@@ -37,7 +37,7 @@ class AppsControllerTest < ActionController::TestCase
       end
     end
   end
-  
+
   context "A User with apps" do
     setup do
       @user = Factory(:user)

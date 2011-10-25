@@ -93,7 +93,7 @@ Environment Setup:
   
 
 -Set up accounts and database
-  -Create developer account at www.tapjoy.com and have someone give you the "admin" role
+  -Create developer account at dashboard.tapjoy.com and have someone give you the "admin" role
   -Sync prod db with local db (this will overwrite any pre-existing changes)
     -rake admin:sync_db
   -Now you have an admin account in production and locally

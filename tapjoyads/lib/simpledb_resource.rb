@@ -1,25 +1,25 @@
 class SimpledbResource
-  
+
   include Simpledb
-  
+
   cattr_reader :sdb
   attr_accessor :key, :attributes, :this_domain_name, :is_new, :key_hash
   cattr_accessor :domain_name, :key_format
   superclass_delegating_accessor :domain_name, :key_format
   class_inheritable_accessor :attribute_names
-  
+
   def self.reset_connection
     @@sdb = RightAws::SdbInterface.new(nil, nil, { :multi_thread => true, :port => 80, :protocol => 'http' })
   end
   self.reset_connection
-  
+
   @@special_values = {
     :newline => "^^TAPJOY_NEWLINE^^",
     :escaped => "^^TAPJOY_ESCAPED^^"
   }
-  
+
   self.attribute_names = [ 'id', 'key' ]
-  
+
   ##
   # Initializes a new SimpledbResource, which represents a single row in a domain.
   # options:
@@ -41,19 +41,19 @@ class SimpledbResource
     @attributes_to_delete      = options.delete(:attrs_to_delete)      { {} }
     @attribute_names_to_delete = options.delete(:attr_names_to_delete) { [] }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
-    
+
     @this_domain_name = get_real_domain_name(@this_domain_name)
     setup_key_hash
-    
+
     load(load_from_memcache, consistent) if should_load
     @is_new = @attributes.empty?
-    
+
     after_initialize if run_after_initialize
   end
-  
+
   def after_initialize
   end
-  
+
   def self.sdb_attr(name, options = {})
     type          = options.delete(:type)          { :string }
     default_value = options.delete(:default_value)
@@ -62,53 +62,53 @@ class SimpledbResource
     replace       = options.delete(:replace)       { true }
     attr_name     = options.delete(:attr_name)     { name.to_s }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
-    
+
     get_options = {
       :type => type,
       :force_array => force_array,
       :default_value => default_value
     }
-    
+
     put_options = {
       :type => type,
       :cgi_escape => cgi_escape,
       :replace => replace
     }
-    
+
     module_eval %Q{
       def #{name.to_s}()
         get('#{attr_name}', #{get_options.inspect})
       end
     }
-    
+
     module_eval %Q{
       def #{name.to_s}=(value)
         put('#{attr_name}', value, #{put_options.inspect})
       end
     }
-    
+
     module_eval %Q{
       def #{name.to_s}?
         !get('#{attr_name}', #{get_options.inspect}).blank?
       end
     }
-    
+
     self.attribute_names << attr_name.to_s
   end
   self.sdb_attr :updated_at, {:type => :time, :attr_name => 'updated-at'}
-  
+
   def id
     @key
   end
-  
+
   def id=(key)
     @key = key
   end
-  
+
   def new_record?
     @is_new
   end
-  
+
   ##
   # Attempt to load the item attributes from memcache. If they are not found,
   # they will attempt be loaded from simpledb. If thet are still not found,
@@ -126,7 +126,7 @@ class SimpledbResource
       @attributes = load_from_sdb(consistent)
     end
   end
-  
+
   ##
   # Calls serial_save in a separate thread.
   def save(options = {})
@@ -135,11 +135,11 @@ class SimpledbResource
     end
     return thread
   end
-  
+
   def save!(options = {})
     serial_save({ :catch_exceptions => false }.merge(options))
   end
-  
+
   ##
   # Updates the 'updated-at' attribute of this item, and saves it to SimpleDB.
   # If the domain does not exist, then the domain is created.
@@ -167,7 +167,7 @@ class SimpledbResource
     else
       put('updated-at', now.to_f.to_s)
     end
-    
+
     Rails.logger.info_with_time("Saving to sdb, domain: #{this_domain_name}") do
       self.write_to_memcache if save_to_memcache
       self.write_to_sdb(expected_attr) if save_to_sdb
@@ -185,9 +185,6 @@ class SimpledbResource
   rescue Exception => e
     if e.is_a?(RightAws::AwsError)
       Mc.increment_count("failed_sdb_saves.sdb.#{@this_domain_name}.#{(now.to_f / 1.hour).to_i}", false, 1.day)
-      if @this_domain_name =~ /^#{RUN_MODE_PREFIX}web-request-/
-        Mc.increment_count("failed_sdb_saves.wr.#{@this_domain_name}.#{(now.to_f / 1.minute).to_i}", false, 1.hour)
-      end
     else
       Mc.increment_count("failed_sdb_saves.mc.#{@this_domain_name}.#{(now.to_f / 1.hour).to_i}", false, 1.day)
     end
@@ -199,24 +196,19 @@ class SimpledbResource
     end
     return if @this_domain_name =~ /^#{RUN_MODE_PREFIX}devices_/
     Rails.logger.info "Sdb save failed. Adding to sqs. Domain: #{@this_domain_name} Key: #{@key} Exception: #{e.class} - #{e}"
-    if @this_domain_name =~ /^#{RUN_MODE_PREFIX}web-request-/
-      message = Base64::encode64(self.serialize)
-      Sqs.send_message(QueueNames::ENCODED_WEB_REQUESTS, message)
-    else
-      uuid = UUIDTools::UUID.random_create.to_s
-      bucket = S3.bucket(BucketNames::FAILED_SDB_SAVES)
-      bucket.put("incomplete/#{uuid}", self.serialize)
-      message = { :uuid => uuid, :options => options_copy }.to_json
-      Sqs.send_message(QueueNames::FAILED_SDB_SAVES, message)
-    end
+    uuid = UUIDTools::UUID.random_create.to_s
+    bucket = S3.bucket(BucketNames::FAILED_SDB_SAVES)
+    bucket.put("incomplete/#{uuid}", self.serialize)
+    message = { :uuid => uuid, :options => options_copy }.to_json
+    Sqs.send_message(QueueNames::FAILED_SDB_SAVES, message)
     Rails.logger.info "Successfully added to sqs. Message: #{message}"
   ensure
     Rails.logger.flush
   end
-  
+
   ##
   # Gets value(s) for a given attribute name.
-  # If the attr_name is associated with only one value, then that value is returned. 
+  # If the attr_name is associated with only one value, then that value is returned.
   # If it is associated with multiple values, then all values are returned in an array.
   # options:
   #   force_array: Forces the return value to be an array, even if the attr_name is only associated
@@ -231,33 +223,33 @@ class SimpledbResource
     type          = options.delete(:type)          { :string }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
     raise "Unknown type conversion: #{type}" unless TypeConverters::TYPES.include?(type)
-    
+
     attr_array = @attributes[attr_name]
-    
+
     unless @attributes[attr_name]
       return force_array ? [] : default_value
     end
-    
+
     if not force_array and @attributes[attr_name].first.length >= 1000
       joined_value = ''
       while @attributes[attr_name] && @attributes[attr_name].first.length >= 1000 do
         joined_value += @attributes[attr_name].first
         attr_name += '_'
       end
-      
+
       joined_value += @attributes[attr_name].first if @attributes[attr_name]
-      
+
       attr_array = [joined_value]
     end
-    
+
     attr_array = attr_array.map do |value|
       TypeConverters::TYPES[type].from_string(unescape_specials(value))
     end
-    
+
     return attr_array.first if not force_array and attr_array.length == 1
     return attr_array
   end
-  
+
   ##
   # Puts a value to be associated with an attribute name.
   def put(attr_name, value, options = {})
@@ -266,14 +258,14 @@ class SimpledbResource
     type       = options.delete(:type)       { :string }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
     raise "Unknown type conversion: #{type}" unless TypeConverters::TYPES.include?(type)
-    
+
     if value.nil?
       return
     end
     value = TypeConverters::TYPES[type].to_string(value)
-    
+
     value = escape_specials(value, {:cgi_escape => cgi_escape})
-    
+
     value_array = value.scan(/.{1,1000}/)
     value_array.each do |part|
       raw_put(attr_name, part, replace)
@@ -281,7 +273,7 @@ class SimpledbResource
     end
     delete_extra_attributes(attr_name)
   end
-  
+
   ##
   # Adds a value to be deleted. Also removes it from the hash of attributes.
   def delete(attr_name, value = nil)
@@ -291,24 +283,24 @@ class SimpledbResource
       @attribute_names_to_delete.push(attr_name)
       @attributes.delete(attr_name)
     end
-    
+
     if @attributes[attr_name]
       @attributes[attr_name].delete(value)
       @attributes.delete(attr_name) if @attributes[attr_name].empty?
     end
   end
-  
+
   ##
   # Deletes this entire row immediately (no need to call save after calling this).
   def delete_all(delete_from_memcache = true)
     Mc.delete(get_memcache_key) if delete_from_memcache
     @@sdb.delete_attributes(@this_domain_name, key)
   end
-  
+
   def changed?
     !(@attributes_to_add.empty? && @attributes_to_replace.empty? && @attributes_to_delete.empty? && @attribute_names_to_delete.empty?)
   end
-  
+
   ##
   # Loads a single row from this domain, modifies it, and saves it. Uses SDB's Conditional Put
   # on the 'version' attribute to ensure that the row has been unmodified during the course of
@@ -318,15 +310,15 @@ class SimpledbResource
     version_attr = options.delete(:version_attr) { 'version' }
     retries      = options.delete(:retries)      { 3 }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
-    
+
     load_options = {:consistent => true, :load_from_memcache => false}.merge(load_options)
-    
+
     begin
       row = self.new(load_options.dup)
       initial_version = row.get(version_attr)
-      
+
       yield(row)
-      
+
       row.put(version_attr, initial_version.to_i + 1)
       row.serial_save(:catch_exceptions => false, :expected_attr => {version_attr => initial_version}, :write_to_memcache => false)
       return row
@@ -341,13 +333,13 @@ class SimpledbResource
       end
     end
   end
-  
+
   ##
   # Performs a batch_put_attributes.
   def self.put_items(items, options = {})
     replace = options.delete(:replace) { true }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
-    
+
     raise "Too many items to batch_put" if items.length > 25
     return {} if items.length == 0
 
@@ -359,7 +351,7 @@ class SimpledbResource
     end
     return @@sdb.batch_put_attributes(batch_put_domain_name, items_object, replace)
   end
-  
+
   ##
   # Runs a select count(*) for the specified domain, with the specified where clause,
   # and returns the number.
@@ -376,7 +368,7 @@ class SimpledbResource
 
     query = "SELECT count(*) FROM `#{domain_name}`"
     query += " WHERE #{where}" if where
-    
+
     count = 0
     loop do
       begin
@@ -390,15 +382,15 @@ class SimpledbResource
           raise e
         end
       end
-      
+
       count += response[:items][0]['Domain']['Count'][0].to_i
-      
+
       next_token = response[:next_token]
       break if next_token.nil?
     end
     return count
   end
-  
+
   def self.count_async(options = {})
     where       = options.delete(:where)
     next_token  = options.delete(:next_token)
@@ -408,22 +400,22 @@ class SimpledbResource
     hydra       = options.delete(:hydra)       { Typhoeus::Hydra.new }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
     raise "Must provide a domain name" unless domain_name
-    
+
     hydra.disable_memoization
-    
+
     domain_name = get_real_domain_name(domain_name)
-    
+
     query = "SELECT count(*) FROM `#{domain_name}`"
     query += " WHERE #{where}" if where
     query += " LIMIT #{limit}" if limit
-    
+
     self.send_count_async_request(query, next_token, consistent, hydra) do |count|
       yield count
     end
-    
+
     return hydra
   end
-  
+
   def self.send_count_async_request(query, next_token, consistent, hydra)
     retries = 20
     sdb_request = @@sdb.generate_request('Select', { 'SelectExpression' => query, 'NextToken' => next_token, 'ConsistentRead' => consistent })
@@ -454,7 +446,7 @@ class SimpledbResource
     end
     hydra.queue(request)
   end
-  
+
   ##
   # Returns an array of items which match the specified select parameters.
   def self.select(options = {})
@@ -468,23 +460,23 @@ class SimpledbResource
     consistent  = options.delete(:consistent)  { false }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
     raise "Must provide a domain name" unless domain_name
-    
+
     domain_name = get_real_domain_name(domain_name)
-    
+
     query = "SELECT #{attrs} FROM `#{domain_name}`"
     query += " WHERE #{where}" if where
     query += " ORDER BY #{order_by}" if order_by
     query += " LIMIT #{limit}" if limit
-    
+
     sdb_item_array = []
     box_usage = 0
     retry_count = 0
-    
+
     loop do
       begin
         response = @@sdb.select(query, next_token, consistent)
       rescue RightAws::AwsError => e
-        if e.message =~ /^(ServiceUnavailable|QueryTimeout)/ && retry_count < retries 
+        if e.message =~ /^(ServiceUnavailable|QueryTimeout)/ && retry_count < retries
           Rails.logger.info "Error: #{e}. Retrying up to #{retries - retry_count} more times."
           retry_count += 1
           retry
@@ -493,12 +485,12 @@ class SimpledbResource
           raise e
         end
       end
-      
+
       response[:items].each do |item|
-        
+
         sdb_item = self.new({
-          :key => item.keys[0], 
-          :load => false, 
+          :key => item.keys[0],
+          :load => false,
           :domain_name => domain_name,
           :attributes => item.values[0]})
         sdb_item.attributes = item.values[0]
@@ -509,7 +501,7 @@ class SimpledbResource
         end
       end
       box_usage += response[:box_usage].to_f
-      
+
       unless block_given?
         return {
           :items => sdb_item_array,
@@ -518,27 +510,27 @@ class SimpledbResource
           :retry_count => retry_count
         }
       end
-      
+
       next_token = response[:next_token]
       break if next_token.nil?
     end
-    
+
     return {:box_usage => box_usage}
   rescue => e
     Rails.logger.error("Error while processing query: #{query}")
     raise e
   end
-  
+
   def self.create_domain(domain_name)
     domain_name = get_real_domain_name(domain_name)
     return @@sdb.create_domain(domain_name)
   end
-  
+
   def self.delete_domain(domain_name)
     domain_name = get_real_domain_name(domain_name)
     return @@sdb.delete_domain(domain_name)
   end
-  
+
   def self.get_domain_names
     domain_names = Set.new
     @@sdb.list_domains do |result|
@@ -548,7 +540,7 @@ class SimpledbResource
     end
     domain_names
   end
-  
+
   ##
   # Stores the domain name, item key and attributes to a json string.
   # options:
@@ -556,7 +548,7 @@ class SimpledbResource
   def serialize(options = {})
     attributes_only = options.delete(:attributes_only) { false }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
-    
+
     obj = {:domain => @this_domain_name, :key => @key, :attrs => @attributes}
     unless attributes_only
       obj[:attrs_to_add] = @attributes_to_add unless @attributes_to_add.empty?
@@ -567,7 +559,7 @@ class SimpledbResource
 
     return obj.to_json
   end
-  
+
   ##
   # Re-creates this item from a json string.
   def self.deserialize(str)
@@ -579,20 +571,20 @@ class SimpledbResource
     attrs_to_replace = json['attrs_to_replace']
     attrs_to_delete = json['attrs_to_delete']
     attr_names_to_delete = json['attr_names_to_delete']
-    
+
     options = {:load => false, :domain_name => domain_name, :key => key, :attributes => attributes}
     options[:attrs_to_add] = attrs_to_add if attrs_to_add
     options[:attrs_to_replace] = attrs_to_replace if attrs_to_replace
     options[:attrs_to_delete] = attrs_to_delete if attrs_to_delete
     options[:attr_names_to_delete] = attr_names_to_delete if attr_names_to_delete
-    
+
     return self.new(options)
   end
-  
+
   ##
   # Generates ActiveRecord-like find_by_#{attribute_name}(attribute_value) methods when appropriate.
   # Both "id" and "key" can be used to look up SimpleDB itemname() values.
-  # examples: 
+  # examples:
   # ActivityLog.find_all_by_user_and_controller('ryan', 'statz')
   # finds all ActivityLog records with user='ryan' and controller='statz'
   #
@@ -603,35 +595,35 @@ class SimpledbResource
     if match = DynamicFinderMatch.match(method_id)
       matched_attribute_names = match.attribute_names
       super unless matched_attribute_names.all? { |name| attribute_names.include?(name) }
-      
+
       self.class_eval %{
         def self.#{method_id}(*args)
           options = args.extract_options!
           where_attributes = {}
           [:#{matched_attribute_names.join(',:')}].each_with_index { |name, idx| where_attributes[name] = args[idx] }
-          
+
           where_attributes["itemname()"] = where_attributes[:key] if where_attributes[:key]
           where_attributes["itemname()"] = where_attributes[:id] if where_attributes[:id]
           where_attributes.delete(:key)
           where_attributes.delete(:id)
-          
+
           options[:where] = where_attributes.collect { |key, value| key.to_s + " = " + "'" + value.to_s + "'" }.join(" and ")
           find(:#{match.finder}, options)
         end
       }, __FILE__, __LINE__
-      
+
       send(method_id, *arguments)
     else
       super
     end
   end
-  
+
   def ==(other)
     other.is_a?(SimpledbResource) && (self.attributes == other.attributes) && (self.id == other.id) && (self.domain_name == other.domain_name)
   end
-  
+
 protected
-  
+
   def write_to_sdb(expected_attr = {})
     sdb_interface = RightAws::SdbInterface.new(nil, nil, {:multi_thread => true, :port => 80, :protocol => 'http'})
     attributes_to_put = @attributes_to_add.merge(@attributes_to_replace)
@@ -639,7 +631,7 @@ protected
     @attribute_names_to_delete.each do |attr_name_to_delete|
       attributes_to_delete[attr_name_to_delete] = :all
     end
-    
+
     begin
       unless attributes_to_put.empty?
         sdb_interface.put_attributes(@this_domain_name, @key, attributes_to_put, @attributes_to_replace.keys, expected_attr)
@@ -660,7 +652,7 @@ protected
       end
     end
   end
-    
+
   def write_to_memcache
     Mc.compare_and_swap(get_memcache_key) do |mc_attributes|
       if mc_attributes
@@ -668,7 +660,7 @@ protected
         @attributes_to_add.each do |key, values|
           mc_attributes[key] = Array(mc_attributes[key]) | values
         end
-              
+
         @attributes_to_delete.each do |key, values|
           if mc_attributes[key]
             values.each do |value|
@@ -677,20 +669,20 @@ protected
             mc_attributes.delete(key) if mc_attributes[key].empty?
           end
         end
-      
+
         @attribute_names_to_delete.each do |attr_name|
           mc_attributes.delete(attr_name)
         end
-      
+
         @attributes = mc_attributes
       end
-      
+
       @attributes
     end
   end
-  
+
 private
-  
+
   def load_from_sdb(consistent = false)
     attributes = {}
     begin
@@ -709,7 +701,7 @@ private
     end
     return attributes
   end
-  
+
   def get_key_from(key_obj)
     if key_obj.nil?
       return UUIDTools::UUID.random_create.to_s
@@ -720,7 +712,7 @@ private
       return key_obj.to_s
     end
   end
-  
+
   def setup_key_hash
     key_hash = nil
     unless key_format.nil?
@@ -728,42 +720,42 @@ private
 
       key_parts = @key.split('.')
       key_format_parts = key_format.split('.')
-      
+
       key_format_parts.each_index do |i|
         key_hash[key_format_parts[i].to_sym] = key_parts[i]
       end
     end
   end
-  
+
   def get_memcache_key
     "sdb.#{@this_domain_name}.#{@key}"
   end
-  
+
   # Return the domain name, but strip any pre-existing run mode prefix, in order to ensure that
   # only one prefix is added.
   def self.get_real_domain_name(domain_name)
     RUN_MODE_PREFIX + domain_name.gsub(Regexp.new('^' + RUN_MODE_PREFIX), '')
   end
-  
+
   def get_real_domain_name(domain_name)
     SimpledbResource.get_real_domain_name(domain_name)
   end
-  
+
   def dynamic_domain_name
     return self.domain_name
   end
-  
+
   def unescape_specials(value)
     value = value.gsub(@@special_values[:newline], "\n")
-    
+
     if value.starts_with?(@@special_values[:escaped])
       value = value.gsub(@@special_values[:escaped], '')
       value = CGI::unescape(value)
     end
-    
+
     return value
   end
-  
+
   def escape_specials(value, options = {})
     cgi_escape = options.delete(:cgi_escape) { false }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
@@ -777,12 +769,12 @@ private
       value = value.gsub("\n", @@special_values[:newline])
       value = value.gsub("\r", @@special_values[:newline])
     end
-    
+
     return value
   end
-  
+
   ##
-  # Puts a value directly in to the attributes array, as well as the attributes_to_replace or 
+  # Puts a value directly in to the attributes array, as well as the attributes_to_replace or
   # attributes_to_add arrays.
   def raw_put(attr_name, value, replace)
     if replace
@@ -793,7 +785,7 @@ private
       @attributes_to_add[attr_name] = Array(value) | Array(@attributes_to_add[attr_name])
     end
   end
-  
+
   ##
   # Delete any extra attributes that exist with an extra '_' after them, starting with the attr_name
   # passed in. This will be called because the value may have gotten shorter.
@@ -803,5 +795,5 @@ private
       attr_name += '_'
     end
   end
-  
+
 end

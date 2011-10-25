@@ -1,16 +1,16 @@
 class Job::MasterReloadStatzController < Job::JobController
   include ActionView::Helpers::NumberHelper
-  
+
   def index
     cache_stats('24_hours')
-    
+
     render :text => 'ok'
   end
-  
+
   def daily
     cache_stats('7_days')
     cache_stats('1_month')
-    
+
     render :text => 'ok'
   end
 
@@ -26,48 +26,53 @@ class Job::MasterReloadStatzController < Job::JobController
 
     render :text => 'ok'
   end
-  
+
 private
-  
+
   def cache_stats(timeframe)
     now, granularity, start_time = get_times(timeframe)
 
-    cached_stats = {}
-    find_options = timeframe == '24_hours' ? { :conditions => 'active = true' } : {}
+    cached_stats    = {}
+    cached_metadata = {}
+    find_options    = timeframe == '24_hours' ? { :conditions => 'active = true' } : {}
     Offer.find_each(find_options) do |offer|
-      appstats = Appstats.new(offer.id, { :start_time => start_time, :end_time => now + 1.hour, :granularity => granularity }).stats
-      conversions = appstats['paid_installs'].sum
+      appstats         = Appstats.new(offer.id, { :start_time => start_time, :end_time => now + 1.hour, :granularity => granularity }).stats
+      conversions      = appstats['paid_installs'].sum
       published_offers = appstats['rewards'].sum + appstats['featured_published_offers'].sum + appstats['display_conversions'].sum
-      connects = appstats['logins'].sum
+      connects         = appstats['logins'].sum
       next unless conversions > 0 || published_offers > 0 || (offer.item_type == 'ActionOffer' && connects > 0)
-      
-      this_apps_stats = {}
-      this_apps_stats['icon_url'] = offer.get_icon_url
-      this_apps_stats['offer_name'] = offer.name_with_suffix
-      this_apps_stats['conversions'] = number_with_delimiter(conversions)
-      this_apps_stats['connects'] = number_with_delimiter(appstats['logins'].sum)
-      region = offer.get_device_types.include?('android') ? 'english' : 'united_states'
-      price = offer.is_paid? ? 'paid' : 'free'
-      this_apps_stats['overall_store_rank'] = (Array(appstats['ranks']["overall.#{price}.#{region}"]).find_all{|r| r != nil}.last || '-')
-      this_apps_stats['price'] = number_to_currency(offer.price / 100.0)
-      this_apps_stats['payment'] = number_to_currency(offer.payment / 100.0)
-      this_apps_stats['balance'] = number_to_currency(offer.partner.balance / 100.0)
-      this_apps_stats['conversion_rate'] = "%.1f%" % ((offer.conversion_rate || 0) * 100.0)
-      this_apps_stats['published_offers'] = number_with_delimiter(published_offers)
-      this_apps_stats['offers_revenue'] = number_to_currency(appstats['total_revenue'].sum / 100.0)
-      this_apps_stats['platform'] = offer.get_platform
-      this_apps_stats['featured'] = offer.featured?
-      this_apps_stats['rewarded'] = offer.rewarded?
-      this_apps_stats['offer_type'] = offer.item_type
-      
-      cached_stats[offer.id] = this_apps_stats
+
+      metadata = {}
+      metadata['icon_url']        = offer.get_icon_url
+      metadata['offer_name']      = offer.name_with_suffix
+      metadata['price']           = number_to_currency(offer.price / 100.0)
+      metadata['payment']         = number_to_currency(offer.payment / 100.0)
+      metadata['balance']         = number_to_currency(offer.partner.balance / 100.0)
+      metadata['conversion_rate'] = "%.1f%" % ((offer.conversion_rate || 0) * 100.0)
+      metadata['platform']        = offer.get_platform
+      metadata['featured']        = offer.featured?
+      metadata['rewarded']        = offer.rewarded?
+      metadata['offer_type']      = offer.item_type
+
+      stats = {}
+      stats['conversions']        = number_with_delimiter(conversions)
+      stats['connects']           = number_with_delimiter(appstats['logins'].sum)
+      stats['published_offers']   = number_with_delimiter(published_offers)
+      stats['offers_revenue']     = number_to_currency(appstats['total_revenue'].sum / 100.0)
+      region                      = offer.get_device_types.include?('android') ? 'english' : 'united_states'
+      price                       = offer.is_paid? ? 'paid' : 'free'
+      stats['overall_store_rank'] = (Array(appstats['ranks']["overall.#{price}.#{region}"]).find_all{ |r| r != nil }.last || '-')
+
+      cached_metadata[offer.id] = metadata
+      cached_stats[offer.id]    = stats
     end
-    
+
     cached_stats = cached_stats.sort do |s1, s2|
       s2[1]['conversions'].gsub(',', '').to_i <=> s1[1]['conversions'].gsub(',', '').to_i
     end
-    
-    Mc.distributed_put("statz.cached_stats.#{timeframe}", cached_stats)
+
+    Mc.distributed_put("statz.metadata.#{timeframe}", cached_metadata)
+    Mc.distributed_put("statz.stats.#{timeframe}", cached_stats)
     Mc.put("statz.last_updated.#{timeframe}", now.to_f)
   end
 
@@ -79,8 +84,8 @@ private
     find_options = timeframe == '24_hours' ? { :joins => :offers, :conditions => 'active = true' } : {}
     Partner.find_each(find_options) do |partner|
       ['partner', 'partner-ios', 'partner-android'].each do |prefix|
-        stats = Appstats.new(partner.id, { :start_time => start_time, :end_time => now + 1.hour, :granularity => granularity, :stat_prefix => prefix }).stats
-        conversions = stats['paid_installs'].sum
+        stats            = Appstats.new(partner.id, { :start_time => start_time, :end_time => now + 1.hour, :granularity => granularity, :stat_prefix => prefix }).stats
+        conversions      = stats['paid_installs'].sum
         published_offers = stats['rewards'].sum + stats['featured_published_offers'].sum + stats['display_conversions'].sum
         next unless conversions > 0 || published_offers > 0
         cached_partners[prefix] ||= {}
@@ -102,12 +107,12 @@ private
     partner_stats = {}
 
     # for advertisers and publishers pages
-    partner_stats['partner'] = partner.name
+    partner_stats['partner']     = partner.name
     partner_stats['account_mgr'] = partner.account_managers.collect { |mgr| mgr.email }.compact.join(',')
 
     # for publishers page
     partner_stats['total_revenue'] = number_to_currency(stats['total_revenue'].sum / 100.0)
-    partner_stats['rev_share'] = number_to_percentage(partner.rev_share * 100.0, :precision => 1)
+    partner_stats['rev_share']     = number_to_percentage(partner.rev_share * 100.0, :precision => 1)
 
     partner_stats['offerwall_views'] = number_with_delimiter(stats['offerwall_views'].sum)
     partner_stats['featured_views']  = number_with_delimiter(stats['featured_offers_shown'].sum)

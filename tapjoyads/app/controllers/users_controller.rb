@@ -1,7 +1,7 @@
 class UsersController < WebsiteController
   layout 'tabbed'
   current_tab :account
-  
+
   filter_access_to :all
 
   before_filter :nag_user_about_payout_info
@@ -15,15 +15,15 @@ class UsersController < WebsiteController
       @users = current_partner.non_managers
     end
   end
-  
+
   def new
     @user = User.new
   end
-  
+
   def create
     @user = User.new
     log_activity(@user)
-    
+
     @user.username = params[:user][:email]
     @user.email = params[:user][:email]
     pwd = UUIDTools::UUID.random_create.to_s
@@ -40,15 +40,15 @@ class UsersController < WebsiteController
       render :action => :new
     end
   end
-  
+
   def edit
     @user = current_user
   end
-  
+
   def update
     @user = current_user
     log_activity(@user)
-    
+
     params[:user][:username] = params[:user][:email]
     if @user.safe_update_attributes(params[:user], [ :username, :email, :password, :password_confirmation, :time_zone, :receive_campaign_emails ])
       flash[:notice] = 'Successfully updated account.'

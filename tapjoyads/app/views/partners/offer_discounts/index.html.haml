@@ -33,7 +33,7 @@
     - if @offer_discounts.empty?
       %tr
         %td{ :colspan => 4 } This partner has no offer discounts.
-    
+
 = will_paginate(@offer_discounts)
 
 - content_for :page_javascript do

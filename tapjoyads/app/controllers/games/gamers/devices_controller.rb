@@ -23,13 +23,14 @@ class Games::Gamers::DevicesController < GamesController
       when 'MAC_ADDRESS_EN0'; mac_address = value
       end
     end
-    raise "Error parsing plist" if udid.blank? || product.blank? || version.blank? || mac_address.blank?
+    raise "Error parsing plist" if udid.blank? || product.blank? || version.blank?
 
+    mac_address = mac_address.present? ? mac_address.downcase.gsub(/:/,"") : nil
     data = {
       :udid              => udid,
       :product           => product,
       :version           => version,
-      :mac_address       => mac_address.downcase.gsub(/:/,""),
+      :mac_address       => mac_address,
       :platform          => 'ios'
     }
     redirect_to finalize_games_gamer_device_path(:data => SymmetricCrypto.encrypt_object(data, SYMMETRIC_CRYPTO_SECRET)), :status => 301
@@ -43,12 +44,14 @@ class Games::Gamers::DevicesController < GamesController
     if current_gamer.present?
       redirect_to games_root_path unless params[:data].present?
       data = SymmetricCrypto.decrypt_object(params[:data], SYMMETRIC_CRYPTO_SECRET)
-      
+
       device = Device.new(:key => data[:udid])
       device.product = data[:product]
       device.version = data[:version]
-      device.mac_address = data[:mac_address]
+      device.mac_address = data[:mac_address] if data[:mac_address].present?
       device.platform = data[:platform]
+
+      cookies[:data] = { :value => params[:data], :expires => 1.year.from_now } if params[:data].present?
 
       if current_gamer.devices.create(:device => device)
         device.set_last_run_time!(TAPJOY_GAMES_REGISTRATION_OFFER_ID)

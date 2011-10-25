@@ -1,18 +1,18 @@
 module RightAws
   class SdbInterface
-    
+
     # Override, in order to support consistency.
     silence_warnings do
       API_VERSION = '2009-04-15'
     end
-    
+
     alias_method :orig_pack_attributes,   :pack_attributes
     alias_method :orig_put_attributes,    :put_attributes
     alias_method :orig_delete_attributes, :delete_attributes
     alias_method :orig_request_info,      :request_info
     alias_method :orig_get_attributes,    :get_attributes
     alias_method :orig_generate_request,  :generate_request
-    
+
     def generate_request(action, params={}) #:nodoc:
       # remove empty params from request
       params.delete_if {|key,value| value.nil? }
@@ -39,12 +39,12 @@ module RightAws
         request = Net::HTTP::Get.new("#{service}?#{service_params}")
       end
       # prepare output hash
-      { :request  => request, 
+      { :request  => request,
         :server   => @params[:server],
         :port     => @params[:port],
         :protocol => @params[:protocol] }
     end
-    
+
     # Prepare attributes for putting or deleting.
     # (used by put_attributes, delete_attributes and batch_put_attributes)
     def pack_attributes(attributes, replace = false, expected_attr = {})
@@ -57,7 +57,7 @@ module RightAws
           if replace == true || (replace.kind_of?(Enumerable) && replace.include?(attribute))
             result["Attribute.#{idx}.Replace"] = 'true'
           end
-          
+
           # set expected attribute
           if expected_attr.include?(attribute)
             result["Expected.#{idx}.Name"] = attribute
@@ -67,7 +67,7 @@ module RightAws
               result["Expected.#{idx}.Value"] = expected_attr[attribute]
             end
           end
-          
+
           # pack Name/Value
           values = [nil] if values.nil?
           Array(values).each do |value|
@@ -81,7 +81,7 @@ module RightAws
       end
       result
     end
-    
+
     def put_attributes(domain_name, item_name, attributes, replace = false, expected_attr = {})
       params = { 'DomainName' => domain_name, 'ItemName' => item_name }.merge(pack_attributes(attributes, replace, expected_attr))
       link = generate_request("PutAttributes", params)
@@ -89,7 +89,7 @@ module RightAws
     rescue Exception
       on_exception
     end
-    
+
     def delete_attributes(domain_name, item_name, attributes = nil, expected_attr = {})
       params = { 'DomainName' => domain_name, 'ItemName' => item_name }.merge(pack_attributes(attributes, false, expected_attr))
       link = generate_request("DeleteAttributes", params)
@@ -97,7 +97,7 @@ module RightAws
     rescue Exception
       on_exception
     end
-    
+
     # Add/Replace item attributes in Batch mode.
     # By using Amazon SDB BatchPutAttributes rather than PutAttributes this
     # method achieves a 15x-20x speed improvement when storing big quantities
@@ -114,9 +114,9 @@ module RightAws
     #  }
     #  replace = :replace | any other value to skip replacement
     #
-    # Returns a hash: { :box_usage, :request_id } on success or an exception on error. 
+    # Returns a hash: { :box_usage, :request_id } on success or an exception on error.
     #
-    # see: http://docs.amazonwebservices.com/AmazonSimpleDB/2007-11-07/DeveloperGuide/SDB_API_BatchPutAttributes.html 
+    # see: http://docs.amazonwebservices.com/AmazonSimpleDB/2007-11-07/DeveloperGuide/SDB_API_BatchPutAttributes.html
     def batch_put_attributes(domain_name, items, replace = false)
       params = { 'DomainName' => domain_name }
       item_count = 0
@@ -132,7 +132,7 @@ module RightAws
     rescue Exception
       on_exception
     end
-    
+
     def domain_metadata(domain_name)
       params = { 'DomainName' => domain_name }
       link = generate_request("DomainMetadata", params)
@@ -140,7 +140,7 @@ module RightAws
     rescue Exception
       on_exception
     end
-    
+
     def get_attributes(domain_name, item_name, attribute_name=nil, consistent = false)
       link = generate_request("GetAttributes", 'DomainName'     => domain_name,
                                                'ItemName'       => item_name,
@@ -154,7 +154,7 @@ module RightAws
     rescue Exception
       on_exception
     end
-    
+
     def select(select_expression, next_token = nil, consistent = false)
       select_expression      = query_expression_from_array(select_expression) if select_expression.is_a?(Array)
       @last_query_expression = select_expression
@@ -177,7 +177,7 @@ module RightAws
     rescue Exception
       on_exception
     end
-    
+
     class QSdbDomainMetadataParser < RightAWSParser #:nodoc:
       def reset
         @result = {}
@@ -186,32 +186,32 @@ module RightAws
         case name
         when 'BoxUsage'  then @result[:box_usage]  =  @text
         when 'RequestId' then @result[:request_id] =  @text
-          
+
         when 'ItemCount'                then @result[:item_count]                  =  @text.to_i
         when 'ItemNamesSizeBytes'       then @result[:item_name_size_bytes]        =  @text.to_i
         when 'AttributeNameCount'       then @result[:attribute_name_count]        =  @text.to_i
-        when 'AttributeNamesSizeBytes'  then @result[:attribute_names_size_bytes]  =  @text.to_i  
+        when 'AttributeNamesSizeBytes'  then @result[:attribute_names_size_bytes]  =  @text.to_i
         when 'AttributeValueCount'      then @result[:attribute_value_count]       =  @text.to_i
-        when 'AttributeValuesSizeBytes' then @result[:attribute_values_size_bytes] =  @text.to_i 
+        when 'AttributeValuesSizeBytes' then @result[:attribute_values_size_bytes] =  @text.to_i
         when 'Timestamp'                then @result[:timestamp]                   =  Time.zone.at(@text.to_i)
         end
       end
     end
   end
-  
+
   class  AcfInterface < RightAwsBase
-    
+
     # Override, in order to support invalidation.
     silence_warnings do
       API_VERSION = '2010-11-01'
     end
-    
+
     def invalidate(aws_id, paths, caller_reference)
       paths_str = ''
       paths.each do |path|
         paths_str << "<Path>#{path}</Path>"
       end
-      
+
       body = <<-EOXML
         <?xml version="1.0" encoding="UTF-8"?>
         <InvalidationBatch>
@@ -219,12 +219,11 @@ module RightAws
            <CallerReference>#{caller_reference}</CallerReference>
         </InvalidationBatch>
       EOXML
-      
+
       request_hash = generate_request('POST', "distribution/#{aws_id}/invalidation", body.strip)
       request_info(request_hash, AcfInvalidationParser.new)
     end
-    
-    
+
     class AcfInvalidationParser < RightAWSParser #:nodoc:
       def reset
         @result = {}
@@ -238,10 +237,10 @@ module RightAws
       end
     end
   end
-  
+
   class SqsGen2Interface
     alias_method :orig_generate_post_request, :generate_post_request
-    
+
     def generate_post_request(action, param={})  # :nodoc:
       service = param[:queue_url] ? URI(param[:queue_url]).path : '/'
       message   = param[:message]                # extract message body if nesessary
@@ -252,120 +251,43 @@ module RightAws
                        "MessageBody"      => message,
                        "Version"          => API_VERSION }
       service_hash.update(param)
-      #
+
       service_params = signed_service_params(@aws_secret_access_key, service_hash, :post, @params[:server], service)
       request        = Net::HTTP::Post.new(AwsUtils::URLencode(service))
-      request['Content-Type'] = 'application/x-www-form-urlencoded; charset=utf-8' 
+      request['Content-Type'] = 'application/x-www-form-urlencoded; charset=utf-8'
       request.body = service_params
         # prepare output hash
-      { :request  => request, 
+      { :request  => request,
         :server   => @params[:server],
         :port     => @params[:port],
         :protocol => @params[:protocol] }
     end
-    
+
     def get_extra_queue_attributes(queue_url, attribute='All')
       req_hash = generate_request('GetQueueAttributes', 'AttributeName' => attribute, 'Version' => '2009-02-01', :queue_url  => queue_url)
       request_info(req_hash, SqsGetQueueAttributesParser.new(:logger => @logger))
     rescue
       on_exception
     end
-    
+
     def get_queue_length_not_visible(queue_url)
       get_extra_queue_attributes(queue_url)['ApproximateNumberOfMessagesNotVisible'].to_i
     rescue
       on_exception
     end
   end
-  
+
   class SqsGen2
     class Queue
       def get_extra_attribute(attribute='All')
         attributes = @sqs.interface.get_extra_queue_attributes(@url, attribute)
         attribute=='All' ? attributes : attributes[attribute]
       end
-      
+
       def size_not_visible
         @sqs.interface.get_queue_length_not_visible(@url)
       end
     end
   end
-  
-  module RightAwsBaseInterface
-    def request_info_impl(connection, benchblock, request, parser, &block) #:nodoc:
-      @connection    = connection
-      @last_request  = request[:request]
-      @last_response = nil
-      response=nil
-      blockexception = nil
-      if request[:server] == 'sdb.amazonaws.com' && (@last_request.path =~ /web-request/ || @last_request.body =~ /web-request/)
-        reiteration_time = -1
-      else
-        reiteration_time = nil
-      end
 
-      if(block != nil)
-        # TRB 9/17/07 Careful - because we are passing in blocks, we get a situation where
-        # an exception may get thrown in the block body (which is high-level
-        # code either here or in the application) but gets caught in the
-        # low-level code of HttpConnection.  The solution is not to let any
-        # exception escape the block that we pass to HttpConnection::request.
-        # Exceptions can originate from code directly in the block, or from user
-        # code called in the other block which is passed to response.read_body.
-        benchblock.service.add! do
-          responsehdr = @connection.request(request) do |response|
-          #########
-            begin
-              @last_response = response
-              if response.is_a?(Net::HTTPSuccess)
-                @error_handler = nil
-                response.read_body(&block)
-              else
-                @error_handler = AWSErrorHandler.new(self, parser, :errors_list => self.class.amazon_problems, :reiteration_time => reiteration_time) unless @error_handler
-                check_result   = @error_handler.check(request)
-                if check_result
-                  @error_handler = nil
-                  return check_result 
-                end
-                raise AwsError.new(@last_errors, @last_response.code, @last_request_id)
-              end
-            rescue Exception => e
-              blockexception = e
-            end
-          end
-          #########
-
-          #OK, now we are out of the block passed to the lower level
-          if(blockexception)
-            raise blockexception
-          end
-          benchblock.xml.add! do
-            parser.parse(responsehdr)
-          end
-          return parser.result
-        end
-      else
-        benchblock.service.add!{ response = @connection.request(request) }
-          # check response for errors...
-        @last_response = response
-        if response.is_a?(Net::HTTPSuccess)
-          @error_handler = nil
-          benchblock.xml.add! { parser.parse(response) }
-          return parser.result
-        else
-          @error_handler = AWSErrorHandler.new(self, parser, :errors_list => self.class.amazon_problems, :reiteration_time => reiteration_time) unless @error_handler
-          check_result   = @error_handler.check(request)
-          if check_result
-            @error_handler = nil
-            return check_result 
-          end
-          raise AwsError.new(@last_errors, @last_response.code, @last_request_id)
-        end
-      end
-    rescue
-      @error_handler = nil
-      raise
-    end
-  end
-  
 end

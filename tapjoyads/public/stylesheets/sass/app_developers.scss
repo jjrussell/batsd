@@ -1,0 +1,39 @@
+#developers { float: left; margin-top: 42px; width: 980px; }
+.platform_icon { float: left; margin-left: 15px; }
+#about { clear: left; float: left; line-height: 20px; margin: 32px 0 32px 0; }
+#about a { font-weight: bold; }
+
+#knowledgebase { float: left; margin-bottom: 25px; width: 100%; }
+
+/** screenshots **/
+#developer_phone { background: url('/images/developer_phone.gif'); float: left; height: 596px; margin-left: -42px; width: 309px; }
+#dots { float: left; margin: 175px 0 0 25px; width: 14px; }
+.screenshot { display: none; float: left; margin: 90px 0 0 25px; }
+
+/** product info **/
+#product_info { float: left; margin: 34px 0 0 24px; width: 390px; }
+#products { float: left; font-size: 14px; width: 100%; }
+#products a { color: #787878; float: left; font-weight: bold; margin-right: 7px; }
+#products .selected { color: #008ac8; float: left; margin-right: 7px; }
+#products .divider { color: #787878; float: left; margin-right: 7px; }
+
+#product_title { background: url('/images/developer_ribbon.png'); height: 45px; margin: 36px 0 0 -24px; width: 213px; }
+#product_title span { color: #fff; float: left; font-size: 20px; font-weight: bold; margin: 12px 0 0 24px; }
+
+#product_info p { clear: left; float: left; font-size: 13px; line-height: 17px; margin-top: 20px; width: 390px; }
+#product_info p a { font-size: 14px; font-weight: bold; }
+
+.product_details { display: none; }
+
+/** right side details **/
+#info { background: #f7f7f7; float: left; margin: 34px 0 0 16px; padding-bottom: 10px; width: 282px; }
+#top { background: #e9e9e9; height: 38px; width: 282px; }
+#top > span { color: #525252; float: left; font-weight: bold; font-size: 14px; margin-top: 12px; text-align: center; width: 100%; }
+.item { margin: 12px 0 12px 12px; width: 270px; }
+.item * { float: left; }
+.item img {  }
+.item span { color: #315364; float: left; font-size: 13px; font-weight: bold; margin-left: 13px; width: 175px; }
+.item p { float: left; font-size: 12px; margin: 8px 0 0 13px; width: 175px; }
+#info .divider { margin-left: 10px; }
+
+.show { display: block; }

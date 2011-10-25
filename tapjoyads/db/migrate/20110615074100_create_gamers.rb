@@ -13,7 +13,7 @@ class CreateGamers < ActiveRecord::Migration
       t.datetime :last_login_at
       t.timestamps
     end
-    
+
     add_index :gamers, :id, :unique => true
     add_index :gamers, :username, :unique => true
     add_index :gamers, :persistence_token

@@ -1,11 +1,11 @@
 module AuthenticationHelper
 
   private
-  
+
   USERS = {
     'internal' => 'r3sU0oQav2Nl'
   }
-  
+
   def authenticate(allowed_users = nil)
     authenticate_or_request_with_http_digest do |username|
       if allowed_users.nil? or allowed_users.include?(username)
@@ -14,13 +14,13 @@ module AuthenticationHelper
       password
     end
   end
-  
+
   def basic_authenticate(allowed_users = nil)
     authenticate_or_request_with_http_basic do |username, password|
       username == 'tapjoy' && password == '02P3jsH2opPl'
     end
   end
-  
+
   def sales_authenticate
     authenticate_or_request_with_http_digest do |username|
       if username == 'sales'
@@ -30,7 +30,7 @@ module AuthenticationHelper
       end
     end
   end
-  
+
   def tapulous_authenticate
     authenticate_or_request_with_http_digest do |username|
       if username == 'tapulous'
@@ -39,7 +39,7 @@ module AuthenticationHelper
       password
     end
   end
-  
+
   def pocketgems_authenticate
     authenticate_or_request_with_http_digest do |username|
       if username == 'pocketgems'
@@ -48,7 +48,7 @@ module AuthenticationHelper
       password
     end
   end
-  
+
   def sgn_authenticate
     authenticate_or_request_with_http_digest do |username|
       if username == 'sgn'
@@ -57,7 +57,7 @@ module AuthenticationHelper
       password
     end
   end
-  
+
   def pinger_authenticate
     authenticate_or_request_with_http_digest do |username|
       if username == 'pinger'
@@ -66,7 +66,7 @@ module AuthenticationHelper
       password
     end
   end
-  
+
   def zynga_authenticate
     authenticate_or_request_with_http_digest do |username|
       if username == 'zynga'
@@ -84,7 +84,7 @@ module AuthenticationHelper
       password
     end
   end
-  
+
   def fluent_authenticate
     authenticate_or_request_with_http_digest do |username|
       if username == 'fluent'
@@ -93,7 +93,7 @@ module AuthenticationHelper
       password
     end
   end
-  
+
   def ngmoco_authenticate
     authenticate_or_request_with_http_digest do |username|
       if username == 'ngmoco'
@@ -102,7 +102,7 @@ module AuthenticationHelper
       password
     end
   end
-  
+
   def gogii_authenticate
     authenticate_or_request_with_http_digest do |username|
       if username == 'gogii'
@@ -111,7 +111,7 @@ module AuthenticationHelper
       password
     end
   end
-  
+
   def loopt_authenticate
     authenticate_or_request_with_http_digest do |username|
       if username == 'loopt'
@@ -120,7 +120,7 @@ module AuthenticationHelper
       password
     end
   end
-  
+
   def adways_authenticate
     authenticate_or_request_with_http_digest do |username|
       if username == 'adways'
@@ -129,7 +129,7 @@ module AuthenticationHelper
       password
     end
   end
-  
+
   def brooklyn_packet_authenticate
     authenticate_or_request_with_http_digest do |username|
       if username == 'brooklyn_packet'
@@ -138,7 +138,7 @@ module AuthenticationHelper
       password
     end
   end
-  
+
   def ea_authenticate
     authenticate_or_request_with_http_digest do |username|
       if username == 'ea'
@@ -147,5 +147,5 @@ module AuthenticationHelper
       password
     end
   end
-  
+
 end

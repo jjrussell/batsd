@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20111011182943) do
+ActiveRecord::Schema.define(:version => 20111022082130) do
 
   create_table "action_offers", :id => false, :force => true do |t|
     t.string   "id",                    :limit => 36,                    :null => false
@@ -81,10 +81,11 @@ ActiveRecord::Schema.define(:version => 20111011182943) do
     t.date     "featured_on"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "platform"
   end
 
   add_index "app_reviews", ["app_id", "author_id"], :name => "index_app_reviews_on_app_id_and_author_id", :unique => true
-  add_index "app_reviews", ["featured_on"], :name => "index_app_reviews_on_featured_on", :unique => true
+  add_index "app_reviews", ["featured_on", "platform"], :name => "index_app_reviews_on_featured_on_and_platform", :unique => true
   add_index "app_reviews", ["id"], :name => "index_app_reviews_on_id", :unique => true
 
   create_table "apps", :id => false, :force => true do |t|
@@ -157,7 +158,6 @@ ActiveRecord::Schema.define(:version => 20111011182943) do
     t.decimal  "spend_share",                                              :precision => 8, :scale => 6, :default => 0.5,   :null => false
     t.integer  "minimum_featured_bid"
     t.decimal  "direct_pay_share",                                         :precision => 8, :scale => 6, :default => 1.0,   :null => false
-    t.boolean  "banner_advertiser",                                                                      :default => false, :null => false
     t.text     "offer_whitelist",                                                                                           :null => false
     t.boolean  "use_whitelist",                                                                          :default => false, :null => false
     t.boolean  "tapjoy_enabled",                                                                         :default => false, :null => false
@@ -276,12 +276,13 @@ ActiveRecord::Schema.define(:version => 20111011182943) do
   add_index "enable_offer_requests", ["status"], :name => "index_enable_offer_requests_on_status"
 
   create_table "gamer_devices", :id => false, :force => true do |t|
-    t.string   "id",         :limit => 36, :null => false
-    t.string   "gamer_id",   :limit => 36, :null => false
-    t.string   "device_id",                :null => false
-    t.string   "name",                     :null => false
+    t.string   "id",          :limit => 36, :null => false
+    t.string   "gamer_id",    :limit => 36, :null => false
+    t.string   "device_id",                 :null => false
+    t.string   "name",                      :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "device_type"
   end
 
   add_index "gamer_devices", ["device_id"], :name => "index_gamer_devices_on_device_id"
@@ -289,10 +290,8 @@ ActiveRecord::Schema.define(:version => 20111011182943) do
   add_index "gamer_devices", ["id"], :name => "index_gamer_devices_on_id", :unique => true
 
   create_table "gamer_profiles", :id => false, :force => true do |t|
-    t.string   "id",                :limit => 36,                    :null => false
-    t.string   "gamer_id",          :limit => 36,                    :null => false
-    t.string   "last_name"
-    t.string   "first_name"
+    t.string   "id",                     :limit => 36,                    :null => false
+    t.string   "gamer_id",               :limit => 36,                    :null => false
     t.string   "gender"
     t.date     "birthdate"
     t.string   "city"
@@ -300,15 +299,16 @@ ActiveRecord::Schema.define(:version => 20111011182943) do
     t.string   "favorite_game"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "facebook_id"
-    t.string   "fb_access_token"
-    t.string   "referred_by",     :limit => 36
-    t.integer  "referral_count",                :default => 0
     t.string   "name"
     t.string   "nickname"
     t.string   "postal_code"
     t.string   "favorite_category"
-    t.boolean  "use_gravatar",                    :default => false
+    t.boolean  "use_gravatar",                         :default => false
+    t.string   "facebook_id"
+    t.string   "fb_access_token"
+    t.string   "referred_by",            :limit => 36
+    t.integer  "referral_count",                       :default => 0
+    t.boolean  "allow_marketing_emails",               :default => true
   end
 
   add_index "gamer_profiles", ["facebook_id"], :name => "index_gamer_profiles_on_facebook_id"
@@ -317,8 +317,8 @@ ActiveRecord::Schema.define(:version => 20111011182943) do
   add_index "gamer_profiles", ["referred_by"], :name => "index_gamer_profiles_on_referred_by"
 
   create_table "gamers", :id => false, :force => true do |t|
-    t.string   "id",                 :limit => 36,                    :null => false
-    t.string   "email",                                               :null => false
+    t.string   "id",                   :limit => 36,                    :null => false
+    t.string   "email",                                                 :null => false
     t.string   "crypted_password"
     t.string   "password_salt"
     t.string   "persistence_token"
@@ -330,8 +330,9 @@ ActiveRecord::Schema.define(:version => 20111011182943) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "udid"
-    t.string   "confirmation_token",               :default => "",    :null => false
-    t.boolean  "blocked",                          :default => false
+    t.string   "confirmation_token",                 :default => "",    :null => false
+    t.boolean  "blocked",                            :default => false
+    t.integer  "accepted_tos_version",               :default => 0
   end
 
   add_index "gamers", ["confirmation_token"], :name => "index_gamers_on_confirmation_token", :unique => true
@@ -624,6 +625,7 @@ ActiveRecord::Schema.define(:version => 20111011182943) do
     t.string   "billing_email"
     t.integer  "freshbooks_client_id"
     t.boolean  "accepted_publisher_tos"
+    t.string   "sales_rep_id",               :limit => 36
   end
 
   add_index "partners", ["id"], :name => "index_partners_on_id", :unique => true

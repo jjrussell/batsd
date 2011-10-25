@@ -1,0 +1,16 @@
+#jqt
+  #home.current
+    = render :partial => 'games/homepage/nav_bar', :locals => { :active => 'back', :back_button_destination => edit_games_gamer_path }
+
+    .content_wrapper
+      = render(:partial => 'header')
+      #edit_preferences.profile
+        .content
+          .content_box
+            .interior
+              - form_for([ :games, :gamer, @gamer_profile ], :url => update_prefs_games_gamer_gamer_profile_path, :html => { :method => "put" }) do |f|
+                .field
+                  = f.check_box :allow_marketing_emails
+                  = f.label :allow_marketing_emails, "Allow Tapjoy to send me marketing emails"
+                .field
+                  = f.submit 'Save', :class => 'button'

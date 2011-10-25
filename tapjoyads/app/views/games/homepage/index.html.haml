@@ -1,144 +1,94 @@
 #jqt
   #home.current
-    .container.vertical-scroll
-      .scroller.with-scrollbar
-        %a{ :href => edit_games_gamer_path }
-          .top_nav_bar
-        .page
-          .logo_title_preload
-          .logo
-            .slide_nav
-              %a{ :href => "#", :class => "more_games_url" }
-                .slider.more_games.slider_right.right
-                  %span.title.small
-                    More Games
-              .slider_btn.left
-                .slider.slider_active.slider_left
-                  %span.title
-                    My Apps
-                .slide_arrow_wrapper.bottom_arrow
-                  .slide_arrow
-          - if current_gamer.devices.empty?
-            .content_wrapper
-              .content
-                = render 'register_device'
-          - elsif @external_publishers.blank?
-            .content_wrapper
-              = render 'featured_review_preview'
-              .content
-                = render 'no_games'
-          - else
-            .content_wrapper
-              = render 'featured_review_preview'
-              .content
-                = render 'my_apps'
+    = render :partial => 'nav_bar', :locals => { :show_device => true, :active => 'my_apps' }
+    - if current_gamer.devices.empty?
+      .content_wrapper
+        .content
+          = render 'register_device'
+    - elsif @external_publishers.blank?
+      .content_wrapper
+        = render 'featured_review_preview'
+        .content
+          = render 'no_games'
+    - else
+      .content_wrapper
+        = render 'featured_review_preview'
+        .content
+          = render 'my_apps'
+
   #feat_app
-    .container.vertical-scroll
-      .scroller.with-scrollbar
-        %a{ :href => edit_games_gamer_path }
-          .top_nav_bar
-        .page
-          .logo
-            .slide_nav
-              %a{ :href => "#home", :class => "slideright" }
-                .left
-                  .slide_arrow_wrapper.left_arrow
-                    .slide_arrow
-                .slider.back.slider_active.slider_left.left
-                  %span.title
-                    Back
-          .content_wrapper
-            #feat_app.content
-              = render 'featured_review'
+    = render :partial => 'nav_bar', :locals => { :show_device => true, :active => 'back', :back_button_destination => '#home' }
+    .content_wrapper
+      #feat_app.content
+        = render 'featured_review'
 
   #earn
-    .container.vertical-scroll
-      .scroller.with-scrollbar
-        %a{ :href => edit_games_gamer_path }
-          .top_nav_bar
-        .page
-          .logo
-            .slide_nav
-              %a{ :href => "#home", :class => "slideright" }
-                .left
-                  .slide_arrow_wrapper.left_arrow
-                    .slide_arrow
-                .slider.back.slider_active.slider_left.left
-                  %span.title
-                    Back
-          .content_wrapper
-            .content
-              #app_title
-                %span.arrow
-              #earn_content.hide
+    = render :partial => 'nav_bar', :locals => { :show_device => true, :active => 'back', :back_button_destination => '#home' }
+    .content_wrapper
+      .content
+        #app_title
+          %span.arrow
+        #earn_content.hide
 
   #more_games
-    .container.vertical-scroll
-      .scroller.with-scrollbar
-        %a{ :href => edit_games_gamer_path }
-          .top_nav_bar
-        .page
-          .logo
-            .slide_nav
-              %a{ :href => "#home", :class => "slideright"}
-                .slider_btn.left
-                  .left
-                    .slide_arrow_wrapper.left_arrow
-                      .slide_arrow
-                  .slider.back.slider_active.slider_left.left
-                    %span.title
-                      Back
-          .content_wrapper
-            .content
-              .tab_wrapper.clearfix
-                #top_grossing_games_tab.tab_right
-                  #top_grossing_games_button.tab_button.grey
-                    .tab_content
-                      Popular Games
-                  #top_grossing_games_button_arrow.tab_button_bottom_arrrow_wrapper
-                    .tab_button_bottom_arrrow
-                #recommended_games_tab.tab_left
-                  #recommended_games_button.tab_button.dark_grey
-                    .tab_content
-                      Tapjoy Recommends
-                  #recommended_games_button_arrow.tab_button_bottom_arrrow_wrapper
-                    .tab_button_bottom_arrrow
-              #more_games_content.hide   
+    = render :partial => 'nav_bar', :locals => { :show_device => true, :active => 'back', :back_button_destination => '#home' }
+    .content_wrapper
+      .content
+        .tab_wrapper.clearfix
+          #top_grossing_games_tab.tab_right
+            #top_grossing_games_button.tab_button.grey
+              .tab_content
+                Popular Apps
+            #top_grossing_games_button_arrow.tab_button_bottom_arrrow_wrapper
+              .tab_button_bottom_arrrow
+          #recommended_games_tab.tab_left
+            #recommended_games_button.tab_button.dark_grey
+              .tab_content
+                Tapjoy Recommends
+            #recommended_games_button_arrow.tab_button_bottom_arrrow_wrapper
+              .tab_button_bottom_arrrow
+        #more_games_content.hide
 
--# #update_dob_dialog.dialog_wrapper.hide
-  -# .dialog
-    -# #update_dob_dialog_content
--# #update_dob_dialog_content_placeholder.hide
-  -# .dialog_header_wrapper
-    -# .dialog_header_right
-    -# .dialog_header_left
-    -# .dialog_title.title_2
-      -# Required Info Missing
-  -# .dialog_header
-    -# Please provide your birthdate
-  -# .dialog_content
-    -# - form_for([ :games, :gamer, @gamer_profile ], :url => update_birthdate_games_gamer_gamer_profile_path, :html => { :method => "put" }, :class => "update_dob_form") do |f|
-      -# .field
-        -# = label_tag :birthdate
-        -# = select_date nil, { :order => [:month, :day, :year], :start_year => Time.now.year, :end_year => (Time.now.year - 100), :include_blank => false, :prompt => {:day => 'Day', :month => 'Month', :year => 'Year'} }
-      -# .field.clearfix
-        -# = f.submit 'Submit', :class => 'right button m_width lt_blue'
-      -# .dob_error.center
-        -# = error_message_on @gamer_profile, :birthdate
+
+#accept_tos_dialog.dialog_wrapper.hide
+  .dialog
+    #accept_tos_dialog_content
+#accept_tos_dialog_content_placeholder.hide
+  .dialog_header_wrapper
+    .dialog_header_right
+    .dialog_header_left
+    .dialog_title.title_2
+      Action Required!
+  .dialog_header
+    Our #{ link_to('terms of service', games_tos_path, :target => '_blank') } have changed.  Please review and indicate your agreement below.
+  .dialog_content
+    - form_for([ :games, current_gamer ], :url => accept_tos_games_gamer_path, :html => { :method => "put" }, :class => "accept_tos_form") do |f|
+      .field
+        = f.check_box :terms_of_service
+        = f.label :terms_of_service, "By checking this box I assert that I agree to the terms of service."
+      .field.clearfix
+        = f.submit 'OK', :class => 'right button m_width lt_blue'
+      .tos_error.center
+        = error_message_on @gamer_profile, :birthdate
 
 - content_for :page_head do
-  %meta{ :name => 'description', :content => 'Tapjoy Games: The destination for mobile apps and games on Android, iPhone and iPad.' }
+  %meta{ :name => 'description', :content => 'Tapjoy: The destination for mobile apps and games on Android, iPhone and iPad.' }
   %meta{ :name => 'keywords', :content => 'games, mobile games, mobile apps, iOS, iPhone, iTouch, iPad, Android' }
 
 - content_for :page_javascript do
-  :plain
-    $(window).load(function() { 
-      TJG.ui.homeInit();
-      TJG.more_games_editor_picks =  "#{games_more_games_editor_picks_path}";
-      TJG.more_games_popular =  "#{games_more_games_popular_path}";
-    });
-  -# - if @gamer_profile.birthdate.blank?
-    -# :plain
-      -# $(window).load(function() { 
-        -# TJG.ui.showUpdateDob();
-      -# });
+  - if current_gamer.accepted_tos_version < TAPJOY_GAMES_CURRENT_TOS_VERSION
+    :plain
+      $(window).load(function() {
+        TJG.ui.showAcceptTos();
+      });
+  - else
+    :plain
+      $(window).load(function() {
+        TJG.select_device = #{@device_data.to_json};
+        TJG.require_select_device = #{@require_select_device.to_json};
+        TJG.more_games_editor_picks =  "#{games_more_games_editor_picks_path}";
+        TJG.more_games_popular =  "#{games_more_games_popular_path}";
+        TJG.ios_link_device_url = "#{new_games_gamer_device_path}";
+        TJG.android_market_url = "#{GAMES_ANDROID_MARKET_URL}";
+        TJG.ui.homeInit();
+      });

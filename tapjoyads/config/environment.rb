@@ -23,7 +23,7 @@ Rails::Initializer.run do |config|
   # you must remove the Active Record framework.
   config.frameworks -= [ :active_resource, :actionmailer ]
 
-  # Specify gems that this application depends on. 
+  # Specify gems that this application depends on.
   # They can then be installed with "rake gems:install" on new installations.
   # You have to specify the :lib option for libraries, where the Gem name (sqlite3-ruby) differs from the file itself (sqlite3)
 
@@ -53,7 +53,7 @@ Rails::Initializer.run do |config|
   config.gem 'geoip', :version => '1.1.1'
   config.gem 'haml', :version => '3.1.3'
   config.gem 'hominid', :version => '2.2.0'
-  config.gem 'newrelic_rpm', :version => '3.0.1'
+  config.gem 'newrelic_rpm', :version => '3.2.0'
   config.gem 'plist', :version => '3.1.0'
   config.gem 'read_from_slave', :version => '0.4.0'
   config.gem 'sass', :version => '3.1.7'
@@ -62,7 +62,7 @@ Rails::Initializer.run do |config|
   config.gem 'vertica', :version => '0.8.1'
   config.gem 'will_paginate', :version => '2.3.16'
 
-  # Only load the plugins named here, in the order given. By default, all plugins 
+  # Only load the plugins named here, in the order given. By default, all plugins
   # in vendor/plugins are loaded in alphabetical order.
   # :all can be used as a placeholder for all plugins not explicitly named
   # config.plugins = [ :exception_notification, :ssl_requirement, :all ]
@@ -86,7 +86,7 @@ Rails::Initializer.run do |config|
 
   # Your secret key for verifying cookie session data integrity.
   # If you change this key, all old sessions will become invalid!
-  # Make sure the secret is at least 30 characters and all random, 
+  # Make sure the secret is at least 30 characters and all random,
   # no regular words or you'll be exposed to dictionary attacks.
   config.action_controller.session = {
     :key         => '_tapjoyads_session',
@@ -110,8 +110,8 @@ Rails::Initializer.run do |config|
   # Activate observers that should always be running
   # Please note that observers generated using script/generate observer need to have an _observer suffix
   # config.active_record.observers = :cacher, :garbage_collector, :forum_observer
-  
- 
+
+
   # Memcached clone instance on passenger fork:
   if defined?(PhusionPassenger)
     PhusionPassenger.on_event(:starting_worker_process) do |forked|
@@ -123,12 +123,12 @@ Rails::Initializer.run do |config|
       end
     end
   end
-  
+
   # Mailer:
   config.action_mailer.delivery_method = :amazon_ses
   config.action_mailer.raise_delivery_errors = true
   config.action_mailer.perform_deliveries = true
-  
+
 end
 
 # Register custom Mime types to generate ActionOffer header files

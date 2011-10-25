@@ -31,6 +31,22 @@ class Invitation < ActiveRecord::Base
   named_scope :facebook, :conditions => { :channel => FACEBOOK }
   named_scope :pending_invitations_for, lambda { |external_info| { :conditions => ["external_info = ? and status = ?", external_info, PENDING ] } }
 
+  def self.invitation_message(name, link_url=nil)
+    link = link_url ? "<a href='#{link_url}'>#{TJGAMES_URL}</a>" : TJGAMES_URL
+    <<-eos.gsub(/^ {6}/, '')
+      Hi,
+
+      #{name} has invited you to join Tapjoy, where you can discover mobile apps just for you.
+
+      To get started, create your account here:
+
+      #{link}
+
+      Start Discovering!
+      Team Tapjoy
+    eos
+  end
+
   def pending?; status == PENDING; end
 
   def self.reconcile_pending_invitations(noob, options={})

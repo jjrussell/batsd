@@ -1,6 +1,6 @@
 class ActivityLog < SimpledbResource
   self.domain_name = 'activity_logs'
-  
+
   self.sdb_attr :user
   self.sdb_attr :controller
   self.sdb_attr :action
@@ -42,7 +42,7 @@ class ActivityLog < SimpledbResource
 
   def object
     return @state_object unless @state_object.nil?
-    
+
     klass = self.object_type.constantize
     if klass.respond_to?(:sdb)
       @state_object = klass.new(:key => self.object_id)
@@ -52,7 +52,7 @@ class ActivityLog < SimpledbResource
     @state_object_new = false
     @state_object
   end
-  
+
   def object=(obj)
     @state_object = obj
     @state_object_new = obj.new_record?
@@ -75,16 +75,16 @@ class ActivityLog < SimpledbResource
     elsif self.object_type == 'Partner'
       self.partner_id = self.object_id
     end
-    
+
     before_hash = {}
     after_hash = {}
-    
+
     if @state_object_new
       after_hash = self.after_state
     else
       before_hash = self.before_state
       after_hash = self.after_state
-      
+
       after_hash.reject! do |k, v|
         if before_hash[k] == v
           before_hash.delete(k)
@@ -94,20 +94,20 @@ class ActivityLog < SimpledbResource
         end
       end
     end
-    
+
     self.before_state = before_hash
     self.after_state = after_hash
   end
-  
+
   def serial_save(options = {})
     return unless is_new
     return if self.object.respond_to?(:errors) && self.object.errors.is_a?(ActiveRecord::Errors) && self.object.errors.present?
-    
+
     if self.before_state.length > 0 || self.after_state.length > 0
       super({ :write_to_memcache => false }.merge(options))
     end
   end
-  
+
 private
 
   def get_attributes

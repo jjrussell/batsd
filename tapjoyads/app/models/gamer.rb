@@ -13,12 +13,13 @@ class Gamer < ActiveRecord::Base
 
   before_create :generate_confirmation_token
   before_create :check_referrer
+  before_create :set_tos_version
 
   alias_method :devices, :gamer_devices
 
   acts_as_authentic do |c|
     c.crypto_provider = Authlogic::CryptoProviders::Sha512
-    c.perishable_token_valid_for = 1.hour
+    c.perishable_token_valid_for = 1.day
     c.login_field = :email
     c.validate_login_field = false
     c.require_password_confirmation = true
@@ -41,7 +42,7 @@ class Gamer < ActiveRecord::Base
   def self.find_all_gamer_based_on_facebook(external)
     gamer_profiles = GamerProfile.find_all_by_facebook_id(external)
     gamers = []
-    
+
     if gamer_profiles.any?
       gamer_profiles.each do |profile|
         gamers << Gamer.find_by_id(profile.gamer_id)
@@ -70,7 +71,7 @@ class Gamer < ActiveRecord::Base
       gamer_profile.name
     end
   end
-  
+
   def get_gamer_name
     if gamer_profile.present? && gamer_profile.name.present?
       gamer_profile.name
@@ -120,5 +121,9 @@ private
 
   def generate_confirmation_token
     self.confirmation_token = Authlogic::Random.friendly_token
+  end
+
+  def set_tos_version
+    self.accepted_tos_version = TAPJOY_GAMES_CURRENT_TOS_VERSION
   end
 end

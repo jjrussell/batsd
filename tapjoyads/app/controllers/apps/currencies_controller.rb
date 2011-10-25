@@ -25,16 +25,16 @@ class Apps::CurrenciesController < WebsiteController
   def update
     log_activity(@currency)
     currency_params = sanitize_currency_params(params[:currency], [ :minimum_featured_bid, :minimum_offerwall_bid, :minimum_display_bid ])
-    
+
     if params[:managed_by_tapjoy]
       params[:currency][:callback_url] = Currency::TAPJOY_MANAGED_CALLBACK_URL
     end
-    
+
     safe_attributes = [:name, :conversion_rate, :initial_balance, :callback_url, :secret_key, :test_devices, :minimum_featured_bid, :minimum_offerwall_bid, :minimum_display_bid]
     if permitted_to?(:edit, :statz)
-      safe_attributes += [:disabled_offers, :max_age_rating, :only_free_offers, :ordinal, :banner_advertiser, :hide_rewarded_app_installs, :minimum_hide_rewarded_app_installs_version, :tapjoy_enabled, :rev_share_override]
+      safe_attributes += [:disabled_offers, :max_age_rating, :only_free_offers, :ordinal, :hide_rewarded_app_installs, :minimum_hide_rewarded_app_installs_version, :tapjoy_enabled, :rev_share_override]
     end
-    
+
     if @currency.safe_update_attributes(currency_params, safe_attributes)
       flash[:notice] = 'Currency was successfully updated.'
       redirect_to app_currency_path(:app_id => @app.id, :id => @currency.id)
@@ -43,17 +43,17 @@ class Apps::CurrenciesController < WebsiteController
       render :action => :show
     end
   end
-  
+
   def new
     @currency = Currency.new
   end
-  
+
   def create
     unless @app.can_have_new_currency?
       flash[:error] = 'Cannot create currency for this app.'
       redirect_to apps_path and return
     end
-    
+
     if @app.currencies.empty?
       @currency = Currency.new
       @currency.id = @app.id
@@ -65,17 +65,17 @@ class Apps::CurrenciesController < WebsiteController
       @currency = @app.currencies.first.clone
       @currency.attributes = { :created_at => nil, :updated_at => nil, :ordinal => (@app.currencies.last.ordinal + 100) }
     end
-    
+
     log_activity(@currency)
     @currency.name = params[:currency][:name]
-    
+
     partner = @currency.partner
-    
+
     unless partner.accepted_publisher_tos? || params[:terms_of_service] == '1'
       flash[:error] = 'You must accept the terms of service to create a new virtual currency'
       render :action => :new and return
     end
-    
+
     if @currency.save
       if params[:terms_of_service] == '1'
         log_activity(partner)
@@ -110,7 +110,7 @@ private
     else
       @app = current_partner.apps.find(params[:app_id])
     end
-    
+
     if params[:id]
       @currency = @app.currencies.find(params[:id])
     end

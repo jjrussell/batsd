@@ -1,6 +1,8 @@
 class Games::SocialController < GamesController
+  rescue_from Mogli::Client::SessionInvalidatedDueToPasswordChange, Mogli::Client::OAuthException, :with => :handle_oauth_exception
+
   before_filter :require_gamer
-  before_filter :offline_facebook_authenticate, :only => [:invite_facebook_friends, :send_facebook_invites ]
+  before_filter :offline_facebook_authenticate, :only => [ :invite_facebook_friends, :send_facebook_invites ]
   before_filter :validate_recipients, :only => [ :send_email_invites ]
 
   def invite_facebook_friends
@@ -20,11 +22,13 @@ class Games::SocialController < GamesController
     friends = params[:friends]
 
     if friends.blank?
-      render(:json => { :success => false, :error => "You must select at least one friend before sending out an invite" })
+      render(:json => { :success => false, :error => "Please select at least one friend before sending out an invite" })
     else
       posts = []
       gamers = []
       non_gamers = []
+
+      current_facebook_user.fetch
 
       friends.each do |friend_id|
         exist_gamers = Gamer.find_all_gamer_based_on_facebook(friend_id)
@@ -36,15 +40,15 @@ class Games::SocialController < GamesController
         else
           friend_id = DEV_FACEBOOK_ID if Rails.env != 'production'
           friend = Mogli::User.find(friend_id.to_i, current_facebook_client)
-          non_gamers << "#{friend.first_name} #{friend.last_name}"
+          non_gamers << friend.name
           invitation = current_gamer.facebook_invitation_for(friend_id)
           if invitation.pending?
             name = TJGAMES_URL
             link = games_login_url :referrer => invitation.encrypted_referral_id
-            message = "#{friend.first_name} #{friend.last_name} has invited you to join Tapjoy."
-            
+            message = "#{current_facebook_user.name} has invited you to join Tapjoy."
+
             description = "Experience the best of mobile apps!"
-            post = Mogli::Post.new(:name => name, :link => link, :message => message, :description => description, :caption => " ", :picture => "#{TJGAMES_URL}/images/games/star_on_web.png")
+            post = Mogli::Post.new(:name => name, :link => link, :message => message, :description => description, :caption => " ", :picture => "#{TJGAMES_URL}/images/ic_launcher_96x96.png")
             posts << friend.feed_create(post)
           end
         end
@@ -53,13 +57,13 @@ class Games::SocialController < GamesController
       if gamers.any? || posts.any?{|post| post.id.present? }
         render :json => { :success => true, :gamers => gamers, :non_gamers => non_gamers }
       else
-        render :json => { :success => false, :error => "There was an issue with inviting your friend, please try again later" }
+        render :json => { :success => false, :error => "There was an issue with inviting your friend. Please try again later" }
       end
     end
   end
 
   def invite_email_friends
-    @content ="Hi,\n\n#{current_gamer.get_gamer_name} has invited you to join Tapjoy. \n\nWith Tapjoy you can discover tons of apps and build fuel in your current ones. Create your account here:\n\n#{TJGAMES_URL}\n\nStart Discovering!\nTeam Tapjoy"
+    @content = Invitation.invitation_message(current_gamer.get_gamer_name)
   end
 
   def send_email_invites
@@ -84,9 +88,7 @@ class Games::SocialController < GamesController
             :external_info => recipient,
           })
           invitation.save
-        end
 
-        if invitation.pending?
           link = games_login_url(:referrer => invitation.encrypted_referral_id)
           GamesMailer.deliver_invite(current_gamer.get_gamer_name, recipient, link)
         end
@@ -99,28 +101,56 @@ private
   def offline_facebook_authenticate
     if current_gamer.facebook_id.blank? && params[:valid_login] && current_facebook_user
       current_gamer.gamer_profile.update_facebook_info!(current_facebook_user)
+      unless has_permissions?
+        dissociate_and_redirect
+      end
     elsif current_gamer.facebook_id?
       fb_create_user_and_client(current_gamer.fb_access_token, '', current_gamer.facebook_id)
+      unless has_permissions?
+        dissociate_and_redirect
+      end
     else
-      flash[:error] = 'Please connect facebook with tapjoy games.'
+      flash[:error] = @error_msg ||'Please connect Facebook with Tapjoy.'
       redirect_to edit_games_gamer_path
     end
+  end
+
+  def has_permissions?
+    begin
+      unless current_facebook_user.has_permission?(:offline_access) && current_facebook_user.has_permission?(:publish_stream)
+        @error_msg = "Please grant us both permissions before sending out an invite."
+      end
+    rescue
+    end
+    @error_msg.blank?
+  end
+
+  def dissociate_and_redirect
+    current_gamer.gamer_profile.dissociate_account!(Invitation::FACEBOOK)
+    render :json => { :success => false, :error_redirect => true } and return if params[:ajax].present?
+    flash[:error] = @error_msg
+    redirect_to edit_games_gamer_path
+  end
+
+  def handle_oauth_exception
+    @error_msg = "Please authorize us before sending out an invite."
+    dissociate_and_redirect
   end
 
   def require_gamer
     redirect_to games_login_path unless current_gamer
   end
-  
+
   def validate_recipients
     if params[:recipients].present?
       @recipients = params[:recipients].split(/,/)
       not_valid = []
-      
+
       @recipients.each_with_index do |recipient, index|
         @recipients[index] = recipient.strip.downcase
         not_valid << recipient if @recipients[index] !~ Authlogic::Regex.email
       end
-      
+
       if not_valid.any?
         render :json => { :success => false, :error => "Invalid email(s):  #{not_valid.join(', ')}" }
       end
