@@ -60,7 +60,7 @@ private
 
   def require_gamer
     if current_gamer.blank?
-      redirect_to games_login_path
+      redirect_to games_login_path(:original_url => request.url)
     end
   end
 

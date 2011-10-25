@@ -9,6 +9,8 @@
           - form_for([ :games, @gamer_session ]) do |f|
             - if params[:data].present?
               = hidden_field_tag :data, params[:data]
+            - if params[:original_url].present?
+              = hidden_field_tag :original_url, params[:original_url]
             .field.login_email.clearfix
               = f.label :email
               = f.email_field :email, "autocorrect" => "off", "autocapitalize" => "off"

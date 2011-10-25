@@ -138,7 +138,7 @@ private
   end
 
   def require_gamer
-    redirect_to games_login_path unless current_gamer
+    redirect_to games_login_path(:original_url => request.url) unless current_gamer
   end
 
   def validate_recipients
