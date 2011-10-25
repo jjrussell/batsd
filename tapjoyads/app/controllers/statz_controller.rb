@@ -16,7 +16,8 @@ class StatzController < WebsiteController
     @money_stats = Mc.get('money.cached_stats') || { @timeframe => {} }
     @money_last_updated = Time.zone.at(Mc.get("money.last_updated") || 0)
 
-    @last_updated = Time.zone.at(Mc.get("statz.last_updated.#{@timeframe}") || 0)
+    @last_updated_start = Time.zone.at(Mc.get("statz.last_updated_start.#{@timeframe}") || 0)
+    @last_updated_end = Time.zone.at(Mc.get("statz.last_updated_end.#{@timeframe}") || 0)
     @cached_metadata = Mc.distributed_get("statz.metadata.#{@timeframe}") || {}
     @cached_stats = Mc.distributed_get("statz.stats.#{@timeframe}") || []
   end
@@ -157,7 +158,8 @@ private
   def load_partner_stats
     @timeframe = params[:timeframe] || '24_hours'
     prefix = get_stat_prefix('partner')
-    @last_updated = Time.zone.at(Mc.get("statz.#{prefix}.last_updated.#{@timeframe}") || 0)
+    @last_updated_start = Time.zone.at(Mc.get("statz.#{prefix}.last_updated_start.#{@timeframe}") || 0)
+    @last_updated_end = Time.zone.at(Mc.get("statz.#{prefix}.last_updated_end.#{@timeframe}") || 0)
     @cached_stats = Mc.distributed_get("statz.#{prefix}.cached_stats.#{@timeframe}") || []
   end
 end

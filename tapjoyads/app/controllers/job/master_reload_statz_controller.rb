@@ -30,41 +30,55 @@ class Job::MasterReloadStatzController < Job::JobController
 private
 
   def cache_stats(timeframe)
-    now, granularity, start_time = get_times(timeframe)
+    start_time, end_time = get_times_for_vertica(timeframe)
+    time_conditions      = "time >= '#{start_time.to_s(:db)}' AND time < '#{end_time.to_s(:db)}'"
 
-    cached_stats    = {}
+    advertiser_stats = VerticaCluster.query('analytics.actions', {
+        :select     => 'offer_id, count(*) AS conversions',
+        :group      => 'offer_id',
+        :conditions => "path LIKE '%reward%' AND #{time_conditions}" })
+    publisher_stats = VerticaCluster.query('analytics.actions', {
+        :select     => 'publisher_app_id AS offer_id, count(*) AS published_offers, sum(publisher_amount) AS offers_revenue',
+        :group      => 'publisher_app_id',
+        :conditions => "path LIKE '%reward%' AND #{time_conditions}" })
+    # connects = VerticaCluster.query('analytics.connects', {
+    #     :select     => 'app_id AS offer_id, count(*) AS connects',
+    #     :group      => 'app_id',
+    #     :conditions => "path LIKE '%connect%' AND #{time_conditions}" })
+
+    cached_stats = {}
+    advertiser_stats.each do |stats|
+      cached_stats[stats[:offer_id]] ||= {}
+      cached_stats[stats[:offer_id]]['conversions'] = number_with_delimiter(stats[:conversions])
+    end
+    publisher_stats.each do |stats|
+      cached_stats[stats[:offer_id]] ||= {}
+      cached_stats[stats[:offer_id]]['published_offers'] = number_with_delimiter(stats[:published_offers])
+      cached_stats[stats[:offer_id]]['offers_revenue']   = number_to_currency(stats[:offers_revenue] / 100.0)
+    end
+    # connects.each do |stats|
+    #   cached_stats[stats[:offer_id]] ||= {}
+    #   cached_stats[stats[:offer_id]]['connects'] = number_with_delimiter(stats[:connects])
+    # end
+
     cached_metadata = {}
-    find_options    = timeframe == '24_hours' ? { :conditions => 'active = true' } : {}
-    Offer.find_each(find_options) do |offer|
-      appstats         = Appstats.new(offer.id, { :start_time => start_time, :end_time => now + 1.hour, :granularity => granularity }).stats
-      conversions      = appstats['paid_installs'].sum
-      published_offers = appstats['rewards'].sum + appstats['featured_published_offers'].sum + appstats['display_conversions'].sum
-      connects         = appstats['logins'].sum
-      next unless conversions > 0 || published_offers > 0 || (offer.item_type == 'ActionOffer' && connects > 0)
-
-      metadata = {}
+    Offer.find_each(:conditions => [ 'id IN (?)', cached_stats.keys ]) do |offer|
+      metadata                    = {}
       metadata['icon_url']        = offer.get_icon_url
       metadata['offer_name']      = offer.name_with_suffix
       metadata['price']           = number_to_currency(offer.price / 100.0)
       metadata['payment']         = number_to_currency(offer.payment / 100.0)
       metadata['balance']         = number_to_currency(offer.partner.balance / 100.0)
-      metadata['conversion_rate'] = "%.1f%" % ((offer.conversion_rate || 0) * 100.0)
+      metadata['conversion_rate'] = number_to_percentage((offer.conversion_rate || 0) * 100.0, :precision => 1)
       metadata['platform']        = offer.get_platform
       metadata['featured']        = offer.featured?
       metadata['rewarded']        = offer.rewarded?
       metadata['offer_type']      = offer.item_type
+      cached_metadata[offer.id]   = metadata
 
-      stats = {}
-      stats['conversions']        = number_with_delimiter(conversions)
-      stats['connects']           = number_with_delimiter(appstats['logins'].sum)
-      stats['published_offers']   = number_with_delimiter(published_offers)
-      stats['offers_revenue']     = number_to_currency(appstats['total_revenue'].sum / 100.0)
-      region                      = offer.get_device_types.include?('android') ? 'english' : 'united_states'
-      price                       = offer.is_paid? ? 'paid' : 'free'
-      stats['overall_store_rank'] = (Array(appstats['ranks']["overall.#{price}.#{region}"]).find_all{ |r| r != nil }.last || '-')
-
-      cached_metadata[offer.id] = metadata
-      cached_stats[offer.id]    = stats
+      # TODO: populate these with the correct values
+      cached_stats[offer.id]['connects'] = 0
+      cached_stats[offer.id]['overall_store_rank'] = '-'
     end
 
     cached_stats = cached_stats.sort do |s1, s2|
@@ -73,18 +87,19 @@ private
 
     Mc.distributed_put("statz.metadata.#{timeframe}", cached_metadata)
     Mc.distributed_put("statz.stats.#{timeframe}", cached_stats)
-    Mc.put("statz.last_updated.#{timeframe}", now.to_f)
+    Mc.put("statz.last_updated_start.#{timeframe}", start_time.to_f)
+    Mc.put("statz.last_updated_end.#{timeframe}", end_time.to_f)
   end
 
   def cache_partners(timeframe)
-    now, granularity, start_time = get_times(timeframe)
+    start_time, end_time, granularity = get_times_for_appstats(timeframe)
 
     cached_partners = {}
 
     find_options = timeframe == '24_hours' ? { :joins => :offers, :conditions => 'active = true' } : {}
     Partner.find_each(find_options) do |partner|
       ['partner', 'partner-ios', 'partner-android'].each do |prefix|
-        stats            = Appstats.new(partner.id, { :start_time => start_time, :end_time => now + 1.hour, :granularity => granularity, :stat_prefix => prefix }).stats
+        stats            = Appstats.new(partner.id, { :start_time => start_time, :end_time => end_time, :granularity => granularity, :stat_prefix => prefix }).stats
         conversions      = stats['paid_installs'].sum
         published_offers = stats['rewards'].sum + stats['featured_published_offers'].sum + stats['display_conversions'].sum
         next unless conversions > 0 || published_offers > 0
@@ -98,7 +113,8 @@ private
         s2[1]['total_revenue'].gsub(',', '').gsub('$', '').to_i <=> s1[1]['total_revenue'].gsub(',', '').gsub('$', '').to_i
       end
       Mc.distributed_put("statz.#{key}.cached_stats.#{timeframe}", breakdown)
-      Mc.put("statz.#{key}.last_updated.#{timeframe}", now.to_f)
+      Mc.put("statz.#{key}.last_updated_start.#{timeframe}", start_time.to_f)
+      Mc.put("statz.#{key}.last_updated_end.#{timeframe}", end_time.to_f)
     end
   end
 
@@ -171,17 +187,39 @@ private
     partner_stats
   end
 
-  def get_times(timeframe)
-    now = Time.zone.now
+  def get_times_for_vertica(timeframe)
+    most_recent = VerticaCluster.query('analytics.actions', :select => 'max(time)').first[:max]
 
-    granularity = timeframe == '24_hours' ? :hourly : :daily
-    start_time = now - 23.hours
-    if timeframe == '7_days'
-      start_time = now - 7.days
+    if timeframe == '24_hours'
+      end_time   = most_recent - (most_recent.to_i % 10.minutes).seconds
+      start_time = end_time - 24.hours
+    elsif timeframe == '7_days'
+      end_time   = most_recent.beginning_of_day
+      start_time = end_time - 7.days
     elsif timeframe == '1_month'
-      start_time = now - 30.days
+      end_time   = most_recent.beginning_of_day
+      start_time = end_time - 30.days
     end
 
-    return now, granularity, start_time
+    [ start_time, end_time ]
   end
+
+  def get_times_for_appstats(timeframe)
+    now = Time.zone.now
+    granularity = timeframe == '24_hours' ? :hourly : :daily
+
+    if timeframe == '24_hours'
+      end_time   = now.beginning_of_hour
+      start_time = end_time - 24.hours
+    elsif timeframe == '7_days'
+      end_time   = now.beginning_of_day
+      start_time = end_time - 7.days
+    elsif timeframe == '1_month'
+      end_time   = now.beginning_of_day
+      start_time = end_time - 30.days
+    end
+
+    [ start_time, end_time, granularity ]
+  end
+
 end
