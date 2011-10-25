@@ -56,7 +56,7 @@
 
         $.ajax({
           type: "GET",
-          url: $(this).attr("href"),
+          url: "#{new_support_request_url(missing_currency_support_params('js'))}",
           success: function(html) {
             $('#support_request').prepend(html);
             $('#show_offers').hide();
@@ -99,6 +99,10 @@
     label {
       display: block;
       font-size: 10pt;
+    }
+
+    #offer_id {
+      width: 100%;
     }
 
     img {
