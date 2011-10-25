@@ -43,6 +43,19 @@ class ExternalPublisher
     "#{API_URL}/get_offers?data=#{SymmetricCrypto.encrypt_object(data, SYMMETRIC_CRYPTO_SECRET)}"
   end
 
+  def self.most_recently_run_for_gamer(gamer)
+    external_publishers = []
+    gamer.gamer_devices.each do |gamer_device|
+      device = Device.new(:key => gamer_device.device_id)
+      external_publishers << ExternalPublisher.load_all_for_device(device).first
+    end
+
+    external_publishers.sort! do |e1, e2|
+      e2.last_run_time <=> e1.last_run_time
+    end
+    external_publishers.first
+  end
+
   def self.load_all_for_device(device)
     external_publishers = []
     self.load_all.each do |app_id, external_publisher|
