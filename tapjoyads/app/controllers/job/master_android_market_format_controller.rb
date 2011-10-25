@@ -14,6 +14,7 @@ class Job::MasterAndroidMarketFormatController < Job::JobController
       retries += 1
       if retries < 5
         puts "retrying"
+        sleep 5
         retry
       else
         Notifier.alert_new_relic(AndroidMarketChanged, 'Site may be down')
