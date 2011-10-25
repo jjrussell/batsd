@@ -44,6 +44,7 @@
           creative.name = availableCreatives[i];
           creative.width = parseInt(availableCreativeSizes[i][0]);
           creative.height = parseInt(availableCreativeSizes[i][1]);
+          creative.orientation = (creative.height > creative.width) ? 'portrait' : 'landscape';
           calcCreativeMargins(creative);
 
           // Determine if this creative is a better option than our current 'favorite'
@@ -86,9 +87,9 @@
       var creativeImg = document.getElementById('creative');
 
       // Add webkit transition directives to our attributes of interest to enable animations for future modifications
-      webkitStyle(buttonsDiv, 'transition-property', 'top,width');
-      webkitStyle(buttonsDiv, 'transition-duration', animOptions.duration + ', ' + animOptions.duration);
-      webkitStyle(buttonsDiv, 'transition-timing-function', animOptions.timingFunction + ', ' + animOptions.timingFunction);
+      webkitStyle(buttonsDiv, 'transition-property', 'top,width,opacity');
+      webkitStyle(buttonsDiv, 'transition-duration', animOptions.duration + ', ' + animOptions.duration + ', ' + animOptions.duration);
+      webkitStyle(buttonsDiv, 'transition-timing-function', animOptions.timingFunction + ', ' + animOptions.timingFunction + ', ' + animOptions.timingFunction);
       webkitStyle(creativeImg, 'transition', 'all ' + animOptions.duration + ' ' + animOptions.timingFunction);
     }
 
@@ -112,6 +113,7 @@
 
     function moveButtons() {
       // Relocate buttons div
+      buttonsDiv.style.opacity = '1';
       buttonsDiv.style.width = client.width + 'px';
       buttonsDiv.style.top = (client.height - buttonsHeight) + 'px';
     }
@@ -127,10 +129,11 @@
       var skipButton = document.getElementById('skip');
 
       // Scale the buttons to fit this screen size
+      //alert("Client size: " + client.width + "x" + client.height);
       if(Math.max(client.width, client.height) <= 480) {
         var presetSize = 480;
         buttonsHeight = 50;
-      } else if (Math.max(client.width, client.height) <= 640) {
+      } else if (Math.max(client.width, client.height) < 960) {
         var presetSize = 640;
         buttonsHeight = 75;
       } else {
@@ -180,7 +183,7 @@
       main.style.margin = vertMargin + 'px ' + horizMargin + 'px';
       main.style.height = newHeight + 'px';
 
-      alert("New Size: " + newWidth + "x" + newHeight + "(Margins: " + horizMargin + " horiz, " + vertMargin + " vert)");
+      //alert("New Size: " + newWidth + "x" + newHeight + "(Margins: " + horizMargin + " horiz, " + vertMargin + " vert)");
 
       // Set the image url if this is the initial drawing
       creativeImg.src = baseCreativeUrl + "/" + creative.name;
@@ -196,6 +199,10 @@
 
   - content_for :page_styles do
     :plain
+      html {
+        height: 100%;
+      }
+
       body {
         margin: 0;
         height: #{@height}px;
@@ -228,6 +235,7 @@
       .buttons {
         background-color: rgba(0,0,0,0.6);
         left: 0;
+        opacity: 0;
         position: absolute;
         text-align: center;
       }
