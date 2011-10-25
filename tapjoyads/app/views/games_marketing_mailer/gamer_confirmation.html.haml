@@ -44,10 +44,7 @@
               %br/
               - link_to @confirmation_link, :style => css[:a] do
                 = image_tag("#{image_root}/confirm_button.png", :title => 'Confirm', :alt => 'Confirm', :style => "border: none;", :size => '170x49')
-    - if @linked && @offerwall_url
-      Click here to see available offers!
-      = @offerwall_url
-    - else
+    - unless @linked
       .step{:style => css[:step]}
         %table
           %tr
