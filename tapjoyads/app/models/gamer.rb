@@ -95,7 +95,7 @@ private
   end
 
   def check_referrer
-    if referrer?
+    if referrer.present?
       if referrer.starts_with?('tjreferrer:')
         click = Click.new :key => referrer.gsub('tjreferrer:', '')
         if click.rewardable?
@@ -107,7 +107,10 @@ private
           Downloader.get_with_retry url
         end
       else
-        self.referred_by, invitation_id = SymmetricCrypto.decrypt_object(referrer, SYMMETRIC_CRYPTO_SECRET).split(',')
+        begin
+          self.referred_by, invitation_id = SymmetricCrypto.decrypt_object(referrer, SYMMETRIC_CRYPTO_SECRET).split(',')
+        rescue OpenSSL::Cipher::CipherError => e
+        end
         if referred_by? && invitation_id
           referred_by_gamer = Gamer.find(self.referred_by)
           referred_by_gamer.gamer_profile.update_attributes!(:referral_count => referred_by_gamer.referral_count + 1)
