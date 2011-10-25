@@ -4,10 +4,12 @@ class Appstats
   attr_accessor :app_key, :stats, :granularity, :start_time, :end_time, :x_labels, :intervals
 
   def initialize(app_key, options = {})
-    @now = Time.zone.now
+    @granularity = options.delete(:granularity) { :hourly }
+
+    @now = @granularity == :hourly ? Time.zone.now : Time.now.utc
     @start_time = options.delete(:start_time) { @now.beginning_of_hour - 23.hours }
     @end_time = options.delete(:end_time) { @start_time + 24.hours }
-    @granularity = options.delete(:granularity) { :hourly }
+
     @stat_types = options.delete(:stat_types) { Stats::STAT_TYPES }
     @include_labels = options.delete(:include_labels) { false }
     @stat_prefix = options.delete(:stat_prefix) { 'app' }
@@ -345,25 +347,13 @@ class Appstats
   end
 
   def self.parse_dates(start_time_string, end_time_string, granularity_string)
-    now = Time.zone.now
-    if start_time_string.blank?
-      start_time = now.beginning_of_hour - 23.hours
-    else
-      start_time = Time.zone.parse(start_time_string).beginning_of_day
-      start_time = now.beginning_of_hour - 23.hours if start_time > now
-    end
-
-    if end_time_string.blank?
-      end_time = start_time + 24.hours
-    else
-      end_time = Time.zone.parse(end_time_string).end_of_day
-      end_time = now if end_time <= start_time || end_time > now
-    end
+    start_time, end_time = get_times(start_time_string, end_time_string)
 
     if granularity_string == 'daily' || end_time - start_time >= 7.days
       granularity = :daily
     else
       granularity = :hourly
+      start_time, end_time = get_times(start_time_string, end_time_string, false)
     end
 
     if (end_time - start_time < 1.day) && granularity == :daily
@@ -375,6 +365,25 @@ class Appstats
   end
 
 private
+
+  def self.get_times(start_time_string, end_time_string, use_utc = true)
+    now = use_utc ? Time.now.utc : Time.zone.now
+    if start_time_string.blank?
+      start_time = now.beginning_of_hour - 23.hours
+    else
+      start_time = (use_utc ? start_time_string.to_time : Time.zone.parse(start_time_string)).beginning_of_day
+      start_time = now.beginning_of_hour - 23.hours if start_time > now
+    end
+
+    if end_time_string.blank?
+      end_time = start_time + 24.hours
+    else
+      end_time = (use_utc ? end_time_string.to_time : Time.zone.parse(end_time_string)).end_of_day
+      end_time = now if end_time <= start_time || end_time > now
+    end
+
+    [start_time, end_time]
+  end
 
   ##
   # Returns the hourly stats for stat_name.
