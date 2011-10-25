@@ -3,6 +3,7 @@ ActionController::Routing::Routes.draw do |map|
     m.root :controller => 'games/homepage', :action => :index
     m.tos 'tos', :controller => 'games/homepage', :action => :tos
     m.privacy 'privacy', :controller => 'games/homepage', :action => :privacy
+    m.help 'help', :controller => 'games/homepage', :action => :help
     m.switch_device 'switch_device', :controller => 'games/homepage', :action => :switch_device
     m.send_device_link 'send_device_link', :controller => 'games/homepage', :action => :send_device_link
 

@@ -14,20 +14,32 @@
 
 #money_totals
   .last_updated Totals Last Updated: #{@money_last_updated.to_s(:pub_ampm_sec)}
-  %h3
-    %table
-      %tr
-        %td Total conversions: #{@money_stats[@timeframe]['conversions']} &nbsp;
-        %td Total revenue: #{@money_stats[@timeframe]['revenue']} &nbsp;
-        %td Total payouts: #{@money_stats[@timeframe]['publisher_earnings']}
-      %tr
-        %td Android conversions: #{@money_stats[@timeframe]['android_conversions']} &nbsp;
-        %td Android Adv. Spend: #{@money_stats[@timeframe]['android_adv_spend']} &nbsp;
-        %td Android Payouts: #{@money_stats[@timeframe]['android_pub_earnings']}
-      %tr
-        %td iOS conversions: #{@money_stats[@timeframe]['ios_conversions']} &nbsp;
-        %td iOS Adv. Spend: #{@money_stats[@timeframe]['ios_adv_spend']} &nbsp;
-        %td iOS Payouts: #{@money_stats[@timeframe]['ios_pub_earnings']}
+  %table#overall
+    %tr
+      %th
+      %th Conversions
+      %th Adv. Spend
+      %th Payouts
+    %tr
+      %th Total
+      %td= @money_stats[@timeframe]['conversions']
+      %td= @money_stats[@timeframe]['advertiser_spend']
+      %td= @money_stats[@timeframe]['publisher_earnings']
+    %tr
+      %th Android
+      %td= @money_stats[@timeframe]['android_conversions']
+      %td= @money_stats[@timeframe]['android_adv_spend']
+      %td= @money_stats[@timeframe]['android_pub_earnings']
+    %tr
+      %th iOS
+      %td= @money_stats[@timeframe]['ios_conversions']
+      %td= @money_stats[@timeframe]['ios_adv_spend']
+      %td= @money_stats[@timeframe]['ios_pub_earnings']
+    %tr
+      %th TJ Games
+      %td= @money_stats[@timeframe]['tjgames_conversions']
+      %td= @money_stats[@timeframe]['tjgames_adv_spend']
+      %td= @money_stats[@timeframe]['tjgames_pub_earnings']
 %p
   = link_to "Global Network Stats", global_statz_path
   - if permitted_to? :publisher, :statz
@@ -78,35 +90,36 @@
   %tbody#apps_tbody
     - @cached_stats.each do |offer_id, stats|
       :ruby
+        metadata = @cached_metadata[offer_id]
         tr_classes = []
-        tr_classes << (stats['conversions']=='0'         ? 'zero_conversions' : 'nonzero_conversions')
-        tr_classes << (stats['connects']=='0'            ? 'zero_connects'    : 'nonzero_connects')
-        tr_classes << (stats['overall_store_rank']=='-'  ? 'unranked'         : 'ranked')
-        tr_classes << (stats['price']=='$0.00'           ? 'free'             : 'paid')
-        tr_classes << stats['platform'].to_s.downcase
-        tr_classes << (stats['published_offers']=='0'    ? 'zero_published'   : 'nonzero_published')
-        tr_classes << (stats['offers_revenue']=='$0.00'  ? 'zero_revenue'     : 'nonzero_revenue')
-        tr_classes << (stats['featured']                 ? 'featured'         : 'nonfeatured')
-        tr_classes << (stats['rewarded']                 ? 'rewarded'         : 'nonrewarded')
-        tr_classes << stats['offer_type'].to_s.downcase
-        value = stats['balance'].gsub(/[\$,]/,'')
+        tr_classes << (stats['conversions'] == '0'         ? 'zero_conversions' : 'nonzero_conversions')
+        tr_classes << (stats['connects'] == '0'            ? 'zero_connects'    : 'nonzero_connects')
+        tr_classes << (stats['overall_store_rank'] == '-'  ? 'unranked'         : 'ranked')
+        tr_classes << (metadata['price'] == '$0.00'        ? 'free'             : 'paid')
+        tr_classes << metadata['platform'].to_s.downcase
+        tr_classes << (stats['published_offers'] == '0'    ? 'zero_published'   : 'nonzero_published')
+        tr_classes << (stats['offers_revenue'] == '$0.00'  ? 'zero_revenue'     : 'nonzero_revenue')
+        tr_classes << (metadata['featured']                ? 'featured'         : 'nonfeatured')
+        tr_classes << (metadata['rewarded']                ? 'rewarded'         : 'nonrewarded')
+        tr_classes << metadata['offer_type'].to_s.downcase
+        value = metadata['balance'].gsub(/[\$,]/,'')
       %tr{ :class => tr_classes.compact.join(' '), :value => value }
         %td
-          %img.icon.hidden{ :s => stats['icon_url'] }
-        %td= link_to(stats['offer_name'], statz_path(offer_id))
+          %img.icon.hidden{ :s => metadata['icon_url'] }
+        %td= link_to(metadata['offer_name'], statz_path(offer_id))
         %td= stats['conversions']
         %td= stats['connects']
         %td= stats['overall_store_rank']
-        %td= stats['price']
-        %td= stats['payment']
-        %td= stats['balance']
-        %td= stats['platform']
-        %td= stats['conversion_rate']
+        %td= metadata['price']
+        %td= metadata['payment']
+        %td= metadata['balance']
+        %td= metadata['platform']
+        %td= metadata['conversion_rate']
         %td= stats['published_offers']
         %td= stats['offers_revenue']
-        %td= stats['featured']
-        %td= stats['rewarded']
-        %td= stats['offer_type']
+        %td= metadata['featured']
+        %td= metadata['rewarded']
+        %td= metadata['offer_type']
 
 - content_for :page_javascript do
   :plain
@@ -227,6 +240,10 @@
   :plain
     #main {
       width: 1150px;
+    }
+    #overall th {
+      text-align: left;
+      padding-right: 10px;
     }
     td#filters_title {
       padding-left: 15px;

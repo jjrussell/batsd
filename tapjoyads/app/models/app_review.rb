@@ -6,7 +6,7 @@ class AppReview < ActiveRecord::Base
 
   before_save :copy_platform
 
-  validates_uniqueness_of [:featured_on, :platform], :allow_nil => true
+  validates_uniqueness_of :featured_on, :scope => :platform, :allow_nil => true
   validates_uniqueness_of :author_id, :scope => :app_id, :message => "has already reviewed this app"
   validates_presence_of :author, :app, :text
 
