@@ -1147,7 +1147,6 @@ TJG.ui = {
           '<div class="title_2 center">Registering</div>',
           '<div class="loading_animation"></div>'
         ].join('');
-        console.log(form_height);
         $('.register_form').animate({ height: "0px" }, animateSpd, function() {
           $('.register_progess').html(loader);
         });
@@ -1272,7 +1271,7 @@ TJG.ui = {
 
   showAcceptTos : function () {
     var animateSpd = "fast";
-    $("#accept_tos_dialog_content").parent().css("height", "200px");
+    $("#accept_tos_dialog_content").parent().css("height", "250px");
     $("#accept_tos_dialog_content").html($('#accept_tos_dialog_content_placeholder').html());
     setTimeout(function() {
       TJG.utils.centerDialog("#accept_tos_dialog");

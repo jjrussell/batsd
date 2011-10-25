@@ -2,6 +2,7 @@ production:
   app_id: '276090845745399'
   secret: '38698ac9e364133fc42e43fad3208277'
   api_key: '276090845745399'
+  oauth2: true
 
 development:
   app_id: '272075209492622'
@@ -12,3 +13,4 @@ test:
   app_id: '273914012622852'
   secret: '810c1363c332e39a53d130fcf5132ca9'
   api_key: '273914012622852'
+  oauth2: true
