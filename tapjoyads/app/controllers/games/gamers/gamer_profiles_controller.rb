@@ -31,7 +31,7 @@ class Games::Gamers::GamerProfilesController < GamesController
     if params[:account_type].present?
       channel = params[:account_type].to_i
 
-       if @gamer_profile.dissociate_account!(channel)
+      if @gamer_profile.dissociate_account!(channel)
         flash[:notice] = "You've successfully dissociated your #{Invitation::CHANNEL[channel]} account."
         redirect_to edit_games_gamer_path and return
       else
