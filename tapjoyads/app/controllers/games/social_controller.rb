@@ -2,7 +2,7 @@ class Games::SocialController < GamesController
   require "rubygems"
   require "twitter"
 
-  rescue_from Mogli::Client::SessionInvalidatedDueToPasswordChange, Mogli::Client::OAuthException, :with => :handle_oauth_exception
+  rescue_from Mogli::Client::ClientException, :with => :handle_mogli_exceptions
   rescue_from Twitter::Error, :with => :handle_twitter_exceptions
 
   before_filter :require_gamer
@@ -233,9 +233,19 @@ private
     flash[:error] = @error_msg
     redirect_to edit_games_gamer_path
   end
-
-  def handle_oauth_exception
-    @error_msg = "Please authorize us before sending out an invite."
+  
+  def handle_mogli_exceptions(e)
+    case e
+    when Mogli::Client::FeedActionRequestLimitExceeded
+      @error_msg = "You've reached the limit. Please try again later."
+    when Mogli::Client::HTTPException
+      @error_msg = "There was an issue with inviting your friend. Please try again later."
+    when Mogli::Client::SessionInvalidatedDueToPasswordChange, Mogli::Client::OAuthException
+      @error_msg = "Please authorize us before sending out an invite."
+    else
+      @error_msg = "There was an issue with inviting your friend. Please try again later."
+    end
+    
     dissociate_and_redirect
   end
 
