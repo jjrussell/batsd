@@ -22,6 +22,7 @@ class BalancesMismatch < EmailWorthyError; end
 class UnverifiedStatsError < EmailWorthyError; end
 class AppStoreSearchFailed < EmailWorthyError; end
 class VerticaMissingDataError < EmailWorthyError; end
+class AndroidMarketChanged < EmailWorthyError; end
 
 class Notifier
 
