@@ -4,6 +4,9 @@ defaults: &defaults
     'tjg.jquery-1.6.2.min',
     'init',
     'jqtouch',
+    'utils',
+    'ui',
+    'social',
     'tapjoygames'
   ]
   js_compile_out_file: 'tjgames.min'
