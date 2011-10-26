@@ -139,10 +139,9 @@ class Games::SocialController < GamesController
             current_gamer.follow_gamer(gamer)
           end
         else
+          friend_id = TEST_TWITTER_ID if Rails.env != 'production' # please make sure the TEST_TWITTER_ID is the id of one of current twitter account's followers
           friend_name = Twitter.user(friend_id.to_i).name
           non_gamers << "#{friend_name}"
-          
-          friend_id = '388167589' if Rails.env != 'production' #388167589, 8752692
           invitation = current_gamer.invitation_for(friend_id, Invitation::TWITTER)
           
           if invitation.pending?
@@ -152,7 +151,7 @@ class Games::SocialController < GamesController
             message = "#{Twitter.user(current_gamer.twitter_id.to_i).name} has invited you to join Tapjoy. Experience the best of mobile apps! #{link}"
             
             # posts << Twitter.update(message)
-            posts << Twitter.direct_message_create(friend_id.to_i, message) # could only send direct msg to follower
+            posts << Twitter.direct_message_create(friend_id.to_i, message)
           end
         end
       end

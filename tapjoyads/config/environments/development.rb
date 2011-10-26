@@ -67,3 +67,4 @@ ENV['CONSUMER_KEY'] = twitter['dev']['consumer_key']
 ENV['CONSUMER_SECRET'] = twitter['dev']['consumer_secret']
 
 DEV_FACEBOOK_ID = '100000459598424'
+TEST_TWITTER_ID = '388167589'
