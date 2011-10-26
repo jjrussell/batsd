@@ -7,7 +7,6 @@ class Apps::OffersController < WebsiteController
   after_filter :save_activity_logs, :only => [ :create, :update, :toggle ]
 
   def new
-
   end
 
   def create
