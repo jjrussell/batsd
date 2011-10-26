@@ -43,10 +43,6 @@ class Job::MasterReloadStatzController < Job::JobController
         :select     => 'publisher_app_id AS offer_id, count(*) AS published_offers, sum(publisher_amount) AS offers_revenue',
         :group      => 'publisher_app_id',
         :conditions => "path LIKE '%reward%' AND #{time_conditions}" })
-    # connects = VerticaCluster.query('analytics.connects', {
-    #     :select     => 'app_id AS offer_id, count(*) AS connects',
-    #     :group      => 'app_id',
-    #     :conditions => "path LIKE '%connect%' AND #{time_conditions}" })
 
     cached_stats = {}
     advertiser_stats.each do |stats|
@@ -58,10 +54,6 @@ class Job::MasterReloadStatzController < Job::JobController
       cached_stats[stats[:offer_id]]['published_offers'] = number_with_delimiter(stats[:published_offers])
       cached_stats[stats[:offer_id]]['offers_revenue']   = number_to_currency(stats[:offers_revenue] / 100.0)
     end
-    # connects.each do |stats|
-    #   cached_stats[stats[:offer_id]] ||= {}
-    #   cached_stats[stats[:offer_id]]['connects'] = number_with_delimiter(stats[:connects])
-    # end
 
     cached_metadata = {}
     Offer.find_each(:conditions => [ 'id IN (?)', cached_stats.keys ]) do |offer|
@@ -78,8 +70,6 @@ class Job::MasterReloadStatzController < Job::JobController
       metadata['offer_type']      = offer.item_type
       cached_metadata[offer.id]   = metadata
 
-      # TODO: populate these with the correct values
-      cached_stats[offer.id]['connects'] = 0
       cached_stats[offer.id]['overall_store_rank'] = @combined_ranks[offer.third_party_data] || '-'
     end
 

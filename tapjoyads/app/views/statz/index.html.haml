@@ -58,7 +58,6 @@
         %a{ :id => 'toggle_icons', :href => '#' } Icon
       %th Offer
       %th{ :class => 'headerSortUp header' } Conversions
-      %th Connects
       %th Store rank
       %th Price
       %th Payment
@@ -75,7 +74,6 @@
         %b Filters
         (#{link_to('reset all', '#', :id => 'reset_filters')})
       %td.filter= select_tag('conversions_filter', options_for_select(filter_options(:conversions)))
-      %td.filter= select_tag('connects_filter', options_for_select(filter_options(:connects)))
       %td.filter= select_tag('rank_filter', options_for_select(filter_options(:rank)))
       %td.filter= select_tag('price_filter', options_for_select(filter_options(:free)))
       %td.filter &nbsp;
@@ -93,7 +91,6 @@
         metadata = @cached_metadata[offer_id]
         tr_classes = []
         tr_classes << (stats['conversions'] == '0'         ? 'zero_conversions' : 'nonzero_conversions')
-        tr_classes << (stats['connects'] == '0'            ? 'zero_connects'    : 'nonzero_connects')
         tr_classes << (stats['overall_store_rank'] == '-'  ? 'unranked'         : 'ranked')
         tr_classes << (metadata['price'] == '$0.00'        ? 'free'             : 'paid')
         tr_classes << metadata['platform'].to_s.downcase
@@ -108,7 +105,6 @@
           %img.icon.hidden{ :s => metadata['icon_url'] }
         %td= link_to(metadata['offer_name'], statz_path(offer_id))
         %td= stats['conversions']
-        %td= stats['connects']
         %td= stats['overall_store_rank']
         %td= metadata['price']
         %td= metadata['payment']
@@ -155,13 +151,12 @@
         headers: {
           0:  { sorter: false },
           2:  { sorter: 'formatted-number-column' },
-          3:  { sorter: 'formatted-number-column' },
-          4:  { sorter: 'rank-column' },
+          3:  { sorter: 'rank-column' },
+          4:  { sorter: 'currency-column' },
           5:  { sorter: 'currency-column' },
           6:  { sorter: 'currency-column' },
-          7:  { sorter: 'currency-column' },
-          10: { sorter: 'formatted-number-column' },
-          11: { sorter: 'currency-column' }
+          9: { sorter: 'formatted-number-column' },
+          10: { sorter: 'currency-column' }
         }
       });
 
@@ -194,7 +189,6 @@
       $('.filter select').change(function(){
         var selectValues = [
           String( $('#conversions_filter').val() ).toLowerCase(),
-          String( $('#connects_filter').val() ).toLowerCase(),
           String( $('#rank_filter').val() ).toLowerCase(),
           String( $('#price_filter').val() ).toLowerCase(),
           String( $('#published_offers_filter').val() ).toLowerCase(),
