@@ -2,8 +2,9 @@
   - link_to(get_click_url(@offer), :class => 'image-link') do
     %img{ :src => "#{CLOUDFRONT_URL}/images/blank.png", :class => 'creative', :id => 'creative' }
 .buttons#buttons
+  - action_text = @offer.rewarded? ? "Earn #{@currency.get_visual_reward_amount(@offer, params[:display_multiplier])} #{@currency.name}" : "Download"
   = link_to('Skip', 'dismiss', :class => 'skip', :id => 'skip')
-  = link_to("#{@offer.item_type == 'App' ? 'Download' : 'Earn now'}", get_click_url(@offer), :class => 'download', :id => 'download')
+  = link_to("#{action_text}", get_click_url(@offer), :class => 'download', :id => 'download')
 
 - content_for :page_javascript do
   :plain
