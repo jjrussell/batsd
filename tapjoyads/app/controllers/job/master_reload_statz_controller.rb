@@ -83,12 +83,20 @@ class Job::MasterReloadStatzController < Job::JobController
       cached_stats[offer.id]['overall_store_rank'] = @combined_ranks[offer.third_party_data] || '-'
     end
 
-    cached_stats = cached_stats.sort do |s1, s2|
+    cached_stats_adv = cached_stats.sort do |s1, s2|
       s2[1]['conversions'].gsub(',', '').to_i <=> s1[1]['conversions'].gsub(',', '').to_i
     end
+    cached_stats_pub = cached_stats.sort do |s1, s2|
+      s2[1]['published_offers'].gsub(',', '').to_i <=> s1[1]['published_offers'].gsub(',', '').to_i
+    end
+    top_cached_stats = (cached_stats_adv.first(50) + cached_stats_pub.first(50)).uniq
+    top_offer_ids = Set.new(top_cached_stats.map { |pair| pair[0] })
+    top_cached_metadata = cached_metadata.reject { |k, v| !top_offer_ids.include?(k) }
 
+    Mc.distributed_put("statz.top_metadata.#{timeframe}", top_cached_metadata)
+    Mc.distributed_put("statz.top_stats.#{timeframe}", top_cached_stats)
     Mc.distributed_put("statz.metadata.#{timeframe}", cached_metadata)
-    Mc.distributed_put("statz.stats.#{timeframe}", cached_stats)
+    Mc.distributed_put("statz.stats.#{timeframe}", cached_stats_adv)
     Mc.put("statz.last_updated_start.#{timeframe}", start_time.to_f)
     Mc.put("statz.last_updated_end.#{timeframe}", end_time.to_f)
   end

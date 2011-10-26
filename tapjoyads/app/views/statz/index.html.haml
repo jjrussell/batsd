@@ -1,12 +1,12 @@
 - timeframe = @timeframe == '7_days' ? '7 days' : @timeframe == '1_month' ? '30 days' : '24 hours'
-- @page_title = "Stats for last #{timeframe}"
+- @page_title = "Stats #{@display == 'summary' ? 'summary ' : ''}for last #{timeframe}"
 
-%h1 Stats for last #{timeframe}
+%h1= @page_title
 
-%ul.timeframes
-  %li= @timeframe == '24_hours' ? '24 hours' : link_to('24 hours', statz_index_path)
-  %li= @timeframe == '7_days' ? '7 days' : link_to('7 days', statz_index_path(:timeframe => '7_days'))
-  %li= @timeframe == '1_month' ? '30 days' : link_to('30 days', statz_index_path(:timeframe => '1_month'))
+%form.filter
+  = select_tag(:timeframe, options_for_select([['24 hours', '24_hours'], ['7 days', '7_days'], ['30 days', '1_month']], @timeframe))
+  = select_tag(:display, options_for_select([['Summary', 'summary'], ['Complete', 'complete']], @display))
+  = submit_tag('Update')
 
 .tjform
   = label_tag('search_box', 'Offer Name:')
@@ -272,23 +272,17 @@
       font-size: 14px;
     }
 
-    ul.timeframes {
-      margin: -10px 0 10px;
-      padding: 0px;
-    }
-    ul.timeframes li {
-      display: inline;
-    }
-    ul.timeframes li:after {
-      content: " |";
-    }
-    ul.timeframes li:last-child:after {
-      content: "";
-    }
-
     #money_totals {
       margin-top: 15px;
     }
     #money_totals h3 {
       margin-top: 5px;
+    }
+
+    h1 {
+      margin-bottom: 10px;
+    }
+
+    .filter {
+      margin-bottom: 10px;
     }

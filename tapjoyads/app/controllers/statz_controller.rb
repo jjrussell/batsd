@@ -12,14 +12,16 @@ class StatzController < WebsiteController
 
   def index
     @timeframe = params[:timeframe] || '24_hours'
+    @display   = params[:display]   || 'summary'
 
     @money_stats = Mc.get('money.cached_stats') || { @timeframe => {} }
     @money_last_updated = Time.zone.at(Mc.get("money.last_updated") || 0)
 
+    prefix = @display == 'summary' ? 'top_' : ''
+    @cached_metadata = Mc.distributed_get("statz.#{prefix}metadata.#{@timeframe}") || {}
+    @cached_stats = Mc.distributed_get("statz.#{prefix}stats.#{@timeframe}") || []
     @last_updated_start = Time.zone.at(Mc.get("statz.last_updated_start.#{@timeframe}") || 0)
     @last_updated_end = Time.zone.at(Mc.get("statz.last_updated_end.#{@timeframe}") || 0)
-    @cached_metadata = Mc.distributed_get("statz.metadata.#{@timeframe}") || {}
-    @cached_stats = Mc.distributed_get("statz.stats.#{@timeframe}") || []
   end
 
   def udids
