@@ -109,7 +109,7 @@ private
       else
         begin
           self.referred_by, invitation_id = SymmetricCrypto.decrypt_object(referrer, SYMMETRIC_CRYPTO_SECRET).split(',')
-        rescue OpenSSL::Cipher::CipherError => e
+        rescue OpenSSL::Cipher::CipherError
         end
         if referred_by? && invitation_id
           referred_by_gamer = Gamer.find(self.referred_by)
