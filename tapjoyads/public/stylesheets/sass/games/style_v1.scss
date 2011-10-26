@@ -773,6 +773,20 @@ form#new_gamer_session .login_pass input[type=submit] {
 #invite_friends .social_btn.fb:hover, #invite_friends .social_btn.fb:action {
   background-position: 100% 0;
 }
+.web #invite_friends .social_btn.tw,
+.ipad #invite_friends .social_btn.tw {
+  background-position: 0 234px;
+}
+.mobile #invite_friends .social_btn.tw {
+  background-position: 0 117px;
+}
+.web #invite_friends .social_btn.tw:hover, .web #invite_friends .social_btn.tw:action,
+.ipad #invite_friends .social_btn.tw:hover, .ipad #invite_friends .social_btn.tw:action {
+  background-position: 100% 234px;
+}
+.mobile #invite_friends .social_btn.tw:hover, .mobile #invite_friends .social_btn.tw:action {
+  background-position: 100% 117px;
+}
 #invite_friends .social_btn.email {
   background-position: 0 100%;
 }
