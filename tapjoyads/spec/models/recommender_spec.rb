@@ -13,25 +13,37 @@ describe Recommender do
   end
   
   it "should return recommendations for app in the correct data structure" do
-    app = @recommenders.first.most_popular_apps.last
+    app = @recommenders.first.most_popular_apps.last[:app_id]
     @recommenders.each do |r| 
       r.recommendations_for_app(app).should be_an Array
-      r.recommendations_for_app(app).first.should be_a String
-      r.recommendations_for_app(app, :with_weights => true).first.should be_an Array
-      r.recommendations_for_app(app, :with_weights => true).first.first.should be_a String
-      r.recommendations_for_app(app, :with_weights => true).first.last.should be_a Numeric
+      r.recommendations_for_app(app, :n => 15).should have_at_most(15).items
+      r.recommendations_for_app(app).first.should be_a Hash
+      r.recommendations_for_app(app).first[:app_id].should be_a String
+      r.recommendations_for_app(app).first[:app_name].should be_a String
+      r.recommendations_for_app(app).first[:weight].should be_a Numeric
     end
+  end
+  
+  it "should return recommendations for udid in the correct data structure" do
+    udid = Recommenders::JoeyBayesianRecommender.instance.random_udid
+    @recommenders.each do |r|    
+      r.recommendations_for_udid(udid).should be_an Array
+      r.recommendations_for_udid(udid, :n => 15).should have_at_most(15).items
+      r.recommendations_for_udid(udid).first.should be_a Hash
+      r.recommendations_for_udid(udid).first[:app_id].should be_a String
+      r.recommendations_for_udid(udid).first[:app_name].should be_a String
+      r.recommendations_for_udid(udid).first[:weight].should be_a Numeric
+    end                          
   end
 
   it "should return the most popular apps with the correct options" do
     @recommenders.each do |r|
       r.most_popular_apps.should be_an Array
-      r.most_popular_apps(:n => 15).should have(15).items
-      r.most_popular_apps.first.should be_a String
-      r.most_popular_apps(:with_weights => true).first.should be_an Array
-      r.most_popular_apps(:with_weights => true).first.should have(2).items
-      r.most_popular_apps(:with_weights => true).first.first.should be_a String
-      r.most_popular_apps(:with_weights => true).first.last.should be_a Numeric
+      r.most_popular_apps(:n => 15).should have_at_most(15).items
+      r.most_popular_apps.first.should be_a Hash
+      r.most_popular_apps.first[:app_id].should be_a String
+      r.most_popular_apps.first[:app_name].should be_a String
+      r.most_popular_apps.first[:weight].should be_a Numeric
     end
   end
   

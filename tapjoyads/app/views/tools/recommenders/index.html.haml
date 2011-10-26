@@ -13,21 +13,31 @@
           %td= select_tag :recommender, options_for_select(@recommenders.invert, params[:recommender].to_sym)
         -else
           %td= select_tag :recommender, options_for_select(@recommenders.invert)
-        
       %tr
-        %th= label_tag :app_id, "Enter An App ID"
-        %td= text_field_tag :app_id, params[:app_id], :size => 60
+        %th Recommend for
+        %td
+          - app_id_selected = params[:recommend_for].blank? ? true : params[:recommend_for] =~ /app/
+          %div 
+            = radio_button_tag :recommend_for, :app_id, app_id_selected
+            = label_tag :recommend_for, "Application"
+          %div 
+            = radio_button_tag :recommend_for, :udid, !app_id_selected
+            = label_tag :recommend_for, "Device"
       %tr
-        %th= label_tag :udid, "Enter A Device ID"
-        %td= text_field_tag :udid, params[:udid] , :size => 60
+        %th= label_tag :app_or_device_id, "Enter App ID or Device UDID:"
+        %td= text_field_tag :app_or_device_id, params[:app_or_device_id] , :size => 60
+      %tr
+        %th= label_tag :n, "How many recommendations? (if available)"
+        %td= text_field_tag :n, params[:n], :size => 3
+      %tr
+        %th= label_tag :with_weights, "Show weights with recommendations?"
+        %td= check_box_tag :with_weights, true, !params[:with_weights].blank?
       %tr
         %td{ :colspan => 2 }= submit_tag('Get Recommendations')
 
 
-- unless @recs_for_app.nil?
-  = render :partial => 'recommendations', :locals => {:recs_for => "#{@recommender.app_name(params[:app_id])} (#{params[:app_id]})", :collection=>@recs_for_app}
-- unless @recs_for_udid.nil?
-  = render :partial => 'recommendations', :locals => {:recs_for => "udid #{params[:udid]}", :collection=>@recs_for_udid}
+- unless @recommendations.nil?
+  = render :partial => 'recommendations', :locals => {:recommendations_header => @recommendations_header, :recommendations=>@recommendations}
   
 
 - content_for :page_javascript do

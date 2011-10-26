@@ -19,6 +19,12 @@ class Recommender  #interface for all recommenders
   end
   
   # END RECOMMENDER INTERFACE
+  #useful methods
+  def top_apps_in_hash(weighted_apps_hash, n)
+    return [] if weighted_apps_hash.nil?
+    n = 10 if n.nil? || !n.is_a?(Numeric)
+    weighted_apps_hash.sort_by{|app, weight| -weight}[0...n].map{|x, y| {:app_name => app_name(x), :app_id => x, :weight => y}}
+  end
   
   
   class << self

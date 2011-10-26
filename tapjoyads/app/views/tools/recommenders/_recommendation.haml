@@ -1,9 +1,5 @@
-- if recommendation.is_a? Array
-  %tr 
-    %td=@recommender.app_name(recommendation.first)
-    %td=recommendation.first
-    %td=recommendation.last
-- else
-  %tr
-    %td=@recommender.app_name(recommendation)
-    %td=recommendation
+%tr
+  %td=recommendation[:app_id]
+  %td=recommendation[:app_name]
+  - unless @options[:with_weights].blank?
+    %td=recommendation[:weight] 

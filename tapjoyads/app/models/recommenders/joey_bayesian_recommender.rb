@@ -14,23 +14,23 @@ class Recommenders::JoeyBayesianRecommender < Recommender
   end
   
   def most_popular_apps(opts={})
-    top_items_in_hash(@most_popular_apps, opts)
+    top_apps_in_hash(@most_popular_apps, opts[:n])
   end
   
   def recommendations_for_app(app, opts={})
-    top_items_in_hash(@recs_for_app[app], opts)
+    top_apps_in_hash(@recs_for_app[app], opts[:n])
   end
 
   def recommendations_for_udid(udid, opts={})
-    top_items_in_hash(@recs_for_udid[udid], opts)
+    top_apps_in_hash(@recs_for_udid[udid], opts[:n])
   end
   
   def random_udid
-    @recs_for_udid.keys.rand
+    @recs_for_udid.keys.sample
   end
   
   def random_app
-    @app_names.keys.rand
+    @app_names.keys.sample
   end
   
   def app_name(app_id)
@@ -39,13 +39,6 @@ class Recommenders::JoeyBayesianRecommender < Recommender
 
   
   private
-  
-  def top_items_in_hash(weighted_items_hash, opts={})
-    return [] if weighted_items_hash.nil?
-    opts.reverse_merge! :n => 10, :with_weights => false
-    items = weighted_items_hash.sort_by{|item, weight| -weight}[0...opts[:n]]
-    opts[:with_weights] ? items : items.map(&:first)
-  end
   
   def parse_file(file_name)
     file_lines(file_name).each do |line|

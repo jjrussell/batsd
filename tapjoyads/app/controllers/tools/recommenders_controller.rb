@@ -7,14 +7,31 @@ class Tools::RecommendersController < WebsiteController
     @recommenders = Recommender::ACTIVE_RECOMMENDERS
     unless params[:recommender].blank?
       @recommender = "Recommenders::#{params[:recommender].to_s.camelize}".constantize.instance
-      @recs_for_app = @recommender.recommendations_for_app(params[:app_id], :n=>20, :with_weights => true) unless params[:app_id].blank?
-      @recs_for_udid = @recommender.recommendations_for_udid(params[:udid], :n=>20, :with_weights => true) unless params[:udid].blank?
+      @options = {}
+      n = params[:n].blank? ? 20 : params[:n].to_i
+      @options[:with_weights] = !params[:with_weights].blank?
+      if params[:app_or_device_id].blank?
+        @recommendations_header = "Most Popular Apps: (Enter an app id or a device id for specific recommendations)"
+        @recommendations = @recommender.most_popular_apps :n => n
+      elsif params[:recommend_for]=='udid'
+        @recommendations_header = "Recommendations for Device #{params[:app_or_device_id]}"
+        @recommendations = @recommender.recommendations_for_udid params[:app_or_device_id], :n => n
+      else
+        @recommendations_header = "Recommendations for #{@recommender.app_name(params[:app_or_device_id])} (#{params[:app_or_device_id]})"
+        @recommendations = @recommender.recommendations_for_app params[:app_or_device_id], :n => n
+      end
+    end
+    respond_to do |format|
+      format.html do
+      end
+      format.json do
+        render :json => @recommendations.to_json
+      end
     end
   end
   
   def create
-    # redirect_to tools_recommenders_path(params)
-    redirect_to tools_recommenders_path :recommender => params[:recommender], :app_id => params[:app_id], :udid => params[:udid]
+    redirect_to params.merge!(:action => :index)
   end
 
 end
