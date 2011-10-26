@@ -1,9 +1,12 @@
-require 'test_helper'
+require 'spec/spec_helper'
 
-class AppsControllerTest < ActionController::TestCase
-  setup :activate_authlogic
-  context "An admin user" do
-    setup do
+describe AppsController do
+  before :each do
+    activate_authlogic
+  end
+
+  describe "An admin user" do
+    before :each do
       @user = Factory(:admin)
       @partner = Factory(:partner, :pending_earnings => 10000, :balance => 10000, :users => [@user])
       Factory(:app, :partner => @partner)
@@ -11,35 +14,35 @@ class AppsControllerTest < ActionController::TestCase
       login_as(@user)
     end
 
-    context "accessing apps index" do
-      should "be shown an app they own" do
+    describe "accessing apps index" do
+      it "should be shown an app they own" do
         get 'index'
-        assert_response(:redirect)
-        assert @partner.apps.include? assigns(:app)
+        response.should be_redirect
+        @partner.apps.should include(assigns(:app))
       end
     end
 
-    context "accessing app show" do
-      should "be shown last app visited" do
+    describe "accessing app show" do
+      it "should be shown last app visited" do
         last_app = @partner.apps.last
         get 'show', :id => last_app.id
-        assert_equal last_app, assigns(:app)
-        assert_equal last_app.id, session[:last_shown_app]
+        last_app.should == assigns(:app)
+        last_app.id.should == session[:last_shown_app]
         get 'index'
-        assert_equal last_app, assigns(:app)
+        last_app.should == assigns(:app)
       end
 
-      should "see someone else's app" do
+      it "should see someone else's app" do
         someone_else = Factory(:partner, :pending_earnings => 10000, :balance => 10000)
         not_my_app = Factory(:app, :partner => someone_else)
         get 'show', :id => not_my_app.id
-        assert_response(200)
+        response.should be_success
       end
     end
   end
 
-  context "A User with apps" do
-    setup do
+  describe "A User with apps" do
+    before :each do
       @user = Factory(:user)
       @partner = Factory(:partner, :pending_earnings => 10000, :balance => 10000, :users => [@user])
       Factory(:app, :partner => @partner)
@@ -47,54 +50,54 @@ class AppsControllerTest < ActionController::TestCase
       login_as(@user)
     end
 
-    context "accessing apps index" do
-      should "be shown an app they own" do
+    describe "accessing apps index" do
+      it "should be shown an app they own" do
         get 'index'
-        assert_response(:redirect)
-        assert @partner.apps.include? assigns(:app)
+        response.should be_redirect
+        @partner.apps.should include(assigns(:app))
       end
     end
 
-    context "accessing app show" do
-      should "be shown last app visited" do
+    describe "accessing app show" do
+      it "should be shown last app visited" do
         last_app = @partner.apps.last
         get 'show', :id => last_app.id
-        assert_equal last_app, assigns(:app)
-        assert_equal last_app.id, session[:last_shown_app]
+        last_app.should == assigns(:app)
+        last_app.id.should == session[:last_shown_app]
         get 'index'
-        assert_equal last_app, assigns(:app)
+        last_app.should == assigns(:app)
       end
 
-      should "not see someone else's app" do
+      it "should not see someone else's app" do
         someone_else = Factory(:partner, :pending_earnings => 10000, :balance => 10000)
         not_my_app = Factory(:app, :partner => someone_else)
-        assert_raise(ActiveRecord::RecordNotFound) do
+        lambda {
           get 'show', :id => not_my_app.id
-        end
+        }.should raise_error(ActiveRecord::RecordNotFound)
       end
     end
   end
 
-  context "Users without apps" do
-    setup do
+  describe "Users without apps" do
+    before :each do
       @user = Factory(:admin)
       @partner = Factory(:partner, :pending_earnings => 10000, :balance => 10000, :users => [@user])
       login_as(@user)
     end
 
-    context "accessing apps index" do
-      should "redirect to app creation page" do
+    describe "accessing apps index" do
+      it "should redirect to app creation page" do
         get 'index'
-        assert_redirected_to(new_app_path)
+        response.should redirect_to(new_app_path)
       end
     end
 
-    context "accessing app show" do
-      should "redirect to app creation page" do
+    describe "accessing app show" do
+      it "should redirect to app creation page" do
         someone_else = Factory(:partner, :pending_earnings => 10000, :balance => 10000)
         not_my_app = Factory(:app, :partner => someone_else)
         get 'show', :id => not_my_app.id
-        assert_redirected_to(new_app_path)
+        response.should redirect_to(new_app_path)
       end
     end
   end
