@@ -1,31 +1,24 @@
 ActionController::Routing::Routes.draw do |map|
   map.connect 'healthz', :controller => :healthz, :action => :index
 
-  if MACHINE_TYPE == 'dashboard'
-    ActionController::Routing::Routes.add_configuration_file(Rails.root.join('config/routes/dashboard.rb'))
-    ActionController::Routing::Routes.add_configuration_file(Rails.root.join('config/routes/api.rb'))
-    ActionController::Routing::Routes.add_configuration_file(Rails.root.join('config/routes/sdks.rb'))
-  elsif MACHINE_TYPE == 'games'
-    ActionController::Routing::Routes.add_configuration_file(Rails.root.join('config/routes/games.rb'))
-  elsif MACHINE_TYPE == 'website'
-    ActionController::Routing::Routes.add_configuration_file(Rails.root.join('config/routes/website.rb'))
-    ActionController::Routing::Routes.add_configuration_file(Rails.root.join('config/routes/api.rb'))
-    ActionController::Routing::Routes.add_configuration_file(Rails.root.join('config/routes/sdks.rb'))
-  elsif MACHINE_TYPE == 'web'
-    ActionController::Routing::Routes.add_configuration_file(Rails.root.join('config/routes/web.rb'))
-    ActionController::Routing::Routes.add_configuration_file(Rails.root.join('config/routes/legacy.rb'))
-    ActionController::Routing::Routes.add_configuration_file(Rails.root.join('config/routes/default.rb'))
-  elsif MACHINE_TYPE == 'jobs' || MACHINE_TYPE == 'masterjobs'
-    ActionController::Routing::Routes.add_configuration_file(Rails.root.join('config/routes/default.rb'))
+  routes = case MACHINE_TYPE
+  when 'dashboard'
+    %w( dashboard api sdks )
+  when 'games'
+    %w( games )
+  when 'website'
+    %w( website api sdks )
+  when 'web'
+    %w( web legacy default )
+  when 'jobs', 'masterjobs'
+    %w( default )
   else
     # test/dev
-    ActionController::Routing::Routes.add_configuration_file(Rails.root.join('config/routes/api.rb'))
-    ActionController::Routing::Routes.add_configuration_file(Rails.root.join('config/routes/sdks.rb'))
-    ActionController::Routing::Routes.add_configuration_file(Rails.root.join('config/routes/dashboard.rb'))
-    ActionController::Routing::Routes.add_configuration_file(Rails.root.join('config/routes/games.rb'))
-    ActionController::Routing::Routes.add_configuration_file(Rails.root.join('config/routes/website.rb'))
-    ActionController::Routing::Routes.add_configuration_file(Rails.root.join('config/routes/web.rb'))
-    ActionController::Routing::Routes.add_configuration_file(Rails.root.join('config/routes/legacy.rb'))
-    ActionController::Routing::Routes.add_configuration_file(Rails.root.join('config/routes/default.rb'))
+    %w( api sdks dashboard games website web legacy default )
+  end
+
+  routes.each do |route|
+    path = Rails.root.join("config/routes/#{route}.rb")
+    ActionController::Routing::Routes.add_configuration_file(path)
   end
 end
