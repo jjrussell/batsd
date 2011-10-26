@@ -56,20 +56,21 @@ class Job::MasterReloadStatzController < Job::JobController
     end
 
     cached_metadata = {}
-    Offer.find_each(:conditions => [ 'id IN (?)', cached_stats.keys ]) do |offer|
-      metadata                    = {}
-      metadata['icon_url']        = offer.get_icon_url
-      metadata['offer_name']      = offer.name_with_suffix
-      metadata['price']           = number_to_currency(offer.price / 100.0)
-      metadata['payment']         = number_to_currency(offer.payment / 100.0)
-      metadata['balance']         = number_to_currency(offer.partner.balance / 100.0)
-      metadata['conversion_rate'] = number_to_percentage((offer.conversion_rate || 0) * 100.0, :precision => 1)
-      metadata['platform']        = offer.get_platform
-      metadata['featured']        = offer.featured?
-      metadata['rewarded']        = offer.rewarded?
-      metadata['offer_type']      = offer.item_type
-      cached_metadata[offer.id]   = metadata
+    Offer.find_each(:conditions => [ 'id IN (?)', cached_stats.keys ], :include => :partner) do |offer|
+      metadata = {
+        'icon_url'        => offer.get_icon_url,
+        'offer_name'      => offer.name_with_suffix,
+        'price'           => number_to_currency(offer.price / 100.0),
+        'payment'         => number_to_currency(offer.payment / 100.0),
+        'balance'         => number_to_currency(offer.partner.balance / 100.0),
+        'conversion_rate' => number_to_percentage((offer.conversion_rate || 0) * 100.0, :precision => 1),
+        'platform'        => offer.get_platform,
+        'featured'        => offer.featured?,
+        'rewarded'        => offer.rewarded?,
+        'offer_type'      => offer.item_type,
+      }
 
+      cached_metadata[offer.id] = metadata
       cached_stats[offer.id]['overall_store_rank'] = @combined_ranks[offer.third_party_data] || '-'
     end
 
