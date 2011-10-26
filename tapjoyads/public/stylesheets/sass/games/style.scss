@@ -1,53 +1,55 @@
-/*--------------------*/
+//-------------------------------------------
+// Global Mixins
+//-------------------------------------------
 
 @import "games_mixins";
 
-/*--------------------*/
+//-------------------------------------------
+// Import Base CSS 
+//-------------------------------------------
 
-html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, big, cite, code, del, dfn, em, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var, b, u, i, center, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td, article, aside, canvas, details, embed,  figure, figcaption, footer, header, hgroup, menu, a, output, ruby, section, summary, time, mark, audio, video { margin: 0; padding: 0; border: 0; font-size: 100%; font: inherit; vertical-align: baseline; }
-article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, section { display: block; }
-body { line-height: 1; }
-ol, ul { list-style: none; }
-blockquote, q { quotes: none; }
-blockquote:before, blockquote:after, q:before, q:after { content: ''; content: none; }
-table { border-collapse: collapse; border-spacing: 0; }
-html { -webkit-text-size-adjust: none; }
-*:focus { outline: none; }
+@import "games-base";
 
-body {
-  background: #F7F7F7;
-  font-family: $main-font-name;
-  color: $main-font-color;
-  height: 100%;
+//-------------------------------------------
+//  Basics
+//-------------------------------------------
+
+#jqt {
+  color: #FFF;
+  opacity: 0.05;
   width: 100%;
-  -webkit-font-smoothing: antialiased;
-  -webkit-tap-highlight-color: rgba(0,0,0,0);
-  -webkit-touch-callout: none;
-}
-a, a:visited {
-  text-decoration: none;
-  color: $main-font-color;
-  -webkit-tap-highlight-color: rgba(0,0,0,0);
+  height: 100%;
 }
 
-#jqt {}
+@font-face {
+  font-family: 'Cooper';
+  font-style: normal;
+  font-weight: bold;
+  src: local("Cooper"), url("/fonts/CooperStd.ttf") format("truetype");
+}
+@font-face {
+  font-family: 'AmericanTypewriter';
+  font-style: normal;
+  font-weight: bold;
+  src: local("AmericanTypewriter"), url("/fonts/AmericanTypewriter.ttf") format("truetype");
+}
 
-/*------ Top Nav -----*/
+//-------------------------------------------
+//  Top Nav
+//-------------------------------------------
 .nav {
-  background-color: $nav-bg-color;
-  background: $nav-bg-color url('/images/games/v2/nav_bg_hd.png') repeat;
+  background: url('/images/games/v2/nav_bg_hd.png'), -webkit-gradient(linear, left top, left bottom, from(#444444), to(#999999));
   border-bottom: 1px solid #9D9990;
   color: $main-font-color;
-  //@include box-shadow;
   padding: $nav-padding-v $nav-padding-h;
   
   .nav_container {
     width: 100%;
     
     .aside_nav, .aside_login {
+      float: right;
       font-size: 0.8em;
       font-weight: bold;
-      float: right;
       margin: 2px 6px 0 0;
       position: relative;
       top: 24px;
@@ -56,6 +58,7 @@ a, a:visited {
       margin-left: $nav-padding-h;
     }
     .aside_login {
+      text-align: center;
       top: 8px;
       
       form#new_gamer_session input {
@@ -68,6 +71,7 @@ a, a:visited {
         border: 1px solid #B0B0B0;
         border-color: #B0131D;
         color: #FFF;
+        cursor: pointer;
         font-size: 0.7em;
         position: relative;
         margin-left: 6px;
@@ -78,12 +82,11 @@ a, a:visited {
         @include inset-shadow;
         @include gradient(#CF1623, #EA1927);
       }
-      .fieldWithErrors{
+      .fieldWithErrors {
         float: left;
       }
     }
     .logo {
-      background: transparent url('/images/games/v2/logo_hd.png') no-repeat;
       height: 76px;
       margin: 0 12px 0 24px;
       float: left;
@@ -91,7 +94,7 @@ a, a:visited {
     }
     .nav_buttons {
       float: left;
-      margin: 0 auto 0;
+      margin: 0 auto;
     }
     .nav_buttons a {
       float: left;
@@ -154,14 +157,15 @@ a, a:visited {
     .nav_buttons li.active_button, .nav_buttons li:active {
       border-color: #B0131D;
       color: #FFF;
-      text-shadow: 0 1px 1px #444;
+      @include inset-text-shadow;
+      @include box-shadow(#999);
       @include gradient(#CF1623, #EA1927);
     }
-    .nav_buttoons li.active {
+    .nav_buttons li.active {
       cursor: default;
     }
-  } // .nav_container
-} // .nav
+  }
+}
 
 #login .content_box {
   margin: 0 auto;
@@ -185,29 +189,47 @@ a, a:visited {
   width: 310px;
 }
 
-#support_request .content_box.fixed {
-  height: 200px;
+#support_request {
+  .content_box {
+    width: 350px;
+  }
+  textarea {
+    width: 310px;
+  }
+  .content_box.fixed {
+    height: 200px;
+  }
 }
 
 .button.red {
+  border: 1px solid #B0B0B0;
   border-color: #B0131D;
   color: #FFF;
   cursor: pointer;
-  text-shadow: 0 1px 1px #444;
-  @include inset-button(16px, 6px 4px);
-  @include inset-shadow;
-  @include gradient(#CF1623, #EA1927);
-}
-.button.red.try_again {
-  margin: 0 auto;
+  font-size: 0.9em;
+  position: relative;
+  margin: 8px auto 0;
   width: 120px;
+  @include inset-button(16px, 8px 10px);
+  @include inset-shadow;
+  @include inset-text-shadow;
+  @include box-shadow(#999);
+  @include gradient(#CF1623, #EA1927);
 }
 
 .loading_animation {
-  background: transparent url('/images/games/v2/loader.gif') no-repeat;
   margin: 12px auto;
   height: 11px;
   width: 16px;
+}
+
+//-------------------------------------------
+// Login Page
+//-------------------------------------------
+#login .content_box {
+  margin: 0 auto;
+  padding: 20px;
+  width: 460px;
 }
 
 .content_wrapper {
@@ -215,22 +237,41 @@ a, a:visited {
   .content {
   }
   
+  //------------------------
+  // Staff Pick
   .feat_review {
+    height: 280px;
+    width: 640px;
     background-color: #FEFEFE;
     border: 1px solid #DEDEDE;
     border-bottom: 1px solid #9D9990;
     @include rounded-corners;
   }
+  .feat_review.min {
+    height: 130px;
+    width: 640px;
+  }
+  .feat_review {
+    margin: 12px auto;
+  }
+  .feat_toggle {
+    background: transparent url("/images/games/feat_open_web.png") no-repeat center center;
+    cursor: pointer;
+    float: right;
+    height: 50px;
+    position: relative;
+    top: 42px;
+    right: 30px;
+    width: 50px;
+  }
   
   .sign_up_icon {
-    background: transparent url('/images/games/v2/sign_up_hd.png') no-repeat;
     height: 30px;
     margin: 0 auto;
     width: 100px;
   }
 
   .register_header {
-    background: transparent url('/images/games/v2/register_header.png') no-repeat;
     height: 57px;
     margin: 0 auto 24px;
     width: 400px;
@@ -261,21 +302,22 @@ a, a:visited {
       font-size: 0.9em;
       position: relative;
       margin: 8px auto 0;
-      text-shadow: 0 1px 1px #444;
       width: 100px;
       @include inset-button(16px, 8px 10px);
       @include inset-shadow;
+      @include inset-text-shadow;
+      @include box-shadow(#999);
       @include gradient(#CF1623, #EA1927);
     }
     
     form#new_gamer {
       
       select {
-       border: 1px solid #C1C1C1;
-       padding: 4px;
-       -webkit-appearance: none;
-       @include inset-button(16px, 6px 10px);
-       @include inset-shadow;
+        border: 1px solid #C1C1C1;
+        padding: 4px;
+        -webkit-appearance: none;
+        @include inset-button(16px, 6px 10px);
+        @include inset-shadow;
       }
     }
   }
@@ -287,7 +329,7 @@ a, a:visited {
   .profile .field {
     margin: 8px 0;
   }
-  
+
   .profile input[type=text],
   .profile input[type=password] {
     border: 1px solid #C1C1C1;
@@ -296,7 +338,7 @@ a, a:visited {
     @include rounded-corners(10px);
     @include inset-shadow;
   }
-  
+
   .profile select {
     border: 1px solid #C1C1C1;
     width: 98%;
@@ -335,8 +377,11 @@ a, a:visited {
     @include gradient(#CF1623, #EA1927);
   }
 
-} //.content_wrapper
+}
 
+//-------------------------------------------
+// Device Selector
+//-------------------------------------------
 .device_wrapper {
   color: $main-font-color;
   position: absolute;
@@ -405,4 +450,312 @@ a, a:visited {
 
 .forgot_pass {
   font-size: 0.8em;
+}
+
+//-------------------------------------------
+//  Spinner Image
+//-------------------------------------------
+.image_loader_wrapper {
+  background-color: #333;
+  margin: 6px auto;
+  height: 43px;
+  padding: 2px;
+  opacity: 0.8;
+  width: 43px;
+  -moz-border-radius: 12px;
+  -webkit-border-radius: 12px;
+}
+.dialog_image, .image_loader {
+  background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACMAAAAjBAMAAADs965qAAAAA3NCSVQICAjb4U/gAAAAMFBMVEX////x8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHvvEhiAAAAEHRSTlMAESIzRFVmd4iZqrvM3e7/dpUBFQAAAAlwSFlzAAAK6wAACusBgosNWgAAABx0RVh0U29mdHdhcmUAQWRvYmUgRmlyZXdvcmtzIENTNXG14zYAAAEaSURBVCiRY2AgATCapaUqoIiIzN5z5syZJiQRltW7gUJ3705C6OraDRG6GwATkli1evdusNBTuKJVq3c4MjBX3733DqqMfdWqFWDbau+9ewIRspy5KgHMYL737g1EX+fMaVAjbN+9KwDLzZxZAHPMu3cXwEbNnAl397p3YDslOmD6GBjs/v8AURodzXAh3v+/QZRHRyNciPP/f4hQA1yIHVMICtzLC9CFzMuL0IXEy0vQhdjK0+BsRqgv0tIMYEKCggJgmbS0QJgiQUEIwy0tVQCmCCokmhYaCFMElWMKDQ01BIkoKcKEGFRDQ1yMlISUgEIwe5iAQi7GxkpKSjBFwMh2cXEGCSkiOVcFLIQswsAgZGxshCpCBgAA0FNYp5zwDegAAAAASUVORK5CYII=) no-repeat;
+  height: 35px;
+  margin: 4px auto;
+  width: 35px;
+  -webkit-animation: spin .8s infinite linear;
+  -moz-animation: spin .8s infinite linear;
+}
+.image_loader {
+  margin: 0 auto;
+  position: relative;
+  top: -9px;
+}
+@-webkit-keyframes spin {
+  from {
+    -webkit-transform: rotate(0deg);
+}
+  to {
+    -webkit-transform: rotate(360deg); }
+}
+@-moz-keyframes spin {
+  from {
+    -moz-transform: rotate(0deg);
+  }
+  to {
+    -moz-transform: rotate(360deg);
+  }
+}
+
+//-------------------------------------------
+//  Top Right Close Button
+//-------------------------------------------
+.close_button {
+  background: transparent url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAYAAACM/rhtAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyJpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNSBNYWNpbnRvc2giIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6QTRCMjM3NTJEQjM0MTFFMEFDMkM5Qzc3QzBDOEVGQTQiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6NjZCQ0VFNDREQjM3MTFFMEFDMkM5Qzc3QzBDOEVGQTQiPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDpBNEIyMzc1MERCMzQxMUUwQUMyQzlDNzdDMEM4RUZBNCIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDpBNEIyMzc1MURCMzQxMUUwQUMyQzlDNzdDMEM4RUZBNCIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/PuWYPjwAAAkWSURBVHja1Fl5bI1Z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) no-repeat;
+  cursor: pointer;
+  float: right;
+  height: 40px;
+  position: absolute;
+  right: -12px;
+  top: -12px;
+  width: 40px;
+}
+.close_device_select {
+  right: -16px;
+  top: -16px;
+}
+
+
+//-------------------------------------------
+//  Dialog
+//-------------------------------------------
+.dialog_wrapper {
+  background-color: #FFF;
+  color: #FFF;
+  opacity: 0.95;
+  padding: 2px;
+  position: absolute;
+  text-align: center;
+  z-index: 998;
+  -moz-border-radius: 10px;
+  -webkit-border-radius: 10px;
+  -moz-box-shadow: 0 0 6px #555;
+  -webkit-box-shadow: 0 0 6px #555;
+  box-shadow: 0 0 6px #555;
+}
+.dialog {
+  background-color: #222;
+  color: #FFF;
+  padding-top: 15px;
+  z-index: 999;
+  -moz-border-radius: 10px;
+  -webkit-border-radius: 10px;
+}
+.dialog_content {
+  padding: 6px 12px;
+}
+.dialog_content a, .dialog_content a:visited {
+  color: #C1C1C1;
+}
+#loader.dialog_wrapper {
+  width: 200px;
+}
+#loader.dialog_wrapper .dialog, #sender.dialog_wrapper .dialog {
+  height: 80px;
+  padding: 30px;
+}
+.dialog_wrapper {
+  width: 280px;
+}
+#link_device.dialog_header_wrapper {
+  padding: 6px 14px;
+}
+#how_works_dialog .dialog_header_wrapper {
+  padding: 6px;
+}
+#link_device_dialog .dialog_header_wrapper {
+  padding: 6px 12px;
+}
+#link_device_dialog .dialog {
+  height: 300px;
+}
+#bad_news.dialog_wrapper .dialog {
+  height: 120px;
+}
+#flash_error .dialog {
+  height: 60px;
+}
+#register_device .dialog {
+  height: 150px;
+}
+#sign_up_dialog .dialog {
+  padding-bottom: 6px;
+}
+#how_works_dialog .dialog, #linked_device .dialog {
+  height: 180px;
+}
+#how_works_dialog .dialog .dialog_title {
+  padding: 0px;
+}
+#bad_news .dialog {
+  height: 240px;
+}
+#sign_up_again {
+  margin-top: 6px;
+}
+.dialog form#new_gamer {
+  margin: 0 auto;
+  text-align: left;
+}
+.dialog_title {
+  font-size: 20px;
+}
+.dialog_header_left,
+.dialog_header_right {
+  background: transparent url("/images/games/dialog_decoration.png") no-repeat;
+  position: relative;
+  height: 15px;
+  top: 6px;
+  width: 50px;
+}
+.dialog_header_wrapper {
+  padding: 2px 36px;
+}
+.dialog_header_wrapper .less_pad {
+  padding: 2px 16px;
+}
+.dialog_header_left {
+  float: left;
+}
+.dialog_header_right {
+  float: right;
+  -moz-transform: scaleX(-1);
+  -webkit-transform: scaleX(-1);
+}
+.dialog_header {
+  font-size: 14px;
+  margin: 6px;
+}
+.dialog_header div {
+  margin: 6px 0;
+}
+#link_device_dialog .dialog_header {
+  padding: 0;
+}
+.dialog_content {
+  font-size: 14px;
+}
+#update_dob_again {
+  margin-top: 6px;
+}
+#update_dob_dialog form {
+  margin: 0 auto;
+  text-align: left;
+}
+#update_dob_dialog label {
+  display: block;
+  padding: 3px 0;
+}
+#update_dob_dialog input[type=submit] {
+  margin-top: 8px;
+}
+#update_dob_dialog .field {
+  width: 100%;
+}
+#accept_tos_dialog label {
+  font-size: 12px;
+}
+#accept_tos_dialog .dialog_header a, #accept_tos_dialog .dialog_header a:visited {
+  color: red;
+}
+#accept_tos_dialog input[type=submit] {
+  margin-top: 10px;
+}
+#accept_tos_again {
+  margin-top: 6px;
+}
+//-------------------------------------------
+//  Bookmarking, Misc. Modals
+//-------------------------------------------
+#addToHome, #newUser, #deviceSelect {
+  border-radius: 6px;
+  font-size: 14px;
+  background-color: #222;
+  border: 3px solid #b6b5b5;
+  color: #FFF;
+  line-height: 130%;
+  padding: 12px 10px;
+  position: absolute;
+  opacity: 0.95;
+  text-align: center;
+  width: 306px;
+  z-index: 9999;
+  -webkit-background-clip: padding-box;
+  -webkit-border-radius: 6px;
+  -moz-border-radius: 6px;
+  -webkit-box-sizing: border-box;
+  -webkit-user-select: none;
+}
+#deviceSelect {
+  width: 280px;
+}
+#deviceSelect li {
+  margin: 8px 0;
+}
+#deviceSelect li a {
+  color: #333;
+}
+#deviceSelect li a:hover, #deviceSelect li a:active {
+  color: #FFF;
+}
+#newUser {
+  display: none;
+}
+#newUser .close_button {
+  background: transparent url("/images/games/close_btn_m.png") no-repeat;
+  cursor: pointer;
+  float: right;
+  height: 30px;
+  position: absolute;
+  right: -12px;
+  top: -12px;
+  width: 30px;
+}
+#addToHome.ipad {
+  width: 326px;
+}
+#addToHome .arrow, #newUser .arrow {
+  background-color: #222;
+  border-width: 0 3px 3px 0;
+  border-style: solid;
+  border-color: #b6b5b5;
+  bottom: -12px;
+  height: 16px;
+  left: 50%;
+  margin-left: -8px;
+  position: absolute;
+  width: 16px;
+  -webkit-transform: rotate(45deg);
+  -moz-transform: rotate(45deg);
+  -o-transform: rotate(45deg);
+  -ms-transform: rotate(45deg);
+  transform: rotate(45deg);
+}
+#addToHome.ipad .arrow {
+  top: -12px;
+  bottom: auto;
+  left: 50%;
+  -webkit-transform: rotate(-135deg);
+  -moz-transform: rotate(-135deg);
+  -o-transform: rotate(-135deg);
+  -ms-transform: rotate(-135deg);
+  transform: rotate(-135deg);
+}
+.bookmark {
+  float: left;
+  margin-top: 6px;
+  height: 22px;
+}
+.bookmark span {
+  float: left;
+  display: block;
+}
+.bookmark_icon {
+  background: transparent url("/images/games/bookmark_icon_mobile.png") no-repeat;
+  height: 22px;
+  margin: 0 2px;
+  width: 22px;
+}
+.bookmark_btn {
+  background: transparent url("/images/games/bookmark_btn_mobile.png") no-repeat;
+  height: 20px;
+  margin: 0 2px;
+  width: 125px;
 }

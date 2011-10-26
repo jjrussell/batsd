@@ -1,11 +1,13 @@
-/*--------------------*/
+//-------------------------------------------
+// Global Mixins
+//-------------------------------------------
 
 @import "games_mixins";
 
-/*--------------------*/
+//-------------------------------------------
 
 .nav {
-  padding: $nav-padding-v/2 $nav-padding-h/2;
+  padding: mobile_pad($nav-padding-v) mobile_pad($nav-padding-h);
 
   .nav_container {
     
@@ -24,13 +26,13 @@
       background: transparent url('/images/games/v2/logo_mobile.png') no-repeat;
       height: 38px;
       margin: 0 auto;
-      margin-bottom: $logo-bottom-margin/2;
+      margin-bottom: mobile_pad($logo-bottom-margin);
       width: 84px;
     }
     .nav_buttons ul li {
       @include inset-button(16px, 6px 2px);
-      font-size: 0.60em;
-      width: 60px;
+      font-size: 0.7em;
+      width: 70px;
     }
   }
 }
@@ -58,7 +60,5 @@
     margin: 0 auto;
     width: 67px;
   }
-  form#new_gamer {
-  }
   
-} //.content_wrapper
+}
