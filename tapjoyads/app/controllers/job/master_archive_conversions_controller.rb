@@ -18,7 +18,7 @@ class Job::MasterArchiveConversionsController < Job::JobController
     render :text => 'ok'
   end
 
-private
+  private
 
   def archive_conversions(start_time, end_time)
     expected_count = Conversion.created_between(start_time, end_time).count
@@ -45,15 +45,15 @@ private
 
     # pick a filename for s3, making sure not to overwrite anything
     bucket = S3.bucket(BucketNames::CONVERSION_ARCHIVES)
-    while bucket.key("#{base_filename}.sql.gz").exists?
+    while bucket.objects["#{base_filename}.sql.gz"].exists?
       base_filename += '_2'
     end
 
     # upload to s3
     retries = 3
     begin
-      bucket.put("#{base_filename}.sql.gz", open(gzip_filename))
-    rescue RightAws::AwsError => e
+      bucket.objects["#{base_filename}.sql.gz"].write(:file => gzip_filename)
+    rescue AWS::Errors::Base => e
       if retries > 0
         retries -= 1
         sleep 5
