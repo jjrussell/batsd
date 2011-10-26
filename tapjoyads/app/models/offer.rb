@@ -354,8 +354,6 @@ class Offer < ActiveRecord::Base
 
     return if Digest::MD5.hexdigest(icon_src_blob) == Digest::MD5.hexdigest(existing_icon_blob)
 
-    src_obj.write(:data => icon_src_blob, :acl => :public_read)
-
     if item_type == 'VideoOffer'
       icon_200 = Magick::Image.from_blob(icon_src_blob)[0].resize(200, 125).opaque('#ffffff00', 'white')
       corner_mask_blob = bucket.objects["display/round_mask_200x125.png"].read
@@ -366,6 +364,7 @@ class Offer < ActiveRecord::Base
 
       icon_200_blob = icon_200.to_blob{|i| i.format = 'JPG'}
       bucket.objects["icons/200/#{icon_id}.jpg"].write(:data => icon_200_blob, :acl => :public_read)
+      src_obj.write(:data => icon_src_blob, :acl => :public_read)
 
       Mc.delete("icon.s3.#{id}")
       return
@@ -388,6 +387,7 @@ class Offer < ActiveRecord::Base
     bucket.objects["icons/114/#{icon_id}.jpg"].write(:data => icon_114_blob, :acl => :public_read)
     bucket.objects["icons/57/#{icon_id}.jpg"].write(:data => icon_57_blob, :acl => :public_read)
     bucket.objects["icons/57/#{icon_id}.png"].write(:data => icon_57_png_blob, :acl => :public_read)
+    src_obj.write(:data => icon_src_blob, :acl => :public_read)
 
     Mc.delete("icon.s3.#{id}")
 
