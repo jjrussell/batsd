@@ -1,5 +1,8 @@
 ActionController::Routing::Routes.draw do |map|
   map.root :controller => :homepage, :action => 'start'
+  map.connect 'site/privacy', :controller => 'documents', :action => 'privacy'
+  map.connect 'site/privacy.html', :controller => 'documents', :action => 'privacy'
+  map.connect 'site/privacy_mobile', :controller => 'documents', :action => 'privacy_mobile'
   map.connect 'site/:action', :controller => 'homepage'
   map.connect 'index.html', :controller => 'homepage', :action => 'index'
   map.connect 'site/advertisers/whitepaper', :controller => 'homepage', :action => 'whitepaper'
@@ -12,7 +15,7 @@ ActionController::Routing::Routes.draw do |map|
   map.connect 'androidfund', :controller => 'androidfund'
   map.connect 'AndroidFund', :controller => 'androidfund'
   map.connect 'androidfund/apply', :controller => 'androidfund', :action => :apply
-  map.connect 'privacy', :controller => 'homepage', :action => 'privacy'
-  map.connect 'privacy.html', :controller => 'homepage', :action => 'privacy'
+  map.connect 'privacy', :controller => 'documents', :action => 'privacy'
+  map.connect 'privacy.html', :controller => 'documents', :action => 'privacy'
   map.resources :opt_outs, :only => :create
 end

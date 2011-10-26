@@ -51,7 +51,7 @@ class GameState < SimpledbShardedResource
   end
 
   def serial_save(options = {})
-    super(:write_to_memcache => false)
+    super({:write_to_memcache => false}.merge(options))
   end
 
 end
