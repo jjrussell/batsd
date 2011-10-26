@@ -28,7 +28,7 @@ class VideoOffer < ActiveRecord::Base
     video_buttons.enabled.size <= 2
   end
 
-private
+  private
 
   def create_primary_offer
     offer = Offer.new(:item => self)
@@ -66,8 +66,9 @@ private
 
   def video_exists
     bucket = S3.bucket(BucketNames::TAPJOY)
-    key = bucket.key("videos/src/#{id}.mp4")
+    obj    = bucket.objects["videos/src/#{id}.mp4"]
 
-    errors.add :video_url, 'Video does not exist.' if !key.exists?
+    errors.add :video_url, 'Video does not exist.' unless obj.exists?
   end
+
 end
