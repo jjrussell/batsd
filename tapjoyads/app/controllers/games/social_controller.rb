@@ -137,10 +137,6 @@ private
     dissociate_and_redirect
   end
 
-  def require_gamer
-    redirect_to games_login_path(:original_url => request.url) unless current_gamer
-  end
-
   def validate_recipients
     if params[:recipients].present?
       @recipients = params[:recipients].split(/,/)
