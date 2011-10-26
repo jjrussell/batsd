@@ -1,11 +1,11 @@
 test:
-  consumer_key: 'B9zToT0qEzWyNnIOYqZA'
-  consumer_secret: 'ubI5ntqnzCybslXUx7X4cC4IlfTFSMXdzYWtIfCk0'
+  consumer_key: 'ZgMiZocUS3OzTmmmW2qVg'
+  consumer_secret: 'GEIKM5HkR9cdYQZmy6gb2rYpTB8ArYCREvJQ'
 
 dev:
-  consumer_key: 'B9zToT0qEzWyNnIOYqZA'
-  consumer_secret: 'ubI5ntqnzCybslXUx7X4cC4IlfTFSMXdzYWtIfCk0'
+  consumer_key: 'ZgMiZocUS3OzTmmmW2qVg'
+  consumer_secret: 'GEIKM5HkR9cdYQZmy6gb2rYpTB8ArYCREvJQ'
   
 production:
-  consumer_key: 'B9zToT0qEzWyNnIOYqZA'
-  consumer_secret: 'ubI5ntqnzCybslXUx7X4cC4IlfTFSMXdzYWtIfCk0'
+  consumer_key: 'lATYykTyba7ZX4yUUAC9w'
+  consumer_secret: 'fTJKf1MkeQauMwzm88zMfzKKYYTiW7MQBFDkJ9S5UJE'
