@@ -21,12 +21,12 @@ class GamesMailer < ActionMailer::Base
     body :reset_link => reset_link
   end
 
-  def feedback(gamer, content, user_agent)
+  def feedback(gamer, content, user_agent, device_id)
     from 'Tapjoy <noreply@tapjoy.com>'
-    recipients "feedback@tapjoy.com"
+    recipients "customerservice@tapjoy.com"
     subject "User Feedback - Tapjoy"
     content_type 'text/html'
-    body(:content => content, :email => gamer.email, :user_agent => user_agent)
+    body(:content => content, :email => gamer.email, :udid => device_id, :user_agent => user_agent)
   end
 
   def report_bug(gamer, content, user_agent, device_id)
