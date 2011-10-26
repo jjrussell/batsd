@@ -51,9 +51,7 @@ class Recommenders::MostPopularRecommender < Recommender
   
   def file_lines(file_name)
     @file_lines ||= {}
-    # @file_lines[file_name] ||= S3.bucket(BucketNames::TAPJOY_GAMES).get(file_name).split(/[\r\n]/)
-    # @file_lines[file_name] ||= S3.bucket("dev_tj-games").get(file_name).split(/[\r\n]/)
-    @file_lines[file_name] ||= File.read(File.join('/Users/francisco/code/tapjoy/data', file_name)).split(/[\r\n]/)
+    @file_lines[file_name] ||= S3.bucket(BucketNames::TAPJOY_GAMES).get(file_name).split(/[\r\n]/)
   end
     
   
