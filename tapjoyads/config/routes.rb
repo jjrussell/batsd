@@ -3,18 +3,18 @@ ActionController::Routing::Routes.draw do |map|
 
   routes = case MACHINE_TYPE
   when 'dashboard'
-    ['dashboard']
+    %w( dashboard )
   when 'games'
-    ['games']
+    %w( games )
   when 'website'
-    ['website','dashboard']
+    %w( website dashboard )
   when 'web'
-    ['web','legacy','default']
+    %w( web legacy default )
   when 'jobs', 'masterjobs'
-    ['default']
+    %w( default )
   else
     # test/dev
-    ['dashboard','games','website','web','legacy','default']
+    %w( dashboard games website web legacy default )
   end
 
   routes.each do |route|
