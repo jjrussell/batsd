@@ -1106,15 +1106,14 @@ TJG.ui = {
 
       $(".get_offerwall_jsonp").each(function() {
         $(this).click(function(){
-          getOfferWallClicked($(this));
+          displayOfferWall($(this).attr("jsonp_url"), $(this).attr("id"), $(this).attr("app_name"), $(this).attr("currency"));
         });
       });
     }
 
-    function getOfferWallClicked(offerwallElem) {
+    function displayOfferWall(url, appId, appName, currencyName) {
       slidePage("#earn", "left");
       $("#earn_content").empty();
-      var url = offerwallElem.attr("jsonp_url"), appId = offerwallElem.attr("id"), appName = offerwallElem.attr("app_name"), currencyName = offerwallElem.attr("currency");
       if (!TJG.appOfferWall[appId]) {
         TJG.appOfferWall[appId] = {};
       }
@@ -1164,7 +1163,7 @@ TJG.ui = {
               $(".get_more_apps").click(function(){
                 if (isLoading) { return; }
                 $(".get_more_apps_content").html('<div class="image_loader"></div>');
-                var appId = offerwallElem.attr("app_id");
+                var appId = $(this).attr("app_id");
                 $(".load_more_loader").show();
                 if (TJG.appOfferWall[appId]['offers_left'] > 0) {
                   var url = TJG.appOfferWall[appId]['jsonp_url'];
@@ -1252,9 +1251,10 @@ TJG.ui = {
       return decodeURIComponent(results[1].replace(/\+/g, " "));
     }
 
-    var offers_for_app_id = getParameterByName("offers_for_app_id")
-    if (offers_for_app_id !== null) {
-      getOfferWallClicked($('#' + offers_for_app_id));
+    var offersForAppId = getParameterByName("offers_for_app_id")
+    if (offersForAppId !== null) {
+      earnButton = $('#' + offersForAppId);
+      displayOfferWall(earnButton.attr("jsonp_url"), earnButton.attr("id"), earnButton.attr("app_name"), earnButton.attr("currency"));
     }
 
     function reloadOfferWalls () {
