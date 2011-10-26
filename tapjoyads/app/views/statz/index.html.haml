@@ -188,7 +188,7 @@
         $('.filter select').each(function(i,select){
           $(select).val('');
         });
-        $('tr').show();
+        $('#apps_table tr').show();
         return false;
       });
       $('.filter select').change(function(){
@@ -211,8 +211,8 @@
             className += '.' + selectValues[i];
           }
         }
-        $('tbody tr:visible').hide();
-        $('tbody tr'+className).show();
+        $('#apps_table tbody tr:visible').hide();
+        $('#apps_table tbody tr' + className).show();
 
         // balance levels
         var balance = $('#balance_filter').val();
@@ -283,6 +283,6 @@
       margin-bottom: 10px;
     }
 
-    .filter {
+    form.filter {
       margin-bottom: 10px;
     }
