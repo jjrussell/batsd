@@ -1,4 +1,3 @@
-
 RegExp.escape = function(text) {
   if (!arguments.callee.sRE) {
     var specials = [
