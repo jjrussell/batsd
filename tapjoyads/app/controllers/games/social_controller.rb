@@ -3,6 +3,7 @@ class Games::SocialController < GamesController
   require "twitter"
 
   rescue_from Mogli::Client::SessionInvalidatedDueToPasswordChange, Mogli::Client::OAuthException, :with => :handle_oauth_exception
+  rescue_from Twitter::Error, :with => :handle_twitter_exceptions
 
   before_filter :require_gamer
   before_filter :offline_facebook_authenticate, :only => [ :invite_facebook_friends, :send_facebook_invites ]
@@ -33,8 +34,6 @@ class Games::SocialController < GamesController
       gamers = []
       non_gamers = []
       
-      current_facebook_user.fetch
-
       current_facebook_user.fetch
 
       friends.each do |friend_id|
@@ -147,22 +146,17 @@ class Games::SocialController < GamesController
           friend_name = Twitter.user(friend_id.to_i).name
           non_gamers << "#{friend_name}"
           
-          friend_id = '8752692' if Rails.env != 'production'
+          friend_id = '388167589' if Rails.env != 'production' #388167589, 8752692
           invitation = current_gamer.invitation_for(friend_id, Invitation::TWITTER)
           
           if invitation.pending?
             link = games_login_url :referrer => invitation.encrypted_referral_id
-            link = "http://www.tapjoygames.com/games/login?referrer=#{invitation.encrypted_referral_id}" if Rails.env != 'production' #we need this because twitter cannot recognize IP addr as a valid url
+            link = "http://www.tapjoygames.com/login?referrer=#{invitation.encrypted_referral_id}" if Rails.env != 'production' #we need this because twitter cannot recognize IP addr as a valid url
             
             message = "#{Twitter.user(current_gamer.twitter_id.to_i).name} has invited you to join Tapjoy. Experience the best of mobile apps! #{link}"
             
-            begin
-              # posts << Twitter.update(message)
-              posts << Twitter.direct_message_create(friend_id.to_i, message) # could only send direct msg to follower
-            rescue Exception => e
-              handle_twitter_exception(e)
-              return
-            end
+            # posts << Twitter.update(message)
+            posts << Twitter.direct_message_create(friend_id.to_i, message) # could only send direct msg to follower
           end
         end
       end
@@ -209,21 +203,17 @@ private
     end
   end
   
-  def handle_twitter_exception(e)
-    # TODO: more detailed error handling (based on: https://github.com/jnunemaker/twitter)
-    error_code = e.message.split(/:/)[2].strip
-    
-    case error_code
-    when '403'
-      render :json => { :success => false, :error => "Please try to invite the same person again tomorrow.(Duplicate or Reach limitation)" } and return
-      # flash[:error] = "Please try again tomorrow.(Duplicate or Reach limitation)"
-      # redirect_to edit_games_gamer_path
-      # return
-    when '401'
-      # render :json => { :success => false, :error => "For somereason, you\'ve revoke our app in your TWITTER, please re-authenticating us." } and return
+  def handle_twitter_exceptions(e)
+    case e
+    when Twitter::Forbidden
+      render :json => { :success => false, :error => "Please try to invite the same person again tomorrow.(Duplicate or Reach limitation)" }
+    when Twitter::Unauthorized
       current_gamer.gamer_profile.dissociate_account!(Invitation::TWITTER)
       redirect_to games_social_invite_twitter_friends_path
-      return
+    when Twitter::InternalServerError, Twitter::BadGateway, Twitter::ServiceUnavailable
+      render :json => { :success => false, :error => "Something happened to Twttier. Please try again later" }
+    else
+      render :json => { :success => false, :error => "There was an issue with inviting your friend, please try again later" }
     end
   end
 
