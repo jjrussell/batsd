@@ -86,7 +86,7 @@ class StatsAggregation
 
       hourly_stat_row = Stats.new(:key => "app.#{start_time.strftime('%Y-%m-%d')}.#{offer.id}", :load_from_memcache => false)
 
-      verify_web_request_stats_over_range(hourly_stat_row, offer, start_time, end_time)
+      # verify_web_request_stats_over_range(hourly_stat_row, offer, start_time, end_time)
       verify_conversion_stats_over_range(hourly_stat_row, offer, start_time, end_time)
 
       hourly_stat_row.update_daily_stat

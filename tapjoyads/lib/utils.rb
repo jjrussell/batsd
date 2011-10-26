@@ -135,7 +135,6 @@ class Utils
     count = 0
     bucket = S3.bucket(BucketNames::FAILED_SDB_SAVES)
     bucket.objects.with_prefix('incomplete/').each do |obj|
-      next if obj.key == 'incomplete/'
       if obj.last_modified < time
         count += 1
         puts "moving: #{obj.key} - last modified: #{obj.last_modified}"
