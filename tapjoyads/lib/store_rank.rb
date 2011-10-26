@@ -7,6 +7,8 @@ class StoreRank
     error_count = 0
     known_store_ids = {}
     s3_rows = {}
+    overall_us_free = {}
+    overall_us_paid = {}
 
     ranks_file_name = "ranks.#{time.beginning_of_hour.to_s(:db)}.json"
     ranks_file = open("tmp/#{ranks_file_name}", 'w')
@@ -41,6 +43,14 @@ class StoreRank
               ranks_hash.each do |store_id, rank|
                 next if known_store_ids[store_id].nil?
 
+                if category_key == 'overall' && country_key == 'united_states'
+                  if pop_key == 'free'
+                    overall_us_free[store_id] = rank
+                  elsif pop_key == 'paid'
+                    overall_us_paid[store_id] = rank
+                  end
+                end
+
                 known_store_ids[store_id].each do |offer_id|
                   s3_rows[offer_id] ||= S3Stats::Ranks.find_or_initialize_by_id("ranks/#{date_string}/#{offer_id}", :load_from_memcache => false)
                   s3_rows[offer_id].update_stat_for_hour(ranks_key, time.hour, rank)
@@ -62,6 +72,9 @@ class StoreRank
 
     hydra.run
     log_progress "Finished making requests."
+
+    Mc.put('store_ranks.ios.overall.free.united_states', overall_us_free)
+    Mc.put('store_ranks.ios.overall.paid.united_states', overall_us_paid)
 
     ranks_file.close
     `gzip -f 'tmp/#{ranks_file_name}'`
@@ -88,6 +101,8 @@ class StoreRank
     known_store_ids = {}
     known_android_store_ids = {}
     s3_rows = {}
+    overall_en_free = {}
+    overall_en_paid = {}
 
     android_ranks_file_name = "ranks.android.#{time.beginning_of_hour.to_s(:db)}.json"
     android_ranks_file = open("tmp/#{android_ranks_file_name}", 'w')
@@ -133,6 +148,15 @@ class StoreRank
                 ranks_hash = get_google_ranks_hash(response.body, current_offset)
                 ranks_hash.each do |store_id, rank|
                   next if known_android_store_ids[store_id].nil?
+
+                  if category_key == 'overall' && language_key == 'english'
+                    if pop_key == 'free'
+                      overall_en_free[store_id] = rank
+                    elsif pop_key == 'paid'
+                      overall_en_paid[store_id] = rank
+                    end
+                  end
+
                   known_android_store_ids[store_id].each do |offer_id|
                     s3_rows[offer_id] ||= S3Stats::Ranks.find_or_initialize_by_id("ranks/#{date_string}/#{offer_id}", :load_from_memcache => false)
                     s3_rows[offer_id].update_stat_for_hour(ranks_key, time.hour, rank)
@@ -151,6 +175,9 @@ class StoreRank
 
     hydra.run
     log_progress "Finished making requests."
+
+    Mc.put('store_ranks.android.overall.free.english', overall_en_free)
+    Mc.put('store_ranks.android.overall.paid.english', overall_en_paid)
 
     android_ranks_file.close
     `gzip -f 'tmp/#{android_ranks_file_name}'`

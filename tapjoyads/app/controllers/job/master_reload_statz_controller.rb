@@ -1,6 +1,8 @@
 class Job::MasterReloadStatzController < Job::JobController
   include ActionView::Helpers::NumberHelper
 
+  before_filter :get_combined_ranks, :only => [ :index, :daily ]
+
   def index
     cache_stats('24_hours')
 
@@ -27,7 +29,7 @@ class Job::MasterReloadStatzController < Job::JobController
     render :text => 'ok'
   end
 
-private
+  private
 
   def cache_stats(timeframe)
     start_time, end_time = get_times_for_vertica(timeframe)
@@ -78,7 +80,7 @@ private
 
       # TODO: populate these with the correct values
       cached_stats[offer.id]['connects'] = 0
-      cached_stats[offer.id]['overall_store_rank'] = '-'
+      cached_stats[offer.id]['overall_store_rank'] = @combined_ranks[offer.third_party_data] || '-'
     end
 
     cached_stats = cached_stats.sort do |s1, s2|
@@ -220,6 +222,14 @@ private
     end
 
     [ start_time, end_time, granularity ]
+  end
+
+  def get_combined_ranks
+    ios_ranks_free     = Mc.get('store_ranks.ios.overall.free.united_states') || {}
+    ios_ranks_paid     = Mc.get('store_ranks.ios.overall.paid.united_states') || {}
+    android_ranks_free = Mc.get('store_ranks.android.overall.free.english') || {}
+    android_ranks_paid = Mc.get('store_ranks.android.overall.paid.english') || {}
+    @combined_ranks    = ios_ranks_free.merge(ios_ranks_paid).merge(android_ranks_free).merge(android_ranks_paid)
   end
 
 end
