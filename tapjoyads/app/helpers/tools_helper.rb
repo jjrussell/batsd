@@ -12,7 +12,7 @@ module ToolsHelper
     end
     concat_li("Currency", click.currency_reward)
     concat_li_currency('Adv', click.advertiser_amount)
-    concat_li_currency('Pub', click.advertiser_amount)
+    concat_li_currency('Pub', click.publisher_amount)
     concat_li_currency('Tj', click.tapjoy_amount)
     concat_li("Pub user ID", click.publisher_user_id) if click.publisher_user_id != click.udid
     concat("</ul>")
