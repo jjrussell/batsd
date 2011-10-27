@@ -59,4 +59,15 @@ class GamerTest < ActiveSupport::TestCase
     end
 
   end
+
+  context "Deleting Gamers" do
+    should "only delete users deactivated 3 days ago" do
+      5.times.each { Factory(:gamer) }
+      5.times.each { Factory(:gamer, :deactivated_at => Time.zone.now) }
+      5.times.each { Factory(:gamer, :deactivated_at => Time.zone.now - Gamer::DAYS_BEFORE_DELETION - 1.day) }
+      assert_equal 15, Gamer.count
+      Gamer.to_delete.each(&:destroy)
+      assert_equal 10, Gamer.count
+    end
+  end
 end

@@ -15,6 +15,9 @@ class Gamer < ActiveRecord::Base
   before_create :check_referrer
   before_create :set_tos_version
 
+  DAYS_BEFORE_DELETION = 3.days
+  named_scope :to_delete, lambda { { :conditions => ["deactivated_at < ?", Time.zone.now.beginning_of_day - DAYS_BEFORE_DELETION] } }
+
   alias_method :devices, :gamer_devices
 
   acts_as_authentic do |c|
