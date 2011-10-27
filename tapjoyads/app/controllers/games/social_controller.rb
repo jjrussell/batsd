@@ -204,6 +204,7 @@ private
       render :json => { :success => false, :error => "Please try to invite the same person again tomorrow.(Duplicate or Reach limitation)" }
     when Twitter::Unauthorized
       current_gamer.gamer_profile.dissociate_account!(Invitation::TWITTER)
+      render :json => { :success => false, :error_redirect => true } and return if params[:ajax].present?
       redirect_to games_social_invite_twitter_friends_path
     when Twitter::InternalServerError, Twitter::BadGateway, Twitter::ServiceUnavailable
       render :json => { :success => false, :error => "Something happened to Twttier. Please try again later" }
