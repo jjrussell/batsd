@@ -18,6 +18,8 @@ class Deploy
         if environment == 'production'
           @options[:environment] = 'production'
           @options[:server_groups] = 'masterjobs jobserver website dashboard games webserver'
+        elsif environment == 'util'
+          @options[:server_groups] = 'util'
         elsif environment != 'test'
           print_usage_and_exit
         end

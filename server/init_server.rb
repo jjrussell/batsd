@@ -48,7 +48,7 @@ end
 `/etc/init.d/apache2 start`
 
 # deploy the latest code
-if server_type == 'test'
+if server_type == 'test' || server_type == 'util'
   `su - webuser -c 'cd /home/webuser/tapjoyserver && server/deploy.rb master'`
 else
   `su - webuser -c 'cd /home/webuser/tapjoyserver && server/deploy.rb'`

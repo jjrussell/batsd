@@ -35,13 +35,19 @@ MEMCACHE_SERVERS = [ 'tj-acs-prod.fqfjqv.1xm3.use1.acsvc.amazonaws.com',
 EXCEPTIONS_NOT_LOGGED = ['ActionController::UnknownAction',
                          'ActionController::RoutingError']
 
+begin
+  local_config = YAML::load_file("#{RAILS_ROOT}/config/local.yml")
+rescue Errno::ENOENT
+  local_config = {}
+end
+
 RUN_MODE_PREFIX = ''
-API_URL = 'https://ws.tapjoyads.com'
-DASHBOARD_URL = 'https://dashboard.tapjoy.com'
-WEBSITE_URL = 'https://www.tapjoy.com'
+API_URL = local_config['api_url'] || 'https://ws.tapjoyads.com'
+DASHBOARD_URL = local_config['dashboard_url'] || 'https://dashboard.tapjoy.com'
+WEBSITE_URL = local_config['website_url'] || 'https://www.tapjoy.com'
 CLOUDFRONT_URL = 'https://d21x2jbj16e06e.cloudfront.net'
 GAMES_ANDROID_MARKET_URL = 'http://market.android.com/details?id=com.tapjoy.tapjoy'
-TJGAMES_URL = 'https://www.tapjoygames.com'
+TJGAMES_URL = local_config['tjgames_url'] || 'https://www.tapjoygames.com'
 
 # Amazon services:
 amazon = YAML::load_file("#{ENV['HOME']}/.tapjoy_aws_credentials.yaml")
