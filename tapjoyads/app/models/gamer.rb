@@ -80,13 +80,20 @@ class Gamer < ActiveRecord::Base
     end
   end
 
-  def get_gravatar_profile_url
-    "https://secure.gravatar.com/#{generate_gravatar_hash}"
+  def get_avatar_profile_url
+    if @gamer_profile.image_source == 'facebook' && @gamer_profile.facebook_id.present?
+      "http://www.facebook.com/profile.php?id=#{@gamer_profile.facebook_id}"
+    else
+      "https://secure.gravatar.com/#{generate_gravatar_hash}"
+    end
   end
 
-  def get_gravatar_url(size=nil)
-    size_param = size.present? ? "&size=#{size}" : nil
-    "https://secure.gravatar.com/avatar/#{generate_gravatar_hash}?d=mm#{size_param}"
+  def get_avatar_url
+    if @gamer_profile.image_source == 'facebook' && @gamer_profile.facebook_id.present?
+      "https://graph.facebook.com/#{@gamer_profile.facebook_id}/picture"
+    else
+      "https://secure.gravatar.com/avatar/#{generate_gravatar_hash}?d=mm"
+    end
   end
 private
   def generate_gravatar_hash

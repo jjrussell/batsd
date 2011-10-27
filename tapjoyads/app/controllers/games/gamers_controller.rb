@@ -29,7 +29,7 @@ class Games::GamersController < GamesController
       @geoip_data = get_geoip_data
       @gamer_profile.country = Countries.country_code_to_name[@geoip_data[:country]]
     end
-    
+
     if @gamer_profile.facebook_id.present?
       fb_create_user_and_client(@gamer_profile.fb_access_token, '', @gamer_profile.facebook_id)
       current_facebook_user.fetch
@@ -41,7 +41,6 @@ class Games::GamersController < GamesController
     if @gamer_profile.facebook_id.present?
       fb_create_user_and_client(@gamer_profile.fb_access_token, '', @gamer_profile.facebook_id)
       current_facebook_user.fetch
-      logger.debug("current facebook user: #{current_facebook_user.username}, #{current_facebook_user.first_name} #{current_facebook_user.last_name}")
       @image_source_options['Facebook'] = 'facebook'
     end
   end

@@ -1107,23 +1107,13 @@ form#new_gamer_session .login_pass {
 #edit_preferences input[type=checkbox] {
   margin: 0 0 0 12px;
 }
-#edit_avatar select,
-#edit_avatar label, 
-#edit_avatar .image {
-	float: left;
-	position: relative;
-}
 .button_bar {
   width: 100%;
 }
-.button_bar input[type=submit],
-.button_bar a {
+.button_bar input[type=submit] {
   float: right;
   margin: 0 16px 10px 0;
   position: relative;
-}
-.tan .content .button_bar a {
-  color: white;
 }
 #sign_up_form {
   padding: 12px 20px;

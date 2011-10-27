@@ -45,7 +45,6 @@
   :plain
     var changeFb = function(){
       FB.getLoginStatus(function(response) {
-        console.log(response.authResponse);
         if (response.authResponse) {
           FB.logout(function(response) {
             <!--
@@ -68,7 +67,6 @@
             window.location = "#{games_social_connect_facebook_account_path}"
             //-->
           });
-        } else {
         }
       }, {scope: scope});
     };
