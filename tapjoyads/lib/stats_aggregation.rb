@@ -6,13 +6,16 @@ class StatsAggregation
     @offer_ids = offer_ids
   end
 
-  def recount_stats_over_range(start_time, end_time)
+  def recount_stats_over_range(start_time, end_time, update_daily = false)
+    raise "can't wrap over multiple days" if start_time.beginning_of_day != (end_time - 1.second).beginning_of_day
+
     Offer.find(@offer_ids).each do |offer|
       hourly_stat_row = Stats.new(:key => "app.#{start_time.strftime('%Y-%m-%d')}.#{offer.id}", :load_from_memcache => false)
 
       verify_web_request_stats_over_range(hourly_stat_row, offer, start_time, end_time)
       verify_conversion_stats_over_range(hourly_stat_row, offer, start_time, end_time)
 
+      hourly_stat_row.update_daily_stat if update_daily == true
       hourly_stat_row.serial_save
     end
   end
