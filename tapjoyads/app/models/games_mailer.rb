@@ -49,6 +49,8 @@ class GamesMailer < ActionMailer::Base
   end
 
   def link_device(gamer, ios_link, android_link)
+    puts ios_link
+    puts android_link
     from 'Tapjoy <noreply@tapjoy.com>'
     recipients gamer.email
     subject "Tapjoy - Link Device"
