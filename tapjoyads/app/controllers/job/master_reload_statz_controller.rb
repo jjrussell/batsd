@@ -69,7 +69,7 @@ class Job::MasterReloadStatzController < Job::JobController
       }
 
       cached_metadata[offer.id] = metadata
-      cached_stats[offer.id]['overall_store_rank'] = get_combined_ranks[offer.third_party_data] || '-'
+      cached_stats[offer.id]['overall_store_rank'] = combined_ranks[offer.third_party_data] || '-'
     end
 
     cached_stats_adv = cached_stats.sort do |s1, s2|
@@ -221,7 +221,7 @@ class Job::MasterReloadStatzController < Job::JobController
     [ start_time, end_time, granularity ]
   end
 
-  def get_combined_ranks
+  def combined_ranks
     @combined_ranks ||= begin
       ios_ranks_free     = Mc.get('store_ranks.ios.overall.free.united_states') || {}
       ios_ranks_paid     = Mc.get('store_ranks.ios.overall.paid.united_states') || {}
