@@ -69,5 +69,46 @@ class GamerTest < ActiveSupport::TestCase
       Gamer.to_delete.each(&:destroy)
       assert_equal 10, Gamer.count
     end
+
+    should "also delete friendships" do
+      gamer = Factory(:gamer, :deactivated_at => Time.zone.now - Gamer::DAYS_BEFORE_DELETION - 1.day)
+
+      stalker = Factory(:gamer)
+
+      friendship = Friendship.new
+      friendship.gamer_id  = stalker.id
+      friendship.following_id = gamer.id
+      friendship.serial_save
+
+      friend = Factory(:gamer)
+
+      friendship = Friendship.new
+      friendship.gamer_id  = gamer.id
+      friendship.following_id = friend.id
+      friendship.serial_save
+
+      friendship = Friendship.new
+      friendship.gamer_id  = friend.id
+      friendship.following_id = gamer.id
+      friendship.serial_save
+
+      assert_equal 3, Friendship.count(:where => "gamer_id = '#{gamer.id}' or following_id = '#{gamer.id}'", :consistent => true)
+      Gamer.to_delete.each(&:destroy)
+      assert_equal 0, Friendship.count(:where => "gamer_id = '#{gamer.id}' or following_id = '#{gamer.id}'", :consistent => true)
+    end
+
+    should "also delete invitations" do
+      gamer = Factory(:gamer, :deactivated_at => Time.zone.now - Gamer::DAYS_BEFORE_DELETION - 1.day)
+      3.times do
+        Invitation.create({
+          :gamer_id => gamer.id,
+          :channel => Invitation::EMAIL,
+          :external_info => Factory.next(:name),
+        })
+      end
+      assert_equal 3, Invitation.count
+      Gamer.to_delete.each(&:destroy)
+      assert_equal 0, Invitation.count
+    end
   end
 end

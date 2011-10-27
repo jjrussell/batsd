@@ -15,8 +15,15 @@ class Gamer < ActiveRecord::Base
   before_create :check_referrer
   before_create :set_tos_version
 
+  after_destroy :delete_friends
+
   DAYS_BEFORE_DELETION = 3.days
-  named_scope :to_delete, lambda { { :conditions => ["deactivated_at < ?", Time.zone.now.beginning_of_day - DAYS_BEFORE_DELETION] } }
+  named_scope :to_delete, lambda {
+    {
+      :conditions => ["deactivated_at < ?", Time.zone.now.beginning_of_day - DAYS_BEFORE_DELETION],
+      :order => 'deactivated_at'
+    }
+  }
 
   alias_method :devices, :gamer_devices
 
@@ -97,7 +104,8 @@ class Gamer < ActiveRecord::Base
     "https://secure.gravatar.com/avatar/#{generate_gravatar_hash}?d=mm#{size_param}"
   end
 
-private
+  private
+
   def generate_gravatar_hash
     Digest::MD5.hexdigest email.strip.downcase
   end
@@ -136,5 +144,16 @@ private
 
   def set_tos_version
     self.accepted_tos_version = TAPJOY_GAMES_CURRENT_TOS_VERSION
+  end
+
+  def delete_friends
+    conditions = "gamer_id = '#{id}' or following_id = '#{id}'"
+    Friendship.select(:where => conditions, :consistent => true) do |friendship|
+      friendship.delete_all
+    end
+
+    Invitation.for_gamer(self).each do |invitation|
+      invitation.destroy
+    end
   end
 end
