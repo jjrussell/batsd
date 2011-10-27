@@ -55,7 +55,7 @@ class Games::Gamers::DevicesController < GamesController
 
       if current_gamer.devices.create(:device => device)
         click = Click.new :key => "#{device.key}.#{TAPJOY_GAMES_REGISTRATION_OFFER_ID}"
-        if !click.new_record? && click.rewardable?
+        if click.rewardable?
           current_gamer.reward_click(click)
         else
           device.set_last_run_time!(TAPJOY_GAMES_REGISTRATION_OFFER_ID)
