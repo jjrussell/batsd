@@ -101,6 +101,6 @@
       - currency = external_publisher.currencies.first
       - url = external_publisher.get_offerwall_url(@device, currency, request.headers)
       :plain
-        TJG.ui.getAndShowOfferWall('#{url}', '#{currency[:id]}', '#{external_publisher.app_name}', '#{currency[:name]}');
+        TJG.ui.getAndShowOfferWall('#{url}', '#{currency[:id]}', '#{escape_javascript(external_publisher.app_name)}', '#{escape_javascript(currency[:name])}');
     :plain
       });
