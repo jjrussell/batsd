@@ -1,8 +1,6 @@
 class Job::MasterReloadStatzController < Job::JobController
   include ActionView::Helpers::NumberHelper
 
-  before_filter :get_combined_ranks, :only => [ :index, :daily ]
-
   def index
     cache_stats('24_hours')
 
@@ -71,7 +69,7 @@ class Job::MasterReloadStatzController < Job::JobController
       }
 
       cached_metadata[offer.id] = metadata
-      cached_stats[offer.id]['overall_store_rank'] = @combined_ranks[offer.third_party_data] || '-'
+      cached_stats[offer.id]['overall_store_rank'] = get_combined_ranks[offer.third_party_data] || '-'
     end
 
     cached_stats_adv = cached_stats.sort do |s1, s2|
@@ -224,11 +222,14 @@ class Job::MasterReloadStatzController < Job::JobController
   end
 
   def get_combined_ranks
-    ios_ranks_free     = Mc.get('store_ranks.ios.overall.free.united_states') || {}
-    ios_ranks_paid     = Mc.get('store_ranks.ios.overall.paid.united_states') || {}
-    android_ranks_free = Mc.get('store_ranks.android.overall.free.english') || {}
-    android_ranks_paid = Mc.get('store_ranks.android.overall.paid.english') || {}
-    @combined_ranks    = ios_ranks_free.merge(ios_ranks_paid).merge(android_ranks_free).merge(android_ranks_paid)
+    @combined_ranks ||= begin
+      ios_ranks_free     = Mc.get('store_ranks.ios.overall.free.united_states') || {}
+      ios_ranks_paid     = Mc.get('store_ranks.ios.overall.paid.united_states') || {}
+      android_ranks_free = Mc.get('store_ranks.android.overall.free.english')   || {}
+      android_ranks_paid = Mc.get('store_ranks.android.overall.paid.english')   || {}
+
+      ios_ranks_free.merge(ios_ranks_paid).merge(android_ranks_free).merge(android_ranks_paid)
+    end
   end
 
 end
