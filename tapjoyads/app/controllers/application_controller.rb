@@ -144,6 +144,7 @@ private
       data[:lat]         = geo_struct[:latitude]
       data[:long]        = geo_struct[:longitude]
       data[:area_code]   = geo_struct[:area_code]
+      data[:dma_code]    = geo_struct[:dma_code]
     end
 
     data

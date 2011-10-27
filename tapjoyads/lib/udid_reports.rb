@@ -35,7 +35,7 @@ class UdidReports
     if outfile.pos > 0
       outfile.close
       path   = "#{offer_id}/#{date.strftime('%Y-%m')}/#{date.strftime('%Y-%m-%d')}.csv"
-      bucket = AWS::S3.new.buckets[BucketNames::UDID_REPORTS]
+      bucket = S3.bucket(BucketNames::UDID_REPORTS)
       bucket.objects[path].write(:file => fs_path, :acl => :authenticated_read)
       cache_available_months(offer_id)
     end
@@ -46,7 +46,7 @@ class UdidReports
   end
 
   def self.cache_available_months(offer_id)
-    bucket = AWS::S3.new.buckets[BucketNames::UDID_REPORTS]
+    bucket = S3.bucket(BucketNames::UDID_REPORTS)
     months = Set.new
     bucket.objects.with_prefix("#{offer_id}/").each do |obj|
       next unless obj.key.ends_with?('.csv')
@@ -65,7 +65,7 @@ class UdidReports
   end
 
   def self.get_monthly_report(offer_id, month)
-    bucket = AWS::S3.new.buckets[BucketNames::UDID_REPORTS]
+    bucket = S3.bucket(BucketNames::UDID_REPORTS)
     report_data = ''
     bucket.objects.with_prefix("#{offer_id}/#{month}/").each do |obj|
       report_data += obj.read
@@ -74,7 +74,7 @@ class UdidReports
   end
 
   def self.get_daily_report(offer_id, date)
-    bucket = AWS::S3.new.buckets[BucketNames::UDID_REPORTS]
+    bucket = S3.bucket(BucketNames::UDID_REPORTS)
     obj = bucket.objects["#{offer_id}/#{date[0...7]}/#{date}.csv"]
     if obj.exists?
       obj.read

@@ -28,15 +28,16 @@ class Employee < ActiveRecord::Base
 
   def save_photo!(photo_src_blob)
     bucket = S3.bucket(BucketNames::TAPJOY)
+    object = bucket.objects["employee_photos/#{id}.png"]
 
-    existing_photo_blob = bucket.get("employee_photos/#{id}.png") rescue ''
+    existing_photo_blob = object.exists? ? object.read : ''
 
     return if Digest::MD5.hexdigest(photo_src_blob) == Digest::MD5.hexdigest(existing_photo_blob)
 
     photo = Magick::Image.from_blob(photo_src_blob)[0].resize(78, 78)
     photo_blob = photo.to_blob{|i| i.format = 'PNG'}
 
-    bucket.put("employee_photos/#{id}.png", photo_blob, {}, "public-read")
+    object.write(:data => photo_blob, :acl => :public_read)
 
     # Invalidate cloudfront
     if existing_photo_blob.present?
@@ -48,4 +49,5 @@ class Employee < ActiveRecord::Base
       end
     end
   end
+
 end

@@ -40,7 +40,7 @@ class DisplayAdController < ApplicationController
     send_data image_data, :type => "image/png", :disposition => 'inline'
   end
 
-private
+  private
 
   def setup
     params[:currency_id] ||= params[:app_id]
@@ -125,7 +125,7 @@ private
       key = offer.banner_creative_mc_key(size)
       Mc.delete(key) if re_cache
       return Mc.get_and_put(key) do
-        Base64.encode64(offer.banner_creative_s3_key(size).read).gsub("\n", '')
+        Base64.encode64(offer.banner_creative_s3_object(size).read).gsub("\n", '')
       end
     end
 
@@ -151,17 +151,17 @@ private
       icon_height = height - border * 2 - icon_padding * 2
 
       bucket = S3.bucket(BucketNames::TAPJOY)
-      background_blob = bucket.get("display/self_ad_bg_#{width}x#{height}.png")
+      background_blob = bucket.objects["display/self_ad_bg_#{width}x#{height}.png"].read
       background = Magick::Image.from_blob(background_blob)[0]
 
-      offer_icon_blob = bucket.get("icons/src/#{Offer.hashed_icon_id(offer.icon_id)}.jpg")
+      offer_icon_blob = bucket.objects["icons/src/#{Offer.hashed_icon_id(offer.icon_id)}.jpg"].read
       offer_icon = Magick::Image.from_blob(offer_icon_blob)[0].resize(icon_height, icon_height)
 
-      corner_mask_blob = bucket.get("display/round_mask.png")
+      corner_mask_blob = bucket.objects["display/round_mask.png"].read
       corner_mask = Magick::Image.from_blob(corner_mask_blob)[0].resize(icon_height, icon_height)
       offer_icon.composite!(corner_mask, 0, 0, Magick::CopyOpacityCompositeOp)
 
-      icon_shadow_blob = bucket.get("display/icon_shadow.png")
+      icon_shadow_blob = bucket.objects["display/icon_shadow.png"].read
       icon_shadow = Magick::Image.from_blob(icon_shadow_blob)[0].resize(icon_height + icon_padding, icon_height)
 
       img = Magick::Image.new(width, height)
@@ -177,25 +177,25 @@ private
         text = "Try #{offer.name} today"
       end
 
-      font = Rails.env == 'production' ? 'Helvetica' : ''
+      font        = Rails.env == 'production' ? 'Helvetica' : ''
       image_label = Magick::Image.read("caption:#{text}") do
-        self.size = text_area_size
-        self.gravity = Magick::WestGravity
-        self.fill = '#363636'
-        self.pointsize = font_size
-        self.font = font
-        self.stroke = 'transparent'
+        self.size             = text_area_size
+        self.gravity          = Magick::WestGravity
+        self.fill             = '#363636'
+        self.pointsize        = font_size
+        self.font             = font
+        self.stroke           = 'transparent'
         self.background_color = 'transparent'
       end
       img.composite!(image_label[0], icon_height + icon_padding * 4 + 1, border + 2, Magick::AtopCompositeOp)
 
       image_label = Magick::Image.read("caption:#{text}") do
-        self.size = text_area_size
-        self.gravity = Magick::WestGravity
-        self.fill = 'white'
-        self.pointsize = font_size
-        self.font = font
-        self.stroke = 'transparent'
+        self.size             = text_area_size
+        self.gravity          = Magick::WestGravity
+        self.fill             = 'white'
+        self.pointsize        = font_size
+        self.font             = font
+        self.stroke           = 'transparent'
         self.background_color = 'transparent'
       end
       img.composite!(image_label[0], icon_height + icon_padding * 4, border + 1, Magick::AtopCompositeOp)
