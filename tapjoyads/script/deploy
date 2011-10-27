@@ -19,6 +19,7 @@ class Deploy
           @options[:environment] = 'production'
           @options[:server_groups] = 'masterjobs jobserver website dashboard games webserver'
         elsif environment == 'util'
+          @options[:environment] = 'util'
           @options[:server_groups] = 'util'
         elsif environment != 'test'
           print_usage_and_exit
@@ -43,7 +44,7 @@ class Deploy
       puts "invalid version for production deploy, must be a version number"
       print_usage_and_exit
     end
-    @options[:version] = 'master' if @options[:environment] == 'test' && @options[:version].nil?
+    @options[:version] = 'master' if (@options[:environment] == 'test' || @options[:environment] == 'util') && @options[:version].nil?
   end
 
   def deploy
