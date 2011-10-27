@@ -31,7 +31,14 @@ class Games::HomepageController < GamesController
     device_info = current_device_info
     @device_name = device_info.name if device_info
     @device = Device.new(:key => device_id) if device_id.present?
-    @external_publishers = ExternalPublisher.load_all_for_device(@device) if @device.present?
+    if @device.present?
+      if @show_offerwall = (params[:publisher_app_id] && @device.has_app?(params[:publisher_app_id]))
+        currency = Currency.find(params[:publisher_app_id]) # just use primary currency
+        @external_publishers = ExternalPublisher.new(currency).to_a
+      else
+        @external_publishers = ExternalPublisher.load_all_for_device(@device)
+      end
+    end
     @featured_review = AppReview.featured_review(@device.try(:platform))
   end
 
