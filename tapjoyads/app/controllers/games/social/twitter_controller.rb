@@ -21,7 +21,6 @@ class Games::Social::TwitterController < GamesController
       omniauth['credentials']['secret'] ? authhash[:twitter_access_secret] = omniauth['credentials']['secret'] : authhash[:twitter_access_secret] = ''
       
       if authhash[:twitter_id] != '' and authhash[:twitter_access_token] != '' and authhash[:twitter_access_secret] != ''
-        session[:authhash] = authhash
         current_gamer.gamer_profile.update_twitter_info!(authhash)
         redirect_to games_social_invite_twitter_friends_path
       else
@@ -37,7 +36,6 @@ class Games::Social::TwitterController < GamesController
   # callback: failure    
   def failure
     flash[:error] = 'We need your authentication to continue inviting your twitter friends.'
-    session[:twitter_id] = nil
     redirect_to edit_games_gamer_path
   end
 end

@@ -105,11 +105,11 @@ class Games::SocialController < GamesController
   
   def invite_twitter_friends    
     @page_size = 25
-    
+
     @twitter_complete_friends = Twitter.follower_ids.ids.map do |id|
       Twitter.user(id)
     end
-    
+
     @twitter_friends = @twitter_complete_friends.map do |friend|
       {
         :social_id => friend.id,
@@ -143,19 +143,19 @@ class Games::SocialController < GamesController
           friend_name = Twitter.user(friend_id.to_i).name
           non_gamers << "#{friend_name}"
           invitation = current_gamer.invitation_for(friend_id, Invitation::TWITTER)
-          
+
           if invitation.pending?
             link = games_login_url :referrer => invitation.encrypted_referral_id
             link = "http://www.tapjoygames.com/login?referrer=#{invitation.encrypted_referral_id}" if Rails.env != 'production' #we need this because twitter cannot recognize IP addr as a valid url
-            
+
             message = "#{Twitter.user(current_gamer.twitter_id.to_i).name} has invited you to join Tapjoy. Experience the best of mobile apps! #{link}"
-            
+
             # posts << Twitter.update(message)
             posts << Twitter.direct_message_create(friend_id.to_i, message)
           end
         end
       end
-            
+
       if gamers.any? || posts.any?{|post| post.id.present? }
         render :json => { :success => true, :gamers => gamers, :non_gamers => non_gamers }
       else
