@@ -59,18 +59,12 @@ RegExp.escape = function(text) {
       },
 
       loadEvents : function () {
+        // Closes Dialog
         $('.close_dialog').click(function(){
           TJG.ui.removeDialogs();
           TJG.repositionDialog = [];
         });
-
-        TJG.ui.showRegister();
-
-        $('#how_works').click(function(){
-          TJG.utils.centerDialog("#how_works_dialog");
-          TJG.repositionDialog = ["#how_works_dialog"];
-          $("#how_works_dialog").fadeIn(350);
-        });
+        
         $('#link_device').click(function(){
           if (TJG.vars.isAndroid &&  TJG.android_market_url) {
             document.location.href = TJG.android_market_url;
