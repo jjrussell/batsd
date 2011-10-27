@@ -38,8 +38,8 @@ end
 
 # start apache
 `cp /home/webuser/tapjoyserver/server/apache2.conf /etc/apache2/`
-`cp /home/webuser/tapjoyserver/server/passenger.load /etc/apache2/mods-available/`
 `cp /home/webuser/tapjoyserver/server/passenger.conf /etc/apache2/mods-available/`
+`cp /home/webuser/tapjoyserver/server/passenger.load /etc/apache2/mods-available/`
 if server_type == 'test'
   `cp /home/webuser/tapjoyserver/server/tapjoy-staging /etc/apache2/sites-available/tapjoy`
 else
