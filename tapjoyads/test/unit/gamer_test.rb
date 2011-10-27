@@ -51,5 +51,12 @@ class GamerTest < ActiveSupport::TestCase
       assert_equal 1, @referring_gamer.reload.referral_count
       assert_equal 0, @stalker_gamer.reload.referral_count
     end
+
+    should "be able to deactivate" do
+      @gamer.deactivate!
+      assert @gamer.deactivated_at > Time.zone.now - 1.minute
+      assert @gamer.deactivated_at < Time.zone.now
+    end
+
   end
 end

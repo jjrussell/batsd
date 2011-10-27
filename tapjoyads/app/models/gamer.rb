@@ -30,6 +30,11 @@ class Gamer < ActiveRecord::Base
     save
   end
 
+  def deactivate!
+    self.deactivated_at = Time.zone.now
+    save!
+  end
+
   def external_info(channel)
     case channel
     when Invitation::EMAIL
