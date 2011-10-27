@@ -1,19 +1,4 @@
 class GamesMarketingMailer < ActionMailer::Base
-  include SendGrid
-
-  self.delivery_method = :smtp
-  self.smtp_settings = {
-    :address => 'smtp.sendgrid.net',
-    :port => 587,
-    :domain => 'tapjoy.com',
-    :authentication => :plain,
-    :user_name => RAILS_ENV == 'development' ? "erictipton" : 'produser',
-    :password => RAILS_ENV == 'development' ? 'shufflethebits' : 'prodpwd'
-  }
-
-  sendgrid_category :use_subject_lines
-  sendgrid_enable :clicktrack, :opentrack
-
   def gamer_confirmation(gamer, confirmation_link)
     from 'Tapjoy <noreply@tapjoy.com>'
     recipients gamer.email
