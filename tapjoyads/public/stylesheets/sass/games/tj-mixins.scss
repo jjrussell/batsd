@@ -7,22 +7,20 @@ $tj-orange: #DD4814;
 $tj-blue: #0088CE;
 $tj-black: #000000;
 
-$main-bg: #434343 url("/images/games/bg_web.jpg");
+$main-bg: #FFF;
 $main-title-font-size: 1.2em;
 $main-font-size: 1em;
-$main-font-color: #505F6D;
+$main-font-color: #848484;
 $main-font-name: "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
 
-$nav-padding-v: 16px;
-$nav-padding-h: 8px;
-$nav-bg-color: #E9E5DA;
+$page-padding-v: 12px;
+$page-padding-h: 8px;
 
-$logo-bottom-margin: 12px;
 
-$mobile-scale-multiplier: 2;
+$mobile-scaledown-multiplier: 2;
 
 @function mobile_pad($n) {
-  @return $n/$mobile-scale-multiplier;
+  @return $n/$mobile-scaledown-multiplier;
 }
 
 @mixin rounded-corners($radius: 6px) {

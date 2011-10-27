@@ -172,5 +172,3 @@ TJG.utils = {
   }
 
 };
-
-$.utils = TJG.utils;

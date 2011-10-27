@@ -2,31 +2,16 @@
 // Global Mixins
 //-------------------------------------------
 
-@import "games_mixins";
+@import "tj-mixins";
 
 //-------------------------------------------
 
-.nav {
-  background: $nav-bg-color url('/images/games/v2/nav_bg_hd.png');
-}
 .logo {
-  background: transparent url('/images/games/v2/logo_hd.png') no-repeat;
+  background: transparent url('/images/games/logo.png') no-repeat;
 }
 .loading_animation {
-  background: transparent url('/images/games/v2/loader.gif') no-repeat;
+  background: transparent url('/images/games/loader.gif') no-repeat;
 }
-.sign_up_icon {
-  background: transparent url('/images/games/v2/sign_up_hd.png') no-repeat;
-}
-.register_header {
-  background: transparent url('/images/games/v2/register_header.png') no-repeat;
-}
-.plus {
-  background: transparent url("/images/games/v2/plus_button.png") no-repeat;
-}
-.plus.close {
-  background: transparent url("/images/games/v2/minus_button.png") no-repeat;
-}
-.mobile_icon {
-  background: transparent url("/images/games/v2/phone.png") no-repeat;
+.main_scene {
+  background: transparent url('/images/games/main-scene.jpg') no-repeat center;
 }

@@ -2,24 +2,24 @@ TJG.ui = {
 
   hideLoader : function(delay,fn) {
     TJG.repositionDialog = [];
-    delay = $.utils.or(delay, "fast");
+    delay = TJG.utils.or(delay, "fast");
     setTimeout(function() {
       $('#loader').fadeOut(delay,fn);
     });
   },
 
   showLoader : function(delay,fn) {
-    $.utils.centerDialog("#loader");
+    TJG.utils.centerDialog("#loader");
     TJG.repositionDialog = ["#loader"];
-    delay = $.utils.or(delay, "fast");
+    delay = TJG.utils.or(delay, "fast");
     setTimeout(function() {
       $('#loader').fadeIn(delay,fn);
     });
   },
 
   showLoaderAtCenter : function(delay,fn) {
-    $.utils.centerDialog("#loader");
-    delay = $.utils.or(delay, "fast");
+    TJG.utils.centerDialog("#loader");
+    delay = TJG.utils.or(delay, "fast");
     setTimeout(function() {
       var scrollTop = $(window).scrollTop();
       var screenHeight = $(window).height();
@@ -30,15 +30,15 @@ TJG.ui = {
 
   hideSender : function(delay,fn) {
     TJG.repositionDialog = [];
-    delay = $.utils.or(delay, "fast");
+    delay = TJG.utils.or(delay, "fast");
     setTimeout(function() {
       $('#sender').fadeOut(delay,fn);
     });
   },
 
   showSender : function(delay,fn) {
-    $.utils.centerDialog("#sender");
-    delay = $.utils.or(delay, "fast");
+    TJG.utils.centerDialog("#sender");
+    delay = TJG.utils.or(delay, "fast");
     setTimeout(function() {
       var scrollTop = $(window).scrollTop();
       var screenHeight = $(window).height();
@@ -48,7 +48,7 @@ TJG.ui = {
   },
 
   removeDialogs : function (delay) {
-    delay = $.utils.or(delay, "fast");
+    delay = TJG.utils.or(delay, "fast");
     setTimeout(function() {
       $('.dialog_wrapper').fadeOut(delay);
     });

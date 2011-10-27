@@ -1,53 +1,57 @@
 #jqt
   #home.current
-    = render :partial => 'nav_bar', :locals => { :show_device => true, :active => 'my_apps' }
-    - if current_gamer.devices.empty?
-      .content_wrapper
-        .content
-          = render 'register_device'
-    - elsif @external_publishers.blank?
-      .content_wrapper
-        = render 'featured_review_preview'
-        .content
-          = render 'no_games'
-    - else
-      .content_wrapper
-        = render 'featured_review_preview'
-        .content
-          = render 'my_apps'
+    .page
+      = render :partial => 'nav_bar', :locals => { :show_device => true, :active => 'my_apps' }
+      - if current_gamer.devices.empty?
+        .content_wrapper
+          .content
+            = render 'register_device'
+      - elsif @external_publishers.blank?
+        .content_wrapper
+          = render 'featured_review_preview'
+          .content
+            = render 'no_games'
+      - else
+        .content_wrapper
+          = render 'featured_review_preview'
+          .content
+            = render 'my_apps'
 
   #feat_app
-    = render :partial => 'nav_bar', :locals => { :show_device => true, :active => 'back', :back_button_destination => '#home' }
-    .content_wrapper
-      #feat_app.content
-        = render 'featured_review'
+    .page
+      = render :partial => 'nav_bar', :locals => { :show_device => true, :active => 'back', :back_button_destination => '#home' }
+      .content_wrapper
+        #feat_app.content
+          = render 'featured_review'
 
   #earn
-    = render :partial => 'nav_bar', :locals => { :show_device => true, :active => 'back', :back_button_destination => '#home' }
-    .content_wrapper
-      .content
-        #app_title
-          %span.arrow
-        #earn_content.hide
+    .page
+      = render :partial => 'nav_bar', :locals => { :show_device => true, :active => 'back', :back_button_destination => '#home' }
+      .content_wrapper
+        .content
+          #app_title
+            %span.arrow
+          #earn_content.hide
 
   #more_games
-    = render :partial => 'nav_bar', :locals => { :show_device => true, :active => 'back', :back_button_destination => '#home' }
-    .content_wrapper
-      .content
-        .tab_wrapper.clearfix
-          #top_grossing_games_tab.tab_right
-            #top_grossing_games_button.tab_button.grey
-              .tab_content
-                Popular Apps
-            #top_grossing_games_button_arrow.tab_button_bottom_arrrow_wrapper
-              .tab_button_bottom_arrrow
-          #recommended_games_tab.tab_left
-            #recommended_games_button.tab_button.dark_grey
-              .tab_content
-                Tapjoy Recommends
-            #recommended_games_button_arrow.tab_button_bottom_arrrow_wrapper
-              .tab_button_bottom_arrrow
-        #more_games_content.hide
+    .page
+      = render :partial => 'nav_bar', :locals => { :show_device => true, :active => 'back', :back_button_destination => '#home' }
+      .content_wrapper
+        .content
+          .tab_wrapper.clearfix
+            #top_grossing_games_tab.tab_right
+              #top_grossing_games_button.tab_button.grey
+                .tab_content
+                  Popular Apps
+              #top_grossing_games_button_arrow.tab_button_bottom_arrrow_wrapper
+                .tab_button_bottom_arrrow
+            #recommended_games_tab.tab_left
+              #recommended_games_button.tab_button.dark_grey
+                .tab_content
+                  Tapjoy Recommends
+              #recommended_games_button_arrow.tab_button_bottom_arrrow_wrapper
+                .tab_button_bottom_arrrow
+          #more_games_content.hide
 
 
 #accept_tos_dialog.dialog_wrapper.hide
