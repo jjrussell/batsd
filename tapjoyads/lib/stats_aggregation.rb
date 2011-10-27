@@ -289,14 +289,14 @@ class StatsAggregation
     global_stats.each { |stat| stat.update_daily_stat } if aggregate_daily
   end
 
-  def self.aggregate_daily_group_stats(date = nil)
-    date ||= Time.zone.now
+  def self.aggregate_daily_group_stats
+    date = Time.zone.now
     num_unverified = Offer.count(:conditions => [ "last_daily_stats_aggregation_time < ?",  date.beginning_of_day ])
-    daily_stat = Stats.new(:key => "global.#{date.strftime('%Y-%m')}", :load_from_memcache => false, :consistent => true)
+    daily_stat = Stats.new(:key => "global.#{date.yesterday.strftime('%Y-%m')}", :load_from_memcache => false, :consistent => true)
     if num_unverified > 0
       Rails.logger.info "there are #{num_unverified} offers with unverified stats, not aggregating global stats yet"
-    elsif daily_stat.get_daily_count('logins')[date.day - 1] > 0
-      Rails.logger.info "stats have already been aggregated for date: #{date}"
+    elsif daily_stat.get_daily_count('logins')[date.yesterday.day - 1] > 0
+      Rails.logger.info "stats have already been aggregated for date: #{date.yesterday}"
     else
       aggregate_hourly_group_stats(date.yesterday, true)
     end
