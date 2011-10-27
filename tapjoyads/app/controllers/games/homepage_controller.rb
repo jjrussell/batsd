@@ -2,6 +2,10 @@ class Games::HomepageController < GamesController
 
   before_filter :require_gamer, :except => [ :index, :tos, :privacy ]
 
+  def earn
+    index and render :action => 'index'
+  end
+
   def index
     unless current_gamer
       params[:path] = url_for(params.merge(:only_path => true))
@@ -32,7 +36,7 @@ class Games::HomepageController < GamesController
     @device_name = device_info.name if device_info
     @device = Device.new(:key => device_id) if device_id.present?
     if @device.present?
-      if @show_offerwall = (params[:publisher_app_id] && @device.has_app?(params[:publisher_app_id]))
+      if @show_offerwall = (params[:action] == 'earn' && params[:publisher_app_id] && @device.has_app?(params[:publisher_app_id]))
         currency = Currency.find(params[:publisher_app_id]) # just use primary currency
         @external_publishers = ExternalPublisher.new(currency).to_a
       else
