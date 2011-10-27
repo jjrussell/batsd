@@ -57,12 +57,8 @@ class S3Resource
   def self.find_by_id(id, options = {})
     begin
       find(id, options)
-    rescue RightAws::AwsError => e
-      if e.message =~ /^NoSuchKey:/
-        nil
-      else
-        raise e
-      end
+    rescue AWS::S3::Errors::NoSuchKey => e
+      nil
     end
   end
 
@@ -106,10 +102,10 @@ class S3Resource
     else
       if load_from_memcache
         @saved_attributes = Mc.get_and_put(get_memcache_key) do
-          convert_from_raw_attributes(S3.bucket(bucket_name).get(id))
+          convert_from_raw_attributes(S3.bucket(bucket_name).objects[id].read)
         end
       else
-        @saved_attributes = convert_from_raw_attributes(S3.bucket(bucket_name).get(id))
+        @saved_attributes = convert_from_raw_attributes(S3.bucket(bucket_name).objects[id].read)
       end
       @attributes = @saved_attributes.dup
     end
@@ -123,7 +119,7 @@ class S3Resource
   def save(options = {})
     begin
       save!(options)
-    rescue RightAws::AwsError => e
+    rescue AWS::Errors::Base
       false
     end
   end
@@ -142,12 +138,12 @@ class S3Resource
 
       Mc.put(get_memcache_key, @attributes) if save_to_memcache
 
-      bucket = S3.bucket(bucket_name)
+      object = S3.bucket(bucket_name).objects[id]
       raw_attributes = convert_to_raw_attributes
 
       begin
-        bucket.put(id, raw_attributes)
-      rescue Exception => e
+        object.write(:data => raw_attributes)
+      rescue AWS::Errors::Base => e
         if retries > 0
           delay ||= 0.1
           Rails.logger.info("#{e.class}: S3 save failed, will retry #{retries} more times")
@@ -168,14 +164,14 @@ class S3Resource
 
   def destroy
     Mc.delete(get_memcache_key)
-    S3.bucket(bucket_name).key(id).delete
+    S3.bucket(bucket_name).objects[id].delete
     @saved_attributes.clear
     @unsaved_attributes.clear
     @unsaved_attributes += @attributes.keys
     self
   end
 
-private
+  private
 
   def read_attribute(attribute, default = nil)
     @attributes[attribute] || default

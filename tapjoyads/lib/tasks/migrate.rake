@@ -10,7 +10,7 @@ namespace :db do
         end
         threads << t
       end
-      OfferCacher.cache_offers
+      OfferCacher.cache_offers(true)
       threads.each { |t| t.join }
     end
   end
