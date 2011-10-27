@@ -289,8 +289,8 @@ class StatsAggregation
     global_stats.each { |stat| stat.update_daily_stat } if aggregate_daily
   end
 
-  def self.aggregate_daily_group_stats(date = nil)
-    date ||= Time.zone.now
+  def self.aggregate_daily_group_stats
+    date = Time.zone.now
     num_unverified = Offer.count(:conditions => [ "last_daily_stats_aggregation_time < ?",  date.beginning_of_day ])
     daily_stat = Stats.new(:key => "global.#{date.strftime('%Y-%m')}", :load_from_memcache => false, :consistent => true)
     if num_unverified > 0
