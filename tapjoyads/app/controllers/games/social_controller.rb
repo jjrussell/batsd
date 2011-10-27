@@ -106,11 +106,11 @@ class Games::SocialController < GamesController
   def invite_twitter_friends    
     @page_size = 25
 
-    @twitter_complete_friends = Twitter.follower_ids.ids.map do |id|
+    twitter_friends = Twitter.follower_ids.ids.map do |id|
       Twitter.user(id)
     end
 
-    @twitter_friends = @twitter_complete_friends.map do |friend|
+    @twitter_friends = twitter_friends.map do |friend|
       {
         :social_id => friend.id,
         :name => friend.name,
