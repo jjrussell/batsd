@@ -4,9 +4,10 @@
       %table
         %tr
           %td
-            %a{ :href => @gamer.get_gravatar_profile_url, :target => '_blank' }
-              .large_avatar
-                %img{ :src => @gamer.get_avatar_url }
+            - if @gamer_profile.image_source == 'facebook' && @gamer_profile.facebook_id.present?
+              = render(:partial => 'facebook_avatar')
+            - else
+              = render(:partial => 'gravatar')
           %td
             .gamer_name
               = @gamer.get_gamer_nickname

@@ -9,15 +9,19 @@
           .title_2
             Social Networks
           .content_box
+            = fb_connect_async_js
             .interior
-              .field
-                Facebook Profile:
-                = fb_connect_async_js
-                - if @gamer_profile.facebook_id.present?
-                  %img{ :src => "https://graph.facebook.com/#{@gamer_profile.facebook_id}/picture" }
-                  = fb_name(current_facebook_user, :use_you => false)
-                - else 
-                  None Selected 
+              #facebook_profile.field
+                %table
+                  %tr
+                    %td= label_tag "Facebook Profile:"
+                    %td
+                      - if @gamer_profile.facebook_id.present?
+                        = fb_profile_pic(current_facebook_user, :size => 'small')
+                        %br
+                        = fb_name(current_facebook_user, :use_you => false)
+                      - else
+                        None Selected
               .field
                 - if @gamer_profile.facebook_id.present?
                   %a.change_fb_acct_btn.button{ :onclick => "changeFb()" }
@@ -31,10 +35,8 @@
             .interior
               - form_for([ :games, :gamer, @gamer_profile ], :url => update_social_games_gamer_gamer_profile_path, :html => { :method => "put" }) do |f|
                 .field
-                  = f.label :image_source
+                  = f.label :image_source, 'Image Source:'
                   = f.select :image_source, @image_source_options
-                  %a#user_gravatar.image{ :href => @gamer.get_gravatar_profile_url, :target => '_blank' }
-                    %img{ :src => @gamer.get_gravatar_url(30) }
                   = error_message_on @gamer_profile, :image_source
                 .field
                   = submit_tag('Save', :class => 'button')
@@ -60,11 +62,13 @@
 
     var doLogin = function(scope){
       FB.login(function(response, scope) {
-        if (response.session) {
-          <!--
-          window.location = "#{games_social_connect_facebook_account_path(:valid_login => true)}"
-          //-->
+        if (response.authResponse) {
+          FB.api('/me', function(response) {
+            <!--
+            window.location = "#{games_social_connect_facebook_account_path}"
+            //-->
+          });
         } else {
         }
-      }, {perms: scope});
+      }, {scope: scope});
     };

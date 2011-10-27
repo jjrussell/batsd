@@ -26,17 +26,16 @@ class Games::Gamers::GamerProfilesController < GamesController
       render(:json => { :success => false, :error => @gamer_profile.errors }) and return
     end
   end
-  
+
   def dissociate_account
     if params[:account_type].present?
       channel = params[:account_type].to_i
 
       if @gamer_profile.dissociate_account!(channel)
-        flash[:notice] = "You've successfully dissociated your #{Invitation::CHANNEL[channel]} account."
-        redirect_to edit_games_gamer_path and return
+        redirect_to social_games_gamer_path
       else
-        flash[:error] = 'Please try dissociate later.'
-        redirect_to edit_games_gamer_path and return
+        flash[:error] = 'Failed to change linked Facebook account.'
+        redirect_to social_games_gamer_path
       end
     end
   end

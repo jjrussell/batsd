@@ -40,10 +40,10 @@ a, a:visited {
   color: $main-font-color;
   //@include box-shadow;
   padding: $nav-padding-v $nav-padding-h;
-  
+
   .nav_container {
     width: 100%;
-    
+
     .aside_nav, .aside_login {
       font-size: 0.8em;
       font-weight: bold;
@@ -57,7 +57,7 @@ a, a:visited {
     }
     .aside_login {
       top: 8px;
-      
+
       form#new_gamer_session input {
         border: 1px solid #C1C1C1;
         width: 110px;
@@ -211,17 +211,17 @@ a, a:visited {
 }
 
 .content_wrapper {
-  
+
   .content {
   }
-  
+
   .feat_review {
     background-color: #FEFEFE;
     border: 1px solid #DEDEDE;
     border-bottom: 1px solid #9D9990;
     @include rounded-corners;
   }
-  
+
   .sign_up_icon {
     background: transparent url('/images/games/v2/sign_up_hd.png') no-repeat;
     height: 30px;
@@ -237,12 +237,12 @@ a, a:visited {
   }
   .register_form {
     overflow: hidden;
-    
+
     form#new_gamer label {
       margin: 0 auto;
       margin-top: 8px;
     }
-    
+
     form#new_gamer input[type=email],
     form#new_gamer input[type=password] {
       border: 1px solid #C1C1C1;
@@ -252,7 +252,7 @@ a, a:visited {
       @include rounded-corners(10px);
       @include inset-shadow;
     }
-    
+
     form#new_gamer input[type=submit] {
       border: 1px solid #B0B0B0;
       border-color: #B0131D;
@@ -267,9 +267,9 @@ a, a:visited {
       @include inset-shadow;
       @include gradient(#CF1623, #EA1927);
     }
-    
+
     form#new_gamer {
-      
+
       select {
        border: 1px solid #C1C1C1;
        padding: 4px;
@@ -287,7 +287,7 @@ a, a:visited {
   .profile .field {
     margin: 8px 0;
   }
-  
+
   .profile input[type=text],
   .profile input[type=password] {
     border: 1px solid #C1C1C1;
@@ -296,7 +296,7 @@ a, a:visited {
     @include rounded-corners(10px);
     @include inset-shadow;
   }
-  
+
   .profile select {
     border: 1px solid #C1C1C1;
     width: 98%;
@@ -341,11 +341,11 @@ a, a:visited {
   color: $main-font-color;
   position: absolute;
   width: 100%;
-  
+
   div {
     float: left;
   }
-  
+
   .device {
     background: $nav-bg-color url('/images/games/v2/nav_bg_hd.png') repeat;
     border: 1px solid #C1C1C1;
@@ -359,7 +359,7 @@ a, a:visited {
     -webkit-border-top-left-radius: 0;
     -moz-border-radius-topright: 0;
     -moz-border-radius-topleft: 0;
-    
+
     .plus {
       cursor: pointer;
       background: transparent url("/images/games/v2/plus_button.png") no-repeat;
@@ -399,10 +399,27 @@ a, a:visited {
 
 #reset_password {
   .content_box {
-    height: 160px; 
+    height: 160px;
   }
 }
 
 .forgot_pass {
   font-size: 0.8em;
+}
+
+#edit_social{
+  label {
+    font-weight: bold;
+  }
+  select {
+    width: auto;
+  }
+}
+
+#facebook_profile {
+  td {
+    padding: 5px;
+    text-align: center;
+    vertical-align: middle;
+  }
 }

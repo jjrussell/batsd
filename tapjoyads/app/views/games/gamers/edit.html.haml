@@ -56,7 +56,7 @@
         if (response.authResponse) {
           FB.api('/me', function(response) {
             <!--
-            window.location = "#{games_social_invite_facebook_friends_path(:valid_login => true)}"
+            window.location = "#{games_social_invite_facebook_friends_path}"
             //-->
           });
         } else {
