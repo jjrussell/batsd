@@ -54,7 +54,12 @@ class Games::Gamers::DevicesController < GamesController
       cookies[:data] = { :value => params[:data], :expires => 1.year.from_now } if params[:data].present?
 
       if current_gamer.devices.create(:device => device)
-        device.set_last_run_time!(TAPJOY_GAMES_REGISTRATION_OFFER_ID)
+        click = Click.new :key => "#{device.key}.#{TAPJOY_GAMES_REGISTRATION_OFFER_ID}"
+        if !click.new_record? && click.rewardable?
+          current_gamer.reward_click(click)
+        else
+          device.set_last_run_time!(TAPJOY_GAMES_REGISTRATION_OFFER_ID)
+        end
         redirect_to games_root_path(:register_device => true)
       else
         flash[:error] = "Error linking device. Please try again."
