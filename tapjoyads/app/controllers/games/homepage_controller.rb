@@ -38,7 +38,7 @@ class Games::HomepageController < GamesController
     if @device.present?
       if @show_offerwall = (params[:action] == 'earn' && params[:publisher_app_id] && @device.has_app?(params[:publisher_app_id]))
         currency = Currency.find(params[:publisher_app_id]) # just use primary currency
-        @offerwall_external_publisher = ExternalPublisher.new(currency).to_a
+        @offerwall_external_publisher = ExternalPublisher.new(currency)
       end
       @external_publishers = ExternalPublisher.load_all_for_device(@device)
     end
