@@ -26,18 +26,63 @@ a, a:visited {
 }
 
 .page {
-  color: #FFF;
   padding: $page-padding-v $page-padding-h;
   height: 100%;
 }
 
+.button.red {
+  border: 1px solid #B0B0B0;
+  border-color: #B0131D;
+  color: #FFF;
+  cursor: pointer;
+  font-size: 0.9em;
+  position: relative;
+  margin: 8px auto 0;
+  width: 120px;
+  @include inset-button(16px, 8px 10px);
+  @include inset-shadow;
+  @include inset-text-shadow;
+  @include box-shadow(#999);
+  @include gradient(#CF1623, #EA1927);
+}
+
+.loading_animation {
+  margin: 12px auto;
+  height: 11px;
+  width: 16px;
+}
+
+//-------------------------------------------
+//  Forms
+//-------------------------------------------
+input {
+  border: 1px solid $border-color;
+  padding: 6px;
+  @include rounded-corners(12px);
+  @include inset-shadow;
+}
+input[type=email]:focus, input[type=password]:focus {
+  @include inset-shadow(#FFF, 6px);
+  @include shadow($border-color, 6px);
+}
+input[type=submit] {
+  border: 1px solid #B0B0B0;
+  border-color: #B0131D;
+  color: #FFF;
+  cursor: pointer;
+  font-style: italic;
+  font-size: 0.9em;
+  position: relative;
+  text-shadow: 0 1px 1px #444;
+  @include button(12px, 6px 12px);
+  @include gradient(#CF1623, #EA1927);
+}
 
 //-------------------------------------------
 //  Navigation Bar
 //-------------------------------------------
 .nav {
-  color: $main-font-color;
-  height: 78px;
+  height: 72px;
   margin: 0 auto;
   width: 960px;
   
@@ -46,9 +91,9 @@ a, a:visited {
     
     .aside_nav, .aside_login {
       float: right;
-      font-size: 0.8em;
+      font-size: 0.9em;
       position: relative;
-      top: 24px;
+      top: 12px;
     }
     .aside_nav span {
     }
@@ -75,30 +120,12 @@ a, a:visited {
             top: 6px;
           }
           input {
-            border: 1px solid $border-color;
             margin-right: 10px;
-            padding: 6px;
             width: 112px;
-            @include rounded-corners(10px);
-            @include inset-shadow;
-          }
-          input[type=email]:focus, input[type=password]:focus {
-            @include inset-shadow(#FFF, 6px);
-            @include shadow($border-color, 6px);
           }
           input[type=submit] {
-            border: 1px solid #B0B0B0;
-            border-color: #B0131D;
-            color: #FFF;
-            cursor: pointer;
-            font-style: italic;
-            font-size: 0.9em;
-            position: relative;
             margin-right: 0;
-            text-shadow: 0 1px 1px #444;
             width: 62px;
-            @include button(16px, 6px 12px);
-            @include gradient(#CF1623, #EA1927);
           }
         }
         .fieldWithErrors {
@@ -140,7 +167,7 @@ a, a:visited {
       color: #FFF;
       @include inset-text-shadow;
       @include box-shadow(#999);
-      @include gradient(#CF1623, #EA1927);
+      @include gradient(#CF1623, #CF1623);
     }
     .nav_buttons li.active {
       cursor: default;
@@ -154,88 +181,63 @@ a, a:visited {
 .main_scene {
   height: 450px;
   margin: 0 auto;
-  width: 1300px;
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-#login .content_box {
-  margin: 0 auto;
-  padding: 20px;
-  width: 460px;
-}
-
-.mobile #support_request .content_box {
-  width: 305px;
-}
-
-.mobile #support_request textarea {
-  width: 270px;
-}
-
-#support_request .content_box {
-  width: 350px;
-}
-
-#support_request textarea {
-  width: 310px;
-}
-
-#support_request {
+  width: 1200px;
+  @include rounded-corners(3px);
+  
   .content_box {
-    width: 350px;
+    height: 450px;
+    margin: 0 auto;
+    width: 960px;
   }
-  textarea {
-    width: 310px;
+  .content_box div {
+    float: left;
   }
-  .content_box.fixed {
-    height: 200px;
+  
+  .main_phone {
+    height: 450px;
+    margin: 0 36px 0 200px;
+    width: 380px;
+  }
+  
+  .sign_up {
+    background-color: #FFF;
+    border: 1px solid $tj-red;
+    position: relative;
+    top: 256px;
+    width: 320px;
+    @include shadow(#333);
+    @include rounded-corners(10px);
+          
+    .sign_up_content {
+      padding: 16px;
+    }
+    
+    input {
+      width: 100%;
+    }
   }
 }
 
-.button.red {
-  border: 1px solid #B0B0B0;
-  border-color: #B0131D;
-  color: #FFF;
-  cursor: pointer;
-  font-size: 0.9em;
-  position: relative;
-  margin: 8px auto 0;
-  width: 120px;
-  @include inset-button(16px, 8px 10px);
-  @include inset-shadow;
-  @include inset-text-shadow;
-  @include box-shadow(#999);
-  @include gradient(#CF1623, #EA1927);
-}
 
-.loading_animation {
-  margin: 12px auto;
-  height: 11px;
-  width: 16px;
-}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 //-------------------------------------------
 // Login Page
 //-------------------------------------------
-#login .content_box {
-  margin: 0 auto;
-  padding: 20px;
-  width: 460px;
-}
-
 .content_wrapper {
   
   .content {
