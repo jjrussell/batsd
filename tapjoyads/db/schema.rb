@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20111026210735) do
+ActiveRecord::Schema.define(:version => 20111027011224) do
 
   create_table "action_offers", :id => false, :force => true do |t|
     t.string   "id",                    :limit => 36,                    :null => false
@@ -500,8 +500,6 @@ ActiveRecord::Schema.define(:version => 20111026210735) do
     t.integer  "daily_budget",                                                                  :default => 0,     :null => false
     t.integer  "overall_budget",                                                                :default => 0,     :null => false
     t.text     "countries",                                                                                        :null => false
-    t.text     "cities",                                                                                           :null => false
-    t.text     "postal_codes",                                                                                     :null => false
     t.text     "device_types",                                                                                     :null => false
     t.boolean  "pay_per_click",                                                                 :default => false
     t.boolean  "allow_negative_balance",                                                        :default => false
@@ -549,7 +547,7 @@ ActiveRecord::Schema.define(:version => 20111026210735) do
     t.integer  "interval",                                                                      :default => 0,     :null => false
     t.boolean  "url_overridden",                                                                :default => false, :null => false
     t.text     "banner_creatives"
-    t.text     "dma_codes"
+    t.text     "dma_codes",                                                                                        :null => false
   end
 
   add_index "offers", ["id"], :name => "index_offers_on_id", :unique => true
