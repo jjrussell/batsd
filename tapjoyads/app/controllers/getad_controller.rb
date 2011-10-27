@@ -226,7 +226,7 @@ class GetadController < ApplicationController
 
     image = Mc.get_and_put("img.s3.#{image_name.hash}") do
       bucket = S3.bucket(BucketNames::ADIMAGES)
-      image_content = bucket.get(image_name)
+      image_content = bucket.objects[image_name].read
       Base64.encode64 image_content
     end
 
@@ -263,7 +263,7 @@ class GetadController < ApplicationController
 
     image = Mc.get_and_put("img.s3.#{ad_id}") do
       bucket = S3.bucket(BucketNames::PUBLISHER_ADS)
-      image_content = bucket.get("base64.#{ad_id}")
+      image_content = bucket.objects["base64.#{ad_id}"].read
     end
 
     @tapjoy_ad.image = image

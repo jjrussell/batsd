@@ -64,18 +64,17 @@ class Apps::VirtualGoodsController < WebsiteController
     redirect_to :action => 'index'
   end
 
-private
+  private
 
   def update_virtual_good
-    @virtual_good.app_id              = @app.id
-    @virtual_good.name                = params[:virtual_good][:name]
-    @virtual_good.title               = params[:virtual_good][:title]
-    @virtual_good.description         = params[:virtual_good][:description]
-    @virtual_good.price               = params[:virtual_good][:price]
-    @virtual_good.max_purchases       = params[:virtual_good][:max_purchases]
-    @virtual_good.beta                = params[:virtual_good][:beta] == '1'
-    @virtual_good.disabled            = params[:virtual_good][:disabled] == '1'
-
+    @virtual_good.app_id        = @app.id
+    @virtual_good.name          = params[:virtual_good][:name]
+    @virtual_good.title         = params[:virtual_good][:title]
+    @virtual_good.description   = params[:virtual_good][:description]
+    @virtual_good.price         = params[:virtual_good][:price]
+    @virtual_good.max_purchases = params[:virtual_good][:max_purchases]
+    @virtual_good.beta          = params[:virtual_good][:beta] == '1'
+    @virtual_good.disabled      = params[:virtual_good][:disabled] == '1'
 
     if params[:virtual_good][:icon]
       icon_file = params[:virtual_good][:icon]
@@ -86,7 +85,7 @@ private
           if dimensions[0] <= 100 && dimensions[1] <= 200
             icon_file.rewind
             bucket = S3.bucket(BucketNames::VIRTUAL_GOODS)
-            bucket.put("icons/#{@virtual_good.key}.png", icon_file.read, {}, 'public-read')
+            bucket.objects["icons/#{@virtual_good.key}.png"].write(:data => icon_file.read, :acl => :public_read)
             @virtual_good.has_icon = true
           else
             flash[:error] = "icon file dimensions (#{dimensions.join('x')}) is too large"
@@ -107,7 +106,7 @@ private
       if data_size <= (5 << 20) # 5MB
         bucket = S3.bucket(BucketNames::VIRTUAL_GOODS)
         data = params[:virtual_good][:data].read
-        bucket.put("data/#{@virtual_good.key}.zip", data, {}, 'public-read')
+        bucket.objects["data/#{@virtual_good.key}.zip"].write(:data => data, :acl => :public_read)
         @virtual_good.has_data = true
         @virtual_good.file_size = data_size
         @virtual_good.data_hash = Digest::MD5.hexdigest data
