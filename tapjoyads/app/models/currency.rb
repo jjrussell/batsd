@@ -45,7 +45,7 @@ class Currency < ActiveRecord::Base
 
   before_validation :sanitize_attributes
   before_validation_on_create :assign_default_currency_group
-  before_create :set_values_from_partner_and_reseller
+  before_create :set_hide_rewarded_app_installs, :set_values_from_partner_and_reseller
   before_update :update_spend_share
   after_cache :cache_by_app_id
   after_cache_clear :clear_cache_by_app_id
@@ -169,8 +169,11 @@ class Currency < ActiveRecord::Base
       self.offer_whitelist   = partner.offer_whitelist
       self.use_whitelist     = partner.use_whitelist
     end
-    self.tapjoy_enabled    = partner.approved_publisher if new_record?
-    self.external_publisher ||= partner.accepted_publisher_tos?
+    if new_record?
+      self.tapjoy_enabled     = partner.approved_publisher
+      self.external_publisher = partner.accepted_publisher_tos?
+    end
+
     true
   end
 
@@ -185,7 +188,7 @@ class Currency < ActiveRecord::Base
     self.reseller_spend_share = reseller_id? ? reseller.reseller_rev_share * spend_share_ratio : nil
   end
 
-private
+  private
 
   def cache_by_app_id
     currencies = Currency.find_all_by_app_id(app_id, :order => 'ordinal ASC').each { |c| c.run_callbacks(:before_cache) }
@@ -228,4 +231,10 @@ private
       calculate_spend_shares
     end
   end
+
+  def set_hide_rewarded_app_installs
+    self.hide_rewarded_app_installs = true if app.platform == 'iphone'
+    true
+  end
+
 end
