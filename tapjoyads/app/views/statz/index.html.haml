@@ -91,7 +91,7 @@
         metadata = @cached_metadata[offer_id]
         tr_classes = []
         tr_classes << (stats['conversions'] == '0'         ? 'zero_conversions' : 'nonzero_conversions')
-        tr_classes << (stats['overall_store_rank'] == '-'  ? 'unranked'         : 'ranked')
+        tr_classes << (metadata['overall_store_rank'] == '-'  ? 'unranked'         : 'ranked')
         tr_classes << (metadata['price'] == '$0.00'        ? 'free'             : 'paid')
         tr_classes << metadata['platform'].to_s.downcase
         tr_classes << (stats['published_offers'] == '0'    ? 'zero_published'   : 'nonzero_published')
@@ -105,7 +105,7 @@
           %img.icon.hidden{ :s => metadata['icon_url'] }
         %td= link_to(metadata['offer_name'], statz_path(offer_id))
         %td= stats['conversions']
-        %td= stats['overall_store_rank']
+        %td= metadata['overall_store_rank']
         %td= metadata['price']
         %td= metadata['payment']
         %td= metadata['balance']

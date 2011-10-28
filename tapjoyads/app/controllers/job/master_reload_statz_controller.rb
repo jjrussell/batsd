@@ -33,43 +33,41 @@ class Job::MasterReloadStatzController < Job::JobController
     start_time, end_time = get_times_for_vertica(timeframe)
     time_conditions      = "time >= '#{start_time.to_s(:db)}' AND time < '#{end_time.to_s(:db)}'"
 
-    advertiser_stats = VerticaCluster.query('analytics.actions', {
+    cached_stats = {}
+    VerticaCluster.query('analytics.actions', {
         :select     => 'offer_id, count(*) AS conversions',
         :group      => 'offer_id',
-        :conditions => "path LIKE '%reward%' AND #{time_conditions}" })
-    publisher_stats = VerticaCluster.query('analytics.actions', {
+        :conditions => "path LIKE '%reward%' AND #{time_conditions}" }).each do |result|
+      cached_stats[result[:offer_id]] = {
+        'conversions'      => number_with_delimiter(result[:conversions]),
+        'published_offers' => '0',
+        'offers_revenue'   => '$0.00',
+      }
+    end
+    VerticaCluster.query('analytics.actions', {
         :select     => 'publisher_app_id AS offer_id, count(*) AS published_offers, sum(publisher_amount) AS offers_revenue',
         :group      => 'publisher_app_id',
-        :conditions => "path LIKE '%reward%' AND #{time_conditions}" })
-
-    cached_stats = {}
-    advertiser_stats.each do |stats|
-      cached_stats[stats[:offer_id]] ||= {}
-      cached_stats[stats[:offer_id]]['conversions'] = number_with_delimiter(stats[:conversions])
-    end
-    publisher_stats.each do |stats|
-      cached_stats[stats[:offer_id]] ||= {}
-      cached_stats[stats[:offer_id]]['published_offers'] = number_with_delimiter(stats[:published_offers])
-      cached_stats[stats[:offer_id]]['offers_revenue']   = number_to_currency(stats[:offers_revenue] / 100.0)
+        :conditions => "path LIKE '%reward%' AND #{time_conditions}" }).each do |result|
+      cached_stats[result[:offer_id]] ||= { 'conversions' => '0' }
+      cached_stats[result[:offer_id]]['published_offers'] = number_with_delimiter(result[:published_offers])
+      cached_stats[result[:offer_id]]['offers_revenue']   = number_to_currency(result[:offers_revenue] / 100.0)
     end
 
     cached_metadata = {}
     Offer.find_each(:conditions => [ 'id IN (?)', cached_stats.keys ], :include => :partner) do |offer|
-      metadata = {
-        'icon_url'        => offer.get_icon_url,
-        'offer_name'      => offer.name_with_suffix,
-        'price'           => number_to_currency(offer.price / 100.0),
-        'payment'         => number_to_currency(offer.payment / 100.0),
-        'balance'         => number_to_currency(offer.partner.balance / 100.0),
-        'conversion_rate' => number_to_percentage((offer.conversion_rate || 0) * 100.0, :precision => 1),
-        'platform'        => offer.get_platform,
-        'featured'        => offer.featured?,
-        'rewarded'        => offer.rewarded?,
-        'offer_type'      => offer.item_type,
+      cached_metadata[offer.id] = {
+        'icon_url'           => offer.get_icon_url,
+        'offer_name'         => offer.name_with_suffix,
+        'price'              => number_to_currency(offer.price / 100.0),
+        'payment'            => number_to_currency(offer.payment / 100.0),
+        'balance'            => number_to_currency(offer.partner.balance / 100.0),
+        'conversion_rate'    => number_to_percentage((offer.conversion_rate || 0) * 100.0, :precision => 1),
+        'platform'           => offer.get_platform,
+        'featured'           => offer.featured?,
+        'rewarded'           => offer.rewarded?,
+        'offer_type'         => offer.item_type,
+        'overall_store_rank' => combined_ranks[offer.third_party_data] || '-',
       }
-
-      cached_metadata[offer.id] = metadata
-      cached_stats[offer.id]['overall_store_rank'] = combined_ranks[offer.third_party_data] || '-'
     end
 
     cached_stats_adv = cached_stats.sort do |s1, s2|
