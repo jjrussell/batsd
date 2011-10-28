@@ -37,7 +37,7 @@ class Sqs
         s3_message = {:queue_name => queue_name, :message => message}.to_json
 
         bucket = S3.bucket(BucketNames::FAILED_SQS_WRITES)
-        bucket.put(UUIDTools::UUID.random_create.to_s, s3_message)
+        bucket.objects[UUIDTools::UUID.random_create.to_s].write(:data => s3_message)
       else
         raise e
       end
