@@ -1,10 +1,10 @@
-%h2=recommendations_header
+%h3=description
 %table#recommendations_table.tablesorter
   %thead
     %tr
       %th App ID
       %th App Name
-      - unless @options[:with_weights].blank?
+      - if @options[:with_weights] == 'true'
         %th weight
   %tbody{ :class => cycle('even', 'odd') }
     = render :partial => 'recommendation', :collection => recommendations

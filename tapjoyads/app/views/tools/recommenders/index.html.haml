@@ -1,9 +1,5 @@
-
 - @page_title = "Recommenders"
-- unless params[:recommender].blank? 
-  %h1="Recommendations by #{@recommenders[params[:recommender].to_sym]}:"
-- else
-  %h1 Choose a recommender
+%h1 Recommenders
 - form_tag(tools_recommenders_path) do
   %table
     %tbody
@@ -17,17 +13,17 @@
         %th Recommend for
         %td
           - app_id_selected = params[:recommend_for].blank? ? true : params[:recommend_for] =~ /app/
-          %div 
+          %div
             = radio_button_tag :recommend_for, :app_id, app_id_selected
             = label_tag :recommend_for, "Application"
-          %div 
+          %div
             = radio_button_tag :recommend_for, :udid, !app_id_selected
             = label_tag :recommend_for, "Device"
       %tr
         %th= label_tag :app_or_device_id, "Enter App ID or Device UDID:"
         %td= text_field_tag :app_or_device_id, params[:app_or_device_id] , :size => 60
       %tr
-        %th= label_tag :n, "How many recommendations? (if available)"
+        %th= label_tag :n, "Max number of recommendations:"
         %td= text_field_tag :n, params[:n], :size => 3
       %tr
         %th= label_tag :with_weights, "Show weights with recommendations?"
@@ -37,8 +33,8 @@
 
 
 - unless @recommendations.nil?
-  = render :partial => 'recommendations', :locals => {:recommendations_header => @recommendations_header, :recommendations=>@recommendations}
-  
+  = render :partial => 'recommendations', :locals => { :description => @options[:description], :recommendations=>@recommendations }
+
 
 - content_for :page_javascript do
   :plain

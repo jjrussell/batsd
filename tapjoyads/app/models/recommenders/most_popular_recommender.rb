@@ -6,11 +6,11 @@ class Recommenders::MostPopularRecommender < Recommender
     @app_names = {}    #names of the apps
     parse_file self.class::MOST_POPULAR_FILE
   end
-  
+
   def most_popular_apps(opts={})
     top_apps_in_hash(@most_popular_apps, opts[:n])
   end
-  
+
   def recommendations_for_app(app, opts={})
     most_popular_apps(opts)
   end
@@ -18,43 +18,23 @@ class Recommenders::MostPopularRecommender < Recommender
   def recommendations_for_udid(udid, opts={})
     most_popular_apps(opts)
   end
-  
+
   def random_app
     @app_names.keys.rand
   end
-  
+
   def app_name(app_id)
     @app_names[app_id]
   end
 
-  
   private
-  
-  def parse_file(file_name)
-    file_lines(file_name).each do |line|
-      parse_line(line, file_name)
-    end
-  end
-    
   def parse_line(line, file_name)
-    case file_name
-      when self.class::MOST_POPULAR_FILE then parse_popular_line(line)
-      else raise "Wrong File Name!"
-    end
+    parse_popular_line(line)
   end
-  
+
   def parse_popular_line(line)
     app_id, name, count = line.split("\t")
     @app_names[app_id] = name
     @most_popular_apps[app_id] = count.to_i
   end
-  
-  def file_lines(file_name)
-    @file_lines ||= {}
-    @file_lines[file_name] ||= S3.bucket(BucketNames::TAPJOY_GAMES).get(file_name).split(/[\r\n]/)
-  end
-    
-  
 end
-  
-
