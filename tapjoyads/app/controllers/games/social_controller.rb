@@ -1,5 +1,6 @@
 class Games::SocialController < GamesController
-  rescue_from Mogli::Client::SessionInvalidatedDueToPasswordChange, Mogli::Client::OAuthException, :with => :handle_oauth_exception
+  rescue_from Mogli::Client::ClientException, :with => :handle_mogli_exceptions
+  rescue_from Errno::ECONNRESET, :with => :handle_other_exceptions
 
   before_filter :require_gamer
   before_filter :offline_facebook_authenticate, :only => [ :invite_facebook_friends, :send_facebook_invites ]
@@ -131,10 +132,28 @@ private
     flash[:error] = @error_msg
     redirect_to edit_games_gamer_path
   end
-
-  def handle_oauth_exception
-    @error_msg = "Please authorize us before sending out an invite."
+  
+  def handle_mogli_exceptions(e)
+    case e
+    when Mogli::Client::FeedActionRequestLimitExceeded
+      @error_msg = "You've reached the limit. Please try again later."
+    when Mogli::Client::HTTPException
+      @error_msg = "There was an issue with inviting your friend. Please try again later."
+    when Mogli::Client::SessionInvalidatedDueToPasswordChange, Mogli::Client::OAuthException
+      @error_msg = "Please authorize us before sending out an invite."
+    else
+      @error_msg = "There was an issue with inviting your friend. Please try again later."
+    end
+    
     dissociate_and_redirect
+  end
+  
+  def handle_other_exceptions(e)
+    case e
+    when Errno::ECONNRESET
+      @error_msg = "There was a connection issue. Please try again later."
+      redirect_to edit_games_gamer_path
+    end
   end
 
   def require_gamer

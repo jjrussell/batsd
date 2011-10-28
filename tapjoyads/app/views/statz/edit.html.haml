@@ -123,15 +123,23 @@
         = f.label(:cities)
         #help_cities.help ?
       %td
-        = f.text_field(:cities)
+        = f.text_field(:cities, :disabled => true)
         = error_message_on @offer, :cities
     %tr
       %th
         = f.label(:postal_codes)
         #help_postal_codes.help ?
       %td
-        = f.text_field(:postal_codes)
+        = f.text_field(:postal_codes, :disabled => true)
         = error_message_on @offer, :postal_codes
+    %tr
+      %th
+        = f.label(:dma_codes)
+        #help_dma_codes.help ?
+      %td
+        = f.text_field(:dma_codes)
+        = error_message_on @offer, :dma_codes
+        .details= link_to('DMA Code List', 'http://code.google.com/apis/adwords/docs/appendix/metrocodes.html', :target => '_blank')
     %tr
       %th
         = f.label(:device_types)
@@ -163,14 +171,14 @@
           = error_message_on @offer, :min_bid_override
       %tr
         %th
-          = f.label(:daily_budget)
+          = f.label(:daily_budget, 'Daily Conversions')
           #help_daily_budget.help ?
         %td
           = f.text_field(:daily_budget)
           = error_message_on @offer, :daily_budget
       %tr
         %th
-          = f.label(:overall_budget)
+          = f.label(:overall_budget, 'Overall Conversions')
           #help_overall_budget.help ?
         %td
           = f.text_field(:overall_budget)
@@ -230,10 +238,11 @@
   #help_min_conversion_rate_content{ :name => 'Min CVR' } This is used to prevent low conversion rate warnings. A warning will only be issued if the conversion rate falls below this threshold. Allowed values are blank or 0.0 - 1.0
   #help_cities_content{ :name => 'Cities' } Targets this offer to these cities. Must be an array of city names or blank for no targeting. i.e. ["San Francisco"]
   #help_postal_codes_content{ :name => 'Postal Codes' } Targets this offer to these postal codes. Must be an array of postal codes or blank for no targeting. i.e. ["94105"]
+  #help_dma_codes_content{ :name => 'DMA Codes' } Targets this offer to these designated market areas (DMAs). Must be an array of DMA codes or blank for no targeting. i.e. [807]
   #help_device_types_content{ :name => 'Device Types' } Targets this offer to these device types. At least one device type must be selected.
   #help_publisher_app_whitelist_content{ :name => 'Publisher App Whitelist' } Restrict this offer to these publisher apps. Must be a ";" separated list of publisher app IDs.
-  #help_daily_budget_content{ :name => 'Daily Budget' } The maximum number of conversions to complete in one day.
-  #help_overall_budget_content{ :name => 'Overall Budget' } The maximum number of conversions to complete in the lifetime of this offer. This is merely a hard limit so it is likely that the offer will go over-budget.
+  #help_daily_budget_content{ :name => 'Daily Conversions' } The maximum number of conversions to complete in one day.
+  #help_overall_budget_content{ :name => 'Overall Conversions' } The maximum number of conversions to complete in the lifetime of this offer. This is merely a hard limit so it is likely that the offer will go over-budget.
   #help_interval_content{ :name => 'Interval' } The interval for frequency capping.
   #help_url_overridden_content{ :name => 'Override Store URL' } Allows for manual override of Completion URL field
   #help_url_content{ :name => 'Store URL' } The URL that the user will be redirected to upon clicking an ad (typically links to Market Place / App store search results page)
@@ -264,4 +273,7 @@
     .icon {
       float: left;
       padding: 20px 0;
+    }
+    .details {
+      font-size: 12px;
     }

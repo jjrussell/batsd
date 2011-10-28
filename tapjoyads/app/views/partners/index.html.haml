@@ -79,4 +79,12 @@
           url: url
         });
       });
+      $('#q').autocomplete({
+        source: '#{search_partners_path}',
+        delay: 250,
+        minLength: 2,
+        select: function(event, ui) {
+          location.href = '#{partners_path}/' + ui.item.partner_id;
+        },
+      });
     });

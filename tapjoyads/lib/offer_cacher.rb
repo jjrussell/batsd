@@ -63,18 +63,18 @@ class OfferCacher
       group = 0
 
       offers.compact.each_slice(GROUP_SIZE) do |offer_group|
-        bucket.put("#{s3_key}.#{group}", Marshal.dump(offer_group)) if save_to_s3
+        bucket.objects["#{s3_key}.#{group}"].write(:data => Marshal.dump(offer_group)) if save_to_s3
         Mc.distributed_put("#{mc_key}.#{group}", offer_group, false, 1.day)
         group += 1
       end
 
-      bucket.put("#{s3_key}.#{group}", Marshal.dump([])) if save_to_s3
+      bucket.objects["#{s3_key}.#{group}"].write(:data => Marshal.dump([])) if save_to_s3
       Mc.distributed_put("#{mc_key}.#{group}", [], false, 1.day)
       group += 1
 
       if save_to_s3
-        while bucket.key("#{s3_key}.#{group}").exists?
-          bucket.key("#{s3_key}.#{group}").delete
+        while bucket.objects["#{s3_key}.#{group}"].exists?
+          bucket.objects["#{s3_key}.#{group}"].delete
       	  Mc.distributed_delete("#{mc_key}.#{group}")
       	  group += 1
       	end
@@ -90,7 +90,7 @@ class OfferCacher
       loop do
         offer_group = Mc.distributed_get_and_put("#{mc_key}.#{group}", false, 1.day) do
           bucket = S3.bucket(BucketNames::OFFER_DATA)
-          Marshal.restore(bucket.get("#{s3_key}.#{group}"))
+          Marshal.restore(bucket.objects["#{s3_key}.#{group}"].read)
         end
         offers |= offer_group
         break unless offer_group.length == GROUP_SIZE
@@ -119,14 +119,14 @@ class OfferCacher
         :avg_revenue_mean => avg_revenue_mean, :avg_revenue_std_dev => avg_revenue_std_dev, :bid_mean => bid_mean, :bid_std_dev => bid_std_dev }
 
       bucket = S3.bucket(BucketNames::OFFER_DATA)
-      bucket.put("offer_rank_statistics", Marshal.dump(stats))
+      bucket.objects["offer_rank_statistics"].write(:data => Marshal.dump(stats))
       Mc.put("s3.offer_rank_statistics", stats)
     end
 
     def get_offer_stats
       Mc.get_and_put("s3.offer_rank_statistics") do
         bucket = S3.bucket(BucketNames::OFFER_DATA)
-        Marshal.restore(bucket.get("offer_rank_statistics"))
+        Marshal.restore(bucket.objects["offer_rank_statistics"].read)
       end
     end
 

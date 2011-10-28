@@ -7,7 +7,6 @@ class Apps::OffersController < WebsiteController
   after_filter :save_activity_logs, :only => [ :create, :update, :toggle ]
 
   def new
-
   end
 
   def create
@@ -39,8 +38,8 @@ class Apps::OffersController < WebsiteController
 
   def preview
     bucket = S3.bucket(BucketNames::TAPJOY)
-    key = RightAws::S3::Key.create(bucket, "icons/src/#{Offer.hashed_icon_id(@offer.icon_id)}.jpg")
-    @show_generated_ads = key.exists?
+    obj = bucket.objects["icons/src/#{Offer.hashed_icon_id(@offer.icon_id)}.jpg"]
+    @show_generated_ads = obj.exists?
 
     render :layout => 'simple'
   end
@@ -56,7 +55,7 @@ class Apps::OffersController < WebsiteController
     if permitted_to? :edit, :statz
       safe_attributes += [ :tapjoy_enabled, :allow_negative_balance, :pay_per_click,
           :name, :name_suffix, :show_rate, :min_conversion_rate, :countries, :cities,
-          :postal_codes, :device_types, :publisher_app_whitelist, :overall_budget, :min_bid_override ]
+          :postal_codes, :device_types, :publisher_app_whitelist, :overall_budget, :min_bid_override, :dma_codes ]
     end
 
     if @offer.safe_update_attributes(offer_params, safe_attributes)
