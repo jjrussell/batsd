@@ -104,7 +104,12 @@ class Games::SocialController < GamesController
 private
   def offline_facebook_authenticate
     if current_gamer.facebook_id.blank? && current_facebook_user
-      current_gamer.gamer_profile.update_facebook_info!(current_facebook_user)
+      begin
+        current_gamer.gamer_profile.update_facebook_info!(current_facebook_user)
+      rescue
+        flash[:error] = @error_msg || 'Failed connecting to Facebook profile'
+        redirect_to edit_games_gamer_path
+      end
       unless has_permissions?
         dissociate_and_redirect
       end
