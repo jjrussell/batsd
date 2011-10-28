@@ -234,6 +234,7 @@ class Currency < ActiveRecord::Base
 
   def set_hide_rewarded_app_installs
     self.hide_rewarded_app_installs = false if app.platform == 'iphone'
+    true
   end
 
 end
