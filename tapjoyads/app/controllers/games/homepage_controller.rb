@@ -52,7 +52,7 @@ class Games::HomepageController < GamesController
 
   def send_device_link
     ios_link_url = "https://#{request.host}#{games_root_path}"
-    GamesMarketingMailer.deliver_link_device(current_gamer, ios_link_url, GAMES_ANDROID_MARKET_URL )
+    GamesMailer.deliver_link_device(current_gamer, ios_link_url, GAMES_ANDROID_MARKET_URL )
     render(:json => { :success => true }) and return
   end
 
