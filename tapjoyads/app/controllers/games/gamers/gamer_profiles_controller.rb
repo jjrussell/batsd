@@ -28,16 +28,13 @@ class Games::Gamers::GamerProfilesController < GamesController
   end
 
   def dissociate_account
-    if params[:account_type].present?
-      channel = params[:account_type].to_i
-
-      begin
-        @gamer_profile.dissociate_account!(channel)
-        redirect_to social_games_gamer_path
-      rescue
-        flash[:error] = 'Failed to change linked Facebook account.'
-        redirect_to social_games_gamer_path
-      end
+    channel = params[:account_type].present? ? params[:account_type].to_i : Invitation::FACEBOOK
+    begin
+      @gamer_profile.dissociate_account!(channel)
+      redirect_to social_games_gamer_path
+    rescue
+      flash[:error] = 'Failed to change linked Facebook account.'
+      redirect_to social_games_gamer_path
     end
   end
 
