@@ -91,7 +91,7 @@ class Games::SocialController < GamesController
           invitation.save
 
           link = games_login_url(:referrer => invitation.encrypted_referral_id)
-          GamesMailer.deliver_invite(current_gamer.get_gamer_name, recipient, link)
+          GamesMarketingMailer.deliver_invite(current_gamer.get_gamer_name, recipient, link)
         end
       end
     end
@@ -132,7 +132,7 @@ private
     flash[:error] = @error_msg
     redirect_to edit_games_gamer_path
   end
-  
+
   def handle_mogli_exceptions(e)
     case e
     when Mogli::Client::FeedActionRequestLimitExceeded
@@ -144,7 +144,7 @@ private
     else
       @error_msg = "There was an issue with inviting your friend. Please try again later."
     end
-    
+
     dissociate_and_redirect
   end
   
