@@ -54,20 +54,6 @@
     = error_message_on @offer, :min_conversion_rate
 %tr.admin
   %th
-    = f.label(:cities)
-    #help_cities.help ?
-  %td
-    = f.text_field(:cities, :disabled => true)
-    = error_message_on @offer, :cities
-%tr.admin
-  %th
-    = f.label(:postal_codes)
-    #help_postal_codes.help ?
-  %td
-    = f.text_field(:postal_codes, :disabled => true)
-    = error_message_on @offer, :postal_codes
-%tr.admin
-  %th
     = f.label(:dma_codes)
     #help_dma_codes.help ?
   %td
@@ -128,8 +114,6 @@
   #help_internal_suffix_content{ :name => 'Internal Suffix' } Internal identifier for offers. i.e. 'featured' or 'us only'
   #help_show_rate_content{ :name => 'Show Rate' } The probability that this offer will be shown on an offerwall impression. This is set automatically by the system and is used for budgeting. Allowed values are 0.0 - 1.0.
   #help_min_conversion_rate_content{ :name => 'Min CVR' } This is used to prevent low conversion rate warnings. A warning will only be issued if the conversion rate falls below this threshold. Allowed values are blank or 0.0 - 1.0
-  #help_cities_content{ :name => 'Cities' } Targets this offer to these cities. Must be an array of city names or blank for no targeting. i.e. ["San Francisco"]
-  #help_postal_codes_content{ :name => 'Postal Codes' } Targets this offer to these postal codes. Must be an array of postal codes or blank for no targeting. i.e. ["94105"]
   #help_dma_codes_content{ :name => 'DMA Codes' } Targets this offer to these designated market areas (DMAs). Must be an array of DMA codes or blank for no targeting. i.e. [807]
   #help_device_types_content{ :name => 'Device Types' } Targets this offer to these device types. At least one device type must be selected.
   #help_publisher_app_whitelist_content{ :name => 'Publisher App Whitelist' } Restrict this offer to these publisher apps. Must be a ";" separated list of publisher app IDs.
