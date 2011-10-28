@@ -73,6 +73,9 @@ class StoreRank
     hydra.run
     log_progress "Finished making requests."
 
+    Mc.put('store_ranks.ios.overall.free.united_states', overall_us_free) rescue nil # doesn't matter if these fail
+    Mc.put('store_ranks.ios.overall.paid.united_states', overall_us_paid) rescue nil
+
     ranks_file.close
     `gzip -f 'tmp/#{ranks_file_name}'`
 
@@ -84,9 +87,6 @@ class StoreRank
     end
 
     log_progress "Finished saving ranks_rows."
-
-    Mc.put('store_ranks.ios.overall.free.united_states', overall_us_free)
-    Mc.put('store_ranks.ios.overall.paid.united_states', overall_us_paid)
 
   ensure
     `rm 'tmp/#{ranks_file_name}'`
@@ -176,6 +176,9 @@ class StoreRank
     hydra.run
     log_progress "Finished making requests."
 
+    Mc.put('store_ranks.android.overall.free.english', overall_en_free) rescue nil # doesn't matter if these fail
+    Mc.put('store_ranks.android.overall.paid.english', overall_en_paid) rescue nil
+
     android_ranks_file.close
     `gzip -f 'tmp/#{android_ranks_file_name}'`
 
@@ -187,9 +190,6 @@ class StoreRank
     end
 
     log_progress "Finished saving ranks_rows."
-
-    Mc.put('store_ranks.android.overall.free.english', overall_en_free)
-    Mc.put('store_ranks.android.overall.paid.english', overall_en_paid)
 
   ensure
     `rm 'tmp/#{android_ranks_file_name}'`
