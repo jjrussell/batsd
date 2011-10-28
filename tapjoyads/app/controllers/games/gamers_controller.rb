@@ -1,6 +1,7 @@
 class Games::GamersController < GamesController
 
   before_filter :set_profile, :only => [ :edit, :accept_tos, :password, :update_password, :prefs, :social ]
+  before_filter :offline_facebook_authenticate, :only => :connect_facebook_account
 
   def create
     @gamer = Gamer.new do |g|
@@ -43,6 +44,10 @@ class Games::GamersController < GamesController
       current_facebook_user.fetch
       @image_source_options['Facebook'] = 'facebook'
     end
+  end
+
+  def connect_facebook_account
+    redirect_to :action => :social
   end
 
   def update_password
