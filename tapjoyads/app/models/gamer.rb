@@ -1,9 +1,9 @@
 class Gamer < ActiveRecord::Base
   include UuidPrimaryKey
 
-  has_many :gamer_devices
-  has_many :invitations
-  has_one :gamer_profile
+  has_many :gamer_devices, :dependent => :destroy
+  has_many :invitations, :dependent => :destroy
+  has_one :gamer_profile, :dependent => :destroy
   delegate :facebook_id, :facebook_id?, :fb_access_token, :referred_by, :referred_by=, :referred_by?, :referral_count, :to => :gamer_profile
 
   validates_associated :gamer_profile, :on => :create
@@ -152,10 +152,6 @@ class Gamer < ActiveRecord::Base
     conditions = "gamer_id = '#{id}' or following_id = '#{id}'"
     Friendship.select(:where => conditions, :consistent => true) do |friendship|
       friendship.delete_all
-    end
-
-    Invitation.for_gamer(self).each do |invitation|
-      invitation.destroy
     end
   end
 end
