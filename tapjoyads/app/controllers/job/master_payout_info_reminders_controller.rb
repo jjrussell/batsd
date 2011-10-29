@@ -4,7 +4,7 @@ class Job::MasterPayoutInfoRemindersController < Job::JobController
     Partner.to_payout.each do |partner|
       unless partner.completed_payout_info? && partner.pending_earnings >= 25000
         recipients = partner.non_managers.select(&:receive_campaign_emails?).map(&:email).reject(&:blank?)
-        unless recipients.empty? && Rails.env != 'production'
+        unless recipients.empty? && !Rails.env.production?
           TapjoyMailer.deliver_payout_info_reminder(recipients, partner.pending_earnings)
           sleep 2
         end

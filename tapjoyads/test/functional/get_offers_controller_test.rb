@@ -87,6 +87,7 @@ class GetOffersControllerTest < ActionController::TestCase
     setup do
       @device = Factory(:device)
       @currency = Factory(:currency, :test_devices => @device.id)
+      @currency.update_attribute(:hide_rewarded_app_installs, false)
       @params = { :udid => 'stuff', :publisher_user_id => 'more_stuff', :currency_id => @currency.id, :app_id => @currency.app.id }
       @offer = Factory(:app).primary_offer
       OfferCacher.stubs(:get_unsorted_offers_prerejected).returns([@offer])
@@ -129,6 +130,7 @@ class GetOffersControllerTest < ActionController::TestCase
       RailsCache.stubs(:get).returns(nil)
       @device = Factory(:device)
       @currency = Factory(:currency, :test_devices => @device.id)
+      @currency.update_attribute(:hide_rewarded_app_installs, false)
       @offer = Factory(:app).primary_offer
       controller.stubs(:get_ip_address).returns('208.90.212.38')
       OfferCacher.stubs(:get_unsorted_offers_prerejected).returns([@offer])
