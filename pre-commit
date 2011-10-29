@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 # copy this file to .git/hooks/ to automatically strip spaces from the end of
-# lines and add newlines to the ends of files as necessary
+# lines and add newlines to the end of files as necessary
 
 filetypes = %w(
   builder
@@ -37,18 +37,18 @@ paths_regexp = /^tapjoyads\/(#{paths.join('|')})/
 files = `git diff-index --name-status --cached HEAD | grep -v ^D | cut -c3-`
 files.each do |f|
 
-  # Only examine known text files
+  # Only examine specified file types and paths
   if f =~ filetype_regexp && f =~ paths_regexp
 
     # Add a linebreak to the end of the file if it doesn't have one
     if `tail -c1 #{f}` != "\n"
       `echo >> #{f}`
-      #`git add #{f}`
+      `git add #{f}`
     end
 
     # Remove trailing whitespace if it exists
     if `grep -q "[[:blank:]]$" #{f}`
-      # sed command works differently on Mac than on Linux
+      # sed command works differently on Mac and Linux
       if `uname` =~ /Darwin/
         `sed -i "" -e $'s/[ \t]*$//g' #{f}`
       elsif `uname` =~ /Linux/
