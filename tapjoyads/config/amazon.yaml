@@ -5,3 +5,7 @@ test:
 dev:
   access_key_id: 'AKIAJ7DKVQDPY55BZSHQ'
   secret_access_key: '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'
+
+staging:
+  access_key_id: 'AKIAJ7DKVQDPY55BZSHQ'
+  secret_access_key: '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'

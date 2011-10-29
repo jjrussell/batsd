@@ -57,6 +57,7 @@ Rails::Initializer.run do |config|
   config.gem 'plist', :version => '3.1.0'
   config.gem 'read_from_slave', :version => '0.4.0'
   config.gem 'sass', :version => '3.1.7'
+  config.gem 'sendgrid', :version => '1.0.1'
   config.gem 'syslog-logger', :version => '1.6.4', :lib => 'syslog_logger'
   config.gem 'uuidtools', :version => '2.1.2'
   config.gem 'vertica', :version => '0.8.1'

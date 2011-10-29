@@ -7,7 +7,7 @@ class AgencyApiController < ApplicationController
 protected
 
   def ssl_required?
-    Rails.env == 'production'
+    Rails.env.production?
   end
 
 private

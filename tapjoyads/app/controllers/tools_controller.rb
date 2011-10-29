@@ -128,7 +128,7 @@ class ToolsController < WebsiteController
   def elb_status
     elb_interface  = RightAws::ElbInterface.new
     ec2_interface  = RightAws::Ec2.new
-    @lb_names      = Rails.env == 'production' ? %w( masterjob-lb job-lb website-lb dashboard-lb games-lb api-lb test-lb ) : []
+    @lb_names      = Rails.env.production? ? %w( masterjob-lb job-lb website-lb dashboard-lb games-lb api-lb test-lb util-lb ) : []
     @lb_instances  = {}
     @ec2_instances = {}
     @lb_names.each do |lb_name|
@@ -296,7 +296,7 @@ class ToolsController < WebsiteController
     click.manually_resolved_at = Time.zone.now
     click.serial_save
 
-    if Rails.env == 'production'
+    if Rails.env.production?
       url = "#{API_URL}/"
       if click.type == 'generic'
         url += "offer_completed?click_key=#{click.key}"
