@@ -8,14 +8,24 @@ table { border-collapse: collapse; border-spacing: 0; }
 html { -webkit-text-size-adjust: none; }
 *:focus { outline: none; }
 body {
-  font-size: 1em;
+  color: $main-link-font-color;
+  font-size: $main-font-size;
   -webkit-font-smoothing: antialiased;
+  -moz-font-smoothing: antialiased;  
   -webkit-tap-highlight-color: rgba(0,0,0,0);
   -webkit-touch-callout: none;
 }
-a, a:visited, a:active {
+a {
+  color: $main-link-font-color;
   text-decoration: none;
   -webkit-tap-highlight-color: rgba(0,0,0,0);
+  -moz-transition: all .35s;
+  -webkit-transition: all .35s;
+  -o-transition: all .35s;
+  transition: all .35s;
+}
+a:hover {
+  color: $main-link-font-color-hover;
 }
 h1 {
   font-size: 1.4em;

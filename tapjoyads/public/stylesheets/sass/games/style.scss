@@ -21,9 +21,6 @@ body {
   height: 100%;
   width: 100%;
 }
-a, a:visited {
-  color: $main-font-color;
-}
 
 .page {
   padding: $page-padding-v $page-padding-h;
@@ -56,10 +53,17 @@ a, a:visited {
 //  Forms
 //-------------------------------------------
 input {
-  border: 1px solid $border-color;
+  border: 1px solid $border-color;;
+  color: $main-font-color;
   padding: 6px;
   @include rounded-corners(12px);
   @include inset-shadow;
+}
+input::-webkit-input-placeholder {
+  color: $main-font-color;
+}
+input:-moz-placeholder {
+  color: $main-font-color;
 }
 input[type=email]:focus, input[type=password]:focus {
   @include inset-shadow(#FFF, 6px);
@@ -93,7 +97,7 @@ input[type=submit] {
       float: right;
       font-size: 0.9em;
       position: relative;
-      top: 12px;
+      top: 6px;
     }
     .aside_nav span {
     }
@@ -105,7 +109,8 @@ input[type=submit] {
         
         .form_fields {
           height: 30px;
-        
+          margin-bottom: 6px;
+          
           .field {
             float: left;
             height: 30px;
@@ -128,8 +133,9 @@ input[type=submit] {
             width: 62px;
           }
         }
+        .form
         .fieldWithErrors {
-          float: left;
+          position: relative;
         }
       }
     }
@@ -181,7 +187,7 @@ input[type=submit] {
 .main_scene {
   height: 450px;
   margin: 0 auto;
-  width: 1200px;
+  width: 1300px;
   @include rounded-corners(3px);
   
   .content_box {
@@ -211,7 +217,6 @@ input[type=submit] {
     .sign_up_content {
       padding: 16px;
     }
-    
     input {
       width: 100%;
     }
@@ -454,7 +459,7 @@ input[type=submit] {
 }
 
 .forgot_pass {
-  font-size: 0.8em;
+  font-size: 0.9em;
 }
 
 //-------------------------------------------

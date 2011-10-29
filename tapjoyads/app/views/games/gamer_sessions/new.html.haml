@@ -7,7 +7,7 @@
             .logo
           .aside_login
             .login
-              .form_fields.clearfix
+              .form_fields
                 - form_for([ :games, @gamer_session ]) do |f|
                   - if params[:data].present?
                     = hidden_field_tag :data, params[:data]
@@ -19,11 +19,12 @@
                     = f.password_field :password, :placeholder => "Password", :required => ""
                   .field.login_btn
                     = f.submit 'Login', :class => 'right button'
-              .login_error
-                = error_message_on @gamer_session, :email, :prepend_text => "Email "
-                = error_message_on @gamer_session, :password, :prepend_text => "Password "
-              .forgot_pass
-                = link_to('Forgot password?', new_games_password_reset_path)
+              .form_fields
+                .login_error
+                  = error_message_on @gamer_session, :email, :prepend_text => "Email "
+                  = error_message_on @gamer_session, :password, :prepend_text => "Password "
+                .forgot_pass
+                  = link_to('Forgot password?', new_games_password_reset_path)
 
       .content.main_scene
         .content_box
@@ -36,11 +37,13 @@
                 - form_for([ :games, @gamer ], :url => games_gamer_path ) do |f|
                   .field
                     = label_tag :birthdate
-                    = select_date nil, { :order => [:month, :day, :year], :start_year => Time.now.year, :end_year => (Time.now.year - 100), :include_blank => false, :prompt => {:day => 'Day', :month => 'Month', :year => 'Year'} }
+                    = select_date nil, { :order => [:month, :day, :year], :start_year => Time.now.year, :end_year => (Time.now.year - 100), :include_blank => false, :prompt => {:day => 'dd', :month => 'mm', :year => 'yy'} }
                   .field
                     = f.email_field :email, "autocorrect" => "off", "autocapitalize" => "off", :placeholder => "Email"
                   .field
                     = f.password_field :password, :placeholder => "Password"
+                  .field
+                    = f.password_field :password_confirmation, :placeholder => "Confirm Password"
                   .field.field_tos
                     = f.check_box :terms_of_service
                     = f.label :terms_of_service, "By checking this box I assert that I agree to the #{ link_to('terms of services', games_tos_path, :target => '_blank') } &amp; #{ link_to('privacy policy', games_privacy_path, :target => '_blank') }"
