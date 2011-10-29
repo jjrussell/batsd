@@ -3,7 +3,6 @@ class Recommenders::MostPopularRecommender < Recommender
 
   def initialize
     @most_popular_apps = {}  #the most popular apps
-    @app_names = {}    #names of the apps
     parse_file self.class::MOST_POPULAR_FILE
   end
 
@@ -20,11 +19,7 @@ class Recommenders::MostPopularRecommender < Recommender
   end
 
   def random_app
-    @app_names.keys.rand
-  end
-
-  def app_name(app_id)
-    @app_names[app_id]
+    @most_popular_apps.keys.sample
   end
 
   private
@@ -34,7 +29,6 @@ class Recommenders::MostPopularRecommender < Recommender
 
   def parse_popular_line(line)
     app_id, name, count = line.split("\t")
-    @app_names[app_id] = name
     @most_popular_apps[app_id] = count.to_i
   end
 end

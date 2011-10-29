@@ -11,13 +11,11 @@ describe Recommender do
   end
 
   it "should return recommendations for app in the correct data structure" do
-    app = @recommenders.first.most_popular_apps.last[:app_id]
     @recommenders.each do |r|
       r.recommendations_for_app(app).should be_an Array
       r.recommendations_for_app(app, :n => 15).should have_at_most(15).items
       r.recommendations_for_app(app).first.should be_a Hash
       r.recommendations_for_app(app).first[:app_id].should be_a String
-      r.recommendations_for_app(app).first[:app_name].should be_a String
       r.recommendations_for_app(app).first[:weight].should be_a Numeric
     end
   end
@@ -29,7 +27,6 @@ describe Recommender do
       r.recommendations_for_udid(udid, :n => 15).should have_at_most(15).items
       r.recommendations_for_udid(udid).first.should be_a Hash
       r.recommendations_for_udid(udid).first[:app_id].should be_a String
-      r.recommendations_for_udid(udid).first[:app_name].should be_a String
       r.recommendations_for_udid(udid).first[:weight].should be_a Numeric
     end
   end
@@ -40,7 +37,6 @@ describe Recommender do
       r.most_popular_apps(:n => 15).should have_at_most(15).items
       r.most_popular_apps.first.should be_a Hash
       r.most_popular_apps.first[:app_id].should be_a String
-      r.most_popular_apps.first[:app_name].should be_a String
       r.most_popular_apps.first[:weight].should be_a Numeric
     end
   end

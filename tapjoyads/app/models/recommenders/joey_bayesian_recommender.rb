@@ -7,7 +7,6 @@ class Recommenders::JoeyBayesianRecommender < Recommender
     @recs_for_app = {} #recommendations for a particular application
     @recs_for_udid = {} #recommendations for a particular user
     @most_popular_apps = {}  #the most popular apps
-    @app_names = {}    #names of the apps
     parse_file self.class::APP_FILE
     parse_file self.class::DEVICE_FILE
     parse_file self.class::MOST_POPULAR_FILE
@@ -30,11 +29,7 @@ class Recommenders::JoeyBayesianRecommender < Recommender
   end
 
   def random_app
-    @app_names.keys.sample
-  end
-
-  def app_name(app_id)
-    @app_names[app_id]
+    @recs_for_app.keys.sample
   end
 
   private
@@ -49,7 +44,6 @@ class Recommenders::JoeyBayesianRecommender < Recommender
 
   def parse_popular_line(line)
     app_id, name, count = line.split("\t")
-    @app_names[app_id] = name
     @most_popular_apps[app_id] = count.to_i
   end
 

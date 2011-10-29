@@ -41,6 +41,11 @@ class Recommender  #Interface for all recommenders.
     self.inspect
   end
 
+  def app_name(app_id)
+    app = App.find_by_id app_id
+    app.nil? ? nil : app.name
+  end
+
   protected
   def parse_file(file_name)
     file_lines(file_name).each { |line| parse_line(line, file_name) }

@@ -4,7 +4,7 @@
     %tr
       %th App ID
       %th App Name
-      - if @options[:with_weights] == 'true'
+      - if @options[:with_weights]
         %th weight
   %tbody{ :class => cycle('even', 'odd') }
     = render :partial => 'recommendation', :collection => recommendations
