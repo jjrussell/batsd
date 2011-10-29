@@ -49,11 +49,11 @@ class Games::GamersControllerTest < ActionController::TestCase
   end
 
   context "deactivating gamer" do
-    should "mark gamer as deactivated" do
+    setup do
       params = {
         :gamer => {
           :email            => Factory.next(:email),
-          :password         => Factory.next(:name),
+          :password         => 'foobar',
           :terms_of_service => '1',
         },
         :date => {
@@ -64,12 +64,24 @@ class Games::GamersControllerTest < ActionController::TestCase
       }
 
       post 'create', params
-      assert_not_nil assigns(:gamer)
-      gamer = assigns(:gamer)
+      @gamer = assigns(:gamer)
+    end
 
+    should "mark gamer as deactivated" do
       post 'destroy'
       assert_redirected_to(games_logout_path)
-      assert_not_nil gamer.reload.deactivated_at
+      assert_not_nil @gamer.reload.deactivated_at
+    end
+
+    should "undelete gamer on login" do
+      post 'destroy'
+
+      wrap_with_controller(Games::GamerSessionsController) do
+        gamer_login = { :email => @gamer.email, :password => 'foobar' }
+        post :create, :gamer_session => gamer_login
+      end
+
+      assert_nil @gamer.reload.deactivated_at
     end
   end
 end

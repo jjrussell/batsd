@@ -46,8 +46,10 @@ class Gamer < ActiveRecord::Base
   end
 
   def reactivate!
-    self.deactivated_at = nil
-    save!
+    if self.deactivated_at
+      self.deactivated_at = nil
+      save!
+    end
   end
 
   def external_info(channel)
