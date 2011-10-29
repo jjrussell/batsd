@@ -47,4 +47,29 @@ class Games::GamersControllerTest < ActionController::TestCase
       assert_equal 1, json['error'].length
     end
   end
+
+  context "deactivating gamer" do
+    should "mark gamer as deactivated" do
+      params = {
+        :gamer => {
+          :email            => Factory.next(:email),
+          :password         => Factory.next(:name),
+          :terms_of_service => '1',
+        },
+        :date => {
+          :year   => '1981',
+          :month  => '10',
+          :day    => '23',
+        },
+      }
+
+      post 'create', params
+      assert_not_nil assigns(:gamer)
+      gamer = assigns(:gamer)
+
+      post 'destroy'
+      assert_redirected_to(games_logout_path)
+      assert_not_nil gamer.reload.deactivated_at
+    end
+  end
 end

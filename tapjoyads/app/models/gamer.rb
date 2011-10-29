@@ -45,6 +45,11 @@ class Gamer < ActiveRecord::Base
     save!
   end
 
+  def reactivate!
+    self.deactivated_at = nil
+    save!
+  end
+
   def external_info(channel)
     case channel
     when Invitation::EMAIL

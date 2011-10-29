@@ -41,6 +41,11 @@ class Games::GamersController < GamesController
     end
   end
 
+  def destroy
+    current_gamer.deactivate!
+    redirect_to games_logout_path
+  end
+
   def accept_tos
     @gamer.accepted_tos_version = TAPJOY_GAMES_CURRENT_TOS_VERSION
     if @gamer.save
@@ -49,8 +54,8 @@ class Games::GamersController < GamesController
       render(:json => { :success => false, :error => @gamer.errors }) and return
     end
   end
-  
-private
+
+  private
 
   def set_profile
     if current_gamer.present?
