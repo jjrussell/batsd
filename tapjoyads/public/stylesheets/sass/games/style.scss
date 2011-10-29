@@ -50,20 +50,59 @@ body {
 }
 
 //-------------------------------------------
+//  Transitions
+//-------------------------------------------
+
+@-webkit-keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@-moz-keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }  
+}
+
+//-------------------------------------------
 //  Forms
 //-------------------------------------------
-input {
+input, select {
   border: 1px solid $border-color;;
-  color: $main-font-color;
   padding: 6px;
-  @include rounded-corners(12px);
+  color: $main-font-color;
+  -webkit-appearance: none;
   @include inset-shadow;
+}
+input[type=email], input[type=password] {
+  @include rounded-corners(12px);
+}
+input[type=checkbox] {
+  cursor: pointer;
+  width: 18px;
+  height: 18px;
+  @include rounded-corners(2px);
+}
+input[type=checkbox]:checked {
+  background-color: $tj-red;
+}
+select {
+  -webkit-appearance: none;
+  @include rounded-corners(6px);
 }
 input::-webkit-input-placeholder {
   color: $main-font-color;
+  font-style: italic;
 }
 input:-moz-placeholder {
   color: $main-font-color;
+  font-style: italic;
 }
 input[type=email]:focus, input[type=password]:focus {
   @include inset-shadow(#FFF, 6px);
@@ -203,6 +242,7 @@ input[type=submit] {
     height: 450px;
     margin: 0 36px 0 200px;
     width: 380px;
+    @include fadeIn(0.65s);
   }
   
   .sign_up {
@@ -213,13 +253,18 @@ input[type=submit] {
     width: 320px;
     @include shadow(#333);
     @include rounded-corners(10px);
-          
+    
+    h1, h4 {
+      color: $tj-red;
+      margin: 4px auto;
+    }
     .sign_up_content {
       padding: 16px;
     }
-    input {
-      width: 100%;
+    input[type=email], input[type=password] {
+      width: 274px;
     }
+
   }
 }
 

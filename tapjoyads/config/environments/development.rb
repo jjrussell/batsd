@@ -63,3 +63,6 @@ FRESHBOOKS_AUTH_TOKEN = '59548f1150fa38c3feb2a67d6b1a0f8b'
 CLEAR_MEMCACHE = !(local_config['clear_memcache'] == false)
 
 DEV_FACEBOOK_ID = '100000459598424'
+
+# SASS - Output compressed CSS
+Sass::Plugin.options[:style] = :compressed

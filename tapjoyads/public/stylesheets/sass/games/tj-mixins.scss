@@ -96,3 +96,16 @@ $mobile-scaledown-multiplier: 2;
   @include inset-button;
   background-color: #FFF;
 }
+
+@mixin fadeIn($time: 0.5s, $count: 1, $delay: 0s) {
+  -webkit-animation-delay: $delay;
+  -webkit-animation-name: fadeIn;
+  -webkit-animation-duration: $time;
+  -webkit-animation-iteration-count: $count;
+  -webkit-animation-timing-function: linear;
+  -moz-animation-delay: $delay;
+  -moz-animation-name: fadeIn;
+  -moz-animation-duration: $time;
+  -moz-animation-iteration-count: $count;
+  -moz-animation-timing-function: linear;
+}

@@ -31,9 +31,11 @@
           .main_phone
           .sign_up
             .sign_up_content
-              .register_header
+              %h1
+                Sign Up!
+              %h4
+                Creating an account is too easy!
               .register_form
-                .sign_up_icon
                 - form_for([ :games, @gamer ], :url => games_gamer_path ) do |f|
                   .field
                     = label_tag :birthdate

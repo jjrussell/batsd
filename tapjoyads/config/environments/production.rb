@@ -80,3 +80,6 @@ FRESHBOOKS_API_URL = 'tapjoy.freshbooks.com'
 FRESHBOOKS_AUTH_TOKEN = '26c1ce82ad1cfab698746e532361f814'
 
 CLEAR_MEMCACHE = false
+
+# SASS - Output compressed CSS
+Sass::Plugin.options[:style] = :compressed
