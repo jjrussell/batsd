@@ -128,11 +128,13 @@ class Gamer < ActiveRecord::Base
         rescue OpenSSL::Cipher::CipherError
         end
         if referred_by? && invitation_id
-          referred_by_gamer = Gamer.find(self.referred_by)
-          referred_by_gamer.gamer_profile.update_attributes!(:referral_count => referred_by_gamer.referral_count + 1)
-          invitation = Invitation.find(invitation_id)
-          follow_gamer(Gamer.find_by_id(referred_by))
-          Invitation.reconcile_pending_invitations(self, :invitation => invitation)
+          referred_by_gamer = Gamer.find_by_id(self.referred_by)
+          invitation = Invitation.find_by_id(invitation_id)
+          if referred_by_gamer && invitation
+            referred_by_gamer.gamer_profile.update_attributes!(:referral_count => referred_by_gamer.referral_count + 1)
+            follow_gamer(Gamer.find_by_id(referred_by))
+            Invitation.reconcile_pending_invitations(self, :invitation => invitation)
+          end
         end
       end
     end

@@ -110,5 +110,29 @@ class GamerTest < ActiveSupport::TestCase
       Gamer.to_delete.each(&:destroy)
       assert_equal 0, Invitation.count
     end
+
+    should "not error out when deleted invitations are fulfilled" do
+
+      gamer = Factory(:gamer, :deactivated_at => Time.zone.now - Gamer::DAYS_BEFORE_DELETION - 1.day)
+      invitation = Invitation.create({
+        :gamer_id => gamer.id,
+        :channel => Invitation::EMAIL,
+        :external_info => Factory.next(:name),
+      })
+      referrer = invitation.encrypted_referral_id
+
+      Gamer.to_delete.each(&:destroy)
+
+      noob = Gamer.new do |g|
+        g.email                 = 'a@tapjoy.com'
+        g.password              = 'aaaa'
+        g.password_confirmation = 'aaaa'
+        g.referrer              = referrer
+        g.terms_of_service      = '1'
+      end
+      noob.gamer_profile = GamerProfile.new(:birthdate => Date.parse('1981-10-23'))
+
+      noob.save
+    end
   end
 end
