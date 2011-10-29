@@ -17,10 +17,10 @@ class Gamer < ActiveRecord::Base
 
   after_destroy :delete_friends
 
-  DAYS_BEFORE_DELETION = 3.days
+  DAYS_BEFORE_DELETION = 3
   named_scope :to_delete, lambda {
     {
-      :conditions => ["deactivated_at < ?", Time.zone.now.beginning_of_day - DAYS_BEFORE_DELETION],
+      :conditions => ["deactivated_at < ?", Time.zone.now.beginning_of_day - DAYS_BEFORE_DELETION.days],
       :order => 'deactivated_at'
     }
   }
@@ -46,7 +46,7 @@ class Gamer < ActiveRecord::Base
   end
 
   def reactivate!
-    if self.deactivated_at
+    if self.deactivated_at?
       self.deactivated_at = nil
       save!
     end

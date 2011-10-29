@@ -12,7 +12,10 @@ class Games::GamerSessionsController < GamesController
     @gamer_session = GamerSession.new(params[:gamer_session])
     @gamer_session.remember_me = true
     if @gamer_session.save
-      current_gamer.reactivate!
+      if current_gamer.deactivated_at?
+        current_gamer.reactivate!
+        flash[:notice] = 'Your account has been reactivated!'
+      end
       destroy and return if current_gamer.blocked?
       if params[:data].present?
         redirect_to finalize_games_gamer_device_path(:data => params[:data])

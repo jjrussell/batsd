@@ -1,6 +1,6 @@
 class Games::GamersController < GamesController
 
-  before_filter :set_profile, :only => [ :edit, :accept_tos, :password, :update_password, :prefs ]
+  before_filter :set_profile, :only => [ :edit, :accept_tos, :password, :update_password, :prefs, :confirm_delete ]
 
   def create
     @gamer = Gamer.new do |g|
@@ -43,6 +43,7 @@ class Games::GamersController < GamesController
 
   def destroy
     current_gamer.deactivate!
+    flash[:notice] = 'Your account has been deactivated and scheduled for deletion!'
     redirect_to games_logout_path
   end
 
