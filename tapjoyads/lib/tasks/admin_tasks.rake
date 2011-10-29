@@ -30,7 +30,7 @@ namespace :admin do
     Rake.application.invoke_task('db:drop')
     Rake.application.invoke_task('db:create')
 
-    print("Restoring backup to the development database... ")
+    print("Restoring backup to the #{Rails.env} database... ")
     time = Benchmark.realtime do
       system("mysql -u #{dest['username']} --password=#{dest['password']} -h #{dest['host']} #{dest['database']} < #{dump_file}")
       system("mysql -u #{dest['username']} --password=#{dest['password']} -h #{dest['host']} #{dest['database']} < #{dump_file2}")
