@@ -15,7 +15,7 @@ module WebsiteHelper
   end
 
   def should_use_dashboard?
-    Rails.env == 'production' && request.host != 'dashboard.tapjoy.com'
+    Rails.env.production? && request.host != 'dashboard.tapjoy.com'
   end
 
   def platform_icon_url(object)
