@@ -1,13 +1,25 @@
 class Job::MasterDailyAppStatsController < Job::JobController
 
   def index
-    if Offer.to_aggregate_daily_stats.count == 0
+    if Offer.to_aggregate_daily_stats.count == 0 || vertica_data_inaccurate?
       render :text => 'ok'
       return
     end
 
-    now        = Time.zone.now
-    start_time = (now - 1.day).beginning_of_day
+    next_aggregation_time = (Time.zone.now + 1.day).beginning_of_day + StatsAggregation::DAILY_STATS_START_HOUR.hours
+    Offer.to_aggregate_daily_stats.find_in_batches(:batch_size => StatsAggregation::OFFERS_PER_MESSAGE) do |offers|
+      offer_ids = offers.collect(&:id)
+      Offer.connection.execute("UPDATE #{Offer.quoted_table_name} SET next_daily_stats_aggregation_time = '#{next_aggregation_time.to_s(:db)}' WHERE id IN ('#{offer_ids.join("','")}')")
+      Sqs.send_message(QueueNames::APP_STATS_DAILY, offer_ids.to_json)
+    end
+
+    render :text => 'ok'
+  end
+
+  private
+
+  def vertica_data_inaccurate?
+    start_time = (Time.zone.now - 1.day).beginning_of_day
     end_time   = start_time + 1.day
 
     appstats_counts = Appstats.new(nil, {
@@ -27,7 +39,9 @@ class Job::MasterDailyAppStatsController < Job::JobController
     appstats_total = appstats_counts.sum
     vertica_total  = vertica_counts.values.sum
     percentage     = vertica_total / appstats_total.to_f
-    if percentage < 0.99999 || percentage > 1.00001
+    inaccurate     = percentage < 0.99999 || percentage > 1.00001
+
+    if inaccurate
       message  = "Cannot verify daily stats because Vertica has inaccurate data.\n"
       message += "Appstats total: #{appstats_total}\n"
       message += "Vertica total: #{vertica_total}\n"
@@ -39,18 +53,9 @@ class Job::MasterDailyAppStatsController < Job::JobController
         message += "#{i}, #{appstats_val}, #{vertica_val}, #{appstats_val - vertica_val}\n"
       end
       Notifier.alert_new_relic(VerticaDataError, message, request, params)
-      render :text => 'ok'
-      return
     end
 
-    next_aggregation_time = (now + 1.day).beginning_of_day + StatsAggregation::DAILY_STATS_START_HOUR.hours
-    Offer.to_aggregate_daily_stats.find_in_batches(:batch_size => StatsAggregation::OFFERS_PER_MESSAGE) do |offers|
-      offer_ids = offers.collect(&:id)
-      Offer.connection.execute("UPDATE #{Offer.quoted_table_name} SET next_daily_stats_aggregation_time = '#{next_aggregation_time.to_s(:db)}' WHERE id IN ('#{offer_ids.join("','")}')")
-      Sqs.send_message(QueueNames::APP_STATS_DAILY, offer_ids.to_json)
-    end
-
-    render :text => 'ok'
+    inaccurate
   end
 
 end
