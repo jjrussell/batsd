@@ -42,7 +42,7 @@ class Job::MasterDailyAppStatsController < Job::JobController
     inaccurate     = percentage < 0.99999 || percentage > 1.00001
 
     if inaccurate
-      message  = "Cannot verify daily stats because Vertica has inaccurate data.\n"
+      message  = "Cannot verify daily stats because Vertica has inaccurate data for #{start_time.to_date}.\n"
       message += "Appstats total: #{appstats_total}\n"
       message += "Vertica total: #{vertica_total}\n"
       message += "Difference: #{appstats_total - vertica_total}\n\n"
