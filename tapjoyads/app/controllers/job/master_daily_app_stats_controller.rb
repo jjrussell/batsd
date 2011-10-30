@@ -16,14 +16,17 @@ class Job::MasterDailyAppStatsController < Job::JobController
         :end_time    => end_time,
         :stat_types  => [ 'featured_offers_requested' ],
         :granularity => :hourly }).stats['featured_offers_requested']
-    vertica_counts = WebRequest.select_with_vertica(
+    vertica_counts = {}
+    WebRequest.select_with_vertica(
         :select     => "count(*), floor((time - #{start_time.to_i}) / #{1.hour.to_i}) as h",
         :conditions => "path LIKE '%featured_offer_requested%' AND time >= #{start_time.to_i} AND time < #{end_time.to_i}",
         :group      => 'h',
-        :order      => 'h ASC').map { |result| result[:count] }
+        :order      => 'h ASC').each do |result|
+      vertica_counts[result[:h].to_i] = result[:count]
+    end
 
     appstats_total = appstats_counts.sum
-    vertica_total  = vertica_counts.sum
+    vertica_total  = vertica_counts.values.sum
     percentage     = vertica_total / appstats_total.to_f
     if percentage < 0.99999 || percentage > 1.00001
       message  = "Cannot verify daily stats because Vertica has inaccurate data.\n"
@@ -32,7 +35,9 @@ class Job::MasterDailyAppStatsController < Job::JobController
       message += "Difference: #{appstats_total - vertica_total}\n\n"
       message += "hour, appstats, vertica, diff\n"
       24.times do |i|
-        message += "#{i}, #{appstats_counts[i]}, #{vertica_counts[i]}, #{appstats_counts[i] - vertica_counts[i]}\n"
+        appstats_val = appstats_counts[i]
+        vertica_val  = vertica_counts[i] || 0
+        message += "#{i}, #{appstats_val}, #{vertica_val}, #{appstats_val - vertica_val}\n"
       end
       Notifier.alert_new_relic(VerticaDataError, message, request, params)
       render :text => 'ok'
