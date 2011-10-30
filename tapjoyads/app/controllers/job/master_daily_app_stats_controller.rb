@@ -20,8 +20,7 @@ class Job::MasterDailyAppStatsController < Job::JobController
     WebRequest.select_with_vertica(
         :select     => "count(*), floor((time - #{start_time.to_i}) / #{1.hour.to_i}) as h",
         :conditions => "path LIKE '%featured_offer_requested%' AND time >= #{start_time.to_i} AND time < #{end_time.to_i}",
-        :group      => 'h',
-        :order      => 'h ASC').each do |result|
+        :group      => 'h').each do |result|
       vertica_counts[result[:h].to_i] = result[:count]
     end
 
