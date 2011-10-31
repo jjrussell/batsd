@@ -3,7 +3,7 @@ class TapjoyMailer < ActionMailer::Base
   def newrelic_alert(error)
     from 'Tapjoy <noreply@tapjoy.com>'
     recipients "dev@tapjoy.com"
-    subject "NewRelic Error: #{error.inspect}"
+    subject "NewRelic Error: #{error.class}"
     body(:error => error)
   end
 
