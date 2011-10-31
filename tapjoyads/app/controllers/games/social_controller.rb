@@ -4,6 +4,7 @@ class Games::SocialController < GamesController
 
   rescue_from Mogli::Client::ClientException, :with => :handle_mogli_exceptions
   rescue_from Twitter::Error, :with => :handle_twitter_exceptions
+  rescue_from Errno::ECONNRESET, :with => :handle_other_exceptions
 
   before_filter :require_gamer
   before_filter :offline_facebook_authenticate, :only => [ :invite_facebook_friends, :send_facebook_invites ]
@@ -44,7 +45,7 @@ class Games::SocialController < GamesController
             current_gamer.follow_gamer(gamer)
           end
         else
-          friend_id = DEV_FACEBOOK_ID if Rails.env != 'production'
+          friend_id = DEV_FACEBOOK_ID if !Rails.env.production?
           friend = Mogli::User.find(friend_id.to_i, current_facebook_client)
           non_gamers << friend.name
           invitation = current_gamer.invitation_for(friend_id, Invitation::FACEBOOK)
@@ -96,7 +97,7 @@ class Games::SocialController < GamesController
           invitation.save
 
           link = games_login_url(:referrer => invitation.encrypted_referral_id)
-          GamesMailer.deliver_invite(current_gamer.get_gamer_name, recipient, link)
+          GamesMarketingMailer.deliver_invite(current_gamer.get_gamer_name, recipient, link)
         end
       end
     end
@@ -229,7 +230,7 @@ private
     flash[:error] = @error_msg
     redirect_to edit_games_gamer_path
   end
-  
+
   def handle_mogli_exceptions(e)
     case e
     when Mogli::Client::FeedActionRequestLimitExceeded
@@ -241,8 +242,16 @@ private
     else
       @error_msg = "There was an issue with inviting your friend. Please try again later."
     end
-    
+
     dissociate_and_redirect
+  end
+  
+  def handle_other_exceptions(e)
+    case e
+    when Errno::ECONNRESET
+      @error_msg = "There was a connection issue. Please try again later."
+      redirect_to edit_games_gamer_path
+    end
   end
 
   def require_gamer

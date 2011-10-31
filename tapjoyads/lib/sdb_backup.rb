@@ -84,21 +84,21 @@ class SdbBackup
   def self.write_to_s3(s3_name, local_name, bucket_name, num_retries)
     bucket = S3.bucket(bucket_name)
 
-    while bucket.key(s3_name).exists?
+    while bucket.objects[s3_name].exists?
       s3_name += '_2'
     end
 
     1.upto(num_retries) do |attempt_num|
       begin
-        bucket = S3.bucket(bucket_name)
-        bucket.put(s3_name, open(local_name))
+        bucket.objects[s3_name].write(:file => local_name)
         Rails.logger.info "Successfully stored #{local_name} to s3 as #{s3_name} after #{attempt_num} attempts."
         return
-      rescue RightAws::AwsError => e
+      rescue AWS::Errors::Base => e
         Rails.logger.info "Failed attempt to store #{local_name} to s3. Error: #{e}"
       end
       sleep(attempt_num * 5)
     end
     raise "Failed to save #{local_name} to s3 after #{num_retries} attempts."
   end
+
 end
