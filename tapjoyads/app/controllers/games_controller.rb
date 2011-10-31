@@ -46,7 +46,7 @@ class GamesController < ApplicationController
 protected
 
   def ssl_required?
-    Rails.env == 'production'
+    Rails.env.production?
   end
 
   def set_current_device(data)
