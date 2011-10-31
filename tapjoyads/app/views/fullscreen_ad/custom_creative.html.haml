@@ -3,8 +3,8 @@
     %img{ :src => "#{CLOUDFRONT_URL}/images/blank.png", :class => 'creative', :id => 'creative' }
 .buttons#buttons
   - action_text = @offer.rewarded? ? "Earn #{@currency.get_visual_reward_amount(@offer, params[:display_multiplier])} #{@currency.name}" : "Download"
-  = link_to('Skip', 'dismiss', :class => 'skip', :id => 'skip')
-  = link_to("#{action_text}", get_click_url(@offer), :class => 'download', :id => 'download')
+  = link_to('Skip', 'dismiss', :class => 'skip gradient', :id => 'skip')
+  = link_to("#{action_text}", get_click_url(@offer), :class => 'download gradient', :id => 'download')
 
 - content_for :page_javascript do
   :plain
@@ -130,11 +130,14 @@
       var skipButton = document.getElementById('skip');
 
       // Scale the buttons to fit this screen size
-      //alert("Client size: " + client.width + "x" + client.height);
-      if(Math.max(client.width, client.height) <= 480) {
+      alert("window.innerWidth x window.innerHeight: " + client.width + "x" + client.height + "\n" +
+            "screen.width x screen.height: " + screen.width + "x" + screen.height + "\n" +
+            "documentElement.offsetWidth x documentElement.offsetHeight: " + document.documentElement.offsetWidth + "x" + document.documentElement.offsetHeight + "\n" +
+            "documentElement.clientWidth x documentElement.clientHeight: " + document.documentElement.clientWidth + "x" + document.documentElement.clientHeight + "\n");
+      if(Math.min(client.width, client.height) <= 320) {
         var presetSize = 480;
         buttonsHeight = 50;
-      } else if (Math.max(client.width, client.height) < 960) {
+      } else if (Math.min(client.width, client.height) < 640) {
         var presetSize = 640;
         buttonsHeight = 75;
       } else {
@@ -245,21 +248,44 @@
 
       .download,
       .skip {
-        color: #ffffff;
+        border-style: solid;
+        border-color: #FFFFFF;
         display: inline;
         text-decoration: none;
       }
 
       .download {
+        background: #3e92c7; /* Old browsers */
+        background: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/Pgo8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgdmlld0JveD0iMCAwIDEgMSIgcHJlc2VydmVBc3BlY3RSYXRpbz0ibm9uZSI+CiAgPGxpbmVhckdyYWRpZW50IGlkPSJncmFkLXVjZ2ctZ2VuZXJhdGVkIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgeDE9IjAlIiB5MT0iMCUiIHgyPSIwJSIgeTI9IjEwMCUiPgogICAgPHN0b3Agb2Zmc2V0PSIxMiUiIHN0b3AtY29sb3I9IiMzZTkyYzciIHN0b3Atb3BhY2l0eT0iMSIvPgogICAgPHN0b3Agb2Zmc2V0PSI2OSUiIHN0b3AtY29sb3I9IiMxYjZjOWYiIHN0b3Atb3BhY2l0eT0iMSIvPgogIDwvbGluZWFyR3JhZGllbnQ+CiAgPHJlY3QgeD0iMCIgeT0iMCIgd2lkdGg9IjEiIGhlaWdodD0iMSIgZmlsbD0idXJsKCNncmFkLXVjZ2ctZ2VuZXJhdGVkKSIgLz4KPC9zdmc+);
+        background: -moz-linear-gradient(top,  #3e92c7 12%, #1b6c9f 69%); /* FF3.6+ */
+        background: -webkit-gradient(linear, left top, left bottom, color-stop(12%,#3e92c7), color-stop(69%,#1b6c9f)); /* Chrome,Safari4+ */
+        background: -webkit-linear-gradient(top,  #3e92c7 12%,#1b6c9f 69%); /* Chrome10+,Safari5.1+ */
+        background: -o-linear-gradient(top,  #3e92c7 12%,#1b6c9f 69%); /* Opera 11.10+ */
+        background: -ms-linear-gradient(top,  #3e92c7 12%,#1b6c9f 69%); /* IE10+ */
+        background: linear-gradient(top,  #3e92c7 12%,#1b6c9f 69%); /* W3C */
+        filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#3e92c7', endColorstr='#1b6c9f',GradientType=0 ); /* IE6-8 */
+
+        color: #FFFFFF;
         font-weight: bold;
       }
 
       .skip {
+        background: #c6c6c6; /* Old browsers */
+        background: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/Pgo8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgdmlld0JveD0iMCAwIDEgMSIgcHJlc2VydmVBc3BlY3RSYXRpbz0ibm9uZSI+CiAgPGxpbmVhckdyYWRpZW50IGlkPSJncmFkLXVjZ2ctZ2VuZXJhdGVkIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgeDE9IjAlIiB5MT0iMCUiIHgyPSIwJSIgeTI9IjEwMCUiPgogICAgPHN0b3Agb2Zmc2V0PSIxMiUiIHN0b3AtY29sb3I9IiNjNmM2YzYiIHN0b3Atb3BhY2l0eT0iMSIvPgogICAgPHN0b3Agb2Zmc2V0PSI2OSUiIHN0b3AtY29sb3I9IiM5ZTllOWUiIHN0b3Atb3BhY2l0eT0iMSIvPgogIDwvbGluZWFyR3JhZGllbnQ+CiAgPHJlY3QgeD0iMCIgeT0iMCIgd2lkdGg9IjEiIGhlaWdodD0iMSIgZmlsbD0idXJsKCNncmFkLXVjZ2ctZ2VuZXJhdGVkKSIgLz4KPC9zdmc+);
+        background: -moz-linear-gradient(top, #c6c6c6 12%, #9e9e9e 69%); /* FF3.6+ */
+        background: -webkit-gradient(linear, left top, left bottom, color-stop(12%,#c6c6c6), color-stop(69%,#9e9e9e)); /* Chrome,Safari4+ */
+        background: -webkit-linear-gradient(top, #c6c6c6 12%,#9e9e9e 69%); /* Chrome10+,Safari5.1+ */
+        background: -o-linear-gradient(top, #c6c6c6 12%,#9e9e9e 69%); /* Opera 11.10+ */
+        background: -ms-linear-gradient(top, #c6c6c6 12%,#9e9e9e 69%); /* IE10+ */
+        background: linear-gradient(top, #c6c6c6 12%,#9e9e9e 69%); /* W3C */
+        filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#c6c6c6', endColorstr='#9e9e9e',GradientType=0 ); /* IE6-8 */
+
+        color: #333333;
       }
 
       .buttons480 {
         font-size: 20px;
-        padding-top: 12px;
+        padding-top: 15px;
       }
 
       .download480,
@@ -269,20 +295,21 @@
         -ms-border-radius: 7px;
         -o-border-radius: 7px;
         -webkit-border-radius: 7px;
+        padding: 7px 12px;
       }
 
       .download480 {
-        padding: 5px 30px 5px 20px;
+        text-shadow: 1px 1px #333;
       }
 
       .skip480 {
-        margin-right: 20px;
-        padding: 5px;
+        margin-right: 10px;
+        text-shadow: 1px 1px #CCC;
       }
 
       .buttons640 {
         font-size: 30px;
-        padding-top: 18px;
+        padding-top: 22px;
       }
 
       .download640,
@@ -292,32 +319,44 @@
         -ms-border-radius: 10px;
         -o-border-radius: 10px;
         -webkit-border-radius: 10px;
+        padding: 10px 17px;
       }
 
       .download640 {
-        padding: 8px 40px 8px 30px;
+        text-shadow: 2px 2px #333;
       }
 
       .skip640 {
-        margin-right: 30px;
-        padding: 8px;
+        margin-right: 15px;
+        text-shadow: 2px 2px #CCC;
       }
 
       .buttons960 {
         font-size: 40px;
-        padding-top: 35px;
+        padding-top: 30px;
       }
 
       .download960,
       .skip960 {
+        border-width: 2px;
+        -moz-border-radius: 15px;
+        -ms-border-radius: 15px;
+        -o-border-radius: 15px;
+        -webkit-border-radius: 15px;
+        padding: 15px 25px;
       }
 
       .download960 {
-        background: url("/images/button-blue.gif") top left no-repeat;
-        padding: 30px 65px 30px 65px;
+          text-shadow: 2px 2px #333;
       }
 
       .skip960 {
-        margin-right: 40px;
-        padding: 10px;
+        margin-right: 20px;
+        text-shadow: 2px 2px #CCC;
       }
+
+/[if gte IE 9]
+  :css
+    .gradient {
+      filter: none;
+    }
