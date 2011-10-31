@@ -94,6 +94,20 @@
                       %br/
                       Earn
                       = h("#{offer['Payout']} #{offers['CurrencyName']}")
+    - elsif @popular_apps.any?
+      .step{:style => css[:step]}
+        %table
+          %tr
+            %td
+              = image_tag("#{image_root}/connect_icon.png", :class => 'icon', :size => '68x68', :title => 'Find apps', :alt => 'Find')
+            %td{:style => css[:step_body]}
+              .name{:style => css[:step_name]}
+                Check out these popular apps!
+              - @popular_apps.each do |app|
+                - link_to(app.store_url, :style => css[:offer]) do
+                  = image_tag(app.get_icon_url, :style => css[:offer_icon])
+                  .description
+                    = h(app.name)
     .step{:style => "border-top: 1px dotted #{light_gray};"}
       &nbsp;
   #footer{ :style => "padding-top: 20px; padding-bottom: 30px !important; padding: #{offset}; padding-bottom: 0px;" }
