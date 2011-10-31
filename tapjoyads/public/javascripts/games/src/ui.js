@@ -171,7 +171,6 @@ TJG.ui = {
           '<div class="title_2 center">Registering</div>',
           '<div class="loading_animation"></div>'
         ].join('');
-        console.log(form_height);
         $('.register_form').animate({ height: "0px" }, animateSpd, function() {
           $('.register_progess').html(loader);
         });

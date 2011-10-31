@@ -44,7 +44,7 @@ TJG.vars.orientationClasses = ['landscape', 'portrait'];
 TJG.vars.isIos = false;
 TJG.vars.isTouch = false;
 TJG.vars.imageLoaderInit = false;
-TJG.vars.autoKey = 0;  
+TJG.vars.autoKey = 0;
 TJG.appOfferWall = {};
 TJG.loadedImages = {};
 (function(window, document) {
@@ -973,7 +973,6 @@ TJG.utils = {
 
 };
 $.utils = TJG.utils;
-
 TJG.ui = {
 
   hideLoader : function(delay,fn) {
@@ -1256,7 +1255,7 @@ TJG.ui = {
             msg = [
               '<div class="title_2 center">Oops!</div>',
               '<div class="dialog_content center">', error ,'.</div>',
-              '<div class="sign_up_again"><div class="button red try_again">Try Again</div></div>',
+              '<div id="sign_up_again"><div class="button red try_again">Try Again</div></div>',
             ].join('');
             $('.register_progess').html(msg);
             $('.sign_up_again').click(function(){
@@ -1271,7 +1270,7 @@ TJG.ui = {
 
   showAcceptTos : function () {
     var animateSpd = "fast";
-    $("#accept_tos_dialog_content").parent().css("height", "250px");
+    $("#accept_tos_dialog_content").parent().css("height", "200px");
     $("#accept_tos_dialog_content").html($('#accept_tos_dialog_content_placeholder').html());
     setTimeout(function() {
       TJG.utils.centerDialog("#accept_tos_dialog");
@@ -2024,7 +2023,6 @@ TJG.ui = {
   }
 
 };
-
 TJG.social = {
   setup: function(options){
     // local variables
@@ -2373,7 +2371,6 @@ RegExp.escape = function(text) {
   }
   return text.replace(arguments.callee.sRE, '\\$1');
 };
-
 (function(window, document) {
 
     TJG.onload = {
