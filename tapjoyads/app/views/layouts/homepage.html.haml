@@ -45,7 +45,7 @@
     = javascript_include_tag 'jquery-1.4.2.min', 'jquery.easing.1.2.js', 'jquery.anythingslider.js', 'pluginpage.js', 'jquery.pngFix.pack.js'
     %script{ :type => 'text/javascript', :charset => 'utf-8' }
       = yield :page_javascript
-      - unless Rails.env == 'development'
+      - if Rails.env.production?
         :plain
           var _gaq = _gaq || [];
           _gaq.push(['_setAccount', 'UA-5323442-1']);

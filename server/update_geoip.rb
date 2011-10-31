@@ -5,6 +5,9 @@ if ENV['USER'] != 'webuser'
   exit
 end
 
+server_type = `/home/webuser/tapjoyserver/server/server_type.rb`
+exit if server_type == 'test'
+
 require 'rubygems'
 require 'yaml'
 require 'aws-sdk'

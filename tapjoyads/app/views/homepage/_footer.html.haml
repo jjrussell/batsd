@@ -30,7 +30,7 @@
       });
     });
   = yield :page_javascript
-  - unless Rails.env == 'development'
+  - if Rails.env.production?
     :plain
       var _gaq = _gaq || [];
       _gaq.push(['_setAccount', 'UA-5323442-1']);

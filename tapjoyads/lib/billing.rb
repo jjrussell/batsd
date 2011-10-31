@@ -6,11 +6,11 @@ class Billing
   NO_CIM_MSG        = 'no CIM number'
 
   def self.get_gateway
-    ActiveMerchant::Billing::AuthorizeNetGateway.new(:login => AUTH_NET_LOGIN, :password => AUTH_NET_PASSWORD, :test => Rails.env != 'production')
+    ActiveMerchant::Billing::AuthorizeNetGateway.new(:login => AUTH_NET_LOGIN, :password => AUTH_NET_PASSWORD, :test => !Rails.env.production?)
   end
 
   def self.get_cim_gateway
-    ActiveMerchant::Billing::AuthorizeNetCimGateway.new(:login => AUTH_NET_LOGIN, :password => AUTH_NET_PASSWORD, :test => Rails.env != 'production')
+    ActiveMerchant::Billing::AuthorizeNetCimGateway.new(:login => AUTH_NET_LOGIN, :password => AUTH_NET_PASSWORD, :test => !Rails.env.production?)
   end
 
   def self.charge_credit_card(credit_card, amount, partner_id)
