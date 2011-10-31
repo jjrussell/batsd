@@ -25,8 +25,7 @@ class Job::QueueSendWelcomeEmailsController < Job::SqsReaderController
       sess = Patron::Session.new
       response = sess.get(offerwall_url)
       raise "Error getting offerwall data" unless response.status == 200
-      offerwall_data = response.body
-      offer_data[currency[:id]] = JSON.parse(offerwall_data)
+      offer_data[currency[:id]] = JSON.parse(response.body)
     end
 
     confirm_url = "#{TJGAMES_URL}/confirm?token=#{CGI.escape(gamer.confirmation_token)}"

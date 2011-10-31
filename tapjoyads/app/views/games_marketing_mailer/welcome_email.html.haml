@@ -11,6 +11,8 @@
     :step => "border-top: 1px dotted #{light_gray}; padding: 20px 0px;",
     :step_body => "padding-left: 20px;",
     :step_name => "color: #{blue}; font-weight: bold; font-size: 16px; padding-bottom: 5px;",
+    :offer => "height: 57px; display: block; margin-top: 15px;",
+    :offer_icon => "float: left; margin-right: 5px;"
   }
 
 #email{:style => "color: #{gray}; margin: 0px auto; border: 1px solid #{light_gray}; width: 600px; font-family: 'arial'; font-size: 15px; background-color: white;"}
@@ -44,19 +46,7 @@
               %br/
               - link_to @confirmation_link, :style => css[:a] do
                 = image_tag("#{image_root}/confirm_button.png", :title => 'Confirm', :alt => 'Confirm', :style => "border: none;", :size => '170x49')
-    - if @linked && @offer_data.any?
-      .step{:style => css[:step]}
-        %table
-          - @offer_data.each do |currency_id, offers|
-            %tr
-              %td
-                = link_to(offers['Message'], "#{TJGAMES_URL}/earn/#{currency_id}")
-            - offers['OfferArray'].each do |offer|
-              %tr
-                %td
-                  = link_to(offer['Name'], "#{TJGAMES_URL}/earn/#{currency_id}")
-              - break
-    - else
+    - unless @linked
       .step{:style => css[:step]}
         %table
           %tr
@@ -80,6 +70,30 @@
                 Add Tapjoy to your Home Screen
               .description
                 Engaging with your favorite apps can be just a tap away.
+    - if @linked && @offer_data.any?
+      .step{:style => css[:step]}
+        %table
+          - @offer_data.each do |currency_id, offers|
+            - currency = Currency.find(currency_id)
+            %tr
+              %td
+                = image_tag("#{image_root}/connect_icon.png", :class => 'icon', :size => '68x68', :title => 'Earn currency', :alt => 'Earn')
+              %td{:style => css[:step_body]}
+                .name{:style => css[:step_name]}
+                  Install one of the apps below to earn
+                  = h(offers['CurrencyName'])
+                  in
+                  = h(currency.app.name)
+                - offers['OfferArray'][0..2].each do |offer|
+                  - link_to("#{TJGAMES_URL}/earn/#{currency_id}", :style => css[:offer]) do
+                    = image_tag(offer['IconURL'], :style => css[:offer_icon])
+                    .description
+                      - if offer['Type'] == 'App'
+                        Install and run
+                      = h(offer['Name'])
+                      %br/
+                      Earn
+                      = h("#{offer['Payout']} #{offers['CurrencyName']}")
     .step{:style => "border-top: 1px dotted #{light_gray};"}
       &nbsp;
   #footer{ :style => "padding-top: 20px; padding-bottom: 30px !important; padding: #{offset}; padding-bottom: 0px;" }
