@@ -19,8 +19,8 @@ class GamesMarketingMailer < ActionMailer::Base
     recipients gamer.email
     subject "Welcome to Tapjoy!"
     content_type 'text/html'
-    device_type = (gamer_device && gamer_device.device_type == 'android') ? :android : :iphone
-    body :confirmation_link => confirmation_link, :linked => gamer.gamer_devices.any?, :device_type => device_type, :offer_data => offer_data
+    android_device = gamer_device.device_type == 'android' rescue false
+    body :confirmation_link => confirmation_link, :linked => gamer.gamer_devices.any?, :android_device => android_device, :offer_data => offer_data
   end
 
   def link_device(gamer, ios_link, android_link)
