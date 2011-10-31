@@ -177,7 +177,7 @@ class DisplayAdController < ApplicationController
         text = "Try #{offer.name} today"
       end
 
-      font        = Rails.env == 'production' ? 'Helvetica' : ''
+      font = (Rails.env.production? || Rails.env.staging?) ? 'Helvetica' : ''
       image_label = Magick::Image.read("caption:#{text}") do
         self.size             = text_area_size
         self.gravity          = Magick::WestGravity

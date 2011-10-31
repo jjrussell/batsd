@@ -39,7 +39,7 @@ class Games::SocialController < GamesController
             current_gamer.follow_gamer(gamer)
           end
         else
-          friend_id = DEV_FACEBOOK_ID if Rails.env != 'production'
+          friend_id = DEV_FACEBOOK_ID if !Rails.env.production?
           friend = Mogli::User.find(friend_id.to_i, current_facebook_client)
           non_gamers << friend.name
           invitation = current_gamer.facebook_invitation_for(friend_id)
