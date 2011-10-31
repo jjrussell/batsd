@@ -7,23 +7,14 @@ zh:
       ads_by: "Ads by"
 
     offerwall:
-      # shared between the original wall and the redesigned wall
       title: "赚 %{currency}"
       free: "免费"
       next: "下页 %{items}"
       previous: "上页 %{items}"
       missing_currency: "Missing %{currency}?"
-
-      # original wall only
-      instructions: "安装并运行以下的一个应用以得到 %{currency}"
-      amount_and_currency: "%{amount} %{currency}"
-      earn_currency: "赚 %{amount_and_currency}"
-      buy_currency: "买 %{amount_and_currency}"
-
-      # redesigned wall only
-      redesign_instructions: "完成以下的要求其中之一可以得到 %{currency}"
-      redesign_earn_currency: "赚 %{amount} %{currency}"
-      redesign_buy_currency: "买 %{amount} %{currency}"
+      instructions: "完成以下的要求其中之一可以得到 %{currency}"
+      earn_currency: "赚 %{amount} %{currency}"
+      buy_currency: "买 %{amount} %{currency}"
 
     instructions:
       title: "说明"
