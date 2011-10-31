@@ -9,9 +9,20 @@ class Recommender  #Interface for all recommenders.
       self.name.split("::").last.snake_case.to_sym
     end
 
-    def instance
+    def instance(recommender_type = nil)
       @@recommenders ||= {}
-      @@recommenders[self.type] ||= self.new
+      if is_active?(recommender_type)
+        @@recommenders[recommender_type.to_sym] ||= "Recommenders::#{recommender_type.to_s.camelize}".constantize.new
+      elsif is_active?(self.type)
+        @@recommenders[self.type] ||= self.new
+      else
+        raise "Wrong recommender type, Recommenders::#{(recommender_type || self.type).to_s.camelize} does not exist"
+      end
+    end
+
+    def is_active?(recommender_type)
+      return false if recommender_type.nil?
+      ACTIVE_RECOMMENDERS.keys.member?(recommender_type.to_sym)
     end
   end
 

@@ -6,7 +6,7 @@ class Tools::RecommendersController < WebsiteController
     @recommenders = Recommender::ACTIVE_RECOMMENDERS
     @options = { :with_weights => (params[:with_weights] == 'true') }
     unless params[:recommender].blank?
-      recommender = "Recommenders::#{params[:recommender].to_s.camelize}".constantize.instance
+      recommender = Recommender.instance params[:recommender]
       n = params[:n].blank? ? 20 : params[:n].to_i
       @options[:recommender] = recommender.type
       case
