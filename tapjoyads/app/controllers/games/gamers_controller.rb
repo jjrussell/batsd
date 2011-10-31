@@ -15,7 +15,8 @@ class Games::GamersController < GamesController
     @gamer.gamer_profile = @gamer_profile
 
     if @gamer.save
-      GamesMarketingMailer.deliver_gamer_confirmation(@gamer, games_confirm_url(:token => @gamer.confirmation_token))
+      message = { :gamer_id => @gamer.id, :accept_language_str => request.headers['accept-language'], :user_agent_str => request.headers['user-agent'] }.to_json
+      Sqs.send_message(QueueNames::SEND_WELCOME_EMAILS, message)
       render(:json => { :success => true, :link_device_url => new_games_gamer_device_path, :linked => @gamer.devices.any? })
     else
       errors = @gamer.errors.reject{|error|error[0] == 'gamer_profile'}

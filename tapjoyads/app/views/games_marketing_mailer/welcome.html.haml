@@ -44,7 +44,19 @@
               %br/
               - link_to @confirmation_link, :style => css[:a] do
                 = image_tag("#{image_root}/confirm_button.png", :title => 'Confirm', :alt => 'Confirm', :style => "border: none;", :size => '170x49')
-    - unless @linked
+    - if @linked && @offer_data.any?
+      .step{:style => css[:step]}
+        %table
+          - @offer_data.each do |currency_id, offers|
+            %tr
+              %td
+                = link_to(offers['Message'], "#{TJGAMES_URL}/games/earn/#{currency_id}")
+            - offers['OfferArray'].each do |offer|
+              %tr
+                %td
+                  = link_to(offer['Name'], "#{TJGAMES_URL}/games/earn/#{currency_id}")
+              - break
+    - else
       .step{:style => css[:step]}
         %table
           %tr

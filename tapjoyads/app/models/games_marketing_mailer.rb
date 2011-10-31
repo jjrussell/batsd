@@ -14,17 +14,13 @@ class GamesMarketingMailer < ActionMailer::Base
   sendgrid_category :use_subject_lines
   sendgrid_enable :clicktrack, :opentrack
 
-  def gamer_confirmation(gamer, confirmation_link)
+  def welcome(gamer, confirmation_link, gamer_device = nil, offer_data = {})
     from 'Tapjoy <noreply@tapjoy.com>'
     recipients gamer.email
     subject "Welcome to Tapjoy!"
     content_type 'text/html'
-    if gamer.gamer_devices.any? && gamer.gamer_devices.first.device_type == 'android'
-      device_type = :android
-    else
-      device_type = :iphone
-    end
-    body :confirmation_link => confirmation_link, :linked => gamer.gamer_devices.any?, :device_type => device_type
+    device_type = gamer_device.device_type.to_sym rescue :iphone
+    body :confirmation_link => confirmation_link, :linked => gamer.gamer_devices.any?, :device_type => device_type, :offer_data => offer_data
   end
 
   def link_device(gamer, ios_link, android_link)

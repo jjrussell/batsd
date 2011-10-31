@@ -21,10 +21,10 @@ class ExternalPublisher
     Offer.get_icon_url(options.merge(:icon_id => Offer.hashed_icon_id(app_id)))
   end
 
-  def get_offerwall_url(device, currency, headers)
-    language_code = HeaderParser.locale(headers['accept-language'])
-    device_type = HeaderParser.device_type(headers['user-agent'])
-    os_version = HeaderParser.os_version(headers['user-agent']) if device_type.present?
+  def get_offerwall_url(device, currency, accept_language_str, user_agent_str)
+    language_code = HeaderParser.locale(accept_language_str)
+    device_type = HeaderParser.device_type(user_agent_str)
+    os_version = HeaderParser.os_version(user_agent_str) if device_type.present?
 
     publisher_user_id = currency[:udid_for_user_id] ? device.key : device.publisher_user_ids[app_id]
 
@@ -41,6 +41,23 @@ class ExternalPublisher
     data[:os_version]    = os_version if os_version.present?
 
     "#{API_URL}/get_offers?data=#{SymmetricCrypto.encrypt_object(data, SYMMETRIC_CRYPTO_SECRET)}"
+  end
+
+  def self.most_recently_run_for_gamer(gamer)
+    # return [device, gamer_device, external_publisher]
+    arr = [nil, nil, nil]
+
+    latest_run_time = 0
+    gamer.gamer_devices.each do |gamer_device|
+      device = Device.new(:key => gamer_device.device_id)
+      external_publisher = ExternalPublisher.load_all_for_device(device).first
+      latest_run_time = [latest_run_time, external_publisher.last_run_time].max
+      if latest_run_time == external_publisher.last_run_time
+        arr = [device, gamer_device, external_publisher]
+      end
+    end
+
+    arr
   end
 
   def self.load_all_for_device(device)

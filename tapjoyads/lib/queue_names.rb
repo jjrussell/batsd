@@ -19,4 +19,5 @@ class QueueNames
   SEND_CURRENCY          = "#{BASE_NAME}SendCurrency"
   UDID_REPORTS           = "#{BASE_NAME}UdidReports"
   UPDATE_MONTHLY_ACCOUNT = "#{BASE_NAME}UpdateMonthlyAccount"
+  SEND_WELCOME_EMAILS    = "#{BASE_NAME}SendWelcomeEmails"
 end
