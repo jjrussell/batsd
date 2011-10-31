@@ -14,7 +14,7 @@ class GamesMarketingMailer < ActionMailer::Base
   sendgrid_category :use_subject_lines
   sendgrid_enable :clicktrack, :opentrack
 
-  def welcome(gamer, confirmation_link, gamer_device = nil, offer_data = {})
+  def welcome_email(gamer, confirmation_link, gamer_device = nil, offer_data = {})
     from 'Tapjoy <noreply@tapjoy.com>'
     recipients gamer.email
     subject "Welcome to Tapjoy!"

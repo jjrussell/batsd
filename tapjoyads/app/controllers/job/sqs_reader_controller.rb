@@ -5,6 +5,7 @@ class Job::SqsReaderController < Job::JobController
     @num_reads            = 100
     @raise_on_error       = true
     @break_on_nil_message = true
+    @retry_on_false_return_value = false
   end
 
   def index
@@ -31,7 +32,7 @@ class Job::SqsReaderController < Job::JobController
       end
 
       begin
-        on_message(message)
+        return_value = on_message(message)
       rescue Exception => e
         Rails.logger.warn "Error processing message. Error: #{e}"
         message_params = split_message_into_params(message.body)
