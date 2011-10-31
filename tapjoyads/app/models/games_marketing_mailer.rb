@@ -7,8 +7,8 @@ class GamesMarketingMailer < ActionMailer::Base
     :port => 587,
     :domain => 'tapjoy.com',
     :authentication => :plain,
-    :user_name => RAILS_ENV == 'development' ? "erictipton" : 'produser',
-    :password => RAILS_ENV == 'development' ? 'shufflethebits' : 'prodpwd'
+    :user_name => RAILS_ENV == 'production' ?  'produser' : 'erictipton',
+    :password => RAILS_ENV == 'production' ? 'prodpwd' : 'shufflethebits'
   }
 
   sendgrid_category :use_subject_lines
