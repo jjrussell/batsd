@@ -1,18 +1,14 @@
 class MailChimp
   def self.chimp
-    @chimp ||= Hominid::Base.new({:api_key => MAIL_CHIMP_API_KEY})
-  end
-
-  def self.get_lists
-    @lists ||= chimp.lists
+    Hominid::API.new(MAIL_CHIMP_API_KEY)
   end
 
   def self.lookup_user(email)
-    chimp.member_info(MAIL_CHIMP_PARTNERS_LIST_ID, email)
+    chimp.list_member_info(MAIL_CHIMP_PARTNERS_LIST_ID, [email]).first.second.first
   end
 
   def self.update(email, merge_tags)
-    chimp.update_member(MAIL_CHIMP_PARTNERS_LIST_ID, email, merge_tags)
+    chimp.list_update_member(MAIL_CHIMP_PARTNERS_LIST_ID, email, merge_tags)
   end
 
   # todo: remove "add_partner" and "add_partners"
@@ -40,7 +36,7 @@ class MailChimp
         end
       end
     end.compact.each_slice(100) do |slice|
-      results = chimp.subscribe_many(MAIL_CHIMP_PARTNERS_LIST_ID, slice)
+      results = chimp.list_batch_subscribe(MAIL_CHIMP_PARTNERS_LIST_ID, slice)
       errors << results["errors"]
     end
     errors.flatten
@@ -57,6 +53,6 @@ class MailChimp
       'IS_PUB' => partner.has_publisher_offer? ? 'true' : 'false',
       'CAN_EMAIL' => 'true'
     }
-    chimp.subscribe(MAIL_CHIMP_PARTNERS_LIST_ID, user.email, hash)
+    chimp.list_subscribe(MAIL_CHIMP_PARTNERS_LIST_ID, user.email, hash)
   end
 end
