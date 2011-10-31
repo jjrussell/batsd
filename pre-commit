@@ -9,7 +9,6 @@ filetypes = %w(
   erb
   haml
   html
-  js
   json
   rake
   rb
