@@ -45,7 +45,7 @@ class Currency < ActiveRecord::Base
 
   before_validation :sanitize_attributes
   before_validation_on_create :assign_default_currency_group
-  before_create :set_values_from_partner_and_reseller
+  before_create :set_hide_rewarded_app_installs, :set_values_from_partner_and_reseller
   before_update :update_spend_share
   after_cache :cache_by_app_id
   after_cache_clear :clear_cache_by_app_id
@@ -54,7 +54,7 @@ class Currency < ActiveRecord::Base
   delegate :categories, :to => :app
   memoize :postcache_weights, :categories
 
-  def self.find_all_in_cache_by_app_id(app_id, do_lookup = (Rails.env != 'production'))
+  def self.find_all_in_cache_by_app_id(app_id, do_lookup = !Rails.env.production?)
     currencies = Mc.distributed_get("mysql.app_currencies.#{app_id}.#{SCHEMA_VERSION}")
     if currencies.nil?
       if do_lookup
@@ -188,7 +188,7 @@ class Currency < ActiveRecord::Base
     self.reseller_spend_share = reseller_id? ? reseller.reseller_rev_share * spend_share_ratio : nil
   end
 
-private
+  private
 
   def cache_by_app_id
     currencies = Currency.find_all_by_app_id(app_id, :order => 'ordinal ASC').each { |c| c.run_callbacks(:before_cache) }
@@ -231,4 +231,10 @@ private
       calculate_spend_shares
     end
   end
+
+  def set_hide_rewarded_app_installs
+    self.hide_rewarded_app_installs = true if app.platform == 'iphone'
+    true
+  end
+
 end
