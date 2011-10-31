@@ -29,7 +29,7 @@ class Job::MasterArchiveConversionsController < Job::JobController
     gzip_filename = "#{local_filename}.gz"
 
     # backup the conversions
-    db_config = ActiveRecord::Base.configurations[Rails.env == 'production' ? 'production_slave_for_tapjoy_db' : Rails.env]
+    db_config = ActiveRecord::Base.configurations[Rails.env.production? ? 'production_slave_for_tapjoy_db' : Rails.env]
     mysql_cmd = "mysql -u #{db_config['username']} --password=#{db_config['password']} -h #{db_config['host']} #{db_config['database']}"
     mysql_cmd += " -e \"SELECT * FROM conversions WHERE created_at >= '#{start_time.to_s(:db)}' AND created_at < '#{end_time.to_s(:db)}'\""
     `#{mysql_cmd} > #{local_filename}`
