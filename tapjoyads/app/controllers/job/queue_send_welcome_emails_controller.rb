@@ -23,7 +23,9 @@ class Job::QueueSendWelcomeEmailsController < Job::SqsReaderController
       offerwall_url = external_publisher.get_offerwall_url(device, currency, message['accept_language_str'], message['user_agent_str'])
 
       sess = Patron::Session.new
-      offerwall_data = sess.get(offerwall_url).body
+      response = sess.get(offerwall_url)
+      raise "Error getting offerwall data" unless response.status == 200
+      offerwall_data = response.body
       offer_data[currency[:id]] = JSON.parse(offerwall_data)
     end
 
