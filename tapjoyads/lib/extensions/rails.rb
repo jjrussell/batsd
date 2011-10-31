@@ -22,7 +22,7 @@ module ActionController
 
       def recognition_conditions
         result = orig_recognition_conditions
-        result << "conditions[:hosts].include?(env[:host])" if conditions[:hosts] && Rails.env == 'production'
+        result << "conditions[:hosts].include?(env[:host])" if conditions[:hosts] && Rails.env.production?
         result
       end
     end
@@ -89,7 +89,7 @@ module ActiveRecord
     alias_method :orig_readonly?, :readonly?
 
     def readonly?
-      (connection.adapter_name == 'SQLite' && Rails.env == 'production') || orig_readonly?
+      (connection.adapter_name == 'SQLite' && Rails.env.production?) || orig_readonly?
     end
 
     def safe_update_attributes(attributes, allowed_attr_names)

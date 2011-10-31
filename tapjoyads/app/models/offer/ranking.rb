@@ -8,7 +8,7 @@ module Offer::Ranking
   end
 
   def calculate_ranking_fields
-    return if Rails.env == 'test' # We need to be seeding the test environment with enabled offers for these calculations to work
+    return if Rails.env.test? # We need to be seeding the test environment with enabled offers for these calculations to work
     stats                       = OfferCacher.get_offer_stats
     self.normal_conversion_rate = (stats[:cvr_std_dev] == 0) ? 0 : (conversion_rate - stats[:cvr_mean]) / stats[:cvr_std_dev]
     self.normal_price           = (stats[:price_std_dev] == 0) ? 0 : (price - stats[:price_mean]) / stats[:price_std_dev]

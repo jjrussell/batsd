@@ -81,7 +81,7 @@ private
   end
 
   def create_mail_chimp_entry
-    return if Rails.env == 'test'
+    return if Rails.env.test?
     if has_valid_email?
       message = { :type => "add_user", :user_id => id }.to_json
       Sqs.send_message(QueueNames::MAIL_CHIMP_UPDATES, message)

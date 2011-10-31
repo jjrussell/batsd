@@ -33,7 +33,7 @@ class SurveysController < ApplicationController
       device.survey_answers = answers
       device.save
 
-      if Rails.env == 'production'
+      if Rails.env.production?
         Downloader.get_with_retry "#{API_URL}/offer_completed?click_key=#{params[:click_key]}"
       end
     end

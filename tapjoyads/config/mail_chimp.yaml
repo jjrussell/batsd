@@ -13,3 +13,8 @@ development:
     settings_key: '3f3bd12048d95319e060f75b1'
     partners_list_id: 'ce6f97f269'
     webhook_key: 'KILA3WgoaZRWywfY'
+staging:
+    api_key: 'ac14495cc872e548179a99675e93aea1-us2'
+    settings_key: '3f3bd12048d95319e060f75b1'
+    partners_list_id: 'ce6f97f269'
+    webhook_key: 'KILA3WgoaZRWywfY'
