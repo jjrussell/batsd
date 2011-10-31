@@ -1,3 +1,4 @@
+- @page_design = 'new'
 #jqt
   #login.current
     .page
@@ -28,36 +29,42 @@
 
       .content.main_scene
         .content_box
-          .main_phone
-          .sign_up
-            .sign_up_content
-              %h1
-                Sign Up!
-              %h4
-                Creating an account is too easy!
-              .register_form
-                - form_for([ :games, @gamer ], :url => games_gamer_path ) do |f|
-                  .field
-                    = label_tag :birthdate
-                    = select_date nil, { :order => [:month, :day, :year], :start_year => Time.now.year, :end_year => (Time.now.year - 100), :include_blank => false, :prompt => {:day => 'dd', :month => 'mm', :year => 'yy'} }
-                  .field
-                    = f.email_field :email, "autocorrect" => "off", "autocapitalize" => "off", :placeholder => "Email"
-                  .field
-                    = f.password_field :password, :placeholder => "Password"
-                  .field
-                    = f.password_field :password_confirmation, :placeholder => "Confirm Password"
-                  .field.field_tos
-                    = f.check_box :terms_of_service
-                    = f.label :terms_of_service, "By checking this box I assert that I agree to the #{ link_to('terms of services', games_tos_path, :target => '_blank') } &amp; #{ link_to('privacy policy', games_privacy_path, :target => '_blank') }"
-                  .field
-                    = f.hidden_field :referrer, :value => params[:referrer]
-                    = f.submit 'Sign Up', :class => 'button'
-                  .email_error.center
-                    = error_message_on @gamer, :email
-                    = error_message_on @gamer, :password
-                    = error_message_on @gamer, :terms_of_service
-              .register_progess
-
+          .main_scene_content
+            .main_phone
+            .sign_up_message
+            .sign_up
+              .sign_up_content.clearfix
+                %h1
+                  Sign Up!
+                %h5
+                  Creating an account is too easy!
+                .register_form
+                  - form_for([ :games, @gamer ], :url => games_gamer_path ) do |f|
+                    .field
+                      = label_tag :birthdate
+                      = select_date nil, { :order => [:month, :day, :year], :start_year => Time.now.year, :end_year => (Time.now.year - 100), :include_blank => false, :prompt => {:day => 'dd', :month => 'mm', :year => 'yy'} }
+                    .field
+                      = f.email_field :email, "autocorrect" => "off", "autocapitalize" => "off", :placeholder => "Email"
+                    .field
+                      = f.password_field :password, :placeholder => "Password"
+                    .field
+                      = f.password_field :password_confirmation, :placeholder => "Confirm Password"
+                    .field.field_tos
+                      .field_checkbox
+                        = f.check_box :terms_of_service
+                      .field_tos_text
+                        = f.label :terms_of_service, "By checking this box I assert that I agree to the #{ link_to('terms of services', games_tos_path, :target => '_blank') } &amp; #{ link_to('privacy policy', games_privacy_path, :target => '_blank') }"
+                      = f.hidden_field :referrer, :value => params[:referrer]
+                    .field.right
+                      = f.submit 'Sign Up', :class => 'button'
+                    .email_error.center
+                      = error_message_on @gamer, :email
+                      = error_message_on @gamer, :password
+                      = error_message_on @gamer, :terms_of_service
+                .register_progess
+      .content
+        .content_box
+          .device
 - content_for :page_javascript do
   :plain
     $(window).load(function() {

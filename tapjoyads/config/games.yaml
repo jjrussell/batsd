@@ -7,7 +7,7 @@ defaults: &defaults
     'utils',
     'ui',
     'social',
-    'onload'
+    'tapjoygames'
   ]
   js_compile_out_file: 'tjgames.min'
 
