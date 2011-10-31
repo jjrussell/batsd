@@ -26,6 +26,7 @@ class MailChimp
         else
           name = partner.contact_name
           name = email if name.blank?
+          email = 'dev@tapjoy.com' unless Rails.env.production?
           {
             'EMAIL' => email,
             'NAME' => name,
@@ -46,8 +47,10 @@ class MailChimp
     partner = user.partners.first
     name = partner.contact_name
     name = user.email if name.blank?
+    email = user.email
+    email = 'dev@tapjoy.com' unless Rails.env.production?
     hash = {
-      'EMAIL' => user.email,
+      'EMAIL' => email,
       'NAME' => name,
       'ID' => partner.id,
       'IS_PUB' => partner.has_publisher_offer? ? 'true' : 'false',
