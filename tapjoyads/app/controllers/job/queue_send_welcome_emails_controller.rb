@@ -29,6 +29,7 @@ class Job::QueueSendWelcomeEmailsController < Job::SqsReaderController
 
     confirm_url = "#{TJGAMES_URL}/confirm?token=#{CGI.escape(gamer.confirmation_token)}"
     GamesMarketingMailer.deliver_welcome_email(gamer, confirm_url, gamer_device, offer_data)
+    true
   end
 
 end
