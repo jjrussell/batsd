@@ -27,7 +27,8 @@ class Job::QueueSendWelcomeEmailsController < Job::SqsReaderController
       offer_data[currency[:id]] = JSON.parse(offerwall_data)
     end
 
-    GamesMarketingMailer.deliver_welcome_email(gamer, games_confirm_url(:token => gamer.confirmation_token), gamer_device, offer_data)
+    confirm_url = "#{TJGAMES_URL}/confirm?token=#{CGI.escape(gamer.confirmation_token)}"
+    GamesMarketingMailer.deliver_welcome_email(gamer, confirm_url, gamer_device, offer_data)
   end
 
 end

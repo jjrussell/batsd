@@ -50,11 +50,11 @@
           - @offer_data.each do |currency_id, offers|
             %tr
               %td
-                = link_to(offers['Message'], "#{TJGAMES_URL}/games/earn/#{currency_id}")
+                = link_to(offers['Message'], "#{TJGAMES_URL}/earn/#{currency_id}")
             - offers['OfferArray'].each do |offer|
               %tr
                 %td
-                  = link_to(offer['Name'], "#{TJGAMES_URL}/games/earn/#{currency_id}")
+                  = link_to(offer['Name'], "#{TJGAMES_URL}/earn/#{currency_id}")
               - break
     - else
       .step{:style => css[:step]}
