@@ -102,9 +102,9 @@
     }
 
     function inspectScreen() {
-      if(#{@height.present? && @width.present?}) {
-        client.width = parseInt('#{@width}');
-        client.height = parseInt('#{@height}');
+      if(#{params[:height].present? && params[:width].present?}) {
+        client.width = parseInt('#{params[:width]}');
+        client.height = parseInt('#{params[:height]}');
       } else {
         client.width = window.innerWidth;
         client.height = window.innerHeight;
@@ -201,7 +201,7 @@
 
       body {
         margin: 0;
-        height: #{@height}px;
+        height: #{params[:height]}px;
         background-color: #000;
       }
 
@@ -209,8 +209,8 @@
         text-align: center;
         position: relative;
         margin: auto;
-        height: #{@height}px;
-        width: #{@width}px;
+        height: #{params[:height]}px;
+        width: #{params[:width]}px;
       }
 
       .image-link {
@@ -221,8 +221,8 @@
       img.creative {
         display: block;
         margin: 0 auto;
-        height: #{@height}px;
-        width: #{@width}px;
+        height: #{params[:height]}px;
+        width: #{params[:width]}px;
         background-image: url('/images/spinner.gif');
         background-repeat: no-repeat;
         background-position: center;

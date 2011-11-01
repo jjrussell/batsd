@@ -4,16 +4,17 @@ class FullscreenAdController < ApplicationController
 
   def image
     offer = Offer.find_in_cache(params[:offer_id])
-    if params[:dimensions].present?
-      width, height = params[:dimensions].split("x")
-      screen_height = height.to_i + Offer::FEATURED_AD_BUTTON_HEIGHT
+    if params[:image_size].present?
+      width, height = params[:image_size].split("x")
     else
       # Default to showing low-res ad with portrait orientation
       width = 320
-      height = 440
-      screen_height = 480
+      height = 480
     end
-    img = IMGKit.new(offer.fullscreen_ad_url(:publisher_app_id => params[:publisher_app_id], :width => width, :height => height), :width => width, :height => screen_height)
+
+    # Ensure that wkhtmltoimage waits until the Javascript has finished executing before generating the page.
+    img = IMGKit.new(offer.fullscreen_ad_url(:publisher_app_id => params[:publisher_app_id], :width => width, :height => height),
+                     :width => width, :height => height, :javascript_delay => 2000)
 
     prevent_browser_cache(params[:prevent_browser_cache])
 
@@ -34,8 +35,6 @@ class FullscreenAdController < ApplicationController
 
     @now = params[:viewed_at].present? ? Time.zone.at(params[:viewed_at].to_f) : Time.zone.now
     @geoip_data = { :country => params[:country_code] }
-    @width = params[:width] if params[:width].present?
-    @height = params[:height] if params[:height].present?
 
     creative_exists = true if @offer.banner_creatives.any? { |size| Offer::FEATURED_AD_SIZES.include?(size) }
     render :custom_creative, :layout => "blank" if creative_exists

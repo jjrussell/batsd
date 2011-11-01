@@ -49,7 +49,6 @@ class Apps::OffersController < WebsiteController
 
   def preview
     @show_generated_ads = @offer.check_for_uploaded_icon
-    @image_size = params[:image_size] if params[:image_size].present?
     render 'apps/offers_shared/preview', :layout => 'simple'
   end
 

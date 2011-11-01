@@ -474,9 +474,8 @@ class Offer < ActiveRecord::Base
   end
 
   def check_for_uploaded_icon
-    bucket = S3.bucket(BucketNames::TAPJOY)
-    key = RightAws::S3::Key.create(bucket, "icons/src/#{Offer.hashed_icon_id(icon_id)}.jpg")
-    key.exists?
+    bucket = AWS::S3.new.buckets[BucketNames::TAPJOY]
+    bucket.objects["icons/src/#{Offer.hashed_icon_id(icon_id)}.jpg"].exists?
   end
 
   def update_payment(force_update = false)

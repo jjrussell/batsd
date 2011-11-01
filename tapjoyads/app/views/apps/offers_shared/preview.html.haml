@@ -5,9 +5,9 @@
   - unable_to_show = []
   - if @offer.featured?
     - if @show_generated_ads
-      = "Featured ad: (#{@image_size})"
-      %div{:class => "img#{@image_size}"}
-        = image_tag(@offer.fullscreen_ad_image_url(publisher_app_id, true, :image_size => @image_size), :class => 'preview', :alt => '')
+      = "Featured ad: (#{params[:image_size]})"
+      %div{:class => "img#{params[:image_size]}"}
+        = image_tag(@offer.fullscreen_ad_image_url(publisher_app_id, true, :image_size => params[:image_size]), :class => 'preview', :alt => '')
     - else
       - unable_to_show << "Featured"
   - else
