@@ -2,13 +2,13 @@
 // Global Mixins
 //-------------------------------------------
 
-@import "games_mixins";
+@import "tj-mixins";
 
 //-------------------------------------------
 // Import Base CSS 
 //-------------------------------------------
 
-@import "games_base";
+@import "tj-base";
 
 //-------------------------------------------
 //  Basics
@@ -115,7 +115,7 @@ input[type=email]:focus, input[type=password]:focus {
 //-------------------------------------------
 //  Navigation Bar
 //-------------------------------------------
-#login { // Isolate this to just the logged out view for now.
+#login { // Isolate this to just the logged out view for now.  For this push, we want to only update the logged out page
 .nav {
   height: 72px;
   margin: 0 auto;
@@ -129,9 +129,6 @@ input[type=email]:focus, input[type=password]:focus {
       font-size: 0.9em;
       position: relative;
       top: 6px;
-    }
-    .aside_nav {
-      top: 70px;
     }
     .aside_nav span {
     }
@@ -236,8 +233,7 @@ input[type=email]:focus, input[type=password]:focus {
     margin: 0 auto;
     max-width: 960px;
   }
-  .content_box div {
-  }
+
   .main_scene_content {
     width: 780px;
     float: right;
@@ -266,21 +262,20 @@ input[type=email]:focus, input[type=password]:focus {
       width: 320px;
       @include shadow(#333);
       @include rounded-corners(10px);
-    
+      
       h1, h5 {
         color: $tj-red;
-        margin: 4px auto;
+        margin: 8px auto;
       }
       
       .sign_up_content {
         padding: 16px;
         
         .register_form {
-          
+
           select {
             width: 60px;
-          }
-          
+          }          
           input[type=email], input[type=password] {
             width: 274px;
           }
@@ -304,18 +299,71 @@ input[type=email]:focus, input[type=password]:focus {
           input[type=submit] {
             margin: 0 auto;
             padding: 12px 16px
+            }
           }
         }
       }
     }
   }
 }
+
+.overview {
+  height: 340px;
+  max-width: 960px;
+  position: relative;
+  top: -20px;
+  margin: 0 auto;
+  
+  .devices {
+    float: left;
+    height: 255px;
+    width: 313px;
+  }
+  .about {
+    color: #848484;
+    float: left;
+    margin-left: 40px;
+    
+    .knows_apps {
+      float: none;
+      height: 82px;
+      width: 560px;
+    }
+    .about_tapjoy {
+      float: none;
+      line-height: 110%;
+      padding-top: 24px;
+      width: 560px;
+    }
+    
+  }
 }
 
+.b2b {
+  height: 180px;
+  max-width: 960px;
+  margin: 0 auto;
+  
+  .block {
+    float: left;
+    width: 320px;
+    
+    .icon {
+      float: left;
+      height: 90px;
+      margin-right: 12px;
+      width: 90px;
+    }
+    
+    h1 {
+      color: $tj-red;
+    }
+  }
+}
 
 //-------------------------------------------
 //
-// TODO: Old design. Remove items below once other pages ported over.
+// NOTE: Stuff below this will be removed from once final design has been finalized and ported over to the new.
 //
 body.old {
 .nav {
@@ -336,6 +384,9 @@ body.old {
       margin: 2px 6px 0 0;
       position: relative;
       top: 24px;
+    }
+    .aside_nav {
+      top: 70px;
     }
     .aside_nav span {
       margin-left: $nav-padding-h;
@@ -677,6 +728,9 @@ body.old .content_box {
       height: 40px;
       text-align: center;
     }
+    .device_info div {
+      float: none;
+    }
     .device_name {
       cursor: pointer;
       font-size: 0.85em;
@@ -694,7 +748,7 @@ body.old .content_box {
       background: transparent url("/images/games/old/v2/phone.png") no-repeat center center;
       cursor: pointer;
       height: 40px;
-      width: px;
+      width: 20px;
     }
   }
 }

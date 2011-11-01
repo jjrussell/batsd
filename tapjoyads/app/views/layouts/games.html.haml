@@ -21,13 +21,13 @@
 
     = yield :page_head
 
-  %body{ :class => @page_design }
+  %body{ :class => @page_design == 'new' ? 'new' : 'old' }
     %noscript
       %style{:type => "text/css", :media => "screen"}
         :plain
           #jqt {display:none;}
       .noscript_msg
-        Please go into your browser settings and enable JavaScript to continue using Tapjoy Games.
+        Please go into your browser settings and enable JavaScript to continue using Tapjoy.
 
     = yield
 

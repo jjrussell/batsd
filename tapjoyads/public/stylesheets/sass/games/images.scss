@@ -2,7 +2,7 @@
 // Global Mixins
 //-------------------------------------------
 
-@import "games_mixins";
+@import "tj-mixins";
 
 //-------------------------------------------
 
@@ -17,27 +17,39 @@
 //-------------------------------------------
 
 .new {
-input[type=checkbox]:checked {
-  background: transparent url('/images/games/checkmark.png') no-repeat;
-}
-.logo {
-  background: transparent url('/images/games/logo.png') no-repeat;
-}
-.loading_animation {
-  background: transparent url('/images/games/loader.gif') no-repeat;
-}
-.main_scene {
-  background: transparent url('/images/games/main-scene.jpg') no-repeat center;
-}
-.main_phone {
-  background: transparent url('/images/games/main-phone.png') no-repeat center 18px;
-}
-.sign_up_message {
-  background: transparent url('/images/games/unlock-mobile-joy.png') no-repeat center bottom;
-}
-.register_form {
-   select {
-     background: transparent url('/images/games/select-bg.png') no-repeat center right;
-   }
-}
+  input[type=checkbox]:checked {
+    background: transparent url('/images/games/checkmark.png') no-repeat;
+  }
+  .logo {
+    background: transparent url('/images/games/logo.png') no-repeat;
+  }
+  .loading_animation {
+    background: transparent url('/images/games/loader.gif') no-repeat;
+  }
+  .main_scene {
+    background: transparent url('/images/games/main-scene.jpg') no-repeat center;
+  }
+  .main_phone {
+    background: transparent url('/images/games/main-phone.png') no-repeat center 18px;
+  }
+  .sign_up_message {
+    background: transparent url('/images/games/unlock-mobile-joy.png') no-repeat center bottom;
+  }
+  .register_form {
+     select {
+       background: transparent url('/images/games/select-bg.png') no-repeat center right;
+     }
+  }
+  .devices {
+    background: transparent url('/images/games/devices.png') no-repeat center center;
+  }
+  .knows_apps {
+    background: transparent url('/images/games/knows-apps.png') no-repeat center left;
+  }
+  .icon.advertisers {
+    background: transparent url('/images/games/advertisers-icon.png') no-repeat center center;
+  }
+  .icon.publishers {
+    background: transparent url('/images/games/publishers-icon.png') no-repeat center center;
+  }
 }

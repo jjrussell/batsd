@@ -62,9 +62,27 @@
                       = error_message_on @gamer, :password
                       = error_message_on @gamer, :terms_of_service
                 .register_progess
-      .content
+      .content.overview
         .content_box
-          .device
+          .devices
+          .about
+            .knows_apps
+            .about_tapjoy
+              Tapjoy gives you a way to earn virtual currency by playing your favorite games like Happy Park, City of Wonder, Coin Dozer, Overkill, VIP Poker, and Gun Bros.  It recommends new apps to you, so if you like playing Magic Zoo, Tapjoy will suggest other games you'll enjoy, like Safari Zoo or Bug Village HD. Tapjoy also suggests apps to you that your friends are using right now. All that is free! So sign up now and tap into a better way to find the apps you love.
+      .content.b2b
+        .content_box
+          link_to("https://www.tapjoy.com/site/app_developers", )
+          .block
+            .icon.advertisers
+            %h1
+              Advertisers
+          .block
+            .icon.developers
+            %h1
+              Developers
+              
+              
+
 - content_for :page_javascript do
   :plain
     $(window).load(function() {

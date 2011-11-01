@@ -41,6 +41,9 @@ h3 {
 h4 {
   font-size: 1em;
 }
+h5 {
+  font-size: 0.9em;
+}
 .right {
   float: right;
 }
@@ -171,12 +174,6 @@ html[xmlns] .clearfix {
     opacity: 0;
   }
 }
-#jqt .slideright.in {
-  -webkit-animation-name: slideRightIn;
-}
-#jqt .slideright.out {
-  -webkit-animation-name: slideRightOut;
-}
 @-webkit-keyframes slideRightIn {
   0% {
     -webkit-transform: translateX(-100%);
@@ -192,4 +189,58 @@ html[xmlns] .clearfix {
   100% {
     -webkit-transform: translateX(100%);
   }
+}
+@-moz-keyframes slideLeftIn {
+  0% {
+    -moz-transform: translateX(100%);
+  }
+  100% {
+    -moz-transform: translateX(0);
+  }
+}
+@-moz-keyframes slideLeftOut {
+  0% {
+    -moz-transform: translateX(0px);
+  }
+  100% {
+    -moz-transform: translateX(-100%);
+  }
+}
+@-moz-keyframes slideLeftInFade {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+@-moz-keyframes slideLeftOutFade {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+@-moz-keyframes slideRightIn {
+  0% {
+    -moz-transform: translateX(-100%);
+  }
+  100% {
+    -moz-transform: translateX(0);
+  }
+}
+@-moz-keyframes slideRightOut {
+  0% {
+    -moz-transform: translateX(0);
+  }
+  100% {
+    -moz-transform: translateX(100%);
+  }
+}
+#jqt .slideright.in {
+  -webkit-animation-name: slideRightIn;
+}
+#jqt .slideright.out {
+  -webkit-animation-name: slideRightOut;
 }
