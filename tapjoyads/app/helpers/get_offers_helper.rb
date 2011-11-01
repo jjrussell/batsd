@@ -1,23 +1,5 @@
 module GetOffersHelper
 
-  def get_previous_link
-    return nil if @start_index == 0
-
-    tmp_params = params.reject { |k, v| k == 'controller' || k == 'action' }
-    tmp_params['start'] = [@start_index - @max_items, 0].max
-    url = "/get_offers/webpage?data=#{SymmetricCrypto.encrypt_object(tmp_params, SYMMETRIC_CRYPTO_SECRET)}"
-    link_to("<div class='arrow'></div>#{t('text.offerwall.previous', :items => @max_items)}", url, :onclick => "this.className = 'clicked';")
-  end
-
-  def get_next_link
-    return nil if @more_data_available < 1
-
-    tmp_params = params.reject { |k, v| k == 'controller' || k == 'action' }
-    tmp_params['start'] = @start_index + @max_items
-    url = "/get_offers/webpage?data=#{SymmetricCrypto.encrypt_object(tmp_params, SYMMETRIC_CRYPTO_SECRET)}"
-    link_to("<div class='arrow'></div>#{t('text.offerwall.next', :items => [@more_data_available, @max_items].min)}", url, :onclick => "this.className = 'clicked';")
-  end
-
   def get_next_link_json
     return nil if @more_data_available < 1
     tmp_params = params.reject { |k, v| k == 'controller' || k == 'action' }
