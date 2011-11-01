@@ -13,6 +13,7 @@ all_caps:
       instructions: "ENGAGE IN ANY OF THE FOLLOWING ACTIONS TO RECEIVE %{currency}"
       earn_currency: "EARN %{amount} %{currency}"
       buy_currency: "BUY %{amount} %{currency}"
+      load_more: "LOAD SOME MORE!"
 
     instructions:
       title: "INSTRUCTIONS"
