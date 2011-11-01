@@ -37,7 +37,7 @@
             = visual_cost(offer)
         .icon
           - if offer.item_type == 'VideoOffer'
-            .video_icon{:style => "background: url(" << offer.get_video_icon_url << ")"}
+            .video_icon{:style => "background-image: url(" << offer.get_video_icon_url << ")"}
               .play
           - else
             .offer_icon
