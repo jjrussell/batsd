@@ -130,14 +130,10 @@
       var skipButton = document.getElementById('skip');
 
       // Scale the buttons to fit this screen size
-      alert("window.innerWidth x window.innerHeight: " + client.width + "x" + client.height + "\n" +
-            "screen.width x screen.height: " + screen.width + "x" + screen.height + "\n" +
-            "documentElement.offsetWidth x documentElement.offsetHeight: " + document.documentElement.offsetWidth + "x" + document.documentElement.offsetHeight + "\n" +
-            "documentElement.clientWidth x documentElement.clientHeight: " + document.documentElement.clientWidth + "x" + document.documentElement.clientHeight + "\n");
-      if(Math.min(client.width, client.height) <= 320) {
+      if(Math.max(client.width, client.height) <= 480) {
         var presetSize = 480;
         buttonsHeight = 50;
-      } else if (Math.min(client.width, client.height) < 640) {
+      } else if (Math.max(client.width, client.height) < 960) {
         var presetSize = 640;
         buttonsHeight = 75;
       } else {
@@ -162,8 +158,6 @@
 
       calcCreativeMargins(preferredCreative);
 
-      //alert("Screen size: " + client.width + "x" + client.height + " (" + client.orientation + ")");
-
       // Calculate which dimension can be maximized without the image being cropped
       var adjustPercent = Math.min(creative.horizMarginPercent, creative.vertMarginPercent);
 
@@ -186,8 +180,6 @@
       creativeImg.style.height = newHeight + 'px';
       main.style.margin = vertMargin + 'px ' + horizMargin + 'px';
       main.style.height = newHeight + 'px';
-
-      //alert("New Size: " + newWidth + "x" + newHeight + "(Margins: " + horizMargin + " horiz, " + vertMargin + " vert)");
 
       // Set the image url if this is the initial drawing
       creativeImg.src = baseCreativeUrl + "/" + creative.name;
