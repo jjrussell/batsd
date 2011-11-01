@@ -79,7 +79,7 @@ private
       else
         params[:callback_url] = callback_url
         begin
-          if Rails.env == 'production' || Rails.env == 'test'
+          if Rails.env.production? || Rails.env.test?
             response = Downloader.get_strict(callback_url, { :timeout => 20 })
             status = response.status
           else

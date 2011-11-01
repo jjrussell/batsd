@@ -134,12 +134,12 @@ class Utils
     time = Time.zone.now - 24.hours
     count = 0
     bucket = S3.bucket(BucketNames::FAILED_SDB_SAVES)
-    bucket.keys(:prefix => 'incomplete/').each do |key|
-      next if key.name == 'incomplete/'
-      if key.last_modified < time
+    bucket.objects.with_prefix('incomplete/').each do |obj|
+      if obj.last_modified < time
         count += 1
-        puts "moving: #{key.name} - last modified: #{key.last_modified}"
-        bucket.move_key(key.name, key.name.gsub('incomplete', 'orphaned'))
+        puts "moving: #{obj.key} - last modified: #{obj.last_modified}"
+        obj.copy_to(obj.key.gsub('incomplete', 'orphaned'))
+        obj.delete
       end
     end
     puts "moved #{count} orphaned items from #{BucketNames::FAILED_SDB_SAVES}"
@@ -171,18 +171,34 @@ class Utils
     # -enable master hourly app stats job
 
     def self.save_state
-      keys = [ 'statz.last_updated.24_hours',
-               'statz.last_updated.7_days',
-               'statz.last_updated.1_month',
-               'statz.partner.last_updated.24_hours',
-               'statz.partner.last_updated.7_days',
-               'statz.partner.last_updated.1_month',
-               'statz.partner-ios.last_updated.24_hours',
-               'statz.partner-ios.last_updated.7_days',
-               'statz.partner-ios.last_updated.1_month',
-               'statz.partner-android.last_updated.24_hours',
-               'statz.partner-android.last_updated.7_days',
-               'statz.partner-android.last_updated.1_month',
+      keys = [ 'statz.last_updated_start.24_hours',
+               'statz.last_updated_start.7_days',
+               'statz.last_updated_start.1_month',
+               'statz.last_updated_end.24_hours',
+               'statz.last_updated_end.7_days',
+               'statz.last_updated_end.1_month',
+               'statz.partner.last_updated_start.24_hours',
+               'statz.partner.last_updated_start.7_days',
+               'statz.partner.last_updated_start.1_month',
+               'statz.partner.last_updated_end.24_hours',
+               'statz.partner.last_updated_end.7_days',
+               'statz.partner.last_updated_end.1_month',
+               'statz.partner-ios.last_updated_start.24_hours',
+               'statz.partner-ios.last_updated_start.7_days',
+               'statz.partner-ios.last_updated_start.1_month',
+               'statz.partner-ios.last_updated_end.24_hours',
+               'statz.partner-ios.last_updated_end.7_days',
+               'statz.partner-ios.last_updated_end.1_month',
+               'statz.partner-android.last_updated_start.24_hours',
+               'statz.partner-android.last_updated_start.7_days',
+               'statz.partner-android.last_updated_start.1_month',
+               'statz.partner-android.last_updated_end.24_hours',
+               'statz.partner-android.last_updated_end.7_days',
+               'statz.partner-android.last_updated_end.1_month',
+               'store_ranks.android.overall.free.english',
+               'store_ranks.android.overall.paid.english',
+               'store_ranks.ios.overall.free.united_states',
+               'store_ranks.ios.overall.paid.united_states',
                'money.cached_stats',
                'money.total_balance',
                'money.total_pending_earnings',
@@ -193,6 +209,12 @@ class Utils
                            'statz.stats.24_hours',
                            'statz.stats.7_days',
                            'statz.stats.1_month',
+                           'statz.top_metadata.24_hours',
+                           'statz.top_metadata.7_days',
+                           'statz.top_metadata.1_month',
+                           'statz.top_stats.24_hours',
+                           'statz.top_stats.7_days',
+                           'statz.top_stats.1_month',
                            'statz.partner.cached_stats.24_hours',
                            'statz.partner.cached_stats.7_days',
                            'statz.partner.cached_stats.1_month',
@@ -215,18 +237,34 @@ class Utils
     end
 
     def self.restore_state
-      keys = [ 'statz.last_updated.24_hours',
-               'statz.last_updated.7_days',
-               'statz.last_updated.1_month',
-               'statz.partner.last_updated.24_hours',
-               'statz.partner.last_updated.7_days',
-               'statz.partner.last_updated.1_month',
-               'statz.partner-ios.last_updated.24_hours',
-               'statz.partner-ios.last_updated.7_days',
-               'statz.partner-ios.last_updated.1_month',
-               'statz.partner-android.last_updated.24_hours',
-               'statz.partner-android.last_updated.7_days',
-               'statz.partner-android.last_updated.1_month',
+      keys = [ 'statz.last_updated_start.24_hours',
+               'statz.last_updated_start.7_days',
+               'statz.last_updated_start.1_month',
+               'statz.last_updated_end.24_hours',
+               'statz.last_updated_end.7_days',
+               'statz.last_updated_end.1_month',
+               'statz.partner.last_updated_start.24_hours',
+               'statz.partner.last_updated_start.7_days',
+               'statz.partner.last_updated_start.1_month',
+               'statz.partner.last_updated_end.24_hours',
+               'statz.partner.last_updated_end.7_days',
+               'statz.partner.last_updated_end.1_month',
+               'statz.partner-ios.last_updated_start.24_hours',
+               'statz.partner-ios.last_updated_start.7_days',
+               'statz.partner-ios.last_updated_start.1_month',
+               'statz.partner-ios.last_updated_end.24_hours',
+               'statz.partner-ios.last_updated_end.7_days',
+               'statz.partner-ios.last_updated_end.1_month',
+               'statz.partner-android.last_updated_start.24_hours',
+               'statz.partner-android.last_updated_start.7_days',
+               'statz.partner-android.last_updated_start.1_month',
+               'statz.partner-android.last_updated_end.24_hours',
+               'statz.partner-android.last_updated_end.7_days',
+               'statz.partner-android.last_updated_end.1_month',
+               'store_ranks.android.overall.free.english',
+               'store_ranks.android.overall.paid.english',
+               'store_ranks.ios.overall.free.united_states',
+               'store_ranks.ios.overall.paid.united_states',
                'money.cached_stats',
                'money.total_balance',
                'money.total_pending_earnings',
@@ -237,6 +275,12 @@ class Utils
                            'statz.stats.24_hours',
                            'statz.stats.7_days',
                            'statz.stats.1_month',
+                           'statz.top_metadata.24_hours',
+                           'statz.top_metadata.7_days',
+                           'statz.top_metadata.1_month',
+                           'statz.top_stats.24_hours',
+                           'statz.top_stats.7_days',
+                           'statz.top_stats.1_month',
                            'statz.partner.cached_stats.24_hours',
                            'statz.partner.cached_stats.7_days',
                            'statz.partner.cached_stats.1_month',

@@ -354,7 +354,6 @@ TJG.ui = {
           '<div class="title_2 center">Registering</div>',
           '<div class="loading_animation"></div>'
         ].join('');
-        console.log(form_height);
         $('.register_form').animate({ height: "0px" }, animateSpd, function() {
           $('.register_progess').html(loader);
         });
@@ -464,7 +463,7 @@ TJG.ui = {
             msg = [
               '<div class="title_2 center">Oops!</div>',
               '<div class="dialog_content center">', error ,'.</div>',
-              '<div id="sign_up_again"><div class="button red try_again">Try Again</div></div>',
+              '<div class="sign_up_again"><div class="button red try_again">Try Again</div></div>',
             ].join('');
             $('.register_progess').html(msg);
             $('.sign_up_again').click(function(){
@@ -479,7 +478,7 @@ TJG.ui = {
 
   showAcceptTos : function () {
     var animateSpd = "fast";
-    $("#accept_tos_dialog_content").parent().css("height", "200px");
+    $("#accept_tos_dialog_content").parent().css("height", "250px");
     $("#accept_tos_dialog_content").html($('#accept_tos_dialog_content_placeholder').html());
     setTimeout(function() {
       TJG.utils.centerDialog("#accept_tos_dialog");

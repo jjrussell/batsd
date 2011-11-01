@@ -1,0 +1,84 @@
+- gray = '#505050'
+- light_gray = '#c0c0c0'
+- blue = '#505f6d'
+- red  = '#e11826'
+- offset = '30px'
+:ruby
+  image_root = 'https://s3.amazonaws.com/tapjoy/images/email'
+  css = {
+    :a => "color: #{red}; text-decoration: none;",
+    :social => "width: 40px;",
+    :step => "border-top: 1px dotted #{light_gray}; padding: 20px 0px;",
+    :step_body => "padding-left: 20px;",
+    :step_name => "color: #{blue}; font-weight: bold; font-size: 16px; padding-bottom: 5px;",
+  }
+
+#email{:style => "color: #{gray}; margin: 0px auto; border: 1px solid #{light_gray}; width: 600px; font-family: 'arial'; font-size: 15px; background-color: white;"}
+  %table#header{:border => 0, :cellspacing => 0, :cellpadding => 0, :background => "#{image_root}/header_bg.png", :style => "color: #{blue}; padding: 12px #{offset} 12px; height: 101px; width: 100%;"}
+    %tr
+      %td
+        = image_tag("#{image_root}/logo.png", :title => 'Tapjoy', :alt => 'Tapjoy', :size => '114x52')
+      %td{:style => "font-size: 12px; font-style: italic; color: #{blue}; width: 60px;"}
+        follow us:
+      %td{:style => css[:social]}
+        - link_to 'https://www.facebook.com/TapjoyGames', :style => css[:a] do
+          = image_tag("#{image_root}/facebook_icon.png", :title => 'Facebook', :alt => 'Facebook', :style => "border: none;", :size => '30x30')
+      %td{:style => css[:social]}
+        - link_to 'https://twitter.com/#!/tapjoygames', :style => css[:a] do
+          = image_tag("#{image_root}/twitter_icon.png", :title => 'Twitter', :alt => 'Twitter', :style => "border: none;", :size => '30x30')
+  #content{:style => "padding: #{offset}; padding-bottom: 0px;"}
+    #thanks{:style => "font-size: 20px; font-weight: bold; color: #{blue};"}
+      Thanks for creating a Tapjoy account!
+    #discover{:style => "padding-top: 5px; padding-bottom: 30px;"}
+      Now you can start discovering cool new apps while also earning currency in apps you already play.
+    .step{:style => css[:step]}
+      %table
+        %tr
+          %td
+            = image_tag("#{image_root}/check_icon.png", :class => 'icon', :size => '68x68', :title => 'Confirm', :alt => 'Confirm Address')
+          %td{:style => css[:step_body]}
+            .name{:style => css[:step_name]}
+              Getting started
+            .description
+              Confirm your email address:
+              %br/
+              - link_to @confirmation_link, :style => css[:a] do
+                = image_tag("#{image_root}/confirm_button.png", :title => 'Confirm', :alt => 'Confirm', :style => "border: none;", :size => '170x49')
+    - unless @linked
+      .step{:style => css[:step]}
+        %table
+          %tr
+            %td
+              = image_tag("#{image_root}/connect_icon.png", :class => 'icon', :size => '68x68', :title => 'Connect your device', :alt => 'Connect')
+            %td{:style => css[:step_body]}
+              .name{:style => css[:step_name]}
+                Connect your device
+              .description
+                By connecting your device we can personalize your Tapjoy
+                experience and recommend the best apps just for you. You
+                must be on the device you wish to add.
+    - unless @device_type == :android
+      .step{:style => css[:step]}
+        %table
+          %tr
+            %td
+              = image_tag("#{image_root}/home_icon.png", :class => 'icon', :size => '68x68', :title => 'Add Tapjoy to your Home Screen', :alt => 'Home')
+            %td{:style => css[:step_body]}
+              .name{:style => css[:step_name]}
+                Add Tapjoy to your Home Screen
+              .description
+                Engaging with your favorite apps can be just a tap away.
+    .step{:style => "border-top: 1px dotted #{light_gray};"}
+      &nbsp;
+  #footer{ :style => "padding-top: 20px; padding-bottom: 30px !important; padding: #{offset}; padding-bottom: 0px;" }
+    If you have any questions please contact us at
+    = mail_to('feedback@tapjoy.com', 'feedback@tapjoy.com', :style => css[:a])
+    %br/
+    and we'll help you with what you need.
+    #discovery{:style => "font-weight: bold; font-size: 18px; color: #{blue};"}
+      %p Let the discovery begin!
+    #signature{:style => "font-weight: bold; font-size: 16px; color: #{blue};"}
+      %p Team Tapjoy
+    If the "confirm address" button doesn't work, copy the link below and paste it in your browser:
+    %br/
+    = link_to @confirmation_link, @confirmation_link, :style => css[:a]

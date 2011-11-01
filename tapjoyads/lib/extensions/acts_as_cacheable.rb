@@ -21,7 +21,7 @@ module ActsAsCacheable
           find_each(&:cache)
         end
 
-        def find_in_cache(id, do_lookup = (Rails.env != 'production'))
+        def find_in_cache(id, do_lookup = !Rails.env.production?)
           object = Mc.distributed_get("mysql.#{model_name.underscore}.#{id}.#{SCHEMA_VERSION}")
           if object.nil? && do_lookup
             object = find(id)

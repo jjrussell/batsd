@@ -40,15 +40,19 @@ class SearchController < WebsiteController
   end
 
   def partners
-    conditions = [ "id = ?", "#{params[:term].to_s.strip}" ]
-    results = Partner.find(:all,
-      :conditions => conditions,
-      :include => ['offers', 'users'],
-      :limit => 1
-    )
+    term = params[:term].to_s.strip
+
+    if term =~ UUID_REGEX
+      conditions = [ "id = ?", "#{}" ]
+      results = Partner.find(:all,
+        :conditions => conditions,
+        :include => ['offers', 'users'],
+        :limit => 1
+      )
+    end
 
     if results.blank?
-      term = "#{params[:term].to_s.strip}%"
+      term = "#{term}%"
       results = Partner.find_by_sql(
         [ 'select * from partners as p where name like ?' +
           ' order by (select count(*) from offers where partner_id = p.id) desc' +
