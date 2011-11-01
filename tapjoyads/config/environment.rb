@@ -57,11 +57,7 @@ Rails::Initializer.run do |config|
   config.gem 'newrelic_rpm', :version => '3.2.0'
   config.gem 'plist', :version => '3.1.0'
   config.gem 'read_from_slave', :version => '0.4.0'
-<<<<<<< HEAD
   config.gem 'ruby-hmac', :version => '0.4.0', :lib => 'ruby_hmac'
-=======
-  config.gem 'ruby-hmac', :version => '0.4.0'
->>>>>>> 8570f6d9cc3b57b315938b95f5dbb45e1f8cdf38
   config.gem 'sass', :version => '3.1.7'
   config.gem 'sendgrid', :version => '1.0.1'
   config.gem 'syslog-logger', :version => '1.6.4', :lib => 'syslog_logger'
