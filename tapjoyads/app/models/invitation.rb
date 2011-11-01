@@ -32,10 +32,8 @@ class Invitation < ActiveRecord::Base
   named_scope :pending_invitations_for, lambda { |external_info| { :conditions => ["external_info = ? and status = ?", external_info, PENDING ] } }
   named_scope :for_gamer, lambda { |gamer| { :conditions => ['gamer_id = ?', gamer.id] } }
 
-  def self.invitation_message(name, link_url=nil)
-    link = link_url ? "<a href='#{link_url}'>#{TJGAMES_URL}</a>" : TJGAMES_URL
+  def self.invitation_message(name)
     <<-eos.gsub(/^ {6}/, '')
-      Hi,
 
       #{name} has invited you to join Tapjoy, the BEST place to find the hottest new apps. Signing up is free and you'll be able discover the best apps on iOS and Android, while also earning currency in your favorite apps.
       
@@ -43,10 +41,6 @@ class Invitation < ActiveRecord::Base
 
       To get started, create your account here:
 
-      #{link}
-
-      Start Discovering!
-      Team Tapjoy
     eos
   end
 

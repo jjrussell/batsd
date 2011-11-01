@@ -6,6 +6,9 @@ $dark_gray: #888;
 $medium_gray: #AAA;
 $light_gray: #DDD;
 
+$gray: #505050;
+$red: #e11826;
+
 $filter_height: 22px;
 $offset_x: 15px;
 
@@ -208,4 +211,44 @@ li.checked {
 #content {
   @extend #recipients;
   background: $light_gray;
+}
+#email {
+  color: $gray;
+  padding: 20px auto;
+  width: 500px;
+  font:{
+    family: 'arial';
+    size: 12px;
+  }
+  margin: 40px auto;
+  align: center;
+  table {
+    width: 100%;
+  }
+  #follow_us {
+    font: {
+      weight: bold;
+      style: italic;
+      size: 13px;
+    }
+    width: 70px;
+    vertical-align: middle;
+  }
+  #social {
+    width: 20px;
+    vertical-align: middle;
+  }
+  hr {
+    color: $red;
+    background: $red;
+    border: 0px;
+    height: 1px;
+  }
+  .greeting, .signature {
+    font: {
+      weight: bold;
+      size: 13px;
+    }
+    margin: 20px 0px;
+  }
 }
