@@ -11,9 +11,6 @@
   - if params[:currency_selector] == '1' && @currencies.present? && @currencies.size > 1
     = render :partial => 'currency_selector'
 
-- if @start_index > 0
-  = render :partial => 'pagination_links'
-
 - if @test_offers.present?
   - unless @currency.tapjoy_enabled?
     #top_box
