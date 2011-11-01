@@ -210,6 +210,7 @@ module Offer::Rejecting
   end
 
   def video_offers_reject?(video_offer_ids, type)
+    return false
     return false if type == Offer::VIDEO_OFFER_TYPE
     item_type == 'VideoOffer' && !video_offer_ids.include?(id)
   end
