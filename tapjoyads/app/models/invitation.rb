@@ -30,6 +30,7 @@ class Invitation < ActiveRecord::Base
   named_scope :email,    :conditions => { :channel => EMAIL }
   named_scope :facebook, :conditions => { :channel => FACEBOOK }
   named_scope :pending_invitations_for, lambda { |external_info| { :conditions => ["external_info = ? and status = ?", external_info, PENDING ] } }
+  named_scope :for_gamer, lambda { |gamer| { :conditions => ['gamer_id = ?', gamer.id] } }
 
   def self.invitation_message(name, link_url=nil)
     link = link_url ? "<a href='#{link_url}'>#{TJGAMES_URL}</a>" : TJGAMES_URL
