@@ -28,7 +28,7 @@ class Job::QueueSendWelcomeEmailsController < Job::SqsReaderController
       offer_data[currency[:id]] = JSON.parse(response.body)
     end
 
-    popular_apps = offer_data.any? [] : PopularApp.send("get_#{message['using_android'] ? 'android' : 'ios'}")
+    popular_apps = offer_data.any? ? [] : PopularApp.send("get_#{message['using_android'] ? 'android' : 'ios'}")
 
     confirm_url = "#{TJGAMES_URL}/confirm?token=#{CGI.escape(gamer.confirmation_token)}"
     GamesMarketingMailer.deliver_welcome_email(gamer, confirm_url, gamer_device, offer_data, popular_apps)
