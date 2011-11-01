@@ -25,7 +25,7 @@ class RatingOffer < ActiveRecord::Base
     app_version.blank? ? id : (id + '.' + app_version)
   end
 
-private
+  private
 
   def set_name_and_description
     self.name = "Rate #{app.name} in the App Store"
@@ -60,19 +60,13 @@ private
   end
 
   def create_icon
-    retries = 3
-    begin
-      bucket = S3.bucket(BucketNames::TAPJOY)
-      image_data = bucket.get('icons/ratestar.png')
-      bucket.put("icons/#{id}.png", image_data, {}, 'public-read')
+    return if Rails.env == 'test'
 
-      image_data = bucket.get('icons/114/ratestar.jpg')
-      primary_offer.save_icon!(image_data)
-    rescue
-      sleep 0.5
-      retries -= 1
-      retry if retries > 0
-    end
+    bucket = S3.bucket(BucketNames::TAPJOY)
+    bucket.objects['icons/ratestar.png'].copy_to("icons/#{id}.png", :acl => :public_read)
+
+    image_data = bucket.objects['icons/114/ratestar.jpg'].read
+    primary_offer.save_icon!(image_data)
   end
 
 end

@@ -1,12 +1,12 @@
 - timeframe = @timeframe == '7_days' ? '7 days' : @timeframe == '1_month' ? '30 days' : '24 hours'
-- @page_title = "Stats for last #{timeframe}"
+- @page_title = "Stats #{@display == 'summary' ? 'summary ' : ''}for last #{timeframe}"
 
-%h1 Stats for last #{timeframe}
+%h1= @page_title
 
-%ul.timeframes
-  %li= @timeframe == '24_hours' ? '24 hours' : link_to('24 hours', statz_index_path)
-  %li= @timeframe == '7_days' ? '7 days' : link_to('7 days', statz_index_path(:timeframe => '7_days'))
-  %li= @timeframe == '1_month' ? '30 days' : link_to('30 days', statz_index_path(:timeframe => '1_month'))
+%form.filter
+  = select_tag(:timeframe, options_for_select([['24 hours', '24_hours'], ['7 days', '7_days'], ['30 days', '1_month']], @timeframe))
+  = select_tag(:display, options_for_select([['Summary', 'summary'], ['Complete', 'complete']], @display))
+  = submit_tag('Update')
 
 .tjform
   = label_tag('search_box', 'Offer Name:')
@@ -49,7 +49,7 @@
     |
     = link_to("Advertiser Stats", advertiser_statz_path)
 
-.last_updated Last Updated: #{@last_updated.to_s(:pub_ampm_sec)}
+.last_updated For: #{@last_updated_start.to_s(:pub_ampm_sec)} - #{@last_updated_end.to_s(:pub_ampm_sec)}
 
 %table#apps_table.tablesorter
   %thead
@@ -58,7 +58,6 @@
         %a{ :id => 'toggle_icons', :href => '#' } Icon
       %th Offer
       %th{ :class => 'headerSortUp header' } Conversions
-      %th Connects
       %th Store rank
       %th Price
       %th Payment
@@ -75,7 +74,6 @@
         %b Filters
         (#{link_to('reset all', '#', :id => 'reset_filters')})
       %td.filter= select_tag('conversions_filter', options_for_select(filter_options(:conversions)))
-      %td.filter= select_tag('connects_filter', options_for_select(filter_options(:connects)))
       %td.filter= select_tag('rank_filter', options_for_select(filter_options(:rank)))
       %td.filter= select_tag('price_filter', options_for_select(filter_options(:free)))
       %td.filter &nbsp;
@@ -90,35 +88,34 @@
   %tbody#apps_tbody
     - @cached_stats.each do |offer_id, stats|
       :ruby
+        metadata = @cached_metadata[offer_id]
         tr_classes = []
-        tr_classes << (stats['conversions']=='0'         ? 'zero_conversions' : 'nonzero_conversions')
-        tr_classes << (stats['connects']=='0'            ? 'zero_connects'    : 'nonzero_connects')
-        tr_classes << (stats['overall_store_rank']=='-'  ? 'unranked'         : 'ranked')
-        tr_classes << (stats['price']=='$0.00'           ? 'free'             : 'paid')
-        tr_classes << stats['platform'].to_s.downcase
-        tr_classes << (stats['published_offers']=='0'    ? 'zero_published'   : 'nonzero_published')
-        tr_classes << (stats['offers_revenue']=='$0.00'  ? 'zero_revenue'     : 'nonzero_revenue')
-        tr_classes << (stats['featured']                 ? 'featured'         : 'nonfeatured')
-        tr_classes << (stats['rewarded']                 ? 'rewarded'         : 'nonrewarded')
-        tr_classes << stats['offer_type'].to_s.downcase
-        value = stats['balance'].gsub(/[\$,]/,'')
+        tr_classes << (stats['conversions'] == '0'         ? 'zero_conversions' : 'nonzero_conversions')
+        tr_classes << (metadata['overall_store_rank'] == '-'  ? 'unranked'         : 'ranked')
+        tr_classes << (metadata['price'] == '$0.00'        ? 'free'             : 'paid')
+        tr_classes << metadata['platform'].to_s.downcase
+        tr_classes << (stats['published_offers'] == '0'    ? 'zero_published'   : 'nonzero_published')
+        tr_classes << (stats['offers_revenue'] == '$0.00'  ? 'zero_revenue'     : 'nonzero_revenue')
+        tr_classes << (metadata['featured']                ? 'featured'         : 'nonfeatured')
+        tr_classes << (metadata['rewarded']                ? 'rewarded'         : 'nonrewarded')
+        tr_classes << metadata['offer_type'].to_s.downcase
+        value = metadata['balance'].gsub(/[\$,]/,'')
       %tr{ :class => tr_classes.compact.join(' '), :value => value }
         %td
-          %img.icon.hidden{ :s => stats['icon_url'] }
-        %td= link_to(stats['offer_name'], statz_path(offer_id))
+          %img.icon.hidden{ :s => metadata['icon_url'] }
+        %td= link_to(metadata['offer_name'], statz_path(offer_id))
         %td= stats['conversions']
-        %td= stats['connects']
-        %td= stats['overall_store_rank']
-        %td= stats['price']
-        %td= stats['payment']
-        %td= stats['balance']
-        %td= stats['platform']
-        %td= stats['conversion_rate']
+        %td= metadata['overall_store_rank']
+        %td= metadata['price']
+        %td= metadata['payment']
+        %td= metadata['balance']
+        %td= metadata['platform']
+        %td= metadata['conversion_rate']
         %td= stats['published_offers']
         %td= stats['offers_revenue']
-        %td= stats['featured']
-        %td= stats['rewarded']
-        %td= stats['offer_type']
+        %td= metadata['featured']
+        %td= metadata['rewarded']
+        %td= metadata['offer_type']
 
 - content_for :page_javascript do
   :plain
@@ -154,13 +151,12 @@
         headers: {
           0:  { sorter: false },
           2:  { sorter: 'formatted-number-column' },
-          3:  { sorter: 'formatted-number-column' },
-          4:  { sorter: 'rank-column' },
+          3:  { sorter: 'rank-column' },
+          4:  { sorter: 'currency-column' },
           5:  { sorter: 'currency-column' },
           6:  { sorter: 'currency-column' },
-          7:  { sorter: 'currency-column' },
-          10: { sorter: 'formatted-number-column' },
-          11: { sorter: 'currency-column' }
+          9: { sorter: 'formatted-number-column' },
+          10: { sorter: 'currency-column' }
         }
       });
 
@@ -187,13 +183,12 @@
         $('.filter select').each(function(i,select){
           $(select).val('');
         });
-        $('tr').show();
+        $('#apps_table tr').show();
         return false;
       });
       $('.filter select').change(function(){
         var selectValues = [
           String( $('#conversions_filter').val() ).toLowerCase(),
-          String( $('#connects_filter').val() ).toLowerCase(),
           String( $('#rank_filter').val() ).toLowerCase(),
           String( $('#price_filter').val() ).toLowerCase(),
           String( $('#published_offers_filter').val() ).toLowerCase(),
@@ -210,8 +205,8 @@
             className += '.' + selectValues[i];
           }
         }
-        $('tbody tr:visible').hide();
-        $('tbody tr'+className).show();
+        $('#apps_table tbody tr:visible').hide();
+        $('#apps_table tbody tr' + className).show();
 
         // balance levels
         var balance = $('#balance_filter').val();
@@ -271,23 +266,17 @@
       font-size: 14px;
     }
 
-    ul.timeframes {
-      margin: -10px 0 10px;
-      padding: 0px;
-    }
-    ul.timeframes li {
-      display: inline;
-    }
-    ul.timeframes li:after {
-      content: " |";
-    }
-    ul.timeframes li:last-child:after {
-      content: "";
-    }
-
     #money_totals {
       margin-top: 15px;
     }
     #money_totals h3 {
       margin-top: 5px;
+    }
+
+    h1 {
+      margin-bottom: 10px;
+    }
+
+    form.filter {
+      margin-bottom: 10px;
     }

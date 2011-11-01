@@ -18,7 +18,7 @@ class Job::MasterArchiveConversionsController < Job::JobController
     render :text => 'ok'
   end
 
-private
+  private
 
   def archive_conversions(start_time, end_time)
     expected_count = Conversion.created_between(start_time, end_time).count
@@ -29,7 +29,7 @@ private
     gzip_filename = "#{local_filename}.gz"
 
     # backup the conversions
-    db_config = ActiveRecord::Base.configurations[Rails.env == 'production' ? 'production_slave_for_tapjoy_db' : Rails.env]
+    db_config = ActiveRecord::Base.configurations[Rails.env.production? ? 'production_slave_for_tapjoy_db' : Rails.env]
     mysql_cmd = "mysql -u #{db_config['username']} --password=#{db_config['password']} -h #{db_config['host']} #{db_config['database']}"
     mysql_cmd += " -e \"SELECT * FROM conversions WHERE created_at >= '#{start_time.to_s(:db)}' AND created_at < '#{end_time.to_s(:db)}'\""
     `#{mysql_cmd} > #{local_filename}`
@@ -45,15 +45,15 @@ private
 
     # pick a filename for s3, making sure not to overwrite anything
     bucket = S3.bucket(BucketNames::CONVERSION_ARCHIVES)
-    while bucket.key("#{base_filename}.sql.gz").exists?
+    while bucket.objects["#{base_filename}.sql.gz"].exists?
       base_filename += '_2'
     end
 
     # upload to s3
     retries = 3
     begin
-      bucket.put("#{base_filename}.sql.gz", open(gzip_filename))
-    rescue RightAws::AwsError => e
+      bucket.objects["#{base_filename}.sql.gz"].write(:file => gzip_filename)
+    rescue AWS::Errors::Base => e
       if retries > 0
         retries -= 1
         sleep 5

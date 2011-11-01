@@ -198,7 +198,7 @@ class SimpledbResource
     Rails.logger.info "Sdb save failed. Adding to sqs. Domain: #{@this_domain_name} Key: #{@key} Exception: #{e.class} - #{e}"
     uuid = UUIDTools::UUID.random_create.to_s
     bucket = S3.bucket(BucketNames::FAILED_SDB_SAVES)
-    bucket.put("incomplete/#{uuid}", self.serialize)
+    bucket.objects["incomplete/#{uuid}"].write(:data => self.serialize)
     message = { :uuid => uuid, :options => options_copy }.to_json
     Sqs.send_message(QueueNames::FAILED_SDB_SAVES, message)
     Rails.logger.info "Successfully added to sqs. Message: #{message}"
@@ -640,7 +640,7 @@ protected
         sdb_interface.delete_attributes(@this_domain_name, @key, attributes_to_delete, expected_attr)
       end
     rescue RightAws::AwsError => e
-      if e.message.starts_with?("NoSuchDomain") && Rails.env != 'production'
+      if e.message.starts_with?("NoSuchDomain") && !Rails.env.production?
         Rails.logger.info_with_time("Creating new domain: #{@this_domain_name}") do
           sdb_interface.create_domain(@this_domain_name)
         end

@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20111020070044) do
+ActiveRecord::Schema.define(:version => 20111027000013) do
 
   create_table "action_offers", :id => false, :force => true do |t|
     t.string   "id",                    :limit => 36,                    :null => false
@@ -333,9 +333,11 @@ ActiveRecord::Schema.define(:version => 20111020070044) do
     t.string   "confirmation_token",                 :default => "",    :null => false
     t.boolean  "blocked",                            :default => false
     t.integer  "accepted_tos_version",               :default => 0
+    t.datetime "deactivated_at"
   end
 
   add_index "gamers", ["confirmation_token"], :name => "index_gamers_on_confirmation_token", :unique => true
+  add_index "gamers", ["deactivated_at"], :name => "index_gamers_on_deactivated_at"
   add_index "gamers", ["email"], :name => "index_gamers_on_email", :unique => true
   add_index "gamers", ["id"], :name => "index_gamers_on_id", :unique => true
   add_index "gamers", ["perishable_token"], :name => "index_gamers_on_perishable_token"
@@ -549,6 +551,7 @@ ActiveRecord::Schema.define(:version => 20111020070044) do
     t.integer  "interval",                                                                      :default => 0,     :null => false
     t.boolean  "url_overridden",                                                                :default => false, :null => false
     t.text     "banner_creatives"
+    t.text     "dma_codes"
   end
 
   add_index "offers", ["id"], :name => "index_offers_on_id", :unique => true
@@ -625,6 +628,7 @@ ActiveRecord::Schema.define(:version => 20111020070044) do
     t.string   "billing_email"
     t.integer  "freshbooks_client_id"
     t.boolean  "accepted_publisher_tos"
+    t.string   "sales_rep_id",               :limit => 36
   end
 
   add_index "partners", ["id"], :name => "index_partners_on_id", :unique => true
