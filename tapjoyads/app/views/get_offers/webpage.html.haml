@@ -188,9 +188,16 @@
                       t.push('</div>');
                     t.push('</div>');
                     t.push('<div class="icon">');
-                      t.push('<div class="' + imgCls + '">');
-                        t.push('<img src="' + blank_img + '" s="' + v.IconURL + '">');
-                      t.push('</div>');
+                      if (v.Type == 'VideoOffer') {
+                        t.push('<div class="' + imgCls + '" style="background: url(' + v.IconURL+ ')">');
+                          t.push('<div class="play"></div>');
+                        t.push('</div>');
+                      }
+                      else {
+                        t.push('<div class="' + imgCls + '">');
+                          t.push('<img src="' + blank_img + '" s="' + v.IconURL + '">');
+                        t.push('</div>');
+                      }
                     t.push('</div>');
                     t.push('<div class="offer-text">');
                       t.push('<span>');
