@@ -53,7 +53,7 @@ class PartnerTest < ActiveSupport::TestCase
 
     context "with MonthlyAccoutings" do
       setup do
-        reference_time = Conversion.archive_cutoff_time - 1
+        reference_time = Conversion.accounting_cutoff_time - 1
         monthly_accounting = MonthlyAccounting.new(:partner => @partner, :month => reference_time.month, :year => reference_time.year)
         monthly_accounting.calculate_totals!
       end
