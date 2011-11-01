@@ -1,18 +1,22 @@
 class StatsAggregation
 
   OFFERS_PER_MESSAGE = 200
+  DAILY_STATS_START_HOUR = 3
 
   def initialize(offer_ids)
     @offer_ids = offer_ids
   end
 
-  def recount_stats_over_range(start_time, end_time)
+  def recount_stats_over_range(start_time, end_time, update_daily = false)
+    raise "can't wrap over multiple days" if start_time.beginning_of_day != (end_time - 1.second).beginning_of_day
+
     Offer.find(@offer_ids).each do |offer|
       hourly_stat_row = Stats.new(:key => "app.#{start_time.strftime('%Y-%m-%d')}.#{offer.id}", :load_from_memcache => false)
 
       verify_web_request_stats_over_range(hourly_stat_row, offer, start_time, end_time)
       verify_conversion_stats_over_range(hourly_stat_row, offer, start_time, end_time)
 
+      hourly_stat_row.update_daily_stat if update_daily == true
       hourly_stat_row.serial_save
     end
   end
@@ -98,7 +102,7 @@ class StatsAggregation
       daily_ranks.save
 
       offer.last_daily_stats_aggregation_time = end_time
-      offer.next_daily_stats_aggregation_time = end_time + 1.day + Offer::DAILY_STATS_START_HOUR.hours + rand(Offer::DAILY_STATS_RANGE.hours)
+      offer.next_daily_stats_aggregation_time = end_time + 1.day + DAILY_STATS_START_HOUR.hours
       offer.save!
     end
   end
@@ -286,14 +290,14 @@ class StatsAggregation
     global_stats.each { |stat| stat.update_daily_stat } if aggregate_daily
   end
 
-  def self.aggregate_daily_group_stats(date = nil)
-    date ||= Time.zone.now
+  def self.aggregate_daily_group_stats
+    date = Time.zone.now
     num_unverified = Offer.count(:conditions => [ "last_daily_stats_aggregation_time < ?",  date.beginning_of_day ])
-    daily_stat = Stats.new(:key => "global.#{date.strftime('%Y-%m')}", :load_from_memcache => false, :consistent => true)
+    daily_stat = Stats.new(:key => "global.#{date.yesterday.strftime('%Y-%m')}", :load_from_memcache => false, :consistent => true)
     if num_unverified > 0
       Rails.logger.info "there are #{num_unverified} offers with unverified stats, not aggregating global stats yet"
-    elsif daily_stat.get_daily_count('logins')[date.day - 1] > 0
-      Rails.logger.info "stats have already been aggregated for date: #{date}"
+    elsif daily_stat.get_daily_count('logins')[date.yesterday.day - 1] > 0
+      Rails.logger.info "stats have already been aggregated for date: #{date.yesterday}"
     else
       aggregate_hourly_group_stats(date.yesterday, true)
     end

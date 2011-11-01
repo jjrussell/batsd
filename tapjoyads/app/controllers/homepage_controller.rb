@@ -33,13 +33,6 @@ class HomepageController < WebsiteController
     end
   end
 
-  def privacy
-  end
-
-  def privacy_mobile
-    render :layout => false
-  end
-
   def about_us
   end
 

@@ -110,7 +110,7 @@
     -# Until this task is automated for production build, please run this task: $ rake javascript:games_minify
     -#
 
-    - if Rails.env.production?
+    - if Rails.env.production? || Rails.env.staging?
       = javascript_include_tag "games/#{GAMES_CONFIG['js_compile_out_file']}-#{GAMES_CONFIG['js_version']}"
     - else
       - files = GAMES_CONFIG['js_files']

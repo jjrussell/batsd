@@ -14,6 +14,14 @@ test:
   password:
   reconnect: true
 
+staging:
+  adapter: mysql
+  database: tapjoy_db_staging
+  host: localhost
+  username: root
+  password:
+  reconnect: true
+
 production:
   adapter: mysql
   database: tapjoy_db

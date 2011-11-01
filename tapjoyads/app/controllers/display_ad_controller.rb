@@ -101,7 +101,8 @@ class DisplayAdController < ApplicationController
       if params[:details] == '1'
         @offer  = offer
         @amount = currency.get_visual_reward_amount(offer, params[:display_multiplier])
-        if offer.item_type == 'App'
+        if
+        offer.item_type == 'App'
           advertiser_app = App.find_in_cache(@offer.item_id)
           return unless verify_records([ advertiser_app ])
           @categories = advertiser_app.categories
@@ -123,7 +124,7 @@ class DisplayAdController < ApplicationController
 
     if offer.display_custom_banner_for_size?(size)
       return Mc.get_and_put(offer.banner_creative_mc_key(size)) do
-        Base64.encode64(offer.banner_creative_s3_key(size).read).gsub("\n", '')
+        Base64.encode64(offer.banner_creative_s3_object(size).read).gsub("\n", '')
       end
     end
 
@@ -155,7 +156,7 @@ class DisplayAdController < ApplicationController
     img.format = 'png'
     img.composite!(background, 0, 0, Magick::AtopCompositeOp)
 
-    font = Rails.env.production? ? 'Helvetica' : ''
+    font = (Rails.env.production? || Rails.env.staging?) ? 'Helvetica' : ''
     if currency.hide_rewarded_app_installs?
       text = "Try #{offer.name} today"
     else
@@ -198,11 +199,7 @@ class DisplayAdController < ApplicationController
     image_label = Magick::Image.read("caption:#{text}") do
       self.size = text_area_size
       self.gravity = Magick::WestGravity
-      if use_white_fill
-        self.fill = 'white'
-      else
-        self.fill = '#363636'
-      end
+      use_white_fill? ? self.fill = 'white' : self.fill = '#363636'
       self.pointsize = font_size
       self.font = font
       self.stroke = 'transparent'
