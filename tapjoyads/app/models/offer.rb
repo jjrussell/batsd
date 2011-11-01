@@ -683,7 +683,9 @@ private
 
   def set_stats_aggregation_times
     now = Time.now.utc
-    self.next_stats_aggregation_time = now
+    self.last_stats_aggregation_time       = nil
+    self.last_daily_stats_aggregation_time = nil
+    self.next_stats_aggregation_time       = now
     self.next_daily_stats_aggregation_time = (now + 1.day).beginning_of_day + StatsAggregation::DAILY_STATS_START_HOUR.hours
   end
 
