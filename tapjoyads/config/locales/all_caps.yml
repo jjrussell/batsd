@@ -15,7 +15,7 @@ all_caps:
       buy_currency: "BUY %{amount} %{currency}"
       load_more: "LOAD SOME MORE!"
       loading: "LOADING..."
-      load_error: "THERE WAS AN ISSUE. PLEASE TRY AGAIN."
+      load_error: "PLEASE TRY AGAIN."
 
     instructions:
       title: "INSTRUCTIONS"

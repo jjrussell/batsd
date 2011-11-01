@@ -17,7 +17,7 @@ zh:
       buy_currency: "买 %{amount} %{currency}"
       load_more: "Load some more!"
       loading: "Loading..."
-      load_error: "There was an issue. Please try again."
+      load_error: "Please try again."
 
     instructions:
       title: "说明"

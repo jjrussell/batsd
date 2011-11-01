@@ -15,7 +15,7 @@ ja:
       buy_currency: "%{amount} %{currency} を買う"
       load_more: "Load some more!"
       loading: "Loading..."
-      load_error: "There was an issue. Please try again."
+      load_error: "Please try again."
 
     instructions:
       title: "指示"
