@@ -31,8 +31,8 @@ class Partner < ActiveRecord::Base
   validates_numericality_of :rev_share, :transfer_bonus, :direct_pay_share, :greater_than_or_equal_to => 0, :less_than_or_equal_to => 1
   validates_inclusion_of :exclusivity_level_type, :in => ExclusivityLevel::TYPES, :allow_nil => true, :allow_blank => false
   validates_inclusion_of :use_whitelist, :approved_publisher, :in => [ true, false ]
-  validates_inclusion_of :sales_rep, :in => User.employees, :allow_nil => true
   validate :exclusivity_level_legal
+  validate :sales_rep_is_employee
   validates_format_of :billing_email, :with => Authlogic::Regex.email, :message => "should look like an email address.", :allow_blank => true, :allow_nil => true
   # validates_format_of :name, :with => /^[[:print:]]*$/, :message => "Partner name must be alphanumeric."
   validates_each :disabled_partners, :allow_blank => true do |record, attribute, value|
@@ -324,5 +324,11 @@ private
 
   def check_billing_email
     self.freshbooks_client_id = nil if billing_email_changed?
+  end
+
+  def sales_rep_is_employee
+    if sales_rep && !sales_rep.employee?
+      errors.add(:sales_rep, 'must be an employee')
+    end
   end
 end

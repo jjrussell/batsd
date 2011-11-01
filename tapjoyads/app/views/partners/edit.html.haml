@@ -29,8 +29,8 @@
   .field
     = f.label :sales_rep
     #help_sales_rep.help ?
-    - options = options_from_collection_for_select(User.employees, 'id', 'email', @partner.sales_rep && @partner.sales_rep.id)
-    = f.select :sales_rep_id, options, {:include_blank => '(no one)'}
+    = f.text_field :sales_rep
+    = error_message_on(@partner, :sales_rep) if @partner.errors.on :sales_rep
   .field
     = f.label :billing_email
     #help_billing_email.help ?
@@ -72,7 +72,7 @@
   #help_account_managers_content{:name => 'Account manager(s)'}
     Who is managing this partner?
   #help_sales_rep_content{:name => 'Sales rep'}
-    Who is the sales rep for this partner?
+    Email of the Tapjoy sales rep for this partner.
   #help_disabled_partners_content{:name => 'Disabled partners'}
     Offers belonging to partners that are in this list will not be shown in this partner's offerwalls.
   #help_billing_email_content{:name => 'Billing email'}
@@ -116,3 +116,15 @@
       width: 400px;
       margin-left: 20px;
     }
+
+- content_for :page_javascript do
+  :plain
+    $(function($){
+      var options = {
+        source: '#{search_users_path}?tapjoy_only=true',
+        delay: 250,
+        minLength: 2
+      };
+
+      $('#partner_sales_rep').focus().autocomplete(options);
+    });

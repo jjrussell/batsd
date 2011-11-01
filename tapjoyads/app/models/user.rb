@@ -26,12 +26,6 @@ class User < ActiveRecord::Base
   after_create :create_mail_chimp_entry
   after_save :update_auth_net_cim_profile
 
-  named_scope :employees, :conditions => 'users.id IN ' +
-                '(SELECT user_id FROM role_assignments WHERE user_role_id IN' +
-                  '(SELECT id FROM user_roles WHERE user_roles.employee = true)' +
-                ')', :order => 'email'
-
-
   def role_symbols
     user_roles.map do |role|
       role.name.underscore.to_sym
