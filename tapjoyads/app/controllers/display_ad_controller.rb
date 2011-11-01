@@ -101,8 +101,7 @@ class DisplayAdController < ApplicationController
       if params[:details] == '1'
         @offer  = offer
         @amount = currency.get_visual_reward_amount(offer, params[:display_multiplier])
-        if
-        offer.item_type == 'App'
+        if offer.item_type == 'App'
           advertiser_app = App.find_in_cache(@offer.item_id)
           return unless verify_records([ advertiser_app ])
           @categories = advertiser_app.categories
@@ -156,7 +155,7 @@ class DisplayAdController < ApplicationController
     img.format = 'png'
     img.composite!(background, 0, 0, Magick::AtopCompositeOp)
 
-    font = Rails.env == 'production' ? 'Helvetica' : ''
+    font = Rails.env.production? ? 'Helvetica' : ''
     if currency.hide_rewarded_app_installs?
       text = "Try #{offer.name} today"
     else
