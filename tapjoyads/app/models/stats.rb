@@ -3,11 +3,10 @@ class Stats < SimpledbResource
   self.domain_name = 'stats'
 
   self.sdb_attr :values, :type => :json, :default_value => {}
-  self.sdb_attr :ranks, :type => :json, :default_value => {}
   self.sdb_attr :virtual_goods, :type => :json, :default_value => {}
   self.sdb_attr :countries, :type => :json, :default_value => {}
 
-  attr_reader :parsed_values, :parsed_ranks, :parsed_virtual_goods, :parsed_countries
+  attr_reader :parsed_values, :parsed_virtual_goods, :parsed_countries
 
   CONVERSION_STATS  = Conversion::STAT_TO_REWARD_TYPE_MAP.keys
   WEB_REQUEST_STATS = WebRequest::STAT_TO_PATH_MAP.keys
@@ -85,7 +84,6 @@ class Stats < SimpledbResource
 
   def after_initialize
     @parsed_values = values
-    @parsed_ranks = ranks
     @parsed_virtual_goods = virtual_goods
     @parsed_countries = countries
   end
@@ -141,12 +139,6 @@ class Stats < SimpledbResource
       update_stat_for_day(key, day, count)
     end
 
-    hourly_stat_row.parsed_ranks.each do |key, value|
-      stat_path = ['ranks', key]
-      rank = value.reject{ |r| r == 0 }.min
-      update_stat_for_day(stat_path, day, rank)
-    end
-
     hourly_stat_row.parsed_virtual_goods.each do |key, value|
       stat_path = ['virtual_goods', key]
       count = value.sum
@@ -172,12 +164,10 @@ class Stats < SimpledbResource
 
   def serial_save(options = {})
     strip_defaults(@parsed_values)
-    strip_defaults(@parsed_ranks)
     strip_defaults(@parsed_virtual_goods)
     strip_defaults(@parsed_countries)
 
     self.values = @parsed_values if self.values != @parsed_values
-    self.ranks = @parsed_ranks if self.ranks != @parsed_ranks
     self.virtual_goods = @parsed_virtual_goods if self.virtual_goods != @parsed_virtual_goods
     self.countries = @parsed_countries if self.countries != @parsed_countries
 
@@ -207,11 +197,7 @@ private
   end
 
   def get_counts_object(stat_name_or_path, length)
-    if stat_name_or_path == 'ranks'
-      return @parsed_ranks
-    elsif stat_name_or_path.is_a?(Array) && stat_name_or_path.first == 'ranks'
-      obj = @parsed_ranks
-    elsif stat_name_or_path == 'virtual_goods'
+    if stat_name_or_path == 'virtual_goods'
       return @parsed_virtual_goods
     elsif stat_name_or_path.is_a?(Array) && stat_name_or_path.first == 'virtual_goods'
       obj = @parsed_virtual_goods

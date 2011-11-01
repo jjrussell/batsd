@@ -1,9 +1,0 @@
-{
-  "Statement" : [
-    {
-      "Effect"   : "Allow",
-      "Action"   : [ "iam:*AccessKey*", "iam:*SigningCertificate*", "iam:*LoginProfile", "iam:ResyncMFADevice" ],
-      "Resource" : "arn:aws:iam::266171351246:user/USERNAME"
-    }
-  ]
-}

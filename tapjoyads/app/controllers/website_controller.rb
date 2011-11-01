@@ -54,7 +54,7 @@ class WebsiteController < ApplicationController
   end
 
   def check_employee_device
-    return unless Rails.env == 'production'
+    return unless Rails.env.production?
     if current_user && current_user.employee?
       if request.path.match(/logout|approve_device/)
         return
@@ -86,7 +86,7 @@ protected
   end
 
   def ssl_required?
-    Rails.env == 'production'
+    Rails.env.production?
   end
 
 private

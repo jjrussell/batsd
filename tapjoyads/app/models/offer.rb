@@ -39,7 +39,7 @@ class Offer < ActiveRecord::Base
   OFFER_LIST_REQUIRED_COLUMNS = [ 'id', 'item_id', 'item_type', 'partner_id',
                                   'name', 'url', 'price', 'bid', 'payment',
                                   'conversion_rate', 'show_rate', 'self_promote_only',
-                                  'device_types', 'countries', 'postal_codes', 'cities',
+                                  'device_types', 'countries',
                                   'age_rating', 'multi_complete', 'featured',
                                   'publisher_app_whitelist', 'direct_pay', 'reward_value',
                                   'third_party_data', 'payment_range_low',
@@ -50,9 +50,6 @@ class Offer < ActiveRecord::Base
                                   'interval', 'banner_creatives', 'dma_codes' ].map { |c| "#{quoted_table_name}.#{c}" }.join(', ')
 
   DIRECT_PAY_PROVIDERS = %w( boku paypal )
-
-  DAILY_STATS_START_HOUR = 6
-  DAILY_STATS_RANGE = 6
 
   FREQUENCIES_CAPPING_INTERVAL = {
     "none"     => 0,
@@ -167,8 +164,8 @@ class Offer < ActiveRecord::Base
   alias_method :events, :offer_events
   alias_method :random, :rand
 
-  json_set_field :device_types, :screen_layout_sizes, :countries, :cities, :postal_codes, :dma_codes
-  memoize :get_device_types, :get_screen_layout_sizes, :get_countries, :get_cities, :get_postal_codes, :get_dma_codes
+  json_set_field :device_types, :screen_layout_sizes, :countries, :dma_codes
+  memoize :get_device_types, :get_screen_layout_sizes, :get_countries, :get_dma_codes
 
   def app_offer?
     item_type == 'App' || item_type == 'ActionOffer'
@@ -196,30 +193,6 @@ class Offer < ActiveRecord::Base
   def banner_creatives_changed?
     return false if (super && banner_creatives_was.empty? && banner_creatives.empty?)
     super
-  end
-
-  def self.redistribute_hourly_stats_aggregation
-    Benchmark.realtime do
-      now = Time.zone.now + 15.minutes
-      Offer.find_each do |o|
-        o.next_stats_aggregation_time = now + rand(1.hour)
-        o.save(false)
-      end
-    end
-  end
-
-  def self.redistribute_daily_stats_aggregation
-    Benchmark.realtime do
-      now = Time.zone.now + 15.minutes
-      Offer.find_each do |o|
-        if now.hour >= DAILY_STATS_START_HOUR && now.hour < (DAILY_STATS_START_HOUR + DAILY_STATS_RANGE)
-          o.next_daily_stats_aggregation_time = now + rand(DAILY_STATS_RANGE.hours)
-        else
-          o.next_daily_stats_aggregation_time = (now - DAILY_STATS_START_HOUR.hours + 1.day).beginning_of_day + DAILY_STATS_START_HOUR.hours + rand(DAILY_STATS_RANGE.hours)
-        end
-        o.save(false)
-      end
-    end
   end
 
   def find_associated_offers
@@ -710,8 +683,10 @@ private
 
   def set_stats_aggregation_times
     now = Time.now.utc
-    self.next_stats_aggregation_time = now if next_stats_aggregation_time.blank?
-    self.next_daily_stats_aggregation_time = (now + 1.day).beginning_of_day + DAILY_STATS_START_HOUR.hours + rand(DAILY_STATS_RANGE.hours) if next_daily_stats_aggregation_time.blank?
+    self.last_stats_aggregation_time       = nil
+    self.last_daily_stats_aggregation_time = nil
+    self.next_stats_aggregation_time       = now
+    self.next_daily_stats_aggregation_time = (now + 1.day).beginning_of_day + StatsAggregation::DAILY_STATS_START_HOUR.hours
   end
 
   def bid_higher_than_min_bid
