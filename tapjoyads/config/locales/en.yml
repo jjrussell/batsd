@@ -13,6 +13,7 @@ en:
       instructions: "Engage in any of the following actions to receive %{currency}"
       earn_currency: "Earn %{amount} %{currency}"
       buy_currency: "Buy %{amount} %{currency}"
+      load_more: "Load some more!"
 
     instructions:
       title: "Instructions"

@@ -15,6 +15,7 @@ zh:
       instructions: "完成以下的要求其中之一可以得到 %{currency}"
       earn_currency: "赚 %{amount} %{currency}"
       buy_currency: "买 %{amount} %{currency}"
+      load_more: "Load some more!"
 
     instructions:
       title: "说明"
