@@ -14,6 +14,8 @@ all_caps:
       earn_currency: "EARN %{amount} %{currency}"
       buy_currency: "BUY %{amount} %{currency}"
       load_more: "LOAD SOME MORE!"
+      loading: "LOADING..."
+      load_error: "THERE WAS AN ISSUE. PLEASE TRY AGAIN."
 
     instructions:
       title: "INSTRUCTIONS"

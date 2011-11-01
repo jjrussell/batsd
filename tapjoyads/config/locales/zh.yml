@@ -11,11 +11,13 @@ zh:
       free: "免费"
       next: "下页 %{items}"
       previous: "上页 %{items}"
-      missing_currency: "Missing %{currency}?"
+      missing_currency: "没得到 %{currency}?"
       instructions: "完成以下的要求其中之一可以得到 %{currency}"
       earn_currency: "赚 %{amount} %{currency}"
       buy_currency: "买 %{amount} %{currency}"
       load_more: "Load some more!"
+      loading: "Loading..."
+      load_error: "There was an issue. Please try again."
 
     instructions:
       title: "说明"

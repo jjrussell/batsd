@@ -152,7 +152,7 @@
     function fetchOffers() {
       if (avail <= 0) {return;}
       if (url) {
-        $("#load_more").html("Loading...");
+        $("#load_more").html("#{t('text.offerwall.loading')}");
         $.ajax({
           url: url + '&limit=25&start=' + start,
           dataType: 'json',
@@ -162,7 +162,7 @@
               var offers = data.OfferArray;
               offset = offers.length;
               if (data.MoreDataAvailable) {
-                $("#load_more").html("Load some more offers");
+                $("#load_more").html("#{t('text.offerwall.load_more')}");
                 avail = data.MoreDataAvailable;
               }
               else {
@@ -225,7 +225,7 @@
             }
           },
           error: function() {
-            $("#load_more").html("There was an issue. Please try again.");
+            $("#load_more").html("#{t('text.offerwall.load_error')}");
           }
         });
       }

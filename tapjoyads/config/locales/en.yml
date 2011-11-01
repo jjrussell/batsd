@@ -14,6 +14,8 @@ en:
       earn_currency: "Earn %{amount} %{currency}"
       buy_currency: "Buy %{amount} %{currency}"
       load_more: "Load some more!"
+      loading: "Loading..."
+      load_error: "There was an issue. Please try again."
 
     instructions:
       title: "Instructions"
