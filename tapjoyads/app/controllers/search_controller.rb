@@ -43,7 +43,7 @@ class SearchController < WebsiteController
     term = params[:term].to_s.strip
 
     if term =~ UUID_REGEX
-      conditions = [ "id = ?", "#{}" ]
+      conditions = [ "id = ?", "#{term}" ]
       results = Partner.find(:all,
         :conditions => conditions,
         :include => ['offers', 'users'],
