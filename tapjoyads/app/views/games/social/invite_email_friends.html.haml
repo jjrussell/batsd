@@ -12,7 +12,7 @@
         %table{:border => 0, :cellspacing => 0, :cellpadding => 0}
           %tr
             %td
-              = image_tag("#{image_root}/logo.png")
+              = image_tag("#{image_root}/logo.png", :title => 'Tapjoy Games', :alt => 'Tapjoy Games', :style => "border: none;")
             %td#follow_us
               follow us:
             %td#social
@@ -24,7 +24,7 @@
         - @content.each do |line|
           %p= line
           %br
-        = image_tag("#{image_root}/createAccount_btn.png", :title => 'TapjoyGames', :alt => 'Tapjoy Games', :style => "border: none;")
+        = image_tag("#{image_root}/createAccount_btn.png", :title => 'Tapjoy Games', :alt => 'Tapjoy Games', :style => "border: none;")
         %br
         .signature Team Tapjoy
     %span#back_button Back

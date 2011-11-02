@@ -4,7 +4,7 @@
 :ruby
   image_root = "#{TJGAMES_URL}/images/email"
   css = {
-    :a => "color: #{red}; text-decoration: none; border:none;",
+    :a => "color: #{red}; text-decoration: underline; border:none;",
     :social => "width: 20px;",
     :follow_us => "font-weight: bold; font-style: italic; font-size: 12px; width: 70px;",
     :content => "font-size: 12px;",
@@ -15,7 +15,7 @@
   %table{:cellspacing => 0, :cellpadding => 0, :align => "center", :style => "width: 600px; background-color: white; margin-bottom: 50px;"}
     %tr
       %td{:style => "height: 60px;"}
-        - link_to 'https://www.tapjoygames.com', :style => "border: none" do
+        - link_to 'https://www.tapjoygames.com', :style => css[:a] do
           = image_tag("#{image_root}/logo.png", :title => 'Tapjoy Games', :alt => 'Tapjoy Games', :style => "border: none; margin: 20px 0px 0px 20px;")
       %td{:style => css[:follow_us]}
         follow us:
