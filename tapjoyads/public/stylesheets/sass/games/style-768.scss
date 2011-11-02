@@ -3,6 +3,31 @@
 @import "tj-mixins";
 
 //-------------------------------------------
+
+#login {
+  
+  .nav {
+    max-width: 768px;
+  }
+  .main_scene {
+    
+    .content_box {
+      max-width: 768px;
+    }
+    .main_phone {
+      left: 36px;
+    }
+  }
+  .overview {
+    max-width: 768px;
+    
+    .about {
+      margin: 36px 0 0 20px;
+      width: 380px;
+    }
+  }
+}
+
 body.old {
 .nav {
   padding: $nav-padding-v/2 $nav-padding-h/2;

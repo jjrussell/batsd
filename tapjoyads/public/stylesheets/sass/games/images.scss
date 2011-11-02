@@ -21,7 +21,12 @@
     background: transparent url('/images/games/checkmark.png') no-repeat;
   }
   .logo {
-    background: transparent url('/images/games/logo.png') no-repeat;
+    background: transparent url('/images/games/logo.png') no-repeat center center;
+  }
+  @media screen and (max-width: 480px) {
+      .logo {
+        background: transparent url('/images/games/logo-mobile.png') no-repeat center center;
+      }
   }
   .loading_animation {
     background: transparent url('/images/games/loader.gif') no-repeat;
@@ -49,7 +54,7 @@
   .icon.advertisers {
     background: transparent url('/images/games/advertisers-icon.png') no-repeat center center;
   }
-  .icon.publishers {
+  .icon.developers {
     background: transparent url('/images/games/publishers-icon.png') no-repeat center center;
   }
 }

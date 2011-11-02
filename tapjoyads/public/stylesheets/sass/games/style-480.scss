@@ -3,6 +3,111 @@
 @import "tj-mixins";
 
 //-------------------------------------------
+
+#login {
+  
+  .nav {
+    height: 110px;
+    max-width: 480px;
+    
+    .nav_container {
+      
+      .aside_login {
+         float: none;
+         padding: 0;
+         width: 460px;
+         
+        .login {
+          .form_fields {
+            width: 460px;
+            
+            input {
+              margin: 0 4px;
+            }
+            .row {
+              float: none;
+              height: 30px;
+              margin: 0 auto;
+              width: 268px;
+            }
+            .field {
+              float: none;
+            }
+            .field.sign_in {
+              display: none;
+              height: 30px;
+              margin: 0 auto;
+              width: 60px;
+            }
+            .field.email {
+              float: left;
+            }
+            .field.password {
+              float: left;
+            }
+            .field.login_btn {
+              margin: 0 auto;
+              width: 62px;
+            }
+          }
+        }
+      }
+      .logo {
+        background-size: 80%;
+        float: none;
+        height: 36px;
+        width: 99px;
+        margin: 0 auto;
+      }
+      .nav_buttons a {
+        float: none;
+      }
+    }
+  }
+  .main_scene {
+    
+    .content_box {
+      max-width: 460px;
+      height: 340px;
+      
+      .main_scene_content {
+        width: 460px;
+
+        .sign_up_message {
+          display: none;
+          float: none;
+          margin: 0 auto;
+        }
+        .sign_up {
+          float: none;
+          left: 0;
+          margin: 0 auto;
+          top: 24px;
+        }
+        .main_phone {
+          display: none;
+        }
+        .sign_up_content {
+          postiton: relative;
+          top: 24px;
+        }
+      }
+    }
+  }
+  .overview {
+    display: none;
+  }
+  .b2b {
+    height: 200px;
+    margin-top: 12px;
+    
+    .block {
+      width: 460px;
+      margin-bottom: 12px;
+    }
+  }
+}
+
 body.old {
 .nav {
   padding: $nav-padding-v/2 $nav-padding-h/2;

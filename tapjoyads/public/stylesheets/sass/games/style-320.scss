@@ -3,6 +3,120 @@
 @import "tj-mixins";
 
 //-------------------------------------------
+
+#login {
+  
+  .nav {
+    height: 110px;
+    max-width: 320px;
+    
+    .nav_container {
+      
+      .aside_login {
+         float: none;
+         padding: 0;
+         width: 300px;
+         
+        .login {
+          .form_fields {
+            width: 320px;
+            
+            input {
+              margin: 0 4px;
+            }
+            .row {
+              float: none;
+              height: 30px;
+              margin: 0 auto;
+              width: 268px;
+            }
+            .field {
+              float: none;
+            }
+            .field.sign_in {
+              display: none;
+              height: 30px;
+              margin: 0 auto;
+              width: 60px;
+            }
+            .field.email {
+              float: left;
+            }
+            .field.password {
+              float: left;
+            }
+            .field.login_btn {
+              margin: 0 auto;
+              width: 62px;
+            }
+          }
+        }
+      }
+      .logo {
+        background-size: 80%;
+        float: none;
+        height: 36px;
+        width: 99px;
+        margin: 0 auto;
+      }
+      .nav_buttons a {
+        float: none;
+      }
+    }
+  }
+  .main_scene {
+    
+    .content_box {
+      max-width: 300px;
+      height: 340px;
+      
+      .main_scene_content {
+        width: 300px;
+
+        .sign_up_message {
+          display: none;
+          float: none;
+          margin: 0 auto;
+        }
+        .sign_up {
+          float: none;
+          left: 0;
+          margin: 0 auto;
+          top: 24px;
+          width: 300px;
+          
+          .sign_up_content {
+            postiton: relative;
+            top: 24px;
+            
+            input[type=email], input[type=password] {
+              width: 254px;
+            }
+            input[type=submit] {
+              width: 100px;
+            }
+          }
+        }
+        .main_phone {
+          display: none;
+        }
+      }
+    }
+  }
+  .overview {
+    display: none;
+  }
+  .b2b {
+    height: 200px;
+    margin-top: 12px;
+    
+    .block {
+      width: 300px;
+      margin-bottom: 12px;
+    }
+  }
+}
+
 body.old {
 .nav {
   padding: $nav-padding-v/2 $nav-padding-h/2;

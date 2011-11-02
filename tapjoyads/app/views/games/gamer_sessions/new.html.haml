@@ -14,10 +14,11 @@
                     = hidden_field_tag :data, params[:data]
                   .field.sign_in
                     Sign In
-                  .field
-                    = f.email_field :email, "autocorrect" => "off", "autocapitalize" => "off", :placeholder => "Email", :required => ""
-                  .field
-                    = f.password_field :password, :placeholder => "Password", :required => ""
+                  .row
+                    .field.email
+                      = f.email_field :email, "autocorrect" => "off", "autocapitalize" => "off", :placeholder => "Email", :required => ""
+                    .field.password
+                      = f.password_field :password, :placeholder => "Password", :required => ""
                   .field.login_btn
                     = f.submit 'Login', :class => 'right button'
               .form_fields
@@ -71,18 +72,32 @@
               Tapjoy gives you a way to earn virtual currency by playing your favorite games like Happy Park, City of Wonder, Coin Dozer, Overkill, VIP Poker, and Gun Bros.  It recommends new apps to you, so if you like playing Magic Zoo, Tapjoy will suggest other games you'll enjoy, like Safari Zoo or Bug Village HD. Tapjoy also suggests apps to you that your friends are using right now. All that is free! So sign up now and tap into a better way to find the apps you love.
       .content.b2b
         .content_box
-          link_to("https://www.tapjoy.com/site/app_developers", )
-          .block
-            .icon.advertisers
-            %h1
-              Advertisers
-          .block
-            .icon.developers
-            %h1
-              Developers
-              
-              
-
+          %a{ :href => "/site/advertisers"}
+            .block
+              .icon.advertisers
+              %h1
+                Advertisers
+              .block_text
+                Reach Millions of users and gain exposure for your products
+          %a{ :href => "/site/app_developers"}
+            .block
+              .icon.developers
+              %h1
+                Developers
+              .block_text
+                Drive significant revenue to your app with our monetization tools
+      .content.footer
+        .content_box
+          %a{ :href => "/site/about_us" }
+            .item
+              About Tapjoy
+          %a{ :href => games_privacy_path }
+            .item
+              Privacy Policy
+          %a{ :href =>  "http://blog.tapjoy.com" }
+            .item
+              Blog
+            
 - content_for :page_javascript do
   :plain
     $(window).load(function() {
