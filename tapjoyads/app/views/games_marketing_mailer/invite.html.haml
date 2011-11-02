@@ -1,20 +1,22 @@
-- gray = '#505050'
-- red  = '#e11826'
-- offset = '30px'
+- gray = '#5d5d5d'
+- red  = '#ef1a28'
+- light_gray = '#f5f5f5'
 :ruby
   image_root = "#{TJGAMES_URL}/images/email"
   css = {
-    :a => "color: #{red}; text-decoration: none;",
+    :a => "color: #{red}; text-decoration: none; border:none;",
     :social => "width: 20px;",
-    :follow_us => "font-weight: bold; font-style: italic; font-size: 13px; width: 70px;",
-    :bold_content => "font-weight: bold; font-size: 13px; margin: 30px 0px;",
+    :follow_us => "font-weight: bold; font-style: italic; font-size: 12px; width: 70px;",
+    :content => "font-size: 12px;",
+    :bold_content => "color: #{gray}; font-size: 13px; padding-top: 10px",
   }
 
-#email{:style => "color: #{gray}; padding: 20px auto; width: 500px; font-family: 'arial'; font-size: 12px; background-color: white; align: center;"}    
-  %table{:border => 0, :cellspacing => 0, :cellpadding => 0, :style => "width: 100%;"}
+#email{:style => "background-color: #{light_gray}; font-family: 'Arial, Helvetica, sans-serif'; color: #{gray};"}    
+  %table{:cellspacing => 0, :cellpadding => 0, :align => "center", :style => "width: 600px; background-color: white; margin-bottom: 50px;"}
     %tr
-      %td
-        = image_tag("#{image_root}/logo.png")
+      %td{:style => "height: 60px;"}
+        - link_to 'https://www.tapjoygames.com', :style => "border: none" do
+          = image_tag("#{image_root}/logo.png", :title => 'Tapjoy Games', :alt => 'Tapjoy Games', :style => "border: none; margin: 20px 0px 0px 20px;")
       %td{:style => css[:follow_us]}
         follow us:
       %td{:style => css[:social]}
@@ -22,12 +24,19 @@
           = image_tag("#{image_root}/fb_icon.png", :title => 'Facebook', :alt => 'Facebook', :style => "border: none;")
       %td{:style => css[:social]}
         - link_to 'https://twitter.com/#!/tapjoygames', :style => css[:a] do
-          = image_tag("#{image_root}/twitter_icon.png", :title => 'Twitter', :alt => 'Twitter', :style => "border: none;")                        
-  %hr{:style => "color: #{red}; background: #{red}; border: 0px; height: 1px;"}
-  .greeting{:style => css[:bold_content]} Hi,
-  - @content.each do |line|
-    %p= line
-  - link_to "#{@link}", :style => css[:a] do
-    = image_tag("#{image_root}/createAccount_btn.png", :title => 'TapjoyGames', :alt => 'Tapjoy Games', :style => "border: none;")
+          = image_tag("#{image_root}/twitter_icon.png", :title => 'Twitter', :alt => 'Twitter', :style => "border: none; margin-right: 20px;")
+    %tr
+      %td{:colspan => 4}
+        %hr{:style => "color: #{red}; background: #{red}; border: 0px; height: 1px; width: 95%;"}
+    %tr
+      %td{:colspan => 4, :style => "padding: 20px 20px;"}
+        %b{:style => css[:bold_content]} Hi,
+    %tr
+      %td{:colspan => 4, :style => "padding: 0px 20px 50px 20px; width: 500px;"}
+        - @content.each do |line|
+          %p{:style => css[:content]}= line
+        - link_to "#{@link}", :style => css[:a] do
+          = image_tag("#{image_root}/createAccount_btn.png", :title => 'Tapjoy Games', :alt => 'Tapjoy Games', :style => "border: none; margin-bottom: 40px;")
+        %br
+        %b{:style => css[:bold_content]} Team Tapjoy
   %br
-  .signature{:style => css[:bold_content]} Team Tapjoy
