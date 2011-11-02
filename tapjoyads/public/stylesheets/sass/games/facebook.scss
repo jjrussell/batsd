@@ -215,7 +215,8 @@ li.checked {
 #email {
   color: $gray;
   padding: 20px auto;
-  width: 500px;
+  width: 90%;
+  max-width: 500px;
   font:{
     family: 'arial';
     size: 12px;
@@ -224,6 +225,7 @@ li.checked {
   align: center;
   table {
     width: 100%;
+    padding: 0 10px;
   }
   #follow_us {
     font: {
