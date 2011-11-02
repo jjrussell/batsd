@@ -4,15 +4,16 @@
   red = '#ef1a28'
   light_gray = '#f5f5f5'
   css = {
-    :a => "color: #{red}; text-decoration: underline; border:none;",
+    :a => "color: #{red}; text-decoration: none; border:none;",
     :social => "width: 20px;",
     :follow_us => "font-weight: bold; font-style: italic; font-size: 12px; width: 70px;",
-    :content => "font-size: 12px;",
+    :content => "font-size: 12px; line-height: 19px;",
     :bold_content => "color: #{gray}; font-size: 13px; padding-top: 10px",
+    :footer => "height: 50px; color: #{light_gray};",
   }
 
 #email{:style => "background-color: #{light_gray}; font-family: 'Arial, Helvetica, sans-serif'; color: #{gray};"} 
-  %table{:cellspacing => 0, :cellpadding => 0, :align => "center", :style => "width: 600px; background-color: white; margin-bottom: 50px;"}
+  %table{:cellspacing => 0, :cellpadding => 0, :align => "center", :style => "width: 600px; background-color: white;"}
     %tr
       %td{:style => "height: 60px;"}
         - link_to 'https://www.tapjoygames.com', :style => css[:a] do
@@ -39,4 +40,4 @@
           = image_tag("#{image_root}/createAccount_btn.png", :title => 'Tapjoy Games', :alt => 'Tapjoy Games', :style => "border: none; margin-bottom: 40px;")
         %br
         %b{:style => css[:bold_content]} Team Tapjoy
-  %br
+  %p{:style => css[:footer]} Tapjoy Games
