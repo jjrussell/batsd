@@ -25,7 +25,7 @@ class Job::QueueSendWelcomeEmailsController < Job::SqsReaderController
       sess = Patron::Session.new
       response = sess.get(offerwall_url)
       raise "Error getting offerwall data" unless response.status == 200
-      offer_data[currency[:id]] = JSON.parse(response.body)
+      offer_data[currency[:id]] = JSON.parse(response.body).merge(:external_publisher => external_publisher)
     end
 
     editors_picks = offer_data.any? ? [] : EditorsPick.cached_active(message['using_android'] ? 'android' : 'ios')

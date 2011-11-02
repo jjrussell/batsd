@@ -74,16 +74,17 @@
       .step{:style => css[:step]}
         %table
           - @offer_data.each do |currency_id, offers|
-            - currency = Currency.find(currency_id)
+            - external_publisher = offers[:external_publisher]
             %tr
               %td
                 = image_tag("#{image_root}/connect_icon.png", :class => 'icon', :size => '68x68', :title => 'Earn currency', :alt => 'Earn')
               %td{:style => css[:step_body]}
                 .name{:style => css[:step_name]}
+                  = image_tag(external_publisher.get_icon_url, :style => css[:offer_icon])
                   Install one of the apps below to earn
                   = h(offers['CurrencyName'])
                   in
-                  = h(currency.app.name)
+                  = h(external_publisher.app_name)
                 - offers['OfferArray'][0..2].each do |offer|
                   - link_to("#{TJGAMES_URL}/earn/#{currency_id}", :style => css[:offer]) do
                     = image_tag(offer['IconURL'], :style => css[:offer_icon])

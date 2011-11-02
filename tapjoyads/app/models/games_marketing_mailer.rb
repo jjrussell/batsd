@@ -7,8 +7,8 @@ class GamesMarketingMailer < ActionMailer::Base
     :port => 587,
     :domain => 'tapjoy.com',
     :authentication => :plain,
-    :user_name => RAILS_ENV == 'production' ?  'produser' : 'erictipton',
-    :password => RAILS_ENV == 'production' ? 'prodpwd' : 'shufflethebits'
+    :user_name => RAILS_ENV == 'production' ? 'tapjoyprod' : 'tapjoydev',
+    :password => RAILS_ENV == 'production' ? 'b4%6GbMv' : 'emailthebits'
   }
 
   sendgrid_category :use_subject_lines
@@ -20,7 +20,9 @@ class GamesMarketingMailer < ActionMailer::Base
     subject "Welcome to Tapjoy!"
     content_type 'text/html'
     android_device = gamer_device.device_type == 'android' rescue false
-    body :confirmation_link => confirmation_link, :linked => gamer.gamer_devices.any?, :android_device => android_device,
+    # body :confirmation_link => confirmation_link, :linked => gamer.gamer_devices.any?, :android_device => android_device,
+    #   :offer_data => offer_data, :editors_picks => editors_picks
+    body :confirmation_link => confirmation_link, :linked => false, :android_device => android_device,
       :offer_data => offer_data, :editors_picks => editors_picks
   end
 
