@@ -1,25 +1,30 @@
 class Games::Social::TwitterController < GamesController
-  # callback: success
-  # This handles signing in and adding an authentication service to existing accounts itself
-  # It renders a separate view if there is a new user to create
-  def authenticate
-    # get the full hash from omniauth
-    omniauth = request.env['omniauth.auth']
-    
-    # continue only if hash exist
-    if omniauth
-    
-      # map the returned hashes to our variables first - the hashes differs for every service
-    
-      # create a new hash
+  require 'oauth'
+
+  rescue_from OAuth::Error, :with => :handle_oauth_exceptions
+
+  def start_oauth
+    consumer = OAuth::Consumer.new(ENV['CONSUMER_KEY'], ENV['CONSUMER_SECRET'], {:site=>"http://twitter.com" })
+    req_token = consumer.get_request_token(:oauth_callback => ('http://' + request.env['HTTP_HOST'] + "#{games_social_twitter_finish_oauth_path}"))
+    session[:twitter_request_token] = req_token.token
+    session[:twitter_request_token_secret] = req_token.secret
+    redirect_to req_token.authorize_url
+  end
+
+  def finish_oauth
+    oauth_consumer = OAuth::Consumer.new(ENV['CONSUMER_KEY'], ENV['CONSUMER_SECRET'], {:site=>"http://twitter.com" })
+    req_token = OAuth::RequestToken.new(oauth_consumer, session[:twitter_request_token], session[:twitter_request_token_secret])
+
+    if req_token
+      # Request user access info from Twitter
+      access_token = req_token.get_access_token
+
+      # Store the OAuth info for the user
       authhash = Hash.new
-      omniauth['user_info']['email'] ? authhash[:twitter_email] =  omniauth['user_info']['email'] : authhash[:twitter_email] = ''
-      omniauth['user_info']['name'] ? authhash[:twitter_name] =  omniauth['user_info']['name'] : authhash[:twitter_name] = ''
-      omniauth['uid'] ? authhash[:twitter_id] = omniauth['uid'].to_s : authhash[:twitter_id] = ''
-      omniauth['provider'] ? authhash[:provider] = omniauth['provider'] : authhash[:provider] = ''
-      omniauth['credentials']['token'] ? authhash[:twitter_access_token] = omniauth['credentials']['token'] : authhash[:twitter_access_token] = ''
-      omniauth['credentials']['secret'] ? authhash[:twitter_access_secret] = omniauth['credentials']['secret'] : authhash[:twitter_access_secret] = ''
-      
+      access_token.token ? authhash[:twitter_id] = access_token.token.split('-')[0] : authhash[:twitter_id] = ''
+      access_token.token ? authhash[:twitter_access_token] = access_token.token : authhash[:twitter_access_token] = ''
+      access_token.secret ? authhash[:twitter_access_secret] = access_token.secret : authhash[:twitter_access_secret] = ''
+
       if authhash[:twitter_id] != '' and authhash[:twitter_access_token] != '' and authhash[:twitter_access_secret] != ''
         current_gamer.gamer_profile.update_twitter_info!(authhash)
         redirect_to games_social_invite_twitter_friends_path
@@ -33,9 +38,16 @@ class Games::Social::TwitterController < GamesController
     end
   end
 
-  # callback: failure    
-  def failure
-    flash[:error] = 'We need your authentication to continue inviting your twitter friends.'
-    redirect_to edit_games_gamer_path
+private
+  def handle_oauth_exceptions(e)
+    case e
+    when OAuth::Unauthorized
+      current_gamer.gamer_profile.dissociate_account!(Invitation::TWITTER)
+      flash[:error] = 'Please authorize us before sending out an invite.'
+      redirect_to edit_games_gamer_path
+    else
+      flash[:error] = 'Something happened to Twttier. Please try again later.'
+      redirect_to edit_games_gamer_path
+    end
   end
 end

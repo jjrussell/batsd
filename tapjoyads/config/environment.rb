@@ -42,8 +42,6 @@ Rails::Initializer.run do |config|
   config.gem 'rmagick', :version => '2.12.2', :lib => 'RMagick'
   config.gem 'sqlite3', :version => '1.3.3'
   config.gem 'typhoeus', :version => '0.2.4'
-  config.gem 'omniauth', :version => '0.3.0'
-  config.gem 'oa-enterprise', :version => '0.3.0'
   config.gem 'twitter', :version => '1.7.2'
 
   # These gems should be vendored

@@ -34,7 +34,7 @@ class Games::SocialController < GamesController
       posts = []
       gamers = []
       non_gamers = []
-      
+
       current_facebook_user.fetch
 
       friends.each do |friend_id|
@@ -103,7 +103,7 @@ class Games::SocialController < GamesController
     end
     render :json => { :success => true, :gamers => gamers, :non_gamers => non_gamers }
   end
-  
+
   def invite_twitter_friends    
     @page_size = 25
 
@@ -182,10 +182,10 @@ private
       redirect_to edit_games_gamer_path
     end
   end
-  
+
   def twitter_authenticate
     if current_gamer.twitter_id.blank?
-      redirect_to '/auth/twitter'
+      redirect_to games_social_twitter_start_oauth_path #'/auth/twitter'
     elsif current_gamer.twitter_id? and current_gamer.twitter_access_token? and current_gamer.twitter_access_secret?
       Twitter.configure do |config|
         config.consumer_key       = ENV['CONSUMER_KEY']
@@ -198,7 +198,7 @@ private
       redirect_to edit_games_gamer_path
     end
   end
-  
+
   def handle_twitter_exceptions(e)
     case e
     when Twitter::Forbidden
@@ -245,7 +245,7 @@ private
 
     dissociate_and_redirect
   end
-  
+
   def handle_other_exceptions(e)
     case e
     when Errno::ECONNRESET

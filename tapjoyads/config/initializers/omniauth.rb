@@ -1,1 +1,0 @@
-ActionController::Dispatcher.middleware.use OmniAuth::Strategies::Twitter, ENV['CONSUMER_KEY'], ENV['CONSUMER_SECRET']

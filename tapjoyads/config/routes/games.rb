@@ -37,8 +37,10 @@ ActionController::Routing::Routes.draw do |map|
       social.invite_twitter_friends 'invite_twitter_friends', :action => :invite_twitter_friends
       social.send_twitter_invites 'send_twitter_invites', :action => :send_twitter_invites
     end
+
+    map.with_options :controller => 'games/social/twitter', :name_prefix => 'games_social_twitter_' do |twitter|
+      twitter.start_oauth 'twitter/start_oauth', :action => :start_oauth
+      twitter.finish_oauth 'twitter/finish_oauth', :action => :finish_oauth
+    end
   end
-  
-  map.games_social_twitter_auth 'auth/twitter/callback', :controller => 'games/social/twitter', :action => :authenticate
-  map.games_social_twitter_auth_failure 'auth/failure', :controller => 'games/social/twitter', :action => :failure
 end
