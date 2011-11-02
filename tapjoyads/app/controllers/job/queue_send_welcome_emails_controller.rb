@@ -2,7 +2,6 @@ class Job::QueueSendWelcomeEmailsController < Job::SqsReaderController
 
   def initialize
     super QueueNames::SEND_WELCOME_EMAILS
-    @retry_on_false_return_value = true
   end
 
   private
@@ -10,11 +9,6 @@ class Job::QueueSendWelcomeEmailsController < Job::SqsReaderController
   def on_message(message)
     message = JSON.parse(message.to_s)
     gamer = Gamer.find(message['gamer_id'])
-
-    # give the gamer time to link a device
-    if gamer.created_at >= (Time.zone.now - 5.minutes)
-      return false # retry later
-    end
 
     offer_data = {}
     device, gamer_device, external_publisher = ExternalPublisher.most_recently_run_for_gamer(gamer)
@@ -32,7 +26,6 @@ class Job::QueueSendWelcomeEmailsController < Job::SqsReaderController
 
     confirm_url = "#{TJGAMES_URL}/confirm?token=#{CGI.escape(gamer.confirmation_token)}"
     GamesMarketingMailer.deliver_welcome_email(gamer, confirm_url, gamer_device, offer_data, editors_picks)
-    true
   end
 
 end
