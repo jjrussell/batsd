@@ -149,7 +149,7 @@ class Games::SocialController < GamesController
             link = games_login_url :referrer => invitation.encrypted_referral_id
             link = "http://www.tapjoygames.com/login?referrer=#{invitation.encrypted_referral_id}" if Rails.env != 'production' #we need this because twitter cannot recognize IP addr as a valid url
 
-            message = "#{Twitter.user(current_gamer.twitter_id.to_i).name} has invited you to join Tapjoy. Experience the best of mobile apps! #{link}"
+            message = "#{Twitter.user(current_gamer.twitter_id.to_i).name} has invited you to join Tapjoy, the BEST place to find the hottest apps. Signing up is free! #{link}"
 
             # posts << Twitter.update(message)
             posts << Twitter.direct_message_create(friend_id.to_i, message)
