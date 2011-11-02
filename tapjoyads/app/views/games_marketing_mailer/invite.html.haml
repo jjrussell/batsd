@@ -1,8 +1,8 @@
-- gray = '#5d5d5d'
-- red  = '#ef1a28'
-- light_gray = '#f5f5f5'
 :ruby
   image_root = "#{TJGAMES_URL}/images/email"
+  gray = '#5d5d5d'
+  red = '#ef1a28'
+  light_gray = '#f5f5f5'
   css = {
     :a => "color: #{red}; text-decoration: underline; border:none;",
     :social => "width: 20px;",
@@ -35,7 +35,7 @@
       %td{:colspan => 4, :style => "padding: 0px 20px 50px 20px; width: 500px;"}
         - @content.each do |line|
           %p{:style => css[:content]}= line
-        - link_to "#{@link}", :style => css[:a] do
+        - link_to @link, :style => css[:a] do
           = image_tag("#{image_root}/createAccount_btn.png", :title => 'Tapjoy Games', :alt => 'Tapjoy Games', :style => "border: none; margin-bottom: 40px;")
         %br
         %b{:style => css[:bold_content]} Team Tapjoy
