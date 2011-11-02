@@ -14,7 +14,7 @@ class AddFieldsToGamers < ActiveRecord::Migration
     add_column :gamers, :referred_by, 'char(36) binary', :null => true
     add_column :gamers, :referral_count, :integer, :default => 0
     add_column :gamers, :use_gravatar, :boolean, :default => false
-    add_column :gamers, :allow_marketing_emails, :boolean
+    add_column :gamers, :allow_marketing_emails, :boolean, :default => true
 
     add_index :gamers, :referred_by
     add_index :gamers, :facebook_id
