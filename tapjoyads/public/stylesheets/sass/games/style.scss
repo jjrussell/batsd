@@ -5,7 +5,7 @@
 @import "tj-mixins";
 
 //-------------------------------------------
-// Import Base CSS 
+// Import Base CSS
 //-------------------------------------------
 
 @import "tj-base";
@@ -36,6 +36,7 @@ body.new {
 body.new .page {
   padding: $page-padding-v $page-padding-h;
   height: 100%;
+  overflow: hidden;
 }
 
 body.new .button {
@@ -68,7 +69,7 @@ body.new .button {
   }
   to {
     opacity: 1;
-  }  
+  }
 }
 
 //-------------------------------------------
@@ -117,15 +118,15 @@ input[type=email]:focus, input[type=password]:focus {
 //-------------------------------------------
 #login { // Isolate this to just the logged out view for now.  For this push, we want to only update the logged out page
   padding-bottom: 24px;
-  
+
   .nav {
     height: 72px;
     margin: 0 auto;
     max-width: 960px;
-    
+
     .nav_container {
       width: 100%;
-    
+
       .aside_nav, .aside_login {
         float: right;
         font-size: 0.9em;
@@ -135,13 +136,13 @@ input[type=email]:focus, input[type=password]:focus {
       .aside_login {
         width: 410px;
         padding: 0 10px;
-        
+
         .login {
-          
+
           .form_fields {
             height: 30px;
             margin-bottom: 6px;
-            
+
             .row {
               float: left;
             }
@@ -229,17 +230,17 @@ input[type=email]:focus, input[type=password]:focus {
     margin: 0 auto;
     width: 100%;
     @include rounded-corners(3px);
-    
+
     .content_box {
       height: 450px;
       margin: 0 auto;
       max-width: 960px;
     }
-    
+
     .main_scene_content {
       width: 780px;
       float: right;
-      
+
       .main_phone {
         float: left;
         height: 450px;
@@ -247,7 +248,7 @@ input[type=email]:focus, input[type=password]:focus {
         width: 380px;
         @include fadeIn(0.5s);
       }
-      
+
       .sign_up_message {
         float: left;
         height: 240px;
@@ -255,7 +256,7 @@ input[type=email]:focus, input[type=password]:focus {
         width: 400px;
         @include fadeIn(0.5s);
       }
-      
+
       .sign_up {
         background-color: #FFF;
         border: 1px solid $tj-red;
@@ -267,17 +268,17 @@ input[type=email]:focus, input[type=password]:focus {
         @include shadow(#333);
         @include rounded-corners(10px);
         @include fadeIn(0.5s);
-        
+
         h1, h5 {
           color: $tj-red;
           margin: 8px auto;
         }
-        
+
         .sign_up_content {
           padding: 16px;
-          
+
           .register_form {
-            
+
             select {
               width: 60px;
             }
@@ -317,7 +318,7 @@ input[type=email]:focus, input[type=password]:focus {
     position: relative;
     top: -20px;
     margin: 0 auto;
-    
+
     .devices {
       float: left;
       height: 255px;
@@ -328,7 +329,7 @@ input[type=email]:focus, input[type=password]:focus {
       float: left;
       margin-left: 40px;
       width: 560px;
-      
+
       .knows_apps {
         float: none;
         height: 82px;
@@ -345,11 +346,11 @@ input[type=email]:focus, input[type=password]:focus {
     height: 180px;
     max-width: 960px;
     margin: 0 auto;
-  
+
     .block {
       float: left;
       width: 320px;
-    
+
       .icon {
         float: left;
         height: 90px;
@@ -371,7 +372,7 @@ input[type=email]:focus, input[type=password]:focus {
     height: 30px;
     max-width: 960px;
     margin: 0 auto;
-  
+
     .item {
       float: left;
       font-size: 0.8em;
@@ -392,10 +393,10 @@ body.old {
   color: $main-font-color;
   //@include box-shadow;
   padding: $nav-padding-v $nav-padding-h;
-  
+
   .nav_container {
     width: 100%;
-    
+
     .aside_nav, .aside_login {
       font-size: 0.8em;
       font-weight: bold;
@@ -412,7 +413,7 @@ body.old {
     }
     .aside_login {
       top: 8px;
-      
+
       form#new_gamer_session input {
         border: 1px solid #C1C1C1;
         width: 110px;
@@ -584,17 +585,17 @@ body.old .content_box {
 }
 
 .content_wrapper {
-  
+
   .content {
   }
-  
+
   .feat_review {
     background-color: #FEFEFE;
     border: 1px solid #DEDEDE;
     border-bottom: 1px solid #9D9990;
     @include rounded-corners;
   }
-  
+
   .sign_up_icon {
     background: transparent url('/images/games/old/v2/sign_up_hd.png') no-repeat;
     height: 30px;
@@ -610,12 +611,12 @@ body.old .content_box {
   }
   .register_form {
     overflow: hidden;
-    
+
     form#new_gamer label {
       margin: 0 auto;
       margin-top: 8px;
     }
-    
+
     form#new_gamer input[type=email],
     form#new_gamer input[type=password] {
       border: 1px solid #C1C1C1;
@@ -625,7 +626,7 @@ body.old .content_box {
       @include rounded-corners(10px);
       @include inset-shadow;
     }
-    
+
     form#new_gamer input[type=submit] {
       border: 1px solid #B0B0B0;
       border-color: #B0131D;
@@ -640,9 +641,9 @@ body.old .content_box {
       @include inset-shadow;
       @include gradient(#CF1623, #EA1927);
     }
-    
+
     form#new_gamer {
-      
+
       select {
        border: 1px solid #C1C1C1;
        padding: 4px;
@@ -660,7 +661,7 @@ body.old .content_box {
   .profile .field {
     margin: 8px 0;
   }
-  
+
   .profile input[type=text],
   .profile input[type=password] {
     border: 1px solid #C1C1C1;
@@ -669,7 +670,7 @@ body.old .content_box {
     @include rounded-corners(10px);
     @include inset-shadow;
   }
-  
+
   .profile select {
     border: 1px solid #C1C1C1;
     width: 98%;
@@ -714,11 +715,11 @@ body.old .content_box {
   color: $main-font-color;
   position: absolute;
   width: 100%;
-  
+
   div {
     float: left;
   }
-  
+
   .device {
     background: $nav-bg-color url('/images/games/old/v2/nav_bg_hd.png') repeat;
     border: 1px solid #C1C1C1;
@@ -732,7 +733,7 @@ body.old .content_box {
     -webkit-border-top-left-radius: 0;
     -moz-border-radius-topright: 0;
     -moz-border-radius-topleft: 0;
-    
+
     .plus {
       cursor: pointer;
       background: transparent url("/images/games/old/v2/plus_button.png") no-repeat center center;
@@ -779,7 +780,7 @@ body.old .content_box {
 
 #reset_password {
   .content_box {
-    height: 160px; 
+    height: 160px;
   }
 }
 
