@@ -52,7 +52,7 @@
                       .field_checkbox
                         = f.check_box :terms_of_service
                       .field_tos_text
-                        = f.label :terms_of_service, "By checking this box I assert that I agree to the #{ link_to('terms of services', games_tos_path, :target => '_blank') } &amp; #{ link_to('privacy policy', games_privacy_path, :target => '_blank') }"
+                        = f.label :terms_of_service, "By checking this box I assert that I agree to the #{ link_to('terms of use', games_tos_path, :target => '_blank') } &amp; #{ link_to('privacy policy', games_privacy_path, :target => '_blank') }"
                       = f.hidden_field :referrer, :value => params[:referrer]
                     .field.right
                       = f.submit 'Sign Up', :class => 'button'
