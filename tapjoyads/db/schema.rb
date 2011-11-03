@@ -303,6 +303,7 @@ ActiveRecord::Schema.define(:version => 20111027000013) do
     t.string   "nickname"
     t.string   "postal_code"
     t.string   "favorite_category"
+    t.boolean  "use_gravatar",                         :default => false
     t.string   "facebook_id"
     t.string   "fb_access_token"
     t.string   "referred_by",            :limit => 36

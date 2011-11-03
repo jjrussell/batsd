@@ -6,6 +6,10 @@ class GamerProfile < ActiveRecord::Base
   validate :at_least_age_thirteen
   validates_inclusion_of :gender, :in => %w{ male female }, :allow_nil => true, :allow_blank => true
 
+  def self.columns
+    super.reject { |c| c.name == "use_gravatar" }
+  end
+
   def at_least_age_thirteen
     unless birthdate.nil?
       turns_thirteen = birthdate.years_since(13)
