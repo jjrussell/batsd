@@ -5,7 +5,7 @@ ActionController::Routing::Routes.draw do |map|
   when 'dashboard'
     %w( dashboard )
   when 'games'
-    %w( games )
+    %w( games website )
   when 'website'
     %w( website dashboard )
   when 'web'
