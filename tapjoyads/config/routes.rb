@@ -7,7 +7,7 @@ ActionController::Routing::Routes.draw do |map|
   when 'games'
     %w( games )
   when 'website'
-    %w( website api sdks )
+    %w( games website api sdks )
   when 'web'
     %w( web legacy default )
   when 'jobs', 'masterjobs'
