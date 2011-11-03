@@ -49,6 +49,10 @@ body.new .button {
  @include gradient(#EA1927, #CF1623);
 }
 
+body.old a.red-link {
+  color: #EA1927;
+}
+
 
 //-------------------------------------------
 //  Transitions
