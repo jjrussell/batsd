@@ -57,7 +57,7 @@
   - property_row('Min CVR', @offer.min_conversion_rate, nil)
   - property_row('Countries', @offer.countries, '')
   - property_row('DMA Codes', @offer.dma_codes, '')
-  - property_row('Region', @offer.region, '')
+  - property_row('Region', @offer.regions, '')
   - property_row('Pay-per-click', @offer.pay_per_click?, false)
   - property_row('Device types', @offer.device_types, @offer.expected_device_types.to_json, @offer.wrong_platform? ? 'incomplete' : '')
   - if @offer.item_type == 'App' && @offer.item.platform == 'iphone' && @offer.item.supported_devices.present?
