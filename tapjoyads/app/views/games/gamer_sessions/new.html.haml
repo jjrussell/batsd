@@ -19,8 +19,8 @@
                       = f.email_field :email, "autocorrect" => "off", "autocapitalize" => "off", :placeholder => "Email", :required => ""
                     .field.password
                       = f.password_field :password, :placeholder => "Password", :required => ""
-                  .field.login_btn
-                    = f.submit 'Login', :class => 'right button'
+                    .field.login_btn
+                      = f.submit 'Login', :class => 'right button'
               .form_fields
                 .login_error
                   = error_message_on @gamer_session, :email, :prepend_text => "Email "
@@ -70,6 +70,9 @@
             .knows_apps
             .about_tapjoy
               Tapjoy gives you a way to earn virtual currency by playing your favorite games like Happy Park, City of Wonder, Coin Dozer, Overkill, VIP Poker, and Gun Bros.  It recommends new apps to you, so if you like playing Magic Zoo, Tapjoy will suggest other games you'll enjoy, like Safari Zoo or Bug Village HD. Tapjoy also suggests apps to you that your friends are using right now. All that is free! So sign up now and tap into a better way to find the apps you love.
+      .content.sign_up_button
+        %h1
+          A better place to love the apps you have and find the apps you'll love.
       .content.b2b
         .content_box
           %a{ :href => "#{WEBSITE_URL}/site/advertisers"}

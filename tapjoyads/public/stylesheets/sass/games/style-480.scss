@@ -8,7 +8,7 @@
   
   .nav {
     height: 110px;
-    max-width: 480px;
+    width: 480px;
     
     .nav_container {
       
@@ -28,10 +28,13 @@
               float: none;
               height: 30px;
               margin: 0 auto;
-              width: 268px;
+              width: 330px;
             }
             .field {
               float: none;
+            }
+            .field.login_btn {
+              float: left;
             }
             .field.sign_in {
               display: none;
@@ -50,6 +53,11 @@
               width: 62px;
             }
           }
+          .forgot_pass {
+            float: none;
+            margin: 6px auto 0;
+            width: 102px;
+          }
         }
       }
       .logo {
@@ -65,10 +73,11 @@
     }
   }
   .main_scene {
+    background-position: -200px;
+    overflow: hidden;
     
     .content_box {
       max-width: 460px;
-      height: 340px;
       
       .main_scene_content {
         width: 460px;
@@ -86,6 +95,7 @@
         }
         .main_phone {
           display: none;
+          float: right;
         }
         .sign_up_content {
           postiton: relative;
@@ -98,13 +108,20 @@
     display: none;
   }
   .b2b {
+    float: none;
     height: 200px;
-    margin-top: 12px;
+    margin: 24px 0 12px;
+    width: 460px;
     
     .block {
       width: 460px;
       margin-bottom: 12px;
     }
+  }
+  .sign_up_button {
+    display: block;
+    margin: 12px 0;
+    width: 460px;
   }
 }
 

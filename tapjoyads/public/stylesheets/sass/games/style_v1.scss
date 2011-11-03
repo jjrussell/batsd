@@ -372,8 +372,8 @@ form#new_gamer input {
   margin-bottom: 12px;
   text-align: center;
 }
-.web .content,
-.ipad .content {
+.web body.old .content,
+.ipad body.old .content {
   margin: 0 auto;
   width: 640px;
   padding: 16px 40px;

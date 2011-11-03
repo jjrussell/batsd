@@ -182,6 +182,9 @@ input[type=email]:focus, input[type=password]:focus {
             font-weight: bold;
             margin: 4px 12px 0 0;
           }
+          .login_error {
+            text-align: center;
+          }
         } // login
       } // aside_login
       .logo {
@@ -231,9 +234,10 @@ input[type=email]:focus, input[type=password]:focus {
   //-------------------------------------------
   .main_scene {
     margin: 0 auto;
-    width: 100%;
+    max-width: 1300px;
     padding-left: 0;
     padding-right: 0;
+    width: 100%;
     @include rounded-corners(3px);
 
     .content_box {
@@ -249,7 +253,6 @@ input[type=email]:focus, input[type=password]:focus {
       .main_phone {
         float: left;
         height: 450px;
-        position: relative;
         width: 380px;
         @include fadeIn(0.5s);
       }
@@ -266,6 +269,7 @@ input[type=email]:focus, input[type=password]:focus {
         background-color: #FFF;
         border: 1px solid $tj-red;
         float: left;
+        height: 280px;
         left: 36px;
         position: relative;
         width: 320px;
@@ -319,7 +323,7 @@ input[type=email]:focus, input[type=password]:focus {
 
   .overview {
     height: 340px;
-    max-width: 960px;
+    width: 960px;
     position: relative;
     top: -20px;
     margin: 0 auto;
@@ -349,8 +353,8 @@ input[type=email]:focus, input[type=password]:focus {
 
   .b2b {
     height: 180px;
-    max-width: 960px;
     margin: 0 auto;
+    width: 960px;
 
     .block {
       float: left;
@@ -373,6 +377,10 @@ input[type=email]:focus, input[type=password]:focus {
     }
   }
 
+  .sign_up_button {
+    display: none;
+  }
+  
   .footer {
     height: 30px;
     max-width: 960px;
