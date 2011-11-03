@@ -19,8 +19,8 @@
                       = f.email_field :email, "autocorrect" => "off", "autocapitalize" => "off", :placeholder => "Email", :required => ""
                     .field.password
                       = f.password_field :password, :placeholder => "Password", :required => ""
-                    .field.login_btn
-                      = f.submit 'Login', :class => 'right button'
+                  .field.login_btn
+                    = f.submit 'Login', :class => 'right button'
               .form_fields
                 .login_error
                   = error_message_on @gamer_session, :email, :prepend_text => "Email "
