@@ -38,7 +38,6 @@ DASHBOARD_URL = local_config['dashboard_url'] || ''
 WEBSITE_URL = local_config['website_url'] || ''
 CLOUDFRONT_URL = 'https://d21x2jbj16e06e.cloudfront.net'
 GAMES_ANDROID_MARKET_URL = 'http://market.android.com/details?id=com.tapjoy.tapjoy'
-TJGAMES_URL = local_config['tjgames_url'] || ''
 
 NUM_POINT_PURCHASES_DOMAINS = 2
 NUM_CLICK_DOMAINS = 2
@@ -61,6 +60,11 @@ UDID_SALT = '2AdufehEmUpEdrEtamaspuxasU#=De'
 FRESHBOOKS_API_URL = 'tjdev.freshbooks.com'
 FRESHBOOKS_AUTH_TOKEN = '59548f1150fa38c3feb2a67d6b1a0f8b'
 
+PAPAYA_API_URL = 'https://papayamobile.com'
+PAPAYA_SECRET = 'RT4oNOKx0QK2nJ51'
+
 CLEAR_MEMCACHE = !(local_config['clear_memcache'] == false)
 
 DEV_FACEBOOK_ID = '100000459598424'
+
+Sass::Plugin.options[:style] = :nested

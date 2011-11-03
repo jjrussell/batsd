@@ -1,14 +1,137 @@
-/*--------------------*/
+//-------------------------------------------
 
-@import "games_mixins";
+@import "tj-mixins";
 
-/*--------------------*/
+//-------------------------------------------
 
+#login {
+
+  .nav {
+    height: 110px;
+    max-width: 320px;
+
+    .nav_container {
+
+      .aside_login {
+         float: none;
+         padding: 0;
+         width: 300px;
+
+        .login {
+          .form_fields {
+            width: 320px;
+
+            input {
+              margin: 0 4px;
+              width: 80px;
+            }
+            .row {
+              float: none;
+              height: 30px;
+              margin: 0 auto;
+            }
+            .field {
+              float: none;
+            }
+            .field.sign_in {
+              display: none;
+              height: 30px;
+              margin: 0 auto;
+              width: 60px;
+            }
+            .field.email {
+              float: left;
+            }
+            .field.password {
+              float: left;
+            }
+            .field.login_btn {
+              margin: 0 auto;
+              width: 62px;
+            }
+          }
+        }
+      }
+      .logo {
+        background-size: 80%;
+        float: none;
+        height: 36px;
+        width: 99px;
+        margin: 0 auto;
+      }
+      .nav_buttons a {
+        float: none;
+      }
+    }
+  }
+  .main_scene {
+
+    .content_box {
+      max-width: 300px;
+      height: 300px;
+
+      .main_scene_content {
+        width: 300px;
+
+        .sign_up_message {
+          display: none;
+          float: none;
+          margin: 0 auto;
+        }
+        .sign_up {
+          float: none;
+          height: 280px;
+          left: 0;
+          margin: 0 auto;
+          top: 24px;
+          width: 295px;
+
+          .sign_up_content {
+            postiton: relative;
+            top: 24px;
+
+            input[type=email], input[type=password] {
+              width: 254px;
+            }
+            input[type=submit] {
+              width: 100px;
+            }
+            .register_form {
+              .field_tos {
+                .field_tos_text {
+                  margin-right: 7px;
+                }
+              }
+            }
+          }
+        }
+        .main_phone {
+          display: none;
+        }
+      }
+    }
+  }
+  .overview {
+    display: none;
+  }
+  .b2b {
+    height: 200px;
+    margin-top: 12px;
+    width: 320px;
+
+    .block {
+      width: 300px;
+      margin-bottom: 12px;
+    }
+  }
+}
+
+body.old {
 .nav {
   padding: $nav-padding-v/2 $nav-padding-h/2;
 
   .nav_container {
-    
+
     .aside_nav {
       font-size: 0.7em;
       font-weight: bold;
@@ -21,7 +144,7 @@
       width: 300px;
     }
     .logo {
-      background: transparent url('/images/games/v2/logo_mobile.png') no-repeat;
+      background: transparent url('/images/games/old/v2/logo_mobile.png') no-repeat;
       height: 38px;
       margin: 0 auto;
       margin-bottom: $logo-bottom-margin/2;
@@ -29,7 +152,7 @@
     }
     .nav_buttons ul li {
       @include inset-button(16px, 6px 2px);
-      font-size: 0.60em;
+      font-size: 0.7em;
       width: 60px;
     }
   }
@@ -42,10 +165,10 @@
 }
 
 .content_wrapper {
-  
+
   .content {
   }
-  
+
   .register_header {
     background-size: 100%;
     height: 28px;
@@ -60,5 +183,6 @@
   }
   form#new_gamer {
   }
-  
+
 } //.content_wrapper
+}
