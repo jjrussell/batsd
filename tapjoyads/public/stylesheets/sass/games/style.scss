@@ -33,6 +33,7 @@ body.new .page {
 }
 
 body.new .button {
+  background-color: #CF1623;
   color: #FFF;
   cursor: pointer;
   font-size: 0.9em;
@@ -40,7 +41,7 @@ body.new .button {
   width: 120px;
   @include button(16px, 8px 10px);
   @include inset-text-shadow;
- @include gradient(#EA1927, #CF1623);
+  @include gradient(#EA1927, #CF1623);
 }
 
 body.old a.red-link {
@@ -177,6 +178,7 @@ input[type=email]:focus, input[type=password]:focus {
               }
             }
             input {
+              border: 1px solid #CECECE;
               margin-right: 10px;
               width: 112px;
             }
