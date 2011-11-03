@@ -5,23 +5,17 @@ all_caps:
       ads_by: "ADS BY"
 
     offerwall:
-      # shared between the original wall and the redesigned wall
       title: "EARN %{currency}"
       free: "FREE"
       next: "NEXT %{items}"
       previous: "PREVIOUS %{items}"
       missing_currency: "MISSING %{currency}?"
-
-      # original wall only
-      instructions: "INSTALL AND OPEN ONE OF THE APPS BELOW TO RECEIVE %{currency}"
-      amount_and_currency: "%{amount} %{currency}"
-      earn_currency: "EARN %{amount_and_currency}"
-      buy_currency: "BUY %{amount_and_currency}"
-
-      # redesigned wall only
-      redesign_instructions: "ENGAGE IN ANY OF THE FOLLOWING ACTIONS TO RECEIVE %{currency}"
-      redesign_earn_currency: "EARN %{amount} %{currency}"
-      redesign_buy_currency: "BUY %{amount} %{currency}"
+      instructions: "ENGAGE IN ANY OF THE FOLLOWING ACTIONS TO RECEIVE %{currency}"
+      earn_currency: "EARN %{amount} %{currency}"
+      buy_currency: "BUY %{amount} %{currency}"
+      load_more: "LOAD SOME MORE!"
+      loading: "LOADING..."
+      load_error: "PLEASE TRY AGAIN."
 
     instructions:
       title: "INSTRUCTIONS"

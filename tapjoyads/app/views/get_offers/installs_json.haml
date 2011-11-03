@@ -4,7 +4,7 @@
     hash                    = {}
     hash["Cost"]            = visual_cost(offer)
     hash["Amount"]          = @currency.get_visual_reward_amount(offer, params[:display_multiplier])
-    hash["IconURL"]         = offer.get_icon_url(:source => :cloudfront, :size => '57')
+    hash["IconURL"]         = offer.item_type == 'VideoOffer' ? offer.get_video_icon_url : offer.get_icon_url(:source => :cloudfront, :size => '57')
     hash["Name"]            = offer.name
     hash["RedirectURL"]     = get_click_url(offer)
     hash["StoreID"]         = offer.store_id_for_feed

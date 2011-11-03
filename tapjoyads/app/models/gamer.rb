@@ -1,9 +1,9 @@
 class Gamer < ActiveRecord::Base
   include UuidPrimaryKey
 
-  has_many :gamer_devices
-  has_many :invitations
-  has_one :gamer_profile
+  has_many :gamer_devices, :dependent => :destroy
+  has_many :invitations, :dependent => :destroy
+  has_one :gamer_profile, :dependent => :destroy
   delegate :facebook_id, :facebook_id?, :fb_access_token, :referred_by, :referred_by=, :referred_by?, :referral_count, :to => :gamer_profile
 
   validates_associated :gamer_profile, :on => :create
@@ -14,6 +14,16 @@ class Gamer < ActiveRecord::Base
   before_create :generate_confirmation_token
   before_create :check_referrer
   before_create :set_tos_version
+
+  after_destroy :delete_friends
+
+  DAYS_BEFORE_DELETION = 3.days
+  named_scope :to_delete, lambda {
+    {
+      :conditions => ["deactivated_at < ?", Time.zone.now.beginning_of_day - DAYS_BEFORE_DELETION],
+      :order => 'deactivated_at'
+    }
+  }
 
   alias_method :devices, :gamer_devices
 
@@ -28,6 +38,11 @@ class Gamer < ActiveRecord::Base
   def confirm!
     self.confirmed_at = Time.zone.now
     save
+  end
+
+  def deactivate!
+    self.deactivated_at = Time.zone.now
+    save!
   end
 
   def external_info(channel)
@@ -89,7 +104,8 @@ class Gamer < ActiveRecord::Base
     "https://secure.gravatar.com/avatar/#{generate_gravatar_hash}?d=mm#{size_param}"
   end
 
-private
+  private
+
   def generate_gravatar_hash
     Digest::MD5.hexdigest email.strip.downcase
   end
@@ -112,11 +128,13 @@ private
         rescue OpenSSL::Cipher::CipherError
         end
         if referred_by? && invitation_id
-          referred_by_gamer = Gamer.find(self.referred_by)
-          referred_by_gamer.gamer_profile.update_attributes!(:referral_count => referred_by_gamer.referral_count + 1)
-          invitation = Invitation.find(invitation_id)
-          follow_gamer(Gamer.find_by_id(referred_by))
-          Invitation.reconcile_pending_invitations(self, :invitation => invitation)
+          referred_by_gamer = Gamer.find_by_id(self.referred_by)
+          invitation = Invitation.find_by_id(invitation_id)
+          if referred_by_gamer && invitation
+            referred_by_gamer.gamer_profile.update_attributes!(:referral_count => referred_by_gamer.referral_count + 1)
+            follow_gamer(Gamer.find_by_id(referred_by))
+            Invitation.reconcile_pending_invitations(self, :invitation => invitation)
+          end
         end
       end
     end
@@ -128,5 +146,12 @@ private
 
   def set_tos_version
     self.accepted_tos_version = TAPJOY_GAMES_CURRENT_TOS_VERSION
+  end
+
+  def delete_friends
+    conditions = "gamer_id = '#{id}' or following_id = '#{id}'"
+    Friendship.select(:where => conditions, :consistent => true) do |friendship|
+      friendship.delete_all
+    end
   end
 end

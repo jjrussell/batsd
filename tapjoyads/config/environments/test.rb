@@ -65,6 +65,9 @@ UDID_SALT = 'yeJaf+ux5W!a_62eZacra9ep8w@Z&?'
 FRESHBOOKS_API_URL = 'tjdev.freshbooks.com'
 FRESHBOOKS_AUTH_TOKEN = '59548f1150fa38c3feb2a67d6b1a0f8b'
 
+PAPAYA_API_URL = 'https://papayamobile.com'
+PAPAYA_SECRET = 'RT4oNOKx0QK2nJ51'
+
 CLEAR_MEMCACHE = true
 
 DEV_FACEBOOK_ID = '100000459598424'

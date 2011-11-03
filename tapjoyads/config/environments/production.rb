@@ -79,6 +79,9 @@ UDID_SALT = 'Z*Xac$dum8xeB9-Quv3St@RET6E6UT'
 FRESHBOOKS_API_URL = 'tapjoy.freshbooks.com'
 FRESHBOOKS_AUTH_TOKEN = '26c1ce82ad1cfab698746e532361f814'
 
+PAPAYA_API_URL = 'https://papayamobile.com'
+PAPAYA_SECRET = 'RT4oNOKx0QK2nJ51'
+
 CLEAR_MEMCACHE = false
 
 # SASS - Output compressed CSS

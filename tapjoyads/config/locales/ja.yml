@@ -5,23 +5,17 @@ ja:
       ads_by: "Ads by"
 
     offerwall:
-      # shared between the original wall and the redesigned wall
       title: "%{currency} 稼ぐ"
       free: "無料"
       next: "次の %{items}件"
       previous: "前の %{items}件"
       missing_currency: "%{currency}が受取れない場合"
-
-      # original wall only
-      instructions: "%{currency} を獲得するために、次の中からアプリをインストールして起動してください"
-      amount_and_currency: "%{amount} %{currency}"
-      earn_currency: "%{amount_and_currency} を獲得"
-      buy_currency: "%{amount_and_currency} を買う"
-
-      # redesigned wall only
-      redesign_instructions: "次のアクションで %{currency} を獲得する"
-      redesign_earn_currency: "%{amount} %{currency}  を獲得"
-      redesign_buy_currency: "%{amount} %{currency} を買う"
+      instructions: "次のアクションで %{currency} を獲得する"
+      earn_currency: "%{amount} %{currency}  を獲得"
+      buy_currency: "%{amount} %{currency} を買う"
+      load_more: "Load some more!"
+      loading: "Loading..."
+      load_error: "Please try again."
 
     instructions:
       title: "指示"
