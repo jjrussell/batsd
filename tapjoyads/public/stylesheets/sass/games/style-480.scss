@@ -8,14 +8,15 @@
 
   .nav {
     height: 110px;
-    width: 480px;
-
+    max-width: 480px;
+    width: 100%;
+    
     .nav_container {
-
+      
       .aside_login {
          float: none;
+         margin: 0 auto;
          padding: 0;
-         width: 460px;
 
         .login {
           .form_fields {
@@ -129,8 +130,10 @@
   }
   .sign_up_button {
     display: block;
-    margin: 12px 0;
-    width: 95%;
+    width: 100%;
+  }
+  .sign_up_button div {
+    padding: 12px;
   }
 }
 

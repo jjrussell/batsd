@@ -8,14 +8,14 @@
 
   .nav {
     height: 110px;
-    max-width: 320px;
+    width: 320px;
 
     .nav_container {
 
       .aside_login {
          float: none;
+         margin: 0 auto;
          padding: 0;
-         width: 300px;
 
         .login {
           .form_fields {
