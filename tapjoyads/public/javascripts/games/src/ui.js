@@ -167,13 +167,15 @@ TJG.ui = {
         $(".email_error").show();
       }
       else if (hasError != true) {
+				var form_content = $(".register_form").html();
+				$(".register_form").html('');
         var loader = [
           '<div class="title_2 center">Registering</div>',
           '<div class="loading_animation"></div>'
         ].join('');
-        $('.register_form').animate({ height: "0px" }, animateSpd, function() {
+        //$('.register_form').animate({ height: "0px" }, animateSpd, function() {
           $('.register_progess').html(loader);
-        });
+        //});
         $.ajax({
           type: 'POST',
           url: rurl,
@@ -265,7 +267,8 @@ TJG.ui = {
             }
             $('.sign_up_again').click(function(){
               $('.register_progess').html('');
-              $('.register_form').animate({ height: form_height + "px" }, animateSpd);
+							$(".register_form").html(form_content);
+              //$('.register_form').animate({ height: form_height + "px" }, animateSpd);
             });
           },
           error: function() {
@@ -278,7 +281,8 @@ TJG.ui = {
             $('.register_progess').html(msg);
             $('.sign_up_again').click(function(){
                $('.register_progess').html('');
-               $('.register_form').animate({ height: form_height + "px" }, animateSpd);
+							 $(".register_form").html(form_content);
+//               $('.register_form').animate({ height: form_height + "px" }, animateSpd);
             });
           }
         });
