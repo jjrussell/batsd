@@ -164,8 +164,8 @@ class Offer < ActiveRecord::Base
   alias_method :events, :offer_events
   alias_method :random, :rand
 
-  json_set_field :device_types, :screen_layout_sizes, :countries, :dma_codes
-  memoize :get_device_types, :get_screen_layout_sizes, :get_countries, :get_dma_codes
+  json_set_field :device_types, :screen_layout_sizes, :countries, :dma_codes, :region
+  memoize :get_device_types, :get_screen_layout_sizes, :get_countries, :get_dma_codes, :get_region
 
   def app_offer?
     item_type == 'App' || item_type == 'ActionOffer'
