@@ -288,6 +288,10 @@ input[type=email]:focus, input[type=password]:focus {
 
           .register_form {
 
+            select#date_month {
+              width: 100px;
+            }
+
             select {
               width: 60px;
             }
@@ -397,6 +401,7 @@ input[type=email]:focus, input[type=password]:focus {
     margin: 0 auto;
     font-size: 0.8em;
     text-align: center;
+    
   }
 }
 
