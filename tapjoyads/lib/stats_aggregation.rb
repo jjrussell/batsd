@@ -1,6 +1,7 @@
 class StatsAggregation
 
   OFFERS_PER_MESSAGE = 200
+  DAILY_STATS_START_HOUR = 3
 
   def initialize(offer_ids)
     @offer_ids = offer_ids
@@ -101,7 +102,7 @@ class StatsAggregation
       daily_ranks.save
 
       offer.last_daily_stats_aggregation_time = end_time
-      offer.next_daily_stats_aggregation_time = end_time + 1.day + Offer::DAILY_STATS_START_HOUR.hours + rand(Offer::DAILY_STATS_RANGE.hours)
+      offer.next_daily_stats_aggregation_time = end_time + 1.day + DAILY_STATS_START_HOUR.hours
       offer.save!
     end
   end

@@ -110,9 +110,29 @@ TJG.loadedImages = {};
     TJG.doc.className = className + classes.join(' ');
 })(this, document);
 /*
+
+            _/    _/_/    _/_/_/_/_/                              _/
+               _/    _/      _/      _/_/    _/    _/    _/_/_/  _/_/_/
+          _/  _/  _/_/      _/    _/    _/  _/    _/  _/        _/    _/
+         _/  _/    _/      _/    _/    _/  _/    _/  _/        _/    _/
+        _/    _/_/  _/    _/      _/_/      _/_/_/    _/_/_/  _/    _/
+       _/
+    _/
+
+    Created by David Kaneda <http://www.davidkaneda.com>
+    Documentation and issue tracking on GitHub <http://wiki.github.com/senchalabs/jQTouch/>
+
+    Special thanks to Jonathan Stark <http://jonathanstark.com/>
+    and pinch/zoom <http://www.pinchzoom.com/>
+
+    (c) 2010 by jQTouch project members.
+    See LICENSE.txt for license.
+
     $Revision: 166 $
     $Date: Tue Mar 29 01:24:46 EDT 2011 $
     $LastChangedBy: jonathanstark $
+
+
 */
 (function($) {
     $.jQTouch = function(options) {
@@ -935,30 +955,28 @@ TJG.utils = {
   }
 
 };
-
-$.utils = TJG.utils;
 TJG.ui = {
 
   hideLoader : function(delay,fn) {
     TJG.repositionDialog = [];
-    delay = $.utils.or(delay, "fast");
+    delay = TJG.utils.or(delay, "fast");
     setTimeout(function() {
       $('#loader').fadeOut(delay,fn);
     });
   },
 
   showLoader : function(delay,fn) {
-    $.utils.centerDialog("#loader");
+    TJG.utils.centerDialog("#loader");
     TJG.repositionDialog = ["#loader"];
-    delay = $.utils.or(delay, "fast");
+    delay = TJG.utils.or(delay, "fast");
     setTimeout(function() {
       $('#loader').fadeIn(delay,fn);
     });
   },
 
   showLoaderAtCenter : function(delay,fn) {
-    $.utils.centerDialog("#loader");
-    delay = $.utils.or(delay, "fast");
+    TJG.utils.centerDialog("#loader");
+    delay = TJG.utils.or(delay, "fast");
     setTimeout(function() {
       var scrollTop = $(window).scrollTop();
       var screenHeight = $(window).height();
@@ -969,15 +987,15 @@ TJG.ui = {
 
   hideSender : function(delay,fn) {
     TJG.repositionDialog = [];
-    delay = $.utils.or(delay, "fast");
+    delay = TJG.utils.or(delay, "fast");
     setTimeout(function() {
       $('#sender').fadeOut(delay,fn);
     });
   },
 
   showSender : function(delay,fn) {
-    $.utils.centerDialog("#sender");
-    delay = $.utils.or(delay, "fast");
+    TJG.utils.centerDialog("#sender");
+    delay = TJG.utils.or(delay, "fast");
     setTimeout(function() {
       var scrollTop = $(window).scrollTop();
       var screenHeight = $(window).height();
@@ -987,7 +1005,7 @@ TJG.ui = {
   },
 
   removeDialogs : function (delay) {
-    delay = $.utils.or(delay, "fast");
+    delay = TJG.utils.or(delay, "fast");
     setTimeout(function() {
       $('.dialog_wrapper').fadeOut(delay);
     });
@@ -1212,7 +1230,7 @@ TJG.ui = {
             msg = [
               '<div class="title_2 center">Oops!</div>',
               '<div class="dialog_content center">', error ,'.</div>',
-              '<div class="sign_up_again"><div class="button red try_again">Try Again</div></div>',
+              '<div id="sign_up_again"><div class="button red try_again">Try Again</div></div>',
             ].join('');
             $('.register_progess').html(msg);
             $('.sign_up_again').click(function(){
@@ -2376,18 +2394,14 @@ RegExp.escape = function(text) {
       },
 
       loadEvents : function () {
+
+        TJG.ui.showRegister();
+
         $('.close_dialog').click(function(){
           TJG.ui.removeDialogs();
           TJG.repositionDialog = [];
         });
-
-        TJG.ui.showRegister();
-
-        $('#how_works').click(function(){
-          TJG.utils.centerDialog("#how_works_dialog");
-          TJG.repositionDialog = ["#how_works_dialog"];
-          $("#how_works_dialog").fadeIn(350);
-        });
+        
         $('#link_device').click(function(){
           if (TJG.vars.isAndroid &&  TJG.android_market_url) {
             document.location.href = TJG.android_market_url;

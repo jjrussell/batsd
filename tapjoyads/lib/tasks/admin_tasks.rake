@@ -12,11 +12,11 @@ namespace :admin do
 
   desc "Copies the production database to the development database"
   task :sync_db do
-    raise "Must be run from development mode" unless Rails.env == 'development'
+    raise "Must be run from development or staging mode" unless Rails.env.development? || Rails.env.staging?
 
     database_yml = YAML::load_file("config/database.yml")
     source       = database_yml['production_slave']
-    dest         = database_yml['development']
+    dest         = database_yml[Rails.env]
     dump_file    = "tmp/#{source['database']}.sql"
     dump_file2   = "tmp/#{source['database']}2.sql"
 
@@ -30,7 +30,7 @@ namespace :admin do
     Rake.application.invoke_task('db:drop')
     Rake.application.invoke_task('db:create')
 
-    print("Restoring backup to the development database... ")
+    print("Restoring backup to the #{Rails.env} database... ")
     time = Benchmark.realtime do
       system("mysql -u #{dest['username']} --password=#{dest['password']} -h #{dest['host']} #{dest['database']} < #{dump_file}")
       system("mysql -u #{dest['username']} --password=#{dest['password']} -h #{dest['host']} #{dest['database']} < #{dump_file2}")
@@ -42,13 +42,13 @@ namespace :admin do
 
   desc "Reconfigure syslog-ng"
   task :reconfigure_syslog_ng, :args do |task, task_args|
-    servers = Rails.env == 'test' ? 'testserver' : 'masterjobs jobserver website dashboard games webserver'
+    servers = Rails.env.test? ? 'util' : 'masterjobs jobserver website dashboard games webserver'
     system("script/cloudrun '#{servers}' 'sudo /home/webuser/tapjoyserver/server/syslog-ng/configure.rb #{task_args[:args]} 2>&1' 'ubuntu'")
   end
 
   desc "Update geoip databse"
   task :geoipupdate do
-    servers = Rails.env == 'test' ? 'testserver' : 'masterjobs jobserver website dashboard games webserver'
+    servers = Rails.env.test? ? 'util' : 'masterjobs jobserver website dashboard games webserver'
     system("script/cloudrun '#{servers}' 'tapjoyserver/server/update_geoip.rb' 'webuser' 'serial'")
   end
 
