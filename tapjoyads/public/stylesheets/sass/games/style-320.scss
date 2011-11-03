@@ -68,7 +68,7 @@
 
     .content_box {
       max-width: 300px;
-      height: 300px;
+      height: 310px;
 
       .main_scene_content {
         width: 300px;
@@ -80,10 +80,11 @@
         }
         .sign_up {
           float: none;
+          height: 290px;
           left: 0;
           margin: 0 auto;
           top: 24px;
-          width: 300px;
+          width: 295px;
 
           .sign_up_content {
             postiton: relative;
@@ -94,6 +95,13 @@
             }
             input[type=submit] {
               width: 100px;
+            }
+            .register_form {
+              .field_tos {
+                .field_tos_text {
+                  margin-right: 7px;
+                }
+              }
             }
           }
         }
