@@ -1,20 +1,20 @@
-/*--------------------*/
+//-------------------------------------------
+// Global Mixins
+//-------------------------------------------
 
-@import "games_mixins";
+@import "tj-mixins";
 
-/*--------------------*/
+//-------------------------------------------
+// Import Base CSS
+//-------------------------------------------
 
-html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, big, cite, code, del, dfn, em, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var, b, u, i, center, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td, article, aside, canvas, details, embed,  figure, figcaption, footer, header, hgroup, menu, a, output, ruby, section, summary, time, mark, audio, video { margin: 0; padding: 0; border: 0; font-size: 100%; font: inherit; vertical-align: baseline; }
-article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, section { display: block; }
-body { line-height: 1; }
-ol, ul { list-style: none; }
-blockquote, q { quotes: none; }
-blockquote:before, blockquote:after, q:before, q:after { content: ''; content: none; }
-table { border-collapse: collapse; border-spacing: 0; }
-html { -webkit-text-size-adjust: none; }
-*:focus { outline: none; }
+@import "tj-base";
 
-body {
+//-------------------------------------------
+//  Basics
+//-------------------------------------------
+
+body.old {
   background: #F7F7F7;
   font-family: $main-font-name;
   color: $main-font-color;
@@ -24,26 +24,440 @@ body {
   -webkit-tap-highlight-color: rgba(0,0,0,0);
   -webkit-touch-callout: none;
 }
-a, a:visited {
-  text-decoration: none;
+
+body.new {
+  border-top: 1px solid $tj-red;
+  font-family: $main-font-name;
   color: $main-font-color;
-  -webkit-tap-highlight-color: rgba(0,0,0,0);
+  height: 100%;
+  width: 100%;
 }
 
-#jqt {}
+body.new .page {
+  padding: $page-padding-v $page-padding-h;
+  height: 100%;
+}
 
-/*------ Top Nav -----*/
+body.new .button {
+  color: #FFF;
+  cursor: pointer;
+  font-size: 0.9em;
+  position: relative;
+  width: 120px;
+  @include button(16px, 8px 10px);
+  @include inset-text-shadow;
+ @include gradient(#EA1927, #CF1623);
+}
+
+body.old a.red-link {
+  color: #EA1927;
+}
+
+
+//-------------------------------------------
+//  Transitions
+//-------------------------------------------
+
+@-webkit-keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@-moz-keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+//-------------------------------------------
+//  Forms
+//-------------------------------------------
+input, select {
+  border: 1px solid $border-color;;
+  padding: 6px;
+  color: $main-font-color;
+  -webkit-appearance: none;
+  @include inset-shadow;
+}
+input[type=email], input[type=password] {
+  @include rounded-corners(12px);
+}
+input[type=checkbox] {
+  cursor: pointer;
+  width: 18px;
+  height: 18px;
+  @include rounded-corners(2px);
+}
+input[type=checkbox]:checked {
+
+}
+select {
+  -webkit-appearance: none;
+  @include rounded-corners(6px);
+}
+input::-webkit-input-placeholder {
+  color: $main-font-color;
+  font-style: italic;
+  font-weight: bold;
+}
+input:-moz-placeholder {
+  color: $main-font-color;
+  font-style: italic;
+  font-weight: bold;
+}
+input[type=email]:focus, input[type=password]:focus {
+  @include inset-shadow(#FFF, 6px);
+  @include shadow($border-color, 6px);
+}
+
+//-------------------------------------------
+//  Navigation Bar
+//-------------------------------------------
+#login { // Isolate this to just the logged out view for now.  For this push, we want to only update the logged out page
+  padding-bottom: 24px;
+
+  .nav {
+    height: 72px;
+    margin: 0 auto;
+    max-width: 960px;
+
+    .nav_container {
+      width: 100%;
+
+      .aside_nav, .aside_login {
+        float: right;
+        font-size: 0.9em;
+        position: relative;
+        top: 6px;
+      }
+      .aside_login {
+        width: 410px;
+        padding: 0 10px;
+
+        .login {
+
+          .form_fields {
+            height: 30px;
+            margin-bottom: 6px;
+
+            .row {
+              float: left;
+            }
+            .field {
+              float: left;
+              height: 30px;
+            }
+            @media screen and (max-width: 640px) {
+              .row {
+                width: 134px;
+              }
+              .field {
+                float: none;
+              }
+              .login_btn {
+                float: left;
+              }
+            }
+            .field.sign_in {
+              color: $tj-red;
+              font-size: 1.2em;
+              font-weight: bold;
+              font-style: italic;
+              margin-right: 10px;
+              position: relative;
+              top: 6px;
+            }
+            @media screen and (max-width: 640px) {
+              .field.sign_in {
+                float: left;
+              }
+            }
+            @media screen and (max-width: 580px) {
+              .field.sign_in {
+                display: none;
+              }
+            }
+            input {
+              margin-right: 10px;
+              width: 112px;
+            }
+            input[type=submit] {
+              height: 30px;
+              margin-right: 0;
+              padding: 6px;
+              width: 62px;
+            }
+          }
+          .fieldWithErrors {
+            position: relative;
+          }
+          .formError {
+            float: none;
+          }
+          .forgot_pass {
+            float: right;
+            font-size: 0.85em;
+            font-weight: bold;
+            margin: 0 12px 0 0;
+          }
+          .login_error {
+            text-align: right;
+            padding: 0 12px 0 0;
+          }
+        } // login
+      } // aside_login
+      @media screen and (max-width: 640px) {
+        .aside_login {
+          width: 340px;
+          top: 0;
+        }
+      }
+      @media screen and (max-width: 580px) {
+        .aside_login {
+          width: 240px;
+          top: 0;
+        }
+      }
+      .logo {
+        height: 93px;
+        float: left;
+        width: 197px;
+      }
+      .nav_buttons {
+        float: left;
+        margin: 0 auto;
+      }
+      .nav_buttons a {
+        float: left;
+      }
+      .nav_buttons ul ul.pair {
+        float: left;
+      }
+      .nav_buttons li {
+        color: $main-font-color;
+        cursor: pointer;
+        font-size: 0.9em;
+        font-weight: bold;
+        float: left;
+        list-style: none;
+        margin-top: 16px;
+        margin-right: 8px;
+        width: 100px;
+        @include inset-button(16px, 8px 4px);
+        @include inset-shadow;
+        border: 1px solid #B0B0B0;
+      }
+      .nav_buttons li.active_button, .nav_buttons li:active {
+        border-color: #B0131D;
+        color: #FFF;
+        @include inset-text-shadow;
+        @include box-shadow(#999);
+        @include gradient(#CF1623, #CF1623);
+      }
+      .nav_buttons li.active {
+        cursor: default;
+      }
+    }
+  }
+
+  //-------------------------------------------
+  // Signup/Login Page
+  //-------------------------------------------
+  .main_scene {
+    margin: 0 auto;
+    max-width: 1300px;
+    padding-left: 0;
+    padding-right: 0;
+    width: 100%;
+    @include rounded-corners(3px);
+
+    .content_box {
+      height: 450px;
+      margin: 0 auto;
+      max-width: 960px;
+    }
+
+    .main_scene_content {
+      width: 780px;
+      float: right;
+
+      .main_phone {
+        float: left;
+        height: 450px;
+        width: 380px;
+        @include fadeIn(0.5s);
+      }
+
+      .sign_up_message {
+        float: left;
+        height: 240px;
+        position: relative;
+        width: 400px;
+        @include fadeIn(0.5s);
+      }
+
+      .sign_up {
+        background-color: #FFF;
+        border: 1px solid $tj-red;
+        float: left;
+        height: 270px;
+        left: 36px;
+        position: relative;
+        width: 320px;
+        z-index: 1;
+        @include shadow(#333);
+        @include rounded-corners(10px);
+        @include fadeIn(0.5s);
+
+        h1, h5 {
+          color: $tj-red;
+          margin: 8px auto;
+        }
+
+        .sign_up_content {
+          padding: 16px;
+
+          .register_form {
+
+            select#date_month {
+              width: 100px;
+            }
+
+            select {
+              width: 60px;
+            }
+            input[type=email], input[type=password] {
+              width: 274px;
+            }
+            .field {
+              margin: 4px 0;
+            }
+            .field_tos {
+              float: left;
+              .field_checkbox {
+                float: left;
+                margin-right: 12px;
+                width: 22px;
+              }
+              .field_tos_text {
+                float: left;
+                font-size: 10px;
+                width: 120px;
+                margin-right: 12px;
+              }
+            }
+            input[type=submit] {
+              margin: 5px auto;
+              padding: 12px 16px
+            }
+          }
+
+          .register_progess {
+            .button {
+              margin: 0 auto;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  .content {
+    min-height: 0;
+  }
+
+  .overview {
+    height: 340px;
+    width: 960px;
+    position: relative;
+    top: -20px;
+    margin: 0 auto;
+
+    .devices {
+      float: left;
+      height: 255px;
+      width: 313px;
+    }
+    .about {
+      color: #848484;
+      float: left;
+      margin-left: 40px;
+      width: 560px;
+
+      .knows_apps {
+        float: none;
+        height: 82px;
+        padding-top: 50px;
+      }
+      .about_tapjoy {
+        float: none;
+        line-height: 140%;
+      }
+    }
+  }
+
+  .b2b {
+    height: 180px;
+    margin: 0 auto;
+    width: 960px;
+
+    .block {
+      float: left;
+      width: 320px;
+
+      .icon {
+        float: left;
+        height: 90px;
+        margin-right: 12px;
+        width: 90px;
+      }
+      h1 {
+        color: $tj-red;
+      }
+      .block_text {
+        font-size: 0.9em;
+        line-height: 140%;
+        margin-top: 12px;
+      }
+    }
+  }
+
+  .sign_up_button {
+    display: none;
+  }
+
+  .footer {
+    height: 30px;
+    max-width: 960px;
+    margin: 0 auto;
+    font-size: 0.8em;
+    text-align: center;
+
+  }
+}
+
+//-------------------------------------------
+//
+// NOTE: Stuff below this will be removed from once final design has been finalized and ported over to the new.
+//
+body.old {
 .nav {
   background-color: $nav-bg-color;
-  background: $nav-bg-color url('/images/games/v2/nav_bg_hd.png') repeat;
+  background: $nav-bg-color url('/images/games/old/v2/nav_bg_hd.png') repeat;
   border-bottom: 1px solid #9D9990;
   color: $main-font-color;
   //@include box-shadow;
   padding: $nav-padding-v $nav-padding-h;
-  
+
   .nav_container {
     width: 100%;
-    
+
     .aside_nav, .aside_login {
       font-size: 0.8em;
       font-weight: bold;
@@ -52,12 +466,15 @@ a, a:visited {
       position: relative;
       top: 24px;
     }
+    .aside_nav {
+      top: 70px;
+    }
     .aside_nav span {
       margin-left: $nav-padding-h;
     }
     .aside_login {
       top: 8px;
-      
+
       form#new_gamer_session input {
         border: 1px solid #C1C1C1;
         width: 110px;
@@ -83,7 +500,7 @@ a, a:visited {
       }
     }
     .logo {
-      background: transparent url('/images/games/v2/logo_hd.png') no-repeat;
+      background: transparent url('/images/games/old/v2/logo_hd.png') no-repeat;
       height: 76px;
       margin: 0 12px 0 24px;
       float: left;
@@ -151,6 +568,24 @@ a, a:visited {
         }
       }
     }
+    @media screen and (max-width: 420px) {
+      .aside_login {
+        width: 300px;
+      }
+      .logo {
+        margin: 0 12px !important;
+      }
+      .nav_buttons ul li {
+        @include inset-button(16px, 6px 2px);
+        font-size: 0.7em;
+        width: 60px;
+      }
+      .aside_login {
+        form#new_gamer_session input {
+          float: none;
+        }
+      }
+    }
     .nav_buttons li.active_button, .nav_buttons li:active {
       border-color: #B0131D;
       color: #FFF;
@@ -163,7 +598,7 @@ a, a:visited {
   } // .nav_container
 } // .nav
 
-#login .content_box {
+body.old .content_box {
   margin: 0 auto;
   padding: 20px;
   width: 460px;
@@ -178,11 +613,11 @@ a, a:visited {
 }
 
 #support_request .content_box {
-  width: 350px;
+  width: 300px;
 }
 
 #support_request textarea {
-  width: 310px;
+  width: 260px;
 }
 
 #support_request .content_box.fixed {
@@ -204,45 +639,45 @@ a, a:visited {
 }
 
 .loading_animation {
-  background: transparent url('/images/games/v2/loader.gif') no-repeat;
+  background: transparent url('/images/games/old/v2/loader.gif') no-repeat;
   margin: 12px auto;
   height: 11px;
   width: 16px;
 }
 
 .content_wrapper {
-  
+
   .content {
   }
-  
+
   .feat_review {
     background-color: #FEFEFE;
     border: 1px solid #DEDEDE;
     border-bottom: 1px solid #9D9990;
     @include rounded-corners;
   }
-  
+
   .sign_up_icon {
-    background: transparent url('/images/games/v2/sign_up_hd.png') no-repeat;
+    background: transparent url('/images/games/old/v2/sign_up_hd.png') no-repeat;
     height: 30px;
     margin: 0 auto;
     width: 100px;
   }
 
   .register_header {
-    background: transparent url('/images/games/v2/register_header.png') no-repeat;
+    background: transparent url('/images/games/old/v2/register_header.png') no-repeat;
     height: 57px;
     margin: 0 auto 24px;
     width: 400px;
   }
   .register_form {
     overflow: hidden;
-    
+
     form#new_gamer label {
       margin: 0 auto;
       margin-top: 8px;
     }
-    
+
     form#new_gamer input[type=email],
     form#new_gamer input[type=password] {
       border: 1px solid #C1C1C1;
@@ -252,7 +687,7 @@ a, a:visited {
       @include rounded-corners(10px);
       @include inset-shadow;
     }
-    
+
     form#new_gamer input[type=submit] {
       border: 1px solid #B0B0B0;
       border-color: #B0131D;
@@ -267,9 +702,9 @@ a, a:visited {
       @include inset-shadow;
       @include gradient(#CF1623, #EA1927);
     }
-    
+
     form#new_gamer {
-      
+
       select {
        border: 1px solid #C1C1C1;
        padding: 4px;
@@ -287,7 +722,7 @@ a, a:visited {
   .profile .field {
     margin: 8px 0;
   }
-  
+
   .profile input[type=text],
   .profile input[type=password] {
     border: 1px solid #C1C1C1;
@@ -296,7 +731,7 @@ a, a:visited {
     @include rounded-corners(10px);
     @include inset-shadow;
   }
-  
+
   .profile select {
     border: 1px solid #C1C1C1;
     width: 98%;
@@ -341,53 +776,60 @@ a, a:visited {
   color: $main-font-color;
   position: absolute;
   width: 100%;
-  
+
   div {
     float: left;
   }
-  
+
   .device {
-    background: $nav-bg-color url('/images/games/v2/nav_bg_hd.png') repeat;
+    background: $nav-bg-color url('/images/games/old/v2/nav_bg_hd.png') repeat;
     border: 1px solid #C1C1C1;
     border-top-style: none;
     float: right;
     margin-right: 12px;
-    padding: 4px 6px;
+    padding: 0 6px;
     z-index: 1;
     @include rounded-corners(10px);
     -webkit-border-top-right-radius: 0;
     -webkit-border-top-left-radius: 0;
     -moz-border-radius-topright: 0;
     -moz-border-radius-topleft: 0;
-    
+
     .plus {
       cursor: pointer;
-      background: transparent url("/images/games/v2/plus_button.png") no-repeat;
-      height: 24px;
-      width: 23px;
+      background: transparent url("/images/games/old/v2/plus_button.png") no-repeat center center;
+      height: 40px;
+      width: 30px;
     }
     .plus.close {
-      background: transparent url("/images/games/v2/minus_button.png") no-repeat;
+      background: transparent url("/images/games/old/v2/minus_button.png") no-repeat center center;
+      height: 40px;
     }
     .device_info {
+      height: 40px;
       text-align: center;
+    }
+    .device_info div {
+      float: none;
     }
     .device_name {
       cursor: pointer;
-      font-size: 0.8em;
+      font-size: 0.85em;
       font-weight: bold;
-      margin: 0 auto;
+      margin: 5px auto 0;
       overflow: hidden;
       text-align: center;
     }
     .device_switch {
       margin: 0 auto;
+      font-size: 0.75em;
+      margin: 5px auto 0;
     }
     .mobile_icon {
-      background: transparent url("/images/games/v2/phone.png") no-repeat;
+      background: transparent url("/images/games/old/v2/phone.png") no-repeat center center;
       cursor: pointer;
-      height: 22px;
-      width: 14px;
+      height: 40px;
+      width: 20px;
     }
   }
 }
@@ -399,10 +841,11 @@ a, a:visited {
 
 #reset_password {
   .content_box {
-    height: 160px; 
+    height: 160px;
   }
 }
 
 .forgot_pass {
   font-size: 0.8em;
+}
 }

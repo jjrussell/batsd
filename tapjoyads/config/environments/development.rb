@@ -66,3 +66,5 @@ PAPAYA_SECRET = 'RT4oNOKx0QK2nJ51'
 CLEAR_MEMCACHE = !(local_config['clear_memcache'] == false)
 
 DEV_FACEBOOK_ID = '100000459598424'
+
+Sass::Plugin.options[:style] = :nested

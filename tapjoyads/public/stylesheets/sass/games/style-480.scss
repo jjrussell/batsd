@@ -1,26 +1,149 @@
-/*--------------------*/
+//-------------------------------------------
 
-@import "games_mixins";
+@import "tj-mixins";
 
-/*--------------------*/
+//-------------------------------------------
 
+#login {
+
+  .nav {
+    height: 110px;
+    width: 480px;
+
+    .nav_container {
+
+      .aside_login {
+         float: none;
+         padding: 0;
+         width: 460px;
+
+        .login {
+          .form_fields {
+            width: 460px;
+
+            input {
+              margin: 0 4px;
+            }
+            .row {
+              float: none;
+              height: 30px;
+              margin: 0 auto;
+              width: 330px;
+            }
+            .field {
+              float: none;
+            }
+            .field.login_btn {
+              float: left;
+            }
+            .field.sign_in {
+              display: none;
+              height: 30px;
+              margin: 0 auto;
+              width: 60px;
+            }
+            .field.email {
+              float: left;
+            }
+            .field.password {
+              float: left;
+            }
+            .field.login_btn {
+              margin: 0 auto;
+              width: 62px;
+            }
+          }
+          .forgot_pass {
+            float: none;
+            margin: 6px auto 0;
+            width: 110px;
+          }
+        }
+      }
+      .logo {
+        background-size: 80%;
+        float: none;
+        height: 36px;
+        width: 99px;
+        margin: 0 auto;
+      }
+      .nav_buttons a {
+        float: none;
+      }
+    }
+  }
+  .main_scene {
+    background: none;
+//    background-position: -200px;
+    overflow: hidden;
+
+    .content_box {
+      height: 300px;
+      max-width: 460px;
+
+      .main_scene_content {
+        width: 460px;
+
+        .sign_up_message {
+          display: none;
+          float: none;
+          margin: 0 auto;
+        }
+        .sign_up {
+          float: none;
+          height: 280px;
+          left: 0;
+          margin: 0 auto;
+          top: 24px;
+        }
+        .main_phone {
+          display: none;
+          float: right;
+        }
+        .sign_up_content {
+          postiton: relative;
+          top: 24px;
+        }
+      }
+    }
+  }
+  .overview {
+    display: none;
+  }
+  .b2b {
+    float: none;
+    height: 200px;
+    margin: 24px 0 12px;
+    width: 460px;
+
+    .block {
+      width: 460px;
+      margin-bottom: 12px;
+    }
+  }
+  .sign_up_button {
+    display: block;
+    margin: 12px 0;
+    width: 95%;
+  }
+}
+
+body.old {
 .nav {
   padding: $nav-padding-v/2 $nav-padding-h/2;
 
   .nav_container {
     width: 100%;
-    
+
     .aside_nav {
-      margin-top: 6px;
-      top: 12px;
+      margin-top: 20px;
+      top: 20px;
     }
     .aside_login {
       float: none;
       margin: 0 auto;
-      
       text-align: center;
-      width: 460px;
-      
+
       form#new_gamer_session input {
         width: 130px;
       }
@@ -32,7 +155,7 @@
       }
     }
     .logo {
-      background: transparent url('/images/games/v2/logo_mobile.png') no-repeat;
+      background: transparent url('/images/games/old/v2/logo_mobile.png') no-repeat;
       float: none;
       height: 38px;
       margin: 0 auto !important;
@@ -59,27 +182,28 @@
 #login .content_box{
   margin: 0 auto;
   padding: 10px;
-  width: 440px;
+  width: 340px;
 }
 .content_wrapper {
-  
+
   .content {
   }
-  
+
   .register_header {
-    background: transparent url('/images/games/v2/register_header.png') no-repeat;
+    background: transparent url('/images/games/old/v2/register_header.png') no-repeat;
     background-size: 100%;
     height: 28px;
     margin: 0 auto 12px;
     width: 200px;
-  }  
+  }
   form#new_gamer {
   }
-  
+
 } //.content_wrapper
 .device_wrapper {
-  
+
   .device {
     margin-right: 6px;
   }
+}
 }
