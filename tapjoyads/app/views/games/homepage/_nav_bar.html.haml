@@ -3,12 +3,13 @@
 
 - if show_device
   .device_wrapper
-    .device
+    .device.clearfix
       .mobile_icon
       .device_info
-        %span.device_name
+        .device_name
           = @device_name
-        %span.device_switch
+        .device_switch
+          wrong device?
       .plus
 
 
@@ -30,13 +31,13 @@
         %ul
           %ul.pair
             - if active == 'back'
-            
+
               %a{ :href => back_button_destination, :class => "slideright" }
                 %li.my_apps
                   Back
-            
+
             - else
-            
+
               - if active == 'my_apps'
                 %li.my_apps.active_button
                   My Apps

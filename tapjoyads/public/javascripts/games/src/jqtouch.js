@@ -83,7 +83,7 @@
                     {selector:'#jqt > * > ul li a', name:'slideleft', is3d:false}
                 ]
             };
-            
+
         function addAnimation(animation) {
             if (typeof(animation.selector) === 'string' && typeof(animation.name) === 'string') {
                 animations.push(animation);
@@ -386,7 +386,7 @@
             if (!$el.is(touchSelectors.join(', '))) {
                 var $el = $(e.target).closest(touchSelectors.join(', '));
             }
-            
+
             if (!$el.length || !$el.attr('href')) {
                 return false;
             }
@@ -439,7 +439,7 @@
                 }
             }
         }
-        function touchStartHandler(e) {            
+        function touchStartHandler(e) {
             if (!tapReady) {
                 e.preventDefault();
                 return false;
@@ -632,8 +632,8 @@
                 .bind('submit', submitHandler)
                 .bind('tap', tapHandler)
                 .trigger('orientationchange');
-            
-            
+
+
             if ($('#jqt > .current').length == 0) {
                 currentPage = $('#jqt > *:first');
             } else {
@@ -646,7 +646,7 @@
             setHash(initialPageId);
             addPageToHistory(currentPage);
             scrollTo(0, 0);
-            
+
             $('#jqt > *').css('minHeight', window.innerHeight);
 
         });

@@ -15,3 +15,9 @@ test:
   secret: '810c1363c332e39a53d130fcf5132ca9'
   api_key: '273914012622852'
   oauth2: true
+
+staging:
+  app_id: '273914012622852'
+  secret: '810c1363c332e39a53d130fcf5132ca9'
+  api_key: '273914012622852'
+  oauth2: true

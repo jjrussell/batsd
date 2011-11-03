@@ -1,18 +1,14 @@
-/*--------------------*/
+//-------------------------------------------
+// Global Mixins
+//-------------------------------------------
 
-@import "games_mixins";
+@import "tj-mixins";
 
-/*--------------------*/
+//-------------------------------------------
 
 .logo {
-  background: transparent url("/images/games/v2/logo_hd.png") no-repeat;
+  background: transparent url("/images/games/old/v2/logo_hd.png") no-repeat;
   background-size: 100%;
   height: 38px;
   width: 84px;
-}
-.sign_up_icon {
-  background: transparent url('/images/games/v2/sign_up_hd.png') no-repeat;
-  background-size: 100%;
-  height: 19px;
-  width: 42px;
 }

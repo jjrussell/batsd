@@ -1,55 +1,109 @@
+- @page_design = 'new'
 #jqt
   #login.current
-    .nav
-      .nav_container.clearfix
-        %a{ :href => games_root_path, :class => "slideright" }
-          .logo
-        .aside_login
-          .login.clearfix
-          - form_for([ :games, @gamer_session ]) do |f|
-            - if params[:data].present?
-              = hidden_field_tag :data, params[:data]
-            .field.login_email.clearfix
-              = f.label :email
-              = f.email_field :email, "autocorrect" => "off", "autocapitalize" => "off"
-            .field.login_pass.clearfix
-              = f.label :password
-              = f.password_field :password
-            .field.login_btn.clearfix
-              = f.submit 'Login!', :class => 'right button'
-            .login_error
-              = error_message_on @gamer_session, :email, :prepend_text => "Email "
-              = error_message_on @gamer_session, :password, :prepend_text => "Password "
-            .forgot_pass.right
-              = link_to('Forgot password?', new_games_password_reset_path)
+    .page
+      .nav
+        .nav_container.clearfix
+          %a{ :href => games_root_path, :class => "slideright" }
+            .logo
+          .aside_login
+            .login
+              .form_fields
+                - form_for([ :games, @gamer_session ]) do |f|
+                  - if params[:data].present?
+                    = hidden_field_tag :data, params[:data]
+                  .field.sign_in
+                    Sign In
+                  .row
+                    .field.email
+                      = f.email_field :email, "autocorrect" => "off", "autocapitalize" => "off", :placeholder => "Email", :required => ""
+                    .field.password
+                      = f.password_field :password, :placeholder => "Password", :required => ""
+                  .field.login_btn
+                    = f.submit 'Login', :class => 'right button'
+              .form_fields
+                .login_error
+                  = error_message_on @gamer_session, :email, :prepend_text => "Email "
+                  = error_message_on @gamer_session, :password, :prepend_text => "Password "
+                .forgot_pass
+                  = link_to('Forgot password?', new_games_password_reset_path)
 
-    .content_wrapper
-      .content
+      .content.main_scene
         .content_box
-          .register_header
-          .register_form
-            .sign_up_icon
-            - form_for([ :games, @gamer ], :url => games_gamer_path ) do |f|
-              .field
-                = label_tag :birthdate
-                = select_date nil, { :order => [:month, :day, :year], :start_year => Time.now.year, :end_year => (Time.now.year - 100), :include_blank => false, :prompt => {:day => 'Day', :month => 'Month', :year => 'Year'} }
-              .field
-                = f.label :email
-                = f.email_field :email, "autocorrect" => "off", "autocapitalize" => "off"
-              .field
-                = f.label :password
-                = f.password_field :password
-              .field.field_tos
-                = f.check_box :terms_of_service
-                = f.label :terms_of_service, "By checking this box I assert that I agree to the #{ link_to('terms of services', games_tos_path, :target => '_blank') } &amp; #{ link_to('privacy policy', games_privacy_path, :target => '_blank') }"
-              .field
-                = f.hidden_field :referrer, :value => params[:referrer]
-                = f.submit 'Sign Up', :class => 'button'
-              .email_error.center
-                = error_message_on @gamer, :email
-                = error_message_on @gamer, :password
-                = error_message_on @gamer, :terms_of_service
-          .register_progess
+          .main_scene_content
+            .main_phone
+            .sign_up_message
+            .sign_up
+              .sign_up_content.clearfix
+                %h1
+                  Sign Up
+                .register_form
+                  - form_for([ :games, @gamer ], :url => games_gamer_path ) do |f|
+                    .field
+                      = label_tag :birthdate
+                      = select_date nil, { :order => [:month, :day, :year], :start_year => Time.now.year, :end_year => (Time.now.year - 100), :include_blank => false, :prompt => {:day => 'dd', :month => 'mm', :year => 'yy'} }
+                    .field
+                      = f.email_field :email, "autocorrect" => "off", "autocapitalize" => "off", :placeholder => "Email"
+                    .field
+                      = f.password_field :password, :placeholder => "Password"
+                    .field.field_tos
+                      .field_checkbox
+                        = f.check_box :terms_of_service
+                      .field_tos_text
+                        = f.label :terms_of_service, "By checking this box I assert that I agree to the #{ link_to('terms of use', games_tos_path, :target => '_blank') } &amp; #{ link_to('privacy policy', games_privacy_path, :target => '_blank') }"
+                      = f.hidden_field :referrer, :value => params[:referrer]
+                    .field.right
+                      = f.submit 'Sign Up', :class => 'button'
+                    .email_error.center
+                      = error_message_on @gamer, :email
+                      = error_message_on @gamer, :password
+                      = error_message_on @gamer, :terms_of_service
+                .register_progess
+      .content.overview
+        .content_box
+          .devices
+          .about
+            .knows_apps
+            .about_tapjoy
+              Tapjoy allows you to discover popular apps like Happy Park,
+              City of Wonder, Coin Dozer, Overkill, VIP Poker, and Gun Bros,
+              while accessing premium content in your favorite apps.
+
+      .content.sign_up_button
+        %h1
+          A better place to love the apps you have and find the apps you'll love.
+      .content.b2b
+        .content_box
+          %a{ :href => "#{WEBSITE_URL}/site/advertisers"}
+            .block
+              .icon.advertisers
+              %h1
+                Advertisers
+              .block_text
+                Reach millions of users and gain exposure for your products
+          %a{ :href => "#{WEBSITE_URL}/site/app_developers"}
+            .block
+              .icon.developers
+              %h1
+                Developers
+              .block_text
+                Drive significant revenue to your app with our monetization tools
+      .content.footer
+        .content_box
+          %a{ :href => "#{WEBSITE_URL}/site/about_us" }
+            About Tapjoy
+          |
+          %a{ :href => games_privacy_path }
+            Privacy Policy
+          |
+          %a{ :href =>  "http://blog.tapjoy.com" }
+            Blog
+        .content_box
+          %br
+          Copyright &copy; 2011 Tapjoy, Inc. All Rights Reserved.
+          Tapjoy and the Tapjoy logo are trademarks or registered trademarks
+          of Tapjoy, Inc. All third party logos and trademarks mentioned are
+          the property of their respective owners.
 
 - content_for :page_javascript do
   :plain
@@ -81,4 +135,3 @@
         });
       });
     });
-

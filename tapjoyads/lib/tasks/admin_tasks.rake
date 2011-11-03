@@ -12,25 +12,25 @@ namespace :admin do
 
   desc "Copies the production database to the development database"
   task :sync_db do
-    raise "Must be run from development mode" unless Rails.env == 'development'
+    raise "Must be run from development or staging mode" unless Rails.env.development? || Rails.env.staging?
 
     database_yml = YAML::load_file("config/database.yml")
     source       = database_yml['production_slave']
-    dest         = database_yml['development']
+    dest         = database_yml[Rails.env]
     dump_file    = "tmp/#{source['database']}.sql"
     dump_file2   = "tmp/#{source['database']}2.sql"
 
     print("Backing up the production database... ")
     time = Benchmark.realtime do
-      system("mysqldump -u #{source['username']} --password=#{source['password']} -h #{source['host']} --single-transaction --ignore-table=#{source['database']}.conversions --ignore-table=#{source['database']}.payout_infos #{source['database']} > #{dump_file}")
-      system("mysqldump -u #{source['username']} --password=#{source['password']} -h #{source['host']} --single-transaction --no-data #{source['database']} conversions payout_infos > #{dump_file2}")
+      system("mysqldump -u #{source['username']} --password=#{source['password']} -h #{source['host']} --single-transaction --ignore-table=#{source['database']}.gamers --ignore-table=#{source['database']}.gamer_profiles --ignore-table=#{source['database']}.gamer_devices --ignore-table=#{source['database']}.conversions --ignore-table=#{source['database']}.payout_infos #{source['database']} > #{dump_file}")
+      system("mysqldump -u #{source['username']} --password=#{source['password']} -h #{source['host']} --single-transaction --no-data #{source['database']} gamers gamer_profiles gamer_devices conversions payout_infos > #{dump_file2}")
     end
     puts("finished in #{time} seconds.")
 
     Rake.application.invoke_task('db:drop')
     Rake.application.invoke_task('db:create')
 
-    print("Restoring backup to the development database... ")
+    print("Restoring backup to the #{Rails.env} database... ")
     time = Benchmark.realtime do
       system("mysql -u #{dest['username']} --password=#{dest['password']} -h #{dest['host']} #{dest['database']} < #{dump_file}")
       system("mysql -u #{dest['username']} --password=#{dest['password']} -h #{dest['host']} #{dest['database']} < #{dump_file2}")
@@ -42,13 +42,13 @@ namespace :admin do
 
   desc "Reconfigure syslog-ng"
   task :reconfigure_syslog_ng, :args do |task, task_args|
-    servers = Rails.env == 'test' ? 'testserver' : 'masterjobs jobserver website dashboard games webserver'
+    servers = Rails.env.test? ? 'util' : 'masterjobs jobserver website dashboard games webserver'
     system("script/cloudrun '#{servers}' 'sudo /home/webuser/tapjoyserver/server/syslog-ng/configure.rb #{task_args[:args]} 2>&1' 'ubuntu'")
   end
 
   desc "Update geoip databse"
   task :geoipupdate do
-    servers = Rails.env == 'test' ? 'testserver' : 'masterjobs jobserver website dashboard games webserver'
+    servers = Rails.env.test? ? 'util' : 'masterjobs jobserver website dashboard games webserver'
     system("script/cloudrun '#{servers}' 'tapjoyserver/server/update_geoip.rb' 'webuser' 'serial'")
   end
 

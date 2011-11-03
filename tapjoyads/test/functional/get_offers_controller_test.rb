@@ -87,6 +87,7 @@ class GetOffersControllerTest < ActionController::TestCase
     setup do
       @device = Factory(:device)
       @currency = Factory(:currency, :test_devices => @device.id)
+      @currency.update_attribute(:hide_rewarded_app_installs, false)
       @params = { :udid => 'stuff', :publisher_user_id => 'more_stuff', :currency_id => @currency.id, :app_id => @currency.app.id }
       @offer = Factory(:app).primary_offer
       OfferCacher.stubs(:get_unsorted_offers_prerejected).returns([@offer])
@@ -96,32 +97,6 @@ class GetOffersControllerTest < ActionController::TestCase
       @response = get(:webpage, @params.merge(:udid => @device.id))
       assert assigns(:test_offers)
     end
-
-    should "render redesign for appropriate devices" do
-      @response = get(:webpage, @params.merge(:udid => @device.id))
-      assert_template "get_offers/webpage.html.haml"
-
-      device = Device.new(:key => 'a100000d9833c5')
-      @response = get(:webpage, @params.merge(:udid => device.id))
-      assert_template "get_offers/webpage_redesign_2"
-      assert_equal "layouts/offerwall_redesign_2", @response.layout
-
-      @currency.hide_rewarded_app_installs = true
-      @currency.save!
-      @response = get(:webpage, @params.merge(:udid => @device.id))
-      assert_template "get_offers/webpage_redesign"
-      assert_equal "layouts/iphone_redesign", @response.layout
-
-      @response = get(:webpage, @params.merge(:source => "tj_games"))
-      assert_template "get_offers/webpage.html.haml"
-
-      @currency.minimum_hide_rewarded_app_installs_version = "15"
-      @currency.save!
-      @response = get(:webpage, @params.merge(:app_version => "14"))
-      assert_template "get_offers/webpage.html.haml"
-      @response = get(:webpage, @params.merge(:app_version => "16"))
-      assert_template "get_offers/webpage_redesign.html.haml"
-    end
   end
 
   context "when calling 'featured'" do
@@ -129,6 +104,7 @@ class GetOffersControllerTest < ActionController::TestCase
       RailsCache.stubs(:get).returns(nil)
       @device = Factory(:device)
       @currency = Factory(:currency, :test_devices => @device.id)
+      @currency.update_attribute(:hide_rewarded_app_installs, false)
       @offer = Factory(:app).primary_offer
       controller.stubs(:get_ip_address).returns('208.90.212.38')
       OfferCacher.stubs(:get_unsorted_offers_prerejected).returns([@offer])
