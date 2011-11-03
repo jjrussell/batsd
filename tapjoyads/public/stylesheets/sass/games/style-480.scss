@@ -126,10 +126,11 @@
     float: none;
     height: 200px;
     margin: 24px 0 12px;
-    width: 460px;
+    max-width: 460px;
+    width: 100%;
 
     .block {
-      width: 460px;
+      width: 100%;
       margin-bottom: 12px;
     }
   }

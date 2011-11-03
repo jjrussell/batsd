@@ -203,6 +203,11 @@ input[type=email]:focus, input[type=password]:focus {
             text-align: right;
             padding: 0 12px 0 0;
           }
+          @media screen and (max-width: 640px) {
+            .login_error {
+              font-size: 0.75em;
+            }
+          }
         } // login
       } // aside_login
       @media screen and (max-width: 640px) {
