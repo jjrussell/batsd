@@ -28,7 +28,8 @@
               float: none;
               height: 30px;
               margin: 0 auto;
-              width: 330px;
+              width: 250px;
+              display: inline-block;
             }
             .field {
               float: none;
@@ -43,14 +44,18 @@
               width: 60px;
             }
             .field.email {
-              float: left;
+              float: none;
+              display: inline-block;
             }
             .field.password {
-              float: left;
+              float: none;
+              display: inline-block;
             }
             .field.login_btn {
               margin: 0 auto;
               width: 62px;
+              float: none;
+              display: inline-block;
             }
           }
           .forgot_pass {
@@ -74,7 +79,7 @@
   }
   .main_scene {
     background: none;
-//    background-position: -200px;
+// background-position: -200px;
     overflow: hidden;
 
     .content_box {
