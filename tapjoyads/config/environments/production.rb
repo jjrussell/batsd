@@ -82,3 +82,5 @@ PAPAYA_API_URL = 'https://papayamobile.com'
 PAPAYA_SECRET = 'RT4oNOKx0QK2nJ51'
 
 CLEAR_MEMCACHE = false
+
+Sass::Plugin.options[:style] = :compressed
