@@ -71,3 +71,5 @@ PAPAYA_SECRET = 'RT4oNOKx0QK2nJ51'
 CLEAR_MEMCACHE = true
 
 DEV_FACEBOOK_ID = '100000459598424'
+
+Sass::Plugin.options[:style] = :nested

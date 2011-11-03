@@ -84,5 +84,4 @@ PAPAYA_SECRET = 'RT4oNOKx0QK2nJ51'
 
 CLEAR_MEMCACHE = false
 
-# SASS - Output compressed CSS
 Sass::Plugin.options[:style] = :compressed
