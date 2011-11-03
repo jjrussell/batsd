@@ -36,26 +36,4 @@ ActionController::Routing::Routes.draw do |map|
       social.send_facebook_invites 'send_facebook_invites', :action => :send_facebook_invites
     end
   end
-  
-  map.with_options({:path_prefix => MACHINE_TYPE == 'games' ? 'site' : 'games/site', :name_prefix => 'site_'}) do |map|
-    map.root :controller => :homepage, :action => 'start'
-    map.connect 'privacy', :controller => 'documents', :action => 'privacy'
-    map.connect 'privacy.html', :controller => 'documents', :action => 'privacy'
-    map.connect 'privacy_mobile', :controller => 'documents', :action => 'privacy_mobile'
-    map.connect ':action', :controller => 'homepage'
-    map.connect 'index.html', :controller => 'homepage', :action => 'index'
-    map.connect 'advertisers/whitepaper', :controller => 'homepage', :action => 'whitepaper'
-    map.connect 'press', :controller => 'homepage/press', :action => 'index'
-    map.connect 'press/:id', :controller => 'homepage/press', :action => 'show'
-    map.connect 'careers', :controller => 'homepage/careers', :action => 'index'
-    map.connect 'careers/:id', :controller => 'homepage/careers', :action => 'show'
-    map.connect 'glu', :controller => 'homepage/press', :action => 'glu'
-    map.connect 'publishing', :controller => 'homepage', :action => 'publishers'
-    map.connect 'androidfund', :controller => 'androidfund'
-    map.connect 'AndroidFund', :controller => 'androidfund'
-    map.connect 'androidfund/apply', :controller => 'androidfund', :action => :apply
-    map.connect 'privacy', :controller => 'documents', :action => 'privacy'
-    map.connect 'privacy.html', :controller => 'documents', :action => 'privacy'
-    map.resources :opt_outs, :only => :create
-  end
 end
