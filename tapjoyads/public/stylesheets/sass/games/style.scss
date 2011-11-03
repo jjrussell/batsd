@@ -327,6 +327,10 @@ input[type=email]:focus, input[type=password]:focus {
     }
   }
 
+  .content {
+    min-height: 0;
+  }
+
   .overview {
     height: 340px;
     width: 960px;
