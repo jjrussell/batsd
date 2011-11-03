@@ -176,6 +176,9 @@ input[type=email]:focus, input[type=password]:focus {
           .fieldWithErrors {
             position: relative;
           }
+          .formError {
+            float: none;
+          }
           .forgot_pass {
             float: right;
             font-size: 0.85em;
