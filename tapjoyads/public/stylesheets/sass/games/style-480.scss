@@ -78,6 +78,7 @@
     overflow: hidden;
 
     .content_box {
+      height: 310px;
       max-width: 460px;
 
       .main_scene_content {
@@ -90,6 +91,7 @@
         }
         .sign_up {
           float: none;
+          height: 290px;
           left: 0;
           margin: 0 auto;
           top: 24px;
