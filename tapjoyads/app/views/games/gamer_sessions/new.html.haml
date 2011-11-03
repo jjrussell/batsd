@@ -48,8 +48,6 @@
                       = f.email_field :email, "autocorrect" => "off", "autocapitalize" => "off", :placeholder => "Email"
                     .field
                       = f.password_field :password, :placeholder => "Password"
-                    .field
-                      = f.password_field :password_confirmation, :placeholder => "Confirm Password"
                     .field.field_tos
                       .field_checkbox
                         = f.check_box :terms_of_service
@@ -81,7 +79,7 @@
               %h1
                 Advertisers
               .block_text
-                Reach Millions of users and gain exposure for your products
+                Reach millions of users and gain exposure for your products
           %a{ :href => "#{WEBSITE_URL}/site/app_developers"}
             .block
               .icon.developers
