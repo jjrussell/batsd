@@ -137,7 +137,7 @@ input[type=email]:focus, input[type=password]:focus {
         top: 6px;
       }
       .aside_login {
-        width: 410px;
+        width: 406px;
         padding: 0 10px;
 
         .login {
@@ -173,7 +173,7 @@ input[type=email]:focus, input[type=password]:focus {
               position: relative;
               top: 6px;
             }
-            @media screen and (max-width: 640px) {
+            @media screen and (max-width: 650px) {
               .field.sign_in {
                 float: left;
               }
@@ -220,7 +220,7 @@ input[type=email]:focus, input[type=password]:focus {
       }
       @media screen and (max-width: 580px) {
         .aside_login {
-          width: 240px;
+          width: 250px;
           top: 0;
         }
       }
@@ -277,6 +277,8 @@ input[type=email]:focus, input[type=password]:focus {
     width: 100%;
     @include rounded-corners(3px);
 
+    .content {width: 100%;}
+    
     .content_box {
       height: 450px;
       margin: 0 auto;

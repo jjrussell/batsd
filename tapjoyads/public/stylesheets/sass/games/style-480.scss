@@ -19,16 +19,17 @@
 
         .login {
           .form_fields {
-            width: 460px;
-
+            margin: 0 auto;
+            width: 360px;
+            
             input {
               margin: 0 4px;
             }
             .row {
-              float: none;
+              float: left;
               height: 30px;
               margin: 0 auto;
-              width: 330px;
+              width: 268px;
             }
             .field {
               float: none;
@@ -38,6 +39,7 @@
             }
             .field.sign_in {
               display: none;
+              float: left;
               height: 30px;
               margin: 0 auto;
               width: 60px;
@@ -54,9 +56,12 @@
             }
           }
           .forgot_pass {
-            float: none;
-            margin: 6px auto 0;
+            float: right;
+            margin: 6px 24px 0 0;
             width: 110px;
+          }
+          .login_error {
+            text-align: center;
           }
         }
       }
@@ -78,11 +83,11 @@
     overflow: hidden;
 
     .content_box {
-      height: 300px;
+      height: 320px;
       max-width: 460px;
 
       .main_scene_content {
-        width: 460px;
+        width: 100%;
 
         .sign_up_message {
           display: none;
@@ -94,6 +99,7 @@
           height: 280px;
           left: 0;
           margin: 0 auto;
+          position: static;
           top: 24px;
         }
         .main_phone {
