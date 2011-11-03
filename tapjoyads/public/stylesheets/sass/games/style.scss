@@ -36,7 +36,6 @@ body.new {
 body.new .page {
   padding: $page-padding-v $page-padding-h;
   height: 100%;
-  overflow: hidden;
 }
 
 body.new .button {
@@ -233,6 +232,8 @@ input[type=email]:focus, input[type=password]:focus {
   .main_scene {
     margin: 0 auto;
     width: 100%;
+    padding-left: 0;
+    padding-right: 0;
     @include rounded-corners(3px);
 
     .content_box {
