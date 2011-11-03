@@ -17,7 +17,8 @@
          float: none;
          margin: 0 auto;
          padding: 0;
-
+         width: 100%;
+         
         .login {
           .form_fields {
             margin: 0 auto;
@@ -46,14 +47,18 @@
               width: 60px;
             }
             .field.email {
-              float: left;
+              float: none;
+              display: inline-block;
             }
             .field.password {
-              float: left;
+              float: none;
+              display: inline-block;
             }
             .field.login_btn {
               margin: 0 auto;
               width: 62px;
+              float: none;
+              display: inline-block;
             }
           }
           .forgot_pass {
@@ -62,7 +67,8 @@
             width: 110px;
           }
           .login_error {
-            text-align: center;
+            margin: 6px 24px 0 0;
+            text-align: right;
           }
         }
       }
@@ -80,7 +86,6 @@
   }
   .main_scene {
     background: none;
-//    background-position: -200px;
     overflow: hidden;
 
     .content_box {
