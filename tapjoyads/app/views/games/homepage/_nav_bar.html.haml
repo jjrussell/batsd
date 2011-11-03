@@ -3,12 +3,13 @@
 
 - if show_device
   .device_wrapper
-    .device
+    .device.clearfix
       .mobile_icon
       .device_info
-        %span.device_name
+        .device_name
           = @device_name
-        %span.device_switch
+        .device_switch
+          wrong device?
       .plus
 
 
