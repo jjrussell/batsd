@@ -1,22 +1,47 @@
-/*--------------------*/
+//-------------------------------------------
 
-@import "games_mixins";
+@import "tj-mixins";
 
-/*--------------------*/
+//-------------------------------------------
 
+#login {
+  
+  .nav {
+    max-width: 768px;
+  }
+  .main_scene {
+    
+    .content_box {
+      max-width: 768px;
+    }
+    .main_phone {
+      left: 36px;
+    }
+  }
+  .overview {
+    max-width: 768px;
+    
+    .about {
+      margin: 36px 0 0 20px;
+      width: 380px;
+    }
+  }
+}
+
+body.old {
 .nav {
   padding: $nav-padding-v/2 $nav-padding-h/2;
 
   .nav_container {
     
     .aside_nav {
-      top: 22px;
+      top: 40px;
     }
     .aside_login {
       top: 0px;
     }
     .logo {
-      background: transparent url('/images/games/v2/logo_hd.png');
+      background: transparent url('/images/games/old/v2/logo_hd.png');
       background-repeat: no-repeat;
       background-position: center;
       background-size: 100%;
@@ -42,4 +67,18 @@
   }
   
 } //.content_wrapper
+}
 
+.new {
+.main_scene {
+  margin: 0 auto;
+  width: 100%;
+  @include rounded-corners(3px);
+    
+  .content_box {
+    height: 450px;
+    margin: 0 auto;
+    max-width: 768px;
+  }
+}
+}

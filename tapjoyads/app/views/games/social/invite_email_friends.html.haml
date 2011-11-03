@@ -1,11 +1,32 @@
 - content_for :page_head, stylesheet_link_tag('games/facebook')
+:ruby
+  image_root = "#{WEBSITE_URL}/images/email"
 
 %h1.titlebar Send an Email Invite
 .email_invite_wrapper
   - form_tag games_social_send_email_invites_path, :id => 'invite_friends' do
     #recipients_lable Recipients
     .recipients_wrapper= text_field_tag 'recipients', @recipients, :placeholder => 'Use commas to separate multiple emails'
-    .content_wrapper= text_area_tag 'content', @content, :rows => 15, :disabled => true
+    .content_wrapper
+      #email
+        %table{:border => 0, :cellspacing => 0, :cellpadding => 0}
+          %tr
+            %td
+              = image_tag("#{image_root}/logo.png", :title => 'Tapjoy Games', :alt => 'Tapjoy Games', :style => "border: none;")
+            %td#follow_us
+              follow us:
+            %td#social
+              = image_tag("#{image_root}/fb_icon.png", :title => 'Facebook', :alt => 'Facebook', :style => "border: none;")
+            %td#social
+              = image_tag("#{image_root}/twitter_icon.png", :title => 'Twitter', :alt => 'Twitter', :style => "border: none;")
+        %hr
+        .greeting Hi,
+        - @content.each do |line|
+          .invite_email_body= line
+          %br
+        = image_tag("#{image_root}/createAccount_btn.png", :title => 'Tapjoy Games', :alt => 'Tapjoy Games', :style => "border: none;")
+        %br
+        .signature Team Tapjoy
     %span#back_button Back
     %span#invite_button Invite
 

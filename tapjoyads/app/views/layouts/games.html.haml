@@ -10,7 +10,7 @@
     %link{ :rel => 'apple-touch-icon-precomposed', :href => '/images/tjgames-114x114.png' }
 
     %title= @page_title.blank? ? 'Tapjoy' : "#{@page_title} - Tapjoy"
-    
+
     = stylesheet_link_tag("games/style_v1")
     = stylesheet_link_tag("games/style")
     = stylesheet_link_tag("games/images")
@@ -21,13 +21,13 @@
 
     = yield :page_head
 
-  %body
+  %body{ :class => @page_design == 'new' ? 'new' : 'old' }
     %noscript
       %style{:type => "text/css", :media => "screen"}
         :plain
           #jqt {display:none;}
       .noscript_msg
-        Please go into your browser settings and enable JavaScript to continue using Tapjoy Games.
+        Please go into your browser settings and enable JavaScript to continue using Tapjoy.
 
     = yield
 
@@ -40,7 +40,7 @@
           .dialog_header_right
           .dialog_header_left
           .dialog_title.title_2 Hooray!
-        .dialog_header Your device has been linked to your Tapjoy Games account
+        .dialog_header Your device has been linked to your Tapjoy account
         .dialog_content Now close this box and start earning currency in your favorite games!
 
     #bad_news.dialog_wrapper.hide
