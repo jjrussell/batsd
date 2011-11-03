@@ -132,6 +132,10 @@
     .block {
       width: 100%;
       margin-bottom: 12px;
+      
+      .block_text {
+        padding-right: 12px;
+      }
     }
   }
   .sign_up_button {
