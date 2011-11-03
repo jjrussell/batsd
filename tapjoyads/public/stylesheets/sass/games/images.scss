@@ -13,6 +13,9 @@
   .logo {
     background: transparent url('/images/games/old/v2/logo_hd.png');
   }
+  input[type=checkbox]:checked {
+    background: transparent url('/images/games/checkmark.png') no-repeat;
+  }
 }
 //-------------------------------------------
 
