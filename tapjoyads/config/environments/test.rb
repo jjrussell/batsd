@@ -38,7 +38,6 @@ DASHBOARD_URL = ''
 WEBSITE_URL = ''
 CLOUDFRONT_URL = 'https://d21x2jbj16e06e.cloudfront.net'
 GAMES_ANDROID_MARKET_URL = 'http://market.android.com/details?id=com.tapjoy.tapjoy'
-TJGAMES_URL = ''
 
 amazon = YAML::load_file("#{RAILS_ROOT}/config/amazon.yaml")
 ENV['AWS_ACCESS_KEY_ID'] = amazon['test']['access_key_id']

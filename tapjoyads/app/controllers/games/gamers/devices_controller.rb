@@ -2,7 +2,7 @@ class Games::Gamers::DevicesController < GamesController
 
   def new
     if current_gamer.present?
-      send_file("#{RAILS_ROOT}/data/TapjoyGamesProfile.mobileconfig", :filename => 'TapjoyGamesProfile.mobileconfig', :disposition => 'inline', :type => :mobileconfig)
+      send_file("#{RAILS_ROOT}/data/TapjoyProfile.mobileconfig", :filename => 'TapjoyProfile.mobileconfig', :disposition => 'inline', :type => :mobileconfig)
     else
       flash[:error] = "Please log in and try again. You must have cookies enabled."
       redirect_to games_root_path
