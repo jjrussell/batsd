@@ -1,23 +1,21 @@
+- @page_title = @currency.conversion_rate > 0 ? t('text.featured.title', :currency => @currency.name) : ''
+
 #main
   - if @offer.rewarded? && @currency.conversion_rate > 0
-    %h1
-      Earn
-      %span.amount= @currency.get_visual_reward_amount(@offer, params[:display_multiplier])
-      #{@currency.name}!
+    %h1= t('text.featured.earn_currency', :amount_and_currency => "#{@currency.get_visual_reward_amount(@offer, params[:display_multiplier])} #{@currency.name}")
   %p.offertext
     - if @offer.item_type == 'App'
-      = @offer.rewarded? ? "Just download and run" : "Try out"
+      = @offer.rewarded? ? t('text.featured.download_and_run') : t('text.featured.try_out')
   - link_to(get_click_url(@offer), :class => 'image-link') do
     %img{ :src => "#{CLOUDFRONT_URL}/images/blank.png", :s => @offer.get_icon_url(:source => :cloudfront, :size => '256'), :class => 'icon', :id => 'icon' }
-    .offername
-      #{@offer.truncated_name}
+    .offername= @offer.truncated_name
   .clear
-  = link_to('Skip', 'dismiss', :class => 'skip')
-  = link_to("#{@offer.item_type == 'App' ? 'Download' : 'Earn now'}", get_click_url(@offer), :class => 'download')
+  = link_to(t('text.featured.skip'), 'dismiss', :class => 'skip')
+  = link_to(@offer.item_type == 'App' ? t('text.featured.download') : t('text.featured.earn_now'), get_click_url(@offer), :class => 'download')
   .showOffers
-    = link_to(@currency.hide_rewarded_app_installs? ? '' : 'Show more apps', 'showOffers')
+    = link_to(@currency.hide_rewarded_app_installs? ? '' : t('text.featured.show_more_apps'), 'showOffers')
   .adsby
-    Ads by
+    = t('text.shared.ads_by')
     %img{ :src => "#{CLOUDFRONT_URL}/images/tapjoylogo-small.png", :alt => "Tapjoy"}
 
 - content_for :page_javascript do
@@ -71,10 +69,6 @@
       text-align: center;
       position: relative;
       margin: 8px;
-    }
-
-    .amount {
-      color: #008810;
     }
 
     .offertext {

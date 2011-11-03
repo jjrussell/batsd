@@ -17,6 +17,20 @@ en:
       loading: "Loading..."
       load_error: "Please try again."
 
+    featured:
+      title: "Earn %{currency}"
+      download_and_run: "Just download and run"
+      try_out: "Try out"
+      download: "Download"
+      skip: "Skip"
+      earn_now: "Earn now"
+      show_more_apps: "Show more apps"
+      earn_currency: "Earn %{amount_and_currency}"
+
+    unavailable_offer:
+      message: "We're sorry but %{offer} is no longer available. You can return to the previous page and refresh to view the latest offer list."
+      optional_message: "Or, click here to download %{offer} anyway."
+
     instructions:
       title: "Instructions"
       amount_and_currency: "%{amount} %{currency}"
