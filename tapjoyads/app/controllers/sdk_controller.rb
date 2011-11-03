@@ -1,5 +1,7 @@
 class SdkController < WebsiteController
 
+  layout 'sdks'
+
   def index
     @iphone_version  =  IPHONE_CONNECT_SDK[/v\d+\.\d+\.\d+\.zip/][0..-5]
     @android_version = ANDROID_CONNECT_SDK[/v\d+\.\d+\.\d+\.zip/][0..-5]
