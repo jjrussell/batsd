@@ -34,8 +34,8 @@
         icon.src = icon.getAttribute('s');
       }
 
-      if(#{@height.present?}) {
-        clientHeight = #{@height};
+      if(#{params[:height].present?}) {
+        clientHeight = #{params[:height]};
       } else {
         clientHeight = document.documentElement.clientHeight;
       }
@@ -69,7 +69,7 @@
 
     body {
       margin: 0;
-      height: #{@height}px;
+      height: #{params[:height]}px;
     }
 
     #main {

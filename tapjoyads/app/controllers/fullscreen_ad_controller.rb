@@ -14,7 +14,7 @@ class FullscreenAdController < ApplicationController
 
     # Ensure that wkhtmltoimage waits until the Javascript has finished executing before generating the page.
     img = IMGKit.new(offer.fullscreen_ad_url(:publisher_app_id => params[:publisher_app_id], :width => width, :height => height),
-                     :width => width, :height => height, :javascript_delay => 2000)
+                     :width => width, :height => height)
 
     prevent_browser_cache(params[:prevent_browser_cache])
 

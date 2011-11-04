@@ -19,26 +19,26 @@ class FullscreenAdControllerTest < ActionController::TestCase
 
     context "when calling 'image'" do
       setup do
-        @params.merge!(:advertiser_app_id => @offer.id, :size => '320X50', :publisher_app_id => @params[:app_id])
+        @params.merge!(:advertiser_app_id => @offer.id, :size => '320X480', :publisher_app_id => @params[:app_id])
         @params.delete(:app_id)
       end
 
       context "with custom ad" do
         setup do
-          @offer.banner_creatives = %w(320x50)
-          @offer.rewarded = false
+          @offer.banner_creatives = %w(320x480)
+          @offer.featured = true
 
-          object = @bucket.objects[@offer.banner_creative_path('320x50')]
-          @custom_banner = File.read("#{RAILS_ROOT}/test/assets/banner_ads/custom_320x50.png")
+          object = @bucket.objects[@offer.banner_creative_path('320x480')]
+          @custom_banner = File.read("#{RAILS_ROOT}/test/assets/banner_ads/custom_320x480.jpeg")
           object.stubs(:read).returns(@custom_banner)
-          @bucket.stubs(:objects).returns({ @offer.banner_creative_path('320x50') => object })
+          @bucket.stubs(:objects).returns({ @offer.banner_creative_path('320x480', 'jpeg') => object })
         end
 
         should "return proper image" do
           response = get(:image, @params)
           assert_equal('image/png', response.content_type)
 
-          # To diagnose a mismatch, uncomment the following and compare the new image to #{RAILS_ROOT}/test/assets/banner_ads/custom_320x50.png
+          # To diagnose a mismatch, uncomment the following and compare the new image to #{RAILS_ROOT}/test/assets/banner_ads/custom_320x480.jpeg
           # File.open("#{RAILS_ROOT}/test/assets/banner_ads/wtf.png", 'w') { |f| f.write(response.body) }
 
           assert(@custom_banner == response.body)
