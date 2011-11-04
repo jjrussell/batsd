@@ -2,6 +2,8 @@
 # Likewise, all the methods added will be available for all controllers.
 
 class ApplicationController < ActionController::Base
+  extend ActiveSupport::Memoizable
+  
   helper :all # include all helpers, all the time
 
   before_filter :set_time_zone
@@ -141,6 +143,7 @@ private
 
     data
   end
+  memoize :get_geoip_data
 
   def reject_banned_ips
     render :text => '' if BANNED_IPS.include?(get_ip_address)
