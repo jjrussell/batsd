@@ -56,9 +56,7 @@ private
     true
   end
 
-  def prevent_browser_cache(prevent_cache_str)
-    return unless (prevent_cache_str && prevent_cache_str == 'true')
-
+  def prevent_browser_cache
     response.headers['Cache-Control'] = 'no-cache, no-store, max-age=0, must-revalidate'
     response.headers['Pragma'] = 'no-cache'
     response.headers['Expires'] = 'Fri, 01 Jan 1990 00:00:00 GMT'
