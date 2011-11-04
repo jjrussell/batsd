@@ -118,9 +118,9 @@ private
   end
 
   def get_geoip_data
-    return @geoip_data if @geoip_data.present?
+    return @cached_geoip_data if @cached_geoip_data.present?
 
-    @geoip_data = {}
+    @cached_geoip_data = {}
     ip_address = params[:device_ip] || get_ip_address
 
     begin
@@ -130,18 +130,18 @@ private
     end
 
     if geo_struct.present?
-      @geoip_data[:country]     = geo_struct[:country_code2]
-      @geoip_data[:continent]   = geo_struct[:continent_code]
-      @geoip_data[:region]      = geo_struct[:region_name]
-      @geoip_data[:city]        = geo_struct[:city_name]
-      @geoip_data[:postal_code] = geo_struct[:postal_code]
-      @geoip_data[:lat]         = geo_struct[:latitude]
-      @geoip_data[:long]        = geo_struct[:longitude]
-      @geoip_data[:area_code]   = geo_struct[:area_code]
-      @geoip_data[:dma_code]    = geo_struct[:dma_code]
+      @cached_geoip_data[:country]     = geo_struct[:country_code2]
+      @cached_geoip_data[:continent]   = geo_struct[:continent_code]
+      @cached_geoip_data[:region]      = geo_struct[:region_name]
+      @cached_geoip_data[:city]        = geo_struct[:city_name]
+      @cached_geoip_data[:postal_code] = geo_struct[:postal_code]
+      @cached_geoip_data[:lat]         = geo_struct[:latitude]
+      @cached_geoip_data[:long]        = geo_struct[:longitude]
+      @cached_geoip_data[:area_code]   = geo_struct[:area_code]
+      @cached_geoip_data[:dma_code]    = geo_struct[:dma_code]
     end
 
-    @geoip_data
+    @cached_geoip_data
   end
 
   def reject_banned_ips
