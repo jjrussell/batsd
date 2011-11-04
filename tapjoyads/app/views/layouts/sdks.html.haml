@@ -15,32 +15,9 @@
       #top_nav
         .left
           = link_to image_tag("#{RUN_MODE_PREFIX}tapjoylogo.png"), "#{WEBSITE_URL}/"
-        .right
-          = link_to('Dev forum', DEV_FORUM_URL)
-          |
-          - if current_user
-            = current_user.username
-            |
-            - if permitted_to?(:index, :apps)
-              = link_to('Partner Home', apps_path)
-              |
-            = link_to('Logout', logout_path)
-          - else
-            = link_to('Register', register_path)
-            |
-            = link_to('Login', login_path)
         .clear
 
       #content
-        - flash.each do |name, msg|
-          .flash{ :id => "flash_#{name}", :title => "Click to dismiss this message" }
-            %strong #{name.to_s.humanize}:
-            = msg
-        - [:error, :warning, :notice].each do |name|
-          - if flash[name].blank?
-            .flash.hidden{ :id => "flash_#{name}", :title => "Click to dismiss this message" }
-              %strong #{name.to_s.humanize}:
-              %span.message &nbsp;
         = yield
         .clear
 
