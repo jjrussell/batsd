@@ -3,6 +3,23 @@
 = render('apps/offers_shared/countries', :f => f)
 %tr.admin
   %th
+    = f.label(:regions)
+    #help_regions.help ?
+  %td
+    = f.text_field(:regions)
+    = error_message_on @offer, :regions
+    .details= link_to('State Code List', 'http://en.wikipedia.org/wiki/List_of_U.S._state_abbreviations', :target => '_blank')
+    .details= link_to('Province Code List', 'http://en.wikipedia.org/wiki/Canadian_subnational_postal_abbreviations', :target => '_blank')
+%tr.admin
+  %th
+    = f.label(:dma_codes)
+    #help_dma_codes.help ?
+  %td
+    = f.text_field(:dma_codes)
+    = error_message_on @offer, :dma_codes
+    .details= link_to('DMA Code List', 'http://code.google.com/apis/adwords/docs/appendix/metrocodes.html', :target => '_blank')
+%tr.admin
+  %th
     = f.label(:tapjoy_enabled)
     #help_tapjoy_enabled.help ?
   %td
@@ -52,21 +69,6 @@
   %td
     = f.text_field(:min_conversion_rate)
     = error_message_on @offer, :min_conversion_rate
-%tr.admin
-  %th
-    = f.label(:dma_codes)
-    #help_dma_codes.help ?
-  %td
-    = f.text_field(:dma_codes)
-    = error_message_on @offer, :dma_codes
-    .details= link_to('DMA Code List', 'http://code.google.com/apis/adwords/docs/appendix/metrocodes.html', :target => '_blank')
-%tr.admin
-  %th
-    = f.label(:regions)
-    #help_regions.help ?
-  %td
-    = f.text_field(:regions)
-    = error_message_on @offer, :regions
 %tr.admin
   %th
     = f.label(:device_types)
