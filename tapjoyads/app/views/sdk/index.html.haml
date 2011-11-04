@@ -6,7 +6,7 @@
     %h3 iOS Library (#{@iphone_version})
     %ul
       %li
-        - sdk_link 'iOS Advertiser Library', 'iphone-adv', false
+        - sdk_link 'iOS Advertiser Library', 'iphone-adv',
       %li
         - sdk_link 'iOS Publisher Library', 'iphone-pub'
       %li
@@ -15,11 +15,18 @@
     %h3 Android Library (#{@android_version})
     %ul
       %li
-        - sdk_link 'Android Advertiser Library', 'android-adv', false
+        - sdk_link 'Android Advertiser Library', 'android-adv'
       %li
         - sdk_link 'Android Publisher Library', 'android-pub'
       %li
         - sdk_link 'Android Publisher Library (+ Virtual Goods)', 'android-vg'
+
+    %h3 Windows Library (#{@windows_version})
+    %ul
+      %li
+        - sdk_link 'Windows Advertiser Library', 'windows-adv'
+      %li
+        - sdk_link 'Windows Publisher Library', 'windows-pub'
 
     %h3 Third-party Plugins
     %ul

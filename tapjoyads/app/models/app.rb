@@ -46,7 +46,7 @@ class App < ActiveRecord::Base
       :sdk => {
         :connect  => WINDOWS_CONNECT_SDK,
         :offers   => WINDOWS_OFFERS_SDK,
-        :vg       => WINDOWS_VG_SDK,
+        :vg       => WINDOWS_OFFERS_SDK,
       },
       :store_name => 'Marketplace',
       :info_url => 'http://social.zune.net/redirect?type=phoneapp&id=STORE_ID',

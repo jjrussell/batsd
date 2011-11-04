@@ -5,6 +5,7 @@ class SdkController < WebsiteController
   def index
     @iphone_version  =  IPHONE_CONNECT_SDK[/v\d+\.\d+\.\d+\.zip/][0..-5]
     @android_version = ANDROID_CONNECT_SDK[/v\d+\.\d+\.\d+\.zip/][0..-5]
+    @windows_version = WINDOWS_CONNECT_SDK[/v\d+\.\d+\.\d+\.zip/][0..-5]
   end
 
   def show
@@ -31,7 +32,7 @@ class SdkController < WebsiteController
       when 'windows-pub'
         WINDOWS_OFFERS_SDK
       when 'windows-vg'
-        WINDOWS_VG_SDK
+        WINDOWS_OFFERS_SDK
       else
         sdk_index_path
       end
