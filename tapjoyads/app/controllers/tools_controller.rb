@@ -121,7 +121,7 @@ class ToolsController < WebsiteController
   def elb_status
     elb_interface  = RightAws::ElbInterface.new
     ec2_interface  = RightAws::Ec2.new
-    @lb_names      = Rails.env.production? ? %w( masterjob-lb job-lb website-lb dashboard-lb games-lb api-lb test-lb util-lb ) : []
+    @lb_names      = Rails.env.production? ? %w( masterjob-lb job-lb website-lb dashboard-lb api-lb test-lb util-lb ) : []
     @lb_instances  = {}
     @ec2_instances = {}
     @lb_names.each do |lb_name|

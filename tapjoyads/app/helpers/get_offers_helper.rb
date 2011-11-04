@@ -49,7 +49,8 @@ module GetOffersHelper
         :exp                => params[:exp],
         :country_code       => @geoip_data[:country],
         :display_multiplier => params[:display_multiplier],
-        :library_version    => params[:library_version])
+        :library_version    => params[:library_version],
+        :language_code      => params[:language_code])
   end
 
   def visual_cost(offer)

@@ -1,0 +1,41 @@
+!!!
+
+%html
+  %head
+    %meta{ 'http-equiv' => 'Content-Type', :content => 'text/html; charset=utf-8' }
+    %link{ :rel => 'shortcut icon', :href => '/favicon.ico', :content => 'image/vnd.microsoft.icon' }
+    %title= @page_title.blank? ? 'Tapjoy' : "#{@page_title} - Tapjoy"
+    = stylesheet_link_tag 'website', 'jquery-ui-1.8.5', 'themes/blue/style', 'chosen'
+    %style{ :type => 'text/css' }
+      = yield :page_styles
+    = yield :page_head
+
+  %body
+    #main
+      #top_nav
+        .left
+          = link_to image_tag("#{RUN_MODE_PREFIX}tapjoylogo.png"), "#{WEBSITE_URL}/"
+        .clear
+
+      #content
+        = yield
+        .clear
+
+      #footer
+        &copy; #{Time.now.year} Tapjoy, Inc.
+        = link_to 'Privacy Policy', "#{WEBSITE_URL}/privacy.html", :target => '_blank'
+
+    = javascript_include_tag 'jquery-1.4.2.min', 'jquery-ui-1.8.5.min', 'jquery.tablesorter', 'application', 'chosen.jquery'
+    = yield :included_javascripts
+    %script{ :type => 'text/javascript', :charset => 'utf-8' }
+      = yield :page_javascript
+      - if Rails.env.production?
+        :plain
+          var _gaq = _gaq || [];
+          _gaq.push(['_setAccount', 'UA-5323442-1']);
+          _gaq.push(['_trackPageview']);
+          (function() {
+            var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+            ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+            var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+          })();
