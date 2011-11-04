@@ -1,8 +1,12 @@
 require 'test_helper'
 
+##
+## RESTRUCTURE THIS TEST TO TEST ADS BOTH WITH AND WITHOUT CURRENCY
+##
+
 class FullscreenAdControllerTest < ActionController::TestCase
 
-  context "hitting fullscreen ad controller" do
+  context "hitting fullscreen ad controller with app with virtual currency" do
     setup do
       RailsCache.stubs(:get).returns(nil)
       @offer = Factory(:app).primary_offer
@@ -10,119 +14,57 @@ class FullscreenAdControllerTest < ActionController::TestCase
       Offer.stubs(:find_in_cache).with(@offer.id).returns(@offer)
       OfferCacher.stubs(:get_unsorted_offers_prerejected).returns([@offer])
 
-      @bucket = S3.bucket(BucketNames::TAPJOY)
-      S3.stubs(:bucket).with(BucketNames::TAPJOY).returns(@bucket)
-
       @currency = Factory(:currency)
       @params = { :udid => 'stuff', :publisher_user_id => 'more_stuff', :currency_id => @currency.id, :app_id => @currency.app.id }
     end
 
     context "when calling 'image'" do
       setup do
-        @params.merge!(:advertiser_app_id => @offer.id, :size => '320x480', :publisher_app_id => @params[:app_id])
-        @params.delete(:app_id)
+        @params.merge! :offer_id => @offer.id, :image_size => '320x480', :publisher_app_id => @params[:app_id], :preview => true
+        @params.delete :app_id
       end
 
       context "with custom ad" do
         setup do
           @offer.banner_creatives = %w(320x480)
           @offer.featured = true
-
-          object = @bucket.objects[@offer.banner_creative_path('320x480')]
-          @custom_banner = File.read("#{RAILS_ROOT}/test/assets/banner_ads/custom_320x480.jpeg")
-          object.stubs(:read).returns(@custom_banner)
-          @bucket.stubs(:objects).returns({ @offer.banner_creative_path('320x480', 'jpeg') => object })
         end
 
-        should "return proper image" do
-          response = get(:image, @params)
-          assert_equal('image/png', response.content_type)
-
-          # To diagnose a mismatch, uncomment the following and compare the new image to #{RAILS_ROOT}/test/assets/banner_ads/custom_320x480.jpeg
-          # File.open("#{RAILS_ROOT}/test/assets/banner_ads/wtf.png", 'w') { |f| f.write(response.body) }
-
-          assert(@custom_banner == response.body)
+        should "return PNG preview image" do
+          response = get :image, @params
+          assert_response :success
+          assert_equal 'image/png', response.content_type
         end
       end
 
       context "with generated ad" do
-        setup do
-          ad_bg = File.read("#{RAILS_ROOT}/test/assets/display/self_ad_bg_320x50.png")
-          td_icon = File.read("#{RAILS_ROOT}/test/assets/icons/tap_defense.jpg")
-          round_mask = File.read("#{RAILS_ROOT}/test/assets/display/round_mask.png")
-          icon_shadow = File.read("#{RAILS_ROOT}/test/assets/display/icon_shadow.png")
-
-          obj_ad_bg = @bucket.objects["display/self_ad_bg_320x50.png"]
-          obj_td_icon = @bucket.objects["icons/src/#{Offer.hashed_icon_id(@offer.icon_id)}.jpg"]
-          obj_round_mask = @bucket.objects["display/round_mask.png"]
-          obj_icon_shadow = @bucket.objects["display/icon_shadow.png"]
-          objects = {
-            "display/self_ad_bg_320x50.png" => obj_ad_bg,
-            "icons/src/#{Offer.hashed_icon_id(@offer.icon_id)}.jpg" => obj_td_icon,
-            "display/round_mask.png" => obj_round_mask,
-            "display/icon_shadow.png" => obj_icon_shadow,
-          }
-
-          @bucket.stubs(:objects).returns(objects)
-          obj_ad_bg.stubs(:read).returns(ad_bg)
-          obj_td_icon.stubs(:read).returns(td_icon)
-          obj_round_mask.stubs(:read).returns(round_mask)
-          obj_icon_shadow.stubs(:read).returns(icon_shadow)
-
-          @generated_banner = File.read("#{RAILS_ROOT}/test/assets/banner_ads/generated_320x50.png")
-        end
-
-        should "return proper image" do
-          response = get(:image, @params)
-          assert_equal('image/png', response.content_type)
-
-          # Uncomment the following to re-generate the image if needed (e.g. background image changes, text changes, etc)
-          # File.open("#{RAILS_ROOT}/test/assets/banner_ads/generated_320x50.png", 'w') { |f| f.write(response.body) }
-
-          # To diagnose a mismatch, uncomment the following and compare the new image to #{RAILS_ROOT}/test/assets/banner_ads/generated_320x50.png
-          # File.open("#{RAILS_ROOT}/test/assets/banner_ads/wtf.png", 'w') { |f| f.write(response.body) }
-
-          ### The test seems to be failing due to different versions of ImageMagick / different fonts on other developer machines ###
-          # assert(@generated_banner == response.body)
+        should "return preview PNG image" do
+          response = get :image, @params
+          assert_response :success
+          assert_equal 'image/png', response.content_type
         end
       end
     end
 
     context "when calling 'index'" do
-      context "with custom ad" do
+      setup do
+        @params.merge! :offer_id => @offer.id, :image_size => '320x480', :publisher_app_id => @params[:app_id]
+        @params.delete :app_id
+      end
+
+      context "with custom ads" do
         setup do
-          @offer.banner_creatives = %w(320x50 640x100)
-          @offer.rewarded = false
+          @offer.banner_creatives = %w(320x480 480x320)
+          @offer.featured = true
         end
 
-        should "return proper image data in json" do
-          object = @bucket.objects[@offer.banner_creative_path('320x50')]
-          custom_banner = File.read("#{RAILS_ROOT}/test/assets/banner_ads/custom_320x50.png")
-          object.stubs(:read).returns(custom_banner)
-          @bucket.stubs(:objects).returns({ @offer.banner_creative_path('320x50') => object })
+        should "render custom creative template" do
+          response = get :index, @params
+          assert_response :success
+          assert_template "fullscreen_ad/custom_creative"
 
-          response = get(:index, @params.merge(:format => 'json'))
-          assert_equal('application/json', response.content_type)
-
-          # To diagnose a mismatch, uncomment the following and compare the new image to #{RAILS_ROOT}/test/assets/banner_ads/custom_320x50.png
-          # File.open("#{RAILS_ROOT}/test/assets/banner_ads/wtf.png", 'w') { |f| f.write(response.body) }
-
-          assert(custom_banner == Base64.decode64(assigns['image']))
-        end
-
-        should "return proper image data in xml" do
-          object = @bucket.objects[@offer.banner_creative_path('640x100')]
-          custom_banner = File.read("#{RAILS_ROOT}/test/assets/banner_ads/custom_640x100.png")
-          object.stubs(:read).returns(custom_banner)
-          @bucket.stubs(:objects).returns({ @offer.banner_creative_path('640x100') => object })
-
-          response = get(:index, @params)
-          assert_equal('application/xml', response.content_type)
-
-          # To diagnose a mismatch, uncomment the following and compare the new image to #{RAILS_ROOT}/test/assets/banner_ads/custom_640x100.png
-          # File.open("#{RAILS_ROOT}/test/assets/banner_ads/wtf.png", 'w') { |f| f.write(response.body) }
-
-          assert(custom_banner == Base64.decode64(assigns['image']))
+          assert response.body.include? 'Skip'
+          assert response.body.include? "Earn #{@currency.get_visual_reward_amount(@offer, params[:display_multiplier])} #{@currency.name}"
         end
       end
 
