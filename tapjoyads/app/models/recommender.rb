@@ -1,6 +1,6 @@
 class Recommender  #Interface for all recommenders.
   ACTIVE_RECOMMENDERS = { #When a new recommender is ready, put name here.
-    :joey_bayesian_recommender => "Joey's Bayesian Recommender",
+    :app_affinity_recommender => "App Affinity Recommender",
     :most_popular_recommender => "Popular Apps Recommender"
   }
 

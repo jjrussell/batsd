@@ -11,6 +11,7 @@ describe Recommender do
   end
 
   it "should return recommendations for app in the correct data structure" do
+    app = Recommender.instance(:app_affinity_recommender).random_app
     @recommenders.each do |r|
       r.recommendations_for_app(app).should be_an Array
       r.recommendations_for_app(app, :n => 15).should have_at_most(15).items
@@ -21,7 +22,7 @@ describe Recommender do
   end
 
   it "should return recommendations for udid in the correct data structure" do
-    udid = Recommenders::JoeyBayesianRecommender.instance.random_udid
+    udid = Recommender.instance(:app_affinity_recommender).random_udid
     @recommenders.each do |r|
       r.recommendations_for_udid(udid).should be_an Array
       r.recommendations_for_udid(udid, :n => 15).should have_at_most(15).items

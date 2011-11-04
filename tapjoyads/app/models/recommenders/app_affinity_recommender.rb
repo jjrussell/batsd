@@ -1,4 +1,4 @@
-class Recommenders::JoeyBayesianRecommender < Recommender
+class Recommenders::AppAffinityRecommender < Recommender
   MOST_POPULAR_FILE = 'most_popular.txt'
   APP_FILE          = 'app_app_matrix.txt'
   DEVICE_FILE       = 'udid_reco.txt'
