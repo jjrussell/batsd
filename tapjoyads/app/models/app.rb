@@ -39,7 +39,7 @@ class App < ActiveRecord::Base
       :store_url => 'http://phobos.apple.com/WebObjects/MZStore.woa/wa/viewSoftware?id=STORE_ID&mt=8',
       :default_actions_file_name => "TJCPPA.h",
       :min_action_offer_bid => 35,
-      :versions => [ '2.0', '2.1', '2.2', '3.0', '3.1', '3.2', '4.0', '4.1', '4.2', '4.3' ],
+      :versions => [ '2.0', '2.1', '2.2', '3.0', '3.1', '3.2', '4.0', '4.1', '4.2', '4.3', '5.0' ],
     },
     'windows' => {
       :expected_device_types => Offer::WINDOWS_DEVICES,
