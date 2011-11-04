@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# activate this file by typing:  ln -s rvmrc .rvmrc
 
 # This is an RVM Project .rvmrc file, used to automatically load the ruby
 # development environment upon cd'ing into the directory
