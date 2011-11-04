@@ -19,7 +19,7 @@ class FullscreenAdControllerTest < ActionController::TestCase
 
     context "when calling 'image'" do
       setup do
-        @params.merge!(:advertiser_app_id => @offer.id, :size => '320X480', :publisher_app_id => @params[:app_id])
+        @params.merge!(:advertiser_app_id => @offer.id, :size => '320x480', :publisher_app_id => @params[:app_id])
         @params.delete(:app_id)
       end
 

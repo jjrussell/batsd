@@ -9,7 +9,7 @@
         %td
           - if @offer.featured?
             - @custom_creative_sizes.each do |size_hash|
-              = link_to("Preview #{size_hash[:label_image_size]} ads", preview_app_offer_path(:id => @offer.id, :app_id => @app.id, :image_size => size_hash[:image_size]), :rel => 'facebox', :id => 'preview_link')
+              = link_to("Preview #{size_hash[:label_image_size]} ads", preview_app_offer_path(:id => @offer.id, :app_id => @app.id, :image_size => size_hash[:image_size], :preview => true), :rel => 'facebox', :id => 'preview_link')
               %br
           - else
             = link_to("Preview ads", preview_app_offer_path(:id => @offer.id, :app_id => @app.id), :rel => 'facebox', :id => 'preview_link')

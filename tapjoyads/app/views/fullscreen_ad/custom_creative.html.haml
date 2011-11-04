@@ -18,8 +18,8 @@
     // If this is an ad preview, we want visual effects to complete immediately so that the preview image
     //   will be generated more quickly.
     var animOptions = {
-      duration: '#{params[:preview].present? ? "0s" : "0.8s"}',
-      startDelay: #{params[:preview].present? ? '0' : '2000'},
+      duration: '#{params[:preview] == 'true' ? "0s" : "0.8s"}',
+      startDelay: #{params[:preview] == 'true' ? '0' : '2000'},
       timingFunction: 'ease-in-out'
     };
     var buttonsDiv = document.getElementById('buttons');

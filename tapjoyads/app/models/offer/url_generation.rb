@@ -184,6 +184,7 @@ module Offer::UrlGeneration
     # Allow screen size to be specified for ad previews
     width              = options.delete(:width)              { nil }
     height             = options.delete(:height)             { nil }
+    preview            = options.delete(:preview)            { nil }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
 
     ad_url = "#{API_URL}/fullscreen_ad"
@@ -198,6 +199,7 @@ module Offer::UrlGeneration
     ad_url << "&exp=#{exp}" if exp.present?
     ad_url << "&width=#{width}" if width.present?
     ad_url << "&height=#{height}" if height.present?
+    ad_url << "&preview=#{preview}" if preview.present?
     ad_url
   end
 
