@@ -33,6 +33,7 @@ body.new .page {
 }
 
 body.new .button {
+  background-color: #CF1623;
   color: #FFF;
   cursor: pointer;
   font-size: 0.9em;
@@ -40,7 +41,7 @@ body.new .button {
   width: 120px;
   @include button(16px, 8px 10px);
   @include inset-text-shadow;
- @include gradient(#EA1927, #CF1623);
+  @include gradient(#EA1927, #CF1623);
 }
 
 body.old a.red-link {
@@ -131,8 +132,7 @@ input[type=email]:focus, input[type=password]:focus {
         top: 6px;
       }
       .aside_login {
-        width: 410px;
-        padding: 0 10px;
+        width: 406px;
 
         .login {
 
@@ -167,7 +167,7 @@ input[type=email]:focus, input[type=password]:focus {
               position: relative;
               top: 6px;
             }
-            @media screen and (max-width: 640px) {
+            @media screen and (max-width: 650px) {
               .field.sign_in {
                 float: left;
               }
@@ -178,6 +178,7 @@ input[type=email]:focus, input[type=password]:focus {
               }
             }
             input {
+              border: 1px solid #CECECE;
               margin-right: 10px;
               width: 112px;
             }
@@ -204,6 +205,11 @@ input[type=email]:focus, input[type=password]:focus {
             text-align: right;
             padding: 0 12px 0 0;
           }
+          @media screen and (max-width: 640px) {
+            .login_error {
+              font-size: 0.75em;
+            }
+          }
         } // login
       } // aside_login
       @media screen and (max-width: 640px) {
@@ -214,7 +220,7 @@ input[type=email]:focus, input[type=password]:focus {
       }
       @media screen and (max-width: 580px) {
         .aside_login {
-          width: 240px;
+          width: 250px;
           top: 0;
         }
       }
@@ -271,6 +277,8 @@ input[type=email]:focus, input[type=password]:focus {
     width: 100%;
     @include rounded-corners(3px);
 
+    .content {width: 100%;}
+    
     .content_box {
       height: 450px;
       margin: 0 auto;

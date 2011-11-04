@@ -1,7 +1,7 @@
 class ClickController < ApplicationController
   layout 'iphone'
 
-  before_filter :decrypt_data_param
+  prepend_before_filter :decrypt_data_param
   before_filter :setup
   before_filter :validate_click, :except => [ :test_offer, :test_video_offer ]
   before_filter :determine_link_affiliates, :only => :app

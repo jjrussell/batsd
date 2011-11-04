@@ -42,13 +42,13 @@ namespace :admin do
 
   desc "Reconfigure syslog-ng"
   task :reconfigure_syslog_ng, :args do |task, task_args|
-    servers = Rails.env.test? ? 'util' : 'masterjobs jobserver website dashboard games webserver'
+    servers = Rails.env.test? ? 'util' : 'masterjobs jobserver website dashboard webserver'
     system("script/cloudrun '#{servers}' 'sudo /home/webuser/tapjoyserver/server/syslog-ng/configure.rb #{task_args[:args]} 2>&1' 'ubuntu'")
   end
 
   desc "Update geoip databse"
   task :geoipupdate do
-    servers = Rails.env.test? ? 'util' : 'masterjobs jobserver website dashboard games webserver'
+    servers = Rails.env.test? ? 'util' : 'masterjobs jobserver website dashboard webserver'
     system("script/cloudrun '#{servers}' 'tapjoyserver/server/update_geoip.rb' 'webuser' 'serial'")
   end
 
