@@ -19,6 +19,8 @@ class SdkController < WebsiteController
         ANDROID_VG_SDK
       when 'android-unity'
         ANDROID_UNITY_PLUGIN
+      when 'android-marmalade'
+        ANDROID_MARMALADE_EXTENSION
       when 'iphone-adv'
         IPHONE_CONNECT_SDK
       when 'iphone-pub'
@@ -27,6 +29,8 @@ class SdkController < WebsiteController
         IPHONE_VG_SDK
       when 'iphone-unity'
         IPHONE_UNITY_PLUGIN
+      when 'iphone-marmalade'
+        IPHONE_MARMALADE_EXTENSION
       when 'windows-adv'
         WINDOWS_CONNECT_SDK
       when 'windows-pub'
