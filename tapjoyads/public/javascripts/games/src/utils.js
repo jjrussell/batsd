@@ -1,5 +1,18 @@
 TJG.utils = {
 
+  slidePage : function(el,dir) {
+    if (TJG.ui.jQT === undefined) {
+      return;
+    }
+    if (dir == 'right') {
+      dir = 'slideright'
+    }
+    else {
+      dir = 'slideleft'
+    }
+    TJG.ui.jQT.goTo(el, dir);
+  },
+
   genSym : function() {
     var res = '' + TJG.vars.autoKey;
     TJG.vars.autoKey++;
