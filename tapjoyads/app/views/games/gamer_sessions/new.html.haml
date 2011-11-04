@@ -41,7 +41,7 @@
                   - form_for([ :games, @gamer ], :url => games_gamer_path ) do |f|
                     .field
                       = label_tag :birthdate
-                      = select_date nil, { :order => [:month, :day, :year], :start_year => Time.now.year, :end_year => (Time.now.year - 100), :include_blank => false, :prompt => {:day => 'dd', :month => 'mm', :year => 'yy'} }
+                      = select_date nil, { :order => [:month, :day, :year], :start_year => Time.now.year, :end_year => (Time.now.year - 100), :include_blank => false, :prompt => {:day => 'Day', :month => 'Month', :year => 'Year'} }
                     .field
                       = f.email_field :email, "autocorrect" => "off", "autocapitalize" => "off", :placeholder => "Email"
                     .field
@@ -65,9 +65,16 @@
           .about
             .knows_apps
             .about_tapjoy
-              Tapjoy gives you a way to earn virtual currency by playing your favorite games like Happy Park, City of Wonder, Coin Dozer, Overkill, VIP Poker, and Gun Bros.  It recommends new apps to you, so if you like playing Magic Zoo, Tapjoy will suggest other games you'll enjoy, like Safari Zoo or Bug Village HD. So sign up now and tap into a better way to find the apps you love.
+              Tapjoy allows you to discover popular apps like Happy Park,
+              City of Wonder, Coin Dozer, Overkill, VIP Poker, and Gun Bros,
+              while accessing premium content in your favorite apps.
+              It recommends new apps to you so if you like playing Magic Zoo,
+              Tapjoy will suggest other games you'll enjoy, like Safari Zoo or
+              Bug Village HD. So sign up now, and tap into a better way to find
+              the apps you love.
+
       .content.sign_up_button
-        %h1
+        %div
           A better place to love the apps you have and find the apps you'll love.
       .content.b2b
         .content_box
@@ -97,7 +104,10 @@
             Blog
         .content_box
           %br
-          Copyright &copy; 2011 Tapjoy Inc
+          Copyright &copy; 2011 Tapjoy, Inc. All Rights Reserved.
+          Tapjoy and the Tapjoy logo are trademarks or registered trademarks
+          of Tapjoy, Inc. All third party logos and trademarks mentioned are
+          the property of their respective owners.
 
 - content_for :page_javascript do
   :plain
