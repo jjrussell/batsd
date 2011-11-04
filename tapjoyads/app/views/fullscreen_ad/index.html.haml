@@ -16,8 +16,7 @@
     = link_to(@currency.hide_rewarded_app_installs? ? '' : t('text.featured.show_more_apps'), 'showOffers')
 
   .adsby
-    %span
-      = t('text.shared.ads_by')
+    %span= t('text.shared.ads_by')
     #logo
 
 - content_for :page_javascript do
