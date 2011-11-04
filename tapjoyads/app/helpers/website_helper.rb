@@ -14,10 +14,6 @@ module WebsiteHelper
     (request.headers['User-Agent'] || '')[/msie/i]
   end
 
-  def should_use_dashboard?
-    Rails.env == 'production' && request.host != 'dashboard.tapjoy.com'
-  end
-
   def platform_icon_url(object)
     platform =
       if object.is_a?(Offer)

@@ -1,0 +1,43 @@
+:ruby
+  image_root = "#{WEBSITE_URL}/images/email"
+  gray = '#5d5d5d'
+  red = '#ef1a28'
+  light_gray = '#f5f5f5'
+  css = {
+    :a => "color: #{red}; text-decoration: none; border:none;",
+    :social => "width: 20px;",
+    :follow_us => "font-weight: bold; font-style: italic; font-size: 12px; width: 70px;",
+    :content => "font-size: 12px; line-height: 19px;",
+    :bold_content => "color: #{gray}; font-size: 13px; padding-top: 10px",
+    :footer => "height: 50px; color: #{light_gray};",
+  }
+
+#email{:style => "background-color: #{light_gray}; font-family: 'Arial, Helvetica, sans-serif'; color: #{gray};"}
+  %table{:cellspacing => 0, :cellpadding => 0, :align => "center", :style => "width: 600px; background-color: white;"}
+    %tr
+      %td{:style => "height: 60px;"}
+        - link_to WEBSITE_URL, :style => css[:a] do
+          = image_tag("#{image_root}/logo.png", :title => 'Tapjoy Games', :alt => 'Tapjoy Games', :style => "border: none; margin: 20px 0px 0px 20px;")
+      %td{:style => css[:follow_us]}
+        follow us:
+      %td{:style => css[:social]}
+        - link_to 'https://www.facebook.com/TapjoyGames', :style => css[:a] do
+          = image_tag("#{image_root}/fb_icon.png", :title => 'Facebook', :alt => 'Facebook', :style => "border: none;")
+      %td{:style => css[:social]}
+        - link_to 'https://twitter.com/#!/tapjoygames', :style => css[:a] do
+          = image_tag("#{image_root}/twitter_icon.png", :title => 'Twitter', :alt => 'Twitter', :style => "border: none; margin-right: 20px;")
+    %tr
+      %td{:colspan => 4}
+        %hr{:style => "color: #{red}; background: #{red}; border: 0px; height: 1px; width: 95%;"}
+    %tr
+      %td{:colspan => 4, :style => "padding: 20px 20px;"}
+        %b{:style => css[:bold_content]} Hi,
+    %tr
+      %td{:colspan => 4, :style => "padding: 0px 20px 50px 20px; width: 500px;"}
+        - @content.each do |line|
+          %p{:style => css[:content]}= line
+        - link_to @link, :style => css[:a] do
+          = image_tag("#{image_root}/createAccount_btn.png", :title => 'Tapjoy Games', :alt => 'Tapjoy Games', :style => "border: none; margin-bottom: 40px;")
+        %br
+        %b{:style => css[:bold_content]} Team Tapjoy
+  %p{:style => css[:footer]} Tapjoy Games

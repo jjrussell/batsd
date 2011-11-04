@@ -7,23 +7,31 @@ zh:
       ads_by: "Ads by"
 
     offerwall:
-      # shared between the original wall and the redesigned wall
       title: "赚 %{currency}"
       free: "免费"
       next: "下页 %{items}"
       previous: "上页 %{items}"
-      missing_currency: "Missing %{currency}?"
+      missing_currency: "没得到 %{currency}?"
+      instructions: "完成以下的要求其中之一可以得到 %{currency}"
+      earn_currency: "赚 %{amount} %{currency}"
+      buy_currency: "买 %{amount} %{currency}"
+      load_more: "Load some more!"
+      loading: "Loading..."
+      load_error: "Please try again."
 
-      # original wall only
-      instructions: "安装并运行以下的一个应用以得到 %{currency}"
-      amount_and_currency: "%{amount} %{currency}"
+    featured:
+      title: "赚 %{currency}"
+      download_and_run: "Just download and run"
+      try_out: "Try out"
+      download: "Download"
+      skip: "Skip"
+      earn_now: "Earn now"
+      show_more_apps: "Show more apps"
       earn_currency: "赚 %{amount_and_currency}"
-      buy_currency: "买 %{amount_and_currency}"
 
-      # redesigned wall only
-      redesign_instructions: "完成以下的要求其中之一可以得到 %{currency}"
-      redesign_earn_currency: "赚 %{amount} %{currency}"
-      redesign_buy_currency: "买 %{amount} %{currency}"
+    unavailable_offer:
+      message: "We're sorry but %{offer} is no longer available. You can return to the previous page and refresh to view the latest offer list."
+      optional_message: "Or, click here to download %{offer} anyway."
 
     instructions:
       title: "说明"
