@@ -9,17 +9,19 @@
   .nav {
     height: 110px;
     max-width: 320px;
+    width: 100%;
 
     .nav_container {
 
       .aside_login {
          float: none;
+         margin: 0 auto;
          padding: 0;
-         width: 300px;
 
         .login {
           .form_fields {
-            width: 320px;
+            margin: 0 auto;
+            width: 260px;
 
             input {
               margin: 0 4px;
@@ -49,6 +51,10 @@
               margin: 0 auto;
               width: 62px;
             }
+          }
+          .login_error {
+            float: right;
+            font-size: 0.7em;
           }
         }
       }
@@ -117,11 +123,11 @@
   .b2b {
     height: 200px;
     margin-top: 12px;
-    width: 320px;
+    width: 100%;
 
     .block {
-      width: 300px;
-      margin-bottom: 12px;
+      max-width: 320px;
+      width: 100%;
     }
   }
 }

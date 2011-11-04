@@ -5,7 +5,7 @@ ja:
       ads_by: "Ads by"
 
     offerwall:
-      title: "%{currency} 稼ぐ"
+      title: "%{currency} を稼ぐ"
       free: "無料"
       next: "次の %{items}件"
       previous: "前の %{items}件"
@@ -13,9 +13,23 @@ ja:
       instructions: "次のアクションで %{currency} を獲得する"
       earn_currency: "%{amount} %{currency}  を獲得"
       buy_currency: "%{amount} %{currency} を買う"
-      load_more: "Load some more!"
-      loading: "Loading..."
-      load_error: "Please try again."
+      load_more: "もっと読み込みましょう！"
+      loading: "読み込み中・・・"
+      load_error: "もう一度試してください"
+
+    featured:
+      title: "%{currency} を稼ぐ"
+      download_and_run: "インストールして起動してください。"
+      try_out: "Try out"
+      download: "ダウンロード"
+      skip: "戻る"
+      earn_now: "Earn now"
+      show_more_apps: "もっとアプリを見る"
+      earn_currency: "%{amount_and_currency} を獲得"
+
+    unavailable_offer:
+      message: "We're sorry but %{offer} is no longer available. You can return to the previous page and refresh to view the latest offer list."
+      optional_message: "Or, click here to download %{offer} anyway."
 
     instructions:
       title: "指示"
