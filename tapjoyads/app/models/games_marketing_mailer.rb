@@ -17,7 +17,7 @@ class GamesMarketingMailer < ActionMailer::Base
     recipients recipients_email
     subject "#{gamer_name} has invited you to join Tapjoy"
     content_type 'text/html'
-    content = Invitation.invitation_message(gamer_name, link).split(/\n+/)
-    body(:content => content)
+    content = Invitation.invitation_message(gamer_name).split(/\n+/)
+    body(:content => content, :link => link)
   end
 end

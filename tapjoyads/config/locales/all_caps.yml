@@ -17,6 +17,20 @@ all_caps:
       loading: "LOADING..."
       load_error: "PLEASE TRY AGAIN."
 
+    featured:
+      title: "EARN %{currency}"
+      download_and_run: "JUST DOWNLOAD AND RUN"
+      try_out: "TRY OUT"
+      download: "DOWNLOAD"
+      skip: "SKIP"
+      earn_now: "EARN NOW"
+      show_more_apps: "SHOW MORE APPS"
+      earn_currency: "EARN %{amount_and_currency}"
+
+    unavailable_offer:
+      message: "WE'RE SORRY BUT %{offer} IS NO LONGER AVAILABLE. YOU CAN RETURN TO THE PREVIOUS PAGE AND REFRESH TO VIEW THE LATEST OFFER LIST."
+      optional_message: "OR, CLICK HERE TO DOWNLOAD %{offer} ANYWAY."
+
     instructions:
       title: "INSTRUCTIONS"
       amount_and_currency: "%{amount} %{currency}"
