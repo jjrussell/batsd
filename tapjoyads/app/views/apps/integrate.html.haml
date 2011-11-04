@@ -7,7 +7,7 @@
   %li
     Download the lightweight, open source
     = succeed '.' do
-      - sdk_link 'Tapjoy library', "#{@app.platform}-adv", false
+      - sdk_link 'Tapjoy library', "#{@app.platform}-adv"
   %li Add it to your project directory.
   %li Compile and run your project.
   %li Add the Tapjoy credentials (provided below) to your app.
@@ -36,7 +36,7 @@
 
 %p
   .left.download_link
-    - sdk_link 'Advertiser Library Download', "#{@app.platform}-adv", false
+    - sdk_link 'Advertiser Library Download', "#{@app.platform}-adv"
   .clear
 
 - content_for :page_styles do
