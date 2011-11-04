@@ -147,7 +147,6 @@ module Offer::UrlGeneration
       display_multiplier = (display_multiplier || 1).to_f
       # TO REMOVE: displayer_app_id param after rollout.
       url = "#{API_URL}/display_ad/image?publisher_app_id=#{publisher_app_id}&advertiser_app_id=#{id}&displayer_app_id=#{publisher_app_id}&size=#{size}&display_multiplier=#{display_multiplier}&currency_id=#{currency_id}"
-      url << "&re_memcache=#{bust_cache}&prevent_browser_cache=#{bust_cache}"
       delim = '&'
     end
     url << "#{delim}ts=#{Time.now.to_i}" if bust_cache
@@ -158,7 +157,7 @@ module Offer::UrlGeneration
     if options[:dimensions].present? && display_custom_banner_for_size?(options[:dimensions])
       url = "#{CLOUDFRONT_URL}/#{banner_creative_path(size)}"
     else
-      url = "#{API_URL}/fullscreen_ad/image?publisher_app_id=#{publisher_app_id}&offer_id=#{id}&prevent_browser_cache=#{bust_cache}"
+      url = "#{API_URL}/fullscreen_ad/image?publisher_app_id=#{publisher_app_id}&offer_id=#{id}"
     end
     url << "&ts=#{Time.now.to_i}" if bust_cache
     options.each do |key,value|
@@ -203,7 +202,7 @@ module Offer::UrlGeneration
   end
 
   def get_offers_image_url(publisher_app_id, bust_cache = false)
-    url = "#{API_URL}/get_offers/image?publisher_app_id=#{publisher_app_id}&offer_id=#{id}&prevent_browser_cache=#{bust_cache}"
+    url = "#{API_URL}/get_offers/image?publisher_app_id=#{publisher_app_id}&offer_id=#{id}"
     url << "&ts=#{Time.now.to_i}" if bust_cache
     url
   end
