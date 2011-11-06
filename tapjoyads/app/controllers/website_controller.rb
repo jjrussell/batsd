@@ -122,6 +122,7 @@ private
   def set_recent_partners
     if current_user && current_user.can_manage_account?
       partner_ids = cookies[:recent_partners].to_s.split(';')
+      partner_ids = [current_partner.id] if partner_ids.empty?
       @recent_partners = partner_ids.collect do |partner_id|
         [
           Partner.find(partner_id).name,
