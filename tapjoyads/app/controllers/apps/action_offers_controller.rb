@@ -59,6 +59,7 @@ class Apps::ActionOffersController < WebsiteController
         :primary_offer_attributes_min_conversion_rate,
         :primary_offer_attributes_countries,
         :primary_offer_attributes_dma_codes,
+        :primary_offer_attributes_regions,
         :primary_offer_attributes_device_types,
         :primary_offer_attributes_publisher_app_whitelist,
         :primary_offer_attributes_overall_budget,
