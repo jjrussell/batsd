@@ -93,6 +93,7 @@ input[type=checkbox]:checked {
 
 }
 select {
+  -moz-appearance: none;
   -webkit-appearance: none;
   @include rounded-corners(6px);
 }
@@ -132,10 +133,17 @@ input[type=email]:focus, input[type=password]:focus {
         top: 6px;
       }
       .aside_login {
-        width: 406px;
+        width: 410px;
 
         .login {
-
+          
+          .client_login {
+            float: left;
+            font-size: 0.75em;
+            margin-right: 12px;
+            padding-top: 2px;
+            width: 60px;
+          }
           .form_fields {
             height: 30px;
             margin-bottom: 6px;
@@ -158,15 +166,6 @@ input[type=email]:focus, input[type=password]:focus {
                 float: left;
               }
             }
-            .field.sign_in {
-              color: $tj-red;
-              font-size: 1.2em;
-              font-weight: bold;
-              font-style: italic;
-              margin-right: 10px;
-              position: relative;
-              top: 6px;
-            }
             @media screen and (max-width: 650px) {
               .field.sign_in {
                 float: left;
@@ -187,6 +186,9 @@ input[type=email]:focus, input[type=password]:focus {
               margin-right: 0;
               padding: 6px;
               width: 62px;
+            }
+            input[type=submit] {
+              border-style: none;
             }
           }
           .fieldWithErrors {
@@ -328,11 +330,13 @@ input[type=email]:focus, input[type=password]:focus {
           .register_form {
 
             select#date_month {
-              width: 100px;
+              width: 110px;
             }
-
+            select#date_year {
+              width: 80px;
+            }            
             select {
-              width: 60px;
+              width: 70px;
             }
             input[type=email], input[type=password] {
               width: 274px;

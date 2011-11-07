@@ -8,12 +8,13 @@
             .logo
           .aside_login
             .login
+              .client_login
+                %a{ :href => "#{DASHBOARD_URL}/login" }
+                  advertiser & developer login
               .form_fields
                 - form_for([ :games, @gamer_session ]) do |f|
                   - if params[:data].present?
                     = hidden_field_tag :data, params[:data]
-                  .field.sign_in
-                    Sign In
                   .row
                     .field.email
                       = f.email_field :email, "autocorrect" => "off", "autocapitalize" => "off", :placeholder => "Email", :required => ""
