@@ -48,7 +48,7 @@ class Offer < ActiveRecord::Base
                                   'normal_bid', 'normal_conversion_rate', 'normal_avg_revenue',
                                   'normal_price', 'over_threshold', 'rewarded', 'reseller_id',
                                   'cookie_tracking', 'min_os_version', 'screen_layout_sizes',
-                                  'interval', 'banner_creatives', 'dma_codes' ].map { |c| "#{quoted_table_name}.#{c}" }.join(', ')
+                                  'interval', 'banner_creatives', 'dma_codes', 'regions' ].map { |c| "#{quoted_table_name}.#{c}" }.join(', ')
 
   DIRECT_PAY_PROVIDERS = %w( boku paypal )
 
@@ -168,8 +168,8 @@ class Offer < ActiveRecord::Base
   alias_method :events, :offer_events
   alias_method :random, :rand
 
-  json_set_field :device_types, :screen_layout_sizes, :countries, :dma_codes
-  memoize :get_device_types, :get_screen_layout_sizes, :get_countries, :get_dma_codes
+  json_set_field :device_types, :screen_layout_sizes, :countries, :dma_codes, :regions
+  memoize :get_device_types, :get_screen_layout_sizes, :get_countries, :get_dma_codes, :get_regions
 
   def app_offer?
     item_type == 'App' || item_type == 'ActionOffer'
