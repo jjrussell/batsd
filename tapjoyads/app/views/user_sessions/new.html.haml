@@ -2,13 +2,7 @@
 
 #left-panel
   %h2
-    Tapjoy for
-    %span.highlight Mobile
-    developers
-  %span.small
-    iPhone and Android
-    = image_tag 'icon_apple.png'
-    = image_tag 'icon_android.png'
+    Log in to Tapjoy Dashboard:
   #login_mobile
     - form_for(@user_session, :html => { :id => '', :class => 'tjform' }) do |f|
       = hidden_field_tag 'goto', @goto unless @goto.nil?
