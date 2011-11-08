@@ -4,7 +4,7 @@
 - red  = '#e11826'
 - offset = '30px'
 :ruby
-  image_root = "https://s3.amazonaws.com/#{RUN_MODE_PREFIX}tapjoy/images/email"
+  image_root = RAILS_ENV == 'production' ? "http://content.tapjoy.com/images/email" : "https://s3.amazonaws.com/#{RUN_MODE_PREFIX}tapjoy/images/email"
   css = {
     :a => "color: #{red}; text-decoration: none;",
     :social => "width: 40px;",
@@ -88,7 +88,8 @@
               %td{:style => css[:step_no_icon]}
                 .name{:style => css[:step_name]}
                   .publisher{:style => css[:offer_publisher]}
-                    = image_tag(external_publisher.get_icon_url)
+                    - icon_url = external_publisher.get_icon_url.gsub(CLOUDFRONT_URL, 'http://content.tapjoy.com')
+                    = image_tag(icon_url)
                     %div{:style => css[:offer_publisher_description]}
                       Install one of the apps below to earn
                       = h(offers['CurrencyName'])
@@ -101,7 +102,8 @@
                 - link_to("#{WEBSITE_URL}/earn/#{currency_id}", :style => css[:similar_offers_link]) do
                   - offers['OfferArray'][0..2].each do |offer|
                     %div{:style => css[:offer]}
-                      = image_tag(offer['IconURL'])
+                      - icon_url = offer['IconURL'].gsub(CLOUDFRONT_URL, 'http://content.tapjoy.com')
+                      = image_tag(icon_url)
                       %br/
                       .description{:style => css[:offer_description]}
                         - if offer['Type'] == 'App'
@@ -122,7 +124,8 @@
               - link_to("#{WEBSITE_URL}/more_apps", :style => css[:similar_offers_link]) do
                 - @editors_picks[0..2].each do |cached_app|
                   %div{:style => css[:offer]}
-                    = image_tag(cached_app.icon_url)
+                    - icon_url = cached_app.icon_url.gsub(CLOUDFRONT_URL, 'http://content.tapjoy.com')
+                    = image_tag(icon_url)
                     %br/
                     .description{:style => css[:offer_description]}
                       = h(cached_app.name)
