@@ -11,9 +11,10 @@
     :step => "border-top: 1px dotted #{light_gray}; padding: 10px 0;",
     :step_icon => "vertical-align: top;",
     :step_body => "float: left; margin-top: 10px; padding-left: 20px;",
+    :step_body_editors_picks => "margin-top: 10px; width: 100%; padding-left: 20px; padding-right: 20px;",
     :step_no_icon => "margin-top: 10px;",
     :step_name => "color: #{blue}; font-weight: bold; font-size: 16px; padding-bottom: 5px;",
-    :offerwall_link => "display: block; text-align: center; padding-top: 10px;",
+    :similar_offers_link => "display: block; text-align: center; padding-top: 10px;",
     :offer_publisher => "text-align: center;",
     :offer_publisher_description => "width: 50%; margin: auto;",
     :offer => "float: left; width: 33%;",
@@ -96,7 +97,7 @@
           %table{:style => "width: 100%"}
             %tr
               %td{:style => css[:step_no_icon]}
-                - link_to("#{WEBSITE_URL}/earn/#{currency_id}", :style => css[:offerwall_link]) do
+                - link_to("#{WEBSITE_URL}/earn/#{currency_id}", :style => css[:similar_offers_link]) do
                   - offers['OfferArray'][0..2].each do |offer|
                     %div{:style => css[:offer]}
                       = image_tag(offer['IconURL'])
@@ -113,15 +114,17 @@
         %table
           %tr
             %td{:style => css[:step_icon]}
-              = image_tag("#{image_root}/connect_icon.png", :class => 'icon', :size => '68x68', :title => 'Find apps', :alt => 'Find')
-            %td{:style => css[:step_body]}
+              = image_tag("#{image_root}/recommend_icon.png", :class => 'icon', :size => '68x68', :title => 'Recommended apps', :alt => 'Recommended')
+            %td{:style => css[:step_body_editors_picks]}
               .name{:style => css[:step_name]}
                 Check out these recommended apps!
-              - @editors_picks[0..2].each do |cached_app|
-                - link_to(cached_app.url, :style => css[:offer]) do
-                  = image_tag(cached_app.icon_url)
-                  .description
-                    = h(cached_app.name)
+              - link_to("#{WEBSITE_URL}/more_apps", :style => css[:similar_offers_link]) do
+                - @editors_picks[0..2].each do |cached_app|
+                  %div{:style => css[:offer]}
+                    = image_tag(cached_app.icon_url)
+                    %br/
+                    .description{:style => css[:offer_description]}
+                      = h(cached_app.name)
     .step{:style => "border-top: 1px dotted #{light_gray};"}
       &nbsp;
   #footer{ :style => "padding-top: 20px; padding-bottom: 30px !important; padding: #{offset}; padding-bottom: 0px;" }
