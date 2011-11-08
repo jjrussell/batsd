@@ -49,13 +49,6 @@ TJG.utils = {
     $(el).css('left', w + "px");
   },
 
-  disableScrollOnBody : function() {
-    if (!TJG.vars.isTouch) return;
-    document.body.addEventListener("touchmove", function(e) {
-      e.preventDefault();
-    }, false);
-  },
-
   getParam : function(name) {
     name = name.replace(/[\[]/,"\\\[").replace(/[\]]/,"\\\]");
     var regexS = "[\\?&]"+name+"=([^&#]*)";
@@ -179,4 +172,3 @@ TJG.utils = {
   }
 
 };
-$.utils = TJG.utils;

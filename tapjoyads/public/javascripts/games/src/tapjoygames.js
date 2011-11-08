@@ -1,3 +1,16 @@
+RegExp.escape = function(text) {
+  if (!arguments.callee.sRE) {
+    var specials = [
+      '/', '.', '*', '+', '?', '|',
+      '(', ')', '[', ']', '{', '}', '\\'
+    ];
+    arguments.callee.sRE = new RegExp(
+      '(\\' + specials.join('|\\') + ')', 'g'
+    );
+  }
+  return text.replace(arguments.callee.sRE, '\\$1');
+};
+
 (function(window, document) {
 
     TJG.onload = {
@@ -46,18 +59,14 @@
       },
 
       loadEvents : function () {
+
+        TJG.ui.showRegister();
+
         $('.close_dialog').click(function(){
           TJG.ui.removeDialogs();
           TJG.repositionDialog = [];
         });
-
-        TJG.ui.showRegister();
-
-        $('#how_works').click(function(){
-          TJG.utils.centerDialog("#how_works_dialog");
-          TJG.repositionDialog = ["#how_works_dialog"];
-          $("#how_works_dialog").fadeIn(350);
-        });
+        
         $('#link_device').click(function(){
           if (TJG.vars.isAndroid &&  TJG.android_market_url) {
             document.location.href = TJG.android_market_url;

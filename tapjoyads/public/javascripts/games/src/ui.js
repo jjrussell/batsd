@@ -2,24 +2,24 @@ TJG.ui = {
 
   hideLoader : function(delay,fn) {
     TJG.repositionDialog = [];
-    delay = $.utils.or(delay, "fast");
+    delay = TJG.utils.or(delay, "fast");
     setTimeout(function() {
       $('#loader').fadeOut(delay,fn);
     });
   },
 
   showLoader : function(delay,fn) {
-    $.utils.centerDialog("#loader");
+    TJG.utils.centerDialog("#loader");
     TJG.repositionDialog = ["#loader"];
-    delay = $.utils.or(delay, "fast");
+    delay = TJG.utils.or(delay, "fast");
     setTimeout(function() {
       $('#loader').fadeIn(delay,fn);
     });
   },
 
   showLoaderAtCenter : function(delay,fn) {
-    $.utils.centerDialog("#loader");
-    delay = $.utils.or(delay, "fast");
+    TJG.utils.centerDialog("#loader");
+    delay = TJG.utils.or(delay, "fast");
     setTimeout(function() {
       var scrollTop = $(window).scrollTop();
       var screenHeight = $(window).height();
@@ -30,15 +30,15 @@ TJG.ui = {
 
   hideSender : function(delay,fn) {
     TJG.repositionDialog = [];
-    delay = $.utils.or(delay, "fast");
+    delay = TJG.utils.or(delay, "fast");
     setTimeout(function() {
       $('#sender').fadeOut(delay,fn);
     });
   },
 
   showSender : function(delay,fn) {
-    $.utils.centerDialog("#sender");
-    delay = $.utils.or(delay, "fast");
+    TJG.utils.centerDialog("#sender");
+    delay = TJG.utils.or(delay, "fast");
     setTimeout(function() {
       var scrollTop = $(window).scrollTop();
       var screenHeight = $(window).height();
@@ -48,7 +48,7 @@ TJG.ui = {
   },
 
   removeDialogs : function (delay) {
-    delay = $.utils.or(delay, "fast");
+    delay = TJG.utils.or(delay, "fast");
     setTimeout(function() {
       $('.dialog_wrapper').fadeOut(delay);
     });
@@ -171,9 +171,10 @@ TJG.ui = {
           '<div class="title_2 center">Registering</div>',
           '<div class="loading_animation"></div>'
         ].join('');
-        $('.register_form').animate({ height: "0px" }, animateSpd, function() {
+        //$('.register_form').animate({ height: "0px" }, animateSpd, function() {
+          $(".register_form").hide();
           $('.register_progess').html(loader);
-        });
+        //});
         $.ajax({
           type: 'POST',
           url: rurl,
@@ -197,17 +198,17 @@ TJG.ui = {
               msg = [
                 '<div class="title_2 center">Success!</div>',
                 '<div class="dialog_content center">Your Tapjoy account was sucessfully created!</div>',
-                '<div class="continue_link_device"><div class="button red try_again">Continue</div></div>',
+                '<div class="continue_link_device"><div class="button red">Continue</div></div>',
               ].join('');
               if (!TJG.vars.isTouch) {
                 msg = [
                   '<div class="title_2 center">Success!</div>',
                   '<div class="dialog_content center">Your Tapjoy account was sucessfully created!</div>',
-                  '<div class="continue_link_device"><div class="button red try_again">Continue</div></div>',
+                  '<div class="continue_link_device"><div class="button red">Continue</div></div>',
                 ].join('');
               }
               $('.register_progess').html(msg);
-              if (d.linked) {
+              if (d.linked) { // Device already linked with account
                 $('.continue_link_device').click(function(){
                   if (TJG.path) {
                     document.location.href = TJG.path;
@@ -217,7 +218,7 @@ TJG.ui = {
                   }
                 });
               }
-              else if (d.link_device_url) {
+              else if (d.link_device_url) { // Link device
                 $('.continue_link_device').click(function(){
                   if (TJG.vars.isAndroid &&  TJG.android_market_url) {
                     document.location.href = TJG.android_market_url;
@@ -233,13 +234,6 @@ TJG.ui = {
                       document.location.href = document.domain;
                     }
                   }
-                  $('.close_dialog').unbind('click');
-                  $("#sign_up_dialog_content").html($("#link_device_dialog .dialog").html());
-                  $("#sign_up_dialog_content .dialog_header_wrapper").css("padding", "6px 12px");
-                  $("#sign_up_dialog_content").parent().animate({ height: "300px", }, animateSpd);
-                  $('.close_dialog,.link_device_url').click(function(){
-                    document.location.href = d.link_device_url;
-                  });
                 });
               }
               else {
@@ -272,7 +266,8 @@ TJG.ui = {
             }
             $('.sign_up_again').click(function(){
               $('.register_progess').html('');
-              $('.register_form').animate({ height: form_height + "px" }, animateSpd);
+              $(".register_form").show();
+              //$('.register_form').animate({ height: form_height + "px" }, animateSpd);
             });
           },
           error: function() {
@@ -285,7 +280,8 @@ TJG.ui = {
             $('.register_progess').html(msg);
             $('.sign_up_again').click(function(){
                $('.register_progess').html('');
-               $('.register_form').animate({ height: form_height + "px" }, animateSpd);
+               $(".register_form").show();
+//               $('.register_form').animate({ height: form_height + "px" }, animateSpd);
             });
           }
         });
@@ -295,7 +291,7 @@ TJG.ui = {
 
   showAcceptTos : function () {
     var animateSpd = "fast";
-    $("#accept_tos_dialog_content").parent().css("height", "200px");
+    $("#accept_tos_dialog_content").parent().css("height", "250px");
     $("#accept_tos_dialog_content").html($('#accept_tos_dialog_content_placeholder').html());
     setTimeout(function() {
       TJG.utils.centerDialog("#accept_tos_dialog");
