@@ -22,7 +22,7 @@
   }
 
 #email{:style => "color: #{gray}; margin: 0px auto; border: 1px solid #{light_gray}; width: 600px; font-family: 'arial'; font-size: 15px; background-color: white;"}
-  %table#header{:border => 0, :cellspacing => 0, :cellpadding => 0, :background => "#{image_root}/header_bg.png", :style => "color: #{blue}; padding: 12px #{offset} 12px; height: 101px; width: 100%;"}
+  %table#header{:border => 0, :cellspacing => 0, :cellpadding => 0, :style => "color: #{blue}; padding: 12px #{offset} 12px; height: 101px; width: 100%;"}
     %tr
       %td
         = image_tag("#{image_root}/logo.png", :title => 'Tapjoy', :alt => 'Tapjoy', :size => '114x52')
@@ -34,6 +34,7 @@
       %td{:style => css[:social]}
         - link_to 'https://twitter.com/#!/tapjoygames', :style => css[:a] do
           = image_tag("#{image_root}/twitter_icon.png", :title => 'Twitter', :alt => 'Twitter', :style => "border: none;", :size => '30x30')
+  %hr{:style => "height: 1px; border: 0; color: #{red}; background-color: #{red}; margin: 0 #{offset} 0 #{offset};"}
   #content{:style => "padding: #{offset}; padding-bottom: 0px;"}
     #thanks{:style => "font-size: 20px; font-weight: bold; color: #{blue};"}
       Thanks for creating a Tapjoy account!
