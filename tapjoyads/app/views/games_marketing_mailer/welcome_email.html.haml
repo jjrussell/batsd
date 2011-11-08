@@ -4,15 +4,20 @@
 - red  = '#e11826'
 - offset = '30px'
 :ruby
-  image_root = 'https://s3.amazonaws.com/tapjoy/images/email'
+  image_root = "https://s3.amazonaws.com/#{RUN_MODE_PREFIX}tapjoy/images/email"
   css = {
     :a => "color: #{red}; text-decoration: none;",
     :social => "width: 40px;",
-    :step => "border-top: 1px dotted #{light_gray}; padding: 20px 0px;",
-    :step_body => "padding-left: 20px;",
+    :step => "border-top: 1px dotted #{light_gray}; padding: 10px 0;",
+    :step_icon => "vertical-align: top;",
+    :step_body => "float: left; margin-top: 10px; padding-left: 20px;",
+    :step_no_icon => "margin-top: 10px;",
     :step_name => "color: #{blue}; font-weight: bold; font-size: 16px; padding-bottom: 5px;",
-    :offer => "height: 57px; display: block; margin-top: 15px;",
-    :offer_icon => "float: left; margin-right: 5px;"
+    :offerwall_link => "display: block; text-align: center; padding-top: 10px;",
+    :offer_publisher => "text-align: center;",
+    :offer_publisher_description => "width: 50%; margin: auto;",
+    :offer => "float: left; width: 33%;",
+    :offer_description => "color: #{red};"
   }
 
 #email{:style => "color: #{gray}; margin: 0px auto; border: 1px solid #{light_gray}; width: 600px; font-family: 'arial'; font-size: 15px; background-color: white;"}
@@ -36,8 +41,8 @@
     .step{:style => css[:step]}
       %table
         %tr
-          %td
-            = image_tag("#{image_root}/check_icon.png", :class => 'icon', :size => '68x68', :title => 'Confirm', :alt => 'Confirm Address')
+          %td{:style => css[:step_icon]}
+            = image_tag("#{image_root}/check.png", :class => 'icon', :size => '68x68', :title => 'Confirm', :alt => 'Confirm Address')
           %td{:style => css[:step_body]}
             .name{:style => css[:step_name]}
               Getting started
@@ -50,7 +55,7 @@
       .step{:style => css[:step]}
         %table
           %tr
-            %td
+            %td{:style => css[:step_icon]}
               = image_tag("#{image_root}/connect_icon.png", :class => 'icon', :size => '68x68', :title => 'Connect your device', :alt => 'Connect')
             %td{:style => css[:step_body]}
               .name{:style => css[:step_name]}
@@ -59,11 +64,13 @@
                 By connecting your device we can personalize your Tapjoy
                 experience and recommend the best apps just for you. You
                 must be on the device you wish to add.
+                %br/
+                %br/
     - unless @android_device
       .step{:style => css[:step]}
         %table
           %tr
-            %td
+            %td{:style => css[:step_icon]}
               = image_tag("#{image_root}/home_icon.png", :class => 'icon', :size => '68x68', :title => 'Add Tapjoy to your Home Screen', :alt => 'Home')
             %td{:style => css[:step_body]}
               .name{:style => css[:step_name]}
@@ -71,42 +78,48 @@
               .description
                 Engaging with your favorite apps can be just a tap away.
     - if @linked && @offer_data.any?
-      .step{:style => css[:step]}
-        %table
-          - @offer_data.each do |currency_id, offers|
-            - external_publisher = offers[:external_publisher]
+      - @offer_data.each do |currency_id, offers|
+        - external_publisher = offers[:external_publisher]
+        .step{:style => css[:step]}
+          %table{:style => "width: 100%;"}
             %tr
-              %td
-                = image_tag("#{image_root}/connect_icon.png", :class => 'icon', :size => '68x68', :title => 'Earn currency', :alt => 'Earn')
-              %td{:style => css[:step_body]}
+              %td{:style => css[:step_no_icon]}
                 .name{:style => css[:step_name]}
-                  = image_tag(external_publisher.get_icon_url, :style => css[:offer_icon])
-                  Install one of the apps below to earn
-                  = h(offers['CurrencyName'])
-                  in
-                  = h(external_publisher.app_name)
-                - offers['OfferArray'][0..2].each do |offer|
-                  - link_to("#{WEBSITE_URL}/earn/#{currency_id}", :style => css[:offer]) do
-                    = image_tag(offer['IconURL'], :style => css[:offer_icon])
-                    .description
-                      - if offer['Type'] == 'App'
-                        Install and run
-                      = h(offer['Name'])
+                  .publisher{:style => css[:offer_publisher]}
+                    = image_tag(external_publisher.get_icon_url)
+                    %div{:style => css[:offer_publisher_description]}
+                      Install one of the apps below to earn
+                      = h(offers['CurrencyName'])
+                      in
+                      = h(external_publisher.app_name)
+        .step{:style => css[:step]}
+          %table{:style => "width: 100%"}
+            %tr
+              %td{:style => css[:step_no_icon]}
+                - link_to("#{WEBSITE_URL}/earn/#{currency_id}", :style => css[:offerwall_link]) do
+                  - offers['OfferArray'][0..2].each do |offer|
+                    %div{:style => css[:offer]}
+                      = image_tag(offer['IconURL'])
                       %br/
-                      Earn
-                      = h("#{offer['Payout']} #{offers['CurrencyName']}")
+                      .description{:style => css[:offer_description]}
+                        - if offer['Type'] == 'App'
+                          Install and run
+                        = h(offer['Name'])
+                        %br/
+                        Earn
+                        = h("#{offer['Payout']} #{offers['CurrencyName']}")
     - elsif @editors_picks.any?
       .step{:style => css[:step]}
         %table
           %tr
-            %td
+            %td{:style => css[:step_icon]}
               = image_tag("#{image_root}/connect_icon.png", :class => 'icon', :size => '68x68', :title => 'Find apps', :alt => 'Find')
             %td{:style => css[:step_body]}
               .name{:style => css[:step_name]}
                 Check out these recommended apps!
               - @editors_picks[0..2].each do |cached_app|
                 - link_to(cached_app.url, :style => css[:offer]) do
-                  = image_tag(cached_app.icon_url, :style => css[:offer_icon])
+                  = image_tag(cached_app.icon_url)
                   .description
                     = h(cached_app.name)
     .step{:style => "border-top: 1px dotted #{light_gray};"}
