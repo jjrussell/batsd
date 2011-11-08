@@ -348,7 +348,7 @@ ActiveRecord::Schema.define(:version => 20111031203250) do
     t.string   "referred_by",            :limit => 36
     t.integer  "referral_count",                       :default => 0
     t.boolean  "use_gravatar",                         :default => false
-    t.boolean  "allow_marketing_emails"
+    t.boolean  "allow_marketing_emails",               :default => true
   end
 
   add_index "gamers", ["confirmation_token"], :name => "index_gamers_on_confirmation_token", :unique => true
