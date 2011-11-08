@@ -102,5 +102,9 @@
       - app_name = escape_javascript(@offerwall_external_publisher.app_name)
       :plain
         TJG.ui.getAndShowOfferWall('#{url}', '#{currency[:id]}', '#{app_name}', '#{escape_javascript(currency[:name])}');
+    - elsif @show_more_apps
+      :plain
+        TJG.moreAppOfferWall = '#{escape_javascript(@more_app_offerwall)}';
+        TJG.ui.showMoreGames();
     :plain
       });

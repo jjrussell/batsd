@@ -25,6 +25,12 @@ class Games::HomepageController < GamesController
       @external_publishers = ExternalPublisher.load_all_for_device(@device)
     end
     @featured_review = AppReview.featured_review(@device.try(:platform))
+
+    if params[:action] == 'more_apps'
+      @show_more_apps = true
+      @editors_picks = EditorsPick.cached_active(using_android? ? 'android' : 'iphone')
+      @more_app_offerwall = render_to_string :template => 'games/more_games/editor_picks', :layout => false
+    end
   end
 
   def switch_device

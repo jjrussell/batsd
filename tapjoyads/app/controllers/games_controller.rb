@@ -80,4 +80,13 @@ private
     @gamer ||= Gamer.new
     render 'games/gamer_sessions/new'
   end
+
+  def using_android?
+    if current_gamer && current_device_id
+      device = current_gamer.gamer_devices.find_by_device_id(current_device_id)
+      device.device_type =~ /android/
+    else
+      HeaderParser.device_type(request.headers['user-agent']) == 'android'
+    end
+  end
 end
