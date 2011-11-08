@@ -3,7 +3,7 @@
 - form_for(@offer, :url => { :action => :update }, :html => { :method => :put, :class => 'tjform', :id => 'update' }) do |f|
   %table
     %tbody
-      %tr
+      %tr{ :class => (@app.store_id? ? '' : 'hidden')}
         %th
           = f.label "View Ads"
         %td

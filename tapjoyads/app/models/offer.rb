@@ -473,7 +473,7 @@ class Offer < ActiveRecord::Base
     item_type == 'App' ? third_party_data : Offer.hashed_icon_id(id)
   end
 
-  def check_for_uploaded_icon
+  def uploaded_icon?
     bucket = AWS::S3.new.buckets[BucketNames::TAPJOY]
     bucket.objects["icons/src/#{Offer.hashed_icon_id(icon_id)}.jpg"].exists?
   end
@@ -591,7 +591,7 @@ class Offer < ActiveRecord::Base
   def unlogged_attributes
     [ 'normal_avg_revenue', 'normal_bid', 'normal_conversion_rate', 'normal_price' ]
   end
-  
+
   def self.columns
     super.reject { |c| c.name == "postal_codes" || c.name == "cities" }
   end

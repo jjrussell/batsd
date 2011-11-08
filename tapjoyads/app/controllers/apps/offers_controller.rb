@@ -48,7 +48,7 @@ class Apps::OffersController < WebsiteController
   end
 
   def preview
-    @show_generated_ads = @offer.check_for_uploaded_icon
+    @show_generated_ads = @offer.uploaded_icon?
     render 'apps/offers_shared/preview', :layout => 'simple'
   end
 
