@@ -107,6 +107,14 @@ class PartnersController < WebsiteController
   def make_current
     if current_user.update_attributes({ :current_partner_id => @partner.id })
       flash[:notice] = "You are now acting as #{@partner.name}."
+      partner_ids = cookies[:recent_partners].to_s.split(';')
+      partner_ids.delete(@partner.id)
+      partner_ids.pop if partner_ids.length >= 10
+      partner_ids.unshift(@partner.id)
+      cookies[:recent_partners] = {
+        :value => partner_ids.join(';'),
+        :expires => 1.year.from_now
+      }
     else
       flash[:error] = 'Could not switch partners.'
     end
