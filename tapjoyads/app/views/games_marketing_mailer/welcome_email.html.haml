@@ -86,7 +86,7 @@
                   in
                   = h(external_publisher.app_name)
                 - offers['OfferArray'][0..2].each do |offer|
-                  - link_to("#{TJGAMES_URL}/earn/#{currency_id}", :style => css[:offer]) do
+                  - link_to("#{WEBSITE_URL}/earn/#{currency_id}", :style => css[:offer]) do
                     = image_tag(offer['IconURL'], :style => css[:offer_icon])
                     .description
                       - if offer['Type'] == 'App'
