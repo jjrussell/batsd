@@ -4,8 +4,6 @@ ActionController::Routing::Routes.draw do |map|
   routes = case MACHINE_TYPE
   when 'dashboard'
     %w( dashboard api sdks )
-  when 'games'
-    %w( games )
   when 'website'
     %w( games website api sdks )
   when 'web'
