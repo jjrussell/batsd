@@ -6,8 +6,6 @@ class FullscreenAdController < ApplicationController
     offer = Offer.find_in_cache(params[:offer_id])
     img = IMGKit.new(offer.fullscreen_ad_url(:publisher_app_id => params[:publisher_app_id]), :width => 320, :height => 480)
 
-    prevent_browser_cache if params[:publisher_app_id] == App::PREVIEW_PUBLISHER_APP_ID
-
     send_data img.to_png, :type => 'image/png', :disposition => 'inline'
   end
 

@@ -22,10 +22,7 @@ class DisplayAdController < ApplicationController
     key = "display_ad.decoded.#{params[:currency_id]}.#{params[:advertiser_app_id]}.#{size}.#{params[:display_multiplier] || 1}"
 
     # always be up to date for previews
-    if params[:publisher_app_id] == App::PREVIEW_PUBLISHER_APP_ID
-      Mc.delete(key)
-      prevent_browser_cache
-    end
+    Mc.delete(key) if params[:publisher_app_id] == App::PREVIEW_PUBLISHER_APP_ID
 
     image_data = Mc.get_and_put(key, false, 5.minutes) do
       publisher = App.find_in_cache(params[:publisher_app_id])
