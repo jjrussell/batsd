@@ -9,3 +9,7 @@ dev:
 production:
   consumer_key: 'lATYykTyba7ZX4yUUAC9w'
   consumer_secret: 'fTJKf1MkeQauMwzm88zMfzKKYYTiW7MQBFDkJ9S5UJE'
+  
+staging:
+  consumer_key: 'ZgMiZocUS3OzTmmmW2qVg'
+  consumer_secret: 'GEIKM5HkR9cdYQZmy6gb2rYpTB8ArYCREvJQ'  

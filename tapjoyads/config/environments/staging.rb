@@ -77,6 +77,11 @@ FRESHBOOKS_AUTH_TOKEN = '59548f1150fa38c3feb2a67d6b1a0f8b'
 
 CLEAR_MEMCACHE = false
 
+twitter = YAML::load_file("#{RAILS_ROOT}/config/twitter.yaml")
+ENV['CONSUMER_KEY'] = twitter['staging']['consumer_key']
+ENV['CONSUMER_SECRET'] = twitter['staging']['consumer_secret']
+
 DEV_FACEBOOK_ID = '100000459598424'
+TEST_TWITTER_ID = '388167589'
 
 Sass::Plugin.options[:style] = :compressed
