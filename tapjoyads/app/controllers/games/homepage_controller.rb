@@ -29,7 +29,6 @@ class Games::HomepageController < GamesController
     if params[:action] == 'more_apps'
       @show_more_apps = true
       @editors_picks = EditorsPick.cached_active(using_android? ? 'android' : 'iphone')
-      @more_app_offerwall = render_to_string :template => 'games/more_games/editor_picks', :layout => false
     end
   end
 
