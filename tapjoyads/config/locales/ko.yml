@@ -1,0 +1,60 @@
+ko:
+  text:
+    shared:
+      privacy: "프라이버시"
+      ads_by: "Ads by"
+
+    offerwall:
+      title: "%{currency} 를 지급받기"
+      free: "무료"
+      next: "다음 %{items} 건"
+      previous: "이전 %{items} 건"
+      missing_currency: "Missing %{currency}?"
+      instructions: "다음 액션들 중 한 가지를 완료하면 %{currency} 를 지급 받을 수 있습니다."
+      earn_currency: "%{amount} %{currency} 를 지급 받기"
+      buy_currency: "%{amount} %{currency} 를 구매하기."
+      load_more: "더 보여 주세요!"
+      loading: "로딩중..."
+      load_error: "다시 한번 시도해주십시오."
+
+    featured:
+      title: "%{currency} 를 지급 받기."
+      download_and_run: "다운로드 받고 실행해보기."
+      try_out: "사용해 보기."
+      download: "다운로드"
+      skip: "무시하기."
+      earn_now: "지금 당장 획득하기."
+      show_more_apps: "앱 리스트를 더 보기"
+      earn_currency: "%{amount_and_currency} 를 지급 받기."
+
+    unavailable_offer:
+      message: "%{offer} 는 더 이상 유효하지 않습니다. 직전 페이지로 돌아가셔서 새 오퍼 리스트를 보실 수 있습니다."
+      optional_message: "혹은, 여기를 클릭하여 %{offer} 를 일단 다운로드해 봅니다."
+
+    instructions:
+      title: "이용안내"
+      amount_and_currency: "%{amount} %{currency}"
+      earn_currency: "%{amount_and_currency} 를 지급 받기."
+      header: "Follow these steps to earn %{currency}:"
+      footer: "After completing these steps, you will earn %{amount_and_currency}."
+      download_action: "here"
+      download_link: "If you don't have this app, click %{download_action} to download it."
+      continue_link: "Click here to continue."
+
+    support:
+      title: "Missing %{currency}?"
+      instructions_1: "Please select the offer you completed without receiving %{currency} and enter your email address."
+      instructions_2: "If you submit a ticket with incomplete information, it will result in a delay in getting your issue resolved. Priority is given to tickets with complete information."
+      specify_offer_label: "Specify offer:"
+      offer_name_label: "Offer name:"
+      description_label: "Description:"
+      email_address_label: "Email address:"
+      submit_support_request: "Submit Support Request"
+      support_request_submitted: "Support Request Submitted"
+      thanks: "Thanks for submitting your support request! You will receive your %{currency} after we have verified that you completed the offer."
+      missing_description: "Please describe the offer you completed."
+      missing_offer: "You must specify the offer you completed."
+      invalid_email: "Please enter a real email address."
+      abuse_warning: "This form is strictly for users who have not been rewarded for a completed offer. Abuse of this page may lead to your account being banned from engaging in offers in the future."
+      select_offer: "Select Offer"
+      another_offer: "Other (specify below)"
