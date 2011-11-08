@@ -593,6 +593,10 @@ class Offer < ActiveRecord::Base
   def unlogged_attributes
     [ 'normal_avg_revenue', 'normal_bid', 'normal_conversion_rate', 'normal_price' ]
   end
+  
+  def self.columns
+    super.reject { |c| c.name == "postal_codes" || c.name == "cities" }
+  end
 
 private
 
