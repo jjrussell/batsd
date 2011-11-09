@@ -94,7 +94,8 @@ private
 
   def current_user_session
     @current_user_session ||= UserSession.find
-    # TODO:  remove the following 2 lines at some point after 01/01/2012
+    # The following line makes sure that business accounts aren't logged in
+    # on gamer servers.  Should be safe to remove sometime after 01/01/2012.
     @current_user_session.destroy if MACHINE_TYPE == 'website'
     @currenty_user_session
   end
