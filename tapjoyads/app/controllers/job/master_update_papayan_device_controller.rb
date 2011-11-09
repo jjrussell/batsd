@@ -14,7 +14,7 @@ class Job::MasterUpdatePapayanDeviceController < Job::JobController
         sleep 5
         retry
       else
-        Notifier.alert_new_relic(UpatePapayanDeviceError, 'Error getting Papaya deveice udids for date '+date_str+': '+e)
+        Notifier.alert_new_relic(UpdatePapayanDeviceError, 'Error getting Papaya deveice udids for date '+date_str+': '+e)
         return
       end
     end
@@ -24,12 +24,12 @@ class Job::MasterUpdatePapayanDeviceController < Job::JobController
       json_string = SymmetricCrypto.decrypt(message, PAPAYA_SECRET, 'AES-128-ECB')
       parsed_json = ActiveSupport::JSON.decode(json_string)
     rescue Exception => e
-      Notifier.alert_new_relic(UpatePapayanDeviceError, 'Error parsing Papaya udid list for date '+date_str+': '+e)
+      Notifier.alert_new_relic(UpdatePapayanDeviceError, 'Error parsing Papaya udid list for date '+date_str+': '+e)
       return
     end
 
     if parsed_json.length == 0
-      Notifier.alert_new_relic(UpatePapayanDeviceError, 'Papaya udid list is empty for date '+date_str+', please make sure the date format is correct')
+      Notifier.alert_new_relic(UpdatePapayanDeviceError, 'Papaya udid list is empty for date '+date_str+', please make sure the date format is correct')
       return
     end
 
