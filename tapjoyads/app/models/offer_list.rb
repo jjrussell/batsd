@@ -48,7 +48,7 @@ class OfferList
       end
     end
 
-    if (@device && @device.opted_out?) || (@currency && !@currency.tapjoy_enabled?)
+    if (@device && (@device.opted_out? || @device.banned?)) || (@currency && !@currency.tapjoy_enabled?)
       @offers = []
     else
       @offers = RailsCache.get_and_put("offers.#{@type}.#{@platform_name}.#{@hide_rewarded_app_installs}.#{@normalized_device_type}") do
@@ -79,7 +79,7 @@ class OfferList
   end
 
   def get_offers(start, max_offers)
-    return [ [], 0 ] if @device && @device.opted_out?
+    return [ [], 0 ] if @device && (@device.opted_out? || @device.banned)
     @offers.sort! { |a,b| b.rank_score <=> a.rank_score }
     returned_offers = []
     offers_to_find  = start + max_offers

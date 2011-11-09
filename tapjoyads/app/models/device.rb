@@ -2,6 +2,7 @@ class Device < SimpledbShardedResource
   self.num_domains = NUM_DEVICES_DOMAINS
 
   attr_reader :parsed_apps
+  attr_reader :parsed_opt_out_offer_types
 
   self.sdb_attr :apps, :type => :json, :default_value => {}
   self.sdb_attr :is_jailbroken, :type => :bool, :default_value => false
@@ -9,6 +10,8 @@ class Device < SimpledbShardedResource
   self.sdb_attr :internal_notes
   self.sdb_attr :survey_answers, :type => :json, :default_value => {}, :cgi_escape => true
   self.sdb_attr :opted_out, :type => :bool, :default_value => false
+  self.sdb_attr :opt_out_offer_types, :type => :json, :default_value => {}
+  self.sdb_attr :banned, :type => :bool, :default_value => false
   self.sdb_attr :last_run_time_tester, :type => :bool, :default_value => false
   self.sdb_attr :publisher_user_ids, :type => :json, :default_value => {}, :cgi_escape => true
   self.sdb_attr :product
@@ -22,11 +25,19 @@ class Device < SimpledbShardedResource
   end
 
   def after_initialize
+    @parsed_opt_out_offer_types = parse_opt_out_offer_types
     begin
       @parsed_apps = apps
     rescue JSON::ParserError
       fix_parser_error
     end
+  end
+
+  def parse_opt_out_offer_types
+    begin
+      return get('opt_out_offer_types').gsub(/(\"|\[|\])/, '')
+    end
+    return nil
   end
 
   def handle_connect!(app_id, params)

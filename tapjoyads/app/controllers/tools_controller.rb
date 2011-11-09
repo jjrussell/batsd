@@ -251,7 +251,9 @@ class ToolsController < WebsiteController
     device = Device.new :key => params[:udid]
     log_activity(device)
     device.internal_notes = params[:internal_notes]
+    device.opt_out_offer_types = params[:opt_out_offer_types]
     device.opted_out = params[:opted_out] == '1'
+    device.banned = params[:banned] == '1'
     device.serial_save
     flash[:notice] = 'Device successfully updated.'
     redirect_to :action => :device_info, :udid => params[:udid]
