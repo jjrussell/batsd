@@ -18,7 +18,6 @@ class GamesMarketingMailer < ActionMailer::Base
     from 'Tapjoy <noreply@tapjoy.com>'
     recipients gamer.email
     subject "Welcome to Tapjoy!"
-    content_type 'text/html'
 
     linked = !gamer_device.nil?
     android_device = gamer_device.device_type == 'android' rescue false
