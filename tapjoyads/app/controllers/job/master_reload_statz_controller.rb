@@ -67,6 +67,7 @@ class Job::MasterReloadStatzController < Job::JobController
         'rewarded'           => offer.rewarded?,
         'offer_type'         => offer.item_type,
         'overall_store_rank' => combined_ranks[offer.third_party_data] || '-',
+        'sales_rep'          => offer.partner.sales_rep.to_s
       }
     end
 
@@ -122,6 +123,7 @@ class Job::MasterReloadStatzController < Job::JobController
     # for advertisers and publishers pages
     partner_stats['partner']     = partner.name
     partner_stats['account_mgr'] = partner.account_managers.collect { |mgr| mgr.email }.compact.join(',')
+    partner_stats['sales_rep']   = partner.sales_rep.to_s
 
     # for publishers page
     partner_stats['total_revenue'] = number_to_currency(stats['total_revenue'].sum / 100.0)
