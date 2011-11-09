@@ -88,7 +88,7 @@
                   %td{:style => css[:step_no_icon]}
                     .name{:style => css[:step_name]}
                       .publisher{:style => css[:offer_publisher]}
-                        = image_tag(external_publisher.get_icon_url)
+                        = image_tag(external_publisher.get_icon_url, :alt => external_publisher.app_name)
                         %div{:style => css[:offer_publisher_description]}
                           Perform actions to earn more currency in your favorite apps. Click below to start earning
                           = h(offers['CurrencyName'])
@@ -102,7 +102,7 @@
                       - offers_array = offers['OfferArray'][0..2]
                       - offers_array.each do |offer|
                         %div{:style => "float: left; width: #{100/offers_array.size}%;"}
-                          = image_tag(offer['IconURL'])
+                          = image_tag(offer['IconURL'], :alt => offer['Name'])
                           %br/
                           .description
                             - if offer['Type'] == 'App'
@@ -124,7 +124,7 @@
                     - editors_picks_array = @editors_picks[0..2]
                     - editors_picks_array.each do |cached_app|
                       %div{:style => "float: left; width: #{100/editors_picks_array.size}%;"}
-                        = image_tag(cached_app.icon_url)
+                        = image_tag(cached_app.icon_url, :alt => cached_app.name)
                         %br/
                         .description
                           = h(cached_app.name)
