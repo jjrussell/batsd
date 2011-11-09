@@ -14,6 +14,23 @@ class GamesMarketingMailer < ActionMailer::Base
   sendgrid_category :use_subject_lines
   sendgrid_enable :clicktrack, :opentrack
 
+  # to send to litmus addresses in dev mode, just need to specify the [udid]@emailtests.com address as a recipient
+  if RAILS_ENV == 'development'
+    def instance_variable_set(ivar, val)
+      return super(ivar, val) if ivar != '@recipients'
+
+      recipients_arr = val.to_a
+      recipients_arr.each do |recipient|
+        if recipient =~ /.*@emailtests\.com/i
+          recipients_arr += LITMUS_SPAM_ADDRESSES
+          break
+        end
+      end
+
+      super(ivar, recipients_arr)
+    end
+  end
+
   def welcome_email(gamer, confirmation_link, gamer_device = nil, offer_data = {}, editors_picks = [])
     from 'Tapjoy <noreply@tapjoy.com>'
     recipients gamer.email
