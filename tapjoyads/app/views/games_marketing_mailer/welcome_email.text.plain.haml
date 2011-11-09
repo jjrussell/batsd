@@ -11,12 +11,12 @@
 
 - unless @linked
   :plain
-    #{step_number+=1; step_number}.) Connect your device here: #{"connect device link"}. By connecting your device we can personalize your Tapjoy experience and recommend the best apps just for you. You must be on the device you wish to add.
+    #{step_number+=1; step_number}.) Connect your device. By connecting your device we can personalize your Tapjoy experience and recommend the best apps just for you. You must be on the device you wish to add.
   = blank_line
 
 - unless @android_device
   :plain
-    #{step_number+=1; step_number}.) Add Tapjoy to your Home Screen here: #{"add to homescreen link"}. Engaging with your favorite apps can be just a tap away.
+    #{step_number+=1; step_number}.) Add Tapjoy to your Home Screen. Engaging with your favorite apps can be just a tap away.
   = blank_line
 
 - if @linked && @offer_data.any?
