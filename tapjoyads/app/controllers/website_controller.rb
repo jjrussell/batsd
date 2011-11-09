@@ -94,6 +94,7 @@ private
 
   def current_user_session
     @current_user_session ||= UserSession.find
+    @current_user_session.destroy if MACHINE_TYPE == 'website'
   end
 
   def set_time_zone
