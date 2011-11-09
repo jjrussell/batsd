@@ -20,14 +20,15 @@
                       = f.email_field :email, "autocorrect" => "off", "autocapitalize" => "off", :placeholder => "Email", :required => ""
                     .field.password
                       = f.password_field :password, :placeholder => "Password", :required => ""
-                  .field.login_btn
-                    = f.submit 'Login', :class => 'right button'
-              .form_fields
-                .login_error
-                  = error_message_on @gamer_session, :email, :prepend_text => "Email "
-                  = error_message_on @gamer_session, :password, :prepend_text => "Password "
-                .forgot_pass
-                  = link_to('Forgot password?', new_games_password_reset_path)
+                    .field.login_btn
+                      = f.submit 'Login', :class => 'right button'
+                  .row
+                    .field.forgot_pass
+                      = link_to('Forgot password?', new_games_password_reset_path)
+                    .field.login_error
+                      = error_message_on @gamer_session, :email, :prepend_text => "Email "
+                      = error_message_on @gamer_session, :password, :prepend_text => "Password "
+
 
       .content.main_scene
         .content_box

@@ -1,27 +1,7 @@
 /*
-
-            _/    _/_/    _/_/_/_/_/                              _/
-               _/    _/      _/      _/_/    _/    _/    _/_/_/  _/_/_/
-          _/  _/  _/_/      _/    _/    _/  _/    _/  _/        _/    _/
-         _/  _/    _/      _/    _/    _/  _/    _/  _/        _/    _/
-        _/    _/_/  _/    _/      _/_/      _/_/_/    _/_/_/  _/    _/
-       _/
-    _/
-
-    Created by David Kaneda <http://www.davidkaneda.com>
-    Documentation and issue tracking on GitHub <http://wiki.github.com/senchalabs/jQTouch/>
-
-    Special thanks to Jonathan Stark <http://jonathanstark.com/>
-    and pinch/zoom <http://www.pinchzoom.com/>
-
-    (c) 2010 by jQTouch project members.
-    See LICENSE.txt for license.
-
     $Revision: 166 $
     $Date: Tue Mar 29 01:24:46 EDT 2011 $
     $LastChangedBy: jonathanstark $
-
-
 */
 (function($) {
     $.jQTouch = function(options) {
@@ -117,6 +97,7 @@
 
         }
         function doNavigation(fromPage, toPage, animation, goingBack) {
+            console.log(animation);
             if (toPage.length === 0) {
                 $.fn.unselect();
                 return false;

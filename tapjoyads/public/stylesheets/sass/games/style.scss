@@ -1,4 +1,4 @@
-//-------------------------------------------
+ //-------------------------------------------
 // Import Base CSS
 //-------------------------------------------
 
@@ -144,16 +144,17 @@ input[type=email]:focus, input[type=password]:focus {
             padding-top: 2px;
             width: 60px;
           }
+          .client_login.right_side {
+            display: none;
+          }
+          
           .form_fields {
-            height: 30px;
             margin-bottom: 6px;
 
             .row {
-              float: left;
             }
             .field {
               float: left;
-              height: 30px;
             }
             @media screen and (max-width: 640px) {
               .row {

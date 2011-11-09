@@ -23,8 +23,14 @@
           
           .client_login {
             float: none;
-            margin-bottom: 10px;
-            width: 100%;
+            margin: 0 auto 10px;
+            text-align: right;
+          }
+          .client_login.right_side {
+            display: block;
+          }
+          .client_login.left_side {
+            display: none;
           }
           .form_fields {
             margin: 0 auto;
@@ -37,7 +43,7 @@
               float: left;
               height: 30px;
               margin: 0 auto;
-              width: 268px;
+              width: 340px;
             }
             .field {
               float: none;
