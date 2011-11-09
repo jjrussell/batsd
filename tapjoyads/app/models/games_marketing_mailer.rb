@@ -19,7 +19,8 @@ class GamesMarketingMailer < ActionMailer::Base
     recipients gamer.email
     subject "Welcome to Tapjoy!"
 
-    linked = !gamer_device.nil?
+    gamer_device ||= gamer.gamer_devices.first
+    linked = gamer_device.present?
     android_device = gamer_device.device_type == 'android' rescue false
     sendgrid_category "Welcome Email, #{linked ? "Linked for Device Type #{gamer_device.device_type}" : "Not Linked"}"
 

@@ -51,6 +51,7 @@ class ExternalPublisher
     gamer.gamer_devices.each do |gamer_device|
       device = Device.new(:key => gamer_device.device_id)
       external_publisher = ExternalPublisher.load_all_for_device(device).first
+      next unless external_publisher.present?
       latest_run_time = [latest_run_time, external_publisher.last_run_time].max
       if latest_run_time == external_publisher.last_run_time
         arr = [device, gamer_device, external_publisher]
