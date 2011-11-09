@@ -6,17 +6,17 @@
 
   Getting started
 
-  #{step_number+=1; step_number}.) Confirm your email address here: #{@confirmation_link}
+  #{step_number+=1}.) Confirm your email address here: #{@confirmation_link}
 = blank_line
 
 - unless @linked
   :plain
-    #{step_number+=1; step_number}.) Connect your device. By connecting your device we can personalize your Tapjoy experience and recommend the best apps just for you. You must be on the device you wish to add.
+    #{step_number+=1}.) Connect your device. By connecting your device we can personalize your Tapjoy experience and recommend the best apps just for you. You must be on the device you wish to add.
   = blank_line
 
 - unless @android_device
   :plain
-    #{step_number+=1; step_number}.) Add Tapjoy to your Home Screen. Engaging with your favorite apps can be just a tap away.
+    #{step_number+=1}.) Add Tapjoy to your Home Screen. Engaging with your favorite apps can be just a tap away.
   = blank_line
 
 - if @linked && @offer_data.any?
@@ -24,7 +24,7 @@
     - external_publisher = offers[:external_publisher]
 
     :plain
-      #{step_number+=1; step_number}.) Perform actions to earn more currency in your favorite apps. See below for examples of how you can start earning #{offers['CurrencyName']} in #{external_publisher.app_name}:
+      #{step_number+=1}.) Perform actions to earn more currency in your favorite apps. See below for examples of how you can start earning #{offers['CurrencyName']} in #{external_publisher.app_name}:
     = blank_line
 
     - offers['OfferArray'][0..2].each do |offer|
@@ -38,7 +38,7 @@
 
 - elsif @editors_picks.any?
   :plain
-    #{step_number+=1; step_number}.) Check out Tapjoy's Recommended Apps. Here are a few examples:
+    #{step_number+=1}.) Check out Tapjoy's Recommended Apps. Here are a few examples:
   = blank_line
 
   - @editors_picks[0..2].each do |cached_app|
