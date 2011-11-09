@@ -9,6 +9,7 @@ class WebsiteController < ApplicationController
 
   before_filter { |c| Authorization.current_user = c.current_user }
   before_filter :check_employee_device
+  before_filter :set_recent_partners
 
   def current_user
     @current_user ||= current_user_session && current_user_session.record
@@ -115,6 +116,19 @@ private
     if flash.now[:notice].blank? && current_partner.approved_publisher? &&
       (current_partner.payout_info.nil? || !current_partner.payout_info.valid?)
         flash.now[:notice] = "Please remember to <a href='/billing/payment-info'>update your W8/W9</a>."
+    end
+  end
+
+  def set_recent_partners
+    if current_user && current_user.can_manage_account?
+      partner_ids = cookies[:recent_partners].to_s.split(';')
+      partner_ids = [current_partner.id] if partner_ids.empty?
+      @recent_partners = partner_ids.collect do |partner_id|
+        [
+          Partner.find(partner_id).name,
+          make_current_partner_path(partner_id)
+        ]
+      end
     end
   end
 end
