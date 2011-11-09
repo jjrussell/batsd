@@ -9,7 +9,7 @@ class OneOffs
       puts 'Error parsing dates! '+e
       return
     end
-    (start_date...end_date+1).each do |date|
+    (start_date..end_date).each do |date|
       puts date
       delta = Benchmark.realtime{ updater.index(date.to_s(:yy_mm_dd)) }
       if delta < 60 and date < end_date #api restrict calling for different dates within 1 minute
