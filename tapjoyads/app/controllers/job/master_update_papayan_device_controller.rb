@@ -1,0 +1,45 @@
+class Job::MasterUpdatePapayanDeviceController < Job::JobController
+  def initialize
+    @yesterday = (Time.now - 1.day).strftime("%y-%m-%d")
+  end
+
+  def index(date_str = @yesterday)
+    url = PAPAYA_API_URL+'/imeiapi/udid_list?date='+date_str
+    retries = 5
+    begin
+      response = Downloader.get_strict(url, {:timeout => 30})
+    rescue Exception => e
+      if retries > 0
+        retries -= 1
+        sleep 5
+        retry
+      else
+        Notifier.alert_new_relic(UpatePapayanDeviceError, 'Error getting Papaya deveice udids for date '+date_str+': '+e)
+        return
+      end
+    end
+
+    begin
+      message = Base64.decode64(response.body)
+      json_string = SymmetricCrypto.decrypt(message, PAPAYA_SECRET, 'AES-128-ECB')
+      parsed_json = ActiveSupport::JSON.decode(json_string)
+    rescue Exception => e
+      Notifier.alert_new_relic(UpatePapayanDeviceError, 'Error parsing Papaya udid list for date '+date_str+': '+e)
+      return
+    end
+
+    if parsed_json.length == 0
+      Notifier.alert_new_relic(UpatePapayanDeviceError, 'Papaya udid list is empty for date '+date_str+', please make sure the date format is correct')
+      return
+    end
+
+    parsed_json.each do |id|
+      puts id
+      #probably needs to add filter to invalid udids later, have seen "0000000000", "0", and sometimes a udid followed by ' /1 02'. Other 99.9% seems valid though
+      device = Device.new(:key => id.downcase)
+      device.is_papayan = true
+      device.save
+    end
+    puts parsed_json.length
+  end
+end
