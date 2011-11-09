@@ -13,7 +13,7 @@ class OneOffs
       t1 = Time.now
       updater.index(date.strftime("%y-%m-%d"))
       delta = Time.now - t1
-      if delta < 60  #api restrict calling for different date within 1 minite
+      if delta < 60  #api restrict calling for different dates within 1 minute
         sleep 60 - delta
       end
       date += 1.day
