@@ -6,7 +6,7 @@ ActionController::Routing::Routes.draw do |map|
     m.help 'help', :controller => 'games/homepage', :action => :help
     m.switch_device 'switch_device', :controller => 'games/homepage', :action => :switch_device
     m.send_device_link 'send_device_link', :controller => 'games/homepage', :action => :send_device_link
-    m.earn 'earn/:currency_id', :controller => 'games/homepage', :action => :earn
+    m.earn 'earn/:currency_id', :controller => 'games/homepage', :action => :index, :earn => true
 
     m.more_games_editor_picks 'editor_picks', :controller => 'games/more_games', :action => :editor_picks
     m.more_games_popular 'popular', :controller => 'games/more_games', :action => :popular
