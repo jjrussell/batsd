@@ -1,9 +1,6 @@
 class Job::MasterUpdatePapayanDeviceController < Job::JobController
-  def initialize
-    @yesterday = Date.yesterday.to_s(:yy_mm_dd)
-  end
-
-  def index(date_str = @yesterday)
+  def index(date_str = nil)
+    date_str = Date.yesterday.to_s(:yy_mm_dd) unless date_str.present?
     url = "#{PAPAYA_API_URL}/imeiapi/udid_list?date=#{date_str}"
     retries = 5
     begin
