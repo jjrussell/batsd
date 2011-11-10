@@ -18,6 +18,7 @@
     %tr
       %th Partner
       %th Acct Mgr
+      %th Sales Rep
       %th Spend
       %th Balance
       %th Clicks
@@ -30,6 +31,7 @@
       %tr
         %td= link_to stats['partner'], partner_path(partner_id)
         %td= stats['account_mgr']
+        %td= stats['sales_rep']
         %td= stats['spend']
         %td= stats['balance']
         %td= stats['clicks']
@@ -52,12 +54,12 @@
       $("#advertisers_table").tablesorter({
         widgets: ['zebra'],
         headers: {
-          2:  {sorter: 'formatted-number-column' },
           3:  {sorter: 'formatted-number-column' },
           4:  {sorter: 'formatted-number-column' },
           5:  {sorter: 'formatted-number-column' },
-          7:  {sorter: 'formatted-number-column' },
-          8:  {sorter: 'formatted-number-column' }
+          6:  {sorter: 'formatted-number-column' },
+          8:  {sorter: 'formatted-number-column' },
+          9:  {sorter: 'formatted-number-column' },
         }
       });
     });

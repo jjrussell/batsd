@@ -11,7 +11,7 @@
       = yield :page_styles
       :plain
         #acting_as {
-          font-size: 0.5em;
+          font-size: 0.8em;
           background-color: yellow;
           float: right;
         }
@@ -61,6 +61,7 @@
             - form_tag('') do
               acting as
               = select_tag(:recent_partners, options_for_select(@recent_partners))
+              = link_to('Partner page', partner_path(current_partner))
 
       #tabs
         - tabs = []
