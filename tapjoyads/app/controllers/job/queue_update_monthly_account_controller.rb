@@ -4,10 +4,10 @@ class Job::QueueUpdateMonthlyAccountController < Job::SqsReaderController
     super QueueNames::UPDATE_MONTHLY_ACCOUNT
   end
 
-private
+  private
 
   def on_message(message)
-    json = JSON.parse(message.to_s)
+    json = JSON.parse(message.body)
 
     partner = Partner.find(json['partner_id'])
     month = json['month']

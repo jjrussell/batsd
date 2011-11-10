@@ -7,11 +7,11 @@ class Job::QueueSendCurrencyController < Job::SqsReaderController
     @bad_callbacks = Set.new
   end
 
-private
+  private
 
   def on_message(message)
     params.delete(:callback_url)
-    reward = Reward.deserialize(message.to_s)
+    reward = Reward.deserialize(message.body)
     return if reward.sent_currency?
 
     mc_time = Time.zone.now.to_i / 1.hour
@@ -111,4 +111,5 @@ private
 
     reward.serial_save
   end
+
 end
