@@ -1,6 +1,7 @@
 class Games::SocialController < GamesController
   rescue_from Mogli::Client::ClientException, :with => :handle_mogli_exceptions
   rescue_from Errno::ECONNRESET, :with => :handle_other_exceptions
+  rescue_from Errno::ETIMEDOUT, :with => :handle_other_exceptions
 
   before_filter :require_gamer
   before_filter :offline_facebook_authenticate, :only => [ :invite_facebook_friends, :send_facebook_invites ]
@@ -150,7 +151,7 @@ private
   
   def handle_other_exceptions(e)
     case e
-    when Errno::ECONNRESET
+    when Errno::ECONNRESET, Errno::ETIMEDOUT
       @error_msg = "There was a connection issue. Please try again later."
       redirect_to edit_games_gamer_path
     end
