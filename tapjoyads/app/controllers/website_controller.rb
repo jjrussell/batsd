@@ -94,6 +94,12 @@ private
 
   def current_user_session
     @current_user_session ||= UserSession.find
+    # The following block makes sure that business accounts aren't logged in
+    # on gamer servers.  Should be safe to remove sometime after 01/01/2012.
+    if @current_user_session && MACHINE_TYPE == 'website'
+      @current_user_session.destroy
+    end
+    @current_user_session
   end
 
   def set_time_zone
