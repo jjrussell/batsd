@@ -51,11 +51,7 @@ module Offer::Rejecting
   def frequency_capping_reject?(device)
     return false unless multi_complete? && interval != Offer::FREQUENCIES_CAPPING_INTERVAL['none']
 
-    if device.has_app?(item_id)
-      device.last_run_time(item_id) + interval > Time.zone.now
-    else
-      false
-    end
+    device.has_app?(item_id) && (device.last_run_time(item_id) + interval > Time.zone.now)
   end
 
   private
