@@ -1,6 +1,7 @@
 class Games::SocialController < GamesController
   require "rubygems"
   require "twitter"
+  include ActionView::Helpers::TextHelper
 
   rescue_from Mogli::Client::ClientException, :with => :handle_mogli_exceptions
   rescue_from Twitter::Error, :with => :handle_twitter_exceptions
@@ -148,11 +149,14 @@ class Games::SocialController < GamesController
 
           if invitation.pending?
             link = games_login_url :referrer => invitation.encrypted_referral_id
-            link = "http://www.tapjoygames.com/login?referrer=#{invitation.encrypted_referral_id}" if Rails.env != 'production' #we need this because twitter cannot recognize IP addr as a valid url
+            link = "http://www.tapjoygames.com/login?referrer=#{invitation.encrypted_referral_id}" if Rails.env != 'production' # we need this because twitter cannot recognize IP addr as a valid url
 
-            message = "#{Twitter.user(current_gamer.twitter_id.to_i).name} has invited you to join Tapjoy, the BEST place to find the hottest apps. Signing up is free! #{link}"
+            name = Twitter.user(current_gamer.twitter_id.to_i).name
+            cookies[:twitter_short_url_len] = { :value => Twitter.configuration.short_url_length_https, :expires => 1.day.from_now } unless cookies[:twitter_short_url_len]
+            rem_len = 140 - cookies[:twitter_short_url_len].to_i - name.size - 2
+            template = truncate("has invited you to join Tapjoy, the BEST place to find the hottest apps. Signing up is free!", :length => rem_len)
+            message = "#{name} #{template} #{link}"
 
-            # posts << Twitter.update(message)
             posts << Twitter.direct_message_create(friend_id.to_i, message)
           end
         end
@@ -209,9 +213,13 @@ private
       render :json => { :success => false, :error_redirect => true } and return if params[:ajax].present?
       redirect_to games_social_invite_twitter_friends_path
     when Twitter::InternalServerError, Twitter::BadGateway, Twitter::ServiceUnavailable
-      render :json => { :success => false, :error => "Something happened to Twttier. Please try again later" }
+      render :json => { :success => false, :error => "Something happened to Twttier. Please try again later" } and return if params[:ajax].present?
+      flash[:error] = 'Something happened to Twttier. Please try again later.'
+      redirect_to edit_games_gamer_path
     else
-      render :json => { :success => false, :error => "There was an issue with inviting your friend, please try again later" }
+      render :json => { :success => false, :error => "There was an issue with inviting your friend, please try again later" } and return if params[:ajax].present?
+      flash[:error] = 'There was an issue with inviting your friend, please try again later.'
+      redirect_to edit_games_gamer_path
     end
   end
 
