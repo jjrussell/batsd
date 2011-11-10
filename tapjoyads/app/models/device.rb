@@ -15,6 +15,7 @@ class Device < SimpledbShardedResource
   self.sdb_attr :version
   self.sdb_attr :mac_address
   self.sdb_attr :platform
+  self.sdb_attr :is_papayan, :type => :bool, :default_value => false
 
   def dynamic_domain_name
     domain_number = @key.matz_silly_hash % NUM_DEVICES_DOMAINS
