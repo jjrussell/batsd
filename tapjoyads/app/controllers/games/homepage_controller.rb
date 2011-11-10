@@ -55,13 +55,4 @@ class Games::HomepageController < GamesController
     GamesMailer.deliver_link_device(current_gamer, ios_link_url, GAMES_ANDROID_MARKET_URL )
     render(:json => { :success => true }) and return
   end
-
-private
-
-  def require_gamer
-    if current_gamer.blank?
-      redirect_to games_login_path
-    end
-  end
-
 end
