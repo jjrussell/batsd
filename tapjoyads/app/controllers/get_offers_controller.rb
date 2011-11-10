@@ -103,7 +103,7 @@ private
     @publisher_app = App.find_in_cache(params[:app_id])
     return unless verify_records([ @currency, @publisher_app ])
 
-    if params[:udid]
+    unless @for_preview
       @device = Device.new(:key => params[:udid])
       @device.set_publisher_user_id!(params[:app_id], params[:publisher_user_id])
     end
