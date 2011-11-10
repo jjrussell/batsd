@@ -34,11 +34,10 @@ class Job::MasterUpdatePapayanDeviceController < Job::JobController
     end
 
     parsed_json.each do |id|
-      puts id
       #probably needs to add filter to invalid udids later, have seen "0000000000", "0", and sometimes a udid followed by '/0 2'. Other 99.9% seems valid though
       device = Device.new(:key => id.downcase)
       device.is_papayan = true
-      device.save
+      device.serial_save
     end
     puts parsed_json.length
   end
