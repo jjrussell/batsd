@@ -132,7 +132,7 @@ module Offer::Rejecting
   end
 
   def selective_opt_out_reject?(device)
-    device.parsed_opt_out_offer_types.index(item_type)
+    return device.get_opt_out_offer_types.include?(item_type)
   end
 
   def show_rate_reject?(device)
