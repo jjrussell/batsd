@@ -1,18 +1,4 @@
 class GamesMailer < ActionMailer::Base
-
-  def gamer_confirmation(gamer, confirmation_link)
-    from 'Tapjoy <noreply@tapjoy.com>'
-    recipients gamer.email
-    subject "Welcome to Tapjoy!"
-    content_type 'text/html'
-    if gamer.gamer_devices.any? && gamer.gamer_devices.first.device_type == 'android'
-      device_type = :android
-    else
-      device_type = :iphone
-    end
-    body :confirmation_link => confirmation_link, :linked => gamer.gamer_devices.any?, :device_type => device_type
-  end
-
   def feedback(gamer, content, user_agent, device_id)
     from 'Tapjoy <noreply@tapjoy.com>'
     reply_to gamer.email
@@ -49,8 +35,6 @@ class GamesMailer < ActionMailer::Base
   end
 
   def link_device(gamer, ios_link, android_link)
-    puts ios_link
-    puts android_link
     from 'Tapjoy <noreply@tapjoy.com>'
     recipients gamer.email
     subject "Tapjoy - Link Device"
