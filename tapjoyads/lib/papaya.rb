@@ -33,7 +33,7 @@ class Papaya
     parsed_json.each do |id|
       #probably needs to add filter to invalid udids later, have seen "0000000000", "0", and sometimes a udid followed by '/0 2'. Other 99.9% seems valid though
       device = Device.new(:key => id.downcase)
-      if device.is_papayan != true
+      unless device.is_papayan?
         device.is_papayan = true
         device.serial_save
       end
