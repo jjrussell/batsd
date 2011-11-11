@@ -251,13 +251,10 @@ class ToolsController < WebsiteController
     device = Device.new :key => params[:udid]
     log_activity(device)
     device.internal_notes = params[:internal_notes]
-    if params[:opt_out_offer_types]
-      params[:opt_out_offer_types].each do |offer_type|
-        device.opt_out_offer_types = offer_type
-      end
-    else
-      device.opt_out_offer_types = []
-    end
+    opted_out_types = params[:opt_out_offer_types] || []
+    opted_in_types  = device.opt_out_offer_types - opted_out_types
+    opted_out_types.each { |type| device.opt_out_offer_types = type }
+    opted_in_types.each  { |type| device.delete('opt_out_offer_types', type) }
     device.opted_out = params[:opted_out] == '1'
     device.banned = params[:banned] == '1'
     device.serial_save
