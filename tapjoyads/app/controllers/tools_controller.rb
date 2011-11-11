@@ -252,9 +252,9 @@ class ToolsController < WebsiteController
     log_activity(device)
     device.internal_notes = params[:internal_notes]
     if params[:opt_out_offer_types]
-      params[:opt_out_offer_types].each { |offer_type|
+      params[:opt_out_offer_types].each do |offer_type|
         device.opt_out_offer_types = offer_type
-      }
+      end
     else
       device.opt_out_offer_types = []
     end
