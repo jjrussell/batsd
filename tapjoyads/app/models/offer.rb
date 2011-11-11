@@ -492,7 +492,7 @@ class Offer < ActiveRecord::Base
       if featured? && rewarded?
         is_paid? ? price : 65
       elsif !rewarded?
-        50
+        100
       else
         is_paid? ? (price * 0.50).round : 35
         # uncomment for tapjoy premier & change show.html line 92-ish
