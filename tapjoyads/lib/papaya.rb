@@ -3,7 +3,6 @@ class Papaya
     date_str = date.to_s(:yy_mm_dd)
     url = "#{PAPAYA_API_URL}/imeiapi/udid_list?date=#{date_str}"
     papaya_data = get_papaya_data(url)
-    return if papaya_data.nil?
 
     papaya_data.each do |id|
       #probably needs to add filter to invalid udids later, have seen "0000000000", "0", and sometimes a udid followed by '/0 2'. Other 99.9% seems valid though
@@ -18,7 +17,6 @@ class Papaya
   def self.update_apps
     url = "#{PAPAYA_API_URL}/imeiapi/app_list"
     papaya_data = get_papaya_data(url)
-    return if papaya_data.nil?
 
     papaya_data.each do |package_name, user_count|
       unless user_count.is_a?(Integer)
@@ -26,9 +24,8 @@ class Papaya
         next
       end
       apps = App.find_all_by_store_id(package_name)
-      if apps.length == 0
+      if apps.blank?
         Notifier.alert_new_relic(PapayaAPIError, "#{package_name} not found in Apps table")
-        next
       end
       apps.each do |app|
         app.papaya_user_count = user_count
@@ -61,9 +58,8 @@ class Papaya
       return nil
     end
 
-    if papaya_data.length == 0
+    if papaya_data.blank?
       Notifier.alert_new_relic(PapayaAPIError, "Papaya data is empty")
-      return nil
     end
     papaya_data
   end
