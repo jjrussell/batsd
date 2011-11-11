@@ -79,7 +79,7 @@ class OfferList
   end
 
   def get_offers(start, max_offers)
-    return [ [], 0 ] if @device && (@device.opted_out? || @device.banned)
+    return [ [], 0 ] if @device && (@device.opted_out? || @device.banned?)
     @offers.sort! { |a,b| b.rank_score <=> a.rank_score }
     returned_offers = []
     offers_to_find  = start + max_offers

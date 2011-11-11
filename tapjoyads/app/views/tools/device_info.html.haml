@@ -48,7 +48,7 @@
             Opt Out Selective Offer Types
             #help_opt_out_offer_types.help ?
           %td
-            = select_tag :opt_out_offer_types, options_for_select(Offer::ALL_OFFER_TYPES, @device.get_opt_out_offer_types), {:multiple => true, :class => 'chosen'}
+            = select_tag :opt_out_offer_types, options_for_select(Offer::ALL_OFFER_TYPES, @device.opt_out_offer_types), {:multiple => true, :class => 'chosen'}
         %tr
           %th
             Banned?
