@@ -3,6 +3,7 @@ module Offer::Rejecting
   def postcache_reject?(publisher_app, device, currency, device_type, geoip_data, app_version, direct_pay_providers, type, hide_rewarded_app_installs, library_version, os_version, screen_layout_size, video_offer_ids, source)
     geoip_reject?(geoip_data, device) ||
     already_complete?(device, app_version) ||
+    selective_opt_out_reject?(device) ||
     show_rate_reject?(device) ||
     flixter_reject?(publisher_app, device) ||
     minimum_bid_reject?(currency, type) ||
@@ -124,6 +125,10 @@ module Offer::Rejecting
     end
 
     device.has_app?(app_id_for_device)
+  end
+
+  def selective_opt_out_reject?(device)
+    device.opt_out_offer_types.include?(item_type)
   end
 
   def show_rate_reject?(device)
