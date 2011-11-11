@@ -7,7 +7,7 @@
 #login {
 
   .nav {
-    height: 110px;
+    height: 120px;
     max-width: 320px;
     width: 100%;
 
@@ -19,54 +19,28 @@
          padding: 0;
 
         .login {
-          .client_login {
-            width: 260px;
-            text-align: right;
-          }
           
           .form_fields {
             margin: 0 auto;
-            width: 260px;
-
+            width: 280px;
+            
             input {
               margin: 0 4px;
-              width: 80px;
             }
-            .row {
+            ul.row {
               float: none;
-              height: 30px;
-              margin: 0 auto;
+              
+              li.field.login_error {
+                margin: 6px 0;
+              }
             }
-            .field {
-              float: none;
-            }
-            .field.sign_in {
-              display: none;
-              height: 30px;
-              margin: 0 auto;
-              width: 60px;
-            }
-            .field.email {
-              float: left;
-            }
-            .field.password {
-              float: left;
-            }
-            .field.login_btn {
-              margin: 0 auto;
-              width: 62px;
-            }
-          }
-          .login_error {
-            float: right;
-            font-size: 0.7em;
           }
         }
       }
       .logo {
-        background-size: 80%;
+        background-size: 99px 47px;
         float: none;
-        height: 36px;
+        height: 47px;
         width: 99px;
         margin: 0 auto;
       }
@@ -78,8 +52,9 @@
   .main_scene {
 
     .content_box {
-      max-width: 300px;
-      height: 300px;
+      height: 282px;
+      margin: 12px 0;
+      max-width: 300  px;
 
       .main_scene_content {
         width: 300px;
