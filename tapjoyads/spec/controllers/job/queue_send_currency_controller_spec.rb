@@ -165,8 +165,8 @@ describe Job::QueueSendCurrencyController do
         )
 
       mock_queue = mock()
-      mock_queue.stubs(:receive).returns(@reward.serialize, nil)
-      mock_queue.stubs(:visibility).returns(1)
+      mock_queue.stubs(:receive_message).returns(AWS::SQS::ReceivedMessage.new(nil, nil, nil, { :body => @reward.serialize }), nil)
+      mock_queue.stubs(:visibility_timeout).returns(1)
       Sqs.expects(:queue).returns(mock_queue)
 
       get 'index'
@@ -187,8 +187,8 @@ describe Job::QueueSendCurrencyController do
         )
 
       mock_queue = mock()
-      mock_queue.stubs(:receive).returns(@reward.serialize, nil)
-      mock_queue.stubs(:visibility).returns(1)
+      mock_queue.stubs(:receive_message).returns(AWS::SQS::ReceivedMessage.new(nil, nil, nil, { :body => @reward.serialize }), nil)
+      mock_queue.stubs(:visibility_timeout).returns(1)
       Sqs.expects(:queue).returns(mock_queue)
 
       get 'index'

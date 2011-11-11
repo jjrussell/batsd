@@ -12,6 +12,8 @@
                 - form_for([ :games, @gamer_session ]) do |f|
                   - if params[:data].present?
                     = hidden_field_tag :data, params[:data]
+                  - if params[:path].present?
+                    = hidden_field_tag :path, params[:path]
                   %ul.row.inputs
                     %ul.group.inputs
                       %li.field.sign_in
