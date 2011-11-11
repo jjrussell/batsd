@@ -1,6 +1,7 @@
 class GamesMailer < ActionMailer::Base
   def feedback(gamer, content, user_agent, device_id)
     from 'Tapjoy <noreply@tapjoy.com>'
+    reply_to gamer.email
     recipients "customerservice@tapjoy.com"
     subject "User Feedback - Tapjoy"
     content_type 'text/html'
@@ -9,6 +10,7 @@ class GamesMailer < ActionMailer::Base
 
   def report_bug(gamer, content, user_agent, device_id)
     from 'Tapjoy <noreply@tapjoy.com>'
+    reply_to gamer.email
     recipients "mobilehelp@tapjoy.com"
     subject "Bug Report - Tapjoy"
     content_type 'text/html'
@@ -17,6 +19,7 @@ class GamesMailer < ActionMailer::Base
 
   def contact_support(gamer, content, user_agent, device_id)
     from 'Tapjoy <noreply@tapjoy.com>'
+    reply_to gamer.email
     recipients "mobilehelp@tapjoy.com"
     subject "User Support - Tapjoy"
     content_type 'text/html'

@@ -9,12 +9,15 @@ class Device < SimpledbShardedResource
   self.sdb_attr :internal_notes
   self.sdb_attr :survey_answers, :type => :json, :default_value => {}, :cgi_escape => true
   self.sdb_attr :opted_out, :type => :bool, :default_value => false
+  self.sdb_attr :opt_out_offer_types, :replace => false, :force_array => true
+  self.sdb_attr :banned, :type => :bool, :default_value => false
   self.sdb_attr :last_run_time_tester, :type => :bool, :default_value => false
   self.sdb_attr :publisher_user_ids, :type => :json, :default_value => {}, :cgi_escape => true
   self.sdb_attr :product
   self.sdb_attr :version
   self.sdb_attr :mac_address
   self.sdb_attr :platform
+  self.sdb_attr :is_papayan, :type => :bool, :default_value => false
 
   def dynamic_domain_name
     domain_number = @key.matz_silly_hash % NUM_DEVICES_DOMAINS

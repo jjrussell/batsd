@@ -7,11 +7,12 @@ class Job::QueueFailedDownloadsController < Job::SqsReaderController
   private
 
   def on_message(message)
-    json = JSON.parse(message.to_s)
+    json = JSON.parse(message.body)
 
     url = json['url']
     download_options = json['download_options'].symbolize_keys
 
     Downloader.get_strict(url, download_options)
   end
+
 end

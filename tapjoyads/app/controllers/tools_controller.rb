@@ -115,13 +115,20 @@ class ToolsController < WebsiteController
   end
 
   def sqs_lengths
-    @queues = Sqs.sqs.queues
+    @queues = Sqs.queues.map do |queue|
+      {
+        :name        => queue.url.split('/').last,
+        :size        => queue.visible_messages,
+        :hidden_size => queue.invisible_messages,
+        :visibility  => queue.visibility_timeout,
+      }
+    end
   end
 
   def elb_status
     elb_interface  = RightAws::ElbInterface.new
     ec2_interface  = RightAws::Ec2.new
-    @lb_names      = Rails.env.production? ? %w( masterjob-lb job-lb website-lb dashboard-lb games-lb api-lb test-lb util-lb ) : []
+    @lb_names      = Rails.env.production? ? %w( masterjob-lb job-lb website-lb dashboard-lb api-lb test-lb util-lb ) : []
     @lb_instances  = {}
     @ec2_instances = {}
     @lb_names.each do |lb_name|
@@ -251,7 +258,12 @@ class ToolsController < WebsiteController
     device = Device.new :key => params[:udid]
     log_activity(device)
     device.internal_notes = params[:internal_notes]
+    opted_out_types = params[:opt_out_offer_types] || []
+    opted_in_types  = device.opt_out_offer_types - opted_out_types
+    opted_out_types.each { |type| device.opt_out_offer_types = type }
+    opted_in_types.each  { |type| device.delete('opt_out_offer_types', type) }
     device.opted_out = params[:opted_out] == '1'
+    device.banned = params[:banned] == '1'
     device.serial_save
     flash[:notice] = 'Device successfully updated.'
     redirect_to :action => :device_info, :udid => params[:udid]

@@ -22,8 +22,8 @@ namespace :admin do
 
     print("Backing up the production database... ")
     time = Benchmark.realtime do
-      system("mysqldump -u #{source['username']} --password=#{source['password']} -h #{source['host']} --single-transaction --ignore-table=#{source['database']}.conversions --ignore-table=#{source['database']}.payout_infos #{source['database']} > #{dump_file}")
-      system("mysqldump -u #{source['username']} --password=#{source['password']} -h #{source['host']} --single-transaction --no-data #{source['database']} conversions payout_infos > #{dump_file2}")
+      system("mysqldump -u #{source['username']} --password=#{source['password']} -h #{source['host']} --single-transaction --ignore-table=#{source['database']}.gamers --ignore-table=#{source['database']}.gamer_profiles --ignore-table=#{source['database']}.gamer_devices --ignore-table=#{source['database']}.conversions --ignore-table=#{source['database']}.payout_infos #{source['database']} > #{dump_file}")
+      system("mysqldump -u #{source['username']} --password=#{source['password']} -h #{source['host']} --single-transaction --no-data #{source['database']} gamers gamer_profiles gamer_devices conversions payout_infos > #{dump_file2}")
     end
     puts("finished in #{time} seconds.")
 
@@ -42,13 +42,13 @@ namespace :admin do
 
   desc "Reconfigure syslog-ng"
   task :reconfigure_syslog_ng, :args do |task, task_args|
-    servers = Rails.env.test? ? 'util' : 'masterjobs jobserver website dashboard games webserver'
+    servers = Rails.env.test? ? 'util' : 'masterjobs jobserver website dashboard webserver'
     system("script/cloudrun '#{servers}' 'sudo /home/webuser/tapjoyserver/server/syslog-ng/configure.rb #{task_args[:args]} 2>&1' 'ubuntu'")
   end
 
   desc "Update geoip databse"
   task :geoipupdate do
-    servers = Rails.env.test? ? 'util' : 'masterjobs jobserver website dashboard games webserver'
+    servers = Rails.env.test? ? 'util' : 'masterjobs jobserver website dashboard webserver'
     system("script/cloudrun '#{servers}' 'tapjoyserver/server/update_geoip.rb' 'webuser' 'serial'")
   end
 

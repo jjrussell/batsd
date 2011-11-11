@@ -44,12 +44,12 @@ DASHBOARD_URL = local_config['dashboard_url'] || ''
 WEBSITE_URL = local_config['website_url'] || ''
 CLOUDFRONT_URL = 'https://d21x2jbj16e06e.cloudfront.net'
 GAMES_ANDROID_MARKET_URL = 'http://market.android.com/details?id=com.tapjoy.tapjoy'
-TJGAMES_URL = local_config['tjgames_url'] || ''
 
 # Amazon services:
 amazon = YAML::load_file("#{RAILS_ROOT}/config/amazon.yaml")
 ENV['AWS_ACCESS_KEY_ID'] = amazon['staging']['access_key_id']
 ENV['AWS_SECRET_ACCESS_KEY'] = amazon['staging']['secret_access_key']
+AWS_ACCOUNT_ID = '331510376354'
 
 # Add "RightAws::AwsError: sdb.amazonaws.com temporarily unavailable: (getaddrinfo: Temporary failure in name resolution)"
 # to the list of transient problems which will automatically get retried by RightAws.
@@ -79,3 +79,5 @@ FRESHBOOKS_AUTH_TOKEN = '59548f1150fa38c3feb2a67d6b1a0f8b'
 CLEAR_MEMCACHE = false
 
 DEV_FACEBOOK_ID = '100000459598424'
+
+Sass::Plugin.options[:style] = :compressed

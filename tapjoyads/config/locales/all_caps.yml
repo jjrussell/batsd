@@ -5,23 +5,31 @@ all_caps:
       ads_by: "ADS BY"
 
     offerwall:
-      # shared between the original wall and the redesigned wall
       title: "EARN %{currency}"
       free: "FREE"
       next: "NEXT %{items}"
       previous: "PREVIOUS %{items}"
       missing_currency: "MISSING %{currency}?"
+      instructions: "ENGAGE IN ANY OF THE FOLLOWING ACTIONS TO RECEIVE %{currency}"
+      earn_currency: "EARN %{amount} %{currency}"
+      buy_currency: "BUY %{amount} %{currency}"
+      load_more: "LOAD SOME MORE!"
+      loading: "LOADING..."
+      load_error: "PLEASE TRY AGAIN."
 
-      # original wall only
-      instructions: "INSTALL AND OPEN ONE OF THE APPS BELOW TO RECEIVE %{currency}"
-      amount_and_currency: "%{amount} %{currency}"
+    featured:
+      title: "EARN %{currency}"
+      download_and_run: "JUST DOWNLOAD AND RUN"
+      try_out: "TRY OUT"
+      download: "DOWNLOAD"
+      skip: "SKIP"
+      earn_now: "EARN NOW"
+      show_more_apps: "SHOW MORE APPS"
       earn_currency: "EARN %{amount_and_currency}"
-      buy_currency: "BUY %{amount_and_currency}"
 
-      # redesigned wall only
-      redesign_instructions: "ENGAGE IN ANY OF THE FOLLOWING ACTIONS TO RECEIVE %{currency}"
-      redesign_earn_currency: "EARN %{amount} %{currency}"
-      redesign_buy_currency: "BUY %{amount} %{currency}"
+    unavailable_offer:
+      message: "WE'RE SORRY BUT %{offer} IS NO LONGER AVAILABLE. YOU CAN RETURN TO THE PREVIOUS PAGE AND REFRESH TO VIEW THE LATEST OFFER LIST."
+      optional_message: "OR, CLICK HERE TO DOWNLOAD %{offer} ANYWAY."
 
     instructions:
       title: "INSTRUCTIONS"

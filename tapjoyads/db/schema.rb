@@ -569,6 +569,7 @@ ActiveRecord::Schema.define(:version => 20111031203250) do
     t.boolean  "url_overridden",                                                                :default => false, :null => false
     t.text     "banner_creatives"
     t.text     "dma_codes"
+    t.text     "regions"
   end
 
   add_index "offers", ["id"], :name => "index_offers_on_id", :unique => true

@@ -5,23 +5,31 @@ ja:
       ads_by: "Ads by"
 
     offerwall:
-      # shared between the original wall and the redesigned wall
-      title: "%{currency} 稼ぐ"
+      title: "%{currency} を稼ぐ"
       free: "無料"
       next: "次の %{items}件"
       previous: "前の %{items}件"
       missing_currency: "%{currency}が受取れない場合"
+      instructions: "次のアクションで %{currency} を獲得する"
+      earn_currency: "%{amount} %{currency}  を獲得"
+      buy_currency: "%{amount} %{currency} を買う"
+      load_more: "もっと読み込みましょう！"
+      loading: "読み込み中・・・"
+      load_error: "もう一度試してください"
 
-      # original wall only
-      instructions: "%{currency} を獲得するために、次の中からアプリをインストールして起動してください"
-      amount_and_currency: "%{amount} %{currency}"
+    featured:
+      title: "%{currency} を稼ぐ"
+      download_and_run: "インストールして起動してください。"
+      try_out: "試してみる"
+      download: "ダウンロード"
+      skip: "戻る"
+      earn_now: "今すぐ稼ぐ"
+      show_more_apps: "もっとアプリを見る"
       earn_currency: "%{amount_and_currency} を獲得"
-      buy_currency: "%{amount_and_currency} を買う"
 
-      # redesigned wall only
-      redesign_instructions: "次のアクションで %{currency} を獲得する"
-      redesign_earn_currency: "%{amount} %{currency}  を獲得"
-      redesign_buy_currency: "%{amount} %{currency} を買う"
+    unavailable_offer:
+      message: "申し訳ございませんが %{offer} が現在提供しておりません。前のページに戻って更新して頂くと最新オファー広告リストがご覧頂けます。"
+      optional_message: "又は %{offer} をダウンロードするにはクリックしてください"
 
     instructions:
       title: "指示"
