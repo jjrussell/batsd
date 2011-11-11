@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20111027000013) do
+ActiveRecord::Schema.define(:version => 20111031203250) do
 
   create_table "action_offers", :id => false, :force => true do |t|
     t.string   "id",                    :limit => 36,                    :null => false
@@ -317,8 +317,8 @@ ActiveRecord::Schema.define(:version => 20111027000013) do
   add_index "gamer_profiles", ["referred_by"], :name => "index_gamer_profiles_on_referred_by"
 
   create_table "gamers", :id => false, :force => true do |t|
-    t.string   "id",                   :limit => 36,                    :null => false
-    t.string   "email",                                                 :null => false
+    t.string   "id",                     :limit => 36,                    :null => false
+    t.string   "email",                                                   :null => false
     t.string   "crypted_password"
     t.string   "password_salt"
     t.string   "persistence_token"
@@ -330,18 +330,35 @@ ActiveRecord::Schema.define(:version => 20111027000013) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "udid"
-    t.string   "confirmation_token",                 :default => "",    :null => false
-    t.boolean  "blocked",                            :default => false
-    t.integer  "accepted_tos_version",               :default => 0
+    t.string   "confirmation_token",                   :default => "",    :null => false
+    t.boolean  "blocked",                              :default => false
+    t.integer  "accepted_tos_version",                 :default => 0
     t.datetime "deactivated_at"
+    t.string   "gender"
+    t.date     "birthdate"
+    t.string   "city"
+    t.string   "country"
+    t.string   "favorite_game"
+    t.string   "name"
+    t.string   "nickname"
+    t.string   "postal_code"
+    t.string   "favorite_category"
+    t.string   "facebook_id"
+    t.string   "fb_access_token"
+    t.string   "referred_by",            :limit => 36
+    t.integer  "referral_count",                       :default => 0
+    t.boolean  "use_gravatar",                         :default => false
+    t.boolean  "allow_marketing_emails",               :default => true
   end
 
   add_index "gamers", ["confirmation_token"], :name => "index_gamers_on_confirmation_token", :unique => true
   add_index "gamers", ["deactivated_at"], :name => "index_gamers_on_deactivated_at"
   add_index "gamers", ["email"], :name => "index_gamers_on_email", :unique => true
+  add_index "gamers", ["facebook_id"], :name => "index_gamers_on_facebook_id"
   add_index "gamers", ["id"], :name => "index_gamers_on_id", :unique => true
   add_index "gamers", ["perishable_token"], :name => "index_gamers_on_perishable_token"
   add_index "gamers", ["persistence_token"], :name => "index_gamers_on_persistence_token"
+  add_index "gamers", ["referred_by"], :name => "index_gamers_on_referred_by"
 
   create_table "generic_offers", :id => false, :force => true do |t|
     t.string   "id",               :limit => 36,                    :null => false
