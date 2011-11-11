@@ -20,9 +20,9 @@ class Papaya
     papaya_data = get_papaya_data(url)
     return if papaya_data.nil?
 
-    papaya_data.each do |package_name, total_user|
-      unless total_user.is_a?(Integer)
-        Notifier.alert_new_relic(PapayaAPIError, "invalid number from Papaya : #{package_name} = #{total_user}")
+    papaya_data.each do |package_name, user_count|
+      unless user_count.is_a?(Integer)
+        Notifier.alert_new_relic(PapayaAPIError, "invalid number from Papaya : #{package_name} = #{user_count}")
         next
       end
       apps = App.find_all_by_store_id(package_name)
@@ -31,7 +31,7 @@ class Papaya
         next
       end
       apps.each do |app|
-        app.papaya_total_user = total_user
+        app.papaya_user_count = user_count
         app.save
       end
     end
