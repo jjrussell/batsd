@@ -28,8 +28,10 @@ class Papaya
         Notifier.alert_new_relic(PapayaAPIError, "#{package_name} not found in Apps table")
       end
       apps.each do |app|
-        app.papaya_user_count = user_count
-        app.save
+        if app.papaya_user_count != user_count
+          app.papaya_user_count = user_count
+          app.save
+        end
       end
     end
   end
