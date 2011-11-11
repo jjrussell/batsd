@@ -1,6 +1,8 @@
 There was a NewRelic alert.
 
-<%= @error.inspect %>
+<%= @error.class %>
+
+<%= @error.message %>
 
 Stacktrace:
 <%= @error.backtrace * "\n" %>

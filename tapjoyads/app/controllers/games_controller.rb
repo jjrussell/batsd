@@ -46,7 +46,7 @@ class GamesController < ApplicationController
 protected
 
   def ssl_required?
-    Rails.env == 'production'
+    Rails.env.production?
   end
 
   def set_current_device(data)
@@ -67,4 +67,7 @@ private
     current_gamer.devices.find_by_device_id(udid) if current_gamer
   end
 
+  def require_gamer
+    redirect_to games_login_path(:path => "#{request.path}?#{request.query_string}") unless current_gamer
+  end
 end

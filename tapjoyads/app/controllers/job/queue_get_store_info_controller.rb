@@ -4,10 +4,10 @@ class Job::QueueGetStoreInfoController < Job::SqsReaderController
     super QueueNames::GET_STORE_INFO
   end
 
-private
+  private
 
   def on_message(message)
-    app = App.find(message.to_s)
+    app = App.find(message.body)
     log_activity(app)
 
     return unless app.store_id.present?

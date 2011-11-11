@@ -14,6 +14,7 @@ class User < ActiveRecord::Base
   has_many :enable_offer_requests
   has_many :admin_devices
   has_many :internal_devices
+  has_many :partners_for_sales, :class_name => 'Partner', :foreign_key => 'sales_rep_id'
   belongs_to :current_partner, :class_name => 'Partner'
   belongs_to :reseller
 
@@ -61,6 +62,10 @@ class User < ActiveRecord::Base
     user_roles.any? { |role| role.employee? }
   end
 
+  def to_s
+    email
+  end
+
 private
 
   def update_auth_net_cim_profile
@@ -70,7 +75,7 @@ private
   end
 
   def create_mail_chimp_entry
-    return if Rails.env == 'test'
+    return if Rails.env.test?
     if has_valid_email?
       message = { :type => "add_user", :user_id => id }.to_json
       Sqs.send_message(QueueNames::MAIL_CHIMP_UPDATES, message)

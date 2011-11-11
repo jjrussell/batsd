@@ -1,23 +1,16 @@
 - @page_title = 'Unavailable Offer'
 
 #main
-  We're sorry but
-  %span.name #{@offer.name}
-  is no longer available. You can return to the previous page and refresh to view the latest offer list.
+  = t('text.unavailable_offer.message', :offer => @offer.name)
   %br
   %br
 
   - if @offer.item_type == 'App'
-    %a{ :href => @destination_url }
-      Or, click here to download #{@offer.name} anyway.
+    %a{ :href => @destination_url }= t('text.unavailable_offer.optional_message', :offer => @offer.name)
 
 - content_for :page_styles do
   :plain
     #main {
       padding-bottom: 15px;
       font-size: 115%;
-    }
-    .name {
-      font-weight: bold;
-      color: #008810;
     }

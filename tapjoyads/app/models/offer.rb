@@ -11,6 +11,7 @@ class Offer < ActiveRecord::Base
   ANDROID_DEVICES = %w( android )
   WINDOWS_DEVICES = %w( windows )
   ALL_DEVICES = APPLE_DEVICES + ANDROID_DEVICES + WINDOWS_DEVICES
+  ALL_OFFER_TYPES = %w( App EmailOffer GenericOffer OfferpalOffer RatingOffer ActionOffer VideoOffer)
   EXEMPT_UDIDS = Set.new(['7bed2150f941bad724c42413c5efa7f202c502e0',
                           'a000002256c234'])
 
@@ -47,12 +48,9 @@ class Offer < ActiveRecord::Base
                                   'normal_bid', 'normal_conversion_rate', 'normal_avg_revenue',
                                   'normal_price', 'over_threshold', 'rewarded', 'reseller_id',
                                   'cookie_tracking', 'min_os_version', 'screen_layout_sizes',
-                                  'interval', 'banner_creatives', 'dma_codes' ].map { |c| "#{quoted_table_name}.#{c}" }.join(', ')
+                                  'interval', 'banner_creatives', 'dma_codes', 'regions' ].map { |c| "#{quoted_table_name}.#{c}" }.join(', ')
 
   DIRECT_PAY_PROVIDERS = %w( boku paypal )
-
-  DAILY_STATS_START_HOUR = 6
-  DAILY_STATS_RANGE = 6
 
   FREQUENCIES_CAPPING_INTERVAL = {
     "none"     => 0,
@@ -91,7 +89,7 @@ class Offer < ActiveRecord::Base
   validates_numericality_of :show_rate, :greater_than_or_equal_to => 0, :less_than_or_equal_to => 1
   validates_numericality_of :payment_range_low, :payment_range_high, :only_integer => true, :allow_nil => true, :greater_than => 0
   validates_inclusion_of :pay_per_click, :user_enabled, :tapjoy_enabled, :allow_negative_balance, :self_promote_only, :featured, :multi_complete, :rewarded, :cookie_tracking, :in => [ true, false ]
-  validates_inclusion_of :item_type, :in => %w( App EmailOffer GenericOffer OfferpalOffer RatingOffer ActionOffer VideoOffer)
+  validates_inclusion_of :item_type, :in => ALL_OFFER_TYPES
   validates_inclusion_of :direct_pay, :allow_blank => true, :allow_nil => true, :in => DIRECT_PAY_PROVIDERS
   validates_each :device_types, :allow_blank => false, :allow_nil => false do |record, attribute, value|
     begin
@@ -167,8 +165,8 @@ class Offer < ActiveRecord::Base
   alias_method :events, :offer_events
   alias_method :random, :rand
 
-  json_set_field :device_types, :screen_layout_sizes, :countries, :dma_codes
-  memoize :get_device_types, :get_screen_layout_sizes, :get_countries, :get_dma_codes
+  json_set_field :device_types, :screen_layout_sizes, :countries, :dma_codes, :regions
+  memoize :get_device_types, :get_screen_layout_sizes, :get_countries, :get_dma_codes, :get_regions
 
   def app_offer?
     item_type == 'App' || item_type == 'ActionOffer'
@@ -196,30 +194,6 @@ class Offer < ActiveRecord::Base
   def banner_creatives_changed?
     return false if (super && banner_creatives_was.empty? && banner_creatives.empty?)
     super
-  end
-
-  def self.redistribute_hourly_stats_aggregation
-    Benchmark.realtime do
-      now = Time.zone.now + 15.minutes
-      Offer.find_each do |o|
-        o.next_stats_aggregation_time = now + rand(1.hour)
-        o.save(false)
-      end
-    end
-  end
-
-  def self.redistribute_daily_stats_aggregation
-    Benchmark.realtime do
-      now = Time.zone.now + 15.minutes
-      Offer.find_each do |o|
-        if now.hour >= DAILY_STATS_START_HOUR && now.hour < (DAILY_STATS_START_HOUR + DAILY_STATS_RANGE)
-          o.next_daily_stats_aggregation_time = now + rand(DAILY_STATS_RANGE.hours)
-        else
-          o.next_daily_stats_aggregation_time = (now - DAILY_STATS_START_HOUR.hours + 1.day).beginning_of_day + DAILY_STATS_START_HOUR.hours + rand(DAILY_STATS_RANGE.hours)
-        end
-        o.save(false)
-      end
-    end
   end
 
   def find_associated_offers
@@ -518,7 +492,7 @@ class Offer < ActiveRecord::Base
       if featured? && rewarded?
         is_paid? ? price : 65
       elsif !rewarded?
-        50
+        100
       else
         is_paid? ? (price * 0.50).round : 35
         # uncomment for tapjoy premier & change show.html line 92-ish
@@ -608,6 +582,10 @@ class Offer < ActiveRecord::Base
 
   def unlogged_attributes
     [ 'normal_avg_revenue', 'normal_bid', 'normal_conversion_rate', 'normal_price' ]
+  end
+  
+  def self.columns
+    super.reject { |c| c.name == "postal_codes" || c.name == "cities" }
   end
 
 private
@@ -710,8 +688,10 @@ private
 
   def set_stats_aggregation_times
     now = Time.now.utc
-    self.next_stats_aggregation_time = now if next_stats_aggregation_time.blank?
-    self.next_daily_stats_aggregation_time = (now + 1.day).beginning_of_day + DAILY_STATS_START_HOUR.hours + rand(DAILY_STATS_RANGE.hours) if next_daily_stats_aggregation_time.blank?
+    self.last_stats_aggregation_time       = nil
+    self.last_daily_stats_aggregation_time = nil
+    self.next_stats_aggregation_time       = now
+    self.next_daily_stats_aggregation_time = (now + 1.day).beginning_of_day + StatsAggregation::DAILY_STATS_START_HOUR.hours
   end
 
   def bid_higher_than_min_bid

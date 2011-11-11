@@ -33,10 +33,11 @@ elsif server_type == 'web'
   `cp tapjoyads/config/newrelic-web.yml tapjoyads/config/newrelic.yml`
 elsif server_type == 'website'
   `cp tapjoyads/config/newrelic-website.yml tapjoyads/config/newrelic.yml`
-elsif server_type == 'games'
-  `cp tapjoyads/config/newrelic-games.yml tapjoyads/config/newrelic.yml`
 elsif server_type == 'dashboard'
   `cp tapjoyads/config/newrelic-dashboard.yml tapjoyads/config/newrelic.yml`
+elsif server_type == 'util'
+  `cp tapjoyads/config/newrelic-util.yml tapjoyads/config/newrelic.yml`
+  `cp tapjoyads/config/local-util.yml tapjoyads/config/local.yml`
 end
 
 if server_type == 'web'

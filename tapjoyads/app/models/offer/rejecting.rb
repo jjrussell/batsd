@@ -3,6 +3,7 @@ module Offer::Rejecting
   def postcache_reject?(publisher_app, device, currency, device_type, geoip_data, app_version, direct_pay_providers, type, hide_rewarded_app_installs, library_version, os_version, screen_layout_size, video_offer_ids, source)
     geoip_reject?(geoip_data, device) ||
     already_complete?(device, app_version) ||
+    selective_opt_out_reject?(device) ||
     show_rate_reject?(device) ||
     flixter_reject?(publisher_app, device) ||
     minimum_bid_reject?(currency, type) ||
@@ -51,11 +52,7 @@ module Offer::Rejecting
   def frequency_capping_reject?(device)
     return false unless multi_complete? && interval != Offer::FREQUENCIES_CAPPING_INTERVAL['none']
 
-    if device.has_app?(item_id)
-      device.last_run_time(item_id) + interval > Time.zone.now
-    else
-      false
-    end
+    device.has_app?(item_id) && (device.last_run_time(item_id) + interval > Time.zone.now)
   end
 
   private
@@ -93,6 +90,7 @@ module Offer::Rejecting
 
     return true if countries.present? && countries != '[]' && !get_countries.include?(geoip_data[:country])
     return true if geoip_data[:country] && get_countries_blacklist.include?(geoip_data[:country].to_s.upcase)
+    return true if regions.present? && regions != '[]' && !get_regions.include?(geoip_data[:region])
     return true if dma_codes.present? && dma_codes != '[]' && !get_dma_codes.include?(geoip_data[:dma_code])
 
     false
@@ -127,6 +125,10 @@ module Offer::Rejecting
     end
 
     device.has_app?(app_id_for_device)
+  end
+
+  def selective_opt_out_reject?(device)
+    device.opt_out_offer_types.include?(item_type)
   end
 
   def show_rate_reject?(device)

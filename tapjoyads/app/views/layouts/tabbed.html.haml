@@ -11,8 +11,9 @@
       = yield :page_styles
       :plain
         #acting_as {
-          font-size: 0.5em;
+          font-size: 0.8em;
           background-color: yellow;
+          float: right;
         }
     = yield :page_head
 
@@ -24,10 +25,6 @@
           = link_to image_tag("#{RUN_MODE_PREFIX}tapjoylogo#{premier_suffix}.png"), "#{WEBSITE_URL}/"
         .right
           = current_user.username
-          - if current_user.can_manage_account?
-            %span#acting_as
-              acting as
-              = link_to current_partner.name_or_contact_name, partner_path(current_partner)
           |
           - link_text = "<span id='number_of_active_offers'>#{current_partner_active_app_offers.length}</span> active campaigns"
           - link_class = "soft-link #{current_partner_active_app_offers.blank? ? 'inactive' : ''}"
@@ -59,6 +56,12 @@
           |
           = link_to('Logout', logout_path)
         .clear
+        - if current_user.can_manage_account?
+          %span#acting_as
+            - form_tag('') do
+              acting as
+              = select_tag(:recent_partners, options_for_select(@recent_partners))
+              = link_to('Partner page', partner_path(current_partner))
 
       #tabs
         - tabs = []
@@ -73,12 +76,6 @@
         = navigation(tabs)
 
       #content
-        - if should_use_dashboard?
-          .flash
-            The Tapjoy dashboard is now located at
-            = succeed '.' do
-              = link_to 'dashboard.tapjoy.com', "#{DASHBOARD_URL}#{request.path}"
-            Please update your bookmarks.
         - flash.each do |name, msg|
           .flash{ :id => "flash_#{name}", :title => "Click to dismiss this message" }
             %strong #{name.to_s.humanize}:
@@ -105,9 +102,19 @@
           $('a[rel*=facebox]').facebox({
             closeImage   : '/images/closelabel.png'
           });
+
         });
 
-      - unless Rails.env == 'development'
+        $(function ($) {
+          $('#recent_partners').change(function () {
+            var form = $(this).parent('form');
+            var url = $(this).val();
+            form.attr('action', url);
+            form.submit();
+          });
+        });
+
+      - if Rails.env.production?
         :plain
           var _gaq = _gaq || [];
           _gaq.push(['_setAccount', 'UA-5323442-1']);

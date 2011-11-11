@@ -19,14 +19,14 @@
   #developer_phone
     #dots
 
-    %img.screenshot.offerwall.show{:src => "/images/offerwall.png"}/
+    %img.screenshot.marketplace.show{:src => "/images/marketplace.png"}/
     %img.screenshot.featured_app{:src => "/images/featured_app.jpg"}/
     %img.screenshot.banner_ads{:src => "/images/banner_a_ds.jpg"}/
     %img.screenshot.infrastructure{:src => "/images/infrastructure.png"}/
   #product_info
     #products
-      %a.selected.offerwall_link{:href => "...", :title => "offerwall"}
-        Offerwall
+      %a.selected.marketplace_link{:href => "...", :title => "marketplace"}
+        Marketplace
       .divider
         |
       %a.featured_app_link{:href => "...", :title => "featured_app"}
@@ -39,22 +39,20 @@
         |
       %a.infrastructure_link{:href => "...", :title => "infrastructure"}
         Infrastructure
-    .product_details.offerwall.show
+    .product_details.marketplace.show
       #product_title
         %span
-          Offerwall
+          Marketplace
       %p
-        The Tapjoy Offerwall is a list of marketing actions that your users can complete and earn virtual currency. The action might be
-        %b
-          "Install Kayak Mobile"
-        or even&nbsp;
-        %b><
-          "Install Tap Defense and beat level 3"
-        \.
+        The Tapjoy Marketplace is a list of marketing actions that your users can complete to access premium content. The action might be
+        %b &quot;Sign up for Netflix&quot;
+        or even
+        = succeed('.') do
+          %b &quot;Complete this tutorial for Tap Defense&quot;
       %p
         By integrating this ad unit, you can double your app's revenue by monetizing all of your users who can't participate in in-app payments or aren't willing to pay money. Since many offers are free, there is no payment information necessary in order to monetize these users.
       %p
-        The Offerwall allows you to unlock these additional revenue streams without affecting existing payments.
+        The Marketplace allows you to unlock these additional revenue streams without affecting existing payments.
       %p
         <a href="#{DASHBOARD_URL}/register">Sign-up for Tapjoy!</a>
     .product_details.featured_app

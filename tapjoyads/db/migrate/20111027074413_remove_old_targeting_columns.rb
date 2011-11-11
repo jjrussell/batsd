@@ -3,6 +3,7 @@ class RemoveOldTargetingColumns < ActiveRecord::Migration
     remove_column :offers, :cities
     remove_column :offers, :postal_codes
     change_column :offers, :dma_codes, :text, :null => false, :default => ''
+    change_column :offers, :regions, :text, :null => false, :default => ''
   end
 
   def self.down
