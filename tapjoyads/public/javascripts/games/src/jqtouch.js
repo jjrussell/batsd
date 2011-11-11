@@ -97,7 +97,6 @@
 
         }
         function doNavigation(fromPage, toPage, animation, goingBack) {
-            console.log(animation);
             if (toPage.length === 0) {
                 $.fn.unselect();
                 return false;
