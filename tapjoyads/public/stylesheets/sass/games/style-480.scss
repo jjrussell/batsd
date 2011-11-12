@@ -7,7 +7,7 @@
 #login {
 
   .nav {
-    height: 130px;
+    height: 120px;
     max-width: 480px;
     width: 100%;
     
@@ -42,7 +42,7 @@
                 display: none;
               }
               li.field.login_error {
-                margin: 0 12px 0;
+                margin: 0 6px 0;
                 float: right;
               }
               li.field.client_login {
@@ -83,11 +83,9 @@
         }
         .sign_up {
           float: none;
-          height: 280px;
           left: 0;
-          margin: 0 auto;
+          margin: 12px auto;
           position: static;
-          top: 24px;
         }
         .main_phone {
           display: none;
