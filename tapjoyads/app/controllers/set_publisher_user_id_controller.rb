@@ -1,5 +1,4 @@
 class SetPublisherUserIdController < ApplicationController
-  TEXTFREE_PUB_APP_ID = '6b69461a-949a-49ba-b612-94c8e7589642'
 
   def index
     return unless verify_params([:app_id, :udid, :publisher_user_id])

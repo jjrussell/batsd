@@ -45,3 +45,5 @@ AWS.config(
 GAMES_CONFIG = YAML::load_file("#{RAILS_ROOT}/config/games.yaml")[Rails.env]
 
 VERTICA_CONFIG = YAML::load_file("#{RAILS_ROOT}/config/vertica.yml")[Rails.env]
+
+TEXTFREE_PUB_APP_ID = '6b69461a-949a-49ba-b612-94c8e7589642'
