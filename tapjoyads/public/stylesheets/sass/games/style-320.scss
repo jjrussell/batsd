@@ -7,7 +7,7 @@
 #login {
 
   .nav {
-    height: 120px;
+    height: 124 px;
     max-width: 320px;
     width: 100%;
 
@@ -53,8 +53,8 @@
 
     .content_box {
       height: 282px;
-      margin: 12px 0;
-      max-width: 300  px;
+      margin: 24px 0 12px;
+      max-width: 300px;
 
       .main_scene_content {
         width: 300px;
@@ -67,25 +67,30 @@
         .sign_up {
           float: none;
           height: 280px;
-          left: 0;
           margin: 0 auto;
-          top: 24px;
           width: 295px;
-
+          
           .sign_up_content {
             postiton: relative;
             top: 24px;
-
+            
             input[type=email], input[type=password] {
-              width: 254px;
+              width: 260px;
             }
             input[type=submit] {
               width: 100px;
             }
             .register_form {
-              .field_tos {
-                .field_tos_text {
-                  margin-right: 7px;
+              .row {
+                width: 260px;
+                
+                .field_tos {
+                  .field_checkbox {
+                    margin-right: 6px;
+                  }
+                  .field_tos_text {
+                    margin-right: 6px;
+                  }
                 }
               }
             }

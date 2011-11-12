@@ -524,30 +524,30 @@ body.old .content_box {
 .account_info {
   padding: 20px;
 }
-form#new_gamer input[type=checkbox] {
+body.old form#new_gamer input[type=checkbox] {
   float: left;
   position: relative;
   top: 10px;
 }
-form#new_gamer label[for=gamer_terms_of_service] {
+body.old form#new_gamer label[for=gamer_terms_of_service] {
   float: left;
   font-size: 11px;
   margin-left: 12px;
   width: 90%;
 }
-form#new_gamer label[for=gamer_terms_of_service] a {
+body.old form#new_gamer label[for=gamer_terms_of_service] a {
   color: #333;
   text-decoration: underline;
 }
-form#new_gamer_session {
+body.old form#new_gamer_session {
   color: #7E7E7E;
   font-size: 12px;
 }
-.web form#new_gamer_session,
-.ipad form#new_gamer_session {
+.web body.old form#new_gamer_session,
+.ipad body.old form#new_gamer_session {
   font-size: 14px;
 }
-form#new_gamer_session label {
+body.old form#new_gamer_session label {
   float: left;
   position: relative;
   top: 6px;

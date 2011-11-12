@@ -110,29 +110,9 @@ TJG.loadedImages = {};
     TJG.doc.className = className + classes.join(' ');
 })(this, document);
 /*
-
-            _/    _/_/    _/_/_/_/_/                              _/
-               _/    _/      _/      _/_/    _/    _/    _/_/_/  _/_/_/
-          _/  _/  _/_/      _/    _/    _/  _/    _/  _/        _/    _/
-         _/  _/    _/      _/    _/    _/  _/    _/  _/        _/    _/
-        _/    _/_/  _/    _/      _/_/      _/_/_/    _/_/_/  _/    _/
-       _/
-    _/
-
-    Created by David Kaneda <http://www.davidkaneda.com>
-    Documentation and issue tracking on GitHub <http://wiki.github.com/senchalabs/jQTouch/>
-
-    Special thanks to Jonathan Stark <http://jonathanstark.com/>
-    and pinch/zoom <http://www.pinchzoom.com/>
-
-    (c) 2010 by jQTouch project members.
-    See LICENSE.txt for license.
-
     $Revision: 166 $
     $Date: Tue Mar 29 01:24:46 EDT 2011 $
     $LastChangedBy: jonathanstark $
-
-
 */
 (function($) {
     $.jQTouch = function(options) {
@@ -1096,8 +1076,6 @@ TJG.ui = {
           values[this.name] = $(this).val();
         }
       });
-      var form_height = $('.register_form').outerHeight();
-
       $(".email_error").hide();
       emailReg = /^([\w-\.+]+@([\w-]+\.)+[\w-]{2,4})?$/;
       if(values['date[day]'] == '' || values['date[month]'] == '' || values['date[year]'] == '') {
@@ -1128,10 +1106,8 @@ TJG.ui = {
           '<div class="title_2 center">Registering</div>',
           '<div class="loading_animation"></div>'
         ].join('');
-        //$('.register_form').animate({ height: "0px" }, animateSpd, function() {
-          $(".register_form").hide();
-          $('.register_progess').html(loader);
-        //});
+        $(".register_form").hide();
+        $('.register_progess').html(loader);
         $.ajax({
           type: 'POST',
           url: rurl,
@@ -1224,7 +1200,6 @@ TJG.ui = {
             $('.sign_up_again').click(function(){
               $('.register_progess').html('');
               $(".register_form").show();
-              //$('.register_form').animate({ height: form_height + "px" }, animateSpd);
             });
           },
           error: function() {
@@ -1238,7 +1213,6 @@ TJG.ui = {
             $('.sign_up_again').click(function(){
                $('.register_progess').html('');
                $(".register_form").show();
-//               $('.register_form').animate({ height: form_height + "px" }, animateSpd);
             });
           }
         });
@@ -2428,6 +2402,9 @@ RegExp.escape = function(text) {
           }
         });
         if ($('form#new_gamer_session')) {
+          $('form#new_gamer_session input').focus(function() {
+            $('form#new_gamer_session .login_error').empty();
+          });
           $('form#new_gamer_session').submit(function(e){
             $(".formError").hide();
             var inputs, email, pass, values = {};
