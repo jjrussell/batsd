@@ -68,6 +68,11 @@ private
   end
 
   def require_gamer
-    redirect_to games_login_path(:path => "#{request.path}?#{request.query_string}") unless current_gamer
+    unless current_gamer
+      path = request.path
+      path += "?#{request.query_string}" if request.query_string.present?
+      options = { :path => path } unless path == '/'
+      redirect_to games_login_path(options)
+    end
   end
 end
