@@ -116,13 +116,17 @@ class Device < SimpledbShardedResource
     save!
   end
 
-  def set_publisher_user_id!(app_id, publisher_user_id)
+  def set_publisher_user_id(app_id, publisher_user_id)
     parsed_publisher_user_ids = publisher_user_ids
     return if parsed_publisher_user_ids[app_id] == publisher_user_id
 
     parsed_publisher_user_ids[app_id] = publisher_user_id
     self.publisher_user_ids = parsed_publisher_user_ids
-    save
+  end
+
+  def set_publisher_user_id!(app_id, publisher_user_id)
+    set_publisher_user_id(app_id, publisher_user_id)
+    save if changed?
   end
 
   def self.normalize_device_type(device_type_param)
