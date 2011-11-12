@@ -492,7 +492,7 @@ class Offer < ActiveRecord::Base
       if featured? && rewarded?
         is_paid? ? price : 65
       elsif !rewarded?
-        50
+        100
       else
         is_paid? ? (price * 0.50).round : 35
         # uncomment for tapjoy premier & change show.html line 92-ish
@@ -582,10 +582,6 @@ class Offer < ActiveRecord::Base
 
   def unlogged_attributes
     [ 'normal_avg_revenue', 'normal_bid', 'normal_conversion_rate', 'normal_price' ]
-  end
-  
-  def self.columns
-    super.reject { |c| c.name == "postal_codes" || c.name == "cities" }
   end
 
 private
