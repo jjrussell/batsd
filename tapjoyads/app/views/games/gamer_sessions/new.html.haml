@@ -9,7 +9,7 @@
           .aside_login
             .login
               .form_fields
-                - form_for([ :gamer_sessions, @gamer_session ], :url => games_login_path ) do |f|
+                - form_for([ :gamer_sessions, @gamer_session ] ) do |f|
                   - if params[:data].present?
                     = hidden_field_tag :data, params[:data]
                   - if params[:path].present?
