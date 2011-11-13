@@ -5,8 +5,7 @@ class Games::GamerSessionsController < GamesController
   end
 
   def new
-    @gamer_session = GamerSession.new
-    @gamer = Gamer.new
+    show_login_page
   end
 
   def create
@@ -22,8 +21,7 @@ class Games::GamerSessionsController < GamesController
         redirect_to games_root_path
       end
     else
-      @gamer = Gamer.new
-      render :action => :new
+      show_login_page
     end
   end
 

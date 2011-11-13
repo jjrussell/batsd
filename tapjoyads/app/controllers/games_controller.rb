@@ -6,7 +6,7 @@ class GamesController < ApplicationController
 
   skip_before_filter :fix_params
 
-  helper_method :current_gamer, :current_device_id, :current_device_id_cookie, :current_device_info, :has_multiple_devices
+  helper_method :current_gamer, :current_device_id, :current_device_id_cookie, :current_device_info, :has_multiple_devices, :show_login_page
 
   def current_gamer
     @current_gamer ||= current_gamer_session && current_gamer_session.record
@@ -70,10 +70,13 @@ private
   def require_gamer
     unless current_gamer
       params[:path] = url_for(params.merge(:only_path => true))
-
-      @gamer_session = GamerSession.new
-      @gamer = Gamer.new
-      render 'games/gamer_sessions/new'
+      show_login_page
     end
+  end
+
+  def show_login_page
+    @gamer_session = GamerSession.new
+    @gamer = Gamer.new
+    render 'games/gamer_sessions/new'
   end
 end
