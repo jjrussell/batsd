@@ -9,9 +9,31 @@ class GamesController < ApplicationController
   helper_method :current_gamer, :current_device_id, :current_device_id_cookie, :current_device_info, :has_multiple_devices, :show_login_form
 
   def login
-    # this is just to show the login form...
-    # actual authentication is done in gamer_sessions_controller/create
-    show_login_form
+    unless request.method == :post
+      show_login_form and return
+    end
+
+    @gamer_session = GamerSession.new(params[:gamer_session])
+    @gamer_session.remember_me = true
+    if @gamer_session.save
+      logout and return if current_gamer.blocked?
+      if params[:data].present?
+        redirect_to finalize_games_gamer_device_path(:data => params[:data])
+      elsif params[:path]
+        redirect_to params[:path]
+      else
+        redirect_to games_root_path
+      end
+    else
+      show_login_form
+    end
+  end
+
+  def logout
+    session[:current_device_id] = nil
+    gamer_session = GamerSession.find
+    gamer_session.destroy unless gamer_session.nil?
+    redirect_to games_root_path
   end
 
   def current_gamer
