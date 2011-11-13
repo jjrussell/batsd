@@ -8,34 +8,6 @@ class GamesController < ApplicationController
 
   helper_method :current_gamer, :current_device_id, :current_device_id_cookie, :current_device_info, :has_multiple_devices, :show_login_page
 
-  def login
-    unless request.method == :post
-      show_login_page and return
-    end
-
-    @gamer_session = GamerSession.new(params[:gamer_session])
-    @gamer_session.remember_me = true
-    if @gamer_session.save
-      logout and return if current_gamer.blocked?
-      if params[:data].present?
-        redirect_to finalize_games_gamer_device_path(:data => params[:data])
-      elsif params[:path]
-        redirect_to params[:path]
-      else
-        redirect_to games_root_path
-      end
-    else
-      show_login_page
-    end
-  end
-
-  def logout
-    session[:current_device_id] = nil
-    gamer_session = GamerSession.find
-    gamer_session.destroy unless gamer_session.nil?
-    redirect_to games_root_path
-  end
-
   def current_gamer
     @current_gamer ||= current_gamer_session && current_gamer_session.record
   end
@@ -98,12 +70,10 @@ private
   def require_gamer
     unless current_gamer
       params[:path] = url_for(params.merge(:only_path => true))
-      show_login_page
-  end
 
-  def show_login_page
-    @gamer_session ||= GamerSession.new
-    @gamer ||= Gamer.new
-    render 'games/login'
+      @gamer_session = GamerSession.new
+      @gamer = Gamer.new
+      render 'games/gamer_sessions/new'
+    end
   end
 end
