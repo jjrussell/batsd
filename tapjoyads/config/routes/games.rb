@@ -10,8 +10,8 @@ ActionController::Routing::Routes.draw do |map|
     m.more_games_editor_picks 'editor_picks', :controller => 'games/more_games', :action => :editor_picks
     m.more_games_popular 'popular', :controller => 'games/more_games', :action => :popular
 
-    m.resources :gamer_sessions, :controller => 'games/gamer_sessions', :only => [ :new, :create, :destroy, :index ]
-    m.login 'login', :controller => 'games/gamer_sessions', :action => :new
+    m.resources :gamer_sessions, :controller => 'games/gamer_sessions', :only => [ :create, :destroy ]
+    m.login 'login', :controller => 'games', :action => :login
     m.logout 'logout', :controller => 'games/gamer_sessions', :action => :destroy
 
     m.resource :gamer, :controller => 'games/gamers', :only => [ :create, :edit, :update ], :member => { :password => :get, :prefs => :get, :update_password => :put, :accept_tos => :put } do |gamer|

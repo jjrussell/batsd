@@ -6,7 +6,13 @@ class GamesController < ApplicationController
 
   skip_before_filter :fix_params
 
-  helper_method :current_gamer, :current_device_id, :current_device_id_cookie, :current_device_info, :has_multiple_devices
+  helper_method :current_gamer, :current_device_id, :current_device_id_cookie, :current_device_info, :has_multiple_devices, :show_login_form
+
+  def login
+    # this is just to show the login form...
+    # actual authentication is done in gamer_sessions_controller/create
+    show_login_form
+  end
 
   def current_gamer
     @current_gamer ||= current_gamer_session && current_gamer_session.record
@@ -73,5 +79,11 @@ private
       options = { :path => path } unless path == games_root_path
       redirect_to games_login_path(options)
     end
+  end
+
+  def show_login_form
+    @gamer_session ||= GamerSession.new
+    @gamer ||= Gamer.new
+    render 'games/login'
   end
 end

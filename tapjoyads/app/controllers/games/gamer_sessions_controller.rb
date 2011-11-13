@@ -1,14 +1,5 @@
 class Games::GamerSessionsController < GamesController
 
-  def index
-    redirect_to games_login_path
-  end
-
-  def new
-    @gamer_session = GamerSession.new
-    @gamer = Gamer.new
-  end
-
   def create
     @gamer_session = GamerSession.new(params[:gamer_session])
     @gamer_session.remember_me = true
@@ -22,8 +13,7 @@ class Games::GamerSessionsController < GamesController
         redirect_to games_root_path
       end
     else
-      @gamer = Gamer.new
-      render :action => :new
+      show_login_form
     end
   end
 
