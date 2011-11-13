@@ -6,11 +6,11 @@ class GamesController < ApplicationController
 
   skip_before_filter :fix_params
 
-  helper_method :current_gamer, :current_device_id, :current_device_id_cookie, :current_device_info, :has_multiple_devices, :show_login_form
+  helper_method :current_gamer, :current_device_id, :current_device_id_cookie, :current_device_info, :has_multiple_devices, :show_login_page
 
   def login
     unless request.method == :post
-      show_login_form and return
+      show_login_page and return
     end
 
     @gamer_session = GamerSession.new(params[:gamer_session])
@@ -25,7 +25,7 @@ class GamesController < ApplicationController
         redirect_to games_root_path
       end
     else
-      show_login_form
+      show_login_page
     end
   end
 
@@ -98,10 +98,10 @@ private
   def require_gamer
     unless current_gamer
       params[:path] = url_for(params.merge(:only_path => true))
-      show_login_form
+      show_login_page
   end
 
-  def show_login_form
+  def show_login_page
     @gamer_session ||= GamerSession.new
     @gamer ||= Gamer.new
     render 'games/login'
