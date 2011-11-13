@@ -69,9 +69,8 @@ private
 
   def require_gamer
     unless current_gamer
-      path = request.path
-      path += "?#{request.query_string}" if request.query_string.present?
-      options = { :path => path } unless path == '/'
+      path = url_for(params.merge(:only_path => true))
+      options = { :path => path } unless path == games_root_path
       redirect_to games_login_path(options)
     end
   end
