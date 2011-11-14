@@ -11,6 +11,7 @@ class Offer < ActiveRecord::Base
   ANDROID_DEVICES = %w( android )
   WINDOWS_DEVICES = %w( windows )
   ALL_DEVICES = APPLE_DEVICES + ANDROID_DEVICES + WINDOWS_DEVICES
+  ALL_OFFER_TYPES = %w( App EmailOffer GenericOffer OfferpalOffer RatingOffer ActionOffer VideoOffer)
   EXEMPT_UDIDS = Set.new(['7bed2150f941bad724c42413c5efa7f202c502e0',
                           'a000002256c234'])
 
@@ -88,7 +89,7 @@ class Offer < ActiveRecord::Base
   validates_numericality_of :show_rate, :greater_than_or_equal_to => 0, :less_than_or_equal_to => 1
   validates_numericality_of :payment_range_low, :payment_range_high, :only_integer => true, :allow_nil => true, :greater_than => 0
   validates_inclusion_of :pay_per_click, :user_enabled, :tapjoy_enabled, :allow_negative_balance, :self_promote_only, :featured, :multi_complete, :rewarded, :cookie_tracking, :in => [ true, false ]
-  validates_inclusion_of :item_type, :in => %w( App EmailOffer GenericOffer OfferpalOffer RatingOffer ActionOffer VideoOffer)
+  validates_inclusion_of :item_type, :in => ALL_OFFER_TYPES
   validates_inclusion_of :direct_pay, :allow_blank => true, :allow_nil => true, :in => DIRECT_PAY_PROVIDERS
   validates_each :device_types, :allow_blank => false, :allow_nil => false do |record, attribute, value|
     begin
@@ -491,7 +492,7 @@ class Offer < ActiveRecord::Base
       if featured? && rewarded?
         is_paid? ? price : 65
       elsif !rewarded?
-        50
+        100
       else
         is_paid? ? (price * 0.50).round : 35
         # uncomment for tapjoy premier & change show.html line 92-ish
@@ -581,10 +582,6 @@ class Offer < ActiveRecord::Base
 
   def unlogged_attributes
     [ 'normal_avg_revenue', 'normal_bid', 'normal_conversion_rate', 'normal_price' ]
-  end
-  
-  def self.columns
-    super.reject { |c| c.name == "postal_codes" || c.name == "cities" }
   end
 
 private

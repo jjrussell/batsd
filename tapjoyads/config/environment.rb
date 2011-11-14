@@ -65,6 +65,16 @@ Rails::Initializer.run do |config|
   config.gem 'uuidtools', :version => '2.1.2'
   config.gem 'vertica', :version => '0.8.1'
   config.gem 'will_paginate', :version => '2.3.16'
+  config.gem 'hashie', :version => '1.1.0'
+  config.gem 'multi_json', :version => '1.0.3'
+  config.gem 'multi_xml', :version => '0.4.0'
+  config.gem 'addressable', :version => '2.2.6', :lib => 'addressable/uri'
+  config.gem 'multipart-post', :version => '1.1.0', :lib => 'net/http/post/multipart'
+  config.gem 'faraday', :version => '0.7.4'
+  config.gem 'faraday_middleware', :version => '0.7.0'
+  config.gem 'simple_oauth', :version => '0.1.5'
+  config.gem 'twitter', :version => '1.7.2'
+  config.gem 'oauth', :version => '0.4.5'
 
   # Only load the plugins named here, in the order given. By default, all plugins
   # in vendor/plugins are loaded in alphabetical order.
@@ -122,7 +132,6 @@ Rails::Initializer.run do |config|
       if forked
         Mc.reset_connection
         SimpledbResource.reset_connection
-        Sqs.reset_connection
         VerticaCluster.reset_connection
       end
     end

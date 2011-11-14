@@ -16,12 +16,12 @@ class StatuszController < ApplicationController
     send_currency_queue       = Sqs.queue(QueueNames::SEND_CURRENCY)
 
     result = "success"
-    if hourly_app_stats_queue.size > 1000 ||
-       daily_app_stats_queue.size > 1000 ||
-       conversion_tracking_queue.size > 1000 ||
-       create_conversions_queue.size > 1000 ||
-       failed_sdb_saves_queue.size > 1000 ||
-       send_currency_queue.size > 5000
+    if hourly_app_stats_queue.visible_messages > 1000 ||
+       daily_app_stats_queue.visible_messages > 1000 ||
+       conversion_tracking_queue.visible_messages > 1000 ||
+       create_conversions_queue.visible_messages > 1000 ||
+       failed_sdb_saves_queue.visible_messages > 1000 ||
+       send_currency_queue.visible_messages > 5000
       result = "too long"
     end
 
