@@ -595,10 +595,6 @@ class Offer < ActiveRecord::Base
     [ 'normal_avg_revenue', 'normal_bid', 'normal_conversion_rate', 'normal_price' ]
   end
 
-  def self.columns
-    super.reject { |c| c.name == "postal_codes" || c.name == "cities" }
-  end
-
 private
 
   def sync_banner_creatives!
