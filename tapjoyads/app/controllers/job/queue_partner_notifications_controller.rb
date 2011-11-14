@@ -7,7 +7,7 @@ class Job::QueuePartnerNotificationsController < Job::SqsReaderController
   private
 
   def on_message(message)
-    json = JSON.load(message.to_s)
+    json = JSON.load(message.body)
     partner_id = json["partner_id"]
     partner = Partner.find partner_id
     offers = partner.offers.enabled_offers
@@ -35,4 +35,5 @@ class Job::QueuePartnerNotificationsController < Job::SqsReaderController
       end
     end
   end
+
 end

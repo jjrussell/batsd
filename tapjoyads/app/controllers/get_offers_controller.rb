@@ -89,7 +89,9 @@ private
     return unless verify_records([ @currency, @publisher_app ])
 
     @device = Device.new(:key => params[:udid])
-    @device.set_publisher_user_id!(params[:app_id], params[:publisher_user_id])
+    @device.set_publisher_user_id(params[:app_id], params[:publisher_user_id])
+    @device.set_last_run_time(TEXTFREE_PUB_APP_ID) if params[:app_id] == TEXTFREE_PUB_APP_ID && (!@device.has_app?(TEXTFREE_PUB_APP_ID) || (Time.zone.now - @device.last_run_time(TEXTFREE_PUB_APP_ID)) > 24.hours)
+    @device.save if @device.changed?
 
     params[:source] = 'offerwall' if params[:source].blank?
     params[:exp] = nil if params[:type] == Offer::CLASSIC_OFFER_TYPE
