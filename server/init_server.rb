@@ -39,8 +39,8 @@ end
 # start apache
 `cp /home/webuser/tapjoyserver/server/apache2.conf /etc/apache2/`
 `cp /home/webuser/tapjoyserver/server/passenger.load /etc/apache2/mods-available/`
-if server_type == 'webserver'
-  `cp /home/webuser/tapjoyserver/server/passenger.conf-webserver /etc/apache2/mods-available/passenger.conf`
+if server_type == 'web'
+  `cp /home/webuser/tapjoyserver/server/passenger.conf-web /etc/apache2/mods-available/passenger.conf`
 else
   `cp /home/webuser/tapjoyserver/server/passenger.conf /etc/apache2/mods-available/passenger.conf`
 end
