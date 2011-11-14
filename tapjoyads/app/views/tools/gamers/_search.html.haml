@@ -1,0 +1,48 @@
+#gamer_search
+  = label_tag 'search_box', 'Search email:'
+  = text_field_tag 'search_box', ''
+  = text_field_tag 'tapjoy_only_search_box', ''
+  %br/
+  = check_box_tag 'search_only_tapjoy', '1', true
+  = label_tag 'search_only_tapjoy', 'limit to @tapjoy.com and @offerpal.com emails'
+
+- content_for :page_styles do
+  :plain
+    #gamer_search {
+      float: right;
+      text-align: right;
+    }
+    #search_box {
+      display: none;
+    }
+    #search_box, #tapjoy_only_search_box {
+      width: 300px;
+    }
+
+- content_for :page_javascript do
+  :plain
+    $(function($){
+      var options = {
+        source: '#{search_gamers_path}',
+        delay: 250,
+        minLength: 2,
+        select: function(event, ui) {
+          location.href = '/tools/gamers/' + ui.item.gamer_id;
+        }
+      };
+      $('#search_box').focus().autocomplete(options);
+      options.source += '?tapjoy_only=true';
+      $('#tapjoy_only_search_box').focus().autocomplete(options);
+
+      $('#search_only_tapjoy').change(function(){
+        if ($(this).is(':checked')) {
+          var currentVal = $('#search_box').val();
+          $('#search_box').hide();
+          $('#tapjoy_only_search_box').val(currentVal).show();
+        } else {
+          var currentVal = $('#tapjoy_only_search_box').val();
+          $('#tapjoy_only_search_box').hide();
+          $('#search_box').val(currentVal).show();
+        }
+      });
+    });

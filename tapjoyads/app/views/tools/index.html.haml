@@ -3,10 +3,10 @@
 %h1 Tools
 - if permitted_to? :show, :statz
   .tjform
-    = label_tag('search_box', 'Offer Name:')
-    = text_field_tag('search_box', '', :size => '40')
+    = label_tag 'search_box', 'Offer Name:'
+    = text_field_tag 'search_box', '', :size => '40'
 
-- if has_permissions_for_one_of?(:payops, :payout_manager, :executive, :account_mgr)
+- if has_permissions_for_one_of? :payops, :payout_manager, :executive, :account_mgr
   %h3 Money
 %ul
   - if permitted_to? :failed_invoices, :tools_orders
@@ -24,7 +24,7 @@
   - if permitted_to? :publisher_payout_info_changes, :tools
     %li= link_to 'Payout Info Changes', publisher_payout_info_changes_tools_path
 
-- if has_permissions_for_one_of?(:admin)
+- if has_permissions_for_one_of? :admin
   %h3 Admin
 %ul
   - if permitted_to? :send_currency_failures, :tools
@@ -50,15 +50,17 @@
   - if permitted_to? :index, :tools_press_releases
     %li= link_to 'Press Releases', tools_press_releases_path
 
-- if has_permissions_for_one_of?(:games_editor)
+- if has_permissions_for_one_of? :games_editor, :customer_service
   %h3 Games
 %ul
   - if permitted_to? :index, :tools_editors_picks
     %li= link_to 'Editor\'s Choices', tools_editors_picks_path
   - if permitted_to? :index, :tools_app_reviews
     %li= link_to 'App Reviews', tools_app_reviews_path
+  - if permitted_to? :index, :tools_gamers
+    %li= link_to 'Gamers', tools_gamers_path
 
-- if has_permissions_for_one_of?(:account_mgr)
+- if has_permissions_for_one_of? :account_mgr
   %h3 Account Management
 %ul
   - if permitted_to? :index, :tools_offer_lists
@@ -90,7 +92,7 @@
   - if permitted_to? :index, :tools_agency_users
     %li= link_to 'Agency Users', tools_agency_users_path
 
-- if has_permissions_for_one_of?(:account_mgr, :customer_service, :admin)
+- if has_permissions_for_one_of? :account_mgr, :customer_service, :admin
   %h3 Customer Support
 %ul
   - if permitted_to? :device_info, :tools
@@ -100,7 +102,7 @@
   - if permitted_to? :index, :tools_admin_devices
     %li= link_to 'Admin Devices', tools_admin_devices_path
 
-- if has_permissions_for_one_of?(:hr)
+- if has_permissions_for_one_of? :hr
   %h3 Human Resources
 %ul
   - if permitted_to? :index, :tools_employees

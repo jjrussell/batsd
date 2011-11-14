@@ -46,6 +46,7 @@ ActionController::Routing::Routes.draw do |map|
   end
   map.connect 'partners/managed_by/:id', :controller => :partners, :action => :managed_by
   map.with_options(:controller => 'search') do |m|
+    m.search_gamers 'search/gamers', :action => 'gamers'
     m.search_offers 'search/offers', :action => 'offers'
     m.search_users 'search/users', :action => 'users'
     m.search_partners 'search/partners', :action => 'partners'
@@ -90,6 +91,7 @@ ActionController::Routing::Routes.draw do |map|
     tools.resources :agency_users, :only => [ :index, :show ]
     tools.resources :support_requests, :only => [ :index ]
     tools.resources :press_releases, :only => [ :index, :new, :create, :edit, :update ]
+    tools.resources :gamers, :only => [ :index ]
   end
 
   map.connect 'mail_chimp_callback/callback', :controller => :mail_chimp_callback, :action => :callback
