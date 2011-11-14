@@ -9,7 +9,6 @@
     Managed by:
     - options = options_for_select(@account_managers, params[:id])
     = select_tag('managed_by', options_for_select(options))
-    -# partners_path(:mine => true)}
   - form_tag(partners_path, :method => :get, :class => 'tjform') do
     = label_tag(:q, "Name or Email Address:")
     = text_field_tag(:q, params[:q], :size => '40')
