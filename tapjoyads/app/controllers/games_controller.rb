@@ -69,12 +69,13 @@ private
 
   def require_gamer
     unless current_gamer
-      params[:path] = url_for(params.merge(:only_path => true))
-      show_login_page
+      path = url_for(params.merge(:only_path => true))
+      options = { :path => path } unless path == games_root_path
+      redirect_to games_login_path(options)
     end
   end
 
-  def show_login_page
+  def render_login_page
     @gamer_session ||= GamerSession.new
     @gamer ||= Gamer.new
     render 'games/gamer_sessions/new'

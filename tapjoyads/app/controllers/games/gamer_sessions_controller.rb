@@ -5,7 +5,7 @@ class Games::GamerSessionsController < GamesController
   end
 
   def new
-    show_login_page
+    render_login_page
   end
 
   def create
@@ -21,7 +21,7 @@ class Games::GamerSessionsController < GamesController
         redirect_to games_root_path
       end
     else
-      show_login_page
+      render_login_page
     end
   end
 
