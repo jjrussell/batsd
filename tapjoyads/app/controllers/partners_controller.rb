@@ -70,18 +70,15 @@ class PartnersController < WebsiteController
   def update
     log_activity(@partner)
 
-    params[:partner][:account_managers] = User.find_all_by_id(params[:partner][:account_managers])
-    if params[:partner][:sales_rep].blank?
-      sales_rep = nil
-    else
-      sales_rep = User.find_by_email(params[:partner][:sales_rep])
-      if sales_rep.nil?
-        flash.now[:error] = 'Invalid sales rep email'
-        render :action => :edit
-        return
-      end
+    if params[:partner].include?(:account_managers)
+      account_managers = User.find_all_by_id(params[:partner][:account_managers])
+      params[:partner][:account_managers] = account_managers
     end
-    params[:partner][:sales_rep] = sales_rep
+
+    if params[:partner].include?(:sales_rep)
+      sales_rep = User.find_all_by_email(params[:partner][:sales_rep]).first
+      params[:partner][:sales_rep] = sales_rep
+    end
 
     safe_attributes = [ :name, :account_managers, :account_manager_notes, :rev_share, :transfer_bonus, :disabled_partners, :direct_pay_share, :approved_publisher, :billing_email, :accepted_publisher_tos, :sales_rep ]
     name_was = @partner.name
