@@ -1,6 +1,6 @@
 <IfModule mod_passenger.c>
   PassengerUseGlobalQueue on
-  PassengerMaxPoolSize 36
+  PassengerMaxPoolSize 18
   PassengerPoolIdleTime 0
   PassengerStatThrottleRate 1
   RailsAutoDetect off
