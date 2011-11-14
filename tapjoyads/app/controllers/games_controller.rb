@@ -75,8 +75,8 @@ private
   end
 
   def show_login_page
-    @gamer_session = GamerSession.new
-    @gamer = Gamer.new
+    @gamer_session ||= GamerSession.new
+    @gamer ||= Gamer.new
     render 'games/gamer_sessions/new'
   end
 end
