@@ -45,14 +45,6 @@ class GamesMarketingMailer < ActionMailer::Base
       :offer_data => offer_data, :editors_picks => editors_picks
   end
 
-  def link_device(gamer, ios_link, android_link)
-    from 'Tapjoy <noreply@tapjoy.com>'
-    recipients gamer.email
-    subject "Tapjoy - Link Device"
-    content_type 'text/html'
-    body(:ios_link => ios_link, :android_link => android_link)
-  end
-
   def invite(gamer_name, recipients_email, link)
     from "#{gamer_name} <noreply@tapjoy.com>"
     recipients recipients_email
