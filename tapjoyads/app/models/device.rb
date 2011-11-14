@@ -9,6 +9,8 @@ class Device < SimpledbShardedResource
   self.sdb_attr :internal_notes
   self.sdb_attr :survey_answers, :type => :json, :default_value => {}, :cgi_escape => true
   self.sdb_attr :opted_out, :type => :bool, :default_value => false
+  self.sdb_attr :opt_out_offer_types, :replace => false, :force_array => true
+  self.sdb_attr :banned, :type => :bool, :default_value => false
   self.sdb_attr :last_run_time_tester, :type => :bool, :default_value => false
   self.sdb_attr :publisher_user_ids, :type => :json, :default_value => {}, :cgi_escape => true
   self.sdb_attr :product
@@ -114,13 +116,17 @@ class Device < SimpledbShardedResource
     save!
   end
 
-  def set_publisher_user_id!(app_id, publisher_user_id)
+  def set_publisher_user_id(app_id, publisher_user_id)
     parsed_publisher_user_ids = publisher_user_ids
     return if parsed_publisher_user_ids[app_id] == publisher_user_id
 
     parsed_publisher_user_ids[app_id] = publisher_user_id
     self.publisher_user_ids = parsed_publisher_user_ids
-    save
+  end
+
+  def set_publisher_user_id!(app_id, publisher_user_id)
+    set_publisher_user_id(app_id, publisher_user_id)
+    save if changed?
   end
 
   def self.normalize_device_type(device_type_param)

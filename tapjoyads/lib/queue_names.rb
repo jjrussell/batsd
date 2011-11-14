@@ -1,21 +1,22 @@
 class QueueNames
-  CONVERSION_TRACKING      = RUN_MODE_PREFIX + 'ConversionTracking'
-  FAILED_SDB_SAVES         = RUN_MODE_PREFIX + 'FailedSdbSaves'
-  FAILED_DOWNLOADS         = RUN_MODE_PREFIX + 'FailedDownloads'
-  CREATE_CONVERSIONS       = RUN_MODE_PREFIX + 'CreateConversions'
-  SEND_CURRENCY            = RUN_MODE_PREFIX + 'SendCurrency'
-  APP_STATS_HOURLY         = RUN_MODE_PREFIX + 'AppStatsHourly'
-  APP_STATS_DAILY          = RUN_MODE_PREFIX + 'AppStatsDaily'
-  CALCULATE_SHOW_RATE      = RUN_MODE_PREFIX + 'CalculateShowRate'
-  SELECT_VG_ITEMS          = RUN_MODE_PREFIX + 'SelectVgItems'
-  GET_STORE_INFO           = RUN_MODE_PREFIX + 'GetStoreInfo'
-  UPDATE_MONTHLY_ACCOUNT   = RUN_MODE_PREFIX + 'UpdateMonthlyAccount'
-  SDB_BACKUPS              = RUN_MODE_PREFIX + 'SdbBackups'
-  MAIL_CHIMP_UPDATES       = RUN_MODE_PREFIX + 'MailChimpUpdates'
-  PARTNER_NOTIFICATIONS    = RUN_MODE_PREFIX + 'PartnerNotifications'
-  RECOUNT_STATS            = RUN_MODE_PREFIX + 'RecountStats'
-  CACHE_OFFERS             = RUN_MODE_PREFIX + 'CacheOffers'
-  UDID_REPORTS             = RUN_MODE_PREFIX + 'UdidReports'
-  CREATE_INVOICES          = RUN_MODE_PREFIX + 'CreateInvoices'
-  FAILED_EMAILS            = RUN_MODE_PREFIX + 'FailedEmails'
+  BASE_NAME = "#{AWS.config.use_ssl ? 'https://' : 'http://'}#{AWS.config.sqs_endpoint}/#{AWS_ACCOUNT_ID}/#{RUN_MODE_PREFIX}"
+
+  APP_STATS_DAILY        = "#{BASE_NAME}AppStatsDaily"
+  APP_STATS_HOURLY       = "#{BASE_NAME}AppStatsHourly"
+  CALCULATE_SHOW_RATE    = "#{BASE_NAME}CalculateShowRate"
+  CONVERSION_TRACKING    = "#{BASE_NAME}ConversionTracking"
+  CREATE_CONVERSIONS     = "#{BASE_NAME}CreateConversions"
+  CREATE_INVOICES        = "#{BASE_NAME}CreateInvoices"
+  FAILED_DOWNLOADS       = "#{BASE_NAME}FailedDownloads"
+  FAILED_EMAILS          = "#{BASE_NAME}FailedEmails"
+  FAILED_SDB_SAVES       = "#{BASE_NAME}FailedSdbSaves"
+  GET_STORE_INFO         = "#{BASE_NAME}GetStoreInfo"
+  MAIL_CHIMP_UPDATES     = "#{BASE_NAME}MailChimpUpdates"
+  PARTNER_NOTIFICATIONS  = "#{BASE_NAME}PartnerNotifications"
+  RECOUNT_STATS          = "#{BASE_NAME}RecountStats"
+  SDB_BACKUPS            = "#{BASE_NAME}SdbBackups"
+  SELECT_VG_ITEMS        = "#{BASE_NAME}SelectVgItems"
+  SEND_CURRENCY          = "#{BASE_NAME}SendCurrency"
+  UDID_REPORTS           = "#{BASE_NAME}UdidReports"
+  UPDATE_MONTHLY_ACCOUNT = "#{BASE_NAME}UpdateMonthlyAccount"
 end
