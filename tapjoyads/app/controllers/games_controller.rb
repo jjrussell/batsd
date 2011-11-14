@@ -67,4 +67,11 @@ private
     current_gamer.devices.find_by_device_id(udid) if current_gamer
   end
 
+  def require_gamer
+    unless current_gamer
+      path = url_for(params.merge(:only_path => true))
+      options = { :path => path } unless path == games_root_path
+      redirect_to games_login_path(options)
+    end
+  end
 end

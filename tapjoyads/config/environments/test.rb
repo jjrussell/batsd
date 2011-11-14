@@ -42,6 +42,7 @@ GAMES_ANDROID_MARKET_URL = 'http://market.android.com/details?id=com.tapjoy.tapj
 amazon = YAML::load_file("#{RAILS_ROOT}/config/amazon.yaml")
 ENV['AWS_ACCESS_KEY_ID'] = amazon['test']['access_key_id']
 ENV['AWS_SECRET_ACCESS_KEY'] = amazon['test']['secret_access_key']
+AWS_ACCOUNT_ID = '331510376354'
 
 NUM_POINT_PURCHASES_DOMAINS = 2
 NUM_CLICK_DOMAINS = 2

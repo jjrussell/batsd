@@ -24,7 +24,7 @@ class GetOffersController < ApplicationController
 
     set_geoip_data
 
-    if @for_preview = !params[:offer_id].blank?
+    if @for_preview
       @offer_list, @more_data_available = [[Offer.find_in_cache(params[:offer_id])], 0]
     else
       @offer_list, @more_data_available = get_offer_list.get_offers(@start_index, @max_items)
@@ -83,12 +83,9 @@ private
   end
 
   def setup
-    required_params = [:app_id]
-    if params[:action] == 'webpage' && params[:offer_id]
-      required_params << :offer_id
-    else
-      required_params += [:udid, :publisher_user_id]
-    end
+    @for_preview = (params[:action] == 'webpage' && params[:offer_id].present?)
+
+    required_params = [:app_id] + (@for_preview ? [:offer_id] : [:udid, :publisher_user_id])
     return unless verify_params(required_params)
 
     @now = Time.zone.now
@@ -106,9 +103,11 @@ private
     @publisher_app = App.find_in_cache(params[:app_id])
     return unless verify_records([ @currency, @publisher_app ])
 
-    if params[:udid]
+    unless @for_preview
       @device = Device.new(:key => params[:udid])
-      @device.set_publisher_user_id!(params[:app_id], params[:publisher_user_id])
+      @device.set_publisher_user_id(params[:app_id], params[:publisher_user_id])
+      @device.set_last_run_time(TEXTFREE_PUB_APP_ID) if params[:app_id] == TEXTFREE_PUB_APP_ID && (!@device.has_app?(TEXTFREE_PUB_APP_ID) || (Time.zone.now - @device.last_run_time(TEXTFREE_PUB_APP_ID)) > 24.hours)
+      @device.save if @device.changed?
     end
 
     params[:source] = 'offerwall' if params[:source].blank?

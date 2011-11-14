@@ -1,8 +1,4 @@
 FactoryGirl.define do
-  factory :store_click do
-    key { "#{Factory.next(:udid)}.#{Factory.next(:guid)}" }
-  end
-
   factory :device do
     key { "#{Factory.next(:udid)}" }
   end

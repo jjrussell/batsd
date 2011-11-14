@@ -39,4 +39,5 @@ class Job::QueueSelectVgItemsController < Job::SqsReaderController
     end
     Mc.put(mc_key, keys, false)
   end
+
 end
