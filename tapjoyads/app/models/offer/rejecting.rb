@@ -86,8 +86,6 @@ module Offer::Rejecting
   end
 
   def geoip_reject?(geoip_data, device)
-    return false if Offer::EXEMPT_UDIDS.include?(device.key)
-
     return true if countries.present? && countries != '[]' && !get_countries.include?(geoip_data[:country])
     return true if geoip_data[:country] && get_countries_blacklist.include?(geoip_data[:country].to_s.upcase)
     return true if regions.present? && regions != '[]' && !get_regions.include?(geoip_data[:region])
@@ -97,7 +95,7 @@ module Offer::Rejecting
   end
 
   def already_complete?(device, app_version = nil)
-    return false if Offer::EXEMPT_UDIDS.include?(device.key) || multi_complete?
+    return false if multi_complete?
 
     app_id_for_device = item_id
     if item_type == 'RatingOffer'
@@ -137,8 +135,6 @@ module Offer::Rejecting
   end
 
   def show_rate_reject?(device)
-    return false if Offer::EXEMPT_UDIDS.include?(device.key)
-
     srand( (device.key + (Time.now.to_f / 1.hour).to_i.to_s + id).hash )
     should_reject = rand > show_rate
     srand
