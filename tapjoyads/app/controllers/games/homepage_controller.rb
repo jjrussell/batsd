@@ -26,7 +26,7 @@ class Games::HomepageController < GamesController
     end
     @featured_review = AppReview.featured_review(@device.try(:platform))
 
-    if params[:more_apps] == true
+    if params[:load] == 'more_apps'
       @show_more_apps = true
       @editors_picks = EditorsPick.cached_active(using_android? ? 'android' : 'iphone')
     end
