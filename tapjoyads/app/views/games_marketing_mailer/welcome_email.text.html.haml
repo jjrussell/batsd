@@ -11,12 +11,9 @@
     :step => "border-top: 1px dotted #{light_gray}; padding: 10px 0;",
     :step_icon => "vertical-align: top;",
     :step_body => "float: left; margin-top: 10px; padding-left: 20px;",
-    :step_body_editors_picks => "margin-top: 10px; width: 100%; padding-left: 20px; padding-right: 20px;",
     :step_no_icon => "margin-top: 10px;",
     :step_name => "color: #{blue}; font-weight: bold; font-size: 16px; padding-bottom: 5px;",
-    :similar_offers_link => "display: block; color: #{red}; padding-top: 10px; text-align: center; text-decoration: none;",
-    :offer_publisher => "text-align: center;",
-    :offer_publisher_description => "width: 50%; margin: auto;"
+    :offers => "display: block; padding-top: 10px; text-align: center; font-weight: normal; font-size: 14px;"
   }
 
 %html
@@ -55,50 +52,54 @@
                     = image_tag("#{image_root}/confirm_button.png", :title => 'Confirm', :alt => 'Confirm', :style => "border: none;", :size => '170x49')
         - unless @linked
           .step{:style => css[:step]}
-            %table
-              %tr
-                %td{:style => css[:step_icon]}
-                  = image_tag("#{image_root}/connect_icon.png", :class => 'icon', :size => '68x68', :title => 'Connect your device', :alt => 'Connect')
-                %td{:style => css[:step_body]}
-                  .name{:style => css[:step_name]}
-                    Connect your device
-                  .description
-                    By connecting your device we can personalize your Tapjoy
-                    experience and recommend the best apps just for you. You
-                    must be on the device you wish to add.
-                    %br/
-                    %br/
+            - link_to(WEBSITE_URL) do
+              %table
+                %tr
+                  %td{:style => css[:step_icon]}
+                    = image_tag("#{image_root}/connect_icon.png", :class => 'icon', :size => '68x68', :title => 'Connect your device', :alt => 'Connect')
+                  %td{:style => css[:step_body]}
+                    .name{:style => css[:step_name]}
+                      Connect your device
+                    .description
+                      By connecting your device we can personalize your Tapjoy
+                      experience and recommend the best apps just for you. You
+                      must be on the device you wish to add.
+                      %br/
+                      %br/
         - unless @android_device
           .step{:style => css[:step]}
-            %table
-              %tr
-                %td{:style => css[:step_icon]}
-                  = image_tag("#{image_root}/home_icon.png", :class => 'icon', :size => '68x68', :title => 'Add Tapjoy to your Home Screen', :alt => 'Home')
-                %td{:style => css[:step_body]}
-                  .name{:style => css[:step_name]}
-                    Add Tapjoy to your Home Screen
-                  .description
-                    Engaging with your favorite apps can be just a tap away.
+            - link_to(WEBSITE_URL) do
+              %table
+                %tr
+                  %td{:style => css[:step_icon]}
+                    = image_tag("#{image_root}/home_icon.png", :class => 'icon', :size => '68x68', :title => 'Add Tapjoy to your Home Screen', :alt => 'Home')
+                  %td{:style => css[:step_body]}
+                    .name{:style => css[:step_name]}
+                      Add Tapjoy to your Home Screen
+                    .description
+                      Engaging with your favorite apps can be just a tap away.
         - if @linked && @offer_data.any?
           - @offer_data.each do |currency_id, offers|
+            - earn_url = "#{WEBSITE_URL}/earn/#{currency_id}"
             - external_publisher = offers[:external_publisher]
             .step{:style => css[:step]}
-              %table{:style => "width: 100%;"}
-                %tr
-                  %td{:style => css[:step_no_icon]}
-                    .name{:style => css[:step_name]}
-                      .publisher{:style => css[:offer_publisher]}
-                        = image_tag(external_publisher.get_icon_url, :alt => external_publisher.app_name)
-                        %div{:style => css[:offer_publisher_description]}
-                          Perform actions to earn more currency in your favorite apps. Click below to start earning
-                          = h(offers['CurrencyName'])
-                          in
-                          = h(external_publisher.app_name)
+              - link_to(earn_url, :style => "#{css[:offers]} #{css[:a]}") do
+                %table{:style => "width: 100%;"}
+                  %tr
+                    %td{:style => css[:step_no_icon]}
+                      .name{:style => css[:step_name]}
+                        .publisher{:style => "text-align: center;"}
+                          = image_tag(external_publisher.get_icon_url, :alt => external_publisher.app_name)
+                          %div{:style => "width: 50%; margin: auto;"}
+                            Perform actions to earn more currency in your favorite apps. Click below to start earning
+                            = h(offers['CurrencyName'])
+                            in
+                            = h(external_publisher.app_name)
             .step{:style => css[:step]}
-              %table{:style => "width: 100%"}
-                %tr
-                  %td{:style => css[:step_no_icon]}
-                    - link_to("#{WEBSITE_URL}/earn/#{currency_id}", :style => css[:similar_offers_link]) do
+              - link_to(earn_url, :style => "#{css[:offers]} #{css[:a]}") do
+                %table{:style => "width: 100%"}
+                  %tr
+                    %td{:style => css[:step_no_icon]}
                       - offers_array = offers['OfferArray'][0..2]
                       - offers_array.each do |offer|
                         %div{:style => "float: left; width: #{100/offers_array.size}%;"}
@@ -113,21 +114,22 @@
                             = h("#{offer['Payout']} #{offers['CurrencyName']}")
         - elsif @editors_picks.any?
           .step{:style => css[:step]}
-            %table
-              %tr
-                %td{:style => css[:step_icon]}
-                  = image_tag("#{image_root}/recommend_icon.png", :class => 'icon', :size => '68x68', :title => 'Recommended apps', :alt => 'Recommended')
-                %td{:style => css[:step_body_editors_picks]}
-                  .name{:style => css[:step_name]}
-                    Check out Tapjoy's Recommended Apps!
-                  - link_to("#{WEBSITE_URL}/more_apps", :style => css[:similar_offers_link]) do
-                    - editors_picks_array = @editors_picks[0..2]
-                    - editors_picks_array.each do |cached_app|
-                      %div{:style => "float: left; width: #{100/editors_picks_array.size}%;"}
-                        = image_tag(cached_app.icon_url, :alt => cached_app.name)
-                        %br/
-                        .description
-                          = h(cached_app.name)
+            - link_to("#{WEBSITE_URL}/more_apps", :style => css[:a]) do
+              %table
+                %tr
+                  %td{:style => css[:step_icon]}
+                    = image_tag("#{image_root}/recommend_icon.png", :class => 'icon', :size => '68x68', :title => 'Recommended apps', :alt => 'Recommended')
+                  %td{:style => "#{css[:step_body]} padding-right: 20px; width: 100%;"}
+                    .name{:style => css[:step_name]}
+                      Check out Tapjoy's Recommended Apps!
+                    %div{:style => css[:offers]}
+                      - editors_picks_array = @editors_picks[0..2]
+                      - editors_picks_array.each do |cached_app|
+                        %div{:style => "float: left; width: #{100/editors_picks_array.size}%;"}
+                          = image_tag(cached_app.icon_url, :alt => cached_app.name)
+                          %br/
+                          .description
+                            = h(cached_app.name)
         .step{:style => "border-top: 1px dotted #{light_gray};"}
           &nbsp;
       #footer{ :style => "padding-top: 20px; padding-bottom: 30px !important; padding: #{offset}; padding-bottom: 0px;" }
