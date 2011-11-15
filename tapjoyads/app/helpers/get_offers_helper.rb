@@ -44,7 +44,7 @@ module GetOffersHelper
 
   def get_fullscreen_ad_url(offer)
     offer.fullscreen_ad_url(
-        :publisher_app      => @publisher_app,
+        :publisher_app_id   => @publisher_app.id,
         :publisher_user_id  => params[:publisher_user_id],
         :udid               => params[:udid],
         :currency_id        => @currency.id,

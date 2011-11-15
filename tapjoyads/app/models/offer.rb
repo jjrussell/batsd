@@ -285,8 +285,14 @@ class Offer < ActiveRecord::Base
     banner_creative_path(size, format).gsub('/', '.')
   end
 
+  def display_banner_ads?
+    return false if (is_paid? || featured?)
+    return (item_type == 'App' && name.length <= 30) if rewarded?
+    item_type != 'VideoOffer'
+  end
+
   def display_custom_banner_for_size?(size)
-    return !rewarded? && !featured? && is_free? && item_type != 'VideoOffer' && banner_creatives.include?(size)
+    display_banner_ads? && banner_creatives.include?(size)
   end
 
   def get_video_icon_url(options = {})
@@ -466,6 +472,11 @@ class Offer < ActiveRecord::Base
 
   def store_id_for_feed
     item_type == 'App' ? third_party_data : Offer.hashed_icon_id(id)
+  end
+
+  def uploaded_icon?
+    bucket = AWS::S3.new.buckets[BucketNames::TAPJOY]
+    bucket.objects["icons/src/#{Offer.hashed_icon_id(icon_id)}.jpg"].exists?
   end
 
   def update_payment(force_update = false)
