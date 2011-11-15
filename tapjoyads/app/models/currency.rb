@@ -183,7 +183,7 @@ class Currency < ActiveRecord::Base
   end
 
   def calculate_spend_shares
-    spend_share_ratio = get_spend_share_ratio
+    spend_share_ratio = SpendShare.current_ratio
     self.spend_share = (rev_share_override || partner.rev_share) * spend_share_ratio
     self.reseller_spend_share = reseller_id? ? reseller.reseller_rev_share * spend_share_ratio : nil
   end
@@ -203,18 +203,6 @@ class Currency < ActiveRecord::Base
   def clear_cache_by_app_id
     currencies = Currency.find_all_by_app_id(app_id, :order => 'ordinal ASC').each { |c| c.run_callbacks(:before_cache) }
     Mc.distributed_put("mysql.app_currencies.#{app_id}.#{SCHEMA_VERSION}", currencies, false, 1.day)
-  end
-
-  def get_spend_share_ratio
-    Mc.distributed_get_and_put('currency.spend_share_ratio') do
-      orders = Order.created_since(1.month.ago.to_date)
-
-      sum_all_orders = orders.collect(&:amount).sum
-      sum_website_orders = orders.select{|o| o.payment_method == 0}.collect(&:amount).sum
-      sum_marketing_orders = orders.select{|o| o.payment_method == 2}.collect(&:amount).sum
-
-      sum_all_orders == 0 ? 1 : (sum_all_orders - sum_marketing_orders - 0.025 * sum_website_orders) / sum_all_orders
-    end
   end
 
   def sanitize_attributes
