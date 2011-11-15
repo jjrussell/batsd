@@ -12,8 +12,6 @@ class Offer < ActiveRecord::Base
   WINDOWS_DEVICES = %w( windows )
   ALL_DEVICES = APPLE_DEVICES + ANDROID_DEVICES + WINDOWS_DEVICES
   ALL_OFFER_TYPES = %w( App EmailOffer GenericOffer OfferpalOffer RatingOffer ActionOffer VideoOffer)
-  EXEMPT_UDIDS = Set.new(['7bed2150f941bad724c42413c5efa7f202c502e0',
-                          'a000002256c234'])
 
   CLASSIC_OFFER_TYPE               = '0'
   DEFAULT_OFFER_TYPE               = '1'
@@ -81,7 +79,7 @@ class Offer < ActiveRecord::Base
   validates_presence_of :partner, :item, :name, :url, :rank_boost
   validates_numericality_of :price, :interval, :only_integer => true, :greater_than_or_equal_to => 0
   validates_numericality_of :payment, :daily_budget, :overall_budget, :only_integer => true, :greater_than_or_equal_to => 0, :allow_nil => false
-  validates_numericality_of :bid, :only_integer => true, :greater_than_or_equal_to => 0, :less_than_or_equal_to => 10000, :allow_nil => false
+  validates_numericality_of :bid, :only_integer => true, :greater_than_or_equal_to => 0, :allow_nil => false
   validates_numericality_of :min_bid_override, :only_integer => true, :greater_than_or_equal_to => 0, :allow_nil => true
   validates_numericality_of :conversion_rate, :greater_than_or_equal_to => 0
   validates_numericality_of :rank_boost, :allow_nil => false, :only_integer => true
@@ -128,7 +126,7 @@ class Offer < ActiveRecord::Base
       record.errors.add(attribute, "cannot be used for pay-per-click offers") if record.pay_per_click?
     end
   end
-  validate :bid_higher_than_min_bid
+  validate :bid_within_range
 
   before_validation :update_payment
   before_validation_on_create :set_reseller_from_partner
@@ -287,8 +285,14 @@ class Offer < ActiveRecord::Base
     banner_creative_path(size, format).gsub('/', '.')
   end
 
+  def display_banner_ads?
+    return false if (is_paid? || featured?)
+    return (item_type == 'App' && name.length <= 30) if rewarded?
+    item_type != 'VideoOffer'
+  end
+
   def display_custom_banner_for_size?(size)
-    return !rewarded? && !featured? && is_free? && item_type != 'VideoOffer' && banner_creatives.include?(size)
+    display_banner_ads? && banner_creatives.include?(size)
   end
 
   def get_video_icon_url(options = {})
@@ -470,6 +474,11 @@ class Offer < ActiveRecord::Base
     item_type == 'App' ? third_party_data : Offer.hashed_icon_id(id)
   end
 
+  def uploaded_icon?
+    bucket = AWS::S3.new.buckets[BucketNames::TAPJOY]
+    bucket.objects["icons/src/#{Offer.hashed_icon_id(icon_id)}.jpg"].exists?
+  end
+
   def update_payment(force_update = false)
     if (force_update || bid_changed? || new_record?)
       if (item_type == 'App' || item_type == 'ActionOffer')
@@ -510,6 +519,10 @@ class Offer < ActiveRecord::Base
     else
       0
     end
+  end
+
+  def max_bid
+    [ 10000, (price * 0.50).round ].max
   end
 
   def create_featured_clone
@@ -690,10 +703,13 @@ private
     self.next_daily_stats_aggregation_time = (now + 1.day).beginning_of_day + StatsAggregation::DAILY_STATS_START_HOUR.hours
   end
 
-  def bid_higher_than_min_bid
+  def bid_within_range
     if bid_changed? || price_changed?
       if bid < min_bid
         errors.add :bid, "is below the minimum (#{min_bid} cents)"
+      end
+      if bid > max_bid
+        errors add :bid, "is above the maximum (#{max_bid} cents)"
       end
       if item_type == 'RatingOffer' && bid != 0
         errors.add :bid, "must be 0 for RatingOffers"

@@ -3,6 +3,9 @@ ActionController::Routing::Routes.draw do |map|
     m.root :controller => 'dashboard/homepage', :action => :index
   end
 
+  map.connect 'tos-advertiser.html', :controller => 'documents', :action => 'tos_advertiser'
+  map.connect 'tos-publisher.html', :controller => 'documents', :action => 'tos_publisher'
+
   map.resource :sign_up, :controller => :sign_up, :only => :create
   map.register 'register', :controller => :sign_up, :action => :new
   map.login 'login', :controller => :user_sessions, :action => :new
@@ -25,7 +28,7 @@ ActionController::Routing::Routes.draw do |map|
       :member => { :reset_test_device => :post }, :controller => 'apps/currencies'
     app.resources :virtual_goods, :as => 'virtual-goods', :only => [ :show, :update, :new, :create, :index ],
       :collection => { :reorder => :post }, :controller => 'apps/virtual_goods'
-    app.resources :action_offers, :only => [ :new, :create, :edit, :update, :index ], :member => { :toggle => :post }, :collection => { :TJCPPA => :get, :TapjoyPPA => :get }, :controller => 'apps/action_offers'
+    app.resources :action_offers, :only => [ :new, :create, :edit, :update, :index ], :member => { :toggle => :post, :preview => :get }, :collection => { :TJCPPA => :get, :TapjoyPPA => :get }, :controller => 'apps/action_offers'
   end
   map.resources :enable_offer_requests, :only => [ :create ]
   map.resources :reporting, :only => [ :index, :show ], :member => { :export => :post, :download_udids => :get }, :collection => { :aggregate => :get, :export_aggregate => :post, :api => :get, :regenerate_api_key => :post }

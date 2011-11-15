@@ -15,6 +15,7 @@
       <!--[if IE 6]>
        <link href="/stylesheets/ie6.css" rel="stylesheet" type="text/css" />
       <![endif]-->
+    = render('shared/analytics')
   %body
     #sub1.wrapper
       .shadow
@@ -45,14 +46,3 @@
     = javascript_include_tag 'jquery-1.4.2.min', 'jquery.easing.1.2.js', 'jquery.anythingslider.js', 'pluginpage.js', 'jquery.pngFix.pack.js'
     %script{ :type => 'text/javascript', :charset => 'utf-8' }
       = yield :page_javascript
-      - if Rails.env.production?
-        :plain
-          var _gaq = _gaq || [];
-          _gaq.push(['_setAccount', 'UA-5323442-1']);
-          _gaq.push(['_trackPageview']);
-          _gaq.push(['_setDomainName', '.tapjoy.com']);
-          (function() {
-            var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-            ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-            var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-          })();

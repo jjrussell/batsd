@@ -3,12 +3,11 @@
 - form_for(@offer, :url => { :action => :update }, :html => { :method => :put, :class => 'tjform', :id => 'update' }) do |f|
   %table
     %tbody
-      - if !@offer.rewarded? && !@offer.featured?
-        %tr
-          %th
-            = f.label "View Ads"
-          %td
-            = link_to("Click to preview ad images", preview_app_offer_path(:id => @offer.id, :app_id => @app.id), :rel => 'facebox', :id => 'preview_link')
+      %tr{ :class => (@app.store_id? ? '' : 'hidden')}
+        %th
+          = f.label "View Ads"
+        %td
+          = link_to("Click to preview ad images", preview_app_offer_path(:id => @offer.id, :app_id => @app.id), :rel => 'facebox', :id => 'preview_link')
       %tr
         %th
           = f.label :user_enabled, @offer.featured? ? 'Enable Featured Installs' : 'Enable Installs'
