@@ -91,10 +91,8 @@
                         .publisher{:style => "text-align: center;"}
                           = image_tag(external_publisher.get_icon_url, :alt => external_publisher.app_name)
                           %div{:style => "width: 50%; margin: auto;"}
-                            Perform actions to earn more currency in your favorite apps. Click below to start earning
-                            = h(offers['CurrencyName'])
-                            in
-                            = h(external_publisher.app_name)
+                            Earn more currency in your favorite apps, such as
+                            = "#{h(external_publisher.app_name)}:"
             .step{:style => css[:step]}
               - link_to(earn_url, :style => "#{css[:offers]} #{css[:a]}") do
                 %table{:style => "width: 100%"}
@@ -108,10 +106,10 @@
                           .description
                             - if offer['Type'] == 'App'
                               Install and run
-                            = h(offer['Name'])
+                            = "#{h(offer['Name'])}."
                             %br/
                             Earn
-                            = h("#{offer['Payout']} #{offers['CurrencyName']}")
+                            = h("#{offer['Payout']} #{offers['CurrencyName']}.")
         - elsif @editors_picks.any?
           .step{:style => css[:step]}
             - link_to("#{WEBSITE_URL}/more_apps", :style => css[:a]) do
