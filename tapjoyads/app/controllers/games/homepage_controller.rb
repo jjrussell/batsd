@@ -1,8 +1,13 @@
 class Games::HomepageController < GamesController
 
-  before_filter :require_gamer, :except => [ :tos, :privacy ]
+  before_filter :require_gamer, :except => [ :index, :tos, :privacy ]
 
   def index
+    unless current_gamer
+      params[:path] = url_for(params.merge(:only_path => true))
+      render_login_page and return
+    end
+
     @require_select_device = false
     if has_multiple_devices?
       @device_data = []

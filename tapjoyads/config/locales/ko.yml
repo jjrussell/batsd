@@ -38,7 +38,7 @@ ko:
       header: "다음 스텝들을 완료하고 %{currency}를 획득하십시오."
       footer: "다음 스텝들을 완료한 이후에, %{amount_and_currency}를 획득할 수 있습니다."
       download_action: "여기"
-      download_link: "이 앱을 가지고 있지 않다면 %{here}를 클릭하여 다운로드 받으십시오."
+      download_link: "이 앱을 가지고 있지 않다면 %{download_action}를 클릭하여 다운로드 받으십시오."
       continue_link: "계속하시려면 여기를 클릭하십시오."
 
     support:

@@ -11,6 +11,7 @@ ActionController::Routing::Routes.draw do |map|
     m.more_games_popular 'popular', :controller => 'games/more_games', :action => :popular
 
     m.resources :gamer_sessions, :controller => 'games/gamer_sessions', :only => [ :new, :create, :destroy, :index ]
+    m.connect 'login', :controller => 'games/gamer_sessions', :action => :create, :conditions => {:method => :post}
     m.login 'login', :controller => 'games/gamer_sessions', :action => :new
     m.logout 'logout', :controller => 'games/gamer_sessions', :action => :destroy
 
