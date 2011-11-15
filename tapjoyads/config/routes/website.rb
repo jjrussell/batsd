@@ -17,5 +17,7 @@ ActionController::Routing::Routes.draw do |map|
   map.connect 'androidfund/apply', :controller => 'androidfund', :action => :apply
   map.connect 'privacy', :controller => 'documents', :action => 'privacy'
   map.connect 'privacy.html', :controller => 'documents', :action => 'privacy'
+  map.connect 'tos-advertiser.html', :controller => 'documents', :action => 'tos_advertiser'
+  map.connect 'tos-publisher.html', :controller => 'documents', :action => 'tos_publisher'
   map.resources :opt_outs, :only => :create
 end
