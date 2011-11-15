@@ -26,7 +26,7 @@ class SpendShare < ActiveRecord::Base
   end
 
   def self.create_for_date!(date)
-    orders               = Order.created_between(date.prev_month, date)
+    orders               = Order.created_between(date - 30.days, date)
     sum_all_orders       = orders.collect(&:amount).sum
     sum_website_orders   = orders.select{ |o| o.payment_method == 0 }.collect(&:amount).sum
     sum_marketing_orders = orders.select{ |o| o.payment_method == 2 }.collect(&:amount).sum
