@@ -282,6 +282,7 @@ private
       if price_changed?
         offer.price = price
         offer.bid = offer.min_bid if offer.bid < offer.min_bid
+        offer.bid = offer.max_bid if offer.bid > offer.max_bid
       end
       offer.url = store_url if store_id_changed? && !offer.url_overridden?
       offer.third_party_data = store_id if store_id_changed?
