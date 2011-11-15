@@ -10,19 +10,7 @@ class Games::HomepageController < GamesController
 
     @require_select_device = false
     if has_multiple_devices?
-      @device_data = []
-      current_gamer.devices.each do |d|
-        data = {
-          :udid         => d.device_id,
-          :id           => d.id,
-          :device_type  => d.device_type
-        }
-        device_info = {}
-        device_info[:name] = d.name
-        device_info[:data] = SymmetricCrypto.encrypt_object(data, SYMMETRIC_CRYPTO_SECRET)
-        device_info[:device_type] = d.device_type
-        @device_data << device_info
-      end
+      @device_data = current_gamer.devices.map(&:device_data)
       if current_device_id_cookie.nil?
         @require_select_device = true
       end
