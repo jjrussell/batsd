@@ -32,8 +32,8 @@ class Games::HomepageController < GamesController
     @device_name = device_info.name if device_info
     @device = Device.new(:key => device_id) if device_id.present?
     if @device.present?
-      if params[:earn] == true
-        currency = Currency.find(params[:currency_id]) rescue nil
+      if params[:load] == 'earn'
+        currency = Currency.find_by_id(params[:currency_id])
         @show_offerwall = @device.has_app?(currency.app_id) if currency
         @offerwall_external_publisher = ExternalPublisher.new(currency) if @show_offerwall
       end

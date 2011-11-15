@@ -1063,21 +1063,15 @@ TJG.ui = {
         },
         error: function() {
           TJG.ui.hideLoader();
-          var m = [
-           '<div class="center">There was an issue. Please try again</div>'
-          ].join('');
-          $("#earn_content").html(m).fadeIn(fadeSpd);
+          $("#earn_content").html('<div class="center">There was an issue. Please try again</div>').fadeIn(fadeSpd);
           TJG.utils.scrollTop();
         }
       });
     }
     else {
-      var m = [
-        '<div class="center">There was an issue. Please try again</div>'
-      ].join('');
-      $("#earn_content").html(m).fadeIn(fadeSpd);
+      $("#earn_content").html('<div class="center">There was an issue. Please try again</div>').fadeIn(fadeSpd);
       TJG.utils.scrollTop();
-   }
+    }
   },
 
   hideLoader : function(delay,fn) {
