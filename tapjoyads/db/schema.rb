@@ -111,6 +111,7 @@ ActiveRecord::Schema.define(:version => 20111115074018) do
     t.float    "user_rating"
     t.string   "categories"
     t.text     "countries_blacklist"
+    t.integer  "papaya_user_count"
   end
 
   add_index "apps", ["id"], :name => "index_apps_on_id", :unique => true
