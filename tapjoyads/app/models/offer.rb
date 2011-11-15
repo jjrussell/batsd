@@ -79,7 +79,7 @@ class Offer < ActiveRecord::Base
   validates_presence_of :partner, :item, :name, :url, :rank_boost
   validates_numericality_of :price, :interval, :only_integer => true, :greater_than_or_equal_to => 0
   validates_numericality_of :payment, :daily_budget, :overall_budget, :only_integer => true, :greater_than_or_equal_to => 0, :allow_nil => false
-  validates_numericality_of :bid, :only_integer => true, :allow_nil => false
+  validates_numericality_of :bid, :only_integer => true, :greater_than_or_equal_to => 0, :allow_nil => false
   validates_numericality_of :min_bid_override, :only_integer => true, :greater_than_or_equal_to => 0, :allow_nil => true
   validates_numericality_of :conversion_rate, :greater_than_or_equal_to => 0
   validates_numericality_of :rank_boost, :allow_nil => false, :only_integer => true
