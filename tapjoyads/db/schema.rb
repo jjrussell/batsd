@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20111111004413) do
+ActiveRecord::Schema.define(:version => 20111115074018) do
 
   create_table "action_offers", :id => false, :force => true do |t|
     t.string   "id",                    :limit => 36,                    :null => false
@@ -762,6 +762,17 @@ ActiveRecord::Schema.define(:version => 20111111004413) do
 
   add_index "role_assignments", ["id"], :name => "index_role_assignments_on_id", :unique => true
   add_index "role_assignments", ["user_id", "user_role_id"], :name => "index_role_assignments_on_user_id_and_user_role_id", :unique => true
+
+  create_table "spend_shares", :id => false, :force => true do |t|
+    t.string   "id",           :limit => 36, :null => false
+    t.float    "ratio",                      :null => false
+    t.date     "effective_on",               :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "spend_shares", ["effective_on"], :name => "index_spend_shares_on_effective_on", :unique => true
+  add_index "spend_shares", ["id"], :name => "index_spend_shares_on_id", :unique => true
 
   create_table "user_roles", :id => false, :force => true do |t|
     t.string   "id",         :limit => 36, :null => false
