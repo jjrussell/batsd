@@ -124,6 +124,11 @@ module Offer::Rejecting
       return device.has_app?('7f44c068-6fa1-482c-b2d2-770edcf8f83d') || device.has_app?('192e6d0b-cc2f-44c2-957c-9481e3c223a0')
     end
 
+    if app_id_for_device == 'cab56716-8e27-4a4c-8477-457e1d311209' || app_id_for_device == '069eafb8-a9b8-4293-8d2a-e9d9ed659ac8'
+      # there are 2 my town 2 apps
+      return device.has_app?('cab56716-8e27-4a4c-8477-457e1d311209') || device.has_app?('069eafb8-a9b8-4293-8d2a-e9d9ed659ac8')
+    end
+
     device.has_app?(app_id_for_device)
   end
 
