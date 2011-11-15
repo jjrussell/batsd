@@ -55,7 +55,7 @@ Rails::Initializer.run do |config|
   config.gem 'haml', :version => '3.1.3'
   config.gem 'hominid', :version => '3.0.2'
   config.gem 'mogli', :version => '0.0.33'
-  config.gem 'newrelic_rpm', :version => '3.2.0'
+  config.gem 'newrelic_rpm', :version => '3.3.0'
   config.gem 'plist', :version => '3.1.0'
   config.gem 'read_from_slave', :version => '0.4.0'
   config.gem 'ruby-hmac', :version => '0.4.0', :lib => 'ruby_hmac'
