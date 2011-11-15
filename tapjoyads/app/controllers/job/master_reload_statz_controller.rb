@@ -27,7 +27,7 @@ class Job::MasterReloadStatzController < Job::JobController
     render :text => 'ok'
   end
 
-  #private
+  private
 
   def cache_stats(timeframe)
     start_time, end_time = get_times_for_vertica(timeframe)
