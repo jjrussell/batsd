@@ -95,6 +95,8 @@ module Offer::Rejecting
   end
 
   def already_complete?(device, app_version = nil)
+    return false if multi_complete?
+
     app_id_for_device = item_id
     if item_type == 'RatingOffer'
       app_id_for_device = RatingOffer.get_id_with_app_version(item_id, app_version)
