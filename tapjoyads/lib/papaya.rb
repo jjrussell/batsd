@@ -24,9 +24,6 @@ class Papaya
         next
       end
       apps = App.find_all_by_store_id(package_name)
-      if apps.blank?
-        Notifier.alert_new_relic(PapayaAPIError, "#{package_name} not found in Apps table")
-      end
       apps.each do |app|
         if app.papaya_user_count != user_count
           app.papaya_user_count = user_count
