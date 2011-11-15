@@ -11,6 +11,6 @@ class CreateSpendShares < ActiveRecord::Migration
   end
 
   def self.down
-    drop_table :spend_share_ratios
+    drop_table :spend_shares
   end
 end

@@ -9,7 +9,7 @@ class SpendShare < ActiveRecord::Base
     end
   end
 
-  named_scope :effective, lambda { |date| { :conditions => { :effective_on => date } } }
+  named_scope :effective, lambda { |date| { :conditions => { :effective_on => date.to_date } } }
 
   def self.current_ratio
     Mc.distributed_get_and_put("spend_share.ratio.#{Date.today}") do
