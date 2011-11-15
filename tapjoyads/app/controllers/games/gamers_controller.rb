@@ -43,6 +43,7 @@ class Games::GamersController < GamesController
 
   def destroy
     current_gamer.deactivate!
+    GamesMailer.deliver_delete_gamer(current_gamer)
     flash[:notice] = 'Your account has been deactivated and scheduled for deletion!'
     redirect_to games_logout_path
   end
