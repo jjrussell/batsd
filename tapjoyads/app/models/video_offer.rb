@@ -31,14 +31,15 @@ class VideoOffer < ActiveRecord::Base
   private
 
   def create_primary_offer
-    offer = Offer.new(:item => self)
-    offer.id = id
-    offer.partner = partner
-    offer.name = name
-    offer.price = 0
-    offer.device_types = Offer::ALL_DEVICES.to_json
-    offer.url = video_url if video_url.present?
-    offer.bid = offer.min_bid
+    offer               = Offer.new(:item => self)
+    offer.id            = id
+    offer.partner       = partner
+    offer.name          = name
+    offer.price         = 0
+    offer.device_types  = Offer::ALL_DEVICES.to_json
+    offer.url           = video_url if video_url.present?
+    offer.bid           = offer.min_bid
+    offer.name_suffix   = 'Video'
     offer.save!
   end
 
