@@ -90,7 +90,7 @@
     :plain
       $(window).load(function() {
         TJG.select_device = #{@device_data.to_json};
-        TJG.require_select_device = #{@require_select_device.to_json};
+        TJG.require_select_device = #{!!@require_select_device};
         TJG.more_games_editor_picks =  "#{games_more_games_editor_picks_path}";
         TJG.more_games_popular =  "#{games_more_games_popular_path}";
         TJG.ios_link_device_url = "#{new_games_gamer_device_path}";

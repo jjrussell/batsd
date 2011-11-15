@@ -8,12 +8,9 @@ class Games::HomepageController < GamesController
       render_login_page and return
     end
 
-    @require_select_device = false
     if has_multiple_devices?
       @device_data = current_gamer.devices.map(&:device_data)
-      if current_device_id_cookie.nil?
-        @require_select_device = true
-      end
+      @require_select_device = current_device_id_cookie.nil?
     end
     device_id = current_device_id
     device_info = current_device_info
