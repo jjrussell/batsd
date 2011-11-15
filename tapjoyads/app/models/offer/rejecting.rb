@@ -18,7 +18,8 @@ module Offer::Rejecting
     publisher_whitelist_reject?(publisher_app) ||
     currency_whitelist_reject?(currency) ||
     video_offers_reject?(video_offer_ids, type) ||
-    frequency_capping_reject?(device)
+    frequency_capping_reject?(device) ||
+    tapjoy_games_retargeting_reject?(device)
   end
 
   def precache_reject?(platform_name, hide_rewarded_app_installs, normalized_device_type)
@@ -217,4 +218,7 @@ module Offer::Rejecting
     item_type == 'VideoOffer' && !video_offer_ids.include?(id)
   end
 
+  def tapjoy_games_retargeting_reject?(device)
+    ['2107dd6a-a8b7-4e31-a52b-57a1a74ddbc1', '12b7ea33-8fde-4297-bae9-b7cb444897dc'].include?(item_id) && !device.has_app?(TAPJOY_GAMES_REGISTRATION_OFFER_ID)
+  end
 end
