@@ -139,8 +139,6 @@ TJG.ui = {
           values[this.name] = $(this).val();
         }
       });
-      var form_height = $('.register_form').outerHeight();
-
       $(".email_error").hide();
       emailReg = /^([\w-\.+]+@([\w-]+\.)+[\w-]{2,4})?$/;
       if(values['date[day]'] == '' || values['date[month]'] == '' || values['date[year]'] == '') {
@@ -171,10 +169,8 @@ TJG.ui = {
           '<div class="title_2 center">Registering</div>',
           '<div class="loading_animation"></div>'
         ].join('');
-        //$('.register_form').animate({ height: "0px" }, animateSpd, function() {
-          $(".register_form").hide();
-          $('.register_progess').html(loader);
-        //});
+        $(".register_form").hide();
+        $('.register_progess').html(loader);
         $.ajax({
           type: 'POST',
           url: rurl,
@@ -267,7 +263,6 @@ TJG.ui = {
             $('.sign_up_again').click(function(){
               $('.register_progess').html('');
               $(".register_form").show();
-              //$('.register_form').animate({ height: form_height + "px" }, animateSpd);
             });
           },
           error: function() {
@@ -281,7 +276,6 @@ TJG.ui = {
             $('.sign_up_again').click(function(){
                $('.register_progess').html('');
                $(".register_form").show();
-//               $('.register_form').animate({ height: form_height + "px" }, animateSpd);
             });
           }
         });
