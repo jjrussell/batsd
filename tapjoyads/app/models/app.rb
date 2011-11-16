@@ -74,6 +74,7 @@ class App < ActiveRecord::Base
   has_many :app_metadata_mappings
   has_many :app_metadatas, :through => :app_metadata_mappings
   has_many :app_reviews
+  has_many :reengagement_offers
 
   belongs_to :partner
 
