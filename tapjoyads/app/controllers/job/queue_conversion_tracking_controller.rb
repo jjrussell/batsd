@@ -4,10 +4,10 @@ class Job::QueueConversionTrackingController < Job::SqsReaderController
     super QueueNames::CONVERSION_TRACKING
   end
 
-private
+  private
 
   def on_message(message)
-    json = JSON.parse(message.to_s)
+    json = JSON.parse(message.body)
     click = Click.deserialize(json['click'])
     installed_at_epoch = json['install_timestamp']
 
@@ -86,9 +86,9 @@ private
       return
     end
 
-    message = reward.serialize(:attributes_only => true)
-    Sqs.send_message(QueueNames::SEND_CURRENCY, message) if offer.rewarded? && currency.callback_url != Currency::NO_CALLBACK_URL
-    Sqs.send_message(QueueNames::CREATE_CONVERSIONS, message)
+    reward_message = reward.serialize(:attributes_only => true)
+    Sqs.send_message(QueueNames::SEND_CURRENCY, reward_message) if offer.rewarded? && currency.callback_url != Currency::NO_CALLBACK_URL
+    Sqs.send_message(QueueNames::CREATE_CONVERSIONS, reward_message)
 
     reward.update_realtime_stats rescue nil # we don't really care if this produces an error
 
@@ -118,4 +118,5 @@ private
     web_request.viewed_at         = reward.viewed_at
     web_request.save
   end
+
 end

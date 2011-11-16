@@ -4,7 +4,7 @@
   #top_box
     .explanation= @message
 
-- if @currency.conversion_rate > 0
+- if @currency.conversion_rate > 0 && !@for_preview
   #top_box
     .explanation
       = t('text.offerwall.instructions', :currency => @currency.name)
@@ -38,7 +38,11 @@
               .play
           - else
             .offer_icon
-              %img{ :src => "#{CLOUDFRONT_URL}/images/blank.png", :s => offer.get_icon_url(:source => :cloudfront, :size => '57') }
+              - icon_url = offer.get_icon_url(:source => :cloudfront, :size => '57')
+              - if @for_preview
+                = image_tag(icon_url)
+              - else
+                %img{ :src => "#{CLOUDFRONT_URL}/images/blank.png", :s => icon_url }
         .offer-text
           - if @currency.conversion_rate > 0
             %span
@@ -56,16 +60,18 @@
     #plus
     %a{ :href => "javascript:void(0);", :id => "load_more" }
       = t('text.offerwall.load_more')
-#footerWrapper
-  #footer
-    - if @currency.conversion_rate > 0
-      = link_to_missing_currency
-      %span &nbsp;|&nbsp;
-    = link_to(t('text.shared.privacy'), "#{WEBSITE_URL}/site/privacy_mobile?language_code=#{I18n.locale}")
-    %br
-    %span
-      = t('text.shared.ads_by')
-    #logo
+
+- unless @for_preview
+  #footerWrapper
+    #footer
+      - if @currency.conversion_rate > 0
+        = link_to_missing_currency
+        %span &nbsp;|&nbsp;
+      = link_to(t('text.shared.privacy'), "#{WEBSITE_URL}/site/privacy_mobile?language_code=#{I18n.locale}")
+      %br
+      %span
+        = t('text.shared.ads_by')
+      #logo
 
 %img.hidden{ :src => '/images/load-circle.gif' }
 

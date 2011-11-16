@@ -45,6 +45,17 @@
             = check_box_tag 'opted_out', '1', @device.opted_out?
         %tr
           %th
+            Opt Out Selective Offer Types
+            #help_opt_out_offer_types.help ?
+          %td
+            = select_tag :opt_out_offer_types, options_for_select(Offer::ALL_OFFER_TYPES, @device.opt_out_offer_types), {:multiple => true, :class => 'chosen'}
+        %tr
+          %th
+            Banned?
+          %td
+            = check_box_tag 'banned', '1', @device.banned?
+        %tr
+          %th
             Internal Notes
           %td
             = text_field_tag 'internal_notes', @device.internal_notes, :size => '50'
@@ -143,6 +154,9 @@
           - text = "Show #{Time.zone.at(@cut_off_date - 2.month).to_s(:pub)} - #{Time.zone.at(@cut_off_date - 1.month).to_s(:pub)}"
           = button_to text, '#', :class => 'next-clicks'
           * Please note that there may not be more clicks.
+
+.hidden
+  #help_opt_out_offer_types_content{ :name => 'Opt Out Offer Types' } Opt the device out of specific offers only. The user will be considered for all offers, except for those selected here.
 
 - content_for :page_head, stylesheet_link_tag('tools')
 

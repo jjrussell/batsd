@@ -1,41 +1,31 @@
-##
-# Functionality to write a message to sqs. If writing to sqs fails, the message will be stored in
-# the failed-sqs-writes s3 bucket.
 class Sqs
 
-  def self.reset_connection
-    @@sqs = RightAws::SqsGen2.new(nil, nil, { :multi_thread => true, :port => 80, :protocol => 'http' })
-    @@queues = {}
+  def self.queues
+    AWS::SQS.new.queues
   end
 
-  cattr_reader :sqs
-  self.reset_connection
+  def self.queue(queue_name)
+    queues[queue_name]
+  end
 
-  def self.queue(queue_name, create = true, visibility = nil)
-    if @@queues[queue_name].nil? || @@queues[queue_name].name != queue_name
-      @@queues[queue_name] = @@sqs.queue(queue_name, create, visibility)
-    end
-    @@queues[queue_name]
+  def self.create_queue(queue_name, visibility_timeout)
+    queues.create("#{RUN_MODE_PREFIX}#{queue_name}", { :default_visibility_timeout => visibility_timeout })
   end
 
   def self.send_message(queue_name, message, write_to_s3_on_failure = true)
-    queue = Sqs.queue(queue_name)
-
     num_retries = 1
     begin
-      queue.send_message(message)
+      queue(queue_name).send_message(message)
     rescue Exception => e
       if num_retries > 0
         num_retries -= 1
         retry
       end
 
-      # If we've gotten here, the message has failed to send to sqs. Write the message to S3.
       Notifier.alert_new_relic(FailedToWriteToSqsError, "#{queue_name} - #{message}")
 
       if write_to_s3_on_failure
-        s3_message = {:queue_name => queue_name, :message => message}.to_json
-
+        s3_message = { :queue_name => queue_name, :message => message }.to_json
         bucket = S3.bucket(BucketNames::FAILED_SQS_WRITES)
         bucket.objects[UUIDTools::UUID.random_create.to_s].write(:data => s3_message)
       else
@@ -47,17 +37,15 @@ class Sqs
   def self.read_messages(queue_name)
     q = queue(queue_name)
     loop do
-      message = q.receive
-      unless message.to_s == ''
-        yield message
-      end
+      message = q.receive_message
+      yield message unless message.nil?
     end
   end
 
   def self.delete_messages(queue_name, regex)
     read_messages(queue_name) do |message|
-      if message.to_s =~ regex
-        puts message.to_s
+      if message.body =~ regex
+        puts message.body
         message.delete
       end
     end

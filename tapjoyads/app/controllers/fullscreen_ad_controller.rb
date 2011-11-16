@@ -2,9 +2,17 @@ class FullscreenAdController < ApplicationController
 
   layout 'iphone'
 
+  def image
+    offer = Offer.find_in_cache(params[:offer_id])
+    img = IMGKit.new(offer.fullscreen_ad_url(:publisher_app_id => params[:publisher_app_id]), :width => 320, :height => 480)
+
+    send_data img.to_png, :type => 'image/png', :disposition => 'inline'
+  end
+
   def index
     @publisher_app = App.find_in_cache(params[:publisher_app_id])
-    @currency = Currency.find_in_cache(params[:currency_id] || params[:publisher_app_id])
+    currency_id = params[:currency_id].blank? ? params[:publisher_app_id] : params[:currency_id]
+    @currency = Currency.find_in_cache(currency_id)
     @offer = Offer.find_in_cache(params[:offer_id])
     required_records = [ @publisher_app, @currency, @offer ]
     if params[:displayer_app_id].present?

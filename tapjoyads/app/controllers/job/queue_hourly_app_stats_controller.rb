@@ -7,7 +7,7 @@ class Job::QueueHourlyAppStatsController < Job::SqsReaderController
   private
 
   def on_message(message)
-    offer_ids = JSON.parse(message.to_s)
+    offer_ids = JSON.parse(message.body)
     StatsAggregation.new(offer_ids).populate_hourly_stats
   end
 
