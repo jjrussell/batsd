@@ -183,7 +183,7 @@ class Currency < ActiveRecord::Base
   end
 
   def calculate_spend_shares
-    spend_share_ratio = SpendShare.current_ratio
+    spend_share_ratio = [ SpendShare.current_ratio, 1 - partner.max_deduction_percentage ].max
     self.spend_share = (rev_share_override || partner.rev_share) * spend_share_ratio
     self.reseller_spend_share = reseller_id? ? reseller.reseller_rev_share * spend_share_ratio : nil
   end
