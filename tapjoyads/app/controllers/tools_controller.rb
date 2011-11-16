@@ -253,11 +253,7 @@ class ToolsController < WebsiteController
         click.displayer_app_id?
       end
     elsif params[:email_address].present?
-      @all_udids = []
-      SupportRequest.find_all_by_email_address(params[:email_address]).each do |request|
-        @all_udids.push(request.udid)
-      end
-      @all_udids = @all_udids.uniq
+      @all_udids = SupportRequest.find_all_by_email_address(params[:email_address]).map(&:udid).uniq
       if @all_udids.empty?
         flash.now[:error] = "No UDIDs associated with the email address: #{params[:email_address]}"
       elsif @all_udids.size == 1
