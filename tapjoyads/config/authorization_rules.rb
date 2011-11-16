@@ -41,6 +41,7 @@ authorization do
     includes :money
     has_permission_on :tools_payouts, :to => [ :index ]
     has_permission_on :tools_orders, :to => [ :failed_invoices, :retry_invoicing, :mark_invoiced ]
+    has_permission_on :tools_network_costs, :to => [ :index, :new, :create ]
   end
 
   role :payout_manager do

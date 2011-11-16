@@ -449,6 +449,17 @@ ActiveRecord::Schema.define(:version => 20111116005224) do
   add_index "monthly_accountings", ["partner_id", "month", "year"], :name => "index_monthly_accountings_on_partner_id_and_month_and_year", :unique => true
   add_index "monthly_accountings", ["partner_id"], :name => "index_monthly_accountings_on_partner_id"
 
+  create_table "network_costs", :id => false, :force => true do |t|
+    t.string   "id",         :limit => 36,                :null => false
+    t.integer  "amount",                   :default => 0, :null => false
+    t.text     "notes"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "network_costs", ["created_at"], :name => "index_network_costs_on_created_at"
+  add_index "network_costs", ["id"], :name => "index_network_costs_on_id", :unique => true
+
   create_table "news_coverages", :id => false, :force => true do |t|
     t.string   "id",           :limit => 36, :null => false
     t.datetime "published_at",               :null => false
