@@ -57,6 +57,7 @@
   - property_row('Min CVR', @offer.min_conversion_rate, nil)
   - property_row('Countries', @offer.countries, '')
   - property_row('DMA Codes', @offer.dma_codes, '')
+  - property_row('Regions', @offer.regions, '')
   - property_row('Pay-per-click', @offer.pay_per_click?, false)
   - property_row('Device types', @offer.device_types, @offer.expected_device_types.to_json, @offer.wrong_platform? ? 'incomplete' : '')
   - if @offer.item_type == 'App' && @offer.item.platform == 'iphone' && @offer.item.supported_devices.present?
@@ -117,7 +118,7 @@
     %h4 Currency - #{c.name}
     .currency
       %a.more{ :href => '#', :c_id => c.id } [Show more details]
-      = link_to('[View Offer Wall]', "#{API_URL}/get_offers/webpage?app_id=#{@offer.id}&udid=#{Offer::EXEMPT_UDIDS.first}&publisher_user_id=testuser&currency_id=#{c.id}&device_type=#{@offer.item.platform}")
+      = link_to('[View Offer Wall]', "#{API_URL}/get_offers/webpage?app_id=#{@offer.id}&udid=statz_test_udid&publisher_user_id=testuser&currency_id=#{c.id}&device_type=#{@offer.item.platform}")
       .details{ :id => "details_#{c.id}"}
         %table.properties
           - property_row('Tapjoy enabled', c.tapjoy_enabled?, nil, c.tapjoy_enabled? ? 'true' : 'warning')

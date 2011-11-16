@@ -191,13 +191,13 @@ class DisplayAdControllerTest < ActionController::TestCase
         setup do
            @offer.banner_creatives = %w(320x50)
            @offer.rewarded = false
-         end
+        end
 
         should "contain proper image link" do
           response = get(:webview, @params)
 
           assert_match(/^#{CLOUDFRONT_URL}/, assigns['image_url'])
-          assert_equal(@offer.get_ad_image_url(@currency.app.id, 320, 50, @currency.id), assigns['image_url'])
+          assert_equal(@offer.display_ad_image_url(@currency.app.id, 320, 50, @currency.id), assigns['image_url'])
         end
       end
 
@@ -206,7 +206,7 @@ class DisplayAdControllerTest < ActionController::TestCase
           response = get(:webview, @params)
 
           assert_match(/^#{API_URL}/, assigns['image_url'])
-          assert_equal(@offer.get_ad_image_url(@currency.app.id, 320, 50, @currency.id), assigns['image_url'])
+          assert_equal(@offer.display_ad_image_url(@currency.app.id, 320, 50, @currency.id), assigns['image_url'])
         end
       end
     end

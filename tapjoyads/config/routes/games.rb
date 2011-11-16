@@ -1,5 +1,5 @@
 ActionController::Routing::Routes.draw do |map|
-  map.with_options({:path_prefix => MACHINE_TYPE == 'games' ? '' : 'games', :name_prefix => 'games_'}) do |m|
+  map.with_options({:path_prefix => MACHINE_TYPE == 'website' ? '' : 'games', :name_prefix => 'games_'}) do |m|
     m.root :controller => 'games/homepage', :action => :index
     m.tos 'tos', :controller => 'games/homepage', :action => :tos
     m.privacy 'privacy', :controller => 'games/homepage', :action => :privacy
@@ -11,6 +11,7 @@ ActionController::Routing::Routes.draw do |map|
     m.more_games_popular 'popular', :controller => 'games/more_games', :action => :popular
 
     m.resources :gamer_sessions, :controller => 'games/gamer_sessions', :only => [ :new, :create, :destroy, :index ]
+    m.connect 'login', :controller => 'games/gamer_sessions', :action => :create, :conditions => {:method => :post}
     m.login 'login', :controller => 'games/gamer_sessions', :action => :new
     m.logout 'logout', :controller => 'games/gamer_sessions', :action => :destroy
 

@@ -25,8 +25,8 @@ As of: #{Time.zone.now.to_s(:pub_ampm_sec)}
       %th Length (non-visible)
   %tbody
     %tr
-      %td= @queue.size
-      %td= @queue.size_not_visible
+      %td= @queue.visible_messages
+      %td= @queue.invisible_messages
 
 %h2 Delivery Attempts
 

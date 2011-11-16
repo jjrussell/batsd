@@ -15,9 +15,23 @@ zh:
       instructions: "完成以下的要求其中之一可以得到 %{currency}"
       earn_currency: "赚 %{amount} %{currency}"
       buy_currency: "买 %{amount} %{currency}"
-      load_more: "Load some more!"
-      loading: "Loading..."
-      load_error: "Please try again."
+      load_more: "下一页！"
+      loading: "载入中。。。"
+      load_error: "请再次一次。"
+
+    featured:
+      title: "赚 %{currency}"
+      download_and_run: "请下载和安装。"
+      try_out: "试一试"
+      download: "下载"
+      skip: "跳过"
+      earn_now: "赚金币。"
+      show_more_apps: "看下一个"
+      earn_currency: "赚 %{amount_and_currency}"
+
+    unavailable_offer:
+      message: "对不起。您找的 %{offer} 目前无法出现。可以回到前一页然后刷新。"
+      optional_message: "或您可以点和下载这个 %{offer} 。"
 
     instructions:
       title: "说明"

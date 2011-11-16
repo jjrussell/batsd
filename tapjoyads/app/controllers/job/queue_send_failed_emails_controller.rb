@@ -7,7 +7,7 @@ class Job::QueueSendFailedEmailsController < Job::SqsReaderController
   private
 
   def on_message(message)
-    mail = Marshal.restore(Base64::decode64(message.to_s))
+    mail = Marshal.restore(Base64::decode64(message.body))
 
     begin
       ActionMailer::Base.deliver_without_rescue_errors(mail)

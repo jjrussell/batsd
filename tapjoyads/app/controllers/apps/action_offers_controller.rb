@@ -35,6 +35,11 @@ class Apps::ActionOffersController < WebsiteController
     end
   end
 
+  def preview
+    @show_generated_ads = @offer.uploaded_icon?
+    render 'apps/offers_shared/preview', :layout => 'simple'
+  end
+
   def update
     params[:action_offer][:primary_offer_attributes].delete(:payment)
     params[:action_offer][:primary_offer_attributes][:daily_budget].gsub!(',', '') if params[:action_offer][:primary_offer_attributes][:daily_budget].present?
@@ -54,6 +59,7 @@ class Apps::ActionOffersController < WebsiteController
         :primary_offer_attributes_min_conversion_rate,
         :primary_offer_attributes_countries,
         :primary_offer_attributes_dma_codes,
+        :primary_offer_attributes_regions,
         :primary_offer_attributes_device_types,
         :primary_offer_attributes_publisher_app_whitelist,
         :primary_offer_attributes_overall_budget,

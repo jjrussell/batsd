@@ -1,6 +1,7 @@
 class Games::SocialController < GamesController
   rescue_from Mogli::Client::ClientException, :with => :handle_mogli_exceptions
   rescue_from Errno::ECONNRESET, :with => :handle_other_exceptions
+  rescue_from Errno::ETIMEDOUT, :with => :handle_other_exceptions
 
   before_filter :require_gamer
   before_filter :offline_facebook_authenticate, :only => [ :invite_facebook_friends, :send_facebook_invites ]
@@ -44,12 +45,12 @@ class Games::SocialController < GamesController
           non_gamers << friend.name
           invitation = current_gamer.facebook_invitation_for(friend_id)
           if invitation.pending?
-            name = TJGAMES_URL
+            name = WEBSITE_URL
             link = games_login_url :referrer => invitation.encrypted_referral_id
-            message = "#{current_facebook_user.name} has invited you to join Tapjoy."
+            message = "#{current_facebook_user.name} has invited you to join Tapjoy, the BEST place to find the hottest new apps. Signing up is free and you'll be able discover the best apps on iOS and Android, while also earning currency in your favorite apps."
 
             description = "Experience the best of mobile apps!"
-            post = Mogli::Post.new(:name => name, :link => link, :message => message, :description => description, :caption => " ", :picture => "#{TJGAMES_URL}/images/ic_launcher_96x96.png")
+            post = Mogli::Post.new(:name => name, :link => link, :message => message, :description => description, :caption => " ", :picture => "#{WEBSITE_URL}/images/ic_launcher_96x96.png")
             posts << friend.feed_create(post)
           end
         end
@@ -150,14 +151,10 @@ private
   
   def handle_other_exceptions(e)
     case e
-    when Errno::ECONNRESET
+    when Errno::ECONNRESET, Errno::ETIMEDOUT
       @error_msg = "There was a connection issue. Please try again later."
       redirect_to edit_games_gamer_path
     end
-  end
-
-  def require_gamer
-    redirect_to games_login_path unless current_gamer
   end
 
   def validate_recipients
