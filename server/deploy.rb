@@ -20,7 +20,7 @@ deploy_version = ARGV.first || current_version
 puts "Deploying version: #{deploy_version}"
 
 system "git checkout master 2>&1"
-system "git pull 2>&1"
+system "git pull --quiet 2>&1"
 system "git pull --tags origin master 2>&1"
 system "git checkout #{deploy_version} 2>&1"
 
