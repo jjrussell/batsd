@@ -4,10 +4,10 @@ class Job::QueueCreateConversionsController < Job::SqsReaderController
     super QueueNames::CREATE_CONVERSIONS
   end
 
-private
+  private
 
   def on_message(message)
-    reward = Reward.deserialize(message.to_s)
+    reward = Reward.deserialize(message.body)
 
     reward.build_conversions.each do |c|
       save_conversion(c)

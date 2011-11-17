@@ -1,8 +1,13 @@
 class Games::HomepageController < GamesController
 
-  before_filter :require_gamer, :except => [ :tos, :privacy ]
+  before_filter :require_gamer, :except => [ :index, :tos, :privacy ]
 
   def index
+    unless current_gamer
+      params[:path] = url_for(params.merge(:only_path => true))
+      render_login_page and return
+    end
+
     @require_select_device = false
     if has_multiple_devices?
       @device_data = []
@@ -55,13 +60,4 @@ class Games::HomepageController < GamesController
     GamesMailer.deliver_link_device(current_gamer, ios_link_url, GAMES_ANDROID_MARKET_URL )
     render(:json => { :success => true }) and return
   end
-
-private
-
-  def require_gamer
-    if current_gamer.blank?
-      redirect_to games_login_path
-    end
-  end
-
 end

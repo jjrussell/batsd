@@ -4,6 +4,7 @@
     %title Android Fund by Tapjoy
     %link{:href => "/stylesheets/android.css", :media => "screen", :rel => "stylesheet", :type => "text/css"}/
     %link{:href => "https://fonts.googleapis.com/css?family=The+Girl+Next+Door&v1", :rel => "stylesheet", :type => "text/css"}/
+    = render('shared/analytics')
   %body
     #wrapper
       #header
@@ -35,13 +36,4 @@
     = javascript_include_tag 'jquery-1.4.2.min', 'android'
     %script{ :type => 'text/javascript', :charset => 'utf-8' }
       = yield :page_javascript
-      - if Rails.env.production?
-        :plain
-          var _gaq = _gaq || [];
-          _gaq.push(['_setAccount', 'UA-5323442-1']);
-          _gaq.push(['_trackPageview']);
-          (function() {
-            var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-            ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-            var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-          })();
+
