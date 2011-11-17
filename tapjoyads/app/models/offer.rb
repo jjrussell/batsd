@@ -709,7 +709,7 @@ private
         errors.add :bid, "is below the minimum (#{min_bid} cents)"
       end
       if bid > max_bid
-        errors add :bid, "is above the maximum (#{max_bid} cents)"
+        errors.add :bid, "is above the maximum (#{max_bid} cents)"
       end
       if item_type == 'RatingOffer' && bid != 0
         errors.add :bid, "must be 0 for RatingOffers"
