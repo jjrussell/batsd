@@ -86,6 +86,6 @@ class SearchController < WebsiteController
       :limit => 100
     )
 
-    render
+    render :layout => false
   end
 end
