@@ -56,4 +56,4 @@ ja:
       invalid_email: "正しいメールアドレスを記入してください"
       abuse_warning: "このフォームはオファー案件の手続きを終了したにもかかわらず、仮想通貨を受取れなかったお客様のためのものです。　不正利用の場合にはオファー広告を利用することが出来なくなります。"
       select_offer: "オファー広告を選択してください"
-      no_incomplete_offers_label: "No suitable offers were found."
+      no_incomplete_offers_label: "適当なオファー広告がありません"
