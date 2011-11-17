@@ -5,19 +5,19 @@ production:
   oauth2: true
 
 development:
-  app_id: '273914012622852'
-  secret: '810c1363c332e39a53d130fcf5132ca9'
-  api_key: '273914012622852'
+  app_id: '281461335227331'
+  secret: 'c2338efd83e1abe81f3ef798837a6a91'
+  api_key: '281461335227331'
   oauth2: true
 
 test:
-  app_id: '273914012622852'
-  secret: '810c1363c332e39a53d130fcf5132ca9'
-  api_key: '273914012622852'
+  app_id: '281461335227331'
+  secret: 'c2338efd83e1abe81f3ef798837a6a91'
+  api_key: '281461335227331'
   oauth2: true
 
 staging:
-  app_id: '273914012622852'
-  secret: '810c1363c332e39a53d130fcf5132ca9'
-  api_key: '273914012622852'
+  app_id: '281461335227331'
+  secret: 'c2338efd83e1abe81f3ef798837a6a91'
+  api_key: '281461335227331'
   oauth2: true
