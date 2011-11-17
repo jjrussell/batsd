@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20111111004413) do
+ActiveRecord::Schema.define(:version => 20111116005224) do
 
   create_table "action_offers", :id => false, :force => true do |t|
     t.string   "id",                    :limit => 36,                    :null => false
@@ -111,6 +111,7 @@ ActiveRecord::Schema.define(:version => 20111111004413) do
     t.float    "user_rating"
     t.string   "categories"
     t.text     "countries_blacklist"
+    t.integer  "papaya_user_count"
   end
 
   add_index "apps", ["id"], :name => "index_apps_on_id", :unique => true
@@ -448,6 +449,17 @@ ActiveRecord::Schema.define(:version => 20111111004413) do
   add_index "monthly_accountings", ["partner_id", "month", "year"], :name => "index_monthly_accountings_on_partner_id_and_month_and_year", :unique => true
   add_index "monthly_accountings", ["partner_id"], :name => "index_monthly_accountings_on_partner_id"
 
+  create_table "network_costs", :id => false, :force => true do |t|
+    t.string   "id",         :limit => 36,                :null => false
+    t.integer  "amount",                   :default => 0, :null => false
+    t.text     "notes"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "network_costs", ["created_at"], :name => "index_network_costs_on_created_at"
+  add_index "network_costs", ["id"], :name => "index_network_costs_on_id", :unique => true
+
   create_table "news_coverages", :id => false, :force => true do |t|
     t.string   "id",           :limit => 36, :null => false
     t.datetime "published_at",               :null => false
@@ -645,6 +657,7 @@ ActiveRecord::Schema.define(:version => 20111111004413) do
     t.integer  "freshbooks_client_id"
     t.boolean  "accepted_publisher_tos"
     t.string   "sales_rep_id",               :limit => 36
+    t.decimal  "max_deduction_percentage",                 :precision => 8, :scale => 6, :default => 1.0,       :null => false
   end
 
   add_index "partners", ["id"], :name => "index_partners_on_id", :unique => true
@@ -761,6 +774,17 @@ ActiveRecord::Schema.define(:version => 20111111004413) do
 
   add_index "role_assignments", ["id"], :name => "index_role_assignments_on_id", :unique => true
   add_index "role_assignments", ["user_id", "user_role_id"], :name => "index_role_assignments_on_user_id_and_user_role_id", :unique => true
+
+  create_table "spend_shares", :id => false, :force => true do |t|
+    t.string   "id",           :limit => 36, :null => false
+    t.float    "ratio",                      :null => false
+    t.date     "effective_on",               :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "spend_shares", ["effective_on"], :name => "index_spend_shares_on_effective_on", :unique => true
+  add_index "spend_shares", ["id"], :name => "index_spend_shares_on_id", :unique => true
 
   create_table "user_roles", :id => false, :force => true do |t|
     t.string   "id",         :limit => 36, :null => false

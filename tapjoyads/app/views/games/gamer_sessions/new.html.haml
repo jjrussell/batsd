@@ -14,21 +14,27 @@
                     = hidden_field_tag :data, params[:data]
                   - if params[:path].present?
                     = hidden_field_tag :path, params[:path]
-                  .field.sign_in
-                    Sign In
-                  .row
-                    .field.email
-                      = f.email_field :email, "autocorrect" => "off", "autocapitalize" => "off", :placeholder => "Email", :required => ""
-                    .field.password
-                      = f.password_field :password, :placeholder => "Password", :required => ""
-                  .field.login_btn
-                    = f.submit 'Login', :class => 'right button'
-              .form_fields
-                .login_error
-                  = error_message_on @gamer_session, :email, :prepend_text => "Email "
-                  = error_message_on @gamer_session, :password, :prepend_text => "Password "
-                .forgot_pass
-                  = link_to('Forgot password?', new_games_password_reset_path)
+                  %ul.row.inputs
+                    %ul.group.inputs
+                      %li.field.sign_in
+                        Sign In
+                      %li.field.email
+                        = f.email_field :email, "autocorrect" => "off", "autocapitalize" => "off", :placeholder => "Email", :required => ""
+                      %li.field.password
+                        = f.password_field :password, :placeholder => "Password", :required => ""
+                    %ul.group
+                      %li.field.login_btn
+                        = f.submit 'Login', :class => 'right button'
+                  %ul.row
+                    %li.field.forgot_pass
+                      = link_to('Forgot password?', new_games_password_reset_path)
+                    %li.field.login_error
+                      = error_message_on @gamer_session, :email, :prepend_text => "Email "
+                      = error_message_on @gamer_session, :password, :prepend_text => "Password "
+                  %ul.row
+                    %li.field.client_login
+                      %a{ :href => "#{DASHBOARD_URL}/login" }
+                        advertiser/developer? login here
 
       .content.main_scene
         .content_box
@@ -48,18 +54,22 @@
                       = f.email_field :email, "autocorrect" => "off", "autocapitalize" => "off", :placeholder => "Email"
                     .field
                       = f.password_field :password, :placeholder => "Password"
-                    .field.field_tos
-                      .field_checkbox
-                        = f.check_box :terms_of_service
-                      .field_tos_text
-                        = f.label :terms_of_service, "By checking this box I assert that I agree to the #{ link_to('terms of use', games_tos_path, :target => '_blank') } &amp; #{ link_to('privacy policy', games_privacy_path, :target => '_blank') }"
-                      = f.hidden_field :referrer, :value => params[:referrer]
-                    .field.right
-                      = f.submit 'Sign Up', :class => 'button'
-                    .email_error.center
+                    .row
+                      .field.field_tos
+                        .field_checkbox
+                          = f.check_box :terms_of_service
+                        .field_tos_text
+                          = f.label :terms_of_service, "By checking this box I assert that I agree to the #{ link_to('terms of use', games_tos_path, :target => '_blank') } &amp; #{ link_to('privacy policy', games_privacy_path, :target => '_blank') }"
+                        = f.hidden_field :referrer, :value => params[:referrer]
+                      .field.right
+                        = f.submit 'Sign Up', :class => 'button'
+                    .email_error
                       = error_message_on @gamer, :email
                       = error_message_on @gamer, :password
                       = error_message_on @gamer, :terms_of_service
+                    .client_sign_up
+                      %a{ :href => "#{DASHBOARD_URL}/register" }
+                        advertiser & developer sign up
                 .register_progess
       .content.overview
         .content_box

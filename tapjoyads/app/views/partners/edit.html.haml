@@ -52,6 +52,11 @@
     = f.text_field :transfer_bonus
     = error_message_on(@partner, :transfer_bonus) if @partner.errors.on :transfer_bonus
   .field
+    = f.label :max_deduction_percentage
+    #help_max_deduction_percentage.help ?
+    = f.text_field :max_deduction_percentage
+    = error_message_on(@partner, :max_deduction_percentage) if @partner.errors.on :max_deduction_percentage
+  .field
     = f.label :disabled_partners
     #help_disabled_partners.help ?
     = f.text_area :disabled_partners
@@ -83,6 +88,9 @@
     The share of direct-pay revenue that this publisher gets. A number between 0 an 1.
   #help_transfer_bonus_content{:name => 'Transfer bonus'}
     The bonus that this partner gets when transferring between pending earnings and balance. A value of 0.1 will give a 10% bonus.
+  #help_max_deduction_percentage_content{:name => 'Max deduction percent'}
+    The maximum percentage that a publisher's rev share can be lowered to recover marketing credits and network operating costs. Must be number between 0 and 1.
+    Example: A pub with rev share of 70% and max deduction percentage of 7% will have an effective rev share between 65-70%. (70% * 93% = 65%)
   #help_accepted_publisher_tos_content{:name => 'Accepted publisher ToS'}
     Has this partner accepted the publisher terms of service?
 
