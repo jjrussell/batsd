@@ -5,6 +5,7 @@
       %th Contact
       - if current_user.is_one_of?([:admin, :account_mgr])
         %th Account Manager
+        %th Sales Rep
       %th Balance
       %th
         Pending
@@ -34,6 +35,14 @@
               = f.select :account_managers, options, {:include_blank => '(no one)'}
             = image_tag 'load-circle.gif', :class => 'hidden'
             .message.hidden
+          %td.sales_rep
+            - form_for(partner) do |f|
+              - sales_rep_email = partner.sales_rep ? partner.sales_rep.email : ''
+              - options = options_from_collection_for_select(User.sales_reps, "email", "email", sales_rep_email)
+              = f.select :sales_rep, options, {:include_blank => '(no one)'}
+            = image_tag 'load-circle.gif', :class => 'hidden'
+            .message.hidden
+
         %td= number_to_currency(partner.balance / 100.0)
         %td= number_to_currency(partner.pending_earnings / 100.0)
         %td.nowrap= partner.created_at.to_s(:pub)

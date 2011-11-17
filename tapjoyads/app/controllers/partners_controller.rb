@@ -70,9 +70,17 @@ class PartnersController < WebsiteController
   def update
     log_activity(@partner)
 
-    params[:partner][:account_managers] = User.find_all_by_id(params[:partner][:account_managers])
+    if params[:partner].include?(:account_managers)
+      account_managers = User.find_all_by_id(params[:partner][:account_managers])
+      params[:partner][:account_managers] = account_managers
+    end
 
-    safe_attributes = [ :name, :account_managers, :account_manager_notes, :rev_share, :transfer_bonus, :disabled_partners, :direct_pay_share, :approved_publisher, :billing_email, :accepted_publisher_tos ]
+    if params[:partner].include?(:sales_rep)
+      sales_rep = User.find_all_by_email(params[:partner][:sales_rep]).first
+      params[:partner][:sales_rep] = sales_rep
+    end
+
+    safe_attributes = [ :name, :account_managers, :account_manager_notes, :rev_share, :transfer_bonus, :disabled_partners, :direct_pay_share, :approved_publisher, :billing_email, :accepted_publisher_tos, :sales_rep, :max_deduction_percentage ]
     name_was = @partner.name
     if @partner.safe_update_attributes(params[:partner], safe_attributes)
       if name_was != @partner.name
@@ -107,6 +115,14 @@ class PartnersController < WebsiteController
   def make_current
     if current_user.update_attributes({ :current_partner_id => @partner.id })
       flash[:notice] = "You are now acting as #{@partner.name}."
+      partner_ids = cookies[:recent_partners].to_s.split(';')
+      partner_ids.delete(@partner.id)
+      partner_ids.pop if partner_ids.length >= 10
+      partner_ids.unshift(@partner.id)
+      cookies[:recent_partners] = {
+        :value => partner_ids.join(';'),
+        :expires => 1.year.from_now
+      }
     else
       flash[:error] = 'Could not switch partners.'
     end

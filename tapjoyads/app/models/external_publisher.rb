@@ -22,7 +22,7 @@ class ExternalPublisher
   end
 
   def get_offerwall_url(device, currency, headers, gamer_id = nil)
-    language_code, country_code = HeaderParser.locale(headers['accept-language'])
+    language_code = HeaderParser.locale(headers['accept-language'])
     device_type = HeaderParser.device_type(headers['user-agent'])
     os_version = HeaderParser.os_version(headers['user-agent']) if device_type.present?
 
@@ -37,7 +37,6 @@ class ExternalPublisher
       :json              => '1',
     }
     data[:language_code] = language_code if language_code.present?
-    data[:country_code]  = country_code if country_code.present?
     data[:device_type]   = device_type if device_type.present?
     data[:os_version]    = os_version if os_version.present?
     data[:gamer_id]      = gamer_id if gamer_id.present?

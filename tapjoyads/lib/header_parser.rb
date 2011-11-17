@@ -27,7 +27,6 @@ class HeaderParser
 
   def self.locale(accept_language)
     locale = accept_language.to_s.split(',').first
-    language_code, country_code = locale.split(';').first.split('-') if locale.present?
-    [language_code.try(:upcase), country_code.try(:upcase)]
+    locale && locale.split(';').first.split('-').first.upcase
   end
 end

@@ -4,10 +4,10 @@ class Job::QueueCalculateShowRateController < Job::SqsReaderController
     super QueueNames::CALCULATE_SHOW_RATE
   end
 
-private
+  private
 
   def on_message(message)
-    offer = Offer.find(message.to_s)
+    offer = Offer.find(message.body)
 
     return if offer.payment == 0
 

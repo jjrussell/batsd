@@ -51,6 +51,17 @@ class OfferTest < ActiveSupport::TestCase
       geoip_data = { :country => "GB" }
       assert @offer.send(:geoip_reject?, geoip_data, device)
     end
+
+    should "reject depending on region" do
+      device = Factory(:device)
+      @offer.regions = ["CA"]
+      geoip_data = { :region => "CA" }
+      assert !@offer.send(:geoip_reject?, geoip_data, device)
+      geoip_data = { :region => "OR" }
+      assert @offer.send(:geoip_reject?, geoip_data, device)
+      @offer.regions = []
+      assert !@offer.send(:geoip_reject?, geoip_data, device)
+    end
   end
 
 end

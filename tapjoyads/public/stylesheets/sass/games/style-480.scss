@@ -7,7 +7,7 @@
 #login {
 
   .nav {
-    height: 110px;
+    height: 120px;
     max-width: 480px;
     width: 100%;
     
@@ -20,62 +20,42 @@
          width: 100%;
          
         .login {
+          
           .form_fields {
             margin: 0 auto;
-            width: 360px;
+            width: 340px;
             
             input {
               margin: 0 4px;
             }
-            .row {
-              float: left;
+            ul.row {
+              float: none;
+            }
+            ul.row.inputs {
               height: 30px;
-              margin: 0 auto;
-              width: 268px;
             }
-            .field {
-              float: none;
+            ul.row {
+              ul.group.inputs li {
+                float: left;
+              }
+              li.field.sign_in {
+                display: none;
+              }
+              li.field.login_error {
+                margin: 0 6px 0;
+                float: right;
+              }
+              li.field.client_login {
+                text-align: right;
+              }
             }
-            .field.login_btn {
-              float: left;
-            }
-            .field.sign_in {
-              display: none;
-              float: left;
-              height: 30px;
-              margin: 0 auto;
-              width: 60px;
-            }
-            .field.email {
-              float: none;
-              display: inline-block;
-            }
-            .field.password {
-              float: none;
-              display: inline-block;
-            }
-            .field.login_btn {
-              margin: 0 auto;
-              width: 62px;
-              float: none;
-              display: inline-block;
-            }
-          }
-          .forgot_pass {
-            float: right;
-            margin: 6px 24px 0 0;
-            width: 110px;
-          }
-          .login_error {
-            margin: 6px 24px 0 0;
-            text-align: right;
           }
         }
       }
       .logo {
-        background-size: 80%;
+        background-size: 99px 47px;
         float: none;
-        height: 36px;
+        height: 47px;
         width: 99px;
         margin: 0 auto;
       }
@@ -89,7 +69,8 @@
     overflow: hidden;
 
     .content_box {
-      height: 320px;
+      height: 282px;
+      margin: 12px 0;
       max-width: 460px;
 
       .main_scene_content {
@@ -102,11 +83,9 @@
         }
         .sign_up {
           float: none;
-          height: 280px;
           left: 0;
-          margin: 0 auto;
+          margin: 12px auto;
           position: static;
-          top: 24px;
         }
         .main_phone {
           display: none;
@@ -125,7 +104,7 @@
   .b2b {
     float: none;
     height: 200px;
-    margin: 24px 0 12px;
+    margin: 12px 0;
     max-width: 460px;
     width: 100%;
 

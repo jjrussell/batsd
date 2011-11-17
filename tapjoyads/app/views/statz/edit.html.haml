@@ -127,6 +127,15 @@
     = render('apps/offers_shared/countries', :f => f)
     %tr
       %th
+        = f.label(:regions)
+        #help_regions.help ?
+      %td
+        = f.text_field(:regions)
+        = error_message_on @offer, :regions
+        .details= link_to('State Code List', 'http://en.wikipedia.org/wiki/List_of_U.S._state_abbreviations', :target => '_blank')
+        .details= link_to('Province Code List', 'http://en.wikipedia.org/wiki/Canadian_subnational_postal_abbreviations', :target => '_blank')
+    %tr
+      %th
         = f.label(:dma_codes)
         #help_dma_codes.help ?
       %td
@@ -231,6 +240,7 @@
   #help_show_rate_content{ :name => 'Show Rate' } The probability that this offer will be shown on an offerwall impression. This is set automatically by the system and is used for budgeting. Allowed values are 0.0 - 1.0.
   #help_min_conversion_rate_content{ :name => 'Min CVR' } This is used to prevent low conversion rate warnings. A warning will only be issued if the conversion rate falls below this threshold. Allowed values are blank or 0.0 - 1.0
   #help_dma_codes_content{ :name => 'DMA Codes' } Targets this offer to these designated market areas (DMAs). Must be an array of DMA codes or blank for no targeting. i.e. [807]
+  #help_regions_content{ :name => 'Regions' } Targets this offer to these designated regions or blank for all regions. Must be an array of state and province codes. i.e. ["CA"]
   #help_device_types_content{ :name => 'Device Types' } Targets this offer to these device types. At least one device type must be selected.
   #help_publisher_app_whitelist_content{ :name => 'Publisher App Whitelist' } Restrict this offer to these publisher apps. Must be a ";" separated list of publisher app IDs.
   #help_daily_budget_content{ :name => 'Daily Conversions' } The maximum number of conversions to complete in one day.

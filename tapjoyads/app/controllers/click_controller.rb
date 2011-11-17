@@ -209,6 +209,7 @@ private
       @click = Click.new(:key => (type == 'generic' ? UUIDTools::UUID.random_create.to_s : "#{params[:udid]}.#{params[:advertiser_app_id]}"))
     end
 
+    @click.delete('installed_at') if @click.installed_at?
     @click.clicked_at        = @now
     @click.viewed_at         = Time.zone.at(params[:viewed_at].to_f)
     @click.udid              = params[:udid]

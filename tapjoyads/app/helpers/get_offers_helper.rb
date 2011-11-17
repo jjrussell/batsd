@@ -32,7 +32,12 @@ module GetOffersHelper
       :gamer_id           => params[:gamer_id])
 
     if offer.item_type == 'VideoOffer' || offer.item_type == 'TestVideoOffer'
-      "tjvideo://video_id=#{offer.id}&amount=#{@currency.get_visual_reward_amount(offer, params[:display_multiplier])}&currency_name=#{URI::escape(@currency.name)}&click_url=#{click_url}"
+      if @publisher_app.platform == 'windows'
+        prefix = "http://tjvideo.tjvideo.com/tjvideo?"
+      else
+        prefix = "tjvideo://"
+      end
+      "#{prefix}video_id=#{offer.id}&amount=#{@currency.get_visual_reward_amount(offer, params[:display_multiplier])}&currency_name=#{URI::escape(@currency.name)}&click_url=#{click_url}"
     else
       click_url
     end
@@ -40,7 +45,7 @@ module GetOffersHelper
 
   def get_fullscreen_ad_url(offer)
     offer.fullscreen_ad_url(
-        :publisher_app      => @publisher_app,
+        :publisher_app_id   => @publisher_app.id,
         :publisher_user_id  => params[:publisher_user_id],
         :udid               => params[:udid],
         :currency_id        => @currency.id,
