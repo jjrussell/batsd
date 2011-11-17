@@ -17,7 +17,8 @@ module Offer::Rejecting
     publisher_whitelist_reject?(publisher_app) ||
     currency_whitelist_reject?(currency) ||
     video_offers_reject?(video_offer_ids, type) ||
-    frequency_capping_reject?(device)
+    frequency_capping_reject?(device) ||
+    source_reject?(source)
   end
 
   def precache_reject?(platform_name, hide_rewarded_app_installs, normalized_device_type)
@@ -214,4 +215,8 @@ module Offer::Rejecting
     item_type == 'VideoOffer' && !video_offer_ids.include?(id)
   end
 
+  def source_reject?(source)
+    return true if source != 'tj_games' && tj_games_only?
+    false
+  end
 end

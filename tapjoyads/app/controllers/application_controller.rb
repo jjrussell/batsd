@@ -22,10 +22,16 @@ private
 
   def verify_params(required_params, options = {})
     render_missing_text = options.delete(:render_missing_text) { true }
+    from_click_controller = options.delete(:from_click_controller) { false }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
 
     if params[:udid] == 'null' || params[:app_id] == 'todo todo todo todo'
       render :text => "missing required params", :status => 400 if render_missing_text
+      return false
+    end
+
+    if from_click_controller && params[:source] == 'tj_games' && Offer.find_in_cache(params[:offer_id]).item_type == 'GenericOffer' && GenericOffer.find_by_id(params[:offer_id]).category == 'Invite' && params[:gamer_id].blank?
+      render :text => "missing required params", :status => 400
       return false
     end
 

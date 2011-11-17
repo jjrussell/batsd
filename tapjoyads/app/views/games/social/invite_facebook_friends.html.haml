@@ -34,6 +34,7 @@
         pageSize:  #{@page_size},
         fbFriends: #{@fb_friends.to_json},
         inviteUrl: #{edit_games_gamer_path.to_json},
+        clickKey: #{params[:click_key].to_json},
       };
       TJG.social.setup(options);
     });

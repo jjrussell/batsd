@@ -1,5 +1,5 @@
 class Games::Gamers::DevicesController < GamesController
-
+  require 'hpricot'
   def new
     if current_gamer.present?
       send_file("#{RAILS_ROOT}/data/TapjoyProfile.mobileconfig", :filename => 'TapjoyProfile.mobileconfig', :disposition => 'inline', :type => :mobileconfig)
@@ -56,6 +56,28 @@ class Games::Gamers::DevicesController < GamesController
       if current_gamer.devices.create(:device => device)
         device.set_last_run_time!(TAPJOY_GAMES_REGISTRATION_OFFER_ID)
         session[:current_device_id] = SymmetricCrypto.encrypt_object(device.key, SYMMETRIC_CRYPTO_SECRET)
+
+        if current_gamer.referrer.present? && !current_gamer.referrer.starts_with?('tjreferrer:')
+          devices = GamerDevice.find_all_by_device_id(data[:udid])
+          if devices.size == 1 && devices[0].gamer_id == current_gamer.id
+            data = SymmetricCrypto.decrypt_object(current_gamer.referrer, SYMMETRIC_CRYPTO_SECRET).split(',')
+            referred_by_gamer = Gamer.find_by_id(current_gamer.referred_by)
+            if referred_by_gamer
+              referred_by_gamer.gamer_profile.update_attributes!(:referral_count => referred_by_gamer.referral_count + 1)
+              begin
+                if data[1] && Invitation.find_by_id(data[0]).gamer_id == current_gamer.referred_by
+                  click = Click.new(:key => "#{current_gamer.referred_by}.#{data[1]}")
+                  unless click.new_record?
+                    create_sub_click(click, referred_by_gamer.referral_count)
+                  end
+                end
+              rescue
+                nil
+              end
+            end
+          end
+        end
+
         redirect_to games_root_path(:register_device => true)
       else
         flash[:error] = "Error linking device. Please try again."
@@ -65,5 +87,36 @@ class Games::Gamers::DevicesController < GamesController
       flash[:error] = "Please log in to link your device. You must have cookies enabled."
       redirect_to games_login_path(:data => params[:data])
     end
+  end
+
+  def create_sub_click(primary_click, referral_count)
+    click = Click.new(:key => "#{current_gamer.referred_by}.invite[#{referral_count}]")
+    click.clicked_at        = primary_click.clicked_at
+    click.viewed_at         = primary_click.viewed_at
+    click.udid              = primary_click.udid
+    click.publisher_app_id  = primary_click.publisher_app_id
+    click.publisher_user_id = primary_click.publisher_user_id
+    click.advertiser_app_id = primary_click.advertiser_app_id
+    click.displayer_app_id  = primary_click.displayer_app_id
+    click.offer_id          = primary_click.offer_id
+    click.currency_id       = primary_click.currency_id
+    click.reward_key        = UUIDTools::UUID.random_create.to_s
+    click.reward_key_2      = primary_click.reward_key_2
+    click.source            = primary_click.source
+    click.ip_address        = primary_click.ip_address
+    click.country           = primary_click.country
+    click.type              = primary_click.type
+    click.advertiser_amount = primary_click.advertiser_amount
+    click.publisher_amount  = primary_click.publisher_amount
+    click.currency_reward   = primary_click.currency_reward
+    click.displayer_amount  = primary_click.displayer_amount
+    click.tapjoy_amount     = primary_click.tapjoy_amount
+    click.exp               = primary_click.exp
+    click.device_name       = primary_click.device_name
+
+    click.save
+
+    message = { :click => click.serialize(:attributes_only => true), :install_timestamp => Time.zone.now.to_f.to_s }.to_json
+    Sqs.send_message(QueueNames::CONVERSION_TRACKING, message)
   end
 end

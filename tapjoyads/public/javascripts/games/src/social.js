@@ -10,6 +10,7 @@ TJG.social = {
     var fbFriends = options.fbFriends;
     var inviteUrl = options.inviteUrl;
     var channel = options.channel;
+    var clickKey = options.clickKey;
 
     // local functions
     var onWindowResize = function(event) {
@@ -123,7 +124,8 @@ TJG.social = {
         dataType: 'json',
         data: {
           friends: selectedFriends,
-          ajax: true
+          ajax: true,
+          click_key: clickKey
         },
         success: function(d) {
           var existDiv = '', notExistDiv = '';
@@ -177,7 +179,8 @@ TJG.social = {
         timeout: 35000,
         dataType: 'json',
         data: {
-          recipients: recipients
+          recipients: recipients,
+          click_key: clickKey
         },
         success: function(d) {
           var existDiv = '', notExistDiv = '';

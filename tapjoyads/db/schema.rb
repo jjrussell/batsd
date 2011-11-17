@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20111027000013) do
+ActiveRecord::Schema.define(:version => 20111115220508) do
 
   create_table "action_offers", :id => false, :force => true do |t|
     t.string   "id",                    :limit => 36,                    :null => false
@@ -290,8 +290,8 @@ ActiveRecord::Schema.define(:version => 20111027000013) do
   add_index "gamer_devices", ["id"], :name => "index_gamer_devices_on_id", :unique => true
 
   create_table "gamer_profiles", :id => false, :force => true do |t|
-    t.string   "id",                     :limit => 36,                    :null => false
-    t.string   "gamer_id",               :limit => 36,                    :null => false
+    t.string   "id",                     :limit => 36,                         :null => false
+    t.string   "gamer_id",               :limit => 36,                         :null => false
     t.string   "gender"
     t.date     "birthdate"
     t.string   "city"
@@ -552,6 +552,7 @@ ActiveRecord::Schema.define(:version => 20111027000013) do
     t.boolean  "url_overridden",                                                                :default => false, :null => false
     t.text     "banner_creatives"
     t.text     "dma_codes"
+    t.boolean  "tj_games_only",                                                                 :default => false, :null => false
   end
 
   add_index "offers", ["id"], :name => "index_offers_on_id", :unique => true

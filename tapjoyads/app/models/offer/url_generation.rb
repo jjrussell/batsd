@@ -61,6 +61,7 @@ module Offer::UrlGeneration
     elsif item_type == 'EmailOffer'
       final_url += "&publisher_app_id=#{publisher_app_id}"
     elsif item_type == 'GenericOffer'
+      final_url.gsub!('TAPJOY_GENERIC_INVITE', click_key.to_s.split('.')[1])
       final_url.gsub!('TAPJOY_GENERIC', click_key.to_s)
       if has_variable_payment?
         extra_params = {
@@ -94,6 +95,7 @@ module Offer::UrlGeneration
     display_multiplier = options.delete(:display_multiplier) { 1 }
     device_name        = options.delete(:device_name)        { nil }
     library_version    = options.delete(:library_version)    { nil }
+    gamer_id           = options.delete(:gamer_id)           { nil }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
 
     click_url = "#{API_URL}/click/"
@@ -132,6 +134,7 @@ module Offer::UrlGeneration
       :display_multiplier => display_multiplier,
       :device_name        => device_name,
       :library_version    => library_version,
+      :gamer_id           => gamer_id
     }
 
     "#{click_url}?data=#{SymmetricCrypto.encrypt_object(data, SYMMETRIC_CRYPTO_SECRET)}"

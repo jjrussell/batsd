@@ -95,7 +95,7 @@ class ClickController < ApplicationController
 private
 
   def setup
-    return false unless verify_params([ :data ])
+    return false unless verify_params([ :data ], :from_click_controller => true)
 
     @now = Time.zone.now
     if params[:offer_id] == 'test_video'
@@ -203,7 +203,12 @@ private
   end
 
   def create_click(type)
-    @click = Click.new(:key => (type == 'generic' ? UUIDTools::UUID.random_create.to_s : "#{params[:udid]}.#{params[:advertiser_app_id]}"))
+    if type == 'generic' and GenericOffer.find_by_id(@offer.id).category == 'Invite'
+      @click = Click.new(:key => "#{params[:gamer_id]}.#{@offer.id}")
+    else
+      @click = Click.new(:key => (type == 'generic' ? UUIDTools::UUID.random_create.to_s : "#{params[:udid]}.#{params[:advertiser_app_id]}"))
+    end
+
     @click.clicked_at        = @now
     @click.viewed_at         = Time.zone.at(params[:viewed_at].to_f)
     @click.udid              = params[:udid]

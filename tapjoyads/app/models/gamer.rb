@@ -124,15 +124,15 @@ class Gamer < ActiveRecord::Base
         end
       else
         begin
-          self.referred_by, invitation_id = SymmetricCrypto.decrypt_object(referrer, SYMMETRIC_CRYPTO_SECRET).split(',')
+          invitation_id, click_key = SymmetricCrypto.decrypt_object(referrer, SYMMETRIC_CRYPTO_SECRET).split(',')
         rescue OpenSSL::Cipher::CipherError
         end
-        if referred_by? && invitation_id
-          referred_by_gamer = Gamer.find_by_id(self.referred_by)
+        if invitation_id
           invitation = Invitation.find_by_id(invitation_id)
+          self.referred_by = invitation.gamer_id
+          referred_by_gamer = Gamer.find_by_id(self.referred_by)
           if referred_by_gamer && invitation
-            referred_by_gamer.gamer_profile.update_attributes!(:referral_count => referred_by_gamer.referral_count + 1)
-            follow_gamer(Gamer.find_by_id(referred_by))
+            follow_gamer(referred_by_gamer)
             Invitation.reconcile_pending_invitations(self, :invitation => invitation)
           end
         end
