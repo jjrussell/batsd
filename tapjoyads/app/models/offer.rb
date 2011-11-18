@@ -522,7 +522,8 @@ class Offer < ActiveRecord::Base
   end
 
   def max_bid
-    [ 10000, (price * 0.50).round ].max
+    val = item_type == 'GenericOffer' ? 15000 : 10000
+    [ val, (price * 0.50).round ].max
   end
 
   def create_featured_clone
