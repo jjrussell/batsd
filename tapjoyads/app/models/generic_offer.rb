@@ -36,7 +36,7 @@ private
       offer.partner_id = partner_id if partner_id_changed?
       offer.name = name if name_changed?
       offer.price = price if price_changed?
-      offer.url = url if url_changed?
+      offer.url = url if url_changed? && !offer.url_overridden?
       offer.instructions = instructions if instructions_changed?
       offer.third_party_data = third_party_data if third_party_data_changed?
       offer.hidden = hidden if hidden_changed?

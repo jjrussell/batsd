@@ -689,8 +689,12 @@ private
   end
 
   def cleanup_url
-    if (url_overridden_changed? || url_changed?) && !url_overridden? && %w(App ActionOffer RatingOffer).include?(item_type)
-      self.url = self.item.store_url
+    if (url_overridden_changed? || url_changed?) && !url_overridden?
+      if %w(App ActionOffer RatingOffer).include?(item_type)
+        self.url = self.item.store_url
+      elsif item_type == 'GenericOffer'
+        self.url = self.item.url
+      end
     end
     self.url = url.gsub(" ", "%20")
   end
