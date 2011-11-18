@@ -8,7 +8,7 @@ ActionController::Routing::Routes.draw do |map|
     m.send_device_link 'send_device_link', :controller => 'games/homepage', :action => :send_device_link
 
     m.more_games_editor_picks 'editor_picks', :controller => 'games/more_games', :action => :editor_picks
-    m.more_games_popular 'popular', :controller => 'games/more_games', :action => :popular
+    m.more_games_recommended 'recommended', :controller => 'games/more_games', :action => :recommended
 
     m.resources :gamer_sessions, :controller => 'games/gamer_sessions', :only => [ :new, :create, :destroy, :index ]
     m.connect 'login', :controller => 'games/gamer_sessions', :action => :create, :conditions => {:method => :post}

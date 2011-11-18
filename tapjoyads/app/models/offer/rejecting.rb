@@ -56,6 +56,10 @@ module Offer::Rejecting
     device.has_app?(item_id) && (device.last_run_time(item_id) + interval > Time.zone.now)
   end
 
+  def recommendation_reject?(device, device_type, geoip_data, os_version)
+    recommendable_types_reject? || device_platform_mismatch?(device_type) || geoip_reject?(geoip_data, device) || already_complete?(device) || min_os_version_reject?(os_version)
+  end
+
   private
 
   def is_disabled?(publisher_app, currency)
@@ -221,5 +225,9 @@ module Offer::Rejecting
   TAPJOY_GAMES_RETARGETED_OFFERS = ['2107dd6a-a8b7-4e31-a52b-57a1a74ddbc1', '12b7ea33-8fde-4297-bae9-b7cb444897dc']
   def tapjoy_games_retargeting_reject?(device)
     TAPJOY_GAMES_RETARGETED_OFFERS.include?(item_id) && !device.has_app?(TAPJOY_GAMES_REGISTRATION_OFFER_ID)
+  end
+  
+  def recommendable_types_reject?
+    item_type != 'App'
   end
 end
