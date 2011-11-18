@@ -9,8 +9,8 @@
             .offer_title.title
               = external_publisher.app_name
         .offer_info
-        - external_publisher.currencies.each_with_index do |currency, i|
-          - link_to("#", :id => currency[:id], :class => "get_offerwall_jsonp", :jsonp_url => external_publisher.get_offerwall_url(@device, currency, request.headers, current_gamer.id), :currency => currency[:name], :app_name => external_publisher.app_name, current_gamer.id) do
+        - external_publisher.currencies.each do |currency|
+          - link_to("#", :id => currency[:id], :class => "get_offerwall_jsonp", :jsonp_url => external_publisher.get_offerwall_url(@device, currency, request.headers, current_gamer.id), :currency => currency[:name], :app_name => external_publisher.app_name) do
             .currency_item.left
               .offer_button
                 .button.grey
