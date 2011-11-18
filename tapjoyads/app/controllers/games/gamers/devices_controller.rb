@@ -1,5 +1,4 @@
 class Games::Gamers::DevicesController < GamesController
-  require 'hpricot'
   def new
     if current_gamer.present?
       send_file("#{RAILS_ROOT}/data/TapjoyProfile.mobileconfig", :filename => 'TapjoyProfile.mobileconfig', :disposition => 'inline', :type => :mobileconfig)
