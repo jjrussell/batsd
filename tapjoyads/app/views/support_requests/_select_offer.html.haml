@@ -1,7 +1,7 @@
 - unless @incomplete_offers.empty?
   .field
     = label_tag :offer_id, t('text.support.specify_offer_label')
-    = select_tag :offer_id, options_for_select(@incomplete_offers.collect { |o| [ o.name, o.id ] }, params[:offer_id].present? ? params[:offer_id] : params[:offer_name].present? ? nil : @incomplete_offers.first.id)
+    = select_tag :offer_id, options_for_select(@incomplete_offers.collect { |o| [ o.name, o.id ] }, params[:offer_id].present? ? params[:offer_id] : @incomplete_offers.first.id)
 
-#no_incomplete_offers_field.field{ :class => @incomplete_offers.empty? ? '' : 'hidden'}
+- else
   = label_tag 'no_incomplete_offers', t('text.support.no_incomplete_offers_label')
