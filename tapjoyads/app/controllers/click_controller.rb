@@ -95,7 +95,7 @@ class ClickController < ApplicationController
 private
 
   def setup
-    return false unless verify_params([ :data ], :from_click_controller => true)
+    return false unless verify_params([ :data ])
 
     @now = Time.zone.now
     if params[:offer_id] == 'test_video'
@@ -106,6 +106,12 @@ private
     else
       @offer = Offer.find_in_cache(params[:offer_id])
     end
+
+    if params[:source] == 'tj_games' && @offer.item_type == 'GenericOffer' && GenericOffer.find_by_id(params[:offer_id]).category == 'Invite' && params[:gamer_id].blank?
+      render :text => "missing required params", :status => 400
+      return
+    end
+
     @currency = Currency.find_in_cache(params[:currency_id])
     required_records = [ @offer, @currency ]
     if params[:displayer_app_id].present?
