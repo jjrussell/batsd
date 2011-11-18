@@ -1,0 +1,13 @@
+.invite_wrapper
+  .title_2
+    Invite Your Friends!
+  #invite_friends.clearfix
+    .social_btn_wrapper
+      = fb_connect_async_js
+      - if @gamer.facebook_id.blank?
+        .social_btn.fb{ :onclick => "doLogin('offline_access,publish_stream');" }
+      - else
+        .social_btn.fb{ :onclick => "location.href='#{games_social_invite_facebook_friends_path}';" }
+    .social_btn_wrapper
+      %a{ :href => games_social_invite_email_friends_path }
+        .social_btn.email
