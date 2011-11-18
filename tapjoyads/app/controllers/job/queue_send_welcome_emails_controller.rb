@@ -7,7 +7,7 @@ class Job::QueueSendWelcomeEmailsController < Job::SqsReaderController
   private
 
   def on_message(message)
-    message = JSON.parse(message.to_s)
+    message = JSON.parse(message.body)
     gamer = Gamer.find(message['gamer_id'])
 
     offer_data = {}
