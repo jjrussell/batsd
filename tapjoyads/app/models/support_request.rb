@@ -33,25 +33,21 @@ class SupportRequest < SimpledbResource
     self.app_id            = app.id
     self.currency_id       = currency.id
     self.offer_id          = offer.id if offer.present?
-    click                  = get_last_click(params[:udid], offer)
+    click                  = offer.present? ? get_last_click(params[:udid], offer) : nil
     self.click_id          = click ? click.id : nil
 
   end
 
   def get_last_click(udid, offer)
-    if offer.present?
-      #Lookup based on offer id. Almost all requests should have one.
-      #Especially since we are not accepting requests without an offer.
-      clicks = Click.find_all_by_udid_and_offer_id(udid, offer.id)
-      if clicks.empty?
-        return nil
-      end
-      click = clicks.sort_by { |c| c.clicked_at }.last
-      if click.installed_at? || click.manually_resolved_at?
-        return nil
-      end
-      return click
+    conditions = "udid = '#{udid}' and offer_id = '#{offer.item_id}'"
+    clicks = Click.select_all(:conditions => conditions)
+    if clicks.empty?
+      return nil
     end
-    return nil
+    click = clicks.sort_by { |c| c.clicked_at.to_f }.last
+    if click.installed_at? || click.manually_resolved_at?
+      return nil
+    end
+    return click
   end
 end
