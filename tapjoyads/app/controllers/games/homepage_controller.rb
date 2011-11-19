@@ -1,7 +1,6 @@
 class Games::HomepageController < GamesController
 
   before_filter :require_gamer, :except => [ :index, :tos, :privacy ]
-  before_filter :set_profile, :only => [ :index ]
 
   def index
     unless current_gamer
@@ -16,6 +15,8 @@ class Games::HomepageController < GamesController
     device_id = current_device_id
     device_info = current_device_info
     @gamer = current_gamer
+    @gamer.gamer_profile ||= GamerProfile.new(:gamer => @gamer)
+    
     @device_name = device_info.name if device_info
     @device = Device.new(:key => device_id) if device_id.present?
     if @device.present?
