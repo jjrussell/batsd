@@ -11,3 +11,18 @@
     .social_btn_wrapper
       %a{ :href => games_social_invite_email_friends_path }
         .social_btn.email
+
+- content_for :page_javascript do
+  :plain
+    var doLogin = function(scope){
+      FB.login(function(response, scope) {
+        if (response.authResponse) {
+          FB.api('/me', function(response) {
+            <!--
+            window.location = "#{games_social_invite_facebook_friends_path(:valid_login => true)}"
+            //-->
+          });
+        } else {
+        }
+      }, {scope: scope});
+    };
