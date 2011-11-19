@@ -1,6 +1,7 @@
 class Games::HomepageController < GamesController
 
   before_filter :require_gamer, :except => [ :index, :tos, :privacy ]
+  before_filter :set_profile, :only => [ :index ]
 
   def index
     unless current_gamer
