@@ -8,6 +8,8 @@ class Job::MasterAndroidMarketFormatController < Job::JobController
     render :text => 'ok'
   end
 
+  private
+
   def test_search
     fields = [:title, :price, :icon_url, :publisher, :item_id]
     term = 'tapdefense'
@@ -30,8 +32,6 @@ class Job::MasterAndroidMarketFormatController < Job::JobController
       Notifier.alert_new_relic(AndroidMarketChanged, message)
     end
   end
-
-  private
 
   def with_retries
     retries = 0
