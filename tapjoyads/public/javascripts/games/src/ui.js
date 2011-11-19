@@ -26,10 +26,7 @@ TJG.ui = {
           });
         },
         error: function() {
-          var m = [
-            '<div>There was an issue. Please try again</div>'
-          ].join('');
-          $("#more_games_content").html(m).fadeIn(TJG.ui.fadeSpd);
+          $("#more_games_content").html('<div>There was an issue. Please try again</div>').fadeIn(TJG.ui.fadeSpd);
         }
       });
     }
