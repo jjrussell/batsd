@@ -41,16 +41,3 @@
         $('.error_msg').text(error);
       }
     });
-
-    var doLogin = function(scope){
-      FB.login(function(response, scope) {
-        if (response.authResponse) {
-          FB.api('/me', function(response) {
-            <!--
-            window.location = "#{games_social_invite_facebook_friends_path(:valid_login => true)}"
-            //-->
-          });
-        } else {
-        }
-      }, {scope: scope});
-    };
