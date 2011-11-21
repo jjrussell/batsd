@@ -26,7 +26,8 @@ class SupportRequestsController < ApplicationController
       support_request.save
 
       TapjoyMailer.deliver_support_request(params[:description], params[:email_address], @app, @currency, params[:udid],
-        params[:publisher_user_id], params[:device_type], params[:language_code], @offer || params[:offer_name])
+        params[:publisher_user_id], params[:device_type], params[:language_code], @offer || params[:offer_name],
+        support_request, support_request.click_id)
     end
   end
 
