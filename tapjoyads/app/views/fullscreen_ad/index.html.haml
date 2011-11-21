@@ -34,7 +34,7 @@
       }
 
       if(#{params[:height].present?}) {
-        clientHeight = #{params[:height]};
+        clientHeight = parseInt('#{params[:height]}');
       } else {
         clientHeight = document.documentElement.clientHeight;
       }

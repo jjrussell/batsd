@@ -4,13 +4,9 @@ class FullscreenAdController < ApplicationController
 
   def image
     offer = Offer.find_in_cache(params[:offer_id])
-    if params[:image_size].present?
-      width, height = params[:image_size].split("x")
-    else
-      # Default to showing low-res ad with portrait orientation
-      width = 320
-      height = 480
-    end
+
+    # Default to showing low-res ad with portrait orientation
+    width, height = params[:image_size].present? ? params[:image_size].split("x") : [320, 480]
 
     # Ensure that wkhtmltoimage waits until the Javascript has finished executing before generating the page.
     img = IMGKit.new(offer.fullscreen_ad_url(:publisher_app_id => params[:publisher_app_id], :width => width, :height => height),
