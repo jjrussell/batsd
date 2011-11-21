@@ -14,7 +14,7 @@ class SupportRequestsController < ApplicationController
   end
 
   def create
-    if @offer.nil? && params[:offer_name].blank?
+    if @offer.nil?
       render_new_with_error(I18n.t('text.support.missing_offer'))
     elsif params[:description].blank?
       render_new_with_error(I18n.t('text.support.missing_description'))
@@ -26,7 +26,7 @@ class SupportRequestsController < ApplicationController
       support_request.save
 
       TapjoyMailer.deliver_support_request(params[:description], params[:email_address], @app, @currency, params[:udid],
-        params[:publisher_user_id], params[:device_type], params[:language_code], @offer || params[:offer_name],
+        params[:publisher_user_id], params[:device_type], params[:language_code], @offer,
         support_request, support_request.click_id)
     end
   end
@@ -42,7 +42,7 @@ private
   end
 
   def find_incomplete_offers
-    conditions = "udid = '#{params[:udid]}' and currency_id = '#{params[:currency_id]}' and clicked_at > '#{2.weeks.ago.to_f}' and installed_at is null and manually_resolved_at is null"
+    conditions = "udid = '#{params[:udid]}' and currency_id = '#{params[:currency_id]}' and clicked_at > '#{2.weeks.ago.to_f}' and manually_resolved_at is null"
     advertiser_offer_ids = []
     Click.select_all(:conditions => conditions).sort_by { |click| -click.clicked_at.to_f }.each do |click|
       advertiser_offer_ids << click.advertiser_app_id unless advertiser_offer_ids.include?(click.advertiser_app_id)
