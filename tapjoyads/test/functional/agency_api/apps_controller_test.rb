@@ -212,7 +212,7 @@ class AgencyApi::AppsControllerTest < ActionController::TestCase
       end
 
       should "assign store id" do
-        Sqs.expects(:send_message).with('test_GetStoreInfo', regexp_matches(/(\w+-){4}\w+/))
+        Sqs.expects(:send_message).with(QueueNames::GET_STORE_INFO, regexp_matches(/(\w+-){4}\w+/))
         post :create, @params.merge(:store_id => 'wah!')
         result = JSON.parse(@response.body)
         assert result['success']
@@ -321,7 +321,7 @@ class AgencyApi::AppsControllerTest < ActionController::TestCase
       end
 
       should "change store id" do
-        Sqs.expects(:send_message).with('test_GetStoreInfo', regexp_matches(/(\w+-){4}\w+/))
+        Sqs.expects(:send_message).with(QueueNames::GET_STORE_INFO, regexp_matches(/(\w+-){4}\w+/))
         post :update, @params.merge(:store_id => 'wah!')
         result = JSON.parse(@response.body)
         assert result['success']

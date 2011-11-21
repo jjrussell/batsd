@@ -44,7 +44,7 @@ Rails::Initializer.run do |config|
   config.gem 'aws-sdk', :version => '1.1.4'
 
   # These gems should be vendored
-  config.gem 'airbrake', :version => '3.0.4'
+  config.gem 'airbrake', :version => '3.0.5'
   config.gem 'after_commit', :version => '1.0.10'
   config.gem 'authlogic', :version => '2.1.3'
   config.gem 'builder', :version => '3.0.0'
@@ -54,8 +54,9 @@ Rails::Initializer.run do |config|
   config.gem 'geoip', :version => '1.1.1'
   config.gem 'haml', :version => '3.1.3'
   config.gem 'hominid', :version => '3.0.2'
+  config.gem 'imgkit', :version => '1.3.2'
   config.gem 'mogli', :version => '0.0.33'
-  config.gem 'newrelic_rpm', :version => '3.2.0'
+  config.gem 'newrelic_rpm', :version => '3.3.0'
   config.gem 'plist', :version => '3.1.0'
   config.gem 'read_from_slave', :version => '0.4.0'
   config.gem 'ruby-hmac', :version => '0.4.0', :lib => 'ruby_hmac'
@@ -132,7 +133,6 @@ Rails::Initializer.run do |config|
       if forked
         Mc.reset_connection
         SimpledbResource.reset_connection
-        Sqs.reset_connection
         VerticaCluster.reset_connection
       end
     end

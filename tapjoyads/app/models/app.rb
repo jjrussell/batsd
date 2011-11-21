@@ -59,6 +59,7 @@ class App < ActiveRecord::Base
 
   TRADEDOUBLER_COUNTRIES = Set.new(%w( GB FR DE IT IE ES NL AT CH BE DK FI NO SE LU PT GR ))
   MAXIMUM_INSTALLS_PER_PUBLISHER = 4000
+  PREVIEW_PUBLISHER_APP_ID = "bba49f11-b87f-4c0f-9632-21aa810dd6f1" # EasyAppPublisher... used for "ad preview" generation
 
   has_many :offers, :as => :item
   has_one :primary_offer, :class_name => 'Offer', :as => :item, :conditions => 'id = item_id'
@@ -281,6 +282,7 @@ private
       if price_changed?
         offer.price = price
         offer.bid = offer.min_bid if offer.bid < offer.min_bid
+        offer.bid = offer.max_bid if offer.bid > offer.max_bid
       end
       offer.url = store_url if store_id_changed? && !offer.url_overridden?
       offer.third_party_data = store_id if store_id_changed?

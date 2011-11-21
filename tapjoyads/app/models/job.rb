@@ -9,7 +9,7 @@ class Job < ActiveRecord::Base
   validates_inclusion_of :frequency, :in => FREQUENCIES
   validates_inclusion_of :active, :in => [ true, false ]
   validates_numericality_of :seconds, :only_integer => true, :greater_than_or_equal_to => 0
-  validates_each :seconds do |record, attribute, value|
+  validates_each :seconds, :allow_nil => true do |record, attribute, value|
     if record.frequency == 'daily'
       record.errors.add(attribute, 'should be less than 1 day') unless value < 1.day.to_i
     else

@@ -145,26 +145,29 @@
 - else
   %h2.not_integrated Partner has not submitted payment/tax information.
 
-%table#apps_table.tablesorter
-  %thead
-    %tr
-      %th Icon
-      %th Offer
-      %th Type
-      %th Price
-      %th Payment
-      %th TJ Enabled
-      %th Platform
-  %tbody
-    - @partner.offers.each do |offer|
+- if @partner.offers.blank?
+  No offers found for this partner.
+- else
+  %table#apps_table.tablesorter
+    %thead
       %tr
-        %td.icon= image_tag(offer.get_icon_url, :size => '57x57')
-        %td= link_to_offer(offer)
-        %td= offer.item_type
-        %td= number_to_currency(offer.price / 100.0)
-        %td= number_to_currency(offer.payment / 100.0)
-        %td= offer.tapjoy_enabled
-        %td= offer.get_platform
+        %th Icon
+        %th Offer
+        %th Type
+        %th Price
+        %th Payment
+        %th TJ Enabled
+        %th Platform
+    %tbody
+      - @partner.offers.each do |offer|
+        %tr
+          %td.icon= image_tag(offer.get_icon_url, :size => '57x57')
+          %td= link_to_offer(offer)
+          %td= offer.item_type
+          %td= number_to_currency(offer.price / 100.0)
+          %td= number_to_currency(offer.payment / 100.0)
+          %td= offer.tapjoy_enabled
+          %td= offer.get_platform
 
 - content_for :page_javascript do
   :plain

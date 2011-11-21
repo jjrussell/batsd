@@ -38,9 +38,10 @@ class HeaderParserTest < ActiveSupport::TestCase
     end
 
     should "parse locales from known accept-languages" do
-      assert_equal ['EN', 'US'], HeaderParser.locale('en-us')
-      assert_equal ['EN', nil], HeaderParser.locale('en')
-      assert_equal ['EN', 'GB'], HeaderParser.locale('en-gb;en-us;en')
+      assert_equal nil, HeaderParser.locale('')
+      assert_equal 'EN', HeaderParser.locale('en-us')
+      assert_equal 'EN', HeaderParser.locale('en')
+      assert_equal 'EN', HeaderParser.locale('en-gb;en-us;en')
     end
   end
 end

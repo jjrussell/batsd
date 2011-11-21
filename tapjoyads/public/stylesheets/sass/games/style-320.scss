@@ -7,7 +7,7 @@
 #login {
 
   .nav {
-    height: 110px;
+    height: 124px;
     max-width: 320px;
     width: 100%;
 
@@ -19,49 +19,28 @@
          padding: 0;
 
         .login {
+          
           .form_fields {
             margin: 0 auto;
-            width: 260px;
-
+            width: 280px;
+            
             input {
               margin: 0 4px;
-              width: 80px;
             }
-            .row {
+            ul.row {
               float: none;
-              height: 30px;
-              margin: 0 auto;
+              
+              li.field.login_error {
+                margin: 6px 0;
+              }
             }
-            .field {
-              float: none;
-            }
-            .field.sign_in {
-              display: none;
-              height: 30px;
-              margin: 0 auto;
-              width: 60px;
-            }
-            .field.email {
-              float: left;
-            }
-            .field.password {
-              float: left;
-            }
-            .field.login_btn {
-              margin: 0 auto;
-              width: 62px;
-            }
-          }
-          .login_error {
-            float: right;
-            font-size: 0.7em;
           }
         }
       }
       .logo {
-        background-size: 80%;
+        background-size: 99px 47px;
         float: none;
-        height: 36px;
+        height: 47px;
         width: 99px;
         margin: 0 auto;
       }
@@ -73,8 +52,9 @@
   .main_scene {
 
     .content_box {
+      height: 282px;
+      margin: 24px 0 12px;
       max-width: 300px;
-      height: 300px;
 
       .main_scene_content {
         width: 300px;
@@ -86,26 +66,30 @@
         }
         .sign_up {
           float: none;
-          height: 280px;
-          left: 0;
           margin: 0 auto;
-          top: 24px;
           width: 295px;
-
+          
           .sign_up_content {
             postiton: relative;
             top: 24px;
-
+            
             input[type=email], input[type=password] {
-              width: 254px;
+              width: 260px;
             }
             input[type=submit] {
               width: 100px;
             }
             .register_form {
-              .field_tos {
-                .field_tos_text {
-                  margin-right: 7px;
+              .row {
+                width: 260px;
+                
+                .field_tos {
+                  .field_checkbox {
+                    margin-right: 6px;
+                  }
+                  .field_tos_text {
+                    margin-right: 6px;
+                  }
                 }
               }
             }

@@ -63,4 +63,13 @@ class GamerDevice < ActiveRecord::Base
       self.device_type = PRODUCT_TYPES[new_device.product]
     end
   end
+
+  def device_data
+    data = { :udid => device_id, :id => id, :device_type  => device_type }
+    {
+      :name        => name,
+      :device_type => device_type,
+      :data        => SymmetricCrypto.encrypt_object(data, SYMMETRIC_CRYPTO_SECRET),
+    }
+  end
 end

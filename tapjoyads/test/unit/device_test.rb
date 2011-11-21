@@ -52,6 +52,16 @@ class DeviceTest < ActiveSupport::TestCase
     end
   end
 
+  context "Publisher user ids" do
+    setup do
+      @device = Device.new
+    end
+
+    should "update publisher_user_id" do
+      @device.set_publisher_user_id('app_id', 'foo')
+      assert_equal 'foo', @device.publisher_user_ids['app_id']
+    end
+  end
 
   context "Jailbreak detection" do
     setup do

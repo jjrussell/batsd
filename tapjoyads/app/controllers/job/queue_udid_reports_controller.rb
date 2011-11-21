@@ -10,7 +10,7 @@ class Job::QueueUdidReportsController < Job::SqsReaderController
   private
 
   def on_message(message)
-    json = JSON.load(message.to_s)
+    json = JSON.load(message.body)
     offer_id = json['offer_id']
     date_str = json['date']
 
