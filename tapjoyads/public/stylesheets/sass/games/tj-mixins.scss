@@ -112,6 +112,13 @@ $mobile-scaledown-multiplier: 2;
   -moz-animation-timing-function: linear;
 }
 
+@mixin animate ($type: all, $time: 0.65s){
+  -moz-transition: $type $time ease-out;
+  -o-transition: $type $time ease-out;
+  -webkit-transition: $type $time ease-out;
+  -ms-transition: $type $time ease-out;
+}
+
 //-------------------------------------------
 // TODO: Old design. Remove once other pages ported over.
 //

@@ -120,6 +120,15 @@
     = render('apps/offers_shared/countries', :f => f)
     %tr
       %th
+        = f.label(:regions)
+        #help_regions.help ?
+      %td
+        = f.text_field(:regions)
+        = error_message_on @offer, :regions
+        .details= link_to('State Code List', 'http://en.wikipedia.org/wiki/List_of_U.S._state_abbreviations', :target => '_blank')
+        .details= link_to('Province Code List', 'http://en.wikipedia.org/wiki/Canadian_subnational_postal_abbreviations', :target => '_blank')
+    %tr
+      %th
         = f.label(:dma_codes)
         #help_dma_codes.help ?
       %td
@@ -180,7 +189,7 @@
       %tr
         %th= f.label(:third_party_data)
         %td= f.text_area(:third_party_data)
-    - if @offer.item_type == 'App'
+    - if @offer.item_type == 'App' || @offer.item_type == 'GenericOffer'
       %tr
         %th
           = f.label(:url_overridden, 'Override Default Destination URL')
@@ -195,16 +204,19 @@
             = f.text_field(:url)
             = error_message_on @offer, :url
           %span{:id => 'default_url', :class => (@offer.url_overridden? ? 'hidden' : '')}
-            = h(@offer.item.store_url)
+            - if @offer.item_type == 'App'
+              = h(@offer.item.store_url)
+            - elsif @offer.item_type == 'GenericOffer'
+              = h(@offer.item.url)
 
-      - if @offer.item.screen_layout_sizes.any?
-        %tr
-          %th
-            = f.label(:screen_layout_sizes)
-            #help_screen_layout_sizes.help ?
-          %td
-            = f.chosen_select(:screen_layout_sizes, options_for_select(@offer.item.screen_layout_sizes, @offer.get_screen_layout_sizes), {}, :multiple => true)
-            = error_message_on @offer, :screen_layout_sizes
+    - if @offer.item_type == 'App' && @offer.item.screen_layout_sizes.any?
+      %tr
+        %th
+          = f.label(:screen_layout_sizes)
+          #help_screen_layout_sizes.help ?
+        %td
+          = f.chosen_select(:screen_layout_sizes, options_for_select(@offer.item.screen_layout_sizes, @offer.get_screen_layout_sizes), {}, :multiple => true)
+          = error_message_on @offer, :screen_layout_sizes
     %tr
       %td{ :colspan => 2 }= f.submit('Save Changes')
 
@@ -223,20 +235,21 @@
   #help_show_rate_content{ :name => 'Show Rate' } The probability that this offer will be shown on an offerwall impression. This is set automatically by the system and is used for budgeting. Allowed values are 0.0 - 1.0.
   #help_min_conversion_rate_content{ :name => 'Min CVR' } This is used to prevent low conversion rate warnings. A warning will only be issued if the conversion rate falls below this threshold. Allowed values are blank or 0.0 - 1.0
   #help_dma_codes_content{ :name => 'DMA Codes' } Targets this offer to these designated market areas (DMAs). Must be an array of DMA codes or blank for no targeting. i.e. [807]
+  #help_regions_content{ :name => 'Regions' } Targets this offer to these designated regions or blank for all regions. Must be an array of state and province codes. i.e. ["CA"]
   #help_device_types_content{ :name => 'Device Types' } Targets this offer to these device types. At least one device type must be selected.
   #help_publisher_app_whitelist_content{ :name => 'Publisher App Whitelist' } Restrict this offer to these publisher apps. Must be a ";" separated list of publisher app IDs.
   #help_daily_budget_content{ :name => 'Daily Conversions' } The maximum number of conversions to complete in one day.
   #help_overall_budget_content{ :name => 'Overall Conversions' } The maximum number of conversions to complete in the lifetime of this offer. This is merely a hard limit so it is likely that the offer will go over-budget.
   #help_interval_content{ :name => 'Interval' } The interval for frequency capping.
-  #help_url_overridden_content{ :name => 'Override Store URL' } Allows for manual override of Completion URL field
-  #help_url_content{ :name => 'Store URL' } The URL that the user will be redirected to upon clicking an ad (typically links to Market Place / App store search results page)
+  #help_url_overridden_content{ :name => 'Override Destination URL' } Allows for manual override of Completion URL field
+  #help_url_content{ :name => 'Destination URL' } The URL that the user will be redirected to upon clicking an ad (typically links to Market Place / App store search results page)
   #help_bid_content{ :name => 'Bid' } The bid affects your payment and your offerwall rank.
   #help_min_bid_override_content{ :name => 'Min Bid Override' } Manually set the minimum allowed bid for this offer.
   #help_min_os_version_content{:name => 'Minimum OS Version'} Your offer will only be shown to devices with an OS at this version or higher.
   #help_screen_layout_sizes_content{ :name => 'Screen Layout Sizes' } Targets this offer to these screen sizes. If no specific screen sizes are selected, all screen sizes will be targeted.
   #help_age_rating_content{ :name => 'Age Rating' } Set the minimum viewing age, the recommended ages are 4/9/12/17. If it is viewable to all, just leave the field empty.
 
-- if @offer.item_type == 'App'
+- if @offer.item_type == 'App' || @offer.item_type == 'GenericOffer'
   - content_for :page_javascript do
     :plain
       $(function($){

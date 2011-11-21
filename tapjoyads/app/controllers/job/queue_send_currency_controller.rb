@@ -7,11 +7,11 @@ class Job::QueueSendCurrencyController < Job::SqsReaderController
     @bad_callbacks = Set.new
   end
 
-private
+  private
 
   def on_message(message)
     params.delete(:callback_url)
-    reward = Reward.deserialize(message.to_s)
+    reward = Reward.deserialize(message.body)
     return if reward.sent_currency?
 
     mc_time = Time.zone.now.to_i / 1.hour
@@ -42,19 +42,33 @@ private
 
     mark = '?'
     mark = '&' if callback_url =~ /\?/
-    callback_url += "#{mark}snuid=#{CGI::escape(publisher_user_id)}&currency=#{reward.currency_reward}"
+    callback_url += mark
+    url_params = [
+      "snuid=#{CGI::escape(publisher_user_id)}",
+      "currency=#{reward.currency_reward}",
+    ]
     if currency.send_offer_data?
       offer = Offer.find_in_cache(reward.offer_id, true)
-      callback_url += "&storeId=#{CGI::escape(offer.store_id_for_feed)}"
-      callback_url += "&application=#{CGI::escape(offer.name)}"
-      publisher_revenue = reward.publisher_amount / 100.0
-      callback_url += "&rev=#{publisher_revenue}"
+      url_params += [
+        "storeId=#{CGI::escape(offer.store_id_for_feed)}",
+        "application=#{CGI::escape(offer.name)}",
+        "rev=#{reward.publisher_amount / 100.0}",
+      ]
     end
     if currency.secret_key.present?
-      hash_source = "#{reward.key}:#{publisher_user_id}:#{reward.currency_reward}:#{currency.secret_key}"
-      hash = Digest::MD5.hexdigest(hash_source)
-      callback_url += "&id=#{reward.key}&verifier=#{hash}"
+      hash_bits = [
+        reward.key,
+        publisher_user_id,
+        reward.currency_reward,
+        currency.secret_key,
+      ]
+      hash = Digest::MD5.hexdigest(hash_bits.join(':'))
+      url_params += [
+        "id=#{reward.key}",
+        "verifier=#{hash}",
+      ]
     end
+    callback_url += url_params.join('&')
 
     reward.sent_currency = Time.zone.now
 
@@ -111,4 +125,5 @@ private
 
     reward.serial_save
   end
+
 end

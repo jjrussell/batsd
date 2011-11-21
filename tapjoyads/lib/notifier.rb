@@ -23,6 +23,7 @@ class UnverifiedStatsError < EmailWorthyError; end
 class AppStoreSearchFailed < EmailWorthyError; end
 class VerticaDataError < EmailWorthyError; end
 class AndroidMarketChanged < EmailWorthyError; end
+class PapayaAPIError < EmailWorthyError; end
 
 class Notifier
 

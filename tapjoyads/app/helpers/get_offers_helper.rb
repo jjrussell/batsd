@@ -31,7 +31,12 @@ module GetOffersHelper
       :library_version    => params[:library_version])
 
     if offer.item_type == 'VideoOffer' || offer.item_type == 'TestVideoOffer'
-      "tjvideo://video_id=#{offer.id}&amount=#{@currency.get_visual_reward_amount(offer, params[:display_multiplier])}&currency_name=#{URI::escape(@currency.name)}&click_url=#{click_url}"
+      if @publisher_app.platform == 'windows'
+        prefix = "http://tjvideo.tjvideo.com/tjvideo?"
+      else
+        prefix = "tjvideo://"
+      end
+      "#{prefix}video_id=#{offer.id}&amount=#{@currency.get_visual_reward_amount(offer, params[:display_multiplier])}&currency_name=#{URI::escape(@currency.name)}&click_url=#{click_url}"
     else
       click_url
     end
@@ -39,7 +44,7 @@ module GetOffersHelper
 
   def get_fullscreen_ad_url(offer)
     offer.fullscreen_ad_url(
-        :publisher_app      => @publisher_app,
+        :publisher_app_id   => @publisher_app.id,
         :publisher_user_id  => params[:publisher_user_id],
         :udid               => params[:udid],
         :currency_id        => @currency.id,
@@ -73,8 +78,8 @@ module GetOffersHelper
   end
 
   def missing_currency_support_params(format = 'html')
-    support_params = [ 'app_id', 'currency_id', 'udid', 'device_type', 'publisher_user_id', 'language_code' ].inject({}) { |h,k| h[k] = params[k]; h }
-    support_params['format'] = format;
+    support_params = [ :app_id, :currency_id, :udid, :device_type, :publisher_user_id, :language_code ].inject({}) { |h,k| h[k] = params[k]; h }
+    support_params[:format] = format
     support_params
   end
 

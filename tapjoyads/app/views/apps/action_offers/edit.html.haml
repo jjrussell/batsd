@@ -1,3 +1,5 @@
+- content_for :page_head, stylesheet_link_tag('facebox')
+
 - @page_title = 'Edit Action'
 
 %h3 Edit Action
@@ -7,6 +9,11 @@
 - form_for [ @app, @action_offer ], :html => { :class => 'tjform' } do |f|
   %table
     %tbody
+      %tr
+        %th
+          = f.label "View Ads"
+        %td
+          = link_to("Click to preview ad images", preview_app_action_offer_path(:id => @action_offer.id, :app_id => @app.id), :rel => 'facebox')
       - f.fields_for :primary_offer do |primary_offer_form|
         %tr
           %th

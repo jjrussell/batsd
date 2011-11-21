@@ -13,6 +13,7 @@ class GamerDevice < ActiveRecord::Base
     'iPhone2,1*' => 'iPhone 3GS',
     'iPhone3,1'  => 'iPhone 4',
     'iPhone3,3'  => 'iPhone 4',
+    'iPhone4,1'  => 'iPhone 4S',
     'iPad1,1'    => 'iPad',
     'iPad2,1'    => 'iPad 2 Wi-Fi',
     'iPad2,2'    => 'iPad 2 3G',
@@ -36,6 +37,7 @@ class GamerDevice < ActiveRecord::Base
     'iPhone2,1*' => 'iphone',
     'iPhone3,1'  => 'iphone',
     'iPhone3,3'  => 'iphone',
+    'iPhone4,1'  => 'iphone',
     'iPad1,1'    => 'ipad',
     'iPad2,1'    => 'ipad',
     'iPad2,2'    => 'ipad',
@@ -60,5 +62,14 @@ class GamerDevice < ActiveRecord::Base
       self.name = PRODUCT_NAMES[new_device.product]
       self.device_type = PRODUCT_TYPES[new_device.product]
     end
+  end
+
+  def device_data
+    data = { :udid => device_id, :id => id, :device_type  => device_type }
+    {
+      :name        => name,
+      :device_type => device_type,
+      :data        => SymmetricCrypto.encrypt_object(data, SYMMETRIC_CRYPTO_SECRET),
+    }
   end
 end

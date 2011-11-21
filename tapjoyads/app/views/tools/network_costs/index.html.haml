@@ -1,0 +1,48 @@
+- @page_title = 'Network Costs'
+
+%h1 Network Costs
+
+= link_to('Create New', new_tools_network_cost_path)
+
+%table#costs_table.tablesorter
+  %thead
+    %tr
+      %th Created
+      %th Amount
+      %th Notes
+  %tbody
+    - @costs.each do |cost|
+      %tr
+        %td= cost.created_at.to_s(:mdy_ampm)
+        %td= number_to_currency(cost.amount / 100.0)
+        %td= cost.notes
+
+- content_for :page_javascript do
+  :plain
+    $(function() {
+      $.tablesorter.addParser({
+        id: 'date-column',
+        is: function(s) { return false; },
+        type: 'numeric',
+        format: function(s) {
+          return new Date(s).getTime();
+        }
+      });
+      $.tablesorter.addParser({
+        id: 'currency-column',
+        is: function(s) { return false; },
+        type: 'numeric',
+        format: function(s) {
+          return s.replace(/\$/g, '').replace(/,/g, '');
+        }
+      });
+      $("#costs_table").tablesorter({
+        widgets: ['zebra'],
+        headers: {
+          0:  { sorter: 'date-column' },
+          1:  { sorter: 'currency-column' },
+          2:  { sorter: false }
+        },
+        sortList: [ [0, 1] ]
+      });
+    });

@@ -68,7 +68,9 @@ class Games::GamersController < GamesController
       render(:json => { :success => false, :error => @gamer.errors }) and return
     end
   end
+
 private
+
   def set_profile
     if current_gamer.present?
       @gamer = current_gamer
@@ -79,4 +81,5 @@ private
       redirect_to games_root_path
     end
   end
+
 end

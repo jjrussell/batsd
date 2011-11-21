@@ -20,6 +20,7 @@ class Partner < ActiveRecord::Base
   has_many :offer_discounts, :order => 'expires_on DESC'
   has_many :app_offers, :class_name => 'Offer', :conditions => "item_type = 'App'"
   has_one :payout_info
+  belongs_to :sales_rep, :class_name => 'User'
   has_many :earnings_adjustments
 
   belongs_to :reseller
@@ -27,10 +28,11 @@ class Partner < ActiveRecord::Base
   validates_presence_of :reseller, :if => Proc.new { |partner| partner.reseller_id? }
   validates_numericality_of :balance, :pending_earnings, :next_payout_amount, :only_integer => true, :allow_nil => false
   validates_numericality_of :premier_discount, :greater_than_or_equal_to => 0, :only_integer => true, :allow_nil => false
-  validates_numericality_of :rev_share, :transfer_bonus, :direct_pay_share, :greater_than_or_equal_to => 0, :less_than_or_equal_to => 1
+  validates_numericality_of :rev_share, :transfer_bonus, :direct_pay_share, :max_deduction_percentage, :greater_than_or_equal_to => 0, :less_than_or_equal_to => 1
   validates_inclusion_of :exclusivity_level_type, :in => ExclusivityLevel::TYPES, :allow_nil => true, :allow_blank => false
   validates_inclusion_of :use_whitelist, :approved_publisher, :in => [ true, false ]
   validate :exclusivity_level_legal
+  validate :sales_rep_is_employee, :if => :sales_rep_id_changed?
   validates_format_of :billing_email, :with => Authlogic::Regex.email, :message => "should look like an email address.", :allow_blank => true, :allow_nil => true
   # validates_format_of :name, :with => /^[[:print:]]*$/, :message => "Partner name must be alphanumeric."
   validates_each :disabled_partners, :allow_blank => true do |record, attribute, value|
@@ -284,7 +286,7 @@ class Partner < ActiveRecord::Base
 private
 
   def update_currencies
-    if rev_share_changed? || direct_pay_share_changed? || disabled_partners_changed? || offer_whitelist_changed? || use_whitelist_changed? || accepted_publisher_tos_changed?
+    if rev_share_changed? || direct_pay_share_changed? || disabled_partners_changed? || offer_whitelist_changed? || use_whitelist_changed? || accepted_publisher_tos_changed? || max_deduction_percentage_changed?
       currencies.each do |c|
         c.set_values_from_partner_and_reseller
         c.save!
@@ -322,5 +324,11 @@ private
 
   def check_billing_email
     self.freshbooks_client_id = nil if billing_email_changed?
+  end
+
+  def sales_rep_is_employee
+    if sales_rep && !sales_rep.employee?
+      errors.add(:sales_rep, 'must be an employee')
+    end
   end
 end

@@ -1,7 +1,6 @@
 module ToolsHelper
   def click_info_ul(click, reward)
     concat("<ul class='nobr hidden'>")
-    concat_li("Click ID:", clippy(click.key))
     concat_li_timestamp("Viewed at", click.viewed_at)
     concat_li_timestamp("Clicked at", click.clicked_at)
     concat_li_timestamp("Installed at", click.installed_at)
@@ -15,6 +14,7 @@ module ToolsHelper
     concat_li_currency('Pub', click.publisher_amount)
     concat_li_currency('Tj', click.tapjoy_amount)
     concat_li("Pub user ID", click.publisher_user_id) if click.publisher_user_id != click.udid
+    concat_li("Block Reason", click.block_reason) if click.block_reason?
     concat("</ul>")
   end
 
