@@ -23,6 +23,7 @@ class GetOffersController < ApplicationController
     end
 
     set_geoip_data
+    @papaya_offers = OfferCacher.get_papaya_offers
 
     if @for_preview
       @offer_list, @more_data_available = [[Offer.find_in_cache(params[:offer_id])], 0]

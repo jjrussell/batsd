@@ -130,6 +130,23 @@ class OfferCacher
       end
     end
 
+    def cache_papaya_offers
+      offer_list_data = {}
+      Offer.enabled_offers.papaya_app_offers.each do |o|
+        offer_list_data[o.id] = o.papaya_user_count
+      end
+      bucket = S3.bucket(BucketNames::OFFER_DATA)
+      bucket.objects["papaya_offers"].write(:data => Marshal.dump(offer_list_data))
+      Mc.put("s3.papaya_offers", offer_list_data)
+    end
+
+    def get_papaya_offers
+      Mc.get_and_put("s3.papaya_offers") do
+        bucket = S3.bucket(BucketNames::OFFER_DATA)
+        Marshal.restore(bucket.objects["papaya_offers"].read)
+      end
+    end
+
     def populate_rails_cache
       OFFER_TYPES.each do |type|
         PLATFORMS.each do |platform|

@@ -74,6 +74,7 @@ class Offer < ActiveRecord::Base
   belongs_to :partner
   belongs_to :item, :polymorphic => true
   belongs_to :reseller
+  belongs_to :app, :foreign_key => "item_id"
 
   validates_presence_of :reseller, :if => Proc.new { |offer| offer.reseller_id? }
   validates_presence_of :partner, :item, :name, :url, :rank_boost
@@ -156,6 +157,7 @@ class Offer < ActiveRecord::Base
   named_scope :app_offers, :conditions => "item_type = 'App' or item_type = 'ActionOffer'"
   named_scope :video_offers, :conditions => "item_type = 'VideoOffer'"
   named_scope :non_video_offers, :conditions => "item_type != 'VideoOffer'"
+  named_scope :papaya_app_offers, :joins => :app, :conditions => "(item_type = 'App' or item_type = 'ActionOffer') AND #{App.quoted_table_name}.papaya_user_count > 0", :select => "#{Offer.quoted_table_name}.id, #{App.quoted_table_name}.papaya_user_count"
 
   delegate :balance, :pending_earnings, :name, :approved_publisher?, :rev_share, :to => :partner, :prefix => true
   memoize :partner_balance
