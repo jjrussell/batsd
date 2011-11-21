@@ -16,7 +16,7 @@ class Games::HomepageController < GamesController
     device_info = current_device_info
     @gamer = current_gamer
     @gamer.gamer_profile ||= GamerProfile.new(:gamer => @gamer)
-    
+
     @device_name = device_info.name if device_info
     @device = Device.new(:key => device_id) if device_id.present?
     if @device.present?
