@@ -12,6 +12,7 @@ class SupportRequest < SimpledbResource
   self.sdb_attr :app_id
   self.sdb_attr :currency_id
   self.sdb_attr :offer_id
+  self.sdb_attr :click_id
 
   def initialize(options = {})
     super({:load_from_memcache => false}.merge(options))
@@ -31,6 +32,14 @@ class SupportRequest < SimpledbResource
     self.app_id            = app.id
     self.currency_id       = currency.id
     self.offer_id          = offer.id if offer.present?
+    click                  = offer.present? ? get_last_click(params[:udid], offer) : nil
+    self.click_id          = click ? click.id : nil
+
   end
 
+  def get_last_click(udid, offer)
+    conditions = "udid = '#{udid}' and offer_id = '#{offer.id}' and installed_at is null and manually_resolved_at is null"
+    clicks = Click.select_all(:conditions => conditions)
+    clicks.sort_by { |c| c.clicked_at.to_f }.last
+  end
 end
