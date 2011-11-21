@@ -50,7 +50,7 @@
                 %label= @currency.get_visual_reward_amount(offer, params[:display_multiplier])
               = offer.direct_pay? ? t('text.offerwall.buy_currency', :amount => amount, :currency => @currency.name) : t('text.offerwall.earn_currency', :amount => amount, :currency => @currency.name)
           %p
-            %b= offer.name + ((offer.item_type == 'App' && !@device.is_papayan && App.find_by_id(offer.item_id).papaya_user_count != nil)? " : #{App.find_by_id(offer.item_id).papaya_user_count} papayans are playing this game" : '')
+            %b= offer.name + ((offer.item_type == 'App' && !@device.is_papayan && App.find_by_id(offer.item_id).papaya_user_count != nil)? " : #{App.find_by_id(offer.item_id).papaya_user_count} papayans are playing this game" : ' no papaya user count!')
         .load
     - unless index == (@offer_list.size-1)
       .divider
