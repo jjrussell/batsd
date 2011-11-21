@@ -254,7 +254,8 @@ class ToolsController < WebsiteController
       end
     elsif params[:email_address].present?
       @all_udids = SupportRequest.find_all_by_email_address(params[:email_address]).map(&:udid)
-      Gamer.find_all_by_email(params[:email_address]).each do |gamer|
+      gamer = Gamer.find_by_email(params[:email_address])
+      if gamer.present?
         @all_udids += gamer.gamer_devices.map(&:device_id)
       end
       @all_udids = @all_udids.uniq
