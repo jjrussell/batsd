@@ -14,7 +14,7 @@ module Offer::Rejecting
     cookie_tracking_reject?(publisher_app, library_version, source) ||
     screen_layout_sizes_reject?(screen_layout_size) ||
     is_disabled?(publisher_app, currency) ||
-    age_rating_reject?(currency) ||
+    age_rating_reject?(currency.max_age_rating) ||
     publisher_whitelist_reject?(publisher_app) ||
     currency_whitelist_reject?(currency) ||
     video_offers_reject?(video_offer_ids, type) ||
@@ -43,7 +43,7 @@ module Offer::Rejecting
       screen_layout_sizes_reject?(screen_layout_size) ||
       is_disabled?(publisher_app, currency) ||
       app_platform_mismatch?(publisher_app) ||
-      age_rating_reject?(currency) ||
+      age_rating_reject?(currency.max_age_rating) ||
       publisher_whitelist_reject?(publisher_app) ||
       currency_whitelist_reject?(currency) ||
       frequency_capping_reject?(device)) &&
@@ -57,7 +57,12 @@ module Offer::Rejecting
   end
 
   def recommendation_reject?(device, device_type, geoip_data, os_version)
-    recommendable_types_reject? || device_platform_mismatch?(device_type) || geoip_reject?(geoip_data, device) || already_complete?(device) || min_os_version_reject?(os_version)
+    recommendable_types_reject? || 
+      device_platform_mismatch?(device_type) || 
+      geoip_reject?(geoip_data, device) ||
+      already_complete?(device) ||
+      min_os_version_reject?(os_version) ||
+      age_rating_reject?(3) # reject 17+ apps
   end
 
   private
@@ -84,10 +89,11 @@ module Offer::Rejecting
     platform_name != 'All' && platform_name != app_platform_name
   end
 
-  def age_rating_reject?(currency)
-    return false if currency.max_age_rating.nil?
+  def age_rating_reject?(max_age_rating)
+    return false if max_age_rating.nil?
     return false if age_rating.nil?
-    currency.max_age_rating < age_rating
+    Rails.logger.info "REJECTED?: #{max_age_rating < age_rating}"
+    max_age_rating < age_rating
   end
 
   def geoip_reject?(geoip_data, device)
