@@ -26,7 +26,7 @@ class Games::Social::TwitterController < GamesController
       access_token.secret ? authhash[:twitter_access_secret] = access_token.secret : authhash[:twitter_access_secret] = ''
 
       if authhash[:twitter_id] != '' and authhash[:twitter_access_token] != '' and authhash[:twitter_access_secret] != ''
-        current_gamer.gamer_profile.update_twitter_info!(authhash)
+        current_gamer.update_twitter_info!(authhash)
         redirect_to games_social_invite_twitter_friends_path
       else
         flash[:error] =  'Error while authenticating via TWITTER. The service did not return valid data.'
@@ -42,7 +42,7 @@ private
   def handle_oauth_exceptions(e)
     case e
     when OAuth::Unauthorized
-      current_gamer.gamer_profile.dissociate_account!(Invitation::TWITTER)
+      current_gamer.dissociate_account!(Invitation::TWITTER)
       flash[:error] = 'Please authorize us before sending out an invite.'
       redirect_to edit_games_gamer_path
     else

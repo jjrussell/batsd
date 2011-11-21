@@ -56,8 +56,7 @@ class Games::SocialController < GamesController
             message = "#{current_facebook_user.name} has invited you to join Tapjoy, the BEST place to find the hottest new apps. Signing up is free and you'll be able discover the best apps on iOS and Android, while also earning currency in your favorite apps."
 
             description = "Experience the best of mobile apps!"
-            image_url = Rails.env.production? ? "#{WEBSITE_URL}/images/ic_launcher_96x96.png" : "www.tapjoy.com/images/ic_launcher_96x96.png"
-            post = Mogli::Post.new(:name => name, :link => link, :message => message, :description => description, :caption => " ", :picture => image_url)
+            post = Mogli::Post.new(:name => name, :link => link, :message => message, :description => description, :caption => " ", :picture => "#{WEBSITE_URL}/images/ic_launcher_96x96.png")
             posts << friend.feed_create(post)
           end
         end
@@ -106,7 +105,7 @@ class Games::SocialController < GamesController
     render :json => { :success => true, :gamers => gamers, :non_gamers => non_gamers }
   end
 
-  def invite_twitter_friends    
+  def invite_twitter_friends
     @page_size = 25
 
     twitter_friends = Twitter.follower_ids.ids.map do |id|
@@ -134,7 +133,7 @@ class Games::SocialController < GamesController
       gamers = []
       non_gamers = []
 
-      friends.each do |friend_id|        
+      friends.each do |friend_id|
         exist_gamers = Gamer.find_all_gamer_based_on_channel(Invitation::TWITTER, friend_id)
         if exist_gamers.any?
           exist_gamers.each do |gamer|
@@ -209,7 +208,7 @@ private
     when Twitter::Forbidden
       render :json => { :success => false, :error => "Please try to invite the same person again tomorrow.(Duplicate or Reach limitation)" }
     when Twitter::Unauthorized
-      current_gamer.gamer_profile.dissociate_account!(Invitation::TWITTER)
+      current_gamer.dissociate_account!(Invitation::TWITTER)
       render :json => { :success => false, :error_redirect => true } and return if params[:ajax].present?
       redirect_to games_social_invite_twitter_friends_path
     when Twitter::InternalServerError, Twitter::BadGateway, Twitter::ServiceUnavailable
@@ -234,7 +233,7 @@ private
   end
 
   def dissociate_and_redirect
-    current_gamer.gamer_profile.dissociate_account!(Invitation::FACEBOOK)
+    current_gamer.dissociate_account!(Invitation::FACEBOOK)
     render :json => { :success => false, :error_redirect => true } and return if params[:ajax].present?
     flash[:error] = @error_msg
     redirect_to edit_games_gamer_path

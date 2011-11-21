@@ -4,7 +4,7 @@ class Gamer < ActiveRecord::Base
   has_many :gamer_devices, :dependent => :destroy
   has_many :invitations, :dependent => :destroy
   has_one :gamer_profile, :dependent => :destroy
-  delegate :facebook_id, :facebook_id?, :fb_access_token, :twitter_id, :twitter_id?, :twitter_access_token, :twitter_access_token?, :twitter_access_secret, :twitter_access_secret?, :referred_by, :referred_by=, :referred_by?, :referral_count, :to => :gamer_profile
+  delegate :facebook_id, :facebook_id?, :fb_access_token, :referred_by, :referred_by=, :referred_by?, :referral_count, :to => :gamer_profile
 
   validates_associated :gamer_profile, :on => :create
   validates_presence_of :email
@@ -58,15 +58,14 @@ class Gamer < ActiveRecord::Base
 
   def self.find_all_gamer_based_on_channel(channel, external)
     gamer_profiles = []
+    gamers = []
     
     case channel
     when Invitation::FACEBOOK
       gamer_profiles = GamerProfile.find_all_by_facebook_id(external)
     when Invitation::TWITTER
-      gamer_profiles = GamerProfile.find_all_by_twitter_id(external)
+      gamers = Gamer.find_all_by_twitter_id(external)
     end
-    
-    gamers = []
 
     if gamer_profiles.any?
       gamer_profiles.each do |profile|
@@ -112,6 +111,31 @@ class Gamer < ActiveRecord::Base
   def get_avatar_url(size=nil)
     size_param = size.present? ? "&size=#{size}" : nil
     "https://secure.gravatar.com/avatar/#{generate_gravatar_hash}?d=mm#{size_param}"
+  end
+
+  def update_twitter_info!(authhash)
+    if twitter_id != authhash[:twitter_id]
+      self.twitter_id            = authhash[:twitter_id]
+      self.twitter_access_token  = authhash[:twitter_access_token]
+      self.twitter_access_secret = authhash[:twitter_access_secret]
+      save!
+
+      Invitation.reconcile_pending_invitations(Gamer.find_by_id(self.id), :external_info => twitter_id)
+    end
+  end
+
+  def dissociate_account!(account_type)
+    case account_type
+    when Invitation::FACEBOOK
+      self.gamer_profile.facebook_id     = nil
+      self.gamer_profile.fb_access_token = nil
+      self.gamer_profile.save!
+    when Invitation::TWITTER
+      self.twitter_id            = nil
+      self.twitter_access_token  = nil
+      self.twitter_access_secret = nil
+      save!
+    end
   end
 
   private
