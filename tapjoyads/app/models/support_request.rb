@@ -28,7 +28,6 @@ class SupportRequest < SimpledbResource
     self.publisher_user_id = params[:publisher_user_id]
     self.device_type       = params[:device_type]
     self.language_code     = params[:language_code]
-    self.offer_name        = params[:offer_name]
     self.app_id            = app.id
     self.currency_id       = currency.id
     self.offer_id          = offer.id if offer.present?

@@ -14,7 +14,7 @@ class SupportRequestsController < ApplicationController
   end
 
   def create
-    if @offer.nil? && params[:offer_name].blank?
+    if @offer.nil?
       render_new_with_error(I18n.t('text.support.missing_offer'))
     elsif params[:description].blank?
       render_new_with_error(I18n.t('text.support.missing_description'))
@@ -26,7 +26,7 @@ class SupportRequestsController < ApplicationController
       support_request.save
 
       TapjoyMailer.deliver_support_request(params[:description], params[:email_address], @app, @currency, params[:udid],
-        params[:publisher_user_id], params[:device_type], params[:language_code], @offer || params[:offer_name])
+        params[:publisher_user_id], params[:device_type], params[:language_code], @offer)
     end
   end
 

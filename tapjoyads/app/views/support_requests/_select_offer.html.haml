@@ -1,4 +1,4 @@
-- unless @incomplete_offers.empty?
+- if @incomplete_offers.any?
   .field
     = label_tag :offer_id, t('text.support.specify_offer_label')
     = select_tag :offer_id, options_for_select(@incomplete_offers.collect { |o| [ o.name, o.id ] }, params[:offer_id].present? ? params[:offer_id] : @incomplete_offers.first.id)
