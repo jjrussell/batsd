@@ -170,7 +170,8 @@ class Games::SocialController < GamesController
     end
   end
 
-private
+  private
+
   def offline_facebook_authenticate
     if current_gamer.facebook_id.blank? && params[:valid_login] && current_facebook_user
       current_gamer.gamer_profile.update_facebook_info!(current_facebook_user)
