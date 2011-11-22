@@ -131,13 +131,16 @@ class OfferCacher
     end
 
     def cache_papaya_offers
-      offer_list_data = {}
+      papaya_offers = {}
       Offer.enabled_offers.papaya_app_offers.each do |o|
-        offer_list_data[o.id] = o.papaya_user_count
+        papaya_offers[o.id] = o.papaya_user_count
+      end
+      Offer.enabled_offers.papaya_action_offers.each do |o|
+        papaya_offers[o.id] = o.papaya_user_count
       end
       bucket = S3.bucket(BucketNames::OFFER_DATA)
-      bucket.objects["papaya_offers"].write(:data => Marshal.dump(offer_list_data))
-      Mc.put("s3.papaya_offers", offer_list_data)
+      bucket.objects["papaya_offers"].write(:data => Marshal.dump(papaya_offers))
+      Mc.put("s3.papaya_offers", papaya_offers)
     end
 
     def get_papaya_offers

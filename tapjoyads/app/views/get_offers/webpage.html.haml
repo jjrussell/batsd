@@ -50,7 +50,9 @@
                 %label= @currency.get_visual_reward_amount(offer, params[:display_multiplier])
               = offer.direct_pay? ? t('text.offerwall.buy_currency', :amount => amount, :currency => @currency.name) : t('text.offerwall.earn_currency', :amount => amount, :currency => @currency.name)
           %p
-            %b= offer.name + (@papaya_offers.include?(offer.id) ? " : #{@papaya_offers[offer.id]} players are currently playing" : '')
+            %b= offer.name 
+            - if @papaya_offers.include?(offer.id) && @device.is_papayan?
+              = "#{@papaya_offers[offer.id]} players are currently playing"
         .load
     - unless index == (@offer_list.size-1)
       .divider
@@ -212,7 +214,10 @@
                       t.push('</span>');
                       t.push('<p>');
                         t.push('<b>');
-                          t.push(v.Name);
+                          t.push(v.Name); 
+                          if (v.PapayaUserCount) {
+                            t.push(v.PapayaUserCount + ' players are currently playing');
+                          }
                         t.push('</b>');
                       t.push('</p>');
                     t.push('</div>');

@@ -23,7 +23,6 @@ class GetOffersController < ApplicationController
     end
 
     set_geoip_data
-    @papaya_offers = OfferCacher.get_papaya_offers
 
     if @for_preview
       @offer_list, @more_data_available = [[Offer.find_in_cache(params[:offer_id])], 0]
@@ -118,6 +117,8 @@ private
     @web_request = WebRequest.new(:time => @now)
     @web_request.put_values(wr_path, params, get_ip_address, get_geoip_data, request.headers['User-Agent'])
     @web_request.viewed_at = @now
+
+    @papaya_offers = OfferCacher.get_papaya_offers
   end
 
   def get_offer_list(type = nil)
