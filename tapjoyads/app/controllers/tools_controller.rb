@@ -256,7 +256,7 @@ class ToolsController < WebsiteController
       @all_udids = SupportRequest.find_all_by_email_address(params[:email_address]).map(&:udid)
       gamer = Gamer.find_by_email(params[:email_address])
       @all_udids += gamer.gamer_devices.map(&:device_id) if gamer.present?
-      @all_udids = @all_udids.uniq
+      @all_udids.uniq!
       if @all_udids.empty?
         flash.now[:error] = "No UDIDs associated with the email address: #{params[:email_address]}"
       elsif @all_udids.size == 1
