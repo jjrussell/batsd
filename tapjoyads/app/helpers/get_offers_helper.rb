@@ -79,8 +79,8 @@ module GetOffersHelper
   end
 
   def missing_currency_support_params(format = 'html')
-    support_params = [ 'app_id', 'currency_id', 'udid', 'device_type', 'publisher_user_id', 'language_code' ].inject({}) { |h,k| h[k] = params[k]; h }
-    support_params['format'] = format;
+    support_params = [ :app_id, :currency_id, :udid, :device_type, :publisher_user_id, :language_code ].inject({}) { |h,k| h[k] = params[k]; h }
+    support_params[:format] = format
     support_params
   end
 
