@@ -120,7 +120,7 @@ module Offer::Rejecting
 
     ALREADY_COMPLETE_IDS.each do |target_ids, ids_to_reject|
       if target_ids.include?(app_id_for_device)
-        return ids_to_reject.any? { |reject_id| device.has_app?(reject_id) }
+        return true if ids_to_reject.any? { |reject_id| device.has_app?(reject_id) }
       end
     end
 
