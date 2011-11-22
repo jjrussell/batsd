@@ -6,7 +6,7 @@ class Job::MasterArchiveConversionsController < Job::JobController
     # backup anything before the archive cutoff date
     Conversion.using_slave_db do
       start_time = Conversion.minimum(:created_at).beginning_of_month
-      end_time = Conversion.archive_cutoff_time
+      end_time = Conversion.backup_cutoff_time
       while start_time < end_time
         archive_conversions(start_time, start_time.next_month)
         start_time = start_time.next_month
