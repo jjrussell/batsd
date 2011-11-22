@@ -128,6 +128,11 @@ module Offer::Rejecting
       return device.has_app?('cab56716-8e27-4a4c-8477-457e1d311209') || device.has_app?('069eafb8-a9b8-4293-8d2a-e9d9ed659ac8')
     end
 
+    if app_id_for_device == '99d4a403-38a8-41e3-b7a2-5778acb968ef' || app_id_for_device == 'b22f3ef8-947f-4605-a5bc-a83609af5ab7'
+      # there are 2 snoopy's street fair apps
+      return device.has_app?('99d4a403-38a8-41e3-b7a2-5778acb968ef') || device.has_app?('b22f3ef8-947f-4605-a5bc-a83609af5ab7')
+    end
+
     device.has_app?(app_id_for_device)
   end
 
