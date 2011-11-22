@@ -1,4 +1,5 @@
 class Games::Gamers::DevicesController < GamesController
+
   def new
     if current_gamer.present?
       send_file("#{RAILS_ROOT}/data/TapjoyProfile.mobileconfig", :filename => 'TapjoyProfile.mobileconfig', :disposition => 'inline', :type => :mobileconfig)
@@ -52,7 +53,8 @@ class Games::Gamers::DevicesController < GamesController
 
       cookies[:data] = { :value => params[:data], :expires => 1.year.from_now } if params[:data].present?
 
-      if current_gamer.devices.create(:device => device)
+      new_device = current_gamer.devices.create(:device => device)
+      if new_device.save
         device.set_last_run_time!(TAPJOY_GAMES_REGISTRATION_OFFER_ID)
         session[:current_device_id] = SymmetricCrypto.encrypt_object(device.key, SYMMETRIC_CRYPTO_SECRET)
 
@@ -77,9 +79,8 @@ class Games::Gamers::DevicesController < GamesController
           end
         end
 
-        redirect_to games_root_path(:register_device => true)
+        redirect_to games_root_path
       else
-        flash[:error] = "Error linking device. Please try again."
         redirect_to games_root_path
       end
     else
