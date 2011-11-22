@@ -5,7 +5,7 @@ class Games::Social::TwitterController < GamesController
 
   def start_oauth
     consumer = OAuth::Consumer.new(ENV['CONSUMER_KEY'], ENV['CONSUMER_SECRET'], {:site=>"http://twitter.com" })
-    req_token = consumer.get_request_token(:oauth_callback => ('http://' + request.env['HTTP_HOST'] + "#{games_social_twitter_finish_oauth_path}"))
+    req_token = consumer.get_request_token(:oauth_callback => "http://#{request.host_with_port}#{games_social_twitter_finish_oauth_path}")
     session[:twitter_request_token] = req_token.token
     session[:twitter_request_token_secret] = req_token.secret
     redirect_to req_token.authorize_url
@@ -20,7 +20,7 @@ class Games::Social::TwitterController < GamesController
       access_token = req_token.get_access_token
 
       # Store the OAuth info for the user
-      authhash = Hash.new
+      authhash = {}
       access_token.token ? authhash[:twitter_id] = access_token.token.split('-')[0] : authhash[:twitter_id] = ''
       access_token.token ? authhash[:twitter_access_token] = access_token.token : authhash[:twitter_access_token] = ''
       access_token.secret ? authhash[:twitter_access_secret] = access_token.secret : authhash[:twitter_access_secret] = ''
@@ -38,7 +38,8 @@ class Games::Social::TwitterController < GamesController
     end
   end
 
-private
+  private
+
   def handle_oauth_exceptions(e)
     case e
     when OAuth::Unauthorized
