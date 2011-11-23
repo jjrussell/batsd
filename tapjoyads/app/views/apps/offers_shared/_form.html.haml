@@ -3,16 +3,6 @@
 - form_for(@offer, :url => { :action => :update }, :html => { :method => :put, :class => 'tjform', :id => 'update' }) do |f|
   %table
     %tbody
-      %tr{ :class => (@app.store_id? ? '' : 'hidden')}
-        %th
-          = f.label "View Ads"
-        %td
-          - if @offer.featured?
-            - @custom_creative_sizes.each do |size_hash|
-              = link_to("Preview #{size_hash[:label_image_size]} ads", preview_app_offer_path(:id => @offer.id, :app_id => @app.id, :image_size => size_hash[:image_size], :preview => true), :rel => 'facebox', :id => 'preview_link')
-              %br
-          - else
-            = link_to("Preview ads", preview_app_offer_path(:id => @offer.id, :app_id => @app.id), :rel => 'facebox', :id => 'preview_link')
       %tr
         %th
           = f.label :user_enabled, @offer.featured? ? 'Enable Featured Installs' : 'Enable Installs'
@@ -70,6 +60,17 @@
           Offer Name
           #help_offer_name.help ?
         %td= @offer.name
+      %tr{ :class => (@app.store_id? ? '' : 'hidden')}
+        %th
+          = f.label "View Ads"
+          #help_view_ads.help ?
+        %td
+          - if @offer.featured?
+            - @custom_creative_sizes.each do |size_hash|
+              = link_to("Preview #{size_hash[:label_image_size]} ads", preview_app_offer_path(:id => @offer.id, :app_id => @app.id, :image_size => size_hash[:image_size], :preview => true), :rel => 'facebox', :id => 'preview_link')
+              %br
+          - else
+            = link_to("Preview ads", preview_app_offer_path(:id => @offer.id, :app_id => @app.id), :rel => 'facebox', :id => 'preview_link')
       %tr
         %th
           = f.label :daily_budget, 'Daily Budget'
@@ -152,6 +153,8 @@
 .hidden
   #help_offer_name_content{:name => 'Offer Name'}
     Name that will be displayed on offer walls.
+  #help_view_ads_content{:name => 'View Ads'}
+    Shows previews of how offers will be displayed to users. Previews are available for multiple screen resolutions.
   #help_balance_content{:name => 'Balance'}
     Current balance available.
   #help_daily_content{:name => 'Daily Budget'}

@@ -81,8 +81,8 @@
       // If we've found creative to use, then tweak the styling and download the image
       setupCreative(preferredCreative);
       setupButtons();
-      setTimeout("addWebkitDirectives()", (animOptions.startDelay/2));
-      setTimeout("moveButtons()", (animOptions.startDelay));
+      setTimeout(addWebkitDirectives, (animOptions.startDelay/2));
+      setTimeout(moveButtons, (animOptions.startDelay));
     }
 
     function addWebkitDirectives() {

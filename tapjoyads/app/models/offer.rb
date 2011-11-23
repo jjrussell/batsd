@@ -290,7 +290,7 @@ class Offer < ActiveRecord::Base
   end
 
   def display_custom_banner_for_size?(size)
-    return !rewarded? && !featured? && is_free? && item_type != 'VideoOffer' && banner_creatives.include?(size)
+    return display_banner_ads? && banner_creatives.include?(size)
   end
 
   def get_video_icon_url(options = {})

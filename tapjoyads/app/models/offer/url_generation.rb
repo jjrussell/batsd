@@ -153,8 +153,8 @@ module Offer::UrlGeneration
     url
   end
 
-  def fullscreen_ad_image_url(publisher_app_id, bust_cache = false, options = {})
-    if options[:dimensions].present? && display_custom_banner_for_size?(options[:dimensions])
+  def fullscreen_ad_image_url(publisher_app_id, bust_cache = false, dimensions = nil)
+    if dimensions.present? && display_custom_banner_for_size?(dimensions)
       url = "#{CLOUDFRONT_URL}/#{banner_creative_path(size)}"
     else
       url = "#{API_URL}/fullscreen_ad/image?publisher_app_id=#{publisher_app_id}&offer_id=#{id}"
