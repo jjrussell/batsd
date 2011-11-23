@@ -1,0 +1,26 @@
+%h1 Mass Award Clicks
+- form_tag({}, { :method => 'post', :class => 'tjform', :multipart => true }) do
+  %table
+    %tbody
+      %tr
+        %th
+          CSV with Support Requests
+          #help_csv_support_requests.help ?
+        %td
+          = file_field_tag :upload_support_requests, :accept => 'text/csv,text/comma-separated-values'
+      %tr
+        %td{ :colspan => 2 }= submit_tag 'Upload'
+      - if @request_successfully_awarded > 0
+        %tr
+          %td{ :colspan => 2}= "Successfully awarded #{@request_successfully_awarded} support requests."
+      - if @request_not_awarded.any?
+        %tr
+          %td{ :colspan => 2 }= "The following rows were not processed"
+      - @request_not_awarded.each do |row, error|
+        %tr
+          %td= row
+          %td= error
+
+.hidden
+  #help_csv_support_requests_content{ :name => 'Support Requests CSV' } A CSV containing a list of all the Support Requests (not CS TicketID) that need to be resolved. The column with the support request ids should be name as 'Support Request', else the first column will be treated as the one containing the Support Request ID.
+

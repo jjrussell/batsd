@@ -3,7 +3,7 @@ class Tools::SupportRequestsController < WebsiteController
   current_tab :tools
   filter_access_to :all
 
-  def upload_support_requests
+  def mass_resolve
     @request_not_awarded = []
     @request_successfully_awarded = 0
     return if params[:upload_support_requests].blank?
@@ -37,7 +37,7 @@ class Tools::SupportRequestsController < WebsiteController
         click = Click.new(:key => support_request.click_id)
         raise "Invalid click id: #{support_request.click_id} for the given support request: #{support_request.id}" if click.new_record?
 
-        click = Utils.resolve_click(click)
+        click.resolve!
         @request_successfully_awarded += 1
       rescue Exception => e
         @request_not_awarded.push([row, e])
@@ -48,7 +48,6 @@ class Tools::SupportRequestsController < WebsiteController
   end
 
   def index
-    upload_support_requests
     @end_time   = params[:end_time] || Time.zone.now
     @start_time = params[:start_time] || 1.day.ago
 

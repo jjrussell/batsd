@@ -99,30 +99,6 @@ class Utils
     counts
   end
 
-  def self.resolve_click(click)
-    raise 'Unknown click id.' if click.nil? or click.new_record?
-    raise "The click is already resolved" if click.manually_resolved_at?
-
-    if click.currency_id.nil? # old clicks don't have currency_id
-      currencies = Currency.find_all_by_app_id(click.publisher_app_id)
-      raise "Ambiguity -- the publisher app has more than one currency and currency_id was not specified." if currencies.length != 1
-      click.currency_id = currencies.first.id
-    end
-    click.manually_resolved_at = Time.zone.now
-    click.serial_save
-
-    if Rails.env.production?
-      url = "#{API_URL}/"
-      if click.type == 'generic'
-        url += "offer_completed?click_key=#{click.key}"
-      else
-        url += "connect?app_id=#{click.advertiser_app_id}&udid=#{click.udid}"
-      end
-      Downloader.get_with_retry url
-    end
-    return click
-  end
-
   def self.fix_stuck_send_currency(reward_id, status)
     reward = Reward.find(reward_id, :consistent => true)
     if reward.sent_currency.present? && reward.send_currency_status.present?
