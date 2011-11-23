@@ -20,9 +20,6 @@ class Job::MasterArchiveConversionsController < Job::JobController
   private
 
   def archive_conversions(start_time, end_time)
-    expected_count = Conversion.created_between(start_time, end_time).count
-    return if expected_count == 0
-
     base_filename = "conversions_#{start_time.strftime('%Y-%m')}"
     local_filename = "tmp/#{base_filename}.sql"
     gzip_filename = "#{local_filename}.gz"
@@ -30,6 +27,9 @@ class Job::MasterArchiveConversionsController < Job::JobController
 
     bucket = S3.bucket(BucketNames::CONVERSION_ARCHIVES)
     return if bucket.objects[s3_filename].exists?
+
+    expected_count = Conversion.created_between(start_time, end_time).count
+    return if expected_count == 0
 
     db_config = ActiveRecord::Base.configurations[Rails.env.production? ? 'production_slave_for_tapjoy_db' : Rails.env]
     mysql_cmd = "mysql -u #{db_config['username']} --password=#{db_config['password']} -h #{db_config['host']} #{db_config['database']}"
