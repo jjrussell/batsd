@@ -42,7 +42,7 @@ RUN_MODE_PREFIX = 'staging_'
 API_URL = local_config['api_url'] || ''
 DASHBOARD_URL = local_config['dashboard_url'] || ''
 WEBSITE_URL = local_config['website_url'] || ''
-CLOUDFRONT_URL = 'https://s3.amazonaws.com/dev_tapjoy'
+CLOUDFRONT_URL = 'https://s3.amazonaws.com/staging_tapjoy'
 GAMES_ANDROID_MARKET_URL = 'http://market.android.com/details?id=com.tapjoy.tapjoy'
 
 # Amazon services:
