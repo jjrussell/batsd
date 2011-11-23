@@ -5,9 +5,9 @@
   - unable_to_show = []
   - if @offer.featured?
     - if @show_generated_ads
-      = "Featured ad: (#{params[:image_size]})"
-      %div{:class => "img#{params[:image_size]}"}
-        = image_tag(@offer.fullscreen_ad_image_url(publisher_app_id, true, :image_size => params[:image_size], :preview => true), :class => 'preview', :alt => '')
+      - width, height = params[:image_size].split("x").collect{|x|x.to_i}
+      = "Featured ad preview: (#{width}x#{height})"
+      %iframe.preview{ :src => @offer.fullscreen_ad_url(:publisher_app_id => publisher_app_id, :width => width, :height => height, :preview => true), :width => width, :height => height }
     - else
       - unable_to_show << "Featured"
   - else
@@ -74,6 +74,11 @@
 
     .banner_ad_notes {
       font-size: 12px;
+    }
+
+    iframe.preview {
+      border: none;
+      overflow: hidden;
     }
 
     img.preview {

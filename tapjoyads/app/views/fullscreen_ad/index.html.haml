@@ -6,14 +6,14 @@
   %p.offertext
     - if @offer.item_type == 'App'
       = @offer.rewarded? ? t('text.featured.download_and_run') : t('text.featured.try_out')
-  - link_to(get_click_url(@offer), :class => 'image-link') do
+  - link_to((params[:preview] == 'true' ? '#' : get_click_url(@offer)), :class => 'image-link') do
     %img{ :src => "#{CLOUDFRONT_URL}/images/blank.png", :s => @offer.get_icon_url(:source => :cloudfront, :size => '256'), :class => 'icon', :id => 'icon' }
     .offername= @offer.truncated_name
   .clear
-  = link_to(t('text.featured.skip'), 'dismiss', :class => 'skip')
-  = link_to(@offer.item_type == 'App' ? t('text.featured.download') : t('text.featured.earn_now'), get_click_url(@offer), :class => 'download')
+  = link_to(t('text.featured.skip'), (params[:preview] == 'true' ? '#' : 'dismiss'), :class => 'skip')
+  = link_to(@offer.item_type == 'App' ? t('text.featured.download') : t('text.featured.earn_now'), (params[:preview] == 'true' ? '#' : get_click_url(@offer)), :class => 'download')
   .showOffers
-    = link_to(@currency.hide_rewarded_app_installs? ? '' : t('text.featured.show_more_apps'), 'showOffers')
+    = link_to(@currency.hide_rewarded_app_installs? ? '' : t('text.featured.show_more_apps'), (params[:preview] == 'true' ? '#' : 'showOffers'))
 
   .adsby
     %span= t('text.shared.ads_by')
