@@ -29,11 +29,11 @@
 
     - offers['OfferArray'][0..2].each do |offer|
       :plain
-              #{offer['Type'] == 'App' ? 'Install and run' : ''} #{offer['Name']}. Earn #{offer['Payout']} #{offers['CurrencyName']}.
+        #{'-'} #{offer['Type'] == 'App' ? 'Install and run' : ''} #{offer['Name']}. Earn #{offer['Payout']} #{offers['CurrencyName']}.
 
     = blank_line
     :plain
-            See more here: #{WEBSITE_URL}/earn/#{currency_id}
+      See more here: #{WEBSITE_URL}/earn/#{currency_id}
     = blank_line
 
 - elsif @editors_picks.any?
@@ -43,11 +43,11 @@
 
   - @editors_picks[0..2].each do |cached_app|
     :plain
-            #{cached_app.name}
+      #{'-'} #{cached_app.name}
 
   = blank_line
   :plain
-          See more here: #{WEBSITE_URL}/more_apps
+    See more here: #{WEBSITE_URL}/more_apps
   = blank_line
 
 :plain
