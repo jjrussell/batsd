@@ -1,9 +1,5 @@
 class SurveyQuestion < ActiveRecord::Base
-  QUESTION_FORMATS = [
-    'dropdown',
-    'radio',
-    'text',
-  ]
+  QUESTION_FORMATS = %w( dropdown radio text )
 
   belongs_to :survey_offer
 

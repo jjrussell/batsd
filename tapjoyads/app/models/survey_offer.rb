@@ -49,7 +49,7 @@ class SurveyOffer < ActiveRecord::Base
     primary_offer.save!
   end
 
-private
+  private
 
   def create_primary_offer
     Offer.create!({
