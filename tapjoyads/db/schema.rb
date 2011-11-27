@@ -786,6 +786,26 @@ ActiveRecord::Schema.define(:version => 20111116005224) do
   add_index "spend_shares", ["effective_on"], :name => "index_spend_shares_on_effective_on", :unique => true
   add_index "spend_shares", ["id"], :name => "index_spend_shares_on_id", :unique => true
 
+  create_table "survey_offers", :id => false, :force => true do |t|
+    t.string   "id",         :limit => 36,                    :null => false
+    t.string   "partner_id", :limit => 36,                    :null => false
+    t.string   "name",                                        :null => false
+    t.boolean  "hidden",                   :default => false, :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "survey_offers", ["id"], :name => "index_survey_offers_on_id", :unique => true
+
+  create_table "survey_questions", :force => true do |t|
+    t.string   "survey_offer_id",    :limit => 36
+    t.string   "text",                             :null => false
+    t.string   "format",                           :null => false
+    t.string   "possible_responses"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "user_roles", :id => false, :force => true do |t|
     t.string   "id",         :limit => 36, :null => false
     t.string   "name",                     :null => false
