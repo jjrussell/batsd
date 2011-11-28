@@ -1,4 +1,6 @@
 class SurveyQuestion < ActiveRecord::Base
+  include UuidPrimaryKey
+
   QUESTION_FORMATS = %w( dropdown radio text )
 
   belongs_to :survey_offer
