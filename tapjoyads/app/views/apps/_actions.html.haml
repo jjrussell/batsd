@@ -30,7 +30,7 @@
       -if request.path_parameters['controller'] == 'apps' && request.path_parameters['action'][/integrate/]
         %li.inception= link_to 'Advertiser', integrate_app_path(@app), :class => (request.path_parameters['controller'] == 'apps' && request.path_parameters['action']=='integrate' ? 'selected' : '')
         %li.inception= link_to 'Publisher', publisher_integrate_app_path(@app), :class => (request.path_parameters['controller'] == 'apps' && request.path_parameters['action']=='publisher_integrate' ? 'selected' : '')
-      %li= link_to 'Re-Engagement Offers', @app.reengagement_offers.present? ? app_reengagement_offer_path(:app_id => @app.id, :action => ( @person.nil? ? "create" : "update" )) : new_app_reengagement_offer_path(:app_id => @app.id, :action => ( @person.nil? ? "create" : "update" )), :class => controller.controller_name == 'apps/reengagement_offers' ? 'selected' : ''
+      %li= link_to 'Re-Engagement Offers', @app.get_day_number_for_next_reengagement_offer > 1 ? app_reengagement_offers_path(:app_id => @app.id) : new_app_reengagement_offer_path(:app_id => @app.id), :class => controller.controller_name == 'apps/reengagement_offers' ? 'selected' : ''
 
     - else
       %li.disabled Details

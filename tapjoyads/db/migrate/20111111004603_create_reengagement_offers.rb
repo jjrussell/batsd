@@ -8,6 +8,8 @@ class CreateReengagementOffers < ActiveRecord::Migration
       t.guid :prerequisite_offer_id
       t.text :instructions
       t.integer :day_number, :null => false
+      t.integer :reward_value, :null => false
+      t.boolean :hidden, :default => false, :null => false
       
       t.timestamps
     end

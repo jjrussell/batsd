@@ -1,0 +1,46 @@
+- @page_title = 'Re-Engagement Offers'
+
+%h3 Re-Engagement Offers
+
+%p Below is a listing of all re-engagement offers for this app.
+%p To create a new re-engagement offer for the next day, click the 'Add A Day' link under the table below.
+- if @app.get_day_number_for_next_reengagement_offer == 1
+  %p
+  %p You have no re-engagement offers for this application. If you would like to make one, click the button below.
+  = button_to 'Add A Day', {:action => "new"}, :method => :get
+- else
+  %p To edit an existing re-engagement offer, click the 'Edit' link next to that re-engagement offer in the table below.
+  %p To remove a re-engagement offer, click the 'Remove' link next to that re-engagement offer in the table below.
+
+  .tjform
+    %table
+      %tr
+        %th
+          Day
+        %th
+          Reward Currency
+        %th 
+          Reward Amount
+        %th
+        %th
+      - @app.reengagement_offers.each do |ro|
+        - if not ro.hidden
+          %tr
+            %td
+              = ro.day_number
+            %td
+              = ro.currency.name
+            %td
+              = ro.reward_value
+            %td
+              = link_to 'Edit', :action => "edit", :id => ro.id
+            %td
+              - if ro.day_number + 1 == @app.get_day_number_for_next_reengagement_offer
+                = link_to 'Remove', {:action => "destroy", :app_id => @app.id, :id => ro.id}, {:method => :delete}
+      %tr
+        %td
+        %td
+        %td
+        %td{:colspan => "2"}
+          %p
+          = button_to 'Add A Day', {:action => "new"}, :method => :get

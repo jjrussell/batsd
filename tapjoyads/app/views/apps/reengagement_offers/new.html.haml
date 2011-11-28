@@ -1,39 +1,8 @@
-- @page_title = 'New Re-Engagement'
+- @page_title = 'New Re-Engagement Offer'
 
 %h3 New Re-Engagement Offer
 
-Re-Engagement offers enable you to provide a daily bonus to users for returning to your application. A message will appear the first time the application is opened, asking users to return the next day for a currency bonus. When users return in consecutive days, they are rewarded according to the number of days the re-engagement offer runs for, and the currency type and currency amount for each day you construct.
+%p Re-Engagement offers enable you to provide a daily bonus to users for returning to your application. A message will appear the first time the application is opened, asking users to return the next day for a currency bonus. When users return in consecutive days, they are rewarded according to the number of days the re-engagement offer runs for, and the currency type and currency amount for each day you construct.
 
 .tjform
-  - form_for [ @app, @reengagement_offer ], :url => { :action => "create" } do |f|
-    %table
-      %tbody
-        %tr
-          %th
-            = f.label :user_enabled, 'Enable Re-Engagement'
-            #help_user_enabled ?
-          %td
-            = f.check_box :user_enabled?
-            = error_message_on @reengagement_offer, :primary_offer_user_enabled
-        
-        %tr
-          %th
-            Day 1
-        %tr
-          %th
-            = f.label :currency_id, 'Currency'
-            #help_currency_id ?
-          %td
-            = collection_select(:currency, :currency_id, @app.currencies, :id, :name)
-        %tr
-          %th
-            = f.label :reward_value, 'Reward Amount'
-            #help_amount ?
-          %td
-            = f.text_field(:reward_value)
-        %tr
-          %th
-            = f.label :instructions, 'Reward Message'
-            #help_instructions ?
-          %td
-            = f.text_field(:instructions)
+  = render "day"
