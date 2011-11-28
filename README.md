@@ -184,11 +184,6 @@ Download desired editor (most people use TextMate) and set it to use soft tabs (
   * Add `TM_TAB_SIZE` with value of 2
   * See `http://manual.macromates.com/en/environment_variables.html` if curious about other TextMate shell variables
 
-Update DNS server list (this is to ensure Ruby Resolv library will work most of the time)
------------------------------------------------------------------------------------------
-* Prepend `8.8.8.8` and `8.8.4.4` to your DNS list
-  * In OSX, System Preferences -> Network -> Advanced -> DNS -> + -> [prepend ips] -> OK -> Apply
-
 OPTIONAL: to install Passenger (so you can use alternate local domains instead of `http://localhost:3000`)
 --------------------------------------------------------------------------------------------------------
 
