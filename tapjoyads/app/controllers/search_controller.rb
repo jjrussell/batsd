@@ -80,7 +80,7 @@ class SearchController < WebsiteController
       conditions = [ "(email LIKE ? OR email LIKE ?) AND email NOT LIKE ?",
         tapjoy_email, offerpal_email, "%+%" ]
     end
-    results = Gamer.find(:all,
+    @gamers = Gamer.find(:all,
       :conditions => conditions,
       :order => 'email ASC',
       :limit => 100

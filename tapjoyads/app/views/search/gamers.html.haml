@@ -1,1 +1,29 @@
-Ima show you results in a minute...
+%table.tablesorter
+  %thead
+    %tr
+      %th Gamer ID
+      %th Email
+      %th Nickname
+  %tbody
+    - @gamers.each do |gamer|
+      %tr
+        %td.gamer-id= link_to(gamer.id, tools_gamer_path(gamer.id))
+        %td.email= gamer.email
+        %td.nickname= gamer.nickname
+  %br
+
+- content_for :page_styles do
+  :plain
+    td.gamer-id {
+      font-family: 'courier new';
+    }
+    td.email,
+    td.nickname {
+      font-size: 16px;
+    }
+    td {
+      vertical-align: top;
+    }
+    ul {
+      margin: 0px;
+    }
