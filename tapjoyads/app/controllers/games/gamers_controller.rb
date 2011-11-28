@@ -15,7 +15,7 @@ class Games::GamersController < GamesController
     @gamer.gamer_profile = @gamer_profile
 
     if @gamer.save
-      message = { :gamer_id => @gamer.id, :accept_language_str => request.headers['accept-language'], :user_agent_str => request.headers['user-agent'], :using_android => using_android? }.to_json
+      message = { :gamer_id => @gamer.id, :accept_language_str => request.accept_language, :user_agent_str => request.user_agent, :using_android => using_android? }.to_json
       Sqs.send_message(QueueNames::SEND_WELCOME_EMAILS, message)
       render(:json => { :success => true, :link_device_url => new_games_gamer_device_path, :linked => @gamer.devices.any? })
     else
@@ -50,7 +50,7 @@ class Games::GamersController < GamesController
       render(:json => { :success => false, :error => @gamer.errors }) and return
     end
   end
-  
+
 private
 
   def set_profile
