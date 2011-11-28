@@ -87,6 +87,6 @@ private
       return device.device_type == 'android'
     end
 
-    HeaderParser.device_type(request.headers['user-agent']) == 'android'
+    HeaderParser.device_type(request.user_agent) == 'android'
   end
 end
