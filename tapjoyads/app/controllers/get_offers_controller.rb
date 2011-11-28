@@ -118,7 +118,7 @@ private
     @web_request.put_values(wr_path, params, get_ip_address, get_geoip_data, request.headers['User-Agent'])
     @web_request.viewed_at = @now
 
-    @papaya_offers = OfferCacher.get_papaya_offers
+    @papaya_offers = OfferCacher.get_papaya_offers if @device.is_papayan?
   end
 
   def get_offer_list(type = nil)
