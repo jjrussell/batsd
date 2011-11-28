@@ -46,7 +46,6 @@ en:
       instructions_1: "Please select the offer you completed without receiving %{currency} and enter your email address."
       instructions_2: "If you submit a ticket with incomplete information, it will result in a delay in getting your issue resolved. Priority is given to tickets with complete information."
       specify_offer_label: "Specify offer:"
-      offer_name_label: "Offer name:"
       description_label: "Description:"
       email_address_label: "Email address:"
       submit_support_request: "Submit Support Request"
@@ -57,4 +56,4 @@ en:
       invalid_email: "Please enter a real email address."
       abuse_warning: "This form is strictly for users who have not been rewarded for a completed offer. Abuse of this page may lead to your account being banned from engaging in offers in the future."
       select_offer: "Select Offer"
-      another_offer: "Other (specify below)"
+      no_incomplete_offers_label: "No suitable offers were found."

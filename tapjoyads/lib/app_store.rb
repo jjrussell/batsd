@@ -222,18 +222,17 @@ private
   def self.search_android_market(term)
     response = request(ANDROID_SEARCH_URL + CGI::escape(term))
     if response.status == 200
-      items = Hpricot(response.body)/"ul.search-results-list"/"li.search-results-item"
+      items = Hpricot(response.body)/"div.results-section.apps"/"li.goog-inline-block"
       return items.map do |item|
         icon_link   = (item/"div"/"div.thumbnail-wrapper"/"a")
         icon_url    = (icon_link/"img").attr('src')
         query_str   = URI::split(icon_link.attr('href'))[7]
         item_id     = query_str.split('&').select { |param| param =~ /id=/ }.first.split('=')[1]
         details     = item/"div"/"div.details"
-        price_span  = details/"div.buy-wrapper"/"div"/"a"/"span"
-        price       = price_span.inner_html.gsub(/[^\d\.\-]/,'').to_f
+        price       = (item/:div/:div/:div/'a.buy-button').attr('data-docPrice').gsub(/[^\d\.\-]/,'').to_f
         title       = (details/"a.title").inner_html
-        publisher   = (details/"p"/"span.attribution"/"a").inner_html
-        description = (item/:div/'.description').inner_html
+        publisher   = (details/'.goog-inline-block'/:a).inner_text
+        description = ""
         {
           :item_id      => item_id,
           :title        => title,

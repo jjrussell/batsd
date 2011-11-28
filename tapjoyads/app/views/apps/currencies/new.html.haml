@@ -20,7 +20,7 @@
       %td
         = f.text_field :name
         = error_message_on(@currency, :name)
-    - unless current_partner.accepted_publisher_tos?
+    - unless @app.partner.accepted_publisher_tos?
       %tr
         %td{ :colspan => 2 }
           = check_box_tag :terms_of_service
