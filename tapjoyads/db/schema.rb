@@ -797,7 +797,8 @@ ActiveRecord::Schema.define(:version => 20111116005224) do
 
   add_index "survey_offers", ["id"], :name => "index_survey_offers_on_id", :unique => true
 
-  create_table "survey_questions", :force => true do |t|
+  create_table "survey_questions", :id => false, :force => true do |t|
+    t.string   "id",                 :limit => 36, :null => false
     t.string   "survey_offer_id",    :limit => 36
     t.text     "text",                             :null => false
     t.text     "possible_responses"
@@ -806,6 +807,7 @@ ActiveRecord::Schema.define(:version => 20111116005224) do
     t.datetime "updated_at"
   end
 
+  add_index "survey_questions", ["id"], :name => "index_survey_questions_on_id", :unique => true
   add_index "survey_questions", ["survey_offer_id"], :name => "index_survey_questions_on_survey_offer_id"
 
   create_table "user_roles", :id => false, :force => true do |t|
