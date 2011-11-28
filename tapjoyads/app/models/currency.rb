@@ -26,6 +26,7 @@ class Currency < ActiveRecord::Base
       else
         begin
           uri = URI.parse(value)
+          # sometimes DNS with internal office ips isn't the best, so hard-code google DNS ip for dev mode
           config_info = { :nameserver => ['8.8.8.8'] } if Rails.env.development?
           Resolv::DNS.new(config_info).getaddress(uri.host || '')
         rescue URI::InvalidURIError, Resolv::ResolvError => e
