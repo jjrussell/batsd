@@ -7,6 +7,7 @@ ActionController::Routing::Routes.draw do |map|
     m.switch_device 'switch_device', :controller => 'games/homepage', :action => :switch_device
     m.send_device_link 'send_device_link', :controller => 'games/homepage', :action => :send_device_link
     m.earn 'earn/:currency_id', :controller => 'games/homepage', :action => :index, :load => 'earn'
+    m.more_apps 'more_apps', :controller => 'games/homepage', :action => :index, :load => 'more_apps'
 
     m.more_games_editor_picks 'editor_picks', :controller => 'games/more_games', :action => :editor_picks
     m.more_games_recommended 'recommended', :controller => 'games/more_games', :action => :recommended

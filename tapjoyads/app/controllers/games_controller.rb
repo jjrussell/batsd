@@ -92,4 +92,13 @@ class GamesController < ApplicationController
     @gamer ||= Gamer.new
     render 'games/gamer_sessions/new'
   end
+
+  def using_android?
+    if current_gamer && current_device_id
+      device = GamerDevice.find_by_gamer_id_and_device_id(current_gamer.id, current_device_id)
+      return device.device_type == 'android'
+    end
+
+    HeaderParser.device_type(request.user_agent) == 'android'
+  end
 end
