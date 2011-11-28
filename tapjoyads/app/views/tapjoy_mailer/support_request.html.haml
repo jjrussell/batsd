@@ -1,4 +1,4 @@
-= support_request_field :offer, @offer.is_a?(Offer) ? "#{@offer.name} #{DASHBOARD_URL}/statz/#{@offer.id}" : @offer
+= support_request_field :offer, "#{@offer.name} #{DASHBOARD_URL}/statz/#{@offer.id}"
 = support_request_field :description, @description
 = support_request_field :udid, "#{@udid} #{DASHBOARD_URL}/tools/device_info?udid=#{@udid}"
 = support_request_field :publisher_user_id, @publisher_user_id
@@ -8,3 +8,5 @@
 = support_request_field :email_address, @email_address
 = support_request_field :language_code, @language_code
 = support_request_field :publisher_partner_id, @app.partner_id
+= support_request_field :support_request, @support_request.id
+= support_request_field :click_id, @click_id

@@ -59,10 +59,13 @@
           location.href = '/partners/managed_by/' + $(this).val();
         }
       });
-      $('td.account_manager select').change(function(){
+
+      $('td.account_manager select,td.sales_rep select').change(function(){
         var form = $(this).parent('form');
         var url = form.attr('action');
-        var data = {"partner[account_managers]": [$(this).val()]};
+        var key = $(this).attr('name');
+        var data = {};
+        data[key] = [$(this).val()];
         form.siblings('img').show();
         $.ajax({
           data: data,
@@ -78,6 +81,7 @@
           url: url
         });
       });
+
       $('#q').autocomplete({
         source: '#{search_partners_path}',
         delay: 250,

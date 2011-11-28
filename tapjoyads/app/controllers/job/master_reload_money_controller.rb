@@ -102,6 +102,7 @@ private
 
         website_orders_deduction        = Order.created_between(start_time, end_time).sum(:amount, :conditions => "payment_method = 0") / 100.0 * 0.025
         stats[key]['deduct_pct']        = ( stats[key]['marketing_credits'] + website_orders_deduction ) / stats[key]['orders'] * 100
+        stats[key]['network_costs']     = NetworkCost.created_between(start_time, end_time).sum(:amount) / 100.0
 
         stats[key]['conversions']        = stats[key]['conversions'].nil? ? '-' : number_with_delimiter(stats[key]['conversions'])
         stats[key]['advertiser_spend']   = number_to_currency(stats[key]['advertiser_spend'])
@@ -115,6 +116,7 @@ private
         stats[key]['revenue']            = number_to_currency(stats[key]['revenue'])
         stats[key]['net_revenue']        = number_to_currency(stats[key]['net_revenue'])
         stats[key]['margin']             = number_to_percentage(stats[key]['margin'], :precision => 2)
+        stats[key]['network_costs']      = number_to_currency(stats[key]['network_costs'])
       end
     end
 

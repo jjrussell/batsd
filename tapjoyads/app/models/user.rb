@@ -54,6 +54,10 @@ class User < ActiveRecord::Base
     end
   end
 
+  def self.sales_reps
+    account_managers
+  end
+
   def has_valid_email?
     email.present? && !(/mailinator\.com$|example\.com$|test\.com$/ =~ email)
   end

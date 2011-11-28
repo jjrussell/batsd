@@ -28,7 +28,7 @@ class Partner < ActiveRecord::Base
   validates_presence_of :reseller, :if => Proc.new { |partner| partner.reseller_id? }
   validates_numericality_of :balance, :pending_earnings, :next_payout_amount, :only_integer => true, :allow_nil => false
   validates_numericality_of :premier_discount, :greater_than_or_equal_to => 0, :only_integer => true, :allow_nil => false
-  validates_numericality_of :rev_share, :transfer_bonus, :direct_pay_share, :greater_than_or_equal_to => 0, :less_than_or_equal_to => 1
+  validates_numericality_of :rev_share, :transfer_bonus, :direct_pay_share, :max_deduction_percentage, :greater_than_or_equal_to => 0, :less_than_or_equal_to => 1
   validates_inclusion_of :exclusivity_level_type, :in => ExclusivityLevel::TYPES, :allow_nil => true, :allow_blank => false
   validates_inclusion_of :use_whitelist, :approved_publisher, :in => [ true, false ]
   validate :exclusivity_level_legal
@@ -286,7 +286,7 @@ class Partner < ActiveRecord::Base
 private
 
   def update_currencies
-    if rev_share_changed? || direct_pay_share_changed? || disabled_partners_changed? || offer_whitelist_changed? || use_whitelist_changed? || accepted_publisher_tos_changed?
+    if rev_share_changed? || direct_pay_share_changed? || disabled_partners_changed? || offer_whitelist_changed? || use_whitelist_changed? || accepted_publisher_tos_changed? || max_deduction_percentage_changed?
       currencies.each do |c|
         c.set_values_from_partner_and_reseller
         c.save!
