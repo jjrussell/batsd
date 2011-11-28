@@ -45,7 +45,7 @@ class Currency < ActiveRecord::Base
 
   before_validation :sanitize_attributes
   before_validation_on_create :assign_default_currency_group
-  before_create :set_values_from_partner_and_reseller
+  before_create :set_hide_rewarded_app_installs, :set_values_from_partner_and_reseller
   before_update :update_spend_share
   after_cache :cache_by_app_id
   after_cache_clear :clear_cache_by_app_id
@@ -54,7 +54,7 @@ class Currency < ActiveRecord::Base
   delegate :categories, :to => :app
   memoize :postcache_weights, :categories
 
-  def self.find_all_in_cache_by_app_id(app_id, do_lookup = (Rails.env != 'production'))
+  def self.find_all_in_cache_by_app_id(app_id, do_lookup = !Rails.env.production?)
     currencies = Mc.distributed_get("mysql.app_currencies.#{app_id}.#{SCHEMA_VERSION}")
     if currencies.nil?
       if do_lookup
@@ -169,8 +169,11 @@ class Currency < ActiveRecord::Base
       self.offer_whitelist   = partner.offer_whitelist
       self.use_whitelist     = partner.use_whitelist
     end
-    self.tapjoy_enabled    = partner.approved_publisher if new_record?
-    self.external_publisher ||= partner.accepted_publisher_tos?
+    if new_record?
+      self.tapjoy_enabled     = partner.approved_publisher
+      self.external_publisher = partner.accepted_publisher_tos?
+    end
+
     true
   end
 
@@ -180,12 +183,12 @@ class Currency < ActiveRecord::Base
   end
 
   def calculate_spend_shares
-    spend_share_ratio = get_spend_share_ratio
+    spend_share_ratio = [ SpendShare.current_ratio, 1 - partner.max_deduction_percentage ].max
     self.spend_share = (rev_share_override || partner.rev_share) * spend_share_ratio
     self.reseller_spend_share = reseller_id? ? reseller.reseller_rev_share * spend_share_ratio : nil
   end
 
-private
+  private
 
   def cache_by_app_id
     currencies = Currency.find_all_by_app_id(app_id, :order => 'ordinal ASC').each { |c| c.run_callbacks(:before_cache) }
@@ -202,18 +205,6 @@ private
     Mc.distributed_put("mysql.app_currencies.#{app_id}.#{SCHEMA_VERSION}", currencies, false, 1.day)
   end
 
-  def get_spend_share_ratio
-    Mc.distributed_get_and_put('currency.spend_share_ratio') do
-      orders = Order.created_since(1.month.ago.to_date)
-
-      sum_all_orders = orders.collect(&:amount).sum
-      sum_website_orders = orders.select{|o| o.payment_method == 0}.collect(&:amount).sum
-      sum_marketing_orders = orders.select{|o| o.payment_method == 2}.collect(&:amount).sum
-
-      sum_all_orders == 0 ? 1 : (sum_all_orders - sum_marketing_orders - 0.025 * sum_website_orders) / sum_all_orders
-    end
-  end
-
   def sanitize_attributes
     self.test_devices    = test_devices.gsub(/\s/, '').downcase
     self.disabled_offers = disabled_offers.gsub(/\s/, '')
@@ -228,4 +219,10 @@ private
       calculate_spend_shares
     end
   end
+
+  def set_hide_rewarded_app_installs
+    self.hide_rewarded_app_installs = true if app.platform == 'iphone'
+    true
+  end
+
 end

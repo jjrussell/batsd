@@ -7,23 +7,31 @@ zh:
       ads_by: "Ads by"
 
     offerwall:
-      # shared between the original wall and the redesigned wall
       title: "赚 %{currency}"
       free: "免费"
       next: "下页 %{items}"
       previous: "上页 %{items}"
-      missing_currency: "Missing %{currency}?"
+      missing_currency: "没得到 %{currency}?"
+      instructions: "完成以下的要求其中之一可以得到 %{currency}"
+      earn_currency: "赚 %{amount} %{currency}"
+      buy_currency: "买 %{amount} %{currency}"
+      load_more: "下一页！"
+      loading: "载入中。。。"
+      load_error: "请再次一次。"
 
-      # original wall only
-      instructions: "安装并运行以下的一个应用以得到 %{currency}"
-      amount_and_currency: "%{amount} %{currency}"
+    featured:
+      title: "赚 %{currency}"
+      download_and_run: "请下载和安装。"
+      try_out: "试一试"
+      download: "下载"
+      skip: "跳过"
+      earn_now: "赚金币。"
+      show_more_apps: "看下一个"
       earn_currency: "赚 %{amount_and_currency}"
-      buy_currency: "买 %{amount_and_currency}"
 
-      # redesigned wall only
-      redesign_instructions: "完成以下的要求其中之一可以得到 %{currency}"
-      redesign_earn_currency: "赚 %{amount} %{currency}"
-      redesign_buy_currency: "买 %{amount} %{currency}"
+    unavailable_offer:
+      message: "对不起。您找的 %{offer} 目前无法出现。可以回到前一页然后刷新。"
+      optional_message: "或您可以点和下载这个 %{offer} 。"
 
     instructions:
       title: "说明"
@@ -47,8 +55,7 @@ zh:
       invalid_email: "请输入您真实的电子邮箱."
       abuse_warning: "本页表格是针对完成了流程但未获得虚拟币奖励的用. 滥用者可导致将来受禁止参与此类活动."
       specify_offer_label: "选以下的广告："
-      offer_name_label: "广告名字："
       description_label: "请描述您下载了APP的流程:"
       missing_offer: "您需要写下您完成的广告。"
       select_offer: "选以下的广告"
-      another_offer: "其他"
+      no_incomplete_offers_label: "No suitable offers were found."

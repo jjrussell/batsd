@@ -9,7 +9,7 @@
             .offer_title.title
               = external_publisher.app_name
         .offer_info
-        - external_publisher.currencies.each_with_index do |currency, i|
+        - external_publisher.currencies.each do |currency|
           - link_to("#", :id => currency[:id], :class => "get_offerwall_jsonp", :jsonp_url => external_publisher.get_offerwall_url(@device, currency, request.headers), :currency => currency[:name], :app_name => external_publisher.app_name) do
             .currency_item.left
               .offer_button
@@ -18,9 +18,3 @@
                     Earn
                   %span.currency
                     = currency[:name]
-              - if currency[:tapjoy_managed]
-                - publisher_user_id = currency[:udid_for_user_ids] ? @device.key : @device.publisher_user_ids[external_publisher.app_id]
-                - tap_points = PointPurchases.new(:key => "#{publisher_user_id}.#{currency[:id]}").points
-                - if tap_points.present?
-                  .tap_points.left
-                    = "Balance: #{tap_points} #{currency[:name]}"

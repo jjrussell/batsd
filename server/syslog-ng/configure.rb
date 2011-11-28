@@ -1,5 +1,8 @@
 #!/usr/bin/env ruby
 
+server_type = `su - webuser -c '/home/webuser/tapjoyserver/server/server_type.rb'`
+exit if server_type == 'test'
+
 base_filename = '/home/webuser/tapjoyserver/server/syslog-ng/syslog-ng.conf-client-'
 conf_files    = Dir.glob("#{base_filename}*")
 choices       = []

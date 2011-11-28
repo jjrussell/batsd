@@ -1,8 +1,24 @@
 module Offer::Rejecting
 
+  ALREADY_COMPLETE_IDS = {
+    # Tap Farm
+    [ '4ddd4e4b-123c-47ed-b7d2-7e0ff2e01424' ] => [ '4ddd4e4b-123c-47ed-b7d2-7e0ff2e01424', 'bad4b0ae-8458-42ba-97ba-13b302827234', '403014c2-9a1b-4c1d-8903-5a41aa09be0e' ],
+    # Tap Store
+    [ 'b23efaf0-b82b-4525-ad8c-4cd11b0aca91' ] => [ 'b23efaf0-b82b-4525-ad8c-4cd11b0aca91', 'a994587c-390c-4295-a6b6-dd27713030cb', '6703401f-1cb2-42ec-a6a4-4c191f8adc27' ],
+    # Clubworld
+    [ '3885c044-9c8e-41d4-b136-c877915dda91' ] => [ '3885c044-9c8e-41d4-b136-c877915dda91', 'a3980ac5-7d33-43bc-8ba1-e4598c7ed279' ],
+    # Groupon
+    [ '7f44c068-6fa1-482c-b2d2-770edcf8f83d', '192e6d0b-cc2f-44c2-957c-9481e3c223a0' ] => [ '7f44c068-6fa1-482c-b2d2-770edcf8f83d', '192e6d0b-cc2f-44c2-957c-9481e3c223a0' ],
+    # My Town 2
+    [ 'cab56716-8e27-4a4c-8477-457e1d311209', '069eafb8-a9b8-4293-8d2a-e9d9ed659ac8' ] => [ 'cab56716-8e27-4a4c-8477-457e1d311209', '069eafb8-a9b8-4293-8d2a-e9d9ed659ac8' ],
+    # Snoopy's Street Fair
+    [ '99d4a403-38a8-41e3-b7a2-5778acb968ef', 'b22f3ef8-947f-4605-a5bc-a83609af5ab7' ] => [ '99d4a403-38a8-41e3-b7a2-5778acb968ef', 'b22f3ef8-947f-4605-a5bc-a83609af5ab7' ],
+  }
+
   def postcache_reject?(publisher_app, device, currency, device_type, geoip_data, app_version, direct_pay_providers, type, hide_rewarded_app_installs, library_version, os_version, screen_layout_size, video_offer_ids, source)
     geoip_reject?(geoip_data, device) ||
     already_complete?(device, app_version) ||
+    selective_opt_out_reject?(device) ||
     show_rate_reject?(device) ||
     flixter_reject?(publisher_app, device) ||
     minimum_bid_reject?(currency, type) ||
@@ -17,7 +33,8 @@ module Offer::Rejecting
     publisher_whitelist_reject?(publisher_app) ||
     currency_whitelist_reject?(currency) ||
     video_offers_reject?(video_offer_ids, type) ||
-    frequency_capping_reject?(device)
+    frequency_capping_reject?(device) ||
+    tapjoy_games_retargeting_reject?(device)
   end
 
   def precache_reject?(platform_name, hide_rewarded_app_installs, normalized_device_type)
@@ -51,11 +68,7 @@ module Offer::Rejecting
   def frequency_capping_reject?(device)
     return false unless multi_complete? && interval != Offer::FREQUENCIES_CAPPING_INTERVAL['none']
 
-    if device.has_app?(item_id)
-      device.last_run_time(item_id) + interval > Time.zone.now
-    else
-      false
-    end
+    device.has_app?(item_id) && (device.last_run_time(item_id) + interval > Time.zone.now)
   end
 
   private
@@ -89,51 +102,36 @@ module Offer::Rejecting
   end
 
   def geoip_reject?(geoip_data, device)
-    return false if Offer::EXEMPT_UDIDS.include?(device.key)
-
     return true if countries.present? && countries != '[]' && !get_countries.include?(geoip_data[:country])
     return true if geoip_data[:country] && get_countries_blacklist.include?(geoip_data[:country].to_s.upcase)
-    return true if postal_codes.present? && postal_codes != '[]' && !get_postal_codes.include?(geoip_data[:postal_code])
-    return true if cities.present? && cities != '[]' && !get_cities.include?(geoip_data[:city])
+    return true if regions.present? && regions != '[]' && !get_regions.include?(geoip_data[:region])
     return true if dma_codes.present? && dma_codes != '[]' && !get_dma_codes.include?(geoip_data[:dma_code])
 
     false
   end
 
   def already_complete?(device, app_version = nil)
-    return false if Offer::EXEMPT_UDIDS.include?(device.key) || multi_complete?
+    return false if multi_complete?
 
     app_id_for_device = item_id
     if item_type == 'RatingOffer'
       app_id_for_device = RatingOffer.get_id_with_app_version(item_id, app_version)
     end
 
-    if app_id_for_device == '4ddd4e4b-123c-47ed-b7d2-7e0ff2e01424'
-      # Don't show 'Tap farm' offer to users that already have 'Tap farm', 'Tap farm 6', or 'Tap farm 5'
-      return device.has_app?(app_id_for_device) || device.has_app?('bad4b0ae-8458-42ba-97ba-13b302827234') || device.has_app?('403014c2-9a1b-4c1d-8903-5a41aa09be0e')
-    end
-
-    if app_id_for_device == 'b23efaf0-b82b-4525-ad8c-4cd11b0aca91'
-      # Don't show 'Tap Store' offer to users that already have 'Tap Store', 'Tap Store Boost', or 'Tap Store Plus'
-      return device.has_app?(app_id_for_device) || device.has_app?('a994587c-390c-4295-a6b6-dd27713030cb') || device.has_app?('6703401f-1cb2-42ec-a6a4-4c191f8adc27')
-    end
-
-    if app_id_for_device == '3885c044-9c8e-41d4-b136-c877915dda91'
-      # don't show the beat level 2 in clubworld action to users that already have clubworld
-      return device.has_app?(app_id_for_device) || device.has_app?('a3980ac5-7d33-43bc-8ba1-e4598c7ed279')
-    end
-
-    if app_id_for_device == '7f44c068-6fa1-482c-b2d2-770edcf8f83d' || app_id_for_device == '192e6d0b-cc2f-44c2-957c-9481e3c223a0'
-      # there are 2 groupon apps
-      return device.has_app?('7f44c068-6fa1-482c-b2d2-770edcf8f83d') || device.has_app?('192e6d0b-cc2f-44c2-957c-9481e3c223a0')
+    ALREADY_COMPLETE_IDS.each do |target_ids, ids_to_reject|
+      if target_ids.include?(app_id_for_device)
+        return true if ids_to_reject.any? { |reject_id| device.has_app?(reject_id) }
+      end
     end
 
     device.has_app?(app_id_for_device)
   end
 
-  def show_rate_reject?(device)
-    return false if Offer::EXEMPT_UDIDS.include?(device.key)
+  def selective_opt_out_reject?(device)
+    device.opt_out_offer_types.include?(item_type)
+  end
 
+  def show_rate_reject?(device)
     srand( (device.key + (Time.now.to_f / 1.hour).to_i.to_s + id).hash )
     should_reject = rand > show_rate
     srand
@@ -216,4 +214,8 @@ module Offer::Rejecting
     item_type == 'VideoOffer' && !video_offer_ids.include?(id)
   end
 
+  TAPJOY_GAMES_RETARGETED_OFFERS = ['2107dd6a-a8b7-4e31-a52b-57a1a74ddbc1', '12b7ea33-8fde-4297-bae9-b7cb444897dc']
+  def tapjoy_games_retargeting_reject?(device)
+    TAPJOY_GAMES_RETARGETED_OFFERS.include?(item_id) && !device.has_app?(TAPJOY_GAMES_REGISTRATION_OFFER_ID)
+  end
 end

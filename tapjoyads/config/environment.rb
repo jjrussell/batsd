@@ -28,7 +28,6 @@ Rails::Initializer.run do |config|
   # You have to specify the :lib option for libraries, where the Gem name (sqlite3-ruby) differs from the file itself (sqlite3)
 
   # These gems can't be vendored
-  config.gem 'aws-sdk', :version => '1.1.4'
   config.gem 'daemons', :version => '1.0.10'
   config.gem 'hpricot', :version => '0.8.1'
   config.gem 'httparty', :version => '0.7.8'
@@ -42,25 +41,41 @@ Rails::Initializer.run do |config|
   config.gem 'rmagick', :version => '2.12.2', :lib => 'RMagick'
   config.gem 'sqlite3', :version => '1.3.3'
   config.gem 'typhoeus', :version => '0.2.4'
+  config.gem 'aws-sdk', :version => '1.1.4'
 
   # These gems should be vendored
-  config.gem 'airbrake', :version => '3.0.4'
+  config.gem 'airbrake', :version => '3.0.5'
   config.gem 'after_commit', :version => '1.0.10'
   config.gem 'authlogic', :version => '2.1.3'
+  config.gem 'builder', :version => '3.0.0'
   config.gem 'curbit', :version => '0.2.0'
   config.gem 'declarative_authorization', :version => '0.4.1'
   config.gem 'differ', :version => '0.1.2'
   config.gem 'geoip', :version => '1.1.1'
   config.gem 'haml', :version => '3.1.3'
-  config.gem 'hominid', :version => '2.2.0'
-  config.gem 'newrelic_rpm', :version => '3.2.0'
+  config.gem 'hominid', :version => '3.0.2'
+  config.gem 'imgkit', :version => '1.3.2'
+  config.gem 'mogli', :version => '0.0.33'
+  config.gem 'newrelic_rpm', :version => '3.3.0'
   config.gem 'plist', :version => '3.1.0'
   config.gem 'read_from_slave', :version => '0.4.0'
+  config.gem 'ruby-hmac', :version => '0.4.0', :lib => 'ruby_hmac'
   config.gem 'sass', :version => '3.1.7'
+  config.gem 'sendgrid', :version => '1.0.1'
   config.gem 'syslog-logger', :version => '1.6.4', :lib => 'syslog_logger'
   config.gem 'uuidtools', :version => '2.1.2'
   config.gem 'vertica', :version => '0.8.1'
   config.gem 'will_paginate', :version => '2.3.16'
+  config.gem 'hashie', :version => '1.1.0'
+  config.gem 'multi_json', :version => '1.0.3'
+  config.gem 'multi_xml', :version => '0.4.0'
+  config.gem 'addressable', :version => '2.2.6', :lib => 'addressable/uri'
+  config.gem 'multipart-post', :version => '1.1.0', :lib => 'net/http/post/multipart'
+  config.gem 'faraday', :version => '0.7.4'
+  config.gem 'faraday_middleware', :version => '0.7.0'
+  config.gem 'simple_oauth', :version => '0.1.5'
+  config.gem 'twitter', :version => '1.7.2'
+  config.gem 'oauth', :version => '0.4.5'
 
   # Only load the plugins named here, in the order given. By default, all plugins
   # in vendor/plugins are loaded in alphabetical order.
@@ -118,7 +133,6 @@ Rails::Initializer.run do |config|
       if forked
         Mc.reset_connection
         SimpledbResource.reset_connection
-        Sqs.reset_connection
         VerticaCluster.reset_connection
       end
     end

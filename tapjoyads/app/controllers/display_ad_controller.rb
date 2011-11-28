@@ -20,6 +20,10 @@ class DisplayAdController < ApplicationController
     size = "#{width}x#{height}"
 
     key = "display_ad.decoded.#{params[:currency_id]}.#{params[:advertiser_app_id]}.#{size}.#{params[:display_multiplier] || 1}"
+
+    # always be up to date for previews
+    Mc.delete(key) if params[:publisher_app_id] == App::PREVIEW_PUBLISHER_APP_ID
+
     image_data = Mc.get_and_put(key, false, 5.minutes) do
       publisher = App.find_in_cache(params[:publisher_app_id])
       currency = Currency.find_in_cache(params[:currency_id])
@@ -88,7 +92,7 @@ class DisplayAdController < ApplicationController
       )
       width, height = parse_size(params[:size])
       if params[:action] == 'webview' || params[:details] == '1'
-        @image_url = offer.get_ad_image_url(publisher_app.id, width, height, currency.id, params[:display_multiplier])
+        @image_url = offer.display_ad_image_url(publisher_app.id, width, height, currency.id, params[:display_multiplier])
       else
         @image = get_ad_image(publisher_app, offer, width, height, currency, params[:display_multiplier])
       end
@@ -117,12 +121,15 @@ class DisplayAdController < ApplicationController
     size = "#{width}x#{height}"
 
     if offer.display_custom_banner_for_size?(size)
-      return Mc.get_and_put(offer.banner_creative_mc_key(size)) do
+      key = offer.banner_creative_mc_key(size)
+      Mc.delete(key) if publisher.id == App::PREVIEW_PUBLISHER_APP_ID
+      return Mc.get_and_put(key) do
         Base64.encode64(offer.banner_creative_s3_object(size).read).gsub("\n", '')
       end
     end
 
     key = "display_ad.#{currency.id}.#{offer.id}.#{size}.#{display_multiplier}"
+    Mc.delete(key) if publisher.id == App::PREVIEW_PUBLISHER_APP_ID
     Mc.get_and_put(key, false, 1.hour) do
       if width == 640 && height == 100
         border = 4
@@ -163,13 +170,13 @@ class DisplayAdController < ApplicationController
       img.composite!(icon_shadow, border + 2, border + icon_padding * 2, Magick::AtopCompositeOp)
       img.composite!(offer_icon, border + icon_padding, border + icon_padding, Magick::AtopCompositeOp)
 
-      if currency.hide_rewarded_app_installs?
-        text = "Try #{offer.name} today"
-      else
+      if offer.rewarded?
         text = "Earn #{currency.get_visual_reward_amount(offer, display_multiplier)} #{currency.name} download \\n#{offer.name}"
+      else
+        text = "Try #{offer.name} today"
       end
 
-      font        = Rails.env == 'production' ? 'Helvetica' : ''
+      font = (Rails.env.production? || Rails.env.staging?) ? 'Helvetica' : ''
       image_label = Magick::Image.read("caption:#{text}") do
         self.size             = text_area_size
         self.gravity          = Magick::WestGravity

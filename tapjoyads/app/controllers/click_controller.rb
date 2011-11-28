@@ -1,7 +1,7 @@
 class ClickController < ApplicationController
   layout 'iphone'
 
-  before_filter :decrypt_data_param
+  prepend_before_filter :decrypt_data_param
   before_filter :setup
   before_filter :validate_click, :except => [ :test_offer, :test_video_offer ]
   before_filter :determine_link_affiliates, :only => :app
@@ -211,6 +211,7 @@ private
       click_key = "#{params[:udid]}.#{params[:advertiser_app_id]}"
     end
     @click = Click.new(:key => click_key)
+    @click.delete('installed_at') if @click.installed_at?
     @click.clicked_at        = @now
     @click.viewed_at         = Time.zone.at(params[:viewed_at].to_f)
     @click.udid              = params[:udid]

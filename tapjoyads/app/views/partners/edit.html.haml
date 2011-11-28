@@ -27,6 +27,11 @@
     - options = options_from_collection_for_select(User.account_managers, "id", "email", @partner.account_managers.map(&:id))
     = f.select :account_managers, options, {:include_blank => '(no one)'}
   .field
+    = f.label :sales_rep
+    #help_sales_rep.help ?
+    = f.text_field :sales_rep
+    = error_message_on(@partner, :sales_rep) if @partner.errors.on :sales_rep
+  .field
     = f.label :billing_email
     #help_billing_email.help ?
     = f.text_field :billing_email
@@ -47,6 +52,11 @@
     = f.text_field :transfer_bonus
     = error_message_on(@partner, :transfer_bonus) if @partner.errors.on :transfer_bonus
   .field
+    = f.label :max_deduction_percentage
+    #help_max_deduction_percentage.help ?
+    = f.text_field :max_deduction_percentage
+    = error_message_on(@partner, :max_deduction_percentage) if @partner.errors.on :max_deduction_percentage
+  .field
     = f.label :disabled_partners
     #help_disabled_partners.help ?
     = f.text_area :disabled_partners
@@ -66,6 +76,8 @@
     Internal notes, only viewable by tapjoyers.
   #help_account_managers_content{:name => 'Account manager(s)'}
     Who is managing this partner?
+  #help_sales_rep_content{:name => 'Sales rep'}
+    Email of the Tapjoy sales rep for this partner.
   #help_disabled_partners_content{:name => 'Disabled partners'}
     Offers belonging to partners that are in this list will not be shown in this partner's offerwalls.
   #help_billing_email_content{:name => 'Billing email'}
@@ -76,6 +88,9 @@
     The share of direct-pay revenue that this publisher gets. A number between 0 an 1.
   #help_transfer_bonus_content{:name => 'Transfer bonus'}
     The bonus that this partner gets when transferring between pending earnings and balance. A value of 0.1 will give a 10% bonus.
+  #help_max_deduction_percentage_content{:name => 'Max deduction percent'}
+    The maximum percentage that a publisher's rev share can be lowered to recover marketing credits and network operating costs. Must be number between 0 and 1.
+    Example: A pub with rev share of 70% and max deduction percentage of 7% will have an effective rev share between 65-70%. (70% * 93% = 65%)
   #help_accepted_publisher_tos_content{:name => 'Accepted publisher ToS'}
     Has this partner accepted the publisher terms of service?
 
@@ -109,3 +124,15 @@
       width: 400px;
       margin-left: 20px;
     }
+
+- content_for :page_javascript do
+  :plain
+    $(function($){
+      var options = {
+        source: '#{search_users_path}?tapjoy_only=true',
+        delay: 250,
+        minLength: 2
+      };
+
+      $('#partner_sales_rep').focus().autocomplete(options);
+    });

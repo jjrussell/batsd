@@ -15,7 +15,7 @@ class Games::GamersController < GamesController
     @gamer.gamer_profile = @gamer_profile
 
     if @gamer.save
-      GamesMailer.deliver_gamer_confirmation(@gamer, games_confirm_url(:token => @gamer.confirmation_token))
+      GamesMarketingMailer.deliver_gamer_confirmation(@gamer, games_confirm_url(:token => @gamer.confirmation_token))
       render(:json => { :success => true, :link_device_url => new_games_gamer_device_path, :linked => @gamer.devices.any? })
     else
       errors = @gamer.errors.reject{|error|error[0] == 'gamer_profile'}
@@ -49,7 +49,9 @@ class Games::GamersController < GamesController
       render(:json => { :success => false, :error => @gamer.errors }) and return
     end
   end
+  
 private
+
   def set_profile
     if current_gamer.present?
       @gamer = current_gamer
@@ -60,4 +62,5 @@ private
       redirect_to games_root_path
     end
   end
+
 end

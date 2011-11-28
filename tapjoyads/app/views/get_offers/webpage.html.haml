@@ -1,91 +1,100 @@
 - @page_title = @currency.conversion_rate > 0 ? t('text.offerwall.title', :currency => @currency.name) : ''
 
 - unless @message.blank?
-  .message= @message
+  #top_box
+    .explanation= @message
 
-- if params[:currency_selector] == '1' && @currencies.present? && @currencies.size > 1
-  = render :partial => 'currency_selector'
-
-- if @currency.conversion_rate > 0
-  #instructions
-    = t 'text.offerwall.instructions', :currency => @currency.name
-
-- if @start_index > 0
-  .pagination
-    .prev= get_previous_link
-    .next= get_next_link
-    .clear
+- if @currency.conversion_rate > 0 && !@for_preview
+  #top_box
+    .explanation
+      = t('text.offerwall.instructions', :currency => @currency.name)
+  - if params[:currency_selector] == '1' && @currencies.present? && @currencies.size > 1
+    = render :partial => 'currency_selector'
 
 - if @test_offers.present?
   - unless @currency.tapjoy_enabled?
-    .message
-      You must email #{mail_to("publishersupport@tapjoy.com")} before users will be able to view offers.
+    #top_box
+      .explanation
+        You must email #{mail_to("publishersupport@tapjoy.com")} before users will be able to view offers.
   - @test_offers.each do |test_offer|
-    .message
-      = test_offer.name
+    #top_box
+      .explanation
+        = test_offer.name
+        %br
+        = link_to("Click to receive #{@currency.get_visual_reward_amount(test_offer, params[:display_multiplier])} #{@currency.name}", get_click_url(test_offer))
+
+#offers.box
+  - @offer_list.each_with_index do |offer, index|
+    - link_class = index == 0 ? 'offer first' : index == @offer_list.size - 1 ? 'offer last' : 'offer'
+    - link_class << ' video' if offer.item_type == 'VideoOffer'
+    - link_to(get_click_url(offer), :class => link_class, :onclick => "this.className += ' clicked';") do
+      .content
+        .banner
+          .cost
+            = visual_cost(offer)
+        .icon
+          - if offer.item_type == 'VideoOffer'
+            .video_icon{:style => "background-image: url(" << offer.get_video_icon_url << ")"}
+              .play
+          - else
+            .offer_icon
+              - icon_url = offer.get_icon_url(:source => :cloudfront, :size => '57')
+              - if @for_preview
+                = image_tag(icon_url)
+              - else
+                %img{ :src => "#{CLOUDFRONT_URL}/images/blank.png", :s => icon_url }
+        .offer-text
+          - if @currency.conversion_rate > 0
+            %span
+              - amount = capture_haml do
+                %label= @currency.get_visual_reward_amount(offer, params[:display_multiplier])
+              = offer.direct_pay? ? t('text.offerwall.buy_currency', :amount => amount, :currency => @currency.name) : t('text.offerwall.earn_currency', :amount => amount, :currency => @currency.name)
+          %p
+            %b= offer.name
+        .load
+    - unless index == (@offer_list.size-1)
+      .divider
+
+- if @more_data_available > 0
+  #bottom_box{ :onclick => "javascript:getAds();" }
+    #plus
+    %a{ :href => "javascript:void(0);", :id => "load_more" }
+      = t('text.offerwall.load_more')
+
+- unless @for_preview
+  #footerWrapper
+    #footer
+      - if @currency.conversion_rate > 0
+        = link_to_missing_currency
+        %span &nbsp;|&nbsp;
+      = link_to(t('text.shared.privacy'), "#{WEBSITE_URL}/site/privacy_mobile?language_code=#{I18n.locale}")
       %br
-      = link_to("Click to receive #{@currency.get_visual_reward_amount(test_offer, params[:display_multiplier])} #{@currency.name}", get_click_url(test_offer))
-
-#offers
-  - @offer_list.each do |offer|
-    .offer
-      - link_to(get_click_url(offer), :onclick => "this.className = 'clicked';") do
-        %img{ :src => "#{CLOUDFRONT_URL}/images/blank.png", :s => offer.get_icon_url(:source => :cloudfront, :size => '57') }
-        .offertext
-          .cell
-            %span.offername #{offer.name} (#{visual_cost(offer)})
-            - if @currency.conversion_rate > 0
-              %br
-              - amount_and_currency = capture_haml do
-                %span.amount= t('text.offerwall.amount_and_currency', :currency => @currency.name, :amount => @currency.get_visual_reward_amount(offer, params[:display_multiplier]))
-              = offer.direct_pay? ? t('text.offerwall.buy_currency', :amount_and_currency => amount_and_currency) : t('text.offerwall.earn_currency', :amount_and_currency => amount_and_currency)
-
-- if @start_index > 0 || @more_data_available > 0
-  .pagination
-    .prev= get_previous_link
-    .next= get_next_link
-    .clear
-
-#privacy
-  = link_to(t('text.shared.privacy'), "#{WEBSITE_URL}/site/privacy_mobile?language_code=#{I18n.locale}")
-  - if @currency.conversion_rate > 0
-    ·
-    = link_to_missing_currency
-
-#adsby
-  = t('text.shared.ads_by')
-  %img{ :src => "#{CLOUDFRONT_URL}/images/tapjoylogo-small.png", :alt => "Tapjoy"}
-
-.clear
+      %span
+        = t('text.shared.ads_by')
+      #logo
 
 %img.hidden{ :src => '/images/load-circle.gif' }
 
 - content_for :page_javascript do
-  - if params[:device_type].to_s.match(/windows/i)
-    :plain
-      window.onfocus = reload;
-      function reload(){}
-
-      var images = document.getElementsByTagName('img');
-      for (var i = 0, image; image = images[i]; i++) {
-        loadImage(image);
-      }
   :plain
     window.onload = init;
     window.onscroll = scroll;
     document.body.ontouchmove = scroll;
-
-    function init() {
-      window.setTimeout(scroll, 0);
-    }
+    var jqSrc = "/javascripts/jquery-1.4.2.min.js";
+    var jqLoaded = false, firstLoad = true, jqInt, reqOffers = false; loadedOffers = 0, limit = 25, start = 25;
+    var blank_img = "#{CLOUDFRONT_URL}/images/blank.png";
+    var url = "#{get_next_link_json}";
+    var currency = "#{@currency.name}";
+    var avail = "#{@more_data_available}";
+    avail = parseInt(avail);
 
     function scroll() {
-      var images = document.getElementsByTagName('img');
+      images = document.getElementsByTagName('img');
       for (var i = 0, image; image = images[i]; i++) {
         var scrollY = window.scrollY;
-        if (!window.scrollY)
+        if (!window.scrollY) {
           scrollY = document.body.parentNode.scrollTop;
-
+        }
         if (scrollY + window.innerHeight + 480 > image.offsetTop) {
           loadImage(image);
         }
@@ -97,174 +106,135 @@
         image.src = image.getAttribute('s');
       }
     }
-- content_for :page_styles do
-  :plain
-    * {
-      margin: 0;
-      padding: 0;
-      outline: 0;
-      font-weight: inherit;
-      font-style: inherit;
-      font-size: inherit;
-      font-family: inherit;
-      vertical-align: baseline;
-      text-decoration: none;
+
+    function loadJQ(ref){
+      if (jqSrc) {
+        var s = document.createElement("script");
+        s.type = "text/javascript";
+        s.src = jqSrc;
+        document.getElementsByTagName("head")[0].appendChild(s);
+        jqInt = setInterval(function() {
+          if (jqLoaded) {
+            return;
+          }
+          else if (typeof $ != 'undefined') {
+            firstLoad = false;
+            jqLoaded = true;
+            if (ref == 'getAds') {
+              getAds();
+            }
+            clearInterval(jqInt);
+          }
+        }, 100);
+      }
     }
 
-    body {
-      margin-bottom: 10px;
+    function checkJQ(ref) {
+      if (jqLoaded) {
+        return;
+      }
+      else if (typeof $ != 'undefined') {
+        firstLoad = false;
+        jqLoaded = true;
+        clearInterval(jqInt);
+        if (ref == 'getAds') {
+          getAds();
+        }
+      }
     }
 
-    img {
-      border: 0;
+    function getAds() {
+      if (firstLoad) {
+        loadJQ('getAds');
+      }
+      else {
+        fetchOffers();
+      }
     }
 
-    .message,
-    .pagination,
-    #instructions {
-      padding: 10px;
-      margin: 10px 3%;
-      color: #004E09;
-      font-size: 75%;
-      font-weight: bold;
-      text-align: center;
-      background: white;
-      border: 1px solid #d5d5d5;
-      -moz-border-radius: 7px;
-      -webkit-border-radius: 7px;
+    function fetchOffers() {
+      if (avail <= 0) {return;}
+      if (url) {
+        $("#load_more").html("#{t('text.offerwall.loading')}");
+        $.ajax({
+          url: url + '&limit=25&start=' + start,
+          dataType: 'json',
+          timeout: 15000,
+          success: function(data) {
+            if (data.OfferArray) {
+              var offers = data.OfferArray;
+              offset = offers.length;
+              if (data.MoreDataAvailable) {
+                $("#load_more").html("#{t('text.offerwall.load_more')}");
+                avail = data.MoreDataAvailable;
+              }
+              else {
+               $("#bottom_box").hide();
+                avail = 0;
+              }
+              var t = [];
+              $.each(offers, function(i,v){
+                var offerCls = "";
+                var imgCls = "offer_icon";
+                if (v.Type == 'VideoOffer') {
+                  offerCls = 'video';
+                  imgCls = 'video_icon';
+                }
+                if (i == 0) {
+                  t.push('<div class="divider"></div>');
+                }
+                t.push('<a class="offer '+ offerCls +'" href="'+ v.RedirectURL + '">');
+                  t.push('<div class="content">');
+                    t.push('<div class="banner">');
+                      t.push('<div class="cost">');
+                        t.push(v.Cost);
+                      t.push('</div>');
+                    t.push('</div>');
+                    t.push('<div class="icon">');
+                      if (v.Type == 'VideoOffer') {
+                        t.push('<div class="' + imgCls + '" style="background-image: url(' + v.IconURL+ ')">');
+                          t.push('<div class="play"></div>');
+                        t.push('</div>');
+                      }
+                      else {
+                        t.push('<div class="' + imgCls + '">');
+                          t.push('<img src="' + blank_img + '" s="' + v.IconURL + '">');
+                        t.push('</div>');
+                      }
+                    t.push('</div>');
+                    t.push('<div class="offer-text">');
+                      t.push('<span>');
+                       t.push('Earn ');
+                         t.push('<label>');
+                           t.push(v.Amount)
+                         t.push('</label>');
+                         t.push(' ' + currency);
+                      t.push('</span>');
+                      t.push('<p>');
+                        t.push('<b>');
+                          t.push(v.Name);
+                        t.push('</b>');
+                      t.push('</p>');
+                    t.push('</div>');
+                  t.push('</div>');
+                t.push('</a>');
+                if (i != (offers.length - 1)) {
+                  t.push('<div class="divider"></div>');
+                }
+              });
+              $("#offers").append(t.join(''));
+              scroll();
+              start = start + 25;
+            }
+          },
+          error: function() {
+            $("#load_more").html("#{t('text.offerwall.load_error')}");
+          }
+        });
+      }
     }
 
-    #instructions {
-      font-size: 110%;
+    function init() {
+      window.setTimeout(scroll, 0);
     }
 
-    #offers {
-      margin: 10px 3%;
-      background: white;
-      border: 1px solid #d5d5d5;
-      -moz-border-radius: 10px;
-      -webkit-border-radius: 10px;
-    }
-
-    #offers .offer {
-      padding: 5px 10px;
-      height: 65px;
-      font-size: 90%;
-      font-weight: bold;
-      border-bottom: 1px solid #d5d5d5;
-    }
-
-    #offers .offer:last-child {
-      border-bottom: none;
-    }
-
-    #offers .offer a {
-      display: block;
-      padding-right: 16px;
-      color: #004E09;
-      background: transparent url(/images/arrow-right.png) no-repeat 100%;
-    }
-
-    #offers .offer a.clicked {
-      background: transparent url(/images/load-circle.gif) no-repeat 100%;
-    }
-
-    #offers .offer img {
-      padding-top: 4px;
-      width: 57px;
-      height: 57px;
-      float: left;
-    }
-
-    #offers .offer .offertext {
-      float: left;
-    }
-
-    body:nth-of-type(1) #offers .offer .offertext {
-       float: none;
-    }
-
-    #offers .offer .offertext .cell {
-      height: 65px;
-      display: table-cell;
-      vertical-align: middle;
-      padding-left: 10px;
-      line-height: 16px;
-    }
-
-    #offers .offer .offername {
-      display: inline-block;
-      max-height: 32px;
-      overflow: hidden;
-      padding-bottom: 2px;
-    }
-
-    #offers .offer .amount {
-      color: rgb(0, 136, 16);
-    }
-
-    #adsby,
-    #privacy a {
-      font-size: 75%;
-      color: #004E09;
-    }
-
-    #adsby {
-      margin-top: 2px;
-      float: right;
-      margin-right: 5%;
-    }
-
-    #adsby img {
-      vertical-align: bottom;
-    }
-
-    #privacy {
-      float: left;
-      margin-left: 5%;
-    }
-
-    #privacy a {
-      text-decoration: underline;
-    }
-
-    .pagination a {
-      font-size: 120%;
-      font-weight: bold;
-      color: #004E09;
-      display: block;
-    }
-
-    .pagination .prev a {
-      padding: 5px 0 5px 20px;
-      background: transparent url(/images/arrow-left-small.png) no-repeat 0%;
-    }
-
-    .pagination .next a {
-      padding: 5px 20px 5px 0;
-      background: transparent url(/images/arrow-right-small.png) no-repeat 100%;
-    }
-
-    .pagination .prev a.clicked {
-      background: transparent url(/images/load-circle.gif) no-repeat 0%;
-    }
-
-    .pagination .next a.clicked {
-      background: transparent url(/images/load-circle.gif) no-repeat 100%;
-    }
-
-    .pagination .prev {
-      float: left;
-    }
-
-    .pagination .next {
-      float: right;
-    }
-
-    .clear {
-      clear: both;
-    }
-
-    .hidden {
-      display: none;
-    }

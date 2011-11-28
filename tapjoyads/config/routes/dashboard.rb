@@ -3,6 +3,9 @@ ActionController::Routing::Routes.draw do |map|
     m.root :controller => 'dashboard/homepage', :action => :index
   end
 
+  map.connect 'tos-advertiser.html', :controller => 'documents', :action => 'tos_advertiser'
+  map.connect 'tos-publisher.html', :controller => 'documents', :action => 'tos_publisher'
+
   map.resource :sign_up, :controller => :sign_up, :only => :create
   map.register 'register', :controller => :sign_up, :action => :new
   map.login 'login', :controller => :user_sessions, :action => :new
@@ -11,16 +14,6 @@ ActionController::Routing::Routes.draw do |map|
   map.resources :internal_devices, :only => [ :index, :show, :destroy, :edit, :update ], :member => { :block => :get }
   map.new_internal_device 'approve_device', :controller => :internal_devices, :action => 'new', :conditions => { :method => :get }
   map.approve_internal_device 'approve_device/:id', :controller => :internal_devices, :action => 'approve', :conditions => { :method => :get }
-
-  map.resources :sdk, :only => [ :index, :show ], :collection => { :popup => :get, :license => :get }
-
-  map.namespace :agency_api do |agency|
-    agency.resources :apps, :only => [ :index, :show, :create, :update ]
-    agency.resources :partners, :only => [ :index, :show, :create, :update ], :collection => { :link => :post }
-    agency.resources :currencies, :only => [ :index, :show, :create, :update ]
-  end
-  map.connect 'create_account', :controller => :create_account, :action => :index
-  map.resources :reporting_data, :only => :index, :collection => { :udids => :get }
 
   map.namespace :account do |account|
     account.resources :whitelist, :controller => 'whitelist', :only => [ :index ], :collection => [ :enable, :disable ]
@@ -35,7 +28,7 @@ ActionController::Routing::Routes.draw do |map|
       :member => { :reset_test_device => :post }, :controller => 'apps/currencies'
     app.resources :virtual_goods, :as => 'virtual-goods', :only => [ :show, :update, :new, :create, :index ],
       :collection => { :reorder => :post }, :controller => 'apps/virtual_goods'
-    app.resources :action_offers, :only => [ :new, :create, :edit, :update, :index ], :member => { :toggle => :post }, :collection => { :TJCPPA => :get, :TapjoyPPA => :get }, :controller => 'apps/action_offers'
+    app.resources :action_offers, :only => [ :new, :create, :edit, :update, :index ], :member => { :toggle => :post, :preview => :get }, :collection => { :TJCPPA => :get, :TapjoyPPA => :get }, :controller => 'apps/action_offers'
   end
   map.resources :enable_offer_requests, :only => [ :create ]
   map.resources :reporting, :only => [ :index, :show ], :member => { :export => :post, :download_udids => :get }, :collection => { :aggregate => :get, :export_aggregate => :post, :api => :get, :regenerate_api_key => :post }
@@ -100,21 +93,8 @@ ActionController::Routing::Routes.draw do |map|
     tools.resources :agency_users, :only => [ :index, :show ]
     tools.resources :support_requests, :only => [ :index ]
     tools.resources :press_releases, :only => [ :index, :new, :create, :edit, :update ]
+    tools.resources :network_costs, :only => [ :index, :new, :create ]
   end
 
   map.connect 'mail_chimp_callback/callback', :controller => :mail_chimp_callback, :action => :callback
-
-  map.connect 'adways_data',          :controller => :adways_data,          :action => :index
-  map.connect 'brooklyn_packet_data', :controller => :brooklyn_packet_data, :action => :index
-  map.connect 'ea_data',              :controller => :ea_data,              :action => :index
-  map.connect 'fluent_data',          :controller => :fluent_data,          :action => :index
-  map.connect 'glu_data',             :controller => :glu_data,             :action => :index
-  map.connect 'gogii_data',           :controller => :gogii_data,           :action => :index
-  map.connect 'loopt_data',           :controller => :loopt_data,           :action => :index
-  map.connect 'ngmoco_data',          :controller => :ngmoco_data,          :action => :index
-  map.connect 'pinger_data',          :controller => :pinger_data,          :action => :index
-  map.connect 'pocketgems_data',      :controller => :pocketgems_data,      :action => :index
-  map.connect 'sgn_data',             :controller => :sgn_data,             :action => :index
-  map.connect 'zynga_data',           :controller => :zynga_data,           :action => :index
-  map.connect 'tapulous_marketing',   :controller => :tapulous_marketing,   :action => :index
 end

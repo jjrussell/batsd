@@ -13,6 +13,7 @@
           %li= link_to 'Contact us', '/site/contact'
           %li= link_to 'Tapjoy Knowledge Center', 'http://knowledge.tapjoy.com'
           %li= link_to 'Privacy Policy', '/site/privacy'
+          %li= link_to '日本語', 'http://tapjoy.jp'
       #legal_stuff
         %img.header{:src => "/images/legal_stuff.png"}/
         %p
@@ -30,13 +31,4 @@
       });
     });
   = yield :page_javascript
-  - unless Rails.env == 'development'
-    :plain
-      var _gaq = _gaq || [];
-      _gaq.push(['_setAccount', 'UA-5323442-1']);
-      _gaq.push(['_trackPageview']);
-      (function() {
-        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-      })();
+= render('shared/analytics')

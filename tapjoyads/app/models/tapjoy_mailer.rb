@@ -3,7 +3,7 @@ class TapjoyMailer < ActionMailer::Base
   def newrelic_alert(error)
     from 'Tapjoy <noreply@tapjoy.com>'
     recipients "dev@tapjoy.com"
-    subject "NewRelic Error: #{error.inspect}"
+    subject "NewRelic Error: #{error.class}"
     body(:error => error)
   end
 
@@ -55,7 +55,7 @@ class TapjoyMailer < ActionMailer::Base
 
   def contact_us(info)
     from 'Tapjoy <noreply@tapjoy.com>'
-    if Rails.env == 'development'
+    if !Rails.env.production?
       recipients "dev@tapjoy.com"
     else
       recipients "support+contactus@tapjoy.com"
@@ -67,7 +67,7 @@ class TapjoyMailer < ActionMailer::Base
 
   def publisher_application(info)
     from 'Tapjoy <noreply@tapjoy.com>'
-    if Rails.env == 'development'
+    if !Rails.env.production?
       recipients "dev@tapjoy.com"
     else
       recipients "publishing@tapjoy.com"
@@ -79,7 +79,7 @@ class TapjoyMailer < ActionMailer::Base
 
   def whitepaper_request(info)
     from 'Tapjoy <noreply@tapjoy.com>'
-    if Rails.env == 'development'
+    if !Rails.env.production?
       recipients "dev@tapjoy.com"
     else
       recipients "sunny.cha@tapjoy.com, raghu.nayani@tapjoy.com"
@@ -94,7 +94,7 @@ class TapjoyMailer < ActionMailer::Base
 
   def advertiser_application(info)
     from 'Tapjoy <noreply@tapjoy.com>'
-    if Rails.env == 'development'
+    if !Rails.env.production?
       recipients "dev@tapjoy.com"
     else
       if info[:source] == 'performance'
@@ -110,7 +110,7 @@ class TapjoyMailer < ActionMailer::Base
 
   def androidfund_application(info)
     from 'Tapjoy <noreply@tapjoy.com>'
-    if Rails.env == 'development'
+    if !Rails.env.production?
       recipients "dev+androidfund@tapjoy.com"
     else
       recipients "marketing@tapjoy.com, publishing@tapjoy.com"
@@ -147,14 +147,15 @@ class TapjoyMailer < ActionMailer::Base
     body(:click_key => click_key)
   end
 
-  def support_request(description, email_address, app, currency, udid, publisher_user_id, device_type, language_code, offer)
+  def support_request(description, email_address, app, currency, udid, publisher_user_id, device_type, language_code, offer, support_request, click_id)
     from 'Online Support Request <noreply@tapjoy.com>'
     reply_to email_address
     recipients 'mobilehelp@tapjoy.com'
     content_type 'text/html'
     subject 'Missing Currency'
     body(:description => description, :app => app, :currency => currency, :udid => udid, :publisher_user_id => publisher_user_id,
-      :device_type => device_type, :email_address => email_address, :language_code => language_code, :offer => offer)
+      :device_type => device_type, :email_address => email_address, :language_code => language_code, :offer => offer,
+      :support_request => support_request, :click_id => click_id)
   end
 
   def approve_device(email_address, verification_link, password_reset_link, location, timestamp)
@@ -167,7 +168,7 @@ class TapjoyMailer < ActionMailer::Base
 
   def partner_name_change_notification(partner, name_was, acct_mgr_email, partner_link)
     from 'Tapjoy <noreply@tapjoy.com>'
-    if Rails.env == 'production'
+    if Rails.env.production?
       recipients 'accounting@tapjoy.com'
     else
       recipients 'dev@tapjoy.com'

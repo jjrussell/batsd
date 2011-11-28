@@ -17,7 +17,10 @@ class Deploy
       opts.on('-e', '--environment [ENVIRONMENT]') do |environment|
         if environment == 'production'
           @options[:environment] = 'production'
-          @options[:server_groups] = 'masterjobs jobserver website dashboard games webserver'
+          @options[:server_groups] = 'masterjobs jobserver website dashboard webserver'
+        elsif environment == 'util'
+          @options[:environment] = 'util'
+          @options[:server_groups] = 'util'
         elsif environment != 'test'
           print_usage_and_exit
         end
@@ -41,7 +44,7 @@ class Deploy
       puts "invalid version for production deploy, must be a version number"
       print_usage_and_exit
     end
-    @options[:version] = 'master' if @options[:environment] == 'test' && @options[:version].nil?
+    @options[:version] = 'master' if (@options[:environment] == 'test' || @options[:environment] == 'util') && @options[:version].nil?
   end
 
   def deploy
@@ -59,8 +62,8 @@ private
 
   def print_usage_and_exit
     puts "USAGE: script/deploy [options]"
-    puts "    -e, --environment (optional): The environment to deploy to. Can be 'test' or 'production'. Default is 'test'."
-    puts "    -v, --version (optional): The version to deploy. Defaults to 'master' for test deploys, creates a new tag for production deploys."
+    puts "    -e, --environment (optional): The environment to deploy to. Can be 'test', 'util', or 'production'. Default is 'test'."
+    puts "    -v, --version (optional): The version to deploy. Defaults to 'master' for test and util deploys, creates a new tag for production deploys."
     exit
   end
 

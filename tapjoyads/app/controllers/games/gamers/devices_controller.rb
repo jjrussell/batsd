@@ -2,7 +2,7 @@ class Games::Gamers::DevicesController < GamesController
 
   def new
     if current_gamer.present?
-      send_file("#{RAILS_ROOT}/data/TapjoyGamesProfile.mobileconfig", :filename => 'TapjoyGamesProfile.mobileconfig', :disposition => 'inline', :type => :mobileconfig)
+      send_file("#{RAILS_ROOT}/data/TapjoyProfile.mobileconfig", :filename => 'TapjoyProfile.mobileconfig', :disposition => 'inline', :type => :mobileconfig)
     else
       flash[:error] = "Please log in and try again. You must have cookies enabled."
       redirect_to games_root_path
@@ -54,12 +54,13 @@ class Games::Gamers::DevicesController < GamesController
       cookies[:data] = { :value => params[:data], :expires => 1.year.from_now } if params[:data].present?
 
       if current_gamer.devices.create(:device => device)
-        click = Click.new :key => "#{device.key}.#{TAPJOY_GAMES_REGISTRATION_OFFER_ID}"
+        click = Click.new(:key => "#{device.key}.#{TAPJOY_GAMES_REGISTRATION_OFFER_ID}")
         if click.rewardable?
           current_gamer.reward_click(click)
         else
           device.set_last_run_time!(TAPJOY_GAMES_REGISTRATION_OFFER_ID)
         end
+        session[:current_device_id] = SymmetricCrypto.encrypt_object(device.key, SYMMETRIC_CRYPTO_SECRET)
         redirect_to games_root_path(:register_device => true)
       else
         flash[:error] = "Error linking device. Please try again."

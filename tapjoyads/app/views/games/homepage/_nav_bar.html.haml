@@ -1,66 +1,52 @@
-- active = defined?(active) ? active : ""
-- show_device = defined?(show_device) ? show_device : false
+- active ||= ""
+- show_device ||= false
 
 - if show_device
   .device_wrapper
-    .device
+    .device.clearfix
       .mobile_icon
       .device_info
-        %span.device_name
+        .device_name
           = @device_name
-        %span.device_switch
+        .device_switch
+          wrong device?
       .plus
-
 
 .nav
   .nav_container.clearfix
     .aside_nav
       %span
-        %a{ :href => games_help_path }
-          Help
+        = link_to("Help", games_help_path )
       %span
         |
-      %a{ :href => games_logout_path }
-        %span
-          Logout
-    %a{ :href => games_root_path, :class => "slideright" }
+      - link_to(games_logout_path) do
+        %span Logout
+    - link_to(games_root_path, :class => "slideright") do
       .logo
     .nav_buttons
       .nav_list.clearfix
         %ul
           %ul.pair
             - if active == 'back'
-            
-              %a{ :href => back_button_destination, :class => "slideright" }
-                %li.my_apps
-                  Back
-            
+              - link_to(back_button_destination, :class => "slideright") do
+                %li.my_apps Back
             - else
-            
               - if active == 'my_apps'
-                %li.my_apps.active_button
-                  My Apps
+                %li.my_apps.active_button My Apps
               - else
-                %a{ :href => games_root_path, :class => "slideright" }
-                  %li.my_apps
-                    My Apps
+                - link_to(games_root_path, :class => "slideright") do
+                  %li.my_apps My Apps
               - if active == 'more_apps'
-                %li.more_apps.more_apps_path.active_button
-                  More Apps
+                %li.more_apps.more_apps_path.active_button More Apps
               - elsif active == 'my_apps'
-                %li.more_apps.more_apps_path
-                  More Apps
-              %ul.pair
-                - if active == 'my_account'
-                  %li.my_account.active_button
-                    My Account
-                - else
-                  %a{ :href => edit_games_gamer_path }
-                    %li.my_account
-                      My Account
-                //- if active == 'share'
-                //  %li.share.active_button
-                //    Share
-                //- elsif active != 'my_account'
-                //  %li.share
-                //    Share
+                %li.more_apps.more_apps_path More Apps
+              - if active == 'my_account'
+                %li.my_account.active_button My Account
+              - else
+                - link_to(edit_games_gamer_path) do
+                  %li.my_account My Account
+              - if false # hide social share button until ready
+                - if active == 'share'
+                  %li.share.active_button Share
+                - elsif active != 'my_account'
+                  %li.share Share

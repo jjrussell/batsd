@@ -1,8 +1,4 @@
 FactoryGirl.define do
-  factory :store_click do
-    key { "#{Factory.next(:udid)}.#{Factory.next(:guid)}" }
-  end
-
   factory :device do
     key { "#{Factory.next(:udid)}" }
   end
@@ -19,11 +15,6 @@ FactoryGirl.define do
   end
 
   factory :reward do
-    # app = Factory(:app)
-    #
-    # publisher_app_id  app.id
-    # currency_id       { Factory(:currency, :id => app.id).id }
-    key               { Factory.next(:guid) }
     publisher_user_id "bill"
     currency_reward    100
   end

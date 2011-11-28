@@ -8,8 +8,7 @@
   .right
     Managed by:
     - options = options_for_select(@account_managers, params[:id])
-    = select_tag('managed_by', options_for_select(options))
-    -# partners_path(:mine => true)}
+    = select_tag('managed_by', options)
   - form_tag(partners_path, :method => :get, :class => 'tjform') do
     = label_tag(:q, "Name or Email Address:")
     = text_field_tag(:q, params[:q], :size => '40')
@@ -60,10 +59,13 @@
           location.href = '/partners/managed_by/' + $(this).val();
         }
       });
-      $('td.account_manager select').change(function(){
+
+      $('td.account_manager select,td.sales_rep select').change(function(){
         var form = $(this).parent('form');
         var url = form.attr('action');
-        var data = {"partner[account_managers]": [$(this).val()]};
+        var key = $(this).attr('name');
+        var data = {};
+        data[key] = [$(this).val()];
         form.siblings('img').show();
         $.ajax({
           data: data,
@@ -78,5 +80,14 @@
           type: 'put',
           url: url
         });
+      });
+
+      $('#q').autocomplete({
+        source: '#{search_partners_path}',
+        delay: 250,
+        minLength: 2,
+        select: function(event, ui) {
+          location.href = '#{partners_path}/' + ui.item.partner_id;
+        },
       });
     });
