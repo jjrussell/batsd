@@ -9,7 +9,7 @@
             .offer_title.title
               = external_publisher.app_name
         .offer_info
-        - external_publisher.currencies.each_with_index do |currency, i|
+        - external_publisher.currencies.each do |currency|
           - link_to("#", :id => currency[:id], :class => "get_offerwall_jsonp", :jsonp_url => external_publisher.get_offerwall_url(@device, currency, request.headers), :currency => currency[:name], :app_name => external_publisher.app_name) do
             .currency_item.left
               .offer_button
