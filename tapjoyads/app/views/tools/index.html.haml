@@ -102,7 +102,7 @@
   - if permitted_to? :index, :tools_support_requests
     %li= link_to 'Support Request Stats', tools_support_requests_path
   - if permitted_to? :mass_resolve, :tools_support_requests
-    %li= link_to 'Mass Resolve Clicks', :controller => tools_support_requests_path, :action => 'mass_resolve'
+    %li= link_to 'Mass Resolve Clicks', tools_mass_resolve_support_requests_path
 
 - if has_permissions_for_one_of?(:hr)
   %h3 Human Resources

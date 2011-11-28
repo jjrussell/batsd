@@ -80,6 +80,6 @@ class Click < SimpledbShardedResource
 
   def resolve!
     resolve
-    save
+    save!
   end
 end
