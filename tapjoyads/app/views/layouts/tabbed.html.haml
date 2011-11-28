@@ -22,7 +22,7 @@
       #top_nav
         .left
           - premier_suffix = current_partner.is_premier? ? '_premier' : ''
-          = link_to image_tag("#{RUN_MODE_PREFIX}tapjoylogo#{premier_suffix}.png"), "#{DASHBOARD_URL}/"
+          = link_to image_tag("#{RUN_MODE_PREFIX}tapjoylogo#{premier_suffix}.png"), "#{WEBSITE_URL}/"
         .right
           = current_user.username
           |

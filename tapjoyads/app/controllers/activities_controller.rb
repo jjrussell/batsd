@@ -5,7 +5,7 @@ class ActivitiesController < WebsiteController
   filter_access_to :all
 
   def index
-    where_clause = '`updated-at` is not null'
+    where_clause = '`updated-at` is not null';
     where_clause += " and object_id = '#{params[:object_id]}'" unless params[:object_id].blank?
     where_clause += " and user = '#{params[:user]}'" unless params[:user].blank?
     where_clause += " and request_id = '#{params[:request_id]}'" unless params[:request_id].blank?

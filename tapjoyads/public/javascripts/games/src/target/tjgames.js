@@ -1376,7 +1376,7 @@ TJG.ui = {
             msg = [
               '<div class="title_2 center">Oops!</div>',
               '<div class="dialog_content center">', error ,'.</div>',
-              '<div class="sign_up_again"><div class="button red try_again">Try Again</div></div>',
+              '<div id="sign_up_again"><div class="button red try_again">Try Again</div></div>',
             ].join('');
             $('.register_progess').html(msg);
             $('.sign_up_again').click(function(){

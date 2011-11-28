@@ -88,7 +88,6 @@ class App < ActiveRecord::Base
   after_update :update_offers
   after_update :update_rating_offer
   after_update :update_action_offers
-  after_update :update_currencies
   after_update :update_app_metadata
 
   named_scope :visible, :conditions => { :hidden => false }
@@ -302,8 +301,7 @@ private
   end
 
   def update_rating_offer
-    if (name_changed? || store_id_changed? || partner_id_changed?) && rating_offer.present?
-      rating_offer.partner_id = partner_id if partner_id_changed?
+    if (name_changed? || store_id_changed?) && rating_offer.present?
       rating_offer.save!
     end
   end
@@ -312,16 +310,6 @@ private
     if store_id_changed?
       action_offers.each do |action_offer|
         action_offer.save!
-      end
-    end
-  end
-
-  def update_currencies
-    if partner_id_changed?
-      currencies.each do |currency|
-        currency.partner_id = partner_id
-        currency.set_values_from_partner_and_reseller
-        currency.save!
       end
     end
   end

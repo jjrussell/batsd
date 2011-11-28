@@ -14,7 +14,7 @@ class Tools::SupportRequestsController < WebsiteController
     @publisher_apps   = Hash.new(0)
     @total            = 0
 
-    SupportRequest.select(:where => "`updated-at` >= '#{@start_time.to_f}' AND `updated-at` < '#{@end_time.to_f}'") do |sr|
+    SupportRequest.select(:where => "`updated-at` > '#{@start_time.to_f}' AND `updated-at` < '#{@end_time.to_f}'") do |sr|
       offer_ids[sr.offer_id] += 1
       publisher_app_ids[sr.app_id] += 1
       @udids[sr.udid] += 1
