@@ -1,6 +1,8 @@
 class Partner < ActiveRecord::Base
   include UuidPrimaryKey
 
+  THE_REAL_TAPJOY_PARTNER_ID = "70f54c6d-f078-426c-8113-d6e43ac06c6d"
+
   has_many :orders
   has_many :payouts
   has_many :currencies
