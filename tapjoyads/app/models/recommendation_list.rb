@@ -27,69 +27,77 @@ class RecommendationList
 
     def cache_all
       cache_most_popular
-      cache_by_apps
-      # cache_by_devices
+      cache_raw_by_app
+      cache_raw_by_device
     end
 
     def cache_most_popular
       recommendations = []
-      parse_recommendations_file('most_popular.txt') do |rec|
+      parse_recommendations_file(MOST_POPULAR_FILE) do |rec|
         begin
           recommendations << Offer.find_in_cache(rec.split("\t").first)
         rescue ActiveRecord::RecordNotFound => e
           next
         end
       end
-      Mc.distributed_put('s3.recommendations.most_popular', recommendations)
+      Mc.distributed_put('s3.recommendations.offers.most_popular', recommendations)
     end
 
-    def cache_by_apps
-      parse_recommendations_file('app_app_matrix.txt') do |recs|
-        recommendations = []
+    def cache_raw_by_app
+      parse_recommendations_file(APP_FILE) do |recs|
         recs = recs.split(/[;,]/, 2)
         app_id = recs.shift
-        recs.first.split(/;/).each do |rec|
-          begin
-            recommendations << Offer.find_in_cache(rec.split(',').first.gsub(/"/, ""))
-          rescue ActiveRecord::RecordNotFound => e
-            next
-          end
-        end
-        Mc.put("s3.recommendations.by_app.#{app_id}", recommendations)
+        recommendations = recs.second
+        Mc.put("s3.recommendations.raw.by_app.#{app_id}", recommendations)
       end
     end
 
-    def cache_by_devices
-      parse_recommendations_file('udid_reco.txt') do |recs|
-        recommendations = []
+    def cache_raw_by_device
+      parse_recommendations_file(DEVICE_FILE) do |recs|
         recs = recs.split(/[;,]/, 2)
-        device_id = recs.shift
-        recs.first.split(';').each do |rec|
-          begin
-            recommendations << Offer.find_in_cache(rec.split(',').first.gsub(/"/, ""))
-          rescue ActiveRecord::RecordNotFound => e
-            next
-          end
-        end
-        Mc.put("s3.recommendations.by_device.#{device_id}", recommendations)
+        device_id = recs.first
+        recommendations = recs.second
+        Mc.put("s3.recommendations.raw.by_device.#{device_id}", recommendations)
       end
+    end
+
+    def raw_for_app(app_id)
+      Mc.get("s3.recommendations.raw.by_app.#{app_id}") || ""
+    end
+
+    def raw_for_device(device_id)
+      Mc.get("s3.recommendations.raw.by_device.#{device_id}") || ""
     end
 
     def most_popular
-      Mc.distributed_get('s3.recommendations.most_popular') || []
+      Mc.distributed_get('s3.recommendations.offers.most_popular') || []
     end
 
     def for_app(app_id)
-      Mc.distributed_get("s3.recommendations.by_app.#{app_id}") || []
+      Mc.get_and_put("s3.recommendations.offers.by_app.#{app_id}", false, 1.day) do
+        offers = []
+        raw_for_app(app_id).split(';').each do |recommendation|
+          offers << Offer.find_in_cache(recommendation.split(',').first)
+        end
+
+        offers.compact
+      end
     end
 
     def for_device(device_id)
-      Mc.get("s3.recommendations.by_device.#{device_id}") || []
+      Mc.get_and_put("s3.recommendations.offers.by_device.#{device_id}", false, 1.day) do
+        offers = []
+        raw_for_device(device_id).split(';').each do |recommendation|
+          offers << Offer.find_in_cache(recommendation.split(',').first)
+        end
+
+        offers.compact
+      end
     end
 
     def parse_recommendations_file(file_name, &blk)
-      S3.bucket(BucketNames::TAPJOY_GAMES).objects[file_name].read.split(/[\r\n]/).each do |row|
-        yield(row)
+      S3.bucket(BucketNames::TAPJOY_GAMES).objects[file_name].read.each do |row|
+        yield(row.chomp)
       end
     end
 
