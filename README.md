@@ -188,6 +188,7 @@ Update DNS server list (this is to ensure Ruby Resolv library will work most of 
 -----------------------------------------------------------------------------------------
 * Prepend `8.8.8.8` and `8.8.4.4` to your DNS list
   * In OSX, System Preferences -> Network -> Advanced -> DNS -> + -> [prepend ips] -> OK -> Apply
+* Note: To use a wifi service such as gogo in-flight Internet, you might need to temporarily remove manually-entered DNS ips
 
 OPTIONAL: to install Passenger (so you can use alternate local domains instead of `http://localhost:3000`)
 --------------------------------------------------------------------------------------------------------
