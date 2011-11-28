@@ -51,8 +51,11 @@
               = offer.direct_pay? ? t('text.offerwall.buy_currency', :amount => amount, :currency => @currency.name) : t('text.offerwall.earn_currency', :amount => amount, :currency => @currency.name)
           %p
             %b= offer.name 
-            - if @papaya_offers.include?(offer.id) && @device.is_papayan?
-              = "#{@papaya_offers[offer.id]} players are currently playing"
+            - if @device.is_papayan? && @papaya_offers.include?(offer.id)
+              .papaya-box
+                %span.papaya-logo
+                %span.orange-box
+                  = "#{number_with_delimiter(@papaya_offers[offer.id])} players are currently playing"
         .load
     - unless index == (@offer_list.size-1)
       .divider
@@ -216,7 +219,13 @@
                         t.push('<b>');
                           t.push(v.Name); 
                           if (v.PapayaUserCount) {
-                            t.push(v.PapayaUserCount + ' players are currently playing');
+                            t.push('<div class="papaya-box">');
+                              t.push('<span class="papaya-logo">');
+                              t.push('</span>');
+                              t.push('<span class="orange-box">');
+                                t.push(v.PapayaUserCount + ' players are currently playing');
+                              t.push('</span>');
+                            t.push('</div>');
                           }
                         t.push('</b>');
                       t.push('</p>');
