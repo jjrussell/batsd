@@ -1869,7 +1869,7 @@ TJG.ui = {
         else {
           TJG.ui.showLoader();
           $.ajax({
-            url: TJG.more_games_editor_picks,
+            url: TJG.more_games_recommended,
             timeout: 15000,
             success: function(c) {
               TJG.moreAppOfferWall = c;
@@ -1922,7 +1922,7 @@ TJG.ui = {
         else {
           TJG.ui.showLoader();
           $.ajax({
-            url: TJG.more_games_popular,
+            url: TJG.more_games_editor_picks,
             timeout: 15000,
             success: function(c) {
               TJG.topAppOfferWall = c;
