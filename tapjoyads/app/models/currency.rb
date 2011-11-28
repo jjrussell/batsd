@@ -20,13 +20,14 @@ class Currency < ActiveRecord::Base
   validates_numericality_of :max_age_rating, :minimum_featured_bid, :minimum_offerwall_bid, :minimum_display_bid, :allow_nil => true, :only_integer => true
   validates_inclusion_of :has_virtual_goods, :only_free_offers, :send_offer_data, :hide_rewarded_app_installs, :tapjoy_enabled, :in => [ true, false ]
   validates_each :callback_url, :if => :callback_url_changed? do |record, attribute, value|
-    if !Rails.env.development? && !SPECIAL_CALLBACK_URLS.include?(value)
+    unless SPECIAL_CALLBACK_URLS.include?(value)
       if value !~ /^https?:\/\//
         record.errors.add(attribute, 'is not a valid url')
       else
         begin
           uri = URI.parse(value)
-          Resolv.getaddress(uri.host || '')
+          config_info = { :nameserver => ['8.8.8.8'] } if Rails.env.development?
+          Resolv::DNS.new(config_info).getaddress(uri.host || '')
         rescue URI::InvalidURIError, Resolv::ResolvError => e
           record.errors.add(attribute, 'is not a valid url')
         end
