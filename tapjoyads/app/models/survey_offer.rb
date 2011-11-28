@@ -70,7 +70,7 @@ class SurveyOffer < ActiveRecord::Base
     offer.name = name
     offer.hidden = hidden
     offer.bid = @bid_price unless @bid_price.nil?
-    offer.save!
+    offer.save! if offer.changed?
   end
 
   def assign_partner_id
