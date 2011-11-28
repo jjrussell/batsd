@@ -1,6 +1,8 @@
 class Partner < ActiveRecord::Base
   include UuidPrimaryKey
 
+  THE_REAL_TAPJOY_PARTNER_ID = "70f54c6d-f078-426c-8113-d6e43ac06c6d"
+
   has_many :orders
   has_many :payouts
   has_many :currencies
@@ -286,7 +288,7 @@ class Partner < ActiveRecord::Base
 private
 
   def update_currencies
-    if rev_share_changed? || direct_pay_share_changed? || disabled_partners_changed? || offer_whitelist_changed? || use_whitelist_changed? || accepted_publisher_tos_changed?
+    if rev_share_changed? || direct_pay_share_changed? || disabled_partners_changed? || offer_whitelist_changed? || use_whitelist_changed? || accepted_publisher_tos_changed? || max_deduction_percentage_changed?
       currencies.each do |c|
         c.set_values_from_partner_and_reseller
         c.save!

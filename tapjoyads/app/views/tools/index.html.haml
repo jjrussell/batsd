@@ -96,7 +96,7 @@
   %h3 Customer Support
 %ul
   - if permitted_to? :device_info, :tools
-    %li= link_to 'Device Info & Unresolved clicks', device_info_tools_path
+    %li= link_to 'Device Info &amp; Unresolved clicks', device_info_tools_path
   - if permitted_to? :reset_device, :tools
     %li= link_to 'Reset Device', reset_device_tools_path
   - if permitted_to? :index, :tools_admin_devices

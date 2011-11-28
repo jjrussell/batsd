@@ -46,7 +46,6 @@ all_caps:
       instructions_1: "PLEASE PROVIDE THE NAME OF THE OFFER YOU COMPLETED WITHOUT RECEIVING %{currency} AND YOUR EMAIL ADDRESS."
       instructions_2: "IF YOU DON'T CLEARLY INDICATE THE OFFER YOU COMPLETED, YOUR %{currency} WILL BE DELAYED."
       specify_offer_label: "SPECIFY OFFER:"
-      offer_name_label: "OFFER NAME:"
       description_label: "DESCRIPTION:"
       email_address_label: "EMAIL ADDRESS:"
       submit_support_request: "SUBMIT SUPPORT REQUEST"
@@ -57,4 +56,4 @@ all_caps:
       invalid_email: "PLEASE ENTER A REAL EMAIL ADDRESS."
       abuse_warning: "THIS FORM IS STRICTLY FOR USERS WHO HAVE NOT BEEN REWARDED FOR A COMPLETED OFFER. ABUSE OF THIS PAGE MAY LEAD TO YOUR ACCOUNT BEING BANNED FROM ENGAGING IN OFFERS IN THE FUTURE."
       select_offer: "SELECT OFFER"
-      another_offer: "OTHER (SPECIFY BELOW)"
+      no_incomplete_offers_label: "NO SUITABLE OFFERS WERE FOUND."

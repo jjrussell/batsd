@@ -11,7 +11,7 @@ class Offer < ActiveRecord::Base
   ANDROID_DEVICES = %w( android )
   WINDOWS_DEVICES = %w( windows )
   ALL_DEVICES = APPLE_DEVICES + ANDROID_DEVICES + WINDOWS_DEVICES
-  ALL_OFFER_TYPES = %w( App EmailOffer GenericOffer OfferpalOffer RatingOffer ActionOffer VideoOffer ReengagementOffer)
+  ALL_OFFER_TYPES = %w( App EmailOffer GenericOffer OfferpalOffer RatingOffer ActionOffer VideoOffer SurveyOffer ReengagementOffer)
 
   CLASSIC_OFFER_TYPE               = '0'
   DEFAULT_OFFER_TYPE               = '1'
@@ -522,7 +522,8 @@ class Offer < ActiveRecord::Base
   end
 
   def max_bid
-    [ 10000, (price * 0.50).round ].max
+    val = item_type == 'GenericOffer' ? 15000 : 10000
+    [ val, (price * 0.50).round ].max
   end
 
   def create_featured_clone
@@ -689,8 +690,12 @@ private
   end
 
   def cleanup_url
-    if (url_overridden_changed? || url_changed?) && !url_overridden? && %w(App ActionOffer RatingOffer).include?(item_type)
-      self.url = self.item.store_url
+    if (url_overridden_changed? || url_changed?) && !url_overridden?
+      if %w(App ActionOffer RatingOffer).include?(item_type)
+        self.url = self.item.store_url
+      elsif item_type == 'GenericOffer'
+        self.url = self.item.url
+      end
     end
     self.url = url.gsub(" ", "%20")
   end
@@ -709,7 +714,7 @@ private
         errors.add :bid, "is below the minimum (#{min_bid} cents)"
       end
       if bid > max_bid
-        errors add :bid, "is above the maximum (#{max_bid} cents)"
+        errors.add :bid, "is above the maximum (#{max_bid} cents)"
       end
       if item_type == 'RatingOffer' && bid != 0
         errors.add :bid, "must be 0 for RatingOffers"

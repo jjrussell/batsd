@@ -101,6 +101,10 @@ class Conversion < ActiveRecord::Base
     end
   end
 
+  def self.backup_cutoff_time
+    Time.zone.now.beginning_of_month
+  end
+
   def self.archive_cutoff_time
     Time.zone.now.beginning_of_month - 3.months
   end

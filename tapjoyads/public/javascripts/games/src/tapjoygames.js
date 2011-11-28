@@ -66,7 +66,7 @@ RegExp.escape = function(text) {
           TJG.ui.removeDialogs();
           TJG.repositionDialog = [];
         });
-        
+
         $('#link_device').click(function(){
           if (TJG.vars.isAndroid &&  TJG.android_market_url) {
             document.location.href = TJG.android_market_url;
@@ -90,6 +90,9 @@ RegExp.escape = function(text) {
           }
         });
         if ($('form#new_gamer_session')) {
+          $('form#new_gamer_session input').focus(function() {
+            $('form#new_gamer_session .login_error').empty();
+          });
           $('form#new_gamer_session').submit(function(e){
             $(".formError").hide();
             var inputs, email, pass, values = {};
