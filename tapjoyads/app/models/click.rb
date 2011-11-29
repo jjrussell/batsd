@@ -59,12 +59,6 @@ class Click < SimpledbShardedResource
   def resolve
     raise 'Unknown click id.' if new_record?
     raise "The click is already resolved" if manually_resolved_at?
-
-    if currency_id.nil? # old clicks don't have currency_id
-      currencies = Currency.find_all_by_app_id(publisher_app_id)
-      raise "Ambiguity -- the publisher app has more than one currency and currency_id was not specified." if currencies.length != 1
-      currency_id = currencies.first.id
-    end
     manually_resolved_at = Time.zone.now
 
     if Rails.env.production?
