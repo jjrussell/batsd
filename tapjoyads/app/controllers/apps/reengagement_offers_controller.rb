@@ -34,9 +34,6 @@ class Apps::ReengagementOffersController < WebsiteController
   end
   
   def destroy
-    # @reengagement_offer.offers.each do |offer|
-    #   offer.hidden = true
-    # end
     @reengagement_offer.hidden = true
     @reengagement_offer.save!
     flash[:notice] = "Removed day #{@reengagement_offer.day_number} re-engagement offer."
@@ -73,7 +70,6 @@ class Apps::ReengagementOffersController < WebsiteController
       @reengagement_offer = @app.reengagement_offers.find(params[:id])
       @offer = @reengagement_offer.primary_offer
       log_activity(@reengagement_offer)
-      #log_activity(@offer)
     end
   end
 
