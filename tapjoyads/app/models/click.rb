@@ -19,6 +19,7 @@ class Click < SimpledbShardedResource
   self.sdb_attr :displayer_amount,  :type => :int
   self.sdb_attr :tapjoy_amount,     :type => :int
   self.sdb_attr :currency_reward,   :type => :int
+  self.sdb_attr :spend_share,       :type => :float
   self.sdb_attr :source
   self.sdb_attr :ip_address
   self.sdb_attr :country
@@ -27,6 +28,10 @@ class Click < SimpledbShardedResource
   self.sdb_attr :block_reason
   self.sdb_attr :manually_resolved_at, :type => :time
   self.sdb_attr :device_name,          :cgi_escape => :true
+  self.sdb_attr :publisher_partner_id
+  self.sdb_attr :advertiser_partner_id
+  self.sdb_attr :publisher_reseller_id
+  self.sdb_attr :advertiser_reseller_id
 
   def initialize(options = {})
     super({ :load_from_memcache => false }.merge(options))
