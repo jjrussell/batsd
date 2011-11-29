@@ -285,6 +285,18 @@ class Partner < ActiveRecord::Base
     payout_info.present? && payout_info.valid?
   end
 
+  def is_tapjoy_sponsored?
+    return false if offers.blank?
+    offers.each do |o|
+      return false unless o.tapjoy_sponsored?
+    end
+    return true
+  end
+
+  def update_tapjoy_sponsored_offers(flag)
+    self.offers.each { |o| o.update_tapjoy_sponsored(flag) }  
+  end
+
 private
 
   def update_currencies

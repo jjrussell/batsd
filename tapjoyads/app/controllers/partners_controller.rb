@@ -79,6 +79,11 @@ class PartnersController < WebsiteController
       sales_rep = User.find_all_by_email(params[:partner][:sales_rep]).first
       params[:partner][:sales_rep] = sales_rep
     end
+    
+    if params[:partner].include?(:is_tapjoy_sponsored)
+      @partner.update_tapjoy_sponsored_offers(params[:partner][:is_tapjoy_sponsored])
+      params[:partner].delete :is_tapjoy_sponsored
+    end
 
     safe_attributes = [ :name, :account_managers, :account_manager_notes, :rev_share, :transfer_bonus, :disabled_partners, :direct_pay_share, :approved_publisher, :billing_email, :accepted_publisher_tos, :sales_rep, :max_deduction_percentage ]
     name_was = @partner.name
