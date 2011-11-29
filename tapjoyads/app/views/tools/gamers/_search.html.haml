@@ -108,5 +108,9 @@
     {
       $('#search_box').delayedObserver(0.5, doSearch);
       $('#search_only_tapjoy').change(doSearch);
-      $('#gamers_table').fadeIn();
+
+      if($('#search_box').val().length > 1)
+        doSearch();
+      else
+        $('#gamers_table').fadeIn();
     });
