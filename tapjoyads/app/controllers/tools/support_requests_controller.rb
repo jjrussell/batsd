@@ -15,7 +15,7 @@ class Tools::SupportRequestsController < WebsiteController
 
     first_row = true
     column_for_support_request = 0
-    file_contents.split("\n").each do |row|
+    file_contents.each do |row|
       begin
         all_columns = row.split(',').map{ |element| element.strip }
         next if all_columns.empty?
