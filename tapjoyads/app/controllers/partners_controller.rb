@@ -79,7 +79,7 @@ class PartnersController < WebsiteController
       sales_rep = User.find_all_by_email(params[:partner][:sales_rep]).first
       params[:partner][:sales_rep] = sales_rep
     end
-    
+
     if params[:partner].include?(:is_tapjoy_sponsored)
       @partner.update_tapjoy_sponsored_offers(params[:partner][:is_tapjoy_sponsored])
       params[:partner].delete :is_tapjoy_sponsored
