@@ -110,29 +110,9 @@ TJG.loadedImages = {};
     TJG.doc.className = className + classes.join(' ');
 })(this, document);
 /*
-
-            _/    _/_/    _/_/_/_/_/                              _/
-               _/    _/      _/      _/_/    _/    _/    _/_/_/  _/_/_/
-          _/  _/  _/_/      _/    _/    _/  _/    _/  _/        _/    _/
-         _/  _/    _/      _/    _/    _/  _/    _/  _/        _/    _/
-        _/    _/_/  _/    _/      _/_/      _/_/_/    _/_/_/  _/    _/
-       _/
-    _/
-
-    Created by David Kaneda <http://www.davidkaneda.com>
-    Documentation and issue tracking on GitHub <http://wiki.github.com/senchalabs/jQTouch/>
-
-    Special thanks to Jonathan Stark <http://jonathanstark.com/>
-    and pinch/zoom <http://www.pinchzoom.com/>
-
-    (c) 2010 by jQTouch project members.
-    See LICENSE.txt for license.
-
     $Revision: 166 $
     $Date: Tue Mar 29 01:24:46 EDT 2011 $
     $LastChangedBy: jonathanstark $
-
-
 */
 (function($) {
     $.jQTouch = function(options) {
@@ -783,6 +763,19 @@ TJG.loadedImages = {};
 })(jQuery);
 TJG.utils = {
 
+  slidePage : function(el,dir) {
+    if (TJG.ui.jQT === undefined) {
+      return;
+    }
+    if (dir == 'right') {
+      dir = 'slideright'
+    }
+    else {
+      dir = 'slideleft'
+    }
+    TJG.ui.jQT.goTo(el, dir);
+  },
+
   genSym : function() {
     var res = '' + TJG.vars.autoKey;
     TJG.vars.autoKey++;
@@ -957,6 +950,162 @@ TJG.utils = {
 };
 TJG.ui = {
 
+  showMoreGames : function() {
+    TJG.utils.slidePage("#more_games", "left");
+    $("#recommended_games_button").addClass("dark_grey").removeClass("grey");
+    $("#top_grossing_games_button").addClass("grey").removeClass("dark_grey");
+    $("#top_grossing_games_button_arrow").hide();
+    $("#recommended_games_button_arrow").show();
+    if (TJG.moreAppOfferWall) {
+      $("#more_games_content").html(TJG.moreAppOfferWall).fadeIn(TJG.ui.fadeSpdSlow, function() {
+        TJG.utils.loadImages(".offer_image_loader_wrapper");
+        TJG.ui.loadRatings();
+      });
+    }
+    else {
+      TJG.ui.showLoader();
+      $.ajax({
+        url: TJG.more_games_editor_picks,
+        timeout: 15000,
+        success: function(c) {
+          TJG.moreAppOfferWall = c;
+          TJG.ui.hideLoader();
+          $("#more_games_content").html(c).fadeIn(TJG.ui.fadeSpd, function(){
+            TJG.utils.loadImages(".offer_image_loader_wrapper");
+            TJG.ui.loadRatings();
+          });
+        },
+        error: function() {
+          $("#more_games_content").html('<div>There was an issue. Please try again</div>').fadeIn(TJG.ui.fadeSpd);
+        }
+      });
+    }
+  },
+
+  getAndShowOfferWall : function(url, appId, appName, currencyName) {
+    TJG.utils.slidePage("#earn", "left");
+    var fadeSpd = TJG.ui.fadeSpd;
+
+    $("#earn_content").empty();
+    if (!TJG.appOfferWall[appId]) {
+      TJG.appOfferWall[appId] = {};
+    }
+    TJG.appOfferWall[appId]['jsonp_url'] = url;
+    var title = 'Complete any of the offers below to earn <span class="bold">' + currencyName + '</span> for <span class="bold">' + appName + '</span>';
+    $("#app_title").html(title).show();
+    if (url) {
+      TJG.ui.showLoader();
+      $.ajax({
+        url: url+"&callback=?",
+        dataType: 'json',
+        timeout: 15000,
+        success: function(data) {
+          var i = 0;
+          TJG.ui.hideLoader();
+          if (data.OfferArray) {
+            var offers = data.OfferArray;
+            offerOffset = offers.length;
+            if (data.MoreDataAvailable) {
+              TJG.appOfferWall[appId]['offers_left'] = data.MoreDataAvailable;
+            }
+            else {
+              TJG.appOfferWall[appId]['offers_left'] = 0;
+            }
+            TJG.appOfferWall[appId]['offset'] = offerOffset;
+            var offerRows = TJG.ui.getOfferRow(offers, currencyName);
+            var t = [
+              '<ul id="offerwall_id-', appId ,'">',
+                offerRows,
+              '</ul>',
+            ];
+            if (TJG.appOfferWall[appId]['offers_left'] > 0) {
+              t.push('<div class="more_button_wrapper"><div class="get_more_apps" app_id="' + appId + '"><div class="get_more_apps_content">Load More</div></div></div>');
+            }
+            else {
+              t.push('<div class="more_button_wrapper"><div class="back_to_top grey_button"><div class="grey_button_content">Back to Top</div></div></div>');
+              $(".back_to_top").click(function(){
+                TJG.utils.scrollTop();
+              });
+            }
+            t = t.join('');
+            $("#earn_content").html(t).fadeIn(fadeSpd, function(){
+              TJG.utils.loadImages(".offer_image_loader_wrapper");
+            });
+            var isLoading = false;
+            var hasFailed = false;
+            $(".get_more_apps").click(function(){
+              if (isLoading) { return; }
+              $(".get_more_apps_content").html('<div class="image_loader"></div>');
+              var appId = $(this).attr("app_id");
+              $(".load_more_loader").show();
+              if (TJG.appOfferWall[appId]['offers_left'] > 0) {
+                var url = TJG.appOfferWall[appId]['jsonp_url'];
+                url = url + "&start=" + TJG.appOfferWall[appId]['offset'] + "&max=25&callback=?";
+                isLoading = true;
+                $.ajax({
+                  url: url,
+                  dataType: 'json',
+                  timeout: 15000,
+                  success: function(data) {
+                    if (data.OfferArray) {
+                      var offers = data.OfferArray;
+                      if (data.MoreDataAvailable) {
+                        TJG.appOfferWall[appId]['offers_left'] = data.MoreDataAvailable;
+                      }
+                      else {
+                        TJG.appOfferWall[appId]['offers_left'] = 0;
+                      }
+                      TJG.appOfferWall[appId]['offset'] = TJG.appOfferWall[appId]['offset'] + 25;
+                      var moreOfferRows = TJG.ui.getOfferRow(offers, currencyName, i, true);
+                      $("#offerwall_id-" + appId).append(moreOfferRows);
+                      var el = ".offer_item_" + i;
+                      $.each($(el), function(n,o) {
+                        $(o).fadeIn(fadeSpd);
+                      });
+                      TJG.utils.loadImages(".offer_image_loader_wrapper");
+                      if (TJG.appOfferWall[appId]['offers_left'] > 0) {
+                        $(".get_more_apps_content").html("Load More");
+                      }
+                      else {
+                        $(".more_button_wrapper").html('<div class="back_to_top grey_button"><div class="grey_button_content">Back to Top</div></div>');
+                        $(".back_to_top").click(function(){
+                          TJG.utils.scrollTop();
+                        });
+                      }
+                    }
+                    isLoading = false;
+                  },
+                  error: function () {
+                    var m = [
+                      '<div class="center">There was an issue fetching more offers. Please try again.</div>'
+                    ].join('');
+                    if (!hasFailed) {
+                      $("#offerwall_id-" + appId).append(m).fadeIn(fadeSpd);
+                    }
+                    hasFailed = true;
+                    $(".get_more_apps_content").html("Load More");
+                    $(".load_more_loader").hide();
+                    isLoading = false;
+                  }
+                });
+                i++;
+              }
+            });
+          }
+        },
+        error: function() {
+          TJG.ui.hideLoader();
+          $("#earn_content").html('<div class="center">There was an issue. Please try again</div>').fadeIn(fadeSpd);
+          TJG.utils.scrollTop();
+        }
+      });
+    }
+    else {
+      $("#earn_content").html('<div class="center">There was an issue. Please try again</div>').fadeIn(fadeSpd);
+      TJG.utils.scrollTop();
+    }
+  },
+
   hideLoader : function(delay,fn) {
     TJG.repositionDialog = [];
     delay = TJG.utils.or(delay, "fast");
@@ -1096,8 +1245,6 @@ TJG.ui = {
           values[this.name] = $(this).val();
         }
       });
-      var form_height = $('.register_form').outerHeight();
-
       $(".email_error").hide();
       emailReg = /^([\w-\.+]+@([\w-]+\.)+[\w-]{2,4})?$/;
       if(values['date[day]'] == '' || values['date[month]'] == '' || values['date[year]'] == '') {
@@ -1128,10 +1275,8 @@ TJG.ui = {
           '<div class="title_2 center">Registering</div>',
           '<div class="loading_animation"></div>'
         ].join('');
-        //$('.register_form').animate({ height: "0px" }, animateSpd, function() {
-          $(".register_form").hide();
-          $('.register_progess').html(loader);
-        //});
+        $(".register_form").hide();
+        $('.register_progess').html(loader);
         $.ajax({
           type: 'POST',
           url: rurl,
@@ -1224,7 +1369,6 @@ TJG.ui = {
             $('.sign_up_again').click(function(){
               $('.register_progess').html('');
               $(".register_form").show();
-              //$('.register_form').animate({ height: form_height + "px" }, animateSpd);
             });
           },
           error: function() {
@@ -1232,13 +1376,12 @@ TJG.ui = {
             msg = [
               '<div class="title_2 center">Oops!</div>',
               '<div class="dialog_content center">', error ,'.</div>',
-              '<div id="sign_up_again"><div class="button red try_again">Try Again</div></div>',
+              '<div class="sign_up_again"><div class="button red try_again">Try Again</div></div>',
             ].join('');
             $('.register_progess').html(msg);
             $('.sign_up_again').click(function(){
                $('.register_progess').html('');
                $(".register_form").show();
-//               $('.register_form').animate({ height: form_height + "px" }, animateSpd);
             });
           }
         });
@@ -1604,10 +1747,14 @@ TJG.ui = {
   },
 
   homeInit : function () {
-    var jQT = new $.jQTouch({
+    TJG.ui.jQT = new $.jQTouch({
       slideSelector: '#jqt',
     });
-    var fadeSpd = 350, fadeSpdFast = 250, fadeSpdSlow = 700;
+    TJG.ui.fadeSpd = 350;
+    TJG.ui.fadeSpdFast = 250;
+    TJG.ui.fadeSpdSlow = 700;
+
+    var fadeSpd = TJG.ui.fadeSpd, fadeSpdFast = TJG.ui.fadeSpdFas, fadeSpdSlow = TJG.ui.fadeSpdSlow;
     var install = TJG.utils.getParam("register_device");
 
     // Enable bookmarking modal
@@ -1685,16 +1832,6 @@ TJG.ui = {
 
     TJG.ui.loadRatings();
 
-    function slidePage(el,dir) {
-      if (dir == 'right') {
-        dir = 'slideright'
-      }
-      else {
-        dir = 'slideleft'
-      }
-      jQT.goTo(el, dir);
-    }
-
     function getOfferWalls() {
       $("#home").bind('pageAnimationStart', function(e, info){
         if (info.direction == "out") {
@@ -1737,133 +1874,8 @@ TJG.ui = {
         }
       });
       $(".get_offerwall_jsonp").each(function() {
-        var i = 0;
         $(this).click(function(){
-          slidePage("#earn", "left");
-          $("#earn_content").empty();
-          var url = $(this).attr("jsonp_url"), appId = $(this).attr("id"), appName = $(this).attr("app_name"), currencyName = $(this).attr("currency");
-          if (!TJG.appOfferWall[appId]) {
-            TJG.appOfferWall[appId] = {};
-          }
-          TJG.appOfferWall[appId]['jsonp_url'] = url;
-          var title = 'Complete any of the offers below to earn <span class="bold">' + currencyName + '</span> for <span class="bold">' + appName + '</span>';
-          $("#app_title").html(title).show();
-          if (url) {
-            TJG.ui.showLoader();
-            $.ajax({
-              url: url+"&callback=?",
-              dataType: 'json',
-              timeout: 15000,
-              success: function(data) {
-                TJG.ui.hideLoader();
-                if (data.OfferArray) {
-                  var offers = data.OfferArray;
-                  offerOffset = offers.length;
-                  if (data.MoreDataAvailable) {
-                    TJG.appOfferWall[appId]['offers_left'] = data.MoreDataAvailable;
-                  }
-                  else {
-                    TJG.appOfferWall[appId]['offers_left'] = 0;
-                  }
-                  TJG.appOfferWall[appId]['offset'] = offerOffset;
-                  var offerRows = TJG.ui.getOfferRow(offers, currencyName);
-                  var t = [
-                    '<ul id="offerwall_id-', appId ,'">',
-                      offerRows,
-                    '</ul>',
-                  ];
-                  if (TJG.appOfferWall[appId]['offers_left'] > 0) {
-                    t.push('<div class="more_button_wrapper"><div class="get_more_apps" app_id="' + appId + '"><div class="get_more_apps_content">Load More</div></div></div>');
-                  }
-                  else {
-                    t.push('<div class="more_button_wrapper"><div class="back_to_top grey_button"><div class="grey_button_content">Back to Top</div></div></div>');
-                    $(".back_to_top").click(function(){
-                      TJG.utils.scrollTop();
-                    });
-                  }
-                  t = t.join('');
-                  $("#earn_content").html(t).fadeIn(fadeSpd, function(){
-                    TJG.utils.loadImages(".offer_image_loader_wrapper");
-                  });
-                  var isLoading = false;
-                  var hasFailed = false;
-                  $(".get_more_apps").click(function(){
-                    if (isLoading) { return; }
-                    $(".get_more_apps_content").html('<div class="image_loader"></div>');
-                    var appId = $(this).attr("app_id");
-                    $(".load_more_loader").show();
-                    if (TJG.appOfferWall[appId]['offers_left'] > 0) {
-                      var url = TJG.appOfferWall[appId]['jsonp_url'];
-                      url = url + "&start=" + TJG.appOfferWall[appId]['offset'] + "&max=25&callback=?";
-                      isLoading = true;
-                      $.ajax({
-                        url: url,
-                        dataType: 'json',
-                        timeout: 15000,
-                        success: function(data) {
-                          if (data.OfferArray) {
-                            var offers = data.OfferArray;
-                            if (data.MoreDataAvailable) {
-                              TJG.appOfferWall[appId]['offers_left'] = data.MoreDataAvailable;
-                            }
-                            else {
-                              TJG.appOfferWall[appId]['offers_left'] = 0;
-                            }
-                            TJG.appOfferWall[appId]['offset'] = TJG.appOfferWall[appId]['offset'] + 25;
-                            var moreOfferRows = TJG.ui.getOfferRow(offers, currencyName, i, true);
-                            $("#offerwall_id-" + appId).append(moreOfferRows);
-                            var el = ".offer_item_" + i;
-                            $.each($(el), function(n,o) {
-                              $(o).fadeIn(fadeSpd);
-                            });
-                            TJG.utils.loadImages(".offer_image_loader_wrapper");
-                            if (TJG.appOfferWall[appId]['offers_left'] > 0) {
-                              $(".get_more_apps_content").html("Load More");
-                            }
-                            else {
-                              $(".more_button_wrapper").html('<div class="back_to_top grey_button"><div class="grey_button_content">Back to Top</div></div>');
-                              $(".back_to_top").click(function(){
-                                TJG.utils.scrollTop();
-                              });
-                            }
-                          }
-                          isLoading = false;
-                        },
-                        error: function () {
-                          var m = [
-                            '<div class="center">There was an issue fetching more offers. Please try again.</div>'
-                          ].join('');
-                          if (!hasFailed) {
-                            $("#offerwall_id-" + appId).append(m).fadeIn(fadeSpd);
-                          }
-                          hasFailed = true;
-                          $(".get_more_apps_content").html("Load More");
-                          $(".load_more_loader").hide();
-                          isLoading = false;
-                        }
-                      });
-                      i++;
-                    }
-                  });
-                }
-              },
-              error: function() {
-                TJG.ui.hideLoader();
-                var m = [
-                 '<div class="center">There was an issue. Please try again</div>'
-                ].join('');
-                $("#earn_content").html(m).fadeIn(fadeSpd);
-                TJG.utils.scrollTop();
-              }
-            });
-          }
-          else {
-            var m = [
-              '<div class="center">There was an issue. Please try again</div>'
-            ].join('');
-            $("#earn_content").html(m).fadeIn(fadeSpd);
-            TJG.utils.scrollTop();
-         }
+          TJG.ui.getAndShowOfferWall($(this).attr("jsonp_url"), $(this).attr("id"), $(this).attr("app_name"), $(this).attr("currency"));
         });
       });
     }
@@ -1875,38 +1887,7 @@ TJG.ui = {
 
     function getMoreGames() {
       $(".more_apps_path").click(function() {
-        slidePage("#more_games", "left");
-        $("#recommended_games_button").addClass("dark_grey").removeClass("grey");
-        $("#top_grossing_games_button").addClass("grey").removeClass("dark_grey");
-        $("#top_grossing_games_button_arrow").hide();
-        $("#recommended_games_button_arrow").show();
-        if (TJG.moreAppOfferWall) {
-          $("#more_games_content").html(TJG.moreAppOfferWall).fadeIn(fadeSpdSlow, function() {
-            TJG.utils.loadImages(".offer_image_loader_wrapper");
-            TJG.ui.loadRatings();
-          });
-        }
-        else {
-          TJG.ui.showLoader();
-          $.ajax({
-            url: TJG.more_games_editor_picks,
-            timeout: 15000,
-            success: function(c) {
-              TJG.moreAppOfferWall = c;
-              TJG.ui.hideLoader();
-              $("#more_games_content").html(c).fadeIn(fadeSpd, function(){
-                TJG.utils.loadImages(".offer_image_loader_wrapper");
-                TJG.ui.loadRatings();
-              });
-            },
-            error: function() {
-              var m = [
-                '<div>There was an issue. Please try again</div>'
-              ].join('');
-              $("#more_games_content").html(m).fadeIn(fadeSpd);
-            }
-          });
-        }
+        TJG.ui.showMoreGames();
       });
     }
 
@@ -1968,7 +1949,7 @@ TJG.ui = {
     }
     function featuredReview() {
       $(".feat_app_url").click(function() {
-         slidePage("#feat_app", "left");
+         TJG.utils.slidePage("#feat_app", "left");
       });
     }
     getOfferWalls();
@@ -2404,7 +2385,7 @@ RegExp.escape = function(text) {
           TJG.ui.removeDialogs();
           TJG.repositionDialog = [];
         });
-        
+
         $('#link_device').click(function(){
           if (TJG.vars.isAndroid &&  TJG.android_market_url) {
             document.location.href = TJG.android_market_url;
@@ -2428,6 +2409,9 @@ RegExp.escape = function(text) {
           }
         });
         if ($('form#new_gamer_session')) {
+          $('form#new_gamer_session input').focus(function() {
+            $('form#new_gamer_session .login_error').empty();
+          });
           $('form#new_gamer_session').submit(function(e){
             $(".formError").hide();
             var inputs, email, pass, values = {};
