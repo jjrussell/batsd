@@ -40,7 +40,7 @@ class Click < SimpledbShardedResource
   def dynamic_domain_name
     domain_number = @key.matz_silly_hash % NUM_CLICK_DOMAINS
 
-    return "clicks_#{domain_number}"
+    "clicks_#{domain_number}"
   end
 
   def serial_save(options = {})
