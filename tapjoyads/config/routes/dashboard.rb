@@ -94,7 +94,7 @@ ActionController::Routing::Routes.draw do |map|
     tools.resources :agency_users, :only => [ :index, :show ]
     tools.resources :support_requests, :only => [ :index ]
     tools.resources :press_releases, :only => [ :index, :new, :create, :edit, :update ]
-    tools.resources :gamers, :only => [ :index ]
+    tools.resources :gamers, :only => [ :index, :show ]
     tools.resources :network_costs, :only => [ :index, :new, :create ]
   end
 

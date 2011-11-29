@@ -1,18 +1,38 @@
-#gamer_search
-  = label_tag 'search_box', 'Search email:'
-  = text_field_tag 'search_box', ''
-  %br/
-  = check_box_tag 'search_only_tapjoy', '1', true
-  = label_tag 'search_only_tapjoy', 'limit to @tapjoy.com and @offerpal.com emails'
+%table.search
+  %tr
+    %td Use the field to the right to search.
+
+    %td.gamer_search
+      .spinner
+        %span#spinner= image_tag('spinner.gif', :alt => 'Searching...')
+      = label_tag 'search_box', 'Search email:'
+      = text_field_tag 'search_box', ''
+      %br/
+      = check_box_tag 'search_only_tapjoy', '1', true
+      = label_tag 'search_only_tapjoy', 'limit to @tapjoy.com and @offerpal.com emails'
 
 - content_for :page_styles do
   :plain
-    #gamer_search {
+    .gamer_search {
       float: right;
       text-align: right;
     }
+
     #search_box, #tapjoy_only_search_box {
       width: 300px;
+    }
+    .spinner {
+      display: inline;
+    }
+    span#spinner {
+      display: none;
+      margin: 5px;
+    }
+    table.search {
+      width: 100%;
+    }
+    table.search td {
+      vertical-align: top;
     }
 
 - content_for :page_javascript do
@@ -58,14 +78,29 @@
 
     // Executes the AJAX call to perform search and updates results div
     function doSearch() {
-      //controller's URI
+      // controller's URI
       var term = $("#search_box").val();
       var url = '#{search_gamers_path}';
       var params = { term:        term,
                      tapjoy_only: $('#search_only_tapjoy').is(':checked') ? true : false };
 
       if(term.length > 1) {
-        $("#search_results").load(url, params);
+        // show spinner
+        $('span#spinner').fadeIn('fast', function() {
+          $("#search_results").load(url, params, function() {
+            $('#gamers_table').fadeIn();
+            $('span#spinner').fadeOut();
+            $('#gamers_table').tablesorter({
+              widgets: ['zebra'],
+              headers: {
+                0:  { sorter: false },
+                4:  { sorter: 'usLongDate' },
+                5:  { sorter: 'usLongDate' }
+              },
+              sortList: [[4,0], [2,0]]
+            });
+          });
+        });
       }
     }
 
@@ -73,4 +108,5 @@
     {
       $('#search_box').delayedObserver(0.5, doSearch);
       $('#search_only_tapjoy').change(doSearch);
+      $('#gamers_table').fadeIn();
     });

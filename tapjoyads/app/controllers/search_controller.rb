@@ -86,6 +86,6 @@ class SearchController < WebsiteController
       :limit => 100
     )
 
-    render :layout => false
+    render :partial => 'gamers'
   end
 end

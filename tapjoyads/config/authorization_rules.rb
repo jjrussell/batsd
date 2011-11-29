@@ -29,7 +29,7 @@ authorization do
     includes :tools
     has_permission_on :search, :to => [ :gamers ]
     has_permission_on :tools, :to => [ :resolve_clicks, :device_info, :update_device, :award_currencies, :update_award_currencies ]
-    has_permission_on :tools_gamers, :to => [ :index ]
+    has_permission_on :tools_gamers, :to => [ :index, :show ]
   end
 
   role :money do
