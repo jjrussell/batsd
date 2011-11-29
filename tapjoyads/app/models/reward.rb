@@ -13,6 +13,7 @@ class Reward < SimpledbShardedResource
   self.sdb_attr :tapjoy_amount,     :type => :int
   self.sdb_attr :offerpal_amount,   :type => :int
   self.sdb_attr :currency_reward,   :type => :int
+  self.sdb_attr :spend_share,       :type => :float
   self.sdb_attr :source
   self.sdb_attr :type
   self.sdb_attr :udid
@@ -25,6 +26,10 @@ class Reward < SimpledbShardedResource
   self.sdb_attr :sent_money_txn,    :type => :time
   self.sdb_attr :send_currency_status
   self.sdb_attr :customer_support_username
+  self.sdb_attr :publisher_partner_id
+  self.sdb_attr :advertiser_partner_id
+  self.sdb_attr :publisher_reseller_id
+  self.sdb_attr :advertiser_reseller_id
 
   def initialize(options = {})
     super({:load_from_memcache => false}.merge(options))

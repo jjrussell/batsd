@@ -115,7 +115,8 @@ class ToolsController < WebsiteController
   end
 
   def sqs_lengths
-    @queues = Sqs.queues.map do |queue|
+    queues = params[:queue_name].present? ? Sqs.queue("#{QueueNames::BASE_NAME}#{params[:queue_name]}").to_a : Sqs.queues
+    @queues = queues.map do |queue|
       {
         :name        => queue.url.split('/').last,
         :size        => queue.visible_messages,
