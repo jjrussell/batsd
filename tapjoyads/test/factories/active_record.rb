@@ -179,4 +179,10 @@ FactoryGirl.define do
     channel       { 0 }
     external_info { Factory.next(:name) }
   end
+
+  factory :reseller do
+    name               { Factory.next(:name) }
+    reseller_rev_share { 0.8 }
+    rev_share          { 0.75 }
+  end
 end
