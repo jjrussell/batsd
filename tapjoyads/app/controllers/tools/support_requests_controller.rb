@@ -14,20 +14,12 @@ class Tools::SupportRequestsController < WebsiteController
     end
 
     file_contents.each do |support_request_id|
-      begin
-        support_request_id.strip!
-        raise 'No valid support request' if support_request_id.nil? or support_request_id.empty?
-        support_request = SupportRequest.new(:key => support_request_id)
-        raise "Invalid support_request_id: #{support_request_id}" if support_request.new_record?
-        raise "Unable to find the click associated with the request" if support_request.click_id.nil?
-        click = Click.new(:key => support_request.click_id)
-        raise "Invalid click id: #{support_request.click_id} for the given support request: #{support_request.id}" if click.new_record?
-
-        click.resolve!
+      support_request_id.strip!
+      error = SupportRequest.resolve(support_request_id)
+      if error.nil?
         @request_successfully_awarded += 1
-      rescue Exception => e
-        @request_not_awarded.push([support_request_id, e])
-        next
+      else
+        @request_not_awarded.push([support_request_id, error])
       end
     end
     flash[:error] = 'Some errors were encountered while processing the rows.' if @request_not_awarded.size > 0
