@@ -16,8 +16,8 @@ class Partner < ActiveRecord::Base
   has_many :action_offers
   has_many :video_offers
   has_many :offers
-  has_many :publisher_conversions, :through => :apps
-  has_many :advertiser_conversions, :through => :offers
+  has_many :publisher_conversions, :class_name => 'Conversion', :foreign_key => :publisher_partner_id
+  has_many :advertiser_conversions, :class_name => 'Conversion', :foreign_key => :advertiser_partner_id
   has_many :monthly_accountings
   has_many :offer_discounts, :order => 'expires_on DESC'
   has_many :app_offers, :class_name => 'Offer', :conditions => "item_type = 'App'"
@@ -61,7 +61,7 @@ class Partner < ActiveRecord::Base
     end
   end
 
-  validates_each :negotiated_rev_share_ends_on, :allow_blank => true do |record, attribute, value|
+  validates_each :negotiated_rev_share_ends_on, :if => :negotiated_rev_share_ends_on_changed?, :allow_blank => true do |record, attribute, value|
     record.errors.add(attribute, 'You can not choose a date in the past for negotiated rev share expiration time.') if value.to_time < Time.zone.now
   end
 

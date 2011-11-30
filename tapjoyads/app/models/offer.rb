@@ -675,7 +675,7 @@ private
     # Invalidate cloudfront
     begin
       acf = RightAws::AcfInterface.new
-      acf.invalidate('E1MG6JDV6GH0F2', banner_creative_path(size, format).to_a, "#{id}.#{Time.now.to_i}")
+      acf.invalidate('E1MG6JDV6GH0F2', "/#{banner_creative_path(size, format)}".to_a, "#{id}.#{Time.now.to_i}")
     rescue Exception => e
       Notifier.alert_new_relic(FailedToInvalidateCloudfront, e.message)
     end
