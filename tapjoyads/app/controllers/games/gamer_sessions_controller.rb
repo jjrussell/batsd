@@ -5,6 +5,9 @@ class Games::GamerSessionsController < GamesController
   end
 
   def new
+    if current_gamer
+      redirect_to games_root_path and return
+    end
     render_login_page
   end
 
