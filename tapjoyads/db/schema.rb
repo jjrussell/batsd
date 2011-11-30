@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20111129045021) do
+ActiveRecord::Schema.define(:version => 20111130154545) do
 
   create_table "action_offers", :id => false, :force => true do |t|
     t.string   "id",                    :limit => 36,                    :null => false
@@ -629,42 +629,44 @@ ActiveRecord::Schema.define(:version => 20111129045021) do
   add_index "partner_assignments", ["user_id", "partner_id"], :name => "index_partner_assignments_on_user_id_and_partner_id", :unique => true
 
   create_table "partners", :id => false, :force => true do |t|
-    t.string   "id",                         :limit => 36,                                                      :null => false
+    t.string   "id",                           :limit => 36,                                                      :null => false
     t.string   "contact_name"
     t.string   "contact_phone"
-    t.integer  "balance",                                                                :default => 0,         :null => false
-    t.integer  "pending_earnings",                                                       :default => 0,         :null => false
+    t.integer  "balance",                                                                  :default => 0,         :null => false
+    t.integer  "pending_earnings",                                                         :default => 0,         :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "payout_frequency",                                                       :default => "monthly", :null => false
-    t.integer  "next_payout_amount",                                                     :default => 0,         :null => false
+    t.string   "payout_frequency",                                                         :default => "monthly", :null => false
+    t.integer  "next_payout_amount",                                                       :default => 0,         :null => false
     t.string   "name"
     t.integer  "calculated_advertiser_tier"
     t.integer  "calculated_publisher_tier"
     t.integer  "custom_advertiser_tier"
     t.integer  "custom_publisher_tier"
     t.text     "account_manager_notes"
-    t.text     "disabled_partners",                                                                             :null => false
-    t.integer  "premier_discount",                                                       :default => 0,         :null => false
+    t.text     "disabled_partners",                                                                               :null => false
+    t.integer  "premier_discount",                                                         :default => 0,         :null => false
     t.string   "exclusivity_level_type"
     t.date     "exclusivity_expires_on"
-    t.decimal  "transfer_bonus",                           :precision => 8, :scale => 6, :default => 0.0,       :null => false
-    t.decimal  "rev_share",                                :precision => 8, :scale => 6, :default => 0.5,       :null => false
-    t.decimal  "direct_pay_share",                         :precision => 8, :scale => 6, :default => 1.0,       :null => false
+    t.decimal  "transfer_bonus",                             :precision => 8, :scale => 6, :default => 0.0,       :null => false
+    t.decimal  "rev_share",                                  :precision => 8, :scale => 6, :default => 0.5,       :null => false
+    t.decimal  "direct_pay_share",                           :precision => 8, :scale => 6, :default => 1.0,       :null => false
     t.string   "apsalar_username"
     t.string   "apsalar_api_secret"
     t.text     "apsalar_url"
-    t.text     "offer_whitelist",                                                                               :null => false
-    t.boolean  "use_whitelist",                                                          :default => false,     :null => false
-    t.boolean  "approved_publisher",                                                     :default => false,     :null => false
-    t.boolean  "apsalar_sharing_adv",                                                    :default => false,     :null => false
-    t.boolean  "apsalar_sharing_pub",                                                    :default => false,     :null => false
-    t.string   "reseller_id",                :limit => 36
+    t.text     "offer_whitelist",                                                                                 :null => false
+    t.boolean  "use_whitelist",                                                            :default => false,     :null => false
+    t.boolean  "approved_publisher",                                                       :default => false,     :null => false
+    t.boolean  "apsalar_sharing_adv",                                                      :default => false,     :null => false
+    t.boolean  "apsalar_sharing_pub",                                                      :default => false,     :null => false
+    t.string   "reseller_id",                  :limit => 36
     t.string   "billing_email"
     t.integer  "freshbooks_client_id"
     t.boolean  "accepted_publisher_tos"
-    t.string   "sales_rep_id",               :limit => 36
-    t.decimal  "max_deduction_percentage",                 :precision => 8, :scale => 6, :default => 1.0,       :null => false
+    t.string   "sales_rep_id",                 :limit => 36
+    t.decimal  "max_deduction_percentage",                   :precision => 8, :scale => 6, :default => 1.0,       :null => false
+    t.date     "negotiated_rev_share_ends_on"
+    t.boolean  "accepted_negotiated_tos",                                                  :default => false
   end
 
   add_index "partners", ["id"], :name => "index_partners_on_id", :unique => true
