@@ -2,17 +2,6 @@ class FullscreenAdController < ApplicationController
 
   layout 'iphone'
 
-  def image
-    offer = Offer.find_in_cache(params[:offer_id])
-
-    # Default to showing low-res ad with portrait orientation
-    width, height = params[:image_size].present? ? params[:image_size].split("x") : [320, 480]
-    img = IMGKit.new(offer.fullscreen_ad_url(:publisher_app_id => params[:publisher_app_id], :width => width, :height => height, :preview => params[:preview]),
-                     :width => width, :height => height)
-
-    send_data img.to_png, :type => 'image/png', :disposition => 'inline'
-  end
-
   def index
     @publisher_app = App.find_in_cache(params[:publisher_app_id])
     currency_id = params[:currency_id].blank? ? params[:publisher_app_id] : params[:currency_id]

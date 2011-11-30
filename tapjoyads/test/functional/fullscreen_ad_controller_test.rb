@@ -14,34 +14,6 @@ class FullscreenAdControllerTest < ActionController::TestCase
       @params = { :udid => 'stuff', :publisher_user_id => 'more_stuff', :currency_id => @currency.id, :app_id => @currency.app.id }
     end
 
-    context "when calling 'image'" do
-      setup do
-        @params.merge! :offer_id => @offer.id, :image_size => '320x480', :publisher_app_id => @params[:app_id], :preview => true
-        @params.delete :app_id
-      end
-
-      context "with custom ad" do
-        setup do
-          @offer.banner_creatives = %w(320x480)
-          @offer.featured = true
-        end
-
-        should "return PNG preview image" do
-          response = get :image, @params
-          assert_response :success
-          assert_equal 'image/png', response.content_type
-        end
-      end
-
-      context "with generated ad" do
-        should "return preview PNG image" do
-          response = get :image, @params
-          assert_response :success
-          assert_equal 'image/png', response.content_type
-        end
-      end
-    end
-
     context "when calling 'index'" do
       setup do
         @params.merge! :offer_id => @offer.id, :image_size => '320x480', :publisher_app_id => @params[:app_id]
