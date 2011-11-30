@@ -13,8 +13,8 @@ class PartnerTest < ActiveSupport::TestCase
   should have_many(:offerpal_offers)
   should have_many(:generic_offers)
   should have_many(:offers)
-  should have_many(:publisher_conversions).through(:apps)
-  should have_many(:advertiser_conversions).through(:offers)
+  should have_many(:publisher_conversions)
+  should have_many(:advertiser_conversions)
   should have_many(:monthly_accountings)
 
   should validate_numericality_of(:balance)
