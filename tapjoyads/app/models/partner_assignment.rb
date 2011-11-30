@@ -9,7 +9,7 @@ class PartnerAssignment < ActiveRecord::Base
 
   after_create :set_reseller
 
-private
+  private
 
   def set_reseller
     partner.reseller_id = user.reseller_id
