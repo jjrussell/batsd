@@ -52,6 +52,7 @@ class Conversion < ActiveRecord::Base
   belongs_to :publisher_partner, :class_name => 'Partner'
   belongs_to :advertiser_partner, :class_name => 'Partner'
 
+  validates_presence_of :publisher_app, :advertiser_offer, :publisher_partner, :advertiser_partner
   validates_numericality_of :advertiser_amount, :publisher_amount, :tapjoy_amount, :only_integer => true, :allow_nil => false
   validates_inclusion_of :reward_type, :in => REWARD_TYPES.values
 
