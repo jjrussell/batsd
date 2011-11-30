@@ -25,6 +25,9 @@ class Gamer < ActiveRecord::Base
     }
   }
 
+  IMAGE_SOURCE_GRAVATAR = 0
+  IMAGE_SOURCE_FACEBOOK = 1
+
   alias_method :devices, :gamer_devices
 
   acts_as_authentic do |c|
@@ -33,6 +36,10 @@ class Gamer < ActiveRecord::Base
     c.login_field = :email
     c.validate_login_field = false
     c.require_password_confirmation = true
+  end
+
+  def self.columns
+    super.reject { |c| c.name == "use_gravatar" }
   end
 
   def confirm!
@@ -96,16 +103,16 @@ class Gamer < ActiveRecord::Base
   end
 
   def get_avatar_profile_url
-    if @gamer_profile.image_source == 'facebook' && @gamer_profile.facebook_id.present?
-      "http://www.facebook.com/profile.php?id=#{@gamer_profile.facebook_id}"
+    if image_source == Gamer::IMAGE_SOURCE_FACEBOOK && gamer_profile.facebook_id.present?
+      "http://www.facebook.com/profile.php?id=#{gamer_profile.facebook_id}"
     else
       "https://secure.gravatar.com/#{generate_gravatar_hash}"
     end
   end
 
   def get_avatar_url
-    if @gamer_profile.image_source == 'facebook' && @gamer_profile.facebook_id.present?
-      "https://graph.facebook.com/#{@gamer_profile.facebook_id}/picture"
+    if image_source == Gamer::IMAGE_SOURCE_FACEBOOK && gamer_profile.facebook_id.present?
+      "https://graph.facebook.com/#{gamer_profile.facebook_id}/picture"
     else
       "https://secure.gravatar.com/avatar/#{generate_gravatar_hash}?d=mm"
     end

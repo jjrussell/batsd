@@ -291,8 +291,8 @@ ActiveRecord::Schema.define(:version => 20111116005224) do
   add_index "gamer_devices", ["id"], :name => "index_gamer_devices_on_id", :unique => true
 
   create_table "gamer_profiles", :id => false, :force => true do |t|
-    t.string   "id",                     :limit => 36,                         :null => false
-    t.string   "gamer_id",               :limit => 36,                         :null => false
+    t.string   "id",                     :limit => 36,                    :null => false
+    t.string   "gamer_id",               :limit => 36,                    :null => false
     t.string   "gender"
     t.date     "birthdate"
     t.string   "city"
@@ -310,7 +310,6 @@ ActiveRecord::Schema.define(:version => 20111116005224) do
     t.string   "referred_by",            :limit => 36
     t.integer  "referral_count",                       :default => 0
     t.boolean  "allow_marketing_emails",               :default => true
-    t.string   "image_source",                         :default => "gravatar"
   end
 
   add_index "gamer_profiles", ["facebook_id"], :name => "index_gamer_profiles_on_facebook_id"
@@ -351,6 +350,7 @@ ActiveRecord::Schema.define(:version => 20111116005224) do
     t.integer  "referral_count",                       :default => 0
     t.boolean  "use_gravatar",                         :default => false
     t.boolean  "allow_marketing_emails",               :default => true
+    t.integer  "image_source",                         :default => 0
   end
 
   add_index "gamers", ["confirmation_token"], :name => "index_gamers_on_confirmation_token", :unique => true
@@ -786,6 +786,30 @@ ActiveRecord::Schema.define(:version => 20111116005224) do
 
   add_index "spend_shares", ["effective_on"], :name => "index_spend_shares_on_effective_on", :unique => true
   add_index "spend_shares", ["id"], :name => "index_spend_shares_on_id", :unique => true
+
+  create_table "survey_offers", :id => false, :force => true do |t|
+    t.string   "id",         :limit => 36,                    :null => false
+    t.string   "partner_id", :limit => 36,                    :null => false
+    t.string   "name",                                        :null => false
+    t.boolean  "hidden",                   :default => false, :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "survey_offers", ["id"], :name => "index_survey_offers_on_id", :unique => true
+
+  create_table "survey_questions", :id => false, :force => true do |t|
+    t.string   "id",                 :limit => 36, :null => false
+    t.string   "survey_offer_id",    :limit => 36
+    t.text     "text",                             :null => false
+    t.text     "possible_responses"
+    t.string   "format",                           :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "survey_questions", ["id"], :name => "index_survey_questions_on_id", :unique => true
+  add_index "survey_questions", ["survey_offer_id"], :name => "index_survey_questions_on_survey_offer_id"
 
   create_table "user_roles", :id => false, :force => true do |t|
     t.string   "id",         :limit => 36, :null => false

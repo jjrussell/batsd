@@ -33,11 +33,11 @@
             Profile Image
           .content_box
             .interior
-              - form_for([ :games, :gamer, @gamer_profile ], :url => update_social_games_gamer_gamer_profile_path, :html => { :method => "put" }) do |f|
+              - form_for([ :games, @gamer ], :url => update_social_games_gamer_path, :html => { :method => "put" }) do |f|
                 .field
                   = f.label :image_source, 'Image Source:'
                   = f.select :image_source, @image_source_options
-                  = error_message_on @gamer_profile, :image_source
+                  = error_message_on @gamer, :image_source
                 .field
                   = submit_tag('Save', :class => 'button')
 
