@@ -9,41 +9,15 @@ class ReengagementOffer < ActiveRecord::Base
   has_one :primary_offer, :class_name => 'Offer', :as => :item, :conditions => 'id = item_id'
   has_many :offers, :as => :item
 
-  #accepts_nested_attributes_for :primary_offer
-
   validates_presence_of :partner, :app, :instructions, :reward_value
   validates_numericality_of :reward_value
-
-      # t.guid :app_id, :null => false
-      # t.guid :partner_id, :null => false
-      # t.guid :currency_id, :null => false
-      # t.guid :prerequisite_offer_id
-      # t.text :instructions
-      # t.integer :day_number, :null => false
 
   after_create :create_primary_offer
   after_update :update_offers
 
   delegate :get_offer_device_types, :store_id, :store_url, :large_download?, :supported_devices, :platform, :get_countries_blacklist, :countries_blacklist, :primary_category, :user_rating, :info_url, :to => :app
 
-  # def user_enabled=(enabled)
-  #   @user_enabled = enabled
-  #   primary_offer.user_enabled = enabled if primary_offer
-  # end
-
-  # def user_enabled?
-  #   @user_enabled ||= primary_offer ? primary_offer.user_enabled? : false
-  # end
-
-  # def reward_value
-  #   primary_offer.nil? ? 0 : primary_offer.reward_value
-  # end
-
-  # def reward_value=(rv)
-  #   primary_offer.nil? ? 0 : primary_offer.reward_value = rv
-  # end
-  # def reward_value=
-
+  named_scope :visible, :conditions => { :hidden => false }
   
 
   private

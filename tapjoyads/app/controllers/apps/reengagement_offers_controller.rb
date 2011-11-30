@@ -4,8 +4,6 @@ class Apps::ReengagementOffersController < WebsiteController
   before_filter :setup
   filter_access_to :all
 
-
-
   def index
     @reengagement_offers = @app.reengagement_offers
     if @reengagement_offers.empty?
@@ -19,8 +17,10 @@ class Apps::ReengagementOffersController < WebsiteController
 
   def create
     reengagement_offer_params = params[:reengagement_offer].merge(:partner => current_partner)
-    if reengagement_offer_params[:day_number].to_i > 1
-      reengagement_offer_params.merge!(:prerequisite_offer_id => ReengagementOffer.find_by_app_id_and_day_number_and_hidden(@app.id, reengagement_offer_params[:day_number].to_i - 1, false).id)
+    day_number = reengagement_offer_params[:day_number].to_i
+    if day_number > 1
+      prerequisite_offer_id = @app.reengagement_offers.visible.find_by_day_number(day_number - 1).id
+      reengagement_offer_params.merge!(:prerequisite_offer_id => prerequisite_offer_id)
     end
     @reengagement_offer = @app.reengagement_offers.build reengagement_offer_params
     if @reengagement_offer.save!
