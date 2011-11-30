@@ -1,6 +1,6 @@
 class Games::GamersController < GamesController
 
-  before_filter :set_profile, :only => [ :edit, :accept_tos, :password, :update_password, :prefs ]
+  before_filter :set_profile, :only => [ :edit, :accept_tos, :password, :update_password, :prefs, :friends ]
 
   def create
     @gamer = Gamer.new do |g|
@@ -49,7 +49,14 @@ class Games::GamersController < GamesController
       render(:json => { :success => false, :error => @gamer.errors }) and return
     end
   end
-private
+
+  def friends
+    @followings = get_friends_info(Friendship.following_ids(current_gamer.id))
+    @followers = get_friends_info(Friendship.follower_ids(current_gamer.id))
+  end
+
+  private
+
   def set_profile
     if current_gamer.present?
       @gamer = current_gamer
@@ -58,6 +65,16 @@ private
     else
       flash[:error] = "Please log in and try again. You must have cookies enabled."
       redirect_to games_root_path
+    end
+  end
+
+  def get_friends_info(ids)
+    Gamer.find_all_by_id(ids).map do |friend|
+      {
+        :id        => friend.id,
+        :name      => friend.get_gamer_name,
+        :image_url => friend.get_avatar_url(80)
+      }
     end
   end
 end

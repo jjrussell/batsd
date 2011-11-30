@@ -36,11 +36,17 @@
                 .label
                   Reset Password
           %a{ :href => prefs_games_gamer_path }
-            .slider.clearfix
+            .slider.bottom_line.clearfix
               .profile_arrow.right
               .field
                 .label
                   Preferences
+          %a{ :href => friends_games_gamer_path }
+            .slider.clearfix
+              .profile_arrow.right
+              .field
+                .label
+                  Friends
 
 - content_for :page_javascript do
   :plain

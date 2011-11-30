@@ -1,0 +1,46 @@
+#jqt
+  #home.current
+    = render :partial => 'games/homepage/nav_bar', :locals => { :active => 'back', :back_button_destination => edit_games_gamer_path }
+
+    .content_wrapper
+      = render(:partial => 'header')
+      #display_friendships.profile
+        .content
+          .content_box
+            .friend_tabs
+              .following_tab
+                .following_count= @followings.size
+                .following_text Following
+              .followers_tab
+                .followers_count= @followers.size
+                .followers_text Followers
+            #friends_display
+              .following_display
+                %ul
+                  - @followings.each_with_index do |following, i|
+                    = render(:partial => 'friend', :locals => { :friend => following, :current_index => i, :last_index => (@followings.size - 1)})
+              .followers_display
+                %ul
+                  - @followers.each_with_index do |follower, i|
+                    = render(:partial => 'friend', :locals => { :friend => follower, :current_index => i, :last_index => (@followers.size - 1)})
+
+- content_for :page_javascript do
+  :plain
+    $(function($) {
+      $('.following_tab').addClass('active');
+      $('.followers_display').addClass('hide');
+    });
+
+    $('.following_tab').click(function(){
+      $('.following_tab').addClass('active');
+      $('.followers_tab').removeClass('active');
+      $('.following_display').removeClass('hide');
+      $('.followers_display').addClass('hide');
+    });
+
+    $('.followers_tab').click(function(){
+      $('.following_tab').removeClass('active');
+      $('.followers_tab').addClass('active');
+      $('.following_display').addClass('hide');
+      $('.followers_display').removeClass('hide');
+    });
