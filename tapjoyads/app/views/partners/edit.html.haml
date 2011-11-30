@@ -37,21 +37,16 @@
     = f.text_field :billing_email
     = error_message_on(@partner, :billing_email) if @partner.errors.on :billing_email
   .field
-    = f.label :negotiated_rev_share, 'Negotiated Rev Share'
-    #help_negotiated_rev_share.help ?
-    = f.check_box :negotiated_rev_share
-    = error_message_on(@partner, :negotiated_rev_share) if @partner.errors.on :negotiated_rev_share
-  .field.negotiated_rev_share_only
     = f.label :accepted_negotiated_tos, 'Accepted Negotiated Rev Share ToS'
     #help_accepted_negotiated_tos.help ?
     = f.check_box :accepted_negotiated_tos
     = error_message_on(@partner, :accepted_negotiated_tos) if @partner.errors.on :accepted_negotiated_tos
-  .field.negotiated_rev_share_only
+  .field
     = f.label :negotiated_rev_share_ends_on, 'Negotiated Rev Share End Date'
     #help_negotiated_rev_share_ends_on.help ?
     = f.text_field :negotiated_rev_share_ends_on, :value => (@partner.negotiated_rev_share_ends_on ? @partner.negotiated_rev_share_ends_on.strftime('%m-%d-%Y') : '')
     = error_message_on(@partner, :negotiated_rev_share_ends_on) if @partner.errors.on :negotiated_rev_share_ends_on
-  .field.negotiated_rev_share_only
+  .field
     = f.label :rev_share
     #help_rev_share.help ?
     = f.text_field :rev_share
@@ -97,8 +92,6 @@
     Offers belonging to partners that are in this list will not be shown in this partner's offerwalls.
   #help_billing_email_content{:name => 'Billing email'}
     The email contact used for invoicing.
-  #help_negotiated_rev_share_content{:name => 'Negotiated Rev Share'}
-    A partner who has negotiated a special rev share. The user must have a valid expiration date for the negotiated Rev share.
   #help_accepted_negotiated_tos_content{:name => 'Accepted Negotiated ToS'}
     Checked if the partner has accepted the ToS for having a negotiated rev share.
   #help_negotiated_rev_share_ends_on_content{:name => 'Negotiated Rev Share End Date'}
@@ -155,18 +148,6 @@
         minLength: 2
       };
 
+      $('#partner_negotiated_rev_share_ends_on').datepicker();
       $('#partner_sales_rep').focus().autocomplete(options);
-    });
-
-    $(function($){
-      $('#partner_negotiated_rev_share_ends_on').datepicker({ dateFormat: 'mm-dd-yy' });
-      var negotiatedCheckChange = function() {
-        if ($('#partner_negotiated_rev_share').attr('checked')) {
-          $('.negotiated_rev_share_only').show();
-        } else {
-          $('.negotiated_rev_share_only').hide();
-        }
-      };
-      $('#partner_negotiated_rev_share').change(negotiatedCheckChange);
-      negotiatedCheckChange();
     });
