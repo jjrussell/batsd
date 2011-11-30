@@ -57,21 +57,15 @@ class Gamer < ActiveRecord::Base
   end
 
   def self.find_all_gamer_based_on_channel(channel, external)
-    gamer_profiles = []
     gamers = []
-    
+
     case channel
     when Invitation::FACEBOOK
-      gamer_profiles = GamerProfile.find_all_by_facebook_id(external)
+      gamers = GamerProfile.find_all_by_facebook_id(external, :include => [:gamer]).map(&:gamer)
     when Invitation::TWITTER
       gamers = Gamer.find_all_by_twitter_id(external)
     end
 
-    if gamer_profiles.any?
-      gamer_profiles.each do |profile|
-        gamers << Gamer.find_by_id(profile.gamer_id)
-      end
-    end
     gamers
   end
 
@@ -120,7 +114,7 @@ class Gamer < ActiveRecord::Base
       self.twitter_access_secret = authhash[:twitter_access_secret]
       save!
 
-      Invitation.reconcile_pending_invitations(Gamer.find_by_id(self.id), :external_info => twitter_id)
+      Invitation.reconcile_pending_invitations(Gamer.find_by_id(id), :external_info => twitter_id)
     end
   end
 

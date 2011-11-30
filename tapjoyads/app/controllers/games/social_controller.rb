@@ -1,6 +1,4 @@
 class Games::SocialController < GamesController
-  require "rubygems"
-  require "twitter"
   include ActionView::Helpers::TextHelper
 
   rescue_from Mogli::Client::ClientException, :with => :handle_mogli_exceptions
