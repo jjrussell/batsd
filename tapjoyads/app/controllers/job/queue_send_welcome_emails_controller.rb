@@ -24,8 +24,7 @@ class Job::QueueSendWelcomeEmailsController < Job::SqsReaderController
 
     editors_picks = offer_data.any? ? [] : EditorsPick.cached_active(message['using_android'] ? 'android' : 'ios')
 
-    confirm_url = "#{WEBSITE_URL}/confirm?token=#{CGI.escape(gamer.confirmation_token)}"
-    GamesMarketingMailer.deliver_welcome_email(gamer, confirm_url, gamer_device, offer_data, editors_picks)
+    GamesMarketingMailer.deliver_welcome_email(gamer, gamer_device, offer_data, editors_picks)
   end
 
 end

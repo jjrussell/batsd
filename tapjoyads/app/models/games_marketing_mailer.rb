@@ -31,7 +31,7 @@ class GamesMarketingMailer < ActionMailer::Base
     end
   end
 
-  def welcome_email(gamer, confirmation_link, gamer_device = nil, offer_data = {}, editors_picks = [])
+  def welcome_email(gamer, gamer_device = nil, offer_data = {}, editors_picks = [])
     from 'Tapjoy <noreply@tapjoy.com>'
     recipients gamer.email
     subject "Welcome to Tapjoy!"
@@ -39,8 +39,9 @@ class GamesMarketingMailer < ActionMailer::Base
     gamer_device ||= gamer.gamer_devices.first
     linked = gamer_device.present?
     android_device = gamer_device.device_type == 'android' rescue false
-    sendgrid_category "Welcome Email, #{linked ? "Linked for Device Type #{gamer_device.device_type}" : "Not Linked"}"
+    confirmation_link = url_for(:host => WEBSITE_URL.gsub(/^https?:\/\//, ''), :controller => 'confirm', :token => gamer.confirmation_token)
 
+    sendgrid_category "Welcome Email, #{linked ? "Linked for Device Type #{gamer_device.device_type}" : "Not Linked"}"
     body :confirmation_link => confirmation_link, :linked => linked, :android_device => android_device,
       :offer_data => offer_data, :editors_picks => editors_picks
   end
