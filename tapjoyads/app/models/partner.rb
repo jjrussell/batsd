@@ -66,6 +66,7 @@ class Partner < ActiveRecord::Base
   after_save :update_currencies, :update_offers
 
   cattr_reader :per_page
+  attr_reader :negotiated_rev_share
   attr_protected :exclusivity_level_type, :exclusivity_expires_on, :premier_discount
 
   @@per_page = 20
@@ -80,6 +81,10 @@ class Partner < ActiveRecord::Base
   named_scope :payout_info_changed, lambda { |start_date, end_date| { :joins => :payout_info,
     :conditions => [ "#{PayoutInfo.quoted_table_name}.updated_at >= ? and #{PayoutInfo.quoted_table_name}.updated_at < ? ", start_date, end_date ]
   } }
+
+  def negotiated_rev_share
+    !negotiated_rev_share_ends_on.nil? ? true : false
+  end
 
   def applied_offer_discounts
     offer_discounts.select { |discount| discount.active? && discount.amount == premier_discount }

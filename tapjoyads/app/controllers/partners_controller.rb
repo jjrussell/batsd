@@ -80,7 +80,7 @@ class PartnersController < WebsiteController
       params[:partner][:sales_rep] = sales_rep
     end
 
-    negotiated_expire_date = params[:partner][:negotiated_rev_share_end].strip
+    negotiated_expire_date = params[:partner][:negotiated_rev_share_ends_on].strip
     new_expiration = nil
 
     if params[:partner][:negotiated_rev_share] == '1'
@@ -95,11 +95,12 @@ class PartnersController < WebsiteController
       end
     end
 
-    @partner.negotiated_rev_share_end = new_expiration
+    @partner.negotiated_rev_share_ends_on = new_expiration
 
-    safe_attributes = [ :name, :account_managers, :account_manager_notes, :negotiated_rev_share, :accepted_negotiated_tos, :rev_share, :transfer_bonus, :disabled_partners, :direct_pay_share, :approved_publisher, :billing_email, :accepted_publisher_tos, :sales_rep, :max_deduction_percentage ]
+    safe_attributes = [ :name, :account_managers, :account_manager_notes, :accepted_negotiated_tos, :rev_share, :transfer_bonus, :disabled_partners, :direct_pay_share, :approved_publisher, :billing_email, :accepted_publisher_tos, :sales_rep, :max_deduction_percentage ]
     name_was = @partner.name
-    params[:partner].delete(:negotiated_rev_share_end)
+    params[:partner].delete(:negotiated_rev_share_ends_on)
+    params[:partner].delete(:negotiated_rev_share)
     if @partner.safe_update_attributes(params[:partner], safe_attributes)
       if name_was != @partner.name
         TapjoyMailer.deliver_partner_name_change_notification(@partner, name_was, current_user.email, partner_url(@partner))

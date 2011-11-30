@@ -47,10 +47,10 @@
     = f.check_box :accepted_negotiated_tos
     = error_message_on(@partner, :accepted_negotiated_tos) if @partner.errors.on :accepted_negotiated_tos
   .field.negotiated_rev_share_only
-    = f.label :negotiated_rev_share_end, 'Negotiated Rev Share End Date'
-    #help_negotiated_rev_share_end.help ?
-    = f.text_field :negotiated_rev_share_end, :value => (@partner.negotiated_rev_share_end ? @partner.negotiated_rev_share_end.strftime('%m-%d-%Y') : '')
-    = error_message_on(@partner, :negotiated_rev_share_end) if @partner.errors.on :negotiated_rev_share_end
+    = f.label :negotiated_rev_share_ends_on, 'Negotiated Rev Share End Date'
+    #help_negotiated_rev_share_ends_on.help ?
+    = f.text_field :negotiated_rev_share_ends_on, :value => (@partner.negotiated_rev_share_ends_on ? @partner.negotiated_rev_share_ends_on.strftime('%m-%d-%Y') : '')
+    = error_message_on(@partner, :negotiated_rev_share_ends_on) if @partner.errors.on :negotiated_rev_share_ends_on
   .field.negotiated_rev_share_only
     = f.label :rev_share
     #help_rev_share.help ?
@@ -101,7 +101,7 @@
     A partner who has negotiated a special rev share. The user must have a valid expiration date for the negotiated Rev share.
   #help_accepted_negotiated_tos_content{:name => 'Accepted Negotiated ToS'}
     Checked if the partner has accepted the ToS for having a negotiated rev share.
-  #help_negotiated_rev_share_end_content{:name => 'Negotiated Rev Share End Date'}
+  #help_negotiated_rev_share_ends_on_content{:name => 'Negotiated Rev Share End Date'}
     The date on which the negotiated rev share will end. Once the negotiated rev share ends, the partner will return to the default rev share.
   #help_rev_share_content{:name => 'Rev share'}
     The share of offer revenue that this publisher gets. A number between 0 an 1.
@@ -159,7 +159,7 @@
     });
 
     $(function($){
-      $('#partner_negotiated_rev_share_end').datepicker({ dateFormat: 'mm-dd-yy' });
+      $('#partner_negotiated_rev_share_ends_on').datepicker({ dateFormat: 'mm-dd-yy' });
       var negotiatedCheckChange = function() {
         if ($('#partner_negotiated_rev_share').attr('checked')) {
           $('.negotiated_rev_share_only').show();
