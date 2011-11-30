@@ -13,23 +13,9 @@ class Tools::SupportRequestsController < WebsiteController
       return
     end
 
-    first_row = true
-    column_for_support_request = 0
-    file_contents.each do |row|
+    file_contents.each do |support_request_id|
       begin
-        all_columns = row.split(',').map{ |element| element.strip }
-        next if all_columns.empty?
-        if first_row
-          first_row = false
-          column_for_support_request = all_columns.index{|column| column.downcase == 'support request'}
-          if column_for_support_request.nil?
-            column_for_support_request = 0
-          else
-            next
-          end
-        end
-
-        support_request_id = all_columns[column_for_support_request]
+        support_request_id.strip!
         raise 'No valid support request' if support_request_id.nil? or support_request_id.empty?
         support_request = SupportRequest.new(:key => support_request_id)
         raise "Invalid support_request_id: #{support_request_id}" if support_request.new_record?
@@ -40,7 +26,7 @@ class Tools::SupportRequestsController < WebsiteController
         click.resolve!
         @request_successfully_awarded += 1
       rescue Exception => e
-        @request_not_awarded.push([row, e])
+        @request_not_awarded.push([support_request_id, e])
         next
       end
     end
