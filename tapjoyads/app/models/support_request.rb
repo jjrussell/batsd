@@ -43,19 +43,8 @@ class SupportRequest < SimpledbResource
     clicks.sort_by { |c| c.clicked_at.to_f }.last
   end
 
-  def self.resolve(support_request_id)
-    begin
-      return 'No support request id provided' if support_request_id.nil? or support_request_id.empty?
-      support_request = SupportRequest.new(:key => support_request_id)
-      return "Invalid support_request_id: #{support_request_id}" if support_request.new_record?
-      return "Unable to find the click associated with the request" if support_request.click_id.nil?
-      click = Click.new(:key => support_request.click_id)
-      return "Invalid click id: #{support_request.click_id} for the given support request: #{support_request.id}" if click.new_record?
-
-      click.resolve!
-    rescue Exception => e
-      return "#{e}"
-    end
-    return nil
+  def click
+    click = Click.new(:key => click_id)
+    click.new_record? ? nil : click
   end
 end

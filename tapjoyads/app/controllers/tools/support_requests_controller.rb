@@ -15,12 +15,27 @@ class Tools::SupportRequestsController < WebsiteController
 
     file_contents.each do |support_request_id|
       support_request_id.strip!
-      error = SupportRequest.resolve(support_request_id)
-      if error.nil?
-        @request_successfully_awarded += 1
-      else
-        @request_not_awarded.push([support_request_id, error])
+      next if support_request_id.empty?
+
+      support_request = SupportRequest.new(:key => support_request_id)
+      if support_request.new_record?
+        @request_not_awarded.push([support_request_id, "Invalid support_request_id: #{support_request_id}"])
+        next
       end
+
+      click = support_request.click
+      if click.nil?
+        @request_not_awarded.push([support_request_id, "Unable to find a suitable click for: #{support_request_id}"])
+        next
+      end
+
+      begin
+        click.resolve!
+      rescue Exception => error
+        @request_not_awarded.push([support_request_id, error])
+        next
+      end
+      @request_successfully_awarded += 1
     end
     flash[:error] = 'Some errors were encountered while processing the rows.' if @request_not_awarded.size > 0
   end
