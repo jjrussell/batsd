@@ -44,7 +44,6 @@ class SupportRequest < SimpledbResource
   end
 
   def click
-    click = Click.new(:key => click_id)
-    click.new_record? ? nil : click
+    Click.find(click_id)
   end
 end
