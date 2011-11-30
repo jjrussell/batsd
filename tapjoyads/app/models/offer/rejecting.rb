@@ -13,6 +13,8 @@ module Offer::Rejecting
     [ 'cab56716-8e27-4a4c-8477-457e1d311209', '069eafb8-a9b8-4293-8d2a-e9d9ed659ac8' ] => [ 'cab56716-8e27-4a4c-8477-457e1d311209', '069eafb8-a9b8-4293-8d2a-e9d9ed659ac8' ],
     # Snoopy's Street Fair
     [ '99d4a403-38a8-41e3-b7a2-5778acb968ef', 'b22f3ef8-947f-4605-a5bc-a83609af5ab7' ] => [ '99d4a403-38a8-41e3-b7a2-5778acb968ef', 'b22f3ef8-947f-4605-a5bc-a83609af5ab7' ],
+    # Pocket Potions
+    [ '7158f47a-9cad-4956-9cef-8f0bb4cef0af', 'c71463b5-b5bd-488d-b435-f78155fb7f85' ] => [ '7158f47a-9cad-4956-9cef-8f0bb4cef0af', 'c71463b5-b5bd-488d-b435-f78155fb7f85' ],
   }
 
   def postcache_reject?(publisher_app, device, currency, device_type, geoip_data, app_version, direct_pay_providers, type, hide_rewarded_app_installs, library_version, os_version, screen_layout_size, video_offer_ids, source)
