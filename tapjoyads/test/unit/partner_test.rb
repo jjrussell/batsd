@@ -26,11 +26,11 @@ class PartnerTest < ActiveSupport::TestCase
   context "A Partner" do
     setup do
       @partner = Factory(:partner, :pending_earnings => 10000, :balance => 10000)
-      app = Factory(:app, :partner => @partner)
+      @app = Factory(:app, :partner => @partner)
       cutoff_date = @partner.payout_cutoff_date
-      Factory(:conversion, :publisher_app => app, :publisher_amount => 100, :created_at => (cutoff_date - 1))
-      Factory(:conversion, :publisher_app => app, :publisher_amount => 100, :created_at => cutoff_date)
-      Factory(:conversion, :publisher_app => app, :publisher_amount => 100, :created_at => (cutoff_date + 1))
+      Factory(:conversion, :publisher_app => @app, :publisher_amount => 100, :created_at => (cutoff_date - 1))
+      Factory(:conversion, :publisher_app => @app, :publisher_amount => 100, :created_at => cutoff_date)
+      Factory(:conversion, :publisher_app => @app, :publisher_amount => 100, :created_at => (cutoff_date + 1))
       @partner.reload
     end
 
@@ -200,6 +200,35 @@ class PartnerTest < ActiveSupport::TestCase
           assert @partner.needs_exclusivity_expired?
         end
       end
+    end
+
+    context "when assigning a reseller user" do
+      setup do
+        @partner.users << Factory(:user)
+        @reseller = Factory(:reseller)
+        @reseller_user = Factory(:user, :reseller => @reseller)
+        @currency = Factory(:currency, :partner => @partner)
+        @offer = Factory(:offer, :partner => @partner, :item => @app)
+      end
+
+      should "modify reseller of partner and partner's dependent records" do
+        @partner.users << @reseller_user
+        @partner.reload
+        @currency.reload
+        @offer.reload
+        assert_equal @reseller, @partner.reseller
+        assert_equal @reseller, @currency.reseller
+        assert_equal @reseller, @offer.reseller
+
+        @partner.remove_user(@reseller_user)
+        @partner.reload
+        @currency.reload
+        @offer.reload
+        assert_nil @partner.reseller
+        assert_nil @currency.reseller
+        assert_nil @offer.reseller
+      end
+
     end
 
   end

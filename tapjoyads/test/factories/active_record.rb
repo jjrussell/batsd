@@ -58,6 +58,31 @@ FactoryGirl.define do
     store_id 'whatevs'
   end
 
+  factory :offer do
+    association :partner
+    association :item
+    name { Factory.next(:name) }
+
+    item_type 'App'
+    rank_boost 1
+    url 'http://example.com'
+    price 0
+    payment 50
+    bid 50
+    conversion_rate 1
+    show_rate 1
+    pay_per_click false
+    user_enabled true
+    tapjoy_enabled true
+    allow_negative_balance false
+    self_promote_only false
+    featured false
+    multi_complete false
+    rewarded true
+    cookie_tracking true
+    device_types '["android"]'
+  end
+
   factory :enable_offer_request do
     offer        { Factory(:app).primary_offer }
     requested_by { Factory(:user) }
