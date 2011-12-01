@@ -203,13 +203,12 @@ private
   end
 
   def create_click(type)
-    if params[:offer_id] == TAPJOY_GAMES_REGISTRATION_OFFER_ID
-      click_key = "#{params[:udid]}.#{TAPJOY_GAMES_REGISTRATION_OFFER_ID}"
-    elsif type == 'generic'
-      click_key = UUIDTools::UUID.random_create.to_s
-    else
+    if type != 'generic' || params[:advertiser_app_id] == TAPJOY_GAMES_REGISTRATION_OFFER_ID
       click_key = "#{params[:udid]}.#{params[:advertiser_app_id]}"
+    else
+      click_key = UUIDTools::UUID.random_create.to_s
     end
+
     @click = Click.new(:key => click_key)
     @click.delete('installed_at') if @click.installed_at?
     @click.clicked_at        = @now
