@@ -11,7 +11,7 @@ class Offer < ActiveRecord::Base
   ANDROID_DEVICES = %w( android )
   WINDOWS_DEVICES = %w( windows )
   ALL_DEVICES = APPLE_DEVICES + ANDROID_DEVICES + WINDOWS_DEVICES
-  ALL_OFFER_TYPES = %w( App EmailOffer GenericOffer OfferpalOffer RatingOffer ActionOffer VideoOffer)
+  ALL_OFFER_TYPES = %w( App EmailOffer GenericOffer OfferpalOffer RatingOffer ActionOffer VideoOffer SurveyOffer )
 
   CLASSIC_OFFER_TYPE               = '0'
   DEFAULT_OFFER_TYPE               = '1'
@@ -675,7 +675,7 @@ private
     # Invalidate cloudfront
     begin
       acf = RightAws::AcfInterface.new
-      acf.invalidate('E1MG6JDV6GH0F2', banner_creative_path(size, format).to_a, "#{id}.#{Time.now.to_i}")
+      acf.invalidate('E1MG6JDV6GH0F2', "/#{banner_creative_path(size, format)}".to_a, "#{id}.#{Time.now.to_i}")
     rescue Exception => e
       Notifier.alert_new_relic(FailedToInvalidateCloudfront, e.message)
     end

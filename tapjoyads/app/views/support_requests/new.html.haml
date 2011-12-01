@@ -38,29 +38,14 @@
 - content_for :page_javascript do
   :plain
     $(function($){
-      function initializeOfferChangeEvents() {
-        $('#offer_id').change(function() {
-          if ($(this).val() == "") {
-            $('#offer_name_field').show();
-          }
-          else {
-            $('#offer_name_field').hide();
-            $('#offer_name').val('');
-          }
-        });
-        $('#offer_id').change();
-      }
-
       $('#show_offers').click(function() {
         $(this).attr("disabled", "disabled");
-
         $.ajax({
           type: "GET",
           url: "#{new_support_request_url(missing_currency_support_params('js'))}",
           success: function(html) {
             $('#support_request').prepend(html);
             $('#show_offers').hide();
-            initializeOfferChangeEvents();
           },
           error: function() {
             $('#show_offers').removeAttr("disabled");

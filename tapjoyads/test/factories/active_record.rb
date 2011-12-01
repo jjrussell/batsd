@@ -109,6 +109,8 @@ FactoryGirl.define do
     publisher_amount 70
     advertiser_amount -100
     tapjoy_amount 30
+    publisher_partner { publisher_app.partner }
+    advertiser_partner { advertiser_offer.partner }
   end
 
   factory :currency do

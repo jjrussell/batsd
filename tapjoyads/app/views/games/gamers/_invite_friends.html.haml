@@ -14,7 +14,7 @@
       - else
         .social_btn.tw{ :onclick => "location.href='#{games_social_invite_twitter_friends_path}';" }
     .social_btn_wrapper
-      %a{ :href => games_social_invite_email_friends_path }
+      - link_to games_social_invite_email_friends_path do
         .social_btn.email
 
 - content_for :page_javascript do
