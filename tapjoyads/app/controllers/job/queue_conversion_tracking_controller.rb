@@ -95,7 +95,11 @@ class Job::QueueConversionTrackingController < Job::SqsReaderController
     Sqs.send_message(QueueNames::SEND_CURRENCY, reward_message) if offer.rewarded? && currency.callback_url != Currency::NO_CALLBACK_URL
     Sqs.send_message(QueueNames::CREATE_CONVERSIONS, reward_message)
 
-    reward.update_realtime_stats rescue nil # we don't really care if this produces an error
+    begin
+      reward.update_realtime_stats
+    rescue Exception => e
+      Notifier.alert_new_relic(e.class, e.message, request, params)
+    end
 
     click.put('installed_at', installed_at_epoch)
     click.serial_save
