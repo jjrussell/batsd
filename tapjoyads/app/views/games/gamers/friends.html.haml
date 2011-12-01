@@ -16,13 +16,9 @@
                 .followers_text Followers
             #friends_display
               .following_display
-                %ul
-                  - @followings.each_with_index do |following, i|
-                    = render(:partial => 'friend', :locals => { :friend => following, :current_index => i, :last_index => (@followings.size - 1)})
+                = render(:partial => 'friend', :locals => { :friends => @followings })
               .followers_display
-                %ul
-                  - @followers.each_with_index do |follower, i|
-                    = render(:partial => 'friend', :locals => { :friend => follower, :current_index => i, :last_index => (@followers.size - 1)})
+                = render(:partial => 'friend', :locals => { :friends => @followers })
 
 - content_for :page_javascript do
   :plain
