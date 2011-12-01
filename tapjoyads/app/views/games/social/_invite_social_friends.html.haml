@@ -1,0 +1,38 @@
+- content_for :page_head, stylesheet_link_tag('games/facebook')
+
+%h1.titlebar= "Please select #{channel.capitalize} friends to invite"
+#friend_title Friends (#{friends.size})
+#friend_list_header
+  %p.friend_filter_wrapper
+    %span.clear_search_button
+    = text_field_tag 'friend_filter', nil, :placeholder => 'Start Typing a Name'
+#friend_list_wrapper
+  - form_tag send_path, :id => 'invite_friends' do
+    .navigation.hidden
+      = link_to("PREVIOUS #{@page_size}", invite_path, :id => 'prev')
+    %ul.friend_list
+    .navigation
+      = link_to("NEXT #{@page_size}", invite_path, :id => 'next', :class => 'hidden')
+      = link_to("TOP &#8679;", invite_path, :id => 'top')
+    .actions
+      %span#back_button Back
+      %span#invite_button Invite
+  %br
+
+#social_dialog.dialog_wrapper.hide
+  .close_dialog
+    .close_button
+  .dialog
+    #social_dialog_content
+
+- content_for :page_javascript do
+  :plain
+    $(function($) {
+      var options = {
+        channel:   #{abbreviation.to_json},
+        pageSize:  #{@page_size},
+        socialFriends: #{friends.to_json},
+        inviteUrl: #{edit_games_gamer_path.to_json},
+      };
+      TJG.social.setup(options);
+    });
