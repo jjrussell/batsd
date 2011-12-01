@@ -1,10 +1,5 @@
 %ul
   - friends.each_with_index do |friend, i|
-    - if i == (friends.size - 1)
-      %li.tj_friend{:id => friend[:id]}
-        = image_tag friend[:image_url], :title => "#{friend[:name]}"
-        = friend[:name]
-    - else
-      %li.tj_friend.bottom_line{:id => friend[:id]}
-        = image_tag friend[:image_url], :title => "#{friend[:name]}"
-        = friend[:name]
+    %li.tj_friend{:id => friend[:id]}
+      = image_tag friend[:image_url], :title => "#{friend[:name]}"
+      = friend[:name]

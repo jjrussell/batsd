@@ -1960,10 +1960,9 @@ body {
   padding: 20px;
   font-size: 16px;
   font-weight: bold;
-}
-.tj_friend.bottom_line {
   border-bottom: 1px dotted #DDD;
 }
+li.tj_friend:last-child { border: none; }
 .tj_friend img {
   vertical-align: top;
   line-height: 100px;
