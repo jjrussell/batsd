@@ -85,14 +85,14 @@ class DisplayAdController < ApplicationController
 
     if offer.present?
       @click_url = offer.click_url(
-      :publisher_app     => publisher_app,
-      :publisher_user_id => params[:publisher_user_id],
-      :udid              => params[:udid],
-      :currency_id       => currency.id,
-      :source            => 'display_ad',
-      :viewed_at         => now,
-      :displayer_app_id  => params[:app_id],
-      :country_code      => geoip_data[:country]
+        :publisher_app     => publisher_app,
+        :publisher_user_id => params[:publisher_user_id],
+        :udid              => params[:udid],
+        :currency_id       => currency.id,
+        :source            => 'display_ad',
+        :viewed_at         => now,
+        :displayer_app_id  => params[:app_id],
+        :country_code      => geoip_data[:country]
       )
       width, height = parse_size(params[:size])
 
