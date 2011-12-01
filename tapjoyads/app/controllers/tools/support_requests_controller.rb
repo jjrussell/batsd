@@ -3,6 +3,8 @@ class Tools::SupportRequestsController < WebsiteController
   current_tab :tools
   filter_access_to :all
 
+  after_filter :save_activity_logs, :only => [ :mass_resolve ]
+
   def mass_resolve
     @request_not_awarded = []
     @request_successfully_awarded = 0
