@@ -62,9 +62,9 @@ class Click < SimpledbShardedResource
 
     # We only resolve clicks in the last 48 hours.
     if clicked_at < Time.zone.now - 47.hours
-      clicked_at = Time.zone.now - 1.minute
+      self.clicked_at = Time.zone.now - 1.minute
     end
-    manually_resolved_at = Time.zone.now
+    self.manually_resolved_at = Time.zone.now
 
     if Rails.env.production?
       url = "#{API_URL}/"
