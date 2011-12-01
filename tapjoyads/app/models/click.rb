@@ -56,7 +56,7 @@ class Click < SimpledbShardedResource
     !(new_record? || installed_at? || clicked_at < (Time.zone.now - 2.days))
   end
 
-  def resolve
+  def resolve!
     raise 'Unknown click id.' if new_record?
     raise "The click is already resolved" if manually_resolved_at?
 
@@ -75,10 +75,6 @@ class Click < SimpledbShardedResource
       end
       Downloader.get_with_retry url
     end
-  end
-
-  def resolve!
-    resolve
     save!
   end
 end
