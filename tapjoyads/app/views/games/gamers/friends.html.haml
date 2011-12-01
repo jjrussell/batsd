@@ -9,16 +9,19 @@
           .content_box
             .friend_tabs
               .following_tab
-                .following_count= @followings.size
+                .following_count= @friends_lists[:following].size
                 .following_text Following
               .followers_tab
-                .followers_count= @followers.size
+                .followers_count= @friends_lists[:followers].size
                 .followers_text Followers
             #friends_display
-              .following_display
-                = render(:partial => 'friend', :locals => { :friends => @followings })
-              .followers_display
-                = render(:partial => 'friend', :locals => { :friends => @followers })
+              - @friends_lists.each do |key, friends|
+                %div{:class => "#{key}_display"}
+                  %ul
+                    - friends.each do |friend|
+                      %li.tj_friend{:id => friend[:id]}
+                        = image_tag friend[:image_url], :title => "#{friend[:name]}"
+                        = friend[:name]
 
 - content_for :page_javascript do
   :plain

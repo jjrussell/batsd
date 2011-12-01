@@ -58,8 +58,10 @@ class Games::GamersController < GamesController
   end
 
   def friends
-    @followings = get_friends_info(Friendship.following_ids(current_gamer.id))
-    @followers = get_friends_info(Friendship.follower_ids(current_gamer.id))
+    @friends_lists = {
+      :following => get_friends_info(Friendship.following_ids(current_gamer.id)),
+      :followers => get_friends_info(Friendship.follower_ids(current_gamer.id))
+    }
   end
 
   private

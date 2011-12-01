@@ -1,5 +1,0 @@
-%ul
-  - friends.each_with_index do |friend, i|
-    %li.tj_friend{:id => friend[:id]}
-      = image_tag friend[:image_url], :title => "#{friend[:name]}"
-      = friend[:name]
