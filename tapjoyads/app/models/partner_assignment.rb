@@ -7,13 +7,19 @@ class PartnerAssignment < ActiveRecord::Base
   validates_presence_of :user, :partner
   validates_uniqueness_of :user_id, :scope => [ :partner_id ]
 
-  after_create :set_reseller
+  before_create :set_reseller
 
   private
 
   def set_reseller
-    partner.reseller_id = user.reseller_id
-    partner.save! if partner.changed?
+    if user.reseller_id?
+      if partner.reseller_id? && partner.reseller_id != user.reseller_id
+        return false
+      else
+        partner.reseller_id = user.reseller_id
+        partner.save! if partner.changed?
+      end
+    end
     true
   end
 
