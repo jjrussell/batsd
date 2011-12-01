@@ -33,6 +33,8 @@ class Gamer < ActiveRecord::Base
     c.login_field = :email
     c.validate_login_field = false
     c.require_password_confirmation = true
+    c.merge_validates_uniqueness_of_login_field_options(:case_sensitive => true)
+    c.merge_validates_uniqueness_of_email_field_options(:case_sensitive => true)
   end
 
   def confirm!
