@@ -30,6 +30,7 @@ class Tools::SupportRequestsController < WebsiteController
       end
 
       begin
+        log_activity(click)
         click.resolve!
       rescue Exception => error
         @request_not_awarded.push([support_request_id, error])
