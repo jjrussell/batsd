@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20111116005224) do
+ActiveRecord::Schema.define(:version => 20111129045021) do
 
   create_table "action_offers", :id => false, :force => true do |t|
     t.string   "id",                    :limit => 36,                    :null => false
@@ -119,23 +119,30 @@ ActiveRecord::Schema.define(:version => 20111116005224) do
   add_index "apps", ["partner_id"], :name => "index_apps_on_partner_id"
 
   create_table "conversions", :id => false, :force => true do |t|
-    t.string   "id",                  :limit => 36, :null => false
-    t.string   "reward_id",           :limit => 36
-    t.string   "advertiser_offer_id", :limit => 36
-    t.string   "publisher_app_id",    :limit => 36, :null => false
-    t.integer  "advertiser_amount",                 :null => false
-    t.integer  "publisher_amount",                  :null => false
-    t.integer  "tapjoy_amount",                     :null => false
-    t.integer  "reward_type",                       :null => false
+    t.string   "id",                     :limit => 36, :null => false
+    t.string   "reward_id",              :limit => 36
+    t.string   "advertiser_offer_id",    :limit => 36
+    t.string   "publisher_app_id",       :limit => 36, :null => false
+    t.integer  "advertiser_amount",                    :null => false
+    t.integer  "publisher_amount",                     :null => false
+    t.integer  "tapjoy_amount",                        :null => false
+    t.integer  "reward_type",                          :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "country",             :limit => 2
+    t.string   "country",                :limit => 2
+    t.string   "publisher_partner_id",   :limit => 36, :null => false
+    t.string   "advertiser_partner_id",  :limit => 36, :null => false
+    t.string   "publisher_reseller_id",  :limit => 36
+    t.string   "advertiser_reseller_id", :limit => 36
+    t.float    "spend_share"
   end
 
   add_index "conversions", ["advertiser_offer_id", "created_at", "reward_type"], :name => "index_on_advertiser_offer_id_created_at_and_reward_type"
+  add_index "conversions", ["advertiser_partner_id", "created_at"], :name => "index_conversions_on_advertiser_partner_id_and_created_at"
   add_index "conversions", ["created_at"], :name => "index_conversions_on_created_at"
   add_index "conversions", ["id", "created_at"], :name => "index_conversions_on_id_and_created_at", :unique => true
   add_index "conversions", ["publisher_app_id", "created_at", "reward_type"], :name => "index_on_publisher_app_id_created_at_and_reward_type"
+  add_index "conversions", ["publisher_partner_id", "created_at"], :name => "index_conversions_on_publisher_partner_id_and_created_at"
 
   create_table "currencies", :id => false, :force => true do |t|
     t.string   "id",                                         :limit => 36,                                                  :null => false

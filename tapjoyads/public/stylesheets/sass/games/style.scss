@@ -794,6 +794,8 @@ body.old {
       @include inset-shadow;
     }
 
+    input#delete_account,
+    input#cancel_delete,
     .profile .button {
       border: 1px solid #B0B0B0;
       border-color: #B0131D;
@@ -807,6 +809,17 @@ body.old {
       @include inset-button(16px, 8px 10px);
       @include inset-shadow;
       @include gradient(#CF1623, #EA1927);
+    }
+    input#delete_account {
+      width: 120px;
+    }
+    input#cancel_delete {
+      width: 120px;
+      border: 1px solid #B0B0B0;
+      border-color: #BBB;
+      color: #888;
+      text-shadow: 0 1px 1px #FFF;
+      @include gradient(#EEE, #CCC);
     }
 
     #support_request input[type=submit] {

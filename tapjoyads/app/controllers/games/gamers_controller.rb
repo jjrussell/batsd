@@ -1,6 +1,6 @@
 class Games::GamersController < GamesController
 
-  before_filter :set_profile, :only => [ :edit, :accept_tos, :password, :update_password, :update_social, :prefs, :social ]
+  before_filter :set_profile, :only => [ :edit, :accept_tos, :password, :update_password, :update_social, :prefs, :social, :confirm_delete ]
   before_filter :offline_facebook_authenticate, :only => :connect_facebook_account
 
   def create
@@ -70,6 +70,13 @@ class Games::GamersController < GamesController
     end
   end
 
+  def destroy
+    current_gamer.deactivate!
+    GamesMailer.deliver_delete_gamer(current_gamer)
+    flash[:notice] = 'Your account has been deactivated and scheduled for deletion!'
+    redirect_to games_logout_path
+  end
+
   def accept_tos
     @gamer.accepted_tos_version = TAPJOY_GAMES_CURRENT_TOS_VERSION
     if @gamer.save
@@ -79,7 +86,7 @@ class Games::GamersController < GamesController
     end
   end
 
-private
+  private
 
   def set_profile
     if current_gamer.present?

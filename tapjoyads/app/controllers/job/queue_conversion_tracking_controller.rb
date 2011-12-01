@@ -61,24 +61,29 @@ class Job::QueueConversionTrackingController < Job::SqsReaderController
 
     reward = Reward.new(:key => click.reward_key)
     reward.put('created', installed_at_epoch)
-    reward.type              = click.type
-    reward.publisher_app_id  = click.publisher_app_id
-    reward.advertiser_app_id = click.advertiser_app_id
-    reward.displayer_app_id  = click.displayer_app_id
-    reward.offer_id          = click.offer_id
-    reward.currency_id       = click.currency_id
-    reward.publisher_user_id = click.publisher_user_id
-    reward.advertiser_amount = click.advertiser_amount
-    reward.publisher_amount  = click.publisher_amount
-    reward.displayer_amount  = click.displayer_amount
-    reward.currency_reward   = click.currency_reward
-    reward.tapjoy_amount     = click.tapjoy_amount
-    reward.source            = click.source
-    reward.udid              = click.udid
-    reward.country           = click.country
-    reward.reward_key_2      = click.reward_key_2
-    reward.exp               = click.exp
-    reward.viewed_at         = click.viewed_at
+    reward.type                   = click.type
+    reward.publisher_app_id       = click.publisher_app_id
+    reward.advertiser_app_id      = click.advertiser_app_id
+    reward.displayer_app_id       = click.displayer_app_id
+    reward.offer_id               = click.offer_id
+    reward.currency_id            = click.currency_id
+    reward.publisher_user_id      = click.publisher_user_id
+    reward.advertiser_amount      = click.advertiser_amount
+    reward.publisher_amount       = click.publisher_amount
+    reward.displayer_amount       = click.displayer_amount
+    reward.currency_reward        = click.currency_reward
+    reward.tapjoy_amount          = click.tapjoy_amount
+    reward.source                 = click.source
+    reward.udid                   = click.udid
+    reward.country                = click.country
+    reward.reward_key_2           = click.reward_key_2
+    reward.exp                    = click.exp
+    reward.viewed_at              = click.viewed_at
+    reward.publisher_partner_id   = click.publisher_partner_id || currency.partner_id
+    reward.advertiser_partner_id  = click.advertiser_partner_id || offer.partner_id
+    reward.publisher_reseller_id  = click.publisher_reseller_id || currency.reseller_id
+    reward.advertiser_reseller_id = click.advertiser_reseller_id || offer.reseller_id
+    reward.spend_share            = click.spend_share || currency.get_spend_share(offer)
 
     begin
       reward.serial_save(:catch_exceptions => false, :expected_attr => { 'type' => nil })
@@ -90,7 +95,11 @@ class Job::QueueConversionTrackingController < Job::SqsReaderController
     Sqs.send_message(QueueNames::SEND_CURRENCY, reward_message) if offer.rewarded? && currency.callback_url != Currency::NO_CALLBACK_URL
     Sqs.send_message(QueueNames::CREATE_CONVERSIONS, reward_message)
 
-    reward.update_realtime_stats rescue nil # we don't really care if this produces an error
+    begin
+      reward.update_realtime_stats
+    rescue Exception => e
+      Notifier.alert_new_relic(e.class, e.message, request, params)
+    end
 
     click.put('installed_at', installed_at_epoch)
     click.serial_save
