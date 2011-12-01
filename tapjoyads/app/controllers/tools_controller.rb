@@ -296,10 +296,6 @@ class ToolsController < WebsiteController
     log_activity(click)
     begin
       click.resolve!
-      if click.clicked_at < Time.zone.now - 47.hours
-        click.clicked_at = Time.zone.now - 1.minute
-        flash[:error] = "Because the click was from 48+ hours ago this might fail. If it doesn't go through, try again in a few minutes."
-      end
     rescue Exception => e
       flash[:error] = "#{e}"
     end
