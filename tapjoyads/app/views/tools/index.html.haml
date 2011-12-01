@@ -19,6 +19,8 @@
     %li= link_to 'Monthly Data', monthly_data_tools_path
   - if permitted_to? :new_transfer, :tools
     %li= link_to 'Transfer Funds', new_transfer_tools_path
+  - if permitted_to? :index, :tools_network_costs
+    %li= link_to 'Network Costs', tools_network_costs_path
   - if permitted_to? :publishers_without_payout_info, :tools
     %li= link_to 'Pubs Without W9', publishers_without_payout_info_tools_path
   - if permitted_to? :publisher_payout_info_changes, :tools
@@ -94,7 +96,7 @@
   %h3 Customer Support
 %ul
   - if permitted_to? :device_info, :tools
-    %li= link_to 'Device Info & Unresolved clicks', device_info_tools_path
+    %li= link_to 'Device Info &amp; Unresolved clicks', device_info_tools_path
   - if permitted_to? :reset_device, :tools
     %li= link_to 'Reset Device', reset_device_tools_path
   - if permitted_to? :index, :tools_admin_devices

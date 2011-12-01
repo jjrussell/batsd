@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20111027000013) do
+ActiveRecord::Schema.define(:version => 20111130154545) do
 
   create_table "action_offers", :id => false, :force => true do |t|
     t.string   "id",                    :limit => 36,                    :null => false
@@ -111,6 +111,7 @@ ActiveRecord::Schema.define(:version => 20111027000013) do
     t.float    "user_rating"
     t.string   "categories"
     t.text     "countries_blacklist"
+    t.integer  "papaya_user_count"
   end
 
   add_index "apps", ["id"], :name => "index_apps_on_id", :unique => true
@@ -118,23 +119,30 @@ ActiveRecord::Schema.define(:version => 20111027000013) do
   add_index "apps", ["partner_id"], :name => "index_apps_on_partner_id"
 
   create_table "conversions", :id => false, :force => true do |t|
-    t.string   "id",                  :limit => 36, :null => false
-    t.string   "reward_id",           :limit => 36
-    t.string   "advertiser_offer_id", :limit => 36
-    t.string   "publisher_app_id",    :limit => 36, :null => false
-    t.integer  "advertiser_amount",                 :null => false
-    t.integer  "publisher_amount",                  :null => false
-    t.integer  "tapjoy_amount",                     :null => false
-    t.integer  "reward_type",                       :null => false
+    t.string   "id",                     :limit => 36, :null => false
+    t.string   "reward_id",              :limit => 36
+    t.string   "advertiser_offer_id",    :limit => 36
+    t.string   "publisher_app_id",       :limit => 36, :null => false
+    t.integer  "advertiser_amount",                    :null => false
+    t.integer  "publisher_amount",                     :null => false
+    t.integer  "tapjoy_amount",                        :null => false
+    t.integer  "reward_type",                          :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "country",             :limit => 2
+    t.string   "country",                :limit => 2
+    t.string   "publisher_partner_id",   :limit => 36, :null => false
+    t.string   "advertiser_partner_id",  :limit => 36, :null => false
+    t.string   "publisher_reseller_id",  :limit => 36
+    t.string   "advertiser_reseller_id", :limit => 36
+    t.float    "spend_share"
   end
 
   add_index "conversions", ["advertiser_offer_id", "created_at", "reward_type"], :name => "index_on_advertiser_offer_id_created_at_and_reward_type"
+  add_index "conversions", ["advertiser_partner_id", "created_at"], :name => "index_conversions_on_advertiser_partner_id_and_created_at"
   add_index "conversions", ["created_at"], :name => "index_conversions_on_created_at"
   add_index "conversions", ["id", "created_at"], :name => "index_conversions_on_id_and_created_at", :unique => true
   add_index "conversions", ["publisher_app_id", "created_at", "reward_type"], :name => "index_on_publisher_app_id_created_at_and_reward_type"
+  add_index "conversions", ["publisher_partner_id", "created_at"], :name => "index_conversions_on_publisher_partner_id_and_created_at"
 
   create_table "currencies", :id => false, :force => true do |t|
     t.string   "id",                                         :limit => 36,                                                  :null => false
@@ -317,8 +325,8 @@ ActiveRecord::Schema.define(:version => 20111027000013) do
   add_index "gamer_profiles", ["referred_by"], :name => "index_gamer_profiles_on_referred_by"
 
   create_table "gamers", :id => false, :force => true do |t|
-    t.string   "id",                   :limit => 36,                    :null => false
-    t.string   "email",                                                 :null => false
+    t.string   "id",                     :limit => 36,                    :null => false
+    t.string   "email",                                                   :null => false
     t.string   "crypted_password"
     t.string   "password_salt"
     t.string   "persistence_token"
@@ -330,18 +338,35 @@ ActiveRecord::Schema.define(:version => 20111027000013) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "udid"
-    t.string   "confirmation_token",                 :default => "",    :null => false
-    t.boolean  "blocked",                            :default => false
-    t.integer  "accepted_tos_version",               :default => 0
+    t.string   "confirmation_token",                   :default => "",    :null => false
+    t.boolean  "blocked",                              :default => false
+    t.integer  "accepted_tos_version",                 :default => 0
     t.datetime "deactivated_at"
+    t.string   "gender"
+    t.date     "birthdate"
+    t.string   "city"
+    t.string   "country"
+    t.string   "favorite_game"
+    t.string   "name"
+    t.string   "nickname"
+    t.string   "postal_code"
+    t.string   "favorite_category"
+    t.string   "facebook_id"
+    t.string   "fb_access_token"
+    t.string   "referred_by",            :limit => 36
+    t.integer  "referral_count",                       :default => 0
+    t.boolean  "use_gravatar",                         :default => false
+    t.boolean  "allow_marketing_emails",               :default => true
   end
 
   add_index "gamers", ["confirmation_token"], :name => "index_gamers_on_confirmation_token", :unique => true
   add_index "gamers", ["deactivated_at"], :name => "index_gamers_on_deactivated_at"
   add_index "gamers", ["email"], :name => "index_gamers_on_email", :unique => true
+  add_index "gamers", ["facebook_id"], :name => "index_gamers_on_facebook_id"
   add_index "gamers", ["id"], :name => "index_gamers_on_id", :unique => true
   add_index "gamers", ["perishable_token"], :name => "index_gamers_on_perishable_token"
   add_index "gamers", ["persistence_token"], :name => "index_gamers_on_persistence_token"
+  add_index "gamers", ["referred_by"], :name => "index_gamers_on_referred_by"
 
   create_table "generic_offers", :id => false, :force => true do |t|
     t.string   "id",               :limit => 36,                    :null => false
@@ -431,6 +456,17 @@ ActiveRecord::Schema.define(:version => 20111027000013) do
   add_index "monthly_accountings", ["partner_id", "month", "year"], :name => "index_monthly_accountings_on_partner_id_and_month_and_year", :unique => true
   add_index "monthly_accountings", ["partner_id"], :name => "index_monthly_accountings_on_partner_id"
 
+  create_table "network_costs", :id => false, :force => true do |t|
+    t.string   "id",         :limit => 36,                :null => false
+    t.integer  "amount",                   :default => 0, :null => false
+    t.text     "notes"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "network_costs", ["created_at"], :name => "index_network_costs_on_created_at"
+  add_index "network_costs", ["id"], :name => "index_network_costs_on_id", :unique => true
+
   create_table "news_coverages", :id => false, :force => true do |t|
     t.string   "id",           :limit => 36, :null => false
     t.datetime "published_at",               :null => false
@@ -502,8 +538,6 @@ ActiveRecord::Schema.define(:version => 20111027000013) do
     t.integer  "daily_budget",                                                                  :default => 0,     :null => false
     t.integer  "overall_budget",                                                                :default => 0,     :null => false
     t.text     "countries",                                                                                        :null => false
-    t.text     "cities",                                                                                           :null => false
-    t.text     "postal_codes",                                                                                     :null => false
     t.text     "device_types",                                                                                     :null => false
     t.boolean  "pay_per_click",                                                                 :default => false
     t.boolean  "allow_negative_balance",                                                        :default => false
@@ -551,8 +585,8 @@ ActiveRecord::Schema.define(:version => 20111027000013) do
     t.integer  "interval",                                                                      :default => 0,     :null => false
     t.boolean  "url_overridden",                                                                :default => false, :null => false
     t.text     "banner_creatives"
-    t.text     "dma_codes"
-    t.text     "regions"
+    t.text     "dma_codes",                                                                                        :null => false
+    t.text     "regions",                                                                                          :null => false
   end
 
   add_index "offers", ["id"], :name => "index_offers_on_id", :unique => true
@@ -595,41 +629,44 @@ ActiveRecord::Schema.define(:version => 20111027000013) do
   add_index "partner_assignments", ["user_id", "partner_id"], :name => "index_partner_assignments_on_user_id_and_partner_id", :unique => true
 
   create_table "partners", :id => false, :force => true do |t|
-    t.string   "id",                         :limit => 36,                                                      :null => false
+    t.string   "id",                           :limit => 36,                                                      :null => false
     t.string   "contact_name"
     t.string   "contact_phone"
-    t.integer  "balance",                                                                :default => 0,         :null => false
-    t.integer  "pending_earnings",                                                       :default => 0,         :null => false
+    t.integer  "balance",                                                                  :default => 0,         :null => false
+    t.integer  "pending_earnings",                                                         :default => 0,         :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "payout_frequency",                                                       :default => "monthly", :null => false
-    t.integer  "next_payout_amount",                                                     :default => 0,         :null => false
+    t.string   "payout_frequency",                                                         :default => "monthly", :null => false
+    t.integer  "next_payout_amount",                                                       :default => 0,         :null => false
     t.string   "name"
     t.integer  "calculated_advertiser_tier"
     t.integer  "calculated_publisher_tier"
     t.integer  "custom_advertiser_tier"
     t.integer  "custom_publisher_tier"
     t.text     "account_manager_notes"
-    t.text     "disabled_partners",                                                                             :null => false
-    t.integer  "premier_discount",                                                       :default => 0,         :null => false
+    t.text     "disabled_partners",                                                                               :null => false
+    t.integer  "premier_discount",                                                         :default => 0,         :null => false
     t.string   "exclusivity_level_type"
     t.date     "exclusivity_expires_on"
-    t.decimal  "transfer_bonus",                           :precision => 8, :scale => 6, :default => 0.0,       :null => false
-    t.decimal  "rev_share",                                :precision => 8, :scale => 6, :default => 0.5,       :null => false
-    t.decimal  "direct_pay_share",                         :precision => 8, :scale => 6, :default => 1.0,       :null => false
+    t.decimal  "transfer_bonus",                             :precision => 8, :scale => 6, :default => 0.0,       :null => false
+    t.decimal  "rev_share",                                  :precision => 8, :scale => 6, :default => 0.5,       :null => false
+    t.decimal  "direct_pay_share",                           :precision => 8, :scale => 6, :default => 1.0,       :null => false
     t.string   "apsalar_username"
     t.string   "apsalar_api_secret"
     t.text     "apsalar_url"
-    t.text     "offer_whitelist",                                                                               :null => false
-    t.boolean  "use_whitelist",                                                          :default => false,     :null => false
-    t.boolean  "approved_publisher",                                                     :default => false,     :null => false
-    t.boolean  "apsalar_sharing_adv",                                                    :default => false,     :null => false
-    t.boolean  "apsalar_sharing_pub",                                                    :default => false,     :null => false
-    t.string   "reseller_id",                :limit => 36
+    t.text     "offer_whitelist",                                                                                 :null => false
+    t.boolean  "use_whitelist",                                                            :default => false,     :null => false
+    t.boolean  "approved_publisher",                                                       :default => false,     :null => false
+    t.boolean  "apsalar_sharing_adv",                                                      :default => false,     :null => false
+    t.boolean  "apsalar_sharing_pub",                                                      :default => false,     :null => false
+    t.string   "reseller_id",                  :limit => 36
     t.string   "billing_email"
     t.integer  "freshbooks_client_id"
     t.boolean  "accepted_publisher_tos"
-    t.string   "sales_rep_id",               :limit => 36
+    t.string   "sales_rep_id",                 :limit => 36
+    t.decimal  "max_deduction_percentage",                   :precision => 8, :scale => 6, :default => 1.0,       :null => false
+    t.date     "negotiated_rev_share_ends_on"
+    t.boolean  "accepted_negotiated_tos",                                                  :default => false
   end
 
   add_index "partners", ["id"], :name => "index_partners_on_id", :unique => true
@@ -746,6 +783,41 @@ ActiveRecord::Schema.define(:version => 20111027000013) do
 
   add_index "role_assignments", ["id"], :name => "index_role_assignments_on_id", :unique => true
   add_index "role_assignments", ["user_id", "user_role_id"], :name => "index_role_assignments_on_user_id_and_user_role_id", :unique => true
+
+  create_table "spend_shares", :id => false, :force => true do |t|
+    t.string   "id",           :limit => 36, :null => false
+    t.float    "ratio",                      :null => false
+    t.date     "effective_on",               :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "spend_shares", ["effective_on"], :name => "index_spend_shares_on_effective_on", :unique => true
+  add_index "spend_shares", ["id"], :name => "index_spend_shares_on_id", :unique => true
+
+  create_table "survey_offers", :id => false, :force => true do |t|
+    t.string   "id",         :limit => 36,                    :null => false
+    t.string   "partner_id", :limit => 36,                    :null => false
+    t.string   "name",                                        :null => false
+    t.boolean  "hidden",                   :default => false, :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "survey_offers", ["id"], :name => "index_survey_offers_on_id", :unique => true
+
+  create_table "survey_questions", :id => false, :force => true do |t|
+    t.string   "id",                 :limit => 36, :null => false
+    t.string   "survey_offer_id",    :limit => 36
+    t.text     "text",                             :null => false
+    t.text     "possible_responses"
+    t.string   "format",                           :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "survey_questions", ["id"], :name => "index_survey_questions_on_id", :unique => true
+  add_index "survey_questions", ["survey_offer_id"], :name => "index_survey_questions_on_survey_offer_id"
 
   create_table "user_roles", :id => false, :force => true do |t|
     t.string   "id",         :limit => 36, :null => false

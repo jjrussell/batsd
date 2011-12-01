@@ -1,33 +1,38 @@
 class Games::HomepageController < GamesController
 
-  before_filter :require_gamer, :except => [ :tos, :privacy ]
+  before_filter :require_gamer, :except => [ :index, :tos, :privacy ]
 
   def index
-    @require_select_device = false
+    unless current_gamer
+      params[:path] = url_for(params.merge(:only_path => true))
+      render_login_page and return
+    end
+
     if has_multiple_devices?
-      @device_data = []
-      current_gamer.devices.each do |d|
-        data = {
-          :udid         => d.device_id,
-          :id           => d.id,
-          :device_type  => d.device_type
-        }
-        device_info = {}
-        device_info[:name] = d.name
-        device_info[:data] = SymmetricCrypto.encrypt_object(data, SYMMETRIC_CRYPTO_SECRET)
-        device_info[:device_type] = d.device_type
-        @device_data << device_info
-      end
-      if current_device_id_cookie.nil?
-        @require_select_device = true
-      end
+      @device_data = current_gamer.devices.map(&:device_data)
+      @require_select_device = current_device_id_cookie.nil?
     end
     device_id = current_device_id
     device_info = current_device_info
+    @gamer = current_gamer
+    @gamer.gamer_profile ||= GamerProfile.new(:gamer => @gamer)
+
     @device_name = device_info.name if device_info
     @device = Device.new(:key => device_id) if device_id.present?
-    @external_publishers = ExternalPublisher.load_all_for_device(@device) if @device.present?
+    if @device.present?
+      if params[:load] == 'earn'
+        currency = Currency.find_by_id(params[:currency_id])
+        @show_offerwall = @device.has_app?(currency.app_id) if currency
+        @offerwall_external_publisher = ExternalPublisher.new(currency) if @show_offerwall
+      end
+      @external_publishers = ExternalPublisher.load_all_for_device(@device)
+    end
     @featured_review = AppReview.featured_review(@device.try(:platform))
+
+    if params[:load] == 'more_apps'
+      @show_more_apps = true
+      @editors_picks = EditorsPick.cached_active(using_android? ? 'android' : 'iphone')
+    end
   end
 
   def switch_device
@@ -55,13 +60,4 @@ class Games::HomepageController < GamesController
     GamesMailer.deliver_link_device(current_gamer, ios_link_url, GAMES_ANDROID_MARKET_URL )
     render(:json => { :success => true }) and return
   end
-
-private
-
-  def require_gamer
-    if current_gamer.blank?
-      redirect_to games_login_path
-    end
-  end
-
 end

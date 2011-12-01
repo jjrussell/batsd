@@ -204,28 +204,34 @@ private
 
   def create_click(type)
     @click = Click.new(:key => (type == 'generic' ? UUIDTools::UUID.random_create.to_s : "#{params[:udid]}.#{params[:advertiser_app_id]}"))
-    @click.clicked_at        = @now
-    @click.viewed_at         = Time.zone.at(params[:viewed_at].to_f)
-    @click.udid              = params[:udid]
-    @click.publisher_app_id  = params[:publisher_app_id]
-    @click.publisher_user_id = params[:publisher_user_id]
-    @click.advertiser_app_id = params[:advertiser_app_id]
-    @click.displayer_app_id  = params[:displayer_app_id] || ''
-    @click.offer_id          = params[:offer_id]
-    @click.currency_id       = params[:currency_id]
-    @click.reward_key        = UUIDTools::UUID.random_create.to_s
-    @click.reward_key_2      = @displayer_app.present? ? UUIDTools::UUID.random_create.to_s : ''
-    @click.source            = params[:source] || ''
-    @click.ip_address        = get_ip_address
-    @click.country           = params[:country_code] || ''
-    @click.type              = type
-    @click.advertiser_amount = @currency.get_advertiser_amount(@offer)
-    @click.publisher_amount  = @currency.get_publisher_amount(@offer, @displayer_app)
-    @click.currency_reward   = @currency.get_reward_amount(@offer)
-    @click.displayer_amount  = @currency.get_displayer_amount(@offer, @displayer_app)
-    @click.tapjoy_amount     = @currency.get_tapjoy_amount(@offer, @displayer_app)
-    @click.exp               = params[:exp]
-    @click.device_name       = params[:device_name]
+    @click.delete('installed_at') if @click.installed_at?
+    @click.clicked_at             = @now
+    @click.viewed_at              = Time.zone.at(params[:viewed_at].to_f)
+    @click.udid                   = params[:udid]
+    @click.publisher_app_id       = params[:publisher_app_id]
+    @click.publisher_user_id      = params[:publisher_user_id]
+    @click.advertiser_app_id      = params[:advertiser_app_id]
+    @click.displayer_app_id       = params[:displayer_app_id] || ''
+    @click.offer_id               = params[:offer_id]
+    @click.currency_id            = params[:currency_id]
+    @click.reward_key             = UUIDTools::UUID.random_create.to_s
+    @click.reward_key_2           = @displayer_app.present? ? UUIDTools::UUID.random_create.to_s : ''
+    @click.source                 = params[:source] || ''
+    @click.ip_address             = get_ip_address
+    @click.country                = params[:country_code] || ''
+    @click.type                   = type
+    @click.advertiser_amount      = @currency.get_advertiser_amount(@offer)
+    @click.publisher_amount       = @currency.get_publisher_amount(@offer, @displayer_app)
+    @click.currency_reward        = @currency.get_reward_amount(@offer)
+    @click.displayer_amount       = @currency.get_displayer_amount(@offer, @displayer_app)
+    @click.tapjoy_amount          = @currency.get_tapjoy_amount(@offer, @displayer_app)
+    @click.exp                    = params[:exp]
+    @click.device_name            = params[:device_name]
+    @click.publisher_partner_id   = @currency.partner_id
+    @click.advertiser_partner_id  = @offer.partner_id
+    @click.publisher_reseller_id  = @currency.reseller_id || ''
+    @click.advertiser_reseller_id = @offer.reseller_id || ''
+    @click.spend_share            = @currency.get_spend_share(@offer)
 
     @click.save
   end

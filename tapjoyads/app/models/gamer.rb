@@ -4,7 +4,7 @@ class Gamer < ActiveRecord::Base
   has_many :gamer_devices, :dependent => :destroy
   has_many :invitations, :dependent => :destroy
   has_one :gamer_profile, :dependent => :destroy
-  delegate :facebook_id, :facebook_id?, :fb_access_token, :referred_by, :referred_by=, :referred_by?, :referral_count, :to => :gamer_profile
+  delegate :facebook_id, :facebook_id?, :fb_access_token, :referred_by, :referred_by=, :referred_by?, :referral_count, :to => :gamer_profile, :allow_nil => true
 
   validates_associated :gamer_profile, :on => :create
   validates_presence_of :email
@@ -17,10 +17,10 @@ class Gamer < ActiveRecord::Base
 
   after_destroy :delete_friends
 
-  DAYS_BEFORE_DELETION = 3.days
+  DAYS_BEFORE_DELETION = 3
   named_scope :to_delete, lambda {
     {
-      :conditions => ["deactivated_at < ?", Time.zone.now.beginning_of_day - DAYS_BEFORE_DELETION],
+      :conditions => ["deactivated_at < ?", Time.zone.now.beginning_of_day - DAYS_BEFORE_DELETION.days],
       :order => 'deactivated_at'
     }
   }
@@ -43,6 +43,13 @@ class Gamer < ActiveRecord::Base
   def deactivate!
     self.deactivated_at = Time.zone.now
     save!
+  end
+
+  def reactivate!
+    if self.deactivated_at?
+      self.deactivated_at = nil
+      save!
+    end
   end
 
   def external_info(channel)

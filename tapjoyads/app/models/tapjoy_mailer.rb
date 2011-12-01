@@ -94,14 +94,10 @@ class TapjoyMailer < ActionMailer::Base
 
   def advertiser_application(info)
     from 'Tapjoy <noreply@tapjoy.com>'
-    if !Rails.env.production?
-      recipients "dev@tapjoy.com"
+    if Rails.env.production?
+      recipients "insidesales@tapjoy.com"
     else
-      if info[:source] == 'performance'
-        recipients "performancemarketing@tapjoy.com"
-      else
-        recipients "brands@tapjoy.com"
-      end
+      recipients "dev@tapjoy.com"
     end
     content_type 'text/html'
     subject "Advertiser inquiry from #{info[:name]} at #{info[:company]}"
@@ -147,14 +143,15 @@ class TapjoyMailer < ActionMailer::Base
     body(:click_key => click_key)
   end
 
-  def support_request(description, email_address, app, currency, udid, publisher_user_id, device_type, language_code, offer)
+  def support_request(description, email_address, app, currency, udid, publisher_user_id, device_type, language_code, offer, support_request, click_id)
     from 'Online Support Request <noreply@tapjoy.com>'
     reply_to email_address
     recipients 'mobilehelp@tapjoy.com'
     content_type 'text/html'
     subject 'Missing Currency'
     body(:description => description, :app => app, :currency => currency, :udid => udid, :publisher_user_id => publisher_user_id,
-      :device_type => device_type, :email_address => email_address, :language_code => language_code, :offer => offer)
+      :device_type => device_type, :email_address => email_address, :language_code => language_code, :offer => offer,
+      :support_request => support_request, :click_id => click_id)
   end
 
   def approve_device(email_address, verification_link, password_reset_link, location, timestamp)

@@ -64,14 +64,14 @@ class GamerTest < ActiveSupport::TestCase
     should "only delete users deactivated 3 days ago" do
       5.times.each { Factory(:gamer) }
       5.times.each { Factory(:gamer, :deactivated_at => Time.zone.now) }
-      5.times.each { Factory(:gamer, :deactivated_at => Time.zone.now - Gamer::DAYS_BEFORE_DELETION - 1.day) }
+      5.times.each { Factory(:gamer, :deactivated_at => Time.zone.now - Gamer::DAYS_BEFORE_DELETION.days - 1.day) }
       assert_equal 15, Gamer.count
       Gamer.to_delete.each(&:destroy)
       assert_equal 10, Gamer.count
     end
 
     should "also delete friendships" do
-      gamer = Factory(:gamer, :deactivated_at => Time.zone.now - Gamer::DAYS_BEFORE_DELETION - 1.day)
+      gamer = Factory(:gamer, :deactivated_at => Time.zone.now - Gamer::DAYS_BEFORE_DELETION.days - 1.day)
 
       stalker = Factory(:gamer)
 
@@ -98,7 +98,7 @@ class GamerTest < ActiveSupport::TestCase
     end
 
     should "also delete invitations" do
-      gamer = Factory(:gamer, :deactivated_at => Time.zone.now - Gamer::DAYS_BEFORE_DELETION - 1.day)
+      gamer = Factory(:gamer, :deactivated_at => Time.zone.now - Gamer::DAYS_BEFORE_DELETION.days - 1.day)
       3.times do
         Invitation.create({
           :gamer_id => gamer.id,
@@ -113,7 +113,7 @@ class GamerTest < ActiveSupport::TestCase
 
     should "not error out when deleted invitations are fulfilled" do
 
-      gamer = Factory(:gamer, :deactivated_at => Time.zone.now - Gamer::DAYS_BEFORE_DELETION - 1.day)
+      gamer = Factory(:gamer, :deactivated_at => Time.zone.now - Gamer::DAYS_BEFORE_DELETION.days - 1.day)
       invitation = Invitation.create({
         :gamer_id => gamer.id,
         :channel => Invitation::EMAIL,

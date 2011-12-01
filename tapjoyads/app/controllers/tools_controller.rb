@@ -115,7 +115,15 @@ class ToolsController < WebsiteController
   end
 
   def sqs_lengths
-    @queues = Sqs.sqs.queues
+    queues = params[:queue_name].present? ? Sqs.queue("#{QueueNames::BASE_NAME}#{params[:queue_name]}").to_a : Sqs.queues
+    @queues = queues.map do |queue|
+      {
+        :name        => queue.url.split('/').last,
+        :size        => queue.visible_messages,
+        :hidden_size => queue.invisible_messages,
+        :visibility  => queue.visibility_timeout,
+      }
+    end
   end
 
   def elb_status
@@ -204,6 +212,7 @@ class ToolsController < WebsiteController
       @blocked_count = 0
       @rewarded_failed_clicks_count = 0
       @rewards = {}
+      @support_requests_created = SupportRequest.count(:where => "udid = '#{udid}'")
       click_app_ids = []
       NUM_CLICK_DOMAINS.times do |i|
         Click.select(:domain_name => "clicks_#{i}", :where => conditions) do |click|
@@ -244,6 +253,16 @@ class ToolsController < WebsiteController
       @has_displayer = @clicks.any? do |click|
         click.displayer_app_id?
       end
+    elsif params[:email_address].present?
+      @all_udids = SupportRequest.find_all_by_email_address(params[:email_address]).map(&:udid)
+      gamer = Gamer.find_by_email(params[:email_address])
+      @all_udids += gamer.gamer_devices.map(&:device_id) if gamer.present?
+      @all_udids.uniq!
+      if @all_udids.empty?
+        flash.now[:error] = "No UDIDs associated with the email address: #{params[:email_address]}"
+      elsif @all_udids.size == 1
+        redirect_to :action => :device_info, :udid => @all_udids.first, :email_address => params[:email_address]
+      end
     end
   end
 
@@ -251,7 +270,12 @@ class ToolsController < WebsiteController
     device = Device.new :key => params[:udid]
     log_activity(device)
     device.internal_notes = params[:internal_notes]
+    opted_out_types = params[:opt_out_offer_types] || []
+    opted_in_types  = device.opt_out_offer_types - opted_out_types
+    opted_out_types.each { |type| device.opt_out_offer_types = type }
+    opted_in_types.each  { |type| device.delete('opt_out_offer_types', type) }
     device.opted_out = params[:opted_out] == '1'
+    device.banned = params[:banned] == '1'
     device.serial_save
     flash[:notice] = 'Device successfully updated.'
     redirect_to :action => :device_info, :udid => params[:udid]

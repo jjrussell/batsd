@@ -524,37 +524,37 @@ body.old .content_box {
 .account_info {
   padding: 20px;
 }
-form#new_gamer input[type=checkbox] {
+body.old form#new_gamer input[type=checkbox] {
   float: left;
   position: relative;
   top: 10px;
 }
-form#new_gamer label[for=gamer_terms_of_service] {
+body.old form#new_gamer label[for=gamer_terms_of_service] {
   float: left;
   font-size: 11px;
   margin-left: 12px;
   width: 90%;
 }
-form#new_gamer label[for=gamer_terms_of_service] a {
+body.old form#new_gamer label[for=gamer_terms_of_service] a {
   color: #333;
   text-decoration: underline;
 }
-form#new_gamer_session {
+body.old form#new_gamer_session {
   color: #7E7E7E;
   font-size: 12px;
 }
-.web form#new_gamer_session,
-.ipad form#new_gamer_session {
+.web body.old form#new_gamer_session,
+.ipad body.old form#new_gamer_session {
   font-size: 14px;
 }
-form#new_gamer_session label {
+body.old form#new_gamer_session label {
   float: left;
   position: relative;
   top: 6px;
 }
-form#new_gamer_session input[type=text],
-form#new_gamer_session input[type=email],
-form#new_gamer_session input[type=password] {
+body.old form#new_gamer_session input[type=text],
+body.old form#new_gamer_session input[type=email],
+body.old form#new_gamer_session input[type=password] {
   border: none;
   float: left;
   font-size: 12px;
@@ -562,22 +562,18 @@ form#new_gamer_session input[type=password] {
   outline: none;
   -webkit-appearance: none;
 }
-.web form#new_gamer_session input#gamer_session_email, .ipad form#new_gamer_session input#gamer_session_email {
-}
-.mobile form#new_gamer_session input#gamer_session_email {
+.mobile body.old form#new_gamer_session input#gamer_session_email {
   width: 100px;
 }
-.web form#new_gamer_session input#gamer_session_password, .ipad form#new_gamer_session input#gamer_session_password {
-}
-.mobile form#new_gamer_session input#gamer_session_password {
+.mobile body.old form#new_gamer_session input#gamer_session_password {
   width: 100px;
 }
-form#new_gamer_session label {
+body.oldform#new_gamer_session label {
   padding: 0 8px 0 12px;
 }
-form#new_gamer_session .login_pass label {
+body.old form#new_gamer_session .login_pass label {
 }
-form#new_gamer_session .login_pass input[type=submit] {
+body.old form#new_gamer_session .login_pass input[type=submit] {
   padding: 7px 18px 3px;
   position: relative;
   top: 3px;
@@ -585,7 +581,7 @@ form#new_gamer_session .login_pass input[type=submit] {
   -moz-border-radius: 3px;
   -webkit-border-radius: 3px;
 }
-.web form#new_gamer_session .login_pass input[type=submit], .ipad form#new_gamer_session .login_pass input[type=submit] {
+.web body.old form#new_gamer_session .login_pass input[type=submit], .ipad body.old form#new_gamer_session .login_pass input[type=submit] {
   font-size: 15px;
 }
 .mobile form#new_gamer_session .login_pass input[type=submit] {
@@ -879,24 +875,16 @@ body.old .sign_up_button {
 .login_header_wrapper a, .my_account_header_wrapper a, .header_wrapper a {
   color: #6B5F54;
 }
-.formError {
+body.old .formError {
   float: left;
   width: 100%;
 }
-.formError, .email_error, .account_error, .login_error, .form_error, .dob_error {
+body.old .formError, body.old .email_error, body.old .account_error, body.old .login_error, body.old .form_error, body.old .dob_error {
   color: #F21C1A;
   font-size: 13px;
   padding: 4px;
 }
-.formError .pad, .email_error .pad, .account_error .pad, .login_error .pad, .form_error .pad, .dob_error .pad {
-  padding: 6px;
-}
-.formError, .email_error, .account_error, .login_error, .form_error, .tos_error {
-  color: #F21C1A;
-  font-size: 13px;
-  padding: 4px;
-}
-.formError .pad, .email_error .pad, .account_error .pad, .login_error .pad, .form_error .pad, .tos_error .pad {
+body.old .formError .pad, body.old .email_error .pad, body.old .account_error .pad, body.old .login_error .pad, body.old .form_error .pad, body.old .dob_error .pad {
   padding: 6px;
 }
 .mobile .tab_wrapper {

@@ -37,6 +37,16 @@
     = f.text_field :billing_email
     = error_message_on(@partner, :billing_email) if @partner.errors.on :billing_email
   .field
+    = f.label :accepted_negotiated_tos, 'Accepted Negotiated Rev Share ToS'
+    #help_accepted_negotiated_tos.help ?
+    = f.check_box :accepted_negotiated_tos
+    = error_message_on(@partner, :accepted_negotiated_tos) if @partner.errors.on :accepted_negotiated_tos
+  .field
+    = f.label :negotiated_rev_share_ends_on, 'Negotiated Rev Share End Date'
+    #help_negotiated_rev_share_ends_on.help ?
+    = f.text_field :negotiated_rev_share_ends_on
+    = error_message_on(@partner, :negotiated_rev_share_ends_on) if @partner.errors.on :negotiated_rev_share_ends_on
+  .field
     = f.label :rev_share
     #help_rev_share.help ?
     = f.text_field :rev_share
@@ -51,6 +61,11 @@
     #help_transfer_bonus.help ?
     = f.text_field :transfer_bonus
     = error_message_on(@partner, :transfer_bonus) if @partner.errors.on :transfer_bonus
+  .field
+    = f.label :max_deduction_percentage
+    #help_max_deduction_percentage.help ?
+    = f.text_field :max_deduction_percentage
+    = error_message_on(@partner, :max_deduction_percentage) if @partner.errors.on :max_deduction_percentage
   .field
     = f.label :disabled_partners
     #help_disabled_partners.help ?
@@ -77,12 +92,19 @@
     Offers belonging to partners that are in this list will not be shown in this partner's offerwalls.
   #help_billing_email_content{:name => 'Billing email'}
     The email contact used for invoicing.
+  #help_accepted_negotiated_tos_content{:name => 'Accepted Negotiated ToS'}
+    Checked if the partner has accepted the ToS for having a negotiated rev share.
+  #help_negotiated_rev_share_ends_on_content{:name => 'Negotiated Rev Share End Date'}
+    The date on which the negotiated rev share will end. Once the negotiated rev share ends, the partner will return to the default rev share.
   #help_rev_share_content{:name => 'Rev share'}
     The share of offer revenue that this publisher gets. A number between 0 an 1.
   #help_direct_pay_share_content{:name => 'Direct-pay share'}
     The share of direct-pay revenue that this publisher gets. A number between 0 an 1.
   #help_transfer_bonus_content{:name => 'Transfer bonus'}
     The bonus that this partner gets when transferring between pending earnings and balance. A value of 0.1 will give a 10% bonus.
+  #help_max_deduction_percentage_content{:name => 'Max deduction percent'}
+    The maximum percentage that a publisher's rev share can be lowered to recover marketing credits and network operating costs. Must be number between 0 and 1.
+    Example: A pub with rev share of 70% and max deduction percentage of 7% will have an effective rev share between 65-70%. (70% * 93% = 65%)
   #help_accepted_publisher_tos_content{:name => 'Accepted publisher ToS'}
     Has this partner accepted the publisher terms of service?
 
@@ -126,5 +148,6 @@
         minLength: 2
       };
 
+      $('#partner_negotiated_rev_share_ends_on').datepicker({ dateFormat: 'yy-mm-dd' });
       $('#partner_sales_rep').focus().autocomplete(options);
     });

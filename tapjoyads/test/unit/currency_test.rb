@@ -9,6 +9,7 @@ class CurrencyTest < ActiveSupport::TestCase
   should validate_presence_of(:app)
   should validate_presence_of(:partner)
   should validate_presence_of(:name)
+  should validate_presence_of(:callback_url)
   should validate_numericality_of(:conversion_rate)
   should validate_numericality_of(:initial_balance)
   should validate_numericality_of(:spend_share)
@@ -187,6 +188,14 @@ class CurrencyTest < ActiveSupport::TestCase
         assert_equal 'foo', @currency.disabled_partners
         assert_equal 'bar', @currency.offer_whitelist
         assert_equal true, @currency.use_whitelist
+      end
+
+      context "when not tapjoy-managed" do
+        should "validate callback url" do
+          @currency.callback_url = 'http://tapjoy' # invalid url
+          @currency.save
+          assert_equal 'is not a valid url', @currency.errors.on(:callback_url)
+        end
       end
     end
 

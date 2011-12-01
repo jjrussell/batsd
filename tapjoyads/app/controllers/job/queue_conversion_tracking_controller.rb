@@ -4,10 +4,10 @@ class Job::QueueConversionTrackingController < Job::SqsReaderController
     super QueueNames::CONVERSION_TRACKING
   end
 
-private
+  private
 
   def on_message(message)
-    json = JSON.parse(message.to_s)
+    json = JSON.parse(message.body)
     click = Click.deserialize(json['click'])
     installed_at_epoch = json['install_timestamp']
 
@@ -61,24 +61,29 @@ private
 
     reward = Reward.new(:key => click.reward_key)
     reward.put('created', installed_at_epoch)
-    reward.type              = click.type
-    reward.publisher_app_id  = click.publisher_app_id
-    reward.advertiser_app_id = click.advertiser_app_id
-    reward.displayer_app_id  = click.displayer_app_id
-    reward.offer_id          = click.offer_id
-    reward.currency_id       = click.currency_id
-    reward.publisher_user_id = click.publisher_user_id
-    reward.advertiser_amount = click.advertiser_amount
-    reward.publisher_amount  = click.publisher_amount
-    reward.displayer_amount  = click.displayer_amount
-    reward.currency_reward   = click.currency_reward
-    reward.tapjoy_amount     = click.tapjoy_amount
-    reward.source            = click.source
-    reward.udid              = click.udid
-    reward.country           = click.country
-    reward.reward_key_2      = click.reward_key_2
-    reward.exp               = click.exp
-    reward.viewed_at         = click.viewed_at
+    reward.type                   = click.type
+    reward.publisher_app_id       = click.publisher_app_id
+    reward.advertiser_app_id      = click.advertiser_app_id
+    reward.displayer_app_id       = click.displayer_app_id
+    reward.offer_id               = click.offer_id
+    reward.currency_id            = click.currency_id
+    reward.publisher_user_id      = click.publisher_user_id
+    reward.advertiser_amount      = click.advertiser_amount
+    reward.publisher_amount       = click.publisher_amount
+    reward.displayer_amount       = click.displayer_amount
+    reward.currency_reward        = click.currency_reward
+    reward.tapjoy_amount          = click.tapjoy_amount
+    reward.source                 = click.source
+    reward.udid                   = click.udid
+    reward.country                = click.country
+    reward.reward_key_2           = click.reward_key_2
+    reward.exp                    = click.exp
+    reward.viewed_at              = click.viewed_at
+    reward.publisher_partner_id   = click.publisher_partner_id || currency.partner_id
+    reward.advertiser_partner_id  = click.advertiser_partner_id || offer.partner_id
+    reward.publisher_reseller_id  = click.publisher_reseller_id || currency.reseller_id
+    reward.advertiser_reseller_id = click.advertiser_reseller_id || offer.reseller_id
+    reward.spend_share            = click.spend_share || currency.get_spend_share(offer)
 
     begin
       reward.serial_save(:catch_exceptions => false, :expected_attr => { 'type' => nil })
@@ -86,14 +91,20 @@ private
       return
     end
 
-    message = reward.serialize(:attributes_only => true)
-    Sqs.send_message(QueueNames::SEND_CURRENCY, message) if offer.rewarded? && currency.callback_url != Currency::NO_CALLBACK_URL
-    Sqs.send_message(QueueNames::CREATE_CONVERSIONS, message)
+    reward_message = reward.serialize(:attributes_only => true)
+    Sqs.send_message(QueueNames::SEND_CURRENCY, reward_message) if offer.rewarded? && currency.callback_url != Currency::NO_CALLBACK_URL
+    Sqs.send_message(QueueNames::CREATE_CONVERSIONS, reward_message)
 
-    reward.update_realtime_stats rescue nil # we don't really care if this produces an error
+    begin
+      reward.update_realtime_stats
+    rescue Exception => e
+      Notifier.alert_new_relic(e.class, e.message, request, params)
+    end
 
     click.put('installed_at', installed_at_epoch)
     click.serial_save
+
+    device.set_last_run_time!(click.advertiser_app_id)
 
     web_request = WebRequest.new(:time => Time.zone.at(installed_at_epoch.to_f))
     web_request.path              = 'reward'
@@ -116,4 +127,5 @@ private
     web_request.viewed_at         = reward.viewed_at
     web_request.save
   end
+
 end

@@ -93,6 +93,7 @@ input[type=checkbox]:checked {
 
 }
 select {
+  -moz-appearance: none;
   -webkit-appearance: none;
   @include rounded-corners(6px);
 }
@@ -118,7 +119,7 @@ input[type=email]:focus, input[type=password]:focus {
   padding-bottom: 24px;
 
   .nav {
-    height: 72px;
+    height: 90px;
     margin: 0 auto;
     max-width: 960px;
 
@@ -127,54 +128,60 @@ input[type=email]:focus, input[type=password]:focus {
 
       .aside_nav, .aside_login {
         float: right;
-        font-size: 0.9em;
         position: relative;
         top: 6px;
       }
       .aside_login {
-        width: 406px;
+        width: 410px;
+        @include animate;
 
         .login {
 
           .form_fields {
-            height: 30px;
-            margin-bottom: 6px;
 
-            .row {
+            ul.row  {
               float: left;
+              height: 14px;
+              width: 100%;
+              margin-bottom: 8px;
             }
-            .field {
-              float: left;
+            ul.row.inputs {
               height: 30px;
+              margin-bottom: 12px;
             }
-            @media screen and (max-width: 640px) {
-              .row {
-                width: 134px;
-              }
-              .field {
-                float: none;
-              }
-              .login_btn {
+            ul.row  {
+
+              ul.group {
                 float: left;
               }
-            }
-            .field.sign_in {
-              color: $tj-red;
-              font-size: 1.2em;
-              font-weight: bold;
-              font-style: italic;
-              margin-right: 10px;
-              position: relative;
-              top: 6px;
-            }
-            @media screen and (max-width: 650px) {
-              .field.sign_in {
-                float: left;
+              ul.group.inputs {
+                height: 30px;
               }
-            }
-            @media screen and (max-width: 580px) {
-              .field.sign_in {
-                display: none;
+
+              li.field {
+                float: left;
+                font-size: 0.85em;
+              }
+              li.field.sign_in {
+                color: $tj-red;
+                font-size: 1.2em;
+                font-style: italic;
+                margin-right: 12px;
+                position: relative;
+                top: 6px;
+              }
+              li.field.forgot_pass {
+                float: right;
+              }
+              li.field.login_error {
+                color: $tj-red;
+                float: right;
+                margin-right: 12px;
+                padding: 0;
+              }
+              li.field.client_login {
+                float: right;
+                text-decoration: underline;
               }
             }
             input {
@@ -188,46 +195,55 @@ input[type=email]:focus, input[type=password]:focus {
               padding: 6px;
               width: 62px;
             }
-          }
-          .fieldWithErrors {
-            position: relative;
-          }
-          .formError {
-            float: none;
-          }
-          .forgot_pass {
-            float: right;
-            font-size: 0.85em;
-            font-weight: bold;
-            margin: 0 12px 0 0;
-          }
-          .login_error {
-            text-align: right;
-            padding: 0 12px 0 0;
-          }
-          @media screen and (max-width: 640px) {
-            .login_error {
-              font-size: 0.75em;
+            input[type=submit] {
+              border-style: none;
+            }
+            @media screen and (min-width: 481px) and (max-width: 640px) {
+              li.field.sign_in {
+                display: none;
+              }
+            }
+            @media screen and (min-width: 481px) and (max-width: 540px) {
+              ul.row.inputs {
+                float: right;
+                height: 60px;
+                width: 200px;
+              }
+              ul.group.inputs li {
+                float: none;
+              }
+              li.field.login_error {
+                float: left;
+                font-size: 0.75em;
+                margin: 0;
+              }
             }
           }
         } // login
       } // aside_login
-      @media screen and (max-width: 640px) {
+      @media screen and (min-width: 481px) and (max-width: 640px) {
         .aside_login {
           width: 340px;
-          top: 0;
         }
       }
-      @media screen and (max-width: 580px) {
+      @media screen and (min-width: 481px) and (max-width: 540px) {
         .aside_login {
-          width: 250px;
-          top: 0;
+          width: 280px;
         }
       }
       .logo {
+        background-size: 197px 93px;
         height: 93px;
         float: left;
         width: 197px;
+        @include animate;
+      }
+      @media screen and (max-width: 580px) {
+        .logo {
+          background-size: 170px 80px;
+          height: 80px;
+          width: 170px;
+        }
       }
       .nav_buttons {
         float: left;
@@ -265,7 +281,12 @@ input[type=email]:focus, input[type=password]:focus {
       }
     }
   }
-
+  @media screen and (max-width: 540px) {
+    .nav {
+      height: 120px;
+      @include animate;
+    }
+  }
   //-------------------------------------------
   // Signup/Login Page
   //-------------------------------------------
@@ -278,7 +299,7 @@ input[type=email]:focus, input[type=password]:focus {
     @include rounded-corners(3px);
 
     .content {width: 100%;}
-    
+
     .content_box {
       height: 450px;
       margin: 0 auto;
@@ -308,7 +329,7 @@ input[type=email]:focus, input[type=password]:focus {
         background-color: #FFF;
         border: 1px solid $tj-red;
         float: left;
-        height: 270px;
+        height: 290px;
         left: 36px;
         position: relative;
         width: 320px;
@@ -328,11 +349,13 @@ input[type=email]:focus, input[type=password]:focus {
           .register_form {
 
             select#date_month {
-              width: 100px;
+              width: 110px;
             }
-
+            select#date_year {
+              width: 80px;
+            }
             select {
-              width: 60px;
+              width: 70px;
             }
             input[type=email], input[type=password] {
               width: 274px;
@@ -340,31 +363,57 @@ input[type=email]:focus, input[type=password]:focus {
             .field {
               margin: 4px 0;
             }
-            .field_tos {
-              float: left;
-              .field_checkbox {
+            .row {
+              height: 60px;
+
+              .field_tos {
                 float: left;
-                margin-right: 12px;
-                width: 22px;
+
+                .field_checkbox {
+                  float: left;
+                  margin-right: 12px;
+                  width: 22px;
+                }
+                .field_tos_text {
+                  float: left;
+                  font-size: 10px;
+                  width: 120px;
+                  margin-right: 12px;
+                }
+                .field_tos_text a {
+                  text-decoration: underline;
+                }
               }
-              .field_tos_text {
-                float: left;
-                font-size: 10px;
-                width: 120px;
-                margin-right: 12px;
+              input[type=submit] {
+                margin: 5px auto;
+                padding: 12px 16px;
               }
-            }
-            input[type=submit] {
-              margin: 5px auto;
-              padding: 12px 16px
             }
           }
-
+          .email_error {
+            color: $tj-red;
+            font-size: 0.8em;
+            height: 14px;
+            margin-bottom: 8px;
+            text-align: center;
+          }
+          .client_sign_up {
+            font-size: 0.8em;
+            text-align: center;
+            text-decoration: underline;
+          }
           .register_progess {
+            width: 288px;
+
             .button {
               margin: 0 auto;
             }
           }
+        }
+        .loading_animation {
+          margin: 12px auto;
+          height: 11px;
+          width: 16px;
         }
       }
     }
@@ -650,6 +699,9 @@ body.old .content_box {
 .content_wrapper {
 
   .content {
+    .offer_list {
+      margin-bottom: 20px;
+    }
   }
 
   .feat_review {
@@ -742,6 +794,8 @@ body.old .content_box {
     @include inset-shadow;
   }
 
+  input#delete_account,
+  input#cancel_delete,
   .profile input[type=submit] {
     border: 1px solid #B0B0B0;
     border-color: #B0131D;
@@ -755,6 +809,17 @@ body.old .content_box {
     @include inset-button(16px, 8px 10px);
     @include inset-shadow;
     @include gradient(#CF1623, #EA1927);
+  }
+  input#delete_account {
+    width: 120px;
+  }
+  input#cancel_delete {
+    width: 120px;
+    border: 1px solid #B0B0B0;
+    border-color: #BBB;
+    color: #888;
+    text-shadow: 0 1px 1px #FFF;
+    @include gradient(#EEE, #CCC);
   }
 
   #support_request input[type=submit] {

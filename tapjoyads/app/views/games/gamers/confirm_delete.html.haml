@@ -1,0 +1,25 @@
+#jqt
+  #home.current
+    = render :partial => 'games/homepage/nav_bar', :locals => { :active => 'back', :back_button_destination => edit_games_gamer_path }
+    .content_wrapper
+      = render(:partial => 'header')
+      .content
+        .title_2
+          Delete My Account
+        .content_box
+          .interior
+            .field
+              Click on the button below to deactivate your account. Once an
+              account has been deactivated for #{Gamer::DAYS_BEFORE_DELETION}
+              days, it will be completely deleted. We cannot recover your
+              account once it has been deleted.
+            .field &nbsp;
+            .left
+              - form_for([ :games, @gamer ], :url => games_gamer_path, :html => { :method => "delete" }, :id => 'destroy_gamer') do |f|
+                = f.submit 'Deactivate', :class => 'button', :id => 'delete_account'
+            .left
+              &nbsp;
+            .left
+              = button_to_function 'Cancel', 'history.go(-1)', :class => 'button', :id => 'cancel_delete'
+            .clearfix
+            .field &nbsp;

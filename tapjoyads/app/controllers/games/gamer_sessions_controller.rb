@@ -5,23 +5,30 @@ class Games::GamerSessionsController < GamesController
   end
 
   def new
-    @gamer_session = GamerSession.new
-    @gamer = Gamer.new
+    if current_gamer
+      redirect_to games_root_path and return
+    end
+    render_login_page
   end
 
   def create
     @gamer_session = GamerSession.new(params[:gamer_session])
     @gamer_session.remember_me = true
     if @gamer_session.save
+      if current_gamer.deactivated_at?
+        current_gamer.reactivate!
+        flash[:notice] = 'Your account has been reactivated!'
+      end
       destroy and return if current_gamer.blocked?
       if params[:data].present?
         redirect_to finalize_games_gamer_device_path(:data => params[:data])
+      elsif params[:path]
+        redirect_to params[:path]
       else
         redirect_to games_root_path
       end
     else
-      @gamer = Gamer.new
-      render :action => :new
+      render_login_page
     end
   end
 

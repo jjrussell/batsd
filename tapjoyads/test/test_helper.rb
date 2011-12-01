@@ -48,6 +48,12 @@ class ActiveSupport::TestCase
     GamerSession.create(user)
   end
 
+  def wrap_with_controller(new_controller)
+    old_controller = @controller
+    @controller = new_controller.new
+    yield
+    @controller = old_controller
+  end
   # Tests equality of attribute hashes. An attribute hash has the form:
   # { :key1 => [value1, value2], :key2 => [value3]}
   # The value arrays may be in any order.

@@ -1,6 +1,7 @@
 class HomepageController < WebsiteController
   layout 'newcontent'
   protect_from_forgery :except => [:contact]
+  before_filter :legacy_redirect, :only => [:advertisers_contact, :contact_us, :publishers_contact, :gaming_platforms]
 
   def start
     render :action => 'index', :layout => 'newhome'
@@ -76,4 +77,11 @@ class HomepageController < WebsiteController
       end
     end
   end
+
+  private
+
+  def legacy_redirect
+    redirect_to :action => 'contact'
+  end
+
 end

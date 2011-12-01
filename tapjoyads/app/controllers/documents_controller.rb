@@ -8,4 +8,12 @@ class DocumentsController < WebsiteController
   def privacy_mobile
     render :layout => false
   end
+
+  def tos_advertiser
+    render :layout => false
+  end
+
+  def tos_publisher
+    render :layout => false
+  end
 end

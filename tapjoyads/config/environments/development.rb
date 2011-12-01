@@ -20,6 +20,7 @@ config.gem 'mail_safe', :version => '0.3.1'
 amazon = YAML::load_file("#{RAILS_ROOT}/config/amazon.yaml")
 ENV['AWS_ACCESS_KEY_ID'] = amazon['dev']['access_key_id']
 ENV['AWS_SECRET_ACCESS_KEY'] = amazon['dev']['secret_access_key']
+AWS_ACCOUNT_ID = '331510376354'
 
 MEMCACHE_SERVERS = ['127.0.0.1']
 

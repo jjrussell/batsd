@@ -1,0 +1,16 @@
+- @page_title = 'Create Network Cost'
+
+%h1 Create Network Cost
+
+- form_for [ :tools, @network_cost ], :html => { :class => 'tjform' } do |f|
+  %table
+    %tr
+      %th= f.label :amount
+      %td
+        = f.currency_field :amount, {}, { :class => 'allow_negative' }
+        = error_message_on @network_cost, :amount
+    %tr
+      %th= f.label :notes
+      %td= f.text_area :notes
+    %tr
+      %td{ :colspan => 2 }= f.submit 'Create Network Cost'
