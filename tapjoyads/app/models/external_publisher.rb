@@ -44,7 +44,7 @@ class ExternalPublisher
   end
 
   def self.most_recently_run_for_gamer(gamer)
-    # return [device, gamer_device, external_publisher]
+    # return value should be... [device, gamer_device, external_publisher]
     arr = [nil, nil, nil]
 
     latest_run_time = 0
