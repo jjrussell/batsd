@@ -1,26 +1,27 @@
 class SpendShare < ActiveRecord::Base
   include UuidPrimaryKey
 
-  MIN_SPEND_SHARE_RATIO = 0.8
+  MIN_RATIO = 0.8
 
   validates_numericality_of :ratio, :greater_than_or_equal_to => 0, :less_than_or_equal_to => 1
   validates_uniqueness_of :effective_on
   validates_each :effective_on, :allow_blank => false, :allow_nil => false do |record, attribute, value|
-    if value > Date.today
+    if value > Time.now.utc.to_date
       record.errors.add(attribute, "is in the future")
     end
   end
 
   named_scope :effective, lambda { |date| { :conditions => { :effective_on => date.to_date } } }
+  named_scope :over_range, lambda { |start_time, end_time| { :conditions => ["effective_on >= ? AND effective_on <= ?", start_time.to_date, end_time.to_date] } }
 
   def self.current_ratio
-    Mc.distributed_get_and_put("spend_share.ratio.#{Date.today}") do
-      [current.ratio, MIN_SPEND_SHARE_RATIO].max
+    Mc.distributed_get_and_put("spend_share.ratio.#{Time.now.utc.to_date}") do
+      [current.ratio, MIN_RATIO].max
     end
   end
 
   def self.current
-    for_date(Date.today)
+    for_date(Time.now.utc.to_date)
   end
 
   def self.for_date(date)

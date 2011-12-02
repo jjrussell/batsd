@@ -99,16 +99,14 @@ private
         stats[key]['revenue']           = stats[key]['advertiser_spend'] - stats[key]['marketing_credits'] + stats[key]['linkshare_est'] + stats[key]['ads_est']
         stats[key]['net_revenue']       = stats[key]['revenue'] - stats[key]['publisher_earnings']
         stats[key]['margin']            = stats[key]['net_revenue'] / stats[key]['revenue'] * 100
-
-        website_orders_deduction        = Order.created_between(start_time, end_time).sum(:amount, :conditions => "payment_method = 0") / 100.0 * 0.025
-        stats[key]['deduct_pct']        = ( stats[key]['marketing_credits'] + website_orders_deduction ) / stats[key]['orders'] * 100
+        stats[key]['avg_deduct_pct']    = (1 - SpendShare.over_range(start_time, end_time).average(:ratio)) * 100
         stats[key]['network_costs']     = NetworkCost.created_between(start_time, end_time).sum(:amount) / 100.0
 
         stats[key]['conversions']        = stats[key]['conversions'].nil? ? '-' : number_with_delimiter(stats[key]['conversions'])
         stats[key]['advertiser_spend']   = number_to_currency(stats[key]['advertiser_spend'])
         stats[key]['publisher_earnings'] = number_to_currency(stats[key]['publisher_earnings'])
         stats[key]['marketing_credits']  = number_to_currency(stats[key]['marketing_credits'])
-        stats[key]['deduct_pct']         = number_to_percentage(stats[key]['deduct_pct'], :precision => 2)
+        stats[key]['avg_deduct_pct']     = number_to_percentage(stats[key]['avg_deduct_pct'], :precision => 2)
         stats[key]['orders']             = number_to_currency(stats[key]['orders'])
         stats[key]['payouts']            = number_to_currency(stats[key]['payouts'])
         stats[key]['linkshare_est']      = number_to_currency(stats[key]['linkshare_est'])
@@ -119,8 +117,6 @@ private
         stats[key]['network_costs']      = number_to_currency(stats[key]['network_costs'])
       end
     end
-
-    stats['1_month']['deduct_pct'] = number_to_percentage((1 - SpendShare.current.ratio) * 100, :precision => 2)
 
     stats
   end
