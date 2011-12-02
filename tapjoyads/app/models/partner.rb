@@ -61,6 +61,10 @@ class Partner < ActiveRecord::Base
     end
   end
 
+  validates_each :negotiated_rev_share_ends_on, :if => :negotiated_rev_share_ends_on_changed?, :allow_blank => true do |record, attribute, value|
+    record.errors.add(attribute, 'You can not choose a date in the past for negotiated rev share expiration time.') if value.to_time < Time.zone.now
+  end
+
   before_validation :remove_whitespace_from_attributes, :update_rev_share
   before_save :check_billing_email
   after_save :update_currencies, :update_offers

@@ -28,6 +28,7 @@ authorization do
   role :customer_service do
     includes :tools
     has_permission_on :tools, :to => [ :resolve_clicks, :device_info, :update_device, :award_currencies, :update_award_currencies ]
+    has_permission_on :tools_support_requests, :to => [ :index, :mass_resolve ]
   end
 
   role :money do
@@ -108,7 +109,7 @@ authorization do
     has_permission_on :tools, :to => [ :failed_sdb_saves, :sdb_metadata, :reset_device, :send_currency_failures, :sqs_lengths, :elb_status, :ses_status, :as_groups, :manage_user_roles, :update_user_roles ]
     has_permission_on :tools_users_role_assignments, :to => [ :create, :destroy ]
     has_permission_on :tools_jobs, :to => [ :index, :new, :create, :edit, :update, :destroy ]
-    has_permission_on :tools_support_requests, :to => [ :index ]
+    has_permission_on :tools_support_requests, :to => [ :index, :mass_resolve ]
     has_permission_on :tools_press_releases, :to => [ :index, :new, :create, :edit, :update ]
   end
 end

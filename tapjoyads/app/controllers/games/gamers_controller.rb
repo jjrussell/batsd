@@ -1,6 +1,6 @@
 class Games::GamersController < GamesController
 
-  before_filter :set_profile, :only => [ :edit, :accept_tos, :password, :update_password, :update_social, :prefs, :social, :confirm_delete ]
+  before_filter :set_profile, :only => [ :edit, :accept_tos, :password, :prefs, :social, :friends, :update_password, :update_social, :confirm_delete ]
   before_filter :offline_facebook_authenticate, :only => :connect_facebook_account
 
   def create
@@ -86,6 +86,13 @@ class Games::GamersController < GamesController
     end
   end
 
+  def friends
+    @friends_lists = {
+      :following => get_friends_info(Friendship.following_ids(current_gamer.id)),
+      :followers => get_friends_info(Friendship.follower_ids(current_gamer.id))
+    }
+  end
+
   private
 
   def set_profile
@@ -99,4 +106,13 @@ class Games::GamersController < GamesController
     end
   end
 
+  def get_friends_info(ids)
+    Gamer.find_all_by_id(ids).map do |friend|
+      {
+        :id        => friend.id,
+        :name      => friend.get_gamer_name,
+        :image_url => friend.get_avatar_url(80)
+      }
+    end
+  end
 end
