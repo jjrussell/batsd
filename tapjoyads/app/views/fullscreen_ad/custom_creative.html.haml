@@ -1,9 +1,11 @@
+- link_to(params[:preview] == 'true' ? '#' : 'dismiss') do
+  .close_button_outer
+    .close_button_inner x
 #main
   - link_to((params[:preview] == 'true' ? '#' : get_click_url(@offer)), :class => 'image-link') do
     %img{ :src => "#{CLOUDFRONT_URL}/images/blank.png", :class => 'creative', :id => 'creative' }
 .buttons#buttons
   - action_text = @offer.rewarded? ? "Earn #{@currency.get_visual_reward_amount(@offer, params[:display_multiplier])} #{@currency.name}" : "Download"
-  = link_to('Skip', (params[:preview] == 'true' ? '#' : 'dismiss'), :class => 'skip gradient', :id => 'skip')
   = link_to("#{action_text}", (params[:preview] == 'true' ? '#' : get_click_url(@offer)), :class => 'download gradient', :id => 'download')
 
 - content_for :page_javascript do
@@ -128,7 +130,6 @@
 
     function setupButtons() {
       var downloadButton = document.getElementById('download');
-      var skipButton = document.getElementById('skip');
 
       // Scale the buttons to fit this screen size
       if(Math.max(client.width, client.height) <= 480) {
@@ -145,7 +146,6 @@
       buttonsDiv.style.height = buttonsHeight + 'px';
       buttonsDiv.className += ' buttons' + presetSize;
       downloadButton.className += ' download' + presetSize;
-      skipButton.className += ' skip' + presetSize;
 
       // Place buttons div in the correct initial position (just below visible screen)
       buttonsDiv.style.width = client.width + 'px';
@@ -187,7 +187,7 @@
     }
 
     function webkitStyle(element, attribute, value) {
-      var prefixes = [ '-moz-', '-ms-', '-o-', '-webkit-' ];
+      var prefixes = [ '', '-moz-', '-ms-', '-o-', '-webkit-' ];
 
       for(var i = 0; i < prefixes.length; i++ ) {
         element.style.cssText += prefixes[i] + attribute + ': ' + value + ';';
@@ -227,6 +227,93 @@
         background-image: url('/images/spinner.gif');
         background-repeat: no-repeat;
         background-position: center;
+      }
+
+      .close_outer {
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.7);
+          -moz-box-shadow: 0 0 10px 10px rgba(0, 0, 0, 0.7);
+          -webkit-box-shadow: 0 0 10px 10px rgba(0, 0, 0, 0.7);
+        right: -220px;
+        top: -220px;
+        z-index: 3;
+      }
+
+      .close_inner {
+        background: url("/images/games/old/v2/nav_bg_hd.png") repeat scroll 0 0 #E9E5DA;
+        box-shadow: inset 0 0 20px #B7B192;
+          -moz-box-shadow: inset 0 0 10px 10px #B7B192;
+          -webkit-box-shadow: inset 0 0 10px 10px #B7B192;
+        z-index: 5;
+      }
+
+      .close_inner, .close_outer {
+        border-radius: 200px;
+          -moz-border-radius: 200px;
+          -ms-border-radius: 200px;
+          -o-border-radius: 200px;
+          -webkit-border-radius: 200px;
+        height: 400px;
+        position: absolute;
+        width: 400px;
+      }
+
+      .close_button_inner {
+        background: #cf1623; /* Old browsers */
+        /* IE9 SVG, needs conditional override of 'filter' to 'none' */
+        background: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/Pgo8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgdmlld0JveD0iMCAwIDEgMSIgcHJlc2VydmVBc3BlY3RSYXRpbz0ibm9uZSI+CiAgPGxpbmVhckdyYWRpZW50IGlkPSJncmFkLXVjZ2ctZ2VuZXJhdGVkIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgeDE9IjAlIiB5MT0iMCUiIHgyPSIwJSIgeTI9IjEwMCUiPgogICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iI2NmMTYyMyIgc3RvcC1vcGFjaXR5PSIxIi8+CiAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiNlYTE5MjciIHN0b3Atb3BhY2l0eT0iMSIvPgogIDwvbGluZWFyR3JhZGllbnQ+CiAgPHJlY3QgeD0iMCIgeT0iMCIgd2lkdGg9IjEiIGhlaWdodD0iMSIgZmlsbD0idXJsKCNncmFkLXVjZ2ctZ2VuZXJhdGVkKSIgLz4KPC9zdmc+);
+        background: -moz-linear-gradient(top,  #cf1623 0%, #ea1927 100%); /* FF3.6+ */
+        background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#cf1623), color-stop(100%,#ea1927)); /* Chrome,Safari4+ */
+        background: -webkit-linear-gradient(top,  #cf1623 0%,#ea1927 100%); /* Chrome10+,Safari5.1+ */
+        background: -o-linear-gradient(top,  #cf1623 0%,#ea1927 100%); /* Opera 11.10+ */
+        background: -ms-linear-gradient(top,  #cf1623 0%,#ea1927 100%); /* IE10+ */
+        background: linear-gradient(top,  #cf1623 0%,#ea1927 100%); /* W3C */
+        filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#cf1623', endColorstr='#ea1927',GradientType=0 ); /* IE6-8 */
+
+        border-radius: 45px;
+          -moz-border-radius: 45px;
+          -ms-border-radius: 45px;
+          -o-border-radius: 45px;
+          -webkit-border-radius: 45px;
+
+        box-shadow: inset 0 0 30px 0 rgba(0, 0, 0, 0.3);
+          -moz-box-shadow: inset 0 0 30px 0 rgba(0, 0, 0, 0.3);
+          -webkit-box-shadow: inset 0 0 30px 0 rgba(0, 0, 0, 0.3);
+
+        color: #E9E5DA;
+        font: bold 70px helvetica,san-serif;
+        height: 90px;
+        left: 5px;
+        line-height: 90px;
+        position: absolute;
+        //right: 20px;
+        text-align: center;
+        text-shadow: -2px 0 1px #FF9999, 0 2px 1px #FF9999, 2px 2px 1px #FF9999, -2px 0 1px #994444, 0 -2px 1px #994444, -2px -2px 1px #994444;
+        //top: 240px;
+        top: 5px;
+        width: 90px;
+        z-index: 10;
+      }
+
+      .close_button_outer {
+        background-color: #FF9999;
+
+        border: 2px solid #685B3D;
+        border-radius: 50px;
+          -moz-border-radius: 50px;
+          -ms-border-radius: 50px;
+          -o-border-radius: 50px;
+          -webkit-border-radius: 50px;
+
+        box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.7);
+          -moz-box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.7);
+          -webkit-box-shadow: iet 0 0 20px 0 rgba(0, 0, 0, 0.7);
+
+        height: 100px;
+        position: absolute;
+        right: 20px;
+        top: 20px;
+        width: 100px;
+        z-index: 8;
       }
 
       .buttons {
@@ -284,10 +371,11 @@
       .download480,
       .skip480 {
         border-width: 1px;
-        -moz-border-radius: 7px;
-        -ms-border-radius: 7px;
-        -o-border-radius: 7px;
-        -webkit-border-radius: 7px;
+        border-radius: 7px;
+          -moz-border-radius: 7px;
+          -ms-border-radius: 7px;
+          -o-border-radius: 7px;
+          -webkit-border-radius: 7px;
         padding: 7px 12px;
       }
 
@@ -308,10 +396,11 @@
       .download640,
       .skip640 {
         border-width: 1px;
-        -moz-border-radius: 10px;
-        -ms-border-radius: 10px;
-        -o-border-radius: 10px;
-        -webkit-border-radius: 10px;
+        border-radius: 10px;
+          -moz-border-radius: 10px;
+          -ms-border-radius: 10px;
+          -o-border-radius: 10px;
+          -webkit-border-radius: 10px;
         padding: 10px 17px;
       }
 
@@ -332,10 +421,11 @@
       .download960,
       .skip960 {
         border-width: 2px;
-        -moz-border-radius: 15px;
-        -ms-border-radius: 15px;
-        -o-border-radius: 15px;
-        -webkit-border-radius: 15px;
+        border-radius: 15px;
+          -moz-border-radius: 15px;
+          -ms-border-radius: 15px;
+          -o-border-radius: 15px;
+          -webkit-border-radius: 15px;
         padding: 15px 25px;
       }
 

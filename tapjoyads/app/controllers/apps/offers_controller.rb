@@ -36,7 +36,7 @@ class Apps::OffersController < WebsiteController
     end
 
     if !@offer.rewarded?
-      @custom_creative_sizes = Offer::DISPLAY_AD_SIZES.collect { |size| { :dimensions => size, :label_image_size => "#{size} creative" }}
+      @custom_creative_sizes = Offer::DISPLAY_AD_SIZES.collect { |size| { :image_size => size, :label_image_size => "#{size} creative" }}
     elsif @offer.featured?
       @custom_creative_sizes = Offer::FEATURED_AD_SIZES.collect do |size|
         width, height = size.split("x").collect{|x|x.to_i}
