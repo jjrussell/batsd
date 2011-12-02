@@ -25,7 +25,7 @@
           = "#{size} banner ad:"
           %div{:class => "img#{size}"}
             - width, height = size.split("x").collect{|x|x.to_i}
-            = image_tag(@offer.display_ad_image_url(publisher_app_id, width, height, nil, nil, true), :class => 'preview', :alt => '')
+            = image_tag(@offer.display_ad_image_url(publisher_app_id, width, height, nil, nil, true, false), :class => 'preview', :alt => '')
         - else
           - unable_to_show << "#{size} banner"
 
@@ -81,15 +81,15 @@
 
   - (Offer::DISPLAY_AD_SIZES + %w(320x480 320x76)).each do |size|
     - width, height = size.split("x")
-    - if @show_generated_ads # show spinner while images are loading
+    - if @show_generated_ads || @offer.banner_creatives.include?(size) # show spinner while images are loading
       :plain
-        div.img#{width}x#{height} {
+        div.img#{size} {
           background-image: url('/images/spinner.gif');
           background-repeat: no-repeat;
           background-position: center;
         }
     :plain
-      div.img#{width}x#{height} {
+      div.img#{size} {
         height: #{height}px;
         margin-bottom: 10px;
         margin-top: 5px;
