@@ -9,10 +9,10 @@ class RecommendationList
   DEVICE_FILE       = 'daily/udid_apps_reco.dat'
 
   def initialize(options = {})
-    @device       = options[:device]
-    @device_type  = options[:device_type]
-    @geoip_data   = options[:geoip_data] || {}
-    @os_version   = options[:os_version]
+    @device      = options[:device]
+    @device_type = options[:device_type]
+    @geoip_data  = options[:geoip_data] || {}
+    @os_version  = options[:os_version]
 
     @offers = RecommendationList.for_device(@device.id).reject { |offer| recommendation_reject?(offer) }
     @offers |= RecommendationList.for_app(@device.last_app_run).reject { |offer| recommendation_reject?(offer) } if @offers.length < MINIMUM
@@ -32,15 +32,17 @@ class RecommendationList
     end
 
     def cache_most_popular
-      recommendations = []
+      offers = []
       parse_recommendations_file(MOST_POPULAR_FILE) do |rec|
         begin
-          recommendations << Offer.find_in_cache(rec.split("\t").first)
+          offers << Offer.find_in_cache(rec.split("\t").first)
         rescue ActiveRecord::RecordNotFound => e
           next
         end
       end
-      Mc.distributed_put('s3.recommendations.offers.most_popular', recommendations)
+      offers.compact!
+      
+      Mc.distributed_put('s3.recommendations.offers.most_popular', offers)
     end
 
     def cache_raw_by_app
@@ -83,6 +85,7 @@ class RecommendationList
             next
           end
         end
+        offers.compact!
 
         offers.any? ? offers : nil
       end
@@ -98,7 +101,8 @@ class RecommendationList
             next
           end
         end
-
+        offers.compact!
+        
         offers.any? ? offers : nil
       end
     end
