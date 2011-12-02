@@ -148,6 +148,10 @@ class Partner < ActiveRecord::Base
   def remove_user(user)
     if users.length > 1 && users.include?(user)
       user.partners.delete(self)
+      if user.reseller_id?
+        self.reseller_id = nil
+        save!
+      end
       if user.partners.blank?
         user.current_partner = Partner.new(:name => user.email, :contact_name => user.email)
         user.partners << user.current_partner
@@ -292,7 +296,7 @@ class Partner < ActiveRecord::Base
 private
 
   def update_currencies
-    if rev_share_changed? || direct_pay_share_changed? || disabled_partners_changed? || offer_whitelist_changed? || use_whitelist_changed? || accepted_publisher_tos_changed? || max_deduction_percentage_changed?
+    if rev_share_changed? || direct_pay_share_changed? || disabled_partners_changed? || offer_whitelist_changed? || use_whitelist_changed? || accepted_publisher_tos_changed? || max_deduction_percentage_changed? || reseller_id_changed?
       currencies.each do |c|
         c.set_values_from_partner_and_reseller
         c.save!
