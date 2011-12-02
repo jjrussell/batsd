@@ -1,0 +1,59 @@
+de:
+  text:
+    shared:
+      privacy: "Datenschutz"
+      ads_by: "Werbung von"
+
+    offerwall:
+      title: "Erhalte %{currency}"
+      free: "Kostenlos"
+      next: "Nächste %{items} "
+      previous: "Vorherige %{items}"
+      missing_currency: "Fehlende %{currency}?"
+      instructions: "Nimm an einer der folgenden Aktionen teil um %{currency} zu erhalten"
+      earn_currency: "Erhalte %{amount} %{currency}"
+      buy_currency: "Kaufe %{amount} %{currency}"
+      load_more: "Lade noch mehr!"
+      loading: "Lade..."
+      load_error: "Bitte versuche es nochmal!"
+
+    featured:
+      title: "Erhalte %{currency}"
+      download_and_run: "Einfach downloaden und los"
+      try_out: "Jetzt ausprobieren"
+      download: "Download"
+      skip: "Weiter"
+      earn_now: "Jetzt erhalten"
+      show_more_apps: "Mehr Apps anzeigen"
+      earn_currency: "Erhalte %{amount_and_currency}"
+
+    unavailable_offer:
+      message: "Es tut uns leid, aber %{offer} ist nicht mehr verfügbar. Du kannst zur vorherigen Seite zurückkehren und diese neu laden um die aktuellste Angebotsliste anzuzeigen."
+      optional_message: "Oder klicke hier um trotzdem %{offer} zu downloaden."
+
+    instructions:
+      title: "Anleitung"
+      amount_and_currency: "%{amount} %{currency}"
+      earn_currency: "Erhalte %{amount_and_currency}"
+      header: "Folge diesen Schritten um %{currency} zu erhalten:"
+      footer: "Nachdem Du diese Schritte abgeschlossen hast, erhältst Du %{amount_and_currency}."
+      download_action: "hier"
+      download_link: "Wenn Du diese App nicht besitzt, klicke %{download_action} um sie downzuloaden."
+      continue_link: "Klicke hier um fortzufahren."
+
+    support:
+      title: "Fehlende %{currency}?"
+      instructions_1: "Bitte wähle das Angebot, das Du abgeschlossen hast, ohne %{currency} zu erhalten und trage Deine E-Mail-Adresse ein!"
+      instructions_2: "Wenn Du eine Anfrage mit unvollständigen Informationen erstellst, kann es eine Verzögerung in der Lösung Deines Problems geben. Anfragen mit vollständigen Informationen können daher bevorzugt behandelt werden."
+      specify_offer_label: "Erläutere das Angebot:"
+      description_label: "Beschreibung:"
+      email_address_label: "E-Mail-Adresse:"
+      submit_support_request: "Supportanfrage senden"
+      support_request_submitted: "Supportanfrage gesendet"
+      thanks: "Danke, daß Du die Supportanfrage gesendet hast! Du wirst Deine %{currency} erhalten, sobald wir nachvollziehen konnten, daß Du das Angebot abgeschlossen hast."
+      missing_description: "Bitte beschreibe das Angebot, das Du abgeschlossen hast!"
+      missing_offer: "Du musst das abgeschlossene Angebot erläutern!"
+      invalid_email: "Bitte gib eine reale E-Mail-Adresse ein!"
+      abuse_warning: "Dieses Formular ist ausschliesslich für Nutzer, die noch nicht für ein abgeschlossenes Angebot belohnt wurden. Missbrauch dieser Seite kann dazu führen, dass Dein Account für die zukünftige Nutzung der Angebote gesperrt wird."
+      select_offer: "Wähle das Angebot"
+      no_incomplete_offers_label: "No suitable offers were found."
