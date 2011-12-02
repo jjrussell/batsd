@@ -1,6 +1,6 @@
 class Games::GamersController < GamesController
 
-  before_filter :set_profile, :only => [ :edit, :accept_tos, :password, :prefs, :social, :friends, :update_password, :update_social, :confirm_delete ]
+  before_filter :set_profile, :only => [ :edit, :accept_tos, :password, :prefs, :social, :update_password, :update_social, :confirm_delete ]
   before_filter :offline_facebook_authenticate, :only => :connect_facebook_account
 
   def create
@@ -38,6 +38,10 @@ class Games::GamersController < GamesController
   end
 
   def social
+    @friends_lists = {
+      :following => get_friends_info(Friendship.following_ids(current_gamer.id)),
+      :followers => get_friends_info(Friendship.follower_ids(current_gamer.id))
+    }
     @image_source_options = { 'Gravatar' => Gamer::IMAGE_SOURCE_GRAVATAR}
     if @gamer_profile.facebook_id.present?
       fb_create_user_and_client(@gamer_profile.fb_access_token, '', @gamer_profile.facebook_id)
@@ -86,13 +90,6 @@ class Games::GamersController < GamesController
     end
   end
 
-  def friends
-    @friends_lists = {
-      :following => get_friends_info(Friendship.following_ids(current_gamer.id)),
-      :followers => get_friends_info(Friendship.follower_ids(current_gamer.id))
-    }
-  end
-
   private
 
   def set_profile
@@ -111,7 +108,7 @@ class Games::GamersController < GamesController
       {
         :id        => friend.id,
         :name      => friend.get_gamer_name,
-        :image_url => friend.get_avatar_url(80)
+        :image_url => friend.get_avatar_url
       }
     end
   end
