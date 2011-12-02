@@ -156,7 +156,7 @@ class DisplayAdController < ApplicationController
     icon_height = height - border * 2 - icon_padding * 2
 
     bucket = S3.bucket(BucketNames::TAPJOY)
-    background_blob = bucket.get("display/self_ad_bg_#{width}x#{height}.png")
+    background_blob = bucket.object["display/self_ad_bg_#{width}x#{height}.png"].read
     background = Magick::Image.from_blob(background_blob)[0]
 
     img = Magick::Image.new(width, height)
@@ -176,14 +176,14 @@ class DisplayAdController < ApplicationController
       Mc.get_and_put(key, false, 1.hour) do
         # At this point, the value for the given key exists in Mc, which means that it found
         # an icon corresponding to the given key
-        offer_icon_blob = bucket.get("icons/src/#{Offer.hashed_icon_id(offer.icon_id)}.jpg")
+        offer_icon_blob = bucket.object["icons/src/#{Offer.hashed_icon_id(offer.icon_id)}.jpg"].read
         offer_icon = Magick::Image.from_blob(offer_icon_blob)[0].resize(icon_height, icon_height)
         
-        corner_mask_blob = bucket.get("display/round_mask.png")
+        corner_mask_blob = bucket.object["display/round_mask.png"].read
         corner_mask = Magick::Image.from_blob(corner_mask_blob)[0].resize(icon_height, icon_height)
         offer_icon.composite!(corner_mask, 0, 0, Magick::CopyOpacityCompositeOp)
         
-        icon_shadow_blob = bucket.get("display/icon_shadow.png")
+        icon_shadow_blob = bucket.object["display/icon_shadow.png"].read
         icon_shadow = Magick::Image.from_blob(icon_shadow_blob)[0].resize(icon_height + icon_padding, icon_height)
         
         img.composite!(icon_shadow, border + 2, border + icon_padding * 2, Magick::AtopCompositeOp)
