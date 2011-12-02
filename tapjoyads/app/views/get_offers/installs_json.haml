@@ -11,7 +11,7 @@
     hash["Payout"]          = @currency.get_publisher_amount(offer)
     hash["Type"]            = offer.item_type
     hash["FullScreenAdURL"] = get_fullscreen_ad_url(offer) if params[:source] == 'featured'
-    hash["PapayaUserCount"] = number_with_delimiter(@papaya_offers[offer.id]) if @device.is_papayan? && @papaya_offers.include?(offer.id) && @show_papaya
+    hash["PapayaUserCount"] = number_with_delimiter(@papaya_offers[offer.id]) if @device.is_papayan? && @show_papaya && @papaya_offers.include?(offer.id)
     offer_array << hash
   end
 
