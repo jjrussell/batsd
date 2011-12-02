@@ -121,9 +121,9 @@ class Gamer < ActiveRecord::Base
 
   def get_avatar_url
     if image_source == Gamer::IMAGE_SOURCE_FACEBOOK && gamer_profile.facebook_id.present?
-      "https://graph.facebook.com/#{gamer_profile.facebook_id}/picture"
+      "https://graph.facebook.com/#{gamer_profile.facebook_id}/picture?size=square"
     else
-      "https://secure.gravatar.com/avatar/#{generate_gravatar_hash}?d=mm"
+      "https://secure.gravatar.com/avatar/#{generate_gravatar_hash}?d=mm&s=50"
     end
   end
 

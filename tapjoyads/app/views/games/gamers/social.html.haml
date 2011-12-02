@@ -36,7 +36,7 @@
                     %td= label_tag "Facebook Profile:"
                     %td
                       - if @gamer_profile.facebook_id.present?
-                        = fb_profile_pic(current_facebook_user, :size => 'small')
+                        = fb_profile_pic(current_facebook_user, :size => :thumb)
                         %br
                         = fb_name(current_facebook_user, :use_you => false)
                       - else
