@@ -51,15 +51,7 @@
           = mail_to "support@tapjoy.com"
         Please ensure images have correct dimensions. Custom banner ads for non-rewarded installs are only displayed for free apps.
 
-- content_for :page_javascript do
-  :plain
-    $(function($){
-      $("img.preview").load(function() {
-        this.setAttribute("style", "display: inline; border: 1px solid;");
-      });
-    });
-
-- content_for :page_styles do
+%style{ :type => 'text/css' }
   :plain
     #previews {
       text-align: center;
@@ -95,3 +87,11 @@
         margin-top: 5px;
         min-width: #{width}px;
       }
+
+%script{ :type => 'text/javascript', :charset => 'utf-8' }
+  :plain
+    $(function($){
+      $("img.preview").load(function() {
+        this.setAttribute("style", "display: inline; border: 1px solid;");
+      });
+    });
