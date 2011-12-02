@@ -105,8 +105,7 @@ module Offer::Rejecting
   end
 
   def age_rating_reject?(max_age_rating)
-    return false if max_age_rating.nil?
-    return false if age_rating.nil?
+    return false unless max_age_rating && age_rating
 
     max_age_rating < age_rating
   end

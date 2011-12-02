@@ -44,15 +44,11 @@ class GamesController < ApplicationController
   end
   
   def device_type
-    @device_type ||= HeaderParser.device_type(headers['user-agent'])
-  end
-
-  def geoip_data
-    @geoip_data ||= get_geoip_data
+    @device_type ||= HeaderParser.device_type(request.user_agent)
   end
 
   def os_version
-    @os_version ||= HeaderParser.os_version(headers['user-agent'])
+    @os_version ||= HeaderParser.os_version(request.user_agent)
   end
 
   protected

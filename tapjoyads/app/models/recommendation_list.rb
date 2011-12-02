@@ -1,5 +1,5 @@
 class RecommendationList
-  Offer
+  Offer # This class caches Offers, so the Offer model must be loaded
 
   attr_reader :offers
 
@@ -14,9 +14,9 @@ class RecommendationList
     @geoip_data   = options[:geoip_data] || {}
     @os_version   = options[:os_version]
 
-    @offers = RecommendationList.for_device(@device.id).reject { |offer| offer.recommendation_reject?(@device, @device_type, @geoip_data, @os_version) }
-    @offers |= RecommendationList.for_app(@device.last_app_run).reject { |offer| offer.recommendation_reject?(@device, @device_type, @geoip_data, @os_version) } if @offers.length < MINIMUM
-    @offers |= RecommendationList.most_popular.reject { |offer| offer.recommendation_reject?(@device, @device_type, @geoip_data, @os_version) } if @offers.length < MINIMUM
+    @offers = RecommendationList.for_device(@device.id).reject { |offer| recommendation_reject?(offer) }
+    @offers |= RecommendationList.for_app(@device.last_app_run).reject { |offer| recommendation_reject?(offer) } if @offers.length < MINIMUM
+    @offers |= RecommendationList.most_popular.reject { |offer| recommendation_reject?(offer) } if @offers.length < MINIMUM
   end
 
   def apps
@@ -46,7 +46,7 @@ class RecommendationList
     def cache_raw_by_app
       parse_recommendations_file(APP_FILE) do |recs|
         recs = recs.split(/[;,]/, 2)
-        app_id = recs.shift
+        app_id = recs.first
         recommendations = recs.second
         Mc.put("s3.recommendations.raw.by_app.#{app_id}", recommendations)
       end
@@ -77,10 +77,14 @@ class RecommendationList
       Mc.get_and_put("s3.recommendations.offers.by_app.#{app_id}", false, 1.day) do
         offers = []
         raw_for_app(app_id).split(';').each do |recommendation|
-          offers << Offer.find_in_cache(recommendation.split(',').first)
+          begin  
+            offers << Offer.find_in_cache(recommendation.split(',').first)
+          rescue ActiveRecord::RecordNotFound => e
+            next
+          end
         end
 
-        offers.compact
+        offers
       end
     end
 
@@ -88,10 +92,14 @@ class RecommendationList
       Mc.get_and_put("s3.recommendations.offers.by_device.#{device_id}", false, 1.day) do
         offers = []
         raw_for_device(device_id).split(';').each do |recommendation|
-          offers << Offer.find_in_cache(recommendation.split(',').first)
+          begin  
+            offers << Offer.find_in_cache(recommendation.split(',').first)
+          rescue ActiveRecord::RecordNotFound => e
+            next
+          end
         end
-
-        offers.compact
+        
+        offers
       end
     end
 
@@ -101,6 +109,12 @@ class RecommendationList
       end
     end
 
+  end
+
+  private
+
+  def recommendation_reject?(offer)
+    offer.recommendation_reject?(@device, @device_type, @geoip_data, @os_version)
   end
 
 end
