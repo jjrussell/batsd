@@ -88,7 +88,7 @@ class RecommendationList
         offers.compact!
 
         offers.any? ? offers : nil
-      end
+      end || []
     end
 
     def for_device(device_id)
@@ -104,7 +104,7 @@ class RecommendationList
         offers.compact!
         
         offers.any? ? offers : nil
-      end
+      end || []
     end
 
     def parse_recommendations_file(file_name, &blk)
