@@ -41,4 +41,12 @@ class GamesMailer < ActionMailer::Base
     content_type 'text/html'
     body(:ios_link => ios_link, :android_link => android_link)
   end
+
+  def delete_gamer(gamer)
+    from 'Tapjoy <noreply@tapjoy.com>'
+    recipients gamer.email
+    subject "Tapjoy - Delete Account Confirmation"
+    content_type 'text/html'
+    body(:name => gamer.get_gamer_name)
+  end
 end

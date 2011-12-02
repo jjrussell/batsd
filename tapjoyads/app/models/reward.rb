@@ -39,7 +39,7 @@ class Reward < SimpledbShardedResource
   def dynamic_domain_name
     domain_number = @key.matz_silly_hash % NUM_REWARD_DOMAINS
 
-    return "rewards_#{domain_number}"
+    "rewards_#{domain_number}"
   end
 
   def serial_save(options = {})
@@ -50,16 +50,21 @@ class Reward < SimpledbShardedResource
     conversions = []
 
     conversions << Conversion.new do |c|
-      c.id                  = key
-      c.reward_id           = key
-      c.advertiser_offer_id = offer_id
-      c.publisher_app_id    = publisher_app_id
-      c.advertiser_amount   = advertiser_amount
-      c.publisher_amount    = publisher_amount
-      c.tapjoy_amount       = tapjoy_amount
-      c.reward_type_string  = type
-      c.created_at          = created
-      c.country             = country
+      c.id                     = key
+      c.reward_id              = key
+      c.advertiser_offer_id    = offer_id
+      c.publisher_app_id       = publisher_app_id
+      c.advertiser_amount      = advertiser_amount
+      c.publisher_amount       = publisher_amount
+      c.tapjoy_amount          = tapjoy_amount
+      c.reward_type_string     = type
+      c.created_at             = created
+      c.country                = country
+      c.publisher_partner_id   = publisher_partner_id
+      c.advertiser_partner_id  = advertiser_partner_id
+      c.publisher_reseller_id  = publisher_reseller_id
+      c.advertiser_reseller_id = advertiser_reseller_id
+      c.spend_share            = spend_share
     end
 
     if displayer_app_id.present? && source == 'display_ad' # TO REMOVE: the source check when we fix our data corruption issues
@@ -74,6 +79,11 @@ class Reward < SimpledbShardedResource
         c.reward_type_string_for_displayer = type
         c.created_at                       = created
         c.country                          = country
+        c.publisher_partner_id             = publisher_partner_id
+        c.advertiser_partner_id            = advertiser_partner_id
+        c.publisher_reseller_id            = publisher_reseller_id
+        c.advertiser_reseller_id           = advertiser_reseller_id
+        c.spend_share                      = spend_share
       end
     end
 
