@@ -51,7 +51,7 @@
               = offer.direct_pay? ? t('text.offerwall.buy_currency', :amount => amount, :currency => @currency.name) : t('text.offerwall.earn_currency', :amount => amount, :currency => @currency.name)
           %p
             %b= offer.name
-            - if !@for_preview && @device.is_papayan? && @papaya_offers.include?(offer.id) && @show_papaya
+            - if !@for_preview && @device.is_papayan? && @show_papaya && @papaya_offers.include?(offer.id)
               .papaya-box
                 %span.papaya-logo
                 %span.orange-box
