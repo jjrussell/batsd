@@ -120,6 +120,8 @@ private
       end
     end
 
+    stats['1_month']['deduct_pct'] = number_to_percentage((1 - SpendShare.current.ratio) * 100, :precision => 2)
+
     stats
   end
 

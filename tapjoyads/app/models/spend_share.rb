@@ -1,6 +1,8 @@
 class SpendShare < ActiveRecord::Base
   include UuidPrimaryKey
 
+  MIN_SPEND_SHARE_RATIO = 0.8
+
   validates_numericality_of :ratio, :greater_than_or_equal_to => 0, :less_than_or_equal_to => 1
   validates_uniqueness_of :effective_on
   validates_each :effective_on, :allow_blank => false, :allow_nil => false do |record, attribute, value|
@@ -13,7 +15,7 @@ class SpendShare < ActiveRecord::Base
 
   def self.current_ratio
     Mc.distributed_get_and_put("spend_share.ratio.#{Date.today}") do
-      current.ratio
+      [current.ratio, MIN_SPEND_SHARE_RATIO].max
     end
   end
 
