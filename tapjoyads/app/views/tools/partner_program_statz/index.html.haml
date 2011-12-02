@@ -1,0 +1,320 @@
+- timeframe = @timeframe == '7_days' ? '7 days' : @timeframe == '1_month' ? '30 days' : '24 hours'
+- @page_title = "Tapjoy sponsored publishers stats"
+
+%h1= @page_title
+
+.tjform
+  = label_tag('search_box', 'Offer Name:')
+  = text_field_tag('search_box', '', :size => '40')
+
+%br
+
+.tjform
+  %form#change_date.tjform
+    = text_field_tag(:date, @start_time.to_date.to_s(:mdy))
+    \-
+    = text_field_tag(:end_date, @end_time.to_date.to_s(:mdy))
+    = submit_tag('Update', :id => :date_submit)
+
+//#money_totals
+//  .last_updated Totals Last Updated: #{@money_last_updated.to_s(:pub_ampm_sec)}
+//  %table#overall
+//    %tr
+//      %th
+//      %th Conversions
+//      %th Adv. Spend
+//      %th Payouts
+//    %tr
+//      %th Total
+//      %td= @money_stats[@timeframe]['conversions']
+//      %td= @money_stats[@timeframe]['advertiser_spend']
+//      %td= @money_stats[@timeframe]['publisher_earnings']
+//    %tr
+//      %th Android
+//      %td= @money_stats[@timeframe]['android_conversions']
+//      %td= @money_stats[@timeframe]['android_adv_spend']
+//      %td= @money_stats[@timeframe]['android_pub_earnings']
+//    %tr
+//      %th iOS
+//      %td= @money_stats[@timeframe]['ios_conversions']
+//      %td= @money_stats[@timeframe]['ios_adv_spend']
+//      %td= @money_stats[@timeframe]['ios_pub_earnings']
+//    %tr
+//      %th TJ Games
+//      %td= @money_stats[@timeframe]['tjgames_conversions']
+//      %td= @money_stats[@timeframe]['tjgames_adv_spend']
+//      %td= @money_stats[@timeframe]['tjgames_pub_earnings']
+//%p
+//  = link_to "Global Network Stats", global_statz_path
+//  - if permitted_to? :publisher, :statz
+//    |
+//    = link_to("Publisher Stats", publisher_statz_path)
+//  - if permitted_to? :advertiser, :statz
+//    |
+//    = link_to("Advertiser Stats", advertiser_statz_path)
+
+//.last_updated For: #{@last_updated_start.to_s(:pub_ampm_sec)} - #{@last_updated_end.to_s(:pub_ampm_sec)}
+
+%table#apps_table.tablesorter
+  %thead
+    %tr
+      %th
+        %a{ :id => 'toggle_icons', :href => '#' } Icon
+      %th Offer
+      %th Partner name
+      %th{ :class => 'headerSortUp header' } Conversions
+      %th Store rank
+      %th Price
+      %th Payment
+      %th Balance
+      %th Platform
+      %th CVR
+      %th Published offers
+      %th Offers revenue
+      %th Publisher Revenue
+      %th Publisher pending earnings
+      %th Featured
+      %th Rewarded
+      %th Offer type
+      %th Sales rep
+    %tr
+      %td.filter#filters_title{:colspan => 2}
+        %b Filters
+        (#{link_to('reset all', '#', :id => 'reset_filters')})
+      %td.filter &nbsp;
+      %td.filter= select_tag('conversions_filter', options_for_select(filter_options(:conversions)))
+      %td.filter= select_tag('rank_filter', options_for_select(filter_options(:rank)))
+      %td.filter= select_tag('price_filter', options_for_select(filter_options(:free)))
+      %td.filter &nbsp;
+      %td.filter= select_tag('balance_filter', options_for_select(filter_options(:balance)))
+      %td.filter= select_tag('platform_filter', options_for_select(filter_options(:platform)))
+      %td.filter &nbsp;
+      %td.filter= select_tag('published_offers_filter', options_for_select(filter_options(:published_offers)))
+      %td.filter= select_tag('revenue_filter', options_for_select(filter_options(:revenue)))
+      %td.filter= select_tag('publisher_revenue_filter', options_for_select(filter_options(:revenue)))
+      %td.filter= select_tag('publisher_pending_earnings_filter', options_for_select(filter_options(:pending_earnings)))
+      %td.filter= select_tag('featured_filter', options_for_select(filter_options(:featured)))
+      %td.filter= select_tag('rewarded_filter', options_for_select(filter_options(:rewarded)))
+      %td.filter= select_tag('offer_type_filter', options_for_select(filter_options(:offer_type)))
+      %td
+  %tbody#apps_tbody
+    - @partner_program_stats.each do |offer_id, stats|
+      :ruby
+        metadata = @partner_program_metadata[offer_id]
+        tr_classes = []
+        tr_classes << (stats['conversions'] == '0'         ? 'zero_conversions' : 'nonzero_conversions')
+        tr_classes << (metadata['overall_store_rank'] == '-'  ? 'unranked'         : 'ranked')
+        tr_classes << (metadata['price'] == '$0.00'        ? 'free'             : 'paid')
+        tr_classes << metadata['platform'].to_s.downcase
+        tr_classes << (stats['published_offers'] == '0'    ? 'zero_published'   : 'nonzero_published')
+        tr_classes << (stats['offers_revenue'] == '$0.00'  ? 'zero_revenue'     : 'nonzero_revenue')
+        tr_classes << (metadata['featured']                ? 'featured'         : 'nonfeatured')
+        tr_classes << (metadata['rewarded']                ? 'rewarded'         : 'nonrewarded')
+        tr_classes << metadata['offer_type'].to_s.downcase
+        value = metadata['balance'].gsub(/[\$,]/,'')
+      %tr{ :class => tr_classes.compact.join(' '), :value => value }
+        %td
+          %img.icon.hidden{ :s => metadata['icon_url'] }
+        %td= link_to(metadata['offer_name'], statz_path(offer_id))
+        %td= metadata['partner_name']
+        %td= stats['conversions']
+        %td= metadata['overall_store_rank']
+        %td= metadata['price']
+        %td= metadata['payment']
+        %td= metadata['balance']
+        %td= metadata['platform']
+        %td= metadata['conversion_rate']
+        %td= stats['published_offers']
+        %td= stats['offers_revenue']
+        %td= stats['offers_revenue']
+        %td= metadata['partner_pending_earnings']
+        %td= metadata['featured']
+        %td= metadata['rewarded']
+        %td= metadata['offer_type']
+        %td= metadata['sales_rep']
+
+- content_for :page_javascript do
+  :plain
+    $(function() {
+      $('#search_box').autocomplete({ source: '#{search_offers_path}', delay: 250, minLength: 2, select: function(event, ui) { window.location.assign(ui.item.url); } });
+
+      $.tablesorter.addParser({
+        id: 'currency-column',
+        is: function(s) { return false; },
+        type: 'numeric',
+        format: function(s) {
+          return s.replace(/\$/g, '').replace(/,/g, '');
+        }
+      });
+      $.tablesorter.addParser({
+        id: 'rank-column',
+        is: function(s) { return false; },
+        type: 'numeric',
+        format: function(s) {
+          return s.replace(/-/g, '999999');
+        }
+      });
+      $.tablesorter.addParser({
+        id: 'formatted-number-column',
+        is: function(s) { return false; },
+        type: 'numeric',
+        format: function(s) {
+          return s.replace(/,/g, '');
+        }
+      });
+      $("#apps_table").tablesorter({
+        widgets: ['zebra'],
+        headers: {
+          0:  { sorter: false },
+          3:  { sorter: 'formatted-number-column' },
+          4:  { sorter: 'rank-column' },
+          5:  { sorter: 'currency-column' },
+          6:  { sorter: 'currency-column' },
+          7:  { sorter: 'currency-column' },
+          10: { sorter: 'formatted-number-column' },
+          11: { sorter: 'currency-column' },
+          12: { sorter: 'currency-column' },
+          13: { sorter: 'currency-column' }
+        }
+      });
+
+      var iconsLoaded = false;
+      var iconsVisible = false;
+      $('#toggle_icons').click(function() {
+        if (iconsVisible) {
+          $('img.icon').hide();
+          iconsVisible = false;
+        } else {
+          if (!iconsLoaded) {
+            $('img.icon').each(function() {
+              $(this).attr('src', $(this).attr('s'));
+            });
+            iconsLoaded = true;
+          }
+          $('img.icon').show();
+          iconsVisible = true;
+        }
+        return false;
+      });
+
+      $('#reset_filters').click(function(){
+        $('.filter select').each(function(i,select){
+          $(select).val('');
+        });
+        $('#apps_table tr').show();
+        return false;
+      });
+      $('.filter select').change(function(){
+        var selectValues = [
+          String( $('#conversions_filter').val() ).toLowerCase(),
+          String( $('#rank_filter').val() ).toLowerCase(),
+          String( $('#price_filter').val() ).toLowerCase(),
+          String( $('#published_offers_filter').val() ).toLowerCase(),
+          String( $('#revenue_filter').val() ).toLowerCase(),
+          String( $('#publisher_revenue_filter').val() ).toLowerCase(),
+          String( $('#featured_filter').val() ).toLowerCase(),
+          String( $('#rewarded_filter').val() ).toLowerCase(),
+          String( $('#platform_filter').val() ).toLowerCase(),
+          String( $('#offer_type_filter').val() ).toLowerCase(),
+        ]
+        var className = '';
+        var length = selectValues.length;
+        for(var i = 0; i<length; i++) {
+          if (selectValues[i]) {
+            className += '.' + selectValues[i];
+          }
+        }
+        $('#apps_table tbody tr:visible').hide();
+        $('#apps_table tbody tr' + className).show();
+
+        // balance levels
+        var balance = $('#balance_filter').val();
+        if (balance) {
+          var keepNonPositive = isNaN(balance);
+          balance = Number(balance);
+          $('tbody tr:visible').each(function(i,tr){
+            tr = $(tr);
+            if (keepNonPositive) {
+              if(Number(tr.attr('value')) > 0) {
+                tr.hide();
+              }
+            } else {
+              if(balance >= Number(tr.attr('value'))) {
+                tr.hide();
+              }
+            }
+          });
+        }
+
+        // partner pending earnings levels
+        var pending_earnings = $('#publisher_pending_earnings_filter').val();
+        if (pending_earnings) {
+          var keepNonPositive1 = isNaN(pending_earnings);
+          pending_earnings = Number(pending_earnings);
+          $('tbody tr:visible').each(function(i,tr){
+            tr = $(tr);
+            if (keepNonPositive1) {
+              if(Number(tr.attr('value')) > 0) {
+                tr.hide();
+              }
+            } else {
+              if(pending_earnings >= Number(tr.attr('value'))) {
+                tr.hide();
+              }
+            }
+          });
+        }
+
+      });
+    });
+
+- content_for :page_styles do
+  :plain
+    #main {
+      width: 1150px;
+    }
+    #overall th {
+      text-align: left;
+      padding-right: 10px;
+    }
+    td#filters_title {
+      padding-left: 15px;
+    }
+
+    table.tablesorter {
+      border-collapse: separate;
+    }
+
+    table.tablesorter thead tr .header {
+      background-position: right bottom;
+    }
+
+    th,
+    td {
+      border: 0;
+    }
+
+    img.icon {
+      width: 57px;
+      height: 57px;
+    }
+
+    .last_updated {
+      font-weight: bold;
+      font-size: 14px;
+    }
+
+    #money_totals {
+      margin-top: 15px;
+    }
+    #money_totals h3 {
+      margin-top: 5px;
+    }
+
+    h1 {
+      margin-bottom: 10px;
+    }
+
+    form.filter {
+      margin-bottom: 10px;
+    }

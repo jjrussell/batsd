@@ -1,10 +1,13 @@
 development:
   hosts:
-    - ec2-50-17-5-126.compute-1.amazonaws.com
+    - ec2-50-19-59-251.compute-1.amazonaws.com
+    - ec2-107-20-45-56.compute-1.amazonaws.com
+    - ec2-107-20-49-157.compute-1.amazonaws.com
+    - ec2-50-19-198-233.compute-1.amazonaws.com
   port: 5433
   database: tapjoy
-  user: dbadmin
-  password: tapjoy
+  user: prod
+  password: taptaptap1234!
 
 test:
   hosts:

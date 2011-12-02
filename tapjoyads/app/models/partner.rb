@@ -286,15 +286,14 @@ class Partner < ActiveRecord::Base
   end
 
   def is_tapjoy_sponsored?
-    return false if offers.blank?
-    offers.each do |o|
-      return false unless o.tapjoy_sponsored?
-    end
-    return true
+    offers.blank? ? false : offers.all?{ |offer| offer.tapjoy_sponsored? }
   end
 
   def update_tapjoy_sponsored_offers(flag)
-    self.offers.each { |o| o.update_tapjoy_sponsored(flag) }  
+    offers.each do |offer|
+      offer.tapjoy_sponsored = flag
+      offer.save! if offer.changed?
+    end
   end
 
 private

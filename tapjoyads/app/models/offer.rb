@@ -156,6 +156,7 @@ class Offer < ActiveRecord::Base
   named_scope :app_offers, :conditions => "item_type = 'App' or item_type = 'ActionOffer'"
   named_scope :video_offers, :conditions => "item_type = 'VideoOffer'"
   named_scope :non_video_offers, :conditions => "item_type != 'VideoOffer'"
+  named_scope :tapjoy_sponsored_offer_ids, :conditions => "tapjoy_sponsored = true", :select => "#{Offer.quoted_table_name}.id"
 
   delegate :balance, :pending_earnings, :name, :approved_publisher?, :rev_share, :to => :partner, :prefix => true
   memoize :partner_balance
@@ -596,11 +597,6 @@ class Offer < ActiveRecord::Base
 
   def unlogged_attributes
     [ 'normal_avg_revenue', 'normal_bid', 'normal_conversion_rate', 'normal_price' ]
-  end
-
-  def update_tapjoy_sponsored(flag = false)
-    self.tapjoy_sponsored = flag
-    self.save!
   end
 
 private

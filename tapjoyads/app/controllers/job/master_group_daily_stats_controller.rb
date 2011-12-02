@@ -13,6 +13,6 @@ class Job::MasterGroupDailyStatsController < Job::JobController
       File.delete(lockfile)
     end
 
-    render :text => 'ok'
+    #render :text => 'ok'
   end
 end
