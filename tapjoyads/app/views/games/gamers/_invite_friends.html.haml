@@ -9,7 +9,7 @@
       - else
         .social_btn.fb{ :onclick => "location.href='#{games_social_invite_facebook_friends_path(:click_key => "#{params[:click_key]}")}';" }
     .social_btn_wrapper
-      %a{ :href => games_social_invite_email_friends_path(:click_key => "#{params[:click_key]}") }
+      - link_to games_social_invite_email_friends_path(:click_key => "#{params[:click_key]}") do
         .social_btn.email
 
 - content_for :page_javascript do

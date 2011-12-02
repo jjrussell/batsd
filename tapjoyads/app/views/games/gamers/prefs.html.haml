@@ -14,3 +14,12 @@
                   = f.label :allow_marketing_emails, "Allow Tapjoy to send me marketing emails"
                 .field
                   = f.submit 'Save', :class => 'button'
+    .content_wrapper
+      .content
+        #account_options.content_box.clearfix
+          - link_to confirm_delete_games_gamer_path do
+            .slider.clearfix
+              .profile_arrow.right
+              .field
+                .label
+                  Delete My Account

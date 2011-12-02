@@ -19,6 +19,7 @@ class Click < SimpledbShardedResource
   self.sdb_attr :displayer_amount,  :type => :int
   self.sdb_attr :tapjoy_amount,     :type => :int
   self.sdb_attr :currency_reward,   :type => :int
+  self.sdb_attr :spend_share,       :type => :float
   self.sdb_attr :source
   self.sdb_attr :ip_address
   self.sdb_attr :country
@@ -27,6 +28,10 @@ class Click < SimpledbShardedResource
   self.sdb_attr :block_reason
   self.sdb_attr :manually_resolved_at, :type => :time
   self.sdb_attr :device_name,          :cgi_escape => :true
+  self.sdb_attr :publisher_partner_id
+  self.sdb_attr :advertiser_partner_id
+  self.sdb_attr :publisher_reseller_id
+  self.sdb_attr :advertiser_reseller_id
 
   def initialize(options = {})
     super({ :load_from_memcache => false }.merge(options))
@@ -35,7 +40,7 @@ class Click < SimpledbShardedResource
   def dynamic_domain_name
     domain_number = @key.matz_silly_hash % NUM_CLICK_DOMAINS
 
-    return "clicks_#{domain_number}"
+    "clicks_#{domain_number}"
   end
 
   def serial_save(options = {})
@@ -54,5 +59,27 @@ class Click < SimpledbShardedResource
 
   def rewardable?
     !(new_record? || installed_at? || clicked_at < (Time.zone.now - 2.days))
+  end
+
+  def resolve!
+    raise 'Unknown click id.' if new_record?
+    raise "The click is already resolved" if manually_resolved_at?
+
+    # We only resolve clicks in the last 48 hours.
+    if clicked_at < Time.zone.now - 47.hours
+      self.clicked_at = Time.zone.now - 1.minute
+    end
+    self.manually_resolved_at = Time.zone.now
+
+    if Rails.env.production?
+      url = "#{API_URL}/"
+      if type == 'generic'
+        url += "offer_completed?click_key=#{key}"
+      else
+        url += "connect?app_id=#{advertiser_app_id}&udid=#{udid}&consistent=true"
+      end
+      Downloader.get_with_retry url
+    end
+    save!
   end
 end

@@ -94,14 +94,10 @@ class TapjoyMailer < ActionMailer::Base
 
   def advertiser_application(info)
     from 'Tapjoy <noreply@tapjoy.com>'
-    if !Rails.env.production?
-      recipients "dev@tapjoy.com"
+    if Rails.env.production?
+      recipients "insidesales@tapjoy.com"
     else
-      if info[:source] == 'performance'
-        recipients "performancemarketing@tapjoy.com"
-      else
-        recipients "brands@tapjoy.com"
-      end
+      recipients "dev@tapjoy.com"
     end
     content_type 'text/html'
     subject "Advertiser inquiry from #{info[:name]} at #{info[:company]}"

@@ -53,9 +53,14 @@ class Games::Gamers::DevicesController < GamesController
 
       cookies[:data] = { :value => params[:data], :expires => 1.year.from_now } if params[:data].present?
 
-      new_device = current_gamer.devices.create(:device => device)
+      new_device = current_gamer.devices.new(:device => device)
       if new_device.save
-        device.set_last_run_time!(TAPJOY_GAMES_REGISTRATION_OFFER_ID)
+        click = Click.new(:key => "#{device.key}.#{TAPJOY_GAMES_REGISTRATION_OFFER_ID}")
+        if click.rewardable?
+          current_gamer.reward_click(click)
+        else
+          device.set_last_run_time!(TAPJOY_GAMES_REGISTRATION_OFFER_ID)
+        end
         session[:current_device_id] = SymmetricCrypto.encrypt_object(device.key, SYMMETRIC_CRYPTO_SECRET)
 
         if current_gamer.referrer.present? && !current_gamer.referrer.starts_with?('tjreferrer:')

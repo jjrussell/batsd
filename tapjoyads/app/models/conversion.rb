@@ -49,13 +49,13 @@ class Conversion < ActiveRecord::Base
 
   belongs_to :publisher_app, :class_name => 'App'
   belongs_to :advertiser_offer, :class_name => 'Offer'
+  belongs_to :publisher_partner, :class_name => 'Partner'
+  belongs_to :advertiser_partner, :class_name => 'Partner'
 
-  validates_presence_of :publisher_app
-  validates_presence_of :advertiser_offer, :unless => Proc.new { |conversion| conversion.advertiser_offer_id.blank? }
+  validates_presence_of :publisher_app, :advertiser_offer, :publisher_partner, :advertiser_partner
   validates_numericality_of :advertiser_amount, :publisher_amount, :tapjoy_amount, :only_integer => true, :allow_nil => false
   validates_inclusion_of :reward_type, :in => REWARD_TYPES.values
 
-  before_save :sanitize_reward_id
   after_create :update_partner_amounts
 
   named_scope :created_since, lambda { |date| { :conditions => [ "created_at >= ?", date ] } }
@@ -96,6 +96,10 @@ class Conversion < ActiveRecord::Base
     else
       []
     end
+  end
+
+  def self.backup_cutoff_time
+    Time.zone.now.beginning_of_month
   end
 
   def self.archive_cutoff_time
@@ -185,22 +189,18 @@ class Conversion < ActiveRecord::Base
     end
   end
 
-private
+  private
 
   def update_partner_amounts
     partners = []
-    partners << publisher_app.partner_id unless publisher_amount == 0
-    partners << advertiser_offer.partner_id unless advertiser_amount == 0 || advertiser_offer.nil?
+    partners << publisher_partner_id unless publisher_amount == 0
+    partners << advertiser_partner_id unless advertiser_amount == 0
 
     return true if partners.empty?
 
     Partner.find_all_by_id(partners, :lock => "FOR UPDATE")
-    Partner.connection.execute("UPDATE #{Partner.quoted_table_name} SET pending_earnings = (pending_earnings + #{publisher_amount}) WHERE id = '#{publisher_app.partner_id}'") unless publisher_amount == 0
-    Partner.connection.execute("UPDATE #{Partner.quoted_table_name} SET balance = (balance + #{advertiser_amount}) WHERE id = '#{advertiser_offer.partner_id}'") unless advertiser_amount == 0 || advertiser_offer.nil?
-  end
-
-  def sanitize_reward_id
-    self.reward_id = nil unless reward_id =~ UUID_REGEX
+    Partner.connection.execute("UPDATE #{Partner.quoted_table_name} SET pending_earnings = (pending_earnings + #{publisher_amount}) WHERE id = '#{publisher_partner_id}'") unless publisher_amount == 0
+    Partner.connection.execute("UPDATE #{Partner.quoted_table_name} SET balance = (balance + #{advertiser_amount}) WHERE id = '#{advertiser_partner_id}'") unless advertiser_amount == 0
   end
 
 end
