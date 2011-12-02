@@ -28,6 +28,7 @@ class DisplayAdController < ApplicationController
       currency = Currency.find_in_cache(params[:currency_id])
       currency = nil if currency.present? && currency.app_id != params[:publisher_app_id]
       offer = Offer.find_in_cache(params[:advertiser_app_id])
+      offer.item_type = params[:offer_type] if params[:offer_type].present?
       return unless verify_records([ publisher, currency, offer ])
 
       ad_image_base64 = get_ad_image(publisher, offer, width, height, currency, params[:display_multiplier])
@@ -41,7 +42,6 @@ class DisplayAdController < ApplicationController
   private
 
   def setup
-
     params[:currency_id] ||= params[:app_id]
     return unless verify_params([ :app_id, :udid, :currency_id ])
 
@@ -97,7 +97,7 @@ class DisplayAdController < ApplicationController
       width, height = parse_size(params[:size])
 
       if params[:action] == 'webview' || params[:details] == '1'
-        @image_url = offer.display_ad_image_url(publisher_app.id, width, height, currency.id, params[:display_multiplier])
+        @image_url = offer.display_ad_image_url(publisher_app.id, width, height, currency.id, params[:display_multiplier], false, offer.item_type)
       else
         @image = get_ad_image(publisher_app, offer, width, height, currency, params[:display_multiplier])
       end
@@ -135,70 +135,68 @@ class DisplayAdController < ApplicationController
 
     key = "display_ad.#{currency.id}.#{offer.id}.#{size}.#{display_multiplier}"
     Mc.delete(key) if publisher.id == App::PREVIEW_PUBLISHER_APP_ID
+    Mc.get_and_put(key, false, 1.hour) do
+      if width == 640 && height == 100
+        border = 4
+        icon_padding = 7
+        font_size = 26
+        text_area_size = '380x92'
+      elsif width == 768 && height == 90
+        border = 4
+        icon_padding = 7
+        font_size = 26
+        text_area_size = '518x82'
+      else
+        border = 2
+        icon_padding = 3
+        font_size = 13
+        text_area_size = '190x46'
+      end
+      icon_height = height - border * 2 - icon_padding * 2
 
-    if width == 640 && height == 100
-      border = 4
-      icon_padding = 7
-      font_size = 26
-      text_area_size = '380x92'
-    elsif width == 768 && height == 90
-      border = 4
-      icon_padding = 7
-      font_size = 26
-      text_area_size = '518x82'
-    else
-      border = 2
-      icon_padding = 3
-      font_size = 13
-      text_area_size = '190x46'
-    end
-    icon_height = height - border * 2 - icon_padding * 2
+      bucket = S3.bucket(BucketNames::TAPJOY)
+      background_blob = bucket.objects["display/self_ad_bg_#{width}x#{height}.png"].read
+      background = Magick::Image.from_blob(background_blob)[0]
 
-    bucket = S3.bucket(BucketNames::TAPJOY)
-    background_blob = bucket.objects["display/self_ad_bg_#{width}x#{height}.png"].read
-    background = Magick::Image.from_blob(background_blob)[0]
+      img = Magick::Image.new(width, height)
+      img.format = 'png'
+      img.composite!(background, 0, 0, Magick::AtopCompositeOp)
 
-    img = Magick::Image.new(width, height)
-    img.format = 'png'
-    img.composite!(background, 0, 0, Magick::AtopCompositeOp)
-
-    font = (Rails.env.production? || Rails.env.staging?) ? 'Helvetica' : ''
-    
-    if offer.rewarded?
-      text = "Earn #{currency.get_visual_reward_amount(offer, display_multiplier)} #{currency.name} download \\n#{offer.name}"
-    else
-      text = "Try #{offer.name} today"
-    end
-    
-    image_label = get_image_label(text, text_area_size, font_size, font, false)
-    begin
-      Mc.get_and_put(key, false, 1.hour) do
-        # At this point, the value for the given key exists in Mc, which means that it found
-        # an icon corresponding to the given key
+      font = (Rails.env.production? || Rails.env.staging?) ? 'Helvetica' : ''
+      
+      if offer.item_type == 'TestOffer'
+        text = 'Test Offer\\nOnly Visible to Test Devices'
+      elsif offer.rewarded?
+        text = "Earn #{currency.get_visual_reward_amount(offer, display_multiplier)} #{currency.name} download \\n#{offer.name}"
+      else
+        text = "Try #{offer.name} today"
+      end
+      
+      image_label = get_image_label(text, text_area_size, font_size, font, false)
+      begin
         offer_icon_blob = bucket.objects["icons/src/#{Offer.hashed_icon_id(offer.icon_id)}.jpg"].read
+      rescue
+        offer_icon_blob = ''
+      end
+      if offer_icon_blob.present?
         offer_icon = Magick::Image.from_blob(offer_icon_blob)[0].resize(icon_height, icon_height)
-        
         corner_mask_blob = bucket.objects["display/round_mask.png"].read
         corner_mask = Magick::Image.from_blob(corner_mask_blob)[0].resize(icon_height, icon_height)
         offer_icon.composite!(corner_mask, 0, 0, Magick::CopyOpacityCompositeOp)
         
         icon_shadow_blob = bucket.objects["display/icon_shadow.png"].read
         icon_shadow = Magick::Image.from_blob(icon_shadow_blob)[0].resize(icon_height + icon_padding, icon_height)
-        
+      
         img.composite!(icon_shadow, border + 2, border + icon_padding * 2, Magick::AtopCompositeOp)
         img.composite!(offer_icon, border + icon_padding, border + icon_padding, Magick::AtopCompositeOp)
         img.composite!(image_label[0], icon_height + icon_padding * 4 + 1, border + 2, Magick::AtopCompositeOp)
         image_label = get_image_label(text, text_area_size, font_size, font, true)
+      else
+        image_label = get_image_label(text, text_area_size, font_size, font, true)
       end
-    rescue => ex
-      # This block is executed when Mc.get_and_put raises an exception, generally because the key can not be found.
-      # If the value for that key doesn't exist in Mc, then the icon doesn't exist and we should fall back to a test icon.
-      text = 'TEST AD TEXT'
-      image_label = get_image_label(text, text_area_size, font_size, font, false)
-      Notifier.alert_new_relic(ex.class, 'Could not find ad image, falling back to test ad image.')
+      img.composite!(image_label[0], icon_height + icon_padding * 4, border + 1, Magick::AtopCompositeOp)
+      Base64.encode64(img.to_blob).gsub("\n", '')
     end
-    img.composite!(image_label[0], icon_height + icon_padding * 4, border + 1, Magick::AtopCompositeOp)
-    Base64.encode64(img.to_blob).gsub("\n", '')
   end
 
   ##

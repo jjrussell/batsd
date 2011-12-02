@@ -137,7 +137,7 @@ module Offer::UrlGeneration
     "#{click_url}?data=#{SymmetricCrypto.encrypt_object(data, SYMMETRIC_CRYPTO_SECRET)}"
   end
 
-  def display_ad_image_url(publisher_app_id, width, height, currency_id = nil, display_multiplier = nil, bust_cache = false)
+  def display_ad_image_url(publisher_app_id, width, height, currency_id = nil, display_multiplier = nil, bust_cache = false, offer_type = nil)
     size = "#{width}x#{height}"
 
     delim = '?'
@@ -149,6 +149,7 @@ module Offer::UrlGeneration
       url = "#{API_URL}/display_ad/image?publisher_app_id=#{publisher_app_id}&advertiser_app_id=#{id}&displayer_app_id=#{publisher_app_id}&size=#{size}&display_multiplier=#{display_multiplier}&currency_id=#{currency_id}"
       delim = '&'
     end
+    url << "&offer_type=#{offer_type.to_s}" if offer_type.present?
     url << "#{delim}ts=#{Time.now.to_i}" if bust_cache
     url
   end
