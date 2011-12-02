@@ -84,7 +84,7 @@ class RecommendationList
           end
         end
 
-        offers
+        offers.any? ? offers : nil
       end
     end
 
@@ -98,8 +98,8 @@ class RecommendationList
             next
           end
         end
-        
-        offers
+
+        offers.any? ? offers : nil
       end
     end
 
