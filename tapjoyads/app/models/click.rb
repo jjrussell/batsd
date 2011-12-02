@@ -71,6 +71,8 @@ class Click < SimpledbShardedResource
     end
     self.manually_resolved_at = Time.zone.now
 
+    save!
+
     if Rails.env.production?
       url = "#{API_URL}/"
       if type == 'generic'
@@ -80,6 +82,5 @@ class Click < SimpledbShardedResource
       end
       Downloader.get_with_retry url
     end
-    save!
   end
 end
