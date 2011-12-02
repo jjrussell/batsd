@@ -51,6 +51,11 @@ module StatzHelper
           ["$0.00", "zero_revenue"],
           [">$0", "nonzero_revenue"],
         ]
+      when :publisher_revenue
+        [
+          ["$0.00", "zero_pub_revenue"],
+          [">$0", "nonzero_pub_revenue"],
+        ]
       when :featured
         [
           ["true", "featured"],

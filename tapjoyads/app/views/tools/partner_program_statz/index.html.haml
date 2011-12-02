@@ -81,7 +81,7 @@
       %td.filter#filters_title{:colspan => 2}
         %b Filters
         (#{link_to('reset all', '#', :id => 'reset_filters')})
-      %td.filter &nbsp;
+      %td.filter= select_tag('publisher_filter', options_for_select(["-"].concat(@partner_names.values)))
       %td.filter= select_tag('conversions_filter', options_for_select(filter_options(:conversions)))
       %td.filter= select_tag('rank_filter', options_for_select(filter_options(:rank)))
       %td.filter= select_tag('price_filter', options_for_select(filter_options(:free)))
@@ -91,7 +91,7 @@
       %td.filter &nbsp;
       %td.filter= select_tag('published_offers_filter', options_for_select(filter_options(:published_offers)))
       %td.filter= select_tag('revenue_filter', options_for_select(filter_options(:revenue)))
-      %td.filter= select_tag('publisher_revenue_filter', options_for_select(filter_options(:revenue)))
+      %td.filter= select_tag('publisher_revenue_filter', options_for_select(filter_options(:publisher_revenue)))
       %td.filter= select_tag('publisher_pending_earnings_filter', options_for_select(filter_options(:pending_earnings)))
       %td.filter= select_tag('featured_filter', options_for_select(filter_options(:featured)))
       %td.filter= select_tag('rewarded_filter', options_for_select(filter_options(:rewarded)))
@@ -107,16 +107,18 @@
         tr_classes << (metadata['price'] == '$0.00'        ? 'free'             : 'paid')
         tr_classes << metadata['platform'].to_s.downcase
         tr_classes << (stats['published_offers'] == '0'    ? 'zero_published'   : 'nonzero_published')
-        tr_classes << (stats['offers_revenue'] == '$0.00'  ? 'zero_revenue'     : 'nonzero_revenue')
+        tr_classes << (stats['offers_revenue'] == 0  ? 'zero_revenue'     : 'nonzero_revenue')
+        tr_classes << (@partner_revenue_stats[metadata['partner_id']] == 0  ? 'zero_pub_revenue'     : 'nonzero_pub_revenue')
         tr_classes << (metadata['featured']                ? 'featured'         : 'nonfeatured')
         tr_classes << (metadata['rewarded']                ? 'rewarded'         : 'nonrewarded')
         tr_classes << metadata['offer_type'].to_s.downcase
         value = metadata['balance'].gsub(/[\$,]/,'')
-      %tr{ :class => tr_classes.compact.join(' '), :value => value }
+        title = @partner_names[metadata['partner_id']]
+      %tr{ :class => tr_classes.compact.join(' '), :value => value, :title => title }
         %td
           %img.icon.hidden{ :s => metadata['icon_url'] }
         %td= link_to(metadata['offer_name'], statz_path(offer_id))
-        %td= metadata['partner_name']
+        %td= title
         %td= stats['conversions']
         %td= metadata['overall_store_rank']
         %td= metadata['price']
@@ -125,8 +127,8 @@
         %td= metadata['platform']
         %td= metadata['conversion_rate']
         %td= stats['published_offers']
-        %td= stats['offers_revenue']
-        %td= stats['offers_revenue']
+        %td= number_to_currency(stats['offers_revenue'] / 100.0)
+        %td= number_to_currency(@partner_revenue_stats[metadata['partner_id']] / 100.0)
         %td= metadata['partner_pending_earnings']
         %td= metadata['featured']
         %td= metadata['rewarded']
@@ -226,6 +228,16 @@
         }
         $('#apps_table tbody tr:visible').hide();
         $('#apps_table tbody tr' + className).show();
+        
+        var publisher = $('#publisher_filter').val();
+        if (publisher != '-') {
+          $('tbody tr:visible').each(function(i,tr){
+            tr = $(tr);
+            if (tr.attr('title') != publisher) {
+              tr.hide();
+            }
+          });
+        }
 
         // balance levels
         var balance = $('#balance_filter').val();
@@ -240,25 +252,6 @@
               }
             } else {
               if(balance >= Number(tr.attr('value'))) {
-                tr.hide();
-              }
-            }
-          });
-        }
-
-        // partner pending earnings levels
-        var pending_earnings = $('#publisher_pending_earnings_filter').val();
-        if (pending_earnings) {
-          var keepNonPositive1 = isNaN(pending_earnings);
-          pending_earnings = Number(pending_earnings);
-          $('tbody tr:visible').each(function(i,tr){
-            tr = $(tr);
-            if (keepNonPositive1) {
-              if(Number(tr.attr('value')) > 0) {
-                tr.hide();
-              }
-            } else {
-              if(pending_earnings >= Number(tr.attr('value'))) {
                 tr.hide();
               }
             }

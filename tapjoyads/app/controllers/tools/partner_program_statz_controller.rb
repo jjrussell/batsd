@@ -18,7 +18,7 @@ class Tools::PartnerProgramStatzController < WebsiteController
     #@money_last_updated = Time.zone.at(Mc.get("money.last_updated") || 0)
 
     prefix = @display == 'summary' ? 'top_' : ''
-    @partner_program_metadata, @partner_program_stats = get_stats(@start_time, @end_time) || {}
+    @partner_program_metadata, @partner_program_stats, @partner_revenue_stats, @partner_names = get_stats(@start_time, @end_time) || {}
     #@last_updated_start = Time.zone.at(Mc.get("statz.last_updated_start.#{@timeframe}") || 0)
     #@last_updated_end = Time.zone.at(Mc.get("statz.last_updated_end.#{@timeframe}") || 0)
   end
@@ -53,7 +53,8 @@ class Tools::PartnerProgramStatzController < WebsiteController
 
     if @offer.update_attributes(offer_params)
       @offer.find_associated_offers.each do |o|
-        o.update_tapjoy_sponsored(offer_params[:tapjoy_sponsored])
+        o.tapjoy_sponsored = offer_params[:tapjoy_sponsored]
+        o.save! if o.changed?
       end
       flash[:notice] = "Successfully updated #{@offer.name}"
       redirect_to statz_path(@offer)
@@ -183,7 +184,7 @@ private
       partner_program_stats[result[:offer_id]] = {
         'conversions'      => number_with_delimiter(result[:conversions]),
         'published_offers' => '0',
-        'offers_revenue'   => '$0.00',
+        'offers_revenue'   => 0, #put int 0 here for it's easier to calculate partner revenues below
       }
     end
     VerticaCluster.query('analytics.actions', {
@@ -193,11 +194,11 @@ private
         #:conditions => "path LIKE '%reward%' AND publisher_app_id IN (#{partner_program_offer_ids})" }).each do |result|
       partner_program_stats[result[:offer_id]] ||= { 'conversions' => '0' }
       partner_program_stats[result[:offer_id]]['published_offers'] = number_with_delimiter(result[:published_offers])
-      partner_program_stats[result[:offer_id]]['offers_revenue']   = number_to_currency(result[:offers_revenue] / 100.0)
+      partner_program_stats[result[:offer_id]]['offers_revenue']   = result[:offers_revenue] #won't call number_to_currency here for it's easier to calculate partner revenues below
     end
     
     partner_revenue_stats = {}
-
+    partner_names = {}
     partner_program_metadata = {}
     Offer.find_each(:conditions => [ 'id IN (?)', partner_program_stats.keys ], :include => :partner) do |offer|
       partner_program_metadata[offer.id] = {
@@ -213,9 +214,10 @@ private
         'offer_type'         => offer.item_type,
         'overall_store_rank' => combined_ranks[offer.third_party_data] || '-',
         'sales_rep'          => offer.partner.sales_rep.to_s,
-        'partner_name'       => offer.partner.name,
-        'partner_pending_earnings'  => number_to_currency(offer.partner.pending_earnings / 100.0)
+        'partner_pending_earnings'  => number_to_currency(offer.partner.pending_earnings / 100.0),
+        'partner_id'         => offer.partner.id
       }
+      partner_names[offer.partner.id] ||= offer.partner.name
       partner_revenue_stats[offer.partner.id] ||= 0
       partner_revenue_stats[offer.partner.id] += partner_program_stats[offer.id]['offers_revenue']
     end
@@ -224,7 +226,7 @@ private
       s2[1]['conversions'].gsub(',', '').to_i <=> s1[1]['conversions'].gsub(',', '').to_i
     end
 
-    return partner_program_metadata, partner_program_stats_adv
+    return partner_program_metadata, partner_program_stats_adv, partner_revenue_stats, partner_names
   end
 
   def get_times_for_vertica(timeframe)

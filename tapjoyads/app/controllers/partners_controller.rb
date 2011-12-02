@@ -80,9 +80,9 @@ class PartnersController < WebsiteController
       params[:partner][:sales_rep] = sales_rep
     end
 
-    if params[:partner].include?(:is_tapjoy_sponsored)
-      @partner.update_tapjoy_sponsored_offers(params[:partner][:is_tapjoy_sponsored])
-      params[:partner].delete :is_tapjoy_sponsored
+    if params[:partner].include?(:tapjoy_sponsored)
+      @partner.tapjoy_sponsored(params[:partner][:tapjoy_sponsored])
+      params[:partner].delete :tapjoy_sponsored
     end
 
     safe_attributes = [ :name, :account_managers, :account_manager_notes, :rev_share, :transfer_bonus, :disabled_partners, :direct_pay_share, :approved_publisher, :billing_email, :accepted_publisher_tos, :sales_rep, :max_deduction_percentage ]

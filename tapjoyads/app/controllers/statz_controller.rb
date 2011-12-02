@@ -54,7 +54,8 @@ class StatzController < WebsiteController
 
     if @offer.update_attributes(offer_params)
       @offer.find_associated_offers.each do |o|
-        o.update_tapjoy_sponsored(offer_params[:tapjoy_sponsored])
+        o.tapjoy_sponsored = offer_params[:tapjoy_sponsored]
+        o.save! if o.changed?
       end
       flash[:notice] = "Successfully updated #{@offer.name}"
       redirect_to statz_path(@offer)
