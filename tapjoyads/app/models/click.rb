@@ -63,7 +63,6 @@ class Click < SimpledbShardedResource
 
   def resolve!
     raise 'Unknown click id.' if new_record?
-    raise "The click is already resolved" if manually_resolved_at?
 
     # We only resolve clicks in the last 48 hours.
     if clicked_at < Time.zone.now - 47.hours
