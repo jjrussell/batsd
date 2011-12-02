@@ -8,10 +8,10 @@
         .content
           .title_2
             Social Networks
-          .content_box
+          #facebook_profile.content_box
             = fb_connect_async_js
             .interior
-              #facebook_profile.field
+              .field
                 %table
                   %tr
                     %td= label_tag "Facebook Profile:"
@@ -22,13 +22,9 @@
                         = fb_name(current_facebook_user, :use_you => false)
                       - else
                         None Selected
-              .field
-                - if @gamer_profile.facebook_id.present?
-                  %a.change_fb_acct_btn.button{ :onclick => "changeFb()" }
-                    Change
-                - else
-                  %a.add_fb_acct_btn.button{ :onclick => "doLogin('offline_access,publish_stream')" }
-                    Link My Facebook
+              - form_for([ :games, @gamer ], :url => dissociate_account_games_gamer_gamer_profile_path(:account_type => Invitation::FACEBOOK), :html => { :method => "put" }) do |f|
+                .field
+                  = submit_tag(@gamer_profile.facebook_id.present? ? 'Change' : 'Link My Facebook', :class => "button")
           .title_2
             Profile Image
           .content_box
@@ -42,31 +38,17 @@
                   = submit_tag('Save', :class => 'button')
 
 - content_for :page_javascript do
-  :plain
-    var changeFb = function(){
-      FB.getLoginStatus(function(response) {
-        if (response.authResponse) {
-          FB.logout(function(response) {
-            <!--
-            window.location = "#{dissociate_account_games_gamer_gamer_profile_path(:account_type => Invitation::FACEBOOK)}"
-            //-->
-          });
-        } else {
-          <!--
-          window.location = "#{dissociate_account_games_gamer_gamer_profile_path(:account_type => Invitation::FACEBOOK)}"
-          //-->
-        }
+  - if @gamer_profile.facebook_id.blank?
+    :plain
+      $(window).load(function() {
+        $("#facebook_profile form").submit(function(e){
+          TJG.social.doFbLogin("#{connect_facebook_account_games_gamer_path}");
+          return false;
+        });
       });
-    };
+  - if params['fb_logout'] == 'true'
+    :plain
+      $(window).load(function() {
+        TJG.social.doFbLogout();
+      });
 
-    var doLogin = function(scope){
-      FB.login(function(response, scope) {
-        if (response.authResponse) {
-          FB.api('/me', function(response) {
-            <!--
-            window.location = "#{connect_facebook_account_games_gamer_path}"
-            //-->
-          });
-        }
-      }, {scope: scope});
-    };
