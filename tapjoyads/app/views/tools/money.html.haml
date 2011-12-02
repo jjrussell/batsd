@@ -23,7 +23,11 @@ As of: #{@last_updated.to_s(:pub_ampm_sec)}
 
 %h3 Total Balance: #{number_to_currency(@total_balance)}
 %h3 Total Pending Earnings: #{number_to_currency(@total_pending_earnings)}
-%h3 Deduct Percentage: #{number_to_percentage((1 - SpendShare.current_ratio) * 100, :precision => 2)}
+%h3
+  Deduct Percentage: #{number_to_percentage((1 - SpendShare.current_ratio) * 100, :precision => 2)}
+  - if SpendShare.current.ratio < SpendShare::MIN_RATIO
+    %span.alert{:title => "This is what the deduct percentage would be, if it weren't capped at #{number_to_percentage((1 - SpendShare::MIN_RATIO) * 100, :precision => 2)}"}
+      = "(#{number_to_percentage((1 - SpendShare.current.ratio) * 100, :precision => 2)})"
 
 - content_for :page_styles do
   :plain
@@ -33,4 +37,8 @@ As of: #{@last_updated.to_s(:pub_ampm_sec)}
 
     table.tablesorter thead tr .header {
       background-position: right bottom;
+    }
+
+    .alert {
+      color: red;
     }
