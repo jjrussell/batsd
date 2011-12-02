@@ -47,8 +47,6 @@
     %li= link_to 'Manage user roles', tools_users_path
   - if permitted_to? :index, :tools_jobs
     %li= link_to 'Job Configuration', tools_jobs_path
-  - if permitted_to? :index, :tools_support_requests
-    %li= link_to 'Support Request Stats', tools_support_requests_path
   - if permitted_to? :index, :tools_press_releases
     %li= link_to 'Press Releases', tools_press_releases_path
 
@@ -101,6 +99,10 @@
     %li= link_to 'Reset Device', reset_device_tools_path
   - if permitted_to? :index, :tools_admin_devices
     %li= link_to 'Admin Devices', tools_admin_devices_path
+  - if permitted_to? :index, :tools_support_requests
+    %li= link_to 'Support Request Stats', tools_support_requests_path
+  - if permitted_to? :mass_resolve, :tools_support_requests
+    %li= link_to 'Mass Resolve Support Requests', mass_resolve_tools_support_requests_path
 
 - if has_permissions_for_one_of?(:hr)
   %h3 Human Resources
