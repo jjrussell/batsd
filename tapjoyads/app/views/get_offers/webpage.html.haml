@@ -50,7 +50,7 @@
                 %label= @currency.get_visual_reward_amount(offer, params[:display_multiplier])
               = offer.direct_pay? ? t('text.offerwall.buy_currency', :amount => amount, :currency => @currency.name) : t('text.offerwall.earn_currency', :amount => amount, :currency => @currency.name)
           %p
-            %b= offer.name 
+            %b= offer.name
             - if @device.is_papayan? && @papaya_offers.include?(offer.id) && @show_papaya
               .papaya-box
                 %span.papaya-logo
@@ -217,7 +217,7 @@
                       t.push('</span>');
                       t.push('<p>');
                         t.push('<b>');
-                          t.push(v.Name); 
+                          t.push(v.Name);
                           if (v.PapayaUserCount) {
                             t.push('<div class="papaya-box">');
                               t.push('<span class="papaya-logo">');
