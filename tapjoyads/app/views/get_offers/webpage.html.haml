@@ -55,7 +55,7 @@
               .papaya-box
                 %span.papaya-logo
                 %span.orange-box
-                  = "#{number_with_delimiter(@papaya_offers[offer.id])} players are currently playing"
+                  #{number_with_delimiter(@papaya_offers[offer.id])} currently playing
         .load
     - unless index == (@offer_list.size-1)
       .divider
@@ -223,7 +223,7 @@
                               t.push('<span class="papaya-logo">');
                               t.push('</span>');
                               t.push('<span class="orange-box">');
-                                t.push(v.PapayaUserCount + ' players are currently playing');
+                                t.push(v.PapayaUserCount + ' currently playing');
                               t.push('</span>');
                             t.push('</div>');
                           }
