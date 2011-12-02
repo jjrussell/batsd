@@ -147,6 +147,15 @@ class Device < SimpledbShardedResource
     end
   end
 
+  def last_app_run
+    return nil if @parsed_apps.empty?
+    @parsed_apps.max_by { |k,v| v }.first
+  end
+
+  def recommendations(options = {})
+    RecommendationList.new(options.merge(:device => self)).apps
+  end
+
 private
 
   def fix_parser_error
