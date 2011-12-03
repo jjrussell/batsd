@@ -214,7 +214,7 @@ private
         'offer_type'         => offer.item_type,
         'overall_store_rank' => combined_ranks[offer.third_party_data] || '-',
         'sales_rep'          => offer.partner.sales_rep.to_s,
-        'partner_pending_earnings'  => number_to_currency(offer.partner.pending_earnings / 100.0),
+        'partner_pending_earnings'  => offer.partner.pending_earnings,
         'partner_id'         => offer.partner.id
       }
       partner_names[offer.partner.id] ||= offer.partner.name

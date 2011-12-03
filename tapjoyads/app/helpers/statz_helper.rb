@@ -38,13 +38,12 @@ module StatzHelper
           [">$0", "0"],
           ["\342\211\244$0","negative"],
         ]
-      when :pending_earnings
+      when :pending_earning
         [
-          [">$100k","100000"],
-          [">$10k","10000"],
-          [">$1k", "1000"],
-          [">$0", "0"],
-          ["\342\211\244$0","negative"],
+          [">$10k","earning_10k"],
+          [">$1k", "earning_1k"],
+          [">$0", "earning_zero"],
+          ["\342\211\244$0","earning_negative"],
         ]
       when :revenue
         [
