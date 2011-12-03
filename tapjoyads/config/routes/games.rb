@@ -1,5 +1,6 @@
 ActionController::Routing::Routes.draw do |map|
-  map.with_options({:path_prefix => MACHINE_TYPE == 'website' ? '' : 'games', :name_prefix => 'games_'}) do |m|
+  website_uri = URI.parse(WEBSITE_URL)
+  map.with_options({:path_prefix => MACHINE_TYPE == 'website' ? '' : 'games', :name_prefix => 'games_', :protocol => website_uri.scheme, :host => website_uri.host}) do |m|
     m.root :controller => 'games/homepage', :action => :index
     m.tos 'tos', :controller => 'games/homepage', :action => :tos
     m.privacy 'privacy', :controller => 'games/homepage', :action => :privacy
