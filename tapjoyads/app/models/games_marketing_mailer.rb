@@ -40,8 +40,8 @@ class GamesMarketingMailer < ActionMailer::Base
     linked = gamer_device.present?
     android_device = gamer_device.device_type == 'android' rescue false
 
-    protocol, host = WEBSITE_URL.split('://')
-    confirmation_link = url_for(:protocol => protocol, :host => host, :controller => 'confirm', :token => gamer.confirmation_token)
+    uri = URI.parse(WEBSITE_URL)
+    confirmation_link = games_confirm_url(:protocol => uri.scheme, :host => uri.host, :token => gamer.confirmation_token)
 
     sendgrid_category "Welcome Email, #{linked ? "Linked for Device Type #{gamer_device.device_type}" : "Not Linked"}"
     body :confirmation_link => confirmation_link, :linked => linked, :android_device => android_device,
