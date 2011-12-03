@@ -107,7 +107,7 @@ private
       @offer = Offer.find_in_cache(params[:offer_id])
     end
 
-    if params[:source] == 'tj_games' && @offer.item_type == 'GenericOffer' && GenericOffer.find_by_id(params[:offer_id]).category == 'Invite' && params[:gamer_id].blank?
+    if params[:source] == 'tj_games' && params[:advertiser_app_id] == TAPJOY_GAMES_INVITATION_OFFER_ID && params[:gamer_id].blank?
       render :text => "missing required params", :status => 400
       return
     end
@@ -211,8 +211,8 @@ private
   def create_click(type)
     if type != 'generic' || params[:advertiser_app_id] == TAPJOY_GAMES_REGISTRATION_OFFER_ID
       click_key = "#{params[:udid]}.#{params[:advertiser_app_id]}"
-    elsif type == 'generic' and GenericOffer.find_by_id(@offer.id).category == 'Invite'
-      click_key = "#{params[:gamer_id]}.#{@offer.id}"
+    elsif type == 'generic' && params[:advertiser_app_id] == TAPJOY_GAMES_INVITATION_OFFER_ID
+      click_key = "#{params[:gamer_id]}.#{params[:advertiser_app_id]}"
     else
       click_key = UUIDTools::UUID.random_create.to_s
     end
