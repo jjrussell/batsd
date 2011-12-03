@@ -38,7 +38,7 @@ class GamesMarketingMailer < ActionMailer::Base
 
     gamer_device ||= gamer.gamer_devices.first
     linked = gamer_device.present?
-    android_device = gamer_device.device_type == 'android' rescue false
+    android_device = linked ? (gamer_device.device_type == 'android') : false
 
     uri = URI.parse(WEBSITE_URL)
     confirmation_link = games_confirm_url(:protocol => uri.scheme, :host => uri.host, :token => gamer.confirmation_token)
