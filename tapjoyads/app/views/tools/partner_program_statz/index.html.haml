@@ -1,4 +1,3 @@
-- timeframe = @timeframe == '7_days' ? '7 days' : @timeframe == '1_month' ? '30 days' : '24 hours'
 - @page_title = "Tapjoy sponsored publishers stats"
 
 %h1= @page_title
@@ -7,55 +6,17 @@
   = label_tag('search_box', 'Offer Name:')
   = text_field_tag('search_box', '', :size => '40')
 
-%p time in UTC
+%br
 
 .tjform
   %form#change_date.tjform
+    Time in UTC
     = text_field_tag(:date, @start_time.to_date.to_s(:mdy))
     \-
     = text_field_tag(:end_date, @end_time.to_date.to_s(:mdy))
     = submit_tag('Update', :id => :date_submit)
 
-%p Note: publishers revenue total and publisher pending earnings total are sums by publisher, not sum of the column.
-
-//#money_totals
-//  .last_updated Totals Last Updated: #{@money_last_updated.to_s(:pub_ampm_sec)}
-//  %table#overall
-//    %tr
-//      %th
-//      %th Conversions
-//      %th Adv. Spend
-//      %th Payouts
-//    %tr
-//      %th Total
-//      %td= @money_stats[@timeframe]['conversions']
-//      %td= @money_stats[@timeframe]['advertiser_spend']
-//      %td= @money_stats[@timeframe]['publisher_earnings']
-//    %tr
-//      %th Android
-//      %td= @money_stats[@timeframe]['android_conversions']
-//      %td= @money_stats[@timeframe]['android_adv_spend']
-//      %td= @money_stats[@timeframe]['android_pub_earnings']
-//    %tr
-//      %th iOS
-//      %td= @money_stats[@timeframe]['ios_conversions']
-//      %td= @money_stats[@timeframe]['ios_adv_spend']
-//      %td= @money_stats[@timeframe]['ios_pub_earnings']
-//    %tr
-//      %th TJ Games
-//      %td= @money_stats[@timeframe]['tjgames_conversions']
-//      %td= @money_stats[@timeframe]['tjgames_adv_spend']
-//      %td= @money_stats[@timeframe]['tjgames_pub_earnings']
-//%p
-//  = link_to "Global Network Stats", global_statz_path
-//  - if permitted_to? :publisher, :statz
-//    |
-//    = link_to("Publisher Stats", publisher_statz_path)
-//  - if permitted_to? :advertiser, :statz
-//    |
-//    = link_to("Advertiser Stats", advertiser_statz_path)
-
-//.last_updated For: #{@last_updated_start.to_s(:pub_ampm_sec)} - #{@last_updated_end.to_s(:pub_ampm_sec)}
+%p Note: publisher revenue total and publisher pending earnings total are sums by publisher, not sum of the column.
 
 %table#apps_table.tablesorter
   %thead
@@ -298,11 +259,12 @@
         }
         updateTotals();
       });
-
       function updateTotals() {
-        $('.total_convertions').html(sumOfColumns(4));
-        $('.total_published_offers').html(sumOfColumns(11));
-        $('.total_offers_revenue').html("$"+sumOfColumns(12));
+        $('.total_convertions').text(addCommas(sumOfColumns(4)));
+        $('.total_published_offers').text(addCommas(sumOfColumns(11)));
+        $('.total_offers_revenue').text(formatCurrency(sumOfColumns(12)));
+        $('.total_publisher_revenue').text(formatCurrency(sumByPublishers(13)));
+        $('.total_publisher_pending_earnings').text(formatCurrency(sumByPublishers(14)));
       }
       function sumOfColumns(coln) {
         var sum = 0;
@@ -312,6 +274,33 @@
             sum += parseFloat($(this).html().replace(/[\$,]/g, ""));
           });
         return sum;
+      }
+      function sumByPublishers(coln){
+        var sum = 0;
+        $('#publisher_filter option').each(function(i,o){
+          var $tr = $('#apps_table tbody tr:visible[title="'+$(o).attr('value')+'"]:eq(0)');
+          $tr.children('td:nth-child('+coln+')').each(function(){
+            sum += parseFloat($(this).html().replace(/[\$,]/g, ""));
+          });
+        });
+        return sum;
+      }
+      function formatCurrency(n){
+        if(isNaN(n)){
+          return "$0.00";
+        }
+        return "$"+addCommas(n.toFixed(2));
+      }
+      function addCommas(nStr){
+        nStr += '';
+        x = nStr.split('.');
+        x1 = x[0];
+        x2 = x.length > 1 ? '.' + x[1] : '';
+        var rgx = /(\d+)(\d{3})/;
+        while (rgx.test(x1)) {
+          x1 = x1.replace(rgx, '$1' + ',' + '$2');
+        }
+        return x1 + x2;
       }
     });
 
@@ -338,37 +327,30 @@
     table.tablesorter {
       border-collapse: separate;
     }
-
     table.tablesorter thead tr .header {
       background-position: right bottom;
     }
-
     th,
     td {
       border: 0;
     }
-
     img.icon {
       width: 57px;
       height: 57px;
     }
-
     .last_updated {
       font-weight: bold;
       font-size: 14px;
     }
-
     #money_totals {
       margin-top: 15px;
     }
     #money_totals h3 {
       margin-top: 5px;
     }
-
     h1 {
       margin-bottom: 10px;
     }
-
     form.filter {
       margin-bottom: 10px;
     }
