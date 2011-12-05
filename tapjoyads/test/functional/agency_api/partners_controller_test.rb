@@ -130,7 +130,8 @@ class AgencyApi::PartnersControllerTest < ActionController::TestCase
 
   context "on POST to :create" do
     setup do
-      @agency_user = Factory(:agency_user)
+      @reseller = Factory(:reseller)
+      @agency_user = Factory(:agency_user, :reseller => @reseller)
     end
 
     context "with missing params" do
@@ -184,6 +185,7 @@ class AgencyApi::PartnersControllerTest < ActionController::TestCase
         partner = user.partners.first
         assert_equal partner.id, result['partner_id']
         assert_equal 'partner', partner.name
+        assert_equal @reseller.id, partner.reseller_id
       end
     end
   end

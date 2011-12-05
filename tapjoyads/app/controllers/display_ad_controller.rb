@@ -27,8 +27,11 @@ class DisplayAdController < ApplicationController
       publisher = App.find_in_cache(params[:publisher_app_id])
       currency = Currency.find_in_cache(params[:currency_id])
       currency = nil if currency.present? && currency.app_id != params[:publisher_app_id]
-      offer = Offer.find_in_cache(params[:advertiser_app_id])
-      offer.item_type = params[:offer_type] if params[:offer_type].present?
+      if params[:offer_type] == "TestOffer"
+        offer = build_test_offer(publisher)
+      else
+        offer = Offer.find_in_cache(params[:advertiser_app_id])
+      end
       return unless verify_records([ publisher, currency, offer ])
 
       ad_image_base64 = get_ad_image(publisher, offer, width, height, currency, params[:display_multiplier])
@@ -165,7 +168,7 @@ class DisplayAdController < ApplicationController
       font = (Rails.env.production? || Rails.env.staging?) ? 'Helvetica' : ''
       
       if offer.item_type == 'TestOffer'
-        text = 'Test Offer\\nOnly Visible to Test Devices'
+        text = offer.name
       elsif offer.rewarded?
         text = "Earn #{currency.get_visual_reward_amount(offer, display_multiplier)} #{currency.name} download \\n#{offer.name}"
       else
@@ -190,10 +193,8 @@ class DisplayAdController < ApplicationController
         img.composite!(icon_shadow, border + 2, border + icon_padding * 2, Magick::AtopCompositeOp)
         img.composite!(offer_icon, border + icon_padding, border + icon_padding, Magick::AtopCompositeOp)
         img.composite!(image_label[0], icon_height + icon_padding * 4 + 1, border + 2, Magick::AtopCompositeOp)
-        image_label = get_image_label(text, text_area_size, font_size, font, true)
-      else
-        image_label = get_image_label(text, text_area_size, font_size, font, true)
       end
+      image_label = get_image_label(text, text_area_size, font_size, font, true)
       img.composite!(image_label[0], icon_height + icon_padding * 4, border + 1, Magick::AtopCompositeOp)
       Base64.encode64(img.to_blob).gsub("\n", '')
     end

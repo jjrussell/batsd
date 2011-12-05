@@ -137,19 +137,18 @@ module Offer::UrlGeneration
     "#{click_url}?data=#{SymmetricCrypto.encrypt_object(data, SYMMETRIC_CRYPTO_SECRET)}"
   end
 
-  def display_ad_image_url(publisher_app_id, width, height, currency_id = nil, display_multiplier = nil, bust_cache = false, offer_type = nil)
+  def display_ad_image_url(publisher_app_id, width, height, currency_id = nil, display_multiplier = nil, bust_cache = false, use_cloudfront = true)
     size = "#{width}x#{height}"
 
     delim = '?'
     if display_custom_banner_for_size?(size)
-      url = "#{CLOUDFRONT_URL}/#{banner_creative_path(size)}"
+      url = "#{use_cloudfront ? CLOUDFRONT_URL : "https://s3.amazonaws.com/#{BucketNames::TAPJOY}"}/#{banner_creative_path(size)}"
     else
       display_multiplier = (display_multiplier || 1).to_f
       # TO REMOVE: displayer_app_id param after rollout.
-      url = "#{API_URL}/display_ad/image?publisher_app_id=#{publisher_app_id}&advertiser_app_id=#{id}&displayer_app_id=#{publisher_app_id}&size=#{size}&display_multiplier=#{display_multiplier}&currency_id=#{currency_id}"
+      url = "#{API_URL}/display_ad/image?publisher_app_id=#{publisher_app_id}&advertiser_app_id=#{id}&displayer_app_id=#{publisher_app_id}&size=#{size}&display_multiplier=#{display_multiplier}&currency_id=#{currency_id}&offer_type=#{item_type}"
       delim = '&'
     end
-    url << "&offer_type=#{offer_type.to_s}" if offer_type.present?
     url << "#{delim}ts=#{Time.now.to_i}" if bust_cache
     url
   end

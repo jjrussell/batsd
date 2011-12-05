@@ -10,12 +10,8 @@ class Games::MoreGamesController < GamesController
     end
   end
 
-  def popular
-    if using_android?
-      @popular_apps = PopularApp.get_android
-    else
-      @popular_apps = PopularApp.get_ios
-    end
+  def recommended
+    @recommendations = Device.new(:key => current_device_id).recommendations(:device_type => device_type, :geoip_data => get_geoip_data, :os_version => os_version)
   end
 
 end
