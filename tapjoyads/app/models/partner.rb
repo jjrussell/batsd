@@ -286,7 +286,7 @@ class Partner < ActiveRecord::Base
   end
 
   def tapjoy_sponsored?
-    offers.blank? ? false : offers.all?{ |offer| offer.tapjoy_sponsored? }
+    offers.blank? ? false : offers.all?(&:tapjoy_sponsored?)
   end
 
   def tapjoy_sponsored(flag)
