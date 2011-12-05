@@ -49,6 +49,7 @@ class ToolsController < WebsiteController
     @last_updated = Time.zone.at(Mc.get('money.last_updated') || 0)
     @total_balance = Mc.get('money.total_balance') || 0
     @total_pending_earnings = Mc.get('money.total_pending_earnings') || 0
+    @current_spend_share = SpendShare.current
   end
 
   def send_currency_failures

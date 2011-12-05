@@ -29,8 +29,6 @@
 - if has_permissions_for_one_of?(:admin)
   %h3 Admin
 %ul
-  - if permitted_to? :send_currency_failures, :tools
-    %li= link_to 'Send Currency Failures', send_currency_failures_tools_path
   - if permitted_to? :failed_sdb_saves, :tools
     %li= link_to 'Failed Sdb Saves', failed_sdb_saves_tools_path
   - if permitted_to? :sqs_lengths, :tools
@@ -103,6 +101,8 @@
     %li= link_to 'Support Request Stats', tools_support_requests_path
   - if permitted_to? :mass_resolve, :tools_support_requests
     %li= link_to 'Mass Resolve Support Requests', mass_resolve_tools_support_requests_path
+  - if permitted_to? :send_currency_failures, :tools
+    %li= link_to 'Send Currency Failures', send_currency_failures_tools_path
 
 - if has_permissions_for_one_of?(:hr)
   %h3 Human Resources
