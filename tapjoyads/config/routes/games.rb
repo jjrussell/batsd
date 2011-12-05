@@ -10,7 +10,7 @@ ActionController::Routing::Routes.draw do |map|
     m.more_apps 'more_apps', :controller => 'games/homepage', :action => :index, :load => 'more_apps'
 
     m.more_games_editor_picks 'editor_picks', :controller => 'games/more_games', :action => :editor_picks
-    m.more_games_popular 'popular', :controller => 'games/more_games', :action => :popular
+    m.more_games_recommended 'recommended', :controller => 'games/more_games', :action => :recommended
 
     m.resources :gamer_sessions, :controller => 'games/gamer_sessions', :only => [ :new, :create, :destroy, :index ]
     m.connect 'login', :controller => 'games/gamer_sessions', :action => :create, :conditions => {:method => :post}

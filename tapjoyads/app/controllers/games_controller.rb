@@ -6,7 +6,7 @@ class GamesController < ApplicationController
 
   skip_before_filter :fix_params
 
-  helper_method :current_gamer, :current_device_id, :current_device_id_cookie, :current_device_info, :has_multiple_devices, :show_login_page
+  helper_method :current_gamer, :current_device_id, :current_device_id_cookie, :current_device_info, :has_multiple_devices, :show_login_page, :device_type, :geoip_data, :os_version
 
   def current_gamer
     @current_gamer ||= current_gamer_session && current_gamer_session.record
@@ -42,8 +42,16 @@ class GamesController < ApplicationController
   def has_multiple_devices?
     current_gamer.devices.size > 1
   end
+  
+  def device_type
+    @device_type ||= HeaderParser.device_type(request.user_agent)
+  end
 
-protected
+  def os_version
+    @os_version ||= HeaderParser.os_version(request.user_agent)
+  end
+
+  protected
 
   def ssl_required?
     Rails.env.production?
@@ -57,7 +65,7 @@ protected
     end
   end
 
-private
+  private
 
   def current_gamer_session
     @current_gamer_session ||= GamerSession.find
