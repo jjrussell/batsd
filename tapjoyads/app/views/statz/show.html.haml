@@ -107,6 +107,7 @@
   - property_row('Balance', number_to_currency(@offer.partner_balance / 100.0))
   - property_row('Pending Earnings', number_to_currency(@offer.partner_pending_earnings / 100.0))
   - property_row('Account managers', @offer.account_managers.map(&:email).join(', '))
+  - property_row('CS Contact Email', @offer.partner_cs_contact_email)
   - property_row('Approved publisher', @offer.partner_approved_publisher?)
   - property_row('Rev share', number_to_percentage(@offer.partner_rev_share * 100, :precision => 1))
   - property_row('Internal notes', @offer.internal_notes, '')
