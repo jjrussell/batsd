@@ -92,7 +92,7 @@ ActionController::Routing::Routes.draw do |map|
     tools.resources :editors_picks, :except => [ :destroy ], :member => { :activate => :post, :expire => :post }
     tools.resources :app_reviews, :except => [ :show ], :member => { :update_featured => :put }
     tools.resources :agency_users, :only => [ :index, :show ]
-    tools.resources :support_requests, :only => [ :index ]
+    tools.resources :support_requests, :only => [ :index ], :collection => { :mass_resolve => [ :get, :post ] }
     tools.resources :press_releases, :only => [ :index, :new, :create, :edit, :update ]
     tools.resources :network_costs, :only => [ :index, :new, :create ]
   end

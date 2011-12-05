@@ -69,6 +69,18 @@ class Currency < ActiveRecord::Base
     currencies
   end
 
+  def get_spend_share(offer)
+    if partner_id == offer.partner_id
+      0
+    elsif offer.direct_pay?
+      direct_pay_share
+    elsif reseller_id? && reseller_id == offer.reseller_id
+      reseller_spend_share
+    else
+      spend_share
+    end
+  end
+
   def get_visual_reward_amount(offer, display_multiplier = 1)
     display_multiplier = (display_multiplier.present? ? display_multiplier : 1).to_f
     if offer.has_variable_payment?
@@ -100,21 +112,11 @@ class Currency < ActiveRecord::Base
   end
 
   def get_publisher_amount(offer, displayer_app = nil)
-    if offer.partner_id == partner_id
-      publisher_amount = 0
-    elsif offer.direct_pay?
-      publisher_amount = offer.payment * direct_pay_share
-    elsif reseller_id? && reseller_id == offer.reseller_id
-      publisher_amount = offer.payment * reseller_spend_share
-    else
-      publisher_amount = offer.payment * spend_share
-    end
-
     if displayer_app.present?
-      publisher_amount = 0
+      0
+    else
+      (offer.payment * get_spend_share(offer)).to_i
     end
-
-    publisher_amount.to_i
   end
 
   def get_advertiser_amount(offer)

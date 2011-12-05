@@ -10,6 +10,7 @@ class BucketNames
   STORE_CLICKS        = RUN_MODE_PREFIX + 'store-clicks'
   STORE_RANKS         = RUN_MODE_PREFIX + 'store-ranks'
   TAPJOY              = RUN_MODE_PREFIX + 'tapjoy'
+  TAPJOY_GAMES        = RUN_MODE_PREFIX + 'tj-games'
   UDID_REPORTS        = RUN_MODE_PREFIX + 'udid-reports'
   VIRTUAL_GOODS       = RUN_MODE_PREFIX + 'virtual_goods'
 end

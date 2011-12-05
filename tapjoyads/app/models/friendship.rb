@@ -13,4 +13,16 @@ class Friendship < SimpledbResource
       friendship.save
     end
   end
+
+  def self.following_ids(id)
+    Friendship.select(:where => "gamer_id = '#{id}'", :consistent => true)[:items].map do |f|
+      f.following_id
+    end
+  end
+
+  def self.follower_ids(id)
+    Friendship.select(:where => "following_id = '#{id}'", :consistent => true)[:items].map do |f|
+      f.gamer_id
+    end
+  end
 end

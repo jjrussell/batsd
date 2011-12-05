@@ -49,6 +49,7 @@ class ToolsController < WebsiteController
     @last_updated = Time.zone.at(Mc.get('money.last_updated') || 0)
     @total_balance = Mc.get('money.total_balance') || 0
     @total_pending_earnings = Mc.get('money.total_pending_earnings') || 0
+    @current_spend_share = SpendShare.current
   end
 
   def send_currency_failures
@@ -115,7 +116,8 @@ class ToolsController < WebsiteController
   end
 
   def sqs_lengths
-    @queues = Sqs.queues.map do |queue|
+    queues = params[:queue_name].present? ? Sqs.queue("#{QueueNames::BASE_NAME}#{params[:queue_name]}").to_a : Sqs.queues
+    @queues = queues.map do |queue|
       {
         :name        => queue.url.split('/').last,
         :size        => queue.visible_messages,
@@ -289,39 +291,16 @@ class ToolsController < WebsiteController
   def resolve_clicks
     click = Click.new(:key => params[:click_id])
     if click.new_record?
-      flash[:error] = "Unknown click id."
+      flash[:error] = 'Unknown click id.'
       redirect_to device_info_tools_path and return
     end
+
     log_activity(click)
-
-    if click.currency_id.nil? # old clicks don't have currency_id
-      currencies = Currency.find_all_by_app_id(click.publisher_app_id)
-      if currencies.length == 1
-        click.currency_id = currencies.first.id
-      else
-        flash[:error] = "Ambiguity -- the publisher app has more than one currency and currency_id was not specified."
-        redirect_to device_info_tools_path(:udid => click.udid) and return
-      end
+    begin
+      click.resolve!
+    rescue Exception => e
+      flash[:error] = "#{e}"
     end
-
-    if click.clicked_at < Time.zone.now - 47.hours
-      click.clicked_at = Time.zone.now - 1.minute
-      flash[:error] = "Because the click was from 48+ hours ago this might fail. If it doesn't go through, try again in a few minutes."
-    end
-
-    click.manually_resolved_at = Time.zone.now
-    click.serial_save
-
-    if Rails.env.production?
-      url = "#{API_URL}/"
-      if click.type == 'generic'
-        url += "offer_completed?click_key=#{click.key}"
-      else
-        url += "connect?app_id=#{click.advertiser_app_id}&udid=#{click.udid}"
-      end
-      Downloader.get_with_retry url
-    end
-
     redirect_to device_info_tools_path(:udid => click.udid)
   end
 
