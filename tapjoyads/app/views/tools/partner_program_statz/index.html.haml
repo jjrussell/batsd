@@ -8,9 +8,13 @@
 
 %br
 
+%form#csv_export{ :action => 'export', :method => 'get' }
+  = hidden_field_tag(:date,  @start_time.to_date.to_s(:mdy))
+  = hidden_field_tag(:end_date, @end_time.to_date.to_s(:mdy))
+  = button_to 'Export to csv'
+
 .tjform
   %form#change_date.tjform
-    Time in UTC &nbsp;
     = text_field_tag(:date, @start_time.to_date.to_s(:mdy))
     \-
     = text_field_tag(:end_date, @end_time.to_date.to_s(:mdy))
@@ -358,4 +362,7 @@
     }
     #date_submit {
       margin: 0;
+    }
+    #csv_export {
+      float: right;
     }

@@ -5,19 +5,15 @@ class Tools::PartnerProgramStatzController < WebsiteController
   current_tab :tools
   filter_access_to :all
 
-  before_filter :setup, :only => [ :index ]
+  before_filter :setup, :only => [ :index, :export ]
 
   def index
-    @timeframe = params[:timeframe] || '24_hours'
-    @display   = params[:display]   || 'summary'
+    @partner_program_metadata, @partner_program_stats, @partner_revenue_stats, @partner_names = get_stats(@start_time, @end_time)
+  end
 
-    #@money_stats = Mc.get('money.cached_stats') || { @timeframe => {} }
-    #@money_last_updated = Time.zone.at(Mc.get("money.last_updated") || 0)
-
-    prefix = @display == 'summary' ? 'top_' : ''
-    @partner_program_metadata, @partner_program_stats, @partner_revenue_stats, @partner_names = get_stats(@start_time, @end_time) || {}
-    #@last_updated_start = Time.zone.at(Mc.get("statz.last_updated_start.#{@timeframe}") || 0)
-    #@last_updated_end = Time.zone.at(Mc.get("statz.last_updated_end.#{@timeframe}") || 0)
+  def export
+    data = generate_csv()
+    send_data(data.join("\n"), :type => 'text/csv', :filename => "Tapjoy_sponsored_publishers_stats_#{@start_time.to_s(:yyyy_mm_dd)}_#{@end_time.to_s(:yyyy_mm_dd)}.csv")
   end
 
 private
@@ -27,9 +23,7 @@ private
   end
 
   def get_stats(start_time, end_time)
-    #start_time, end_time = get_times_for_vertica(timeframe)
     time_conditions      = "time >= '#{start_time.to_s(:db)}' AND time < '#{end_time.to_s(:db)}'"
-
     partner_program_offer_ids = Offer.tapjoy_sponsored_offer_ids.map { |o| "'#{o.id}'" }.join(',')  #is it necessary to add Offer.enabled_offers.tapjoy_sponsored_offer_ids here?
 
     partner_program_stats = {}
@@ -37,11 +31,10 @@ private
         :select     => 'offer_id, count(*) AS conversions',
         :group      => 'offer_id',
         :conditions => "path LIKE '%reward%' AND #{time_conditions} AND offer_id IN (#{partner_program_offer_ids})" }).each do |result|
-        #:conditions => "path LIKE '%reward%' AND offer_id IN (#{partner_program_offer_ids})" }).each do |result|
       partner_program_stats[result[:offer_id]] = {
         'conversions'      => number_with_delimiter(result[:conversions]),
         'published_offers' => '0',
-        'offers_revenue'   => 0, #put int 0 here for it's easier to calculate partner revenues below
+        'offers_revenue'   => 0,
       }
     end
     VerticaCluster.query('analytics.actions', {
@@ -51,9 +44,9 @@ private
         #:conditions => "path LIKE '%reward%' AND publisher_app_id IN (#{partner_program_offer_ids})" }).each do |result|
       partner_program_stats[result[:offer_id]] ||= { 'conversions' => '0' }
       partner_program_stats[result[:offer_id]]['published_offers'] = number_with_delimiter(result[:published_offers])
-      partner_program_stats[result[:offer_id]]['offers_revenue']   = result[:offers_revenue] #won't call number_to_currency here for it's easier to calculate partner revenues below
+      partner_program_stats[result[:offer_id]]['offers_revenue']   = result[:offers_revenue]
     end
-    
+
     partner_revenue_stats = {}
     partner_names = {}
     partner_program_metadata = {}
@@ -86,22 +79,6 @@ private
     return partner_program_metadata, partner_program_stats_adv, partner_revenue_stats, partner_names
   end
 
-  def get_times_for_vertica(timeframe)
-    most_recent = VerticaCluster.query('analytics.actions', :select => 'max(time)').first[:max]
-
-    if timeframe == '24_hours'
-      end_time   = most_recent - (most_recent.to_i % 10.minutes).seconds
-      start_time = end_time - 24.hours
-    elsif timeframe == '7_days'
-      end_time   = most_recent.beginning_of_day
-      start_time = end_time - 7.days
-    elsif timeframe == '1_month'
-      end_time   = most_recent.beginning_of_day
-      start_time = end_time - 30.days
-    end
-    [ start_time, end_time ]
-  end
-
   def combined_ranks
     @combined_ranks ||= begin
       ios_ranks_free     = Mc.get('store_ranks.ios.overall.free.united_states') || {}
@@ -111,6 +88,35 @@ private
 
       ios_ranks_free.merge(ios_ranks_paid).merge(android_ranks_free).merge(android_ranks_paid)
     end
+  end
+
+  def generate_csv
+    data = ["Offer,Publisher_name,Conversions,Store_rank,Price,Payment,Balance,Platform,CVR,Published_offers,Offers_revenue,Publisher_Revenue,Publisher_pending_earnings,Featured,Rewarded,Offer_type,Sales_rep"]
+    @partner_program_metadata, @partner_program_stats, @partner_revenue_stats, @partner_names = get_stats(@start_time, @end_time)
+    @partner_program_stats.each do |offer_id, stats|
+      metadata = @partner_program_metadata[offer_id]
+      line = [
+        metadata['offer_name'].gsub(/[,]/,' '),
+        @partner_names[metadata['partner_id']],
+        stats['conversions'].gsub(/[,]/,''),
+        metadata['overall_store_rank'].gsub(/[,]/,''),
+        metadata['price'].gsub(/[,]/,''),
+        metadata['payment'].gsub(/[,]/,''),
+        metadata['balance'].gsub(/[,]/,''),
+        metadata['platform'],
+        metadata['conversion_rate'],
+        stats['published_offers'].gsub(/[,]/,''),
+        number_to_currency(stats['offers_revenue'] / 100.0, :delimiter => ''),
+        number_to_currency(@partner_revenue_stats[metadata['partner_id']] / 100.0, :delimiter => ''),
+        number_to_currency(metadata['partner_pending_earnings'] / 100.0, :delimiter => ''),
+        metadata['featured'],
+        metadata['rewarded'],
+        metadata['offer_type'],
+        metadata['sales_rep']
+      ]
+      data << line.join(',')
+    end
+    data
   end
 
 end
