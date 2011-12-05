@@ -8,11 +8,12 @@
   image_root = "https://s3.amazonaws.com/#{RUN_MODE_PREFIX}tapjoy/images/email"
   css = {
     :a => "color: #{red}; text-decoration: none;",
+    :icon_img => "border: none;",
     :social => "width: 40px; vertical-align: middle;",
     :step => "border-top: 1px dotted #{light_gray}; padding: 10px 0;",
     :step_icon => "vertical-align: top;",
-    :step_body => "float: left; margin-top: 10px; padding-left: 20px;",
-    :step_no_icon => "margin-top: 10px;",
+    :step_body => "float: left; padding-top: 10px; padding-left: 20px;",
+    :step_no_icon => "padding-top: 10px;",
     :step_name => "color: #{blue}; font-weight: bold; font-size: 16px; padding-bottom: 5px;",
     :offers => "color: #{red}; padding-top: 10px; text-align: center; font-weight: normal; font-size: 14px;"
   }
@@ -20,20 +21,21 @@
 %html
   %body
     #email{:style => "color: #{gray}; margin: 0px auto; border: 1px solid #{light_gray}; width: 600px; font-family: 'arial'; font-size: 15px; background-color: white;"}
-      %table#header{:border => 0, :cellspacing => 0, :cellpadding => 0, :style => "color: #{blue}; margin: 12px #{offset} 12px #{offset}; height: 101px; width: #{width}"}
-        %tr
-          %td{:style => "vertical-align: middle;"}
-            = image_tag("#{image_root}/logo.png", :title => 'Tapjoy', :alt => 'Tapjoy', :size => '114x52', :style => 'margin-top: 10px;')
-          %td{:style => "font-size: 12px; font-style: italic; color: #{blue}; width: 60px; vertical-align: middle;"}
-            follow us:
-          %td{:style => css[:social]}
-            - link_to 'https://www.facebook.com/Tapjoy', :style => css[:a] do
-              = image_tag("#{image_root}/facebook_icon.png", :title => 'Facebook', :alt => 'Facebook', :style => "border: none;", :size => '30x30')
-          %td{:style => css[:social]}
-            - link_to 'https://twitter.com/#!/tapjoygames', :style => css[:a] do
-              = image_tag("#{image_root}/twitter_icon.png", :title => 'Twitter', :alt => 'Twitter', :style => "border: none;", :size => '30x30')
-      %hr{:style => "max-height: 1px; border-top: #{red} 1px solid; border-bottom: none; border-left: none; border-right: none; margin: 0 #{offset} 0 #{offset};"}
-      #content{:style => "padding: #{offset}; padding-bottom: 0px;"}
+      %div{ :style => "padding: 12px #{offset} 5px #{offset};" }
+        %table#header{:border => 0, :cellspacing => 0, :cellpadding => 0, :style => "color: #{blue}; height: 101px; width: #{width};"}
+          %tr
+            %td{:style => "vertical-align: middle;"}
+              = image_tag("#{image_root}/logo.png", :title => 'Tapjoy', :alt => 'Tapjoy', :size => '114x52', :style => 'padding-top: 10px;')
+            %td{:style => "font-size: 12px; font-style: italic; color: #{blue}; width: 60px; vertical-align: middle;"}
+              follow us:
+            %td{:style => css[:social]}
+              - link_to 'https://www.facebook.com/Tapjoy', :style => css[:a] do
+                = image_tag("#{image_root}/facebook_icon.png", :title => 'Facebook', :alt => 'Facebook', :style => "border: none;", :size => '30x30')
+            %td{:style => css[:social]}
+              - link_to 'https://twitter.com/#!/tapjoygames', :style => css[:a] do
+                = image_tag("#{image_root}/twitter_icon.png", :title => 'Twitter', :alt => 'Twitter', :style => "border: none;", :size => '30x30')
+      %hr{:style => "max-height: 1px; border-top: #{red} 1px solid; border-bottom: none; border-left: none; border-right: none; text-align: center; width: #{width};"}
+      #content{:style => "padding: 23px #{offset} 0 #{offset};"}
         #thanks{:style => "font-size: 20px; font-weight: bold; color: #{blue};"}
           Thanks for creating a Tapjoy account!
         #discover{:style => "padding-top: 5px; padding-bottom: 30px;"}
@@ -42,7 +44,7 @@
           %table
             %tr
               %td{:style => css[:step_icon]}
-                = image_tag("#{image_root}/check.png", :class => 'icon', :size => '68x68', :title => 'Confirm', :alt => 'Confirm Address')
+                = image_tag("#{image_root}/check.png", :class => 'icon', :size => '68x68', :title => 'Confirm', :alt => 'Confirm Address', :style => css[:icon_img])
               %td{:style => css[:step_body]}
                 .name{:style => css[:step_name]}
                   Getting started
@@ -57,7 +59,7 @@
               %table
                 %tr
                   %td{:style => css[:step_icon]}
-                    = image_tag("#{image_root}/connect_icon.png", :class => 'icon', :size => '68x68', :title => 'Connect your device', :alt => 'Connect')
+                    = image_tag("#{image_root}/connect_icon.png", :class => 'icon', :size => '68x68', :title => 'Connect your device', :alt => 'Connect', :style => css[:icon_img])
                   %td{:style => css[:step_body]}
                     .name{:style => css[:step_name]}
                       Connect your device
@@ -73,7 +75,7 @@
               %table
                 %tr
                   %td{:style => css[:step_icon]}
-                    = image_tag("#{image_root}/home_icon.png", :class => 'icon', :size => '68x68', :title => 'Add Tapjoy to your Home Screen', :alt => 'Home', :style => "border: none;")
+                    = image_tag("#{image_root}/home_icon.png", :class => 'icon', :size => '68x68', :title => 'Add Tapjoy to your Home Screen', :alt => 'Home', :style => css[:icon_img])
                   %td{:style => css[:step_body]}
                     .name{:style => css[:step_name]}
                       Add Tapjoy to your Home Screen
@@ -85,13 +87,13 @@
             - external_publisher = offers[:external_publisher]
             .step{:style => css[:step]}
               - link_to(earn_url, :style => "#{css[:offers]} #{css[:a]}") do
-                %table{:style => "width: #{width}"}
+                %table{:style => "width: #{width};"}
                   %tr
                     %td{:style => css[:step_no_icon]}
                       .name{:style => css[:step_name]}
                         .publisher{:style => "text-align: center;"}
                           = image_tag(external_publisher.get_icon_url, :alt => external_publisher.app_name, :style => "border: none;")
-                          %div{:style => "width: 50%; margin: auto;"}
+                          %div{:style => "min-width: 270px; padding: 0 #{width.to_i/4}px 0 #{width.to_i/4}px;"}
                             Earn more currency in your favorite apps, like
                             = "#{h(external_publisher.app_name)}:"
             .step{:style => css[:step]}
@@ -116,15 +118,15 @@
               %table
                 %tr
                   %td{:style => css[:step_icon]}
-                    = image_tag("#{image_root}/recommend_icon.png", :class => 'icon', :size => '68x68', :title => 'Recommended apps', :alt => 'Recommended')
+                    = image_tag("#{image_root}/recommend_icon.png", :class => 'icon', :size => '68x68', :title => 'Recommended apps', :alt => 'Recommended', :style => css[:icon_img])
                   %td{:style => "#{css[:step_body]} padding-right: 20px; width: 100%"}
                     .name{:style => css[:step_name]}
                       Check out Tapjoy's Recommended Apps!
-                    %table{:style => "width: 100%; margin-top: 5px;"}
+                    %table{:style => "width: 100%; padding-top: 5px;"}
                       %tr
                       - editors_picks_array = @editors_picks[0..2]
                       - editors_picks_array.each do |cached_app|
-                        %td{:style => "text-align: center;"}
+                        %td{:style => css[:offers]}
                           = image_tag(cached_app.icon_url, :alt => cached_app.name, :style => "border: none;")
                           %br/
                           .description
@@ -136,11 +138,11 @@
         = mail_to('feedback@tapjoy.com', 'feedback@tapjoy.com', :style => css[:a])
         and we'll help you with what you need.
 
-        #discovery{:style => "font-weight: bold; font-size: 18px; color: #{blue}; margin-top: 15px;"}
-          %p Let the discovery begin!
+        #discovery{:style => "font-weight: bold; font-size: 18px; color: #{blue}; padding-top: 15px;"}
+          Let the discovery begin!
 
-        #signature{:style => "font-weight: bold; font-size: 16px; color: #{blue}; margin: 15px 0 15px 0;"}
-          %p Team Tapjoy
+        #signature{:style => "font-weight: bold; font-size: 16px; color: #{blue}; padding: 15px 0 15px 0;"}
+          Team Tapjoy
 
         If the "confirm address" button doesn't work, copy the link below and paste it in your browser:
         = link_to @confirmation_link, @confirmation_link, :style => css[:a]
