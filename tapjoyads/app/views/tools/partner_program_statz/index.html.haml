@@ -10,13 +10,13 @@
 
 .tjform
   %form#change_date.tjform
-    Time in UTC
+    Time in UTC &nbsp;
     = text_field_tag(:date, @start_time.to_date.to_s(:mdy))
     \-
     = text_field_tag(:end_date, @end_time.to_date.to_s(:mdy))
     = submit_tag('Update', :id => :date_submit)
 
-%p Note: publisher revenue total and publisher pending earnings total are sums by publisher, not sum of the column.
+%p Note: publisher revenue total and publisher pending earnings total are sums by publishers, not sums of the columns.
 
 %table#apps_table.tablesorter
   %thead
@@ -181,6 +181,8 @@
           13: { sorter: 'currency-column' }
         }
       });
+      $('#date').datepicker();
+      $('#end_date').datepicker();
       updateTotals();
       var iconsLoaded = false;
       var iconsVisible = false;
@@ -353,4 +355,7 @@
     }
     form.filter {
       margin-bottom: 10px;
+    }
+    #date_submit {
+      margin: 0;
     }
