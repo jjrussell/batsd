@@ -28,6 +28,14 @@ class SpendShare < ActiveRecord::Base
     effective(date).first || create_for_date!(date)
   end
 
+  def deduct_pct(field = :ratio)
+    NumberHelper.new.number_to_percentage((1 - self[field]) * 100, :precision => 2)
+  end
+
+  def capped?
+    uncapped_ratio < ratio
+  end
+
   def self.create_for_date!(date)
     sum_network_costs    = NetworkCost.created_between(date - 30.days, date).sum(:amount)
     orders               = Order.created_between(date - 30.days, date)
