@@ -56,4 +56,4 @@ es:
       invalid_email: "Por favor, introduce una dirección de correo electrónico."
       abuse_warning: "El objetivo de este formulario es solucionar problemas de usuarios que no han recibido su moneda virtual tras completar una oferta. Un uso abusivo de esta página podría causar el baneo de tu cuenta."
       select_offer: "Seleccionar una oferta"
-      no_incomplete_offers_label: "No suitable offers were found."
+      no_incomplete_offers_label: "No se han encontrado ofertas."

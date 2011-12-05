@@ -56,4 +56,4 @@ fr:
       invalid_email: "Merci d'entrer une adresse email valide."
       abuse_warning: "Ce formulaire est uniquement dédié aux utilisateurs n'ayant pas été récompensés après avoir complété une offre. L'utilisation abusive de cette page pourrait entraîner un bannissement définitif de votre compte sur les offres futures."
       select_offer: "Choisir une offre"
-      no_incomplete_offers_label: "No suitable offers were found."
+      no_incomplete_offers_label: "Aucun résultat trouvé"

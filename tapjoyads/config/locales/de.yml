@@ -56,4 +56,4 @@ de:
       invalid_email: "Bitte gib eine reale E-Mail-Adresse ein!"
       abuse_warning: "Dieses Formular ist ausschliesslich für Nutzer, die noch nicht für ein abgeschlossenes Angebot belohnt wurden. Missbrauch dieser Seite kann dazu führen, dass Dein Account für die zukünftige Nutzung der Angebote gesperrt wird."
       select_offer: "Wähle das Angebot"
-      no_incomplete_offers_label: "No suitable offers were found."
+      no_incomplete_offers_label: "Es wurden keine passenden Angebote gefunden."
