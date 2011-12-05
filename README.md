@@ -193,6 +193,8 @@ RECOMMENDED: Set git pre-commit hook to run
 cp tapjoyserver/setup/pre-commit tapjoyserver/.git/hooks/
 ```
 
+Alternatively, use `ln -s` instead of `cp` so any updates to the script in the repo get automatically changed in the git folder.
+
 OPTIONAL: to install Passenger (so you can use alternate local domains instead of `http://localhost:3000`)
 --------------------------------------------------------------------------------------------------------
 
