@@ -184,6 +184,15 @@ Download desired editor (most people use TextMate) and set it to use soft tabs (
   * Add `TM_TAB_SIZE` with value of 2
   * See `http://manual.macromates.com/en/environment_variables.html` if curious about other TextMate shell variables
 
+OPTIONAL: Set git pre-commit hook to run
+----------------------------------------
+* The pre-commit hook runs before any git commit.
+* It automatically strips trailing whitespace and adds newlines to the end of files, which is compliant with our style guide.
+
+```
+cp tapjoyserver/setup/pre-commit tapjoyserver/.git/hooks/
+```
+
 OPTIONAL: to install Passenger (so you can use alternate local domains instead of `http://localhost:3000`)
 --------------------------------------------------------------------------------------------------------
 
