@@ -682,8 +682,8 @@ private
       upload_banner_creative!(blob, changed_size, format)
     end
 
+    # 'acts_as_cacheable' caches entire object, including all attributes, so... let's clear the blobs
     creative_blobs.values.each do |blob|
-      # 'acts_as_cacheable' caches entire object, including all attributes, so... let's clear the blobs
       blob.replace("")
     end
   end
