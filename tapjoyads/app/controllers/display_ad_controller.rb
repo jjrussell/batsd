@@ -177,6 +177,8 @@ class DisplayAdController < ApplicationController
         text = "Try #{offer.name} today"
       end
       
+      image_label = get_image_label(text, text_area_size, font_size, font, false)
+      img.composite!(image_label[0], icon_height + icon_padding * 4 + 1, border + 2, Magick::AtopCompositeOp)
       image_label = get_image_label(text, text_area_size, font_size, font, true)
       img.composite!(image_label[0], icon_height + icon_padding * 4, border + 1, Magick::AtopCompositeOp)
 
