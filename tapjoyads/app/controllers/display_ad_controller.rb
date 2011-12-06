@@ -1,6 +1,7 @@
 class DisplayAdController < ApplicationController
 
   before_filter :set_device_type, :set_publisher_user_id, :setup, :except => :image
+
   def index
   end
 
@@ -176,7 +177,7 @@ class DisplayAdController < ApplicationController
       end
       
       image_label = get_image_label(text, text_area_size, font_size, font, false)
-      offer_icon_blob = bucket.objects["icons/src/#{Offer.hashed_icon_id(offer.icon_id)}.jpg"].read rescue offer_icon_blob = ''
+      offer_icon_blob = bucket.objects["icons/src/#{Offer.hashed_icon_id(offer.icon_id)}.jpg"].read rescue ''
       if offer_icon_blob.present?
         offer_icon = Magick::Image.from_blob(offer_icon_blob)[0].resize(icon_height, icon_height)
         corner_mask_blob = bucket.objects["display/round_mask.png"].read
