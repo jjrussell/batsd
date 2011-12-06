@@ -218,7 +218,7 @@ module Offer::Rejecting
     cookie_tracking? && source != 'tj_games' && publisher_app.platform == 'iphone' && !library_version.version_greater_than_or_equal_to?('8.0.3')
   end
 
-  def video_offers_reject?(video_offer_ids, type, all_videos = false)
+  def video_offers_reject?(video_offer_ids, type, all_videos)
     return false if type == Offer::VIDEO_OFFER_TYPE || all_videos
     
     item_type == 'VideoOffer' && !video_offer_ids.include?(id)
