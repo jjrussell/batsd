@@ -636,6 +636,24 @@ class Offer < ActiveRecord::Base
 private
 
   def sync_banner_creatives!
+    # How this should work...
+    #
+    # ONE OF:
+    #
+    # adding new creative(s):
+    # offer.banner_creatives += ["320x50", "640x100"]
+    # offer.banner_creative_320x50_blob = image_data
+    # offer.banner_creative_640x100_blob = image_data
+    # offer.save!
+    #
+    # removing creative: (only one at a time allowed)
+    # offer.banner_creatives -= ["320x50"]
+    # offer.save!
+    #
+    # updating creative: (only one at a time allowed)
+    # offer.banner_creative_320x50_blob = image_data
+    # offer.save!
+    #
     creative_blobs = {}
 
     custom_creative_sizes = []
