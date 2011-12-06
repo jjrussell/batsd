@@ -187,19 +187,22 @@ class Offer < ActiveRecord::Base
   memoize :get_device_types, :get_screen_layout_sizes, :get_countries, :get_dma_codes, :get_regions
 
   def clone
+    # this is ugly but we need to un-set then re-set banner creatives so that the attribute_changed? stuff will fire
+    # see https://rails.lighthouseapp.com/projects/8994/tickets/2919
+    # TODO: update this once we upgrade Rails to a version containing the fix (NOTE: also remove line below)
+    # TODO: worth creating an extension to fix this more generically? or just wait for fix?
+    banner_creatives = self.banner_creatives
+    self.banner_creatives = []
     clone = super
-    clone.banner_creatives = nil # this field always needs to be in sync with s3
-    clone
-  end
+    self.banner_creatives = banner_creatives
 
-  def copy_banner_creatives!(orig_offer)
-    orig_offer.banner_creatives.each_with_index do |size, index|
-      save! if index > 0
-      blob = orig_offer.banner_creative_s3_object(size).read
-      self.send("banner_creative_#{size}_blob=", blob)
-      self.banner_creatives << size
+    # set up banner_creatives to be copied on save
+    banner_creatives.each do |size|
+      blob = banner_creative_s3_object(size).read
+      clone.send("banner_creative_#{size}_blob=", blob)
+      clone.banner_creatives += size.to_a # once Rails is updated, remove this line
     end
-    save!
+    clone
   end
 
   def app_offer?
@@ -556,7 +559,7 @@ class Offer < ActiveRecord::Base
     featured_offer = self.clone
     featured_offer.attributes = { :created_at => nil, :updated_at => nil, :featured => true, :name_suffix => "featured", :tapjoy_enabled => false }
     featured_offer.bid = featured_offer.min_bid
-    featured_offer.copy_banner_creatives!(self)
+    featured_offer.save!
     featured_offer
   end
 
@@ -564,7 +567,7 @@ class Offer < ActiveRecord::Base
     non_rewarded_offer = self.clone
     non_rewarded_offer.attributes = { :created_at => nil, :updated_at => nil, :rewarded => false, :name_suffix => "non-rewarded", :tapjoy_enabled => false }
     non_rewarded_offer.bid = non_rewarded_offer.min_bid
-    non_rewarded_offer.copy_banner_creatives!(self)
+    non_rewarded_offer.save!
     non_rewarded_offer
   end
 
@@ -636,10 +639,13 @@ private
     creative_blobs = {}
 
     custom_creative_sizes = []
+    format = ''
     if !rewarded? && !featured?
       custom_creative_sizes = Offer::DISPLAY_AD_SIZES
+      format = 'png'
     elsif featured?
       custom_creative_sizes = Offer::FEATURED_AD_SIZES
+      format = 'jpeg'
     end
     custom_creative_sizes.each do |size|
       image_data = (send("banner_creative_#{size}_blob") rescue nil)
@@ -647,42 +653,39 @@ private
     end
 
     return if (!banner_creatives_changed? && creative_blobs.empty?)
-    if (banner_creatives.size - banner_creatives_was.size).abs > 1 || creative_blobs.size > 1
-      raise "Unable to sync changes to more than one custom creative file at a time"
+
+    new_creatives = banner_creatives - banner_creatives_was
+    removed_creatives = banner_creatives_was - banner_creatives
+    changed_creatives = creative_blobs.keys - new_creatives
+
+    if new_creatives.any?
+      raise "Unable to delete or update creatives while also adding creatives" if (removed_creatives.any? || changed_creatives.any?)
+    elsif (banner_creatives.size - banner_creatives_was.size).abs > 1 || creative_blobs.size > 1
+      raise "Unable to delete or update more than one banner creative at a time"
     end
 
-    # Get proper format for creative
-    format = ''
-    if !rewarded? && !featured?
-      format = 'png'
-    elsif featured?
-      format = 'jpeg'
-    end
-
-    blob = creative_blobs.values.first # will be nil for banner creative removals
-    if banner_creatives.size > banner_creatives_was.size
-      # banner creative added, find which size was added and make sure file matches up
-      new_size = (banner_creatives - banner_creatives_was).first
-      raise BannerSyncError.new("custom_creative_#{new_size}_blob", "#{new_size} custom creative file not provided.") if creative_blobs[new_size].nil?
-
+    new_creatives.each do |new_size|
+      raise BannerSyncError.new("custom_creative_#{new_size}_blob", "#{new_size} banner creative file not provided.") if !creative_blobs.has_key?(new_size)
+      blob = creative_blobs[new_size]
       # upload to S3
       upload_banner_creative!(blob, new_size, format)
-    elsif banner_creatives_was.size > banner_creatives.size
-      # banner creative removed, find which size was removed
-      removed_size = (banner_creatives_was - banner_creatives).first
-
-      # delete from S3
-      delete_banner_creative!(removed_size, format)
-    else
-      # a banner creative was changed, find which size it applies to
-      size = creative_blobs.keys.first
-
-      # upload file to S3
-      upload_banner_creative!(blob, size, format)
     end
 
-    # 'acts_as_cacheable' caches entire object, including all attributes, so... let's clear the blob
-    blob.replace("") if blob
+    removed_creatives.each do |removed_size|
+      # delete from S3
+      delete_banner_creative!(removed_size, format)
+    end
+
+    changed_creatives.each do |changed_size|
+      blob = creative_blobs[changed_size]
+      # upload file to S3
+      upload_banner_creative!(blob, changed_size, format)
+    end
+
+    creative_blobs.values.each do |blob|
+      # 'acts_as_cacheable' caches entire object, including all attributes, so... let's clear the blobs
+      blob.replace("")
+    end
   end
 
   def delete_banner_creative!(size, format='png')
