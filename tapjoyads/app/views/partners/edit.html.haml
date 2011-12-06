@@ -32,6 +32,11 @@
     - options = options_from_collection_for_select(User.account_managers, "id", "email", @partner.account_managers.map(&:id))
     = f.select :account_managers, options, {:include_blank => '(no one)'}
   .field
+    = f.label(:cs_contact_email, 'CS Contact Email')
+    #help_cs_contact_email.help ?
+    = f.text_field :cs_contact_email
+    = error_message_on(@partner, :cs_contact_email) if @partner.errors.on :cs_contact_email
+  .field
     = f.label :sales_rep
     #help_sales_rep.help ?
     = f.text_field :sales_rep
@@ -41,6 +46,16 @@
     #help_billing_email.help ?
     = f.text_field :billing_email
     = error_message_on(@partner, :billing_email) if @partner.errors.on :billing_email
+  .field
+    = f.label :accepted_negotiated_tos, 'Accepted Negotiated Rev Share ToS'
+    #help_accepted_negotiated_tos.help ?
+    = f.check_box :accepted_negotiated_tos
+    = error_message_on(@partner, :accepted_negotiated_tos) if @partner.errors.on :accepted_negotiated_tos
+  .field
+    = f.label :negotiated_rev_share_ends_on, 'Negotiated Rev Share End Date'
+    #help_negotiated_rev_share_ends_on.help ?
+    = f.text_field :negotiated_rev_share_ends_on
+    = error_message_on(@partner, :negotiated_rev_share_ends_on) if @partner.errors.on :negotiated_rev_share_ends_on
   .field
     = f.label :rev_share
     #help_rev_share.help ?
@@ -81,12 +96,18 @@
     Internal notes, only viewable by tapjoyers.
   #help_account_managers_content{:name => 'Account manager(s)'}
     Who is managing this partner?
+  #help_cs_contact_email_content{:name => 'CS Contact Email'}
+    Email address of the CS representative for this partner.
   #help_sales_rep_content{:name => 'Sales rep'}
     Email of the Tapjoy sales rep for this partner.
   #help_disabled_partners_content{:name => 'Disabled partners'}
     Offers belonging to partners that are in this list will not be shown in this partner's offerwalls.
   #help_billing_email_content{:name => 'Billing email'}
     The email contact used for invoicing.
+  #help_accepted_negotiated_tos_content{:name => 'Accepted Negotiated ToS'}
+    Checked if the partner has accepted the ToS for having a negotiated rev share.
+  #help_negotiated_rev_share_ends_on_content{:name => 'Negotiated Rev Share End Date'}
+    The date on which the negotiated rev share will end. Once the negotiated rev share ends, the partner will return to the default rev share.
   #help_rev_share_content{:name => 'Rev share'}
     The share of offer revenue that this publisher gets. A number between 0 an 1.
   #help_direct_pay_share_content{:name => 'Direct-pay share'}
@@ -141,5 +162,6 @@
         minLength: 2
       };
 
+      $('#partner_negotiated_rev_share_ends_on').datepicker({ dateFormat: 'yy-mm-dd' });
       $('#partner_sales_rep').focus().autocomplete(options);
     });

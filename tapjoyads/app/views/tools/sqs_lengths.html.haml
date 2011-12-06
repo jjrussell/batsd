@@ -7,6 +7,10 @@ As of: #{Time.zone.now.to_s(:pub_ampm_sec)}
 %br
 Number of queues: #{@queues.size}
 
+- if @queues.size == 1
+  = surround '(', ')' do
+    = link_to('view all queues', sqs_lengths_tools_path)
+
 %table#metadata.tablesorter
   %thead
     %tr
@@ -17,7 +21,7 @@ Number of queues: #{@queues.size}
   %tbody
     - @queues.each do |queue|
       %tr
-        %td= queue[:name]
+        %td= link_to(queue[:name], sqs_lengths_tools_path(:queue_name => queue[:name].sub(/^.*_/, '')))
         %td= number_with_delimiter(queue[:size])
         %td= number_with_delimiter(queue[:hidden_size])
         %td= number_with_delimiter(queue[:visibility])

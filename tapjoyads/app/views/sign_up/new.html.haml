@@ -2,6 +2,11 @@
 
 %h1 Registration
 
+%p
+  This is the registration page for Advertisers and Developers. If you're looking for a way to find cool apps, head over to our
+  = succeed '!' do
+    = link_to('website', WEBSITE_URL)
+
 - form_for(:user, @user, :url => { :action => :create }, :html => { :method => :post, :class => 'tjform' }) do |f|
   %table
     %tr

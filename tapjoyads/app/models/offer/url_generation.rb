@@ -137,12 +137,12 @@ module Offer::UrlGeneration
     "#{click_url}?data=#{SymmetricCrypto.encrypt_object(data, SYMMETRIC_CRYPTO_SECRET)}"
   end
 
-  def display_ad_image_url(publisher_app_id, width, height, currency_id = nil, display_multiplier = nil, bust_cache = false)
+  def display_ad_image_url(publisher_app_id, width, height, currency_id = nil, display_multiplier = nil, bust_cache = false, use_cloudfront = true)
     size = "#{width}x#{height}"
 
     delim = '?'
     if display_custom_banner_for_size?(size)
-      url = "#{CLOUDFRONT_URL}/#{banner_creative_path(size)}"
+      url = "#{use_cloudfront ? CLOUDFRONT_URL : "https://s3.amazonaws.com/#{BucketNames::TAPJOY}"}/#{banner_creative_path(size)}"
     else
       display_multiplier = (display_multiplier || 1).to_f
       # TO REMOVE: displayer_app_id param after rollout.

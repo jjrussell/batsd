@@ -83,6 +83,7 @@ private
   end
 
   def setup
+    @show_papaya = false
     @for_preview = (params[:action] == 'webpage' && params[:offer_id].present?)
 
     required_params = [:app_id] + (@for_preview ? [:offer_id] : [:udid, :publisher_user_id])
@@ -113,10 +114,14 @@ private
     params[:source] = 'offerwall' if params[:source].blank?
     params[:exp] = nil if params[:type] == Offer::CLASSIC_OFFER_TYPE
 
-    wr_path = params[:source] == 'featured' ? 'featured_offer_requested' : 'offers'
-    @web_request = WebRequest.new(:time => @now)
-    @web_request.put_values(wr_path, params, get_ip_address, get_geoip_data, request.headers['User-Agent'])
-    @web_request.viewed_at = @now
+    unless @for_preview
+      wr_path = params[:source] == 'featured' ? 'featured_offer_requested' : 'offers'
+      @web_request = WebRequest.new(:time => @now)
+      @web_request.put_values(wr_path, params, get_ip_address, get_geoip_data, request.headers['User-Agent'])
+      @web_request.viewed_at = @now
+    end
+
+    @papaya_offers = OfferCacher.get_papaya_offers if !@for_preview && @device.is_papayan? && @show_papaya
   end
 
   def get_offer_list(type = nil)
@@ -149,7 +154,7 @@ private
   end
 
   def save_web_request
-    @web_request.save
+    @web_request.save unless @for_preview
   end
 
 end

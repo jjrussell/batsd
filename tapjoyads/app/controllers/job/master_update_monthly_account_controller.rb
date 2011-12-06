@@ -8,7 +8,7 @@ class Job::MasterUpdateMonthlyAccountController < Job::JobController
 
         message = { :partner_id => partner.id, :month => now.last_month.month, :year => now.last_month.year }.to_json
         Sqs.send_message(QueueNames::UPDATE_MONTHLY_ACCOUNT, message)
-        sleep(3)
+        sleep(1)
       end
     end
 

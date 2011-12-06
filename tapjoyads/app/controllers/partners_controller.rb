@@ -85,7 +85,8 @@ class PartnersController < WebsiteController
       params[:partner].delete :tapjoy_sponsored
     end
 
-    safe_attributes = [ :name, :account_managers, :account_manager_notes, :rev_share, :transfer_bonus, :disabled_partners, :direct_pay_share, :approved_publisher, :billing_email, :accepted_publisher_tos, :sales_rep, :max_deduction_percentage ]
+    safe_attributes = [ :name, :account_managers, :account_manager_notes, :accepted_negotiated_tos, :negotiated_rev_share_ends_on, :rev_share, :transfer_bonus, :disabled_partners, :direct_pay_share, :approved_publisher, :billing_email, :accepted_publisher_tos, :cs_contact_email, :sales_rep, :max_deduction_percentage ]
+
     name_was = @partner.name
     if @partner.safe_update_attributes(params[:partner], safe_attributes)
       if name_was != @partner.name
