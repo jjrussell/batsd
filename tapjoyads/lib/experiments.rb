@@ -1,13 +1,12 @@
 class Experiments
   EXPERIMENTS = {
-    :default => '0'
+    :default => '0',
+    :papaya => '1'
   }
 
   def self.choose(udid)
     if udid.present?
-      udid_hash = (udid.hash % 2).to_s #AB testing for papaya udids
-    else
-      EXPERIMENTS[:default]
+      udid.hash % 2 == 1 ? EXPERIMENTS[:papaya] : EXPERIMENTS[:default]
     end
   end
 
