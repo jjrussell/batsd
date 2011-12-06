@@ -37,6 +37,9 @@
         %tr
           %th Jailbroken?
           %td{:class => @device.is_jailbroken? ? "jailbroken" : ""}= @device.is_jailbroken?
+        %tr
+          %th TJM Gamers
+          %td= @gamer_emails
         - if @device.country.present?
           %tr
             %th Country
