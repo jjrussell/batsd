@@ -119,11 +119,12 @@ private
       @web_request.put_values(wr_path, params, get_ip_address, get_geoip_data, request.headers['User-Agent'])
       @web_request.viewed_at = @now
     end
+    @show_papaya = false
+    @papaya_offers = {}
     if !@for_preview && @device.is_papayan?
-      @show_papaya = params[:exp] == 1 ? true : false
+      @show_papaya = true if params[:exp] == 1
       @papaya_offers = OfferCacher.get_papaya_offers if @show_papaya
     end
-    @papaya_offers = {} if @papaya_offers.nil?
   end
 
   def get_offer_list(type = nil)
