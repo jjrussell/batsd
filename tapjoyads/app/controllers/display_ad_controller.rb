@@ -76,15 +76,16 @@ class DisplayAdController < ApplicationController
       offer = build_test_offer(publisher_app)
     else
       offer = OfferList.new(
-      :publisher_app      => publisher_app,
-      :device             => device,
-      :currency           => currency,
-      :device_type        => params[:device_type],
-      :geoip_data         => geoip_data,
-      :os_version         => params[:os_version],
-      :type               => Offer::DISPLAY_OFFER_TYPE,
-      :library_version    => params[:library_version],
-      :screen_layout_size => params[:screen_layout_size]).weighted_rand
+        :publisher_app      => publisher_app,
+        :device             => device,
+        :currency           => currency,
+        :device_type        => params[:device_type],
+        :geoip_data         => geoip_data,
+        :os_version         => params[:os_version],
+        :type               => Offer::DISPLAY_OFFER_TYPE,
+        :library_version    => params[:library_version],
+        :screen_layout_size => params[:screen_layout_size]
+      ).weighted_rand
     end
 
     if offer.present?
@@ -176,7 +177,9 @@ class DisplayAdController < ApplicationController
         text = "Try #{offer.name} today"
       end
       
-      image_label = get_image_label(text, text_area_size, font_size, font, false)
+      image_label = get_image_label(text, text_area_size, font_size, font, true)
+      img.composite!(image_label[0], icon_height + icon_padding * 4, border + 1, Magick::AtopCompositeOp)
+
       offer_icon_blob = bucket.objects["icons/src/#{Offer.hashed_icon_id(offer.icon_id)}.jpg"].read rescue ''
       if offer_icon_blob.present?
         offer_icon = Magick::Image.from_blob(offer_icon_blob)[0].resize(icon_height, icon_height)
@@ -189,10 +192,7 @@ class DisplayAdController < ApplicationController
       
         img.composite!(icon_shadow, border + 2, border + icon_padding * 2, Magick::AtopCompositeOp)
         img.composite!(offer_icon, border + icon_padding, border + icon_padding, Magick::AtopCompositeOp)
-        img.composite!(image_label[0], icon_height + icon_padding * 4 + 1, border + 2, Magick::AtopCompositeOp)
       end
-      image_label = get_image_label(text, text_area_size, font_size, font, true)
-      img.composite!(image_label[0], icon_height + icon_padding * 4, border + 1, Magick::AtopCompositeOp)
       Base64.encode64(img.to_blob).gsub("\n", '')
     end
   end
