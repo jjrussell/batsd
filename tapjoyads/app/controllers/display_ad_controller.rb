@@ -28,7 +28,11 @@ class DisplayAdController < ApplicationController
       publisher = App.find_in_cache(params[:publisher_app_id])
       currency = Currency.find_in_cache(params[:currency_id])
       currency = nil if currency.present? && currency.app_id != params[:publisher_app_id]
-      offer = Offer.find_in_cache(params[:advertiser_app_id])
+      if params[:offer_type] == "TestOffer"
+        offer = build_test_offer(publisher)
+      else
+        offer = Offer.find_in_cache(params[:advertiser_app_id])
+      end
       return unless verify_records([ publisher, currency, offer ])
 
       ad_image_base64 = get_ad_image(publisher, offer, width, height, currency, params[:display_multiplier])
@@ -68,29 +72,35 @@ class DisplayAdController < ApplicationController
     web_request = WebRequest.new(:time => now)
     web_request.put_values('display_ad_requested', params, get_ip_address, geoip_data, request.headers['User-Agent'])
 
-    offer = OfferList.new(
-      :publisher_app      => publisher_app,
-      :device             => device,
-      :currency           => currency,
-      :device_type        => params[:device_type],
-      :geoip_data         => geoip_data,
-      :os_version         => params[:os_version],
-      :type               => Offer::DISPLAY_OFFER_TYPE,
-      :library_version    => params[:library_version],
-      :screen_layout_size => params[:screen_layout_size]).weighted_rand
+    if currency.get_test_device_ids.include?(params[:udid])
+      offer = build_test_offer(publisher_app)
+    else
+      offer = OfferList.new(
+        :publisher_app      => publisher_app,
+        :device             => device,
+        :currency           => currency,
+        :device_type        => params[:device_type],
+        :geoip_data         => geoip_data,
+        :os_version         => params[:os_version],
+        :type               => Offer::DISPLAY_OFFER_TYPE,
+        :library_version    => params[:library_version],
+        :screen_layout_size => params[:screen_layout_size]
+      ).weighted_rand
+    end
 
     if offer.present?
       @click_url = offer.click_url(
-          :publisher_app     => publisher_app,
-          :publisher_user_id => params[:publisher_user_id],
-          :udid              => params[:udid],
-          :currency_id       => currency.id,
-          :source            => 'display_ad',
-          :viewed_at         => now,
-          :displayer_app_id  => params[:app_id],
-          :country_code      => geoip_data[:country]
+        :publisher_app     => publisher_app,
+        :publisher_user_id => params[:publisher_user_id],
+        :udid              => params[:udid],
+        :currency_id       => currency.id,
+        :source            => 'display_ad',
+        :viewed_at         => now,
+        :displayer_app_id  => params[:app_id],
+        :country_code      => geoip_data[:country]
       )
       width, height = parse_size(params[:size])
+
       if params[:action] == 'webview' || params[:details] == '1'
         @image_url = offer.display_ad_image_url(publisher_app.id, width, height, currency.id, params[:display_multiplier])
       else
@@ -98,9 +108,9 @@ class DisplayAdController < ApplicationController
       end
 
       if params[:details] == '1'
-        @offer  = offer
+        @offer = offer
         @amount = currency.get_visual_reward_amount(offer, params[:display_multiplier])
-        if @offer.item_type == 'App'
+        if offer.item_type == 'App'
           advertiser_app = App.find_in_cache(@offer.item_id)
           return unless verify_records([ advertiser_app ])
           @categories = advertiser_app.categories
@@ -153,54 +163,55 @@ class DisplayAdController < ApplicationController
       background_blob = bucket.objects["display/self_ad_bg_#{width}x#{height}.png"].read
       background = Magick::Image.from_blob(background_blob)[0]
 
-      offer_icon_blob = bucket.objects["icons/src/#{Offer.hashed_icon_id(offer.icon_id)}.jpg"].read
-      offer_icon = Magick::Image.from_blob(offer_icon_blob)[0].resize(icon_height, icon_height)
-
-      corner_mask_blob = bucket.objects["display/round_mask.png"].read
-      corner_mask = Magick::Image.from_blob(corner_mask_blob)[0].resize(icon_height, icon_height)
-      offer_icon.composite!(corner_mask, 0, 0, Magick::CopyOpacityCompositeOp)
-
-      icon_shadow_blob = bucket.objects["display/icon_shadow.png"].read
-      icon_shadow = Magick::Image.from_blob(icon_shadow_blob)[0].resize(icon_height + icon_padding, icon_height)
-
       img = Magick::Image.new(width, height)
       img.format = 'png'
-
       img.composite!(background, 0, 0, Magick::AtopCompositeOp)
-      img.composite!(icon_shadow, border + 2, border + icon_padding * 2, Magick::AtopCompositeOp)
-      img.composite!(offer_icon, border + icon_padding, border + icon_padding, Magick::AtopCompositeOp)
 
-      if offer.rewarded?
+      font = (Rails.env.production? || Rails.env.staging?) ? 'Helvetica' : ''
+      
+      if offer.item_type == 'TestOffer'
+        text = offer.name
+      elsif offer.rewarded?
         text = "Earn #{currency.get_visual_reward_amount(offer, display_multiplier)} #{currency.name} download \\n#{offer.name}"
       else
         text = "Try #{offer.name} today"
       end
-
-      font = (Rails.env.production? || Rails.env.staging?) ? 'Helvetica' : ''
-      image_label = Magick::Image.read("caption:#{text}") do
-        self.size             = text_area_size
-        self.gravity          = Magick::WestGravity
-        self.fill             = '#363636'
-        self.pointsize        = font_size
-        self.font             = font
-        self.stroke           = 'transparent'
-        self.background_color = 'transparent'
-      end
+      
+      image_label = get_image_label(text, text_area_size, font_size, font, false)
       img.composite!(image_label[0], icon_height + icon_padding * 4 + 1, border + 2, Magick::AtopCompositeOp)
-
-      image_label = Magick::Image.read("caption:#{text}") do
-        self.size             = text_area_size
-        self.gravity          = Magick::WestGravity
-        self.fill             = 'white'
-        self.pointsize        = font_size
-        self.font             = font
-        self.stroke           = 'transparent'
-        self.background_color = 'transparent'
-      end
+      image_label = get_image_label(text, text_area_size, font_size, font, true)
       img.composite!(image_label[0], icon_height + icon_padding * 4, border + 1, Magick::AtopCompositeOp)
 
+      offer_icon_blob = bucket.objects["icons/src/#{Offer.hashed_icon_id(offer.icon_id)}.jpg"].read rescue ''
+      if offer_icon_blob.present?
+        offer_icon = Magick::Image.from_blob(offer_icon_blob)[0].resize(icon_height, icon_height)
+        corner_mask_blob = bucket.objects["display/round_mask.png"].read
+        corner_mask = Magick::Image.from_blob(corner_mask_blob)[0].resize(icon_height, icon_height)
+        offer_icon.composite!(corner_mask, 0, 0, Magick::CopyOpacityCompositeOp)
+        
+        icon_shadow_blob = bucket.objects["display/icon_shadow.png"].read
+        icon_shadow = Magick::Image.from_blob(icon_shadow_blob)[0].resize(icon_height + icon_padding, icon_height)
+      
+        img.composite!(icon_shadow, border + 2, border + icon_padding * 2, Magick::AtopCompositeOp)
+        img.composite!(offer_icon, border + icon_padding, border + icon_padding, Magick::AtopCompositeOp)
+      end
       Base64.encode64(img.to_blob).gsub("\n", '')
     end
+  end
+
+  ##
+  # Sets up image label for the ad image
+  def get_image_label(text, text_area_size, font_size, font, use_white_fill)
+    image_label = Magick::Image.read("caption:#{text}") do
+      self.size = text_area_size
+      self.gravity = Magick::WestGravity
+      use_white_fill ? self.fill = 'white' : self.fill = '#363636'
+      self.pointsize = font_size
+      self.font = font
+      self.stroke = 'transparent'
+      self.background_color = 'transparent'
+    end
+    image_label
   end
 
   ##
