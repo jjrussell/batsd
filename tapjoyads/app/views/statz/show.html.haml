@@ -49,7 +49,7 @@
       - updated = @offer.item.recently_released? ? time_ago_in_words(@offer.item.released_at) + " ago" : @offer.item.released_at.to_s(:pub)
       - property_row('App Update', updated, nil, @offer.item.recently_released? ? 'warning' : nil)
   - else
-    - property_row('Destination url', link_to(truncate(@offer.url, :length => 60), @offer.url))
+    - property_row(@offer.url_overridden? ? 'Overridden destination url' : 'Destination url', link_to(truncate(@offer.url, :length => 60), @offer.url))
   - property_row('Price', number_to_currency(@offer.price / 100.0), nil, @offer.expensive? ? 'warning' : nil)
   - property_row('Daily budget', @offer.daily_budget, 0)
   - property_row('Overall budget', @offer.overall_budget, 0)
@@ -107,6 +107,7 @@
   - property_row('Balance', number_to_currency(@offer.partner_balance / 100.0))
   - property_row('Pending Earnings', number_to_currency(@offer.partner_pending_earnings / 100.0))
   - property_row('Account managers', @offer.account_managers.map(&:email).join(', '))
+  - property_row('CS Contact Email', @offer.partner_cs_contact_email)
   - property_row('Approved publisher', @offer.partner_approved_publisher?)
   - property_row('Rev share', number_to_percentage(@offer.partner_rev_share * 100, :precision => 1))
   - property_row('Internal notes', @offer.internal_notes, '')

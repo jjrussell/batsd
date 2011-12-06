@@ -46,7 +46,6 @@ ko:
       instructions_1: "%{currency}를 받지 못한 제안 광고를 선택하고 이메일 주소를 입력하십시오."
       instructions_2: "자세한 정보가 기입되어 있지 않을 때는 시간이 걸리는 경우가 있습니다."
       specify_offer_label: "제안 광고를 지정하십시오."
-      offer_name_label: "제안 광고 이름"
       description_label: "설명"
       email_address_label: "이메일 주소"
       submit_support_request: "고객지원 요청"
@@ -57,4 +56,4 @@ ko:
       invalid_email: "올바른 이메일 주소를 입력해주십시오."
       abuse_warning: "이 양식은 제안 안건 절차를 종료 했음에도 불구하고, 가상 통화를받지 못한 고객을위한 것입니다. 부정 사용의 경우에는 앞으로 사용에 제약을 받게됩니다."
       select_offer: "제안 광고를 선택하여 주십시오."
-      another_offer: "기타 (아래에 기입해주십시오)"
+      no_incomplete_offers_label: "No suitable offers were found."

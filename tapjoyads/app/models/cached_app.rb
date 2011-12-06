@@ -8,10 +8,12 @@ class CachedApp
     self.price = offer.price
     self.description = description
 
-    if offer.app_offer?
-      self.url = offer.item.info_url
-      self.primary_category = offer.item.primary_category
-      self.user_rating = offer.item.user_rating
+    if offer.item_type == 'App'
+      app = App.find_in_cache(offer.item_id)
+      self.url = app.info_url
+      self.primary_category = app.primary_category
+      self.user_rating = app.user_rating
+      self.description ||= app.description
     else
       self.url = offer.url
       self.primary_category = nil

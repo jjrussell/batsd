@@ -13,6 +13,12 @@ if ENV['USER'] != 'webuser'
   exit
 end
 
+if File.exists?('deploy.lock')
+  puts "Deploying to this server has been locked."
+  puts "Lock message: #{File.read('deploy.lock')}"
+  exit
+end
+
 server_type = `server/server_type.rb`
 current_version = YAML::load_file('server/version.yaml')['current']
 deploy_version = ARGV.first || current_version
@@ -20,7 +26,7 @@ deploy_version = ARGV.first || current_version
 puts "Deploying version: #{deploy_version}"
 
 system "git checkout master 2>&1"
-system "git pull 2>&1"
+system "git pull --quiet 2>&1"
 system "git pull --tags origin master 2>&1"
 system "git checkout #{deploy_version} 2>&1"
 

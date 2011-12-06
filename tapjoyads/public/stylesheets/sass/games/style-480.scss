@@ -10,21 +10,21 @@
     height: 120px;
     max-width: 480px;
     width: 100%;
-    
+
     .nav_container {
-      
+
       .aside_login {
          float: none;
          margin: 0 auto;
          padding: 0;
          width: 100%;
-         
+
         .login {
-          
+
           .form_fields {
             margin: 0 auto;
             width: 340px;
-            
+
             input {
               margin: 0 4px;
             }
@@ -46,7 +46,7 @@
                 float: right;
               }
               li.field.client_login {
-                text-align: right;
+                display: none;
               }
             }
           }
@@ -111,7 +111,7 @@
     .block {
       width: 100%;
       margin-bottom: 12px;
-      
+
       .block_text {
         padding-right: 12px;
       }

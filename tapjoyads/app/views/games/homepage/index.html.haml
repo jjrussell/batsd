@@ -17,6 +17,7 @@
           = render 'featured_review_preview'
           .content
             = render 'my_apps'
+            = render(:partial => 'games/gamers/invite_friends')
 
   #feat_app
     .page
@@ -43,13 +44,13 @@
             #top_grossing_games_tab.tab_right
               #top_grossing_games_button.tab_button.grey
                 .tab_content
-                  Popular Apps
+                  Tapjoy Picks
               #top_grossing_games_button_arrow.tab_button_bottom_arrrow_wrapper
                 .tab_button_bottom_arrrow
             #recommended_games_tab.tab_left
               #recommended_games_button.tab_button.dark_grey
                 .tab_content
-                  Tapjoy Recommends
+                  Recommendations
               #recommended_games_button_arrow.tab_button_bottom_arrrow_wrapper
                 .tab_button_bottom_arrrow
           #more_games_content.hide
@@ -91,9 +92,20 @@
       $(window).load(function() {
         TJG.select_device = #{@device_data.to_json};
         TJG.require_select_device = #{@require_select_device.to_json};
-        TJG.more_games_editor_picks =  "#{games_more_games_editor_picks_path}";
-        TJG.more_games_popular =  "#{games_more_games_popular_path}";
+        TJG.more_games_editor_picks = "#{games_more_games_editor_picks_path}";
+        TJG.more_games_recommended = "#{games_more_games_recommended_path}";
         TJG.ios_link_device_url = "#{new_games_gamer_device_path}";
         TJG.android_market_url = "#{GAMES_ANDROID_MARKET_URL}";
         TJG.ui.homeInit();
+    - if @show_offerwall
+      - currency_data = @offerwall_external_publisher.currencies.first
+      - url = @offerwall_external_publisher.get_offerwall_url(@device, currency_data, request.headers)
+      - app_name = escape_javascript(@offerwall_external_publisher.app_name)
+      :plain
+        TJG.ui.getAndShowOfferWall('#{url}', '#{currency_data[:id]}', '#{app_name}', '#{escape_javascript(currency_data[:name])}');
+    - elsif @show_more_apps
+      :plain
+        TJG.moreAppOfferWall = '#{escape_javascript(render 'games/more_games/cached_app_list', :cached_app_list => @editors_picks)}';
+        TJG.ui.showMoreGames();
+    :plain
       });

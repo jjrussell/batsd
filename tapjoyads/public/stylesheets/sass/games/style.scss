@@ -122,7 +122,7 @@ input[type=email]:focus, input[type=password]:focus {
     height: 90px;
     margin: 0 auto;
     max-width: 960px;
-    
+
     .nav_container {
       width: 100%;
 
@@ -134,11 +134,11 @@ input[type=email]:focus, input[type=password]:focus {
       .aside_login {
         width: 410px;
         @include animate;
-        
+
         .login {
-          
+
           .form_fields {
-            
+
             ul.row  {
               float: left;
               height: 14px;
@@ -150,14 +150,14 @@ input[type=email]:focus, input[type=password]:focus {
               margin-bottom: 12px;
             }
             ul.row  {
-              
+
               ul.group {
                 float: left;
               }
               ul.group.inputs {
                 height: 30px;
               }
-              
+
               li.field {
                 float: left;
                 font-size: 0.85em;
@@ -299,7 +299,7 @@ input[type=email]:focus, input[type=password]:focus {
     @include rounded-corners(3px);
 
     .content {width: 100%;}
-    
+
     .content_box {
       height: 450px;
       margin: 0 auto;
@@ -353,7 +353,7 @@ input[type=email]:focus, input[type=password]:focus {
             }
             select#date_year {
               width: 80px;
-            }            
+            }
             select {
               width: 70px;
             }
@@ -365,10 +365,10 @@ input[type=email]:focus, input[type=password]:focus {
             }
             .row {
               height: 60px;
-              
+
               .field_tos {
                 float: left;
-                
+
                 .field_checkbox {
                   float: left;
                   margin-right: 12px;
@@ -404,7 +404,7 @@ input[type=email]:focus, input[type=password]:focus {
           }
           .register_progess {
             width: 288px;
-            
+
             .button {
               margin: 0 auto;
             }
@@ -699,6 +699,9 @@ body.old .content_box {
 .content_wrapper {
 
   .content {
+    .offer_list {
+      margin-bottom: 20px;
+    }
   }
 
   .feat_review {
@@ -791,6 +794,8 @@ body.old .content_box {
     @include inset-shadow;
   }
 
+  input#delete_account,
+  input#cancel_delete,
   .profile input[type=submit] {
     border: 1px solid #B0B0B0;
     border-color: #B0131D;
@@ -804,6 +809,17 @@ body.old .content_box {
     @include inset-button(16px, 8px 10px);
     @include inset-shadow;
     @include gradient(#CF1623, #EA1927);
+  }
+  input#delete_account {
+    width: 120px;
+  }
+  input#cancel_delete {
+    width: 120px;
+    border: 1px solid #B0B0B0;
+    border-color: #BBB;
+    color: #888;
+    text-shadow: 0 1px 1px #FFF;
+    @include gradient(#EEE, #CCC);
   }
 
   #support_request input[type=submit] {

@@ -6,16 +6,19 @@ ActionController::Routing::Routes.draw do |map|
     m.help 'help', :controller => 'games/homepage', :action => :help
     m.switch_device 'switch_device', :controller => 'games/homepage', :action => :switch_device
     m.send_device_link 'send_device_link', :controller => 'games/homepage', :action => :send_device_link
+    m.earn 'earn/:currency_id', :controller => 'games/homepage', :action => :index, :load => 'earn'
+    m.more_apps 'more_apps', :controller => 'games/homepage', :action => :index, :load => 'more_apps'
 
     m.more_games_editor_picks 'editor_picks', :controller => 'games/more_games', :action => :editor_picks
-    m.more_games_popular 'popular', :controller => 'games/more_games', :action => :popular
+    m.more_games_recommended 'recommended', :controller => 'games/more_games', :action => :recommended
 
     m.resources :gamer_sessions, :controller => 'games/gamer_sessions', :only => [ :new, :create, :destroy, :index ]
     m.connect 'login', :controller => 'games/gamer_sessions', :action => :create, :conditions => {:method => :post}
     m.login 'login', :controller => 'games/gamer_sessions', :action => :new
     m.logout 'logout', :controller => 'games/gamer_sessions', :action => :destroy
 
-    m.resource :gamer, :controller => 'games/gamers', :only => [ :create, :edit, :update ], :member => { :password => :get, :prefs => :get, :update_password => :put, :accept_tos => :put } do |gamer|
+    m.resource :gamer, :controller => 'games/gamers', :only => [ :create, :edit, :update, :destroy ],
+      :member => { :password => :get, :prefs => :get, :update_password => :put, :accept_tos => :put, :confirm_delete => :get, :friends => :get } do |gamer|
       gamer.resource :device, :controller => 'games/gamers/devices', :only => [ :new, :create ], :member => { :finalize => :get }
       gamer.resource :gamer_profile, :controller => 'games/gamers/gamer_profiles', :only => [ :update ], :member => { :update_birthdate => :put, :update_prefs => :put }
     end
