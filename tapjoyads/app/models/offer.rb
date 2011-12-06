@@ -394,7 +394,7 @@ class Offer < ActiveRecord::Base
     video_id  = options.delete(:video_id)  { |k| raise "#{k} is a required argument" }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
 
-    prefix = "https://s3.amazonaws.com/#{RUN_MODE_PREFIX}tapjoy"
+    prefix = "http://s3.amazonaws.com/#{RUN_MODE_PREFIX}tapjoy"
 
     "#{prefix}/videos/src/#{video_id}.mp4"
   end
