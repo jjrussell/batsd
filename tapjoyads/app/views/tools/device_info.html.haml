@@ -38,10 +38,8 @@
           %th Jailbroken?
           %td{:class => @device.is_jailbroken? ? "jailbroken" : ""}= @device.is_jailbroken?
         %tr
-          %th TJM Gamer
-          %td
-            - @gamer = @device.gamer
-            = @gamer ? @gamer.email : 'Not connected to any Tapjoy Marketplace Gamer'
+          %th TJM Gamers
+          %td= @gamer_emails
         - if @device.country.present?
           %tr
             %th Country

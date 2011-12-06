@@ -156,8 +156,8 @@ class Device < SimpledbShardedResource
     RecommendationList.new(options.merge(:device => self)).apps
   end
 
-  def gamer
-    Gamer.find(:all, :joins => [:gamer_devices], :conditions => "gamer_devices.device_id = '#{key}'").first
+  def gamers
+    Gamer.find(:all, :joins => [:gamer_devices], :conditions => "gamer_devices.device_id = '#{key}'")
   end
 
 private
