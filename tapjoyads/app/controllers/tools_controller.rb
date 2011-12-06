@@ -214,7 +214,7 @@ class ToolsController < WebsiteController
       @rewarded_failed_clicks_count = 0
       @rewards = {}
       @support_requests_created = SupportRequest.count(:where => "udid = '#{udid}'")
-      @gamer_emails = @device.gamers.map{ |gamer| gamer.email }.join(',')
+      @gamer_emails = @device.gamers.map(&:email).join(',')
       @gamer_emails = 'Not connected to any Tapjoy Marketplace Gamer' if @gamer_emails.empty?
       click_app_ids = []
       NUM_CLICK_DOMAINS.times do |i|
