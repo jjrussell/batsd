@@ -83,7 +83,7 @@ private
   end
 
   def setup
-    @show_papaya = false
+    @show_papaya = params[:exp] == 1? true : false
     @for_preview = (params[:action] == 'webpage' && params[:offer_id].present?)
 
     required_params = [:app_id] + (@for_preview ? [:offer_id] : [:udid, :publisher_user_id])
@@ -122,6 +122,7 @@ private
     end
 
     @papaya_offers = OfferCacher.get_papaya_offers if !@for_preview && @device.is_papayan? && @show_papaya
+    @papaya_offers = {} if @papaya_offers.nil?
   end
 
   def get_offer_list(type = nil)

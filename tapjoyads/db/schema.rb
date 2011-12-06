@@ -587,6 +587,7 @@ ActiveRecord::Schema.define(:version => 20111205230000) do
     t.text     "banner_creatives"
     t.text     "dma_codes",                                                                                        :null => false
     t.text     "regions",                                                                                          :null => false
+    t.boolean  "tapjoy_sponsored",                                                              :default => false, :null => false
   end
 
   add_index "offers", ["id"], :name => "index_offers_on_id", :unique => true
