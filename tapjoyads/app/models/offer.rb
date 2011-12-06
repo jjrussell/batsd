@@ -193,13 +193,13 @@ class Offer < ActiveRecord::Base
   end
 
   def copy_banner_creatives!(orig_offer)
-    orig_offer.banner_creatives.each do |size|
+    orig_offer.banner_creatives.each_with_index do |size, index|
+      save! if index > 0
       blob = orig_offer.banner_creative_s3_object(size).read
       self.send("banner_creative_#{size}_blob=", blob)
       self.banner_creatives << size
-      save!
     end
-    self
+    save!
   end
 
   def app_offer?
