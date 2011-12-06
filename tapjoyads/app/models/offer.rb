@@ -186,6 +186,22 @@ class Offer < ActiveRecord::Base
   json_set_field :device_types, :screen_layout_sizes, :countries, :dma_codes, :regions
   memoize :get_device_types, :get_screen_layout_sizes, :get_countries, :get_dma_codes, :get_regions
 
+  def clone
+    clone = super
+    clone.banner_creatives = nil # this field always needs to be in sync with s3
+    clone
+  end
+
+  def copy_banner_creatives!(orig_offer)
+    orig_offer.banner_creatives.each do |size|
+      blob = orig_offer.banner_creative_s3_object(size).read
+      self.send("banner_creative_#{size}_blob=", blob)
+      self.banner_creatives << size
+      save!
+    end
+    self
+  end
+
   def app_offer?
     item_type == 'App' || item_type == 'ActionOffer'
   end
@@ -540,7 +556,7 @@ class Offer < ActiveRecord::Base
     featured_offer = self.clone
     featured_offer.attributes = { :created_at => nil, :updated_at => nil, :featured => true, :name_suffix => "featured", :tapjoy_enabled => false }
     featured_offer.bid = featured_offer.min_bid
-    featured_offer.save!
+    featured_offer.copy_banner_creatives!(self)
     featured_offer
   end
 
@@ -548,7 +564,7 @@ class Offer < ActiveRecord::Base
     non_rewarded_offer = self.clone
     non_rewarded_offer.attributes = { :created_at => nil, :updated_at => nil, :rewarded => false, :name_suffix => "non-rewarded", :tapjoy_enabled => false }
     non_rewarded_offer.bid = non_rewarded_offer.min_bid
-    non_rewarded_offer.save!
+    non_rewarded_offer.copy_banner_creatives!(self)
     non_rewarded_offer
   end
 

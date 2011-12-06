@@ -63,7 +63,8 @@ class StatzController < WebsiteController
 
   def create
     new_offer = @offer.clone
-    new_offer.update_attributes!(:created_at => nil, :updated_at => nil, :tapjoy_enabled => false, :name_suffix => params[:suffix])
+    new_offer.attributes = {:created_at => nil, :updated_at => nil, :tapjoy_enabled => false, :name_suffix => params[:suffix]}
+    new_offer.copy_banner_creatives!(@offer)
     flash[:notice] = "Successfully created offer"
     redirect_to statz_path(new_offer)
   end
