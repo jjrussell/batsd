@@ -122,7 +122,7 @@ private
     @show_papaya = false
     @papaya_offers = {}
     if !@for_preview && @device.is_papayan?
-      @show_papaya = true if params[:exp] == 1
+      @show_papaya = true if params[:exp] == '1'
       @papaya_offers = OfferCacher.get_papaya_offers if @show_papaya
       @papaya_offers = {} if @papaya_offers.nil?
     end

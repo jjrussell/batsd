@@ -5,7 +5,7 @@ class Experiments
 
   def self.choose(udid)
     if udid.present?
-      udid_hash = udid.hash % 2 #AB testing for papaya udids
+      udid_hash = (udid.hash % 2).to_s #AB testing for papaya udids
     else
       EXPERIMENTS[:default]
     end
