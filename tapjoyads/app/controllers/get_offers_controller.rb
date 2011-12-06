@@ -3,9 +3,10 @@ class GetOffersController < ApplicationController
   layout 'offerwall', :only => :webpage
 
   prepend_before_filter :decrypt_data_param
-  before_filter :choose_experiment, :except => [:featured, :image]
+  #before_filter :choose_experiment, :except => [:featured, :image]
   before_filter :set_featured_params, :only => :featured
   before_filter :setup, :except => :image
+  before_filter :choose_papaya_experiment, :only => [:index, :webpage]
 
   after_filter :save_web_request, :except => :image
 
@@ -121,11 +122,6 @@ private
     end
     @show_papaya = false
     @papaya_offers = {}
-    if !@for_preview && @device.is_papayan?
-      @show_papaya = true if params[:exp] == '1'
-      @papaya_offers = OfferCacher.get_papaya_offers if @show_papaya
-      @papaya_offers = {} if @papaya_offers.nil?
-    end
   end
 
   def get_offer_list(type = nil)
@@ -159,6 +155,16 @@ private
 
   def save_web_request
     @web_request.save unless @for_preview
+  end
+
+  def choose_papaya_experiment
+    if !@for_preview && @device.is_papayan?
+      choose_experiment
+      if params[:exp] == '1'
+        @show_papaya = true
+        @papaya_offers = OfferCacher.get_papaya_offers || {}
+      end
+    end
   end
 
 end
