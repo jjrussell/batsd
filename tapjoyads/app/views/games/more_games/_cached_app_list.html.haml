@@ -26,6 +26,6 @@
                     = number_to_currency(cached_app.price / 100.0)
                 %span.get_it
                   Get it!
-          -#- if !file_size_limit.nil? && cached_app.file_size_bytes >= file_size_limit
+          -#- if !file_size_limit.nil? && cached_app.file_size_bytes > file_size_limit
           -#  .offer_wifi_required
           -#    Wifi required icon goes here
