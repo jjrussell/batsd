@@ -7,8 +7,8 @@ class GamesMarketingMailer < ActionMailer::Base
     :port => 587,
     :domain => 'tapjoy.com',
     :authentication => :plain,
-    :user_name => SENDGRID_USER,
-    :password => SENDGRID_PASSWD
+    :user_name => SEND_GRID_USER,
+    :password => SEND_GRID_PASSWD
   }
 
   sendgrid_category :use_subject_lines
