@@ -13,20 +13,20 @@ TJG.loadedImages = {};
     winW = $(window).width();
     var nav = navigator, classes = [''], classReplaces = {}, device = "", orientationCompute = "";
     TJG.vars.isIos = (/iphone|ipod|ipad/gi).test(nav.platform);
-    TJG.vars.device_type = nav.platform.toLowerCase();
+    TJG.vars.deviceType = nav.platform.toLowerCase();
     TJG.vars.isIpad = (/ipad/gi).test(nav.userAgent);
     TJG.vars.isIpod = (/ipod/gi).test(nav.userAgent);
     TJG.vars.isIphone = (/iphone/gi).test(nav.userAgent);
     TJG.vars.isAndroid = (/android/gi).test(nav.userAgent);
     TJG.vars.isMobile = /(ip(od|ad|hone))/gi.test(nav.userAgent);
     if (TJG.vars.isAndroid) {
-     TJG.vars.device_type = 'android';
+     TJG.vars.deviceType = 'android';
      if ((/mobile/gi).test(nav.userAgent)) {
        TJG.vars.isMobile = true;
      }
     }
-    if (TJG.vars.device_type) {
-     TJG.vars.device_type = '' + TJG.vars.device_type.toLowerCase();
+    if (TJG.vars.deviceType) {
+      TJG.vars.deviceType = '' + TJG.vars.deviceType.toLowerCase();
     }
     TJG.vars.isIPad = (/ipad/gi).test(nav.platform);
     TJG.vars.isRetina = 'devicePixelRatio' in window && window.devicePixelRatio > 1;
@@ -42,18 +42,18 @@ TJG.loadedImages = {};
      }
     }
     else {
-    classReplaces['mobile'] = 'web';
+      classReplaces['mobile'] = 'web';
     }
     classes.push(winW + 'x' + winH);
     if ('ontouchend' in document) {
-    classReplaces['no-touch'] = 'touch';
-    TJG.vars.isTouch = true;
+      classReplaces['no-touch'] = 'touch';
+      TJG.vars.isTouch = true;
     }
     if (TJG.vars.isRetina) {
       classReplaces['no-hd'] = 'hd';
     }
     function getOrientationClass() {
-    return TJG.vars.orientationClasses[window.orientation % 180 ? 0 : 1];
+      return TJG.vars.orientationClasses[window.orientation % 180 ? 0 : 1];
     }
     if ('orientation' in window) {
     var orientationRe = new RegExp('(' + TJG.vars.orientationClasses.join('|') + ')'),

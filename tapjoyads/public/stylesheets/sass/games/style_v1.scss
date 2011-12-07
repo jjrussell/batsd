@@ -295,26 +295,15 @@ form#new_gamer input {
   overflow: hidden;
   text-align: center;
 }
-
+.device_info {
+  cursor: pointer;
+}
 .device_icon .mobile {
   background: transparent url("/images/games/old/v2/phone.png") no-repeat;
   left: 14px;
   height: 22px;
   top: 2px;
   width: 14px;
-}
-.device_name {
-  font-size: 16px;
-  padding: 6px 12px 0;
-}
-.device_name.has_switch {
-  font-size: 13px;
-  padding: 2px 12px 0;
-}
-.device_switch {
-  font-size: 10px;
-  line-height: 12px;
-  margin-top: 2px;
 }
 /* Page */
 .web .page,
@@ -1066,7 +1055,7 @@ body.old .formError .pad, body.old .email_error .pad, body.old .account_error .p
   background: transparent url("/images/games/old/feat_arrow_web.png") no-repeat center center;
   height: 45px;
   position: relative;
-  top: 40px;
+  top: 24px;
   width: 25px;
 }
 .mobile .feat_arrow {

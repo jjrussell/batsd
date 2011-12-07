@@ -51,11 +51,6 @@ RegExp.escape = function(text) {
         if (!TJG.vars.c_data && TJG.vars.ls_data) {
           TJG.utils.setCookie('data', TJG.vars.ls_data, 365, 1);
         }
-        // Set cookie if missing and from android app
-        var data_p = TJG.utils.getParam('data');
-        if (!TJG.vars.c_data && !TJG.utils.isNull(data_p) && (TJG.utils.getParam('src') == 'android_app')) {
-          TJG.utils.setCookie('data', data_p, 365, 1);
-        }
       },
 
       loadEvents : function () {
@@ -125,20 +120,22 @@ RegExp.escape = function(text) {
         if (w < 60) {
           w = 60;
         }
-        $('.device_info').fadeOut(50, function(){
+        $('.device_info').fadeOut(50, function(){ 
           $('.device_info').animate({width:"0px"}, 250);
         });
         TJG.animating = false;
-        $('.plus,.mobile_icon').click(function(){
+        TJG.deviceInfoOpen = false;
+        function selectDevice(){
           if (TJG.animating) {
             return;
           }
           TJG.animating = true;
-          if ($('.device_info').width() == 0) {
+          if (TJG.deviceInfoOpen == false) {
             $('.device_info').animate({width:w+"px"}, 250, function(){
-              $('.device_info').fadeIn(200);
+              $('.device_info').fadeIn(50);
               $('.plus').addClass('close');
             });
+            TJG.deviceInfoOpen = true;
             TJG.animating = false;
           }
           else {
@@ -146,8 +143,12 @@ RegExp.escape = function(text) {
               $('.device_info').animate({width:"0px"}, 250);
               $('.plus').removeClass('close');
             });
+            TJG.deviceInfoOpen = false;
             TJG.animating = false;
           }
+        }
+        $('.plus, .mobile_icon').click(function() {
+          selectDevice();
         });
       },
 
@@ -168,7 +169,11 @@ RegExp.escape = function(text) {
         TJG.onload[key]();
       }
     };
-    window.addEventListener("load", TJG.init, false);
-
+    if (window.addEventListener) {
+      window.addEventListener("load", TJG.init, false);
+    }
+    else {
+      window.attachEvent("load", TJG.init);
+    }
 
 })(this, document);
