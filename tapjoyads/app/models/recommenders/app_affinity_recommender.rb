@@ -1,7 +1,7 @@
 class Recommenders::AppAffinityRecommender < Recommender
   MOST_POPULAR_FILE = 'most_popular.txt'
   APP_FILE          = 'app_app_matrix.txt'
-  DEVICE_FILE       = 'udid_reco.txt'
+  DEVICE_FILE       = 'daily/udid_apps_reco.dat'
 
   def initialize
     @recs_for_app = {} #recommendations for a particular application
