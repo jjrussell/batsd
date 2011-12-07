@@ -180,4 +180,15 @@ class TapjoyMailer < ActionMailer::Base
     content_type 'text/html'
     subject 'Thanks for signing up with Tapjoy!'
   end
+
+  def resolve_support_requests(user_email, mass_resolve_results)
+    from 'Tapjoy <noreply@tapjoy.com>'
+    recipients user_email
+    if Rails.env.production?
+      cc 'customerservice@tapjoy.com'
+    end
+    content_type 'text/html'
+    subject 'Support Request Mass Resolution'
+    body(:mass_resolve_results => mass_resolve_results)
+  end
 end
