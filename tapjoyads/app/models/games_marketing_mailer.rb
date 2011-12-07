@@ -15,7 +15,7 @@ class GamesMarketingMailer < ActionMailer::Base
   sendgrid_enable :clicktrack, :opentrack
 
   # to send to litmus addresses in dev mode, just need to specify the [udid]@emailtests.com address as a recipient
-  if RAILS_ENV == 'development'
+  if Rails.env.development?
     def instance_variable_set(ivar, val)
       return super(ivar, val) if ivar != '@recipients'
 
