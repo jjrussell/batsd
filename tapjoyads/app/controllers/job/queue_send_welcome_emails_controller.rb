@@ -8,23 +8,11 @@ class Job::QueueSendWelcomeEmailsController < Job::SqsReaderController
 
   def on_message(message)
     message = JSON.parse(message.body)
+
     gamer = Gamer.find(message['gamer_id'])
+    device_info = { :accept_language => message['accept_language_str'], :user_agent => message['user_agent_str'], :is_android => message['using_android'] }
 
-    offer_data = {}
-    device, gamer_device, external_publisher = ExternalPublisher.most_recently_run_for_gamer(gamer)
-    if external_publisher
-      currency = external_publisher.currencies.first
-      offerwall_url = external_publisher.get_offerwall_url(device, currency, message['accept_language_str'], message['user_agent_str'])
-
-      sess = Patron::Session.new
-      response = sess.get(offerwall_url)
-      raise "Error getting offerwall data" unless response.status == 200
-      offer_data[currency[:id]] = JSON.parse(response.body).merge(:external_publisher => external_publisher)
-    end
-
-    editors_picks = offer_data.any? ? [] : EditorsPick.cached_active(message['using_android'] ? 'android' : 'ios')
-
-    GamesMarketingMailer.deliver_welcome_email(gamer, gamer_device, offer_data, editors_picks)
+    GamesMarketingMailer.deliver_welcome_email(gamer, device_info)
   end
 
 end
