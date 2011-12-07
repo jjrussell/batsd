@@ -12,7 +12,7 @@ class GamesMarketingMailer < ActionMailer::Base
   }
 
   sendgrid_category :use_subject_lines
-  sendgrid_enable :clicktrack, :opentrack
+  sendgrid_enable :clicktrack, :opentrack, :subscriptiontrack
 
   # to send to litmus addresses in dev mode, just need to specify the [udid]@emailtests.com address as a recipient
   if Rails.env.development?
@@ -58,6 +58,7 @@ class GamesMarketingMailer < ActionMailer::Base
     confirmation_link = url_for(:protocol => protocol, :host => host, :controller => "confirm", :token => gamer.confirmation_token)
 
     sendgrid_category "Welcome Email, #{linked ? "Linked for Device Type #{gamer_device.device_type}" : "Not Linked"}"
+    sendgrid_subscriptiontrack_text(:replace => "[unsubscribe_link]")
     body :confirmation_link => confirmation_link, :linked => linked, :android_device => android_device,
       :offer_data => offer_data, :editors_picks => editors_picks
   end
