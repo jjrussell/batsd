@@ -1,8 +1,13 @@
 class Job::MasterDeleteGamersController < Job::JobController
   def index
-    Gamer.to_delete.each do |gamer|
-      gamer.destroy
-    end
+    today = Date.today
+    key = "deleted_gamers/#{today.strftime('%Y-%m')}"
+    object = S3.bucket(BucketNames::TAPJOY).objects[key]
+    data = object.exists? ? object.read : ''
+    data = "#{data}#{today.to_s}: #{Gamer.to_delete.count}\n"
+    object.write(:data => data)
+
+    Gamer.to_delete.destroy_all
 
     render :text => 'ok'
   end

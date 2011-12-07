@@ -42,4 +42,8 @@ class SupportRequest < SimpledbResource
     clicks = Click.select_all(:conditions => conditions)
     clicks.sort_by { |c| c.clicked_at.to_f }.last
   end
+
+  def click
+    Click.find(click_id)
+  end
 end

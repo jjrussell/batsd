@@ -3,9 +3,10 @@ class GetOffersController < ApplicationController
   layout 'offerwall', :only => :webpage
 
   prepend_before_filter :decrypt_data_param
-  before_filter :choose_experiment, :except => [:featured, :image]
+  #before_filter :choose_experiment, :except => [:featured, :image]
   before_filter :set_featured_params, :only => :featured
   before_filter :setup, :except => :image
+  before_filter :choose_papaya_experiment, :only => [:index, :webpage]
 
   after_filter :save_web_request, :except => :image
 
@@ -113,10 +114,14 @@ private
     params[:source] = 'offerwall' if params[:source].blank?
     params[:exp] = nil if params[:type] == Offer::CLASSIC_OFFER_TYPE
 
-    wr_path = params[:source] == 'featured' ? 'featured_offer_requested' : 'offers'
-    @web_request = WebRequest.new(:time => @now)
-    @web_request.put_values(wr_path, params, get_ip_address, get_geoip_data, request.headers['User-Agent'])
-    @web_request.viewed_at = @now
+    unless @for_preview
+      wr_path = params[:source] == 'featured' ? 'featured_offer_requested' : 'offers'
+      @web_request = WebRequest.new(:time => @now)
+      @web_request.put_values(wr_path, params, get_ip_address, get_geoip_data, request.headers['User-Agent'])
+      @web_request.viewed_at = @now
+    end
+    @show_papaya = false
+    @papaya_offers = {}
   end
 
   def get_offer_list(type = nil)
@@ -135,7 +140,8 @@ private
       :os_version           => params[:os_version],
       :source               => params[:source],
       :screen_layout_size   => params[:screen_layout_size],
-      :video_offer_ids      => params[:video_offer_ids].to_s.split(',')
+      :video_offer_ids      => params[:video_offer_ids].to_s.split(','),
+      :all_videos           => params[:all_videos]
     )
   end
 
@@ -149,7 +155,17 @@ private
   end
 
   def save_web_request
-    @web_request.save
+    @web_request.save unless @for_preview
+  end
+
+  def choose_papaya_experiment
+    if !@for_preview && @device.is_papayan?
+      choose_experiment
+      if params[:exp] == '1'
+        @show_papaya = true
+        @papaya_offers = OfferCacher.get_papaya_offers || {}
+      end
+    end
   end
 
 end

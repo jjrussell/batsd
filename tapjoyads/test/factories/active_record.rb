@@ -109,6 +109,8 @@ FactoryGirl.define do
     publisher_amount 70
     advertiser_amount -100
     tapjoy_amount 30
+    publisher_partner { publisher_app.partner }
+    advertiser_partner { advertiser_offer.partner }
   end
 
   factory :currency do
@@ -178,5 +180,11 @@ FactoryGirl.define do
     noob          { Factory(:gamer) }
     channel       { 0 }
     external_info { Factory.next(:name) }
+  end
+
+  factory :reseller do
+    name               { Factory.next(:name) }
+    reseller_rev_share { 0.8 }
+    rev_share          { 0.75 }
   end
 end

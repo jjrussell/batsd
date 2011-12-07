@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20111116005224) do
+ActiveRecord::Schema.define(:version => 20111205230000) do
 
   create_table "action_offers", :id => false, :force => true do |t|
     t.string   "id",                    :limit => 36,                    :null => false
@@ -119,23 +119,30 @@ ActiveRecord::Schema.define(:version => 20111116005224) do
   add_index "apps", ["partner_id"], :name => "index_apps_on_partner_id"
 
   create_table "conversions", :id => false, :force => true do |t|
-    t.string   "id",                  :limit => 36, :null => false
-    t.string   "reward_id",           :limit => 36
-    t.string   "advertiser_offer_id", :limit => 36
-    t.string   "publisher_app_id",    :limit => 36, :null => false
-    t.integer  "advertiser_amount",                 :null => false
-    t.integer  "publisher_amount",                  :null => false
-    t.integer  "tapjoy_amount",                     :null => false
-    t.integer  "reward_type",                       :null => false
+    t.string   "id",                     :limit => 36, :null => false
+    t.string   "reward_id",              :limit => 36
+    t.string   "advertiser_offer_id",    :limit => 36
+    t.string   "publisher_app_id",       :limit => 36, :null => false
+    t.integer  "advertiser_amount",                    :null => false
+    t.integer  "publisher_amount",                     :null => false
+    t.integer  "tapjoy_amount",                        :null => false
+    t.integer  "reward_type",                          :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "country",             :limit => 2
+    t.string   "country",                :limit => 2
+    t.string   "publisher_partner_id",   :limit => 36, :null => false
+    t.string   "advertiser_partner_id",  :limit => 36, :null => false
+    t.string   "publisher_reseller_id",  :limit => 36
+    t.string   "advertiser_reseller_id", :limit => 36
+    t.float    "spend_share"
   end
 
   add_index "conversions", ["advertiser_offer_id", "created_at", "reward_type"], :name => "index_on_advertiser_offer_id_created_at_and_reward_type"
+  add_index "conversions", ["advertiser_partner_id", "created_at"], :name => "index_conversions_on_advertiser_partner_id_and_created_at"
   add_index "conversions", ["created_at"], :name => "index_conversions_on_created_at"
   add_index "conversions", ["id", "created_at"], :name => "index_conversions_on_id_and_created_at", :unique => true
   add_index "conversions", ["publisher_app_id", "created_at", "reward_type"], :name => "index_on_publisher_app_id_created_at_and_reward_type"
+  add_index "conversions", ["publisher_partner_id", "created_at"], :name => "index_conversions_on_publisher_partner_id_and_created_at"
 
   create_table "currencies", :id => false, :force => true do |t|
     t.string   "id",                                         :limit => 36,                                                  :null => false
@@ -622,42 +629,45 @@ ActiveRecord::Schema.define(:version => 20111116005224) do
   add_index "partner_assignments", ["user_id", "partner_id"], :name => "index_partner_assignments_on_user_id_and_partner_id", :unique => true
 
   create_table "partners", :id => false, :force => true do |t|
-    t.string   "id",                         :limit => 36,                                                      :null => false
+    t.string   "id",                           :limit => 36,                                                      :null => false
     t.string   "contact_name"
     t.string   "contact_phone"
-    t.integer  "balance",                                                                :default => 0,         :null => false
-    t.integer  "pending_earnings",                                                       :default => 0,         :null => false
+    t.integer  "balance",                                                                  :default => 0,         :null => false
+    t.integer  "pending_earnings",                                                         :default => 0,         :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "payout_frequency",                                                       :default => "monthly", :null => false
-    t.integer  "next_payout_amount",                                                     :default => 0,         :null => false
+    t.string   "payout_frequency",                                                         :default => "monthly", :null => false
+    t.integer  "next_payout_amount",                                                       :default => 0,         :null => false
     t.string   "name"
     t.integer  "calculated_advertiser_tier"
     t.integer  "calculated_publisher_tier"
     t.integer  "custom_advertiser_tier"
     t.integer  "custom_publisher_tier"
     t.text     "account_manager_notes"
-    t.text     "disabled_partners",                                                                             :null => false
-    t.integer  "premier_discount",                                                       :default => 0,         :null => false
+    t.text     "disabled_partners",                                                                               :null => false
+    t.integer  "premier_discount",                                                         :default => 0,         :null => false
     t.string   "exclusivity_level_type"
     t.date     "exclusivity_expires_on"
-    t.decimal  "transfer_bonus",                           :precision => 8, :scale => 6, :default => 0.0,       :null => false
-    t.decimal  "rev_share",                                :precision => 8, :scale => 6, :default => 0.5,       :null => false
-    t.decimal  "direct_pay_share",                         :precision => 8, :scale => 6, :default => 1.0,       :null => false
+    t.decimal  "transfer_bonus",                             :precision => 8, :scale => 6, :default => 0.0,       :null => false
+    t.decimal  "rev_share",                                  :precision => 8, :scale => 6, :default => 0.5,       :null => false
+    t.decimal  "direct_pay_share",                           :precision => 8, :scale => 6, :default => 1.0,       :null => false
     t.string   "apsalar_username"
     t.string   "apsalar_api_secret"
     t.text     "apsalar_url"
-    t.text     "offer_whitelist",                                                                               :null => false
-    t.boolean  "use_whitelist",                                                          :default => false,     :null => false
-    t.boolean  "approved_publisher",                                                     :default => false,     :null => false
-    t.boolean  "apsalar_sharing_adv",                                                    :default => false,     :null => false
-    t.boolean  "apsalar_sharing_pub",                                                    :default => false,     :null => false
-    t.string   "reseller_id",                :limit => 36
+    t.text     "offer_whitelist",                                                                                 :null => false
+    t.boolean  "use_whitelist",                                                            :default => false,     :null => false
+    t.boolean  "approved_publisher",                                                       :default => false,     :null => false
+    t.boolean  "apsalar_sharing_adv",                                                      :default => false,     :null => false
+    t.boolean  "apsalar_sharing_pub",                                                      :default => false,     :null => false
+    t.string   "reseller_id",                  :limit => 36
     t.string   "billing_email"
     t.integer  "freshbooks_client_id"
     t.boolean  "accepted_publisher_tos"
-    t.string   "sales_rep_id",               :limit => 36
-    t.decimal  "max_deduction_percentage",                 :precision => 8, :scale => 6, :default => 1.0,       :null => false
+    t.string   "sales_rep_id",                 :limit => 36
+    t.decimal  "max_deduction_percentage",                   :precision => 8, :scale => 6, :default => 1.0,       :null => false
+    t.date     "negotiated_rev_share_ends_on"
+    t.boolean  "accepted_negotiated_tos",                                                  :default => false
+    t.string   "cs_contact_email"
   end
 
   add_index "partners", ["id"], :name => "index_partners_on_id", :unique => true
@@ -776,11 +786,12 @@ ActiveRecord::Schema.define(:version => 20111116005224) do
   add_index "role_assignments", ["user_id", "user_role_id"], :name => "index_role_assignments_on_user_id_and_user_role_id", :unique => true
 
   create_table "spend_shares", :id => false, :force => true do |t|
-    t.string   "id",           :limit => 36, :null => false
-    t.float    "ratio",                      :null => false
-    t.date     "effective_on",               :null => false
+    t.string   "id",             :limit => 36, :null => false
+    t.float    "ratio",                        :null => false
+    t.date     "effective_on",                 :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.float    "uncapped_ratio",               :null => false
   end
 
   add_index "spend_shares", ["effective_on"], :name => "index_spend_shares_on_effective_on", :unique => true
