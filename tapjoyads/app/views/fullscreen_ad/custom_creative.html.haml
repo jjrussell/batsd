@@ -1,5 +1,5 @@
 .close#close
-  - link_to(params[:preview] == 'true' ? '#' : 'dismiss') do
+  - link_to(params[:preview] == 'true' ? '#' : 'dismiss', :class => 'close', :id => 'close-link') do
     .close_inner#close_inner x
 #main
   - link_to((params[:preview] == 'true' ? '#' : get_click_url(@offer)), :class => 'image-link') do
@@ -25,6 +25,7 @@
     var buttonsDiv = document.getElementById('buttons');
     var buttonsHeight;
     var closeButton = document.getElementById('close');
+    var closeButtonInner = document.getElementById('close_inner');
 
     function init() {
       // Determine target screen size and orientation
@@ -84,8 +85,9 @@
       // If we've found creative to use, then tweak the styling and download the image
       setupCreative(preferredCreative);
       setupButtons();
-      setTimeout(addWebkitDirectives, (animOptions.startDelay/2));
-      setTimeout(moveButtons, (animOptions.startDelay));
+      setTimeout(addWebkitDirectives, (animOptions.startDelay/10));
+      setTimeout(showCloseButton, (animOptions.startDelay/10));
+      setTimeout(moveActionButtons, (animOptions.startDelay));
     }
 
     function addWebkitDirectives() {
@@ -96,7 +98,7 @@
       webkitStyle(buttonsDiv, 'transition-duration', animOptions.duration + ', ' + animOptions.duration + ', ' + animOptions.duration);
       webkitStyle(buttonsDiv, 'transition-timing-function', animOptions.timingFunction + ', ' + animOptions.timingFunction + ', ' + animOptions.timingFunction);
       webkitStyle(creativeImg, 'transition', 'all ' + animOptions.duration + ' ' + animOptions.timingFunction);
-      webkitStyle(closeButton, 'transition', 'all ' + animOptions.duration + ' ' + animOptions.timingFunction);
+      webkitStyle(closeButton, 'transition', 'opacity ' + animOptions.duration + ' ' + animOptions.timingFunction);
     }
 
     function calcCreativeMargins(creative) {
@@ -117,22 +119,27 @@
       client.orientation = (client.height > client.width) ? 'portrait' : 'landscape';
     }
 
-    function moveButtons() {
+    function moveActionButtons() {
       // Relocate buttons div
       buttonsDiv.style.opacity = '1';
       buttonsDiv.style.width = client.width + 'px';
       buttonsDiv.style.top = (client.height - buttonsHeight) + 'px';
     }
 
+    function showCloseButton() {
+      var closeButtonLink = document.getElementById('close-link');
+      closeButton.style.opacity = '1';
+      closeButtonLink.style.opacity = '1';
+    }
+
     function rearrange() {
       inspectScreen();
       setupCreative(preferredCreative);
-      moveButtons();
+      moveActionButtons();
     }
 
     function setupButtons() {
       var downloadButton = document.getElementById('download');
-      var closeButtonInner = document.getElementById('close_inner');
 
       // Scale the buttons to fit this screen size
       if(Math.max(client.width, client.height) <= 480) {
@@ -184,7 +191,7 @@
       // Apply size constraints to image tag
       creativeImg.style.width = newWidth + 'px';
       creativeImg.style.height = newHeight + 'px';
-      main.style.margin = vertMargin + 'px ' + horizMargin + 'px 0 0';
+      main.style.margin = vertMargin + 'px ' + horizMargin + 'px';
       main.style.height = newHeight + 'px';
 
       // Set the image url if this is the initial drawing
@@ -238,6 +245,10 @@
       background-position: center;
     }
 
+    a:link, a:visited, a:active, a:hover {
+      text-decoration: none;
+    }
+
     .buttons {
       background-color: rgba(0,0,0,0.6);
       font-family: "helvetica", "san-serif";
@@ -250,9 +261,8 @@
 
     .close {
       background-color: #FF9999;
-      border-color: #685B3D;
-      border-style: solid;
       position: absolute;
+      opacity: 0;
       z-index: 8;
     }
 
@@ -266,7 +276,7 @@
       background: -o-linear-gradient(top,  #cf1623 0%,#ea1927 100%); /* Opera 11.10+ */
       background: -ms-linear-gradient(top,  #cf1623 0%,#ea1927 100%); /* IE10+ */
       background: linear-gradient(top,  #cf1623 0%,#ea1927 100%); /* W3C */
-      filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#cf1623', endColorstr='#ea1927',GradientType=0 ); /* IE6-8 */
+      //filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#cf1623', endColorstr='#ea1927',GradientType=0 ); /* IE6-8 */
 
       color: #E9E5DA;
       font-family: helvetica,san-serif;
@@ -274,14 +284,6 @@
       position: absolute;
       text-align: center;
       z-index: 10;
-    }
-
-    .download,
-    .skip {
-      border-style: solid;
-      border-color: #FFFFFF;
-      display: inline;
-      text-decoration: none;
     }
 
     .download {
@@ -295,22 +297,12 @@
       background: linear-gradient(top,  #3e92c7 12%,#1b6c9f 69%); /* W3C */
       filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#3e92c7', endColorstr='#1b6c9f',GradientType=0 ); /* IE6-8 */
 
+      border-style: solid;
+      border-color: #FFFFFF;
       color: #FFFFFF;
+      display: inline;
       font-weight: bold;
-    }
-
-    .skip {
-      background: #c6c6c6; /* Old browsers */
-      background: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/Pgo8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgdmlld0JveD0iMCAwIDEgMSIgcHJlc2VydmVBc3BlY3RSYXRpbz0ibm9uZSI+CiAgPGxpbmVhckdyYWRpZW50IGlkPSJncmFkLXVjZ2ctZ2VuZXJhdGVkIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgeDE9IjAlIiB5MT0iMCUiIHgyPSIwJSIgeTI9IjEwMCUiPgogICAgPHN0b3Agb2Zmc2V0PSIxMiUiIHN0b3AtY29sb3I9IiNjNmM2YzYiIHN0b3Atb3BhY2l0eT0iMSIvPgogICAgPHN0b3Agb2Zmc2V0PSI2OSUiIHN0b3AtY29sb3I9IiM5ZTllOWUiIHN0b3Atb3BhY2l0eT0iMSIvPgogIDwvbGluZWFyR3JhZGllbnQ+CiAgPHJlY3QgeD0iMCIgeT0iMCIgd2lkdGg9IjEiIGhlaWdodD0iMSIgZmlsbD0idXJsKCNncmFkLXVjZ2ctZ2VuZXJhdGVkKSIgLz4KPC9zdmc+);
-      background: -moz-linear-gradient(top, #c6c6c6 12%, #9e9e9e 69%); /* FF3.6+ */
-      background: -webkit-gradient(linear, left top, left bottom, color-stop(12%,#c6c6c6), color-stop(69%,#9e9e9e)); /* Chrome,Safari4+ */
-      background: -webkit-linear-gradient(top, #c6c6c6 12%,#9e9e9e 69%); /* Chrome10+,Safari5.1+ */
-      background: -o-linear-gradient(top, #c6c6c6 12%,#9e9e9e 69%); /* Opera 11.10+ */
-      background: -ms-linear-gradient(top, #c6c6c6 12%,#9e9e9e 69%); /* IE10+ */
-      background: linear-gradient(top, #c6c6c6 12%,#9e9e9e 69%); /* W3C */
-      filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#c6c6c6', endColorstr='#9e9e9e',GradientType=0 ); /* IE6-8 */
-
-      color: #333333;
+      text-decoration: none;
     }
 
     .buttons480 {
@@ -318,24 +310,52 @@
       padding-top: 15px;
     }
 
-    .download480,
-    .skip480 {
-      border-width: 1px;
-      border-radius: 7px;
-        -moz-border-radius: 7px;
-        -ms-border-radius: 7px;
-        -o-border-radius: 7px;
-        -webkit-border-radius: 7px;
-      padding: 7px 12px;
+    .close480 {
+      border-radius: 25px;
+      -moz-border-radius: 25px;
+      -ms-border-radius: 25px;
+      -o-border-radius: 25px;
+      -webkit-border-radius: 25px;
+
+      box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.7);
+      -moz-box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.7);
+      -webkit-box-shadow: iet 0 0 10px 0 rgba(0, 0, 0, 0.7);
+
+      height: 50px;
+      right: 10px;
+      top: 10px;
+      width: 50px;
+    }
+
+    .close_inner480 {
+      border-radius: 22px;
+      -moz-border-radius: 22px;
+      -ms-border-radius: 22px;
+      -o-border-radius: 22px;
+      -webkit-border-radius: 22px;
+
+      box-shadow: inset 0 0 15px 0 rgba(0, 0, 0, 0.3);
+      -moz-box-shadow: inset 0 0 15px 0 rgba(0, 0, 0, 0.3);
+      -webkit-box-shadow: inset 0 0 15px 0 rgba(0, 0, 0, 0.3);
+
+      font-size: 35px;
+      height: 46px;
+      left: 2px;
+      line-height: 40px;
+      text-shadow: 1px 0 1px #{close_x_bevel_light}, 0 1px 1px #{close_x_bevel_light}, 1px 1px 1px #{close_x_bevel_light}, -1px 0 1px #{close_x_bevel_dark}, 0 -1px 1px #{close_x_bevel_dark}, -1px -1px 1px #{close_x_bevel_dark};
+      top: 2px;
+      width: 46px;
     }
 
     .download480 {
+      border-width: 1px;
+      border-radius: 7px;
+      -moz-border-radius: 7px;
+      -ms-border-radius: 7px;
+      -o-border-radius: 7px;
+      -webkit-border-radius: 7px;
+      padding: 7px 12px;
       text-shadow: 1px 1px #333;
-    }
-
-    .skip480 {
-      margin-right: 10px;
-      text-shadow: 1px 1px #CCC;
     }
 
     .buttons640 {
@@ -343,24 +363,52 @@
       padding-top: 22px;
     }
 
-    .download640,
-    .skip640 {
-      border-width: 1px;
-      border-radius: 10px;
-        -moz-border-radius: 10px;
-        -ms-border-radius: 10px;
-        -o-border-radius: 10px;
-        -webkit-border-radius: 10px;
-      padding: 10px 17px;
+    .close640 {
+      border-radius: 35px;
+      -moz-border-radius: 35px;
+      -ms-border-radius: 35px;
+      -o-border-radius: 35px;
+      -webkit-border-radius: 35px;
+
+      box-shadow: 0 0 15px 0 rgba(0, 0, 0, 0.7);
+      -moz-box-shadow: 0 0 15px 0 rgba(0, 0, 0, 0.7);
+      -webkit-box-shadow: iet 0 0 15px 0 rgba(0, 0, 0, 0.7);
+
+      height: 70px;
+      right: 15px;
+      top: 15px;
+      width: 70px;
+    }
+
+    .close_inner640 {
+      border-radius: 32px;
+      -moz-border-radius: 32px;
+      -ms-border-radius: 32px;
+      -o-border-radius: 32px;
+      -webkit-border-radius: 32px;
+
+      box-shadow: inset 0 0 20px 0 rgba(0, 0, 0, 0.3);
+      -moz-box-shadow: inset 0 0 20px 0 rgba(0, 0, 0, 0.3);
+      -webkit-box-shadow: inset 0 0 20px 0 rgba(0, 0, 0, 0.3);
+
+      font-size: 50px;
+      height: 64px;
+      left: 3px;
+      line-height: 60px;
+      text-shadow: 2px 0 1px #{close_x_bevel_light}, 0 2px 1px #{close_x_bevel_light}, 2px 2px 1px #{close_x_bevel_light}, -2px 0 1px #{close_x_bevel_dark}, 0 -2px 1px #{close_x_bevel_dark}, -2px -2px 1px #{close_x_bevel_dark};
+      top: 3px;
+      width: 64px;
     }
 
     .download640 {
+      border-width: 1px;
+      border-radius: 10px;
+      -moz-border-radius: 10px;
+      -ms-border-radius: 10px;
+      -o-border-radius: 10px;
+      -webkit-border-radius: 10px;
+      padding: 10px 17px;
       text-shadow: 2px 2px #333;
-    }
-
-    .skip640 {
-      margin-right: 15px;
-      text-shadow: 2px 2px #CCC;
     }
 
     .buttons960 {
@@ -369,16 +417,15 @@
     }
 
     .close960 {
-      border-width: 2px;
       border-radius: 50px;
-        -moz-border-radius: 50px;
-        -ms-border-radius: 50px;
-        -o-border-radius: 50px;
-        -webkit-border-radius: 50px;
+      -moz-border-radius: 50px;
+      -ms-border-radius: 50px;
+      -o-border-radius: 50px;
+      -webkit-border-radius: 50px;
 
       box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.7);
-        -moz-box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.7);
-        -webkit-box-shadow: iet 0 0 20px 0 rgba(0, 0, 0, 0.7);
+      -moz-box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.7);
+      -webkit-box-shadow: iet 0 0 20px 0 rgba(0, 0, 0, 0.7);
 
       height: 100px;
       right: 20px;
@@ -388,42 +435,33 @@
 
     .close_inner960 {
       border-radius: 45px;
-        -moz-border-radius: 45px;
-        -ms-border-radius: 45px;
-        -o-border-radius: 45px;
-        -webkit-border-radius: 45px;
+      -moz-border-radius: 45px;
+      -ms-border-radius: 45px;
+      -o-border-radius: 45px;
+      -webkit-border-radius: 45px;
 
       box-shadow: inset 0 0 30px 0 rgba(0, 0, 0, 0.3);
-        -moz-box-shadow: inset 0 0 30px 0 rgba(0, 0, 0, 0.3);
-        -webkit-box-shadow: inset 0 0 30px 0 rgba(0, 0, 0, 0.3);
+      -moz-box-shadow: inset 0 0 30px 0 rgba(0, 0, 0, 0.3);
+      -webkit-box-shadow: inset 0 0 30px 0 rgba(0, 0, 0, 0.3);
 
       font-size: 70px;
       height: 90px;
       left: 5px;
-      line-height: 90px;
+      line-height: 80px;
       text-shadow: 2px 0 1px #{close_x_bevel_light}, 0 2px 1px #{close_x_bevel_light}, 2px 2px 1px #{close_x_bevel_light}, -2px 0 1px #{close_x_bevel_dark}, 0 -2px 1px #{close_x_bevel_dark}, -2px -2px 1px #{close_x_bevel_dark};
       top: 5px;
       width: 90px;
     }
 
-    .download960,
-    .skip960 {
+    .download960 {
       border-width: 2px;
       border-radius: 15px;
-        -moz-border-radius: 15px;
-        -ms-border-radius: 15px;
-        -o-border-radius: 15px;
-        -webkit-border-radius: 15px;
+      -moz-border-radius: 15px;
+      -ms-border-radius: 15px;
+      -o-border-radius: 15px;
+      -webkit-border-radius: 15px;
       padding: 15px 25px;
-    }
-
-    .download960 {
-        text-shadow: 2px 2px #333;
-    }
-
-    .skip960 {
-      margin-right: 20px;
-      text-shadow: 2px 2px #CCC;
+      text-shadow: 2px 2px #333;
     }
 
 /[if gte IE 9]
