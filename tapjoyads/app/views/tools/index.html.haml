@@ -29,8 +29,6 @@
 - if has_permissions_for_one_of?(:admin)
   %h3 Admin
 %ul
-  - if permitted_to? :send_currency_failures, :tools
-    %li= link_to 'Send Currency Failures', send_currency_failures_tools_path
   - if permitted_to? :failed_sdb_saves, :tools
     %li= link_to 'Failed Sdb Saves', failed_sdb_saves_tools_path
   - if permitted_to? :sqs_lengths, :tools
@@ -47,8 +45,6 @@
     %li= link_to 'Manage user roles', tools_users_path
   - if permitted_to? :index, :tools_jobs
     %li= link_to 'Job Configuration', tools_jobs_path
-  - if permitted_to? :index, :tools_support_requests
-    %li= link_to 'Support Request Stats', tools_support_requests_path
   - if permitted_to? :index, :tools_press_releases
     %li= link_to 'Press Releases', tools_press_releases_path
 
@@ -96,11 +92,17 @@
   %h3 Customer Support
 %ul
   - if permitted_to? :device_info, :tools
-    %li= link_to 'Device Info & Unresolved clicks', device_info_tools_path
+    %li= link_to 'Device Info &amp; Unresolved clicks', device_info_tools_path
   - if permitted_to? :reset_device, :tools
     %li= link_to 'Reset Device', reset_device_tools_path
   - if permitted_to? :index, :tools_admin_devices
     %li= link_to 'Admin Devices', tools_admin_devices_path
+  - if permitted_to? :index, :tools_support_requests
+    %li= link_to 'Support Request Stats', tools_support_requests_path
+  - if permitted_to? :mass_resolve, :tools_support_requests
+    %li= link_to 'Mass Resolve Support Requests', mass_resolve_tools_support_requests_path
+  - if permitted_to? :send_currency_failures, :tools
+    %li= link_to 'Send Currency Failures', send_currency_failures_tools_path
 
 - if has_permissions_for_one_of?(:hr)
   %h3 Human Resources

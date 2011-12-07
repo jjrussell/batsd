@@ -1,6 +1,8 @@
 class Partner < ActiveRecord::Base
   include UuidPrimaryKey
 
+  THE_REAL_TAPJOY_PARTNER_ID = "70f54c6d-f078-426c-8113-d6e43ac06c6d"
+
   has_many :orders
   has_many :payouts
   has_many :currencies
@@ -14,8 +16,8 @@ class Partner < ActiveRecord::Base
   has_many :action_offers
   has_many :video_offers
   has_many :offers
-  has_many :publisher_conversions, :through => :apps
-  has_many :advertiser_conversions, :through => :offers
+  has_many :publisher_conversions, :class_name => 'Conversion', :foreign_key => :publisher_partner_id
+  has_many :advertiser_conversions, :class_name => 'Conversion', :foreign_key => :advertiser_partner_id
   has_many :monthly_accountings
   has_many :offer_discounts, :order => 'expires_on DESC'
   has_many :app_offers, :class_name => 'Offer', :conditions => "item_type = 'App'"
@@ -33,7 +35,7 @@ class Partner < ActiveRecord::Base
   validates_inclusion_of :use_whitelist, :approved_publisher, :in => [ true, false ]
   validate :exclusivity_level_legal
   validate :sales_rep_is_employee, :if => :sales_rep_id_changed?
-  validates_format_of :billing_email, :with => Authlogic::Regex.email, :message => "should look like an email address.", :allow_blank => true, :allow_nil => true
+  validates_format_of :billing_email, :cs_contact_email, :with => Authlogic::Regex.email, :message => "should look like an email address.", :allow_blank => true, :allow_nil => true
   # validates_format_of :name, :with => /^[[:print:]]*$/, :message => "Partner name must be alphanumeric."
   validates_each :disabled_partners, :allow_blank => true do |record, attribute, value|
     record.errors.add(attribute, "must be blank when using whitelisting") if record.use_whitelist? && value.present?
@@ -57,6 +59,10 @@ class Partner < ActiveRecord::Base
     elsif record.exclusivity_level_type.blank? && record.exclusivity_expires_on?
       record.errors.add(attribute, "must be blank if the Partner does not have exclusivity_level_type set")
     end
+  end
+
+  validates_each :negotiated_rev_share_ends_on, :if => :negotiated_rev_share_ends_on_changed?, :allow_blank => true do |record, attribute, value|
+    record.errors.add(attribute, 'You can not choose a date in the past for negotiated rev share expiration time.') if value.to_time < Time.zone.now
   end
 
   before_validation :remove_whitespace_from_attributes, :update_rev_share
@@ -142,6 +148,10 @@ class Partner < ActiveRecord::Base
   def remove_user(user)
     if users.length > 1 && users.include?(user)
       user.partners.delete(self)
+      if user.reseller_id?
+        self.reseller_id = nil
+        save!
+      end
       if user.partners.blank?
         user.current_partner = Partner.new(:name => user.email, :contact_name => user.email)
         user.partners << user.current_partner
@@ -286,7 +296,7 @@ class Partner < ActiveRecord::Base
 private
 
   def update_currencies
-    if rev_share_changed? || direct_pay_share_changed? || disabled_partners_changed? || offer_whitelist_changed? || use_whitelist_changed? || accepted_publisher_tos_changed? || max_deduction_percentage_changed?
+    if rev_share_changed? || direct_pay_share_changed? || disabled_partners_changed? || offer_whitelist_changed? || use_whitelist_changed? || accepted_publisher_tos_changed? || max_deduction_percentage_changed? || reseller_id_changed?
       currencies.each do |c|
         c.set_values_from_partner_and_reseller
         c.save!

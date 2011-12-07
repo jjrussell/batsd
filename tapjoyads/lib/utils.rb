@@ -306,6 +306,7 @@ class Utils
       end
       OfferCacher.cache_offer_stats
       OfferCacher.cache_offers
+      OfferCacher.cache_papaya_offers
       Mc.cache_all
       true
     end

@@ -39,7 +39,10 @@ As of: #{@now.to_s(:pub_ampm_sec)}
         %td= number_with_delimiter(hash[:this_hour_skips])
         %td
           = image_tag(hash[:currency].app.get_icon_url, :size => '20x20')
-          = link_to(hash[:currency].app.name, statz_path(hash[:currency].app.id))
+          - if permitted_to? :show, :statz
+            = link_to(hash[:currency].app.name, statz_path(hash[:currency].app.id))
+          - else
+            = hash[:currency].app.name
         %td= number_with_delimiter(hash[:last_hour_total])
         %td= number_with_delimiter(hash[:last_hour_unique])
         %td= number_with_delimiter(hash[:last_hour_skips])
