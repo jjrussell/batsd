@@ -15,7 +15,7 @@ module Offer::Rejecting
     [ '99d4a403-38a8-41e3-b7a2-5778acb968ef', 'b22f3ef8-947f-4605-a5bc-a83609af5ab7' ] => [ '99d4a403-38a8-41e3-b7a2-5778acb968ef', 'b22f3ef8-947f-4605-a5bc-a83609af5ab7' ],
   }
 
-  def postcache_reject?(publisher_app, device, currency, device_type, geoip_data, app_version, direct_pay_providers, type, hide_rewarded_app_installs, library_version, os_version, screen_layout_size, video_offer_ids, source)
+  def postcache_reject?(publisher_app, device, currency, device_type, geoip_data, app_version, direct_pay_providers, type, hide_rewarded_app_installs, library_version, os_version, screen_layout_size, video_offer_ids, source, all_videos)
     geoip_reject?(geoip_data, device) ||
     already_complete?(device, app_version) ||
     selective_opt_out_reject?(device) ||
@@ -32,7 +32,7 @@ module Offer::Rejecting
     age_rating_reject?(currency.max_age_rating) ||
     publisher_whitelist_reject?(publisher_app) ||
     currency_whitelist_reject?(currency) ||
-    video_offers_reject?(video_offer_ids, type) ||
+    video_offers_reject?(video_offer_ids, type, all_videos) ||
     frequency_capping_reject?(device) ||
     tapjoy_games_retargeting_reject?(device)
   end
@@ -218,8 +218,9 @@ module Offer::Rejecting
     cookie_tracking? && source != 'tj_games' && publisher_app.platform == 'iphone' && !library_version.version_greater_than_or_equal_to?('8.0.3')
   end
 
-  def video_offers_reject?(video_offer_ids, type)
-    return false if type == Offer::VIDEO_OFFER_TYPE
+  def video_offers_reject?(video_offer_ids, type, all_videos)
+    return false if type == Offer::VIDEO_OFFER_TYPE || all_videos
+    
     item_type == 'VideoOffer' && !video_offer_ids.include?(id)
   end
 
