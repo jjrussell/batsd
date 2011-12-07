@@ -1,11 +1,4 @@
 class Games::MoreGamesController < GamesController
-  PLATFORM_3G_DOWNLOAD_LIMIT_BYTES = {
-    'iphone' => 20971520, #20mb
-    'ipod' => 20971520,
-    'ipad' => 20971520,
-    'windows' => 20971520
-  }
-
   layout false
   before_filter :setup
 
@@ -24,6 +17,17 @@ class Games::MoreGamesController < GamesController
 private
 
   def setup
-    @platform_3g_download_limit = PLATFORM_3G_DOWNLOAD_LIMIT_BYTES[device_type]
+    @platform_3g_download_limit = get_platform_3g_download_limit
+  end
+  
+  def get_platform_3g_download_limit
+    case device_type
+    when /ip/
+      App::PLATFORM_DETAILS['iphone'][:platform_3g_download_limit_bytes]
+    when 'windows'
+      App::PLATFORM_DETAILS['windows'][:platform_3g_download_limit_bytes]
+    else
+      nil
+    end
   end
 end
