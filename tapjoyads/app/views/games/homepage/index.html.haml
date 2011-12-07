@@ -105,7 +105,7 @@
         TJG.ui.getAndShowOfferWall('#{url}', '#{currency_data[:id]}', '#{app_name}', '#{escape_javascript(currency_data[:name])}');
     - elsif @show_more_apps
       :plain
-        TJG.moreAppOfferWall = '#{escape_javascript(render 'games/more_games/cached_app_list', :cached_app_list => @editors_picks)}';
+        TJG.moreAppOfferWall = '#{escape_javascript(render 'games/more_games/cached_app_list', :cached_app_list => @editors_picks, :file_size_limit => @platform_3g_download_limit)}';
         TJG.ui.showMoreGames();
     :plain
       });
