@@ -31,7 +31,7 @@ class FullscreenAdControllerTest < ActionController::TestCase
           assert_response :success
           assert_template "fullscreen_ad/custom_creative"
 
-          assert response.body.include? 'Skip</a>'
+          assert response.body.include? '>x</div>'
         end
 
         context "when offer is rewarded" do
