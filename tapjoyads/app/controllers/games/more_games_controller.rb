@@ -17,10 +17,10 @@ class Games::MoreGamesController < GamesController
 private
 
   def setup
-    @platform_3g_download_limit = get_platform_3g_download_limit
+    @cell_download_limit_bytes = get_cell_download_limit_bytes
   end
   
-  def get_platform_3g_download_limit
+  def get_cell_download_limit_bytes
     case device_type
     when /ip/
       App::PLATFORM_DETAILS['iphone'][:cell_download_limit_bytes]
