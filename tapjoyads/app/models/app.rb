@@ -40,7 +40,7 @@ class App < ActiveRecord::Base
       :default_actions_file_name => "TJCPPA.h",
       :min_action_offer_bid => 35,
       :versions => [ '2.0', '2.1', '2.2', '3.0', '3.1', '3.2', '4.0', '4.1', '4.2', '4.3', '5.0' ],
-      :platform_3g_download_limit_bytes => 20971520
+      :cell_download_limit_bytes => 20971520
     },
     'windows' => {
       :expected_device_types => Offer::WINDOWS_DEVICES,
@@ -55,7 +55,7 @@ class App < ActiveRecord::Base
       :default_actions_file_name => '', #TODO fill this out
       :min_action_offer_bid => 25,
       :versions => [ '7.0' ],
-      :platform_3g_download_limit_bytes => 20971520
+      :cell_download_limit_bytes => 20971520
     },
   }
 

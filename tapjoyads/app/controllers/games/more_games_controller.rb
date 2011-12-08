@@ -23,9 +23,9 @@ private
   def get_platform_3g_download_limit
     case device_type
     when /ip/
-      App::PLATFORM_DETAILS['iphone'][:platform_3g_download_limit_bytes]
+      App::PLATFORM_DETAILS['iphone'][:cell_download_limit_bytes]
     when 'windows'
-      App::PLATFORM_DETAILS['windows'][:platform_3g_download_limit_bytes]
+      App::PLATFORM_DETAILS['windows'][:cell_download_limit_bytes]
     else
       nil
     end
