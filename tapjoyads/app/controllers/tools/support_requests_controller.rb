@@ -13,7 +13,13 @@ class Tools::SupportRequestsController < WebsiteController
       return
     end
 
-    Sqs.send_message(QueueNames::RESOLVE_SUPPORT_REQUESTS, { :user_email => current_user.email, :support_requests => file_contents }.to_json)
+    begin
+      support_request_file = "#{(Time.now.to_f * 1000).to_i}_mass_resolve_support_requests_list"
+      S3.bucket(BucketNames::SUPPORT_REQUESTS).objects[support_request_file].write(:data => file_contents)
+      Sqs.send_message(QueueNames::RESOLVE_SUPPORT_REQUESTS, { :user_email => current_user.email, :support_requests_file => support_request_file }.to_json)
+    rescue
+      flash[:error] = 'Unable to upload the file for processing.'
+    end
 
     flash[:notice] = 'The request has been submitted. An email confirmation will be mailed to you.'
   end
@@ -44,5 +50,4 @@ class Tools::SupportRequestsController < WebsiteController
       @publisher_apps[App.find(k)] = v unless k.nil?
     end
   end
-
 end

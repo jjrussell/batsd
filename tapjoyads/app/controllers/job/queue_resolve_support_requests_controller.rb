@@ -11,7 +11,8 @@ class Job::QueueResolveSupportRequestsController < Job::SqsReaderController
     @request_successfully_awarded = 0
 
     json = JSON.load(message.body)
-    json['support_requests'].each do |support_request_id|
+    support_requests_file = S3.bucket(BucketNames::SUPPORT_REQUESTS).objects[json['support_requests_file']]
+    support_requests_file.read.each do |support_request_id|
       support_request_id.strip!
       next if support_request_id.empty?
 
@@ -36,6 +37,7 @@ class Job::QueueResolveSupportRequestsController < Job::SqsReaderController
       end
       @request_successfully_awarded += 1
     end
+    support_requests_file.delete
     save_activity_logs(true)
     TapjoyMailer.deliver_resolve_support_requests(json['user_email'], { :successfully_awarded_num => @request_successfully_awarded, :requests_not_awarded => @request_not_awarded })
   end

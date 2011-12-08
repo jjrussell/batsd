@@ -13,4 +13,5 @@ class BucketNames
   TAPJOY_GAMES        = RUN_MODE_PREFIX + 'tj-games'
   UDID_REPORTS        = RUN_MODE_PREFIX + 'udid-reports'
   VIRTUAL_GOODS       = RUN_MODE_PREFIX + 'virtual_goods'
+  SUPPORT_REQUESTS    = RUN_MODE_PREFIX + 'support-requests'
 end
