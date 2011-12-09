@@ -1,6 +1,7 @@
-- step_number = 0
-- blank_line = "\n\n"
-- protocol, host = WEBSITE_URL.split("://")
+:ruby
+  step_number = 0
+  blank_line = "\n\n"
+  protocol, host = [@website_uri.scheme, @website_uri.host]
 
 :plain
   Thanks for creating a Tapjoy account! Now you can start discovering cool new apps while also earning currency in apps you already play.
