@@ -187,20 +187,12 @@ class Offer < ActiveRecord::Base
   memoize :get_device_types, :get_screen_layout_sizes, :get_countries, :get_dma_codes, :get_regions
 
   def clone
-    # this is ugly but we need to un-set then re-set banner creatives so that the attribute_changed? stuff will fire
-    # see https://rails.lighthouseapp.com/projects/8994/tickets/2919
-    # TODO: update this once we upgrade Rails to a version containing the fix (NOTE: also remove line below)
-    # TODO: worth creating an extension to fix this more generically? or just wait for fix?
-    banner_creatives = self.banner_creatives
-    self.banner_creatives = []
     clone = super
-    self.banner_creatives = banner_creatives
 
     # set up banner_creatives to be copied on save
     banner_creatives.each do |size|
       blob = banner_creative_s3_object(size).read
       clone.send("banner_creative_#{size}_blob=", blob)
-      clone.banner_creatives += size.to_a # once Rails is updated, remove this line
     end
     clone
   end
