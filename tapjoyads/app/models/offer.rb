@@ -216,8 +216,9 @@ class Offer < ActiveRecord::Base
   end
 
   def banner_creatives_was
-    return [] if super.nil?
-    super
+    ret_val = super
+    return [] if ret_val.nil?
+    ret_val
   end
 
   def should_update_approved_banner_creatives?
