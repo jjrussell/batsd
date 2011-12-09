@@ -6,7 +6,7 @@
   offset = '24px'
   width = '540px'
   image_root = "https://s3.amazonaws.com/#{RUN_MODE_PREFIX}tapjoy/images/email"
-  protocol, host = [@website_uri.scheme, @website_uri.host]
+  protocol, host = WEBSITE_URL.split("://")
   css = {
     :a => "color: #{red}; text-decoration: none;",
     :icon_img => "border: none;",
