@@ -53,10 +53,6 @@ class StatzController < WebsiteController
     offer_params = sanitize_currency_params(params[:offer], [ :bid, :min_bid_override ])
 
     if @offer.update_attributes(offer_params)
-      @offer.find_associated_offers.each do |o|
-        o.tapjoy_sponsored = offer_params[:tapjoy_sponsored]
-        o.save! if o.changed?
-      end
       flash[:notice] = "Successfully updated #{@offer.name}"
       redirect_to statz_path(@offer)
     else
