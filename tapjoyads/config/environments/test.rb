@@ -35,7 +35,7 @@ EXCEPTIONS_NOT_LOGGED = []
 RUN_MODE_PREFIX = 'test_'
 API_URL = 'http://localhost:3000'
 DASHBOARD_URL = 'http://localhost:3000'
-WEBSITE_URL = 'http://localhost:3000/games'
+WEBSITE_URL = 'http://localhost:3000'
 CLOUDFRONT_URL = 'https://d21x2jbj16e06e.cloudfront.net'
 GAMES_ANDROID_MARKET_URL = 'http://market.android.com/details?id=com.tapjoy.tapjoy'
 
