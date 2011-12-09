@@ -9,8 +9,8 @@ class Job::QueueSendWelcomeEmailsController < Job::SqsReaderController
   def on_message(message)
     message = JSON.parse(message.body)
 
-    gamer = Gamer.find(message['gamer_id'])
-    device_info = { :accept_language => message['accept_language_str'], :user_agent => message['user_agent_str'], :is_android => message['using_android'] }
+    gamer = Gamer.find(message.delete('gamer_id'))
+    device_info = message.symbolize_keys!
 
     GamesMarketingMailer.deliver_welcome_email(gamer, device_info)
   end

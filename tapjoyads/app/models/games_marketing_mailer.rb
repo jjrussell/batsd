@@ -36,31 +36,32 @@ class GamesMarketingMailer < ActionMailer::Base
     recipients gamer.email
     subject "Welcome to Tapjoy!"
 
-    offer_data = {}
+    @offer_data = {}
     device, gamer_device, external_publisher = ExternalPublisher.most_recently_run_for_gamer(gamer)
     if external_publisher
       currency = external_publisher.currencies.first
-      offerwall_url = external_publisher.get_offerwall_url(device, currency, device_info[:accept_language], device_info[:user_agent])
+      offerwall_url = external_publisher.get_offerwall_url(device, currency, device_info[:accept_language_str], device_info[:user_agent_str])
 
       sess = Patron::Session.new
       response = sess.get(offerwall_url)
       raise "Error getting offerwall data" unless response.status == 200
-      offer_data[currency[:id]] = JSON.parse(response.body).merge(:external_publisher => external_publisher)
+      @offer_data[currency[:id]] = JSON.parse(response.body).merge(:external_publisher => external_publisher)
     end
 
-    editors_picks = offer_data.any? ? [] : EditorsPick.cached_active(device_info[:is_android] ? 'android' : 'ios')
-
     gamer_device ||= gamer.gamer_devices.first
-    linked = gamer_device.present?
-    android_device = linked ? (gamer_device.device_type == 'android') : false
+    @linked = gamer_device.present?
+    @android_device = @linked ? (gamer_device.device_type == 'android') : false
+
+    device = Device.new(:key => @linked ? gamer_device.device_id : nil)
+    # select only necessary values
+    rec_device_info = Hash[*device_info.select{ |k,v| [:device_type, :geoip_data, :os_version].include? k }.flatten]
+    @recommendations = @offer_data.any? ? [] : device.recommendations(rec_device_info)
 
     protocol, host = WEBSITE_URL.split("://")
-    confirmation_link = url_for(:protocol => protocol, :host => host, :controller => "confirm", :token => gamer.confirmation_token)
+    @confirmation_link = url_for(:protocol => protocol, :host => host, :controller => "confirm", :token => gamer.confirmation_token)
 
-    sendgrid_category "Welcome Email, #{linked ? "Linked for Device Type #{gamer_device.device_type}" : "Not Linked"}"
+    sendgrid_category "Welcome Email, #{@linked ? "Linked for Device Type #{gamer_device.device_type}" : "Not Linked"}"
     sendgrid_subscriptiontrack_text(:replace => "[unsubscribe_link]")
-    body :confirmation_link => confirmation_link, :linked => linked, :android_device => android_device,
-      :offer_data => offer_data, :editors_picks => editors_picks
   end
 
   def invite(gamer_name, recipients_email, link)

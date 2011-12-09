@@ -140,11 +140,11 @@
                               Earn
                               = h("#{offer['Payout']} #{offers['CurrencyName']}.")
 
-        - elsif @editors_picks.any?
+        - elsif @recommendations.any?
           %tr
             %td
               - link_to("#{WEBSITE_URL}/more_apps", :style => css[:a]) do
-                %table.editors_picks{:align => "center", :style => css[:step]}
+                %table.recommendations{:align => "center", :style => css[:step]}
                   %tbody
                     %tr
                       %td{:style => css[:step_icon]}
@@ -155,8 +155,7 @@
                         %table{:style => "width: 100%; padding-top: 5px; padding-right: 18px;"}
                           %tbody
                             %tr
-                              - editors_picks_array = @editors_picks[0..2]
-                              - editors_picks_array.each do |cached_app|
+                              - @recommendations[0..2].each do |cached_app|
                                 %td{:style => "#{css[:offers]} width: 120px;"}
                                   = image_tag(cached_app.icon_url, :alt => cached_app.name, :style => "border: none;")
                                   %br/

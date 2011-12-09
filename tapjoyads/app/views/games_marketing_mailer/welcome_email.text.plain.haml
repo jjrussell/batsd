@@ -36,12 +36,12 @@
       See more here: #{WEBSITE_URL}/earn/#{currency_id}
     = blank_line
 
-- elsif @editors_picks.any?
+- elsif @recommendations.any?
   :plain
     #{step_number+=1}.) Check out Tapjoy's Recommended Apps. Here are a few examples:
   = blank_line
 
-  - @editors_picks[0..2].each do |cached_app|
+  - @recommendations[0..2].each do |cached_app|
     :plain
       #{'-'} #{cached_app.name}
 
