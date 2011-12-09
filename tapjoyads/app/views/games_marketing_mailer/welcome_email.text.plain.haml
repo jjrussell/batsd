@@ -1,6 +1,5 @@
 - step_number = 0
 - blank_line = "\n\n"
-- protocol, host = WEBSITE_URL.split("://")
 
 :plain
   Thanks for creating a Tapjoy account! Now you can start discovering cool new apps while also earning currency in apps you already play.
@@ -34,7 +33,7 @@
 
     = blank_line
     :plain
-      See more here: #{url_for(:protocol => protocol, :host => host, :controller => 'earn', :action => currency_id)}
+      See more here: #{WEBSITE_URL}/earn/#{currency_id}
     = blank_line
 
 - elsif @recommendations.any?
@@ -48,7 +47,7 @@
 
   = blank_line
   :plain
-    See more here: #{url_for(:protocol => protocol, :host => host, :controller => 'more_apps')}
+    See more here: #{WEBSITE_URL}/more_apps
   = blank_line
 
 :plain
@@ -61,4 +60,4 @@
   To unsubscribe please click here: [unsubscribe_link]
   Tapjoy
   111 Sutter Street, 13th Floor, San Francisco, CA 94104
-  Did not sign up for Tapjoy? Click here to delete: #{url_for(:protocol => protocol, :host => host, :controller => 'gamer', :action => 'confirm_delete')}
+  Did not sign up for Tapjoy? Click here to delete: #{WEBSITE_URL}/gamer/confirm_delete

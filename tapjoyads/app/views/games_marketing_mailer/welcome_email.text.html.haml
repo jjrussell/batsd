@@ -6,7 +6,6 @@
   offset = '24px'
   width = '540px'
   image_root = "https://s3.amazonaws.com/#{RUN_MODE_PREFIX}tapjoy/images/email"
-  protocol, host = WEBSITE_URL.split("://")
   css = {
     :a => "color: #{red}; text-decoration: none;",
     :icon_img => "border: none;",
@@ -107,7 +106,7 @@
 
         - if @linked && @offer_data.any?
           - @offer_data.each do |currency_id, offers|
-            = link_to('here', url_for(:protocol => protocol, :host => host, :controller => 'earn', :action => currency_id))
+            - earn_url = "#{WEBSITE_URL}/earn/#{currency_id}"
             - external_publisher = offers[:external_publisher]
             %tr
               %td
@@ -144,7 +143,7 @@
         - elsif @recommendations.any?
           %tr
             %td
-              - link_to(url_for(:protocol => protocol, :host => host, :controller => 'more_apps'), :style => css[:a]) do
+              - link_to("#{WEBSITE_URL}/more_apps", :style => css[:a]) do
                 %table.recommendations{:align => "center", :style => css[:step]}
                   %tbody
                     %tr
@@ -194,7 +193,7 @@
             = link_to('here', '[unsubscribe_link]')
             %br/
             Did not sign up for Tapjoy? Click
-            = link_to('here', url_for(:protocol => protocol, :host => host, :controller => 'gamer', :action => 'confirm_delete'))
+            = link_to('here', "#{WEBSITE_URL}/gamer/confirm_delete")
             to delete.
           %td{:style=>"vertical-align: top; font-size: 11px;"}
             Tapjoy
