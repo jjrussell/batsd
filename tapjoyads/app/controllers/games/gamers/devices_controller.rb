@@ -66,19 +66,15 @@ class Games::Gamers::DevicesController < GamesController
         if current_gamer.referrer.present? && !current_gamer.referrer.starts_with?('tjreferrer:')
           devices = GamerDevice.find_all_by_device_id(data[:udid])
           if devices.size == 1 && devices[0].gamer_id == current_gamer.id
-            data = SymmetricCrypto.decrypt_object(current_gamer.referrer, SYMMETRIC_CRYPTO_SECRET).split(',')
+            invitation_id, advertiser_id = SymmetricCrypto.decrypt_object(current_gamer.referrer, SYMMETRIC_CRYPTO_SECRET).split(',')
             referred_by_gamer = Gamer.find_by_id(current_gamer.referred_by)
             if referred_by_gamer
               referred_by_gamer.gamer_profile.update_attributes!(:referral_count => referred_by_gamer.referral_count + 1)
-              begin
-                if data[1] && Invitation.find_by_id(data[0]).gamer_id == current_gamer.referred_by
-                  click = Click.new(:key => "#{current_gamer.referred_by}.#{data[1]}")
-                  unless click.new_record?
-                    create_sub_click(click, referred_by_gamer.referral_count)
-                  end
+              if advertiser_id && Invitation.find_by_id(invitation_id).gamer_id == current_gamer.referred_by
+                click = Click.new(:key => "#{current_gamer.referred_by}.#{advertiser_id}")
+                unless click.new_record?
+                  create_sub_click(click, referred_by_gamer.referral_count)
                 end
-              rescue
-                nil
               end
             end
           end
