@@ -4,9 +4,6 @@ class RecommendationList
   attr_reader :offers
 
   MINIMUM           = 7
-  MOST_POPULAR_FILE = 'most_popular.txt'
-  APP_FILE          = 'app_app_matrix.txt'
-  DEVICE_FILE       = 'daily/udid_apps_reco.dat'
 
   def initialize(options = {})
     @device      = options[:device]
@@ -26,50 +23,23 @@ class RecommendationList
   class << self
 
     def cache_all
+      Recommender.instance.cache_all
       cache_most_popular
-      cache_raw_by_app
-      cache_raw_by_device
     end
 
     def cache_most_popular
       offers = []
-      parse_recommendations_file(MOST_POPULAR_FILE) do |rec|
+      Recommender.instance.most_popular.each do |recommendation, weight|
         begin
-          offers << Offer.find_in_cache(rec.split("\t").first)
+          offers << Offer.find_in_cache(recommendation)
         rescue ActiveRecord::RecordNotFound => e
           next
         end
       end
       offers.compact!
-      
       Mc.distributed_put('s3.recommendations.offers.most_popular', offers)
     end
 
-    def cache_raw_by_app
-      parse_recommendations_file(APP_FILE) do |recs|
-        recs = recs.split(/[;,]/, 2)
-        app_id = recs.first
-        recommendations = recs.second
-        Mc.put("s3.recommendations.raw.by_app.#{app_id}", recommendations)
-      end
-    end
-
-    def cache_raw_by_device
-      parse_recommendations_file(DEVICE_FILE) do |recs|
-        recs = recs.split(/[;,]/, 2)
-        device_id = recs.first
-        recommendations = recs.second
-        Mc.put("s3.recommendations.raw.by_device.#{device_id}", recommendations)
-      end
-    end
-
-    def raw_for_app(app_id)
-      Mc.get("s3.recommendations.raw.by_app.#{app_id}") || ""
-    end
-
-    def raw_for_device(device_id)
-      Mc.get("s3.recommendations.raw.by_device.#{device_id}") || ""
-    end
 
     def most_popular
       Mc.distributed_get('s3.recommendations.offers.most_popular') || []
@@ -78,9 +48,9 @@ class RecommendationList
     def for_app(app_id)
       Mc.get_and_put("s3.recommendations.offers.by_app.#{app_id}", false, 1.day) do
         offers = []
-        raw_for_app(app_id).split(';').each do |recommendation|
-          begin  
-            offers << Offer.find_in_cache(recommendation.split(',').first)
+        Recommender.instance.for_app(app_id).each do |recommendation, weight|
+          begin
+            offers << Offer.find_in_cache(recommendation)
           rescue ActiveRecord::RecordNotFound => e
             next
           end
@@ -94,23 +64,17 @@ class RecommendationList
     def for_device(device_id)
       Mc.get_and_put("s3.recommendations.offers.by_device.#{device_id}", false, 1.day) do
         offers = []
-        raw_for_device(device_id).split(';').each do |recommendation|
-          begin  
-            offers << Offer.find_in_cache(recommendation.split(',').first)
+        Recommender.instance.for_device(device_id).each do |recommendation, weight|
+          begin
+            offers << Offer.find_in_cache(recommendation)
           rescue ActiveRecord::RecordNotFound => e
             next
           end
         end
         offers.compact!
-        
+
         offers.any? ? offers : nil
       end || []
-    end
-
-    def parse_recommendations_file(file_name, &blk)
-      S3.bucket(BucketNames::TAPJOY_GAMES).objects[file_name].read.each do |row|
-        yield(row.chomp)
-      end
     end
 
   end

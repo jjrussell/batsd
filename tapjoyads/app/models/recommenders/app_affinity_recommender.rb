@@ -3,61 +3,64 @@ class Recommenders::AppAffinityRecommender < Recommender
   APP_FILE          = 'app_app_matrix.txt'
   DEVICE_FILE       = 'daily/udid_apps_reco.dat'
 
-  def initialize
-    @recs_for_app = {} #recommendations for a particular application
-    @recs_for_udid = {} #recommendations for a particular user
-    @most_popular_apps = {}  #the most popular apps
-    parse_file self.class::APP_FILE
-    parse_file self.class::DEVICE_FILE
-    parse_file self.class::MOST_POPULAR_FILE
+  def cache_all
+    cache_most_popular
+    cache_by_app
+    cache_by_device
   end
 
-  def most_popular_apps(opts={})
-    top_apps_in_hash(@most_popular_apps, opts[:n])
+  def most_popular(opts = {})
+    out = Mc.distributed_get('s3.recommendations.raw_list.most_popular') || []
+    first_n out, opts[:n]
   end
 
-  def recommendations_for_app(app, opts={})
-    top_apps_in_hash(@recs_for_app[app], opts[:n])
+  def for_app(app_id, opts = {})
+    out = Mc.get("s3.recommendations.raw_list.by_app.#{app_id}") || []
+    first_n out, opts[:n]
   end
 
-  def recommendations_for_udid(udid, opts={})
-    top_apps_in_hash(@recs_for_udid[udid], opts[:n])
+  def for_device(device_id, opts = {})
+    out = Mc.get("s3.recommendations.raw_list.by_device.#{device_id}") || []
+    first_n out, opts[:n]
   end
 
-  def random_udid
-    @recs_for_udid.keys.sample
+  def cache_most_popular
+    list = []
+    parse_recommendations_file(MOST_POPULAR_FILE) do |rec|
+      app_id, name, weight = rec.split("\t")
+      weight = weight.nil? ? 0 : weight.to_i
+      list << [app_id, weight] unless app_id.nil?
+    end
+    Mc.distributed_put('s3.recommendations.raw_list.most_popular', list.sort_by{ |app, weight| -weight })
   end
 
-  def random_app
-    @recs_for_app.keys.sample
-  end
-
-  private
-  def parse_line(line, file_name)
-    case file_name
-    when self.class::MOST_POPULAR_FILE then parse_popular_line(line)
-    when self.class::APP_FILE then parse_app_app_line(line)
-    when self.class::DEVICE_FILE then parse_udid_line(line)
-    else raise "Wrong File Name!"
+  def cache_by_app
+    parse_recommendations_file(APP_FILE) do |recs|
+      app_id, recommendations = recs.split(/[;,]/, 2)
+      Mc.put("s3.recommendations.raw_list.by_app.#{app_id}", parse_recommendations(recommendations))
     end
   end
 
-  def parse_popular_line(line)
-    app_id, name, count = line.split("\t")
-    @most_popular_apps[app_id] = count.to_i
+  def cache_by_device
+    parse_recommendations_file(DEVICE_FILE) do |recs|
+      device_id, recommendations = recs.split(/[;,]/, 2)
+      Mc.put("s3.recommendations.raw_list.by_device.#{device_id}", parse_recommendations(recommendations))
+    end
   end
 
-  def parse_udid_line(line)
-    udid, recommendations = line.split(',', 2)
-    @recs_for_udid[udid] = parse_recommendations(recommendations.gsub(/"/, ''))
-  end
-
-  def parse_app_app_line(line)
-    target, recommendations = line.split(';', 2)
-    @recs_for_app[target] = parse_recommendations(recommendations)
+  private
+  def first_n(list, n)
+    n = 20 unless n && n.is_a?(Numeric)
+    list[0...n]
   end
 
   def parse_recommendations(recommendations)
-    Hash[recommendations.split(';').map { |x| x.split(',') }.map { |x| x.length == 1 ? x + ["0"] : x }.map { |app, percent| [app, percent.to_f] }]
+    recommendations.split(';').map { |x| x.split(',') }.map { |x| x.length == 1 ? x + ["0"] : x }.map { |app, weight| [app, weight.to_f] }.sort_by { |app, weight| -weight }
+  end
+
+  def parse_recommendations_file(file_name, &blk)
+    S3.bucket(BucketNames::TAPJOY_GAMES).objects[file_name].read.each do |row|
+      yield(row.chomp)
+    end
   end
 end
