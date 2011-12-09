@@ -179,20 +179,21 @@
 
         %tr
           %td
-            %table#footer{:align => "center", :cellpadding=>"0", :cellspacing=>"0", :style=>"background-color: #f1f1f1; margin: 0 auto; color: #a9a9a9; font-size: 11px; padding-bottom: 5px; width: 100%"}
-              %tr
-                %td{:colspan=>"2"}
-                  %hr{:style=>"margin: 0 0 5px 0; background-color: #000; color: #000; height: 1px;"}
-              %tr
-                %td{:style=>"vertical-align: top; font-size: 11px; padding-left: #{offset};"}
-                  Did not sign up for Tapjoy? Click
+            %table#footer{:align => "center", :cellpadding=>"0", :cellspacing=>"0", :style=>"border-top: #{light_gray} 1px solid; margin: 0 auto; color: #{light_gray}; font-size: 11px; width: 100%;"}
+              %tr{:style => "background-color: #f1f1f1;" }
+                %td{:style=>"vertical-align: top; font-size: 11px; padding: 5px 0 5px #{offset};"}
+                  Did not sign up for Tapjoy?
+                  %br/
+                  Click
                   = link_to('here', "#{WEBSITE_URL}/gamer/confirm_delete")
                   to delete.
                   %br/
                   To unsubscribe please click
                   = succeed '.' do
                     = link_to('here', '[unsubscribe_link]')
-                %td{:style=>"vertical-align: top; font-size: 11px; text-align: center;"}
+                %td{:style=>"vertical-align: top; font-size: 11px; text-align: center; padding: 5px 0 5px 0;"}
                   Tapjoy
                   %br/
-                  111 Sutter Street, 13th Floor, San Francisco, CA 94104
+                  111 Sutter Street, 13th Floor
+                  %br/
+                  San Francisco, CA 94104
