@@ -23,6 +23,7 @@ private
   end
 
   def get_stats(start_time, end_time)
+    return {},{},{},{} if Offer.tapjoy_sponsored_offer_ids.size == 0
     time_conditions      = "time >= '#{start_time.to_s(:db)}' AND time < '#{end_time.to_s(:db)}'"
     partner_program_offer_ids = Offer.tapjoy_sponsored_offer_ids.map { |o| "'#{o.id}'" }.join(',')  #is it necessary to add Offer.enabled_offers.tapjoy_sponsored_offer_ids here?
 
@@ -41,7 +42,6 @@ private
         :select     => 'publisher_app_id AS offer_id, count(*) AS published_offers, sum(publisher_amount) AS offers_revenue',
         :group      => 'publisher_app_id',
         :conditions => "path LIKE '%reward%' AND #{time_conditions} AND publisher_app_id IN (#{partner_program_offer_ids})" }).each do |result|
-        #:conditions => "path LIKE '%reward%' AND publisher_app_id IN (#{partner_program_offer_ids})" }).each do |result|
       partner_program_stats[result[:offer_id]] ||= { 'conversions' => '0' }
       partner_program_stats[result[:offer_id]]['published_offers'] = number_with_delimiter(result[:published_offers])
       partner_program_stats[result[:offer_id]]['offers_revenue']   = result[:offers_revenue]

@@ -8,9 +8,9 @@
 
 %br
 
-%form#csv_export{ :action => 'export', :method => 'get' }
-  = hidden_field_tag(:date,  @start_time.to_date.to_s(:mdy))
-  = hidden_field_tag(:end_date, @end_time.to_date.to_s(:mdy))
+%form#csv_export{ :action => '/tools/partner_program_statz/export', :method => 'get' }
+  = hidden_field_tag(:date,  @start_time.to_date.to_s(:mdy), :id => "start_time")
+  = hidden_field_tag(:end_date, @end_time.to_date.to_s(:mdy), :id => "end_time")
   = button_to 'Export to csv'
 
 .tjform
