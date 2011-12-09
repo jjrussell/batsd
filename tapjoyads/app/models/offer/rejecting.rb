@@ -15,7 +15,7 @@ module Offer::Rejecting
     [ '99d4a403-38a8-41e3-b7a2-5778acb968ef', 'b22f3ef8-947f-4605-a5bc-a83609af5ab7' ] => [ '99d4a403-38a8-41e3-b7a2-5778acb968ef', 'b22f3ef8-947f-4605-a5bc-a83609af5ab7' ],
   }
 
-  def postcache_reject?(publisher_app, device, currency, device_type, geoip_data, app_version, direct_pay_providers, type, hide_rewarded_app_installs, library_version, os_version, screen_layout_size, video_offer_ids, source)
+  def postcache_reject?(publisher_app, device, currency, device_type, geoip_data, app_version, direct_pay_providers, type, hide_rewarded_app_installs, library_version, os_version, screen_layout_size, video_offer_ids, source, all_videos)
     geoip_reject?(geoip_data, device) ||
     already_complete?(device, app_version) ||
     selective_opt_out_reject?(device) ||
@@ -29,10 +29,10 @@ module Offer::Rejecting
     cookie_tracking_reject?(publisher_app, library_version, source) ||
     screen_layout_sizes_reject?(screen_layout_size) ||
     is_disabled?(publisher_app, currency) ||
-    age_rating_reject?(currency) ||
+    age_rating_reject?(currency.max_age_rating) ||
     publisher_whitelist_reject?(publisher_app) ||
     currency_whitelist_reject?(currency) ||
-    video_offers_reject?(video_offer_ids, type) ||
+    video_offers_reject?(video_offer_ids, type, all_videos) ||
     frequency_capping_reject?(device) ||
     tapjoy_games_retargeting_reject?(device)
   end
@@ -58,7 +58,7 @@ module Offer::Rejecting
       screen_layout_sizes_reject?(screen_layout_size) ||
       is_disabled?(publisher_app, currency) ||
       app_platform_mismatch?(publisher_app) ||
-      age_rating_reject?(currency) ||
+      age_rating_reject?(currency.max_age_rating) ||
       publisher_whitelist_reject?(publisher_app) ||
       currency_whitelist_reject?(currency) ||
       frequency_capping_reject?(device)) &&
@@ -69,6 +69,15 @@ module Offer::Rejecting
     return false unless multi_complete? && interval != Offer::FREQUENCIES_CAPPING_INTERVAL['none']
 
     device.has_app?(item_id) && (device.last_run_time(item_id) + interval > Time.zone.now)
+  end
+
+  def recommendation_reject?(device, device_type, geoip_data, os_version)
+    recommendable_types_reject? ||
+      device_platform_mismatch?(device_type) ||
+      geoip_reject?(geoip_data, device) ||
+      already_complete?(device) ||
+      min_os_version_reject?(os_version) ||
+      age_rating_reject?(3) # reject 17+ apps
   end
 
   private
@@ -95,10 +104,10 @@ module Offer::Rejecting
     platform_name != 'All' && platform_name != app_platform_name
   end
 
-  def age_rating_reject?(currency)
-    return false if currency.max_age_rating.nil?
-    return false if age_rating.nil?
-    currency.max_age_rating < age_rating
+  def age_rating_reject?(max_age_rating)
+    return false unless max_age_rating && age_rating
+
+    max_age_rating < age_rating
   end
 
   def geoip_reject?(geoip_data, device)
@@ -209,13 +218,18 @@ module Offer::Rejecting
     cookie_tracking? && source != 'tj_games' && publisher_app.platform == 'iphone' && !library_version.version_greater_than_or_equal_to?('8.0.3')
   end
 
-  def video_offers_reject?(video_offer_ids, type)
-    return false if type == Offer::VIDEO_OFFER_TYPE
+  def video_offers_reject?(video_offer_ids, type, all_videos)
+    return false if type == Offer::VIDEO_OFFER_TYPE || all_videos
+
     item_type == 'VideoOffer' && !video_offer_ids.include?(id)
   end
 
   TAPJOY_GAMES_RETARGETED_OFFERS = ['2107dd6a-a8b7-4e31-a52b-57a1a74ddbc1', '12b7ea33-8fde-4297-bae9-b7cb444897dc']
   def tapjoy_games_retargeting_reject?(device)
     TAPJOY_GAMES_RETARGETED_OFFERS.include?(item_id) && !device.has_app?(TAPJOY_GAMES_REGISTRATION_OFFER_ID)
+  end
+
+  def recommendable_types_reject?
+    item_type != 'App'
   end
 end

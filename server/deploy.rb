@@ -13,6 +13,12 @@ if ENV['USER'] != 'webuser'
   exit
 end
 
+if File.exists?('deploy.lock')
+  puts "Deploying to this server has been locked."
+  puts "Lock message: #{File.read('deploy.lock')}"
+  exit
+end
+
 server_type = `server/server_type.rb`
 current_version = YAML::load_file('server/version.yaml')['current']
 deploy_version = ARGV.first || current_version

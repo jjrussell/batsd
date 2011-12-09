@@ -1,6 +1,6 @@
 class Games::GamersController < GamesController
 
-  before_filter :set_profile, :only => [ :edit, :accept_tos, :password, :update_password, :prefs, :confirm_delete ]
+  before_filter :set_profile, :only => [ :edit, :accept_tos, :password, :update_password, :prefs, :confirm_delete, :friends ]
 
   def create
     @gamer = Gamer.new do |g|
@@ -58,6 +58,13 @@ class Games::GamersController < GamesController
     end
   end
 
+  def friends
+    @friends_lists = {
+      :following => get_friends_info(Friendship.following_ids(current_gamer.id)),
+      :followers => get_friends_info(Friendship.follower_ids(current_gamer.id))
+    }
+  end
+
   private
 
   def set_profile
@@ -71,4 +78,13 @@ class Games::GamersController < GamesController
     end
   end
 
+  def get_friends_info(ids)
+    Gamer.find_all_by_id(ids).map do |friend|
+      {
+        :id        => friend.id,
+        :name      => friend.get_gamer_name,
+        :image_url => friend.get_avatar_url(80)
+      }
+    end
+  end
 end

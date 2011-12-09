@@ -27,6 +27,11 @@
     - options = options_from_collection_for_select(User.account_managers, "id", "email", @partner.account_managers.map(&:id))
     = f.select :account_managers, options, {:include_blank => '(no one)'}
   .field
+    = f.label(:cs_contact_email, 'CS Contact Email')
+    #help_cs_contact_email.help ?
+    = f.text_field :cs_contact_email
+    = error_message_on(@partner, :cs_contact_email) if @partner.errors.on :cs_contact_email
+  .field
     = f.label :sales_rep
     #help_sales_rep.help ?
     = f.text_field :sales_rep
@@ -86,6 +91,8 @@
     Internal notes, only viewable by tapjoyers.
   #help_account_managers_content{:name => 'Account manager(s)'}
     Who is managing this partner?
+  #help_cs_contact_email_content{:name => 'CS Contact Email'}
+    Email address of the CS representative for this partner.
   #help_sales_rep_content{:name => 'Sales rep'}
     Email of the Tapjoy sales rep for this partner.
   #help_disabled_partners_content{:name => 'Disabled partners'}

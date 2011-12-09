@@ -1,13 +1,13 @@
 class Experiments
   EXPERIMENTS = {
-    :default => '0'
+    :default => '0',
+    :papaya_on => '1',
+    :papaya_off => '2'
   }
 
   def self.choose(udid)
     if udid.present?
-      # udid_hash = udid.hash % 100
-
-      EXPERIMENTS[:default]
+      udid.hash % 2 == 0 ? EXPERIMENTS[:papaya_on] : EXPERIMENTS[:papaya_off]
     end
   end
 

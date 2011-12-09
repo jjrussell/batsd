@@ -60,4 +60,26 @@ class Click < SimpledbShardedResource
   def rewardable?
     !(new_record? || installed_at? || clicked_at < (Time.zone.now - 2.days))
   end
+
+  def resolve!
+    raise 'Unknown click id.' if new_record?
+
+    # We only resolve clicks in the last 48 hours.
+    if clicked_at < Time.zone.now - 47.hours
+      self.clicked_at = Time.zone.now - 1.minute
+    end
+    self.manually_resolved_at = Time.zone.now
+
+    save!
+
+    if Rails.env.production?
+      url = "#{API_URL}/"
+      if type == 'generic'
+        url += "offer_completed?click_key=#{key}"
+      else
+        url += "connect?app_id=#{advertiser_app_id}&udid=#{udid}&consistent=true"
+      end
+      Downloader.get_with_retry url
+    end
+  end
 end

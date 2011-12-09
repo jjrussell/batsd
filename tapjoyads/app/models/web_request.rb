@@ -67,6 +67,7 @@ class WebRequest
         return if value.nil?
         value = TypeConverters::TYPES[#{type.inspect}].to_string(value)
         if value.present?
+          value.gsub!(/\n|\r|\t/, '')
           value = "#{CGI_ESCAPED_PREFIX}\#{CGI::escape(value)}" if #{cgi_escape}
           if #{replace}
             @attributes[#{name.inspect}] = [ value ]

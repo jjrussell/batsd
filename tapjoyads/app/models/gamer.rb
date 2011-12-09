@@ -113,6 +113,10 @@ class Gamer < ActiveRecord::Base
     "https://secure.gravatar.com/avatar/#{generate_gravatar_hash}?d=mm#{size_param}"
   end
 
+  def reward_click(click)
+    Downloader.get_with_retry("#{API_URL}/offer_completed?click_key=#{click.key}")
+  end
+
   private
 
   def generate_gravatar_hash
@@ -128,8 +132,7 @@ class Gamer < ActiveRecord::Base
           device.product = click.device_name
           device.save
           devices.build(:device => device)
-          url = "#{API_URL}/offer_completed?click_key=#{click.key}"
-          Downloader.get_with_retry url
+          reward_click(click)
         end
       else
         begin

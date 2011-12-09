@@ -34,6 +34,7 @@ class Offer < ActiveRecord::Base
   }
 
   DISPLAY_AD_SIZES = ['320x50', '640x100', '768x90']
+  FEATURED_AD_SIZES = ['960x640', '640x960', '480x320', '320x480']
 
   OFFER_LIST_REQUIRED_COLUMNS = [ 'id', 'item_id', 'item_type', 'partner_id',
                                   'name', 'url', 'price', 'bid', 'payment',
@@ -58,9 +59,14 @@ class Offer < ActiveRecord::Base
     "24 hours" => 24.hours.to_i,
   }
 
+  PAPAYA_OFFER_COLUMNS = "#{Offer.quoted_table_name}.id, #{App.quoted_table_name}.papaya_user_count"
+
   serialize :banner_creatives, Array
 
   DISPLAY_AD_SIZES.each do |size|
+    attr_accessor "banner_creative_#{size}_blob".to_sym
+  end
+  FEATURED_AD_SIZES.each do |size|
     attr_accessor "banner_creative_#{size}_blob".to_sym
   end
 
@@ -74,6 +80,8 @@ class Offer < ActiveRecord::Base
   belongs_to :partner
   belongs_to :item, :polymorphic => true
   belongs_to :reseller
+  belongs_to :app, :foreign_key => "item_id", :conditions => ['item_type = ?', 'App']
+  belongs_to :action_offer, :foreign_key => "item_id", :conditions => ['item_type = ?', 'ActionOffer']
 
   validates_presence_of :reseller, :if => Proc.new { |offer| offer.reseller_id? }
   validates_presence_of :partner, :item, :name, :url, :rank_boost
@@ -156,8 +164,10 @@ class Offer < ActiveRecord::Base
   named_scope :app_offers, :conditions => "item_type = 'App' or item_type = 'ActionOffer'"
   named_scope :video_offers, :conditions => "item_type = 'VideoOffer'"
   named_scope :non_video_offers, :conditions => "item_type != 'VideoOffer'"
+  named_scope :papaya_app_offers, :joins => :app, :conditions => "item_type = 'App' AND #{App.quoted_table_name}.papaya_user_count > 0", :select => PAPAYA_OFFER_COLUMNS
+  named_scope :papaya_action_offers, :joins => { :action_offer => :app }, :conditions => "item_type = 'ActionOffer' AND #{App.quoted_table_name}.papaya_user_count > 0", :select => PAPAYA_OFFER_COLUMNS
 
-  delegate :balance, :pending_earnings, :name, :approved_publisher?, :rev_share, :to => :partner, :prefix => true
+  delegate :balance, :pending_earnings, :name, :cs_contact_email, :approved_publisher?, :rev_share, :to => :partner, :prefix => true
   memoize :partner_balance
 
   alias_method :events, :offer_events
@@ -285,14 +295,8 @@ class Offer < ActiveRecord::Base
     banner_creative_path(size, format).gsub('/', '.')
   end
 
-  def display_banner_ads?
-    return false if (is_paid? || featured?)
-    return (item_type == 'App' && name.length <= 30) if rewarded?
-    item_type != 'VideoOffer'
-  end
-
   def display_custom_banner_for_size?(size)
-    display_banner_ads? && banner_creatives.include?(size)
+    return display_banner_ads? && banner_creatives.include?(size)
   end
 
   def get_video_icon_url(options = {})
@@ -388,7 +392,7 @@ class Offer < ActiveRecord::Base
     video_id  = options.delete(:video_id)  { |k| raise "#{k} is a required argument" }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
 
-    prefix = "https://s3.amazonaws.com/#{RUN_MODE_PREFIX}tapjoy"
+    prefix = "http://s3.amazonaws.com/#{RUN_MODE_PREFIX}tapjoy"
 
     "#{prefix}/videos/src/#{video_id}.mp4"
   end
@@ -598,40 +602,61 @@ class Offer < ActiveRecord::Base
     [ 'normal_avg_revenue', 'normal_bid', 'normal_conversion_rate', 'normal_price' ]
   end
 
+  def display_banner_ads?
+    return false if (is_paid? || featured?)
+    return (item_type == 'App' && name.length <= 30) if rewarded?
+    item_type != 'VideoOffer'
+  end
+
 private
 
   def sync_banner_creatives!
     creative_blobs = {}
-    Offer::DISPLAY_AD_SIZES.each do |size|
+
+    custom_creative_sizes = []
+    if !rewarded? && !featured?
+      custom_creative_sizes = Offer::DISPLAY_AD_SIZES
+    elsif featured?
+      custom_creative_sizes = Offer::FEATURED_AD_SIZES
+    end
+    custom_creative_sizes.each do |size|
       image_data = (send("banner_creative_#{size}_blob") rescue nil)
       creative_blobs[size] = image_data if !image_data.blank?
     end
 
     return if (!banner_creatives_changed? && creative_blobs.empty?)
     if (banner_creatives.size - banner_creatives_was.size).abs > 1 || creative_blobs.size > 1
-      raise "Unable to sync changes to more than one banner creative at a time"
+      raise "Unable to sync changes to more than one custom creative file at a time"
+    end
+
+    # Get proper format for creative
+    format = ''
+    if !rewarded? && !featured?
+      format = 'png'
+    elsif featured?
+      format = 'jpeg'
     end
 
     blob = creative_blobs.values.first # will be nil for banner creative removals
     if banner_creatives.size > banner_creatives_was.size
       # banner creative added, find which size was added and make sure file matches up
       new_size = (banner_creatives - banner_creatives_was).first
-      raise BannerSyncError.new("custom_creative_#{new_size}_blob", "#{new_size} banner creative file not provided.") if creative_blobs[new_size].nil?
+      raise BannerSyncError.new("custom_creative_#{new_size}_blob", "#{new_size} custom creative file not provided.") if creative_blobs[new_size].nil?
 
       # upload to S3
-      upload_banner_creative!(blob, new_size)
+      upload_banner_creative!(blob, new_size, format)
     elsif banner_creatives_was.size > banner_creatives.size
       # banner creative removed, find which size was removed
       removed_size = (banner_creatives_was - banner_creatives).first
 
       # delete from S3
-      delete_banner_creative!(removed_size)
+      delete_banner_creative!(removed_size, format)
     else
       # a banner creative was changed, find which size it applies to
       size = creative_blobs.keys.first
 
       # upload file to S3
-      upload_banner_creative!(blob, size)
+      upload_banner_creative!(blob, size, format)
     end
 
     # 'acts_as_cacheable' caches entire object, including all attributes, so... let's clear the blob
@@ -652,6 +677,7 @@ private
       end
       creative = creative_arr[0]
       creative.format = format
+      creative.interlace = Magick::JPEGInterlace if format == 'jpeg'
     rescue
       raise BannerSyncError.new("custom_creative_#{size}_blob", "New file is invalid - unable to convert to .#{format}.")
     end
@@ -660,7 +686,7 @@ private
     raise BannerSyncError.new("custom_creative_#{size}_blob", "New file has invalid dimensions.") if [width, height] != [creative.columns, creative.rows]
 
     begin
-      banner_creative_s3_object(size, format).write(:data => creative.to_blob, :acl => :public_read)
+      banner_creative_s3_object(size, format).write(:data => creative.to_blob { self.quality = 75 }, :acl => :public_read)
     rescue
       raise BannerSyncError.new("custom_creative_#{size}_blob", "Encountered unexpected error while uploading new file, please try again.")
     end

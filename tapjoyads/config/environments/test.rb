@@ -36,7 +36,7 @@ RUN_MODE_PREFIX = 'test_'
 API_URL = 'http://localhost:3000'
 DASHBOARD_URL = 'http://localhost:3000'
 WEBSITE_URL = 'http://localhost:3000'
-CLOUDFRONT_URL = 'https://d21x2jbj16e06e.cloudfront.net'
+CLOUDFRONT_URL = 'https://s3.amazonaws.com/test_tapjoy'
 GAMES_ANDROID_MARKET_URL = 'http://market.android.com/details?id=com.tapjoy.tapjoy'
 
 amazon = YAML::load_file("#{RAILS_ROOT}/config/amazon.yaml")
