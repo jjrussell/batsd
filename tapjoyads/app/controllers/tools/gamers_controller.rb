@@ -5,4 +5,7 @@ class Tools::GamersController < WebsiteController
 
   def index
   end
+
+  def show
+  end
 end
