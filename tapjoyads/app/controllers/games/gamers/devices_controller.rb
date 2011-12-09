@@ -68,22 +68,20 @@ class Games::Gamers::DevicesController < GamesController
           if devices.size == 1 && devices[0].gamer_id == current_gamer.id
             invitation_id, advertiser_id = SymmetricCrypto.decrypt_object(current_gamer.referrer, SYMMETRIC_CRYPTO_SECRET).split(',')
             referred_by_gamer = Gamer.find_by_id(current_gamer.referred_by)
-            if referred_by_gamer
-              referred_by_gamer.gamer_profile.update_attributes!(:referral_count => referred_by_gamer.referral_count + 1)
-              if advertiser_id && Invitation.find_by_id(invitation_id).gamer_id == current_gamer.referred_by
-                click = Click.new(:key => "#{current_gamer.referred_by}.#{advertiser_id}")
-                unless click.new_record?
-                  create_sub_click(click, referred_by_gamer.referral_count)
-                end
+            invitation = Invitation.find_by_id_and_gamer_id(invitation_id, current_gamer.referred_by)
+            if advertiser_id && referred_by_gamer && invitation
+              click = Click.new(:key => "#{current_gamer.referred_by}.#{advertiser_id}")
+              unless click.new_record?
+                new_referral_count = referred_by_gamer.referral_count + 1
+                referred_by_gamer.gamer_profile.update_attributes!(:referral_count => new_referral_count)
+                create_sub_click(click, new_referral_count)
               end
             end
           end
         end
-
-        redirect_to games_root_path
-      else
-        redirect_to games_root_path
       end
+
+      redirect_to games_root_path
     else
       flash[:error] = "Please log in to link your device. You must have cookies enabled."
       redirect_to games_login_path(:data => params[:data])
