@@ -2,6 +2,30 @@ class SdkController < WebsiteController
 
   layout 'sdks'
 
+  SDKS = {
+    'android' => {
+      'adv'       => ANDROID_CONNECT_SDK,
+      'pub'       => ANDROID_OFFERS_SDK,
+      'vg'        => ANDROID_VG_SDK,
+      'marmalade' => ANDROID_MARMALADE_EXTENSION,
+      'phonegap'  => ANDROID_PHONEGAP_PLUGIN,
+      'unity'     => ANDROID_UNITY_PLUGIN,
+    },
+    'iphone' => {
+      'adv'       => IPHONE_CONNECT_SDK,
+      'pub'       => IPHONE_OFFERS_SDK,
+      'vg'        => IPHONE_VG_SDK,
+      'marmalade' => IPHONE_MARMALADE_EXTENSION,
+      'phonegap'  => IPHONE_PHONEGAP_PLUGIN,
+      'unity'     => IPHONE_UNITY_PLUGIN,
+    },
+    'windows' => {
+      'adv'       => WINDOWS_CONNECT_SDK,
+      'pub'       => WINDOWS_OFFERS_SDK,
+      'vg'        => WINDOWS_OFFERS_SDK,
+    },
+  }
+
   def index
     @iphone_version  =  IPHONE_CONNECT_SDK[/v\d+\.\d+\.\d+\.zip/][0..-5]
     @android_version = ANDROID_CONNECT_SDK[/v\d+\.\d+\.\d+\.zip/][0..-5]
@@ -9,38 +33,9 @@ class SdkController < WebsiteController
   end
 
   def show
-    target =
-      case params[:id]
-      when 'android-adv'
-        ANDROID_CONNECT_SDK
-      when 'android-pub'
-        ANDROID_OFFERS_SDK
-      when 'android-vg'
-        ANDROID_VG_SDK
-      when 'android-unity'
-        ANDROID_UNITY_PLUGIN
-      when 'android-marmalade'
-        ANDROID_MARMALADE_EXTENSION
-      when 'iphone-adv'
-        IPHONE_CONNECT_SDK
-      when 'iphone-pub'
-        IPHONE_OFFERS_SDK
-      when 'iphone-vg'
-        IPHONE_VG_SDK
-      when 'iphone-unity'
-        IPHONE_UNITY_PLUGIN
-      when 'iphone-marmalade'
-        IPHONE_MARMALADE_EXTENSION
-      when 'windows-adv'
-        WINDOWS_CONNECT_SDK
-      when 'windows-pub'
-        WINDOWS_OFFERS_SDK
-      when 'windows-vg'
-        WINDOWS_OFFERS_SDK
-      else
-        sdk_index_path
-      end
-      redirect_to target
+    platform, sdk_type = params[:id].split(/-/)
+    sdk_download_link = SDKS[platform] && SDKS[platform][sdk_type]
+    redirect_to sdk_download_link || sdk_index_path
   end
 
   def popup
