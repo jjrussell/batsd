@@ -17,7 +17,7 @@ class Games::MoreGamesController < GamesController
 private
 
   def setup
-    @cell_download_limit_bytes = get_cell_download_limit_bytes
+    @cell_download_limit_bytes = 20.megabytes #get_cell_download_limit_bytes
   end
   
   def get_cell_download_limit_bytes
