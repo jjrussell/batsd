@@ -80,11 +80,6 @@ class PartnersController < WebsiteController
       params[:partner][:sales_rep] = sales_rep
     end
 
-    #if params[:partner].include?(:tapjoy_sponsored)
-    #  @partner.tapjoy_sponsored(params[:partner][:tapjoy_sponsored])
-    #  params[:partner].delete :tapjoy_sponsored
-    #end
-
     safe_attributes = [ :name, :account_managers, :account_manager_notes, :accepted_negotiated_tos, :negotiated_rev_share_ends_on, :rev_share, :transfer_bonus, :disabled_partners, :direct_pay_share, :approved_publisher, :billing_email, :accepted_publisher_tos, :cs_contact_email, :sales_rep, :max_deduction_percentage ]
 
     name_was = @partner.name
@@ -177,8 +172,9 @@ class PartnersController < WebsiteController
   end
   
   def set_tapjoy_sponsored
-    @partner.tapjoy_sponsored(params[:flag])
-    redirect_to request.referer
+    @partner.set_tapjoy_sponsored_on_offers!(params[:flag])
+    flash[:notice] = "Successfully updated all offers"
+    redirect_to partner_path
   end
 
 private

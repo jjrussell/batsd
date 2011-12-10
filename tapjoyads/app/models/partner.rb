@@ -297,7 +297,7 @@ class Partner < ActiveRecord::Base
     offers.blank? ? false : offers.all?(&:tapjoy_sponsored?)
   end
 
-  def tapjoy_sponsored(flag)
+  def set_tapjoy_sponsored_on_offers!(flag)
     offers.each do |offer|
       offer.tapjoy_sponsored = flag
       offer.save! if offer.changed?
