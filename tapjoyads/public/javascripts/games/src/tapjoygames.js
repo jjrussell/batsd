@@ -61,7 +61,6 @@ RegExp.escape = function(text) {
           TJG.ui.removeDialogs();
           TJG.repositionDialog = [];
         });
-
         $('#link_device').click(function(){
           if (TJG.vars.isAndroid &&  TJG.android_market_url) {
             document.location.href = TJG.android_market_url;
@@ -150,6 +149,52 @@ RegExp.escape = function(text) {
         $('.plus, .mobile_icon').click(function() {
           selectDevice();
         });
+        // Placeholder support for non-supported browsers
+        var input = document.createElement("input");
+        if (('placeholder' in input) == false) {
+          $('[placeholder]').focus(function() {
+            var me = $(this);
+            if (me.val() == '' || me.val() == me.attr('placeholder')) {
+              me.val('').removeClass('placeholder');
+              if (me.hasClass('password')) {
+                me.removeClass('password');
+                if ($.browser.msie) {
+                  me.prev().hide(); // Show label directly above obj
+                }
+                else {
+                  this.type = 'password';
+                }
+              }
+            }
+          }).blur(function() {
+            var me = $(this);
+            if (me.val() == '' || me.val() == me.attr('placeholder')) {
+              if (this.type == 'password') {
+                me.addClass('password');
+                me.addClass('placeholder').val('');
+                if ($.browser.msie) {
+                  me.prev().show(); // Show label directly above obj
+                }
+                else {
+                  this.type = 'text';
+                }
+              }
+              else {
+                me.addClass('placeholder').val(me.attr('placeholder'));
+              }
+            }
+          }).blur().parents('form').submit(function() {
+            $(this).find('[placeholder]').each(function() {
+              var me = $(this);
+              if (me.val() == me.attr('placeholder')) {
+                me.val('');
+              }
+            });
+          });
+          $('label[for=password]').click(function() {
+            $(this).hide();
+          });
+        }
       },
 
       checkFlashMessages: function () {
@@ -169,11 +214,6 @@ RegExp.escape = function(text) {
         TJG.onload[key]();
       }
     };
-    if (window.addEventListener) {
-      window.addEventListener("load", TJG.init, false);
-    }
-    else {
-      window.attachEvent("load", TJG.init);
-    }
+    TJG.init();
 
 })(this, document);
