@@ -21,6 +21,11 @@ module StatzHelper
           [ "0", "zero_conversions"],
           [ ">0", "nonzero_conversions"],
         ]
+      when :spend
+        [
+          [ "$0.00", "zero_spend"],
+          [ ">$0", "nonzero_spend"],
+        ]
       when :connects
         [
           [ "0", "zero_connects"],
