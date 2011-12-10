@@ -23,17 +23,20 @@ class Games::AndroidController < GamesController
       :platform   => params[:platform]
     }
 
+    encrypt_data = SymmetricCrypto.encrypt_object(data, SYMMETRIC_CRYPTO_SECRET)
+    cookies[:device_type] = { :value => 'android', :expires => 1.year.from_now }
     if current_gamer.present?
       if current_gamer.devices.empty?
-        redirect_to finalize_games_gamer_device_path(:data => SymmetricCrypto.encrypt_object(data, SYMMETRIC_CRYPTO_SECRET), :src => 'android_app')
+        redirect_to finalize_games_gamer_device_path(:data => encrypt_data, :src => 'android_app')
       else
-        encrypt_data = SymmetricCrypto.encrypt_object(data, SYMMETRIC_CRYPTO_SECRET)
-        cookies[:data] = { :value => encrypt_data, :expires => 1.year.from_now } if params[:data].present?
-        redirect_to games_root_path(:data => encrypt_data, :src => 'android_app')
+        if valid_device_id(params[:udid])
+          cookies[:data] = { :value => encrypt_data, :expires => 1.year.from_now }
+          redirect_to games_root_path(:data => encrypt_data, :src => 'android_app')
+        else
+          redirect_to finalize_games_gamer_device_path(:data => encrypt_data, :src => 'android_app')
+        end
       end
     else
-      encrypt_data = SymmetricCrypto.encrypt_object(data, SYMMETRIC_CRYPTO_SECRET)
-      cookies[:data] = { :value => encrypt_data, :expires => 1.year.from_now } if params[:data].present?
       redirect_to games_login_path(:data => encrypt_data, :src => 'android_app')
     end
   end
