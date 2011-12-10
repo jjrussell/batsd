@@ -32,10 +32,16 @@ MEMCACHE_SERVERS = ['127.0.0.1']
 
 EXCEPTIONS_NOT_LOGGED = []
 
+begin
+  local_config = YAML::load_file("#{RAILS_ROOT}/config/local.yml")
+rescue Errno::ENOENT
+  local_config = {}
+end
+
 RUN_MODE_PREFIX = 'test_'
-API_URL = 'http://localhost:3000'
-DASHBOARD_URL = 'http://localhost:3000'
-WEBSITE_URL = 'http://localhost:3000'
+API_URL = local_config['api_url'] || 'http://localhost:3000'
+DASHBOARD_URL = local_config['dashboard_url'] || 'http://localhost:3000'
+WEBSITE_URL = local_config['website_url'] || 'http://localhost:3000'
 CLOUDFRONT_URL = 'https://s3.amazonaws.com/test_tapjoy'
 GAMES_ANDROID_MARKET_URL = 'http://market.android.com/details?id=com.tapjoy.tapjoy'
 
