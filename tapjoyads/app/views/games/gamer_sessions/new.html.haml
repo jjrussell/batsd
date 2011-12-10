@@ -47,6 +47,10 @@
                   Sign Up
                 .register_form
                   - form_for([ :games, @gamer ], :url => games_gamer_path ) do |f|
+                    - if params[:data].present?
+                      = hidden_field_tag :data, params[:data]
+                    - if params[:src].present?
+                      = hidden_field_tag :src, params[:src]
                     .field
                       = label_tag :birthdate
                       = select_date nil, { :order => [:month, :day, :year], :start_year => Time.now.year, :end_year => (Time.now.year - 100), :include_blank => false, :prompt => {:day => 'Day', :month => 'Month', :year => 'Year'} }

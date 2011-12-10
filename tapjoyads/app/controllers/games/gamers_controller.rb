@@ -23,7 +23,12 @@ class Games::GamersController < GamesController
         :geoip_data => get_geoip_data,
         :os_version => os_version }.to_json
       Sqs.send_message(QueueNames::SEND_WELCOME_EMAILS, message)
-      render(:json => { :success => true, :link_device_url => new_games_gamer_device_path, :linked => @gamer.devices.any? })
+
+      if params[:data].present? && params[:src] == 'android_app'
+        render(:json => { :success => true, :link_device_url => finalize_games_gamer_device_path(:data => params[:data]), :android => true })
+      else
+        render(:json => { :success => true, :link_device_url => new_games_gamer_device_path })
+      end
     else
       errors = @gamer.errors.reject{|error|error[0] == 'gamer_profile'}
       errors |= @gamer_profile.errors.to_a
