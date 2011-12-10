@@ -168,7 +168,7 @@ class Job::MasterReloadStatzController < Job::JobController
     partner_stats['display_ecpm']   = number_to_currency((stats['display_revenue'].sum / 100.0) / (stats['display_ads_shown'].sum / 1000.0))
 
     # for advertisers page
-    partner_stats['spend']   = number_to_currency(stats['installs_spend'].sum / 100.0)
+    partner_stats['spend']   = number_to_currency(-stats['installs_spend'].sum / 100.0)
     partner_stats['balance'] = number_to_currency(partner.balance / 100.0)
 
     partner_stats['clicks']        = number_with_delimiter(stats['paid_clicks'].sum)
