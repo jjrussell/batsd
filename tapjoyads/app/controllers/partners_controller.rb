@@ -5,7 +5,7 @@ class PartnersController < WebsiteController
 
   filter_access_to :all
 
-  before_filter :find_partner, :only => [ :show, :make_current, :manage, :update, :edit, :new_transfer, :create_transfer, :reporting ]
+  before_filter :find_partner, :only => [ :show, :make_current, :manage, :update, :edit, :new_transfer, :create_transfer, :reporting, :set_tapjoy_sponsored ]
   before_filter :get_account_managers, :only => [ :index, :managed_by ]
   before_filter :set_platform, :only => [ :reporting ]
   after_filter :save_activity_logs, :only => [ :update, :create_transfer ]
@@ -80,10 +80,10 @@ class PartnersController < WebsiteController
       params[:partner][:sales_rep] = sales_rep
     end
 
-    if params[:partner].include?(:tapjoy_sponsored)
-      @partner.tapjoy_sponsored(params[:partner][:tapjoy_sponsored])
-      params[:partner].delete :tapjoy_sponsored
-    end
+    #if params[:partner].include?(:tapjoy_sponsored)
+    #  @partner.tapjoy_sponsored(params[:partner][:tapjoy_sponsored])
+    #  params[:partner].delete :tapjoy_sponsored
+    #end
 
     safe_attributes = [ :name, :account_managers, :account_manager_notes, :accepted_negotiated_tos, :negotiated_rev_share_ends_on, :rev_share, :transfer_bonus, :disabled_partners, :direct_pay_share, :approved_publisher, :billing_email, :accepted_publisher_tos, :cs_contact_email, :sales_rep, :max_deduction_percentage ]
 
@@ -174,6 +174,11 @@ class PartnersController < WebsiteController
         render :json => { :data => @appstats.graph_data(:admin => true) }
       end
     end
+  end
+  
+  def set_tapjoy_sponsored
+    @partner.tapjoy_sponsored(params[:flag])
+    redirect_to request.referer
   end
 
 private

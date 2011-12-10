@@ -18,11 +18,6 @@
     = f.check_box :accepted_publisher_tos
     = error_message_on(@partner, :accepted_publisher_tos) if @partner.errors.on :accepted_publisher_tos
   .field
-    = f.label :tapjoy_sponsored, 'Tapjoy sponsored'
-    #help_tapjoy_sponsored.help ?
-    = f.check_box :tapjoy_sponsored?
-    = error_message_on(@partner, :tapjoy_sponsored) if @partner.errors.on :tapjoy_sponsored
-  .field
     = f.label(:account_manager_notes, 'Internal notes')
     #help_account_manager_notes.help ?
     = f.text_area :account_manager_notes
@@ -119,8 +114,6 @@
     Example: A pub with rev share of 70% and max deduction percentage of 7% will have an effective rev share between 65-70%. (70% * 93% = 65%)
   #help_accepted_publisher_tos_content{:name => 'Accepted publisher ToS'}
     Has this partner accepted the publisher terms of service?
-  #help_tapjoy_sponsored_content{:name => 'Tapjoy sponsored'}
-    Is this partner Tapjoy sponsered? This will flag all offers of this partner to be Tapjoy sponsored.
 
 - content_for :page_styles do
   :plain
