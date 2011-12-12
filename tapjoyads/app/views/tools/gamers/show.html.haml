@@ -1,1 +1,58 @@
-Show this gamer
+%h1 Gamer Management
+= render('search')
+
+= render('games/gamers/header')
+
+%table.tablesorter
+  %tbody
+    %tr
+      %th Name
+      %td= @gamer.get_gamer_name
+    %tr
+      %th Gender
+      %td= @gamer_profile.gender
+    %tr
+      %th Birthdate
+      %td= @gamer_profile.birthdate
+    %tr
+      %th City
+      %td= @gamer_profile.city
+    %tr
+      %th Country
+      %td= @gamer_profile.country
+    %tr
+      %th Postal Code
+      %td= @gamer_profile.postal_code
+    %tr
+      %th Favorite Game
+      %td= @gamer_profile.favorite_game
+    %tr
+      %th Favorite Category
+      %td= @gamer_profile.favorite_category
+    %tr
+      %th Last Login
+      %td= @gamer.last_login_at? ? @gamer.last_login_at.to_s(:db) : 'never'
+    %tr
+      %th Created
+      %td= @gamer.created_at.to_s(:db)
+    %tr
+      %th Updated
+      %td= @gamer.updated_at? ? @gamer.updated_at.to_s(:db) : 'never'
+
+- content_for :page_styles do
+  :plain
+    .gamer_name {
+      font-size: 24px;
+      font-weight: bold;
+    }
+    .gamer_email {
+      font-size: 18px;
+      font-weight: bold;
+    }
+    .gamer_signup_date {
+      font-size: 12px;
+      margin-top: 3px;
+    }
+    #profile_info_display td {
+      padding-right: 5px;
+    }
