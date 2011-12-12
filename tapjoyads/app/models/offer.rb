@@ -134,7 +134,7 @@ class Offer < ActiveRecord::Base
       record.errors.add(attribute, "cannot be used for pay-per-click offers") if record.pay_per_click?
     end
   end
-  validates_each :instructions_overridden do |record, attribute, value|
+  validates_each :instructions_overridden, :if => :instructions_overridden? do |record, attribute, value|
     record.errors.add(attribute, "is only for GenericOffers and ActionsOffers") unless record.item_type == 'GenericOffer' || record.item_type == 'ActionOffer'
   end
   validate :bid_within_range
