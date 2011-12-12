@@ -42,7 +42,7 @@ class GamesController < ApplicationController
   def has_multiple_devices?
     current_gamer.devices.size > 1
   end
-  
+
   def device_type
     @device_type ||= HeaderParser.device_type(request.user_agent)
   end
@@ -65,14 +65,14 @@ class GamesController < ApplicationController
     end
   end
 
+  def valid_device_id(udid)
+    current_gamer.devices.find_by_device_id(udid) if current_gamer
+  end
+
   private
 
   def current_gamer_session
     @current_gamer_session ||= GamerSession.find
-  end
-
-  def valid_device_id(udid)
-    current_gamer.devices.find_by_device_id(udid) if current_gamer
   end
 
   def require_gamer

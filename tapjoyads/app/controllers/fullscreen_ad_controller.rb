@@ -2,13 +2,6 @@ class FullscreenAdController < ApplicationController
 
   layout 'iphone'
 
-  def image
-    offer = Offer.find_in_cache(params[:offer_id])
-    img = IMGKit.new(offer.fullscreen_ad_url(:publisher_app_id => params[:publisher_app_id]), :width => 320, :height => 480)
-
-    send_data img.to_png, :type => 'image/png', :disposition => 'inline'
-  end
-
   def index
     @publisher_app = App.find_in_cache(params[:publisher_app_id])
     currency_id = params[:currency_id].blank? ? params[:publisher_app_id] : params[:currency_id]
@@ -23,6 +16,9 @@ class FullscreenAdController < ApplicationController
 
     @now = params[:viewed_at].present? ? Time.zone.at(params[:viewed_at].to_f) : Time.zone.now
     @geoip_data = { :country => params[:country_code] }
+
+    creative_exists = true if @offer.banner_creatives.any? { |size| Offer::FEATURED_AD_SIZES.include?(size) }
+    render :custom_creative, :layout => "blank" if creative_exists
   end
 
   def test_offer

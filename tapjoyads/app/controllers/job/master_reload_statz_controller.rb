@@ -35,22 +35,23 @@ class Job::MasterReloadStatzController < Job::JobController
 
     cached_stats = {}
     VerticaCluster.query('analytics.actions', {
-        :select     => 'offer_id, count(*) AS conversions',
+        :select     => 'offer_id, count(*) AS conversions, -sum(advertiser_amount) AS spend',
         :group      => 'offer_id',
         :conditions => "path LIKE '%reward%' AND #{time_conditions}" }).each do |result|
       cached_stats[result[:offer_id]] = {
         'conversions'      => number_with_delimiter(result[:conversions]),
+        'spend'            => number_to_currency(result[:spend] / 100.0),
         'published_offers' => '0',
-        'offers_revenue'   => '$0.00',
+        'gross_revenue'    => '$0.00',
       }
     end
     VerticaCluster.query('analytics.actions', {
-        :select     => 'publisher_app_id AS offer_id, count(*) AS published_offers, sum(publisher_amount) AS offers_revenue',
+        :select     => 'publisher_app_id AS offer_id, count(*) AS published_offers, sum(publisher_amount + tapjoy_amount) AS gross_revenue',
         :group      => 'publisher_app_id',
         :conditions => "path LIKE '%reward%' AND #{time_conditions}" }).each do |result|
-      cached_stats[result[:offer_id]] ||= { 'conversions' => '0' }
+      cached_stats[result[:offer_id]] ||= { 'conversions' => '0', 'spend' => '$0.00' }
       cached_stats[result[:offer_id]]['published_offers'] = number_with_delimiter(result[:published_offers])
-      cached_stats[result[:offer_id]]['offers_revenue']   = number_to_currency(result[:offers_revenue] / 100.0)
+      cached_stats[result[:offer_id]]['gross_revenue']    = number_to_currency(result[:gross_revenue] / 100.0)
     end
 
     cached_metadata = {}
@@ -72,12 +73,14 @@ class Job::MasterReloadStatzController < Job::JobController
     end
 
     cached_stats_adv = cached_stats.sort do |s1, s2|
-      s2[1]['conversions'].gsub(',', '').to_i <=> s1[1]['conversions'].gsub(',', '').to_i
+      currency_to_number(s2[1]['spend']) <=> currency_to_number(s1[1]['spend'])
     end
     cached_stats_pub = cached_stats.sort do |s1, s2|
-      s2[1]['published_offers'].gsub(',', '').to_i <=> s1[1]['published_offers'].gsub(',', '').to_i
+      currency_to_number(s2[1]['gross_revenue']) <=> currency_to_number(s1[1]['gross_revenue'])
     end
-    top_cached_stats = (cached_stats_adv.first(50) + cached_stats_pub.first(50)).uniq
+    top_cached_stats = (cached_stats_adv.first(50) + cached_stats_pub.first(50)).uniq.sort do |s1, s2|
+      currency_to_number(s2[1]['spend']) <=> currency_to_number(s1[1]['spend'])
+    end
     top_offer_ids = Set.new(top_cached_stats.map { |pair| pair[0] })
     top_cached_metadata = cached_metadata.reject { |k, v| !top_offer_ids.include?(k) }
 
@@ -107,9 +110,6 @@ class Job::MasterReloadStatzController < Job::JobController
     end
 
     cached_partners.each do |key, breakdown|
-      breakdown = breakdown.sort do |s1, s2|
-        s2[1]['total_revenue'].gsub(',', '').gsub('$', '').to_i <=> s1[1]['total_revenue'].gsub(',', '').gsub('$', '').to_i
-      end
       Mc.distributed_put("statz.#{key}.cached_stats.#{timeframe}", breakdown)
       Mc.put("statz.#{key}.last_updated_start.#{timeframe}", start_time.to_f)
       Mc.put("statz.#{key}.last_updated_end.#{timeframe}", end_time.to_f)
@@ -126,8 +126,9 @@ class Job::MasterReloadStatzController < Job::JobController
     partner_stats['sales_rep']   = partner.sales_rep.to_s
 
     # for publishers page
-    partner_stats['total_revenue'] = number_to_currency(stats['total_revenue'].sum / 100.0)
-    partner_stats['rev_share']     = number_to_percentage(partner.rev_share * 100.0, :precision => 1)
+    partner_stats['est_gross_revenue'] = number_to_currency(stats['total_revenue'].sum / 100.0 / partner.rev_share)
+    partner_stats['total_revenue']     = number_to_currency(stats['total_revenue'].sum / 100.0)
+    partner_stats['rev_share']         = number_to_percentage(partner.rev_share * 100.0, :precision => 1)
 
     partner_stats['offerwall_views'] = number_with_delimiter(stats['offerwall_views'].sum)
     partner_stats['featured_views']  = number_with_delimiter(stats['featured_offers_shown'].sum)
@@ -167,7 +168,7 @@ class Job::MasterReloadStatzController < Job::JobController
     partner_stats['display_ecpm']   = number_to_currency((stats['display_revenue'].sum / 100.0) / (stats['display_ads_shown'].sum / 1000.0))
 
     # for advertisers page
-    partner_stats['spend']   = number_to_currency(stats['installs_spend'].sum / 100.0)
+    partner_stats['spend']   = number_to_currency(-stats['installs_spend'].sum / 100.0)
     partner_stats['balance'] = number_to_currency(partner.balance / 100.0)
 
     partner_stats['clicks']        = number_with_delimiter(stats['paid_clicks'].sum)
