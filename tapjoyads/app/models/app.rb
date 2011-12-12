@@ -251,6 +251,13 @@ class App < ActiveRecord::Base
     PLATFORM_DETAILS[platform][:screen_layout_sizes].nil? ? [] : PLATFORM_DETAILS[platform][:screen_layout_sizes].sort{ |a,b| a[1] <=> b[1] }
   end
 
+  def is_wifi_required?
+    if App::PLATFORM_DETAILS[platform][:cell_download_limit_bytes] && file_size_bytes > App::PLATFORM_DETAILS[platform][:cell_download_limit_bytes]
+      true
+    end
+      false
+  end
+
 private
 
   def generate_secret_key

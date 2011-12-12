@@ -1,0 +1,12 @@
+Script started on Fri Dec  9 18:14:57 2011
+[?1034hbash-3.2$ if nil
+> end
+> end
+> end
+> then
+> 
+bash-3.2$ a = 1
+bash: a: command not found
+bash-3.2$ s[Kquit
+bash: quit: command not found
+bash-3.2$ q[K
