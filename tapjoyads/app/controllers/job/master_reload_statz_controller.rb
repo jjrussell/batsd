@@ -47,7 +47,7 @@ class Job::MasterReloadStatzController < Job::JobController
       }
     end
     VerticaCluster.query('analytics.actions', {
-        :select     => 'publisher_app_id AS offer_id, count(*) AS published_offers, sum(publisher_amount + tapjoy_amount) AS gross_revenue, sum(publisher_amount) as publisher_revenue',
+        :select     => 'publisher_app_id AS offer_id, count(*) AS published_offers, sum(publisher_amount + tapjoy_amount) AS gross_revenue, sum(publisher_amount) AS publisher_revenue',
         :group      => 'publisher_app_id',
         :conditions => "path LIKE '%reward%' AND #{time_conditions}" }).each do |result|
       cached_stats[result[:offer_id]] ||= { 'conversions' => '0', 'spend' => '$0.00' }
