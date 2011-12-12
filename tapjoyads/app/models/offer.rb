@@ -774,7 +774,7 @@ private
   end
 
   def update_instructions
-    if instructions_overridden_changed? && !instructions_overridden?
+    if instructions_overridden_changed? && !instructions_overridden? && (item_type == 'ActionOffer' || item_type == 'GenericOffer')
       self.instructions = item.instructions
     end
   end
