@@ -39,19 +39,21 @@ class Job::MasterReloadStatzController < Job::JobController
         :group      => 'offer_id',
         :conditions => "path LIKE '%reward%' AND #{time_conditions}" }).each do |result|
       cached_stats[result[:offer_id]] = {
-        'conversions'      => number_with_delimiter(result[:conversions]),
-        'spend'            => number_to_currency(result[:spend] / 100.0),
-        'published_offers' => '0',
-        'gross_revenue'    => '$0.00',
+        'conversions'       => number_with_delimiter(result[:conversions]),
+        'spend'             => number_to_currency(result[:spend] / 100.0),
+        'published_offers'  => '0',
+        'gross_revenue'     => '$0.00',
+        'publisher_revenue' => '$0.00',
       }
     end
     VerticaCluster.query('analytics.actions', {
-        :select     => 'publisher_app_id AS offer_id, count(*) AS published_offers, sum(publisher_amount + tapjoy_amount) AS gross_revenue',
+        :select     => 'publisher_app_id AS offer_id, count(*) AS published_offers, sum(publisher_amount + tapjoy_amount) AS gross_revenue, sum(publisher_amount) as publisher_revenue',
         :group      => 'publisher_app_id',
         :conditions => "path LIKE '%reward%' AND #{time_conditions}" }).each do |result|
       cached_stats[result[:offer_id]] ||= { 'conversions' => '0', 'spend' => '$0.00' }
-      cached_stats[result[:offer_id]]['published_offers'] = number_with_delimiter(result[:published_offers])
-      cached_stats[result[:offer_id]]['gross_revenue']    = number_to_currency(result[:gross_revenue] / 100.0)
+      cached_stats[result[:offer_id]]['published_offers']  = number_with_delimiter(result[:published_offers])
+      cached_stats[result[:offer_id]]['gross_revenue']     = number_to_currency(result[:gross_revenue] / 100.0)
+      cached_stats[result[:offer_id]]['publisher_revenue'] = number_to_currency(result[:publisher_revenue] / 100.0)
     end
 
     cached_metadata = {}
