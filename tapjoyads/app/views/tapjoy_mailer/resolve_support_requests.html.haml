@@ -1,10 +1,10 @@
-%p The mass resolution of the support requests has finished.
+%p The support request file you uploaded at #{@upload_time_stamp} has been processed.
 - if @mass_resolve_results[:successfully_awarded_num] == 0
   %p No requests were awarded.
 - else
   %p Successfully awarded #{@mass_resolve_results[:successfully_awarded_num]} support requests.
 - if @mass_resolve_results[:requests_not_awarded].any?
-  %p An error was encountered while processing the following support requests.
+  %p The following support requests could not be processed:
   %table
     %tbody
       %tr

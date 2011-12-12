@@ -14,14 +14,14 @@ class Tools::SupportRequestsController < WebsiteController
     end
 
     begin
-      support_request_file = "#{(Time.now.to_f * 1000).to_i}_mass_resolve_support_requests_list"
+      support_request_file = UUIDTools::UUID.random_create.to_s
       S3.bucket(BucketNames::SUPPORT_REQUESTS).objects[support_request_file].write(:data => file_contents)
       Sqs.send_message(QueueNames::RESOLVE_SUPPORT_REQUESTS, { :user_email => current_user.email, :support_requests_file => support_request_file }.to_json)
     rescue
-      flash[:error] = 'Unable to upload the file for processing.'
+      flash[:error] = "Your file could not be processed. Try uploading it again, or email dev@tapjoy.com if it's continuing to fail."
     end
 
-    flash[:notice] = 'The request has been submitted. An email confirmation will be mailed to you.'
+    flash[:notice] = "Your file has been uploaded. You'll receive an email after your file has been processed."
   end
 
   def index

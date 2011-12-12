@@ -181,14 +181,15 @@ class TapjoyMailer < ActionMailer::Base
     subject 'Thanks for signing up with Tapjoy!'
   end
 
-  def resolve_support_requests(user_email, mass_resolve_results)
+  def resolve_support_requests(user_email, mass_resolve_results, upload_time)
+    upload_time_stamp = upload_time.strftime("%A %m/%e/%Y %k:%M:%S %p")
     from 'Tapjoy <noreply@tapjoy.com>'
     recipients user_email
     if Rails.env.production?
       cc 'customerservice@tapjoy.com'
     end
     content_type 'text/html'
-    subject 'Support Request Mass Resolution'
-    body(:mass_resolve_results => mass_resolve_results)
+    subject "Support Request for Mass Resolution initiated on #{upload_time_stamp}"
+    body(:mass_resolve_results => mass_resolve_results, :upload_time_stamp => upload_time_stamp)
   end
 end

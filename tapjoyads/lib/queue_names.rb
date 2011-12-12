@@ -14,10 +14,10 @@ class QueueNames
   MAIL_CHIMP_UPDATES         = "#{BASE_NAME}MailChimpUpdates"
   PARTNER_NOTIFICATIONS      = "#{BASE_NAME}PartnerNotifications"
   RECOUNT_STATS              = "#{BASE_NAME}RecountStats"
+  RESOLVE_SUPPORT_REQUESTS   = "#{BASE_NAME}ResolveSupportRequests"
   SDB_BACKUPS                = "#{BASE_NAME}SdbBackups"
   SELECT_VG_ITEMS            = "#{BASE_NAME}SelectVgItems"
   SEND_CURRENCY              = "#{BASE_NAME}SendCurrency"
   UDID_REPORTS               = "#{BASE_NAME}UdidReports"
   UPDATE_MONTHLY_ACCOUNT     = "#{BASE_NAME}UpdateMonthlyAccount"
-  RESOLVE_SUPPORT_REQUESTS   = "#{BASE_NAME}ResolveSupportRequests"
 end
