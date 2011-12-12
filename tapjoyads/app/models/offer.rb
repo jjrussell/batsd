@@ -373,7 +373,7 @@ class Offer < ActiveRecord::Base
 
     Mc.delete("icon.s3.#{id}")
     paths = ["icons/256/#{icon_id}.jpg", "icons/114/#{icon_id}.jpg", "icons/57/#{icon_id}.jpg", "icons/57/#{icon_id}.png"]
-    CloudFront.invalidate(paths) if existing_icon_blob.present?
+    CloudFront.invalidate(id, paths) if existing_icon_blob.present?
   end
 
   def get_video_url(options = {})
@@ -690,7 +690,7 @@ private
       # no worries, it will get cached later if needed
     end
 
-    CloudFront.invalidate(banner_creative_path(size, format))
+    CloudFront.invalidate(id, banner_creative_path(size, format))
   end
 
   def is_test_device?(currency, device)

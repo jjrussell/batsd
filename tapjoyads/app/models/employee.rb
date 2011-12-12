@@ -38,7 +38,7 @@ class Employee < ActiveRecord::Base
     photo_blob = photo.to_blob{|i| i.format = 'PNG'}
 
     object.write(:data => photo_blob, :acl => :public_read)
-    CloudFront.invalidate("employee_photos/#{id}.png") if existing_photo_blob.present?
+    CloudFront.invalidate(id, "employee_photos/#{id}.png") if existing_photo_blob.present?
   end
 
 end
