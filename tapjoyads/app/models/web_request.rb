@@ -131,6 +131,7 @@ class WebRequest
   self.define_attr :displayer_amount, :type => :int
   self.define_attr :tapjoy_amount, :type => :int
   self.define_attr :currency_reward, :type => :int
+  self.define_attr :package_names, :force_array => true, :replace => false
 
   def self.count_with_vertica(conditions = nil)
     VerticaCluster.count('production.web_request', conditions)

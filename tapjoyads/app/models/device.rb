@@ -18,8 +18,8 @@ class Device < SimpledbShardedResource
   self.sdb_attr :mac_address
   self.sdb_attr :platform
   self.sdb_attr :is_papayan, :type => :bool, :default_value => false
-  self.sdb_attr :scraped_apps_all_time
-  self.sdb_attr :scraped_apps_current
+  self.sdb_attr :all_time_packages
+  self.sdb_attr :current_packages
 
   def dynamic_domain_name
     domain_number = @key.matz_silly_hash % NUM_DEVICES_DOMAINS
@@ -162,11 +162,10 @@ class Device < SimpledbShardedResource
     Gamer.find(:all, :joins => [:gamer_devices], :conditions => ['gamer_devices.device_id = ?', key])
   end
 
-  def update_scraped_apps!(current_scraped_apps)
-    current_apps = current_scraped_apps.split(',').map { |app| app.strip }.reject {|app| app.empty?}.uniq
-    all_apps = (scraped_apps_all_time ? scraped_apps_all_time.split(',') : []) | current_apps
-    self.scraped_apps_all_time = all_apps.join(',')
-    self.scraped_apps_current = current_apps.join(',')
+  def update_package_names!(package_names)
+    all = (all_time_packages ? all_time_packages.split(',') : []) | package_names
+    self.all_time_packages = all.join(',')
+    self.current_packages = package_names.join(',')
     save!
   end
 
