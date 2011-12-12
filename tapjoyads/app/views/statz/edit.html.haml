@@ -88,6 +88,13 @@
         %td
           = f.select(:interval, options_for_select(Offer::FREQUENCIES_CAPPING_INTERVAL, @offer.interval), { :include_blank => false })
           = error_message_on @offer, :interval
+    %tr
+      %th
+        = f.label(:tapjoy_sponsored, 'Tapjoy Sponsored')
+        #help_tapjoy_sponsored.help ?
+      %td
+        = f.check_box(:tapjoy_sponsored)
+        = error_message_on @offer, :tapjoy_sponsored
     - if @offer.item_type == 'GenericOffer'
       %tr
         %th
@@ -249,6 +256,7 @@
   #help_allow_negative_balance_content{ :name => 'Allow Negative Balance' } Allow this partner's balance to go below zero. This effectively locks show rate to 1.0.
   #help_pay_per_click_content{ :name => 'Pay-Per-Click' } Charge the advertiser and award the user immediately on click.
   #help_multi_complete_content{ :name => 'Multi-complete' } Allow this offer to be completed multiple times per device.
+  #help_tapjoy_sponsored_content{ :name => 'Tapjoy sponsored' } Whether or not the offer is Tapjoy sponsored.
   #help_direct_pay_content{ :name => 'Direct-pay' } Select a direct-pay provider from the list to designate this offer as a direct-pay offer. Revenue generated will be split up using the publisher's direct-pay share.
   #help_featured_content{ :name => 'Featured' } Enables this offer in our featured offers feed.
   #help_cookie_tracking_content{ :name => 'Cookie Tracking' } Designates that this offer requires cookies to track a conversion.

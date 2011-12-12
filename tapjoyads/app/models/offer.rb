@@ -149,6 +149,7 @@ class Offer < ActiveRecord::Base
   before_save :update_instructions
   after_save :update_enabled_rating_offer_id
   after_save :update_pending_enable_requests
+  after_save :update_tapjoy_sponsored_associated_offers
   after_save :sync_banner_creatives! # NOTE: this should always be the last thing run by the after_save callback chain
 
   named_scope :enabled_offers, :joins => :partner,
@@ -171,6 +172,7 @@ class Offer < ActiveRecord::Base
   named_scope :non_video_offers, :conditions => "item_type != 'VideoOffer'"
   named_scope :papaya_app_offers, :joins => :app, :conditions => "item_type = 'App' AND #{App.quoted_table_name}.papaya_user_count > 0", :select => PAPAYA_OFFER_COLUMNS
   named_scope :papaya_action_offers, :joins => { :action_offer => :app }, :conditions => "item_type = 'ActionOffer' AND #{App.quoted_table_name}.papaya_user_count > 0", :select => PAPAYA_OFFER_COLUMNS
+  named_scope :tapjoy_sponsored_offer_ids, :conditions => "tapjoy_sponsored = true", :select => "#{Offer.quoted_table_name}.id"
 
   delegate :balance, :pending_earnings, :name, :cs_contact_email, :approved_publisher?, :rev_share, :to => :partner, :prefix => true
   memoize :partner_balance
@@ -765,6 +767,15 @@ private
       enable_offer_requests.pending.each { |request| request.approve! }
     elsif hidden_changed? && hidden?
       enable_offer_requests.pending.each { |request| request.approve!(false) }
+    end
+  end
+
+  def update_tapjoy_sponsored_associated_offers
+    if tapjoy_sponsored_changed?
+      find_associated_offers.each do |o|
+        o.tapjoy_sponsored = tapjoy_sponsored
+        o.save! if o.changed?
+      end
     end
   end
 

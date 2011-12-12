@@ -587,6 +587,7 @@ ActiveRecord::Schema.define(:version => 20111212062016) do
     t.text     "banner_creatives"
     t.text     "dma_codes",                                                                                        :null => false
     t.text     "regions",                                                                                          :null => false
+    t.boolean  "tapjoy_sponsored",                                                              :default => false, :null => false
     t.boolean  "instructions_overridden",                                                       :default => false, :null => false
   end
 
