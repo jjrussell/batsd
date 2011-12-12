@@ -183,14 +183,7 @@ RegExp.escape = function(text) {
                 me.addClass('placeholder').val(me.attr('placeholder'));
               }
             }
-          }).blur().parents('form').submit(function() {
-            $(this).find('[placeholder]').each(function() {
-              var me = $(this);
-              if (me.val() == me.attr('placeholder')) {
-                me.val('');
-              }
-            });
-          });
+          }).blur();
           $('label[for=password]').click(function() {
             $(this).hide();
           });

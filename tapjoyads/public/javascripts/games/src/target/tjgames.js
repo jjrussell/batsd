@@ -2485,8 +2485,8 @@ RegExp.escape = function(text) {
               me.val('').removeClass('placeholder');
               if (me.hasClass('password')) {
                 me.removeClass('password');
-                if ($.browser.msie) {
-                  me.prev().hide(); // Show label directly above obj
+                if ($.browser.msie) { // IE doesn't support changing input type
+                  me.prev().hide(); // Hide label
                 }
                 else {
                   this.type = 'password';
@@ -2499,8 +2499,8 @@ RegExp.escape = function(text) {
               if (this.type == 'password') {
                 me.addClass('password');
                 me.addClass('placeholder').val('');
-                if ($.browser.msie) {
-                  me.prev().show(); // Show label directly above obj
+                if ($.browser.msie) { // IE doesn't support changing input type
+                  me.prev().show(); // Show label
                 }
                 else {
                   this.type = 'text';
@@ -2510,14 +2510,7 @@ RegExp.escape = function(text) {
                 me.addClass('placeholder').val(me.attr('placeholder'));
               }
             }
-          }).blur().parents('form').submit(function() {
-            $(this).find('[placeholder]').each(function() {
-              var me = $(this);
-              if (me.val() == me.attr('placeholder')) {
-                me.val('');
-              }
-            });
-          });
+          }).blur();
           $('label[for=password]').click(function() {
             $(this).hide();
           });
