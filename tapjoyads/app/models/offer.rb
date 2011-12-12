@@ -57,6 +57,7 @@ class Offer < ActiveRecord::Base
     "1 hour"   => 1.hour.to_i,
     "8 hours"  => 8.hours.to_i,
     "24 hours" => 24.hours.to_i,
+    "3 days"   => 3.days.to_i,
   }
 
   PAPAYA_OFFER_COLUMNS = "#{Offer.quoted_table_name}.id, #{App.quoted_table_name}.papaya_user_count"
@@ -131,7 +132,7 @@ class Offer < ActiveRecord::Base
   validates_each :multi_complete do |record, attribute, value|
     if value
       record.errors.add(attribute, "is not for App offers") if record.item_type == 'App'
-      record.errors.add(attribute, "cannot be used for pay-per-click offers") if record.pay_per_click?
+      record.errors.add(attribute, "cannot be used for non-interval pay-per-click offers") if record.pay_per_click? && record.interval == 0
     end
   end
   validate :bid_within_range

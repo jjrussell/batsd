@@ -98,6 +98,13 @@
           = error_message_on @offer, :direct_pay
     %tr
       %th
+        = f.label(:name, 'Name')
+        #help_name.help ?
+      %td
+        = f.text_field(:name)
+        = error_message_on @offer, :name
+    %tr
+      %th
         = f.label(:name_suffix, 'Internal Suffix')
         #help_internal_suffix.help ?
       %td
@@ -231,6 +238,7 @@
   #help_featured_content{ :name => 'Featured' } Enables this offer in our featured offers feed.
   #help_cookie_tracking_content{ :name => 'Cookie Tracking' } Designates that this offer requires cookies to track a conversion.
   #help_rewarded_content{ :name => 'Rewarded' } Whether or not the offer rewards the user with currency.
+  #help_name_content{ :name => 'Name' } The name of this offer. This is shown to end-users when displaying the ad.
   #help_internal_suffix_content{ :name => 'Internal Suffix' } Internal identifier for offers. i.e. 'featured' or 'us only'
   #help_show_rate_content{ :name => 'Show Rate' } The probability that this offer will be shown on an offerwall impression. This is set automatically by the system and is used for budgeting. Allowed values are 0.0 - 1.0.
   #help_min_conversion_rate_content{ :name => 'Min CVR' } This is used to prevent low conversion rate warnings. A warning will only be issued if the conversion rate falls below this threshold. Allowed values are blank or 0.0 - 1.0
