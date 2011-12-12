@@ -134,6 +134,9 @@ class Offer < ActiveRecord::Base
       record.errors.add(attribute, "cannot be used for pay-per-click offers") if record.pay_per_click?
     end
   end
+  validates_each :instructions_overridden do |record, attribute, value|
+    record.errors.add(attribute, "is only for GenericOffers and ActionsOffers") unless record.item_type == 'GenericOffer' || record.item_type == 'ActionOffer'
+  end
   validate :bid_within_range
 
   before_validation :update_payment
@@ -142,6 +145,7 @@ class Offer < ActiveRecord::Base
   before_save :cleanup_url
   before_save :fix_country_targeting
   before_save :update_payment
+  before_save :update_instructions
   after_save :update_enabled_rating_offer_id
   after_save :update_pending_enable_requests
   after_save :sync_banner_creatives! # NOTE: this should always be the last thing run by the after_save callback chain
@@ -766,6 +770,12 @@ private
   def fix_country_targeting
     unless countries.blank?
       countries.gsub!(/uk/i, 'GB')
+    end
+  end
+
+  def update_instructions
+    if instructions_overridden_changed? && !instructions_overridden?
+      self.instructions = item.instructions
     end
   end
 

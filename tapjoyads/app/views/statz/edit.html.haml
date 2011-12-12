@@ -217,18 +217,21 @@
         %td
           = f.chosen_select(:screen_layout_sizes, options_for_select(@offer.item.screen_layout_sizes, @offer.get_screen_layout_sizes), {}, :multiple => true)
           = error_message_on @offer, :screen_layout_sizes
-    %tr
-      %th
-        = f.label(:instructions_overridden, 'Override Default Instructions')
-        #help_instructions_overridden.help ?
-      %td= f.check_box(:instructions_overridden)
-    %tr{:id => 'instructions_container', :class => (@offer.instructions_overridden? ? '' : 'hidden')}
-      %th
-        = f.label(:instructions, 'Instructions')
-        #help_instructions.help ?
-      %td
-        = f.text_area(:instructions)
-        = error_message_on @offer, :instructions
+    - if @offer.item_type == 'ActionOffer' || @offer.item_type == 'GenericOffer'
+      %tr
+        %th
+          = f.label(:instructions_overridden, 'Override Default Instructions')
+          #help_instructions_overridden.help ?
+        %td
+          = f.check_box(:instructions_overridden)
+          = error_message_on @offer, :instructions_overridden
+      %tr{:id => 'instructions_container', :class => (@offer.instructions_overridden? ? '' : 'hidden')}
+        %th
+          = f.label(:instructions, 'Instructions')
+          #help_instructions.help ?
+        %td
+          = f.text_area(:instructions)
+          = error_message_on @offer, :instructions
     %tr
       %td{ :colspan => 2 }= f.submit('Save Changes')
 
@@ -289,15 +292,15 @@
           return true;
         });
       })
-
-- content_for :page_javascript do
-  :plain
-    $(function($){
-      $('#offer_instructions_overridden').click(function(){
-        $('#instructions_container')[0].className = (this.checked ? '' : 'hidden');
-        return true;
-      });
-    })
+- if @offer.item_type == 'ActionOffer' || @offer.item_type == 'GenericOffer'
+  - content_for :page_javascript do
+    :plain
+      $(function($){
+        $('#offer_instructions_overridden').click(function(){
+          $('#instructions_container')[0].className = (this.checked ? '' : 'hidden');
+          return true;
+        });
+      })
 
 - content_for :page_styles do
   :plain
