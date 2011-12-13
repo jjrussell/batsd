@@ -101,12 +101,12 @@ RegExp.escape = function(text) {
               }
               email = values['gamer_session[email]'];
               pass = values['gamer_session[password]'];
-              if ( email == '' ) {
+              if (email == '' || email == 'Email') {
                 $(".login_error").html('Please enter your email address');
                 $(".formError").show();
                 e.preventDefault();
               }
-              else if ( pass == '' ) {
+              else if (pass == '' || pass == 'Password') {
                 $(".login_error").html('Please enter your password');
                 $(".formError").show();
                 e.preventDefault();

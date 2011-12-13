@@ -1257,7 +1257,7 @@ TJG.ui = {
         $(".email_error").html('Please enter your birthdate');
         hasError = true;
       }
-      else if(values['gamer[email]'] == '') {
+      else if(values['gamer[email]'] == '' || values['gamer[email]'] == "Email") {
         $(".email_error").html('Please enter your email address');
         hasError = true;
       }
@@ -1265,7 +1265,7 @@ TJG.ui = {
         $(".email_error").html('Enter a valid email address');
         hasError = true;
       }
-      else if(values['gamer[password]'] == '') {
+      else if(values['gamer[password]'] == '' || values['gamer[password]'] == "Password") {
         $(".email_error").html('Please enter a password');
         hasError = true;
       }
@@ -2428,12 +2428,12 @@ RegExp.escape = function(text) {
               }
               email = values['gamer_session[email]'];
               pass = values['gamer_session[password]'];
-              if ( email == '' ) {
+              if (email == '' || email == 'Email') {
                 $(".login_error").html('Please enter your email address');
                 $(".formError").show();
                 e.preventDefault();
               }
-              else if ( pass == '' ) {
+              else if (pass == '' || pass == 'Password') {
                 $(".login_error").html('Please enter your password');
                 $(".formError").show();
                 e.preventDefault();
