@@ -16,6 +16,12 @@ ActionController::Routing::Routes.draw do |map|
     m.connect 'login', :controller => 'games/gamer_sessions', :action => :create, :conditions => {:method => :post}
     m.login 'login', :controller => 'games/gamer_sessions', :action => :new
     m.logout 'logout', :controller => 'games/gamer_sessions', :action => :destroy
+    map.support 'support',
+      :controller => 'games/support_requests', :action => :support
+    map.bugs 'bugs',
+      :controller => 'games/support_requests', :action => :bugs
+    map.feedback 'feedback',
+      :controller => 'games/support_requests', :action => :feedback
 
     m.resource :gamer, :controller => 'games/gamers', :only => [ :create, :edit, :update, :destroy ],
       :member => { :password => :get, :prefs => :get, :update_password => :put, :accept_tos => :put, :confirm_delete => :get, :friends => :get } do |gamer|
