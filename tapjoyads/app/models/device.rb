@@ -18,8 +18,8 @@ class Device < SimpledbShardedResource
   self.sdb_attr :mac_address
   self.sdb_attr :platform
   self.sdb_attr :is_papayan, :type => :bool, :default_value => false
-  self.sdb_attr :all_time_packages
-  self.sdb_attr :current_packages
+  self.sdb_attr :all_time_packages, :type => :json, :default_value => []
+  self.sdb_attr :current_packages, :type => :json, :default_value => []
 
   def dynamic_domain_name
     domain_number = @key.matz_silly_hash % NUM_DEVICES_DOMAINS
@@ -163,9 +163,8 @@ class Device < SimpledbShardedResource
   end
 
   def update_package_names!(package_names)
-    all = (all_time_packages ? all_time_packages.split(',') : []) | package_names
-    self.all_time_packages = all.join(',')
-    self.current_packages = package_names.join(',')
+    self.all_time_packages |= package_names
+    self.current_packages = package_names
     save!
   end
 
