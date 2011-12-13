@@ -6,8 +6,8 @@ class Job::MasterReloadMoneyController < Job::JobController
 
     total_balance, total_pending_earnings = nil
     Partner.using_slave_db do
-      total_balance          = Partner.sum(:balance, :conditions => "id != '70f54c6d-f078-426c-8113-d6e43ac06c6d'") / 100.0
-      total_pending_earnings = Partner.sum(:pending_earnings, :conditions => "id != '70f54c6d-f078-426c-8113-d6e43ac06c6d'") / 100.0
+      total_balance          = Partner.sum(:balance, :conditions => "id != '#{TAPJOY_PARTNER_ID}'") / 100.0
+      total_pending_earnings = Partner.sum(:pending_earnings, :conditions => "id != '#{TAPJOY_PARTNER_ID}'") / 100.0
     end
 
     start_times               = {}
@@ -28,15 +28,14 @@ class Job::MasterReloadMoneyController < Job::JobController
     render :text => 'ok'
   end
 
-private
+  private
 
   def get_money_stats(start_times, end_time)
     accounting_cutoff = Conversion.accounting_cutoff_time
-    tj_partner = Partner.find('70f54c6d-f078-426c-8113-d6e43ac06c6d')
     stats = {}
     android_ids = App.by_platform('android').collect(&:id)
     ios_ids = App.by_platform('iphone').collect(&:id)
-    tj_apps = tj_partner.app_ids
+    tj_apps = App.by_partner_id(TAPJOY_PARTNER_ID).collect(&:id)
 
     Conversion.using_slave_db do
       start_times.each do |key, start_time|
@@ -59,8 +58,8 @@ private
           stats[key]['advertiser_spend'] = MonthlyAccounting.since(start_time).prior_to(accounting_cutoff).sum(:spend)
           stats[key]['advertiser_spend'] += Conversion.created_between(accounting_cutoff, end_time).sum(:advertiser_amount)
 
-          stats[key]['publisher_earnings'] = MonthlyAccounting.since(start_time).prior_to(accounting_cutoff).sum(:earnings, :conditions => ["partner_id != ?", tj_partner.id])
-          stats[key]['publisher_earnings'] += Conversion.created_between(accounting_cutoff, end_time).sum(:publisher_amount, :conditions => ["publisher_app_id NOT IN (?)", tj_partner.app_ids])
+          stats[key]['publisher_earnings'] = MonthlyAccounting.since(start_time).prior_to(accounting_cutoff).sum(:earnings, :conditions => ["partner_id != ?", TAPJOY_PARTNER_ID])
+          stats[key]['publisher_earnings'] += Conversion.created_between(accounting_cutoff, end_time).sum(:publisher_amount, :conditions => ["publisher_partner_id != ?", TAPJOY_PARTNER_ID])
 
           stats[key]['android_conversions']  = '-'
           stats[key]['android_adv_spend']    = '-'
@@ -71,7 +70,7 @@ private
         else
           stats[key]['conversions']        = Conversion.created_between(start_time, end_time).count(:conditions => ["reward_type < 1000 OR reward_type >= 2000"])
           stats[key]['advertiser_spend']   = Conversion.created_between(start_time, end_time).sum(:advertiser_amount)
-          stats[key]['publisher_earnings'] = Conversion.created_between(start_time, end_time).sum(:publisher_amount, :conditions => ["publisher_app_id NOT IN (?)", tj_partner.app_ids])
+          stats[key]['publisher_earnings'] = Conversion.created_between(start_time, end_time).sum(:publisher_amount, :conditions => ["publisher_partner_id != ?", TAPJOY_PARTNER_ID])
 
           stats[key]['android_conversions']  = Conversion.created_between(start_time, end_time).non_display.include_pub_apps(android_ids).count
           stats[key]['android_adv_spend']    = Conversion.created_between(start_time, end_time).include_pub_apps(android_ids).sum(:advertiser_amount) / -100.0

@@ -1,0 +1,59 @@
+sv:
+  text:
+    shared:
+      privacy: "Integritetspolicy"
+      ads_by: "Annonsör"
+
+    offerwall:
+      title: "Tjäna %{currency}"
+      free: "Gratis"
+      next: "Nästa %{items}"
+      previous: "Föregående %{items}"
+      missing_currency: "Saknade %{currency}?"
+      instructions: "Genomför något av följande erbjudande för att få %{currency}"
+      earn_currency: "Tjäna %{amount} %{currency}"
+      buy_currency: "Köp %{amount} %{currency}"
+      load_more: "Fler erbjudanden!"
+      loading: "Laddar..."
+      load_error: "Var vänlig försök igen."
+
+    featured:
+      title: "Tjäna %{currency}"
+      download_and_run: "Ladda ner och starta"
+      try_out: "Testa"
+      download: "Ladda ner"
+      skip: "Hoppa över"
+      earn_now: "Tjäna nu"
+      show_more_apps: "Visa fler appar"
+      earn_currency: "Tjäna %{amount_and_currency}"
+
+    unavailable_offer:
+      message: "Vi beklagar men %{offer} är inte längre tillgängligt. Du kan återgå till föregående sida och uppdatera den för att se de senaste erbjudandena."
+      optional_message: "Eller, klicka här för att ladda ner %{offer} ändå."
+
+    instructions:
+      title: "Instruktioner"
+      amount_and_currency: "%{amount} %{currency}"
+      earn_currency: "Tjäna %{amount_and_currency}"
+      header: "Följ dessa steg för att tjäna %{currency}:"
+      footer: "Efter att ha genomfört dessa steg kommer du tjäna %{amount_and_currency}."
+      download_action: "här"
+      download_link: "Om du inte har denna app, klicka %{download_action} för att ladda ner den."
+      continue_link: "Klicka här för att fortsätta."
+
+    support:
+      title: "Saknade %{currency}?"
+      instructions_1: "Var vänlig välj det erbjudande du genomförde utan att tilldelas %{currency} och skriv in din email adress. "
+      instructions_2: "Om du skickar in din förfrågan utan fullständig information kommer det att resultera i längre behandlingstid. Prioritering ges till förfrågningar med fullständig information."
+      specify_offer_label: "Specificera erbjudande:"
+      description_label: "Beskrivning:"
+      email_address_label: "Email adress:"
+      submit_support_request: "Skicka in Supportförfrågan"
+      support_request_submitted: "Supportförfrågan skickad"
+      thanks: "Tack för att du fyllt i supportförfrågan! Du kommer tilldelas din %{currency} när vi har verifierat att du genomfört erbjudandet."
+      missing_description: "Var vänlig och beskriv det erbjudande du genomförde."
+      missing_offer: "Du måste specificera det erbjudande du genomförde."
+      invalid_email: "Var vänlig och fyll i en giltig email adress."
+      abuse_warning: "Detta formulär är endast till för dem som inte har blivit belönade för ett genomfört erbjudanden. Missbruk kan leda till att ditt konto blir avstängt från att ta del av erbjudanden i framtiden. "
+      select_offer: "Välj erbjudande"
+      no_incomplete_offers_label: "Inga matchande erbjudanden kunde hittas."

@@ -74,6 +74,6 @@ class SurveyOffer < ActiveRecord::Base
   end
 
   def assign_partner_id
-    self.partner_id = Partner::THE_REAL_TAPJOY_PARTNER_ID
+    self.partner_id = TAPJOY_PARTNER_ID
   end
 end

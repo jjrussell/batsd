@@ -42,7 +42,7 @@ ActionController::Routing::Routes.draw do |map|
     :collection => { :global => :get, :publisher => :get, :advertiser => :get, :gamez => :get }
   map.resources :activities, :only => [ :index ]
   map.resources :partners, :only => [ :index, :show, :new, :create, :update, :edit ],
-    :member => { :make_current => :post, :manage => :post, :stop_managing => :post, :mail_chimp_info => :get, :new_transfer => :get, :create_transfer => :post, :reporting => :get },
+    :member => { :make_current => :post, :manage => :post, :stop_managing => :post, :mail_chimp_info => :get, :new_transfer => :get, :create_transfer => :post, :reporting => :get, :set_tapjoy_sponsored => :post },
     :collection => { :agency_api => :get } do |partner|
     partner.resources :offer_discounts, :only => [ :index, :new, :create ], :member => { :deactivate => :post }, :controller => 'partners/offer_discounts'
     partner.resources :payout_infos, :only => [ :index, :update ]
@@ -91,9 +91,10 @@ ActionController::Routing::Routes.draw do |map|
     tools.resources :editors_picks, :except => [ :destroy ], :member => { :activate => :post, :expire => :post }
     tools.resources :app_reviews, :except => [ :show ], :member => { :update_featured => :put }
     tools.resources :agency_users, :only => [ :index, :show ]
-    tools.resources :support_requests, :only => [ :index ], :collection => { :mass_resolve => :post }
+    tools.resources :support_requests, :only => [ :index ], :collection => { :mass_resolve => [ :get, :post ] }
     tools.resources :press_releases, :only => [ :index, :new, :create, :edit, :update ]
     tools.resources :network_costs, :only => [ :index, :new, :create ]
+    tools.resources :partner_program_statz, :only => [ :index ], :collection => { :export => :get }
   end
 
   map.connect 'mail_chimp_callback/callback', :controller => :mail_chimp_callback, :action => :callback

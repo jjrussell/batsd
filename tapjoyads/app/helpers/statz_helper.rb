@@ -21,6 +21,11 @@ module StatzHelper
           [ "0", "zero_conversions"],
           [ ">0", "nonzero_conversions"],
         ]
+      when :spend
+        [
+          [ "$0.00", "zero_spend"],
+          [ ">$0", "nonzero_spend"],
+        ]
       when :connects
         [
           [ "0", "zero_connects"],
@@ -38,10 +43,22 @@ module StatzHelper
           [">$0", "0"],
           ["\342\211\244$0","negative"],
         ]
+      when :pending_earning
+        [
+          [">$10k","earning_10k"],
+          [">$1k", "earning_1k"],
+          [">$0", "earning_zero"],
+          ["\342\211\244$0","earning_negative"],
+        ]
       when :revenue
         [
           ["$0.00", "zero_revenue"],
           [">$0", "nonzero_revenue"],
+        ]
+      when :publisher_revenue
+        [
+          ["$0.00", "zero_pub_revenue"],
+          [">$0", "nonzero_pub_revenue"],
         ]
       when :featured
         [
