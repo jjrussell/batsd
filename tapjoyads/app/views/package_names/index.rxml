@@ -1,7 +1,5 @@
 xml.instruct!
 xml.TapjoyConnectReturnObject do
   xml.Success @call_success
-  xml.PackageNamesObject do
-    xml.RefreshInterval @new_refresh_interval
-  end
+  xml.RefreshInterval @new_refresh_interval
 end

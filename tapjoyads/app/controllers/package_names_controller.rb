@@ -26,7 +26,7 @@ class PackageNamesController < ApplicationController
       web_request.save
     rescue
       @call_success = false
-      @new_refresh_interval = 0
+      @new_refresh_interval = 1.day
     end
   end
 end
