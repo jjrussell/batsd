@@ -2,6 +2,7 @@ class Job::QueueResolveSupportRequestsController < Job::SqsReaderController
 
   def initialize
     super QueueNames::RESOLVE_SUPPORT_REQUESTS
+    @num_reads = 5
   end
 
   private
