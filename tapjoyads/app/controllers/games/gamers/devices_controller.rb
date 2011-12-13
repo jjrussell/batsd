@@ -37,7 +37,7 @@ class Games::Gamers::DevicesController < GamesController
       :mac_address       => mac_address,
       :platform          => 'ios'
     }
-    redirect_to finalize_games_gamer_device_path(:data => SymmetricCrypto.encrypt_object(data, SYMMETRIC_CRYPTO_SECRET)), :status => 301
+    redirect_to finalize_games_gamer_device_path(:data => ObjectEncryptor.encrypt(data)), :status => 301
   rescue Exception => e
     Notifier.alert_new_relic(e.class, e.message, request, params)
     flash[:error] = "Error linking device. Please try again."
@@ -47,7 +47,7 @@ class Games::Gamers::DevicesController < GamesController
   def finalize
     if current_gamer.present?
       redirect_to games_root_path unless params[:data].present?
-      data = SymmetricCrypto.decrypt_object(params[:data], SYMMETRIC_CRYPTO_SECRET)
+      data = ObjectEncryptor.decrypt(params[:data])
 
       device = Device.new(:key => data[:udid])
       device.product = data[:product]
@@ -65,12 +65,13 @@ class Games::Gamers::DevicesController < GamesController
         else
           device.set_last_run_time!(TAPJOY_GAMES_REGISTRATION_OFFER_ID)
         end
-        session[:current_device_id] = SymmetricCrypto.encrypt_object(device.key, SYMMETRIC_CRYPTO_SECRET)
+
+        session[:current_device_id] = ObjectEncryptor.encrypt(device.key)
 
         if current_gamer.referrer.present? && !current_gamer.referrer.starts_with?('tjreferrer:')
           devices = GamerDevice.find_all_by_device_id(data[:udid])
           if devices.size == 1 && devices[0].gamer_id == current_gamer.id
-            invitation_id, advertiser_app_id = SymmetricCrypto.decrypt_object(current_gamer.referrer, SYMMETRIC_CRYPTO_SECRET).split(',')
+            invitation_id, advertiser_app_id = ObjectEncryptor.encrypt(current_gamer.referrer).split(',')
             referred_by_gamer = Gamer.find_by_id(current_gamer.referred_by)
             invitation = Invitation.find_by_id_and_gamer_id(invitation_id, current_gamer.referred_by)
             if advertiser_app_id && referred_by_gamer && invitation

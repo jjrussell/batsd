@@ -41,7 +41,7 @@ class ExternalPublisher
     data[:os_version]    = os_version if os_version.present?
     data[:gamer_id]      = gamer_id if gamer_id.present?
 
-    "#{API_URL}/get_offers?data=#{SymmetricCrypto.encrypt_object(data, SYMMETRIC_CRYPTO_SECRET)}"
+    "#{API_URL}/get_offers?data=#{ObjectEncryptor.encrypt(data)}"
   end
 
   def self.load_all_for_device(device)

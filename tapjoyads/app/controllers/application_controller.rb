@@ -225,7 +225,7 @@ private
     return unless params[:data].present?
 
     begin
-      data = SymmetricCrypto.decrypt_object(params[:data], SYMMETRIC_CRYPTO_SECRET)
+      data = ObjectEncryptor.decrypt(params[:data])
       params.merge!(data)
     rescue OpenSSL::Cipher::CipherError, TypeError => e
       render :text => 'bad request', :status => 400

@@ -31,7 +31,7 @@ module Offer::UrlGeneration
       :library_version       => library_version,
     }
 
-    "#{API_URL}/offer_instructions?data=#{SymmetricCrypto.encrypt_object(data, SYMMETRIC_CRYPTO_SECRET)}"
+    "#{API_URL}/offer_instructions?data=#{ObjectEncryptor.encrypt(data)}"
   end
 
   def complete_action_url(options)
@@ -137,7 +137,7 @@ module Offer::UrlGeneration
       :gamer_id           => gamer_id
     }
 
-    "#{click_url}?data=#{SymmetricCrypto.encrypt_object(data, SYMMETRIC_CRYPTO_SECRET)}"
+    "#{click_url}?data=#{ObjectEncryptor.encrypt(data)}"
   end
 
   def display_ad_image_url(publisher_app_id, width, height, currency_id = nil, display_multiplier = nil, bust_cache = false, use_cloudfront = true)

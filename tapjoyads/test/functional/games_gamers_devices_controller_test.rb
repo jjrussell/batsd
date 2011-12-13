@@ -17,7 +17,7 @@ class Games::Gamers::DevicesControllerTest < ActionController::TestCase
 
       invitation = Factory(:invitation, :gamer_id => @inviter.id)
 
-      gamer = Factory(:gamer, :referrer => SymmetricCrypto.encrypt_object("#{invitation.id},#{generic_offer_for_invite.id}", SYMMETRIC_CRYPTO_SECRET))
+      gamer = Factory(:gamer, :referrer => ObjectEncryptor.encrypt("#{invitation.id},#{generic_offer_for_invite.id}"))
       gamer.gamer_profile = GamerProfile.create(:gamer => gamer, :referred_by => @inviter.id)
       games_login_as(gamer)
     end
@@ -30,7 +30,7 @@ class Games::Gamers::DevicesControllerTest < ActionController::TestCase
         :mac_address       => Factory.next(:name),
         :platform          => 'ios'
       }
-      get :finalize, {:data => SymmetricCrypto.encrypt_object(data, SYMMETRIC_CRYPTO_SECRET)}
+      get :finalize, {:data => ObjectEncryptor.encrypt(data)}
       assert_equal false, Click.new(:key => "#{@inviter.id}.invite[1]", :consistent => true).new_record?
     end
   end

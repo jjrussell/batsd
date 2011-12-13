@@ -4,13 +4,13 @@ module GetOffersHelper
     return nil if @more_data_available < 1
     tmp_params = params.reject { |k, v| k == 'controller' || k == 'action' }
     tmp_params['json'] = "1"
-    "/get_offers?data=#{SymmetricCrypto.encrypt_object(tmp_params, SYMMETRIC_CRYPTO_SECRET)}"
+    "/get_offers?data=#{ObjectEncryptor.encrypt(tmp_params)}"
   end
 
   def get_currency_link(currency)
     tmp_params = params.reject { |k, v| k == 'controller' || k == 'action' }
     tmp_params['currency_id'] = currency.id
-    url = "/get_offers/webpage?data=#{SymmetricCrypto.encrypt_object(tmp_params, SYMMETRIC_CRYPTO_SECRET)}"
+    url = "/get_offers/webpage?data=#{ObjectEncryptor.encrypt(tmp_params)}"
     link_to(currency.name, url)
   end
 
