@@ -21,6 +21,8 @@
                       %li.field.email
                         = f.email_field :email, "autocorrect" => "off", "autocapitalize" => "off", :placeholder => "Email", :required => ""
                       %li.field.password
+                        %label{ :for => "password", :class => "hidden" }
+                          Password
                         = f.password_field :password, :placeholder => "Password", :required => ""
                     %ul.group
                       %li.field.login_btn
@@ -57,6 +59,8 @@
                     .field
                       = f.email_field :email, "autocorrect" => "off", "autocapitalize" => "off", :placeholder => "Email"
                     .field
+                      %label{ :for => "password", :class => "hidden" }
+                        Password
                       = f.password_field :password, :placeholder => "Password"
                     .row
                       .field.field_tos
@@ -127,31 +131,3 @@
 
 - content_for :page_javascript do
   :plain
-    $(window).load(function() {
-      $('form#new_gamer_session').submit(function(e){
-        $(".formError").hide();
-        var inputs, email, pass, values = {};
-        var emailReg = /^([\w-\.+]+@([\w-]+\.)+[\w-]{2,4})?$/;
-        inputs = $('form#new_gamer_session :input*');
-        inputs.each(function() {
-          if (this.type == 'checkbox' || this.type == 'radio') {
-            values[this.name] = $(this).attr("checked");
-          }
-          else {
-            values[this.name] = $(this).val();
-          }
-          email = values['gamer_session[email]'];
-          pass = values['gamer_session[password]'];
-          if ( email == '' ) {
-            $(".login_error").html('Please enter your email address');
-            $(".formError").show();
-            e.preventDefault();
-          }
-          else if ( pass == '' ) {
-            $(".login_error").html('Please enter your password');
-            $(".formError").show();
-            e.preventDefault();
-          }
-        });
-      });
-    });
