@@ -18,17 +18,4 @@ class Games::SupportRequestsController < GamesController
     end
   end
 
-  def support
-    redirect_to new_games_support_request_path(:type => 'contact_support')
-  end
-
-  def bugs
-    redirect_to new_games_support_request_path(:type => 'report_bug')
-  end
-
-  def feedback
-    redirect_to new_games_support_request_path(:type => 'feedback')
-  end
-
-
 end
