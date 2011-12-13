@@ -1,43 +1,61 @@
 %h1 Gamer Management
 = render('search')
 
-= render('games/gamers/header')
+#search_results
+  = render('games/gamers/header')
 
-%table.tablesorter
-  %tbody
-    %tr
-      %th Name
-      %td= @gamer.get_gamer_name
-    %tr
-      %th Gender
-      %td= @gamer_profile.gender
-    %tr
-      %th Birthdate
-      %td= @gamer_profile.birthdate
-    %tr
-      %th City
-      %td= @gamer_profile.city
-    %tr
-      %th Country
-      %td= @gamer_profile.country
-    %tr
-      %th Postal Code
-      %td= @gamer_profile.postal_code
-    %tr
-      %th Favorite Game
-      %td= @gamer_profile.favorite_game
-    %tr
-      %th Favorite Category
-      %td= @gamer_profile.favorite_category
-    %tr
-      %th Last Login
-      %td= @gamer.last_login_at? ? @gamer.last_login_at.to_s(:db) : 'never'
-    %tr
-      %th Created
-      %td= @gamer.created_at.to_s(:db)
-    %tr
-      %th Updated
-      %td= @gamer.updated_at? ? @gamer.updated_at.to_s(:db) : 'never'
+  %table#gamer_profile.tablesorter
+    %tbody
+      %tr
+        %th Name
+        %td{ :class => @gamer.get_gamer_name.blank? ? 'blank' : '' }
+          = @gamer.get_gamer_name.blank? ? 'None specified' : @gamer.get_gamer_name
+      %tr
+        %th Gender
+        %td{ :class => @gamer_profile.gender? ? '' : 'blank' }
+          = @gamer_profile.gender? ? @gamer_profile.gender : 'None specified'
+      %tr
+        %th Birthdate
+        %td{ :class => @gamer_profile.birthdate? ? '' : 'blank' }
+          = @gamer_profile.birthdate? ? @gamer_profile.birthdate.to_s(:pr) : 'None specified'
+      %tr
+        %th City
+        %td{ :class => @gamer_profile.city? ? '' : 'blank' }
+          = @gamer_profile.city? ? @gamer_profile.city : 'None specified'
+      %tr
+        %th Country
+        %td{ :class => @gamer_profile.country? ? '' : 'blank' }
+          = @gamer_profile.country? ? @gamer_profile.country : 'None specified'
+      %tr
+        %th Postal Code
+        %td{ :class => @gamer_profile.postal_code? ? '' : 'blank' }
+          = @gamer_profile.postal_code? ? @gamer_profile.postal_code : 'None specified'
+      %tr
+        %th Favorite Game
+        %td{ :class => @gamer_profile.favorite_game? ? '' : 'blank' }
+          = @gamer_profile.favorite_game? ? @gamer_profile.favorite_game : 'None specified'
+      %tr
+        %th Favorite Category
+        %td{ :class => @gamer_profile.favorite_category? ? '' : 'blank' }
+          = @gamer_profile.favorite_category? ? @gamer_profile.favorite_category : 'None specified'
+      %tr
+        %th Referrals
+        %td= number_with_delimiter @gamer_profile.referral_count
+      %tr
+        %th Referred by
+        %td{ :class => @gamer_profile.referred_by? ? '' : 'blank' }
+          = @gamer_profile.referred_by? ? @gamer_profile.referred_by : 'None'
+      %tr
+        %th Last Login
+        %td{ :class => @gamer.last_login_at? ? '' : 'blank' }
+          = @gamer.last_login_at? ? @gamer.last_login_at.to_s(:pub_full_ampm_sec_zone) : 'Never'
+      %tr
+        %th Created
+        %td= @gamer.created_at.to_s(:pub_full_ampm_sec_zone)
+      %tr
+        %th Updated
+        %td{ :class => @gamer.updated_at? ? '' : 'blank' }
+          = @gamer.updated_at? ? @gamer.updated_at.to_s(:pub_full_ampm_sec_zone) : 'Never'
 
 - content_for :page_styles do
   :plain
@@ -55,4 +73,16 @@
     }
     #profile_info_display td {
       padding-right: 5px;
+    }
+    #gamer_profile th {
+      padding-left: 30px;
+      padding-right: 5px;
+      text-align: right;
+      white-space: nowrap;
+      width: 0%;
+    }
+    #gamer_profile td.blank {
+      color: #AAAAAA;
+      font-style: italic;
+      width: 100%;
     }
