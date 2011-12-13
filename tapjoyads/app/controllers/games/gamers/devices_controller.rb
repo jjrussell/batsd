@@ -74,7 +74,7 @@ class Games::Gamers::DevicesController < GamesController
             referred_by_gamer = Gamer.find_by_id(current_gamer.referred_by)
             invitation = Invitation.find_by_id_and_gamer_id(invitation_id, current_gamer.referred_by)
             if advertiser_app_id && referred_by_gamer && invitation
-              click = Click.new(:key => "#{current_gamer.referred_by}.#{advertiser_app_id}")
+              click = Click.new(:key => "#{current_gamer.referred_by}.#{advertiser_app_id}", :consistent => true)
               unless click.new_record?
                 new_referral_count = referred_by_gamer.referral_count + 1
                 referred_by_gamer.gamer_profile.update_attributes!(:referral_count => new_referral_count)
