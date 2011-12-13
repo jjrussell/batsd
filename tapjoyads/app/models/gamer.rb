@@ -3,6 +3,7 @@ class Gamer < ActiveRecord::Base
 
   has_many :gamer_devices, :dependent => :destroy
   has_many :invitations, :dependent => :destroy
+  has_many :gamer_reviews, :as => :author, :dependent => :destroy
   has_one :gamer_profile, :dependent => :destroy
   delegate :facebook_id, :facebook_id?, :fb_access_token, :referred_by, :referred_by=, :referred_by?, :referral_count, :to => :gamer_profile, :allow_nil => true
 

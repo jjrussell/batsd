@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20111130154545) do
+ActiveRecord::Schema.define(:version => 20111209193119) do
 
   create_table "action_offers", :id => false, :force => true do |t|
     t.string   "id",                    :limit => 36,                    :null => false
@@ -323,6 +323,21 @@ ActiveRecord::Schema.define(:version => 20111130154545) do
   add_index "gamer_profiles", ["gamer_id"], :name => "index_gamer_profiles_on_gamer_id", :unique => true
   add_index "gamer_profiles", ["id"], :name => "index_gamer_profiles_on_id", :unique => true
   add_index "gamer_profiles", ["referred_by"], :name => "index_gamer_profiles_on_referred_by"
+
+  create_table "gamer_reviews", :id => false, :force => true do |t|
+    t.string   "id",          :limit => 36, :null => false
+    t.string   "app_id",      :limit => 36, :null => false
+    t.string   "author_id",   :limit => 36, :null => false
+    t.string   "author_type",               :null => false
+    t.string   "platform",                  :null => false
+    t.text     "text",                      :null => false
+    t.float    "user_rating"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "gamer_reviews", ["app_id", "author_id"], :name => "index_gamer_reviews_on_app_id_and_author_id", :unique => true
+  add_index "gamer_reviews", ["id"], :name => "index_gamer_reviews_on_id", :unique => true
 
   create_table "gamers", :id => false, :force => true do |t|
     t.string   "id",                     :limit => 36,                    :null => false

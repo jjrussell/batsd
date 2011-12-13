@@ -1976,3 +1976,57 @@ li.tj_friend:last-child { border: none; }
   -webkit-box-shadow: 0px 2px 4px #222;
   box-shadow: 0px 2px 4px #222;
 }
+.offer_review {
+  background: #FFF;
+  border: 1px solid grey;
+  padding: 5px;
+}
+.offer_review textarea{
+  width: 100%;
+  border: none;
+}
+.review_submit {
+  margin-top: 10px;
+  float: right;
+}
+.review_submit input {
+  font-family: "HelveticaNeue-Light","Helvetica Neue Light","Helvetica Neue",Helvetica,Arial,"Lucida Grande",sans-serif;
+  font-weight: bold;
+  font-size: 13px;
+  width: 110px;
+  background: -moz-linear-gradient(top, #e7e7e7 0%, #c4c4c4 100%);
+  background: -webkit-gradient(linear, 0 0, 0 100%, color-stop(0, #e7e7e7), color-stop(1, #c4c4c4));
+  color: #3F3F3F;
+  border-radius: 6px;
+  -moz-border-radius: 6px;
+  -webkit-border-radius: 6px;
+  -moz-box-shadow: inset 1px 1px 1px #FFF;
+  -webkit-box-shadow: inset 1px 1px #FFF;
+  -moz-box-shadow: 1px 1px 1px #303030;
+  -webkit-box-shadow: 1px 1px 1px #303030;
+
+  &:hover, &:active {
+    border-color: #B0131D;
+    color: #FFF;
+    text-shadow: 0 1px 1px #444;
+    @include inset-shadow;
+    @include gradient(#CF1623, #EA1927);
+    background: red;
+  }
+}
+#gamer_reviews_table, .no_review {
+  margin: 10px;
+  width: 95%;
+  text-align: center;
+}
+#gamer_reviews_table th {
+  font-weight: bold;
+  width: 25%;
+}
+#gamer_reviews_table td {
+  padding: 5px;
+  vertical-align: middle;
+}
+#gamer_reviews_table td div{
+  margin: 2px;
+}

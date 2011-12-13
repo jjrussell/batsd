@@ -1,0 +1,22 @@
+- form_for([:tools, @gamer_review], :html => { :class => 'tjform' }) do |f|
+  = f.hidden_field :app_id
+  = f.hidden_field :author_type, :value => 'Gamer'
+  %table
+    %tr
+      %th= f.label :reviewer
+      %td
+        = @gamer_review.author.get_gamer_name
+        = error_message_on @gamer_review, :author
+    %tr
+      %th= f.label :user_rating
+      %td
+        = f.select :user_rating, [1,2,3,4,5]
+        = error_message_on @gamer_review, :user_rating
+    %tr
+      %th= f.label :review_text
+      %td
+        = f.text_area :text, :rows => 10, :size => 50
+        = error_message_on @gamer_review, :text
+    %tr
+      %th
+      %td= f.submit

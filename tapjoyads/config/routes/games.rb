@@ -39,5 +39,7 @@ ActionController::Routing::Routes.draw do |map|
       social.invite_facebook_friends 'invite_facebook_friends', :action => :invite_facebook_friends
       social.send_facebook_invites 'send_facebook_invites', :action => :send_facebook_invites
     end
+
+    m.resources :gamer_reviews, :controller => 'games/gamer_reviews', :only => [ :index, :new, :create, :edit, :update, :destroy]
   end
 end

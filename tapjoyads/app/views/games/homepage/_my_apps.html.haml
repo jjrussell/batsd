@@ -9,12 +9,20 @@
             .offer_title.title
               = external_publisher.app_name
         .offer_info
-        - external_publisher.currencies.each do |currency|
-          - link_to("#", :id => currency[:id], :class => "get_offerwall_jsonp", :jsonp_url => external_publisher.get_offerwall_url(@device, currency, request.headers), :currency => currency[:name], :app_name => external_publisher.app_name) do
-            .currency_item.left
+          - external_publisher.currencies.each do |currency|
+            - link_to("#", :id => currency[:id], :class => "get_offerwall_jsonp", :jsonp_url => external_publisher.get_offerwall_url(@device, currency, request.headers), :currency => currency[:name], :app_name => external_publisher.app_name) do
+              .currency_item.left
+                .offer_button
+                  .button.grey
+                    %span.earn
+                      Earn
+                    %span.currency
+                      = currency[:name]
+          - link_to new_games_gamer_review_path(:app_id => external_publisher.app_id) do
+            .currency_item.right
               .offer_button
                 .button.grey
                   %span.earn
-                    Earn
+                    Write
                   %span.currency
-                    = currency[:name]
+                    Review

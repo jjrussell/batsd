@@ -1,0 +1,41 @@
+#jqt
+  #home.current
+    = render :partial => 'games/homepage/nav_bar', :locals => { :active => 'back', :back_button_destination => edit_games_gamer_path }
+
+    .content_wrapper
+      = render(:partial => 'games/gamers/header')
+      #display_reviews.profile
+        .content
+          .title_2
+            My App Reviews
+          .content_box
+            #reviews_display
+              - if @gamer_reviews.size > 0
+                %table#gamer_reviews_table
+                  %thead
+                    %tr
+                      %th App Name
+                      %th Your Rating
+                      %th Review Text
+                      %th
+                  %tbody
+                    - @gamer_reviews.each do |gamer_review|
+                      %tr
+                        %td= truncate(gamer_review.app_name, :length => 20)
+                        %td= gamer_review.user_rating
+                        %td= truncate(gamer_review.text, :length => 25)
+                        %td
+                          - link_to edit_games_gamer_review_path(gamer_review) do
+                            .edit_review.left
+                              .edit_review_button
+                                .button.grey
+                                  %span.currency
+                                    Edit
+                          - link_to games_gamer_review_path(gamer_review), :method => :delete, :confirm => "Delete review?" do
+                            .delete_review.left
+                              .delete_review_button
+                                .button.grey
+                                  %span.currency
+                                    Delete
+              - else
+                .no_review No Review Available

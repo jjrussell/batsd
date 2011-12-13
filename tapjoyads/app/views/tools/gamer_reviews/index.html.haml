@@ -1,0 +1,46 @@
+- @page_title = 'All Gamer Reviews'
+
+%h1
+  All Gamer Reviews
+  - if @app.present?
+    for #{@app.name}
+  - if @author.present?
+    by #{@author.get_gamer_name}
+
+- if @app.present? || @author.present?
+  = link_to "[All gamer reviews]", tools_gamer_reviews_path
+
+%br
+
+%table#gamer_reviews_table.tablesorter
+  %thead
+    %tr
+      %th App Name
+      %th Reviewer
+      %th Platform
+      %th Review Text
+      %th User Rating
+      %th
+      %th
+  %tbody
+    - @gamer_reviews.each do |gamer_review|
+      %tr
+        %td= link_to(gamer_review.app_name, tools_gamer_reviews_path(:app_id => gamer_review.app_id))
+        %td= link_to(gamer_review.author.get_gamer_name, tools_gamer_reviews_path(:author_id => gamer_review.author_id))
+        %td= gamer_review.platform
+        %td= gamer_review.text
+        %td= gamer_review.user_rating
+        %td= link_to('Edit', edit_tools_gamer_review_path(gamer_review))
+        %td= link_to('Delete', tools_gamer_review_path(gamer_review), :method => :delete, :confirm => "Delete review?")
+
+- content_for :page_javascript do
+  :plain
+    $(function() {
+      $("#gamer_reviews_table").tablesorter({
+        widgets: ['zebra'],
+        headers: {
+          5: { sorter: false },
+          6: { sorter: false }
+        }
+      });
+    });

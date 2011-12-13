@@ -55,6 +55,8 @@
     %li= link_to 'Editor\'s Choices', tools_editors_picks_path
   - if permitted_to? :index, :tools_app_reviews
     %li= link_to 'App Reviews', tools_app_reviews_path
+  - if permitted_to? :index, :tools_gamer_reviews
+    %li= link_to 'Gamer Reviews', tools_gamer_reviews_path
 
 - if has_permissions_for_one_of?(:account_mgr)
   %h3 Account Management
