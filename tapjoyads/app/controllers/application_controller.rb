@@ -158,11 +158,16 @@ private
     activity_log                  = ActivityLog.new({ :load => false })
     activity_log.request_id       = @request_id
     activity_log.user             = 'system'
-    activity_log.user             = current_user.username if self.respond_to?(:current_user)
     activity_log.controller       = params[:controller]
     activity_log.action           = params[:action]
     activity_log.included_methods = included_methods
     activity_log.object           = object
+    activity_log.ip_address       = get_ip_address
+
+    if self.respond_to?(:current_user)
+      activity_log.user           = current_user.username
+      activity_log.user_id        = current_user.id
+    end
 
     @activity_logs << activity_log
   end
