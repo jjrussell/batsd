@@ -30,7 +30,7 @@ describe Job::MasterReloadStatzController do
       returns([{ :spend => 1 }])
     
     vertica_options = {
-        :select     => 'publisher_app_id AS offer_id, count(*) AS published_offers, sum(publisher_amount + tapjoy_amount) AS gross_revenue',
+        :select     => 'publisher_app_id AS offer_id, count(*) AS published_offers, sum(publisher_amount + tapjoy_amount) AS gross_revenue, sum(publisher_amount) AS publisher_revenue',
         :group      => 'publisher_app_id',
         :conditions => conditions.join(' AND '),
     }
@@ -38,7 +38,7 @@ describe Job::MasterReloadStatzController do
       expects(:query).
       once.
       with('analytics.actions', vertica_options).
-      returns([{ :gross_revenue => 5 }])
+      returns([{ :gross_revenue => 5, :publisher_revenue => 5 }])
   end
 
   describe 'when caching stats' do
@@ -46,10 +46,11 @@ describe Job::MasterReloadStatzController do
       get :index
 
       stats_hash = {
-        "conversions"      => nil,
-        "gross_revenue"    => "$0.05",
-        "published_offers" => nil,
-        "spend"            => "$0.01",
+        "conversions"       => nil,
+        "gross_revenue"     => "$0.05",
+        "publisher_revenue" => "$0.05",
+        "published_offers"  => nil,
+        "spend"             => "$0.01",
       }
       stats_array = [[nil, stats_hash]]
 
