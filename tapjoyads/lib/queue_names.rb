@@ -12,6 +12,7 @@ class QueueNames
   FAILED_SDB_SAVES       = "#{BASE_NAME}FailedSdbSaves"
   GET_STORE_INFO         = "#{BASE_NAME}GetStoreInfo"
   MAIL_CHIMP_UPDATES     = "#{BASE_NAME}MailChimpUpdates"
+  PARTNER_CHANGES        = "#{BASE_NAME}PartnerChanges"
   PARTNER_NOTIFICATIONS  = "#{BASE_NAME}PartnerNotifications"
   RECOUNT_STATS          = "#{BASE_NAME}RecountStats"
   SDB_BACKUPS            = "#{BASE_NAME}SdbBackups"
