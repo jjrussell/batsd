@@ -4,6 +4,8 @@ class Gamer < ActiveRecord::Base
   has_many :gamer_devices, :dependent => :destroy
   has_many :invitations, :dependent => :destroy
   has_one :gamer_profile, :dependent => :destroy
+  has_one :referrer_gamer, :class_name => 'Gamer', :primary_key => :referred_by, :foreign_key => :id
+
   delegate :facebook_id, :facebook_id?, :fb_access_token, :referred_by, :referred_by=, :referred_by?, :referral_count, :to => :gamer_profile, :allow_nil => true
 
   validates_associated :gamer_profile, :on => :create

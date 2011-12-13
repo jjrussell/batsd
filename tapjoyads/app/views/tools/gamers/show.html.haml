@@ -44,7 +44,12 @@
       %tr
         %th Referred by
         %td{ :class => @gamer_profile.referred_by? ? '' : 'blank' }
-          = @gamer_profile.referred_by? ? @gamer_profile.referred_by : 'None'
+          - if @gamer_profile.referred_by?
+            = @gamer_profile.referrer_gamer.get_gamer_name
+            = surround "(", ")" do
+              = link_to @gamer_profile.referred_by, tools_gamer_path(@gamer_profile.referred_by)
+          - else
+            None
       %tr
         %th Last Login
         %td{ :class => @gamer.last_login_at? ? '' : 'blank' }
