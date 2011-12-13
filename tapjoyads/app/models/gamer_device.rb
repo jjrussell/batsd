@@ -69,7 +69,7 @@ class GamerDevice < ActiveRecord::Base
     {
       :name        => name,
       :device_type => device_type,
-      :data        => SymmetricCrypto.encrypt_object(data, SYMMETRIC_CRYPTO_SECRET),
+      :data        => ObjectEncryptor.encrypt(data),
     }
   end
 end
