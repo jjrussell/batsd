@@ -102,7 +102,7 @@
                       .description
                         Engaging with your favorite apps can be just a tap away.
 
-        - if @linked && @offer_data.any?
+        - if @offer_data.any?
           - @offer_data.each do |currency_id, offers|
             - earn_url = "#{WEBSITE_URL}/earn/#{currency_id}"
             - external_publisher = offers[:external_publisher]
@@ -136,7 +136,7 @@
                             Earn
                             = h("#{offer['Payout']} #{offers['CurrencyName']}.")
 
-        - elsif @recommendations.any?
+        - if @recommendations.any?
           %tr
             %td
               - link_to("#{WEBSITE_URL}/more_apps", :style => css[:a]) do

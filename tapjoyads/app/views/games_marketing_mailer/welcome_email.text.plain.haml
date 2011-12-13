@@ -19,7 +19,7 @@
     #{step_number+=1}.) Add Tapjoy to your Home Screen at #{WEBSITE_URL}. Engaging with your favorite apps can be just a tap away.
   = blank_line
 
-- if @linked && @offer_data.any?
+- if @offer_data.any?
   - @offer_data.each do |currency_id, offers|
     - external_publisher = offers[:external_publisher]
 
@@ -36,7 +36,7 @@
       See more here: #{WEBSITE_URL}/earn/#{currency_id}
     = blank_line
 
-- elsif @recommendations.any?
+- if @recommendations.any?
   :plain
     #{step_number+=1}.) Check out Recommended Apps personal to you. Here are a few examples:
   = blank_line
