@@ -39,6 +39,9 @@ class StatzController < WebsiteController
         @associated_offers = @offer.find_associated_offers
         @active_boosts = @offer.rank_boosts.active
         @total_boost = @active_boosts.map(&:amount).sum
+        num_rewards = @offer.num_clicks_rewarded
+        @support_request_rewards_ratio = 'NA'
+        @support_request_rewards_ratio = ("%.3f" % (@offer.num_support_requests * 100.0 / num_rewards)) if num_rewards > 0
       end
 
       format.json do

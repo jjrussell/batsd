@@ -61,6 +61,11 @@ class Click < SimpledbShardedResource
     !(new_record? || installed_at? || clicked_at < (Time.zone.now - 2.days))
   end
 
+  def successfully_rewarded?
+    reward = Reward.find(reward_key)
+    installed_at? && reward && reward.successful?
+  end
+
   def resolve!
     raise 'Unknown click id.' if new_record?
 
