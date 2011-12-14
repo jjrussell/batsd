@@ -1,0 +1,368 @@
+- @page_title = "Tapjoy sponsored publishers stats"
+
+%h1= @page_title
+
+.tjform
+  = label_tag('search_box', 'Offer Name:')
+  = text_field_tag('search_box', '', :size => '40')
+
+%br
+
+%form#csv_export{ :action => export_tools_partner_program_statz_path, :method => 'get' }
+  = hidden_field_tag(:date,  @start_time.to_date.to_s(:mdy), :id => "start_time")
+  = hidden_field_tag(:end_date, @end_time.to_date.to_s(:mdy), :id => "end_time")
+  = button_to 'Export to csv'
+
+.tjform
+  %form#change_date.tjform
+    = text_field_tag(:date, @start_time.to_date.to_s(:mdy))
+    \-
+    = text_field_tag(:end_date, @end_time.to_date.to_s(:mdy))
+    = submit_tag('Update', :id => :date_submit)
+
+%p Note: publisher revenue total and publisher pending earnings total are sums by publishers, not sums of the columns.
+
+%table#apps_table.tablesorter
+  %thead
+    %tr
+      %th
+        %a{ :id => 'toggle_icons', :href => '#' } Icon
+      %th Offer
+      %th Publisher name
+      %th{ :class => 'headerSortUp header' } Conversions
+      %th Store rank
+      %th Price
+      %th Payment
+      %th Balance
+      %th Platform
+      %th CVR
+      %th Published offers
+      %th Offers revenue
+      %th Publisher Revenue
+      %th Publisher pending earnings
+      %th Featured
+      %th Rewarded
+      %th Offer type
+      %th Sales rep
+    %tr.total
+      %td.total#total{:colspan => 3} Total
+      %td.total.total_convertions
+      %td
+      %td
+      %td
+      %td
+      %td
+      %td
+      %td.total.total_published_offers
+      %td.total.total_offers_revenue
+      %td.total.total_publisher_revenue
+      %td.total.total_publisher_pending_earnings
+      %td
+      %td
+      %td
+      %td
+    %tr
+      %td.filter#filters_title{:colspan => 2}
+        %b Filters
+        (#{link_to('reset all', '#', :id => 'reset_filters')})
+      %td.filter= select_tag('publisher_filter', options_for_select(["-"].concat(@partner_names.values)))
+      %td.filter= select_tag('conversions_filter', options_for_select(filter_options(:conversions)))
+      %td.filter= select_tag('rank_filter', options_for_select(filter_options(:rank)))
+      %td.filter= select_tag('price_filter', options_for_select(filter_options(:free)))
+      %td.filter &nbsp;
+      %td.filter= select_tag('balance_filter', options_for_select(filter_options(:balance)))
+      %td.filter= select_tag('platform_filter', options_for_select(filter_options(:platform)))
+      %td.filter &nbsp;
+      %td.filter= select_tag('published_offers_filter', options_for_select(filter_options(:published_offers)))
+      %td.filter= select_tag('revenue_filter', options_for_select(filter_options(:offer_revenue)))
+      %td.filter= select_tag('publisher_revenue_filter', options_for_select(filter_options(:publisher_revenue)))
+      %td.filter= select_tag('publisher_pending_earnings_filter', options_for_select(filter_options(:pending_earning)))
+      %td.filter= select_tag('featured_filter', options_for_select(filter_options(:featured)))
+      %td.filter= select_tag('rewarded_filter', options_for_select(filter_options(:rewarded)))
+      %td.filter= select_tag('offer_type_filter', options_for_select(filter_options(:offer_type)))
+      %td
+  %tbody#apps_tbody
+    - @partner_program_stats.each do |offer_id, stats|
+      :ruby
+        metadata = @partner_program_metadata[offer_id]
+        tr_classes = []
+        tr_classes << (stats['conversions'] == '0'         ? 'zero_conversions' : 'nonzero_conversions')
+        tr_classes << (metadata['overall_store_rank'] == '-'  ? 'unranked'         : 'ranked')
+        tr_classes << (metadata['price'] == '$0.00'        ? 'free'             : 'paid')
+        tr_classes << metadata['platform'].to_s.downcase
+        tr_classes << (stats['published_offers'] == '0'    ? 'zero_published'   : 'nonzero_published')
+        tr_classes << (stats['offers_revenue'] == 0  ? 'zero_offer_revenue'     : 'nonzero_offer_revenue')
+        tr_classes << (@partner_revenue_stats[metadata['partner_id']] == 0  ? 'zero_publisher_revenue'     : 'nonzero_publisher_revenue')
+        tr_classes << (metadata['featured']                ? 'featured'         : 'nonfeatured')
+        tr_classes << (metadata['rewarded']                ? 'rewarded'         : 'nonrewarded')
+        tr_classes << metadata['offer_type'].to_s.downcase
+        partner_pending_earnings = metadata['partner_pending_earnings'] / 100.0
+        tr_classes << (partner_pending_earnings > 10000    ? 'earning_10k'      : '')
+        tr_classes << (partner_pending_earnings > 1000     ? 'earning_1k'       : '')
+        tr_classes << (partner_pending_earnings > 0        ? 'earning_zero'     : '')
+        tr_classes << (partner_pending_earnings <= 0       ? 'earning_negative' : '')
+        value = metadata['balance'].gsub(/[\$,]/,'')
+        title = @partner_names[metadata['partner_id']]
+      %tr{ :class => tr_classes.compact.join(' '), :value => value, :title => title }
+        %td
+          %img.icon.hidden{ :s => metadata['icon_url'] }
+        %td= link_to(metadata['offer_name'], statz_path(offer_id))
+        %td= title
+        %td= stats['conversions']
+        %td= metadata['overall_store_rank']
+        %td= metadata['price']
+        %td= metadata['payment']
+        %td= metadata['balance']
+        %td= metadata['platform']
+        %td= metadata['conversion_rate']
+        %td= stats['published_offers']
+        %td= number_to_currency(stats['offers_revenue'] / 100.0)
+        %td= number_to_currency(@partner_revenue_stats[metadata['partner_id']] / 100.0)
+        %td= number_to_currency(partner_pending_earnings)
+        %td= metadata['featured']
+        %td= metadata['rewarded']
+        %td= metadata['offer_type']
+        %td= metadata['sales_rep']
+  %thead
+    %tr.total
+      %td.total#total{:colspan => 3} Total
+      %td.total.total_convertions
+      %td
+      %td
+      %td
+      %td
+      %td
+      %td
+      %td.total.total_published_offers
+      %td.total.total_offers_revenue
+      %td.total.total_publisher_revenue
+      %td.total.total_publisher_pending_earnings
+      %td
+      %td
+      %td
+      %td
+
+- content_for :page_javascript do
+  :plain
+    $(function() {
+      $('#search_box').autocomplete({ source: '#{search_offers_path}', delay: 250, minLength: 2, select: function(event, ui) { window.location.assign(ui.item.url); } });
+      $.tablesorter.addParser({
+        id: 'currency-column',
+        is: function(s) { return false; },
+        type: 'numeric',
+        format: function(s) {
+          return s.replace(/\$/g, '').replace(/,/g, '');
+        }
+      });
+      $.tablesorter.addParser({
+        id: 'rank-column',
+        is: function(s) { return false; },
+        type: 'numeric',
+        format: function(s) {
+          return s.replace(/-/g, '999999');
+        }
+      });
+      $.tablesorter.addParser({
+        id: 'formatted-number-column',
+        is: function(s) { return false; },
+        type: 'numeric',
+        format: function(s) {
+          return s.replace(/,/g, '');
+        }
+      });
+      $("#apps_table").tablesorter({
+        widgets: ['zebra'],
+        headers: {
+          0:  { sorter: false },
+          3:  { sorter: 'formatted-number-column' },
+          4:  { sorter: 'rank-column' },
+          5:  { sorter: 'currency-column' },
+          6:  { sorter: 'currency-column' },
+          7:  { sorter: 'currency-column' },
+          10: { sorter: 'formatted-number-column' },
+          11: { sorter: 'currency-column' },
+          12: { sorter: 'currency-column' },
+          13: { sorter: 'currency-column' }
+        }
+      });
+      $('#date').datepicker();
+      $('#end_date').datepicker();
+      updateTotals();
+      var iconsLoaded = false;
+      var iconsVisible = false;
+      $('#toggle_icons').click(function() {
+        if (iconsVisible) {
+          $('img.icon').hide();
+          iconsVisible = false;
+        } else {
+          if (!iconsLoaded) {
+            $('img.icon').each(function() {
+              $(this).attr('src', $(this).attr('s'));
+            });
+            iconsLoaded = true;
+          }
+          $('img.icon').show();
+          iconsVisible = true;
+        }
+        return false;
+      });
+      $('#reset_filters').click(function(){
+        $('.filter select').each(function(i,select){
+          $(select).val('');
+        });
+        $('#apps_table tr').show();
+        updateTotals();
+        return false;
+      });
+      $('.filter select').change(function(){
+        var selectValues = [
+          String( $('#conversions_filter').val() ).toLowerCase(),
+          String( $('#rank_filter').val() ).toLowerCase(),
+          String( $('#price_filter').val() ).toLowerCase(),
+          String( $('#published_offers_filter').val() ).toLowerCase(),
+          String( $('#revenue_filter').val() ).toLowerCase(),
+          String( $('#publisher_revenue_filter').val() ).toLowerCase(),
+          String( $('#publisher_pending_earnings_filter').val() ).toLowerCase(),
+          String( $('#featured_filter').val() ).toLowerCase(),
+          String( $('#rewarded_filter').val() ).toLowerCase(),
+          String( $('#platform_filter').val() ).toLowerCase(),
+          String( $('#offer_type_filter').val() ).toLowerCase(),
+        ]
+        var className = '';
+        var length = selectValues.length;
+        for(var i = 0; i<length; i++) {
+          if (selectValues[i]) {
+            className += '.' + selectValues[i];
+          }
+        }
+        $('#apps_table tbody tr:visible').hide();
+        $('#apps_table tbody tr' + className).show();
+        var publisher = $('#publisher_filter').val();
+        if (publisher != '-') {
+          $('tbody tr:visible').each(function(i,tr){
+            tr = $(tr);
+            if (tr.attr('title') != publisher) {
+              tr.hide();
+            }
+          });
+        }
+        var balance = $('#balance_filter').val();
+        if (balance) {
+          var keepNonPositive = isNaN(balance);
+          balance = Number(balance);
+          $('tbody tr:visible').each(function(i,tr){
+            tr = $(tr);
+            if (keepNonPositive) {
+              if(Number(tr.attr('value')) > 0) {
+                tr.hide();
+              }
+            } else {
+              if(balance >= Number(tr.attr('value'))) {
+                tr.hide();
+              }
+            }
+          });
+        }
+        updateTotals();
+      });
+      function updateTotals() {
+        $('.total_convertions').text(addCommas(sumOfColumns(4)));
+        $('.total_published_offers').text(addCommas(sumOfColumns(11)));
+        $('.total_offers_revenue').text(formatCurrency(sumOfColumns(12)));
+        $('.total_publisher_revenue').text(formatCurrency(sumByPublishers(13)));
+        $('.total_publisher_pending_earnings').text(formatCurrency(sumByPublishers(14)));
+      }
+      function sumOfColumns(coln) {
+        var sum = 0;
+        $('#apps_table tbody tr:visible')
+          .children("td:nth-child("+coln+")")
+          .each(function() {
+            sum += parseFloat($(this).html().replace(/[\$,]/g, ""));
+          });
+        return sum;
+      }
+      function sumByPublishers(coln){
+        var sum = 0;
+        $('#publisher_filter option').each(function(i,o){
+          var $tr = $('#apps_table tbody tr:visible[title="'+$(o).attr('value')+'"]:eq(0)');
+          $tr.children('td:nth-child('+coln+')').each(function(){
+            sum += parseFloat($(this).html().replace(/[\$,]/g, ""));
+          });
+        });
+        return sum;
+      }
+      function formatCurrency(n){
+        if(isNaN(n)){
+          return "$0.00";
+        }
+        return "$"+addCommas(n.toFixed(2));
+      }
+      function addCommas(nStr){
+        nStr += '';
+        x = nStr.split('.');
+        x1 = x[0];
+        x2 = x.length > 1 ? '.' + x[1] : '';
+        var rgx = /(\d+)(\d{3})/;
+        while (rgx.test(x1)) {
+          x1 = x1.replace(rgx, '$1' + ',' + '$2');
+        }
+        return x1 + x2;
+      }
+    });
+
+- content_for :page_styles do
+  :plain
+    #main {
+      width: 1150px;
+    }
+    #overall th {
+      text-align: left;
+      padding-right: 10px;
+    }
+    td#filters_title {
+      padding-left: 15px;
+    }
+    td#total {
+      text-align: center;
+    }
+    td.total {
+      background-color: #FFF;
+      size: 12px;
+      font-weight: bold;
+    }
+    table.tablesorter {
+      border-collapse: separate;
+    }
+    table.tablesorter thead tr .header {
+      background-position: right bottom;
+    }
+    th,
+    td {
+      border: 0;
+    }
+    img.icon {
+      width: 57px;
+      height: 57px;
+    }
+    .last_updated {
+      font-weight: bold;
+      font-size: 14px;
+    }
+    #money_totals {
+      margin-top: 15px;
+    }
+    #money_totals h3 {
+      margin-top: 5px;
+    }
+    h1 {
+      margin-bottom: 10px;
+    }
+    form.filter {
+      margin-bottom: 10px;
+    }
+    #date_submit {
+      margin: 0;
+    }
+    #csv_export {
+      float: right;
+    }

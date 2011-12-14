@@ -43,47 +43,53 @@ TJG.loadedImages = {};
     winW = $(window).width();
     var nav = navigator, classes = [''], classReplaces = {}, device = "", orientationCompute = "";
     TJG.vars.isIos = (/iphone|ipod|ipad/gi).test(nav.platform);
-    TJG.vars.device_type = nav.platform.toLowerCase();
+    TJG.vars.deviceType = nav.platform.toLowerCase();
     TJG.vars.isIpad = (/ipad/gi).test(nav.userAgent);
     TJG.vars.isIpod = (/ipod/gi).test(nav.userAgent);
     TJG.vars.isIphone = (/iphone/gi).test(nav.userAgent);
     TJG.vars.isAndroid = (/android/gi).test(nav.userAgent);
     TJG.vars.isMobile = /(ip(od|ad|hone))/gi.test(nav.userAgent);
     if (TJG.vars.isAndroid) {
-     TJG.vars.device_type = 'android';
+     TJG.vars.deviceType = 'android';
      if ((/mobile/gi).test(nav.userAgent)) {
        TJG.vars.isMobile = true;
      }
     }
-    if (TJG.vars.device_type) {
-     TJG.vars.device_type = '' + TJG.vars.device_type.toLowerCase();
+    if (TJG.vars.deviceType) {
+      TJG.vars.deviceType = '' + TJG.vars.deviceType.toLowerCase();
     }
     TJG.vars.isIPad = (/ipad/gi).test(nav.platform);
     TJG.vars.isRetina = 'devicePixelRatio' in window && window.devicePixelRatio > 1;
     TJG.vars.isSafari = nav.appVersion.match(/Safari/gi);
     TJG.vars.hasHomescreen = 'standalone' in nav && TJG.vars.isIos;
     TJG.vars.isStandalone = TJG.vars.hasHomescreen && nav.standalone;
-    TJG.vars.version = nav.appVersion.match(/OS \d+_\d+/g);
-    TJG.vars.platform = nav.platform.split(' ')[0];
-    TJG.vars.language = nav.language.replace('-', '_');
+    if (nav.appVersion) {
+       TJG.vars.version = nav.appVersion.match(/OS \d+_\d+/g);
+    }
+    if (nav.platform) {
+      TJG.vars.platform = nav.platform.split(' ')[0];
+    }
+    if (nav.language) {
+      TJG.vars.language = nav.language.replace('-', '_');
+    }
     if (TJG.vars.isIos || TJG.vars.isMobile) {
      if (TJG.vars.isIPad) {
        classReplaces['mobile'] = 'ipad';
      }
     }
     else {
-    classReplaces['mobile'] = 'web';
+      classReplaces['mobile'] = 'web';
     }
     classes.push(winW + 'x' + winH);
     if ('ontouchend' in document) {
-    classReplaces['no-touch'] = 'touch';
-    TJG.vars.isTouch = true;
+      classReplaces['no-touch'] = 'touch';
+      TJG.vars.isTouch = true;
     }
     if (TJG.vars.isRetina) {
       classReplaces['no-hd'] = 'hd';
     }
     function getOrientationClass() {
-    return TJG.vars.orientationClasses[window.orientation % 180 ? 0 : 1];
+      return TJG.vars.orientationClasses[window.orientation % 180 ? 0 : 1];
     }
     if ('orientation' in window) {
     var orientationRe = new RegExp('(' + TJG.vars.orientationClasses.join('|') + ')'),
@@ -1251,7 +1257,7 @@ TJG.ui = {
         $(".email_error").html('Please enter your birthdate');
         hasError = true;
       }
-      else if(values['gamer[email]'] == '') {
+      else if(values['gamer[email]'] == '' || values['gamer[email]'] == "Email") {
         $(".email_error").html('Please enter your email address');
         hasError = true;
       }
@@ -1259,7 +1265,7 @@ TJG.ui = {
         $(".email_error").html('Enter a valid email address');
         hasError = true;
       }
-      else if(values['gamer[password]'] == '') {
+      else if(values['gamer[password]'] == '' || values['gamer[password]'] == "Password") {
         $(".email_error").html('Please enter a password');
         hasError = true;
       }
@@ -1285,6 +1291,8 @@ TJG.ui = {
           dataType: 'json',
           data: {
             'authenticity_token': values['authenticity_token'],
+            'data': values['data'],
+            'src': values['src'],
             'gamer[email]': values['gamer[email]'],
             'gamer[password]': values['gamer[password]'],
             'gamer[referrer]': values['gamer[referrer]'],
@@ -1310,23 +1318,16 @@ TJG.ui = {
                 ].join('');
               }
               $('.register_progess').html(msg);
-              if (d.linked) { // Device already linked with account
+              if (d.link_device_url) { // Link device
                 $('.continue_link_device').click(function(){
-                  if (TJG.path) {
-                    document.location.href = TJG.path;
+                  if (TJG.vars.isAndroid && d.android) {
+                    document.location.href = d.link_device_url;
                   }
-                  else {
-                    document.location.href = document.domain;
-                  }
-                });
-              }
-              else if (d.link_device_url) { // Link device
-                $('.continue_link_device').click(function(){
-                  if (TJG.vars.isAndroid &&  TJG.android_market_url) {
+                  else if (TJG.vars.isAndroid && TJG.android_market_url) {
                     document.location.href = TJG.android_market_url;
                   }
-                  else if (TJG.vars.isIos && TJG.ios_link_device_url) {
-                    document.location.href = TJG.ios_link_device_url;
+                  else if (TJG.vars.isIos) {
+                    document.location.href = d.link_device_url;
                   }
                   else {
                     if (TJG.path) {
@@ -1641,8 +1642,8 @@ TJG.ui = {
     $.each(devices, function(i,v){
       var device_type = v.device_type;
       if (!TJG.utils.isNull(device_type)
-        && TJG.vars.device_type
-          && (device_type.toLowerCase() == TJG.vars.device_type.toLowerCase())) {
+        && TJG.vars.deviceType
+          && (device_type.toLowerCase() == TJG.vars.deviceType.toLowerCase())) {
         device_count++;
         device_found = true;
         device_data = v.data;
@@ -1770,23 +1771,30 @@ TJG.ui = {
     // Checks if new user. If so, shows intro tutorial
     var repeat = TJG.utils.getLocalStorage("tjg.new_user");
     if (install.indexOf("true") != -1) {
-      TJG.utils.centerDialog("#register_device");
-      $("#register_device").fadeIn(fadeSpd);
-      if (repeat != "false") {
-         $("#register_device .close_dialog").click(function() {
-           showIntro();
-         });
+      if (TJG.vars.isAndroid) {
+        showIntro();
+      }
+      else {
+        TJG.utils.centerDialog("#register_device");
+        $("#register_device").fadeIn(fadeSpd);
+        if (repeat != "false") {
+          $("#register_device .close_dialog").click(function() {
+            showIntro();
+          });
+        }
       }
     }
     // Cookie is missing, so prompt user to select device
-    else if (TJG.require_select_device && TJG.select_device) {
+    else if (TJG.require_select_device && TJG.select_device.length > 0 && TJG.vars.isTouch) {
       TJG.ui.showDeviceSelection(TJG.select_device, false);
     }
     else if (repeat != "false") {
       showIntro();
     }
-    // If user has multiple devices, enable device selection UI
-    if (TJG.select_device && (TJG.select_device.length > 1)) {
+    if (TJG.select_device && TJG.select_device.length == 0) {
+      $('.device_wrapper').hide();
+    }
+    if (TJG.select_device && TJG.select_device.length > 0) {
       $('.device_switch').html("wrong device?");
       $('.device_name').addClass("has_switch");
       $('.device_info').css('cursor','pointer');
@@ -2370,11 +2378,6 @@ RegExp.escape = function(text) {
         if (!TJG.vars.c_data && TJG.vars.ls_data) {
           TJG.utils.setCookie('data', TJG.vars.ls_data, 365, 1);
         }
-        // Set cookie if missing and from android app
-        var data_p = TJG.utils.getParam('data');
-        if (!TJG.vars.c_data && !TJG.utils.isNull(data_p) && (TJG.utils.getParam('src') == 'android_app')) {
-          TJG.utils.setCookie('data', data_p, 365, 1);
-        }
       },
 
       loadEvents : function () {
@@ -2385,7 +2388,6 @@ RegExp.escape = function(text) {
           TJG.ui.removeDialogs();
           TJG.repositionDialog = [];
         });
-
         $('#link_device').click(function(){
           if (TJG.vars.isAndroid &&  TJG.android_market_url) {
             document.location.href = TJG.android_market_url;
@@ -2426,12 +2428,12 @@ RegExp.escape = function(text) {
               }
               email = values['gamer_session[email]'];
               pass = values['gamer_session[password]'];
-              if ( email == '' ) {
+              if (email == '' || email == 'Email') {
                 $(".login_error").html('Please enter your email address');
                 $(".formError").show();
                 e.preventDefault();
               }
-              else if ( pass == '' ) {
+              else if (pass == '' || pass == 'Password') {
                 $(".login_error").html('Please enter your password');
                 $(".formError").show();
                 e.preventDefault();
@@ -2444,20 +2446,22 @@ RegExp.escape = function(text) {
         if (w < 60) {
           w = 60;
         }
-        $('.device_info').fadeOut(50, function(){
+        $('.device_info').fadeOut(50, function(){ 
           $('.device_info').animate({width:"0px"}, 250);
         });
         TJG.animating = false;
-        $('.plus,.mobile_icon').click(function(){
+        TJG.deviceInfoOpen = false;
+        function selectDevice(){
           if (TJG.animating) {
             return;
           }
           TJG.animating = true;
-          if ($('.device_info').width() == 0) {
+          if (TJG.deviceInfoOpen == false) {
             $('.device_info').animate({width:w+"px"}, 250, function(){
-              $('.device_info').fadeIn(200);
+              $('.device_info').fadeIn(50);
               $('.plus').addClass('close');
             });
+            TJG.deviceInfoOpen = true;
             TJG.animating = false;
           }
           else {
@@ -2465,9 +2469,52 @@ RegExp.escape = function(text) {
               $('.device_info').animate({width:"0px"}, 250);
               $('.plus').removeClass('close');
             });
+            TJG.deviceInfoOpen = false;
             TJG.animating = false;
           }
+        }
+        $('.plus, .mobile_icon').click(function() {
+          selectDevice();
         });
+        // Placeholder support for non-supported browsers
+        var input = document.createElement("input");
+        if (('placeholder' in input) == false) {
+          $('[placeholder]').focus(function() {
+            var me = $(this);
+            if (me.val() == '' || me.val() == me.attr('placeholder')) {
+              me.val('').removeClass('placeholder');
+              if (me.hasClass('password')) {
+                me.removeClass('password');
+                if ($.browser.msie) { // IE doesn't support changing input type
+                  me.prev().hide(); // Hide label
+                }
+                else {
+                  this.type = 'password';
+                }
+              }
+            }
+          }).blur(function() {
+            var me = $(this);
+            if (me.val() == '' || me.val() == me.attr('placeholder')) {
+              if (this.type == 'password') {
+                me.addClass('password');
+                me.addClass('placeholder').val('');
+                if ($.browser.msie) { // IE doesn't support changing input type
+                  me.prev().show(); // Show label
+                }
+                else {
+                  this.type = 'text';
+                }
+              }
+              else {
+                me.addClass('placeholder').val(me.attr('placeholder'));
+              }
+            }
+          }).blur();
+          $('label[for=password]').click(function() {
+            $(this).hide();
+          });
+        }
       },
 
       checkFlashMessages: function () {
@@ -2487,7 +2534,6 @@ RegExp.escape = function(text) {
         TJG.onload[key]();
       }
     };
-    window.addEventListener("load", TJG.init, false);
-
+    TJG.init();
 
 })(this, document);

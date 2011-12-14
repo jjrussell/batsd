@@ -18,6 +18,8 @@ config.action_view.cache_template_loading            = true
 # Disable request forgery protection because this is an api
 config.action_controller.allow_forgery_protection    = false
 
+config.gem 'mail_safe', :version => '0.3.1'
+
 # Use a different cache store in production
 # config.cache_store = :mem_cache_store
 
@@ -42,7 +44,7 @@ RUN_MODE_PREFIX = 'staging_'
 API_URL = local_config['api_url'] || ''
 DASHBOARD_URL = local_config['dashboard_url'] || ''
 WEBSITE_URL = local_config['website_url'] || ''
-CLOUDFRONT_URL = 'https://d21x2jbj16e06e.cloudfront.net'
+CLOUDFRONT_URL = 'https://s3.amazonaws.com/staging_tapjoy'
 GAMES_ANDROID_MARKET_URL = 'http://market.android.com/details?id=com.tapjoy.tapjoy'
 
 # Amazon services:

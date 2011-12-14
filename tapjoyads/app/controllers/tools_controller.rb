@@ -22,7 +22,7 @@ class ToolsController < WebsiteController
       date += 1.month
     end
 
-    conditions = [ "month = ? AND year = ? AND partner_id != '70f54c6d-f078-426c-8113-d6e43ac06c6d'", @period.month, @period.year ]
+    conditions = [ "month = ? AND year = ? AND partner_id != '#{TAPJOY_PARTNER_ID}'", @period.month, @period.year ]
     MonthlyAccounting.using_slave_db do
       expected    = Partner.count(:conditions => [ "created_at < ?", @period.next_month ])
       actual      = MonthlyAccounting.count(:conditions => [ "month = ? AND year = ?", @period.month, @period.year ])

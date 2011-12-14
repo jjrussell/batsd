@@ -119,7 +119,7 @@ Setup memcached to start on boot
 --------------------------------
 * download `http://s3.amazonaws.com/dev_tapjoy/rails_env/Memcached.applescript`
 * open the applescript and save the script as an Application in your `/Applications` directory
-* open the System Preferences and navigate to the Account section
+* open the System Preferences and navigate to the Users & Groups section
 * add the Memcached app as a Login Item for your user account
 
 Copy config files into place

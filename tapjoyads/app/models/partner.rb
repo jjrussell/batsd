@@ -1,8 +1,6 @@
 class Partner < ActiveRecord::Base
   include UuidPrimaryKey
 
-  THE_REAL_TAPJOY_PARTNER_ID = "70f54c6d-f078-426c-8113-d6e43ac06c6d"
-
   has_many :orders
   has_many :payouts
   has_many :currencies
@@ -98,7 +96,7 @@ class Partner < ActiveRecord::Base
     Partner.using_slave_db do
       Partner.slave_connection.execute("BEGIN")
       partner = Partner.find(partner_id)
-      return partner.pending_earnings - Conversion.created_since(partner.payout_cutoff_date).sum(:publisher_amount, :conditions => [ "publisher_app_id IN (?)", partner.app_ids ])
+      return partner.pending_earnings - partner.publisher_conversions.created_since(partner.payout_cutoff_date).sum(:publisher_amount)
     end
   ensure
     Partner.using_slave_db do
@@ -224,10 +222,10 @@ class Partner < ActiveRecord::Base
     accounting_cutoff = Conversion.accounting_cutoff_time
 
     publisher_conversions_sum = monthly_accountings.prior_to(accounting_cutoff).sum(:earnings)
-    publisher_conversions_sum += Conversion.created_since(accounting_cutoff).sum(:publisher_amount, :conditions => [ "publisher_app_id IN (?)", app_ids ])
+    publisher_conversions_sum += publisher_conversions.created_since(accounting_cutoff).sum(:publisher_amount)
 
     advertiser_conversions_sum = monthly_accountings.prior_to(accounting_cutoff).sum(:spend)
-    advertiser_conversions_sum += Conversion.created_since(accounting_cutoff).sum(:advertiser_amount, :conditions => [ "advertiser_offer_id IN (?)", offer_ids ])
+    advertiser_conversions_sum += advertiser_conversions.created_since(accounting_cutoff).sum(:advertiser_amount)
 
     orders_sum = orders.sum(:amount)
     payouts_sum = payouts.sum(:amount, :conditions => 'status = 1')
@@ -291,6 +289,17 @@ class Partner < ActiveRecord::Base
 
   def completed_payout_info?
     payout_info.present? && payout_info.valid?
+  end
+
+  def tapjoy_sponsored?
+    offers.blank? ? false : offers.all?(&:tapjoy_sponsored?)
+  end
+
+  def set_tapjoy_sponsored_on_offers!(flag)
+    offers.each do |offer|
+      offer.tapjoy_sponsored = flag
+      offer.save! if offer.changed?
+    end
   end
 
 private

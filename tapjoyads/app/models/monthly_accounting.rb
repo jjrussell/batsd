@@ -35,29 +35,29 @@ class MonthlyAccounting < ActiveRecord::Base
     # balance components
     orders = {}
     Order.using_slave_db do
-      orders = Order.created_between(start_time, end_time).sum(:amount, :conditions => [ "partner_id = ?", partner.id ], :group => :payment_method)
+      orders = partner.orders.created_between(start_time, end_time).sum(:amount, :group => :payment_method)
     end
     self.website_orders   = orders[0] || 0
     self.invoiced_orders  = orders[1] || 0
     self.marketing_orders = orders[2] || 0
     self.transfer_orders  = orders[3] || 0
     Partner.using_slave_db do
-      self.spend = Conversion.created_between(start_time, end_time).sum(:advertiser_amount, :conditions => [ "advertiser_offer_id IN (?)", partner.offer_ids ])
+      self.spend = partner.advertiser_conversions.created_between(start_time, end_time).sum(:advertiser_amount)
     end
     self.ending_balance = beginning_balance + website_orders + invoiced_orders + marketing_orders + transfer_orders + spend
 
     # pending earnings components
     payouts = {}
     Payout.using_slave_db do
-      payouts = Payout.created_between(start_time, end_time).sum(:amount, :conditions => [ "status = ? AND partner_id = ?", 1, partner.id ], :group => :payment_method)
+      payouts = partner.payouts.created_between(start_time, end_time).sum(:amount, :conditions => "status = 1", :group => :payment_method)
     end
     self.payment_payouts  = (payouts[1] || 0) * -1
     self.transfer_payouts = (payouts[3] || 0) * -1
     Partner.using_slave_db do
-      self.earnings = Conversion.created_between(start_time, end_time).sum(:publisher_amount, :conditions => [ "publisher_app_id IN (?)", partner.app_ids ])
+      self.earnings = partner.publisher_conversions.created_between(start_time, end_time).sum(:publisher_amount)
     end
     EarningsAdjustment.using_slave_db do
-      self.earnings_adjustments = EarningsAdjustment.created_between(start_time, end_time).sum(:amount, :conditions => [ "partner_id = ?", partner.id ])
+      self.earnings_adjustments = partner.earnings_adjustments.created_between(start_time, end_time).sum(:amount)
     end
     self.ending_pending_earnings = beginning_pending_earnings + payment_payouts + transfer_payouts + earnings + earnings_adjustments
 
