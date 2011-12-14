@@ -221,7 +221,7 @@ class Offer < ActiveRecord::Base
 
   def copy_banner_creative_assets_from(original_offer)
     original_offer.banner_creatives.each do |size|
-      original_offer.banner_creative_s3_object(size).copy_to(self.banner_creative_path(size))
+      original_offer.banner_creative_s3_object(size).copy_to(self.banner_creative_path)
       self.banner_creative_s3_object(size).acl = :public_read
     end
   end
