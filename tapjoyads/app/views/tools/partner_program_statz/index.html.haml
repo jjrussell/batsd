@@ -74,7 +74,7 @@
       %td.filter= select_tag('platform_filter', options_for_select(filter_options(:platform)))
       %td.filter &nbsp;
       %td.filter= select_tag('published_offers_filter', options_for_select(filter_options(:published_offers)))
-      %td.filter= select_tag('revenue_filter', options_for_select(filter_options(:revenue)))
+      %td.filter= select_tag('revenue_filter', options_for_select(filter_options(:offer_revenue)))
       %td.filter= select_tag('publisher_revenue_filter', options_for_select(filter_options(:publisher_revenue)))
       %td.filter= select_tag('publisher_pending_earnings_filter', options_for_select(filter_options(:pending_earning)))
       %td.filter= select_tag('featured_filter', options_for_select(filter_options(:featured)))
@@ -91,8 +91,8 @@
         tr_classes << (metadata['price'] == '$0.00'        ? 'free'             : 'paid')
         tr_classes << metadata['platform'].to_s.downcase
         tr_classes << (stats['published_offers'] == '0'    ? 'zero_published'   : 'nonzero_published')
-        tr_classes << (stats['offers_revenue'] == 0  ? 'zero_revenue'     : 'nonzero_revenue')
-        tr_classes << (@partner_revenue_stats[metadata['partner_id']] == 0  ? 'zero_pub_revenue'     : 'nonzero_pub_revenue')
+        tr_classes << (stats['offers_revenue'] == 0  ? 'zero_offer_revenue'     : 'nonzero_offer_revenue')
+        tr_classes << (@partner_revenue_stats[metadata['partner_id']] == 0  ? 'zero_publisher_revenue'     : 'nonzero_publisher_revenue')
         tr_classes << (metadata['featured']                ? 'featured'         : 'nonfeatured')
         tr_classes << (metadata['rewarded']                ? 'rewarded'         : 'nonrewarded')
         tr_classes << metadata['offer_type'].to_s.downcase

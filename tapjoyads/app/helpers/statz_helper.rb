@@ -50,15 +50,20 @@ module StatzHelper
           [">$0", "earning_zero"],
           ["\342\211\244$0","earning_negative"],
         ]
-      when :revenue
+      when :gross_revenue
         [
-          ["$0.00", "zero_revenue"],
-          [">$0", "nonzero_revenue"],
+          ["$0.00", "zero_gross_revenue"],
+          [">$0", "nonzero_gross_revenue"],
         ]
       when :publisher_revenue
         [
-          ["$0.00", "zero_pub_revenue"],
-          [">$0", "nonzero_pub_revenue"],
+          ["$0.00", "zero_publisher_revenue"],
+          [">$0", "nonzero_publisher_revenue"],
+        ]
+      when :offer_revenue
+        [
+          ["$0.00", "zero_offer_revenue"],
+          [">$0", "nonzero_offer_revenue"],
         ]
       when :featured
         [
