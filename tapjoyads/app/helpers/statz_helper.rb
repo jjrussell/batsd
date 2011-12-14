@@ -60,10 +60,10 @@ module StatzHelper
           ["$0.00", "zero_publisher_revenue"],
           [">$0", "nonzero_publisher_revenue"],
         ]
-      when :publisher_revenue
+      when :offer_revenue
         [
-          ["$0.00", "zero_pub_revenue"],
-          [">$0", "nonzero_pub_revenue"],
+          ["$0.00", "zero_offer_revenue"],
+          [">$0", "nonzero_offer_revenue"],
         ]
       when :featured
         [
