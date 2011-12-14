@@ -4,4 +4,9 @@ require 'yaml'
 
 VERSION_FILENAME = '../server/version.yaml'
 current_tag = YAML::load(File.open(VERSION_FILENAME))["current"]
-system("open https://github.com/Tapjoy/tapjoyserver/compare/#{current_tag}...master")
+if `uname` =~ /Darwin/
+  command = "open"
+elsif `uname` =~ /Linux/
+  command = "xdg-open"
+end
+system("#{command} https://github.com/Tapjoy/tapjoyserver/compare/#{current_tag}...master")
