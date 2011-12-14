@@ -31,7 +31,7 @@ module Offer::UrlGeneration
       :library_version       => library_version,
     }
 
-    "#{API_URL}/offer_instructions?data=#{SymmetricCrypto.encrypt_object(data, SYMMETRIC_CRYPTO_SECRET)}"
+    "#{API_URL}/offer_instructions?data=#{ObjectEncryptor.encrypt(data)}"
   end
 
   def complete_action_url(options)
@@ -134,7 +134,7 @@ module Offer::UrlGeneration
       :library_version    => library_version,
     }
 
-    "#{click_url}?data=#{SymmetricCrypto.encrypt_object(data, SYMMETRIC_CRYPTO_SECRET)}"
+    "#{click_url}?data=#{ObjectEncryptor.encrypt(data)}"
   end
 
   def display_ad_image_url(publisher_app_id, width, height, currency_id = nil, display_multiplier = nil, bust_cache = false, use_cloudfront = true)
@@ -146,16 +146,23 @@ module Offer::UrlGeneration
     else
       display_multiplier = (display_multiplier || 1).to_f
       # TO REMOVE: displayer_app_id param after rollout.
-      url = "#{API_URL}/display_ad/image?publisher_app_id=#{publisher_app_id}&advertiser_app_id=#{id}&displayer_app_id=#{publisher_app_id}&size=#{size}&display_multiplier=#{display_multiplier}&currency_id=#{currency_id}"
+      url = "#{API_URL}/display_ad/image?publisher_app_id=#{publisher_app_id}&advertiser_app_id=#{id}&displayer_app_id=#{publisher_app_id}&size=#{size}&display_multiplier=#{display_multiplier}&currency_id=#{currency_id}&offer_type=#{item_type}"
       delim = '&'
     end
     url << "#{delim}ts=#{Time.now.to_i}" if bust_cache
     url
   end
 
-  def fullscreen_ad_image_url(publisher_app_id, bust_cache = false)
-    url = "#{API_URL}/fullscreen_ad/image?publisher_app_id=#{publisher_app_id}&offer_id=#{id}"
+  def fullscreen_ad_image_url(publisher_app_id, bust_cache = false, dimensions = nil)
+    if dimensions.present? && display_custom_banner_for_size?(dimensions)
+      url = "#{CLOUDFRONT_URL}/#{banner_creative_path(size)}"
+    else
+      url = "#{API_URL}/fullscreen_ad/image?publisher_app_id=#{publisher_app_id}&offer_id=#{id}"
+    end
     url << "&ts=#{Time.now.to_i}" if bust_cache
+    options.each do |key,value|
+      url << "&#{key}=#{value}"
+    end
     url
   end
 
@@ -173,6 +180,11 @@ module Offer::UrlGeneration
     display_multiplier = options.delete(:display_multiplier) { 1 }
     library_version    = options.delete(:library_version)    { nil }
     language_code      = options.delete(:language_code)      { nil }
+
+    # Allow screen size to be specified for ad previews
+    width              = options.delete(:width)              { nil }
+    height             = options.delete(:height)             { nil }
+    preview            = options.delete(:preview)            { nil }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
 
     ad_url = "#{API_URL}/fullscreen_ad"
@@ -185,6 +197,9 @@ module Offer::UrlGeneration
       "&library_version=#{library_version}&language_code=#{language_code}"
     ad_url << "&displayer_app_id=#{displayer_app_id}" if displayer_app_id.present?
     ad_url << "&exp=#{exp}" if exp.present?
+    ad_url << "&width=#{width}" if width.present?
+    ad_url << "&height=#{height}" if height.present?
+    ad_url << "&preview=#{preview}" if preview.present?
     ad_url
   end
 

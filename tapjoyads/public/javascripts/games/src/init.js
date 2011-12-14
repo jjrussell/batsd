@@ -13,47 +13,53 @@ TJG.loadedImages = {};
     winW = $(window).width();
     var nav = navigator, classes = [''], classReplaces = {}, device = "", orientationCompute = "";
     TJG.vars.isIos = (/iphone|ipod|ipad/gi).test(nav.platform);
-    TJG.vars.device_type = nav.platform.toLowerCase();
+    TJG.vars.deviceType = nav.platform.toLowerCase();
     TJG.vars.isIpad = (/ipad/gi).test(nav.userAgent);
     TJG.vars.isIpod = (/ipod/gi).test(nav.userAgent);
     TJG.vars.isIphone = (/iphone/gi).test(nav.userAgent);
     TJG.vars.isAndroid = (/android/gi).test(nav.userAgent);
     TJG.vars.isMobile = /(ip(od|ad|hone))/gi.test(nav.userAgent);
     if (TJG.vars.isAndroid) {
-     TJG.vars.device_type = 'android';
+     TJG.vars.deviceType = 'android';
      if ((/mobile/gi).test(nav.userAgent)) {
        TJG.vars.isMobile = true;
      }
     }
-    if (TJG.vars.device_type) {
-     TJG.vars.device_type = '' + TJG.vars.device_type.toLowerCase();
+    if (TJG.vars.deviceType) {
+      TJG.vars.deviceType = '' + TJG.vars.deviceType.toLowerCase();
     }
     TJG.vars.isIPad = (/ipad/gi).test(nav.platform);
     TJG.vars.isRetina = 'devicePixelRatio' in window && window.devicePixelRatio > 1;
     TJG.vars.isSafari = nav.appVersion.match(/Safari/gi);
     TJG.vars.hasHomescreen = 'standalone' in nav && TJG.vars.isIos;
     TJG.vars.isStandalone = TJG.vars.hasHomescreen && nav.standalone;
-    TJG.vars.version = nav.appVersion.match(/OS \d+_\d+/g);
-    TJG.vars.platform = nav.platform.split(' ')[0];
-    TJG.vars.language = nav.language.replace('-', '_');
+    if (nav.appVersion) {
+       TJG.vars.version = nav.appVersion.match(/OS \d+_\d+/g);
+    }
+    if (nav.platform) {
+      TJG.vars.platform = nav.platform.split(' ')[0];
+    }
+    if (nav.language) {
+      TJG.vars.language = nav.language.replace('-', '_');
+    }
     if (TJG.vars.isIos || TJG.vars.isMobile) {
      if (TJG.vars.isIPad) {
        classReplaces['mobile'] = 'ipad';
      }
     }
     else {
-    classReplaces['mobile'] = 'web';
+      classReplaces['mobile'] = 'web';
     }
     classes.push(winW + 'x' + winH);
     if ('ontouchend' in document) {
-    classReplaces['no-touch'] = 'touch';
-    TJG.vars.isTouch = true;
+      classReplaces['no-touch'] = 'touch';
+      TJG.vars.isTouch = true;
     }
     if (TJG.vars.isRetina) {
       classReplaces['no-hd'] = 'hd';
     }
     function getOrientationClass() {
-    return TJG.vars.orientationClasses[window.orientation % 180 ? 0 : 1];
+      return TJG.vars.orientationClasses[window.orientation % 180 ? 0 : 1];
     }
     if ('orientation' in window) {
     var orientationRe = new RegExp('(' + TJG.vars.orientationClasses.join('|') + ')'),

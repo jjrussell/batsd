@@ -54,7 +54,7 @@ private
       offer.icon_id_override = app_id if app_id_changed? && app_id_was == offer.icon_id_override
       offer.url              = app.store_url unless offer.url_overridden?
       offer.name             = name if name_changed?
-      offer.instructions     = instructions if instructions_changed?
+      offer.instructions     = instructions if instructions_changed? && !offer.instructions_overridden?
       offer.hidden           = hidden if hidden_changed?
       offer.price            = prerequisite_offer_id? ? 0 : app.price
       if offer.price_changed? && offer.bid < offer.min_bid

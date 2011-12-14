@@ -1,8 +1,7 @@
 - @page_title = 'App Integration'
 - @dropdown_options = { :with_new_app_button => true }
 
-%h3
-  Integrate your application
+%h3 Integrate your application
 %ol
   %li
     Download the lightweight, open source
@@ -39,6 +38,7 @@
     - sdk_link 'Advertiser Library Download', "#{@app.platform}-adv"
   .clear
 
+- content_for :page_head, stylesheet_link_tag('facebox')
 - content_for :page_styles do
   :plain
     .download_link {
