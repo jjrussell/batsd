@@ -166,7 +166,7 @@ class Device < SimpledbShardedResource
     return if ((package_names - current_packages) | (current_packages - package_names)).empty?
     self.all_packages |= package_names
     self.current_packages = package_names
-    save! if changed?
+    save!
   end
 
 private
