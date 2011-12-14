@@ -33,8 +33,8 @@ class Offer < ActiveRecord::Base
     NON_REWARDED_FEATURED_BACKFILLED_OFFER_TYPE => 'Non-Rewarded Featured Offers (Backfilled)'
   }
 
-  DISPLAY_AD_SIZES = ['320x50', '640x100', '768x90']
-  FEATURED_AD_SIZES = ['960x640', '640x960', '480x320', '320x480']
+  DISPLAY_AD_SIZES = ['320x50', '640x100', '768x90'] # data stored as pngs
+  FEATURED_AD_SIZES = ['960x640', '640x960', '480x320', '320x480'] # data stored as jpegs
 
   OFFER_LIST_REQUIRED_COLUMNS = [ 'id', 'item_id', 'item_type', 'partner_id',
                                   'name', 'url', 'price', 'bid', 'payment',
@@ -308,16 +308,24 @@ class Offer < ActiveRecord::Base
     VirtualGood.count(:where => "app_id = '#{self.item_id}'") > 0
   end
 
-  def banner_creative_path(size, format = 'png')
+  def banner_creative_format(size)
+    return 'jpeg' if FEATURED_AD_SIZES.include? size
+    'png'
+  end
+
+  def banner_creative_path(size, format = nil)
+    format = banner_creative_format(size) if format.nil?
     "banner_creatives/#{Offer.hashed_icon_id(id)}_#{size}.#{format}"
   end
 
-  def banner_creative_s3_object(size, format = 'png')
+  def banner_creative_s3_object(size, format = nil)
+    format = banner_creative_format(size) if format.nil?
     bucket = S3.bucket(BucketNames::TAPJOY)
     bucket.objects[banner_creative_path(size, format)]
   end
 
-  def banner_creative_mc_key(size, format = 'png')
+  def banner_creative_mc_key(size, format = nil)
+    format = banner_creative_format(size) if format.nil?
     banner_creative_path(size, format).gsub('/', '.')
   end
 
@@ -418,7 +426,7 @@ class Offer < ActiveRecord::Base
   def save(perform_validation = true)
     super(perform_validation)
   rescue BannerSyncError => bse
-    self.errors.add(bse.offer_attr_name.to_sym, bse.message)
+    self.errors.add(bse.offer_attr_name.to_sym, bse.message) if bse.offer_attr_name.present?
     false
   end
 
@@ -675,12 +683,16 @@ private
       raise "Unable to delete or update more than one banner creative at a time"
     end
 
+    errors_size = errors.size
     new_creatives.each do |new_size|
-      raise BannerSyncError.new("custom_creative_#{new_size}_blob", "#{new_size} banner creative file not provided.") if !creative_blobs.has_key?(new_size)
+      unless creative_blobs.has_key?(new_size)
+        self.errors.add("custom_creative_#{new_size}_blob".to_sym, "#{new_size} custom creative file not provided.") and next
+      end
       blob = creative_blobs[new_size]
       # upload to S3
       upload_banner_creative!(blob, new_size, format)
     end
+    raise BannerSyncError.new("multiple new file upload errors") if errors.size > errors_size
 
     removed_creatives.each do |removed_size|
       # delete from S3
@@ -699,13 +711,15 @@ private
     end
   end
 
-  def delete_banner_creative!(size, format='png')
+  def delete_banner_creative!(size, format = nil)
+    format = banner_creative_format(size) if format.nil?
     banner_creative_s3_object(size, format).delete
   rescue
-    raise BannerSyncError.new("custom_creative_#{size}_blob", "Encountered unexpected error while deleting existing file, please try again.")
+    raise BannerSyncError.new("Encountered unexpected error while deleting existing file, please try again.", "custom_creative_#{size}_blob")
   end
 
-  def upload_banner_creative!(blob, size, format='png')
+  def upload_banner_creative!(blob, size, format = nil)
+    format = banner_creative_format(size) if format.nil?
     begin
       creative_arr = Magick::Image.from_blob(blob)
       if creative_arr.size != 1
@@ -715,16 +729,16 @@ private
       creative.format = format
       creative.interlace = Magick::JPEGInterlace if format == 'jpeg'
     rescue
-      raise BannerSyncError.new("custom_creative_#{size}_blob", "New file is invalid - unable to convert to .#{format}.")
+      raise BannerSyncError.new("New file is invalid - unable to convert to .#{format}.", "custom_creative_#{size}_blob")
     end
 
     width, height = size.split("x").collect{|x|x.to_i}
-    raise BannerSyncError.new("custom_creative_#{size}_blob", "New file has invalid dimensions.") if [width, height] != [creative.columns, creative.rows]
+    raise BannerSyncError.new("New file has invalid dimensions.", "custom_creative_#{size}_blob") if [width, height] != [creative.columns, creative.rows]
 
     begin
       banner_creative_s3_object(size, format).write(:data => creative.to_blob { self.quality = 85 }, :acl => :public_read)
     rescue
-      raise BannerSyncError.new("custom_creative_#{size}_blob", "Encountered unexpected error while uploading new file, please try again.")
+      raise BannerSyncError.new("Encountered unexpected error while uploading new file, please try again.", "custom_creative_#{size}_blob")
     end
 
     # Add to memcache
@@ -822,7 +836,7 @@ end
 
 class BannerSyncError < StandardError;
   attr_accessor :offer_attr_name
-  def initialize(offer_attr_name, message)
+  def initialize(message, offer_attr_name = nil)
     super(message)
     self.offer_attr_name = offer_attr_name
   end
