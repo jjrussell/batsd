@@ -629,10 +629,8 @@ class Offer < ActiveRecord::Base
       "clicked_at < '#{end_time.to_f}'",
       "clicked_at >= '#{start_time.to_f}'",
     ].join(' and ')
-    NUM_CLICK_DOMAINS.times do |i|
-      Click.select(:domain_name => "clicks_#{i}", :where => conditions) do |click|
-        num_clicks_rewarded += 1 if click.successfully_rewarded?
-      end
+    Click.select_all(:conditions => conditions) do |click|
+      num_clicks_rewarded += 1 if click.successfully_rewarded?
     end
     return num_clicks_rewarded
   end
