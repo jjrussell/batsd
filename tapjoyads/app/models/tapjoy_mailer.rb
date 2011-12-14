@@ -182,7 +182,7 @@ class TapjoyMailer < ActionMailer::Base
   end
 
   def resolve_support_requests(user_email, mass_resolve_results, upload_time)
-    upload_time_stamp = upload_time.strftime("%A %m/%e/%Y %k:%M:%S %p")
+    upload_time_stamp = upload_time.to_s(:pub_ampm)
     from 'Tapjoy <noreply@tapjoy.com>'
     recipients user_email
     if Rails.env.production?
