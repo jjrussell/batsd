@@ -379,16 +379,8 @@ class Offer < ActiveRecord::Base
     src_obj.write(:data => icon_src_blob, :acl => :public_read)
 
     Mc.delete("icon.s3.#{id}")
-
-    # Invalidate cloudfront
-    if existing_icon_blob.present?
-      begin
-        acf = RightAws::AcfInterface.new
-        acf.invalidate('E1MG6JDV6GH0F2', ["/icons/256/#{icon_id}.jpg", "/icons/114/#{icon_id}.jpg", "/icons/57/#{icon_id}.jpg", "/icons/57/#{icon_id}.png"], "#{id}.#{Time.now.to_i}")
-      rescue Exception => e
-        Notifier.alert_new_relic(FailedToInvalidateCloudfront, e.message)
-      end
-    end
+    paths = ["icons/256/#{icon_id}.jpg", "icons/114/#{icon_id}.jpg", "icons/57/#{icon_id}.jpg", "icons/57/#{icon_id}.png"]
+    CloudFront.invalidate(id, paths) if existing_icon_blob.present?
   end
 
   def get_video_url(options = {})
@@ -705,13 +697,7 @@ private
       # no worries, it will get cached later if needed
     end
 
-    # Invalidate cloudfront
-    begin
-      acf = RightAws::AcfInterface.new
-      acf.invalidate('E1MG6JDV6GH0F2', "/#{banner_creative_path(size, format)}".to_a, "#{id}.#{Time.now.to_i}")
-    rescue Exception => e
-      Notifier.alert_new_relic(FailedToInvalidateCloudfront, e.message)
-    end
+    CloudFront.invalidate(id, banner_creative_path(size, format))
   end
 
   def is_test_device?(currency, device)
