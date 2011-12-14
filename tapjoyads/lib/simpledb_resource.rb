@@ -396,11 +396,19 @@ class SimpledbResource
     return count
   end
 
+  def has_unique?(attribute)
+    value = send(attribute)
+    conditions = {
+      :where => "#{attribute} = '#{value}' and itemName() != '#{key}'",
+      :consistent => true,
+    }
+    self.class.count(conditions).zero?
+  end
+
   def self.count_async(options = {})
     where       = options.delete(:where)
     next_token  = options.delete(:next_token)
     domain_name = options.delete(:domain_name) { self.domain_name }
-    limit       = options.delete(:limit)
     consistent  = options.delete(:consistent)  { false }
     hydra       = options.delete(:hydra)       { Typhoeus::Hydra.new }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
@@ -412,7 +420,6 @@ class SimpledbResource
 
     query = "SELECT count(*) FROM `#{domain_name}`"
     query += " WHERE #{where}" if where
-    query += " LIMIT #{limit}" if limit
 
     self.send_count_async_request(query, next_token, consistent, hydra) do |count|
       yield count
