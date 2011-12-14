@@ -301,6 +301,11 @@ class SimpledbResource
     !(@attributes_to_add.empty? && @attributes_to_replace.empty? && @attributes_to_delete.empty? && @attribute_names_to_delete.empty?)
   end
 
+  def attribute_changed?(name)
+    keys = (@attributes_to_add.keys | @attributes_to_replace.keys | @attributes_to_delete.keys | @attribute_names_to_delete)
+    keys.include?(name.to_s)
+  end
+
   ##
   # Loads a single row from this domain, modifies it, and saves it. Uses SDB's Conditional Put
   # on the 'version' attribute to ensure that the row has been unmodified during the course of
