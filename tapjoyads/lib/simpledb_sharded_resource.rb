@@ -28,13 +28,13 @@ class SimpledbShardedResource < SimpledbResource
 
   def has_unique?(attribute)
     value = send(attribute)
-    where = "#{attribute} = '#{value}' and itemKey != '#{key}'"
+    where = "#{attribute} = '#{value}' and itemName() != '#{key}'"
     self.class.count(:where => where, :consistent => true) == 0
   end
 
   def self.select_all(options = {}, &block)
     conditions = options.delete(:conditions)
-    consistent = options.delete(:consistent) { true }
+    consistent = options.delete(:consistent)
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
 
     records = []
