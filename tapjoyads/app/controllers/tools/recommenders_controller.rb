@@ -44,7 +44,7 @@ class Tools::RecommendersController < WebsiteController
 
   private
   def make_display_hash(app_id, weight)
-    offer = Offer.find app_id
-    {:app_id => app_id, :weight => weight, :app_name => offer.name, :offer => offer}
+    offer = Offer.find app_id rescue nil
+    {:app_id => app_id, :weight => weight, :app_name => offer.nil? ? "NO OFFER FOUND FOR THIS APP" : offer.name , :offer => offer}
   end
 end
