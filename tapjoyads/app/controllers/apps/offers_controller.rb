@@ -10,8 +10,10 @@ class Apps::OffersController < WebsiteController
   end
 
   def create
-    if params[:offer_type] == 'featured'
-      @offer = @app.primary_featured_offer || @app.primary_offer.create_featured_clone
+    if params[:offer_type] == 'rewarded_featured'
+      @offer = @app.primary_rewarded_featured_offer || @app.primary_offer.create_rewarded_featured_clone
+    elsif params[:offer_type] == 'non_rewarded_featured'
+      @offer = @app.primary_non_rewarded_featured_offer || @app.primary_offer.create_non_rewarded_featured_clone
     elsif params[:offer_type] == 'non_rewarded'
       @offer = @app.primary_non_rewarded_offer || @app.primary_offer.create_non_rewarded_clone
     end
