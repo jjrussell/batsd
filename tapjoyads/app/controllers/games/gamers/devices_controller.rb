@@ -37,7 +37,7 @@ class Games::Gamers::DevicesController < GamesController
       :mac_address       => mac_address,
       :platform          => 'ios'
     }
-    redirect_to finalize_games_gamer_device_path(:data => SymmetricCrypto.encrypt_object(data, SYMMETRIC_CRYPTO_SECRET)), :status => 301
+    redirect_to finalize_games_gamer_device_path(:data => ObjectEncryptor.encrypt(data)), :status => 301
   rescue Exception => e
     Notifier.alert_new_relic(e.class, e.message, request, params)
     flash[:error] = "Error linking device. Please try again."
@@ -47,7 +47,7 @@ class Games::Gamers::DevicesController < GamesController
   def finalize
     if current_gamer.present?
       redirect_to games_root_path unless params[:data].present?
-      data = SymmetricCrypto.decrypt_object(params[:data], SYMMETRIC_CRYPTO_SECRET)
+      data = ObjectEncryptor.decrypt(params[:data])
 
       device = Device.new(:key => data[:udid])
       device.product = data[:product]
@@ -64,7 +64,7 @@ class Games::Gamers::DevicesController < GamesController
         else
           device.set_last_run_time!(TAPJOY_GAMES_REGISTRATION_OFFER_ID)
         end
-        session[:current_device_id] = SymmetricCrypto.encrypt_object(device.key, SYMMETRIC_CRYPTO_SECRET)
+        session[:current_device_id] = ObjectEncryptor.encrypt(device.key)
         redirect_to games_root_path(:register_device => true)
       else
         flash[:error] = "Error linking device. Please try again."

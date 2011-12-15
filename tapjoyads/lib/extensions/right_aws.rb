@@ -199,7 +199,7 @@ module RightAws
     end
   end
 
-  class  AcfInterface < RightAwsBase
+  class AcfInterface < RightAwsBase
 
     # Override, in order to support invalidation.
     silence_warnings do

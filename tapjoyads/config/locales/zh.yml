@@ -58,4 +58,4 @@ zh:
       description_label: "请描述您下载了APP的流程:"
       missing_offer: "您需要写下您完成的广告。"
       select_offer: "选以下的广告"
-      no_incomplete_offers_label: "No suitable offers were found."
+      no_incomplete_offers_label: "没法提供其他的广告。"

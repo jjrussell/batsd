@@ -61,7 +61,6 @@ RegExp.escape = function(text) {
           TJG.ui.removeDialogs();
           TJG.repositionDialog = [];
         });
-
         $('#link_device').click(function(){
           if (TJG.vars.isAndroid &&  TJG.android_market_url) {
             document.location.href = TJG.android_market_url;
@@ -102,12 +101,12 @@ RegExp.escape = function(text) {
               }
               email = values['gamer_session[email]'];
               pass = values['gamer_session[password]'];
-              if ( email == '' ) {
+              if (email == '' || email == 'Email') {
                 $(".login_error").html('Please enter your email address');
                 $(".formError").show();
                 e.preventDefault();
               }
-              else if ( pass == '' ) {
+              else if (pass == '' || pass == 'Password') {
                 $(".login_error").html('Please enter your password');
                 $(".formError").show();
                 e.preventDefault();
@@ -150,6 +149,45 @@ RegExp.escape = function(text) {
         $('.plus, .mobile_icon').click(function() {
           selectDevice();
         });
+        // Placeholder support for non-supported browsers
+        var input = document.createElement("input");
+        if (('placeholder' in input) == false) {
+          $('[placeholder]').focus(function() {
+            var me = $(this);
+            if (me.val() == '' || me.val() == me.attr('placeholder')) {
+              me.val('').removeClass('placeholder');
+              if (me.hasClass('password')) {
+                me.removeClass('password');
+                if ($.browser.msie) { // IE doesn't support changing input type
+                  me.prev().hide(); // Hide label
+                }
+                else {
+                  this.type = 'password';
+                }
+              }
+            }
+          }).blur(function() {
+            var me = $(this);
+            if (me.val() == '' || me.val() == me.attr('placeholder')) {
+              if (this.type == 'password') {
+                me.addClass('password');
+                me.addClass('placeholder').val('');
+                if ($.browser.msie) { // IE doesn't support changing input type
+                  me.prev().show(); // Show label
+                }
+                else {
+                  this.type = 'text';
+                }
+              }
+              else {
+                me.addClass('placeholder').val(me.attr('placeholder'));
+              }
+            }
+          }).blur();
+          $('label[for=password]').click(function() {
+            $(this).hide();
+          });
+        }
       },
 
       checkFlashMessages: function () {
@@ -169,11 +207,6 @@ RegExp.escape = function(text) {
         TJG.onload[key]();
       }
     };
-    if (window.addEventListener) {
-      window.addEventListener("load", TJG.init, false);
-    }
-    else {
-      window.attachEvent("load", TJG.init);
-    }
+    TJG.init();
 
 })(this, document);

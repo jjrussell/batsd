@@ -138,7 +138,7 @@ class Gamer < ActiveRecord::Base
         end
       else
         begin
-          self.referred_by, invitation_id = SymmetricCrypto.decrypt_object(referrer, SYMMETRIC_CRYPTO_SECRET).split(',')
+          self.referred_by, invitation_id = ObjectEncryptor.decrypt(referrer).split(',')
         rescue OpenSSL::Cipher::CipherError
         end
         if referred_by? && invitation_id

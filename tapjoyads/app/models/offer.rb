@@ -149,6 +149,7 @@ class Offer < ActiveRecord::Base
   before_save :update_instructions
   after_save :update_enabled_rating_offer_id
   after_save :update_pending_enable_requests
+  after_save :update_tapjoy_sponsored_associated_offers
   after_save :sync_banner_creatives! # NOTE: this should always be the last thing run by the after_save callback chain
 
   named_scope :enabled_offers, :joins => :partner,
@@ -171,6 +172,7 @@ class Offer < ActiveRecord::Base
   named_scope :non_video_offers, :conditions => "item_type != 'VideoOffer'"
   named_scope :papaya_app_offers, :joins => :app, :conditions => "item_type = 'App' AND #{App.quoted_table_name}.papaya_user_count > 0", :select => PAPAYA_OFFER_COLUMNS
   named_scope :papaya_action_offers, :joins => { :action_offer => :app }, :conditions => "item_type = 'ActionOffer' AND #{App.quoted_table_name}.papaya_user_count > 0", :select => PAPAYA_OFFER_COLUMNS
+  named_scope :tapjoy_sponsored_offer_ids, :conditions => "tapjoy_sponsored = true", :select => "#{Offer.quoted_table_name}.id"
 
   delegate :balance, :pending_earnings, :name, :cs_contact_email, :approved_publisher?, :rev_share, :to => :partner, :prefix => true
   memoize :partner_balance
@@ -377,16 +379,8 @@ class Offer < ActiveRecord::Base
     src_obj.write(:data => icon_src_blob, :acl => :public_read)
 
     Mc.delete("icon.s3.#{id}")
-
-    # Invalidate cloudfront
-    if existing_icon_blob.present?
-      begin
-        acf = RightAws::AcfInterface.new
-        acf.invalidate('E1MG6JDV6GH0F2', ["/icons/256/#{icon_id}.jpg", "/icons/114/#{icon_id}.jpg", "/icons/57/#{icon_id}.jpg", "/icons/57/#{icon_id}.png"], "#{id}.#{Time.now.to_i}")
-      rescue Exception => e
-        Notifier.alert_new_relic(FailedToInvalidateCloudfront, e.message)
-      end
-    end
+    paths = ["icons/256/#{icon_id}.jpg", "icons/114/#{icon_id}.jpg", "icons/57/#{icon_id}.jpg", "icons/57/#{icon_id}.png"]
+    CloudFront.invalidate(id, paths) if existing_icon_blob.present?
   end
 
   def get_video_url(options = {})
@@ -703,13 +697,7 @@ private
       # no worries, it will get cached later if needed
     end
 
-    # Invalidate cloudfront
-    begin
-      acf = RightAws::AcfInterface.new
-      acf.invalidate('E1MG6JDV6GH0F2', "/#{banner_creative_path(size, format)}".to_a, "#{id}.#{Time.now.to_i}")
-    rescue Exception => e
-      Notifier.alert_new_relic(FailedToInvalidateCloudfront, e.message)
-    end
+    CloudFront.invalidate(id, banner_creative_path(size, format))
   end
 
   def is_test_device?(currency, device)
@@ -765,6 +753,15 @@ private
       enable_offer_requests.pending.each { |request| request.approve! }
     elsif hidden_changed? && hidden?
       enable_offer_requests.pending.each { |request| request.approve!(false) }
+    end
+  end
+
+  def update_tapjoy_sponsored_associated_offers
+    if tapjoy_sponsored_changed?
+      find_associated_offers.each do |o|
+        o.tapjoy_sponsored = tapjoy_sponsored
+        o.save! if o.changed?
+      end
     end
   end
 

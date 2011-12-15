@@ -56,4 +56,4 @@ ko:
       invalid_email: "올바른 이메일 주소를 입력해주십시오."
       abuse_warning: "이 양식은 제안 안건 절차를 종료 했음에도 불구하고, 가상 통화를받지 못한 고객을위한 것입니다. 부정 사용의 경우에는 앞으로 사용에 제약을 받게됩니다."
       select_offer: "제안 광고를 선택하여 주십시오."
-      no_incomplete_offers_label: "No suitable offers were found."
+      no_incomplete_offers_label: "광고를 제공하지 못했습니다."

@@ -63,9 +63,15 @@ TJG.loadedImages = {};
     TJG.vars.isSafari = nav.appVersion.match(/Safari/gi);
     TJG.vars.hasHomescreen = 'standalone' in nav && TJG.vars.isIos;
     TJG.vars.isStandalone = TJG.vars.hasHomescreen && nav.standalone;
-    TJG.vars.version = nav.appVersion.match(/OS \d+_\d+/g);
-    TJG.vars.platform = nav.platform.split(' ')[0];
-    TJG.vars.language = nav.language.replace('-', '_');
+    if (nav.appVersion) {
+       TJG.vars.version = nav.appVersion.match(/OS \d+_\d+/g);
+    }
+    if (nav.platform) {
+      TJG.vars.platform = nav.platform.split(' ')[0];
+    }
+    if (nav.language) {
+      TJG.vars.language = nav.language.replace('-', '_');
+    }
     if (TJG.vars.isIos || TJG.vars.isMobile) {
      if (TJG.vars.isIPad) {
        classReplaces['mobile'] = 'ipad';
@@ -1251,7 +1257,7 @@ TJG.ui = {
         $(".email_error").html('Please enter your birthdate');
         hasError = true;
       }
-      else if(values['gamer[email]'] == '') {
+      else if(values['gamer[email]'] == '' || values['gamer[email]'] == "Email") {
         $(".email_error").html('Please enter your email address');
         hasError = true;
       }
@@ -1259,7 +1265,7 @@ TJG.ui = {
         $(".email_error").html('Enter a valid email address');
         hasError = true;
       }
-      else if(values['gamer[password]'] == '') {
+      else if(values['gamer[password]'] == '' || values['gamer[password]'] == "Password") {
         $(".email_error").html('Please enter a password');
         hasError = true;
       }
@@ -2382,7 +2388,6 @@ RegExp.escape = function(text) {
           TJG.ui.removeDialogs();
           TJG.repositionDialog = [];
         });
-
         $('#link_device').click(function(){
           if (TJG.vars.isAndroid &&  TJG.android_market_url) {
             document.location.href = TJG.android_market_url;
@@ -2423,12 +2428,12 @@ RegExp.escape = function(text) {
               }
               email = values['gamer_session[email]'];
               pass = values['gamer_session[password]'];
-              if ( email == '' ) {
+              if (email == '' || email == 'Email') {
                 $(".login_error").html('Please enter your email address');
                 $(".formError").show();
                 e.preventDefault();
               }
-              else if ( pass == '' ) {
+              else if (pass == '' || pass == 'Password') {
                 $(".login_error").html('Please enter your password');
                 $(".formError").show();
                 e.preventDefault();
@@ -2471,6 +2476,45 @@ RegExp.escape = function(text) {
         $('.plus, .mobile_icon').click(function() {
           selectDevice();
         });
+        // Placeholder support for non-supported browsers
+        var input = document.createElement("input");
+        if (('placeholder' in input) == false) {
+          $('[placeholder]').focus(function() {
+            var me = $(this);
+            if (me.val() == '' || me.val() == me.attr('placeholder')) {
+              me.val('').removeClass('placeholder');
+              if (me.hasClass('password')) {
+                me.removeClass('password');
+                if ($.browser.msie) { // IE doesn't support changing input type
+                  me.prev().hide(); // Hide label
+                }
+                else {
+                  this.type = 'password';
+                }
+              }
+            }
+          }).blur(function() {
+            var me = $(this);
+            if (me.val() == '' || me.val() == me.attr('placeholder')) {
+              if (this.type == 'password') {
+                me.addClass('password');
+                me.addClass('placeholder').val('');
+                if ($.browser.msie) { // IE doesn't support changing input type
+                  me.prev().show(); // Show label
+                }
+                else {
+                  this.type = 'text';
+                }
+              }
+              else {
+                me.addClass('placeholder').val(me.attr('placeholder'));
+              }
+            }
+          }).blur();
+          $('label[for=password]').click(function() {
+            $(this).hide();
+          });
+        }
       },
 
       checkFlashMessages: function () {
@@ -2490,11 +2534,6 @@ RegExp.escape = function(text) {
         TJG.onload[key]();
       }
     };
-    if (window.addEventListener) {
-      window.addEventListener("load", TJG.init, false);
-    }
-    else {
-      window.attachEvent("load", TJG.init);
-    }
+    TJG.init();
 
 })(this, document);
