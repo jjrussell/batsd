@@ -43,7 +43,7 @@
                         None Selected
               - form_for([ :games, @gamer ], :url => dissociate_account_games_gamer_gamer_profile_path(:account_type => Invitation::FACEBOOK), :html => { :method => "put" }) do |f|
                 .field
-                  = submit_tag(@gamer_profile.facebook_id.present? ? 'Change' : 'Link My Facebook', :class => "button")
+                  = submit_tag(@gamer_profile.facebook_id.present? ? 'Change Linked Account' : 'Link My Facebook', :class => "button")
 
 - content_for :page_javascript do
   :plain
