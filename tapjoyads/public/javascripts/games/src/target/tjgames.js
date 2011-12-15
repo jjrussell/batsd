@@ -2324,6 +2324,29 @@ TJG.social = {
     showFriendList();
     onWindowResize();
   },
+
+  doFbLogin : function(connect_acct_path){
+    var scope = 'offline_access,publish_stream';
+    FB.login(function(response, scope) {
+      if (response.authResponse) {
+        FB.api('/me', function(response) {
+          <!--
+          window.location = connect_acct_path;
+          //-->
+        });
+      } else {
+      }
+    }, {scope: scope});
+  },
+
+  doFbLogout : function(){
+    FB.getLoginStatus(function(response) {
+      if (response.authResponse) {
+        FB.logout(function(response) {
+        });
+      }
+    });
+  },
 };
 RegExp.escape = function(text) {
   if (!arguments.callee.sRE) {
