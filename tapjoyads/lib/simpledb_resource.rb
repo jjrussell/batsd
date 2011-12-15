@@ -301,6 +301,11 @@ class SimpledbResource
     !(@attributes_to_add.empty? && @attributes_to_replace.empty? && @attributes_to_delete.empty? && @attribute_names_to_delete.empty?)
   end
 
+  def attribute_changed?(name)
+    keys = (@attributes_to_add.keys | @attributes_to_replace.keys | @attributes_to_delete.keys | @attribute_names_to_delete)
+    keys.include?(name.to_s)
+  end
+
   ##
   # Loads a single row from this domain, modifies it, and saves it. Uses SDB's Conditional Put
   # on the 'version' attribute to ensure that the row has been unmodified during the course of
@@ -391,11 +396,19 @@ class SimpledbResource
     return count
   end
 
+  def has_unique?(attribute)
+    value = send(attribute)
+    conditions = {
+      :where => "#{attribute} = '#{value}' and itemName() != '#{key}'",
+      :consistent => true,
+    }
+    self.class.count(conditions).zero?
+  end
+
   def self.count_async(options = {})
     where       = options.delete(:where)
     next_token  = options.delete(:next_token)
     domain_name = options.delete(:domain_name) { self.domain_name }
-    limit       = options.delete(:limit)
     consistent  = options.delete(:consistent)  { false }
     hydra       = options.delete(:hydra)       { Typhoeus::Hydra.new }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
@@ -407,7 +420,6 @@ class SimpledbResource
 
     query = "SELECT count(*) FROM `#{domain_name}`"
     query += " WHERE #{where}" if where
-    query += " LIMIT #{limit}" if limit
 
     self.send_count_async_request(query, next_token, consistent, hydra) do |count|
       yield count

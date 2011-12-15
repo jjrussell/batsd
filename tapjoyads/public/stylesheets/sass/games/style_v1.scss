@@ -295,26 +295,15 @@ form#new_gamer input {
   overflow: hidden;
   text-align: center;
 }
-
+.device_info {
+  cursor: pointer;
+}
 .device_icon .mobile {
   background: transparent url("/images/games/old/v2/phone.png") no-repeat;
   left: 14px;
   height: 22px;
   top: 2px;
   width: 14px;
-}
-.device_name {
-  font-size: 16px;
-  padding: 6px 12px 0;
-}
-.device_name.has_switch {
-  font-size: 13px;
-  padding: 2px 12px 0;
-}
-.device_switch {
-  font-size: 10px;
-  line-height: 12px;
-  margin-top: 2px;
 }
 /* Page */
 .web .page,
@@ -1066,7 +1055,7 @@ body.old .formError .pad, body.old .email_error .pad, body.old .account_error .p
   background: transparent url("/images/games/old/feat_arrow_web.png") no-repeat center center;
   height: 45px;
   position: relative;
-  top: 40px;
+  top: 24px;
   width: 25px;
 }
 .mobile .feat_arrow {
@@ -1351,6 +1340,7 @@ body.old .formError .pad, body.old .email_error .pad, body.old .account_error .p
   padding-right: 6px;
 }
 .get_more_apps, .grey_button, .tab_button.grey {
+  background-color: #e7e7e7;
   background: -moz-linear-gradient(top, #e7e7e7 0%, #a6a6a6 100%);
   background: -webkit-gradient(linear, 0 0, 0 100%, color-stop(0, #e7e7e7), color-stop(1, #a6a6a6));
   border-radius: 6px;
@@ -1488,6 +1478,7 @@ input.button {
   border: none;
 }
 .button.grey {
+  background-color: #e7e7e7;
   background: -moz-linear-gradient(top, #e7e7e7 0%, #c4c4c4 100%);
   background: -webkit-gradient(linear, 0 0, 0 100%, color-stop(0, #e7e7e7), color-stop(1, #c4c4c4));
   color: #3F3F3F;
@@ -1497,6 +1488,7 @@ input.button {
   -webkit-box-shadow: 1px 1px 1px #303030;
 }
 .button.blue, .button.grey:hover, .button.grey:active {
+  background-color: #CF1623;
   border-color: #B0131D;
   color: #FFF;
   text-shadow: 0 1px 1px #444;

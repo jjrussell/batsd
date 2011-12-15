@@ -301,7 +301,7 @@ TJG.ui = {
         $(".email_error").html('Please enter your birthdate');
         hasError = true;
       }
-      else if(values['gamer[email]'] == '') {
+      else if(values['gamer[email]'] == '' || values['gamer[email]'] == "Email") {
         $(".email_error").html('Please enter your email address');
         hasError = true;
       }
@@ -309,7 +309,7 @@ TJG.ui = {
         $(".email_error").html('Enter a valid email address');
         hasError = true;
       }
-      else if(values['gamer[password]'] == '') {
+      else if(values['gamer[password]'] == '' || values['gamer[password]'] == "Password") {
         $(".email_error").html('Please enter a password');
         hasError = true;
       }
@@ -335,6 +335,8 @@ TJG.ui = {
           dataType: 'json',
           data: {
             'authenticity_token': values['authenticity_token'],
+            'data': values['data'],
+            'src': values['src'],
             'gamer[email]': values['gamer[email]'],
             'gamer[password]': values['gamer[password]'],
             'gamer[referrer]': values['gamer[referrer]'],
@@ -360,23 +362,16 @@ TJG.ui = {
                 ].join('');
               }
               $('.register_progess').html(msg);
-              if (d.linked) { // Device already linked with account
+              if (d.link_device_url) { // Link device
                 $('.continue_link_device').click(function(){
-                  if (TJG.path) {
-                    document.location.href = TJG.path;
+                  if (TJG.vars.isAndroid && d.android) {
+                    document.location.href = d.link_device_url;
                   }
-                  else {
-                    document.location.href = document.domain;
-                  }
-                });
-              }
-              else if (d.link_device_url) { // Link device
-                $('.continue_link_device').click(function(){
-                  if (TJG.vars.isAndroid &&  TJG.android_market_url) {
+                  else if (TJG.vars.isAndroid && TJG.android_market_url) {
                     document.location.href = TJG.android_market_url;
                   }
-                  else if (TJG.vars.isIos && TJG.ios_link_device_url) {
-                    document.location.href = TJG.ios_link_device_url;
+                  else if (TJG.vars.isIos) {
+                    document.location.href = d.link_device_url;
                   }
                   else {
                     if (TJG.path) {
@@ -691,8 +686,8 @@ TJG.ui = {
     $.each(devices, function(i,v){
       var device_type = v.device_type;
       if (!TJG.utils.isNull(device_type)
-        && TJG.vars.device_type
-          && (device_type.toLowerCase() == TJG.vars.device_type.toLowerCase())) {
+        && TJG.vars.deviceType
+          && (device_type.toLowerCase() == TJG.vars.deviceType.toLowerCase())) {
         device_count++;
         device_found = true;
         device_data = v.data;
@@ -820,23 +815,30 @@ TJG.ui = {
     // Checks if new user. If so, shows intro tutorial
     var repeat = TJG.utils.getLocalStorage("tjg.new_user");
     if (install.indexOf("true") != -1) {
-      TJG.utils.centerDialog("#register_device");
-      $("#register_device").fadeIn(fadeSpd);
-      if (repeat != "false") {
-         $("#register_device .close_dialog").click(function() {
-           showIntro();
-         });
+      if (TJG.vars.isAndroid) {
+        showIntro();
+      }
+      else {
+        TJG.utils.centerDialog("#register_device");
+        $("#register_device").fadeIn(fadeSpd);
+        if (repeat != "false") {
+          $("#register_device .close_dialog").click(function() {
+            showIntro();
+          });
+        }
       }
     }
     // Cookie is missing, so prompt user to select device
-    else if (TJG.require_select_device && TJG.select_device) {
+    else if (TJG.require_select_device && TJG.select_device.length > 0 && TJG.vars.isTouch) {
       TJG.ui.showDeviceSelection(TJG.select_device, false);
     }
     else if (repeat != "false") {
       showIntro();
     }
-    // If user has multiple devices, enable device selection UI
-    if (TJG.select_device && (TJG.select_device.length > 1)) {
+    if (TJG.select_device && TJG.select_device.length == 0) {
+      $('.device_wrapper').hide();
+    }
+    if (TJG.select_device && TJG.select_device.length > 0) {
       $('.device_switch').html("wrong device?");
       $('.device_name').addClass("has_switch");
       $('.device_info').css('cursor','pointer');

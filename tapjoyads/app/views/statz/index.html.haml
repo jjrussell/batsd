@@ -57,7 +57,8 @@
       %th
         %a{ :id => 'toggle_icons', :href => '#' } Icon
       %th Offer
-      %th{ :class => 'headerSortUp header' } Conversions
+      %th{ :class => 'headerSortUp header' } Spend
+      %th Conversions
       %th Store rank
       %th Price
       %th Payment
@@ -65,7 +66,8 @@
       %th Platform
       %th CVR
       %th Published offers
-      %th Offers revenue
+      %th Gross revenue
+      %th Publisher revenue
       %th Featured
       %th Rewarded
       %th Offer type
@@ -74,6 +76,7 @@
       %td.filter#filters_title{:colspan => 2}
         %b Filters
         (#{link_to('reset all', '#', :id => 'reset_filters')})
+      %td.filter= select_tag('spend_filter', options_for_select(filter_options(:spend)))
       %td.filter= select_tag('conversions_filter', options_for_select(filter_options(:conversions)))
       %td.filter= select_tag('rank_filter', options_for_select(filter_options(:rank)))
       %td.filter= select_tag('price_filter', options_for_select(filter_options(:free)))
@@ -82,7 +85,8 @@
       %td.filter= select_tag('platform_filter', options_for_select(filter_options(:platform)))
       %td.filter &nbsp;
       %td.filter= select_tag('published_offers_filter', options_for_select(filter_options(:published_offers)))
-      %td.filter= select_tag('revenue_filter', options_for_select(filter_options(:revenue)))
+      %td.filter= select_tag('gross_revenue_filter', options_for_select(filter_options(:gross_revenue)))
+      %td.filter= select_tag('publisher_revenue_filter', options_for_select(filter_options(:publisher_revenue)))
       %td.filter= select_tag('featured_filter', options_for_select(filter_options(:featured)))
       %td.filter= select_tag('rewarded_filter', options_for_select(filter_options(:rewarded)))
       %td.filter= select_tag('offer_type_filter', options_for_select(filter_options(:offer_type)))
@@ -92,20 +96,23 @@
       :ruby
         metadata = @cached_metadata[offer_id]
         tr_classes = []
-        tr_classes << (stats['conversions'] == '0'         ? 'zero_conversions' : 'nonzero_conversions')
-        tr_classes << (metadata['overall_store_rank'] == '-'  ? 'unranked'         : 'ranked')
-        tr_classes << (metadata['price'] == '$0.00'        ? 'free'             : 'paid')
+        tr_classes << (stats['spend'] == '$0.00'             ? 'zero_spend'             : 'nonzero_spend')
+        tr_classes << (stats['conversions'] == '0'           ? 'zero_conversions'       : 'nonzero_conversions')
+        tr_classes << (metadata['overall_store_rank'] == '-' ? 'unranked'               : 'ranked')
+        tr_classes << (metadata['price'] == '$0.00'          ? 'free'                   : 'paid')
         tr_classes << metadata['platform'].to_s.downcase
-        tr_classes << (stats['published_offers'] == '0'    ? 'zero_published'   : 'nonzero_published')
-        tr_classes << (stats['offers_revenue'] == '$0.00'  ? 'zero_revenue'     : 'nonzero_revenue')
-        tr_classes << (metadata['featured']                ? 'featured'         : 'nonfeatured')
-        tr_classes << (metadata['rewarded']                ? 'rewarded'         : 'nonrewarded')
+        tr_classes << (stats['published_offers'] == '0'      ? 'zero_published'         : 'nonzero_published')
+        tr_classes << (stats['gross_revenue'] == '$0.00'     ? 'zero_gross_revenue'     : 'nonzero_gross_revenue')
+        tr_classes << (stats['publisher_revenue'] == '$0.00' ? 'zero_publisher_revenue' : 'nonzero_publisher_revenue')
+        tr_classes << (metadata['featured']                  ? 'featured'               : 'nonfeatured')
+        tr_classes << (metadata['rewarded']                  ? 'rewarded'               : 'nonrewarded')
         tr_classes << metadata['offer_type'].to_s.downcase
         value = metadata['balance'].gsub(/[\$,]/,'')
       %tr{ :class => tr_classes.compact.join(' '), :value => value }
         %td
           %img.icon.hidden{ :s => metadata['icon_url'] }
         %td= link_to(metadata['offer_name'], statz_path(offer_id))
+        %td= stats['spend']
         %td= stats['conversions']
         %td= metadata['overall_store_rank']
         %td= metadata['price']
@@ -114,7 +121,8 @@
         %td= metadata['platform']
         %td= metadata['conversion_rate']
         %td= stats['published_offers']
-        %td= stats['offers_revenue']
+        %td= stats['gross_revenue']
+        %td= stats['publisher_revenue']
         %td= metadata['featured']
         %td= metadata['rewarded']
         %td= metadata['offer_type']
@@ -153,14 +161,16 @@
         widgets: ['zebra'],
         headers: {
           0:  { sorter: false },
-          2:  { sorter: 'formatted-number-column' },
-          3:  { sorter: 'rank-column' },
-          4:  { sorter: 'currency-column' },
+          2:  { sorter: 'currency-column' },
+          3:  { sorter: 'formatted-number-column' },
+          4:  { sorter: 'rank-column' },
           5:  { sorter: 'currency-column' },
           6:  { sorter: 'currency-column' },
-          9: { sorter: 'formatted-number-column' },
-          10: { sorter: 'currency-column' }
-        }
+          7:  { sorter: 'currency-column' },
+          10: { sorter: 'formatted-number-column' },
+          11: { sorter: 'currency-column' },
+          12: { sorter: 'currency-column' }
+        },
       });
 
       var iconsLoaded = false;
@@ -191,11 +201,13 @@
       });
       $('.filter select').change(function(){
         var selectValues = [
+          String( $('#spend_filter').val() ).toLowerCase(),
           String( $('#conversions_filter').val() ).toLowerCase(),
           String( $('#rank_filter').val() ).toLowerCase(),
           String( $('#price_filter').val() ).toLowerCase(),
           String( $('#published_offers_filter').val() ).toLowerCase(),
-          String( $('#revenue_filter').val() ).toLowerCase(),
+          String( $('#gross_revenue_filter').val() ).toLowerCase(),
+          String( $('#publisher_revenue_filter').val() ).toLowerCase(),
           String( $('#featured_filter').val() ).toLowerCase(),
           String( $('#rewarded_filter').val() ).toLowerCase(),
           String( $('#platform_filter').val() ).toLowerCase(),
