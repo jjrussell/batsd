@@ -135,11 +135,11 @@ class WebRequest
   self.define_attr :truncated_package_names, :type => :bool
 
   def self.count_with_vertica(conditions = nil)
-    VerticaCluster.count('production.web_request', conditions)
+    VerticaCluster.count('production.web_requests', conditions)
   end
 
   def self.select_with_vertica(options = {})
-    VerticaCluster.query('production.web_request', options)
+    VerticaCluster.query('production.web_requests', options)
   end
 
   def initialize(options = {})
