@@ -76,6 +76,12 @@
   .metadata
     Exclusivity Expires On:
     = @partner.exclusivity_expires_on ? @partner.exclusivity_expires_on.to_s(:pub) : "N/A"
+  .metadata
+    %form#csv_export{ :action => set_tapjoy_sponsored_partner_path, :method => 'post' }
+      = hidden_field_tag(:flag, !@partner.tapjoy_sponsored?)
+      Tapjoy sponsored all apps:
+      = @partner.tapjoy_sponsored? ? "Yes" : "No"
+      = submit_tag('switch')
 
 .clear
 
@@ -158,6 +164,7 @@
         %th Payment
         %th TJ Enabled
         %th Platform
+        %th TJ Sponsored
     %tbody
       - @partner.offers.each do |offer|
         %tr
@@ -168,6 +175,7 @@
           %td= number_to_currency(offer.payment / 100.0)
           %td= offer.tapjoy_enabled
           %td= offer.get_platform
+          %td= offer.tapjoy_sponsored ? "Yes" : "No"
 
 - content_for :page_javascript do
   :plain

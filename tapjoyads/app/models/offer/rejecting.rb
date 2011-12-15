@@ -13,6 +13,8 @@ module Offer::Rejecting
     [ 'cab56716-8e27-4a4c-8477-457e1d311209', '069eafb8-a9b8-4293-8d2a-e9d9ed659ac8' ] => [ 'cab56716-8e27-4a4c-8477-457e1d311209', '069eafb8-a9b8-4293-8d2a-e9d9ed659ac8' ],
     # Snoopy's Street Fair
     [ '99d4a403-38a8-41e3-b7a2-5778acb968ef', 'b22f3ef8-947f-4605-a5bc-a83609af5ab7' ] => [ '99d4a403-38a8-41e3-b7a2-5778acb968ef', 'b22f3ef8-947f-4605-a5bc-a83609af5ab7' ],
+    # Zombie Lane
+    [ 'd299fb80-29f6-48a3-8957-bbd8a20acdc9', 'eca4615a-7439-486c-b5c3-efafe3ec69a6' ] => [ 'd299fb80-29f6-48a3-8957-bbd8a20acdc9', 'eca4615a-7439-486c-b5c3-efafe3ec69a6' ],
   }
 
   def postcache_reject?(publisher_app, device, currency, device_type, geoip_data, app_version, direct_pay_providers, type, hide_rewarded_app_installs, library_version, os_version, screen_layout_size, video_offer_ids, source, all_videos)
@@ -72,8 +74,8 @@ module Offer::Rejecting
   end
 
   def recommendation_reject?(device, device_type, geoip_data, os_version)
-    recommendable_types_reject? || 
-      device_platform_mismatch?(device_type) || 
+    recommendable_types_reject? ||
+      device_platform_mismatch?(device_type) ||
       geoip_reject?(geoip_data, device) ||
       already_complete?(device) ||
       min_os_version_reject?(os_version) ||
@@ -220,7 +222,7 @@ module Offer::Rejecting
 
   def video_offers_reject?(video_offer_ids, type, all_videos)
     return false if type == Offer::VIDEO_OFFER_TYPE || all_videos
-    
+
     item_type == 'VideoOffer' && !video_offer_ids.include?(id)
   end
 
@@ -228,7 +230,7 @@ module Offer::Rejecting
   def tapjoy_games_retargeting_reject?(device)
     TAPJOY_GAMES_RETARGETED_OFFERS.include?(item_id) && !device.has_app?(TAPJOY_GAMES_REGISTRATION_OFFER_ID)
   end
-  
+
   def recommendable_types_reject?
     item_type != 'App'
   end

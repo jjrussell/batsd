@@ -33,7 +33,7 @@ production:
 production_slave_for_tapjoy_db:
   adapter: mysql
   database: tapjoy_db
-  host: tapjoy-db-rds-replica-prod.cck8zbm50hdd.us-east-1.rds.amazonaws.com
+  host: tapjoy-db-rds-replica1.cck8zbm50hdd.us-east-1.rds.amazonaws.com
   username: tapjoy
   password: andoverbusiness1
   reconnect: true

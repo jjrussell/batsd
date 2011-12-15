@@ -8,10 +8,8 @@ class Games::HomepageController < GamesController
       render_login_page and return
     end
 
-    if has_multiple_devices?
-      @device_data = current_gamer.devices.map(&:device_data)
-      @require_select_device = current_device_id_cookie.nil?
-    end
+    @device_data = current_gamer.devices.map(&:device_data)
+    @require_select_device = current_device_id_cookie.nil?
     device_id = current_device_id
     device_info = current_device_info
     @gamer = current_gamer
@@ -20,18 +18,18 @@ class Games::HomepageController < GamesController
     @device_name = device_info.name if device_info
     @device = Device.new(:key => device_id) if device_id.present?
     if @device.present?
+      @external_publishers = ExternalPublisher.load_all_for_device(@device)
       if params[:load] == 'earn'
         currency = Currency.find_by_id(params[:currency_id])
         @show_offerwall = @device.has_app?(currency.app_id) if currency
         @offerwall_external_publisher = ExternalPublisher.new(currency) if @show_offerwall
       end
-      @external_publishers = ExternalPublisher.load_all_for_device(@device)
     end
     @featured_review = AppReview.featured_review(@device.try(:platform))
 
     if params[:load] == 'more_apps'
       @show_more_apps = true
-      @editors_picks = EditorsPick.cached_active(using_android? ? 'android' : 'iphone')
+      current_recommendations
     end
   end
 
