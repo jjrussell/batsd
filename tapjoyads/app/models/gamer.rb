@@ -8,7 +8,8 @@ class Gamer < ActiveRecord::Base
 
   delegate :facebook_id, :facebook_id?, :fb_access_token, :referred_by, :referred_by=, :referred_by?, :to => :gamer_profile, :allow_nil => true
   delegate :birthdate, :birthdate?, :city, :city?, :country, :country?, :favorite_category, :favorite_category?,
-           :favorite_game, :favorite_game?, :gender, :gender?, :postal_code, :postal_code?, :referral_count, :to => :gamer_profile, :allow_nil => true
+           :favorite_game, :favorite_game?, :gender, :gender?, :postal_code, :postal_code?, :referral_count,
+           :to => :gamer_profile, :allow_nil => true
 
   validates_associated :gamer_profile, :on => :create
   validates_presence_of :email
