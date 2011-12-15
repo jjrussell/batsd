@@ -169,6 +169,23 @@ class Device < SimpledbShardedResource
     save!
   end
 
+  def serial_save(options = {})
+    if is_new
+      create_identifiers
+    end
+    super(options)
+  end
+
+  def create_identifiers
+    all_identifiers = [ Digest::SHA2.hexdigest(key) ]
+    all_identifiers.push(mac_address) if self.mac_address.present?
+    all_identifiers.each do |identifier|
+      device_identifier = DeviceIdentifier.new(:key => identifier)
+      device_identifier.udid = key
+      device_identifier.save
+    end
+  end
+
 private
 
   def fix_parser_error
