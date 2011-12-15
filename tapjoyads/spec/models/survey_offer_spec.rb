@@ -48,7 +48,7 @@ describe SurveyOffer do
         "udid=TAPJOY_UDID",
         "click_key=TAPJOY_SURVEY",
       ]
-      url = "/survey_results/new?#{url_params.join('&')}"
+      url = "#{API_URL}/survey_results/new?#{url_params.join('&')}"
       primary_offer.url.should              == url
       primary_offer.bid.should              == 0
       primary_offer.device_types.should     == Offer::ALL_DEVICES.to_json
