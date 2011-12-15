@@ -99,13 +99,13 @@
         TJG.ui.homeInit();
     - if @show_offerwall
       - currency_data = @offerwall_external_publisher.currencies.first
-      - url = @offerwall_external_publisher.get_offerwall_url(@device, currency_data, request.headers)
+      - url = @offerwall_external_publisher.get_offerwall_url(@device, currency_data, request.accept_language, request.user_agent)
       - app_name = escape_javascript(@offerwall_external_publisher.app_name)
       :plain
         TJG.ui.getAndShowOfferWall('#{url}', '#{currency_data[:id]}', '#{app_name}', '#{escape_javascript(currency_data[:name])}');
     - elsif @show_more_apps
       :plain
-        TJG.moreAppOfferWall = '#{escape_javascript(render 'games/more_games/cached_app_list', :cached_app_list => @editors_picks)}';
+        TJG.moreAppOfferWall = '#{escape_javascript(render :template => 'games/more_games/recommended', :layout => false)}';
         TJG.ui.showMoreGames();
     :plain
       });

@@ -12,6 +12,7 @@ class QueueNames
   FAILED_SDB_SAVES           = "#{BASE_NAME}FailedSdbSaves"
   GET_STORE_INFO             = "#{BASE_NAME}GetStoreInfo"
   MAIL_CHIMP_UPDATES         = "#{BASE_NAME}MailChimpUpdates"
+  PARTNER_CHANGES            = "#{BASE_NAME}PartnerChanges"
   PARTNER_NOTIFICATIONS      = "#{BASE_NAME}PartnerNotifications"
   RECOUNT_STATS              = "#{BASE_NAME}RecountStats"
   RESOLVE_SUPPORT_REQUESTS   = "#{BASE_NAME}ResolveSupportRequests"
@@ -20,4 +21,5 @@ class QueueNames
   SEND_CURRENCY              = "#{BASE_NAME}SendCurrency"
   UDID_REPORTS               = "#{BASE_NAME}UdidReports"
   UPDATE_MONTHLY_ACCOUNT     = "#{BASE_NAME}UpdateMonthlyAccount"
+  SEND_WELCOME_EMAILS        = "#{BASE_NAME}SendWelcomeEmails"
 end
