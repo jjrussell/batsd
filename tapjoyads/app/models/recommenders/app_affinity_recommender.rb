@@ -1,5 +1,4 @@
 class Recommenders::AppAffinityRecommender < Recommender
-  MOST_POPULAR_FILE = 'most_popular.txt'
   APP_FILE          = 'app_app_matrix.txt'
   DEVICE_FILE       = 'daily/udid_apps_reco.dat'
 
@@ -10,8 +9,7 @@ class Recommenders::AppAffinityRecommender < Recommender
   end
 
   def most_popular(opts = {})
-    out = Mc.distributed_get('s3.recommendations.raw_list.most_popular') || []
-    first_n out, opts[:n]
+    Recommender.instance(:most_popular_recommender).most_popular(opts)
   end
 
   def for_app(app_id, opts = {})
@@ -25,13 +23,7 @@ class Recommenders::AppAffinityRecommender < Recommender
   end
 
   def cache_most_popular
-    list = []
-    parse_recommendations_file(MOST_POPULAR_FILE) do |rec|
-      app_id, name, weight = rec.split("\t")
-      weight = weight.nil? ? 0 : weight.to_i
-      list << [app_id, weight] unless app_id.nil?
-    end
-    Mc.distributed_put('s3.recommendations.raw_list.most_popular', list.sort_by{ |app, weight| -weight })
+    Recommender.instance(:most_popular_recommender).cache_all if most_popular.empty?
   end
 
   def cache_by_app
@@ -49,18 +41,7 @@ class Recommenders::AppAffinityRecommender < Recommender
   end
 
   private
-  def first_n(list, n)
-    n = 20 unless n && n.is_a?(Numeric)
-    list[0...n]
-  end
-
   def parse_recommendations(recommendations)
     recommendations.split(';').map { |x| x.split(',') }.map { |x| x.length == 1 ? x + ["0"] : x }.map { |app, weight| [app, weight.to_f] }.sort_by { |app, weight| -weight }
-  end
-
-  def parse_recommendations_file(file_name, &blk)
-    S3.bucket(BucketNames::TAPJOY_GAMES).objects[file_name].read.each do |row|
-      yield(row.chomp)
-    end
   end
 end

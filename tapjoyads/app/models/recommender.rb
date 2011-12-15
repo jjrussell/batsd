@@ -28,6 +28,10 @@ class Recommender  #Interface for all recommenders.
   end
 
   # RECOMMENDER INTERFACE
+  def cache_all
+    raise "Child class must implement cache_all"
+  end
+
   def most_popular(opts={})
     raise "Child class must implement most_popular(opts={})"
   end
@@ -56,5 +60,16 @@ class Recommender  #Interface for all recommenders.
   def app_name(app_id)
     offer = Offer.find(app_id) rescue nil
     offer.nil? ? nil : offer.name
+  end
+
+  def first_n(list, n)
+     n = 20 unless n && n.is_a?(Numeric)
+     list[0...n]
+   end
+
+  def parse_recommendations_file(file_name, &blk)
+    S3.bucket(BucketNames::TAPJOY_GAMES).objects[file_name].read.each do |row|
+      yield(row.chomp)
+    end
   end
 end
