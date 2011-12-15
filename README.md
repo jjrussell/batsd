@@ -119,7 +119,7 @@ Setup memcached to start on boot
 --------------------------------
 * download `http://s3.amazonaws.com/dev_tapjoy/rails_env/Memcached.applescript`
 * open the applescript and save the script as an Application in your `/Applications` directory
-* open the System Preferences and navigate to the Account section
+* open the System Preferences and navigate to the Users & Groups section
 * add the Memcached app as a Login Item for your user account
 
 Copy config files into place
@@ -183,6 +183,17 @@ Download desired editor (most people use TextMate) and set it to use soft tabs (
   * Add `TM_SOFT_TABS` with value of YES (make sure it doesn't convert the TM to a ™ symbol)
   * Add `TM_TAB_SIZE` with value of 2
   * See `http://manual.macromates.com/en/environment_variables.html` if curious about other TextMate shell variables
+
+RECOMMENDED: Set git pre-commit hook to run
+----------------------------------------
+* The pre-commit hook runs before any git commit.
+* It automatically strips trailing whitespace and adds newlines to the end of files, which is compliant with our style guide.
+
+```
+cp tapjoyserver/setup/pre-commit tapjoyserver/.git/hooks/
+```
+
+Alternatively, use `ln -s` instead of `cp` so any updates to the script in the repo get automatically changed in the git folder.
 
 OPTIONAL: to install Passenger (so you can use alternate local domains instead of `http://localhost:3000`)
 --------------------------------------------------------------------------------------------------------

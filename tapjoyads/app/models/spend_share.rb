@@ -3,7 +3,7 @@ class SpendShare < ActiveRecord::Base
 
   MIN_RATIO = 0.8
 
-  validates_numericality_of :ratio, :greater_than_or_equal_to => 0, :less_than_or_equal_to => 1
+  validates_numericality_of :ratio, :uncapped_ratio, :greater_than_or_equal_to => 0, :less_than_or_equal_to => 1
   validates_uniqueness_of :effective_on
   validates_each :effective_on, :allow_blank => false, :allow_nil => false do |record, attribute, value|
     if value > Time.now.utc.to_date
@@ -16,7 +16,7 @@ class SpendShare < ActiveRecord::Base
 
   def self.current_ratio
     Mc.distributed_get_and_put("spend_share.ratio.#{Time.now.utc.to_date}") do
-      [current.ratio, MIN_RATIO].max
+      current.ratio
     end
   end
 
@@ -28,6 +28,14 @@ class SpendShare < ActiveRecord::Base
     effective(date).first || create_for_date!(date)
   end
 
+  def deduct_pct(field = :ratio)
+    NumberHelper.new.number_to_percentage((1 - self[field]) * 100, :precision => 2)
+  end
+
+  def capped?
+    uncapped_ratio < ratio
+  end
+
   def self.create_for_date!(date)
     sum_network_costs    = NetworkCost.created_between(date - 30.days, date).sum(:amount)
     orders               = Order.created_between(date - 30.days, date)
@@ -36,12 +44,14 @@ class SpendShare < ActiveRecord::Base
     sum_marketing_orders = orders.select{ |o| o.payment_method == 2 }.collect(&:amount).sum + sum_network_costs
 
     if sum_all_orders == 0
-      ratio = 1
+      uncapped_ratio = 1
     else
-      ratio = (sum_all_orders - sum_marketing_orders - (0.025 * sum_website_orders)) / sum_all_orders
+      uncapped_ratio = (sum_all_orders - sum_marketing_orders - (0.025 * sum_website_orders)) / sum_all_orders
     end
 
-    create!(:effective_on => date, :ratio => ratio)
+    ratio = [uncapped_ratio, MIN_RATIO].max
+
+    create!(:effective_on => date, :ratio => ratio, :uncapped_ratio => uncapped_ratio)
   end
 
 end

@@ -17,7 +17,11 @@ class Games::GamersController < GamesController
 
     if @gamer.save
       GamesMarketingMailer.deliver_gamer_confirmation(@gamer, games_confirm_url(:token => @gamer.confirmation_token))
-      render(:json => { :success => true, :link_device_url => new_games_gamer_device_path, :linked => @gamer.devices.any? })
+      if params[:data].present? && params[:src] == 'android_app'
+        render(:json => { :success => true, :link_device_url => finalize_games_gamer_device_path(:data => params[:data]), :android => true })
+      else
+        render(:json => { :success => true, :link_device_url => new_games_gamer_device_path })
+      end
     else
       errors = @gamer.errors.reject{|error|error[0] == 'gamer_profile'}
       errors |= @gamer_profile.errors.to_a

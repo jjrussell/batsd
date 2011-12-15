@@ -5,7 +5,7 @@ class PartnersController < WebsiteController
 
   filter_access_to :all
 
-  before_filter :find_partner, :only => [ :show, :make_current, :manage, :update, :edit, :new_transfer, :create_transfer, :reporting ]
+  before_filter :find_partner, :only => [ :show, :make_current, :manage, :update, :edit, :new_transfer, :create_transfer, :reporting, :set_tapjoy_sponsored ]
   before_filter :get_account_managers, :only => [ :index, :managed_by ]
   before_filter :set_platform, :only => [ :reporting ]
   after_filter :save_activity_logs, :only => [ :update, :create_transfer ]
@@ -80,7 +80,7 @@ class PartnersController < WebsiteController
       params[:partner][:sales_rep] = sales_rep
     end
 
-    safe_attributes = [ :name, :account_managers, :account_manager_notes, :accepted_negotiated_tos, :negotiated_rev_share_ends_on, :rev_share, :transfer_bonus, :disabled_partners, :direct_pay_share, :approved_publisher, :billing_email, :accepted_publisher_tos, :sales_rep, :max_deduction_percentage ]
+    safe_attributes = [ :name, :account_managers, :account_manager_notes, :accepted_negotiated_tos, :negotiated_rev_share_ends_on, :rev_share, :transfer_bonus, :disabled_partners, :direct_pay_share, :approved_publisher, :billing_email, :accepted_publisher_tos, :cs_contact_email, :sales_rep, :max_deduction_percentage ]
     name_was = @partner.name
     if @partner.safe_update_attributes(params[:partner], safe_attributes)
       if name_was != @partner.name
@@ -168,6 +168,12 @@ class PartnersController < WebsiteController
         render :json => { :data => @appstats.graph_data(:admin => true) }
       end
     end
+  end
+
+  def set_tapjoy_sponsored
+    @partner.set_tapjoy_sponsored_on_offers!(params[:flag])
+    flash[:notice] = "Successfully updated all offers"
+    redirect_to partner_path
   end
 
 private

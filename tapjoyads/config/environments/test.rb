@@ -27,6 +27,7 @@ config.gem 'shoulda-addons', :version => '0.2.2', :lib => 'shoulda_addons'
 config.gem 'mocha', :version => '0.9.12'
 config.gem 'rspec', :lib => false, :version => '1.3.2'
 config.gem 'rspec-rails', :lib => false, :version => '1.3.4'
+config.gem 'spork', :version => '0.8.5'
 
 MEMCACHE_SERVERS = ['127.0.0.1']
 
@@ -36,7 +37,7 @@ RUN_MODE_PREFIX = 'test_'
 API_URL = ''
 DASHBOARD_URL = ''
 WEBSITE_URL = ''
-CLOUDFRONT_URL = 'https://d21x2jbj16e06e.cloudfront.net'
+CLOUDFRONT_URL = 'https://s3.amazonaws.com/test_tapjoy'
 GAMES_ANDROID_MARKET_URL = 'http://market.android.com/details?id=com.tapjoy.tapjoy'
 
 amazon = YAML::load_file("#{RAILS_ROOT}/config/amazon.yaml")

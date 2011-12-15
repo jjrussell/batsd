@@ -2,6 +2,7 @@ class ActivityLog < SimpledbResource
   self.domain_name = 'activity_logs'
 
   self.sdb_attr :user
+  self.sdb_attr :user_id
   self.sdb_attr :controller
   self.sdb_attr :action
   self.sdb_attr :request_id
@@ -9,6 +10,7 @@ class ActivityLog < SimpledbResource
   self.sdb_attr :object_type
   self.sdb_attr :included_methods,  :force_array => true
   self.sdb_attr :partner_id
+  self.sdb_attr :ip_address
   self.sdb_attr :before_state,      :type => :json
   self.sdb_attr :after_state,       :type => :json
   self.sdb_attr :created_at,        :type => :time, :attr_name => 'updated-at'

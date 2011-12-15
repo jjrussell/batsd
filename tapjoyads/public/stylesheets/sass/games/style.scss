@@ -74,13 +74,13 @@ body.old a.red-link {
 //  Forms
 //-------------------------------------------
 input, select {
-  border: 1px solid $border-color;;
+  border: 1px solid $border-color;
   padding: 6px;
   color: $main-font-color;
   -webkit-appearance: none;
   @include inset-shadow;
 }
-input[type=email], input[type=password] {
+input[type=email], input[type=password], input[type=text] {
   @include rounded-corners(12px);
 }
 input[type=checkbox] {
@@ -97,17 +97,24 @@ select {
   -webkit-appearance: none;
   @include rounded-corners(6px);
 }
-input::-webkit-input-placeholder {
+label[for=password] {
+  position: absolute;
+  color: $main-font-color;
+  font-style: italic;
+  font-weight: bold;
+  font-size: 13px;
+}
+input::-webkit-input-placeholder, input::-moz-placeholder, input::-o-placeholder, input::-ms-placeholder {
   color: $main-font-color;
   font-style: italic;
   font-weight: bold;
 }
-input:-moz-placeholder {
+input.placeholder {
   color: $main-font-color;
   font-style: italic;
   font-weight: bold;
 }
-input[type=email]:focus, input[type=password]:focus {
+input[type=email]:focus, input[type=password]:focus, input[type=text]:focus {
   @include inset-shadow(#FFF, 6px);
   @include shadow($border-color, 6px);
 }
@@ -151,6 +158,11 @@ input[type=email]:focus, input[type=password]:focus {
             }
             ul.row  {
 
+              label[for=password] {
+                display: none;
+                top: 10px;
+                left: 6px;
+              }
               ul.group {
                 float: left;
               }
@@ -161,6 +173,7 @@ input[type=email]:focus, input[type=password]:focus {
               li.field {
                 float: left;
                 font-size: 0.85em;
+                position: relative;
               }
               li.field.sign_in {
                 color: $tj-red;
@@ -357,10 +370,16 @@ input[type=email]:focus, input[type=password]:focus {
             select {
               width: 70px;
             }
-            input[type=email], input[type=password] {
+            input[type=email], input[type=password], input[type=text] {
               width: 274px;
             }
+            label[for=password] {
+              display: none;
+              top: 4px;
+              left: 6px;
+            }
             .field {
+              position: relative;
               margin: 4px 0;
             }
             .row {
@@ -638,6 +657,7 @@ body.old {
       }
     }
     .nav_buttons li.active_button, .nav_buttons li:active {
+      background-color: #CF1623;
       border-color: #B0131D;
       color: #FFF;
       text-shadow: 0 1px 1px #444;
@@ -733,7 +753,8 @@ body.old .content_box {
     }
 
     form#new_gamer input[type=email],
-    form#new_gamer input[type=password] {
+    form#new_gamer input[type=password],
+    form#new_gamer input[type=text] {
       border: 1px solid #C1C1C1;
       padding: 4px;
       width: 92%;
@@ -954,7 +975,6 @@ body.old .content_box {
       text-align: center;
     }
     .device_switch {
-      margin: 0 auto;
       font-size: 0.75em;
       margin: 5px auto 0;
     }

@@ -1,0 +1,59 @@
+fr:
+  text:
+    shared:
+      privacy: "Confidentialité"
+      ads_by: "Annonces par"
+
+    offerwall:
+      title: "Gagne des %{currency}"
+      free: "Gratuit"
+      next: "%{items} offres suivantes"
+      previous: "%{items} offres précédentes"
+      missing_currency: "En manque de %{currency}?"
+      instructions: "Complète une des offres suivantes et reçois des %{currency}"
+      earn_currency: "Gagne %{amount} %{currency}"
+      buy_currency: "Achète %{amount} %{currency}"
+      load_more: "Voir plus d'offres!"
+      loading: "Chargement..."
+      load_error: "Essaye encore."
+
+    featured:
+      title: "Gagne des %{currency}"
+      download_and_run: "Télécharge et lance"
+      try_out: "A découvrir"
+      download: "Télécharge"
+      skip: "Passe"
+      earn_now: "Gagne maintenant"
+      show_more_apps: "Voir plus d'offres"
+      earn_currency: "Gagne %{amount_and_currency}"
+
+    unavailable_offer:
+      message: "Désolé, mais l'offre suivante n'est plus disponible: %{offer}. Retourne à la page précédente et rafraîchis la liste pour voir notre offre mise à jour."
+      optional_message: "Ou, clique ici pour la télécharger quand même %{offer}."
+
+    instructions:
+      title: "Instructions"
+      amount_and_currency: "%{amount} %{currency}"
+      earn_currency: "Gagne %{amount_and_currency}"
+      header: "Suis les étapes suivantes et gagne des %{currency}:"
+      footer: "Après avoir complété ces étapes, tu recevras %{amount_and_currency}."
+      download_action: "ici"
+      download_link: "Si tu n'as pas déjà cette application, clique %{download_action} pour la télécharger."
+      continue_link: "Clique ici pour continuer."
+
+    support:
+      title: "En manque de %{currency}?"
+      instructions_1: "Merci de sélectionner l'offre complétée pour laquelle vous n'avez pas reçu vos %{currency} et entrez votre adresse email."
+      instructions_2: "Une demande de ticket comportant des éléments manquants se traduira par un délai dans sa résolution. La priorité étant donnée aux demandes parfaitement complétées."
+      specify_offer_label: "Specifier l'offre:"
+      description_label: "Description:"
+      email_address_label: "Adresse email:"
+      submit_support_request: "Contacter le support"
+      support_request_submitted: "Demande bien reçue"
+      thanks: "Merci de votre soumission au support! Vous recevrez vos %{currency} après vérification que l'offre soumise air bien été complétée."
+      missing_description: "Merci de décrire l'offre complétée."
+      missing_offer: "Vous devez spécifier le nom de l'offre complétée."
+      invalid_email: "Merci d'entrer une adresse email valide."
+      abuse_warning: "Ce formulaire est uniquement dédié aux utilisateurs n'ayant pas été récompensés après avoir complété une offre. L'utilisation abusive de cette page pourrait entraîner un bannissement définitif de votre compte sur les offres futures."
+      select_offer: "Choisir une offre"
+      no_incomplete_offers_label: "Aucun résultat trouvé"

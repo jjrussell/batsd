@@ -74,8 +74,8 @@ options {
 # rails
 
 destination log_server {
-  tcp("10.218.81.187"
-    failover_servers("10.44.19.160", "10.44.10.148")
+  tcp("10.12.254.7"
+    failover_servers("10.42.222.205", "10.43.29.107")
     port(51400)
     flush_lines(100)               # default: 0 lines
     flush_timeout(1000)            # default: 10000 milliseconds

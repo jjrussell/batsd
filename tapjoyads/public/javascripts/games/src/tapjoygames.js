@@ -51,11 +51,6 @@ RegExp.escape = function(text) {
         if (!TJG.vars.c_data && TJG.vars.ls_data) {
           TJG.utils.setCookie('data', TJG.vars.ls_data, 365, 1);
         }
-        // Set cookie if missing and from android app
-        var data_p = TJG.utils.getParam('data');
-        if (!TJG.vars.c_data && !TJG.utils.isNull(data_p) && (TJG.utils.getParam('src') == 'android_app')) {
-          TJG.utils.setCookie('data', data_p, 365, 1);
-        }
       },
 
       loadEvents : function () {
@@ -66,7 +61,6 @@ RegExp.escape = function(text) {
           TJG.ui.removeDialogs();
           TJG.repositionDialog = [];
         });
-
         $('#link_device').click(function(){
           if (TJG.vars.isAndroid &&  TJG.android_market_url) {
             document.location.href = TJG.android_market_url;
@@ -107,12 +101,12 @@ RegExp.escape = function(text) {
               }
               email = values['gamer_session[email]'];
               pass = values['gamer_session[password]'];
-              if ( email == '' ) {
+              if (email == '' || email == 'Email') {
                 $(".login_error").html('Please enter your email address');
                 $(".formError").show();
                 e.preventDefault();
               }
-              else if ( pass == '' ) {
+              else if (pass == '' || pass == 'Password') {
                 $(".login_error").html('Please enter your password');
                 $(".formError").show();
                 e.preventDefault();
@@ -129,16 +123,18 @@ RegExp.escape = function(text) {
           $('.device_info').animate({width:"0px"}, 250);
         });
         TJG.animating = false;
-        $('.plus,.mobile_icon').click(function(){
+        TJG.deviceInfoOpen = false;
+        function selectDevice(){
           if (TJG.animating) {
             return;
           }
           TJG.animating = true;
-          if ($('.device_info').width() == 0) {
+          if (TJG.deviceInfoOpen == false) {
             $('.device_info').animate({width:w+"px"}, 250, function(){
-              $('.device_info').fadeIn(200);
+              $('.device_info').fadeIn(50);
               $('.plus').addClass('close');
             });
+            TJG.deviceInfoOpen = true;
             TJG.animating = false;
           }
           else {
@@ -146,9 +142,52 @@ RegExp.escape = function(text) {
               $('.device_info').animate({width:"0px"}, 250);
               $('.plus').removeClass('close');
             });
+            TJG.deviceInfoOpen = false;
             TJG.animating = false;
           }
+        }
+        $('.plus, .mobile_icon').click(function() {
+          selectDevice();
         });
+        // Placeholder support for non-supported browsers
+        var input = document.createElement("input");
+        if (('placeholder' in input) == false) {
+          $('[placeholder]').focus(function() {
+            var me = $(this);
+            if (me.val() == '' || me.val() == me.attr('placeholder')) {
+              me.val('').removeClass('placeholder');
+              if (me.hasClass('password')) {
+                me.removeClass('password');
+                if ($.browser.msie) { // IE doesn't support changing input type
+                  me.prev().hide(); // Hide label
+                }
+                else {
+                  this.type = 'password';
+                }
+              }
+            }
+          }).blur(function() {
+            var me = $(this);
+            if (me.val() == '' || me.val() == me.attr('placeholder')) {
+              if (this.type == 'password') {
+                me.addClass('password');
+                me.addClass('placeholder').val('');
+                if ($.browser.msie) { // IE doesn't support changing input type
+                  me.prev().show(); // Show label
+                }
+                else {
+                  this.type = 'text';
+                }
+              }
+              else {
+                me.addClass('placeholder').val(me.attr('placeholder'));
+              }
+            }
+          }).blur();
+          $('label[for=password]').click(function() {
+            $(this).hide();
+          });
+        }
       },
 
       checkFlashMessages: function () {
@@ -168,7 +207,6 @@ RegExp.escape = function(text) {
         TJG.onload[key]();
       }
     };
-    window.addEventListener("load", TJG.init, false);
-
+    TJG.init();
 
 })(this, document);
