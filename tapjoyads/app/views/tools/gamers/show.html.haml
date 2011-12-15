@@ -12,42 +12,42 @@
           = @gamer.get_gamer_name.blank? ? 'None specified' : @gamer.get_gamer_name
       %tr
         %th Gender
-        %td{ :class => @gamer_profile.gender? ? '' : 'blank' }
-          = @gamer_profile.gender? ? @gamer_profile.gender : 'None specified'
+        %td{ :class => @gamer.gender? ? '' : 'blank' }
+          = @gamer.gender? ? @gamer.gender : 'None specified'
       %tr
         %th Birthdate
-        %td{ :class => @gamer_profile.birthdate? ? '' : 'blank' }
-          = @gamer_profile.birthdate? ? @gamer_profile.birthdate.to_s(:pr) : 'None specified'
+        %td{ :class => @gamer.birthdate? ? '' : 'blank' }
+          = @gamer.birthdate? ? @gamer.birthdate.to_s(:pr) : 'None specified'
       %tr
         %th City
-        %td{ :class => @gamer_profile.city? ? '' : 'blank' }
-          = @gamer_profile.city? ? @gamer_profile.city : 'None specified'
+        %td{ :class => @gamer.city? ? '' : 'blank' }
+          = @gamer.city? ? @gamer.city : 'None specified'
       %tr
         %th Country
-        %td{ :class => @gamer_profile.country? ? '' : 'blank' }
-          = @gamer_profile.country? ? @gamer_profile.country : 'None specified'
+        %td{ :class => @gamer.country? ? '' : 'blank' }
+          = @gamer.country? ? @gamer.country : 'None specified'
       %tr
         %th Postal Code
-        %td{ :class => @gamer_profile.postal_code? ? '' : 'blank' }
-          = @gamer_profile.postal_code? ? @gamer_profile.postal_code : 'None specified'
+        %td{ :class => @gamer.postal_code? ? '' : 'blank' }
+          = @gamer.postal_code? ? @gamer.postal_code : 'None specified'
       %tr
         %th Favorite Game
-        %td{ :class => @gamer_profile.favorite_game? ? '' : 'blank' }
-          = @gamer_profile.favorite_game? ? @gamer_profile.favorite_game : 'None specified'
+        %td{ :class => @gamer.favorite_game? ? '' : 'blank' }
+          = @gamer.favorite_game? ? @gamer.favorite_game : 'None specified'
       %tr
         %th Favorite Category
-        %td{ :class => @gamer_profile.favorite_category? ? '' : 'blank' }
-          = @gamer_profile.favorite_category? ? @gamer_profile.favorite_category : 'None specified'
+        %td{ :class => @gamer.favorite_category? ? '' : 'blank' }
+          = @gamer.favorite_category? ? @gamer.favorite_category : 'None specified'
       %tr
         %th Referrals
-        %td= number_with_delimiter @gamer_profile.referral_count
+        %td= number_with_delimiter @gamer.referral_count
       %tr
         %th Referred by
-        %td{ :class => @gamer_profile.referred_by? ? '' : 'blank' }
-          - if @gamer_profile.referred_by?
-            = @gamer_profile.referrer_gamer.get_gamer_name
+        %td{ :class => @gamer.referred_by? ? '' : 'blank' }
+          - if @gamer.referred_by?
+            = @gamer.referrer_gamer.get_gamer_name
             = surround "(", ")" do
-              = link_to @gamer_profile.referred_by, tools_gamer_path(@gamer_profile.referred_by)
+              = link_to @gamer.referred_by, tools_gamer_path(@gamer.referred_by)
           - else
             None
       %tr
@@ -86,8 +86,10 @@
       white-space: nowrap;
       width: 0%;
     }
+    #gamer_profile td {
+      width: 100%;
+    }
     #gamer_profile td.blank {
       color: #AAAAAA;
       font-style: italic;
-      width: 100%;
     }
