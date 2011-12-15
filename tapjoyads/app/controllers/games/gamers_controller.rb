@@ -1,6 +1,6 @@
 class Games::GamersController < GamesController
 
-  before_filter :set_profile, :only => [ :edit, :accept_tos, :password, :prefs, :social, :update_password, :update_social, :confirm_delete ]
+  before_filter :set_profile, :only => [ :edit, :accept_tos, :password, :prefs, :social, :update_password, :confirm_delete ]
   before_filter :offline_facebook_authenticate, :only => :connect_facebook_account
 
   def create
@@ -46,11 +46,9 @@ class Games::GamersController < GamesController
       :following => get_friends_info(Friendship.following_ids(current_gamer.id)),
       :followers => get_friends_info(Friendship.follower_ids(current_gamer.id))
     }
-    @image_source_options = { 'Gravatar' => Gamer::IMAGE_SOURCE_GRAVATAR}
     if @gamer_profile.facebook_id.present?
       fb_create_user_and_client(@gamer_profile.fb_access_token, '', @gamer_profile.facebook_id)
       current_facebook_user.fetch
-      @image_source_options['Facebook'] = Gamer::IMAGE_SOURCE_FACEBOOK
     end
   end
 
@@ -65,16 +63,6 @@ class Games::GamersController < GamesController
     else
       flash.now[:error] = 'Error updating password'
       render :action => :password
-    end
-  end
-
-  def update_social
-    @gamer.safe_update_attributes(params[:gamer], [ :image_source ])
-    if @gamer.save
-      redirect_to edit_games_gamer_path
-    else
-      flash.now[:error] = 'Error updating profile image source'
-      render :action => :social
     end
   end
 

@@ -44,17 +44,6 @@
               - form_for([ :games, @gamer ], :url => dissociate_account_games_gamer_gamer_profile_path(:account_type => Invitation::FACEBOOK), :html => { :method => "put" }) do |f|
                 .field
                   = submit_tag(@gamer_profile.facebook_id.present? ? 'Change' : 'Link My Facebook', :class => "button")
-          .title_2
-            Profile Image
-          .content_box
-            .interior
-              - form_for([ :games, @gamer ], :url => update_social_games_gamer_path, :html => { :method => "put" }) do |f|
-                .field
-                  = f.label :image_source, 'Image Source:'
-                  = f.select :image_source, @image_source_options
-                  = error_message_on @gamer, :image_source
-                .field
-                  = submit_tag('Save', :class => 'button')
 
 - content_for :page_javascript do
   :plain

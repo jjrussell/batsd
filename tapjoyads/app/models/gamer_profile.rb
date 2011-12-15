@@ -18,8 +18,6 @@ class GamerProfile < ActiveRecord::Base
       self.facebook_id = facebook_user.id
       self.fb_access_token = facebook_user.client.access_token
       save!
-      gamer.image_source = Gamer::IMAGE_SOURCE_FACEBOOK
-      gamer.save!
 
       Invitation.reconcile_pending_invitations(Gamer.find_by_id(self.gamer_id), :external_info => self.facebook_id)
     end

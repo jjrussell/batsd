@@ -25,9 +25,6 @@ class Gamer < ActiveRecord::Base
     }
   }
 
-  IMAGE_SOURCE_GRAVATAR = 0
-  IMAGE_SOURCE_FACEBOOK = 1
-
   alias_method :devices, :gamer_devices
 
   acts_as_authentic do |c|
@@ -112,7 +109,7 @@ class Gamer < ActiveRecord::Base
   end
 
   def get_avatar_profile_url
-    if image_source == Gamer::IMAGE_SOURCE_FACEBOOK && gamer_profile.facebook_id.present?
+    if gamer_profile.facebook_id.present?
       "http://www.facebook.com/profile.php?id=#{gamer_profile.facebook_id}"
     else
       "https://secure.gravatar.com/#{generate_gravatar_hash}"
@@ -120,7 +117,7 @@ class Gamer < ActiveRecord::Base
   end
 
   def get_avatar_url
-    if image_source == Gamer::IMAGE_SOURCE_FACEBOOK && gamer_profile.facebook_id.present?
+    if gamer_profile.facebook_id.present?
       "https://graph.facebook.com/#{gamer_profile.facebook_id}/picture?size=square"
     else
       "https://secure.gravatar.com/avatar/#{generate_gravatar_hash}?d=mm&s=50"
