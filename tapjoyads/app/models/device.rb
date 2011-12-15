@@ -56,10 +56,13 @@ class Device < SimpledbShardedResource
       end
     end
 
-    if now.year != last_run_time_was.year || now.yday != last_run_time_was.yday
+    offset = @key.matz_silly_hash % 1.day
+    adjusted_now = now - offset
+    adjusted_lrt = last_run_time_was - offset
+    if adjusted_now.year != adjusted_lrt.year || adjusted_now.yday != adjusted_lrt.yday
       path_list.push('daily_user')
     end
-    if now.year != last_run_time_was.year || now.month != last_run_time_was.month
+    if adjusted_now.year != adjusted_lrt.year || adjusted_now.month != adjusted_lrt.month
       path_list.push('monthly_user')
     end
 
@@ -169,7 +172,7 @@ class Device < SimpledbShardedResource
     save!
   end
 
-private
+  private
 
   def fix_parser_error
     str = get('apps')
