@@ -7,7 +7,7 @@ class Job::QueueSendWelcomeEmailsController < Job::SqsReaderController
   private
 
   def on_message(message)
-    message = JSON.parse(message.body)
+    message = Marshal.restore(Base64::decode64(message.body))
 
     gamer = Gamer.find(message.delete('gamer_id'))
     device_info = message.symbolize_keys!
