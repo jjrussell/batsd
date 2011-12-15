@@ -168,7 +168,7 @@ class DisplayAdController < ApplicationController
       img.composite!(background, 0, 0, Magick::AtopCompositeOp)
 
       font = (Rails.env.production? || Rails.env.staging?) ? 'Helvetica' : ''
-      
+
       if offer.item_type == 'TestOffer'
         text = offer.name
       elsif offer.rewarded?
@@ -176,7 +176,7 @@ class DisplayAdController < ApplicationController
       else
         text = "Try #{offer.name} today"
       end
-      
+
       image_label = get_image_label(text, text_area_size, font_size, font, false)
       img.composite!(image_label[0], icon_height + icon_padding * 4 + 1, border + 2, Magick::AtopCompositeOp)
       image_label = get_image_label(text, text_area_size, font_size, font, true)
@@ -188,10 +188,10 @@ class DisplayAdController < ApplicationController
         corner_mask_blob = bucket.objects["display/round_mask.png"].read
         corner_mask = Magick::Image.from_blob(corner_mask_blob)[0].resize(icon_height, icon_height)
         offer_icon.composite!(corner_mask, 0, 0, Magick::CopyOpacityCompositeOp)
-        
+
         icon_shadow_blob = bucket.objects["display/icon_shadow.png"].read
         icon_shadow = Magick::Image.from_blob(icon_shadow_blob)[0].resize(icon_height + icon_padding, icon_height)
-      
+
         img.composite!(icon_shadow, border + 2, border + icon_padding * 2, Magick::AtopCompositeOp)
         img.composite!(offer_icon, border + icon_padding, border + icon_padding, Magick::AtopCompositeOp)
       end

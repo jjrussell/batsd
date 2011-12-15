@@ -15,7 +15,15 @@ class Games::GamersController < GamesController
     @gamer.gamer_profile = @gamer_profile
 
     if @gamer.save
-      GamesMarketingMailer.deliver_gamer_confirmation(@gamer, games_confirm_url(:token => @gamer.confirmation_token))
+      message = {
+        :gamer_id => @gamer.id,
+        :accept_language_str => request.accept_language,
+        :user_agent_str => request.user_agent,
+        :device_type => device_type,
+        :geoip_data => get_geoip_data,
+        :os_version => os_version }.to_json
+      Sqs.send_message(QueueNames::SEND_WELCOME_EMAILS, message)
+
       if params[:data].present? && params[:src] == 'android_app'
         render(:json => { :success => true, :link_device_url => finalize_games_gamer_device_path(:data => params[:data]), :android => true })
       else
