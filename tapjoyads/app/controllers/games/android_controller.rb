@@ -23,7 +23,7 @@ class Games::AndroidController < GamesController
       :platform   => params[:platform]
     }
 
-    encrypt_data = SymmetricCrypto.encrypt_object(data, SYMMETRIC_CRYPTO_SECRET)
+    encrypt_data = ObjectEncryptor.encrypt(data)
     cookies[:device_type] = { :value => 'android', :expires => 1.year.from_now }
     if current_gamer.present?
       if current_gamer.devices.empty?

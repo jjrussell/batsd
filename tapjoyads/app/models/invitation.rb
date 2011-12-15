@@ -75,6 +75,6 @@ class Invitation < ActiveRecord::Base
   end
 
   def encrypted_referral_id
-    SymmetricCrypto.encrypt_object("#{gamer.id},#{id}", SYMMETRIC_CRYPTO_SECRET)
+    ObjectEncryptor.encrypt("#{gamer.id},#{id}")
   end
 end

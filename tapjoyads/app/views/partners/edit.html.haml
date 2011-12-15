@@ -49,7 +49,7 @@
   .field
     = f.label :negotiated_rev_share_ends_on, 'Negotiated Rev Share End Date'
     #help_negotiated_rev_share_ends_on.help ?
-    = f.text_field :negotiated_rev_share_ends_on
+    = f.text_field :negotiated_rev_share_ends_on, :value => (@partner.negotiated_rev_share_ends_on ? @partner.negotiated_rev_share_ends_on.to_s(:mdy) : nil)
     = error_message_on(@partner, :negotiated_rev_share_ends_on) if @partner.errors.on :negotiated_rev_share_ends_on
   .field
     = f.label :rev_share
@@ -155,6 +155,6 @@
         minLength: 2
       };
 
-      $('#partner_negotiated_rev_share_ends_on').datepicker({ dateFormat: 'yy-mm-dd' });
+      $('#partner_negotiated_rev_share_ends_on').datepicker({ dateFormat: 'mm/dd/yy' });
       $('#partner_sales_rep').focus().autocomplete(options);
     });

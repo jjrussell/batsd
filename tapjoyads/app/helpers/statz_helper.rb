@@ -43,10 +43,27 @@ module StatzHelper
           [">$0", "0"],
           ["\342\211\244$0","negative"],
         ]
-      when :revenue
+      when :pending_earning
         [
-          ["$0.00", "zero_revenue"],
-          [">$0", "nonzero_revenue"],
+          [">$10k","earning_10k"],
+          [">$1k", "earning_1k"],
+          [">$0", "earning_zero"],
+          ["\342\211\244$0","earning_negative"],
+        ]
+      when :gross_revenue
+        [
+          ["$0.00", "zero_gross_revenue"],
+          [">$0", "nonzero_gross_revenue"],
+        ]
+      when :publisher_revenue
+        [
+          ["$0.00", "zero_publisher_revenue"],
+          [">$0", "nonzero_publisher_revenue"],
+        ]
+      when :offer_revenue
+        [
+          ["$0.00", "zero_offer_revenue"],
+          [">$0", "nonzero_offer_revenue"],
         ]
       when :featured
         [

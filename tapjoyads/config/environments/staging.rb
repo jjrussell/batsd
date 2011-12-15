@@ -18,6 +18,8 @@ config.action_view.cache_template_loading            = true
 # Disable request forgery protection because this is an api
 config.action_controller.allow_forgery_protection    = false
 
+config.gem 'mail_safe', :version => '0.3.1'
+
 # Use a different cache store in production
 # config.cache_store = :mem_cache_store
 

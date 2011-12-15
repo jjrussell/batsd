@@ -40,7 +40,7 @@ class ExternalPublisher
     data[:device_type]   = device_type if device_type.present?
     data[:os_version]    = os_version if os_version.present?
 
-    "#{API_URL}/get_offers?data=#{SymmetricCrypto.encrypt_object(data, SYMMETRIC_CRYPTO_SECRET)}"
+    "#{API_URL}/get_offers?data=#{ObjectEncryptor.encrypt(data)}"
   end
 
   def self.most_recently_run_for_gamer(gamer)

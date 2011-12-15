@@ -301,7 +301,7 @@ TJG.ui = {
         $(".email_error").html('Please enter your birthdate');
         hasError = true;
       }
-      else if(values['gamer[email]'] == '') {
+      else if(values['gamer[email]'] == '' || values['gamer[email]'] == "Email") {
         $(".email_error").html('Please enter your email address');
         hasError = true;
       }
@@ -309,7 +309,7 @@ TJG.ui = {
         $(".email_error").html('Enter a valid email address');
         hasError = true;
       }
-      else if(values['gamer[password]'] == '') {
+      else if(values['gamer[password]'] == '' || values['gamer[password]'] == "Password") {
         $(".email_error").html('Please enter a password');
         hasError = true;
       }

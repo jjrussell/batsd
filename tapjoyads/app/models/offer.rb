@@ -57,6 +57,7 @@ class Offer < ActiveRecord::Base
     "1 hour"   => 1.hour.to_i,
     "8 hours"  => 8.hours.to_i,
     "24 hours" => 24.hours.to_i,
+    "3 days"   => 3.days.to_i,
   }
 
   PAPAYA_OFFER_COLUMNS = "#{Offer.quoted_table_name}.id, #{App.quoted_table_name}.papaya_user_count"
@@ -131,8 +132,11 @@ class Offer < ActiveRecord::Base
   validates_each :multi_complete do |record, attribute, value|
     if value
       record.errors.add(attribute, "is not for App offers") if record.item_type == 'App'
-      record.errors.add(attribute, "cannot be used for pay-per-click offers") if record.pay_per_click?
+      record.errors.add(attribute, "cannot be used for non-interval pay-per-click offers") if record.pay_per_click? && record.interval == 0
     end
+  end
+  validates_each :instructions_overridden, :if => :instructions_overridden? do |record, attribute, value|
+    record.errors.add(attribute, "is only for GenericOffers and ActionsOffers") unless record.item_type == 'GenericOffer' || record.item_type == 'ActionOffer'
   end
   validate :bid_within_range
 
@@ -142,8 +146,10 @@ class Offer < ActiveRecord::Base
   before_save :cleanup_url
   before_save :fix_country_targeting
   before_save :update_payment
+  before_save :update_instructions
   after_save :update_enabled_rating_offer_id
   after_save :update_pending_enable_requests
+  after_save :update_tapjoy_sponsored_associated_offers
   after_save :sync_banner_creatives! # NOTE: this should always be the last thing run by the after_save callback chain
 
   named_scope :enabled_offers, :joins => :partner,
@@ -166,6 +172,7 @@ class Offer < ActiveRecord::Base
   named_scope :non_video_offers, :conditions => "item_type != 'VideoOffer'"
   named_scope :papaya_app_offers, :joins => :app, :conditions => "item_type = 'App' AND #{App.quoted_table_name}.papaya_user_count > 0", :select => PAPAYA_OFFER_COLUMNS
   named_scope :papaya_action_offers, :joins => { :action_offer => :app }, :conditions => "item_type = 'ActionOffer' AND #{App.quoted_table_name}.papaya_user_count > 0", :select => PAPAYA_OFFER_COLUMNS
+  named_scope :tapjoy_sponsored_offer_ids, :conditions => "tapjoy_sponsored = true", :select => "#{Offer.quoted_table_name}.id"
 
   delegate :balance, :pending_earnings, :name, :cs_contact_email, :approved_publisher?, :rev_share, :to => :partner, :prefix => true
   memoize :partner_balance
@@ -372,16 +379,8 @@ class Offer < ActiveRecord::Base
     src_obj.write(:data => icon_src_blob, :acl => :public_read)
 
     Mc.delete("icon.s3.#{id}")
-
-    # Invalidate cloudfront
-    if existing_icon_blob.present?
-      begin
-        acf = RightAws::AcfInterface.new
-        acf.invalidate('E1MG6JDV6GH0F2', ["/icons/256/#{icon_id}.jpg", "/icons/114/#{icon_id}.jpg", "/icons/57/#{icon_id}.jpg", "/icons/57/#{icon_id}.png"], "#{id}.#{Time.now.to_i}")
-      rescue Exception => e
-        Notifier.alert_new_relic(FailedToInvalidateCloudfront, e.message)
-      end
-    end
+    paths = ["icons/256/#{icon_id}.jpg", "icons/114/#{icon_id}.jpg", "icons/57/#{icon_id}.jpg", "icons/57/#{icon_id}.png"]
+    CloudFront.invalidate(id, paths) if existing_icon_blob.present?
   end
 
   def get_video_url(options = {})
@@ -698,13 +697,7 @@ private
       # no worries, it will get cached later if needed
     end
 
-    # Invalidate cloudfront
-    begin
-      acf = RightAws::AcfInterface.new
-      acf.invalidate('E1MG6JDV6GH0F2', "/#{banner_creative_path(size, format)}".to_a, "#{id}.#{Time.now.to_i}")
-    rescue Exception => e
-      Notifier.alert_new_relic(FailedToInvalidateCloudfront, e.message)
-    end
+    CloudFront.invalidate(id, banner_creative_path(size, format))
   end
 
   def is_test_device?(currency, device)
@@ -763,9 +756,24 @@ private
     end
   end
 
+  def update_tapjoy_sponsored_associated_offers
+    if tapjoy_sponsored_changed?
+      find_associated_offers.each do |o|
+        o.tapjoy_sponsored = tapjoy_sponsored
+        o.save! if o.changed?
+      end
+    end
+  end
+
   def fix_country_targeting
     unless countries.blank?
       countries.gsub!(/uk/i, 'GB')
+    end
+  end
+
+  def update_instructions
+    if instructions_overridden_changed? && !instructions_overridden? && (item_type == 'ActionOffer' || item_type == 'GenericOffer')
+      self.instructions = item.instructions
     end
   end
 
