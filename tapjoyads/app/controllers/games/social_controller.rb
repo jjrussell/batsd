@@ -1,5 +1,4 @@
 class Games::SocialController < GamesController
-  rescue_from Mogli::Client::ClientException, :with => :handle_mogli_exceptions
   rescue_from Errno::ECONNRESET, :with => :handle_other_exceptions
   rescue_from Errno::ETIMEDOUT, :with => :handle_other_exceptions
 
@@ -99,21 +98,7 @@ class Games::SocialController < GamesController
     render :json => { :success => true, :gamers => gamers, :non_gamers => non_gamers }
   end
 
-private
-  def handle_mogli_exceptions(e)
-    case e
-    when Mogli::Client::FeedActionRequestLimitExceeded
-      @error_msg = "You've reached the limit. Please try again later."
-    when Mogli::Client::HTTPException
-      @error_msg = "There was an issue with inviting your friend. Please try again later."
-    when Mogli::Client::SessionInvalidatedDueToPasswordChange, Mogli::Client::OAuthException
-      @error_msg = "Please authorize us before sending out an invite."
-    else
-      @error_msg = "There was an issue with inviting your friend. Please try again later."
-    end
-
-    dissociate_and_redirect
-  end
+  private
 
   def handle_other_exceptions(e)
     case e

@@ -2,6 +2,8 @@ class GamesController < ApplicationController
   include Facebooker2::Rails::Controller
   include SslRequirement
 
+  rescue_from Mogli::Client::ClientException, :with => :handle_mogli_exceptions
+
   layout 'games'
 
   skip_before_filter :fix_params
@@ -113,6 +115,21 @@ class GamesController < ApplicationController
   end
 
   private
+
+  def handle_mogli_exceptions(e)
+    case e
+    when Mogli::Client::FeedActionRequestLimitExceeded
+      @error_msg = "You've reached the limit. Please try again later."
+    when Mogli::Client::HTTPException
+      @error_msg = "There was an issue with inviting your friend. Please try again later."
+    when Mogli::Client::SessionInvalidatedDueToPasswordChange, Mogli::Client::OAuthException
+      @error_msg = "Please authorize us before sending out an invite."
+    else
+      @error_msg = "There was an issue with inviting your friend. Please try again later."
+    end
+
+    dissociate_and_redirect
+  end
 
   def current_gamer_session
     @current_gamer_session ||= GamerSession.find
