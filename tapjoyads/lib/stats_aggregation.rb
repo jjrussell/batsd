@@ -213,7 +213,7 @@ class StatsAggregation
     @counts[group] ||= {}
     if @counts[group][conditions].nil?
       @counts[group][conditions] = {}
-      WebRequest.select_with_vertica(:select => "COUNT(hour) AS count, #{group}, hour", :conditions => conditions, :group => "#{group}, hour").each do |result|
+      WebRequest.select(:select => "COUNT(hour) AS count, #{group}, hour", :conditions => conditions, :group => "#{group}, hour").each do |result|
         @counts[group][conditions][result[group.to_sym]] ||= Array.new(24, 0)
         @counts[group][conditions][result[group.to_sym]][result[:hour]] = result[:count]
       end

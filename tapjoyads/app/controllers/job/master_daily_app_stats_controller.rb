@@ -29,7 +29,7 @@ class Job::MasterDailyAppStatsController < Job::JobController
         :stat_types  => [ 'featured_offers_requested' ],
         :granularity => :hourly }).stats['featured_offers_requested']
     vertica_counts = {}
-    WebRequest.select_with_vertica(
+    WebRequest.select(
         :select     => "count(hour), hour",
         :conditions => "path LIKE '%featured_offer_requested%' AND day = '#{start_time.to_s(:yyyy_mm_dd)}'",
         :group      => 'hour').each do |result|
