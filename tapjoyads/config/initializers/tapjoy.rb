@@ -50,5 +50,3 @@ GAMES_CONFIG = YAML::load_file("#{RAILS_ROOT}/config/games.yaml")[Rails.env]
 VERTICA_CONFIG = YAML::load_file("#{RAILS_ROOT}/config/vertica.yml")[Rails.env]
 
 TEXTFREE_PUB_APP_ID = '6b69461a-949a-49ba-b612-94c8e7589642'
-
-LITMUS_SPAM_ADDRESSES = %w(ml@ml.emailtests.com postini_2@postini-mailtest.com barracuda@barracuda.emailtests.com chkemltests@gapps.emailtests.com chkemltests@me.com chkemltests@sg.emailtests.com chkemltests@gmx.com chkemltests@hushmail.com chkemltests@fastmail.fm chkemltests@lycos.com chkemltests@mail.com)
