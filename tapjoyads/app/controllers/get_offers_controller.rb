@@ -123,7 +123,7 @@ private
     @show_papaya = false
     @papaya_offers = {}
 
-    #TJG app offers will show wifi only icon, for offerwall only windows phone will show the icon
+    #TJG app offers will show wifi only icon (except for android there's no cell download limit yet), for offerwall only windows phone will show the icon
     if params[:show_wifi_only] == '1'
       @show_wifi_only = true
     else
