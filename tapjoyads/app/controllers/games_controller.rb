@@ -112,8 +112,6 @@ class GamesController < ApplicationController
     current_gamer.devices.find_by_device_id(udid) if current_gamer
   end
 
-  private
-
   def handle_mogli_exceptions(e)
     case e
     when Mogli::Client::FeedActionRequestLimitExceeded
@@ -128,6 +126,8 @@ class GamesController < ApplicationController
 
     dissociate_and_redirect
   end
+
+  private
 
   def current_gamer_session
     @current_gamer_session ||= GamerSession.find
