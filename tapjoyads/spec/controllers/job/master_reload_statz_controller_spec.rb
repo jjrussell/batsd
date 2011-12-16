@@ -19,7 +19,7 @@ describe Job::MasterReloadStatzController do
       returns([{ :max => Time.zone.parse('2011-02-15') }])
     
     vertica_options = {
-        :select     => 'offer_id, count(*) AS conversions, -sum(advertiser_amount) AS spend',
+        :select     => 'offer_id, count(path) AS conversions, -sum(advertiser_amount) AS spend',
         :group      => 'offer_id',
         :conditions => conditions.join(' AND '),
     }
@@ -30,7 +30,7 @@ describe Job::MasterReloadStatzController do
       returns([{ :spend => 1 }])
     
     vertica_options = {
-        :select     => 'publisher_app_id AS offer_id, count(*) AS published_offers, sum(publisher_amount + tapjoy_amount) AS gross_revenue, sum(publisher_amount) AS publisher_revenue',
+        :select     => 'publisher_app_id AS offer_id, count(path) AS published_offers, sum(publisher_amount + tapjoy_amount) AS gross_revenue, sum(publisher_amount) AS publisher_revenue',
         :group      => 'publisher_app_id',
         :conditions => conditions.join(' AND '),
     }
