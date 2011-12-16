@@ -2,17 +2,14 @@
   %ul
     - unless app.nil? || app.new_record?
       %li= link_to 'Details', app_path(app), :class => (request.path_parameters['controller'] == 'apps' && !request.path_parameters['action'][/integrate/] ? 'selected' : '')
-      %li= link_to 'Pay-Per-Install', edit_app_offer_path(:id => app.primary_offer.id, :app_id => app.id), :class => (controller.controller_name == 'offers' && @offer.rewarded? && !@offer.featured? && !%w(rewarded_featured non_rewarded_featured non_rewarded).include?(params[:offer_type]) ? 'selected' : '')
+      %li= link_to 'Pay-Per-Install', edit_app_offer_path(:id => app.primary_offer.id, :app_id => app.id), :class => (controller.controller_name == 'offers' && @offer.rewarded? && !@offer.featured? && !%w(featured non_rewarded).include?(params[:offer_type]) ? 'selected' : '')
       - if @app.primary_offer.present? && @app.primary_offer.tapjoy_enabled?
         %li.inception= link_to 'Scheduling', app_offer_offer_events_path(@app, @app.primary_offer), :class => (controller.controller_name == 'offer_events' && @offer == @app.primary_offer ? 'selected' : '')
       - if @app.price == 0
-        %li= link_to 'Rewarded Featured Installs', @app.primary_rewarded_featured_offer ? edit_app_offer_path(@app, @app.primary_rewarded_featured_offer) : new_app_offer_path(@app, :offer_type => 'rewarded_featured'), :class => (controller.controller_name == 'offers' && ((@offer.featured? && @offer.rewarded?) || params[:offer_type] == 'rewarded_featured')) ? 'selected' : ''
-        - if @app.primary_rewarded_featured_offer.present? && @app.primary_rewarded_featured_offer.tapjoy_enabled?
-          %li.inception= link_to 'Scheduling', app_offer_offer_events_path(@app, @app.primary_rewarded_featured_offer), :class => (controller.controller_name == 'offer_events' && @offer == @app.primary_rewarded_featured_offer ? 'selected' : '')
-        %li= link_to 'Non-Rewarded Featured Installs', @app.primary_non_rewarded_featured_offer ? edit_app_offer_path(@app, @app.primary_non_rewarded_featured_offer) : new_app_offer_path(@app, :offer_type => 'non_rewarded_featured'), :class => (controller.controller_name == 'offers' && ((@offer.featured? && !@offer.rewarded?) || params[:offer_type] == 'non_rewarded_featured')) ? 'selected' : ''
-        - if @app.primary_non_rewarded_featured_offer.present? && @app.primary_non_rewarded_featured_offer.tapjoy_enabled?
-          %li.inception= link_to 'Scheduling', app_offer_offer_events_path(@app, @app.primary_non_rewarded_featured_offer), :class => (controller.controller_name == 'offer_events' && @offer == @app.primary_non_rewarded_featured_offer ? 'selected' : '')
-        %li= link_to 'Non-Rewarded Installs', @app.primary_non_rewarded_offer ? edit_app_offer_path(@app, @app.primary_non_rewarded_offer) : new_app_offer_path(@app, :offer_type => 'non_rewarded'), :class => (controller.controller_name == 'offers' && ((!@offer.rewarded? && !@offer.featured?) || params[:offer_type] == 'non_rewarded')) ? 'selected' : ''
+        %li= link_to 'Featured Installs', @app.primary_featured_offer ? edit_app_offer_path(@app, @app.primary_featured_offer) : new_app_offer_path(@app, :offer_type => 'featured'), :class => (controller.controller_name == 'offers' && (@offer.featured? || params[:offer_type] == 'featured')) ? 'selected' : ''
+        - if @app.primary_featured_offer.present? && @app.primary_featured_offer.tapjoy_enabled?
+          %li.inception= link_to 'Scheduling', app_offer_offer_events_path(@app, @app.primary_featured_offer), :class => (controller.controller_name == 'offer_events' && @offer == @app.primary_featured_offer ? 'selected' : '')
+        %li= link_to 'Non-Rewarded Installs', @app.primary_non_rewarded_offer ? edit_app_offer_path(@app, @app.primary_non_rewarded_offer) : new_app_offer_path(@app, :offer_type => 'non_rewarded'), :class => (controller.controller_name == 'offers' && (!@offer.rewarded? || params[:offer_type] == 'non_rewarded')) ? 'selected' : ''
         - if @app.primary_non_rewarded_offer.present? && @app.primary_non_rewarded_offer.tapjoy_enabled?
           %li.inception= link_to 'Scheduling', app_offer_offer_events_path(@app, @app.primary_non_rewarded_offer), :class => (controller.controller_name == 'offer_events' && @offer == @app.primary_non_rewarded_offer ? 'selected' : '')
       %li= link_to 'Pay-Per-Action', @app.action_offers.present? ? app_action_offers_path(@app) : new_app_action_offer_path(@app), :class => (controller.controller_name == 'action_offers') ? 'selected' : ''

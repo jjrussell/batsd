@@ -1,18 +1,24 @@
 - @page_title = 'Edit Offer'
 
-= render('apps/offers_shared/descriptions')
-
-%p.description
-  - if @offer.featured? || !@offer.rewarded?
-    Enter your bid per
-    = @offer.rewarded? ? 'rewarded' : 'non-rewarded'
-    = @offer.featured? ? 'featured' : ''
-    install below. The minimum bid is
-    = "#{number_to_currency(@offer.min_bid / 100.0)}."
-  - else
+- if @offer.featured?
+  %h3 Featured Installs
+  %p.description
+    Featured Installs let you buy premium views for your app offer, such as being displayed full-screen when an app is launched. Like Pay-Per-Install, you only pay when a user installs your app.
+  %p.description
+    Enter your bid per featured install below. The minimum bid is 100% of the purchase price for paid apps, or $0.65 for free apps. Higher bids will fetch more installs.
+- elsif !@offer.rewarded?
+  %h3 Non-Rewarded Installs
+  %p.description
+    Non-Rewarded Installs allow you to buy installations of your application through our banner ad network. Like Pay-Per-Install, you only pay when a user installs and runs your application.  The difference is that with Non-Rewarded Installs, users do not receive any virtual currency reward in exchange for downloading your app.
+  %p.description
+    Enter your bid per non-rewarded install below. The minimum bid is $1.00.
+- else
+  %h3 Pay-Per-Install
+  %p.description
+    Pay-Per-Install lets you buy a set number of incentivized installations for your app. Only pay when a user installs and runs your application.
+  %p.description
     Enter your bid per install below. The minimum bid is 50% of the purchase price for paid apps, or $0.35 for free apps.
-
-  Higher bids will result in more installs.
+    Higher bids will result in more installs.
 
 = render('apps/offers_shared/scheduling') if @offer.tapjoy_enabled?
 = render('apps/offers_shared/form')
