@@ -142,8 +142,6 @@ Rails::Initializer.run do |config|
   config.action_mailer.delivery_method = :amazon_ses
   config.action_mailer.raise_delivery_errors = true
   config.action_mailer.perform_deliveries = true
-
-  LITMUS_SPAM_ADDRESSES = %w(ml@ml.emailtests.com postini_2@postini-mailtest.com barracuda@barracuda.emailtests.com chkemltests@gapps.emailtests.com chkemltests@me.com chkemltests@sg.emailtests.com chkemltests@gmx.com chkemltests@hushmail.com chkemltests@fastmail.fm chkemltests@lycos.com chkemltests@mail.com)
 end
 
 # Register custom Mime types to generate ActionOffer header files
