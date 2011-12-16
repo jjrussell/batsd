@@ -41,7 +41,7 @@ class RecommendationList
         end
       end
       offers.compact!
-      
+
       Mc.distributed_put('s3.recommendations.offers.most_popular', offers)
     end
 
@@ -79,7 +79,7 @@ class RecommendationList
       Mc.get_and_put("s3.recommendations.offers.by_app.#{app_id}", false, 1.day) do
         offers = []
         raw_for_app(app_id).split(';').each do |recommendation|
-          begin  
+          begin
             offers << Offer.find_in_cache(recommendation.split(',').first)
           rescue ActiveRecord::RecordNotFound => e
             next
@@ -95,14 +95,14 @@ class RecommendationList
       Mc.get_and_put("s3.recommendations.offers.by_device.#{device_id}", false, 1.day) do
         offers = []
         raw_for_device(device_id).split(';').each do |recommendation|
-          begin  
+          begin
             offers << Offer.find_in_cache(recommendation.split(',').first)
           rescue ActiveRecord::RecordNotFound => e
             next
           end
         end
         offers.compact!
-        
+
         offers.any? ? offers : nil
       end || []
     end

@@ -1,0 +1,199 @@
+:ruby
+  gray = '#505050'
+  light_gray = '#c0c0c0'
+  blue = '#505f6d'
+  red = '#e11826'
+  offset = '24px'
+  width = '540px'
+  image_root = "https://s3.amazonaws.com/#{RUN_MODE_PREFIX}tapjoy/images/email"
+  css = {
+    :a => "color: #{red}; text-decoration: none;",
+    :icon_img => "border: none;",
+    :social => "width: 40px; vertical-align: middle;",
+    :step => "border-top: 1px dotted #{light_gray}; padding: 10px 0; width: #{width};",
+    :step_icon => "vertical-align: top; width: 80px;",
+    :step_body => "float: left; padding-top: 10px; padding-left: 20px;",
+    :step_no_icon => "padding-top: 10px;",
+    :step_name => "color: #{blue}; font-weight: bold; font-size: 16px; padding-bottom: 5px;",
+    :offers => "color: #{red}; padding-top: 10px; text-align: center; font-weight: normal; font-size: 14px;"
+  }
+
+!!!
+%html
+  %body
+    %table#outer_table{:align => "center", :cellpadding=>"0", :cellspacing=>"0", :style => "border: 1px solid #{light_gray}; color: #{gray}; margin: 0px auto; width: 600px; font-family: 'arial'; font-size: 15px; background-color: white;"}
+
+      %thead
+
+        %tr
+          %td
+            %table#header{:align => "center", :cellpadding=>"0", :cellspacing=>"0"}
+              - header_height = '90'
+              %tr{:style => "color: #{blue}; height: #{header_height}px;", :height => "#{header_height}"}
+                %td{:style => "width: 440px; padding-left: #{offset};"}
+                  - link_to WEBSITE_URL, :style => "#{css[:a]} display:block;" do
+                    = image_tag("#{image_root}/logo.jpg", :title => 'Tapjoy', :alt => 'Tapjoy', :size => '114x52', :style => "border: none; display: inline;")
+                %td{:style => "font-size: 12px; font-style: italic; color: #{blue}; vertical-align: middle; text-align: right; width: 80px;"}
+                  follow us:
+                %td{:style => "vertical-align:middle; text-align: right; width: 40px;"}
+                  - link_to 'https://www.facebook.com/Tapjoy', :style => "#{css[:a]} display:block;" do
+                    = image_tag("#{image_root}/facebook_icon.jpg", :title => 'Facebook', :alt => 'Facebook', :style => "border: none; display: inline;", :size => '30x30')
+                %td{:style => "vertical-align:middle; text-align: right; width: 40px; padding-right: #{offset};"}
+                  - link_to 'https://twitter.com/#!/tapjoygames', :style => "#{css[:a]} display:block;" do
+                    = image_tag("#{image_root}/twitter_icon.jpg", :title => 'Twitter', :alt => 'Twitter', :style => "border: none; display: inline;", :size => '30x30')
+              %tr
+                %td{:colspan => "4"}
+                  %hr{:style => "max-height: 1px; border-top: #{red} 1px solid; border-bottom: none; border-left: none; border-right: none; text-align: center; width: #{width}; color: #{red}; margin: 0 auto;"}
+
+      %tbody
+
+        %tr
+          %td{:style => "padding: 20px 0 20px 0;"}
+            %table#intro{:align => "center", :cellpadding=>"0", :cellspacing=>"0", :style => "width: #{width};"}
+              %tr
+                %td{:style => "font-size: 20px; font-weight: bold; color: #{blue};"}
+                  Thanks for creating a Tapjoy account!
+              %tr{:style => "padding-top: 5px;"}
+                %td
+                  Now you can start discovering cool new apps while also earning currency in apps you already play.
+
+        %tr
+          %td
+            %table#confirmation{:align => "center", :cellpadding=>"0", :cellspacing=>"0", :style => css[:step]}
+              %tr
+                %td{:style => css[:step_icon]}
+                  = image_tag("#{image_root}/check.jpg", :class => 'icon', :size => '68x68', :title => 'Confirm', :alt => 'Confirm Address', :style => css[:icon_img])
+                %td{:style => css[:step_body]}
+                  .name{:style => css[:step_name]}
+                    Getting started
+                  .description
+                    Confirm your email address:
+                    %br/
+                    - link_to @confirmation_link, :style => css[:a] do
+                      = image_tag("#{image_root}/confirm_button.jpg", :title => 'Confirm', :alt => 'Confirm', :style => "border: none;", :size => '170x49')
+
+        - unless @linked
+          %tr
+            %td
+              - link_to(WEBSITE_URL, :style => "color: #{gray}; text-decoration: none;") do
+                %table#link_device{:align => "center", :cellpadding=>"0", :cellspacing=>"0", :style => css[:step]}
+                  %tr
+                    %td{:style => css[:step_icon]}
+                      = image_tag("#{image_root}/connect_icon.jpg", :class => 'icon', :size => '68x68', :title => 'Connect your device', :alt => 'Connect', :style => css[:icon_img])
+                    %td{:style => css[:step_body]}
+                      .name{:style => css[:step_name]}
+                        Connect your device
+                      .description
+                        By connecting your device we can personalize your Tapjoy
+                        experience and recommend the best apps just for you. You
+                        must be on the device you wish to add.
+
+        - unless @android_device
+          %tr
+            %td
+              - link_to(WEBSITE_URL, :style => "color: #{gray}; text-decoration: none;") do
+                %table#add_to_home_screen{:align => "center", :cellpadding=>"0", :cellspacing=>"0", :style => css[:step]}
+                  %tr
+                    %td{:style => css[:step_icon]}
+                      = image_tag("#{image_root}/home_icon.jpg", :class => 'icon', :size => '68x68', :title => 'Add Tapjoy to your Home Screen', :alt => 'Home', :style => css[:icon_img])
+                    %td{:style => css[:step_body]}
+                      .name{:style => css[:step_name]}
+                        Add Tapjoy to your Home Screen
+                      .description
+                        Engaging with your favorite apps can be just a tap away.
+
+        - if @offer_data.any?
+          - @offer_data.each do |currency_id, offers|
+            - earn_url = "#{WEBSITE_URL}/earn/#{currency_id}"
+            - external_publisher = offers[:external_publisher]
+            %tr
+              %td
+                - link_to(earn_url, :style => "#{css[:offers]} #{css[:a]}") do
+                  %table.publisher{:align => "center", :cellpadding=>"0", :cellspacing=>"0", :style => css[:step]}
+                    %tr
+                      %td{:style => css[:step_no_icon]}
+                        .name{:style => css[:step_name]}
+                          .publisher{:style => "text-align: center;"}
+                            = image_tag(external_publisher.get_icon_url, :alt => external_publisher.app_name, :style => "border: none;")
+                            %div{:style => "min-width: 270px; padding: 0 #{width.to_i/4}px 0 #{width.to_i/4}px;"}
+                              Earn more currency in your favorite apps, like
+                              = "#{h(external_publisher.app_name)}:"
+            %tr
+              %td
+                - link_to(earn_url, :style => css[:a]) do
+                  %table.offers{:align => "center", :cellpadding=>"0", :cellspacing=>"0", :style => css[:step]}
+                    %tr
+                      - offers_array = offers['OfferArray'][0..2]
+                      - offers_array.each do |offer|
+                        %td{:style => "#{css[:offers]} #{css[:step_no_icon]}"}
+                          = image_tag(offer['IconURL'], :alt => offer['Name'], :style => "border: none;")
+                          %br/
+                          .description
+                            - if offer['Type'] == 'App'
+                              Install and run
+                            = "#{h(offer['Name'])}."
+                            %br/
+                            Earn
+                            = h("#{offer['Payout']} #{offers['CurrencyName']}.")
+
+        - if @recommendations.any?
+          %tr
+            %td
+              - link_to("#{WEBSITE_URL}/more_apps", :style => css[:a]) do
+                %table.recommendations{:align => "center", :cellpadding=>"0", :cellspacing=>"0", :style => css[:step]}
+                  %tr
+                    %td{:style => css[:step_icon]}
+                      = image_tag("#{image_root}/recommend_icon.jpg", :class => 'icon', :size => '68x68', :title => 'Recommended apps', :alt => 'Recommended', :style => css[:icon_img])
+                    %td{:style => css[:step_body]}
+                      .name{:style => css[:step_name]}
+                        Check out Recommended Apps personal to you.
+                      %table{:cellpadding=>"0", :cellspacing=>"0", :style => "width: 100%; padding-top: 5px; padding-right: 18px;"}
+                        %tr
+                          - @recommendations[0..2].each do |cached_app|
+                            %td{:style => "#{css[:offers]} width: 120px;"}
+                              = image_tag(cached_app.icon_url, :alt => cached_app.name, :style => "border: none;")
+                              %br/
+                              .description
+                                = h(cached_app.name)
+
+        %tr
+          %td{:style => "padding: 10px 0 10px 0;"}
+            %table#end{:align => "center", :cellpadding=>"0", :cellspacing=>"0", :style => css[:step]}
+              %tr
+                %td
+                  If you have any questions please contact us at
+                  = mail_to('feedback@tapjoy.com', 'feedback@tapjoy.com', :style => css[:a])
+                  and we'll help you with what you need.
+              %tr
+                %td{:style => "font-weight: bold; font-size: 18px; color: #{blue}; padding-top: 15px;"}
+                  Let the discovery begin!
+              %tr
+                %td{:style => "font-weight: bold; font-size: 16px; color: #{blue}; padding: 15px 0 15px 0;"}
+                  Team Tapjoy
+              %tr
+                %td
+                  If the "confirm address" button doesn't work, copy the link below and paste it in your browser:
+                  = link_to @confirmation_link, @confirmation_link, :style => css[:a]
+
+      %tfoot
+
+        %tr
+          %td
+            %table#footer{:align => "center", :cellpadding=>"0", :cellspacing=>"0", :style=>"border-top: #{light_gray} 1px solid; margin: 0 auto; color: #{light_gray}; font-size: 11px; width: 100%;"}
+              %tr{:style => "background-color: #f1f1f1;" }
+                %td{:style=>"vertical-align: top; font-size: 11px; padding: 5px 0 5px #{offset};"}
+                  Did not sign up for Tapjoy?
+                  %br/
+                  Click
+                  = link_to('here', "#{WEBSITE_URL}/gamer/confirm_delete")
+                  to delete.
+                  %br/
+                  To unsubscribe please click
+                  = succeed '.' do
+                    = link_to('here', '[unsubscribe_link]')
+                %td{:style=>"vertical-align: top; font-size: 11px; text-align: center; padding: 5px 0 5px 0;"}
+                  Tapjoy
+                  %br/
+                  111 Sutter Street, 13th Floor
+                  %br/
+                  San Francisco, CA 94104

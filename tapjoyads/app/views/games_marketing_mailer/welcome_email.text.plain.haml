@@ -1,0 +1,64 @@
+- step_number = 0
+- blank_line = "\n\n"
+
+:plain
+  Thanks for creating a Tapjoy account! Now you can start discovering cool new apps while also earning currency in apps you already play.
+
+  Getting started
+
+  #{step_number+=1}.) Confirm your email address here: #{@confirmation_link}
+= blank_line
+
+- unless @linked
+  :plain
+    #{step_number+=1}.) Connect your device at #{WEBSITE_URL}. By connecting your device we can personalize your Tapjoy experience and recommend the best apps just for you. You must be on the device you wish to add.
+  = blank_line
+
+- unless @android_device
+  :plain
+    #{step_number+=1}.) Add Tapjoy to your Home Screen at #{WEBSITE_URL}. Engaging with your favorite apps can be just a tap away.
+  = blank_line
+
+- if @offer_data.any?
+  - @offer_data.each do |currency_id, offers|
+    - external_publisher = offers[:external_publisher]
+
+    :plain
+      #{step_number+=1}.) Perform actions to earn more currency in your favorite apps. See below for examples of how you can start earning #{offers['CurrencyName']} in #{external_publisher.app_name}:
+    = blank_line
+
+    - offers['OfferArray'][0..2].each do |offer|
+      :plain
+        #{'-'} #{offer['Type'] == 'App' ? 'Install and run' : ''} #{offer['Name']}. Earn #{offer['Payout']} #{offers['CurrencyName']}.
+
+    = blank_line
+    :plain
+      See more here: #{WEBSITE_URL}/earn/#{currency_id}
+    = blank_line
+
+- if @recommendations.any?
+  :plain
+    #{step_number+=1}.) Check out Recommended Apps personal to you. Here are a few examples:
+  = blank_line
+
+  - @recommendations[0..2].each do |cached_app|
+    :plain
+      #{'-'} #{cached_app.name}
+
+  = blank_line
+  :plain
+    See more here: #{WEBSITE_URL}/more_apps
+  = blank_line
+
+:plain
+  If you have any questions please contact us at feedback@tapjoy.com and we'll help you with what you need. Let the discovery begin!
+
+  Team Tapjoy
+
+  #{'------------------------------------------------------------'}
+
+  Did not sign up for Tapjoy? Click here to delete: #{WEBSITE_URL}/gamer/confirm_delete
+  To unsubscribe please click here: [unsubscribe_link]
+  Tapjoy
+  111 Sutter Street, 13th Floor
+  San Francisco, CA 94104
