@@ -24,12 +24,12 @@ class Offer < ActiveRecord::Base
   NON_REWARDED_FEATURED_BACKFILLED_OFFER_TYPE = '8'
   OFFER_TYPE_NAMES = {
     DEFAULT_OFFER_TYPE               => 'Offerwall Offers',
-    FEATURED_OFFER_TYPE              => 'Featured Offers',
+    FEATURED_OFFER_TYPE              => 'Rewarded Featured Offers',
     DISPLAY_OFFER_TYPE               => 'Display Ad Offers',
     NON_REWARDED_DISPLAY_OFFER_TYPE  => 'Non-Rewarded Display Ad Offers',
     NON_REWARDED_FEATURED_OFFER_TYPE => 'Non-Rewarded Featured Offers',
     VIDEO_OFFER_TYPE                 => 'Video Offers',
-    FEATURED_BACKFILLED_OFFER_TYPE   => 'Featured Offers (Backfilled)',
+    FEATURED_BACKFILLED_OFFER_TYPE   => 'Rewarded Featured Offers (Backfilled)',
     NON_REWARDED_FEATURED_BACKFILLED_OFFER_TYPE => 'Non-Rewarded Featured Offers (Backfilled)'
   }
 
