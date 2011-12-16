@@ -24,7 +24,7 @@ class EmailVerifier
 
     if mail.to.blank?
       failed_email.serial_save
-      Notifier.alert_new_relic(EmailVerificationFailure, "No message sent because 'To' is blank. FailedEmail id: #{failed_email.id}")
+      Notifier.alert_new_relic(EmailNotDelivered, "No message sent because 'To' is blank. FailedEmail id: #{failed_email.id}")
     end
 
     mail.to.present?
