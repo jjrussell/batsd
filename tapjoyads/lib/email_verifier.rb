@@ -1,9 +1,9 @@
 class EmailVerifier
 
-  FIELDS_TO_CHECK = %w(to cc bcc)
+  RECIPIENT_FIELDS = %w(to cc bcc)
 
   def self.check_recipients(mail)
-    FIELDS_TO_CHECK.each do |field|
+    RECIPIENT_FIELDS.each do |field|
       if mail.send(field).present?
         mail.send("#{field}=", mail.send(field).reject { |email| !Resolv.valid_email?(email) })
       end
