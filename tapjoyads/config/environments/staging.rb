@@ -18,6 +18,7 @@ config.action_view.cache_template_loading            = true
 # Disable request forgery protection because this is an api
 config.action_controller.allow_forgery_protection    = false
 
+LITMUS_SPAM_ADDRESSES = %w(ml@ml.emailtests.com postini_2@postini-mailtest.com barracuda@barracuda.emailtests.com chkemltests@gapps.emailtests.com chkemltests@me.com chkemltests@sg.emailtests.com chkemltests@gmx.com chkemltests@hushmail.com chkemltests@fastmail.fm chkemltests@lycos.com chkemltests@mail.com)
 config.gem 'mail_safe', :version => '0.3.1'
 
 # Use a different cache store in production
