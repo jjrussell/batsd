@@ -57,6 +57,7 @@ class Offer < ActiveRecord::Base
     "1 hour"   => 1.hour.to_i,
     "8 hours"  => 8.hours.to_i,
     "24 hours" => 24.hours.to_i,
+    "2 days"   => 2.days.to_i,
     "3 days"   => 3.days.to_i,
   }
 

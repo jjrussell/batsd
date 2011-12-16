@@ -51,6 +51,9 @@ class Apps::OffersController < WebsiteController
 
   def preview
     @show_generated_ads = @offer.uploaded_icon?
+    unless request.xhr?
+      redirect_to edit_app_offer_path(:id => @offer.id, :app_id => @app.id, :show_preview => 'true', :preview_image_size => params[:image_size]) and return
+    end
     render 'apps/offers_shared/preview', :layout => false
   end
 
