@@ -122,6 +122,13 @@ private
     end
     @show_papaya = false
     @papaya_offers = {}
+
+    #TJG app offers will show wifi only icon, for offerwall only windows phone will show the icon
+    if params[:show_wifi_only] == '1'
+      @show_wifi_only = true
+    else
+      @show_wifi_only = params[:device_type] == 'windows' ? true : false
+    end
   end
 
   def get_offer_list(type = nil)
