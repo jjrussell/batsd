@@ -11,6 +11,8 @@ class FailedToInvalidateCloudfront < RuntimeError; end
 class SdbObjectNotInS3 < RuntimeError; end
 class SkippedSendCurrency < RuntimeError; end
 class AndroidRank404 < RuntimeError; end
+class EmailVerificationFailure < RuntimeError; end
+class EmailNotDelivered < RuntimeError; end
 
 # Any errors that extend this class will result in an email being sent to dev@tapjoy.com.
 class EmailWorthyError < RuntimeError

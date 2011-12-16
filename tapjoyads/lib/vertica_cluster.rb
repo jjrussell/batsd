@@ -18,6 +18,7 @@ class VerticaCluster
 
   def self.query(table, options = {})
     select     = options.delete(:select) { '*' }
+    join       = options.delete(:join)
     conditions = options.delete(:conditions)
     group      = options.delete(:group)
     order      = options.delete(:order)
@@ -25,6 +26,7 @@ class VerticaCluster
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
 
     query  = "SELECT #{select} FROM #{table}"
+    query += " JOIN #{join}"        if join.present?
     query += " WHERE #{conditions}" if conditions.present?
     query += " GROUP BY #{group}"   if group.present?
     query += " ORDER BY #{order}"   if order.present?
