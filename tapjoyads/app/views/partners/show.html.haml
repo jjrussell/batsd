@@ -26,8 +26,6 @@
 = render 'make_current_button', :partner => @partner
 
 .metadata Name: #{@partner.name}
-- if @partner.payout_info.present?
-  .metadata d/b/a: #{@partner.payout_info.doing_business_as}
 .metadata Contact name: #{@partner.contact_name}
 .metadata Contact phone: #{@partner.contact_phone}
 .metadata Contact email(s):
@@ -106,6 +104,9 @@
       %tr
         %th Billing Name:
         %td= payout_info.billing_name
+      %tr
+        %th Doing Business As:
+        %td= payout_info.doing_business_as
       %tr
         %th Tax ID:
         %td.do-not-print= decrypt_if_permitted(payout_info, :tax_id)
