@@ -44,7 +44,7 @@ class Job::MasterReloadMoneyController < Job::JobController
         if key == '24_hours'
           conditions = "path = '[reward]' and source = 'tj_games' and time >= '#{(start_time - 1.hour).to_s(:db)}' and time < '#{(end_time - 1.hour).to_s(:db)}'"
           select = 'sum(advertiser_amount) as adv_amount, count(source), sum(publisher_amount) as pub_amount'
-          results = VerticaCluster.query(:select => select, :conditions => conditions).first
+          results = VerticaCluster.query('analytics.actions', :select => select, :conditions => conditions).first
           stats[key]['tjgames_conversions'] = number_with_delimiter(results[:count])
           stats[key]['tjgames_adv_spend'] = number_to_currency(results[:adv_amount].to_i / -100.0)
           stats[key]['tjgames_pub_earnings'] = number_to_currency(results[:pub_amount].to_i / 100.0)
