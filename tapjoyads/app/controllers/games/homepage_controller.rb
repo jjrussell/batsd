@@ -1,5 +1,5 @@
 class Games::HomepageController < GamesController
-
+  rescue_from Mogli::Client::ClientException, :with => :handle_mogli_exceptions
   before_filter :require_gamer, :except => [ :index, :tos, :privacy ]
 
   def index

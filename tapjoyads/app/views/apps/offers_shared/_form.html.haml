@@ -356,6 +356,12 @@
         checkMinimumPrice();
         return checkValidBudget() && checkMaximumBid(true);
       });
+
+  - if params[:show_preview] == 'true'
+    :plain
+      $.facebox({ajax: "#{preview_app_offer_path(:id => @offer.id, :app_id => @app.id, :image_size => params[:preview_image_size], :preview => 'true')}"});
+
+  :plain
     });
 
 - content_for :page_styles do
