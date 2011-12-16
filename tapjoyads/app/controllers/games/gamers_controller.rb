@@ -22,8 +22,8 @@ class Games::GamersController < GamesController
         :user_agent_str => request.user_agent,
         :device_type => device_type,
         :geoip_data => get_geoip_data,
-        :os_version => os_version }.to_json
-      Sqs.send_message(QueueNames::SEND_WELCOME_EMAILS, message)
+        :os_version => os_version }
+      Sqs.send_message(QueueNames::SEND_WELCOME_EMAILS, Base64::encode64(Marshal.dump(message)))
 
       if params[:data].present? && params[:src] == 'android_app'
         render(:json => { :success => true, :link_device_url => finalize_games_gamer_device_path(:data => params[:data]), :android => true })
