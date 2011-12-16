@@ -10,6 +10,6 @@ class Games::MoreGamesController < GamesController
   end
 
   def recommended
-    @recommendations = Device.new(:key => current_device_id).recommendations(:device_type => device_type, :geoip_data => get_geoip_data, :os_version => os_version)
+    current_recommendations
   end
 end

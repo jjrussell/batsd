@@ -74,8 +74,8 @@ module Offer::Rejecting
   end
 
   def recommendation_reject?(device, device_type, geoip_data, os_version)
-    recommendable_types_reject? || 
-      device_platform_mismatch?(device_type) || 
+    recommendable_types_reject? ||
+      device_platform_mismatch?(device_type) ||
       geoip_reject?(geoip_data, device) ||
       already_complete?(device) ||
       min_os_version_reject?(os_version) ||
@@ -222,7 +222,7 @@ module Offer::Rejecting
 
   def video_offers_reject?(video_offer_ids, type, all_videos)
     return false if type == Offer::VIDEO_OFFER_TYPE || all_videos
-    
+
     item_type == 'VideoOffer' && !video_offer_ids.include?(id)
   end
 
@@ -230,7 +230,7 @@ module Offer::Rejecting
   def tapjoy_games_retargeting_reject?(device)
     TAPJOY_GAMES_RETARGETED_OFFERS.include?(item_id) && !device.has_app?(TAPJOY_GAMES_REGISTRATION_OFFER_ID)
   end
-  
+
   def recommendable_types_reject?
     item_type != 'App'
   end

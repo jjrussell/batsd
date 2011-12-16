@@ -169,7 +169,7 @@ class PartnersController < WebsiteController
       end
     end
   end
-  
+
   def set_tapjoy_sponsored
     @partner.set_tapjoy_sponsored_on_offers!(params[:flag])
     flash[:notice] = "Successfully updated all offers"

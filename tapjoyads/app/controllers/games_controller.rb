@@ -6,7 +6,7 @@ class GamesController < ApplicationController
 
   skip_before_filter :fix_params
 
-  helper_method :current_gamer, :current_device_id, :current_device_id_cookie, :current_device_info, :has_multiple_devices, :show_login_page, :device_type, :geoip_data, :os_version
+  helper_method :current_gamer, :current_device_id, :current_device_id_cookie, :current_device_info, :current_recommendations, :has_multiple_devices, :show_login_page, :device_type, :geoip_data, :os_version
 
   def current_gamer
     @current_gamer ||= current_gamer_session && current_gamer_session.record
@@ -37,6 +37,10 @@ class GamesController < ApplicationController
 
   def current_device_info
     current_gamer.devices.find_by_device_id(current_device_id) if current_gamer
+  end
+
+  def current_recommendations
+    @recommendations ||= Device.new(:key => current_device_id).recommendations(:device_type => device_type, :geoip_data => get_geoip_data, :os_version => os_version)
   end
 
   def has_multiple_devices?

@@ -135,7 +135,7 @@ private
 
       price       = (data_hash['price'][/\$\d\.\d\d/] || '$0').gsub('$', '').to_f
       user_rating = data_hash['rating'][/[^ ]* stars/].gsub(' stars','').to_f
-      category    = (Hpricot(data_hash['category'])/:a).attr('href').split('/').last
+      category    = (Hpricot(data_hash['category'])/:a).attr('href').split('/').last.split('?').first
       released_at = Date.parse(data_hash['updated']).strftime('%FT00:00:00Z')
 
       file_size   = data_hash['size'].to_f

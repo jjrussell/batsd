@@ -105,7 +105,7 @@ class OfferList
 
     [ returned_offers, 0 ]
   end
-  
+
   private
   def postcache_reject?(offer)
     offer.postcache_reject?(@publisher_app, @device, @currency, @device_type, @geoip_data, @app_version,
