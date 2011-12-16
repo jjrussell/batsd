@@ -69,8 +69,62 @@ class GamesController < ApplicationController
     end
   end
 
+  def offline_facebook_authenticate
+    if current_gamer.facebook_id.blank? && current_facebook_user
+      begin
+        current_gamer.gamer_profile.update_facebook_info!(current_facebook_user)
+      rescue
+        flash[:error] = @error_msg || 'Failed connecting to Facebook profile'
+        redirect_to edit_games_gamer_path
+      end
+      unless has_permissions?
+        dissociate_and_redirect
+      end
+    elsif current_gamer.facebook_id?
+      fb_create_user_and_client(current_gamer.fb_access_token, '', current_gamer.facebook_id)
+      unless has_permissions?
+        dissociate_and_redirect
+      end
+    else
+      flash[:error] = @error_msg ||'Please connect Facebook with Tapjoy.'
+      redirect_to edit_games_gamer_path
+    end
+  end
+
+  def has_permissions?
+    begin
+      unless current_facebook_user.has_permission?(:offline_access) && current_facebook_user.has_permission?(:publish_stream)
+        @error_msg = "Please grant us both permissions before sending out an invite."
+      end
+    rescue
+    end
+    @error_msg.blank?
+  end
+
+  def dissociate_and_redirect
+    current_gamer.gamer_profile.dissociate_account!(Invitation::FACEBOOK)
+    render :json => { :success => false, :error_redirect => true } and return if params[:ajax].present?
+    flash[:error] = @error_msg
+    redirect_to edit_games_gamer_path
+  end
+
   def valid_device_id(udid)
     current_gamer.devices.find_by_device_id(udid) if current_gamer
+  end
+
+  def handle_mogli_exceptions(e)
+    case e
+    when Mogli::Client::FeedActionRequestLimitExceeded
+      @error_msg = "You've reached the limit. Please try again later."
+    when Mogli::Client::HTTPException
+      @error_msg = "There was an issue with inviting your friend. Please try again later."
+    when Mogli::Client::SessionInvalidatedDueToPasswordChange, Mogli::Client::OAuthException
+      @error_msg = "Please authorize us before sending out an invite."
+    else
+      @error_msg = "There was an issue with inviting your friend. Please try again later."
+    end
+
+    dissociate_and_redirect
   end
 
   private
