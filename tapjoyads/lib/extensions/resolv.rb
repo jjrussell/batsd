@@ -11,6 +11,8 @@ class Resolv
   def self.valid_email?(email)
     domain = email.gsub(/^.+\@/, '')
     WHITELISTED_MX_DOMAINS.include?(domain) || self::DNS.open { |dns| dns.getresources(domain, Resolv::DNS::Resource::IN::MX) }.any?
+  rescue
+    true
   end
 
 end
