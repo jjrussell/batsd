@@ -1,4 +1,5 @@
 class Games::SocialController < GamesController
+  rescue_from Mogli::Client::ClientException, :with => :handle_mogli_exceptions
   rescue_from Errno::ECONNRESET, :with => :handle_other_exceptions
   rescue_from Errno::ETIMEDOUT, :with => :handle_other_exceptions
 

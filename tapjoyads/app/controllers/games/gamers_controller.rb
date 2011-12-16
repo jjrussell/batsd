@@ -1,5 +1,5 @@
 class Games::GamersController < GamesController
-
+  rescue_from Mogli::Client::ClientException, :with => :handle_mogli_exceptions
   before_filter :set_profile, :only => [ :edit, :accept_tos, :password, :prefs, :social, :update_password, :confirm_delete ]
   before_filter :offline_facebook_authenticate, :only => :connect_facebook_account
 

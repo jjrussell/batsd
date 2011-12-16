@@ -2,8 +2,6 @@ class GamesController < ApplicationController
   include Facebooker2::Rails::Controller
   include SslRequirement
 
-  rescue_from Mogli::Client::ClientException, :with => :handle_mogli_exceptions
-
   layout 'games'
 
   skip_before_filter :fix_params
