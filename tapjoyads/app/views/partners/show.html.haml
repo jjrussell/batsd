@@ -26,6 +26,7 @@
 = render 'make_current_button', :partner => @partner
 
 .metadata Name: #{@partner.name}
+.metadata d/b/a: #{@partner.payout_info.doing_business_as}
 .metadata Contact name: #{@partner.contact_name}
 .metadata Contact phone: #{@partner.contact_phone}
 .metadata Contact email(s):
