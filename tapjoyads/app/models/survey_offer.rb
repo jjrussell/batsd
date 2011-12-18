@@ -1,5 +1,6 @@
 class SurveyOffer < ActiveRecord::Base
   include UuidPrimaryKey
+  acts_as_cacheable
 
   has_many :survey_questions
   has_one :offer, :as => :item
@@ -20,6 +21,7 @@ class SurveyOffer < ActiveRecord::Base
   before_validation :assign_partner_id
   after_create :create_primary_offer, :create_icon
   after_update :update_offer
+  after_clear_association_cache :survey_questions
 
   named_scope :visible, :conditions => { :hidden => false }
 
@@ -86,7 +88,6 @@ class SurveyOffer < ActiveRecord::Base
       :item             => self,
       :partner          => partner,
       :name             => name,
-      :third_party_data => self.to_json(:include => :survey_questions),
       :reward_value     => 15,
       :price            => 0,
       :url              => url,
@@ -109,7 +110,6 @@ class SurveyOffer < ActiveRecord::Base
     offer.partner_id       = partner_id
     offer.name             = name
     offer.hidden           = hidden
-    offer.third_party_data = self.to_json(:include => :survey_questions)
     offer.bid              = @bid_price unless @bid_price.blank?
     offer.save! if offer.changed?
   end

@@ -10,7 +10,7 @@ module ActsAsCacheable
       include ActsAsCacheable::InstanceMethods
       include ActiveSupport::Callbacks
 
-      define_callbacks :before_cache, :after_cache, :before_cache_clear, :after_cache_clear
+      define_callbacks :before_cache, :after_cache, :before_cache_clear, :after_cache_clear, :after_clear_association_cache
 
       after_commit_on_create :cache
       after_commit_on_update :cache
@@ -44,6 +44,7 @@ module ActsAsCacheable
     def cache
       run_callbacks(:before_cache)
       clear_association_cache
+      run_callbacks(:after_clear_association_cache)
       Mc.distributed_put("mysql.#{self.class.model_name.underscore}.#{id}.#{SCHEMA_VERSION}", self, false, 1.day).tap do
         run_callbacks(:after_cache)
       end

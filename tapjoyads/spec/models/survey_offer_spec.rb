@@ -40,7 +40,6 @@ describe SurveyOffer do
       primary_offer.partner.id.should       == TAPJOY_PARTNER_ID
       primary_offer.name.should             == @survey_offer.name
       json = @survey_offer.to_json(:include => :survey_questions)
-      primary_offer.third_party_data.should == json
       primary_offer.reward_value.should     == 15
       primary_offer.price.should            == 0
       url_params = [
@@ -81,7 +80,6 @@ describe SurveyOffer do
       primary_offer.hidden.should be_true
       primary_offer.bid.should == 5
       json = @survey_offer.to_json(:include => :survey_questions)
-      primary_offer.third_party_data.should == json
 
       @survey_offer = SurveyOffer.find(@survey_offer.id)
       @survey_offer.update_attributes({ :name => 'tom' })
