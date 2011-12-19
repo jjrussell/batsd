@@ -17,9 +17,21 @@ describe Job::MasterReloadStatzController do
       once.
       with('analytics.actions', :select => 'max(time)').
       returns([{ :max => Time.zone.parse('2011-02-15') }])
-    
+
     vertica_options = {
-        :select     => 'offer_id, count(*) AS conversions, -sum(advertiser_amount) AS spend',
+        :select     => 'source, app_platform, count(path), -sum(advertiser_amount) as adv_amount, sum(publisher_amount) as pub_amount',
+        :join       => 'analytics.apps_partners on actions.publisher_app_id = apps_partners.app_id',
+        :conditions => "path = '[reward]' and app_platform != 'windows' and time >= '#{@start_time.to_s(:db)}' AND time < '#{@end_time.to_s(:db)}'",
+        :group      => 'source, app_platform',
+    }
+    VerticaCluster.
+      expects(:query).
+      once.
+      with('analytics.actions', vertica_options).
+      returns([{ :count => 1, :adv_amount => 1, :pub_amount => 1, :app_platform => 'iphone', :source => 'tj_games' }])
+
+    vertica_options = {
+        :select     => 'offer_id, count(path) AS conversions, -sum(advertiser_amount) AS spend',
         :group      => 'offer_id',
         :conditions => conditions.join(' AND '),
     }
@@ -28,9 +40,9 @@ describe Job::MasterReloadStatzController do
       once.
       with('analytics.actions', vertica_options).
       returns([{ :spend => 1 }])
-    
+
     vertica_options = {
-        :select     => 'publisher_app_id AS offer_id, count(*) AS published_offers, sum(publisher_amount + tapjoy_amount) AS gross_revenue, sum(publisher_amount) AS publisher_revenue',
+        :select     => 'publisher_app_id AS offer_id, count(path) AS published_offers, sum(publisher_amount + tapjoy_amount) AS gross_revenue, sum(publisher_amount) AS publisher_revenue',
         :group      => 'publisher_app_id',
         :conditions => conditions.join(' AND '),
     }
