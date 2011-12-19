@@ -9,6 +9,7 @@ class VerticaCluster
 
   def self.get_connection
     @@offset = @@offset == @@nodes.size - 1 ? 0 : @@offset + 1
+    @@nodes[@@offset] = nil if @@nodes[@@offset] && @@nodes[@@offset].closed?
     @@nodes[@@offset] ||= Vertica.connect(:host     => VERTICA_CONFIG['hosts'][@@offset],
                                           :port     => VERTICA_CONFIG['port'],
                                           :database => VERTICA_CONFIG['database'],
