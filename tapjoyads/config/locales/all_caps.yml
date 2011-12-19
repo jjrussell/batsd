@@ -11,6 +11,7 @@ all_caps:
       previous: "PREVIOUS %{items}"
       missing_currency: "MISSING %{currency}?"
       instructions: "ENGAGE IN ANY OF THE FOLLOWING ACTIONS TO RECEIVE %{currency}"
+      instructions_non_rewarded: "ENGAGE IN ANY OF THE FOLLOWING NON REWARDED ACTIONS"
       earn_currency: "EARN %{amount} %{currency}"
       buy_currency: "BUY %{amount} %{currency}"
       load_more: "LOAD SOME MORE!"

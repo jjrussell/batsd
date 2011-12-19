@@ -11,6 +11,7 @@ de:
       previous: "Vorherige %{items}"
       missing_currency: "Fehlende %{currency}?"
       instructions: "Nimm an einer der folgenden Aktionen teil um %{currency} zu erhalten"
+      instructions_non_rewarded: "Engage in any of the following non rewarded actions"
       earn_currency: "Erhalte %{amount} %{currency}"
       buy_currency: "Kaufe %{amount} %{currency}"
       load_more: "Lade noch mehr!"

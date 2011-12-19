@@ -11,6 +11,7 @@ en:
       previous: "Previous %{items}"
       missing_currency: "Missing %{currency}?"
       instructions: "Engage in any of the following actions to receive %{currency}"
+      instructions_non_rewarded: "Engage in any of the following non rewarded actions"
       earn_currency: "Earn %{amount} %{currency}"
       buy_currency: "Buy %{amount} %{currency}"
       load_more: "Load some more!"
