@@ -607,6 +607,10 @@ class Offer < ActiveRecord::Base
     return (item_type == 'App' && name.length <= 30) if rewarded?
     item_type != 'VideoOffer'
   end
+  
+  def to_s
+    name
+  end
 
 private
 
