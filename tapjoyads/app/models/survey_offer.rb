@@ -92,6 +92,7 @@ class SurveyOffer < ActiveRecord::Base
       :price            => 0,
       :url              => url,
       :bid              => @bid_price,
+      :name_suffix      => 'Survey',
       :device_types     => Offer::ALL_DEVICES.to_json,
       :tapjoy_enabled   => true,
     })
