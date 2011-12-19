@@ -19,17 +19,17 @@
          padding: 0;
 
         .login {
-          
+
           .form_fields {
             margin: 0 auto;
             width: 280px;
-            
+
             input {
               margin: 0 4px;
             }
             ul.row {
               float: none;
-              
+
               li.field.login_error {
                 margin: 6px 0;
               }
@@ -68,11 +68,11 @@
           float: none;
           margin: 0 auto;
           width: 295px;
-          
+
           .sign_up_content {
             postiton: relative;
             top: 24px;
-            
+
             input[type=email], input[type=password] {
               width: 260px;
             }
@@ -82,7 +82,7 @@
             .register_form {
               .row {
                 width: 260px;
-                
+
                 .field_tos {
                   .field_checkbox {
                     margin-right: 6px;

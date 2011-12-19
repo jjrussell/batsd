@@ -11,7 +11,8 @@ class Job::QueueSendWelcomeEmailsController < Job::SqsReaderController
 
     gamer = Gamer.find(device_info.delete(:gamer_id))
 
-    GamesMarketingMailer.deliver_welcome_email(gamer, device_info)
+    mail = GamesMarketingMailer.create_welcome_email(gamer, device_info)
+    GamesMarketingMailer.deliver(mail) if EmailVerifier.check_recipients(mail)
   end
 
 end
