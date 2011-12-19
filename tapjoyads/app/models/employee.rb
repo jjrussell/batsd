@@ -13,6 +13,10 @@ class Employee < ActiveRecord::Base
     "#{first_name} #{last_name}"
   end
 
+  def dom_id
+    full_name.gsub(/\W/, '').downcase
+  end
+
   def photo_alt_name
     "#{first_name.downcase}_#{last_name.downcase}"
   end

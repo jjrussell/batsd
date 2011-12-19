@@ -119,7 +119,7 @@ RegExp.escape = function(text) {
         if (w < 60) {
           w = 60;
         }
-        $('.device_info').fadeOut(50, function(){ 
+        $('.device_info').fadeOut(50, function(){
           $('.device_info').animate({width:"0px"}, 250);
         });
         TJG.animating = false;
