@@ -14,7 +14,7 @@
         - link_to(@featured_review.app.info_url, :target => '_blank') do
           .button.grey.offer_button
             Download now!
-        - if @featured_review.app.is_wifi_required?
+        - if @featured_review.app.wifi_required?
           .wifi_only
             Wifi Only
             .wifi_icon
