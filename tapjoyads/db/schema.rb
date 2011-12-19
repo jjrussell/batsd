@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20111212062016) do
+ActiveRecord::Schema.define(:version => 20111213101816) do
 
   create_table "action_offers", :id => false, :force => true do |t|
     t.string   "id",                    :limit => 36,                    :null => false
@@ -587,9 +587,9 @@ ActiveRecord::Schema.define(:version => 20111212062016) do
     t.text     "banner_creatives"
     t.text     "dma_codes",                                                                                        :null => false
     t.text     "regions",                                                                                          :null => false
-    t.boolean  "tj_games_only",                                                                 :default => false, :null => false
-    t.boolean  "tapjoy_sponsored",                                                              :default => false, :null => false
     t.boolean  "instructions_overridden",                                                       :default => false, :null => false
+    t.boolean  "tapjoy_sponsored",                                                              :default => false, :null => false
+    t.boolean  "tj_games_only",                                                                 :default => false, :null => false
   end
 
   add_index "offers", ["id"], :name => "index_offers_on_id", :unique => true
@@ -630,6 +630,25 @@ ActiveRecord::Schema.define(:version => 20111212062016) do
   add_index "partner_assignments", ["id"], :name => "index_partner_assignments_on_id", :unique => true
   add_index "partner_assignments", ["partner_id"], :name => "index_partner_assignments_on_partner_id"
   add_index "partner_assignments", ["user_id", "partner_id"], :name => "index_partner_assignments_on_user_id_and_partner_id", :unique => true
+
+  create_table "partner_changes", :id => false, :force => true do |t|
+    t.string   "id",                     :limit => 36, :null => false
+    t.string   "item_id",                :limit => 36, :null => false
+    t.string   "item_type",                            :null => false
+    t.string   "source_partner_id",      :limit => 36, :null => false
+    t.string   "destination_partner_id", :limit => 36, :null => false
+    t.datetime "scheduled_for"
+    t.datetime "completed_at"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "partner_changes", ["destination_partner_id"], :name => "index_partner_changes_on_destination_partner_id"
+  add_index "partner_changes", ["id"], :name => "index_partner_changes_on_id", :unique => true
+  add_index "partner_changes", ["item_id"], :name => "index_partner_changes_on_item_id"
+  add_index "partner_changes", ["item_type", "item_id"], :name => "index_partner_changes_on_item_type_and_item_id"
+  add_index "partner_changes", ["scheduled_for", "completed_at"], :name => "index_partner_changes_on_scheduled_for_and_completed_at"
+  add_index "partner_changes", ["source_partner_id"], :name => "index_partner_changes_on_source_partner_id"
 
   create_table "partners", :id => false, :force => true do |t|
     t.string   "id",                           :limit => 36,                                                      :null => false

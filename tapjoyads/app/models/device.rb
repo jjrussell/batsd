@@ -18,6 +18,8 @@ class Device < SimpledbShardedResource
   self.sdb_attr :mac_address
   self.sdb_attr :platform
   self.sdb_attr :is_papayan, :type => :bool, :default_value => false
+  self.sdb_attr :all_packages, :type => :json, :default_value => []
+  self.sdb_attr :current_packages, :type => :json, :default_value => []
 
   def dynamic_domain_name
     domain_number = @key.matz_silly_hash % NUM_DEVICES_DOMAINS
@@ -32,6 +34,7 @@ class Device < SimpledbShardedResource
     end
   end
 
+  CUTOFF_DAY = Time.zone.parse('2011-12-17') # TO REMOVE: after 2011-12-17
   def handle_connect!(app_id, params)
     return [] unless app_id =~ APP_ID_FOR_DEVICES_REGEX
 
@@ -54,10 +57,13 @@ class Device < SimpledbShardedResource
       end
     end
 
-    if now.year != last_run_time_was.year || now.yday != last_run_time_was.yday
+    offset = now >= CUTOFF_DAY ? @key.matz_silly_hash % 1.day : 0 # TO REMOVE: the cutoff check after 2011-12-17
+    adjusted_now = now - offset
+    adjusted_lrt = last_run_time_was - offset
+    if adjusted_now.year != adjusted_lrt.year || adjusted_now.yday != adjusted_lrt.yday
       path_list.push('daily_user')
     end
-    if now.year != last_run_time_was.year || now.month != last_run_time_was.month
+    if adjusted_now.year != adjusted_lrt.year || adjusted_now.month != adjusted_lrt.month
       path_list.push('monthly_user')
     end
 
@@ -160,7 +166,14 @@ class Device < SimpledbShardedResource
     Gamer.find(:all, :joins => [:gamer_devices], :conditions => ['gamer_devices.device_id = ?', key])
   end
 
-private
+  def update_package_names!(package_names)
+    return if ((package_names - current_packages) | (current_packages - package_names)).empty?
+    self.all_packages |= package_names
+    self.current_packages = package_names
+    save!
+  end
+
+  private
 
   def fix_parser_error
     str = get('apps')
