@@ -140,12 +140,14 @@ class Gamer < ActiveRecord::Base
         rescue OpenSSL::Cipher::CipherError
         end
         if invitation_id
-          invitation = Invitation.find_by_id(invitation_id)
-          self.referred_by = invitation.gamer_id
-          referred_by_gamer = Gamer.find_by_id(self.referred_by)
-          if referred_by_gamer && invitation
-            follow_gamer(referred_by_gamer)
-            Invitation.reconcile_pending_invitations(self, :invitation => invitation)
+          invitation = Invitation.find_by_id(invitation_id) || (Invitation.find_by_id(advertiser_app_id) if advertiser_app_id)
+          if invitation
+            self.referred_by = invitation.gamer_id
+            referred_by_gamer = Gamer.find_by_id(self.referred_by)
+            if referred_by_gamer
+              follow_gamer(referred_by_gamer)
+              Invitation.reconcile_pending_invitations(self, :invitation => invitation)
+            end
           end
         end
       end
