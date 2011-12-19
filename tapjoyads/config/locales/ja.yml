@@ -11,7 +11,7 @@ ja:
       previous: "前の %{items}件"
       missing_currency: "%{currency}が受取れない場合"
       instructions: "次のアクションで %{currency} を獲得する"
-      instructions_non_rewarded: "Engage in any of the following non rewarded actions"
+      instructions_non_rewarded: "次のアクションで %{currency} を獲得する"
       earn_currency: "%{amount} %{currency}  を獲得"
       buy_currency: "%{amount} %{currency} を買う"
       load_more: "もっと読み込みましょう！"

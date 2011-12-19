@@ -4,12 +4,15 @@
   #top_box
     .explanation= @message
 
-- if @currency.conversion_rate > 0 && !@for_preview
+- if !@for_preview
   #top_box
     .explanation
-      = t('text.offerwall.instructions', :currency => @currency.name)
-  - if params[:currency_selector] == '1' && @currencies.present? && @currencies.size > 1
-    = render :partial => 'currency_selector'
+      - if @currency.conversion_rate > 0
+        = t('text.offerwall.instructions', :currency => @currency.name)
+        - if params[:currency_selector] == '1' && @currencies.present? && @currencies.size > 1
+          = render :partial => 'currency_selector'
+      - else
+        = t('text.offerwall.instructions_non_rewarded')
 
 - if @test_offers.present?
   - unless @currency.tapjoy_enabled?

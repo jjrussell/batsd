@@ -11,7 +11,7 @@ fr:
       previous: "%{items} offres précédentes"
       missing_currency: "En manque de %{currency}?"
       instructions: "Complète une des offres suivantes et reçois des %{currency}"
-      instructions_non_rewarded: "Engage in any of the following non rewarded actions"
+      instructions_non_rewarded: "Complète une des offres suivantes et reçois des %{currency}"
       earn_currency: "Gagne %{amount} %{currency}"
       buy_currency: "Achète %{amount} %{currency}"
       load_more: "Voir plus d'offres!"

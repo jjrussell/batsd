@@ -11,7 +11,7 @@ sv:
       previous: "Föregående %{items}"
       missing_currency: "Saknade %{currency}?"
       instructions: "Genomför något av följande erbjudande för att få %{currency}"
-      instructions_non_rewarded: "Engage in any of the following non rewarded actions"
+      instructions_non_rewarded: "Genomför något av följande erbjudande för att få %{currency}"
       earn_currency: "Tjäna %{amount} %{currency}"
       buy_currency: "Köp %{amount} %{currency}"
       load_more: "Fler erbjudanden!"
