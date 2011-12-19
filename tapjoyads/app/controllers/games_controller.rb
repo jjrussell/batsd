@@ -127,12 +127,9 @@ class GamesController < ApplicationController
     dissociate_and_redirect
   end
 
-  def handle_errno_exceptions(e)
-    case e
-    when Errno::ECONNRESET, Errno::ETIMEDOUT
-      @error_msg = "There was a connection issue. Please try again later."
-      redirect_to edit_games_gamer_path
-    end
+  def handle_errno_exceptions
+    @error_msg = "There was a connection issue. Please try again later."
+    redirect_to edit_games_gamer_path
   end
 
   private
