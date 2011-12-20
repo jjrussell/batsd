@@ -34,7 +34,6 @@ class Device < SimpledbShardedResource
     end
   end
 
-  CUTOFF_DAY = Time.zone.parse('2011-12-17') # TO REMOVE: after 2011-12-17
   def handle_connect!(app_id, params)
     return [] unless app_id =~ APP_ID_FOR_DEVICES_REGEX
 
@@ -57,7 +56,7 @@ class Device < SimpledbShardedResource
       end
     end
 
-    offset = now >= CUTOFF_DAY ? @key.matz_silly_hash % 1.day : 0 # TO REMOVE: the cutoff check after 2011-12-17
+    offset = @key.matz_silly_hash % 1.day
     adjusted_now = now - offset
     adjusted_lrt = last_run_time_was - offset
     if adjusted_now.year != adjusted_lrt.year || adjusted_now.yday != adjusted_lrt.yday
