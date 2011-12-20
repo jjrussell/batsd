@@ -199,7 +199,7 @@ class Offer < ActiveRecord::Base
 
   def banner_creatives
     self.banner_creatives = [] if super.nil?
-    super
+    super.map { |c| Array.wrap c } # Prepare old flat arrays for the approval field
   end
 
   def banner_creatives_was
@@ -210,6 +210,32 @@ class Offer < ActiveRecord::Base
   def banner_creatives_changed?
     return false if (super && banner_creatives_was.empty? && banner_creatives.empty?)
     super
+  end
+
+  def has_banner_creative? size
+    self.banner_creatives.flatten.include? size
+  end
+
+  def banner_creative_approved? size
+    self.banner_creatives.select { |c| c[0] == size && c[1] }.any?
+  end
+
+  def remove_banner_creative size
+    return unless has_banner_creative? size
+    self.banner_creatives = banner_creatives.reject { |c| c[0] == size }
+  end
+
+  def add_banner_creative size
+    return if has_banner_creative? size
+    self.banner_creatives = banner_creatives + [size, false]
+  end
+
+  def approve_banner_creative size
+    return unless has_banner_creative? size
+    self.banner_creatives = banner_creatives.map do |c|
+      c[1] = true if c[0] == size
+      c
+    end
   end
 
   def find_associated_offers

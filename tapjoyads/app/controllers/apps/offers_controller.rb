@@ -92,10 +92,10 @@ class Apps::OffersController < WebsiteController
     case request.method
       when :delete
         # necessary to use assignment so @offer.banner_creatives_changed? will be true (can't modify in-place)
-        @offer.banner_creatives -= @image_size.to_a
+        @offer.remove_banner_creative @image_size
       when :post
         # necessary to use assignment so @offer.banner_creatives_changed? will be true (can't modify in-place)
-        @offer.banner_creatives += @image_size.to_a
+        @offer.add_banner_creative @image_size
       when :put
         # do nothing
       when :get
@@ -112,8 +112,17 @@ class Apps::OffersController < WebsiteController
       end
     end
 
-    @creative_exists = @offer.banner_creatives.include? @image_size
+    @creative_exists = @offer.has_banner_creative? @image_size
+    @creative_approved = @offer.banner_creative_approved? @image_size
     render :layout => 'simple'
+  end
+
+  def approve_creative
+    @image_size = params[:image_size]
+    @offer.approve_banner_creative @image_size
+    @offer.save
+
+    redirect_to :action => :upload_creative, :id => @offer.id, :app_id => @app.id, :image_size => @image_size, :label => "#{@image_size} custom creative"
   end
 
   def toggle
