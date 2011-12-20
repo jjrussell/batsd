@@ -122,8 +122,6 @@ private
     end
     @show_papaya = false
     @papaya_offers = {}
-    #test if rewarded or not, probably shouldn't use Offer.find_in_cache(params[:app_id])
-    @rewarded = Offer.find_in_cache(params[:app_id]).rewarded
   end
 
   def get_offer_list(type = nil)
