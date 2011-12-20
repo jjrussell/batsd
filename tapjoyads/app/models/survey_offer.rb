@@ -21,7 +21,7 @@ class SurveyOffer < ActiveRecord::Base
   before_validation :assign_partner_id
   after_create :create_primary_offer, :create_icon
   after_update :update_offer
-  after_clear_association_cache :survey_questions
+  cache_associations :survey_questions
 
   named_scope :visible, :conditions => { :hidden => false }
 
