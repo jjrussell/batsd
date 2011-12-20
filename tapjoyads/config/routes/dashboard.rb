@@ -55,6 +55,8 @@ ActionController::Routing::Routes.draw do |map|
   end
   map.resource :premier, :controller => :premier, :only => [ :update ]
   map.premier 'premier', :controller => :premier, :action => :edit
+  map.resources :survey_offers, :except => [ :show ]
+  map.resources :survey_results, :only => [ :new, :create ]
 
   # Admin tools routes
   map.resources :tools, :only => :index,

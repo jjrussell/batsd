@@ -1,0 +1,94 @@
+%h1= @page_title
+
+- form_for(@survey_offer, nil, :html => { :class => 'tjform' }) do |f|
+  .field
+    = f.label :name
+    #help_name.help ?
+    = f.text_field :name
+    = error_message_on(@survey_offer, :name)
+  .field
+    =f.label :bid
+    #help_bid.help ?
+    = f.currency_field :bid
+    = error_message_on(@survey_offer, :bid_price)
+  %h2 Questions
+  - f.fields_for(:survey_questions) do |q|
+    .question
+      .field
+        = q.label :text
+        #help_text.help ?
+        = q.text_field :text
+      .field
+        = q.label :format
+        #help_format.help ?
+        = q.select :format,
+          SurveyQuestion::QUESTION_FORMATS,
+          {}, { :class => 'format_dropdown' }
+      .field.responses
+        = q.label :possible_responses
+        #help_possible_responses.help ?
+        = q.text_field :possible_responses
+    %hr
+
+  = submit_tag "Update"
+
+.hidden
+  #help_name_content{:name => 'Name'}
+    The name of the survey offer.
+  #help_bid_content{:name => 'Bid'}
+    What dollar value to place on the survey being filled out.
+  #help_text_content{:name => 'Text'}
+    The text of the question.
+  #help_format_content{:name => 'Type'}
+    What format the question should be presented in.
+  #help_possible_responses_content{:name => 'Possible Responses'}
+    What response options the user will see, separated by semi-colons.
+
+- content_for :page_styles do
+  :plain
+
+    label {
+      vertical-align: top;
+      font-weight: bold;
+      text-align: right;
+      display: inline-block;
+      width: 200px;
+      margin-left: -200px;
+    }
+
+    textarea {
+      width: 500px;
+      height: 75px;
+    }
+
+    input[type=submit] {
+      float: right;
+    }
+
+    .field {
+      margin-bottom: 5px;
+      margin-left: 200px;
+    }
+
+- content_for :page_javascript do
+  :plain
+
+    $(function () {
+      function toggle_text_field(dropdown) {
+        if (dropdown.val() == 'text') {
+          responses_div = dropdown.parents('.question').find('.responses');
+          responses_div.hide();
+          responses_div.find('input').val('');
+        } else {
+          dropdown.parents('.question').find('.responses').show();
+        }
+      };
+
+      $('.format_dropdown').each(function () {
+        toggle_text_field($(this));
+      });
+
+      $('.format_dropdown').change(function () {
+        toggle_text_field($(this));
+      });
+    });

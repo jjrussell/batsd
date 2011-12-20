@@ -45,5 +45,7 @@ ActionController::Routing::Routes.draw do |map|
       social.invite_facebook_friends 'invite_facebook_friends', :action => :invite_facebook_friends
       social.send_facebook_invites 'send_facebook_invites', :action => :send_facebook_invites
     end
+
+    map.resources :survey_results, :only => [ :new, :create ]
   end
 end

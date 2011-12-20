@@ -43,6 +43,13 @@ class ClickController < ApplicationController
     render :text => 'OK'
   end
 
+  def survey
+    create_click('survey')
+    handle_pay_per_click
+
+    redirect_to(get_destination_url)
+  end
+
   def test_offer
     publisher_app = App.find_in_cache(params[:publisher_app_id])
     return unless verify_records([ @currency, publisher_app ])
