@@ -104,13 +104,13 @@ class Job::MasterReloadStatzController < Job::JobController
     end
 
     cached_stats_adv = cached_stats.sort do |s1, s2|
-      currency_to_number(s2[1]['spend']) <=> currency_to_number(s1[1]['spend'])
+      NumberHelper.currency_to_number(s2[1]['spend']) <=> NumberHelper.currency_to_number(s1[1]['spend'])
     end
     cached_stats_pub = cached_stats.sort do |s1, s2|
-      currency_to_number(s2[1]['gross_revenue']) <=> currency_to_number(s1[1]['gross_revenue'])
+      NumberHelper.currency_to_number(s2[1]['gross_revenue']) <=> NumberHelper.currency_to_number(s1[1]['gross_revenue'])
     end
     top_cached_stats = (cached_stats_adv.first(50) + cached_stats_pub.first(50)).uniq.sort do |s1, s2|
-      currency_to_number(s2[1]['spend']) <=> currency_to_number(s1[1]['spend'])
+      NumberHelper.currency_to_number(s2[1]['spend']) <=> NumberHelper.currency_to_number(s1[1]['spend'])
     end
     top_offer_ids = Set.new(top_cached_stats.map { |pair| pair[0] })
     top_cached_metadata = cached_metadata.reject { |k, v| !top_offer_ids.include?(k) }
