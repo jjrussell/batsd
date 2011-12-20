@@ -111,7 +111,7 @@ class ExternalPublisher
 
       valid_currency = true
       count = 0
-      WebRequest.select(:select => 'udid, publisher_user_id', :conditions => "#{conditions} AND app_id = '#{currency.app_id}'", :limit => 100).each do |wr|
+      VerticaCluster.query('analytics.views', :select => 'udid, publisher_user_id', :conditions => "#{conditions} AND app_id = '#{currency.app_id}'", :limit => 100).each do |wr|
         if wr[:udid] != wr[:publisher_user_id]
           valid_currency = false
           break
