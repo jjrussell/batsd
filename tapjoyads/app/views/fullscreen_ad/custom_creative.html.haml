@@ -37,7 +37,8 @@
         var availableCreatives = [];
 
   - # Provide available custom creative sizes to javascript
-  - @offer.banner_creatives.each_with_index do |size,index|
+  - @offer.banner_creatives.each do |info|
+    - size, approved = info
     :plain
         availableCreativeSizes.push("#{size}".split('x'));
         availableCreatives.push("#{@offer.banner_creative_path(size, 'jpeg')}");

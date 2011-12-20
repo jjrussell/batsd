@@ -19,7 +19,7 @@
 
     - if @offer.display_banner_ads?
       - Offer::DISPLAY_AD_SIZES.each do |size|
-        - if @show_generated_ads || @offer.banner_creatives.include?(size)
+        - if @show_generated_ads || @offer.has_banner_creative?(size)
           = "#{size} banner ad:"
           %div{:class => "img#{size}"}
             - width, height = size.split("x").collect{|x|x.to_i}

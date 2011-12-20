@@ -227,7 +227,7 @@ class Offer < ActiveRecord::Base
 
   def add_banner_creative size
     return if has_banner_creative? size
-    self.banner_creatives = banner_creatives + [size, false]
+    self.banner_creatives = banner_creatives + [[size, false]]
   end
 
   def approve_banner_creative size
@@ -635,16 +635,19 @@ class Offer < ActiveRecord::Base
   end
 
 private
+  def custom_creative_sizes
+    if !rewarded? && !featured?
+      Offer::DISPLAY_AD_SIZES
+    elsif featured?
+      Offer::FEATURED_AD_SIZES
+    else
+      []
+    end
+  end
 
   def sync_banner_creatives!
     creative_blobs = {}
 
-    custom_creative_sizes = []
-    if !rewarded? && !featured?
-      custom_creative_sizes = Offer::DISPLAY_AD_SIZES
-    elsif featured?
-      custom_creative_sizes = Offer::FEATURED_AD_SIZES
-    end
     custom_creative_sizes.each do |size|
       image_data = (send("banner_creative_#{size}_blob") rescue nil)
       creative_blobs[size] = image_data if !image_data.blank?
@@ -666,14 +669,14 @@ private
     blob = creative_blobs.values.first # will be nil for banner creative removals
     if banner_creatives.size > banner_creatives_was.size
       # banner creative added, find which size was added and make sure file matches up
-      new_size = (banner_creatives - banner_creatives_was).first
+      new_size = (banner_creatives - banner_creatives_was).first.first
       raise BannerSyncError.new("custom_creative_#{new_size}_blob", "#{new_size} custom creative file not provided.") if creative_blobs[new_size].nil?
 
       # upload to S3
       upload_banner_creative!(blob, new_size, format)
     elsif banner_creatives_was.size > banner_creatives.size
       # banner creative removed, find which size was removed
-      removed_size = (banner_creatives_was - banner_creatives).first
+      removed_size = (banner_creatives_was - banner_creatives).first.first
 
       # delete from S3
       delete_banner_creative!(removed_size, format)

@@ -86,6 +86,7 @@ class Apps::OffersController < WebsiteController
   def upload_creative
     @image_size = params[:image_size]
     @label = params[:label]
+    @email_managers = false
     image_data = params[:offer]["custom_creative_#{@image_size}".to_sym].read rescue nil
 
     modifying = true
@@ -94,7 +95,12 @@ class Apps::OffersController < WebsiteController
         @offer.remove_banner_creative @image_size
       when :post
         @offer.add_banner_creative @image_size
-        @offer.approve_banner_creative @image_size if permitted_to?(:edit, :statz)
+
+        if permitted_to?(:edit, :statz)
+          @offer.approve_banner_creative @image_size
+        else
+          @email_managers = true
+        end
       when :put
         # do nothing
       when :get
@@ -105,6 +111,13 @@ class Apps::OffersController < WebsiteController
       @offer.send("banner_creative_#{@image_size}_blob=", image_data)
       if @offer.save
         @success_message = "File #{request.method == :delete ? 'removed' : 'uploaded'} successfully."
+
+        if @email_managers
+          approval_link = edit_app_offer_url(:id => @offer.id, :app_id => @app.id)
+          @offer.partner.account_managers.each do |mgr|
+            TapjoyMailer.deliver_approve_offer_creative(mgr.email, @offer, @app, approval_link)
+          end
+        end
       else
         @error_message = @offer.errors["custom_creative_#{@image_size}_blob".to_sym]
         @offer.reload # we want the form to reset back to the way it was

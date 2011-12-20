@@ -192,4 +192,12 @@ class TapjoyMailer < ActionMailer::Base
     subject "Support Request for Mass Resolution initiated on #{upload_time_stamp}"
     body(:mass_resolve_results => mass_resolve_results, :upload_time_stamp => upload_time_stamp)
   end
+
+  def approve_offer_creative(email_address, offer, app, approval_link)
+    from 'Tapjoy <noreply@tapjoy.com>'
+    recipients email_address
+    content_type 'text/html'
+    subject "New Custom Creative requires approval"
+    body(:offer => offer, :app => app, :approval_url => approval_link)
+  end
 end
