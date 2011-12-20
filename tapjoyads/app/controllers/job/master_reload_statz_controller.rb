@@ -33,9 +33,39 @@ class Job::MasterReloadStatzController < Job::JobController
     start_time, end_time = get_times_for_vertica(timeframe)
     time_conditions      = "time >= '#{start_time.to_s(:db)}' AND time < '#{end_time.to_s(:db)}'"
 
+    cached_money = {
+      :total    => { :count => 0, :adv_amount => 0, :pub_amount => 0, },
+      :iphone   => { :count => 0, :adv_amount => 0, :pub_amount => 0, },
+      :android  => { :count => 0, :adv_amount => 0, :pub_amount => 0, },
+      :tj_games => { :count => 0, :adv_amount => 0, :pub_amount => 0, },
+    }
+    VerticaCluster.query('analytics.actions', {
+        :select     => 'source, app_platform, count(path), -sum(advertiser_amount) as adv_amount, sum(publisher_amount) as pub_amount',
+        :join       => 'analytics.apps_partners on actions.publisher_app_id = apps_partners.app_id',
+        :conditions => "path = '[reward]' and app_platform != 'windows' and #{time_conditions}",
+        :group      => 'source, app_platform' }).each do |result|
+      cached_money[:total][:count] += result[:count]
+      cached_money[:total][:adv_amount] += result[:adv_amount]
+      cached_money[:total][:pub_amount] += result[:pub_amount]
+      if result[:source] == 'tj_games'
+        cached_money[:tj_games][:count] += result[:count]
+        cached_money[:tj_games][:adv_amount] += result[:adv_amount]
+        cached_money[:tj_games][:pub_amount] += result[:pub_amount]
+      else
+        cached_money[result[:app_platform].to_sym][:count] += result[:count]
+        cached_money[result[:app_platform].to_sym][:adv_amount] += result[:adv_amount]
+        cached_money[result[:app_platform].to_sym][:pub_amount] += result[:pub_amount]
+      end
+    end
+    cached_money.each do |k, values|
+      values[:count]      = number_with_delimiter(values[:count])
+      values[:adv_amount] = number_to_currency(values[:adv_amount] / 100.0)
+      values[:pub_amount] = number_to_currency(values[:pub_amount] / 100.0)
+    end
+
     cached_stats = {}
     VerticaCluster.query('analytics.actions', {
-        :select     => 'offer_id, count(*) AS conversions, -sum(advertiser_amount) AS spend',
+        :select     => 'offer_id, count(path) AS conversions, -sum(advertiser_amount) AS spend',
         :group      => 'offer_id',
         :conditions => "path LIKE '%reward%' AND #{time_conditions}" }).each do |result|
       cached_stats[result[:offer_id]] = {
@@ -47,7 +77,7 @@ class Job::MasterReloadStatzController < Job::JobController
       }
     end
     VerticaCluster.query('analytics.actions', {
-        :select     => 'publisher_app_id AS offer_id, count(*) AS published_offers, sum(publisher_amount + tapjoy_amount) AS gross_revenue, sum(publisher_amount) AS publisher_revenue',
+        :select     => 'publisher_app_id AS offer_id, count(path) AS published_offers, sum(publisher_amount + tapjoy_amount) AS gross_revenue, sum(publisher_amount) AS publisher_revenue',
         :group      => 'publisher_app_id',
         :conditions => "path LIKE '%reward%' AND #{time_conditions}" }).each do |result|
       cached_stats[result[:offer_id]] ||= { 'conversions' => '0', 'spend' => '$0.00' }
@@ -86,6 +116,7 @@ class Job::MasterReloadStatzController < Job::JobController
     top_offer_ids = Set.new(top_cached_stats.map { |pair| pair[0] })
     top_cached_metadata = cached_metadata.reject { |k, v| !top_offer_ids.include?(k) }
 
+    Mc.distributed_put("statz.money.#{timeframe}", cached_money)
     Mc.distributed_put("statz.top_metadata.#{timeframe}", top_cached_metadata)
     Mc.distributed_put("statz.top_stats.#{timeframe}", top_cached_stats)
     Mc.distributed_put("statz.metadata.#{timeframe}", cached_metadata)
@@ -98,9 +129,15 @@ class Job::MasterReloadStatzController < Job::JobController
     start_time, end_time, granularity = get_times_for_appstats(timeframe)
 
     cached_partners = {}
+    partner_ids = []
+    Conversion.using_slave_db do
+      conditions = "created_at >= '#{start_time.to_s(:db)}' AND created_at < '#{end_time.to_s(:db)}'"
+      partner_ids |= Conversion.slave_connection.select_values("SELECT DISTINCT(publisher_partner_id)  FROM #{Conversion.quoted_table_name} WHERE #{conditions}")
+      partner_ids |= Conversion.slave_connection.select_values("SELECT DISTINCT(advertiser_partner_id) FROM #{Conversion.quoted_table_name} WHERE #{conditions}")
+    end
 
-    find_options = timeframe == '24_hours' ? { :joins => :offers, :conditions => 'active = true' } : {}
-    Partner.find_each(find_options) do |partner|
+    partner_ids.each do |partner_id|
+      partner = Partner.find(partner_id)
       ['partner', 'partner-ios', 'partner-android'].each do |prefix|
         stats            = Appstats.new(partner.id, { :start_time => start_time, :end_time => end_time, :granularity => granularity, :stat_prefix => prefix }).stats
         conversions      = stats['paid_installs'].sum
