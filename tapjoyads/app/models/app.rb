@@ -25,6 +25,7 @@ class App < ActiveRecord::Base
       :default_actions_file_name => "TapjoyPPA.java",
       :min_action_offer_bid => 25,
       :versions => [ '1.5', '1.6', '2.0', '2.1', '2.2', '2.3', '3.0' ],
+      :cell_download_limit_bytes => 99.gigabyte,
       :screen_layout_sizes => { 'small (320x426)' => '1', 'medium (320x470)' => '2', 'large (480x640)' => '3', 'extra large (720x960)' => '4' }
     },
     'iphone' => {
@@ -253,7 +254,7 @@ class App < ActiveRecord::Base
   end
 
   def wifi_required?
-    PLATFORM_DETAILS[platform][:cell_download_limit_bytes] && file_size_bytes > PLATFORM_DETAILS[platform][:cell_download_limit_bytes]
+    file_size_bytes && PLATFORM_DETAILS[platform][:cell_download_limit_bytes] && file_size_bytes > PLATFORM_DETAILS[platform][:cell_download_limit_bytes]
   end
 
 private
