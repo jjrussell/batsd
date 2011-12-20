@@ -83,4 +83,6 @@ CLEAR_MEMCACHE = true
 
 DEV_FACEBOOK_ID = '100000459598424'
 
+DEVICE_LINK_TRACKING_PIXEL = ''
+
 Sass::Plugin.options[:style] = :nested

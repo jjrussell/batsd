@@ -71,4 +71,6 @@ CLEAR_MEMCACHE = !(local_config['clear_memcache'] == false)
 
 DEV_FACEBOOK_ID = '100000459598424'
 
+DEVICE_LINK_TRACKING_PIXEL = ''
+
 Sass::Plugin.options[:style] = :nested
