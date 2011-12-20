@@ -39,7 +39,7 @@ ActionController::Routing::Routes.draw do |map|
   map.payout_info_billing 'billing/payment-info', :controller => :billing, :action => :payout_info
   map.resources :statz, :only => [ :index, :show, :edit, :update, :new, :create ],
     :member => { :last_run_times => :get, :udids => :get, :download_udids => :get },
-    :collection => { :global => :get, :publisher => :get, :advertiser => :get, :gamez => :get }
+    :collection => { :global => :get, :publisher => :get, :advertiser => :get, :gamez => :get, :support_request_reward_ratio => :get }
   map.resources :activities, :only => [ :index ]
   map.resources :partners, :only => [ :index, :show, :new, :create, :update, :edit ],
     :member => { :make_current => :post, :manage => :post, :stop_managing => :post, :mail_chimp_info => :get, :new_transfer => :get, :create_transfer => :post, :reporting => :get },

@@ -5,7 +5,7 @@ class StatzController < WebsiteController
 
   filter_access_to :all
 
-  before_filter :find_offer, :only => [ :show, :edit, :update, :new, :create, :last_run_times, :udids, :download_udids ]
+  before_filter :find_offer, :only => [ :show, :edit, :update, :new, :create, :last_run_times, :udids, :download_udids, :support_request_reward_ratio ]
   before_filter :setup, :only => [ :show, :global ]
   before_filter :set_platform, :only => [ :global, :publisher, :advertiser ]
   after_filter :save_activity_logs, :only => [ :update ]
@@ -39,9 +39,6 @@ class StatzController < WebsiteController
         @associated_offers = @offer.find_associated_offers
         @active_boosts = @offer.rank_boosts.active
         @total_boost = @active_boosts.map(&:amount).sum
-        num_rewards = @offer.num_clicks_rewarded
-        @support_request_rewards_ratio = 'NA'
-        @support_request_rewards_ratio = ("%.3f" % (@offer.num_support_requests * 100.0 / num_rewards)) if num_rewards > 0
       end
 
       format.json do
@@ -49,6 +46,10 @@ class StatzController < WebsiteController
         render :json => { :data => @appstats.graph_data(:offer => @offer, :admin => true) }.to_json
       end
     end
+  end
+
+  def support_request_reward_ratio
+    render :text => @offer.support_request_rewards_ratio
   end
 
   def update

@@ -635,6 +635,19 @@ class Offer < ActiveRecord::Base
     return num_clicks_rewarded
   end
 
+  def support_request_rewards_ratio
+    ratio = Mc.get_and_put("Offer.SRRR.#{id}", false, 15.minutes) do
+      new_ratio = 0
+      num_requests = num_support_requests
+      unless num_requests == 0
+        num_rewards = num_clicks_rewarded
+        new_ratio = ("%.4f" % (num_requests / num_rewards)) if num_rewards > 0
+      end
+      new_ratio
+    end
+    ratio
+  end
+
 private
 
   def sync_banner_creatives!
