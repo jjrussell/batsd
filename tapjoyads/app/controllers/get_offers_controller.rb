@@ -127,7 +127,7 @@ private
     if params[:show_wifi_only] == '1'
       @show_wifi_only = true
     else
-      @show_wifi_only = params[:device_type] == 'windows' ? true : false
+      @show_wifi_only = params[:device_type] == 'windows'
     end
   end
 
