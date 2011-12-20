@@ -75,7 +75,7 @@ class GamesController < ApplicationController
         current_gamer.gamer_profile.update_facebook_info!(current_facebook_user)
       rescue
         flash[:error] = @error_msg || 'Failed connecting to Facebook profile'
-        redirect_to edit_games_gamer_path
+        redirect_to social_feature_redirect_path
       end
       unless has_permissions?
         dissociate_and_redirect
@@ -87,7 +87,7 @@ class GamesController < ApplicationController
       end
     else
       flash[:error] = @error_msg ||'Please connect Facebook with Tapjoy.'
-      redirect_to edit_games_gamer_path
+      redirect_to social_feature_redirect_path
     end
   end
 
@@ -105,7 +105,7 @@ class GamesController < ApplicationController
     current_gamer.gamer_profile.dissociate_account!(Invitation::FACEBOOK)
     render :json => { :success => false, :error_redirect => true } and return if params[:ajax].present?
     flash[:error] = @error_msg
-    redirect_to edit_games_gamer_path
+    redirect_to social_feature_redirect_path
   end
 
   def valid_device_id(udid)
@@ -128,8 +128,8 @@ class GamesController < ApplicationController
   end
 
   def handle_errno_exceptions
-    @error_msg = "There was a connection issue. Please try again later."
-    redirect_to edit_games_gamer_path
+    flash[:error] = "There was a connection issue. Please try again later."
+    redirect_to social_feature_redirect_path
   end
 
   private
@@ -159,5 +159,10 @@ class GamesController < ApplicationController
     end
 
     HeaderParser.device_type(request.user_agent) == 'android'
+  end
+
+  def social_feature_redirect_path
+    return request.env['HTTP_REFERER'] if request.env['HTTP_REFERER']
+    edit_games_gamer_path
   end
 end

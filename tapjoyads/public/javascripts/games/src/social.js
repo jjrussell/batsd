@@ -343,8 +343,28 @@ TJG.social = {
           //-->
         });
       } else {
+        showError("Please authorize us/grant us both permissions before sending out an invite.");
       }
     }, {scope: scope});
+
+    var showError = function(error){
+      var msg = [
+        '<div id="flash_error" class="dialog_wrapper hide" style="top: 179px; left: 533px; display: block;">',
+        '<div class="close_dialog">',
+        '<div class="close_button"></div>',
+        '</div>',
+        '<div class="dialog">',
+        '<div class="dialog_content">',
+        '<div class="error">', error ,'</div>',
+        '</div></div></div>',
+      ].join('');
+      $('body').append(msg);
+
+      $(".close_button").click(function(event) {
+        $("#flash_error").fadeOut();
+        $("#flash_error").remove();
+      });
+    };
   },
 
   doFbLogout : function(){
