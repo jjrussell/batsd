@@ -91,11 +91,10 @@ class Apps::OffersController < WebsiteController
     modifying = true
     case request.method
       when :delete
-        # necessary to use assignment so @offer.banner_creatives_changed? will be true (can't modify in-place)
         @offer.remove_banner_creative @image_size
       when :post
-        # necessary to use assignment so @offer.banner_creatives_changed? will be true (can't modify in-place)
         @offer.add_banner_creative @image_size
+        @offer.approve_banner_creative @image_size if permitted_to?(:edit, :statz)
       when :put
         # do nothing
       when :get
