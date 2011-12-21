@@ -7,7 +7,13 @@ class Tools::OffersController < WebsiteController
   def creative
     @creatives = []
 
-    Offer.creative_approval_needed.each do |offer|
+    offers = if params[:offer_id]
+                [Offer.find params[:offer_id]]
+              else
+                Offer.creative_approval_needed
+              end
+
+    offers.each do |offer|
       offer.banner_creatives.each do |size|
         next if offer.banner_creative_approved?(size)
         width, height = size.split 'x'
