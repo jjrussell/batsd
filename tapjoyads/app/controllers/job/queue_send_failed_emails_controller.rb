@@ -7,10 +7,13 @@ class Job::QueueSendFailedEmailsController < Job::SqsReaderController
   private
 
   def on_message(message)
-    mail = Marshal.restore(Base64::decode64(message.body))
+    message = Marshal.restore(Base64::decode64(message.body))
+
+    mailer = message[:mailer_name].constantize
+    mail = message[:mail]
 
     begin
-      ActionMailer::Base.deliver_without_rescue_errors(mail)
+      mailer.deliver_without_rescue_errors(mail)
     rescue AWS::SimpleEmailService::Errors::MessageRejected => e
       recipients = mail.to.to_a + mail.cc.to_a + mail.bcc.to_a
       if e.to_s =~ /Address blacklisted/ && recipients.size == 1
