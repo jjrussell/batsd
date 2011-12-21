@@ -129,14 +129,6 @@ class Apps::OffersController < WebsiteController
     render :layout => 'simple'
   end
 
-  def approve_creative
-    @image_size = params[:image_size]
-    @offer.approve_banner_creative @image_size
-    @offer.save
-
-    redirect_to :action => :upload_creative, :id => @offer.id, :app_id => @app.id, :image_size => @image_size, :label => "#{@image_size} custom creative"
-  end
-
   def toggle
     @offer = current_partner.offers.find(params[:id])
     log_activity(@offer)

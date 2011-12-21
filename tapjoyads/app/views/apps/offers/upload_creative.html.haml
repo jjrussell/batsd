@@ -2,7 +2,6 @@
 
 - if @creative_exists
   - form_tag(url, :method => :delete, :id => "remove_form_for_#{@image_size}", :class => "hidden") {}
-  - form_tag(approve_creative_app_offer_path(:id => @offer.id, :app_id => @app.id, :image_size => @image_size), :method => :post, :id => "approve_form_for_#{@image_size}", :class => "hidden") {}
 
 - form_for(@offer, :url => url, :html => { :id => 'upload_form', :class => 'tjform', :method => (@creative_exists ? :put : :post), :multipart => true }) do |f|
   %table
@@ -22,9 +21,6 @@
                   = link_to("View existing file", '#', :class => 'view_link')
                   |
                   = link_to("Remove existing file", '#', :id => "remove_link")
-                  - if permitted_to?(:edit, :statz) && !@creative_approved
-                    |
-                    = link_to("Approve file", '#', :id => 'approve_link')
                 - else
                   = f.file_field("custom_creative_#{@image_size}")
                   %td
