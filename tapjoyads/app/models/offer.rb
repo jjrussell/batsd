@@ -64,6 +64,7 @@ class Offer < ActiveRecord::Base
   PAPAYA_OFFER_COLUMNS = "#{Offer.quoted_table_name}.id, #{App.quoted_table_name}.papaya_user_count"
 
   serialize :banner_creatives, Array
+  serialize :approved_banner_creatives, Array
 
   DISPLAY_AD_SIZES.each do |size|
     attr_accessor "banner_creative_#{size}_blob".to_sym
@@ -174,7 +175,7 @@ class Offer < ActiveRecord::Base
   named_scope :papaya_app_offers, :joins => :app, :conditions => "item_type = 'App' AND #{App.quoted_table_name}.papaya_user_count > 0", :select => PAPAYA_OFFER_COLUMNS
   named_scope :papaya_action_offers, :joins => { :action_offer => :app }, :conditions => "item_type = 'ActionOffer' AND #{App.quoted_table_name}.papaya_user_count > 0", :select => PAPAYA_OFFER_COLUMNS
   named_scope :tapjoy_sponsored_offer_ids, :conditions => "tapjoy_sponsored = true", :select => "#{Offer.quoted_table_name}.id"
-  named_scope :creative_approval_needed, :conditions => 'banner_creatives LIKE "%false%"'
+  named_scope :creative_approval_needed, :conditions => 'banner_creatives != approved_banner_creatives OR (banner_creatives IS NOT NULL AND approved_banner_creatives IS NULL)'
 
   delegate :balance, :pending_earnings, :name, :cs_contact_email, :approved_publisher?, :rev_share, :to => :partner, :prefix => true
   memoize :partner_balance
@@ -200,11 +201,12 @@ class Offer < ActiveRecord::Base
 
   def banner_creatives
     self.banner_creatives = [] if super.nil?
-    super.map do |c| # Prepare old flat arrays for the approval field
-      c = Array.wrap c
-      c << true if c.size == 1 # Assume approved for all old records
-      c
-    end
+    super.sort
+  end
+
+  def approved_banner_creatives
+    self.approved_banner_creatives = [] if super.nil?
+    super.sort
   end
 
   def banner_creatives_was
@@ -218,29 +220,28 @@ class Offer < ActiveRecord::Base
   end
 
   def has_banner_creative? size
-    self.banner_creatives.flatten.include? size
+    self.banner_creatives.include? size
   end
 
   def banner_creative_approved? size
-    self.banner_creatives.select { |c| c[0] == size && c[1] }.any?
+    has_banner_creative?(size) && self.approved_banner_creatives.include?(size)
   end
 
   def remove_banner_creative size
     return unless has_banner_creative? size
-    self.banner_creatives = banner_creatives.reject { |c| c[0] == size }
+    self.banner_creatives = banner_creatives.reject { |c| c == size }
+    self.approved_banner_creatives = approved_banner_creatives.reject { |c| c == size }
   end
 
   def add_banner_creative size
     return if has_banner_creative? size
-    self.banner_creatives = banner_creatives + [[size, false]]
+    self.banner_creatives += [size]
   end
 
   def approve_banner_creative size
     return unless has_banner_creative? size
-    self.banner_creatives = banner_creatives.map do |c|
-      c[1] = true if c[0] == size
-      c
-    end
+    return if banner_creative_approved? size
+    self.approved_banner_creatives += [size]
   end
 
   def find_associated_offers
@@ -335,7 +336,7 @@ class Offer < ActiveRecord::Base
   end
 
   def display_custom_banner_for_size?(size)
-    display_banner_ads? && banner_creative_approved? size
+    display_banner_ads? && banner_creative_approved?(size)
   end
 
   def get_video_icon_url(options = {})
