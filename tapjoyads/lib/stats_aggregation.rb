@@ -111,19 +111,24 @@ class StatsAggregation
 
   def verify_web_request_stats_over_range(stat_row, offer, start_time, end_time)
     WebRequest::STAT_TO_PATH_MAP.each do |stat_name, path_definition|
-      conditions = "#{get_path_condition(path_definition[:paths], path_definition[:use_like])} AND #{path_definition[:attr_name]} IN ('#{@offer_ids.join("','")}')"
+      conditions = [ get_path_condition(path_definition[:paths], path_definition[:use_like]),
+                     "#{path_definition[:attr_name]} IN ('#{@offer_ids.join("','")}')",
+                     "day = '#{start_time.to_s(:yyyy_mm_dd)}'" ].join(' AND ')
       verify_stat_over_range(stat_row, stat_name, offer, start_time, end_time, false) do |s_time, e_time|
-        get_web_request_count(path_definition[:attr_name], "#{conditions} AND #{get_time_condition(s_time, e_time)}", offer.id)
+        get_web_request_count(path_definition[:attr_name], conditions, offer.id, (s_time.hour..(e_time - 1.second).hour))
       end
     end
 
     if stat_row.get_hourly_count('vg_purchases')[start_time.hour..(end_time - 1.second).hour].sum > 0
       virtual_goods = offer.virtual_goods
-      conditions    = "path = '[purchased_vg]' AND app_id = '#{offer.id}' AND virtual_good_id IN ('#{virtual_goods.map(&:id).join("','")}')"
+      conditions = [ "path = '[purchased_vg]'",
+                     "app_id = '#{offer.id}'",
+                     "virtual_good_id IN ('#{virtual_goods.map(&:id).join("','")}')",
+                     "day = '#{start_time.to_s(:yyyy_mm_dd)}'" ].join(' AND ')
       virtual_goods.each do |virtual_good|
         stat_path = [ 'virtual_goods', virtual_good.id ]
         verify_stat_over_range(stat_row, stat_path, offer, start_time, end_time, false) do |s_time, e_time|
-          get_web_request_count('virtual_good_id', "#{conditions} AND #{get_time_condition(s_time, e_time)}", virtual_good.id)
+          get_web_request_count('virtual_good_id', conditions, virtual_good.id, (s_time.hour..(e_time - 1.second).hour))
         end
       end
     end
@@ -177,7 +182,7 @@ class StatsAggregation
     end
 
     range = start_time.hour..(end_time - 1.second).hour
-    unless counts_acceptable?(value_over_range, hourly_values[range].sum, require_exact_match)
+    unless value_over_range == hourly_values[range].sum
       message = "Verification of #{stat_name_or_path.inspect} failed for offer: #{offer.name} (#{offer.id}), for range: #{start_time.to_s(:db)} - #{end_time.to_s(:db)}. Value is: #{value_over_range}, hourly values are: #{hourly_values[range].inspect}, difference is: #{value_over_range - hourly_values[range].sum}"
       Notifier.alert_new_relic(AppStatsVerifyError, message)
 
@@ -185,39 +190,28 @@ class StatsAggregation
       while time < end_time
         hour_value = yield(time, time + 1.hour)
         hourly_values[time.hour] = hour_value
-        break if counts_acceptable?(value_over_range, hourly_values[range].sum, require_exact_match)
+        break if value_over_range == hourly_values[range].sum
         time += 1.hour
       end
 
-      unless counts_acceptable?(value_over_range, hourly_values[range].sum, require_exact_match)
+      unless value_over_range == hourly_values[range].sum
         raise "Re-counted each hour for #{stat_name_or_path.inspect} and counts do not match the total count for offer: #{offer.name} (#{offer.id}), for range: #{start_time.to_s(:db)} - #{end_time.to_s(:db)}. Value is: #{value_over_range}, hourly sum is: #{hourly_values[range].sum}"
       end
     end
   end
 
-  def counts_acceptable?(overall_count, summed_count, require_exact_match)
-    if require_exact_match
-      overall_count == summed_count
-    else
-      (overall_count - summed_count).abs <= 5
-    end
-  end
-
-  def get_web_request_count(group, conditions, key)
+  def get_web_request_count(group, conditions, key, range)
     @counts ||= {}
     @counts[group] ||= {}
     if @counts[group][conditions].nil?
       @counts[group][conditions] = {}
-      WebRequest.select_with_vertica(:select => "COUNT(*) AS count, #{group}", :conditions => conditions, :group => group).each do |pair|
-        @counts[group][conditions][pair[group.to_sym]] = pair[:count]
+      WebRequest.select(:select => "COUNT(hour) AS count, #{group}, hour", :conditions => conditions, :group => "#{group}, hour").each do |result|
+        @counts[group][conditions][result[group.to_sym]] ||= Array.new(24, 0)
+        @counts[group][conditions][result[group.to_sym]][result[:hour]] = result[:count]
       end
     end
 
-    @counts[group][conditions][key] || 0
-  end
-
-  def get_time_condition(start_time, end_time)
-    "time >= #{start_time.to_f} AND time < #{end_time.to_f}"
+    (@counts[group][conditions][key] || [])[range].sum
   end
 
   def get_path_condition(paths, use_like)

@@ -90,6 +90,11 @@
   - else
     :plain
       $(window).load(function() {
+    - if flash[:register_device]
+      :plain
+        TJG.register_device = true;
+        TJG.register_device_pixel = "#{DEVICE_LINK_TRACKING_PIXEL}";
+    :plain
         TJG.select_device = #{@device_data.to_json};
         TJG.require_select_device = #{@require_select_device.to_json};
         TJG.more_games_editor_picks = "#{games_more_games_editor_picks_path}";

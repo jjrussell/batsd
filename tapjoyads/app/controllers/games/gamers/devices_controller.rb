@@ -65,7 +65,7 @@ class Games::Gamers::DevicesController < GamesController
           device.set_last_run_time!(TAPJOY_GAMES_REGISTRATION_OFFER_ID)
         end
         session[:current_device_id] = ObjectEncryptor.encrypt(device.key)
-        redirect_to games_root_path(:register_device => true)
+        redirect_to games_root_path, :flash => { :register_device => true }
       else
         flash[:error] = "Error linking device. Please try again."
         redirect_to games_root_path
