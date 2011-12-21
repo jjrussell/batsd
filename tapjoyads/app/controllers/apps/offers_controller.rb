@@ -113,7 +113,7 @@ class Apps::OffersController < WebsiteController
         @success_message = "File #{request.method == :delete ? 'removed' : 'uploaded'} successfully."
 
         if @email_managers
-          approval_link = edit_app_offer_url(:id => @offer.id, :app_id => @app.id)
+          approval_link = creative_tools_offers_url(:offer_id => @offer.id)
           @offer.partner.account_managers.each do |mgr|
             TapjoyMailer.deliver_approve_offer_creative(mgr.email, @offer, @app, approval_link)
           end
