@@ -75,6 +75,8 @@ module Offer::UrlGeneration
       end
     elsif item_type == 'ActionOffer'
       final_url = url
+    elsif item_type == 'SurveyOffer'
+      final_url.gsub!('TAPJOY_SURVEY', click_key.to_s)
     end
 
     final_url
@@ -113,6 +115,8 @@ module Offer::UrlGeneration
       click_url += "action"
     elsif item_type == 'VideoOffer'
       click_url += "video"
+    elsif item_type == 'SurveyOffer'
+      click_url += "survey"
     else
       raise "click_url requested for an offer that should not be enabled. offer_id: #{id}"
     end

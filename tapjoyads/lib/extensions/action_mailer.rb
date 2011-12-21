@@ -4,7 +4,7 @@ class ActionMailer::Base
     begin
       deliver_without_rescue_errors!(mail)
     rescue Exception => e
-      message = Base64::encode64(Marshal.dump(mail))
+      message = Base64::encode64(Marshal.dump({:mail => mail, :mailer_name => self.class.name}))
       Sqs.send_message(QueueNames::FAILED_EMAILS, message)
       Notifier.alert_new_relic(e.class, e.message)
     end

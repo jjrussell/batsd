@@ -15,6 +15,8 @@ module Offer::Rejecting
     [ '99d4a403-38a8-41e3-b7a2-5778acb968ef', 'b22f3ef8-947f-4605-a5bc-a83609af5ab7' ] => [ '99d4a403-38a8-41e3-b7a2-5778acb968ef', 'b22f3ef8-947f-4605-a5bc-a83609af5ab7' ],
     # Zombie Lane
     [ 'd299fb80-29f6-48a3-8957-bbd8a20acdc9', 'eca4615a-7439-486c-b5c3-efafe3ec69a6' ] => [ 'd299fb80-29f6-48a3-8957-bbd8a20acdc9', 'eca4615a-7439-486c-b5c3-efafe3ec69a6' ],
+    # iTriage
+    [ '7f398870-b1da-478f-adfb-82d22d25c13d', '6f7d9238-be52-46e9-902b-5ad038ddb7eb' ] => [ '7f398870-b1da-478f-adfb-82d22d25c13d', '6f7d9238-be52-46e9-902b-5ad038ddb7eb' ],
   }
 
   def postcache_reject?(publisher_app, device, currency, device_type, geoip_data, app_version, direct_pay_providers, type, hide_rewarded_app_installs, library_version, os_version, screen_layout_size, video_offer_ids, source, all_videos)

@@ -84,6 +84,8 @@ class Games::Gamers::DevicesController < GamesController
             end
           end
         end
+      else
+        flash[:error] = "Error linking device. Please try again."
       end
 
       redirect_to games_root_path

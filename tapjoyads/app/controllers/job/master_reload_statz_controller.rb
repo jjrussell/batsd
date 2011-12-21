@@ -129,9 +129,15 @@ class Job::MasterReloadStatzController < Job::JobController
     start_time, end_time, granularity = get_times_for_appstats(timeframe)
 
     cached_partners = {}
+    partner_ids = []
+    Conversion.using_slave_db do
+      conditions = "created_at >= '#{start_time.to_s(:db)}' AND created_at < '#{end_time.to_s(:db)}'"
+      partner_ids |= Conversion.slave_connection.select_values("SELECT DISTINCT(publisher_partner_id)  FROM #{Conversion.quoted_table_name} WHERE #{conditions}")
+      partner_ids |= Conversion.slave_connection.select_values("SELECT DISTINCT(advertiser_partner_id) FROM #{Conversion.quoted_table_name} WHERE #{conditions}")
+    end
 
-    find_options = timeframe == '24_hours' ? { :joins => :offers, :conditions => 'active = true' } : {}
-    Partner.find_each(find_options) do |partner|
+    partner_ids.each do |partner_id|
+      partner = Partner.find(partner_id)
       ['partner', 'partner-ios', 'partner-android'].each do |prefix|
         stats            = Appstats.new(partner.id, { :start_time => start_time, :end_time => end_time, :granularity => granularity, :stat_prefix => prefix }).stats
         conversions      = stats['paid_installs'].sum
