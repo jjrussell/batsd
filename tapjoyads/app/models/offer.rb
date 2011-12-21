@@ -174,6 +174,7 @@ class Offer < ActiveRecord::Base
   named_scope :papaya_app_offers, :joins => :app, :conditions => "item_type = 'App' AND #{App.quoted_table_name}.papaya_user_count > 0", :select => PAPAYA_OFFER_COLUMNS
   named_scope :papaya_action_offers, :joins => { :action_offer => :app }, :conditions => "item_type = 'ActionOffer' AND #{App.quoted_table_name}.papaya_user_count > 0", :select => PAPAYA_OFFER_COLUMNS
   named_scope :tapjoy_sponsored_offer_ids, :conditions => "tapjoy_sponsored = true", :select => "#{Offer.quoted_table_name}.id"
+  named_scope :creative_approval_needed, :conditions => 'banner_creatives LIKE "%false%"'
 
   delegate :balance, :pending_earnings, :name, :cs_contact_email, :approved_publisher?, :rev_share, :to => :partner, :prefix => true
   memoize :partner_balance
@@ -330,7 +331,7 @@ class Offer < ActiveRecord::Base
   end
 
   def display_custom_banner_for_size?(size)
-    return display_banner_ads? && banner_creatives.include?(size)
+    display_banner_ads? && banner_creative_approved? size
   end
 
   def get_video_icon_url(options = {})
