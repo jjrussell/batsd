@@ -200,7 +200,11 @@ class Offer < ActiveRecord::Base
 
   def banner_creatives
     self.banner_creatives = [] if super.nil?
-    super.map { |c| Array.wrap c } # Prepare old flat arrays for the approval field
+    super.map do |c| # Prepare old flat arrays for the approval field
+      c = Array.wrap c
+      c << true if c.size == 1 # Assume approved for all old records
+      c
+    end
   end
 
   def banner_creatives_was
