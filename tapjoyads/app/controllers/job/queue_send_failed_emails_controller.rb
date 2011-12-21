@@ -9,9 +9,8 @@ class Job::QueueSendFailedEmailsController < Job::SqsReaderController
   def on_message(message)
     message = Marshal.restore(Base64::decode64(message.body))
 
-    # TODO: remove ternary and 'else' values once we're sure every new message is a hash
-    mailer = (message.is_a? Hash) ? message[:mailer_name].constantize : ActionMailer::Base
-    mail = (message.is_a? Hash) ? message[:mail] : message
+    mailer = message[:mailer_name].constantize
+    mail = message[:mail]
 
     begin
       mailer.deliver_without_rescue_errors(mail)
