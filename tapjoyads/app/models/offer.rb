@@ -530,28 +530,30 @@ class Offer < ActiveRecord::Base
     [ val, (price * 0.50).round ].max
   end
 
+  def create_clone(featured, rewarded)
+    offer = self.clone
+    offer.attributes = {
+      :created_at => nil,
+      :updated_at => nil,
+      :featured   => featured,
+      :rewarded   => rewarded,
+      :name_suffix => "#{rewarded ? '' : 'non-'}rewarded#{featured ? ' featured': ''}",
+      :tapjoy_enabled => false }
+    offer.bid = offer.min_bid
+    offer.save!
+    offer
+  end
+
   def create_non_rewarded_featured_clone
-    featured_offer = self.clone
-    featured_offer.attributes = { :created_at => nil, :updated_at => nil, :featured => true, :rewarded => false, :name_suffix => "non-rewarded featured", :tapjoy_enabled => false }
-    featured_offer.bid = featured_offer.min_bid
-    featured_offer.save!
-    featured_offer
+    create_clone true, false
   end
 
   def create_rewarded_featured_clone
-    featured_offer = self.clone
-    featured_offer.attributes = { :created_at => nil, :updated_at => nil, :featured => true, :rewarded => true, :name_suffix => "rewarded featured", :tapjoy_enabled => false }
-    featured_offer.bid = featured_offer.min_bid
-    featured_offer.save!
-    featured_offer
+    create_clone true, true
   end
 
   def create_non_rewarded_clone
-    non_rewarded_offer = self.clone
-    non_rewarded_offer.attributes = { :created_at => nil, :updated_at => nil, :rewarded => false, :name_suffix => "non-rewarded", :tapjoy_enabled => false }
-    non_rewarded_offer.bid = non_rewarded_offer.min_bid
-    non_rewarded_offer.save!
-    non_rewarded_offer
+    create_clone false, false
   end
 
   def needs_more_funds?
