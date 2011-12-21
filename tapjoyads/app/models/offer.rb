@@ -675,14 +675,14 @@ private
     blob = creative_blobs.values.first # will be nil for banner creative removals
     if banner_creatives.size > banner_creatives_was.size
       # banner creative added, find which size was added and make sure file matches up
-      new_size = (banner_creatives - banner_creatives_was).first.first
+      new_size = (banner_creatives - banner_creatives_was).first
       raise BannerSyncError.new("custom_creative_#{new_size}_blob", "#{new_size} custom creative file not provided.") if creative_blobs[new_size].nil?
 
       # upload to S3
       upload_banner_creative!(blob, new_size, format)
     elsif banner_creatives_was.size > banner_creatives.size
       # banner creative removed, find which size was removed
-      removed_size = (banner_creatives_was - banner_creatives).first.first
+      removed_size = (banner_creatives_was - banner_creatives).first
 
       # delete from S3
       delete_banner_creative!(removed_size, format)
