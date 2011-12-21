@@ -1,29 +1,31 @@
 .app_review.full
   .app_item.clearfix
     .app_image
-      %img{:src => Offer.get_icon_url(:size => '57', :source => :cloudfront, :icon_id => Offer.hashed_icon_id(@featured_review.app_id)) }
+      %img{:src => @featured_review.get_icon_url("#{@featured_review.id}_secondary") }
     .app_text
       .app_title.title
-        = @featured_review.app.name
-      .app_meta.clearfix
-        .app_category
-          = @featured_review.app.primary_category
-        .app_rating_wrapper
-          .app_rating.hide{ :rating => @featured_review.app.user_rating }
+        = @featured_review.offer_title
+      - app = App.find_by_id(@featured_review.offer_id) if @featured_review.offer_id.present?
+      - if app.present?
+        .app_meta.clearfix
+          .app_category
+            = app.primary_category
+          .app_rating_wrapper
+            .app_rating.hide{ :rating => app.user_rating }
       %div
-      - link_to(@featured_review.app.info_url, :target => '_blank') do
+      - link_to(@featured_review.button_url) do
         .button.grey
-          Download now!
+          = @featured_review.button_text
 
   .review.clearfix
     .staff_info.full
       .staff_img
-        %img{:src => @featured_review.author.get_photo_url(:source => :cloudfront) }
+        %img{:src => @featured_review.get_icon_url("#{@featured_review.id}_main") }
       .staff_meta
         .staff_name
           %span.author
-            #{@featured_review.author.first_name} says:
+            #{@featured_review.subtitle} says:
 
     .review_text
       -# TODO: Escape this text once we start supporting user reviews.
-      = "&#8220;#{@featured_review.text.gsub("\n", "<br>")}&#8221"
+      = "&#8220;#{@featured_review.description.gsub("\n", "<br>")}&#8221"

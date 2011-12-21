@@ -1,0 +1,198 @@
+= image_tag "feature_placement_on_my_app_preview.png", :width => 400, :height => 260
+= image_tag "feature_placement_on_detail_preview.png", :width => 400, :height => 280
+  
+- form_for([:tools, @staff_pick], :html => { :class => 'tjform', :multipart => true }) do |f|
+  = f.hidden_field :offer_id
+  = f.hidden_field :main_icon_url
+  = f.hidden_field :secondary_icon_url
+  %table
+    %tr
+      %th
+        = f.label :offer_type, 'Offer Type'
+        #help_offer_type.help ?
+      %td
+        = f.select :offer_type, StaffPick::OFFER_TYPES
+        = error_message_on @staff_pick, :offer_type
+    %tr.author_select
+      %th
+        = f.label :author
+        #help_author.help ?
+      %td
+        = f.select :author_id, options_from_collection_for_select(@employees, :id, :full_name, @staff_pick.author_id)
+        = error_message_on @staff_pick, :author_id
+    %tr.app_select
+      %th
+        = label_tag 'Offer Name', 'Offer Name'
+        #help_offer_.help ?
+      %td
+        = text_field_tag 'app_search_box', @search_result_name, :size => '40'
+        = error_message_on @staff_pick, :offer_id
+    %tr
+      %th
+        = f.label :platforms
+        #help_platforms.help ?
+      %td
+        = f.chosen_select(:platforms, options_for_select(Offer::ALL_DEVICES, @staff_pick.get_platforms), {}, :multiple => true)
+        = error_message_on @staff_pick, :platforms
+    %tr
+      %th
+        = f.label :subtitle
+        #help_subtitle.help ?
+      %td
+        = f.text_field(:subtitle)
+        = error_message_on @staff_pick, :subtitle
+    %tr
+      %th
+        = f.label :offer_title, 'Offer Title'
+        #help_offer_title.help ?
+      %td
+        = f.text_field(:offer_title)
+        = error_message_on @staff_pick, :offer_title
+    %tr
+      %th
+        = f.label :description
+        #help_description.help ?
+      %td
+        = f.text_area :description, :rows => 10, :cols => 31
+        = error_message_on @staff_pick, :description
+    %tr
+      %th
+        = label_tag :main_icon, @staff_pick.new_record? ? 'Upload Main Icon' : 'Upload New Main Icon'
+        #help_main_icon.help ?
+      %td= file_field_tag :main_icon
+    - if !@staff_pick.new_record?
+      %tr
+        %th
+          = label_tag "Current Main Icon", "Current Main Icon"
+        %td= @staff_pick.get_icon_url("#{@staff_pick.id}_main")
+    %tr
+      %th
+        = label_tag :secondary_icon, @staff_pick.new_record? ? 'Upload Secondary Icon' : 'Upload New Secondary Icon'
+        #help_secondary_icon.help ?
+      %td= file_field_tag :secondary_icon
+    - if !@staff_pick.new_record?
+      %tr
+        %th
+          = label_tag "Current Secondary Icon", "Current Secondary Icon"
+        %td= image_tag @staff_pick.get_icon_url("#{@staff_pick.id}_secondary")
+    %tr
+      %th
+        = f.label :button_text, 'Action Button Text'
+        #help_button_text.help ?
+      %td
+        = f.text_field(:button_text)
+        = error_message_on @staff_pick, :button_text
+    %tr
+      %th
+        = f.label :button_url, 'Action Button Link'
+        #help_button_url.help ?
+      %td
+        = f.text_field(:button_url)
+        = error_message_on @staff_pick, :button_url
+    %tr
+      %th
+        = f.label :start_date, 'Start Date'
+        #help_start_date.help ?
+      %td
+        = f.text_field :start_date, :class => 'start_date', :id => "start_#{@staff_pick.id}.datepicker", :value => (@staff_pick.start_date.present? ? @staff_pick.start_date.strftime("%m/%d/%Y") : '')
+        = error_message_on @staff_pick, :start_date
+    %tr
+      %th
+        = f.label :end_date, 'End Date'
+        #help_end_date.help ?
+      %td
+        = f.text_field :end_date, :class => 'end_date', :id => "end_#{@staff_pick.id}.datepicker", :value => (@staff_pick.end_date.present? ? @staff_pick.end_date.strftime("%m/%d/%Y") : '')
+        = error_message_on @staff_pick, :end_date
+    %tr
+      %th
+        = f.label :weight
+        #help_weight.help ?
+      %td
+        = f.select :weight, StaffPick::WEIGHTS
+        = error_message_on @staff_pick, :weight
+    %tr
+      %th
+      %td= f.submit
+
+.hidden
+  #help_offer_type_content{ :name => 'Offer Type' } The type of this featured placement.
+  #help_author_content{ :name => 'Author' } Author will show up in the subtitle area.
+  #help_offer_content{ :name => 'Offer' } App will show up in the subtitle/description area.
+  #help_platforms_content{ :name => 'Platforms' } The targeted platforms. If target to iOS, please select 'iphone', 'itouch', and 'ipad'.
+  #help_subtitle_content{ :name => 'Subtitle' } The title of the featured placement.
+  #help_offer_title_content{ :name => 'Offer Title' } The subtitle of the featured placement.
+  #help_description_content{ :name => 'Description' } The description of the featured placement.
+  #help_main_icon_content{ :name => 'Main Icon' } The main icon.
+  #help_secondary_icon_content{ :name => 'Secondary Icon' } The secondary icon.
+  #help_button_text_content{ :name => 'Button Text' } The text that will shown on the action button on the detail page.
+  #help_button_url_content{ :name => 'Button Url' } The url where the action button will lead the user.
+  #help_start_date_content{ :name => 'Start Date' } The start date of the featured placement.
+  #help_end_date_content{ :name => 'End Date' } The end date of the featured placement.
+  #help_weight_content{ :name => 'Weight' } Determine the show up frequency.
+  
+  
+
+- content_for :page_javascript do
+  :plain
+    var offer_type = 'Staff Pick';
+    $(function() {
+      $("#staff_pick_author_id option:selected").each(function () {
+        $("#staff_pick_subtitle").val($(this).text());
+      });
+
+      
+      $(".start_date").datepicker();
+      $(".end_date").datepicker();
+      
+      $("#staff_pick_offer_type").change(function() {
+        offer_type = $(this).val();
+
+        // if(offer_type == 'Tapjoy News' || offer_type == 'Contest!'){
+        //   $(".app_select").addClass("hidden");
+        // }else{
+        //   $(".app_select").removeClass("hidden");
+        // }
+
+        if(offer_type == 'App Promo (FAAD)'){
+          $(".author_select").addClass("hidden");
+          $("#staff_pick_subtitle").val('');
+          $("#staff_pick_offer_title").val('Free App of the Day');
+        }else{
+          $(".author_select").removeClass("hidden");
+          $("#staff_pick_author_id option:selected").each(function () {
+            $("#staff_pick_subtitle").val($(this).text());
+          });
+        }
+        if(offer_type != 'Staff Pick'){
+          $("#staff_pick_secondary_icon_url").val("http://www.tapjoy.com/images/ic_launcher_96x96.png");
+        }
+      });
+
+      $('#app_search_box').autocomplete({ source: '#{search_offers_path(:more_details => true)}', delay: 250, minLength: 2, select: function(event, ui) {
+        
+        $("#staff_pick_description").val(ui.item.description);
+        $("#staff_pick_button_url").val(ui.item.click_url);
+        $("#staff_pick_offer_id").val(ui.item.id);
+        alert(ui.item.icon_url);
+        if(offer_type == 'App Promo (FAAD)'){
+          $("#staff_pick_subtitle").val(ui.item.name);
+          $("#staff_pick_main_icon_url").val(ui.item.icon_url);
+        }else{
+          if(offer_type == 'Staff Pick'){
+            alert("set staff_pick_secondary_icon_url:"+ui.item.icon_url);
+            $("#staff_pick_secondary_icon_url").val(ui.item.icon_url);
+            alert($("#staff_pick_secondary_icon_url").val());
+          }
+          $("#staff_pick_offer_title").val(ui.item.name);
+        }
+      } });
+      
+      $('#staff_pick_author_id').change(function() {
+        $("#staff_pick_author_id option:selected").each(function () {
+          $("#staff_pick_subtitle").val($(this).text());
+          // if(offer_type != 'App Promo (FAAD)'){
+          //   //$("#staff_pick_main_icon_url").val();
+          // }
+        });
+      });
+    });

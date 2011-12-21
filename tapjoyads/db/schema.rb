@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20111212062016) do
+ActiveRecord::Schema.define(:version => 20111214000157) do
 
   create_table "action_offers", :id => false, :force => true do |t|
     t.string   "id",                    :limit => 36,                    :null => false
@@ -324,6 +324,21 @@ ActiveRecord::Schema.define(:version => 20111212062016) do
   add_index "gamer_profiles", ["id"], :name => "index_gamer_profiles_on_id", :unique => true
   add_index "gamer_profiles", ["referred_by"], :name => "index_gamer_profiles_on_referred_by"
 
+  create_table "gamer_reviews", :id => false, :force => true do |t|
+    t.string   "id",          :limit => 36, :null => false
+    t.string   "app_id",      :limit => 36, :null => false
+    t.string   "author_id",   :limit => 36, :null => false
+    t.string   "author_type",               :null => false
+    t.string   "platform",                  :null => false
+    t.text     "text",                      :null => false
+    t.float    "user_rating"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "gamer_reviews", ["app_id", "author_id"], :name => "index_gamer_reviews_on_app_id_and_author_id", :unique => true
+  add_index "gamer_reviews", ["id"], :name => "index_gamer_reviews_on_id", :unique => true
+
   create_table "gamers", :id => false, :force => true do |t|
     t.string   "id",                     :limit => 36,                    :null => false
     t.string   "email",                                                   :null => false
@@ -587,6 +602,7 @@ ActiveRecord::Schema.define(:version => 20111212062016) do
     t.text     "banner_creatives"
     t.text     "dma_codes",                                                                                        :null => false
     t.text     "regions",                                                                                          :null => false
+    t.boolean  "tj_games_only",                                                                 :default => false, :null => false
     t.boolean  "tapjoy_sponsored",                                                              :default => false, :null => false
     t.boolean  "instructions_overridden",                                                       :default => false, :null => false
   end
@@ -629,6 +645,25 @@ ActiveRecord::Schema.define(:version => 20111212062016) do
   add_index "partner_assignments", ["id"], :name => "index_partner_assignments_on_id", :unique => true
   add_index "partner_assignments", ["partner_id"], :name => "index_partner_assignments_on_partner_id"
   add_index "partner_assignments", ["user_id", "partner_id"], :name => "index_partner_assignments_on_user_id_and_partner_id", :unique => true
+
+  create_table "partner_changes", :id => false, :force => true do |t|
+    t.string   "id",                     :limit => 36, :null => false
+    t.string   "item_id",                :limit => 36, :null => false
+    t.string   "item_type",                            :null => false
+    t.string   "source_partner_id",      :limit => 36, :null => false
+    t.string   "destination_partner_id", :limit => 36, :null => false
+    t.datetime "scheduled_for"
+    t.datetime "completed_at"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "partner_changes", ["destination_partner_id"], :name => "index_partner_changes_on_destination_partner_id"
+  add_index "partner_changes", ["id"], :name => "index_partner_changes_on_id", :unique => true
+  add_index "partner_changes", ["item_id"], :name => "index_partner_changes_on_item_id"
+  add_index "partner_changes", ["item_type", "item_id"], :name => "index_partner_changes_on_item_type_and_item_id"
+  add_index "partner_changes", ["scheduled_for", "completed_at"], :name => "index_partner_changes_on_scheduled_for_and_completed_at"
+  add_index "partner_changes", ["source_partner_id"], :name => "index_partner_changes_on_source_partner_id"
 
   create_table "partners", :id => false, :force => true do |t|
     t.string   "id",                           :limit => 36,                                                      :null => false
@@ -798,6 +833,29 @@ ActiveRecord::Schema.define(:version => 20111212062016) do
 
   add_index "spend_shares", ["effective_on"], :name => "index_spend_shares_on_effective_on", :unique => true
   add_index "spend_shares", ["id"], :name => "index_spend_shares_on_id", :unique => true
+
+  create_table "staff_picks", :id => false, :force => true do |t|
+    t.string   "id",                 :limit => 36,                :null => false
+    t.string   "offer_id",           :limit => 36
+    t.string   "author_id",          :limit => 36
+    t.string   "offer_type",                                      :null => false
+    t.text     "platforms",                                       :null => false
+    t.string   "subtitle",                                        :null => false
+    t.string   "offer_title",                                     :null => false
+    t.text     "description",                                     :null => false
+    t.string   "main_icon_url"
+    t.string   "secondary_icon_url"
+    t.string   "button_text"
+    t.string   "button_url"
+    t.date     "start_date",                                      :null => false
+    t.date     "end_date",                                        :null => false
+    t.integer  "weight",                           :default => 0, :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "staff_picks", ["id"], :name => "index_staff_picks_on_id", :unique => true
+  add_index "staff_picks", ["offer_type"], :name => "index_staff_picks_on_offer_type"
 
   create_table "survey_offers", :id => false, :force => true do |t|
     t.string   "id",         :limit => 36,                    :null => false

@@ -1013,19 +1013,21 @@ body.old .formError .pad, body.old .email_error .pad, body.old .account_error .p
 .mobile .staff_info .staff_meta {
   margin: 2px 0 0 8px;
 }
-.web .staff_info .staff_title, .ipad .staff_info .staff_title {
-  background: transparent url("/images/games/old/staff_pick_web.png") no-repeat center center;
+.web .staff_info .offer_type, .ipad .staff_info .offer_type {
+  //background: transparent url("/images/games/old/staff_pick_web.png") no-repeat center center;
   height: 24px;
   margin-bottom: 6px;
   width: 154px;
+  font-size: 30px;
 }
-.mobile .staff_info .staff_title {
-  background: transparent url("/images/games/old/staff_pick_mobile.png") no-repeat center center;
+.mobile .staff_info .offer_type {
+  //background: transparent url("/images/games/old/staff_pick_mobile.png") no-repeat center center;
   height: 12px;
   margin-bottom: 3px;
   width: 77px;
+  font-size: 22px;
 }
-.staff_info .staff_title {
+.staff_info .offer_type {
   margin-bottom: 6px;
 }
 .staff_info .staff_name {

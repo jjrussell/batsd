@@ -1,0 +1,42 @@
+%h2= list_name.to_s.titleize
+
+%table.tablesorter{ :id => "#{list_name.to_s}_staff_picks_table" }
+  %thead
+    %tr
+      %th Offer Type
+      %th Start
+      %th End
+      %th Platform
+      %th Title
+      %th Subtitle
+      %th Weight
+      %th
+      %th
+  %tbody
+    - list.each do |staff_pick|
+      %tr
+        %td= staff_pick.offer_type
+        %td= staff_pick.start_date.strftime("%m/%d/%Y")
+        %td= staff_pick.end_date.strftime("%m/%d/%Y")
+        %td= staff_pick.platforms
+        %td= staff_pick.subtitle
+        %td= staff_pick.offer_title
+        %td= staff_pick.weight
+        %td= link_to('Edit', edit_tools_staff_pick_path(staff_pick))
+        %td= link_to('Delete', tools_staff_pick_path(staff_pick), :method => :delete, :confirm => "Delete staff pick?")
+        
+= will_paginate(list, :param_name => "#{list_name}_page")
+
+- content_for :page_javascript do
+  :plain
+    $(function() {
+      $("##{list_name}_staff_picks_table").tablesorter({
+        widgets: ['zebra'],
+        headers: {
+          1: { sorter: 'date-field-column' },
+          2: { sorter: 'date-field-column' },
+          7: { sorter: false },
+          8: { sorter: false }
+        }
+      });
+    });

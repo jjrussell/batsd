@@ -14,7 +14,13 @@ class SearchController < WebsiteController
       :order => 'hidden ASC, active DESC, name ASC',
       :limit => 10
     ).collect do |o|
-      { :label => o.search_result_name, :url => statz_path(o), :id => o.id, :user_enabled => o.user_enabled, :daily_budget => o.daily_budget, :bid => o.bid, :payment => o.payment }
+      if params[:more_details]
+        result = { :label => o.search_result_name, :id => o.id, :user_enabled => o.user_enabled, :name => o.name, :description => "", :click_url => "www.google.com", :icon_url => o.get_icon_url }
+        result[:description] = App.find_by_id(o.item_id).description if o.item_type == "App"
+        result
+      else
+        { :label => o.search_result_name, :url => statz_path(o), :id => o.id, :user_enabled => o.user_enabled, :daily_budget => o.daily_budget, :bid => o.bid, :payment => o.payment}
+      end
     end
 
     render(:json => results.to_json)
