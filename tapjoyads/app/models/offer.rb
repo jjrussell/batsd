@@ -227,6 +227,12 @@ class Offer < ActiveRecord::Base
     has_banner_creative?(size) && self.approved_banner_creatives.include?(size)
   end
 
+  def self.unapproved_count
+    creative_approval_needed.inject(0) do |total, offer|
+      total + (offer.banner_creatives.size - offer.approved_banner_creatives.size)
+    end
+  end
+
   def remove_banner_creative size
     return unless has_banner_creative? size
     self.banner_creatives = banner_creatives.reject { |c| c == size }
