@@ -88,4 +88,6 @@ PAPAYA_SECRET = 'RT4oNOKx0QK2nJ51'
 
 CLEAR_MEMCACHE = false
 
+DEVICE_LINK_TRACKING_PIXEL = 'http://tapjoy.go2cloud.org/SL2P'
+
 Sass::Plugin.options[:style] = :compressed

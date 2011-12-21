@@ -29,11 +29,11 @@ class Job::MasterDailyAppStatsController < Job::JobController
         :stat_types  => [ 'featured_offers_requested' ],
         :granularity => :hourly }).stats['featured_offers_requested']
     vertica_counts = {}
-    WebRequest.select_with_vertica(
-        :select     => "count(*), floor((time - #{start_time.to_i}) / #{1.hour.to_i}) as h",
-        :conditions => "path LIKE '%featured_offer_requested%' AND time >= #{start_time.to_i} AND time < #{end_time.to_i}",
-        :group      => 'h').each do |result|
-      vertica_counts[result[:h].to_i] = result[:count]
+    WebRequest.select(
+        :select     => "count(hour), hour",
+        :conditions => "path LIKE '%featured_offer_requested%' AND day = '#{start_time.to_s(:yyyy_mm_dd)}'",
+        :group      => 'hour').each do |result|
+      vertica_counts[result[:hour]] = result[:count]
     end
 
     appstats_total = appstats_counts.sum
