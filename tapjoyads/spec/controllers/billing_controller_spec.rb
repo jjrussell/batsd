@@ -45,7 +45,7 @@ describe BillingController do
   describe 'transfer freeze' do
     describe 'during freeze' do
       before :each do
-        Time.stubs(:now).returns(Time.parse('2011-12-22'))
+        @controller.stubs(:during_transfer_freeze?).returns(true)
       end
 
       it 'should not show transfer page' do
@@ -61,7 +61,7 @@ describe BillingController do
 
     describe 'after freeze' do
       before :each do
-        Time.stubs(:now).returns(Time.parse('2011-12-23'))
+        @controller.stubs(:during_transfer_freeze?).returns(false)
       end
 
       it 'should show transfer page' do
