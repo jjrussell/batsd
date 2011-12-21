@@ -20,7 +20,9 @@
     - if @offer.display_banner_ads?
       - Offer::DISPLAY_AD_SIZES.each do |size|
         - if @show_generated_ads || @offer.has_banner_creative?(size)
-          = "#{size} banner ad:"
+          - label = "#{size} banner ad"
+          - label << " <em>(Pending approval)</em>" if @offer.has_banner_creative?(size) and !@offer.banner_creative_approved?(size)
+          %span.label "#{label}:"
           %div{:class => "img#{size}"}
             - width, height = size.split("x").collect{|x|x.to_i}
             = image_tag(@offer.display_ad_image_url(publisher_app_id, width, height, nil, nil, true, false), :class => 'preview', :alt => '')
@@ -54,6 +56,10 @@
   :plain
     #previews {
       text-align: center;
+    }
+
+    #previews span.label em {
+      color: red;
     }
 
     #unable_to_show {
