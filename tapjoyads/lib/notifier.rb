@@ -13,6 +13,7 @@ class SkippedSendCurrency < RuntimeError; end
 class AndroidRank404 < RuntimeError; end
 class EmailVerificationFailure < RuntimeError; end
 class EmailNotDelivered < RuntimeError; end
+class VerticaConnectionReset < RuntimeError; end
 
 # Any errors that extend this class will result in an email being sent to dev@tapjoy.com.
 class EmailWorthyError < RuntimeError
