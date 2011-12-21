@@ -86,4 +86,6 @@ CLEAR_MEMCACHE = false
 
 DEV_FACEBOOK_ID = '100000459598424'
 
+DEVICE_LINK_TRACKING_PIXEL = 'http://tapjoy.go2cloud.org/SL2P'
+
 Sass::Plugin.options[:style] = :compressed

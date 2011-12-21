@@ -1756,7 +1756,6 @@ TJG.ui = {
     TJG.ui.fadeSpdSlow = 700;
 
     var fadeSpd = TJG.ui.fadeSpd, fadeSpdFast = TJG.ui.fadeSpdFas, fadeSpdSlow = TJG.ui.fadeSpdSlow;
-    var install = TJG.utils.getParam("register_device");
 
     // Enable bookmarking modal
     if (TJG.vars.isIos || TJG.vars.hasHomescreen) {
@@ -1770,7 +1769,11 @@ TJG.ui = {
     }
     // Checks if new user. If so, shows intro tutorial
     var repeat = TJG.utils.getLocalStorage("tjg.new_user");
-    if (install.indexOf("true") != -1) {
+    if (TJG.register_device) {
+      if (TJG.register_device_pixel) {
+        var pixel = new Image();
+        pixel.src = TJG.register_device_pixel;
+      }
       if (TJG.vars.isAndroid) {
         showIntro();
       }
@@ -2412,8 +2415,7 @@ RegExp.escape = function(text) {
         if (TJG.vars.c_data && !TJG.vars.ls_data) {
           TJG.utils.setLocalStorage('data', TJG.vars.c_data);
           TJG.utils.setLocalStorage('data_ts', t);
-          var install = TJG.utils.getParam("register_device");
-          if (install.indexOf("true") != -1) {
+          if (TJG.register_device) {
             TJG.utils.setLocalStorage('link_ts', t);
           }
         }
