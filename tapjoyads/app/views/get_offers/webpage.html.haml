@@ -56,7 +56,7 @@
                 %span.papaya-logo
                 %span.orange-box
                   #{number_with_delimiter(@papaya_offers[offer.id])} currently playing
-            - if @show_wifi_only && offer.item_type == 'App' && App.find_in_cache(offer.item_id).wifi_required?
+            - if @show_wifi_only && offer.wifi_only
               .wifi_only
                 Wifi Only
                 .wifi_icon

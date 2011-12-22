@@ -281,6 +281,7 @@ private
     offer.device_types = get_offer_device_types.to_json
     offer.third_party_data = store_id
     offer.age_rating = age_rating
+    offer.wifi_only = wifi_required?
     offer.save!
   end
 
@@ -299,6 +300,7 @@ private
       offer.hidden = hidden if hidden_changed?
       offer.tapjoy_enabled = false if hidden? && hidden_changed?
       offer.device_types = get_offer_device_types.to_json if store_id_changed?
+      offer.wifi_only = wifi_required? if file_size_bytes_changed?
       offer.save! if offer.changed?
     end
 
