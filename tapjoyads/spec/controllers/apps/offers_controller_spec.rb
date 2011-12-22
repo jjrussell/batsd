@@ -7,8 +7,8 @@ describe Apps::OffersController do
 
   before :each do
     @user = Factory :admin
-    @partner = Factory :partner, :users => [@user]
-    @app = Factory :app, :partner => @partner
+    @partner = Factory(:partner, :users => [@user])
+    @app = Factory(:app, :partner => @partner)
     login_as @user
   end
 
@@ -28,7 +28,7 @@ describe Apps::OffersController do
       offer.should be_a Offer
       offer.should_not be_rewarded
       offer.should be_featured
-      response.should redirect_to :action => :edit, :id => offer.id
+      response.should redirect_to(:action => :edit, :id => offer.id)
     end
 
     it 'should not show up as rewarded featured offer' do
@@ -59,7 +59,7 @@ describe Apps::OffersController do
       offer.should be_a Offer
       offer.should be_rewarded
       offer.should be_featured
-      response.should redirect_to :action => :edit, :id => offer.id
+      response.should redirect_to(:action => :edit, :id => offer.id)
     end
 
     it 'should not show up as non-rewarded feautred offer' do
@@ -90,7 +90,7 @@ describe Apps::OffersController do
       offer.should be_a Offer
       offer.should_not be_rewarded
       offer.should_not be_featured
-      response.should redirect_to :action => :edit, :id => offer.id
+      response.should redirect_to(:action => :edit, :id => offer.id)
     end
 
     it 'should not show up as a featured offer' do
