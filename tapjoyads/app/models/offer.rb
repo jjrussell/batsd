@@ -149,7 +149,7 @@ class Offer < ActiveRecord::Base
   before_save :fix_country_targeting
   before_save :update_payment
   before_save :update_instructions
-  before_save :update_approved_banner_creatives
+  before_save :update_approved_banner_creatives, :if => :should_update_approved_banner_creatives?
   after_save :update_enabled_rating_offer_id
   after_save :update_pending_enable_requests
   after_save :update_tapjoy_sponsored_associated_offers
@@ -207,6 +207,10 @@ class Offer < ActiveRecord::Base
   def banner_creatives_was
     return [] if super.nil?
     super
+  end
+
+  def should_update_approved_banner_creatives?
+    banner_creatives_changed? && banner_creatives != approved_banner_creatives
   end
 
   def banner_creatives_changed?
