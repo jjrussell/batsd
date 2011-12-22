@@ -530,23 +530,6 @@ class Offer < ActiveRecord::Base
     [ val, (price * 0.50).round ].max
   end
 
-  def create_clone(options = {})
-    @featured = options[:featured]
-    @rewarded = options[:rewarded]
-
-    @offer = self.clone
-    @offer.attributes = {
-      :created_at => nil,
-      :updated_at => nil,
-      :featured   => !@featured.nil? ? @featured : self.featured,
-      :rewarded   => !@rewarded.nil? ? @rewarded : self.rewarded,
-      :name_suffix => "#{@rewarded ? '' : 'non-'}rewarded#{@featured ? ' featured': ''}",
-      :tapjoy_enabled => false }
-    @offer.bid = @offer.min_bid
-    @offer.save!
-    @offer
-  end
-
   def create_non_rewarded_featured_clone
     create_clone :featured => true, :rewarded => false
   end
@@ -791,6 +774,22 @@ private
     end
   end
 
+  def create_clone(options = {})
+    @featured = options[:featured]
+    @rewarded = options[:rewarded]
+
+    @offer = self.clone
+    @offer.attributes = {
+      :created_at => nil,
+      :updated_at => nil,
+      :featured   => !@featured.nil? ? @featured : self.featured,
+      :rewarded   => !@rewarded.nil? ? @rewarded : self.rewarded,
+      :name_suffix => "#{@rewarded ? '' : 'non-'}rewarded#{@featured ? ' featured': ''}",
+      :tapjoy_enabled => false }
+    @offer.bid = @offer.min_bid
+    @offer.save!
+    @offer
+  end
 end
 
 class BannerSyncError < StandardError;

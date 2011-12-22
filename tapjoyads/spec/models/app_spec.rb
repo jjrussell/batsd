@@ -61,4 +61,76 @@ describe App do
       offer.bid.should equal(35)
     end
   end
+
+  context "An App with a Non-Rewarded Featured Offer" do
+    before :all do
+      @app = Factory :app
+      @new_offer = @app.primary_offer.create_non_rewarded_featured_clone
+      @app.reload
+    end
+
+    it 'should have non-rewarded featured associations' do
+      @app.primary_non_rewarded_featured_offer.should == @new_offer
+      @app.non_rewarded_featured_offers.size.should equal(1)
+      @app.non_rewarded_featured_offers.should include(@new_offer)
+    end
+
+    it 'should not have rewarded featured associations' do
+      @app.primary_rewarded_featured_offer.should be_nil
+      @app.rewarded_featured_offers.should be_empty
+    end
+
+    it 'should not have non-rewarded associations' do
+      @app.primary_non_rewarded_offer.should be_nil
+      @app.non_rewarded_offers.should be_empty
+    end
+  end
+
+  context "An App with a Rewarded Featured Offer" do
+    before :all do
+      @app = Factory :app
+      @new_offer = @app.primary_offer.create_rewarded_featured_clone
+      @app.reload
+    end
+
+    it 'should have rewarded featured associations' do
+      @app.primary_rewarded_featured_offer.should == @new_offer
+      @app.rewarded_featured_offers.size.should equal(1)
+      @app.rewarded_featured_offers.should include(@new_offer)
+    end
+
+    it 'should not have non-rewarded featured associations' do
+      @app.primary_non_rewarded_featured_offer.should be_nil
+      @app.non_rewarded_featured_offers.should be_empty
+    end
+
+    it 'should not have non-rewarded associations' do
+      @app.primary_non_rewarded_offer.should be_nil
+      @app.non_rewarded_offers.should be_empty
+    end
+  end
+
+  context "An App with a Non-Rewarded Offer" do
+    before :all do
+      @app = Factory :app
+      @new_offer = @app.primary_offer.create_non_rewarded_clone
+      @app.reload
+    end
+
+    it 'should have non-rewarded associations' do
+      @app.primary_non_rewarded_offer.should == @new_offer
+      @app.non_rewarded_offers.size.should equal(1)
+      @app.non_rewarded_offers.should include(@new_offer)
+    end
+
+    it 'should not have rewarded featured associations' do
+      @app.primary_rewarded_featured_offer.should be_nil
+      @app.rewarded_featured_offers.should be_empty
+    end
+
+    it 'should not have non-rewarded featured associations' do
+      @app.primary_non_rewarded_featured_offer.should be_nil
+      @app.non_rewarded_featured_offers.should be_empty
+    end
+  end
 end
