@@ -7,14 +7,13 @@ class FeaturedContent < ActiveRecord::Base
   PROMO     = 2
   CONTEST   = 3
 
-  TYPES = [ 'StaffPick', 'News', 'Promo', 'Contest' ]
-
   TYPES_MAP = {
      STAFFPICK => 'StaffPick',
      NEWS      => 'News',
      PROMO     => 'Promo',
      CONTEST   => 'Contest'
    }
+
   WEIGHTS = [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 ]
 
   belongs_to :author, :polymorphic => true
@@ -35,7 +34,6 @@ class FeaturedContent < ActiveRecord::Base
   memoize :get_platforms
 
   def self.random_select(featured_contents)
-    # TODO: concise this part of code!!!
     total = featured_contents.inject(0){|sum, featured_content| sum + featured_content.weight}
     percentages = featured_contents.map do |featured_content|
       (featured_content.weight/total) * 100
@@ -72,9 +70,9 @@ class FeaturedContent < ActiveRecord::Base
   end
 
   def get_icon_url(icon_id, options = {})
-    size       = options.delete(:size)     { '57' }
-
+    size     = options.delete(:size)     { '57' }
     icon_obj = S3.bucket(BucketNames::TAPJOY).objects["icons/#{size}/#{icon_id}.jpg"]
+
     return FeaturedContent.get_icon_url({:icon_id => icon_id, :size => size}.merge(options)) if icon_obj.exists?
     return main_icon_url if icon_id == "#{id}_main" and main_icon_url.present?
     return secondary_icon_url if icon_id == "#{id}_secondary" and secondary_icon_url.present?
@@ -101,7 +99,7 @@ class FeaturedContent < ActiveRecord::Base
       return FeaturedContent.get_icon_url({:icon_id => icon_id, :size => size}.merge(options))
     else
       icon_src_blob = bucket.objects["icons/src/#{icon_id}.jpg"].read
-      save_icon!(icon_src_blob, icon_id)
+      save_icon_in_different_sizes!(icon_src_blob, icon_id, bucket)
       return FeaturedContent.get_icon_url({:icon_id => icon_id, :size => size}.merge(options))
     end
   end
@@ -109,11 +107,29 @@ class FeaturedContent < ActiveRecord::Base
   def save_icon!(icon_src_blob, icon_id)
     bucket  = S3.bucket(BucketNames::TAPJOY)
     src_obj = bucket.objects["icons/src/#{icon_id}.jpg"]
-
     existing_icon_blob = src_obj.exists? ? src_obj.read : ''
 
     return if Digest::MD5.hexdigest(icon_src_blob) == Digest::MD5.hexdigest(existing_icon_blob)
 
+    save_icon_in_different_sizes!(icon_src_blob, icon_id, bucket)
+    src_obj.write(:data => icon_src_blob, :acl => :public_read)
+
+    Mc.delete("icon.s3.#{id}") # id ==> icon_id
+
+    # Invalidate cloudfront
+    if existing_icon_blob.present?
+      begin
+        acf = RightAws::AcfInterface.new
+        acf.invalidate('E1MG6JDV6GH0F2', ["/icons/256/#{icon_id}.jpg", "/icons/114/#{icon_id}.jpg", "/icons/57/#{icon_id}.jpg", "/icons/57/#{icon_id}.png"], "#{id}.#{Time.now.to_i}")
+      rescue Exception => e
+        Notifier.alert_new_relic(FailedToInvalidateCloudfront, e.message)
+      end
+    end
+  end
+
+  private
+
+  def save_icon_in_different_sizes!(icon_src_blob, icon_id, bucket)
     icon_256 = Magick::Image.from_blob(icon_src_blob)[0].resize(256, 256).opaque('#ffffff00', 'white')
     icon_obj = S3.bucket(BucketNames::TAPJOY).objects[icon_id]
 
@@ -132,22 +148,7 @@ class FeaturedContent < ActiveRecord::Base
     bucket.objects["icons/114/#{icon_id}.jpg"].write(:data => icon_114_blob, :acl => :public_read)
     bucket.objects["icons/57/#{icon_id}.jpg"].write(:data => icon_57_blob, :acl => :public_read)
     bucket.objects["icons/57/#{icon_id}.png"].write(:data => icon_57_png_blob, :acl => :public_read)
-    src_obj.write(:data => icon_src_blob, :acl => :public_read)
-
-    Mc.delete("icon.s3.#{id}")
-
-    # Invalidate cloudfront
-    if existing_icon_blob.present?
-      begin
-        acf = RightAws::AcfInterface.new
-        acf.invalidate('E1MG6JDV6GH0F2', ["/icons/256/#{icon_id}.jpg", "/icons/114/#{icon_id}.jpg", "/icons/57/#{icon_id}.jpg", "/icons/57/#{icon_id}.png"], "#{id}.#{Time.now.to_i}")
-      rescue Exception => e
-        Notifier.alert_new_relic(FailedToInvalidateCloudfront, e.message)
-      end
-    end
   end
-
-  private
 
   def author_required?
     [ TYPES_MAP[STAFFPICK], TYPES_MAP[NEWS], TYPES_MAP[CONTEST] ].include?(featured_type)

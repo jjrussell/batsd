@@ -1,6 +1,6 @@
 = image_tag "feature_placement_on_my_app_preview.png", :width => 400, :height => 260
 = image_tag "feature_placement_on_detail_preview.png", :width => 400, :height => 280
-  
+
 - form_for([:tools, @featured_content], :html => { :class => 'tjform', :multipart => true }) do |f|
   = f.hidden_field :offer_id
   = f.hidden_field :main_icon_url
@@ -11,7 +11,7 @@
         = f.label :featured_type, 'Type'
         #help_featured_type.help ?
       %td
-        = f.select :featured_type, FeaturedContent::TYPES
+        = f.select :featured_type, FeaturedContent::TYPES_MAP.values
         = error_message_on @featured_content, :featured_type
     %tr.author_select
       %th
@@ -141,24 +141,63 @@
 
     var default_icon_url = "https://s3.amazonaws.com/tapjoy/icons/src/dynamic_staff_pick_tool.jpg";
 
-    var type = TYPES.STAFFPICK;
     $(function() {
+      var type = $("#featured_content_featured_type").val();
+
+      toggleAppSelect();
+      toggleAuthorSelect();
+
       $("#featured_content_author_id option:selected").each(function () {
-        $("#featured_content_subtitle").val($(this).text());
+        if(type != TYPES.PROMO ){
+          $("#featured_content_subtitle").val($(this).text());
+        }
       });
 
       $(".start_date").datepicker();
       $(".end_date").datepicker();
-      
+
       $("#featured_content_featured_type").change(function() {
         type = $(this).val();
 
+        toggleAppSelect();
+        toggleAuthorSelect();
+
+        if(type != TYPES.STAFFPICK){
+          $("#featured_content_secondary_icon_url").val(default_icon_url);
+        }
+      });
+
+      $('#app_search_box').autocomplete({ source: '#{search_offers_path(:more_details => true)}', delay: 250, minLength: 2, select: function(event, ui) {
+          $("#featured_content_description").val(ui.item.description);
+          $("#featured_content_button_url").val(ui.item.click_url);
+          $("#featured_content_offer_id").val(ui.item.id);
+          if(type == TYPES.PROMO){
+            $("#featured_content_subtitle").val(ui.item.name);
+            $("#featured_content_main_icon_url").val(ui.item.icon_url);
+          }else{
+            if(type == TYPES.STAFFPICK){
+              $("#featured_content_secondary_icon_url").val(ui.item.icon_url);
+            }
+            $("#featured_content_title").val(ui.item.name);
+          }
+        } 
+      });
+
+      $('#featured_content_author_id').change(function() {
+        $("#featured_content_author_id option:selected").each(function () {
+          $("#featured_content_subtitle").val($(this).text());
+        });
+      });
+
+      function toggleAppSelect() {
         if(type == TYPES.NEWS || type == TYPES.CONTEST){
           $(".app_select").addClass("hidden");
         }else{
           $(".app_select").removeClass("hidden");
         }
+      }
 
+      function toggleAuthorSelect() {
         if(type == TYPES.PROMO){
           $(".author_select").addClass("hidden");
           $("#featured_content_subtitle").val('');
@@ -169,29 +208,5 @@
             $("#featured_content_subtitle").val($(this).text());
           });
         }
-        if(type != TYPES.STAFFPICK){
-          $("#featured_content_secondary_icon_url").val(default_icon_url);
-        }
-      });
-
-      $('#app_search_box').autocomplete({ source: '#{search_offers_path(:more_details => true)}', delay: 250, minLength: 2, select: function(event, ui) {
-        $("#featured_content_description").val(ui.item.description);
-        $("#featured_content_button_url").val(ui.item.click_url);
-        $("#featured_content_offer_id").val(ui.item.id);
-        if(type == TYPES.PROMO){
-          $("#staff_pick_subtitle").val(ui.item.name);
-          $("#staff_pick_main_icon_url").val(ui.item.icon_url);
-        }else{
-          if(type == TYPES.STAFFPICK){
-            $("#featured_content_secondary_icon_url").val(ui.item.icon_url);
-          }
-          $("#featured_content_title").val(ui.item.name);
-        }
-      } });
-
-      $('#featured_content_author_id').change(function() {
-        $("#featured_content_author_id option:selected").each(function () {
-          $("#featured_content_subtitle").val($(this).text());
-        });
-      });
+      }
     });

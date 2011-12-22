@@ -14,9 +14,10 @@
             .app_rating_wrapper
               .app_rating.hide{ :rating => app.user_rating }
         %div
-        - link_to(@featured_content.button_url) do
-          .button.grey
-            = @featured_content.button_text
+        - if @featured_content.button_url.present?
+          - link_to(@featured_content.button_url) do
+            .button.grey
+              = @featured_content.button_text
 
     .review.clearfix
       .staff_info.full

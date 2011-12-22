@@ -30,8 +30,6 @@ class Tools::FeaturedContentsController < WebsiteController
     @featured_content.main_icon_url = (@featured_content.author.get_photo_url(:source => :cloudfront)).gsub("#{RUN_MODE_PREFIX}tapjoy", "tapjoy") unless params[:featured_content][:featured_type] == FeaturedContent::TYPES_MAP[FeaturedContent::PROMO]
     @featured_content.secondary_icon_url = @featured_content.get_default_icon_url unless params[:featured_content][:featured_type] == FeaturedContent::TYPES_MAP[FeaturedContent::STAFFPICK]
 
-    Rails.logger.info("===================>>>>>>#{@featured_content.secondary_icon_url}")
-    # Rails.logger.info("===================>>>>>>#{params[:staff_pick][:main_icon_url].present?}")
     if params[:featured_content][:start_date].present? && params[:featured_content][:end_date].present?
       unless params[:featured_content][:start_date].present? && params[:featured_content][:end_date].present? && date_validate?
         setup_before_render('End Date must be equal to or greater than Start Date.')
@@ -47,7 +45,6 @@ class Tools::FeaturedContentsController < WebsiteController
     end
 
     if @featured_content.save
-      # Rails.logger.info("@featured_content.main_icon_url=======>>>>>#{@featured_content.main_icon_url}")
       @featured_content.save_icon!(params[:main_icon].read, "#{@featured_content.id}_main")  if params[:main_icon].present?
       @featured_content.save_icon!(params[:secondary_icon].read, "#{@featured_content.id}_secondary") if params[:secondary_icon].present?
       flash[:notice] = 'Featured content was successfully created.'
@@ -71,9 +68,7 @@ class Tools::FeaturedContentsController < WebsiteController
 
     @featured_content.main_icon_url = (@featured_content.author.get_photo_url(:source => :cloudfront)).gsub("#{RUN_MODE_PREFIX}tapjoy", "tapjoy") unless params[:featured_content][:featured_type] == FeaturedContent::TYPES_MAP[FeaturedContent::PROMO]
     @featured_content.secondary_icon_url = @featured_content.get_default_icon_url unless params[:featured_content][:featured_type] == FeaturedContent::TYPES_MAP[FeaturedContent::STAFFPICK]
-    Rails.logger.info("===================>>>>>>#{p@featured_content.secondary_icon_url}")
-    # Rails.logger.info("===================>>>>>>#{params[:staff_pick][:main_icon_url].present?}")
-    
+
     if params[:featured_content][:start_date].present? && params[:featured_content][:end_date].present?
       unless date_validate?
         setup_before_render('End Date must be equal to or greater than Start Date.')
