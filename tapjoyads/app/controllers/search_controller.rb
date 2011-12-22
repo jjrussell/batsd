@@ -15,7 +15,7 @@ class SearchController < WebsiteController
       :limit => 10
     ).collect do |o|
       if params[:more_details]
-        result = { :label => o.search_result_name, :id => o.id, :user_enabled => o.user_enabled, :name => o.name, :description => "", :click_url => "www.google.com", :icon_url => o.get_icon_url }
+        result = { :label => o.search_result_name, :id => o.id, :user_enabled => o.user_enabled, :name => o.name, :description => "", :click_url => "www.tapjoy.com", :icon_url => o.get_icon_url }
         result[:description] = App.find_by_id(o.item_id).description if o.item_type == "App"
         result
       else

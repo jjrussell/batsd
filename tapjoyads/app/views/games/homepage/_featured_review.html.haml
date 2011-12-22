@@ -4,7 +4,7 @@
       %img{:src => @featured_review.get_icon_url("#{@featured_review.id}_secondary") }
     .app_text
       .app_title.title
-        = @featured_review.offer_title
+        = @featured_review.title
       - app = App.find_by_id(@featured_review.offer_id) if @featured_review.offer_id.present?
       - if app.present?
         .app_meta.clearfix

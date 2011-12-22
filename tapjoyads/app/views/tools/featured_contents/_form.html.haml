@@ -1,0 +1,197 @@
+= image_tag "feature_placement_on_my_app_preview.png", :width => 400, :height => 260
+= image_tag "feature_placement_on_detail_preview.png", :width => 400, :height => 280
+  
+- form_for([:tools, @featured_content], :html => { :class => 'tjform', :multipart => true }) do |f|
+  = f.hidden_field :offer_id
+  = f.hidden_field :main_icon_url
+  = f.hidden_field :secondary_icon_url
+  %table
+    %tr
+      %th
+        = f.label :featured_type, 'Type'
+        #help_featured_type.help ?
+      %td
+        = f.select :featured_type, FeaturedContent::TYPES
+        = error_message_on @featured_content, :featured_type
+    %tr.author_select
+      %th
+        = f.label :author
+        #help_author.help ?
+      %td
+        = f.select :author_id, options_from_collection_for_select(@employees, :id, :full_name, @featured_content.author_id)
+        = error_message_on @featured_content, :author_id
+    %tr.app_select
+      %th
+        = label_tag 'Offer/App Name', 'Offer/App Name'
+        #help_offer_.help ?
+      %td
+        = text_field_tag 'app_search_box', @search_result_name, :size => '40'
+        = error_message_on @featured_content, :offer_id
+    %tr
+      %th
+        = f.label :platforms
+        #help_platforms.help ?
+      %td
+        = f.chosen_select(:platforms, options_for_select(Offer::ALL_DEVICES, @featured_content.get_platforms), {}, :multiple => true)
+        = error_message_on @featured_content, :platforms
+    %tr
+      %th
+        = f.label :subtitle
+        #help_subtitle.help ?
+      %td
+        = f.text_field(:subtitle)
+        = error_message_on @featured_content, :subtitle
+    %tr
+      %th
+        = f.label :title, 'Title'
+        #help_title.help ?
+      %td
+        = f.text_field(:title)
+        = error_message_on @featured_content, :title
+    %tr
+      %th
+        = f.label :description
+        #help_description.help ?
+      %td
+        = f.text_area :description, :rows => 10, :cols => 31
+        = error_message_on @featured_content, :description
+    %tr
+      %th
+        = label_tag :main_icon, @featured_content.new_record? ? 'Upload Main Icon' : 'Upload New Main Icon'
+        #help_main_icon.help ?
+      %td= file_field_tag :main_icon
+    - if !@featured_content.new_record?
+      %tr
+        %th
+          = label_tag "Current Main Icon", "Current Main Icon"
+        %td= image_tag @featured_content.get_icon_url("#{@featured_content.id}_main")
+    %tr
+      %th
+        = label_tag :secondary_icon, @featured_content.new_record? ? 'Upload Secondary Icon' : 'Upload New Secondary Icon'
+        #help_secondary_icon.help ?
+      %td= file_field_tag :secondary_icon
+    - if !@featured_content.new_record?
+      %tr
+        %th
+          = label_tag "Current Secondary Icon", "Current Secondary Icon"
+        %td= image_tag @featured_content.get_icon_url("#{@featured_content.id}_secondary")
+    %tr
+      %th
+        = f.label :button_text, 'Action Button Text'
+        #help_button_text.help ?
+      %td
+        = f.text_field(:button_text)
+        = error_message_on @featured_content, :button_text
+    %tr
+      %th
+        = f.label :button_url, 'Action Button Link'
+        #help_button_url.help ?
+      %td
+        = f.text_field(:button_url)
+        = error_message_on @featured_content, :button_url
+    %tr
+      %th
+        = f.label :start_date, 'Start Date'
+        #help_start_date.help ?
+      %td
+        = f.text_field :start_date, :class => 'start_date', :id => "start_#{@featured_content.id}.datepicker", :value => (@featured_content.start_date.present? ? @featured_content.start_date.strftime("%m/%d/%Y") : '')
+        = error_message_on @featured_content, :start_date
+    %tr
+      %th
+        = f.label :end_date, 'End Date'
+        #help_end_date.help ?
+      %td
+        = f.text_field :end_date, :class => 'end_date', :id => "end_#{@featured_content.id}.datepicker", :value => (@featured_content.end_date.present? ? @featured_content.end_date.strftime("%m/%d/%Y") : '')
+        = error_message_on @featured_content, :end_date
+    %tr
+      %th
+        = f.label :weight
+        #help_weight.help ?
+      %td
+        = f.select :weight, FeaturedContent::WEIGHTS
+        = error_message_on @featured_content, :weight
+    %tr
+      %th
+      %td= f.submit
+
+.hidden
+  #help_featured_type_content{ :name => 'Featured Type' } The type of this featured placement.
+  #help_author_content{ :name => 'Author' } Author will show up in the subtitle area.
+  #help_offer_content{ :name => 'Offer' } App will show up in the subtitle/description area.
+  #help_platforms_content{ :name => 'Platforms' } The targeted platforms. If target to iOS, please select 'iphone', 'itouch', and 'ipad'.
+  #help_subtitle_content{ :name => 'Subtitle' } The title of the featured placement.
+  #help_title_content{ :name => 'Title' } The subtitle of the featured placement.
+  #help_description_content{ :name => 'Description' } The description of the featured placement.
+  #help_main_icon_content{ :name => 'Main Icon' } The main icon.
+  #help_secondary_icon_content{ :name => 'Secondary Icon' } The secondary icon.
+  #help_button_text_content{ :name => 'Button Text' } The text that will shown on the action button on the detail page.
+  #help_button_url_content{ :name => 'Button Url' } The url where the action button will lead the user.
+  #help_start_date_content{ :name => 'Start Date' } The start date of the featured placement.
+  #help_end_date_content{ :name => 'End Date' } The end date of the featured placement.
+  #help_weight_content{ :name => 'Weight' } Determine the show up frequency.
+
+- content_for :page_javascript do
+  :plain
+    var TYPES = {
+      STAFFPICK : 'StaffPick',
+      NEWS      : 'News',
+      PROMO     : 'Promo',
+      CONTEST   : 'Contest'
+    };
+
+    var default_icon_url = "https://s3.amazonaws.com/tapjoy/icons/src/dynamic_staff_pick_tool.jpg";
+
+    var type = TYPES.STAFFPICK;
+    $(function() {
+      $("#featured_content_author_id option:selected").each(function () {
+        $("#featured_content_subtitle").val($(this).text());
+      });
+
+      $(".start_date").datepicker();
+      $(".end_date").datepicker();
+      
+      $("#featured_content_featured_type").change(function() {
+        type = $(this).val();
+
+        if(type == TYPES.NEWS || type == TYPES.CONTEST){
+          $(".app_select").addClass("hidden");
+        }else{
+          $(".app_select").removeClass("hidden");
+        }
+
+        if(type == TYPES.PROMO){
+          $(".author_select").addClass("hidden");
+          $("#featured_content_subtitle").val('');
+          $("#featured_content_title").val('Free App of the Day');
+        }else{
+          $(".author_select").removeClass("hidden");
+          $("#featured_content_author_id option:selected").each(function () {
+            $("#featured_content_subtitle").val($(this).text());
+          });
+        }
+        if(type != TYPES.STAFFPICK){
+          $("#featured_content_secondary_icon_url").val(default_icon_url);
+        }
+      });
+
+      $('#app_search_box').autocomplete({ source: '#{search_offers_path(:more_details => true)}', delay: 250, minLength: 2, select: function(event, ui) {
+        $("#featured_content_description").val(ui.item.description);
+        $("#featured_content_button_url").val(ui.item.click_url);
+        $("#featured_content_offer_id").val(ui.item.id);
+        if(type == TYPES.PROMO){
+          $("#staff_pick_subtitle").val(ui.item.name);
+          $("#staff_pick_main_icon_url").val(ui.item.icon_url);
+        }else{
+          if(type == TYPES.STAFFPICK){
+            $("#featured_content_secondary_icon_url").val(ui.item.icon_url);
+          }
+          $("#featured_content_title").val(ui.item.name);
+        }
+      } });
+
+      $('#featured_content_author_id').change(function() {
+        $("#featured_content_author_id option:selected").each(function () {
+          $("#featured_content_subtitle").val($(this).text());
+        });
+      });
+    });

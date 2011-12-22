@@ -25,7 +25,7 @@ class Games::HomepageController < GamesController
       end
       @external_publishers = ExternalPublisher.load_all_for_device(@device)
     end
-    @featured_review = StaffPick.random_select(StaffPick.staff_picks(@device.try(:platform)))
+    @featured_review = FeaturedContent.random_select(FeaturedContent.featured_contents(@device.try(:platform)))
 
     if params[:load] == 'more_apps'
       @show_more_apps = true

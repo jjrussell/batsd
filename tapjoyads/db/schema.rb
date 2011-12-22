@@ -283,6 +283,29 @@ ActiveRecord::Schema.define(:version => 20111214000157) do
   add_index "enable_offer_requests", ["offer_id"], :name => "index_enable_offer_requests_on_offer_id"
   add_index "enable_offer_requests", ["status"], :name => "index_enable_offer_requests_on_status"
 
+  create_table "featured_contents", :id => false, :force => true do |t|
+    t.string   "id",                 :limit => 36,                :null => false
+    t.string   "offer_id",           :limit => 36
+    t.string   "author_id",          :limit => 36
+    t.string   "featured_type",                                   :null => false
+    t.text     "platforms",                                       :null => false
+    t.string   "subtitle",                                        :null => false
+    t.string   "title",                                           :null => false
+    t.text     "description",                                     :null => false
+    t.string   "main_icon_url"
+    t.string   "secondary_icon_url"
+    t.string   "button_text"
+    t.string   "button_url"
+    t.date     "start_date",                                      :null => false
+    t.date     "end_date",                                        :null => false
+    t.integer  "weight",                           :default => 0, :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "featured_contents", ["featured_type"], :name => "index_featured_contents_on_featured_type"
+  add_index "featured_contents", ["id"], :name => "index_featured_contents_on_id", :unique => true
+
   create_table "gamer_devices", :id => false, :force => true do |t|
     t.string   "id",          :limit => 36, :null => false
     t.string   "gamer_id",    :limit => 36, :null => false
@@ -833,29 +856,6 @@ ActiveRecord::Schema.define(:version => 20111214000157) do
 
   add_index "spend_shares", ["effective_on"], :name => "index_spend_shares_on_effective_on", :unique => true
   add_index "spend_shares", ["id"], :name => "index_spend_shares_on_id", :unique => true
-
-  create_table "staff_picks", :id => false, :force => true do |t|
-    t.string   "id",                 :limit => 36,                :null => false
-    t.string   "offer_id",           :limit => 36
-    t.string   "author_id",          :limit => 36
-    t.string   "offer_type",                                      :null => false
-    t.text     "platforms",                                       :null => false
-    t.string   "subtitle",                                        :null => false
-    t.string   "offer_title",                                     :null => false
-    t.text     "description",                                     :null => false
-    t.string   "main_icon_url"
-    t.string   "secondary_icon_url"
-    t.string   "button_text"
-    t.string   "button_url"
-    t.date     "start_date",                                      :null => false
-    t.date     "end_date",                                        :null => false
-    t.integer  "weight",                           :default => 0, :null => false
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  add_index "staff_picks", ["id"], :name => "index_staff_picks_on_id", :unique => true
-  add_index "staff_picks", ["offer_type"], :name => "index_staff_picks_on_offer_type"
 
   create_table "survey_offers", :id => false, :force => true do |t|
     t.string   "id",         :limit => 36,                    :null => false

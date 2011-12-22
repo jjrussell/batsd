@@ -1,67 +1,72 @@
-class StaffPick < ActiveRecord::Base
+class FeaturedContent < ActiveRecord::Base
   include UuidPrimaryKey
   acts_as_cacheable
-  
-  OFFER_TYPES = [ 'Staff Pick', 'Tapjoy News', 'App Promo (FAAD)', 'Contest!' ]
+
+  STAFFPICK = 0
+  NEWS      = 1
+  PROMO     = 2
+  CONTEST   = 3
+
+  TYPES = [ 'StaffPick', 'News', 'Promo', 'Contest' ]
+
+  TYPES_MAP = {
+     STAFFPICK => 'StaffPick',
+     NEWS      => 'News',
+     PROMO     => 'Promo',
+     CONTEST   => 'Contest'
+   }
   WEIGHTS = [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 ]
 
   belongs_to :author, :polymorphic => true
   belongs_to :offer
 
-  validates_presence_of :author, :if => :author_required?
-  validates_presence_of :offer, :if => :offer_required?
-  validates_presence_of :offer_type, :platforms, :subtitle, :offer_title, :description, :start_date, :end_date, :weight
-  
+  validates_presence_of :author, :if => :author_required?, :message => "Please select and author."
+  validates_presence_of :offer, :if => :offer_required?, :message => "Please select an offer/app."
+  validates_presence_of :featured_type, :platforms, :subtitle, :title, :description, :start_date, :end_date, :weight
 
   named_scope :ordered_by_date, :order => "start_date DESC, end_date DESC"
   named_scope :upcoming,  lambda { |date| { :conditions => [ "start_date > ?", date.to_date ], :order => "start_date ASC" } }
   named_scope :expired,  lambda { |date| { :conditions => [ "end_date < ?", date.to_date ], :order => "end_date ASC" } }
   named_scope :active, lambda { |date| { :conditions => [ "start_date <= ? AND end_date >= ?", date.to_date, date.to_date ] } }
   named_scope :for_platform, lambda { |platform| { :conditions => [ "platforms LIKE ?", "%#{platform}%" ] } }
-  # named_scope :by_device, lambda { |platform| { :conditions => ["offers.device_types LIKE ?", "%#{platform}%" ] } }
-  named_scope :for_offer_type, lambda { |offer_type| { :conditions => [ "offer_type = ?", offer_type ] } }
+  named_scope :for_featured_type, lambda { |featured_type| { :conditions => [ "featured_type = ?", featured_type ] } }
 
   json_set_field :platforms
   memoize :get_platforms
 
-
-  def self.random_select(staff_picks)
+  def self.random_select(featured_contents)
     # TODO: concise this part of code!!!
-    total = staff_picks.inject(0){|sum, staff_pick| sum + staff_pick.weight}
-    percentages = staff_picks.map do |staff_pick|
-      (staff_pick.weight/total) * 100
+    total = featured_contents.inject(0){|sum, featured_content| sum + featured_content.weight}
+    percentages = featured_contents.map do |featured_content|
+      (featured_content.weight/total) * 100
     end
 
     current = 0
     ranges = []
-    percentages.each do |percentage| 
+    percentages.each do |percentage|
       ranges << current + percentage
       current = percentage
     end
 
     random_number = rand(total)
     ranges.each_with_index do |range, index|
-      return staff_picks[index] if random_number < range
+      return featured_contents[index] if random_number < range
     end
-    return staff_picks[0]
+    return featured_contents[0]
   end
-    
-  def self.staff_picks(platform)
-    platform = 'iphone' unless %w(android iphone).include?(platform)
-    # do we want to stored in Memcache? if yes, what's the time interval?
-    # or
-    # we could store today's pick and calculate a random one when ever there's a request comming
-    Mc.get_and_put("dynamic_staff_pick.#{platform}", false, 1.day) do
-      now = Time.now.utc
-      staff_picks =  StaffPick.active(now).for_platform(platform) ||
-                StaffPick.upcoming.for_platform(platform) ||
-                StaffPick.expired(now).for_platform(platform)
 
-      if staff_picks.nil?
-        raise StaffPickEmptyError.new("Platform #{platform}, Time #{now}")
+  def self.featured_contents(platform)
+    platform = 'iphone' unless %w(android iphone).include?(platform)
+    Mc.get_and_put("featured_contents.#{platform}", false, 1.day) do
+      now = Time.now.utc
+      featured_contents =  FeaturedContent.active(now).for_platform(platform) ||
+                FeaturedContent.upcoming.for_platform(platform) ||
+                FeaturedContent.expired(now).for_platform(platform)
+
+      if featured_contents.nil?
+        raise FeaturedContentEmptyError.new("Platform #{platform}, Time #{now}")
       else
-        # staff_pick = staff_picks[random_select(staff_picks)]
-        staff_picks
+        featured_contents
       end
     end
   end
@@ -69,14 +74,11 @@ class StaffPick < ActiveRecord::Base
   def get_icon_url(icon_id, options = {})
     size       = options.delete(:size)     { '57' }
 
-    Rails.logger.info("icon_id=================>>>>>#{icon_id}")
     icon_obj = S3.bucket(BucketNames::TAPJOY).objects["icons/#{size}/#{icon_id}.jpg"]
-    return StaffPick.get_icon_url({:icon_id => icon_id, :size => size}.merge(options)) if icon_obj.exists?
-    Rails.logger.info("main_icon_url=================>>>>>#{main_icon_url}")
+    return FeaturedContent.get_icon_url({:icon_id => icon_id, :size => size}.merge(options)) if icon_obj.exists?
     return main_icon_url if icon_id == "#{id}_main" and main_icon_url.present?
     return secondary_icon_url if icon_id == "#{id}_secondary" and secondary_icon_url.present?
-    return "http://www.tapjoy.com/images/ic_launcher_96x96.png"
-    # return self.get_default_icon_url
+    return get_default_icon_url
   end
 
   def self.get_icon_url(options = {})
@@ -89,23 +91,19 @@ class StaffPick < ActiveRecord::Base
 
     "#{prefix}/icons/#{size}/#{icon_id}.jpg"
   end
-  
-  def self.get_default_icon_url(options = {})
+
+  def get_default_icon_url(options = {})
     icon_id = "dynamic_staff_pick_tool"
     size   = options.delete(:size)     { '57' }
     bucket  = S3.bucket(BucketNames::TAPJOY)
-    icon_obj = bucket.objects["icons/src/#{icon_id}.jpg"]
+    icon_obj = bucket.objects["icons/#{size}/#{icon_id}.jpg"]
     if icon_obj.exists?
-      return StaffPick.get_icon_url({:icon_id => icon_id, :size => size}.merge(options))
+      return FeaturedContent.get_icon_url({:icon_id => icon_id, :size => size}.merge(options))
     else
-      # manually store icon_src_blob into BucketNames::TAPJOY  to "icons/src/dynamic_staff_pick_tool.jpg"
-      icon_src_blob = icon_obj.read
+      icon_src_blob = bucket.objects["icons/src/#{icon_id}.jpg"].read
       save_icon!(icon_src_blob, icon_id)
-      return StaffPick.get_icon_url({:icon_id => icon_id, :size => size}.merge(options))
-      # save_icon_with_different_size!(icon_src_blob, icon_id, bucket)
+      return FeaturedContent.get_icon_url({:icon_id => icon_id, :size => size}.merge(options))
     end
- 
-    "http://www.tapjoy.com/images/ic_launcher_96x96.png"
   end
 
   def save_icon!(icon_src_blob, icon_id)
@@ -115,7 +113,7 @@ class StaffPick < ActiveRecord::Base
     existing_icon_blob = src_obj.exists? ? src_obj.read : ''
 
     return if Digest::MD5.hexdigest(icon_src_blob) == Digest::MD5.hexdigest(existing_icon_blob)
-    
+
     icon_256 = Magick::Image.from_blob(icon_src_blob)[0].resize(256, 256).opaque('#ffffff00', 'white')
     icon_obj = S3.bucket(BucketNames::TAPJOY).objects[icon_id]
 
@@ -137,7 +135,7 @@ class StaffPick < ActiveRecord::Base
     src_obj.write(:data => icon_src_blob, :acl => :public_read)
 
     Mc.delete("icon.s3.#{id}")
-    
+
     # Invalidate cloudfront
     if existing_icon_blob.present?
       begin
@@ -152,11 +150,10 @@ class StaffPick < ActiveRecord::Base
   private
 
   def author_required?
-    [ 'Staff Pick', 'Tapjoy News', 'Contest' ].include?(offer_type)
+    [ TYPES_MAP[STAFFPICK], TYPES_MAP[NEWS], TYPES_MAP[CONTEST] ].include?(featured_type)
   end
-  
+
   def offer_required?
-    [ 'Staff Pick', 'App Promo (FAAD)' ].include?(offer_type)
+    [ TYPES_MAP[STAFFPICK], TYPES_MAP[PROMO] ].include?(featured_type)
   end
-  
 end

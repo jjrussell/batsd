@@ -5,7 +5,7 @@
       .staff_img
         %img{:src => @featured_review.get_icon_url("#{@featured_review.id}_main") }
       .staff_meta
-        .offer_type.title= @featured_review.offer_type
+        .offer_type.title= @featured_review.featured_type
         .staff_name
           by
           %span.author
@@ -18,6 +18,6 @@
             %img{:src => @featured_review.get_icon_url("#{@featured_review.id}_secondary") }
           .app_text
             .app_title.title
-              = @featured_review.offer_title
+              = @featured_review.title
             .app_info
               = truncate(@featured_review.description, :length => 65)
