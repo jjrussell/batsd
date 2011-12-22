@@ -121,7 +121,7 @@ module ActionView
         html_classes = options[:class].nil? ? [] : options[:class].split(' ')
         html_classes << 'currency_field' unless html_classes.include?('currency_field')
         options.merge!({ :class => html_classes.join(' ') })
-        options.merge!({ :value => number_to_currency(object.send(field) / 100.0, number_options) }) unless object.send(field).nil?
+        options.merge!({ :value => ::NumberHelper.number_to_currency(object.send(field) / 100.0, number_options) }) unless object.send(field).nil?
         text_field(field, options)
       end
 
