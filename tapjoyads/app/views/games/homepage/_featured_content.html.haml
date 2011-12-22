@@ -1,33 +1,49 @@
 - if @featured_content.present?
-  .app_review.full
-    .app_item.clearfix
-      .app_image
-        %img{:src => @featured_content.get_icon_url("#{@featured_content.id}_secondary") }
-      .app_text
-        .app_title.title
-          = @featured_content.title
-        - app = App.find_by_id(@featured_content.offer_id) if @featured_content.offer_id.present?
-        - if app.present?
-          .app_meta.clearfix
-            .app_category
-              = app.primary_category
-            .app_rating_wrapper
-              .app_rating.hide{ :rating => app.user_rating }
+  - if @featured_content.featured_type == 'StaffPick' || @featured_content.featured_type == 'Promo'
+    .app_review.full
+      .app_item.clearfix
+        .app_image
+          %img{:src => @featured_content.get_icon_url("#{@featured_content.id}_secondary") }
+        .app_text
+          .app_title.title
+            = @featured_content.title
+          - app = App.find_by_id(@featured_content.offer_id) if @featured_content.offer_id.present?
+          - if app.present?
+            .app_meta.clearfix
+              .app_category
+                = app.primary_category
+              .app_rating_wrapper
+                .app_rating.hide{ :rating => app.user_rating }
         %div
         - if @featured_content.button_url.present?
           - link_to(@featured_content.button_url) do
             .button.grey
               = @featured_content.button_text
 
-    .review.clearfix
-      .staff_info.full
-        .staff_img
-          %img{:src => @featured_content.get_icon_url("#{@featured_content.id}_main") }
-        .staff_meta
-          .staff_name
-            %span.author
-              #{@featured_content.subtitle} says:
+      .review.clearfix
+        .staff_info.full
+          .staff_img
+            %img{:src => @featured_content.get_icon_url("#{@featured_content.id}_main") }
+          .staff_meta
+            .staff_name
+              %span.author
+                #{@featured_content.subtitle} says:
+
+        .review_text
+          -# TODO: Escape this text once we start supporting user reviews.
+          = "&#8220;#{@featured_content.description.gsub("\n", "<br>")}&#8221"
+  - else
+    .app_review.full
+      .app_item.clearfix
+        .app_image
+          %img{:src => @featured_content.get_icon_url("#{@featured_content.id}_secondary") }
+        .app_text
+          .app_title.title
+            = @featured_content.title
+          %div
+          - link_to(@featured_content.button_url) do
+            .button.grey
+              = @featured_content.button_text
 
       .review_text
-        -# TODO: Escape this text once we start supporting user reviews.
-        = "&#8220;#{@featured_content.description.gsub("\n", "<br>")}&#8221"
+        = @featured_content.description.gsub("\n", "<br>")

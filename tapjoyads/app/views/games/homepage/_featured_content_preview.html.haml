@@ -1,24 +1,49 @@
 - if @featured_content.present?
-  .feat_review.min
-    .feat_toggle.collaspe
-    .feat_content
-      .staff_info
-        .staff_img
-          %img{:src => @featured_content.get_icon_url("#{@featured_content.id}_main") }
-        .staff_meta
-          .offer_type.title= @featured_content.featured_type
-          .staff_name
-            by
-            %span.author
-              = @featured_content.subtitle
-      .app_review.hide
-        %a{ :href => "#", :class => "feat_app_url" }
-          .app_item.clearfix
-            .feat_arrow.right
-            .app_image
-              %img{:src => @featured_content.get_icon_url("#{@featured_content.id}_secondary") }
-            .app_text
-              .app_title.title
-                = @featured_content.title
-              .app_info
-                = truncate(@featured_content.description, :length => 65)
+  - if @featured_content.featured_type == 'StaffPick'
+    .feat_review.min
+      .feat_toggle.collaspe
+      .feat_content
+        .staff_info
+          .staff_img
+            %img{ :src => @featured_content.get_icon_url("#{@featured_content.id}_main"), :class => 'main_icon' }
+          .staff_meta
+            .staff_title
+            .staff_name
+              by
+              %span.author
+                = @featured_content.subtitle
+        .app_review.hide
+          %a{ :href => "#", :class => "feat_app_url" }
+            .app_item.clearfix
+              .feat_arrow.right
+              .app_image
+                %img{ :src => @featured_content.get_icon_url("#{@featured_content.id}_secondary"), :class => 'secondary_icon' }
+              .app_text
+                .app_title.title
+                  = @featured_content.title
+                .app_info
+                  = truncate(@featured_content.description, :length => 65)
+
+  - elsif @featured_content.featured_type == 'Promo'
+    .featured_content_wrapper
+      .featured_content
+        .clearfix
+          .app_review
+            %a{ :href => "#", :class => "feat_app_url" }
+              .app_item.clearfix
+                .feat_arrow.right
+                .app_image
+                  %img{ :src => @featured_content.get_icon_url("#{@featured_content.id}_secondary"), :class => 'secondary_icon' }
+                .app_text
+                  .app_title.title
+                    = @featured_content.title
+                  .app_info
+                    = @featured_content.title
+  - else
+    .featured_content_wrapper
+      %a{ :href => "#", :class => "feat_app_url" }
+        .featured_content.clearfix
+          %img{ :src => @featured_content.get_icon_url("#{@featured_content.id}_main"), :class => 'main_icon' }
+          .title= @featured_content.title
+          %div
+            = @featured_content.subtitle

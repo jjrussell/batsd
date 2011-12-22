@@ -19,12 +19,12 @@
         %td= featured_content.start_date.strftime("%m/%d/%Y")
         %td= featured_content.end_date.strftime("%m/%d/%Y")
         %td= featured_content.platforms
-        %td= featured_content.subtitle
         %td= featured_content.title
+        %td= featured_content.subtitle
         %td= featured_content.weight
         %td= link_to('Edit', edit_tools_featured_content_path(featured_content))
         %td= link_to('Delete', tools_featured_content_path(featured_content), :method => :delete, :confirm => "Delete featured_content?")
-        
+
 = will_paginate(list, :param_name => "#{list_name}_page")
 
 - content_for :page_javascript do
