@@ -144,7 +144,7 @@
   Upload custom creatives:
   %br
   - @custom_creative_sizes.each do |size_hash|
-    - label = "#{size_hash[:label_image_size]} creative"
+    - label = size_hash[:label_image_size]
     - label << " <em>(Pending approval)</em>" if @offer.has_banner_creative?(size_hash[:image_size]) and !@offer.banner_creative_approved?(size_hash[:image_size])
     %iframe.creative_upload{:src => upload_creative_app_offer_path(:id => @offer.id, :app => @app.id, :image_size => size_hash[:image_size], :label => label)}
 
