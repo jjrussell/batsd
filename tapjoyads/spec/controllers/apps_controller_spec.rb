@@ -1,4 +1,5 @@
 require 'spec/spec_helper'
+require 'fake_aws'
 
 describe AppsController do
   before :each do

@@ -1,4 +1,5 @@
 require 'spec/spec_helper'
+require 'fake_aws'
 
 describe Job::QueueSendCurrencyController do
   before :each do
