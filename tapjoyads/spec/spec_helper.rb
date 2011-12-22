@@ -35,3 +35,7 @@ def stub_offers
   Offer.any_instance.stubs(:save_icon!)
   Offer.any_instance.stubs(:sync_banner_creatives!)
 end
+
+def fake_aws
+  include FakeAws
+end
