@@ -64,6 +64,7 @@ class Offer < ActiveRecord::Base
   PAPAYA_OFFER_COLUMNS = "#{Offer.quoted_table_name}.id, #{App.quoted_table_name}.papaya_user_count"
 
   serialize :banner_creatives, Array
+  serialize :approved_banner_creatives, Array
 
   DISPLAY_AD_SIZES.each do |size|
     attr_accessor "banner_creative_#{size}_blob".to_sym
