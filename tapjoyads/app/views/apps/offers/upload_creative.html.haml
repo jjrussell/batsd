@@ -49,14 +49,6 @@
         return false;
       });
 
-      $('#approve_link').click(function() {
-        $('#spinner').show();
-        toggle_other_forms(true);
-        $('#approve_form_for_#{@image_size}')[0].submit();
-        $('#controls').fadeOut('fast');
-        return false;
-      });
-
       $('#upload_form').submit(function() {
         $('#spinner').show();
         toggle_other_forms(true);
