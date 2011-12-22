@@ -90,4 +90,4 @@ DEVICE_LINK_TRACKING_PIXEL = 'http://tapjoy.go2cloud.org/SL2P'
 
 Sass::Plugin.options[:style] = :compressed
 
-TAPJOY_GAMES_INVITATION_OFFER_ID = '70f54c6d-f078-426c-8113-d6e43ac06c6d'
+TAPJOY_GAMES_INVITATION_OFFER_ID = '3839e884-2310-4de4-873f-8b0ca44c1a1a'
