@@ -14,7 +14,7 @@ module ToolsHelper
     concat_li_currency('Pub', click.publisher_amount)
     concat_li_currency('Tj', click.tapjoy_amount)
     concat_li("Pub user ID", click.publisher_user_id) if click.publisher_user_id != click.udid
-    concat_li("UDID's for blocking", click.publisher_users.join('<BR/>')) if click.block_reason =~ /TooManyUdidsForPublisherUserId/
+    concat_li("UDID's for blocking", click.publisher_user_udids.join('<BR/>')) if click.block_reason =~ /TooManyUdidsForPublisherUserId/
     concat("</ul>")
   end
 

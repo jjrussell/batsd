@@ -51,7 +51,7 @@ class Click < SimpledbShardedResource
     !(new_record? || installed_at? || clicked_at < (Time.zone.now - 2.days))
   end
 
-  def publisher_users
+  def publisher_user_udids
     PublisherUser.new(:key => "#{publisher_app_id}.#{publisher_user_id}").udids
   end
 
