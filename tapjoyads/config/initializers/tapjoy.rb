@@ -32,7 +32,6 @@ SCHEMA_VERSION = ActiveRecord::Migrator.current_version
 DEV_FORUM_URL = 'https://groups.google.com/group/tapjoy-developer'
 KNOWLEDGE_CENTER_URL = 'http://knowledge.tapjoy.com/'
 TAPJOY_GAMES_REGISTRATION_OFFER_ID = 'f7cc4972-7349-42dd-a696-7fcc9dcc2d03'
-TAPJOY_GAMES_INVITATION_OFFER_ID = '114d3e0c-c8f3-4f42-b016-2b2f81723cd8'
 TAPJOY_GAMES_CURRENT_TOS_VERSION = 2
 TAPJOY_PARTNER_ID = '70f54c6d-f078-426c-8113-d6e43ac06c6d'
 
