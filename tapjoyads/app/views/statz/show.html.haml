@@ -120,6 +120,7 @@
     .currency
       %a.more{ :href => '#', :c_id => c.id } [Show more details]
       = link_to('[View Offer Wall]', "#{API_URL}/get_offers/webpage?app_id=#{@offer.id}&udid=statz_test_udid&publisher_user_id=testuser&currency_id=#{c.id}&device_type=#{@offer.item.platform}")
+      = link_to('[Non Rewarded Offer Wall]', "#{API_URL}/get_offers/webpage?app_id=#{@offer.id}&udid=statz_test_udid&publisher_user_id=testuser&currency_id=#{c.id}&device_type=#{@offer.item.platform}&non_rewarded=1")
       .details{ :id => "details_#{c.id}"}
         %table.properties
           - property_row('Tapjoy enabled', c.tapjoy_enabled?, nil, c.tapjoy_enabled? ? 'true' : 'warning')

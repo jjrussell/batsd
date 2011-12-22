@@ -122,6 +122,8 @@ private
     end
     @show_papaya = false
     @papaya_offers = {}
+
+    @non_rewarded = params[:non_rewarded] == '1'
   end
 
   def get_offer_list(type = nil)
@@ -141,7 +143,8 @@ private
       :source               => params[:source],
       :screen_layout_size   => params[:screen_layout_size],
       :video_offer_ids      => params[:video_offer_ids].to_s.split(','),
-      :all_videos           => params[:all_videos]
+      :all_videos           => params[:all_videos],
+      :non_rewarded         => @non_rewarded
     )
   end
 

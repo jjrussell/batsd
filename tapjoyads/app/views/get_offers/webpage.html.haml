@@ -7,7 +7,7 @@
 - if !@for_preview
   #top_box
     .explanation
-      - if @currency.conversion_rate > 0
+      - if !@non_rewarded && @currency.conversion_rate > 0
         = t('text.offerwall.instructions', :currency => @currency.name)
         - if params[:currency_selector] == '1' && @currencies.present? && @currencies.size > 1
           = render :partial => 'currency_selector'
