@@ -42,12 +42,18 @@
       $.ajax({
         url: $(this).attr('href'),
         accepts: 'application/json',
+        data: 'json',
         type: 'POST',
         success: function(data, textStatus, jqXHR) {
           creativeLinks.removeClass('disabled');
-          row.fadeOut('fast', function() {
-            row.remove();
-          });
+
+          if (data.success) {
+            row.fadeOut('fast', function() {
+              row.remove();
+            });
+          } else {
+            alert('There was a problem ' + verbage + ' the creative. Please try again.')
+          }
         },
         error: function(jqXHR, textStatus, errorThrown) {
           alert('There was a problem ' + verbage + ' the creative. Please try again.')
