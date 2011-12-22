@@ -2,7 +2,7 @@
   %ul
     -@external_publishers.each do |external_publisher|
       %li.offer_item.clearfix
-        - link_to("#", :id => external_publisher.currencies.first[:id], :class => "get_offerwall_jsonp", :jsonp_url => external_publisher.get_offerwall_url(@device, external_publisher.currencies.first, request.headers), :currency => external_publisher.currencies.first[:name], :app_name => external_publisher.app_name) do
+        - link_to("#", :id => external_publisher.currencies.first[:id], :class => "get_offerwall_jsonp", :jsonp_url => external_publisher.get_offerwall_url(@device, external_publisher.currencies.first, request.accept_language, request.user_agent), :currency => external_publisher.currencies.first[:name], :app_name => external_publisher.app_name) do
           .offer_image
             = image_tag(external_publisher.get_icon_url(:source => :cloudfront))
           .offer_text.clearfix
@@ -10,7 +10,7 @@
               = external_publisher.app_name
         .offer_info
         - external_publisher.currencies.each do |currency|
-          - link_to("#", :id => currency[:id], :class => "get_offerwall_jsonp", :jsonp_url => external_publisher.get_offerwall_url(@device, currency, request.headers), :currency => currency[:name], :app_name => external_publisher.app_name) do
+          - link_to("#", :id => currency[:id], :class => "get_offerwall_jsonp", :jsonp_url => external_publisher.get_offerwall_url(@device, currency, request.accept_language, request.user_agent), :currency => currency[:name], :app_name => external_publisher.app_name) do
             .currency_item.left
               .offer_button
                 .button.grey

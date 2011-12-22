@@ -13,6 +13,10 @@ class Employee < ActiveRecord::Base
     "#{first_name} #{last_name}"
   end
 
+  def dom_id
+    full_name.gsub(/\W/, '').downcase
+  end
+
   def photo_alt_name
     "#{first_name.downcase}_#{last_name.downcase}"
   end
@@ -38,16 +42,7 @@ class Employee < ActiveRecord::Base
     photo_blob = photo.to_blob{|i| i.format = 'PNG'}
 
     object.write(:data => photo_blob, :acl => :public_read)
-
-    # Invalidate cloudfront
-    if existing_photo_blob.present?
-      begin
-        acf = RightAws::AcfInterface.new
-        acf.invalidate('E1MG6JDV6GH0F2', ["/employee_photos/#{id}.png"], "#{id}.#{Time.now.to_i}")
-      rescue Exception => e
-        Notifier.alert_new_relic(FailedToInvalidateCloudfront, e.message)
-      end
-    end
+    CloudFront.invalidate(id, "employee_photos/#{id}.png") if existing_photo_blob.present?
   end
 
 end
