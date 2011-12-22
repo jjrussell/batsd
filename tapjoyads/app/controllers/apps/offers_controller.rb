@@ -114,7 +114,9 @@ class Apps::OffersController < WebsiteController
 
         if @email_managers
           approval_link = creative_tools_offers_url(:offer_id => @offer.id)
-          @offer.partner.account_managers.each do |mgr|
+          emails = @offer.partner.account_managers.map(&:email)
+          emails = ['support@tapjoy.com'] if emails.empty? # Default address if no managers are found
+          emails.each do |mgr|
             TapjoyMailer.deliver_approve_offer_creative(mgr.email, @offer, @app, approval_link)
           end
         end
