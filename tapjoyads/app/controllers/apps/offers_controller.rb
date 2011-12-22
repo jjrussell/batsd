@@ -92,12 +92,12 @@ class Apps::OffersController < WebsiteController
     modifying = true
     case request.method
       when :delete
-        @offer.remove_banner_creative @image_size
+        @offer.remove_banner_creative(@image_size)
       when :post
-        @offer.add_banner_creative @image_size
+        @offer.add_banner_creative(@image_size)
 
         if permitted_to?(:edit, :statz)
-          @offer.approve_banner_creative @image_size
+          @offer.approve_banner_creative(@image_size)
         else
           email_managers = true
         end
@@ -126,8 +126,8 @@ class Apps::OffersController < WebsiteController
       end
     end
 
-    @creative_exists = @offer.has_banner_creative? @image_size
-    @creative_approved = @offer.banner_creative_approved? @image_size
+    @creative_exists = @offer.has_banner_creative?(@image_size)
+    @creative_approved = @offer.banner_creative_approved?(@image_size)
     render :layout => 'simple'
   end
 

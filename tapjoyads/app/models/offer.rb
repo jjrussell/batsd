@@ -219,11 +219,11 @@ class Offer < ActiveRecord::Base
     super
   end
 
-  def has_banner_creative? size
-    self.banner_creatives.include? size
+  def has_banner_creative?(size)
+    self.banner_creatives.include?(size)
   end
 
-  def banner_creative_approved? size
+  def banner_creative_approved?(size)
     has_banner_creative?(size) && self.approved_banner_creatives.include?(size)
   end
 
@@ -233,20 +233,20 @@ class Offer < ActiveRecord::Base
     end
   end
 
-  def remove_banner_creative size
-    return unless has_banner_creative? size
+  def remove_banner_creative(size)
+    return unless has_banner_creative?(size)
     self.banner_creatives = banner_creatives.reject { |c| c == size }
     self.approved_banner_creatives = approved_banner_creatives.reject { |c| c == size }
   end
 
-  def add_banner_creative size
-    return if has_banner_creative? size
+  def add_banner_creative(size)
+    return if has_banner_creative?(size)
     self.banner_creatives += [size]
   end
 
-  def approve_banner_creative size
-    return unless has_banner_creative? size
-    return if banner_creative_approved? size
+  def approve_banner_creative(size)
+    return unless has_banner_creative?(size)
+    return if banner_creative_approved?(size)
     self.approved_banner_creatives += [size]
   end
 

@@ -32,7 +32,7 @@ class Tools::OffersController < WebsiteController
     success = false
 
     if @offer
-      @offer.approve_banner_creative params[:size]
+      @offer.approve_banner_creative(params[:size])
       success = @offer.save
     end
 
@@ -44,7 +44,7 @@ class Tools::OffersController < WebsiteController
     success = false
 
     if @offer
-      @offer.remove_banner_creative params[:size]
+      @offer.remove_banner_creative(params[:size])
       success = @offer.save
     end
 
