@@ -83,7 +83,9 @@ body.old #jqt {
 .dialog_content a, .dialog_content a:visited {
   color: #C1C1C1;
 }
-
+.dialog_content .button {
+  display: block;
+}
 .image_loader_wrapper {
   background-color: #333;
   margin: 6px auto;
