@@ -119,9 +119,10 @@ class RecommendationList
   private
 
   def recommendation_reject?(offer)
-    (@store_ids.include?(offer.store_id_for_feed) || offer.recommendation_reject?(@device, @device_type, @geoip_data, @os_version)).tap do |rejected|
-      @store_ids << offer.store_id_for_feed unless rejected || offer.store_id_for_feed.blank?
-    end
+    rejected = @store_ids.include?(offer.store_id_for_feed) || offer.recommendation_reject?(@device, @device_type, @geoip_data, @os_version)
+    @store_ids << offer.store_id_for_feed unless rejected || offer.store_id_for_feed.blank?
+
+    rejected
   end
 
 end
