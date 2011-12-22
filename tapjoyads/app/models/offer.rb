@@ -619,7 +619,7 @@ class Offer < ActiveRecord::Base
       "`updated-at` < '#{end_time.to_f}'",
       "`updated-at` >= '#{start_time.to_f}'",
     ].join(' and ')
-    return SupportRequest.count(:where => conditions)
+    SupportRequest.count(:where => conditions)
   end
 
   def num_clicks_rewarded(start_time = 1.day.ago, end_time = Time.zone.now)
@@ -632,7 +632,7 @@ class Offer < ActiveRecord::Base
     Click.select_all(:conditions => conditions) do |click|
       num_clicks_rewarded += 1 if click.successfully_rewarded?
     end
-    return num_clicks_rewarded
+    num_clicks_rewarded
   end
 
   def support_request_rewards_ratio
