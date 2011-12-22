@@ -200,4 +200,20 @@ class TapjoyMailer < ActionMailer::Base
     subject "New Custom Creative requires approval"
     body(:offer => offer, :app => app, :approval_url => approval_link)
   end
+
+  def offer_creative_approved(email_address, offer, size, offer_link)
+    from 'Tapjoy <noreply@tapjoy.com>'
+    recipients email_address
+    content_type 'text/html'
+    subject "Custom creative has been approved!"
+    body(:offer => offer, :size => size, :offer_url => offer_link)
+  end
+
+  def offer_creative_rejected(email_address, offer, size, offer_link)
+    from 'Tapjoy <noreply@tapjoy.com>'
+    recipients email_address
+    content_type 'text/html'
+    subject "Custom creative has been rejected!"
+    body(:offer => offer, :size => size, :offer_url => offer_link)
+  end
 end

@@ -33,7 +33,7 @@ class Tools::OffersController < WebsiteController
 
     if @offer
       @offer.approve_banner_creative(params[:size])
-      success = @offer.save
+      creative_email(:approved, @offer) if success = @offer.save
     end
 
     render :json => {:success => success}
@@ -45,10 +45,17 @@ class Tools::OffersController < WebsiteController
 
     if @offer
       @offer.remove_banner_creative(params[:size])
-      success = @offer.save
+      creative_email(:rejected, @offer) if success = @offer.save
     end
 
     render :json => {:success => success}
+  end
+
+  private
+  def creative_email(status, offer)
+    app = App.find(offer.item_id)
+    offer_link = edit_app_offer_url(:id => offer.id, :app_id => app.id)
+    TapjoyMailer.send("deliver_offer_creative_#{status}", offer.partner.contact_email, offer, params[:size], offer_link)
   end
 end
 
