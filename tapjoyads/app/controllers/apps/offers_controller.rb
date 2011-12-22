@@ -86,7 +86,7 @@ class Apps::OffersController < WebsiteController
   def upload_creative
     @image_size = params[:image_size]
     @label = params[:label]
-    @email_managers = false
+    email_managers = false
     image_data = params[:offer]["custom_creative_#{@image_size}".to_sym].read rescue nil
 
     modifying = true
@@ -99,7 +99,7 @@ class Apps::OffersController < WebsiteController
         if permitted_to?(:edit, :statz)
           @offer.approve_banner_creative @image_size
         else
-          @email_managers = true
+          email_managers = true
         end
       when :put
         # do nothing
@@ -112,7 +112,7 @@ class Apps::OffersController < WebsiteController
       if @offer.save
         @success_message = "File #{request.method == :delete ? 'removed' : 'uploaded'} successfully."
 
-        if @email_managers
+        if email_managers
           approval_link = creative_tools_offers_url(:offer_id => @offer.id)
           emails = @offer.partner.account_managers.map(&:email)
           emails = ['support@tapjoy.com'] if emails.empty? # Default address if no managers are found
