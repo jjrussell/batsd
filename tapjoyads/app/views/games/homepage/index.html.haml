@@ -9,12 +9,12 @@
             = render 'register_device'
       - elsif @external_publishers.blank?
         .content_wrapper
-          = render 'featured_review_preview'
+          = render 'featured_content_preview'
           .content
             = render 'no_games'
       - else
         .content_wrapper
-          = render 'featured_review_preview'
+          = render 'featured_content_preview'
           .content
             = render 'my_apps'
             = render(:partial => 'games/gamers/invite_friends')
@@ -24,7 +24,7 @@
       = render :partial => 'nav_bar', :locals => { :show_device => true, :active => 'back', :back_button_destination => '#home' }
       .content_wrapper
         #feat_app.content
-          = render 'featured_review'
+          = render 'featured_content'
 
   #earn
     .page
