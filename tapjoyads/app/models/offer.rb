@@ -530,30 +530,33 @@ class Offer < ActiveRecord::Base
     [ val, (price * 0.50).round ].max
   end
 
-  def create_clone(featured, rewarded)
-    offer = self.clone
-    offer.attributes = {
+  def create_clone(options = {})
+    @featured = options[:featured]
+    @rewarded = options[:rewarded]
+
+    @offer = self.clone
+    @offer.attributes = {
       :created_at => nil,
       :updated_at => nil,
-      :featured   => featured,
-      :rewarded   => rewarded,
-      :name_suffix => "#{rewarded ? '' : 'non-'}rewarded#{featured ? ' featured': ''}",
+      :featured   => !@featured.nil? ? @featured : self.featured,
+      :rewarded   => !@rewarded.nil? ? @rewarded : self.rewarded,
+      :name_suffix => "#{@rewarded ? '' : 'non-'}rewarded#{@featured ? ' featured': ''}",
       :tapjoy_enabled => false }
-    offer.bid = offer.min_bid
-    offer.save!
-    offer
+    @offer.bid = @offer.min_bid
+    @offer.save!
+    @offer
   end
 
   def create_non_rewarded_featured_clone
-    create_clone true, false
+    create_clone :featured => true, :rewarded => false
   end
 
   def create_rewarded_featured_clone
-    create_clone true, true
+    create_clone :featured => true, :rewarded => true
   end
 
   def create_non_rewarded_clone
-    create_clone false, false
+    create_clone :featured => false, :rewarded => false
   end
 
   def needs_more_funds?
