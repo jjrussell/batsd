@@ -30,7 +30,6 @@ class FeaturedContent < ActiveRecord::Base
   named_scope :for_featured_type, lambda { |featured_type| { :conditions => [ "featured_type = ?", featured_type ] } }
 
   json_set_field :platforms
-  memoize :get_platforms
 
   def self.featured_contents(platform)
     platform = 'iphone' unless %w(android iphone).include?(platform)
