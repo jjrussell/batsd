@@ -33,12 +33,20 @@
               .app_item.clearfix
                 .feat_arrow.right
                 .app_image
-                  %img{ :src => @featured_content.get_icon_url("#{@featured_content.id}_secondary"), :class => 'secondary_icon' }
+                  %img{ :src => @featured_content.get_icon_url("#{@featured_content.id}_main"), :class => 'secondary_icon' }
                 .app_text
                   .app_title.title
-                    = @featured_content.title
+                    = @featured_content.subtitle
                   .app_info
                     = @featured_content.title
+  - elsif @featured_content.featured_type == 'Contest'
+    .featured_content_wrapper
+      %a{ :href => "#", :class => "feat_app_url" }
+        .featured_content.clearfix
+          %img{ :src => @featured_content.get_icon_url("#{@featured_content.id}_secondary"), :class => 'main_icon' }
+          .title= @featured_content.title
+          %div
+            = @featured_content.subtitle
   - else
     .featured_content_wrapper
       %a{ :href => "#", :class => "feat_app_url" }

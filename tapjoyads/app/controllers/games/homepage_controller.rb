@@ -27,7 +27,8 @@ class Games::HomepageController < GamesController
         @offerwall_external_publisher = ExternalPublisher.new(currency) if @show_offerwall
       end
     end
-    @featured_content = FeaturedContent.random_select(FeaturedContent.featured_contents(@device.try(:platform)))
+    featured_contents = FeaturedContent.featured_contents(@device.try(:platform)).to_a
+    @featured_content = featured_contents.weighted_rand(featured_contents.map(&:weight))
 
     if params[:load] == 'more_apps'
       @show_more_apps = true

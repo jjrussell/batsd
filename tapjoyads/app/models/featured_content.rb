@@ -33,26 +33,6 @@ class FeaturedContent < ActiveRecord::Base
   json_set_field :platforms
   memoize :get_platforms
 
-  def self.random_select(featured_contents)
-    total = featured_contents.inject(0){|sum, featured_content| sum + featured_content.weight}
-    percentages = featured_contents.map do |featured_content|
-      (featured_content.weight/total) * 100
-    end
-
-    current = 0
-    ranges = []
-    percentages.each do |percentage|
-      ranges << current + percentage
-      current = percentage
-    end
-
-    random_number = rand(total)
-    ranges.each_with_index do |range, index|
-      return featured_contents[index] if random_number < range
-    end
-    return featured_contents[0]
-  end
-
   def self.featured_contents(platform)
     platform = 'iphone' unless %w(android iphone).include?(platform)
     Mc.get_and_put("featured_contents.#{platform}", false, 1.day) do

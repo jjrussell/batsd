@@ -289,13 +289,13 @@ ActiveRecord::Schema.define(:version => 20111214000157) do
     t.string   "author_id",          :limit => 36
     t.string   "featured_type",                                   :null => false
     t.text     "platforms",                                       :null => false
-    t.string   "subtitle",                                        :null => false
-    t.string   "title",                                           :null => false
+    t.text     "subtitle",                                        :null => false
+    t.text     "title",                                           :null => false
     t.text     "description",                                     :null => false
-    t.string   "main_icon_url"
-    t.string   "secondary_icon_url"
-    t.string   "button_text"
-    t.string   "button_url"
+    t.text     "main_icon_url"
+    t.text     "secondary_icon_url"
+    t.text     "button_text"
+    t.text     "button_url"
     t.date     "start_date",                                      :null => false
     t.date     "end_date",                                        :null => false
     t.integer  "weight",                           :default => 0, :null => false
