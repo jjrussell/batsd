@@ -192,7 +192,6 @@
       function toggleAppSelect() {
         if(type == TYPES.NEWS || type == TYPES.CONTEST){
           $(".app_select").addClass("hidden");
-          $("#featured_content_button_text").val('');
         }else{
           $(".app_select").removeClass("hidden");
           $("#featured_content_button_text").val("Download now!");
@@ -204,11 +203,9 @@
         $("#featured_content_subtitle").val('');
         if(type == TYPES.PROMO){
           $(".author_select").addClass("hidden");
-          $("#featured_content_subtitle").val('');
           $("#featured_content_title").val('Free App of the Day');
         }
         else {
-          $("#featured_content_title").val('');
           if (type == TYPES.CONTEST) {
             $(".author_select").addClass("hidden");
           }
