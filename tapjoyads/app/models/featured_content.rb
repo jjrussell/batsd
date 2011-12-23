@@ -1,6 +1,5 @@
 class FeaturedContent < ActiveRecord::Base
   include UuidPrimaryKey
-  acts_as_cacheable
 
   STAFFPICK = 0
   NEWS      = 1
@@ -35,7 +34,7 @@ class FeaturedContent < ActiveRecord::Base
 
   def self.featured_contents(platform)
     platform = 'iphone' unless %w(android iphone).include?(platform)
-    Mc.get_and_put("featured_contents.#{platform}", false, 1.day) do
+    Mc.get_and_put("featured_contents.#{platform}", false, 1.hour) do
       now = Time.now.utc
       featured_contents =  FeaturedContent.active(now).for_platform(platform) ||
                 FeaturedContent.upcoming.for_platform(platform) ||
