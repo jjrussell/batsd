@@ -3,6 +3,10 @@ class DisplayAdController < ApplicationController
   before_filter :set_device_type, :set_publisher_user_id, :setup, :except => :image
 
   def index
+    respond_to do |format|
+      format.xml {}
+      format.json {}
+    end
   end
 
   def webview
