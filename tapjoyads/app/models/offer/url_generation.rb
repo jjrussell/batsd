@@ -61,7 +61,8 @@ module Offer::UrlGeneration
     elsif item_type == 'EmailOffer'
       final_url += "&publisher_app_id=#{publisher_app_id}"
     elsif item_type == 'GenericOffer'
-      final_url.gsub!('TAPJOY_GENERIC_INVITE', click_key.to_s.split('.')[1])
+      advertiser_app_id = click_key.to_s.split('.')[1]
+      final_url.gsub!('TAPJOY_GENERIC_INVITE', advertiser_app_id) if advertiser_app_id
       final_url.gsub!('TAPJOY_GENERIC', click_key.to_s)
       if has_variable_payment?
         extra_params = {
