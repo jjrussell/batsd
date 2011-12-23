@@ -298,8 +298,8 @@ ActiveRecord::Schema.define(:version => 20111213101816) do
   add_index "gamer_devices", ["id"], :name => "index_gamer_devices_on_id", :unique => true
 
   create_table "gamer_profiles", :id => false, :force => true do |t|
-    t.string   "id",                     :limit => 36,                    :null => false
-    t.string   "gamer_id",               :limit => 36,                    :null => false
+    t.string   "id",                     :limit => 36,                         :null => false
+    t.string   "gamer_id",               :limit => 36,                         :null => false
     t.string   "gender"
     t.date     "birthdate"
     t.string   "city"
@@ -589,6 +589,7 @@ ActiveRecord::Schema.define(:version => 20111213101816) do
     t.text     "regions",                                                                                          :null => false
     t.boolean  "instructions_overridden",                                                       :default => false, :null => false
     t.boolean  "tapjoy_sponsored",                                                              :default => false, :null => false
+    t.boolean  "tj_games_only",                                                                 :default => false, :null => false
   end
 
   add_index "offers", ["id"], :name => "index_offers_on_id", :unique => true
