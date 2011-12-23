@@ -3,7 +3,7 @@
 %h1
   All Apps Featured Content
 
-  = button_to "Create New", new_tools_featured_content_path
+= link_to "Create New", new_tools_featured_content_path
 
 %br
 = render :partial => 'list', :object => @active_featured_contents, :locals => { :list_name => :active }
