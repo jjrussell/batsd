@@ -32,7 +32,7 @@
         .review_text
           -# TODO: Escape this text once we start supporting user reviews.
           = "&#8220;#{@featured_content.description.gsub("\n", "<br>")}&#8221"
-  - if @featured_content.featured_type == 'Promo'
+  - elsif @featured_content.featured_type == 'Promo'
     .app_review.full
       .app_item.clearfix
         .app_image
