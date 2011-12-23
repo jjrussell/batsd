@@ -427,6 +427,9 @@ input[type=email]:focus, input[type=password]:focus, input[type=text]:focus {
             .button {
               margin: 0 auto;
             }
+            .continue_link_device {
+              text-align: center;
+            }
           }
         }
         .loading_animation {
@@ -835,7 +838,6 @@ body.old .content_box {
     position: relative;
     margin: 8px auto 0;
     text-shadow: 0 1px 1px #444;
-    width: 60px;
     @include inset-button(16px, 8px 10px);
     @include inset-shadow;
     @include gradient(#CF1623, #EA1927);
