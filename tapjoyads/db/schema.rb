@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20111213101816) do
+ActiveRecord::Schema.define(:version => 20111214000157) do
 
   create_table "action_offers", :id => false, :force => true do |t|
     t.string   "id",                    :limit => 36,                    :null => false
@@ -282,6 +282,29 @@ ActiveRecord::Schema.define(:version => 20111213101816) do
   add_index "enable_offer_requests", ["id"], :name => "index_enable_offer_requests_on_id", :unique => true
   add_index "enable_offer_requests", ["offer_id"], :name => "index_enable_offer_requests_on_offer_id"
   add_index "enable_offer_requests", ["status"], :name => "index_enable_offer_requests_on_status"
+
+  create_table "featured_contents", :id => false, :force => true do |t|
+    t.string   "id",                 :limit => 36,                :null => false
+    t.string   "offer_id",           :limit => 36
+    t.string   "author_id",          :limit => 36
+    t.string   "featured_type",                                   :null => false
+    t.text     "platforms",                                       :null => false
+    t.text     "subtitle",                                        :null => false
+    t.text     "title",                                           :null => false
+    t.text     "description",                                     :null => false
+    t.text     "main_icon_url"
+    t.text     "secondary_icon_url"
+    t.text     "button_text"
+    t.text     "button_url"
+    t.date     "start_date",                                      :null => false
+    t.date     "end_date",                                        :null => false
+    t.integer  "weight",                           :default => 0, :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "featured_contents", ["featured_type"], :name => "index_featured_contents_on_featured_type"
+  add_index "featured_contents", ["id"], :name => "index_featured_contents_on_id", :unique => true
 
   create_table "gamer_devices", :id => false, :force => true do |t|
     t.string   "id",          :limit => 36, :null => false
