@@ -5,6 +5,8 @@ def read_asset(name, directory='banner_ads')
 end
 
 describe DisplayAdController do
+  integrate_views
+
   describe "hitting display ad controller" do
     before :each do
       RailsCache.stubs(:get).returns(nil)
