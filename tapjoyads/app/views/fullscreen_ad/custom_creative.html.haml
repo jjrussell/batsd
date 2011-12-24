@@ -74,8 +74,8 @@
           } else if(preferredCreative.orientation != client.orientation) {
             // If we haven't found a creative whose orientation matches the client, find the best
             // fitting creative to show in the 'wrong' orientation
-            if((creative.orientation == 'portrait' && Math.abs(vertMarginPercent) <= Math.abs(minVertMarginPercent)) ||
-               (creative.orientation == 'landscape' && Math.abs(horizMarginPercent) <= Math.abs(minHorizMarginPercent))) {
+            if((creative.orientation == 'portrait' && Math.abs(creative.vertMarginPercent) <= Math.abs(creative.minVertMarginPercent)) ||
+               (creative.orientation == 'landscape' && Math.abs(creative.horizMarginPercent) <= Math.abs(creative.minHorizMarginPercent))) {
               preferredCreative = creative;
             }
           }
