@@ -24,18 +24,3 @@ end
 
 Spork.each_run do
 end
-
-def stub_offers
-  mock_bucket = mock()
-  mock_image = mock()
-  mock_image.stubs(:read).returns('fake image')
-  mock_hash = { 'icons/checkbox.jpg' => mock_image }
-  mock_bucket.stubs(:objects).returns(mock_hash)
-  S3.stubs(:bucket).returns(mock_bucket)
-  Offer.any_instance.stubs(:save_icon!)
-  Offer.any_instance.stubs(:sync_banner_creatives!)
-end
-
-def fake_aws
-  include FakeAws
-end
