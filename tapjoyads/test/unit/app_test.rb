@@ -15,14 +15,17 @@ class AppTest < ActiveSupport::TestCase
 
   context "An App" do
     setup do
-      @app = Factory(:app, :price => 200)
+      @app = Factory(:app)
+      @app.app_metadatas << Factory(:app_metadata, :price => 200)
+      @app.save!
     end
     should "update its offers' bids when its price changes" do
       offer = @app.primary_offer
       current_offer_bid = offer.bid
-      @app.update_attributes({:price => 400})
+      @app.primary_app_metadata.update_attributes({:price => 400})
       offer.reload
       assert_equal 200, offer.bid
+      assert_equal 400, offer.price
     end
   end
 
@@ -30,6 +33,8 @@ class AppTest < ActiveSupport::TestCase
     setup do
       @action_offer = Factory(:action_offer)
       @app = @action_offer.app
+      @app_metadata = Factory(:app_metadata, :price => 200)
+      @app.app_metadatas << @app_metadata
     end
 
     should "update action offer hidden field" do
@@ -41,10 +46,11 @@ class AppTest < ActiveSupport::TestCase
     end
 
     should "update action offer bids when its price changes" do
-      @app.update_attributes({:price => 400})
+      @app_metadata.update_attributes({:price => 400})
       @action_offer.reload
       offer = @action_offer.primary_offer
       assert_equal 200, offer.bid
+      assert_equal 400, offer.price
     end
 
     should "not update action offer bids if has prerequisite offer" do
@@ -52,7 +58,7 @@ class AppTest < ActiveSupport::TestCase
       @action_offer.save
       offer = @action_offer.primary_offer
       current_offer_bid = offer.bid
-      @app.update_attributes({:price => 400})
+      @app_metadata.update_attributes({:price => 450})
       offer.reload
       assert_equal 35, offer.bid
     end

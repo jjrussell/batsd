@@ -74,6 +74,7 @@ class App < ActiveRecord::Base
   has_one :primary_non_rewarded_offer, :class_name => 'Offer', :as => :item, :conditions => "not rewarded", :order => "created_at"
   has_many :app_metadata_mappings
   has_many :app_metadatas, :through => :app_metadata_mappings
+  has_one :primary_app_metadata, :through => :app_metadata_mappings, :source => :app_metadata, :order => "created_at"
   has_many :app_reviews
 
   belongs_to :partner
@@ -84,18 +85,22 @@ class App < ActiveRecord::Base
   before_validation_on_create :generate_secret_key
 
   after_create :create_primary_offer
-  after_create :create_app_metadata
   after_update :update_offers
-  after_update :update_rating_offer
-  after_update :update_action_offers
   after_update :update_currencies
-  after_update :update_app_metadata
 
   named_scope :visible, :conditions => { :hidden => false }
   named_scope :by_platform, lambda { |platform| { :conditions => ["platform = ?", platform] } }
   named_scope :by_partner_id, lambda { |partner_id| { :conditions => ["partner_id = ?", partner_id] } }
 
   delegate :conversion_rate, :to => :primary_currency, :prefix => true
+  delegate :store_id, :description, :age_rating, :file_size_bytes, :supported_devices, :supported_devices?, :released_at, :user_rating, :to => :primary_app_metadata, :allow_nil => true
+
+  TO_BE_DELETED = %w(description price store_id age_rating file_size_bytes supported_devices released_at user_rating categories)
+  def self.columns
+    super.reject do |c|
+      TO_BE_DELETED.include?(c.name)
+    end
+  end
 
   def is_ipad_only?
     supported_devices? && JSON.load(supported_devices).all?{ |i| i.match(/^ipad/i) }
@@ -133,14 +138,6 @@ class App < ActiveRecord::Base
     PLATFORM_DETAILS[platform][:store_url].sub('STORE_ID', store_id.to_s)
   end
 
-  def categories=(arr)
-    write_attribute(:categories, arr.join(';'))
-  end
-
-  def categories
-    (read_attribute(:categories)||'').split(';')
-  end
-
   def primary_category
     categories.first.humanize if categories.present?
   end
@@ -159,27 +156,21 @@ class App < ActiveRecord::Base
   end
 
   ##
-  # Grab data from the app store and mutate self with data.
-  def fill_app_store_data(country=nil)
-    return {} if store_id.blank?
-    data = AppStore.fetch_app_by_id(store_id, platform, country)
+  # Grab data from the app store and update app and metadata objects.
+  def update_from_store(app_store_id, country=nil)
+    data = AppStore.fetch_app_by_id(app_store_id, platform, country)
     if (data.nil?) # might not be available in the US market
-      data = AppStore.fetch_app_by_id(store_id, platform, primary_country)
+      data = AppStore.fetch_app_by_id(app_store_id, platform, primary_country)
     end
     raise "Fetching app store data failed for app: #{name} (#{id})." if data.nil?
-    self.name                = data[:title]
-    self.price               = (data[:price].to_f * 100).round
-    self.description         = data[:description]
-    self.age_rating          = data[:age_rating]
-    self.file_size_bytes     = data[:file_size_bytes]
-    self.released_at         = data[:released_at]
-    self.user_rating         = data[:user_rating]
-    self.categories          = data[:categories]
-    self.supported_devices   = data[:supported_devices].present? ? data[:supported_devices].to_json : nil
-    self.countries_blacklist = AppStore.prepare_countries_blacklist(store_id, platform)
-
-    download_icon(data[:icon_url]) unless new_record?
+    fill_app_store_data(data)
     data
+  end
+
+  def fill_app_store_data(data)
+    self.name = data[:title]
+    self.countries_blacklist = AppStore.prepare_countries_blacklist(store_id, platform)
+    download_icon(data[:icon_url]) unless new_record?
   end
 
   def download_icon(url)
@@ -250,6 +241,49 @@ class App < ActiveRecord::Base
     PLATFORM_DETAILS[platform][:screen_layout_sizes].nil? ? [] : PLATFORM_DETAILS[platform][:screen_layout_sizes].sort{ |a,b| a[1] <=> b[1] }
   end
 
+  def price
+    primary_app_metadata.nil? ? 0 : primary_app_metadata.price
+  end
+
+  def categories
+    primary_app_metadata.nil? ? [] : primary_app_metadata.categories
+  end
+
+  def find_or_initialize_app_metadata(app_store_id)
+    app_metadata = AppMetadata.find_by_store_name_and_store_id(store_name, app_store_id)
+    if app_metadata.nil?
+      app_metadata = AppMetadata.new(
+        :store_name => store_name,
+        :store_id => app_store_id
+      )
+    end
+    app_metadata
+  end
+
+  def update_app_metadata(app_store_id)
+    app_metadata = primary_app_metadata
+    if app_metadata.nil?
+      # app changed from not live to live status, need to create metadata record
+      app_metadata = find_or_initialize_app_metadata(app_store_id)
+      app_metadatas << app_metadata
+    else
+      if app_metadata.store_id != app_store_id
+        # app_metadata record points to the wrong store_id -- update to correct record, creating if necessary
+        app_metadata = find_or_initialize_app_metadata(app_store_id)
+        app_metadata.save! if app_metadata.new_record?
+
+        mapping = app_metadata_mappings.first
+        mapping.app_metadata_id = app_metadata.id
+        mapping.save!
+        # do we need to remove any app_metadatas records that are no longer associated to any apps?
+      end
+    end
+    app_metadata
+  end
+
+  def update_primary_app_metadata
+    primary_app_metadata.update_metadata_from_store if primary_app_metadata.present?
+  end
 private
 
   def generate_secret_key
@@ -278,42 +312,38 @@ private
   end
 
   def update_offers
+    change_in_price = false
+    change_in_store_id = false
     offers.each do |offer|
       offer.partner_id = partner_id if partner_id_changed?
       offer.name = name if name_changed? && name_was == offer.name
-      if price_changed?
+      if offer.price != price
+        change_in_price = true
         offer.price = price
         offer.bid = offer.min_bid if offer.bid < offer.min_bid
         offer.bid = offer.max_bid if offer.bid > offer.max_bid
       end
-      offer.url = store_url if store_id_changed? && !offer.url_overridden?
-      offer.third_party_data = store_id if store_id_changed?
-      offer.age_rating = age_rating if age_rating_changed?
+      if offer.third_party_data != store_id
+        change_in_store_id = true
+        offer.third_party_data = store_id
+        offer.device_types = get_offer_device_types.to_json
+      end
+      offer.url = store_url if change_in_store_id && !offer.url_overridden?
+      offer.age_rating = age_rating if offer.age_rating != age_rating
       offer.hidden = hidden if hidden_changed?
       offer.tapjoy_enabled = false if hidden? && hidden_changed?
-      offer.device_types = get_offer_device_types.to_json if store_id_changed?
       offer.save! if offer.changed?
     end
 
     action_offers.each do |action_offer|
       action_offer.partner_id = partner_id if partner_id_changed?
       action_offer.hidden = hidden if hidden_changed?
-      action_offer.save! if action_offer.changed? || price_changed?
+      action_offer.save! if action_offer.changed? || change_in_price || change_in_store_id
     end
-  end
 
-  def update_rating_offer
-    if (name_changed? || store_id_changed? || partner_id_changed?) && rating_offer.present?
+    if (name_changed? || change_in_store_id || partner_id_changed?) && rating_offer.present?
       rating_offer.partner_id = partner_id if partner_id_changed?
       rating_offer.save!
-    end
-  end
-
-  def update_action_offers
-    if store_id_changed?
-      action_offers.each do |action_offer|
-        action_offer.save!
-      end
     end
   end
 
@@ -326,62 +356,4 @@ private
       end
     end
   end
-
-  def create_app_metadata
-    return unless store_id.present?
-
-    app_metadata = AppMetadata.find_by_store_name_and_store_id(store_name, store_id)
-    if app_metadata.nil?
-      # only create this record if one doesn't already exist for this store and store_id
-      app_metadata = AppMetadata.new(
-        :store_name => store_name,
-        :store_id   => store_id
-      )
-    end
-    fill_app_metadata(app_metadata)
-
-    app_metadata.apps << self
-  end
-
-  def update_app_metadata
-    return unless store_id.present?
-
-    mapping = AppMetadataMapping.find(:first, :joins => :app_metadata, :conditions => ["app_id = ? and #{AppMetadata.quoted_table_name}.store_name = ?", id, store_name])
-
-    if mapping.nil?
-      # app changed from not live to live status, need to create metadata records
-      create_app_metadata
-    else
-      if mapping.app_metadata.store_id != store_id
-        # app_metadata record points to the wrong store_id -- update to correct record, creating if necessary
-        new_metadata = AppMetadata.find_by_store_name_and_store_id(store_name, store_id)
-        if new_metadata.nil?
-          new_metadata = AppMetadata.create!(
-            :store_name => store_name,
-            :store_id   => store_id
-          )
-        end
-
-        mapping = AppMetadataMapping.find(mapping.id)
-        mapping.app_metadata_id = new_metadata.id
-        mapping.save!
-        # do we need to remove any app_metadatas records that are no longer associated to any apps?
-      end
-      fill_app_metadata(mapping.app_metadata)
-    end
-  end
-
-  def fill_app_metadata(app_metadata)
-    app_metadata.name               = name
-    app_metadata.price              = price
-    app_metadata.description        = description
-    app_metadata.age_rating         = age_rating
-    app_metadata.file_size_bytes    = file_size_bytes
-    app_metadata.released_at        = released_at
-    app_metadata.user_rating        = user_rating
-    app_metadata.categories         = categories
-    app_metadata.supported_devices  = supported_devices
-    app_metadata.save!
-  end
-
 end

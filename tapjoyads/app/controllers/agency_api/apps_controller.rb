@@ -42,13 +42,14 @@ class AgencyApi::AppsController < AgencyApiController
     app.partner = @partner
     app.name = params[:name]
     app.platform = params[:platform]
-    app.store_id = params[:store_id] if params[:store_id].present?
-    unless app.valid?
-      render_error(app.errors, 400)
-      return
+    if params[:store_id].present?
+      app_metadata = app.find_or_initialize_app_metadata(params[:store_id])
+      app.app_metadatas << app_metadata
     end
-    app.save!
-    Sqs.send_message(QueueNames::GET_STORE_INFO, app.id) if params[:store_id].present?
+    unless app.save
+      render_error(app.errors, 400) and return
+    end
+    app.update_primary_app_metadata
 
     save_activity_logs
     render_success({ :app_id => app.id, :app_secret_key => app.secret_key })
@@ -67,13 +68,16 @@ class AgencyApi::AppsController < AgencyApiController
 
     log_activity(app)
     app.name = params[:name] if params[:name].present?
-    app.store_id = params[:store_id] if params[:store_id].present?
-    unless app.valid?
-      render_error(app.errors, 400)
-      return
+    original_store_id = app.store_id
+    app_store_id_changed = false
+    if params[:store_id].present?
+      app.update_app_metadata(params[:store_id])
+      app_store_id_changed = (original_store_id != params[:store_id])
     end
-    Sqs.send_message(QueueNames::GET_STORE_INFO, app.id) if app.store_id_changed?
-    app.save!
+    unless app.save
+      render_error(app.errors, 400) and return
+    end
+    app.primary_app_metadata.update_metadata_from_store if app_store_id_changed
 
     save_activity_logs
     render_success

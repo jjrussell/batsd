@@ -51,11 +51,15 @@ FactoryGirl.define do
     year  { Date.today.year }
   end
 
+  factory :app_metadata do
+    store_name 'App Store'
+    store_id 123
+  end
+
   factory :app do
     association :partner
     name { Factory.next(:name) }
     platform 'iphone'
-    store_id 'whatevs'
   end
 
   factory :enable_offer_request do
