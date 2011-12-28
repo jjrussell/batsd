@@ -133,6 +133,7 @@ class WebRequest
   self.define_attr :currency_reward, :type => :int
   self.define_attr :package_names, :force_array => true, :replace => false
   self.define_attr :truncated_package_names, :type => :bool
+  self.define_attr :offerwall_rank, :type => :int
 
   def self.count(conditions = nil)
     VerticaCluster.count('production.web_requests', conditions)
@@ -186,6 +187,11 @@ class WebRequest
     self.mobile_network_code  = params[:mobile_network_code]
     self.country              = params[:country_code].present? ? params[:country_code] : geoip_data[:country]
     self.geoip_country        = geoip_data[:country]
+  end
+
+  def replace_path(replacement)
+    @attributes[:path] = [ replacement ]
+    replacement
   end
 
   def save
