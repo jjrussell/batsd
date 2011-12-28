@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20111221231406) do
+ActiveRecord::Schema.define(:version => 20111227171406) do
 
   create_table "action_offers", :id => false, :force => true do |t|
     t.string   "id",                    :limit => 36,                    :null => false
@@ -612,6 +612,7 @@ ActiveRecord::Schema.define(:version => 20111221231406) do
     t.text     "regions",                                                                                          :null => false
     t.boolean  "instructions_overridden",                                                       :default => false, :null => false
     t.boolean  "tapjoy_sponsored",                                                              :default => false, :null => false
+    t.text     "carriers",                                                                                         :null => false
     t.boolean  "tj_games_only",                                                                 :default => false, :null => false
     t.boolean  "wifi_only",                                                                     :default => false, :null => false
   end
