@@ -55,6 +55,8 @@
     %li= link_to 'Editor\'s Choices', tools_editors_picks_path
   - if permitted_to? :index, :tools_app_reviews
     %li= link_to 'App Reviews', tools_app_reviews_path
+  - if permitted_to? :index, :tools_featured_contents
+    %li= link_to 'Featured Contents', tools_featured_contents_path
 
 - if has_permissions_for_one_of?(:account_mgr)
   %h3 Account Management
@@ -87,6 +89,8 @@
     %li= link_to 'External Publishers', tools_external_publishers_path
   - if permitted_to? :index, :tools_agency_users
     %li= link_to 'Agency Users', tools_agency_users_path
+  - if permitted_to? :index, :tools_partner_program_statz
+    %li= link_to 'Tapjoy Sponsored Publishers', tools_partner_program_statz_index_path
 
 - if has_permissions_for_one_of?(:account_mgr, :customer_service, :admin)
   %h3 Customer Support

@@ -67,7 +67,7 @@ class OfferList
   def weighted_rand
     offers = @offers.clone
     while offers.any?
-      weight_scale = 1 - offers.last.rank_score
+      weight_scale = 1 - offers.map(&:rank_score).min
       weights = offers.collect { |o| o.rank_score + weight_scale }
       offer = offers.weighted_rand(weights)
       return offer if offer.nil?
@@ -105,7 +105,7 @@ class OfferList
 
     [ returned_offers, 0 ]
   end
-  
+
   private
   def postcache_reject?(offer)
     offer.postcache_reject?(@publisher_app, @device, @currency, @device_type, @geoip_data, @app_version,

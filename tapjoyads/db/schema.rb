@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20111212062016) do
+ActiveRecord::Schema.define(:version => 20111214000157) do
 
   create_table "action_offers", :id => false, :force => true do |t|
     t.string   "id",                    :limit => 36,                    :null => false
@@ -282,6 +282,29 @@ ActiveRecord::Schema.define(:version => 20111212062016) do
   add_index "enable_offer_requests", ["id"], :name => "index_enable_offer_requests_on_id", :unique => true
   add_index "enable_offer_requests", ["offer_id"], :name => "index_enable_offer_requests_on_offer_id"
   add_index "enable_offer_requests", ["status"], :name => "index_enable_offer_requests_on_status"
+
+  create_table "featured_contents", :id => false, :force => true do |t|
+    t.string   "id",                 :limit => 36,                :null => false
+    t.string   "offer_id",           :limit => 36
+    t.string   "author_id",          :limit => 36
+    t.string   "featured_type",                                   :null => false
+    t.text     "platforms",                                       :null => false
+    t.text     "subtitle",                                        :null => false
+    t.text     "title",                                           :null => false
+    t.text     "description",                                     :null => false
+    t.text     "main_icon_url"
+    t.text     "secondary_icon_url"
+    t.text     "button_text"
+    t.text     "button_url"
+    t.date     "start_date",                                      :null => false
+    t.date     "end_date",                                        :null => false
+    t.integer  "weight",                           :default => 0, :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "featured_contents", ["featured_type"], :name => "index_featured_contents_on_featured_type"
+  add_index "featured_contents", ["id"], :name => "index_featured_contents_on_id", :unique => true
 
   create_table "gamer_devices", :id => false, :force => true do |t|
     t.string   "id",          :limit => 36, :null => false
@@ -588,6 +611,8 @@ ActiveRecord::Schema.define(:version => 20111212062016) do
     t.text     "dma_codes",                                                                                        :null => false
     t.text     "regions",                                                                                          :null => false
     t.boolean  "instructions_overridden",                                                       :default => false, :null => false
+    t.boolean  "tapjoy_sponsored",                                                              :default => false, :null => false
+    t.boolean  "tj_games_only",                                                                 :default => false, :null => false
   end
 
   add_index "offers", ["id"], :name => "index_offers_on_id", :unique => true
@@ -628,6 +653,25 @@ ActiveRecord::Schema.define(:version => 20111212062016) do
   add_index "partner_assignments", ["id"], :name => "index_partner_assignments_on_id", :unique => true
   add_index "partner_assignments", ["partner_id"], :name => "index_partner_assignments_on_partner_id"
   add_index "partner_assignments", ["user_id", "partner_id"], :name => "index_partner_assignments_on_user_id_and_partner_id", :unique => true
+
+  create_table "partner_changes", :id => false, :force => true do |t|
+    t.string   "id",                     :limit => 36, :null => false
+    t.string   "item_id",                :limit => 36, :null => false
+    t.string   "item_type",                            :null => false
+    t.string   "source_partner_id",      :limit => 36, :null => false
+    t.string   "destination_partner_id", :limit => 36, :null => false
+    t.datetime "scheduled_for"
+    t.datetime "completed_at"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "partner_changes", ["destination_partner_id"], :name => "index_partner_changes_on_destination_partner_id"
+  add_index "partner_changes", ["id"], :name => "index_partner_changes_on_id", :unique => true
+  add_index "partner_changes", ["item_id"], :name => "index_partner_changes_on_item_id"
+  add_index "partner_changes", ["item_type", "item_id"], :name => "index_partner_changes_on_item_type_and_item_id"
+  add_index "partner_changes", ["scheduled_for", "completed_at"], :name => "index_partner_changes_on_scheduled_for_and_completed_at"
+  add_index "partner_changes", ["source_partner_id"], :name => "index_partner_changes_on_source_partner_id"
 
   create_table "partners", :id => false, :force => true do |t|
     t.string   "id",                           :limit => 36,                                                      :null => false

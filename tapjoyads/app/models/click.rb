@@ -47,16 +47,6 @@ class Click < SimpledbShardedResource
     super({ :write_to_memcache => false }.merge(options))
   end
 
-  def self.select_all(options = {}, &block)
-    clicks = []
-    NUM_CLICK_DOMAINS.times do |i|
-      Click.select(:domain_name => "clicks_#{i}", :where => options[:conditions]) do |click|
-        block_given? ? yield(click) : clicks << click
-      end
-    end
-    clicks
-  end
-
   def rewardable?
     !(new_record? || installed_at? || clicked_at < (Time.zone.now - 2.days))
   end
@@ -64,6 +54,10 @@ class Click < SimpledbShardedResource
   def successfully_rewarded?
     reward = Reward.find(reward_key)
     installed_at? && reward && reward.successful?
+
+  def tapjoy_games_invitation_primary_click?
+    advertiser_app_id == TAPJOY_GAMES_INVITATION_OFFER_ID &&
+      key !~ /invite\[\d+\]$/
   end
 
   def resolve!

@@ -219,7 +219,7 @@ class ToolsController < WebsiteController
       click_app_ids = []
       NUM_CLICK_DOMAINS.times do |i|
         Click.select(:domain_name => "clicks_#{i}", :where => conditions) do |click|
-          @clicks << click
+          @clicks << click unless click.tapjoy_games_invitation_primary_click?
           if click.installed_at?
             @rewards[click.reward_key] = Reward.find(click.reward_key)
             if @rewards[click.reward_key] && @rewards[click.reward_key].successful?

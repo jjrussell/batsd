@@ -13,6 +13,7 @@ class RecommendationList
     @device_type = options[:device_type]
     @geoip_data  = options[:geoip_data] || {}
     @os_version  = options[:os_version]
+    @store_ids   = Set.new
 
     @offers = RecommendationList.for_device(@device.id).reject { |offer| recommendation_reject?(offer) }
     @offers |= RecommendationList.for_app(@device.last_app_run).reject { |offer| recommendation_reject?(offer) } if @offers.length < MINIMUM
@@ -41,7 +42,7 @@ class RecommendationList
         end
       end
       offers.compact!
-      
+
       Mc.distributed_put('s3.recommendations.offers.most_popular', offers)
     end
 
@@ -79,7 +80,7 @@ class RecommendationList
       Mc.get_and_put("s3.recommendations.offers.by_app.#{app_id}", false, 1.day) do
         offers = []
         raw_for_app(app_id).split(';').each do |recommendation|
-          begin  
+          begin
             offers << Offer.find_in_cache(recommendation.split(',').first)
           rescue ActiveRecord::RecordNotFound => e
             next
@@ -95,14 +96,14 @@ class RecommendationList
       Mc.get_and_put("s3.recommendations.offers.by_device.#{device_id}", false, 1.day) do
         offers = []
         raw_for_device(device_id).split(';').each do |recommendation|
-          begin  
+          begin
             offers << Offer.find_in_cache(recommendation.split(',').first)
           rescue ActiveRecord::RecordNotFound => e
             next
           end
         end
         offers.compact!
-        
+
         offers.any? ? offers : nil
       end || []
     end
@@ -118,7 +119,10 @@ class RecommendationList
   private
 
   def recommendation_reject?(offer)
-    offer.recommendation_reject?(@device, @device_type, @geoip_data, @os_version)
+    rejected = @store_ids.include?(offer.store_id_for_feed) || offer.recommendation_reject?(@device, @device_type, @geoip_data, @os_version)
+    @store_ids << offer.store_id_for_feed unless rejected || offer.store_id_for_feed.blank?
+
+    rejected
   end
 
 end

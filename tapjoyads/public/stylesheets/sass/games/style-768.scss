@@ -5,12 +5,12 @@
 //-------------------------------------------
 
 #login {
-  
+
   .nav {
     max-width: 768px;
   }
   .main_scene {
-    
+
     .content_box {
       max-width: 768px;
     }
@@ -20,7 +20,7 @@
   }
   .overview {
     max-width: 768px;
-    
+
     .about {
       margin: 36px 0 0 20px;
       width: 380px;
@@ -33,7 +33,7 @@ body.old {
   padding: $nav-padding-v/2 $nav-padding-h/2;
 
   .nav_container {
-    
+
     .aside_nav {
       top: 40px;
     }
@@ -59,13 +59,13 @@ body.old {
   }
 }
 .content_wrapper {
-  
+
   .content {
   }
-  
+
   form#new_gamer {
   }
-  
+
 } //.content_wrapper
 }
 
@@ -74,7 +74,7 @@ body.old {
   margin: 0 auto;
   width: 100%;
   @include rounded-corners(3px);
-    
+
   .content_box {
     height: 450px;
     margin: 0 auto;

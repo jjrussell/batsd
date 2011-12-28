@@ -33,9 +33,15 @@ TJG.loadedImages = {};
     TJG.vars.isSafari = nav.appVersion.match(/Safari/gi);
     TJG.vars.hasHomescreen = 'standalone' in nav && TJG.vars.isIos;
     TJG.vars.isStandalone = TJG.vars.hasHomescreen && nav.standalone;
-    TJG.vars.version = nav.appVersion.match(/OS \d+_\d+/g);
-    TJG.vars.platform = nav.platform.split(' ')[0];
-    TJG.vars.language = nav.language.replace('-', '_');
+    if (nav.appVersion) {
+       TJG.vars.version = nav.appVersion.match(/OS \d+_\d+/g);
+    }
+    if (nav.platform) {
+      TJG.vars.platform = nav.platform.split(' ')[0];
+    }
+    if (nav.language) {
+      TJG.vars.language = nav.language.replace('-', '_');
+    }
     if (TJG.vars.isIos || TJG.vars.isMobile) {
      if (TJG.vars.isIPad) {
        classReplaces['mobile'] = 'ipad';

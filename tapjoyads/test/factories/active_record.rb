@@ -176,8 +176,7 @@ FactoryGirl.define do
   end
 
   factory :invitation do
-    gamer         { Factory(:facebook_gamer) }
-    noob          { Factory(:gamer) }
+    gamer         { Factory(:gamer) }
     channel       { 0 }
     external_info { Factory.next(:name) }
   end
@@ -186,5 +185,17 @@ FactoryGirl.define do
     name               { Factory.next(:name) }
     reseller_rev_share { 0.8 }
     rev_share          { 0.75 }
+  end
+
+  factory :survey_question do
+    text "what's your name?"
+    format "radio"
+    possible_responses "male;female"
+    association :survey_offer
+  end
+
+  factory :survey_offer do
+    bid_price 0
+    name 'short survey 1'
   end
 end

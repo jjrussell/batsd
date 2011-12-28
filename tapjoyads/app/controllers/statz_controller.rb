@@ -1,5 +1,4 @@
 class StatzController < WebsiteController
-  include ActionView::Helpers::NumberHelper
 
   layout 'tabbed'
 
@@ -14,12 +13,10 @@ class StatzController < WebsiteController
     @timeframe = params[:timeframe] || '24_hours'
     @display   = params[:display]   || 'summary'
 
-    @money_stats = Mc.get('money.cached_stats') || { @timeframe => {} }
-    @money_last_updated = Time.zone.at(Mc.get("money.last_updated") || 0)
-
     prefix = @display == 'summary' ? 'top_' : ''
     @cached_metadata = Mc.distributed_get("statz.#{prefix}metadata.#{@timeframe}") || {}
     @cached_stats = Mc.distributed_get("statz.#{prefix}stats.#{@timeframe}") || []
+    @money_stats = Mc.distributed_get("statz.money.#{@timeframe}") || { :total => {}, :iphone => {}, :android  => {}, :tj_games => {} }
     @last_updated_start = Time.zone.at(Mc.get("statz.last_updated_start.#{@timeframe}") || 0)
     @last_updated_end = Time.zone.at(Mc.get("statz.last_updated_end.#{@timeframe}") || 0)
   end
@@ -134,7 +131,7 @@ class StatzController < WebsiteController
     send_data(data, :type => 'text/csv', :filename => "tj-games-conversions_#{Time.zone.now.to_s}.csv")
   end
 
-private
+  private
 
   def find_offer
     @offer = Offer.find_by_id(params[:id])

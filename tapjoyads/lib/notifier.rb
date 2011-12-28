@@ -4,6 +4,7 @@ class AppStatsVerifyError < RuntimeError; end
 class GetStoreInfoError < RuntimeError; end
 class AppDataFetchError < RuntimeError; end
 class AppReviewEmptyError < RuntimeError; end
+class FeaturedContentEmptyError < RuntimeError; end
 class GenericOfferCallbackError < RuntimeError; end
 class DeviceCountryChanged < RuntimeError; end
 class JailbrokenInstall < RuntimeError; end
@@ -11,6 +12,9 @@ class FailedToInvalidateCloudfront < RuntimeError; end
 class SdbObjectNotInS3 < RuntimeError; end
 class SkippedSendCurrency < RuntimeError; end
 class AndroidRank404 < RuntimeError; end
+class EmailVerificationFailure < RuntimeError; end
+class EmailNotDelivered < RuntimeError; end
+class VerticaConnectionReset < RuntimeError; end
 
 # Any errors that extend this class will result in an email being sent to dev@tapjoy.com.
 class EmailWorthyError < RuntimeError

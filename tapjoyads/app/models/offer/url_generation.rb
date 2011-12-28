@@ -31,7 +31,7 @@ module Offer::UrlGeneration
       :library_version       => library_version,
     }
 
-    "#{API_URL}/offer_instructions?data=#{SymmetricCrypto.encrypt_object(data, SYMMETRIC_CRYPTO_SECRET)}"
+    "#{API_URL}/offer_instructions?data=#{ObjectEncryptor.encrypt(data)}"
   end
 
   def complete_action_url(options)
@@ -61,6 +61,8 @@ module Offer::UrlGeneration
     elsif item_type == 'EmailOffer'
       final_url += "&publisher_app_id=#{publisher_app_id}"
     elsif item_type == 'GenericOffer'
+      advertiser_app_id = click_key.to_s.split('.')[1]
+      final_url.gsub!('TAPJOY_GENERIC_INVITE', advertiser_app_id) if advertiser_app_id
       final_url.gsub!('TAPJOY_GENERIC', click_key.to_s)
       if has_variable_payment?
         extra_params = {
@@ -74,6 +76,8 @@ module Offer::UrlGeneration
       end
     elsif item_type == 'ActionOffer'
       final_url = url
+    elsif item_type == 'SurveyOffer'
+      final_url.gsub!('TAPJOY_SURVEY', click_key.to_s)
     end
 
     final_url
@@ -94,6 +98,7 @@ module Offer::UrlGeneration
     display_multiplier = options.delete(:display_multiplier) { 1 }
     device_name        = options.delete(:device_name)        { nil }
     library_version    = options.delete(:library_version)    { nil }
+    gamer_id           = options.delete(:gamer_id)           { nil }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
 
     click_url = "#{API_URL}/click/"
@@ -111,6 +116,8 @@ module Offer::UrlGeneration
       click_url += "action"
     elsif item_type == 'VideoOffer'
       click_url += "video"
+    elsif item_type == 'SurveyOffer'
+      click_url += "survey"
     else
       raise "click_url requested for an offer that should not be enabled. offer_id: #{id}"
     end
@@ -132,9 +139,10 @@ module Offer::UrlGeneration
       :display_multiplier => display_multiplier,
       :device_name        => device_name,
       :library_version    => library_version,
+      :gamer_id           => gamer_id
     }
 
-    "#{click_url}?data=#{SymmetricCrypto.encrypt_object(data, SYMMETRIC_CRYPTO_SECRET)}"
+    "#{click_url}?data=#{ObjectEncryptor.encrypt(data)}"
   end
 
   def display_ad_image_url(publisher_app_id, width, height, currency_id = nil, display_multiplier = nil, bust_cache = false, use_cloudfront = true)

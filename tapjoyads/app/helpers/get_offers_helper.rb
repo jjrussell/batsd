@@ -4,13 +4,13 @@ module GetOffersHelper
     return nil if @more_data_available < 1
     tmp_params = params.reject { |k, v| k == 'controller' || k == 'action' }
     tmp_params['json'] = "1"
-    "/get_offers?data=#{SymmetricCrypto.encrypt_object(tmp_params, SYMMETRIC_CRYPTO_SECRET)}"
+    "/get_offers?data=#{ObjectEncryptor.encrypt(tmp_params)}"
   end
 
   def get_currency_link(currency)
     tmp_params = params.reject { |k, v| k == 'controller' || k == 'action' }
     tmp_params['currency_id'] = currency.id
-    url = "/get_offers/webpage?data=#{SymmetricCrypto.encrypt_object(tmp_params, SYMMETRIC_CRYPTO_SECRET)}"
+    url = "/get_offers/webpage?data=#{ObjectEncryptor.encrypt(tmp_params)}"
     link_to(currency.name, url)
   end
 
@@ -28,7 +28,8 @@ module GetOffersHelper
       :language_code      => params[:language_code],
       :display_multiplier => params[:display_multiplier],
       :device_name        => params[:device_name],
-      :library_version    => params[:library_version])
+      :library_version    => params[:library_version],
+      :gamer_id           => params[:gamer_id])
 
     if offer.item_type == 'VideoOffer' || offer.item_type == 'TestVideoOffer'
       if @publisher_app.platform == 'windows'

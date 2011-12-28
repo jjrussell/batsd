@@ -301,7 +301,7 @@ TJG.ui = {
         $(".email_error").html('Please enter your birthdate');
         hasError = true;
       }
-      else if(values['gamer[email]'] == '') {
+      else if(values['gamer[email]'] == '' || values['gamer[email]'] == "Email") {
         $(".email_error").html('Please enter your email address');
         hasError = true;
       }
@@ -309,7 +309,7 @@ TJG.ui = {
         $(".email_error").html('Enter a valid email address');
         hasError = true;
       }
-      else if(values['gamer[password]'] == '') {
+      else if(values['gamer[password]'] == '' || values['gamer[password]'] == "Password") {
         $(".email_error").html('Please enter a password');
         hasError = true;
       }
@@ -800,7 +800,6 @@ TJG.ui = {
     TJG.ui.fadeSpdSlow = 700;
 
     var fadeSpd = TJG.ui.fadeSpd, fadeSpdFast = TJG.ui.fadeSpdFas, fadeSpdSlow = TJG.ui.fadeSpdSlow;
-    var install = TJG.utils.getParam("register_device");
 
     // Enable bookmarking modal
     if (TJG.vars.isIos || TJG.vars.hasHomescreen) {
@@ -814,7 +813,11 @@ TJG.ui = {
     }
     // Checks if new user. If so, shows intro tutorial
     var repeat = TJG.utils.getLocalStorage("tjg.new_user");
-    if (install.indexOf("true") != -1) {
+    if (TJG.register_device) {
+      if (TJG.register_device_pixel) {
+        var pixel = new Image();
+        pixel.src = TJG.register_device_pixel;
+      }
       if (TJG.vars.isAndroid) {
         showIntro();
       }

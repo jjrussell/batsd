@@ -12,34 +12,6 @@
   = label_tag('search_box', 'Offer Name:')
   = text_field_tag('search_box', '', :size => '40')
 
-#money_totals
-  .last_updated Totals Last Updated: #{@money_last_updated.to_s(:pub_ampm_sec)}
-  %table#overall
-    %tr
-      %th
-      %th Conversions
-      %th Adv. Spend
-      %th Payouts
-    %tr
-      %th Total
-      %td= @money_stats[@timeframe]['conversions']
-      %td= @money_stats[@timeframe]['advertiser_spend']
-      %td= @money_stats[@timeframe]['publisher_earnings']
-    %tr
-      %th Android
-      %td= @money_stats[@timeframe]['android_conversions']
-      %td= @money_stats[@timeframe]['android_adv_spend']
-      %td= @money_stats[@timeframe]['android_pub_earnings']
-    %tr
-      %th iOS
-      %td= @money_stats[@timeframe]['ios_conversions']
-      %td= @money_stats[@timeframe]['ios_adv_spend']
-      %td= @money_stats[@timeframe]['ios_pub_earnings']
-    %tr
-      %th TJ Games
-      %td= @money_stats[@timeframe]['tjgames_conversions']
-      %td= @money_stats[@timeframe]['tjgames_adv_spend']
-      %td= @money_stats[@timeframe]['tjgames_pub_earnings']
 %p
   = link_to "Global Network Stats", global_statz_path
   - if permitted_to? :publisher, :statz
@@ -50,6 +22,34 @@
     = link_to("Advertiser Stats", advertiser_statz_path)
 
 .last_updated For: #{@last_updated_start.to_s(:pub_ampm_sec)} - #{@last_updated_end.to_s(:pub_ampm_sec)}
+
+#money_totals
+  %table#overall
+    %tr
+      %th
+      %th Conversions
+      %th Adv. Spend
+      %th Payouts
+    %tr
+      %th Total
+      %td= @money_stats[:total][:count] || '-'
+      %td= @money_stats[:total][:adv_amount] || '-'
+      %td= @money_stats[:total][:pub_amount] || '-'
+    %tr
+      %th Android
+      %td= @money_stats[:android][:count] || '-'
+      %td= @money_stats[:android][:adv_amount] || '-'
+      %td= @money_stats[:android][:pub_amount] || '-'
+    %tr
+      %th iOS
+      %td= @money_stats[:iphone][:count] || '-'
+      %td= @money_stats[:iphone][:adv_amount] || '-'
+      %td= @money_stats[:iphone][:pub_amount] || '-'
+    %tr
+      %th TJ Games
+      %td= @money_stats[:tj_games][:count] || '-'
+      %td= @money_stats[:tj_games][:adv_amount] || '-'
+      %td= @money_stats[:tj_games][:pub_amount] || '-'
 
 %table#apps_table.tablesorter
   %thead
@@ -67,6 +67,7 @@
       %th CVR
       %th Published offers
       %th Gross revenue
+      %th Publisher revenue
       %th Featured
       %th Rewarded
       %th Offer type
@@ -84,7 +85,8 @@
       %td.filter= select_tag('platform_filter', options_for_select(filter_options(:platform)))
       %td.filter &nbsp;
       %td.filter= select_tag('published_offers_filter', options_for_select(filter_options(:published_offers)))
-      %td.filter= select_tag('revenue_filter', options_for_select(filter_options(:revenue)))
+      %td.filter= select_tag('gross_revenue_filter', options_for_select(filter_options(:gross_revenue)))
+      %td.filter= select_tag('publisher_revenue_filter', options_for_select(filter_options(:publisher_revenue)))
       %td.filter= select_tag('featured_filter', options_for_select(filter_options(:featured)))
       %td.filter= select_tag('rewarded_filter', options_for_select(filter_options(:rewarded)))
       %td.filter= select_tag('offer_type_filter', options_for_select(filter_options(:offer_type)))
@@ -94,15 +96,16 @@
       :ruby
         metadata = @cached_metadata[offer_id]
         tr_classes = []
-        tr_classes << (stats['spend'] == '$0.00'           ? 'zero_spend'       : 'nonzero_spend')
-        tr_classes << (stats['conversions'] == '0'         ? 'zero_conversions' : 'nonzero_conversions')
-        tr_classes << (metadata['overall_store_rank'] == '-'  ? 'unranked'         : 'ranked')
-        tr_classes << (metadata['price'] == '$0.00'        ? 'free'             : 'paid')
+        tr_classes << (stats['spend'] == '$0.00'             ? 'zero_spend'             : 'nonzero_spend')
+        tr_classes << (stats['conversions'] == '0'           ? 'zero_conversions'       : 'nonzero_conversions')
+        tr_classes << (metadata['overall_store_rank'] == '-' ? 'unranked'               : 'ranked')
+        tr_classes << (metadata['price'] == '$0.00'          ? 'free'                   : 'paid')
         tr_classes << metadata['platform'].to_s.downcase
-        tr_classes << (stats['published_offers'] == '0'    ? 'zero_published'   : 'nonzero_published')
-        tr_classes << (stats['gross_revenue'] == '$0.00'   ? 'zero_revenue'     : 'nonzero_revenue')
-        tr_classes << (metadata['featured']                ? 'featured'         : 'nonfeatured')
-        tr_classes << (metadata['rewarded']                ? 'rewarded'         : 'nonrewarded')
+        tr_classes << (stats['published_offers'] == '0'      ? 'zero_published'         : 'nonzero_published')
+        tr_classes << (stats['gross_revenue'] == '$0.00'     ? 'zero_gross_revenue'     : 'nonzero_gross_revenue')
+        tr_classes << (stats['publisher_revenue'] == '$0.00' ? 'zero_publisher_revenue' : 'nonzero_publisher_revenue')
+        tr_classes << (metadata['featured']                  ? 'featured'               : 'nonfeatured')
+        tr_classes << (metadata['rewarded']                  ? 'rewarded'               : 'nonrewarded')
         tr_classes << metadata['offer_type'].to_s.downcase
         value = metadata['balance'].gsub(/[\$,]/,'')
       %tr{ :class => tr_classes.compact.join(' '), :value => value }
@@ -119,6 +122,7 @@
         %td= metadata['conversion_rate']
         %td= stats['published_offers']
         %td= stats['gross_revenue']
+        %td= stats['publisher_revenue']
         %td= metadata['featured']
         %td= metadata['rewarded']
         %td= metadata['offer_type']
@@ -164,7 +168,8 @@
           6:  { sorter: 'currency-column' },
           7:  { sorter: 'currency-column' },
           10: { sorter: 'formatted-number-column' },
-          11: { sorter: 'currency-column' }
+          11: { sorter: 'currency-column' },
+          12: { sorter: 'currency-column' }
         },
       });
 
@@ -201,7 +206,8 @@
           String( $('#rank_filter').val() ).toLowerCase(),
           String( $('#price_filter').val() ).toLowerCase(),
           String( $('#published_offers_filter').val() ).toLowerCase(),
-          String( $('#revenue_filter').val() ).toLowerCase(),
+          String( $('#gross_revenue_filter').val() ).toLowerCase(),
+          String( $('#publisher_revenue_filter').val() ).toLowerCase(),
           String( $('#featured_filter').val() ).toLowerCase(),
           String( $('#rewarded_filter').val() ).toLowerCase(),
           String( $('#platform_filter').val() ).toLowerCase(),

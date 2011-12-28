@@ -47,7 +47,7 @@ class Offer < ActiveRecord::Base
                                   'normal_bid', 'normal_conversion_rate', 'normal_avg_revenue',
                                   'normal_price', 'over_threshold', 'rewarded', 'reseller_id',
                                   'cookie_tracking', 'min_os_version', 'screen_layout_sizes',
-                                  'interval', 'banner_creatives', 'dma_codes', 'regions' ].map { |c| "#{quoted_table_name}.#{c}" }.join(', ')
+                                  'interval', 'banner_creatives', 'dma_codes', 'regions', 'tj_games_only' ].map { |c| "#{quoted_table_name}.#{c}" }.join(', ')
 
   DIRECT_PAY_PROVIDERS = %w( boku paypal )
 
@@ -57,6 +57,7 @@ class Offer < ActiveRecord::Base
     "1 hour"   => 1.hour.to_i,
     "8 hours"  => 8.hours.to_i,
     "24 hours" => 24.hours.to_i,
+    "2 days"   => 2.days.to_i,
     "3 days"   => 3.days.to_i,
   }
 
@@ -95,7 +96,7 @@ class Offer < ActiveRecord::Base
   validates_numericality_of :min_conversion_rate, :allow_nil => true, :greater_than_or_equal_to => 0, :less_than_or_equal_to => 1
   validates_numericality_of :show_rate, :greater_than_or_equal_to => 0, :less_than_or_equal_to => 1
   validates_numericality_of :payment_range_low, :payment_range_high, :only_integer => true, :allow_nil => true, :greater_than => 0
-  validates_inclusion_of :pay_per_click, :user_enabled, :tapjoy_enabled, :allow_negative_balance, :self_promote_only, :featured, :multi_complete, :rewarded, :cookie_tracking, :in => [ true, false ]
+  validates_inclusion_of :pay_per_click, :user_enabled, :tapjoy_enabled, :allow_negative_balance, :self_promote_only, :featured, :multi_complete, :rewarded, :cookie_tracking, :tj_games_only, :in => [ true, false ]
   validates_inclusion_of :item_type, :in => ALL_OFFER_TYPES
   validates_inclusion_of :direct_pay, :allow_blank => true, :allow_nil => true, :in => DIRECT_PAY_PROVIDERS
   validates_each :device_types, :allow_blank => false, :allow_nil => false do |record, attribute, value|
@@ -149,6 +150,7 @@ class Offer < ActiveRecord::Base
   before_save :update_instructions
   after_save :update_enabled_rating_offer_id
   after_save :update_pending_enable_requests
+  after_save :update_tapjoy_sponsored_associated_offers
   after_save :sync_banner_creatives! # NOTE: this should always be the last thing run by the after_save callback chain
 
   named_scope :enabled_offers, :joins => :partner,
@@ -171,6 +173,7 @@ class Offer < ActiveRecord::Base
   named_scope :non_video_offers, :conditions => "item_type != 'VideoOffer'"
   named_scope :papaya_app_offers, :joins => :app, :conditions => "item_type = 'App' AND #{App.quoted_table_name}.papaya_user_count > 0", :select => PAPAYA_OFFER_COLUMNS
   named_scope :papaya_action_offers, :joins => { :action_offer => :app }, :conditions => "item_type = 'ActionOffer' AND #{App.quoted_table_name}.papaya_user_count > 0", :select => PAPAYA_OFFER_COLUMNS
+  named_scope :tapjoy_sponsored_offer_ids, :conditions => "tapjoy_sponsored = true", :select => "#{Offer.quoted_table_name}.id"
 
   delegate :balance, :pending_earnings, :name, :cs_contact_email, :approved_publisher?, :rev_share, :to => :partner, :prefix => true
   memoize :partner_balance
@@ -377,16 +380,8 @@ class Offer < ActiveRecord::Base
     src_obj.write(:data => icon_src_blob, :acl => :public_read)
 
     Mc.delete("icon.s3.#{id}")
-
-    # Invalidate cloudfront
-    if existing_icon_blob.present?
-      begin
-        acf = RightAws::AcfInterface.new
-        acf.invalidate('E1MG6JDV6GH0F2', ["/icons/256/#{icon_id}.jpg", "/icons/114/#{icon_id}.jpg", "/icons/57/#{icon_id}.jpg", "/icons/57/#{icon_id}.png"], "#{id}.#{Time.now.to_i}")
-      rescue Exception => e
-        Notifier.alert_new_relic(FailedToInvalidateCloudfront, e.message)
-      end
-    end
+    paths = ["icons/256/#{icon_id}.jpg", "icons/114/#{icon_id}.jpg", "icons/57/#{icon_id}.jpg", "icons/57/#{icon_id}.png"]
+    CloudFront.invalidate(id, paths) if existing_icon_blob.present?
   end
 
   def get_video_url(options = {})
@@ -738,13 +733,7 @@ private
       # no worries, it will get cached later if needed
     end
 
-    # Invalidate cloudfront
-    begin
-      acf = RightAws::AcfInterface.new
-      acf.invalidate('E1MG6JDV6GH0F2', "/#{banner_creative_path(size, format)}".to_a, "#{id}.#{Time.now.to_i}")
-    rescue Exception => e
-      Notifier.alert_new_relic(FailedToInvalidateCloudfront, e.message)
-    end
+    CloudFront.invalidate(id, banner_creative_path(size, format))
   end
 
   def is_test_device?(currency, device)
@@ -800,6 +789,15 @@ private
       enable_offer_requests.pending.each { |request| request.approve! }
     elsif hidden_changed? && hidden?
       enable_offer_requests.pending.each { |request| request.approve!(false) }
+    end
+  end
+
+  def update_tapjoy_sponsored_associated_offers
+    if tapjoy_sponsored_changed?
+      find_associated_offers.each do |o|
+        o.tapjoy_sponsored = tapjoy_sponsored
+        o.save! if o.changed?
+      end
     end
   end
 
