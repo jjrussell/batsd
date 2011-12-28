@@ -111,6 +111,8 @@ module Offer::UrlGeneration
       click_url += "action"
     elsif item_type == 'VideoOffer'
       click_url += "video"
+    elsif item_type == 'ReengagementOffer'
+      click_url += 'reengagement'
     else
       raise "click_url requested for an offer that should not be enabled. offer_id: #{id}"
     end

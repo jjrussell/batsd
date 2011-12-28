@@ -1,5 +1,6 @@
 class ReengagementOffer < ActiveRecord::Base
   include UuidPrimaryKey
+  acts_as_cacheable
 
   belongs_to :app
   belongs_to :partner
@@ -14,11 +15,50 @@ class ReengagementOffer < ActiveRecord::Base
 
   after_create :create_primary_offer
   after_update :update_offers
+  after_destroy :update_offers
+  after_cache :cache_list
 
+  delegate :instructions_overridden, :to => :primary_offer
   delegate :get_offer_device_types, :store_id, :store_url, :large_download?, :supported_devices, :platform, :get_countries_blacklist, :countries_blacklist, :primary_category, :user_rating, :info_url, :to => :app
 
   named_scope :visible, :conditions => { :hidden => false }
   
+  def enable
+    set_enabled_for_app(app_id, true)  
+  end
+
+  def disable
+    set_enabled_for_app(app_id, false)
+  end
+
+  def self.cache_list(app_id)
+    reengagement_offers = ReengagementOffer.visible.find_all_by_app_id(app_id, :order => 'day_number ASC')
+    response = Mc.put("mysql.reengagement_offers.#{app_id}.#{SCHEMA_VERSION}", reengagement_offers, false, 1.day)
+    reengagement_offers.length
+  end
+
+  def self.find_list_in_cache(app_id)
+    Mc.get("mysql.reengagement_offers.#{app_id}.#{SCHEMA_VERSION}")
+  end
+  
+  def cache_list
+    ReengagementOffer.cache_list app_id
+  end
+
+  private
+
+  def set_enabled_for_app(app_id, enabled_value)
+    reengagement_offers = ReengagementOffer.visible.find_all_by_app_id(app_id)
+    reengagement_offers.each do |r|
+      po = r.primary_offer
+      po.enabled = enabled_value
+      po.save!
+    end
+  end
+
+  def find_list_in_cache
+    Mc.get("mysql.reengagement_offer.#{app_id}.#{SCHEMA_VERSION}")
+  end
 
   private
 
@@ -26,7 +66,7 @@ class ReengagementOffer < ActiveRecord::Base
     offer = Offer.new(:item => self)
     offer.id                = id
     offer.partner           = partner
-    offer.name              = "reengagement_offer.#{app.id}.#{id}"
+    offer.name              = "reengagement_offer.#{app_id}.#{id}"
     offer.url               = app.store_url
     offer.instructions      = instructions
     offer.device_types      = app.primary_offer.device_types
@@ -38,7 +78,6 @@ class ReengagementOffer < ActiveRecord::Base
     offer.icon_id_override  = app.id
     offer.user_enabled      = false
     offer.save!
-    puts "Created primary offer with id #{offer.id}"
   end
 
  def update_offers

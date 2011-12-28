@@ -1,13 +1,21 @@
 class Apps::ReengagementOffersController < WebsiteController
+  ReengagementOffer
+
   layout 'apps'
   current_tab :apps
-  before_filter :setup
+  before_filter :setup, :except => [ :show ]
+  before_filter :set_enabled, :only => [ :index ]
   filter_access_to :all
 
+  def show
+  end
+
   def index
-    @reengagement_offers = @app.reengagement_offers
+    @reengagement_offers = ReengagementOffer.visible.find_all_by_app_id @app.id
     if @reengagement_offers.empty?
       redirect_to new_app_reengagement_offer_path(@app, @reengagement_offer)
+    else
+      @reengagement_offer = @reengagement_offers.first
     end
   end
 
@@ -16,18 +24,15 @@ class Apps::ReengagementOffersController < WebsiteController
   end
 
   def create
-    reengagement_offer_params = params[:reengagement_offer].merge(:partner => current_partner)
-    day_number = reengagement_offer_params[:day_number].to_i
+    params[:reengagement_offer].merge!(:partner => current_partner)
+    day_number = params[:day_number].to_i
     if day_number > 1
-      prerequisite_offer_id = @app.reengagement_offers.visible.find_by_day_number(day_number - 1).id
-      reengagement_offer_params.merge!(:prerequisite_offer_id => prerequisite_offer_id)
+      params.merge!(:prerequisite_offer_id => @app.reengagement_offers.visible[day_number - 2].id)
     end
-    @reengagement_offer = @app.reengagement_offers.build reengagement_offer_params
-    if @reengagement_offer.save!
-      redirect_to app_reengagement_offers_path(@app)
-    else
-      render :new
-    end
+    @reengagement_offer = @app.reengagement_offers.build params[:reengagement_offer]
+    @reengagement_offer.save!
+    flash[:notice] = "Added day #{@reengagement_offer.day_number} reengagement offer."
+    redirect_to app_reengagement_offers_path(@app)
   end
 
   def edit
@@ -49,29 +54,34 @@ class Apps::ReengagementOffersController < WebsiteController
     redirect_to app_reengagement_offers_path(@app)
   end
 
-  def toggle
-    if @action_offer.toggle_user_enabled
-      render :json => { :success => true, :user_enabled => @action_offer.user_enabled? }
-    else
-      render :json => { :success => false }
+  private
+
+  def set_enabled
+    if params[:reengagement_offer].present? && params[:reengagement_offer][:enabled].present?
+      should_enable = params[:reengagement_offer][:enabled] == "1" ? true : false
+      @reengagement_offers = ReengagementOffer.visible.find_all_by_app_id @app.id
+      @reengagement_offers.each do |r|
+        r.enabled = should_enable
+        r.save!
+      end
     end
   end
 
-  private
-
   def setup
-    if permitted_to? :edit, :statz
-      @app = App.find(params[:app_id])
-    else
-      @app = current_partner.apps.find(params[:app_id])
+    if  params[:app_id].present?
+      if permitted_to? :edit, :statz
+        @app = App.find(params[:app_id])
+      else
+        @app = current_partner.apps.find(params[:app_id])
+      end
     end
 
     if params[:id]
-      @reengagement_offer = @app.reengagement_offers.find(params[:id])
+      @reengagement_offer = ReengagementOffer.find(params[:id])
+      @app = App.find(@reengagement_offer.app_id) unless @app.present?
       @offer = @reengagement_offer.primary_offer
       log_activity(@reengagement_offer)
     end
   end
-
 
 end

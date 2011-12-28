@@ -1,0 +1,238 @@
+$dark_gray: #444444;
+$gray: #5b5b5b;
+$red: #bc1318;
+$white: #000;
+
+@mixin red_underline {
+	color: #bc1318;
+	text-decoration: underline;
+}
+
+@mixin date_style {
+	width: 100%;
+	float: left;
+	display: block;
+	text-align: center;
+}
+
+@mixin zero_mp {
+	margin: 0 auto;
+	padding: 0;
+}
+
+@mixin box_style {
+	width: 100px;
+	height: 170px;
+	float: left;
+	display: block;
+}
+
+@mixin border_radius_10 {
+	border-radius: 10px;
+	-moz-border-radius: 10px;
+	-webkit-border-radius: 10px;
+}
+
+@mixin day_style {
+	@include border_radius_10;
+	width: 100%;
+	height: 55%;
+	display: block;
+}
+
+@mixin credits_style {
+	height: 10%;
+	margin-bottom: 18%;
+	text-align: center;
+	display: block;
+}
+
+body {
+	@include zero_mp;
+	font: 100%/1.4 Helvetica, Arial, sans-serif;
+	background: $white;
+	color: $gray;
+}
+
+h1, h2, p {
+	margin-top: 0;
+}
+
+h1, h2{
+	color: $dark_gray;
+}
+
+p {
+	color: $gray;
+}
+
+.container {
+	@include border_radius_10;
+	width: 90%;
+	background: #f5f5f5;
+	margin: 0 auto;
+}
+
+.header {
+	height: 90px;
+	background: $red url(reengagement_rewards/bg-header.png) repeat-x;
+}
+
+.content {
+	@include zero_mp;
+	height: 90%;
+	text-align: center;
+}
+
+.top {
+	height: 100px;
+	background: #bc1318 url(reengagement_rewards/bg-top.png) repeat-x;
+	margin: 0 auto;
+	text-align: left;
+	padding: 0 45px 0 45px;
+	color: #fff;
+	border-top-left-radius: 10%;
+	border-top-right-radius: 10%;
+	-moz-border-radius-topleft: 10px;
+	-moz-border-radius-topright: 10px;
+	-webkit-border-radius-topleft: 10px;
+	-webkit-border-radius-topright: 10px;
+
+	h1 {
+		color: #fff
+	}
+}
+
+.headbg {
+	width: 100%;
+	height: 60%;
+	background-image: url(reengagement_rewards/header.png);
+	margin-left: auto;
+  margin-right: auto;
+	text-align: center;
+	display: block;
+	position: relative;
+	top: 25%;
+}
+
+.bot {
+	clear: both;
+	height: 45%;
+	padding: 2% 12% 2% 12%;
+	background: #f4f4f4 url(reengagement_rewards/bg-bot.png) repeat-x;
+	text-align:center;
+}
+
+.days {
+	width: 100%;
+	text-align: center;
+	margin-left: auto;
+	margin-right: auto;
+	display: block;
+	clear: both;
+}
+
+.box {
+	@include box_style;
+	margin-left: 6%;
+}
+
+.box-past {
+	@include box_style;
+	margin-right: 6%;
+}
+
+.box-current {
+	@include box_style;
+}
+
+.day {
+	@include day_style;
+	background: #444;
+}
+
+.day-past {
+	@include day_style;
+	background: #acacac url(reengagement_rewards/1check.png);
+}
+
+.day-current {
+	@include day_style;
+	background: #d01619 url(reengagement_rewards/2check-large.png);
+}
+
+.day-image {
+	@include day_style;
+	background: #444 url(reengagement_rewards/3check-full.png);
+}
+
+.credits {
+	@include credits_style;
+	clear: both;
+}
+
+.credits-past {
+	@include credits_style;
+	clear: left;
+	h1 { color: #acacac; }
+}
+
+.credits-current {
+	@include credits_style;
+	clear: both;
+	h1 { color: #d01619; }
+}
+
+.date {
+	@include date_style
+}
+
+.date-past {
+	@include date_style;
+	h2 { color: #acacac; }
+}
+
+.date-current {
+	@include date_style;
+	h2 { color: #d01619; }
+}
+
+.footer {
+	height: 50px;
+	margin: 0;
+	padding: 0 45px 0 45px;
+	background: #d1d1d1;
+	border-bottom-left-radius: 10px;
+	border-bottom-right-radius: 10px;
+	-moz-border-radius-bottomleft: 10px;
+	-moz-border-radius-bottomright: 10px;
+	-webkit-border-radius-bottomleft: 10px;
+	-webkit-border-radius-bottomright: 10px;
+	border-top: 1px dotted #000;
+	clear: both;
+}
+
+.floatl {
+	display: block;
+	float: left;
+}
+
+.floatr {
+	display: block;
+	float: right;
+}
+
+.floatc {
+	display: block;
+	margin: 0 auto;
+}
+
+.textc {
+	display: block;
+	text-align: center;
+	clear: left;
+	padding-top: 25px;
+	padding-bottom: 0;
+	margin-bottom: 0;
+	height: 45px;
+}
