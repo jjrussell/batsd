@@ -42,6 +42,7 @@
       var options = {
         channel:   'EMAIL',
         inviteUrl: #{edit_games_gamer_path.to_json},
+        advertiserAppId: #{params[:advertiser_app_id].to_json},
       };
       TJG.social.setup(options);
     });
