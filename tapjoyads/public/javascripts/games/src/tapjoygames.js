@@ -42,8 +42,7 @@ RegExp.escape = function(text) {
         if (TJG.vars.c_data && !TJG.vars.ls_data) {
           TJG.utils.setLocalStorage('data', TJG.vars.c_data);
           TJG.utils.setLocalStorage('data_ts', t);
-          var install = TJG.utils.getParam("register_device");
-          if (install.indexOf("true") != -1) {
+          if (TJG.register_device) {
             TJG.utils.setLocalStorage('link_ts', t);
           }
         }

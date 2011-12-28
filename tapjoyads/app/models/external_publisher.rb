@@ -21,7 +21,7 @@ class ExternalPublisher
     Offer.get_icon_url(options.merge(:icon_id => Offer.hashed_icon_id(app_id)))
   end
 
-  def get_offerwall_url(device, currency, accept_language_str, user_agent_str)
+  def get_offerwall_url(device, currency, accept_language_str, user_agent_str, gamer_id = nil)
     language_code = HeaderParser.locale(accept_language_str)
     device_type = HeaderParser.device_type(user_agent_str)
     os_version = HeaderParser.os_version(user_agent_str) if device_type.present?
@@ -39,6 +39,7 @@ class ExternalPublisher
     data[:language_code] = language_code if language_code.present?
     data[:device_type]   = device_type if device_type.present?
     data[:os_version]    = os_version if os_version.present?
+    data[:gamer_id]      = gamer_id if gamer_id.present?
 
     "#{API_URL}/get_offers?data=#{ObjectEncryptor.encrypt(data)}"
   end
@@ -103,7 +104,7 @@ class ExternalPublisher
 
   def self.populate_potential
     start_time = (Time.zone.now - 1.day).beginning_of_day
-    conditions = "(path = '[offers]' OR path LIKE '%display_ad_requested%' OR path LIKE '%featured_offer_requested%') AND time >= #{start_time.to_i}"
+    conditions = "(path = '[offers]' OR path LIKE '%display_ad_requested%' OR path LIKE '%featured_offer_requested%') AND day >= '#{start_time.to_s(:yyyy_mm_dd)}'"
 
     Currency.find_each(:conditions => 'udid_for_user_id = false') do |currency|
       appstats = Appstats.new(currency.app_id, :start_time => start_time, :stat_types => ['offerwall_views', 'display_ads_requested', 'featured_offers_requested'])
@@ -111,7 +112,7 @@ class ExternalPublisher
 
       valid_currency = true
       count = 0
-      WebRequest.select_with_vertica(:select => 'udid, publisher_user_id', :conditions => "#{conditions} AND app_id = '#{currency.app_id}'", :limit => 100).each do |wr|
+      VerticaCluster.query('analytics.views', :select => 'udid, publisher_user_id', :conditions => "#{conditions} AND app_id = '#{currency.app_id}'", :limit => 100).each do |wr|
         if wr[:udid] != wr[:publisher_user_id]
           valid_currency = false
           break
