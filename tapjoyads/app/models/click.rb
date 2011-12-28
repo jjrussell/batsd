@@ -54,6 +54,7 @@ class Click < SimpledbShardedResource
   def successfully_rewarded?
     reward = Reward.find(reward_key)
     installed_at? && reward && reward.successful?
+  end
 
   def tapjoy_games_invitation_primary_click?
     advertiser_app_id == TAPJOY_GAMES_INVITATION_OFFER_ID &&

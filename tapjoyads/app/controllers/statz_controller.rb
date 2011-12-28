@@ -46,7 +46,11 @@ class StatzController < WebsiteController
   end
 
   def support_request_reward_ratio
-    render :text => @offer.support_request_rewards_ratio
+    rewards = @offer.num_clicks_rewarded
+    support_requests = @offer.num_support_requests
+    ratio = '-'
+    ratio = ("%.4f" % ( Float(support_requests) / rewards)) if rewards > 0
+    render :text => "Support Requests: #{support_requests}, Clicks Rewarded: #{rewards} ( #{ratio} )"
   end
 
   def update

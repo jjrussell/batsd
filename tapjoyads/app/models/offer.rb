@@ -618,29 +618,19 @@ class Offer < ActiveRecord::Base
   end
 
   def num_clicks_rewarded(start_time = 1.day.ago, end_time = Time.zone.now)
-    num_clicks_rewarded = 0
-    conditions = [
-      "offer_id = '#{id}'",
-      "clicked_at < '#{end_time.to_f}'",
-      "clicked_at >= '#{start_time.to_f}'",
-    ].join(' and ')
-    Click.select_all(:conditions => conditions) do |click|
-      num_clicks_rewarded += 1 if click.successfully_rewarded?
+    num_clicks_rewarded = Mc.get_and_put("Offer.ClicksRewarded.#{id}", false, 15.minutes) do
+      clicks_rewarded = 0
+      conditions = [
+        "offer_id = '#{id}'",
+        "clicked_at < '#{end_time.to_f}'",
+        "clicked_at >= '#{start_time.to_f}'",
+      ].join(' and ')
+      Click.select_all(:conditions => conditions) do |click|
+        clicks_rewarded += 1 if click.successfully_rewarded?
+      end
+      clicks_rewarded
     end
     num_clicks_rewarded
-  end
-
-  def support_request_rewards_ratio
-    ratio = Mc.get_and_put("Offer.SRRR.#{id}", false, 15.minutes) do
-      new_ratio = 0
-      num_requests = num_support_requests
-      unless num_requests == 0
-        num_rewards = num_clicks_rewarded
-        new_ratio = ("%.4f" % (num_requests / num_rewards)) if num_rewards > 0
-      end
-      new_ratio
-    end
-    ratio
   end
 
 private
