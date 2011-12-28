@@ -103,6 +103,13 @@
         %td
           = f.select(:direct_pay, options_for_select(Offer::DIRECT_PAY_PROVIDERS, @offer.direct_pay), { :include_blank => true })
           = error_message_on @offer, :direct_pay
+      %tr
+        %th
+          = f.label(:tj_games_only, 'TJGames Only')
+          #help_tj_games_only.help ?
+        %td
+          = f.check_box(:tj_games_only)
+          = error_message_on @offer, :tj_games_only
     %tr
       %th
         = f.label(:name, 'Name')
@@ -258,6 +265,7 @@
   #help_multi_complete_content{ :name => 'Multi-complete' } Allow this offer to be completed multiple times per device.
   #help_tapjoy_sponsored_content{ :name => 'Tapjoy sponsored' } Whether or not the offer is Tapjoy sponsored.
   #help_direct_pay_content{ :name => 'Direct-pay' } Select a direct-pay provider from the list to designate this offer as a direct-pay offer. Revenue generated will be split up using the publisher's direct-pay share.
+  #help_tj_games_only_content{ :name => 'TJGames Only' } Whether or not the offer is just for TJGames.
   #help_featured_content{ :name => 'Featured' } Enables this offer in our featured offers feed.
   #help_cookie_tracking_content{ :name => 'Cookie Tracking' } Designates that this offer requires cookies to track a conversion.
   #help_rewarded_content{ :name => 'Rewarded' } Whether or not the offer rewards the user with currency.
@@ -265,8 +273,8 @@
   #help_internal_suffix_content{ :name => 'Internal Suffix' } Internal identifier for offers. i.e. 'featured' or 'us only'
   #help_show_rate_content{ :name => 'Show Rate' } The probability that this offer will be shown on an offerwall impression. This is set automatically by the system and is used for budgeting. Allowed values are 0.0 - 1.0.
   #help_min_conversion_rate_content{ :name => 'Min CVR' } This is used to prevent low conversion rate warnings. A warning will only be issued if the conversion rate falls below this threshold. Allowed values are blank or 0.0 - 1.0
-  #help_dma_codes_content{ :name => 'DMA Codes' } Targets this offer to these designated market areas (DMAs). Must be an array of DMA codes or blank for no targeting. i.e. [807]
-  #help_regions_content{ :name => 'Regions' } Targets this offer to these designated regions or blank for all regions. Must be an array of state and province codes. i.e. ["CA"]
+  #help_dma_codes_content{ :name => 'DMA Codes' } Targets this offer to these designated market areas (DMAs). Must be an array of DMA codes or blank for no targeting. i.e. [807,515]
+  #help_regions_content{ :name => 'Regions' } Targets this offer to these designated regions or blank for all regions. Must be an array of state and province codes. i.e. ["CA","OH"]
   #help_device_types_content{ :name => 'Device Types' } Targets this offer to these device types. At least one device type must be selected.
   #help_publisher_app_whitelist_content{ :name => 'Publisher App Whitelist' } Restrict this offer to these publisher apps. Must be a ";" separated list of publisher app IDs.
   #help_daily_budget_content{ :name => 'Daily Conversions' } The maximum number of conversions to complete in one day.

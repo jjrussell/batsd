@@ -26,6 +26,24 @@ class SimpledbShardedResource < SimpledbResource
     end
   end
 
+  def self.select_all(options = {}, &block)
+    conditions = options.delete(:conditions)
+    consistent = options.delete(:consistent)
+    raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
+
+    records = []
+    select_options = { :where => conditions, :consistent => consistent }
+    all_domain_names.each do |current_domain_name|
+      select_options[:domain_name] = current_domain_name
+      select(select_options.dup) do |record|
+        block_given? ? yield(record) : records << record
+      end
+    end
+
+    records
+  end
+
+
   private
 
   def self.num_domains

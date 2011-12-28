@@ -64,10 +64,6 @@ class Conversion < ActiveRecord::Base
   named_scope :created_since, lambda { |date| { :conditions => [ "created_at >= ?", date ] } }
   named_scope :created_between, lambda { |start_time, end_time| { :conditions => [ "created_at >= ? AND created_at < ?", start_time, end_time ] } }
 
-  named_scope :non_display, :conditions => ["reward_type < 1000 OR reward_type >= 2000"]
-  named_scope :exclude_pub_apps, lambda { |apps| { :conditions => ["publisher_app_id NOT IN (?)", apps] } }
-  named_scope :include_pub_apps, lambda { |apps| { :conditions => ["publisher_app_id IN (?)", apps] } }
-
   def self.get_stat_definitions(reward_type)
     case reward_type
     when 0, 2, 3, 5, 6
