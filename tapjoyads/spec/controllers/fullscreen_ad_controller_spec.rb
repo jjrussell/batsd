@@ -13,6 +13,15 @@ describe FullscreenAdController do
 
       @currency = Factory(:currency)
       @params = { :udid => 'stuff', :publisher_user_id => 'more_stuff', :currency_id => @currency.id, :app_id => @currency.app.id }
+
+      # Rails uses a tag parser which is more strict than necessary. Silence
+      # the warnings here.
+      @verbosity = $-v
+      $-v = nil
+    end
+
+    after :each do
+      $-v = @verbosity
     end
 
     describe "when calling 'index'" do
