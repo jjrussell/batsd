@@ -44,37 +44,29 @@ describe FullscreenAdController do
           response.should have_tag('div', 'x')
         end
 
-        describe "when offer is rewarded" do
-          it "should include call-to-action button with specific reward text" do
-            get :index, @params
+        it "should include call-to-action button for rewarded" do
+          get :index, @params
 
-            expected_text = "Earn #{@currency.get_visual_reward_amount(@offer)} #{@currency.name}"
-            response.should be_success
-            response.should have_tag('a', expected_text)
-          end
+          expected_text = "Earn #{@currency.get_visual_reward_amount(@offer)} #{@currency.name}"
+          response.should be_success
+          response.should have_tag('a', expected_text)
         end
 
-        describe "when offer is non-rewarded" do
-          before :each do
-            @offer.rewarded = false
-          end
+        it "should include call-to-action button for non-rewarded offers" do
+          @offer.rewarded = false
 
-          it "should include call-to-action button with specific reward text" do
-            get :index, @params
-
-            response.should be_success
-            response.should have_tag('a', 'Download')
-          end
-        end
-      end
-
-      describe "with generated ad" do
-        it "should render generated ad template" do
           get :index, @params
 
           response.should be_success
-          response.should render_template("fullscreen_ad/index")
+          response.should have_tag('a', 'Download')
         end
+      end
+
+      it "should render generated ad template" do
+        get :index, @params
+
+        response.should be_success
+        response.should render_template("fullscreen_ad/index")
       end
     end
   end
