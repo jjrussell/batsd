@@ -19,7 +19,7 @@ class Mc
   # Memcache counts can't go below 0. Set the offset to 2^32/2 for all counts.
   COUNT_OFFSET = 2147483648
 
-  MEMCACHED_ACTIVE_RECORD_MODELS = %w( App Currency Offer SurveyOffer )
+  MEMCACHED_ACTIVE_RECORD_MODELS = %w( App Currency Offer SurveyOffer VideoOffer )
 
   def self.cache_all
     MEMCACHED_ACTIVE_RECORD_MODELS.each do |klass|
