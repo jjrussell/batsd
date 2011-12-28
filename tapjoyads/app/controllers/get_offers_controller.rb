@@ -124,11 +124,7 @@ private
     @papaya_offers = {}
 
     #TJG app offers will show wifi only icon (except for android there's no cell download limit yet), for offerwall only windows phone will show the icon
-    if params[:show_wifi_only] == '1'
-      @show_wifi_only = true
-    else
-      @show_wifi_only = params[:device_type] == 'windows'
-    end
+    @show_wifi_only = (params[:show_wifi_only] == '1') || (params[:device_type] == 'windows')
   end
 
   def get_offer_list(type = nil)
