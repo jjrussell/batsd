@@ -2005,6 +2005,7 @@ TJG.social = {
     var fbFriends = options.fbFriends;
     var inviteUrl = options.inviteUrl;
     var channel = options.channel;
+    var advertiserAppId = options.advertiserAppId;
 
     // local functions
     var onWindowResize = function(event) {
@@ -2118,7 +2119,8 @@ TJG.social = {
         dataType: 'json',
         data: {
           friends: selectedFriends,
-          ajax: true
+          ajax: true,
+          advertiser_app_id: advertiserAppId
         },
         success: function(d) {
           var existDiv = '', notExistDiv = '';
@@ -2172,7 +2174,8 @@ TJG.social = {
         timeout: 35000,
         dataType: 'json',
         data: {
-          recipients: recipients
+          recipients: recipients,
+          advertiser_app_id: advertiserAppId
         },
         success: function(d) {
           var existDiv = '', notExistDiv = '';

@@ -1,5 +1,4 @@
 class StatzController < WebsiteController
-  include ActionView::Helpers::NumberHelper
 
   layout 'tabbed'
 
@@ -128,7 +127,7 @@ class StatzController < WebsiteController
     send_data(data, :type => 'text/csv', :filename => "tj-games-conversions_#{Time.zone.now.to_s}.csv")
   end
 
-private
+  private
 
   def find_offer
     @offer = Offer.find_by_id(params[:id])
