@@ -83,6 +83,28 @@ module Offer::UrlGeneration
     final_url
   end
 
+  def linkshare_url(options)
+    udid                  = options.delete(:udid)                  { nil }
+    platform              = options.delete(:platform)              { nil }
+    itunes_link_affiliate = options.delete(:itunes_link_affiliate) { nil }
+    raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
+
+    if item_type == 'App' && platform == 'iOS'
+      final_url = udid ? url.gsub('TAPJOY_UDID', udid.to_s) : url
+      if final_url =~ /^http:\/\/phobos\.apple\.com/
+        final_url += '&referrer=tapjoy'
+
+        if itunes_link_affiliate == 'tradedoubler'
+          final_url += '&partnerId=2003&tduid=UK1800811'
+        else
+          final_url += '&partnerId=30&siteID=OxXMC6MRBt4'
+        end
+      end
+      return final_url
+    end
+    nil
+  end
+
   def click_url(options)
     publisher_app      = options.delete(:publisher_app)      { |k| raise "#{k} is a required argument" }
     publisher_user_id  = options.delete(:publisher_user_id)  { |k| raise "#{k} is a required argument" }
