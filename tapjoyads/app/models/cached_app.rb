@@ -10,7 +10,7 @@ class CachedApp
 
     if offer.item_type == 'App'
       app = App.find_in_cache(offer.item_id)
-      self.url = offer.linkshare_url(:platform => offer.get_platform) || app.info_url
+      self.url = offer.linkshare_url(app.info_url)
       self.primary_category = app.primary_category
       self.user_rating = app.user_rating
       self.description ||= app.description
