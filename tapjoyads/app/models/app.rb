@@ -95,6 +95,7 @@ class App < ActiveRecord::Base
   delegate :conversion_rate, :to => :primary_currency, :prefix => true
   delegate :store_id, :description, :age_rating, :file_size_bytes, :supported_devices, :supported_devices?, :released_at, :user_rating, :to => :primary_app_metadata, :allow_nil => true
 
+  # TODO: remove these columns from apps table definition and remove this method
   TO_BE_DELETED = %w(description price store_id age_rating file_size_bytes supported_devices released_at user_rating categories)
   def self.columns
     super.reject do |c|
