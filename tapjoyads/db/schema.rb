@@ -613,6 +613,7 @@ ActiveRecord::Schema.define(:version => 20111228221004) do
     t.boolean  "instructions_overridden",                                                       :default => false, :null => false
     t.boolean  "tapjoy_sponsored",                                                              :default => false, :null => false
     t.boolean  "tj_games_only",                                                                 :default => false, :null => false
+    t.boolean  "wifi_only",                                                                     :default => false, :null => false
   end
 
   add_index "offers", ["id"], :name => "index_offers_on_id", :unique => true
