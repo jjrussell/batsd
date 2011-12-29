@@ -25,6 +25,7 @@ class App < ActiveRecord::Base
       :default_actions_file_name => "TapjoyPPA.java",
       :min_action_offer_bid => 25,
       :versions => [ '1.5', '1.6', '2.0', '2.1', '2.2', '2.3', '3.0' ],
+      :cell_download_limit_bytes => 99.gigabyte,
       :screen_layout_sizes => { 'small (320x426)' => '1', 'medium (320x470)' => '2', 'large (480x640)' => '3', 'extra large (720x960)' => '4' }
     },
     'iphone' => {
@@ -40,6 +41,7 @@ class App < ActiveRecord::Base
       :default_actions_file_name => "TJCPPA.h",
       :min_action_offer_bid => 35,
       :versions => [ '2.0', '2.1', '2.2', '3.0', '3.1', '3.2', '4.0', '4.1', '4.2', '4.3', '5.0' ],
+      :cell_download_limit_bytes => 20.megabytes
     },
     'windows' => {
       :expected_device_types => Offer::WINDOWS_DEVICES,
@@ -54,6 +56,7 @@ class App < ActiveRecord::Base
       :default_actions_file_name => '', #TODO fill this out
       :min_action_offer_bid => 25,
       :versions => [ '7.0' ],
+      :cell_download_limit_bytes => 20.megabytes
     },
   }
 
@@ -285,7 +288,12 @@ class App < ActiveRecord::Base
   def update_primary_app_metadata
     primary_app_metadata.update_metadata_from_store if primary_app_metadata.present?
   end
-private
+
+  def wifi_required?
+    !!(file_size_bytes && file_size_bytes > PLATFORM_DETAILS[platform][:cell_download_limit_bytes])
+  end
+
+  private
 
   def generate_secret_key
     return if secret_key.present?
@@ -309,6 +317,7 @@ private
     offer.device_types = get_offer_device_types.to_json
     offer.third_party_data = store_id
     offer.age_rating = age_rating
+    offer.wifi_only = wifi_required?
     offer.save!
   end
 
@@ -333,6 +342,7 @@ private
       offer.age_rating = age_rating if offer.age_rating != age_rating
       offer.hidden = hidden if hidden_changed?
       offer.tapjoy_enabled = false if hidden? && hidden_changed?
+      offer.wifi_only = wifi_required? if offer.wifi_only != wifi_required?
       offer.save! if offer.changed?
     end
 
