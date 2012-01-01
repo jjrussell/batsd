@@ -26,8 +26,7 @@
           - if survey_offer.enabled?
             = link_to('Disable', survey_offer_path(survey_offer, 'survey_offer[enabled]' => 'false'), :method => :put)
           - else
-            /= link_to('Enable', survey_offer_path(survey_offer, 'survey_offer[enabled]' => 'true'), :method => :put, :confirm => 'Make this offer live?')
-            = "Enable (Coming soon)"
+            = link_to('Enable', survey_offer_path(survey_offer, 'survey_offer[enabled]' => 'true'), :method => :put, :confirm => 'Make this offer live?')
         %td= link_to('Edit', edit_survey_offer_path(survey_offer))
         %td= link_to('Remove', survey_offer_path(survey_offer),
           :method => :delete,
