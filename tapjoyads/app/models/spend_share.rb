@@ -29,7 +29,7 @@ class SpendShare < ActiveRecord::Base
   end
 
   def deduct_pct(field = :ratio)
-    NumberHelper.new.number_to_percentage((1 - self[field]) * 100, :precision => 2)
+    NumberHelper.number_to_percentage((1 - self[field]) * 100, :precision => 2)
   end
 
   def capped?
