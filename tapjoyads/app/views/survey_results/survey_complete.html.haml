@@ -1,12 +1,9 @@
-#main
-  Thank you for completing the survey. You will receive your #{@click.currency_reward} #{@currency.name} shortly.
+.container
+  #main
+    #survey_complete
+      - @currency_reward = @click.currency_reward.present? ? @click.currency_reward : ''
+      - @currency = @currency.name.present? ? @currency.name : 'credits'
+      Thank you for completing the survey. You will receive your #{@currency_reward} #{@currency} shortly.
 
 - content_for :page_styles do
-  :plain
-    #main {
-      padding: 10px;
-      color: #004E09;
-      font-size: 85%;
-      font-weight: bold;
-      text-align: center;
-    }
+  = stylesheet_link_tag("survey_results/style")

@@ -1,0 +1,148 @@
+body {
+  background: transparent url("/images/games/old/v2/nav_bg_hd.png");
+  color: #444;
+  font-size: 1em; }
+
+.container {
+  min-height: 100%;
+  padding: 12px;
+  position: relative;
+  width: 100%;
+  box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  -ms-box-sizing: border-box; }
+
+#main {
+  background-color: rgba(255, 255, 255, 0.75);
+  padding: 18px;
+  border-radius: 12px;
+  overflow: hidden;
+  -moz-border-radius-: 12px;
+  -webkit-border-radius: 12px;
+  -webkit-box-shadow: 0 0 8px #cecece;
+  -moz-box-shadow: 0 0 8px #cecece;
+  box-shadow: 0 0 8px #cecece; }
+
+#survey_complete {
+  text-align: center; }
+
+.message, .message_error {
+  color: #505F6D;
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 18px;
+  text-align: center; }
+
+.message_error {
+  color: #cd202c;
+  font-size: 18px; }
+
+.field {
+  margin-bottom: 12px;
+  line-height: 1.4;
+  width: 100%; }
+
+.question {
+  float: left;
+  margin-bottom: 6px; }
+
+.answer {
+  margin-bottom: 6px; }
+
+.question_number {
+  border: 1px solid #cecece;
+  float: left;
+  font-size: 0.75em;
+  display: block;
+  height: 16px;
+  margin-right: 12px;
+  padding: 4px 8px;
+  width: 8px;
+  border-radius: 16px;
+  overflow: hidden;
+  -moz-border-radius-: 16px;
+  -webkit-border-radius: 16px;
+  -webkit-box-shadow: 0 0 4px #cecece;
+  -moz-box-shadow: 0 0 4px #cecece;
+  box-shadow: 0 0 4px #cecece; }
+
+.answer {
+  float: right; }
+
+.radio_item {
+  display: inline-block;
+  margin-right: 12px; }
+
+.radio_item:last-child {
+  margin-right: 0; }
+
+.button {
+  background-color: #CF1623;
+  border-style: none;
+  color: #FFF;
+  cursor: pointer;
+  display: block;
+  font-size: 1.1em;
+  margin: 0 auto;
+  width: 120px;
+  padding: 10px 16px;
+  text-align: center;
+  border-radius: 16px;
+  overflow: hidden;
+  -moz-border-radius-: 16px;
+  -webkit-border-radius: 16px;
+  text-shadow: rgba(160, 150, 145, 0.5) -1px 0, rgba(160, 150, 145, 0.3) 0 -1px, rgba(0, 0, 0, 0.5) 0 1px, rgba(0, 0, 0, 0.3) -1px -1px;
+  background: -moz-linear-gradient(top, #ea1927 0%, #cf1623 100%);
+  background: -webkit-gradient(linear, 0 0, 0 100%, color-stop(0, #ea1927), color-stop(1, #cf1623)); }
+
+label {
+  line-height: 1.4;
+  margin-bottom: 6px; }
+
+label[for=question] {
+  margin-bottom: 6px; }
+
+select {
+  background: white url("/images/games/select-bg.png") no-repeat center right;
+  border: 1px solid #cecece;
+  color: #5a5a5a;
+  padding: 6px;
+  -moz-appearance: none;
+  -webkit-appearance: none;
+  -webkit-box-shadow: inset 0 0 4px #cecece;
+  -moz-box-shadow: inset 0 0 4px #cecece;
+  box-shadow: inset 0 0 4px #cecece;
+  border-radius: 6px;
+  overflow: hidden;
+  -moz-border-radius-: 6px;
+  -webkit-border-radius: 6px; }
+
+input[type="text"] {
+  border: 1px solid #cecece;
+  padding: 0.6em;
+  width: 210px;
+  border-radius: 12px;
+  overflow: hidden;
+  -moz-border-radius-: 12px;
+  -webkit-border-radius: 12px;
+  -webkit-box-shadow: inset 0 0 4px #cecece;
+  -moz-box-shadow: inset 0 0 4px #cecece;
+  box-shadow: inset 0 0 4px #cecece; }
+
+input[type="text"]:focus {
+  -webkit-box-shadow: inset 0 0 6px white;
+  -moz-box-shadow: inset 0 0 6px white;
+  box-shadow: inset 0 0 6px white;
+  -webkit-box-shadow: 0 0 6px #cecece;
+  -moz-box-shadow: 0 0 6px #cecece;
+  box-shadow: 0 0 6px #cecece; }
+
+input[type="checkbox"] {
+  cursor: pointer;
+  width: 18px;
+  height: 18px;
+  border-radius: 2px;
+  overflow: hidden;
+  -moz-border-radius-: 2px;
+  -webkit-border-radius: 2px; }

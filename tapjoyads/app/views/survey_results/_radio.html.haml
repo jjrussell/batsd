@@ -1,4 +1,6 @@
-- question.possible_responses.each do |response|
-  = label_tag(response)
-  - selected = response == params[question.id]
-  = radio_button_tag(question.id, response, selected)
+.radio_select
+  - question.possible_responses.each do |response|
+    %span.radio_item
+      = label_tag(response)
+      - selected = response == params[question.id]
+      = radio_button_tag(question.id, response, selected)

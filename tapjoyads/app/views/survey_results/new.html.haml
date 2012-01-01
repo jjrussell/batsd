@@ -1,59 +1,38 @@
-.message
-  Instructions: Fill out this short survey
+.container
+  .message
+    Instructions: Fill out this short survey
 
-#error.message{ :style => (@missing_params ? '' : 'display: none;') }
-  Please complete all questions!
+  #error.message_error{ :style => (@missing_params ? '' : 'display: none;') }
+    Please complete all questions!
 
-#main
-  - form_tag(survey_results_path) do
-    = hidden_field_tag(:udid, params[:udid])
-    = hidden_field_tag(:click_key, params[:click_key])
-    = hidden_field_tag(:id, params[:id])
+  #main
+    - form_tag(survey_results_path) do
+      = hidden_field_tag(:udid, params[:udid])
+      = hidden_field_tag(:click_key, params[:click_key])
+      = hidden_field_tag(:id, params[:id])
 
-    - @survey_questions.each do |survey_question|
-      .field
-        .question= survey_question.text
-        .answer= render survey_question.format,
-          :question => survey_question
-    = submit_tag("Submit Survey")
+      - @survey_questions.each_with_index do |survey_question, i|
+        .field.clearfix
+          %span.question
+            %span.question_number
+              = i + 1
+            %label{ :for => 'question' }= survey_question.text
+          %span.answer
+            = render survey_question.format,
+              :question => survey_question
+      = submit_tag("Submit", :class => 'button')
 
 - content_for :page_styles do
+  = stylesheet_link_tag("survey_results/style")
+
+- content_for :page_javascript do
   :plain
-    .message {
-      margin-bottom: 10px;
-      padding: 10px;
-      margin: 10px 3%;
-      color: #004E09;
-      font-size: 85%;
-      font-weight: bold;
-      text-align: center;
-      background: white;
-      border: 1px solid #d5d5d5;
-      -moz-border-radius: 7px;
-      -webkit-border-radius: 7px;
-    }
-    #error {
-      background-color: darkRed;
-      color: white;
-      padding: 3px 0;
-    }
-    input {
-      -webkit-text-size-adjust: 140%;
-    }
-    input[type=text] {
-      width: 50px;
-    }
-    input[type=submit] {
-      width: 100%;
-    }
-    .field {
-      margin: 10px 0;
-      border-bottom: 1px dotted #ccc;
-      padding-bottom: 5px;
-    }
-    .question {
-      color: #004E09;
-    }
-    .answer {
-      margin-top: 5px;
-    }
+    $(window).load(function() {
+      if ($("select option")) {
+        $("select option").each(function() {
+           if($(this).attr('value') == '') {
+            $(this).text("Select...");
+           }
+        });
+      }
+    });

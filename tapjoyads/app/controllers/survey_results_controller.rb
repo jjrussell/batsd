@@ -1,12 +1,13 @@
 class SurveyResultsController < ApplicationController
 
-  layout 'offerwall'
+  layout 'mobile'
 
   before_filter :read_click, :only => [ :create ]
 
   def new
     return unless verify_params([:udid, :click_key])
     survey_offer = SurveyOffer.find_in_cache(params[:id])
+    @page_title = survey_offer.name
     @survey_questions = survey_offer.survey_questions
   end
 

@@ -1,0 +1,37 @@
+!!! 5
+/[if IEMobile 7 ]
+  %html{ 'class' => 'no-js iem7' }
+/[if (gt IEMobile 7)|!(IEMobile)]
+  %html{ 'class' => 'no-js' }
+
+%head
+  %meta{ :charset => 'utf-8' }
+  %meta{ 'http-equiv' => 'cleartype', :content => 'on' }
+
+  %meta{ :name => 'HandheldFriendly', :content => 'True' }
+  %meta{ :name => 'MobileOptimized', :content => '320' }
+  %meta{ 'name' => 'viewport', 'content' => 'width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=no;' }
+  %meta{ :name => 'apple-mobile-web-app-status-bar-style', :content => 'black' }
+
+  %link{ :rel => 'shortcut icon', :href => '/favicon.ico', :content => 'image/vnd.microsoft.icon' }
+  %link{ :rel => 'apple-touch-icon-precomposed', :href => '/images/tjgames-114x114.png' }
+
+  %title= @page_title.blank? ? 'Tapjoy' : "#{@page_title} - Tapjoy"
+
+  = stylesheet_link_tag("mobile/base")
+
+  = yield :page_styles
+
+  = javascript_include_tag "mobile/modernizr"
+  = javascript_include_tag "mobile/respond"
+
+  = yield :page_head
+
+%body
+  = yield
+
+= javascript_include_tag "jquery-1.4.2.min"
+= yield :included_javascripts
+
+%script{ :type => 'text/javascript', :charset => 'utf-8' }
+  = yield :page_javascript
