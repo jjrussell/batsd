@@ -42,7 +42,7 @@ class TapjoyMailer < ActionMailer::Base
     recipients user_email
     subject "Password Reset - Tapjoy.com"
     content_type 'text/html'
-    body(:reset_link => reset_link, :location => location)
+    body(:reset_link => reset_link, :location => location, :timestamp => timestamp)
   end
 
   def new_secondary_account(user_email, reset_link)
