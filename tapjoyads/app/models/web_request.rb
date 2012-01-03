@@ -134,6 +134,7 @@ class WebRequest
   self.define_attr :package_names, :force_array => true, :replace => false
   self.define_attr :truncated_package_names, :type => :bool
   self.define_attr :offerwall_rank, :type => :int
+  self.define_attr :offerwall_rank_score, :type => :float
   self.define_attr :offerwall_start_index, :type => :int
   self.define_attr :offerwall_max_items, :type => :int
 
