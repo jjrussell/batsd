@@ -10,7 +10,9 @@ class PasswordResetsController < WebsiteController
     @user = User.find_by_email(params[:email])
     if @user
       @user.reset_perishable_token!
-      TapjoyMailer.deliver_password_reset(@user.email, edit_password_reset_url(@user.perishable_token))
+      url = edit_password_reset_url(@user.perishable_token)
+      timestamp = Time.zone.now.strftime("%l:%M%p on %b %d, %Y")
+      TapjoyMailer.deliver_password_reset(@user.email, url, geoip_location, timestamp)
       flash.now[:notice] = "A password reset link has just been emailed to you. Please check your email."
     else
       flash.now[:error] = "No user found with that email address."
