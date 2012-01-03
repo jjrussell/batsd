@@ -254,7 +254,7 @@ class App < ActiveRecord::Base
   end
 
   def wifi_required?
-    file_size_bytes && file_size_bytes > PLATFORM_DETAILS[platform][:cell_download_limit_bytes]
+    !!(file_size_bytes && file_size_bytes > PLATFORM_DETAILS[platform][:cell_download_limit_bytes])
   end
 
 private
