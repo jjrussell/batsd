@@ -1,6 +1,6 @@
 class CachedApp
 
-  attr_accessor :id, :name, :description, :primary_category, :user_rating, :price, :url
+  attr_accessor :id, :name, :description, :primary_category, :user_rating, :price, :url, :wifi_required
 
   def initialize(offer, description = nil)
     self.id = offer.id
@@ -14,6 +14,7 @@ class CachedApp
       self.primary_category = app.primary_category
       self.user_rating = app.user_rating
       self.description ||= app.description
+      self.wifi_required = app.wifi_required?
     else
       self.url = offer.url
       self.primary_category = nil
