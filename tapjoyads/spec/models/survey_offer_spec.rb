@@ -10,7 +10,7 @@ describe SurveyOffer do
   it { should validate_presence_of :name }
 
   before :each do
-    stub_offers
+    require 'fake_aws'
 
     @partner = Factory(:partner, :id => TAPJOY_PARTNER_ID)
     @survey_offer = Factory(:survey_offer)
@@ -56,7 +56,8 @@ describe SurveyOffer do
     end
 
     it "should create the offer icon" do
-      Offer.any_instance.expects(:save_icon!).with('fake image')
+      fake_object = FakeObject.new('icons/checkbox.jpg')
+      Offer.any_instance.expects(:save_icon!).with(fake_object.read)
       survey_offer = SurveyOffer.new(:name => 'bob', :bid_price => 0)
       survey_offer.save
     end
