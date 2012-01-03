@@ -127,6 +127,11 @@ class GamesController < ApplicationController
     dissociate_and_redirect
   end
 
+  def handle_errno_exceptions
+    @error_msg = "There was a connection issue. Please try again later."
+    redirect_to edit_games_gamer_path
+  end
+
   private
 
   def current_gamer_session
@@ -150,7 +155,7 @@ class GamesController < ApplicationController
   def using_android?
     if current_gamer && current_device_id
       device = GamerDevice.find_by_gamer_id_and_device_id(current_gamer.id, current_device_id)
-      return device.device_type == 'android'
+      return device && device.device_type == 'android'
     end
 
     HeaderParser.device_type(request.user_agent) == 'android'

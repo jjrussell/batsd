@@ -989,6 +989,7 @@ TJG.ui = {
   },
 
   getAndShowOfferWall : function(url, appId, appName, currencyName) {
+    url = url + "&show_wifi_only=1";
     TJG.utils.slidePage("#earn", "left");
     var fadeSpd = TJG.ui.fadeSpd;
 
@@ -1214,6 +1215,11 @@ TJG.ui = {
                   t.push('</div>');
                 t.push('</a>');
             t.push('</div>');
+            if (v.WifiOnly) {
+              t.push('<div class = "wifi_only">');
+                t.push('Wifi Only <div class="wifi_icon"></div>');
+              t.push('</div>');
+            }
           t.push('</div>');
         t.push('</li>');
       t.push('</a>');
@@ -1756,7 +1762,6 @@ TJG.ui = {
     TJG.ui.fadeSpdSlow = 700;
 
     var fadeSpd = TJG.ui.fadeSpd, fadeSpdFast = TJG.ui.fadeSpdFas, fadeSpdSlow = TJG.ui.fadeSpdSlow;
-    var install = TJG.utils.getParam("register_device");
 
     // Enable bookmarking modal
     if (TJG.vars.isIos || TJG.vars.hasHomescreen) {
@@ -1770,7 +1775,11 @@ TJG.ui = {
     }
     // Checks if new user. If so, shows intro tutorial
     var repeat = TJG.utils.getLocalStorage("tjg.new_user");
-    if (install.indexOf("true") != -1) {
+    if (TJG.register_device) {
+      if (TJG.register_device_pixel) {
+        var pixel = new Image();
+        pixel.src = TJG.register_device_pixel;
+      }
       if (TJG.vars.isAndroid) {
         showIntro();
       }
@@ -2002,6 +2011,7 @@ TJG.social = {
     var fbFriends = options.fbFriends;
     var inviteUrl = options.inviteUrl;
     var channel = options.channel;
+    var advertiserAppId = options.advertiserAppId;
 
     // local functions
     var onWindowResize = function(event) {
@@ -2115,7 +2125,8 @@ TJG.social = {
         dataType: 'json',
         data: {
           friends: selectedFriends,
-          ajax: true
+          ajax: true,
+          advertiser_app_id: advertiserAppId
         },
         success: function(d) {
           var existDiv = '', notExistDiv = '';
@@ -2169,7 +2180,8 @@ TJG.social = {
         timeout: 35000,
         dataType: 'json',
         data: {
-          recipients: recipients
+          recipients: recipients,
+          advertiser_app_id: advertiserAppId
         },
         success: function(d) {
           var existDiv = '', notExistDiv = '';
@@ -2392,8 +2404,7 @@ RegExp.escape = function(text) {
         if (TJG.vars.c_data && !TJG.vars.ls_data) {
           TJG.utils.setLocalStorage('data', TJG.vars.c_data);
           TJG.utils.setLocalStorage('data_ts', t);
-          var install = TJG.utils.getParam("register_device");
-          if (install.indexOf("true") != -1) {
+          if (TJG.register_device) {
             TJG.utils.setLocalStorage('link_ts', t);
           }
         }

@@ -10,6 +10,7 @@ class RecommendationList
     @device_type = options[:device_type]
     @geoip_data  = options[:geoip_data] || {}
     @os_version  = options[:os_version]
+    @store_ids   = Set.new
 
     @offers = RecommendationList.for_device(@device.id).reject { |offer| recommendation_reject?(offer) }
     @offers |= RecommendationList.for_app(@device.last_app_run).reject { |offer| recommendation_reject?(offer) } if @offers.length < MINIMUM
@@ -82,7 +83,10 @@ class RecommendationList
   private
 
   def recommendation_reject?(offer)
-    offer.recommendation_reject?(@device, @device_type, @geoip_data, @os_version)
+    rejected = @store_ids.include?(offer.store_id_for_feed) || offer.recommendation_reject?(@device, @device_type, @geoip_data, @os_version)
+    @store_ids << offer.store_id_for_feed unless rejected || offer.store_id_for_feed.blank?
+
+    rejected
   end
 
 end
