@@ -120,6 +120,8 @@ private
       @web_request = WebRequest.new(:time => @now)
       @web_request.put_values(wr_path, params, get_ip_address, get_geoip_data, request.headers['User-Agent'])
       @web_request.viewed_at = @now
+      @web_request.offerwall_start_index = @start_index
+      @web_request.offerwall_max_items = @max_items
     end
     @show_papaya = false
     @papaya_offers = {}
