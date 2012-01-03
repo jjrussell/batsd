@@ -12,6 +12,7 @@
     hash["Type"]            = offer.item_type
     hash["FullScreenAdURL"] = get_fullscreen_ad_url(offer) if params[:source] == 'featured'
     hash["PapayaUserCount"] = number_with_delimiter(@papaya_offers[offer.id]) if @device.is_papayan? && @show_papaya && @papaya_offers.include?(offer.id)
+    hash["WifiOnly"]        = offer.wifi_only? if @show_wifi_only
     offer_array << hash
   end
 
