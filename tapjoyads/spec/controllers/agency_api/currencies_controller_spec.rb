@@ -17,32 +17,32 @@ describe AgencyApi::CurrenciesController do
       }
     end
 
-    it 'with missing params should respond with error' do
+    it 'should respond with error given missing params' do
       get :index
 
       should_respond_with_json_error(400)
     end
 
-    it 'with bad credentials should respond with error' do
+    it 'should respond with error given bad credentials' do
       get :index, @valid_params.merge(:api_key => 'foo')
 
       should_respond_with_json_error(403)
     end
 
-    it 'with an invalid app_id should respond with error' do
+    it 'should respond with error given invalid app_id' do
       get :index, @valid_params.merge(:app_id => 'foo')
 
       should_respond_with_json_error(400)
     end
 
-    it 'with an app_id from an invalid partner should respond with error' do
+    it 'should respond with error given app_id from invalid partner' do
       app2 = Factory(:app)
       get :index, @valid_params.merge(:app_id => app2.id)
 
       should_respond_with_json_error(403)
     end
 
-    it 'with valid params should respond with success' do
+    it 'should respond with success given valid params' do
       Resolv.stubs(:getaddress).returns('1.1.1.1')
 
       currency = Factory(:currency,
@@ -88,25 +88,25 @@ describe AgencyApi::CurrenciesController do
       }
     end
 
-    it 'with missing params should respond with error' do
+    it 'should respond with error given missing params' do
       get :show
 
       should_respond_with_json_error(400)
     end
 
-    it 'with bad credentials should respond with error' do
+    it 'should respond with error given bad credentials' do
       get :show, @valid_params.merge(:api_key => 'foo')
 
       should_respond_with_json_error(403)
     end
 
-    it 'with an invalid currency_id should respond with error' do
+    it 'should respond with error given invalid currency_id' do
       get :show, @valid_params.merge(:id => 'foo')
 
       should_respond_with_json_error(400)
     end
 
-    it 'with a currency_id from an invalid partner should respond with error' do
+    it 'should respond with error given currency_id from an invalid partner' do
       currency2 = Factory(:currency)
 
       get :show, @valid_params.merge(:id => currency2.id)
@@ -114,7 +114,7 @@ describe AgencyApi::CurrenciesController do
       should_respond_with_json_error(403)
     end
 
-    it 'with valid params should respond with success' do
+    it 'should respond with success given valid params' do
       get :show, @valid_params
 
       should_respond_with_json_success(200)
@@ -145,25 +145,25 @@ describe AgencyApi::CurrenciesController do
       }
     end
 
-    it 'with missing params should respond with error' do
+    it 'should respond with error given missing params' do
       post :create
 
       should_respond_with_json_error(400)
     end
 
-    it 'with bad credentials should respond with error' do
+    it 'should respond with error given bad credentials' do
       post :create, @valid_params.merge(:api_key => 'foo')
 
       should_respond_with_json_error(403)
     end
 
-    it 'with an invalid app_id should respond with error' do
+    it 'should respond with error given invalid app_id' do
       post :create, @valid_params.merge(:app_id => 'foo')
 
       should_respond_with_json_error(400)
     end
 
-    it 'with an app_id from an invalid partner should respond with error' do
+    it 'should respond with error given app_id from an invalid partner' do
       partner2 = Factory(:partner)
       app2 = Factory(:app, :partner => partner2)
       post :create, @valid_params.merge(:app_id => app2.id)
@@ -171,7 +171,7 @@ describe AgencyApi::CurrenciesController do
       should_respond_with_json_error(403)
     end
 
-    it 'with an app that already has a currency should respond with error' do
+    it 'should respond with error when an app already has a currency' do
       Factory(:currency, :id => @app.id, :app => @app, :partner => @partner)
 
       post :create, @valid_params
@@ -179,13 +179,13 @@ describe AgencyApi::CurrenciesController do
       should_respond_with_json_error(400)
     end
 
-    it 'with invalid conversion rate should respond with error' do
+    it 'should respond with error given an invalid conversion rate' do
       post :create, @valid_params.merge(:conversion_rate => -1)
 
       should_respond_with_json_error(400)
     end
 
-    it 'with valid params should respond with success' do
+    it 'should respond with success given valid params' do
       Resolv.stubs(:getaddress).returns('1.1.1.1')
 
       post :create, @valid_params
@@ -224,25 +224,25 @@ describe AgencyApi::CurrenciesController do
       }
     end
 
-    it 'with missing params should respond with error' do
+    it 'should respond with error given missing params' do
       put :update
 
       should_respond_with_json_error(400)
     end
 
-    it 'with bad credentials should respond with error' do
+    it 'should respond with error given bad credentials' do
       put :update, @valid_params.merge(:api_key => 'foo')
 
       should_respond_with_json_error(403)
     end
 
-    it 'with an invalid id should respond with error' do
+    it 'should respond with error given invalid id' do
       put :update, @valid_params.merge(:id => 'foo')
 
       should_respond_with_json_error(400)
     end
 
-    it 'with an id from an invalid partner should respond with error' do
+    it 'should respond with error given id from an invalid partner' do
       currency2 = Factory(:currency)
 
       put :update, @valid_params.merge(:id => currency2.id)
@@ -250,13 +250,13 @@ describe AgencyApi::CurrenciesController do
       should_respond_with_json_error(403)
     end
 
-    it 'with invalid conversion rate should respond with error' do
+    it 'should respond with error given an invalid conversion rate' do
       put :update, @valid_params.merge(:conversion_rate => -1)
 
       should_respond_with_json_error(400)
     end
 
-    it 'with valid params should respond with success' do
+    it 'should respond with success given valid params' do
       Resolv.stubs(:getaddress).returns('1.1.1.1')
 
       put :update, @valid_params
