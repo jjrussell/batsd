@@ -62,6 +62,17 @@ class OfferTest < ActiveSupport::TestCase
       @offer.regions = []
       assert !@offer.send(:geoip_reject?, geoip_data, device)
     end
+
+    should "reject based on source" do
+      @offer.approved_sources = ['tj_games']
+      assert @offer.send(:source_reject?, 'offerwall')
+      assert !@offer.send(:source_reject?, 'tj_games')
+    end
+
+    should "not reject on source when approved_sources is empty" do
+      assert !@offer.send(:source_reject?, 'foo')
+      assert !@offer.send(:source_reject?, 'offerwall')
+    end
   end
 
 end
