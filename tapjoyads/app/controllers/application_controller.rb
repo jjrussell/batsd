@@ -144,11 +144,8 @@ private
     @cached_geoip_data
   end
 
-  alias_method :ip_address, :get_ip_address
-  alias_method :geoip_data, :get_geoip_data
-
   def geoip_location
-    "#{geoip_data[:city]}, #{geoip_data[:region]}, #{geoip_data[:country]} (#{ip_address})"
+    "#{get_geoip_data[:city]}, #{get_geoip_data[:region]}, #{get_geoip_data[:country]} (#{get_ip_address})"
   end
 
   def reject_banned_ips
