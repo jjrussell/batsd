@@ -9,6 +9,7 @@ class GetOffersController < ApplicationController
   before_filter :choose_papaya_experiment, :only => [:index, :webpage]
 
   after_filter :save_web_request, :except => :image
+  after_filter :save_impressions, :only => [:index, :webpage]
 
   def image
     offer = Offer.find_in_cache(params[:offer_id])
@@ -119,6 +120,8 @@ private
       @web_request = WebRequest.new(:time => @now)
       @web_request.put_values(wr_path, params, get_ip_address, get_geoip_data, request.headers['User-Agent'])
       @web_request.viewed_at = @now
+      @web_request.offerwall_start_index = @start_index
+      @web_request.offerwall_max_items = @max_items
     end
     @show_papaya = false
     @papaya_offers = {}
@@ -159,6 +162,18 @@ private
 
   def save_web_request
     @web_request.save unless @for_preview
+  end
+
+  def save_impressions
+    unless @for_preview
+      @offer_list.each_with_index do |offer, i|
+        @web_request.replace_path('offerwall_impression')
+        @web_request.offer_id = offer.id
+        @web_request.offerwall_rank = i + @start_index + 1
+        @web_request.offerwall_rank_score = offer.rank_score
+        @web_request.save
+      end
+    end
   end
 
   def choose_papaya_experiment
