@@ -6,8 +6,6 @@ describe BillingController do
     user = Factory(:user)
     @partner = Factory(:partner, :pending_earnings => 10000, :balance => 10000, :users => [user], :transfer_bonus => 0.1)
     login_as(user)
-    # remove this line after 12/23
-    Time.stubs(:now).returns(Time.parse('2011-12-23'))
   end
 
   describe "admins creating transfers" do
@@ -39,40 +37,6 @@ describe BillingController do
       @partner.payouts.should be_blank
       @partner.pending_earnings.should == 10_000
       @partner.balance.should == 10_000
-    end
-  end
-
-  describe 'transfer freeze' do
-    describe 'during freeze' do
-      before :each do
-        Time.stubs(:now).returns(Time.parse('2011-12-22'))
-      end
-
-      it 'should not show transfer page' do
-        get :transfer_funds
-        @response.should render_template('billing/no_transfer.html.haml')
-      end
-
-      it 'should not create transfer' do
-        post :create_transfer, { :transfer_amount => '$1.00' }
-        flash[:error].should =~ /error/
-      end
-    end
-
-    describe 'after freeze' do
-      before :each do
-        Time.stubs(:now).returns(Time.parse('2011-12-23'))
-      end
-
-      it 'should show transfer page' do
-        get :transfer_funds
-        @response.should render_template('billing/transfer_funds.html.haml')
-      end
-
-      it 'should resume creating transfer' do
-        post :create_transfer, { :transfer_amount => '$1.00' }
-        flash[:error].should be_nil
-      end
     end
   end
 end

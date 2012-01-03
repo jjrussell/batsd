@@ -21,7 +21,7 @@ class ExternalPublisher
     Offer.get_icon_url(options.merge(:icon_id => Offer.hashed_icon_id(app_id)))
   end
 
-  def get_offerwall_url(device, currency, accept_language_str, user_agent_str)
+  def get_offerwall_url(device, currency, accept_language_str, user_agent_str, gamer_id = nil)
     language_code = HeaderParser.locale(accept_language_str)
     device_type = HeaderParser.device_type(user_agent_str)
     os_version = HeaderParser.os_version(user_agent_str) if device_type.present?
@@ -39,6 +39,7 @@ class ExternalPublisher
     data[:language_code] = language_code if language_code.present?
     data[:device_type]   = device_type if device_type.present?
     data[:os_version]    = os_version if os_version.present?
+    data[:gamer_id]      = gamer_id if gamer_id.present?
 
     "#{API_URL}/get_offers?data=#{ObjectEncryptor.encrypt(data)}"
   end

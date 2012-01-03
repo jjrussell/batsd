@@ -89,3 +89,5 @@ DEV_FACEBOOK_ID = '100000459598424'
 DEVICE_LINK_TRACKING_PIXEL = 'http://tapjoy.go2cloud.org/SL2P'
 
 Sass::Plugin.options[:style] = :compressed
+
+TAPJOY_GAMES_INVITATION_OFFER_ID = '3839e884-2310-4de4-873f-8b0ca44c1a1a'
