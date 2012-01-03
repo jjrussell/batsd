@@ -18,7 +18,7 @@
     - @costs.each do |cost|
       %tr
         %td= cost.first_effective_on
-        %td= cost.first_effective_on + 29.days
+        %td= cost.last_effective_on
         %td= number_to_currency(cost.amount / 100.0)
         %td= cost.notes
         %td= cost.created_at.to_s(:mdy_ampm)
