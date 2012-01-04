@@ -25,6 +25,9 @@ class PartnerTest < ActiveSupport::TestCase
 
   context "A Partner" do
     setup do
+      mock_slave = mock()
+      mock_slave.stubs(:execute)
+      Partner.stubs(:slave_connection).returns(mock_slave)
       @partner = Factory(:partner, :pending_earnings => 10000, :balance => 10000)
       @app = Factory(:app, :partner => @partner)
       cutoff_date = @partner.payout_cutoff_date

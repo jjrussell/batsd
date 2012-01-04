@@ -989,6 +989,7 @@ TJG.ui = {
   },
 
   getAndShowOfferWall : function(url, appId, appName, currencyName) {
+    url = url + "&show_wifi_only=1";
     TJG.utils.slidePage("#earn", "left");
     var fadeSpd = TJG.ui.fadeSpd;
 
@@ -1214,6 +1215,11 @@ TJG.ui = {
                   t.push('</div>');
                 t.push('</a>');
             t.push('</div>');
+            if (v.WifiOnly) {
+              t.push('<div class = "wifi_only">');
+                t.push('Wifi Only <div class="wifi_icon"></div>');
+              t.push('</div>');
+            }
           t.push('</div>');
         t.push('</li>');
       t.push('</a>');

@@ -47,7 +47,7 @@ class Offer < ActiveRecord::Base
                                   'normal_bid', 'normal_conversion_rate', 'normal_avg_revenue',
                                   'normal_price', 'over_threshold', 'rewarded', 'reseller_id',
                                   'cookie_tracking', 'min_os_version', 'screen_layout_sizes',
-                                  'interval', 'banner_creatives', 'dma_codes', 'regions', 'tj_games_only' ].map { |c| "#{quoted_table_name}.#{c}" }.join(', ')
+                                  'interval', 'banner_creatives', 'dma_codes', 'regions', 'tj_games_only', 'wifi_only' ].map { |c| "#{quoted_table_name}.#{c}" }.join(', ')
 
   DIRECT_PAY_PROVIDERS = %w( boku paypal )
 
@@ -690,7 +690,7 @@ private
     raise BannerSyncError.new("custom_creative_#{size}_blob", "New file has invalid dimensions.") if [width, height] != [creative.columns, creative.rows]
 
     begin
-      banner_creative_s3_object(size, format).write(:data => creative.to_blob { self.quality = 75 }, :acl => :public_read)
+      banner_creative_s3_object(size, format).write(:data => creative.to_blob { self.quality = 85 }, :acl => :public_read)
     rescue
       raise BannerSyncError.new("custom_creative_#{size}_blob", "Encountered unexpected error while uploading new file, please try again.")
     end
