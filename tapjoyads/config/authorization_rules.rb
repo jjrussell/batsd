@@ -8,7 +8,7 @@ authorization do
     has_permission_on :enable_offer_requests, :to => [ :create ]
     has_permission_on :reporting, :to => [ :index, :show, :export, :download_udids, :api, :regenerate_api_key, :aggregate, :export_aggregate ]
     has_permission_on :apps_action_offers, :to => [ :index, :new, :create, :edit, :update, :toggle, :TJCPPA, :TapjoyPPA, :preview ]
-    has_permission_on :apps_reengagement_offers, :to => [ :index, :new, :create, :edit, :update, :destroy ]
+    has_permission_on :apps_reengagement_offers, :to => [ :index, :new, :create, :edit, :update, :destroy, :update_status ]
     has_permission_on :billing, :to => [ :index, :add_funds, :transfer_funds, :payout_info, :update_payout_info, :create_transfer, :create_order, :export_statements, :export_orders, :export_payouts, :export_adjustments, :forget_credit_card ]
     has_permission_on :users, :to => [ :index, :new, :create, :edit, :update ]
     has_permission_on :support, :to => [ :index ]

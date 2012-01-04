@@ -23,18 +23,17 @@ class ReengagementOffer < ActiveRecord::Base
 
   named_scope :visible, :conditions => { :hidden => false }
   
-  def enable
-    set_enabled_for_app(app_id, true)  
+  def self.enable_all(app_id)
+    ReengagementOffer.set_enabled(app_id, true)  
   end
 
-  def disable
-    set_enabled_for_app(app_id, false)
+  def self.disable_all(app_id)
+    ReengagementOffer.set_enabled(app_id, false)
   end
 
   def self.cache_list(app_id)
     reengagement_offers = ReengagementOffer.visible.find_all_by_app_id(app_id, :order => 'day_number ASC')
     response = Mc.put("mysql.reengagement_offers.#{app_id}.#{SCHEMA_VERSION}", reengagement_offers, false, 1.day)
-    reengagement_offers.length
   end
 
   def self.find_list_in_cache(app_id)
@@ -47,13 +46,14 @@ class ReengagementOffer < ActiveRecord::Base
 
   private
 
-  def set_enabled_for_app(app_id, enabled_value)
+  def self.set_enabled_for_app(app_id, enabled_value)
     reengagement_offers = ReengagementOffer.visible.find_all_by_app_id(app_id)
     reengagement_offers.each do |r|
       po = r.primary_offer
       po.enabled = enabled_value
       po.save!
     end
+    ReengagementOffer.cache_list(app_id)
   end
 
   def find_list_in_cache
