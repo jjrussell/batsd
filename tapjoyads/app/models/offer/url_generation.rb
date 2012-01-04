@@ -116,6 +116,8 @@ module Offer::UrlGeneration
       click_url += "action"
     elsif item_type == 'VideoOffer'
       click_url += "video"
+    elsif item_type == 'ReengagementOffer'
+      click_url += 'reengagement'
     elsif item_type == 'SurveyOffer'
       click_url += "survey"
     else

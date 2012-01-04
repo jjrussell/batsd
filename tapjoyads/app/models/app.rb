@@ -78,6 +78,7 @@ class App < ActiveRecord::Base
   has_many :app_metadata_mappings
   has_many :app_metadatas, :through => :app_metadata_mappings
   has_many :app_reviews
+  has_many :reengagement_offers
 
   belongs_to :partner
 
@@ -99,6 +100,20 @@ class App < ActiveRecord::Base
   named_scope :by_partner_id, lambda { |partner_id| { :conditions => ["partner_id = ?", partner_id] } }
 
   delegate :conversion_rate, :to => :primary_currency, :prefix => true
+
+  def get_day_number_for_next_reengagement_offer
+    day_number = 0
+    reengagement_offers = ReengagementOffer.find_all_by_app_id(id)
+    if reengagement_offers.empty?
+      return 1
+    end
+    reengagement_offers.each do |ro|
+      unless ro.hidden or ro.day_number <= day_number
+        day_number = ro.day_number
+      end
+    end
+    day_number + 1
+  end
 
   def is_ipad_only?
     supported_devices? && JSON.load(supported_devices).all?{ |i| i.match(/^ipad/i) }

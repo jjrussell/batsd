@@ -32,6 +32,7 @@ class Click < SimpledbShardedResource
   self.sdb_attr :advertiser_partner_id
   self.sdb_attr :publisher_reseller_id
   self.sdb_attr :advertiser_reseller_id
+  self.sdb_attr :client_timestamp,  :type => :time
 
   def initialize(options = {})
     super({ :load_from_memcache => false }.merge(options))

@@ -12,6 +12,8 @@ class Currency < ActiveRecord::Base
   belongs_to :currency_group
   belongs_to :reseller
 
+  has_many :reengagement_offers
+
   validates_presence_of :reseller, :if => Proc.new { |currency| currency.reseller_id? }
   validates_presence_of :app, :partner, :name, :currency_group, :callback_url
   validates_numericality_of :conversion_rate, :initial_balance, :ordinal, :only_integer => true, :greater_than_or_equal_to => 0

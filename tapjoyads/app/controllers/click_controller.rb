@@ -15,6 +15,14 @@ class ClickController < ApplicationController
     redirect_to(get_destination_url)
   end
 
+  def reengagement
+    params.merge (:advertiser_app_id => params[:publisher_app_id])
+    create_click('reengagement')
+    handle_pay_per_click
+  
+    render :text => 'OK'
+  end
+
   def action
     create_click('action')
     handle_pay_per_click
@@ -246,6 +254,7 @@ private
     @click.publisher_reseller_id  = @currency.reseller_id || ''
     @click.advertiser_reseller_id = @offer.reseller_id || ''
     @click.spend_share            = @currency.get_spend_share(@offer)
+    @click.local_timestamp        = params[:local_timestamp] if params[:local_timestamp].present?
 
     @click.save
   end

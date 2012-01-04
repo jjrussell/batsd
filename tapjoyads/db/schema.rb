@@ -812,6 +812,24 @@ ActiveRecord::Schema.define(:version => 20111227171406) do
   add_index "rating_offers", ["id"], :name => "index_rating_offers_on_id", :unique => true
   add_index "rating_offers", ["partner_id"], :name => "index_rating_offers_on_partner_id"
 
+  create_table "reengagement_offers", :id => false, :force => true do |t|
+    t.string   "id",                    :limit => 36,                    :null => false
+    t.string   "app_id",                :limit => 36,                    :null => false
+    t.string   "partner_id",            :limit => 36,                    :null => false
+    t.string   "currency_id",           :limit => 36,                    :null => false
+    t.string   "prerequisite_offer_id", :limit => 36
+    t.text     "instructions"
+    t.integer  "day_number",                                             :null => false
+    t.integer  "reward_value",                                           :null => false
+    t.boolean  "hidden",                              :default => false, :null => false
+    t.boolean  "enabled",                             :default => false, :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "reengagement_offers", ["app_id"], :name => "index_reengagement_offers_on_app_id"
+  add_index "reengagement_offers", ["id"], :name => "index_reengagement_offers_on_id"
+
   create_table "resellers", :id => false, :force => true do |t|
     t.string   "id",                 :limit => 36,                               :null => false
     t.string   "name"
