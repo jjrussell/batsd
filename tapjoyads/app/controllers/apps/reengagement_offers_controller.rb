@@ -4,7 +4,6 @@ class Apps::ReengagementOffersController < WebsiteController
   layout 'apps'
   current_tab :apps
   before_filter :setup, :except => [ :show ]
-  before_filter :set_enabled, :only => [ :index ]
   filter_access_to :all
 
   def show
@@ -25,9 +24,11 @@ class Apps::ReengagementOffersController < WebsiteController
 
   def create
     params[:reengagement_offer].merge!(:partner => current_partner)
+    reengagement_offers = @app.reengagement_offers.visible
+    redirect_to app_reengagement_offers_path(@app) if reengagement_offers.length >= 5
     day_number = params[:day_number].to_i
     if day_number > 1
-      params.merge!(:prerequisite_offer_id => @app.reengagement_offers.visible[day_number - 2].id)
+      params.merge!(:prerequisite_offer_id => reengagement_offers[day_number - 2].id)
     end
     @reengagement_offer = @app.reengagement_offers.build params[:reengagement_offer]
     @reengagement_offer.save!
@@ -45,6 +46,15 @@ class Apps::ReengagementOffersController < WebsiteController
     redirect_to :action => :index, :app_id => @app.id
   end
 
+  def update_status
+    puts "======================= #{params[:enabled]}"
+    if params[:app_id].present? && params[:enabled].present?
+      puts "======================= #{params[:enabled]}"
+      params[:enabled] == true.to_s ? ReengagementOffer.enable_all(params[:app_id]) : ReengagementOffer.disable_all(params[:app_id])
+    end
+    redirect_to :action => :index, :app_id => @app.id
+  end
+
   def update
     @reengagement_offer.currency_id = params[:reengagement_offer][:currency_id]
     @reengagement_offer.reward_value = params[:reengagement_offer][:reward_value]
@@ -55,17 +65,6 @@ class Apps::ReengagementOffersController < WebsiteController
   end
 
   private
-
-  def set_enabled
-    if params[:reengagement_offer].present? && params[:reengagement_offer][:enabled].present?
-      should_enable = params[:reengagement_offer][:enabled] == "1" ? true : false
-      @reengagement_offers = ReengagementOffer.visible.find_all_by_app_id @app.id
-      @reengagement_offers.each do |r|
-        r.enabled = should_enable
-        r.save!
-      end
-    end
-  end
 
   def setup
     if  params[:app_id].present?

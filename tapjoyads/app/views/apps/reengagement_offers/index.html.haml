@@ -13,42 +13,45 @@
   %p To remove a re-engagement offer, click the 'Remove' link next to that re-engagement offer in the table below.
 
   .tjform
-    - form_for @reengagement_offer do |f|
-      Enabled: 
-      = check_box "reengagement_offer", "enabled", :checked => @reengagement_offer.enabled?
-      %table
+    %br
+    %b Enabled: 
+    = check_box "reengagement_offer", "enabled", :checked => @reengagement_offer.enabled?
+    %br
+    %table
+      %tr
+        %th
+          Day
+        %th
+          Reward Currency
+        %th 
+          Reward Amount
+        %th
+        %th
+        %th
+        %th
+        %th
+        %th
+      - @reengagement_offers.each do |ro|
         %tr
-          %th
-            Day
-          %th
-            Reward Currency
-          %th 
-            Reward Amount
-          %th
-          %th
-          %th
-          %th
-          %th
-          %th
-        - @reengagement_offers.each do |ro|
-          %tr
-            %td
-              = ro.day_number
-            %td
-              = ro.currency.name
-            %td
-              = ro.reward_value
-            %td
-            %td
-              = link_to 'Preview', reengagement_reward_path(ro.id)
-            %td
-            %td
-              = link_to 'Edit', :action => "edit", :id => ro.id
-            %td
-            %td
-              - if ro == @reengagement_offers.last
-                = link_to 'Remove', {:action => "destroy", :app_id => @app.id, :id => ro.id}, {:method => :delete}
-        %tr
+          %td
+            = ro.day_number
+          %td
+            = ro.currency.name
+          %td
+            = ro.reward_value
+          %td
+          %td
+            = link_to 'Preview', reengagement_reward_path(ro.id)
+          %td
+          %td
+            = link_to 'Edit', :action => "edit", :id => ro.id
+          %td
+          %td
+            - if ro == @reengagement_offers.last
+              = link_to 'Remove', {:action => "destroy", :app_id => @app.id, :id => ro.id}, {:method => :delete}
+      
+      %tr
+        - if @reengagement_offers.length < 5
           %td{:colspan => "2"}
             = link_to 'Add A Day', {:action => "new"}, :method => :get
-      = f.submit
+    = button_to 'Save', {:action => "update_status", :app_id => @app.id, :enabled => @reengagement_offer.enabled?}, {:method => :post}

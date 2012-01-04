@@ -1,0 +1,411 @@
+# Logfile created on Fri Dec 02 11:03:14 -0800 2011 by logger.rb/22285
+[12/02/11 11:03:14 -0800 Adam-Sumners-MacBook-Air.local (490)] INFO : Dispatcher: webrick
+[12/02/11 11:03:14 -0800 Adam-Sumners-MacBook-Air.local (490)] INFO : Application: TapjoyApiTest
+[12/02/11 11:03:14 -0800 Adam-Sumners-MacBook-Air.local (490)] WARN : Agent configured not to send data in this environment - edit newrelic.yml to change this
+[12/02/11 11:03:14 -0800 Adam-Sumners-MacBook-Air.local (490)] INFO : New Relic Ruby Agent 3.3.0 Initialized: pid = 490
+[12/02/11 11:03:14 -0800 Adam-Sumners-MacBook-Air.local (490)] INFO : Agent Log at /Users/asumner/Development/tapjoyserver/log/newrelic_agent.log
+[12/02/11 12:04:25 -0800 Adam-Sumners-MacBook-Air.local (584)] INFO : Dispatcher: webrick
+[12/02/11 12:04:25 -0800 Adam-Sumners-MacBook-Air.local (584)] INFO : Application: TapjoyApiTest
+[12/02/11 12:04:25 -0800 Adam-Sumners-MacBook-Air.local (584)] WARN : Agent configured not to send data in this environment - edit newrelic.yml to change this
+[12/02/11 12:04:25 -0800 Adam-Sumners-MacBook-Air.local (584)] INFO : New Relic Ruby Agent 3.3.0 Initialized: pid = 584
+[12/02/11 12:04:25 -0800 Adam-Sumners-MacBook-Air.local (584)] INFO : Agent Log at /Users/asumner/Development/tapjoyserver/log/newrelic_agent.log
+[12/02/11 12:18:29 -0800 Adam-Sumners-MacBook-Air.local (593)] INFO : Dispatcher: webrick
+[12/02/11 12:18:29 -0800 Adam-Sumners-MacBook-Air.local (593)] INFO : Application: TapjoyApiTest
+[12/02/11 12:18:29 -0800 Adam-Sumners-MacBook-Air.local (593)] WARN : Agent configured not to send data in this environment - edit newrelic.yml to change this
+[12/02/11 12:18:29 -0800 Adam-Sumners-MacBook-Air.local (593)] INFO : New Relic Ruby Agent 3.3.0 Initialized: pid = 593
+[12/02/11 12:18:29 -0800 Adam-Sumners-MacBook-Air.local (593)] INFO : Agent Log at /Users/asumner/Development/tapjoyserver/log/newrelic_agent.log
+[12/02/11 12:24:58 -0800 Adam-Sumners-MacBook-Air.local (599)] INFO : Dispatcher: webrick
+[12/02/11 12:24:58 -0800 Adam-Sumners-MacBook-Air.local (599)] INFO : Application: TapjoyApiTest
+[12/02/11 12:24:58 -0800 Adam-Sumners-MacBook-Air.local (599)] WARN : Agent configured not to send data in this environment - edit newrelic.yml to change this
+[12/02/11 12:24:58 -0800 Adam-Sumners-MacBook-Air.local (599)] INFO : New Relic Ruby Agent 3.3.0 Initialized: pid = 599
+[12/02/11 12:24:58 -0800 Adam-Sumners-MacBook-Air.local (599)] INFO : Agent Log at /Users/asumner/Development/tapjoyserver/log/newrelic_agent.log
+[12/02/11 12:26:23 -0800 Adam-Sumners-MacBook-Air.local (603)] INFO : Dispatcher: webrick
+[12/02/11 12:26:23 -0800 Adam-Sumners-MacBook-Air.local (603)] INFO : Application: TapjoyApiTest
+[12/02/11 12:26:23 -0800 Adam-Sumners-MacBook-Air.local (603)] WARN : Agent configured not to send data in this environment - edit newrelic.yml to change this
+[12/02/11 12:26:23 -0800 Adam-Sumners-MacBook-Air.local (603)] INFO : New Relic Ruby Agent 3.3.0 Initialized: pid = 603
+[12/02/11 12:26:23 -0800 Adam-Sumners-MacBook-Air.local (603)] INFO : Agent Log at /Users/asumner/Development/tapjoyserver/log/newrelic_agent.log
+[12/02/11 12:28:35 -0800 Adam-Sumners-MacBook-Air.local (610)] INFO : Dispatcher: webrick
+[12/02/11 12:28:35 -0800 Adam-Sumners-MacBook-Air.local (610)] INFO : Application: TapjoyApiTest
+[12/02/11 12:28:35 -0800 Adam-Sumners-MacBook-Air.local (610)] WARN : Agent configured not to send data in this environment - edit newrelic.yml to change this
+[12/02/11 12:28:35 -0800 Adam-Sumners-MacBook-Air.local (610)] INFO : New Relic Ruby Agent 3.3.0 Initialized: pid = 610
+[12/02/11 12:28:35 -0800 Adam-Sumners-MacBook-Air.local (610)] INFO : Agent Log at /Users/asumner/Development/tapjoyserver/log/newrelic_agent.log
+[12/02/11 12:31:21 -0800 Adam-Sumners-MacBook-Air.local (614)] INFO : Dispatcher: webrick
+[12/02/11 12:31:21 -0800 Adam-Sumners-MacBook-Air.local (614)] INFO : Application: TapjoyApiTest
+[12/02/11 12:31:21 -0800 Adam-Sumners-MacBook-Air.local (614)] WARN : Agent configured not to send data in this environment - edit newrelic.yml to change this
+[12/02/11 12:31:21 -0800 Adam-Sumners-MacBook-Air.local (614)] INFO : New Relic Ruby Agent 3.3.0 Initialized: pid = 614
+[12/02/11 12:31:21 -0800 Adam-Sumners-MacBook-Air.local (614)] INFO : Agent Log at /Users/asumner/Development/tapjoyserver/log/newrelic_agent.log
+[12/02/11 12:36:11 -0800 Adam-Sumners-MacBook-Air.local (619)] INFO : Dispatcher: webrick
+[12/02/11 12:36:11 -0800 Adam-Sumners-MacBook-Air.local (619)] INFO : Application: TapjoyApiTest
+[12/02/11 12:36:11 -0800 Adam-Sumners-MacBook-Air.local (619)] WARN : Agent configured not to send data in this environment - edit newrelic.yml to change this
+[12/02/11 12:36:11 -0800 Adam-Sumners-MacBook-Air.local (619)] INFO : New Relic Ruby Agent 3.3.0 Initialized: pid = 619
+[12/02/11 12:36:11 -0800 Adam-Sumners-MacBook-Air.local (619)] INFO : Agent Log at /Users/asumner/Development/tapjoyserver/log/newrelic_agent.log
+[12/02/11 12:37:09 -0800 Adam-Sumners-MacBook-Air.local (623)] INFO : Dispatcher: webrick
+[12/02/11 12:37:09 -0800 Adam-Sumners-MacBook-Air.local (623)] INFO : Application: TapjoyApiTest
+[12/02/11 12:37:09 -0800 Adam-Sumners-MacBook-Air.local (623)] WARN : Agent configured not to send data in this environment - edit newrelic.yml to change this
+[12/02/11 12:37:09 -0800 Adam-Sumners-MacBook-Air.local (623)] INFO : New Relic Ruby Agent 3.3.0 Initialized: pid = 623
+[12/02/11 12:37:09 -0800 Adam-Sumners-MacBook-Air.local (623)] INFO : Agent Log at /Users/asumner/Development/tapjoyserver/log/newrelic_agent.log
+[12/02/11 12:41:33 -0800 Adam-Sumners-MacBook-Air.local (627)] INFO : Dispatcher: webrick
+[12/02/11 12:41:33 -0800 Adam-Sumners-MacBook-Air.local (627)] INFO : Application: TapjoyApiTest
+[12/02/11 12:41:33 -0800 Adam-Sumners-MacBook-Air.local (627)] WARN : Agent configured not to send data in this environment - edit newrelic.yml to change this
+[12/02/11 12:41:33 -0800 Adam-Sumners-MacBook-Air.local (627)] INFO : New Relic Ruby Agent 3.3.0 Initialized: pid = 627
+[12/02/11 12:41:33 -0800 Adam-Sumners-MacBook-Air.local (627)] INFO : Agent Log at /Users/asumner/Development/tapjoyserver/log/newrelic_agent.log
+[12/02/11 12:43:38 -0800 Adam-Sumners-MacBook-Air.local (631)] INFO : Dispatcher: webrick
+[12/02/11 12:43:38 -0800 Adam-Sumners-MacBook-Air.local (631)] INFO : Application: TapjoyApiTest
+[12/02/11 12:43:38 -0800 Adam-Sumners-MacBook-Air.local (631)] WARN : Agent configured not to send data in this environment - edit newrelic.yml to change this
+[12/02/11 12:43:38 -0800 Adam-Sumners-MacBook-Air.local (631)] INFO : New Relic Ruby Agent 3.3.0 Initialized: pid = 631
+[12/02/11 12:43:38 -0800 Adam-Sumners-MacBook-Air.local (631)] INFO : Agent Log at /Users/asumner/Development/tapjoyserver/log/newrelic_agent.log
+[12/02/11 12:45:45 -0800 Adam-Sumners-MacBook-Air.local (635)] INFO : Dispatcher: webrick
+[12/02/11 12:45:45 -0800 Adam-Sumners-MacBook-Air.local (635)] INFO : Application: TapjoyApiTest
+[12/02/11 12:45:45 -0800 Adam-Sumners-MacBook-Air.local (635)] WARN : Agent configured not to send data in this environment - edit newrelic.yml to change this
+[12/02/11 12:45:45 -0800 Adam-Sumners-MacBook-Air.local (635)] INFO : New Relic Ruby Agent 3.3.0 Initialized: pid = 635
+[12/02/11 12:45:45 -0800 Adam-Sumners-MacBook-Air.local (635)] INFO : Agent Log at /Users/asumner/Development/tapjoyserver/log/newrelic_agent.log
+[12/02/11 12:46:28 -0800 Adam-Sumners-MacBook-Air.local (639)] INFO : Dispatcher: webrick
+[12/02/11 12:46:28 -0800 Adam-Sumners-MacBook-Air.local (639)] INFO : Application: TapjoyApiTest
+[12/02/11 12:46:28 -0800 Adam-Sumners-MacBook-Air.local (639)] WARN : Agent configured not to send data in this environment - edit newrelic.yml to change this
+[12/02/11 12:46:28 -0800 Adam-Sumners-MacBook-Air.local (639)] INFO : New Relic Ruby Agent 3.3.0 Initialized: pid = 639
+[12/02/11 12:46:28 -0800 Adam-Sumners-MacBook-Air.local (639)] INFO : Agent Log at /Users/asumner/Development/tapjoyserver/log/newrelic_agent.log
+[12/02/11 12:50:11 -0800 Adam-Sumners-MacBook-Air.local (644)] INFO : Dispatcher: webrick
+[12/02/11 12:50:11 -0800 Adam-Sumners-MacBook-Air.local (644)] INFO : Application: TapjoyApiTest
+[12/02/11 12:50:11 -0800 Adam-Sumners-MacBook-Air.local (644)] WARN : Agent configured not to send data in this environment - edit newrelic.yml to change this
+[12/02/11 12:50:11 -0800 Adam-Sumners-MacBook-Air.local (644)] INFO : New Relic Ruby Agent 3.3.0 Initialized: pid = 644
+[12/02/11 12:50:11 -0800 Adam-Sumners-MacBook-Air.local (644)] INFO : Agent Log at /Users/asumner/Development/tapjoyserver/log/newrelic_agent.log
+[12/02/11 12:53:13 -0800 Adam-Sumners-MacBook-Air.local (648)] INFO : Dispatcher: webrick
+[12/02/11 12:53:13 -0800 Adam-Sumners-MacBook-Air.local (648)] INFO : Application: TapjoyApiTest
+[12/02/11 12:53:13 -0800 Adam-Sumners-MacBook-Air.local (648)] WARN : Agent configured not to send data in this environment - edit newrelic.yml to change this
+[12/02/11 12:53:13 -0800 Adam-Sumners-MacBook-Air.local (648)] INFO : New Relic Ruby Agent 3.3.0 Initialized: pid = 648
+[12/02/11 12:53:13 -0800 Adam-Sumners-MacBook-Air.local (648)] INFO : Agent Log at /Users/asumner/Development/tapjoyserver/log/newrelic_agent.log
+[12/02/11 13:40:40 -0800 Adam-Sumners-MacBook-Air.local (671)] INFO : Dispatcher: webrick
+[12/02/11 13:40:40 -0800 Adam-Sumners-MacBook-Air.local (671)] INFO : Application: TapjoyApiTest
+[12/02/11 13:40:40 -0800 Adam-Sumners-MacBook-Air.local (671)] WARN : Agent configured not to send data in this environment - edit newrelic.yml to change this
+[12/02/11 13:40:40 -0800 Adam-Sumners-MacBook-Air.local (671)] INFO : New Relic Ruby Agent 3.3.0 Initialized: pid = 671
+[12/02/11 13:40:40 -0800 Adam-Sumners-MacBook-Air.local (671)] INFO : Agent Log at /Users/asumner/Development/tapjoyserver/log/newrelic_agent.log
+[12/02/11 13:42:44 -0800 Adam-Sumners-MacBook-Air.local (676)] INFO : Dispatcher: webrick
+[12/02/11 13:42:44 -0800 Adam-Sumners-MacBook-Air.local (676)] INFO : Application: TapjoyApiTest
+[12/02/11 13:42:44 -0800 Adam-Sumners-MacBook-Air.local (676)] WARN : Agent configured not to send data in this environment - edit newrelic.yml to change this
+[12/02/11 13:42:44 -0800 Adam-Sumners-MacBook-Air.local (676)] INFO : New Relic Ruby Agent 3.3.0 Initialized: pid = 676
+[12/02/11 13:42:44 -0800 Adam-Sumners-MacBook-Air.local (676)] INFO : Agent Log at /Users/asumner/Development/tapjoyserver/log/newrelic_agent.log
+[12/02/11 13:45:13 -0800 Adam-Sumners-MacBook-Air.local (680)] INFO : Dispatcher: webrick
+[12/02/11 13:45:13 -0800 Adam-Sumners-MacBook-Air.local (680)] INFO : Application: TapjoyApiTest
+[12/02/11 13:45:13 -0800 Adam-Sumners-MacBook-Air.local (680)] WARN : Agent configured not to send data in this environment - edit newrelic.yml to change this
+[12/02/11 13:45:13 -0800 Adam-Sumners-MacBook-Air.local (680)] INFO : New Relic Ruby Agent 3.3.0 Initialized: pid = 680
+[12/02/11 13:45:13 -0800 Adam-Sumners-MacBook-Air.local (680)] INFO : Agent Log at /Users/asumner/Development/tapjoyserver/log/newrelic_agent.log
+[12/02/11 13:59:48 -0800 Adam-Sumners-MacBook-Air.local (689)] INFO : Dispatcher: webrick
+[12/02/11 13:59:48 -0800 Adam-Sumners-MacBook-Air.local (689)] INFO : Application: TapjoyApiTest
+[12/02/11 13:59:48 -0800 Adam-Sumners-MacBook-Air.local (689)] WARN : Agent configured not to send data in this environment - edit newrelic.yml to change this
+[12/02/11 13:59:48 -0800 Adam-Sumners-MacBook-Air.local (689)] INFO : New Relic Ruby Agent 3.3.0 Initialized: pid = 689
+[12/02/11 13:59:48 -0800 Adam-Sumners-MacBook-Air.local (689)] INFO : Agent Log at /Users/asumner/Development/tapjoyserver/log/newrelic_agent.log
+[12/02/11 14:14:57 -0800 Adam-Sumners-MacBook-Air.local (693)] INFO : Dispatcher: webrick
+[12/02/11 14:14:57 -0800 Adam-Sumners-MacBook-Air.local (693)] INFO : Application: TapjoyApiTest
+[12/02/11 14:14:57 -0800 Adam-Sumners-MacBook-Air.local (693)] WARN : Agent configured not to send data in this environment - edit newrelic.yml to change this
+[12/02/11 14:14:57 -0800 Adam-Sumners-MacBook-Air.local (693)] INFO : New Relic Ruby Agent 3.3.0 Initialized: pid = 693
+[12/02/11 14:14:57 -0800 Adam-Sumners-MacBook-Air.local (693)] INFO : Agent Log at /Users/asumner/Development/tapjoyserver/log/newrelic_agent.log
+[12/02/11 14:20:24 -0800 Adam-Sumners-MacBook-Air.local (699)] INFO : Dispatcher: webrick
+[12/02/11 14:20:24 -0800 Adam-Sumners-MacBook-Air.local (699)] INFO : Application: TapjoyApiTest
+[12/02/11 14:20:24 -0800 Adam-Sumners-MacBook-Air.local (699)] WARN : Agent configured not to send data in this environment - edit newrelic.yml to change this
+[12/02/11 14:20:24 -0800 Adam-Sumners-MacBook-Air.local (699)] INFO : New Relic Ruby Agent 3.3.0 Initialized: pid = 699
+[12/02/11 14:20:24 -0800 Adam-Sumners-MacBook-Air.local (699)] INFO : Agent Log at /Users/asumner/Development/tapjoyserver/log/newrelic_agent.log
+[12/02/11 14:24:55 -0800 Adam-Sumners-MacBook-Air.local (703)] INFO : Dispatcher: webrick
+[12/02/11 14:24:55 -0800 Adam-Sumners-MacBook-Air.local (703)] INFO : Application: TapjoyApiTest
+[12/02/11 14:24:55 -0800 Adam-Sumners-MacBook-Air.local (703)] WARN : Agent configured not to send data in this environment - edit newrelic.yml to change this
+[12/02/11 14:24:55 -0800 Adam-Sumners-MacBook-Air.local (703)] INFO : New Relic Ruby Agent 3.3.0 Initialized: pid = 703
+[12/02/11 14:24:55 -0800 Adam-Sumners-MacBook-Air.local (703)] INFO : Agent Log at /Users/asumner/Development/tapjoyserver/log/newrelic_agent.log
+[12/02/11 14:26:47 -0800 Adam-Sumners-MacBook-Air.local (715)] INFO : Dispatcher: webrick
+[12/02/11 14:26:47 -0800 Adam-Sumners-MacBook-Air.local (715)] INFO : Application: TapjoyApiTest
+[12/02/11 14:26:47 -0800 Adam-Sumners-MacBook-Air.local (715)] WARN : Agent configured not to send data in this environment - edit newrelic.yml to change this
+[12/02/11 14:26:47 -0800 Adam-Sumners-MacBook-Air.local (715)] INFO : New Relic Ruby Agent 3.3.0 Initialized: pid = 715
+[12/02/11 14:26:47 -0800 Adam-Sumners-MacBook-Air.local (715)] INFO : Agent Log at /Users/asumner/Development/tapjoyserver/log/newrelic_agent.log
+[12/02/11 14:28:34 -0800 Adam-Sumners-MacBook-Air.local (720)] INFO : Dispatcher: webrick
+[12/02/11 14:28:34 -0800 Adam-Sumners-MacBook-Air.local (720)] INFO : Application: TapjoyApiTest
+[12/02/11 14:28:34 -0800 Adam-Sumners-MacBook-Air.local (720)] WARN : Agent configured not to send data in this environment - edit newrelic.yml to change this
+[12/02/11 14:28:34 -0800 Adam-Sumners-MacBook-Air.local (720)] INFO : New Relic Ruby Agent 3.3.0 Initialized: pid = 720
+[12/02/11 14:28:34 -0800 Adam-Sumners-MacBook-Air.local (720)] INFO : Agent Log at /Users/asumner/Development/tapjoyserver/log/newrelic_agent.log
+[12/02/11 14:29:07 -0800 Adam-Sumners-MacBook-Air.local (724)] INFO : Dispatcher: webrick
+[12/02/11 14:29:07 -0800 Adam-Sumners-MacBook-Air.local (724)] INFO : Application: TapjoyApiTest
+[12/02/11 14:29:07 -0800 Adam-Sumners-MacBook-Air.local (724)] WARN : Agent configured not to send data in this environment - edit newrelic.yml to change this
+[12/02/11 14:29:07 -0800 Adam-Sumners-MacBook-Air.local (724)] INFO : New Relic Ruby Agent 3.3.0 Initialized: pid = 724
+[12/02/11 14:29:07 -0800 Adam-Sumners-MacBook-Air.local (724)] INFO : Agent Log at /Users/asumner/Development/tapjoyserver/log/newrelic_agent.log
+[12/02/11 14:45:00 -0800 Adam-Sumners-MacBook-Air.local (744)] INFO : Dispatcher: webrick
+[12/02/11 14:45:00 -0800 Adam-Sumners-MacBook-Air.local (744)] INFO : Application: TapjoyApiTest
+[12/02/11 14:45:00 -0800 Adam-Sumners-MacBook-Air.local (744)] WARN : Agent configured not to send data in this environment - edit newrelic.yml to change this
+[12/02/11 14:45:00 -0800 Adam-Sumners-MacBook-Air.local (744)] INFO : New Relic Ruby Agent 3.3.0 Initialized: pid = 744
+[12/02/11 14:45:00 -0800 Adam-Sumners-MacBook-Air.local (744)] INFO : Agent Log at /Users/asumner/Development/tapjoyserver/log/newrelic_agent.log
+[12/05/11 11:24:45 -0800 Adam-Sumners-MacBook-Air.local (1540)] INFO : Dispatcher: webrick
+[12/05/11 11:24:45 -0800 Adam-Sumners-MacBook-Air.local (1540)] INFO : Application: TapjoyApiTest
+[12/05/11 11:24:45 -0800 Adam-Sumners-MacBook-Air.local (1540)] WARN : Agent configured not to send data in this environment - edit newrelic.yml to change this
+[12/05/11 11:24:45 -0800 Adam-Sumners-MacBook-Air.local (1540)] INFO : New Relic Ruby Agent 3.3.0 Initialized: pid = 1540
+[12/05/11 11:24:45 -0800 Adam-Sumners-MacBook-Air.local (1540)] INFO : Agent Log at /Users/asumner/Development/tapjoyserver/log/newrelic_agent.log
+[12/05/11 11:27:40 -0800 Adam-Sumners-MacBook-Air.local (1552)] INFO : Dispatcher: webrick
+[12/05/11 11:27:40 -0800 Adam-Sumners-MacBook-Air.local (1552)] INFO : Application: TapjoyApiTest
+[12/05/11 11:27:40 -0800 Adam-Sumners-MacBook-Air.local (1552)] WARN : Agent configured not to send data in this environment - edit newrelic.yml to change this
+[12/05/11 11:27:40 -0800 Adam-Sumners-MacBook-Air.local (1552)] INFO : New Relic Ruby Agent 3.3.0 Initialized: pid = 1552
+[12/05/11 11:27:40 -0800 Adam-Sumners-MacBook-Air.local (1552)] INFO : Agent Log at /Users/asumner/Development/tapjoyserver/log/newrelic_agent.log
+[12/05/11 11:31:36 -0800 Adam-Sumners-MacBook-Air.local (1558)] INFO : Dispatcher: webrick
+[12/05/11 11:31:36 -0800 Adam-Sumners-MacBook-Air.local (1558)] INFO : Application: TapjoyApiTest
+[12/05/11 11:31:36 -0800 Adam-Sumners-MacBook-Air.local (1558)] WARN : Agent configured not to send data in this environment - edit newrelic.yml to change this
+[12/05/11 11:31:36 -0800 Adam-Sumners-MacBook-Air.local (1558)] INFO : New Relic Ruby Agent 3.3.0 Initialized: pid = 1558
+[12/05/11 11:31:36 -0800 Adam-Sumners-MacBook-Air.local (1558)] INFO : Agent Log at /Users/asumner/Development/tapjoyserver/log/newrelic_agent.log
+[12/05/11 12:33:35 -0800 Adam-Sumners-MacBook-Air.local (451)] INFO : Dispatcher: webrick
+[12/05/11 12:33:35 -0800 Adam-Sumners-MacBook-Air.local (451)] INFO : Application: TapjoyApiTest
+[12/05/11 12:33:35 -0800 Adam-Sumners-MacBook-Air.local (451)] WARN : Agent configured not to send data in this environment - edit newrelic.yml to change this
+[12/05/11 12:33:35 -0800 Adam-Sumners-MacBook-Air.local (451)] INFO : New Relic Ruby Agent 3.3.0 Initialized: pid = 451
+[12/05/11 12:33:35 -0800 Adam-Sumners-MacBook-Air.local (451)] INFO : Agent Log at /Users/asumner/Development/tapjoyserver/log/newrelic_agent.log
+[12/05/11 14:46:46 -0800 Adam-Sumners-MacBook-Air.local (569)] INFO : Dispatcher: webrick
+[12/05/11 14:46:46 -0800 Adam-Sumners-MacBook-Air.local (569)] INFO : Application: TapjoyApiTest
+[12/05/11 14:46:46 -0800 Adam-Sumners-MacBook-Air.local (569)] WARN : Agent configured not to send data in this environment - edit newrelic.yml to change this
+[12/05/11 14:46:46 -0800 Adam-Sumners-MacBook-Air.local (569)] INFO : New Relic Ruby Agent 3.3.0 Initialized: pid = 569
+[12/05/11 14:46:46 -0800 Adam-Sumners-MacBook-Air.local (569)] INFO : Agent Log at /Users/asumner/Development/tapjoyserver/log/newrelic_agent.log
+[12/06/11 11:05:37 -0800 Adam-Sumners-MacBook-Air.local (1200)] INFO : Dispatcher: webrick
+[12/06/11 11:05:37 -0800 Adam-Sumners-MacBook-Air.local (1200)] INFO : Application: TapjoyApiTest
+[12/06/11 11:05:37 -0800 Adam-Sumners-MacBook-Air.local (1200)] WARN : Agent configured not to send data in this environment - edit newrelic.yml to change this
+[12/06/11 11:05:37 -0800 Adam-Sumners-MacBook-Air.local (1200)] INFO : New Relic Ruby Agent 3.3.0 Initialized: pid = 1200
+[12/06/11 11:05:37 -0800 Adam-Sumners-MacBook-Air.local (1200)] INFO : Agent Log at /Users/asumner/Development/tapjoyserver/log/newrelic_agent.log
+[12/06/11 11:07:56 -0800 Adam-Sumners-MacBook-Air.local (1206)] INFO : Dispatcher: webrick
+[12/06/11 11:07:56 -0800 Adam-Sumners-MacBook-Air.local (1206)] INFO : Application: TapjoyApiTest
+[12/06/11 11:07:56 -0800 Adam-Sumners-MacBook-Air.local (1206)] WARN : Agent configured not to send data in this environment - edit newrelic.yml to change this
+[12/06/11 11:07:56 -0800 Adam-Sumners-MacBook-Air.local (1206)] INFO : New Relic Ruby Agent 3.3.0 Initialized: pid = 1206
+[12/06/11 11:07:56 -0800 Adam-Sumners-MacBook-Air.local (1206)] INFO : Agent Log at /Users/asumner/Development/tapjoyserver/log/newrelic_agent.log
+[12/06/11 11:09:04 -0800 Adam-Sumners-MacBook-Air.local (1210)] INFO : Dispatcher: webrick
+[12/06/11 11:09:04 -0800 Adam-Sumners-MacBook-Air.local (1210)] INFO : Application: TapjoyApiTest
+[12/06/11 11:09:04 -0800 Adam-Sumners-MacBook-Air.local (1210)] WARN : Agent configured not to send data in this environment - edit newrelic.yml to change this
+[12/06/11 11:09:04 -0800 Adam-Sumners-MacBook-Air.local (1210)] INFO : New Relic Ruby Agent 3.3.0 Initialized: pid = 1210
+[12/06/11 11:09:04 -0800 Adam-Sumners-MacBook-Air.local (1210)] INFO : Agent Log at /Users/asumner/Development/tapjoyserver/log/newrelic_agent.log
+[12/06/11 11:09:32 -0800 Adam-Sumners-MacBook-Air.local (1214)] INFO : Dispatcher: webrick
+[12/06/11 11:09:32 -0800 Adam-Sumners-MacBook-Air.local (1214)] INFO : Application: TapjoyApiTest
+[12/06/11 11:09:32 -0800 Adam-Sumners-MacBook-Air.local (1214)] WARN : Agent configured not to send data in this environment - edit newrelic.yml to change this
+[12/06/11 11:09:32 -0800 Adam-Sumners-MacBook-Air.local (1214)] INFO : New Relic Ruby Agent 3.3.0 Initialized: pid = 1214
+[12/06/11 11:09:32 -0800 Adam-Sumners-MacBook-Air.local (1214)] INFO : Agent Log at /Users/asumner/Development/tapjoyserver/log/newrelic_agent.log
+[12/06/11 11:10:09 -0800 Adam-Sumners-MacBook-Air.local (1219)] INFO : Dispatcher: webrick
+[12/06/11 11:10:09 -0800 Adam-Sumners-MacBook-Air.local (1219)] INFO : Application: TapjoyApiTest
+[12/06/11 11:10:09 -0800 Adam-Sumners-MacBook-Air.local (1219)] WARN : Agent configured not to send data in this environment - edit newrelic.yml to change this
+[12/06/11 11:10:09 -0800 Adam-Sumners-MacBook-Air.local (1219)] INFO : New Relic Ruby Agent 3.3.0 Initialized: pid = 1219
+[12/06/11 11:10:09 -0800 Adam-Sumners-MacBook-Air.local (1219)] INFO : Agent Log at /Users/asumner/Development/tapjoyserver/log/newrelic_agent.log
+[12/06/11 11:51:32 -0800 Adam-Sumners-MacBook-Air.local (1312)] INFO : Dispatcher: webrick
+[12/06/11 11:51:32 -0800 Adam-Sumners-MacBook-Air.local (1312)] INFO : Application: TapjoyApiTest
+[12/06/11 11:51:32 -0800 Adam-Sumners-MacBook-Air.local (1312)] WARN : Agent configured not to send data in this environment - edit newrelic.yml to change this
+[12/06/11 11:51:32 -0800 Adam-Sumners-MacBook-Air.local (1312)] INFO : New Relic Ruby Agent 3.3.0 Initialized: pid = 1312
+[12/06/11 11:51:32 -0800 Adam-Sumners-MacBook-Air.local (1312)] INFO : Agent Log at /Users/asumner/Development/tapjoyserver/log/newrelic_agent.log
+[12/06/11 11:52:34 -0800 Adam-Sumners-MacBook-Air.local (1316)] INFO : Dispatcher: webrick
+[12/06/11 11:52:34 -0800 Adam-Sumners-MacBook-Air.local (1316)] INFO : Application: TapjoyApiTest
+[12/06/11 11:52:34 -0800 Adam-Sumners-MacBook-Air.local (1316)] WARN : Agent configured not to send data in this environment - edit newrelic.yml to change this
+[12/06/11 11:52:34 -0800 Adam-Sumners-MacBook-Air.local (1316)] INFO : New Relic Ruby Agent 3.3.0 Initialized: pid = 1316
+[12/06/11 11:52:34 -0800 Adam-Sumners-MacBook-Air.local (1316)] INFO : Agent Log at /Users/asumner/Development/tapjoyserver/log/newrelic_agent.log
+[12/06/11 11:59:26 -0800 Adam-Sumners-MacBook-Air.local (1326)] INFO : Dispatcher: webrick
+[12/06/11 11:59:26 -0800 Adam-Sumners-MacBook-Air.local (1326)] INFO : Application: TapjoyApiTest
+[12/06/11 11:59:26 -0800 Adam-Sumners-MacBook-Air.local (1326)] WARN : Agent configured not to send data in this environment - edit newrelic.yml to change this
+[12/06/11 11:59:26 -0800 Adam-Sumners-MacBook-Air.local (1326)] INFO : New Relic Ruby Agent 3.3.0 Initialized: pid = 1326
+[12/06/11 11:59:26 -0800 Adam-Sumners-MacBook-Air.local (1326)] INFO : Agent Log at /Users/asumner/Development/tapjoyserver/log/newrelic_agent.log
+[12/06/11 12:00:17 -0800 Adam-Sumners-MacBook-Air.local (1330)] INFO : Dispatcher: webrick
+[12/06/11 12:00:17 -0800 Adam-Sumners-MacBook-Air.local (1330)] INFO : Application: TapjoyApiTest
+[12/06/11 12:00:17 -0800 Adam-Sumners-MacBook-Air.local (1330)] WARN : Agent configured not to send data in this environment - edit newrelic.yml to change this
+[12/06/11 12:00:17 -0800 Adam-Sumners-MacBook-Air.local (1330)] INFO : New Relic Ruby Agent 3.3.0 Initialized: pid = 1330
+[12/06/11 12:00:17 -0800 Adam-Sumners-MacBook-Air.local (1330)] INFO : Agent Log at /Users/asumner/Development/tapjoyserver/log/newrelic_agent.log
+[12/06/11 12:01:00 -0800 Adam-Sumners-MacBook-Air.local (1334)] INFO : Dispatcher: webrick
+[12/06/11 12:01:00 -0800 Adam-Sumners-MacBook-Air.local (1334)] INFO : Application: TapjoyApiTest
+[12/06/11 12:01:00 -0800 Adam-Sumners-MacBook-Air.local (1334)] WARN : Agent configured not to send data in this environment - edit newrelic.yml to change this
+[12/06/11 12:01:00 -0800 Adam-Sumners-MacBook-Air.local (1334)] INFO : New Relic Ruby Agent 3.3.0 Initialized: pid = 1334
+[12/06/11 12:01:00 -0800 Adam-Sumners-MacBook-Air.local (1334)] INFO : Agent Log at /Users/asumner/Development/tapjoyserver/log/newrelic_agent.log
+[12/06/11 12:01:37 -0800 Adam-Sumners-MacBook-Air.local (1338)] INFO : Dispatcher: webrick
+[12/06/11 12:01:37 -0800 Adam-Sumners-MacBook-Air.local (1338)] INFO : Application: TapjoyApiTest
+[12/06/11 12:01:37 -0800 Adam-Sumners-MacBook-Air.local (1338)] WARN : Agent configured not to send data in this environment - edit newrelic.yml to change this
+[12/06/11 12:01:37 -0800 Adam-Sumners-MacBook-Air.local (1338)] INFO : New Relic Ruby Agent 3.3.0 Initialized: pid = 1338
+[12/06/11 12:01:37 -0800 Adam-Sumners-MacBook-Air.local (1338)] INFO : Agent Log at /Users/asumner/Development/tapjoyserver/log/newrelic_agent.log
+[12/06/11 12:03:20 -0800 Adam-Sumners-MacBook-Air.local (1342)] INFO : Dispatcher: webrick
+[12/06/11 12:03:20 -0800 Adam-Sumners-MacBook-Air.local (1342)] INFO : Application: TapjoyApiTest
+[12/06/11 12:03:20 -0800 Adam-Sumners-MacBook-Air.local (1342)] WARN : Agent configured not to send data in this environment - edit newrelic.yml to change this
+[12/06/11 12:03:20 -0800 Adam-Sumners-MacBook-Air.local (1342)] INFO : New Relic Ruby Agent 3.3.0 Initialized: pid = 1342
+[12/06/11 12:03:20 -0800 Adam-Sumners-MacBook-Air.local (1342)] INFO : Agent Log at /Users/asumner/Development/tapjoyserver/log/newrelic_agent.log
+[12/06/11 17:15:11 -0800 Adam-Sumners-MacBook-Air.local (1755)] INFO : Dispatcher: webrick
+[12/06/11 17:15:11 -0800 Adam-Sumners-MacBook-Air.local (1755)] INFO : Application: TapjoyApiTest
+[12/06/11 17:15:11 -0800 Adam-Sumners-MacBook-Air.local (1755)] WARN : Agent configured not to send data in this environment - edit newrelic.yml to change this
+[12/06/11 17:15:11 -0800 Adam-Sumners-MacBook-Air.local (1755)] INFO : New Relic Ruby Agent 3.3.0 Initialized: pid = 1755
+[12/06/11 17:15:11 -0800 Adam-Sumners-MacBook-Air.local (1755)] INFO : Agent Log at /Users/asumner/Development/tapjoyserver/log/newrelic_agent.log
+[12/09/11 14:32:21 -0800 Adam-Sumners-MacBook-Air.local (1075)] INFO : Dispatcher: webrick
+[12/09/11 14:32:21 -0800 Adam-Sumners-MacBook-Air.local (1075)] INFO : Application: TapjoyApiTest
+[12/09/11 14:32:21 -0800 Adam-Sumners-MacBook-Air.local (1075)] WARN : Agent configured not to send data in this environment - edit newrelic.yml to change this
+[12/09/11 14:32:21 -0800 Adam-Sumners-MacBook-Air.local (1075)] INFO : New Relic Ruby Agent 3.3.0 Initialized: pid = 1075
+[12/09/11 14:32:21 -0800 Adam-Sumners-MacBook-Air.local (1075)] INFO : Agent Log at /Users/asumner/Development/tapjoyserver/log/newrelic_agent.log
+[12/09/11 14:57:19 -0800 Adam-Sumners-MacBook-Air.local (1158)] INFO : Dispatcher: webrick
+[12/09/11 14:57:19 -0800 Adam-Sumners-MacBook-Air.local (1158)] INFO : Application: TapjoyApiTest
+[12/09/11 14:57:19 -0800 Adam-Sumners-MacBook-Air.local (1158)] WARN : Agent configured not to send data in this environment - edit newrelic.yml to change this
+[12/09/11 14:57:19 -0800 Adam-Sumners-MacBook-Air.local (1158)] INFO : New Relic Ruby Agent 3.3.0 Initialized: pid = 1158
+[12/09/11 14:57:19 -0800 Adam-Sumners-MacBook-Air.local (1158)] INFO : Agent Log at /Users/asumner/Development/tapjoyserver/log/newrelic_agent.log
+[12/09/11 14:58:40 -0800 Adam-Sumners-MacBook-Air.local (1162)] INFO : Dispatcher: webrick
+[12/09/11 14:58:40 -0800 Adam-Sumners-MacBook-Air.local (1162)] INFO : Application: TapjoyApiTest
+[12/09/11 14:58:40 -0800 Adam-Sumners-MacBook-Air.local (1162)] WARN : Agent configured not to send data in this environment - edit newrelic.yml to change this
+[12/09/11 14:58:40 -0800 Adam-Sumners-MacBook-Air.local (1162)] INFO : New Relic Ruby Agent 3.3.0 Initialized: pid = 1162
+[12/09/11 14:58:40 -0800 Adam-Sumners-MacBook-Air.local (1162)] INFO : Agent Log at /Users/asumner/Development/tapjoyserver/log/newrelic_agent.log
+[12/09/11 15:20:08 -0800 Adam-Sumners-MacBook-Air.local (1171)] INFO : Dispatcher: webrick
+[12/09/11 15:20:08 -0800 Adam-Sumners-MacBook-Air.local (1171)] INFO : Application: TapjoyApiTest
+[12/09/11 15:20:08 -0800 Adam-Sumners-MacBook-Air.local (1171)] WARN : Agent configured not to send data in this environment - edit newrelic.yml to change this
+[12/09/11 15:20:08 -0800 Adam-Sumners-MacBook-Air.local (1171)] INFO : New Relic Ruby Agent 3.3.0 Initialized: pid = 1171
+[12/09/11 15:20:08 -0800 Adam-Sumners-MacBook-Air.local (1171)] INFO : Agent Log at /Users/asumner/Development/tapjoyserver/log/newrelic_agent.log
+[12/12/11 10:08:58 -0800 Adam-Sumners-MacBook-Air.local (1551)] INFO : Dispatcher: webrick
+[12/12/11 10:08:58 -0800 Adam-Sumners-MacBook-Air.local (1551)] INFO : Application: TapjoyApiTest
+[12/12/11 10:08:58 -0800 Adam-Sumners-MacBook-Air.local (1551)] WARN : Agent configured not to send data in this environment - edit newrelic.yml to change this
+[12/12/11 10:08:58 -0800 Adam-Sumners-MacBook-Air.local (1551)] INFO : New Relic Ruby Agent 3.3.0 Initialized: pid = 1551
+[12/12/11 10:08:58 -0800 Adam-Sumners-MacBook-Air.local (1551)] INFO : Agent Log at /Users/asumner/Development/tapjoyserver/log/newrelic_agent.log
+[12/12/11 11:02:22 -0800 Adam-Sumners-MacBook-Air.local (1660)] INFO : Dispatcher: webrick
+[12/12/11 11:02:22 -0800 Adam-Sumners-MacBook-Air.local (1660)] INFO : Application: TapjoyApiTest
+[12/12/11 11:02:22 -0800 Adam-Sumners-MacBook-Air.local (1660)] WARN : Agent configured not to send data in this environment - edit newrelic.yml to change this
+[12/12/11 11:02:22 -0800 Adam-Sumners-MacBook-Air.local (1660)] INFO : New Relic Ruby Agent 3.3.0 Initialized: pid = 1660
+[12/12/11 11:02:22 -0800 Adam-Sumners-MacBook-Air.local (1660)] INFO : Agent Log at /Users/asumner/Development/tapjoyserver/log/newrelic_agent.log
+[12/12/11 11:03:33 -0800 Adam-Sumners-MacBook-Air.local (1672)] INFO : Dispatcher: webrick
+[12/12/11 11:03:33 -0800 Adam-Sumners-MacBook-Air.local (1672)] INFO : Application: TapjoyApiTest
+[12/12/11 11:03:33 -0800 Adam-Sumners-MacBook-Air.local (1672)] WARN : Agent configured not to send data in this environment - edit newrelic.yml to change this
+[12/12/11 11:03:33 -0800 Adam-Sumners-MacBook-Air.local (1672)] INFO : New Relic Ruby Agent 3.3.0 Initialized: pid = 1672
+[12/12/11 11:03:33 -0800 Adam-Sumners-MacBook-Air.local (1672)] INFO : Agent Log at /Users/asumner/Development/tapjoyserver/log/newrelic_agent.log
+[12/12/11 11:33:04 -0800 Adam-Sumners-MacBook-Air.local (1693)] INFO : Dispatcher: webrick
+[12/12/11 11:33:04 -0800 Adam-Sumners-MacBook-Air.local (1693)] INFO : Application: TapjoyApiTest
+[12/12/11 11:33:04 -0800 Adam-Sumners-MacBook-Air.local (1693)] WARN : Agent configured not to send data in this environment - edit newrelic.yml to change this
+[12/12/11 11:33:04 -0800 Adam-Sumners-MacBook-Air.local (1693)] INFO : New Relic Ruby Agent 3.3.0 Initialized: pid = 1693
+[12/12/11 11:33:04 -0800 Adam-Sumners-MacBook-Air.local (1693)] INFO : Agent Log at /Users/asumner/Development/tapjoyserver/log/newrelic_agent.log
+[12/12/11 11:35:35 -0800 Adam-Sumners-MacBook-Air.local (1698)] INFO : Dispatcher: webrick
+[12/12/11 11:35:35 -0800 Adam-Sumners-MacBook-Air.local (1698)] INFO : Application: TapjoyApiTest
+[12/12/11 11:35:35 -0800 Adam-Sumners-MacBook-Air.local (1698)] WARN : Agent configured not to send data in this environment - edit newrelic.yml to change this
+[12/12/11 11:35:35 -0800 Adam-Sumners-MacBook-Air.local (1698)] INFO : New Relic Ruby Agent 3.3.0 Initialized: pid = 1698
+[12/12/11 11:35:35 -0800 Adam-Sumners-MacBook-Air.local (1698)] INFO : Agent Log at /Users/asumner/Development/tapjoyserver/log/newrelic_agent.log
+[12/12/11 11:44:14 -0800 Adam-Sumners-MacBook-Air.local (1702)] INFO : Dispatcher: webrick
+[12/12/11 11:44:14 -0800 Adam-Sumners-MacBook-Air.local (1702)] INFO : Application: TapjoyApiTest
+[12/12/11 11:44:14 -0800 Adam-Sumners-MacBook-Air.local (1702)] WARN : Agent configured not to send data in this environment - edit newrelic.yml to change this
+[12/12/11 11:44:14 -0800 Adam-Sumners-MacBook-Air.local (1702)] INFO : New Relic Ruby Agent 3.3.0 Initialized: pid = 1702
+[12/12/11 11:44:14 -0800 Adam-Sumners-MacBook-Air.local (1702)] INFO : Agent Log at /Users/asumner/Development/tapjoyserver/log/newrelic_agent.log
+[12/12/11 11:45:17 -0800 Adam-Sumners-MacBook-Air.local (1710)] INFO : Dispatcher: webrick
+[12/12/11 11:45:17 -0800 Adam-Sumners-MacBook-Air.local (1710)] INFO : Application: TapjoyApiTest
+[12/12/11 11:45:17 -0800 Adam-Sumners-MacBook-Air.local (1710)] WARN : Agent configured not to send data in this environment - edit newrelic.yml to change this
+[12/12/11 11:45:17 -0800 Adam-Sumners-MacBook-Air.local (1710)] INFO : New Relic Ruby Agent 3.3.0 Initialized: pid = 1710
+[12/12/11 11:45:17 -0800 Adam-Sumners-MacBook-Air.local (1710)] INFO : Agent Log at /Users/asumner/Development/tapjoyserver/log/newrelic_agent.log
+[12/12/11 11:46:18 -0800 Adam-Sumners-MacBook-Air.local (1716)] INFO : Dispatcher: webrick
+[12/12/11 11:46:18 -0800 Adam-Sumners-MacBook-Air.local (1716)] INFO : Application: TapjoyApiTest
+[12/12/11 11:46:18 -0800 Adam-Sumners-MacBook-Air.local (1716)] WARN : Agent configured not to send data in this environment - edit newrelic.yml to change this
+[12/12/11 11:46:18 -0800 Adam-Sumners-MacBook-Air.local (1716)] INFO : New Relic Ruby Agent 3.3.0 Initialized: pid = 1716
+[12/12/11 11:46:18 -0800 Adam-Sumners-MacBook-Air.local (1716)] INFO : Agent Log at /Users/asumner/Development/tapjoyserver/log/newrelic_agent.log
+[12/13/11 11:55:49 -0800 Adam-Sumners-MacBook-Air.local (4925)] INFO : Dispatcher: webrick
+[12/13/11 11:55:49 -0800 Adam-Sumners-MacBook-Air.local (4925)] INFO : Application: TapjoyApiTest
+[12/13/11 11:55:49 -0800 Adam-Sumners-MacBook-Air.local (4925)] WARN : Agent configured not to send data in this environment - edit newrelic.yml to change this
+[12/13/11 11:55:49 -0800 Adam-Sumners-MacBook-Air.local (4925)] INFO : New Relic Ruby Agent 3.3.0 Initialized: pid = 4925
+[12/13/11 11:55:49 -0800 Adam-Sumners-MacBook-Air.local (4925)] INFO : Agent Log at /Users/asumner/Development/tapjoyserver/log/newrelic_agent.log
+[12/13/11 14:17:45 -0800 Adam-Sumners-MacBook-Air.local (6264)] INFO : Dispatcher: webrick
+[12/13/11 14:17:45 -0800 Adam-Sumners-MacBook-Air.local (6264)] INFO : Application: TapjoyApiTest
+[12/13/11 14:17:45 -0800 Adam-Sumners-MacBook-Air.local (6264)] WARN : Agent configured not to send data in this environment - edit newrelic.yml to change this
+[12/13/11 14:17:45 -0800 Adam-Sumners-MacBook-Air.local (6264)] INFO : New Relic Ruby Agent 3.3.0 Initialized: pid = 6264
+[12/13/11 14:17:45 -0800 Adam-Sumners-MacBook-Air.local (6264)] INFO : Agent Log at /Users/asumner/Development/tapjoyserver/log/newrelic_agent.log
+[12/13/11 14:22:47 -0800 Adam-Sumners-MacBook-Air.local (6270)] INFO : Dispatcher: webrick
+[12/13/11 14:22:47 -0800 Adam-Sumners-MacBook-Air.local (6270)] INFO : Application: TapjoyApiTest
+[12/13/11 14:22:47 -0800 Adam-Sumners-MacBook-Air.local (6270)] WARN : Agent configured not to send data in this environment - edit newrelic.yml to change this
+[12/13/11 14:22:47 -0800 Adam-Sumners-MacBook-Air.local (6270)] INFO : New Relic Ruby Agent 3.3.0 Initialized: pid = 6270
+[12/13/11 14:22:47 -0800 Adam-Sumners-MacBook-Air.local (6270)] INFO : Agent Log at /Users/asumner/Development/tapjoyserver/log/newrelic_agent.log
+[12/13/11 14:34:20 -0800 Adam-Sumners-MacBook-Air.local (6292)] INFO : Dispatcher: webrick
+[12/13/11 14:34:20 -0800 Adam-Sumners-MacBook-Air.local (6292)] INFO : Application: TapjoyApiTest
+[12/13/11 14:34:20 -0800 Adam-Sumners-MacBook-Air.local (6292)] WARN : Agent configured not to send data in this environment - edit newrelic.yml to change this
+[12/13/11 14:34:20 -0800 Adam-Sumners-MacBook-Air.local (6292)] INFO : New Relic Ruby Agent 3.3.0 Initialized: pid = 6292
+[12/13/11 14:34:20 -0800 Adam-Sumners-MacBook-Air.local (6292)] INFO : Agent Log at /Users/asumner/Development/tapjoyserver/log/newrelic_agent.log
+[12/13/11 14:38:51 -0800 Adam-Sumners-MacBook-Air.local (6299)] INFO : Dispatcher: webrick
+[12/13/11 14:38:51 -0800 Adam-Sumners-MacBook-Air.local (6299)] INFO : Application: TapjoyApiTest
+[12/13/11 14:38:51 -0800 Adam-Sumners-MacBook-Air.local (6299)] WARN : Agent configured not to send data in this environment - edit newrelic.yml to change this
+[12/13/11 14:38:51 -0800 Adam-Sumners-MacBook-Air.local (6299)] INFO : New Relic Ruby Agent 3.3.0 Initialized: pid = 6299
+[12/13/11 14:38:51 -0800 Adam-Sumners-MacBook-Air.local (6299)] INFO : Agent Log at /Users/asumner/Development/tapjoyserver/log/newrelic_agent.log
+[12/13/11 15:25:42 -0800 Adam-Sumners-MacBook-Air.local (6343)] INFO : Dispatcher: webrick
+[12/13/11 15:25:42 -0800 Adam-Sumners-MacBook-Air.local (6343)] INFO : Application: TapjoyApiTest
+[12/13/11 15:25:42 -0800 Adam-Sumners-MacBook-Air.local (6343)] WARN : Agent configured not to send data in this environment - edit newrelic.yml to change this
+[12/13/11 15:25:42 -0800 Adam-Sumners-MacBook-Air.local (6343)] INFO : New Relic Ruby Agent 3.3.0 Initialized: pid = 6343
+[12/13/11 15:25:42 -0800 Adam-Sumners-MacBook-Air.local (6343)] INFO : Agent Log at /Users/asumner/Development/tapjoyserver/log/newrelic_agent.log
+[12/13/11 16:13:16 -0800 Adam-Sumners-MacBook-Air.local (6356)] INFO : Dispatcher: webrick
+[12/13/11 16:13:16 -0800 Adam-Sumners-MacBook-Air.local (6356)] INFO : Application: TapjoyApiTest
+[12/13/11 16:13:16 -0800 Adam-Sumners-MacBook-Air.local (6356)] WARN : Agent configured not to send data in this environment - edit newrelic.yml to change this
+[12/13/11 16:13:16 -0800 Adam-Sumners-MacBook-Air.local (6356)] INFO : New Relic Ruby Agent 3.3.0 Initialized: pid = 6356
+[12/13/11 16:13:16 -0800 Adam-Sumners-MacBook-Air.local (6356)] INFO : Agent Log at /Users/asumner/Development/tapjoyserver/log/newrelic_agent.log
+[12/13/11 16:13:32 -0800 Adam-Sumners-MacBook-Air.local (6361)] INFO : Dispatcher: webrick
+[12/13/11 16:13:32 -0800 Adam-Sumners-MacBook-Air.local (6361)] INFO : Application: TapjoyApiTest
+[12/13/11 16:13:32 -0800 Adam-Sumners-MacBook-Air.local (6361)] WARN : Agent configured not to send data in this environment - edit newrelic.yml to change this
+[12/13/11 16:13:32 -0800 Adam-Sumners-MacBook-Air.local (6361)] INFO : New Relic Ruby Agent 3.3.0 Initialized: pid = 6361
+[12/13/11 16:13:32 -0800 Adam-Sumners-MacBook-Air.local (6361)] INFO : Agent Log at /Users/asumner/Development/tapjoyserver/log/newrelic_agent.log
+[12/13/11 16:14:28 -0800 Adam-Sumners-MacBook-Air.local (6374)] INFO : Dispatcher: webrick
+[12/13/11 16:14:28 -0800 Adam-Sumners-MacBook-Air.local (6374)] INFO : Application: TapjoyApiTest
+[12/13/11 16:14:28 -0800 Adam-Sumners-MacBook-Air.local (6374)] WARN : Agent configured not to send data in this environment - edit newrelic.yml to change this
+[12/13/11 16:14:28 -0800 Adam-Sumners-MacBook-Air.local (6374)] INFO : New Relic Ruby Agent 3.3.0 Initialized: pid = 6374
+[12/13/11 16:14:28 -0800 Adam-Sumners-MacBook-Air.local (6374)] INFO : Agent Log at /Users/asumner/Development/tapjoyserver/log/newrelic_agent.log
+[12/13/11 16:19:29 -0800 Adam-Sumners-MacBook-Air.local (6383)] INFO : Dispatcher: webrick
+[12/13/11 16:19:29 -0800 Adam-Sumners-MacBook-Air.local (6383)] INFO : Application: TapjoyApiTest
+[12/13/11 16:19:29 -0800 Adam-Sumners-MacBook-Air.local (6383)] WARN : Agent configured not to send data in this environment - edit newrelic.yml to change this
+[12/13/11 16:19:29 -0800 Adam-Sumners-MacBook-Air.local (6383)] INFO : New Relic Ruby Agent 3.3.0 Initialized: pid = 6383
+[12/13/11 16:19:29 -0800 Adam-Sumners-MacBook-Air.local (6383)] INFO : Agent Log at /Users/asumner/Development/tapjoyserver/log/newrelic_agent.log
+[12/13/11 16:26:46 -0800 Adam-Sumners-MacBook-Air.local (6391)] INFO : Dispatcher: webrick
+[12/13/11 16:26:46 -0800 Adam-Sumners-MacBook-Air.local (6391)] INFO : Application: TapjoyApiTest
+[12/13/11 16:26:46 -0800 Adam-Sumners-MacBook-Air.local (6391)] WARN : Agent configured not to send data in this environment - edit newrelic.yml to change this
+[12/13/11 16:26:46 -0800 Adam-Sumners-MacBook-Air.local (6391)] INFO : New Relic Ruby Agent 3.3.0 Initialized: pid = 6391
+[12/13/11 16:26:46 -0800 Adam-Sumners-MacBook-Air.local (6391)] INFO : Agent Log at /Users/asumner/Development/tapjoyserver/log/newrelic_agent.log
+[12/14/11 11:36:01 -0800 Adam-Sumners-MacBook-Air.local (647)] INFO : Dispatcher: webrick
+[12/14/11 11:36:01 -0800 Adam-Sumners-MacBook-Air.local (647)] INFO : Application: TapjoyApiTest
+[12/14/11 11:36:01 -0800 Adam-Sumners-MacBook-Air.local (647)] WARN : Agent configured not to send data in this environment - edit newrelic.yml to change this
+[12/14/11 11:36:01 -0800 Adam-Sumners-MacBook-Air.local (647)] INFO : New Relic Ruby Agent 3.3.0 Initialized: pid = 647
+[12/14/11 11:36:01 -0800 Adam-Sumners-MacBook-Air.local (647)] INFO : Agent Log at /Users/asumner/Development/tapjoyserver/log/newrelic_agent.log
+[12/14/11 11:48:23 -0800 Adam-Sumners-MacBook-Air.local (739)] INFO : Dispatcher: webrick
+[12/14/11 11:48:23 -0800 Adam-Sumners-MacBook-Air.local (739)] INFO : Application: TapjoyApiTest
+[12/14/11 11:48:23 -0800 Adam-Sumners-MacBook-Air.local (739)] WARN : Agent configured not to send data in this environment - edit newrelic.yml to change this
+[12/14/11 11:48:23 -0800 Adam-Sumners-MacBook-Air.local (739)] INFO : New Relic Ruby Agent 3.3.0 Initialized: pid = 739
+[12/14/11 11:48:23 -0800 Adam-Sumners-MacBook-Air.local (739)] INFO : Agent Log at /Users/asumner/Development/tapjoyserver/log/newrelic_agent.log
+[12/14/11 13:38:14 -0800 Adam-Sumners-MacBook-Air.local (814)] INFO : Dispatcher: webrick
+[12/14/11 13:38:14 -0800 Adam-Sumners-MacBook-Air.local (814)] INFO : Application: TapjoyApiTest
+[12/14/11 13:38:14 -0800 Adam-Sumners-MacBook-Air.local (814)] WARN : Agent configured not to send data in this environment - edit newrelic.yml to change this
+[12/14/11 13:38:14 -0800 Adam-Sumners-MacBook-Air.local (814)] INFO : New Relic Ruby Agent 3.3.0 Initialized: pid = 814
+[12/14/11 13:38:14 -0800 Adam-Sumners-MacBook-Air.local (814)] INFO : Agent Log at /Users/asumner/Development/tapjoyserver/log/newrelic_agent.log
+[12/14/11 16:31:51 -0800 Adam-Sumners-MacBook-Air.local (904)] INFO : Dispatcher: webrick
+[12/14/11 16:31:51 -0800 Adam-Sumners-MacBook-Air.local (904)] INFO : Application: TapjoyApiTest
+[12/14/11 16:31:51 -0800 Adam-Sumners-MacBook-Air.local (904)] WARN : Agent configured not to send data in this environment - edit newrelic.yml to change this
+[12/14/11 16:31:51 -0800 Adam-Sumners-MacBook-Air.local (904)] INFO : New Relic Ruby Agent 3.3.0 Initialized: pid = 904
+[12/14/11 16:31:51 -0800 Adam-Sumners-MacBook-Air.local (904)] INFO : Agent Log at /Users/asumner/Development/tapjoyserver/log/newrelic_agent.log
+[12/14/11 16:59:15 -0800 Adam-Sumners-MacBook-Air.local (934)] INFO : Dispatcher: webrick
+[12/14/11 16:59:15 -0800 Adam-Sumners-MacBook-Air.local (934)] INFO : Application: TapjoyApiTest
+[12/14/11 16:59:15 -0800 Adam-Sumners-MacBook-Air.local (934)] WARN : Agent configured not to send data in this environment - edit newrelic.yml to change this
+[12/14/11 16:59:15 -0800 Adam-Sumners-MacBook-Air.local (934)] INFO : New Relic Ruby Agent 3.3.0 Initialized: pid = 934
+[12/14/11 16:59:15 -0800 Adam-Sumners-MacBook-Air.local (934)] INFO : Agent Log at /Users/asumner/Development/tapjoyserver/log/newrelic_agent.log
+[12/14/11 18:07:56 -0800 Adam-Sumners-MacBook-Air.local (971)] INFO : Dispatcher: webrick
+[12/14/11 18:07:56 -0800 Adam-Sumners-MacBook-Air.local (971)] INFO : Application: TapjoyApiTest
+[12/14/11 18:07:56 -0800 Adam-Sumners-MacBook-Air.local (971)] WARN : Agent configured not to send data in this environment - edit newrelic.yml to change this
+[12/14/11 18:07:56 -0800 Adam-Sumners-MacBook-Air.local (971)] INFO : New Relic Ruby Agent 3.3.0 Initialized: pid = 971
+[12/14/11 18:07:56 -0800 Adam-Sumners-MacBook-Air.local (971)] INFO : Agent Log at /Users/asumner/Development/tapjoyserver/log/newrelic_agent.log
+[12/15/11 16:35:09 -0800 Adam-Sumners-MacBook-Air.local (1249)] INFO : Dispatcher: webrick
+[12/15/11 16:35:09 -0800 Adam-Sumners-MacBook-Air.local (1249)] INFO : Application: TapjoyApiTest
+[12/15/11 16:35:09 -0800 Adam-Sumners-MacBook-Air.local (1249)] WARN : Agent configured not to send data in this environment - edit newrelic.yml to change this
+[12/15/11 16:35:09 -0800 Adam-Sumners-MacBook-Air.local (1249)] INFO : New Relic Ruby Agent 3.3.0 Initialized: pid = 1249
+[12/15/11 16:35:09 -0800 Adam-Sumners-MacBook-Air.local (1249)] INFO : Agent Log at /Users/asumner/Development/tapjoyserver/log/newrelic_agent.log
+[12/15/11 16:43:27 -0800 Adam-Sumners-MacBook-Air.local (1268)] INFO : Dispatcher: webrick
+[12/15/11 16:43:27 -0800 Adam-Sumners-MacBook-Air.local (1268)] INFO : Application: TapjoyApiTest
+[12/15/11 16:43:27 -0800 Adam-Sumners-MacBook-Air.local (1268)] WARN : Agent configured not to send data in this environment - edit newrelic.yml to change this
+[12/15/11 16:43:27 -0800 Adam-Sumners-MacBook-Air.local (1268)] INFO : New Relic Ruby Agent 3.3.0 Initialized: pid = 1268
+[12/15/11 16:43:27 -0800 Adam-Sumners-MacBook-Air.local (1268)] INFO : Agent Log at /Users/asumner/Development/tapjoyserver/log/newrelic_agent.log
+[12/15/11 17:38:20 -0800 Adam-Sumners-MacBook-Air.local (1366)] INFO : Dispatcher: webrick
+[12/15/11 17:38:20 -0800 Adam-Sumners-MacBook-Air.local (1366)] INFO : Application: TapjoyApiTest
+[12/15/11 17:38:20 -0800 Adam-Sumners-MacBook-Air.local (1366)] WARN : Agent configured not to send data in this environment - edit newrelic.yml to change this
+[12/15/11 17:38:20 -0800 Adam-Sumners-MacBook-Air.local (1366)] INFO : New Relic Ruby Agent 3.3.0 Initialized: pid = 1366
+[12/15/11 17:38:20 -0800 Adam-Sumners-MacBook-Air.local (1366)] INFO : Agent Log at /Users/asumner/Development/tapjoyserver/log/newrelic_agent.log
+[12/19/11 11:31:28 -0800 Adam-Sumners-MacBook-Air.local (3223)] INFO : Dispatcher: webrick
+[12/19/11 11:31:28 -0800 Adam-Sumners-MacBook-Air.local (3223)] INFO : Application: TapjoyApiTest
+[12/19/11 11:31:28 -0800 Adam-Sumners-MacBook-Air.local (3223)] WARN : Agent configured not to send data in this environment - edit newrelic.yml to change this
+[12/19/11 11:31:28 -0800 Adam-Sumners-MacBook-Air.local (3223)] INFO : New Relic Ruby Agent 3.3.0 Initialized: pid = 3223
+[12/19/11 11:31:28 -0800 Adam-Sumners-MacBook-Air.local (3223)] INFO : Agent Log at /Users/asumner/Dropbox/tapjoyserver/log/newrelic_agent.log
+[01/03/12 09:45:57 -0800 Adam-Sumners-MacBook-Air.local (1272)] INFO : Dispatcher: webrick
+[01/03/12 09:45:57 -0800 Adam-Sumners-MacBook-Air.local (1272)] INFO : Application: TapjoyApiTest
+[01/03/12 09:45:57 -0800 Adam-Sumners-MacBook-Air.local (1272)] WARN : Agent configured not to send data in this environment - edit newrelic.yml to change this
+[01/03/12 09:45:57 -0800 Adam-Sumners-MacBook-Air.local (1272)] INFO : New Relic Ruby Agent 3.3.0 Initialized: pid = 1272
+[01/03/12 09:45:57 -0800 Adam-Sumners-MacBook-Air.local (1272)] INFO : Agent Log at /Users/asumner/Dropbox/tapjoyserver/log/newrelic_agent.log
+[01/03/12 11:40:06 -0800 Adam-Sumners-MacBook-Air.local (1454)] INFO : Dispatcher: webrick
+[01/03/12 11:40:06 -0800 Adam-Sumners-MacBook-Air.local (1454)] INFO : Application: TapjoyApiTest
+[01/03/12 11:40:06 -0800 Adam-Sumners-MacBook-Air.local (1454)] WARN : Agent configured not to send data in this environment - edit newrelic.yml to change this
+[01/03/12 11:40:06 -0800 Adam-Sumners-MacBook-Air.local (1454)] INFO : New Relic Ruby Agent 3.3.0 Initialized: pid = 1454
+[01/03/12 11:40:06 -0800 Adam-Sumners-MacBook-Air.local (1454)] INFO : Agent Log at /Users/asumner/Dropbox/tapjoyserver/log/newrelic_agent.log
+[01/03/12 14:25:41 -0800 Adam-Sumners-MacBook-Air.local (1601)] INFO : Dispatcher: webrick
+[01/03/12 14:25:41 -0800 Adam-Sumners-MacBook-Air.local (1601)] INFO : Application: TapjoyApiTest
+[01/03/12 14:25:41 -0800 Adam-Sumners-MacBook-Air.local (1601)] WARN : Agent configured not to send data in this environment - edit newrelic.yml to change this
+[01/03/12 14:25:41 -0800 Adam-Sumners-MacBook-Air.local (1601)] INFO : New Relic Ruby Agent 3.3.0 Initialized: pid = 1601
+[01/03/12 14:25:41 -0800 Adam-Sumners-MacBook-Air.local (1601)] INFO : Agent Log at /Users/asumner/Dropbox/tapjoyserver/log/newrelic_agent.log
+[01/03/12 16:19:30 -0800 Adam-Sumners-MacBook-Air.local (1812)] INFO : Dispatcher: webrick
+[01/03/12 16:19:30 -0800 Adam-Sumners-MacBook-Air.local (1812)] INFO : Application: TapjoyApiTest
+[01/03/12 16:19:30 -0800 Adam-Sumners-MacBook-Air.local (1812)] WARN : Agent configured not to send data in this environment - edit newrelic.yml to change this
+[01/03/12 16:19:30 -0800 Adam-Sumners-MacBook-Air.local (1812)] INFO : New Relic Ruby Agent 3.3.0 Initialized: pid = 1812
+[01/03/12 16:19:30 -0800 Adam-Sumners-MacBook-Air.local (1812)] INFO : Agent Log at /Users/asumner/Dropbox/tapjoyserver/log/newrelic_agent.log
+[01/04/12 13:35:19 -0800 Adam-Sumners-MacBook-Air.local (520)] INFO : Dispatcher: webrick
+[01/04/12 13:35:19 -0800 Adam-Sumners-MacBook-Air.local (520)] INFO : Application: TapjoyApiTest
+[01/04/12 13:35:19 -0800 Adam-Sumners-MacBook-Air.local (520)] WARN : Agent configured not to send data in this environment - edit newrelic.yml to change this
+[01/04/12 13:35:19 -0800 Adam-Sumners-MacBook-Air.local (520)] INFO : New Relic Ruby Agent 3.3.0 Initialized: pid = 520
+[01/04/12 13:35:19 -0800 Adam-Sumners-MacBook-Air.local (520)] INFO : Agent Log at /Users/asumner/Dropbox/tapjoyserver/log/newrelic_agent.log
