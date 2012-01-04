@@ -171,7 +171,7 @@ private
         @web_request.offer_id = offer.id
         @web_request.offerwall_rank = i + @start_index + 1
         @web_request.offerwall_rank_score = offer.rank_score
-        @web_request.save
+        # @web_request.save
       end
     end
   end
