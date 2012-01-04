@@ -174,7 +174,7 @@ class Offer < ActiveRecord::Base
   named_scope :by_name, lambda { |offer_name| { :conditions => ["offers.name LIKE ?", "%#{offer_name}%" ] } }
   named_scope :by_device, lambda { |platform| { :conditions => ["offers.device_types LIKE ?", "%#{platform}%" ] } }
   named_scope :for_offer_list, :select => OFFER_LIST_REQUIRED_COLUMNS
-  named_scope :for_display_ads, :conditions => "item_type = 'App' AND price = 0 AND conversion_rate >= 0.3 AND LENGTH(offers.name) <= 30"
+  named_scope :for_display_ads, :conditions => "price = 0 AND conversion_rate >= 0.3 AND ((item_type = 'App' AND LENGTH(offers.name) <= 30) OR banner_creatives IS NOT NULL)"
   named_scope :non_rewarded, :conditions => "NOT rewarded"
   named_scope :rewarded, :conditions => "rewarded"
   named_scope :featured, :conditions => { :featured => true }
@@ -917,3 +917,4 @@ class BannerSyncError < StandardError;
     self.offer_attr_name = offer_attr_name
   end
 end
+
