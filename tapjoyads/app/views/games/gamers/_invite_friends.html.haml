@@ -2,12 +2,13 @@
   .title_2
     Invite Your Friends!
   #invite_friends.clearfix
-    .social_btn_wrapper
-      = fb_connect_async_js
-      - if @gamer.facebook_id.blank?
-        .social_btn.fb{ :onclick => "TJG.social.doFbLogin('#{CGI.unescapeHTML(games_social_invite_facebook_friends_path(:valid_login => true, :advertiser_app_id => params[:advertiser_app_id]))}');" }
-      - else
-        .social_btn.fb{ :onclick => "location.href='#{games_social_invite_facebook_friends_path(:advertiser_app_id => "#{params[:advertiser_app_id]}")}';" }
+    - if false # Facebook banned wall posts
+      .social_btn_wrapper
+        = fb_connect_async_js
+        - if @gamer.facebook_id.blank?
+          .social_btn.fb{ :onclick => "TJG.social.doFbLogin('#{CGI.unescapeHTML(games_social_invite_facebook_friends_path(:valid_login => true, :advertiser_app_id => params[:advertiser_app_id]))}');" }
+        - else
+          .social_btn.fb{ :onclick => "location.href='#{games_social_invite_facebook_friends_path(:advertiser_app_id => "#{params[:advertiser_app_id]}")}';" }
     .social_btn_wrapper
       - link_to games_social_invite_email_friends_path(:advertiser_app_id => "#{params[:advertiser_app_id]}") do
         .social_btn.email

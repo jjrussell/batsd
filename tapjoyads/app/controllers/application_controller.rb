@@ -144,6 +144,10 @@ private
     @cached_geoip_data
   end
 
+  def geoip_location
+    "#{get_geoip_data[:city]}, #{get_geoip_data[:region]}, #{get_geoip_data[:country]} (#{get_ip_address})"
+  end
+
   def reject_banned_ips
     render :text => '' if BANNED_IPS.include?(get_ip_address)
   end

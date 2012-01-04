@@ -123,15 +123,9 @@ class BillingController < WebsiteController
   end
 
   def transfer_funds
-    render :no_transfer if during_transfer_freeze?
   end
 
   def create_transfer
-    if during_transfer_freeze?
-      flash[:error] = "Transfer error."
-      redirect_to transfer_funds_billing_path and return
-    end
-
     amount = sanitize_currency_param(params[ :transfer_amount ]).to_i
     if amount <= 0
       flash[:error] = "Transfer amount must be more than $0."
@@ -261,10 +255,4 @@ private
       @selected_state[:payout_info] = 'selected'
     end
   end
-
-  def during_transfer_freeze?
-    freeze_ends = Time.parse('2011-12-23 PST')
-    freeze_ends.future?
-  end
-
 end
