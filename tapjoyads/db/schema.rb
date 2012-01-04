@@ -612,9 +612,9 @@ ActiveRecord::Schema.define(:version => 20111227171406) do
     t.text     "regions",                                                                                          :null => false
     t.boolean  "instructions_overridden",                                                       :default => false, :null => false
     t.boolean  "tapjoy_sponsored",                                                              :default => false, :null => false
-    t.string   "approved_banner_creatives"
     t.boolean  "tj_games_only",                                                                 :default => false, :null => false
     t.boolean  "wifi_only",                                                                     :default => false, :null => false
+    t.text     "approved_banner_creatives"
   end
 
   add_index "offers", ["id"], :name => "index_offers_on_id", :unique => true
