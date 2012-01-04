@@ -357,7 +357,6 @@ ActiveRecord::Schema.define(:version => 20111221194809) do
     t.integer  "referral_count",                       :default => 0
     t.boolean  "use_gravatar",                         :default => false
     t.boolean  "allow_marketing_emails",               :default => true
-    t.string   "default_platforms"
   end
 
   add_index "gamers", ["confirmation_token"], :name => "index_gamers_on_confirmation_token", :unique => true
