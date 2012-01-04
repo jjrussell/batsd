@@ -90,12 +90,19 @@ class GetOffersControllerTest < ActionController::TestCase
       @currency.update_attribute(:hide_rewarded_app_installs, false)
       @params = { :udid => 'stuff', :publisher_user_id => 'more_stuff', :currency_id => @currency.id, :app_id => @currency.app.id }
       @offer = Factory(:app).primary_offer
-      OfferCacher.stubs(:get_unsorted_offers_prerejected).returns([@offer])
     end
 
     should "assign test offer for test devices" do
+      OfferCacher.stubs(:get_unsorted_offers_prerejected).returns([@offer])
       @response = get(:webpage, @params.merge(:udid => @device.id))
       assert assigns(:test_offers)
+    end
+
+    should "not log impressions when there are no offers" do
+      OfferCacher.stubs(:get_unsorted_offers_prerejected).returns([])
+      RailsCache.stubs(:get).returns(nil)
+      @response = get(:webpage, @params)
+      assert assigns(:web_request).path.include? 'offers'
     end
   end
 
@@ -153,7 +160,10 @@ class GetOffersControllerTest < ActionController::TestCase
 
       should "return no offers" do
         assert assigns(:offer_list).empty?
-        assert assigns(:web_request).offer_id.nil?
+        web_request = assigns(:web_request)
+        assert web_request.offer_id.nil?
+        assert web_request.path.include? 'featured_offer_requested'
+        assert !web_request.path.include?('featured_offer_shown')
       end
     end
 
@@ -197,12 +207,13 @@ class GetOffersControllerTest < ActionController::TestCase
       assert_equal @request.headers["User-Agent"], web_request.user_agent
       assert_equal '208.90.212.38', web_request.ip_address
       assert_equal 'offerwall', web_request.source
-      assert web_request.path.include? 'offers'
+      assert_equal 1, web_request.offerwall_rank
+      assert web_request.path.include? 'offerwall_impression'
 
-      @response = get(:index, @params.merge(:source => 'featured', :exp => 10, :type => '0'))
+      @response = get(:featured, @params)
       web_request = assigns(:web_request)
       assert web_request.path.include? 'featured_offer_requested'
-      assert_equal nil, web_request.exp
+      assert web_request.path.include? 'featured_offer_shown'
     end
 
     should "assign max_items" do

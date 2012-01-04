@@ -176,8 +176,7 @@ FactoryGirl.define do
   end
 
   factory :invitation do
-    gamer         { Factory(:facebook_gamer) }
-    noob          { Factory(:gamer) }
+    gamer         { Factory(:gamer) }
     channel       { 0 }
     external_info { Factory.next(:name) }
   end

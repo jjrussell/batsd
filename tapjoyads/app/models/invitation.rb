@@ -74,7 +74,7 @@ class Invitation < ActiveRecord::Base
     end
   end
 
-  def encrypted_referral_id
-    ObjectEncryptor.encrypt("#{gamer.id},#{id}")
+  def encrypted_referral_id(advertiser_app_id = nil)
+    ObjectEncryptor.encrypt("#{id},#{advertiser_app_id}")
   end
 end

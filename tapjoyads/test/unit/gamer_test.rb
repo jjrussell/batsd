@@ -9,7 +9,7 @@ class GamerTest < ActiveSupport::TestCase
       @gamer.gamer_profile = GamerProfile.create(:gamer => @gamer)
     end
 
-    should "increase referral count when new gamer is referred" do
+    should "compatible with old invitation" do
       invitation = Invitation.create(
         :gamer_id => @gamer.id,
         :channel => Invitation::FACEBOOK,
@@ -17,11 +17,11 @@ class GamerTest < ActiveSupport::TestCase
 
       new_gamer = Factory(:gamer)
       new_gamer.gamer_profile = GamerProfile.create(:facebook_id => '0', :gamer => new_gamer)
-      new_gamer.referrer = invitation.encrypted_referral_id
+      new_gamer.referrer = ObjectEncryptor.encrypt("#{@gamer.id},#{invitation.id}")
       new_gamer.send :check_referrer
 
       assert_equal @gamer.id, new_gamer.referred_by
-      assert_equal 1, @gamer.reload.referral_count
+      assert_equal false, Friendship.new(:key => "#{new_gamer.id}.#{@gamer.id}", :consistent => true).new_record?
     end
 
     should "set up friendships" do
@@ -48,7 +48,7 @@ class GamerTest < ActiveSupport::TestCase
       @new_gamer.send :check_referrer
 
       assert_equal @referring_gamer.id, @new_gamer.referred_by
-      assert_equal 1, @referring_gamer.reload.referral_count
+      assert_equal 0, @referring_gamer.reload.referral_count
       assert_equal 0, @stalker_gamer.reload.referral_count
     end
 

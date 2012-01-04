@@ -989,6 +989,7 @@ TJG.ui = {
   },
 
   getAndShowOfferWall : function(url, appId, appName, currencyName) {
+    url = url + "&show_wifi_only=1";
     TJG.utils.slidePage("#earn", "left");
     var fadeSpd = TJG.ui.fadeSpd;
 
@@ -1214,6 +1215,11 @@ TJG.ui = {
                   t.push('</div>');
                 t.push('</a>');
             t.push('</div>');
+            if (v.WifiOnly) {
+              t.push('<div class = "wifi_only">');
+                t.push('Wifi Only <div class="wifi_icon"></div>');
+              t.push('</div>');
+            }
           t.push('</div>');
         t.push('</li>');
       t.push('</a>');
@@ -2005,6 +2011,7 @@ TJG.social = {
     var fbFriends = options.fbFriends;
     var inviteUrl = options.inviteUrl;
     var channel = options.channel;
+    var advertiserAppId = options.advertiserAppId;
 
     // local functions
     var onWindowResize = function(event) {
@@ -2118,7 +2125,8 @@ TJG.social = {
         dataType: 'json',
         data: {
           friends: selectedFriends,
-          ajax: true
+          ajax: true,
+          advertiser_app_id: advertiserAppId
         },
         success: function(d) {
           var existDiv = '', notExistDiv = '';
@@ -2172,7 +2180,8 @@ TJG.social = {
         timeout: 35000,
         dataType: 'json',
         data: {
-          recipients: recipients
+          recipients: recipients,
+          advertiser_app_id: advertiserAppId
         },
         success: function(d) {
           var existDiv = '', notExistDiv = '';
