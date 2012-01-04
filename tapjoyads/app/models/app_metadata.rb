@@ -12,11 +12,11 @@ class AppMetadata < ActiveRecord::Base
   after_update :update_apps
 
   def categories=(arr)
-    write_attribute(:categories, arr.join(';'))
+    super(arr.join(';'))
   end
 
   def categories
-    (read_attribute(:categories)||'').split(';')
+    super.to_s.split(';')
   end
 
   def update_metadata_from_store
