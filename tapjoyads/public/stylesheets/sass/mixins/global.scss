@@ -1,5 +1,5 @@
 //-------------------------------------------
-// Global SASS variables and mixins
+// Global SASS mixins
 //-------------------------------------------
 
 $tj-red: #CD202C;
@@ -7,64 +7,20 @@ $tj-orange: #DD4814;
 $tj-blue: #0088CE;
 $tj-black: #000000;
 
-$main-bg: #FFF;
-$main-title-font-size: 1.2em;
-$main-font-size: 1em;
-$main-font-color: #5A5A5A;
-$main-link-font-color: #787878;
-$main-link-font-color-hover: #262626;
-$main-font-name: "Helvetica Neue", Arial, Helvetica, "Lucida Grande", sans-serif;
-
-$nav-bg-color: #000;
-
-$page-padding-v: 12px;
-$page-padding-h: 8px;
-
-$border-color: #CECECE;
-
-$mobile-scaledown-multiplier: 2;
-
-@function mobile_pad($n) {
-  @return $n/$mobile-scaledown-multiplier;
-}
-
 @mixin rounded-corners($radius: 6px) {
   border-radius: $radius;
   overflow: hidden;
-  -moz-border-radius-: $radius;
+  -moz-border-radius: $radius;
+  -ms-border-radius: $radius;
+  -o-border-radius: $radius;
   -webkit-border-radius: $radius;
 }
 
 @mixin button ($radius: 6px, $padding: 8px 8px) {
+  display: inline-block;
   padding: $padding;
   text-align: center;
   @include rounded-corners($radius)
-}
-
-@mixin inset-shadow($color: $border-color, $length: 4px) {
-  -webkit-box-shadow: inset 0 0 $length $color;
-  -moz-box-shadow: inset 0 0 $length $color;
-  box-shadow: inset 0 0 $length $color;
-}
-
-@mixin shadow($color: $border-color, $length: 4px) {
-  -webkit-box-shadow: 0 0 $length $color;
-  -moz-box-shadow: 0 0 $length $color;
-  box-shadow: 0 0 $length $color;
-}
-
-@mixin box-shadow($color: #9D9990){
-  -box-shadow: 0 4px 2px -2px $color;
-  -moz-box-shadow: 0 4px 2px -2px $color;
-  -webkit-box-shadow: 0 4px 2px -2px $color;
-}
-
-@mixin gradient-inset-shadow {
-  background-image: -moz-linear-gradient(top, rgba(160,150,145,.1) 0%, rgba(160,150,145,0) 30%, rgba(160,150,145,.2) 100%);
-  background-image: -webkit-gradient(linear,left top, left bottom, color-stop(0%, rgba(160,150,145,0.1)), color-stop(30%, rgba(160,150,145,0)), color-stop(100%, rgba(160,150,145,.2)));
-  background-image: -webkit-linear-gradient(top, rgba(160,150,145,.1) 0%, rgba(160,150,145,0) 30%, rgba(160,150,145,.2) 100%);
-  background-image: -o-linear-gradient(top, rgba(160,150,145,.1) 0%, rgba(160,150,145,0) 30%, rgba(160,150,145,.2) 100%);
-  background-image: linear-gradient(top, rgba(160,150,145,.1) 0%, rgba(160,150,145,0) 30%, rgba(160,150,145,.2) 100%);
 }
 
 @mixin inset-button ($radius: 6px, $padding: 8px 8px) {
@@ -72,50 +28,68 @@ $mobile-scaledown-multiplier: 2;
   @include button($radius, $padding)
 }
 
-@mixin inset-text-shadow {
-  text-shadow: rgba(160,150,145,.5) -1px 0, rgba(160,150,145,.3) 0 -1px, rgba(0,0,0,.5) 0 1px, rgba(0,0,0,.3) -1px -1px;
+@mixin inset-shadow($x, $y, $length: 4px, $color: #CECECE) {
+  -webkit-box-shadow: inset $x $y $length $color;
+  -moz-box-shadow: inset $x $y $length $color;
+  box-shadow: inset $x $y $length $color;
+}
+
+@mixin shadow($x: 0, $y: 0, $color: #CECECE, $length: 4px) {
+  box-shadow: $x $y $length $color;
+  -webkit-box-shadow: $x $y $length $color;
+  -moz-box-shadow: $x $y $length $color;
+}
+
+@mixin box-shadow($x: 0, $y: 4px, $blur: 2px, $length: -2px, $color: #9D9990){
+  box-shadow: $x $y $blur $length $color;
+  -moz-box-shadow: $x $y $blur $length $color;
+  -webkit-box-shadow: $x $y $blur $length $color;
+}
+
+@mixin gradient-inset-shadow ($r: 160, $g: 150, $b: 145){
+  background-image: -moz-linear-gradient(top, rgba($r,$g,$b,.1) 0%, rgba($r,$g,$b,0) 30%, rgba($r,$g,$b,.2) 100%);
+  background-image: -webkit-gradient(linear,left top, left bottom, color-stop(0%, rgba($r,$g,$b,0.1)), color-stop(30%, rgba($r,$g,$b,0)), color-stop(100%, rgba($r,$g,$b,160,150,145,.2)));
+  background-image: -webkit-linear-gradient(top, rgba($r,$g,$b,.1) 0%, rgba($r,$g,$b,0) 30%, rgba($r,$g,$b,.2) 100%);
+  background-image: -o-linear-gradient(top, rgba($r,$g,$b,.1) 0%, rgba($r,$g,$b,0) 30%, rgba($r,$g,$b,.2) 100%);
+  background-image: linear-gradient(top, rgba($r,$g,$b,.1) 0%, rgba($r,$g,$b,0) 30%, rgba($r,$g,$b,.2) 100%);
+}
+
+@mixin inset-text-shadow ($r: 160, $g: 150, $b: 145, $r2: 0, $g2: 0, $b2: 0){
+  text-shadow: rgba($r,$g,$b,.5) -1px 0, rgba($r,$g,$b,.3) 0 -1px, rgba($r2,$g2,$b2,.5) 0 1px, rgba($r2,$g2,$b2,.3) -1px -1px;
 }
 
 @mixin gradient($from, $to){
-  background: -moz-linear-gradient(top, $from 0%, $to 100%);
-  background: -webkit-gradient(linear, 0 0, 0 100%, color-stop(0, $from), color-stop(1, $to));
+  background-image: -moz-linear-gradient(top, $from 0%, $to 100%);
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, color-stop(0, $from), color-stop(1, $to));
+  background-image: linear-gradient(top,$from, $to);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorStr='$from', EndColorStr='$to');
 }
 
-@mixin content-box {
-  @include box-shadow;
-  @include rounded-corners;
-  @include inset-button;
+@mixin rotate($deg: 45) {
+  -webkit-transform: rotate(#{$deg}deg);
+  -moz-transform: rotate(#{$deg}deg);
+  -o-transform: rotate(#{$deg}deg);
+  -ms-transform: rotate(#{$deg}deg);
+  transform: rotate(#{$deg}deg);
 }
 
-@mixin rotate45 {
-  -webkit-transform: rotate(45deg);
-  -moz-transform: rotate(45deg);
-  -o-transform: rotate(45deg);
-  -ms-transform: rotate(45deg);
-  transform: rotate(45deg);
-}
-
-@mixin form-field {
-  @include inset-button;
-  background-color: #FFF;
-}
-
-@mixin fadeIn($time: 0.5s, $count: 1, $delay: 0s) {
-  -webkit-animation-delay: $delay;
+@mixin fadeIn($time: 0.5s, $count: 1, $delay: 0) {
+  -webkit-animation-delay: #{$delay}s;
   -webkit-animation-name: fadeIn;
   -webkit-animation-duration: $time;
   -webkit-animation-iteration-count: $count;
   -webkit-animation-timing-function: linear;
-  -moz-animation-delay: $delay;
+  -moz-animation-delay: #{$delay}s;
   -moz-animation-name: fadeIn;
   -moz-animation-duration: $time;
   -moz-animation-iteration-count: $count;
   -moz-animation-timing-function: linear;
 }
 
-@mixin animate ($type: all, $time: 0.65s){
-  -moz-transition: $type $time ease-out;
-  -o-transition: $type $time ease-out;
-  -webkit-transition: $type $time ease-out;
-  -ms-transition: $type $time ease-out;
+@mixin animate ($type: all, $time: 0.65s, $ease: ease-out) {
+  transition: $type $time $ease;
+  -moz-transition: $type $time $ease;
+  -ms-transition: $type $time $ease;
+  -o-transition: $type $time $ease;
+  -webkit-transition: $type $time $ease;
 }
