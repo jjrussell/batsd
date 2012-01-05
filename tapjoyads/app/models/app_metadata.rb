@@ -44,7 +44,8 @@ class AppMetadata < ActiveRecord::Base
     self.supported_devices   = data[:supported_devices].present? ? data[:supported_devices].to_json : nil
   end
 
-private
+  private
+
   def update_apps
     if (price_changed? || age_rating_changed?)
       apps.each do |app|
