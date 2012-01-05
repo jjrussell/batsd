@@ -12,7 +12,7 @@ class StatsAggregation
         :granularity => :hourly }).stats['featured_offers_requested']
     vertica_counts = {}
     WebRequest.select(
-        :select     => "count(hour), hour",
+        :select     => "COUNT(hour) AS count, hour",
         :conditions => "path LIKE '%featured_offer_requested%' AND day = '#{start_time.to_s(:yyyy_mm_dd)}'",
         :group      => 'hour').each do |result|
       vertica_counts[result[:hour]] = result[:count]
@@ -25,15 +25,15 @@ class StatsAggregation
     message        = ''
 
     if inaccurate
-      message += "Cannot verify daily stats because Vertica has inaccurate data for #{start_time.to_date}.\n"
-      message += "Appstats total: #{appstats_total}\n"
-      message += "Vertica total: #{vertica_total}\n"
-      message += "Difference: #{appstats_total - vertica_total}\n\n"
-      message += "hour, appstats, vertica, diff\n"
+      message << "Cannot verify daily stats because Vertica has inaccurate data for #{start_time.to_date}.\n"
+      message << "Appstats total: #{appstats_total}\n"
+      message << "Vertica total: #{vertica_total}\n"
+      message << "Difference: #{appstats_total - vertica_total}\n\n"
+      message << "hour, appstats, vertica, diff\n"
       24.times do |i|
         appstats_val = appstats_counts[i]
         vertica_val  = vertica_counts[i] || 0
-        message += "#{i}, #{appstats_val}, #{vertica_val}, #{appstats_val - vertica_val}\n"
+        message << "#{i}, #{appstats_val}, #{vertica_val}, #{appstats_val - vertica_val}\n"
       end
     end
 
@@ -51,7 +51,7 @@ class StatsAggregation
       stats[stat_name] = {}
 
       select     = "COUNT(hour) AS count, #{path_definition[:attr_name]}, hour"
-      conditions = "#{get_path_condition(path_definition[:paths], path_definition[:use_like])} AND day = '#{start_time.to_s(:yyyy_mm_dd)}'"
+      conditions = "#{path_condition(path_definition[:paths], path_definition[:use_like])} AND day = '#{start_time.to_s(:yyyy_mm_dd)}'"
       group      = "#{path_definition[:attr_name]}, hour"
       results    = WebRequest.select(:select => select, :conditions => conditions, :group => group)
 
@@ -66,7 +66,7 @@ class StatsAggregation
     bucket.objects[cached_stats_s3_path(start_time, end_time)].write(:data => Marshal.dump(stats))
   end
 
-  def self.get_cached_vertica_stats(s3_path)
+  def self.cached_vertica_stats(s3_path)
     bucket = S3.bucket(BucketNames::WEB_REQUESTS)
     Marshal.load(bucket.objects[s3_path].read)
   end
@@ -77,9 +77,9 @@ class StatsAggregation
     "cached_vertica_stats/#{start_time.to_s(:no_spaces)}...#{end_time.to_s(:no_spaces)}"
   end
 
-  def self.get_path_condition(paths, use_like)
-    path_condition = paths.map { |p| use_like ? "path LIKE '%#{p}%'" : "path = '[#{p}]'" }.join(' OR ')
-    "(#{path_condition})"
+  def self.path_condition(paths, use_like)
+    condition = paths.map { |p| use_like ? "path LIKE '%#{p}%'" : "path = '[#{p}]'" }.join(' OR ')
+    "(#{condition})"
   end
 
   def initialize(offer_ids)
@@ -188,7 +188,7 @@ class StatsAggregation
 
   def verify_web_request_stats_over_range(stat_row, offer, start_time, end_time)
     s3_path = StatsAggregation.cached_stats_s3_path(start_time, end_time)
-    @counts[s3_path] ||= StatsAggregation.get_cached_vertica_stats(s3_path)
+    @counts[s3_path] ||= StatsAggregation.cached_vertica_stats(s3_path)
 
     WebRequest::STAT_TO_PATH_MAP.each do |stat_name, path_definition|
       verify_stat_over_range(stat_row, stat_name, offer, start_time, end_time) do |s_time, e_time|
