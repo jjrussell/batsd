@@ -254,6 +254,9 @@
           = f.text_area(:instructions)
           = error_message_on @offer, :instructions
     %tr
+      %td{ :colspan => 2}
+        = render('offer_creatives/iframes', :offer => @offer)
+    %tr
       %td{ :colspan => 2 }= f.submit('Save Changes')
 
 .hidden
@@ -334,4 +337,9 @@
     }
     .details {
       font-size: 12px;
+    }
+    .creative_upload {
+      width: 100%;
+      border: none;
+      height: 35px;
     }
