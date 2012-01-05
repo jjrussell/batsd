@@ -74,55 +74,6 @@ class Apps::OffersController < WebsiteController
     end
   end
 
-  def upload_creative
-    @image_size = params[:image_size]
-    @label = params[:label]
-    email_managers = false
-    image_data = params[:offer]["custom_creative_#{@image_size}".to_sym].read rescue nil
-
-    modifying = true
-    case request.method
-      when :delete
-        @offer.remove_banner_creative(@image_size)
-      when :post
-        @offer.add_banner_creative(@image_size)
-
-        if permitted_to?(:edit, :statz)
-          @offer.approve_banner_creative(@image_size)
-        else
-          @offer.add_banner_approval(current_user, @image_size)
-          email_managers = true
-        end
-      when :put
-        # do nothing
-      when :get
-        modifying = false
-    end
-
-    if modifying
-      @offer.send("banner_creative_#{@image_size}_blob=", image_data)
-      if @offer.save
-        @success_message = "File #{request.method == :delete ? 'removed' : 'uploaded'} successfully."
-
-        if email_managers
-          approval_link = creative_tools_offers_url(:offer_id => @offer.id)
-          emails = @offer.partner.account_managers.map(&:email)
-          emails << 'support@tapjoy.com'
-          emails.each do |mgr|
-            TapjoyMailer.deliver_approve_offer_creative(mgr, @offer, @app, approval_link)
-          end
-        end
-      else
-        @error_message = @offer.errors["custom_creative_#{@image_size}_blob".to_sym]
-        @offer.reload # we want the form to reset back to the way it was
-      end
-    end
-
-    @creative_exists = @offer.has_banner_creative?(@image_size)
-    @creative_approved = @offer.banner_creative_approved?(@image_size)
-    render :layout => 'simple'
-  end
-
   def toggle
     @offer = current_partner.offers.find(params[:id])
     log_activity(@offer)

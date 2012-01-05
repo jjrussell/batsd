@@ -31,6 +31,12 @@ ActionController::Routing::Routes.draw do |map|
       :collection => { :reorder => :post }, :controller => 'apps/virtual_goods'
     app.resources :action_offers, :only => [ :new, :create, :edit, :update, :index ], :member => { :toggle => :post, :preview => :get }, :collection => { :TJCPPA => :get, :TapjoyPPA => :get }, :controller => 'apps/action_offers'
   end
+  map.with_options :controller => :offer_creatives, :path_prefix => 'offer_creatives/:id/:image_size', :name_prefix => 'offer_creatives_' do |offer|
+    offer.form '', :action => :show, :conditions => { :method => :get }
+    offer.connect '', :action => :create, :conditions => { :method => :post }
+    offer.connect '', :action => :update, :conditions => { :method => :put }
+    offer.connect '', :action => :destroy, :conditions => { :method => :delete }
+  end
   map.resources :enable_offer_requests, :only => [ :create ]
   map.resources :reporting, :only => [ :index, :show ], :member => { :export => :post, :download_udids => :get }, :collection => { :aggregate => :get, :export_aggregate => :post, :api => :get, :regenerate_api_key => :post }
   map.resources :billing, :only => [ :index ],
