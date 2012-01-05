@@ -5,16 +5,16 @@ class Tools::RecommendersController < WebsiteController
   def index
     @recommenders = Recommender::ACTIVE_RECOMMENDERS
     @options = { :with_weights => (params[:with_weights] == 'true') }
-    unless params[:recommender].blank?
+    if params[:recommender].present?
       recommender = Recommender.instance params[:recommender]
       n = params[:n].blank? ? 20 : params[:n].to_i
       @options[:recommender] = recommender.type
       case
-      when params[:recommend_for] == 'udid' && !params[:app_or_device_id].blank?
+      when params[:recommend_for] == 'udid' && params[:app_or_device_id].present?
         @options[:description] = "Recommendations for Device #{params[:app_or_device_id]} by #{@recommenders[recommender.type]}"
         @options[:udid] = params[:app_or_device_id]
         @recommendations = recommender.for_device params[:app_or_device_id], :n => n
-      when params[:recommend_for] == 'app_id' && !params[:app_or_device_id].blank?
+      when params[:recommend_for] == 'app_id' && params[:app_or_device_id].present?
         @options[:description] = "Recommendations for App #{recommender.app_name(params[:app_or_device_id])} (#{params[:app_or_device_id]})  by #{@recommenders[recommender.type]}"
         @options[:app_id] = params[:app_or_device_id]
         @options[:app_name] = recommender.app_name(params[:app_or_device_id])

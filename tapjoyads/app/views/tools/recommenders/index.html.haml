@@ -27,7 +27,7 @@
         %td= text_field_tag :n, params[:n], :size => 3
       %tr
         %th= label_tag :with_weights, "Show weights with recommendations?"
-        %td= check_box_tag :with_weights, true, !params[:with_weights].blank?
+        %td= check_box_tag :with_weights, true, params[:with_weights].present?
       %tr
         %td{ :colspan => 2 }= submit_tag('Get Recommendations')
 
