@@ -5,7 +5,7 @@
     %tbody
       %tr
         %th= label_tag :recommender, "Choose a Recommender"
-        - unless params[:recommender].blank?
+        - if params[:recommender].present?
           %td= select_tag :recommender, options_for_select(@recommenders.invert, params[:recommender].to_sym)
         -else
           %td= select_tag :recommender, options_for_select(@recommenders.invert)
