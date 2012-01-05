@@ -81,17 +81,29 @@ module ActiveRecord
     end
   end
 
-  #
-  # This patch allows us to specify which attributes are safe to update.
-  # This prevents a savvy user from setting hidden fields by manipulating the DOM.
-  #
   class Base
+
+    # See https://rails.lighthouseapp.com/projects/8994/tickets/2919
+    # allows [attribute]_changed? to behave as expected after cloning a model instance
+    if Rails.version == "2.3.14"
+      def clone
+        attrs = clone_attributes(:read_attribute_before_type_cast)
+        attrs.delete(self.class.primary_key)
+        record = self.class.new
+        record.attributes = attrs # original version is 'record.send :instance_variable_set, '@attributes', attrs'
+        record
+      end
+    end
+
+    # ensure API servers are readonly
     alias_method :orig_readonly?, :readonly?
 
     def readonly?
       (connection.adapter_name == 'SQLite' && Rails.env.production?) || orig_readonly?
     end
 
+    # This patch allows us to specify which attributes are safe to update.
+    # This prevents a savvy user from setting hidden fields by manipulating the DOM.
     def safe_update_attributes(attributes, allowed_attr_names)
       allowed_attr_names = Set.new(allowed_attr_names.map { |v| v.to_s })
       attributes.keys.each do |k|
@@ -116,13 +128,12 @@ end
 module ActionView
   module Helpers
     class FormBuilder
-      include ActionView::Helpers::NumberHelper
 
       def currency_field(field, number_options = {}, options = {})
         html_classes = options[:class].nil? ? [] : options[:class].split(' ')
         html_classes << 'currency_field' unless html_classes.include?('currency_field')
         options.merge!({ :class => html_classes.join(' ') })
-        options.merge!({ :value => number_to_currency(object.send(field) / 100.0, number_options) }) unless object.send(field).nil?
+        options.merge!({ :value => ::NumberHelper.number_to_currency(object.send(field) / 100.0, number_options) }) unless object.send(field).nil?
         text_field(field, options)
       end
 

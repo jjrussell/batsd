@@ -1,7 +1,7 @@
 class SurveyQuestion < ActiveRecord::Base
   include UuidPrimaryKey
 
-  QUESTION_FORMATS = %w( dropdown radio text )
+  QUESTION_FORMATS = %w( select radio text )
 
   belongs_to :survey_offer
 
@@ -13,5 +13,9 @@ class SurveyQuestion < ActiveRecord::Base
 
   def to_s
     text
+  end
+
+  def possible_responses
+    super.split(';')
   end
 end

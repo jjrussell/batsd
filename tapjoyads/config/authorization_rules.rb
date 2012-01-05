@@ -97,6 +97,7 @@ authorization do
     has_permission_on :tools, :to => [ :index ]
     has_permission_on :tools_editors_picks, :to => [ :index, :new, :create, :show, :edit, :update, :activate, :expire ]
     has_permission_on :tools_app_reviews, :to => [ :index, :new, :create, :edit, :update, :update_featured, :destroy ]
+    has_permission_on :tools_featured_contents, :to => [ :index, :new, :create, :edit, :update, :destroy ]
   end
 
   role :admin do

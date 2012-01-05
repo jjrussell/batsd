@@ -1,5 +1,4 @@
 module BillingHelper
-  include ActionView::Helpers::NumberHelper
 
   def list_of_countries
     [

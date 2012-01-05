@@ -4,15 +4,15 @@
       %table
         %tr
           %td
-            %a{ :href => @gamer.get_gravatar_profile_url, :target => '_blank' }
+            %a{ :href => @gamer.get_avatar_profile_url, :target => '_blank' }
               .large_avatar
                 %img{ :src => @gamer.get_avatar_url }
           %td
-            %div.gamer_name
+            .gamer_name
               = @gamer.get_gamer_nickname
-            %div.gamer_email
+            .gamer_email
               = @gamer.email
-            %div.gamer_signup_date
+            .gamer_signup_date
               = "Member since #{@gamer.created_at.strftime("%B %d, %Y")}"
   .info_expand_bottom_arrow_wrapper
     .info_expand_bottom_arrow

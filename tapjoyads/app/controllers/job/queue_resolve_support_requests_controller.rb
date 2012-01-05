@@ -13,7 +13,7 @@ class Job::QueueResolveSupportRequestsController < Job::SqsReaderController
 
     json = JSON.load(message.body)
     support_requests_file = S3.bucket(BucketNames::SUPPORT_REQUESTS).objects[json['support_requests_file']]
-    support_requests_file.read.each do |support_request_id|
+    support_requests_file.read.split.each do |support_request_id|
       support_request_id.strip!
       next if support_request_id.empty?
 

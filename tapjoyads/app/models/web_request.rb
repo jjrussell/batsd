@@ -133,13 +133,17 @@ class WebRequest
   self.define_attr :currency_reward, :type => :int
   self.define_attr :package_names, :force_array => true, :replace => false
   self.define_attr :truncated_package_names, :type => :bool
+  self.define_attr :offerwall_rank, :type => :int
+  self.define_attr :offerwall_rank_score, :type => :float
+  self.define_attr :offerwall_start_index, :type => :int
+  self.define_attr :offerwall_max_items, :type => :int
 
-  def self.count_with_vertica(conditions = nil)
-    VerticaCluster.count('production.web_request', conditions)
+  def self.count(conditions = nil)
+    VerticaCluster.count('production.web_requests', conditions)
   end
 
-  def self.select_with_vertica(options = {})
-    VerticaCluster.query('production.web_request', options)
+  def self.select(options = {})
+    VerticaCluster.query('production.web_requests', options)
   end
 
   def initialize(options = {})
@@ -186,6 +190,11 @@ class WebRequest
     self.mobile_network_code  = params[:mobile_network_code]
     self.country              = params[:country_code].present? ? params[:country_code] : geoip_data[:country]
     self.geoip_country        = geoip_data[:country]
+  end
+
+  def replace_path(replacement)
+    @attributes[:path] = [ replacement ]
+    replacement
   end
 
   def save

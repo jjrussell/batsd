@@ -1,5 +1,4 @@
 class Tools::PartnerProgramStatzController < WebsiteController
-  include ActionView::Helpers::NumberHelper
 
   layout 'tabbed'
   current_tab :tools
@@ -12,11 +11,11 @@ class Tools::PartnerProgramStatzController < WebsiteController
   end
 
   def export
-    data = generate_csv()
+    data = generate_csv
     send_data(data.join("\n"), :type => 'text/csv', :filename => "Tapjoy_sponsored_publishers_stats_#{@start_time.to_s(:yyyy_mm_dd)}_#{@end_time.to_s(:yyyy_mm_dd)}.csv")
   end
 
-private
+  private
 
   def setup
     @start_time, @end_time, @granularity = Appstats.parse_dates(params[:date], params[:end_date], params[:granularity])
@@ -33,7 +32,7 @@ private
         :group      => 'offer_id',
         :conditions => "path LIKE '%reward%' AND #{time_conditions} AND offer_id IN (#{partner_program_offer_ids})" }).each do |result|
       partner_program_stats[result[:offer_id]] = {
-        'conversions'      => number_with_delimiter(result[:conversions]),
+        'conversions'      => NumberHelper.number_with_delimiter(result[:conversions]),
         'published_offers' => '0',
         'offers_revenue'   => 0,
       }
@@ -43,7 +42,7 @@ private
         :group      => 'publisher_app_id',
         :conditions => "path LIKE '%reward%' AND #{time_conditions} AND publisher_app_id IN (#{partner_program_offer_ids})" }).each do |result|
       partner_program_stats[result[:offer_id]] ||= { 'conversions' => '0' }
-      partner_program_stats[result[:offer_id]]['published_offers'] = number_with_delimiter(result[:published_offers])
+      partner_program_stats[result[:offer_id]]['published_offers'] = NumberHelper.number_with_delimiter(result[:published_offers])
       partner_program_stats[result[:offer_id]]['offers_revenue']   = result[:offers_revenue]
     end
 
@@ -54,10 +53,10 @@ private
       partner_program_metadata[offer.id] = {
         'icon_url'           => offer.get_icon_url,
         'offer_name'         => offer.name_with_suffix,
-        'price'              => number_to_currency(offer.price / 100.0),
-        'payment'            => number_to_currency(offer.payment / 100.0),
-        'balance'            => number_to_currency(offer.partner.balance / 100.0),
-        'conversion_rate'    => number_to_percentage((offer.conversion_rate || 0) * 100.0, :precision => 1),
+        'price'              => NumberHelper.number_to_currency(offer.price / 100.0),
+        'payment'            => NumberHelper.number_to_currency(offer.payment / 100.0),
+        'balance'            => NumberHelper.number_to_currency(offer.partner.balance / 100.0),
+        'conversion_rate'    => NumberHelper.number_to_percentage((offer.conversion_rate || 0) * 100.0, :precision => 1),
         'platform'           => offer.get_platform,
         'featured'           => offer.featured?,
         'rewarded'           => offer.rewarded?,
@@ -106,9 +105,9 @@ private
         metadata['platform'],
         metadata['conversion_rate'],
         stats['published_offers'].gsub(/[,]/,''),
-        number_to_currency(stats['offers_revenue'] / 100.0, :delimiter => ''),
-        number_to_currency(@partner_revenue_stats[metadata['partner_id']] / 100.0, :delimiter => ''),
-        number_to_currency(metadata['partner_pending_earnings'] / 100.0, :delimiter => ''),
+        NumberHelper.number_to_currency(stats['offers_revenue'] / 100.0, :delimiter => ''),
+        NumberHelper.number_to_currency(@partner_revenue_stats[metadata['partner_id']] / 100.0, :delimiter => ''),
+        NumberHelper.number_to_currency(metadata['partner_pending_earnings'] / 100.0, :delimiter => ''),
         metadata['featured'],
         metadata['rewarded'],
         metadata['offer_type'],
