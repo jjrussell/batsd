@@ -23,8 +23,6 @@ describe Offer do
   it { should validate_numericality_of :payment_range_high }
 
   before :each do
-    stub_offers
-
     @offer = Factory(:app).primary_offer
   end
 
