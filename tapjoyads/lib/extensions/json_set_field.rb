@@ -13,7 +13,8 @@ module JsonSetField
           self[:"#{f}"] = if new_field_value.is_a?(String)
             new_field_value
           elsif new_field_value.is_a?(Array)
-            new_field_value.reject { |val| val.blank? }.to_json
+            new_field_value.reject! { |val| val.blank? }
+            new_field_value.empty? ? '' : new_field_value.to_json
           else
             new_field_value.to_json
           end

@@ -12,6 +12,7 @@ class Offer < ActiveRecord::Base
   WINDOWS_DEVICES = %w( windows )
   ALL_DEVICES = APPLE_DEVICES + ANDROID_DEVICES + WINDOWS_DEVICES
   ALL_OFFER_TYPES = %w( App EmailOffer GenericOffer OfferpalOffer RatingOffer ActionOffer VideoOffer SurveyOffer )
+  ALL_SOURCES = %w( offerwall display_ad featured tj_games )
 
   CLASSIC_OFFER_TYPE               = '0'
   DEFAULT_OFFER_TYPE               = '1'
@@ -47,7 +48,9 @@ class Offer < ActiveRecord::Base
                                   'normal_bid', 'normal_conversion_rate', 'normal_avg_revenue',
                                   'normal_price', 'over_threshold', 'rewarded', 'reseller_id',
                                   'cookie_tracking', 'min_os_version', 'screen_layout_sizes',
-                                  'interval', 'banner_creatives', 'dma_codes', 'regions', 'tj_games_only', 'wifi_only' ].map { |c| "#{quoted_table_name}.#{c}" }.join(', ')
+                                  'interval', 'banner_creatives', 'dma_codes', 'regions',
+                                  'wifi_only', 'approved_sources',
+                                ].map { |c| "#{quoted_table_name}.#{c}" }.join(', ')
 
   DIRECT_PAY_PROVIDERS = %w( boku paypal )
 
@@ -107,6 +110,17 @@ class Offer < ActiveRecord::Base
       record.errors.add(attribute, 'must contain at least one device type') if types.size < 1
       types.each do |type|
         record.errors.add(attribute, 'contains an invalid device type') unless ALL_DEVICES.include?(type)
+      end
+    rescue
+      record.errors.add(attribute, 'is not valid JSON')
+    end
+  end
+  validates_each :approved_sources, :allow_blank => true, :allow_nil => false do |record, attribute, value|
+    begin
+      types = JSON.parse(value)
+      record.errors.add(attribute, 'is not an Array') unless types.is_a?(Array)
+      types.each do |type|
+        record.errors.add(attribute, "contains an invalid source: #{value}") unless ALL_SOURCES.include?(type)
       end
     rescue
       record.errors.add(attribute, 'is not valid JSON')
@@ -183,8 +197,8 @@ class Offer < ActiveRecord::Base
   alias_method :events, :offer_events
   alias_method :random, :rand
 
-  json_set_field :device_types, :screen_layout_sizes, :countries, :dma_codes, :regions
-  memoize :get_device_types, :get_screen_layout_sizes, :get_countries, :get_dma_codes, :get_regions
+  json_set_field :device_types, :screen_layout_sizes, :countries, :dma_codes, :regions, :approved_sources
+  memoize :get_device_types, :get_screen_layout_sizes, :get_countries, :get_dma_codes, :get_regions, :get_approved_sources
 
   def app_offer?
     item_type == 'App' || item_type == 'ActionOffer'
