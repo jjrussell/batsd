@@ -68,6 +68,7 @@ class DisplayAdController < ApplicationController
 
     params[:publisher_app_id] = publisher_app.id
     params[:displayer_app_id] = publisher_app.id
+    params[:source] = 'display_ad'
 
     web_request = WebRequest.new(:time => now)
     web_request.put_values('display_ad_requested', params, get_ip_address, geoip_data, request.headers['User-Agent'])
@@ -83,6 +84,7 @@ class DisplayAdController < ApplicationController
         :geoip_data         => geoip_data,
         :os_version         => params[:os_version],
         :type               => Offer::DISPLAY_OFFER_TYPE,
+        :source             => params[:source],
         :library_version    => params[:library_version],
         :screen_layout_size => params[:screen_layout_size]
       ).weighted_rand
