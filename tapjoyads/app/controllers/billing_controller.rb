@@ -122,6 +122,9 @@ class BillingController < WebsiteController
     redirect_to add_funds_billing_path
   end
 
+  def transfer_funds
+  end
+
   def create_transfer
     amount = sanitize_currency_param(params[ :transfer_amount ]).to_i
     if amount <= 0

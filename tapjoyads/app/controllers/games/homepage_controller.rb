@@ -1,5 +1,7 @@
 class Games::HomepageController < GamesController
   rescue_from Mogli::Client::ClientException, :with => :handle_mogli_exceptions
+  rescue_from Errno::ECONNRESET, :with => :handle_errno_exceptions
+  rescue_from Errno::ETIMEDOUT, :with => :handle_errno_exceptions
   before_filter :require_gamer, :except => [ :index, :tos, :privacy ]
 
   def index
@@ -25,7 +27,8 @@ class Games::HomepageController < GamesController
         @offerwall_external_publisher = ExternalPublisher.new(currency) if @show_offerwall
       end
     end
-    @featured_review = AppReview.featured_review(@device.try(:platform))
+    featured_contents = FeaturedContent.featured_contents(@device.try(:platform)).to_a
+    @featured_content = featured_contents.weighted_rand(featured_contents.map(&:weight))
 
     if params[:load] == 'more_apps'
       @show_more_apps = true
