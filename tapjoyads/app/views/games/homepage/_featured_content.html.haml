@@ -16,7 +16,7 @@
                 .app_rating.hide{ :rating => app.user_rating }
         %div
         - if @featured_content.button_url.present?
-          - link_to(@featured_content.button_url) do
+          - link_to(@featured_content.button_url.gsub('TAPJOY_UDID', current_device_id)) do
             .button.grey
               = @featured_content.button_text
 

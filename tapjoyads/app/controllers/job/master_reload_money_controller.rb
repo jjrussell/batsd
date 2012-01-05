@@ -61,7 +61,6 @@ class Job::MasterReloadMoneyController < Job::JobController
         stats[key]['net_revenue']       = stats[key]['revenue'] - stats[key]['publisher_earnings']
         stats[key]['margin']            = stats[key]['net_revenue'] / stats[key]['revenue'] * 100
         stats[key]['avg_deduct_pct']    = (1 - SpendShare.over_range(start_time, end_time).average(:ratio)) * 100
-        stats[key]['network_costs']     = NetworkCost.created_between(start_time, end_time).sum(:amount) / 100.0
 
         stats[key]['conversions']        = stats[key]['conversions'].nil? ? '-' : NumberHelper.number_with_delimiter(stats[key]['conversions'])
         stats[key]['advertiser_spend']   = NumberHelper.number_to_currency(stats[key]['advertiser_spend'])
@@ -75,7 +74,6 @@ class Job::MasterReloadMoneyController < Job::JobController
         stats[key]['revenue']            = NumberHelper.number_to_currency(stats[key]['revenue'])
         stats[key]['net_revenue']        = NumberHelper.number_to_currency(stats[key]['net_revenue'])
         stats[key]['margin']             = NumberHelper.number_to_percentage(stats[key]['margin'], :precision => 2)
-        stats[key]['network_costs']      = NumberHelper.number_to_currency(stats[key]['network_costs'])
       end
     end
 
