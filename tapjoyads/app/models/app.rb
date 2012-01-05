@@ -285,10 +285,6 @@ class App < ActiveRecord::Base
     app_metadata
   end
 
-  def update_primary_app_metadata
-    primary_app_metadata.update_metadata_from_store if primary_app_metadata.present?
-  end
-
   def wifi_required?
     !!(file_size_bytes && file_size_bytes > PLATFORM_DETAILS[platform][:cell_download_limit_bytes])
   end

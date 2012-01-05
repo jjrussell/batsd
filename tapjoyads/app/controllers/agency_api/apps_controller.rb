@@ -49,7 +49,8 @@ class AgencyApi::AppsController < AgencyApiController
     unless app.save
       render_error(app.errors, 400) and return
     end
-    app.update_primary_app_metadata
+    app.save!
+    Sqs.send_message(QueueNames::GET_STORE_INFO, app.primary_app_metadata.id) if app.primary_app_metadata.present?
 
     save_activity_logs
     render_success({ :app_id => app.id, :app_secret_key => app.secret_key })
@@ -77,7 +78,8 @@ class AgencyApi::AppsController < AgencyApiController
     unless app.save
       render_error(app.errors, 400) and return
     end
-    app.primary_app_metadata.update_metadata_from_store if app_store_id_changed
+    Sqs.send_message(QueueNames::GET_STORE_INFO, app.primary_app_metadata.id) if app_store_id_changed
+    app.save!
 
     save_activity_logs
     render_success
