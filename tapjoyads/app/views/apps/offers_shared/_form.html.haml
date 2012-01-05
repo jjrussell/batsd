@@ -147,8 +147,7 @@
   %br
   Upload custom creatives <small style='color:red'>(red labels are pending approval)</small>:
   %br
-  - @offer.banner_creative_sizes.each do |size_hash|
-    %iframe.creative_upload{:src => upload_creative_app_offer_path(:id => @offer.id, :app => @app.id, :image_size => size_hash[:image_size], :label => size_hash[:label_image_size]), :frameborder => 0}
+  = render('offer_creatives/iframes', :offer => @offer, :app => @app)
 
 - if !@offer.tapjoy_enabled? && @enable_request.new_record?
   - form_for(@enable_request, :html => { :class => 'tjform' }) do |f|

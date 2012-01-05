@@ -241,7 +241,7 @@ class Offer < ActiveRecord::Base
 
   def banner_creative_sizes
     if !featured?
-      DISPLAY_AD_SIZES.collect { |size| {:image_size => size, :label_image_size => "#{size} creative"} }
+      DISPLAY_AD_SIZES.collect { |size| {:image_size => size, :label_image_size => size} }
     else
       FEATURED_AD_SIZES.collect do |size|
         width, height = size.split('x').map(&:to_i)
