@@ -41,11 +41,8 @@ module Offer::Rejecting
     video_offers_reject?(video_offer_ids, type, all_videos) ||
     frequency_capping_reject?(device) ||
     tapjoy_games_retargeting_reject?(device) ||
-<<<<<<< HEAD
+    source_reject?(source) ||
     hide_rewarded_offers_reject?(hide_rewarded_offers)
-=======
-    source_reject?(source)
->>>>>>> master
   end
 
   def precache_reject?(platform_name, hide_rewarded_app_installs, normalized_device_type)
