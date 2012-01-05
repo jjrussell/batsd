@@ -751,12 +751,7 @@ private
     end
 
     # Get proper format for creative
-    format = ''
-    if !rewarded? && !featured?
-      format = 'png'
-    elsif featured?
-      format = 'jpeg'
-    end
+    format = featured? ? 'jpeg' : 'png'
 
     blob = creative_blobs.values.first # will be nil for banner creative removals
     if banner_creatives.size > banner_creatives_was.size
