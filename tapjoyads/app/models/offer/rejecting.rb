@@ -237,7 +237,7 @@ module Offer::Rejecting
   end
 
   def source_reject?(source)
-    !get_approved_sources.include?(source)
+    get_approved_sources.any? && !get_approved_sources.include?(source)
   end
 
   def recommendable_types_reject?
