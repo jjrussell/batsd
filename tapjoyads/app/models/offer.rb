@@ -120,7 +120,7 @@ class Offer < ActiveRecord::Base
       types = JSON.parse(value)
       record.errors.add(attribute, 'is not an Array') unless types.is_a?(Array)
       types.each do |type|
-        record.errors.add(attribute, 'contains an invalid source') unless ALL_SOURCES.include?(type)
+        record.errors.add(attribute, "contains an invalid source: #{value}") unless ALL_SOURCES.include?(type)
       end
     rescue
       record.errors.add(attribute, 'is not valid JSON')
