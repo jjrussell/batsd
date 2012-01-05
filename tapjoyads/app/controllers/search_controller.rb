@@ -19,7 +19,7 @@ class SearchController < WebsiteController
         if o.item_type == "App"
           app = App.find_by_id(o.item_id)
           result[:description] = app.description
-          result[:click_url]   = o.linkshare_url(app.info_url)
+          result[:click_url]   = Linkshare.add_params(app.info_url)
         end
         result
       else

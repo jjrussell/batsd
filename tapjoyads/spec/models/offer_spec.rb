@@ -66,13 +66,13 @@ describe Offer do
     @offer.send(:geoip_reject?, geoip_data, device).should == false
   end
 
-  it "should return propoer linkshare account url" do
+  it "should return proper linkshare account url" do
     url = 'http://phobos.apple.com/WebObjects/MZStore.woa/wa/viewSoftware?id=TEST&mt=8'
-    linkshare_url = @offer.linkshare_url(url)
-    linkshare_url.should == "#{url}&referrer=tapjoy&partnerId=30&siteID=OxXMC6MRBt4"
+    linkshare_url = Linkshare.add_params(url)
+    linkshare_url.should == "#{url}&partnerId=30&siteID=OxXMC6MRBt4"
 
-    linkshare_url = @offer.linkshare_url(url, 'tradedoubler')
-    linkshare_url.should == "#{url}&referrer=tapjoy&partnerId=2003&tduid=UK1800811"
+    linkshare_url = Linkshare.add_params(url, 'tradedoubler')
+    linkshare_url.should == "#{url}&partnerId=2003&tduid=UK1800811"
   end
 
 end
