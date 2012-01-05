@@ -1,2 +1,10 @@
-You just watched {@offer}.
-You just earned {@currency.get_visual_reward_amount(offer, params[:display_multiplier])}
+%p You just watched #{@offer}.
+
+%p You just earned #{@currency.get_visual_reward_amount(@offer, params[:display_multiplier])} #{@currency.name}
+
+%p Buttons:
+
+%ul
+  %li= link_to('Replay Video', get_click_url(@offer))
+  - @video_offer.video_buttons.each do |button|
+    %li= link_to(button.name, button.url)
