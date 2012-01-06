@@ -150,6 +150,7 @@ class Offer < ActiveRecord::Base
   before_save :fix_country_targeting
   before_save :update_payment
   before_save :update_instructions
+  before_save :sync_creative_approval # Must be before_save so auto-approval can happen
   after_save :update_enabled_rating_offer_id
   after_save :update_pending_enable_requests
   after_save :update_tapjoy_sponsored_associated_offers
@@ -243,6 +244,10 @@ class Offer < ActiveRecord::Base
     return unless has_banner_creative?(size)
     return if banner_creative_approved?(size)
     self.approved_banner_creatives += [size]
+  end
+
+  def add_banner_approval(user, size)
+    approvals << CreativeApprovalQueue.new(:offer => self, :user => user, :size => size)
   end
 
   def find_associated_offers
@@ -649,6 +654,25 @@ private
       Offer::FEATURED_AD_SIZES
     else
       []
+    end
+  end
+
+  def sync_creative_approval
+    # Handle banners on this end
+    banner_creatives.each do |size|
+      approval = approvals.find_by_size(size)
+
+      if banner_creative_approved?(size)
+        approval.try(:destroy)
+      elsif approval.nil?
+        # In case of a desync between the queue and actual approvals
+        approve_banner_creative(size)
+      end
+    end
+
+    # Now remove any approval objects that are no longer valid
+    approvals.each do |approval|
+      approval.destroy unless has_banner_creative?(approval.size)
     end
   end
 

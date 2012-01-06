@@ -1,5 +1,5 @@
 - url = upload_creative_app_offer_path(:id => @offer.id, :app_id => @app.id, :image_size => @image_size, :label => @label)
-- pending = @offer.has_banner_creative?(@image_size) and !@offer.banner_creative_approved?(@image_size)
+- pending = @offer.has_banner_creative?(@image_size) && !@offer.banner_creative_approved?(@image_size)
 
 - if @creative_exists
   - form_tag(url, :method => :delete, :id => "remove_form_for_#{@image_size}", :class => "hidden") {}
@@ -9,7 +9,7 @@
     %tbody
       %tr
         %th
-          = f.label("custom_creative_#{@image_size}", @label, :class => pending ? 'pending' : '')
+          = f.label("custom_creative_#{@image_size}", @label, :class => (pending ? 'pending' : ''))
         %td
           %table
             - if @success_message

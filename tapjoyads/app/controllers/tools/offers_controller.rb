@@ -29,19 +29,13 @@ class Tools::OffersController < WebsiteController
   end
 
   def approve_creative
-    if success = @approval.approve!
-      creative_email(:approved)
-      @approval.destroy
-    end
+    creative_email(:approved) if success = @approval.approve!
 
     render :json => {:success => success}
   end
 
   def reject_creative
-    if success = @approval.reject!
-      creative_email(:rejected)
-      @approval.destroy
-    end
+    creative_email(:rejected) if success = @approval.reject!
 
     render :json => {:success => success}
   end

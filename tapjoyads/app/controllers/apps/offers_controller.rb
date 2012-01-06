@@ -93,14 +93,13 @@ class Apps::OffersController < WebsiteController
     case request.method
       when :delete
         @offer.remove_banner_creative(@image_size)
-        @offer.approvals.find_by_size(@image_size).try(:destroy) # Remove the approval queue if it exists
       when :post
         @offer.add_banner_creative(@image_size)
 
         if permitted_to?(:edit, :statz)
           @offer.approve_banner_creative(@image_size)
         else
-          @offer.approvals << CreativeApprovalQueue.new(:offer => @offer, :user => current_user, :size => @image_size)
+          @offer.add_banner_approval(current_user, @image_size)
           email_managers = true
         end
       when :put

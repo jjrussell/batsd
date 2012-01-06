@@ -5,14 +5,15 @@ class CreativeApprovalQueue < ActiveRecord::Base
   belongs_to :user
 
   validates_presence_of :size
+  validates_uniqueness_of :size, :scope => :offer_id
 
   def approve!
     offer.approve_banner_creative(size)
-    offer.save
+    offer.save # after_save on offer will remove this object
   end
 
   def reject!
     offer.remove_banner_creative(size)
-    offer.save
+    offer.save # after_save on offer will remove this object
   end
 end
