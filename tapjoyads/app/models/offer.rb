@@ -638,7 +638,7 @@ class Offer < ActiveRecord::Base
   end
 
   def num_clicks_rewarded(start_time = 1.day.ago, end_time = Time.zone.now)
-    num_clicks_rewarded = Mc.get_and_put("Offer.ClicksRewarded.#{id}", false, 15.minutes) do
+    Mc.get_and_put("Offer.ClicksRewarded.#{id}", false, 15.minutes) do
       clicks_rewarded = 0
       conditions = [
         "offer_id = '#{id}'",
@@ -650,7 +650,6 @@ class Offer < ActiveRecord::Base
       end
       clicks_rewarded
     end
-    num_clicks_rewarded
   end
 
 private
