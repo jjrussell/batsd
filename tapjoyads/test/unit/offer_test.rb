@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class OfferTest < ActiveSupport::TestCas
+class OfferTest < ActiveSupport::TestCase
   context "An App Offer for a free app" do
     setup do
       @offer = Factory(:app).primary_offer.target # need to use the HasOneAssociation's "target" in order for stubbing to work
