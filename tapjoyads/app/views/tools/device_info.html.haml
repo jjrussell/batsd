@@ -136,7 +136,7 @@
         - pub = @click_apps[click.publisher_app_id]
         - tr_class = ''
         - if click.installed_at?
-          - if @rewards[click.reward_key] && (@rewards[click.reward_key].send_currency_status == 'OK' || @rewards[click.reward_key].send_currency_status == '200')
+          - if @rewards[click.reward_key] && @rewards[click.reward_key].successful?
             - tr_class += ' rewarded'
           - else
             - tr_class += ' rewarded-failed'

@@ -96,4 +96,7 @@ class Reward < SimpledbShardedResource
     end
   end
 
+  def successful?
+    send_currency_status == 'OK' || send_currency_status == '200'
+  end
 end

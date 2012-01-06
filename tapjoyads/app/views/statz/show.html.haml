@@ -58,6 +58,7 @@
   - property_row('Countries', @offer.countries, '')
   - property_row('DMA Codes', @offer.dma_codes, '')
   - property_row('Regions', @offer.regions, '')
+  - property_row('Support Request to Awards', "#{link_to('View Ratio', '', :id => 'view_srr_ratio')}#{label_tag('', nil, :id => 'srr_ratio')}")
   - property_row('Pay-per-click', @offer.pay_per_click?, false)
   - property_row('Device types', @offer.device_types, @offer.expected_device_types.to_json, @offer.wrong_platform? ? 'incomplete' : '')
   - if @offer.item_type == 'App' && @offer.item.platform == 'iphone' && @offer.item.supported_devices.present?
@@ -180,5 +181,18 @@
 
     $('#show_boosts').click(function() {
       $('#boosts_list').toggle();
+      return false;
+    });
+
+    $('#view_srr_ratio').click(function() {
+      $('#view_srr_ratio').hide();
+      $('#srr_ratio').text("Calculating...");
+      $.ajax({
+        type: "GET",
+        url: "#{support_request_reward_ratio_statz_url}/#{@offer.id}",
+        success: function(html) {
+          $('#srr_ratio').text(html);
+        }
+      });
       return false;
     });
