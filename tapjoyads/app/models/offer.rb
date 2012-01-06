@@ -79,6 +79,7 @@ class Offer < ActiveRecord::Base
   has_many :dependent_action_offers, :class_name => 'ActionOffer', :foreign_key => :prerequisite_offer_id
   has_many :offer_events
   has_many :editors_picks
+  has_many :approvals, :class_name => 'CreativeApprovalQueue'
 
   belongs_to :partner
   belongs_to :item, :polymorphic => true
@@ -225,12 +226,6 @@ class Offer < ActiveRecord::Base
 
   def banner_creative_approved?(size)
     has_banner_creative?(size) && self.approved_banner_creatives.include?(size)
-  end
-
-  def self.unapproved_count
-    creative_approval_needed.inject(0) do |total, offer|
-      total + (offer.banner_creatives.size - offer.approved_banner_creatives.size)
-    end
   end
 
   def remove_banner_creative(size)
