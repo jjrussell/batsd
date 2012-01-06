@@ -1,5 +1,4 @@
 class Appstats
-  include ActionView::Helpers::NumberHelper
 
   attr_accessor :app_key, :stats, :granularity, :start_time, :end_time, :x_labels, :intervals
 
@@ -275,14 +274,14 @@ class Appstats
     if @granularity == :daily
       data[:connect_data][:main][:names] << 'DAUs'
       data[:connect_data][:main][:data] << @stats['daily_active_users']
-      data[:connect_data][:main][:stringData] << @stats['daily_active_users'].map { |i| number_with_delimiter(i) }
+      data[:connect_data][:main][:stringData] << @stats['daily_active_users'].map { |i| NumberHelper.number_with_delimiter(i) }
       data[:connect_data][:main][:totals] << '-'
       data[:connect_data][:right] = {
         :unitPrefix => '$',
         :decimals => 2,
         :names => [ 'ARPDAU' ],
         :data => [ @stats['arpdau'].map { |i| i / 100.0 } ],
-        :stringData => [ @stats['arpdau'].map { |i| number_to_currency(i / 100.0, :precision => 4) } ],
+        :stringData => [ @stats['arpdau'].map { |i| NumberHelper.number_to_currency(i / 100.0, :precision => 4) } ],
         :totals => [ '-' ],
       }
     end
@@ -298,8 +297,8 @@ class Appstats
       # jailbroken data
       data[:rewarded_installs_plus_spend_data][:main][:names]      << "Jb #{conversion_name}"
       data[:rewarded_installs_plus_spend_data][:main][:data]       << @stats['jailbroken_installs']
-      data[:rewarded_installs_plus_spend_data][:main][:stringData] << @stats['jailbroken_installs'].map { |i| number_with_delimiter(i) }
-      data[:rewarded_installs_plus_spend_data][:main][:totals]     << number_with_delimiter(@stats['jailbroken_installs'].sum)
+      data[:rewarded_installs_plus_spend_data][:main][:stringData] << @stats['jailbroken_installs'].map { |i| NumberHelper.number_with_delimiter(i) }
+      data[:rewarded_installs_plus_spend_data][:main][:totals]     << NumberHelper.number_with_delimiter(@stats['jailbroken_installs'].sum)
     end
 
     data
@@ -322,23 +321,23 @@ class Appstats
         @stats['paid_installs'][i],
         @stats['new_users'][i],
         @stats['cvr'][i],
-        number_to_currency(@stats['installs_spend'][i] / -100.0, :delimiter => ''),
+        NumberHelper.number_to_currency(@stats['installs_spend'][i] / -100.0, :delimiter => ''),
         (Array(@stats['ranks']['overall.free.united_states'])[i] || '-'),
         @stats['offerwall_views'][i],
         @stats['rewards_opened'][i],
         @stats['rewards'][i],
         @stats['rewards_cvr'][i],
-        number_to_currency(@stats['rewards_revenue'][i] / 100.0, :delimiter => ''),
-        number_to_currency(@stats['offerwall_ecpm'][i] / 100.0, :delimiter => ''),
-        number_to_currency(@stats['display_revenue'][i] / 100.0, :delimiter => ''),
-        number_to_currency(@stats['display_ecpm'][i] / 100.0, :delimiter => ''),
-        number_to_currency(@stats['featured_revenue'][i] /100.0, :delimiter => ''),
-        number_to_currency(@stats['featured_ecpm'][i] /100.0, :delimiter => ''),
+        NumberHelper.number_to_currency(@stats['rewards_revenue'][i] / 100.0, :delimiter => ''),
+        NumberHelper.number_to_currency(@stats['offerwall_ecpm'][i] / 100.0, :delimiter => ''),
+        NumberHelper.number_to_currency(@stats['display_revenue'][i] / 100.0, :delimiter => ''),
+        NumberHelper.number_to_currency(@stats['display_ecpm'][i] / 100.0, :delimiter => ''),
+        NumberHelper.number_to_currency(@stats['featured_revenue'][i] /100.0, :delimiter => ''),
+        NumberHelper.number_to_currency(@stats['featured_ecpm'][i] /100.0, :delimiter => ''),
       ]
 
       if @granularity == :daily
         line << @stats['daily_active_users'][i]
-        line << number_to_currency(@stats['arpdau'][i] / 100.0, :delimiter => '')
+        line << NumberHelper.number_to_currency(@stats['arpdau'][i] / 100.0, :delimiter => '')
       end
       data << line.join(',')
     end
@@ -577,12 +576,12 @@ private
 
       if partitions_key == :installs_spend
         @spend_partitions[partitions_key][country][:data] << parts.map { |i| i == nil ? nil : i / -100.0 }
-        @spend_partitions[partitions_key][country][:totals] << number_to_currency(parts.compact.sum / -100.0)
-        @spend_partitions[partitions_key][country][:stringData] << parts.map { |i| i == nil ? '-' : number_to_currency(i / -100.0) }
+        @spend_partitions[partitions_key][country][:totals] << NumberHelper.number_to_currency(parts.compact.sum / -100.0)
+        @spend_partitions[partitions_key][country][:stringData] << parts.map { |i| i == nil ? '-' : NumberHelper.number_to_currency(i / -100.0) }
       elsif partitions_key == :paid_installs
         @spend_partitions[partitions_key][country][:data] << parts
-        @spend_partitions[partitions_key][country][:stringData] << parts.map { |i| number_with_delimiter(i) }
-        @spend_partitions[partitions_key][country][:totals] << number_with_delimiter(parts.compact.sum)
+        @spend_partitions[partitions_key][country][:stringData] << parts.map { |i| NumberHelper.number_with_delimiter(i) }
+        @spend_partitions[partitions_key][country][:totals] << NumberHelper.number_with_delimiter(parts.compact.sum)
       end
     end
 
@@ -678,8 +677,8 @@ private
       @virtual_good_partitions[group][:names] << vg_name
       @virtual_good_partitions[group][:longNames] << vg.name
       @virtual_good_partitions[group][:data] << vg_data
-      @virtual_good_partitions[group][:stringData] << vg_data.map { |i| number_with_delimiter(i) }
-      @virtual_good_partitions[group][:totals] << (number_with_delimiter(@stats['virtual_goods'][vg.key].sum) rescue 0)
+      @virtual_good_partitions[group][:stringData] << vg_data.map { |i| NumberHelper.number_with_delimiter(i) }
+      @virtual_good_partitions[group][:totals] << (NumberHelper.number_with_delimiter(@stats['virtual_goods'][vg.key].sum) rescue 0)
     end
 
     @virtual_good_partitions
@@ -705,8 +704,8 @@ private
       :main => {
         :names => [ 'Sessions', 'New Users' ],
         :data => [ @stats['logins'], @stats['new_users'] ],
-        :stringData => [ @stats['logins'].map { |i| number_with_delimiter(i) }, @stats['new_users'].map { |i| number_with_delimiter(i) } ],
-        :totals => [ number_with_delimiter(@stats['logins'].sum), number_with_delimiter(@stats['new_users'].sum) ],
+        :stringData => [ @stats['logins'].map { |i| NumberHelper.number_with_delimiter(i) }, @stats['new_users'].map { |i| NumberHelper.number_with_delimiter(i) } ],
+        :totals => [ NumberHelper.number_with_delimiter(@stats['logins'].sum), NumberHelper.number_with_delimiter(@stats['new_users'].sum) ],
       },
     }
   end
@@ -719,15 +718,15 @@ private
       :main => {
         :names => [ "Total Paid #{conversion_name}", 'Total Clicks' ],
         :data => [ @stats['paid_installs'], @stats['paid_clicks'] ],
-        :stringData => [ @stats['paid_installs'].map { |i| number_with_delimiter(i) }, @stats['paid_clicks'].map { |i| number_with_delimiter(i) } ],
-        :totals => [ number_with_delimiter(@stats['paid_installs'].sum), number_with_delimiter(@stats['paid_clicks'].sum) ],
+        :stringData => [ @stats['paid_installs'].map { |i| NumberHelper.number_with_delimiter(i) }, @stats['paid_clicks'].map { |i| NumberHelper.number_with_delimiter(i) } ],
+        :totals => [ NumberHelper.number_with_delimiter(@stats['paid_installs'].sum), NumberHelper.number_with_delimiter(@stats['paid_clicks'].sum) ],
       },
       :right => {
         :unitPrefix => '$',
         :names => [ 'Total Spend' ],
         :data => [ @stats['installs_spend'].map { |i| i / -100.0 } ],
-        :stringData => [ @stats['installs_spend'].map { |i| number_to_currency(i / -100.0) } ],
-        :totals => [ number_to_currency(@stats['installs_spend'].sum / -100.0) ],
+        :stringData => [ @stats['installs_spend'].map { |i| NumberHelper.number_to_currency(i / -100.0) } ],
+        :totals => [ NumberHelper.number_to_currency(@stats['installs_spend'].sum / -100.0) ],
       },
       :extra => {
         :names => [ 'Conversion rate' ],
@@ -745,8 +744,8 @@ private
       :main => {
         :names => [ "Total Paid #{conversion_name}" ],
         :data => [ @stats['paid_installs'] ],
-        :stringData => [ @stats['paid_installs'].map { |i| number_with_delimiter(i) } ],
-        :totals => [ number_with_delimiter(@stats['paid_installs'].sum) ],
+        :stringData => [ @stats['paid_installs'].map { |i| NumberHelper.number_with_delimiter(i) } ],
+        :totals => [ NumberHelper.number_with_delimiter(@stats['paid_installs'].sum) ],
       },
       :partition_names => get_rank_partition_names,
       :partition_right => get_rank_partition_values,
@@ -771,16 +770,16 @@ private
           @stats['display_revenue'].map { |i| i / 100.0 },
         ],
         :stringData => [
-          @stats['total_revenue'].map { |i| number_to_currency(i / 100.0) },
-          @stats['rewards_revenue'].map { |i| number_to_currency(i / 100.0) },
-          @stats['featured_revenue'].map { |i| number_to_currency(i / 100.0) },
-          @stats['display_revenue'].map { |i| number_to_currency(i / 100.0) },
+          @stats['total_revenue'].map { |i| NumberHelper.number_to_currency(i / 100.0) },
+          @stats['rewards_revenue'].map { |i| NumberHelper.number_to_currency(i / 100.0) },
+          @stats['featured_revenue'].map { |i| NumberHelper.number_to_currency(i / 100.0) },
+          @stats['display_revenue'].map { |i| NumberHelper.number_to_currency(i / 100.0) },
         ],
         :totals => [
-          number_to_currency(@stats['total_revenue'].sum / 100.0),
-          number_to_currency(@stats['rewards_revenue'].sum / 100.0),
-          number_to_currency(@stats['featured_revenue'].sum / 100.0),
-          number_to_currency(@stats['display_revenue'].sum / 100.0),
+          NumberHelper.number_to_currency(@stats['total_revenue'].sum / 100.0),
+          NumberHelper.number_to_currency(@stats['rewards_revenue'].sum / 100.0),
+          NumberHelper.number_to_currency(@stats['featured_revenue'].sum / 100.0),
+          NumberHelper.number_to_currency(@stats['display_revenue'].sum / 100.0),
         ],
       },
     }
@@ -797,14 +796,14 @@ private
           @stats['offerwall_views'], @stats['rewards_opened'], @stats['rewards'],
         ],
         :stringData => [
-          @stats['offerwall_views'].map { |i| number_with_delimiter(i) },
-          @stats['rewards_opened'].map { |i| number_with_delimiter(i) },
-          @stats['rewards'].map { |i| number_with_delimiter(i) },
+          @stats['offerwall_views'].map { |i| NumberHelper.number_with_delimiter(i) },
+          @stats['rewards_opened'].map { |i| NumberHelper.number_with_delimiter(i) },
+          @stats['rewards'].map { |i| NumberHelper.number_with_delimiter(i) },
         ],
         :totals => [
-          number_with_delimiter(@stats['offerwall_views'].sum),
-          number_with_delimiter(@stats['rewards_opened'].sum),
-          number_with_delimiter(@stats['rewards'].sum),
+          NumberHelper.number_with_delimiter(@stats['offerwall_views'].sum),
+          NumberHelper.number_with_delimiter(@stats['rewards_opened'].sum),
+          NumberHelper.number_with_delimiter(@stats['rewards'].sum),
         ],
       },
       :right => {
@@ -815,12 +814,12 @@ private
           @stats['offerwall_ecpm'].map { |i| i / 100.0 },
         ],
         :stringData => [
-          @stats['rewards_revenue'].map { |i| number_to_currency(i / 100.0) },
-          @stats['offerwall_ecpm'].map { |i| number_to_currency(i / 100.0) },
+          @stats['rewards_revenue'].map { |i| NumberHelper.number_to_currency(i / 100.0) },
+          @stats['offerwall_ecpm'].map { |i| NumberHelper.number_to_currency(i / 100.0) },
         ],
         :totals => [
-          number_to_currency(@stats['rewards_revenue'].sum / 100.0),
-          @stats['offerwall_views'].sum > 0 ? number_to_currency(@stats['rewards_revenue'].sum.to_f / (@stats['offerwall_views'].sum / 1000.0) / 100.0) : '$0.00',
+          NumberHelper.number_to_currency(@stats['rewards_revenue'].sum / 100.0),
+          @stats['offerwall_views'].sum > 0 ? NumberHelper.number_to_currency(@stats['rewards_revenue'].sum.to_f / (@stats['offerwall_views'].sum / 1000.0) / 100.0) : '$0.00',
         ],
       },
       :extra => {
@@ -851,16 +850,16 @@ private
           @stats['featured_published_offers'],
         ],
         :stringData => [
-          @stats['featured_offers_requested'].map { |i| number_with_delimiter(i) },
-          @stats['featured_offers_shown'].map { |i| number_with_delimiter(i) },
-          @stats['featured_offers_opened'].map { |i| number_with_delimiter(i) },
-          @stats['featured_published_offers'].map { |i| number_with_delimiter(i) },
+          @stats['featured_offers_requested'].map { |i| NumberHelper.number_with_delimiter(i) },
+          @stats['featured_offers_shown'].map { |i| NumberHelper.number_with_delimiter(i) },
+          @stats['featured_offers_opened'].map { |i| NumberHelper.number_with_delimiter(i) },
+          @stats['featured_published_offers'].map { |i| NumberHelper.number_with_delimiter(i) },
         ],
         :totals => [
-          number_with_delimiter(@stats['featured_offers_requested'].sum),
-          number_with_delimiter(@stats['featured_offers_shown'].sum),
-          number_with_delimiter(@stats['featured_offers_opened'].sum),
-          number_with_delimiter(@stats['featured_published_offers'].sum),
+          NumberHelper.number_with_delimiter(@stats['featured_offers_requested'].sum),
+          NumberHelper.number_with_delimiter(@stats['featured_offers_shown'].sum),
+          NumberHelper.number_with_delimiter(@stats['featured_offers_opened'].sum),
+          NumberHelper.number_with_delimiter(@stats['featured_published_offers'].sum),
         ],
       },
       :right => {
@@ -871,12 +870,12 @@ private
           @stats['featured_ecpm'].map { |i| i / 100.0 },
         ],
         :stringData => [
-          @stats['featured_revenue'].map { |i| number_to_currency(i / 100.0) },
-          @stats['featured_ecpm'].map { |i| number_to_currency(i / 100.0) },
+          @stats['featured_revenue'].map { |i| NumberHelper.number_to_currency(i / 100.0) },
+          @stats['featured_ecpm'].map { |i| NumberHelper.number_to_currency(i / 100.0) },
         ],
         :totals => [
-          number_to_currency(@stats['featured_revenue'].sum / 100.0),
-          @stats['featured_offers_shown'].sum > 0 ? number_to_currency(@stats['featured_revenue'].sum.to_f / (@stats['featured_offers_shown'].sum / 1000.0) / 100.0) : '$0.00',
+          NumberHelper.number_to_currency(@stats['featured_revenue'].sum / 100.0),
+          @stats['featured_offers_shown'].sum > 0 ? NumberHelper.number_to_currency(@stats['featured_revenue'].sum.to_f / (@stats['featured_offers_shown'].sum / 1000.0) / 100.0) : '$0.00',
         ],
       },
       :extra => {
@@ -909,16 +908,16 @@ private
           @stats['display_conversions'],
         ],
         :stringData => [
-          @stats['display_ads_requested'].map { |i| number_with_delimiter(i) },
-          @stats['display_ads_shown'].map { |i| number_with_delimiter(i) },
-          @stats['display_clicks'].map { |i| number_with_delimiter(i) },
-          @stats['display_conversions'].map { |i| number_with_delimiter(i) },
+          @stats['display_ads_requested'].map { |i| NumberHelper.number_with_delimiter(i) },
+          @stats['display_ads_shown'].map { |i| NumberHelper.number_with_delimiter(i) },
+          @stats['display_clicks'].map { |i| NumberHelper.number_with_delimiter(i) },
+          @stats['display_conversions'].map { |i| NumberHelper.number_with_delimiter(i) },
         ],
         :totals => [
-          number_with_delimiter(@stats['display_ads_requested'].sum),
-          number_with_delimiter(@stats['display_ads_shown'].sum),
-          number_with_delimiter(@stats['display_clicks'].sum),
-          number_with_delimiter(@stats['display_conversions'].sum),
+          NumberHelper.number_with_delimiter(@stats['display_ads_requested'].sum),
+          NumberHelper.number_with_delimiter(@stats['display_ads_shown'].sum),
+          NumberHelper.number_with_delimiter(@stats['display_clicks'].sum),
+          NumberHelper.number_with_delimiter(@stats['display_conversions'].sum),
         ],
       },
       :right => {
@@ -928,11 +927,11 @@ private
           @stats['display_revenue'].map { |i| i / 100.0 },
           @stats['display_ecpm'].map { |i| i / 100.0 } ],
         :stringData => [
-          @stats['display_revenue'].map { |i| number_to_currency(i / 100.0) },
-          @stats['display_ecpm'].map { |i| number_to_currency(i / 100.0) } ],
+          @stats['display_revenue'].map { |i| NumberHelper.number_to_currency(i / 100.0) },
+          @stats['display_ecpm'].map { |i| NumberHelper.number_to_currency(i / 100.0) } ],
         :totals => [
-          number_to_currency(@stats['display_revenue'].sum / 100.0),
-          @stats['display_ads_shown'].sum > 0 ? number_to_currency(@stats['display_revenue'].sum.to_f / (@stats['display_ads_shown'].sum / 1000.0) / 100.0) : '$0.00',
+          NumberHelper.number_to_currency(@stats['display_revenue'].sum / 100.0),
+          @stats['display_ads_shown'].sum > 0 ? NumberHelper.number_to_currency(@stats['display_revenue'].sum.to_f / (@stats['display_ads_shown'].sum / 1000.0) / 100.0) : '$0.00',
         ],
       },
       :extra => {
@@ -959,9 +958,9 @@ private
         :names => [ 'Ad impressions' ],
         :data => [ @stats['hourly_impressions'] ],
         :stringData => [
-          @stats['hourly_impressions'].map { |i| number_with_delimiter(i) },
+          @stats['hourly_impressions'].map { |i| NumberHelper.number_with_delimiter(i) },
         ],
-        :totals => [ number_with_delimiter(@stats['hourly_impressions'].sum) ],
+        :totals => [ NumberHelper.number_with_delimiter(@stats['hourly_impressions'].sum) ],
       },
     }
   end
@@ -975,11 +974,11 @@ private
         :names => [ 'Store views', 'Total purchases' ],
         :data => [ @stats['vg_store_views'], @stats['vg_purchases'] ],
         :stringData => [
-          @stats['vg_store_views'].map { |i| number_with_delimiter(i) },
-          @stats['vg_purchases'].map { |i| number_with_delimiter(i) } ],
+          @stats['vg_store_views'].map { |i| NumberHelper.number_with_delimiter(i) },
+          @stats['vg_purchases'].map { |i| NumberHelper.number_with_delimiter(i) } ],
         :totals => [
-          number_with_delimiter(@stats['vg_store_views'].sum),
-          number_with_delimiter(@stats['vg_purchases'].sum),
+          NumberHelper.number_with_delimiter(@stats['vg_store_views'].sum),
+          NumberHelper.number_with_delimiter(@stats['vg_purchases'].sum),
         ],
       },
       :partition_names => get_virtual_good_partition_names(offer),

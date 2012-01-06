@@ -51,6 +51,15 @@ class Click < SimpledbShardedResource
     !(new_record? || installed_at? || clicked_at < (Time.zone.now - 2.days))
   end
 
+  def publisher_user_udids
+    PublisherUser.new(:key => "#{publisher_app_id}.#{publisher_user_id}").udids
+  end
+
+  def tapjoy_games_invitation_primary_click?
+    advertiser_app_id == TAPJOY_GAMES_INVITATION_OFFER_ID &&
+      key !~ /invite\[\d+\]$/
+  end
+
   def resolve!
     raise 'Unknown click id.' if new_record?
 
