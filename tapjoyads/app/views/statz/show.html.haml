@@ -67,7 +67,7 @@
   - property_row('Featured', @offer.featured?, false)
   - property_row('Direct-pay', @offer.direct_pay, nil)
   - property_row('Cookie Tracking', @offer.cookie_tracking?, false)
-  - property_row('Approved sources', @offer.approved_sources.to_a.join(', '), '')
+  - property_row('Approved sources', "[ #{@offer.get_approved_sources.to_a.join(', ')} ]", '')
   - unless @offer.publisher_app_whitelist.blank?
     - property_row('Publisher app whitelist', @offer.get_publisher_app_whitelist.map { |id| link_to(App.find(id).name, statz_path(id)) }.join(', '))
   - if @offer.item_type == 'ActionOffer' && @offer.third_party_data?
