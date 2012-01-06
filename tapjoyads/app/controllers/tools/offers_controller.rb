@@ -19,7 +19,7 @@ class Tools::OffersController < WebsiteController
         width, height = size.split 'x'
         @creatives << {
           :offer => offer,
-          :preview_url => offer.display_ad_image_url(publisher_app_id = App::PREVIEW_PUBLISHER_APP_ID, width, height, nil, nil, true, false),
+          :preview_url => offer.display_ad_image_url(App::PREVIEW_PUBLISHER_APP_ID, width, height, nil, nil, true, false),
           :approval_url => approve_creative_tools_offers_path(:offer_id => offer.id, :size => size),
           :rejection_url => reject_creative_tools_offers_path(:offer_id => offer.id, :size => size)
         }
