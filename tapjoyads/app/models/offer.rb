@@ -25,12 +25,12 @@ class Offer < ActiveRecord::Base
   NON_REWARDED_FEATURED_BACKFILLED_OFFER_TYPE = '8'
   OFFER_TYPE_NAMES = {
     DEFAULT_OFFER_TYPE               => 'Offerwall Offers',
-    FEATURED_OFFER_TYPE              => 'Featured Offers',
+    FEATURED_OFFER_TYPE              => 'Rewarded Featured Offers',
     DISPLAY_OFFER_TYPE               => 'Display Ad Offers',
     NON_REWARDED_DISPLAY_OFFER_TYPE  => 'Non-Rewarded Display Ad Offers',
     NON_REWARDED_FEATURED_OFFER_TYPE => 'Non-Rewarded Featured Offers',
     VIDEO_OFFER_TYPE                 => 'Video Offers',
-    FEATURED_BACKFILLED_OFFER_TYPE   => 'Featured Offers (Backfilled)',
+    FEATURED_BACKFILLED_OFFER_TYPE   => 'Rewarded Featured Offers (Backfilled)',
     NON_REWARDED_FEATURED_BACKFILLED_OFFER_TYPE => 'Non-Rewarded Featured Offers (Backfilled)'
   }
 
@@ -550,20 +550,16 @@ class Offer < ActiveRecord::Base
     [ val, (price * 0.50).round ].max
   end
 
-  def create_featured_clone
-    featured_offer = self.clone
-    featured_offer.attributes = { :created_at => nil, :updated_at => nil, :featured => true, :name_suffix => "featured", :tapjoy_enabled => false }
-    featured_offer.bid = featured_offer.min_bid
-    featured_offer.save!
-    featured_offer
+  def create_non_rewarded_featured_clone
+    create_clone :featured => true, :rewarded => false
+  end
+
+  def create_rewarded_featured_clone
+    create_clone :featured => true, :rewarded => true
   end
 
   def create_non_rewarded_clone
-    non_rewarded_offer = self.clone
-    non_rewarded_offer.attributes = { :created_at => nil, :updated_at => nil, :rewarded => false, :name_suffix => "non-rewarded", :tapjoy_enabled => false }
-    non_rewarded_offer.bid = non_rewarded_offer.min_bid
-    non_rewarded_offer.save!
-    non_rewarded_offer
+    create_clone :featured => false, :rewarded => false
   end
 
   def needs_more_funds?
@@ -798,10 +794,26 @@ private
     end
   end
 
+  def create_clone(options = {})
+    featured = options[:featured]
+    rewarded = options[:rewarded]
+
+    offer = self.clone
+    offer.attributes = {
+      :created_at => nil,
+      :updated_at => nil,
+      :featured   => !featured.nil? ? featured : self.featured,
+      :rewarded   => !rewarded.nil? ? rewarded : self.rewarded,
+      :name_suffix => "#{rewarded ? '' : 'non-'}rewarded#{featured ? ' featured': ''}",
+      :tapjoy_enabled => false }
+    offer.bid = offer.min_bid
+    offer.save!
+    offer
+  end
+
   def update_approved_banner_creatives
     self.approved_banner_creatives = banner_creatives
   end
-
 end
 
 class BannerSyncError < StandardError;
