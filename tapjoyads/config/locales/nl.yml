@@ -53,7 +53,7 @@ nl:
       thanks: "Dank voor uw vraag! U ontvangt de %{currency} nadat we hebben geverifieerd dat u alle stappen m.b.t. de aanbieding hebt doorlopen."
       missing_description: "Beschrijf a.u.b. de acties die u voltooid hebt. "
       missing_offer: "Specificeer a.u.b. de door u ondernomen acties."
-      invalid_email: "adres"
+      invalid_email: "Geef a.u.b. een geldig email adres op."
       abuse_warning: "Dit formulier is alleen voor mensen die hun beloning nog niet hebben ontvangen. Misbruik kan er toe leiden dat u in de toekomst geen gebruik meer kunt maken van aanbiedingen."
       select_offer: "Selecteer de aanbieding"
       no_incomplete_offers_label: "Er zijn geen passende aanbiedingen gevonden."
