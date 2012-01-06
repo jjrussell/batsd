@@ -1,3 +1,3 @@
 class NumberHelper
-  include ActionView::Helpers::NumberHelper
+  extend ActionView::Helpers::NumberHelper
 end

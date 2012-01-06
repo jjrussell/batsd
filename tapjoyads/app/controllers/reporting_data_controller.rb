@@ -85,26 +85,14 @@ private
     need_to_skip = (@current_page - 1) * @page_size
     need_to_show = @page_size
 
-    partners.each do |partner|
-      break if need_to_show <= 0
+    partner_ids = partners.map(&:id)
 
-      if partner.offers.size < need_to_skip
-        need_to_skip -= partner.offers.size
-        next
-      end
+    Offer.find(:all, :conditions => ["partner_id IN (?)", partner_ids], :limit => "#{need_to_skip},#{need_to_show}").each do |offer|
+      appstats = Appstats.new(offer.id, {
+        :start_time => start_time,
+        :end_time => start_time + 24.hours})
 
-      if partner.offers.present?
-        show_size = (need_to_show < (partner.offers.size - need_to_skip)) ? need_to_show : (partner.offers.size - need_to_skip)
-
-        partner.offers[need_to_skip, show_size].each do |offer|
-          appstats = Appstats.new(offer.id, {
-            :start_time => start_time,
-            :end_time => start_time + 24.hours})
-
-          @appstats_list << [ offer, appstats ]
-        end
-        need_to_show -= show_size
-      end
+      @appstats_list << [ offer, appstats ]
     end
   end
 end

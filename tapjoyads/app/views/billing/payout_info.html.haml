@@ -168,14 +168,14 @@
     By checking this box, I agree under penalties of perjury, I certify that:
     %br/
     = f.error_message_on(:terms)
-    .country_other#terms
+    .country_other#terms-other
       %ol
         %li I am the beneficial owner (or am authorized to sign fot the beneficial owner) of all the income to which this form relates,
         %li The beneficial owner is not a US person,
         %li The income to which this form relates is not effectively connected with the conduct of a trade or business in the United States or is effectively connected but is not subject to tax under an income tax treaty, and
         %li For broker transactions or barter exchanges, the beneficial owner is an exempt foreign person as defined in the instructions.
         %li Furthermore, I authorize this form to be provided to any withholding agent that has control, receipt, or custody of the income of which I am the beneficial owner or any withholding agent that can disburse or make payments of the income of which I am the beneficial owner.
-    .country_us#terms
+    .country_us#terms-us
       %ol
         %li The number shown on this form is my correct taxpayer identification number (or I am waiting for a number to be issued to me), and
         %li I am not subject to backup withholding because: (a) I am exempt from backup withholding, or (b) I have not been notified by the Internal Revenue Service (IRS) that I am subject to backup withholding as a result of a failure to report all interest or dividends, or (c) the IRS has notified me that I am no longer subject to backup withholding, and
@@ -248,7 +248,7 @@
     .country_other select {
       visibility: hidden;
     }
-    #terms {
+    #terms-us, #terms-other {
       font-size: 12px;
     }
     .fieldWithErrors {
@@ -276,16 +276,21 @@
         if (isUS()) {
           $('.country_us').show();
           toggleByPayoutMethod();
-          $('#payout_info_payout_method option').attr('disabled', '');
+          $('#terms-other').hide();
         } else {
           $('.country_us').hide();
           $('.country_other').show();
           if (method == 'check' || method == 'ach') {
             $('#payout_info_payout_method').val('wire');
           }
-          $('#payout_info_payout_method option:nth(0)').attr('disabled', 'disabled')
-          $('#payout_info_payout_method option:nth(1)').attr('disabled', 'disabled')
         }
+      }
+
+      if (isUS()) {
+        $('#payout_info_payout_method option').attr('disabled', '');
+      } else {
+        $('#payout_info_payout_method option:nth(0)').attr('disabled', 'disabled')
+        $('#payout_info_payout_method option:nth(1)').attr('disabled', 'disabled')
       }
     };
     var toggleByPayoutMethod = function() {

@@ -68,11 +68,8 @@ private
   def send_email
     password_reset_url = edit_password_reset_url(current_user.perishable_token)
     verification_url = approve_internal_device_url(@device.id, :verifier => @device.verification_key)
-    geoip_data = get_geoip_data
-    location = [ geoip_data[:city], geoip_data[:region], geoip_data[:country] ].compact.join(', ')
-    location += " (#{get_ip_address})"
     timestamp = Time.zone.now.strftime("%l:%M%p on %b %d, %Y")
-    TapjoyMailer.deliver_approve_device(current_user.email, verification_url, password_reset_url, location, timestamp)
+    TapjoyMailer.deliver_approve_device(current_user.email, verification_url, password_reset_url, geoip_location, timestamp)
   end
 
 end

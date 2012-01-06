@@ -1,6 +1,4 @@
 class Apps::VirtualGoodsController < WebsiteController
-  include ActionView::Helpers::NumberHelper
-
   layout 'apps'
   current_tab :apps
 
@@ -96,7 +94,7 @@ class Apps::VirtualGoodsController < WebsiteController
           return false
         end
       else
-        flash[:error] = "icon file size (#{number_to_human_size(icon_file.size)}) is too large"
+        flash[:error] = "icon file size (#{NumberHelper.number_to_human_size(icon_file.size)}) is too large"
         return false
       end
     end
@@ -111,7 +109,7 @@ class Apps::VirtualGoodsController < WebsiteController
         @virtual_good.file_size = data_size
         @virtual_good.data_hash = Digest::MD5.hexdigest data
       else
-        flash[:error] = "data file size (#{number_to_human_size(data_size)}) is too large"
+        flash[:error] = "data file size (#{NumberHelper.number_to_human_size(data_size)}) is too large"
         return false
       end
     end

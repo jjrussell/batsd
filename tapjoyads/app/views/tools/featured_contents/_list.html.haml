@@ -1,0 +1,42 @@
+%h2= list_name.to_s.titleize
+
+%table.tablesorter{ :id => "#{list_name.to_s}_featured_contents_table" }
+  %thead
+    %tr
+      %th Featured Type
+      %th Start
+      %th End
+      %th Platform
+      %th Title
+      %th Subtitle
+      %th Weight
+      %th
+      %th
+  %tbody
+    - list.each do |featured_content|
+      %tr
+        %td= featured_content.featured_type
+        %td= featured_content.start_date.strftime("%m/%d/%Y")
+        %td= featured_content.end_date.strftime("%m/%d/%Y")
+        %td= featured_content.platforms
+        %td= featured_content.title
+        %td= featured_content.subtitle
+        %td= featured_content.weight
+        %td= link_to('Edit', edit_tools_featured_content_path(featured_content))
+        %td= link_to('Delete', tools_featured_content_path(featured_content), :method => :delete, :confirm => "Delete featured_content?")
+
+= will_paginate(list, :param_name => "#{list_name}_page")
+
+- content_for :page_javascript do
+  :plain
+    $(function() {
+      $("##{list_name}_featured_contents_table").tablesorter({
+        widgets: ['zebra'],
+        headers: {
+          1: { sorter: 'date-field-column' },
+          2: { sorter: 'date-field-column' },
+          7: { sorter: false },
+          8: { sorter: false }
+        }
+      });
+    });
