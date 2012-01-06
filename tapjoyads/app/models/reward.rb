@@ -30,6 +30,7 @@ class Reward < SimpledbShardedResource
   self.sdb_attr :advertiser_partner_id
   self.sdb_attr :publisher_reseller_id
   self.sdb_attr :advertiser_reseller_id
+  self.sdb_attr :click_key
 
   def initialize(options = {})
     super({:load_from_memcache => false}.merge(options))
