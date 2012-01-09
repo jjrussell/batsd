@@ -292,13 +292,17 @@ class GetadController < ApplicationController
 
   def catch_exceptions
     yield
-  rescue Patron::TimeoutError
+  rescue Timeout::Error
     logger.info "Download timed out"
     no_ad
-  rescue Patron::HostResolutionError
-    logger.info "Name resolution error when downloading"
+  rescue SocketError => e
+    if e.message =~ /getaddrinfo/
+      logger.info "Name resolution error when downloading"
+    else
+      logger.info "Socket error when downloading: #{e.message}"
+    end
     no_ad
-  rescue Patron::ConnectionFailed
+  rescue Errno::ECONNREFUSED
     logger.info "ConnectionFailed error when downloading"
     no_ad
   rescue JSON::ParserError
