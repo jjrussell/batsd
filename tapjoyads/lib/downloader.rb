@@ -36,11 +36,12 @@ class Downloader
   def self.post(url, data, options = {})
     return_response = options.delete(:return_response) { false }
     options = setup(options)
+    options[:body] = data
 
     Rails.logger.info "Downloading (POST) #{url}"
 
     start_time = Time.zone.now
-    response = super(url, data, options)
+    response = super(url, options)
 
     Rails.logger.info "Download complete (#{Time.zone.now - start_time}s)"
 
