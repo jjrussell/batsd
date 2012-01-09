@@ -11,8 +11,6 @@ class Job::QueueGetStoreInfoController < Job::SqsReaderController
     log_activity(app)
 
     return unless app.store_id.present?
-    # HACK: android search from EC2 is (hopefully) temporarily blocked
-    return if app.platform == 'android'
 
     begin
       app.fill_app_store_data
