@@ -1,0 +1,16 @@
+- if params[:offer_type] == 'rewarded_featured' || (@offer.featured? && @offer.rewarded?)
+  %h3 Rewarded Featured Installs
+  %p.description
+    Rewarded Featured Installs let you buy premium views for your app offer, such as being displayed full-screen when an app is launched. Like Pay-Per-Install, you only pay when a user installs your app.
+- elsif params[:offer_type] == 'non_rewarded_featured' || (@offer.featured? && !@offer.rewarded?)
+  %h3 Non-Rewarded Featured Installs
+  %p.description
+    Non-Rewarded Featured Installs let you buy premium views for your app offer, such as being displayed full-screen when an app is launched. Like Pay-Per-Install, you only pay when a user installs your app.
+- elsif params[:offer_type] == 'non_rewarded' || !@offer.rewarded?
+  %h3 Non-Rewarded Installs
+  %p.description
+    Non-Rewarded Installs allow you to buy installations of your application through our banner ad network. Like Pay-Per-Install, you only pay when a user installs and runs your application.  The difference is that with Non-Rewarded Installs, users do not receive any virtual currency reward in exchange for downloading your app.
+- else
+  %h3 Pay-Per-Install
+  %p.description
+    Pay-Per-Install lets you buy a set number of incentivized installations for your app. Only pay when a user installs and runs your application.
