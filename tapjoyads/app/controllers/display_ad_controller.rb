@@ -82,6 +82,7 @@ class DisplayAdController < ApplicationController
         :currency           => currency,
         :device_type        => params[:device_type],
         :geoip_data         => geoip_data,
+        :app_version        => params[:app_version],
         :os_version         => params[:os_version],
         :type               => Offer::DISPLAY_OFFER_TYPE,
         :source             => params[:source],
