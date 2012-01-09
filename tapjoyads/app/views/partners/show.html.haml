@@ -105,6 +105,9 @@
         %th Billing Name:
         %td= payout_info.billing_name
       %tr
+        %th Doing Business As:
+        %td= payout_info.doing_business_as
+      %tr
         %th Tax ID:
         %td.do-not-print= decrypt_if_permitted(payout_info, :tax_id)
       %tr

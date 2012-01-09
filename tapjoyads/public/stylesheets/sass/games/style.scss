@@ -126,7 +126,7 @@ input[type=email]:focus, input[type=password]:focus, input[type=text]:focus {
   padding-bottom: 24px;
 
   .nav {
-    height: 90px;
+    height: 72px;
     margin: 0 auto;
     max-width: 960px;
 
@@ -296,7 +296,7 @@ input[type=email]:focus, input[type=password]:focus, input[type=text]:focus {
   }
   @media screen and (max-width: 540px) {
     .nav {
-      height: 120px;
+      height: 102px;
       @include animate;
     }
   }
@@ -342,7 +342,7 @@ input[type=email]:focus, input[type=password]:focus, input[type=text]:focus {
         background-color: #FFF;
         border: 1px solid $tj-red;
         float: left;
-        height: 290px;
+        height: 272px;
         left: 36px;
         position: relative;
         width: 320px;
@@ -427,6 +427,9 @@ input[type=email]:focus, input[type=password]:focus, input[type=text]:focus {
             .button {
               margin: 0 auto;
             }
+            .continue_link_device {
+              text-align: center;
+            }
           }
         }
         .loading_animation {
@@ -503,7 +506,6 @@ input[type=email]:focus, input[type=password]:focus, input[type=text]:focus {
   }
 
   .footer {
-    height: 30px;
     max-width: 960px;
     margin: 0 auto;
     font-size: 0.8em;
@@ -724,11 +726,21 @@ body.old .content_box {
     }
   }
 
-  .feat_review {
+  .feat_review, .featured_content {
     background-color: #FEFEFE;
     border: 1px solid #DEDEDE;
     border-bottom: 1px solid #9D9990;
     @include rounded-corners;
+  }
+  .featured_content {
+    line-height: 1.2em;
+    width: 100%;
+  }
+  .featured_content img.main_icon,  .featured_content img.secondary_icon {
+    float: left;
+    margin-right: 12px;
+    height: 57px;
+    width: 57px;
   }
 
   .sign_up_icon {
@@ -826,7 +838,6 @@ body.old .content_box {
     position: relative;
     margin: 8px auto 0;
     text-shadow: 0 1px 1px #444;
-    width: 60px;
     @include inset-button(16px, 8px 10px);
     @include inset-shadow;
     @include gradient(#CF1623, #EA1927);

@@ -215,6 +215,9 @@ class Utils
                            'statz.top_stats.24_hours',
                            'statz.top_stats.7_days',
                            'statz.top_stats.1_month',
+                           'statz.money.24_hours',
+                           'statz.money.7_days',
+                           'statz.money.1_month',
                            'statz.partner.cached_stats.24_hours',
                            'statz.partner.cached_stats.7_days',
                            'statz.partner.cached_stats.1_month',
@@ -281,6 +284,9 @@ class Utils
                            'statz.top_stats.24_hours',
                            'statz.top_stats.7_days',
                            'statz.top_stats.1_month',
+                           'statz.money.24_hours',
+                           'statz.money.7_days',
+                           'statz.money.1_month',
                            'statz.partner.cached_stats.24_hours',
                            'statz.partner.cached_stats.7_days',
                            'statz.partner.cached_stats.1_month',
@@ -334,10 +340,13 @@ class Utils
     end
 
     def self.queue_recount_stats_jobs
-      end_time = Time.now.utc.beginning_of_hour.to_i
+      end_time   = Time.now.utc.beginning_of_hour
       start_time = end_time - 1.hour
+
+      StatsAggregation.cache_vertica_stats(start_time, end_time)
+
       Offer.find_in_batches(:batch_size => StatsAggregation::OFFERS_PER_MESSAGE) do |offers|
-        message = { :offer_ids => offers.map(&:id), :start_time => start_time, :end_time => end_time }.to_json
+        message = { :offer_ids => offers.map(&:id), :start_time => start_time.to_i, :end_time => end_time.to_i }.to_json
         Sqs.send_message(QueueNames::RECOUNT_STATS, message)
       end
     end

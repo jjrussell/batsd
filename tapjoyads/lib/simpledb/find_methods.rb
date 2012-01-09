@@ -1,7 +1,11 @@
 module Simpledb
-  def self.included(base)
-    class << base
 
+  module FindMethods
+    def self.included(base)
+      base.extend Simpledb::FindMethods::ClassMethods
+    end
+
+    module ClassMethods
       public
 
       def find(*args)
@@ -47,7 +51,8 @@ module Simpledb
         end
         items
       end
-
     end
+
   end
+
 end

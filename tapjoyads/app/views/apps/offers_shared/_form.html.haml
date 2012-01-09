@@ -21,11 +21,15 @@
             #percentile-info.percentile-details
               This bid will make your offer more prioritized than
               %span#percentile= "#{@offer.percentile}%" rescue 'N/A'
-              of featured offers.
+              of
+              = @offer.rewarded? ? 'rewarded' : 'non-rewarded'
+              featured offers.
             #percentile-info-loading.percentile-details{ :style => 'display: none' }
               Estimating new featured placement...
             .percentile-details
-              The bid is just one of many factors affecting your featured offer ranking.
+              The bid is just one of many factors affecting your
+              = @offer.rewarded? ? 'rewarded' : 'non-rewarded'
+              featured offer ranking.
           - elsif !@offer.rewarded?
             #percentile-info.percentile-details
               This bid will make your offer more prioritized than
@@ -356,6 +360,12 @@
         checkMinimumPrice();
         return checkValidBudget() && checkMaximumBid(true);
       });
+
+  - if params[:show_preview] == 'true'
+    :plain
+      $.facebox({ajax: "#{preview_app_offer_path(:id => @offer.id, :app_id => @app.id, :image_size => params[:preview_image_size], :preview => 'true')}"});
+
+  :plain
     });
 
 - content_for :page_styles do

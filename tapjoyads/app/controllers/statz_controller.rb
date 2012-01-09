@@ -1,11 +1,10 @@
 class StatzController < WebsiteController
-  include ActionView::Helpers::NumberHelper
 
   layout 'tabbed'
 
   filter_access_to :all
 
-  before_filter :find_offer, :only => [ :show, :edit, :update, :new, :create, :last_run_times, :udids, :download_udids ]
+  before_filter :find_offer, :only => [ :show, :edit, :update, :new, :create, :last_run_times, :udids, :download_udids, :support_request_reward_ratio ]
   before_filter :setup, :only => [ :show, :global ]
   before_filter :set_platform, :only => [ :global, :publisher, :advertiser ]
   after_filter :save_activity_logs, :only => [ :update ]
@@ -14,12 +13,10 @@ class StatzController < WebsiteController
     @timeframe = params[:timeframe] || '24_hours'
     @display   = params[:display]   || 'summary'
 
-    @money_stats = Mc.get('money.cached_stats') || { @timeframe => {} }
-    @money_last_updated = Time.zone.at(Mc.get("money.last_updated") || 0)
-
     prefix = @display == 'summary' ? 'top_' : ''
     @cached_metadata = Mc.distributed_get("statz.#{prefix}metadata.#{@timeframe}") || {}
     @cached_stats = Mc.distributed_get("statz.#{prefix}stats.#{@timeframe}") || []
+    @money_stats = Mc.distributed_get("statz.money.#{@timeframe}") || { :total => {}, :iphone => {}, :android  => {}, :tj_games => {} }
     @last_updated_start = Time.zone.at(Mc.get("statz.last_updated_start.#{@timeframe}") || 0)
     @last_updated_end = Time.zone.at(Mc.get("statz.last_updated_end.#{@timeframe}") || 0)
   end
@@ -46,6 +43,14 @@ class StatzController < WebsiteController
         render :json => { :data => @appstats.graph_data(:offer => @offer, :admin => true) }.to_json
       end
     end
+  end
+
+  def support_request_reward_ratio
+    rewards = @offer.num_clicks_rewarded
+    support_requests = @offer.num_support_requests
+    ratio = '-'
+    ratio = ("%.4f" % ( Float(support_requests) / rewards)) if rewards > 0
+    render :text => "Support Requests: #{support_requests}, Clicks Rewarded: #{rewards} ( #{ratio} )"
   end
 
   def update
@@ -130,7 +135,7 @@ class StatzController < WebsiteController
     send_data(data, :type => 'text/csv', :filename => "tj-games-conversions_#{Time.zone.now.to_s}.csv")
   end
 
-private
+  private
 
   def find_offer
     @offer = Offer.find_by_id(params[:id])

@@ -10,8 +10,10 @@ class Apps::OffersController < WebsiteController
   end
 
   def create
-    if params[:offer_type] == 'featured'
-      @offer = @app.primary_featured_offer || @app.primary_offer.create_featured_clone
+    if params[:offer_type] == 'rewarded_featured'
+      @offer = @app.primary_rewarded_featured_offer || @app.primary_offer.create_rewarded_featured_clone
+    elsif params[:offer_type] == 'non_rewarded_featured'
+      @offer = @app.primary_non_rewarded_featured_offer || @app.primary_offer.create_non_rewarded_featured_clone
     elsif params[:offer_type] == 'non_rewarded'
       @offer = @app.primary_non_rewarded_offer || @app.primary_offer.create_non_rewarded_clone
     end
@@ -35,20 +37,23 @@ class Apps::OffersController < WebsiteController
       end
     end
 
-    if !@offer.rewarded?
-      @custom_creative_sizes = Offer::DISPLAY_AD_SIZES.collect { |size| { :image_size => size, :label_image_size => "#{size} creative" }}
-    elsif @offer.featured?
+    if @offer.featured?
       @custom_creative_sizes = Offer::FEATURED_AD_SIZES.collect do |size|
         width, height = size.split("x").collect{|x|x.to_i}
         orientation = width > height ? "(landscape)" : "(portrait)"
         { :image_size         => size,
           :label_image_size   => "#{size} #{orientation}" }
       end
+    elsif !@offer.rewarded?
+      @custom_creative_sizes = Offer::DISPLAY_AD_SIZES.collect { |size| { :image_size => size, :label_image_size => "#{size} creative" }}
     end
   end
 
   def preview
     @show_generated_ads = @offer.uploaded_icon?
+    unless request.xhr?
+      redirect_to edit_app_offer_path(:id => @offer.id, :app_id => @app.id, :show_preview => 'true', :preview_image_size => params[:image_size]) and return
+    end
     render 'apps/offers_shared/preview', :layout => false
   end
 

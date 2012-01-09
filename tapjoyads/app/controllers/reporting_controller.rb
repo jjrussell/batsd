@@ -1,6 +1,4 @@
 class ReportingController < WebsiteController
-  include ActionView::Helpers::NumberHelper
-  include ActionView::Helpers::TextHelper
 
   layout 'tabbed'
 

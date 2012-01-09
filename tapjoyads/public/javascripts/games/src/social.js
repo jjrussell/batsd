@@ -10,6 +10,7 @@ TJG.social = {
     var fbFriends = options.fbFriends;
     var inviteUrl = options.inviteUrl;
     var channel = options.channel;
+    var advertiserAppId = options.advertiserAppId;
 
     // local functions
     var onWindowResize = function(event) {
@@ -123,7 +124,8 @@ TJG.social = {
         dataType: 'json',
         data: {
           friends: selectedFriends,
-          ajax: true
+          ajax: true,
+          advertiser_app_id: advertiserAppId
         },
         success: function(d) {
           var existDiv = '', notExistDiv = '';
@@ -177,7 +179,8 @@ TJG.social = {
         timeout: 35000,
         dataType: 'json',
         data: {
-          recipients: recipients
+          recipients: recipients,
+          advertiser_app_id: advertiserAppId
         },
         success: function(d) {
           var existDiv = '', notExistDiv = '';
@@ -331,5 +334,28 @@ TJG.social = {
     // call functions
     showFriendList();
     onWindowResize();
+  },
+
+  doFbLogin : function(connect_acct_path){
+    var scope = 'offline_access,publish_stream';
+    FB.login(function(response, scope) {
+      if (response.authResponse) {
+        FB.api('/me', function(response) {
+          <!--
+          window.location = connect_acct_path;
+          //-->
+        });
+      } else {
+      }
+    }, {scope: scope});
+  },
+
+  doFbLogout : function(){
+    FB.getLoginStatus(function(response) {
+      if (response.authResponse) {
+        FB.logout(function(response) {
+        });
+      }
+    });
   },
 };

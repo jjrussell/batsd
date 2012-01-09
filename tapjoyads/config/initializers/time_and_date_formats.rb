@@ -16,6 +16,7 @@ Time::DATE_FORMATS[:pub_full_ampm_sec_zone] = "%B %e, %Y %l:%M:%S %p %Z"
 Time::DATE_FORMATS[:day] = "%b %d"
 Time::DATE_FORMATS[:pr] = "%B %e, %Y"
 Time::DATE_FORMATS[:yyyy_mm_dd] = "%Y-%m-%d"
+Time::DATE_FORMATS[:no_spaces] = "%Y-%m-%d_%H:%M:%S"
 
 Date::DATE_FORMATS[:pub] = "%b %d, %Y"
 Date::DATE_FORMATS[:pr] = "%B %e, %Y"
