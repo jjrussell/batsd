@@ -2,7 +2,7 @@
   %ul
     - unless app.nil? || app.new_record?
       %li= link_to 'Details', app_path(app), :class => (request.path_parameters['controller'] == 'apps' && !request.path_parameters['action'][/integrate/] ? 'selected' : '')
-      %li= link_to 'Pay-Per-Install', edit_app_offer_path(:id => app.primary_offer.id, :app_id => app.id), :class => (controller.controller_name == 'offers' && @offer.rewarded? && !@offer.featured? && !%w(rewarded_featured non_rewarded_featured non_rewarded).include?(params[:offer_type]) ? 'selected' : '')
+      %li= link_to 'Rewarded Installs', edit_app_offer_path(:id => app.primary_offer.id, :app_id => app.id), :class => (controller.controller_name == 'offers' && @offer.rewarded? && !@offer.featured? && !%w(rewarded_featured non_rewarded_featured non_rewarded).include?(params[:offer_type]) ? 'selected' : '')
       - if @app.primary_offer.present? && @app.primary_offer.tapjoy_enabled?
         %li.inception= link_to 'Scheduling', app_offer_offer_events_path(@app, @app.primary_offer), :class => (controller.controller_name == 'offer_events' && @offer == @app.primary_offer ? 'selected' : '')
       - if @app.price == 0

@@ -116,25 +116,6 @@ class StatzController < WebsiteController
     load_partner_stats
   end
 
-  def gamez
-    Time.zone = 'UTC'
-    start_date = Time.zone.parse(params[:start_date].to_s)
-    end_date = Time.zone.parse(params[:end_date].to_s)
-
-    where_clause = "source = 'tj_games'"
-    where_clause += " and created >= '#{start_date.to_i}'" if start_date.present?
-    where_clause += " and created < '#{end_date.to_i}'" if end_date.present?
-
-    data = "created,created_date,publisher_app_id,advertiser_app_id,udid,publisher_amount,advertiser_amount,tapjoy_amount,currency_reward,r.country\n"
-    NUM_REWARD_DOMAINS.times do |i|
-      Reward.select(:domain_name => "rewards_#{i}", :where => where_clause) do |r|
-        data += "#{r.created.to_s},#{r.created.to_date.to_s},#{r.publisher_app_id},#{r.advertiser_app_id},#{r.udid},#{r.publisher_amount},#{r.advertiser_amount},#{r.tapjoy_amount},#{r.currency_reward},#{r.country}\n"
-      end
-    end
-
-    send_data(data, :type => 'text/csv', :filename => "tj-games-conversions_#{Time.zone.now.to_s}.csv")
-  end
-
   private
 
   def find_offer

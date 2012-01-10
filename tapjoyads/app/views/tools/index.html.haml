@@ -49,7 +49,7 @@
     %li= link_to 'Press Releases', tools_press_releases_path
 
 - if has_permissions_for_one_of? :games_editor, :customer_service
-  %h3 Games
+  %h3 Marketplace
 %ul
   - if permitted_to? :index, :tools_editors_picks
     %li= link_to 'Editor\'s Choices', tools_editors_picks_path
@@ -58,7 +58,7 @@
   - if permitted_to? :index, :tools_gamers
     %li= link_to 'Gamers', tools_gamers_path
   - if permitted_to? :index, :tools_featured_contents
-    %li= link_to 'Featured Contents', tools_featured_contents_path
+    %li= link_to 'My Apps Featured Content', tools_featured_contents_path
 
 - if has_permissions_for_one_of? :account_mgr
   %h3 Account Management
