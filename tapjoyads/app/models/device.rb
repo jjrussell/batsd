@@ -2,6 +2,7 @@ class Device < SimpledbShardedResource
   self.num_domains = NUM_DEVICES_DOMAINS
 
   attr_reader :parsed_apps
+  attr_accessor :create_device_identifiers
 
   self.sdb_attr :apps, :type => :json, :default_value => {}
   self.sdb_attr :is_jailbroken, :type => :bool, :default_value => false
@@ -21,12 +22,23 @@ class Device < SimpledbShardedResource
   self.sdb_attr :all_packages, :type => :json, :default_value => []
   self.sdb_attr :current_packages, :type => :json, :default_value => []
 
+  def mac_address_before_change(new_value, old_value)
+    return nil unless new_value
+
+    new_value = new_value.downcase.gsub(/:/,"")
+    if old_value != new_value
+      @create_device_identifiers = true
+    end
+    new_value
+  end
+
   def dynamic_domain_name
     domain_number = @key.matz_silly_hash % NUM_DEVICES_DOMAINS
     "devices_#{domain_number}"
   end
 
   def after_initialize
+    @create_device_identifiers = is_new ? true : false
     begin
       @parsed_apps = apps
     rescue JSON::ParserError
@@ -173,7 +185,7 @@ class Device < SimpledbShardedResource
   end
 
   def serial_save(options = {})
-    if is_new
+    if @create_device_identifiers
       create_identifiers
     end
     super(options)
@@ -187,6 +199,8 @@ class Device < SimpledbShardedResource
       device_identifier.udid = key
       device_identifier.save
     end
+    @create_device_identifiers = false
+    true
   end
 
   private

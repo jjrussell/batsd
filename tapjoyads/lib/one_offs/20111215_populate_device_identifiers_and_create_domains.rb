@@ -10,6 +10,11 @@ class OneOffs
     NUM_DEVICES_DOMAINS.times do |i|
       Device.select(:domain_name => "devices_#{i}") do |device|
         begin
+          new_mac_address = device.mac_address.present? ? device.mac_address.downcase.gsub(/:/,"") : nil
+          if new_mac_address != device.mac_address
+            device.mac_address = new_mac_address
+            device.save!
+          end
           raise "Unable to create identifiers for device: #{device.id}" unless device.create_identifiers
           num_processed += 1
           puts "#{Time.zone.now} - #{num_processed} devices processed so far. Iterating on domain number: #{i}" if num_processed % 1000 == 0
