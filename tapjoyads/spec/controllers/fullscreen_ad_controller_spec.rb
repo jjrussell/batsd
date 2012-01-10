@@ -3,7 +3,18 @@ require 'spec/spec_helper'
 describe FullscreenAdController do
   integrate_views
 
-  describe "hitting fullscreen ad controller" do
+  # Rails uses a tag parser which is more strict than necessary. Silence
+  # the warnings here.
+  before :each do
+    @verbosity = $-v
+    $-v = nil
+  end
+
+  after :each do
+    $-v = @verbosity
+  end
+
+  describe "Index" do
     before :each do
       RailsCache.stubs(:get).returns(nil)
       @offer = Factory(:app).primary_offer
@@ -12,61 +23,53 @@ describe FullscreenAdController do
       OfferCacher.stubs(:get_unsorted_offers_prerejected).returns([@offer])
 
       @currency = Factory(:currency)
-      @params = { :udid => 'stuff', :publisher_user_id => 'more_stuff', :currency_id => @currency.id, :app_id => @currency.app.id }
-
-      # Rails uses a tag parser which is more strict than necessary. Silence
-      # the warnings here.
-      @verbosity = $-v
-      $-v = nil
+      @params = {
+        :udid => 'stuff',
+        :publisher_user_id => 'more_stuff',
+        :currency_id => @currency.id,
+        :offer_id => @offer.id,
+        :image_size => '320x480',
+        :publisher_app_id => @currency.app.id,
+      }
     end
 
-    after :each do
-      $-v = @verbosity
+    it "should render generated ad template" do
+      get :index, @params
+
+      response.should be_success
+      response.should render_template("fullscreen_ad/index")
     end
 
-    describe "when calling 'index'" do
+    describe "with custom ads" do
       before :each do
-        @params.merge! :offer_id => @offer.id, :image_size => '320x480', :publisher_app_id => @params[:app_id]
-        @params.delete :app_id
+        @offer.banner_creatives = %w(320x480 480x320)
+        @offer.featured = true
       end
 
-      describe "with custom ads" do
-        before :each do
-          @offer.banner_creatives = %w(320x480 480x320)
-          @offer.featured = true
-        end
-
-        it "should render custom creative template" do
-          get :index, @params
-
-          response.should be_success
-          response.should render_template("fullscreen_ad/custom_creative")
-          response.should have_tag('div', 'x')
-        end
-
-        it "should include call-to-action button for rewarded" do
-          get :index, @params
-
-          expected_text = "Earn #{@currency.get_visual_reward_amount(@offer)} #{@currency.name}"
-          response.should be_success
-          response.should have_tag('a', expected_text)
-        end
-
-        it "should include call-to-action button for non-rewarded offers" do
-          @offer.rewarded = false
-
-          get :index, @params
-
-          response.should be_success
-          response.should have_tag('a', 'Download')
-        end
-      end
-
-      it "should render generated ad template" do
+      it "should render custom creative template" do
         get :index, @params
 
         response.should be_success
-        response.should render_template("fullscreen_ad/index")
+        response.should render_template("fullscreen_ad/custom_creative")
+        response.should have_tag('div', 'x')
+      end
+
+      it "should include call-to-action button for rewarded" do
+        get :index, @params
+
+        reward_amount = @currency.get_visual_reward_amount(@offer)
+        expected_text = "Earn #{reward_amount} #{@currency.name}"
+        response.should be_success
+        response.should have_tag('a', expected_text)
+      end
+
+      it "should include call-to-action button for non-rewarded offers" do
+        @offer.rewarded = false
+
+        get :index, @params
+
+        response.should be_success
+        response.should have_tag('a', 'Download')
       end
     end
   end
