@@ -11,7 +11,7 @@ fr:
       previous: "%{items} offres précédentes"
       missing_currency: "En manque de %{currency}?"
       instructions: "Complète une des offres suivantes et reçois des %{currency}"
-      poplular_apps: ""
+      popular_apps: ""
       instructions_non_rewarded: "Complète une des offres suivantes et reçois des %{currency}"
       earn_currency: "Gagne %{amount} %{currency}"
       buy_currency: "Achète %{amount} %{currency}"
