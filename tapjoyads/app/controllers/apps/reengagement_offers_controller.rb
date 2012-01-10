@@ -28,10 +28,28 @@ class Apps::ReengagementOffersController < WebsiteController
     redirect_to app_reengagement_offers_path(@app) if reengagement_offers.length >= 5
     day_number = params[:day_number].to_i
     if day_number > 1
-      params.merge!(:prerequisite_offer_id => reengagement_offers[day_number - 2].id)
+      params.merge!(:prerequisite_offer_id => reengagement_offers[day_number - 1].id)
+    elsif @app.reengagement_offers.detect {|r| r.day_number == 0}.nil?
+      day_zero_reengagement_offer = @app.reengagement_offers.build (
+        :app_id => @app.id,
+        :partner_id => current_partner.id,
+        :currency_id => params[:reengagement_offer][:currency_id],
+        :instructions => 'Come back each day and get rewards!',
+        :reward_value => 0,
+        :day_number => 0)
+      day_zero_reengagement_offer.enable if reengagement_offers.present? && reengagement_offers.last.enabled?
+      day_zero_reengagement_offer.save!
+      reengagement_offers = @app.reengagement_offers.visible
+    else
+      day_zero_reengagement_offer = @app.reengagement_offers.detect { |r| r.day_number == 0 }
+      day_zero_reengagement_offer.hidden = false
+      day_zero_reengagement_offer.enable if reengagement_offers.present? && reengagement_offers.last.enabled?
+      day_zero_reengagement_offer.save!
+      reengagement_offers = @app.reengagement_offers.visible
     end
     @reengagement_offer = @app.reengagement_offers.build params[:reengagement_offer]
-    @reengagement_offer.save!
+    @reengagement_offer.enable if reengagement_offers.present? && reengagement_offers.last.enabled?
+    @reengagement_offer.save! if @reengagement_offer.changed?
     flash[:notice] = "Added day #{@reengagement_offer.day_number} reengagement offer."
     redirect_to app_reengagement_offers_path(@app)
   end
@@ -41,16 +59,19 @@ class Apps::ReengagementOffersController < WebsiteController
   
   def destroy
     @reengagement_offer.hidden = true
-    @reengagement_offer.save!
+    @reengagement_offer.disable
+    reengagement_offers = @app.reengagement_offers.visible
+    if reengagement_offers.length == 1 && reengagement_offers.first.day_number == 0
+      reengagement_offers.first.hidden = true
+      reengagement_offers.first.disable
+    end
     flash[:notice] = "Removed day #{@reengagement_offer.day_number} re-engagement offer."
     redirect_to :action => :index, :app_id => @app.id
   end
 
   def update_status
-    puts "======================= #{params[:enabled]}"
     if params[:app_id].present? && params[:enabled].present?
-      puts "======================= #{params[:enabled]}"
-      params[:enabled] == true.to_s ? ReengagementOffer.enable_all(params[:app_id]) : ReengagementOffer.disable_all(params[:app_id])
+      params[:enabled] == '1' ? ReengagementOffer.enable_all(params[:app_id]) : ReengagementOffer.disable_all(params[:app_id])
     end
     redirect_to :action => :index, :app_id => @app.id
   end

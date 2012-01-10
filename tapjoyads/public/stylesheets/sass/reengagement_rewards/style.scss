@@ -98,7 +98,7 @@ li.box:first-child:nth-last-child(5), li.box:first-child:nth-last-child(5) ~ li 
 
 .day {
   @include day_style;
-  background: #444 url("/images/reengagement_rewards/3check-full.png") no-repeat center center;
+  background: #444 no-repeat center center;
 
 }
 

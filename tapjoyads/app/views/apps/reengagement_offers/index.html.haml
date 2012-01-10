@@ -15,7 +15,11 @@
   .tjform
     %br
     %b Enabled: 
-    = check_box "reengagement_offer", "enabled", :checked => @reengagement_offer.enabled?
+    = @reengagement_offer.enabled? ? 'YES' : 'NO'
+    - if @reengagement_offer.enabled
+      = button_to 'Disable Campaign', {:action => "update_status", :app_id => @app.id, :enabled => 0}, {:method => :post}
+    - else
+      = button_to 'Enable Campaign', {:action => "update_status", :app_id => @app.id, :enabled => 1}, {:method => :post}
     %br
     %table
       %tr
@@ -32,26 +36,26 @@
         %th
         %th
       - @reengagement_offers.each do |ro|
-        %tr
-          %td
-            = ro.day_number
-          %td
-            = ro.currency.name
-          %td
-            = ro.reward_value
-          %td
-          %td
-            = link_to 'Preview', reengagement_reward_path(ro.id)
-          %td
-          %td
-            = link_to 'Edit', :action => "edit", :id => ro.id
-          %td
-          %td
-            - if ro == @reengagement_offers.last
-              = link_to 'Remove', {:action => "destroy", :app_id => @app.id, :id => ro.id}, {:method => :delete}
-      
+        -if ro.day_number > 0
+          %tr
+            %td
+              = ro.day_number
+            %td
+              = ro.currency.name
+            %td
+              = ro.reward_value
+            %td
+            %td
+              = link_to 'Preview', reengagement_reward_path(ro.id)
+            %td
+            %td
+              = link_to 'Edit', :action => "edit", :id => ro.id
+            %td
+            %td
+              - if ro == @reengagement_offers.last
+                = link_to 'Remove', {:action => "destroy", :app_id => @app.id, :id => ro.id}, {:method => :delete}
+        
       %tr
         - if @reengagement_offers.length < 5
           %td{:colspan => "2"}
             = link_to 'Add A Day', {:action => "new"}, :method => :get
-    = button_to 'Save', {:action => "update_status", :app_id => @app.id, :enabled => @reengagement_offer.enabled?}, {:method => :post}

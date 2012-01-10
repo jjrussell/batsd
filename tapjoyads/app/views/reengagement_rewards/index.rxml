@@ -2,5 +2,5 @@ xml.instruct!
 if @reengagement_offer.nil?
   xml.ReengagementURL
 else
-  xml.ReengagementURL "localhost:3000/reengagement_rewards/#{@reengagement_offer.id}/"
+  xml.ReengagementURL "http://10.10.19.30:3000/reengagement_rewards/#{@reengagement_offer.id}/"
 end

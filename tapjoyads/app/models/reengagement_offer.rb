@@ -11,7 +11,7 @@ class ReengagementOffer < ActiveRecord::Base
   has_many :offers, :as => :item
 
   validates_presence_of :partner, :app, :instructions, :reward_value
-  validates_numericality_of :reward_value
+  validates_numericality_of :reward_value, :greater_than_or_equal_to => 0
 
   after_create :create_primary_offer
   after_update :update_offers
@@ -22,13 +22,21 @@ class ReengagementOffer < ActiveRecord::Base
   delegate :get_offer_device_types, :store_id, :store_url, :large_download?, :supported_devices, :platform, :get_countries_blacklist, :countries_blacklist, :primary_category, :user_rating, :info_url, :to => :app
 
   named_scope :visible, :conditions => { :hidden => false }
-  
+
   def self.enable_all(app_id)
     ReengagementOffer.set_enabled(app_id, true)  
   end
 
   def self.disable_all(app_id)
-    ReengagementOffer.set_enabled(app_id, false)
+    ReengagementOffer.set_enabled(app_id, false)  
+  end
+
+  def enable
+    set_enabled(true)
+  end
+
+  def disable
+    set_enabled(false)
   end
 
   def self.cache_list(app_id)
@@ -46,21 +54,36 @@ class ReengagementOffer < ActiveRecord::Base
 
   private
 
-  def self.set_enabled_for_app(app_id, enabled_value)
+  def set_enabled(enabled_value, refresh_cache=true)
+    self.enabled = enabled_value
+    self.save!
+    offers.each do |offer|
+      offer.user_enabled = enabled_value
+      offer.save!
+    end
+    if refresh_cache
+      if enabled_value
+        cache_list
+      else
+        Mc.delete("mysql.reengagement_offers.#{app_id}.#{SCHEMA_VERSION})") unless enabled_value
+      end
+    end
+  end
+
+  def create_day_zero_reengagement(app_id, partner_id)
+  end
+
+  def self.set_enabled(app_id, enabled_value)
+    puts "========================= setting to #{enabled_value}"
     reengagement_offers = ReengagementOffer.visible.find_all_by_app_id(app_id)
     reengagement_offers.each do |r|
-      po = r.primary_offer
-      po.enabled = enabled_value
-      po.save!
+      enabled_value ? r.enable : r.disable
     end
-    ReengagementOffer.cache_list(app_id)
   end
 
   def find_list_in_cache
     Mc.get("mysql.reengagement_offer.#{app_id}.#{SCHEMA_VERSION}")
   end
-
-  private
 
   def create_primary_offer
     offer = Offer.new(:item => self)
@@ -68,6 +91,7 @@ class ReengagementOffer < ActiveRecord::Base
     offer.partner           = partner
     offer.name              = "reengagement_offer.#{app_id}.#{id}"
     offer.url               = app.store_url
+    offer.payment           = 0
     offer.instructions      = instructions
     offer.device_types      = app.primary_offer.device_types
     offer.reward_value      = reward_value
@@ -77,12 +101,14 @@ class ReengagementOffer < ActiveRecord::Base
     offer.third_party_data  = 0
     offer.icon_id_override  = app.id
     offer.user_enabled      = false
+    offer.tapjoy_enabled    = true
     offer.save!
   end
 
  def update_offers
     offers.each do |offer|
       offer.partner_id       = partner_id
+      offer.user_enabled     = enabled
       offer.hidden           = hidden
       offer.reward_value     = reward_value
       offer.instructions     = instructions

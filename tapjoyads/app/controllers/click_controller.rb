@@ -16,7 +16,7 @@ class ClickController < ApplicationController
   end
 
   def reengagement
-    params.merge (:advertiser_app_id => params[:publisher_app_id])
+    params.merge(:advertiser_app_id => params[:publisher_app_id])
     create_click('reengagement')
     handle_pay_per_click
   
@@ -145,8 +145,11 @@ private
   end
 
   def validate_click
+    puts "&&&&&&&&&&&&&&& currency: #{currency_disabled?}"
     return if currency_disabled?
+    puts "&&&&&&&&&&&&&&& offer: #{offer_disabled?}"
     return if offer_disabled?
+    puts "&&&&&&&&&&&&&&& offer completed: #{offer_completed?}"
     return if offer_completed?
 
     wr_path = params[:source] == 'featured' ? 'featured_offer_click' : 'offer_click'
