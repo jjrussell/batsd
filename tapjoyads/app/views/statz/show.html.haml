@@ -189,7 +189,7 @@
       $('#srr_ratio').text("Calculating...");
       $.ajax({
         type: "GET",
-        url: "#{support_request_reward_ratio_statz_url}/#{@offer.id}",
+        url: "#{support_request_reward_ratio_statz_url(@offer.id)}",
         success: function(html) {
           $('#srr_ratio').text(html);
         }
