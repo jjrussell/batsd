@@ -47,7 +47,7 @@ module Offer::UrlGeneration
 
     final_url = url.gsub('TAPJOY_UDID', udid.to_s)
     if item_type == 'App'
-      final_url = linkshare_url(final_url, itunes_link_affiliate)
+      final_url = Linkshare.add_params(final_url, itunes_link_affiliate)
       if library_version.nil? || library_version.version_greater_than_or_equal_to?('8.1.1')
         final_url.sub!('market://search?q=', 'http://market.android.com/details?id=')
       end
@@ -73,19 +73,6 @@ module Offer::UrlGeneration
       final_url.gsub!('TAPJOY_SURVEY', click_key.to_s)
     end
 
-    final_url
-  end
-
-  def linkshare_url(final_url = url, itunes_link_affiliate = nil)
-    if final_url =~ /^http:\/\/phobos\.apple\.com/
-      final_url += '&referrer=tapjoy'
-
-      if itunes_link_affiliate == 'tradedoubler'
-        final_url += '&partnerId=2003&tduid=UK1800811'
-      else
-        final_url += '&partnerId=30&siteID=OxXMC6MRBt4'
-      end
-    end
     final_url
   end
 

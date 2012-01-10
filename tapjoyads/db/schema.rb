@@ -615,6 +615,7 @@ ActiveRecord::Schema.define(:version => 20111228221004) do
     t.boolean  "tj_games_only",                                                                 :default => false, :null => false
     t.boolean  "wifi_only",                                                                     :default => false, :null => false
     t.text     "approved_banner_creatives"
+    t.text     "approved_sources",                                                                                 :null => false
   end
 
   add_index "offers", ["id"], :name => "index_offers_on_id", :unique => true

@@ -222,7 +222,7 @@ class ToolsController < WebsiteController
           @clicks << click unless click.tapjoy_games_invitation_primary_click?
           if click.installed_at?
             @rewards[click.reward_key] = Reward.find(click.reward_key)
-            if @rewards[click.reward_key] && (@rewards[click.reward_key].send_currency_status == 'OK' || @rewards[click.reward_key].send_currency_status == '200')
+            if @rewards[click.reward_key] && @rewards[click.reward_key].successful?
               @rewarded_clicks_count += 1
             else
               @rewarded_failed_clicks_count += 1

@@ -126,7 +126,7 @@ input[type=email]:focus, input[type=password]:focus, input[type=text]:focus {
   padding-bottom: 24px;
 
   .nav {
-    height: 90px;
+    height: 72px;
     margin: 0 auto;
     max-width: 960px;
 
@@ -296,7 +296,7 @@ input[type=email]:focus, input[type=password]:focus, input[type=text]:focus {
   }
   @media screen and (max-width: 540px) {
     .nav {
-      height: 120px;
+      height: 102px;
       @include animate;
     }
   }
@@ -342,7 +342,7 @@ input[type=email]:focus, input[type=password]:focus, input[type=text]:focus {
         background-color: #FFF;
         border: 1px solid $tj-red;
         float: left;
-        height: 290px;
+        height: 272px;
         left: 36px;
         position: relative;
         width: 320px;
