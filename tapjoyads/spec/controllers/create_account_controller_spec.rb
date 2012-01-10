@@ -20,7 +20,7 @@ describe CreateAccountController do
 
       get :index
 
-      response.should be_success
+      response.code.should == "400"
       response.content_type.should =~ /json/
       response.body.should == expected_errors.to_json
     end
@@ -30,7 +30,7 @@ describe CreateAccountController do
 
       get :index, @valid_params.merge(:agency_id => 'foo')
 
-      response.should be_success
+      response.should be_missing
       response.content_type.should =~ /json/
       response.body.should == expected_errors.to_json
     end
@@ -45,7 +45,7 @@ describe CreateAccountController do
 
       get :index, @valid_params.merge(:email => 'foo')
 
-      response.should be_success
+      response.code.should == "400"
       response.content_type.should =~ /json/
       response.body.should == expected_errors.to_json
     end
@@ -60,7 +60,7 @@ describe CreateAccountController do
 
       get :index, @valid_params.merge(:email => @agency_user.email)
 
-      response.should be_success
+      response.code.should == "400"
       response.content_type.should =~ /json/
       response.body.should == expected_errors.to_json
     end
@@ -75,7 +75,7 @@ describe CreateAccountController do
 
       get :index, @valid_params.merge(:password => 'foo')
 
-      response.should be_success
+      response.code.should == "400"
       response.content_type.should =~ /json/
       response.body.should == expected_errors.to_json
     end
