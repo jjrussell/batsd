@@ -84,8 +84,7 @@ class DisplayAdController < ApplicationController
         :os_version         => params[:os_version],
         :type               => Offer::DISPLAY_OFFER_TYPE,
         :library_version    => params[:library_version],
-        :screen_layout_size => params[:screen_layout_size],
-        :non_rewarded       => params[:non_rewarded],
+        :screen_layout_size => params[:screen_layout_size]
       ).weighted_rand
     end
 

@@ -11,6 +11,7 @@ de:
       previous: "Vorherige %{items}"
       missing_currency: "Fehlende %{currency}?"
       instructions: "Nimm an einer der folgenden Aktionen teil um %{currency} zu erhalten"
+      poplular_apps: ""
       instructions_non_rewarded: "Nimm an einer der folgenden Aktionen teil um %{currency} zu erhalten"
       earn_currency: "Erhalte %{amount} %{currency}"
       buy_currency: "Kaufe %{amount} %{currency}"

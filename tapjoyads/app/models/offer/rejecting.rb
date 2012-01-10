@@ -21,7 +21,7 @@ module Offer::Rejecting
     [ 'e8cca05a-0ec0-41fd-9820-24e24db6eec4', 'b1a1b737-bc9d-4a0b-9587-a887d22ae356' ] => [ 'e8cca05a-0ec0-41fd-9820-24e24db6eec4', 'b1a1b737-bc9d-4a0b-9587-a887d22ae356' ],
   }
 
-  def postcache_reject?(publisher_app, device, currency, device_type, geoip_data, app_version, direct_pay_providers, type, hide_rewarded_app_installs, library_version, os_version, screen_layout_size, video_offer_ids, source, all_videos, hide_rewarded_offers)
+  def postcache_reject?(publisher_app, device, currency, device_type, geoip_data, app_version, direct_pay_providers, type, hide_rewarded_app_installs, library_version, os_version, screen_layout_size, video_offer_ids, source, all_videos)
     geoip_reject?(geoip_data, device) ||
     already_complete?(device, app_version) ||
     selective_opt_out_reject?(device) ||
@@ -41,8 +41,7 @@ module Offer::Rejecting
     video_offers_reject?(video_offer_ids, type, all_videos) ||
     frequency_capping_reject?(device) ||
     tapjoy_games_retargeting_reject?(device) ||
-    source_reject?(source) ||
-    hide_rewarded_offers_reject?(hide_rewarded_offers)
+    source_reject?(source)
   end
 
   def precache_reject?(platform_name, hide_rewarded_app_installs, normalized_device_type)
@@ -240,10 +239,6 @@ module Offer::Rejecting
   def source_reject?(source)
     return true if source != 'tj_games' && tj_games_only?
     false
-  end
-
-  def hide_rewarded_offers_reject?(hide_rewarded_offers)
-    hide_rewarded_offers && rewarded?
   end
 
   def recommendable_types_reject?

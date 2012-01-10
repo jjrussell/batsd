@@ -11,6 +11,7 @@ ru:
       previous: "Пред. %{items}"
       missing_currency: "Не получили %{currency}?"
       instructions: "Выполните любое из перечисленных предложений и получите %{currency}"
+      poplular_apps: ""
       instructions_non_rewarded: "Выполните любое из перечисленных предложений и получите %{currency}"
       earn_currency: "Заработать %{amount} %{currency}"
       buy_currency: "Купить %{amount} %{currency}"

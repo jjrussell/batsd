@@ -11,6 +11,7 @@ es:
       previous: "%{items} ofertas anteriores"
       missing_currency: "¿Te falta %{currency}?"
       instructions: "Completa una de las acciones siguientes para recibir %{currency}"
+      poplular_apps: ""
       instructions_non_rewarded: "Completa una de las acciones siguientes para recibir %{currency}"
       earn_currency: "Gana %{amount} %{currency}"
       buy_currency: "Compra %{amount} %{currency}"

@@ -11,6 +11,7 @@ sv:
       previous: "Föregående %{items}"
       missing_currency: "Saknade %{currency}?"
       instructions: "Genomför något av följande erbjudande för att få %{currency}"
+      poplular_apps: ""
       instructions_non_rewarded: "Genomför något av följande erbjudande för att få %{currency}"
       earn_currency: "Tjäna %{amount} %{currency}"
       buy_currency: "Köp %{amount} %{currency}"
