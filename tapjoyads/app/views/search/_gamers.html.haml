@@ -15,7 +15,7 @@
     - @gamers.each do |gamer|
       %tr
         %td.gravatar
-          = link_to image_tag(gamer.get_avatar_url(30)), tools_gamer_path(gamer.id)
+          = link_to image_tag(gamer.get_avatar_url), tools_gamer_path(gamer.id)
         %td.gamer-id= link_to gamer.id, tools_gamer_path(gamer.id)
         %td.email= gamer.email
         %td.name= gamer.get_gamer_name
