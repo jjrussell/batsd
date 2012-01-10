@@ -1,0 +1,185 @@
+@import "../mixins/global";
+
+@mixin date_style {
+  width: 100%;
+  float: left;
+  display: block;
+  text-align: center;
+}
+
+@mixin box_style {
+  width: 78px;
+  height: 100px;
+  float: left;
+  display: block;
+}
+
+@mixin day_style {
+  @include rounded-corners(10px);
+  margin: 0 auto;
+  width: 90%;
+  height: 80px;
+  display: block;
+}
+
+@mixin credits_style {
+  text-align: center;
+  display: block;
+}
+
+body {
+  background-color: #000;
+  color: #333;
+}
+
+a, a:visited {
+  color: #333;
+}
+.container {
+  margin: 4px;
+}
+
+.content {
+  background-color: #FFF;
+  margin: 0 auto;
+  @include rounded-corners(12px);
+}
+
+.top {
+  background-color: $tj-red;
+  margin: 0 auto;
+  padding: 6px 0;
+  color: #FFF;
+
+  h4 { color: #FFF; }
+}
+
+.headbg {
+  margin: 0 auto;
+  text-align: center;
+  display: block;
+  position: relative;
+}
+
+.main {
+  clear: both;
+  padding: 12px 0;
+  text-align: center;
+}
+
+ul.days {
+  text-align: center;
+  margin: 0 auto;
+  padding: 0;
+  display: block;
+  clear: both;
+  width: 100%;
+}
+li.box {
+  float: left;
+}
+li.box:first-child:nth-last-child(1) {
+  width: 100%;
+}
+li.box:first-child:nth-last-child(2), li.box:first-child:nth-last-child(2) ~ li {
+  width: 50%;
+}
+
+li.box:first-child:nth-last-child(3), li.box:first-child:nth-last-child(3) ~ li {
+  width: 33.33%;
+}
+
+li.box:first-child:nth-last-child(4), li.box:first-child:nth-last-child(4) ~ li {
+  width: 25%;
+}
+li.box:first-child:nth-last-child(5), li.box:first-child:nth-last-child(5) ~ li {
+  width: 20%;
+}
+
+.day {
+  @include day_style;
+  background: #444 url("/images/reengagement_rewards/3check-full.png") no-repeat center center;
+
+}
+
+.day.past {
+  background: #acacac url("/images/reengagement_rewards/1check.png") no-repeat center center;
+}
+
+.day.current {
+  background: #d01619 url("/images/reengagement_rewards/2check-large.png") no-repeat center center;
+}
+
+.date {
+  @include date_style;
+}
+
+.date.past {
+  h4 { color: #ACACAC; }
+}
+
+.date.current {
+  h4 { color: #d01619; }
+}
+
+.credits {
+  clear: both;
+}
+
+.credits.past {
+  clear: left;
+  h4 { color: #ACACAC; }
+}
+
+.credits.current {
+  clear: both;
+  h4 { color: #D01619; }
+}
+
+.footer {
+  display: block;
+  padding: 6px 45px;
+  background: #D1D1D1;
+  border-top: 1px dotted #888;
+  clear: both;
+
+  h5 {
+    margin-left: 6px;
+    position: relative;
+    top: 10px;
+  }
+}
+
+.floatl {
+  display: block;
+  float: left;
+}
+
+.floatr {
+  display: block;
+  float: right;
+}
+
+.floatc {
+  display: block;
+  margin: 0 auto;
+}
+
+.textc {
+  display: block;
+  text-align: center;
+  clear: left;
+  padding: 12px;
+}
+
+.button {
+  background-color: #CF1623;
+  color: #FFF;
+  cursor: pointer;
+  font-size: 24px;
+  position: relative;
+  width: 120px;
+  @include button(16px, 8px 10px);
+  @include inset-text-shadow;
+  @include gradient(#EA1927, #CF1623);
+}

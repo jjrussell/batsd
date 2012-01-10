@@ -1,6 +1,8 @@
 class ReengagementRewardsController < ApplicationController
   ReengagementOffer
 
+  layout 'mobile'
+
   def show
     verify_params([:id])
     todays_reengagement_offer = ReengagementOffer.find_in_cache params[:id]
@@ -21,7 +23,7 @@ class ReengagementRewardsController < ApplicationController
     raise "No re-engagement offers found in memcache for app #{params[:app_id]}" if @reengagement_offers.nil?
     device = Device.new :key => params[:udid]
     @reengagement_offer = @reengagement_offers.detect{ |r| !device.has_app?(r.id) }
-    
+
     unless @reengagement_offer.nil?# && should_reward?
       click = Click.new(:key => "#{params[:udid]}.#{@reengagement_offer.id}", :consistent => true)
       Downloader.get_with_retry "#{API_URL}/connect?app_id=#{click.offer_id}&udid=#{click.udid}&consistent=true"
