@@ -358,4 +358,36 @@ TJG.social = {
       }
     });
   },
+
+  checkAndPost : function(currentGamerFbId, link, pictureLink) {
+    FB.getLoginStatus(function(response) {
+      if (response.authResponse) {
+        var curLoginFbId = response.authResponse.userID;
+        if(currentGamerFbId && curLoginFbId && currentGamerFbId != curLoginFbId){
+          FB.logout(function(response) {
+            TJG.social.postToFeed(link, pictureLink);
+          });
+        }
+      } else {
+        TJG.social.postToFeed(link, pictureLink);
+      }
+    });
+  },
+
+  postToFeed : function(link, pictureLink) {
+    var obj = {
+      method: 'feed',
+      display: 'popup',
+      name: 'Tapjoy Marketplace',
+      link: link,
+      picture: pictureLink,
+      caption: ' ',
+      actions: [{ name: 'Join', link: link}],
+      description: 'Check out Tapjoy where you can discover the best new apps and games, while also earning currency in apps you love. It\'s free to join so visit tapjoy.com today to start getting personal app recommendations just for you.'
+    };
+
+    function callback(response) {}
+
+    FB.ui(obj, callback);
+  },
 };
