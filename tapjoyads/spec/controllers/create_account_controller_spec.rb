@@ -26,15 +26,9 @@ describe CreateAccountController do
     end
 
     it 'should detect invalid agency_id' do
-      invalid_params = {
-        :agency_id => 'foo',
-        :app_name => 'foo',
-        :email => 'foo',
-        :password => 'foo'
-      }
       expected_errors = { :error => "unknown or invalid agency_id" }
 
-      get :index, @valid_params.merge(invalid_params)
+      get :index, @valid_params.merge(:agency_id => 'foo')
 
       response.should be_success
       response.content_type.should =~ /json/
@@ -42,11 +36,6 @@ describe CreateAccountController do
     end
 
     it 'should detect invalid email address' do
-      invalid_params = {
-        :app_name => 'foo',
-        :email => 'foo',
-        :password => 'foobaz'
-      }
       expected_errors = {
         :error => [
           [ :email, 'is too short (minimum is 6 characters)' ],
@@ -54,7 +43,7 @@ describe CreateAccountController do
         ]
       }
 
-      get :index, @valid_params.merge(invalid_params)
+      get :index, @valid_params.merge(:email => 'foo')
 
       response.should be_success
       response.content_type.should =~ /json/
@@ -62,9 +51,6 @@ describe CreateAccountController do
     end
 
     it 'should detect existing email address' do
-      invalid_params = {
-        :email => @agency_user.email,
-      }
       expected_errors = {
         :error => [
           [ :email, 'has already been taken' ],
@@ -72,7 +58,7 @@ describe CreateAccountController do
         ]
       }
 
-      get :index, @valid_params.merge(invalid_params)
+      get :index, @valid_params.merge(:email => @agency_user.email)
 
       response.should be_success
       response.content_type.should =~ /json/
@@ -80,9 +66,6 @@ describe CreateAccountController do
     end
 
     it 'should detect invalid password' do
-      invalid_params = {
-        :password => 'foo'
-      }
       expected_errors = {
         :error => [
           [ :password, 'is too short (minimum is 4 characters)' ],
@@ -90,7 +73,7 @@ describe CreateAccountController do
         ]
       }
 
-      get :index, @valid_params.merge(invalid_params)
+      get :index, @valid_params.merge(:password => 'foo')
 
       response.should be_success
       response.content_type.should =~ /json/
