@@ -53,7 +53,7 @@ FactoryGirl.define do
 
   factory :app_metadata do
     store_name 'App Store'
-    store_id 123
+    store_id '123'
   end
 
   factory :app do
