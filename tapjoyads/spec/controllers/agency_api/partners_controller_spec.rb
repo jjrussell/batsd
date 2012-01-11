@@ -10,28 +10,24 @@ describe AgencyApi::PartnersController do
     end
 
     describe "with missing params" do
-      before :each do
-        @response = get(:index)
-      end
       it "should respond with error" do
+        get :index
         should_respond_with_json_error(400)
       end
     end
+
     describe "with bad credentials" do
-      before :each do
-        @response = get(:index, :agency_id => @agency_user.id, :api_key => 'foo')
-      end
       it "should respond with error" do
+        get :index, :agency_id => @agency_user.id, :api_key => 'foo'
         should_respond_with_json_error(403)
       end
     end
+
     describe "with valid params" do
-      before :each do
-        @response = get(:index, :agency_id => @agency_user.id, :api_key => @agency_user.api_key)
-      end
       it "should respond with success" do
+        get :index, :agency_id => @agency_user.id, :api_key => @agency_user.api_key
         should_respond_with_json_success(200)
-        result = JSON.parse(@response.body)
+        result = JSON.parse(response.body)
         expected_response = {
           'partner_id'       => @partner.id,
           'name'             => @partner.name,
@@ -51,46 +47,41 @@ describe AgencyApi::PartnersController do
       PartnerAssignment.create!(:user => @agency_user, :partner => @partner)
       @partner2 = Factory(:partner)
     end
+
     describe "with missing params" do
-      before :each do
-        @response = get(:index, :id => 'not_a_partner_id')
-      end
       it "should respond with error" do
+        get :index, :id => 'not_a_partner_id'
         should_respond_with_json_error(400)
       end
     end
+
     describe "with bad credentials" do
-      before :each do
-        @response = get(:index, :id => @partner.id, :agency_id => @agency_user.id, :api_key => 'foo')
-      end
       it "should respond with error" do
+        get :index, :id => @partner.id, :agency_id => @agency_user.id, :api_key => 'foo'
         should_respond_with_json_error(403)
       end
     end
+
     describe "with an invalid partner_id" do
-      before :each do
-        @response = get(:show, :id => 'foo', :agency_id => @agency_user.id, :api_key => @agency_user.api_key)
-      end
       it "should respond with error" do
+        get :show, :id => 'foo', :agency_id => @agency_user.id, :api_key => @agency_user.api_key
         should_respond_with_json_error(403)
       end
     end
+
     describe "with a partner_id not belonging to the agency" do
-      before :each do
-        @currency2 = Factory(:currency)
-        @response = get(:show, :id => @partner2.id, :agency_id => @agency_user.id, :api_key => @agency_user.api_key)
-      end
       it "should respond with error" do
+        @currency2 = Factory(:currency)
+        get :show, :id => @partner2.id, :agency_id => @agency_user.id, :api_key => @agency_user.api_key
         should_respond_with_json_error(403)
       end
     end
+
     describe "with valid params" do
-      before :each do
-        @response = get(:show, :id => @partner.id, :agency_id => @agency_user.id, :api_key => @agency_user.api_key)
-      end
       it "should respond with success" do
+        get :show, :id => @partner.id, :agency_id => @agency_user.id, :api_key => @agency_user.api_key
         should_respond_with_json_success(200)
-        result = JSON.parse(@response.body)
+        result = JSON.parse(response.body)
         result['partner_id'].should == @partner.id
         result['name'].should == @partner.name
         result['balance'].should == @partner.balance
@@ -107,37 +98,32 @@ describe AgencyApi::PartnersController do
     end
 
     describe "with missing params" do
-      before :each do
-        @response = post(:create)
-      end
       it "should respond with error" do
+        post :create
         should_respond_with_json_error(400)
       end
     end
+
     describe "with bad credentials" do
-      before :each do
-        @response = post(:create, :agency_id => @agency_user.id, :api_key => 'foo', :name => 'partner', :email => 'email@example.com')
-      end
       it "should respond with error" do
+        post :create, :agency_id => @agency_user.id, :api_key => 'foo', :name => 'partner', :email => 'email@example.com'
         should_respond_with_json_error(403)
       end
     end
+
     describe "with invalid params" do
-      before :each do
-        Factory(:user, :email => 'email@example.com')
-        @response = post(:create, :agency_id => @agency_user.id, :api_key => @agency_user.api_key, :name => 'partner', :email => 'email@example.com')
-      end
       it "should respond with error" do
+        Factory(:user, :email => 'email@example.com')
+        post :create, :agency_id => @agency_user.id, :api_key => @agency_user.api_key, :name => 'partner', :email => 'email@example.com'
         should_respond_with_json_error(400)
       end
     end
+
     describe "with valid params" do
-      before :each do
-        @response = post(:create, :agency_id => @agency_user.id, :api_key => @agency_user.api_key, :name => 'partner', :email => 'email@example.com')
-      end
       it "should respond with success" do
+        post :create, :agency_id => @agency_user.id, :api_key => @agency_user.api_key, :name => 'partner', :email => 'email@example.com'
         should_respond_with_json_success(200)
-        result = JSON.parse(@response.body)
+        result = JSON.parse(response.body)
         user = User.find_by_email('email@example.com')
         user.partners.count.should == 1
         partner = user.partners.first
@@ -157,54 +143,47 @@ describe AgencyApi::PartnersController do
     end
 
     describe "with missing params" do
-      before :each do
-        @response = post(:link)
-      end
       it "should respond with error" do
+        post :link
         should_respond_with_json_error(400)
       end
     end
+
     describe "with bad credentials" do
-      before :each do
-        @response = post(:link, :agency_id => @agency_user.id, :api_key => 'foo', :email => @user.email, :user_api_key => @user.api_key)
-      end
       it "should respond with error" do
+        post :link, :agency_id => @agency_user.id, :api_key => 'foo', :email => @user.email, :user_api_key => @user.api_key
         should_respond_with_json_error(403)
       end
     end
+
     describe "with bad user credentials" do
-      before :each do
-        @response = post(:link, :agency_id => @agency_user.id, :api_key => @agency_user.api_key, :email => @user.email, :user_api_key => 'foo')
-      end
       it "should respond with error" do
+        post :link, :agency_id => @agency_user.id, :api_key => @agency_user.api_key, :email => @user.email, :user_api_key => 'foo'
         should_respond_with_json_error(403)
       end
     end
+
     describe "with an invalid email" do
-      before :each do
-        @response = post(:link, :agency_id => @agency_user.id, :api_key => @agency_user.api_key, :email => 'email@example.com', :user_api_key => @user.api_key)
-      end
       it "should respond with error" do
+        post :link, :agency_id => @agency_user.id, :api_key => @agency_user.api_key, :email => 'email@example.com', :user_api_key => @user.api_key
         should_respond_with_json_error(400)
       end
     end
+
     describe "for a user with too many partner accounts" do
-      before :each do
+      it "should respond with error" do
         @partner2 = Factory(:partner)
         PartnerAssignment.create!(:user => @user, :partner => @partner2)
-        @response = post(:link, :agency_id => @agency_user.id, :api_key => @agency_user.api_key, :email => @user.email, :user_api_key => @user.api_key)
-      end
-      it "should respond with error" do
+        post :link, :agency_id => @agency_user.id, :api_key => @agency_user.api_key, :email => @user.email, :user_api_key => @user.api_key
         should_respond_with_json_error(400)
       end
     end
+
     describe "with valid params" do
-      before :each do
-        @response = post(:link, :agency_id => @agency_user.id, :api_key => @agency_user.api_key, :email => @user.email, :user_api_key => @user.api_key)
-      end
       it "should respond with success" do
+        post :link, :agency_id => @agency_user.id, :api_key => @agency_user.api_key, :email => @user.email, :user_api_key => @user.api_key
         should_respond_with_json_success(200)
-        result = JSON.parse(@response.body)
+        result = JSON.parse(response.body)
         result['partner_id'].should == @partner.id
       end
     end
@@ -217,44 +196,39 @@ describe AgencyApi::PartnersController do
       @partner2 = Factory(:partner)
       PartnerAssignment.create!(:user => @agency_user, :partner => @partner)
     end
+
     describe "with missing params" do
-      before :each do
-        @response = put(:update, :id => 'not_a_partner_id')
-      end
       it "should respond with error" do
+        put :update, :id => 'not_a_partner_id'
         should_respond_with_json_error(400)
       end
     end
+
     describe "with bad credentials" do
-      before :each do
-        @response = put(:update, :id => @partner.id, :agency_id => @agency_user.id, :api_key => 'foo')
-      end
       it "should respond with error" do
+        put :update, :id => @partner.id, :agency_id => @agency_user.id, :api_key => 'foo'
         should_respond_with_json_error(403)
       end
     end
+
     describe "with an invalid id" do
-      before :each do
-        @response = put(:update, :id => 'foo', :agency_id => @agency_user.id, :api_key => @agency_user.api_key)
-      end
       it "should respond with error" do
+        put :update, :id => 'foo', :agency_id => @agency_user.id, :api_key => @agency_user.api_key
         should_respond_with_json_error(403)
       end
     end
+
     describe "with an id belonging to an invalid partner" do
-      before :each do
-        @currency2 = Factory(:currency)
-        @response = put(:update, :id => @partner2.id, :agency_id => @agency_user.id, :api_key => @agency_user.api_key)
-      end
       it "should respond with error" do
+        @currency2 = Factory(:currency)
+        put :update, :id => @partner2.id, :agency_id => @agency_user.id, :api_key => @agency_user.api_key
         should_respond_with_json_error(403)
       end
     end
+
     describe "with valid params" do
-      before :each do
-        @response = put(:update, :id => @partner.id, :agency_id => @agency_user.id, :api_key => @agency_user.api_key, :name => 'partner_rename')
-      end
       it "should respond with success" do
+        put :update, :id => @partner.id, :agency_id => @agency_user.id, :api_key => @agency_user.api_key, :name => 'partner_rename'
         should_respond_with_json_success(200)
         @partner.reload
         @partner.name.should == 'partner_rename'
