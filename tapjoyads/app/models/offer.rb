@@ -650,6 +650,12 @@ class Offer < ActiveRecord::Base
     end
   end
 
+  def cached_support_requests_rewards
+    support_requests = Mc.get("Offer.SupportRequests.#{id}") || nil
+    rewards = Mc.get("Offer.ClicksRewarded.#{id}") || nil
+    return support_requests, rewards
+  end
+
 private
 
   def sync_banner_creatives!
