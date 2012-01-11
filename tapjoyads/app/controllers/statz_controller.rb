@@ -32,7 +32,6 @@ class StatzController < WebsiteController
 
   def show
     support_requests, rewards = @offer.cached_support_requests_rewards
-    @srr_ratio = nil
     if support_requests && rewards
       @srr_ratio = support_request_ratio_text(support_requests, rewards)
     end
@@ -49,12 +48,6 @@ class StatzController < WebsiteController
         render :json => { :data => @appstats.graph_data(:offer => @offer, :admin => true) }.to_json
       end
     end
-  end
-
-  def support_request_ratio_text(support_requests, rewards)
-    ratio = '-'
-    ratio = ("%.4f" % ( Float(support_requests) / rewards)) if rewards > 0
-    "Support Requests: #{support_requests}, Clicks Rewarded: #{rewards} ( #{ratio} )"
   end
 
   def support_request_reward_ratio
@@ -127,6 +120,12 @@ class StatzController < WebsiteController
   end
 
   private
+
+  def support_request_ratio_text(support_requests, rewards)
+    ratio = '-'
+    ratio = ("%.4f" % ( Float(support_requests) / rewards)) if rewards > 0
+    "Support Requests: #{support_requests}, Clicks Rewarded: #{rewards} ( #{ratio} )"
+  end
 
   def find_offer
     @offer = Offer.find_by_id(params[:id])
