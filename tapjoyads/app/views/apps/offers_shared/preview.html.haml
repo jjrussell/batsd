@@ -4,7 +4,9 @@
   - if @offer.featured?
     - if @show_generated_ads
       - width, height = params[:image_size].split("x").collect{|x|x.to_i}
-      = "Featured ad preview: (#{width}x#{height})"
+      - label = "Featured ad preview: (#{width}x#{height})"
+      - label << " <em>(Pending approval)</em>" if @offer.has_banner_creative?(params[:image_size]) and !@offer.banner_creative_approved?(params[:image_size])
+      %span.label #{label}:
       %iframe.preview{ :src => @offer.fullscreen_ad_url(:publisher_app_id => publisher_app_id, :width => width, :height => height, :preview => true), :width => width, :height => height }
     - else
       - unable_to_show << "Featured"
