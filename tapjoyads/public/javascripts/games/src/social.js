@@ -178,12 +178,12 @@ TJG.social = {
     var obj = {
       method: 'feed',
       display: 'popup',
-      name: 'Tapjoy Marketplace',
+      name: 'Tapjoy',
       link: link,
       picture: pictureLink,
       caption: ' ',
       actions: [{ name: 'Join', link: link}],
-      description: 'Check out Tapjoy where you can discover the best new apps and games, while also earning currency in apps you love. It\'s free to join so visit tapjoy.com today to start getting personal app recommendations just for you.'
+      description: 'Check out Tapjoy where you can discover the best new apps and games, while also earning currency in apps you love. It\'s free to join so visit tapjoy.com today to start getting app recommendations just for you.'
     };
 
     function callback(response) {}

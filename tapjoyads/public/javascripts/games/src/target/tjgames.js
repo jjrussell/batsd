@@ -2002,13 +2002,7 @@ TJG.ui = {
 TJG.social = {
   setup: function(options){
     // local variables
-    var currentPage = 1;
-    var selectedFriends = [];
     var animateSpeed = "fast";
-    var currentFilter = '';
-    var hasNext = false;
-    var pageSize = options.pageSize;
-    var fbFriends = options.fbFriends;
     var inviteUrl = options.inviteUrl;
     var channel = options.channel;
     var advertiserAppId = options.advertiserAppId;
@@ -2018,157 +2012,6 @@ TJG.social = {
       var viewportWidth = $(window).width();
       $('#friend_filter').attr('size',(viewportWidth-40)/8);
     };
-
-    var resetDirectionButtons = function() {
-      if (currentPage == 1) {
-        $('#prev').parent().hide();
-      } else {
-        $('#prev').parent().show();
-      }
-      if (hasNext) {
-        $('#next').show();
-      } else {
-        $('#next').hide();
-      }
-    }; // resetDirectionButtons
-
-    var showFriendList = function() {
-      $('.friend_list').fadeOut(animateSpeed, function() {
-        hasNext = false;
-        var text      = [],
-          friends     = [],
-          counter     = 0,
-          counterMax  = currentPage * pageSize,
-          counterMin  = counterMax - pageSize;
-        var search = function(regex, text) {
-          for (var i in fbFriends) {
-            if (counter > counterMax) { break; }
-            var friend = fbFriends[i];
-            var included = $.inArray(friend, friends) != -1;
-            var matched = regex ?
-              friend.name.match(regex) :
-              friend.name.toLowerCase().match(RegExp.escape(currentFilter));
-            if (!included && matched) {
-              counter++;
-              if (counter > counterMin && counter < counterMax) {
-                friends.push(friend);
-              }
-            }
-          }
-        };
-
-        // match first names
-        var filter = RegExp.escape(currentFilter);
-        search(new RegExp('^' + filter, 'i'));
-
-        if (currentFilter != '') {
-          // then other names
-          search(new RegExp('\\b' + filter, 'i'));
-
-          // then any part of any name
-          search(false)
-        }
-
-        hasNext = counter >= counterMax;
-
-        for (var i in friends) {
-          var friend = friends[i];
-          var liClass = '';
-          if ($.inArray(friend.fb_id, selectedFriends) != -1) {
-            liClass = ' checked';
-          }
-          text.push('<li class="fb_select',liClass,'" id="', friend.fb_id, '">');
-          text.push('<img src="http://graph.facebook.com/', friend.fb_id, '/picture" width="50" height="50"/>');
-          text.push('<span>', friend.name, '</span>');
-          text.push('</li>');
-        }
-
-        // unregister events
-        $('li.fb_select').unbind();
-        $('.friend_list').html(text.join('')).fadeIn(animateSpeed);
-
-        resetDirectionButtons();
-
-        $('li.fb_select').click(function(){
-          var li = $(this);
-          var fbId = li.attr('id');
-          var index = $.inArray(fbId, selectedFriends);
-          var found = index != -1;
-
-          if (found && li.hasClass('checked')) {
-            li.removeClass('checked');
-            selectedFriends.splice(index, 1);
-          } else if (!found && !li.hasClass('checked')) {
-
-
-            li.addClass('checked');
-            selectedFriends.push(fbId);
-          }
-          var text = 'Invite';
-          if (selectedFriends.length > 0) {
-            var plural = selectedFriends.length > 1 ? 's' : '';
-            text = 'Invite ' + selectedFriends.length + ' Friend' + plural;
-          }
-          $('#invite_button').text(text);
-        });
-      });
-    }; // showFriendList
-
-    var submitFbInvitation = function(url) {
-      loading();
-
-      $.ajax({
-        type: 'POST',
-        url: url,
-        cache: false,
-        timeout: 35000,
-        dataType: 'json',
-        data: {
-          friends: selectedFriends,
-          ajax: true,
-          advertiser_app_id: advertiserAppId
-        },
-        success: function(d) {
-          var existDiv = '', notExistDiv = '';
-
-          if(d.success) {
-            if(d.gamers.length == 1) {
-              existDiv = '<div class="dialog_content">' + d.gamers.toString().replace(/\,/g, ", ") + ' has already registered, you are now following him/her.</div>';
-            }else if(d.gamers.length > 0) {
-              existDiv = '<div class="dialog_content">' + d.gamers.toString().replace(/\,/g, ", ") + ' have already registered, you are now following them.</div>';
-            }
-            if(d.non_gamers.length != 0) {
-              notExistDiv = '<div class="dialog_content">Tapjoy invites have been sent to '+d.non_gamers.toString().replace(/\,/g, ", ")+'</div>';
-            }
-
-            var msg = [
-              '<div class="dialog_header_wrapper"><div class="dialog_header_right"></div><div class="dialog_header_left"></div><div class="dialog_title title_2">Success!</div></div>',
-              '<div style="margin: 5px;"></div>',
-              existDiv,
-              notExistDiv,
-              '<div class="dialog_content"><div class="continue_invite"><div class="button grey dialog_button"  style="margin-bottom: 10px;">Continue</div></div></div>'
-            ].join('');
-            $('#social_dialog_content').parent().animate({}, animateSpeed);
-            $('#social_dialog_content').html(msg);
-
-            TJG.ui.hideLoader();
-            centerDialog($('#social_dialog').height(), '#social_dialog_content', '#social_dialog');
-
-            $('.close_dialog, .continue_invite').click(function(){
-              document.location.href = location.protocol + '//' + location.host + inviteUrl;
-            });
-          } else if(d.error_redirect) {
-            window.setTimeout('location.reload()', 1000);
-          } else {
-            showErrorDialog(d.error, TJG.ui.hideLoader());
-          }
-        },
-        error: function(d) {
-          var error = 'There was an issue, please try again later';
-          showErrorDialog(error, TJG.ui.hideLoader());
-        }
-      });
-    }; // submitFbInvitation
 
     var submitEmailInvitation = function(rurl, recipients){
       sending();
@@ -2266,13 +2109,7 @@ TJG.social = {
       event.preventDefault();
       var url = $('form#invite_friends').attr('action');
 
-      if(channel == 'FB'){
-        if(selectedFriends.length == 0) {
-          showErrorDialog('Please select at least one friend before sending out an invite', TJG.ui.hideLoader());
-        } else {
-          submitFbInvitation(url);
-        }
-      }else if(channel == 'EMAIL'){
+      if(channel == 'EMAIL'){
         submitEmailInvitation(url, $('#recipients').val());
       }
     }; // sendInvite
@@ -2280,48 +2117,12 @@ TJG.social = {
     // bind events
     window.onresize = onWindowResize;
 
-    $('#prev').click(function(event){
-      event.preventDefault();
-      if(currentPage > 1) {
-        currentPage--;
-        showFriendList();
-      }
-    });
-
-    $('#next').click(function(event){
-      event.preventDefault();
-      if(hasNext) {
-        currentPage++;
-        showFriendList();
-      }
-    });
-
-    $('#top').click(function(event){
-      event.preventDefault();
-      $('html, body').animate({ scrollTop: 0 }, animateSpeed);
-    });
-
-    $('.clear_search_button').click(function(event){
-      $('#friend_filter').val('');
-      currentFilter = '';
-      showFriendList();
-    });
-
     $('#invite_button').click(function(event){
       sendInvite(event);
     });
 
     $('#back_button').click(function(event){
       document.location.href = location.protocol + '//' + location.host + inviteUrl;
-    });
-
-    $('#friend_filter').bind('input', function(event){
-      var newFilter = $(this).val().toLowerCase().replace(/^ +/,'').replace(/ +$/,'');
-      if(currentFilter != newFilter){
-        currentFilter = newFilter;
-        currentPage = 1;
-        showFriendList();
-      }
     });
 
     $('#recipients').keypress(function(event){
@@ -2333,7 +2134,6 @@ TJG.social = {
     });
 
     // call functions
-    showFriendList();
     onWindowResize();
   },
 
@@ -2358,6 +2158,38 @@ TJG.social = {
         });
       }
     });
+  },
+
+  checkAndPost : function(currentGamerFbId, link, pictureLink) {
+    FB.getLoginStatus(function(response) {
+      if (response.authResponse) {
+        var curLoginFbId = response.authResponse.userID;
+        if(currentGamerFbId && curLoginFbId && currentGamerFbId != curLoginFbId){
+          FB.logout(function(response) {
+            TJG.social.postToFeed(link, pictureLink);
+          });
+        }
+      } else {
+        TJG.social.postToFeed(link, pictureLink);
+      }
+    });
+  },
+
+  postToFeed : function(link, pictureLink) {
+    var obj = {
+      method: 'feed',
+      display: 'popup',
+      name: 'Tapjoy',
+      link: link,
+      picture: pictureLink,
+      caption: ' ',
+      actions: [{ name: 'Join', link: link}],
+      description: 'Check out Tapjoy where you can discover the best new apps and games, while also earning currency in apps you love. It\'s free to join so visit tapjoy.com today to start getting app recommendations just for you.'
+    };
+
+    function callback(response) {}
+
+    FB.ui(obj, callback);
   },
 };
 RegExp.escape = function(text) {
