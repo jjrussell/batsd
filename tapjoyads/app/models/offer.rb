@@ -674,6 +674,11 @@ private
     approvals.each do |approval|
       approval.destroy unless has_banner_creative?(approval.size)
     end
+
+    # Remove out-of-sync approvals for banners that have been removed
+    self.approved_banner_creatives = self.approved_banner_creatives.select do |size|
+      has_banner_creative?(size)
+    end
   end
 
   def sync_banner_creatives!
