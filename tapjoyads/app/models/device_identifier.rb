@@ -10,12 +10,5 @@ class DeviceIdentifier < SimpledbShardedResource
     "device_identifiers_#{domain_number}"
   end
 
-  def serial_save(options = {})
-    unless self.udid.present?
-      raise 'The identifier must have a UDID associated with it.' unless options[:catch_exceptions]
-      return false
-    end
-    super(options)
-  end
 end
 

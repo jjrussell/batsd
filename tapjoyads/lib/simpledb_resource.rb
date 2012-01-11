@@ -262,11 +262,6 @@ class SimpledbResource
     if value.nil?
       return
     end
-
-    if self.respond_to?("#{attr_name}_before_change")
-      value = self.method("#{attr_name}_before_change").call(value, self.get(attr_name))
-    end
-
     value = TypeConverters::TYPES[type].to_string(value)
 
     value = escape_specials(value, {:cgi_escape => cgi_escape})
