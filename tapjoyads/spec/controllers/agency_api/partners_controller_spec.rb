@@ -14,11 +14,7 @@ describe AgencyApi::PartnersController do
         @response = get(:index)
       end
       it "should respond with error" do
-        should respond_with(400)
-        should respond_with_content_type(:json)
-        result = JSON.parse(@response.body)
-        result['success'].should be_false
-        result['error'].should be_present
+        should_respond_with_json_error(400)
       end
     end
     describe "with bad credentials" do
@@ -26,11 +22,7 @@ describe AgencyApi::PartnersController do
         @response = get(:index, :agency_id => @agency_user.id, :api_key => 'foo')
       end
       it "should respond with error" do
-        should respond_with(403)
-        should respond_with_content_type(:json)
-        result = JSON.parse(@response.body)
-        result['success'].should be_false
-        result['error'].should be_present
+        should_respond_with_json_error(403)
       end
     end
     describe "with valid params" do
@@ -38,10 +30,8 @@ describe AgencyApi::PartnersController do
         @response = get(:index, :agency_id => @agency_user.id, :api_key => @agency_user.api_key)
       end
       it "should respond with success" do
-        should respond_with(200)
-        should respond_with_content_type(:json)
+        should_respond_with_json_success(200)
         result = JSON.parse(@response.body)
-        result['success'].should be_true
         expected_response = {
           'partner_id'       => @partner.id,
           'name'             => @partner.name,
@@ -66,11 +56,7 @@ describe AgencyApi::PartnersController do
         @response = get(:index, :id => 'not_a_partner_id')
       end
       it "should respond with error" do
-        should respond_with(400)
-        should respond_with_content_type(:json)
-        result = JSON.parse(@response.body)
-        result['success'].should be_false
-        result['error'].should be_present
+        should_respond_with_json_error(400)
       end
     end
     describe "with bad credentials" do
@@ -78,11 +64,7 @@ describe AgencyApi::PartnersController do
         @response = get(:index, :id => @partner.id, :agency_id => @agency_user.id, :api_key => 'foo')
       end
       it "should respond with error" do
-        should respond_with(403)
-        should respond_with_content_type(:json)
-        result = JSON.parse(@response.body)
-        result['success'].should be_false
-        result['error'].should be_present
+        should_respond_with_json_error(403)
       end
     end
     describe "with an invalid partner_id" do
@@ -90,11 +72,7 @@ describe AgencyApi::PartnersController do
         @response = get(:show, :id => 'foo', :agency_id => @agency_user.id, :api_key => @agency_user.api_key)
       end
       it "should respond with error" do
-        should respond_with(403)
-        should respond_with_content_type(:json)
-        result = JSON.parse(@response.body)
-        result['success'].should be_false
-        result['error'].should be_present
+        should_respond_with_json_error(403)
       end
     end
     describe "with a partner_id not belonging to the agency" do
@@ -103,11 +81,7 @@ describe AgencyApi::PartnersController do
         @response = get(:show, :id => @partner2.id, :agency_id => @agency_user.id, :api_key => @agency_user.api_key)
       end
       it "should respond with error" do
-        should respond_with(403)
-        should respond_with_content_type(:json)
-        result = JSON.parse(@response.body)
-        result['success'].should be_false
-        result['error'].should be_present
+        should_respond_with_json_error(403)
       end
     end
     describe "with valid params" do
@@ -115,10 +89,8 @@ describe AgencyApi::PartnersController do
         @response = get(:show, :id => @partner.id, :agency_id => @agency_user.id, :api_key => @agency_user.api_key)
       end
       it "should respond with success" do
-        should respond_with(200)
-        should respond_with_content_type(:json)
+        should_respond_with_json_success(200)
         result = JSON.parse(@response.body)
-        result['success'].should be_true
         result['partner_id'].should == @partner.id
         result['name'].should == @partner.name
         result['balance'].should == @partner.balance
@@ -139,11 +111,7 @@ describe AgencyApi::PartnersController do
         @response = post(:create)
       end
       it "should respond with error" do
-        should respond_with(400)
-        should respond_with_content_type(:json)
-        result = JSON.parse(@response.body)
-        result['success'].should be_false
-        result['error'].should be_present
+        should_respond_with_json_error(400)
       end
     end
     describe "with bad credentials" do
@@ -151,11 +119,7 @@ describe AgencyApi::PartnersController do
         @response = post(:create, :agency_id => @agency_user.id, :api_key => 'foo', :name => 'partner', :email => 'email@example.com')
       end
       it "should respond with error" do
-        should respond_with(403)
-        should respond_with_content_type(:json)
-        result = JSON.parse(@response.body)
-        result['success'].should be_false
-        result['error'].should be_present
+        should_respond_with_json_error(403)
       end
     end
     describe "with invalid params" do
@@ -164,11 +128,7 @@ describe AgencyApi::PartnersController do
         @response = post(:create, :agency_id => @agency_user.id, :api_key => @agency_user.api_key, :name => 'partner', :email => 'email@example.com')
       end
       it "should respond with error" do
-        should respond_with(400)
-        should respond_with_content_type(:json)
-        result = JSON.parse(@response.body)
-        result['success'].should be_false
-        result['error'].should be_present
+        should_respond_with_json_error(400)
       end
     end
     describe "with valid params" do
@@ -176,10 +136,8 @@ describe AgencyApi::PartnersController do
         @response = post(:create, :agency_id => @agency_user.id, :api_key => @agency_user.api_key, :name => 'partner', :email => 'email@example.com')
       end
       it "should respond with success" do
-        should respond_with(200)
-        should respond_with_content_type(:json)
+        should_respond_with_json_success(200)
         result = JSON.parse(@response.body)
-        result['success'].should be_true
         user = User.find_by_email('email@example.com')
         user.partners.count.should == 1
         partner = user.partners.first
@@ -203,11 +161,7 @@ describe AgencyApi::PartnersController do
         @response = post(:link)
       end
       it "should respond with error" do
-        should respond_with(400)
-        should respond_with_content_type(:json)
-        result = JSON.parse(@response.body)
-        result['success'].should be_false
-        result['error'].should be_present
+        should_respond_with_json_error(400)
       end
     end
     describe "with bad credentials" do
@@ -215,11 +169,7 @@ describe AgencyApi::PartnersController do
         @response = post(:link, :agency_id => @agency_user.id, :api_key => 'foo', :email => @user.email, :user_api_key => @user.api_key)
       end
       it "should respond with error" do
-        should respond_with(403)
-        should respond_with_content_type(:json)
-        result = JSON.parse(@response.body)
-        result['success'].should be_false
-        result['error'].should be_present
+        should_respond_with_json_error(403)
       end
     end
     describe "with bad user credentials" do
@@ -227,11 +177,7 @@ describe AgencyApi::PartnersController do
         @response = post(:link, :agency_id => @agency_user.id, :api_key => @agency_user.api_key, :email => @user.email, :user_api_key => 'foo')
       end
       it "should respond with error" do
-        should respond_with(403)
-        should respond_with_content_type(:json)
-        result = JSON.parse(@response.body)
-        result['success'].should be_false
-        result['error'].should be_present
+        should_respond_with_json_error(403)
       end
     end
     describe "with an invalid email" do
@@ -239,11 +185,7 @@ describe AgencyApi::PartnersController do
         @response = post(:link, :agency_id => @agency_user.id, :api_key => @agency_user.api_key, :email => 'email@example.com', :user_api_key => @user.api_key)
       end
       it "should respond with error" do
-        should respond_with(400)
-        should respond_with_content_type(:json)
-        result = JSON.parse(@response.body)
-        result['success'].should be_false
-        result['error'].should be_present
+        should_respond_with_json_error(400)
       end
     end
     describe "for a user with too many partner accounts" do
@@ -253,11 +195,7 @@ describe AgencyApi::PartnersController do
         @response = post(:link, :agency_id => @agency_user.id, :api_key => @agency_user.api_key, :email => @user.email, :user_api_key => @user.api_key)
       end
       it "should respond with error" do
-        should respond_with(400)
-        should respond_with_content_type(:json)
-        result = JSON.parse(@response.body)
-        result['success'].should be_false
-        result['error'].should be_present
+        should_respond_with_json_error(400)
       end
     end
     describe "with valid params" do
@@ -265,10 +203,8 @@ describe AgencyApi::PartnersController do
         @response = post(:link, :agency_id => @agency_user.id, :api_key => @agency_user.api_key, :email => @user.email, :user_api_key => @user.api_key)
       end
       it "should respond with success" do
-        should respond_with(200)
-        should respond_with_content_type(:json)
+        should_respond_with_json_success(200)
         result = JSON.parse(@response.body)
-        result['success'].should be_true
         result['partner_id'].should == @partner.id
       end
     end
@@ -286,11 +222,7 @@ describe AgencyApi::PartnersController do
         @response = put(:update, :id => 'not_a_partner_id')
       end
       it "should respond with error" do
-        should respond_with(400)
-        should respond_with_content_type(:json)
-        result = JSON.parse(@response.body)
-        result['success'].should be_false
-        result['error'].should be_present
+        should_respond_with_json_error(400)
       end
     end
     describe "with bad credentials" do
@@ -298,11 +230,7 @@ describe AgencyApi::PartnersController do
         @response = put(:update, :id => @partner.id, :agency_id => @agency_user.id, :api_key => 'foo')
       end
       it "should respond with error" do
-        should respond_with(403)
-        should respond_with_content_type(:json)
-        result = JSON.parse(@response.body)
-        result['success'].should be_false
-        result['error'].should be_present
+        should_respond_with_json_error(403)
       end
     end
     describe "with an invalid id" do
@@ -310,11 +238,7 @@ describe AgencyApi::PartnersController do
         @response = put(:update, :id => 'foo', :agency_id => @agency_user.id, :api_key => @agency_user.api_key)
       end
       it "should respond with error" do
-        should respond_with(403)
-        should respond_with_content_type(:json)
-        result = JSON.parse(@response.body)
-        result['success'].should be_false
-        result['error'].should be_present
+        should_respond_with_json_error(403)
       end
     end
     describe "with an id belonging to an invalid partner" do
@@ -323,11 +247,7 @@ describe AgencyApi::PartnersController do
         @response = put(:update, :id => @partner2.id, :agency_id => @agency_user.id, :api_key => @agency_user.api_key)
       end
       it "should respond with error" do
-        should respond_with(403)
-        should respond_with_content_type(:json)
-        result = JSON.parse(@response.body)
-        result['success'].should be_false
-        result['error'].should be_present
+        should_respond_with_json_error(403)
       end
     end
     describe "with valid params" do
@@ -335,11 +255,8 @@ describe AgencyApi::PartnersController do
         @response = put(:update, :id => @partner.id, :agency_id => @agency_user.id, :api_key => @agency_user.api_key, :name => 'partner_rename')
       end
       it "should respond with success" do
-        should respond_with(200)
-        should respond_with_content_type(:json)
-        result = JSON.parse(@response.body)
+        should_respond_with_json_success(200)
         @partner.reload
-        result['success'].should be_true
         @partner.name.should == 'partner_rename'
       end
     end
