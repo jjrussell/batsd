@@ -1,4 +1,15 @@
 class Click < SimpledbShardedResource
+  belongs_to :device, :foreign_key => 'udid'
+  belongs_to :publisher_app, :class_name => 'App'
+  belongs_to :displayer_app, :class_name => 'App'
+  belongs_to :offer
+  belongs_to :currency
+  belongs_to :reward, :foreign_key => 'reward_key'
+  belongs_to :publisher_partner, :class_name => 'Partner'
+  belongs_to :advertiser_partner, :class_name => 'Partner'
+  belongs_to :publisher_reseller, :class_name => 'Reseller'
+  belongs_to :advertiser_reseller, :class_name => 'Reseller'
+
   self.key_format = 'udid.advertiser_app_id'
   self.num_domains = NUM_CLICK_DOMAINS
 
@@ -52,7 +63,6 @@ class Click < SimpledbShardedResource
   end
 
   def successfully_rewarded?
-    reward = Reward.find(reward_key)
     installed_at? && reward && reward.successful?
   end
 
