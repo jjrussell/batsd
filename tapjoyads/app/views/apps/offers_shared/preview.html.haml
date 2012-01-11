@@ -25,7 +25,7 @@
           %span.label #{label}:
           %div{:class => "img#{size}"}
             - width, height = size.split("x").collect{|x|x.to_i}
-            = image_tag(@offer.display_ad_image_url(publisher_app_id, width, height, nil, nil, true, false), :class => 'preview', :alt => '')
+            = image_tag(@offer.preview_display_ad_image_url(publisher_app_id, width, height), :class => 'preview', :alt => '')
         - else
           - unable_to_show << "#{size} banner"
 
