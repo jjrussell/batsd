@@ -24,6 +24,13 @@
             = error_message_on @action_offer, :primary_offer_user_enabled
         %tr
           %th
+            = primary_offer_form.label :self_promote_only
+            #help_self_promote_only.help ?
+          %td
+            = primary_offer_form.check_box :self_promote_only
+            = error_message_on @offer, :self_promote_only
+        %tr
+          %th
             = primary_offer_form.label :bid, 'Bid'
             #help_bid.help ?
           %td
@@ -147,6 +154,8 @@
     Has this action been integrated?
   #help_user_enabled_content{ :name => 'Enable Action' }
     Enable the action to get your campaign started.
+  #help_self_promote_only_content{ :name => 'Self Promote Only' } 
+    Only show this offer on offerwalls from the same partner.
   #help_bid_content{ :name => 'Bid' }
     The amount you are willing to pay for a completed action. A higher bid will result in more completed actions.
   #help_payment_content{ :name => 'Payment' }
