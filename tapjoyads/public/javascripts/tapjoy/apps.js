@@ -102,15 +102,6 @@ $(function($){
     if (term != "") {
       var platform = $('#app_platform').val();
       var country = $('#app_country').val() || "us";
-      if (platform == 'android') {
-        var text = "We are currently experiencing technical difficulties with" +
-          " Android search. While we fix this problem, please contact us at" +
-          " support@tapjoy.com for further assistance.";
-        var result = $('<div/>').addClass('search-result').text(text);
-        $('#search_results').removeClass('searching');
-        $('#search_results').append(result);
-        return false;
-      }
       $.ajax({
         url: '/apps/search',
         data: { term: term, platform: platform, country: country},

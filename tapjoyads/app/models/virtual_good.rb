@@ -1,4 +1,6 @@
 class VirtualGood < SimpledbResource
+  belongs_to :app
+
   self.domain_name = 'virtual_good'
 
   self.sdb_attr :name,          :cgi_escape => true
@@ -26,7 +28,6 @@ class VirtualGood < SimpledbResource
   end
 
   def price_in_dollars
-    app = App.find_by_id(app_id)
     return 0 if app.primary_currency.nil?
     [price.to_f / app.primary_currency_conversion_rate.to_f, 0.01].max
   end
