@@ -24,6 +24,13 @@
             = error_message_on @action_offer, :primary_offer_user_enabled
         %tr
           %th
+            = primary_offer_form.label :self_promote_only
+            #help_self_promote_only.help ?
+          %td
+            = primary_offer_form.check_box :self_promote_only
+            = error_message_on @offer, :self_promote_only
+        %tr
+          %th
             = primary_offer_form.label :bid, 'Bid'
             #help_bid.help ?
           %td
