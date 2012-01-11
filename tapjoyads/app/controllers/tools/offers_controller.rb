@@ -18,9 +18,17 @@ class Tools::OffersController < WebsiteController
     offers.each do |offer|
       offer.approvals.each do |approval|
         width, height = approval.size.split 'x'
+
+        preview_url = if offer.featured?
+                        preview_app_offer_path(:id => offer.id, :app_id => offer.item_id, :image_size => approval.size, :preview => true, :only_one => true)
+                      else
+                        offer.preview_display_ad_image_url(App::PREVIEW_PUBLISHER_APP_ID, width, height)
+                      end
+
         @creatives << {
           :offer => offer,
-          :preview_url => offer.display_ad_image_url(App::PREVIEW_PUBLISHER_APP_ID, width, height, nil, nil, true, false),
+          :size => approval.size,
+          :preview_url => preview_url,
           :approval_url => approve_creative_tools_offers_path(:approval_id => approval.id),
           :rejection_url => reject_creative_tools_offers_path(:approval_id => approval.id)
         }

@@ -21,6 +21,7 @@
 
     - if @offer.display_banner_ads?
       - Offer::DISPLAY_AD_SIZES.each do |size|
+        - next if params[:only_one] && size != params[:image_size]
         - if @show_generated_ads || @offer.has_banner_creative?(size)
           - label = "#{size} banner ad"
           - label << " <em>(Pending approval)</em>" if @offer.has_banner_creative?(size) and !@offer.banner_creative_approved?(size)

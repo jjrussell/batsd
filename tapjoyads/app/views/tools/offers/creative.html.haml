@@ -1,4 +1,5 @@
 - @page_title = 'Offer Creative Approval'
+- content_for :page_head, stylesheet_link_tag('facebox')
 
 %h1 Custom Creative Approval
 
@@ -14,8 +15,12 @@
       %tr
         %td= "#{creative[:offer].partner.name} (#{creative[:offer].partner.contact_name})"
         %td= creative[:offer].partner.account_managers.first.try(:email)
-        %td= image_tag(creative[:preview_url], :class => 'preview', :alt => '')
         %td
+          - if creative[:offer].featured?
+            %a.preview{:href => creative[:preview_url]} Preview (#{creative[:size]})
+          - else
+            = image_tag(creative[:preview_url], :class => 'preview', :alt => creative[:size])
+        %td.actions
           = link_to 'Approve', creative[:approval_url]
           |
           = link_to 'Decline', creative[:rejection_url]
@@ -31,7 +36,12 @@
 
 - content_for :page_javascript do
   :plain
-    var creativeLinks = $('#creative_table a');
+    $('a.preview').click(function() {
+      parent.$.facebox({ajax: $(this).attr('href')})
+      return false;
+    });
+
+    var creativeLinks = $('#creative_table .actions a');
     creativeLinks.bind('click', function() {
       if ($(this).hasClass('disabled')) return false;
 
