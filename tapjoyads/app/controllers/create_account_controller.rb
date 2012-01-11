@@ -2,12 +2,14 @@ class CreateAccountController < ApplicationController
 
   def index
     unless verify_params([ :agency_id, :email, :password, :app_name ], { :render_missing_text => false })
-      render(:json => { :error => "missing required parameters" }) and return
+      error = "missing required parameters"
+      render(:json => { :error => error }, :status => 400) and return
     end
 
     agency_user = User.find_by_id(params[:agency_id])
     unless agency_user && agency_user.role_symbols.include?(:agency)
-      render(:json => { :error => "unknown or invalid agency_id" }) and return
+      error = "unknown or invalid agency_id"
+      render(:json => { :error => error }, :status => 404) and return
     end
 
     user = User.new
@@ -16,14 +18,14 @@ class CreateAccountController < ApplicationController
     user.password = params[:password]
     user.password_confirmation = params[:password]
     unless user.valid?
-      render(:json => { :error => user.errors }) and return
+      render(:json => { :error => user.errors }, :status => 400) and return
     end
 
     partner = Partner.new
     partner.name = params[:email]
     partner.contact_name = params[:email]
     unless partner.valid?
-      render(:json => { :error => partner.errors }) and return
+      render(:json => { :error => partner.errors }, :status => 400) and return
     end
     partner.save!
 
@@ -38,7 +40,7 @@ class CreateAccountController < ApplicationController
     app.name = params[:app_name]
     app.platform = 'iphone'
     unless app.valid?
-      render(:json => { :error => app.errors }) and return
+      render(:json => { :error => app.errors }, :status => 400) and return
     end
     app.save!
 
