@@ -1,10 +1,18 @@
-%p You just watched #{@offer}.
+#jqt
+  .page.current
+    .content_wrapper
+      .content
+        %div.message_title.title You just watched #{@offer}.
 
-%p You just earned #{@currency.get_visual_reward_amount(@offer, params[:display_multiplier])} #{@currency.name}
+        %div.message_content You just earned #{@currency.get_visual_reward_amount(@offer, params[:display_multiplier])} #{@currency.name}
 
-%p Buttons:
-
-%ul
-  %li= link_to('Replay Video', get_click_url(@offer))
-  - @video_offer.video_buttons.each do |button|
-    %li= link_to(button.name, button.url)
+        .message_content.video_complete
+          %a{ :href => get_click_url(@offer), :class => "replay_video_path" }
+            .slider.slider_right{:style => 'display: inline-table'}
+              .button.grey.arrow
+                .arrow_bg Replay Video
+          - @video_offer.video_buttons.each do |button|
+            %a{ :href => button.url }
+              .slider.slider_right{:style => 'display: inline-table'}
+                .button.grey.arrow
+                  .arrow_bg= button.name

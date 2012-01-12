@@ -2,6 +2,8 @@ class VideosController < ApplicationController
 
   include GetOffersHelper
 
+  layout 'games'
+
   before_filter :setup
 
   def index
@@ -17,7 +19,7 @@ class VideosController < ApplicationController
       :screen_layout_size => params[:screen_layout_size]).get_offers(0, 100).first
     @offer_list.insert(0, build_test_video_offer(@publisher_app).primary_offer) if @currency.get_test_device_ids.include?(params[:udid])
   end
-  
+
   def complete
     @video_offer = VideoOffer.find_in_cache(params[:id])
     @offer = Offer.find_in_cache(params[:id])
