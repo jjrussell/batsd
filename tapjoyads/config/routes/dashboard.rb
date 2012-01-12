@@ -38,8 +38,8 @@ ActionController::Routing::Routes.draw do |map|
   map.transfer_funds_billing 'billing/transfer-funds', :controller => :billing, :action => :transfer_funds
   map.payout_info_billing 'billing/payment-info', :controller => :billing, :action => :payout_info
   map.resources :statz, :only => [ :index, :show, :edit, :update, :new, :create ],
-    :member => { :last_run_times => :get, :udids => :get, :download_udids => :get },
-    :collection => { :global => :get, :publisher => :get, :advertiser => :get, :gamez => :get }
+    :member => { :last_run_times => :get, :udids => :get, :download_udids => :get, :support_request_reward_ratio => :get },
+    :collection => { :global => :get, :publisher => :get, :advertiser => :get }
   map.resources :activities, :only => [ :index ]
   map.resources :partners, :only => [ :index, :show, :new, :create, :update, :edit ],
     :member => { :make_current => :post, :manage => :post, :stop_managing => :post, :mail_chimp_info => :get, :new_transfer => :get, :create_transfer => :post, :reporting => :get, :set_tapjoy_sponsored => :post },
@@ -92,6 +92,7 @@ ActionController::Routing::Routes.draw do |map|
     tools.resources :earnings_adjustments, :only => [ :new, :create ]
     tools.resources :editors_picks, :except => [ :destroy ], :member => { :activate => :post, :expire => :post }
     tools.resources :app_reviews, :except => [ :show ], :member => { :update_featured => :put }
+    tools.resources :featured_contents, :except => [ :show ]
     tools.resources :agency_users, :only => [ :index, :show ]
     tools.resources :support_requests, :only => [ :index ], :collection => { :mass_resolve => [ :get, :post ] }
     tools.resources :press_releases, :only => [ :index, :new, :create, :edit, :update ]

@@ -25,6 +25,7 @@ class App < ActiveRecord::Base
       :default_actions_file_name => "TapjoyPPA.java",
       :min_action_offer_bid => 25,
       :versions => [ '1.5', '1.6', '2.0', '2.1', '2.2', '2.3', '3.0' ],
+      :cell_download_limit_bytes => 99.gigabyte,
       :screen_layout_sizes => { 'small (320x426)' => '1', 'medium (320x470)' => '2', 'large (480x640)' => '3', 'extra large (720x960)' => '4' }
     },
     'iphone' => {
@@ -40,6 +41,7 @@ class App < ActiveRecord::Base
       :default_actions_file_name => "TJCPPA.h",
       :min_action_offer_bid => 35,
       :versions => [ '2.0', '2.1', '2.2', '3.0', '3.1', '3.2', '4.0', '4.1', '4.2', '4.3', '5.0' ],
+      :cell_download_limit_bytes => 20.megabytes
     },
     'windows' => {
       :expected_device_types => Offer::WINDOWS_DEVICES,
@@ -54,6 +56,7 @@ class App < ActiveRecord::Base
       :default_actions_file_name => '', #TODO fill this out
       :min_action_offer_bid => 25,
       :versions => [ '7.0' ],
+      :cell_download_limit_bytes => 20.megabytes
     },
   }
 
@@ -67,11 +70,13 @@ class App < ActiveRecord::Base
   has_many :currencies, :order => 'ordinal ASC'
   has_one :primary_currency, :class_name => 'Currency', :conditions => 'id = app_id'
   has_one :rating_offer
-  has_many :featured_offers, :class_name => 'Offer', :as => :item, :conditions => "featured = true"
-  has_one :primary_featured_offer, :class_name => 'Offer', :as => :item, :conditions => "featured = true", :order => "created_at"
+  has_many :rewarded_featured_offers, :class_name => 'Offer', :as => :item, :conditions => "featured AND rewarded"
+  has_one :primary_rewarded_featured_offer, :class_name => 'Offer', :as => :item, :conditions => "featured AND rewarded", :order => "created_at"
+  has_many :non_rewarded_featured_offers, :class_name => 'Offer', :as => :item, :conditions => "featured AND NOT rewarded"
+  has_one :primary_non_rewarded_featured_offer, :class_name => 'Offer', :as => :item, :conditions => "featured AND NOT rewarded", :order => "created_at"
   has_many :action_offers
-  has_many :non_rewarded_offers, :class_name => 'Offer', :as => :item, :conditions => "not rewarded"
-  has_one :primary_non_rewarded_offer, :class_name => 'Offer', :as => :item, :conditions => "not rewarded", :order => "created_at"
+  has_many :non_rewarded_offers, :class_name => 'Offer', :as => :item, :conditions => "NOT rewarded AND NOT featured"
+  has_one :primary_non_rewarded_offer, :class_name => 'Offer', :as => :item, :conditions => "NOT rewarded AND NOT featured", :order => "created_at"
   has_many :app_metadata_mappings
   has_many :app_metadatas, :through => :app_metadata_mappings
   has_many :app_reviews
@@ -250,6 +255,10 @@ class App < ActiveRecord::Base
     PLATFORM_DETAILS[platform][:screen_layout_sizes].nil? ? [] : PLATFORM_DETAILS[platform][:screen_layout_sizes].sort{ |a,b| a[1] <=> b[1] }
   end
 
+  def wifi_required?
+    !!(file_size_bytes && file_size_bytes > PLATFORM_DETAILS[platform][:cell_download_limit_bytes])
+  end
+
 private
 
   def generate_secret_key
@@ -274,6 +283,7 @@ private
     offer.device_types = get_offer_device_types.to_json
     offer.third_party_data = store_id
     offer.age_rating = age_rating
+    offer.wifi_only = wifi_required?
     offer.save!
   end
 
@@ -292,6 +302,7 @@ private
       offer.hidden = hidden if hidden_changed?
       offer.tapjoy_enabled = false if hidden? && hidden_changed?
       offer.device_types = get_offer_device_types.to_json if store_id_changed?
+      offer.wifi_only = wifi_required? if file_size_bytes_changed?
       offer.save! if offer.changed?
     end
 

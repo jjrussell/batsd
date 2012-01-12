@@ -33,6 +33,7 @@ TJG.ui = {
   },
 
   getAndShowOfferWall : function(url, appId, appName, currencyName) {
+    url = url + "&show_wifi_only=1";
     TJG.utils.slidePage("#earn", "left");
     var fadeSpd = TJG.ui.fadeSpd;
 
@@ -258,6 +259,11 @@ TJG.ui = {
                   t.push('</div>');
                 t.push('</a>');
             t.push('</div>');
+            if (v.WifiOnly) {
+              t.push('<div class = "wifi_only">');
+                t.push('Wifi Required <div class="wifi_icon"></div>');
+              t.push('</div>');
+            }
           t.push('</div>');
         t.push('</li>');
       t.push('</a>');
@@ -800,7 +806,6 @@ TJG.ui = {
     TJG.ui.fadeSpdSlow = 700;
 
     var fadeSpd = TJG.ui.fadeSpd, fadeSpdFast = TJG.ui.fadeSpdFas, fadeSpdSlow = TJG.ui.fadeSpdSlow;
-    var install = TJG.utils.getParam("register_device");
 
     // Enable bookmarking modal
     if (TJG.vars.isIos || TJG.vars.hasHomescreen) {
@@ -814,7 +819,11 @@ TJG.ui = {
     }
     // Checks if new user. If so, shows intro tutorial
     var repeat = TJG.utils.getLocalStorage("tjg.new_user");
-    if (install.indexOf("true") != -1) {
+    if (TJG.register_device) {
+      if (TJG.register_device_pixel) {
+        var pixel = new Image();
+        pixel.src = TJG.register_device_pixel;
+      }
       if (TJG.vars.isAndroid) {
         showIntro();
       }
