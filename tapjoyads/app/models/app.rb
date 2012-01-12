@@ -79,7 +79,10 @@ class App < ActiveRecord::Base
   has_one :primary_non_rewarded_offer, :class_name => 'Offer', :as => :item, :conditions => "NOT rewarded AND NOT featured", :order => "created_at"
   has_many :app_metadata_mappings
   has_many :app_metadatas, :through => :app_metadata_mappings
-  has_one :primary_app_metadata, :through => :app_metadata_mappings, :source => :app_metadata, :order => "created_at"
+  has_one :primary_app_metadata,
+    :through => :app_metadata_mappings,
+    :source => :app_metadata,
+    :order => "created_at"
   has_many :app_reviews
 
   belongs_to :partner
@@ -98,7 +101,8 @@ class App < ActiveRecord::Base
   named_scope :by_partner_id, lambda { |partner_id| { :conditions => ["partner_id = ?", partner_id] } }
 
   delegate :conversion_rate, :to => :primary_currency, :prefix => true
-  delegate :store_id, :description, :age_rating, :file_size_bytes, :supported_devices, :supported_devices?, :released_at, :user_rating, :to => :primary_app_metadata, :allow_nil => true
+  delegate :store_id, :description, :age_rating, :file_size_bytes, :supported_devices, :supported_devices?, :released_at, :user_rating,
+    :to => :primary_app_metadata, :allow_nil => true
 
   # TODO: remove these columns from apps table definition and remove this method
   TO_BE_DELETED = %w(description price store_id age_rating file_size_bytes supported_devices released_at user_rating categories)
@@ -248,11 +252,11 @@ class App < ActiveRecord::Base
   end
 
   def price
-    primary_app_metadata.nil? ? 0 : primary_app_metadata.price
+    primary_app_metadata ? primary_app_metadata.price : 0
   end
 
   def categories
-    primary_app_metadata.nil? ? [] : primary_app_metadata.categories
+    primary_app_metadata ? primary_app_metadata.categories : []
   end
 
   def find_or_initialize_app_metadata(app_store_id)
@@ -272,17 +276,15 @@ class App < ActiveRecord::Base
       # app changed from not live to live status, need to create metadata record
       app_metadata = find_or_initialize_app_metadata(app_store_id)
       app_metadatas << app_metadata
-    else
-      if app_metadata.store_id != app_store_id
-        # app_metadata record points to the wrong store_id -- update to correct record, creating if necessary
-        app_metadata = find_or_initialize_app_metadata(app_store_id)
-        app_metadata.save! if app_metadata.new_record?
+    elsif app_metadata.store_id != app_store_id
+      # app_metadata record points to the wrong store_id -- update to correct record, creating if necessary
+      app_metadata = find_or_initialize_app_metadata(app_store_id)
+      app_metadata.save! if app_metadata.new_record?
 
-        mapping = app_metadata_mappings.first
-        mapping.app_metadata_id = app_metadata.id
-        mapping.save!
-        # do we need to remove any app_metadatas records that are no longer associated to any apps?
-      end
+      mapping = app_metadata_mappings.first
+      mapping.app_metadata_id = app_metadata.id
+      mapping.save!
+      # do we need to remove any app_metadatas records that are no longer associated to any apps?
     end
     app_metadata
   end
