@@ -50,7 +50,7 @@ class AgencyApi::AppsController < AgencyApiController
       render_error(app.errors, 400) and return
     end
     app.save!
-    Sqs.send_message(QueueNames::GET_STORE_INFO, app.primary_app_metadata.id) if app.primary_app_metadata.present?
+    Sqs.send_message(QueueNames::GET_STORE_INFO, app_metadata.id) if params[:store_id].present?
 
     save_activity_logs
     render_success({ :app_id => app.id, :app_secret_key => app.secret_key })
