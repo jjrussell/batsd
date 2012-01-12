@@ -1,10 +1,22 @@
 class Job::MasterDailyAppStatsController < Job::JobController
 
   def index
-    if Offer.to_aggregate_daily_stats.count == 0 || vertica_data_inaccurate?
+    if Offer.to_aggregate_daily_stats.count == 0
       render :text => 'ok'
       return
     end
+
+    start_time        = (Time.zone.now - 1.day).beginning_of_day
+    end_time          = start_time + 1.day
+    accurate, message = StatsAggregation.check_vertica_accuracy(start_time, end_time)
+
+    unless accurate
+      Notifier.alert_new_relic(VerticaDataError, message, request, params)
+      render :text => 'ok'
+      return
+    end
+
+    StatsAggregation.cache_vertica_stats(start_time, end_time)
 
     next_aggregation_time = (Time.zone.now + 1.day).beginning_of_day + StatsAggregation::DAILY_STATS_START_HOUR.hours
     Offer.to_aggregate_daily_stats.find_in_batches(:batch_size => StatsAggregation::OFFERS_PER_MESSAGE) do |offers|
@@ -14,48 +26,6 @@ class Job::MasterDailyAppStatsController < Job::JobController
     end
 
     render :text => 'ok'
-  end
-
-  private
-
-  def vertica_data_inaccurate?
-    start_time = (Time.zone.now - 1.day).beginning_of_day
-    end_time   = start_time + 1.day
-
-    appstats_counts = Appstats.new(nil, {
-        :stat_prefix => 'global',
-        :start_time  => start_time,
-        :end_time    => end_time,
-        :stat_types  => [ 'featured_offers_requested' ],
-        :granularity => :hourly }).stats['featured_offers_requested']
-    vertica_counts = {}
-    WebRequest.select(
-        :select     => "count(hour), hour",
-        :conditions => "path LIKE '%featured_offer_requested%' AND day = '#{start_time.to_s(:yyyy_mm_dd)}'",
-        :group      => 'hour').each do |result|
-      vertica_counts[result[:hour]] = result[:count]
-    end
-
-    appstats_total = appstats_counts.sum
-    vertica_total  = vertica_counts.values.sum
-    percentage     = vertica_total / appstats_total.to_f
-    inaccurate     = percentage < 0.99999 || percentage > 1.00001
-
-    if inaccurate
-      message  = "Cannot verify daily stats because Vertica has inaccurate data for #{start_time.to_date}.\n"
-      message += "Appstats total: #{appstats_total}\n"
-      message += "Vertica total: #{vertica_total}\n"
-      message += "Difference: #{appstats_total - vertica_total}\n\n"
-      message += "hour, appstats, vertica, diff\n"
-      24.times do |i|
-        appstats_val = appstats_counts[i]
-        vertica_val  = vertica_counts[i] || 0
-        message += "#{i}, #{appstats_val}, #{vertica_val}, #{appstats_val - vertica_val}\n"
-      end
-      Notifier.alert_new_relic(VerticaDataError, message, request, params)
-    end
-
-    inaccurate
   end
 
 end

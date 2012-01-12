@@ -37,7 +37,7 @@ class SpendShare < ActiveRecord::Base
   end
 
   def self.create_for_date!(date)
-    sum_network_costs    = NetworkCost.created_between(date - 30.days, date).sum(:amount)
+    sum_network_costs    = NetworkCost.for_date(date).sum(:amount)
     orders               = Order.created_between(date - 30.days, date)
     sum_all_orders       = orders.collect(&:amount).sum + sum_network_costs
     sum_website_orders   = orders.select{ |o| o.payment_method == 0 }.collect(&:amount).sum

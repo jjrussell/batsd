@@ -2,20 +2,26 @@
 
 %h1 Network Costs
 
+%h4 Current Costs: #{number_to_currency(@current_costs / 100.0)}
+
 = link_to('Create New', new_tools_network_cost_path)
 
 %table#costs_table.tablesorter
   %thead
     %tr
-      %th Created
+      %th First Effective On
+      %th Last Effective On
       %th Amount
       %th Notes
+      %th Created
   %tbody
     - @costs.each do |cost|
       %tr
-        %td= cost.created_at.to_s(:mdy_ampm)
+        %td= cost.first_effective_on
+        %td= cost.last_effective_on
         %td= number_to_currency(cost.amount / 100.0)
         %td= cost.notes
+        %td= cost.created_at.to_s(:mdy_ampm)
 
 - content_for :page_javascript do
   :plain
@@ -40,9 +46,11 @@
         widgets: ['zebra'],
         headers: {
           0:  { sorter: 'date-column' },
-          1:  { sorter: 'currency-column' },
-          2:  { sorter: false }
+          1:  { sorter: 'date-column' },
+          2:  { sorter: 'currency-column' },
+          3:  { sorter: false },
+          4:  { sorter: 'date-column' }
         },
-        sortList: [ [0, 1] ]
+        sortList: [ [4, 1] ]
       });
     });

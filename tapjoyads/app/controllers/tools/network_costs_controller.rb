@@ -7,6 +7,7 @@ class Tools::NetworkCostsController < WebsiteController
 
   def index
     @costs = NetworkCost.all
+    @current_costs = NetworkCost.for_date(Date.today).sum(:amount)
   end
 
   def new

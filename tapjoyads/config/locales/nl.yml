@@ -1,0 +1,59 @@
+nl:
+  text:
+    shared:
+      privacy: "Privacy"
+      ads_by: "Advertenties van"
+
+    offerwall:
+      title: "Verdien %{currency}"
+      free: "Gratis"
+      next: "Volgende %{items}"
+      previous: "Vorige %{items}"
+      missing_currency: "Ontbrekende %{currency}?"
+      instructions: "Onderneem de volgende stappen om de %{currency} te ontvangen"
+      earn_currency: "Verdien %{amount} %{currency}"
+      buy_currency: "Koop  %{amount} %{currency}"
+      load_more: "Laad meer!"
+      loading: "Laden..."
+      load_error: "Probeer het a.u.b. opnieuw"
+
+    featured:
+      title: "Verdien %{currency}"
+      download_and_run: "Download en start"
+      try_out: "Probeer"
+      download: "Download"
+      skip: "Overslaan"
+      earn_now: "Verdien nu"
+      show_more_apps: "Laat meer apps zien"
+      earn_currency: "Verdien %{amount_and_currency}"
+
+    unavailable_offer:
+      message: "Sorry, maar %{offer} is niet langer beschikbaar. Je kunt nu terug naar de vorige pagina en deze verversen om de laatste aanbiedingen te zien."
+      optional_message: "Of, klik hier om %{offer} toch te downloaden."
+
+    instructions:
+      title: "Instructies"
+      amount_and_currency: "%{amount} %{currency}"
+      earn_currency: "Verdien %{amount_and_currency}"
+      header: "Volg deze stappen om de %{currency} te krijgen:"
+      footer: "Na het doorlopen van deze stappen ontvang je %{amount_and_currency}."
+      download_action: "hier"
+      download_link: "Als je deze app nog niet hebt, klik %{download_action} om hem te downloaden."
+      continue_link: "Klik hier om verder te gaan."
+
+    support:
+      title: "Ontbreken er %{currency}?"
+      instructions_1: "Selecteer a.u.b. de aanbieding die u gekozen hebt, maar waarvoor u niet de %{currency} hebt ontvangen en geef uw email adres op."
+      instructions_2: "Onvolledige informatie resulteert in een vertraging bij de oplossing van het probleem. Aanvragen met volledige informatie hebben voorrang."
+      specify_offer_label: "Omschrijf aanbieding:"
+      description_label: "Beschrijving:"
+      email_address_label: "Email adres:"
+      submit_support_request: "Verstuur mijn vraag"
+      support_request_submitted: "U vraag is verstuurd"
+      thanks: "Dank voor uw vraag! U ontvangt de %{currency} nadat we hebben geverifieerd dat u alle stappen m.b.t. de aanbieding hebt doorlopen."
+      missing_description: "Beschrijf a.u.b. de acties die u voltooid hebt. "
+      missing_offer: "Specificeer a.u.b. de door u ondernomen acties."
+      invalid_email: "Geef a.u.b. een geldig email adres op."
+      abuse_warning: "Dit formulier is alleen voor mensen die hun beloning nog niet hebben ontvangen. Misbruik kan er toe leiden dat u in de toekomst geen gebruik meer kunt maken van aanbiedingen."
+      select_offer: "Selecteer de aanbieding"
+      no_incomplete_offers_label: "Er zijn geen passende aanbiedingen gevonden."

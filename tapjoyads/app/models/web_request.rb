@@ -114,6 +114,7 @@ class WebRequest
   self.define_attr :source
   self.define_attr :exp
   self.define_attr :country
+  self.define_attr :country_code
   self.define_attr :geoip_country
   self.define_attr :language
   self.define_attr :screen_density
@@ -178,7 +179,7 @@ class WebRequest
     self.virtual_good_id      = params[:virtual_good_id]
     self.source               = params[:source]
     self.exp                  = params[:exp]
-    self.language             = params[:language]
+    self.language             = params[:language_code]
     self.transaction_id       = params[:transaction_id]
     self.tap_points           = params[:tap_points]
     self.screen_density       = params[:screen_density]
@@ -188,6 +189,7 @@ class WebRequest
     self.carrier_country_code = params[:carrier_country_code]
     self.mobile_country_code  = params[:mobile_country_code]
     self.mobile_network_code  = params[:mobile_network_code]
+    self.country_code         = params[:country_code]
     self.country              = params[:country_code].present? ? params[:country_code] : geoip_data[:country]
     self.geoip_country        = geoip_data[:country]
   end
