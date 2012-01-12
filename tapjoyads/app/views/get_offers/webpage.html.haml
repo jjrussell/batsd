@@ -217,13 +217,15 @@
                       }
                     t.push('</div>');
                     t.push('<div class="offer-text">');
-                      t.push('<span>');
-                       t.push('Earn ');
-                         t.push('<label>');
-                           t.push(v.Amount)
-                         t.push('</label>');
-                         t.push(' ' + currency);
-                      t.push('</span>');
+                      if(v.Amount > 0) {
+                        t.push('<span>');
+                         t.push('Earn ');
+                           t.push('<label>');
+                             t.push(v.Amount)
+                           t.push('</label>');
+                           t.push(' ' + currency);
+                        t.push('</span>');
+                      }
                       t.push('<p>');
                         t.push('<b>');
                           t.push(v.Name);
