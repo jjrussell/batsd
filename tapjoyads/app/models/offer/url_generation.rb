@@ -141,7 +141,7 @@ module Offer::UrlGeneration
     size = "#{width}x#{height}"
 
     delim = '?'
-    if display_custom_banner_for_size?(size) || preview
+    if display_custom_banner_for_size?(size) || (preview && has_banner_creative?(size))
       url = "#{use_cloudfront ? CLOUDFRONT_URL : "https://s3.amazonaws.com/#{BucketNames::TAPJOY}"}/#{banner_creative_path(size)}"
     else
       display_multiplier = (display_multiplier || 1).to_f
