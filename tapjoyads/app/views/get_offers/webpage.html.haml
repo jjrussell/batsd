@@ -9,12 +9,12 @@
     .explanation
       - if @currency.conversion_rate > 0
         = t('text.offerwall.instructions', :currency => @currency.name)
-        - if params[:currency_selector] == '1' && @currencies.present? && @currencies.size > 1
-          = render :partial => 'currency_selector'
       - else
         %span.red= t('text.offerwall.popular_apps')
         %br
         = t('text.offerwall.instructions_non_rewarded')
+  - if params[:currency_selector] == '1' && @currencies.present? && @currencies.size > 1
+    = render :partial => 'currency_selector'
 
 - if @test_offers.present?
   - unless @currency.tapjoy_enabled?
