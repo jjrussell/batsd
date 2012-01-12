@@ -91,6 +91,7 @@ authorization do
     has_permission_on :tools_users_partner_assignments, :to => [ :create, :destroy ]
     has_permission_on :tools_agency_users, :to => [ :index, :show ]
     has_permission_on :tools_partner_program_statz, :to => [ :index, :export ]
+    has_permission_on :tools_offers, :to => [ :creative, :approve_creative, :reject_creative ]
   end
 
   role :games_editor do
