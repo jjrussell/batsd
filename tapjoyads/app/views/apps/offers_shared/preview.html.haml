@@ -2,27 +2,21 @@
   - publisher_app_id = App::PREVIEW_PUBLISHER_APP_ID
   - unable_to_show = []
   - if @offer.featured?
-    - if @show_generated_ads
-      - width, height = params[:image_size].split("x").collect{|x|x.to_i}
-      - label = "Featured ad preview: (#{width}x#{height})"
-      - label << " <em>(Pending approval)</em>" if @offer.has_banner_creative?(params[:image_size]) and !@offer.banner_creative_approved?(params[:image_size])
-      %span.label #{label}:
-      %iframe.preview{ :src => @offer.fullscreen_ad_url(:publisher_app_id => publisher_app_id, :width => width, :height => height, :preview => true), :width => width, :height => height }
-    - else
-      - unable_to_show << "Featured"
+    - width, height = params[:image_size].split("x").collect{|x|x.to_i}
+    - label = "Featured ad preview: (#{width}x#{height})"
+    - label << " <em>(Pending approval)</em>" if @offer.has_banner_creative?(params[:image_size]) and !@offer.banner_creative_approved?(params[:image_size])
+    %span.label #{label}:
+    %iframe.preview{ :src => @offer.fullscreen_ad_url(:publisher_app_id => publisher_app_id, :width => width, :height => height, :preview => true), :width => width, :height => height }
   - else
     - if @offer.rewarded? # show offer wall ad
-      - if @show_generated_ads
-        Marketplace ad:
-        %div.img320x76
-          = image_tag(@offer.get_offers_image_url(publisher_app_id, true), :class => 'preview', :alt => '')
-      - else
-        - unable_to_show << "Marketplace"
+      Marketplace ad:
+      %div.img320x76
+        = image_tag(@offer.get_offers_image_url(publisher_app_id, true), :class => 'preview', :alt => '')
 
     - if @offer.display_banner_ads?
       - Offer::DISPLAY_AD_SIZES.each do |size|
         - next if params[:only_one] && size != params[:image_size]
-        - if @show_generated_ads || @offer.has_banner_creative?(size)
+        - if @offer.has_banner_creative?(size)
           - label = "#{size} banner ad"
           - label << " <em>(Pending approval)</em>" if @offer.has_banner_creative?(size) and !@offer.banner_creative_approved?(size)
           %span.label #{label}:
@@ -86,7 +80,7 @@
 
   - (Offer::DISPLAY_AD_SIZES + Offer::FEATURED_AD_SIZES + %w(320x480 320x76)).each do |size|
     - width, height = size.split("x")
-    - if @show_generated_ads || @offer.banner_creatives.include?(size) # show spinner while images are loading
+    - if @offer.has_banner_creative?(size) # show spinner while images are loading
       :plain
         div.img#{size} {
           background-image: url('/images/spinner.gif');
