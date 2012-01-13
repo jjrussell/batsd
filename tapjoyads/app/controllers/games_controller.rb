@@ -1,6 +1,7 @@
 class GamesController < ApplicationController
   include Facebooker2::Rails::Controller
   include SslRequirement
+  include GamesHelper
 
   layout 'games'
 
@@ -161,8 +162,4 @@ class GamesController < ApplicationController
     HeaderParser.device_type(request.user_agent) == 'android'
   end
 
-  def social_feature_redirect_path
-    return request.env['HTTP_REFERER'] if request.env['HTTP_REFERER']
-    "#{WEBSITE_URL}#{edit_games_gamer_path}"
-  end
 end
