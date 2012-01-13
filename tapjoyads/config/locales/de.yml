@@ -11,6 +11,8 @@ de:
       previous: "Vorherige %{items}"
       missing_currency: "Fehlende %{currency}?"
       instructions: "Nimm an einer der folgenden Aktionen teil um %{currency} zu erhalten"
+      popular_apps: "Popular Apps"
+      instructions_non_rewarded: "Discover what's hot on Tapjoy!"
       earn_currency: "Erhalte %{amount} %{currency}"
       buy_currency: "Kaufe %{amount} %{currency}"
       load_more: "Lade noch mehr!"
