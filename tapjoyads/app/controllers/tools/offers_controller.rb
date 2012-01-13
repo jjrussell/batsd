@@ -16,6 +16,8 @@ class Tools::OffersController < WebsiteController
               end
 
     offers.each do |offer|
+      next unless offer.app # For now we only care about app offers
+
       offer.approvals.each do |approval|
         width, height = approval.size.split 'x'
 
@@ -51,6 +53,7 @@ class Tools::OffersController < WebsiteController
   private
   def setup
     @approval = CreativeApprovalQueue.find_by_id(params[:approval_id])
+    raise "Offer is not associated with any app, will not handle creatives" unless @approval.offer.app
   end
 
   def creative_email(status)
