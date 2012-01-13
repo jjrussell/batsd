@@ -96,11 +96,11 @@ describe SimpledbResource do
 
       load_model
       @model.attributes.delete('updated-at')
-      @model.attributes.should deep_match attrs
+      @model.attributes.should match_hash_with_arrays attrs
 
       load_model(:load_from_memcache => false, :consistent => true)
       @model.attributes.delete('updated-at')
-      @model.attributes.should deep_match attrs
+      @model.attributes.should match_hash_with_arrays attrs
     end
 
     it "should handle concurrent deletes" do
@@ -129,11 +129,11 @@ describe SimpledbResource do
 
       load_model
       @model.attributes.delete('updated-at')
-      @model.attributes.should deep_match attrs
+      @model.attributes.should match_hash_with_arrays attrs
 
       load_model(:load_from_memcache => false, :consistent => true)
       @model.attributes.delete('updated-at')
-      @model.attributes.should deep_match attrs
+      @model.attributes.should match_hash_with_arrays attrs
     end
 
     it "should handle adding and replacing attrs in one save operation" do
@@ -156,11 +156,11 @@ describe SimpledbResource do
 
       load_model
       @model.attributes.delete('updated-at')
-      @model.attributes.should deep_match attrs
+      @model.attributes.should match_hash_with_arrays attrs
 
       load_model(:load_from_memcache => false, :consistent => true)
       @model.attributes.delete('updated-at')
-      @model.attributes.should deep_match attrs
+      @model.attributes.should match_hash_with_arrays attrs
     end
 
     it "should convert types" do

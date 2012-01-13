@@ -63,11 +63,11 @@ Spork.prefork do
     end
   end
 
-  def deep_match(expected)
-    DeepMatch.new(expected)
+  def match_hash_with_arrays(expected)
+    MatchHashWithArrays.new(expected)
   end
 
-  class DeepMatch
+  class MatchHashWithArrays
     def initialize(expected)
       @expected = expected
     end
