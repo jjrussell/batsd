@@ -106,7 +106,7 @@ describe AgencyApi::PartnersController do
       should_respond_with_json_error(403)
     end
 
-    it 'should respond with error given invalid params' do
+    it 'should respond with error given an existing user email' do
       Factory(:user, :email => 'email@example.com')
       post :create, @valid_params
       should_respond_with_json_error(400)
