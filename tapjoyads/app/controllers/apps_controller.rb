@@ -120,7 +120,8 @@ class AppsController < WebsiteController
     end
   end
 
-private
+  private
+
   def grab_partner_apps
     session[:last_shown_app] ||= current_partner_apps.first.id unless current_partner_apps.empty?
   end

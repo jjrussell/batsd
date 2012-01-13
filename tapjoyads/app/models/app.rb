@@ -168,7 +168,7 @@ class App < ActiveRecord::Base
   ##
   # Grab data from the app store and update app and metadata objects.
   def update_from_store(app_store_id, country=nil)
-    app_metadata = update_app_metadata(app_store_id)
+    app_metadata = update_app_metadata(app_store_id) || primary_app_metadata
     data = AppStore.fetch_app_by_id(app_store_id, platform, country)
     if (data.nil?) # might not be available in the US market
       data = AppStore.fetch_app_by_id(app_store_id, platform, primary_country)
@@ -262,34 +262,15 @@ class App < ActiveRecord::Base
     primary_app_metadata ? primary_app_metadata.categories : []
   end
 
-  def find_or_initialize_app_metadata(app_store_id)
-    app_metadata = AppMetadata.find_by_store_name_and_store_id(store_name, app_store_id)
-    if app_metadata.nil?
-      app_metadata = AppMetadata.new(
-        :store_name => store_name,
-        :store_id => app_store_id
-      )
-    end
-    app_metadata
-  end
-
   def update_app_metadata(app_store_id)
-    app_metadata = primary_app_metadata
-    if app_metadata.nil?
-      # app changed from not live to live status, need to create metadata record
-      app_metadata = find_or_initialize_app_metadata(app_store_id)
+    if !app_metadatas.map(&:store_id).include?(app_store_id)
+      # app currently has no app_metadata or associated with a different instance
+      app_metadatas.delete_all
+      app_metadata = AppMetadata.find_or_initialize_by_store_name_and_store_id(App::PLATFORM_DETAILS[platform][:store_name], app_store_id)
       app_metadatas << app_metadata
-    elsif app_metadata.store_id != app_store_id
-      # app_metadata record points to the wrong store_id -- update to correct record, creating if necessary
-      app_metadata = find_or_initialize_app_metadata(app_store_id)
-      app_metadata.save! if app_metadata.new_record?
-
-      mapping = app_metadata_mappings.first
-      mapping.app_metadata_id = app_metadata.id
-      mapping.save!
-      # do we need to remove any app_metadatas records that are no longer associated to any apps?
+      return app_metadata # app_metdata changed
     end
-    app_metadata
+    nil # app_metadata unchanged
   end
 
   def wifi_required?
