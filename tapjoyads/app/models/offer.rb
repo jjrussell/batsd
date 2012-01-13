@@ -87,7 +87,6 @@ class Offer < ActiveRecord::Base
   belongs_to :partner
   belongs_to :item, :polymorphic => true
   belongs_to :reseller
-  belongs_to :app, :foreign_key => "item_id", :conditions => ['item_type = ?', 'App']
   belongs_to :action_offer, :foreign_key => "item_id", :conditions => ['item_type = ?', 'ActionOffer']
 
   validates_presence_of :reseller, :if => Proc.new { |offer| offer.reseller_id? }
@@ -201,6 +200,12 @@ class Offer < ActiveRecord::Base
 
   json_set_field :device_types, :screen_layout_sizes, :countries, :dma_codes, :regions, :approved_sources
   memoize :get_device_types, :get_screen_layout_sizes, :get_countries, :get_dma_codes, :get_regions, :get_approved_sources
+
+  # Our relationship wasn't working, and this allows the ActionOffer.app crap to work
+  def app
+    return item if item_type == 'App'
+    return item.app if item_type == 'ActionOffer'
+  end
 
   def app_offer?
     item_type == 'App' || item_type == 'ActionOffer'
