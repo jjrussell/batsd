@@ -103,13 +103,6 @@
         %td
           = f.select(:direct_pay, options_for_select(Offer::DIRECT_PAY_PROVIDERS, @offer.direct_pay), { :include_blank => true })
           = error_message_on @offer, :direct_pay
-      %tr
-        %th
-          = f.label(:tj_games_only, 'TJGames Only')
-          #help_tj_games_only.help ?
-        %td
-          = f.check_box(:tj_games_only)
-          = error_message_on @offer, :tj_games_only
     %tr
       %th
         = f.label(:name, 'Name')
@@ -163,6 +156,13 @@
       %td
         = f.chosen_select(:device_types, options_for_select(Offer::ALL_DEVICES, @offer.get_device_types), {}, :multiple => true)
         = error_message_on @offer, :device_types
+    %tr
+      %th
+        = f.label(:approved_sources)
+        #help_approved_sources.help ?
+      %td
+        = f.chosen_select(:approved_sources, options_for_select(Offer::ALL_SOURCES, @offer.get_approved_sources), {}, :multiple => true)
+        = error_message_on @offer, :approved_sources
     %tr
       %th
         = f.label(:publisher_app_whitelist)
@@ -273,7 +273,7 @@
   #help_multi_complete_content{ :name => 'Multi-complete' } Allow this offer to be completed multiple times per device.
   #help_tapjoy_sponsored_content{ :name => 'Tapjoy sponsored' } Whether or not the offer is Tapjoy sponsored.
   #help_direct_pay_content{ :name => 'Direct-pay' } Select a direct-pay provider from the list to designate this offer as a direct-pay offer. Revenue generated will be split up using the publisher's direct-pay share.
-  #help_tj_games_only_content{ :name => 'TJGames Only' } Whether or not the offer is just for TJGames.
+  #help_approved_sources_content{ :name => 'Approved sources' } Which sources should this offer be shown from.
   #help_featured_content{ :name => 'Featured' } Enables this offer in our featured offers feed.
   #help_cookie_tracking_content{ :name => 'Cookie Tracking' } Designates that this offer requires cookies to track a conversion.
   #help_rewarded_content{ :name => 'Rewarded' } Whether or not the offer rewards the user with currency.

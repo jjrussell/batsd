@@ -237,8 +237,7 @@ module Offer::Rejecting
   end
 
   def source_reject?(source)
-    return true if source != 'tj_games' && tj_games_only?
-    false
+    get_approved_sources.any? && !get_approved_sources.include?(source)
   end
 
   def recommendable_types_reject?

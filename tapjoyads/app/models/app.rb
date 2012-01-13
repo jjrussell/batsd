@@ -70,11 +70,13 @@ class App < ActiveRecord::Base
   has_many :currencies, :order => 'ordinal ASC'
   has_one :primary_currency, :class_name => 'Currency', :conditions => 'id = app_id'
   has_one :rating_offer
-  has_many :featured_offers, :class_name => 'Offer', :as => :item, :conditions => "featured = true"
-  has_one :primary_featured_offer, :class_name => 'Offer', :as => :item, :conditions => "featured = true", :order => "created_at"
+  has_many :rewarded_featured_offers, :class_name => 'Offer', :as => :item, :conditions => "featured AND rewarded"
+  has_one :primary_rewarded_featured_offer, :class_name => 'Offer', :as => :item, :conditions => "featured AND rewarded", :order => "created_at"
+  has_many :non_rewarded_featured_offers, :class_name => 'Offer', :as => :item, :conditions => "featured AND NOT rewarded"
+  has_one :primary_non_rewarded_featured_offer, :class_name => 'Offer', :as => :item, :conditions => "featured AND NOT rewarded", :order => "created_at"
   has_many :action_offers
-  has_many :non_rewarded_offers, :class_name => 'Offer', :as => :item, :conditions => "not rewarded"
-  has_one :primary_non_rewarded_offer, :class_name => 'Offer', :as => :item, :conditions => "not rewarded", :order => "created_at"
+  has_many :non_rewarded_offers, :class_name => 'Offer', :as => :item, :conditions => "NOT rewarded AND NOT featured"
+  has_one :primary_non_rewarded_offer, :class_name => 'Offer', :as => :item, :conditions => "NOT rewarded AND NOT featured", :order => "created_at"
   has_many :app_metadata_mappings
   has_many :app_metadatas, :through => :app_metadata_mappings
   has_many :app_reviews
@@ -254,7 +256,7 @@ class App < ActiveRecord::Base
   end
 
   def wifi_required?
-    file_size_bytes && file_size_bytes > PLATFORM_DETAILS[platform][:cell_download_limit_bytes]
+    !!(file_size_bytes && file_size_bytes > PLATFORM_DETAILS[platform][:cell_download_limit_bytes])
   end
 
 private
