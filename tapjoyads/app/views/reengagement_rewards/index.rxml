@@ -1,6 +1,6 @@
 xml.instruct!
 if @reengagement_offer.nil?
-  xml.ReengagementURL
+  xml.ReengagementURL "0"
 else
   xml.ReengagementURL "http://10.10.19.30/reengagement_rewards/#{@reengagement_offer.id}/"
 end

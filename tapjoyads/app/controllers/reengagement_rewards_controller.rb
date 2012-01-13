@@ -25,19 +25,14 @@ class ReengagementRewardsController < ApplicationController
     device = Device.new :key => params[:udid]
     @reengagement_offer = @reengagement_offers.detect{ |r| !device.has_app?(r.id) }
     if @reengagement_offer.present? && @reengagement_offer.enabled? && !@reengagement_offer.hidden?
-      Rails.logger.info "&&&&&&&&&&&&&&&&&&&&&& #{@reengagement_offer.day_number} #{@reengagement_offer.id}"
       click = Click.find("#{params[:udid]}.#{@reengagement_offer.id}")
-      if click.present? && should_reward?(click)
-        Rails.logger.info '&&&&&&&&&&&&&&&&&&&&&& click present, downloading...'
-        Downloader.get_with_retry "#{API_URL}/connect?app_id=#{click.advertiser_app_id}&udid=#{click.udid}&consistent=true"
+      if @reengagement_offer.day_number == 0 || should_reward?(click)
+        Downloader.get_with_retry "#{API_URL}/connect?app_id=#{params[:app_id]}&udid=#{params[:udid]}&consistent=true"
+        device.set_last_run_time! @reengagement_offer.id
+      end
+      if @reengagement_offer.day_number < @reengagement_offers.length
         next_reengagement_offer = @reengagement_offers.detect{ |r| r.day_number == @reengagement_offer.day_number + 1 }
-        Rails.logger.info "&&&&&&&&&&&&&&&&&&&&&& next reengagement offer exists? #{next_reengagement_offer.present?}"
         create_reengagement_click(next_reengagement_offer) if next_reengagement_offer.present?
-      elsif @reengagement_offer.day_number == 0
-        next_reengagement_offer = @reengagement_offers.detect{ |r| r.day_number == 1 }
-        create_reengagement_click next_reengagement_offer
-      else
-        @reengagement_offer = nil
       end
     else
       @reengagement_offer = nil
@@ -55,9 +50,7 @@ class ReengagementRewardsController < ApplicationController
       :currency_id        =>  reengagement_offer.currency_id,
       :viewed_at          =>  Time.zone.now
     }
-    Rails.logger.info '======================== downloader started'
-    Downloader.get_with_retry(reengagement_offer.primary_offer.click_url(data)) rescue Rails.logger.info '======================== downloader failed'
-    Rails.logger.info '======================== downloader finished'
+    Downloader.get_with_retry(reengagement_offer.primary_offer.click_url(data))
   end
 
   def should_reward?(click)

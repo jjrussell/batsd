@@ -74,7 +74,6 @@ class ReengagementOffer < ActiveRecord::Base
   end
 
   def self.set_enabled(app_id, enabled_value)
-    puts "========================= setting to #{enabled_value}"
     reengagement_offers = ReengagementOffer.visible.find_all_by_app_id(app_id)
     reengagement_offers.each do |r|
       enabled_value ? r.enable : r.disable

@@ -28,8 +28,8 @@ class Apps::ReengagementOffersController < WebsiteController
     redirect_to app_reengagement_offers_path(@app) if reengagement_offers.length >= 5
     day_number = params[:day_number].to_i
     if day_number > 1
-      params.merge!(:prerequisite_offer_id => reengagement_offers[day_number - 1].id)
-    elsif @app.reengagement_offers.detect {|r| r.day_number == 0}.nil?
+      params.merge!(:prerequisite_offer_id => reengagement_offers.detect{ |r| r.day_number - 1 == day_number}.id)
+    else
       day_zero_reengagement_offer = @app.reengagement_offers.build (
         :app_id => @app.id,
         :partner_id => current_partner.id,
@@ -37,12 +37,6 @@ class Apps::ReengagementOffersController < WebsiteController
         :instructions => 'Come back each day and get rewards!',
         :reward_value => 0,
         :day_number => 0)
-      day_zero_reengagement_offer.enable if reengagement_offers.present? && reengagement_offers.last.enabled?
-      day_zero_reengagement_offer.save!
-      reengagement_offers = @app.reengagement_offers.visible
-    else
-      day_zero_reengagement_offer = @app.reengagement_offers.detect { |r| r.day_number == 0 }
-      day_zero_reengagement_offer.hidden = false
       day_zero_reengagement_offer.enable if reengagement_offers.present? && reengagement_offers.last.enabled?
       day_zero_reengagement_offer.save!
       reengagement_offers = @app.reengagement_offers.visible
