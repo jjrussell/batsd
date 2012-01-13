@@ -314,18 +314,18 @@ class Offer < ActiveRecord::Base
   end
 
   def banner_creative_path(size, format = nil)
-    format = banner_creative_format(size) if format.nil?
+    format ||= banner_creative_format(size)
     "banner_creatives/#{Offer.hashed_icon_id(id)}_#{size}.#{format}"
   end
 
   def banner_creative_s3_object(size, format = nil)
-    format = banner_creative_format(size) if format.nil?
+    format ||= banner_creative_format(size)
     bucket = S3.bucket(BucketNames::TAPJOY)
     bucket.objects[banner_creative_path(size, format)]
   end
 
   def banner_creative_mc_key(size, format = nil)
-    format = banner_creative_format(size) if format.nil?
+    format ||= banner_creative_format(size)
     banner_creative_path(size, format).gsub('/', '.')
   end
 
@@ -712,14 +712,14 @@ private
   end
 
   def delete_banner_creative!(size, format = nil)
-    format = banner_creative_format(size) if format.nil?
+    format ||= banner_creative_format(size)
     banner_creative_s3_object(size, format).delete
   rescue
     raise BannerSyncError.new("Encountered unexpected error while deleting existing file, please try again.", "custom_creative_#{size}_blob")
   end
 
   def upload_banner_creative!(blob, size, format = nil)
-    format = banner_creative_format(size) if format.nil?
+    format ||= banner_creative_format(size)
     begin
       creative_arr = Magick::Image.from_blob(blob)
       if creative_arr.size != 1
