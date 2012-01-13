@@ -653,7 +653,7 @@ class Offer < ActiveRecord::Base
   def cached_support_requests_rewards
     support_requests = Mc.get("Offer.SupportRequests.#{id}")
     rewards = Mc.get("Offer.ClicksRewarded.#{id}")
-    return support_requests, rewards
+    return [ support_requests, rewards ]
   end
 
 private
