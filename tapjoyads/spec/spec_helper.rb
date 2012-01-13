@@ -37,6 +37,11 @@ Spork.prefork do
     result['error'].should_not be_present
   end
 
+  def fake_aws
+    RightAws::SdbInterface.stubs(:new).returns(FakeSdb.new)
+    AWS::S3.stubs(:new).returns(FakeS3.new)
+  end
+
   module Spec
     module Rails
       module Example
