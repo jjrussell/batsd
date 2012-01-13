@@ -1,3 +1,5 @@
+tmp/
+.gitignore
+tapjoyads/.gitignore
 .DS_Store
-.rvmrc
 .swp

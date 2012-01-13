@@ -39,14 +39,15 @@
                     = "Day #{r.day_number}"
       .textc
         = @reengagement_offer.instructions
-      %a{:href => "http://ok"}
+      %a{:href => @button_link}
         %span.button
           OK
     .footer.clearfix
       = image_tag @app.get_icon_url, :alt => "App Icon", :name => "App Icon", :height => "50", :id => "app_icon", :class => "app_icon floatl"
 
-      %h5{:name => "Partner Name", :id => "partner_name", :class => "floatl"}
-        = "by #{@partner_name}"
+      - if @partner.present?
+        %h5{:name => "Partner Name", :id => "partner_name", :class => "floatl"}
+          = "by #{@partner.name}"
 
       %a{:href => WEBSITE_URL}
         = image_tag "reengagement_rewards/logo-footer.png", :alt => "Tapjoy Logo", :name => "Tapjoy Logo", :height => "50", :id => "Insert Logo", :class => "floatr"
