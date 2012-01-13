@@ -902,10 +902,6 @@ private
     offer.save!
     offer
   end
-
-  def update_approved_banner_creatives
-    self.approved_banner_creatives = banner_creatives
-  end
 end
 
 class BannerSyncError < StandardError;
