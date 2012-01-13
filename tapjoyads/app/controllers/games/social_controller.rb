@@ -4,6 +4,7 @@ class Games::SocialController < GamesController
   rescue_from Errno::ETIMEDOUT, :with => :handle_errno_exceptions
 
   before_filter :require_gamer
+  before_filter :set_social_feature_redirect_path
   before_filter :offline_facebook_authenticate, :only => [ :invite_facebook_friends, :send_facebook_invites ]
   before_filter :validate_recipients, :only => [ :send_email_invites ]
 
@@ -100,6 +101,10 @@ class Games::SocialController < GamesController
   end
 
   private
+  
+  def set_social_feature_redirect_path
+    @social_feature_redirect_path = social_feature_redirect_path
+  end
 
   def validate_recipients
     if params[:recipients].present?

@@ -2147,7 +2147,7 @@ TJG.social = {
             centerDialog($('#social_dialog').height(), '#social_dialog_content', '#social_dialog');
 
             $('.close_dialog, .continue_invite').click(function(){
-              document.location.href = location.protocol + '//' + location.host + inviteUrl;
+              document.location.href = inviteUrl;
             });
           } else if(d.error_redirect) {
             window.setTimeout('location.reload()', 1000);
@@ -2206,7 +2206,7 @@ TJG.social = {
             centerDialog($('#social_dialog').height(), '#social_dialog_content', '#social_dialog');
 
             $('.close_dialog, .continue_invite').click(function(){
-              document.location.href = location.protocol + '//' + location.host + inviteUrl;
+              document.location.href = inviteUrl;
             });
           } else {
             showErrorDialog(d.error, TJG.ui.hideSender());
@@ -2303,7 +2303,7 @@ TJG.social = {
     });
 
     $('#back_button').click(function(event){
-      document.location.href = location.protocol + '//' + location.host + inviteUrl;
+      document.location.href = inviteUrl;
     });
 
     $('#friend_filter').bind('input', function(event){
