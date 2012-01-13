@@ -101,7 +101,7 @@ module Offer::UrlGeneration
     gamer_id           = options.delete(:gamer_id)           { nil }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
 
-    click_url = "http://localhost:3000/click/"
+    click_url = "#{API_URL}/click/"
     if item_type == 'App' || item_type == 'EmailOffer'
       click_url += "app"
     elsif item_type == 'GenericOffer'
