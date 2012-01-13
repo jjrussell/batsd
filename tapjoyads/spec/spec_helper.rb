@@ -41,6 +41,32 @@ Spork.prefork do
     RightAws::SdbInterface.stubs(:new).returns(FakeSdb.new)
     AWS::S3.stubs(:new).returns(FakeS3.new)
   end
+
+  module Spec
+    module Rails
+      module Example
+        class ControllerExampleGroup
+          class << self
+            # Rails uses a tag parser which is more strict than necessary.
+            # Silence the warnings with this.
+            def ignore_html_warning
+              @verbosity = $-v
+
+              class_eval <<-EOV
+                before :each do
+                  $-v = nil
+                end
+
+                after :each do
+                  $-v = #{@verbosity}
+                end
+              EOV
+            end
+          end
+        end
+      end
+    end
+  end
 end
 
 Spork.each_run do
