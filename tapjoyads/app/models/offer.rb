@@ -204,7 +204,7 @@ class Offer < ActiveRecord::Base
   # Our relationship wasn't working, and this allows the ActionOffer.app crap to work
   def app
     return item if item_type == 'App'
-    return item.app if item_type == 'ActionOffer'
+    return item.app if ['ActionOffer', 'RatingOffer'].include?(item_type)
   end
 
   def app_offer?
