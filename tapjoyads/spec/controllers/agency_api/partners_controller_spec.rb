@@ -4,12 +4,17 @@ describe AgencyApi::PartnersController do
 
   describe 'index' do
     before :each do
-      @agency_user = Factory(:agency_user)
-      @partner = Factory(:partner, :balance => 10, :pending_earnings => 11, :name => 'name', :contact_name => 'contact_name')
-      @partner.users << @agency_user
+      agency_user = Factory(:agency_user)
+      @partner = Factory(:partner,
+        :balance => 10,
+        :pending_earnings => 11,
+        :name => 'name',
+        :contact_name => 'contact_name'
+      )
+      @partner.users << agency_user
       @valid_params = {
-        :agency_id => @agency_user.id,
-        :api_key => @agency_user.api_key
+        :agency_id => agency_user.id,
+        :api_key => agency_user.api_key
       }
     end
 
@@ -40,14 +45,18 @@ describe AgencyApi::PartnersController do
 
   describe 'show' do
     before :each do
-      @agency_user = Factory(:agency_user)
-      @partner = Factory(:partner, :balance => 10, :pending_earnings => 11, :name => 'name', :contact_name => 'contact_name')
-      @partner.users << @agency_user
-      @partner2 = Factory(:partner)
+      agency_user = Factory(:agency_user)
+      @partner = Factory(:partner,
+        :balance => 10,
+        :pending_earnings => 11,
+        :name => 'name',
+        :contact_name => 'contact_name'
+      )
+      @partner.users << agency_user
       @valid_params = {
         :id => @partner.id,
-        :agency_id => @agency_user.id,
-        :api_key => @agency_user.api_key,
+        :agency_id => agency_user.id,
+        :api_key => agency_user.api_key,
       }
     end
 
@@ -67,8 +76,8 @@ describe AgencyApi::PartnersController do
     end
 
     it 'should respond with error given partner_id from another agency' do
-      @currency2 = Factory(:currency)
-      get :show, @valid_params.merge(:id => @partner2.id)
+      partner2 = Factory(:partner)
+      get :show, @valid_params.merge(:id => partner2.id)
       should_respond_with_json_error(403)
     end
 
@@ -76,21 +85,21 @@ describe AgencyApi::PartnersController do
       get :show, @valid_params
       should_respond_with_json_success(200)
       result = JSON.parse(response.body)
-      result['partner_id'].should == @partner.id
-      result['name'].should == @partner.name
-      result['balance'].should == @partner.balance
+      result['partner_id'].should       == @partner.id
+      result['name'].should             == @partner.name
+      result['balance'].should          == @partner.balance
       result['pending_earnings'].should == @partner.pending_earnings
-      result['contact_email'].should == @partner.contact_name
+      result['contact_email'].should    == @partner.contact_name
     end
   end
 
   describe 'create' do
     before :each do
       @reseller = Factory(:reseller)
-      @agency_user = Factory(:agency_user, :reseller => @reseller)
+      agency_user = Factory(:agency_user, :reseller => @reseller)
       @valid_params = {
-        :agency_id => @agency_user.id,
-        :api_key => @agency_user.api_key,
+        :agency_id => agency_user.id,
+        :api_key => agency_user.api_key,
         :name => 'partner',
         :email => 'email@example.com',
       }
@@ -119,21 +128,22 @@ describe AgencyApi::PartnersController do
       user = User.find_by_email('email@example.com')
       user.partners.count.should == 1
       partner = user.partners.first
+
       result['partner_id'].should == partner.id
-      partner.name.should == 'partner'
-      partner.reseller_id.should == @reseller.id
+      partner.name.should         == 'partner'
+      partner.reseller_id.should  == @reseller.id
     end
   end
 
   describe 'link' do
     before :each do
-      @agency_user = Factory(:agency_user)
+      agency_user = Factory(:agency_user)
       @user = Factory(:user)
       @partner = Factory(:partner)
       @partner.users << @user
       @valid_params = {
-        :agency_id => @agency_user.id,
-        :api_key => @agency_user.api_key,
+        :agency_id => agency_user.id,
+        :api_key => agency_user.api_key,
         :email => @user.email,
         :user_api_key => @user.api_key,
       }
@@ -160,14 +170,14 @@ describe AgencyApi::PartnersController do
     end
 
     it 'should respond with error for a user with too many partner accounts' do
-      @partner2 = Factory(:partner)
-      @partner2.users << @user
+      partner2 = Factory(:partner)
+      partner2.users << @user
       post :link, @valid_params
       should_respond_with_json_error(400)
     end
 
     it 'should respond with success given valid params' do
-      post :link, :agency_id => @agency_user.id, :api_key => @agency_user.api_key, :email => @user.email, :user_api_key => @user.api_key
+      post :link, @valid_params
       should_respond_with_json_success(200)
       result = JSON.parse(response.body)
       result['partner_id'].should == @partner.id
@@ -176,14 +186,13 @@ describe AgencyApi::PartnersController do
 
   describe 'update' do
     before :each do
-      @agency_user = Factory(:agency_user)
+      agency_user = Factory(:agency_user)
       @partner = Factory(:partner)
-      @partner2 = Factory(:partner)
-      @partner.users << @agency_user
+      @partner.users << agency_user
       @valid_params = {
         :id => @partner.id,
-        :agency_id => @agency_user.id,
-        :api_key => @agency_user.api_key,
+        :agency_id => agency_user.id,
+        :api_key => agency_user.api_key,
         :name => 'partner_rename',
       }
     end
@@ -204,8 +213,8 @@ describe AgencyApi::PartnersController do
     end
 
     it 'should respond with error given id belonging to invalid partner' do
-      @currency2 = Factory(:currency)
-      put :update, @valid_params.merge(:id => @partner2.id)
+      partner2 = Factory(:partner)
+      put :update, @valid_params.merge(:id => partner2.id)
       should_respond_with_json_error(403)
     end
 
