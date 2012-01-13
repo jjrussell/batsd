@@ -167,17 +167,19 @@ class App < ActiveRecord::Base
 
   ##
   # Grab data from the app store and update app and metadata objects.
-  def update_from_store(app_store_id, country=nil)
-    app_metadata = update_app_metadata(app_store_id) || primary_app_metadata
-    data = AppStore.fetch_app_by_id(app_store_id, platform, country)
+  def update_from_store(params)
+    app_metadata = update_app_metadata(params[:store_id]) || primary_app_metadata
+    data = AppStore.fetch_app_by_id(params[:store_id], platform, params[:country])
     if (data.nil?) # might not be available in the US market
-      data = AppStore.fetch_app_by_id(app_store_id, platform, primary_country)
+      data = AppStore.fetch_app_by_id(params[:store_id], platform, primary_country)
     end
 
     raise "Fetching app store data failed for app: #{name} (#{id})." if data.nil?
     fill_app_store_data(data)
     app_metadata.fill_app_store_data(data)
-    app_metadata.save!
+    app_metadata.save
+  rescue
+    false
   end
 
   def fill_app_store_data(data)
