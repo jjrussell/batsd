@@ -23,7 +23,7 @@ class Device < SimpledbShardedResource
 
   def mac_address=(new_value)
     new_value = new_value ? new_value.downcase.gsub(/:/,"") : ''
-    @create_device_identifiers = (self.mac_address != new_value) || @create_device_identifiers
+    @create_device_identifiers ||= (self.mac_address != new_value)
     put('mac_address', new_value)
   end
 
@@ -180,20 +180,20 @@ class Device < SimpledbShardedResource
   end
 
   def serial_save(options = {})
-    create_identifiers if @create_device_identifiers
+    Sqs.send_message(QueueNames::CREATE_DEVICE_IDENTIFIERS, {'device_id' => key}.to_json) if @create_device_identifiers
+    @create_device_identifiers = false
     super(options)
   end
 
-  def create_identifiers
+  def create_identifiers!
     all_identifiers = [ Digest::SHA2.hexdigest(key) ]
     all_identifiers.push(mac_address) if self.mac_address.present?
     all_identifiers.each do |identifier|
       device_identifier = DeviceIdentifier.new(:key => identifier)
+      next if device_identifier.udid == key
       device_identifier.udid = key
-      device_identifier.save
+      device_identifier.save!
     end
-    @create_device_identifiers = false
-    true
   end
 
   private
