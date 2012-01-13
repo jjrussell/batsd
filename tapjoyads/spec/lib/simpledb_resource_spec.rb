@@ -21,7 +21,7 @@ describe SimpledbResource do
   end
 
   describe "A SimpledbResource object" do
-    before do
+    before :each do
       load_model
     end
 
@@ -252,7 +252,7 @@ describe SimpledbResource do
   end
 
   describe "Many Simpledb rows" do
-    before do
+    before :each do
       @rows = []
       10.times do |i|
         m = Testing.new(:key => "select-#{i}")
