@@ -108,7 +108,7 @@ describe AgencyApi::PartnersController do
 
     it 'should respond with error given invalid params' do
       Factory(:user, :email => 'email@example.com')
-      post :create, @valid_params.merge(:email => 'email@example.com')
+      post :create, @valid_params
       should_respond_with_json_error(400)
     end
 
