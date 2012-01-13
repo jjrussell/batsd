@@ -47,7 +47,7 @@ class Games::SocialController < GamesController
           invitation = current_gamer.facebook_invitation_for(friend_id)
           if invitation.pending?
             name = WEBSITE_URL
-            link = games_login_url :referrer => invitation.encrypted_referral_id
+            link = params[:advertiser_app_id] == "null" ? games_login_url(:referrer => invitation.encrypted_referral_id) : games_login_url(:referrer => invitation.encrypted_referral_id(params[:advertiser_app_id]))
             message = "#{current_facebook_user.name} has invited you to join Tapjoy, the BEST place to find the hottest new apps. Signing up is free and you'll be able discover the best apps on iOS and Android, while also earning currency in your favorite apps."
 
             description = "Experience the best of mobile apps!"
@@ -92,7 +92,7 @@ class Games::SocialController < GamesController
           })
           invitation.save
 
-          link = games_login_url(:referrer => invitation.encrypted_referral_id)
+          link = params[:advertiser_app_id] == "null" ? games_login_url(:referrer => invitation.encrypted_referral_id) : games_login_url(:referrer => invitation.encrypted_referral_id(params[:advertiser_app_id]))
           GamesMarketingMailer.deliver_invite(current_gamer.get_gamer_name, recipient, link)
         end
       end

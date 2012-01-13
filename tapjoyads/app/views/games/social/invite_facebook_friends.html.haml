@@ -34,6 +34,7 @@
         pageSize:  #{@page_size},
         fbFriends: #{@fb_friends.to_json},
         inviteUrl: #{@social_feature_redirect_path.to_json},
+        advertiserAppId: #{params[:advertiser_app_id].to_json},
       };
       TJG.social.setup(options);
     });
