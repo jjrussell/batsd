@@ -62,6 +62,43 @@ Spork.prefork do
       end
     end
   end
+
+  def deep_match(expected)
+    DeepMatch.new(expected)
+  end
+
+  class DeepMatch
+    def initialize(expected)
+      @expected = expected
+    end
+
+    def matches?(actual)
+      @actual = actual
+      match_keys && match_arrays
+    end
+
+    def failure_message_for_should
+      if match_keys
+        "Values do not match for key '#@bad_key'."
+      else
+        "Keys do not match"
+      end
+    end
+
+    def match_keys
+      @actual.keys.sort == @expected.keys.sort
+    end
+
+    def match_arrays
+      @expected.each do |key, value|
+        unless value.sort == @actual[key].sort
+          @bad_key = key
+          return false
+        end
+      end
+      true
+    end
+  end
 end
 
 Spork.each_run do

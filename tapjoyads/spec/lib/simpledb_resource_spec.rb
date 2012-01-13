@@ -1,6 +1,6 @@
-require 'test_helper'
+require 'spec_helper'
 
-class SimpledbResourceTest < ActiveSupport::TestCase
+describe SimpledbResource do
 
   # A real model, which interfaces with real simpledb.
   class Testing < SimpledbResource
@@ -20,21 +20,21 @@ class SimpledbResourceTest < ActiveSupport::TestCase
     @model = Testing.new(options)
   end
 
-  context "A SimpledbResource object" do
-    setup do
+  describe "A SimpledbResource object" do
+    before do
       load_model
     end
 
-    teardown do
+    after do
       @model.delete_all
     end
 
-    should "use default value correctly" do
-      assert_equal('default_value', @model.get('foo', :default_value => 'default_value'))
-      assert_equal(10, @model.foo_10)
+    it "should use default value correctly" do
+      @model.get('foo', :default_value => 'default_value').should == 'default_value'
+      @model.foo_10.should == 10
     end
 
-    should "write long attributes to multiple columns" do
+    it "should write long attributes to multiple columns" do
       long_value = ''
       4501.times do |i|
         long_value += (i % 7).to_s
@@ -42,41 +42,41 @@ class SimpledbResourceTest < ActiveSupport::TestCase
       @model.put('long_string', long_value)
       @model.save!
 
-      assert_equal(long_value, @model.get('long_string'))
+      @model.get('long_string').should == long_value
 
       load_model
-      assert_equal(long_value, @model.get('long_string'))
+      @model.get('long_string').should == long_value
 
       load_model(:load_from_memcache => false, :consistent => true)
-      assert_equal(long_value, @model.get('long_string'))
+      @model.get('long_string').should == long_value
     end
 
-    should "handle newlines in attributes" do
+    it "should handle newlines in attributes" do
       newline_value = "Ths is a \n multiline \n value"
       @model.put('newline_string', newline_value)
-      assert_equal(newline_value, @model.get('newline_string'))
+      @model.get('newline_string').should == newline_value
       @model.save!
 
       load_model
-      assert_equal(newline_value, @model.get('newline_string'))
+      @model.get('newline_string').should == newline_value
 
       load_model(:load_from_memcache => false, :consistent => true)
-      assert_equal(newline_value, @model.get('newline_string'))
+      @model.get('newline_string').should == newline_value
     end
 
-    should "cgi escape attributes when asked to" do
+    it "should cgi escape attributes when asked to" do
       cgi_escape_val = "Special chars\n\t\xc2\xa0"
       @model.put('escaped', cgi_escape_val, {:cgi_escape => true})
       @model.save!
 
       load_model
-      assert_equal(cgi_escape_val, @model.get('escaped'))
+      @model.get('escaped').should == cgi_escape_val
 
       load_model(:load_from_memcache => false, :consistent => true)
-      assert_equal(cgi_escape_val, @model.get('escaped'))
+      @model.get('escaped').should == cgi_escape_val
     end
 
-    should "handle concurrent saves" do
+    it "should handle concurrent saves" do
       attrs = {}
 
       thread_list = []
@@ -96,14 +96,14 @@ class SimpledbResourceTest < ActiveSupport::TestCase
 
       load_model
       @model.attributes.delete('updated-at')
-      assert_attributes_equal(attrs, @model.attributes)
+      @model.attributes.should deep_match attrs
 
       load_model(:load_from_memcache => false, :consistent => true)
       @model.attributes.delete('updated-at')
-      assert_attributes_equal(attrs, @model.attributes)
+      @model.attributes.should deep_match attrs
     end
 
-    should "handle concurrent deletes" do
+    it "should handle concurrent deletes" do
       attrs = {}
 
       10.times do |i|
@@ -129,14 +129,14 @@ class SimpledbResourceTest < ActiveSupport::TestCase
 
       load_model
       @model.attributes.delete('updated-at')
-      assert_attributes_equal(attrs, @model.attributes)
+      @model.attributes.should deep_match attrs
 
       load_model(:load_from_memcache => false, :consistent => true)
       @model.attributes.delete('updated-at')
-      assert_attributes_equal(attrs, @model.attributes)
+      @model.attributes.should deep_match attrs
     end
 
-    should "handle adding and replacing attrs in one save operation" do
+    it "should handle adding and replacing attrs in one save operation" do
       attrs = {}
 
       10.times do |i|
@@ -156,14 +156,14 @@ class SimpledbResourceTest < ActiveSupport::TestCase
 
       load_model
       @model.attributes.delete('updated-at')
-      assert_attributes_equal(attrs, @model.attributes)
+      @model.attributes.should deep_match attrs
 
       load_model(:load_from_memcache => false, :consistent => true)
       @model.attributes.delete('updated-at')
-      assert_attributes_equal(attrs, @model.attributes)
+      @model.attributes.should deep_match attrs
     end
 
-    should "convert types" do
+    it "should convert types" do
       @model.put('string_key', 'string_value', :type => :string)
       @model.put('int_key', 16, :type => :int)
       @model.put('float_key', 16.1616, :type => :float)
@@ -171,47 +171,47 @@ class SimpledbResourceTest < ActiveSupport::TestCase
       @model.put('bool_key', false, :type => :bool)
       @model.save!
 
-      assert_equal('string_value', @model.get('string_key', :type => :string))
-      assert_equal(16, @model.get('int_key', :type => :int))
-      assert_equal(16.1616, @model.get('float_key', :type => :float))
-      assert_equal(Time.at(16), @model.get('time_key', :type => :time))
-      assert_equal(false, @model.get('bool_key', :type => :bool))
+      @model.get('string_key', :type => :string).should == 'string_value'
+      @model.get('int_key', :type => :int).should == 16
+      @model.get('float_key', :type => :float).should == 16.1616
+      @model.get('time_key', :type => :time).should == Time.at(16)
+      @model.get('bool_key', :type => :bool).should be_false
 
       load_model(:load_from_memcache => false, :consistent => true)
-      assert_equal('string_value', @model.get('string_key', :type => :string))
-      assert_equal(16, @model.get('int_key', :type => :int))
-      assert_equal(16.1616, @model.get('float_key', :type => :float))
-      assert_equal(Time.at(16), @model.get('time_key', :type => :time))
-      assert_equal(false, @model.get('bool_key', :type => :bool))
+      @model.get('string_key', :type => :string).should == 'string_value'
+      @model.get('int_key', :type => :int).should == 16
+      @model.get('float_key', :type => :float).should == 16.1616
+      @model.get('time_key', :type => :time).should == Time.at(16)
+      @model.get('bool_key', :type => :bool).should be_false
     end
 
-    should "use sdb attrs" do
+    it "should use sdb attrs" do
       @model.foo = 'bar'
       @model.foo_time = Time.at(16)
-      assert_equal(10, @model.foo_10)
+      @model.foo_10.should == 10
       @model.foo_10 = 10
       @model.foo_array = 'a'
-      assert_equal(['a'], @model.foo_array)
+      @model.foo_array.should == ['a']
       @model.foo_array = 'b'
       @model.foo_bool = true
       @model.save!
 
-      assert_equal(10, @model.foo_10)
-      assert_equal('bar', @model.foo)
-      assert_equal(Time.at(16), @model.foo_time)
-      assert_equal(SortedSet.new(['a', 'b']), SortedSet.new(@model.foo_array))
-      assert_equal(true, @model.foo_bool)
+      @model.foo_10.should == 10
+      @model.foo.should == 'bar'
+      @model.foo_time.should == Time.at(16)
+      SortedSet.new(@model.foo_array).should == SortedSet.new(['a', 'b'])
+      @model.foo_bool.should == true
 
       load_model(:load_from_memcache => false, :consistent => true)
-      assert_equal(10, @model.foo_10)
-      assert_equal('bar', @model.foo)
-      assert_equal(Time.at(16), @model.foo_time)
-      assert_equal(SortedSet.new(['a', 'b']), SortedSet.new(@model.foo_array))
-      assert_equal(true, @model.foo_bool)
-      assert(@model.updated_at > Time.now - 1.minutes)
+      @model.foo_10.should == 10
+      @model.foo.should == 'bar'
+      @model.foo_time.should == Time.at(16)
+      SortedSet.new(@model.foo_array).should == SortedSet.new(['a', 'b'])
+      @model.foo_bool.should be_true
+      @model.updated_at.should > Time.now - 1.minutes
     end
 
-    should "handle expected attributes" do
+    it "should handle expected attributes" do
       @model.put('version', 1)
       begin
         @model.save!(:expected_attr => {'version' => 1})
@@ -222,18 +222,18 @@ class SimpledbResourceTest < ActiveSupport::TestCase
       @model.save!(:expected_attr => {'version' => nil})
 
       load_model(:load_from_memcache => false, :consistent => true)
-      assert_equal('1', @model.get('version'))
+      @model.get('version').should == '1'
 
       Testing.transaction(:key => @model.key, :consistent => true) do |m|
         m.foo = "bar"
       end
 
       load_model(:load_from_memcache => false, :consistent => true)
-      assert_equal('2', @model.get('version'))
-      assert_equal('bar', @model.foo)
+      @model.get('version').should == '2'
+      @model.foo.should == 'bar'
     end
 
-    should "handle concurrent transactions" do
+    it "should handle concurrent transactions" do
       thread_list = []
       3.times do
         thread_list << Thread.new do
@@ -247,12 +247,12 @@ class SimpledbResourceTest < ActiveSupport::TestCase
 
       m = Testing.new(:key => @model.key, :load_from_memcache => false, :consistent => true)
 
-      assert_equal(13, m.foo_10)
+      m.foo_10.should == 13
     end
   end
 
-  context "Many Simpledb rows" do
-    setup do
+  describe "Many Simpledb rows" do
+    before do
       @rows = []
       10.times do |i|
         m = Testing.new(:key => "select-#{i}")
@@ -262,28 +262,28 @@ class SimpledbResourceTest < ActiveSupport::TestCase
       end
     end
 
-    teardown do
+    after do
       @rows.each do |m|
         m.delete_all
       end
     end
 
-    should "be counted correctly and selectable" do
-      assert_equal(10, Testing.count(:where =>"itemName() like 'select-%'", :consistent => true))
+    it "should be counted correctly and selectable" do
+      Testing.count(:where =>"itemName() like 'select-%'", :consistent => true).should == 10
 
       m = Testing.select(:where => "selectable_value = '3'", :consistent => true)[:items][0]
-      assert_equal('select-3', m.key)
+      m.key.should == 'select-3'
 
       m = SimpledbResource.select(:where => "selectable_value = '3'", :domain_name => 'testing', :consistent => true)[:items][0]
-      assert_equal('select-3', m.key)
+      m.key.should == 'select-3'
 
       response = Testing.select(:where =>"selectable_value >= '0'", :limit => 2, :order_by => "selectable_value", :consistent => true)
-      assert_equal(2, response[:items].length)
+      response[:items].length.should == 2
 
       val = 2
       Testing.select(:where =>"selectable_value >= '0'", :limit => 2, :order_by => "selectable_value",
           :next_token => response[:next_token], :consistent => true) do |m|
-        assert_equal(val.to_s, m.get('selectable_value'))
+        m.get('selectable_value').should == val.to_s
         val += 1
       end
 
@@ -291,7 +291,7 @@ class SimpledbResourceTest < ActiveSupport::TestCase
       Testing.count_async(:where =>"itemName() like 'select-%'", :consistent => true) do |c|
         count = c
       end.run
-      assert_equal(10, count, "Async count")
+      count.should == 10
     end
   end
 end
