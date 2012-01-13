@@ -253,6 +253,14 @@
         %td
           = f.text_area(:instructions)
           = error_message_on @offer, :instructions
+    - if @offer.featured_content_id
+      %tr
+        %th
+          = f.label(:featured_content_id, 'Featured Content')
+          #help_featured_contents.help ?
+        %td
+          = link_to(@offer.featured_content_id, edit_tools_featured_content_path(@offer.featured_content_id))
+          = error_message_on @offer, :instructions_overridden
     %tr
       %td{ :colspan => 2 }= f.submit('Save Changes')
 
@@ -300,6 +308,7 @@
     %br
     %br
     Keep your text simple and easy for a user to understand.
+  #help_featured_contents_content{ :name => 'Featured Content' } The featured content this offer belongs to.
 
 - if @offer.item_type == 'App' || @offer.item_type == 'GenericOffer'
   - content_for :page_javascript do

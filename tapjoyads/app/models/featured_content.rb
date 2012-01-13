@@ -17,10 +17,13 @@ class FeaturedContent < ActiveRecord::Base
 
   belongs_to :author, :polymorphic => true
   belongs_to :offer
+  has_one :tracking_offer, :class_name => 'Offer', :dependent => :destroy
 
   validates_presence_of :author, :if => :author_required?, :message => "Please select and author."
   validates_presence_of :offer, :if => :offer_required?, :message => "Please select an offer/app."
   validates_presence_of :featured_type, :platforms, :subtitle, :title, :description, :start_date, :end_date, :weight
+
+  before_save :update_tracking_offer
 
   named_scope :ordered_by_date, :order => "start_date DESC, end_date DESC"
   named_scope :upcoming,  lambda { |date| { :conditions => [ "start_date > ?", date.to_date ], :order => "start_date ASC" } }
@@ -44,6 +47,13 @@ class FeaturedContent < ActiveRecord::Base
       else
         featured_contents
       end
+    end
+  end
+
+  def self.featured_contents_with_country_targeting(geoip_data, device)
+    featured_contents = FeaturedContent.featured_contents(device.try(:platform))
+    featured_contents.delete_if do |fc|
+      fc.tracking_offer.geoip_reject?(geoip_data, device) if fc.tracking_offer && geoip_data[:country] && device
     end
   end
 
@@ -105,6 +115,35 @@ class FeaturedContent < ActiveRecord::Base
     end
   end
 
+  def tracking_url(geoip_data, device, device_name, gamer_id, language_code, display_multiplier, library_version)
+    click_url = tracking_offer.click_url(
+      :publisher_app      => tracking_offer.item,
+      :publisher_user_id  => "",
+      :udid               => device.id,
+      :currency_id        => Currency.find(:first).id,
+      :source             => 'tj_games',
+      :app_version        => "",
+      :viewed_at          => Time.zone.now,
+      :exp                => "",
+      :country_code       => geoip_data[:country],
+      :language_code      => language_code,
+      :display_multiplier => display_multiplier,
+      :device_name        => device_name,
+      :library_version    => library_version,
+      :gamer_id           => gamer_id)
+
+    if tracking_offer.item_type == 'VideoOffer' || tracking_offer.item_type == 'TestVideoOffer'
+      if @publisher_app.platform == 'windows'
+        prefix = "http://tjvideo.tjvideo.com/tjvideo?"
+      else
+        prefix = "tjvideo://"
+      end
+      "#{prefix}video_id=#{offer.id}&amount=#{@currency.get_visual_reward_amount(offer, params[:display_multiplier])}&currency_name=#{URI::escape(@currency.name)}&click_url=#{click_url}"
+    else
+      click_url
+    end
+  end
+
   private
 
   def save_icon_in_different_sizes!(icon_src_blob, icon_id, bucket)
@@ -134,5 +173,43 @@ class FeaturedContent < ActiveRecord::Base
 
   def offer_required?
     [ TYPES_MAP[STAFFPICK], TYPES_MAP[PROMO] ].include?(featured_type)
+  end
+
+  def create_tracking_offer
+    if button_url.present?
+      partner_tapjoy_id           = '70f54c6d-f078-426c-8113-d6e43ac06c6d'
+      if offer
+        @item                     = offer.item
+      else
+        @item                     = GenericOffer.new(:partner_id => partner_tapjoy_id, :name => "#{title}_#{subtitle}", :url => button_url)
+        @item.save
+      end
+      self.tracking_offer                  = Offer.new(:item => @item)
+      self.tracking_offer.partner          = Partner.find_by_id(partner_tapjoy_id)
+      self.tracking_offer.name             = "#{title}_#{subtitle}"
+      self.tracking_offer.url              = button_url
+      self.tracking_offer.device_types     = platforms
+      self.tracking_offer.price            = 0
+      self.tracking_offer.bid              = 0
+      self.tracking_offer.min_bid_override = 0
+      self.tracking_offer.rewarded         = false
+      self.tracking_offer.name_suffix      = 'fc_tracking'
+      self.tracking_offer.third_party_data = id
+      self.tracking_offer.save!
+    end
+  end
+
+  def update_tracking_offer
+    if button_url.present? && tracking_offer
+      self.tracking_offer.name         = "#{title}_#{subtitle}" if title_changed? || subtitle_changed?
+      if button_url_changed?
+        self.tracking_offer.url_overridden = true
+        self.tracking_offer.url            = button_url
+      end
+      self.tracking_offer.device_types = platforms.to_json if platforms_changed?
+      self.tracking_offer.save! if self.tracking_offer.changed?
+    elsif button_url.present? && !tracking_offer
+      create_tracking_offer
+    end
   end
 end

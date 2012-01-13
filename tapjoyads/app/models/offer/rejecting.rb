@@ -87,6 +87,15 @@ module Offer::Rejecting
       age_rating_reject?(3) # reject 17+ apps
   end
 
+  def geoip_reject?(geoip_data, device)
+    return true if countries.present? && countries != '[]' && !get_countries.include?(geoip_data[:country])
+    return true if geoip_data[:country] && get_countries_blacklist.include?(geoip_data[:country].to_s.upcase)
+    return true if regions.present? && regions != '[]' && !get_regions.include?(geoip_data[:region])
+    return true if dma_codes.present? && dma_codes != '[]' && !get_dma_codes.include?(geoip_data[:dma_code])
+
+    false
+  end
+
   private
 
   def is_disabled?(publisher_app, currency)
@@ -115,15 +124,6 @@ module Offer::Rejecting
     return false unless max_age_rating && age_rating
 
     max_age_rating < age_rating
-  end
-
-  def geoip_reject?(geoip_data, device)
-    return true if countries.present? && countries != '[]' && !get_countries.include?(geoip_data[:country])
-    return true if geoip_data[:country] && get_countries_blacklist.include?(geoip_data[:country].to_s.upcase)
-    return true if regions.present? && regions != '[]' && !get_regions.include?(geoip_data[:region])
-    return true if dma_codes.present? && dma_codes != '[]' && !get_dma_codes.include?(geoip_data[:dma_code])
-
-    false
   end
 
   def already_complete?(device, app_version = nil)

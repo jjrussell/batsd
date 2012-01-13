@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20111227171406) do
+ActiveRecord::Schema.define(:version => 20120111020923) do
 
   create_table "action_offers", :id => false, :force => true do |t|
     t.string   "id",                    :limit => 36,                    :null => false
@@ -610,12 +610,14 @@ ActiveRecord::Schema.define(:version => 20111227171406) do
     t.text     "banner_creatives"
     t.text     "dma_codes",                                                                                        :null => false
     t.text     "regions",                                                                                          :null => false
-    t.boolean  "instructions_overridden",                                                       :default => false, :null => false
-    t.boolean  "tapjoy_sponsored",                                                              :default => false, :null => false
     t.boolean  "tj_games_only",                                                                 :default => false, :null => false
+    t.boolean  "tapjoy_sponsored",                                                              :default => false, :null => false
+    t.boolean  "instructions_overridden",                                                       :default => false, :null => false
     t.boolean  "wifi_only",                                                                     :default => false, :null => false
+    t.string   "featured_content_id",               :limit => 36
   end
 
+  add_index "offers", ["featured_content_id"], :name => "index_offers_on_featured_content_id", :unique => true
   add_index "offers", ["id"], :name => "index_offers_on_id", :unique => true
   add_index "offers", ["item_id"], :name => "index_offers_on_item_id"
   add_index "offers", ["item_type", "item_id"], :name => "index_offers_on_item_type_and_item_id"

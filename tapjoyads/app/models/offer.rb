@@ -84,6 +84,7 @@ class Offer < ActiveRecord::Base
   belongs_to :reseller
   belongs_to :app, :foreign_key => "item_id", :conditions => ['item_type = ?', 'App']
   belongs_to :action_offer, :foreign_key => "item_id", :conditions => ['item_type = ?', 'ActionOffer']
+  belongs_to :featured_content, :conditions => ['name_suffix = ?', 'fc_tracking']
 
   validates_presence_of :reseller, :if => Proc.new { |offer| offer.reseller_id? }
   validates_presence_of :partner, :item, :name, :url, :rank_boost
@@ -275,7 +276,7 @@ class Offer < ActiveRecord::Base
   end
 
   def accepting_clicks?
-    tapjoy_enabled? && user_enabled? && (payment > 0 || (payment == 0 && reward_value.present? && reward_value > 0))
+    tapjoy_enabled? && user_enabled? && (payment > 0 || (payment == 0 && reward_value.present? && reward_value > 0)) || fc_tracking_offer?
   end
 
   def has_variable_payment?
@@ -606,6 +607,10 @@ class Offer < ActiveRecord::Base
     return false if (is_paid? || featured?)
     return (item_type == 'App' && name.length <= 30) if rewarded?
     item_type != 'VideoOffer'
+  end
+  
+  def fc_tracking_offer?
+    name_suffix == 'fc_tracking'
   end
 
 private

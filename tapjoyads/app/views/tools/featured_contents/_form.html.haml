@@ -107,6 +107,12 @@
       %td
         = f.select :weight, FeaturedContent::WEIGHTS
         = error_message_on @featured_content, :weight
+    - if @featured_content.tracking_offer
+      %tr
+        %th
+          = f.label 'Tracking Offer', 'Tracking Offer'
+          #help_tracking_offer.help ?
+        %td= link_to(@featured_content.tracking_offer.id, statz_path(@featured_content.tracking_offer.id))
     %tr
       %th
       %td= f.submit
@@ -126,6 +132,7 @@
   #help_start_date_content{ :name => 'Start Date' } The start date of the featured placement.
   #help_end_date_content{ :name => 'End Date' } The end date of the featured placement.
   #help_weight_content{ :name => 'Weight' } Determine the show up frequency.
+  #help_tracking_offer_content{ :name => 'Tracking Offer' } Used for tracking and country targeting.
 
 - content_for :page_javascript do
   :plain

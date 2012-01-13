@@ -27,7 +27,8 @@ class Games::HomepageController < GamesController
         @offerwall_external_publisher = ExternalPublisher.new(currency) if @show_offerwall
       end
     end
-    featured_contents = FeaturedContent.featured_contents(@device.try(:platform)).to_a
+    @geoip_data = get_geoip_data
+    featured_contents = FeaturedContent.featured_contents_with_country_targeting(@geoip_data, @device)
     @featured_content = featured_contents.weighted_rand(featured_contents.map(&:weight))
 
     if params[:load] == 'more_apps'
