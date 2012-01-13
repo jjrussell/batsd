@@ -58,6 +58,14 @@
                       %label{ :for => "password", :class => "hidden" }
                         Password
                       = f.password_field :password, :placeholder => "Password"
+                    - if device_type.nil?
+                      .row.platform
+                        .field#platform_android
+                          = label_tag :default_platform_android, 'Android'
+                          = check_box_tag :default_platform_android, 'android'
+                        .field#platform_iphone
+                          = label_tag :default_platform_iphone, 'iPhone'
+                          = check_box_tag :default_platform_iphone, 'iphone'
                     .row
                       .field.field_tos
                         .field_checkbox
