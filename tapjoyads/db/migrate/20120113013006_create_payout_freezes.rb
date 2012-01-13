@@ -11,6 +11,7 @@ class CreatePayoutFreezes < ActiveRecord::Migration
     end
 
     add_index :payout_freezes, :id, :unique => true
+    add_index :payout_freezes, :enabled
   end
 
   def self.down

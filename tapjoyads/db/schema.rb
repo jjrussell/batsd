@@ -732,6 +732,7 @@ ActiveRecord::Schema.define(:version => 20120113013006) do
     t.datetime "updated_at"
   end
 
+  add_index "payout_freezes", ["enabled"], :name => "index_payout_freezes_on_enabled"
   add_index "payout_freezes", ["id"], :name => "index_payout_freezes_on_id", :unique => true
 
   create_table "payout_infos", :id => false, :force => true do |t|
