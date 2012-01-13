@@ -55,8 +55,7 @@ class Tools::OffersController < WebsiteController
 
   def creative_email(status)
     offer = @approval.offer
-    app = App.find(offer.item_id)
-    offer_link = edit_app_offer_url(:id => offer.id, :app_id => app.id)
+    offer_link = edit_app_offer_url(:id => offer.id, :app_id => offer.item_id)
     TapjoyMailer.send("deliver_offer_creative_#{status}", @approval.user.email, offer, @approval.size, offer_link)
   end
 end
