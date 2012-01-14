@@ -24,15 +24,17 @@ class ReengagementRewardsController < ApplicationController
     raise "No re-engagement offers found in memcache for app #{params[:app_id]}" if @reengagement_offers.nil?
     device = Device.new :key => params[:udid]
     @reengagement_offer = @reengagement_offers.detect{ |r| !device.has_app?(r.id) }
+    Rails.logger.info "&&&&& reengagement #{@reengagement_offer.day_number} #{@reengagement_offer.id}" if @reengagement_offer.present?
     if @reengagement_offer.present? && @reengagement_offer.enabled? && !@reengagement_offer.hidden?
       click = Click.find("#{params[:udid]}.#{@reengagement_offer.id}")
-      if @reengagement_offer.day_number == 0 || should_reward?(click)
-        Downloader.get_with_retry "#{API_URL}/connect?app_id=#{params[:app_id]}&udid=#{params[:udid]}&consistent=true"
+      if @reengagement_offer.day_number == 0 || click.present? && !click.successfully_rewarded? && should_reward?(click)
+        click.resolve! if click.present?
         device.set_last_run_time! @reengagement_offer.id
+        Rails.logger.info "&&&&& click resolved!" if click.present?
       end
       if @reengagement_offer.day_number < @reengagement_offers.length
         next_reengagement_offer = @reengagement_offers.detect{ |r| r.day_number == @reengagement_offer.day_number + 1 }
-        create_reengagement_click(next_reengagement_offer) if next_reengagement_offer.present?
+        create_reengagement_click(next_reengagement_offer, Time.at(params[:timestamp].to_f)) if next_reengagement_offer.present?
       end
     else
       @reengagement_offer = nil
@@ -41,22 +43,21 @@ class ReengagementRewardsController < ApplicationController
 
   private
 
-  def create_reengagement_click(reengagement_offer)
+  def create_reengagement_click(reengagement_offer, timestamp=Time.zone.now)
     data = {
       :publisher_app      =>  App.find_in_cache(params[:app_id]),
       :udid               =>  params[:udid],
       :publisher_user_id  =>  params[:publisher_user_id],
-      :source             =>  'reengaement',
+      :source             =>  'reengagement',
       :currency_id        =>  reengagement_offer.currency_id,
-      :viewed_at          =>  Time.zone.now
+      :viewed_at          =>  timestamp
     }
     Downloader.get_with_retry(reengagement_offer.primary_offer.click_url(data))
   end
 
   def should_reward?(click)
-    true
-    # seconds_since_last_reengagement_reward = Time.at(params[:timestamp].to_i) - Time.at(click.clicked_at.to_i)
-    # click.manually_resolved_at.nil? && seconds_since_last_reengagement_reward > 24.hours && seconds_since_last_reengagement_reward < 48.hours
+    # daylight-savings weirdness and leap years are not accounted for
+    (Time.at(params[:timestamp].to_i) - Time.at(click.clicked_at.to_i)) / 1.day == 1
   end
 
 end

@@ -28,8 +28,8 @@ class Apps::ReengagementOffersController < WebsiteController
     redirect_to app_reengagement_offers_path(@app) if reengagement_offers.length >= 5
     day_number = params[:day_number].to_i
     if day_number > 1
-      params.merge!(:prerequisite_offer_id => reengagement_offers.detect{ |r| r.day_number - 1 == day_number}.id)
-    else
+      params.merge!(:prerequisite_offer_id => reengagement_offers[day_number - 1].id)
+    elsif reengagement_offers.detect {|r| r.day_number == 0}.nil?
       day_zero_reengagement_offer = @app.reengagement_offers.build (
         :app_id => @app.id,
         :partner_id => current_partner.id,

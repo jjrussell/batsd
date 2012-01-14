@@ -79,9 +79,12 @@ class Click < SimpledbShardedResource
   def resolve!
     raise 'Unknown click id.' if new_record?
 
-    # We only resolve clicks in the last 48 hours.
+    # We only resolve clicks in the last 48 hours
     if clicked_at < Time.zone.now - 47.hours
       self.clicked_at = Time.zone.now - 1.minute
+    # Unless they're ReengagementOffers which get decide to be rewarded via should_reward?
+    elsif source == 'reengagement'
+      self.clicked_at = self.viewed_at
     end
     self.manually_resolved_at = Time.zone.now
 

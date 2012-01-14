@@ -70,12 +70,10 @@ class ReengagementOffer < ActiveRecord::Base
     end
   end
 
-  def create_day_zero_reengagement(app_id, partner_id)
-  end
-
   def self.set_enabled(app_id, enabled_value)
     reengagement_offers = ReengagementOffer.visible.find_all_by_app_id(app_id)
     reengagement_offers.each do |r|
+      Rails.logger.info "&&&&&&&&&& #{enabled_value ? 'enabling' : 'disabling'} #{r.id}"
       enabled_value ? r.enable : r.disable
     end
   end
