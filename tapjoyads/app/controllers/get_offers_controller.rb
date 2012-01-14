@@ -157,7 +157,10 @@ private
     else
       @geoip_data = get_geoip_data
     end
-    @geoip_data[:country] = params[:country_code] if params[:country_code].present?
+
+    if @geoip_data[:country] != 'CN' && params[:country_code].present?
+      @geoip_data[:country] = params[:country_code]
+    end
   end
 
   def save_web_request

@@ -13,8 +13,11 @@ describe GetOffersController do
       @offer3 = Factory(:app).primary_offer
       @offer3.countries = ["US"].to_json
       @offer3.save
+      @offer4 = Factory(:app).primary_offer
+      @offer4.countries = ["CN"].to_json
+      @offer4.save
 
-      offers = [ @offer, @offer2, @offer3 ]
+      offers = [ @offer, @offer2, @offer3, @offer4 ]
       OfferCacher.stubs(:get_unsorted_offers_prerejected).returns(offers)
       RailsCache.stubs(:get).returns(nil)
       controller.stubs(:get_ip_address).returns('208.90.212.38')
@@ -25,19 +28,21 @@ describe GetOffersController do
         :app_id => @currency.app.id,
       }
 
-      get(:index, @params.merge(:json => 1))
     end
 
-    it { should respond_with_content_type :json }
+    it "should return json" do
+      get(:index, @params.merge(:json => 1))
+      should respond_with_content_type :json
+      should render_template "get_offers/installs_json"
+    end
 
     it "should render appropriate pages" do
-      response.should render_template "get_offers/installs_json"
       get(:index, @params.merge(:type => 0))
-      response.should render_template "get_offers/offers"
+      should render_template "get_offers/offers"
       get(:index, @params.merge(:redirect => 1))
-      response.should render_template "get_offers/installs_redirect"
+      should render_template "get_offers/installs_redirect"
       get(:index, @params)
-      response.should render_template "get_offers/installs"
+      should render_template "get_offers/installs"
     end
 
     it "should have proper geoip data" do
@@ -60,7 +65,16 @@ describe GetOffersController do
       assigns(:offer_list).should == [@offer, @offer2]
     end
 
+    it "should ignore country_code if IP is in China" do
+      controller.stubs(:get_ip_address).returns('60.0.0.1')
+      get(:index, @params)
+      assigns(:offer_list).should == [@offer, @offer4]
+      get(:index, @params.merge(:country_code => 'GB'))
+      assigns(:offer_list).should == [@offer, @offer4]
+    end
+
     it "should render json with correct fields" do
+      get(:index, @params.merge(:json => 1))
       json = JSON.parse(response.body)
 
       json_offer = json['OfferArray'][0]
@@ -210,10 +224,10 @@ describe GetOffersController do
 
     it "should render appropriate views" do
       get(:featured, @params)
-      response.should render_template "get_offers/installs_redirect"
+      should render_template "get_offers/installs_redirect"
 
       get(:featured, @params.merge(:json => 1))
-      response.should render_template "get_offers/installs_json"
+      should render_template "get_offers/installs_json"
       response.content_type.should == "application/json"
     end
 
