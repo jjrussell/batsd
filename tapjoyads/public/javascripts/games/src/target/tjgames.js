@@ -1217,7 +1217,7 @@ TJG.ui = {
             t.push('</div>');
             if (v.WifiOnly) {
               t.push('<div class = "wifi_only">');
-                t.push('Wifi Only <div class="wifi_icon"></div>');
+                t.push('Wifi Required <div class="wifi_icon"></div>');
               t.push('</div>');
             }
           t.push('</div>');
