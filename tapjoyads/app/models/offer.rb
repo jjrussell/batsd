@@ -642,11 +642,9 @@ class Offer < ActiveRecord::Base
         "offer_id = '#{id}'",
         "clicked_at < '#{end_time.to_f}'",
         "clicked_at >= '#{start_time.to_f}'",
+        "installed_at is not null",
       ].join(' and ')
-      Click.select_all(:conditions => conditions) do |click|
-        clicks_rewarded += 1 if click.successfully_rewarded?
-      end
-      clicks_rewarded
+      Click.count(:where => conditions)
     end
   end
 
