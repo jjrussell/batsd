@@ -35,7 +35,7 @@ class Games::GamersController < GamesController
     else
       errors = @gamer.errors.reject{|error|error[0] == 'gamer_profile'}
       errors |= @gamer_profile.errors.to_a
-      render(:json => { :success => false, :error => errors })
+      render(:json => { :success => false, :error => errors }, :status => 403)
     end
   end
 
