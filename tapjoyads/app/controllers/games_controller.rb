@@ -1,13 +1,12 @@
 class GamesController < ApplicationController
   include Facebooker2::Rails::Controller
   include SslRequirement
-  include GamesHelper
 
   layout 'games'
 
   skip_before_filter :fix_params
 
-  helper_method :current_gamer, :current_device_id, :current_device_id_cookie, :current_device_info, :current_recommendations, :has_multiple_devices, :show_login_page, :device_type, :geoip_data, :os_version
+  helper_method :current_gamer, :current_device_id, :current_device_id_cookie, :current_device_info, :current_recommendations, :has_multiple_devices, :show_login_page, :device_type, :geoip_data, :os_version, :social_feature_redirect_path
 
   def current_gamer
     @current_gamer ||= current_gamer_session && current_gamer_session.record
@@ -160,6 +159,11 @@ class GamesController < ApplicationController
     end
 
     HeaderParser.device_type(request.user_agent) == 'android'
+  end
+
+  def social_feature_redirect_path
+    return request.env['HTTP_REFERER'] if request.env['HTTP_REFERER']
+    "#{WEBSITE_URL}#{edit_games_gamer_path}"
   end
 
 end
