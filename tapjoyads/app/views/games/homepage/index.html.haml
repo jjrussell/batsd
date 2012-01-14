@@ -3,7 +3,6 @@
   #home.current
     .page
       = render :partial => 'nav_bar', :locals => { :show_device => true, :active => 'my_apps' }
-      = raise current_gamer.email.inspect
       - if current_gamer.devices.empty?
         .content_wrapper
           .content
