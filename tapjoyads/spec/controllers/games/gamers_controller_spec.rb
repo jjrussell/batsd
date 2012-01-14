@@ -40,6 +40,17 @@ describe Games::GamersController do
 
       should_respond_with_json_error(403)
     end
+
+    it 'should reject when under date is invalid' do
+      @options[:date] = {
+        :year  => @date.year,
+        :month => 11,
+        :day   => 31,
+      }
+      post 'create', @options
+
+      should_respond_with_json_error(403)
+    end
   end
 
   describe 'Destroy' do
