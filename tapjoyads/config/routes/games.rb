@@ -34,6 +34,7 @@ ActionController::Routing::Routes.draw do |map|
     m.confirm 'confirm', :controller => 'games/confirmations', :action => :create
 
     m.resources :password_resets, :controller => 'games/password_resets', :as => 'password-reset', :only => [ :new, :create, :edit, :update ]
+    m.password_reset 'password-reset', :controller => 'games/password_resets', :action => :new
 
     m.resources :support_requests, :controller => 'games/support_requests', :only => [ :new, :create ]
 
