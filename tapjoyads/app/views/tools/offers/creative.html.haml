@@ -19,7 +19,7 @@
           - if creative[:offer].featured?
             %a.preview{:href => creative[:preview_url]} Preview (#{creative[:size]})
           - else
-            = image_tag(creative[:preview_url], :class => 'preview', :alt => creative[:size])
+            = image_tag(creative[:preview_url], :class => 'preview_img', :alt => creative[:size])
         %td.actions
           = link_to 'Approve', creative[:approval_url]
           |
@@ -27,7 +27,7 @@
 
 - content_for :page_styles do
   :plain
-    #creative_table img.preview {
+    #creative_table img.preview_img {
       width: 320px;
     }
     #creative_table a.disabled {
