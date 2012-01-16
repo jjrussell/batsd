@@ -160,8 +160,8 @@ sudo env ARCHFLAGS="-arch x86_64" gem install mysql -v 2.8.1 -- --with-mysql-con
 sudo gem install rcov -v 0.9.10
 sudo gem install -v 2.3.14 rails
 sudo gem install rdoc
-sudo rdoc-data --install
 sudo gem install rdoc-data
+sudo rdoc-data --install
 ```
 Then from within the tapjoyserver/tapjoyads directory:
 ```
