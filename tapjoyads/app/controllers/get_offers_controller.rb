@@ -21,7 +21,7 @@ class GetOffersController < ApplicationController
   def webpage
     if @currency.get_test_device_ids.include?(params[:udid])
       @test_offers = [ build_test_offer(@publisher_app) ]
-      @test_offers << build_test_video_offer(@publisher_app).primary_offer if params[:video_offer_ids].to_s.split(',').include? 'test_video'
+      @test_offers << build_test_video_offer(@publisher_app).primary_offer if params[:all_videos] || params[:video_offer_ids].to_s.split(',').include?('test_video')
     end
 
     set_geoip_data
@@ -86,6 +86,7 @@ private
 
   def setup
     @for_preview = (params[:action] == 'webpage' && params[:offer_id].present?)
+    @save_web_requests = !@for_preview && params[:no_log] != '1'
 
     required_params = [:app_id] + (@for_preview ? [:offer_id] : [:udid, :publisher_user_id])
     return unless verify_params(required_params)
@@ -115,7 +116,7 @@ private
     params[:source] = 'offerwall' if params[:source].blank?
     params[:exp] = nil if params[:type] == Offer::CLASSIC_OFFER_TYPE
 
-    unless @for_preview
+    if @save_web_requests
       wr_path = params[:source] == 'featured' ? 'featured_offer_requested' : 'offers'
       @web_request = WebRequest.new(:time => @now)
       @web_request.put_values(wr_path, params, get_ip_address, get_geoip_data, request.headers['User-Agent'])
@@ -157,15 +158,18 @@ private
     else
       @geoip_data = get_geoip_data
     end
-    @geoip_data[:country] = params[:country_code] if params[:country_code].present?
+
+    if @geoip_data[:country] != 'CN' && params[:country_code].present?
+      @geoip_data[:country] = params[:country_code]
+    end
   end
 
   def save_web_request
-    @web_request.save unless @for_preview
+    @web_request.save if @save_web_requests
   end
 
   def save_impressions
-    unless @for_preview
+    if @save_web_requests
       @offer_list.each_with_index do |offer, i|
         @web_request.replace_path('offerwall_impression')
         @web_request.offer_id = offer.id
