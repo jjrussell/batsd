@@ -180,6 +180,54 @@ describe Job::MasterReloadStatzController do
 
       response.body.should == 'ok'
     end
+
+    it 'should display 0 for cvr without percentage' do
+      stub_conversions
+
+      zero_keys = [
+        'rewards_opened',
+        'featured_offers_opened',
+        'display_clicks',
+        'paid_clicks',
+      ]
+      zero_hash = {}
+      zero_keys.each { |key| zero_hash[key] = [0] }
+
+      @mock_appstats.stubs(:stats).returns(stats_hash.merge(zero_hash))
+      stub_appstats
+
+      zero_keys = [
+        'offerwall_cvr',
+        'featured_cvr',
+        'display_cvr',
+        'cvr',
+      ]
+
+      get :partner_index
+
+      cached_stats = Mc.get('statz.partner.cached_stats.24_hours')
+      partner_stats = cached_stats[@partner.id]
+      zero_keys.each do |key|
+        partner_stats[key].should == 0
+      end
+    end
+
+    it 'should generate weekly and monthly timeframes' do
+      start_time = Time.zone.now - 7.days
+      end_time = Time.zone.now
+
+      stub_conversions(start_time, end_time)
+      stub_appstats(:daily)
+
+      start_time = Time.zone.now - 30.days
+      end_time = Time.zone.now
+
+      stub_conversions(start_time, end_time)
+      stub_appstats(:daily)
+
+      get :partner_daily
+      response.body.should == 'ok'
+    end
   end
 end
 
