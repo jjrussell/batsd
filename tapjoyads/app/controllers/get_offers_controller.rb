@@ -86,7 +86,7 @@ private
 
   def setup
     @for_preview = (params[:action] == 'webpage' && params[:offer_id].present?)
-    @save_web_requests = !@for_preview && params[:no_log] == '1'
+    @save_web_requests = !@for_preview && params[:no_log] != '1'
 
     required_params = [:app_id] + (@for_preview ? [:offer_id] : [:udid, :publisher_user_id])
     return unless verify_params(required_params)
