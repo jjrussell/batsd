@@ -389,6 +389,46 @@ def conversion_query(partner_type, start_time, end_time)
       "AND created_at < '#{end_time.to_s(:db)}'"
 end
 
+def stats_hash
+  return @hash if @hash
+  @hash = {}
+  stats_keys.each do |key|
+    @hash[key] = [100,200,300]
+  end
+  @hash
+end
+
+def stats_keys
+  @keys ||= Stats::CONVERSION_STATS + Stats::WEB_REQUEST_STATS +
+    [
+      'cvr',
+      'rewards',
+      'rewards_opened',
+      'rewards_revenue',
+      'rewards_ctr',
+      'rewards_cvr',
+      'offerwall_ecpm',
+      'featured_ctr',
+      'featured_cvr',
+      'featured_fill_rate',
+      'featured_ecpm',
+      'display_fill_rate',
+      'display_ctr', 'display_cvr',
+      'display_ecpm',
+      'non_display_revenue',
+      'total_revenue',
+      'daily_active_users'
+    ]
+end
+
+def conversion_query(partner_type, start_time, end_time)
+  insert = partner_type == 'publisher' ? ' ' : ''
+  "SELECT DISTINCT(#{partner_type}_partner_id) #{insert}" +
+    "FROM #{Conversion.quoted_table_name} " +
+    "WHERE created_at >= '#{start_time.to_s(:db)}' " +
+      "AND created_at < '#{end_time.to_s(:db)}'"
+end
+
 def currency(amount)
   NumberHelper.number_to_currency(amount / 100.0)
 end
