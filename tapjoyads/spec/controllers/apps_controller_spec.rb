@@ -6,38 +6,43 @@ describe AppsController do
     activate_authlogic
   end
 
-  describe "An admin user" do
-    before :each do
-      user = Factory(:admin)
-      @partner = Factory(:partner,
-        :pending_earnings => 10000,
-        :balance => 10000,
-        :users => [user]
-      )
-      Factory(:app, :partner => @partner)
-      Factory(:app, :partner => @partner)
-      login_as(user)
-    end
+  describe '#index' do
+    context 'with an admin user' do
+      before :each do
+        user = Factory(:admin)
+        @partner = Factory(:partner,
+          :pending_earnings => 10000,
+          :balance => 10000,
+          :users => [user]
+        )
+        Factory(:app, :partner => @partner)
+        Factory(:app, :partner => @partner)
+        login_as(user)
+      end
 
-    describe "accessing apps index" do
-      it "should be shown an app they own" do
+      it 'displays their own app' do
         get 'index'
         response.should be_redirect
         @partner.apps.should include(assigns(:app))
       end
     end
+  end
 
-    describe "accessing app show" do
-      it "should be shown last app visited" do
-        last_app = @partner.apps.last
-        get 'show', :id => last_app.id
-        last_app.should == assigns(:app)
-        last_app.id.should == session[:last_shown_app]
-        get 'index'
-        last_app.should == assigns(:app)
+  describe '#show' do
+    context 'with an admin user' do
+      before :each do
+        user = Factory(:admin)
+        @partner = Factory(:partner,
+          :pending_earnings => 10000,
+          :balance => 10000,
+          :users => [user]
+        )
+        Factory(:app, :partner => @partner)
+        Factory(:app, :partner => @partner)
+        login_as(user)
       end
 
-      it "should see someone else's app" do
+      it 'displays apps from another partner' do
         someone_else = Factory(:partner,
           :pending_earnings => 10000,
           :balance => 10000
@@ -45,6 +50,15 @@ describe AppsController do
         not_my_app = Factory(:app, :partner => someone_else)
         get 'show', :id => not_my_app.id
         response.should be_success
+      end
+
+      it "displays the last app visited" do
+        last_app = @partner.apps.last
+        get 'show', :id => last_app.id
+        last_app.should == assigns(:app)
+        last_app.id.should == session[:last_shown_app]
+        get 'index'
+        last_app.should == assigns(:app)
       end
     end
   end
