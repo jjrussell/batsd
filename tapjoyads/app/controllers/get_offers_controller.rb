@@ -86,6 +86,7 @@ private
 
   def setup
     @for_preview = (params[:action] == 'webpage' && params[:offer_id].present?)
+    @save_web_requests = !@for_preview && params[:no_log] == '1'
 
     required_params = [:app_id] + (@for_preview ? [:offer_id] : [:udid, :publisher_user_id])
     return unless verify_params(required_params)
@@ -115,7 +116,7 @@ private
     params[:source] = 'offerwall' if params[:source].blank?
     params[:exp] = nil if params[:type] == Offer::CLASSIC_OFFER_TYPE
 
-    unless @for_preview
+    if @save_web_requests
       wr_path = params[:source] == 'featured' ? 'featured_offer_requested' : 'offers'
       @web_request = WebRequest.new(:time => @now)
       @web_request.put_values(wr_path, params, get_ip_address, get_geoip_data, request.headers['User-Agent'])
@@ -164,11 +165,11 @@ private
   end
 
   def save_web_request
-    @web_request.save unless @for_preview
+    @web_request.save if @save_web_requests
   end
 
   def save_impressions
-    unless @for_preview
+    if @save_web_requests
       @offer_list.each_with_index do |offer, i|
         @web_request.replace_path('offerwall_impression')
         @web_request.offer_id = offer.id

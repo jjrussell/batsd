@@ -40,7 +40,7 @@ class GamesMarketingMailer < ActionMailer::Base
     device, gamer_device, external_publisher = ExternalPublisher.most_recently_run_for_gamer(gamer)
     if external_publisher
       currency = external_publisher.currencies.first
-      offerwall_url = external_publisher.get_offerwall_url(device, currency, device_info[:accept_language_str], device_info[:user_agent_str])
+      offerwall_url = external_publisher.get_offerwall_url(device, currency, device_info[:accept_language_str], device_info[:user_agent_str], nil, true)
 
       sess = Patron::Session.new
       response = sess.get(offerwall_url)
