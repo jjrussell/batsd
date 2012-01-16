@@ -63,7 +63,18 @@
           = @gamer.updated_at? ? @gamer.updated_at.to_s(:pub_full_ampm_sec_zone) : 'Never'
 
   %h4 Linked Devices
-
+  %table.tablesorter.devices
+    %thead
+      %tr
+        %th Name
+    %tbody
+      - @current_assignments.each do |assignment|
+        %tr
+          %td &nbsp;
+          %td{:class => (assignment.user_role.name == 'admin') ? 'disabled text' : 'text'}
+            = assignment.user_role.name.titleize
+            - if assignment.user_role.name == 'admin'
+              (not modifiable)
 
 - content_for :page_styles do
   :plain
