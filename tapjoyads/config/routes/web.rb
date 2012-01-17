@@ -1,7 +1,7 @@
 ActionController::Routing::Routes.draw do |map|
   map.resources :offer_instructions, :only => [ :index ]
   map.resources :support_requests, :only => [ :new, :create ]
-  map.resources :surveys, :only => [ :edit, :create ]
+  map.resources :tools_surveys, :only => [ :edit, :create ]
   map.resources :survey_results, :only => [ :new, :create ]
   map.resources :opt_outs, :only => :create
   map.connect 'privacy', :controller => 'documents', :action => 'privacy'

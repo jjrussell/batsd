@@ -1,6 +1,8 @@
 require 'spec/spec_helper'
 
-describe SurveyOffersController do
+describe Tools::SurveyOffersController do
+  integrate_views
+
   before :each do
     stub_offers
     flash.stubs(:sweep)

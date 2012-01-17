@@ -1,4 +1,4 @@
-class SurveyOffersController < WebsiteController
+class Tools::SurveyOffersController < WebsiteController
   layout 'tabbed'
 
   current_tab :tools
@@ -25,7 +25,7 @@ class SurveyOffersController < WebsiteController
     # accepts_attributes_for doesn't play nice with UuidPrimaryKey on creation
     if @survey_offer.save && @survey_offer.update_attributes(options)
       flash[:notice] = 'Survey offer created successfully'
-      redirect_to survey_offers_path
+      redirect_to tools_survey_offers_path
     else
       flash.now[:error] = 'Problems creating survey offer'
       @survey_offer.build_blank_questions
@@ -41,7 +41,7 @@ class SurveyOffersController < WebsiteController
     sanitize_currency_params(params[:survey_offer], [ :bid ])
     if @survey_offer.update_attributes(params[:survey_offer])
       flash[:notice] = 'Survey offer updated successfully'
-      redirect_to survey_offers_path
+      redirect_to tools_survey_offers_path
     else
       flash.now[:error] = 'Problems updating survey offer'
       render :action => :edit
@@ -51,7 +51,7 @@ class SurveyOffersController < WebsiteController
   def destroy
     @survey_offer.hide!
     flash[:notice] = 'Survey offer removed successfully'
-    redirect_to survey_offers_path
+    redirect_to tools_survey_offers_path
   end
 
   private

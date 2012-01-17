@@ -1,6 +1,6 @@
 %h1= @page_title
 
-- form_for(@survey_offer, nil, :html => { :class => 'tjform' }) do |f|
+- form_for( [ :tools, @survey_offer], :html => { :class => 'tjform' }) do |f|
   .field
     = f.label :name
     #help_name.help ?

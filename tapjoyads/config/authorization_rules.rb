@@ -113,6 +113,6 @@ authorization do
     has_permission_on :tools_jobs, :to => [ :index, :new, :create, :edit, :update, :destroy ]
     has_permission_on :tools_support_requests, :to => [ :index, :mass_resolve ]
     has_permission_on :tools_press_releases, :to => [ :index, :new, :create, :edit, :update ]
-    has_permission_on :survey_offers, :to => [ :index, :show, :new, :create, :edit, :update, :destroy ]
+    has_permission_on :tools_survey_offers, :to => [ :index, :show, :new, :create, :edit, :update, :destroy ]
   end
 end
