@@ -87,6 +87,8 @@ RegExp.escape = function(text) {
             $('form#new_gamer_session .login_error').empty();
           });
           $('form#new_gamer_session').submit(function(e){
+            TJG.utils.setCookie('cookies_enabled', 'test', 1);
+            var test_cookie = TJG.utils.getCookie('cookies_enabled');
             $(".formError").hide();
             var inputs, email, pass, values = {};
             var emailReg = /^([\w-\.+]+@([\w-]+\.)+[\w-]{2,4})?$/;
@@ -109,6 +111,15 @@ RegExp.escape = function(text) {
                 $(".login_error").html('Please enter your password');
                 $(".formError").show();
                 e.preventDefault();
+              }
+              else if (TJG.utils.isNull(test_cookie)) {
+                TJG.utils.centerDialog("#cookie_error");
+                $("#cookie_error").fadeIn();
+                TJG.repositionDialog = ["#cookie_error"];
+                e.preventDefault();
+              }
+              else {
+                TJG.utils.deleteCookie('cookies_enabled');
               }
             });
           });
