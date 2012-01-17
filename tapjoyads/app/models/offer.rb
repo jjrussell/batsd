@@ -666,27 +666,33 @@ class Offer < ActiveRecord::Base
   end
 
   def num_support_requests(start_time = 1.day.ago, end_time = Time.zone.now)
-    conditions = [
-      "offer_id = '#{id}'",
-      "`updated-at` < '#{end_time.to_f}'",
-      "`updated-at` >= '#{start_time.to_f}'",
-    ].join(' and ')
-    SupportRequest.count(:where => conditions)
+    Mc.get_and_put("offer.support_requests.#{id}", false, 1.hour) do
+      conditions = [
+        "offer_id = '#{id}'",
+        "`updated-at` < '#{end_time.to_f}'",
+        "`updated-at` >= '#{start_time.to_f}'",
+      ].join(' and ')
+      SupportRequest.count(:where => conditions)
+    end
   end
 
   def num_clicks_rewarded(start_time = 1.day.ago, end_time = Time.zone.now)
-    Mc.get_and_put("Offer.ClicksRewarded.#{id}", false, 15.minutes) do
+    Mc.get_and_put("offer.clicks_rewarded.#{id}", false, 1.hour) do
       clicks_rewarded = 0
       conditions = [
         "offer_id = '#{id}'",
         "clicked_at < '#{end_time.to_f}'",
         "clicked_at >= '#{start_time.to_f}'",
+        "installed_at is not null",
       ].join(' and ')
-      Click.select_all(:conditions => conditions) do |click|
-        clicks_rewarded += 1 if click.successfully_rewarded?
-      end
-      clicks_rewarded
+      Click.count(:where => conditions)
     end
+  end
+
+  def cached_support_requests_rewards
+    support_requests = Mc.get("offer.support_requests.#{id}")
+    rewards = Mc.get("offer.clicks_rewarded.#{id}")
+    [ support_requests, rewards ]
   end
 
 private

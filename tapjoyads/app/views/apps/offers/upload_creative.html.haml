@@ -58,7 +58,7 @@
       });
 
       function toggle_other_forms(disabled) {
-        var iframes = $(parent.document).find('iframe');
+        var iframes = $(parent.document).find('iframe.creative_upload');
         for(var i = 0; i<iframes.length; i++) {
           var iframe = $(iframes[i]);
           var upload_button = iframe.contents().find('#upload_button');

@@ -75,10 +75,10 @@ class OfferCacher
       if save_to_s3
         while bucket.objects["#{s3_key}.#{group}"].exists?
           bucket.objects["#{s3_key}.#{group}"].delete
-      	  Mc.distributed_delete("#{mc_key}.#{group}")
-      	  group += 1
-      	end
-  	  end
+          Mc.distributed_delete("#{mc_key}.#{group}")
+          group += 1
+        end
+      end
     end
 
     def get_offer_list(key)
