@@ -46,11 +46,17 @@
         %td
           - selected_option = @offer_event.change_daily_budget? ? (@offer_event.daily_budget == 0 ? 'Unlimited' : 'Limited') : 'Unchanged'
           = select_tag 'daily_budget_selector', options_for_select([ [ 'Unchanged', 'Unchanged' ], [ 'Unlimited', 'Unlimited' ], [ 'Limited', 'Limited' ] ], selected_option)
+      %tr
+        %th
+        %td
+          = f.label(:daily_budget, 'Installs:', { :class => selected_option == 'Limited' ? 'daily_budget' : 'hidden daily_budget' })
           = f.text_field :daily_budget, { :class => selected_option == 'Limited' ? 'daily_budget' : 'hidden daily_budget' }
+      %tr
+        %th
+        %td
+          = label_tag('estimated_budget', 'Daily Budget:', { :class => selected_option == 'Limited' ? 'daily_budget' : 'hidden daily_budget' } )
+          = text_field_tag('estimated_budget', '', { :class => selected_option == 'Limited' ? 'daily_budget' : 'hidden daily_budget', :size => 24 })
           = error_message_on @offer_event, :daily_budget
-          #estimated_budget.daily_budget{ :class => selected_option == 'Limited' ? '' : 'hidden' }
-            Estimated daily budget:
-            %span.value
 
   = f.submit 'Save Event' if @offer_event.editable?
 
@@ -88,7 +94,7 @@
           checkValidBudget();
           var installLimit = stringToNumber($('#offer_event_daily_budget').val(), true);
           var budget = numberToCurrency(currentPayment * installLimit / 100);
-          $('#estimated_budget .value').text(budget);
+          $('#estimated_budget').val(budget);
         }
       };
 
@@ -127,15 +133,28 @@
       $('#offer_event_daily_budget').change(function() {
         setEstimatedBudget();
       });
+      $('#estimated_budget').change(function() {
+          var budget = stringToNumber($(this).val(), true);
+          var installLimit = Math.floor(budget * 100 / currentPayment);
+          $(this).val(numberToCurrency(budget));
+          $('#offer_event_daily_budget').val(addCommaSeparators(installLimit));
+          if( installLimit <= 0 ) {
+            $('#offer_event_daily_budget').change();
+          }
+      });
 
       setEstimatedBudget();
     });
 
 - content_for :page_styles do
   :plain
-    #current, #estimated_budget {
+    #current {
       font-size: 12px;
     }
-    #current span, #estimated_budget span {
+    #current span {
       font-weight: bold;
+    }
+    label.estimated_budget {
+      width: 60px;
+      display: inline-block;
     }
