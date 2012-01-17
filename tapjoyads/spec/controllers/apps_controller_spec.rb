@@ -20,7 +20,27 @@ describe AppsController do
         login_as(user)
       end
 
-      it 'displays their own app' do
+      it 'shows an app they own' do
+        get 'index'
+        response.should be_redirect
+        @partner.apps.should include(assigns(:app))
+      end
+    end
+
+    context 'with a user with apps' do
+      before :each do
+        user = Factory(:user)
+        @partner = Factory(:partner,
+          :pending_earnings => 10000,
+          :balance => 10000,
+          :users => [user]
+        )
+        Factory(:app, :partner => @partner)
+        Factory(:app, :partner => @partner)
+        login_as(user)
+      end
+
+      it 'shows an app they own' do
         get 'index'
         response.should be_redirect
         @partner.apps.should include(assigns(:app))
@@ -42,7 +62,7 @@ describe AppsController do
         login_as(user)
       end
 
-      it 'displays apps from another partner' do
+      it 'shows apps from another partner' do
         someone_else = Factory(:partner,
           :pending_earnings => 10000,
           :balance => 10000
@@ -52,7 +72,7 @@ describe AppsController do
         response.should be_success
       end
 
-      it "displays the last app visited" do
+      it "shows the last app visited" do
         last_app = @partner.apps.last
         get 'show', :id => last_app.id
         last_app.should == assigns(:app)
@@ -61,31 +81,21 @@ describe AppsController do
         last_app.should == assigns(:app)
       end
     end
-  end
 
-  describe "A User with apps" do
-    before :each do
-      user = Factory(:user)
-      @partner = Factory(:partner,
-        :pending_earnings => 10000,
-        :balance => 10000,
-        :users => [user]
-      )
-      Factory(:app, :partner => @partner)
-      Factory(:app, :partner => @partner)
-      login_as(user)
-    end
-
-    describe "accessing apps index" do
-      it "should be shown an app they own" do
-        get 'index'
-        response.should be_redirect
-        @partner.apps.should include(assigns(:app))
+    context 'with a user with apps' do
+      before :each do
+        user = Factory(:user)
+        @partner = Factory(:partner,
+          :pending_earnings => 10000,
+          :balance => 10000,
+          :users => [user]
+        )
+        Factory(:app, :partner => @partner)
+        Factory(:app, :partner => @partner)
+        login_as(user)
       end
-    end
 
-    describe "accessing app show" do
-      it "should be shown last app visited" do
+      it 'shows the last app visited' do
         last_app = @partner.apps.last
         get 'show', :id => last_app.id
         last_app.should == assigns(:app)
@@ -94,7 +104,7 @@ describe AppsController do
         last_app.should == assigns(:app)
       end
 
-      it "should not see someone else's app" do
+      it 'does not show apps from another publisher' do
         someone_else = Factory(:partner,
           :pending_earnings => 10000,
           :balance => 10000
