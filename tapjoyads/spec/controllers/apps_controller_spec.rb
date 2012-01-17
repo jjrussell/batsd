@@ -4,20 +4,21 @@ describe AppsController do
   before :each do
     fake_the_web
     activate_authlogic
+    @user = Factory(:user)
+    @partner = Factory(:partner,
+      :pending_earnings => 10000,
+      :balance => 10000,
+      :users => [@user]
+    )
+    Factory(:app, :partner => @partner)
+    Factory(:app, :partner => @partner)
+    login_as(@user)
   end
 
   describe '#index' do
     context 'with an admin user' do
       before :each do
-        user = Factory(:admin)
-        @partner = Factory(:partner,
-          :pending_earnings => 10000,
-          :balance => 10000,
-          :users => [user]
-        )
-        Factory(:app, :partner => @partner)
-        Factory(:app, :partner => @partner)
-        login_as(user)
+        @user.user_roles << UserRole.find_or_create_by_name('admin')
       end
 
       it 'shows an app they own' do
@@ -28,18 +29,6 @@ describe AppsController do
     end
 
     context 'with a user with apps' do
-      before :each do
-        user = Factory(:user)
-        @partner = Factory(:partner,
-          :pending_earnings => 10000,
-          :balance => 10000,
-          :users => [user]
-        )
-        Factory(:app, :partner => @partner)
-        Factory(:app, :partner => @partner)
-        login_as(user)
-      end
-
       it 'shows an app they own' do
         get('index')
         response.should be_redirect
@@ -49,13 +38,7 @@ describe AppsController do
 
     context 'with a user without apps' do
       before :each do
-        user = Factory(:admin)
-        @partner = Factory(:partner,
-          :pending_earnings => 10000,
-          :balance => 10000,
-          :users => [user]
-        )
-        login_as(user)
+        @partner.apps.delete_all
       end
 
       it 'redirects to app creation page' do
@@ -68,15 +51,7 @@ describe AppsController do
   describe '#show' do
     context 'with an admin user' do
       before :each do
-        user = Factory(:admin)
-        @partner = Factory(:partner,
-          :pending_earnings => 10000,
-          :balance => 10000,
-          :users => [user]
-        )
-        Factory(:app, :partner => @partner)
-        Factory(:app, :partner => @partner)
-        login_as(user)
+        @user.user_roles << UserRole.find_or_create_by_name('admin')
       end
 
       it 'shows apps from another partner' do
@@ -100,18 +75,6 @@ describe AppsController do
     end
 
     context 'with a user with apps' do
-      before :each do
-        user = Factory(:user)
-        @partner = Factory(:partner,
-          :pending_earnings => 10000,
-          :balance => 10000,
-          :users => [user]
-        )
-        Factory(:app, :partner => @partner)
-        Factory(:app, :partner => @partner)
-        login_as(user)
-      end
-
       it 'shows the last app visited' do
         last_app = @partner.apps.last
         get('show', :id => last_app.id)
@@ -135,13 +98,7 @@ describe AppsController do
 
     context 'with a user without apps' do
       before :each do
-        user = Factory(:admin)
-        @partner = Factory(:partner,
-          :pending_earnings => 10000,
-          :balance => 10000,
-          :users => [user]
-        )
-        login_as(user)
+        @partner.apps.delete_all
       end
 
       it 'redirects to app creation page' do
