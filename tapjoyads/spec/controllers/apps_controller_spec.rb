@@ -46,6 +46,23 @@ describe AppsController do
         @partner.apps.should include(assigns(:app))
       end
     end
+
+    context 'with a user without apps' do
+      before :each do
+        user = Factory(:admin)
+        @partner = Factory(:partner,
+          :pending_earnings => 10000,
+          :balance => 10000,
+          :users => [user]
+        )
+        login_as(user)
+      end
+
+      it 'redirects to app creation page' do
+        get 'index'
+        response.should redirect_to(new_app_path)
+      end
+    end
   end
 
   describe '#show' do
@@ -72,7 +89,7 @@ describe AppsController do
         response.should be_success
       end
 
-      it "shows the last app visited" do
+      it 'shows the last app visited' do
         last_app = @partner.apps.last
         get 'show', :id => last_app.id
         last_app.should == assigns(:app)
@@ -115,28 +132,19 @@ describe AppsController do
         }.should raise_error(ActiveRecord::RecordNotFound)
       end
     end
-  end
 
-  describe "Users without apps" do
-    before :each do
-      user = Factory(:admin)
-      @partner = Factory(:partner,
-        :pending_earnings => 10000,
-        :balance => 10000,
-        :users => [user]
-      )
-      login_as(user)
-    end
-
-    describe "accessing apps index" do
-      it "should redirect to app creation page" do
-        get 'index'
-        response.should redirect_to(new_app_path)
+    context 'with a user without apps' do
+      before :each do
+        user = Factory(:admin)
+        @partner = Factory(:partner,
+          :pending_earnings => 10000,
+          :balance => 10000,
+          :users => [user]
+        )
+        login_as(user)
       end
-    end
 
-    describe "accessing app show" do
-      it "should redirect to app creation page" do
+      it 'redirects to app creation page' do
         someone_else = Factory(:partner,
           :pending_earnings => 10000,
           :balance => 10000
