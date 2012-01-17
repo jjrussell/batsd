@@ -23,8 +23,8 @@ class OfferTest < ActiveSupport::TestCase
         @offer.banner_creative_480x320_blob = "image_data"
         @offer.banner_creative_320x480_blob = "image_data"
 
-        @offer.expects(:upload_banner_creative!).with("image_data", "480x320", "jpeg").returns(nil)
-        @offer.expects(:upload_banner_creative!).with("image_data", "320x480", "jpeg").returns(nil)
+        @offer.expects(:upload_banner_creative!).with("image_data", "480x320").returns(nil)
+        @offer.expects(:upload_banner_creative!).with("image_data", "320x480").returns(nil)
 
         @offer.save!
       end
@@ -40,8 +40,8 @@ class OfferTest < ActiveSupport::TestCase
         clone = @offer.clone
         clone.bid = clone.min_bid
 
-        clone.expects(:upload_banner_creative!).with("image_data", "480x320", "jpeg").returns(nil)
-        clone.expects(:upload_banner_creative!).with("image_data", "320x480", "jpeg").returns(nil)
+        clone.expects(:upload_banner_creative!).with("image_data", "480x320").returns(nil)
+        clone.expects(:upload_banner_creative!).with("image_data", "320x480").returns(nil)
 
         clone.save!
       end
