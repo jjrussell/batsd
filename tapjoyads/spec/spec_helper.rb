@@ -49,6 +49,7 @@ Spork.prefork do
     mock_result.stubs(:answers=)
     mock_result.stubs(:save)
     SurveyResult.stubs(:new).returns(mock_result)
+  end
 
   def should_respond_with_json_error(code)
     should respond_with(code)
