@@ -33,7 +33,7 @@
         channel:   'FB',
         pageSize:  #{@page_size},
         fbFriends: #{@fb_friends.to_json},
-        inviteUrl: #{edit_games_gamer_path.to_json},
+        inviteUrl: '#{social_feature_redirect_path}',
         advertiserAppId: #{params[:advertiser_app_id].to_json},
       };
       TJG.social.setup(options);

@@ -10,7 +10,7 @@ describe SurveyOffer do
   it { should validate_presence_of :name }
 
   before :each do
-    #require 'fake_aws'
+    fake_aws
 
     @partner = Factory(:partner, :id => TAPJOY_PARTNER_ID)
     @survey_offer = Factory(:survey_offer)

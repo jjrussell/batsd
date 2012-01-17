@@ -2,17 +2,7 @@ require 'spec/spec_helper'
 
 describe FullscreenAdController do
   integrate_views
-
-  # Rails uses a tag parser which is more strict than necessary. Silence
-  # the warnings here.
-  before :each do
-    @verbosity = $-v
-    $-v = nil
-  end
-
-  after :each do
-    $-v = @verbosity
-  end
+  ignore_html_warning
 
   describe "Index" do
     before :each do
