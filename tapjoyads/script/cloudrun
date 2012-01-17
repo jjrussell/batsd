@@ -1,6 +1,7 @@
 #!/usr/bin/env ruby
 
 require 'lib/ec2_tasks'
+require 'resolv'
 
 unless ARGV[0] && ARGV[1]
   puts "usage: cloudrun <server_group [server_group ...]> <command> [<user>]"
@@ -27,17 +28,14 @@ end
 f = open(File.expand_path('~/.ssh/known_hosts'), 'r')
 file_content = ''
 f.each do |line|
-  file_content += line
+  file_content += line.split[0]
 end
 f = open(File.expand_path('~/.ssh/known_hosts'), 'a')
 server_list.each do |server|
   unless file_content.include?(server[:dns_name])
+    ip = Resolv.getaddress(server[:dns_name])
     puts "Adding #{server[:dns_name]} to known_hosts"
-    f.puts "#{server[:dns_name]} ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAvR002E1erByLHXDqGG+2dcDSmkUdRHBPi+" +
-           "WgbD9/jgrbXPTL6+Sk1ThvfE/EfmZ5jheX/Tbqb5cHJK9ezLQdJOkNe6aa6Ki+Av26iVqS4gYeIAS2Jb1ywevg6tL71" +
-           "ls8WbeJotTsXWrWqY1A+7JQSmLwMnoUYer9MRHfWBQbDf4ATs4PLlLIWYkZHEpXBjuy55ILyKGgCdykDa01nRBo+bfL" +
-           "Xc2OwMSxkgOY+O8zPHHrfv9hgerAhC4t3QB08LQ46pOhkhr1X8gydMWcWzDFe/t5P0IvKnCEB2F1somIBtxMymsmcmc" +
-           "sfS6mK0LZGgdULjCcbnOrT2IyVKZQuZ9ssw=="
+    f.puts "#{server[:dns_name]},#{ip} ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAvR002E1erByLHXDqGG+2dcDSmkUdRHBPi+WgbD9/jgrbXPTL6+Sk1ThvfE/EfmZ5jheX/Tbqb5cHJK9ezLQdJOkNe6aa6Ki+Av26iVqS4gYeIAS2Jb1ywevg6tL71ls8WbeJotTsXWrWqY1A+7JQSmLwMnoUYer9MRHfWBQbDf4ATs4PLlLIWYkZHEpXBjuy55ILyKGgCdykDa01nRBo+bfLXc2OwMSxkgOY+O8zPHHrfv9hgerAhC4t3QB08LQ46pOhkhr1X8gydMWcWzDFe/t5P0IvKnCEB2F1somIBtxMymsmcmcsfS6mK0LZGgdULjCcbnOrT2IyVKZQuZ9ssw=="
   end
 end
 f.close

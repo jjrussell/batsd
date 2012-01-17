@@ -21,11 +21,15 @@
             #percentile-info.percentile-details
               This bid will make your offer more prioritized than
               %span#percentile= "#{@offer.percentile}%" rescue 'N/A'
-              of featured offers.
+              of
+              = @offer.rewarded? ? 'rewarded' : 'non-rewarded'
+              featured offers.
             #percentile-info-loading.percentile-details{ :style => 'display: none' }
               Estimating new featured placement...
             .percentile-details
-              The bid is just one of many factors affecting your featured offer ranking.
+              The bid is just one of many factors affecting your
+              = @offer.rewarded? ? 'rewarded' : 'non-rewarded'
+              featured offer ranking.
           - elsif !@offer.rewarded?
             #percentile-info.percentile-details
               This bid will make your offer more prioritized than
@@ -139,12 +143,12 @@
       %tr
         %td{ :colspan => 2 }= f.submit 'Update', {:disabled => 'disabled', :id => 'offer_submit_button'}
 
-- if permitted_to?(:edit, :statz) && (!@offer.rewarded? || @offer.featured?)
+- if !@offer.rewarded? || @offer.featured?
   %br
-  Upload custom creatives:
+  Upload custom creatives <small style='color:red'>(red labels are pending approval)</small>:
   %br
   - @custom_creative_sizes.each do |size_hash|
-    %iframe.creative_upload{:src => upload_creative_app_offer_path(:id => @offer.id, :app => @app.id, :image_size => size_hash[:image_size], :label => "#{size_hash[:label_image_size]} creative")}
+    %iframe.creative_upload{:src => upload_creative_app_offer_path(:id => @offer.id, :app => @app.id, :image_size => size_hash[:image_size], :label => size_hash[:label_image_size]), :frameborder => 0}
 
 - if !@offer.tapjoy_enabled? && @enable_request.new_record?
   - form_for(@enable_request, :html => { :class => 'tjform' }) do |f|

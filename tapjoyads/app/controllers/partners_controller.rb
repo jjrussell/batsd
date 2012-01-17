@@ -67,6 +67,9 @@ class PartnersController < WebsiteController
   def edit
   end
 
+  def show
+  end
+
   def update
     log_activity(@partner)
 

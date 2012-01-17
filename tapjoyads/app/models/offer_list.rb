@@ -57,6 +57,13 @@ class OfferList
       end.value
     end
 
+    #append NON_REWARDED_DISPLAY_OFFER_TYPE for non rewarded offerwall
+    if @type == Offer::DEFAULT_OFFER_TYPE && @currency && @currency.conversion_rate == 0
+      @offers += RailsCache.get_and_put("offers.#{Offer::NON_REWARDED_DISPLAY_OFFER_TYPE}.#{@platform_name}.#{@hide_rewarded_app_installs}.#{@normalized_device_type}") do
+        OfferCacher.get_unsorted_offers_prerejected(Offer::NON_REWARDED_DISPLAY_OFFER_TYPE, @platform_name, @hide_rewarded_app_installs, @normalized_device_type)
+      end.value
+    end
+
     if @currency
       @offers.each do |o|
         o.postcache_rank_score(@currency)

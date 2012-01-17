@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20111228221004) do
+ActiveRecord::Schema.define(:version => 20120106214457) do
 
   create_table "action_offers", :id => false, :force => true do |t|
     t.string   "id",                    :limit => 36,                    :null => false
@@ -143,6 +143,12 @@ ActiveRecord::Schema.define(:version => 20111228221004) do
   add_index "conversions", ["id", "created_at"], :name => "index_conversions_on_id_and_created_at", :unique => true
   add_index "conversions", ["publisher_app_id", "created_at", "reward_type"], :name => "index_on_publisher_app_id_created_at_and_reward_type"
   add_index "conversions", ["publisher_partner_id", "created_at"], :name => "index_conversions_on_publisher_partner_id_and_created_at"
+
+  create_table "creative_approval_queue", :force => true do |t|
+    t.string  "offer_id", :limit => 36, :null => false
+    t.string  "user_id",  :limit => 36
+    t.text    "size"
+  end
 
   create_table "currencies", :id => false, :force => true do |t|
     t.string   "id",                                         :limit => 36,                                                  :null => false
@@ -615,6 +621,7 @@ ActiveRecord::Schema.define(:version => 20111228221004) do
     t.boolean  "tj_games_only",                                                                 :default => false, :null => false
     t.boolean  "wifi_only",                                                                     :default => false, :null => false
     t.text     "approved_banner_creatives"
+    t.text     "approved_sources",                                                                                 :null => false
   end
 
   add_index "offers", ["id"], :name => "index_offers_on_id", :unique => true
