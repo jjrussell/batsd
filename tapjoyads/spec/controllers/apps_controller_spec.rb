@@ -21,18 +21,40 @@ describe AppsController do
         @user.user_roles << UserRole.find_or_create_by_name('admin')
       end
 
-      it 'shows an app they own' do
+      it 'redirects to show an app they own' do
         get('index')
         response.should be_redirect
+      end
+
+      it 'assigns an arbitrary app they own' do
+        get('index')
         @partner.apps.should include(assigns(:app))
+      end
+
+      it 'assigns the last app visited' do
+        last_app = @partner.apps.last
+        get('show', :id => last_app.id)
+        get('index')
+        last_app.should == assigns(:app)
       end
     end
 
     context 'with a user with apps' do
-      it 'shows an app they own' do
+      it 'redirects to show an app they own' do
         get('index')
         response.should be_redirect
+      end
+
+      it 'assigns an arbitrary app' do
+        get('index')
         @partner.apps.should include(assigns(:app))
+      end
+
+      it 'assigns the last app visited' do
+        last_app = @partner.apps.last
+        get('show', :id => last_app.id)
+        get('index')
+        last_app.should == assigns(:app)
       end
     end
 
@@ -64,24 +86,30 @@ describe AppsController do
         response.should be_success
       end
 
-      it 'shows the last app visited' do
+      it 'assigns the last app visited' do
         last_app = @partner.apps.last
         get('show', :id => last_app.id)
         last_app.should == assigns(:app)
+      end
+
+      it 'saves the id of the last app visited in the session' do
+        last_app = @partner.apps.last
+        get('show', :id => last_app.id)
         last_app.id.should == session[:last_shown_app]
-        get('index')
-        last_app.should == assigns(:app)
       end
     end
 
     context 'with a user with apps' do
-      it 'shows the last app visited' do
+      it 'assigns the last app visited' do
         last_app = @partner.apps.last
         get('show', :id => last_app.id)
         last_app.should == assigns(:app)
+      end
+
+      it 'saves the id of the last app visited in the session' do
+        last_app = @partner.apps.last
+        get('show', :id => last_app.id)
         last_app.id.should == session[:last_shown_app]
-        get('index')
-        last_app.should == assigns(:app)
       end
 
       it 'does not show apps from another publisher' do
