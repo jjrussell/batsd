@@ -788,16 +788,18 @@ class Offer < ActiveRecord::Base
       raise "Unable to delete or update more than one banner creative at a time"
     end
 
-    errors_size = errors.size
+    error_added = false
     new_creatives.each do |new_size|
       unless creative_blobs.has_key?(new_size)
-        self.errors.add("custom_creative_#{new_size}_blob".to_sym, "#{new_size} custom creative file not provided.") and next
+        self.errors.add("custom_creative_#{new_size}_blob".to_sym, "#{new_size} custom creative file not provided.")
+        error_added = true
+        next
       end
       blob = creative_blobs[new_size]
       # upload to S3
       upload_banner_creative!(blob, new_size)
     end
-    raise BannerSyncError.new("multiple new file upload errors") if errors.size > errors_size
+    raise BannerSyncError.new("multiple new file upload errors") if error_added
 
     removed_creatives.each do |removed_size|
       # delete from S3
