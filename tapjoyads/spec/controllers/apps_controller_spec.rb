@@ -21,7 +21,7 @@ describe AppsController do
       end
 
       it 'shows an app they own' do
-        get 'index'
+        get('index')
         response.should be_redirect
         @partner.apps.should include(assigns(:app))
       end
@@ -41,7 +41,7 @@ describe AppsController do
       end
 
       it 'shows an app they own' do
-        get 'index'
+        get('index')
         response.should be_redirect
         @partner.apps.should include(assigns(:app))
       end
@@ -59,7 +59,7 @@ describe AppsController do
       end
 
       it 'redirects to app creation page' do
-        get 'index'
+        get('index')
         response.should redirect_to(new_app_path)
       end
     end
@@ -85,16 +85,16 @@ describe AppsController do
           :balance => 10000
         )
         not_my_app = Factory(:app, :partner => someone_else)
-        get 'show', :id => not_my_app.id
+        get('show', :id => not_my_app.id)
         response.should be_success
       end
 
       it 'shows the last app visited' do
         last_app = @partner.apps.last
-        get 'show', :id => last_app.id
+        get('show', :id => last_app.id)
         last_app.should == assigns(:app)
         last_app.id.should == session[:last_shown_app]
-        get 'index'
+        get('index')
         last_app.should == assigns(:app)
       end
     end
@@ -114,10 +114,10 @@ describe AppsController do
 
       it 'shows the last app visited' do
         last_app = @partner.apps.last
-        get 'show', :id => last_app.id
+        get('show', :id => last_app.id)
         last_app.should == assigns(:app)
         last_app.id.should == session[:last_shown_app]
-        get 'index'
+        get('index')
         last_app.should == assigns(:app)
       end
 
@@ -127,9 +127,9 @@ describe AppsController do
           :balance => 10000
         )
         not_my_app = Factory(:app, :partner => someone_else)
-        lambda {
-          get 'show', :id => not_my_app.id
-        }.should raise_error(ActiveRecord::RecordNotFound)
+        expect {
+          get('show', :id => not_my_app.id)
+        }.to raise_error(ActiveRecord::RecordNotFound)
       end
     end
 
@@ -150,7 +150,7 @@ describe AppsController do
           :balance => 10000
         )
         not_my_app = Factory(:app, :partner => someone_else)
-        get 'show', :id => not_my_app.id
+        get('show', :id => not_my_app.id)
         response.should redirect_to(new_app_path)
       end
     end
