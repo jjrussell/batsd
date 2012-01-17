@@ -35,6 +35,7 @@ class Offer < ActiveRecord::Base
 
   DISPLAY_AD_SIZES = ['320x50', '640x100', '768x90'] # data stored as pngs
   FEATURED_AD_SIZES = ['960x640', '640x960', '480x320', '320x480'] # data stored as jpegs
+  CUSTOM_AD_SIZES = DISPLAY_AD_SIZES + FEATURED_AD_SIZES
 
   OFFER_LIST_REQUIRED_COLUMNS = [ 'id', 'item_id', 'item_type', 'partner_id',
                                   'name', 'url', 'price', 'bid', 'payment',
@@ -66,10 +67,7 @@ class Offer < ActiveRecord::Base
   serialize :banner_creatives, Array
   serialize :approved_banner_creatives, Array
 
-  DISPLAY_AD_SIZES.each do |size|
-    attr_accessor "banner_creative_#{size}_blob".to_sym
-  end
-  FEATURED_AD_SIZES.each do |size|
+  CUSTOM_AD_SIZES.each do |size|
     attr_accessor "banner_creative_#{size}_blob".to_sym
   end
 
@@ -154,6 +152,7 @@ class Offer < ActiveRecord::Base
   after_save :update_pending_enable_requests
   after_save :update_tapjoy_sponsored_associated_offers
   after_save :sync_banner_creatives! # NOTE: this should always be the last thing run by the after_save callback chain
+  before_cache :clear_creative_blobs
 
   named_scope :enabled_offers, :joins => :partner,
     :readonly => false, :conditions => "tapjoy_enabled = true AND user_enabled = true AND item_type != 'RatingOffer' AND ((payment > 0 AND #{Partner.quoted_table_name}.balance > payment) OR (payment = 0 AND reward_value > 0))"
@@ -634,7 +633,7 @@ class Offer < ActiveRecord::Base
     item_type != 'VideoOffer'
   end
 
-private
+  private
 
   def sync_banner_creatives!
     # How this should work...
@@ -658,13 +657,10 @@ private
     creative_blobs = {}
 
     custom_creative_sizes = []
-    format = ''
     if !rewarded? && !featured?
       custom_creative_sizes = Offer::DISPLAY_AD_SIZES
-      format = 'png'
     elsif featured?
       custom_creative_sizes = Offer::FEATURED_AD_SIZES
-      format = 'jpeg'
     end
     custom_creative_sizes.each do |size|
       image_data = (send("banner_creative_#{size}_blob") rescue nil)
@@ -690,24 +686,26 @@ private
       end
       blob = creative_blobs[new_size]
       # upload to S3
-      upload_banner_creative!(blob, new_size, format)
+      upload_banner_creative!(blob, new_size)
     end
     raise BannerSyncError.new("multiple new file upload errors") if errors.size > errors_size
 
     removed_creatives.each do |removed_size|
       # delete from S3
-      delete_banner_creative!(removed_size, format)
+      delete_banner_creative!(removed_size)
     end
 
     changed_creatives.each do |changed_size|
       blob = creative_blobs[changed_size]
       # upload file to S3
-      upload_banner_creative!(blob, changed_size, format)
+      upload_banner_creative!(blob, changed_size)
     end
+  end
 
-    # 'acts_as_cacheable' caches entire object, including all attributes, so... let's clear the blobs
-    creative_blobs.values.each do |blob|
-      blob.replace("")
+  def clear_creative_blobs
+    CUSTOM_AD_SIZES.each do |size|
+      blob = send("banner_creative_#{size}_blob")
+      blob.replace("") if blob
     end
   end
 
