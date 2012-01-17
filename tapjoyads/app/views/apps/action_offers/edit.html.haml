@@ -237,9 +237,8 @@
 
       $('#estimated_budget').change(function() {
         var budget = stringToNumber($(this).val(), true);
-        var currentBid = $('#action_offer_primary_offer_attributes_bid').val();
-        var currentBidValue = stringToNumber(currentBid, true);
-        var installLimit = Math.floor(budget / currentBidValue);
+        var currentPayment = stringToNumber($('#action_offer_primary_offer_attributes_payment').val(), true);
+        var installLimit = Math.floor(budget / currentPayment);
         $(this).val(numberToCurrency(budget));
         $('#action_offer_primary_offer_attributes_daily_budget').val(addCommaSeparators(installLimit));
         if( installLimit <= 0 ) {

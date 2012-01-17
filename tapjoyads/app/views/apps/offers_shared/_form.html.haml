@@ -222,9 +222,9 @@
 
       var setEstimatedBudget = function() {
         checkValidBudget();
-        var bid = stringToNumber($('#offer_payment').val());
+        var payment = stringToNumber($('#offer_payment').val());
         var installLimit = stringToNumber($('#offer_daily_budget').val(), true);
-        var budget = numberToCurrency(bid * installLimit);
+        var budget = numberToCurrency(payment * installLimit);
         $('#estimated_budget').val(budget);
       };
 
@@ -348,9 +348,8 @@
       });
       $('#estimated_budget').change(function() { 
           var budget = stringToNumber($(this).val(), true);
-          var currentBid = $('#offer_bid').val();
-          var currentBidValue = stringToNumber(currentBid, true);
-          var installLimit = Math.floor(budget / currentBidValue);
+          var currentPayment = stringToNumber($('#offer_payment').val(), true);
+          var installLimit = Math.floor(budget / currentPayment);
           $(this).val(numberToCurrency(budget));
           $('#offer_daily_budget').val(addCommaSeparators(installLimit));
           if( installLimit <= 0 ) {
