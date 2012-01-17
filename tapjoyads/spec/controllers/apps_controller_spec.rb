@@ -8,11 +8,11 @@ describe AppsController do
 
   describe "An admin user" do
     before :each do
-      @user = Factory(:admin)
-      @partner = Factory(:partner, :pending_earnings => 10000, :balance => 10000, :users => [@user])
+      user = Factory(:admin)
+      @partner = Factory(:partner, :pending_earnings => 10000, :balance => 10000, :users => [user])
       Factory(:app, :partner => @partner)
       Factory(:app, :partner => @partner)
-      login_as(@user)
+      login_as(user)
     end
 
     describe "accessing apps index" do
@@ -44,11 +44,11 @@ describe AppsController do
 
   describe "A User with apps" do
     before :each do
-      @user = Factory(:user)
-      @partner = Factory(:partner, :pending_earnings => 10000, :balance => 10000, :users => [@user])
+      user = Factory(:user)
+      @partner = Factory(:partner, :pending_earnings => 10000, :balance => 10000, :users => [user])
       Factory(:app, :partner => @partner)
       Factory(:app, :partner => @partner)
-      login_as(@user)
+      login_as(user)
     end
 
     describe "accessing apps index" do
@@ -81,9 +81,9 @@ describe AppsController do
 
   describe "Users without apps" do
     before :each do
-      @user = Factory(:admin)
-      @partner = Factory(:partner, :pending_earnings => 10000, :balance => 10000, :users => [@user])
-      login_as(@user)
+      user = Factory(:admin)
+      @partner = Factory(:partner, :pending_earnings => 10000, :balance => 10000, :users => [user])
+      login_as(user)
     end
 
     describe "accessing apps index" do
