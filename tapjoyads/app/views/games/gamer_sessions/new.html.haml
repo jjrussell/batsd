@@ -5,7 +5,7 @@
       .nav
         .nav_container.clearfix
           - timestamp = Time.zone.now
-          - start_time = Time.zone.parse('2011-01-18 13:00')
+          - start_time = Time.zone.parse('2011-01-19 13:00')
           - end_time = Time.zone.parse('2012-01-19 01:00')
           - if start_time < timestamp && timestamp < end_time
             - link_to('https://www.google.com/landing/takeaction/', :class => "slideright", :title => "Stop SOPA.") do
