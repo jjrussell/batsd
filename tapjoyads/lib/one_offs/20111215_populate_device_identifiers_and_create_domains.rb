@@ -1,7 +1,7 @@
 class OneOffs
 
   def self.create_device_identifiers_queue
-    Sqs.create_queue("CreateDeviceIdentifiers", 5)
+    Sqs.create_queue("CreateDeviceIdentifiers", 30)
   end
 
   def self.create_device_identifier_domains
