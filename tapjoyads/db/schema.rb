@@ -118,11 +118,6 @@ ActiveRecord::Schema.define(:version => 20120106214457) do
   add_index "apps", ["name"], :name => "index_apps_on_name"
   add_index "apps", ["partner_id"], :name => "index_apps_on_partner_id"
 
-  add_index "carriers", ["brand"], :name => "index_carriers_on_brand"
-  add_index "carriers", ["country"], :name => "index_carriers_on_country"
-  add_index "carriers", ["id"], :name => "index_carriers_on_id", :unique => true
-  add_index "carriers", ["operator"], :name => "index_carriers_on_operator"
-
   create_table "conversions", :id => false, :force => true do |t|
     t.string   "id",                     :limit => 36, :null => false
     t.string   "reward_id",              :limit => 36
