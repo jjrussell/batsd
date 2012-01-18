@@ -55,6 +55,11 @@ module StatzHelper
           ["$0.00", "zero_gross_revenue"],
           [">$0", "nonzero_gross_revenue"],
         ]
+      when :arpdau
+        [
+          ["$0.0000", "zero_arpdau"],
+          [">$0", "nonzero_arpdau"],
+        ]
       when :publisher_revenue
         [
           ["$0.00", "zero_publisher_revenue"],

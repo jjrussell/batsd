@@ -7,7 +7,7 @@ class Tools::PartnerProgramStatzController < WebsiteController
   before_filter :setup, :only => [ :index, :export ]
 
   def index
-    @partner_program_metadata, @partner_program_stats, @partner_revenue_stats, @partner_names = get_stats(@start_time, @end_time)
+    @partner_program_metadata, @partner_program_stats, @partner_revenue_stats, @partner_names, @arpdau_data = get_stats(@start_time, @end_time)
   end
 
   def export
@@ -49,7 +49,17 @@ class Tools::PartnerProgramStatzController < WebsiteController
     partner_revenue_stats = {}
     partner_names = {}
     partner_program_metadata = {}
+    arpdau_data = {}
+
     Offer.find_each(:conditions => [ 'id IN (?)', partner_program_stats.keys ], :include => :partner) do |offer|
+
+      appstats = Appstats.new(offer.id, {
+        :start_time => end_time - 1.day,
+        :end_time => end_time,
+        :granularity => :daily,
+        :stat_types => ['installs_revenue', 'offers_revenue', 'rewards_revenue', 'featured_revenue', 'display_revenue', 'daily_active_users', 'total_revenue', 'arpdau']})
+      arpdau_data[offer.id] = appstats.stats['arpdau'][0] #get the daily arpdau from the list
+
       partner_program_metadata[offer.id] = {
         'icon_url'           => offer.get_icon_url,
         'offer_name'         => offer.name_with_suffix,
@@ -75,7 +85,7 @@ class Tools::PartnerProgramStatzController < WebsiteController
       s2[1]['conversions'].gsub(',', '').to_i <=> s1[1]['conversions'].gsub(',', '').to_i
     end
 
-    return partner_program_metadata, partner_program_stats_adv, partner_revenue_stats, partner_names
+    return partner_program_metadata, partner_program_stats_adv, partner_revenue_stats, partner_names, arpdau_data
   end
 
   def combined_ranks

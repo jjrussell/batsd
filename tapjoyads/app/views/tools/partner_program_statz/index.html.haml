@@ -19,9 +19,7 @@
     \-
     = text_field_tag(:end_date, @end_time.to_date.to_s(:mdy))
     = submit_tag('Update', :id => :date_submit)
-
 %p Note: publisher revenue total and publisher pending earnings total are sums by publishers, not sums of the columns.
-
 %table#apps_table.tablesorter
   %thead
     %tr
@@ -37,6 +35,7 @@
       %th Platform
       %th CVR
       %th Published offers
+      %th ARPDAU
       %th Offers revenue
       %th Publisher Revenue
       %th Publisher pending earnings
@@ -54,6 +53,7 @@
       %td
       %td
       %td.total.total_published_offers
+      %td
       %td.total.total_offers_revenue
       %td.total.total_publisher_revenue
       %td.total.total_publisher_pending_earnings
@@ -74,6 +74,7 @@
       %td.filter= select_tag('platform_filter', options_for_select(filter_options(:platform)))
       %td.filter &nbsp;
       %td.filter= select_tag('published_offers_filter', options_for_select(filter_options(:published_offers)))
+      %td.filter= select_tag('arpdau_filter', options_for_select(filter_options(:arpdau)))
       %td.filter= select_tag('revenue_filter', options_for_select(filter_options(:offer_revenue)))
       %td.filter= select_tag('publisher_revenue_filter', options_for_select(filter_options(:publisher_revenue)))
       %td.filter= select_tag('publisher_pending_earnings_filter', options_for_select(filter_options(:pending_earning)))
@@ -85,22 +86,24 @@
     - @partner_program_stats.each do |offer_id, stats|
       :ruby
         metadata = @partner_program_metadata[offer_id]
-        tr_classes = []
-        tr_classes << (stats['conversions'] == '0'         ? 'zero_conversions' : 'nonzero_conversions')
-        tr_classes << (metadata['overall_store_rank'] == '-'  ? 'unranked'         : 'ranked')
-        tr_classes << (metadata['price'] == '$0.00'        ? 'free'             : 'paid')
-        tr_classes << metadata['platform'].to_s.downcase
-        tr_classes << (stats['published_offers'] == '0'    ? 'zero_published'   : 'nonzero_published')
-        tr_classes << (stats['offers_revenue'] == 0  ? 'zero_offer_revenue'     : 'nonzero_offer_revenue')
-        tr_classes << (@partner_revenue_stats[metadata['partner_id']] == 0  ? 'zero_publisher_revenue'     : 'nonzero_publisher_revenue')
-        tr_classes << (metadata['featured']                ? 'featured'         : 'nonfeatured')
-        tr_classes << (metadata['rewarded']                ? 'rewarded'         : 'nonrewarded')
-        tr_classes << metadata['offer_type'].to_s.downcase
         partner_pending_earnings = metadata['partner_pending_earnings'] / 100.0
-        tr_classes << (partner_pending_earnings > 10000    ? 'earning_10k'      : '')
-        tr_classes << (partner_pending_earnings > 1000     ? 'earning_1k'       : '')
-        tr_classes << (partner_pending_earnings > 0        ? 'earning_zero'     : '')
-        tr_classes << (partner_pending_earnings <= 0       ? 'earning_negative' : '')
+        arpdau = @arpdau_data[offer_id]
+        tr_classes = []
+        tr_classes << (stats['conversions'] == '0'           ? 'zero_conversions'   : 'nonzero_conversions')
+        tr_classes << (metadata['overall_store_rank'] == '-' ? 'unranked'           : 'ranked')
+        tr_classes << (metadata['price'] == '$0.00'          ? 'free'               : 'paid')
+        tr_classes << metadata['platform'].to_s.downcase
+        tr_classes << (stats['published_offers'] == '0'      ? 'zero_published'     : 'nonzero_published')
+        tr_classes << (arpdau == 0                            ? 'zero_arpdau'        : 'nonzero_arpdau')
+        tr_classes << (stats['offers_revenue'] == 0          ? 'zero_offer_revenue' : 'nonzero_offer_revenue')
+        tr_classes << (@partner_revenue_stats[metadata['partner_id']] == 0 ? 'zero_publisher_revenue' : 'nonzero_publisher_revenue')
+        tr_classes << (metadata['featured']                  ? 'featured'           : 'nonfeatured')
+        tr_classes << (metadata['rewarded']                  ? 'rewarded'           : 'nonrewarded')
+        tr_classes << metadata['offer_type'].to_s.downcase
+        tr_classes << (partner_pending_earnings > 10000      ? 'earning_10k'        : '')
+        tr_classes << (partner_pending_earnings > 1000       ? 'earning_1k'         : '')
+        tr_classes << (partner_pending_earnings > 0          ? 'earning_zero'       : '')
+        tr_classes << (partner_pending_earnings <= 0         ? 'earning_negative'   : '')
         value = metadata['balance'].gsub(/[\$,]/,'')
         title = @partner_names[metadata['partner_id']]
       %tr{ :class => tr_classes.compact.join(' '), :value => value, :title => title }
@@ -116,6 +119,7 @@
         %td= metadata['platform']
         %td= metadata['conversion_rate']
         %td= stats['published_offers']
+        %td= number_to_currency(arpdau / 100.0, :precision => 4)
         %td= number_to_currency(stats['offers_revenue'] / 100.0)
         %td= number_to_currency(@partner_revenue_stats[metadata['partner_id']] / 100.0)
         %td= number_to_currency(partner_pending_earnings)
@@ -134,6 +138,7 @@
       %td
       %td
       %td.total.total_published_offers
+      %td
       %td.total.total_offers_revenue
       %td.total.total_publisher_revenue
       %td.total.total_publisher_pending_earnings
@@ -182,7 +187,8 @@
           10: { sorter: 'formatted-number-column' },
           11: { sorter: 'currency-column' },
           12: { sorter: 'currency-column' },
-          13: { sorter: 'currency-column' }
+          13: { sorter: 'currency-column' },
+          14: { sorter: 'currency-column' }
         }
       });
       $('#date').datepicker();
@@ -220,6 +226,7 @@
           String( $('#rank_filter').val() ).toLowerCase(),
           String( $('#price_filter').val() ).toLowerCase(),
           String( $('#published_offers_filter').val() ).toLowerCase(),
+          String( $('#arpdau_filter').val() ).toLowerCase(),
           String( $('#revenue_filter').val() ).toLowerCase(),
           String( $('#publisher_revenue_filter').val() ).toLowerCase(),
           String( $('#publisher_pending_earnings_filter').val() ).toLowerCase(),
@@ -268,9 +275,9 @@
       function updateTotals() {
         $('.total_convertions').text(addCommas(sumOfColumns(4)));
         $('.total_published_offers').text(addCommas(sumOfColumns(11)));
-        $('.total_offers_revenue').text(formatCurrency(sumOfColumns(12)));
-        $('.total_publisher_revenue').text(formatCurrency(sumByPublishers(13)));
-        $('.total_publisher_pending_earnings').text(formatCurrency(sumByPublishers(14)));
+        $('.total_offers_revenue').text(formatCurrency(sumOfColumns(13)));
+        $('.total_publisher_revenue').text(formatCurrency(sumByPublishers(14)));
+        $('.total_publisher_pending_earnings').text(formatCurrency(sumByPublishers(15)));
       }
       function sumOfColumns(coln) {
         var sum = 0;
