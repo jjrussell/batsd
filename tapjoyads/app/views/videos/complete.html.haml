@@ -2,10 +2,13 @@
   .page.current
     .content_wrapper
       .content
-        %div.message_title.title You just watched #{@offer}.
+        .details.clearfix
+          = image_tag @video_offer.primary_offer.get_video_icon_url, :size => '200x125', :id => 'offer-icon'
 
-        %div.message_content You just earned #{@currency.get_visual_reward_amount(@offer, params[:display_multiplier])} #{@currency.name}
+          .earned You just earned #{@currency.get_visual_reward_amount(@offer, params[:display_multiplier])} #{@currency.name}!
+          .quiet= @video_offer.name
 
+        .header What now?
         .message_content.video_complete
           %a{ :href => get_click_url(@offer), :class => "replay_video_path" }
             .slider.slider_right{:style => 'display: inline-table'}
