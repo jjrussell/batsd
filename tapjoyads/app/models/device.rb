@@ -47,7 +47,7 @@ class Device < SimpledbShardedResource
     now = Time.zone.now
     path_list = []
 
-    self.mac_address = params[:mac_address]
+    self.mac_address = params[:mac_address] if params[:mac_address].present?
 
     is_jailbroken_was = is_jailbroken
     country_was = country
