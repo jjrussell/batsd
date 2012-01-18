@@ -2,7 +2,6 @@ class Job::QueueCreateDeviceIdentifiersController < Job::SqsReaderController
 
   def initialize
     super QueueNames::CREATE_DEVICE_IDENTIFIERS
-    @num_reads = 5
   end
 
   private
