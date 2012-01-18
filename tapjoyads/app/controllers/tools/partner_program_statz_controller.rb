@@ -7,7 +7,7 @@ class Tools::PartnerProgramStatzController < WebsiteController
   before_filter :setup, :only => [ :index, :export ]
 
   def index
-    @partner_program_metadata, @partner_program_stats, @partner_revenue_stats, @partner_names, @arpdau_data = get_stats(@start_time, @end_time)
+    @partner_program_metadata, @partner_program_stats, @partner_revenue_stats, @partner_names, @appstats_data = get_stats(@start_time, @end_time)
   end
 
   def export
@@ -28,37 +28,39 @@ class Tools::PartnerProgramStatzController < WebsiteController
 
     partner_program_stats = {}
     VerticaCluster.query('analytics.actions', {
-        :select     => 'offer_id, count(*) AS conversions',
+        :select     => 'offer_id, count(path) AS conversions, -sum(advertiser_amount) AS spend',
         :group      => 'offer_id',
         :conditions => "path LIKE '%reward%' AND #{time_conditions} AND offer_id IN (#{partner_program_offer_ids})" }).each do |result|
       partner_program_stats[result[:offer_id]] = {
-        'conversions'      => NumberHelper.number_with_delimiter(result[:conversions]),
-        'published_offers' => '0',
-        'offers_revenue'   => 0,
+        'conversions'       => NumberHelper.number_with_delimiter(result[:conversions]),
+        'spend'             => NumberHelper.number_to_currency(result[:spend] / 100.0),
+        'published_offers'  => '0',
+        'gross_revenue'     => 0,
+        'publisher_revenue' => 0,
       }
     end
     VerticaCluster.query('analytics.actions', {
-        :select     => 'publisher_app_id AS offer_id, count(*) AS published_offers, sum(publisher_amount) AS offers_revenue',
+        :select     => 'publisher_app_id AS offer_id, count(path) AS published_offers, sum(publisher_amount + tapjoy_amount) AS gross_revenue, sum(publisher_amount) AS publisher_revenue',
         :group      => 'publisher_app_id',
         :conditions => "path LIKE '%reward%' AND #{time_conditions} AND publisher_app_id IN (#{partner_program_offer_ids})" }).each do |result|
-      partner_program_stats[result[:offer_id]] ||= { 'conversions' => '0' }
+      partner_program_stats[result[:offer_id]] ||= { 'conversions' => '0', 'spend' => '$0.00' }
       partner_program_stats[result[:offer_id]]['published_offers'] = NumberHelper.number_with_delimiter(result[:published_offers])
-      partner_program_stats[result[:offer_id]]['offers_revenue']   = result[:offers_revenue]
+      partner_program_stats[result[:offer_id]]['gross_revenue']   = result[:gross_revenue]
+      partner_program_stats[result[:offer_id]]['publisher_revenue']   = result[:publisher_revenue]
     end
 
     partner_revenue_stats = {}
     partner_names = {}
     partner_program_metadata = {}
-    arpdau_data = {}
-
+    appstats_data = {}
     Offer.find_each(:conditions => [ 'id IN (?)', partner_program_stats.keys ], :include => :partner) do |offer|
 
       appstats = Appstats.new(offer.id, {
         :start_time => end_time - 1.day,
         :end_time => end_time,
         :granularity => :daily,
-        :stat_types => ['installs_revenue', 'offers_revenue', 'rewards_revenue', 'featured_revenue', 'display_revenue', 'daily_active_users', 'total_revenue', 'arpdau']})
-      arpdau_data[offer.id] = appstats.stats['arpdau'][0] #get the daily arpdau from the list
+        :stat_types => ['offerwall_views', 'featured_offers_shown', 'display_ads_shown', 'installs_revenue', 'offers_revenue', 'rewards_revenue', 'featured_revenue', 'display_revenue', 'daily_active_users', 'total_revenue', 'arpdau', 'offerwall_ecpm', 'featured_ecpm', 'display_ecpm']})
+      appstats_data[offer.id] = appstats
 
       partner_program_metadata[offer.id] = {
         'icon_url'           => offer.get_icon_url,
@@ -78,14 +80,14 @@ class Tools::PartnerProgramStatzController < WebsiteController
       }
       partner_names[offer.partner.id] ||= offer.partner.name
       partner_revenue_stats[offer.partner.id] ||= 0
-      partner_revenue_stats[offer.partner.id] += partner_program_stats[offer.id]['offers_revenue']
+      partner_revenue_stats[offer.partner.id] += partner_program_stats[offer.id]['publisher_revenue']
     end
 
     partner_program_stats_adv = partner_program_stats.sort do |s1, s2|
-      s2[1]['conversions'].gsub(',', '').to_i <=> s1[1]['conversions'].gsub(',', '').to_i
+      NumberHelper.currency_to_number(s2[1]['spend']) <=> NumberHelper.currency_to_number(s1[1]['spend'])
     end
 
-    return partner_program_metadata, partner_program_stats_adv, partner_revenue_stats, partner_names, arpdau_data
+    return partner_program_metadata, partner_program_stats_adv, partner_revenue_stats, partner_names, appstats_data
   end
 
   def combined_ranks
@@ -100,13 +102,14 @@ class Tools::PartnerProgramStatzController < WebsiteController
   end
 
   def generate_csv
-    data = ["Offer,Publisher_name,Conversions,Store_rank,Price,Payment,Balance,Platform,CVR,Published_offers,Offers_revenue,Publisher_Revenue,Publisher_pending_earnings,Featured,Rewarded,Offer_type,Sales_rep"]
-    @partner_program_metadata, @partner_program_stats, @partner_revenue_stats, @partner_names = get_stats(@start_time, @end_time)
+    data = ["Offer,Publisher_name,Spend,Conversions,Store_rank,Price,Payment,Balance,Platform,CVR,Published_offers,ARPDAU,Offerwall_ecpm,Featured_ecpm,Display_ecpm,Gross_revenue,Publisher_revenue,Publisher_total_revenue,Publisher_pending_earnings,Featured,Rewarded,Offer_type,Sales_rep"]
+    @partner_program_metadata, @partner_program_stats, @partner_revenue_stats, @partner_names, @appstats_data = get_stats(@start_time, @end_time)
     @partner_program_stats.each do |offer_id, stats|
       metadata = @partner_program_metadata[offer_id]
       line = [
         metadata['offer_name'].gsub(/[,]/,' '),
-        @partner_names[metadata['partner_id']],
+        @partner_names[metadata['partner_id']].gsub(/[,]/,' '),
+        stats['spend'].to_s.gsub(/[,]/,''),
         stats['conversions'].to_s.gsub(/[,]/,''),
         metadata['overall_store_rank'].to_s.gsub(/[,]/,''),
         metadata['price'].to_s.gsub(/[,]/,''),
@@ -115,7 +118,12 @@ class Tools::PartnerProgramStatzController < WebsiteController
         metadata['platform'],
         metadata['conversion_rate'],
         stats['published_offers'].to_s.gsub(/[,]/,''),
-        NumberHelper.number_to_currency(stats['offers_revenue'] / 100.0, :delimiter => ''),
+        NumberHelper.number_to_currency(@appstats_data[offer_id].stats['arpdau'][0] / 100.0, :precision => 4, :delimiter => ''),
+        NumberHelper.number_to_currency(@appstats_data[offer_id].stats['offerwall_ecpm'][0] / 100.0, :delimiter => ''),
+        NumberHelper.number_to_currency(@appstats_data[offer_id].stats['featured_ecpm'][0] / 100.0, :delimiter => ''),
+        NumberHelper.number_to_currency(@appstats_data[offer_id].stats['display_ecpm'][0] / 100.0, :delimiter => ''),
+        NumberHelper.number_to_currency(stats['gross_revenue'] / 100.0, :delimiter => ''),
+        NumberHelper.number_to_currency(stats['publisher_revenue'] / 100.0, :delimiter => ''),
         NumberHelper.number_to_currency(@partner_revenue_stats[metadata['partner_id']] / 100.0, :delimiter => ''),
         NumberHelper.number_to_currency(metadata['partner_pending_earnings'] / 100.0, :delimiter => ''),
         metadata['featured'],

@@ -60,15 +60,30 @@ module StatzHelper
           ["$0.0000", "zero_arpdau"],
           [">$0", "nonzero_arpdau"],
         ]
+      when :offerwall_ecpm
+        [
+          ["$0.00", "zero_offerwall_ecpm"],
+          [">$0", "nonzero_offerwall_ecpm"],
+        ]
+      when :featured_ecpm
+        [
+          ["$0.00", "zero_featured_ecpm"],
+          [">$0", "nonzero_featured_ecpm"],
+        ]
+      when :display_ecpm
+        [
+          ["$0.00", "zero_display_ecpm"],
+          [">$0", "nonzero_display_ecpm"],
+        ]
       when :publisher_revenue
         [
           ["$0.00", "zero_publisher_revenue"],
           [">$0", "nonzero_publisher_revenue"],
         ]
-      when :offer_revenue
+      when :publisher_total_revenue
         [
-          ["$0.00", "zero_offer_revenue"],
-          [">$0", "nonzero_offer_revenue"],
+          ["$0.00", "zero_publisher_total_revenue"],
+          [">$0", "nonzero_publisher_total_revenue"],
         ]
       when :featured
         [
