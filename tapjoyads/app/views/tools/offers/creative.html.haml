@@ -1,0 +1,75 @@
+- @page_title = 'Offer Creative Approval'
+- content_for :page_head, stylesheet_link_tag('facebox')
+
+%h1 Custom Creative Approval
+
+%table#creative_table.tablesorter
+  %thead
+    %tr
+      %th Account
+      %th Manager
+      %th Preview
+      %th Approve?
+  %tbody
+    - @creatives.each do |creative|
+      %tr
+        %td= "#{creative[:offer].partner.name} (#{creative[:offer].partner.contact_name})"
+        %td= creative[:offer].partner.account_managers.first.try(:email)
+        %td
+          - if creative[:offer].featured?
+            %a.preview{:href => creative[:preview_url]} Preview (#{creative[:size]})
+          - else
+            = image_tag(creative[:preview_url], :class => 'preview_img', :alt => creative[:size])
+        %td.actions
+          = link_to 'Approve', creative[:approval_url]
+          |
+          = link_to 'Decline', creative[:rejection_url]
+
+- content_for :page_styles do
+  :plain
+    #creative_table img.preview_img {
+      width: 320px;
+    }
+    #creative_table a.disabled {
+      color: #aaa;
+    }
+
+- content_for :page_javascript do
+  :plain
+    $('a.preview').click(function() {
+      parent.$.facebox({ajax: $(this).attr('href')})
+      return false;
+    });
+
+    var creativeLinks = $('#creative_table .actions a');
+    creativeLinks.bind('click', function() {
+      if ($(this).hasClass('disabled')) return false;
+
+      var verbage = ($(this).html() == 'Approve') ? 'approving' : 'rejecting';
+      var row = $(this).parents('tr');
+
+      creativeLinks.addClass('disabled');
+      $.ajax({
+        url: $(this).attr('href'),
+        accepts: 'application/json',
+        data: 'json',
+        type: 'POST',
+        success: function(data, textStatus, jqXHR) {
+          creativeLinks.removeClass('disabled');
+
+          if (data.success) {
+            row.fadeOut('fast', function() {
+              row.remove();
+            });
+          } else {
+            alert('There was a problem ' + verbage + ' the creative. Please try again.')
+          }
+        },
+        error: function(jqXHR, textStatus, errorThrown) {
+          alert('There was a problem ' + verbage + ' the creative. Please try again.')
+          creativeLinks.removeClass('disabled');
+        }
+      });
+
+      return false;
+    });
