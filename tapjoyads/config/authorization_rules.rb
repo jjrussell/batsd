@@ -43,12 +43,14 @@ authorization do
     has_permission_on :tools_payouts, :to => [ :index ]
     has_permission_on :tools_orders, :to => [ :failed_invoices, :retry_invoicing, :mark_invoiced ]
     has_permission_on :tools_network_costs, :to => [ :index, :new, :create ]
+    has_permission_on :tools_payout_freezes, :to => [ :index ]
   end
 
   role :payout_manager do
     includes :payops
     has_permission_on :tools, :to => [ :payout_info, :publishers_without_payout_info, :publisher_payout_info_changes ]
     has_permission_on :tools_payouts, :to => [ :create ]
+    has_permission_on :tools_payout_freezes, :to => [ :create, :disable ]
   end
 
   role :reporting do

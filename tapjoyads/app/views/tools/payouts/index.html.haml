@@ -1,6 +1,16 @@
 - @page_title = 'Payouts'
 
 %h1 Payouts
+
+%h3
+  Payout Freeze Status:
+  - if @freeze_enabled
+    %span{ :class => 'enabled' } Enabled
+  - else
+    %span{ :class => 'disabled' } Disabled
+  - if permitted_to? :index, :tools_payout_freezes
+    = link_to '[modify]', tools_payout_freezes_path
+
 - if @start_date.present?
   %h3
     For partners with payout info modified between
@@ -200,4 +210,17 @@
       border: 1px solid gray;
       padding: 5px;
       font-size: 12px;
+    }
+
+    span.enabled {
+      color: green;
+    }
+
+    span.disabled {
+      color: red;
+    }
+
+    h3 a {
+      text-decoration: none;
+      font-size: 14px;
     }
