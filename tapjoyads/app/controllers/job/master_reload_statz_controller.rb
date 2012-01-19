@@ -16,7 +16,7 @@ class Job::MasterReloadStatzController < Job::JobController
   def partner_index
     cache_partners('24_hours')
 
-    #render :text => 'ok'
+    render :text => 'ok'
   end
 
   def partner_daily
