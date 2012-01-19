@@ -9,7 +9,11 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
+<<<<<<< HEAD
 ActiveRecord::Schema.define(:version => 20120113013006) do
+=======
+ActiveRecord::Schema.define(:version => 20120106214457) do
+>>>>>>> master
 
   create_table "action_offers", :id => false, :force => true do |t|
     t.string   "id",                    :limit => 36,                    :null => false
@@ -143,6 +147,12 @@ ActiveRecord::Schema.define(:version => 20120113013006) do
   add_index "conversions", ["id", "created_at"], :name => "index_conversions_on_id_and_created_at", :unique => true
   add_index "conversions", ["publisher_app_id", "created_at", "reward_type"], :name => "index_on_publisher_app_id_created_at_and_reward_type"
   add_index "conversions", ["publisher_partner_id", "created_at"], :name => "index_conversions_on_publisher_partner_id_and_created_at"
+
+  create_table "creative_approval_queue", :force => true do |t|
+    t.string  "offer_id", :limit => 36, :null => false
+    t.string  "user_id",  :limit => 36
+    t.text    "size"
+  end
 
   create_table "currencies", :id => false, :force => true do |t|
     t.string   "id",                                         :limit => 36,                                                  :null => false

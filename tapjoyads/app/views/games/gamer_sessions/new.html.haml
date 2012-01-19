@@ -4,8 +4,15 @@
     .page
       .nav
         .nav_container.clearfix
-          %a{ :href => games_root_path, :class => "slideright" }
-            .logo
+          - timestamp = Time.zone.now
+          - start_time = Time.zone.parse('2012-01-18 13:00')
+          - end_time = Time.zone.parse('2012-01-19 01:00')
+          - if start_time < timestamp && timestamp < end_time
+            - link_to('https://www.google.com/landing/takeaction/sopa-pipa/', :class => "slideright", :title => "Stop SOPA.") do
+              #stop_sopa.logo
+          - else
+            - link_to(games_root_path, :class => "slideright") do
+              .logo
           .aside_login
             .login
               .form_fields
