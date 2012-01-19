@@ -1,0 +1,14 @@
+- @page_title = 'Create Marketing Credits'
+
+%h1 Create Marketing Credits for #{@partner.name}
+
+- form_tag create_marketing_credits_partner_path, :method => :post, :class => 'tjform' do
+  %table
+    %tr
+      %th= label_tag 'marketing_credits_amount', 'Amount'
+      %td= text_field_tag 'marketing_credits_amount', '$0.00', :class => 'currency_field allow_negative'
+    %tr
+      %th= label_tag 'marketing_credits_note', 'Note'
+      %td= text_field_tag 'marketing_credits_note'
+    %tr
+      %td{ :colspan => 2 }= submit_tag 'Create Marketing Credits'

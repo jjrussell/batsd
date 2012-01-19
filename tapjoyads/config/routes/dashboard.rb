@@ -44,7 +44,7 @@ ActionController::Routing::Routes.draw do |map|
     :collection => { :global => :get, :publisher => :get, :advertiser => :get }
   map.resources :activities, :only => [ :index ]
   map.resources :partners, :only => [ :index, :show, :new, :create, :update, :edit ],
-    :member => { :make_current => :post, :manage => :post, :stop_managing => :post, :mail_chimp_info => :get, :new_transfer => :get, :create_transfer => :post, :reporting => :get, :set_tapjoy_sponsored => :post },
+    :member => { :make_current => :post, :manage => :post, :stop_managing => :post, :mail_chimp_info => :get, :new_marketing_credits => :get, :new_transfer => :get, :create_transfer => :post, :create_marketing_credits => :post, :reporting => :get, :set_tapjoy_sponsored => :post },
     :collection => { :agency_api => :get } do |partner|
     partner.resources :offer_discounts, :only => [ :index, :new, :create ], :member => { :deactivate => :post }, :controller => 'partners/offer_discounts'
     partner.resources :payout_infos, :only => [ :index, :update ]

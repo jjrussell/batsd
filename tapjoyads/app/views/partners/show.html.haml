@@ -6,6 +6,8 @@
   = link_to("Edit", edit_partner_path(@partner))
   |
   = link_to("Create transfer", new_transfer_partner_path(@partner))
+  |
+  = link_to("Create Marketing Credits", new_marketing_credits_partner_path(@partner))
   - if permitted_to?(:new, :tools_earnings_adjustments)
     |
     = link_to('Create Earnings Adjustment', new_tools_earnings_adjustment_path(:partner_id => @partner.id))
