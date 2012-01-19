@@ -56,11 +56,16 @@ class Tools::PartnerProgramStatzController < WebsiteController
     Offer.find_each(:conditions => [ 'id IN (?)', partner_program_stats.keys ], :include => :partner) do |offer|
 
       appstats = Appstats.new(offer.id, {
-        :start_time => end_time - 1.day,
+        :start_time => start_time,
         :end_time => end_time,
         :granularity => :daily,
-        :stat_types => ['offerwall_views', 'featured_offers_shown', 'display_ads_shown', 'installs_revenue', 'offers_revenue', 'rewards_revenue', 'featured_revenue', 'display_revenue', 'daily_active_users', 'total_revenue', 'arpdau', 'offerwall_ecpm', 'featured_ecpm', 'display_ecpm']})
-      appstats_data[offer.id] = appstats
+        :stat_types => ['offerwall_views', 'featured_offers_shown', 'display_ads_shown', 'installs_revenue', 'offers_revenue', 'rewards_revenue', 'featured_revenue', 'display_revenue', 'daily_active_users', 'total_revenue', 'arpdau']})
+      appstats_data[offer.id] = {
+        :arpdau => appstats.stats['arpdau'].sum.to_f / appstats.stats['arpdau'].length.to_f,
+        :offerwall_ecpm => appstats.stats['rewards_revenue'].sum.to_f / (appstats.stats['offerwall_views'].sum / 1000.0),
+        :featured_ecpm => appstats.stats['featured_revenue'].sum.to_f / (appstats.stats['featured_offers_shown'].sum / 1000.0),
+        :display_ecpm => appstats.stats['display_revenue'].sum.to_f / (appstats.stats['display_ads_shown'].sum / 1000.0),
+      }
 
       partner_program_metadata[offer.id] = {
         'icon_url'           => offer.get_icon_url,
@@ -118,10 +123,10 @@ class Tools::PartnerProgramStatzController < WebsiteController
         metadata['platform'],
         metadata['conversion_rate'],
         stats['published_offers'].to_s.gsub(/[,]/,''),
-        NumberHelper.number_to_currency(@appstats_data[offer_id].stats['arpdau'][0] / 100.0, :precision => 4, :delimiter => ''),
-        NumberHelper.number_to_currency(@appstats_data[offer_id].stats['offerwall_ecpm'][0] / 100.0, :delimiter => ''),
-        NumberHelper.number_to_currency(@appstats_data[offer_id].stats['featured_ecpm'][0] / 100.0, :delimiter => ''),
-        NumberHelper.number_to_currency(@appstats_data[offer_id].stats['display_ecpm'][0] / 100.0, :delimiter => ''),
+        NumberHelper.number_to_currency(@appstats_data[offer_id][:arpdau] / 100.0, :precision => 4, :delimiter => ''),
+        NumberHelper.number_to_currency(@appstats_data[offer_id][:offerwall_ecpm] / 100.0, :delimiter => ''),
+        NumberHelper.number_to_currency(@appstats_data[offer_id][:featured_ecpm] / 100.0, :delimiter => ''),
+        NumberHelper.number_to_currency(@appstats_data[offer_id][:display_ecpm] / 100.0, :delimiter => ''),
         NumberHelper.number_to_currency(stats['gross_revenue'] / 100.0, :delimiter => ''),
         NumberHelper.number_to_currency(stats['publisher_revenue'] / 100.0, :delimiter => ''),
         NumberHelper.number_to_currency(@partner_revenue_stats[metadata['partner_id']] / 100.0, :delimiter => ''),

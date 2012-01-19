@@ -102,10 +102,10 @@
       :ruby
         metadata = @partner_program_metadata[offer_id]
         partner_pending_earnings = metadata['partner_pending_earnings'] / 100.0
-        arpdau = @appstats_data[offer_id].stats['arpdau'][0]
-        offerwall_ecpm = @appstats_data[offer_id].stats['offerwall_ecpm'][0]
-        featured_ecpm = @appstats_data[offer_id].stats['featured_ecpm'][0]
-        display_ecpm = @appstats_data[offer_id].stats['display_ecpm'][0]
+        arpdau = @appstats_data[offer_id][:arpdau]
+        offerwall_ecpm = @appstats_data[offer_id][:offerwall_ecpm]
+        featured_ecpm = @appstats_data[offer_id][:featured_ecpm]
+        display_ecpm = @appstats_data[offer_id][:display_ecpm]
         tr_classes = []
         tr_classes << (stats['spend'] == '$0.00'             ? 'zero_spend'         : 'nonzero_spend')
         tr_classes << (stats['conversions'] == '0'           ? 'zero_conversions'   : 'nonzero_conversions')
