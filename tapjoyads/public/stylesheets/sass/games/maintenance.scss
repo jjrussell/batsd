@@ -1,0 +1,16 @@
+$main-bg: #FFF;
+$main-title-font-size: 1.2em;
+$main-font-size: 1em;
+$main-font-color: #5A5A5A;
+$main-link-font-color: #787878;
+$main-link-font-color-hover: #262626;
+$main-font-name: "Helvetica Neue", Arial, Helvetica, "Lucida Grande", sans-serif;
+
+body {
+  background: #F7F7F7;
+  font-family: $main-font-name;
+  color: $main-font-color;
+  .center {
+    text-align: center;
+  }
+}

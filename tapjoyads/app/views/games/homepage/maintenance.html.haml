@@ -1,0 +1,23 @@
+!!! 5
+
+%html
+  %head
+    %meta{ 'http-equiv' => 'Content-Type', :content => 'text/html; charset=utf-8' }
+    %meta{ 'name' => 'viewport', 'content' => 'width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=no;' }
+    %meta{ 'name' => 'apple-mobile-web-app-status-bar-style', 'content' => 'black' }
+
+    %link{ :rel => 'shortcut icon', :href => '/favicon.ico', :content => 'image/vnd.microsoft.icon' }
+    %link{ :rel => 'apple-touch-icon-precomposed', :href => '/images/tjgames-114x114.png' }
+    %link{ :rel => 'publisher', :href => 'https://plus.google.com/b/116280135840952950839/' }
+    = stylesheet_link_tag 'games/maintenance'
+
+    %title Tapjoy in Maintenance mode
+
+  %body
+    .center
+      %h1 We are currently undergoing maintenance.
+      %h3 Our service will be unavailable for the next few hours. Sorry for the inconvenience.
+      %p
+        In the mean time, please join us in protesting
+        = succeed('.') do
+          = link_to('SOPA', 'https://www.google.com/landing/takeaction/sopa-pipa/')

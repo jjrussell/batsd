@@ -1,5 +1,11 @@
 ActionController::Routing::Routes.draw do |map|
   map.with_options({:path_prefix => MACHINE_TYPE == 'website' ? '' : 'games', :name_prefix => 'games_'}) do |m|
+    m.root :controller => 'games/homepage', :action => :maintenance
+=begin
+    m.connect ':controller/:action/:id', :controller => 'games/homepage', :action => :maintenance
+    m.connect ':controller/:action/:id.:format', :controller => 'games/homepage', :action => :maintenance
+    m.connect ':controller.:format', :controller => 'games/homepage', :action => :maintenance
+
     m.root :controller => 'games/homepage', :action => :index
     m.tos 'tos', :controller => 'games/homepage', :action => :tos
     m.privacy 'privacy', :controller => 'games/homepage', :action => :privacy
@@ -46,5 +52,6 @@ ActionController::Routing::Routes.draw do |map|
       social.invite_facebook_friends 'invite_facebook_friends', :action => :invite_facebook_friends
       social.send_facebook_invites 'send_facebook_invites', :action => :send_facebook_invites
     end
+=end
   end
 end
