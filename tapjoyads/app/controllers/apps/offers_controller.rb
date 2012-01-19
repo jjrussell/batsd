@@ -10,8 +10,10 @@ class Apps::OffersController < WebsiteController
   end
 
   def create
-    if params[:offer_type] == 'featured'
-      @offer = @app.primary_featured_offer || @app.primary_offer.create_featured_clone
+    if params[:offer_type] == 'rewarded_featured'
+      @offer = @app.primary_rewarded_featured_offer || @app.primary_offer.create_rewarded_featured_clone
+    elsif params[:offer_type] == 'non_rewarded_featured'
+      @offer = @app.primary_non_rewarded_featured_offer || @app.primary_offer.create_non_rewarded_featured_clone
     elsif params[:offer_type] == 'non_rewarded'
       @offer = @app.primary_non_rewarded_offer || @app.primary_offer.create_non_rewarded_clone
     end
@@ -35,15 +37,15 @@ class Apps::OffersController < WebsiteController
       end
     end
 
-    if !@offer.rewarded?
-      @custom_creative_sizes = Offer::DISPLAY_AD_SIZES.collect { |size| { :image_size => size, :label_image_size => "#{size} creative" }}
-    elsif @offer.featured?
+    if @offer.featured?
       @custom_creative_sizes = Offer::FEATURED_AD_SIZES.collect do |size|
         width, height = size.split("x").collect{|x|x.to_i}
         orientation = width > height ? "(landscape)" : "(portrait)"
         { :image_size         => size,
           :label_image_size   => "#{size} #{orientation}" }
       end
+    elsif !@offer.rewarded?
+      @custom_creative_sizes = Offer::DISPLAY_AD_SIZES.collect { |size| { :image_size => size, :label_image_size => "#{size} creative" }}
     end
   end
 
@@ -86,16 +88,22 @@ class Apps::OffersController < WebsiteController
   def upload_creative
     @image_size = params[:image_size]
     @label = params[:label]
+    email_managers = false
     image_data = params[:offer]["custom_creative_#{@image_size}".to_sym].read rescue nil
 
     modifying = true
     case request.method
       when :delete
-        # necessary to use assignment so @offer.banner_creatives_changed? will be true (can't modify in-place)
-        @offer.banner_creatives -= @image_size.to_a
+        @offer.remove_banner_creative(@image_size)
       when :post
-        # necessary to use assignment so @offer.banner_creatives_changed? will be true (can't modify in-place)
-        @offer.banner_creatives += @image_size.to_a
+        @offer.add_banner_creative(@image_size)
+
+        if permitted_to?(:edit, :statz)
+          @offer.approve_banner_creative(@image_size)
+        else
+          @offer.add_banner_approval(current_user, @image_size)
+          email_managers = true
+        end
       when :put
         # do nothing
       when :get
@@ -106,13 +114,23 @@ class Apps::OffersController < WebsiteController
       @offer.send("banner_creative_#{@image_size}_blob=", image_data)
       if @offer.save
         @success_message = "File #{request.method == :delete ? 'removed' : 'uploaded'} successfully."
+
+        if email_managers
+          approval_link = creative_tools_offers_url(:offer_id => @offer.id)
+          emails = @offer.partner.account_managers.map(&:email)
+          emails = ['support@tapjoy.com'] if emails.empty? # Default address if no managers are found
+          emails.each do |mgr|
+            TapjoyMailer.deliver_approve_offer_creative(mgr, @offer, @app, approval_link)
+          end
+        end
       else
         @error_message = @offer.errors["custom_creative_#{@image_size}_blob".to_sym]
         @offer.reload # we want the form to reset back to the way it was
       end
     end
 
-    @creative_exists = @offer.banner_creatives.include? @image_size
+    @creative_exists = @offer.has_banner_creative?(@image_size)
+    @creative_approved = @offer.banner_creative_approved?(@image_size)
     render :layout => 'simple'
   end
 

@@ -11,6 +11,8 @@ sv:
       previous: "Föregående %{items}"
       missing_currency: "Saknade %{currency}?"
       instructions: "Genomför något av följande erbjudande för att få %{currency}"
+      popular_apps: "Popular Apps"
+      instructions_non_rewarded: "Discover what's hot on Tapjoy!"
       earn_currency: "Tjäna %{amount} %{currency}"
       buy_currency: "Köp %{amount} %{currency}"
       load_more: "Fler erbjudanden!"

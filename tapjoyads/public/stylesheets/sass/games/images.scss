@@ -29,6 +29,9 @@
   .logo {
     background: transparent url('/images/games/logo.png') no-repeat center center;
   }
+  #stop_sopa {
+    background: transparent url('/images/games/logo-sopa.png') no-repeat center center;
+  }
   @media screen and (max-width: 480px) {
       .logo {
         background: transparent url('/images/games/logo-mobile.png') no-repeat center center;

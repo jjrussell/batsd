@@ -140,6 +140,7 @@ private
     return if currency_disabled?
     return if offer_disabled?
     return if offer_completed?
+    return if recently_clicked?
 
     wr_path = params[:source] == 'featured' ? 'featured_offer_click' : 'offer_click'
     build_web_request(wr_path)
@@ -195,6 +196,21 @@ private
       render_unavailable_offer
     end
     completed
+  end
+
+  def recently_clicked?
+    click = Click.find("#{params[:udid]}.#{params[:advertiser_app_id]}")
+    recently_clicked = click.present? &&
+                       click.clicked_at > @now - 1.hour &&
+                       click.publisher_app_id == params[:publisher_app_id] &&
+                       click.publisher_user_id == params[:publisher_user_id]
+
+    if recently_clicked
+      build_web_request('click_too_recent')
+      save_web_request
+      redirect_to(get_destination_url)
+    end
+    recently_clicked
   end
 
   def build_web_request(path)

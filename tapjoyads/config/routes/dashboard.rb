@@ -11,6 +11,7 @@ ActionController::Routing::Routes.draw do |map|
   map.login 'login', :controller => :user_sessions, :action => :new
   map.logout 'logout', :controller => :user_sessions, :action => :destroy
   map.resources :password_resets, :as => 'password-reset', :only => [ :new, :create, :edit, :update ]
+  map.password_reset 'password-reset', :controller => 'password_resets', :action => :new
   map.resources :internal_devices, :only => [ :index, :show, :destroy, :edit, :update ], :member => { :block => :get }
   map.new_internal_device 'approve_device', :controller => :internal_devices, :action => 'new', :conditions => { :method => :get }
   map.approve_internal_device 'approve_device/:id', :controller => :internal_devices, :action => 'approve', :conditions => { :method => :get }
@@ -38,8 +39,8 @@ ActionController::Routing::Routes.draw do |map|
   map.transfer_funds_billing 'billing/transfer-funds', :controller => :billing, :action => :transfer_funds
   map.payout_info_billing 'billing/payment-info', :controller => :billing, :action => :payout_info
   map.resources :statz, :only => [ :index, :show, :edit, :update, :new, :create ],
-    :member => { :last_run_times => :get, :udids => :get, :download_udids => :get },
-    :collection => { :global => :get, :publisher => :get, :advertiser => :get, :gamez => :get }
+    :member => { :last_run_times => :get, :udids => :get, :download_udids => :get, :support_request_reward_ratio => :get },
+    :collection => { :global => :get, :publisher => :get, :advertiser => :get }
   map.resources :activities, :only => [ :index ]
   map.resources :partners, :only => [ :index, :show, :new, :create, :update, :edit ],
     :member => { :make_current => :post, :manage => :post, :stop_managing => :post, :mail_chimp_info => :get, :new_transfer => :get, :create_transfer => :post, :reporting => :get, :set_tapjoy_sponsored => :post },
@@ -74,6 +75,8 @@ ActionController::Routing::Routes.draw do |map|
     tools.resources :video_offers, :only => [ :new, :create, :edit, :update ] do |video_offer|
       video_offer.resources :video_buttons, :controller => 'video_offers/video_buttons'
     end
+    tools.resources :offers,
+      :collection => { :creative => :get, :approve_creative => :post, :reject_creative => :post }
     tools.resources :payouts, :only => [ :index, :create ], :member => { :info => :get }
     tools.resources :enable_offer_requests, :only => [ :update, :index ]
     tools.resources :admin_devices, :only => [ :index, :new, :create, :edit, :update, :destroy ]

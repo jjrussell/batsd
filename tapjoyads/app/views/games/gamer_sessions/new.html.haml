@@ -4,8 +4,15 @@
     .page
       .nav
         .nav_container.clearfix
-          %a{ :href => games_root_path, :class => "slideright" }
-            .logo
+          - timestamp = Time.zone.now
+          - start_time = Time.zone.parse('2012-01-18 13:00')
+          - end_time = Time.zone.parse('2012-01-19 01:00')
+          - if start_time < timestamp && timestamp < end_time
+            - link_to('https://www.google.com/landing/takeaction/sopa-pipa/', :class => "slideright", :title => "Stop SOPA.") do
+              #stop_sopa.logo
+          - else
+            - link_to(games_root_path, :class => "slideright") do
+              .logo
           .aside_login
             .login
               .form_fields
@@ -33,10 +40,6 @@
                     %li.field.login_error
                       = error_message_on @gamer_session, :email, :prepend_text => "Email "
                       = error_message_on @gamer_session, :password, :prepend_text => "Password "
-                  %ul.row
-                    %li.field.client_login
-                      %a{ :href => "#{DASHBOARD_URL}/login" }
-                        advertiser/developer? login here
 
       .content.main_scene
         .content_box
@@ -75,9 +78,6 @@
                       = error_message_on @gamer, :email
                       = error_message_on @gamer, :password
                       = error_message_on @gamer, :terms_of_service
-                    .client_sign_up
-                      %a{ :href => "#{DASHBOARD_URL}/register" }
-                        advertiser &amp; developer sign up
                 .register_progess
       .content.overview
         .content_box

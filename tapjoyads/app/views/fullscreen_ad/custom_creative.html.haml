@@ -37,7 +37,7 @@
         var availableCreatives = [];
 
   - # Provide available custom creative sizes to javascript
-  - @offer.banner_creatives.each_with_index do |size,index|
+  - @offer.banner_creatives.each do |size|
     :plain
         availableCreativeSizes.push("#{size}".split('x'));
         availableCreatives.push("#{@offer.banner_creative_path(size, 'jpeg')}");
@@ -67,15 +67,15 @@
           } else if(creative.orientation == client.orientation) {
             // If the creative's orientation matches the client's, calculate how good of a fit this creative is
             // and compare its fit with the current favorite
-            if(Math.abs(creative.horizMarginPercent) <= Math.abs(creative.minHorizMarginPercent) &&
-               Math.abs(creative.vertMarginPercent) <= Math.abs(creative.minVertMarginPercent)) {
+            if(Math.abs(creative.horizMarginPercent) <= Math.abs(preferredCreative.horizMarginPercent) &&
+               Math.abs(creative.vertMarginPercent) <= Math.abs(preferredCreative.vertMarginPercent)) {
               preferredCreative = creative;
             }
           } else if(preferredCreative.orientation != client.orientation) {
             // If we haven't found a creative whose orientation matches the client, find the best
             // fitting creative to show in the 'wrong' orientation
-            if((creative.orientation == 'portrait' && Math.abs(vertMarginPercent) <= Math.abs(minVertMarginPercent)) ||
-               (creative.orientation == 'landscape' && Math.abs(horizMarginPercent) <= Math.abs(minHorizMarginPercent))) {
+            if((creative.orientation == 'portrait' && Math.abs(creative.vertMarginPercent) <= Math.abs(preferredCreative.vertMarginPercent)) ||
+               (creative.orientation == 'landscape' && Math.abs(creative.horizMarginPercent) <= Math.abs(preferredCreative.horizMarginPercent))) {
               preferredCreative = creative;
             }
           }

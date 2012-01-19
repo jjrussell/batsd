@@ -49,14 +49,14 @@
     %li= link_to 'Press Releases', tools_press_releases_path
 
 - if has_permissions_for_one_of?(:games_editor)
-  %h3 Games
+  %h3 Marketplace
 %ul
   - if permitted_to? :index, :tools_editors_picks
     %li= link_to 'Editor\'s Choices', tools_editors_picks_path
   - if permitted_to? :index, :tools_app_reviews
     %li= link_to 'App Reviews', tools_app_reviews_path
   - if permitted_to? :index, :tools_featured_contents
-    %li= link_to 'Featured Contents', tools_featured_contents_path
+    %li= link_to 'My Apps Featured Content', tools_featured_contents_path
 
 - if has_permissions_for_one_of?(:account_mgr)
   %h3 Account Management
@@ -65,6 +65,8 @@
     %li= link_to 'View Offer Lists', tools_offer_lists_path
   - if permitted_to? :index, :tools_generic_offers
     %li= link_to 'View Generic Offers', tools_generic_offers_path
+  - if permitted_to? :edit, :statz
+    %li= link_to "Approve Creatives (#{CreativeApprovalQueue.count})", creative_tools_offers_path
   - if permitted_to? :index, :activities
     %li= link_to 'Activity Log', activities_path
   - if permitted_to? :disabled_popular_offers, :tools

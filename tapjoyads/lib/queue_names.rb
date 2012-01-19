@@ -6,6 +6,7 @@ class QueueNames
   CALCULATE_SHOW_RATE        = "#{BASE_NAME}CalculateShowRate"
   CONVERSION_TRACKING        = "#{BASE_NAME}ConversionTracking"
   CREATE_CONVERSIONS         = "#{BASE_NAME}CreateConversions"
+  CREATE_DEVICE_IDENTIFIERS  = "#{BASE_NAME}CreateDeviceIdentifiers"
   CREATE_INVOICES            = "#{BASE_NAME}CreateInvoices"
   FAILED_DOWNLOADS           = "#{BASE_NAME}FailedDownloads"
   FAILED_EMAILS              = "#{BASE_NAME}FailedEmails"
