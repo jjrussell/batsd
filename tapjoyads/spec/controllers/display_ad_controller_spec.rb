@@ -6,6 +6,9 @@ end
 
 describe DisplayAdController do
   integrate_views
+  before :each do
+    fake_the_web
+  end
 
   describe "hitting display ad controller" do
     before :each do
