@@ -26,6 +26,11 @@ class Job::MasterReloadStatzController < Job::JobController
     render :text => 'ok'
   end
 
+  def devices_count
+    count = SimpledbResource.count(:domain_name => "devices_#{rand(NUM_DEVICES_DOMAINS)}") * NUM_DEVICES_DOMAINS
+    Mc.put('statz.devices_count', count)
+  end
+
   private
 
   def cache_stats(timeframe)
