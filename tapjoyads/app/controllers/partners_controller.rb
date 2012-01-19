@@ -5,10 +5,10 @@ class PartnersController < WebsiteController
 
   filter_access_to :all
 
-  before_filter :find_partner, :only => [ :show, :make_current, :manage, :update, :edit, :new_transfer, :create_transfer, :reporting, :set_tapjoy_sponsored ]
+  before_filter :find_partner, :only => [ :show, :make_current, :manage, :update, :edit, :new_marketing_credits, :create_marketing_credits, :new_transfer, :create_transfer, :reporting, :set_tapjoy_sponsored ]
   before_filter :get_account_managers, :only => [ :index, :managed_by ]
   before_filter :set_platform, :only => [ :reporting ]
-  after_filter :save_activity_logs, :only => [ :update, :create_transfer ]
+  after_filter :save_activity_logs, :only => [ :update, :create_transfer, :create_marketing_credits ]
 
   def index
     if current_user.role_symbols.include?(:agency)
@@ -132,6 +132,13 @@ class PartnersController < WebsiteController
     redirect_to request.referer
   end
 
+  def new_marketing_credits
+  end
+ 
+  def create_marketing_credits
+    redirect_to partner_path(@partner)
+  end
+ 
   def new_transfer
   end
 
