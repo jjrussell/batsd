@@ -253,14 +253,21 @@
         %td
           = f.text_area(:instructions)
           = error_message_on @offer, :instructions
-    - if @offer.featured_content_id
+    - if @offer.fc_tracking
+      %tr
+        %th
+          = f.label(:fc_tracking, 'FC Tracking')
+          #help_fc_tracking.help ?
+        %td
+          = f.check_box(:fc_tracking)
+          = error_message_on @offer, :fc_tracking
       %tr
         %th
           = f.label(:featured_content_id, 'Featured Content')
-          #help_featured_contents.help ?
+          #help_featured_content_id.help ?
         %td
           = link_to(@offer.featured_content_id, edit_tools_featured_content_path(@offer.featured_content_id))
-          = error_message_on @offer, :instructions_overridden
+          = error_message_on @offer, :featured_content_id
     %tr
       %td{ :colspan => 2 }= f.submit('Save Changes')
 
@@ -308,7 +315,8 @@
     %br
     %br
     Keep your text simple and easy for a user to understand.
-  #help_featured_contents_content{ :name => 'Featured Content' } The featured content this offer belongs to.
+  #help_featured_content_id_content{ :name => 'Featured Content Id' } The featured content this offer belongs to.
+  #help_fc_tracking_content{ :name => 'Featured Content Tracking' } The offer is for the tracking purpose of a featured content.
 
 - if @offer.item_type == 'App' || @offer.item_type == 'GenericOffer'
   - content_for :page_javascript do

@@ -195,6 +195,7 @@ class FeaturedContent < ActiveRecord::Base
       self.tracking_offer.rewarded         = false
       self.tracking_offer.name_suffix      = 'fc_tracking'
       self.tracking_offer.third_party_data = id
+      self.tracking_offer.fc_tracking      = true
       self.tracking_offer.save!
     end
   end

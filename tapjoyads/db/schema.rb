@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120111020923) do
+ActiveRecord::Schema.define(:version => 20120120074718) do
 
   create_table "action_offers", :id => false, :force => true do |t|
     t.string   "id",                    :limit => 36,                    :null => false
@@ -615,8 +615,9 @@ ActiveRecord::Schema.define(:version => 20120111020923) do
     t.boolean  "instructions_overridden",                                                       :default => false, :null => false
     t.boolean  "wifi_only",                                                                     :default => false, :null => false
     t.string   "featured_content_id",               :limit => 36
-    t.text     "approved_banner_creatives"
     t.text     "approved_sources",                                                                                 :null => false
+    t.text     "approved_banner_creatives"
+    t.boolean  "fc_tracking",                                                                   :default => false, :null => false
   end
 
   add_index "offers", ["featured_content_id"], :name => "index_offers_on_featured_content_id", :unique => true
