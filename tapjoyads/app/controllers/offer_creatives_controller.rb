@@ -46,10 +46,14 @@ class OfferCreativesController < WebsiteController
     @label = params[:label]
     @offer = Offer.find(params[:id])
 
-    if params.key?(:app_id)
-      @app = App.find(params[:app_id])
-      @preview_path = preview_app_offer_path(:id => @offer.id, :image_size => @image_size, :preview => true, :app_id => @app.id)
-    end
+    # Okay this whole thing kind of hurts me, but we need this to work even when :app_id isn't a parameter.
+    # Basically, previews must be done through apps/offers#preview right now.
+    @app = if params.key?(:app_id)
+             App.find(params[:app_id])
+           elsif @offer.app.present?
+             @offer.app
+           end
+    @preview_path = preview_app_offer_path(:id => @offer.id, :image_size => @image_size, :preview => true, :app_id => @app.id)
 
     log_activity(@offer)
   end

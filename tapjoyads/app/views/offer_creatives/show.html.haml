@@ -37,7 +37,7 @@
       toggle_other_forms(false);
 
       $('.view_link').click(function() {
-        parent.$.facebox({ajax: "#{preview_app_offer_path(:id => @offer.id, :app_id => @app.id, :image_size => @image_size, :preview => true)}" })
+        parent.$.facebox({ajax: "#{@preview_path}" })
         return false;
       });
 
@@ -110,9 +110,10 @@
       font-weight: bold;
       padding-right: 10px;
       text-align: right;
-    }
-    .admin th {
       width: 225px;
+    }
+    th label.pending {
+      color: red;
     }
     .hidden {
       display: none;
