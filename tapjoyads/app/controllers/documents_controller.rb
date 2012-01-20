@@ -16,4 +16,8 @@ class DocumentsController < WebsiteController
   def tos_publisher
     render :layout => false
   end
+  
+  def publisher_guidelines 
+    render :layout => false  
+  end
 end
