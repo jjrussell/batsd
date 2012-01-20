@@ -23,6 +23,7 @@ describe Offer do
   it { should validate_numericality_of :payment_range_high }
 
   before :each do
+    fake_the_web
     @app = Factory :app
     @offer = @app.primary_offer
   end

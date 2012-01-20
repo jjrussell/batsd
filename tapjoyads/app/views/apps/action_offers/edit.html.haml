@@ -86,10 +86,10 @@
             #daily_budget_fields{ :class => @action_offer.daily_budget > 0 ? '' : 'hidden' }
               = primary_offer_form.label(:daily_budget, 'Installs:', :class => 'installs')
               = primary_offer_form.text_field(:daily_budget, :class => 'togglable installs')
+              %br
+              = label_tag('estimated_budget', 'Daily Budget:', :class => 'budget')
+              = text_field_tag('estimated_budget', '', :class => 'togglable estimated_budget', :size => 20)
               = error_message_on @action_offer, :daily_budget
-              #estimated_budget
-                Estimated daily budget:
-                .value
         %tr
           %th
             = primary_offer_form.label(:min_os_version, "Minimum OS Version")
@@ -154,7 +154,7 @@
     Has this action been integrated?
   #help_user_enabled_content{ :name => 'Enable Action' }
     Enable the action to get your campaign started.
-  #help_self_promote_only_content{ :name => 'Self Promote Only' } 
+  #help_self_promote_only_content{ :name => 'Self Promote Only' }
     Only show this offer on offerwalls from the same partner.
   #help_bid_content{ :name => 'Bid' }
     The amount you are willing to pay for a completed action. A higher bid will result in more completed actions.
@@ -207,7 +207,7 @@
         var payment = stringToNumber($('#action_offer_primary_offer_attributes_payment').val());
         var installLimit = stringToNumber($('#action_offer_primary_offer_attributes_daily_budget').val(), true);
         var budget = numberToCurrency(payment * installLimit);
-        $('#estimated_budget .value').text(budget);
+        $('#estimated_budget').val(budget);
       };
 
       var checkValidBudget = function(){
@@ -233,6 +233,17 @@
         var installsLimit = Math.floor(stringToNumber($(this).val(), true));
         $('#action_offer_primary_offer_attributes_daily_budget').val(addCommaSeparators(installsLimit));
         setEstimatedBudget();
+      });
+
+      $('#estimated_budget').change(function() {
+        var budget = stringToNumber($(this).val(), true);
+        var currentPayment = stringToNumber($('#action_offer_primary_offer_attributes_payment').val(), true);
+        var installLimit = Math.floor(budget / currentPayment);
+        $(this).val(numberToCurrency(budget));
+        $('#action_offer_primary_offer_attributes_daily_budget').val(addCommaSeparators(installLimit));
+        if (!checkValidBudget()) {
+          $('#action_offer_primary_offer_attributes_daily_budget').change();
+        }
       });
 
       if ($('#daily_budget_on').is(':checked')) {
@@ -280,23 +291,22 @@
     .addfunds {
       padding-left: 15px;
     }
-    #estimated_budget .value {
-      font-weight: bold;
-      display: inline;
-    }
-    .premier, .percentile-details, #estimated_budget {
+    .premier, .percentile-details {
       font-size: 12px;
     }
     textarea,
     input[type=text] {
       width: 400px;
     }
-    label.installs {
+    label.installs, label.estimated_budget {
       width: 60px;
       display: inline-block;
     }
     input[type=text].installs {
       width: 336px;
+    }
+    input[type=text].estimated_budget {
+      width: 300px;
     }
     .tapjoy-enabled {
       color: #328F0D;

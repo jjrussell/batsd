@@ -29,7 +29,6 @@ class Games::Gamers::DevicesController < GamesController
     end
     raise "Error parsing plist" if udid.blank? || product.blank? || version.blank?
 
-    mac_address = mac_address.present? ? mac_address.downcase.gsub(/:/,"") : nil
     data = {
       :udid              => udid,
       :product           => product,
