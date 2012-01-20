@@ -17,14 +17,14 @@
     = link_to('Developer Forum', DEV_FORUM_URL)
 
 - form_for(@app, :html => { :class => 'tjform' }) do |f|
-  = hidden_field_tag 'store_id', @app_metadata.store_id, :id => 'app_store_id'
+  = f.hidden_field :store_id
   %table
     %tbody
       %tr
         %th
           Application State
           #help_application_state.help ?
-        %td= select_tag 'state', options_for_select({ 'Not Live' => 'not_live', 'Live' => 'live' }, @app_metadata.store_id? ? 'live' : 'not_live'), :id => 'app_state'
+        %td= select_tag 'state', options_for_select({ 'Not Live' => 'not_live', 'Live' => 'live' }, @app.store_id? ? 'live' : 'not_live'), :id => 'app_state'
       %tr
         %th
           Platform
@@ -73,8 +73,8 @@
       %tr.app_data.hidden
         %th Store ID
         %td
-          - if @app_metadata.store_id.present?
-            = link_to(@app_metadata.store_id, @app.info_url, :target => '_blank', :id => 'app_store_link')
+          - if @app.store_id.present?
+            = link_to(@app.store_id, @app.info_url, :target => '_blank', :id => 'app_store_link')
           - else
             %a#app_store_link{ :target => '_blank' }
       %tr.app_data.hidden
@@ -82,12 +82,12 @@
         %td#app_icon= image_tag(@app.get_icon_url, :size => '57x57', :alt => 'icon')
       %tr.app_data.hidden
         %th Price
-        %td#app_price= number_to_currency(@app_metadata.price / 100.0)
+        %td#app_price= number_to_currency(@app.price / 100.0)
       %tr.app_data.hidden
         %th Description
-        %td#app_description= (@app_metadata.description || '').gsub("\n", '<br>')
+        %td#app_description= (@app.description || '').gsub("\n", '<br>')
       %tr
-        %td{ :colspan => 2 }= f.submit @app_metadata.store_id.present? ? "Update from #{@app.store_name}" : 'Save', :id => 'submit_button'
+        %td{ :colspan => 2 }= f.submit @app.store_id.present? ? "Update from #{@app.store_name}" : 'Save', :id => 'submit_button'
 
 .hidden
   #help_application_state_content{:name => 'Application State'}

@@ -29,7 +29,6 @@ class AppsController < WebsiteController
   end
 
   def show
-    @app_metadata = @app.primary_app_metadata || AppMetadata.new
     @integrated = @app.primary_offer.integrated?
     flash.now[:error] = "You are looking at a deleted app." if @app.hidden?
   end
@@ -43,8 +42,8 @@ class AppsController < WebsiteController
     @app.name = params[:app][:name]
 
     app_store_data = {}
-    if params[:state] == 'live' && params[:store_id].present?
-      unless @app.update_from_store({ :store_id => params[:store_id], :country => params[:app_country] })
+    if params[:state] == 'live' && params[:app][:store_id].present?
+      unless @app.update_from_store({ :store_id => params[:app][:store_id], :country => params[:app_country] })
         flash.now[:error] = "Grabbing app data from app store failed. Please try again."
         render :action => "new"
         return
@@ -66,8 +65,8 @@ class AppsController < WebsiteController
 
     @app.name = params[:app][:name]
 
-    if params[:state] == 'live' && params[:store_id].present?
-      unless @app.update_from_store({ :store_id => params[:store_id], :country => params[:app_country] })
+    if params[:state] == 'live' && params[:app][:store_id].present?
+      unless @app.update_from_store({ :store_id => params[:app][:store_id], :country => params[:app_country] })
         flash.now[:error] = "Grabbing app data from app store failed. Please try again."
         @app_metadata = @app.primary_app_metadata
         render :action => "show"

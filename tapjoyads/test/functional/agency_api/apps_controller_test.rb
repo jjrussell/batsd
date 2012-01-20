@@ -213,11 +213,11 @@ class AgencyApi::AppsControllerTest < ActionController::TestCase
 
       should "assign store id" do
         Sqs.expects(:send_message).with(QueueNames::GET_STORE_INFO, regexp_matches(/(\w+-){4}\w+/))
-        post :create, @params.merge(:store_id => '297558390') # use store_id for TapDefense, as controller will call App Store
+        post :create, @params.merge(:store_id => 'wah!')
         result = JSON.parse(@response.body)
         assert result['success']
         app = App.find(result['app_id'])
-        assert_equal app.store_id, '297558390'
+        assert_equal app.store_id, 'wah!'
       end
 
       should "save activity logs" do
@@ -322,11 +322,11 @@ class AgencyApi::AppsControllerTest < ActionController::TestCase
 
       should "change store id" do
         Sqs.expects(:send_message).with(QueueNames::GET_STORE_INFO, regexp_matches(/(\w+-){4}\w+/))
-        post :update, @params.merge(:store_id => '297558390')
+        post :update, @params.merge(:store_id => 'wah!')
         result = JSON.parse(@response.body)
         assert result['success']
         @app.reload
-        assert_equal @app.store_id, '297558390'
+        assert_equal @app.store_id, 'wah!'
       end
     end
   end

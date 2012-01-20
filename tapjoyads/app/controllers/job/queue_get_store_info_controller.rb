@@ -11,7 +11,7 @@ class Job::QueueGetStoreInfoController < Job::SqsReaderController
     log_activity(app_metadata)
 
     begin
-      app_metadata.update_metadata_from_store
+      app_metadata.update_from_store
     rescue Exception => e
       Rails.logger.info "Exception when fetching app store info: #{e}"
     else

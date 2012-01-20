@@ -19,7 +19,7 @@ class AppMetadata < ActiveRecord::Base
     super.to_s.split(';')
   end
 
-  def update_metadata_from_store
+  def update_from_store
     data = AppStore.fetch_app_by_id(store_id, PLATFORMS[store_name])
     raise "Fetching app store data failed for app: #{name} (#{id})." if data.nil?
 

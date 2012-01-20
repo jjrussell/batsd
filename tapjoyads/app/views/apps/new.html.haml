@@ -7,7 +7,7 @@
 %h3 Add App
 
 - form_for(@app, :html => { :class => 'tjform' }) do |f|
-  = hidden_field_tag 'store_id', nil, :id => 'app_store_id'
+  = f.hidden_field :store_id
   %table
     %tbody
       %tr

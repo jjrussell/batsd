@@ -47,11 +47,12 @@ class AgencyApi::AppsController < AgencyApiController
     end
 
     if params[:store_id].present?
-      app_metadata = app.update_app_metadata(params[:store_id])
+      unless app.update_from_store({ :store_id => params[:store_id], :use_queue => 'true' })
+        render_error("failed to create app metadata", 400) and return
+      end
     end
 
     app.save!
-    Sqs.send_message(QueueNames::GET_STORE_INFO, app_metadata.id) if app_metadata.present?
 
     save_activity_logs
     render_success({ :app_id => app.id, :app_secret_key => app.secret_key })
@@ -76,8 +77,9 @@ class AgencyApi::AppsController < AgencyApiController
     end
 
     if params[:store_id].present?
-      app_metadata = app.update_app_metadata(params[:store_id])
-      Sqs.send_message(QueueNames::GET_STORE_INFO, app_metadata.id) if app_metadata.present?
+      unless app.update_from_store({ :store_id => params[:store_id], :use_queue => 'true' })
+        render_error("failed to update app metadata", 400) and return
+      end
     end
 
     app.save!

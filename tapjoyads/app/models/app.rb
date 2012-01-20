@@ -101,7 +101,7 @@ class App < ActiveRecord::Base
   named_scope :by_partner_id, lambda { |partner_id| { :conditions => ["partner_id = ?", partner_id] } }
 
   delegate :conversion_rate, :to => :primary_currency, :prefix => true
-  delegate :store_id, :description, :age_rating, :file_size_bytes, :supported_devices, :supported_devices?, :released_at, :user_rating,
+  delegate :store_id, :store_id?, :description, :age_rating, :file_size_bytes, :supported_devices, :supported_devices?, :released_at, :user_rating,
     :to => :primary_app_metadata, :allow_nil => true
 
   # TODO: remove these columns from apps table definition and remove this method
@@ -169,15 +169,23 @@ class App < ActiveRecord::Base
   # Grab data from the app store and update app and metadata objects.
   def update_from_store(params)
     app_metadata = update_app_metadata(params[:store_id]) || primary_app_metadata
-    data = AppStore.fetch_app_by_id(params[:store_id], platform, params[:country])
-    if (data.nil?) # might not be available in the US market
-      data = AppStore.fetch_app_by_id(params[:store_id], platform, primary_country)
+    unless params[:use_queue] == 'true'
+      data = AppStore.fetch_app_by_id(params[:store_id], platform, params[:country])
+      if (data.nil?) # might not be available in the US market
+        data = AppStore.fetch_app_by_id(params[:store_id], platform, primary_country)
+      end
+
+      raise "Fetching app store data failed for app: #{name} (#{id})." if data.nil?
+      fill_app_store_data(data)
+      app_metadata.fill_app_store_data(data)
+    end
+    app_metadata.save!
+
+    if params[:use_queue] == 'true'
+      Sqs.send_message(QueueNames::GET_STORE_INFO, app_metadata.id)
     end
 
-    raise "Fetching app store data failed for app: #{name} (#{id})." if data.nil?
-    fill_app_store_data(data)
-    app_metadata.fill_app_store_data(data)
-    app_metadata.save
+    true
   rescue
     false
   end
@@ -265,14 +273,14 @@ class App < ActiveRecord::Base
   end
 
   def update_app_metadata(app_store_id)
+    app_metadata = nil
     if !app_metadatas.map(&:store_id).include?(app_store_id)
       # app currently has no app_metadata or associated with a different instance
       app_metadatas.delete_all
       app_metadata = AppMetadata.find_or_initialize_by_store_name_and_store_id(App::PLATFORM_DETAILS[platform][:store_name], app_store_id)
       app_metadatas << app_metadata
-      return app_metadata # app_metdata changed
     end
-    nil # app_metadata unchanged
+    app_metadata
   end
 
   def wifi_required?
