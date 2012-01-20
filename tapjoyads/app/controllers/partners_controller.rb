@@ -133,9 +133,19 @@ class PartnersController < WebsiteController
   end
 
   def new_marketing_credits
+    @order = Order.new(:payment_method => 4)
   end
  
   def create_marketing_credits
+    sanitized_params = sanitize_currency_params(params[:order], [:amount])
+    @order = Order.new(sanitized_params)
+    log_activity(@order)
+    if @order.is_marketing_credits? and @order.save
+      amount = NumberHelper.number_to_currency(@order.amount / 100.0 )
+      flash[:notice] = "The Marketing Credits order of <b>#{amount}</b> was successfully created."
+    else
+      flash[:error] = "The Marketing Credits order was unable to be processed."
+    end
     redirect_to partner_path(@partner)
   end
  
