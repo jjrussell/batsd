@@ -1029,6 +1029,117 @@ TJG.ui = {
       }
       $(this).html(t.join('')).fadeIn("slow");
     });
-  }
+  },
 
+  loadSummaryGamerRating : function() {
+    $(".gamer_overall_rating").each(function (n,o) {
+      var rating = $(this).attr("rating");
+      var threshold = $(this).attr("threshold");
+      var t = [];
+      if (rating) {
+        rating = parseFloat(rating);
+      }
+      if (threshold) {
+        threshold = parseFloat(threshold);
+      }
+      if (rating > threshold) {
+        t.push('<span class="thumb_up on left"></span>');
+        t.push('<span>'+ rating +'%</span>');
+      }
+      else {
+        t.push('<span class="thumb_down on left"></span>');
+        t.push('<span>'+ (100 - rating) +'%</span>');
+      }
+      $(this).html(t.join('')).fadeIn("slow");
+    });
+  },
+
+  loadExistGamerRating : function() {
+    $('.others_review_rating').each(function() {
+      var rating = $(this).attr("rating");
+      var curId =  $(this).attr('id');
+      var t = [];
+      if (rating) {
+        rating = parseInt(rating);
+      }
+      if (rating == 1) {
+        t.push('<span class="thumb_up on left" id="' + curId + '"></span>');
+      }
+      else if (rating == -1) {
+        t.push('<span class="thumb_down on left" id="' + curId + '"></span>');
+      }
+      $(this).html(t.join('')).fadeIn("slow");
+    });
+  },
+
+  loadActiveGamerRating : function() {
+    $(".gamer_rating").each(function (n,o) {
+      var rating = $(this).attr("rating");
+      var t = [];
+      if (rating) {
+        rating = parseInt(rating);
+      }
+      t.push('<span class="gamer_rating_label">Rating</span>');
+      if (rating == 1) {
+        t.push('<span class="active_thumb_up on left"></span>');
+        t.push('<span class="active_thumb_down off left"></span>');
+      }
+      else if (rating == -1) {
+        t.push('<span class="active_thumb_up off left"></span>');
+        t.push('<span class="active_thumb_down on left"></span>');
+      }
+      else {
+        t.push('<span class="active_thumb_up off left"></span>');
+        t.push('<span class="active_thumb_down off left"></span>');
+      }
+      $(this).html(t.join('')).fadeIn("slow");
+    });
+
+    $('.active_thumb_up').click(function() {
+      var cur_rating = parseFloat($(this).parent().attr("rating"));
+
+      if (cur_rating > 0) {
+        cur_rating = 0;
+      }
+      else {
+        cur_rating = 1;
+      }
+
+     updateThumbs(cur_rating);
+
+      $(this).parent().attr("rating", cur_rating);
+      $('#gamer_review_user_rating').val($(this).parent().attr("rating"));
+    });
+
+    $('.active_thumb_down').click(function() {
+      var cur_rating = parseFloat($(this).parent().attr("rating"));
+
+      if (cur_rating < 0) {
+        cur_rating = 0;
+      }
+      else {
+        cur_rating = -1;
+      }
+
+      updateThumbs(cur_rating);
+
+      $(this).parent().attr("rating", cur_rating);
+      $('#gamer_review_user_rating').val($(this).parent().attr("rating"));
+    });
+
+    function updateThumbs(cur_rating) {
+      if (cur_rating > 0) {
+        $('.active_thumb_up').removeClass('off').addClass('on');
+        $('.active_thumb_down').removeClass('on').addClass('off');
+      }
+      else if (cur_rating == 0) {
+        $('.active_thumb_up').removeClass('on').addClass('off');
+        $('.active_thumb_down').removeClass('on').addClass('off');
+      }
+      else {
+        $('.active_thumb_up').removeClass('on').addClass('off');
+        $('.active_thumb_down').removeClass('off').addClass('on');
+      }
+    }
+  }
 };

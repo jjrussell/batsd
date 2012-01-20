@@ -1,2 +1,24 @@
 = render :partial => 'games/homepage/nav_bar', :locals => { :show_device => true, :active => 'back', :back_button_destination => games_root_path }
-= render 'form', :app => @app
+.content_wrapper
+  .content
+    #reviews_button.tab_button.dark_grey
+      .tab_content
+        Reviews
+    #reviews_button_arrow.tab_button_bottom_arrrow_wrapper
+      .tab_button_bottom_arrrow
+    = render 'review_summary', :app => @app
+    .write_review_label Add New Review
+    = render 'form', :app => @app
+    .separator.clearfix
+    = render 'review_list', :gamer_reviews => @gamer_reviews
+    #back_to_top_button.tab_button.dark_grey
+      .tab_content
+        Back To Top
+
+- content_for :page_javascript do
+  :plain
+    $(function($) {
+      $('#back_to_top_button').click(function(event){
+        $('html, body').animate({ scrollTop: 0 }, 'fast');
+      });
+    });

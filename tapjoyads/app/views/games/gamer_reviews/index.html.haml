@@ -3,7 +3,7 @@
     = render :partial => 'games/homepage/nav_bar', :locals => { :active => 'back', :back_button_destination => edit_games_gamer_path }
 
     .content_wrapper
-      = render(:partial => 'games/gamers/header')
+      = render :partial => 'games/gamers/header'
       #display_reviews.profile
         .content
           .title_2
@@ -22,7 +22,13 @@
                     - @gamer_reviews.each do |gamer_review|
                       %tr
                         %td= truncate(gamer_review.app_name, :length => 20)
-                        %td= gamer_review.user_rating
+                        %td{ :align => "center"}
+                          - if gamer_review.user_rating > 0
+                            .thumb_up
+                          - elsif gamer_review.user_rating < 0
+                            .thumb_down
+                          - else
+                            Not Rating Yet
                         %td= truncate(gamer_review.text, :length => 25)
                         %td
                           - link_to edit_games_gamer_review_path(gamer_review) do

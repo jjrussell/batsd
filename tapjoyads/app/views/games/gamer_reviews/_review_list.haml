@@ -1,0 +1,45 @@
+.pagination_wrapper
+  .my_pagination.clearfix
+    %span.page_info
+      = page_entries_info(gamer_reviews, :entry_name => 'review')
+    .page_links= will_paginate(gamer_reviews, :container => false, :param_name => "gamer_reviews_page", :previous_label => 'Prev&nbsp;&nbsp;|', :next_label => '|&nbsp;&nbsp;Next', :inner_window => 1, :outer_window => 0)
+
+%ul.review_list.clearfix
+  - gamer_reviews.each do |gamer_review|
+    - gamer = Gamer.find_by_id(gamer_review.author_id)
+    - if gamer
+      %li.review_item.clearfix
+        .others_profile_image
+          = image_tag(gamer.get_avatar_url(37))
+        .offer_text.clearfix
+          .others_review_meta
+            %span.others_name.left= gamer.get_gamer_name
+            %span.others_review_rating.clearfix{ :id => gamer.id, :rating => gamer_review.user_rating }
+          .others_review_content_collapse{ :id => gamer.id }
+            %span.truncated_text= truncate(gamer_review.text, :length => 100)
+            - if gamer_review.text.length > 100
+              %span.read_more read more
+          - if gamer_review.text.length > 100
+            .others_review_content_expand.hide{ :id => gamer.id }
+              .full_text= gamer_review.text
+              .collapse collapse  &#8679;
+
+.pagination_wrapper
+  .my_pagination.clearfix
+    .page_links= will_paginate(gamer_reviews, :container => false, :param_name => "gamer_reviews_page", :previous_label => 'Prev&nbsp;&nbsp;|', :next_label => '|&nbsp;&nbsp;Next', :inner_window => 1, :outer_window => 0)
+
+- content_for :page_javascript do
+  :plain
+    $(function($) {
+      TJG.ui.loadExistGamerRating();
+
+      $('.read_more').click(function(){
+        $(this).parent().addClass('hide');
+        $(this).parent().next().removeClass('hide');
+      });
+
+      $('.collapse').click(function(){
+        $(this).parent().addClass('hide');
+        $(this).parent().prev().removeClass('hide');
+      });
+    });

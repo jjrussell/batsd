@@ -7,7 +7,7 @@ class CreateGamerReviews < ActiveRecord::Migration
       t.string  :author_type,   :null => false
       t.string  :platform,      :null => false
       t.text    :text,          :null => false
-      t.float   :user_rating
+      t.integer :user_rating,   :default => 0
 
       t.timestamps
     end

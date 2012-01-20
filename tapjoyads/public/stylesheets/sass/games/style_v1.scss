@@ -666,6 +666,13 @@ body.old form#new_gamer_session .login_pass input[type=submit] {
 .mobile .gamer_name {
   font-size: 18px;
 }
+.web .write_review_label,
+.ipad .write_review_label {
+  font-size: 18px;
+}
+.mobile .write_review_label {
+  font-size: 14px;
+}
 .web .gamer_email,
 .ipad .gamer_email {
   font-size: 18px;
@@ -1176,6 +1183,17 @@ body.old .formError .pad, body.old .email_error .pad, body.old .account_error .p
 .ipad .offer_text {
   width: 560px;
 }
+.mobile.portrait .my_pagination {
+  width: 306px;
+}
+.mobile.landscape .my_pagination {
+  width: 466px;
+}
+.web .my_pagination,
+.ipad.portrait .my_pagination,
+.ipad .my_pagination, {
+  width: 626px;
+}
 .web .app_review .app_text,
 .ipad.portrait .app_review .app_text,
 .ipad .app_review .app_text {
@@ -1277,7 +1295,11 @@ body.old .formError .pad, body.old .email_error .pad, body.old .account_error .p
   min-height: 20px;
   margin-bottom: 4px;
 }
-.mobile .app_meta {
+.review_meta {
+  @extend .app_meta;
+  width: 100%;
+}
+.mobile .app_meta, .mobile .review_meta {
   font-size: 10px;
   margin-bottom: 2px;
 }
@@ -1308,6 +1330,37 @@ body.old .formError .pad, body.old .email_error .pad, body.old .account_error .p
 .star.off {
   background: transparent url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA4AAAASCAYAAABrXO8xAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyJpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNSBNYWNpbnRvc2giIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6NjcyRTIxMkJDQkZBMTFFMEE3MUFDRkFGNTE2RkQyMDQiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6NjcyRTIxMkNDQkZBMTFFMEE3MUFDRkFGNTE2RkQyMDQiPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDo2NzJFMjEyOUNCRkExMUUwQTcxQUNGQUY1MTZGRDIwNCIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDo2NzJFMjEyQUNCRkExMUUwQTcxQUNGQUY1MTZGRDIwNCIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/PuA3xqIAAAJ5SURBVHjadFI7aFphFD73evX6fiFYE22HlnSTQEsRbEGKnVpoFgeLRWeFDt1sFqFLKM6BbtkKWbI4pWAW20Klk4M4qjQPTFR8P+719js3dos/fPee/zz+852H0Gg0aMN5C3SAn3cZRdp8UsDeJqO0Qb+jaVpUEIT7kJ3A4K6Md2XdVVU1AOxAfrwp40vgBdBDhgn+c2R7v1wu2e62WCwfoP8O2bJarRyQHZCbHPgXeATnd/P5nPAnZKLFYkFwIjinDAZDimVJksaQv8L/hgPrQBqGEoI+j8fjh4qikCjeVsCZTSYT2e32Xwjah+pMr5FfwlGAb6D1xuPx/EYWPeNsNiObzUZer/cEQa85iP35UZGdZFnWKeL0AXVdn051MBgQGCzWPWCZptMpiYlEgq6urnQ6OM8nk8kTl8tFwWDwJBQKlcGCoOMGPgMbOj09pWQySWKtVtMvDodDwot7VqtVAbWPkBN8h/zFbDa70JhX5+fndHR0RPV6/ZYRv1qpVJ5eX1//OT4+zrjdbqPP57MzIMulUunTcDg8i8fjgfUY9c5w+4yRSOTB9vb2LrK34cQ6K8CFj6GXotGoH7Yf/X7/hvV6S0FHKBaLMuha/X7/tFwuK4eHhyI3LJvNrmKxmLHb7cp4cJTJZBQ9JX8ODg7YwdBut4PomgaKF6hvyYuAYHOv17uHOfJGXaTTaapWq2QIh8OUz+d5QzRsjtJqtWzoIppsUjFHudlsepBJA5sbPKhinnR5eUlCoVCgXC6nz4vrRedsnU5HcjqdGs+YZxYIBJYIGjOD//MVuMWj0Ui/8CyxciboRF4CrhFj0La2tlTYlPWS6OefAAMAabYyAEd+w7oAAAAASUVORK5CYII=) no-repeat center center;
   float: left;
+}
+.thumb_up {
+  height: 20px;
+  width: 20px;
+  margin-right: 5px;
+  background: transparent url("/images/games/thumb-32x32_up02.png") no-repeat center center;
+  background-size: 20px;
+}
+.thumb_down {
+  height: 20px;
+  width: 20px;
+  margin-right: 5px;
+  background: transparent url("/images/games/thumb-32x32_down02.png") no-repeat center center;
+  background-size: 20px;
+}
+.active_thumb_up, .active_thumb_down {
+  height: 32px;
+  width: 32px;
+  margin-right: 5px;
+}
+.active_thumb_up.on {
+  background: transparent url("/images/games/thumb-32x32_up02.png") no-repeat center center;
+}
+.active_thumb_down.on {
+  background: transparent url("/images/games/thumb-32x32_down02.png") no-repeat center center;
+}
+.active_thumb_up.off {
+  background: transparent url("/images/games/thumb-32x32_up01.png") no-repeat center center;
+}
+.active_thumb_down.off {
+  background: transparent url("/images/games/thumb-32x32_down01.png") no-repeat center center;
 }
 .offer_button.my_apps:hover span,
 .offer_button.my_apps:active span,
@@ -1976,14 +2029,15 @@ li.tj_friend:last-child { border: none; }
   -webkit-box-shadow: 0px 2px 4px #222;
   box-shadow: 0px 2px 4px #222;
 }
-.offer_review {
+.gamer_review {
   background: #FFF;
   border: 1px solid grey;
   padding: 5px;
 }
-.offer_review textarea{
+.gamer_review textarea{
   width: 100%;
   border: none;
+  resize: vertical;
 }
 .review_submit {
   margin-top: 10px;
@@ -2029,4 +2083,115 @@ li.tj_friend:last-child { border: none; }
 }
 #gamer_reviews_table td div{
   margin: 2px;
+}
+.reviews_summary {
+  margin: 10px 0px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #5B5B5B;
+}
+.review_meta span {
+  line-height: 30px;
+  vertical-align: middle;
+  margin-right: 5px;
+}
+.others_profile_image {
+  border-radius: 6px;
+  float: left;
+  height: 37px;
+  overflow: hidden !important;
+  margin-right: 9px;
+  width: 37px;
+  z-index: 3;
+  -moz-border-radius: 6px;
+  -webkit-border-radius: 6px;
+  -moz-box-shadow: 0 0 4px #222;
+  -webkit-box-shadow: 0px 2px 4px #222;
+  box-shadow: 0px 2px 4px #222;
+}
+.others_name {
+  margin-right: 5px;
+  font-weight: bold;
+}
+.others_review_content_collapse {
+  word-wrap: break-word;
+  margin-bottom: 5px;
+  line-height: 19px;
+}
+.others_review_content_expand {
+  word-wrap: break-word;
+  margin-bottom: 5px;
+  line-height: 19px;
+}
+.review_item {
+  background: white;
+  margin: 5px 0px;
+  padding: 10px;
+  border-radius: 6px;
+  -moz-border-radius: 6px;
+  -webkit-border-radius: 6px;
+  -moz-box-shadow: inset 1px 1px 1px #FFF;
+  -webkit-box-shadow: inset 1px 1px #FFF;
+  -moz-box-shadow: 1px 1px 1px #303030;
+  -webkit-box-shadow: 1px 1px 1px #303030;
+}
+.review_item .read_more {
+  text-decoration: underline;
+}
+.review_item .collapse {
+  text-decoration: underline;
+  float: right;
+}
+.write_review {
+  margin: 10px 0px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #5B5B5B;
+}
+.content .write_review_label {
+  color: white;
+  margin: 3px 0px 5px 0px;
+}
+.gamer_rating_label{
+   vertical-align: middle; 
+   line-height: 32px; 
+   float: left;
+   margin-right: 5px;
+}
+.pagination_wrapper {
+  cursor: default;
+  
+  .my_pagination {  
+    a, span, em {
+      text-align: center;
+      padding: 0.2em 0.3em;
+      display: block;
+      float: left;
+      color: white;
+    }
+    .next_page {
+      padding-right: 0;
+    }
+    .disabled {
+      color: #999999;
+    }
+    .current {
+      color: red;
+    }
+    .page_info {
+      color: white;
+      padding-left: 0;
+      margin-bottom: 0.3em;
+    }
+    .page_links {
+      padding-right: 0;
+      margin-right: 0;
+      float: right;
+    }
+  }
+}
+.web .my_pagination,
+.ipad .my_pagination {
+  font-size: 16px;
+}
+.mobile .my_pagination {
+  font-size: 12px;
 }

@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20111209193119) do
+ActiveRecord::Schema.define(:version => 20120110030017) do
 
   create_table "action_offers", :id => false, :force => true do |t|
     t.string   "id",                    :limit => 36,                    :null => false
@@ -112,6 +112,8 @@ ActiveRecord::Schema.define(:version => 20111209193119) do
     t.string   "categories"
     t.text     "countries_blacklist"
     t.integer  "papaya_user_count"
+    t.integer  "thumb_up_count",                        :default => 0
+    t.integer  "thumb_down_count",                      :default => 0
   end
 
   add_index "apps", ["id"], :name => "index_apps_on_id", :unique => true
@@ -325,13 +327,13 @@ ActiveRecord::Schema.define(:version => 20111209193119) do
   add_index "gamer_profiles", ["referred_by"], :name => "index_gamer_profiles_on_referred_by"
 
   create_table "gamer_reviews", :id => false, :force => true do |t|
-    t.string   "id",          :limit => 36, :null => false
-    t.string   "app_id",      :limit => 36, :null => false
-    t.string   "author_id",   :limit => 36, :null => false
-    t.string   "author_type",               :null => false
-    t.string   "platform",                  :null => false
-    t.text     "text",                      :null => false
-    t.float    "user_rating"
+    t.string   "id",          :limit => 36,                :null => false
+    t.string   "app_id",      :limit => 36,                :null => false
+    t.string   "author_id",   :limit => 36,                :null => false
+    t.string   "author_type",                              :null => false
+    t.string   "platform",                                 :null => false
+    t.text     "text",                                     :null => false
+    t.integer  "user_rating",               :default => 0
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -800,9 +802,9 @@ ActiveRecord::Schema.define(:version => 20111209193119) do
   add_index "role_assignments", ["user_id", "user_role_id"], :name => "index_role_assignments_on_user_id_and_user_role_id", :unique => true
 
   create_table "spend_shares", :id => false, :force => true do |t|
-    t.string   "id",           :limit => 36, :null => false
-    t.float    "ratio",                      :null => false
-    t.date     "effective_on",               :null => false
+    t.string   "id",             :limit => 36, :null => false
+    t.float    "ratio",                        :null => false
+    t.date     "effective_on",                 :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
   end

@@ -1,56 +1,27 @@
-- form_for([:games, @gamer_review]) do |f|
-  = f.hidden_field :app_id, :value => params[:app_id]
-  = f.hidden_field :author_type, :value => 'Gamer'
-  = f.hidden_field :author_id, :value => current_gamer.id
-  .content_wrapper
-    .content
-      .offer_image
-        = image_tag(app.get_icon_url(:source => :cloudfront))
-      .offer_text.clearfix
-        .offer_title.title
-          = app.name
-        .app_meta.clearfix
-          .app_category
-            = app.primary_category
-          .app_rating_wrapper
-            .app_rating{ :rating => @gamer_review.user_rating }
-            = f.hidden_field :user_rating, :value => @gamer_review.user_rating
-        .offer_review
-          = f.text_area :text, :rows => 10
-          = error_message_on @gamer_review, :text
-        .review_submit
-          - if @gamer_review.new_record?
-            = f.submit "Submit Review"
-          - else
-            = f.submit "Update Review"
+.write_review.clearfix
+  - form_for([:games, @gamer_review]) do |f|
+    = f.hidden_field :app_id, :value => params[:app_id]
+    = f.hidden_field :author_type, :value => 'Gamer'
+    = f.hidden_field :author_id, :value => current_gamer.id
+    .offer_image
+      = image_tag(current_gamer.get_avatar_url(57))
+    .offer_text.clearfix
+      .app_meta.clearfix
+        .app_rating_wrapper
+          .gamer_rating{ :rating => @gamer_review.user_rating }
+          = f.hidden_field :user_rating, :value => @gamer_review.user_rating
+        .comment_label= 'Comment'
+      .gamer_review
+        = f.text_area :text, :rows => 10
+        = error_message_on @gamer_review, :text
+      .review_submit
+        - if @gamer_review.new_record?
+          = f.submit "Submit Review"
+        - else
+          = f.submit "Update Review"
 
 - content_for :page_javascript do
   :plain
     $(function($) {
-      TJG.ui.loadRatings();
-
-      $('.app_rating span').click(function(){
-        var index = parseFloat($(".app_rating span").index(this)) + 1;
-        var cur_rating = parseFloat($(this).parent().attr("rating"));
-
-        if(cur_rating > index){
-          $(this).parent().attr("rating", index);
-          for(var i = index; i < 5; i++){
-            $('.app_rating span:nth-child('+(i+1)+')').removeClass('on').addClass('off');
-          }
-        }else if(cur_rating < index){
-          $(this).parent().attr("rating", index);
-          for(var i= 0; i < index; i++){
-            $('.app_rating span:nth-child('+(i+1)+')').removeClass('off').addClass('on');
-          }
-        }else if(cur_rating == index){
-          $(this).parent().attr("rating", index-1);
-          $(this).removeClass('on').addClass('off');
-        }else if(!cur_rating && index == 1){
-          $(this).parent().attr("rating", index);
-          $(this).removeClass('off').addClass('on');
-        }
-
-        $('#gamer_review_user_rating').val($(this).parent().attr("rating"));
-      });
+      TJG.ui.loadActiveGamerRating();
     });

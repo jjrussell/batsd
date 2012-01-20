@@ -60,6 +60,7 @@ class App < ActiveRecord::Base
   TRADEDOUBLER_COUNTRIES = Set.new(%w( GB FR DE IT IE ES NL AT CH BE DK FI NO SE LU PT GR ))
   MAXIMUM_INSTALLS_PER_PUBLISHER = 4000
   PREVIEW_PUBLISHER_APP_ID = "bba49f11-b87f-4c0f-9632-21aa810dd6f1" # EasyAppPublisher... used for "ad preview" generation
+  RATING_THRESHOLD = 0.6
 
   has_many :offers, :as => :item
   has_one :primary_offer, :class_name => 'Offer', :as => :item, :conditions => 'id = item_id'
@@ -81,6 +82,8 @@ class App < ActiveRecord::Base
 
   validates_presence_of :partner, :name, :secret_key
   validates_inclusion_of :platform, :in => PLATFORMS.keys
+  validates_numericality_of :thumb_up_count, :only_integer => true, :greater_than_or_equal_to => 0, :allow_nil => false
+  validates_numericality_of :thumb_down_count, :only_integer => true, :greater_than_or_equal_to => 0, :allow_nil => false
 
   before_validation_on_create :generate_secret_key
 
@@ -250,7 +253,16 @@ class App < ActiveRecord::Base
     PLATFORM_DETAILS[platform][:screen_layout_sizes].nil? ? [] : PLATFORM_DETAILS[platform][:screen_layout_sizes].sort{ |a,b| a[1] <=> b[1] }
   end
 
-private
+  def total_thumbs_count
+    thumb_up_count + thumb_down_count
+  end
+
+  def positive_thumbs_percentage
+    total = total_thumbs_count
+    return total > 0 ? ((thumb_up_count.to_f / total) * 100).round(2) : 0
+  end
+
+  private
 
   def generate_secret_key
     return if secret_key.present?

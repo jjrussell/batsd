@@ -1,2 +1,10 @@
 = render :partial => 'games/homepage/nav_bar', :locals => { :show_device => true, :active => 'back', :back_button_destination => games_gamer_reviews_path }
-= render 'form', :app => @gamer_review.app
+.content_wrapper
+  .content
+    = render 'form', :app => @gamer_review.app
+
+- content_for :page_javascript do
+  :plain
+    $(function($) {
+      $('.write_review').css('border-bottom', '0px');
+    });

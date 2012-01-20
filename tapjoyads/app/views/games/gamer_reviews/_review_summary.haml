@@ -1,0 +1,17 @@
+.reviews_summary.clearfix
+  .offer_image
+    = image_tag(app.get_icon_url(:source => :cloudfront))
+  .offer_text.clearfix
+    .offer_title.title
+      = app.name
+    .review_meta.clearfix
+      %span.gamer_overall_rating{ :rating => app.positive_thumbs_percentage, :threshold => "#{App::RATING_THRESHOLD}" }
+      %span= "Thumbs Counted: #{app.total_thumbs_count}"
+      %span= "Up: #{app.thumb_up_count}"
+      %span= "Down: #{app.thumb_down_count}"
+
+- content_for :page_javascript do
+  :plain
+    $(function($) {
+      TJG.ui.loadSummaryGamerRating();
+    });
