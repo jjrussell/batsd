@@ -1,6 +1,6 @@
 class Job::MasterCreativeApprovalQueueController < Job::JobController
   def stale
-    queued ||= {}
+    queued = {}
 
     # Collapse into a hash and send mails after, to prevent a blast of (practically) duplicate emails
     CreativeApprovalQueue.stale.each do |queue|
