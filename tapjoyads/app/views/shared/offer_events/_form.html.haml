@@ -46,16 +46,16 @@
         %td
           - selected_option = @offer_event.change_daily_budget? ? (@offer_event.daily_budget == 0 ? 'Unlimited' : 'Limited') : 'Unchanged'
           = select_tag 'daily_budget_selector', options_for_select([ [ 'Unchanged', 'Unchanged' ], [ 'Unlimited', 'Unlimited' ], [ 'Limited', 'Limited' ] ], selected_option)
-      %tr
+      %tr.daily_budget{ :class => selected_option == 'Limited' ? 'daily_budget' : 'hidden daily_budget' }
         %th
         %td
-          = f.label(:daily_budget, 'Installs:', { :class => selected_option == 'Limited' ? 'daily_budget' : 'hidden daily_budget' })
-          = f.text_field :daily_budget, { :class => selected_option == 'Limited' ? 'daily_budget' : 'hidden daily_budget' }
-      %tr
+          = f.label(:daily_budget, 'Installs:')
+          = f.text_field :daily_budget
+      %tr.estimated_budget{ :class => selected_option == 'Limited' ? 'daily_budget' : 'hidden daily_budget' }
         %th
         %td
-          = label_tag('estimated_budget', 'Daily Budget:', { :class => selected_option == 'Limited' ? 'daily_budget' : 'hidden daily_budget' } )
-          = text_field_tag('estimated_budget', '', { :class => selected_option == 'Limited' ? 'daily_budget' : 'hidden daily_budget', :size => 24 })
+          = label_tag('estimated_budget', 'Daily Budget:' )
+          = text_field_tag('estimated_budget')
           = error_message_on @offer_event, :daily_budget
 
   = f.submit 'Save Event' if @offer_event.editable?
@@ -135,10 +135,10 @@
       });
       $('#estimated_budget').change(function() {
           var budget = stringToNumber($(this).val(), true);
-          var installLimit = Math.floor(budget * 100 / currentPayment);
+          var installLimit = Math.floor(budget / (currentPayment/100));
           $(this).val(numberToCurrency(budget));
           $('#offer_event_daily_budget').val(addCommaSeparators(installLimit));
-          if( installLimit <= 0 ) {
+          if (!checkValidBudget()) {
             $('#offer_event_daily_budget').change();
           }
       });

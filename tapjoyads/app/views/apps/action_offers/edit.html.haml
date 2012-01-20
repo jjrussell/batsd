@@ -241,7 +241,7 @@
         var installLimit = Math.floor(budget / currentPayment);
         $(this).val(numberToCurrency(budget));
         $('#action_offer_primary_offer_attributes_daily_budget').val(addCommaSeparators(installLimit));
-        if( installLimit <= 0 ) {
+        if (!checkValidBudget()) {
           $('#action_offer_primary_offer_attributes_daily_budget').change();
         }
       });
