@@ -220,7 +220,7 @@ private
     end
 
     @orders.each do |order|
-      if order.is_transfer? || order.is_bonus?
+      if order.is_transfer? || order.is_bonus? || order.is_marketing_credits?
         month = order.created_at.strftime("%Y-%m")
         @statements[month][:others] << order
       else

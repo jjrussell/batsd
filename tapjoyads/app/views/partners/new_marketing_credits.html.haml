@@ -2,13 +2,15 @@
 
 %h1 Create Marketing Credits for #{@partner.name}
 
-- form_tag create_marketing_credits_partner_path, :method => :post, :class => 'tjform' do
+- form_for @order, :url => create_marketing_credits_partner_path, :method => :post, :html => {:class => 'tjform' } do |f|
+  = f.hidden_field :partner_id, :value => @partner.id
+  = f.hidden_field :payment_method, :value => @order.payment_method
   %table
     %tr
-      %th= label_tag 'marketing_credits_amount', 'Amount'
-      %td= text_field_tag 'marketing_credits_amount', '$0.00', :class => 'currency_field allow_negative'
+      %th= f.label :amount
+      %td= f.currency_field :amount, {}, {:class => 'allow_negative'}
     %tr
-      %th= label_tag 'marketing_credits_note', 'Note'
-      %td= text_field_tag 'marketing_credits_note'
+      %th= f.label :note
+      %td= f.text_field :note, :size => 50
     %tr
-      %td{ :colspan => 2 }= submit_tag 'Create Marketing Credits'
+      %td{ :colspan => 2 }= f.submit 'Create Marketing Credits'
