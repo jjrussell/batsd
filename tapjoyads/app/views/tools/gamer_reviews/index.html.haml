@@ -28,7 +28,7 @@
         %td= link_to(gamer_review.app_name, tools_gamer_reviews_path(:app_id => gamer_review.app_id))
         %td= link_to(gamer_review.author.get_gamer_name, tools_gamer_reviews_path(:author_id => gamer_review.author_id))
         %td= gamer_review.platform
-        %td= gamer_review.text
+        %td= truncate(gamer_review.text, :length => 20)
         %td= gamer_review.user_rating
         %td= link_to('Edit', edit_tools_gamer_review_path(gamer_review))
         %td= link_to('Delete', tools_gamer_review_path(gamer_review), :method => :delete, :confirm => "Delete review?")
