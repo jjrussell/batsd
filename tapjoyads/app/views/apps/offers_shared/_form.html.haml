@@ -143,11 +143,11 @@
       %tr
         %td{ :colspan => 2 }= f.submit 'Update', {:disabled => 'disabled', :id => 'offer_submit_button'}
 
-- if !@offer.rewarded? || @offer.featured?
+- if @offer.can_change_banner_creatives?
   %br
   Upload custom creatives <small style='color:red'>(red labels are pending approval)</small>:
   %br
-  - @custom_creative_sizes.each do |size_hash|
+  - @offer.banner_creative_sizes.each do |size_hash|
     %iframe.creative_upload{:src => upload_creative_app_offer_path(:id => @offer.id, :app => @app.id, :image_size => size_hash[:image_size], :label => size_hash[:label_image_size]), :frameborder => 0}
 
 - if !@offer.tapjoy_enabled? && @enable_request.new_record?
@@ -346,7 +346,7 @@
         $(this).val(addCommaSeparators(installsLimit));
         setEstimatedBudget();
       });
-      $('#estimated_budget').change(function() { 
+      $('#estimated_budget').change(function() {
           var budget = stringToNumber($(this).val(), true);
           var currentPayment = stringToNumber($('#offer_payment').val(), true);
           var installLimit = Math.floor(budget / currentPayment);

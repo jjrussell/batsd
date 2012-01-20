@@ -36,17 +36,6 @@ class Apps::OffersController < WebsiteController
         @enable_request = @offer.enable_offer_requests.build
       end
     end
-
-    if @offer.featured?
-      @custom_creative_sizes = Offer::FEATURED_AD_SIZES.collect do |size|
-        width, height = size.split("x").collect{|x|x.to_i}
-        orientation = width > height ? "(landscape)" : "(portrait)"
-        { :image_size         => size,
-          :label_image_size   => "#{size} #{orientation}" }
-      end
-    elsif !@offer.rewarded?
-      @custom_creative_sizes = Offer::DISPLAY_AD_SIZES.collect { |size| { :image_size => size, :label_image_size => "#{size} creative" }}
-    end
   end
 
   def preview

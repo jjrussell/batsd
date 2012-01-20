@@ -235,6 +235,22 @@ class Offer < ActiveRecord::Base
     super
   end
 
+  def can_change_banner_creatives?
+    !rewarded? || featured?
+  end
+
+  def banner_creative_sizes
+    if !featured?
+      DISPLAY_AD_SIZES.collect { |size| {:image_size => size, :label_image_size => "#{size} creative"} }
+    else
+      FEATURED_AD_SIZES.collect do |size|
+        width, height = size.split('x').map(&:to_i)
+        orientation = (width > height) ? 'landscape' : 'portrait';
+        {:image_size => size, :label_image_size => "#{size} (#{orientation})"}
+      end
+    end
+  end
+
   def should_update_approved_banner_creatives?
     banner_creatives_changed? && banner_creatives != approved_banner_creatives
   end
@@ -696,16 +712,6 @@ class Offer < ActiveRecord::Base
   end
 
 private
-  def custom_creative_sizes
-    if !rewarded? && !featured?
-      Offer::DISPLAY_AD_SIZES
-    elsif featured?
-      Offer::FEATURED_AD_SIZES
-    else
-      []
-    end
-  end
-
   def sync_creative_approval
     # Handle banners on this end
     banner_creatives.each do |size|
@@ -733,8 +739,9 @@ private
   def sync_banner_creatives!
     creative_blobs = {}
 
-    custom_creative_sizes.each do |size|
-      image_data = (send("banner_creative_#{size}_blob") rescue nil)
+    banner_creative_sizes.each do |data|
+      size = data[:image_size]
+      image_data = send("banner_creative_#{size}_blob")
       creative_blobs[size] = image_data if !image_data.blank?
     end
 
