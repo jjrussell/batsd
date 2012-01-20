@@ -1,4 +1,5 @@
 - url = offer_creatives_form_path(:id => @offer.id, :image_size => @image_size, :label => @label, :app_id => @app)
+- pending = @offer.has_banner_creative?(@image_size) && !@offer.banner_creative_approved?(@image_size)
 
 - if @creative_exists
   - form_tag(url, :method => :delete, :id => "remove_form_for_#{@image_size}", :class => "hidden") {}
@@ -8,7 +9,7 @@
     %tbody
       %tr.admin
         %th
-          = f.label("custom_creative_#{@image_size}", @label)
+          = f.label("custom_creative_#{@image_size}", @label, :class => (pending ? 'pending' : ''))
         %td
           %table
             - unless @success_message.blank?
@@ -36,7 +37,7 @@
       toggle_other_forms(false);
 
       $('.view_link').click(function() {
-        parent.$.facebox({ajax: "#{@preview_path}" })
+        parent.$.facebox({ajax: "#{preview_app_offer_path(:id => @offer.id, :app_id => @app.id, :image_size => @image_size, :preview => true)}" })
         return false;
       });
 
@@ -58,7 +59,7 @@
       });
 
       function toggle_other_forms(disabled) {
-        var iframes = $(parent.document).find('iframe');
+        var iframes = $(parent.document).find('iframe.creative_upload');
         for(var i = 0; i<iframes.length; i++) {
           var iframe = $(iframes[i]);
           var upload_button = iframe.contents().find('#upload_button');
