@@ -16,6 +16,7 @@ nl:
       load_more: "Laad meer!"
       loading: "Laden..."
       load_error: "Probeer het a.u.b. opnieuw"
+      wifi_warning: "This app requires wifi connection to download, OK to continue."
 
     featured:
       title: "Verdien %{currency}"

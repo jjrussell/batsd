@@ -32,8 +32,7 @@
   - @offer_list.each_with_index do |offer, index|
     - link_class = index == 0 ? 'offer first' : index == @offer_list.size - 1 ? 'offer last' : 'offer'
     - link_class << ' video' if offer.item_type == 'VideoOffer'
-    - link_class << ' wifi_requred' if @show_wifi_only && offer.wifi_only?
-    - link_to(get_click_url(offer), :class => link_class, :onclick => "this.className += ' clicked';") do
+    - link_to(get_click_url(offer), :class => link_class, :onclick => @show_wifi_only && offer.wifi_only? ? "return wifiPopUp(this);" : "this.className += ' clicked';") do
       .content
         .banner
           .cost
@@ -103,6 +102,15 @@
     var currency = "#{@currency.name}";
     var avail = "#{@more_data_available}";
     avail = parseInt(avail);
+
+    function wifiPopUp(e){
+      var y = confirm("#{t('text.offerwall.wifi_warning')}");
+      if(y) {
+        e.className += ' clicked';
+        return true;
+      }
+      return false;
+    }
 
     function scroll() {
       images = document.getElementsByTagName('img');
@@ -199,7 +207,7 @@
                 if (i == 0) {
                   t.push('<div class="divider"></div>');
                 }
-                t.push('<a class="offer '+ offerCls +'" href="'+ v.RedirectURL + '">');
+                t.push('<a class="offer '+ offerCls +'" href="'+ v.RedirectURL + '" onclick="' + (v.WifiOnly ? 'return wifiPopUp(this);' : 'this.className += \' clicked\';') + '">');
                   t.push('<div class="content">');
                     t.push('<div class="banner">');
                       t.push('<div class="cost">');
@@ -248,6 +256,7 @@
                         t.push('</b>');
                       t.push('</p>');
                     t.push('</div>');
+                    t.push('<div class="load"></div>');
                   t.push('</div>');
                 t.push('</a>');
                 if (i != (offers.length - 1)) {

@@ -18,6 +18,7 @@ all_caps:
       load_more: "LOAD SOME MORE!"
       loading: "LOADING..."
       load_error: "PLEASE TRY AGAIN."
+      wifi_warning: "THIS APP REQUIRES WIFI CONNECTION TO DOWNLOAD, OK TO CONTINUE."
 
     featured:
       title: "EARN %{currency}"

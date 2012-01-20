@@ -18,6 +18,7 @@ ja:
       load_more: "もっと読み込みましょう！"
       loading: "読み込み中・・・"
       load_error: "もう一度試してください"
+      wifi_warning: "This app requires wifi connection to download, OK to continue."
 
     featured:
       title: "%{currency} を稼ぐ"

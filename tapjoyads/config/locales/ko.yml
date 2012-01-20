@@ -18,6 +18,7 @@ ko:
       load_more: "더 보여 주세요!"
       loading: "로딩중..."
       load_error: "다시 한번 시도해주십시오."
+      wifi_warning: "This app requires wifi connection to download, OK to continue."
 
     featured:
       title: "%{currency}를 지급 받기."
