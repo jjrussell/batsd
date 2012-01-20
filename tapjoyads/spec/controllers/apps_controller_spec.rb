@@ -2,7 +2,7 @@ require 'spec/spec_helper'
 
 describe AppsController do
   before :each do
-    #require 'fake_aws'
+    fake_the_web
     activate_authlogic
   end
 

@@ -99,6 +99,13 @@
           Sending
         .dialog_image
 
+    #cookie_error.dialog_wrapper.hide
+      .close_dialog
+        .close_button
+      .dialog
+        .dialog_content
+          It appears that cookies are not enabled on your browser. You will need to enable cookies in order to use Tapjoy.
+
     - [:notice, :error, :success].each do |key|
       - unless flash[key].blank?
         #flash_error.dialog_wrapper.hide

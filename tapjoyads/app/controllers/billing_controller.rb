@@ -123,9 +123,16 @@ class BillingController < WebsiteController
   end
 
   def transfer_funds
+    @freeze_enabled = PayoutFreeze.enabled?
   end
 
   def create_transfer
+    if PayoutFreeze.enabled?
+      flash[:error] = 'Transfers are currently disabled.'
+      redirect_to :action => :transfer_funds
+      return
+    end
+
     amount = sanitize_currency_param(params[ :transfer_amount ]).to_i
     if amount <= 0
       flash[:error] = "Transfer amount must be more than $0."

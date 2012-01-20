@@ -127,7 +127,7 @@ TJG.utils = {
   },
 
   deleteCookie: function(name) {
-    setCookie(name, "", -1);
+    this.setCookie(name, "", -1);
   },
 
   scrollTop : function (delay){

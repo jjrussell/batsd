@@ -13,6 +13,8 @@
     %li= link_to 'Failed Invoices', failed_invoices_tools_orders_path
   - if permitted_to? :index, :tools_payouts
     %li= link_to 'Payouts', tools_payouts_path
+  - if permitted_to? :index, :tools_payout_freezes
+    %li= link_to 'Payout Freezes', tools_payout_freezes_path
   - if permitted_to? :money, :tools
     %li= link_to 'Money', money_tools_path
   - if permitted_to? :monthly_data, :tools
