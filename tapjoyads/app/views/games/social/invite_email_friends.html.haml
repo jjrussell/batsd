@@ -2,19 +2,18 @@
 :ruby
   image_root = "#{WEBSITE_URL}/images/email"
 
-%h1.titlebar Send an Email Invite
+%h1.titlebar= t('text.games.invite_title')
 .email_invite_wrapper
   - form_tag games_social_send_email_invites_path, :id => 'invite_friends' do
-    #recipients_lable Recipients
-    .recipients_wrapper= text_field_tag 'recipients', @recipients, :placeholder => 'Use commas to separate multiple emails'
+    #recipients_lable= t('text.shared.recipients') 
+    .recipients_wrapper= text_field_tag 'recipients', @recipients, :placeholder => t('text.games.recipients_label') 
     .content_wrapper
       #email
         %table{:border => 0, :cellspacing => 0, :cellpadding => 0}
           %tr
             %td
               = image_tag("#{image_root}/logo.png", :title => 'Tapjoy Games', :alt => 'Tapjoy Games', :style => "border: none;")
-            %td#follow_us
-              follow us:
+            %td#follow_us= t('text.games.follow_us');
             %td#social
               = image_tag("#{image_root}/fb_icon.png", :title => 'Facebook', :alt => 'Facebook', :style => "border: none;")
             %td#social

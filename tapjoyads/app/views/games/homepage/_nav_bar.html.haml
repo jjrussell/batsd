@@ -9,7 +9,7 @@
         .device_name
           = @device_name
         .device_switch
-          wrong device?
+          = t('text.games.wrong_device')
       .plus
 
 .nav
@@ -29,7 +29,7 @@
           %ul.pair
             - if active == 'back'
               - link_to(back_button_destination, :class => "slideright") do
-                %li.my_apps Back
+                %li.my_apps= t('text.shared.back')
             - else
               - if active == 'my_apps'
                 %li.my_apps.active_button= t('text.games.my_apps')
