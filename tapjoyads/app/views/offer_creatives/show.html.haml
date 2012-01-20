@@ -7,7 +7,7 @@
 - form_for(@offer, :url => url, :html => { :id => 'upload_form', :class => 'tjform', :method => (@creative_exists ? :put : :post), :multipart => true }) do |f|
   %table
     %tbody
-      %tr.admin
+      %tr
         %th
           = f.label("custom_creative_#{@image_size}", @label, :class => (pending ? 'pending' : ''))
         %td
