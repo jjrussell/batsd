@@ -19,7 +19,7 @@ zh:
       buy_currency: "买 %{amount} %{currency}"
       load_more: "下一页！"
       loading: "载入中。。。。"
-      load_error: "请再次一次。"
+      load_error: "请再试一次。"
       wifi_warning: "本软件需要wifi联接，点击确定继续下载。"
 
     featured:
