@@ -94,19 +94,24 @@ Install MySQL
 * run the main installer in the mysql dmg
 * run the startup item installer in the mysql dmg
 * run the pref pane in the mysql dmg
-* add mysql to the `PATH` and `MANPATH`
-  * create the file `/etc/paths.d/mysql` with the following line...
+
+Add mysql to the `PATH` and `MANPATH`
+-------------------------------------
+* create the file `/etc/paths.d/mysql` with the following line...
 
 ```
     /usr/local/mysql/bin
 ```
 
-  * create the file `/etc/manpaths.d/mysql` with the following line...
+* create the file `/etc/manpaths.d/mysql` with the following line...
 
 ```
     /usr/local/mysql/man
 ```
 
+
+Start MySQL
+-----------
 * start MySQL via the pref pane in System Preferences
 
 
@@ -121,6 +126,7 @@ Setup memcached to start on boot
 * open the applescript and save the script as an Application in your `/Applications` directory
 * open the System Preferences and navigate to the Users & Groups section
 * add the Memcached app as a Login Item for your user account
+* run the Memcached app manually to start the process
 
 Copy config files into place
 ----------------------------
@@ -153,6 +159,12 @@ sudo env ARCHFLAGS="-arch x86_64" gem install memcached -v 1.2.7
 sudo env ARCHFLAGS="-arch x86_64" gem install mysql -v 2.8.1 -- --with-mysql-config=/usr/local/mysql/bin/mysql_config
 sudo gem install rcov -v 0.9.10
 sudo gem install -v 2.3.14 rails
+sudo gem install rdoc
+sudo gem install rdoc-data
+sudo rdoc-data --install
+```
+Then from within the tapjoyserver/tapjoyads directory:
+```
 sudo rake gems:install
 ```
 

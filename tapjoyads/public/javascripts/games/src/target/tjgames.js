@@ -1217,7 +1217,7 @@ TJG.ui = {
             t.push('</div>');
             if (v.WifiOnly) {
               t.push('<div class = "wifi_only">');
-                t.push('Wifi Only <div class="wifi_icon"></div>');
+                t.push('Wifi Required <div class="wifi_icon"></div>');
               t.push('</div>');
             }
           t.push('</div>');
@@ -2155,7 +2155,7 @@ TJG.social = {
             centerDialog($('#social_dialog').height(), '#social_dialog_content', '#social_dialog');
 
             $('.close_dialog, .continue_invite').click(function(){
-              document.location.href = location.protocol + '//' + location.host + inviteUrl;
+              document.location.href = inviteUrl;
             });
           } else if(d.error_redirect) {
             window.setTimeout('location.reload()', 1000);
@@ -2215,7 +2215,7 @@ TJG.social = {
             centerDialog($('#social_dialog').height(), '#social_dialog_content', '#social_dialog');
 
             $('.close_dialog, .continue_invite').click(function(){
-              document.location.href = location.protocol + '//' + location.host + inviteUrl;
+              document.location.href = inviteUrl;
             });
           } else {
             showErrorDialog(d.error, TJG.ui.hideSender());
@@ -2312,7 +2312,7 @@ TJG.social = {
     });
 
     $('#back_button').click(function(event){
-      document.location.href = location.protocol + '//' + location.host + inviteUrl;
+      document.location.href = inviteUrl;
     });
 
     $('#friend_filter').bind('input', function(event){
@@ -2347,8 +2347,28 @@ TJG.social = {
           //-->
         });
       } else {
+        showError("Please authorize us/grant us both permissions before sending out an invite.");
       }
     }, {scope: scope});
+
+    var showError = function(error){
+      var msg = [
+        '<div id="flash_error" class="dialog_wrapper hide" style="top: 179px; left: 533px; display: block;">',
+        '<div class="close_dialog">',
+        '<div class="close_button"></div>',
+        '</div>',
+        '<div class="dialog">',
+        '<div class="dialog_content">',
+        '<div class="error">', error ,'</div>',
+        '</div></div></div>',
+      ].join('');
+      $('body').append(msg);
+
+      $(".close_button").click(function(event) {
+        $("#flash_error").fadeOut();
+        $("#flash_error").remove();
+      });
+    };
   },
 
   doFbLogout : function(){

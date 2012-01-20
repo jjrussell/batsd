@@ -6,6 +6,9 @@ end
 
 describe DisplayAdController do
   integrate_views
+  before :each do
+    fake_the_web
+  end
 
   describe "hitting display ad controller" do
     before :each do
@@ -38,6 +41,7 @@ describe DisplayAdController do
       describe "with custom ad" do
         before :each do
           @offer.banner_creatives = %w(320x50)
+          @offer.approved_banner_creatives = %w(320x50)
           @offer.rewarded = false
 
           object = @bucket.objects[@offer.banner_creative_path('320x50')]
@@ -109,6 +113,7 @@ describe DisplayAdController do
       describe "with custom ad" do
         before :each do
           @offer.banner_creatives = %w(320x50 640x100)
+          @offer.approved_banner_creatives = %w(320x50 640x100)
           @offer.rewarded = false
         end
 
@@ -213,6 +218,7 @@ describe DisplayAdController do
       describe "with custom ad" do
         before :each do
            @offer.banner_creatives = %w(320x50)
+           @offer.approved_banner_creatives = %w(320x50)
            @offer.rewarded = false
         end
 
