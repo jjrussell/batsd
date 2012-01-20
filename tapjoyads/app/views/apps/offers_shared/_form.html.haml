@@ -3,11 +3,6 @@
 - form_for(@offer, :url => { :action => :update }, :html => { :method => :put, :class => 'tjform', :id => 'update' }) do |f|
   %table
     %tbody
-      %tr{ :class => (@app.store_id? ? '' : 'hidden')}
-        %th
-          = f.label "View Ads"
-        %td
-          = link_to("Click to preview ad images", preview_app_offer_path(:id => @offer.id, :app_id => @app.id), :rel => 'facebox', :id => 'preview_link')
       %tr
         %th
           = f.label :user_enabled, @offer.featured? ? 'Enable Featured Installs' : 'Enable Installs'
@@ -26,11 +21,15 @@
             #percentile-info.percentile-details
               This bid will make your offer more prioritized than
               %span#percentile= "#{@offer.percentile}%" rescue 'N/A'
-              of featured offers.
+              of
+              = @offer.rewarded? ? 'rewarded' : 'non-rewarded'
+              featured offers.
             #percentile-info-loading.percentile-details{ :style => 'display: none' }
               Estimating new featured placement...
             .percentile-details
-              The bid is just one of many factors affecting your featured offer ranking.
+              The bid is just one of many factors affecting your
+              = @offer.rewarded? ? 'rewarded' : 'non-rewarded'
+              featured offer ranking.
           - elsif !@offer.rewarded?
             #percentile-info.percentile-details
               This bid will make your offer more prioritized than
@@ -65,6 +64,17 @@
           Offer Name
           #help_offer_name.help ?
         %td= @offer.name
+      %tr{ :class => (@app.store_id? ? '' : 'hidden')}
+        %th
+          = f.label "View Ads"
+          #help_view_ads.help ?
+        %td
+          - if @offer.featured?
+            - @custom_creative_sizes.each do |size_hash|
+              = link_to("Preview #{size_hash[:label_image_size]} ads", preview_app_offer_path(:id => @offer.id, :app_id => @app.id, :image_size => size_hash[:image_size], :preview => true), :rel => 'facebox', :id => 'preview_link')
+              %br
+          - else
+            = link_to("Preview ads", preview_app_offer_path(:id => @offer.id, :app_id => @app.id), :rel => 'facebox', :id => 'preview_link')
       %tr
         %th
           = f.label :daily_budget, 'Daily Budget'
@@ -133,12 +143,12 @@
       %tr
         %td{ :colspan => 2 }= f.submit 'Update', {:disabled => 'disabled', :id => 'offer_submit_button'}
 
-- if permitted_to?(:edit, :statz) && !@offer.rewarded? && !@offer.featured?
+- if !@offer.rewarded? || @offer.featured?
   %br
-  Upload custom creatives:
+  Upload custom creatives <small style='color:red'>(red labels are pending approval)</small>:
   %br
-  - Offer::DISPLAY_AD_SIZES.each do |size|
-    %iframe.creative_upload{:src => upload_creative_app_offer_path(:id => @offer.id, :app => @app.id, :size => size)}
+  - @custom_creative_sizes.each do |size_hash|
+    %iframe.creative_upload{:src => upload_creative_app_offer_path(:id => @offer.id, :app => @app.id, :image_size => size_hash[:image_size], :label => size_hash[:label_image_size]), :frameborder => 0}
 
 - if !@offer.tapjoy_enabled? && @enable_request.new_record?
   - form_for(@enable_request, :html => { :class => 'tjform' }) do |f|
@@ -147,6 +157,8 @@
 .hidden
   #help_offer_name_content{:name => 'Offer Name'}
     Name that will be displayed on offer walls.
+  #help_view_ads_content{:name => 'View Ads'}
+    Shows previews of how offers will be displayed to users. Previews are available for multiple screen resolutions.
   #help_balance_content{:name => 'Balance'}
     Current balance available.
   #help_daily_content{:name => 'Daily Budget'}
@@ -348,6 +360,12 @@
         checkMinimumPrice();
         return checkValidBudget() && checkMaximumBid(true);
       });
+
+  - if params[:show_preview] == 'true'
+    :plain
+      $.facebox({ajax: "#{preview_app_offer_path(:id => @offer.id, :app_id => @app.id, :image_size => params[:preview_image_size], :preview => 'true')}"});
+
+  :plain
     });
 
 - content_for :page_styles do
@@ -434,5 +452,5 @@
     .creative_upload {
       width: 100%;
       border: none;
-      height: 30px;
+      height: 35px;
     }

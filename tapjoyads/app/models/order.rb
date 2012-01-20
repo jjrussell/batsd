@@ -51,10 +51,8 @@ class Order < ActiveRecord::Base
   def create_freshbooks_invoice!
     return if invoice_id
 
-    unless freshbooks_client_id
-      partner.freshbooks_client_id = FreshBooks.get_client_id(billing_email)
-      partner.save! if freshbooks_client_id
-    end
+    partner.freshbooks_client_id = FreshBooks.get_client_id(billing_email)
+    partner.save! if partner.freshbooks_client_id_changed?
 
     if freshbooks_client_id
       self.invoice_id = FreshBooks.create_invoice(invoice_details)

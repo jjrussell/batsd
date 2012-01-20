@@ -4,7 +4,7 @@
     = f.hidden_field :author_type, :value => 'Gamer'
     = f.hidden_field :author_id, :value => current_gamer.id
     .offer_image
-      = image_tag(current_gamer.get_avatar_url(57))
+      = image_tag(current_gamer.get_avatar_url)
     .offer_text.clearfix
       .app_meta.clearfix
         .app_rating_wrapper

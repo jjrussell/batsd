@@ -41,6 +41,7 @@ module Offer::Ranking
   def postcache_rank_score(currency)
     self.rank_score = precache_rank_score_for(currency.currency_group_id) || 0
     self.rank_score += (categories & currency.categories).length.to_f / currency.categories.length * (currency.postcache_weights[:category_match] || 0) if currency.categories.any?
+    self.rank_score += 1000000 if !featured? && !rewarded? && currency.conversion_rate == 0 && item_type == 'App' && price == 0
     rank_score
   end
 

@@ -2,10 +2,12 @@
   - publisher_app_id = App::PREVIEW_PUBLISHER_APP_ID
   - unable_to_show = []
   - if @offer.featured?
-    - if @show_generated_ads
-      Featured ad:
-      %div.img320x480
-        = image_tag(@offer.fullscreen_ad_image_url(publisher_app_id, true), :class => 'preview', :alt => '')
+    - if !@offer.banner_creatives.empty? || @show_generated_ads
+      - width, height = params[:image_size].split("x").collect{|x|x.to_i}
+      - label = "Featured ad preview: (#{width}x#{height})"
+      - label << " <em>(Pending approval)</em>" if @offer.has_banner_creative?(params[:image_size]) and !@offer.banner_creative_approved?(params[:image_size])
+      %span.label #{label}:
+      %iframe.preview{ :src => @offer.fullscreen_ad_url(:publisher_app_id => publisher_app_id, :width => width, :height => height, :preview => true), :width => width, :height => height }
     - else
       - unable_to_show << "Featured"
   - else
@@ -19,11 +21,14 @@
 
     - if @offer.display_banner_ads?
       - Offer::DISPLAY_AD_SIZES.each do |size|
-        - if @show_generated_ads || @offer.banner_creatives.include?(size)
-          = "#{size} banner ad:"
+        - next if params[:only_one] && size != params[:image_size]
+        - if @show_generated_ads || @offer.has_banner_creative?(size)
+          - label = "#{size} banner ad"
+          - label << " <em>(Pending approval)</em>" if @offer.has_banner_creative?(size) and !@offer.banner_creative_approved?(size)
+          %span.label #{label}:
           %div{:class => "img#{size}"}
             - width, height = size.split("x").collect{|x|x.to_i}
-            = image_tag(@offer.display_ad_image_url(publisher_app_id, width, height, nil, nil, true, false), :class => 'preview', :alt => '')
+            = image_tag(@offer.preview_display_ad_image_url(publisher_app_id, width, height), :class => 'preview', :alt => '')
         - else
           - unable_to_show << "#{size} banner"
 
@@ -42,17 +47,22 @@
     - if @offer.rewarded?
       .banner_ad_notes
         *Banner ads for rewarded installs are only displayed for free apps where the app name is 30 characters or less, and where the conversion rate is 30% or more.
+
     - else
       .banner_ad_notes
         *To provide custom creatives for your non-rewarded ads, please contact
         = succeed '.' do
           = mail_to "support@tapjoy.com"
-        Please ensure images have correct dimensions. Custom banner ads for non-rewarded installs are only displayed for free apps.
+        Please ensure images have correct dimensions. Custom ads for non-rewarded installs are only displayed for free apps.
 
 %style{ :type => 'text/css' }
   :plain
     #previews {
       text-align: center;
+    }
+
+    #previews span.label em {
+      color: red;
     }
 
     #unable_to_show {
@@ -65,11 +75,16 @@
       font-size: 12px;
     }
 
+    iframe.preview {
+      border: none;
+      overflow: hidden;
+    }
+
     img.preview {
       display: none;
     }
 
-  - (Offer::DISPLAY_AD_SIZES + %w(320x480 320x76)).each do |size|
+  - (Offer::DISPLAY_AD_SIZES + Offer::FEATURED_AD_SIZES + %w(320x480 320x76)).each do |size|
     - width, height = size.split("x")
     - if @show_generated_ads || @offer.banner_creatives.include?(size) # show spinner while images are loading
       :plain

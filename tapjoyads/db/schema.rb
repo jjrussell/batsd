@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120110030017) do
+ActiveRecord::Schema.define(:version => 20120113013006) do
 
   create_table "action_offers", :id => false, :force => true do |t|
     t.string   "id",                    :limit => 36,                    :null => false
@@ -145,6 +145,12 @@ ActiveRecord::Schema.define(:version => 20120110030017) do
   add_index "conversions", ["id", "created_at"], :name => "index_conversions_on_id_and_created_at", :unique => true
   add_index "conversions", ["publisher_app_id", "created_at", "reward_type"], :name => "index_on_publisher_app_id_created_at_and_reward_type"
   add_index "conversions", ["publisher_partner_id", "created_at"], :name => "index_conversions_on_publisher_partner_id_and_created_at"
+
+  create_table "creative_approval_queue", :force => true do |t|
+    t.string "offer_id", :limit => 36, :null => false
+    t.string "user_id",  :limit => 36
+    t.text   "size"
+  end
 
   create_table "currencies", :id => false, :force => true do |t|
     t.string   "id",                                         :limit => 36,                                                  :null => false
@@ -284,6 +290,29 @@ ActiveRecord::Schema.define(:version => 20120110030017) do
   add_index "enable_offer_requests", ["id"], :name => "index_enable_offer_requests_on_id", :unique => true
   add_index "enable_offer_requests", ["offer_id"], :name => "index_enable_offer_requests_on_offer_id"
   add_index "enable_offer_requests", ["status"], :name => "index_enable_offer_requests_on_status"
+
+  create_table "featured_contents", :id => false, :force => true do |t|
+    t.string   "id",                 :limit => 36,                :null => false
+    t.string   "offer_id",           :limit => 36
+    t.string   "author_id",          :limit => 36
+    t.string   "featured_type",                                   :null => false
+    t.text     "platforms",                                       :null => false
+    t.text     "subtitle",                                        :null => false
+    t.text     "title",                                           :null => false
+    t.text     "description",                                     :null => false
+    t.text     "main_icon_url"
+    t.text     "secondary_icon_url"
+    t.text     "button_text"
+    t.text     "button_url"
+    t.date     "start_date",                                      :null => false
+    t.date     "end_date",                                        :null => false
+    t.integer  "weight",                           :default => 0, :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "featured_contents", ["featured_type"], :name => "index_featured_contents_on_featured_type"
+  add_index "featured_contents", ["id"], :name => "index_featured_contents_on_id", :unique => true
 
   create_table "gamer_devices", :id => false, :force => true do |t|
     t.string   "id",          :limit => 36, :null => false
@@ -474,14 +503,14 @@ ActiveRecord::Schema.define(:version => 20120110030017) do
   add_index "monthly_accountings", ["partner_id"], :name => "index_monthly_accountings_on_partner_id"
 
   create_table "network_costs", :id => false, :force => true do |t|
-    t.string   "id",         :limit => 36,                :null => false
-    t.integer  "amount",                   :default => 0, :null => false
+    t.string   "id",                 :limit => 36,                :null => false
+    t.integer  "amount",                           :default => 0, :null => false
     t.text     "notes"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.date     "first_effective_on",                              :null => false
   end
 
-  add_index "network_costs", ["created_at"], :name => "index_network_costs_on_created_at"
   add_index "network_costs", ["id"], :name => "index_network_costs_on_id", :unique => true
 
   create_table "news_coverages", :id => false, :force => true do |t|
@@ -604,6 +633,12 @@ ActiveRecord::Schema.define(:version => 20120110030017) do
     t.text     "banner_creatives"
     t.text     "dma_codes",                                                                                        :null => false
     t.text     "regions",                                                                                          :null => false
+    t.boolean  "instructions_overridden",                                                       :default => false, :null => false
+    t.boolean  "tapjoy_sponsored",                                                              :default => false, :null => false
+    t.boolean  "tj_games_only",                                                                 :default => false, :null => false
+    t.boolean  "wifi_only",                                                                     :default => false, :null => false
+    t.text     "approved_banner_creatives"
+    t.text     "approved_sources",                                                                                 :null => false
   end
 
   add_index "offers", ["id"], :name => "index_offers_on_id", :unique => true
@@ -645,6 +680,25 @@ ActiveRecord::Schema.define(:version => 20120110030017) do
   add_index "partner_assignments", ["partner_id"], :name => "index_partner_assignments_on_partner_id"
   add_index "partner_assignments", ["user_id", "partner_id"], :name => "index_partner_assignments_on_user_id_and_partner_id", :unique => true
 
+  create_table "partner_changes", :id => false, :force => true do |t|
+    t.string   "id",                     :limit => 36, :null => false
+    t.string   "item_id",                :limit => 36, :null => false
+    t.string   "item_type",                            :null => false
+    t.string   "source_partner_id",      :limit => 36, :null => false
+    t.string   "destination_partner_id", :limit => 36, :null => false
+    t.datetime "scheduled_for"
+    t.datetime "completed_at"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "partner_changes", ["destination_partner_id"], :name => "index_partner_changes_on_destination_partner_id"
+  add_index "partner_changes", ["id"], :name => "index_partner_changes_on_id", :unique => true
+  add_index "partner_changes", ["item_id"], :name => "index_partner_changes_on_item_id"
+  add_index "partner_changes", ["item_type", "item_id"], :name => "index_partner_changes_on_item_type_and_item_id"
+  add_index "partner_changes", ["scheduled_for", "completed_at"], :name => "index_partner_changes_on_scheduled_for_and_completed_at"
+  add_index "partner_changes", ["source_partner_id"], :name => "index_partner_changes_on_source_partner_id"
+
   create_table "partners", :id => false, :force => true do |t|
     t.string   "id",                           :limit => 36,                                                      :null => false
     t.string   "contact_name"
@@ -684,10 +738,25 @@ ActiveRecord::Schema.define(:version => 20120110030017) do
     t.decimal  "max_deduction_percentage",                   :precision => 8, :scale => 6, :default => 1.0,       :null => false
     t.date     "negotiated_rev_share_ends_on"
     t.boolean  "accepted_negotiated_tos",                                                  :default => false
+    t.string   "cs_contact_email"
   end
 
   add_index "partners", ["id"], :name => "index_partners_on_id", :unique => true
   add_index "partners", ["reseller_id"], :name => "index_partners_on_reseller_id"
+
+  create_table "payout_freezes", :id => false, :force => true do |t|
+    t.string   "id",          :limit => 36,                   :null => false
+    t.boolean  "enabled",                   :default => true, :null => false
+    t.datetime "enabled_at"
+    t.datetime "disabled_at"
+    t.string   "enabled_by"
+    t.string   "disabled_by"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "payout_freezes", ["enabled"], :name => "index_payout_freezes_on_enabled"
+  add_index "payout_freezes", ["id"], :name => "index_payout_freezes_on_id", :unique => true
 
   create_table "payout_infos", :id => false, :force => true do |t|
     t.string   "id",                  :limit => 36, :null => false
@@ -807,6 +876,7 @@ ActiveRecord::Schema.define(:version => 20120110030017) do
     t.date     "effective_on",                 :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.float    "uncapped_ratio",               :null => false
   end
 
   add_index "spend_shares", ["effective_on"], :name => "index_spend_shares_on_effective_on", :unique => true

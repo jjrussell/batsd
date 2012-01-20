@@ -6,8 +6,6 @@ class Tools::SupportRequestsController < WebsiteController
   after_filter :save_activity_logs, :only => [ :mass_resolve ]
 
   def mass_resolve
-    @request_not_awarded = []
-    @request_successfully_awarded = 0
     return if params[:upload_support_requests].blank?
     file_contents = params[:upload_support_requests].read
     if file_contents.blank?
@@ -15,32 +13,15 @@ class Tools::SupportRequestsController < WebsiteController
       return
     end
 
-    file_contents.each do |support_request_id|
-      support_request_id.strip!
-      next if support_request_id.empty?
-
-      support_request = SupportRequest.new(:key => support_request_id)
-      if support_request.new_record?
-        @request_not_awarded.push([support_request_id, "Invalid support_request_id: #{support_request_id}"])
-        next
-      end
-
-      click = support_request.click
-      if click.nil?
-        @request_not_awarded.push([support_request_id, "Unable to find a suitable click for: #{support_request_id}"])
-        next
-      end
-
-      begin
-        log_activity(click)
-        click.resolve!
-      rescue Exception => error
-        @request_not_awarded.push([support_request_id, error])
-        next
-      end
-      @request_successfully_awarded += 1
+    begin
+      support_request_file = UUIDTools::UUID.random_create.to_s
+      S3.bucket(BucketNames::SUPPORT_REQUESTS).objects[support_request_file].write(:data => file_contents)
+      Sqs.send_message(QueueNames::RESOLVE_SUPPORT_REQUESTS, { :user_email => current_user.email, :support_requests_file => support_request_file }.to_json)
+    rescue
+      flash[:error] = "Your file could not be processed. Try uploading it again, or email dev@tapjoy.com if it's continuing to fail."
     end
-    flash[:error] = 'Some errors were encountered while processing the rows.' if @request_not_awarded.size > 0
+
+    flash[:notice] = "Your file has been uploaded. You'll receive an email after your file has been processed."
   end
 
   def index
@@ -69,5 +50,4 @@ class Tools::SupportRequestsController < WebsiteController
       @publisher_apps[App.find(k)] = v unless k.nil?
     end
   end
-
 end

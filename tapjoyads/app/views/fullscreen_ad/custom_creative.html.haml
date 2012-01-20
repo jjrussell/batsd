@@ -1,0 +1,470 @@
+.close#close
+  - link_to(params[:preview] == 'true' ? '#' : 'dismiss', :class => 'close', :id => 'close-link') do
+    .close_inner#close_inner x
+#main
+  - link_to((params[:preview] == 'true' ? '#' : get_click_url(@offer)), :class => 'image-link') do
+    %img{ :src => "#{CLOUDFRONT_URL}/images/blank.png", :class => 'creative', :id => 'creative' }
+.buttons#buttons
+  - action_text = @offer.rewarded? ? "Earn #{@currency.get_visual_reward_amount(@offer, params[:display_multiplier])} #{@currency.name}" : "Download"
+  = link_to("#{action_text}", (params[:preview] == 'true' ? '#' : get_click_url(@offer)), :class => 'download gradient', :id => 'download')
+
+- content_for :page_javascript do
+  :plain
+    document.ontouchmove = function(e){ e.preventDefault(); };
+    window.onload = init;
+    window.onresize = rearrange;
+
+    var preferredCreative;        // Info about creative to be displayed
+    var client = new Object();    // Info about target device
+
+    var animOptions = {
+      duration: '0.8s',
+      startDelay: '2000',
+      timingFunction: 'ease-in-out'
+    };
+    var buttonsDiv = document.getElementById('buttons');
+    var buttonsHeight;
+    var closeButton = document.getElementById('close');
+    var closeButtonInner = document.getElementById('close_inner');
+
+    function init() {
+      // Determine target screen size and orientation
+      inspectScreen();
+
+      // If a creative hasn't already been selected, scan through all available creatives to determine best screen fit
+      if(preferredCreative == null) {
+        var availableCreativeSizes = [];
+        var availableCreatives = [];
+
+  - # Provide available custom creative sizes to javascript
+  - @offer.banner_creatives.each do |size|
+    :plain
+        availableCreativeSizes.push("#{size}".split('x'));
+        availableCreatives.push("#{@offer.banner_creative_path(size, 'jpeg')}");
+
+  :plain
+
+        for(var i = 0; i < availableCreativeSizes.length; i++ ) {
+          // Get info about this creative
+          var creative = new Object();
+          creative.name = availableCreatives[i];
+          creative.width = parseInt(availableCreativeSizes[i][0]);
+          creative.height = parseInt(availableCreativeSizes[i][1]);
+          creative.orientation = (creative.height > creative.width) ? 'portrait' : 'landscape';
+          calcCreativeMargins(creative);
+
+          // Determine if this creative is a better option than our current 'favorite'
+          if(i == 0) {
+            // If this is the first creative being considered, set it as the current 'favorite'
+            preferredCreative = creative;
+          } else if(creative.horizMargin == 0 && creative.vertMargin == 0) {
+            // If this creative is a perfect fit, use it
+            preferredCreative = creative;
+            break;
+          } else if(creative.orientation == client.orientation && preferredCreative.orientation != client.orientation) {
+            // If this creative's orientation is a better match than what we have, use it
+            preferredCreative = creative;
+          } else if(creative.orientation == client.orientation) {
+            // If the creative's orientation matches the client's, calculate how good of a fit this creative is
+            // and compare its fit with the current favorite
+            if(Math.abs(creative.horizMarginPercent) <= Math.abs(preferredCreative.horizMarginPercent) &&
+               Math.abs(creative.vertMarginPercent) <= Math.abs(preferredCreative.vertMarginPercent)) {
+              preferredCreative = creative;
+            }
+          } else if(preferredCreative.orientation != client.orientation) {
+            // If we haven't found a creative whose orientation matches the client, find the best
+            // fitting creative to show in the 'wrong' orientation
+            if((creative.orientation == 'portrait' && Math.abs(creative.vertMarginPercent) <= Math.abs(preferredCreative.vertMarginPercent)) ||
+               (creative.orientation == 'landscape' && Math.abs(creative.horizMarginPercent) <= Math.abs(preferredCreative.horizMarginPercent))) {
+              preferredCreative = creative;
+            }
+          }
+        }
+      }
+
+      // If we've found creative to use, then tweak the styling and download the image
+      setupCreative(preferredCreative);
+      setupButtons();
+      setTimeout(addWebkitDirectives, (animOptions.startDelay/10));
+      setTimeout(showCloseButton, (animOptions.startDelay/10));
+      setTimeout(moveActionButtons, (animOptions.startDelay));
+    }
+
+    function addWebkitDirectives() {
+      var creativeImg = document.getElementById('creative');
+
+      // Add webkit transition directives to our attributes of interest to enable animations for future modifications
+      webkitStyle(buttonsDiv, 'transition-property', 'top,width,opacity');
+      webkitStyle(buttonsDiv, 'transition-duration', animOptions.duration + ', ' + animOptions.duration + ', ' + animOptions.duration);
+      webkitStyle(buttonsDiv, 'transition-timing-function', animOptions.timingFunction + ', ' + animOptions.timingFunction + ', ' + animOptions.timingFunction);
+      webkitStyle(creativeImg, 'transition', 'all ' + animOptions.duration + ' ' + animOptions.timingFunction);
+      webkitStyle(closeButton, 'transition', 'opacity ' + animOptions.duration + ' ' + animOptions.timingFunction);
+    }
+
+    function calcCreativeMargins(creative) {
+      creative.horizMargin = client.width - creative.width;
+      creative.vertMargin = client.height - creative.height;
+      creative.horizMarginPercent = creative.horizMargin / creative.width;
+      creative.vertMarginPercent = creative.vertMargin / creative.height;
+    }
+
+    function inspectScreen() {
+      if(#{params[:height].present? && params[:width].present?}) {
+        client.width = parseInt('#{params[:width]}');
+        client.height = parseInt('#{params[:height]}');
+      } else {
+        client.width = window.innerWidth;
+        client.height = window.innerHeight;
+      }
+      client.orientation = (client.height > client.width) ? 'portrait' : 'landscape';
+    }
+
+    function moveActionButtons() {
+      // Relocate buttons div
+      buttonsDiv.style.opacity = '1';
+      buttonsDiv.style.width = client.width + 'px';
+      buttonsDiv.style.top = (client.height - buttonsHeight) + 'px';
+    }
+
+    function showCloseButton() {
+      var closeButtonLink = document.getElementById('close-link');
+      closeButton.style.opacity = '1';
+      closeButtonLink.style.opacity = '1';
+    }
+
+    function rearrange() {
+      inspectScreen();
+      setupCreative(preferredCreative);
+      moveActionButtons();
+    }
+
+    function setupButtons() {
+      var downloadButton = document.getElementById('download');
+
+      // Scale the buttons to fit this screen size
+      if(Math.max(client.width, client.height) <= 480) {
+        var presetSize = 480;
+        buttonsHeight = 50;
+      } else if (Math.max(client.width, client.height) < 960) {
+        var presetSize = 640;
+        buttonsHeight = 75;
+      } else {
+        var presetSize = 960;
+        buttonsHeight = 100;
+      }
+
+      buttonsDiv.style.height = buttonsHeight + 'px';
+      buttonsDiv.className += ' buttons' + presetSize;
+      closeButton.className += ' close' + presetSize;
+      closeButtonInner.className += ' close_inner' + presetSize;
+      downloadButton.className += ' download' + presetSize;
+
+      // Place buttons div in the correct initial position (just below visible screen)
+      buttonsDiv.style.width = client.width + 'px';
+      buttonsDiv.style.top = client.height + 'px';
+    }
+
+    function setupCreative(creative) {
+      var baseCreativeUrl = "#{CLOUDFRONT_URL}";
+      var creativeImg = document.getElementById('creative');
+      var main = document.getElementById('main');
+
+      calcCreativeMargins(preferredCreative);
+
+      // Calculate which dimension can be maximized without the image being cropped
+      var adjustPercent = Math.min(creative.horizMarginPercent, creative.vertMarginPercent);
+
+      // Calculate adjusted image dimensions
+      var newWidth = parseInt(creative.width) + Math.round(adjustPercent * creative.width);
+      var newHeight = parseInt(creative.height) + Math.round(adjustPercent * creative.height);
+
+      // Calculate margins for main div
+      var horizMargin = 0;
+      var vertMargin = 0;
+      if(client.width != newWidth) {
+        horizMargin = Math.round((client.width - newWidth) / 2);
+      }
+      if(client.height != newHeight) {
+        vertMargin = Math.round((client.height - newHeight) / 2);
+      }
+
+      // Apply size constraints to image tag
+      creativeImg.style.width = newWidth + 'px';
+      creativeImg.style.height = newHeight + 'px';
+      main.style.margin = vertMargin + 'px ' + horizMargin + 'px';
+      main.style.height = newHeight + 'px';
+
+      // Set the image url if this is the initial drawing
+      creativeImg.src = baseCreativeUrl + "/" + creative.name;
+    }
+
+    function webkitStyle(element, attribute, value) {
+      var prefixes = [ '', '-moz-', '-ms-', '-o-', '-webkit-' ];
+
+      for(var i = 0; i < prefixes.length; i++ ) {
+        element.style.cssText += prefixes[i] + attribute + ': ' + value + ';';
+      }
+    }
+
+- content_for :page_styles do
+  - # Set some commonly used values that have to be repeated in multiple CSS blocks
+  - close_x_bevel_dark = '#994444'
+  - close_x_bevel_light = '#FF9999'
+
+  :plain
+    html {
+      height: 100%;
+    }
+
+    body {
+      margin: 0;
+      height: #{params[:height]}px;
+      background-color: #000;
+    }
+
+    #main {
+      text-align: center;
+      position: relative;
+      margin: auto;
+      height: #{params[:height]}px;
+      width: #{params[:width]}px;
+    }
+
+    .image-link {
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    img.creative {
+      display: block;
+      margin: 0 auto;
+      height: #{params[:height]}px;
+      width: #{params[:width]}px;
+      background-image: url('/images/spinner.gif');
+      background-repeat: no-repeat;
+      background-position: center;
+    }
+
+    a:link, a:visited, a:active, a:hover {
+      text-decoration: none;
+    }
+
+    .buttons {
+      background-color: rgba(0,0,0,0.6);
+      font-family: "helvetica", "san-serif";
+      left: 0;
+      opacity: 0;
+      position: absolute;
+      text-align: center;
+      z-index: 10;
+    }
+
+    .close {
+      background-color: #FF9999;
+      position: absolute;
+      opacity: 0;
+      z-index: 8;
+    }
+
+    .close_inner {
+      background: #cf1623; /* Old browsers */
+      /* IE9 SVG, needs conditional override of 'filter' to 'none' */
+      background: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/Pgo8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgdmlld0JveD0iMCAwIDEgMSIgcHJlc2VydmVBc3BlY3RSYXRpbz0ibm9uZSI+CiAgPGxpbmVhckdyYWRpZW50IGlkPSJncmFkLXVjZ2ctZ2VuZXJhdGVkIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgeDE9IjAlIiB5MT0iMCUiIHgyPSIwJSIgeTI9IjEwMCUiPgogICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iI2NmMTYyMyIgc3RvcC1vcGFjaXR5PSIxIi8+CiAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiNlYTE5MjciIHN0b3Atb3BhY2l0eT0iMSIvPgogIDwvbGluZWFyR3JhZGllbnQ+CiAgPHJlY3QgeD0iMCIgeT0iMCIgd2lkdGg9IjEiIGhlaWdodD0iMSIgZmlsbD0idXJsKCNncmFkLXVjZ2ctZ2VuZXJhdGVkKSIgLz4KPC9zdmc+);
+      background: -moz-linear-gradient(top,  #cf1623 0%, #ea1927 100%); /* FF3.6+ */
+      background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#cf1623), color-stop(100%,#ea1927)); /* Chrome,Safari4+ */
+      background: -webkit-linear-gradient(top,  #cf1623 0%,#ea1927 100%); /* Chrome10+,Safari5.1+ */
+      background: -o-linear-gradient(top,  #cf1623 0%,#ea1927 100%); /* Opera 11.10+ */
+      background: -ms-linear-gradient(top,  #cf1623 0%,#ea1927 100%); /* IE10+ */
+      background: linear-gradient(top,  #cf1623 0%,#ea1927 100%); /* W3C */
+
+      color: #E9E5DA;
+      font-family: helvetica,san-serif;
+      font-weight: bold;
+      position: absolute;
+      text-align: center;
+      z-index: 10;
+    }
+
+    .download {
+      background: #3e92c7; /* Old browsers */
+      background: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/Pgo8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgdmlld0JveD0iMCAwIDEgMSIgcHJlc2VydmVBc3BlY3RSYXRpbz0ibm9uZSI+CiAgPGxpbmVhckdyYWRpZW50IGlkPSJncmFkLXVjZ2ctZ2VuZXJhdGVkIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgeDE9IjAlIiB5MT0iMCUiIHgyPSIwJSIgeTI9IjEwMCUiPgogICAgPHN0b3Agb2Zmc2V0PSIxMiUiIHN0b3AtY29sb3I9IiMzZTkyYzciIHN0b3Atb3BhY2l0eT0iMSIvPgogICAgPHN0b3Agb2Zmc2V0PSI2OSUiIHN0b3AtY29sb3I9IiMxYjZjOWYiIHN0b3Atb3BhY2l0eT0iMSIvPgogIDwvbGluZWFyR3JhZGllbnQ+CiAgPHJlY3QgeD0iMCIgeT0iMCIgd2lkdGg9IjEiIGhlaWdodD0iMSIgZmlsbD0idXJsKCNncmFkLXVjZ2ctZ2VuZXJhdGVkKSIgLz4KPC9zdmc+);
+      background: -moz-linear-gradient(top,  #3e92c7 12%, #1b6c9f 69%); /* FF3.6+ */
+      background: -webkit-gradient(linear, left top, left bottom, color-stop(12%,#3e92c7), color-stop(69%,#1b6c9f)); /* Chrome,Safari4+ */
+      background: -webkit-linear-gradient(top,  #3e92c7 12%,#1b6c9f 69%); /* Chrome10+,Safari5.1+ */
+      background: -o-linear-gradient(top,  #3e92c7 12%,#1b6c9f 69%); /* Opera 11.10+ */
+      background: -ms-linear-gradient(top,  #3e92c7 12%,#1b6c9f 69%); /* IE10+ */
+      background: linear-gradient(top,  #3e92c7 12%,#1b6c9f 69%); /* W3C */
+      filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#3e92c7', endColorstr='#1b6c9f',GradientType=0 ); /* IE6-8 */
+
+      border-style: solid;
+      border-color: #FFFFFF;
+      color: #FFFFFF;
+      display: inline;
+      font-weight: bold;
+      text-decoration: none;
+    }
+
+    .buttons480 {
+      font-size: 20px;
+      padding-top: 15px;
+    }
+
+    .close480 {
+      border-radius: 25px;
+      -moz-border-radius: 25px;
+      -ms-border-radius: 25px;
+      -o-border-radius: 25px;
+      -webkit-border-radius: 25px;
+
+      box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.7);
+      -moz-box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.7);
+      -webkit-box-shadow: iet 0 0 10px 0 rgba(0, 0, 0, 0.7);
+
+      height: 50px;
+      right: 10px;
+      top: 10px;
+      width: 50px;
+    }
+
+    .close_inner480 {
+      border-radius: 22px;
+      -moz-border-radius: 22px;
+      -ms-border-radius: 22px;
+      -o-border-radius: 22px;
+      -webkit-border-radius: 22px;
+
+      box-shadow: inset 0 0 15px 0 rgba(0, 0, 0, 0.3);
+      -moz-box-shadow: inset 0 0 15px 0 rgba(0, 0, 0, 0.3);
+      -webkit-box-shadow: inset 0 0 15px 0 rgba(0, 0, 0, 0.3);
+
+      font-size: 35px;
+      height: 46px;
+      left: 2px;
+      line-height: 40px;
+      text-shadow: 1px 0 1px #{close_x_bevel_light}, 0 1px 1px #{close_x_bevel_light}, 1px 1px 1px #{close_x_bevel_light}, -1px 0 1px #{close_x_bevel_dark}, 0 -1px 1px #{close_x_bevel_dark}, -1px -1px 1px #{close_x_bevel_dark};
+      top: 2px;
+      width: 46px;
+    }
+
+    .download480 {
+      border-width: 1px;
+      border-radius: 7px;
+      -moz-border-radius: 7px;
+      -ms-border-radius: 7px;
+      -o-border-radius: 7px;
+      -webkit-border-radius: 7px;
+      padding: 7px 12px;
+      text-shadow: 1px 1px #333;
+    }
+
+    .buttons640 {
+      font-size: 30px;
+      padding-top: 22px;
+    }
+
+    .close640 {
+      border-radius: 35px;
+      -moz-border-radius: 35px;
+      -ms-border-radius: 35px;
+      -o-border-radius: 35px;
+      -webkit-border-radius: 35px;
+
+      box-shadow: 0 0 15px 0 rgba(0, 0, 0, 0.7);
+      -moz-box-shadow: 0 0 15px 0 rgba(0, 0, 0, 0.7);
+      -webkit-box-shadow: iet 0 0 15px 0 rgba(0, 0, 0, 0.7);
+
+      height: 70px;
+      right: 15px;
+      top: 15px;
+      width: 70px;
+    }
+
+    .close_inner640 {
+      border-radius: 32px;
+      -moz-border-radius: 32px;
+      -ms-border-radius: 32px;
+      -o-border-radius: 32px;
+      -webkit-border-radius: 32px;
+
+      box-shadow: inset 0 0 20px 0 rgba(0, 0, 0, 0.3);
+      -moz-box-shadow: inset 0 0 20px 0 rgba(0, 0, 0, 0.3);
+      -webkit-box-shadow: inset 0 0 20px 0 rgba(0, 0, 0, 0.3);
+
+      font-size: 50px;
+      height: 64px;
+      left: 3px;
+      line-height: 60px;
+      text-shadow: 2px 0 1px #{close_x_bevel_light}, 0 2px 1px #{close_x_bevel_light}, 2px 2px 1px #{close_x_bevel_light}, -2px 0 1px #{close_x_bevel_dark}, 0 -2px 1px #{close_x_bevel_dark}, -2px -2px 1px #{close_x_bevel_dark};
+      top: 3px;
+      width: 64px;
+    }
+
+    .download640 {
+      border-width: 1px;
+      border-radius: 10px;
+      -moz-border-radius: 10px;
+      -ms-border-radius: 10px;
+      -o-border-radius: 10px;
+      -webkit-border-radius: 10px;
+      padding: 10px 17px;
+      text-shadow: 2px 2px #333;
+    }
+
+    .buttons960 {
+      font-size: 40px;
+      padding-top: 30px;
+    }
+
+    .close960 {
+      border-radius: 50px;
+      -moz-border-radius: 50px;
+      -ms-border-radius: 50px;
+      -o-border-radius: 50px;
+      -webkit-border-radius: 50px;
+
+      box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.7);
+      -moz-box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.7);
+      -webkit-box-shadow: iet 0 0 20px 0 rgba(0, 0, 0, 0.7);
+
+      height: 100px;
+      right: 20px;
+      top: 20px;
+      width: 100px;
+    }
+
+    .close_inner960 {
+      border-radius: 45px;
+      -moz-border-radius: 45px;
+      -ms-border-radius: 45px;
+      -o-border-radius: 45px;
+      -webkit-border-radius: 45px;
+
+      box-shadow: inset 0 0 30px 0 rgba(0, 0, 0, 0.3);
+      -moz-box-shadow: inset 0 0 30px 0 rgba(0, 0, 0, 0.3);
+      -webkit-box-shadow: inset 0 0 30px 0 rgba(0, 0, 0, 0.3);
+
+      font-size: 70px;
+      height: 90px;
+      left: 5px;
+      line-height: 80px;
+      text-shadow: 2px 0 1px #{close_x_bevel_light}, 0 2px 1px #{close_x_bevel_light}, 2px 2px 1px #{close_x_bevel_light}, -2px 0 1px #{close_x_bevel_dark}, 0 -2px 1px #{close_x_bevel_dark}, -2px -2px 1px #{close_x_bevel_dark};
+      top: 5px;
+      width: 90px;
+    }
+
+    .download960 {
+      border-width: 2px;
+      border-radius: 15px;
+      -moz-border-radius: 15px;
+      -ms-border-radius: 15px;
+      -o-border-radius: 15px;
+      -webkit-border-radius: 15px;
+      padding: 15px 25px;
+      text-shadow: 2px 2px #333;
+    }
+
+/[if gte IE 9]
+  :css
+    .gradient {
+      filter: none;
+    }

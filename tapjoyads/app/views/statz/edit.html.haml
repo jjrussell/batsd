@@ -88,6 +88,13 @@
         %td
           = f.select(:interval, options_for_select(Offer::FREQUENCIES_CAPPING_INTERVAL, @offer.interval), { :include_blank => false })
           = error_message_on @offer, :interval
+    %tr
+      %th
+        = f.label(:tapjoy_sponsored, 'Tapjoy Sponsored')
+        #help_tapjoy_sponsored.help ?
+      %td
+        = f.check_box(:tapjoy_sponsored)
+        = error_message_on @offer, :tapjoy_sponsored
     - if @offer.item_type == 'GenericOffer'
       %tr
         %th
@@ -96,6 +103,13 @@
         %td
           = f.select(:direct_pay, options_for_select(Offer::DIRECT_PAY_PROVIDERS, @offer.direct_pay), { :include_blank => true })
           = error_message_on @offer, :direct_pay
+    %tr
+      %th
+        = f.label(:name, 'Name')
+        #help_name.help ?
+      %td
+        = f.text_field(:name)
+        = error_message_on @offer, :name
     %tr
       %th
         = f.label(:name_suffix, 'Internal Suffix')
@@ -142,6 +156,13 @@
       %td
         = f.chosen_select(:device_types, options_for_select(Offer::ALL_DEVICES, @offer.get_device_types), {}, :multiple => true)
         = error_message_on @offer, :device_types
+    %tr
+      %th
+        = f.label(:approved_sources)
+        #help_approved_sources.help ?
+      %td
+        = f.chosen_select(:approved_sources, options_for_select(Offer::ALL_SOURCES, @offer.get_approved_sources), {}, :multiple => true)
+        = error_message_on @offer, :approved_sources
     %tr
       %th
         = f.label(:publisher_app_whitelist)
@@ -217,6 +238,21 @@
         %td
           = f.chosen_select(:screen_layout_sizes, options_for_select(@offer.item.screen_layout_sizes, @offer.get_screen_layout_sizes), {}, :multiple => true)
           = error_message_on @offer, :screen_layout_sizes
+    - if @offer.item_type == 'ActionOffer' || @offer.item_type == 'GenericOffer'
+      %tr
+        %th
+          = f.label(:instructions_overridden, 'Override Default Instructions')
+          #help_instructions_overridden.help ?
+        %td
+          = f.check_box(:instructions_overridden)
+          = error_message_on @offer, :instructions_overridden
+      %tr{:id => 'instructions_container', :class => (@offer.instructions_overridden? ? '' : 'hidden')}
+        %th
+          = f.label(:instructions, 'Instructions')
+          #help_instructions.help ?
+        %td
+          = f.text_area(:instructions)
+          = error_message_on @offer, :instructions
     %tr
       %td{ :colspan => 2 }= f.submit('Save Changes')
 
@@ -227,15 +263,18 @@
   #help_allow_negative_balance_content{ :name => 'Allow Negative Balance' } Allow this partner's balance to go below zero. This effectively locks show rate to 1.0.
   #help_pay_per_click_content{ :name => 'Pay-Per-Click' } Charge the advertiser and award the user immediately on click.
   #help_multi_complete_content{ :name => 'Multi-complete' } Allow this offer to be completed multiple times per device.
+  #help_tapjoy_sponsored_content{ :name => 'Tapjoy sponsored' } Whether or not the offer is Tapjoy sponsored.
   #help_direct_pay_content{ :name => 'Direct-pay' } Select a direct-pay provider from the list to designate this offer as a direct-pay offer. Revenue generated will be split up using the publisher's direct-pay share.
+  #help_approved_sources_content{ :name => 'Approved sources' } Which sources should this offer be shown from.
   #help_featured_content{ :name => 'Featured' } Enables this offer in our featured offers feed.
   #help_cookie_tracking_content{ :name => 'Cookie Tracking' } Designates that this offer requires cookies to track a conversion.
   #help_rewarded_content{ :name => 'Rewarded' } Whether or not the offer rewards the user with currency.
+  #help_name_content{ :name => 'Name' } The name of this offer. This is shown to end-users when displaying the ad.
   #help_internal_suffix_content{ :name => 'Internal Suffix' } Internal identifier for offers. i.e. 'featured' or 'us only'
   #help_show_rate_content{ :name => 'Show Rate' } The probability that this offer will be shown on an offerwall impression. This is set automatically by the system and is used for budgeting. Allowed values are 0.0 - 1.0.
   #help_min_conversion_rate_content{ :name => 'Min CVR' } This is used to prevent low conversion rate warnings. A warning will only be issued if the conversion rate falls below this threshold. Allowed values are blank or 0.0 - 1.0
-  #help_dma_codes_content{ :name => 'DMA Codes' } Targets this offer to these designated market areas (DMAs). Must be an array of DMA codes or blank for no targeting. i.e. [807]
-  #help_regions_content{ :name => 'Regions' } Targets this offer to these designated regions or blank for all regions. Must be an array of state and province codes. i.e. ["CA"]
+  #help_dma_codes_content{ :name => 'DMA Codes' } Targets this offer to these designated market areas (DMAs). Must be an array of DMA codes or blank for no targeting. i.e. [807,515]
+  #help_regions_content{ :name => 'Regions' } Targets this offer to these designated regions or blank for all regions. Must be an array of state and province codes. i.e. ["CA","OH"]
   #help_device_types_content{ :name => 'Device Types' } Targets this offer to these device types. At least one device type must be selected.
   #help_publisher_app_whitelist_content{ :name => 'Publisher App Whitelist' } Restrict this offer to these publisher apps. Must be a ";" separated list of publisher app IDs.
   #help_daily_budget_content{ :name => 'Daily Conversions' } The maximum number of conversions to complete in one day.
@@ -248,6 +287,19 @@
   #help_min_os_version_content{:name => 'Minimum OS Version'} Your offer will only be shown to devices with an OS at this version or higher.
   #help_screen_layout_sizes_content{ :name => 'Screen Layout Sizes' } Targets this offer to these screen sizes. If no specific screen sizes are selected, all screen sizes will be targeted.
   #help_age_rating_content{ :name => 'Age Rating' } Set the minimum viewing age, the recommended ages are 4/9/12/17. If it is viewable to all, just leave the field empty.
+  #help_instructions_overridden{ :name => 'Override Default Instructions' } Allows for manual override of Offer Instructions.
+  #help_instructions_content{ :name => 'Instructions' }
+    Instructions telling users how to complete the action. For example:
+    %br
+    %br
+    1. Open XX App
+    %br
+    2. Beat Level 1
+    %br
+    3. You'll receive your currency within a few minutes
+    %br
+    %br
+    Keep your text simple and easy for a user to understand.
 
 - if @offer.item_type == 'App' || @offer.item_type == 'GenericOffer'
   - content_for :page_javascript do
@@ -261,6 +313,15 @@
             $('#url_container')[0].className = 'hidden';
             $('#default_url')[0].className = '';
           }
+          return true;
+        });
+      })
+- if @offer.item_type == 'ActionOffer' || @offer.item_type == 'GenericOffer'
+  - content_for :page_javascript do
+    :plain
+      $(function($){
+        $('#offer_instructions_overridden').click(function(){
+          $('#instructions_container')[0].className = (this.checked ? '' : 'hidden');
           return true;
         });
       })

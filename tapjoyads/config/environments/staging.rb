@@ -18,6 +18,8 @@ config.action_view.cache_template_loading            = true
 # Disable request forgery protection because this is an api
 config.action_controller.allow_forgery_protection    = false
 
+config.gem 'mail_safe', :version => '0.3.1'
+
 # Use a different cache store in production
 # config.cache_store = :mem_cache_store
 
@@ -39,10 +41,10 @@ rescue Errno::ENOENT
 end
 
 RUN_MODE_PREFIX = 'staging_'
-API_URL = local_config['api_url'] || ''
-DASHBOARD_URL = local_config['dashboard_url'] || ''
-WEBSITE_URL = local_config['website_url'] || ''
-CLOUDFRONT_URL = 'https://d21x2jbj16e06e.cloudfront.net'
+API_URL = local_config['api_url'] || 'http://localhost:3000'
+DASHBOARD_URL = local_config['dashboard_url'] || 'http://localhost:3000'
+WEBSITE_URL = local_config['website_url'] || 'http://localhost:3000'
+CLOUDFRONT_URL = 'https://s3.amazonaws.com/staging_tapjoy'
 GAMES_ANDROID_MARKET_URL = 'http://market.android.com/details?id=com.tapjoy.tapjoy'
 
 # Amazon services:
@@ -59,6 +61,7 @@ NUM_POINT_PURCHASES_DOMAINS = 2
 NUM_CLICK_DOMAINS = 2
 NUM_REWARD_DOMAINS = 2
 NUM_DEVICES_DOMAINS = 2
+NUM_DEVICE_IDENTIFIER_DOMAINS = 2
 NUM_GAME_STATE_DOMAINS = 2
 NUM_GAME_STATE_MAPPING_DOMAINS = 2
 NUM_PUBLISHER_USER_DOMAINS = 2
@@ -68,6 +71,10 @@ MAIL_CHIMP_API_KEY = mail_chimp['api_key']
 MAIL_CHIMP_PARTNERS_LIST_ID = mail_chimp['partners_list_id']
 MAIL_CHIMP_SETTINGS_KEY = mail_chimp['settings_key']
 MAIL_CHIMP_WEBHOOK_KEY = mail_chimp['webhook_key']
+
+send_grid = YAML::load_file("#{RAILS_ROOT}/config/send_grid.yaml")['staging']
+SEND_GRID_USER = send_grid['user']
+SEND_GRID_PASSWD = send_grid['passwd']
 
 SYMMETRIC_CRYPTO_SECRET = '63fVhp;QqC8N;cV2A0R.q(@6Vd;6K.\\_'
 ICON_HASH_SALT = 'Gi97taauc9VFnb1vDbxWE1ID8Jjv06Il0EehMIKQ'
@@ -80,4 +87,8 @@ CLEAR_MEMCACHE = false
 
 DEV_FACEBOOK_ID = '100000459598424'
 
+DEVICE_LINK_TRACKING_PIXEL = 'http://tapjoy.go2cloud.org/SL2P'
+
 Sass::Plugin.options[:style] = :compressed
+
+TAPJOY_GAMES_INVITATION_OFFER_ID = '3839e884-2310-4de4-873f-8b0ca44c1a1a'

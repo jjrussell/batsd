@@ -22,7 +22,7 @@ class ToolsController < WebsiteController
       date += 1.month
     end
 
-    conditions = [ "month = ? AND year = ? AND partner_id != '70f54c6d-f078-426c-8113-d6e43ac06c6d'", @period.month, @period.year ]
+    conditions = [ "month = ? AND year = ? AND partner_id != '#{TAPJOY_PARTNER_ID}'", @period.month, @period.year ]
     MonthlyAccounting.using_slave_db do
       expected    = Partner.count(:conditions => [ "created_at < ?", @period.next_month ])
       actual      = MonthlyAccounting.count(:conditions => [ "month = ? AND year = ?", @period.month, @period.year ])
@@ -49,6 +49,7 @@ class ToolsController < WebsiteController
     @last_updated = Time.zone.at(Mc.get('money.last_updated') || 0)
     @total_balance = Mc.get('money.total_balance') || 0
     @total_pending_earnings = Mc.get('money.total_pending_earnings') || 0
+    @current_spend_share = SpendShare.current
   end
 
   def send_currency_failures
@@ -213,13 +214,15 @@ class ToolsController < WebsiteController
       @rewarded_failed_clicks_count = 0
       @rewards = {}
       @support_requests_created = SupportRequest.count(:where => "udid = '#{udid}'")
+      @gamer_emails = @device.gamers.map(&:email).join(',')
+      @gamer_emails = 'Not connected to any Tapjoy Marketplace Gamer' if @gamer_emails.empty?
       click_app_ids = []
       NUM_CLICK_DOMAINS.times do |i|
         Click.select(:domain_name => "clicks_#{i}", :where => conditions) do |click|
-          @clicks << click
+          @clicks << click unless click.tapjoy_games_invitation_primary_click?
           if click.installed_at?
             @rewards[click.reward_key] = Reward.find(click.reward_key)
-            if @rewards[click.reward_key] && (@rewards[click.reward_key].send_currency_status == 'OK' || @rewards[click.reward_key].send_currency_status == '200')
+            if @rewards[click.reward_key] && @rewards[click.reward_key].successful?
               @rewarded_clicks_count += 1
             else
               @rewarded_failed_clicks_count += 1

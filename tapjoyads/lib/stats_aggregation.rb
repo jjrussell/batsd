@@ -3,22 +3,88 @@ class StatsAggregation
   OFFERS_PER_MESSAGE = 200
   DAILY_STATS_START_HOUR = 3
 
-  def initialize(offer_ids)
-    @offer_ids = offer_ids
+  def self.check_vertica_accuracy(start_time, end_time)
+    appstats_counts = Appstats.new(nil, {
+        :stat_prefix => 'global',
+        :start_time  => start_time,
+        :end_time    => end_time,
+        :stat_types  => [ 'featured_offers_requested' ],
+        :granularity => :hourly }).stats['featured_offers_requested']
+    vertica_counts = {}
+    WebRequest.select(
+        :select     => "COUNT(hour) AS count, hour",
+        :conditions => "path LIKE '%featured_offer_requested%' AND day = '#{start_time.to_s(:yyyy_mm_dd)}'",
+        :group      => 'hour').each do |result|
+      vertica_counts[result[:hour]] = result[:count]
+    end
+
+    appstats_total = appstats_counts.sum
+    vertica_total  = vertica_counts.values.sum
+    percentage     = vertica_total / appstats_total.to_f
+    inaccurate     = percentage < 0.99999 || percentage > 1.00001
+    message        = ''
+
+    if inaccurate
+      message << "Cannot verify daily stats because Vertica has inaccurate data for #{start_time.to_date}.\n"
+      message << "Appstats total: #{appstats_total}\n"
+      message << "Vertica total: #{vertica_total}\n"
+      message << "Difference: #{appstats_total - vertica_total}\n\n"
+      message << "hour, appstats, vertica, diff\n"
+      24.times do |i|
+        appstats_val = appstats_counts[i]
+        vertica_val  = vertica_counts[i] || 0
+        message << "#{i}, #{appstats_val}, #{vertica_val}, #{appstats_val - vertica_val}\n"
+      end
+    end
+
+    [ !inaccurate, message ]
   end
 
-  def recount_stats_over_range(start_time, end_time, update_daily = false)
+  def self.cache_vertica_stats(start_time, end_time)
     raise "can't wrap over multiple days" if start_time.beginning_of_day != (end_time - 1.second).beginning_of_day
 
-    Offer.find(@offer_ids).each do |offer|
-      hourly_stat_row = Stats.new(:key => "app.#{start_time.strftime('%Y-%m-%d')}.#{offer.id}", :load_from_memcache => false)
+    stats                     = {}
+    stat_map                  = WebRequest::STAT_TO_PATH_MAP
+    stat_map['virtual_goods'] = { :paths => [ 'purchased_vg' ], :attr_name => 'virtual_good_id', :use_like => false }
 
-      verify_web_request_stats_over_range(hourly_stat_row, offer, start_time, end_time)
-      verify_conversion_stats_over_range(hourly_stat_row, offer, start_time, end_time)
+    stat_map.each do |stat_name, path_definition|
+      stats[stat_name] = {}
 
-      hourly_stat_row.update_daily_stat if update_daily == true
-      hourly_stat_row.serial_save
+      select     = "COUNT(hour) AS count, #{path_definition[:attr_name]}, hour"
+      conditions = "#{path_condition(path_definition[:paths], path_definition[:use_like])} AND day = '#{start_time.to_s(:yyyy_mm_dd)}'"
+      group      = "#{path_definition[:attr_name]}, hour"
+      results    = WebRequest.select(:select => select, :conditions => conditions, :group => group)
+
+      results.each do |result|
+        key = result[path_definition[:attr_name].to_sym]
+        stats[stat_name][key] ||= Array.new(24, 0)
+        stats[stat_name][key][result[:hour]] = result[:count]
+      end
     end
+
+    bucket = S3.bucket(BucketNames::WEB_REQUESTS)
+    bucket.objects[cached_stats_s3_path(start_time, end_time)].write(:data => Marshal.dump(stats))
+  end
+
+  def self.cached_vertica_stats(s3_path)
+    bucket = S3.bucket(BucketNames::WEB_REQUESTS)
+    Marshal.load(bucket.objects[s3_path].read)
+  end
+
+  def self.cached_stats_s3_path(start_time, end_time)
+    raise "can't wrap over multiple days" if start_time.beginning_of_day != (end_time - 1.second).beginning_of_day
+
+    "cached_vertica_stats/#{start_time.to_s(:no_spaces)}...#{end_time.to_s(:no_spaces)}"
+  end
+
+  def self.path_condition(paths, use_like)
+    condition = paths.map { |p| use_like ? "path LIKE '%#{p}%'" : "path = '[#{p}]'" }.join(' OR ')
+    "(#{condition})"
+  end
+
+  def initialize(offer_ids)
+    @offer_ids = offer_ids
+    @counts = {}
   end
 
   def populate_hourly_stats
@@ -81,8 +147,7 @@ class StatsAggregation
   def verify_hourly_and_populate_daily_stats
     now = Time.zone.now
 
-    @offer_ids.each do |offer_id|
-      offer      = Offer.find(offer_id)
+    Offer.find(@offer_ids).each do |offer|
       start_time = offer.last_daily_stats_aggregation_time || (now - 1.day).beginning_of_day
       end_time   = start_time + 1.day
 
@@ -107,23 +172,35 @@ class StatsAggregation
     end
   end
 
+  def recount_stats_over_range(start_time, end_time, update_daily = false)
+    Offer.find(@offer_ids).each do |offer|
+      hourly_stat_row = Stats.new(:key => "app.#{start_time.strftime('%Y-%m-%d')}.#{offer.id}", :load_from_memcache => false)
+
+      verify_web_request_stats_over_range(hourly_stat_row, offer, start_time, end_time)
+      verify_conversion_stats_over_range(hourly_stat_row, offer, start_time, end_time)
+
+      hourly_stat_row.update_daily_stat if update_daily == true
+      hourly_stat_row.serial_save
+    end
+  end
+
   private
 
   def verify_web_request_stats_over_range(stat_row, offer, start_time, end_time)
+    s3_path = StatsAggregation.cached_stats_s3_path(start_time, end_time)
+    @counts[s3_path] ||= StatsAggregation.cached_vertica_stats(s3_path)
+
     WebRequest::STAT_TO_PATH_MAP.each do |stat_name, path_definition|
-      conditions = "#{get_path_condition(path_definition[:paths], path_definition[:use_like])} AND #{path_definition[:attr_name]} IN ('#{@offer_ids.join("','")}')"
-      verify_stat_over_range(stat_row, stat_name, offer, start_time, end_time, false) do |s_time, e_time|
-        get_web_request_count(path_definition[:attr_name], "#{conditions} AND #{get_time_condition(s_time, e_time)}", offer.id)
+      verify_stat_over_range(stat_row, stat_name, offer, start_time, end_time) do |s_time, e_time|
+        get_web_request_count(s3_path, stat_name, offer.id, (s_time.hour..(e_time - 1.second).hour))
       end
     end
 
     if stat_row.get_hourly_count('vg_purchases')[start_time.hour..(end_time - 1.second).hour].sum > 0
-      virtual_goods = offer.virtual_goods
-      conditions    = "path = '[purchased_vg]' AND app_id = '#{offer.id}' AND virtual_good_id IN ('#{virtual_goods.map(&:id).join("','")}')"
-      virtual_goods.each do |virtual_good|
+      offer.virtual_goods.each do |virtual_good|
         stat_path = [ 'virtual_goods', virtual_good.id ]
-        verify_stat_over_range(stat_row, stat_path, offer, start_time, end_time, false) do |s_time, e_time|
-          get_web_request_count('virtual_good_id', "#{conditions} AND #{get_time_condition(s_time, e_time)}", virtual_good.id)
+        verify_stat_over_range(stat_row, stat_path, offer, start_time, end_time) do |s_time, e_time|
+          get_web_request_count(s3_path, 'virtual_goods', virtual_good.id, (s_time.hour..(e_time - 1.second).hour))
         end
       end
     end
@@ -132,7 +209,7 @@ class StatsAggregation
   def verify_conversion_stats_over_range(stat_row, offer, start_time, end_time)
     Conversion::STAT_TO_REWARD_TYPE_MAP.each do |stat_name, rtd|
       conditions = [ "#{rtd[:attr_name]} = ? AND reward_type IN (?)", offer.id, rtd[:reward_types] ]
-      verify_stat_over_range(stat_row, stat_name, offer, start_time, end_time, true) do |s_time, e_time|
+      verify_stat_over_range(stat_row, stat_name, offer, start_time, end_time) do |s_time, e_time|
         Conversion.using_slave_db do
           if rtd[:sum_attr].present?
             Conversion.created_between(s_time, e_time).sum(rtd[:sum_attr], :conditions => conditions)
@@ -147,7 +224,7 @@ class StatsAggregation
       values_by_country = {}
       (Stats::COUNTRY_CODES.keys + [ 'other' ]).each do |country|
         stat_path = [ 'countries', "#{stat_name}.#{country}" ]
-        verify_stat_over_range(stat_row, stat_path, offer, start_time, end_time, true) do |s_time, e_time|
+        verify_stat_over_range(stat_row, stat_path, offer, start_time, end_time) do |s_time, e_time|
           key = "#{s_time.to_i}-#{e_time.to_i}"
           values_by_country[key] ||= Conversion.using_slave_db do
             if rtd[:sum_attr].present?
@@ -167,7 +244,7 @@ class StatsAggregation
     end
   end
 
-  def verify_stat_over_range(stat_row, stat_name_or_path, offer, start_time, end_time, require_exact_match)
+  def verify_stat_over_range(stat_row, stat_name_or_path, offer, start_time, end_time)
     value_over_range = yield(start_time, end_time)
     hourly_values    = stat_row.get_hourly_count(stat_name_or_path)
 
@@ -177,7 +254,7 @@ class StatsAggregation
     end
 
     range = start_time.hour..(end_time - 1.second).hour
-    unless counts_acceptable?(value_over_range, hourly_values[range].sum, require_exact_match)
+    unless value_over_range == hourly_values[range].sum
       message = "Verification of #{stat_name_or_path.inspect} failed for offer: #{offer.name} (#{offer.id}), for range: #{start_time.to_s(:db)} - #{end_time.to_s(:db)}. Value is: #{value_over_range}, hourly values are: #{hourly_values[range].inspect}, difference is: #{value_over_range - hourly_values[range].sum}"
       Notifier.alert_new_relic(AppStatsVerifyError, message)
 
@@ -185,44 +262,18 @@ class StatsAggregation
       while time < end_time
         hour_value = yield(time, time + 1.hour)
         hourly_values[time.hour] = hour_value
-        break if counts_acceptable?(value_over_range, hourly_values[range].sum, require_exact_match)
+        break if value_over_range == hourly_values[range].sum
         time += 1.hour
       end
 
-      unless counts_acceptable?(value_over_range, hourly_values[range].sum, require_exact_match)
+      unless value_over_range == hourly_values[range].sum
         raise "Re-counted each hour for #{stat_name_or_path.inspect} and counts do not match the total count for offer: #{offer.name} (#{offer.id}), for range: #{start_time.to_s(:db)} - #{end_time.to_s(:db)}. Value is: #{value_over_range}, hourly sum is: #{hourly_values[range].sum}"
       end
     end
   end
 
-  def counts_acceptable?(overall_count, summed_count, require_exact_match)
-    if require_exact_match
-      overall_count == summed_count
-    else
-      (overall_count - summed_count).abs <= 5
-    end
-  end
-
-  def get_web_request_count(group, conditions, key)
-    @counts ||= {}
-    @counts[group] ||= {}
-    if @counts[group][conditions].nil?
-      @counts[group][conditions] = {}
-      WebRequest.select_with_vertica(:select => "COUNT(*) AS count, #{group}", :conditions => conditions, :group => group).each do |pair|
-        @counts[group][conditions][pair[group.to_sym]] = pair[:count]
-      end
-    end
-
-    @counts[group][conditions][key] || 0
-  end
-
-  def get_time_condition(start_time, end_time)
-    "time >= #{start_time.to_f} AND time < #{end_time.to_f}"
-  end
-
-  def get_path_condition(paths, use_like)
-    path_condition = paths.map { |p| use_like ? "path LIKE '%#{p}%'" : "path = '[#{p}]'" }.join(' OR ')
-    "(#{path_condition})"
+  def get_web_request_count(s3_path, stat_name, key, range)
+    (@counts[s3_path][stat_name][key] || [])[range].sum
   end
 
   def self.aggregate_hourly_group_stats(date = nil, aggregate_daily = false)

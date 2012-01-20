@@ -159,7 +159,7 @@ class Utils
     #
     # shortly after XX:30 (all steps must be completed by XX:59)
     # -run Utils::Memcache.save_state
-    # -deploy new config to test server
+    # -deploy new config to util server
     # -verify new memcache servers are functioning (Mc.cache.stats)
     # -run Utils::Memcache.restore_state
     # -deploy new config to production servers
@@ -215,6 +215,9 @@ class Utils
                            'statz.top_stats.24_hours',
                            'statz.top_stats.7_days',
                            'statz.top_stats.1_month',
+                           'statz.money.24_hours',
+                           'statz.money.7_days',
+                           'statz.money.1_month',
                            'statz.partner.cached_stats.24_hours',
                            'statz.partner.cached_stats.7_days',
                            'statz.partner.cached_stats.1_month',
@@ -281,6 +284,9 @@ class Utils
                            'statz.top_stats.24_hours',
                            'statz.top_stats.7_days',
                            'statz.top_stats.1_month',
+                           'statz.money.24_hours',
+                           'statz.money.7_days',
+                           'statz.money.1_month',
                            'statz.partner.cached_stats.24_hours',
                            'statz.partner.cached_stats.7_days',
                            'statz.partner.cached_stats.1_month',
@@ -307,14 +313,16 @@ class Utils
       OfferCacher.cache_offer_stats
       OfferCacher.cache_offers
       OfferCacher.cache_papaya_offers
+      SpendShare.current_ratio
       Mc.cache_all
       true
     end
 
     def self.aggregate_all_stats
       cutoff = Time.now.utc.beginning_of_hour
-      Offer.find_each(:conditions => ["last_stats_aggregation_time < ?", cutoff]) do |offer|
-        Sqs.send_message(QueueNames::APP_STATS_HOURLY, offer.id)
+      Offer.find_in_batches(:batch_size => StatsAggregation::OFFERS_PER_MESSAGE, :conditions => ["last_stats_aggregation_time < ?", cutoff]) do |offers|
+        message = offers.map(&:id).to_json
+        Sqs.send_message(QueueNames::APP_STATS_HOURLY, message)
       end
     end
 
@@ -325,17 +333,20 @@ class Utils
 
     def self.advance_last_stats_aggregation_times
       last_aggregation_time = Time.now.utc.beginning_of_hour + 1.hour
-      Offer.find_each(:conditions => ["last_stats_aggregation_time < ?", last_aggregation_time]) do |offer|
-        offer.last_stats_aggregation_time = last_aggregation_time
-        offer.save(false)
+      Offer.find_in_batches(:batch_size => 1000, :conditions => ["last_stats_aggregation_time < ?", last_aggregation_time]) do |offers|
+        offer_ids = offers.map(&:id)
+        Offer.connection.execute("UPDATE offers SET last_stats_aggregation_time = '#{last_aggregation_time.to_s(:db)}' WHERE id IN ('#{offer_ids.join("','")}')")
       end
     end
 
     def self.queue_recount_stats_jobs
-      end_time = Time.now.utc.beginning_of_hour.to_i
+      end_time   = Time.now.utc.beginning_of_hour
       start_time = end_time - 1.hour
+
+      StatsAggregation.cache_vertica_stats(start_time, end_time)
+
       Offer.find_in_batches(:batch_size => StatsAggregation::OFFERS_PER_MESSAGE) do |offers|
-        message = { :offer_ids => offers.map(&:id), :start_time => start_time, :end_time => end_time }.to_json
+        message = { :offer_ids => offers.map(&:id), :start_time => start_time.to_i, :end_time => end_time.to_i }.to_json
         Sqs.send_message(QueueNames::RECOUNT_STATS, message)
       end
     end

@@ -4,10 +4,15 @@
   #top_box
     .explanation= @message
 
-- if @currency.conversion_rate > 0 && !@for_preview
+- if !@for_preview
   #top_box
     .explanation
-      = t('text.offerwall.instructions', :currency => @currency.name)
+      - if @currency.conversion_rate > 0
+        = t('text.offerwall.instructions', :currency => @currency.name)
+      - else
+        %span.red= t('text.offerwall.popular_apps')
+        %br
+        = t('text.offerwall.instructions_non_rewarded')
   - if params[:currency_selector] == '1' && @currencies.present? && @currencies.size > 1
     = render :partial => 'currency_selector'
 
@@ -56,6 +61,10 @@
                 %span.papaya-logo
                 %span.orange-box
                   #{number_with_delimiter(@papaya_offers[offer.id])} currently playing
+            - if @show_wifi_only && offer.wifi_only?
+              .wifi_only
+                Wifi Required
+                .wifi_icon
         .load
     - unless index == (@offer_list.size-1)
       .divider
@@ -208,13 +217,15 @@
                       }
                     t.push('</div>');
                     t.push('<div class="offer-text">');
-                      t.push('<span>');
-                       t.push('Earn ');
-                         t.push('<label>');
-                           t.push(v.Amount)
-                         t.push('</label>');
-                         t.push(' ' + currency);
-                      t.push('</span>');
+                      if(v.Amount > 0) {
+                        t.push('<span>');
+                         t.push('Earn ');
+                           t.push('<label>');
+                             t.push(v.Amount)
+                           t.push('</label>');
+                           t.push(' ' + currency);
+                        t.push('</span>');
+                      }
                       t.push('<p>');
                         t.push('<b>');
                           t.push(v.Name);
@@ -225,6 +236,11 @@
                               t.push('<span class="orange-box">');
                                 t.push(v.PapayaUserCount + ' currently playing');
                               t.push('</span>');
+                            t.push('</div>');
+                          }
+                          if (v.WifiOnly) {
+                            t.push('<div class = "wifi_only">');
+                              t.push('Wifi Only <div class="wifi_icon"></div>');
                             t.push('</div>');
                           }
                         t.push('</b>');

@@ -9,6 +9,14 @@ class VerticaCluster
 
   def self.get_connection
     @@offset = @@offset == @@nodes.size - 1 ? 0 : @@offset + 1
+    if @@nodes[@@offset].present?
+      begin
+        @@nodes[@@offset].query('SELECT 1')
+      rescue
+        @@nodes[@@offset] = nil
+        Notifier.alert_new_relic(VerticaConnectionReset, "node: #{VERTICA_CONFIG['hosts'][@@offset]}")
+      end
+    end
     @@nodes[@@offset] ||= Vertica.connect(:host     => VERTICA_CONFIG['hosts'][@@offset],
                                           :port     => VERTICA_CONFIG['port'],
                                           :database => VERTICA_CONFIG['database'],
@@ -18,6 +26,7 @@ class VerticaCluster
 
   def self.query(table, options = {})
     select     = options.delete(:select) { '*' }
+    join       = options.delete(:join)
     conditions = options.delete(:conditions)
     group      = options.delete(:group)
     order      = options.delete(:order)
@@ -25,6 +34,7 @@ class VerticaCluster
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
 
     query  = "SELECT #{select} FROM #{table}"
+    query += " JOIN #{join}"        if join.present?
     query += " WHERE #{conditions}" if conditions.present?
     query += " GROUP BY #{group}"   if group.present?
     query += " ORDER BY #{order}"   if order.present?

@@ -10,7 +10,7 @@
     - if gamer
       %li.review_item.clearfix
         .others_profile_image
-          = image_tag(gamer.get_avatar_url(37))
+          = image_tag(gamer.get_avatar_url)
         .offer_text.clearfix
           .others_review_meta
             %span.others_name.left= gamer.get_gamer_name

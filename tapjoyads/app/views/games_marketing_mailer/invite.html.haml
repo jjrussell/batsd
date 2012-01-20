@@ -17,7 +17,7 @@
     %tr
       %td{:style => "height: 60px;"}
         - link_to WEBSITE_URL, :style => css[:a] do
-          = image_tag("#{image_root}/logo.png", :title => 'Tapjoy Games', :alt => 'Tapjoy Games', :style => "border: none; margin: 20px 0px 0px 20px;")
+          = image_tag("#{image_root}/logo.png", :title => 'Tapjoy', :alt => 'Tapjoy', :style => "border: none; margin: 20px 0px 0px 20px;")
       %td{:style => css[:follow_us]}
         follow us:
       %td{:style => css[:social]}
@@ -37,7 +37,8 @@
         - @content.each do |line|
           %p{:style => css[:content]}= line
         - link_to @link, :style => css[:a] do
-          = image_tag("#{image_root}/createAccount_btn.png", :title => 'Tapjoy Games', :alt => 'Tapjoy Games', :style => "border: none; margin-bottom: 40px;")
+          = image_tag("#{image_root}/createAccount_btn.png", :title => 'Tapjoy', :alt => 'Tapjoy', :style => "border: none; margin-bottom: 40px;")
         %br
         %b{:style => css[:bold_content]} Team Tapjoy
-  %p{:style => css[:footer]} Tapjoy Games
+  %p{:style => css[:footer]} Tapjoy
+

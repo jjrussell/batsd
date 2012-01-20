@@ -18,6 +18,14 @@ class Device < SimpledbShardedResource
   self.sdb_attr :mac_address
   self.sdb_attr :platform
   self.sdb_attr :is_papayan, :type => :bool, :default_value => false
+  self.sdb_attr :all_packages, :type => :json, :default_value => []
+  self.sdb_attr :current_packages, :type => :json, :default_value => []
+
+  def mac_address=(new_value)
+    new_value = new_value ? new_value.downcase.gsub(/:/,"") : ''
+    @create_device_identifiers ||= (self.mac_address != new_value)
+    put('mac_address', new_value)
+  end
 
   def dynamic_domain_name
     domain_number = @key.matz_silly_hash % NUM_DEVICES_DOMAINS
@@ -25,6 +33,7 @@ class Device < SimpledbShardedResource
   end
 
   def after_initialize
+    @create_device_identifiers = is_new
     begin
       @parsed_apps = apps
     rescue JSON::ParserError
@@ -38,7 +47,7 @@ class Device < SimpledbShardedResource
     now = Time.zone.now
     path_list = []
 
-    self.mac_address = params[:mac_address]
+    self.mac_address = params[:mac_address] if params[:mac_address].present?
 
     is_jailbroken_was = is_jailbroken
     country_was = country
@@ -54,10 +63,13 @@ class Device < SimpledbShardedResource
       end
     end
 
-    if now.year != last_run_time_was.year || now.yday != last_run_time_was.yday
+    offset = @key.matz_silly_hash % 1.day
+    adjusted_now = now - offset
+    adjusted_lrt = last_run_time_was - offset
+    if adjusted_now.year != adjusted_lrt.year || adjusted_now.yday != adjusted_lrt.yday
       path_list.push('daily_user')
     end
-    if now.year != last_run_time_was.year || now.month != last_run_time_was.month
+    if adjusted_now.year != adjusted_lrt.year || adjusted_now.month != adjusted_lrt.month
       path_list.push('monthly_user')
     end
 
@@ -156,7 +168,35 @@ class Device < SimpledbShardedResource
     RecommendationList.new(options.merge(:device => self)).apps
   end
 
-private
+  def gamers
+    Gamer.find(:all, :joins => [:gamer_devices], :conditions => ['gamer_devices.device_id = ?', key])
+  end
+
+  def update_package_names!(package_names)
+    return if ((package_names - current_packages) | (current_packages - package_names)).empty?
+    self.all_packages |= package_names
+    self.current_packages = package_names
+    save!
+  end
+
+  def serial_save(options = {})
+    Sqs.send_message(QueueNames::CREATE_DEVICE_IDENTIFIERS, {'device_id' => key}.to_json) if @create_device_identifiers
+    @create_device_identifiers = false
+    super(options)
+  end
+
+  def create_identifiers!
+    all_identifiers = [ Digest::SHA2.hexdigest(key) ]
+    all_identifiers.push(mac_address) if self.mac_address.present?
+    all_identifiers.each do |identifier|
+      device_identifier = DeviceIdentifier.new(:key => identifier)
+      next if device_identifier.udid == key
+      device_identifier.udid = key
+      device_identifier.save!
+    end
+  end
+
+  private
 
   def fix_parser_error
     str = get('apps')
