@@ -5,13 +5,19 @@ en:
       ads_by: "Ads by"
       back: "Back"
       blog: "Blog"
+      cancel: "Cancel"
+      confirm_password: "Confirm Password"
       city: "City"
       copyright: "Copyright &copy; %{year} Tapjoy, Inc. All Rights Reserved. Tapjoy and the Tapjoy logo are trademarks or registered trademarks of Tapjoy, Inc. All third party logos and trademarks mentioned are the property of their respective owners."
       country: "Country"
       day: "Day"
       earn: "Earn"
       email: "Email"
+      facebook_profile: "Facebook profile"
       female: "Female"
+      following: "Following"
+      followers: "Followers"
+      friends: "Friends"
       gender: "Gender"
       help: "Help"
       invite: "Invite"
@@ -23,6 +29,7 @@ en:
       my_account: "My Account"
       my_profile: "My Profile"
       name: "Name"
+      new_password: "New Password"
       nickname: "Nickname"
       options: "Options"
       privacy: "Privacy"
@@ -37,7 +44,6 @@ en:
       sign_up: "Sign Up"
       year: "Year"
       zip_postal: "Zip/Postal Code"
-
 
 
     offerwall:
@@ -96,7 +102,15 @@ en:
       select_offer: "Select Offer"
       no_incomplete_offers_label: "No suitable offers were found."
 
+
     games:
+      deactivate: "Deactivate"
+      delete_my_account: "Delete My Account"
+      del_acct_confirm: "Click on the button below to deactivate your account. Once an account has been deactivated for %{days_before_deletion} days, it will be completely deleted. We cannot recover your account once it has been deleted."
+      none_selected: "None Selected"
+      allow_marketing_emails: "Allow Tapjoy to send me marketing emails"
+      link_my_facebook: "Link My Facebook"
+      change_linked_account: "Change Linked Account"
       wrong_device: "wrong device?"
       more_apps: "More Apps"
       my_apps: "My Apps"
@@ -127,6 +141,7 @@ en:
       sample_email: ""
       favorite_app: "Favorite App"
       favorite_category: "Favorite Category"
+      social_networks: "Social Networks"
       social_settings: "Social Settings"
       member_since: "Member since %{date}"
 
