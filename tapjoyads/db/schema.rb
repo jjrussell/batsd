@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120106214457) do
+ActiveRecord::Schema.define(:version => 20120113013006) do
 
   create_table "action_offers", :id => false, :force => true do |t|
     t.string   "id",                    :limit => 36,                    :null => false
@@ -726,6 +726,20 @@ ActiveRecord::Schema.define(:version => 20120106214457) do
 
   add_index "partners", ["id"], :name => "index_partners_on_id", :unique => true
   add_index "partners", ["reseller_id"], :name => "index_partners_on_reseller_id"
+
+  create_table "payout_freezes", :id => false, :force => true do |t|
+    t.string   "id",          :limit => 36,                   :null => false
+    t.boolean  "enabled",                   :default => true, :null => false
+    t.datetime "enabled_at"
+    t.datetime "disabled_at"
+    t.string   "enabled_by"
+    t.string   "disabled_by"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "payout_freezes", ["enabled"], :name => "index_payout_freezes_on_enabled"
+  add_index "payout_freezes", ["id"], :name => "index_payout_freezes_on_id", :unique => true
 
   create_table "payout_infos", :id => false, :force => true do |t|
     t.string   "id",                  :limit => 36, :null => false

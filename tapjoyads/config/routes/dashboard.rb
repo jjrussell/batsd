@@ -99,6 +99,7 @@ ActionController::Routing::Routes.draw do |map|
     tools.resources :press_releases, :only => [ :index, :new, :create, :edit, :update ]
     tools.resources :network_costs, :only => [ :index, :new, :create ]
     tools.resources :partner_program_statz, :only => [ :index ], :collection => { :export => :get }
+    tools.resources :payout_freezes, :only => [ :index, :create ], :member => { :disable => :post }
   end
 
   map.connect 'mail_chimp_callback/callback', :controller => :mail_chimp_callback, :action => :callback

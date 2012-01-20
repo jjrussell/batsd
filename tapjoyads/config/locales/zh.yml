@@ -18,7 +18,7 @@ zh:
       earn_currency: "赚 %{amount} %{currency}"
       buy_currency: "买 %{amount} %{currency}"
       load_more: "下一页！"
-      loading: "载入中。。。"
+      loading: "载入中。。。。"
       load_error: "请再次一次。"
 
     featured:

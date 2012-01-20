@@ -12,6 +12,7 @@ class Tools::PayoutsController < WebsiteController
     else
       @partners = Partner.to_payout(:include => 'payout_info')
     end
+    @freeze_enabled = PayoutFreeze.enabled?
   end
 
   def info
