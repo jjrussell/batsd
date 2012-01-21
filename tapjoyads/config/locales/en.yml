@@ -138,12 +138,19 @@ en:
       invite_title: "Send an Email Invite"
       recipients_label: "Use commas to separate multiple emails"
       follow_us: "follow us:"
-      sample_email: ""
       favorite_app: "Favorite App"
       favorite_category: "Favorite Category"
       social_networks: "Social Networks"
       social_settings: "Social Settings"
       member_since: "Member since %{date}"
+
+      invite_email_greet: "Hi,"
+      invite_email_signature: "Team Tapjoy"
+      invite_email_body: "%{name} has invited you to join Tapjoy, the BEST place to find the hottest new apps. Signing up is free and you'll be able discover the best apps on iOS and Android, while also earning currency in your favorite apps.
+
+        No need to wade through thousands of apps in the App Store or the Android Market to find your next download. Tapjoy has you covered and recommends apps we know you'll like.
+
+        To get started, create your account here:"
 
   date:
     formats:

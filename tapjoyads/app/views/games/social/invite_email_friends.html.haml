@@ -19,13 +19,13 @@
             %td#social
               = image_tag("#{image_root}/twitter_icon.png", :title => 'Twitter', :alt => 'Twitter', :style => "border: none;")
         %hr
-        .greeting Hi,
-        - @content.each do |line|
+        .greeting= t('text.games.invite_email_greet')
+        - t('text.games.invite_email_body', :name=>@gamer_name).each do |line|
           .invite_email_body= line
-          %br
+        %br
         = image_tag("#{image_root}/createAccount_btn.png", :title => 'Tapjoy Games', :alt => 'Tapjoy Games', :style => "border: none;")
         %br
-        .signature Team Tapjoy
+        .signature= t('text.games.invite_email_signature')
     %span#back_button= t('text.shared.back')
     %span#invite_button= t('text.shared.invite')
 

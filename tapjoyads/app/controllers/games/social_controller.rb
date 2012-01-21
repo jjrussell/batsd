@@ -65,7 +65,8 @@ class Games::SocialController < GamesController
   end
 
   def invite_email_friends
-    @content = Invitation.invitation_message(current_gamer.get_gamer_name)
+    #@content = Invitation.invitation_message(current_gamer.get_gamer_name)
+    @gamer_name = current_gamer.get_gamer_name
   end
 
   def send_email_invites
