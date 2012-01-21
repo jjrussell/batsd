@@ -49,8 +49,9 @@ class GamesMarketingMailer < ActionMailer::Base
     end
 
     gamer_device ||= gamer.gamer_devices.first
+    selected_devices = device_info[:selected_devices] || []
     @linked = gamer_device.present?
-    @android_device = @linked ? (gamer_device.device_type == 'android') : !device_info.selected_devices.include?('ios')
+    @android_device = @linked ? (gamer_device.device_type == 'android') : !selected_devices.include?('ios')
     @confirmation_link = "#{WEBSITE_URL}/confirm?token=#{CGI.escape(gamer.confirmation_token)}"
 
     device = Device.new(:key => @linked ? gamer_device.device_id : nil)
