@@ -106,6 +106,7 @@ class Job::QueueConversionTrackingController < Job::SqsReaderController
     click.serial_save
 
     device.set_last_run_time!(click.advertiser_app_id)
+    device.set_last_run_time!(click.publisher_app_id) if !device.has_app?(click.publisher_app_id) || device.last_run_time(click.publisher_app_id) < 1.week.ago
 
     web_request = WebRequest.new(:time => Time.zone.at(installed_at_epoch.to_f))
     web_request.path              = 'reward'
