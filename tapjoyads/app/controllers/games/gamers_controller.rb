@@ -27,6 +27,7 @@ class Games::GamersController < GamesController
     @gamer.gamer_profile = @gamer_profile
 
     if @gamer.save
+      params[:default_platforms] ||= []
       message = {
         :gamer_id => @gamer.id,
         :accept_language_str => request.accept_language,
