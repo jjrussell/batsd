@@ -9,7 +9,7 @@ class HeaderParser
       'ipad'
     when /android/i
       'android'
-    when /windows/i
+    when /windows phone/i
       'windows'
     else
       nil
