@@ -43,12 +43,14 @@ authorization do
     has_permission_on :tools_payouts, :to => [ :index ]
     has_permission_on :tools_orders, :to => [ :failed_invoices, :retry_invoicing, :mark_invoiced ]
     has_permission_on :tools_network_costs, :to => [ :index, :new, :create ]
+    has_permission_on :tools_payout_freezes, :to => [ :index ]
   end
 
   role :payout_manager do
     includes :payops
     has_permission_on :tools, :to => [ :payout_info, :publishers_without_payout_info, :publisher_payout_info_changes ]
     has_permission_on :tools_payouts, :to => [ :create ]
+    has_permission_on :tools_payout_freezes, :to => [ :create, :disable ]
   end
 
   role :reporting do
@@ -91,6 +93,7 @@ authorization do
     has_permission_on :tools_users_partner_assignments, :to => [ :create, :destroy ]
     has_permission_on :tools_agency_users, :to => [ :index, :show ]
     has_permission_on :tools_partner_program_statz, :to => [ :index, :export ]
+    has_permission_on :tools_offers, :to => [ :creative, :approve_creative, :reject_creative ]
   end
 
   role :games_editor do
@@ -109,6 +112,7 @@ authorization do
     includes :games_editor
     has_permission_on :pub_offer_whitelist, :to => [ :index, :enable, :disable ]
     has_permission_on :tools, :to => [ :failed_sdb_saves, :sdb_metadata, :reset_device, :sqs_lengths, :elb_status, :ses_status, :as_groups, :manage_user_roles, :update_user_roles ]
+    has_permission_on :tools_offers, :to => [ :creative, :approve_creative, :reject_creative ]
     has_permission_on :tools_users_role_assignments, :to => [ :create, :destroy ]
     has_permission_on :tools_jobs, :to => [ :index, :new, :create, :edit, :update, :destroy ]
     has_permission_on :tools_support_requests, :to => [ :index, :mass_resolve ]

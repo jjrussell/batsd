@@ -281,8 +281,10 @@ TJG.ui = {
     }
 
     $('form#new_gamer').submit(function(e){
+      TJG.utils.setCookie('cookies_enabled', 'test', 1);
+      var test_cookie = TJG.utils.getCookie('cookies_enabled');
       e.preventDefault();
-      var rurl, inputs, values = {}, data, hasError = false, emailReg;
+      var rurl, inputs, values = {}, data, hasError = false, cookieError = false, emailReg;
       rurl = $(this).attr('action');
       inputs = $('form#new_gamer :input');
       inputs.each(function() {
@@ -323,7 +325,19 @@ TJG.ui = {
         $(".email_error").html('Please agree to the terms and conditions above');
         hasError = true;
       }
-      if (hasError) {
+      else if (TJG.utils.isNull(test_cookie)) {
+        hasError = true;
+        cookieError = true;
+      }
+      else {
+        TJG.utils.deleteCookie('cookies_enabled');
+      }
+      if (hasError && cookieError) {
+        TJG.utils.centerDialog("#cookie_error");
+        $("#cookie_error").fadeIn();
+        TJG.repositionDialog = ["#cookie_error"];
+      }
+      else if (hasError) {
         $(".email_error").show();
       }
       else if (hasError != true) {

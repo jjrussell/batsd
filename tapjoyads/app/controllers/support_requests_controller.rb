@@ -42,11 +42,11 @@ private
   end
 
   def find_incomplete_offers
-    conditions = "udid = '#{params[:udid]}' and currency_id = '#{params[:currency_id]}' and clicked_at > '#{2.weeks.ago.to_f}' and manually_resolved_at is null"
+    conditions = "udid = '#{params[:udid]}' and currency_id = '#{params[:currency_id]}' and clicked_at > '#{30.days.ago.to_f}' and manually_resolved_at is null"
     advertiser_offer_ids = []
     Click.select_all(:conditions => conditions).sort_by { |click| -click.clicked_at.to_f }.each do |click|
       advertiser_offer_ids << click.advertiser_app_id unless advertiser_offer_ids.include?(click.advertiser_app_id)
-      break if advertiser_offer_ids.length == 10
+      break if advertiser_offer_ids.length == 20
     end
     @incomplete_offers = advertiser_offer_ids.collect { |offer_id| Offer.find_in_cache(offer_id) }
   end

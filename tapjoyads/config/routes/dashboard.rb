@@ -5,6 +5,7 @@ ActionController::Routing::Routes.draw do |map|
 
   map.connect 'tos-advertiser.html', :controller => 'documents', :action => 'tos_advertiser'
   map.connect 'tos-publisher.html', :controller => 'documents', :action => 'tos_publisher'
+  map.connect 'publisher-guidelines.html', :controller => 'documents', :action => 'publisher_guidelines'
 
   map.resource :sign_up, :controller => :sign_up, :only => :create
   map.register 'register', :controller => :sign_up, :action => :new
@@ -75,6 +76,8 @@ ActionController::Routing::Routes.draw do |map|
     tools.resources :video_offers, :only => [ :new, :create, :edit, :update ] do |video_offer|
       video_offer.resources :video_buttons, :controller => 'video_offers/video_buttons'
     end
+    tools.resources :offers,
+      :collection => { :creative => :get, :approve_creative => :post, :reject_creative => :post }
     tools.resources :payouts, :only => [ :index, :create ], :member => { :info => :get }
     tools.resources :enable_offer_requests, :only => [ :update, :index ]
     tools.resources :admin_devices, :only => [ :index, :new, :create, :edit, :update, :destroy ]
@@ -97,6 +100,7 @@ ActionController::Routing::Routes.draw do |map|
     tools.resources :press_releases, :only => [ :index, :new, :create, :edit, :update ]
     tools.resources :network_costs, :only => [ :index, :new, :create ]
     tools.resources :partner_program_statz, :only => [ :index ], :collection => { :export => :get }
+    tools.resources :payout_freezes, :only => [ :index, :create ], :member => { :disable => :post }
   end
 
   map.connect 'mail_chimp_callback/callback', :controller => :mail_chimp_callback, :action => :callback
