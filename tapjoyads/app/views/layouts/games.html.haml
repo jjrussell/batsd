@@ -20,6 +20,9 @@
     = stylesheet_link_tag("games/style-320", :media => "only screen and (max-width: 320px)")
     = stylesheet_link_tag("games/images-hd", :media => "(-webkit-min-device-pixel-ratio: 2)")
 
+    /[if IE 8]
+      = stylesheet_link_tag('games/ie8')
+
     = yield :page_head
 
   %body{ :class => @page_design == 'new' ? 'new' : 'old' }

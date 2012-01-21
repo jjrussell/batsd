@@ -363,7 +363,9 @@ TJG.ui = {
             'gamer[terms_of_service]': values['gamer[terms_of_service]'],
             'date[day]': values['date[day]'],
             'date[month]': values['date[month]'],
-            'date[year]': values['date[year]']
+            'date[year]': values['date[year]'],
+            'default_platforms[android]': values['default_platform_android'],
+            'default_platforms[ios]': values['default_platform_ios']
           },
           success: function(d) {
             var msg;

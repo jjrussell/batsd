@@ -19,6 +19,8 @@ module Offer::Rejecting
     [ '7f398870-b1da-478f-adfb-82d22d25c13d', '6f7d9238-be52-46e9-902b-5ad038ddb7eb' ] => [ '7f398870-b1da-478f-adfb-82d22d25c13d', '6f7d9238-be52-46e9-902b-5ad038ddb7eb' ],
     # Intuit GoPayment
     [ 'e8cca05a-0ec0-41fd-9820-24e24db6eec4', 'b1a1b737-bc9d-4a0b-9587-a887d22ae356' ] => [ 'e8cca05a-0ec0-41fd-9820-24e24db6eec4', 'b1a1b737-bc9d-4a0b-9587-a887d22ae356' ],
+    # Hotels.com
+    [ '6b714133-2358-4918-842d-f266abe6b7b5', 'eaa1cfc9-3499-49ce-8f03-092bcc0ce77a' ] => [ '6b714133-2358-4918-842d-f266abe6b7b5', 'eaa1cfc9-3499-49ce-8f03-092bcc0ce77a' ],
   }
 
   def postcache_reject?(publisher_app, device, currency, device_type, geoip_data, app_version, direct_pay_providers, type, hide_rewarded_app_installs, library_version, os_version, screen_layout_size, video_offer_ids, source, all_videos)
