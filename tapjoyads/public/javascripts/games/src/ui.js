@@ -351,7 +351,7 @@ TJG.ui = {
             'date[month]': values['date[month]'],
             'date[year]': values['date[year]'],
             'default_platforms[android]': values['default_platform_android'],
-            'default_platforms[iphone]': values['default_platform_iphone']
+            'default_platforms[ios]': values['default_platform_ios']
           },
           success: function(d) {
             var msg;
