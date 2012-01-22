@@ -1,7 +1,13 @@
 class Downloader
-  include HTTParty
-
   INTERNAL_AUTH_USER = 'internal'
+
+  def self.backend=(backend)
+    @@backend = backend
+  end
+
+  def self.backend
+    @@backend ||= HTTParty
+  end
 
   ##
   # Make a GET request to the specified url and return the contents of the response.
@@ -18,7 +24,7 @@ class Downloader
     Rails.logger.info "Downloading (GET) #{url}"
 
     start_time = Time.zone.now
-    response = super(url, options)
+    response = backend.get(url, options)
 
     Rails.logger.info "Download complete (#{Time.zone.now - start_time}s)"
 
@@ -41,7 +47,7 @@ class Downloader
     Rails.logger.info "Downloading (POST) #{url}"
 
     start_time = Time.zone.now
-    response = super(url, options)
+    response = backend.post(url, options)
 
     Rails.logger.info "Download complete (#{Time.zone.now - start_time}s)"
 
@@ -61,6 +67,7 @@ class Downloader
       message = {:url => url, :download_options => download_options, :failure_message => failure_message}.to_json
       Sqs.send_message(QueueNames::FAILED_DOWNLOADS, message)
       Rails.logger.info "Added to FailedDownloads queue."
+      false
     end
   end
 
