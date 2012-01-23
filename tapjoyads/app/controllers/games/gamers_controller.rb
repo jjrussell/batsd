@@ -27,11 +27,13 @@ class Games::GamersController < GamesController
     @gamer.gamer_profile = @gamer_profile
 
     if @gamer.save
+      params[:default_platforms] ||= []
       message = {
         :gamer_id => @gamer.id,
         :accept_language_str => request.accept_language,
         :user_agent_str => request.user_agent,
         :device_type => device_type,
+        :selected_devices => params[:default_platforms].reject { |k, v| v != '1' }.keys,
         :geoip_data => get_geoip_data,
         :os_version => os_version }
       Sqs.send_message(QueueNames::SEND_WELCOME_EMAILS, Base64::encode64(Marshal.dump(message)))
