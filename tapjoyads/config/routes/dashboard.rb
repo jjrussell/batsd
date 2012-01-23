@@ -97,6 +97,7 @@ ActionController::Routing::Routes.draw do |map|
     tools.resources :support_requests, :only => [ :index ], :collection => { :mass_resolve => [ :get, :post ] }
     tools.resources :press_releases, :only => [ :index, :new, :create, :edit, :update ]
     tools.resources :gamers, :only => [ :index, :show ]
+    tools.resources :gamer_devices, :only => [ :edit ]
     tools.resources :network_costs, :only => [ :index, :new, :create ]
     tools.resources :partner_program_statz, :only => [ :index ], :collection => { :export => :get }
   end
