@@ -52,8 +52,8 @@ class Job::MasterReloadMoneyController < Job::JobController
         stats[key]['advertiser_spend']   /= -100.0
         stats[key]['publisher_earnings'] /=  100.0
 
-        stats[key]['marketing_credits'] = Order.created_between(start_time, end_time).sum(:amount, :conditions => "payment_method = 2") / 100.0
-        stats[key]['orders']            = Order.created_between(start_time, end_time).sum(:amount, :conditions => "payment_method != 2") / 100.0
+        stats[key]['marketing_credits'] = Order.created_between(start_time, end_time).sum(:amount, :conditions => "payment_method = 2 or payment_method = 4") / 100.0
+        stats[key]['orders']            = Order.created_between(start_time, end_time).sum(:amount, :conditions => "payment_method != 2 and payment_method != 4") / 100.0
         stats[key]['payouts']           = Payout.created_between(start_time, end_time).sum(:amount) / 100.0
         stats[key]['linkshare_est']     = stats[key]['advertiser_spend'] * 0.026
         stats[key]['ads_est']           = 0.0
