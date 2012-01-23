@@ -103,7 +103,7 @@ en:
 
 
     games:
-      earn: "<span class='earn'>Earn</span> <span class='currency'>%{currency}</span>"
+      earn: "Earn %{currency}"
       deactivate: "Deactivate"
       delete_my_account: "Delete My Account"
       del_acct_confirm: "Click on the button below to deactivate your account. Once an account has been deactivated for %{days_before_deletion} days, it will be completely deleted. We cannot recover your account once it has been deleted."
