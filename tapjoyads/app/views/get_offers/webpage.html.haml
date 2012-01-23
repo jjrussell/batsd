@@ -32,7 +32,13 @@
   - @offer_list.each_with_index do |offer, index|
     - link_class = index == 0 ? 'offer first' : index == @offer_list.size - 1 ? 'offer last' : 'offer'
     - link_class << ' video' if offer.item_type == 'VideoOffer'
-    - link_to(get_click_url(offer), :class => link_class, :onclick => @show_wifi_only && offer.wifi_only? ? "return wifiPopUp(this);" : "this.className += ' clicked';") do
+    - if @for_preview
+      - click_url = '#'
+      - click_options = { :onclick => 'return false;', :style => 'width: 320px; height: 76px; border: 1px solid #000; cursor: default;' }
+    - else
+      - click_url = get_click_url(offer)
+      - click_options = { :onclick => @show_wifi_only && offer.wifi_only? ? "return wifiPopUp(this);" : "this.className += ' clicked';" }
+    - link_to(click_url, click_options.merge(:class => link_class)) do
       .content
         .banner
           .cost

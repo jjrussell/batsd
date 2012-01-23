@@ -27,8 +27,10 @@ class Job::MasterReloadStatzController < Job::JobController
   end
 
   def devices_count
-    count = SimpledbResource.count(:domain_name => "devices_#{rand(NUM_DEVICES_DOMAINS)}") * NUM_DEVICES_DOMAINS
+    count = Device.count
     Mc.put('statz.devices_count', count)
+
+    render :text => 'ok'
   end
 
   private

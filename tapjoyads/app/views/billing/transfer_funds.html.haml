@@ -4,36 +4,48 @@
 .left-indented
   %h2 Transfer Funds
 
-  %p Please enter the amount that you would like to transfer from your Pending Earnings to your Balance for use in advertising campaigns.
+  - if @freeze_enabled
+    %p.alert Transfers are currently disabled while we process payouts.
+  - else
+    %p Please enter the amount that you would like to transfer from your Pending Earnings to your Balance for use in advertising campaigns.
 
   %p If you have any questions, please contact your account manager or #{mail_to 'support@tapjoy.com'}.
 
-  - form_tag create_transfer_billing_path, :method => :post, :class => 'tjform' do
-    %table
-      %tbody
-        %tr
-          %th
-            Pending Earnings:
-            #help_pending_earnings.help ?
-          %td= number_to_currency(current_partner.pending_earnings / 100.0)
-        %tr
-          %th
-            Balance:
-            #help_balance.help ?
-          %td= number_to_currency(current_partner.balance / 100.0)
-        - if current_partner.transfer_bonus > 0
+  - unless @freeze_enabled
+    - form_tag create_transfer_billing_path, :method => :post, :class => 'tjform' do
+      %table
+        %tbody
           %tr
             %th
-              Transfer Bonus:
-              #help_bonus.help ?
-            %td #{ current_partner.transfer_bonus * 100 }%
-    %table
-      %tbody
-        %tr
-          %th= label_tag 'transfer_amount', 'Amount'
-          %td= text_field_tag 'transfer_amount', '$0.00', :class => 'currency_field'
-        %tr
-          %td{ :colspan => 2 }= submit_tag 'Create Transfer'
+              Pending Earnings:
+              #help_pending_earnings.help ?
+            %td= number_to_currency(current_partner.pending_earnings / 100.0)
+          %tr
+            %th
+              Balance:
+              #help_balance.help ?
+            %td= number_to_currency(current_partner.balance / 100.0)
+          - if current_partner.transfer_bonus > 0
+            %tr
+              %th
+                Transfer Bonus:
+                #help_bonus.help ?
+              %td #{ current_partner.transfer_bonus * 100 }%
+      %table
+        %tbody
+          %tr
+            %th= label_tag 'transfer_amount', 'Amount'
+            %td= text_field_tag 'transfer_amount', '$0.00', :class => 'currency_field'
+          %tr
+            %td{ :colspan => 2 }= submit_tag 'Create Transfer'
+    - content_for :page_javascript do
+      :plain
+        var maximumAmount = #{current_partner.pending_earnings/100.0};
+        $('#transfer_amount').change(function() {
+          if ( stringToNumber($('#transfer_amount').val()) > maximumAmount) {
+            $('#transfer_amount').val( numberToCurrency(maximumAmount) );
+          }
+        });
 
 .hidden
   #help_pending_earnings_content{ :name => 'Pending Earnings' } Earnings available to be transferred to advertising balance.
@@ -44,11 +56,8 @@
     - else
       Interested in getting a higher transfer bonus? Please contact your account manager or #{mail_to 'support@tapjoy.com'}.
 
-- content_for :page_javascript do
+- content_for :page_styles do
   :plain
-    var maximumAmount = #{current_partner.pending_earnings/100.0};
-    $('#transfer_amount').change(function() {
-      if ( stringToNumber($('#transfer_amount').val()) > maximumAmount) {
-        $('#transfer_amount').val( numberToCurrency(maximumAmount) );
-      }
-    });
+    p.alert {
+      color: red;
+    }

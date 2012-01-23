@@ -6,7 +6,7 @@ ru:
 
     offerwall:
       title: "Заработать %{currency}"
-      free: "Бесплатно"
+      free: "Free"
       next: "След. %{items}"
       previous: "Пред. %{items}"
       missing_currency: "Не получили %{currency}?"
