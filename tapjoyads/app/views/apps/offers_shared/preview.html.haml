@@ -15,7 +15,7 @@
       - if @show_generated_ads
         Marketplace ad:
         %div.img320x76
-          %iframe{:src => @offer.get_offers_webpage_preview_url(publisher_app_id), :width => '322', :height => '78', :style => 'width: 322px; height: 78px; border: none;', :frameborder => '0'}
+          %iframe{:src => @offer.get_offers_webpage_preview_url(publisher_app_id, true), :width => '322', :height => '78', :style => 'width: 322px; height: 78px; border: none;', :frameborder => '0'}
       - else
         - unable_to_show << "Marketplace"
 
