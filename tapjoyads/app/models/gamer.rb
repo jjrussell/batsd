@@ -144,7 +144,7 @@ class Gamer < ActiveRecord::Base
   end
 
   def check_referrer
-    if referrer.present?
+    if referrer.present? && referrer != 'tjreferrer:'
       if referrer.starts_with?('tjreferrer:')
         click = Click.new :key => referrer.gsub('tjreferrer:', '')
         if click.rewardable?
