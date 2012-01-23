@@ -233,7 +233,7 @@ module Offer::Rejecting
     item_type == 'VideoOffer' && !video_offer_ids.include?(id)
   end
 
-  TAPJOY_GAMES_RETARGETED_OFFERS = ['2107dd6a-a8b7-4e31-a52b-57a1a74ddbc1', '12b7ea33-8fde-4297-bae9-b7cb444897dc']
+  TAPJOY_GAMES_RETARGETED_OFFERS = ['2107dd6a-a8b7-4e31-a52b-57a1a74ddbc1', '12b7ea33-8fde-4297-bae9-b7cb444897dc', '8183ce57-8ee4-46c0-ab50-4b10862e2a27']
   def tapjoy_games_retargeting_reject?(device)
     TAPJOY_GAMES_RETARGETED_OFFERS.include?(item_id) && !device.has_app?(TAPJOY_GAMES_REGISTRATION_OFFER_ID)
   end
