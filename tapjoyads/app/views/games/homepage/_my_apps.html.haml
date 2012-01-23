@@ -14,7 +14,4 @@
             .currency_item.left
               .offer_button
                 .button.grey
-                  %span.earn
-                    =t('text.shared.earn')
-                  %span.currency
-                    = currency[:name]
+                  =t('text.games.earn', :currency => currency[:name])

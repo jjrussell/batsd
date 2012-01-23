@@ -11,7 +11,6 @@ en:
       copyright: "Copyright &copy; %{year} Tapjoy, Inc. All Rights Reserved. Tapjoy and the Tapjoy logo are trademarks or registered trademarks of Tapjoy, Inc. All third party logos and trademarks mentioned are the property of their respective owners."
       country: "Country"
       day: "Day"
-      earn: "Earn"
       email: "Email"
       facebook_profile: "Facebook profile"
       female: "Female"
@@ -104,6 +103,7 @@ en:
 
 
     games:
+      earn: "<span class='earn'>Earn</span> <span class='currency'>%{currency}</span>"
       deactivate: "Deactivate"
       delete_my_account: "Delete My Account"
       del_acct_confirm: "Click on the button below to deactivate your account. Once an account has been deactivated for %{days_before_deletion} days, it will be completely deleted. We cannot recover your account once it has been deleted."
