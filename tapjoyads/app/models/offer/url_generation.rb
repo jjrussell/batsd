@@ -208,12 +208,6 @@ module Offer::UrlGeneration
     ad_url
   end
 
-  def get_offers_image_url(publisher_app_id, bust_cache = false)
-    url = "#{API_URL}/get_offers/image?publisher_app_id=#{publisher_app_id}&offer_id=#{id}"
-    url << "&ts=#{Time.now.to_i}" if bust_cache
-    url
-  end
-
   def get_offers_webpage_preview_url(publisher_app_id)
     "#{API_URL}/get_offers/webpage?app_id=#{publisher_app_id}&offer_id=#{id}"
   end
