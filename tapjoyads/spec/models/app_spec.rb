@@ -8,12 +8,14 @@ describe App do
   it { should have_many :offers }
   it { should have_many :publisher_conversions }
   it { should have_many :rewarded_featured_offers }
+  it { should have_many :app_metadatas }
   it { should have_one :rating_offer }
   it { should have_one :primary_currency }
   it { should have_one :primary_offer }
   it { should have_one :primary_rewarded_featured_offer }
   it { should have_one :primary_non_rewarded_featured_offer }
   it { should have_one :primary_non_rewarded_offer }
+  it { should have_one :primary_app_metadata }
   it { should belong_to :partner }
 
   # Check validations
