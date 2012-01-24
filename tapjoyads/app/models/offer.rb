@@ -599,7 +599,7 @@ class Offer < ActiveRecord::Base
         platform.nil? ? 35 : App::PLATFORM_DETAILS[platform][:min_action_offer_bid]
       end
     elsif item_type == 'VideoOffer'
-      15
+      2
     else
       0
     end
