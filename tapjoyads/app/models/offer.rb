@@ -716,7 +716,9 @@ class Offer < ActiveRecord::Base
 
   private
 
-  def custom_creative_sizes
+  def custom_creative_sizes(return_all = false)
+    return Offer::DISPLAY_AD_SIZES + Offer::FEATURED_AD_SIZES if return_all
+
     if !rewarded? && !featured?
       Offer::DISPLAY_AD_SIZES
     elsif featured?
@@ -771,7 +773,7 @@ class Offer < ActiveRecord::Base
     #
     creative_blobs = {}
 
-    custom_creative_sizes.each do |size|
+    custom_creative_sizes(true).each do |size|
       image_data = (send("banner_creative_#{size}_blob") rescue nil)
       creative_blobs[size] = image_data if !image_data.blank?
     end
