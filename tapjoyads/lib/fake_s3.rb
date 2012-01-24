@@ -24,6 +24,11 @@ class FakeObjects
     @fake_objects ||= {}
     @fake_objects[key] ||= FakeObject.new(key)
   end
+
+  def with_prefix(prefix)
+    @fake_objects ||= {}
+    @fake_objects.reject { |key| key !~ /#{prefix}/ }.values
+  end
 end
 
 class FakeObject
@@ -44,6 +49,7 @@ class FakeObject
   end
 
   def read
+    raise AWS::S3::Errors::NoSuchKey.new(nil, nil) unless @data
     @data
   end
 
