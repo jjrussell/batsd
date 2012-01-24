@@ -20,6 +20,7 @@ zh:
       load_more: "下一页！"
       loading: "载入中。。。。"
       load_error: "请再试一次。"
+      wifi_required: "需要Wifi"
       wifi_warning: "下载本软件需要wifi连接。"
 
     featured:

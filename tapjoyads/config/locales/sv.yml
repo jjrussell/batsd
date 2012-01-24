@@ -18,6 +18,8 @@ sv:
       load_more: "Fler erbjudanden!"
       loading: "Laddar..."
       load_error: "Var vänlig försök igen."
+      wifi_required: "Wifi Required"
+      wifi_warning: "This app requires a wifi connection to download."
 
     featured:
       title: "Tjäna %{currency}"
