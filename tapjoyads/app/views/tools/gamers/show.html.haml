@@ -1,7 +1,9 @@
 %h1 Gamer Management
-= render('search')
+= render :partial => 'search',  :locals => { :hide_table => true }
 
 #search_results
+  = render :partial => 'search/gamers'
+
   = render('games/gamers/header')
 
   %table#gamer_profile.tablesorter
@@ -75,7 +77,7 @@
     %tbody
       - @gamer.gamer_devices.each do |device|
         %tr
-          %td= device.id
+          %td= device.device_id
           %td= device.name
           %td= device.device_type
           %td= device.created_at.to_s(:pub_full_ampm_sec_zone)
@@ -110,4 +112,7 @@
     #gamer_profile td.blank {
       color: #AAAAAA;
       font-style: italic;
+    }
+    #gamers_table {
+      display: none;
     }

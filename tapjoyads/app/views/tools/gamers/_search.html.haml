@@ -1,3 +1,5 @@
+- hide_table ||= false
+
 %table.search
   %tr
     %td Use the field to the right to search for gamers.
@@ -7,9 +9,6 @@
         %span#spinner= image_tag('spinner.gif', :alt => 'Searching...')
       = label_tag 'search_box', 'Search email:'
       = text_field_tag 'search_box', ''
-      %br/
-      = check_box_tag 'search_only_tapjoy', '1', true
-      = label_tag 'search_only_tapjoy', 'limit to @tapjoy.com and @offerpal.com emails'
 
 - content_for :page_styles do
   :plain
@@ -18,7 +17,7 @@
       text-align: right;
     }
 
-    #search_box, #tapjoy_only_search_box {
+    #search_box {
       width: 300px;
     }
     .spinner {
@@ -81,8 +80,7 @@
       // controller's URI
       var term = $("#search_box").val();
       var url = '#{search_gamers_path}';
-      var params = { term: term,
-                     tapjoy_only: $('#search_only_tapjoy').is(':checked') ? true : false };
+      var params = { term: term };
 
       if(term.length > 1) {
         // show spinner
@@ -107,10 +105,9 @@
     $(document).ready(function()
     {
       $('#search_box').delayedObserver(0.5, doSearch);
-      $('#search_only_tapjoy').change(doSearch);
 
       if($('#search_box').val().length > 1)
         doSearch();
-      else
+      else if(#{!hide_table})
         $('#gamers_table').fadeIn();
     });
