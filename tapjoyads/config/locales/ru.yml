@@ -18,7 +18,6 @@ ru:
       load_more: "Загрузить еще!"
       loading: "Загрузка..."
       load_error: "Попробуйте еще раз."
-      wifi_warning: "This app requires wifi connection to download, OK to continue."
 
     featured:
       title: "Заработать %{currency}"

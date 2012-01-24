@@ -18,7 +18,6 @@ fr:
       load_more: "Voir plus d'offres!"
       loading: "Chargement..."
       load_error: "Essaye encore."
-      wifi_warning: "This app requires wifi connection to download, OK to continue."
 
     featured:
       title: "Gagne des %{currency}"
