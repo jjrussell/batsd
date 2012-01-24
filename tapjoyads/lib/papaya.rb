@@ -1,11 +1,15 @@
 class Papaya
-  def self.queue_daily_jobs
+  def self.queue_daily_device_jobs
     date_str = Date.yesterday.to_s(:yy_mm_dd)
     Sqs.send_message(QueueNames::UPDATE_PAPAYAN_DEVICE, date_str)
   end
 
-  def self.update_device_by_date(date)
-    date_str = date.to_s(:yy_mm_dd)
+  def self.queue_daily_user_count_jobs
+    Sqs.send_message(QueueNames::UPDATE_PAPAYA_USER_COUNT, '')
+  end
+
+  def self.update_device_by_date(date_str)
+    #date_str = date.to_s(:yy_mm_dd)
     url = "#{PAPAYA_API_URL}/imeiapi/udid_list?date=#{date_str}"
     papaya_data = get_papaya_data(url)
 

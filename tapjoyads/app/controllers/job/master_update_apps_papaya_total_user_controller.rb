@@ -1,7 +1,6 @@
 class Job::MasterUpdateAppsPapayaTotalUserController < Job::JobController
   def index
-    Papaya.update_apps
-    OfferCacher.cache_papaya_offers
+    Papaya.queue_daily_user_count_jobs
     render :text => 'ok'
   end
 end
