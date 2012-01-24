@@ -47,7 +47,9 @@ class AgencyApi::AppsController < AgencyApiController
     end
 
     if params[:store_id].present?
-      unless app.update_from_store({ :store_id => params[:store_id], :use_queue => 'true' })
+      begin
+        app.queue_store_update( :store_id => params[:store_id] )
+      rescue
         render_error("failed to create app metadata", 400) and return
       end
     end
@@ -63,8 +65,7 @@ class AgencyApi::AppsController < AgencyApiController
 
     app = App.find_by_id(params[:id])
     unless app.present?
-      render_error('app not found', 400)
-      return
+      render_error('app not found', 400) and return
     end
 
     return unless verify_partner(app.partner_id)
@@ -77,7 +78,9 @@ class AgencyApi::AppsController < AgencyApiController
     end
 
     if params[:store_id].present?
-      unless app.update_from_store({ :store_id => params[:store_id], :use_queue => 'true' })
+      begin
+        app.queue_store_update( :store_id => params[:store_id] )
+      rescue
         render_error("failed to update app metadata", 400) and return
       end
     end
