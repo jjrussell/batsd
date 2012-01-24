@@ -183,10 +183,8 @@
               %tr{:style => "background-color: #f1f1f1;" }
                 %td{:style=>"vertical-align: top; font-size: 11px; padding: 5px 0 5px #{offset};"}
                   Did not sign up for Tapjoy?
-                  %br/
-                  Click
-                  = link_to('here', "#{WEBSITE_URL}/gamer/confirm_delete")
-                  to delete.
+                  = succeed '.' do
+                    = mail_to('feedback@tapjoy.com', 'Let us know')
                   %br/
                   To unsubscribe please click
                   = succeed '.' do

@@ -23,6 +23,7 @@ describe Offer do
   it { should validate_numericality_of :payment_range_high }
 
   before :each do
+    fake_the_web
     @app = Factory :app
     @offer = @app.primary_offer
   end
@@ -85,76 +86,183 @@ describe Offer do
     @offer.send(:source_reject?, 'offerwall').should be_false
   end
 
-  context "clone creation" do
-    it "should default to same offer type when no options are specified" do
-      new_offer = @offer.send :create_clone
-      new_offer.should_not be_featured
-      new_offer.should be_rewarded
+  describe "#create_clone" do
+    context "when no options are specified" do
+      before :each do
+        @new_offer = @offer.send :create_clone
+      end
 
-      @app.primary_offer.should_not == new_offer
-      @app.offers.should include(new_offer)
+      it "creates an offer with the same featured status" do
+        @new_offer.should_not be_featured
+      end
+
+      it "creates an offer with the same rewarded status" do
+        @new_offer.should be_rewarded
+      end
+
+      it "doesn't replace the app's primary offer" do
+        @app.primary_offer.should_not be @new_offer
+      end
+
+      it "adds the new offer to the app's offers list" do
+        @app.offers.should include @new_offer
+      end
     end
 
-    it "should create non-rewarded" do
-      new_offer = @offer.send(:create_clone, { :rewarded => false })
-      new_offer.should_not be_featured
-      new_offer.should_not be_rewarded
+    context "when 'rewarded' is false" do
+      before :each do
+        @new_offer = @offer.send(:create_clone, { :rewarded => false })
+      end
 
-      @app.primary_non_rewarded_offer.should == new_offer
-      @app.offers.should include(new_offer)
-      @app.non_rewarded_offers.should include(new_offer)
+      it "creates an offer that is non-rewarded" do
+        @new_offer.should_not be_rewarded
+      end
+
+      it "creates an offer that is not featured" do
+        @new_offer.should_not be_featured
+      end
+
+      it "adds the new offer to the app's offers list" do
+        @app.offers.should include @new_offer
+      end
+
+      it "sets the new offer as the app's primary non-rewarded offer" do
+        @app.primary_non_rewarded_offer.should == @new_offer
+      end
+
+      it "adds the new offer to the app's non-rewarded offers list" do
+        @app.non_rewarded_offers.should include @new_offer
+      end
     end
 
-    it "should create non-rewarded featured" do
-      new_offer = @offer.send(:create_clone, { :rewarded => false, :featured => true })
-      new_offer.should be_featured
-      new_offer.should_not be_rewarded
+    context "when 'rewarded' is false and 'featured' is true" do
+      before :each do
+        @new_offer = @offer.send(:create_clone, { :rewarded => false, :featured => true })
+      end
 
-      @app.primary_non_rewarded_featured_offer.should == new_offer
-      @app.offers.should include(new_offer)
-      @app.non_rewarded_featured_offers.should include(new_offer)
+      it "creates an offer that is non-rewarded" do
+        @new_offer.should_not be_rewarded
+      end
+
+      it "creates an offer that is featured" do
+        @new_offer.should be_featured
+      end
+
+      it "adds the new offer ot the app's offers list" do
+        @app.offers.should include @new_offer
+      end
+
+      it "sets the new offer as the app's primary non-rewarded featured offer" do
+        @app.primary_non_rewarded_featured_offer.should == @new_offer
+      end
+
+      it "adds the new offer to the app's non-rewarded featured offers list" do
+        @app.non_rewarded_featured_offers.should include @new_offer
+      end
     end
 
-    it "should create rewarded featured" do
-      new_offer = @offer.send(:create_clone, { :rewarded => true, :featured => true })
-      new_offer.should be_featured
-      new_offer.should be_rewarded
+    context "when 'rewarded' is true and 'featured' is true" do
+      before :each do
+        @new_offer = @offer.send(:create_clone, { :rewarded => true, :featured => true })
+      end
 
-      @app.primary_rewarded_featured_offer.should == new_offer
-      @app.offers.should include(new_offer)
-      @app.rewarded_featured_offers.should include(new_offer)
+      it "creates an offer that is rewarded" do
+        @new_offer.should be_rewarded
+      end
+
+      it "creates an offer that is featured" do
+        @new_offer.should be_featured
+      end
+
+      it "adds the new offer ot the app's offers list" do
+        @app.offers.should include @new_offer
+      end
+
+      it "sets the new offer as the app's primary rewarded featured offer" do
+        @app.primary_rewarded_featured_offer.should == @new_offer
+      end
+
+      it "adds the new offer to the app's rewarded featured offers list" do
+        @app.rewarded_featured_offers.should include @new_offer
+      end
     end
   end
 
-  context "clone creation aliases" do
-    it "should create non-rewarded" do
-      new_offer = @offer.create_non_rewarded_clone
-      new_offer.should_not be_featured
-      new_offer.should_not be_rewarded
-
-      @app.primary_non_rewarded_offer.should == new_offer
-      @app.offers.should include(new_offer)
-      @app.non_rewarded_offers.should include(new_offer)
+  describe "#create_non_rewarded_clone" do
+    before :each do
+      @new_offer = @offer.create_non_rewarded_clone
     end
 
-    it "should create non-rewarded featured" do
-      new_offer = @offer.create_non_rewarded_featured_clone
-      new_offer.should be_featured
-      new_offer.should_not be_rewarded
-
-      @app.primary_non_rewarded_featured_offer.should == new_offer
-      @app.offers.should include(new_offer)
-      @app.non_rewarded_featured_offers.should include(new_offer)
+    it "creates an offer that is non-rewarded" do
+      @new_offer.should_not be_rewarded
     end
 
-    it "should create rewarded featured" do
-      new_offer = @offer.create_rewarded_featured_clone
-      new_offer.should be_featured
-      new_offer.should be_rewarded
+    it "creates an offer that is not featured" do
+      @new_offer.should_not be_featured
+    end
 
-      @app.primary_rewarded_featured_offer.should == new_offer
-      @app.offers.should include(new_offer)
-      @app.rewarded_featured_offers.should include(new_offer)
+    it "adds the new offer to the app's offers list" do
+      @app.offers.should include @new_offer
+    end
+
+    it "sets the new offer as the app's primary non-rewarded offer" do
+      @app.primary_non_rewarded_offer.should == @new_offer
+    end
+
+    it "adds the new offer to the app's non-rewarded offers list" do
+      @app.non_rewarded_offers.should include @new_offer
+    end
+  end
+
+  describe "#create_non_rewarded_featured_clone" do
+    before :each do
+      @new_offer = @offer.create_non_rewarded_featured_clone
+    end
+
+    it "creates an offer that is non-rewarded" do
+      @new_offer.should_not be_rewarded
+    end
+
+    it "creates an offer that is featured" do
+      @new_offer.should be_featured
+    end
+
+    it "adds the new offer ot the app's offers list" do
+      @app.offers.should include @new_offer
+    end
+
+    it "sets the new offer as the app's primary non-rewarded featured offer" do
+      @app.primary_non_rewarded_featured_offer.should == @new_offer
+    end
+
+    it "adds the new offer to the app's non-rewarded featured offers list" do
+      @app.non_rewarded_featured_offers.should include @new_offer
+    end
+  end
+
+  describe "#create_rewarded_featured_clone" do
+    before :each do
+      @new_offer = @offer.create_rewarded_featured_clone
+    end
+
+    it "creates an offer that is rewarded" do
+      @new_offer.should be_rewarded
+    end
+
+    it "creates an offer that is featured" do
+      @new_offer.should be_featured
+    end
+
+    it "adds the new offer ot the app's offers list" do
+      @app.offers.should include @new_offer
+    end
+
+    it "sets the new offer as the app's primary rewarded featured offer" do
+      @app.primary_rewarded_featured_offer.should == @new_offer
+    end
+
+    it "adds the new offer to the app's rewarded featured offers list" do
+      @app.rewarded_featured_offers.should include @new_offer
     end
   end
 end

@@ -40,7 +40,7 @@ class GamesMarketingMailer < ActionMailer::Base
     device, gamer_device, external_publisher = ExternalPublisher.most_recently_run_for_gamer(gamer)
     if external_publisher
       currency = external_publisher.currencies.first
-      offerwall_url = external_publisher.get_offerwall_url(device, currency, device_info[:accept_language_str], device_info[:user_agent_str])
+      offerwall_url = external_publisher.get_offerwall_url(device, currency, device_info[:accept_language_str], device_info[:user_agent_str], nil, true)
 
       sess = Patron::Session.new
       response = sess.get(offerwall_url)
@@ -49,8 +49,9 @@ class GamesMarketingMailer < ActionMailer::Base
     end
 
     gamer_device ||= gamer.gamer_devices.first
+    selected_devices = device_info[:selected_devices] || []
     @linked = gamer_device.present?
-    @android_device = @linked ? (gamer_device.device_type == 'android') : false
+    @android_device = @linked ? (gamer_device.device_type == 'android') : !selected_devices.include?('ios')
     @confirmation_link = "#{WEBSITE_URL}/confirm?token=#{CGI.escape(gamer.confirmation_token)}"
 
     device = Device.new(:key => @linked ? gamer_device.device_id : nil)
