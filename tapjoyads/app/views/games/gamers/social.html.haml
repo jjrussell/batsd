@@ -15,7 +15,7 @@
                 .following_text= t('text.shared.following')
               .followers_tab
                 .followers_count= @friends_lists[:followers].size
-                .followers_text= t('text.shared.followers') 
+                .followers_text= t('text.shared.followers')
             #friends_display
               - @friends_lists.each do |key, friends|
                 %div{:class => "#{key}_display"}
@@ -39,7 +39,7 @@
                         %br
                         = fb_name(current_facebook_user, :use_you => false)
                       - else
-                        =t('text.games.none_selected') 
+                        =t('text.games.none_selected')
               - form_for([ :games, @gamer ], :url => dissociate_account_games_gamer_gamer_profile_path(:account_type => Invitation::FACEBOOK), :html => { :method => "put" }) do |f|
                 .field
                   = submit_tag(@gamer_profile.facebook_id.present? ? t('text.games.change_linked_account') : t('text.games.link_my_facebook'), :class => "button")

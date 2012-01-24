@@ -60,11 +60,11 @@
                       = label_tag :birthdate
                       = select_date nil, { :order => [:month, :day, :year], :start_year => Time.now.year, :end_year => (Time.now.year - 100), :include_blank => false, :prompt => {:day => t("text.shared.day"), :month => t("text.shared.month"), :year => t("text.shared.year")} }
                     .field
-                      = f.email_field :email, "autocorrect" => "off", "autocapitalize" => "off", :placeholder => t('text.shared.email') 
+                      = f.email_field :email, "autocorrect" => "off", "autocapitalize" => "off", :placeholder => t('text.shared.email')
                     .field
                       %label{ :for => "password", :class => "hidden" }
                         Password
-                      = f.password_field :password, :placeholder => t("text.shared.password")
+                      = f.password_field :password, :placeholder => t('text.shared.password')
                     - if device_type.nil?
                       .row.platform
                         .field#platform_android
@@ -78,8 +78,8 @@
                         .field_checkbox
                           = f.check_box :terms_of_service
                         .field_tos_text
-                          = f.label :terms_of_service, t("text.games.tos_acknowledge_html", 
-                            :terms_of_use => link_to(t("text.games.terms_of_use_href"), games_tos_path, :target => '_blank'), 
+                          = f.label :terms_of_service, t("text.games.tos_acknowledge_html",
+                            :terms_of_use => link_to(t("text.games.terms_of_use_href"), games_tos_path, :target => '_blank'),
                             :privacy_policy => link_to(t("text.games.privacy_policy_href"), games_privacy_path, :target => '_blank'))
                         = f.hidden_field :referrer, :value => params[:referrer]
                       .field.right
