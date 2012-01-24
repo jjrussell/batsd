@@ -2,6 +2,7 @@ $main-bg: #FFF;
 $main-title-font-size: 1.2em;
 $main-font-size: 1em;
 $main-font-color: #5A5A5A;
+$red-font-color: #ef1a28;
 $main-link-font-color: #787878;
 $main-link-font-color-hover: #262626;
 $main-font-name: "Helvetica Neue", Arial, Helvetica, "Lucida Grande", sans-serif;
@@ -12,5 +13,8 @@ body {
   color: $main-font-color;
   .center {
     text-align: center;
+    img {
+      max-width: 100%;
+    }
   }
 }
