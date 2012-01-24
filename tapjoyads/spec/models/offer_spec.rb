@@ -92,8 +92,11 @@ describe Offer do
         @new_offer = @offer.send :create_clone
       end
 
-      it "creates the same offer type as the current offer" do
+      it "creates an offer with the same featured status" do
         @new_offer.should_not be_featured
+      end
+
+      it "creates an offer with the same rewarded status" do
         @new_offer.should be_rewarded
       end
 
