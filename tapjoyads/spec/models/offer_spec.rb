@@ -111,9 +111,12 @@ describe Offer do
         @new_offer = @offer.send(:create_clone, { :rewarded => false })
       end
 
-      it "creates a non-rewarded offer" do
-        @new_offer.should_not be_featured
+      it "creates an offer that is non-rewarded" do
         @new_offer.should_not be_rewarded
+      end
+
+      it "creates an offer that is not featured" do
+        @new_offer.should_not be_featured
       end
 
       it "adds the new offer to the app's offers list" do
@@ -134,9 +137,12 @@ describe Offer do
         @new_offer = @offer.send(:create_clone, { :rewarded => false, :featured => true })
       end
 
-      it "should create non-rewarded featured" do
-        @new_offer.should be_featured
+      it "creates an offer that is non-rewarded" do
         @new_offer.should_not be_rewarded
+      end
+
+      it "creates an offer that is featured" do
+        @new_offer.should be_featured
       end
 
       it "adds the new offer ot the app's offers list" do
@@ -157,9 +163,12 @@ describe Offer do
         @new_offer = @offer.send(:create_clone, { :rewarded => true, :featured => true })
       end
 
-      it "should create non-rewarded featured" do
-        @new_offer.should be_featured
+      it "creates an offer that is rewarded" do
         @new_offer.should be_rewarded
+      end
+
+      it "creates an offer that is featured" do
+        @new_offer.should be_featured
       end
 
       it "adds the new offer ot the app's offers list" do
@@ -181,9 +190,12 @@ describe Offer do
       @new_offer = @offer.create_non_rewarded_clone
     end
 
-    it "creates a non-rewarded offer" do
-      @new_offer.should_not be_featured
+    it "creates an offer that is non-rewarded" do
       @new_offer.should_not be_rewarded
+    end
+
+    it "creates an offer that is not featured" do
+      @new_offer.should_not be_featured
     end
 
     it "adds the new offer to the app's offers list" do
@@ -204,9 +216,12 @@ describe Offer do
       @new_offer = @offer.create_non_rewarded_featured_clone
     end
 
-    it "should create non-rewarded featured" do
-      @new_offer.should be_featured
+    it "creates an offer that is non-rewarded" do
       @new_offer.should_not be_rewarded
+    end
+
+    it "creates an offer that is featured" do
+      @new_offer.should be_featured
     end
 
     it "adds the new offer ot the app's offers list" do
@@ -227,9 +242,12 @@ describe Offer do
       @new_offer = @offer.create_rewarded_featured_clone
     end
 
-    it "should create non-rewarded featured" do
-      @new_offer.should be_featured
+    it "creates an offer that is rewarded" do
       @new_offer.should be_rewarded
+    end
+
+    it "creates an offer that is featured" do
+      @new_offer.should be_featured
     end
 
     it "adds the new offer ot the app's offers list" do
