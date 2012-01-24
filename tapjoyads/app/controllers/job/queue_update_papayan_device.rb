@@ -1,4 +1,4 @@
-class Job::QueuePapayanDeviceController < Job::SqsReaderController
+class Job::QueueUpdatePapayanDeviceController < Job::SqsReaderController
 
   def initialize
     super QueueNames::UPDATE_PAPAYAN_DEVICE
