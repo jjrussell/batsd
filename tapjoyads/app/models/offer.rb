@@ -145,7 +145,7 @@ class Offer < ActiveRecord::Base
   end
   validates_each :multi_complete do |record, attribute, value|
     if value
-      record.errors.add(attribute, "is not for App offers") if record.item_type == 'App'
+      record.errors.add(attribute, "is not for App offers") unless record.multi_completable?
       record.errors.add(attribute, "cannot be used for non-interval pay-per-click offers") if record.pay_per_click? && record.interval == 0
     end
   end
@@ -712,6 +712,10 @@ class Offer < ActiveRecord::Base
     support_requests = Mc.get("offer.support_requests.#{id}")
     rewards = Mc.get("offer.clicks_rewarded.#{id}")
     [ support_requests, rewards ]
+  end
+
+  def multi_completable?
+    item_type != 'App' || Offer::Rejecting::TAPJOY_GAMES_RETARGETED_OFFERS.include?(item_id)
   end
 
   private
