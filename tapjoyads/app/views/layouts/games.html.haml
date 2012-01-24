@@ -20,6 +20,9 @@
     = stylesheet_link_tag("games/style-320", :media => "only screen and (max-width: 320px)")
     = stylesheet_link_tag("games/images-hd", :media => "(-webkit-min-device-pixel-ratio: 2)")
 
+    /[if IE 8]
+      = stylesheet_link_tag('games/ie8')
+
     = yield :page_head
 
   %body{ :class => @page_design == 'new' ? 'new' : 'old' }
@@ -100,6 +103,13 @@
         .dialog_title.title_2
           Sending
         .dialog_image
+
+    #cookie_error.dialog_wrapper.hide
+      .close_dialog
+        .close_button
+      .dialog
+        .dialog_content
+          It appears that cookies are not enabled on your browser. You will need to enable cookies in order to use Tapjoy.
 
     - [:notice, :error, :success].each do |key|
       - unless flash[key].blank?

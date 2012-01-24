@@ -2,6 +2,7 @@ require 'spec/spec_helper'
 
 describe AgencyApi::CurrenciesController do
   before :each do
+    fake_the_web
     @agency_user = Factory(:agency_user)
     @partner = Factory(:partner)
     @agency_user.partners << @partner
@@ -43,8 +44,6 @@ describe AgencyApi::CurrenciesController do
     end
 
     it 'should respond with success given valid params' do
-      Resolv.stubs(:getaddress).returns('1.1.1.1')
-
       currency = Factory(:currency,
         :app => @app,
         :partner => @partner,
@@ -186,8 +185,6 @@ describe AgencyApi::CurrenciesController do
     end
 
     it 'should respond with success given valid params' do
-      Resolv.stubs(:getaddress).returns('1.1.1.1')
-
       post :create, @valid_params
 
       should_respond_with_json_success(200)
@@ -257,8 +254,6 @@ describe AgencyApi::CurrenciesController do
     end
 
     it 'should respond with success given valid params' do
-      Resolv.stubs(:getaddress).returns('1.1.1.1')
-
       put :update, @valid_params
 
       should_respond_with_json_success(200)

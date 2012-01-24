@@ -47,6 +47,7 @@
         = f.label :terms_of_service, 'I Agree to the Tapjoy Terms of Service:'
         = link_to 'Advertiser', '/tos-advertiser.html', :target => '_blank'
         = link_to 'Publisher', '/tos-publisher.html', :target => '_blank'
+        = link_to 'Publisher Guidelines', '/publisher-guidelines.html', :target => '_blank'
         = error_message_on @user, :terms_of_service
     %tr
       %td{ :colspan => 2 }= f.submit "Create Account"
