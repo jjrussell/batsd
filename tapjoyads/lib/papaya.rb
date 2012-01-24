@@ -28,7 +28,7 @@ class Papaya
 
     papaya_data.each do |package_name, user_count|
       unless user_count.is_a?(Integer)
-        raise PapayaAPIError.new("invalid number from Papaya : #{package_name} = #{user_count}")
+        raise PapayaAPIError.new("invalid number from Papaya : #{package_name} = #{user_count.inspect} -> #{user_count.class}")
         next
       end
       apps = App.find_all_by_store_id(package_name)
