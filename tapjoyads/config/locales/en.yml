@@ -18,7 +18,7 @@ en:
       load_more: "Load some more!"
       loading: "Loading..."
       load_error: "Please try again."
-      wifi_warning: "This app requires wifi connection to download, OK to continue."
+      wifi_warning: "This app requires a wifi connection to download."
 
     featured:
       title: "Earn %{currency}"
