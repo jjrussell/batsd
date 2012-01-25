@@ -1,48 +1,52 @@
 en:
   text:
     shared:
-      about_link: "About Tapjoy"
-      ads_by: "Ads by"
-      back: "Back"
-      blog: "Blog"
-      cancel: "Cancel"
-      confirm_password: "Confirm Password"
-      city: "City"
-      copyright: "Copyright &copy; %{year} Tapjoy, Inc. All Rights Reserved. Tapjoy and the Tapjoy logo are trademarks or registered trademarks of Tapjoy, Inc. All third party logos and trademarks mentioned are the property of their respective owners."
-      country: "Country"
-      day: "Day"
-      email: "Email"
-      facebook_profile: "Facebook profile"
-      female: "Female"
-      following: "Following"
-      followers: "Followers"
-      friends: "Friends"
-      gender: "Gender"
-      help: "Help"
-      invite: "Invite"
-      login_verb: "Log In"
-      login_noun: "Login"
-      logout: "Log Out"
-      male: "Male"
-      month: "Month"
-      my_account: "My Account"
-      my_profile: "My Profile"
-      name: "Name"
-      new_password: "New Password"
-      nickname: "Nickname"
-      options: "Options"
-      privacy: "Privacy"
-      privacy_policy: "Privacy Policy"
-      password: "Password"
-      preferences: "Preferences"
-      recipients: "Recipients"
-      reset_password: "Reset Password"
-      save: "Save"
-      share: "Share"
-      sign_in: "Sign In"
-      sign_up: "Sign Up"
-      year: "Year"
-      zip_postal: "Zip/Postal Code"
+      about_link: About Tapjoy
+      ads_by: Ads by
+      back: Back
+      blog: Blog
+      cancel: Cancel
+      confirm_password: Confirm Password
+      city: City
+      copyright:
+        Copyright &copy; %{year} Tapjoy, Inc. All Rights Reserved. Tapjoy and
+        the Tapjoy logo are trademarks or registered trademarks of Tapjoy, Inc.
+        All third party logos and trademarks mentioned are the property of
+        their respective owners.
+      country: Country
+      day: Day
+      email: Email
+      facebook_profile: Facebook profile
+      female: Female
+      following: Following
+      followers: Follower
+      friends: Friends
+      gender: Gender
+      help: Help
+      invite: Invite
+      login_verb: Log In
+      login_noun: Login
+      logout: Log Out
+      male: Male
+      month: Month
+      my_account: My Account
+      my_profile: My Profile
+      name: Name
+      new_password: New Password
+      nickname: Nickname
+      options: Options
+      privacy: Privacy
+      privacy_policy: Privacy Policy
+      password: Password
+      preferences: Preferences
+      recipients: Recipients
+      reset_password: Reset Password
+      save: Save
+      share: Share
+      sign_in: Sign In
+      sign_up: Sign Up
+      year: Year
+      zip_postal: Zip/Postal Code
 
 
     offerwall:
@@ -103,54 +107,70 @@ en:
 
 
     games:
-      android: "Android"
-      ios: "iOS"
-      earn: "Earn %{currency}"
-      deactivate: "Deactivate"
-      delete_my_account: "Delete My Account"
-      del_acct_confirm: "Click on the button below to deactivate your account. Once an account has been deactivated for %{days_before_deletion} days, it will be completely deleted. We cannot recover your account once it has been deleted."
-      none_selected: "None Selected"
-      allow_marketing_emails: "Allow Tapjoy to send me marketing emails"
-      link_my_facebook: "Link My Facebook"
-      change_linked_account: "Change Linked Account"
-      wrong_device: "wrong device?"
-      more_apps: "More Apps"
-      my_apps: "My Apps"
-      forgot_pass: "Forgot Password?"
-      call_to_action_title: "Unlock Mobile Joy"
-      call_to_action_body: "A better way to love the apps you have and find the apps you'll love"
-      birthdate: "Birthdate"
+      android: Android
+      ios: iOS
+      earn: Earn %{currency}
+      deactivate: Deactivate
+      delete_my_account: Delete My Account
+      del_acct_confirm:
+        Click on the button below to deactivate your account. Once an account
+        has been deactivated for %{days_before_deletion} days, it will be
+        completely deleted. We cannot recover your account once it has been
+        deleted.
+      none_selected: None Selected
+      allow_marketing_emails: Allow Tapjoy to send me marketing emails
+      link_my_facebook: Link My Facebook
+      change_linked_account: Change Linked Account
+      wrong_device: wrong device?
+      more_apps: More Apps
+      my_apps: My Apps
+      forgot_pass: Forgot Password?
+      call_to_action_title: Unlock Mobile Joy
+      call_to_action_body: A better way to love the apps you have and find the apps you'll love
+      birthdate: Birthdate
 
-      terms_of_use_href: "terms of use"
-      privacy_policy_href: "privacy policy"
-      tos_acknowledge_html: "By checking this box I assert that I agree to the %{terms_of_use} & %{privacy_policy}"
+      terms_of_use_href: terms of use
+      privacy_policy_href: privacy policy
+      tos_acknowledge_html: By checking this box I assert that I agree to the %{terms_of_use} & %{privacy_policy}
 
       about_title: "\"Somehow it knows exactly what apps I like.\""
-      about_body: "Tapjoy allows you to discover popular apps like Happy Park, City of Wonder, Coin Dozer, Overkill, VIP Poker, and Gun Bros, while accessing premium content in your favorite apps. It recommends new apps to you so if you like playing Magic Zoo, Tapjoy will suggest other games you'll enjoy, like Safari Zoo or Bug Village HD. So sign up now, and tap into a better way to find the apps you love."
-      advertisers_title: "Advertisers"
-      advertisers_body: "Reach millions of users and gain exposure for your products"
-      developers_title: "Developers"
-      developers_body: "Drive significant revenue to your apps with our monetization tools"
-      invite: "Invite Your Friends!"
-      recommendations: "Recommendations"
-      tapjoy_picks: "Tapjoy Picks"
-      wifi_required: "WiFi Required"
-      free!: "Free!"
-      get_it: "Get it!"
-      invite_title: "Send an Email Invite"
-      recipients_label: "Use commas to separate multiple emails"
-      follow_us: "follow us:"
-      favorite_app: "Favorite App"
-      favorite_category: "Favorite Category"
-      social_networks: "Social Networks"
-      social_settings: "Social Settings"
-      member_since: "Member since %{date}"
+      about_body:
+        Tapjoy allows you to discover popular apps like Happy Park, City of
+        Wonder, Coin Dozer, Overkill, VIP Poker, and Gun Bros, while accessing
+        premium content in your favorite apps. It recommends new apps to you so
+        if you like playing Magic Zoo, Tapjoy will suggest other games you'll
+        enjoy, like Safari Zoo or Bug Village HD. So sign up now, and tap into a
+        better way to find the apps you love.
+      advertisers_title: Advertisers
+      advertisers_body: Reach millions of users and gain exposure for your products
+      developers_title: Developers
+      developers_body: Drive significant revenue to your apps with our monetization tools
+      invite: Invite Your Friends!
+      recommendations: Recommendations
+      tapjoy_picks: Tapjoy Picks
+      wifi_required: WiFi Required
+      free!: Free!
+      get_it: Get it!
+      invite_title: Send an Email Invite
+      recipients_label: Use commas to separate multiple emails
+      follow_us: follow us
+      favorite_app: Favorite App
+      favorite_category: Favorite Category
+      social_networks: Social Networks
+      social_settings: Social Settings
+      member_since: Member since %{date}
 
-      invite_email_greet: "Hi,"
-      invite_email_signature: "Team Tapjoy"
-      invite_email_body: "%{name} has invited you to join Tapjoy, the BEST place to find the hottest new apps. Signing up is free and you'll be able discover the best apps on iOS and Android, while also earning currency in your favorite apps.
+      invite_email_greet: Hi,
+      invite_email_signature: Team Tapjoy
+      invite_email_body:
+        "%{name} has invited you to join Tapjoy, the BEST place to find the
+        hottest new apps. Signing up is free and you'll be able discover the
+        best apps on iOS and Android, while also earning currency in your
+        favorite apps.
 
-        No need to wade through thousands of apps in the App Store or the Android Market to find your next download. Tapjoy has you covered and recommends apps we know you'll like.
+        No need to wade through thousands of apps in the App Store or the
+        Android Market to find your next download. Tapjoy has you covered and
+        recommends apps we know you'll like.
 
         To get started, create your account here:"
 
