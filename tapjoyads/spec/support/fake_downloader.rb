@@ -21,8 +21,6 @@ class FakeDownloader
     if status.is_a?(Integer)
       body = if status >= 200 && status <= 299
                 "#{method.upcase} #{path}"
-              else
-                nil
               end
 
       OpenStruct.new({
