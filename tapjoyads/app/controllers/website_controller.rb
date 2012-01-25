@@ -7,33 +7,9 @@ class WebsiteController < ApplicationController
 
   helper_method :current_user, :current_partner, :current_partner_apps, :current_partner_offers, :current_partner_app_offers, :current_partner_active_app_offers, :premier_enabled?
 
-  before_filter { |c| Authorization.current_user = c.current_user }
+  before_filter { |c| Authorization.current_user = c.send(:current_user) }
   before_filter :check_employee_device
   before_filter :set_recent_partners
-
-  def current_user
-    @current_user ||= current_user_session && current_user_session.record
-  end
-
-  def current_partner
-    @current_partner ||= current_user && (current_user.current_partner || current_user.partners.first)
-  end
-
-  def current_partner_apps
-    @current_partner_apps ||= current_partner.apps.visible.sort_by{|app| app.name.downcase}
-  end
-
-  def current_partner_offers
-    @current_partner_offers ||= current_partner.offers.visible.sort_by{|offer| offer.name_with_suffix.downcase}
-  end
-
-  def current_partner_app_offers
-    @current_partner_app_offers ||= current_partner.offers.visible.app_offers.sort_by{|app| app.name.downcase}
-  end
-
-  def current_partner_active_app_offers
-    @current_partner_active_app_offers ||= current_partner_app_offers.select(&:is_enabled?)
-  end
 
   def sanitize_currency_params(object, fields)
     unless object.nil?
@@ -48,10 +24,6 @@ class WebsiteController < ApplicationController
 
   def sanitize_currency_param(field)
     field.blank? ? field : (field.gsub(/[\$,]/,'').to_f * 100).round.to_s
-  end
-
-  def premier_enabled?
-    current_partner.exclusivity_level.present?
   end
 
   def check_employee_device
@@ -74,7 +46,7 @@ class WebsiteController < ApplicationController
     cookies["#{current_user.email}-device"] = options
   end
 
-protected
+  protected
 
   def permission_denied
     flash[:error] = "Sorry, you are not allowed to access that page."
@@ -90,7 +62,35 @@ protected
     Rails.env.production?
   end
 
-private
+  def current_user
+    @current_user ||= current_user_session && current_user_session.record
+  end
+
+  private
+
+  def current_partner
+    @current_partner ||= current_user && (current_user.current_partner || current_user.partners.first)
+  end
+
+  def current_partner_apps
+    @current_partner_apps ||= current_partner.apps.visible.sort_by{|app| app.name.downcase}
+  end
+
+  def current_partner_offers
+    @current_partner_offers ||= current_partner.offers.visible.sort_by{|offer| offer.name_with_suffix.downcase}
+  end
+
+  def current_partner_app_offers
+    @current_partner_app_offers ||= current_partner.offers.visible.app_offers.sort_by{|app| app.name.downcase}
+  end
+
+  def current_partner_active_app_offers
+    @current_partner_active_app_offers ||= current_partner_app_offers.select(&:is_enabled?)
+  end
+
+  def premier_enabled?
+    current_partner.exclusivity_level.present?
+  end
 
   def current_user_session
     @current_user_session ||= UserSession.find

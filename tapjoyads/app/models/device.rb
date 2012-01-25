@@ -180,9 +180,9 @@ class Device < SimpledbShardedResource
   end
 
   def serial_save(options = {})
+    super(options)
     Sqs.send_message(QueueNames::CREATE_DEVICE_IDENTIFIERS, {'device_id' => key}.to_json) if @create_device_identifiers
     @create_device_identifiers = false
-    super(options)
   end
 
   def create_identifiers!

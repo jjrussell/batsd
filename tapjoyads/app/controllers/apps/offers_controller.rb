@@ -7,6 +7,17 @@ class Apps::OffersController < WebsiteController
   after_filter :save_activity_logs, :only => [ :create, :update, :toggle ]
 
   def new
+    offer_params = {}
+    if params[:offer_type] == 'rewarded_featured'
+      offer_params = {:featured => true, :rewarded => true}
+    elsif params[:offer_type] == 'non_rewarded_featured'
+      offer_params = {:featured => true, :rewarded => false}
+    elsif params[:offer_type] == 'non_rewarded'
+      offer_params = {:featured => false, :rewarded => false}
+    else
+      offer_params = {:featured => false, :rewarded => true}
+    end
+    @offer = Offer.new(offer_params)
   end
 
   def create
@@ -118,7 +129,7 @@ class Apps::OffersController < WebsiteController
         if email_managers
           approval_link = creative_tools_offers_url(:offer_id => @offer.id)
           emails = @offer.partner.account_managers.map(&:email)
-          emails = ['support@tapjoy.com'] if emails.empty? # Default address if no managers are found
+          emails << 'support@tapjoy.com'
           emails.each do |mgr|
             TapjoyMailer.deliver_approve_offer_creative(mgr, @offer, @app, approval_link)
           end

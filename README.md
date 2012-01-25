@@ -179,15 +179,6 @@ rake admin:sync_db
 
 * Now you have an admin account in production and locally
 
-Add wkhtmltoimage binary (this is so ad previews will work)
------------------------------------------------------------
-* Utilized by imgkit gem
-* For OSX:
-  * Download binary from: http://code.google.com/p/wkhtmltopdf/downloads/detail?name=wkhtmltoimage-OSX-0.10.0_rc2-static.tar.bz2&can=2&q=
-* For other OS's:
-  * Find and download appropriate **wkhtmltoimage** binary at http://code.google.com/p/wkhtmltopdf/downloads/list
-* sudo mv [filename] /usr/local/bin/wkhtmltoimage
-
 Download desired editor (most people use TextMate) and set it to use soft tabs (2 spaces)
 -----------------------------------------------------------------------------------------
 *  Instructions for TextMate:
