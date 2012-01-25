@@ -3,20 +3,13 @@ class GetOffersController < ApplicationController
   layout 'offerwall', :only => :webpage
 
   prepend_before_filter :decrypt_data_param
-  #before_filter :choose_experiment, :except => [:featured, :image]
+  #before_filter :choose_experiment, :except => :featured
   before_filter :set_featured_params, :only => :featured
-  before_filter :setup, :except => :image
+  before_filter :setup
   before_filter :choose_papaya_experiment, :only => [:index, :webpage]
 
-  after_filter :save_web_request, :except => :image
+  after_filter :save_web_request
   after_filter :save_impressions, :only => [:index, :webpage]
-
-  def image
-    offer = Offer.find_in_cache(params[:offer_id])
-    img = IMGKit.new(offer.get_offers_webpage_preview_url(params[:publisher_app_id]), :width => 320)
-
-    send_data img.to_png, :type => 'image/png', :disposition => 'inline'
-  end
 
   def webpage
     if @currency.get_test_device_ids.include?(params[:udid])

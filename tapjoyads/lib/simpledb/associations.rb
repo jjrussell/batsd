@@ -12,7 +12,7 @@ module Simpledb
         options = args.extract_options!
 
         association_name = args.first
-        foreign_key = options[:foreign_key] || "#{association_name}_id" 
+        foreign_key = options[:foreign_key] || "#{association_name}_id"
         klass = (options[:class_name] || association_name).to_s.classify.constantize
 
         define_method(association_name) do

@@ -21,6 +21,9 @@
     |
     = link_to("Advertiser Stats", advertiser_statz_path)
 
+.last_updated Total Devices: #{number_with_delimiter(@devices_count)}
+%br
+
 .last_updated For: #{@last_updated_start.to_s(:pub_ampm_sec)} - #{@last_updated_end.to_s(:pub_ampm_sec)}
 
 #money_totals
