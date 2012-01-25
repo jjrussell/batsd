@@ -53,7 +53,11 @@ class FeaturedContent < ActiveRecord::Base
   def self.featured_contents_with_country_targeting(geoip_data, device)
     featured_contents = FeaturedContent.featured_contents(device.try(:platform))
     featured_contents.delete_if do |fc|
-      fc.tracking_offer.geoip_reject?(geoip_data, device) if fc.tracking_offer && geoip_data[:country] && device
+      if fc.tracking_offer && device
+        fc.tracking_offer.geoip_reject?(geoip_data, device)
+      else
+        false
+      end
     end
   end
 
@@ -102,7 +106,7 @@ class FeaturedContent < ActiveRecord::Base
     save_icon_in_different_sizes!(icon_src_blob, icon_id, bucket)
     src_obj.write(:data => icon_src_blob, :acl => :public_read)
 
-    Mc.delete("icon.s3.#{id}") # id ==> icon_id
+    Mc.delete("icon.s3.#{id}")
 
     # Invalidate cloudfront
     if existing_icon_blob.present?
@@ -138,7 +142,13 @@ class FeaturedContent < ActiveRecord::Base
       else
         prefix = "tjvideo://"
       end
-      "#{prefix}video_id=#{offer.id}&amount=#{@currency.get_visual_reward_amount(offer, params[:display_multiplier])}&currency_name=#{URI::escape(@currency.name)}&click_url=#{click_url}"
+      params_array = [
+        "video_id=#{offer.id}",
+        "amount=#{@currency.get_visual_reward_amount(offer, params[:display_multiplier])}",
+        "currency_name=#{URI::escape(@currency.name)}",
+        "click_url=#{click_url}"
+      ]
+      "#{prefix}#{params_array.join('&')}"
     else
       click_url
     end
@@ -177,40 +187,39 @@ class FeaturedContent < ActiveRecord::Base
 
   def create_tracking_offer
     if button_url.present?
-      partner_tapjoy_id           = '70f54c6d-f078-426c-8113-d6e43ac06c6d'
-      if offer
-        @item                     = offer.item
-      else
-        @item                     = GenericOffer.new(:partner_id => partner_tapjoy_id, :name => "#{title}_#{subtitle}", :url => button_url)
-        @item.save
-      end
-      self.tracking_offer                  = Offer.new(:item => @item)
-      self.tracking_offer.partner          = Partner.find_by_id(partner_tapjoy_id)
-      self.tracking_offer.name             = "#{title}_#{subtitle}"
-      self.tracking_offer.url              = button_url
-      self.tracking_offer.device_types     = platforms
-      self.tracking_offer.price            = 0
-      self.tracking_offer.bid              = 0
-      self.tracking_offer.min_bid_override = 0
-      self.tracking_offer.rewarded         = false
-      self.tracking_offer.name_suffix      = 'fc_tracking'
-      self.tracking_offer.third_party_data = id
-      self.tracking_offer.fc_tracking      = true
-      self.tracking_offer.save!
+      item = GenericOffer.new(:partner_id => TAPJOY_PARTNER_ID, :name => "#{title}_#{subtitle}", :url => button_url)
+      item.save
+
+      self.tracking_offer = Offer.create!({
+        :item             => item,
+        :partner          => Partner.find_by_id(TAPJOY_PARTNER_ID),
+        :name             => "#{title}_#{subtitle}",
+        :url              => button_url,
+        :device_types     => platforms,
+        :price            => 0,
+        :bid              => 0,
+        :min_bid_override => 0,
+        :rewarded         => false,
+        :name_suffix      => 'fc_tracking',
+        :third_party_data => id,
+        :fc_tracking      => true
+      })
     end
   end
 
   def update_tracking_offer
-    if button_url.present? && tracking_offer
-      self.tracking_offer.name         = "#{title}_#{subtitle}" if title_changed? || subtitle_changed?
-      if button_url_changed?
-        self.tracking_offer.url_overridden = true
-        self.tracking_offer.url            = button_url
+    if button_url.present?
+      if tracking_offer
+        self.tracking_offer.name = "#{title}_#{subtitle}" if title_changed? || subtitle_changed?
+        if button_url_changed?
+          self.tracking_offer.url_overridden = true
+          self.tracking_offer.url            = button_url
+        end
+        self.tracking_offer.device_types = platforms.to_json if platforms_changed?
+        self.tracking_offer.save! if self.tracking_offer.changed?
+      else
+        create_tracking_offer
       end
-      self.tracking_offer.device_types = platforms.to_json if platforms_changed?
-      self.tracking_offer.save! if self.tracking_offer.changed?
-    elsif button_url.present? && !tracking_offer
-      create_tracking_offer
     end
   end
 end
