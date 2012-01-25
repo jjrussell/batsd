@@ -1,13 +1,8 @@
 class Downloader
   INTERNAL_AUTH_USER = 'internal'
 
-  def self.backend=(backend)
-    @@backend = backend
-  end
-
-  def self.backend
-    @@backend ||= HTTParty
-  end
+  cattr_accessor :backend
+  self.backend = HTTParty
 
   ##
   # Make a GET request to the specified url and return the contents of the response.
