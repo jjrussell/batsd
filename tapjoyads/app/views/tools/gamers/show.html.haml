@@ -64,7 +64,7 @@
           = @gamer.updated_at? ? @gamer.updated_at.to_s(:pub_full_ampm_sec_zone) : 'Never'
 
   %h3 Linked Devices
-  = #link_to 'Link new device', new_tools_gamer_device_path(:gamer_id => @gamer.id)
+  = link_to 'Link new device', new_tools_gamer_device_path(:gamer_id => @gamer.id)
   %table.tablesorter.devices
     %thead
       %tr

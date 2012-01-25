@@ -1,8 +1,12 @@
 - form_for([ :tools, @gamer_device ], :html => { :class => 'tjform', :multipart => true }) do |f|
   .field
+    = f.label :device_id, 'Gamer'
+    = link_to @gamer_device.gamer.email, tools_gamer_path(@gamer_device.gamer)
+  .field
     = f.label :device_id, 'Device UDID'
     - if @gamer_device.new_record?
       = f.text_field :device_id
+      = error_message_on @gamer_device, :device_id
     - else
       = link_to @gamer_device.device_id, device_info_tools_path(:udid => @gamer_device.device_id)
   .field
@@ -12,6 +16,8 @@
   .field
     = f.label :device_type
     = f.select(:device_type, Offer::ALL_DEVICES)
+    = error_message_on @gamer_device, :device_type
+  = f.hidden_field :gamer_id
   = submit_tag @gamer_device.new_record? ? "Create" : "Update"
 
 - content_for :page_styles do
@@ -41,4 +47,5 @@
     .field {
       margin-bottom: 5px;
       margin-left: 200px;
+      line-height: 25px;
     }
