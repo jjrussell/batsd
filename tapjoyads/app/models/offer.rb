@@ -145,7 +145,7 @@ class Offer < ActiveRecord::Base
   end
   validates_each :multi_complete do |record, attribute, value|
     if value
-      record.errors.add(attribute, "is not for App offers") if record.item_type == 'App'
+      record.errors.add(attribute, "is not for App offers") unless record.multi_completable?
       record.errors.add(attribute, "cannot be used for non-interval pay-per-click offers") if record.pay_per_click? && record.interval == 0
     end
   end
@@ -599,7 +599,7 @@ class Offer < ActiveRecord::Base
         platform.nil? ? 35 : App::PLATFORM_DETAILS[platform][:min_action_offer_bid]
       end
     elsif item_type == 'VideoOffer'
-      2
+      15
     else
       0
     end
@@ -714,9 +714,15 @@ class Offer < ActiveRecord::Base
     [ support_requests, rewards ]
   end
 
+  def multi_completable?
+    item_type != 'App' || Offer::Rejecting::TAPJOY_GAMES_RETARGETED_OFFERS.include?(item_id)
+  end
+
   private
 
-  def custom_creative_sizes
+  def custom_creative_sizes(return_all = false)
+    return Offer::DISPLAY_AD_SIZES + Offer::FEATURED_AD_SIZES if return_all
+
     if !rewarded? && !featured?
       Offer::DISPLAY_AD_SIZES
     elsif featured?
@@ -771,7 +777,7 @@ class Offer < ActiveRecord::Base
     #
     creative_blobs = {}
 
-    custom_creative_sizes.each do |size|
+    custom_creative_sizes(true).each do |size|
       image_data = (send("banner_creative_#{size}_blob") rescue nil)
       creative_blobs[size] = image_data if !image_data.blank?
     end
