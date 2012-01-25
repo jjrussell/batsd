@@ -59,7 +59,9 @@ class Tools::PartnerProgramStatzController < WebsiteController
         :start_time => start_time,
         :end_time => end_time,
         :granularity => :daily,
-        :stat_types => ['offerwall_views', 'featured_offers_shown', 'display_ads_shown', 'installs_revenue', 'offers_revenue', 'rewards_revenue', 'featured_revenue', 'display_revenue', 'daily_active_users', 'total_revenue', 'arpdau']})
+        :stat_types => ['offerwall_views', 'featured_offers_shown', 'display_ads_shown', 'installs_revenue',
+          'offers_revenue', 'rewards_revenue', 'featured_revenue', 'display_revenue', 'daily_active_users',
+          'total_revenue', 'arpdau']})
       appstats_data[offer.id] = {
         :arpdau => appstats.stats['arpdau'].sum.to_f / appstats.stats['arpdau'].length.to_f,
         :offerwall_ecpm => appstats.stats['rewards_revenue'].sum.to_f / (appstats.stats['offerwall_views'].sum / 1000.0),
