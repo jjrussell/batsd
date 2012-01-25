@@ -9,17 +9,6 @@ class ApplicationController < ActionController::Base
   before_filter :set_locale
   before_filter :reject_banned_ips
 
-  rescue_from ActionController::RoutingError, :with => :render_404
-  def render_404(exception)
-    if MACHINE_TYPE == 'website'
-      template = "games/homepage/maintenance"
-    else
-      template = "public/404.html"
-    end
-
-    render :template => template, :status => '404', :layout => false
-  end
-
   # See ActionController::RequestForgeryProtection for details
   # Uncomment the :secret if you're not using the cookie session store
   protect_from_forgery # :secret => 'f9a08830b0e4e7191cd93d2e02b08187'
