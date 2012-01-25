@@ -207,14 +207,13 @@ class Offer < ActiveRecord::Base
   end
 
   def clone
-    clone = super
-
-    # set up banner_creatives to be copied on save
-    banner_creatives.each do |size|
-      blob = banner_creative_s3_object(size).read
-      clone.send("banner_creative_#{size}_blob=", blob)
+    super.tap do |clone|
+      # set up banner_creatives to be copied on save
+      banner_creatives.each do |size|
+        blob = banner_creative_s3_object(size).read
+        clone.send("banner_creative_#{size}_blob=", blob)
+      end
     end
-    clone
   end
 
   def app_offer?
