@@ -18,6 +18,10 @@ describe Games::GamersController do
           :year  => @date.year,
           :month => @date.month,
           :day   => @date.day,
+        },
+        :default_platforms => {
+          :android => '1',
+          :ios => '0',
         }
       }
     end
