@@ -1,4 +1,5 @@
 class Tools::PartnerProgramStatzController < WebsiteController
+  extend ActiveSupport::Memoizable
 
   layout 'tabbed'
   current_tab :tools
@@ -7,7 +8,12 @@ class Tools::PartnerProgramStatzController < WebsiteController
   before_filter :setup, :only => [ :index, :export ]
 
   def index
-    @partner_program_metadata, @partner_program_stats, @partner_revenue_stats, @partner_names, @appstats_data = get_stats(@start_time, @end_time)
+    stats_data = get_stats(@start_time, @end_time)
+    @partner_program_metadata = stats_data[:partner_program_metadata]
+    @partner_program_stats = stats_data[:partner_program_stats_adv]
+    @partner_revenue_stats = stats_data[:partner_revenue_stats]
+    @partner_names = stats_data[:partner_names]
+    @appstats_data = stats_data[:appstats_data]
   end
 
   def export
@@ -96,8 +102,15 @@ class Tools::PartnerProgramStatzController < WebsiteController
       NumberHelper.currency_to_number(s2[1]['spend']) <=> NumberHelper.currency_to_number(s1[1]['spend'])
     end
 
-    return partner_program_metadata, partner_program_stats_adv, partner_revenue_stats, partner_names, appstats_data
+    stats_data = {
+      :partner_program_metadata => partner_program_metadata,
+      :partner_program_stats_adv => partner_program_stats_adv,
+      :partner_revenue_stats => partner_revenue_stats,
+      :partner_names => partner_names,
+      :appstats_data => appstats_data,
+    }
   end
+  memoize :get_stats
 
   def combined_ranks
     @combined_ranks ||= begin
@@ -115,7 +128,12 @@ class Tools::PartnerProgramStatzController < WebsiteController
       Platform,CVR,Published_offers,ARPDAU,Offerwall_ecpm,Featured_ecpm,Display_ecpm,
       Gross_revenue,Publisher_revenue,Publisher_total_revenue,Publisher_pending_earnings,
       Featured,Rewarded,Offer_type,Sales_rep"]
-    @partner_program_metadata, @partner_program_stats, @partner_revenue_stats, @partner_names, @appstats_data = get_stats(@start_time, @end_time)
+    stats_data = get_stats(@start_time, @end_time)
+    @partner_program_metadata = stats_data[:partner_program_metadata]
+    @partner_program_stats = stats_data[:partner_program_stats_adv]
+    @partner_revenue_stats = stats_data[:partner_revenue_stats]
+    @partner_names = stats_data[:partner_names]
+    @appstats_data = stats_data[:appstats_data]
     @partner_program_stats.each do |offer_id, stats|
       metadata = @partner_program_metadata[offer_id]
       line = [
