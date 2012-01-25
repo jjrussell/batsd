@@ -284,25 +284,29 @@ class GetadController < ApplicationController
     end
   end
 
-  def no_ad(extra = nil)
-    logger.info(extra) if extra
+  def no_ad
     logger.info "No ad returned"
     render :text => "no ad"
+  end
+
+  def no_ad_with_log(extra)
+    logger.info(extra)
+    no_ad
   end
 
   def catch_exceptions
     yield
   rescue Timeout::Error
-    no_ad("Download timed out")
+    no_ad_with_log("Download timed out")
   rescue SocketError => e
     if e.message =~ /getaddrinfo/
-      no_ad("Name resolution error when downloading")
+      no_ad_with_log("Name resolution error when downloading")
     else
-      no_ad("Socket error when downloading: #{e.message}")
+      no_ad_with_log("Socket error when downloading: #{e.message}")
     end
   rescue Errno::ECONNREFUSED
-    no_ad("ConnectionFailed error when downloading")
+    no_ad_with_log("ConnectionFailed error when downloading")
   rescue JSON::ParserError
-    no_ad("Error parsing json")
+    no_ad_with_log("Error parsing json")
   end
 end
