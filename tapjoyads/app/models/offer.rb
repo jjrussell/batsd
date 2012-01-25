@@ -50,7 +50,7 @@ class Offer < ActiveRecord::Base
                                   'normal_price', 'over_threshold', 'rewarded', 'reseller_id',
                                   'cookie_tracking', 'min_os_version', 'screen_layout_sizes',
                                   'interval', 'banner_creatives', 'dma_codes', 'regions',
-                                  'wifi_only', 'approved_sources', 'approved_banner_creatives'
+                                  'wifi_only', 'approved_sources', 'approved_banner_creatives', 'sdkless'
                                 ].map { |c| "#{quoted_table_name}.#{c}" }.join(', ')
 
   DIRECT_PAY_PROVIDERS = %w( boku paypal )
@@ -153,6 +153,12 @@ class Offer < ActiveRecord::Base
     record.errors.add(attribute, "is only for GenericOffers and ActionsOffers") unless record.item_type == 'GenericOffer' || record.item_type == 'ActionOffer'
   end
   validate :bid_within_range
+  validates_each :sdkless, :allow_blank => false, :allow_nil => false do |record, attribute, value|
+    if value
+      types = JSON.parse(record.device_types)
+      record.errors.add(attribute, "can only be enabled for Android-only offers") unless types.length == 1 && types.first == "android"
+    end
+  end
 
   before_validation :update_payment
   before_validation_on_create :set_reseller_from_partner
