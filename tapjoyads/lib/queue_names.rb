@@ -23,4 +23,6 @@ class QueueNames
   UDID_REPORTS               = "#{BASE_NAME}UdidReports"
   UPDATE_MONTHLY_ACCOUNT     = "#{BASE_NAME}UpdateMonthlyAccount"
   SEND_WELCOME_EMAILS        = "#{BASE_NAME}SendWelcomeEmails"
+  UPDATE_PAPAYA_DEVICES      = "#{BASE_NAME}UpdatePapayaDevices"
+  UPDATE_PAPAYA_USER_COUNT   = "#{BASE_NAME}UpdatePapayaUserCount"
 end
