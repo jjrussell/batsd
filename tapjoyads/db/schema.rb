@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120124191839) do
+ActiveRecord::Schema.define(:version => 20120124235303) do
 
   create_table "action_offers", :id => false, :force => true do |t|
     t.string   "id",                    :limit => 36,                    :null => false
@@ -22,6 +22,7 @@ ActiveRecord::Schema.define(:version => 20120124191839) do
     t.datetime "updated_at"
     t.string   "variable_name",                                          :null => false
     t.string   "prerequisite_offer_id", :limit => 36
+    t.text     "rejectable_item_ids",                                    :null => false
   end
 
   add_index "action_offers", ["app_id"], :name => "index_action_offers_on_app_id"
@@ -112,6 +113,7 @@ ActiveRecord::Schema.define(:version => 20120124191839) do
     t.string   "categories"
     t.text     "countries_blacklist"
     t.integer  "papaya_user_count"
+    t.text     "rejectable_item_ids",                                      :null => false
   end
 
   add_index "apps", ["id"], :name => "index_apps_on_id", :unique => true
@@ -403,18 +405,19 @@ ActiveRecord::Schema.define(:version => 20120124191839) do
   add_index "gamers", ["twitter_id"], :name => "index_gamers_on_twitter_id"
 
   create_table "generic_offers", :id => false, :force => true do |t|
-    t.string   "id",               :limit => 36,                    :null => false
-    t.string   "partner_id",       :limit => 36,                    :null => false
-    t.string   "name",                                              :null => false
+    t.string   "id",                  :limit => 36,                    :null => false
+    t.string   "partner_id",          :limit => 36,                    :null => false
+    t.string   "name",                                                 :null => false
     t.text     "description"
-    t.integer  "price",                          :default => 0
-    t.string   "url",                                               :null => false
+    t.integer  "price",                             :default => 0
+    t.string   "url",                                                  :null => false
     t.string   "third_party_data"
-    t.boolean  "hidden",                         :default => false, :null => false
+    t.boolean  "hidden",                            :default => false, :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
     t.text     "instructions"
     t.string   "category"
+    t.text     "rejectable_item_ids",                                  :null => false
   end
 
   add_index "generic_offers", ["id"], :name => "index_generic_offers_on_id", :unique => true
@@ -628,6 +631,7 @@ ActiveRecord::Schema.define(:version => 20120124191839) do
     t.text     "approved_banner_creatives"
     t.text     "approved_sources",                                                                                 :null => false
     t.boolean  "sdkless",                                                                       :default => false
+    t.text     "rejectable_item_ids",                                                                              :null => false
   end
 
   add_index "offers", ["id"], :name => "index_offers_on_id", :unique => true
@@ -948,13 +952,14 @@ ActiveRecord::Schema.define(:version => 20120124191839) do
   add_index "video_buttons", ["video_offer_id"], :name => "index_video_buttons_on_video_offer_id"
 
   create_table "video_offers", :id => false, :force => true do |t|
-    t.string   "id",         :limit => 36,                    :null => false
-    t.string   "partner_id", :limit => 36,                    :null => false
-    t.string   "name",                                        :null => false
-    t.boolean  "hidden",                   :default => false, :null => false
+    t.string   "id",                  :limit => 36,                    :null => false
+    t.string   "partner_id",          :limit => 36,                    :null => false
+    t.string   "name",                                                 :null => false
+    t.boolean  "hidden",                            :default => false, :null => false
     t.string   "video_url"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.text     "rejectable_item_ids",                                  :null => false
   end
 
   add_index "video_offers", ["id"], :name => "index_video_offers_on_id", :unique => true
