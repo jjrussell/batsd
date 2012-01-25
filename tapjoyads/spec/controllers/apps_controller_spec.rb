@@ -4,26 +4,68 @@ describe AppsController do
   before :each do
     fake_the_web
     activate_authlogic
+    @user = Factory(:user)
+    @partner = Factory(:partner,
+      :pending_earnings => 10000,
+      :balance => 10000,
+      :users => [@user]
+    )
+    Factory(:app, :partner => @partner)
+    Factory(:app, :partner => @partner)
+    login_as(@user)
   end
 
   describe '#index' do
     context 'with an admin user' do
       before :each do
-        user = Factory(:admin)
-        @partner = Factory(:partner,
-          :pending_earnings => 10000,
-          :balance => 10000,
-          :users => [user]
-        )
-        Factory(:app, :partner => @partner)
-        Factory(:app, :partner => @partner)
-        login_as(user)
+        @user.user_roles << UserRole.find_or_create_by_name('admin')
       end
 
-      it 'displays their own app' do
-        get 'index'
+      it 'redirects to show an app they own' do
+        get('index')
         response.should be_redirect
+      end
+
+      it 'assigns an arbitrary app they own' do
+        get('index')
         @partner.apps.should include(assigns(:app))
+      end
+
+      it 'assigns the last app visited' do
+        last_app = @partner.apps.last
+        get('show', :id => last_app.id)
+        get('index')
+        last_app.should == assigns(:app)
+      end
+    end
+
+    context 'with a user with apps' do
+      it 'redirects to show an app they own' do
+        get('index')
+        response.should be_redirect
+      end
+
+      it 'assigns an arbitrary app' do
+        get('index')
+        @partner.apps.should include(assigns(:app))
+      end
+
+      it 'assigns the last app visited' do
+        last_app = @partner.apps.last
+        get('show', :id => last_app.id)
+        get('index')
+        last_app.should == assigns(:app)
+      end
+    end
+
+    context 'with a user without apps' do
+      before :each do
+        @partner.apps.delete_all
+      end
+
+      it 'redirects to app creation page' do
+        get('index')
+        response.should redirect_to(new_app_path)
       end
     end
   end
@@ -31,108 +73,69 @@ describe AppsController do
   describe '#show' do
     context 'with an admin user' do
       before :each do
-        user = Factory(:admin)
-        @partner = Factory(:partner,
-          :pending_earnings => 10000,
-          :balance => 10000,
-          :users => [user]
-        )
-        Factory(:app, :partner => @partner)
-        Factory(:app, :partner => @partner)
-        login_as(user)
+        @user.user_roles << UserRole.find_or_create_by_name('admin')
       end
 
-      it 'displays apps from another partner' do
+      it 'shows apps from another partner' do
         someone_else = Factory(:partner,
           :pending_earnings => 10000,
           :balance => 10000
         )
         not_my_app = Factory(:app, :partner => someone_else)
-        get 'show', :id => not_my_app.id
+        get('show', :id => not_my_app.id)
         response.should be_success
       end
 
-      it "displays the last app visited" do
+      it 'assigns the last app visited' do
         last_app = @partner.apps.last
-        get 'show', :id => last_app.id
-        last_app.should == assigns(:app)
-        last_app.id.should == session[:last_shown_app]
-        get 'index'
+        get('show', :id => last_app.id)
         last_app.should == assigns(:app)
       end
-    end
-  end
 
-  describe "A User with apps" do
-    before :each do
-      user = Factory(:user)
-      @partner = Factory(:partner,
-        :pending_earnings => 10000,
-        :balance => 10000,
-        :users => [user]
-      )
-      Factory(:app, :partner => @partner)
-      Factory(:app, :partner => @partner)
-      login_as(user)
-    end
-
-    describe "accessing apps index" do
-      it "should be shown an app they own" do
-        get 'index'
-        response.should be_redirect
-        @partner.apps.should include(assigns(:app))
-      end
-    end
-
-    describe "accessing app show" do
-      it "should be shown last app visited" do
+      it 'saves the id of the last app visited in the session' do
         last_app = @partner.apps.last
-        get 'show', :id => last_app.id
-        last_app.should == assigns(:app)
+        get('show', :id => last_app.id)
         last_app.id.should == session[:last_shown_app]
-        get 'index'
+      end
+    end
+
+    context 'with a user with apps' do
+      it 'assigns the last app visited' do
+        last_app = @partner.apps.last
+        get('show', :id => last_app.id)
         last_app.should == assigns(:app)
       end
 
-      it "should not see someone else's app" do
+      it 'saves the id of the last app visited in the session' do
+        last_app = @partner.apps.last
+        get('show', :id => last_app.id)
+        last_app.id.should == session[:last_shown_app]
+      end
+
+      it 'does not show apps from another publisher' do
         someone_else = Factory(:partner,
           :pending_earnings => 10000,
           :balance => 10000
         )
         not_my_app = Factory(:app, :partner => someone_else)
-        lambda {
-          get 'show', :id => not_my_app.id
-        }.should raise_error(ActiveRecord::RecordNotFound)
-      end
-    end
-  end
-
-  describe "Users without apps" do
-    before :each do
-      user = Factory(:admin)
-      @partner = Factory(:partner,
-        :pending_earnings => 10000,
-        :balance => 10000,
-        :users => [user]
-      )
-      login_as(user)
-    end
-
-    describe "accessing apps index" do
-      it "should redirect to app creation page" do
-        get 'index'
-        response.should redirect_to(new_app_path)
+        expect {
+          get('show', :id => not_my_app.id)
+        }.to raise_error(ActiveRecord::RecordNotFound)
       end
     end
 
-    describe "accessing app show" do
-      it "should redirect to app creation page" do
+    context 'with a user without apps' do
+      before :each do
+        @partner.apps.delete_all
+      end
+
+      it 'redirects to app creation page' do
         someone_else = Factory(:partner,
           :pending_earnings => 10000,
           :balance => 10000
         )
         not_my_app = Factory(:app, :partner => someone_else)
-        get 'show', :id => not_my_app.id
+        get('show', :id => not_my_app.id)
         response.should redirect_to(new_app_path)
       end
     end
