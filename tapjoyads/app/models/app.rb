@@ -64,6 +64,8 @@ class App < ActiveRecord::Base
   MAXIMUM_INSTALLS_PER_PUBLISHER = 4000
   PREVIEW_PUBLISHER_APP_ID = "bba49f11-b87f-4c0f-9632-21aa810dd6f1" # EasyAppPublisher... used for "ad preview" generation
 
+  attr_accessor :store_id_changed
+
   has_many :offers, :as => :item
   has_one :primary_offer, :class_name => 'Offer', :as => :item, :conditions => 'id = item_id'
   has_many :publisher_conversions, :class_name => 'Conversion', :foreign_key => :publisher_app_id
@@ -93,8 +95,9 @@ class App < ActiveRecord::Base
   before_validation_on_create :generate_secret_key
 
   after_create :create_primary_offer
-  after_update :update_offers
+  after_update :update_all_offers
   after_update :update_currencies
+  after_save :clear_dirty_flags
 
   named_scope :visible, :conditions => { :hidden => false }
   named_scope :by_platform, lambda { |platform| { :conditions => ["platform = ?", platform] } }
@@ -280,12 +283,44 @@ class App < ActiveRecord::Base
       app_metadatas.delete_all
       app_metadata = AppMetadata.find_or_initialize_by_store_name_and_store_id(App::PLATFORM_DETAILS[platform][:store_name], app_store_id)
       app_metadatas << app_metadata
+      self.store_id_changed = true
     end
     app_metadata
   end
 
   def wifi_required?
     !!(file_size_bytes && file_size_bytes > PLATFORM_DETAILS[platform][:cell_download_limit_bytes])
+  end
+
+  def update_offers
+    offers.each do |offer|
+      offer.partner_id = partner_id
+      offer.name = name if name_changed? && name_was == offer.name
+      offer.price = price
+      offer.bid = offer.min_bid if offer.bid < offer.min_bid
+      offer.bid = offer.max_bid if offer.bid > offer.max_bid
+      offer.third_party_data = store_id
+      offer.device_types = get_offer_device_types.to_json
+      offer.url = store_url unless offer.url_overridden?
+      offer.age_rating = age_rating
+      offer.hidden = hidden
+      offer.tapjoy_enabled = false if hidden?
+      offer.wifi_only = wifi_required?
+      offer.save! if offer.changed?
+    end
+  end
+
+  def update_rating_offer
+    rating_offer.partner_id = partner_id
+    rating_offer.save!
+  end
+
+  def update_action_offers
+    action_offers.each do |action_offer|
+      action_offer.partner_id = partner_id
+      action_offer.hidden = hidden
+      action_offer.save!
+    end
   end
 
   private
@@ -316,41 +351,10 @@ class App < ActiveRecord::Base
     offer.save!
   end
 
-  def update_offers
-    change_in_price = false
-    change_in_store_id = false
-    offers.each do |offer|
-      offer.partner_id = partner_id if partner_id_changed?
-      offer.name = name if name_changed? && name_was == offer.name
-      if offer.price != price
-        change_in_price = true
-        offer.price = price
-        offer.bid = offer.min_bid if offer.bid < offer.min_bid
-        offer.bid = offer.max_bid if offer.bid > offer.max_bid
-      end
-      if offer.third_party_data != store_id
-        change_in_store_id = true
-        offer.third_party_data = store_id
-        offer.device_types = get_offer_device_types.to_json
-      end
-      offer.url = store_url if change_in_store_id && !offer.url_overridden?
-      offer.age_rating = age_rating if offer.age_rating != age_rating
-      offer.hidden = hidden if hidden_changed?
-      offer.tapjoy_enabled = false if hidden? && hidden_changed?
-      offer.wifi_only = wifi_required? if offer.wifi_only != wifi_required?
-      offer.save! if offer.changed?
-    end
-
-    action_offers.each do |action_offer|
-      action_offer.partner_id = partner_id if partner_id_changed?
-      action_offer.hidden = hidden if hidden_changed?
-      action_offer.save! if action_offer.changed? || change_in_price || change_in_store_id
-    end
-
-    if (name_changed? || change_in_store_id || partner_id_changed?) && rating_offer.present?
-      rating_offer.partner_id = partner_id if partner_id_changed?
-      rating_offer.save!
-    end
+  def update_all_offers
+    update_offers if store_id_changed || partner_id_changed? || name_changed? || hidden_changed?
+    update_rating_offer if (store_id_changed || name_changed?) && rating_offer.present?
+    update_action_offers if store_id_changed || name_changed? || hidden_changed?
   end
 
   def update_currencies
@@ -361,5 +365,9 @@ class App < ActiveRecord::Base
         currency.save!
       end
     end
+  end
+
+  def clear_dirty_flags
+    self.store_id_changed = false;
   end
 end

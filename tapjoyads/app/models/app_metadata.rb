@@ -47,9 +47,10 @@ class AppMetadata < ActiveRecord::Base
   private
 
   def update_apps
-    if (price_changed? || age_rating_changed?)
+    if price_changed? || age_rating_changed? || file_size_bytes_changed?
       apps.each do |app|
-        app.save!
+        app.update_offers if price_changed? || age_rating_changed? || file_size_bytes_changed?
+        app.update_action_offers if price_changed?
       end
     end
   end
