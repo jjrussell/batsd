@@ -54,7 +54,7 @@ class Tools::PartnerProgramStatzController < WebsiteController
       partner_program_stats[result[:offer_id]] ||= { 'conversions' => '0', 'spend' => '$0.00' }
       partner_program_stats[result[:offer_id]]['published_offers'] = NumberHelper.number_with_delimiter(result[:published_offers])
       partner_program_stats[result[:offer_id]]['gross_revenue']   = result[:gross_revenue]
-      partner_program_stats[result[:offer_id]]['publisher_revenue']   = result[:publisher_revenue]
+      partner_program_stats[result[:offer_id]]['publisher_revenue'] = result[:publisher_revenue]
     end
 
     partner_revenue_stats = {}
@@ -70,11 +70,19 @@ class Tools::PartnerProgramStatzController < WebsiteController
         :stat_types => ['offerwall_views', 'featured_offers_shown', 'display_ads_shown',
           'installs_revenue', 'offers_revenue', 'rewards_revenue', 'featured_revenue',
           'display_revenue', 'daily_active_users', 'total_revenue', 'arpdau']})
+      arpdau_sum = appstats.stats['arpdau'].sum.to_f
+      arpdau_days = appstats.stats['arpdau'].length.to_f
+      offerwall_revenue = appstats.stats['rewards_revenue'].sum.to_f
+      offerwall_views = appstats.stats['offerwall_views'].sum
+      featured_revenue = appstats.stats['featured_revenue'].sum.to_f
+      featured_offers_shown = appstats.stats['featured_offers_shown'].sum
+      display_revenue = appstats.stats['display_revenue'].sum.to_f
+      display_ads_shown = appstats.stats['display_ads_shown'].sum
       appstats_data[offer.id] = {
-        :arpdau => appstats.stats['arpdau'].sum.to_f / appstats.stats['arpdau'].length.to_f,
-        :offerwall_ecpm => appstats.stats['rewards_revenue'].sum.to_f / (appstats.stats['offerwall_views'].sum / 1000.0),
-        :featured_ecpm => appstats.stats['featured_revenue'].sum.to_f / (appstats.stats['featured_offers_shown'].sum / 1000.0),
-        :display_ecpm => appstats.stats['display_revenue'].sum.to_f / (appstats.stats['display_ads_shown'].sum / 1000.0),
+        :arpdau => arpdau_sum / arpdau_days,
+        :offerwall_ecpm => offerwall_revenue / (offerwall_views / 1000.0),
+        :featured_ecpm => featured_revenue / (featured_offers_shown / 1000.0),
+        :display_ecpm => display_revenue / (display_ads_shown / 1000.0),
       }
 
       partner_program_metadata[offer.id] = {
