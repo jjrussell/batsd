@@ -19,9 +19,7 @@ class FakeDownloader
     status = HOST_STATUS.fetch(path) { nil }
 
     if status.is_a?(Integer)
-      body = if status >= 200 && status <= 299
-                "#{method.upcase} #{path}"
-              end
+      body = "#{method.upcase} #{path}" if status >= 200 && status <= 299
 
       OpenStruct.new({
         :body => body,
