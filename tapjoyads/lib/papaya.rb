@@ -6,7 +6,7 @@ class Papaya
   end
 
   def self.queue_daily_user_count_jobs
-    Sqs.send_message(QueueNames::UPDATE_PAPAYA_USER_COUNT, '')
+    Sqs.send_message(QueueNames::UPDATE_PAPAYA_USER_COUNT, 'run')
   end
 
   def self.update_device_by_date(date_str)
