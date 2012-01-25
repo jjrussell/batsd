@@ -2,7 +2,7 @@ class Games::HomepageController < GamesController
   rescue_from Mogli::Client::ClientException, :with => :handle_mogli_exceptions
   rescue_from Errno::ECONNRESET, :with => :handle_errno_exceptions
   rescue_from Errno::ETIMEDOUT, :with => :handle_errno_exceptions
-  before_filter :require_gamer, :except => [ :index, :tos, :privacy ]
+  before_filter :require_gamer, :except => [ :index, :tos, :privacy, :maintenance ]
 
   def index
     unless current_gamer
@@ -60,5 +60,9 @@ class Games::HomepageController < GamesController
     ios_link_url = "https://#{request.host}#{games_root_path}"
     GamesMailer.deliver_link_device(current_gamer, ios_link_url, GAMES_ANDROID_MARKET_URL )
     render(:json => { :success => true }) and return
+  end
+
+  def maintenance
+    render :layout => false
   end
 end

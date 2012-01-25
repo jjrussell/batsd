@@ -1,0 +1,14 @@
+$main-font-color: #5A5A5A;
+$main-font-name: "Helvetica Neue", Arial, Helvetica, "Lucida Grande", sans-serif;
+
+body {
+  background: #F7F7F7;
+  font-family: $main-font-name;
+  color: $main-font-color;
+  .center {
+    text-align: center;
+    img {
+      max-width: 100%;
+    }
+  }
+}
