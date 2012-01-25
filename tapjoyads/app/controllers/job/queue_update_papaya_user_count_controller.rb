@@ -8,6 +8,7 @@ class Job::QueueUpdatePapayaUserCountController < Job::SqsReaderController
 
   def on_message(message)
     Papaya.update_apps
+    OfferCacher.cache_papaya_offers
   end
 
 end
