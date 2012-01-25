@@ -62,11 +62,11 @@ class WebsiteController < ApplicationController
     Rails.env.production?
   end
 
-  private
-
   def current_user
     @current_user ||= current_user_session && current_user_session.record
   end
+
+  private
 
   def current_partner
     @current_partner ||= current_user && (current_user.current_partner || current_user.partners.first)
