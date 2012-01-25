@@ -19,6 +19,7 @@ class StatzController < WebsiteController
     @money_stats = Mc.distributed_get("statz.money.#{@timeframe}") || { :total => {}, :iphone => {}, :android  => {}, :tj_games => {} }
     @last_updated_start = Time.zone.at(Mc.get("statz.last_updated_start.#{@timeframe}") || 0)
     @last_updated_end = Time.zone.at(Mc.get("statz.last_updated_end.#{@timeframe}") || 0)
+    @devices_count = Mc.get('statz.devices_count') || 0
   end
 
   def udids
