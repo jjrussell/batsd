@@ -18,6 +18,7 @@ en:
       load_more: "Load some more!"
       loading: "Loading..."
       load_error: "Please try again."
+      wifi_required: "Wifi Required"
       wifi_warning: "This app requires a wifi connection to download."
 
     featured:

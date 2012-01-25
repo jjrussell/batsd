@@ -72,7 +72,7 @@
                   #{number_with_delimiter(@papaya_offers[offer.id])} currently playing
             - if @show_wifi_only && offer.wifi_only?
               .wifi_only
-                Wifi Required
+                = t('text.offerwall.wifi_required')
                 .wifi_icon
         .load
     - unless index == (@offer_list.size-1)
@@ -262,7 +262,7 @@
                           }
                           if (v.WifiOnly) {
                             t.push('<div class = "wifi_only">');
-                              t.push('Wifi Only <div class="wifi_icon"></div>');
+                              t.push("#{t('text.offerwall.wifi_required')} <div class=\"wifi_icon\"></div>");
                             t.push('</div>');
                           }
                         t.push('</b>');

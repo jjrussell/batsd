@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120123233915) do
+ActiveRecord::Schema.define(:version => 20120124191839) do
 
   create_table "action_offers", :id => false, :force => true do |t|
     t.string   "id",                    :limit => 36,                    :null => false
@@ -354,8 +354,8 @@ ActiveRecord::Schema.define(:version => 20120123233915) do
   add_index "gamer_profiles", ["referred_by"], :name => "index_gamer_profiles_on_referred_by"
 
   create_table "gamers", :id => false, :force => true do |t|
-    t.string   "id",                     :limit => 36,                    :null => false
-    t.string   "email",                                                   :null => false
+    t.string   "id",                     :limit => 36,                            :null => false
+    t.string   "email",                                                           :null => false
     t.string   "crypted_password"
     t.string   "password_salt"
     t.string   "persistence_token"
@@ -367,9 +367,9 @@ ActiveRecord::Schema.define(:version => 20120123233915) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "udid"
-    t.string   "confirmation_token",                   :default => "",    :null => false
-    t.boolean  "blocked",                              :default => false
-    t.integer  "accepted_tos_version",                 :default => 0
+    t.string   "confirmation_token",                           :default => "",    :null => false
+    t.boolean  "blocked",                                      :default => false
+    t.integer  "accepted_tos_version",                         :default => 0
     t.datetime "deactivated_at"
     t.string   "gender"
     t.date     "birthdate"
@@ -383,9 +383,13 @@ ActiveRecord::Schema.define(:version => 20120123233915) do
     t.string   "facebook_id"
     t.string   "fb_access_token"
     t.string   "referred_by",            :limit => 36
-    t.integer  "referral_count",                       :default => 0
-    t.boolean  "use_gravatar",                         :default => false
-    t.boolean  "allow_marketing_emails",               :default => true
+    t.integer  "referral_count",                               :default => 0
+    t.boolean  "use_gravatar",                                 :default => false
+    t.boolean  "allow_marketing_emails",                       :default => true
+    t.string   "twitter_id"
+    t.string   "twitter_access_token"
+    t.string   "twitter_access_secret"
+    t.text     "extra_attributes",       :limit => 2147483647
   end
 
   add_index "gamers", ["confirmation_token"], :name => "index_gamers_on_confirmation_token", :unique => true
@@ -396,6 +400,7 @@ ActiveRecord::Schema.define(:version => 20120123233915) do
   add_index "gamers", ["perishable_token"], :name => "index_gamers_on_perishable_token"
   add_index "gamers", ["persistence_token"], :name => "index_gamers_on_persistence_token"
   add_index "gamers", ["referred_by"], :name => "index_gamers_on_referred_by"
+  add_index "gamers", ["twitter_id"], :name => "index_gamers_on_twitter_id"
 
   create_table "generic_offers", :id => false, :force => true do |t|
     t.string   "id",               :limit => 36,                    :null => false
