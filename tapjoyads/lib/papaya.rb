@@ -2,7 +2,7 @@ class PapayaAPIError < RuntimeError; end
 class Papaya
   def self.queue_daily_device_jobs
     date_str = Date.yesterday.to_s(:yy_mm_dd)
-    Sqs.send_message(QueueNames::UPDATE_PAPAYAN_DEVICE, date_str)
+    Sqs.send_message(QueueNames::UPDATE_PAPAYA_DEVICES, date_str)
   end
 
   def self.queue_daily_user_count_jobs

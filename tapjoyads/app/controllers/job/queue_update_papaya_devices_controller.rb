@@ -1,7 +1,7 @@
-class Job::QueueUpdatePapayanDeviceController < Job::SqsReaderController
+class Job::QueueUpdatePapayaDevicesController < Job::SqsReaderController
 
   def initialize
-    super QueueNames::UPDATE_PAPAYAN_DEVICE
+    super QueueNames::UPDATE_PAPAYA_DEVICES
   end
 
   private
