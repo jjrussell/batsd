@@ -88,7 +88,7 @@ class Downloader
 
   private
   def self.setup(options)
-    options.merge!({
+    options.reverse_merge!({
       :headers => {},
       :timeout => 2
     })
