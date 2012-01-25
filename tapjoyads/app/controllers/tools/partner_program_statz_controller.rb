@@ -12,7 +12,8 @@ class Tools::PartnerProgramStatzController < WebsiteController
 
   def export
     data = generate_csv
-    send_data(data.join("\n"), :type => 'text/csv', :filename => "Tapjoy_sponsored_publishers_stats_#{@start_time.to_s(:yyyy_mm_dd)}_#{@end_time.to_s(:yyyy_mm_dd)}.csv")
+    send_data(data.join("\n"), :type => 'text/csv', :filename =>
+      "Tapjoy_sponsored_publishers_stats_#{@start_time.to_s(:yyyy_mm_dd)}_#{@end_time.to_s(:yyyy_mm_dd)}.csv")
   end
 
   private
@@ -24,7 +25,7 @@ class Tools::PartnerProgramStatzController < WebsiteController
   def get_stats(start_time, end_time)
     return {},{},{},{} if Offer.tapjoy_sponsored_offer_ids.size == 0
     time_conditions      = "time >= '#{start_time.to_s(:db)}' AND time < '#{end_time.to_s(:db)}'"
-    partner_program_offer_ids = Offer.tapjoy_sponsored_offer_ids.map { |o| "'#{o.id}'" }.join(',')  #is it necessary to add Offer.enabled_offers.tapjoy_sponsored_offer_ids here?
+    partner_program_offer_ids = Offer.tapjoy_sponsored_offer_ids.map { |o| "'#{o.id}'" }.join(',')
 
     partner_program_stats = {}
     VerticaCluster.query('analytics.actions', {
@@ -40,7 +41,8 @@ class Tools::PartnerProgramStatzController < WebsiteController
       }
     end
     VerticaCluster.query('analytics.actions', {
-        :select     => 'publisher_app_id AS offer_id, count(path) AS published_offers, sum(publisher_amount + tapjoy_amount) AS gross_revenue, sum(publisher_amount) AS publisher_revenue',
+        :select     => 'publisher_app_id AS offer_id, count(path) AS published_offers,
+          sum(publisher_amount + tapjoy_amount) AS gross_revenue, sum(publisher_amount) AS publisher_revenue',
         :group      => 'publisher_app_id',
         :conditions => "path LIKE '%reward%' AND #{time_conditions} AND publisher_app_id IN (#{partner_program_offer_ids})" }).each do |result|
       partner_program_stats[result[:offer_id]] ||= { 'conversions' => '0', 'spend' => '$0.00' }
@@ -59,9 +61,9 @@ class Tools::PartnerProgramStatzController < WebsiteController
         :start_time => start_time,
         :end_time => end_time,
         :granularity => :daily,
-        :stat_types => ['offerwall_views', 'featured_offers_shown', 'display_ads_shown', 'installs_revenue',
-          'offers_revenue', 'rewards_revenue', 'featured_revenue', 'display_revenue', 'daily_active_users',
-          'total_revenue', 'arpdau']})
+        :stat_types => ['offerwall_views', 'featured_offers_shown', 'display_ads_shown',
+          'installs_revenue', 'offers_revenue', 'rewards_revenue', 'featured_revenue',
+          'display_revenue', 'daily_active_users', 'total_revenue', 'arpdau']})
       appstats_data[offer.id] = {
         :arpdau => appstats.stats['arpdau'].sum.to_f / appstats.stats['arpdau'].length.to_f,
         :offerwall_ecpm => appstats.stats['rewards_revenue'].sum.to_f / (appstats.stats['offerwall_views'].sum / 1000.0),
@@ -109,7 +111,10 @@ class Tools::PartnerProgramStatzController < WebsiteController
   end
 
   def generate_csv
-    data = ["Offer,Publisher_name,Spend,Conversions,Store_rank,Price,Payment,Balance,Platform,CVR,Published_offers,ARPDAU,Offerwall_ecpm,Featured_ecpm,Display_ecpm,Gross_revenue,Publisher_revenue,Publisher_total_revenue,Publisher_pending_earnings,Featured,Rewarded,Offer_type,Sales_rep"]
+    data = ["Offer,Publisher_name,Spend,Conversions,Store_rank,Price,Payment,Balance,
+      Platform,CVR,Published_offers,ARPDAU,Offerwall_ecpm,Featured_ecpm,Display_ecpm,
+      Gross_revenue,Publisher_revenue,Publisher_total_revenue,Publisher_pending_earnings,
+      Featured,Rewarded,Offer_type,Sales_rep"]
     @partner_program_metadata, @partner_program_stats, @partner_revenue_stats, @partner_names, @appstats_data = get_stats(@start_time, @end_time)
     @partner_program_stats.each do |offer_id, stats|
       metadata = @partner_program_metadata[offer_id]
