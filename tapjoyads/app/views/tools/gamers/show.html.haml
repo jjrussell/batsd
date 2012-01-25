@@ -3,7 +3,6 @@
 
 #search_results
   = render :partial => 'search/gamers'
-
   = render('games/gamers/header')
 
   %table#gamer_profile.tablesorter
@@ -65,7 +64,7 @@
           = @gamer.updated_at? ? @gamer.updated_at.to_s(:pub_full_ampm_sec_zone) : 'Never'
 
   %h3 Linked Devices
-  = link_to 'Link new device', new_tools_gamer_device_path(:gamer_id => @gamer.id)
+  = #link_to 'Link new device', new_tools_gamer_device_path(:gamer_id => @gamer.id)
   %table.tablesorter.devices
     %thead
       %tr
@@ -77,11 +76,11 @@
     %tbody
       - @gamer.gamer_devices.each do |device|
         %tr
-          %td= device.device_id
+          %td= link_to device.device_id, device_info_tools_path(:udid => device.device_id)
           %td= device.name
           %td= device.device_type
           %td= device.created_at.to_s(:pub_full_ampm_sec_zone)
-          %td= link_to 'Edit', edit_tools_gamer_device_path(:gamer_id => @gamer.id)
+          %td= link_to 'Edit', edit_tools_gamer_device_path(device)
 
 - content_for :page_styles do
   :plain

@@ -1,0 +1,44 @@
+- form_for([ :tools, @gamer_device ], :html => { :class => 'tjform', :multipart => true }) do |f|
+  .field
+    = f.label :device_id, 'Device UDID'
+    - if @gamer_device.new_record?
+      = f.text_field :device_id
+    - else
+      = link_to @gamer_device.device_id, device_info_tools_path(:udid => @gamer_device.device_id)
+  .field
+    = f.label :name
+    = f.text_field :name
+    = error_message_on @gamer_device, :name
+  .field
+    = f.label :device_type
+    = f.select(:device_type, Offer::ALL_DEVICES)
+  = submit_tag @gamer_device.new_record? ? "Create" : "Update"
+
+- content_for :page_styles do
+  :plain
+    div {
+      vertical-align: top;
+    }
+
+    label {
+      vertical-align: top;
+      font-weight: bold;
+      text-align: right;
+      display: inline-block;
+      width: 200px;
+      margin-left: -200px;
+    }
+
+    textarea {
+      width: 500px;
+      height: 75px;
+    }
+
+    input[type=submit] {
+      float: right;
+    }
+
+    .field {
+      margin-bottom: 5px;
+      margin-left: 200px;
+    }

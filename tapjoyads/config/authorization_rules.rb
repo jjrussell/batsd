@@ -30,6 +30,7 @@ authorization do
     has_permission_on :search, :to => [ :gamers ]
     has_permission_on :tools, :to => [ :resolve_clicks, :device_info, :update_device, :award_currencies, :update_award_currencies, :send_currency_failures ]
     has_permission_on :tools_gamers, :to => [ :index, :show, :mass_resolve ]
+    has_permission_on :tools_gamer_devices, :to => [ :edit, :update ]
   end
 
   role :money do
