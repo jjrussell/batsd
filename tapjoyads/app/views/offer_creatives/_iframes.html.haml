@@ -1,2 +1,2 @@
-- @offer.banner_creative_sizes.each do |size_hash|
-  %iframe.creative_upload{:src => offer_creatives_form_path(:id => @offer.id, :app_id => @app.try(:id), :image_size => size_hash[:image_size], :label => "#{size_hash[:label_image_size]} creative")}
+- @offer.banner_creative_sizes_with_labels.each do |size_hash|
+  %iframe.creative_upload{:src => offer_creatives_form_path(:id => @offer.id, :app_id => @app.try(:id), :image_size => size_hash[:size], :label => "#{size_hash[:label]} creative")}

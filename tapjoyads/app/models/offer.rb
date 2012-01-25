@@ -251,15 +251,21 @@ class Offer < ActiveRecord::Base
 
   def banner_creative_sizes(return_all = false)
     return DISPLAY_AD_SIZES + FEATURED_AD_SIZES if return_all
+    return DISPLAY_AD_SIZES if !featured?
+    return FEATURED_AD_SIZES
+  end
 
-    if !featured?
-      DISPLAY_AD_SIZES.collect { |size| {:image_size => size, :label_image_size => size} }
-    else
-      FEATURED_AD_SIZES.collect do |size|
+  def banner_creative_sizes_with_labels
+    banner_creative_sizes.collect do |size|
+      data = {:size => size, :label => size}
+
+      if featured?
         width, height = size.split('x').map(&:to_i)
         orientation = (width > height) ? 'landscape' : 'portrait';
-        {:image_size => size, :label_image_size => "#{size} (#{orientation})"}
+        data[:label] << " #{orientation}"
       end
+
+      data
     end
   end
 
@@ -287,6 +293,7 @@ class Offer < ActiveRecord::Base
   end
 
   def add_banner_creative(size)
+    return unless banner_creative_sizes.include?(size)
     return if has_banner_creative?(size)
     self.banner_creatives += [size]
   end
@@ -299,6 +306,7 @@ class Offer < ActiveRecord::Base
 
   def add_banner_approval(user, size)
     approvals << CreativeApprovalQueue.new(:offer => self, :user => user, :size => size)
+    approvals.last
   end
 
   def find_associated_offers
@@ -741,8 +749,8 @@ class Offer < ActiveRecord::Base
     banner_creatives.each do |size|
       approval = approvals.find_by_size(size)
 
-      if banner_creative_approved?(size)
-        approval.try(:destroy)
+      if banner_creative_approved?(size) && approval.present?
+        approvals.destroy(approval)
       elsif approval.nil?
         # In case of a desync between the queue and actual approvals
         approve_banner_creative(size)
@@ -750,14 +758,12 @@ class Offer < ActiveRecord::Base
     end
 
     # Now remove any approval objects that are no longer valid
-    approvals.each do |approval|
-      approval.destroy unless has_banner_creative?(approval.size)
-    end
+    approvals.each { |a| approvals.destroy(a) unless has_banner_creative?(a.size) }
+    # Make sure removed approvals are no longer visible
+    approvals.reload
 
     # Remove out-of-sync approvals for banners that have been removed
-    self.approved_banner_creatives = self.approved_banner_creatives.select do |size|
-      has_banner_creative?(size)
-    end
+    self.approved_banner_creatives = self.approved_banner_creatives.select { |size| has_banner_creative?(size) }
   end
 
   def sync_banner_creatives!
@@ -781,8 +787,7 @@ class Offer < ActiveRecord::Base
     #
     creative_blobs = {}
 
-    banner_creative_sizes(true).each do |data|
-      size = data[:image_size]
+    banner_creative_sizes(true).each do |size|
       image_data = send("banner_creative_#{size}_blob")
       creative_blobs[size] = image_data if !image_data.blank?
     end
