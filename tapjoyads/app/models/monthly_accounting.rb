@@ -37,15 +37,15 @@ class MonthlyAccounting < ActiveRecord::Base
     Order.using_slave_db do
       orders = partner.orders.created_between(start_time, end_time).sum(:amount, :group => :payment_method)
     end
-    self.website_orders            = orders[0] || 0
-    self.invoiced_orders           = orders[1] || 0
-    self.marketing_orders          = orders[2] || 0
-    self.transfer_orders           = orders[3] || 0
-    self.marketing_credits_orders  = orders[4] || 0
+    self.website_orders    = orders[0] || 0
+    self.invoiced_orders   = orders[1] || 0
+    self.marketing_orders  = orders[2] || 0
+    self.transfer_orders   = orders[3] || 0
+    self.bonus_orders      = orders[5] || 0
     Partner.using_slave_db do
       self.spend = partner.advertiser_conversions.created_between(start_time, end_time).sum(:advertiser_amount)
     end
-    self.ending_balance = beginning_balance + website_orders + invoiced_orders + marketing_orders + transfer_orders + marketing_credits_orders + spend
+    self.ending_balance = beginning_balance + website_orders + invoiced_orders + marketing_orders + transfer_orders + bonus_orders + spend
 
     # pending earnings components
     payouts = {}
@@ -74,7 +74,7 @@ class MonthlyAccounting < ActiveRecord::Base
   end
 
   def total_orders
-    website_orders + invoiced_orders + marketing_orders + transfer_orders + marketing_credits_orders
+    website_orders + invoiced_orders + marketing_orders + transfer_orders + bonus_orders
   end
 
   def total_payouts

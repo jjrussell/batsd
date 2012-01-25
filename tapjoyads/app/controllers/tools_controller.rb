@@ -30,7 +30,7 @@ class ToolsController < WebsiteController
 
       @spend      = MonthlyAccounting.sum(:spend,             :conditions => conditions) /-100.0
       @marketing  = MonthlyAccounting.sum(:marketing_orders,  :conditions => conditions) / 100.0 +
-                    MonthlyAccounting.sum(:marketing_credits_orders, :conditions => conditions) / 100.0
+                    MonthlyAccounting.sum(:bonus_orders,      :conditions => conditions) / 100.0
       @new_orders = MonthlyAccounting.sum(:website_orders,    :conditions => conditions) / 100.0 +
                     MonthlyAccounting.sum(:invoiced_orders,   :conditions => conditions) / 100.0
       @transfers  = MonthlyAccounting.sum(:transfer_orders,   :conditions => conditions) / 100.0

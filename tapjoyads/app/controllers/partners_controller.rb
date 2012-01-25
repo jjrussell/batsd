@@ -5,10 +5,10 @@ class PartnersController < WebsiteController
 
   filter_access_to :all
 
-  before_filter :find_partner, :only => [ :show, :make_current, :manage, :update, :edit, :new_marketing_credits, :create_marketing_credits, :new_transfer, :create_transfer, :reporting, :set_tapjoy_sponsored ]
+  before_filter :find_partner, :only => [ :show, :make_current, :manage, :update, :edit, :new_transfer, :create_transfer, :reporting, :set_tapjoy_sponsored ]
   before_filter :get_account_managers, :only => [ :index, :managed_by ]
   before_filter :set_platform, :only => [ :reporting ]
-  after_filter :save_activity_logs, :only => [ :update, :create_transfer, :create_marketing_credits ]
+  after_filter :save_activity_logs, :only => [ :update, :create_transfer ]
 
   def index
     if current_user.role_symbols.include?(:agency)
@@ -132,23 +132,6 @@ class PartnersController < WebsiteController
     redirect_to request.referer
   end
 
-  def new_marketing_credits
-    @order = Order.new(:payment_method => 4)
-  end
- 
-  def create_marketing_credits
-    sanitized_params = sanitize_currency_params(params[:order], [:amount])
-    @order = Order.new(sanitized_params)
-    log_activity(@order)
-    if @order.is_marketing_credits? and @order.save
-      amount = NumberHelper.number_to_currency(@order.amount / 100.0 )
-      flash[:notice] = "The Marketing Credits order of <b>#{amount}</b> was successfully created."
-    else
-      flash[:error] = "The Marketing Credits order was unable to be processed."
-    end
-    redirect_to partner_path(@partner)
-  end
- 
   def new_transfer
     @freeze_enabled = PayoutFreeze.enabled?
   end

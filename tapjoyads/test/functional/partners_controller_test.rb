@@ -40,40 +40,4 @@ class PartnersControllerTest < ActionController::TestCase
     end
 
   end
-
-  context "when creating marketing credits" do
-    setup do
-      @user = Factory(:admin)
-      @partner = Factory(:partner, :users => [@user])
-      Factory(:app, :partner => @partner)
-      Factory(:app, :partner => @partner)
-      login_as(@user)
-    end
-
-    should "log marketing credits" do
-      amount = rand(100) + 100
-
-      post :create_marketing_credits, {:id => @partner.id, :order => { :amount => amount.to_s, :partner_id => @partner.id, :payment_method => 4, :note => 'Test' } }
-      assert_response :redirect
-      assert_match /The Marketing Credits order of .* was successfully created./, flash[:notice]
-      @partner.reload
-
-      order = @partner.orders[0]
-      assert order.is_marketing_credits?
-      assert_equal amount*100, order.amount
-      assert_equal 'Test', order.note
-    end
-
-    should "not allow other payment methods" do
-       amount = rand(100) + 100
-
-       post :create_marketing_credits, {:id => @partner.id, :order => { :amount => amount.to_s, :partner_id => @partner.id, :payment_method => 2, :note => 'Test' } }
-       assert_response :redirect
-       assert_equal "The Marketing Credits order was unable to be processed.", flash[:error]
-       @partner.reload
-
-       order = @partner.orders[0]
-       assert_nil order
-     end
-  end
 end

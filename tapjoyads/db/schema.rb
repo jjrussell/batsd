@@ -478,7 +478,7 @@ ActiveRecord::Schema.define(:version => 20120123233915) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "earnings_adjustments",                                    :null => false
-    t.integer  "marketing_credits_orders",                 :default => 0, :null => false
+    t.integer  "bonus_orders",                             :default => 0, :null => false
   end
 
   add_index "monthly_accountings", ["id"], :name => "index_monthly_accountings_on_id", :unique => true
