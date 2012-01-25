@@ -1,3 +1,4 @@
+class PapayaAPIError < RuntimeError; end
 class Papaya
   def self.queue_daily_device_jobs
     date_str = Date.yesterday.to_s(:yy_mm_dd)
