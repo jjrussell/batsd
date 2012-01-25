@@ -1,15 +1,15 @@
 class PapayaAPIError < RuntimeError; end
 class Papaya
-  def self.queue_daily_device_jobs
+  def self.queue_daily_update_devices_jobs
     date_str = Date.yesterday.to_s(:yy_mm_dd)
     Sqs.send_message(QueueNames::UPDATE_PAPAYA_DEVICES, date_str)
   end
 
-  def self.queue_daily_user_count_jobs
+  def self.queue_daily_update_user_count_jobs
     Sqs.send_message(QueueNames::UPDATE_PAPAYA_USER_COUNT, 'run')
   end
 
-  def self.update_device_by_date(date_str)
+  def self.update_devices_by_date(date_str)
     url = "#{PAPAYA_API_URL}/imeiapi/udid_list?date=#{date_str}"
     papaya_data = get_papaya_data(url)
 

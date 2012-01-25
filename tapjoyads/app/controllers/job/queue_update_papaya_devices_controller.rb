@@ -8,7 +8,7 @@ class Job::QueueUpdatePapayaDevicesController < Job::SqsReaderController
 
   def on_message(message)
     date_str = message.body
-    Papaya.update_device_by_date(date_str)
+    Papaya.update_devices_by_date(date_str)
   end
 
 end
