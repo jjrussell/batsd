@@ -74,7 +74,7 @@
         %td
           = f.check_box(:rewarded)
           = error_message_on @offer, :rewarded
-    - if @offer.item_type != 'App'
+    - if @offer.multi_completable?
       %tr
         %th
           = f.label(:multi_complete, 'Multi-complete')

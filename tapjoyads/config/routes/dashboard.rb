@@ -5,6 +5,7 @@ ActionController::Routing::Routes.draw do |map|
 
   map.connect 'tos-advertiser.html', :controller => 'documents', :action => 'tos_advertiser'
   map.connect 'tos-publisher.html', :controller => 'documents', :action => 'tos_publisher'
+  map.connect 'publisher-guidelines.html', :controller => 'documents', :action => 'publisher_guidelines'
 
   map.resource :sign_up, :controller => :sign_up, :only => :create
   map.register 'register', :controller => :sign_up, :action => :new
