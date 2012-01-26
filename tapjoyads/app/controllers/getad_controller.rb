@@ -270,7 +270,6 @@ class GetadController < ApplicationController
     @tapjoy_ad.ad_impression_id = params[:campaign_id]
   end
 
-  private
   def get_ip_address_local
     ip_address = get_ip_address
     if ip_address == '127.0.0.1'
@@ -290,19 +289,24 @@ class GetadController < ApplicationController
     render :text => "no ad"
   end
 
+  def no_ad_with_log(extra)
+    logger.info(extra)
+    no_ad
+  end
+
   def catch_exceptions
     yield
-  rescue Patron::TimeoutError
-    logger.info "Download timed out"
-    no_ad
-  rescue Patron::HostResolutionError
-    logger.info "Name resolution error when downloading"
-    no_ad
-  rescue Patron::ConnectionFailed
-    logger.info "ConnectionFailed error when downloading"
-    no_ad
+  rescue Timeout::Error
+    no_ad_with_log("Download timed out")
+  rescue SocketError => e
+    if e.message =~ /getaddrinfo/
+      no_ad_with_log("Name resolution error when downloading")
+    else
+      no_ad_with_log("Socket error when downloading: #{e.message}")
+    end
+  rescue Errno::ECONNREFUSED
+    no_ad_with_log("ConnectionFailed error when downloading")
   rescue JSON::ParserError
-    logger.info "Error parsing json"
-    no_ad
+    no_ad_with_log("Error parsing json")
   end
 end

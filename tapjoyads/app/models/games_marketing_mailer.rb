@@ -42,9 +42,8 @@ class GamesMarketingMailer < ActionMailer::Base
       currency = external_publisher.currencies.first
       offerwall_url = external_publisher.get_offerwall_url(device, currency, device_info[:accept_language_str], device_info[:user_agent_str], nil, true)
 
-      sess = Patron::Session.new
-      response = sess.get(offerwall_url)
-      raise "Error getting offerwall data" unless response.status == 200
+      response = Downloader.get(offerwall_url, :return_response => true)
+      raise "Error getting offerwall data" unless response.code == 200
       @offer_data[currency[:id]] = JSON.parse(response.body).merge(:external_publisher => external_publisher)
     end
 
