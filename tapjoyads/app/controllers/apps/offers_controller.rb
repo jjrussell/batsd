@@ -7,6 +7,17 @@ class Apps::OffersController < WebsiteController
   after_filter :save_activity_logs, :only => [ :create, :update, :toggle ]
 
   def new
+    offer_params = {}
+    if params[:offer_type] == 'rewarded_featured'
+      offer_params = {:featured => true, :rewarded => true}
+    elsif params[:offer_type] == 'non_rewarded_featured'
+      offer_params = {:featured => true, :rewarded => false}
+    elsif params[:offer_type] == 'non_rewarded'
+      offer_params = {:featured => false, :rewarded => false}
+    else
+      offer_params = {:featured => false, :rewarded => true}
+    end
+    @offer = Offer.new(offer_params)
   end
 
   def create
