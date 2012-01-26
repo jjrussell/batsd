@@ -2,6 +2,7 @@ en:
   text:
     shared:
       about_link: About Tapjoy
+      android: Android
       ads_by: Ads by
       back: Back
       blog: Blog
@@ -24,6 +25,7 @@ en:
       gender: Gender
       help: Help
       invite: Invite
+      ios: iOS
       login_verb: Log In
       login_noun: Login
       logout: Log Out
@@ -34,6 +36,7 @@ en:
       name: Name
       new_password: New Password
       nickname: Nickname
+      ok: OK
       options: Options
       privacy: Privacy
       privacy_policy: Privacy Policy
@@ -47,9 +50,6 @@ en:
       sign_up: Sign Up
       year: Year
       zip_postal: Zip/Postal Code
-      ok: OK
-      android: Android
-      ios: iOS
 
     offerwall:
       title: "Earn %{currency}"
