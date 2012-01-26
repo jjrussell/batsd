@@ -21,6 +21,8 @@ module Offer::Rejecting
     [ 'e8cca05a-0ec0-41fd-9820-24e24db6eec4', 'b1a1b737-bc9d-4a0b-9587-a887d22ae356' ] => [ 'e8cca05a-0ec0-41fd-9820-24e24db6eec4', 'b1a1b737-bc9d-4a0b-9587-a887d22ae356' ],
     # Hotels.com
     [ '6b714133-2358-4918-842d-f266abe6b7b5', 'eaa1cfc9-3499-49ce-8f03-092bcc0ce77a' ] => [ '6b714133-2358-4918-842d-f266abe6b7b5', 'eaa1cfc9-3499-49ce-8f03-092bcc0ce77a' ],
+    # Trulia Real Estate
+    [ 'afde4da8-3943-44fd-a901-08be5470eaa4', '2ff9ad4e-58a2-417b-9333-d65835b71049' ] => [ 'afde4da8-3943-44fd-a901-08be5470eaa4', '2ff9ad4e-58a2-417b-9333-d65835b71049' ]
   }
 
   def postcache_reject?(publisher_app, device, currency, device_type, geoip_data, app_version, direct_pay_providers, type, hide_rewarded_app_installs, library_version, os_version, screen_layout_size, video_offer_ids, source, all_videos)
