@@ -13,16 +13,27 @@ class Games::GamersController < GamesController
       g.referrer              = params[:gamer][:referrer]
       g.terms_of_service      = params[:gamer][:terms_of_service]
     end
-    birthdate = Date.new(params[:date][:year].to_i, params[:date][:month].to_i, params[:date][:day].to_i)
+    begin
+      birthdate = Date.new(params[:date][:year].to_i, params[:date][:month].to_i, params[:date][:day].to_i)
+    rescue ArgumentError => e
+      if e.message == 'invalid date'
+        errors = [ ['birthday', 'is not valid'] ]
+        render_json_error(errors) and return
+      else
+        raise e
+      end
+    end
     @gamer_profile = GamerProfile.new(:birthdate => birthdate)
     @gamer.gamer_profile = @gamer_profile
 
     if @gamer.save
+      params[:default_platforms] ||= {}
       message = {
         :gamer_id => @gamer.id,
         :accept_language_str => request.accept_language,
         :user_agent_str => request.user_agent,
         :device_type => device_type,
+        :selected_devices => params[:default_platforms].reject { |k, v| v != '1' }.keys,
         :geoip_data => get_geoip_data,
         :os_version => os_version }
       Sqs.send_message(QueueNames::SEND_WELCOME_EMAILS, Base64::encode64(Marshal.dump(message)))
@@ -35,7 +46,7 @@ class Games::GamersController < GamesController
     else
       errors = @gamer.errors.reject{|error|error[0] == 'gamer_profile'}
       errors |= @gamer_profile.errors.to_a
-      render(:json => { :success => false, :error => errors })
+      render_json_error(errors) and return
     end
   end
 
@@ -88,7 +99,7 @@ class Games::GamersController < GamesController
     if @gamer.save
       render(:json => { :success => true }) and return
     else
-      render(:json => { :success => false, :error => @gamer.errors }) and return
+      render_json_error(@gamer.errors) and return
     end
   end
 
@@ -113,5 +124,9 @@ class Games::GamersController < GamesController
         :image_url => friend.get_avatar_url
       }
     end
+  end
+
+  def render_json_error(errors, status = 403)
+    render(:json => { :success => false, :error => errors }, :status => status)
   end
 end

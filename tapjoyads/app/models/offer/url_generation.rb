@@ -47,15 +47,8 @@ module Offer::UrlGeneration
 
     final_url = url.gsub('TAPJOY_UDID', udid.to_s)
     if item_type == 'App'
-      if final_url =~ /^http:\/\/phobos\.apple\.com/
-        final_url += '&referrer=tapjoy'
-
-        if itunes_link_affiliate == 'tradedoubler'
-          final_url += '&partnerId=2003&tduid=UK1800811'
-        else
-          final_url += '&partnerId=30&siteID=OxXMC6MRBt4'
-        end
-      elsif library_version.nil? || library_version.version_greater_than_or_equal_to?('8.1.1')
+      final_url = Linkshare.add_params(final_url, itunes_link_affiliate)
+      if library_version.nil? || library_version.version_greater_than_or_equal_to?('8.1.1')
         final_url.sub!('market://search?q=', 'http://market.android.com/details?id=')
       end
     elsif item_type == 'EmailOffer'
@@ -145,11 +138,11 @@ module Offer::UrlGeneration
     "#{click_url}?data=#{ObjectEncryptor.encrypt(data)}"
   end
 
-  def display_ad_image_url(publisher_app_id, width, height, currency_id = nil, display_multiplier = nil, bust_cache = false, use_cloudfront = true)
+  def display_ad_image_url(publisher_app_id, width, height, currency_id = nil, display_multiplier = nil, bust_cache = false, use_cloudfront = true, preview = false)
     size = "#{width}x#{height}"
 
     delim = '?'
-    if display_custom_banner_for_size?(size)
+    if display_custom_banner_for_size?(size) || (preview && has_banner_creative?(size))
       url = "#{use_cloudfront ? CLOUDFRONT_URL : "https://s3.amazonaws.com/#{BucketNames::TAPJOY}"}/#{banner_creative_path(size)}"
     else
       display_multiplier = (display_multiplier || 1).to_f
@@ -159,6 +152,10 @@ module Offer::UrlGeneration
     end
     url << "#{delim}ts=#{Time.now.to_i}" if bust_cache
     url
+  end
+
+  def preview_display_ad_image_url(publisher_app_id, width, height)
+    display_ad_image_url(publisher_app_id, width, height, nil, nil, true, false, true)
   end
 
   def fullscreen_ad_image_url(publisher_app_id, bust_cache = false, dimensions = nil)
@@ -211,13 +208,9 @@ module Offer::UrlGeneration
     ad_url
   end
 
-  def get_offers_image_url(publisher_app_id, bust_cache = false)
-    url = "#{API_URL}/get_offers/image?publisher_app_id=#{publisher_app_id}&offer_id=#{id}"
+  def get_offers_webpage_preview_url(publisher_app_id, bust_cache = false)
+    url = "#{API_URL}/get_offers/webpage?app_id=#{publisher_app_id}&offer_id=#{id}"
     url << "&ts=#{Time.now.to_i}" if bust_cache
     url
-  end
-
-  def get_offers_webpage_preview_url(publisher_app_id)
-    "#{API_URL}/get_offers/webpage?app_id=#{publisher_app_id}&offer_id=#{id}"
   end
 end

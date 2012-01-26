@@ -2,6 +2,7 @@ require 'spec/spec_helper'
 
 describe Job::QueueSendCurrencyController do
   before :each do
+    fake_the_web
     @controller.expects(:authenticate).at_least_once.returns(true)
     @mock_response = mock()
     @mock_response.stubs(:status).returns('OK')

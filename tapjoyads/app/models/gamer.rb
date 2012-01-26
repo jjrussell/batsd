@@ -132,6 +132,15 @@ class Gamer < ActiveRecord::Base
     ObjectEncryptor.encrypt("#{id},#{advertiser_app_id}")
   end
 
+  # HACK: identify this gamer as migrated, without adding a column
+  def migrated?
+    !!(deactivated_at && deactivated_at > 10.year.since(Time.zone.now))
+  end
+
+  def migrated=(migration_status)
+    self.deactivated_at = migration_status ? Time.parse('2100-01-01') : nil
+  end
+
   private
 
   def generate_gravatar_hash
@@ -139,7 +148,7 @@ class Gamer < ActiveRecord::Base
   end
 
   def check_referrer
-    if referrer.present?
+    if referrer.present? && referrer != 'tjreferrer:'
       if referrer.starts_with?('tjreferrer:')
         click = Click.new :key => referrer.gsub('tjreferrer:', '')
         if click.rewardable?

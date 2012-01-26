@@ -20,7 +20,7 @@ class RailsCache
       @@rails_cache[key]
     end
 
-    def get_and_put(key, max_age = 5.minutes, &block)
+    def get_and_put(key, max_age = 3.minutes, &block)
       result = get(key)
       if result.nil? || (Time.now - result.cached_at) > max_age
         value = yield

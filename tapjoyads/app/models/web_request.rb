@@ -114,6 +114,7 @@ class WebRequest
   self.define_attr :source
   self.define_attr :exp
   self.define_attr :country
+  self.define_attr :country_code
   self.define_attr :geoip_country
   self.define_attr :language
   self.define_attr :screen_density
@@ -133,6 +134,10 @@ class WebRequest
   self.define_attr :currency_reward, :type => :int
   self.define_attr :package_names, :force_array => true, :replace => false
   self.define_attr :truncated_package_names, :type => :bool
+  self.define_attr :offerwall_rank, :type => :int
+  self.define_attr :offerwall_rank_score, :type => :float
+  self.define_attr :offerwall_start_index, :type => :int
+  self.define_attr :offerwall_max_items, :type => :int
 
   def self.count(conditions = nil)
     VerticaCluster.count('production.web_requests', conditions)
@@ -174,7 +179,7 @@ class WebRequest
     self.virtual_good_id      = params[:virtual_good_id]
     self.source               = params[:source]
     self.exp                  = params[:exp]
-    self.language             = params[:language]
+    self.language             = params[:language_code]
     self.transaction_id       = params[:transaction_id]
     self.tap_points           = params[:tap_points]
     self.screen_density       = params[:screen_density]
@@ -184,8 +189,14 @@ class WebRequest
     self.carrier_country_code = params[:carrier_country_code]
     self.mobile_country_code  = params[:mobile_country_code]
     self.mobile_network_code  = params[:mobile_network_code]
+    self.country_code         = params[:country_code]
     self.country              = params[:country_code].present? ? params[:country_code] : geoip_data[:country]
     self.geoip_country        = geoip_data[:country]
+  end
+
+  def replace_path(replacement)
+    @attributes[:path] = [ replacement ]
+    replacement
   end
 
   def save

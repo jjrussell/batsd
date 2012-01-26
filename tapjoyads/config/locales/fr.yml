@@ -11,11 +11,15 @@ fr:
       previous: "%{items} offres précédentes"
       missing_currency: "En manque de %{currency}?"
       instructions: "Complète une des offres suivantes et reçois des %{currency}"
+      popular_apps: "Popular Apps"
+      instructions_non_rewarded: "Discover what's hot on Tapjoy!"
       earn_currency: "Gagne %{amount} %{currency}"
       buy_currency: "Achète %{amount} %{currency}"
       load_more: "Voir plus d'offres!"
       loading: "Chargement..."
       load_error: "Essaye encore."
+      wifi_required: "Wifi Required"
+      wifi_warning: "This app requires a wifi connection to download."
 
     featured:
       title: "Gagne des %{currency}"

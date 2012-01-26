@@ -37,7 +37,8 @@
         %th Edit
       - if permitted_to?(:destroy, :tools_users_partner_assignments)
         %th Remove
-      %th Mailchimp
+      - if permitted_to?(:show, :tools_users)
+        %th Mailchimp
   %tbody
   - @partner.users.each do |user|
     %tr
@@ -52,10 +53,11 @@
             = button_to('Remove', path, :method => 'delete', :confirm => 'Are you sure?')
           - else
             = submit_tag 'Cannot remove last user', :disabled => 'disabled'
-      %td
-        = image_tag('mailchimp.png', :class => "mail_chimp_button", :title => "Subscriber status")
-        .mail_chimp_info.hidden
-          = image_tag 'load-circle.gif'
+      - if permitted_to?(:show, :tools_users)
+        %td
+          = image_tag('mailchimp.png', :class => "mail_chimp_button", :title => "Subscriber status")
+          .mail_chimp_info.hidden
+            = image_tag 'load-circle.gif'
 .metadata Billing email: #{@partner.billing_email || 'Please add'}
 .metadata Balance: #{number_to_currency(@partner.balance / 100.0)}
 .metadata Pending Earnings: #{number_to_currency(@partner.pending_earnings / 100.0)}

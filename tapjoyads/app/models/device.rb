@@ -21,12 +21,19 @@ class Device < SimpledbShardedResource
   self.sdb_attr :all_packages, :type => :json, :default_value => []
   self.sdb_attr :current_packages, :type => :json, :default_value => []
 
+  def mac_address=(new_value)
+    new_value = new_value ? new_value.downcase.gsub(/:/,"") : ''
+    @create_device_identifiers ||= (self.mac_address != new_value)
+    put('mac_address', new_value)
+  end
+
   def dynamic_domain_name
     domain_number = @key.matz_silly_hash % NUM_DEVICES_DOMAINS
     "devices_#{domain_number}"
   end
 
   def after_initialize
+    @create_device_identifiers = is_new
     begin
       @parsed_apps = apps
     rescue JSON::ParserError
@@ -40,7 +47,7 @@ class Device < SimpledbShardedResource
     now = Time.zone.now
     path_list = []
 
-    self.mac_address = params[:mac_address]
+    self.mac_address = params[:mac_address] if params[:mac_address].present?
 
     is_jailbroken_was = is_jailbroken
     country_was = country
@@ -170,6 +177,23 @@ class Device < SimpledbShardedResource
     self.all_packages |= package_names
     self.current_packages = package_names
     save!
+  end
+
+  def serial_save(options = {})
+    super(options)
+    Sqs.send_message(QueueNames::CREATE_DEVICE_IDENTIFIERS, {'device_id' => key}.to_json) if @create_device_identifiers
+    @create_device_identifiers = false
+  end
+
+  def create_identifiers!
+    all_identifiers = [ Digest::SHA2.hexdigest(key) ]
+    all_identifiers.push(mac_address) if self.mac_address.present?
+    all_identifiers.each do |identifier|
+      device_identifier = DeviceIdentifier.new(:key => identifier)
+      next if device_identifier.udid == key
+      device_identifier.udid = key
+      device_identifier.save!
+    end
   end
 
   private
