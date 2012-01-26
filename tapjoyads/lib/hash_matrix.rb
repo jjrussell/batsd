@@ -205,8 +205,8 @@ class HashMatrix
       row(i)[j] = x
       col(j)[i] = x
     else #don't accumulate keys with empty vectors
-      @rows.delete(i) if @rows[i] && @rows[i].empty?
-      @cols.delete(j) if @cols[j] && @cols[j].empty?
+      @rows.delete(i) if(@rows[i] && @rows[i].empty?)
+      @cols.delete(j) if(@cols[j] && @cols[j].empty?)
     end
   end
 
