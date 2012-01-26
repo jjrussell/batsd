@@ -198,4 +198,28 @@ FactoryGirl.define do
     bid_price 0
     name 'short survey 1'
   end
+
+  factory :employee do
+    first_name { Factory.next(:name) }
+    last_name { Factory.next(:name) }
+    title { Factory.next(:name) }
+    email { Factory.next(:name) }
+    superpower { Factory.next(:name) }
+    current_games { Factory.next(:name) }
+    weapon { Factory.next(:name) }
+    biography { Factory.next(:name) }
+  end
+
+  factory :featured_content do
+    featured_type FeaturedContent::STAFFPICK
+    platforms ["iphone", "ipad", "itouch"].to_json
+    subtitle 'Subtitle'
+    title 'Title'
+    description 'Description'
+    start_date { Time.zone.now }
+    end_date { Time.zone.now + 1.day }
+    weight 1
+    offer { Factory(:app).primary_offer }
+    author { Factory(:employee) }
+  end
 end
