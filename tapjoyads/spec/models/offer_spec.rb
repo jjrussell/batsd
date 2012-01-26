@@ -265,4 +265,27 @@ describe Offer do
       @app.rewarded_featured_offers.should include @new_offer
     end
   end
+
+  describe '#valid' do
+    context "when SDK-less is enabled" do
+      before :each do
+        @offer.sdkless = true
+      end
+
+      it "allows Android-only offers" do
+        @offer.device_types = "[\"android\"]"
+        @offer.should be_valid
+      end
+
+      it "disallows non-Android offers" do
+        @offer.device_types = "[\"iphone\",\"itouch\",\"ipad\"]"
+        @offer.should_not be_valid
+      end
+
+      it "disallows multi-platform offers" do
+        @offer.device_types = "[\"android\",\"iphone\",\"itouch\",\"ipad\"]"
+        @offer.should_not be_valid
+      end
+    end
+  end
 end
