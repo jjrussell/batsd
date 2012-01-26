@@ -132,10 +132,12 @@ class Tools::PartnerProgramStatzController < WebsiteController
   end
 
   def generate_csv
-    data = ["Offer,Publisher_name,Spend,Conversions,Store_rank,Price,Payment,Balance,
-      Platform,CVR,Published_offers,ARPDAU,Offerwall_ecpm,Featured_ecpm,Display_ecpm,
-      Gross_revenue,Publisher_revenue,Publisher_total_revenue,Publisher_pending_earnings,
-      Featured,Rewarded,Offer_type,Sales_rep"]
+    data = [
+      "Offer,Publisher_name,Spend,Conversions,Store_rank,Price,Payment,Balance," <<
+      "Platform,CVR,Published_offers,ARPDAU,Offerwall_ecpm,Featured_ecpm,Display_ecpm," <<
+      "Gross_revenue,Publisher_revenue,Publisher_total_revenue,Publisher_pending_earnings," <<
+      "Featured,Rewarded,Offer_type,Sales_rep"
+    ]
     stats_data = get_stats(@start_time, @end_time)
     @partner_program_metadata = stats_data[:partner_program_metadata]
     @partner_program_stats = stats_data[:partner_program_stats_adv]
