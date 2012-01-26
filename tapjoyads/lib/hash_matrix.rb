@@ -3,7 +3,7 @@ class HashMatrix
 
   class HashVector < Hash
     class << self
-      def from_pairs pairs
+      def from_pairs(pairs)
         out = self.new
         pairs.each{ |k, v| out[k] = v }
         out
@@ -51,7 +51,7 @@ class HashMatrix
     end
     alias_method :plus, :+
 
-    def clone(keys = nil)
+    def projection(keys = nil)
       self.class.from_pairs(self.to_pairs(keys))
     end
 
@@ -65,19 +65,19 @@ class HashMatrix
       when p == 2 then euclidean_norm
       when p >= 100 then maximum_norm #infinity norm
       when p < 1 then raise "p-norm is only a norm when p>=1"
-      else values.reduce(0){ |t, x| t + x.abs**p } ** (1.0/p)
+      else values.reduce(0){ |t, x| t + x.abs**p } ** (1.0 / p)
       end
     end
 
     def p_normalize(p = 2)
-      out = self.clone
+      out = self.projection
       out.p_normalize!(p)
       out
     end
 
     def p_normalize!(p = 2)
       s=p_norm(p)
-      keys.each{ |k| self[k] = self[k] * 1.0 / s } if s > 0
+      keys.each{ |k| self[k] = self[k].to_f / s } if s > 0
     end
 
     def reindex!(mapping=nil)
@@ -112,7 +112,7 @@ class HashMatrix
 
     private
     def manhattan_norm
-      values.reduce(0){ |t, x| t + x.abs } * 1.0
+      values.reduce(0){ |t, x| t + x.abs }.to_f
     end
 
     def euclidean_norm
@@ -120,7 +120,7 @@ class HashMatrix
     end
 
     def maximum_norm
-      values.map{ |x| x.abs }.max * 1.0
+      values.map{ |x| x.abs }.max.to_f
     end
 
     def times_vector(other, keys=nil)
@@ -210,8 +210,8 @@ class HashMatrix
     end
   end
 
-  def clone(row_keys = nil, col_keys = nil)
-    self.class.from_triplets to_triplets(row_keys, col_keys)
+  def projection(row_keys = nil, col_keys = nil)
+    self.class.from_triplets(to_triplets(row_keys, col_keys))
   end
 
   def to_triplets(row_keys = nil, col_keys = nil)

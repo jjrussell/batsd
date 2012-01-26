@@ -39,7 +39,7 @@ describe HashMatrix do
     (@v.p_normalize(2) * @v.p_normalize(2)).should == 1
   end
 
-  it "should clone and print with a subset of keys instead of all its keys" do
+  it "should projection and print with a subset of keys instead of all its keys" do
     puts "vector"
     puts @v.to_s
     puts "vector 1..2"
@@ -51,14 +51,14 @@ describe HashMatrix do
     p @m.to_triplets
     puts "triplets 1..2, 1..3"
     p @m.to_triplets 1..2, 1..3
-    puts "matrix clone 1..2, 1..3"
-    puts @m.clone 1..2, 1..3
-    puts "matrix clone nil, 1..3"
-    puts @m.clone nil, 1..3
-    puts "matrix clone 1..2, nil"
-    puts @m.clone 1..2, nil
-    puts "matrix clone nil, 1..1"
-    puts @m.clone nil, 1..1
+    puts "matrix projection 1..2, 1..3"
+    puts @m.projection 1..2, 1..3
+    puts "matrix projection nil, 1..3"
+    puts @m.projection nil, 1..3
+    puts "matrix projection 1..2, nil"
+    puts @m.projection 1..2, nil
+    puts "matrix projection nil, 1..1"
+    puts @m.projection nil, 1..1
   end
 
   it "should do matrix * vector and matrix * matrix multiplication, and also do it with a subset of the keys" do
