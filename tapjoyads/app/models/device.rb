@@ -20,6 +20,7 @@ class Device < SimpledbShardedResource
   self.sdb_attr :is_papayan, :type => :bool, :default_value => false
   self.sdb_attr :all_packages, :type => :json, :default_value => []
   self.sdb_attr :current_packages, :type => :json, :default_value => []
+  self.sdb_attr :sdkless_clicks, :type => :json, :default_value => {}
 
   def mac_address=(new_value)
     new_value = new_value ? new_value.downcase.gsub(/:/,"") : ''

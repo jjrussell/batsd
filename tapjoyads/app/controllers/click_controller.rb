@@ -11,6 +11,7 @@ class ClickController < ApplicationController
   def app
     create_click('install')
     handle_pay_per_click
+    #handle_sdkless_offer
 
     redirect_to(get_destination_url)
   end
