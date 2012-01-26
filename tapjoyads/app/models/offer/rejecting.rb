@@ -244,10 +244,9 @@ module Offer::Rejecting
   def source_reject?(source)
     get_approved_sources.any? && !get_approved_sources.include?(source)
   end
-  
+
   def non_rewarded_offerwall_rewarded_reject?(type, currency)
-    return false unless type == Offer::DEFAULT_OFFER_TYPE && currency && currency.conversion_rate == 0
-    rewarded?
+    type == Offer::DEFAULT_OFFER_TYPE && currency && currency.conversion_rate == 0 && rewarded?
   end
 
   def recommendable_types_reject?
