@@ -759,8 +759,6 @@ class Offer < ActiveRecord::Base
 
     # Now remove any approval objects that are no longer valid
     approvals.each { |a| approvals.destroy(a) unless has_banner_creative?(a.size) }
-    # Make sure removed approvals are no longer visible
-    approvals.reload
 
     # Remove out-of-sync approvals for banners that have been removed
     self.approved_banner_creatives = self.approved_banner_creatives.select { |size| has_banner_creative?(size) }

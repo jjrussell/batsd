@@ -347,6 +347,7 @@ describe Offer do
       @invalid_remove = @offer.add_banner_approval(Factory(:user), '2x2')
 
       @offer.send(:sync_creative_approval)
+      @offer.approvals.reload
     end
 
     it 'removes the approval record for already approved banners' do
