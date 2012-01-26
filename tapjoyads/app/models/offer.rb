@@ -305,7 +305,7 @@ class Offer < ActiveRecord::Base
   end
 
   def add_banner_approval(user, size)
-    approvals << CreativeApprovalQueue.new(:offer => self, :user => user, :size => size)
+    approvals.create(:user => user, :size => size)
     approvals.last
   end
 
