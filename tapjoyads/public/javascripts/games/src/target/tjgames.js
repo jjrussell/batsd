@@ -896,7 +896,7 @@ TJG.utils = {
   },
 
   deleteCookie: function(name) {
-    setCookie(name, "", -1);
+    this.setCookie(name, "", -1);
   },
 
   scrollTop : function (delay){
@@ -1217,7 +1217,7 @@ TJG.ui = {
             t.push('</div>');
             if (v.WifiOnly) {
               t.push('<div class = "wifi_only">');
-                t.push('Wifi Only <div class="wifi_icon"></div>');
+                t.push('Wifi Required <div class="wifi_icon"></div>');
               t.push('</div>');
             }
           t.push('</div>');
@@ -1237,8 +1237,10 @@ TJG.ui = {
     }
 
     $('form#new_gamer').submit(function(e){
+      TJG.utils.setCookie('cookies_enabled', 'test', 1);
+      var test_cookie = TJG.utils.getCookie('cookies_enabled');
       e.preventDefault();
-      var rurl, inputs, values = {}, data, hasError = false, emailReg;
+      var rurl, inputs, values = {}, data, hasError = false, cookieError = false, emailReg;
       rurl = $(this).attr('action');
       inputs = $('form#new_gamer :input');
       inputs.each(function() {
@@ -1279,7 +1281,19 @@ TJG.ui = {
         $(".email_error").html('Please agree to the terms and conditions above');
         hasError = true;
       }
-      if (hasError) {
+      else if (TJG.utils.isNull(test_cookie)) {
+        hasError = true;
+        cookieError = true;
+      }
+      else {
+        TJG.utils.deleteCookie('cookies_enabled');
+      }
+      if (hasError && cookieError) {
+        TJG.utils.centerDialog("#cookie_error");
+        $("#cookie_error").fadeIn();
+        TJG.repositionDialog = ["#cookie_error"];
+      }
+      else if (hasError) {
         $(".email_error").show();
       }
       else if (hasError != true) {
@@ -1305,7 +1319,9 @@ TJG.ui = {
             'gamer[terms_of_service]': values['gamer[terms_of_service]'],
             'date[day]': values['date[day]'],
             'date[month]': values['date[month]'],
-            'date[year]': values['date[year]']
+            'date[year]': values['date[year]'],
+            'default_platforms[android]': values['default_platform_android'],
+            'default_platforms[ios]': values['default_platform_ios']
           },
           success: function(d) {
             var msg;
@@ -2155,7 +2171,7 @@ TJG.social = {
             centerDialog($('#social_dialog').height(), '#social_dialog_content', '#social_dialog');
 
             $('.close_dialog, .continue_invite').click(function(){
-              document.location.href = location.protocol + '//' + location.host + inviteUrl;
+              document.location.href = inviteUrl;
             });
           } else if(d.error_redirect) {
             window.setTimeout('location.reload()', 1000);
@@ -2215,7 +2231,7 @@ TJG.social = {
             centerDialog($('#social_dialog').height(), '#social_dialog_content', '#social_dialog');
 
             $('.close_dialog, .continue_invite').click(function(){
-              document.location.href = location.protocol + '//' + location.host + inviteUrl;
+              document.location.href = inviteUrl;
             });
           } else {
             showErrorDialog(d.error, TJG.ui.hideSender());
@@ -2312,7 +2328,7 @@ TJG.social = {
     });
 
     $('#back_button').click(function(event){
-      document.location.href = location.protocol + '//' + location.host + inviteUrl;
+      document.location.href = inviteUrl;
     });
 
     $('#friend_filter').bind('input', function(event){
@@ -2347,8 +2363,28 @@ TJG.social = {
           //-->
         });
       } else {
+        showError("Please authorize us/grant us both permissions before sending out an invite.");
       }
     }, {scope: scope});
+
+    var showError = function(error){
+      var msg = [
+        '<div id="flash_error" class="dialog_wrapper hide" style="top: 179px; left: 533px; display: block;">',
+        '<div class="close_dialog">',
+        '<div class="close_button"></div>',
+        '</div>',
+        '<div class="dialog">',
+        '<div class="dialog_content">',
+        '<div class="error">', error ,'</div>',
+        '</div></div></div>',
+      ].join('');
+      $('body').append(msg);
+
+      $(".close_button").click(function(event) {
+        $("#flash_error").fadeOut();
+        $("#flash_error").remove();
+      });
+    };
   },
 
   doFbLogout : function(){
@@ -2449,6 +2485,8 @@ RegExp.escape = function(text) {
             $('form#new_gamer_session .login_error').empty();
           });
           $('form#new_gamer_session').submit(function(e){
+            TJG.utils.setCookie('cookies_enabled', 'test', 1);
+            var test_cookie = TJG.utils.getCookie('cookies_enabled');
             $(".formError").hide();
             var inputs, email, pass, values = {};
             var emailReg = /^([\w-\.+]+@([\w-]+\.)+[\w-]{2,4})?$/;
@@ -2471,6 +2509,15 @@ RegExp.escape = function(text) {
                 $(".login_error").html('Please enter your password');
                 $(".formError").show();
                 e.preventDefault();
+              }
+              else if (TJG.utils.isNull(test_cookie)) {
+                TJG.utils.centerDialog("#cookie_error");
+                $("#cookie_error").fadeIn();
+                TJG.repositionDialog = ["#cookie_error"];
+                e.preventDefault();
+              }
+              else {
+                TJG.utils.deleteCookie('cookies_enabled');
               }
             });
           });

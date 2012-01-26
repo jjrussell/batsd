@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20111228221004) do
+ActiveRecord::Schema.define(:version => 20120124191839) do
 
   create_table "action_offers", :id => false, :force => true do |t|
     t.string   "id",                    :limit => 36,                    :null => false
@@ -143,6 +143,13 @@ ActiveRecord::Schema.define(:version => 20111228221004) do
   add_index "conversions", ["id", "created_at"], :name => "index_conversions_on_id_and_created_at", :unique => true
   add_index "conversions", ["publisher_app_id", "created_at", "reward_type"], :name => "index_on_publisher_app_id_created_at_and_reward_type"
   add_index "conversions", ["publisher_partner_id", "created_at"], :name => "index_conversions_on_publisher_partner_id_and_created_at"
+
+  create_table "creative_approval_queue", :force => true do |t|
+    t.string   "offer_id",   :limit => 36, :null => false
+    t.string   "user_id",    :limit => 36
+    t.text     "size"
+    t.datetime "created_at"
+  end
 
   create_table "currencies", :id => false, :force => true do |t|
     t.string   "id",                                         :limit => 36,                                                  :null => false
@@ -348,8 +355,8 @@ ActiveRecord::Schema.define(:version => 20111228221004) do
   add_index "gamer_profiles", ["referred_by"], :name => "index_gamer_profiles_on_referred_by"
 
   create_table "gamers", :id => false, :force => true do |t|
-    t.string   "id",                     :limit => 36,                    :null => false
-    t.string   "email",                                                   :null => false
+    t.string   "id",                     :limit => 36,                            :null => false
+    t.string   "email",                                                           :null => false
     t.string   "crypted_password"
     t.string   "password_salt"
     t.string   "persistence_token"
@@ -361,9 +368,9 @@ ActiveRecord::Schema.define(:version => 20111228221004) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "udid"
-    t.string   "confirmation_token",                   :default => "",    :null => false
-    t.boolean  "blocked",                              :default => false
-    t.integer  "accepted_tos_version",                 :default => 0
+    t.string   "confirmation_token",                           :default => "",    :null => false
+    t.boolean  "blocked",                                      :default => false
+    t.integer  "accepted_tos_version",                         :default => 0
     t.datetime "deactivated_at"
     t.string   "gender"
     t.date     "birthdate"
@@ -377,9 +384,13 @@ ActiveRecord::Schema.define(:version => 20111228221004) do
     t.string   "facebook_id"
     t.string   "fb_access_token"
     t.string   "referred_by",            :limit => 36
-    t.integer  "referral_count",                       :default => 0
-    t.boolean  "use_gravatar",                         :default => false
-    t.boolean  "allow_marketing_emails",               :default => true
+    t.integer  "referral_count",                               :default => 0
+    t.boolean  "use_gravatar",                                 :default => false
+    t.boolean  "allow_marketing_emails",                       :default => true
+    t.string   "twitter_id"
+    t.string   "twitter_access_token"
+    t.string   "twitter_access_secret"
+    t.text     "extra_attributes",       :limit => 2147483647
   end
 
   add_index "gamers", ["confirmation_token"], :name => "index_gamers_on_confirmation_token", :unique => true
@@ -390,6 +401,7 @@ ActiveRecord::Schema.define(:version => 20111228221004) do
   add_index "gamers", ["perishable_token"], :name => "index_gamers_on_perishable_token"
   add_index "gamers", ["persistence_token"], :name => "index_gamers_on_persistence_token"
   add_index "gamers", ["referred_by"], :name => "index_gamers_on_referred_by"
+  add_index "gamers", ["twitter_id"], :name => "index_gamers_on_twitter_id"
 
   create_table "generic_offers", :id => false, :force => true do |t|
     t.string   "id",               :limit => 36,                    :null => false
@@ -615,6 +627,8 @@ ActiveRecord::Schema.define(:version => 20111228221004) do
     t.boolean  "tj_games_only",                                                                 :default => false, :null => false
     t.boolean  "wifi_only",                                                                     :default => false, :null => false
     t.text     "approved_banner_creatives"
+    t.text     "approved_sources",                                                                                 :null => false
+    t.boolean  "sdkless",                                                                       :default => false
   end
 
   add_index "offers", ["id"], :name => "index_offers_on_id", :unique => true
@@ -719,6 +733,20 @@ ActiveRecord::Schema.define(:version => 20111228221004) do
 
   add_index "partners", ["id"], :name => "index_partners_on_id", :unique => true
   add_index "partners", ["reseller_id"], :name => "index_partners_on_reseller_id"
+
+  create_table "payout_freezes", :id => false, :force => true do |t|
+    t.string   "id",          :limit => 36,                   :null => false
+    t.boolean  "enabled",                   :default => true, :null => false
+    t.datetime "enabled_at"
+    t.datetime "disabled_at"
+    t.string   "enabled_by"
+    t.string   "disabled_by"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "payout_freezes", ["enabled"], :name => "index_payout_freezes_on_enabled"
+  add_index "payout_freezes", ["id"], :name => "index_payout_freezes_on_id", :unique => true
 
   create_table "payout_infos", :id => false, :force => true do |t|
     t.string   "id",                  :limit => 36, :null => false

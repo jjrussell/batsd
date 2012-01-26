@@ -11,11 +11,15 @@ ko:
       previous: "이전 %{items}건"
       missing_currency: "Missing %{currency}?"
       instructions: "다음 액션들 중 한 가지를 완료하면 %{currency}를 지급 받을 수 있습니다."
+      popular_apps: "Popular Apps"
+      instructions_non_rewarded: "Discover what's hot on Tapjoy!"
       earn_currency: "%{amount} %{currency}를 지급 받기"
       buy_currency: "%{amount} %{currency}를 구매하기."
       load_more: "더 보여 주세요!"
       loading: "로딩중..."
       load_error: "다시 한번 시도해주십시오."
+      wifi_required: "Wifi Required"
+      wifi_warning: "This app requires a wifi connection to download."
 
     featured:
       title: "%{currency}를 지급 받기."

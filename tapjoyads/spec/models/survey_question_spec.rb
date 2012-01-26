@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe SurveyQuestion do
   before :each do
-    require 'fake_aws'
+    fake_the_web
     Factory(:partner, :id => TAPJOY_PARTNER_ID)
     @survey_question = Factory(:survey_question)
   end

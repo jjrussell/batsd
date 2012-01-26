@@ -11,11 +11,15 @@ ja:
       previous: "前の %{items}件"
       missing_currency: "%{currency}が受取れない場合"
       instructions: "次のアクションで %{currency} を獲得する"
+      popular_apps: "Popular Apps"
+      instructions_non_rewarded: "Discover what's hot on Tapjoy!"
       earn_currency: "%{amount} %{currency}  を獲得"
       buy_currency: "%{amount} %{currency} を買う"
       load_more: "もっと読み込みましょう！"
       loading: "読み込み中・・・"
       load_error: "もう一度試してください"
+      wifi_required: "Wifi Required"
+      wifi_warning: "This app requires a wifi connection to download."
 
     featured:
       title: "%{currency} を稼ぐ"
