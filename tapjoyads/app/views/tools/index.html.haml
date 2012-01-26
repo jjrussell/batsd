@@ -57,8 +57,6 @@
     %li= link_to 'Editor\'s Choices', tools_editors_picks_path
   - if permitted_to? :index, :tools_app_reviews
     %li= link_to 'App Reviews', tools_app_reviews_path
-  - if permitted_to? :index, :tools_gamers
-    %li= link_to 'Gamers', tools_gamers_path
   - if permitted_to? :index, :tools_featured_contents
     %li= link_to 'My Apps Featured Content', tools_featured_contents_path
 
@@ -113,6 +111,8 @@
     %li= link_to 'Mass Resolve Support Requests', mass_resolve_tools_support_requests_path
   - if permitted_to? :send_currency_failures, :tools
     %li= link_to 'Send Currency Failures', send_currency_failures_tools_path
+  - if permitted_to? :index, :tools_gamers
+    %li= link_to 'Gamer Accounts', tools_gamers_path
 
 - if has_permissions_for_one_of? :hr
   %h3 Human Resources
