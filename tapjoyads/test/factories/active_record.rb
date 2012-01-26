@@ -7,11 +7,17 @@ FactoryGirl.define do
   end
 
   factory :admin, :parent => :user do
-    after_build  { |a| a.user_roles << UserRole.find_or_create_by_name('admin') }
+    after_build  do |admin|
+      role = UserRole.find_or_create_by_name('admin', :employee => true)
+      admin.user_roles << role
+    end
   end
 
   factory :account_mgr_user, :parent => :user do
-    after_build  { |a| a.user_roles << UserRole.find_or_create_by_name('account_mgr') }
+    after_build do |account_mgr|
+      role = UserRole.find_or_create_by_name('account_mgr', :employee => true)
+      account_mgr.user_roles << role
+    end
   end
 
   factory :agency_user, :parent => :user do
@@ -199,27 +205,33 @@ FactoryGirl.define do
     name 'short survey 1'
   end
 
+  factory :creative_approval_queue do
+    association :user
+    offer       { Factory(:app).primary_offer }
+    size        '320x50'
+  end
+
   factory :employee do
-    first_name { Factory.next(:name) }
-    last_name { Factory.next(:name) }
-    title { Factory.next(:name) }
-    email { Factory.next(:name) }
-    superpower { Factory.next(:name) }
+    first_name    { Factory.next(:name) }
+    last_name     { Factory.next(:name) }
+    title         { Factory.next(:name) }
+    email         { Factory.next(:email) }
+    superpower    { Factory.next(:name) }
     current_games { Factory.next(:name) }
-    weapon { Factory.next(:name) }
-    biography { Factory.next(:name) }
+    weapon        { Factory.next(:name) }
+    biography     { Factory.next(:name) }
   end
 
   factory :featured_content do
     featured_type FeaturedContent::STAFFPICK
-    platforms ["iphone", "ipad", "itouch"].to_json
-    subtitle 'Subtitle'
-    title 'Title'
-    description 'Description'
-    start_date { Time.zone.now }
-    end_date { Time.zone.now + 1.day }
-    weight 1
-    offer { Factory(:app).primary_offer }
-    author { Factory(:employee) }
+    platforms     ["iphone", "ipad", "itouch"].to_json
+    subtitle      'Subtitle'
+    title         'Title'
+    description   'Description'
+    start_date    { Time.zone.now }
+    end_date      { Time.zone.now + 1.day }
+    weight        1
+    offer         { Factory(:app).primary_offer }
+    author        { Factory(:employee) }
   end
 end
