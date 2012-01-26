@@ -187,13 +187,13 @@ class FeaturedContent < ActiveRecord::Base
 
   def create_tracking_offer
     if button_url.present?
-      item = GenericOffer.new(:partner_id => TAPJOY_PARTNER_ID, :name => "#{title}_#{subtitle}", :url => button_url)
-      item.save
+      item = GenericOffer.find_by_id(FEATURED_CONTENT_GENERIC_TRACKING_OFFER_ID)
 
       self.tracking_offer = Offer.create!({
         :item             => item,
         :partner          => Partner.find_by_id(TAPJOY_PARTNER_ID),
         :name             => "#{title}_#{subtitle}",
+        :url_overridden   => true,
         :url              => button_url,
         :device_types     => platforms,
         :price            => 0,
@@ -210,11 +210,8 @@ class FeaturedContent < ActiveRecord::Base
   def update_tracking_offer
     if button_url.present?
       if tracking_offer
-        self.tracking_offer.name = "#{title}_#{subtitle}" if title_changed? || subtitle_changed?
-        if button_url_changed?
-          self.tracking_offer.url_overridden = true
-          self.tracking_offer.url            = button_url
-        end
+        self.tracking_offer.name         = "#{title}_#{subtitle}" if title_changed? || subtitle_changed?
+        self.tracking_offer.url          = button_url if button_url_changed?
         self.tracking_offer.device_types = platforms.to_json if platforms_changed?
         self.tracking_offer.save! if self.tracking_offer.changed?
       else
