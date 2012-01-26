@@ -47,7 +47,9 @@ en:
       sign_up: Sign Up
       year: Year
       zip_postal: Zip/Postal Code
-
+      ok: OK
+      android: Android
+      ios: iOS
 
     offerwall:
       title: "Earn %{currency}"
@@ -109,8 +111,9 @@ en:
 
 
     games:
-      android: Android
-      ios: iOS
+      action_required: Action Required!
+      meta_description: "Tapjoy: The destination for mobile apps and games on Android, iPhone and iPad."
+      meta_keywords: games, mobile games, mobile apps, ios, android, iphone, ipad, itouch
       earn: Earn %{currency}
       deactivate: Deactivate
       delete_my_account: Delete My Account
@@ -134,6 +137,8 @@ en:
       terms_of_use_href: terms of use
       privacy_policy_href: privacy policy
       tos_acknowledge_html: By checking this box I assert that I agree to the %{terms_of_use} & %{privacy_policy}
+      our_tos_changed: Our %{terms_of_use} have changed. Please review and indicate your agreement below.
+      tos_change_acknowledge: By checking this box I assert that I agree to the terms of service.
 
       about_title: "\"Somehow it knows exactly what apps I like.\""
       about_body:
