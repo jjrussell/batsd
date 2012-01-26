@@ -46,7 +46,7 @@ module Offer::Rejecting
     frequency_capping_reject?(device) ||
     tapjoy_games_retargeting_reject?(device) ||
     source_reject?(source) ||
-    non_rewarded_offerwall_rewarded_reject(type, currency)
+    non_rewarded_offerwall_rewarded_reject?(type, currency)
   end
 
   def precache_reject?(platform_name, hide_rewarded_app_installs, normalized_device_type)
@@ -245,7 +245,7 @@ module Offer::Rejecting
     get_approved_sources.any? && !get_approved_sources.include?(source)
   end
   
-  def non_rewarded_offerwall_rewarded_reject(type, currency)
+  def non_rewarded_offerwall_rewarded_reject?(type, currency)
     return false unless type == Offer::DEFAULT_OFFER_TYPE && currency && currency.conversion_rate == 0
     rewarded?
   end
