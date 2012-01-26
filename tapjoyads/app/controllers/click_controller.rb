@@ -11,7 +11,7 @@ class ClickController < ApplicationController
   def app
     create_click('install')
     handle_pay_per_click
-    #handle_sdkless_offer
+    handle_sdkless_offer
 
     redirect_to(get_destination_url)
   end
@@ -141,7 +141,7 @@ private
     return if currency_disabled?
     return if offer_disabled?
     return if offer_completed?
-    return if recently_clicked?
+    #return if recently_clicked?
 
     wr_path = params[:source] == 'featured' ? 'featured_offer_click' : 'offer_click'
     build_web_request(wr_path)
@@ -265,6 +265,8 @@ private
     @click.spend_share            = @currency.get_spend_share(@offer)
 
     @click.save
+
+    Rails.logger.info "Click data: #{@click.inspect}"
   end
 
   def handle_pay_per_click
@@ -277,6 +279,16 @@ private
 
       message = { :click => @click.serialize(:attributes_only => true), :install_timestamp => @now.to_f.to_s }.to_json
       Sqs.send_message(QueueNames::CONVERSION_TRACKING, message)
+    end
+  end
+
+  # If we're handling an SDK-less app offer, add it to the sdkless_clicks column on the Device model
+  def handle_sdkless_offer
+    if @offer.sdkless
+      sdkless_clicks = @device.sdkless_clicks
+      sdkless_clicks[@offer.third_party_data] = { :click_time => @now.to_f, :item_id => @offer.item_id }
+      @device.sdkless_clicks = sdkless_clicks
+      @device.save
     end
   end
 
