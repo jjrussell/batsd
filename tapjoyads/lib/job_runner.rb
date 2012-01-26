@@ -73,13 +73,7 @@ class JobRunner
             Rails.logger.info "#{now.to_s(:db)} - JobRunner: Running #{job.job_path}"
             Rails.logger.flush
             Thread.new(job.job_path) do |job_path|
-              sess = Patron::Session.new
-              sess.base_url = base_url
-              sess.timeout = 1
-              sess.username = 'internal'
-              sess.password = AuthenticationHelper::USERS[sess.username]
-              sess.auth_type = :digest
-              sess.get("/job/#{job_path}")
+              Downloader.get("#{base_url}/job/#{job_path}", :timeout => 1, :internal_authenticate => true)
             end
             job.set_next_run_time
           end

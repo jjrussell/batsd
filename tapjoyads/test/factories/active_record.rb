@@ -198,4 +198,10 @@ FactoryGirl.define do
     bid_price 0
     name 'short survey 1'
   end
+
+  factory :creative_approval_queue do
+    association :user
+    offer       { Factory(:app).primary_offer }
+    size        '320x50'
+  end
 end
