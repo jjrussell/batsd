@@ -19,7 +19,7 @@ class FeaturedContent < ActiveRecord::Base
   belongs_to :offer
   has_one :tracking_offer, :class_name => 'Offer', :dependent => :destroy
 
-  validates_presence_of :author, :if => :author_required?, :message => "Please select and author."
+  validates_presence_of :author, :if => :author_required?, :message => "Please select an author."
   validates_presence_of :offer, :if => :offer_required?, :message => "Please select an offer/app."
   validates_presence_of :featured_type, :platforms, :subtitle, :title, :description, :start_date, :end_date, :weight
 
