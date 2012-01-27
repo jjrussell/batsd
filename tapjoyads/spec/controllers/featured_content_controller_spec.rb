@@ -8,11 +8,11 @@ describe Tools::FeaturedContentsController do
     @partner = Factory(:partner, :id => TAPJOY_PARTNER_ID)
     @admin.partners << @partner
     login_as(@admin)
-    
+
     @generic_offer = Factory(:generic_offer, :id => FEATURED_CONTENT_GENERIC_TRACKING_OFFER_ID, :partner => @partner)
   end
 
-  describe 'create' do
+  describe '#create' do
     before :each do
       @start_date = Time.zone.now - 1.day
       @end_date = Time.zone.now + 1.day
@@ -68,13 +68,13 @@ describe Tools::FeaturedContentsController do
     end
   end
 
-  describe 'Destroy' do
+  describe '#destroy' do
     before :each do
       @featured_content = Factory(:featured_content)
       @featured_content.update_attributes({ :button_url => "test_url" })
       @tracking_offer_id = @featured_content.tracking_offer.id
     end
-  
+
     it 'delete associated tracking offer' do
       Offer.find_by_id(@tracking_offer_id).should_not be_nil
 
