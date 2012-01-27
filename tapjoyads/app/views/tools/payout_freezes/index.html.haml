@@ -1,0 +1,49 @@
+- @page_title = 'Payout Freezes'
+
+%h1 Payout Freezes
+
+%h3
+  Current Status:
+  - if @enabled
+    %span{ :class => 'enabled' } Enabled
+  - else
+    %span{ :class => 'disabled' } Disabled
+
+- if @enabled
+  - if permitted_to? :disable, :tools_payout_freezes
+    = button_to 'Disable', { :action => :disable, :id => @payout_freeze.id }, :method => :post
+- else
+  - if permitted_to? :create, :tools_payout_freezes
+    - form_for [ :tools, @payout_freeze ] do |f|
+      = f.submit 'Enable'
+
+%table.tablesorter
+  %thead
+    %tr
+      %th{ :class => 'header headerSortUp', :style => 'cursor: default;' } Enabled at
+      %th Enabled by
+      %th Disabled at
+      %th Disabled by
+  %tbody
+    - @payout_freezes.each do |freeze|
+      %tr
+        %td= freeze.enabled_at.to_s(:pub_ampm_sec)
+        %td= freeze.enabled_by
+        %td= freeze.disabled_at && freeze.disabled_at.to_s(:pub_ampm_sec)
+        %td= freeze.disabled_by
+
+= will_paginate(@payout_freezes)
+
+- content_for :page_styles do
+  :plain
+    table.tablesorter {
+      border-collapse: separate;
+    }
+
+    span.enabled {
+      color: green;
+    }
+
+    span.disabled {
+      color: red;
+    }

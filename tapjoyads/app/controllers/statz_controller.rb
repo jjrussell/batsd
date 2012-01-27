@@ -19,6 +19,7 @@ class StatzController < WebsiteController
     @money_stats = Mc.distributed_get("statz.money.#{@timeframe}") || { :total => {}, :iphone => {}, :android  => {}, :tj_games => {} }
     @last_updated_start = Time.zone.at(Mc.get("statz.last_updated_start.#{@timeframe}") || 0)
     @last_updated_end = Time.zone.at(Mc.get("statz.last_updated_end.#{@timeframe}") || 0)
+    @devices_count = Mc.get('statz.devices_count') || 0
   end
 
   def udids
@@ -31,6 +32,11 @@ class StatzController < WebsiteController
   end
 
   def show
+    support_requests, rewards = @offer.cached_support_requests_rewards
+    if support_requests && rewards
+      @srr_ratio = support_request_ratio_text(support_requests, rewards)
+    end
+
     respond_to do |format|
       format.html do
         @associated_offers = @offer.find_associated_offers
@@ -48,9 +54,7 @@ class StatzController < WebsiteController
   def support_request_reward_ratio
     rewards = @offer.num_clicks_rewarded
     support_requests = @offer.num_support_requests
-    ratio = '-'
-    ratio = ("%.4f" % ( Float(support_requests) / rewards)) if rewards > 0
-    render :text => "Support Requests: #{support_requests}, Clicks Rewarded: #{rewards} ( #{ratio} )"
+    render :text => support_request_ratio_text(support_requests, rewards)
   end
 
   def update
@@ -117,6 +121,12 @@ class StatzController < WebsiteController
   end
 
   private
+
+  def support_request_ratio_text(support_requests, rewards)
+    ratio = '-'
+    ratio = ("%.4f" % ( Float(support_requests) / rewards)) if rewards > 0
+    "Support Requests: #{support_requests}, Clicks Rewarded: #{rewards} ( #{ratio} )"
+  end
 
   def find_offer
     @offer = Offer.find_by_id(params[:id])

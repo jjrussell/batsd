@@ -16,6 +16,8 @@ it:
       load_more: "Carica ancora!"
       loading: "Sta caricando..."
       load_error: "Per favore, riprova."
+      wifi_required: "Wifi Required"
+      wifi_warning: "This app requires a wifi connection to download."
 
     featured:
       title: "Guadagna %{currency}"
