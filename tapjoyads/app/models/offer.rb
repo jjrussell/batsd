@@ -579,30 +579,7 @@ class Offer < ActiveRecord::Base
   end
 
   def min_bid
-    return min_bid_override if min_bid_override
-
-    if item_type == 'App'
-      if featured? && rewarded?
-        is_paid? ? price : 65
-      elsif !rewarded?
-        100
-      else
-        is_paid? ? (price * 0.50).round : 35
-        # uncomment for tapjoy premier & change show.html line 92-ish
-        # is_paid? ? (price * 0.65).round : 50
-      end
-    elsif item_type == 'ActionOffer'
-      if is_paid?
-        (price * 0.50).round
-      else
-        platform = App::PLATFORMS.index(get_platform)
-        platform.nil? ? 35 : App::PLATFORM_DETAILS[platform][:min_action_offer_bid]
-      end
-    elsif item_type == 'VideoOffer'
-      15
-    else
-      0
-    end
+    [ min_bid_override, calculated_min_bid ].compact.min
   end
 
   def max_bid
@@ -719,6 +696,31 @@ class Offer < ActiveRecord::Base
   end
 
   private
+
+  def calculated_min_bid
+    if item_type == 'App'
+      if featured? && rewarded?
+        is_paid? ? price : 65
+      elsif !rewarded?
+        100
+      else
+        is_paid? ? (price * 0.50).round : 10
+        # uncomment for tapjoy premier & change show.html line 92-ish
+        # is_paid? ? (price * 0.65).round : 50
+      end
+    elsif item_type == 'ActionOffer'
+      if is_paid?
+        (price * 0.50).round
+      else
+        platform = App::PLATFORMS.index(get_platform)
+        platform.nil? ? 35 : App::PLATFORM_DETAILS[platform][:min_action_offer_bid]
+      end
+    elsif item_type == 'VideoOffer'
+      15
+    else
+      0
+    end
+  end
 
   def custom_creative_sizes(return_all = false)
     return Offer::DISPLAY_AD_SIZES + Offer::FEATURED_AD_SIZES if return_all
