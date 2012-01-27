@@ -1,10 +1,5 @@
 #!/usr/bin/env ruby
 
-if ENV['USER'] != 'ubuntu'
-  puts 'This script must be run by ubuntu.'
-  exit
-end
-
 free_mem  = `free -m`.split("\n")[2].split[3].to_i
 threshold = 250 + rand(250)
 
