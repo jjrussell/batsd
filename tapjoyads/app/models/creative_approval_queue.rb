@@ -4,8 +4,6 @@ class CreativeApprovalQueue < ActiveRecord::Base
   belongs_to :offer
   belongs_to :user
 
-  named_scope :stale, lambda { { :conditions => ['created_at < ?', 7.days.ago] } }
-
   validates_presence_of :size
   validates_uniqueness_of :size, :scope => :offer_id
 
