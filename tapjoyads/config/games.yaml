@@ -2,6 +2,7 @@ defaults: &defaults
   js_version: '1.51'
   js_files: [
     'tjg.jquery-1.6.2.min',
+    'i18n',
     'init',
     'jqtouch',
     'utils',

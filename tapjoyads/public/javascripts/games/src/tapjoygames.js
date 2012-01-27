@@ -12,6 +12,8 @@ RegExp.escape = function(text) {
 };
 
 (function(window, document) {
+  // alias
+  var _t = TJG.i18n.t;
 
     TJG.onload = {
 
@@ -103,12 +105,12 @@ RegExp.escape = function(text) {
               email = values['gamer_session[email]'];
               pass = values['gamer_session[password]'];
               if (email == '' || email == 'Email') {
-                $(".login_error").html('Please enter your email address');
+                $(".login_error").html(_t('games.enter_email'));
                 $(".formError").show();
                 e.preventDefault();
               }
               else if (pass == '' || pass == 'Password') {
-                $(".login_error").html('Please enter your password');
+                $(".login_error").html(_t('games.enter_password'));
                 $(".formError").show();
                 e.preventDefault();
               }

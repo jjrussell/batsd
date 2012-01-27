@@ -1,4 +1,4 @@
-var TJG = {}; TJG.vars = {};
+var TJG = typeof TJG === "object" ? TJG : {}; TJG.vars = {};
 TJG.doc = document.documentElement;
 TJG.vars.orientationClasses = ['landscape', 'portrait'];
 TJG.vars.isIos = false;
