@@ -17,6 +17,10 @@ class OfferCreativesController < WebsiteController
   end
 
   def create
+    unless params[:offer] && params[:offer]["custom_creative_#{@image_size}".to_sym]
+      return return_to_form
+    end
+
     @offer.send("banner_creative_#{@image_size}_blob=", image_data)
     @offer.add_banner_creative(@image_size)
 
@@ -72,7 +76,7 @@ class OfferCreativesController < WebsiteController
 
   def return_to_form
     redir = {
-      :action => :edit,
+      :action => :new,
       :id => @offer.id,
       :image_size => @image_size,
       :label => @label

@@ -52,6 +52,11 @@
       });
 
       $('#upload_form').submit(function() {
+        if ($('[type=file]').val() == '') {
+          alert('Please select an image to upload.');
+          return false;
+        }
+
         $('#spinner').show();
         toggle_other_forms(true);
         $('#controls').fadeOut('fast');
