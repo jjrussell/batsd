@@ -61,18 +61,12 @@ describe Games::GamersController do
         @gamer = Factory(:gamer)
 
         @partner = Factory(:partner, :id => TAPJOY_PARTNER_ID)
-        @invite_offer = Factory(
-          :generic_offer,
-          :id => TAPJOY_GAMES_INVITATION_OFFER_ID,
-          :partner => @partner,
-          :category => 'Social',
-          :url => "#{WEBSITE_URL}/games/gamer/social?advertiser_app_id=TAPJOY_GENERIC_INVITE"
-        )
+        @invite_offer = Factory(:invite_offer, :partner => @partner)
         @options[:gamer][:email] = 'TEST@test.com'
       end
 
       context 'when in new format' do
-        it 'establish friendship based on referrer data' do
+        it 'establishes friendship based on referrer data' do
           @options[:gamer][:referrer] = ObjectEncryptor.encrypt("#{@gamer.id},#{TAPJOY_GAMES_INVITATION_OFFER_ID}")
           post 'create', @options
           @noob = assigns[:gamer]
@@ -93,7 +87,7 @@ describe Games::GamersController do
           @noob = assigns[:gamer]
         end
 
-        it 'establish friendship based on referrer data' do
+        it 'establishes friendship based on referrer data' do
           Friendship.find("#{@noob.id}.#{@gamer.id}").should be_present
         end
 
