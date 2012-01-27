@@ -579,7 +579,7 @@ class Offer < ActiveRecord::Base
   end
 
   def min_bid
-    [ min_bid_override, calculated_min_bid ].compact.min
+    min_bid_override || calculated_min_bid
   end
 
   def max_bid
