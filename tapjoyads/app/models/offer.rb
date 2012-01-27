@@ -705,8 +705,6 @@ class Offer < ActiveRecord::Base
         100
       else
         is_paid? ? (price * 0.50).round : 10
-        # uncomment for tapjoy premier & change show.html line 92-ish
-        # is_paid? ? (price * 0.65).round : 50
       end
     elsif item_type == 'ActionOffer'
       if is_paid?
