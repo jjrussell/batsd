@@ -1,48 +1,47 @@
 class Downloader
-  INTERNAL_AUTH_USER = 'internal'
-
-  cattr_accessor :backend
-  self.backend = HTTParty
-
   ##
   # Make a GET request to the specified url and return the contents of the response.
-  #
-  # Options can include the following:
-  #  :headers - Hash of extra header values
-  #  :timeout - timeout in seconds
-  #  :internal_authenticate - boolean for using authentication settings from AuthenticationHelper
-  #  :return_response - boolean to return the response object, body is returned if otherwise
   def self.get(url, options = {})
+    headers = options.delete(:headers) { {} }
+    timeout = options.delete(:timeout) { 2 }
+    internal_authenticate = options.delete(:internal_authenticate) { false }
     return_response = options.delete(:return_response) { false }
-    options = setup(options)
-
-    Rails.logger.info "Downloading (GET) #{url}"
+    raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
 
     start_time = Time.zone.now
-    response = backend.get(url, options)
+    headers.merge!({ 'User-Agent' => 'Tapjoy Downloader' })
+    Rails.logger.info "Downloading (GET) #{url}"
+
+    sess = Patron::Session.new
+    sess.timeout = timeout
+
+    if internal_authenticate
+      sess.username = 'internal'
+      sess.password = AuthenticationHelper::USERS[sess.username]
+      sess.auth_type = :digest
+    end
+
+    response = sess.get(url, headers)
 
     Rails.logger.info "Download complete (#{Time.zone.now - start_time}s)"
 
     return return_response ? response : response.body
   end
 
-  ##
-  # Make a POST request to the specified url and return the contents of the response.
-  #
-  # Options can include the following:
-  #  :headers - Hash of extra header values
-  #  :timeout - timeout in seconds
-  #  :internal_authenticate - boolean for using authentication settings from AuthenticationHelper
-  #  :return_response - boolean to return the response object, body is returned if otherwise
   def self.post(url, data, options = {})
+    headers = options.delete(:headers) { {} }
+    timeout = options.delete(:timeout) { 2 }
     return_response = options.delete(:return_response) { false }
-    options = setup(options)
-    options[:body] = data
-
-    Rails.logger.info "Downloading (POST) #{url}"
+    raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
 
     start_time = Time.zone.now
-    response = backend.post(url, options)
+    headers.merge!({ 'User-Agent' => 'Tapjoy Downloader' })
+    Rails.logger.info "Downloading (POST) #{url}"
+
+    sess = Patron::Session.new
+    sess.timeout = timeout
+
+    response = sess.post(url, data, headers)
 
     Rails.logger.info "Download complete (#{Time.zone.now - start_time}s)"
 
@@ -52,52 +51,28 @@ class Downloader
   ##
   # Makes a GET request to url. No data is returned.
   # If the download fails, it will be retried automatically via sqs.
-  #
-  # See #self.get_strict
   def self.get_with_retry(url, download_options = {}, failure_message = nil)
     begin
-      get_strict(url, download_options)
+      Downloader.get_strict(url, download_options)
     rescue Exception => e
       Rails.logger.info "Download failed. Error: #{e}"
       message = {:url => url, :download_options => download_options, :failure_message => failure_message}.to_json
       Sqs.send_message(QueueNames::FAILED_DOWNLOADS, message)
       Rails.logger.info "Added to FailedDownloads queue."
-      false
     end
   end
 
   ##
   # Download a url and return the response. Raises an exception if the response status is not normal.
-  #
-  # See #self.get
   def self.get_strict(url, download_options = {})
-    response = get(url, download_options.merge({:return_response => true}))
-    if response.code == 403
+    response = Downloader.get(url, download_options.merge({:return_response => true}))
+    if response.status == 403
       Notifier.alert_new_relic(FailedToDownloadError, "Failed to download #{url}. 403 error.")
-    elsif response.code < 200 or response.code > 399
-      raise "#{response.code} error from #{url}"
+    elsif response.status < 200 or response.status > 399
+      raise "#{response.status} error from #{url}"
     end
 
     return response
   end
 
-  private
-  def self.setup(options)
-    options.reverse_merge!({
-      :headers => {},
-      :timeout => 2
-    })
-
-    options[:headers].merge!({ 'User-Agent' => 'Tapjoy Downloader' })
-    options[:digest_auth] = authentication if options.delete(:internal_authenticate)
-
-    options
-  end
-
-  def self.authentication
-    {
-      :username => INTERNAL_AUTH_USER,
-      :password => AuthenticationHelper::USERS[INTERNAL_AUTH_USER]
-    }
-  end
 end
