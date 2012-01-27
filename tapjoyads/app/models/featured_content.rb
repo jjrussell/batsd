@@ -144,7 +144,7 @@ class FeaturedContent < ActiveRecord::Base
       end
       params = {
         :video_id => offer.id,
-        :amount => @currency.get_visual_reward_amount(offer, params[:display_multiplier]),
+        :amount => @currency.get_visual_reward_amount(offer, display_multiplier),
         :currency_name => @currency.name,
         :click_url => click_url
       }
