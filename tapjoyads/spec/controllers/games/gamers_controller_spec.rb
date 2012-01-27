@@ -5,7 +5,7 @@ describe Games::GamersController do
     activate_authlogic
   end
 
-  describe 'create' do
+  describe '#create' do
     before :each do
       @date = 13.years.ago(Time.zone.now.beginning_of_day) - 1.day
       @options = {
@@ -55,9 +55,57 @@ describe Games::GamersController do
 
       should_respond_with_json_error(403)
     end
+
+    context 'when referrer present' do
+      before :each do
+        @gamer = Factory(:gamer)
+
+        @partner = Factory(:partner, :id => TAPJOY_PARTNER_ID)
+        @invite_offer = Factory(
+          :generic_offer,
+          :id => TAPJOY_GAMES_INVITATION_OFFER_ID,
+          :partner => @partner,
+          :category => 'Social',
+          :url => "#{WEBSITE_URL}/games/gamer/social?advertiser_app_id=TAPJOY_GENERIC_INVITE"
+        )
+        @options[:gamer][:email] = 'TEST@test.com'
+      end
+
+      context 'when in new format' do
+        it 'establish friendship based on referrer data' do
+          @options[:gamer][:referrer] = ObjectEncryptor.encrypt("#{@gamer.id},#{TAPJOY_GAMES_INVITATION_OFFER_ID}")
+          post 'create', @options
+          @noob = assigns[:gamer]
+
+          Friendship.find("#{@noob.id}.#{@gamer.id}").should be_present
+        end
+      end
+
+      context 'when in old format' do
+        before :each do
+          @invitation = Factory(
+            :invitation,
+            :gamer_id => @gamer.id,
+            :external_info => @options[:gamer][:email]
+          )
+          @options[:gamer][:referrer] = ObjectEncryptor.encrypt("#{@invitation.id},#{TAPJOY_GAMES_INVITATION_OFFER_ID}")
+          post 'create', @options
+          @noob = assigns[:gamer]
+        end
+
+        it 'establish friendship based on referrer data' do
+          Friendship.find("#{@noob.id}.#{@gamer.id}").should be_present
+        end
+
+        it 'updates the status of invite' do
+          @invitation.reload
+          @invitation.status.should == 1
+        end
+      end
+    end
   end
 
-  describe 'Destroy' do
+  describe '#destroy' do
     before :each do
       @gamer = Factory(:gamer)
       @controller.stubs(:current_gamer).returns(@gamer)
