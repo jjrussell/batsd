@@ -58,7 +58,9 @@ class Tools::FeaturedContentsController < WebsiteController
   def edit
     @featured_content = FeaturedContent.find(params[:id])
     @employees = Employee.active_by_first_name
-    @search_result_name = Offer.find_in_cache(@featured_content.offer_id).search_result_name if @featured_content.offer_id.present?
+    if @featured_content.offer_id.present?
+      @search_result_name = Offer.find_in_cache(@featured_content.offer_id).search_result_name
+    end
   end
 
   def update

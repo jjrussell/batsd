@@ -33,37 +33,43 @@ describe Tools::FeaturedContentsController do
       }
     end
 
-    it 'should create a new featured_content' do
-      post 'create', @options
-
-      response.session[:flash][:notice].should == 'Featured content was successfully created.'
-      response.should redirect_to(tools_featured_contents_path)
-    end
-
-    it 'should reject when start_date > end_date' do
-      @start_date += 5.days
-      @options[:featured_content][:start_date] = @start_date.to_s
-      post 'create', @options
-
-      response.session[:flash][:error].should == 'End Date must be equal to or greater than Start Date.'
-      response.should render_template('tools/featured_contents/new')
-    end
-
-    context 'platforms' do
-      it 'should reject when platforms is empty' do
-        @options[:featured_content][:platforms] = []
+    context 'when called with valid parameters' do
+      it 'creates a new featured_content' do
         post 'create', @options
 
-        response.session[:flash][:error].should == "Please select at least one platform, and make sure include [#{Offer::APPLE_DEVICES.join(", ")}] for iOS platform."
-        response.should render_template('tools/featured_contents/new')
+        flash[:notice].should == 'Featured content was successfully created.'
+        response.should redirect_to(tools_featured_contents_path)
+      end
+    end
+
+    context 'when called with invalid parameters' do
+      context 'when provide invalid date settings' do
+        it 'rejects when start_date > end_date' do
+          @start_date += 5.days
+          @options[:featured_content][:start_date] = @start_date.to_s
+          post 'create', @options
+
+          response.session[:flash][:error].should == 'End Date must be equal to or greater than Start Date.'
+          response.should render_template('tools/featured_contents/new')
+        end
       end
 
-      it 'should reject when platforms only contain part of iOS platforms' do
-        @options[:featured_content][:platforms] = ['iphone']
-        post 'create', @options
+      context 'when provide invalid platforms settings' do
+        it 'rejects when platforms is empty' do
+          @options[:featured_content][:platforms] = []
+          post 'create', @options
 
-        response.session[:flash][:error].should == "Please select at least one platform, and make sure include [#{Offer::APPLE_DEVICES.join(", ")}] for iOS platform."
-        response.should render_template('tools/featured_contents/new')
+          response.session[:flash][:error].should =~ /select at least one platform/
+          response.should render_template('tools/featured_contents/new')
+        end
+
+        it 'rejects when platforms only contain part of iOS platforms' do
+          @options[:featured_content][:platforms] = ['iphone']
+          post 'create', @options
+
+          response.session[:flash][:error].should =~ /select at least one platform/
+          response.should render_template('tools/featured_contents/new')
+        end
       end
     end
   end
@@ -75,13 +81,14 @@ describe Tools::FeaturedContentsController do
       @tracking_offer_id = @featured_content.tracking_offer.id
     end
 
-    it 'delete associated tracking offer' do
-      Offer.find_by_id(@tracking_offer_id).should_not be_nil
+    context 'when success delete' do
+      it 'deletes associated tracking offer' do
+        delete 'destroy', :id => @featured_content.id
 
-      delete 'destroy', :id => @featured_content.id
-
-      response.should redirect_to(tools_featured_contents_path)
-      Offer.find_by_id(@tracking_offer_id).should be_nil
+        response.should redirect_to(tools_featured_contents_path)
+        Offer.find_by_id(@tracking_offer_id).should be_nil
+      end
     end
   end
+
 end

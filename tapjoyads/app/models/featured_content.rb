@@ -142,13 +142,13 @@ class FeaturedContent < ActiveRecord::Base
       else
         prefix = "tjvideo://"
       end
-      params_array = [
-        "video_id=#{offer.id}",
-        "amount=#{@currency.get_visual_reward_amount(offer, params[:display_multiplier])}",
-        "currency_name=#{URI::escape(@currency.name)}",
-        "click_url=#{click_url}"
-      ]
-      "#{prefix}#{params_array.join('&')}"
+      params = {
+        :video_id => offer.id,
+        :amount => @currency.get_visual_reward_amount(offer, params[:display_multiplier]),
+        :currency_name => @currency.name,
+        :click_url => click_url
+      }
+      "#{prefix}#{params.to_query}"
     else
       click_url
     end
