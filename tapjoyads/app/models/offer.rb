@@ -257,7 +257,7 @@ class Offer < ActiveRecord::Base
 
   def banner_creative_sizes_with_labels
     banner_creative_sizes.collect do |size|
-      data = {:size => size, :label => size}
+      data = {:size => size, :label => size.dup}
 
       if featured?
         width, height = size.split('x').map(&:to_i)

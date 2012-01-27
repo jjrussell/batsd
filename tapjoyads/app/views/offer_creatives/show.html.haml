@@ -1,126 +1,110 @@
-- url = offer_creatives_form_path(:id => @offer.id, :image_size => @image_size, :label => @label, :app_id => @app)
-- pending = @offer.has_banner_creative?(@image_size) && !@offer.banner_creative_approved?(@image_size)
+#previews
+  - publisher_app_id = App::PREVIEW_PUBLISHER_APP_ID
+  - unable_to_show = []
+  - if @offer.featured?
+    - if !@offer.banner_creatives.empty? || @show_generated_ads
+      - width, height = params[:image_size].split("x").collect{|x|x.to_i}
+      - label = "Featured ad preview: (#{width}x#{height})"
+      - label << " <em>(Pending approval)</em>" if @offer.has_banner_creative?(params[:image_size]) and !@offer.banner_creative_approved?(params[:image_size])
+      %span.label #{label}:
+      %iframe.preview{ :src => @offer.fullscreen_ad_url(:publisher_app_id => publisher_app_id, :width => width, :height => height, :preview => true), :width => width, :height => height }
+    - else
+      - unable_to_show << "Featured"
+  - else
+    - if @offer.rewarded? # show offer wall ad
+      - if @show_generated_ads
+        Marketplace ad:
+        %div.img320x76
+          %iframe{:src => @offer.get_offers_webpage_preview_url(publisher_app_id, true), :width => '322', :height => '78', :style => 'width: 322px; height: 78px; border: none;', :frameborder => '0'}
+      - else
+        - unable_to_show << "Marketplace"
 
-- if @creative_exists
-  - form_tag(url, :method => :delete, :id => "remove_form_for_#{@image_size}", :class => "hidden") {}
+    - if @offer.display_banner_ads?
+      - Offer::DISPLAY_AD_SIZES.each do |size|
+        - next if params[:only_one] && size != params[:image_size]
+        - if @show_generated_ads || @offer.has_banner_creative?(size)
+          - label = "#{size} banner ad"
+          - label << " <em>(Pending approval)</em>" if @offer.has_banner_creative?(size) and !@offer.banner_creative_approved?(size)
+          %span.label #{label}:
+          %div{:class => "img#{size}"}
+            - width, height = size.split("x").collect{|x|x.to_i}
+            = image_tag(@offer.preview_display_ad_image_url(publisher_app_id, width, height), :class => 'preview', :alt => '')
+        - else
+          - unable_to_show << "#{size} banner"
 
-- form_for(@offer, :url => url, :html => { :id => 'upload_form', :class => 'tjform', :method => (@creative_exists ? :put : :post), :multipart => true }) do |f|
-  %table
-    %tbody
-      %tr
-        %th
-          = f.label("custom_creative_#{@image_size}", @label, :class => (pending ? 'pending' : ''))
-        %td
-          %table
-            - unless @success_message.blank?
-              %tr#success_message.hidden
-                %td
-                  = h(@success_message)
-            %tr#controls
-              %td
-                - if @creative_exists
-                  - if @app.present?
-                    = link_to("View existing file", '#', :class => 'view_link')
-                    |
-                  = link_to("Remove existing file", '#', :id => "remove_link")
-                - else
-                  = f.file_field("custom_creative_#{@image_size}")
-                  %td
-                    = f.submit('Upload', :id => "upload_button")
-            %tr
-              %td
-                = image_tag("spinner.gif", :id => "spinner", :class => "hidden")
+  - if unable_to_show.any?
+    #unable_to_show
+      = "Unable to show the following ad#{unable_to_show.length == 1 ? '' : 's'}:"
+      %div
+        = unable_to_show.join(", ")
+      %div
+        %i
+          Please
+          = link_to('find your app', app_path(@app))
+          = "in the app store so we can generate #{unable_to_show.length == 1 ? 'this ad' : 'these ads'} using your app's icon."
 
-- content_for :page_javascript do
+  - if !@offer.featured?
+    - if @offer.rewarded?
+      .banner_ad_notes
+        *Banner ads for rewarded installs are only displayed for free apps where the app name is 30 characters or less, and where the conversion rate is 30% or more.
+
+    - else
+      .banner_ad_notes
+        *To provide custom creatives for your non-rewarded ads, please contact
+        = succeed '.' do
+          = mail_to "support@tapjoy.com"
+        Please ensure images have correct dimensions. Custom ads for non-rewarded installs are only displayed for free apps.
+
+%style{ :type => 'text/css' }
   :plain
-    $(function($){
-      toggle_other_forms(false);
-
-      $('.view_link').click(function() {
-        parent.$.facebox({ajax: "#{@preview_path}" })
-        return false;
-      });
-
-      $('#remove_link').click(function() {
-        if(confirm('Are you sure? This will remove the #{@image_size} creative entirely.')) {
-          $('#spinner').show();
-          toggle_other_forms(true);
-          $('#remove_form_for_#{@image_size}')[0].submit();
-          $('#controls').fadeOut('fast');
-        }
-        return false;
-      });
-
-      $('#upload_form').submit(function() {
-        $('#spinner').show();
-        toggle_other_forms(true);
-        $('#controls').fadeOut('fast');
-        return true;
-      });
-
-      function toggle_other_forms(disabled) {
-        var iframes = $(parent.document).find('iframe.creative_upload');
-        for(var i = 0; i<iframes.length; i++) {
-          var iframe = $(iframes[i]);
-          var upload_button = iframe.contents().find('#upload_button');
-          if (upload_button.length > 0) {
-            upload_button.attr('disabled', disabled);
-          }
-          var remove_link = iframe.contents().find('#remove_link');
-          if (remove_link.length > 0) {
-            if (disabled) {
-              remove_link.hide();
-            } else {
-              remove_link.show();
-            }
-          }
-        }
-      }
-    });
-
-- unless @success_message.blank?
-  - content_for :page_javascript do
-    :plain
-      $(function($) {
-        $('#controls').hide();
-        $('#success_message').fadeIn('fast').delay(2000).fadeOut('fast', function() {
-          $('#controls').fadeIn('fast');
-        });
-      });
-
-- unless @error_message.blank?
-  - content_for :page_javascript do
-    :plain
-      $(function($){
-        alert("#{@error_message}");
-      });
-
-- content_for :page_styles do
-  :plain
-    body {
-      background: none;
-      overflow: hidden;
-      margin: 0;
+    #previews {
+      text-align: center;
     }
-    table {
-      border: 0;
-      border-collapse: collapse;
-    }
-    th {
-      font-weight: bold;
-      padding-right: 10px;
-      text-align: right;
-      width: 225px;
-    }
-    th label.pending {
+
+    #previews span.label em {
       color: red;
     }
-    .hidden {
+
+    #unable_to_show {
+      color: red;
+      min-width: 640px;
+      margin-bottom: 15px;
+    }
+
+    .banner_ad_notes {
+      font-size: 12px;
+    }
+
+    iframe.preview {
+      border: none;
+      overflow: hidden;
+    }
+
+    img.preview {
       display: none;
     }
-    .tjform input[type="submit"] {
-      margin-top: 0;
-    }
-    #success_message {
-      color: green;
-    }
+
+  - (Offer::DISPLAY_AD_SIZES + Offer::FEATURED_AD_SIZES + %w(320x480 320x76)).each do |size|
+    - width, height = size.split("x")
+    - if @show_generated_ads || @offer.banner_creatives.include?(size) # show spinner while images are loading
+      :plain
+        div.img#{size} {
+          background-image: url('/images/spinner.gif');
+          background-repeat: no-repeat;
+          background-position: center;
+        }
+    :plain
+      div.img#{size} {
+        height: #{height}px;
+        margin-bottom: 10px;
+        margin-top: 5px;
+        min-width: #{width}px;
+      }
+
+%script{ :type => 'text/javascript', :charset => 'utf-8' }
+  :plain
+    $(function($){
+      $("img.preview").load(function() {
+        this.setAttribute("style", "display: inline; border: 1px solid;");
+      });
+    });

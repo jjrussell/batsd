@@ -5,6 +5,11 @@ class OfferCreativesController < WebsiteController
   before_filter :setup
 
   def show
+    @show_generated_ads = @offer.uploaded_icon?
+    render 'show', :layout => false
+  end
+
+  def new
     @creative_exists = @offer.has_banner_creative?(@image_size)
 
     @success_message = params.delete(:success_message)
@@ -27,12 +32,6 @@ class OfferCreativesController < WebsiteController
     return_to_form
   end
 
-  def update
-    # Apparently this was a dummy method originally... so we'll just redirect back to the form
-
-    redirect_to_form
-  end
-
   def destroy
     @offer.remove_banner_creative(@image_size)
     @success = @offer.save
@@ -53,7 +52,7 @@ class OfferCreativesController < WebsiteController
            elsif @offer.app.present?
              @offer.app
            end
-    @preview_path = preview_app_offer_path(:id => @offer.id, :image_size => @image_size, :preview => true, :app_id => @app.id)
+    @preview_path = offer_creatives_preview_path(:id => @offer.id, :image_size => @image_size)
 
     log_activity(@offer)
   end
@@ -73,12 +72,11 @@ class OfferCreativesController < WebsiteController
 
   def return_to_form
     redir = {
-      :action => :show,
+      :action => :edit,
       :id => @offer.id,
       :image_size => @image_size,
       :label => @label
     }
-    redir[:app_id] = @app.id if @app
 
     # Strict type checks in case we haven't set @success (nil is falsy, we don't want to show an error when there isn't one)
     if @success === true
