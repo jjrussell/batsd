@@ -282,9 +282,9 @@ private
 
   # If we're handling an SDK-less app offer, add it to the sdkless_clicks column on the Device model
   def handle_sdkless_click
-    if @offer.sdkless
+    if @offer.sdkless?
       sdkless_clicks = @device.sdkless_clicks
-      sdkless_clicks[@offer.third_party_data] = { :click_time => @now.to_f, :item_id => @offer.item_id }
+      sdkless_clicks[@offer.third_party_data] = { 'click_time' => @now.to_i, 'item_id' => @offer.item_id }
       @device.sdkless_clicks = sdkless_clicks
       @device.save
     end
