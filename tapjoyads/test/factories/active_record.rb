@@ -234,4 +234,5 @@ FactoryGirl.define do
     offer         { Factory(:app).primary_offer }
     author        { Factory(:employee) }
   end
+
 end
