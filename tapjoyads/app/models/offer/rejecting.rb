@@ -45,7 +45,8 @@ module Offer::Rejecting
     video_offers_reject?(video_offer_ids, type, all_videos) ||
     frequency_capping_reject?(device) ||
     tapjoy_games_retargeting_reject?(device) ||
-    source_reject?(source)
+    source_reject?(source) ||
+    non_rewarded_offerwall_rewarded_reject?(type, currency)
   end
 
   def precache_reject?(platform_name, hide_rewarded_app_installs, normalized_device_type)
@@ -242,6 +243,10 @@ module Offer::Rejecting
 
   def source_reject?(source)
     get_approved_sources.any? && !get_approved_sources.include?(source)
+  end
+
+  def non_rewarded_offerwall_rewarded_reject?(type, currency)
+    currency.conversion_rate == 0 && rewarded? && item_type != 'App'
   end
 
   def recommendable_types_reject?
