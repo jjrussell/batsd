@@ -368,6 +368,6 @@ class App < ActiveRecord::Base
   end
 
   def clear_dirty_flags
-    self.store_id_changed = false;
+    self.store_id_changed = false
   end
 end
