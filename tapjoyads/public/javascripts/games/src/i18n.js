@@ -1,7 +1,7 @@
-(function(w, customError, basicTemplate) {
-  var NUM_MAP = ["zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine"],
-  me = {};
+(function(w, me, customError, basicTemplate) {
+  var NUM_MAP = ["zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine"];
 
+  me = w.TJG.i18n || {};
 
   me.pluralize = function(words, count) {
     var result;
@@ -56,4 +56,4 @@
   };
 
   w.TJG.i18n = me;
-}(this, TJG.utils.customError, TJG.utils.basicTemplate));
+}(this, TJG.i18n, TJG.utils.customError, TJG.utils.basicTemplate));
