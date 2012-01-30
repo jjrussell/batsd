@@ -201,7 +201,7 @@ TJG.utils = {
     return tpl.replace(/%{(.+?)}/g, function(pattern, key) {
       // undefined is bad m'kay
       if(object[key] === undefined) {
-        throw TJG.utils.customError("No matching arg for template: ", {key: key, template: tpl});
+        throw TJG.utils.customError("No matching arg for template: ", {key: key, template: tpl, props: object});
       }
       return object[key];
     });
@@ -228,7 +228,8 @@ TJG.utils = {
     var info="", 
         i,
         options = options || {},
-        TapjoyCustomError; 
+        TapjoyCustomError
+        stringify = (window.JSON && window.JSON.stringify) || function(t) { return t; };
 
     name = name || "TapjoyCustomError";
 
@@ -240,7 +241,7 @@ TJG.utils = {
     
     for(i in options) {
       if(options.hasOwnProperty(i)) {
-        info += "\n[ "+i + ": " + options[i]+" ]";
+        info += "\n[ "+i + ": " + stringify( options[i] ) + " ]";
       }
     }
 

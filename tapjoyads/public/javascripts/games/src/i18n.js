@@ -49,7 +49,7 @@
 
     if(typeof result !== "string") {
       throw customError("Did not find translation string: ",
-        {key: key, locale: opt.locale, default_locale: me.default_locale}, 
+        {key: key, locale: opt.locale, default_locale: me.default_locale, result: result}, 
         "Tapjoyi18nError");
     }
     return basicTemplate(result, args);
