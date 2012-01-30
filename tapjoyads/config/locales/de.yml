@@ -18,6 +18,8 @@ de:
       load_more: "Lade noch mehr!"
       loading: "Lade..."
       load_error: "Bitte versuche es nochmal!"
+      wifi_required: "Wifi Required"
+      wifi_warning: "This app requires a wifi connection to download."
 
     featured:
       title: "Erhalte %{currency}"

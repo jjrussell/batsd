@@ -60,3 +60,8 @@ end
 
 # boot the app
 `su - webuser -c 'curl -s http://localhost:9898/healthz'`
+
+# HACK: job to reload apache when memory is low
+if server_type == 'web'
+  `echo "* * * * * /home/webuser/tapjoyserver/server/check_memory_usage.rb" | crontab -u ubuntu -`
+end
