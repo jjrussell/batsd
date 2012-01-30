@@ -57,11 +57,6 @@ class Recommender  #Interface for all recommenders.
     self.inspect
   end
 
-  def app_name(app_id)
-    offer = Offer.find(app_id) rescue nil
-    offer.nil? ? nil : offer.name
-  end
-
   def first_n(list, n)
      n = 20 unless n && n.is_a?(Numeric)
      list[0...n]

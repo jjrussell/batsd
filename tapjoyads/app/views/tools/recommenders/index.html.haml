@@ -32,8 +32,8 @@
         %td{ :colspan => 2 }= submit_tag('Get Recommendations')
 
 
-- unless @recommendations.nil?
-  = render :partial => 'recommendations', :locals => { :description => @options[:description], :recommendations=>@recommendations }
+- if @recommendations
+  = render('recommendations', :description => @options[:description], :recommendations=>@recommendations)
 
 
 - content_for :page_javascript do
