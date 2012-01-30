@@ -17,7 +17,7 @@ class Countries
     countries
   end
 
-  def self.continent_code_to_name 
+  def self.continent_code_to_name
     { "AS" => "Asia",
       "EU" => "Europe",
       "SA" => "South America",
