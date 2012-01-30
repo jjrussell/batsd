@@ -21,23 +21,25 @@ class ReengagementRewardsController < ApplicationController
   def index
     verify_params([:udid, :timestamp, :publisher_user_id, :app_id])
     @reengagement_offers = ReengagementOffer.find_list_in_cache params[:app_id]
-    raise "No re-engagement offers found in memcache for app #{params[:app_id]}" if @reengagement_offers.nil?
-    device = Device.new :key => params[:udid]
-    @reengagement_offer = @reengagement_offers.detect{ |r| !device.has_app?(r.id) }
-    Rails.logger.info "&&&&& reengagement #{@reengagement_offer.day_number} #{@reengagement_offer.id}" if @reengagement_offer.present?
-    if @reengagement_offer.present? && @reengagement_offer.enabled? && !@reengagement_offer.hidden?
-      click = Click.find("#{params[:udid]}.#{@reengagement_offer.id}")
-      if @reengagement_offer.day_number == 0 || click.present? && !click.successfully_rewarded? && should_reward?(click)
-        click.resolve! if click.present?
-        device.set_last_run_time! @reengagement_offer.id
-        Rails.logger.info "&&&&& click resolved!" if click.present?
+    if @reengagement_offers.length > 1
+      raise "No re-engagement offers found in memcache for app #{params[:app_id]}" if @reengagement_offers.nil?
+      device = Device.new :key => params[:udid]
+      @reengagement_offer = @reengagement_offers.detect{ |r| !device.has_app?(r.id) }
+      Rails.logger.info "&&&&& reengagement #{@reengagement_offer.day_number} #{@reengagement_offer.id}" if @reengagement_offer.present?
+      if @reengagement_offer.present? && @reengagement_offer.enabled? && !@reengagement_offer.hidden?
+        click = Click.find("#{params[:udid]}.#{@reengagement_offer.id}")
+        if @reengagement_offer.day_number == 0 || click.present? && !click.successfully_rewarded? && should_reward?(click)
+          click.resolve! if click.present?
+          device.set_last_run_time! @reengagement_offer.id
+          Rails.logger.info "&&&&& click resolved!" if click.present?
+        end
+        if @reengagement_offer.day_number < @reengagement_offers.length
+          next_reengagement_offer = @reengagement_offers.detect{ |r| r.day_number == @reengagement_offer.day_number + 1 }
+          create_reengagement_click(next_reengagement_offer, Time.at(params[:timestamp].to_f)) if next_reengagement_offer.present?
+        end
+      else
+        @reengagement_offer = nil
       end
-      if @reengagement_offer.day_number < @reengagement_offers.length
-        next_reengagement_offer = @reengagement_offers.detect{ |r| r.day_number == @reengagement_offer.day_number + 1 }
-        create_reengagement_click(next_reengagement_offer, Time.at(params[:timestamp].to_f)) if next_reengagement_offer.present?
-      end
-    else
-      @reengagement_offer = nil
     end
   end
 

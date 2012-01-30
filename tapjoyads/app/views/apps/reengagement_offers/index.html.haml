@@ -56,6 +56,6 @@
                 = link_to 'Remove', {:action => "destroy", :app_id => @app.id, :id => ro.id}, {:method => :delete}
         
       %tr
-        - if @reengagement_offers.length < 6
-          %td{:colspan => "2"}
-            = link_to 'Add A Day', {:action => "new"}, :method => :get
+        / - if @reengagement_offers.length < 6
+        %td{:colspan => "2"}
+          = link_to 'Add A Day', {:action => "new"}, :method => :get

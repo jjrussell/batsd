@@ -22,25 +22,55 @@ class ReengagementOffer < ActiveRecord::Base
   delegate :get_offer_device_types, :store_id, :store_url, :large_download?, :supported_devices, :platform, :get_countries_blacklist, :countries_blacklist, :primary_category, :user_rating, :info_url, :to => :app
 
   named_scope :visible, :conditions => { :hidden => false }
+  named_scope :active, :conditions => { :hidden => false, :enabled => true }
+  named_scope :inactive, :conditions => { :hidden => false, :enabled => false }
 
-  def self.enable_all(app_id)
-    ReengagementOffer.set_enabled(app_id, true)  
+  def self.campaign_length(app_id)
+    ReengagementOffer.visible.find_all_by_app_id(app_id).length
   end
 
-  def self.disable_all(app_id)
-    ReengagementOffer.set_enabled(app_id, false)  
+  def campaign_length
+    ReengagementOffer.campaign_length(app_id)
   end
 
-  def enable
-    set_enabled(true)
+  def self.enable_for_app!(app_id)
+    ReengagementOffer.inactive.find_all_by_app_id(app_id).map(&:enable!)
   end
 
-  def disable
-    set_enabled(false)
+  def self.disable_for_app!(app_id)
+    ReengagementOffer.active.find_all_by_app_id(app_id).map(&:disable!)
+    ReengagementOffer.uncache_list app_id
+  end
+
+  def remove!
+    self.hidden = true
+    disable!
+  end
+
+  def disable!
+    self.enabled = false
+    save_enabled! and uncache if self.changed?
+  end
+
+  def enable!
+    self.enabled = true
+    save_enabled! and cache if self.changed?
+  end
+
+  def uncache
+    ReengagementOffer.uncache id
+  end
+
+  def self.uncache(id)
+    Mc.delete("mysql.reengagement_offer.#{id}.#{SCHEMA_VERSION})") if Mc.get("mysql.reengagement_offer.#{id}.#{SCHEMA_VERSION})").present?
+  end
+
+  def self.uncache_list(app_id)
+    Mc.delete("mysql.reengagement_offers.#{app_id}.#{SCHEMA_VERSION})") if self.find_list_in_cache(app_id).present?
   end
 
   def self.cache_list(app_id)
-    reengagement_offers = ReengagementOffer.visible.find_all_by_app_id(app_id, :order => 'day_number ASC')
+    reengagement_offers = ReengagementOffer.active.find_all_by_app_id(app_id, :order => 'day_number ASC')
     response = Mc.put("mysql.reengagement_offers.#{app_id}.#{SCHEMA_VERSION}", reengagement_offers, false, 1.day)
   end
 
@@ -54,27 +84,11 @@ class ReengagementOffer < ActiveRecord::Base
 
   private
 
-  def set_enabled(enabled_value, refresh_cache=true)
-    self.enabled = enabled_value
+  def save_enabled!
     self.save!
     offers.each do |offer|
-      offer.user_enabled = enabled_value
+      offer.user_enabled = self.enabled
       offer.save!
-    end
-    if refresh_cache
-      if enabled_value
-        cache_list
-      else
-        Mc.delete("mysql.reengagement_offers.#{app_id}.#{SCHEMA_VERSION})") unless enabled_value
-      end
-    end
-  end
-
-  def self.set_enabled(app_id, enabled_value)
-    reengagement_offers = ReengagementOffer.visible.find_all_by_app_id(app_id)
-    reengagement_offers.each do |r|
-      Rails.logger.info "&&&&&&&&&& #{enabled_value ? 'enabling' : 'disabling'} #{r.id}"
-      enabled_value ? r.enable : r.disable
     end
   end
 
@@ -102,7 +116,7 @@ class ReengagementOffer < ActiveRecord::Base
     offer.save!
   end
 
- def update_offers
+  def update_offers
     offers.each do |offer|
       offer.partner_id       = partner_id
       offer.user_enabled     = enabled

@@ -9,7 +9,7 @@
             - if @reengagement_offer && @reengagement_offer.day_number    # if action is 'update'
               = "Day #{@reengagement_offer.day_number}"
             - else
-              - day_num = @app.get_day_number_for_next_reengagement_offer
+              - day_num = ReengagementOffer.campaign_length(@app.id)
               = f.hidden_field :day_number, :value => day_num
               = "Day #{day_num}"  # otherwise action is 'create'
       %tr

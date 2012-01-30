@@ -1,5 +1,4 @@
 ActionController::Routing::Routes.draw do |map|
-
   map.connect 'healthz', :controller => :healthz, :action => :index
 
   routes = case MACHINE_TYPE
