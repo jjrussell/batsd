@@ -1,6 +1,7 @@
-(function(TJG, me) {
-  var NUM_MAP = ["zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine"];
-  me = me || {};
+(function(w, customError, basicTemplate) {
+  var NUM_MAP = ["zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine"],
+  me = {};
+
 
   me.pluralize = function(words, count) {
     var result;
@@ -47,13 +48,12 @@
     result = me.pluralize(result, opt.count);
 
     if(typeof result !== "string") {
-      throw TJG.utils.customError("Did not find translation string: ",
+      throw customError("Did not find translation string: ",
         {key: key, locale: opt.locale, default_locale: me.default_locale}, 
         "Tapjoyi18nError");
     }
-    return TJG.utils.basicTemplate(result, args);
+    return basicTemplate(result, args);
   };
 
-  TJG.i18n = me;
-}( (typeof TJG === "object" ? TJG : window), 
-   (typeof TJG === "object" && TJG.i18n ? TJG.i18n : {}) ));
+  w.TJG.i18n = me;
+}(this, TJG.utils.customError, TJG.utils.basicTemplate));
