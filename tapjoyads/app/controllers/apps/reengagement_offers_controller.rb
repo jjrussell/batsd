@@ -77,14 +77,6 @@ class Apps::ReengagementOffersController < WebsiteController
 
   private
 
-  # def build_new_reengagement(options)
-  #   Rails.logger.info options
-  #   reengagement_offer = ReengagementOffer.new options
-  #   reengagement_offers = @app.reengagement_offers.visible
-  #   reengagement_offers.present? && reengagement_offers.last.enabled? ? reengagement_offer.enable! : reengagement_offer.save!
-  #   reengagement_offer
-  # end
-
   def setup
     if  params[:app_id].present?
       if permitted_to? :edit, :statz
