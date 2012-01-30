@@ -68,7 +68,6 @@ class AppsController < WebsiteController
     if params[:state] == 'live' && params[:app][:store_id].present?
       unless @app.update_from_store({ :store_id => params[:app][:store_id], :country => params[:app_country] })
         flash.now[:error] = "Grabbing app data from app store failed. Please try again."
-        @app_metadata = @app.primary_app_metadata
         render :action => "show"
         return
       end
@@ -79,7 +78,6 @@ class AppsController < WebsiteController
       redirect_to(@app)
     else
       flash.now[:error] = 'Update unsuccessful.'
-      @app_metadata = @app.primary_app_metadata
       render :action => "show"
     end
   end
