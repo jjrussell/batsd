@@ -232,7 +232,8 @@
       var showErrorDialog = function(error, hideTransitionDialog) {
         var msg = [
           '<div class="dialog_header_wrapper"><div class="dialog_header_right"></div><div class="dialog_header_left"></div><div class="dialog_title title_2">'+_t('games.oops')+'</div></div>',
-          '<div class="dialog_content">', error, '. <span id="invite_again"><a href="#">'+_t('games.click_to_try_again')+'</a></span><div style="margin: 5px;"></div></div>',
+          '<div class="dialog_content">', error, '.</div>',
+          '<div id="invite_again" class="button red">'+_t('shared.try_again')+'</div><div style="margin: 5px;"></div>',
         ].join('');
         $('#social_dialog_content').parent().animate({}, animateSpeed);
         $('#social_dialog_content').html(msg);
