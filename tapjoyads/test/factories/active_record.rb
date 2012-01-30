@@ -7,11 +7,17 @@ FactoryGirl.define do
   end
 
   factory :admin, :parent => :user do
-    after_build  { |a| a.user_roles << UserRole.find_or_create_by_name('admin') }
+    after_build  do |admin|
+      role = UserRole.find_or_create_by_name('admin', :employee => true)
+      admin.user_roles << role
+    end
   end
 
   factory :account_mgr_user, :parent => :user do
-    after_build  { |a| a.user_roles << UserRole.find_or_create_by_name('account_mgr') }
+    after_build do |account_mgr|
+      role = UserRole.find_or_create_by_name('account_mgr', :employee => true)
+      account_mgr.user_roles << role
+    end
   end
 
   factory :agency_user, :parent => :user do
@@ -197,11 +203,5 @@ FactoryGirl.define do
   factory :survey_offer do
     bid_price 0
     name 'short survey 1'
-  end
-
-  factory :creative_approval_queue do
-    association :user
-    offer       { Factory(:app).primary_offer }
-    size        '320x50'
   end
 end
