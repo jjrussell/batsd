@@ -50,14 +50,12 @@ class FeaturedContent < ActiveRecord::Base
     end
   end
 
-  def self.featured_contents_with_country_targeting(geoip_data, device)
+  def self.with_country_targeting(geoip_data, device)
     featured_contents = FeaturedContent.featured_contents(device.try(:platform))
     featured_contents.delete_if do |fc|
-      if fc.tracking_offer && device
-        fc.tracking_offer.geoip_reject?(geoip_data, device)
-      else
-        false
-      end
+      !!fc.tracking_offer &&
+      !!device &&
+      fc.tracking_offer.geoip_reject?(geoip_data, device)
     end
   end
 
@@ -119,12 +117,23 @@ class FeaturedContent < ActiveRecord::Base
     end
   end
 
-  def tracking_url(geoip_data, device, device_name, gamer_id, language_code, display_multiplier, library_version)
+  def tracking_url(options = {})
+    geoip_data         = options.delete(:geoip_data)         { |k| raise "#{k} is a required argument" }
+    device             = options.delete(:device)             { |k| raise "#{k} is a required argument" }
+    device_name        = options.delete(:device_name)        { |k| raise "#{k} is a required argument" }
+    gamer_id           = options.delete(:gamer_id)           { nil }
+    language_code      = options.delete(:language_code)      { nil }
+    display_multiplier = options.delete(:display_multiplier) { nil }
+    library_version    = options.delete(:library_version)    { nil }
+    raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
+
+    currency = Currency.find(:first)
+
     click_url = tracking_offer.click_url(
       :publisher_app      => tracking_offer.item,
       :publisher_user_id  => "",
       :udid               => device.id,
-      :currency_id        => Currency.find(:first).id,
+      :currency_id        => currency.id,
       :source             => 'tj_games',
       :app_version        => "",
       :viewed_at          => Time.zone.now,
@@ -137,15 +146,15 @@ class FeaturedContent < ActiveRecord::Base
       :gamer_id           => gamer_id)
 
     if tracking_offer.item_type == 'VideoOffer' || tracking_offer.item_type == 'TestVideoOffer'
-      if @publisher_app.platform == 'windows'
+      if tracking_offer.item.platform == 'windows'
         prefix = "http://tjvideo.tjvideo.com/tjvideo?"
       else
         prefix = "tjvideo://"
       end
       params = {
         :video_id => offer.id,
-        :amount => @currency.get_visual_reward_amount(offer, display_multiplier),
-        :currency_name => @currency.name,
+        :amount => currency.get_visual_reward_amount(offer, display_multiplier),
+        :currency_name => currency.name,
         :click_url => click_url
       }
       "#{prefix}#{params.to_query}"

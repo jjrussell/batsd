@@ -16,7 +16,7 @@
                 .app_rating.hide{ :rating => app.user_rating }
         %div
         - if @featured_content.button_url.present?
-          - link_to(@featured_content.tracking_url(@geoip_data, @device, @device_name, current_gamer.id, params[:language_code], params[:display_multiplier], params[:library_version])) do
+          - link_to(@featured_content.tracking_url(:geoip_data => @geoip_data, :device => @device, :device_name => @device_name, :gamer_id => current_gamer.id, :language_code => params[:language_code], :display_multiplier => params[:display_multiplier], :library_version => params[:library_version])) do
             .button.grey
               = @featured_content.button_text
 
@@ -49,7 +49,7 @@
                 .app_rating.hide{ :rating => app.user_rating }
         %div
         - if @featured_content.button_url.present?
-          - link_to(@featured_content.tracking_url(@geoip_data, @device, @device_name, current_gamer.id, params[:language_code], params[:display_multiplier], params[:library_version])) do
+          - link_to(@featured_content.tracking_url(:geoip_data => @geoip_data, :device => @device, :device_name => @device_name, :gamer_id => current_gamer.id, :language_code => params[:language_code], :display_multiplier => params[:display_multiplier], :library_version => params[:library_version])) do
             .button.grey
               = @featured_content.button_text
 
@@ -67,7 +67,7 @@
             = @featured_content.title
           %div
           - if @featured_content.button_url.present?
-            - link_to(@featured_content.tracking_url(@geoip_data, @device, @device_name, current_gamer.id, params[:language_code], params[:display_multiplier], params[:library_version])) do
+            - link_to(@featured_content.tracking_url(:geoip_data => @geoip_data, :device => @device, :device_name => @device_name, :gamer_id => current_gamer.id, :language_code => params[:language_code], :display_multiplier => params[:display_multiplier], :library_version => params[:library_version])) do
               .button.grey
                 = @featured_content.button_text
 

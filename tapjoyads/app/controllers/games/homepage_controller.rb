@@ -27,7 +27,7 @@ class Games::HomepageController < GamesController
         @offerwall_external_publisher = ExternalPublisher.new(currency) if @show_offerwall
       end
       @geoip_data = get_geoip_data
-      featured_contents = FeaturedContent.featured_contents_with_country_targeting(@geoip_data, @device)
+      featured_contents = FeaturedContent.with_country_targeting(@geoip_data, @device)
       @featured_content = featured_contents.weighted_rand(featured_contents.map(&:weight))
     end
 

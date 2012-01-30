@@ -130,7 +130,7 @@ describe FeaturedContent do
     end
   end
 
-  describe '.featured_contents_with_country_targeting' do
+  describe '.with_country_targeting' do
     before :each do
       @featured_content.update_attributes({ :button_url => "test_url" })
 
@@ -155,7 +155,7 @@ describe FeaturedContent do
       end
 
       it 'returns featured content within country targeting' do
-        featured_contents = FeaturedContent.featured_contents_with_country_targeting(@geoip_data, @device)
+        featured_contents = FeaturedContent.with_country_targeting(@geoip_data, @device)
         featured_contents.size.should == 1
       end
     end
