@@ -18,6 +18,8 @@ class GamerReview < ActiveRecord::Base
   delegate :get_gamer_name, :to => :author, :prefix => true
 
   def update_app_rating_counts(prev_rating)
+    return true if self.user_rating == prev_rating
+
     if self.user_rating > 0
       self.app.thumb_up_count += 1
       self.app.thumb_down_count -= 1 if prev_rating < 0

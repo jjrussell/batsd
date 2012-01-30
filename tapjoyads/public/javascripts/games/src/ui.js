@@ -1046,20 +1046,22 @@ TJG.ui = {
     $(".gamer_overall_rating").each(function (n,o) {
       var rating = $(this).attr("rating");
       var threshold = $(this).attr("threshold");
+      var total = $(this).attr("total");
+      var plural = total > 1 ? 's' : '';
       var t = [];
       if (rating) {
         rating = parseFloat(rating);
       }
       if (threshold) {
-        threshold = parseFloat(threshold);
+        threshold = parseFloat(threshold) * 100;
       }
       if (rating > threshold) {
         t.push('<span class="thumb_up on left"></span>');
-        t.push('<span>'+ rating +'%</span>');
+        t.push('<span>'+ rating +'% of ' + total + ' review' + plural + '</span>');
       }
       else {
         t.push('<span class="thumb_down on left"></span>');
-        t.push('<span>'+ (100 - rating) +'%</span>');
+        t.push('<span>'+ (100 - rating) +'% of ' + total + ' review' + plural + '</span>');
       }
       $(this).html(t.join('')).fadeIn("slow");
     });

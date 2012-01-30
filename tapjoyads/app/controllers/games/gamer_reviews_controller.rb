@@ -22,7 +22,8 @@ class Games::GamerReviewsController < GamesController
       flash[:notice] = 'App review was successfully created.'
       redirect_to new_games_gamer_review_path(:app_id => params[:gamer_review][:app_id])
     else
-      flash.now[:notice] = 'You have reviewed this app.'
+      flash.now[:notice] = 'You have already reviewed this app.'
+      @gamer_reviews = GamerReview.find_all_by_app_id(@app.id).paginate(:page => params[:gamer_reviews_page], :per_page => 10)
       render :action => :new
     end
   end
