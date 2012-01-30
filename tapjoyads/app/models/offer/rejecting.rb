@@ -123,7 +123,7 @@ module Offer::Rejecting
   end
 
   def geoip_reject?(geoip_data, mobile_country_code = '')
-    return true if mobile_country_codes.present? && mobile_country_codes != '[]' && moblie_country_code.present? && !get_mobile_country_codes.include?(mobile_country_code)
+    return true if mobile_country_codes.present? && mobile_country_codes != '[]' && mobile_country_code.present? && !get_mobile_country_codes.include?(mobile_country_code)
     return true if countries.present? && countries != '[]' && !get_countries.include?(geoip_data[:country])
     return true if geoip_data[:country] && get_countries_blacklist.include?(geoip_data[:country].to_s.upcase)
     return true if regions.present? && regions != '[]' && !get_regions.include?(geoip_data[:region])
