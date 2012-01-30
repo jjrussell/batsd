@@ -49,7 +49,6 @@ class Countries
     @@contintent_code_to_country_codes
   end
 
-
   def self.country_code_to_mobile_country_codes
     return @country_code_to_mobile_country_codes if defined?(@country_code_to_mobile_country_codes)
     @country_code_to_mobile_country_codes = {
