@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120124191839) do
+ActiveRecord::Schema.define(:version => 20120127132405) do
 
   create_table "action_offers", :id => false, :force => true do |t|
     t.string   "id",                    :limit => 36,                    :null => false
@@ -117,6 +117,21 @@ ActiveRecord::Schema.define(:version => 20120124191839) do
   add_index "apps", ["id"], :name => "index_apps_on_id", :unique => true
   add_index "apps", ["name"], :name => "index_apps_on_name"
   add_index "apps", ["partner_id"], :name => "index_apps_on_partner_id"
+
+  create_table "carriers", :id => false, :force => true do |t|
+    t.string   "id",            :limit => 36, :null => false
+    t.string   "brand",                       :null => false
+    t.string   "operator",                    :null => false
+    t.string   "country",                     :null => false
+    t.text     "mccmnc_tuples",               :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "carriers", ["brand"], :name => "index_carriers_on_brand"
+  add_index "carriers", ["country"], :name => "index_carriers_on_country"
+  add_index "carriers", ["id"], :name => "index_carriers_on_id", :unique => true
+  add_index "carriers", ["operator"], :name => "index_carriers_on_operator"
 
   create_table "conversions", :id => false, :force => true do |t|
     t.string   "id",                     :limit => 36, :null => false
@@ -627,7 +642,10 @@ ActiveRecord::Schema.define(:version => 20120124191839) do
     t.boolean  "wifi_only",                                                                     :default => false, :null => false
     t.text     "approved_banner_creatives"
     t.text     "approved_sources",                                                                                 :null => false
+    t.text     "carrier_mccmnc_tuples",                                                                            :null => false
+    t.text     "carrier_ids",                                                                                      :null => false
     t.boolean  "sdkless",                                                                       :default => false
+    t.text     "mobile_country_codes",                                                                             :null => false
   end
 
   add_index "offers", ["id"], :name => "index_offers_on_id", :unique => true

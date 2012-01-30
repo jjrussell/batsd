@@ -19,6 +19,7 @@ class OfferList
     @platform_name              = options.delete(:platform_name)
     @video_offer_ids            = options.delete(:video_offer_ids) { [] }
     @all_videos                 = options.delete(:all_videos) { false }
+    @mobile_country_code        = options.delete(:mobile_country_code) || ''
 
     @hide_rewarded_app_installs = @currency ? @currency.hide_rewarded_app_installs_for_version?(@app_version, @source) : false
     @normalized_device_type     = Device.normalize_device_type(@device_type)
@@ -117,7 +118,7 @@ class OfferList
   def postcache_reject?(offer)
     offer.postcache_reject?(@publisher_app, @device, @currency, @device_type, @geoip_data, @app_version,
       @direct_pay_providers, @type, @hide_rewarded_app_installs, @library_version, @os_version, @screen_layout_size,
-      @video_offer_ids, @source, @all_videos)
+      @video_offer_ids, @source, @all_videos, @mobile_country_code)
   end
 
 end
