@@ -27,8 +27,10 @@ class Job::MasterReloadStatzController < Job::JobController
   end
 
   def devices_count
-    count = SimpledbResource.count(:domain_name => "devices_#{rand(NUM_DEVICES_DOMAINS)}") * NUM_DEVICES_DOMAINS
+    count = Device.count
     Mc.put('statz.devices_count', count)
+
+    render :text => 'ok'
   end
 
   private
@@ -172,6 +174,11 @@ class Job::MasterReloadStatzController < Job::JobController
     partner_stats['est_gross_revenue'] = NumberHelper.number_to_currency(stats['total_revenue'].sum / 100.0 / partner.rev_share)
     partner_stats['total_revenue']     = NumberHelper.number_to_currency(stats['total_revenue'].sum / 100.0)
     partner_stats['rev_share']         = NumberHelper.number_to_percentage(partner.rev_share * 100.0, :precision => 1)
+    if stats['arpdau'].present?
+      partner_stats['arpdau']          = NumberHelper.number_to_currency((stats['arpdau'].sum / 100.0) / (stats['arpdau'].length), :precision => 4)
+    else
+      partner_stats['arpdau']          = '-'
+    end
 
     partner_stats['offerwall_views'] = NumberHelper.number_with_delimiter(stats['offerwall_views'].sum)
     partner_stats['featured_views']  = NumberHelper.number_with_delimiter(stats['featured_offers_shown'].sum)
