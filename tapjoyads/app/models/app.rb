@@ -3,8 +3,8 @@ class App < ActiveRecord::Base
   acts_as_cacheable
   json_set_field :countries_blacklist
 
-  ALLOWED_PLATFORMS = { 'android' => 'Android', 'iphone' => 'iOS' }
-  BETA_PLATFORMS    = { 'windows' => 'Windows Phone' }
+  ALLOWED_PLATFORMS = { 'android' => 'Android', 'iphone' => 'iOS', 'windows' => 'Windows Phone' }
+  BETA_PLATFORMS    = {}
   PLATFORMS         = ALLOWED_PLATFORMS.merge(BETA_PLATFORMS)
   APPSTORE_COUNTRIES_OPTIONS = GeoIP::CountryName.zip(GeoIP::CountryCode).select do |name, code|
       code.match(/[a-z]{2}/i)
@@ -104,10 +104,6 @@ class App < ActiveRecord::Base
 
   def is_ipad_only?
     supported_devices? && JSON.load(supported_devices).all?{ |i| i.match(/^ipad/i) }
-  end
-
-  def large_download?
-    file_size_bytes.to_i > 20971520
   end
 
   def recently_released?
@@ -256,7 +252,8 @@ class App < ActiveRecord::Base
   end
 
   def wifi_required?
-    !!(file_size_bytes && file_size_bytes > PLATFORM_DETAILS[platform][:cell_download_limit_bytes])
+    download_limit = PLATFORM_DETAILS[platform][:cell_download_limit_bytes]
+    !!(file_size_bytes && file_size_bytes > download_limit)
   end
 
 private

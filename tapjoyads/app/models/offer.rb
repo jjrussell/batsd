@@ -85,6 +85,7 @@ class Offer < ActiveRecord::Base
   belongs_to :partner
   belongs_to :item, :polymorphic => true
   belongs_to :reseller
+  belongs_to :app, :foreign_key => "item_id", :conditions => ['item_type = ?', 'App']
   belongs_to :action_offer, :foreign_key => "item_id", :conditions => ['item_type = ?', 'ActionOffer']
 
   validates_presence_of :reseller, :if => Proc.new { |offer| offer.reseller_id? }
@@ -604,30 +605,7 @@ class Offer < ActiveRecord::Base
   end
 
   def min_bid
-    return min_bid_override if min_bid_override
-
-    if item_type == 'App'
-      if featured? && rewarded?
-        is_paid? ? price : 65
-      elsif !rewarded?
-        100
-      else
-        is_paid? ? (price * 0.50).round : 35
-        # uncomment for tapjoy premier & change show.html line 92-ish
-        # is_paid? ? (price * 0.65).round : 50
-      end
-    elsif item_type == 'ActionOffer'
-      if is_paid?
-        (price * 0.50).round
-      else
-        platform = App::PLATFORMS.index(get_platform)
-        platform.nil? ? 35 : App::PLATFORM_DETAILS[platform][:min_action_offer_bid]
-      end
-    elsif item_type == 'VideoOffer'
-      15
-    else
-      0
-    end
+    min_bid_override || calculated_min_bid
   end
 
   def max_bid
@@ -744,6 +722,29 @@ class Offer < ActiveRecord::Base
   end
 
   private
+  def calculated_min_bid
+    if item_type == 'App'
+      if featured? && rewarded?
+        is_paid? ? price : 65
+      elsif !rewarded?
+        100
+      else
+        is_paid? ? (price * 0.50).round : 10
+      end
+    elsif item_type == 'ActionOffer'
+      if is_paid?
+        (price * 0.50).round
+      else
+        platform = App::PLATFORMS.index(get_platform)
+        platform.nil? ? 35 : App::PLATFORM_DETAILS[platform][:min_action_offer_bid]
+      end
+    elsif item_type == 'VideoOffer'
+      15
+    else
+      0
+    end
+  end
+
   def sync_creative_approval
     # Handle banners on this end
     banner_creatives.each do |size|

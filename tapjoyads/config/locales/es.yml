@@ -18,6 +18,7 @@ es:
       load_more: "Ver más ofertas"
       loading: "Cargando..."
       load_error: "Inténtalo otra vez."
+      wifi_required: "Wifi Required"
       wifi_warning: "This app requires a wifi connection to download."
 
     featured:
