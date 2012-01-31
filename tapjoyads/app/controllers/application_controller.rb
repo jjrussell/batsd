@@ -73,25 +73,27 @@ private
     end
   end
 
-  # header parsing resources:
-  # http://guides.rubyonrails.org/i18n.html#setting-the-locale-from-the-client-supplied-information
-  # https://github.com/iain/http_accept_language/blob/master/lib/http_accept_language.rb
   def get_http_accept_language
     # example env[HTTP_ACCEPT_LANGUAGE] string: es,en;q=0.8;en-US;q=0.6
-    @browser_preferred_languages ||= request.env['HTTP_ACCEPT_LANGUAGE'].split(/\s*,\s*/).map do |l|
+    language_list = request.env['HTTP_ACCEPT_LANGUAGE'].split(/\s*,\s*/).map do |l|
       l += ';q=1.0' unless l =~ /;q=\d+\.\d+$/
       l.split(';q=')
-    end.sort do |x,y|
-      raise "Not correctly formatted" unless x.first =~ /^[a-z\-]+$/i
-      y.last.to_f <=> x.last.to_f
-    end.map do |l|
-      l.first.downcase.gsub(/-[a-z]+$/i) do |i|
-        i.upcase
-      end
     end
 
-    available_strings = AVAILABLE_LOCALES.map {|i| i.to_s}
-    (@browser_preferred_languages & available_strings).first
+    prioritized_list = language_list.sort do |x,y|
+      raise "Not correctly formatted" unless x.first =~ /^[a-z\-]+$/i
+      y.last.to_f <=> x.last.to_f
+    end
+
+    formatted_list = prioritized_list.map do |l|
+      l.first.downcase.gsub(/-[a-z]+$/i) { |i| i.upcase }
+    end
+
+    available_list = AVAILABLE_LOCALES.map {|i| i.to_s}
+
+    valid_list = formatted_list & available_list
+
+    valid_list.first
   rescue # default to blank if header is malformed
     ""
   end
