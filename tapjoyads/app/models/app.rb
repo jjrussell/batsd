@@ -282,10 +282,14 @@ class App < ActiveRecord::Base
       # app currently has no app_metadata or associated with a different instance
       app_metadatas.delete_all
       app_metadata = AppMetadata.find_or_initialize_by_store_name_and_store_id(App::PLATFORM_DETAILS[platform][:store_name], app_store_id)
-      app_metadatas << app_metadata
-      self.store_id_changed = true
+      add_app_metadata(app_metadata)
     end
     app_metadata
+  end
+
+  def add_app_metadata(metadata)
+    app_metadatas << metadata
+    self.store_id_changed = true
   end
 
   def wifi_required?

@@ -291,7 +291,7 @@ describe Job::QueueSendCurrencyController do
 
     it 'should send offer data if currency says so' do
       app = Factory(:app)
-      app.app_metadatas << Factory(:app_metadata)
+      app.add_app_metadata(Factory(:app_metadata))
       app.reload.save!
       offer = app.primary_offer
 
