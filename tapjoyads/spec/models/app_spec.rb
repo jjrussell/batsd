@@ -19,6 +19,8 @@ describe App do
   # Check validations
   it { should validate_presence_of :partner }
   it { should validate_presence_of :name }
+  it { should validate_numericality_of :thumb_up_count }
+  it { should validate_numericality_of :thumb_down_count }
 
   context "An App" do
     before :each do
@@ -131,6 +133,32 @@ describe App do
     it 'should not have non-rewarded featured associations' do
       @app.primary_non_rewarded_featured_offer.should be_nil
       @app.non_rewarded_featured_offers.should be_empty
+    end
+  end
+
+  context '.total_thumbs_count' do
+    before :each do
+      @action_offer = Factory(:action_offer)
+      @app = @action_offer.app
+      @app.thumb_up_count   = 4
+      @app.thumb_down_count = 4
+    end
+
+    it 'equals 8' do
+      @app.total_thumbs_count.should == 8
+    end
+  end
+
+  context '.positive_thumbs_percentage' do
+    before :each do
+      @action_offer = Factory(:action_offer)
+      @app = @action_offer.app
+      @app.thumb_up_count   = 4
+      @app.thumb_down_count = 4
+    end
+
+    it 'equals 50' do
+      @app.positive_thumbs_percentage.should == 50
     end
   end
 end

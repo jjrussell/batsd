@@ -7,7 +7,7 @@ class GamerReview < ActiveRecord::Base
   before_save :copy_platform
   before_destroy :reset_app_rating_counts
 
-  validates_uniqueness_of :author_id, :scope => :app_id, :message => "has already reviewed this app"
+  validates_uniqueness_of :author_id, :scope => :app_id, :if => :app, :message => "has already reviewed this app"
   validates_presence_of :author, :app, :text
 
   named_scope :by_gamers, :conditions => { :author_type => 'Gamer' }
@@ -41,7 +41,7 @@ class GamerReview < ActiveRecord::Base
 
   def reset_app_rating_counts
     if self.user_rating > 0
-      app.thumb_up_count -=1
+      app.thumb_up_count -= 1
     elsif self.user_rating < 0
       app.thumb_down_count -= 1
     end

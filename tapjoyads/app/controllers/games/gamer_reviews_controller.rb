@@ -18,11 +18,18 @@ class Games::GamerReviewsController < GamesController
     @gamer_review.author = Gamer.find(params[:gamer_review][:author_id])
     @gamer_review.user_rating = params[:gamer_review][:user_rating].to_i != 0 ? params[:gamer_review][:user_rating].to_i : 0
 
-    if @gamer_review.save && @app.save && @gamer_review.update_app_rating_counts(0)
+    if GamerReview.find_by_author_id_and_app_id(current_gamer.id, params[:gamer_review][:app_id])
+      flash.now[:notice] = 'You have already reviewed this app.'
+      @gamer_reviews = GamerReview.find_all_by_app_id(@app.id).paginate(:page => params[:gamer_reviews_page], :per_page => 10)
+      render :action => :new
+      return
+    end
+
+    if @gamer_review.save && @gamer_review.update_app_rating_counts(0)
       flash[:notice] = 'App review was successfully created.'
       redirect_to new_games_gamer_review_path(:app_id => params[:gamer_review][:app_id])
     else
-      flash.now[:notice] = 'You have already reviewed this app.'
+      flash.now[:notice] = "There is a issue, please try again later."
       @gamer_reviews = GamerReview.find_all_by_app_id(@app.id).paginate(:page => params[:gamer_reviews_page], :per_page => 10)
       render :action => :new
     end

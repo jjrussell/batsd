@@ -22,7 +22,9 @@ class Tools::GamerReviewsController < WebsiteController
 
   def update
     @gamer_review = GamerReview.find(params[:id])
-    if @gamer_review.update_attributes(params[:gamer_review])
+    prev_rating = @gamer_review.user_rating ? @gamer_review.user_rating : 0
+
+    if @gamer_review.update_attributes(params[:gamer_review]) && @gamer_review.update_app_rating_counts(prev_rating)
       flash[:notice] = 'App review was successfully updated.'
       redirect_to tools_gamer_reviews_path(:app_id => @gamer_review.app_id)
     else
