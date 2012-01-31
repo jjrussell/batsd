@@ -1,7 +1,6 @@
-(function(w, me, customError, basicTemplate) {
-  var NUM_MAP = ["zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine"];
-
-  me = w.TJG.i18n || {};
+(function(w, customError, basicTemplate) {
+  var NUM_MAP = ["zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine"],
+    me = w.i18n || {};
 
   me.pluralize = function(words, count) {
     var result;
@@ -55,5 +54,5 @@
     return basicTemplate(result, args);
   };
 
-  w.TJG.i18n = me;
-}(this, TJG.i18n, TJG.utils.customError, TJG.utils.basicTemplate));
+  w.i18n = me;
+}(this, TJG.utils.customError, TJG.utils.basicTemplate));

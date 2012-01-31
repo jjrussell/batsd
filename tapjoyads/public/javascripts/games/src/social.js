@@ -1,5 +1,5 @@
 (function(TJG) {
-  var _t = TJG.i18n.t;
+  var _t = window.i18n.t;
   TJG.social = {
     setup: function(options){
       // local variables

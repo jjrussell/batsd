@@ -1,9 +1,0 @@
-:javascript
-  var TJG = typeof TJG === "object" ? TJG : {};
-  TJG.i18n = {};
-  TJG.i18n.locale = "#{I18n.locale}";
-  TJG.i18n.default_locale = "#{I18n.default_locale}";
-  TJG.i18n["#{I18n.default_locale}"] = #{I18n.t("text", :locale => I18n.default_locale).to_json};
-- if(I18n.default_locale != I18n.locale)
-  :javascript
-    TJG.i18n["#{I18n.locale}"] = #{I18n.t("text").to_json};

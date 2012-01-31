@@ -13,7 +13,7 @@ RegExp.escape = function(text) {
 
 (function(window, document) {
   // alias
-  var _t = TJG.i18n.t;
+  var _t = window.i18n.t;
 
     TJG.onload = {
 
