@@ -11,6 +11,9 @@ defaults: &defaults
   ]
   js_compile_out_file: 'tjgames.min'
 
+test:
+  <<: *defaults
+
 development:
   <<: *defaults
 

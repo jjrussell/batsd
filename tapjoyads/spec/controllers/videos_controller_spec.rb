@@ -1,6 +1,8 @@
 require 'spec_helper'
 
 describe VideosController do
+  integrate_views
+
   before(:all) do
     fake_the_web
     OfferCacher.stubs(:get_offer_list).returns([])
@@ -16,14 +18,13 @@ describe VideosController do
     }
   end
 
-  # Not sure why, but under this test the content_type is 'text/html' and no template is rendered. Works fine when env is dev
-  #describe '#index' do
-  #  it 'returns an XML list' do
-  #    get :index, @params
+  describe '#index' do
+    it 'returns an XML list' do
+      get :index, @params
 
-  #    @response.content_type.should == 'application/xml'
-  #  end
-  #end
+      @response.content_type.should == 'application/xml'
+    end
+  end
 
   describe '#complete' do
     before(:each) do
