@@ -72,7 +72,7 @@ describe App do
   end
 
   context "An App with a Non-Rewarded Featured Offer" do
-    before :all do
+    before :each do
       @app = Factory :app
       @new_offer = @app.primary_offer.create_non_rewarded_featured_clone
       @app.reload
@@ -96,7 +96,7 @@ describe App do
   end
 
   context "An App with a Rewarded Featured Offer" do
-    before :all do
+    before :each do
       @app = Factory :app
       @new_offer = @app.primary_offer.create_rewarded_featured_clone
       @app.reload
@@ -120,7 +120,7 @@ describe App do
   end
 
   context "An App with a Non-Rewarded Offer" do
-    before :all do
+    before :each do
       @app = Factory :app
       @new_offer = @app.primary_offer.create_non_rewarded_clone
       @app.reload

@@ -40,7 +40,7 @@
       - property_row('Overridden destination url', link_to('[url]', @offer.url))
     - else
       - property_row('Store id', link_to(@offer.item.store_id, @offer.item.info_url), nil, @offer.item.store_id.blank? ? 'incomplete' : nil)
-    - property_row('File size', number_to_human_size(@offer.item.file_size_bytes), nil, @offer.item.large_download? ? 'warning' : nil)
+    - property_row('File size', number_to_human_size(@offer.item.file_size_bytes), nil, @offer.item.wifi_required? ? 'warning' : nil)
     - unless @offer.item.user_rating.nil?
       - property_row('User rating', "#{@offer.item.user_rating} stars", nil, @offer.item.bad_rating? ? 'warning' : '')
     - unless @offer.item.categories.blank?
@@ -58,7 +58,10 @@
   - property_row('Countries', @offer.countries, '')
   - property_row('DMA Codes', @offer.dma_codes, '')
   - property_row('Regions', @offer.regions, '')
-  - property_row('Support Request to Awards', "#{link_to('View Ratio', '', :id => 'view_srr_ratio')}#{label_tag('', nil, :id => 'srr_ratio')}")
+  - if @srr_ratio
+    - property_row("Offer Health", "#{@srr_ratio}")
+  - else
+    - property_row('Offer Health', "#{label_tag('offer_health_text', 'Ratio of CS tickets to Successfully Rewarded Clicks', :id => 'offer_health_text')} #{link_to('Click to View', '', :id => 'view_srr_ratio')}#{label_tag('', nil, :id => 'srr_ratio')}")
   - property_row('Pay-per-click', @offer.pay_per_click?, false)
   - property_row('Device types', @offer.device_types, @offer.expected_device_types.to_json, @offer.wrong_platform? ? 'incomplete' : '')
   - if @offer.item_type == 'App' && @offer.item.platform == 'iphone' && @offer.item.supported_devices.present?
@@ -186,10 +189,11 @@
 
     $('#view_srr_ratio').click(function() {
       $('#view_srr_ratio').hide();
+      $('#offer_health_text').hide();
       $('#srr_ratio').text("Calculating...");
       $.ajax({
         type: "GET",
-        url: "#{support_request_reward_ratio_statz_url}/#{@offer.id}",
+        url: "#{support_request_reward_ratio_statz_url(@offer.id)}",
         success: function(html) {
           $('#srr_ratio').text(html);
         }

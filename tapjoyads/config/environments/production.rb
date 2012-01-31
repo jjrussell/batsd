@@ -27,10 +27,10 @@ config.action_controller.allow_forgery_protection    = false
 # Disable delivery errors, bad email addresses will be ignored
 # config.action_mailer.raise_delivery_errors = false
 
-MEMCACHE_SERVERS = [ 'tj-prod.fqfjqv.0001.use1.cache.amazonaws.com',
-                     'tj-prod.fqfjqv.0002.use1.cache.amazonaws.com',
-                     'tj-prod.fqfjqv.0003.use1.cache.amazonaws.com',
-                     'tj-prod.fqfjqv.0004.use1.cache.amazonaws.com' ]
+MEMCACHE_SERVERS = [ 'tj-production.fqfjqv.0001.use1.cache.amazonaws.com',
+                     'tj-production.fqfjqv.0002.use1.cache.amazonaws.com',
+                     'tj-production.fqfjqv.0003.use1.cache.amazonaws.com',
+                     'tj-production.fqfjqv.0004.use1.cache.amazonaws.com' ]
 
 EXCEPTIONS_NOT_LOGGED = ['ActionController::UnknownAction',
                          'ActionController::RoutingError']
@@ -62,6 +62,7 @@ NUM_POINT_PURCHASES_DOMAINS = 10
 NUM_CLICK_DOMAINS = 50
 NUM_REWARD_DOMAINS = 50
 NUM_DEVICES_DOMAINS = 300
+NUM_DEVICE_IDENTIFIER_DOMAINS = 100
 NUM_GAME_STATE_DOMAINS = 300
 NUM_GAME_STATE_MAPPING_DOMAINS = 10
 NUM_PUBLISHER_USER_DOMAINS = 50

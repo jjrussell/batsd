@@ -19,6 +19,7 @@ class StatzController < WebsiteController
     @money_stats = Mc.distributed_get("statz.money.#{@timeframe}") || { :total => {}, :iphone => {}, :android  => {}, :tj_games => {} }
     @last_updated_start = Time.zone.at(Mc.get("statz.last_updated_start.#{@timeframe}") || 0)
     @last_updated_end = Time.zone.at(Mc.get("statz.last_updated_end.#{@timeframe}") || 0)
+    @devices_count = Mc.get('statz.devices_count') || 0
   end
 
   def udids
@@ -31,6 +32,11 @@ class StatzController < WebsiteController
   end
 
   def show
+    support_requests, rewards = @offer.cached_support_requests_rewards
+    if support_requests && rewards
+      @srr_ratio = support_request_ratio_text(support_requests, rewards)
+    end
+
     respond_to do |format|
       format.html do
         @associated_offers = @offer.find_associated_offers
@@ -48,9 +54,7 @@ class StatzController < WebsiteController
   def support_request_reward_ratio
     rewards = @offer.num_clicks_rewarded
     support_requests = @offer.num_support_requests
-    ratio = '-'
-    ratio = ("%.4f" % ( Float(support_requests) / rewards)) if rewards > 0
-    render :text => "Support Requests: #{support_requests}, Clicks Rewarded: #{rewards} ( #{ratio} )"
+    render :text => support_request_ratio_text(support_requests, rewards)
   end
 
   def update
@@ -116,26 +120,13 @@ class StatzController < WebsiteController
     load_partner_stats
   end
 
-  def gamez
-    Time.zone = 'UTC'
-    start_date = Time.zone.parse(params[:start_date].to_s)
-    end_date = Time.zone.parse(params[:end_date].to_s)
-
-    where_clause = "source = 'tj_games'"
-    where_clause += " and created >= '#{start_date.to_i}'" if start_date.present?
-    where_clause += " and created < '#{end_date.to_i}'" if end_date.present?
-
-    data = "created,created_date,publisher_app_id,advertiser_app_id,udid,publisher_amount,advertiser_amount,tapjoy_amount,currency_reward,r.country\n"
-    NUM_REWARD_DOMAINS.times do |i|
-      Reward.select(:domain_name => "rewards_#{i}", :where => where_clause) do |r|
-        data += "#{r.created.to_s},#{r.created.to_date.to_s},#{r.publisher_app_id},#{r.advertiser_app_id},#{r.udid},#{r.publisher_amount},#{r.advertiser_amount},#{r.tapjoy_amount},#{r.currency_reward},#{r.country}\n"
-      end
-    end
-
-    send_data(data, :type => 'text/csv', :filename => "tj-games-conversions_#{Time.zone.now.to_s}.csv")
-  end
-
   private
+
+  def support_request_ratio_text(support_requests, rewards)
+    ratio = '-'
+    ratio = ("%.4f" % ( Float(support_requests) / rewards)) if rewards > 0
+    "Support Requests: #{support_requests}, Clicks Rewarded: #{rewards} ( #{ratio} )"
+  end
 
   def find_offer
     @offer = Offer.find_by_id(params[:id])

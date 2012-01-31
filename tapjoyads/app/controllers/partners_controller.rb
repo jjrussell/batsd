@@ -67,6 +67,9 @@ class PartnersController < WebsiteController
   def edit
   end
 
+  def show
+  end
+
   def update
     log_activity(@partner)
 
@@ -130,9 +133,16 @@ class PartnersController < WebsiteController
   end
 
   def new_transfer
+    @freeze_enabled = PayoutFreeze.enabled?
   end
 
   def create_transfer
+    if PayoutFreeze.enabled?
+      flash[:error] = 'Transfers are currently disabled.'
+      redirect_to :action => :new_transfer
+      return
+    end
+
     sanitized_params = sanitize_currency_params(params, [ :transfer_amount ])
     amount = sanitized_params[:transfer_amount].to_i
     Partner.transaction do

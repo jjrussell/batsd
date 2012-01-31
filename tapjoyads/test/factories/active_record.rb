@@ -7,11 +7,17 @@ FactoryGirl.define do
   end
 
   factory :admin, :parent => :user do
-    after_build  { |a| a.user_roles << UserRole.find_or_create_by_name('admin') }
+    after_build  do |admin|
+      role = UserRole.find_or_create_by_name('admin', :employee => true)
+      admin.user_roles << role
+    end
   end
 
   factory :account_mgr_user, :parent => :user do
-    after_build  { |a| a.user_roles << UserRole.find_or_create_by_name('account_mgr') }
+    after_build do |account_mgr|
+      role = UserRole.find_or_create_by_name('account_mgr', :employee => true)
+      account_mgr.user_roles << role
+    end
   end
 
   factory :agency_user, :parent => :user do
