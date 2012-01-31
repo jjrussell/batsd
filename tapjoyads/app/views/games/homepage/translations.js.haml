@@ -1,0 +1,9 @@
+(function(w) {
+w.i18n = w.i18n || {};
+w.i18n = {};
+w.i18n.locale = "#{I18n.locale}";
+w.i18n.default_locale = "#{I18n.default_locale}";
+w.i18n["#{I18n.default_locale}"] = #{I18n.t("text", :locale => I18n.default_locale).to_json};
+- if(I18n.default_locale != I18n.locale)
+  w.i18n["#{I18n.locale}"] = #{I18n.t("text").to_json};
+}(this));
