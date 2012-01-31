@@ -1,6 +1,6 @@
 class AddFeaturedContentIdToOffers < ActiveRecord::Migration
   def self.up
-    add_guid_column :offers, :featured_content_id, :null => true, :default => nil
+    add_guid_column :offers, :featured_content_id
     add_index :offers, :featured_content_id, :unique => true
   end
 

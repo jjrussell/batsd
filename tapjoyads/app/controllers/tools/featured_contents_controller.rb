@@ -61,7 +61,7 @@ class Tools::FeaturedContentsController < WebsiteController
     @featured_content = FeaturedContent.find(params[:id])
     @employees = Employee.active_by_first_name
     if @featured_content.offer
-      @search_result_name = @featured_content.offer.search_result_name #Offer.find_in_cache(@featured_content.offer_id).search_result_name
+      @search_result_name = @featured_content.offer.search_result_name
     end
   end
 

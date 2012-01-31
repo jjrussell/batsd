@@ -22,82 +22,157 @@ describe FeaturedContent do
     it { should validate_presence_of :end_date }
     it { should validate_presence_of :weight }
 
-    it "throws an error if the platforms is blank" do
-      @featured_content.platforms = nil
-      @featured_content.should_not be_valid
-      @featured_content.errors.on(:platforms).should == "is not valid JSON"
-    end
+    describe '#valid?' do
+      context 'when platforms is blank' do
+        before :each do
+          @featured_content.platforms = nil
+        end
 
-    context 'without author' do
-      before :each do
-        @featured_content.update_attributes({ :author => nil })
+        it "returns false" do
+          @featured_content.valid?.should be_false
+        end
+
+        it "sets an error message" do
+          @featured_content.valid?
+          @featured_content.errors.on(:platforms).should == "is not valid JSON"
+        end
       end
 
-      it "throws an error if the featured_type is 'STAFFPICK'" do
-        @featured_content.update_attributes({ :featured_type => FeaturedContent::TYPES_MAP[FeaturedContent::STAFFPICK] })
+      context 'when author is nil' do
+        before :each do
+          @featured_content.update_attributes({ :author => nil })
+        end
 
-        @featured_content.should_not be_valid
-        @featured_content.errors.on(:author).should == "Please select an author."
+        context "when the featured_type is 'STAFFPICK'" do
+          before :each do
+            @featured_content.update_attributes({ :featured_type => FeaturedContent::TYPES_MAP[FeaturedContent::STAFFPICK] })
+          end
+
+          it "returns false" do
+            @featured_content.valid?.should be_false
+          end
+
+          it "sets an error message" do
+            @featured_content.valid?
+            @featured_content.errors.on(:author).should == "Please select an author."
+          end
+        end
+
+        context "when the featured_type is 'PROMO'" do
+          before :each do
+            @featured_content.update_attributes({ :featured_type => FeaturedContent::TYPES_MAP[FeaturedContent::PROMO] })
+          end
+
+          it "returns true" do
+            @featured_content.valid?.should be_true
+          end
+
+          it "sets no error message" do
+            @featured_content.valid?
+            @featured_content.errors.on(:author).should == nil
+          end
+        end
+
+        context "when the featured_type is 'NEWS'" do
+          before :each do
+            @featured_content.update_attributes({ :featured_type => FeaturedContent::TYPES_MAP[FeaturedContent::NEWS] })
+          end
+
+          it "returns false" do
+            @featured_content.valid?.should be_false
+          end
+
+          it "sets an error message" do
+            @featured_content.valid?
+            @featured_content.errors.on(:author).should == "Please select an author."
+          end
+        end
+
+        context "when the featured_type is 'CONTEST'" do
+          before :each do
+            @featured_content.update_attributes({ :featured_type => FeaturedContent::TYPES_MAP[FeaturedContent::CONTEST] })
+          end
+
+          it "returns false" do
+            @featured_content.valid?.should be_false
+          end
+
+          it "sets an error message" do
+            @featured_content.valid?
+            @featured_content.errors.on(:author).should == "Please select an author."
+          end
+        end
       end
 
-      it "throws no error if the featured_type is 'PROMO'" do
-        @featured_content.update_attributes({ :featured_type => FeaturedContent::TYPES_MAP[FeaturedContent::PROMO] })
+      context 'when offer is nil' do
+        before :each do
+          @featured_content.update_attributes({ :offer => nil })
+        end
 
-        @featured_content.should be_valid
-        @featured_content.errors.on(:author).should == nil
-      end
+        context "when the featured_type is 'STAFFPICK'" do
+          before :each do
+            @featured_content.update_attributes({ :featured_type => FeaturedContent::TYPES_MAP[FeaturedContent::STAFFPICK] })
+          end
 
-      it "throws an error if the featured_type is 'NEWS'" do
-        @featured_content.update_attributes({ :featured_type => FeaturedContent::TYPES_MAP[FeaturedContent::NEWS] })
+          it "returns false" do
+            @featured_content.valid?.should be_false
+          end
 
-        @featured_content.should_not be_valid
-        @featured_content.errors.on(:author).should == "Please select an author."
-      end
+          it "sets an error message" do
+            @featured_content.valid?
+            @featured_content.errors.on(:offer).should == "Please select an offer/app."
+          end
+        end
 
-      it "throws an error if the featured_type is 'CONTEST'" do
-        @featured_content.update_attributes({ :featured_type => FeaturedContent::TYPES_MAP[FeaturedContent::CONTEST] })
+        context "when the featured_type is 'PROMO'" do
+          before :each do
+            @featured_content.update_attributes({ :featured_type => FeaturedContent::TYPES_MAP[FeaturedContent::PROMO] })
+          end
 
-        @featured_content.should_not be_valid
-        @featured_content.errors.on(:author).should == "Please select an author."
-      end
-    end
+          it "returns false" do
+            @featured_content.valid?.should be_false
+          end
 
-    context 'without offer' do
-      before :each do
-        @featured_content.update_attributes({ :offer => nil })
-      end
+          it "sets an error message" do
+            @featured_content.valid?
+            @featured_content.errors.on(:offer).should == "Please select an offer/app."
+          end
+        end
 
-      it "throws an error if the featured_type is 'STAFFPICK'" do
-        @featured_content.update_attributes({ :featured_type => FeaturedContent::TYPES_MAP[FeaturedContent::STAFFPICK] })
+        context "when the featured_type is 'NEWS'" do
+          before :each do
+            @featured_content.update_attributes({ :featured_type => FeaturedContent::TYPES_MAP[FeaturedContent::NEWS] })
+          end
 
-        @featured_content.should_not be_valid
-        @featured_content.errors.on(:offer).should == "Please select an offer/app."
-      end
+          it "returns true" do
+            @featured_content.valid?.should be_true
+          end
 
-      it "throws an error if the featured_type is 'PROMO'" do
-        @featured_content.update_attributes({ :featured_type => FeaturedContent::TYPES_MAP[FeaturedContent::PROMO] })
+          it "sets no error message" do
+            @featured_content.valid?
+            @featured_content.errors.on(:offer).should == nil
+          end
+        end
 
-        @featured_content.should_not be_valid
-        @featured_content.errors.on(:offer).should == "Please select an offer/app."
-      end
+        context "when the featured_type is 'CONTEST'" do
+          before :each do
+            @featured_content.update_attributes({ :featured_type => FeaturedContent::TYPES_MAP[FeaturedContent::CONTEST] })
+          end
 
-      it "throws no error if the featured_type is 'NEWS'" do
-        @featured_content.update_attributes({ :featured_type => FeaturedContent::TYPES_MAP[FeaturedContent::NEWS] })
+          it "returns true" do
+            @featured_content.valid?.should be_true
+          end
 
-        @featured_content.should be_valid
-        @featured_content.errors.on(:offer).should == nil
-      end
-
-      it "throws no error if the featured_type is 'CONTEST'" do
-        @featured_content.update_attributes({ :featured_type => FeaturedContent::TYPES_MAP[FeaturedContent::CONTEST] })
-
-        @featured_content.should be_valid
-        @featured_content.errors.on(:offer).should == nil
+          it "sets no error message" do
+            @featured_content.valid?
+            @featured_content.errors.on(:offer).should == nil
+          end
+        end
       end
     end
   end
 
-  describe '.create_tracking_offer' do
+  describe '#create_tracking_offer' do
     context 'when button_url does not exist' do
       it "doesn't create any tracking offer" do
         @featured_content.tracking_offer.should be_nil
@@ -111,21 +186,45 @@ describe FeaturedContent do
 
       it "creates a tracking offer" do
         @featured_content.tracking_offer.should be_present
+      end
+
+      it "sets the tracking_offer's name as 'title_subtitle'" do
         @featured_content.tracking_offer.name.should == "#{@featured_content.title}_#{@featured_content.subtitle}"
+      end
+
+      it "sets the tracking_offer's url with button_url value" do
         @featured_content.tracking_offer.url.should == @featured_content.button_url
+      end
+
+      it "sets the tracking_offer's device_types with platforms value" do
         @featured_content.tracking_offer.device_types.should == @featured_content.platforms
+      end
+
+      it "sets the tracking_offer's third_party_data with id value" do
         @featured_content.tracking_offer.third_party_data == @featured_content.id
+      end
+
+      it "sets the tracking_offer's rewarded to be false" do
         @featured_content.tracking_offer.rewarded.should be_false
+      end
+
+      it "sets the tracking_offer's fc_tracking to be true" do
         @featured_content.tracking_offer.fc_tracking.should be_true
       end
 
-      it "update a tracking offer" do
-        old_title = "#{@featured_content.title}_#{@featured_content.subtitle}"
-        @featured_content.tracking_offer.name.should == old_title
+      context 'when updating a tracking offer' do
+        before :each do
+          @old_title = "#{@featured_content.title}_#{@featured_content.subtitle}"
+          @featured_content.update_attributes({ :title => "new_title" })
+        end
 
-        @featured_content.update_attributes({ :title => "new_title" })
-        @featured_content.tracking_offer.name.should_not == old_title
-        @featured_content.tracking_offer.name.should == "#{@featured_content.title}_#{@featured_content.subtitle}"
+        it "doesn't keep the old title" do
+          @featured_content.tracking_offer.name.should_not == @old_title
+        end
+
+        it "updates the tracking_offer's name with new title" do
+          @featured_content.tracking_offer.name.should == "#{@featured_content.title}_#{@featured_content.subtitle}"
+        end
       end
     end
   end
@@ -136,7 +235,7 @@ describe FeaturedContent do
 
       @featured_content2 = Factory(:featured_content)
       @featured_content2.update_attributes({ :button_url => "test_url" })
-      @featured_content2.tracking_offer.countries = ["GL","GD","GP","GT","GY"].to_json
+      @featured_content2.tracking_offer.countries = %w( GL GD GP GT GY ).to_json
       @featured_content2.tracking_offer.save!
       @featured_content2.reload
 
@@ -185,5 +284,4 @@ describe FeaturedContent do
       end
     end
   end
-
 end
