@@ -178,7 +178,8 @@ class Offer < ActiveRecord::Base
   named_scope :non_rewarded, :conditions => "NOT rewarded"
   named_scope :rewarded, :conditions => "rewarded"
   named_scope :featured, :conditions => { :featured => true }
-  named_scope :free_apps, :conditions => { :item_type => 'App', :price => 0 }
+  named_scope :apps, :conditions => { :item_type => 'App' }
+  named_scope :free, :conditions => { :price => 0 }
   named_scope :nonfeatured, :conditions => { :featured => false }
   named_scope :visible, :conditions => { :hidden => false }
   named_scope :to_aggregate_hourly_stats, lambda { { :conditions => [ "next_stats_aggregation_time < ?", Time.zone.now ], :select => :id } }
