@@ -266,24 +266,29 @@ describe Offer do
     end
   end
 
-  describe '#valid' do
+  describe '#valid?' do
     context "when SDK-less is enabled" do
       before :each do
         @offer.sdkless = true
       end
 
       it "allows Android-only offers" do
-        @offer.device_types = "[\"android\"]"
+        @offer.device_types = %w( android ).to_json
         @offer.should be_valid
       end
 
       it "disallows non-Android offers" do
-        @offer.device_types = "[\"iphone\",\"itouch\",\"ipad\"]"
+        @offer.device_types = %w( iphone ipad itouch ).to_json
         @offer.should_not be_valid
       end
 
       it "disallows multi-platform offers" do
-        @offer.device_types = "[\"android\",\"iphone\",\"itouch\",\"ipad\"]"
+        @offer.device_types = %w( android iphone ipad itouch ).to_json
+        @offer.should_not be_valid
+      end
+
+      it "disallows pay-per-click offers" do
+        @offer.pay_per_click = true
         @offer.should_not be_valid
       end
     end

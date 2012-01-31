@@ -197,6 +197,16 @@ class Device < SimpledbShardedResource
     end
   end
 
+  # If we're handling an SDK-less app offer, add it to the sdkless_clicks column on the Device model
+  def handle_sdkless_click!(offer, timestamp)
+    if offer.sdkless?
+      temp_sdkless_clicks = self.sdkless_clicks
+      temp_sdkless_clicks[offer.third_party_data] = { 'click_time' => timestamp.to_i, 'item_id' => offer.item_id }
+      self.sdkless_clicks = temp_sdkless_clicks
+      self.save!
+    end
+  end
+
   private
 
   def fix_parser_error

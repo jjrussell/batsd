@@ -158,6 +158,7 @@ class Offer < ActiveRecord::Base
     if value
       types = JSON.parse(record.device_types)
       record.errors.add(attribute, "can only be enabled for Android-only offers") unless types.length == 1 && types.first == "android"
+      record.errors.add(attribute, "cannot be enabled for pay-per-click offers") if record.pay_per_click == true
     end
   end
 

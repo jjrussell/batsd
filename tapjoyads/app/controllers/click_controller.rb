@@ -11,7 +11,7 @@ class ClickController < ApplicationController
   def app
     create_click('install')
     handle_pay_per_click
-    handle_sdkless_click
+    @device.handle_sdkless_click!(@offer, @now)
 
     redirect_to(get_destination_url)
   end
@@ -277,16 +277,6 @@ private
 
       message = { :click => @click.serialize(:attributes_only => true), :install_timestamp => @now.to_f.to_s }.to_json
       Sqs.send_message(QueueNames::CONVERSION_TRACKING, message)
-    end
-  end
-
-  # If we're handling an SDK-less app offer, add it to the sdkless_clicks column on the Device model
-  def handle_sdkless_click
-    if @offer.sdkless?
-      sdkless_clicks = @device.sdkless_clicks
-      sdkless_clicks[@offer.third_party_data] = { 'click_time' => @now.to_i, 'item_id' => @offer.item_id }
-      @device.sdkless_clicks = sdkless_clicks
-      @device.save
     end
   end
 
