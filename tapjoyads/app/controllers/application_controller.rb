@@ -61,7 +61,7 @@ private
   end
 
   def set_locale
-    language_code = params[:language_code]
+    language_code = params[:language_code] || get_http_accept_language
     I18n.locale = nil
     if AVAILABLE_LOCALES.include?(language_code)
       I18n.locale = language_code
@@ -71,6 +71,25 @@ private
         I18n.locale = language_code
       end
     end
+  end
+
+  def get_http_accept_language
+    @browser_preferred_languages ||= request.env['HTTP_ACCEPT_LANGUAGE'].split(/\s*,\s*/).collect do |l|
+      l += ';q=1.0' unless l =~ /;q=\d+\.\d+$/
+      l.split(';q=')
+    end.sort do |x,y|
+      raise "Not correctly formatted" unless x.first =~ /^[a-z\-]+$/i
+      y.last.to_f <=> x.last.to_f
+    end.map do |l|
+      l.first.downcase.gsub(/-[a-z]+$/i) do |i|
+        i.upcase
+      end
+    end
+
+    available_strings = AVAILABLE_LOCALES.map {|i| i.to_s}
+    (@browser_preferred_languages & available_strings).first
+  rescue # default to blank if header is malformed
+    ""
   end
 
   def fix_params
