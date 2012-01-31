@@ -204,4 +204,10 @@ FactoryGirl.define do
     bid_price 0
     name 'short survey 1'
   end
+
+  factory :gamer_review do
+    app    { Factory(:app) }
+    author { Factory(:gamer) }
+    text   "A sample gamer review"
+  end
 end
