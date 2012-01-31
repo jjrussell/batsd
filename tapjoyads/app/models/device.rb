@@ -35,6 +35,7 @@ class Device < SimpledbShardedResource
 
   def after_initialize
     @create_device_identifiers = is_new
+    self.skip_sqs_on_fail = true
     begin
       @parsed_apps = apps
     rescue JSON::ParserError
@@ -203,7 +204,8 @@ class Device < SimpledbShardedResource
       temp_sdkless_clicks = self.sdkless_clicks
       temp_sdkless_clicks[offer.third_party_data] = { 'click_time' => timestamp.to_i, 'item_id' => offer.item_id }
       self.sdkless_clicks = temp_sdkless_clicks
-      self.save!
+      self.skip_sqs_on_fail = false
+      self.save
     end
   end
 
