@@ -73,8 +73,12 @@ private
     end
   end
 
+  # header parsing resources:
+  # http://guides.rubyonrails.org/i18n.html#setting-the-locale-from-the-client-supplied-information
+  # https://github.com/iain/http_accept_language/blob/master/lib/http_accept_language.rb
   def get_http_accept_language
-    @browser_preferred_languages ||= request.env['HTTP_ACCEPT_LANGUAGE'].split(/\s*,\s*/).collect do |l|
+    # example env[HTTP_ACCEPT_LANGUAGE] string: es,en;q=0.8;en-US;q=0.6
+    @browser_preferred_languages ||= request.env['HTTP_ACCEPT_LANGUAGE'].split(/\s*,\s*/).map do |l|
       l += ';q=1.0' unless l =~ /;q=\d+\.\d+$/
       l.split(';q=')
     end.sort do |x,y|
