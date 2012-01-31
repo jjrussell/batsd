@@ -40,7 +40,7 @@
       - property_row('Overridden destination url', link_to('[url]', @offer.url))
     - else
       - property_row('Store id', link_to(@offer.item.store_id, @offer.item.info_url), nil, @offer.item.store_id.blank? ? 'incomplete' : nil)
-    - property_row('File size', number_to_human_size(@offer.item.file_size_bytes), nil, @offer.item.large_download? ? 'warning' : nil)
+    - property_row('File size', number_to_human_size(@offer.item.file_size_bytes), nil, @offer.item.wifi_required? ? 'warning' : nil)
     - unless @offer.item.user_rating.nil?
       - property_row('User rating', "#{@offer.item.user_rating} stars", nil, @offer.item.bad_rating? ? 'warning' : '')
     - unless @offer.item.categories.blank?
