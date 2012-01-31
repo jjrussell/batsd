@@ -18,6 +18,7 @@ ru:
       load_more: "Загрузить еще!"
       loading: "Загрузка..."
       load_error: "Попробуйте еще раз."
+      wifi_required: "Wifi Required"
       wifi_warning: "This app requires a wifi connection to download."
 
     featured:
