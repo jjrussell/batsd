@@ -22,7 +22,22 @@ private
 
   def verify_params(required_params, options = {})
     render_missing_text = options.delete(:render_missing_text) { true }
+    lookup_missing_udid = options.delete(:lookup_missing_udid) { false }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
+
+    if (params[:udid].blank? || params[:udid] == 'null') && lookup_missing_udid
+      lookup_keys = []
+      lookup_keys.push(params[:sha2_hash_udid]) if params[:sha2_hash_udid].present?
+      lookup_keys.push(params[:mac_address]) if params[:mac_address].present?
+
+      lookup_keys.each do |lookup_key|
+        identifier = DeviceIdentifier.new(:key => lookup_key)
+        unless identifier.new_record?
+          params[:udid] = identifier.udid
+          break
+        end
+      end
+    end
 
     if params[:udid] == 'null' || params[:app_id] == 'todo todo todo todo'
       render :text => "missing required params", :status => 400 if render_missing_text
@@ -75,6 +90,7 @@ private
 
   def fix_params
     downcase_param(:udid)
+    downcase_param(:sha2_hash_udid)
     downcase_param(:app_id)
     downcase_param(:campaign_id)
     downcase_param(:publisher_app_id)
