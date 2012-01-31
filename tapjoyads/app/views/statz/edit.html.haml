@@ -65,7 +65,7 @@
       %td
         = f.check_box(:cookie_tracking)
         = error_message_on @offer, :cookie_tracking
-    - if @offer.item_type == 'App' && @offer.price == 0
+    - if @offer.is_free?
       %tr
         %th
           = f.label(:rewarded)
