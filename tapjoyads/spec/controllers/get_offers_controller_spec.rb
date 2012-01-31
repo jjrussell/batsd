@@ -83,9 +83,9 @@ describe GetOffersController do
 
       json_offer = json['OfferArray'][0]
       json_offer['Cost'       ].should == 'Free'
-      json_offer['Amount'     ].should == '17'
+      json_offer['Amount'     ].should == '5'
       json_offer['Name'       ].should == @offer.name
-      json_offer['Payout'     ].should == 17
+      json_offer['Payout'     ].should == 5
       json_offer['Type'       ].should == 'App'
       json_offer['StoreID'    ].should == @offer.store_id_for_feed
       json_offer['IconURL'    ].should be_present
