@@ -5,6 +5,8 @@ class GamesController < ApplicationController
   layout 'games'
 
   skip_before_filter :fix_params
+  before_filter :setup_tjm_request
+  after_filter :save_tjm_request
 
   helper_method :current_gamer, :current_device_id, :current_device_id_cookie, :current_device_info, :current_recommendations, :has_multiple_devices, :show_login_page, :device_type, :geoip_data, :os_version, :social_feature_redirect_path
 
@@ -166,5 +168,21 @@ class GamesController < ApplicationController
     @os_version ||= HeaderParser.os_version(request.user_agent)
   end
 
+  def setup_tjm_request
+    now = Time.now.utc
+    if session[:tjm_session_id].blank? || session[:tjm_session_started_at].blank? || session[:tjm_session_last_active_at].blank? ||
+        session[:tjm_session_last_active_at] < now - TJM_SESSION_TIMEOUT
+      session[:tjm_session_started_at] = now
+      session[:tjm_session_id] = UUIDTools::UUID.random_create.hexdigest
+    end
+    session[:tjm_session_last_active_at] = now
+
+    @tjm_request = TjmRequest.new(:time => now)
+    @tjm_request.add_standard_attributes(session, request, current_gamer, current_device_id, get_ip_address, get_geoip_data, params)
+  end
+
+  def save_tjm_request
+    @tjm_request.save
+  end
 
 end
