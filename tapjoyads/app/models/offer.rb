@@ -202,12 +202,6 @@ class Offer < ActiveRecord::Base
   json_set_field :device_types, :screen_layout_sizes, :countries, :dma_codes, :regions, :approved_sources
   memoize :get_device_types, :get_screen_layout_sizes, :get_countries, :get_dma_codes, :get_regions, :get_approved_sources
 
-  # Our relationship wasn't working, and this allows the ActionOffer.app crap to work
-  def app
-    return item if item_type == 'App'
-    return item.app if ['ActionOffer', 'RatingOffer'].include?(item_type)
-  end
-
   def clone
     clone = super
 
