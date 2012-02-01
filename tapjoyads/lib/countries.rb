@@ -40,6 +40,7 @@ class Countries
   def self.get_contintent_code_to_country_codes
     @@contintent_code_to_country_codes = {}
     GeoIP::CountryContinent.each_with_index do |continent_code, i|
+      next if GeoIP::CountryCode[i] == 'KP'
       @@contintent_code_to_country_codes[continent_code] ||= []
       @@contintent_code_to_country_codes[continent_code] << GeoIP::CountryCode[i]
     end
