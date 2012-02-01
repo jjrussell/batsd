@@ -696,7 +696,7 @@ class Offer < ActiveRecord::Base
   def calculated_min_bid
     if item_type == 'App'
       if featured? && rewarded?
-        is_paid? ? price : 65
+        is_paid? ? price : (get_platform == 'iOS' ? 65 : 10)
       elsif !rewarded?
         100
       else
