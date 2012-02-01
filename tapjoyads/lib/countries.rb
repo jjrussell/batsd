@@ -35,8 +35,6 @@ class Countries
     @@contintent_code_to_country_codes ||= get_contintent_code_to_country_codes
   end
 
-  private
-
   def self.get_contintent_code_to_country_codes
     @@contintent_code_to_country_codes = {}
     GeoIP::CountryContinent.each_with_index do |continent_code, i|
