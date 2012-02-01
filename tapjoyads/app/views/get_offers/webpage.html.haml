@@ -37,7 +37,10 @@
       - click_options = { :onclick => 'return false;', :style => 'width: 320px; height: 76px; border: 1px solid #000; cursor: default;' }
     - else
       - click_url = get_click_url(offer)
-      - click_options = { :onclick => "this.className += ' clicked';" }
+      - if @show_wifi_only && offer.wifi_only?
+        - click_options = { :onclick => "return wifiPopUp(this);" }
+      - else
+        - click_options = { :onclick => "this.className += ' clicked';" }
     - link_to(click_url, click_options.merge(:class => link_class)) do
       .content
         .banner
@@ -69,7 +72,7 @@
                   #{number_with_delimiter(@papaya_offers[offer.id])} currently playing
             - if @show_wifi_only && offer.wifi_only?
               .wifi_only
-                Wifi Required
+                = t('text.offerwall.wifi_required')
                 .wifi_icon
         .load
     - unless index == (@offer_list.size-1)
@@ -107,6 +110,15 @@
     var currency = "#{@currency.name}";
     var avail = "#{@more_data_available}";
     avail = parseInt(avail);
+
+    function wifiPopUp(e){
+      var y = confirm("#{t('text.offerwall.wifi_warning')}");
+      if(y) {
+        e.className += ' clicked';
+        return true;
+      }
+      return false;
+    }
 
     function scroll() {
       images = document.getElementsByTagName('img');
@@ -203,7 +215,11 @@
                 if (i == 0) {
                   t.push('<div class="divider"></div>');
                 }
-                t.push('<a class="offer '+ offerCls +'" href="'+ v.RedirectURL + '">');
+                var onClickMethod = 'this.className += \' clicked\';'
+                if (v.WifiOnly) {
+                  onClickMethod = 'return wifiPopUp(this);'
+                }
+                t.push('<a class="offer '+ offerCls +'" href="'+ v.RedirectURL + '" onclick="' + onClickMethod + '">');
                   t.push('<div class="content">');
                     t.push('<div class="banner">');
                       t.push('<div class="cost">');
@@ -246,12 +262,13 @@
                           }
                           if (v.WifiOnly) {
                             t.push('<div class = "wifi_only">');
-                              t.push('Wifi Only <div class="wifi_icon"></div>');
+                              t.push("#{t('text.offerwall.wifi_required')} <div class=\"wifi_icon\"></div>");
                             t.push('</div>');
                           }
                         t.push('</b>');
                       t.push('</p>');
                     t.push('</div>');
+                    t.push('<div class="load"></div>');
                   t.push('</div>');
                 t.push('</a>');
                 if (i != (offers.length - 1)) {

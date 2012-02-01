@@ -85,6 +85,7 @@ class Offer < ActiveRecord::Base
   belongs_to :partner
   belongs_to :item, :polymorphic => true
   belongs_to :reseller
+  belongs_to :app, :foreign_key => "item_id", :conditions => ['item_type = ?', 'App']
   belongs_to :action_offer, :foreign_key => "item_id", :conditions => ['item_type = ?', 'ActionOffer']
 
   validates_presence_of :reseller, :if => Proc.new { |offer| offer.reseller_id? }
@@ -145,7 +146,7 @@ class Offer < ActiveRecord::Base
   end
   validates_each :multi_complete do |record, attribute, value|
     if value
-      record.errors.add(attribute, "is not for App offers") if record.item_type == 'App'
+      record.errors.add(attribute, "is not for App offers") unless record.multi_completable?
       record.errors.add(attribute, "cannot be used for non-interval pay-per-click offers") if record.pay_per_click? && record.interval == 0
     end
   end
@@ -177,7 +178,8 @@ class Offer < ActiveRecord::Base
   named_scope :non_rewarded, :conditions => "NOT rewarded"
   named_scope :rewarded, :conditions => "rewarded"
   named_scope :featured, :conditions => { :featured => true }
-  named_scope :free_apps, :conditions => { :item_type => 'App', :price => 0 }
+  named_scope :apps, :conditions => { :item_type => 'App' }
+  named_scope :free, :conditions => { :price => 0 }
   named_scope :nonfeatured, :conditions => { :featured => false }
   named_scope :visible, :conditions => { :hidden => false }
   named_scope :to_aggregate_hourly_stats, lambda { { :conditions => [ "next_stats_aggregation_time < ?", Time.zone.now ], :select => :id } }
@@ -199,12 +201,6 @@ class Offer < ActiveRecord::Base
 
   json_set_field :device_types, :screen_layout_sizes, :countries, :dma_codes, :regions, :approved_sources
   memoize :get_device_types, :get_screen_layout_sizes, :get_countries, :get_dma_codes, :get_regions, :get_approved_sources
-
-  # Our relationship wasn't working, and this allows the ActionOffer.app crap to work
-  def app
-    return item if item_type == 'App'
-    return item.app if ['ActionOffer', 'RatingOffer'].include?(item_type)
-  end
 
   def clone
     clone = super
@@ -579,30 +575,7 @@ class Offer < ActiveRecord::Base
   end
 
   def min_bid
-    return min_bid_override if min_bid_override
-
-    if item_type == 'App'
-      if featured? && rewarded?
-        is_paid? ? price : 65
-      elsif !rewarded?
-        100
-      else
-        is_paid? ? (price * 0.50).round : 35
-        # uncomment for tapjoy premier & change show.html line 92-ish
-        # is_paid? ? (price * 0.65).round : 50
-      end
-    elsif item_type == 'ActionOffer'
-      if is_paid?
-        (price * 0.50).round
-      else
-        platform = App::PLATFORMS.index(get_platform)
-        platform.nil? ? 35 : App::PLATFORM_DETAILS[platform][:min_action_offer_bid]
-      end
-    elsif item_type == 'VideoOffer'
-      15
-    else
-      0
-    end
+    min_bid_override || calculated_min_bid
   end
 
   def max_bid
@@ -714,9 +687,38 @@ class Offer < ActiveRecord::Base
     [ support_requests, rewards ]
   end
 
+  def multi_completable?
+    item_type != 'App' || Offer::Rejecting::TAPJOY_GAMES_RETARGETED_OFFERS.include?(item_id)
+  end
+
   private
 
-  def custom_creative_sizes
+  def calculated_min_bid
+    if item_type == 'App'
+      if featured? && rewarded?
+        is_paid? ? price : (get_platform == 'iOS' ? 65 : 10)
+      elsif !rewarded?
+        100
+      else
+        is_paid? ? (price * 0.50).round : 10
+      end
+    elsif item_type == 'ActionOffer'
+      if is_paid?
+        (price * 0.50).round
+      else
+        platform = App::PLATFORMS.index(get_platform)
+        platform.nil? ? 35 : App::PLATFORM_DETAILS[platform][:min_action_offer_bid]
+      end
+    elsif item_type == 'VideoOffer'
+      15
+    else
+      0
+    end
+  end
+
+  def custom_creative_sizes(return_all = false)
+    return Offer::DISPLAY_AD_SIZES + Offer::FEATURED_AD_SIZES if return_all
+
     if !rewarded? && !featured?
       Offer::DISPLAY_AD_SIZES
     elsif featured?
@@ -771,7 +773,7 @@ class Offer < ActiveRecord::Base
     #
     creative_blobs = {}
 
-    custom_creative_sizes.each do |size|
+    custom_creative_sizes(true).each do |size|
       image_data = (send("banner_creative_#{size}_blob") rescue nil)
       creative_blobs[size] = image_data if !image_data.blank?
     end

@@ -15,6 +15,10 @@ Spork.prefork do
     config.use_instantiated_fixtures  = false
     config.fixture_path = RAILS_ROOT + '/spec/fixtures/'
     config.mock_with :mocha
+
+    config.after :each do
+      SimpledbResource.reset_connection
+    end
   end
 
   def login_as(user)

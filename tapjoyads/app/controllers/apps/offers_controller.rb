@@ -7,6 +7,17 @@ class Apps::OffersController < WebsiteController
   after_filter :save_activity_logs, :only => [ :create, :update, :toggle ]
 
   def new
+    offer_params = {}
+    if params[:offer_type] == 'rewarded_featured'
+      offer_params = {:featured => true, :rewarded => true}
+    elsif params[:offer_type] == 'non_rewarded_featured'
+      offer_params = {:featured => true, :rewarded => false}
+    elsif params[:offer_type] == 'non_rewarded'
+      offer_params = {:featured => false, :rewarded => false}
+    else
+      offer_params = {:featured => false, :rewarded => true}
+    end
+    @offer = Offer.new(offer_params)
   end
 
   def create
@@ -37,16 +48,7 @@ class Apps::OffersController < WebsiteController
       end
     end
 
-    if @offer.featured?
-      @custom_creative_sizes = Offer::FEATURED_AD_SIZES.collect do |size|
-        width, height = size.split("x").collect{|x|x.to_i}
-        orientation = width > height ? "(landscape)" : "(portrait)"
-        { :image_size         => size,
-          :label_image_size   => "#{size} #{orientation}" }
-      end
-    elsif !@offer.rewarded?
-      @custom_creative_sizes = Offer::DISPLAY_AD_SIZES.collect { |size| { :image_size => size, :label_image_size => "#{size} creative" }}
-    end
+    set_custom_creative_sizes
   end
 
   def preview
@@ -81,6 +83,7 @@ class Apps::OffersController < WebsiteController
         @enable_request = @offer.enable_offer_requests.build
       end
       flash.now[:error] = 'Your offer could not be updated.'
+      set_custom_creative_sizes
       render :action => :edit
     end
   end
@@ -169,5 +172,18 @@ class Apps::OffersController < WebsiteController
       @offer = @app.primary_offer
     end
     log_activity(@offer)
+  end
+
+  def set_custom_creative_sizes
+    if @offer.featured?
+      @custom_creative_sizes = Offer::FEATURED_AD_SIZES.collect do |size|
+        width, height = size.split("x").collect{|x|x.to_i}
+        orientation = width > height ? "(landscape)" : "(portrait)"
+        { :image_size         => size,
+          :label_image_size   => "#{size} #{orientation}" }
+      end
+    elsif !@offer.rewarded?
+      @custom_creative_sizes = Offer::DISPLAY_AD_SIZES.collect { |size| { :image_size => size, :label_image_size => "#{size} creative" }}
+    end
   end
 end
