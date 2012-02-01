@@ -34,7 +34,6 @@ class PointsControllerTest < ActionController::TestCase
       Sqs.expects(:send_message)
       controller.expects(:check_success).with('award_points')
       Reward.any_instance.expects(:serial_save).with(:catch_exceptions => false, :expected_attr => { 'type' => nil })
-      Reward.any_instance.expects(:serialize).with(:attributes_only => true)
       get :award, @params
       assert_template 'user_account'
       assert assigns(:success)
