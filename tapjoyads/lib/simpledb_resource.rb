@@ -3,7 +3,7 @@ class SimpledbResource
   include Simpledb
 
   cattr_reader :sdb
-  attr_accessor :key, :attributes, :this_domain_name, :is_new, :key_hash, :skip_sqs_on_fail
+  attr_accessor :key, :attributes, :this_domain_name, :is_new, :key_hash
   cattr_accessor :domain_name, :key_format
   superclass_delegating_accessor :domain_name, :key_format
   class_inheritable_accessor :attribute_names
@@ -194,7 +194,7 @@ class SimpledbResource
       end
       raise e
     end
-    return if @this_domain_name =~ /^#{RUN_MODE_PREFIX}devices_/ && skip_sqs_on_fail != false
+    return if @skip_sqs_on_fail == true
     Rails.logger.info "Sdb save failed. Adding to sqs. Domain: #{@this_domain_name} Key: #{@key} Exception: #{e.class} - #{e}"
     uuid = UUIDTools::UUID.random_create.to_s
     bucket = S3.bucket(BucketNames::FAILED_SDB_SAVES)

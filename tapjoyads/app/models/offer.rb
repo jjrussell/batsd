@@ -156,9 +156,9 @@ class Offer < ActiveRecord::Base
   validate :bid_within_range
   validates_each :sdkless, :allow_blank => false, :allow_nil => false do |record, attribute, value|
     if value
-      types = JSON.parse(record.device_types)
-      record.errors.add(attribute, "can only be enabled for Android-only offers") unless types.length == 1 && types.first == "android"
-      record.errors.add(attribute, "cannot be enabled for pay-per-click offers") if record.pay_per_click == true
+      record.get_device_types(true)
+      record.errors.add(attribute, "can only be enabled for Android-only offers") unless record.get_platform(true) == 'Android'
+      record.errors.add(attribute, "cannot be enabled for pay-per-click offers") if record.pay_per_click?
     end
   end
 

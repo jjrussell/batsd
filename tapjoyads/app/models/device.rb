@@ -35,7 +35,7 @@ class Device < SimpledbShardedResource
 
   def after_initialize
     @create_device_identifiers = is_new
-    self.skip_sqs_on_fail = true
+    @skip_sqs_on_fail = !is_new
     begin
       @parsed_apps = apps
     rescue JSON::ParserError
@@ -201,11 +201,11 @@ class Device < SimpledbShardedResource
   # If we're handling an SDK-less app offer, add it to the sdkless_clicks column on the Device model
   def handle_sdkless_click!(offer, timestamp)
     if offer.sdkless?
-      temp_sdkless_clicks = self.sdkless_clicks
+      temp_sdkless_clicks = sdkless_clicks
       temp_sdkless_clicks[offer.third_party_data] = { 'click_time' => timestamp.to_i, 'item_id' => offer.item_id }
       self.sdkless_clicks = temp_sdkless_clicks
-      self.skip_sqs_on_fail = false
-      self.save
+      @skip_sqs_on_fail = false
+      save
     end
   end
 
