@@ -32,17 +32,21 @@ class Countries
   end
 
   def self.contintent_code_to_country_codes
-    return @@contintent_code_to_country_codes if defined?(@@contintent_code_to_country_codes)
+    @@contintent_code_to_country_codes ||= get_contintent_code_to_country_codes
+  end
 
+  private
+
+  def self.get_contintent_code_to_country_codes
     @@contintent_code_to_country_codes = {}
     GeoIP::CountryContinent.each_with_index do |continent_code, i|
       @@contintent_code_to_country_codes[continent_code] ||= []
       @@contintent_code_to_country_codes[continent_code] << GeoIP::CountryCode[i]
     end
 
-    self.continent_codes.each do |continent_code|
+    continent_codes.each do |continent_code|
       @@contintent_code_to_country_codes[continent_code].sort! do |c1, c2|
-        self.country_code_to_name[c1] <=> self.country_code_to_name[c2]
+        country_code_to_name[c1] <=> country_code_to_name[c2]
       end
     end
 
