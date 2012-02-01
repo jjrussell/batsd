@@ -84,22 +84,36 @@ describe Job::MasterReloadStatzController do
     it 'should generate combined ranks' do
       apps = [
         Factory(:app,
+          :platform => 'iphone'),
+        Factory(:app,
+          :platform => 'iphone'),
+        Factory(:app,
+          :platform => 'android'),
+        Factory(:app,
+          :platform => 'android'),
+      ]
+      
+      app_metadatas = [
+        Factory(:app_metadata,
           :store_id => 'ios.free',
-          :platform => 'iphone',
           :price => 0),
-        Factory(:app,
+        Factory(:app_metadata,
           :store_id => 'ios.paid',
-          :platform => 'iphone',
           :price => 1),
-        Factory(:app,
+        Factory(:app_metadata,
           :store_id => 'android.free',
-          :platform => 'android',
+          :store_name => 'Market',
           :price => 0),
-        Factory(:app,
+        Factory(:app_metadata,
           :store_id => 'android.paid',
-          :platform => 'android',
+          :store_name => 'Market',
           :price => 1),
       ]
+      
+      apps.each_index do |i| 
+        apps[i].add_app_metadata(app_metadatas[i])
+        apps[i].reload.save!
+      end
 
       stub_vertica
 
