@@ -104,7 +104,7 @@ class App < ActiveRecord::Base
   named_scope :by_partner_id, lambda { |partner_id| { :conditions => ["partner_id = ?", partner_id] } }
 
   delegate :conversion_rate, :to => :primary_currency, :prefix => true
-  delegate :store_id, :store_id?, :description, :age_rating, :file_size_bytes, :supported_devices, :supported_devices?, :released_at, :user_rating,
+  delegate :store_id, :store_id?, :description, :age_rating, :file_size_bytes, :supported_devices, :supported_devices?, :released_at, :released_at?, :user_rating,
     :to => :primary_app_metadata, :allow_nil => true
 
   # TODO: remove these columns from apps table definition and remove this method
