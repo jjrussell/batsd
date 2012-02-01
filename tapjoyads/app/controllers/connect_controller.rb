@@ -1,7 +1,8 @@
 class ConnectController < ApplicationController
 
   def index
-    return unless verify_params([:app_id, :udid], :lookup_missing_udid => true)
+    lookup_udid
+    return unless verify_params([:app_id, :udid])
 
     click = Click.new(:key => "#{params[:udid]}.#{params[:app_id]}", :consistent => params[:consistent])
     if click.rewardable?
