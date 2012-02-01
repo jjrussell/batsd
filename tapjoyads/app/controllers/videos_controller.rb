@@ -1,6 +1,4 @@
 class VideosController < ApplicationController
-  include GetOffersHelper
-
   layout 'games', :only => :complete
 
   before_filter :setup
