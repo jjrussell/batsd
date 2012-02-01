@@ -11,11 +11,11 @@
         .header What now?
         .message_content.video_complete
           %a{ :href => get_click_url(@offer), :class => "replay_video_path" }
-            .slider.slider_right{:style => 'display: inline-table'}
+            .slider.slider_right
               .button.grey.arrow
                 .arrow_bg Replay Video
           - @video_offer.video_buttons.each do |button|
             %a{ :href => button.url }
-              .slider.slider_right{:style => 'display: inline-table'}
+              .slider.slider_right
                 .button.grey.arrow
                   .arrow_bg= button.name

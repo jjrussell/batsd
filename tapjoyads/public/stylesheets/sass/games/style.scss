@@ -747,6 +747,10 @@ body.old .content_box {
 
     .video_complete {
       margin-top: .5em;
+
+      .slider {
+        display: inline-table;
+      }
     }
 
     .details {
