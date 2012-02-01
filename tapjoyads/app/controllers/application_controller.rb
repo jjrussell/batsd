@@ -74,17 +74,16 @@ private
   end
 
   def lookup_udid
-    if (params[:udid].blank? || params[:udid] == 'null')
-      lookup_keys = []
-      lookup_keys.push(params[:sha2_udid]) if params[:sha2_udid].present?
-      lookup_keys.push(params[:mac_address]) if params[:mac_address].present?
+    return if params[:udid].present?
+    lookup_keys = []
+    lookup_keys.push(params[:sha2_udid]) if params[:sha2_udid].present?
+    lookup_keys.push(params[:mac_address]) if params[:mac_address].present?
 
-      lookup_keys.each do |lookup_key|
-        identifier = DeviceIdentifier.new(:key => lookup_key)
-        unless identifier.new_record?
-          params[:udid] = identifier.udid
-          break
-        end
+    lookup_keys.each do |lookup_key|
+      identifier = DeviceIdentifier.new(:key => lookup_key)
+      unless identifier.new_record?
+        params[:udid] = identifier.udid
+        break
       end
     end
   end
