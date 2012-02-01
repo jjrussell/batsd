@@ -61,7 +61,7 @@ private
   end
 
   def set_locale
-    language_code = params[:language_code] or get_http_accept_language
+    language_code = params[:language_code] || get_http_accept_language
     I18n.locale = nil
     if AVAILABLE_LOCALES.include?(language_code)
       I18n.locale = language_code
