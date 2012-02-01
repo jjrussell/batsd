@@ -66,7 +66,7 @@
       %td
         = f.check_box(:cookie_tracking)
         = error_message_on @offer, :cookie_tracking
-    - if @offer.item_type == 'App' && @offer.price == 0
+    - if @offer.is_free?
       %tr
         %th
           = f.label(:rewarded)
@@ -195,6 +195,12 @@
           = error_message_on @offer, :daily_budget
       %tr
         %th
+          = label_tag('estimated_budget', 'Daily Budget')
+          #help_estimated_budget.help ?
+        %td
+          = text_field_tag('estimated_budget')
+      %tr
+        %th
           = f.label(:overall_budget, 'Overall Conversions')
           #help_overall_budget.help ?
         %td
@@ -282,6 +288,7 @@
   #help_device_types_content{ :name => 'Device Types' } Targets this offer to these device types. At least one device type must be selected.
   #help_publisher_app_whitelist_content{ :name => 'Publisher App Whitelist' } Restrict this offer to these publisher apps. Must be a ";" separated list of publisher app IDs.
   #help_daily_budget_content{ :name => 'Daily Conversions' } The maximum number of conversions to complete in one day.
+  #help_estimated_budget_content{ :name => 'Daily Budget' } Maximum $ budget for ad conversions in one day.
   #help_overall_budget_content{ :name => 'Overall Conversions' } The maximum number of conversions to complete in the lifetime of this offer. This is merely a hard limit so it is likely that the offer will go over-budget.
   #help_interval_content{ :name => 'Interval' } The interval for frequency capping.
   #help_url_overridden_content{ :name => 'Override Destination URL' } Allows for manual override of Completion URL field
@@ -329,6 +336,37 @@
           return true;
         });
       })
+- content_for :page_javascript do
+  :plain
+    $(function($){
+
+      var setEstimatedBudget = function() {
+        var payment = stringToNumber($('#offer_bid').val());
+        var installLimit = stringToNumber($('#offer_daily_budget').val(), true);
+        var budget = numberToCurrency(payment * installLimit);
+        $('#estimated_budget').val(budget);
+      };
+
+      $('#offer_daily_budget').change(function() {
+        var installsLimit = Math.floor(stringToNumber($(this).val(), true));
+        $('#offer_daily_budget').val(installsLimit);
+        setEstimatedBudget();
+      });
+
+      $('#estimated_budget').change(function() {
+        var budget = stringToNumber($(this).val(), true);
+        var currentPayment = stringToNumber($('#offer_bid').val(), true);
+        var installLimit = Math.floor(budget / currentPayment);
+        $(this).val(numberToCurrency(budget));
+        $('#offer_daily_budget').val(installLimit);
+        if (!checkValidBudget()) {
+          $('#offer_daily_budget').change();
+        }
+      });
+
+      setEstimatedBudget();
+
+    })
 
 - content_for :page_styles do
   :plain
