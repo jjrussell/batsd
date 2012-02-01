@@ -3,7 +3,7 @@ class ToolsController < WebsiteController
 
   filter_access_to :all
 
-  after_filter :save_activity_logs, :only => [ :update_user, :update_android_app, :update_device, :resolve_clicks, :award_currencies, :update_award_currencies ]
+  after_filter :save_activity_logs, :only => [ :update_user, :update_device, :resolve_clicks, :award_currencies, :update_award_currencies ]
 
   def index
   end
@@ -335,34 +335,6 @@ class ToolsController < WebsiteController
       render :json => {:success => true}
     else
       render :json => {:success => false}
-    end
-  end
-
-  def edit_android_app
-    unless params[:id].blank?
-      @app = App.find_by_id(params[:id])
-      if @app.nil?
-        flash.now[:error] = "Could not find Android app with ID #{params[:id]}."
-      elsif @app.platform != "android"
-        flash.now[:error] = "'#{@app.name}' is not an Android app."
-        @app = nil
-      end
-    end
-  end
-
-  def update_android_app
-    @app = App.find_by_id_and_platform(params[:id], "android")
-    log_activity(@app)
-    @app.store_id = params[:store_id] unless params[:store_id].blank?
-    @app.price = params[:price].to_i
-
-    if @app.save
-      @app.download_icon(params[:url]) unless params[:url].blank?
-      flash[:notice] = 'App was successfully updated'
-      redirect_to statz_path(@app)
-    else
-      flash.now[:error] = 'Update unsuccessful'
-      render :action => "edit_android_app"
     end
   end
 
