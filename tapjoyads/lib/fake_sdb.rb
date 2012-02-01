@@ -15,7 +15,7 @@ class FakeSdb
     { :attributes => attributes }
   end
 
-  def delete_attributes(domain, key, attrs_to_delete, expected_attr)
+  def delete_attributes(domain, key, attrs_to_delete = {}, expected_attr = {})
     data_key = "#{domain}.#{key}"
 
     attributes = @@fake_sdb_data[data_key] || {}
