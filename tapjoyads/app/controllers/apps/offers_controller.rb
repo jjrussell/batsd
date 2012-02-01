@@ -73,7 +73,6 @@ class Apps::OffersController < WebsiteController
         @enable_request = @offer.enable_offer_requests.build
       end
       flash.now[:error] = 'Your offer could not be updated.'
-      set_custom_creative_sizes
       render :action => :edit
     end
   end
