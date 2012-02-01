@@ -54,7 +54,6 @@ Rails::Initializer.run do |config|
   config.gem 'geoip', :version => '1.1.1'
   config.gem 'haml', :version => '3.1.3'
   config.gem 'hominid', :version => '3.0.2'
-  config.gem 'imgkit', :version => '1.3.2'
   config.gem 'mogli', :version => '0.0.33'
   config.gem 'newrelic_rpm', :version => '3.3.0'
   config.gem 'plist', :version => '3.1.0'
@@ -142,7 +141,6 @@ Rails::Initializer.run do |config|
   config.action_mailer.delivery_method = :amazon_ses
   config.action_mailer.raise_delivery_errors = true
   config.action_mailer.perform_deliveries = true
-
 end
 
 # Register custom Mime types to generate ActionOffer header files

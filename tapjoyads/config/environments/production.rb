@@ -27,10 +27,10 @@ config.action_controller.allow_forgery_protection    = false
 # Disable delivery errors, bad email addresses will be ignored
 # config.action_mailer.raise_delivery_errors = false
 
-MEMCACHE_SERVERS = [ 'tj-acs-prod.fqfjqv.1xm3.use1.acsvc.amazonaws.com',
-                     'tj-acs-prod.fqfjqv.1xm4.use1.acsvc.amazonaws.com',
-                     'tj-acs-prod.fqfjqv.1xm5.use1.acsvc.amazonaws.com',
-                     'tj-acs-prod.fqfjqv.1xm6.use1.acsvc.amazonaws.com' ]
+MEMCACHE_SERVERS = [ 'tj-production.fqfjqv.0001.use1.cache.amazonaws.com',
+                     'tj-production.fqfjqv.0002.use1.cache.amazonaws.com',
+                     'tj-production.fqfjqv.0003.use1.cache.amazonaws.com',
+                     'tj-production.fqfjqv.0004.use1.cache.amazonaws.com' ]
 
 EXCEPTIONS_NOT_LOGGED = ['ActionController::UnknownAction',
                          'ActionController::RoutingError']
@@ -62,6 +62,7 @@ NUM_POINT_PURCHASES_DOMAINS = 10
 NUM_CLICK_DOMAINS = 50
 NUM_REWARD_DOMAINS = 50
 NUM_DEVICES_DOMAINS = 300
+NUM_DEVICE_IDENTIFIER_DOMAINS = 100
 NUM_GAME_STATE_DOMAINS = 300
 NUM_GAME_STATE_MAPPING_DOMAINS = 10
 NUM_PUBLISHER_USER_DOMAINS = 50
@@ -71,6 +72,10 @@ MAIL_CHIMP_API_KEY = mail_chimp['api_key']
 MAIL_CHIMP_PARTNERS_LIST_ID = mail_chimp['partners_list_id']
 MAIL_CHIMP_SETTINGS_KEY = mail_chimp['settings_key']
 MAIL_CHIMP_WEBHOOK_KEY = mail_chimp['webhook_key']
+
+send_grid = YAML::load_file("#{RAILS_ROOT}/config/send_grid.yaml")['production']
+SEND_GRID_USER = send_grid['user']
+SEND_GRID_PASSWD = send_grid['passwd']
 
 SYMMETRIC_CRYPTO_SECRET = 'YI,B&nZVZQtl*YRDYpEjVE&\U\#jL2!H#H&*2d'
 ICON_HASH_SALT = 'Gi97taauc9VFnb1vDbxWE1ID8Jjv06Il0EehMIKQ'
@@ -88,4 +93,8 @@ twitter = YAML::load_file("#{RAILS_ROOT}/config/twitter.yaml")
 ENV['CONSUMER_KEY'] = twitter['production']['consumer_key']
 ENV['CONSUMER_SECRET'] = twitter['production']['consumer_secret']
 
+DEVICE_LINK_TRACKING_PIXEL = 'http://tapjoy.go2cloud.org/SL2P'
+
 Sass::Plugin.options[:style] = :compressed
+
+TAPJOY_GAMES_INVITATION_OFFER_ID = '114d3e0c-c8f3-4f42-b016-2b2f81723cd8'

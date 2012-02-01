@@ -51,7 +51,7 @@ class Games::SocialController < GamesController
           invitation = current_gamer.invitation_for(friend_id, Invitation::FACEBOOK)
           if invitation.pending?
             name = WEBSITE_URL
-            link = games_login_url :referrer => invitation.encrypted_referral_id
+            link = params[:advertiser_app_id] == "null" ? games_login_url(:referrer => invitation.encrypted_referral_id) : games_login_url(:referrer => invitation.encrypted_referral_id(params[:advertiser_app_id]))
             message = "#{current_facebook_user.name} has invited you to join Tapjoy, the BEST place to find the hottest new apps. Signing up is free and you'll be able discover the best apps on iOS and Android, while also earning currency in your favorite apps."
 
             description = "Experience the best of mobile apps!"
@@ -96,7 +96,7 @@ class Games::SocialController < GamesController
           })
           invitation.save
 
-          link = games_login_url(:referrer => invitation.encrypted_referral_id)
+          link = params[:advertiser_app_id] == "null" ? games_login_url(:referrer => invitation.encrypted_referral_id) : games_login_url(:referrer => invitation.encrypted_referral_id(params[:advertiser_app_id]))
           GamesMarketingMailer.deliver_invite(current_gamer.get_gamer_name, recipient, link)
         end
       end
@@ -170,22 +170,22 @@ class Games::SocialController < GamesController
 
   private
 
-  def offline_facebook_authenticate
-    if current_gamer.facebook_id.blank? && params[:valid_login] && current_facebook_user
-      current_gamer.gamer_profile.update_facebook_info!(current_facebook_user)
-      unless has_permissions?
-        dissociate_and_redirect
-      end
-    elsif current_gamer.facebook_id?
-      fb_create_user_and_client(current_gamer.fb_access_token, '', current_gamer.facebook_id)
-      unless has_permissions?
-        dissociate_and_redirect
-      end
-    else
-      flash[:error] = @error_msg ||'Please connect Facebook with Tapjoy.'
-      redirect_to edit_games_gamer_path
-    end
-  end
+  # def offline_facebook_authenticate
+  #   if current_gamer.facebook_id.blank? && params[:valid_login] && current_facebook_user
+  #     current_gamer.gamer_profile.update_facebook_info!(current_facebook_user)
+  #     unless has_permissions?
+  #       dissociate_and_redirect
+  #     end
+  #   elsif current_gamer.facebook_id?
+  #     fb_create_user_and_client(current_gamer.fb_access_token, '', current_gamer.facebook_id)
+  #     unless has_permissions?
+  #       dissociate_and_redirect
+  #     end
+  #   else
+  #     flash[:error] = @error_msg ||'Please connect Facebook with Tapjoy.'
+  #     redirect_to edit_games_gamer_path
+  #   end
+  # end
 
   def twitter_authenticate
     if current_gamer.twitter_id.blank?
@@ -199,7 +199,7 @@ class Games::SocialController < GamesController
       end
     else
       flash[:error] = 'Error while authenticating via TWITTER. Please try again.'
-      redirect_to edit_games_gamer_path
+      redirect_to social_feature_redirect_path
     end
   end
 
@@ -214,53 +214,53 @@ class Games::SocialController < GamesController
     when Twitter::InternalServerError, Twitter::BadGateway, Twitter::ServiceUnavailable
       render :json => { :success => false, :error => "Something happened to Twttier. Please try again later" } and return if params[:ajax].present?
       flash[:error] = 'Something happened to Twttier. Please try again later.'
-      redirect_to edit_games_gamer_path
+      redirect_to social_feature_redirect_path
     else
       render :json => { :success => false, :error => "There was an issue with inviting your friend, please try again later" } and return if params[:ajax].present?
       flash[:error] = 'There was an issue with inviting your friend, please try again later.'
-      redirect_to edit_games_gamer_path
+      redirect_to social_feature_redirect_path
     end
   end
 
-  def has_permissions?
-    begin
-      unless current_facebook_user.has_permission?(:offline_access) && current_facebook_user.has_permission?(:publish_stream)
-        @error_msg = "Please grant us both permissions before sending out an invite."
-      end
-    rescue
-    end
-    @error_msg.blank?
-  end
-
-  def dissociate_and_redirect
-    current_gamer.dissociate_account!(Invitation::FACEBOOK)
-    render :json => { :success => false, :error_redirect => true } and return if params[:ajax].present?
-    flash[:error] = @error_msg
-    redirect_to edit_games_gamer_path
-  end
-
-  def handle_mogli_exceptions(e)
-    case e
-    when Mogli::Client::FeedActionRequestLimitExceeded
-      @error_msg = "You've reached the limit. Please try again later."
-    when Mogli::Client::HTTPException
-      @error_msg = "There was an issue with inviting your friend. Please try again later."
-    when Mogli::Client::SessionInvalidatedDueToPasswordChange, Mogli::Client::OAuthException
-      @error_msg = "Please authorize us before sending out an invite."
-    else
-      @error_msg = "There was an issue with inviting your friend. Please try again later."
-    end
-
-    dissociate_and_redirect
-  end
-
-  def handle_other_exceptions(e)
-    case e
-    when Errno::ECONNRESET, Errno::ETIMEDOUT
-      @error_msg = "There was a connection issue. Please try again later."
-      redirect_to edit_games_gamer_path
-    end
-  end
+  # def has_permissions?
+  #   begin
+  #     unless current_facebook_user.has_permission?(:offline_access) && current_facebook_user.has_permission?(:publish_stream)
+  #       @error_msg = "Please grant us both permissions before sending out an invite."
+  #     end
+  #   rescue
+  #   end
+  #   @error_msg.blank?
+  # end
+  # 
+  # def dissociate_and_redirect
+  #   current_gamer.dissociate_account!(Invitation::FACEBOOK)
+  #   render :json => { :success => false, :error_redirect => true } and return if params[:ajax].present?
+  #   flash[:error] = @error_msg
+  #   redirect_to edit_games_gamer_path
+  # end
+  # 
+  # def handle_mogli_exceptions(e)
+  #   case e
+  #   when Mogli::Client::FeedActionRequestLimitExceeded
+  #     @error_msg = "You've reached the limit. Please try again later."
+  #   when Mogli::Client::HTTPException
+  #     @error_msg = "There was an issue with inviting your friend. Please try again later."
+  #   when Mogli::Client::SessionInvalidatedDueToPasswordChange, Mogli::Client::OAuthException
+  #     @error_msg = "Please authorize us before sending out an invite."
+  #   else
+  #     @error_msg = "There was an issue with inviting your friend. Please try again later."
+  #   end
+  # 
+  #   dissociate_and_redirect
+  # end
+  # 
+  # def handle_other_exceptions(e)
+  #   case e
+  #   when Errno::ECONNRESET, Errno::ETIMEDOUT
+  #     @error_msg = "There was a connection issue. Please try again later."
+  #     redirect_to edit_games_gamer_path
+  #   end
+  # end
 
   def validate_recipients
     if params[:recipients].present?

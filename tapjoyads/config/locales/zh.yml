@@ -13,11 +13,15 @@ zh:
       previous: "上页 %{items}"
       missing_currency: "没得到 %{currency}?"
       instructions: "完成以下的要求其中之一可以得到 %{currency}"
+      popular_apps: "最流行的软件"
+      instructions_non_rewarded: "发现Tapjoy的热点!"
       earn_currency: "赚 %{amount} %{currency}"
       buy_currency: "买 %{amount} %{currency}"
       load_more: "下一页！"
-      loading: "载入中。。。"
-      load_error: "请再次一次。"
+      loading: "载入中。。。。"
+      load_error: "请再试一次。"
+      wifi_required: "需要Wifi"
+      wifi_warning: "下载本软件需要wifi连接。"
 
     featured:
       title: "赚 %{currency}"
@@ -58,4 +62,4 @@ zh:
       description_label: "请描述您下载了APP的流程:"
       missing_offer: "您需要写下您完成的广告。"
       select_offer: "选以下的广告"
-      no_incomplete_offers_label: "No suitable offers were found."
+      no_incomplete_offers_label: "没法提供其他的广告。"

@@ -1,0 +1,82 @@
+#jqt
+  #home.current
+    = render :partial => 'games/homepage/nav_bar', :locals => { :active => 'back', :back_button_destination => edit_games_gamer_path }
+
+    .content_wrapper
+      = render(:partial => 'header')
+      .content
+        = render(:partial => 'invite_friends')
+        #display_friendships.profile
+          .title_2
+            Friends
+          .content_box
+            .friend_tabs
+              .following_tab
+                .following_count= @friends_lists[:following].size
+                .following_text Following
+              .followers_tab
+                .followers_count= @friends_lists[:followers].size
+                .followers_text Followers
+            #friends_display
+              - @friends_lists.each do |key, friends|
+                %div{:class => "#{key}_display"}
+                  %ul
+                    - friends.each do |friend|
+                      %li.tj_friend{:id => friend[:id]}
+                        = image_tag friend[:image_url], :title => "#{friend[:name]}"
+                        = friend[:name]
+        #edit_social.profile
+          .title_2
+            Social Networks
+          #facebook_profile.content_box
+            = fb_connect_async_js
+            .interior
+              .field
+                %table
+                  %tr
+                    %td= label_tag "Facebook Profile:"
+                    %td
+                      - if @gamer_profile.facebook_id.present?
+                        = fb_profile_pic(current_facebook_user, :size => :thumb)
+                        %br
+                        = fb_name(current_facebook_user, :use_you => false)
+                      - else
+                        None Selected
+              - form_for([ :games, @gamer ], :url => dissociate_account_games_gamer_gamer_profile_path(:account_type => Invitation::FACEBOOK), :html => { :method => "put" }) do |f|
+                .field
+                  = submit_tag(@gamer_profile.facebook_id.present? ? 'Change Linked Account' : 'Link My Facebook', :class => "button")
+
+- content_for :page_javascript do
+  :plain
+    $(function($) {
+      $('.following_tab').addClass('active');
+      $('.followers_display').addClass('hide');
+    });
+
+    $('.following_tab').click(function(){
+      $('.following_tab').addClass('active');
+      $('.followers_tab').removeClass('active');
+      $('.following_display').removeClass('hide');
+      $('.followers_display').addClass('hide');
+    });
+
+    $('.followers_tab').click(function(){
+      $('.following_tab').removeClass('active');
+      $('.followers_tab').addClass('active');
+      $('.following_display').addClass('hide');
+      $('.followers_display').removeClass('hide');
+    });
+  - if @gamer_profile.facebook_id.blank?
+    :plain
+      $(window).load(function() {
+        $("#facebook_profile form").submit(function(e){
+          TJG.social.doFbLogin("#{connect_facebook_account_games_gamer_path}");
+          return false;
+        });
+      });
+  - if params['fb_logout'] == 'true'
+    :plain
+      $(window).load(function() {
+        TJG.social.doFbLogout();
+      });
+

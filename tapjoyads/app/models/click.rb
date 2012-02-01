@@ -1,4 +1,15 @@
 class Click < SimpledbShardedResource
+  belongs_to :device, :foreign_key => 'udid'
+  belongs_to :publisher_app, :class_name => 'App'
+  belongs_to :displayer_app, :class_name => 'App'
+  belongs_to :offer
+  belongs_to :currency
+  belongs_to :reward, :foreign_key => 'reward_key'
+  belongs_to :publisher_partner, :class_name => 'Partner'
+  belongs_to :advertiser_partner, :class_name => 'Partner'
+  belongs_to :publisher_reseller, :class_name => 'Reseller'
+  belongs_to :advertiser_reseller, :class_name => 'Reseller'
+
   self.key_format = 'udid.advertiser_app_id'
   self.num_domains = NUM_CLICK_DOMAINS
 
@@ -47,17 +58,42 @@ class Click < SimpledbShardedResource
     super({ :write_to_memcache => false }.merge(options))
   end
 
-  def self.select_all(options = {}, &block)
-    clicks = []
-    NUM_CLICK_DOMAINS.times do |i|
-      Click.select(:domain_name => "clicks_#{i}", :where => options[:conditions]) do |click|
-        block_given? ? yield(click) : clicks << click
-      end
-    end
-    clicks
-  end
-
   def rewardable?
     !(new_record? || installed_at? || clicked_at < (Time.zone.now - 2.days))
+  end
+
+  def successfully_rewarded?
+    installed_at? && reward && reward.successful?
+  end
+
+  def publisher_user_udids
+    PublisherUser.new(:key => "#{publisher_app_id}.#{publisher_user_id}").udids
+  end
+
+  def tapjoy_games_invitation_primary_click?
+    advertiser_app_id == TAPJOY_GAMES_INVITATION_OFFER_ID &&
+      key !~ /invite\[\d+\]$/
+  end
+
+  def resolve!
+    raise 'Unknown click id.' if new_record?
+
+    # We only resolve clicks in the last 48 hours.
+    if clicked_at < Time.zone.now - 47.hours
+      self.clicked_at = Time.zone.now - 1.minute
+    end
+    self.manually_resolved_at = Time.zone.now
+
+    save!
+
+    if Rails.env.production?
+      url = "#{API_URL}/"
+      if type == 'generic'
+        url += "offer_completed?click_key=#{key}"
+      else
+        url += "connect?app_id=#{advertiser_app_id}&udid=#{udid}&consistent=true"
+      end
+      Downloader.get_with_retry url
+    end
   end
 end

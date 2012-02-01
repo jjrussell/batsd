@@ -1,6 +1,6 @@
 class CachedApp
 
-  attr_accessor :id, :name, :description, :primary_category, :user_rating, :price, :url
+  attr_accessor :id, :name, :description, :primary_category, :user_rating, :price, :url, :wifi_required
 
   def initialize(offer, description = nil)
     self.id = offer.id
@@ -8,10 +8,13 @@ class CachedApp
     self.price = offer.price
     self.description = description
 
-    if offer.app_offer?
-      self.url = offer.item.info_url
-      self.primary_category = offer.item.primary_category
-      self.user_rating = offer.item.user_rating
+    if offer.item_type == 'App'
+      app = App.find_in_cache(offer.item_id)
+      self.url = Linkshare.add_params(app.info_url)
+      self.primary_category = app.primary_category
+      self.user_rating = app.user_rating
+      self.description ||= app.description
+      self.wifi_required = app.wifi_required?
     else
       self.url = offer.url
       self.primary_category = nil

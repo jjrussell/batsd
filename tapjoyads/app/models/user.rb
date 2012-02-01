@@ -5,6 +5,8 @@ class User < ActiveRecord::Base
     c.crypto_provider = Authlogic::CryptoProviders::Sha512
     c.transition_from_crypto_providers = TapjoyCrypto
     c.perishable_token_valid_for = 1.hour
+    c.merge_validates_uniqueness_of_login_field_options(:case_sensitive => true)
+    c.merge_validates_uniqueness_of_email_field_options(:case_sensitive => true)
   end
 
   has_many :role_assignments, :dependent => :destroy
@@ -49,9 +51,10 @@ class User < ActiveRecord::Base
   end
 
   def self.account_managers
-    Mc.get_and_put('account_managers', false, 1.day) do
-      RoleAssignment.find_all_by_user_role_id(UserRole.find_by_name("account_mgr")).map(&:user).sort_by(&:email)
-    end
+    role = UserRole.find_by_name("account_mgr")
+    conditions = [ "#{RoleAssignment.quoted_table_name}.user_role_id = ?", role.id]
+    users = User.find(:all, :joins => [:role_assignments],
+                      :conditions => conditions, :order => 'email')
   end
 
   def self.sales_reps

@@ -6,14 +6,14 @@
   %p.offertext
     - if @offer.item_type == 'App'
       = @offer.rewarded? ? t('text.featured.download_and_run') : t('text.featured.try_out')
-  - link_to(get_click_url(@offer), :class => 'image-link') do
+  - link_to((params[:preview] == 'true' ? '#' : get_click_url(@offer)), :class => 'image-link') do
     %img{ :src => "#{CLOUDFRONT_URL}/images/blank.png", :s => @offer.get_icon_url(:source => :cloudfront, :size => '256'), :class => 'icon', :id => 'icon' }
     .offername= @offer.truncated_name
   .clear
-  = link_to(t('text.featured.skip'), 'dismiss', :class => 'skip')
-  = link_to(@offer.item_type == 'App' ? t('text.featured.download') : t('text.featured.earn_now'), get_click_url(@offer), :class => 'download')
+  = link_to(t('text.featured.skip'), (params[:preview] == 'true' ? '#' : 'dismiss'), :class => 'skip')
+  = link_to(@offer.item_type == 'App' ? t('text.featured.download') : t('text.featured.earn_now'), (params[:preview] == 'true' ? '#' : get_click_url(@offer)), :class => 'download')
   .showOffers
-    = link_to(@currency.hide_rewarded_app_installs? ? '' : t('text.featured.show_more_apps'), 'showOffers')
+    = link_to(@currency.hide_rewarded_app_installs? ? '' : t('text.featured.show_more_apps'), (params[:preview] == 'true' ? '#' : 'showOffers'))
 
   .adsby
     %span= t('text.shared.ads_by')
@@ -33,12 +33,18 @@
         icon.src = icon.getAttribute('s');
       }
 
-      document.body.setAttribute('style', 'height: ' + (document.documentElement.clientHeight  - 30) + 'px;');
+      if(#{params[:height].present?}) {
+        clientHeight = parseInt('#{params[:height]}');
+      } else {
+        clientHeight = document.documentElement.clientHeight;
+      }
 
-      if (document.documentElement.clientHeight < 480) {
+      document.body.setAttribute('style', 'height: ' + (clientHeight  - 30) + 'px;');
+
+      if (clientHeight < 480) {
         icon.setAttribute('style', 'width: 96px; height: 96px;');
         main.setAttribute('style', 'height: 294px; margin-top: -147px; top: 50%');
-      } else if (document.documentElement.clientHeight > 800) {
+      } else if (clientHeight > 800) {
         icon.setAttribute('style', 'width: 512px; height: 512px;');
         main.setAttribute('style', 'height: 710px; margin-top: -355px; top: 50%');
       } else {
@@ -62,7 +68,7 @@
 
     body {
       margin: 0;
-      height: 480px;
+      height: #{params[:height]}px;
     }
 
     #main {
@@ -97,6 +103,9 @@
       height: 96px;
       -moz-border-radius: 7px;
       -webkit-border-radius: 7px;
+      background-image: url('/images/spinner.gif');
+      background-repeat: no-repeat;
+      background-position: center;
     }
 
     .skip,

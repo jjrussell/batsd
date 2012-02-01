@@ -106,6 +106,12 @@ private
     else
       @offer = Offer.find_in_cache(params[:offer_id])
     end
+
+    if params[:source] == 'tj_games' && params[:advertiser_app_id] == TAPJOY_GAMES_INVITATION_OFFER_ID && params[:gamer_id].blank?
+      render :text => "missing required params", :status => 400
+      return
+    end
+
     @currency = Currency.find_in_cache(params[:currency_id])
     required_records = [ @offer, @currency ]
     if params[:displayer_app_id].present?
@@ -134,6 +140,7 @@ private
     return if currency_disabled?
     return if offer_disabled?
     return if offer_completed?
+    return if recently_clicked?
 
     wr_path = params[:source] == 'featured' ? 'featured_offer_click' : 'offer_click'
     build_web_request(wr_path)
@@ -191,6 +198,21 @@ private
     completed
   end
 
+  def recently_clicked?
+    click = Click.find("#{params[:udid]}.#{params[:advertiser_app_id]}")
+    recently_clicked = click.present? &&
+                       click.clicked_at > @now - 1.hour &&
+                       click.publisher_app_id == params[:publisher_app_id] &&
+                       click.publisher_user_id == params[:publisher_user_id]
+
+    if recently_clicked
+      build_web_request('click_too_recent')
+      save_web_request
+      redirect_to(get_destination_url)
+    end
+    recently_clicked
+  end
+
   def build_web_request(path)
     @web_request = WebRequest.new(:time => @now)
     @web_request.put_values(path, params, get_ip_address, get_geoip_data, request.headers['User-Agent'])
@@ -203,7 +225,15 @@ private
   end
 
   def create_click(type)
-    @click = Click.new(:key => (type == 'generic' ? UUIDTools::UUID.random_create.to_s : "#{params[:udid]}.#{params[:advertiser_app_id]}"))
+    if type != 'generic' || params[:advertiser_app_id] == TAPJOY_GAMES_REGISTRATION_OFFER_ID
+      click_key = "#{params[:udid]}.#{params[:advertiser_app_id]}"
+    elsif type == 'generic' && params[:advertiser_app_id] == TAPJOY_GAMES_INVITATION_OFFER_ID
+      click_key = "#{params[:gamer_id]}.#{params[:advertiser_app_id]}"
+    else
+      click_key = UUIDTools::UUID.random_create.to_s
+    end
+
+    @click = Click.new(:key => click_key)
     @click.delete('installed_at') if @click.installed_at?
     @click.clicked_at             = @now
     @click.viewed_at              = Time.zone.at(params[:viewed_at].to_f)

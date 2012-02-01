@@ -16,6 +16,9 @@
   input[type=checkbox]:checked {
     background: transparent url('/images/games/checkmark.png') no-repeat;
   }
+  .wifi_icon {
+    display: inline-block; height: 11px; width: 15px; background:url('/images/games/wifi.png') no-repeat scroll 0 0 transparent; margin: -2px 0;
+  }
 }
 //-------------------------------------------
 
@@ -25,6 +28,9 @@
   }
   .logo {
     background: transparent url('/images/games/logo.png') no-repeat center center;
+  }
+  #stop_sopa {
+    background: transparent url('/images/games/logo-sopa.png') no-repeat center center;
   }
   @media screen and (max-width: 480px) {
       .logo {
@@ -59,5 +65,8 @@
   }
   .icon.developers {
     background: transparent url('/images/games/publishers-icon.png') no-repeat center center;
+  }
+  .wifi_icon {
+    display: inline-block; height: 11px; width: 15px; background:url('/images/games/wifi.png') no-repeat scroll 0 0 transparent; margin: -2px 0;
   }
 }

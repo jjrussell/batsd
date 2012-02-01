@@ -24,9 +24,9 @@
     %h3 Windows Library (#{@windows_version})
     %ul
       %li
-        - sdk_link 'Windows Advertiser Library', 'windows-adv'
+        - sdk_link 'Windows XNA Advertiser Library', 'windows-adv'
       %li
-        - sdk_link 'Windows Publisher Library', 'windows-pub'
+        - sdk_link 'Windows XNA Publisher Library', 'windows-pub'
 
     %h3 Third-party Plugins
     %ul
@@ -35,9 +35,15 @@
       %li
         - sdk_link 'Unity Plugin for Android', 'android-unity'
       %li
-        - sdk_link 'iOS Marmalade Extension (requires Marmalade/Airplay 5.x or higher)', 'iphone-marmalade'
+        - sdk_link 'Phonegap Plugin for iOS', 'iphone-phonegap'
       %li
-        - sdk_link 'Android Marmalade Extension (requires Marmalade/Airplay 5.x or higher)', 'android-marmalade'
+        - sdk_link 'Phonegap Plugin for Android', 'android-phonegap'
+      %li
+        - sdk_link 'Marmalade Extension for iOS', 'iphone-marmalade'
+        (requires Marmalade/Airplay 5.x or higher)
+      %li
+        - sdk_link 'Marmalade Extension for Android', 'android-marmalade'
+        (requires Marmalade/Airplay 5.x or higher)
 
 - content_for :page_head, stylesheet_link_tag('facebox')
 - content_for :included_javascripts, javascript_include_tag('facebox')

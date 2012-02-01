@@ -6,7 +6,7 @@
     %meta{ 'name' => 'viewport', 'content' => 'width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=no;' }
     %meta{ 'name' => 'apple-mobile-web-app-status-bar-style', 'content' => 'black' }
 
-    %link{ :rel => 'shortcut icon', :href => '/favicon-tjgames.ico', :content => 'image/vnd.microsoft.icon' }
+    %link{ :rel => 'shortcut icon', :href => '/favicon.ico', :content => 'image/vnd.microsoft.icon' }
     %link{ :rel => 'apple-touch-icon-precomposed', :href => '/images/tjgames-114x114.png' }
     %link{ :rel => 'publisher', :href => 'https://plus.google.com/b/116280135840952950839/' }
 
@@ -19,6 +19,9 @@
     = stylesheet_link_tag("games/style-480", :media => "only screen and (max-width: 480px)")
     = stylesheet_link_tag("games/style-320", :media => "only screen and (max-width: 320px)")
     = stylesheet_link_tag("games/images-hd", :media => "(-webkit-min-device-pixel-ratio: 2)")
+
+    /[if IE 8]
+      = stylesheet_link_tag('games/ie8')
 
     = yield :page_head
 
@@ -98,6 +101,13 @@
         .dialog_title.title_2
           Sending
         .dialog_image
+
+    #cookie_error.dialog_wrapper.hide
+      .close_dialog
+        .close_button
+      .dialog
+        .dialog_content
+          It appears that cookies are not enabled on your browser. You will need to enable cookies in order to use Tapjoy.
 
     - [:notice, :error, :success].each do |key|
       - unless flash[key].blank?

@@ -13,6 +13,8 @@
     %li= link_to 'Failed Invoices', failed_invoices_tools_orders_path
   - if permitted_to? :index, :tools_payouts
     %li= link_to 'Payouts', tools_payouts_path
+  - if permitted_to? :index, :tools_payout_freezes
+    %li= link_to 'Payout Freezes', tools_payout_freezes_path
   - if permitted_to? :money, :tools
     %li= link_to 'Money', money_tools_path
   - if permitted_to? :monthly_data, :tools
@@ -29,8 +31,6 @@
 - if has_permissions_for_one_of?(:admin)
   %h3 Admin
 %ul
-  - if permitted_to? :send_currency_failures, :tools
-    %li= link_to 'Send Currency Failures', send_currency_failures_tools_path
   - if permitted_to? :failed_sdb_saves, :tools
     %li= link_to 'Failed Sdb Saves', failed_sdb_saves_tools_path
   - if permitted_to? :sqs_lengths, :tools
@@ -47,18 +47,18 @@
     %li= link_to 'Manage user roles', tools_users_path
   - if permitted_to? :index, :tools_jobs
     %li= link_to 'Job Configuration', tools_jobs_path
-  - if permitted_to? :index, :tools_support_requests
-    %li= link_to 'Support Request Stats', tools_support_requests_path
   - if permitted_to? :index, :tools_press_releases
     %li= link_to 'Press Releases', tools_press_releases_path
 
 - if has_permissions_for_one_of?(:games_editor)
-  %h3 Games
+  %h3 Marketplace
 %ul
   - if permitted_to? :index, :tools_editors_picks
     %li= link_to 'Editor\'s Choices', tools_editors_picks_path
   - if permitted_to? :index, :tools_app_reviews
     %li= link_to 'App Reviews', tools_app_reviews_path
+  - if permitted_to? :index, :tools_featured_contents
+    %li= link_to 'My Apps Featured Content', tools_featured_contents_path
 
 - if has_permissions_for_one_of?(:account_mgr)
   %h3 Account Management
@@ -67,6 +67,8 @@
     %li= link_to 'View Offer Lists', tools_offer_lists_path
   - if permitted_to? :index, :tools_generic_offers
     %li= link_to 'View Generic Offers', tools_generic_offers_path
+  - if permitted_to? :edit, :statz
+    %li= link_to "Approve Creatives (#{CreativeApprovalQueue.count})", creative_tools_offers_path
   - if permitted_to? :index, :activities
     %li= link_to 'Activity Log', activities_path
   - if permitted_to? :disabled_popular_offers, :tools
@@ -91,6 +93,8 @@
     %li= link_to 'External Publishers', tools_external_publishers_path
   - if permitted_to? :index, :tools_agency_users
     %li= link_to 'Agency Users', tools_agency_users_path
+  - if permitted_to? :index, :tools_partner_program_statz
+    %li= link_to 'Tapjoy Sponsored Publishers', tools_partner_program_statz_index_path
 
 - if has_permissions_for_one_of?(:account_mgr, :customer_service, :admin)
   %h3 Customer Support
@@ -101,6 +105,12 @@
     %li= link_to 'Reset Device', reset_device_tools_path
   - if permitted_to? :index, :tools_admin_devices
     %li= link_to 'Admin Devices', tools_admin_devices_path
+  - if permitted_to? :index, :tools_support_requests
+    %li= link_to 'Support Request Stats', tools_support_requests_path
+  - if permitted_to? :mass_resolve, :tools_support_requests
+    %li= link_to 'Mass Resolve Support Requests', mass_resolve_tools_support_requests_path
+  - if permitted_to? :send_currency_failures, :tools
+    %li= link_to 'Send Currency Failures', send_currency_failures_tools_path
 
 - if has_permissions_for_one_of?(:hr)
   %h3 Human Resources

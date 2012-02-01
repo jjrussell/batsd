@@ -1,6 +1,15 @@
+class PapayaAPIError < RuntimeError; end
 class Papaya
-  def self.update_device_by_date(date)
-    date_str = date.to_s(:yy_mm_dd)
+  def self.queue_daily_update_devices_jobs
+    date_str = Date.yesterday.to_s(:yy_mm_dd)
+    Sqs.send_message(QueueNames::UPDATE_PAPAYA_DEVICES, date_str)
+  end
+
+  def self.queue_daily_update_user_count_jobs
+    Sqs.send_message(QueueNames::UPDATE_PAPAYA_USER_COUNT, 'run')
+  end
+
+  def self.update_devices_by_date(date_str)
     url = "#{PAPAYA_API_URL}/imeiapi/udid_list?date=#{date_str}"
     papaya_data = get_papaya_data(url)
 
@@ -20,7 +29,7 @@ class Papaya
 
     papaya_data.each do |package_name, user_count|
       unless user_count.is_a?(Integer)
-        Notifier.alert_new_relic(PapayaAPIError, "invalid number from Papaya : #{package_name} = #{user_count}")
+        raise PapayaAPIError.new("invalid number from Papaya : #{package_name} = #{user_count.inspect} -> #{user_count.class}")
         next
       end
       apps = App.find_all_by_store_id(package_name)
@@ -43,7 +52,7 @@ class Papaya
         sleep 5
         retry
       else
-        Notifier.alert_new_relic(PapayaAPIError, "Error getting Papaya data: #{e}, url = #{url}")
+        raise PapayaAPIError.new("Error getting Papaya data: #{e}, url = #{url}")
         return []
       end
     end
@@ -53,12 +62,12 @@ class Papaya
       json_string = SymmetricCrypto.decrypt(message, PAPAYA_SECRET, 'AES-128-ECB')
       papaya_data = JSON.load(json_string)
     rescue Exception => e
-      Notifier.alert_new_relic(PapayaAPIError, "Error parsing Papaya data: #{e}")
+      raise PapayaAPIError.new("Error parsing Papaya data: #{e}")
       return []
     end
 
     if papaya_data.blank?
-      Notifier.alert_new_relic(PapayaAPIError, "Papaya data is empty")
+      raise PapayaAPIError.new("Papaya data is empty")
     end
     papaya_data
   end

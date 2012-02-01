@@ -79,6 +79,7 @@ class Job::QueueConversionTrackingController < Job::SqsReaderController
     reward.reward_key_2           = click.reward_key_2
     reward.exp                    = click.exp
     reward.viewed_at              = click.viewed_at
+    reward.click_key              = click.key
     reward.publisher_partner_id   = click.publisher_partner_id || currency.partner_id
     reward.advertiser_partner_id  = click.advertiser_partner_id || offer.partner_id
     reward.publisher_reseller_id  = click.publisher_reseller_id || currency.reseller_id
@@ -104,7 +105,9 @@ class Job::QueueConversionTrackingController < Job::SqsReaderController
     click.put('installed_at', installed_at_epoch)
     click.serial_save
 
-    device.set_last_run_time!(click.advertiser_app_id)
+    device.set_last_run_time(click.advertiser_app_id)
+    device.set_last_run_time(click.publisher_app_id) if !device.has_app?(click.publisher_app_id) || device.last_run_time(click.publisher_app_id) < 1.week.ago
+    device.save
 
     web_request = WebRequest.new(:time => Time.zone.at(installed_at_epoch.to_f))
     web_request.path              = 'reward'
@@ -125,6 +128,7 @@ class Job::QueueConversionTrackingController < Job::SqsReaderController
     web_request.country           = reward.country
     web_request.exp               = reward.exp
     web_request.viewed_at         = reward.viewed_at
+    web_request.click_key         = reward.click_key
     web_request.save
   end
 

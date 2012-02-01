@@ -1,0 +1,63 @@
+es:
+  text:
+    shared:
+      privacy: "Confidencialidad"
+      ads_by: "Anuncios de"
+
+    offerwall:
+      title: "Gana %{currency}"
+      free: "Gratis"
+      next: "%{items} ofertas siguientes"
+      previous: "%{items} ofertas anteriores"
+      missing_currency: "¿Te falta %{currency}?"
+      instructions: "Completa una de las acciones siguientes para recibir %{currency}"
+      popular_apps: "Popular Apps"
+      instructions_non_rewarded: "Discover what's hot on Tapjoy!"
+      earn_currency: "Gana %{amount} %{currency}"
+      buy_currency: "Compra %{amount} %{currency}"
+      load_more: "Ver más ofertas"
+      loading: "Cargando..."
+      load_error: "Inténtalo otra vez."
+      wifi_required: "Wifi Required"
+      wifi_warning: "This app requires a wifi connection to download."
+
+    featured:
+      title: "Gana %{currency}"
+      download_and_run: "Descarga y abre"
+      try_out: "Prueba"
+      download: "Descarga"
+      skip: "Salta"
+      earn_now: "Gana ahora"
+      show_more_apps: "Enseñarme más aplicaciones"
+      earn_currency: "Gana %{amount_and_currency}"
+
+    unavailable_offer:
+      message: "Sentimos las molestias, pero %{offer} ya no está disponible. Puedes volver a la pagina anterior y actualizarla para ver la lista de las ofertas más recientes."
+      optional_message: "O, haz clic aquí para descargar %{offer} igual."
+
+    instructions:
+      title: "Instrucciones"
+      amount_and_currency: "%{amount} %{currency}"
+      earn_currency: "Gana %{amount_and_currency}"
+      header: "Sigue estas etapas para ganar %{currency}:"
+      footer: "Tras completar estas etapas, ganarás %{amount_and_currency}."
+      download_action: "aquí"
+      download_link: "Si no tienes esta aplicación, haz clic %{download_action} para descargarla."
+      continue_link: "Haz clic aquí para seguir."
+
+    support:
+      title: "¿Te falta %{currency}?"
+      instructions_1: "Por favor, selecciona la oferta que has completado y para la cual no has recibido %{currency} e introduce tu dirección de correo electrónico."
+      instructions_2: "Tardaremos más en contestar si nos mandas una solicitud incompleta. Daremos prioridad a las solicitudes más completas."
+      specify_offer_label: "¿Qué oferta es?"
+      description_label: "Descripción:"
+      email_address_label: "Dirección de correo electrónico:"
+      submit_support_request: "Mandar al soporte"
+      support_request_submitted: "Mandado al soporte"
+      thanks: "¡Gracias por mandar tu solicitud al soporte! Tras comprobar que has completado la oferta, te mandaremos tu %{currency}."
+      missing_description: "Por favor, describe la oferta que has completado."
+      missing_offer: "Por favor, indícanos qué oferta has completado."
+      invalid_email: "Por favor, introduce una dirección de correo electrónico."
+      abuse_warning: "El objetivo de este formulario es solucionar problemas de usuarios que no han recibido su moneda virtual tras completar una oferta. Un uso abusivo de esta página podría causar el baneo de tu cuenta."
+      select_offer: "Seleccionar una oferta"
+      no_incomplete_offers_label: "No se han encontrado ofertas."

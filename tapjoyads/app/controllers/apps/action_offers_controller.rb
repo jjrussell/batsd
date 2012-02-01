@@ -37,7 +37,7 @@ class Apps::ActionOffersController < WebsiteController
 
   def preview
     @show_generated_ads = @offer.uploaded_icon?
-    render 'apps/offers_shared/preview', :layout => 'simple'
+    render 'apps/offers_shared/preview', :layout => false
   end
 
   def update
@@ -47,7 +47,7 @@ class Apps::ActionOffersController < WebsiteController
     params[:action_offer][:primary_offer_attributes] = sanitize_currency_params(params[:action_offer][:primary_offer_attributes], [ :bid, :min_bid_override ])
 
     safe_attributes = [ :name, :prerequisite_offer_id, :instructions, :primary_offer_attributes_id, :primary_offer_attributes_bid, :primary_offer_attributes_user_enabled,
-      :primary_offer_attributes_daily_budget, :primary_offer_attributes_min_os_version, :primary_offer_attributes_screen_layout_sizes ]
+      :primary_offer_attributes_daily_budget, :primary_offer_attributes_min_os_version, :primary_offer_attributes_screen_layout_sizes, :primary_offer_attributes_self_promote_only ]
 
     if permitted_to? :edit, :statz
       safe_attributes += [

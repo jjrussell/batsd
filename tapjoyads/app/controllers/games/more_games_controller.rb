@@ -10,12 +10,8 @@ class Games::MoreGamesController < GamesController
     end
   end
 
-  def popular
-    if using_android?
-      @popular_apps = PopularApp.get_android
-    else
-      @popular_apps = PopularApp.get_ios
-    end
+  def recommended
+    current_recommendations
   end
 
 end

@@ -1,0 +1,16 @@
+%h1 Mass Resolve Support Requests
+- form_tag({}, { :method => 'post', :class => 'tjform', :multipart => true }) do
+  %table
+    %tbody
+      %tr
+        %th
+          CSV with Support Requests
+          #help_csv_support_requests.help ?
+        %td
+          = file_field_tag :upload_support_requests
+      %tr
+        %td{ :colspan => 2 }= submit_tag 'Upload'
+
+.hidden
+  #help_csv_support_requests_content{ :name => 'Support Requests CSV' } A file containing the list of support request ids which need to be resolved. Each line should have one support request id that needs to be resolved.
+

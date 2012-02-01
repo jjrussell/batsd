@@ -2,6 +2,11 @@
 
 %h1 Registration
 
+%p
+  This is the registration page for Advertisers and Developers. If you're looking for a way to find cool apps, head over to our
+  = succeed '!' do
+    = link_to('website', WEBSITE_URL)
+
 - form_for(:user, @user, :url => { :action => :create }, :html => { :method => :post, :class => 'tjform' }) do |f|
   %table
     %tr
@@ -42,6 +47,7 @@
         = f.label :terms_of_service, 'I Agree to the Tapjoy Terms of Service:'
         = link_to 'Advertiser', '/tos-advertiser.html', :target => '_blank'
         = link_to 'Publisher', '/tos-publisher.html', :target => '_blank'
+        = link_to 'Publisher Guidelines', '/publisher-guidelines.html', :target => '_blank'
         = error_message_on @user, :terms_of_service
     %tr
       %td{ :colspan => 2 }= f.submit "Create Account"

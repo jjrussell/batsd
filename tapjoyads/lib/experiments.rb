@@ -1,13 +1,13 @@
 class Experiments
   EXPERIMENTS = {
-    :default => '0'
+    :default => '0',
+    :papaya_on => '1',
+    :papaya_off => '2'
   }
 
   def self.choose(udid)
     if udid.present?
-      # udid_hash = udid.hash % 100
-
-      EXPERIMENTS[:default]
+      udid.hash % 2 == 0 ? EXPERIMENTS[:papaya_on] : EXPERIMENTS[:papaya_off]
     end
   end
 
@@ -31,9 +31,9 @@ class Experiments
     date = start_time.to_date
 
     while date <= end_time.to_date + 2.days && date <= Time.zone.now.to_date
-      offerwall_views += WebRequest.count_with_vertica "path = '[offers]' AND #{viewed_at_condition_vertica} AND exp = '#{experiment_id}'"
-      clicks += WebRequest.count_with_vertica "path = '[offer_click]' AND #{viewed_at_condition_vertica} AND exp = '#{experiment_id}'"
-      conversions += WebRequest.count_with_vertica "path = '[reward]' AND #{viewed_at_condition_vertica} AND exp = '#{experiment_id}'"
+      offerwall_views += WebRequest.count "path = '[offers]' AND #{viewed_at_condition_vertica} AND exp = '#{experiment_id}'"
+      clicks += WebRequest.count "path = '[offer_click]' AND #{viewed_at_condition_vertica} AND exp = '#{experiment_id}'"
+      conversions += WebRequest.count "path = '[reward]' AND #{viewed_at_condition_vertica} AND exp = '#{experiment_id}'"
       date += 1.day
     end
 

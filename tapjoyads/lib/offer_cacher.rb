@@ -21,19 +21,19 @@ class OfferCacher
         offer_list = Offer.enabled_offers.featured.rewarded.non_video_offers.for_offer_list.to_a
         cache_unsorted_offers_prerejected(offer_list, Offer::FEATURED_OFFER_TYPE, save_to_s3)
 
-        offer_list = Offer.enabled_offers.nonfeatured.free_apps.rewarded.non_video_offers.for_offer_list.to_a
+        offer_list = Offer.enabled_offers.nonfeatured.free.apps.rewarded.non_video_offers.for_offer_list.to_a
         cache_unsorted_offers_prerejected(offer_list, Offer::FEATURED_BACKFILLED_OFFER_TYPE, save_to_s3)
 
         offer_list = Offer.enabled_offers.nonfeatured.rewarded.for_offer_list.non_video_offers.for_display_ads.to_a
         cache_unsorted_offers_prerejected(offer_list, Offer::DISPLAY_OFFER_TYPE, save_to_s3)
 
-        offer_list = Offer.enabled_offers.nonfeatured.non_rewarded.free_apps.non_video_offers.for_offer_list.to_a
+        offer_list = Offer.enabled_offers.nonfeatured.non_rewarded.free.apps.non_video_offers.for_offer_list.to_a
         cache_unsorted_offers_prerejected(offer_list, Offer::NON_REWARDED_DISPLAY_OFFER_TYPE, save_to_s3)
 
-        offer_list = Offer.enabled_offers.featured.non_rewarded.free_apps.non_video_offers.for_offer_list.to_a
+        offer_list = Offer.enabled_offers.featured.non_rewarded.free.non_video_offers.for_offer_list.to_a
         cache_unsorted_offers_prerejected(offer_list, Offer::NON_REWARDED_FEATURED_OFFER_TYPE, save_to_s3)
 
-        offer_list = Offer.enabled_offers.nonfeatured.non_rewarded.free_apps.non_video_offers.for_offer_list.to_a
+        offer_list = Offer.enabled_offers.nonfeatured.non_rewarded.free.apps.non_video_offers.for_offer_list.to_a
         cache_unsorted_offers_prerejected(offer_list, Offer::NON_REWARDED_FEATURED_BACKFILLED_OFFER_TYPE, save_to_s3)
 
         offer_list = Offer.enabled_offers.video_offers.for_offer_list.to_a
@@ -75,10 +75,10 @@ class OfferCacher
       if save_to_s3
         while bucket.objects["#{s3_key}.#{group}"].exists?
           bucket.objects["#{s3_key}.#{group}"].delete
-      	  Mc.distributed_delete("#{mc_key}.#{group}")
-      	  group += 1
-      	end
-  	  end
+          Mc.distributed_delete("#{mc_key}.#{group}")
+          group += 1
+        end
+      end
     end
 
     def get_offer_list(key)
@@ -127,6 +127,26 @@ class OfferCacher
       Mc.get_and_put("s3.offer_rank_statistics") do
         bucket = S3.bucket(BucketNames::OFFER_DATA)
         Marshal.restore(bucket.objects["offer_rank_statistics"].read)
+      end
+    end
+
+    def cache_papaya_offers
+      papaya_offers = {}
+      Offer.enabled_offers.papaya_app_offers.each do |o|
+        papaya_offers[o.id] = o.papaya_user_count
+      end
+      Offer.enabled_offers.papaya_action_offers.each do |o|
+        papaya_offers[o.id] = o.papaya_user_count
+      end
+      bucket = S3.bucket(BucketNames::OFFER_DATA)
+      bucket.objects["papaya_offers"].write(:data => Marshal.dump(papaya_offers))
+      Mc.put("s3.papaya_offers", papaya_offers)
+    end
+
+    def get_papaya_offers
+      Mc.get_and_put("s3.papaya_offers") do
+        bucket = S3.bucket(BucketNames::OFFER_DATA)
+        Marshal.restore(bucket.objects["papaya_offers"].read)
       end
     end
 

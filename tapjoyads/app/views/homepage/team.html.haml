@@ -9,7 +9,7 @@
   #right
     = image_tag("meet_the_team.png", :class => 'header')
     - @employees.each do |employee|
-      .user
+      .user{:id => employee.dom_id}
         .teampic= image_tag(employee.get_photo_url, :alt => h(employee.full_name))
         %span.name= h(employee.full_name)
         %span.title= h(employee.title)

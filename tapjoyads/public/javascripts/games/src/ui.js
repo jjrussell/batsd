@@ -15,7 +15,7 @@ TJG.ui = {
     else {
       TJG.ui.showLoader();
       $.ajax({
-        url: TJG.more_games_editor_picks,
+        url: TJG.more_games_recommended,
         timeout: 15000,
         success: function(c) {
           TJG.moreAppOfferWall = c;
@@ -33,6 +33,7 @@ TJG.ui = {
   },
 
   getAndShowOfferWall : function(url, appId, appName, currencyName) {
+    url = url + "&show_wifi_only=1";
     TJG.utils.slidePage("#earn", "left");
     var fadeSpd = TJG.ui.fadeSpd;
 
@@ -258,6 +259,11 @@ TJG.ui = {
                   t.push('</div>');
                 t.push('</a>');
             t.push('</div>');
+            if (v.WifiOnly) {
+              t.push('<div class = "wifi_only">');
+                t.push('Wifi Required <div class="wifi_icon"></div>');
+              t.push('</div>');
+            }
           t.push('</div>');
         t.push('</li>');
       t.push('</a>');
@@ -275,8 +281,10 @@ TJG.ui = {
     }
 
     $('form#new_gamer').submit(function(e){
+      TJG.utils.setCookie('cookies_enabled', 'test', 1);
+      var test_cookie = TJG.utils.getCookie('cookies_enabled');
       e.preventDefault();
-      var rurl, inputs, values = {}, data, hasError = false, emailReg;
+      var rurl, inputs, values = {}, data, hasError = false, cookieError = false, emailReg;
       rurl = $(this).attr('action');
       inputs = $('form#new_gamer :input');
       inputs.each(function() {
@@ -301,7 +309,7 @@ TJG.ui = {
         $(".email_error").html('Please enter your birthdate');
         hasError = true;
       }
-      else if(values['gamer[email]'] == '') {
+      else if(values['gamer[email]'] == '' || values['gamer[email]'] == "Email") {
         $(".email_error").html('Please enter your email address');
         hasError = true;
       }
@@ -309,7 +317,7 @@ TJG.ui = {
         $(".email_error").html('Enter a valid email address');
         hasError = true;
       }
-      else if(values['gamer[password]'] == '') {
+      else if(values['gamer[password]'] == '' || values['gamer[password]'] == "Password") {
         $(".email_error").html('Please enter a password');
         hasError = true;
       }
@@ -317,7 +325,19 @@ TJG.ui = {
         $(".email_error").html('Please agree to the terms and conditions above');
         hasError = true;
       }
-      if (hasError) {
+      else if (TJG.utils.isNull(test_cookie)) {
+        hasError = true;
+        cookieError = true;
+      }
+      else {
+        TJG.utils.deleteCookie('cookies_enabled');
+      }
+      if (hasError && cookieError) {
+        TJG.utils.centerDialog("#cookie_error");
+        $("#cookie_error").fadeIn();
+        TJG.repositionDialog = ["#cookie_error"];
+      }
+      else if (hasError) {
         $(".email_error").show();
       }
       else if (hasError != true) {
@@ -335,13 +355,17 @@ TJG.ui = {
           dataType: 'json',
           data: {
             'authenticity_token': values['authenticity_token'],
+            'data': values['data'],
+            'src': values['src'],
             'gamer[email]': values['gamer[email]'],
             'gamer[password]': values['gamer[password]'],
             'gamer[referrer]': values['gamer[referrer]'],
             'gamer[terms_of_service]': values['gamer[terms_of_service]'],
             'date[day]': values['date[day]'],
             'date[month]': values['date[month]'],
-            'date[year]': values['date[year]']
+            'date[year]': values['date[year]'],
+            'default_platforms[android]': values['default_platform_android'],
+            'default_platforms[ios]': values['default_platform_ios']
           },
           success: function(d) {
             var msg;
@@ -360,23 +384,16 @@ TJG.ui = {
                 ].join('');
               }
               $('.register_progess').html(msg);
-              if (d.linked) { // Device already linked with account
+              if (d.link_device_url) { // Link device
                 $('.continue_link_device').click(function(){
-                  if (TJG.path) {
-                    document.location.href = TJG.path;
+                  if (TJG.vars.isAndroid && d.android) {
+                    document.location.href = d.link_device_url;
                   }
-                  else {
-                    document.location.href = document.domain;
-                  }
-                });
-              }
-              else if (d.link_device_url) { // Link device
-                $('.continue_link_device').click(function(){
-                  if (TJG.vars.isAndroid &&  TJG.android_market_url) {
+                  else if (TJG.vars.isAndroid && TJG.android_market_url) {
                     document.location.href = TJG.android_market_url;
                   }
-                  else if (TJG.vars.isIos && TJG.ios_link_device_url) {
-                    document.location.href = TJG.ios_link_device_url;
+                  else if (TJG.vars.isIos) {
+                    document.location.href = d.link_device_url;
                   }
                   else {
                     if (TJG.path) {
@@ -691,8 +708,8 @@ TJG.ui = {
     $.each(devices, function(i,v){
       var device_type = v.device_type;
       if (!TJG.utils.isNull(device_type)
-        && TJG.vars.device_type
-          && (device_type.toLowerCase() == TJG.vars.device_type.toLowerCase())) {
+        && TJG.vars.deviceType
+          && (device_type.toLowerCase() == TJG.vars.deviceType.toLowerCase())) {
         device_count++;
         device_found = true;
         device_data = v.data;
@@ -805,7 +822,6 @@ TJG.ui = {
     TJG.ui.fadeSpdSlow = 700;
 
     var fadeSpd = TJG.ui.fadeSpd, fadeSpdFast = TJG.ui.fadeSpdFas, fadeSpdSlow = TJG.ui.fadeSpdSlow;
-    var install = TJG.utils.getParam("register_device");
 
     // Enable bookmarking modal
     if (TJG.vars.isIos || TJG.vars.hasHomescreen) {
@@ -819,24 +835,35 @@ TJG.ui = {
     }
     // Checks if new user. If so, shows intro tutorial
     var repeat = TJG.utils.getLocalStorage("tjg.new_user");
-    if (install.indexOf("true") != -1) {
-      TJG.utils.centerDialog("#register_device");
-      $("#register_device").fadeIn(fadeSpd);
-      if (repeat != "false") {
-         $("#register_device .close_dialog").click(function() {
-           showIntro();
-         });
+    if (TJG.register_device) {
+      if (TJG.register_device_pixel) {
+        var pixel = new Image();
+        pixel.src = TJG.register_device_pixel;
+      }
+      if (TJG.vars.isAndroid) {
+        showIntro();
+      }
+      else {
+        TJG.utils.centerDialog("#register_device");
+        $("#register_device").fadeIn(fadeSpd);
+        if (repeat != "false") {
+          $("#register_device .close_dialog").click(function() {
+            showIntro();
+          });
+        }
       }
     }
     // Cookie is missing, so prompt user to select device
-    else if (TJG.require_select_device && TJG.select_device) {
+    else if (TJG.require_select_device && TJG.select_device.length > 0 && TJG.vars.isTouch) {
       TJG.ui.showDeviceSelection(TJG.select_device, false);
     }
     else if (repeat != "false") {
       showIntro();
     }
-    // If user has multiple devices, enable device selection UI
-    if (TJG.select_device && (TJG.select_device.length > 1)) {
+    if (TJG.select_device && TJG.select_device.length == 0) {
+      $('.device_wrapper').hide();
+    }
+    if (TJG.select_device && TJG.select_device.length > 0) {
       $('.device_switch').html("wrong device?");
       $('.device_name').addClass("has_switch");
       $('.device_info').css('cursor','pointer');
@@ -973,7 +1000,7 @@ TJG.ui = {
         else {
           TJG.ui.showLoader();
           $.ajax({
-            url: TJG.more_games_popular,
+            url: TJG.more_games_editor_picks,
             timeout: 15000,
             success: function(c) {
               TJG.topAppOfferWall = c;

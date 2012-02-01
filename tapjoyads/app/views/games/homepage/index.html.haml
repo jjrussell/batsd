@@ -9,12 +9,12 @@
             = render 'register_device'
       - elsif @external_publishers.blank?
         .content_wrapper
-          = render 'featured_review_preview'
+          = render 'featured_content_preview'
           .content
             = render 'no_games'
       - else
         .content_wrapper
-          = render 'featured_review_preview'
+          = render 'featured_content_preview'
           .content
             = render 'my_apps'
             = render(:partial => 'games/gamers/invite_friends')
@@ -24,7 +24,7 @@
       = render :partial => 'nav_bar', :locals => { :show_device => true, :active => 'back', :back_button_destination => '#home' }
       .content_wrapper
         #feat_app.content
-          = render 'featured_review'
+          = render 'featured_content'
 
   #earn
     .page
@@ -44,13 +44,13 @@
             #top_grossing_games_tab.tab_right
               #top_grossing_games_button.tab_button.grey
                 .tab_content
-                  Popular Apps
+                  Tapjoy Picks
               #top_grossing_games_button_arrow.tab_button_bottom_arrrow_wrapper
                 .tab_button_bottom_arrrow
             #recommended_games_tab.tab_left
               #recommended_games_button.tab_button.dark_grey
                 .tab_content
-                  Tapjoy Recommends
+                  Recommendations
               #recommended_games_button_arrow.tab_button_bottom_arrrow_wrapper
                 .tab_button_bottom_arrrow
           #more_games_content.hide
@@ -90,22 +90,27 @@
   - else
     :plain
       $(window).load(function() {
+    - if flash[:register_device]
+      :plain
+        TJG.register_device = true;
+        TJG.register_device_pixel = "#{DEVICE_LINK_TRACKING_PIXEL}";
+    :plain
         TJG.select_device = #{@device_data.to_json};
         TJG.require_select_device = #{@require_select_device.to_json};
         TJG.more_games_editor_picks = "#{games_more_games_editor_picks_path}";
-        TJG.more_games_popular = "#{games_more_games_popular_path}";
+        TJG.more_games_recommended = "#{games_more_games_recommended_path}";
         TJG.ios_link_device_url = "#{new_games_gamer_device_path}";
         TJG.android_market_url = "#{GAMES_ANDROID_MARKET_URL}";
         TJG.ui.homeInit();
     - if @show_offerwall
       - currency_data = @offerwall_external_publisher.currencies.first
-      - url = @offerwall_external_publisher.get_offerwall_url(@device, currency_data, request.headers)
+      - url = @offerwall_external_publisher.get_offerwall_url(@device, currency_data, request.accept_language, request.user_agent)
       - app_name = escape_javascript(@offerwall_external_publisher.app_name)
       :plain
         TJG.ui.getAndShowOfferWall('#{url}', '#{currency_data[:id]}', '#{app_name}', '#{escape_javascript(currency_data[:name])}');
     - elsif @show_more_apps
       :plain
-        TJG.moreAppOfferWall = '#{escape_javascript(render 'games/more_games/cached_app_list', :cached_app_list => @editors_picks)}';
+        TJG.moreAppOfferWall = '#{escape_javascript(render :template => 'games/more_games/recommended', :layout => false)}';
         TJG.ui.showMoreGames();
     :plain
       });

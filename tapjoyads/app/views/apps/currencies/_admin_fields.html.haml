@@ -42,6 +42,12 @@
     = f.check_box :only_free_offers
 %tr.admin
   %th
+    = f.label :send_offer_data, 'Send offer data'
+    #help_send_offer_data.help ?
+  %td
+    = f.check_box :send_offer_data
+%tr.admin
+  %th
     = f.label :ordinal, 'Ordinal'
     #help_ordinal.help ?
   %td
@@ -93,6 +99,19 @@
       %li 4+: Only show offers rated 4+ and below
   #help_only_free_offers_content{:name => 'Only free offers'}
     If true, only free offers will be shown in this app's offerwall.
+  #help_send_offer_data_content{:name => 'Send offer data'}
+    If true, we will send additional parameters to the publisher when hitting their callback url after an offer has been completed.
+    The additional parameters are:
+    %ul
+      %li
+        %b rev
+        The revenue earned from the offer, in dollars.
+      %li
+        %b storeId
+        The advertiser storeId (if the offer is an app offer).
+      %li
+        %b application
+        The offer name.
   #help_ordinal_content{:name => 'Ordinal'}
     Determines the order of the currency selector buttons on the offer wall webpage.
   #help_rev_share_override_content{:name => 'Rev share override'}

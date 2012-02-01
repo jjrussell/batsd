@@ -3,31 +3,31 @@ development:
     - ec2-50-17-5-126.compute-1.amazonaws.com
   port: 5433
   database: tapjoy
-  user: dbadmin
-  password: tapjoy
+  user: prod
+  password: taptaptap1234!
 
 test:
   hosts:
     - ec2-50-17-5-126.compute-1.amazonaws.com
   port: 5433
   database: tapjoy
-  user: dbadmin
-  password: tapjoy
+  user: prod
+  password: taptaptap1234!
 
 staging:
   hosts:
     - ec2-50-17-5-126.compute-1.amazonaws.com
   port: 5433
   database: tapjoy
-  user: dbadmin
-  password: tapjoy
+  user: prod
+  password: taptaptap1234!
 
 production:
   hosts:
-    - ec2-50-19-59-251.compute-1.amazonaws.com
-    - ec2-107-20-45-56.compute-1.amazonaws.com
-    - ec2-107-20-49-157.compute-1.amazonaws.com
-    - ec2-50-19-198-233.compute-1.amazonaws.com
+    - ec2-50-16-182-173.compute-1.amazonaws.com
+    - ec2-107-20-75-61.compute-1.amazonaws.com
+    - ec2-184-73-24-251.compute-1.amazonaws.com
+    - ec2-184-73-19-192.compute-1.amazonaws.com
   port: 5433
   database: tapjoy
   user: prod

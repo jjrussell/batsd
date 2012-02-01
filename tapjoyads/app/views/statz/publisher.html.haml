@@ -20,8 +20,10 @@
       %th Partner
       %th Acct Mgr
       %th Sales Rep
-      %th{ :class => 'headerSortUp header' } Pub Rev
+      %th Est Gross Revenue
+      %th Pub Rev
       %th Rev Share
+      %th ARPDAU
       %th Views
       %th Conversions
       %th Rev
@@ -38,7 +40,7 @@
       %th CVR
       %th eCPM
     %tr
-      %th{ :colspan => 5 }
+      %th{ :colspan => 7 }
       %th{ :colspan => 5, :align => :center } Offerwall
       %th{ :colspan => 5, :align => :center } Featured
       %th{ :colspan => 5, :align => :center } Display
@@ -48,8 +50,10 @@
         %td= link_to stats['partner'], partner_path(partner_id)
         %td= stats['account_mgr']
         %td= stats['sales_rep']
+        %td= stats['est_gross_revenue']
         %td= stats['total_revenue']
         %td= stats['rev_share']
+        %td= stats['arpdau']
         %td= stats['offerwall_views']
         %td= stats['offerwall_conversions']
         %td= stats['offerwall_revenue']
@@ -81,22 +85,25 @@
         widgets: ['zebra'],
         headers: {
           3:  { sorter: 'formatted-number-column' },
-          5:  { sorter: 'formatted-number-column' },
+          4:  { sorter: 'formatted-number-column' },
           6:  { sorter: 'formatted-number-column' },
           7:  { sorter: 'formatted-number-column' },
+          8:  { sorter: 'formatted-number-column' },
           9:  { sorter: 'formatted-number-column' },
-          10:  { sorter: 'formatted-number-column' },
-          11:  { sorter: 'formatted-number-column' },
-          12:  { sorter: 'formatted-number-column' },
-          14:  { sorter: 'formatted-number-column' },
-          15:  { sorter: 'formatted-number-column' },
-          16:  { sorter: 'formatted-number-column' },
-          17:  { sorter: 'formatted-number-column' },
-          20:  { sorter: false },
-          21:  { sorter: false },
-          22:  { sorter: false },
-          23:  { sorter: false },
-        }
+          11: { sorter: 'formatted-number-column' },
+          12: { sorter: 'formatted-number-column' },
+          13: { sorter: 'formatted-number-column' },
+          14: { sorter: 'formatted-number-column' },
+          16: { sorter: 'formatted-number-column' },
+          17: { sorter: 'formatted-number-column' },
+          18: { sorter: 'formatted-number-column' },
+          19: { sorter: 'formatted-number-column' },
+          22: { sorter: false },
+          23: { sorter: false },
+          24: { sorter: false },
+          25: { sorter: false },
+        },
+        sortList: [ [3,1] ]
       });
     });
 
@@ -113,6 +120,8 @@
     th,
     td {
       border: 0;
+      max-width: 200px;
+      word-wrap: break-word;
     }
 
     .last_updated {

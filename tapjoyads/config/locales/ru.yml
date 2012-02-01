@@ -1,0 +1,63 @@
+ru:
+  text:
+    shared:
+      privacy: "Конфиденциальность"
+      ads_by: "Реклама от"
+
+    offerwall:
+      title: "Заработать %{currency}"
+      free: "Free"
+      next: "След. %{items}"
+      previous: "Пред. %{items}"
+      missing_currency: "Не получили %{currency}?"
+      instructions: "Выполните любое из перечисленных предложений и получите %{currency}"
+      popular_apps: "Popular Apps"
+      instructions_non_rewarded: "Discover what's hot on Tapjoy!"
+      earn_currency: "Заработать %{amount} %{currency}"
+      buy_currency: "Купить %{amount} %{currency}"
+      load_more: "Загрузить еще!"
+      loading: "Загрузка..."
+      load_error: "Попробуйте еще раз."
+      wifi_required: "Wifi Required"
+      wifi_warning: "This app requires a wifi connection to download."
+
+    featured:
+      title: "Заработать %{currency}"
+      download_and_run: "Установить и открыть"
+      try_out: "Попробовать"
+      download: "Установить"
+      skip: "Пропустить"
+      earn_now: "Заработать сейчас"
+      show_more_apps: "Показать больше приложений"
+      earn_currency: "Заработать %{amount_and_currency}"
+
+    unavailable_offer:
+      message: "К сожалению, %{offer} более недоступно. Вернитесь и обновите предыдущую страницу для просмотра последних предложений."
+      optional_message: "Или нажмите здесь, чтобы установить %{offer} все равно."
+
+    instructions:
+      title: "Инструкции"
+      amount_and_currency: "%{amount} %{currency}"
+      earn_currency: "Заработать %{amount_and_currency}"
+      header: "Чтобы заработать %{currency}, сделайте следующее:"
+      footer: "Когда вы полностью выполните задание, вы заработаете %{amount_and_currency}."
+      download_action: "сюда"
+      download_link: "Если у вас нету этого приложения, нажмите %{download_action}, чтобы его установить."
+      continue_link: "Нажмите сюда, чтобы продолжить."
+
+    support:
+      title: "Не получили %{currency}?"
+      instructions_1: "Пожалуйста, укажите предложение, которое вы полностью выполнили, не получив при этом %{currency} и укажите адрес вашей электронной почты."
+      instructions_2: "Если вы отправите запрос без детального описание проблемы, ее решение будет происходить с задержкой. Мы отдаем приоритет запросам с детальным описанием проблемы."
+      specify_offer_label: "Укажите предложение:"
+      description_label: "Описание:"
+      email_address_label: "Адрес электронной почты:"
+      submit_support_request: "Отправить сообщение"
+      support_request_submitted: "Сообщение отправлено"
+      thanks: "Спасибо за отправку вашего сообщения! Вы получите ваши %{currency} после того как мы проверим, что вы полностью выполнили предложение."
+      missing_description: "Пожалуйста, опишите выполненное предложение."
+      missing_offer: "Вы должны указать выполненное предложение."
+      invalid_email: "Пожалуйста, введите реально существующий адрес электронной почты."
+      abuse_warning: "Эта форма предназначена исключительно для пользователей, которые не получили очки за выполнение предложения. Злоупотребление этой формой может привести к деактивации вашей учетной записи и невозможности зарабатывания очков в будущем."
+      select_offer: "Выберите предложение"
+      no_incomplete_offers_label: "Нет подходящих предложений."

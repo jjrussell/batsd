@@ -1,8 +1,6 @@
 class Partner < ActiveRecord::Base
   include UuidPrimaryKey
 
-  THE_REAL_TAPJOY_PARTNER_ID = "70f54c6d-f078-426c-8113-d6e43ac06c6d"
-
   has_many :orders
   has_many :payouts
   has_many :currencies
@@ -35,7 +33,7 @@ class Partner < ActiveRecord::Base
   validates_inclusion_of :use_whitelist, :approved_publisher, :in => [ true, false ]
   validate :exclusivity_level_legal
   validate :sales_rep_is_employee, :if => :sales_rep_id_changed?
-  validates_format_of :billing_email, :with => Authlogic::Regex.email, :message => "should look like an email address.", :allow_blank => true, :allow_nil => true
+  validates_format_of :billing_email, :cs_contact_email, :with => Authlogic::Regex.email, :message => "should look like an email address.", :allow_blank => true, :allow_nil => true
   # validates_format_of :name, :with => /^[[:print:]]*$/, :message => "Partner name must be alphanumeric."
   validates_each :disabled_partners, :allow_blank => true do |record, attribute, value|
     record.errors.add(attribute, "must be blank when using whitelisting") if record.use_whitelist? && value.present?
@@ -98,7 +96,7 @@ class Partner < ActiveRecord::Base
     Partner.using_slave_db do
       Partner.slave_connection.execute("BEGIN")
       partner = Partner.find(partner_id)
-      return partner.pending_earnings - Conversion.created_since(partner.payout_cutoff_date).sum(:publisher_amount, :conditions => [ "publisher_app_id IN (?)", partner.app_ids ])
+      return partner.pending_earnings - partner.publisher_conversions.created_since(partner.payout_cutoff_date).sum(:publisher_amount)
     end
   ensure
     Partner.using_slave_db do
@@ -148,6 +146,10 @@ class Partner < ActiveRecord::Base
   def remove_user(user)
     if users.length > 1 && users.include?(user)
       user.partners.delete(self)
+      if user.reseller_id?
+        self.reseller_id = nil
+        save!
+      end
       if user.partners.blank?
         user.current_partner = Partner.new(:name => user.email, :contact_name => user.email)
         user.partners << user.current_partner
@@ -220,10 +222,10 @@ class Partner < ActiveRecord::Base
     accounting_cutoff = Conversion.accounting_cutoff_time
 
     publisher_conversions_sum = monthly_accountings.prior_to(accounting_cutoff).sum(:earnings)
-    publisher_conversions_sum += Conversion.created_since(accounting_cutoff).sum(:publisher_amount, :conditions => [ "publisher_app_id IN (?)", app_ids ])
+    publisher_conversions_sum += publisher_conversions.created_since(accounting_cutoff).sum(:publisher_amount)
 
     advertiser_conversions_sum = monthly_accountings.prior_to(accounting_cutoff).sum(:spend)
-    advertiser_conversions_sum += Conversion.created_since(accounting_cutoff).sum(:advertiser_amount, :conditions => [ "advertiser_offer_id IN (?)", offer_ids ])
+    advertiser_conversions_sum += advertiser_conversions.created_since(accounting_cutoff).sum(:advertiser_amount)
 
     orders_sum = orders.sum(:amount)
     payouts_sum = payouts.sum(:amount, :conditions => 'status = 1')
@@ -289,10 +291,21 @@ class Partner < ActiveRecord::Base
     payout_info.present? && payout_info.valid?
   end
 
+  def tapjoy_sponsored?
+    offers.blank? ? false : offers.all?(&:tapjoy_sponsored?)
+  end
+
+  def set_tapjoy_sponsored_on_offers!(flag)
+    offers.each do |offer|
+      offer.tapjoy_sponsored = flag
+      offer.save! if offer.changed?
+    end
+  end
+
 private
 
   def update_currencies
-    if rev_share_changed? || direct_pay_share_changed? || disabled_partners_changed? || offer_whitelist_changed? || use_whitelist_changed? || accepted_publisher_tos_changed? || max_deduction_percentage_changed?
+    if rev_share_changed? || direct_pay_share_changed? || disabled_partners_changed? || offer_whitelist_changed? || use_whitelist_changed? || accepted_publisher_tos_changed? || max_deduction_percentage_changed? || reseller_id_changed?
       currencies.each do |c|
         c.set_values_from_partner_and_reseller
         c.save!

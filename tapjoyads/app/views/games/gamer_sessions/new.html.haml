@@ -4,8 +4,15 @@
     .page
       .nav
         .nav_container.clearfix
-          %a{ :href => games_root_path, :class => "slideright" }
-            .logo
+          - timestamp = Time.zone.now
+          - start_time = Time.zone.parse('2012-01-18 13:00')
+          - end_time = Time.zone.parse('2012-01-19 01:00')
+          - if start_time < timestamp && timestamp < end_time
+            - link_to('https://www.google.com/landing/takeaction/sopa-pipa/', :class => "slideright", :title => "Stop SOPA.") do
+              #stop_sopa.logo
+          - else
+            - link_to(games_root_path, :class => "slideright") do
+              .logo
           .aside_login
             .login
               .form_fields
@@ -21,6 +28,8 @@
                       %li.field.email
                         = f.email_field :email, "autocorrect" => "off", "autocapitalize" => "off", :placeholder => "Email", :required => ""
                       %li.field.password
+                        %label{ :for => "password", :class => "hidden" }
+                          Password
                         = f.password_field :password, :placeholder => "Password", :required => ""
                     %ul.group
                       %li.field.login_btn
@@ -31,10 +40,6 @@
                     %li.field.login_error
                       = error_message_on @gamer_session, :email, :prepend_text => "Email "
                       = error_message_on @gamer_session, :password, :prepend_text => "Password "
-                  %ul.row
-                    %li.field.client_login
-                      %a{ :href => "#{DASHBOARD_URL}/login" }
-                        advertiser/developer? login here
 
       .content.main_scene
         .content_box
@@ -47,13 +52,27 @@
                   Sign Up
                 .register_form
                   - form_for([ :games, @gamer ], :url => games_gamer_path ) do |f|
+                    - if params[:data].present?
+                      = hidden_field_tag :data, params[:data]
+                    - if params[:src].present?
+                      = hidden_field_tag :src, params[:src]
                     .field
                       = label_tag :birthdate
                       = select_date nil, { :order => [:month, :day, :year], :start_year => Time.now.year, :end_year => (Time.now.year - 100), :include_blank => false, :prompt => {:day => 'Day', :month => 'Month', :year => 'Year'} }
                     .field
                       = f.email_field :email, "autocorrect" => "off", "autocapitalize" => "off", :placeholder => "Email"
                     .field
+                      %label{ :for => "password", :class => "hidden" }
+                        Password
                       = f.password_field :password, :placeholder => "Password"
+                    - if device_type.nil?
+                      .row.platform
+                        .field#platform_android
+                          = label_tag :default_platform_android, 'Android'
+                          = check_box_tag :default_platform_android, 'android'
+                        .field#platform_ios
+                          = label_tag :default_platform_ios, 'iOS'
+                          = check_box_tag :default_platform_ios, 'ios'
                     .row
                       .field.field_tos
                         .field_checkbox
@@ -67,9 +86,6 @@
                       = error_message_on @gamer, :email
                       = error_message_on @gamer, :password
                       = error_message_on @gamer, :terms_of_service
-                    .client_sign_up
-                      %a{ :href => "#{DASHBOARD_URL}/register" }
-                        advertiser &amp; developer sign up
                 .register_progess
       .content.overview
         .content_box
@@ -123,31 +139,3 @@
 
 - content_for :page_javascript do
   :plain
-    $(window).load(function() {
-      $('form#new_gamer_session').submit(function(e){
-        $(".formError").hide();
-        var inputs, email, pass, values = {};
-        var emailReg = /^([\w-\.+]+@([\w-]+\.)+[\w-]{2,4})?$/;
-        inputs = $('form#new_gamer_session :input*');
-        inputs.each(function() {
-          if (this.type == 'checkbox' || this.type == 'radio') {
-            values[this.name] = $(this).attr("checked");
-          }
-          else {
-            values[this.name] = $(this).val();
-          }
-          email = values['gamer_session[email]'];
-          pass = values['gamer_session[password]'];
-          if ( email == '' ) {
-            $(".login_error").html('Please enter your email address');
-            $(".formError").show();
-            e.preventDefault();
-          }
-          else if ( pass == '' ) {
-            $(".login_error").html('Please enter your password');
-            $(".formError").show();
-            e.preventDefault();
-          }
-        });
-      });
-    });

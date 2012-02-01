@@ -10,17 +10,23 @@ ActionController::Routing::Routes.draw do |map|
     m.more_apps 'more_apps', :controller => 'games/homepage', :action => :index, :load => 'more_apps'
 
     m.more_games_editor_picks 'editor_picks', :controller => 'games/more_games', :action => :editor_picks
-    m.more_games_popular 'popular', :controller => 'games/more_games', :action => :popular
+    m.more_games_recommended 'recommended', :controller => 'games/more_games', :action => :recommended
 
     m.resources :gamer_sessions, :controller => 'games/gamer_sessions', :only => [ :new, :create, :destroy, :index ]
     m.connect 'login', :controller => 'games/gamer_sessions', :action => :create, :conditions => {:method => :post}
     m.login 'login', :controller => 'games/gamer_sessions', :action => :new
     m.logout 'logout', :controller => 'games/gamer_sessions', :action => :destroy
+    map.connect 'support',
+      :controller => 'games/support_requests', :action => :new, :type => 'contact_support'
+    map.connect 'bugs',
+      :controller => 'games/support_requests', :action => :new, :type => 'report_bug'
+    map.connect 'feedback',
+      :controller => 'games/support_requests', :action => :new, :type => 'feedback'
 
     m.resource :gamer, :controller => 'games/gamers', :only => [ :create, :edit, :update, :destroy ],
-      :member => { :password => :get, :prefs => :get, :update_password => :put, :accept_tos => :put, :confirm_delete => :get } do |gamer|
+      :member => { :password => :get, :prefs => :get, :social => :get, :update_password => :put, :accept_tos => :put, :confirm_delete => :get, :connect_facebook_account => :get } do |gamer|
       gamer.resource :device, :controller => 'games/gamers/devices', :only => [ :new, :create ], :member => { :finalize => :get }
-      gamer.resource :gamer_profile, :controller => 'games/gamers/gamer_profiles', :only => [ :update ], :member => { :update_birthdate => :put, :update_prefs => :put }
+      gamer.resource :gamer_profile, :controller => 'games/gamers/gamer_profiles', :only => [ :update ], :member => { :update_birthdate => :put, :update_prefs => :put, :dissociate_account => :put }
     end
     m.register 'register', :controller => 'games/gamers', :action => :new
 
@@ -28,6 +34,7 @@ ActionController::Routing::Routes.draw do |map|
     m.confirm 'confirm', :controller => 'games/confirmations', :action => :create
 
     m.resources :password_resets, :controller => 'games/password_resets', :as => 'password-reset', :only => [ :new, :create, :edit, :update ]
+    m.password_reset 'password-reset', :controller => 'games/password_resets', :action => :new
 
     m.resources :support_requests, :controller => 'games/support_requests', :only => [ :new, :create ]
 

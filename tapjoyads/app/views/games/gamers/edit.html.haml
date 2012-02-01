@@ -10,14 +10,12 @@
         .title_2
           Options
         #account_options.content_box.clearfix
-          - link_to @gamer.get_gravatar_profile_url, :target => '_blank' do
+          - link_to social_games_gamer_path do
             .slider.bottom_line.clearfix
               .profile_arrow.right
               .field
                 .label
-                  Icon:
-                #user_gravatar.image
-                  = image_tag(@gamer.get_avatar_url(30))
+                  Social Settings
           - link_to password_games_gamer_path do
             .slider.bottom_line.clearfix
               .profile_arrow.right

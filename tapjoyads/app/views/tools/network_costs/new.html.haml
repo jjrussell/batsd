@@ -5,6 +5,11 @@
 - form_for [ :tools, @network_cost ], :html => { :class => 'tjform' } do |f|
   %table
     %tr
+      %th= f.label :first_effective_on
+      %td
+        = f.text_field :first_effective_on
+        = error_message_on @network_cost, :first_effective_on
+    %tr
       %th= f.label :amount
       %td
         = f.currency_field :amount, {}, { :class => 'allow_negative' }
@@ -14,3 +19,9 @@
       %td= f.text_area :notes
     %tr
       %td{ :colspan => 2 }= f.submit 'Create Network Cost'
+
+- content_for :page_javascript do
+  :plain
+    $(function() {
+      $('#network_cost_first_effective_on').datepicker();
+    });

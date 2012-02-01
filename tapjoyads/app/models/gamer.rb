@@ -33,6 +33,12 @@ class Gamer < ActiveRecord::Base
     c.login_field = :email
     c.validate_login_field = false
     c.require_password_confirmation = true
+    c.merge_validates_uniqueness_of_login_field_options(:case_sensitive => true)
+    c.merge_validates_uniqueness_of_email_field_options(:case_sensitive => true)
+  end
+
+  def self.columns
+    super.reject { |c| c.name == "use_gravatar" }
   end
 
   def confirm!
@@ -105,13 +111,24 @@ class Gamer < ActiveRecord::Base
     end
   end
 
-  def get_gravatar_profile_url
-    "https://secure.gravatar.com/#{generate_gravatar_hash}"
+  def get_avatar_profile_url
+    if gamer_profile.present? && gamer_profile.facebook_id.present?
+      "http://www.facebook.com/profile.php?id=#{gamer_profile.facebook_id}"
+    else
+      "https://secure.gravatar.com/#{generate_gravatar_hash}"
+    end
   end
 
-  def get_avatar_url(size=nil)
-    size_param = size.present? ? "&size=#{size}" : nil
-    "https://secure.gravatar.com/avatar/#{generate_gravatar_hash}?d=mm#{size_param}"
+  def get_avatar_url
+    if gamer_profile.present? && gamer_profile.facebook_id.present?
+      "https://graph.facebook.com/#{gamer_profile.facebook_id}/picture?size=square"
+    else
+      "https://secure.gravatar.com/avatar/#{generate_gravatar_hash}?d=mm&s=50"
+    end
+  end
+
+  def reward_click(click)
+    Downloader.get_with_retry("#{API_URL}/offer_completed?click_key=#{click.key}")
   end
 
   def update_twitter_info!(authhash)
@@ -146,7 +163,7 @@ class Gamer < ActiveRecord::Base
   end
 
   def check_referrer
-    if referrer.present?
+    if referrer.present? && referrer != 'tjreferrer:'
       if referrer.starts_with?('tjreferrer:')
         click = Click.new :key => referrer.gsub('tjreferrer:', '')
         if click.rewardable?
@@ -154,21 +171,22 @@ class Gamer < ActiveRecord::Base
           device.product = click.device_name
           device.save
           devices.build(:device => device)
-          url = "#{API_URL}/offer_completed?click_key=#{click.key}"
-          Downloader.get_with_retry url
+          reward_click(click)
         end
       else
         begin
-          self.referred_by, invitation_id = SymmetricCrypto.decrypt_object(referrer, SYMMETRIC_CRYPTO_SECRET).split(',')
+          invitation_id, advertiser_app_id = ObjectEncryptor.decrypt(referrer).split(',')
         rescue OpenSSL::Cipher::CipherError
         end
-        if referred_by? && invitation_id
-          referred_by_gamer = Gamer.find_by_id(self.referred_by)
-          invitation = Invitation.find_by_id(invitation_id)
-          if referred_by_gamer && invitation
-            referred_by_gamer.gamer_profile.update_attributes!(:referral_count => referred_by_gamer.referral_count + 1)
-            follow_gamer(Gamer.find_by_id(referred_by))
-            Invitation.reconcile_pending_invitations(self, :invitation => invitation)
+        if invitation_id
+          invitation = Invitation.find_by_id(invitation_id) || (Invitation.find_by_id(advertiser_app_id) if advertiser_app_id)
+          if invitation
+            self.referred_by = invitation.gamer_id
+            referred_by_gamer = Gamer.find_by_id(self.referred_by)
+            if referred_by_gamer
+              follow_gamer(referred_by_gamer)
+              Invitation.reconcile_pending_invitations(self, :invitation => invitation)
+            end
           end
         end
       end

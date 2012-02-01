@@ -23,6 +23,11 @@ As of: #{@last_updated.to_s(:pub_ampm_sec)}
 
 %h3 Total Balance: #{number_to_currency(@total_balance)}
 %h3 Total Pending Earnings: #{number_to_currency(@total_pending_earnings)}
+%h3
+  Deduct Percentage: #{@current_spend_share.deduct_pct}
+  - if @current_spend_share.capped?
+    %span.alert{:title => "This is what the deduct percentage would be, if it weren't capped"}
+      = "(#{@current_spend_share.deduct_pct(:uncapped_ratio)})"
 
 - content_for :page_styles do
   :plain
@@ -32,4 +37,8 @@ As of: #{@last_updated.to_s(:pub_ampm_sec)}
 
     table.tablesorter thead tr .header {
       background-position: right bottom;
+    }
+
+    .alert {
+      color: red;
     }

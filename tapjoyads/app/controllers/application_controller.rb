@@ -144,6 +144,10 @@ private
     @cached_geoip_data
   end
 
+  def geoip_location
+    "#{get_geoip_data[:city]}, #{get_geoip_data[:region]}, #{get_geoip_data[:country]} (#{get_ip_address})"
+  end
+
   def reject_banned_ips
     render :text => '' if BANNED_IPS.include?(get_ip_address)
   end
@@ -158,11 +162,16 @@ private
     activity_log                  = ActivityLog.new({ :load => false })
     activity_log.request_id       = @request_id
     activity_log.user             = 'system'
-    activity_log.user             = current_user.username if self.respond_to?(:current_user)
     activity_log.controller       = params[:controller]
     activity_log.action           = params[:action]
     activity_log.included_methods = included_methods
     activity_log.object           = object
+    activity_log.ip_address       = get_ip_address
+
+    if self.respond_to?(:current_user)
+      activity_log.user           = current_user.username
+      activity_log.user_id        = current_user.id
+    end
 
     @activity_logs << activity_log
   end
@@ -190,12 +199,14 @@ private
   end
 
   def build_test_offer(publisher_app)
-    test_offer = Offer.new(:item_id => publisher_app.id, :item_type => 'TestOffer')
+    test_offer = Offer.new(
+      :item_id            => publisher_app.id,
+      :item_type          => 'TestOffer',
+      :name               => 'Test Offer (Visible to Test Devices)',
+      :third_party_data   => publisher_app.id,
+      :price              => 0,
+      :reward_value       => 100)
     test_offer.id = publisher_app.id
-    test_offer.name = 'Test Offer (Visible to Test Devices)'
-    test_offer.third_party_data = publisher_app.id
-    test_offer.price = 0
-    test_offer.reward_value = 100
     test_offer
   end
 
@@ -223,7 +234,7 @@ private
     return unless params[:data].present?
 
     begin
-      data = SymmetricCrypto.decrypt_object(params[:data], SYMMETRIC_CRYPTO_SECRET)
+      data = ObjectEncryptor.decrypt(params[:data])
       params.merge!(data)
     rescue OpenSSL::Cipher::CipherError, TypeError => e
       render :text => 'bad request', :status => 400

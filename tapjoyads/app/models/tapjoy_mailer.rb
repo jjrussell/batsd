@@ -37,12 +37,12 @@ class TapjoyMailer < ActionMailer::Base
     body(:offer => offer, :stats => stats)
   end
 
-  def password_reset(user_email, reset_link)
+  def password_reset(user_email, reset_link, location, timestamp)
     from 'Tapjoy Support <support@tapjoy.com>'
     recipients user_email
     subject "Password Reset - Tapjoy.com"
     content_type 'text/html'
-    body(:reset_link => reset_link)
+    body(:reset_link => reset_link, :location => location, :timestamp => timestamp)
   end
 
   def new_secondary_account(user_email, reset_link)
@@ -179,5 +179,43 @@ class TapjoyMailer < ActionMailer::Base
     recipients email_address
     content_type 'text/html'
     subject 'Thanks for signing up with Tapjoy!'
+  end
+
+  def resolve_support_requests(user_email, mass_resolve_results, upload_time)
+    upload_time_stamp = upload_time.to_s(:pub_ampm)
+    from 'Tapjoy <noreply@tapjoy.com>'
+    recipients user_email
+    if Rails.env.production?
+      cc 'customerservice@tapjoy.com'
+    end
+    content_type 'text/html'
+    subject "Support Request for Mass Resolution initiated on #{upload_time_stamp}"
+    body(:mass_resolve_results => mass_resolve_results, :upload_time_stamp => upload_time_stamp)
+  end
+
+  def approve_offer_creative(email_address, offer, app, approval_link)
+    from 'Tapjoy <noreply@tapjoy.com>'
+    recipients email_address
+    content_type 'text/html'
+    subject "New Custom Creative requires approval"
+    body(:offer => offer, :app => app, :approval_url => approval_link)
+  end
+
+  def offer_creative_approved(email_address, offer, size, offer_link)
+    offer_creative_updated(:approved, email_address, offer, size, offer_link)
+  end
+
+  def offer_creative_rejected(email_address, offer, size, offer_link)
+    offer_creative_updated(:rejected, email_address, offer, size, offer_link)
+  end
+
+  private
+  def offer_creative_updated(status, email_address, offer, size, offer_link)
+    from('Tapjoy <noreply@tapjoy.com>')
+    recipients(email_address)
+    content_type('text/html')
+    subject("Custom creative has been #{status}!")
+    body(:offer => offer, :size => size, :offer_url => offer_link)
+    template("offer_creative_#{status}")
   end
 end
