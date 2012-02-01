@@ -624,9 +624,9 @@ ActiveRecord::Schema.define(:version => 20120124191839) do
     t.boolean  "instructions_overridden",                                                       :default => false, :null => false
     t.boolean  "tapjoy_sponsored",                                                              :default => false, :null => false
     t.boolean  "tj_games_only",                                                                 :default => false, :null => false
-    t.text     "approved_sources",                                                                                 :null => false
-    t.text     "approved_banner_creatives"
     t.boolean  "wifi_only",                                                                     :default => false, :null => false
+    t.text     "approved_banner_creatives"
+    t.text     "approved_sources",                                                                                 :null => false
     t.boolean  "sdkless",                                                                       :default => false
   end
 
@@ -876,19 +876,6 @@ ActiveRecord::Schema.define(:version => 20120124191839) do
 
   add_index "role_assignments", ["id"], :name => "index_role_assignments_on_id", :unique => true
   add_index "role_assignments", ["user_id", "user_role_id"], :name => "index_role_assignments_on_user_id_and_user_role_id", :unique => true
-
-  create_table "sketchy_activities", :force => true do |t|
-    t.string   "app_id"
-    t.string   "type"
-    t.float    "value1"
-    t.float    "value2"
-    t.float    "value3"
-    t.float    "value4"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  add_index "sketchy_activities", ["app_id"], :name => "index_sketchy_activities_on_app_id"
 
   create_table "spend_shares", :id => false, :force => true do |t|
     t.string   "id",             :limit => 36, :null => false
