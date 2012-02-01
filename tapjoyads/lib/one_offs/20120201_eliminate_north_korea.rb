@@ -6,7 +6,7 @@ class OneOffs
 
     offers.each do |offer|
       offer.countries = offer.get_countries - ['KP'] + ['KR']
-      offer.save
+      offer.save!
     end
 
     puts "After: #{Offer.find_by_sql(sql).length}"
