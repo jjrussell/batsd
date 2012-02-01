@@ -51,7 +51,19 @@ describe Tools::GamerReviewsController do
       end
     end
   end
-  
+
+  describe '#edit' do
+    before :each do
+      get 'edit', :id => @gamer_review11.id
+    end
+
+    context 'when edit success' do
+      it 'gets the gamer_review' do
+        assigns[:gamer_review].should == @gamer_review11
+      end
+    end
+  end
+
   describe '#update' do
     before :each do
       @gamer_review11.update_app_rating_counts(0)
@@ -65,20 +77,47 @@ describe Tools::GamerReviewsController do
     end
 
     context 'when update success' do
-      it 'updates gamer review' do
+      it 'updates the user_rating of gamer_review' do
         assigns[:gamer_review].user_rating.should == -1
+      end
+
+      it 'sets an notice' do
         flash[:notice].should == 'App review was successfully updated.'
+      end
+
+      it "redirects to tools/gamer_reviews/index?app_id=" do
         response.should redirect_to(tools_gamer_reviews_path(:app_id => @gamer_review11.app_id))
       end
-      
+
       it 'updates app thumb_up_count' do
         assigns[:gamer_review].app.thumb_up_count.should == 0
       end
-      
+
       it 'updates app thumb_down_count' do
         assigns[:gamer_review].app.thumb_down_count.should == 1
       end
     end
   end
-  
+
+  describe '#destroy' do
+    before :each do
+      @gamer_review = Factory(:gamer_review)
+      delete 'destroy', :id => @gamer_review.id
+      @app.reload
+    end
+
+    context 'when success delete' do
+      it 'redirects to tools/gamer_reviews/index' do
+        response.should redirect_to(tools_gamer_reviews_path)
+      end
+
+      it 'resets app thumb_up_count' do
+        @app.thumb_up_count.should == 0
+      end
+
+      it 'resets app thumb_down_count' do
+        @app.thumb_down_count.should == 0
+      end
+    end
+  end
 end

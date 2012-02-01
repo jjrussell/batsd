@@ -34,7 +34,7 @@ describe GamerReview do
     end
   end
 
-  context '.update_app_rating_counts' do
+  context '#update_app_rating_counts' do
     before :each do
       @prev_rating = subject.user_rating
     end

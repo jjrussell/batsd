@@ -10,7 +10,7 @@
     %tr
       %th= f.label :user_rating
       %td
-        = f.select :user_rating, [1,2,3,4,5]
+        = f.select :user_rating, [-1, 0, 1]
         = error_message_on @gamer_review, :user_rating
     %tr
       %th= f.label :review_text
