@@ -19,7 +19,9 @@
     \-
     = text_field_tag(:end_date, @end_time.to_date.to_s(:mdy))
     = submit_tag('Update', :id => :date_submit)
+
 %p Note: publisher revenue total and publisher pending earnings total are sums by publishers, not sums of the columns.
+
 %table#apps_table.tablesorter
   %thead
     %tr
@@ -261,23 +263,23 @@
       });
       $('.filter select').change(function(){
         var selectValues = [
-          String( $('#spend_filter').val() ).toLowerCase(),
-          String( $('#conversions_filter').val() ).toLowerCase(),
-          String( $('#rank_filter').val() ).toLowerCase(),
-          String( $('#price_filter').val() ).toLowerCase(),
-          String( $('#published_offers_filter').val() ).toLowerCase(),
-          String( $('#arpdau_filter').val() ).toLowerCase(),
-          String( $('#offerwall_ecpm_filter').val() ).toLowerCase(),
-          String( $('#featured_ecpm_filter').val() ).toLowerCase(),
-          String( $('#display_ecpm_filter').val() ).toLowerCase(),
-          String( $('#gross_revenue_filter').val() ).toLowerCase(),
-          String( $('#publisher_revenue_filter').val() ).toLowerCase(),
-          String( $('#publisher_total_revenue_filter').val() ).toLowerCase(),
-          String( $('#publisher_pending_earnings_filter').val() ).toLowerCase(),
-          String( $('#featured_filter').val() ).toLowerCase(),
-          String( $('#rewarded_filter').val() ).toLowerCase(),
-          String( $('#platform_filter').val() ).toLowerCase(),
-          String( $('#offer_type_filter').val() ).toLowerCase(),
+          getStringLower('#spend_filter'),
+          getStringLower('#conversions_filter'),
+          getStringLower('#rank_filter'),
+          getStringLower('#price_filter'),
+          getStringLower('#published_offers_filter'),
+          getStringLower('#arpdau_filter'),
+          getStringLower('#offerwall_ecpm_filter'),
+          getStringLower('#featured_ecpm_filter'),
+          getStringLower('#display_ecpm_filter'),
+          getStringLower('#gross_revenue_filter'),
+          getStringLower('#publisher_revenue_filter'),
+          getStringLower('#publisher_total_revenue_filter'),
+          getStringLower('#publisher_pending_earnings_filter'),
+          getStringLower('#featured_filter'),
+          getStringLower('#rewarded_filter'),
+          getStringLower('#platform_filter'),
+          getStringLower('#offer_type_filter'),
         ]
         var className = '';
         var length = selectValues.length;
@@ -360,6 +362,9 @@
           x1 = x1.replace(rgx, '$1' + ',' + '$2');
         }
         return x1 + x2;
+      }
+      function getStringLower(id){
+        return String($(id).val()).toLowerCase();
       }
     });
 

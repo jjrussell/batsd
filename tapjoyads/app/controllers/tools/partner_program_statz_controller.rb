@@ -10,10 +10,10 @@ class Tools::PartnerProgramStatzController < WebsiteController
   def index
     stats_data = get_stats(@start_time, @end_time)
     @partner_program_metadata = stats_data[:partner_program_metadata]
-    @partner_program_stats = stats_data[:partner_program_stats_adv]
-    @partner_revenue_stats = stats_data[:partner_revenue_stats]
-    @partner_names = stats_data[:partner_names]
-    @appstats_data = stats_data[:appstats_data]
+    @partner_program_stats    = stats_data[:partner_program_stats_adv]
+    @partner_revenue_stats    = stats_data[:partner_revenue_stats]
+    @partner_names            = stats_data[:partner_names]
+    @appstats_data            = stats_data[:appstats_data]
   end
 
   def export
@@ -52,8 +52,8 @@ class Tools::PartnerProgramStatzController < WebsiteController
         :group      => 'publisher_app_id',
         :conditions => "path LIKE '%reward%' AND #{time_conditions} AND publisher_app_id IN (#{partner_program_offer_ids})" }).each do |result|
       partner_program_stats[result[:offer_id]] ||= { 'conversions' => '0', 'spend' => '$0.00' }
-      partner_program_stats[result[:offer_id]]['published_offers'] = NumberHelper.number_with_delimiter(result[:published_offers])
-      partner_program_stats[result[:offer_id]]['gross_revenue']   = result[:gross_revenue]
+      partner_program_stats[result[:offer_id]]['published_offers']  = NumberHelper.number_with_delimiter(result[:published_offers])
+      partner_program_stats[result[:offer_id]]['gross_revenue']     = result[:gross_revenue]
       partner_program_stats[result[:offer_id]]['publisher_revenue'] = result[:publisher_revenue]
     end
 
@@ -64,25 +64,27 @@ class Tools::PartnerProgramStatzController < WebsiteController
     Offer.find_each(:conditions => [ 'id IN (?)', partner_program_stats.keys ], :include => :partner) do |offer|
 
       appstats = Appstats.new(offer.id, {
-        :start_time => start_time,
-        :end_time => end_time,
+        :start_time  => start_time,
+        :end_time    => end_time,
         :granularity => :daily,
-        :stat_types => ['offerwall_views', 'featured_offers_shown', 'display_ads_shown',
+        :stat_types  => ['offerwall_views', 'featured_offers_shown', 'display_ads_shown',
           'installs_revenue', 'offers_revenue', 'rewards_revenue', 'featured_revenue',
           'display_revenue', 'daily_active_users', 'total_revenue', 'arpdau']})
-      arpdau_sum = appstats.stats['arpdau'].sum.to_f
-      arpdau_days = appstats.stats['arpdau'].length.to_f
-      offerwall_revenue = appstats.stats['rewards_revenue'].sum.to_f
-      offerwall_views = appstats.stats['offerwall_views'].sum
-      featured_revenue = appstats.stats['featured_revenue'].sum.to_f
+
+      arpdau_sum            = appstats.stats['arpdau'].sum.to_f
+      arpdau_days           = appstats.stats['arpdau'].length.to_f
+      offerwall_revenue     = appstats.stats['rewards_revenue'].sum.to_f
+      offerwall_views       = appstats.stats['offerwall_views'].sum
+      featured_revenue      = appstats.stats['featured_revenue'].sum.to_f
       featured_offers_shown = appstats.stats['featured_offers_shown'].sum
-      display_revenue = appstats.stats['display_revenue'].sum.to_f
-      display_ads_shown = appstats.stats['display_ads_shown'].sum
+      display_revenue       = appstats.stats['display_revenue'].sum.to_f
+      display_ads_shown     = appstats.stats['display_ads_shown'].sum
+
       appstats_data[offer.id] = {
-        :arpdau => arpdau_sum / arpdau_days,
+        :arpdau         => arpdau_sum        / arpdau_days,
         :offerwall_ecpm => offerwall_revenue / (offerwall_views / 1000.0),
-        :featured_ecpm => featured_revenue / (featured_offers_shown / 1000.0),
-        :display_ecpm => display_revenue / (display_ads_shown / 1000.0),
+        :featured_ecpm  => featured_revenue  / (featured_offers_shown / 1000.0),
+        :display_ecpm   => display_revenue   / (display_ads_shown / 1000.0),
       }
 
       partner_program_metadata[offer.id] = {
@@ -110,12 +112,12 @@ class Tools::PartnerProgramStatzController < WebsiteController
       NumberHelper.currency_to_number(s2[1]['spend']) <=> NumberHelper.currency_to_number(s1[1]['spend'])
     end
 
-    stats_data = {
-      :partner_program_metadata => partner_program_metadata,
+    {
+      :partner_program_metadata  => partner_program_metadata,
       :partner_program_stats_adv => partner_program_stats_adv,
-      :partner_revenue_stats => partner_revenue_stats,
-      :partner_names => partner_names,
-      :appstats_data => appstats_data,
+      :partner_revenue_stats     => partner_revenue_stats,
+      :partner_names             => partner_names,
+      :appstats_data             => appstats_data,
     }
   end
   memoize :get_stats
@@ -140,10 +142,11 @@ class Tools::PartnerProgramStatzController < WebsiteController
     ]
     stats_data = get_stats(@start_time, @end_time)
     @partner_program_metadata = stats_data[:partner_program_metadata]
-    @partner_program_stats = stats_data[:partner_program_stats_adv]
-    @partner_revenue_stats = stats_data[:partner_revenue_stats]
-    @partner_names = stats_data[:partner_names]
-    @appstats_data = stats_data[:appstats_data]
+    @partner_program_stats    = stats_data[:partner_program_stats_adv]
+    @partner_revenue_stats    = stats_data[:partner_revenue_stats]
+    @partner_names            = stats_data[:partner_names]
+    @appstats_data            = stats_data[:appstats_data]
+
     @partner_program_stats.each do |offer_id, stats|
       metadata = @partner_program_metadata[offer_id]
       line = [
