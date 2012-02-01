@@ -40,7 +40,7 @@ class FakeObject
   def initialize(key)
     @key = key
     if REAL_KEYS.include? @key
-      @data = File.open("#{RAILS_ROOT}/public/images/gunbros.png").read
+      @data = File.open("#{Rails.root}/public/images/gunbros.png").read
     end
   end
 
