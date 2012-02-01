@@ -22,6 +22,7 @@ class Device < SimpledbShardedResource
   self.sdb_attr :current_packages, :type => :json, :default_value => []
 
   def mac_address=(new_value)
+    new_value = new_value ? new_value.downcase.gsub(/:/,"") : ''
     @create_device_identifiers ||= (self.mac_address != new_value)
     put('mac_address', new_value)
   end
