@@ -30,11 +30,11 @@ class Games::Social::TwitterController < GamesController
         redirect_to games_social_invite_twitter_friends_path
       else
         flash[:error] =  'Error while authenticating via TWITTER. The service did not return valid data.'
-        redirect_to edit_games_gamer_path
+        redirect_to social_feature_redirect_path
       end
     else
       flash[:error] = 'Error while authenticating via TWITTER. The service did not return valid data.'
-      redirect_to edit_games_gamer_path
+      redirect_to social_feature_redirect_path
     end
   end
 
@@ -45,10 +45,10 @@ class Games::Social::TwitterController < GamesController
     when OAuth::Unauthorized
       current_gamer.dissociate_account!(Invitation::TWITTER)
       flash[:error] = 'Please authorize us before sending out an invite.'
-      redirect_to edit_games_gamer_path
+      redirect_to social_feature_redirect_path
     else
       flash[:error] = 'Something happened to Twttier. Please try again later.'
-      redirect_to edit_games_gamer_path
+      redirect_to social_feature_redirect_path
     end
   end
 end

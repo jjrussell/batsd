@@ -1,5 +1,6 @@
 class Games::GamersController < GamesController
   rescue_from Mogli::Client::ClientException, :with => :handle_mogli_exceptions
+  rescue_from Twitter::Error, :with => :handle_twitter_exceptions
   rescue_from Errno::ECONNRESET, :with => :handle_errno_exceptions
   rescue_from Errno::ETIMEDOUT, :with => :handle_errno_exceptions
   before_filter :set_profile, :only => [ :edit, :accept_tos, :password, :prefs, :social, :update_password, :confirm_delete ]

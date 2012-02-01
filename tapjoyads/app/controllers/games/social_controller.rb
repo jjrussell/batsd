@@ -3,8 +3,8 @@ class Games::SocialController < GamesController
 
   rescue_from Mogli::Client::ClientException, :with => :handle_mogli_exceptions
   rescue_from Twitter::Error, :with => :handle_twitter_exceptions
-  rescue_from Errno::ECONNRESET, :with => :handle_other_exceptions
-  rescue_from Errno::ETIMEDOUT, :with => :handle_other_exceptions
+  rescue_from Errno::ECONNRESET, :with => :handle_errno_exceptions
+  rescue_from Errno::ETIMEDOUT, :with => :handle_errno_exceptions
 
   before_filter :require_gamer
   before_filter :offline_facebook_authenticate, :only => [ :invite_facebook_friends, :send_facebook_invites ]
@@ -121,7 +121,7 @@ class Games::SocialController < GamesController
       friend[:name].downcase
     end
   end
-  
+
   def send_twitter_invites
     friends = params[:friends]
 
@@ -140,14 +140,15 @@ class Games::SocialController < GamesController
             current_gamer.follow_gamer(gamer)
           end
         else
-          friend_id = TEST_TWITTER_ID if Rails.env != 'production' # please make sure the TEST_TWITTER_ID is the id of one of current twitter account's followers
+          # friend_id = TEST_TWITTER_ID if Rails.env != 'production' # please make sure the TEST_TWITTER_ID is the id of one of current twitter account's followers
           friend_name = Twitter.user(friend_id.to_i).name
           non_gamers << "#{friend_name}"
           invitation = current_gamer.invitation_for(friend_id, Invitation::TWITTER)
 
           if invitation.pending?
-            link = games_login_url :referrer => invitation.encrypted_referral_id
-            link = "http://www.tapjoygames.com/login?referrer=#{invitation.encrypted_referral_id}" if Rails.env != 'production' # we need this because twitter cannot recognize IP addr as a valid url
+            referrer_value = params[:advertiser_app_id] == "null" ? invitation.encrypted_referral_id : invitation.encrypted_referral_id(params[:advertiser_app_id])
+            link = games_login_url :referrer => referrer_value
+            link = "http://www.tapjoygames.com/login?referrer=#{referrer_value}" if Rails.env != 'production' # we need this because twitter cannot recognize IP addr as a valid url
 
             name = Twitter.user(current_gamer.twitter_id.to_i).name
             cookies[:twitter_short_url_len] = { :value => Twitter.configuration.short_url_length_https, :expires => 1.day.from_now } unless cookies[:twitter_short_url_len]
@@ -170,26 +171,9 @@ class Games::SocialController < GamesController
 
   private
 
-  # def offline_facebook_authenticate
-  #   if current_gamer.facebook_id.blank? && params[:valid_login] && current_facebook_user
-  #     current_gamer.gamer_profile.update_facebook_info!(current_facebook_user)
-  #     unless has_permissions?
-  #       dissociate_and_redirect
-  #     end
-  #   elsif current_gamer.facebook_id?
-  #     fb_create_user_and_client(current_gamer.fb_access_token, '', current_gamer.facebook_id)
-  #     unless has_permissions?
-  #       dissociate_and_redirect
-  #     end
-  #   else
-  #     flash[:error] = @error_msg ||'Please connect Facebook with Tapjoy.'
-  #     redirect_to edit_games_gamer_path
-  #   end
-  # end
-
   def twitter_authenticate
     if current_gamer.twitter_id.blank?
-      redirect_to games_social_twitter_start_oauth_path #'/auth/twitter'
+      redirect_to games_social_twitter_start_oauth_path
     elsif current_gamer.twitter_id? and current_gamer.twitter_access_token? and current_gamer.twitter_access_secret?
       Twitter.configure do |config|
         config.consumer_key       = ENV['CONSUMER_KEY']
@@ -202,65 +186,6 @@ class Games::SocialController < GamesController
       redirect_to social_feature_redirect_path
     end
   end
-
-  def handle_twitter_exceptions(e)
-    case e
-    when Twitter::Forbidden
-      render :json => { :success => false, :error => "Please try to invite the same person again tomorrow.(Duplicate or Reach limitation)" }
-    when Twitter::Unauthorized
-      current_gamer.dissociate_account!(Invitation::TWITTER)
-      render :json => { :success => false, :error_redirect => true } and return if params[:ajax].present?
-      redirect_to games_social_invite_twitter_friends_path
-    when Twitter::InternalServerError, Twitter::BadGateway, Twitter::ServiceUnavailable
-      render :json => { :success => false, :error => "Something happened to Twttier. Please try again later" } and return if params[:ajax].present?
-      flash[:error] = 'Something happened to Twttier. Please try again later.'
-      redirect_to social_feature_redirect_path
-    else
-      render :json => { :success => false, :error => "There was an issue with inviting your friend, please try again later" } and return if params[:ajax].present?
-      flash[:error] = 'There was an issue with inviting your friend, please try again later.'
-      redirect_to social_feature_redirect_path
-    end
-  end
-
-  # def has_permissions?
-  #   begin
-  #     unless current_facebook_user.has_permission?(:offline_access) && current_facebook_user.has_permission?(:publish_stream)
-  #       @error_msg = "Please grant us both permissions before sending out an invite."
-  #     end
-  #   rescue
-  #   end
-  #   @error_msg.blank?
-  # end
-  # 
-  # def dissociate_and_redirect
-  #   current_gamer.dissociate_account!(Invitation::FACEBOOK)
-  #   render :json => { :success => false, :error_redirect => true } and return if params[:ajax].present?
-  #   flash[:error] = @error_msg
-  #   redirect_to edit_games_gamer_path
-  # end
-  # 
-  # def handle_mogli_exceptions(e)
-  #   case e
-  #   when Mogli::Client::FeedActionRequestLimitExceeded
-  #     @error_msg = "You've reached the limit. Please try again later."
-  #   when Mogli::Client::HTTPException
-  #     @error_msg = "There was an issue with inviting your friend. Please try again later."
-  #   when Mogli::Client::SessionInvalidatedDueToPasswordChange, Mogli::Client::OAuthException
-  #     @error_msg = "Please authorize us before sending out an invite."
-  #   else
-  #     @error_msg = "There was an issue with inviting your friend. Please try again later."
-  #   end
-  # 
-  #   dissociate_and_redirect
-  # end
-  # 
-  # def handle_other_exceptions(e)
-  #   case e
-  #   when Errno::ECONNRESET, Errno::ETIMEDOUT
-  #     @error_msg = "There was a connection issue. Please try again later."
-  #     redirect_to edit_games_gamer_path
-  #   end
-  # end
 
   def validate_recipients
     if params[:recipients].present?
