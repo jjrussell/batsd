@@ -420,9 +420,9 @@ class ToolsController < WebsiteController
     customer_support_reward.advertiser_amount          =  0
     customer_support_reward.tapjoy_amount              =  0
     customer_support_reward.customer_support_username  =  current_user.username
+    customer_support_reward.serial_save
 
-    message = customer_support_reward.serialize
-    Sqs.send_message(QueueNames::SEND_CURRENCY, message)
+    Sqs.send_message(QueueNames::SEND_CURRENCY, customer_support_reward.key)
 
     flash[:notice] = " Successfully awarded #{params[:amount]} currency. "
     redirect_to :action => :device_info, :udid => params[:udid]
