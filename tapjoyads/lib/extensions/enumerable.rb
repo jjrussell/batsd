@@ -15,4 +15,12 @@ module Enumerable
     Math.sqrt(variance)
   end
 
+  # Gives counts of items, or of items categories if the categorization is given a block
+  # (1..30).histogram{ |x| x % 3 } #=> {0=>10, 1=>10, 2=>10}
+  def histogram(&to_category_block)
+    hist = Hash.new(0)
+    each{ |i| hist[block_given? ? yield(i) : i] += 1 }
+    hist
+  end
+
 end
