@@ -9,5 +9,4 @@ class ReengagementReward
   self.sdb_attr :day_number,    :type => :int
   self.sdb_attr :reward_value,  :type => :int
 
-  private
 end

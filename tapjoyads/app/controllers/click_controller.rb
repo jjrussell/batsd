@@ -145,14 +145,7 @@ private
   end
 
   def validate_click
-    puts "&&&&&&&&&&&&&&& currency: #{currency_disabled?}"
-    return if currency_disabled?
-    puts "&&&&&&&&&&&&&&& offer: #{offer_disabled?}"
-    return if offer_disabled?
-    puts "&&&&&&&&&&&&&&& offer completed: #{offer_completed?}"
-    return if offer_completed?
-    return if recently_clicked?
-
+    return if currency_disabled? || offer_disabled? || offer_completed? || recently_clicked?
     wr_path = params[:source] == 'featured' ? 'featured_offer_click' : 'offer_click'
     build_web_request(wr_path)
   end
