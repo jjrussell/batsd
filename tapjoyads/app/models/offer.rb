@@ -202,12 +202,6 @@ class Offer < ActiveRecord::Base
   json_set_field :device_types, :screen_layout_sizes, :countries, :dma_codes, :regions, :approved_sources
   memoize :get_device_types, :get_screen_layout_sizes, :get_countries, :get_dma_codes, :get_regions, :get_approved_sources
 
-  # Our relationship wasn't working, and this allows the ActionOffer.app crap to work
-  def app
-    return item if item_type == 'App'
-    return item.app if ['ActionOffer', 'RatingOffer'].include?(item_type)
-  end
-
   def clone
     clone = super
 
@@ -702,7 +696,7 @@ class Offer < ActiveRecord::Base
   def calculated_min_bid
     if item_type == 'App'
       if featured? && rewarded?
-        is_paid? ? price : 65
+        is_paid? ? price : (get_platform == 'iOS' ? 65 : 10)
       elsif !rewarded?
         100
       else
