@@ -210,5 +210,6 @@ FactoryGirl.define do
     author { Factory(:gamer) }
     text   "A sample gamer review"
     user_rating 1
+    prev_rating 0
   end
 end

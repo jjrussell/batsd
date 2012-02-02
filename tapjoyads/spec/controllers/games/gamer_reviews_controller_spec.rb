@@ -14,6 +14,7 @@ describe Games::GamerReviewsController do
       @options = {
         :gamer_review => {
           :author_id   => @gamer.id,
+          :author_type => 'Gamer',
           :app_id      => @app.id,
           :text        => "Sampe review",
           :user_rating => 1
@@ -65,7 +66,6 @@ describe Games::GamerReviewsController do
   describe '#edit' do
     before :each do
       @gamer_review = Factory(:gamer_review, :author => @gamer, :app => @app)
-      @gamer_review.update_app_rating_counts(0)
 
       get 'edit', :id => @gamer_review
     end
@@ -80,7 +80,6 @@ describe Games::GamerReviewsController do
   describe '#update' do
     before :each do
       @gamer_review = Factory(:gamer_review, :author => @gamer, :app => @app)
-      @gamer_review.update_app_rating_counts(0)
 
       @options = {
         :id => @gamer_review.id,
@@ -96,7 +95,7 @@ describe Games::GamerReviewsController do
         assigns[:gamer_review].user_rating.should == -1
       end
 
-      it 'sets an notice' do
+      it 'sets a notice' do
         flash[:notice].should == 'App review was successfully updated.'
       end
 

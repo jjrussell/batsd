@@ -3,10 +3,6 @@ require 'spec_helper'
 describe GamerReview do
   subject { Factory(:gamer_review) }
 
-  before :each do
-    subject.update_app_rating_counts(0)
-  end
-
   context 'when associating' do
     it { should belong_to :author }
     it { should belong_to :app }
@@ -19,7 +15,7 @@ describe GamerReview do
   end
 
   context 'when delegating' do
-    it "delegates name to app" do
+    it "delegates app_name and app_id to app" do
       delegated_methods = [ :app_name, :app_id ]
       delegated_methods.each do |dm|
         subject.should respond_to dm
@@ -27,7 +23,7 @@ describe GamerReview do
     end
 
     it "delegates get_gamer_name to author" do
-      delegated_methods = [ :author_get_gamer_name ]
+      delegated_methods = [ :get_gamer_name ]
       delegated_methods.each do |dm|
         subject.should respond_to dm
       end
@@ -36,23 +32,13 @@ describe GamerReview do
 
   context '#update_app_rating_counts' do
     before :each do
-      @prev_rating = subject.user_rating
-    end
-
-    context 'when user_rating not changed' do
-      it 'returns true if user_rating not changed' do
-        subject.user_rating = @prev_rating
-        subject.reload
-
-        subject.update_app_rating_counts(@prev_rating).should be_true
-      end
+      subject.prev_rating = subject.user_rating
     end
 
     context 'when user_rating changed' do
       before :each do
         subject.user_rating = -1
         subject.save
-        subject.update_app_rating_counts(@prev_rating)
         subject.reload
       end
 

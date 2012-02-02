@@ -9,15 +9,15 @@ describe Tools::GamerReviewsController do
     @admin.partners << @partner
     login_as(@admin)
 
-    @app = Factory(:app)
-    @app2 = Factory(:app)
+    @app = Factory(:app, :thumb_up_count => 0, :thumb_down_count => 0)
+    @app2 = Factory(:app, :thumb_up_count => 0, :thumb_down_count => 0)
     @gamer = Factory(:gamer)
     @gamer2 = Factory(:gamer)
 
-    @gamer_review11 = Factory(:gamer_review, :author => @gamer, :app => @app)
-    @gamer_review12 = Factory(:gamer_review, :author => @gamer, :app => @app2)
-    @gamer_review21 = Factory(:gamer_review, :author => @gamer2, :app => @app)
-    @gamer_review22 = Factory(:gamer_review, :author => @gamer2, :app => @app2)
+    @gamer_review = Factory(:gamer_review, :author => @gamer, :app => @app)
+    Factory(:gamer_review, :author => @gamer, :app => @app2, :user_rating => 0)
+    Factory(:gamer_review, :author => @gamer2, :app => @app, :user_rating => 0)
+    Factory(:gamer_review, :author => @gamer2, :app => @app2, :user_rating => 0)
   end
 
   describe '#index' do
@@ -54,21 +54,20 @@ describe Tools::GamerReviewsController do
 
   describe '#edit' do
     before :each do
-      get 'edit', :id => @gamer_review11.id
+      get 'edit', :id => @gamer_review.id
     end
 
     context 'when edit success' do
       it 'gets the gamer_review' do
-        assigns[:gamer_review].should == @gamer_review11
+        assigns[:gamer_review].should == @gamer_review
       end
     end
   end
 
   describe '#update' do
     before :each do
-      @gamer_review11.update_app_rating_counts(0)
       @options = {
-        :id => @gamer_review11.id,
+        :id => @gamer_review.id,
         :gamer_review => {
           :user_rating => -1
         }
@@ -81,12 +80,12 @@ describe Tools::GamerReviewsController do
         assigns[:gamer_review].user_rating.should == -1
       end
 
-      it 'sets an notice' do
+      it 'sets a notice' do
         flash[:notice].should == 'App review was successfully updated.'
       end
 
       it "redirects to tools/gamer_reviews/index?app_id=" do
-        response.should redirect_to(tools_gamer_reviews_path(:app_id => @gamer_review11.app_id))
+        response.should redirect_to(tools_gamer_reviews_path(:app_id => @gamer_review.app_id))
       end
 
       it 'updates app thumb_up_count' do
@@ -101,7 +100,6 @@ describe Tools::GamerReviewsController do
 
   describe '#destroy' do
     before :each do
-      @gamer_review = Factory(:gamer_review)
       delete 'destroy', :id => @gamer_review.id
       @app.reload
     end
