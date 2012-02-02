@@ -103,36 +103,10 @@
     - @partner_program_stats.each do |offer_id, stats|
       :ruby
         metadata = @partner_program_metadata[offer_id]
-        partner_pending_earnings = metadata['partner_pending_earnings'] / 100.0
-        arpdau = @appstats_data[offer_id][:arpdau]
-        offerwall_ecpm = @appstats_data[offer_id][:offerwall_ecpm]
-        featured_ecpm = @appstats_data[offer_id][:featured_ecpm]
-        display_ecpm = @appstats_data[offer_id][:display_ecpm]
-        tr_classes = [
-          (stats['spend'] == '$0.00'             ? 'zero_spend'         : 'nonzero_spend'),
-          (stats['conversions'] == '0'           ? 'zero_conversions'   : 'nonzero_conversions'),
-          (metadata['overall_store_rank'] == '-' ? 'unranked'           : 'ranked'),
-          (metadata['price'] == '$0.00'          ? 'free'               : 'paid'),
-          metadata['platform'].to_s.downcase,
-          (stats['published_offers'] == '0'      ? 'zero_published'     : 'nonzero_published'),
-          (arpdau == 0                           ? 'zero_arpdau'        : 'nonzero_arpdau'),
-          (offerwall_ecpm == 0                   ? 'zero_offerwall_ecpm' : 'nonzero_offerwall_ecpm'),
-          (featured_ecpm == 0                    ? 'zero_featured_ecpm' : 'nonzero_featured_ecpm'),
-          (display_ecpm == 0                     ? 'zero_display_ecpm'  : 'nonzero_display_ecpm'),
-          (stats['gross_revenue'] == 0           ? 'zero_gross_revenue' : 'nonzero_gross_revenue'),
-          (stats['publisher_revenue'] == 0       ? 'zero_publisher_revenue' : 'nonzero_publisher_revenue'),
-          (@partner_revenue_stats[metadata['partner_id']] == 0 ? 'zero_publisher_total_revenue' : 'nonzero_publisher_total_revenue'),
-          (metadata['featured']                  ? 'featured'           : 'nonfeatured'),
-          (metadata['rewarded']                  ? 'rewarded'           : 'nonrewarded'),
-          metadata['offer_type'].to_s.downcase,
-          (partner_pending_earnings > 10000      ? 'earning_10k'        : ''),
-          (partner_pending_earnings > 1000       ? 'earning_1k'         : ''),
-          (partner_pending_earnings > 0          ? 'earning_zero'       : ''),
-          (partner_pending_earnings <= 0         ? 'earning_negative'   : ''),
-        ]
+        tr_class = get_tr_class(stats, metadata, offer_id, @appstats_data, @partner_revenue_stats)
         value = metadata['balance'].gsub(/[\$,]/,'')
         title = @partner_names[metadata['partner_id']]
-      %tr{ :class => tr_classes.compact.join(' '), :value => value, :title => title }
+      %tr{ :class => tr_class, :value => value, :title => title }
         %td
           %img.icon.hidden{ :s => metadata['icon_url'] }
         %td= link_to(metadata['offer_name'], statz_path(offer_id))
@@ -146,14 +120,14 @@
         %td= metadata['platform']
         %td= metadata['conversion_rate']
         %td= stats['published_offers']
-        %td= number_to_currency(arpdau / 100.0, :precision => 4)
-        %td= number_to_currency(offerwall_ecpm / 100.0)
-        %td= number_to_currency(featured_ecpm / 100.0)
-        %td= number_to_currency(display_ecpm / 100.0)
-        %td= number_to_currency(stats['gross_revenue'] / 100.0)
-        %td= number_to_currency(stats['publisher_revenue'] / 100.0)
+        %td= number_to_currency(@appstats_data[offer_id][:arpdau] / 100.0, :precision => 4)
+        %td= number_to_currency(@appstats_data[offer_id][:offerwall_ecpm] / 100.0)
+        %td= number_to_currency(@appstats_data[offer_id][:featured_ecpm] / 100.0)
+        %td= number_to_currency(@appstats_data[offer_id][:display_ecpm] / 100.0)
+        %td= stats['gross_revenue']
+        %td= stats['publisher_revenue']
         %td= number_to_currency(@partner_revenue_stats[metadata['partner_id']] / 100.0)
-        %td= number_to_currency(partner_pending_earnings)
+        %td= number_to_currency(metadata['partner_pending_earnings'] / 100.0)
         %td= metadata['featured']
         %td= metadata['rewarded']
         %td= metadata['offer_type']

@@ -42,8 +42,8 @@ class Tools::PartnerProgramStatzController < WebsiteController
         'conversions'       => NumberHelper.number_with_delimiter(result[:conversions]),
         'spend'             => NumberHelper.number_to_currency(result[:spend] / 100.0),
         'published_offers'  => '0',
-        'gross_revenue'     => 0,
-        'publisher_revenue' => 0,
+        'gross_revenue'     => '$0.00',
+        'publisher_revenue' => '$0.00',
       }
     end
     VerticaCluster.query('analytics.actions', {
@@ -53,8 +53,8 @@ class Tools::PartnerProgramStatzController < WebsiteController
         :conditions => "path LIKE '%reward%' AND #{time_conditions} AND publisher_app_id IN (#{partner_program_offer_ids})" }).each do |result|
       partner_program_stats[result[:offer_id]] ||= { 'conversions' => '0', 'spend' => '$0.00' }
       partner_program_stats[result[:offer_id]]['published_offers']  = NumberHelper.number_with_delimiter(result[:published_offers])
-      partner_program_stats[result[:offer_id]]['gross_revenue']     = result[:gross_revenue]
-      partner_program_stats[result[:offer_id]]['publisher_revenue'] = result[:publisher_revenue]
+      partner_program_stats[result[:offer_id]]['gross_revenue']     = NumberHelper.number_to_currency(result[:gross_revenue] / 100.0)
+      partner_program_stats[result[:offer_id]]['publisher_revenue'] = NumberHelper.number_to_currency(result[:publisher_revenue] / 100.0)
     end
 
     partner_revenue_stats = {}
@@ -105,14 +105,15 @@ class Tools::PartnerProgramStatzController < WebsiteController
       }
       partner_names[offer.partner.id] ||= offer.partner.name
       partner_revenue_stats[offer.partner.id] ||= 0
-      partner_revenue_stats[offer.partner.id] += partner_program_stats[offer.id]['publisher_revenue']
+      publisher_revenue_f = NumberHelper.currency_to_number(partner_program_stats[offer.id]['publisher_revenue']) * 100
+      partner_revenue_stats[offer.partner.id] += publisher_revenue_f
     end
 
     partner_program_stats_adv = partner_program_stats.sort do |s1, s2|
       NumberHelper.currency_to_number(s2[1]['spend']) <=> NumberHelper.currency_to_number(s1[1]['spend'])
     end
 
-    {
+    stats_data = {
       :partner_program_metadata  => partner_program_metadata,
       :partner_program_stats_adv => partner_program_stats_adv,
       :partner_revenue_stats     => partner_revenue_stats,
@@ -165,8 +166,8 @@ class Tools::PartnerProgramStatzController < WebsiteController
         NumberHelper.number_to_currency(@appstats_data[offer_id][:offerwall_ecpm] / 100.0, :delimiter => ''),
         NumberHelper.number_to_currency(@appstats_data[offer_id][:featured_ecpm] / 100.0, :delimiter => ''),
         NumberHelper.number_to_currency(@appstats_data[offer_id][:display_ecpm] / 100.0, :delimiter => ''),
-        NumberHelper.number_to_currency(stats['gross_revenue'] / 100.0, :delimiter => ''),
-        NumberHelper.number_to_currency(stats['publisher_revenue'] / 100.0, :delimiter => ''),
+        stats['gross_revenue'].gsub(/[,]/,''),
+        stats['publisher_revenue'].gsub(/[,]/,''),
         NumberHelper.number_to_currency(@partner_revenue_stats[metadata['partner_id']] / 100.0, :delimiter => ''),
         NumberHelper.number_to_currency(metadata['partner_pending_earnings'] / 100.0, :delimiter => ''),
         metadata['featured'],
