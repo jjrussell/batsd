@@ -28,25 +28,25 @@ describe Offer do
     @offer = @app.primary_offer
   end
 
-  it "should update its payment when the bid is changed" do
+  it "updates its payment when the bid is changed" do
     @offer.update_attributes({:bid => 500})
     @offer.reload
     @offer.payment.should == 500
   end
 
-  it "should update its payment correctly with respect to premier discounts" do
+  it "updates its payment correctly with respect to premier discounts" do
     @offer.partner.premier_discount = 10
     @offer.update_attributes({:bid => 500})
     @offer.reload
     @offer.payment.should == 450
   end
 
-  it "should not allow bids below min_bid" do
+  it "doesn't allow bids below min_bid" do
     @offer.bid = @offer.min_bid - 5
     @offer.valid?.should == false
   end
 
-  it "should reject depending on countries blacklist" do
+  it "rejects depending on countries blacklist" do
     device = Factory(:device)
     @offer.item.countries_blacklist = ["GB"]
     geoip_data = { :country => "US" }
@@ -55,7 +55,7 @@ describe Offer do
     @offer.send(:geoip_reject?, geoip_data, device).should == true
   end
 
-  it "should reject depending on region" do
+  it "rejects depending on region" do
     device = Factory(:device)
     @offer.regions = ["CA"]
     geoip_data = { :region => "CA" }
@@ -66,7 +66,7 @@ describe Offer do
     @offer.send(:geoip_reject?, geoip_data, device).should == false
   end
 
-  it "should return proper linkshare account url" do
+  it "returns proper linkshare account url" do
     url = 'http://phobos.apple.com/WebObjects/MZStore.woa/wa/viewSoftware?id=TEST&mt=8'
     linkshare_url = Linkshare.add_params(url)
     linkshare_url.should == "#{url}&partnerId=30&siteID=OxXMC6MRBt4"
@@ -75,13 +75,13 @@ describe Offer do
     linkshare_url.should == "#{url}&partnerId=2003&tduid=UK1800811"
   end
 
-  it "should reject based on source" do
+  it "rejects based on source" do
     @offer.approved_sources = ['tj_games']
     @offer.send(:source_reject?, 'offerwall').should be_true
     @offer.send(:source_reject?, 'tj_games').should be_false
   end
 
-  it "should not reject on source when approved_sources is empty" do
+  it "doesn't reject on source when approved_sources is empty" do
     @offer.send(:source_reject?, 'foo').should be_false
     @offer.send(:source_reject?, 'offerwall').should be_false
   end
@@ -91,7 +91,7 @@ describe Offer do
       @offer.min_bid_override = 1234
     end
 
-    it "should have a min_bid same as min_bid_override" do
+    it "has a min_bid same as min_bid_override" do
       @offer.min_bid.should == 1234
     end
   end
@@ -101,7 +101,7 @@ describe Offer do
       @offer.min_bid_override = nil
     end
 
-    it "should have a min_bid same as calculated_min_bid" do
+    it "gas a min_bid same as calculated_min_bid" do
       @offer.min_bid.should == @offer.send(:calculated_min_bid)
     end
   end
@@ -118,7 +118,7 @@ describe Offer do
         @offer.rewarded = true
       end
 
-      it "should have a min_bid of 150" do
+      it "has a min_bid of 150" do
         @offer.min_bid.should == 150
       end
     end
@@ -128,7 +128,7 @@ describe Offer do
         @offer.rewarded = false
       end
 
-      it "should have a min_bid of 100" do
+      it "has a min_bid of 100" do
         @offer.min_bid.should == 100
       end
     end
@@ -139,7 +139,7 @@ describe Offer do
         @offer.rewarded = true
       end
 
-      it "should have a min_bid of 75" do
+      it "has a min_bid of 75" do
         @offer.min_bid.should == 75
       end
     end
@@ -157,7 +157,7 @@ describe Offer do
         @offer.rewarded = true
       end
 
-      it "should have a min_bid of 65" do
+      it "has a min_bid of 65" do
         @offer.min_bid.should == 65
       end
     end
@@ -167,7 +167,7 @@ describe Offer do
         @offer.rewarded = false
       end
 
-      it "should have a min_bid of 100" do
+      it "has a min_bid of 100" do
         @offer.min_bid.should == 100
       end
     end
@@ -178,7 +178,7 @@ describe Offer do
         @offer.rewarded = true
       end
 
-      it "should have a min_bid of 10" do
+      it "has a min_bid of 10" do
         @offer.min_bid.should == 10
       end
     end
@@ -190,7 +190,7 @@ describe Offer do
       @offer = @video.primary_offer
     end
 
-    it "should have a min_bid of 15" do
+    it "has a min_bid of 15" do
       @offer.min_bid.should == 15
     end
   end
@@ -203,30 +203,30 @@ describe Offer do
 
     context "on Windows" do
       before :each do
-        @offer.device_types = "[\"windows\"]"
+        @offer.device_types = %w( windows ).to_json
       end
 
-      it "should have a min_bid of 25" do
+      it "has a min_bid of 25" do
         @offer.min_bid.should == 25
       end
     end
 
     context "on Android" do
       before :each do
-        @offer.device_types = "[\"android\"]"
+        @offer.device_types = %w( android ).to_json
       end
 
-      it "should have a min_bid of 25" do
+      it "has a min_bid of 25" do
         @offer.min_bid.should == 25
       end
     end
 
     context "on iOS" do
       before :each do
-        @offer.device_types = "[\"iphone\"]"
+        @offer.device_types = %w( iphone ).to_json
       end
 
-      it "should have a min_bid of 35" do
+      it "has a min_bid of 35" do
         @offer.min_bid.should == 35
       end
     end
@@ -238,7 +238,7 @@ describe Offer do
       @offer = @generic.primary_offer
     end
 
-    it "should have a min_bid of 0" do
+    it "has a min_bid of 0" do
       @offer.min_bid.should == 0
     end
   end
