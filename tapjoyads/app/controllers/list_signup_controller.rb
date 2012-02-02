@@ -84,7 +84,7 @@ class ListSignupController < ApplicationController
 
       click = Click.new(:key => "#{@signup.udid}.#{@signup.advertiser_app_id}")
 
-      message = { :click => click.serialize(:attributes_only => true), :install_timestamp => Time.zone.now.to_f.to_s }.to_json
+      message = { :click_key => click.key, :install_timestamp => Time.zone.now.to_f.to_s }.to_json
       Sqs.send_message(QueueNames::CONVERSION_TRACKING, message)
 
       return true

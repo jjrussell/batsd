@@ -8,7 +8,13 @@ class Job::QueueConversionTrackingController < Job::SqsReaderController
 
   def on_message(message)
     json = JSON.parse(message.body)
-    click = Click.deserialize(json['click'])
+    # TO REMOVE: once all the messages with a serialized click are gone
+    if json['click'].present?
+      click = Click.deserialize(json['click'])
+    else
+      click = Click.find(json['click_key'], :consistent => true)
+      raise "Click not found: #{json['click_key']}" if click.nil?
+    end
     installed_at_epoch = json['install_timestamp']
 
     offer = Offer.find_in_cache(click.offer_id, true)
@@ -92,9 +98,8 @@ class Job::QueueConversionTrackingController < Job::SqsReaderController
       return
     end
 
-    reward_message = reward.serialize(:attributes_only => true)
-    Sqs.send_message(QueueNames::SEND_CURRENCY, reward_message) if offer.rewarded? && currency.callback_url != Currency::NO_CALLBACK_URL
-    Sqs.send_message(QueueNames::CREATE_CONVERSIONS, reward_message)
+    Sqs.send_message(QueueNames::SEND_CURRENCY, reward.key) if offer.rewarded? && currency.callback_url != Currency::NO_CALLBACK_URL
+    Sqs.send_message(QueueNames::CREATE_CONVERSIONS, reward.key)
 
     begin
       reward.update_realtime_stats
@@ -107,7 +112,7 @@ class Job::QueueConversionTrackingController < Job::SqsReaderController
 
     device.set_last_run_time(click.advertiser_app_id)
     device.set_last_run_time(click.publisher_app_id) if !device.has_app?(click.publisher_app_id) || device.last_run_time(click.publisher_app_id) < 1.week.ago
-    device.save
+    device.serial_save
 
     web_request = WebRequest.new(:time => Time.zone.at(installed_at_epoch.to_f))
     web_request.path              = 'reward'
