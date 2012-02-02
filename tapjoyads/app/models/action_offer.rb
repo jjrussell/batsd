@@ -23,7 +23,7 @@ class ActionOffer < ActiveRecord::Base
 
   delegate :user_enabled?, :tapjoy_enabled?, :bid, :min_bid, :daily_budget, :integrated?, :to => :primary_offer
 
-  delegate :get_offer_device_types, :store_id, :store_url, :large_download?, :supported_devices, :platform, :get_countries_blacklist, :countries_blacklist, :primary_category, :user_rating, :info_url, :to => :app
+  delegate :get_offer_device_types, :store_id, :store_url, :wifi_required?, :supported_devices, :platform, :get_countries_blacklist, :countries_blacklist, :primary_category, :user_rating, :info_url, :to => :app
 
   def toggle_user_enabled
     primary_offer.toggle_user_enabled

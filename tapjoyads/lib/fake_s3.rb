@@ -27,7 +27,7 @@ class FakeObjects
 
   def with_prefix(prefix)
     @fake_objects ||= {}
-    @fake_objects.reject { |key| key !~ /#{prefix}/ }.values
+    @fake_objects.reject { |key, value| key !~ /#{prefix}/ }.values
   end
 end
 

@@ -64,6 +64,61 @@ describe Job::MasterReloadStatzController do
 
       response.body.should == 'ok'
     end
+
+    it 'should generate weekly and monthly timeframes' do
+      start_time = Time.zone.now - 7.days
+      end_time = Time.zone.now
+
+      stub_vertica(start_time, end_time)
+
+      start_time = Time.zone.now - 30.days
+      end_time = Time.zone.now
+
+      stub_vertica(start_time, end_time)
+
+      get :daily
+
+      response.body.should == 'ok'
+    end
+
+    it 'should generate combined ranks' do
+      apps = [
+        Factory(:app,
+          :store_id => 'ios.free',
+          :platform => 'iphone',
+          :price => 0),
+        Factory(:app,
+          :store_id => 'ios.paid',
+          :platform => 'iphone',
+          :price => 1),
+        Factory(:app,
+          :store_id => 'android.free',
+          :platform => 'android',
+          :price => 0),
+        Factory(:app,
+          :store_id => 'android.paid',
+          :platform => 'android',
+          :price => 1),
+      ]
+
+      stub_vertica
+
+      hash = {'ios.free' => [1]}
+      Mc.put('store_ranks.ios.overall.free.united_states', hash)
+      hash = {'ios.paid' => [1]}
+      Mc.put('store_ranks.ios.overall.paid.united_states', hash)
+      hash = {'android.free' => [1]}
+      Mc.put('store_ranks.android.overall.free.english', hash)
+      hash = {'android.paid' => [1]}
+      Mc.put('store_ranks.android.overall.paid.english', hash)
+
+      get :index
+
+      metadata = Mc.get("statz.metadata.24_hours")
+      apps.each do |app|
+        metadata[app.id]['overall_store_rank'].should == [1]
+      end
+    end
   end
 end
 
