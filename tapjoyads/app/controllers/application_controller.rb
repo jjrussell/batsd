@@ -73,8 +73,24 @@ private
     end
   end
 
+  def lookup_udid
+    return if params[:udid].present?
+    lookup_keys = []
+    lookup_keys.push(params[:sha2_udid]) if params[:sha2_udid].present?
+    lookup_keys.push(params[:mac_address]) if params[:mac_address].present?
+
+    lookup_keys.each do |lookup_key|
+      identifier = DeviceIdentifier.new(:key => lookup_key)
+      unless identifier.new_record?
+        params[:udid] = identifier.udid
+        break
+      end
+    end
+  end
+
   def fix_params
     downcase_param(:udid)
+    downcase_param(:sha2_udid)
     downcase_param(:app_id)
     downcase_param(:campaign_id)
     downcase_param(:publisher_app_id)
@@ -100,6 +116,7 @@ private
     set_param(:max, :Max)
     set_param(:virtual_good_id, :VirtualGoodID)
     set_param(:language_code, :language)
+    params[:mac_address] = params[:mac_address].downcase.gsub(/:/,"") if params[:mac_address].present?
   end
 
   def downcase_param(p)
