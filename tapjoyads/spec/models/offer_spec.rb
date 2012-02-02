@@ -101,7 +101,7 @@ describe Offer do
       @offer.min_bid_override = nil
     end
 
-    it "gas a min_bid same as calculated_min_bid" do
+    it "has a min_bid same as calculated_min_bid" do
       @offer.min_bid.should == @offer.send(:calculated_min_bid)
     end
   end
