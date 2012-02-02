@@ -88,6 +88,7 @@ class WebRequest
 
   self.define_attr :udid
   self.define_attr :mac_address
+  self.define_attr :sha2_udid
   self.define_attr :android_id
   self.define_attr :app_id
   self.define_attr :offer_id
@@ -162,6 +163,7 @@ class WebRequest
     self.app_id               = params[:app_id]
     self.udid                 = params[:udid]
     self.mac_address          = params[:mac_address]
+    self.sha2_udid            = params[:sha2_udid]
     self.android_id           = params[:android_id]
     self.currency_id          = params[:currency_id]
     self.app_version          = params[:app_version]
