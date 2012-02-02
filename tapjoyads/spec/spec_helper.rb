@@ -25,6 +25,10 @@ Spork.prefork do
     UserSession.create(user)
   end
 
+  def games_login_as(user)
+    GamerSession.create(user)
+  end
+
   def should_respond_with_json_error(code)
     should respond_with(code)
     should respond_with_content_type(:json)
