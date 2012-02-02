@@ -2,7 +2,7 @@ class Games::GamersController < GamesController
   rescue_from Mogli::Client::ClientException, :with => :handle_mogli_exceptions
   rescue_from Errno::ECONNRESET, :with => :handle_errno_exceptions
   rescue_from Errno::ETIMEDOUT, :with => :handle_errno_exceptions
-  before_filter :set_profile, :only => [ :edit, :accept_tos, :password, :prefs, :social, :update_password, :confirm_delete ]
+  before_filter :set_profile, :only => [ :edit, :accept_tos, :password, :prefs, :social, :update_password, :confirm_delete, :favorite_app ]
   before_filter :offline_facebook_authenticate, :only => :connect_facebook_account
 
   def create
@@ -100,6 +100,16 @@ class Games::GamersController < GamesController
     else
       render_json_error(@gamer.errors) and return
     end
+  end
+
+  def favorite_app
+    render_json_error(['An app_id must be provided']) and return if params[:app_id].blank?
+    if params[:delete].present? && params[:delete] == 'true'
+      FavoriteApp.delete_favorite_app(@gamer.id, params[:app_id])
+    else
+      FavoriteApp.add_favorite_app(@gamer.id, params[:app_id])
+    end
+    render(:json => { :success => true }) and return
   end
 
   private
