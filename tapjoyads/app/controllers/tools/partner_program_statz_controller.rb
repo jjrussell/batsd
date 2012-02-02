@@ -113,7 +113,7 @@ class Tools::PartnerProgramStatzController < WebsiteController
       NumberHelper.currency_to_number(s2[1]['spend']) <=> NumberHelper.currency_to_number(s1[1]['spend'])
     end
 
-    stats_data = {
+    {
       :partner_program_metadata  => partner_program_metadata,
       :partner_program_stats_adv => partner_program_stats_adv,
       :partner_revenue_stats     => partner_revenue_stats,
