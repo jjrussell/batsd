@@ -11,7 +11,7 @@ class ReengagementRewardsController < ApplicationController
     @partner = Partner.find @app.partner_id
     @reengagement_offers = ReengagementOffer.find_list_in_cache @reengagement_offer.app_id
     user_agent = request.env['HTTP_USER_AGENT'].downcase
-    if user_agent.index('iphone') || user_agent.index('android') || user_agent.index('ipod') || user_agent.index('ipad')
+    if user_agent =~ /iphone|android|ipod|ipad/
       @button_link = 'http://ok'
     else
       @button_link = ''
