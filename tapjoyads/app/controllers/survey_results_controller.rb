@@ -13,7 +13,7 @@ class SurveyResultsController < ApplicationController
 
   def create
     return unless verify_records([ @currency ])
-    unless @click.installed_at.nil?
+    if @click.installed_at?
       render 'survey_complete'
       return
     end
@@ -31,7 +31,7 @@ class SurveyResultsController < ApplicationController
       answers[question.text] = params[question.id]
     end
 
-    if params[:udid] == 'just_looking'
+    if testing?
       render 'survey_complete'
       return
     end
@@ -51,7 +51,7 @@ class SurveyResultsController < ApplicationController
   private
 
   def read_click
-    if params[:udid] == 'just_looking'
+    if testing?
       @click = Click.new
       @currency = Currency.new
     else
@@ -67,5 +67,9 @@ class SurveyResultsController < ApplicationController
     survey_result.geoip_data = get_geoip_data
     survey_result.answers = answers
     survey_result.save
+  end
+
+  def testing?
+    params[:udid] == 'just_looking'
   end
 end

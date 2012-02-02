@@ -37,7 +37,7 @@ describe SurveyResultsController do
       Device.stubs(:new)
       Downloader.stubs(:get_with_retry)
       @mock_click = mock()
-      @mock_click.stubs(:installed_at).returns(4)
+      @mock_click.stubs(:installed_at?).returns(true)
       @mock_click.stubs(:currency_id).returns(5)
       Click.expects(:find).with('5', :consistent => true).returns(@mock_click)
       Currency.stubs(:find_in_cache).with(5).returns('fake currency')
@@ -60,7 +60,7 @@ describe SurveyResultsController do
     end
 
     it "should render new if all questions aren't answered" do
-      @mock_click.expects(:installed_at).returns(nil)
+      @mock_click.expects(:installed_at?).returns(false)
       post 'create', :click_key => '5', :id => @offer.id
       assigns(:missing_params).should be_true
       response.should render_template('new')
@@ -70,7 +70,7 @@ describe SurveyResultsController do
       stub_device
 
       controller.expects(:get_geoip_data).returns('geoip data')
-      @mock_click.expects(:installed_at).returns(nil)
+      @mock_click.expects(:installed_at?).returns(false)
       mock_result = mock()
 
       SurveyResult.expects(:new).returns(mock_result)
@@ -87,7 +87,7 @@ describe SurveyResultsController do
       stub_survey_result
 
       controller.expects(:get_geoip_data).returns('geoip data')
-      @mock_click.expects(:installed_at).returns(nil)
+      @mock_click.expects(:installed_at?).returns(false)
       mock_device = mock()
 
       Device.expects(:new).with(:key => @udid).returns(mock_device)
@@ -105,7 +105,7 @@ describe SurveyResultsController do
       stub_device
 
       controller.expects(:get_geoip_data).returns('geoip data')
-      @mock_click.expects(:installed_at).returns(nil)
+      @mock_click.expects(:installed_at?).returns(false)
 
       url = "#{API_URL}/offer_completed?click_key=5"
       Downloader.expects(:get_with_retry).with(url)
