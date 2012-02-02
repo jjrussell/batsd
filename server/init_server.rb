@@ -14,6 +14,7 @@ end
 
 # setup log directories
 `mkdir -p /mnt/log/apache2`
+`mkdir -p /mnt/log/nginx`
 `mkdir -p /mnt/log/rails`
 `mkdir -p /mnt/tmp/rails`
 `chmod 777 /mnt/log`
@@ -21,9 +22,11 @@ end
 `chown -R webuser:webuser /mnt/log`
 `chown -R webuser:webuser /mnt/tmp`
 `rm -rf /var/log/apache2`
+`rm -rf /var/log/nginx`
 `rm -rf /home/webuser/tapjoyserver/tapjoyads/log`
 `rm -rf /home/webuser/tapjoyserver/tapjoyads/tmp`
 `ln -s /mnt/log/apache2 /var/log/apache2`
+`ln -s /mnt/log/nginx /var/log/nginx`
 `su - webuser -c 'ln -s /mnt/log/rails /home/webuser/tapjoyserver/tapjoyads/log'`
 `su - webuser -c 'ln -s /mnt/tmp/rails /home/webuser/tapjoyserver/tapjoyads/tmp'`
 
@@ -36,20 +39,14 @@ end
 `rm -rf /home/webuser/tapjoyserver/tapjoyads/data/GeoIPCity.dat`
 `su - webuser -c 'ln -s /home/webuser/GeoIP/GeoIPCity.dat /home/webuser/tapjoyserver/tapjoyads/data/'`
 
-# start apache
-`cp /home/webuser/tapjoyserver/server/apache2.conf /etc/apache2/`
-`cp /home/webuser/tapjoyserver/server/passenger.load /etc/apache2/mods-available/`
-if server_type == 'web'
-  `cp /home/webuser/tapjoyserver/server/passenger.conf-web /etc/apache2/mods-available/passenger.conf`
-else
-  `cp /home/webuser/tapjoyserver/server/passenger.conf /etc/apache2/mods-available/passenger.conf`
-end
+# start nginx
+`cp /home/webuser/tapjoyserver/server/nginx.conf /etc/nginx/`
 if server_type == 'test'
-  `cp /home/webuser/tapjoyserver/server/tapjoy-staging /etc/apache2/sites-available/tapjoy`
+  `cp /home/webuser/tapjoyserver/server/nginx-tapjoy-staging /etc/nginx/sites-available/tapjoy`
 else
-  `cp /home/webuser/tapjoyserver/server/tapjoy-prod /etc/apache2/sites-available/tapjoy`
+  `cp /home/webuser/tapjoyserver/server/nginx-tapjoy-prod /etc/nginx/sites-available/tapjoy`
 end
-`/etc/init.d/apache2 start`
+`/etc/init.d/nginx start`
 
 # deploy the latest code
 if server_type == 'test' || server_type == 'util'
@@ -62,6 +59,6 @@ end
 `su - webuser -c 'curl -s http://localhost:9898/healthz'`
 
 # HACK: job to reload apache when memory is low
-if server_type == 'web'
-  `echo "* * * * * /home/webuser/tapjoyserver/server/check_memory_usage.rb" | crontab -u ubuntu -`
-end
+# if server_type == 'web'
+#   `echo "* * * * * /home/webuser/tapjoyserver/server/check_memory_usage.rb" | crontab -u ubuntu -`
+# end
