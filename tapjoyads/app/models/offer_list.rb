@@ -19,7 +19,7 @@ class OfferList
     @platform_name              = options.delete(:platform_name)
     @video_offer_ids            = options.delete(:video_offer_ids) { [] }
     @all_videos                 = options.delete(:all_videos) { false }
-    @mobile_country_code        = options.delete(:mobile_country_code) || ''
+    @mobile_country_code        = options.delete(:mobile_country_code)
 
     @hide_rewarded_app_installs = @currency ? @currency.hide_rewarded_app_installs_for_version?(@app_version, @source) : false
     @normalized_device_type     = Device.normalize_device_type(@device_type)
