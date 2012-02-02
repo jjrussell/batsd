@@ -66,11 +66,6 @@ describe FeaturedContent do
           it "returns true" do
             @featured_content.valid?.should be_true
           end
-
-          it "sets no error message" do
-            @featured_content.valid?
-            @featured_content.errors.on(:author).should == nil
-          end
         end
 
         context "when the featured_type is 'NEWS'" do
@@ -147,11 +142,6 @@ describe FeaturedContent do
           it "returns true" do
             @featured_content.valid?.should be_true
           end
-
-          it "sets no error message" do
-            @featured_content.valid?
-            @featured_content.errors.on(:offer).should == nil
-          end
         end
 
         context "when the featured_type is 'CONTEST'" do
@@ -161,11 +151,6 @@ describe FeaturedContent do
 
           it "returns true" do
             @featured_content.valid?.should be_true
-          end
-
-          it "sets no error message" do
-            @featured_content.valid?
-            @featured_content.errors.on(:offer).should == nil
           end
         end
       end
