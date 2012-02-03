@@ -54,6 +54,20 @@ else
   `cp tapjoyads/config/database-default.yml tapjoyads/config/database.yml`
 end
 
+puts "Restarting unicorn"
+pid = `server/unicorn_master_pid.rb`
+if pid == ''
+  if server_type == 'test'
+    `unicorn_rails -E staging -c tapjoyads/config/unicorn-18.rb -D`
+  if server_type == 'web' || server_type == 'util'
+    `unicorn_rails -E production -c tapjoyads/config/unicorn-18.rb -D`
+  else
+    `unicorn_rails -E production -c tapjoyads/config/unicorn-36.rb -D`
+  end
+else
+  `kill -USR2 #{pid}`
+end
+
 if server_type == 'jobs' || server_type == 'masterjobs'
   puts "Stopping jobs"
   `tapjoyads/script/jobs stop`
@@ -62,6 +76,3 @@ if server_type == 'jobs' || server_type == 'masterjobs'
   puts "Starting jobs"
   `tapjoyads/script/jobs start -- production`
 end
-
-puts "Restarting passenger"
-`touch tapjoyads/tmp/restart.txt`
