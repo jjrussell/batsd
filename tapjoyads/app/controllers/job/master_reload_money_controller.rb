@@ -53,11 +53,12 @@ class Job::MasterReloadMoneyController < Job::JobController
         stats[key]['publisher_earnings'] /=  100.0
 
         stats[key]['marketing_credits'] = Order.created_between(start_time, end_time).sum(:amount, :conditions => "payment_method = 2") / 100.0
-        stats[key]['orders']            = Order.created_between(start_time, end_time).sum(:amount, :conditions => "payment_method != 2") / 100.0
+        stats[key]['bonus_credits']     = Order.created_between(start_time, end_time).sum(:amount, :conditions => "payment_method = 5") / 100.0
+        stats[key]['orders']            = Order.created_between(start_time, end_time).sum(:amount, :conditions => "payment_method != 2 and payment_method != 5") / 100.0
         stats[key]['payouts']           = Payout.created_between(start_time, end_time).sum(:amount) / 100.0
         stats[key]['linkshare_est']     = stats[key]['advertiser_spend'] * 0.026
         stats[key]['ads_est']           = 0.0
-        stats[key]['revenue']           = stats[key]['advertiser_spend'] - stats[key]['marketing_credits'] + stats[key]['linkshare_est'] + stats[key]['ads_est']
+        stats[key]['revenue']           = stats[key]['advertiser_spend'] - stats[key]['marketing_credits'] - stats[key]['bonus_credits'] + stats[key]['linkshare_est'] + stats[key]['ads_est']
         stats[key]['net_revenue']       = stats[key]['revenue'] - stats[key]['publisher_earnings']
         stats[key]['margin']            = stats[key]['net_revenue'] / stats[key]['revenue'] * 100
         stats[key]['avg_deduct_pct']    = (1 - SpendShare.over_range(start_time, end_time).average(:ratio)) * 100
@@ -66,6 +67,7 @@ class Job::MasterReloadMoneyController < Job::JobController
         stats[key]['advertiser_spend']   = NumberHelper.number_to_currency(stats[key]['advertiser_spend'])
         stats[key]['publisher_earnings'] = NumberHelper.number_to_currency(stats[key]['publisher_earnings'])
         stats[key]['marketing_credits']  = NumberHelper.number_to_currency(stats[key]['marketing_credits'])
+        stats[key]['bonus_credits']      = NumberHelper.number_to_currency(stats[key]['bonus_credits'])
         stats[key]['avg_deduct_pct']     = NumberHelper.number_to_percentage(stats[key]['avg_deduct_pct'], :precision => 2)
         stats[key]['orders']             = NumberHelper.number_to_currency(stats[key]['orders'])
         stats[key]['payouts']            = NumberHelper.number_to_currency(stats[key]['payouts'])
