@@ -41,12 +41,10 @@ class Job::QueueConversionTrackingController < Job::SqsReaderController
     device = Device.new(:key => click.udid)
     other_devices = (publisher_user.udids - [ click.udid ]).map { |udid| Device.new(:key => udid) }
 
-    (other_devices + [ device ]).each do |d|
-      if d.banned?
-        click.block_reason = "Banned"
-        click.serial_save
-        return
-      end
+    if (other_devices + [ device ]).any?(&:banned?)
+      click.block_reason = "Banned"
+      click.serial_save
+      return
     end
 
     # Do not reward if user has installed this app for the same publisher user id on another device
