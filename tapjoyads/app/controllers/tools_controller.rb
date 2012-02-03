@@ -30,6 +30,7 @@ class ToolsController < WebsiteController
 
       @spend      = MonthlyAccounting.sum(:spend,             :conditions => conditions) /-100.0
       @marketing  = MonthlyAccounting.sum(:marketing_orders,  :conditions => conditions) / 100.0
+      @bonus      = MonthlyAccounting.sum(:bonus_orders,      :conditions => conditions) / 100.0
       @new_orders = MonthlyAccounting.sum(:website_orders,    :conditions => conditions) / 100.0 +
                     MonthlyAccounting.sum(:invoiced_orders,   :conditions => conditions) / 100.0
       @transfers  = MonthlyAccounting.sum(:transfer_orders,   :conditions => conditions) / 100.0
@@ -39,7 +40,7 @@ class ToolsController < WebsiteController
 
     @linkshare_est = @spend.to_f * 0.026
     @ads_est = 0.0
-    @revenue = @spend + @linkshare_est + @ads_est - @marketing
+    @revenue = @spend + @linkshare_est + @ads_est - @marketing - @bonus
     @net_revenue = @revenue - @earnings
     @margin = @net_revenue.to_f * 100.0 / @revenue.to_f
   end
