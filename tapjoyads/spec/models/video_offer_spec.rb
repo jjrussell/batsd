@@ -1,57 +1,74 @@
-require 'test_helper'
+require 'spec_helper'
 
-class VideoOfferTest < ActiveSupport::TestCase
-  should have_many :offers
-  should have_many :video_buttons
-  should have_one :primary_offer
+describe VideoOffer do
+  before :each do
+    fake_the_web
+  end
 
-  should belong_to :partner
+  context 'when associating' do
+    it 'has many' do
+      should have_many :offers
+      should have_many :video_buttons
+    end
 
-  should validate_presence_of :partner
-  should validate_presence_of :name
+    it 'has one' do
+      should have_one :primary_offer
+    end
+
+    it 'belongs to' do
+      should belong_to :partner
+    end
+  end
+
+  context 'when validating' do
+    it 'validates presence of' do
+      should validate_presence_of :partner
+      should validate_presence_of :name
+    end
+  end
 
   context "A Video Offer" do
-    setup do
+    before :each do
       @video_offer = Factory(:video_offer)
     end
 
-    should "update video_offer's name" do
+    it "updates video_offer's name" do
       @video_offer.update_attributes({:name => 'changed_offer_name_1'})
-      assert_equal 'changed_offer_name_1', @video_offer.name
+      @video_offer.name.should == 'changed_offer_name_1'
     end
 
-    should "update video_offer's hidden field" do
+    it "updates video_offer's hidden field" do
       @video_offer.update_attributes({:hidden => true})
-      assert @video_offer.hidden?
+      @video_offer.should be_hidden
     end
 
-    should "have value in video_url after video_offer created" do
+    it "has value in video_url after video_offer created" do
       @video_url = Offer.get_video_url({:video_id => @video_offer.id})
-      assert_equal @video_url, @video_offer.video_url
+      @video_offer.video_url.should == @video_url
     end
   end
 
   context "A Video Offer with a primary_offer" do
-    setup do
+    before :each do
       @video_offer = Factory(:video_offer)
       @offer = @video_offer.primary_offer
     end
 
-    should "update the primary_offer's name when video_offer's name is changed" do
+    it "updates the primary_offer's name when video_offer's name is changed" do
       @video_offer.update_attributes({:name => 'changed_offer_name_2'})
       @offer.update_attributes({:name => 'changed_offer_name_2'})
       @video_offer.reload
-      assert_equal 'changed_offer_name_2', @offer.name
+      @offer.name.should == 'changed_offer_name_2'
     end
 
-    should "have value stored in url of the primary_offer after video_offer created" do
+    it "has value stored in url of the primary_offer after video_offer created" do
       @video_url = Offer.get_video_url({:video_id => @video_offer.id})
-      assert_equal @video_url, @offer.url
+      @offer.url.should == @video_url
     end
   end
 
   context "A Video Offer with multiple video_buttons" do
-    setup do
+    before :each do
       @video_offer = Factory(:video_offer)
       @video_button_1 = @video_offer.video_buttons.build
       @video_button_1.name = "button 1"
@@ -71,15 +88,15 @@ class VideoOfferTest < ActiveSupport::TestCase
       @video_offer.reload
     end
 
-    should "have only 2 enabled button" do
-      assert_equal 3, @video_offer.video_buttons.enabled.size
-      assert_equal false, @video_offer.is_valid_for_update_buttons?
+    it "has only 2 enabled button" do
+      @video_offer.video_buttons.enabled.size.should == 3
+      @video_offer.is_valid_for_update_buttons?.should be_false
 
       @video_button_3.enabled = false
       @video_button_3.save!
       @video_offer.reload
-      assert_equal 2, @video_offer.video_buttons.enabled.size
-      assert_equal true, @video_offer.is_valid_for_update_buttons?
+      @video_offer.video_buttons.enabled.size.should == 2
+      @video_offer.is_valid_for_update_buttons?.should be_true
     end
   end
 end
