@@ -47,6 +47,8 @@ else
   `cp /home/webuser/tapjoyserver/server/nginx-tapjoy-prod /etc/nginx/sites-available/tapjoy`
 end
 `/etc/init.d/nginx start`
+`ln -s /etc/init.d/nginx /etc/rc0.d/K20nginx`
+`ln -s /etc/init.d/nginx /etc/rc6.d/K20nginx`
 
 # deploy the latest code
 if server_type == 'test' || server_type == 'util'
