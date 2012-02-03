@@ -15,6 +15,7 @@ end
 # setup log directories
 `mkdir -p /mnt/log/apache2`
 `mkdir -p /mnt/log/nginx`
+`mkdir -p /mnt/log/unicorn`
 `mkdir -p /mnt/log/rails`
 `mkdir -p /mnt/tmp/rails`
 `chmod 777 /mnt/log`
@@ -29,26 +30,20 @@ end
 `ln -s /mnt/log/nginx /var/log/nginx`
 `su - webuser -c 'ln -s /mnt/log/rails /home/webuser/tapjoyserver/tapjoyads/log'`
 `su - webuser -c 'ln -s /mnt/tmp/rails /home/webuser/tapjoyserver/tapjoyads/tmp'`
+`su - webuser -c 'mkdir /home/webuser/tapjoyserver/tapjoyads/pids'`
 
 # configure syslog-ng
 `/home/webuser/tapjoyserver/server/syslog-ng/configure.rb`
 
 # configure geoip database
-`su - webuser -c 'crontab -r'`
 `su - webuser -c '/home/webuser/tapjoyserver/server/update_geoip.rb'`
 `rm -rf /home/webuser/tapjoyserver/tapjoyads/data/GeoIPCity.dat`
 `su - webuser -c 'ln -s /home/webuser/GeoIP/GeoIPCity.dat /home/webuser/tapjoyserver/tapjoyads/data/'`
 
 # start nginx
 `cp /home/webuser/tapjoyserver/server/nginx.conf /etc/nginx/`
-if server_type == 'test'
-  `cp /home/webuser/tapjoyserver/server/nginx-tapjoy-staging /etc/nginx/sites-available/tapjoy`
-else
-  `cp /home/webuser/tapjoyserver/server/nginx-tapjoy-prod /etc/nginx/sites-available/tapjoy`
-end
+`cp /home/webuser/tapjoyserver/server/tapjoy-nginx /etc/nginx/sites-available/tapjoy`
 `/etc/init.d/nginx start`
-`ln -s /etc/init.d/nginx /etc/rc0.d/K20nginx`
-`ln -s /etc/init.d/nginx /etc/rc6.d/K20nginx`
 
 # deploy the latest code
 if server_type == 'test' || server_type == 'util'
@@ -60,7 +55,7 @@ end
 # boot the app
 `su - webuser -c 'curl -s http://localhost:9898/healthz'`
 
-# HACK: job to reload apache when memory is low
-# if server_type == 'web'
-#   `echo "* * * * * /home/webuser/tapjoyserver/server/check_memory_usage.rb" | crontab -u ubuntu -`
-# end
+# HACK: job to restart unicorn when memory is low
+if server_type == 'web'
+  `echo "* * * * * /home/webuser/tapjoyserver/server/check_memory_usage.rb" | crontab -u webuser -`
+end
