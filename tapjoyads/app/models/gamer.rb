@@ -156,6 +156,19 @@ class Gamer < ActiveRecord::Base
     end
   end
 
+  def require_twitter_authenticate?
+    if twitter_id? and twitter_access_token? and twitter_access_secret?
+      Twitter.configure do |config|
+        config.consumer_key       = ENV['CONSUMER_KEY']
+        config.consumer_secret    = ENV['CONSUMER_SECRET']
+        config.oauth_token        = twitter_access_token
+        config.oauth_token_secret = twitter_access_secret
+      end
+      return false
+    end
+    true
+  end
+
   private
 
   def generate_gravatar_hash

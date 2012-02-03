@@ -172,15 +172,8 @@ class Games::SocialController < GamesController
   private
 
   def twitter_authenticate
-    if current_gamer.twitter_id.blank?
+    if current_gamer.require_twitter_authenticate?
       redirect_to games_social_twitter_start_oauth_path
-    elsif current_gamer.twitter_id? and current_gamer.twitter_access_token? and current_gamer.twitter_access_secret?
-      Twitter.configure do |config|
-        config.consumer_key       = ENV['CONSUMER_KEY']
-        config.consumer_secret    = ENV['CONSUMER_SECRET']
-        config.oauth_token        = current_gamer.twitter_access_token
-        config.oauth_token_secret = current_gamer.twitter_access_secret
-      end
     end
   end
 
