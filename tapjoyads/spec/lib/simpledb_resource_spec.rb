@@ -1,10 +1,6 @@
 require 'spec_helper'
 
 describe SimpledbResource do
-  before :each do
-    SimpledbResource.reset_connection
-  end
-
   # A real model, which interfaces with real simpledb.
   class Testing < SimpledbResource
     self.domain_name = 'testing'

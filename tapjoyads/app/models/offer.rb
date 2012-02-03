@@ -41,7 +41,7 @@ class Offer < ActiveRecord::Base
   OFFER_LIST_REQUIRED_COLUMNS = [ 'id', 'item_id', 'item_type', 'partner_id',
                                   'name', 'url', 'price', 'bid', 'payment',
                                   'conversion_rate', 'show_rate', 'self_promote_only',
-                                  'device_types', 'countries',
+                                  'device_types', 'countries', 'mobile_country_codes',
                                   'age_rating', 'multi_complete', 'featured',
                                   'publisher_app_whitelist', 'direct_pay', 'reward_value',
                                   'third_party_data', 'payment_range_low',
@@ -85,8 +85,8 @@ class Offer < ActiveRecord::Base
   belongs_to :partner
   belongs_to :item, :polymorphic => true
   belongs_to :reseller
-  belongs_to :app, :foreign_key => "item_id", :conditions => ['item_type = ?', 'App']
-  belongs_to :action_offer, :foreign_key => "item_id", :conditions => ['item_type = ?', 'ActionOffer']
+  belongs_to :app, :foreign_key => "item_id"
+  belongs_to :action_offer, :foreign_key => "item_id"
 
   validates_presence_of :reseller, :if => Proc.new { |offer| offer.reseller_id? }
   validates_presence_of :partner, :item, :name, :url, :rank_boost
@@ -199,14 +199,10 @@ class Offer < ActiveRecord::Base
   alias_method :events, :offer_events
   alias_method :random, :rand
 
-  json_set_field :device_types, :screen_layout_sizes, :countries, :dma_codes, :regions, :approved_sources
-  memoize :get_device_types, :get_screen_layout_sizes, :get_countries, :get_dma_codes, :get_regions, :get_approved_sources
-
-  # Our relationship wasn't working, and this allows the ActionOffer.app crap to work
-  def app
-    return item if item_type == 'App'
-    return item.app if ['ActionOffer', 'RatingOffer'].include?(item_type)
-  end
+  json_set_field :device_types, :screen_layout_sizes, :countries, :mobile_country_codes,
+    :dma_codes, :regions, :approved_sources
+  memoize :get_device_types, :get_screen_layout_sizes, :get_countries, :get_mobile_country_codes,
+    :get_dma_codes, :get_regions, :get_approved_sources
 
   def clone
     clone = super
@@ -702,7 +698,7 @@ class Offer < ActiveRecord::Base
   def calculated_min_bid
     if item_type == 'App'
       if featured? && rewarded?
-        is_paid? ? price : 65
+        is_paid? ? price : (get_platform == 'iOS' ? 65 : 10)
       elsif !rewarded?
         100
       else
