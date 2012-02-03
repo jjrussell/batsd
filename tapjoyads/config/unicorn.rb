@@ -1,7 +1,8 @@
 # See http://unicorn.bogomips.org/Unicorn/Configurator.html for complete
 # documentation.
 app_dir = "/home/webuser/tapjoyserver/tapjoyads"
-worker_processes 36
+server_type = `/home/webuser/tapjoyserver/server/server_type.rb`
+worker_processes %w(test util web).include?(server_type) ? 18 : 36
 working_directory app_dir
 
 # Load app into the master before forking workers for super-fast
