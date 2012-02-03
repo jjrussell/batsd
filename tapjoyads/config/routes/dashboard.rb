@@ -74,7 +74,7 @@ ActionController::Routing::Routes.draw do |map|
                      :resolve_clicks => :post, :sqs_lengths => :get, :elb_status => :get, :ses_status => :get,
                      :publishers_without_payout_info => :get, :publisher_payout_info_changes => :get, :device_info => :get,
                      :freemium_android => :get, :award_currencies => :post, :update_award_currencies => :post,
-                     :edit_android_app => :get, :update_android_app => :post, :update_user_roles => :post, :update_device => :post }
+                     :update_user_roles => :post, :update_device => :post }
   map.namespace :tools do |tools|
     tools.resources :premier_partners, :only => [ :index ]
     tools.resources :generic_offers, :only => [ :index, :new, :create, :edit, :update ]
