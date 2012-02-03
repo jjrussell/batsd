@@ -1,0 +1,90 @@
+@import "tj-mixins.scss";
+
+.container {
+  max-width: 1024px;
+  width: 90%;
+  margin: 0 auto;
+  padding: 0 40px;
+}
+@media only screen and (max-width: 800px) {
+  .container {
+    padding: 0;
+  }
+}
+
+h2 {
+  margin:0;
+  font-family: "MuseoSlab 500";
+  font-size: 14pt;
+  font-weight: bold;
+}
+body {
+  padding:0;
+  margin:0;
+  font-family: $main-font-name;
+  font-size: 10pt;
+}
+.header {
+  @include gradient(#EA1927, #cf0506);
+  font-size: 12pt;
+  font-family: 'Gill Sans';
+
+  .container {
+    height: 35px;
+    background: transparent url('/images/games/logo-navbar.png') no-repeat scroll center center;
+    background-size: auto 29px;
+    color: #fff;
+
+    .nav-menu {
+      height: 100%;
+      div {
+        float: left;
+        padding: 0 16px;
+        line-height: 35px;
+
+        .selected {
+          background-color: #cd0202;
+        }
+      }
+      .device-icon {
+        background: transparent url('/images/games/iphone-nav.png') no-repeat scroll center center;
+        padding: 0;
+        height:100%;
+        width: 13px;
+      }
+      .left {
+        padding: 0;
+      }
+      .right {
+        padding: 0;
+        float: right;
+        margin-right: -14px;
+      }
+    }
+  }
+}
+.sub-head {
+  padding: 14px 0px;
+  background-color: #ebeef1;
+  position: relative;
+  z-index: 1;
+  -webkit-box-shadow: 0px 1px 2px #ccc;
+     -moz-box-shadow: 0px 1px 2px #ccc;
+          box-shadow: 0px 1px 2px #ccc;
+  .ad {
+    background-color: #ddd;
+    height: 55px;
+  }
+}
+.main {
+  padding: 23px 0px;
+  @include gradient(rgba(210, 210, 210, 1.0), rgba(233, 237, 241, 1.0));
+  height: 100%;
+}
+.game-list {
+  .hd {
+  }
+  .bd {
+    padding: 18px 16px;
+  }
+}

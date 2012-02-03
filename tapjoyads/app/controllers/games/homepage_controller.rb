@@ -4,6 +4,10 @@ class Games::HomepageController < GamesController
   rescue_from Errno::ETIMEDOUT, :with => :handle_errno_exceptions
   before_filter :require_gamer, :except => [ :index, :tos, :privacy ]
 
+  def proto
+    render :proto, :layout=>false
+  end
+
   def index
     unless current_gamer
       params[:path] = url_for(params.merge(:only_path => true))
