@@ -48,11 +48,14 @@ class Job::QueueConversionTrackingController < Job::SqsReaderController
           click.serial_save
           return
         end
-        if device.banned?
-          click.block_reason = "Banned"
-          click.serial_save
-          return
-        end
+      end
+    end
+
+    publisher_user.udids.each do |udid|
+      if Device.new(:key => udid).banned?
+        click.block_reason = "Banned"
+        click.serial_save
+        return
       end
     end
 
