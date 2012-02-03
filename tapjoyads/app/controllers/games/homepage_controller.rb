@@ -5,7 +5,7 @@ class Games::HomepageController < GamesController
   before_filter :require_gamer, :except => [ :index, :tos, :privacy, :translations ]
 
   def translations
-    render "translations.js", :layout => false
+    render "translations.js", :layout => false, :content_type=>"application/javascript"
   end
 
   def index
