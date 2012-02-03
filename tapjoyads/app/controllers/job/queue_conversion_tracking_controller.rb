@@ -38,24 +38,25 @@ class Job::QueueConversionTrackingController < Job::SqsReaderController
       return
     end
 
-    # Do not reward if user has installed this app for the same publisher user id on another device
-    unless offer.multi_complete? || offer.item_type == 'VideoOffer'
-      other_udids = publisher_user.udids - [ click.udid ]
-      other_udids.each do |udid|
-        device = Device.new(:key => udid)
-        if device.has_app?(click.advertiser_app_id)
-          click.block_reason = "AlreadyRewardedForPublisherUserId (UDID=#{udid})"
-          click.serial_save
-          return
-        end
-      end
-    end
+    device = Device.new(:key => click.udid)
+    other_devices = (publisher_user.udids - [ click.udid ]).map { |udid| Device.new(:key => udid) }
 
-    publisher_user.udids.each do |udid|
-      if Device.new(:key => udid).banned?
+    (other_devices + [ device ]).each do |d|
+      if d.banned?
         click.block_reason = "Banned"
         click.serial_save
         return
+      end
+    end
+
+    # Do not reward if user has installed this app for the same publisher user id on another device
+    unless offer.multi_complete? || offer.item_type == 'VideoOffer'
+      other_devices.each do |d|
+        if d.has_app?(click.advertiser_app_id)
+          click.block_reason = "AlreadyRewardedForPublisherUserId (UDID=#{d.key})"
+          click.serial_save
+          return
+        end
       end
     end
 
