@@ -24,6 +24,14 @@ FactoryGirl.define do
     after_build  { |a| a.user_roles << UserRole.find_or_create_by_name('agency') }
   end
 
+  factory :cs_user, :parent => :user do
+    after_build { |a| a.user_roles << UserRole.find_or_create_by_name('customer_service') }
+  end
+
+  factory :partner_user, :parent => :user do
+    after_build { |a| a.user_roles << UserRole.find_or_create_by_name('partner') }
+  end
+
   factory :partner do
     name { Factory.next(:name) }
     approved_publisher true
