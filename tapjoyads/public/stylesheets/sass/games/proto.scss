@@ -1,10 +1,15 @@
 @import "tj-mixins.scss";
+$page-width-1024: (944/16)em;
+$page-padding-1024: 0 (40/16)em;
 
+.clear {
+  clear:both;
+}
 .container {
-  max-width: 1024px;
+  max-width: 944px;
   width: 90%;
   margin: 0 auto;
-  padding: 0 40px;
+  padding: 0;
 }
 @media only screen and (max-width: 800px) {
   .container {
@@ -13,7 +18,7 @@
 }
 
 h2 {
-  margin:0;
+  margin: 0;
   font-family: "MuseoSlab 500";
   font-size: 14pt;
   font-weight: bold;
@@ -21,13 +26,12 @@ h2 {
 body {
   padding:0;
   margin:0;
-  font-family: $main-font-name;
-  font-size: 10pt;
+  font-family: 'Gill Sans';
+  font-size: 100%;
 }
 .header {
   @include gradient(#EA1927, #cf0506);
   font-size: 12pt;
-  font-family: 'Gill Sans';
 
   .container {
     height: 35px;
@@ -77,14 +81,41 @@ body {
   }
 }
 .main {
-  padding: 23px 0px;
+  padding: 23px 0;
   @include gradient(rgba(210, 210, 210, 1.0), rgba(233, 237, 241, 1.0));
-  height: 100%;
+}
+.app {
+  float: left;
+  margin: 18px 1.69491525%;
+  margin-right: 6.56779661%;
+  width: 12.9237288%;
+  img {
+    max-width: 100%;
+  }
+  font-size:10pt;
+}
+.app:nth-child(5), .app:nth-child(10) {
+  margin-right: 0;
 }
 .game-list {
+  clear: both;
+  margin-bottom: 23px;
   .hd {
   }
   .bd {
-    padding: 18px 16px;
+    text-align: center;
+    .game-image {
+      img {
+        @include rounded-corners(100%);
+  -webkit-box-shadow: 0px 0px 3px #000;
+     -moz-box-shadow: 0px 0px 3px #000;
+          box-shadow: 0px 0px 3px #000;
+      }
+    }
+    .title {
+    }
+    .description {
+      color: #797979;
+    }
   }
 }
