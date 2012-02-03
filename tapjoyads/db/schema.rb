@@ -464,25 +464,26 @@ ActiveRecord::Schema.define(:version => 20120127132405) do
   add_index "jobs", ["id"], :name => "index_jobs_on_id", :unique => true
 
   create_table "monthly_accountings", :id => false, :force => true do |t|
-    t.string   "id",                         :limit => 36, :null => false
-    t.string   "partner_id",                 :limit => 36, :null => false
-    t.integer  "month",                                    :null => false
-    t.integer  "year",                                     :null => false
-    t.integer  "beginning_balance",                        :null => false
-    t.integer  "ending_balance",                           :null => false
-    t.integer  "website_orders",                           :null => false
-    t.integer  "invoiced_orders",                          :null => false
-    t.integer  "marketing_orders",                         :null => false
-    t.integer  "transfer_orders",                          :null => false
-    t.integer  "spend",                                    :null => false
-    t.integer  "beginning_pending_earnings",               :null => false
-    t.integer  "ending_pending_earnings",                  :null => false
-    t.integer  "payment_payouts",                          :null => false
-    t.integer  "transfer_payouts",                         :null => false
-    t.integer  "earnings",                                 :null => false
+    t.string   "id",                         :limit => 36,                :null => false
+    t.string   "partner_id",                 :limit => 36,                :null => false
+    t.integer  "month",                                                   :null => false
+    t.integer  "year",                                                    :null => false
+    t.integer  "beginning_balance",                                       :null => false
+    t.integer  "ending_balance",                                          :null => false
+    t.integer  "website_orders",                                          :null => false
+    t.integer  "invoiced_orders",                                         :null => false
+    t.integer  "marketing_orders",                                        :null => false
+    t.integer  "transfer_orders",                                         :null => false
+    t.integer  "spend",                                                   :null => false
+    t.integer  "beginning_pending_earnings",                              :null => false
+    t.integer  "ending_pending_earnings",                                 :null => false
+    t.integer  "payment_payouts",                                         :null => false
+    t.integer  "transfer_payouts",                                        :null => false
+    t.integer  "earnings",                                                :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "earnings_adjustments",                     :null => false
+    t.integer  "earnings_adjustments",                                    :null => false
+    t.integer  "bonus_orders",                             :default => 0, :null => false
   end
 
   add_index "monthly_accountings", ["id"], :name => "index_monthly_accountings_on_id", :unique => true

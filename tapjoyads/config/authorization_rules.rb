@@ -74,7 +74,7 @@ authorization do
     includes :games_editor
     has_permission_on :statz, :to => [ :index, :show, :edit, :update, :new, :create, :last_run_times, :udids, :download_udids, :global, :publisher, :advertiser, :support_request_reward_ratio ]
     has_permission_on :search, :to => [ :offers, :partners, :users ]
-    has_permission_on :tools, :to => [ :disabled_popular_offers, :sanitize_users, :update_user, :resolve_clicks, :new_transfer, :edit_android_app, :update_android_app, :device_info, :update_device, :freemium_android, :award_currencies, :update_award_currencies, :send_currency_failures ]
+    has_permission_on :tools, :to => [ :disabled_popular_offers, :sanitize_users, :update_user, :resolve_clicks, :new_transfer, :device_info, :update_device, :freemium_android, :award_currencies, :update_award_currencies, :send_currency_failures ]
     has_permission_on :tools_enable_offer_requests, :to => [ :index, :update ]
     has_permission_on :activities, :to => [ :index ]
     has_permission_on :partners, :to => [ :index, :show, :edit, :make_current, :manage, :stop_managing, :mail_chimp_info, :update, :managed_by, :new_transfer, :create_transfer, :reporting, :agency_api, :set_tapjoy_sponsored ]
