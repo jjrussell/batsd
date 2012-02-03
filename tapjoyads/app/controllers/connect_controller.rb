@@ -1,6 +1,7 @@
 class ConnectController < ApplicationController
 
   def index
+    lookup_udid
     return unless verify_params([:app_id, :udid])
 
     click = Click.new(:key => "#{params[:udid]}.#{params[:app_id]}", :consistent => params[:consistent])
