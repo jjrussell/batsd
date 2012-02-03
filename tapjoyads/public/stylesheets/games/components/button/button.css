@@ -1,0 +1,134 @@
+.ui-tap-button {
+  padding: 6px 15px;
+  user-select: none;
+  cursor: pointer;
+  font: bold 100% "Helvetica", Arial, Helvetica, sans-serif;
+}
+
+.iconOnly .ui-tap-button {
+  padding: 6px 10px 6px 7px;
+}
+
+.ui-tap-button button {
+  outline: none;
+  border: 0;
+}
+
+.ui-tap-button .text-center {
+  text-align: center;
+}
+
+.ui-tap-button .text-right {
+  text-align: right;
+}
+
+.ui-tap-button .icon {
+  display: inline-block;
+  zoom: 1;
+  width: 16px;
+  height: 16px;
+  margin-right: 2px;
+  padding-top: 2px;
+  vertical-align: top;
+}
+
+.icon img {
+  width: 16px;
+  height: 16px;
+}
+
+.icon img.star {
+  background: url(../../css/images/icons.png) no-repeat -20px -20px;
+}
+
+.ui-tap-button .text {
+  display: inline-block;
+	line-height: 120%;
+}
+
+.ui-tap-button.pt .text {
+  padding-top: 2px;
+}
+
+.ui-tap-button.tapped {
+  color: #fff;
+  text-shadow: 0 -1px 0 #144f95;
+  background: #248be0;
+  background: -moz-linear-gradient(top, #248be0 0%, #207dd4 47%, #2579c7 48%, #1f6ec3 100%);
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#248be0), color-stop(47%,#207dd4), color-stop(48%,#2579c7), color-stop(100%,#1f6ec3));
+  background: -webkit-linear-gradient(top, #248be0 0%,#207dd4 47%,#2579c7 48%,#1f6ec3 100%);
+  background: -o-linear-gradient(top, #248be0 0%,#207dd4 47%,#2579c7 48%,#1f6ec3 100%);
+  background: -ms-linear-gradient(top, #248be0 0%,#207dd4 47%,#2579c7 48%,#1f6ec3 100%);
+  background: linear-gradient(top, #248be0 0%,#207dd4 47%,#2579c7 48%,#1f6ec3 100%);
+  box-shadow: 0 1px 0 rgba(0,0,0, .1), inset 0 1px 0 #49a6ef;
+  border: 1px solid #125db5;
+}
+
+.ui-tap-button.tapped.hover {
+  background: #3293e2;
+  background: -moz-linear-gradient(top, #3293e2 0%, #2685de 47%, #2881d4 48%, #2177d3 100%);
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#3293e2), color-stop(47%,#2685de), color-stop(48%,#2881d4), color-stop(100%,#2177d3));
+  background: -webkit-linear-gradient(top, #3293e2 0%,#2685de 47%,#2881d4 48%,#2177d3 100%);
+  background: -o-linear-gradient(top, #3293e2 0%,#2685de 47%,#2881d4 48%,#2177d3 100%);
+  background: -ms-linear-gradient(top, #3293e2 0%,#2685de 47%,#2881d4 48%,#2177d3 100%);
+  background: linear-gradient(top, #3293e2 0%,#2685de 47%,#2881d4 48%,#2177d3 100%);
+}
+
+.ui-tap-button.tapped.active {
+  text-shadow: 0 1px 0 #144f95;
+  color: #fff;
+  background: #247dd6;
+  background: -moz-linear-gradient(top, #247dd6 0%, #2579c7 46%, #1f6ec3 100%);
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#247dd6), color-stop(46%,#2579c7), color-stop(100%,#1f6ec3));
+  background: -webkit-linear-gradient(top, #247dd6 0%,#2579c7 46%,#1f6ec3 100%);
+  background: -o-linear-gradient(top, #247dd6 0%,#2579c7 46%,#1f6ec3 100%);
+  background: -ms-linear-gradient(top, #247dd6 0%,#2579c7 46%,#1f6ec3 100%);
+  background: linear-gradient(top, #247dd6 0%,#2579c7 46%,#1f6ec3 100%);
+  box-shadow: inset 0 1px 2px rgba(0,0,0, .3);
+}
+
+.ui-tap-button.tapped.disabled {
+  color: #53a5d9;
+  text-shadow: 0 -1px 0 #144f95;
+  cursor: default;
+  background: #248be0;
+  background: -moz-linear-gradient(top, #248be0 0%, #207dd4 47%, #2579c7 48%, #1f6ec3 100%);
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#248be0), color-stop(47%,#207dd4), color-stop(48%,#2579c7), color-stop(100%,#1f6ec3));
+  background: -webkit-linear-gradient(top, #248be0 0%,#207dd4 47%,#2579c7 48%,#1f6ec3 100%);
+  background: -o-linear-gradient(top, #248be0 0%,#207dd4 47%,#2579c7 48%,#1f6ec3 100%);
+  background: -ms-linear-gradient(top, #248be0 0%,#207dd4 47%,#2579c7 48%,#1f6ec3 100%);
+  background: linear-gradient(top, #248be0 0%,#207dd4 47%,#2579c7 48%,#1f6ec3 100%);
+  box-shadow: 0 1px 0 rgba(0,0,0, .25), inset 0 1px 0 #49a6ef;
+  opacity: .8;
+}
+
+.ui-tap-button.light {
+  border: 1px solid #aaa;
+  text-shadow: 0 1px 0 #fff;
+  color: #666;
+  background: #fbfafa;
+  background: -moz-linear-gradient(top, #fbfafa 0%, #f9f9f9 28%, #f5f5f5 59%, #f3f3f3 100%);
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#fbfafa), color-stop(28%,#f9f9f9), color-stop(59%,#f5f5f5), color-stop(100%,#f3f3f3));
+  background: -webkit-linear-gradient(top, #fbfafa 0%,#f9f9f9 28%,#f5f5f5 59%,#f3f3f3 100%);
+  background: -o-linear-gradient(top, #fbfafa 0%,#f9f9f9 28%,#f5f5f5 59%,#f3f3f3 100%);
+  background: -ms-linear-gradient(top, #fbfafa 0%,#f9f9f9 28%,#f5f5f5 59%,#f3f3f3 100%);
+  background: linear-gradient(top, #fbfafa 0%,#f9f9f9 28%,#f5f5f5 59%,#f3f3f3 100%);
+  box-shadow: 0 1px 0 rgba(0,0,0, .1), inset 0 1px 0 #fff;
+}
+
+.ui-tap-button.light.hover {
+  border: 1px solid #777;
+}
+
+.ui-tap-button.light.active {
+  border-bttom: 1px solid #f0f0f0;
+  border: 1px solid #aaa;
+  background: #eeeeee;
+  background: -moz-linear-gradient(top, #eeeeee 0%, #ffffff 59%, #ffffff 100%);
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#eeeeee), color-stop(59%,#ffffff), color-stop(100%,#ffffff));
+  background: -webkit-linear-gradient(top, #eeeeee 0%,#ffffff 59%,#ffffff 100%);
+  background: -o-linear-gradient(top, #eeeeee 0%,#ffffff 59%,#ffffff 100%);
+  background: -ms-linear-gradient(top, #eeeeee 0%,#ffffff 59%,#ffffff 100%);
+  background: linear-gradient(top, #eeeeee 0%,#ffffff 59%,#ffffff 100%);
+  box-shadow: 0 1px 0 rgba(0,0,0, 0), inset 0 1px 0 rgba(0,0,0, .1);
+}
