@@ -48,6 +48,11 @@ class Job::QueueConversionTrackingController < Job::SqsReaderController
           click.serial_save
           return
         end
+        if device.banned?
+          click.block_reason = "Banned"
+          click.serial_save
+          return
+        end
       end
     end
 
