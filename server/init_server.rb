@@ -40,10 +40,9 @@ end
 `rm -rf /home/webuser/tapjoyserver/tapjoyads/data/GeoIPCity.dat`
 `su - webuser -c 'ln -s /home/webuser/GeoIP/GeoIPCity.dat /home/webuser/tapjoyserver/tapjoyads/data/'`
 
-# start nginx
+# setup nginx
 `cp /home/webuser/tapjoyserver/server/nginx.conf /etc/nginx/`
 `cp /home/webuser/tapjoyserver/server/tapjoy-nginx /etc/nginx/sites-available/tapjoy`
-`/etc/init.d/nginx start`
 
 # deploy the latest code
 if server_type == 'test' || server_type == 'util'
@@ -52,8 +51,8 @@ else
   `su - webuser -c 'cd /home/webuser/tapjoyserver && server/deploy.rb'`
 end
 
-# boot the app
-`su - webuser -c 'curl -s http://localhost:9898/healthz'`
+# start nginx
+`/etc/init.d/nginx start`
 
 # HACK: job to restart unicorn when memory is low
 if server_type == 'web'
