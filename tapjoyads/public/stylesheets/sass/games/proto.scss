@@ -11,11 +11,6 @@ $page-padding-1024: 0 (40/16)em;
   margin: 0 auto;
   padding: 0;
 }
-@media only screen and (max-width: 800px) {
-  .container {
-    padding: 0;
-  }
-}
 
 h2 {
   margin: 0;
@@ -38,32 +33,34 @@ body {
     background: transparent url('/images/games/logo-navbar.png') no-repeat scroll center center;
     background-size: auto 29px;
     color: #fff;
-
-    .nav-menu {
-      height: 100%;
-      div {
-        float: left;
-        padding: 0 16px;
-        line-height: 35px;
-
-        .selected {
-          background-color: #cd0202;
-        }
+  }
+  .logo {
+    display: none;
+  }
+  .nav-menu {
+    height: 100%;
+    .device-icon {
+      background: transparent url('/images/games/iphone-nav.png') no-repeat scroll center center;
+      padding: 0;
+      height:100%;
+      width: 13px;
+    }
+    .item {
+      line-height: 35px;
+      float: left;
+      padding: 0 16px;
+      .selected {
+        background-color: #cd0202;
       }
-      .device-icon {
-        background: transparent url('/images/games/iphone-nav.png') no-repeat scroll center center;
-        padding: 0;
-        height:100%;
-        width: 13px;
-      }
-      .left {
-        padding: 0;
-      }
-      .right {
-        padding: 0;
-        float: right;
-        margin-right: -14px;
-      }
+    }
+    .left {
+      padding: 0;
+      float: left;
+    }
+    .right {
+      padding: 0;
+      float: right;
+      margin-right: -14px;
     }
   }
 }
@@ -86,13 +83,30 @@ body {
 }
 .app {
   float: left;
-  margin: 18px 1.69491525%;
-  margin-right: 6.56779661%;
-  width: 12.9237288%;
+  margin: 18px percentage(16/944);
+  margin-right: percentage(62/944);
+  width: percentage(122/944);
   img {
     max-width: 100%;
   }
   font-size:10pt;
+  text-align: center;
+  .game-image {
+    img {
+      @include rounded-corners(100%);
+-webkit-box-shadow: 0px 0px 3px #000;
+   -moz-box-shadow: 0px 0px 3px #000;
+        box-shadow: 0px 0px 3px #000;
+    }
+  }
+  .title {
+  }
+  .description {
+    color: #797979;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+  }
 }
 .app:nth-child(5), .app:nth-child(10) {
   margin-right: 0;
@@ -103,19 +117,104 @@ body {
   .hd {
   }
   .bd {
-    text-align: center;
-    .game-image {
-      img {
-        @include rounded-corners(100%);
-  -webkit-box-shadow: 0px 0px 3px #000;
-     -moz-box-shadow: 0px 0px 3px #000;
-          box-shadow: 0px 0px 3px #000;
+
+  }
+}
+@media only screen and (max-width: 768px) {
+  .container {
+    padding: 0 percentage(12/768);
+    width: percentage(744/768);
+  }
+
+  .header {
+    .nav-menu {
+      .right {
+        margin-right: 0;
       }
     }
+  }
+
+  .app {
+  -webkit-transition: all 0.3s ease-in;
+     -moz-transition: all 0.3s ease-in;
+      -ms-transition: all 0.3s ease-in;
+       -o-transition: all 0.3s ease-in;
+          transition: all 0.3s ease-in;
+    margin: 18px percentage(16/768);
+    margin-right: percentage(62/768);
+    width: percentage(122/768);
+  }
+
+  .app:nth-child(5), .app:nth-child(10) {
+    display:none;
+  }
+
+  .app:nth-child(4), .app:nth-child(8) {
+    margin-right: 0;
+  }
+}
+@media only screen and (max-width: 640px) {
+  .container {
+    padding: 0 percentage(20/640);
+    width: percentage(600/640);
+  }
+  .header {
+    .container {
+      background-image: none;
+    }
+    .logo {
+      display: block;
+      float: right;
+      padding: 11px;
+      width: percentage(124/640);
+      img {
+        max-width: 100%;
+        float: right;
+      }
+    }
+    .right {
+      display: none;
+    }
+  }
+  .sub-head {
+    padding: 0;
+    .container {
+      padding: 0;
+      width: 100%;
+    }
+    .ad {
+      height: 127px;
+    }
+  }
+  .main {
+    .container {
+      width: 100%;
+      padding: 0;
+    }
+  }
+  .app {
+    margin: 0;
+    padding: 35px 20px;
+    border-bottom: 1px solid #6f7072;
+    clear: both;
+    width: 100%;
+    text-align: left;
+    @include gradient(rgba(247, 247, 250, 1.0), rgba(220, 223, 227, 1.0));
+    .game-image {
+      float: left;
+      margin: 0 15px;
+      img {
+        @include rounded-corners(45%);
+      }
+    }
+    .info {
+      float: left;
+    }
     .title {
+      font-size: 30pt;
     }
     .description {
-      color: #797979;
+      display: none;
     }
   }
 }
