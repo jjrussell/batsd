@@ -4,7 +4,7 @@ class Games::Social::TwitterController < GamesController
   rescue_from OAuth::Error, :with => :handle_oauth_exceptions
 
   def start_oauth
-    consumer = OAuth::Consumer.new(ENV['CONSUMER_KEY'], ENV['CONSUMER_SECRET'], {:site=>"http://twitter.com" })
+    consumer = OAuth::Consumer.new(ENV['CONSUMER_KEY'], ENV['CONSUMER_SECRET'], { :site=>"http://twitter.com" })
     req_token = consumer.get_request_token(:oauth_callback => "http://#{request.host_with_port}#{games_social_twitter_finish_oauth_path}")
     session[:twitter_request_token] = req_token.token
     session[:twitter_request_token_secret] = req_token.secret

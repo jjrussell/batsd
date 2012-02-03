@@ -327,8 +327,8 @@ ActiveRecord::Schema.define(:version => 20120124191839) do
   add_index "gamer_devices", ["id"], :name => "index_gamer_devices_on_id", :unique => true
 
   create_table "gamer_profiles", :id => false, :force => true do |t|
-    t.string   "id",                     :limit => 36,                         :null => false
-    t.string   "gamer_id",               :limit => 36,                         :null => false
+    t.string   "id",                     :limit => 36,                    :null => false
+    t.string   "gamer_id",               :limit => 36,                    :null => false
     t.string   "gender"
     t.date     "birthdate"
     t.string   "city"
@@ -371,9 +371,6 @@ ActiveRecord::Schema.define(:version => 20120124191839) do
     t.boolean  "blocked",                                      :default => false
     t.integer  "accepted_tos_version",                         :default => 0
     t.datetime "deactivated_at"
-    t.string   "twitter_id"
-    t.string   "twitter_access_token"
-    t.string   "twitter_access_secret"
     t.string   "gender"
     t.date     "birthdate"
     t.string   "city"
@@ -402,7 +399,6 @@ ActiveRecord::Schema.define(:version => 20120124191839) do
   add_index "gamers", ["id"], :name => "index_gamers_on_id", :unique => true
   add_index "gamers", ["perishable_token"], :name => "index_gamers_on_perishable_token"
   add_index "gamers", ["persistence_token"], :name => "index_gamers_on_persistence_token"
-  add_index "gamers", ["twitter_id"], :name => "index_gamers_on_twitter_id"
   add_index "gamers", ["referred_by"], :name => "index_gamers_on_referred_by"
   add_index "gamers", ["twitter_id"], :name => "index_gamers_on_twitter_id"
 

@@ -181,9 +181,6 @@ class Games::SocialController < GamesController
         config.oauth_token        = current_gamer.twitter_access_token
         config.oauth_token_secret = current_gamer.twitter_access_secret
       end
-    else
-      flash[:error] = 'Error while authenticating via TWITTER. Please try again.'
-      redirect_to social_feature_redirect_path
     end
   end
 
