@@ -58,7 +58,6 @@ class Apps::ActionOffersController < WebsiteController
         :primary_offer_attributes_show_rate,
         :primary_offer_attributes_min_conversion_rate,
         :primary_offer_attributes_countries,
-        :primary_offer_attributes_mobile_country_codes,
         :primary_offer_attributes_dma_codes,
         :primary_offer_attributes_regions,
         :primary_offer_attributes_device_types,
