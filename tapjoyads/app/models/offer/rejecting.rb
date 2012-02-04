@@ -25,8 +25,8 @@ module Offer::Rejecting
     [ 'afde4da8-3943-44fd-a901-08be5470eaa4', '2ff9ad4e-58a2-417b-9333-d65835b71049' ] => [ 'afde4da8-3943-44fd-a901-08be5470eaa4', '2ff9ad4e-58a2-417b-9333-d65835b71049' ]
   }
 
-  def postcache_reject?(publisher_app, device, currency, device_type, geoip_data, app_version, direct_pay_providers, type, hide_rewarded_app_installs, library_version, os_version, screen_layout_size, video_offer_ids, source, all_videos, mobile_country_code)
-    geoip_reject?(geoip_data, mobile_country_code) ||
+  def postcache_reject?(publisher_app, device, currency, device_type, geoip_data, app_version, direct_pay_providers, type, hide_rewarded_app_installs, library_version, os_version, screen_layout_size, video_offer_ids, source, all_videos)
+    geoip_reject?(geoip_data, device) ||
     already_complete?(device, app_version) ||
     selective_opt_out_reject?(device) ||
     show_rate_reject?(device) ||
@@ -53,12 +53,12 @@ module Offer::Rejecting
     app_platform_mismatch?(platform_name) || hide_rewarded_app_installs_reject?(hide_rewarded_app_installs) || device_platform_mismatch?(normalized_device_type)
   end
 
-  def is_valid_for?(publisher_app, device, currency, device_type, geoip_data, app_version, direct_pay_providers, type, hide_rewarded_app_installs, library_version, os_version, screen_layout_size, mobile_country_code)
+  def is_valid_for?(publisher_app, device, currency, device_type, geoip_data, app_version, direct_pay_providers, type, hide_rewarded_app_installs, library_version, os_version, screen_layout_size)
     (is_test_device?(currency, device) &&
       is_test_video_offer?(type) ) ||
     (!(is_test_video_offer?(type) ||
       device_platform_mismatch?(Device.normalize_device_type(device_type)) ||
-      geoip_reject?(geoip_data, mobile_country_code) ||
+      geoip_reject?(geoip_data, device) ||
       already_complete?(device, app_version) ||
       flixter_reject?(publisher_app, device) ||
       minimum_bid_reject?(currency, type) ||
@@ -86,7 +86,7 @@ module Offer::Rejecting
   def recommendation_reject?(device, device_type, geoip_data, os_version)
     recommendable_types_reject? ||
       device_platform_mismatch?(device_type) ||
-      geoip_reject?(geoip_data) ||
+      geoip_reject?(geoip_data, device) ||
       already_complete?(device) ||
       min_os_version_reject?(os_version) ||
       age_rating_reject?(3) # reject 17+ apps
@@ -122,8 +122,7 @@ module Offer::Rejecting
     max_age_rating < age_rating
   end
 
-  def geoip_reject?(geoip_data, mobile_country_code = '')
-    return true if mobile_country_codes.present? && mobile_country_codes != '[]' && mobile_country_code.present? && !get_mobile_country_codes.include?(mobile_country_code)
+  def geoip_reject?(geoip_data, device)
     return true if countries.present? && countries != '[]' && !get_countries.include?(geoip_data[:country])
     return true if geoip_data[:country] && get_countries_blacklist.include?(geoip_data[:country].to_s.upcase)
     return true if regions.present? && regions != '[]' && !get_regions.include?(geoip_data[:region])
