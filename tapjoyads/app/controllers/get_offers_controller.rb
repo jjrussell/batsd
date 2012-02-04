@@ -141,8 +141,7 @@ private
       :source               => params[:source],
       :screen_layout_size   => params[:screen_layout_size],
       :video_offer_ids      => params[:video_offer_ids].to_s.split(','),
-      :all_videos           => params[:all_videos],
-      :mobile_country_code  => params[:mobile_country_code]
+      :all_videos           => params[:all_videos]
     )
   end
 
