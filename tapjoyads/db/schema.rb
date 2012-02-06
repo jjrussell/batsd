@@ -89,11 +89,11 @@ ActiveRecord::Schema.define(:version => 20120202221701) do
   add_index "app_reviews", ["id"], :name => "index_app_reviews_on_id", :unique => true
 
   create_table "approvals", :force => true do |t|
-    t.string   "item_type",                         :null => false
-    t.integer  "item_id",                           :null => false
-    t.string   "event",                             :null => false
-    t.string   "state",      :default => "pending", :null => false
-    t.integer  "owner_id"
+    t.string   "item_type",                                       :null => false
+    t.string   "item_id",    :limit => 36,                        :null => false
+    t.string   "event",                                           :null => false
+    t.string   "state",                    :default => "pending", :null => false
+    t.string   "owner_id",   :limit => 36
     t.text     "object"
     t.text     "reason"
     t.datetime "created_at"
@@ -642,9 +642,9 @@ ActiveRecord::Schema.define(:version => 20120202221701) do
     t.boolean  "instructions_overridden",                                                       :default => false, :null => false
     t.boolean  "tapjoy_sponsored",                                                              :default => false, :null => false
     t.boolean  "tj_games_only",                                                                 :default => false, :null => false
-    t.boolean  "wifi_only",                                                                     :default => false, :null => false
     t.text     "approved_banner_creatives"
     t.text     "approved_sources",                                                                                 :null => false
+    t.boolean  "wifi_only",                                                                     :default => false, :null => false
     t.boolean  "sdkless",                                                                       :default => false
   end
 
