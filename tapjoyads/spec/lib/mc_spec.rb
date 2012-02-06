@@ -1,30 +1,29 @@
-require 'test_helper'
+require 'spec_helper'
 
-class MemcachedTest < ActiveSupport::TestCase
-
-  test "basic get and save" do
+describe Mc do
+  it "gets and saves" do
     Mc.put('key', 'value')
-    assert_equal 'value', Mc.get('key')
+    Mc.get('key').should == 'value'
 
     val = Mc.get('non-key') do
       'bar'
     end
 
-    assert_equal 'bar', val
+    val.should == 'bar'
 
     val = Mc.get_and_put('foo2') do
       'bar2'
     end
 
-    assert_equal 'bar2', val
+    val.should == 'bar2'
 
     val = Mc.get_and_put('foo2') do
       'not accessed'
     end
-    assert_equal 'bar2', val
+    val.should == 'bar2'
   end
 
-  test "multi-threaded" do
+  it "gets and saves multi-threaded" do
     thread_list = []
     10.times do |i|
       thread = Thread.new do
@@ -38,35 +37,35 @@ class MemcachedTest < ActiveSupport::TestCase
     end
 
     10.times do |i|
-      assert_equal "#{i}", Mc.get("thread-#{i}", true)
+      Mc.get("thread-#{i}", true).should == "#{i}"
     end
   end
 
-  test "increment count" do
+  it "increments count" do
     key = 'foocount'
     key2 = 'foocount2'
-    assert_equal 0, Mc.get_count(key)
+    Mc.get_count(key).should == 0
 
-    assert_equal 1, Mc.increment_count(key)
+    Mc.increment_count(key).should == 1
 
     5.times do
       Mc.increment_count(key)
     end
 
-    assert_equal 6, Mc.get_count(key)
+    Mc.get_count(key).should == 6
 
     Mc.increment_count(key, false, 1.week, 10)
-    assert_equal 16, Mc.get_count(key)
+    Mc.get_count(key).should == 16
 
-    assert_equal 0, Mc.get_count(key2)
-    assert_equal -5, Mc.increment_count(key2, false, 1.week, -5)
-    assert_equal -5, Mc.get_count(key2)
-    assert_equal -6, Mc.increment_count(key2, false, 1.week, -1)
-    assert_equal -4, Mc.increment_count(key2, false, 1.week, 2)
-    assert_equal 3, Mc.increment_count(key2, false, 1.week, 7)
+    Mc.get_count(key2).should == 0
+    Mc.increment_count(key2, false, 1.week, -5).should == -5
+    Mc.get_count(key2).should == -5
+    Mc.increment_count(key2, false, 1.week, -1).should == -6
+    Mc.increment_count(key2, false, 1.week, 2).should == -4
+    Mc.increment_count(key2, false, 1.week, 7).should == 3
   end
 
-  test "compare and swap" do
+  it "compares and swaps" do
 
     thread_list = []
     expected_val = ''
@@ -89,6 +88,6 @@ class MemcachedTest < ActiveSupport::TestCase
       thread.join
     end
 
-    assert_equal(expected_val, Mc.get('foo'))
+    Mc.get('foo').should == expected_val
   end
 end
