@@ -132,22 +132,19 @@
         %td Click ID
     %tbody
       - @clicks.each_with_index do |click, i|
-        - adv = @click_apps[click.advertiser_app_id]
-        - pub = @click_apps[click.publisher_app_id]
-        - tr_class = ''
-        - if click.installed_at?
-          - if @rewards[click.reward_key] && @rewards[click.reward_key].successful?
-            - tr_class += ' rewarded'
-          - else
-            - tr_class += ' rewarded-failed'
-        - tr_class += ' jailbroken' if click.type =~ /install_jailbroken/
-        - tr_class += ' click-key-match' if click.key == params[:click_key]
-        - if click.block_reason?
-          - tr_class += click.block_reason =~ /TooManyUdidsForPublisherUserId/ ? ' blocked' : ' not-rewarded'
-        %tr{ :class => tr_class}
+        :ruby
+          adv = @click_apps[click.advertiser_app_id]
+          pub = @click_apps[click.publisher_app_id]
+          reward = @rewards[click.reward_key]
+          tr_class = click_tr_class(click, reward)
+          install_td_class = 'small'
+          if click.block_reason? || click.resolved_too_fast?
+            install_td_class += ' bad'
+          end
+        %tr{ :class => tr_class }
           %td.small
             %nobr= click.clicked_at? ? click.clicked_at.to_s(:pub_abbr_ampm_sec) : '-'
-          %td.small
+          %td{ :class => install_td_class }
             - if click.block_reason?
               = click.block_reason
             - else
