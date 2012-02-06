@@ -160,6 +160,19 @@ class App < ActiveRecord::Base
     end
   end
 
+  def resolve_reengagement(udid, timestamp, publisher_user_id)
+    device = Device.new :key => udid
+    reengagement_offerz = ReengagementOffer.find_list_in_cache
+    reengagement_offer = reengagement_offerz.detect{ |r| !device.has_app?(r.id) }
+    if reengagement_offer && reengagement_offer.resolve
+      if reengagement_offer.day_number < reengagement_offerz.length
+        next_reengagement_offer = reengagement_offerz.detect{ |r| r.day_number == reengagement_offer.day_number + 1 }
+        create_reengagement_click(next_reengagement_offer, Time.at(timestamp), udid, publisher_user_id) if next_reengagement_offer.present?
+      end 
+      reengagement_offer
+    end
+  end
+
   ##
   # Grab data from the app store and mutate self with data.
   def fill_app_store_data(country=nil)

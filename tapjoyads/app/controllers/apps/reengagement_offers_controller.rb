@@ -10,7 +10,7 @@ class Apps::ReengagementOffersController < WebsiteController
   end
 
   def index
-    @reengagement_offers = ReengagementOffer.visible.find_all_by_app_id @app.id
+    @reengagement_offers = ReengagementOffer.visible.for_app @app.id
     @reengagement_offers.blank? ? redirect_to(new_app_reengagement_offer_path(@app)) : @reengagement_offer = @reengagement_offers.first
   end
 
@@ -33,8 +33,8 @@ class Apps::ReengagementOffersController < WebsiteController
   end
 
   def create
-    reengagement_offers = ReengagementOffer.visible.find_all_by_app_id @app.id
-    reengagement_offer = ReengagementOffer.new (
+    reengagement_offers = ReengagementOffer.visible.for_app @app.id
+    reengagement_offer = ReengagementOffer.create(
       :partner => current_partner,
       :app_id => params[:app_id],
       :day_number => reengagement_offers.length,
@@ -43,7 +43,6 @@ class Apps::ReengagementOffersController < WebsiteController
       :instructions => params[:reengagement_offer][:instructions],
       :prerequisite_offer_id => reengagement_offers.last.id,
       :enabled => reengagement_offers.last.enabled )
-    reengagement_offer.save!
     flash[:notice] = "Added day #{reengagement_offer.day_number} reengagement offer."
     redirect_to app_reengagement_offers_path(@app)
   end
