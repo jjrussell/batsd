@@ -28,6 +28,7 @@ describe Games::GamersController do
 
     it 'should create a new gamer' do
       Sqs.expects(:send_message).once
+
       post 'create', @options
 
       should_respond_with_json_success(200)
