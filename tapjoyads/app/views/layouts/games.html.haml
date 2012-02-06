@@ -67,8 +67,10 @@
           .dialog_header_left
           .dialog_title.title_2 How's it work?
         .dialog_header Using Tapjoy games couldn't be easier!
-        .dialog_content All your games are listed in <span class="bold">My Apps</span>. From there, you can start earning currency and discovering new, cool games to play!
-
+        .dialog_content
+          All your games are listed in
+          %span.bold= t('text.games.my_apps')
+          From there, you can start earning currency and discovering new, cool games to play!
     #link_device_dialog.dialog_wrapper.hide
       .close_dialog
         .close_button
