@@ -7,8 +7,7 @@ class Recommenders::MostPopularRecommender < Recommender
 
   def most_popular(opts = {})
     out = Mc.distributed_get('s3.recommendations.raw_list.most_popular') || []
-    cache_all if out == [] #hack to force caching the first time we use it, remove later
-    first_n out, opts[:n]
+    first_n(out, opts[:n])
   end
 
   def for_app(app_id, opts = {})
