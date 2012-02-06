@@ -262,7 +262,7 @@ class Countries
   end
 
   def self.country_names(usa_first=true)
-    rejects = Set.new(continent_code_to_name.values)
+    rejects = Set.new(CONTINENT_CODE_TO_NAME.values)
     rejects << 'United States' if usa_first
     countries = GeoIP::CountryName.reject{|name| rejects.include?(name)}.sort
     countries.unshift('United States') if usa_first

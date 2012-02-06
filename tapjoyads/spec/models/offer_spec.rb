@@ -56,7 +56,7 @@ describe Offer do
     @offer.send(:geoip_reject?, geoip_data, mobile_country_code).should == false
   end
 
-  it "rejects depending on mobile country codes" do
+  it "rejects depending on countries" do
     @offer.countries = ["GB"]
     geoip_data = { :country => "US" }
     @offer.send(:geoip_reject?, geoip_data).should == true
