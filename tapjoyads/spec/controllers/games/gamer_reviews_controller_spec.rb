@@ -115,7 +115,7 @@ describe Games::GamerReviewsController do
 
   describe '#destroy' do
     before :each do
-      @gamer_review = Factory(:gamer_review)
+      @gamer_review = Factory(:gamer_review, :author => @gamer)
       delete 'destroy', :id => @gamer_review.id
       @app.reload
     end

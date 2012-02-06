@@ -26,7 +26,7 @@
     - @gamer_reviews.each do |gamer_review|
       %tr
         %td= link_to(gamer_review.app_name, tools_gamer_reviews_path(:app_id => gamer_review.app_id))
-        %td= link_to(gamer_review.author.get_gamer_name, tools_gamer_reviews_path(:author_id => gamer_review.author_id))
+        %td= link_to(gamer_review.author_name, tools_gamer_reviews_path(:author_id => gamer_review.author_id))
         %td= gamer_review.platform
         %td= truncate(gamer_review.text, :length => 20)
         %td= gamer_review.user_rating

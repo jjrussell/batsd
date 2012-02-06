@@ -17,12 +17,11 @@ class Tools::GamerReviewsController < WebsiteController
 
   def edit
     @gamer_review = GamerReview.find(params[:id])
-    @gamer = Gamer.find(@gamer_review.author_id)
+    @gamer = @gamer_review.author
   end
 
   def update
     @gamer_review = GamerReview.find(params[:id])
-    params[:gamer_review][:prev_rating] = @gamer_review.user_rating ? @gamer_review.user_rating : 0
 
     if @gamer_review.update_attributes(params[:gamer_review])
       flash[:notice] = 'App review was successfully updated.'

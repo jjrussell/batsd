@@ -1,12 +1,13 @@
+- pagination_options = { :container => false, :param_name => "gamer_reviews_page", :previous_label => 'Prev&nbsp;&nbsp;|', :next_label => '|&nbsp;&nbsp;Next', :inner_window => 1, :outer_window => 0 }
 .pagination_wrapper
   .my_pagination.clearfix
     %span.page_info
       = page_entries_info(gamer_reviews, :entry_name => 'review')
-    .page_links= will_paginate(gamer_reviews, :container => false, :param_name => "gamer_reviews_page", :previous_label => 'Prev&nbsp;&nbsp;|', :next_label => '|&nbsp;&nbsp;Next', :inner_window => 1, :outer_window => 0)
+    .page_links= will_paginate(gamer_reviews, pagination_options)
 
 %ul.review_list.clearfix
   - gamer_reviews.each do |gamer_review|
-    - gamer = Gamer.find_by_id(gamer_review.author_id)
+    - gamer = gamer_review.author
     - if gamer
       %li.review_item.clearfix
         .others_profile_image
@@ -26,7 +27,7 @@
 
 .pagination_wrapper
   .my_pagination.clearfix
-    .page_links= will_paginate(gamer_reviews, :container => false, :param_name => "gamer_reviews_page", :previous_label => 'Prev&nbsp;&nbsp;|', :next_label => '|&nbsp;&nbsp;Next', :inner_window => 1, :outer_window => 0)
+    .page_links= will_paginate(gamer_reviews, pagination_options)
 
 - content_for :page_javascript do
   :plain
@@ -34,12 +35,12 @@
       TJG.ui.loadExistGamerRating();
 
       $('.read_more').click(function(){
-        $(this).parent().addClass('hide');
-        $(this).parent().next().removeClass('hide');
+        $(this).parent().hide();
+        $(this).parent().next().show();
       });
 
       $('.collapse').click(function(){
-        $(this).parent().addClass('hide');
-        $(this).parent().prev().removeClass('hide');
+        $(this).parent().hide();
+        $(this).parent().prev().show();
       });
     });

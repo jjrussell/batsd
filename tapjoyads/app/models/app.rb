@@ -269,7 +269,7 @@ class App < ActiveRecord::Base
 
   def positive_thumbs_percentage
     total = total_thumbs_count
-    return total > 0 ? ((thumb_up_count.to_f / total) * 100).round(2) : 0
+    total > 0 ? ((thumb_up_count.to_f / total) * 100).round(2) : 0
   end
 
   private

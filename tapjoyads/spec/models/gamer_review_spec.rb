@@ -15,15 +15,8 @@ describe GamerReview do
   end
 
   context 'when delegating' do
-    it "delegates app_name and app_id to app" do
-      delegated_methods = [ :app_name, :app_id ]
-      delegated_methods.each do |dm|
-        subject.should respond_to dm
-      end
-    end
-
-    it "delegates get_gamer_name to author" do
-      delegated_methods = [ :get_gamer_name ]
+    it "delegates app_name to app" do
+      delegated_methods = [ :app_name ]
       delegated_methods.each do |dm|
         subject.should respond_to dm
       end
@@ -31,10 +24,6 @@ describe GamerReview do
   end
 
   context '#update_app_rating_counts' do
-    before :each do
-      subject.prev_rating = subject.user_rating
-    end
-
     context 'when user_rating changed' do
       before :each do
         subject.user_rating = -1
@@ -48,6 +37,19 @@ describe GamerReview do
 
       it 'increases the app thumb_down_count' do
         subject.app.thumb_down_count.should == 1
+      end
+    end
+  end
+
+  context '#author_name' do
+    context 'when author_type is Gamer' do
+      before :each do
+        @author = Factory(:gamer)
+        @gamer_review = Factory(:gamer_review, :author => @author)
+      end
+
+      it 'returns gamer name' do
+        @gamer_review.author_name.should == @author.get_gamer_name
       end
     end
   end
