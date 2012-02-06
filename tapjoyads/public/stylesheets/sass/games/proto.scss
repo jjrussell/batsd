@@ -156,7 +156,7 @@ body {
         box-shadow: 0px 0px 1px #000;
   }
 }
-.app:nth-child(5), .app:nth-child(10) {
+.app:nth-child(5n) {
   margin-right: 0;
 }
 
@@ -186,7 +186,7 @@ body {
     width: percentage(122/768);
   }
 
-  .app:nth-child(5), .app:nth-child(10) {
+  .app:nth-child(5n) {
     display:none;
   }
 
