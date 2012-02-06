@@ -61,7 +61,7 @@ private
   end
 
   def set_locale
-    language_code = params[:language_code] || get_http_accept_language
+    language_code = get_language_code
     I18n.locale = nil
     if AVAILABLE_LOCALES.include?(language_code)
       I18n.locale = language_code
@@ -73,7 +73,8 @@ private
     end
   end
 
-  def get_http_accept_language
+  def get_language_code
+    return params[:language_code]
     # example env[HTTP_ACCEPT_LANGUAGE] string: en,en-US;q=0.8,es;q=0.6,zh;q=0.4
     language_list = request.env['HTTP_ACCEPT_LANGUAGE'].split(/\s*,\s*/).map do |l|
       l += ';q=1.0' unless l =~ /;q=\d+\.\d+$/

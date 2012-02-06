@@ -14,6 +14,33 @@ class GamesController < ApplicationController
     Rails.env.production?
   end
 
+  def get_language_code
+    lang_code = params[:language_code]
+    # example env[HTTP_ACCEPT_LANGUAGE] string: en,en-US;q=0.8,es;q=0.6,zh;q=0.4
+    language_list = request.env['HTTP_ACCEPT_LANGUAGE'].split(/\s*,\s*/).map do |l|
+      l += ';q=1.0' unless l =~ /;q=\d+\.\d+$/
+      l.split(';q=')
+    end
+
+    prioritized_list = language_list.sort do |x,y|
+      raise "Not correctly formatted" unless x.first =~ /^[a-z\-]+$/i
+      y.last.to_f <=> x.last.to_f
+    end
+
+    prioritized_list.unshift([lang_code]) unless lang_code.nil?
+
+    formatted_list = prioritized_list.map do |l|
+      l.first.downcase.gsub(/-[a-z]+$/i) { |i| i.upcase }
+    end
+
+    available_list = AVAILABLE_LOCALES.map {|i| i.to_s}
+
+    valid_list = formatted_list & available_list
+
+    valid_list.first
+  rescue # default if header is malformed
+    lang_code || ""
+  end
   def set_current_device(data)
     device_data = ObjectEncryptor.decrypt(data)
     if valid_device_id(device_data[:udid])
