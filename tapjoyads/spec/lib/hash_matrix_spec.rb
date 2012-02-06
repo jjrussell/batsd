@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe HashMatrix::HashVector do
-  before do
+  before :each do
     @vector = HashMatrix.vector.from_pairs([[1,2], [2,-2], [3,4], [6,-5]])
   end
 
@@ -148,7 +148,7 @@ end
 
 
 describe HashMatrix do
-  before do
+  before :each do
     @matrix = HashMatrix.eye(3)
     @matrix[1, 3] = 1
     @matrix[3, 1] = -1
@@ -223,7 +223,7 @@ describe HashMatrix do
     end
 
     context "with non-numeric indices" do
-      before do
+      before :each do
         @matrix=HashMatrix.from_triplets [[:a,1,1], [2,:b,2], [1,:c,3]]
         @matrix[1,2] = -1
         @indices = [1,2,3,4,5, :a, :b, :c]
@@ -279,7 +279,7 @@ describe HashMatrix do
     end
 
     context "with non-numeric indices" do
-      before do
+      before :each do
         @matrix=HashMatrix.from_triplets [[:a,1,1], [2,:b,2], [1,:c,3]]
         @matrix[1,2] = -1
         @indices = [1,2,3,4,5, :a, :b, :c]
@@ -324,7 +324,7 @@ describe HashMatrix do
   end
 
   describe "#projection" do
-    before do
+    before :each do
       @matrix[7, 1]=20
     end
     context "when indices for rows and or columns are given" do
