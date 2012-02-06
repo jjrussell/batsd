@@ -840,6 +840,24 @@ ActiveRecord::Schema.define(:version => 20120124191839) do
   add_index "rating_offers", ["id"], :name => "index_rating_offers_on_id", :unique => true
   add_index "rating_offers", ["partner_id"], :name => "index_rating_offers_on_partner_id"
 
+  create_table "reengagement_offers", :id => false, :force => true do |t|
+    t.string   "id",                    :limit => 36,                    :null => false
+    t.string   "app_id",                :limit => 36,                    :null => false
+    t.string   "partner_id",            :limit => 36,                    :null => false
+    t.string   "currency_id",           :limit => 36,                    :null => false
+    t.string   "prerequisite_offer_id", :limit => 36
+    t.text     "instructions"
+    t.integer  "day_number",                                             :null => false
+    t.integer  "reward_value",                                           :null => false
+    t.boolean  "hidden",                              :default => false, :null => false
+    t.boolean  "enabled",                             :default => false, :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "reengagement_offers", ["app_id"], :name => "index_reengagement_offers_on_app_id"
+  add_index "reengagement_offers", ["id"], :name => "index_reengagement_offers_on_id"
+
   create_table "resellers", :id => false, :force => true do |t|
     t.string   "id",                 :limit => 36,                               :null => false
     t.string   "name"
@@ -859,6 +877,19 @@ ActiveRecord::Schema.define(:version => 20120124191839) do
 
   add_index "role_assignments", ["id"], :name => "index_role_assignments_on_id", :unique => true
   add_index "role_assignments", ["user_id", "user_role_id"], :name => "index_role_assignments_on_user_id_and_user_role_id", :unique => true
+
+  create_table "sketchy_activities", :force => true do |t|
+    t.string   "app_id"
+    t.string   "type"
+    t.float    "value1"
+    t.float    "value2"
+    t.float    "value3"
+    t.float    "value4"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "sketchy_activities", ["app_id"], :name => "index_sketchy_activities_on_app_id"
 
   create_table "spend_shares", :id => false, :force => true do |t|
     t.string   "id",             :limit => 36, :null => false
