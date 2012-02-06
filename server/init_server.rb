@@ -50,6 +50,8 @@ else
   `cp /home/webuser/tapjoyserver/server/tapjoy-prod /etc/apache2/sites-available/tapjoy`
 end
 `/etc/init.d/apache2 start`
+`ln -s /etc/init.d/apache2 /etc/rc0.d/K20apache2`
+`ln -s /etc/init.d/apache2 /etc/rc6.d/K20apache2`
 
 # deploy the latest code
 if server_type == 'test' || server_type == 'util'
