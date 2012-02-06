@@ -283,7 +283,7 @@ class Countries
 
     CONTINENT_CODES.each do |continent_code|
       @@contintent_code_to_country_codes[continent_code].sort! do |c1, c2|
-     country_code_to_name[c1] <=> country_code_to_name[c2]
+        country_code_to_name[c1] <=> country_code_to_name[c2]
       end
     end
 
