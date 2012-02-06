@@ -47,13 +47,21 @@ describe Offer do
   end
 
   it "rejects depending on mobile country codes" do
-    @offer.mobile_country_codes = ["234", "235"]
+    @offer.countries = ["GB"]
     geoip_data = { :country => "US" }
     mobile_country_code = "310"
     @offer.send(:geoip_reject?, geoip_data, mobile_country_code).should == true
     geoip_data = { :country => "GB" }
-    mobile_country_code = "235"
+    mobile_country_code = "234"
     @offer.send(:geoip_reject?, geoip_data, mobile_country_code).should == false
+  end
+
+  it "rejects depending on mobile country codes" do
+    @offer.countries = ["GB"]
+    geoip_data = { :country => "US" }
+    @offer.send(:geoip_reject?, geoip_data).should == true
+    geoip_data = { :country => "GB" }
+    @offer.send(:geoip_reject?, geoip_data).should == false
   end
 
   it "rejects depending on countries blacklist" do

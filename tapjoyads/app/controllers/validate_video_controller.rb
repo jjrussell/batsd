@@ -3,7 +3,7 @@ class ValidateVideoController < ApplicationController
   before_filter :setup
 
   def index
-    @valid = @offer.is_valid_for?(@publisher_app, @device, @currency, params[:device_type], @geoip_data, params[:app_version], @direct_pay_providers, @offer.item_type, @hide_app_offers, params[:library_version], params[:os_version], params[:screen_layout_size], params[:mobile_country_code])
+    @valid = @offer.is_valid_for?(@publisher_app, @device, @currency, params[:device_type], @geoip_data, params[:app_version], @direct_pay_providers, @offer.item_type, @hide_app_offers, params[:library_version], params[:os_version], params[:screen_layout_size])
   end
 
 private

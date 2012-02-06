@@ -58,7 +58,7 @@ module Offer::Rejecting
       is_test_video_offer?(type) ) ||
     (!(is_test_video_offer?(type) ||
       device_platform_mismatch?(Device.normalize_device_type(device_type)) ||
-      geoip_reject?(geoip_data, mobile_country_code) ||
+      geoip_reject?(geoip_data) ||
       already_complete?(device, app_version) ||
       flixter_reject?(publisher_app, device) ||
       minimum_bid_reject?(currency, type) ||
@@ -123,8 +123,10 @@ module Offer::Rejecting
   end
 
   def geoip_reject?(geoip_data, mobile_country_code = '')
-    return true if mobile_country_codes.present? && mobile_country_codes != '[]' && mobile_country_code.present? && !get_mobile_country_codes.include?(mobile_country_code)
-    return true if countries.present? && countries != '[]' && !get_countries.include?(geoip_data[:country])
+    if countries.present? && countries != '[]'
+      return true if mobile_country_code.present? && !get_countries.include?(Countries::MOBILE_COUNTRY_CODE_TO_COUNTRY_CODE[mobile_country_code])
+      return true if !get_countries.include?(geoip_data[:country])
+    end
     return true if geoip_data[:country] && get_countries_blacklist.include?(geoip_data[:country].to_s.upcase)
     return true if regions.present? && regions != '[]' && !get_regions.include?(geoip_data[:region])
     return true if dma_codes.present? && dma_codes != '[]' && !get_dma_codes.include?(geoip_data[:dma_code])

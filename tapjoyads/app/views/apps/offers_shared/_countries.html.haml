@@ -5,8 +5,6 @@
   %td
     = f.hidden_field(:countries, :id => 'offer_countries')
     = error_message_on @offer, :countries
-    = f.hidden_field(:mobile_country_codes, :id => 'offer_mobile_country_codes')
-    = error_message_on @offer, :mobile_country_codes
     #change_countries
       = label_tag :country_targeting_off, 'All Countries'
       = radio_button_tag('country_targeting', 'off', @offer.countries.blank?)
@@ -15,7 +13,7 @@
       = radio_button_tag('country_targeting', 'on', !@offer.countries.blank?)
       - country_selector_class = @offer.countries.blank? ? 'hidden' : ''
       %ul#country_checkboxes{:class => country_selector_class}
-        - Countries.continent_codes.each do |continent_code|
+        - Countries::CONTINENT_CODES.each do |continent_code|
           %li
             .expander.ui-icon.ui-icon-triangle-1-e
             - country_set = @offer.get_countries
@@ -23,14 +21,13 @@
             - none_checked = (Set.new(Countries.contintent_code_to_country_codes[continent_code]) & country_set).empty?
             - class_name = (all_checked || none_checked) ? 'continent-label' : 'continent-label some-checked'
             = check_box_tag "continent_#{continent_code}", '1', all_checked, :class => 'continent'
-            = label_tag "continent_#{continent_code}", Countries.continent_code_to_name[continent_code], :class => class_name
+            = label_tag "continent_#{continent_code}", Countries::CONTINENT_CODE_TO_NAME[continent_code], :class => class_name
             %ul.inner.hidden
               - Countries.contintent_code_to_country_codes[continent_code].each do |country_code|
                 %li
                   - checked = country_set.include?(country_code)
                   = check_box_tag "country_#{country_code}", '1', checked, :class => 'country',
-                    :country_code => country_code, :country_name => Countries.country_code_to_name[country_code],
-                    :mobile_country_code => Countries.country_code_to_mobile_country_codes[country_code]
+                    :country_code => country_code, :country_name => Countries.country_code_to_name[country_code]
                   = label_tag "country_#{country_code}", Countries.country_code_to_name[country_code]
 
 - if @offer.app_offer? && @offer.item.platform == 'iphone'
@@ -78,26 +75,20 @@
       var setCountries = function() {
         countryCodes = [];
         countryNames = [];
-        mobileCountryCodes = [];
         if($('#country_targeting_on').attr('checked')) {
           $('input.country').each(function() {
             if($(this).attr('checked')) {
               countryCodes.push($(this).attr('country_code'));
               countryNames.push($(this).attr('country_name'));
-              if($(this).attr('mobile_country_code')){
-                mobileCountryCodes = mobileCountryCodes.concat($(this).attr('mobile_country_code').split(','));
-              }
             }
           });
         }
         if(countryCodes.length == 0) {
           $('#change_countries_link').html("All countries");
           $('#offer_countries').val('');
-          $('#offer_mobile_country_codes').val('');
         } else {
           $('#change_countries_link').html(countryNames.join(', '));
           $('#offer_countries').val('["' + countryCodes.join('","') + '"]');
-          $('#offer_mobile_country_codes').val('["' + mobileCountryCodes.join('","') + '"]');
         }
       };
 
