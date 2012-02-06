@@ -13,8 +13,8 @@ class VideosController < ApplicationController
 
   def complete
     @video_offer = VideoOffer.find_in_cache(params[:id])
-    @offer = Offer.find_in_cache(params[:id])
-    return unless verify_records([ @offer ])
+    @offer = Offer.find_in_cache(params[:offer_id])
+    return unless verify_records([ @video_offer, @offer ])
   end
 
   private
