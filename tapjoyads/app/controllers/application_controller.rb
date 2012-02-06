@@ -74,7 +74,7 @@ private
   end
 
   def get_language_code
-    return params[:language_code]
+    params[:language_code]
   end
 
   def lookup_udid
