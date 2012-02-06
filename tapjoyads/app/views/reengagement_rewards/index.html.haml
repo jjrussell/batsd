@@ -1,0 +1,56 @@
+- @page_title = "Daily Bonus!"
+
+.container
+  .content
+    .top
+      .headbg
+        %h4
+          = "Daily Bonus!"
+    .main
+      %ul.days.clearfix
+        - @reengagement_offers.each do |r|
+          - if r.day_number > 0
+            - if @reengagement_offer.day_number > r.day_number
+              %li.box.past
+                .credits.past
+                  %h4
+                    = "+ #{r.reward_value}"
+                .day.past
+                .date.past
+                  %h4
+                    = "Day #{r.day_number}"
+            - elsif @reengagement_offer.day_number == r.day_number
+              %li.box.current
+                .credits.current
+                  %h4
+                    = "+ #{r.reward_value}"
+                .day.current
+                .date.current
+                  %h4
+                    = "Day #{r.day_number}"
+            - else
+              %li.box
+                .credits
+                  %h4
+                    = "+ #{r.reward_value}"
+                .day
+                .date
+                  %h4
+                    = "Day #{r.day_number}"
+      .textc
+        = @reengagement_offer.instructions
+      %a{:href => @button_link}
+        %span.button
+          OK
+    .footer.clearfix
+      = image_tag @app.get_icon_url, :alt => "App Icon", :name => "App Icon", :height => "50", :id => "app_icon", :class => "app_icon floatl"
+
+      - if @partner.present?
+        %h5{:name => "Partner Name", :id => "partner_name", :class => "floatl"}
+          = "by #{@partner.name}"
+
+      %a{:href => WEBSITE_URL}
+        = image_tag "reengagement_rewards/logo-footer.png", :alt => "Tapjoy Logo", :name => "Tapjoy Logo", :height => "50", :id => "Insert Logo", :class => "floatr"
+
+- content_for :page_styles do
+  = stylesheet_link_tag("reengagement_rewards/style")
