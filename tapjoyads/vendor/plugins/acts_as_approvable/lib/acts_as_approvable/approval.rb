@@ -32,6 +32,14 @@ class Approval < ActiveRecord::Base
     all(:select => 'DISTINCT(owner_id)', :conditions => 'owner_id IS NOT NULL').map { |row| [row.owner.to_s, row.owner_id] }
   end
 
+  def self.available_owners
+    @available_owners ||= ActsAsApprovable.owner_records
+  end
+
+  def self.available_owners_for_select
+    @available_owners_for_select ||= ActsAsApprovable.owner_select
+  end
+
   def self.options_for_type
     all(:select => 'DISTINCT(item_type)').map { |row| [row.item_type.classify, row.item_type] }
   end
@@ -92,6 +100,7 @@ class Approval < ActiveRecord::Base
     end
 
     update_attributes(:state => 'approved')
+    item.approve! if item.respond_to?(:approve!)
   end
 
   def reject!(reason = nil)

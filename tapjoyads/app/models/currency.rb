@@ -1,7 +1,7 @@
 class Currency < ActiveRecord::Base
   include UuidPrimaryKey
   acts_as_cacheable
-  acts_as_approvable
+  acts_as_approvable :on => :create, :state_field => :state
 
   TAPJOY_MANAGED_CALLBACK_URL = 'TAP_POINTS_CURRENCY'
   NO_CALLBACK_URL = 'NO_CALLBACK'
@@ -191,6 +191,13 @@ class Currency < ActiveRecord::Base
     self.reseller_spend_share = reseller_id? ? reseller.reseller_rev_share * spend_share_ratio : nil
   end
 
+  def approve!
+    self.tapjoy_enabled = true
+  end
+  
+  def reject!
+    TapjoyMailer.deliver_currency_rejected(self.partner.email)
+  end
   private
 
   def cache_by_app_id

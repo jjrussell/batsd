@@ -66,7 +66,7 @@ ActionController::Routing::Routes.draw do |map|
                      :resolve_clicks => :post, :sqs_lengths => :get, :elb_status => :get, :ses_status => :get,
                      :publishers_without_payout_info => :get, :publisher_payout_info_changes => :get, :device_info => :get,
                      :freemium_android => :get, :award_currencies => :post, :update_award_currencies => :post,
-                     :update_user_roles => :post, :update_device => :post }
+                     :update_user_roles => :post, :update_device => :post, :approvals => :post }
   map.namespace :tools do |tools|
     tools.resources :premier_partners, :only => [ :index ]
     tools.resources :generic_offers, :only => [ :index, :new, :create, :edit, :update ]
@@ -101,6 +101,8 @@ ActionController::Routing::Routes.draw do |map|
     tools.resources :network_costs, :only => [ :index, :new, :create ]
     tools.resources :partner_program_statz, :only => [ :index ], :collection => { :export => :get }
     tools.resources :payout_freezes, :only => [ :index, :create ], :member => { :disable => :post }
+    tools.resources :approvals, :only => [:index], :collection => [:mine, :history], :member => [:approve, :reject, :assign]
+    tools.resources :currency_approvals, :only => [:index], :collection => [:mine, :history], :member => [:approve, :reject, :assign], :controller => :approvals, :requirements => { :type => :currency, :calling_controller => 'tools/currency_approvals' }
   end
 
   map.connect 'mail_chimp_callback/callback', :controller => :mail_chimp_callback, :action => :callback
