@@ -100,4 +100,11 @@ class Click < SimpledbShardedResource
       Downloader.get_with_retry url
     end
   end
+
+  def resolved_too_fast?(threshold = 20.seconds)
+    successfully_rewarded? &&
+      type != 'video' &&
+      !offer.pay_per_click? &&
+      (installed_at - clicked_at) < threshold
+  end
 end
