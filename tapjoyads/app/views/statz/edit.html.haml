@@ -261,10 +261,10 @@
           = f.text_area(:instructions)
           = error_message_on @offer, :instructions
     %tr
+      %td{ :colspan => 2 }= f.submit('Save Changes')
+    %tr
       %td{ :colspan => 2}
         = render('offer_creatives/iframes', :offer => @offer)
-    %tr
-      %td{ :colspan => 2 }= f.submit('Save Changes')
 
 .hidden
   #help_tapjoy_enabled_content{ :name => 'Tapjoy Enabled' } Whether or not the offer is enabled for installs by Tapjoy.
