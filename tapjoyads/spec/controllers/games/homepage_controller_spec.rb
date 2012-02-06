@@ -11,6 +11,11 @@ describe Games::HomepageController do
       get :index, :language_code => "zh"
       I18n.locale.should == :zh
     end
+
+    it 'checks prefix of provided language code' do
+      get :index, :language_code => "en-XX"
+      I18n.locale.should == :en
+    end
     
     it 'sets locale based on HTTP_ACCEPT_LANGUAGE' do
       request.env["HTTP_ACCEPT_LANGUAGE"] = "zh"
@@ -24,11 +29,17 @@ describe Games::HomepageController do
       I18n.locale.should == :zh
     end
     
-    it 'sets default_locale when language_code values are unacceptable' do
+    it 'sets default_locale when language_code values are invalid' do
       get :index, :language_code => "honey badger don't care about locale"
       I18n.locale.should == I18n.default_locale
     end
     
+    it 'sets HTTP_ACCEPT_LANGUAGE when language_code values are invalid' do
+      request.env["HTTP_ACCEPT_LANGUAGE"] = "zh"
+      get :index, :language_code => "honey badger don't care about locale"
+      I18n.locale.should == :zh
+    end
+
     it 'sets default_locale when HTTP_ACCEPT_LANGUAGE values are unacceptable' do
       request.env["HTTP_ACCEPT_LANGUAGE"] = "fake,notreal;7;totallyInvalidInput"
       get :index
@@ -36,7 +47,7 @@ describe Games::HomepageController do
     end
     
     it 'sets language_code when HTTP_ACCEPT_LANGUAGE values are unacceptable' do
-      request.env["HTTP_ACCEPT_LANGUAGE"] = "fake,notreal;7;totallyInvalidInput"
+      request.env["HTTP_ACCEPT_LANGUAGE"] = "fake,notreal;7;totallyInvalidInput!"
       get :index, :language_code => "zh"
       I18n.locale.should == :zh
     end
