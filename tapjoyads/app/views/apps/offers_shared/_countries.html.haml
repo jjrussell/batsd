@@ -26,8 +26,7 @@
               - Countries.contintent_code_to_country_codes[continent_code].each do |country_code|
                 %li
                   - checked = country_set.include?(country_code)
-                  = check_box_tag "country_#{country_code}", '1', checked, :class => 'country',
-                    :country_code => country_code, :country_name => Countries.country_code_to_name[country_code]
+                  = check_box_tag "country_#{country_code}", '1', checked, :class => 'country', :country_code => country_code, :country_name => Countries.country_code_to_name[country_code]
                   = label_tag "country_#{country_code}", Countries.country_code_to_name[country_code]
 
 - if @offer.app_offer? && @offer.item.platform == 'iphone'
