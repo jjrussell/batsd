@@ -5,6 +5,7 @@ defaults: &defaults
     'init',
     'jqtouch',
     'utils',
+    'i18n',
     'ui',
     'social',
     'tapjoygames'

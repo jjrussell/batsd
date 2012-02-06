@@ -4,22 +4,18 @@
     .content_wrapper
       = render(:partial => 'header')
       .content
-        .title_2
-          Delete My Account
+        .title_2= t('text.games.delete_my_account')
         .content_box
           .interior
             .field
-              Click on the button below to deactivate your account. Once an
-              account has been deactivated for #{Gamer::DAYS_BEFORE_DELETION}
-              days, it will be completely deleted. We cannot recover your
-              account once it has been deleted.
+              =t('text.games.del_acct_confirm', :days_before_deletion => Gamer::DAYS_BEFORE_DELETION)
             .field &nbsp;
             .left
               - form_for([ :games, @gamer ], :url => games_gamer_path, :html => { :method => "delete" }, :id => 'destroy_gamer') do |f|
-                = f.submit 'Deactivate', :class => 'button', :id => 'delete_account'
+                = f.submit t('text.games.deactivate'), :class => 'button', :id => 'delete_account'
             .left
               &nbsp;
             .left
-              = button_to_function 'Cancel', 'history.go(-1)', :class => 'button', :id => 'cancel_delete'
+              = button_to_function t('text.shared.cancel'), 'history.go(-1)', :class => 'button', :id => 'cancel_delete'
             .clearfix
             .field &nbsp;

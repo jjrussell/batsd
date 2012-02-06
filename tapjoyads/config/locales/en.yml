@@ -80,9 +80,9 @@ en:
       - November
       - December
     order:
-      :year
-      :month
-      :day
+      - year
+      - month
+      - day
   datetime:
     distance_in_words:
       about_x_hours:
@@ -240,7 +240,6 @@ en:
       call_to_action_title: Unlock Mobile Joy
       cant_fetch_offers: There was an issue fetching more offers. Please try again.
       change_linked_account: Change Linked Account
-      click_to_try_again: Please click here to try again.
       connect_my_device: Connect My Device
       connect_your_android: Please connect your Android device
       connect_your_device: Please connect your device
