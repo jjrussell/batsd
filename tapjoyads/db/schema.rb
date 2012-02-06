@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120127132405) do
+ActiveRecord::Schema.define(:version => 20120124191839) do
 
   create_table "action_offers", :id => false, :force => true do |t|
     t.string   "id",                    :limit => 36,                    :null => false
@@ -145,9 +145,10 @@ ActiveRecord::Schema.define(:version => 20120127132405) do
   add_index "conversions", ["publisher_partner_id", "created_at"], :name => "index_conversions_on_publisher_partner_id_and_created_at"
 
   create_table "creative_approval_queue", :force => true do |t|
-    t.string "offer_id", :limit => 36, :null => false
-    t.string "user_id",  :limit => 36
-    t.text   "size"
+    t.string   "offer_id",   :limit => 36, :null => false
+    t.string   "user_id",    :limit => 36
+    t.text     "size"
+    t.datetime "created_at"
   end
 
   create_table "currencies", :id => false, :force => true do |t|
@@ -629,7 +630,6 @@ ActiveRecord::Schema.define(:version => 20120127132405) do
     t.text     "approved_banner_creatives"
     t.text     "approved_sources",                                                                                 :null => false
     t.boolean  "sdkless",                                                                       :default => false
-    t.text     "mobile_country_codes",                                                                             :null => false
   end
 
   add_index "offers", ["id"], :name => "index_offers_on_id", :unique => true

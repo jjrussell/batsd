@@ -5,8 +5,13 @@ table.with-border td {
   border: 1px solid #888;
   padding: 2px;
 }
-table.with-border td.small {
-  font-size: 12px;
+table.with-border td {
+  &.small {
+    font-size: 12px;
+  }
+  &.bad {
+    color: red;
+  }
 }
 .rewarded {
   background-color: #0d0;

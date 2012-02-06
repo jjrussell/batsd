@@ -18,6 +18,25 @@ module ToolsHelper
     concat("</ul>")
   end
 
+  def click_tr_class(click, reward)
+    classes = []
+    if click.installed_at?
+      if (reward && reward.successful?)
+        classes << 'rewarded'
+      else
+        classes << 'rewarded-failed'
+      end
+    end
+    classes << 'jailbroken'      if click.type =~ /install_jailbroken/
+    classes << 'click-key-match' if click.key == params[:click_key]
+    if click.block_reason =~ /TooManyUdidsForPublisherUserId|Banned/
+      classes << 'blocked'
+    elsif click.block_reason?
+      classes << 'not-rewarded'
+    end
+    classes.join(' ')
+  end
+
 private
   def concat_li(name, value)
     concat("<li>#{name}: <nobr>#{value}</nobr></li>")
