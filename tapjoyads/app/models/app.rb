@@ -187,9 +187,12 @@ class App < ActiveRecord::Base
 
   def queue_store_update(app_store_id)
     app_metadata = update_app_metadata(app_store_id) || primary_app_metadata
-    app_metadata.save!
-
-    Sqs.send_message(QueueNames::GET_STORE_INFO, app_metadata.id)
+    if app_metadata.save
+      Sqs.send_message(QueueNames::GET_STORE_INFO, app_metadata.id)
+      true
+    else
+      false
+    end
   end
 
   def fill_app_store_data(data)

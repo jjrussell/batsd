@@ -47,9 +47,7 @@ class AgencyApi::AppsController < AgencyApiController
     end
 
     if params[:store_id].present?
-      begin
-        app.queue_store_update( :store_id => params[:store_id] )
-      rescue
+      unless app.queue_store_update( :store_id => params[:store_id] )
         render_error("failed to create app metadata", 400) and return
       end
     end
@@ -78,9 +76,7 @@ class AgencyApi::AppsController < AgencyApiController
     end
 
     if params[:store_id].present?
-      begin
-        app.queue_store_update( :store_id => params[:store_id] )
-      rescue
+      unless app.queue_store_update( :store_id => params[:store_id] )
         render_error("failed to update app metadata", 400) and return
       end
     end
