@@ -65,23 +65,21 @@ describe Offer do
   end
 
   it "rejects depending on countries blacklist" do
-    device = Factory(:device)
     @offer.item.countries_blacklist = ["GB"]
     geoip_data = { :country => "US" }
-    @offer.send(:geoip_reject?, geoip_data, device).should == false
+    @offer.send(:geoip_reject?, geoip_data).should == false
     geoip_data = { :country => "GB" }
-    @offer.send(:geoip_reject?, geoip_data, device).should == true
+    @offer.send(:geoip_reject?, geoip_data).should == true
   end
 
   it "rejects depending on region" do
-    device = Factory(:device)
     @offer.regions = ["CA"]
     geoip_data = { :region => "CA" }
-    @offer.send(:geoip_reject?, geoip_data, device).should == false
+    @offer.send(:geoip_reject?, geoip_data).should == false
     geoip_data = { :region => "OR" }
-    @offer.send(:geoip_reject?, geoip_data, device).should == true
+    @offer.send(:geoip_reject?, geoip_data).should == true
     @offer.regions = []
-    @offer.send(:geoip_reject?, geoip_data, device).should == false
+    @offer.send(:geoip_reject?, geoip_data).should == false
   end
 
   it "returns proper linkshare account url" do
