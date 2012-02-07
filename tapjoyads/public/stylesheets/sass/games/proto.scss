@@ -2,6 +2,10 @@
 $page-width-1024: (944/16)em;
 $page-padding-1024: 0 (40/16)em;
 
+.dark-red-gradient {
+  @include gradient(#EA1927, #cf0506);
+}
+
 .clear {
   clear:both;
 }
@@ -25,7 +29,6 @@ body {
   font-size: 100%;
 }
 .header {
-  @include gradient(#EA1927, #cf0506);
   font-size: 12pt;
 
   .container {
@@ -243,16 +246,18 @@ body {
     @include gradient(rgba(247, 247, 250, 1.0), rgba(220, 223, 227, 1.0));
     .game-image {
       float: left;
-      margin: 0 15px;
+      margin: 0 percentage(15/640);
+      width: percentage(122/640);
       img {
         @include rounded-corners(45%);
       }
     }
     .info {
       float: left;
+      width: percentage(290/640);
     }
     .title {
-      font-size: 30pt;
+      font-size: 25pt;
     }
     .summary {
       font-size: 12pt;
@@ -286,7 +291,8 @@ body {
       margin:0;
       float: right;
       padding: 0 20px 0 0;
-      line-height: 106px;
+      line-height: 134px;
+      width: percentage(125/640);
       font-size: 20pt;
       border: none;
   -webkit-box-shadow: none;
