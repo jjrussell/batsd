@@ -6,7 +6,8 @@ class ReengagementRewardsController < ApplicationController
   def index
     if params[:id]
       @reengagement_offer = ReengagementOffer.find_in_cache params[:id]
-      @app = App.find_in_cache @reengagement_offer.app_id if @reengagement_offer
+      Rails.logger.info "############## #{@reengagement_offer.day_number}"
+      @app = App.find_in_cache @reengagement_offer.app_id if @reengagement_offer.present?
     else
       verify_params([:udid, :timestamp, :publisher_user_id, :app_id])
       @app = App.find_in_cache params[:app_id]

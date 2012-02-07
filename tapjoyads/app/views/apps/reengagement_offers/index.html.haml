@@ -46,7 +46,7 @@
               = ro.reward_value
             %td
             %td
-              = link_to 'Preview', reengagement_reward_path(ro.id)
+              = link_to 'Preview', reengagement_rewards_path({:id => ro.id})
             %td
             %td
               = link_to 'Edit', :action => "edit", :id => ro.id
