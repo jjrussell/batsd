@@ -12,6 +12,7 @@
     = javascript_include_tag("games/src/tapui/core/helpers")
     = javascript_include_tag("games/src/tapui/core/utilities")
     = javascript_include_tag("games/src/tapui/components/button/button")
+    = javascript_include_tag("games/src/fittext")
     = javascript_include_tag("games/src/proto")
   %body
     .page
@@ -34,438 +35,67 @@
             &nbsp;
       .main
         .container
-          .game-list.recommendations
+          .game-list.recommendations.clearfix
             .hd
               %h2 Smart Recommendations
             .bd
-              .app
-                .game-image= image_tag "games/angry.jpg"
-                .info
-                  .title
-                    Scrabble
-                  .description
-                    Based on Words with Friends game
-                  .summary
-                    .rank
-                      %span.icon
-                      %span.value
-                        80%
-                    .friends
-                      %span.icon
-                      %span.value
-                        10
-                    .clear
-                    .current
-                      552 Birds
-                .collect
-                  Collect
-              .app
-                .game-image= image_tag "games/angry.jpg"
-                .info
-                  .title
-                    Scrabble
-                  .description
-                    Based on Words with Friends game
-                  .summary
-                    .rank
-                      %span.icon
-                      %span.value
-                        80%
-                    .friends
-                      %span.icon
-                      %span.value
-                        10
-                    .clear
-                    .current
-                      552 Birds
-                .collect
-                  Collect
-              .app
-                .game-image= image_tag "games/angry.jpg"
-                .info
-                  .title
-                    Scrabble
-                  .description
-                    Based on Words with Friends game
-                  .summary
-                    .rank
-                      %span.icon
-                      %span.value
-                        80%
-                    .friends
-                      %span.icon
-                      %span.value
-                        10
-                    .clear
-                    .current
-                      552 Birds
-                .collect
-                  Collect
-              .app
-                .game-image= image_tag "games/angry.jpg"
-                .info
-                  .title
-                    Scrabble
-                  .description
-                    Based on Words with Friends game
-                  .summary
-                    .rank
-                      %span.icon
-                      %span.value
-                        80%
-                    .friends
-                      %span.icon
-                      %span.value
-                        10
-                    .clear
-                    .current
-                      552 Birds
-                .collect
-                  Collect
-              .app
-                .game-image= image_tag "games/angry.jpg"
-                .info
-                  .title
-                    Scrabble
-                  .description
-                    Based on Words with Friends game
-                  .summary
-                    .rank
-                      %span.icon
-                      %span.value
-                        80%
-                    .friends
-                      %span.icon
-                      %span.value
-                        10
-                    .clear
-                    .current
-                      552 Birds
-                .collect
-                  Collect
-            .clear
-          .game-list.favorites
+              -5.times do
+                .app
+                  .game-image= image_tag "games/angry.jpg"
+                  .info
+                    .title
+                      Scrabble
+                    .description
+                      Based on Words with Friends game
+          .game-list.favorites.clearfix
             .hd
               %h2 Favorites
             .bd
-              .app
-                .game-image= image_tag "games/angry.jpg"
-                .info
-                  .title
-                    Scrabble
-                  .description
-                    Based on Words with Friends game
-                  .summary
-                    .rank
-                      %span.icon
-                      %span.value
-                        80%
-                    .friends
-                      %span.icon
-                      %span.value
-                        10
-                    .clear
-                    .current
-                      552 Birds
-                .collect
-                  Collect
-              .app
-                .game-image= image_tag "games/angry.jpg"
-                .info
-                  .title
-                    Scrabble
-                  .description
-                    Based on Words with Friends game
-                  .summary
-                    .rank
-                      %span.icon
-                      %span.value
-                        80%
-                    .friends
-                      %span.icon
-                      %span.value
-                        10
-                    .clear
-                    .current
-                      552 Birds
-                .collect
-                  Collect
-              .app
-                .game-image= image_tag "games/angry.jpg"
-                .info
-                  .title
-                    Scrabble
-                  .description
-                    Based on Words with Friends game
-                  .summary
-                    .rank
-                      %span.icon
-                      %span.value
-                        80%
-                    .friends
-                      %span.icon
-                      %span.value
-                        10
-                    .clear
-                    .current
-                      552 Birds
-                .collect
-                  Collect
-              .app
-                .game-image= image_tag "games/angry.jpg"
-                .info
-                  .title
-                    Scrabble
-                  .description
-                    Based on Words with Friends game
-                  .summary
-                    .rank
-                      %span.icon
-                      %span.value
-                        80%
-                    .friends
-                      %span.icon
-                      %span.value
-                        10
-                    .clear
-                    .current
-                      552 Birds
-                .collect
-                  Collect
-              .app
-                .game-image= image_tag "games/angry.jpg"
-                .info
-                  .title
-                    Scrabble
-                  .description
-                    Based on Words with Friends game
-                  .summary
-                    .rank
-                      %span.icon
-                      %span.value
-                        80%
-                    .friends
-                      %span.icon
-                      %span.value
-                        10
-                    .clear
-                    .current
-                      552 Birds
-                .collect
-                  Collect
-            .clear
-          .game-list.mine
+              -5.times do
+                .app
+                  .game-image= image_tag "games/angry.jpg"
+                  .info
+                    .title
+                      Scrabble
+                    .description
+                      Based on Words with Friends game
+                    .summary
+                      .rank
+                        %span.icon
+                        %span.value
+                          80%
+                      .friends
+                        %span.icon
+                        %span.value
+                          10
+                      .clear
+                      .current
+                        552 Birds
+                  .collect
+                    Collect
+          .game-list.mine.clearfix
             .hd
               %h2 My Games
             .bd
-              .app
-                .game-image= image_tag "games/angry.jpg"
-                .info
-                  .title
-                    Scrabble
-                  .description
-                    Based on Words with Friends game
-                  .summary
-                    .rank
-                      %span.icon
-                      %span.value
-                        80%
-                    .friends
-                      %span.icon
-                      %span.value
-                        10
-                    .clear
-                    .current
-                      552 Birds
-                .collect
-                  Collect
-              .app
-                .game-image= image_tag "games/angry.jpg"
-                .info
-                  .title
-                    Scrabble
-                  .description
-                    Based on Words with Friends game
-                  .summary
-                    .rank
-                      %span.icon
-                      %span.value
-                        80%
-                    .friends
-                      %span.icon
-                      %span.value
-                        10
-                    .clear
-                    .current
-                      552 Birds
-                .collect
-                  Collect
-              .app
-                .game-image= image_tag "games/angry.jpg"
-                .info
-                  .title
-                    Scrabble
-                  .description
-                    Based on Words with Friends game
-                  .summary
-                    .rank
-                      %span.icon
-                      %span.value
-                        80%
-                    .friends
-                      %span.icon
-                      %span.value
-                        10
-                    .clear
-                    .current
-                      552 Birds
-                .collect
-                  Collect
-              .app
-                .game-image= image_tag "games/angry.jpg"
-                .info
-                  .title
-                    Scrabble
-                  .description
-                    Based on Words with Friends game
-                  .summary
-                    .rank
-                      %span.icon
-                      %span.value
-                        80%
-                    .friends
-                      %span.icon
-                      %span.value
-                        10
-                    .clear
-                    .current
-                      552 Birds
-                .collect
-                  Collect
-              .app
-                .game-image= image_tag "games/angry.jpg"
-                .info
-                  .title
-                    Scrabble
-                  .description
-                    Based on Words with Friends game
-                  .summary
-                    .rank
-                      %span.icon
-                      %span.value
-                        80%
-                    .friends
-                      %span.icon
-                      %span.value
-                        10
-                    .clear
-                    .current
-                      552 Birds
-                .collect
-                  Collect
-              .app
-                .game-image= image_tag "games/angry.jpg"
-                .info
-                  .title
-                    Scrabble
-                  .description
-                    Based on Words with Friends game
-                  .summary
-                    .rank
-                      %span.icon
-                      %span.value
-                        80%
-                    .friends
-                      %span.icon
-                      %span.value
-                        10
-                    .clear
-                    .current
-                      552 Birds
-                .collect
-                  Collect
-              .app
-                .game-image= image_tag "games/angry.jpg"
-                .info
-                  .title
-                    Scrabble
-                  .description
-                    Based on Words with Friends game
-                  .summary
-                    .rank
-                      %span.icon
-                      %span.value
-                        80%
-                    .friends
-                      %span.icon
-                      %span.value
-                        10
-                    .clear
-                    .current
-                      552 Birds
-                .collect
-                  Collect
-              .app
-                .game-image= image_tag "games/angry.jpg"
-                .info
-                  .title
-                    Scrabble
-                  .description
-                    Based on Words with Friends game
-                  .summary
-                    .rank
-                      %span.icon
-                      %span.value
-                        80%
-                    .friends
-                      %span.icon
-                      %span.value
-                        10
-                    .clear
-                    .current
-                      552 Birds
-                .collect
-                  Collect
-              .app
-                .game-image= image_tag "games/angry.jpg"
-                .info
-                  .title
-                    Scrabble
-                  .description
-                    Based on Words with Friends game
-                  .summary
-                    .rank
-                      %span.icon
-                      %span.value
-                        80%
-                    .friends
-                      %span.icon
-                      %span.value
-                        10
-                    .clear
-                    .current
-                      552 Birds
-                .collect
-                  Collect
-              .app
-                .game-image= image_tag "games/angry.jpg"
-                .info
-                  .title
-                    Scrabble
-                  .description
-                    Based on Words with Friends game
-                  .summary
-                    .rank
-                      %span.icon
-                      %span.value
-                        80%
-                    .friends
-                      %span.icon
-                      %span.value
-                        10
-                    .clear
-                    .current
-                      552 Birds
-                .collect
-                  Collect
-            .clear
+              -10.times do
+                .app
+                  .game-image= image_tag "games/angry.jpg"
+                  .info
+                    .title
+                      Scrabble
+                    .description
+                      Based on Words with Friends game
+                    .summary
+                      .rank
+                        %span.icon
+                        %span.value
+                          80%
+                      .friends
+                        %span.icon
+                        %span.value
+                          10
+                      .clear
+                      .current
+                        552 Birds
+                  .collect
+                    Collect

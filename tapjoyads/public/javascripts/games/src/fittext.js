@@ -10,6 +10,23 @@
  */
 
 (function( $ ){
+  var resizeOccurred = true;
+
+  function setup_throttle() {
+    $(window).resize(function() {
+      resizeOccurred = true;
+    });
+
+    window.setInterval(function() {
+      if(resizeOccurred) {
+        resizeOccurred = false;
+        $(document).trigger("fittext-resize");
+      }
+    }, 300);
+
+    setup_throttle = function() {};
+  }
+
   $.fn.fitText = function( kompressor, options ) {
     var settings = {
       'minFontSize' : Number.NEGATIVE_INFINITY,
@@ -23,6 +40,8 @@
          $.extend( settings, options );
       }
 
+      setup_throttle();
+
       // Resizer() resizes items based on the object width divided by the compressor * 10
       var resizer = function () {
         $this.css('font-size', Math.max(Math.min($this.width() / (compressor*10), parseFloat(settings.maxFontSize)), parseFloat(settings.minFontSize)));
@@ -31,8 +50,15 @@
       // Call once to set.
       resizer();
 
-      // Call on resize. Opera debounces their resize by default. 
-      $(window).resize(resizer);
+      var resetter = function() {
+        var style = $this.attr("style");
+        $this.attr("style", style.replace(/font-size:.*?;/, ""));
+        $(document).unbind("fittext-resize", resizer);
+        $(document).unbind("fittext-reset", resetter);
+      };
+
+      $(document).bind("fittext-resize", resizer);
+      $(document).bind("fittext-reset", resetter);
     });
   };
 
