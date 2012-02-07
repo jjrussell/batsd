@@ -1,6 +1,6 @@
 class Currency < ActiveRecord::Base
   include UuidPrimaryKey
-  acts_as_cacheable
+  acts_as_cacheable :version => 1
 
   TAPJOY_MANAGED_CALLBACK_URL = 'TAP_POINTS_CURRENCY'
   NO_CALLBACK_URL = 'NO_CALLBACK'

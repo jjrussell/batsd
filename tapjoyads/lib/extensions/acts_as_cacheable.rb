@@ -5,7 +5,9 @@ module ActsAsCacheable
   end
 
   module ClassMethods
-    def acts_as_cacheable
+    def acts_as_cacheable(options = {})
+      @acts_as_cacheable_version = options[:version] || 0
+
       extend ActiveSupport::Memoizable
       include ActsAsCacheable::InstanceMethods
       include ActiveSupport::Callbacks
@@ -17,12 +19,19 @@ module ActsAsCacheable
       after_commit_on_destroy :clear_cache
 
       class << self
-        def cache_all
+        attr_reader :acts_as_cacheable_version
+
+        def cache_all(check_version = false)
+          return false if check_version && version_cached?
+
           find_each(&:cache)
+          cache_version
+
+          true
         end
 
         def find_in_cache(id, do_lookup = !Rails.env.production?)
-          object = Mc.distributed_get("mysql.#{model_name.underscore}.#{id}.#{SCHEMA_VERSION}")
+          object = Mc.distributed_get(cache_key_for(id))
           if object.nil? && do_lookup
             object = find(id)
             object.cache
@@ -36,6 +45,18 @@ module ActsAsCacheable
         end
         alias_method_chain :memoize, :cache
       end
+
+      def cache_key_for(id)
+        "mysql.#{model_name.underscore}.#{id}.#{acts_as_cacheable_version}"
+      end
+
+      def cache_version(version = acts_as_cacheable_version)
+        Mc.put(cache_key_for("version"), true, false, 1.day)
+      end
+
+      def version_cached?(version = acts_as_cacheable_version)
+        Mc.get(cache_key_for("version")).present?
+      end
     end
   end
 
@@ -45,16 +66,21 @@ module ActsAsCacheable
       run_callbacks(:before_cache)
       clear_association_cache
       run_callbacks(:cache_associations)
-      Mc.distributed_put("mysql.#{self.class.model_name.underscore}.#{id}.#{SCHEMA_VERSION}", self, false, 1.day).tap do
+      Mc.distributed_put(cache_key, self, false, 1.day).tap do
         run_callbacks(:after_cache)
       end
     end
 
     def clear_cache
       run_callbacks(:before_cache_clear)
-      Mc.distributed_delete("mysql.#{self.class.model_name.underscore}.#{id}.#{SCHEMA_VERSION}").tap do
+      Mc.distributed_delete(cache_key).tap do
         run_callbacks(:after_cache_clear)
       end
+    end
+
+    private
+    def cache_key
+      self.class.cache_key_for(id)
     end
   end
 

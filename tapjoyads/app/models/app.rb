@@ -1,6 +1,6 @@
 class App < ActiveRecord::Base
   include UuidPrimaryKey
-  acts_as_cacheable
+  acts_as_cacheable :version => 1
   json_set_field :countries_blacklist
 
   ALLOWED_PLATFORMS = { 'android' => 'Android', 'iphone' => 'iOS', 'windows' => 'Windows Phone' }
