@@ -1,0 +1,21 @@
+#jqt
+  .page.current
+    .content_wrapper
+      .content
+        .details.clearfix
+          = image_tag @video_offer.primary_offer.get_video_icon_url, :size => '200x125', :id => 'offer-icon'
+
+          .earned You just earned #{@currency.get_visual_reward_amount(@offer, params[:display_multiplier])} #{@currency.name}!
+          .quiet= @video_offer.name
+
+        .header What now?
+        .message_content.video_complete
+          %a{ :href => get_click_url(@offer), :class => "replay_video_path" }
+            .slider.slider_right
+              .button.grey.arrow
+                .arrow_bg Replay Video
+          - @video_offer.video_buttons.each do |button|
+            %a{ :href => button.url }
+              .slider.slider_right
+                .button.grey.arrow
+                  .arrow_bg= button.name

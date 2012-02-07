@@ -37,6 +37,14 @@ TJG.utils = {
     return v;
   },
 
+  isArguments : function (obj) {
+    return Object.prototype.toString.call(obj) == '[object Arguments]';
+  },
+
+  isArray : function (obj) {
+    return Object.prototype.toString.call(obj) == '[object Array]';
+  },
+
   hideURLBar : function() {
     setTimeout(function() {
       window.scrollTo(0, 1);
@@ -184,15 +192,27 @@ TJG.utils = {
     }
   },
 
-  toArray: function(args) {
+  toArray: function(iterable) {
     var i, res = [];
 
-    for(i in args) { 
-      if(args.hasOwnProperty(i)) {
-        res.push(args[i]);
+    if (!iterable) {
+      return res;
+    }
+
+    if (typeof iterable.toArray === "function") {
+      return iterable.toArray();
+    }
+
+    if (this.isArray(iterable) || this.isArguments(iterable)) {
+      return Array.prototype.slice.call(iterable);
+    }
+
+    for(i in iterable) {
+      if(iterable.hasOwnProperty(i)) {
+        res.push(iterable[i]);
       }
     }
-    
+
     return res;
   },
 
@@ -225,7 +245,7 @@ TJG.utils = {
   },
 
   customError: function(msg, options, name) {
-    var info="", 
+    var info="",
         i,
         options = options || {},
         TapjoyCustomError
@@ -238,7 +258,7 @@ TJG.utils = {
       this.message = m;
     };
     TapjoyCustomError.prototype = Error.prototype;
-    
+
     for(i in options) {
       if(options.hasOwnProperty(i)) {
         info += "\n[ "+i + ": " + stringify( options[i] ) + " ]";

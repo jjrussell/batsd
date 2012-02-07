@@ -18,7 +18,7 @@ class Job::QueueUdidReportsController < Job::SqsReaderController
   end
 
   def limit_concurrent_jobs
-    if Dir.glob("#{RAILS_ROOT}/tmp/*.s3").length >= 12
+    if Dir.glob("#{Rails.root}/tmp/*.s3").length >= 12
       render :text => 'ok'
     end
   end
