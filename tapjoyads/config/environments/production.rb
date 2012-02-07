@@ -27,16 +27,16 @@ config.action_controller.allow_forgery_protection    = false
 # Disable delivery errors, bad email addresses will be ignored
 # config.action_mailer.raise_delivery_errors = false
 
-MEMCACHE_SERVERS = [ 'tj-prod.fqfjqv.0001.use1.cache.amazonaws.com',
-                     'tj-prod.fqfjqv.0002.use1.cache.amazonaws.com',
-                     'tj-prod.fqfjqv.0003.use1.cache.amazonaws.com',
-                     'tj-prod.fqfjqv.0004.use1.cache.amazonaws.com' ]
+MEMCACHE_SERVERS = [ 'tj-production.fqfjqv.0001.use1.cache.amazonaws.com',
+                     'tj-production.fqfjqv.0002.use1.cache.amazonaws.com',
+                     'tj-production.fqfjqv.0003.use1.cache.amazonaws.com',
+                     'tj-production.fqfjqv.0004.use1.cache.amazonaws.com' ]
 
 EXCEPTIONS_NOT_LOGGED = ['ActionController::UnknownAction',
                          'ActionController::RoutingError']
 
 begin
-  local_config = YAML::load_file("#{RAILS_ROOT}/config/local.yml")
+  local_config = YAML::load_file("#{Rails.root}/config/local.yml")
 rescue Errno::ENOENT
   local_config = {}
 end
@@ -67,13 +67,13 @@ NUM_GAME_STATE_DOMAINS = 300
 NUM_GAME_STATE_MAPPING_DOMAINS = 10
 NUM_PUBLISHER_USER_DOMAINS = 50
 
-mail_chimp = YAML::load_file("#{RAILS_ROOT}/config/mail_chimp.yaml")['production']
+mail_chimp = YAML::load_file("#{Rails.root}/config/mail_chimp.yaml")['production']
 MAIL_CHIMP_API_KEY = mail_chimp['api_key']
 MAIL_CHIMP_PARTNERS_LIST_ID = mail_chimp['partners_list_id']
 MAIL_CHIMP_SETTINGS_KEY = mail_chimp['settings_key']
 MAIL_CHIMP_WEBHOOK_KEY = mail_chimp['webhook_key']
 
-send_grid = YAML::load_file("#{RAILS_ROOT}/config/send_grid.yaml")['production']
+send_grid = YAML::load_file("#{Rails.root}/config/send_grid.yaml")['production']
 SEND_GRID_USER = send_grid['user']
 SEND_GRID_PASSWD = send_grid['passwd']
 

@@ -1,15 +1,19 @@
-require 'test_helper'
+require 'spec_helper'
 
-class GamerTest < ActiveSupport::TestCase
+describe Gamer do
+  before :each do
+    fake_the_web
+  end
+
   subject { Factory(:user) }
 
   context "Gamer" do
-    setup do
+    before :each do
       @gamer = Factory(:gamer)
       @gamer.gamer_profile = GamerProfile.create(:gamer => @gamer)
     end
 
-    should "compatible with old invitation" do
+    it 'should be compatible with old invitation' do
       invitation = Invitation.create(
         :gamer_id => @gamer.id,
         :channel => Invitation::FACEBOOK,
@@ -20,11 +24,11 @@ class GamerTest < ActiveSupport::TestCase
       new_gamer.referrer = ObjectEncryptor.encrypt("#{@gamer.id},#{invitation.id}")
       new_gamer.send :check_referrer
 
-      assert_equal @gamer.id, new_gamer.referred_by
-      assert_equal false, Friendship.new(:key => "#{new_gamer.id}.#{@gamer.id}", :consistent => true).new_record?
+      new_gamer.referred_by.should == @gamer.id
+      Friendship.new(:key => "#{new_gamer.id}.#{@gamer.id}", :consistent => true).should_not be_new_record
     end
 
-    should "set up friendships" do
+    it 'should set up friendships' do
       @new_gamer = Factory(:gamer)
       @new_gamer.gamer_profile = GamerProfile.create(:facebook_id => '0', :gamer => @new_gamer)
       @referring_gamer = Factory(:gamer)
@@ -47,30 +51,30 @@ class GamerTest < ActiveSupport::TestCase
       @new_gamer.referrer = accepted_invitation.encrypted_referral_id
       @new_gamer.send :check_referrer
 
-      assert_equal @referring_gamer.id, @new_gamer.referred_by
-      assert_equal 0, @referring_gamer.reload.referral_count
-      assert_equal 0, @stalker_gamer.reload.referral_count
+      @new_gamer.referred_by.should == @referring_gamer.id
+      @referring_gamer.reload.referral_count.should == 0
+      @stalker_gamer.reload.referral_count.should == 0
     end
 
-    should "be able to deactivate" do
+    it 'should be able to deactivate' do
       @gamer.deactivate!
-      assert @gamer.deactivated_at > Time.zone.now - 1.minute
-      assert @gamer.deactivated_at < Time.zone.now
+      @gamer.deactivated_at.should > Time.zone.now - 1.minute
+      @gamer.deactivated_at.should < Time.zone.now
     end
 
   end
 
   context "Deleting Gamers" do
-    should "only delete users deactivated 3 days ago" do
+    it 'should only delete users deactivated 3 days ago' do
       5.times.each { Factory(:gamer) }
       5.times.each { Factory(:gamer, :deactivated_at => Time.zone.now) }
       5.times.each { Factory(:gamer, :deactivated_at => Time.zone.now - Gamer::DAYS_BEFORE_DELETION.days - 1.day) }
-      assert_equal 15, Gamer.count
+      Gamer.count.should == 15
       Gamer.to_delete.each(&:destroy)
-      assert_equal 10, Gamer.count
+      Gamer.count.should == 10
     end
 
-    should "also delete friendships" do
+    it 'should also delete friendships' do
       gamer = Factory(:gamer, :deactivated_at => Time.zone.now - Gamer::DAYS_BEFORE_DELETION.days - 1.day)
 
       stalker = Factory(:gamer)
@@ -92,12 +96,12 @@ class GamerTest < ActiveSupport::TestCase
       friendship.following_id = gamer.id
       friendship.serial_save
 
-      assert_equal 3, Friendship.count(:where => "gamer_id = '#{gamer.id}' or following_id = '#{gamer.id}'", :consistent => true)
+      Friendship.count(:where => "gamer_id = '#{gamer.id}' or following_id = '#{gamer.id}'", :consistent => true).should == 3
       Gamer.to_delete.each(&:destroy)
-      assert_equal 0, Friendship.count(:where => "gamer_id = '#{gamer.id}' or following_id = '#{gamer.id}'", :consistent => true)
+      Friendship.count(:where => "gamer_id = '#{gamer.id}' or following_id = '#{gamer.id}'", :consistent => true).should == 0
     end
 
-    should "also delete invitations" do
+    it 'should also delete invitations' do
       gamer = Factory(:gamer, :deactivated_at => Time.zone.now - Gamer::DAYS_BEFORE_DELETION.days - 1.day)
       3.times do
         Invitation.create({
@@ -106,12 +110,12 @@ class GamerTest < ActiveSupport::TestCase
           :external_info => Factory.next(:name),
         })
       end
-      assert_equal 3, Invitation.count
+      Invitation.count.should == 3
       Gamer.to_delete.each(&:destroy)
-      assert_equal 0, Invitation.count
+      Invitation.count.should == 0
     end
 
-    should "not error out when deleted invitations are fulfilled" do
+    it 'should not error out when deleted invitations are fulfilled' do
 
       gamer = Factory(:gamer, :deactivated_at => Time.zone.now - Gamer::DAYS_BEFORE_DELETION.days - 1.day)
       invitation = Invitation.create({
