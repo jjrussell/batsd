@@ -11,9 +11,9 @@
               - form_for([ :games, :gamer, @gamer_profile ], :url => update_prefs_games_gamer_gamer_profile_path, :html => { :method => "put" }) do |f|
                 .field
                   = f.check_box :allow_marketing_emails
-                  = f.label :allow_marketing_emails, "Allow Tapjoy to send me marketing emails"
+                  = f.label :allow_marketing_emails, t('text.games.allow_marketing_emails')
                 .field
-                  = f.submit 'Save', :class => 'button'
+                  = f.submit t('text.shared.save'), :class => 'button'
     .content_wrapper
       .content
         #account_options.content_box.clearfix
@@ -21,5 +21,4 @@
             .slider.clearfix
               .profile_arrow.right
               .field
-                .label
-                  Delete My Account
+                .label= t('text.games.delete_my_account')

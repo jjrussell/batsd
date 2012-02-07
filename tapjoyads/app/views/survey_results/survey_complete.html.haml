@@ -1,0 +1,9 @@
+.container
+  #main
+    #survey_complete
+      - @currency_reward = @click.currency_reward.present? ? @click.currency_reward : ''
+      - @currency = @currency.name.present? ? @currency.name : 'credits'
+      Thank you for completing the survey. You will receive your #{@currency_reward} #{@currency} shortly.
+
+- content_for :page_styles do
+  = stylesheet_link_tag("survey_results/style")
