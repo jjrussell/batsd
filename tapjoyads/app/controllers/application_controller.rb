@@ -74,14 +74,8 @@ private
     return [] unless params[:language_code]
 
     code = params[:language_code]
-    result = [code]
 
-    if code['-']
-      prefix = code.split('-').first
-      result << prefix
-    end
-
-    result
+    [ code, code.split(/-/).first ].uniq
   end
 
 

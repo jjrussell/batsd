@@ -21,21 +21,15 @@ class GamesController < ApplicationController
 
   def http_accept_language
     # example env[HTTP_ACCEPT_LANGUAGE] string: en,en-US;q=0.8,es;q=0.6,zh;q=0.4
-    language_list = request.env['HTTP_ACCEPT_LANGUAGE'].split(/\s*,\s*/).map do |l|
-      l += ';q=1.0' unless l =~ /;q=\d+\.\d+$/
-      l.split(';q=')
+    language_list = request.env['HTTP_ACCEPT_LANGUAGE'].split(/\s*,\s*/).map do |pair|
+      language, quality = pair.split(/;q=/)
+      raise "Not correctly formatted" unless language =~ /^[a-z\-]+$/i
+      language = language.downcase.gsub(/-[a-z]+$/i) { |i| i.upcase }
+      quality = 1.0 unless quality.to_s =~ /\d+(\.\d+)?$/
+      [ language, - quality.to_f ]
     end
 
-    prioritized_list = language_list.sort do |x,y|
-      raise "Not correctly formatted" unless x.first =~ /^[a-z\-]+$/i
-      y.last.to_f <=> x.last.to_f
-    end
-
-    formatted_list = prioritized_list.map do |l|
-      l.first.downcase.gsub(/-[a-z]+$/i) { |i| i.upcase }
-    end
-
-    formatted_list
+    language_list.sort_by(&:last).map(&:first)
   rescue # default if header is malformed
     []
   end
