@@ -1,9 +1,11 @@
 ActionController::Routing::Routes.draw do |map|
   map.resources :offer_instructions, :only => [ :index ]
   map.resources :support_requests, :only => [ :new, :create ]
-  map.resources :surveys, :only => [ :edit, :create ]
+  map.resources :tools_surveys, :only => [ :edit, :create ]
+  map.resources :survey_results, :only => [ :new, :create ]
   map.resources :opt_outs, :only => :create
-  map.resources :reengagement_rewards, :only => [ :show, :index ]
+  map.resources :reengagement_rewards, :only => [ :index ]
+  map.resources :videos, :only => [ :index ], :member => { :complete => :get }
   map.connect 'privacy', :controller => 'documents', :action => 'privacy'
   map.connect 'privacy.html', :controller => 'documents', :action => 'privacy'
 

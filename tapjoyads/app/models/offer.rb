@@ -656,6 +656,10 @@ class Offer < ActiveRecord::Base
     return (item_type == 'App' && name.length <= 30) if rewarded?
     item_type != 'VideoOffer'
   end
+  
+  def to_s
+    name
+  end
 
   def num_support_requests(start_time = 1.day.ago, end_time = Time.zone.now)
     Mc.get_and_put("offer.support_requests.#{id}", false, 1.hour) do
