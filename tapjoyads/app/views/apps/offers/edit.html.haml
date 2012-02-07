@@ -3,14 +3,11 @@
 = render('apps/offers_shared/descriptions')
 
 %p.description
-  - if @offer.featured? || !@offer.rewarded?
-    Enter your bid per
-    = @offer.rewarded? ? 'rewarded' : 'non-rewarded'
-    = @offer.featured? ? 'featured' : ''
-    install below. The minimum bid is
-    = "#{number_to_currency(@offer.min_bid / 100.0)}."
-  - else
-    Enter your bid per install below. The minimum bid is 50% of the purchase price for paid apps, or $0.35 for free apps.
+  Enter your bid per
+  = @offer.rewarded? ? 'rewarded' : 'non-rewarded'
+  = @offer.featured? ? 'featured' : ''
+  install below. The minimum bid is
+  = "#{number_to_currency(@offer.min_bid / 100.0)}."
 
   Higher bids will result in more installs.
 

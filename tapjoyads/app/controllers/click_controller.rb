@@ -44,6 +44,13 @@ class ClickController < ApplicationController
     render :text => 'OK'
   end
 
+  def survey
+    create_click('survey')
+    handle_pay_per_click
+
+    redirect_to(get_destination_url)
+  end
+
   def test_offer
     publisher_app = App.find_in_cache(params[:publisher_app_id])
     return unless verify_records([ @currency, publisher_app ])
@@ -66,9 +73,9 @@ class ClickController < ApplicationController
     test_reward.publisher_amount  = 0
     test_reward.advertiser_amount = 0
     test_reward.tapjoy_amount     = 0
+    test_reward.serial_save
 
-    message = test_reward.serialize
-    Sqs.send_message(QueueNames::SEND_CURRENCY, message)
+    Sqs.send_message(QueueNames::SEND_CURRENCY, test_reward.key)
   end
 
   def test_video_offer
@@ -88,9 +95,9 @@ class ClickController < ApplicationController
     test_reward.publisher_amount  = 0
     test_reward.advertiser_amount = 0
     test_reward.tapjoy_amount     = 0
+    test_reward.serial_save
 
-    message = test_reward.serialize
-    Sqs.send_message(QueueNames::SEND_CURRENCY, message)
+    Sqs.send_message(QueueNames::SEND_CURRENCY, test_reward.key)
   end
 
 private
@@ -275,7 +282,7 @@ private
       end
       @device.set_last_run_time!(app_id_for_device)
 
-      message = { :click => @click.serialize(:attributes_only => true), :install_timestamp => @now.to_f.to_s }.to_json
+      message = { :click_key => @click.key, :install_timestamp => @now.to_f.to_s }.to_json
       Sqs.send_message(QueueNames::CONVERSION_TRACKING, message)
     end
   end

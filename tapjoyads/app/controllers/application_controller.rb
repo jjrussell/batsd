@@ -61,7 +61,7 @@ private
   end
 
   def set_locale
-    language_code = params[:language_code]
+    language_code = params[:language_code] || get_http_accept_language
     I18n.locale = nil
     if AVAILABLE_LOCALES.include?(language_code)
       I18n.locale = language_code
@@ -73,8 +73,49 @@ private
     end
   end
 
+  def get_http_accept_language
+    # example env[HTTP_ACCEPT_LANGUAGE] string: es,en;q=0.8;en-US;q=0.6
+    language_list = request.env['HTTP_ACCEPT_LANGUAGE'].split(/\s*,\s*/).map do |l|
+      l += ';q=1.0' unless l =~ /;q=\d+\.\d+$/
+      l.split(';q=')
+    end
+
+    prioritized_list = language_list.sort do |x,y|
+      raise "Not correctly formatted" unless x.first =~ /^[a-z\-]+$/i
+      y.last.to_f <=> x.last.to_f
+    end
+
+    formatted_list = prioritized_list.map do |l|
+      l.first.downcase.gsub(/-[a-z]+$/i) { |i| i.upcase }
+    end
+
+    available_list = AVAILABLE_LOCALES.map {|i| i.to_s}
+
+    valid_list = formatted_list & available_list
+
+    valid_list.first
+  rescue # default to blank if header is malformed
+    ""
+  end
+
+  def lookup_udid
+    return if params[:udid].present?
+    lookup_keys = []
+    lookup_keys.push(params[:sha2_udid]) if params[:sha2_udid].present?
+    lookup_keys.push(params[:mac_address]) if params[:mac_address].present?
+
+    lookup_keys.each do |lookup_key|
+      identifier = DeviceIdentifier.new(:key => lookup_key)
+      unless identifier.new_record?
+        params[:udid] = identifier.udid
+        break
+      end
+    end
+  end
+
   def fix_params
     downcase_param(:udid)
+    downcase_param(:sha2_udid)
     downcase_param(:app_id)
     downcase_param(:campaign_id)
     downcase_param(:publisher_app_id)
@@ -100,6 +141,7 @@ private
     set_param(:max, :Max)
     set_param(:virtual_good_id, :VirtualGoodID)
     set_param(:language_code, :language)
+    params[:mac_address] = params[:mac_address].downcase.gsub(/:/,"") if params[:mac_address].present?
   end
 
   def downcase_param(p)
