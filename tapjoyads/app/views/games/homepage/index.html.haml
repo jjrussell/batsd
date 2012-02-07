@@ -44,13 +44,13 @@
             #top_grossing_games_tab.tab_right
               #top_grossing_games_button.tab_button.grey
                 .tab_content
-                  Tapjoy Picks
+                  =t('text.games.tapjoy_picks')
               #top_grossing_games_button_arrow.tab_button_bottom_arrrow_wrapper
                 .tab_button_bottom_arrrow
             #recommended_games_tab.tab_left
               #recommended_games_button.tab_button.dark_grey
                 .tab_content
-                  Recommendations
+                  =t('text.games.recommendations')
               #recommended_games_button_arrow.tab_button_bottom_arrrow_wrapper
                 .tab_button_bottom_arrrow
           #more_games_content.hide
@@ -64,23 +64,22 @@
     .dialog_header_right
     .dialog_header_left
     .dialog_title.title_2
-      Action Required!
+      =t('text.games.action_required')
   .dialog_header
-    Our #{ link_to('terms of service', games_tos_path, :target => '_blank') } have changed.  Please review and indicate your agreement below.
+    =t('text.games.our_tos_changed', :terms_of_use => link_to(t('text.games.terms_of_use_href'), games_tos_path, :target=>"_blank"))
   .dialog_content
     - form_for([ :games, current_gamer ], :url => accept_tos_games_gamer_path, :html => { :method => "put" }, :class => "accept_tos_form") do |f|
       .field
         = f.check_box :terms_of_service
-        = f.label :terms_of_service, "By checking this box I assert that I agree to the terms of service."
+        = f.label :terms_of_service, t('text.games.tos_change_acknowledge')
       .field.clearfix
-        = f.submit 'OK', :class => 'right button m_width lt_blue'
+        = f.submit t('text.shared.ok'), :class => 'right button m_width lt_blue'
       .tos_error.center
         = error_message_on @gamer_profile, :birthdate
 
 - content_for :page_head do
-  %meta{ :name => 'description', :content => 'Tapjoy: The destination for mobile apps and games on Android, iPhone and iPad.' }
-  %meta{ :name => 'keywords', :content => 'games, mobile games, mobile apps, iOS, iPhone, iTouch, iPad, Android' }
-
+  %meta{ :name => 'description', :content => t('text.games.meta_description') }
+  %meta{ :name => 'keywords', :content => t('text.games.meta_keywords')}
 - content_for :page_javascript do
   - if current_gamer.accepted_tos_version < TAPJOY_GAMES_CURRENT_TOS_VERSION
     :plain

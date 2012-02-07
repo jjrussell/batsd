@@ -41,7 +41,7 @@ class Offer < ActiveRecord::Base
   OFFER_LIST_REQUIRED_COLUMNS = [ 'id', 'item_id', 'item_type', 'partner_id',
                                   'name', 'url', 'price', 'bid', 'payment',
                                   'conversion_rate', 'show_rate', 'self_promote_only',
-                                  'device_types', 'countries', 'mobile_country_codes',
+                                  'device_types', 'countries',
                                   'age_rating', 'multi_complete', 'featured',
                                   'publisher_app_whitelist', 'direct_pay', 'reward_value',
                                   'third_party_data', 'payment_range_low',
@@ -99,7 +99,7 @@ class Offer < ActiveRecord::Base
   validates_numericality_of :min_conversion_rate, :allow_nil => true, :greater_than_or_equal_to => 0, :less_than_or_equal_to => 1
   validates_numericality_of :show_rate, :greater_than_or_equal_to => 0, :less_than_or_equal_to => 1
   validates_numericality_of :payment_range_low, :payment_range_high, :only_integer => true, :allow_nil => true, :greater_than => 0
-  validates_inclusion_of :pay_per_click, :user_enabled, :tapjoy_enabled, :allow_negative_balance, :self_promote_only, :featured, :multi_complete, :rewarded, :cookie_tracking, :tj_games_only, :in => [ true, false ]
+  validates_inclusion_of :pay_per_click, :user_enabled, :tapjoy_enabled, :allow_negative_balance, :self_promote_only, :featured, :multi_complete, :rewarded, :cookie_tracking, :in => [ true, false ]
   validates_inclusion_of :item_type, :in => ALL_OFFER_TYPES
   validates_inclusion_of :direct_pay, :allow_blank => true, :allow_nil => true, :in => DIRECT_PAY_PROVIDERS
   validates_each :device_types, :allow_blank => false, :allow_nil => false do |record, attribute, value|
@@ -199,10 +199,12 @@ class Offer < ActiveRecord::Base
   alias_method :events, :offer_events
   alias_method :random, :rand
 
-  json_set_field :device_types, :screen_layout_sizes, :countries, :mobile_country_codes,
-    :dma_codes, :regions, :approved_sources
-  memoize :get_device_types, :get_screen_layout_sizes, :get_countries, :get_mobile_country_codes,
-    :get_dma_codes, :get_regions, :get_approved_sources
+  json_set_field :device_types, :screen_layout_sizes, :countries, :dma_codes, :regions, :approved_sources
+  memoize :get_device_types, :get_screen_layout_sizes, :get_countries, :get_dma_codes, :get_regions, :get_approved_sources
+
+  def self.column_names
+    super.reject{|c| c == 'tj_games_only'}
+  end
 
   def clone
     clone = super
@@ -657,6 +659,10 @@ class Offer < ActiveRecord::Base
     return false if (is_paid? || featured?)
     return (item_type == 'App' && name.length <= 30) if rewarded?
     item_type != 'VideoOffer'
+  end
+  
+  def to_s
+    name
   end
 
   def num_support_requests(start_time = 1.day.ago, end_time = Time.zone.now)

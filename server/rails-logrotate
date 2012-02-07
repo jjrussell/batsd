@@ -5,6 +5,6 @@
     notifempty
     sharedscripts
     postrotate
-	    touch /home/webuser/tapjoyserver/tapjoyads/tmp/restart.txt
+	    /home/webuser/tapjoyserver/server/start_or_reload_unicorn.rb
     endscript
 }
