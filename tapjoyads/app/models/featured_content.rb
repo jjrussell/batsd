@@ -17,7 +17,7 @@ class FeaturedContent < ActiveRecord::Base
 
   belongs_to :author, :polymorphic => true
   belongs_to :offer
-  has_one :tracking_offer, :class_name => 'Offer', :dependent => :destroy
+  has_one :tracking_offer, :class_name => 'Offer', :dependent => :destroy, :conditions => ['fc_tracking = ?', true]
 
   validates_presence_of :author, :if => :author_required?, :message => "Please select an author."
   validates_presence_of :offer, :if => :offer_required?, :message => "Please select an offer/app."

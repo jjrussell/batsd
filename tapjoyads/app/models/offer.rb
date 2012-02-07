@@ -86,7 +86,7 @@ class Offer < ActiveRecord::Base
   belongs_to :item, :polymorphic => true
   belongs_to :reseller
   belongs_to :action_offer, :foreign_key => "item_id", :conditions => ['item_type = ?', 'ActionOffer']
-  belongs_to :featured_content, :conditions => ['fc_tracking = ?', true]
+  belongs_to :featured_content
 
   validates_presence_of :reseller, :if => Proc.new { |offer| offer.reseller_id? }
   validates_presence_of :partner, :item, :name, :url, :rank_boost
