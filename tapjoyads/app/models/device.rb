@@ -35,7 +35,7 @@ class Device < SimpledbShardedResource
 
   def after_initialize
     @create_device_identifiers = is_new
-    @skip_sqs_on_fail = !is_new
+    @retry_save_on_fail = is_new
     begin
       @parsed_apps = apps
     rescue JSON::ParserError
@@ -199,12 +199,13 @@ class Device < SimpledbShardedResource
   end
 
   # If we're handling an SDK-less app offer, add it to the sdkless_clicks column on the Device model
-  def handle_sdkless_click!(offer, timestamp)
+  def handle_sdkless_click!(offer, now)
     if offer.sdkless?
       temp_sdkless_clicks = sdkless_clicks
-      temp_sdkless_clicks[offer.third_party_data] = { 'click_time' => timestamp.to_i, 'item_id' => offer.item_id }
+      temp_sdkless_clicks[offer.third_party_data] = { 'click_time' => now.to_i, 'item_id' => offer.item_id }
+      temp_sdkless_clicks.delete_if { |key,value| value['click_time'] <= (now - 2.days).to_i }
       self.sdkless_clicks = temp_sdkless_clicks
-      @skip_sqs_on_fail = false
+      @retry_save_on_fail = true
       save
     end
   end

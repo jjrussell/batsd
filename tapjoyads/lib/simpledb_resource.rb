@@ -194,7 +194,7 @@ class SimpledbResource
       end
       raise e
     end
-    return if @skip_sqs_on_fail == true
+    return if @retry_save_on_fail == false
     Rails.logger.info "Sdb save failed. Adding to sqs. Domain: #{@this_domain_name} Key: #{@key} Exception: #{e.class} - #{e}"
     uuid = UUIDTools::UUID.random_create.to_s
     bucket = S3.bucket(BucketNames::FAILED_SDB_SAVES)
