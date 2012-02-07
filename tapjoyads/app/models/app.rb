@@ -110,10 +110,6 @@ class App < ActiveRecord::Base
     supported_devices? && JSON.load(supported_devices).all?{ |i| i.match(/^ipad/i) }
   end
 
-  def large_download?
-    file_size_bytes.to_i > 20971520
-  end
-
   def recently_released?
     released_at? && (Time.zone.now - released_at) < 7.day
   end
@@ -260,7 +256,8 @@ class App < ActiveRecord::Base
   end
 
   def wifi_required?
-    !!(file_size_bytes && file_size_bytes > PLATFORM_DETAILS[platform][:cell_download_limit_bytes])
+    download_limit = PLATFORM_DETAILS[platform][:cell_download_limit_bytes]
+    !!(file_size_bytes && file_size_bytes > download_limit)
   end
 
   def total_thumbs_count

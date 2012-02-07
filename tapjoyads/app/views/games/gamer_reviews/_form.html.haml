@@ -16,9 +16,9 @@
         = error_message_on @gamer_review, :text
       .review_submit
         - if @gamer_review.new_record?
-          = f.submit "Submit Review"
+          = f.submit t('text.shared.submit_review')
         - else
-          = f.submit "Update Review"
+          = f.submit t('text.shared.update_review')
 
 - content_for :page_javascript do
   :plain

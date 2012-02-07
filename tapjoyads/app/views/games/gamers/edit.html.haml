@@ -8,32 +8,32 @@
         = render(:partial => 'invite_friends')
         = render(:partial => 'profile')
         .title_2
-          Options
+          =t('text.shared.options')
         #account_options.content_box.clearfix
           - link_to social_games_gamer_path do
             .slider.bottom_line.clearfix
               .profile_arrow.right
               .field
                 .label
-                  Social Settings
+                  =t('text.games.social_settings')
           - link_to password_games_gamer_path do
             .slider.bottom_line.clearfix
               .profile_arrow.right
               .field
                 .label
-                  Reset Password
+                  =t('text.shared.reset_password')
           - link_to prefs_games_gamer_path do
             .slider.bottom_line.clearfix
               .profile_arrow.right
               .field
                 .label
-                  Preferences
+                  =t('text.shared.preferences')
           - link_to games_gamer_reviews_path do
             .slider.clearfix
               .profile_arrow.right
               .field
                 .label
-                  My Reviews
+                  =t('text.shared.my_reviews')
 
 - content_for :page_javascript do
   :plain

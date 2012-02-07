@@ -182,6 +182,71 @@ TJG.utils = {
       $(window).trigger('scroll');
       TJG.vars.imageLoaderInit = true;
     }
-  }
+  },
 
+  toArray: function(args) {
+    var i, res = [];
+
+    for(i in args) { 
+      if(args.hasOwnProperty(i)) {
+        res.push(args[i]);
+      }
+    }
+    
+    return res;
+  },
+
+  basicTemplate: function(tpl, object) {
+    object = object || {};
+    return tpl.replace(/%{(.+?)}/g, function(pattern, key) {
+      // undefined is bad m'kay
+      if(object[key] === undefined) {
+        throw TJG.utils.customError("No matching arg for template: ", {key: key, template: tpl, props: object});
+      }
+      return object[key];
+    });
+  },
+
+  sprintf: function(text) {
+    var i=1, args=arguments;
+    return text.replace(/%s/g, function(pattern){
+      return (i < args.length) ? args[i++] : "";
+    });
+  },
+
+  sprintfTemplate: function(text) {
+    var that = this;
+    text = [text];
+    return function() {
+      var args = that.toArray(arguments);
+      args = text.concat(args);
+      return that.sprintf.apply(this, args);
+    };
+  },
+
+  customError: function(msg, options, name) {
+    var info="", 
+        i,
+        options = options || {},
+        TapjoyCustomError
+        stringify = (window.JSON && window.JSON.stringify) || function(t) { return t; };
+
+    name = name || "TapjoyCustomError";
+
+    TapjoyCustomError = function(n,m) {
+      this.name = n;
+      this.message = m;
+    };
+    TapjoyCustomError.prototype = Error.prototype;
+    
+    for(i in options) {
+      if(options.hasOwnProperty(i)) {
+        info += "\n[ "+i + ": " + stringify( options[i] ) + " ]";
+      }
+    }
+
+    msg = info ? msg+info : msg;
+
+    return new TapjoyCustomError(name, msg);
+  }
 };

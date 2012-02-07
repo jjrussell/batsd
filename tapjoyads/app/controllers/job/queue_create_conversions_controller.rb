@@ -7,7 +7,13 @@ class Job::QueueCreateConversionsController < Job::SqsReaderController
   private
 
   def on_message(message)
-    reward = Reward.deserialize(message.body)
+    # TO REMOVE: once all the messages with a serialized reward are gone
+    if message.body =~ /^\{.*\}$/
+      reward = Reward.deserialize(message.body)
+    else
+      reward = Reward.find(message.body, :consistent => true)
+      raise "Reward not found: #{message.body}" if reward.nil?
+    end
 
     reward.build_conversions.each do |c|
       save_conversion(c)

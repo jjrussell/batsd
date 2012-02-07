@@ -44,8 +44,6 @@ class PointsController < ApplicationController
       render :template => 'layouts/error' and return
     end
 
-    message = reward.serialize(:attributes_only => true)
-
     @success = true
     @message = "#{tap_points} points awarded"
     @point_purchases = PointPurchases.new(:key => "#{params[:publisher_user_id]}.#{params[:app_id]}")
@@ -53,7 +51,7 @@ class PointsController < ApplicationController
 
     check_success('award_points')
 
-    Sqs.send_message(QueueNames::SEND_CURRENCY, message)
+    Sqs.send_message(QueueNames::SEND_CURRENCY, reward.key)
 
     render :template => 'get_vg_store_items/user_account'
   end

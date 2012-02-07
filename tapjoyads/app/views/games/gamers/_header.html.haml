@@ -13,6 +13,6 @@
             .gamer_email
               = @gamer.email
             .gamer_signup_date
-              = "Member since #{@gamer.created_at.strftime("%B %d, %Y")}"
+              = t('text.games.member_since', :date=>l(@gamer.created_at, :format => :day_long))
   .info_expand_bottom_arrow_wrapper
     .info_expand_bottom_arrow
