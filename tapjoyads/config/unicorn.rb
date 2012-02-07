@@ -9,8 +9,8 @@ working_directory app_dir
 # worker spawn times
 preload_app true
 
-# nuke workers after 30 seconds instead of 60 seconds (the default)
-timeout 30
+# kill workers if they have been stuck on a request for too long
+timeout %w(masterjobs jobs).include?(server_type) ? 43200 : 90
 
 # listen on both a Unix domain socket and a TCP port,
 # we use a shorter backlog for quicker failover when busy
