@@ -5,8 +5,8 @@ module ActsAsCacheable
   end
 
   module ClassMethods
-    def acts_as_cacheable(options = {})
-      @acts_as_cacheable_version = options[:version] || 0
+    def acts_as_cacheable
+      @acts_as_cacheable_version = Digest::MD5.hexdigest(columns.to_json)
 
       extend ActiveSupport::Memoizable
       include ActsAsCacheable::InstanceMethods
@@ -50,11 +50,11 @@ module ActsAsCacheable
         "mysql.#{model_name.underscore}.#{id}.#{acts_as_cacheable_version}"
       end
 
-      def cache_version(version = acts_as_cacheable_version)
+      def cache_version
         Mc.put(cache_key_for("version"), true, false, 1.day)
       end
 
-      def version_cached?(version = acts_as_cacheable_version)
+      def version_cached?
         Mc.get(cache_key_for("version")).present?
       end
     end

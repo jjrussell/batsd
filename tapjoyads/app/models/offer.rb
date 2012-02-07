@@ -3,7 +3,7 @@ class Offer < ActiveRecord::Base
   include Offer::Ranking
   include Offer::Rejecting
   include Offer::UrlGeneration
-  acts_as_cacheable :version => 1
+  acts_as_cacheable
   memoize :precache_rank_scores
 
   APPLE_DEVICES = %w( iphone itouch ipad )

@@ -1,6 +1,6 @@
 class SurveyOffer < ActiveRecord::Base
   include UuidPrimaryKey
-  acts_as_cacheable :version => 1
+  acts_as_cacheable
 
   has_many :survey_questions
   has_one :offer, :as => :item
