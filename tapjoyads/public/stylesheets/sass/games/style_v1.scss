@@ -1525,12 +1525,6 @@ input.button {
   @include inset-shadow;
   @include gradient(#CF1623, #EA1927);
 }
-.button.grey .earn {
-  color: #6C6C6C;
-}
-.button.grey:hover .earn, .button.grey:active .earn {
-  color: #FFF;
-}
 .button.lt_blue {
   background: -moz-linear-gradient(top, #40a7c0 0%, #218bad 100%);
   background: -webkit-gradient(linear, 0 0, 0 100%, color-stop(0, #40a7c0), color-stop(1, #218bad));

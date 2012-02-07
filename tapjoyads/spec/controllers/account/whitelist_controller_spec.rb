@@ -1,9 +1,13 @@
-require 'test_helper'
+require 'spec_helper'
 
-class Account::WhitelistControllerTest < ActionController::TestCase
-  setup :activate_authlogic
+describe Account::WhitelistController do
+  before :each do
+    activate_authlogic
+    fake_the_web
+  end
+
   context 'on GET to :index' do
-    setup do
+    before :each do
       @user = Factory(:admin)
       @offer1 = Factory(:app).primary_offer
       @offer2 = Factory(:app).primary_offer
@@ -19,56 +23,56 @@ class Account::WhitelistControllerTest < ActionController::TestCase
       login_as @user
     end
 
-    should "assign all offers by default" do
+    it "should assign all offers by default" do
       get :index
-      assert_equal [@offer1, @offer2], assigns(:offers)
+      assigns(:offers).should == [@offer1, @offer2]
     end
 
-    should "assign approved offers" do
+    it "should assign approved offers" do
       get :index, :status => 'a'
-      assert_equal [@offer1], assigns(:offers)
+      assigns(:offers).should == [@offer1]
     end
 
-    should "assign blocked offers" do
+    it "should assign blocked offers" do
       get :index, :status => 'b'
-      assert_equal [@offer2], assigns(:offers)
+      assigns(:offers).should == [@offer2]
     end
 
-    should "assign offers by device" do
+    it "should assign offers by device" do
       get :index, :device => 'all'
-      assert_equal [@offer1, @offer2], assigns(:offers)
+      assigns(:offers).should == [@offer1, @offer2]
 
       get :index, :device => 'iphone'
-      assert_equal [@offer1, @offer2], assigns(:offers)
+      assigns(:offers).should == [@offer1, @offer2]
 
       get :index, :device => 'android'
-      assert_equal [], assigns(:offers)
+      assigns(:offers).should == []
 
       @offer1.device_types = ['android'].to_json
       @offer1.save
       get :index, :device => 'android'
-      assert_equal [@offer1], assigns(:offers)
+      assigns(:offers).should == [@offer1]
     end
 
-    should "assign offers by name" do
+    it "should assign offers by name" do
       @offer1.name = 'bill'
       @offer1.save!
       @offer2.name = 'sue'
       @offer2.save!
 
       get :index, :name => 'bill'
-      assert_equal [@offer1], assigns(:offers)
+      assigns(:offers).should == [@offer1]
       get :index, :name => 'sue'
-      assert_equal [@offer2], assigns(:offers)
+      assigns(:offers).should == [@offer2]
       get :index, :name => 'sarah'
-      assert_equal [], assigns(:offers)
+      assigns(:offers).should == []
       get :index
-      assert_equal [@offer1, @offer2], assigns(:offers)
+      assigns(:offers).should == [@offer1, @offer2]
     end
   end
 
   context 'on GET to :enable' do
-    setup do
+    before :each do
       @user = Factory(:admin)
       @offer = Factory(:app).primary_offer
       @offer.tapjoy_enabled = true
@@ -78,29 +82,29 @@ class Account::WhitelistControllerTest < ActionController::TestCase
       login_as @user
     end
 
-    should "redirect to account whitelist index" do
+    it "should redirect to account whitelist index" do
       get :enable
-      assert_redirected_to(account_whitelist_index_path)
+      response.should redirect_to(account_whitelist_index_path)
     end
 
-    should "add offer to whitelist" do
+    it "should add offer to whitelist" do
       get :index, :status => 'a'
-      assert_equal [], assigns(:offers)
+      assigns(:offers).should == []
       get :enable, :id => @offer.id
       get :index, :status => 'a'
-      assert_equal [@offer], assigns(:offers)
+      assigns(:offers).should == [@offer]
       @partner.reload
-      assert_equal Set.new(@offer.id), @partner.get_offer_whitelist
+      @partner.get_offer_whitelist.should == Set.new(@offer.id)
     end
 
-    should "log activity" do
+    it "should log activity" do
       get :enable, :id => @offer.id
-      assert assigns(:activity_logs)
+      assigns(:activity_logs).should_not be_nil
     end
   end
 
   context 'on GET to :disable' do
-    setup do
+    before :each do
       @user = Factory(:admin)
       @offer = Factory(:app).primary_offer
       @offer.tapjoy_enabled = true
@@ -110,25 +114,25 @@ class Account::WhitelistControllerTest < ActionController::TestCase
       login_as @user
     end
 
-    should "redirect to account whitelist index" do
+    it "should redirect to account whitelist index" do
       get :disable
-      assert_redirected_to(account_whitelist_index_path)
+      response.should redirect_to(account_whitelist_index_path)
     end
 
-    should "remove offer from whitelist" do
+    it "should remove offer from whitelist" do
       get :enable, :id => @offer.id
       get :index, :status => 'b'
-      assert_equal [], assigns(:offers)
+      assigns(:offers).should == []
       get :disable, :id => @offer.id
       get :index, :status => 'b'
-      assert_equal [@offer], assigns(:offers)
+      assigns(:offers).should == [@offer]
       @partner.reload
-      assert_equal Set.new, @partner.get_offer_whitelist
+      @partner.get_offer_whitelist.should == Set.new
     end
 
-    should "log activity" do
+    it "should log activity" do
       get :disable, :id => @offer.id
-      assert assigns(:activity_logs)
+      assigns(:activity_logs).should_not be_nil
     end
   end
 end

@@ -30,6 +30,7 @@ class ToolsController < WebsiteController
 
       @spend      = MonthlyAccounting.sum(:spend,             :conditions => conditions) /-100.0
       @marketing  = MonthlyAccounting.sum(:marketing_orders,  :conditions => conditions) / 100.0
+      @bonus      = MonthlyAccounting.sum(:bonus_orders,      :conditions => conditions) / 100.0
       @new_orders = MonthlyAccounting.sum(:website_orders,    :conditions => conditions) / 100.0 +
                     MonthlyAccounting.sum(:invoiced_orders,   :conditions => conditions) / 100.0
       @transfers  = MonthlyAccounting.sum(:transfer_orders,   :conditions => conditions) / 100.0
@@ -39,7 +40,7 @@ class ToolsController < WebsiteController
 
     @linkshare_est = @spend.to_f * 0.026
     @ads_est = 0.0
-    @revenue = @spend + @linkshare_est + @ads_est - @marketing
+    @revenue = @spend + @linkshare_est + @ads_est - @marketing - @bonus
     @net_revenue = @revenue - @earnings
     @margin = @net_revenue.to_f * 100.0 / @revenue.to_f
   end
@@ -420,9 +421,9 @@ class ToolsController < WebsiteController
     customer_support_reward.advertiser_amount          =  0
     customer_support_reward.tapjoy_amount              =  0
     customer_support_reward.customer_support_username  =  current_user.username
+    customer_support_reward.serial_save
 
-    message = customer_support_reward.serialize
-    Sqs.send_message(QueueNames::SEND_CURRENCY, message)
+    Sqs.send_message(QueueNames::SEND_CURRENCY, customer_support_reward.key)
 
     flash[:notice] = " Successfully awarded #{params[:amount]} currency. "
     redirect_to :action => :device_info, :udid => params[:udid]

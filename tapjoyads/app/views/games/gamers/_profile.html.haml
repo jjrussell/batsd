@@ -5,28 +5,28 @@
     .interior
       - form_for([ :games, :gamer, @gamer_profile ], :url => games_gamer_gamer_profile_path, :html => { :method => "put" }) do |f|
         .field
-          = f.label :name, 'Name: '
+          = f.label :name, "#{t('text.shared.name')}: "
           = f.text_field :name
         .field
-          = f.label :nickname, 'Nickname: '
+          = f.label :nickname, "#{t('text.shared.nickname')}: "
           = f.text_field :nickname
         .field
-          = f.label :gender, 'Gender: '
-          = f.select :gender, { 'Male' => 'male', 'Female' => 'female' }, :include_blank => true
+          = f.label :gender, "#{t('text.shared.gender')}: "
+          = f.select :gender, { "Male" => "male", "Female" => "female" }, :include_blank => true
         .field
-          = f.label :country, 'Country: '
+          = f.label :country, "#{t('text.shared.country')}: "
           = f.select :country, Countries.country_names
         .field
-          = f.label :city, 'City: '
+          = f.label :city, "#{t('text.shared.city')}: "
           = f.text_field :city
         .field
-          = f.label :postal_code, 'Zip/Postal Code: '
+          = f.label :postal_code, "#{t('text.shared.zip_postal')}: "
           = f.text_field :postal_code
         .field
-          = f.label :favorite_game, 'Favorite App: '
+          = f.label :favorite_game, "#{t('text.games.favorite_app')}: "
           = f.text_field :favorite_game
         .field
-          = f.label :favorite_category, 'Favorite Category: '
+          = f.label :favorite_category, "#{t('text.games.favorite_category')}: "
           = f.text_field :favorite_category
         .field
-          = f.submit 'Save', :class => 'button'
+          = f.submit t('text.shared.save'), :class => "button"
