@@ -307,7 +307,7 @@ class Offer < ActiveRecord::Base
   end
 
   def send_low_conversion_email?
-     primary? || !primary_offer_enabled?
+    primary? || !primary_offer_enabled?
   end
 
   def calculate_min_conversion_rate
