@@ -61,23 +61,17 @@ private
   end
 
   def set_locale
-    language_codes = get_language_codes
-    I18n.locale = filter_available_locales(language_codes)
+    language_code = params[:language_code]
+    I18n.locale = nil
+    if AVAILABLE_LOCALES.include?(language_code)
+      I18n.locale = language_code
+    elsif language_code.present? && language_code['-']
+      language_code = language_code.split('-').first
+      if AVAILABLE_LOCALES.include?(language_code)
+        I18n.locale = language_code
+      end
+    end
   end
-
-  def filter_available_locales(locales)
-    available_array = AVAILABLE_LOCALES.map {|i| i.to_s}
-    (locales & available_array).first
-  end
-
-  def get_language_codes
-    return [] unless params[:language_code]
-
-    code = params[:language_code]
-
-    [ code, code.split(/-/).first ].uniq
-  end
-
 
   def lookup_udid
     return if params[:udid].present?

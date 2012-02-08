@@ -16,7 +16,16 @@ class GamesController < ApplicationController
 
   def set_locale
     language_codes = get_language_codes.concat http_accept_language
-    I18n.locale = filter_available_locales(language_codes)
+    available_array = AVAILABLE_LOCALES.map {|i| i.to_s}
+    I18n.locale = (language_codes & available_array).first
+  end
+
+  def get_language_codes
+    return [] unless params[:language_code]
+
+    code = params[:language_code]
+
+    [ code, code.split(/-/).first ].uniq
   end
 
   def http_accept_language
