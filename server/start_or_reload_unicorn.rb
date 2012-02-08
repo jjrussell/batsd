@@ -10,7 +10,7 @@ if pid == ''
 else
   free_mem  = `free -m`.split("\n")[2].split[3].to_i
   count = 0
-  while free_mem < 300 || count > 3
+  while free_mem < 300 && count < 4
     puts "dropping worker count (##{count}) for memory issue (#{hostname})"
     `kill -TTOU #{pid}`
     sleep 1
