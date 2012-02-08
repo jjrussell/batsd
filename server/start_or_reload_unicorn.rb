@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 pid = `/home/webuser/tapjoyserver/server/unicorn_master_pid.rb`
-hostname = `hostname`
+hostname = `hostname`.strip
 
 if pid == ''
   server_type = `/home/webuser/tapjoyserver/server/server_type.rb`
