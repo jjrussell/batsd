@@ -806,6 +806,14 @@ TJG.utils = {
     return v;
   },
 
+  isArguments : function (obj) {
+    return Object.prototype.toString.call(obj) == '[object Arguments]';
+  },
+
+  isArray : function (obj) {
+    return Object.prototype.toString.call(obj) == '[object Array]';
+  },
+
   hideURLBar : function() {
     setTimeout(function() {
       window.scrollTo(0, 1);
@@ -953,12 +961,24 @@ TJG.utils = {
     }
   },
 
-  toArray: function(args) {
+  toArray: function(iterable) {
     var i, res = [];
 
-    for(i in args) { 
-      if(args.hasOwnProperty(i)) {
-        res.push(args[i]);
+    if (!iterable) {
+      return res;
+    } 
+
+    if (typeof iterable.toArray === "function") {
+      return iterable.toArray();
+    }
+
+    if (this.isArray(iterable) || this.isArguments(iterable)) {
+      return Array.prototype.slice.call(iterable);
+    }
+
+    for(i in iterable) { 
+      if(iterable.hasOwnProperty(i)) {
+        res.push(iterable[i]);
       }
     }
     

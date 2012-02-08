@@ -89,6 +89,7 @@ module ActiveRecord
       def clone
         attrs = clone_attributes(:read_attribute_before_type_cast)
         attrs.delete(self.class.primary_key)
+        attrs.delete('tj_games_only') if self.class.name == 'Offer'
         record = self.class.new
         record.attributes = attrs # original version is 'record.send :instance_variable_set, '@attributes', attrs'
         record

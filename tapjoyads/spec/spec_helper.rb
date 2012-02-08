@@ -13,16 +13,21 @@ Spork.prefork do
   Spec::Runner.configure do |config|
     config.use_transactional_fixtures = true
     config.use_instantiated_fixtures  = false
-    config.fixture_path = RAILS_ROOT + '/spec/fixtures/'
+    config.fixture_path = "#{Rails.root}/spec/fixtures/"
     config.mock_with :mocha
 
     config.before :each do
       SimpledbResource.reset_connection
+      Mc.cache.flush
     end
   end
 
   def login_as(user)
     UserSession.create(user)
+  end
+
+  def games_login_as(user)
+    GamerSession.create(user)
   end
 
   def stub_offers

@@ -1,5 +1,5 @@
 defaults: &defaults
-  js_version: '1.52'
+  js_version: '1.53'
   js_files: [
     'tjg.jquery-1.6.2.min',
     'init',
@@ -11,6 +11,9 @@ defaults: &defaults
     'tapjoygames'
   ]
   js_compile_out_file: 'tjgames.min'
+
+test:
+  <<: *defaults
 
 development:
   <<: *defaults

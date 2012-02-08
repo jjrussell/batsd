@@ -744,6 +744,36 @@ body.old .content_box {
     .offer_list {
       margin-bottom: 20px;
     }
+
+    .video_complete {
+      margin-top: .5em;
+
+      .slider {
+        display: inline-table;
+      }
+    }
+
+    .details {
+      #offer-icon {
+        float: left;
+      }
+      div {
+        margin-left: 225px;
+        margin-top: 2.25em;
+      }
+      .quiet {
+        color: #777;
+        margin-top: .5em;
+      }
+
+      display: block;
+      background: #F0F0F0;
+      background: -moz-linear-gradient(center top , #F7F7F7 0%, #E4E4E4 100%) repeat scroll 0 0 transparent;
+      color: black;
+      border-radius: 6px;
+      padding: 10px;
+      margin-bottom: 1em;
+    }
   }
 
   .feat_review, .featured_content {
