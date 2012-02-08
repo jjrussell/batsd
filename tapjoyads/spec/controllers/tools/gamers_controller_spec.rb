@@ -5,10 +5,44 @@ describe Tools::GamersController do
     activate_authlogic
   end
 
-  before :each do
-    @user = Factory :admin
-    @partner = Factory(:partner, :users => [@user])
-    @app = Factory(:app, :partner => @partner)
-    login_as @user
+  describe "#index" do
+    context "when logged in as customer service" do
+      before :each do
+        user = Factory :customer_service_user
+        login_as user
+
+        get :index
+      end
+
+      it "allows access" do
+        response.should be_success
+      end
+    end
+
+    context "when logged in as an account manager" do
+      before :each do
+        user = Factory :account_mgr_user
+        login_as user
+
+        get :index
+      end
+
+      it "allows access" do
+        response.should be_success
+      end
+    end
+
+    context "when logged in as a partner" do
+      before :each do
+        user = Factory :partner_user
+        login_as user
+
+        get :index
+      end
+
+      it "disallows access" do
+        response.should_not be_success
+      end
+    end
   end
 end

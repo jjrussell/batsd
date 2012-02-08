@@ -7,13 +7,14 @@ FactoryGirl.define do
   end
 
   factory :admin, :parent => :user do
-    after_build  do |admin|
+    after_build do |admin|
       role = UserRole.find_or_create_by_name('admin', :employee => true)
       admin.user_roles << role
     end
   end
 
   factory :account_mgr_user, :parent => :user do
+    association :current_partner, :factory => :partner
     after_build do |account_mgr|
       role = UserRole.find_or_create_by_name('account_mgr', :employee => true)
       account_mgr.user_roles << role
@@ -21,16 +22,18 @@ FactoryGirl.define do
   end
 
   factory :agency_user, :parent => :user do
-    after_build  { |a| a.user_roles << UserRole.find_or_create_by_name('agency') }
+    after_build do |agency|
+      agency.user_roles << UserRole.find_or_create_by_name('agency')
+    end
   end
 
-  factory :cs_user, :parent => :user do
-    after_build { |a| a.user_roles << UserRole.find_or_create_by_name('customer_service') }
+  factory :customer_service_user, :parent => :user do
+    after_build do |customer_service|
+      customer_service.user_roles << UserRole.find_or_create_by_name('customer_service')
+    end
   end
 
-  factory :partner_user, :parent => :user do
-    after_build { |a| a.user_roles << UserRole.find_or_create_by_name('partner') }
-  end
+  factory :partner_user, :parent => :user
 
   factory :partner do
     name { Factory.next(:name) }

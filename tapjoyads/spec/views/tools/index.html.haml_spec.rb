@@ -1,13 +1,9 @@
 require 'spec/spec_helper'
 
 describe 'tools/index.html.haml' do
-  before :each do
-    activate_authlogic
-  end
-
   context 'with a customer service user' do
     before :each do
-      user = Factory :cs_user
+      user = Factory :customer_service_user
       controller.stubs(:current_user).returns(user)
       template.stubs(:current_user).returns(user)
       render
