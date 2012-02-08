@@ -45,7 +45,7 @@ class Gamer < ActiveRecord::Base
     self.confirmed_at = Time.zone.now
     if save
       click = referrer_click
-      reward_click(click) if click.rewardable?
+      reward_click(click) if click && click.rewardable?
     end
   end
 
