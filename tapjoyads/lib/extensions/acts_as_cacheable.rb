@@ -6,7 +6,7 @@ module ActsAsCacheable
 
   module ClassMethods
     def acts_as_cacheable
-      @acts_as_cacheable_version = Digest::MD5.hexdigest(connection.columns(table_name).to_json)
+      @acts_as_cacheable_version = Digest::MD5.hexdigest(connection.columns(table_name).collect { |c| [c.name,c.type] }.sort.join)
 
       extend ActiveSupport::Memoizable
       include ActsAsCacheable::InstanceMethods
