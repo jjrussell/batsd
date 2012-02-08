@@ -43,9 +43,10 @@ class Gamer < ActiveRecord::Base
 
   def confirm!
     self.confirmed_at = Time.zone.now
-    click = referrer_click
-    reward_click(click) if click.rewardable?
-    save
+    if save
+      click = referrer_click
+      reward_click(click) if click.rewardable?
+    end
   end
 
   def deactivate!
