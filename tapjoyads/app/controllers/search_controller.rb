@@ -84,12 +84,6 @@ class SearchController < WebsiteController
 
   def gamers
     conditions = [ "email LIKE ?", "#{params[:term]}%" ]
-    if params[:tapjoy_only] == 'true'
-      tapjoy_email = "#{params[:term].split('@').first}%@tapjoy.com"
-      offerpal_email = "#{params[:term].split('@').first}%@offerpal.com"
-      conditions = [ "(email LIKE ? OR email LIKE ?) AND email NOT LIKE ?",
-        tapjoy_email, offerpal_email, "%+%" ]
-    end
     @gamers = Gamer.find(:all,
       :conditions => conditions,
       :order => 'email ASC',
