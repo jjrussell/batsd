@@ -202,8 +202,8 @@ class Offer < ActiveRecord::Base
   json_set_field :device_types, :screen_layout_sizes, :countries, :dma_codes, :regions, :approved_sources
   memoize :get_device_types, :get_screen_layout_sizes, :get_countries, :get_dma_codes, :get_regions, :get_approved_sources
 
-  def self.column_names
-    super.reject{|c| c == 'tj_games_only'}
+  def self.columns
+    super.reject{|c| c.name == 'tj_games_only'}
   end
 
   def clone

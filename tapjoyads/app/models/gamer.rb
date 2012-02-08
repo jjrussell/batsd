@@ -48,7 +48,10 @@ class Gamer < ActiveRecord::Base
 
   def confirm!
     self.confirmed_at = Time.zone.now
-    save
+    if save
+      click = referrer_click
+      reward_click(click) if click && click.rewardable?
+    end
   end
 
   def deactivate!
@@ -148,7 +151,6 @@ class Gamer < ActiveRecord::Base
           device.product = click.device_name
           device.save
           devices.build(:device => device)
-          reward_click(click)
         end
       else
         begin
@@ -183,5 +185,10 @@ class Gamer < ActiveRecord::Base
     Friendship.select(:where => conditions, :consistent => true) do |friendship|
       friendship.delete_all
     end
+  end
+
+  def referrer_click
+    return nil unless referrer.present? && referrer != 'tjreferrer:' && referrer.starts_with?('tjreferrer:')
+    Click.new :key => referrer.gsub('tjreferrer:', '')
   end
 end

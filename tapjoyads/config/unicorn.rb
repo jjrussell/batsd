@@ -2,7 +2,7 @@
 # documentation.
 app_dir = "/home/webuser/tapjoyserver/tapjoyads"
 server_type = `/home/webuser/tapjoyserver/server/server_type.rb`
-worker_processes %w(test util web).include?(server_type) ? 18 : 36
+worker_processes %w(masterjobs jobs).include?(server_type) ? 36 : 18
 working_directory app_dir
 
 # Load app into the master before forking workers for super-fast
@@ -19,7 +19,7 @@ listen "/tmp/tapjoy.socket"
 # feel free to point this anywhere accessible on the filesystem
 user 'webuser', 'webuser'
 
-pid "#{app_dir}/pids/unicorn.pid"
+pid "#{app_dir}/pids/unicorn_#{Process.pid}.pid"
 stderr_path "/mnt/log/unicorn/stderr.log"
 stdout_path "/mnt/log/unicorn/stdout.log"
 
@@ -45,14 +45,14 @@ before_fork do |server, worker|
   #
   # Using this method we get 0 downtime deploys.
 
-  old_pid = "#{server.config[:pid]}.oldbin"
-
-  if File.exists?(old_pid) && server.pid != old_pid
-    begin
-      sig = (worker.nr + 1) >= server.worker_processes ? :QUIT : :TTOU
-      Process.kill(sig, File.read(old_pid).to_i)
-    rescue Errno::ENOENT, Errno::ESRCH
-      # someone else did our job for us
+  Dir.glob("#{app_dir}/pids/*.oldbin").each do |old_pid|
+    if File.exists?(old_pid) && server.pid != old_pid
+      begin
+        sig = (worker.nr + 1) >= server.worker_processes ? :QUIT : :TTOU
+        Process.kill(sig, File.read(old_pid).to_i)
+      rescue Errno::ENOENT, Errno::ESRCH
+        # someone else did our job for us
+      end
     end
   end
 end
