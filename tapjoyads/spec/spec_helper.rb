@@ -18,6 +18,7 @@ Spork.prefork do
 
     config.before :each do
       SimpledbResource.reset_connection
+      Mc.cache.flush
     end
   end
 
