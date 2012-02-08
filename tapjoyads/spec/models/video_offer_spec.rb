@@ -90,13 +90,13 @@ describe VideoOffer do
 
     it "has only 2 enabled button" do
       @video_offer.video_buttons.enabled.size.should == 3
-      @video_offer.is_valid_for_update_buttons?.should be_false
+      @video_offer.should_not be_valid_for_update_buttons
 
       @video_button_3.enabled = false
       @video_button_3.save!
       @video_offer.reload
       @video_offer.video_buttons.enabled.size.should == 2
-      @video_offer.is_valid_for_update_buttons?.should be_true
+      @video_offer.should be_valid_for_update_buttons
     end
   end
 end
