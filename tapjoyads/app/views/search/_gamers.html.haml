@@ -1,0 +1,49 @@
+- @gamers ||= []
+%table#gamers_table.tablesorter
+  %thead
+    %tr
+      %th Icon
+      %th Gamer ID
+      %th Email
+      %th Name
+      %th Last Login
+      %th Signed Up
+  %tbody
+    - if @gamers.empty?
+      %tr
+        %td.blank{:colspan => 6} No results for query.
+    - @gamers.each do |gamer|
+      %tr
+        %td.gravatar
+          = link_to image_tag(gamer.get_avatar_url), tools_gamer_path(gamer.id)
+        %td.gamer-id= link_to gamer.id, tools_gamer_path(gamer.id)
+        %td.email= gamer.email
+        %td.name= gamer.get_gamer_name
+        %td.last-login= gamer.last_login_at? ? gamer.last_login_at.to_s(:pub_ampm) : 'Never'
+        %td.signed_up= gamer.created_at? ? gamer.created_at.to_s(:pub_ampm) : 'Never'
+  %br
+
+- content_for :page_styles do
+  :plain
+    #gamers_table {
+      display: none;
+    }
+    #gamers_table td {
+      font-size: 12px;
+      vertical-align: top;
+    }
+    #gamers_table td.blank {
+      color: #999999;
+      font-style: italic;
+      text-align: center;
+    }
+    td.email, td.name {
+      font-size: 16px;
+    }
+    td.gamer-id {
+      font-family: 'courier new';
+    }
+    td.gravatar {
+      background: url('/images/spinner.gif') no-repeat center center transparent;
+      width: 0px;
+    }
