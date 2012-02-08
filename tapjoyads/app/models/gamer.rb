@@ -160,19 +160,20 @@ class Gamer < ActiveRecord::Base
         end
       else
         begin
-          gamer_or_invitation_id, advertiser_app_id = ObjectEncryptor.decrypt(referrer).split(',')
+          invitation_id, advertiser_app_id = ObjectEncryptor.decrypt(referrer).split(',')
         rescue OpenSSL::Cipher::CipherError
         end
 
-        if gamer_or_invitation_id
-          invitation = Invitation.find_by_id(gamer_or_invitation_id)
+        if invitation_id
+          invitation = Invitation.find_by_id(invitation_id)
           invitation ||= Invitation.find_by_id(advertiser_app_id) if advertiser_app_id
           if invitation
             self.referred_by = invitation.gamer_id
             gamer = invitation.gamer
             Invitation.reconcile_pending_invitations(self, :invitation => invitation)
-          elsif gamer = Gamer.find_by_id(gamer_or_invitation_id)
-            self.referred_by = gamer_or_invitation_id
+          else
+            gamer_id = invitation_id
+            self.referred_by = gamer_id if gamer = Gamer.find_by_id(gamer_id)
           end
           follow_gamer(gamer) if gamer
         end
