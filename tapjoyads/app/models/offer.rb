@@ -159,6 +159,7 @@ class Offer < ActiveRecord::Base
       record.get_device_types(true)
       record.errors.add(attribute, "can only be enabled for Android-only offers") unless record.get_platform(true) == 'Android'
       record.errors.add(attribute, "cannot be enabled for pay-per-click offers") if record.pay_per_click?
+      record.errors.add(attribute, "can only be enabled for 'App' offers") unless record.item_type == 'App'
     end
   end
 
@@ -667,7 +668,7 @@ class Offer < ActiveRecord::Base
     return (item_type == 'App' && name.length <= 30) if rewarded?
     item_type != 'VideoOffer'
   end
-  
+
   def to_s
     name
   end
