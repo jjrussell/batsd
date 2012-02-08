@@ -275,7 +275,7 @@ private
     @click.spend_share            = @currency.get_spend_share(@offer)
 
     @click.save
-    @generic_offer_click.save if generic_offer_click
+    @generic_offer_click.save if @generic_offer_click
   end
 
   def handle_pay_per_click
