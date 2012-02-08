@@ -2361,7 +2361,6 @@ TJG.utils = {
         });
       }; // submitFbInvitation
 
-
       var submitEmailInvitation = function(rurl, recipients){
         sending();
 
@@ -2551,17 +2550,12 @@ TJG.utils = {
 
     checkAndPost : function(currentGamerFbId, link, pictureLink) {
       FB.getLoginStatus(function(response) {
-        if (response.authResponse) {
-          var curLoginFbId = response.authResponse.userID;
-          if(currentGamerFbId && curLoginFbId && currentGamerFbId != curLoginFbId){
-            FB.logout(function(response) {
-              TJG.social.postToFeed(link, pictureLink);
-            });
-          }else{
-            TJG.social.postToFeed(link, pictureLink);
-          }
+        var postToFeed = function() { TJG.social.postToFeed(link, pictureLink); };
+        var currentLoginFbId = response.authResponse && response.authResponse.userID;
+        if (currentLoginFbId && currentGamerFbId && currentGamerFbId != currentLoginFbId) {
+          FB.logout(postToFeed);
         } else {
-          TJG.social.postToFeed(link, pictureLink);
+          postToFeed();
         }
       });
     },
@@ -2578,9 +2572,7 @@ TJG.utils = {
         description: 'Check out Tapjoy where you can discover the best new apps and games, while also earning currency in apps you love. It\'s free to join so visit tapjoy.com today to start getting app recommendations just for you.'
       };
 
-      function callback(response) {}
-
-      FB.ui(obj, callback);
+      FB.ui(obj);
     },
   };
 }(TJG));
