@@ -141,8 +141,7 @@ private
       :source               => params[:source],
       :screen_layout_size   => params[:screen_layout_size],
       :video_offer_ids      => params[:video_offer_ids].to_s.split(','),
-      :all_videos           => params[:all_videos],
-      :mobile_country_code  => params[:mobile_country_code]
+      :all_videos           => params[:all_videos]
     )
   end
 
@@ -151,10 +150,6 @@ private
       @geoip_data = {}
     else
       @geoip_data = get_geoip_data
-    end
-
-    if @geoip_data[:country] != 'CN' && params[:country_code].present?
-      @geoip_data[:country] = params[:country_code]
     end
   end
 

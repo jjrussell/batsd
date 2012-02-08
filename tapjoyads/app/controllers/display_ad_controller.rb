@@ -51,7 +51,6 @@ class DisplayAdController < ApplicationController
 
     now = Time.zone.now
     geoip_data = get_geoip_data
-    geoip_data[:country] = params[:country_code] if params[:country_code].present?
 
     if params[:size].blank? || params[:size] == '320x50'
       # Don't show high-res ads to AdMarvel or TextFree, unless they explicitly send a size param.
@@ -77,17 +76,17 @@ class DisplayAdController < ApplicationController
       offer = build_test_offer(publisher_app)
     else
       offer = OfferList.new(
-        :publisher_app      => publisher_app,
-        :device             => device,
-        :currency           => currency,
-        :device_type        => params[:device_type],
-        :geoip_data         => geoip_data,
-        :app_version        => params[:app_version],
-        :os_version         => params[:os_version],
-        :type               => Offer::DISPLAY_OFFER_TYPE,
-        :source             => params[:source],
-        :library_version    => params[:library_version],
-        :screen_layout_size => params[:screen_layout_size]
+        :publisher_app       => publisher_app,
+        :device              => device,
+        :currency            => currency,
+        :device_type         => params[:device_type],
+        :geoip_data          => geoip_data,
+        :app_version         => params[:app_version],
+        :os_version          => params[:os_version],
+        :type                => Offer::DISPLAY_OFFER_TYPE,
+        :source              => params[:source],
+        :library_version     => params[:library_version],
+        :screen_layout_size  => params[:screen_layout_size]
       ).weighted_rand
     end
 
