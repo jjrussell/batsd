@@ -20,13 +20,13 @@
               .button.grey
                 - if cached_app.price == 0
                   %span.amount.free
-                    Free!
+                    =t('text.games.free!')
                 - else
                   %span.amount
                     = number_to_currency(cached_app.price / 100.0)
                 %span.get_it
-                  Get it!
+                  =t('text.games.get_it')
           - if cached_app.wifi_required
             .wifi_only
-              Wifi Required
+              = t('text.games.wifi_required')
               .wifi_icon

@@ -6,7 +6,7 @@ class Games::SocialController < GamesController
   before_filter :validate_recipients, :only => [ :send_email_invites ]
 
   def invite_email_friends
-    @content = Invitation.invitation_message(current_gamer.get_gamer_name)
+    @gamer_name = current_gamer.get_gamer_name
   end
 
   def send_email_invites

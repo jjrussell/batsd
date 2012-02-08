@@ -43,7 +43,10 @@ class Gamer < ActiveRecord::Base
 
   def confirm!
     self.confirmed_at = Time.zone.now
-    save
+    if save
+      click = referrer_click
+      reward_click(click) if click && click.rewardable?
+    end
   end
 
   def deactivate!
@@ -132,15 +135,6 @@ class Gamer < ActiveRecord::Base
     ObjectEncryptor.encrypt("#{id},#{advertiser_app_id}")
   end
 
-  # HACK: identify this gamer as migrated, without adding a column
-  def migrated?
-    !!(deactivated_at && deactivated_at > 10.year.since(Time.zone.now))
-  end
-
-  def migrated=(migration_status)
-    self.deactivated_at = migration_status ? Time.parse('2100-01-01') : nil
-  end
-
   private
 
   def generate_gravatar_hash
@@ -156,7 +150,6 @@ class Gamer < ActiveRecord::Base
           device.product = click.device_name
           device.save
           devices.build(:device => device)
-          reward_click(click)
         end
       else
         begin
@@ -194,5 +187,10 @@ class Gamer < ActiveRecord::Base
     Friendship.select(:where => conditions, :consistent => true) do |friendship|
       friendship.delete_all
     end
+  end
+
+  def referrer_click
+    return nil unless referrer.present? && referrer != 'tjreferrer:' && referrer.starts_with?('tjreferrer:')
+    Click.new :key => referrer.gsub('tjreferrer:', '')
   end
 end

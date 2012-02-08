@@ -12,6 +12,8 @@ ActionController::Routing::Routes.draw do |map|
     m.more_games_editor_picks 'editor_picks', :controller => 'games/more_games', :action => :editor_picks
     m.more_games_recommended 'recommended', :controller => 'games/more_games', :action => :recommended
 
+    m.translations 'translations', :controller => 'games/homepage', :action => :translations
+
     m.resources :gamer_sessions, :controller => 'games/gamer_sessions', :only => [ :new, :create, :destroy, :index ]
     m.connect 'login', :controller => 'games/gamer_sessions', :action => :create, :conditions => {:method => :post}
     m.login 'login', :controller => 'games/gamer_sessions', :action => :new
@@ -44,5 +46,7 @@ ActionController::Routing::Routes.draw do |map|
       social.invite_email_friends 'invite_email_friends', :action => :invite_email_friends
       social.send_email_invites 'send_email_invites', :action => :send_email_invites
     end
+
+    map.resources :survey_results, :only => [ :new, :create ]
   end
 end

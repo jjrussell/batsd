@@ -13,7 +13,7 @@ class BillingController < WebsiteController
     respond_to do |format|
       format.html do
         @payouts.reject!{ |p| p.is_transfer? }
-        @orders.reject! { |o| o.is_transfer? || o.is_bonus? }
+        @orders.reject! { |o| o.is_transfer? || o.is_bonus? || o.is_marketing_credits? }
         @last_payout = @payouts.blank? ? 0 : @payouts.last.amount
         @last_payment = @orders.blank? ? 0 : @orders.last.amount
       end
@@ -220,7 +220,7 @@ private
     end
 
     @orders.each do |order|
-      if order.is_transfer? || order.is_bonus?
+      if order.is_transfer? || order.is_bonus? || order.is_marketing_credits?
         month = order.created_at.strftime("%Y-%m")
         @statements[month][:others] << order
       else

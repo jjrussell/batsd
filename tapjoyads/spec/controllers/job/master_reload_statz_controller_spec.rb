@@ -2,7 +2,6 @@ require 'spec/spec_helper'
 
 describe Job::MasterReloadStatzController do
   before :each do
-    clear_memcache
     Time.zone.stubs(:now).returns(Time.zone.parse('2011-02-15'))
     @start_time = Time.zone.now - 1.day
     @end_time = Time.zone.now
@@ -63,6 +62,61 @@ describe Job::MasterReloadStatzController do
       Mc.get('statz.last_updated_end.24_hours').should == @end_time.to_f
 
       response.body.should == 'ok'
+    end
+
+    it 'should generate weekly and monthly timeframes' do
+      start_time = Time.zone.now - 7.days
+      end_time = Time.zone.now
+
+      stub_vertica(start_time, end_time)
+
+      start_time = Time.zone.now - 30.days
+      end_time = Time.zone.now
+
+      stub_vertica(start_time, end_time)
+
+      get :daily
+
+      response.body.should == 'ok'
+    end
+
+    it 'should generate combined ranks' do
+      apps = [
+        Factory(:app,
+          :store_id => 'ios.free',
+          :platform => 'iphone',
+          :price => 0),
+        Factory(:app,
+          :store_id => 'ios.paid',
+          :platform => 'iphone',
+          :price => 1),
+        Factory(:app,
+          :store_id => 'android.free',
+          :platform => 'android',
+          :price => 0),
+        Factory(:app,
+          :store_id => 'android.paid',
+          :platform => 'android',
+          :price => 1),
+      ]
+
+      stub_vertica
+
+      hash = {'ios.free' => [1]}
+      Mc.put('store_ranks.ios.overall.free.united_states', hash)
+      hash = {'ios.paid' => [1]}
+      Mc.put('store_ranks.ios.overall.paid.united_states', hash)
+      hash = {'android.free' => [1]}
+      Mc.put('store_ranks.android.overall.free.english', hash)
+      hash = {'android.paid' => [1]}
+      Mc.put('store_ranks.android.overall.paid.english', hash)
+
+      get :index
+
+      metadata = Mc.get("statz.metadata.24_hours")
+      apps.each do |app|
+        metadata[app.id]['overall_store_rank'].should == [1]
+      end
     end
   end
 end
@@ -183,31 +237,6 @@ def query_conditions(start_time, end_time)
     "time >= '#{start_time.to_s(:db)}'",
     "time < '#{end_time.to_s(:db)}'",
   ]
-end
-
-def clear_memcache
-  keys = []
-  [ '24_hours', '7_days', '1_month' ].each do |timeframe|
-    keys += [
-      "statz.money.#{timeframe}",
-      "statz.top_metadata.#{timeframe}",
-      "statz.top_stats.#{timeframe}",
-      "statz.metadata.#{timeframe}",
-      "statz.stats.#{timeframe}",
-      "statz.last_updated_start.#{timeframe}",
-      "statz.last_updated_end.#{timeframe}",
-    ]
-    [ 'partner', 'partner-ios', 'partner-android' ].each do |key|
-      keys += [
-        "statz.#{key}.cached_stats.#{timeframe}",
-        "statz.#{key}.last_updated_start.#{timeframe}",
-        "statz.#{key}.last_updated_end.#{timeframe}",
-      ]
-    end
-    keys.each do |key|
-      Mc.delete(key)
-    end
-  end
 end
 
 def currency(amount)

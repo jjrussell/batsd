@@ -3,9 +3,9 @@ class Games::Gamers::DevicesController < GamesController
   def new
     if current_gamer.present?
       if Rails.env.staging?
-        send_file("#{RAILS_ROOT}/data/TapjoyProfile.mobileconfig.staging.unsigned", :filename => 'TapjoyProfile.mobileconfig', :disposition => 'inline', :type => :mobileconfig)
+        send_file("#{Rails.root}/data/TapjoyProfile.mobileconfig.staging.unsigned", :filename => 'TapjoyProfile.mobileconfig', :disposition => 'inline', :type => :mobileconfig)
       else
-        send_file("#{RAILS_ROOT}/data/TapjoyProfile.mobileconfig", :filename => 'TapjoyProfile.mobileconfig', :disposition => 'inline', :type => :mobileconfig)
+        send_file("#{Rails.root}/data/TapjoyProfile.mobileconfig", :filename => 'TapjoyProfile.mobileconfig', :disposition => 'inline', :type => :mobileconfig)
       end
     else
       flash[:error] = "Please log in and try again. You must have cookies enabled."
@@ -123,7 +123,7 @@ class Games::Gamers::DevicesController < GamesController
 
     click.save
 
-    message = { :click => click.serialize(:attributes_only => true), :install_timestamp => Time.zone.now.to_f.to_s }.to_json
+    message = { :click_key => click.key, :install_timestamp => Time.zone.now.to_f.to_s }.to_json
     Sqs.send_message(QueueNames::CONVERSION_TRACKING, message)
   end
 end

@@ -3,7 +3,7 @@ class ToolsController < WebsiteController
 
   filter_access_to :all
 
-  after_filter :save_activity_logs, :only => [ :update_user, :update_android_app, :update_device, :resolve_clicks, :award_currencies, :update_award_currencies ]
+  after_filter :save_activity_logs, :only => [ :update_user, :update_device, :resolve_clicks, :award_currencies, :update_award_currencies ]
 
   def index
   end
@@ -30,6 +30,7 @@ class ToolsController < WebsiteController
 
       @spend      = MonthlyAccounting.sum(:spend,             :conditions => conditions) /-100.0
       @marketing  = MonthlyAccounting.sum(:marketing_orders,  :conditions => conditions) / 100.0
+      @bonus      = MonthlyAccounting.sum(:bonus_orders,      :conditions => conditions) / 100.0
       @new_orders = MonthlyAccounting.sum(:website_orders,    :conditions => conditions) / 100.0 +
                     MonthlyAccounting.sum(:invoiced_orders,   :conditions => conditions) / 100.0
       @transfers  = MonthlyAccounting.sum(:transfer_orders,   :conditions => conditions) / 100.0
@@ -39,7 +40,7 @@ class ToolsController < WebsiteController
 
     @linkshare_est = @spend.to_f * 0.026
     @ads_est = 0.0
-    @revenue = @spend + @linkshare_est + @ads_est - @marketing
+    @revenue = @spend + @linkshare_est + @ads_est - @marketing - @bonus
     @net_revenue = @revenue - @earnings
     @margin = @net_revenue.to_f * 100.0 / @revenue.to_f
   end
@@ -338,34 +339,6 @@ class ToolsController < WebsiteController
     end
   end
 
-  def edit_android_app
-    unless params[:id].blank?
-      @app = App.find_by_id(params[:id])
-      if @app.nil?
-        flash.now[:error] = "Could not find Android app with ID #{params[:id]}."
-      elsif @app.platform != "android"
-        flash.now[:error] = "'#{@app.name}' is not an Android app."
-        @app = nil
-      end
-    end
-  end
-
-  def update_android_app
-    @app = App.find_by_id_and_platform(params[:id], "android")
-    log_activity(@app)
-    @app.store_id = params[:store_id] unless params[:store_id].blank?
-    @app.price = params[:price].to_i
-
-    if @app.save
-      @app.download_icon(params[:url]) unless params[:url].blank?
-      flash[:notice] = 'App was successfully updated'
-      redirect_to statz_path(@app)
-    else
-      flash.now[:error] = 'Update unsuccessful'
-      render :action => "edit_android_app"
-    end
-  end
-
   def publishers_without_payout_info
     partners_without_payout_info = Partner.to_payout_by_earnings.reject(&:completed_payout_info?)
     @count = partners_without_payout_info.length
@@ -448,9 +421,9 @@ class ToolsController < WebsiteController
     customer_support_reward.advertiser_amount          =  0
     customer_support_reward.tapjoy_amount              =  0
     customer_support_reward.customer_support_username  =  current_user.username
+    customer_support_reward.serial_save
 
-    message = customer_support_reward.serialize
-    Sqs.send_message(QueueNames::SEND_CURRENCY, message)
+    Sqs.send_message(QueueNames::SEND_CURRENCY, customer_support_reward.key)
 
     flash[:notice] = " Successfully awarded #{params[:amount]} currency. "
     redirect_to :action => :device_info, :udid => params[:udid]

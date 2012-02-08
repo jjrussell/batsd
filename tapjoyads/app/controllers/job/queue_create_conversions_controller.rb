@@ -7,7 +7,8 @@ class Job::QueueCreateConversionsController < Job::SqsReaderController
   private
 
   def on_message(message)
-    reward = Reward.deserialize(message.body)
+    reward = Reward.find(message.body, :consistent => true)
+    raise "Reward not found: #{message.body}" if reward.nil?
 
     reward.build_conversions.each do |c|
       save_conversion(c)

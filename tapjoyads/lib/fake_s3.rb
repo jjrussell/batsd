@@ -27,7 +27,7 @@ class FakeObjects
 
   def with_prefix(prefix)
     @fake_objects ||= {}
-    @fake_objects.reject { |key| key !~ /#{prefix}/ }.values
+    @fake_objects.reject { |key, value| key !~ /#{prefix}/ }.values
   end
 end
 
@@ -40,7 +40,7 @@ class FakeObject
   def initialize(key)
     @key = key
     if REAL_KEYS.include? @key
-      @data = File.open("#{RAILS_ROOT}/public/images/gunbros.png").read
+      @data = File.open("#{Rails.root}/public/images/gunbros.png").read
     end
   end
 

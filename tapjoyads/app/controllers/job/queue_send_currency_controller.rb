@@ -11,8 +11,9 @@ class Job::QueueSendCurrencyController < Job::SqsReaderController
 
   def on_message(message)
     params.delete(:callback_url)
-    reward = Reward.deserialize(message.body)
-    return if reward.sent_currency?
+    reward = Reward.find(message.body, :consistent => true)
+    raise "Reward not found: #{message.body}" if reward.nil?
+    return if reward.sent_currency? && reward.send_currency_status?
 
     mc_time = Time.zone.now.to_i / 1.hour
     if @bad_callbacks.include?(reward.currency_id)
@@ -40,35 +41,37 @@ class Job::QueueSendCurrencyController < Job::SqsReaderController
       end
     end
 
-    mark = '?'
-    mark = '&' if callback_url =~ /\?/
-    callback_url += mark
-    url_params = [
-      "snuid=#{CGI::escape(publisher_user_id)}",
-      "currency=#{reward.currency_reward}",
-    ]
-    if currency.send_offer_data?
-      offer = Offer.find_in_cache(reward.offer_id, true)
-      url_params += [
-        "storeId=#{CGI::escape(offer.store_id_for_feed)}",
-        "application=#{CGI::escape(offer.name)}",
-        "rev=#{reward.publisher_amount / 100.0}",
+    unless callback_url == Currency::TAPJOY_MANAGED_CALLBACK_URL
+      mark = '?'
+      mark = '&' if callback_url =~ /\?/
+      callback_url += mark
+      url_params = [
+        "snuid=#{CGI::escape(publisher_user_id)}",
+        "currency=#{reward.currency_reward}",
       ]
+      if currency.send_offer_data?
+        offer = Offer.find_in_cache(reward.offer_id, true)
+        url_params += [
+          "storeId=#{CGI::escape(offer.store_id_for_feed)}",
+          "application=#{CGI::escape(offer.name)}",
+          "rev=#{reward.publisher_amount / 100.0}",
+        ]
+      end
+      if currency.secret_key.present?
+        hash_bits = [
+          reward.key,
+          publisher_user_id,
+          reward.currency_reward,
+          currency.secret_key,
+        ]
+        hash = Digest::MD5.hexdigest(hash_bits.join(':'))
+        url_params += [
+          "id=#{reward.key}",
+          "verifier=#{hash}",
+        ]
+      end
+      callback_url += url_params.join('&')
     end
-    if currency.secret_key.present?
-      hash_bits = [
-        reward.key,
-        publisher_user_id,
-        reward.currency_reward,
-        currency.secret_key,
-      ]
-      hash = Digest::MD5.hexdigest(hash_bits.join(':'))
-      url_params += [
-        "id=#{reward.key}",
-        "verifier=#{hash}",
-      ]
-    end
-    callback_url += url_params.join('&')
 
     reward.sent_currency = Time.zone.now
 

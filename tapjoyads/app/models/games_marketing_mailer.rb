@@ -42,8 +42,9 @@ class GamesMarketingMailer < ActionMailer::Base
       currency = external_publisher.currencies.first
       offerwall_url = external_publisher.get_offerwall_url(device, currency, device_info[:accept_language_str], device_info[:user_agent_str], nil, true)
 
-      response = Downloader.get(offerwall_url, :return_response => true)
-      raise "Error getting offerwall data" unless response.code == 200
+      sess = Patron::Session.new
+      response = sess.get(offerwall_url)
+      raise "Error getting offerwall data" unless response.status == 200
       @offer_data[currency[:id]] = JSON.parse(response.body).merge(:external_publisher => external_publisher)
     end
 
@@ -68,7 +69,6 @@ class GamesMarketingMailer < ActionMailer::Base
     sendgrid_category 'Invite'
     subject "#{gamer_name} has invited you to join Tapjoy"
     content_type 'text/html'
-    content = Invitation.invitation_message(gamer_name).split(/\n+/)
-    body(:content => content, :link => link)
+    body(:gamer_name => gamer_name, :link => link)
   end
 end

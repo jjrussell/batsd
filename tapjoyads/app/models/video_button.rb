@@ -21,7 +21,7 @@ class VideoButton < ActiveRecord::Base
     xml.to_s
   end
 
-private
+  private
 
   def update_offer
     video_offer.update_buttons
