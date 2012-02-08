@@ -12,6 +12,10 @@ end
 # setup ssh keys
 `/home/webuser/tapjoyserver/server/copy_authorized_keys.rb`
 
+# Fix the limits stuff
+`cp /home/webuser/tapjoyserver/server/limits.conf /etc/security/limits.conf`
+`cp /home/webuser/tapjoyserver/server/common-session /etc/pam.d/common-session`
+
 # setup log directories
 `mkdir -p /mnt/log/apache2`
 `mkdir -p /mnt/log/nginx`
