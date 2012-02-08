@@ -22,9 +22,8 @@ describe ClickController do
   end
 
   describe "#generic" do
-    context "with an admin user" do
+    context "with a vanilla user" do
       before :each do
-        @user.user_roles <<  UserRole.find_or_create_by_name('admin')
         @params = {
           :udid => 'stuff',
           :offer_id => @offer.id,
@@ -48,9 +47,8 @@ describe ClickController do
   end
 
   describe "#app" do
-    context "with an admin user" do
+    context "with a vanilla user" do
       before :each do
-        @user.user_roles <<  UserRole.find_or_create_by_name('admin')
         @params = {
           :udid => 'app_stuff',
           :offer_id => @offer.id,
