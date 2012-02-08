@@ -206,7 +206,7 @@ class S3Resource
     "s3.#{bucket_name}.#{id}"
   end
 
-  def request_with_retries(retries = 5, &block)
+  def request_with_retries(retries = 5)
     begin
       yield
     rescue Exception => e
