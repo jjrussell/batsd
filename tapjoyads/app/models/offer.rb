@@ -302,8 +302,12 @@ class Offer < ActiveRecord::Base
     Offer.enabled_offers.find_by_id(item_id).present?
   end
 
+  def primary?
+    item_id == id
+  end
+
   def send_low_conversion_email?
-    item_id == id || !primary_offer_enabled?
+    primary? || !primary_offer_enabled?
   end
 
   def calculate_min_conversion_rate
