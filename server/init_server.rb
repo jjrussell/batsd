@@ -13,8 +13,8 @@ end
 `/home/webuser/tapjoyserver/server/copy_authorized_keys.rb`
 
 # Fix the limits stuff
-`cp --remove-destination /home/webuser/tapjoyserver/server/limits.conf /etc/security/limits.conf`
-`cp --remove-destination /home/webuser/tapjoyserver/server/common-session /etc/pam.d/common-session`
+`cp /home/webuser/tapjoyserver/server/limits.conf /etc/security/limits.conf`
+`cp /home/webuser/tapjoyserver/server/common-session /etc/pam.d/common-session`
 
 # setup log directories
 `mkdir -p /mnt/log/apache2`
