@@ -134,7 +134,7 @@
                             = "#{h(offer['Name'])}."
                             %br/
                             Earn
-                            = h("#{offer['Payout']} #{offers['CurrencyName']}.")
+                            = h("#{offer['Amount']} #{offers['CurrencyName']}.")
 
         - if @recommendations.any?
           %tr
