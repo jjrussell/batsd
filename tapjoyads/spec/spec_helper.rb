@@ -25,6 +25,10 @@ Spork.prefork do
     UserSession.create(user)
   end
 
+  def games_login_as(user)
+    GamerSession.create(user)
+  end
+
   def stub_offers
     mock_bucket = mock()
     mock_image = mock()
