@@ -1,7 +1,11 @@
+!!!
 %html
   %head
     -# stylesheet_link_tag("games/components/button/button.css")
+    %meta{ 'name' => 'viewport', 'content' => 'width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=no;' }
     = stylesheet_link_tag("games/proto")
+    = javascript_include_tag("https://raw.github.com/keithclark/selectivizr/master/selectivizr.js")
+    = javascript_include_tag("https://raw.github.com/scottjehl/Respond/master/respond.min.js")
     = javascript_include_tag("games/src/tjg.jquery-1.6.2.min")
     = javascript_include_tag("games/src/tapui/core/foundation")
     = javascript_include_tag("games/src/tapui/core/components")
@@ -35,6 +39,13 @@
             &nbsp;
       .main
         .container
+          %ul.tab-carousel
+            %li
+              Smart Recommendations
+            %li
+              Favorites
+            %li
+              My Games
           .game-list.recommendations.clearfix
             .hd
               %h2 Smart Recommendations

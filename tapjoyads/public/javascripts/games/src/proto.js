@@ -38,7 +38,7 @@
         return div.offsetWidth == 1;
       }, 
       watch: function(query, onEnter, onExit) {
-        var isActive = me.isMedia(query);
+        var isActive = false;
         onEnter = onEnter || noop;
         onExit = onExit || noop;
 
@@ -53,6 +53,8 @@
           }
           isActive = current;
         });
+
+        windowChanged=true;
       }
     };
 
@@ -66,15 +68,15 @@ $(document).ready(function() {
     $(this).removeClass("selected");  
   });
 
-  $.jsMedia.watch("screen and (max-width: 640px)", 
+  /*$.jsMedia.watch("screen and (max-width: 640px)", 
     function() {
-      $(".title").fitText(1, {minFontSize: "12px"});
+      $(".title").fitText(.7, {minFontSize: "12px"});
       $(".current").fitText(1, {minFontSize: "12px"});
       $(".collect").fitText(.4);
     },
     function() {
       $(document).trigger("fittext-reset");
     }
-  );
+  );*/
 
 });

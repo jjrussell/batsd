@@ -254,7 +254,7 @@ body {
   }
   .app {
     margin: 0;
-    padding: 35px percentage(20/640);
+    padding: 17px percentage(20/640);
     border-bottom: 1px solid #6f7072;
     clear: both;
     width: percentage(600/640);
@@ -263,7 +263,7 @@ body {
     .game-image {
       float: left;
       margin: 0 percentage(15/640);
-      width: percentage(122/640);
+      width: percentage(150/640);
       img {
         @include rounded-corners(45%);
       }
@@ -273,22 +273,20 @@ body {
       width: percentage(290/640);
     }
     .summary {
-      font-size: 12pt;
       width: 100%;
     }
     .title {
       width: 100%;
-      font-size: 25pt;
     }
     .rank, .friends {
-      margin: 18px percentage(10/290);
+      margin: 9px percentage(10/290);
       width: percentage(49/290);
     }
     .rank .icon {
-      padding: 12px percentage(8/49);
+      padding: 6px percentage(8/49);
     }
     .friends .icon {
-      padding: 12px percentage(17/49);
+      padding: 6px percentage(17/49);
     }
     .rank .value {
       margin-left: 6px;
@@ -309,7 +307,6 @@ body {
       border-bottom: 1px solid rgba(81, 146, 42, 1.0);
       @include shadow(#047003, 1px);
       color: white;
-      font-size: 20pt;
       padding: 4px;
       text-align: center;
     }
@@ -317,15 +314,16 @@ body {
       margin:0;
       display:table-cell;
       vertical-align: middle;
+      text-align: right;
       padding: 0 20px 0 0;
       width: percentage(119/640);
-      font-size: 20pt;
       border: none;
   -webkit-box-shadow: none;
      -moz-box-shadow: none;
           box-shadow: none;
 
       background: transparent url("/images/games/mw-r-arrow.png") no-repeat right center;
+      background-size: percentage(8/119);
     }
   }
 }
