@@ -57,11 +57,4 @@ end
 puts "Restarting unicorn"
 `server/start_or_reload_unicorn.rb`
 
-if server_type == 'jobs' || server_type == 'masterjobs'
-  puts "Stopping jobs"
-  `tapjoyads/script/jobs stop`
-  `ps aux | grep -v grep | grep jobs`.each { |line| `kill #{line.split(' ')[1]}` }
-
-  puts "Starting jobs"
-  `tapjoyads/script/jobs start -- production`
-end
+`server/restart_job_daemon.rb`
