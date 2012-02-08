@@ -8,7 +8,7 @@ Price: #{price}
 Bid: #{number_to_currency(@offer.bid / 100.0)}
 - unless @offer.primary?
   Primary offer: #{@offer.item.name} (#{DASHBOARD_URL}/statz/#{@offer.item_id})
-Offer type: #{@offer.item_type} #{@offer.rewareded? '' : '(Non-Rewarded)'}
+Offer type: #{@offer.item_type} #{@offer.rewarded? ? '' : '(Non-Rewarded)'}
 - if @offer.item_type == 'App'
   - if @offer.item.user_rating.present?
     Rating: #{@offer.item.user_rating} stars
