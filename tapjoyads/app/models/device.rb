@@ -20,6 +20,7 @@ class Device < SimpledbShardedResource
   self.sdb_attr :is_papayan, :type => :bool, :default_value => false
   self.sdb_attr :all_packages, :type => :json, :default_value => []
   self.sdb_attr :current_packages, :type => :json, :default_value => []
+  self.sdb_attr :sdkless_clicks, :type => :json, :default_value => {}
 
   def mac_address=(new_value)
     new_value = new_value ? new_value.downcase.gsub(/:/,"") : ''
@@ -34,6 +35,7 @@ class Device < SimpledbShardedResource
 
   def after_initialize
     @create_device_identifiers = is_new
+    @retry_save_on_fail = is_new
     begin
       @parsed_apps = apps
     rescue JSON::ParserError
@@ -193,6 +195,17 @@ class Device < SimpledbShardedResource
       next if device_identifier.udid == key
       device_identifier.udid = key
       device_identifier.save!
+    end
+  end
+
+  def handle_sdkless_click!(offer, now)
+    if offer.sdkless?
+      temp_sdkless_clicks = sdkless_clicks
+      temp_sdkless_clicks[offer.third_party_data] = { 'click_time' => now.to_i, 'item_id' => offer.item_id }
+      temp_sdkless_clicks.reject! { |key, value| value['click_time'] <= (now - 2.days).to_i }
+      self.sdkless_clicks = temp_sdkless_clicks
+      @retry_save_on_fail = true
+      save
     end
   end
 
