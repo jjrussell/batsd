@@ -98,12 +98,11 @@ module Offer::Rejecting
     max_age_rating < age_rating
   end
 
-  def geoip_reject?(geoip_data, mobile_country_code = '')
+  def geoip_reject?(geoip_data)
     if countries.present? && countries != '[]'
       return true if geoip_data[:carrier_country_code] && !get_countries.include?(geoip_data[:carrier_country_code].to_s.upcase)
       return true if geoip_data[:country] && !get_countries.include?(geoip_data[:country].to_s.upcase)
       return true if geoip_data[:user_country_code] && !get_countries.include?(geoip_data[:user_country_code].to_s.upcase)
-      
     end
     return true if geoip_data[:carrier_country_code] && get_countries_blacklist.include?(geoip_data[:carrier_country_code].to_s.upcase)
     return true if geoip_data[:country] && get_countries_blacklist.include?(geoip_data[:country].to_s.upcase)

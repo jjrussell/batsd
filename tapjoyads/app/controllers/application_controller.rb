@@ -184,6 +184,7 @@ private
     end
     @cached_geoip_data[:user_country_code]    = params[:country_code]
     @cached_geoip_data[:carrier_country_code] = params[:carrier_country_code]
+
     @cached_geoip_data
   end
 

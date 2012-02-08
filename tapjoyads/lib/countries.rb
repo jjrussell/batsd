@@ -2,7 +2,7 @@ class Countries
 
   CONTINENT_CODES = %w(NA SA EU AS OC AF)
 
-  CONTINENT_CODE_TO_NAME = { 
+  CONTINENT_CODE_TO_NAME = {
     "AS" => "Asia",
     "EU" => "Europe",
     "SA" => "South America",
