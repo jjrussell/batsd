@@ -3,7 +3,7 @@ ActsAsApprovable::Ownership.configure(Approval, User) do
   include UuidPrimaryKey
 
   def self.available_owners
-    (@available_owners ||= owner_class.account_managers).dup
+    @available_owners ||= owner_class.account_managers
   end
 
   private

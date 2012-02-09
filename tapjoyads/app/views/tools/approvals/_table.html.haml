@@ -11,6 +11,7 @@
       %tr
         %td= approval.item_type.classify
         %td= approval.item.try(:to_s) || approval.item.id
+        %td= render :partial => 'owner_select', :locals => {:approval => approval}
         %td= approval.owner.try(:to_s)
         %td= approval.state
         %td.actions

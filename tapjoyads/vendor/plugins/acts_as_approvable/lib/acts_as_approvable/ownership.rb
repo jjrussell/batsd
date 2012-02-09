@@ -37,15 +37,16 @@ module ActsAsApprovable
 
       def options_for_available_owners(with_prompt = false)
         @options_for_available_owners ||= available_owners.map { |owner| option_for_owner(owner) }
-        @options_for_available_owners.dup.unshift(['All Types', nil]) if with_prompt
+        @options_for_available_owners.dup.unshift(['(none)', nil]) if with_prompt
       end
 
       def assigned_owners
-        all(:select => 'DISTINCT(owner_id)', :conditions => 'owner_id IS NOT NULL', :join => :owner).map(&:owner)
+        @assigned_owners ||= all(:select => 'DISTINCT(owner_id)', :conditions => 'owner_id IS NOT NULL', :include => :owner).map(&:owner)
       end
 
-      def options_for_assigned_owners
-        assigned_owners.map { |owner| option_for_owner(owner) }
+      def options_for_assigned_owners(with_prompt = false)
+        @options_for_assigned_owners ||= assigned_owners.map { |owner| option_for_owner(owner) }
+        @options_for_assigned_owners.dup.unshift(['All Owners', nil]) if with_prompt
       end
 
       private
