@@ -76,7 +76,8 @@ $(document).ready(function() {
       $(".title").fitText(1, {minFontSize: "15px", maxFontSize: "25px"});
       //$(".current").fitText(.8, {minFontSize: "13.3px"});
       $(".collect").fitText(.4, {minFontSize: "16px", maxFontSize: "25px"});
-      //$(".collect").vAlign();
+      //$(".item").vAlign();
+      //$(".item").fitText(.5);
     },
     function() {
       $(document).trigger("fittext-reset");

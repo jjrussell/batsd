@@ -260,6 +260,16 @@ body {
     .right {
       display: none;
     }
+    .left {
+      width: percentage(300/640);
+    }
+    .nav-menu {
+      .item {
+        padding: 0 percentage(5/300);
+        width: percentage(140/300);
+        font-size: 19px;
+      }
+    }
   }
   .sub-head {
     padding: 0;
