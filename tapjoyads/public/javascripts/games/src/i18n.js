@@ -47,7 +47,7 @@
     result = me.pluralize(result, opt.count);
 
     if(typeof result !== "string") {
-      if(window.ENVIRONMENT === "development") {
+      if(w.ENVIRONMENT === "development") {
         throw customError("Did not find translation string: ",
           {key: key, locale: opt.locale, default_locale: me.default_locale, result: result}, 
           "Tapjoyi18nError");
