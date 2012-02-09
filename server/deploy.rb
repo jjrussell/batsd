@@ -25,10 +25,10 @@ deploy_version = ARGV.first || current_version
 
 puts "Deploying version: #{deploy_version}"
 
-system "git checkout master 2>&1"
-system "git pull --quiet 2>&1"
-system "git pull --tags origin master 2>&1"
-system "git checkout #{deploy_version} 2>&1"
+system "git checkout master"
+system "git pull --quiet"
+system "git pull --tags origin master"
+system "git checkout #{deploy_version}"
 
 if server_type == 'jobs' || server_type == 'masterjobs'
   `cp tapjoyads/config/newrelic-jobs.yml tapjoyads/config/newrelic.yml`
