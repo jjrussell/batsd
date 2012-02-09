@@ -1,45 +1,48 @@
-require 'test_helper'
+require 'spec_helper'
 
-class EnableOfferRequestTest < ActiveSupport::TestCase
-  should belong_to(:offer)
-  should belong_to(:assigned_to)
+describe EnableOfferRequest do
+
+  describe '.belongs_to' do
+    it { should belong_to(:offer) }
+    it { should belong_to(:assigned_to) }
+  end
 
   context "EnableOfferRequest" do
-    setup do
+    before :each do
       @enable_offer_request = Factory(:enable_offer_request)
       @user = Factory(:user)
       @account_mgr = Factory(:account_mgr_user)
     end
 
-    should "allow account managers to be assignees" do
+    it "allows account managers to be assignees" do
       @enable_offer_request.assigned_to = @account_mgr
-      assert @enable_offer_request.valid?
+      @enable_offer_request.should be_valid
     end
 
-    should "not allow non-account managers to be assignees" do
+    it "does not allow non-account managers to be assignees" do
       @enable_offer_request.assigned_to = @user
-      assert !@enable_offer_request.valid?
+      @enable_offer_request.should_not be_valid
     end
 
-    should "allow status between 0 and 3" do
+    it "allows status between 0 and 3" do
       (0..3).each do |status|
         @enable_offer_request.status = status
-        assert @enable_offer_request.valid?
+        @enable_offer_request.should be_valid
       end
       @enable_offer_request.status = -1
-      assert !@enable_offer_request.valid?
+      @enable_offer_request.should_not be_valid
       @enable_offer_request.status = 4
-      assert !@enable_offer_request.valid?
+      @enable_offer_request.should_not be_valid
     end
 
-    should "not be approved with archived apps" do
+    it "is not approved with archived apps" do
       app = @enable_offer_request.offer.item
       app.hidden = true
       app.save
 
       @enable_offer_request.reload
       @enable_offer_request.status = EnableOfferRequest::STATUS_APPROVED
-      assert !@enable_offer_request.valid?
+      @enable_offer_request.should_not be_valid
     end
   end
 end
