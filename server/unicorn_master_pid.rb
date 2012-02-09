@@ -1,9 +1,9 @@
 #!/usr/bin/env ruby
 
-PIDFILE = '/home/webuser/tapjoyserver/tapjoyads/pids/unicorn.pid'
+PIDFILE = Dir.glob("/home/webuser/tapjoyserver/tapjoyads/pids/*.pid").first
 
 pid = ''
-if File.exists?(PIDFILE)
+unless PIDFILE.nil?
   pid = `cat #{PIDFILE}`.strip
   `kill -s 0 #{pid}`
   pid = '' unless $?.success?

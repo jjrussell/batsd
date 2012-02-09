@@ -81,4 +81,15 @@ class SearchController < WebsiteController
 
     render(:json => results.to_json)
   end
+
+  def gamers
+    conditions = [ "email LIKE ?", "#{params[:term]}%" ]
+    @gamers = Gamer.find(:all,
+      :conditions => conditions,
+      :order => 'email ASC',
+      :limit => 100
+    )
+
+    render :partial => 'gamers'
+  end
 end

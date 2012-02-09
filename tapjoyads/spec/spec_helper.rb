@@ -18,11 +18,16 @@ Spork.prefork do
 
     config.before :each do
       SimpledbResource.reset_connection
+      Mc.cache.flush
     end
   end
 
   def login_as(user)
     UserSession.create(user)
+  end
+
+  def games_login_as(user)
+    GamerSession.create(user)
   end
 
   def stub_offers

@@ -29,7 +29,7 @@
 
     - offers['OfferArray'][0..2].each do |offer|
       :plain
-        #{'-'} #{offer['Type'] == 'App' ? 'Install and run' : ''} #{offer['Name']}. Earn #{offer['Payout']} #{offers['CurrencyName']}.
+        #{'-'} #{offer['Type'] == 'App' ? 'Install and run' : ''} #{offer['Name']}. Earn #{offer['Amount']} #{offers['CurrencyName']}.
 
     = blank_line
     :plain
