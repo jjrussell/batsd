@@ -55,7 +55,7 @@ else
 end
 
 puts "Restarting unicorn"
-`server/start_or_reload_unicorn.rb`
+puts `server/start_or_reload_unicorn.rb`
 
 if server_type == 'jobs' || server_type == 'masterjobs'
   puts "Stopping jobs"
