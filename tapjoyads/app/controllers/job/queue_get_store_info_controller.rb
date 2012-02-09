@@ -2,6 +2,7 @@ class Job::QueueGetStoreInfoController < Job::SqsReaderController
 
   def initialize
     super QueueNames::GET_STORE_INFO
+    @num_reads = 10
   end
 
   private

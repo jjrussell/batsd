@@ -26,7 +26,7 @@ class Tools::VideoOffers::VideoButtonsController < WebsiteController
     log_activity(@video_button)
 
     if @video_button.save
-      unless @video_offer.is_valid_for_update_buttons?
+      unless @video_offer.valid_for_update_buttons?
         flash.now[:warning] = 'Support at most 2 enabled buttons.'
         render :action => :new
       else
@@ -42,7 +42,7 @@ class Tools::VideoOffers::VideoButtonsController < WebsiteController
     log_activity(@video_button)
 
     if @video_button.update_attributes(params[:video_button])
-      unless @video_offer.is_valid_for_update_buttons?
+      unless @video_offer.valid_for_update_buttons?
         flash.now[:warning] = 'Support at most 2 enabled buttons.'
         render :action => :edit
       else
