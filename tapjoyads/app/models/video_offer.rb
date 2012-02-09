@@ -7,7 +7,7 @@ class VideoOffer < ActiveRecord::Base
   has_one :primary_offer, :class_name => 'Offer', :as => :item, :conditions => 'id = item_id'
 
   belongs_to :partner
-  
+
   cache_associations :video_buttons
 
   validates_presence_of :partner, :name
