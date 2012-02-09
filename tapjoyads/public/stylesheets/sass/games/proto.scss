@@ -183,6 +183,7 @@ body {
 }
 
 .tab-carousel {
+  display: none;
   ul {
     width: 4000px;
     margin: 0; padding: 0;
@@ -250,16 +251,16 @@ body {
   .header {
     .container {
       background-image: none;
-      height: 50px;
+      height: 44px;
     }
     .logo {
       display: block;
       float: right;
-      padding: 11px percentage(11/640);
+      padding: 7px percentage(11/640);
       width: 62px;
       img {
-        width: 62px;
-        max-width: 62px;
+        width: 70px;
+        max-width: 70px;
         float: right;
       }
     }
@@ -272,6 +273,7 @@ body {
     .nav-menu {
       .item {
         padding: 0 percentage(20/470);
+        line-height: 44px;
       }
     }
   }
@@ -284,6 +286,9 @@ body {
     .ad {
       height: 63px;
     }
+  }
+  .tab-carousel {
+    display: block;
   }
   .main {
     .container {
