@@ -108,7 +108,7 @@ class Tools::ApprovalsController < WebsiteController
 
   def rejection_mailer
     case @approval.item_type
-    when 'User'; ApprovalMailer.deliver_rejected(@approval.item.email, :user, :subject => 'Your account has been rejected on Tapjoy!')
+    when 'User'; ApprovalMailer.deliver_rejected(@approval.item.email, :user, :subject => 'Your account has been rejected on Tapjoy!', :reason => params[:reason])
     end
   end
 
