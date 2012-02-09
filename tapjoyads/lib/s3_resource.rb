@@ -102,10 +102,16 @@ class S3Resource
     else
       if load_from_memcache
         @saved_attributes = Mc.get_and_put(get_memcache_key) do
-          convert_from_raw_attributes(S3.bucket(bucket_name).objects[id].read)
+          request_with_retries do
+            raw_attributes = S3.bucket(bucket_name).objects[id].read
+          end
+          convert_from_raw_attributes(raw_attributes)
         end
       else
-        @saved_attributes = convert_from_raw_attributes(S3.bucket(bucket_name).objects[id].read)
+        request_with_retries do
+          raw_attributes = S3.bucket(bucket_name).objects[id].read
+        end
+        @saved_attributes = convert_from_raw_attributes(raw_attributes)
       end
       @attributes = @saved_attributes.dup
     end
@@ -119,7 +125,7 @@ class S3Resource
   def save(options = {})
     begin
       save!(options)
-    rescue Exception
+    rescue
       false
     end
   end
@@ -138,22 +144,10 @@ class S3Resource
 
       Mc.put(get_memcache_key, @attributes) if save_to_memcache
 
-      object = S3.bucket(bucket_name).objects[id]
       raw_attributes = convert_to_raw_attributes
 
-      begin
-        object.write(:data => raw_attributes)
-      rescue AWS::Errors::Base => e
-        if retries > 0
-          delay ||= 0.1
-          Rails.logger.info("#{e.class}: S3 save failed, will retry #{retries} more times")
-          retries -= 1
-          sleep(delay)
-          delay *= 2
-          retry
-        else
-          raise e
-        end
+      request_with_retries(retries) do
+        S3.bucket(bucket_name).objects[id].write(:data => raw_attributes)
       end
 
       @saved_attributes = @attributes.dup
@@ -164,7 +158,9 @@ class S3Resource
 
   def destroy
     Mc.delete(get_memcache_key)
-    S3.bucket(bucket_name).objects[id].delete
+    request_with_retries do
+      S3.bucket(bucket_name).objects[id].delete
+    end
     @saved_attributes.clear
     @unsaved_attributes.clear
     @unsaved_attributes += @attributes.keys
@@ -208,6 +204,24 @@ class S3Resource
 
   def get_memcache_key
     "s3.#{bucket_name}.#{id}"
+  end
+
+  def request_with_retries(retries = 5)
+    begin
+      yield
+    rescue Exception => e
+      retries = 0 if e.is_a?(AWS::S3::Errors::NoSuchKey)
+      Rails.logger.info("S3Resource: request failed, will retry #{retries} more times. #{e.class} - #{e.message}\n#{e.backtrace.join("\n")}")
+      if retries > 0
+        delay ||= 0.1
+        retries -= 1
+        sleep(delay)
+        delay *= 2
+        retry
+      else
+        raise e
+      end
+    end
   end
 
 end

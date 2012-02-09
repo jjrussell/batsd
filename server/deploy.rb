@@ -55,6 +55,6 @@ else
 end
 
 puts "Restarting unicorn"
-`server/start_or_reload_unicorn.rb`
+puts `server/start_or_reload_unicorn.rb`
 
 `server/restart_job_daemon.rb`
