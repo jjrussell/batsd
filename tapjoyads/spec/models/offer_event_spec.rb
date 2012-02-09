@@ -10,7 +10,7 @@ describe OfferEvent do
     it { should validate_presence_of :offer }
   end
 
-  context "An OfferEvent scheduled for the future" do
+  context "when scheduled for the future" do
     before :each do
       @event = Factory(:offer_event, :scheduled_for => 1.hour.from_now)
     end
@@ -24,7 +24,7 @@ describe OfferEvent do
     end
   end
 
-  context "An OfferEvent scheduled for the past" do
+  context "when scheduled for the past" do
     before :each do
       @event = Factory(:offer_event)
       @event.scheduled_for = 1.hour.ago
