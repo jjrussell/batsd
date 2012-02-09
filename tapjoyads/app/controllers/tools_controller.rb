@@ -190,7 +190,13 @@ class ToolsController < WebsiteController
 
   def device_info
     if params[:udid].blank? && params[:click_key].present?
-      click = Click.find(params[:click_key])
+      click_key = params[:click_key]
+      unless click_key.include? ?.
+        generic_offer_click = GenericOfferClick.find(click_key)
+        click_key =  (generic_offer_click && generic_offer_click.click_id) || click_key
+      end
+
+      click = Click.find(click_key)
       params[:udid] = click.udid if click.present?
     end
     if params[:udid].present?
