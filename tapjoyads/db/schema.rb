@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120208032532) do
+ActiveRecord::Schema.define(:version => 20120209012231) do
 
   create_table "action_offers", :id => false, :force => true do |t|
     t.string   "id",                    :limit => 36,                    :null => false
@@ -421,6 +421,15 @@ ActiveRecord::Schema.define(:version => 20120208032532) do
   add_index "generic_offers", ["partner_id"], :name => "index_generic_offers_on_partner_id"
   add_index "generic_offers", ["third_party_data"], :name => "index_generic_offers_on_third_party_data"
 
+  create_table "global_promoted_offers", :id => false, :force => true do |t|
+    t.string "id",         :limit => 36, :null => false
+    t.string "partner_id", :limit => 36, :null => false
+    t.string "offer_id",   :limit => 36, :null => false
+  end
+
+  add_index "global_promoted_offers", ["id"], :name => "index_global_promoted_offers_on_id", :unique => true
+  add_index "global_promoted_offers", ["partner_id"], :name => "index_global_promoted_offers_on_partner_id"
+
   create_table "internal_devices", :id => false, :force => true do |t|
     t.string   "id",               :limit => 36, :null => false
     t.string   "user_id",          :limit => 36, :null => false
@@ -810,6 +819,15 @@ ActiveRecord::Schema.define(:version => 20120208032532) do
 
   add_index "press_releases", ["id"], :name => "index_press_releases_on_id", :unique => true
   add_index "press_releases", ["published_at"], :name => "index_press_releases_on_published_at"
+
+  create_table "promoted_offers", :id => false, :force => true do |t|
+    t.string "id",       :limit => 36, :null => false
+    t.string "app_id",   :limit => 36, :null => false
+    t.string "offer_id", :limit => 36, :null => false
+  end
+
+  add_index "promoted_offers", ["app_id"], :name => "index_promoted_offers_on_app_id"
+  add_index "promoted_offers", ["id"], :name => "index_promoted_offers_on_id", :unique => true
 
   create_table "rank_boosts", :id => false, :force => true do |t|
     t.string   "id",         :limit => 36, :null => false

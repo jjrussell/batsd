@@ -34,6 +34,30 @@ describe GetOffersController do
 
     end
 
+    describe "with promoted offers" do
+      before :each do
+        @partner = Factory(:partner)
+        @app = Factory(:app, :partner => @partner)
+        App.stubs(:find_in_cache).returns(@app)
+
+        @offer1 = Factory(:app, :partner => @partner).primary_offer
+        @offer2 = Factory(:app, :partner => @partner).primary_offer
+        @offer3 = Factory(:app, :partner => @partner).primary_offer
+        @offer4 = Factory(:app, :partner => @partner).primary_offer
+        Offer.any_instance.stubs(:can_be_promoted?).returns(true)
+
+        @global_promoted_offer = Factory(:global_promoted_offer, :partner => @partner, :offer => @offer2)
+        @promoted_offer = Factory(:promoted_offer, :app => @app, :offer => @offer3)
+
+        OfferCacher.stubs(:get_unsorted_offers_prerejected).returns([ @offer1, @offer2, @offer3, @offer4 ])
+      end
+
+      it "should favor the cross promoted inventory" do
+        get(:index, @params)
+        assigns(:offer_list).should == [ @offer2, @offer3, @offer1, @offer4 ]
+      end
+    end
+
     it "should return json" do
       get(:index, @params.merge(:json => 1))
       should respond_with_content_type :json

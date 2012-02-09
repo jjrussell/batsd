@@ -12,6 +12,7 @@ authorization do
     has_permission_on :users, :to => [ :index, :new, :create, :edit, :update ]
     has_permission_on :support, :to => [ :index ]
     has_permission_on :premier, :to => [ :edit, :update ]
+    has_permission_on :inventory_management, :to => [ :index, :per_app ]
     has_permission_on :apps_offers_offer_events, :to => [ :index, :new, :create, :edit, :update, :destroy ]
     has_permission_on :account_whitelist, :to => [ :index, :enable, :disable ]
   end

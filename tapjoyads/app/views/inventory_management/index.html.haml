@@ -1,0 +1,34 @@
+- @page_title = 'Inventory Management'
+= render :partial => 'actions'
+
+.left-indented
+  .box-full
+    %h3 Prioritized App Cross Promotion (Global)
+    %p This page allows you to control the top 3 slots on the offerwall for all your publisher apps. You can cross-promote apps within your own network at the top of your offerwalls in order to drive user growth. Select the apps you desire to promote globally. Please be aware that this may reduces the visibility of revenue earning offers on your offerwall, and will reduce your publisher revenue.
+    - form_tag({}, { :method => :get, :class => 'tjform'}) do
+      %p Selctions here will be cross promoted on ALL of your publisher apps. For more fine grained control, click "Per-App" to the left.
+      %p Note: Apps you have marked as "Self-promo only" on the apps tab will still be shown on your offerwalls, they will just not be prioritized to the top of the wall.
+      %table
+        %tbody
+          - if @available_offers[:ios].present?
+            %tr
+              %th
+                iOS
+              %td
+                = select_tag :partner_promoted_offers_ios, options_for_select(@available_offers[:ios], @selected_offers[:ios]), {:multiple => true, :class => 'chosen', :style => "width: 450px;"}
+          - if @available_offers[:android].present?
+            %tr
+              %th
+                Android
+              %td
+                = select_tag :partner_promoted_offers_android, options_for_select(@available_offers[:android], @selected_offers[:android]), {:multiple => true, :class => 'chosen', :style => "width: 450px;"}
+          - if @available_offers[:windows].present?
+            %tr
+              %th
+                Windows
+              %td
+                = select_tag :partner_promoted_offers_wp, options_for_select(@available_offers[:wp], @selected_offers[:wp]), {:multiple => true, :class => 'chosen', :style => "width: 450px;"}
+          %tr
+            %td{ :colspan => 2 }
+              %br
+              = submit_tag('Save')

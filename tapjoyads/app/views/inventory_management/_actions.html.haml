@@ -1,0 +1,5 @@
+.vertical-menu
+  %ul
+    %li= link_to 'Offerwall X-Promo', inventory_management_index_path
+    %li.inception= link_to 'Global', inventory_management_index_path, :class => @selected_state[:index]
+    %li.inception= link_to 'Per-App', per_app_inventory_management_path, :class => @selected_state[:per_app]

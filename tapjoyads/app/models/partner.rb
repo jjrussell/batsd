@@ -22,6 +22,7 @@ class Partner < ActiveRecord::Base
   has_one :payout_info
   belongs_to :sales_rep, :class_name => 'User'
   has_many :earnings_adjustments
+  has_many :global_promoted_offers, :dependent => :destroy
 
   belongs_to :reseller
 
@@ -300,6 +301,19 @@ class Partner < ActiveRecord::Base
       offer.tapjoy_sponsored = flag
       offer.save! if offer.changed?
     end
+  end
+
+  def offers_for_promotion
+    available_offers = { :android => [], :ios => [], :wp => [] }
+    self.offers.each do |offer|
+      platform = Offer.get_platform_symbol(offer)
+      available_offers[platform].push(offer) if platform.present? && offer.can_be_promoted?
+    end
+    available_offers
+  end
+
+  def promoted_offers(platform)
+    self.global_promoted_offers.reject { |promoted_offer| promoted_offer.offer.get_platform != platform }
   end
 
 private

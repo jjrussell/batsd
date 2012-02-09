@@ -1,0 +1,20 @@
+- @page_title = 'Per-App Inventory Management'
+= render :partial => 'actions'
+
+.left-indented
+  .box-full
+    - form_tag({}, { :method => :get, :class => 'tjform', :id => :per_app_inventory }) do
+      = render('shared/dropdown_select', :objects => current_partner_apps, :selected => @app, :options => @dropdown_options)
+      %p
+        You can customize offers that may be promoted on a Per-App basis. These offers are promoted in addition to the globally promoted offers.
+      - if @app
+        %table
+          %tbody
+            %tr
+              %th
+                Promoted Offers
+              %td
+                = select_tag :promoted_offers, options_for_select(@available_offers, @currently_promoted), {:multiple => true, :class => 'chosen', :style => "width: 450px;"}
+            %tr
+              %td{ :colspan => 2 }
+                = submit_tag('Save', :class => 'button')

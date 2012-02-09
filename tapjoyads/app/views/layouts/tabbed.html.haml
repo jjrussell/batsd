@@ -70,6 +70,7 @@
         - tabs << { :billing   => billing_index_path }   if permitted_to?(:index, :billing)
         - tabs << { :account   => users_path }           if permitted_to?(:index, :users)
         - tabs << { :partners  => partners_path }        if permitted_to?(:index, :partners)
+        - tabs << { :inventory_mgmt => inventory_management_index_path } if permitted_to?(:index, :inventory_management)
         - tabs << { :premier   => premier_path }         if permitted_to?(:edit,  :premier)
         - tabs << { :tools     => tools_path }           if permitted_to?(:index, :tools)
         - tabs << { :statz     => statz_index_path }     if permitted_to?(:index, :statz)

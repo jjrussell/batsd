@@ -354,6 +354,10 @@ class Offer < ActiveRecord::Base
     tapjoy_enabled? && user_enabled? && ((payment > 0 && partner_balance > 0) || (payment == 0 && reward_value.present? && reward_value > 0))
   end
 
+  def can_be_promoted?
+    primary? && rewarded? && is_enabled?
+  end
+
   def accepting_clicks?
     tapjoy_enabled? && user_enabled? && (payment > 0 || (payment == 0 && reward_value.present? && reward_value > 0))
   end
@@ -694,6 +698,19 @@ class Offer < ActiveRecord::Base
         "installed_at is not null",
       ].join(' and ')
       Click.count(:where => conditions)
+    end
+  end
+
+  def self.get_platform_symbol(offer)
+    case offer.get_platform
+    when 'iOS'
+      :ios
+    when 'Android'
+      :android
+    when 'Windows Phone'
+      :wp
+    else
+      nil
     end
   end
 

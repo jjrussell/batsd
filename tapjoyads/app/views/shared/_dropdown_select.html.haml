@@ -5,9 +5,12 @@
       = image_tag('dropdown_arrow.png')
     #selected_app_text
       - if selected.nil? || selected.new_record?
-        = image_tag('add_app.png', :size => '24x24', :alt => '')
-        Add a new App
-        = link_to('#', new_app_path, :class => "hidden")
+        - if options[:not_for_nav]
+          = "Please select an App"
+        - else
+          = image_tag('add_app.png', :size => '24x24', :alt => '')
+          Add a new App
+          = link_to('#', new_app_path, :class => "hidden")
       - else
         = image_tag(selected.get_icon_url, :size => '24x24', :alt => '')
         = selected.is_a?(App) ? selected.name : selected.name_with_suffix
@@ -37,6 +40,7 @@
           %span.app-name
             = o.is_a?(App) ? o.name : o.name_with_suffix
             = image_tag(platform_icon_url(o), :class => 'platform_icon')
+            = hidden_field_tag 'app_id', (o.is_a?(App) ? o.id : o), :disabled => true
           = link_to('#', url, :class => "hidden")
     #new_app_box
       .app{ :class => "new_app #{selected.nil? ? 'selected' : ''}", :title => 'Add a new App' }
@@ -45,6 +49,7 @@
         = link_to('#', new_app_path, :class => "hidden")
   - if options[:with_new_app_button]
     = button_to "Add App", new_app_path, :method => 'get', :id => 'new_app_button'
+  = hidden_field_tag :current_app, (selected.nil? ? '' : selected.id)
   .clear
   - content_for :page_styles do
     :plain
@@ -199,7 +204,12 @@
           $('.app.selected').removeClass('selected');
           $(this).addClass('selected');
           $('#selected_app_text').html($(this).html());
-          location.href = $(this).children('a').attr('href');
+          $('#current_app').val($(this).children('span').children('input').val());
+          if (!"#{options[:not_for_nav]}") {
+            location.href = $(this).children('a').attr('href');
+          } else if ("#{options[:submission_form].present?}") {
+            $('##{options[:submission_form]}').submit();
+          }
         });
 
         $(document).click(function(e){
