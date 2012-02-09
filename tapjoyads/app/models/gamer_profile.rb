@@ -1,6 +1,8 @@
 class GamerProfile < ActiveRecord::Base
   include UuidPrimaryKey
 
+  has_one :referrer_gamer, :class_name => 'Gamer', :primary_key => :referred_by, :foreign_key => :id
+
   belongs_to :gamer
 
   validate :at_least_age_thirteen

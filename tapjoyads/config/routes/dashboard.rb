@@ -51,12 +51,14 @@ ActionController::Routing::Routes.draw do |map|
   end
   map.connect 'partners/managed_by/:id', :controller => :partners, :action => :managed_by
   map.with_options(:controller => 'search') do |m|
+    m.search_gamers 'search/gamers', :action => 'gamers'
     m.search_offers 'search/offers', :action => 'offers'
     m.search_users 'search/users', :action => 'users'
     m.search_partners 'search/partners', :action => 'partners'
   end
   map.resource :premier, :controller => :premier, :only => [ :update ]
   map.premier 'premier', :controller => :premier, :action => :edit
+  map.resources :survey_results, :only => [ :new, :create ]
 
   # Admin tools routes
   map.resources :tools, :only => :index,
@@ -98,8 +100,11 @@ ActionController::Routing::Routes.draw do |map|
     tools.resources :agency_users, :only => [ :index, :show ]
     tools.resources :support_requests, :only => [ :index ], :collection => { :mass_resolve => [ :get, :post ] }
     tools.resources :press_releases, :only => [ :index, :new, :create, :edit, :update ]
+    tools.resources :gamers, :only => [ :index, :show ]
+    tools.resources :gamer_devices, :only => [ :create, :edit, :new, :show, :update ]
     tools.resources :network_costs, :only => [ :index, :new, :create ]
     tools.resources :partner_program_statz, :only => [ :index ], :collection => { :export => :get }
+    tools.resources :survey_offers, :except => [ :show ]
     tools.resources :payout_freezes, :only => [ :index, :create ], :member => { :disable => :post }
   end
 

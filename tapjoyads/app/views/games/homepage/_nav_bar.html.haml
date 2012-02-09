@@ -9,18 +9,18 @@
         .device_name
           = @device_name
         .device_switch
-          wrong device?
+          = t('text.games.wrong_device')
       .plus
 
 .nav
   .nav_container.clearfix
     .aside_nav
       %span
-        = link_to("Help", games_help_path )
+        = link_to(t('text.shared.help'), games_help_path )
       %span
         |
       - link_to(games_logout_path) do
-        %span Logout
+        %span= t('text.shared.logout')
     - link_to(games_root_path, :class => "slideright") do
       .logo
     .nav_buttons
@@ -29,24 +29,24 @@
           %ul.pair
             - if active == 'back'
               - link_to(back_button_destination, :class => "slideright") do
-                %li.my_apps Back
+                %li.my_apps= t('text.shared.back')
             - else
               - if active == 'my_apps'
-                %li.my_apps.active_button My Apps
+                %li.my_apps.active_button= t('text.games.my_apps')
               - else
                 - link_to(games_root_path, :class => "slideright") do
-                  %li.my_apps My Apps
+                  %li.my_apps= t('text.games.my_apps')
               - if active == 'more_apps'
-                %li.more_apps.more_apps_path.active_button More Apps
+                %li.more_apps.more_apps_path.active_button= t('text.games.more_apps')
               - elsif active == 'my_apps'
-                %li.more_apps.more_apps_path More Apps
+                %li.more_apps.more_apps_path= t('text.games.more_apps')
               - if active == 'my_account'
-                %li.my_account.active_button My Account
+                %li.my_account.active_button= t('text.shared.my_account')
               - else
                 - link_to(edit_games_gamer_path) do
-                  %li.my_account My Account
+                  %li.my_account= t('text.shared.my_account')
               - if false # hide social share button until ready
                 - if active == 'share'
                   %li.share.active_button Share
                 - elsif active != 'my_account'
-                  %li.share Share
+                  %li.share= t('text.shared.share')

@@ -3,7 +3,11 @@ class Games::HomepageController < GamesController
   rescue_from Twitter::Error, :with => :handle_twitter_exceptions
   rescue_from Errno::ECONNRESET, :with => :handle_errno_exceptions
   rescue_from Errno::ETIMEDOUT, :with => :handle_errno_exceptions
-  before_filter :require_gamer, :except => [ :index, :tos, :privacy ]
+  before_filter :require_gamer, :except => [ :index, :tos, :privacy, :translations ]
+
+  def translations
+    render "translations.js", :layout => false, :content_type=>"application/javascript"
+  end
 
   def index
     unless current_gamer

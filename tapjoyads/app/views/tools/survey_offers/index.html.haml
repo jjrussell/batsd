@@ -1,0 +1,51 @@
+- @page_title = 'Survey Offers'
+
+%h1= @page_title
+
+= link_to 'Create new survey offer', new_tools_survey_offer_path
+
+%table#survey_offers_table.tablesorter
+  %thead
+    %tr
+      %th Name
+      %th Questions
+      %th{ :colspan => 4 }
+  %tbody
+    - @survey_offers.each do |survey_offer|
+      %tr
+        %td
+          = link_to(survey_offer.name, statz_path(survey_offer.id))
+          - if survey_offer.enabled?
+            %b= "(Enabled)"
+        %td
+          %ul
+            - survey_offer.survey_questions.each do |question|
+              %li= question.text
+        %td= link_to('Offerwall view', new_survey_result_path(:id => survey_offer.id, :udid => 'just_looking', :click_key => 'just_looking'))
+        %td
+          - if survey_offer.enabled?
+            = link_to('Disable', tools_survey_offer_path(survey_offer, 'survey_offer[enabled]' => 'false'), :method => :put)
+          - else
+            = link_to('Enable', tools_survey_offer_path(survey_offer, 'survey_offer[enabled]' => 'true'), :method => :put, :confirm => 'Make this offer live?')
+        %td= link_to('Edit', edit_tools_survey_offer_path(survey_offer))
+        %td= link_to('Remove', tools_survey_offer_path(survey_offer),
+          :method => :delete,
+          :confirm => 'Are you sure you want to remove this survey?')
+
+- content_for :page_javascript do
+  :plain
+    $(function() {
+      $('#survey_offers_table').tablesorter({
+        widgets: ['zebra'],
+        headers: {
+          1:  { sorter: false },
+          2:  { sorter: false },
+        }
+      });
+    });
+
+- content_for :page_styles do
+  :plain
+    table.tablesorter thead tr .header {
+      background-position: right bottom;
+    }

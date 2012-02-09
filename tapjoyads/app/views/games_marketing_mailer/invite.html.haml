@@ -31,14 +31,14 @@
         %hr{:style => "color: #{red}; background: #{red}; border: 0px; height: 1px; width: 95%;"}
     %tr
       %td{:colspan => 4, :style => "padding: 20px 20px;"}
-        %b{:style => css[:bold_content]} Hi,
+        %b{:style => css[:bold_content]}= t('text.games.invite_email_greet')
     %tr
       %td{:colspan => 4, :style => "padding: 0px 20px 50px 20px; width: 500px;"}
-        - @content.each do |line|
+        - t('text.games.invite_email_body', :name => @gamer_name).each do |line|
           %p{:style => css[:content]}= line
         - link_to @link, :style => css[:a] do
           = image_tag("#{image_root}/createAccount_btn.png", :title => 'Tapjoy', :alt => 'Tapjoy', :style => "border: none; margin-bottom: 40px;")
         %br
-        %b{:style => css[:bold_content]} Team Tapjoy
+        %b{:style => css[:bold_content]}= t('text.games.invite_email_signature')
   %p{:style => css[:footer]} Tapjoy
 

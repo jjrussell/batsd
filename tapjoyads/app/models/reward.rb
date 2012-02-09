@@ -68,7 +68,7 @@ class Reward < SimpledbShardedResource
       c.spend_share            = spend_share
     end
 
-    if displayer_app_id.present? && source == 'display_ad' # TO REMOVE: the source check when we fix our data corruption issues
+    if displayer_app_id.present? && source == 'display_ad'
       conversions << Conversion.new do |c|
         c.id                               = reward_key_2
         c.reward_id                        = key
