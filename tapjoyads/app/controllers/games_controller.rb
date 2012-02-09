@@ -15,8 +15,7 @@ class GamesController < ApplicationController
   end
 
   def set_locale
-    language_codes = get_language_codes.concat http_accept_language
-    I18n.locale = (language_codes & AVAILABLE_LOCALES_ARRAY).first
+    I18n.locale = (get_language_codes.concat(http_accept_language) & AVAILABLE_LOCALES_ARRAY).first
   end
 
   def get_language_codes
