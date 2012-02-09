@@ -184,6 +184,8 @@ body {
 
 .tab-carousel {
   display: none;
+  width: 100%;
+  overflow: hidden;
   ul {
     width: 4000px;
     margin: 0; padding: 0;
@@ -207,9 +209,6 @@ body {
 
 
 @media only screen and (max-width: 768px) {
-  .main {
-    padding: 0;
-  }
   .container {
     padding: 0 percentage(12/768);
     width: percentage(744/768);
@@ -244,6 +243,9 @@ body {
   }
 }
 @media only screen and (max-width: 480px) {
+  .main {
+    padding: 0;
+  }
   .container {
     padding: 0 percentage(20/640);
     width: percentage(600/640);
