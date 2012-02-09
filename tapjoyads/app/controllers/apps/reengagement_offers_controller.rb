@@ -4,52 +4,49 @@ class Apps::ReengagementOffersController < WebsiteController
   layout 'apps'
   current_tab :apps
   before_filter :setup, :except => [ :show ]
+  #before_filter :pre_create, :only => [ :create ]
   filter_access_to :all
 
   def show
   end
 
   def index
-    @reengagement_offers = ReengagementOffer.visible.for_app @app.id
-    @reengagement_offers.blank? ? redirect_to(new_app_reengagement_offer_path(@app)) : @reengagement_offer = @reengagement_offers.first
+    @reengagement_offers = @app.reengagement_offers.visible.order_by_day
+    if @reengagement_offers.empty?
+      redirect_to new_app_reengagement_offer_path(@app)
+    else
+      @reengagement_offer = @reengagement_offers.first
+    end
   end
 
   def new
-    campaign_length = ReengagementOffer.campaign_length(@app.id)
+    campaign_length = @app.reengagement_offers.visible.length
     if campaign_length > 5
       flash[:info] = "Re-engagement campaigns cannot currently be longer than 5 days."
-      redirect_to app_reengagement_offers_path(@app) 
-    elsif campaign_length == 0 
+      redirect_to app_reengagement_offers_path(@app)
+    elsif campaign_length == 0
       ReengagementOffer.create(
-        :app_id => @app.id,
-        :currency_id => @app.primary_currency.id,
-        :partner => current_partner,
+        :app_id       => @app.id,
+        :partner      => current_partner,
+        :currency_id  => @app.primary_currency.id,
         :instructions => 'Come back each day and get rewards!',
-        :reward_value => 0,
-        :day_number => 0
+        :reward_value => 0
       )
     end
-    @reengagement_offer = ReengagementOffer.new(:partner => current_partner)
+    @reengagement_offer = ReengagementOffer.new
   end
 
   def create
-    reengagement_offers = ReengagementOffer.visible.for_app @app.id
-    reengagement_offer = ReengagementOffer.create(
-      :partner => current_partner,
-      :app_id => params[:app_id],
-      :day_number => reengagement_offers.length,
-      :currency_id => params[:reengagement_offer][:currency_id],
-      :reward_value => params[:reengagement_offer][:reward_value],
-      :instructions => params[:reengagement_offer][:instructions],
-      :prerequisite_offer_id => reengagement_offers.last.id,
-      :enabled => reengagement_offers.last.enabled )
+    params[:reengagement_offer][:app_id] = params[:app_id]
+    params[:reengagement_offer][:partner] = current_partner
+    reengagement_offer = ReengagementOffer.create params[:reengagement_offer]
     flash[:notice] = "Added day #{reengagement_offer.day_number} reengagement offer."
     redirect_to app_reengagement_offers_path(@app)
   end
 
   def edit
   end
-  
+
   def destroy
     @reengagement_offer.remove!
     reengagement_offers = @app.reengagement_offers.visible
@@ -66,9 +63,8 @@ class Apps::ReengagementOffersController < WebsiteController
   end
 
   def update
-    @reengagement_offer.currency_id = params[:reengagement_offer][:currency_id]
-    @reengagement_offer.reward_value = params[:reengagement_offer][:reward_value]
-    @reengagement_offer.instructions = params[:reengagement_offer][:instructions]
+    safe_attributes = [ :currency_id, :reward_value, :instructions ]
+    @reengagement_offer.safe_update_attributes(params[:reengagement_offer], safe_attributes)
     @reengagement_offer.save!
     flash[:notice] = "Updated day #{@reengagement_offer.day_number} re-engagement offer."
     redirect_to app_reengagement_offers_path(@app)
@@ -86,10 +82,8 @@ class Apps::ReengagementOffersController < WebsiteController
     end
 
     if params[:id]
-      @reengagement_offer = ReengagementOffer.find(params[:id])
-      @app = App.find(@reengagement_offer.app_id) unless @app.present?
-      @offer = @reengagement_offer.primary_offer
-      log_activity(@reengagement_offer)
+      @reengagement_offer = @app.reengagement_offers.visible.find(params[:id])
+      @offer = @reengagement_offer.primary_offer if @reengagement_offer
     end
   end
 

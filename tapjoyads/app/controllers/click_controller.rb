@@ -16,10 +16,10 @@ class ClickController < ApplicationController
   end
 
   def reengagement
-    params.merge(:advertiser_app_id => params[:publisher_app_id])
+    params[:advertiser_app_id] = params[:publisher_app_id]
     create_click('reengagement')
     handle_pay_per_click
-  
+
     render :text => 'OK'
   end
 

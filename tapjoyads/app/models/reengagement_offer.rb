@@ -5,13 +5,15 @@ class ReengagementOffer < ActiveRecord::Base
   belongs_to :app
   belongs_to :partner
   belongs_to :currency
-  belongs_to :prerequisite_offer, :class_name => 'Offer'
+  belongs_to :prerequisite_offer, :class_name => 'ReengagementOffer'
 
   has_one :primary_offer, :class_name => 'Offer', :as => :item, :conditions => 'id = item_id'
   has_many :offers, :as => :item
 
   validates_presence_of :partner, :app, :instructions, :reward_value
   validates_numericality_of :reward_value, :greater_than_or_equal_to => 0
+
+  before_create :pre_create
 
   after_create :create_primary_offer
   after_update :update_offers
@@ -25,13 +27,14 @@ class ReengagementOffer < ActiveRecord::Base
   named_scope :active, :conditions => { :hidden => false, :enabled => true }
   named_scope :inactive, :conditions => { :hidden => false, :enabled => false }
   named_scope :for_app, lambda { |app_id| {:conditions => [ "app_id = ?", app_id ] } }
+  named_scope :order_by_day, :order => "day_number ASC"
 
   def self.campaign_length(app_id)
     ReengagementOffer.visible.for_app(app_id).length
   end
 
   def campaign_length
-    ReengagementOffer.campaign_length(app_id)
+    app.reengagement_offers.visible
   end
 
   def self.enable_for_app!(app_id)
@@ -71,9 +74,9 @@ class ReengagementOffer < ActiveRecord::Base
   def self.find_list_in_cache(app_id)
     Mc.get("mysql.reengagement_offers.#{app_id}.#{SCHEMA_VERSION}")
   end
-  
+
   def cache_list
-    ReengagementOffer.cache_list(app_id)
+    app.reengagement_offers.active.map(&:cache)
   end
 
   def resolve(udid, timestamp)
@@ -92,6 +95,13 @@ class ReengagementOffer < ActiveRecord::Base
 
   private
 
+  def pre_create
+    reengagement_offers     = app.reengagement_offers.visible.order_by_day
+    self.day_number         = reengagement_offers.length
+    self.prerequisite_offer = reengagement_offers.last
+    self.enabled            = self.prerequisite_offer.enabled
+  end
+
   def create_reengagement_click(udid, publisher_user_id, timestamp=Time.zone.now)
     data = {
       :publisher_app      =>  App.find_in_cache(app_id),
@@ -103,7 +113,6 @@ class ReengagementOffer < ActiveRecord::Base
     }
     Downloader.get_with_retry(primary_offer.click_url(data))
   end
-
 
   def disable!
     self.enabled = false
@@ -156,5 +165,5 @@ class ReengagementOffer < ActiveRecord::Base
       offer.save! if offer.changed?
     end
   end
-  
+
 end
