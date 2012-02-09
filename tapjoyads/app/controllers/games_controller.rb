@@ -34,10 +34,9 @@ class GamesController < ApplicationController
       raise "Not correctly formatted" unless language =~ /^[a-z\-]+$/i
       language = language.downcase.gsub(/-[a-z]+$/i) { |i| i.upcase }
       quality = 1.0 unless quality.to_s =~ /\d+(\.\d+)?$/
-      [ language, - quality.to_f ]
+      [ - quality.to_f, language ]
     end
-
-    language_list.sort_by(&:last).map(&:first)
+    language_list.sort.map(&:last)
   rescue # default if header is malformed
     []
   end
