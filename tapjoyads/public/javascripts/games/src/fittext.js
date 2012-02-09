@@ -10,7 +10,19 @@
  */
 
 (function( $ ){
-  var resizeOccurred = true;
+  var resizeOccurred = true
+    , clearStyles
+    ;
+
+  clearStyles = function($$) {
+    var args = arguments
+      , i, ii
+      ;
+
+    for(i=1, ii=args.length; i<ii; i++) {
+      $$.css(args[i], "");
+    }
+  };
 
   function setup_throttle() {
     $(window).resize(function() {
@@ -26,6 +38,32 @@
 
     setup_throttle = function() {};
   }
+
+  $.fn.vAlign = function() {
+    return this.each(function() {
+      var $$ = $(this)
+        , $p = $$.parent()
+        , resizer
+        , resetter
+        ;
+
+      resetter = function() {
+        clearStyles($$, "position", "top", "margin-top");
+        $(document).unbind("fittext-resize", resizer);
+        $(document).unbind("fittext-reset", resetter);
+      };
+      resizer = function() {
+        $$.css({
+          "position":"relative", 
+          "top":($p.height()/2),
+          "margin-top":(-$$.height()/2)
+        });
+      };
+
+      $(document).bind("fittext-resize", resizer);
+      $(document).bind("fittext-reset", resetter);
+    });
+  };
 
   $.fn.fitText = function( kompressor, options ) {
     var settings = {
@@ -51,8 +89,7 @@
       resizer();
 
       var resetter = function() {
-        var style = $this.attr("style");
-        $this.attr("style", style.replace(/font-size:.*?;/, ""));
+        clearStyles($this, "font-size");
         $(document).unbind("fittext-resize", resizer);
         $(document).unbind("fittext-reset", resetter);
       };

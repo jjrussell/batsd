@@ -42,7 +42,6 @@ body {
   font-size: 12pt;
 
   .container {
-    height: 35px;
     background: transparent url('/images/games/logo-navbar.png') no-repeat scroll center center;
     background-size: auto 29px;
     color: #fff;
@@ -57,6 +56,7 @@ body {
       padding: 0;
       height:100%;
       width: 13px;
+      line-height: 35px;
     }
     .item {
       line-height: 35px;
@@ -178,8 +178,33 @@ body {
   margin-right: 0;
 }
 
+.tab-carousel {
+  ul {
+    width: 4000px;
+    margin: 0; padding: 0;
+  }
+  li {
+    list-style: none;
+    float: left;
+    font-size: 16px;
+    margin: 15px 25px;
+  }
+  a {
+    color: #5b5b5b;
+    text-decoration: none;
+    font-family: "MuseoSlab 500";
+    font-weight: bold;
+  }
+  a.current {
+    color: #000;
+  }
+}
+
 
 @media only screen and (max-width: 768px) {
+  .main {
+    padding: 0;
+  }
   .container {
     padding: 0 percentage(12/768);
     width: percentage(744/768);
@@ -213,7 +238,7 @@ body {
     margin-right: 0;
   }
 }
-@media only screen and (max-width: 640px) {
+@media only screen and (max-width: 480px) {
   .container {
     padding: 0 percentage(20/640);
     width: percentage(600/640);
@@ -252,6 +277,20 @@ body {
       padding: 0;
     }
   }
+  .game-list {
+    display: none;
+    .hd {
+      display: none;
+    }
+    .bd {
+  -webkit-box-shadow: 0px 0px 2px #000;
+     -moz-box-shadow: 0px 0px 2px #000;
+          box-shadow: 0px 0px 2px #000;
+    }
+  }
+  .selected {
+    display: block;
+  }
   .app {
     margin: 0;
     padding: 17px percentage(20/640);
@@ -261,44 +300,44 @@ body {
     text-align: left;
     @include gradient(rgba(247, 247, 250, 1.0), rgba(220, 223, 227, 1.0));
     .game-image {
-      float: left;
       margin: 0 percentage(15/640);
       width: percentage(150/640);
+      float: left;
       img {
         @include rounded-corners(45%);
       }
     }
     .info {
-      display:table-cell;
       width: percentage(290/640);
+      float: left;
     }
     .summary {
       width: 100%;
     }
     .title {
+      font-size: 15px;
       width: 100%;
     }
     .rank, .friends {
-      margin: 9px percentage(10/290);
-      width: percentage(49/290);
+      margin: 3% 0 6% 0;
+      width: percentage(80/290);
     }
     .rank .icon {
-      padding: 6px percentage(8/49);
+      padding: percentage(8/80);
     }
     .friends .icon {
-      padding: 6px percentage(17/49);
+      padding: percentage(17/80);
     }
     .rank .value {
-      margin-left: 6px;
+      margin-left: percentage(6/80);
     }
     .friends .value {
-      margin-left: 3px;
+      margin-left: percentage(3/80);
     }
     .description {
       display: none;
     }
     .current {
-      width: percentage(112/290);
       display: inline-block;
       @include gradient(rgba(118, 186, 81, 1.0), rgba(73, 138, 36, 1.0));
       @include rounded-corners(4px);
@@ -307,14 +346,14 @@ body {
       border-bottom: 1px solid rgba(81, 146, 42, 1.0);
       @include shadow(#047003, 1px);
       color: white;
-      padding: 4px;
+      padding: 2px 4px;
       text-align: center;
     }
     .collect {
+      color: #444444;
       margin:0;
-      display:table-cell;
-      vertical-align: middle;
       text-align: right;
+      float:right;
       padding: 0 20px 0 0;
       width: percentage(119/640);
       border: none;
@@ -323,7 +362,12 @@ body {
           box-shadow: none;
 
       background: transparent url("/images/games/mw-r-arrow.png") no-repeat right center;
-      background-size: percentage(8/119);
+      background-size: percentage(16/119);
+
+      .inner {
+        display: table-cell;
+        vertical-align: middle;
+      }
     }
   }
 }

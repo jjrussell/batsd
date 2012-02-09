@@ -23,6 +23,7 @@
       setupTimer = noop;
     };
 
+
     me = {
       isMedia: function(query) {
         //if the <div> doesn't exist, create it and make sure it's hidden
@@ -61,6 +62,8 @@
     $.jsMedia = me;
 })(jQuery);
 
+
+
 $(document).ready(function() {
   $(".item").hover(function() {
     $(this).addClass("selected");
@@ -68,15 +71,16 @@ $(document).ready(function() {
     $(this).removeClass("selected");  
   });
 
-  /*$.jsMedia.watch("screen and (max-width: 640px)", 
+  $.jsMedia.watch("screen and (max-width: 480px)", 
     function() {
-      $(".title").fitText(.7, {minFontSize: "12px"});
-      $(".current").fitText(1, {minFontSize: "12px"});
-      $(".collect").fitText(.4);
+      $(".title").fitText(1, {minFontSize: "15px", maxFontSize: "25px"});
+      //$(".current").fitText(.8, {minFontSize: "13.3px"});
+      $(".collect").fitText(.4, {minFontSize: "16px", maxFontSize: "25px"});
+      //$(".collect").vAlign();
     },
     function() {
       $(document).trigger("fittext-reset");
     }
-  );*/
+  );
 
 });
