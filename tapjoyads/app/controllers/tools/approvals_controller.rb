@@ -6,7 +6,6 @@ class Tools::ApprovalsController < WebsiteController
   before_filter :setup_conditions, :only => [:index, :history, :mine]
   before_filter :setup_partial, :only => [:index, :history, :mine]
   before_filter :find_approval, :only => [:approve, :reject, :assign]
-  around_filter :json_wrapper, :only => [:approve, :reject, :assign]
 
   def index
     state = params[:state] || 'pending'
@@ -30,24 +29,40 @@ class Tools::ApprovalsController < WebsiteController
   end
 
   def assign
-    if params[:approval][:owner_id].empty?
-      @approval.unassign
-    else
-      user = Approval.owner_class.find(params[:approval][:owner_id])
-      if @approval.assign(user)
-        ApprovalMailer.deliver_assigned(user.email, approval.item_type, mine_tools_approvals_url)
+    json = json_wrapper do
+      if params[:approval][:owner_id].empty?
+        @approval.unassign
+      else
+        user = User.find(params[:approval][:owner_id])
+        if success = @approval.assign(user)
+          ApprovalMailer.deliver_assigned(user.email, @approval.item_type, mine_tools_approvals_url)
+        end
       end
     end
+
+    render :json => json
   end
 
   def approve
-    @approval.owner = current_user if respond_to?(:curret_user)
-    approval_mailer if @approval.approve!
+    json = json_wrapper do
+      @approval.owner = current_user if respond_to?(:curret_user)
+      if success = @approval.approve!
+        approval_mailer
+      end
+    end
+
+    render :json => json
   end
 
   def reject
-    @approval.owner = current_user if respond_to?(:curret_user)
-    rejection_mailer if @approval.reject!(params[:reason])
+    json = json_wrapper do
+      @approval.owner = current_user if respond_to?(:curret_user)
+      if success = @approval.reject!(params[:reason])
+        rejection_mailer
+      end
+    end
+
+    render :json => json
   end
 
   private
@@ -58,17 +73,9 @@ class Tools::ApprovalsController < WebsiteController
       json[:success] = yield
     rescue ActsAsApprovable::Error => e
       json[:message] = e.message
-    rescue
-      json[:message] = 'An unknown error occured'
     end
 
-    respond_to do |format|
-      format.html do
-        flash[:error] = json[:message] if json[:message]
-        redirect_to :action => :index
-      end
-      format.json { render :json => json }
-    end
+    json
   end
 
   def setup_conditions

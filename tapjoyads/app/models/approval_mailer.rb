@@ -1,7 +1,10 @@
 class ApprovalMailer < ActionMailer::Base
-  def assigned(email, type, data = {})
-    data[:subject] ||= "#{type.to_s.humanize} has been assigned to you"
-    data[:type] = type
+  def assigned(email, type, url)
+    data = {
+      :subject  => "#{type.to_s.humanize} has been assigned to you",
+      :type     => type,
+      :url      => url
+    }
 
     handle(email, 'assigned', data)
   end
