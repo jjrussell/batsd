@@ -34,18 +34,20 @@ class Tools::ApprovalsController < WebsiteController
       @approval.unassign
     else
       user = Approval.owner_class.find(params[:approval][:owner_id])
-      @approval.assign(user)
+      if @approval.assign(user)
+        ApprovalMailer.deliver_assigned(user.email, approval.item_type, mine_tools_approvals_url)
+      end
     end
   end
 
   def approve
     @approval.owner = current_user if respond_to?(:curret_user)
-    @approval.approve!
+    approval_mailer if @approval.approve!
   end
 
   def reject
     @approval.owner = current_user if respond_to?(:curret_user)
-    @approval.reject!(params[:reason])
+    rejection_mailer if @approval.reject!(params[:reason])
   end
 
   private
@@ -88,6 +90,18 @@ class Tools::ApprovalsController < WebsiteController
     if @table_partial != 'table'
       partial_path = Rails.root.join('app', 'views', 'approvals', "_#{@table_partial}.html.#{view_language}")
       @table_partial = 'table' unless File.exist?(partial_path)
+    end
+  end
+
+  def approval_mailer
+    case @approval.item_type
+    when 'User'; ApprovalMailer.deliver_approved(@approval.item.email, :user, :subject => 'Your account has been approved on Tapjoy!')
+    end
+  end
+
+  def rejection_mailer
+    case @approval.item_type
+    when 'User'; ApprovalMailer.deliver_rejected(@approval.item.email, :user, :subject => 'Your account has been rejected on Tapjoy!')
     end
   end
 
