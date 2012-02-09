@@ -74,11 +74,11 @@ class Tools::ApprovalsController < WebsiteController
   def setup_conditions
     @conditions ||= {}
 
-    if params[:owner_id]
+    if params[:owner_id].present?
       @conditions[:owner_id] = params[:owner_id]
       @conditions[:owner_id] = nil if params[:owner_id] == 0
     end
-    if params[:item_type]
+    if params[:item_type].present?
       @conditions[:item_type] = params[:item_type]
     end
   end
