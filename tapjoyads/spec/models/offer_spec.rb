@@ -62,11 +62,27 @@ describe Offer do
     @offer.send(:geoip_reject?, geoip_data).should == false
   end
 
+  it "rejects depending on locale" do
+    @offer.countries = ["GB"]
+    geoip_data = { :user_country_code => "US" }
+    @offer.send(:geoip_reject?, geoip_data).should == true
+    geoip_data = { :user_country_code => "GB" }
+    @offer.send(:geoip_reject?, geoip_data).should == false
+  end
+
   it "rejects depending on countries blacklist" do
     @offer.item.countries_blacklist = ["GB"]
     geoip_data = { :country => "US" }
     @offer.send(:geoip_reject?, geoip_data).should == false
     geoip_data = { :country => "GB" }
+    @offer.send(:geoip_reject?, geoip_data).should == true
+    geoip_data = { :carrier_country_code => "US" }
+    @offer.send(:geoip_reject?, geoip_data).should == false
+    geoip_data = { :carrier_country_code => "GB" }
+    @offer.send(:geoip_reject?, geoip_data).should == true
+    geoip_data = { :user_country_code => "US" }
+    @offer.send(:geoip_reject?, geoip_data).should == false
+    geoip_data = { :user_country_code => "GB" }
     @offer.send(:geoip_reject?, geoip_data).should == true
   end
 
