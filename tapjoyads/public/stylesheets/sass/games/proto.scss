@@ -126,6 +126,9 @@ body {
     }
   }
   .title {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
   }
   .description {
     color: #797979;
@@ -246,14 +249,16 @@ body {
   .header {
     .container {
       background-image: none;
+      height: 50px;
     }
     .logo {
       display: block;
       float: right;
-      padding: 11px;
-      width: percentage(124/640);
+      padding: 11px percentage(11/640);
+      width: 62px;
       img {
-        max-width: 100%;
+        width: 62px;
+        max-width: 62px;
         float: right;
       }
     }
@@ -261,13 +266,11 @@ body {
       display: none;
     }
     .left {
-      width: percentage(300/640);
+      width: percentage(470/640);
     }
     .nav-menu {
       .item {
-        padding: 0 percentage(5/300);
-        width: percentage(140/300);
-        font-size: 19px;
+        padding: 0 percentage(20/470);
       }
     }
   }
@@ -278,7 +281,7 @@ body {
       width: 100%;
     }
     .ad {
-      height: 127px;
+      height: 63px;
     }
   }
   .main {
