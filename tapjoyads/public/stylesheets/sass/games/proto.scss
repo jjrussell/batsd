@@ -1,4 +1,8 @@
 @import "tj-mixins.scss";
+
+@mixin txt-shadow() {
+  text-shadow: 0px 1px 1px rgba(37, 37, 37, .4);
+}
 $page-width-1024: (944/16)em;
 $page-padding-1024: 0 (40/16)em;
 
@@ -59,6 +63,7 @@ body {
       line-height: 35px;
     }
     .item {
+      @include txt-shadow();
       line-height: 35px;
       float: left;
       padding: 0 16px;
@@ -137,29 +142,31 @@ body {
     overflow: hidden;
   }
   .summary {
+    width: 100%;
     .icon {
       background-size: 100%;
     }
   }
   .friends, .rank {
-    margin: 0 5px;
+    margin: 0 0px;
+    width: 50%;
+    font-size: 12px;
+  }
+  .icon {
+    img {
+      vertical-align: middle;
+    }
   }
   .rank {
     float: left;
-    .icon {
-      vertical-align: center;
+    img {
+      width: 10px;
     }
   }
   .friends {
     float: left;
-    .icon {
-      vertical-align: center;
-    }
-  }
-  .icon {
     img {
-      max-width: 100%;
-      vertical-align: center;
+      width: 21px;
     }
   }
   .current {
@@ -189,12 +196,14 @@ body {
   ul {
     width: 4000px;
     margin: 0; padding: 0;
+    height: 48px;
   }
   li {
     list-style: none;
     float: left;
     font-size: 16px;
-    margin: 15px 25px;
+    margin: 0 25px;
+    line-height: 48px;
   }
   a {
     color: #5b5b5b;
@@ -342,6 +351,8 @@ body {
       width: 100%;
     }
     .rank, .friends {
+      font-size: 12px;
+      width: auto;
       margin: 3% 0 6% 0;
     }
     .rank .icon {
@@ -366,6 +377,7 @@ body {
     }
     .current {
       display: inline-block;
+      @include txt-shadow();
       @include gradient(rgba(118, 186, 81, 1.0), rgba(73, 138, 36, 1.0));
       @include rounded-corners(4px);
       border: 1px solid rgba(89, 152, 54, 1.0);
