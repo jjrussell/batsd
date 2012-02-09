@@ -74,11 +74,13 @@
     }
   });
 
-  test("it will not throw errors for no match in production mode", function() {
-    expect(1);
-    window.ENVIRONMENT = "production";
+  test("it will fail silently if not in development mode", function() {
+    expect(2);
     try {
+      window.ENVIRONMENT = "production";
       equals(i18n.t("bad key"), "", "Fails silently in production mode");
+      window.ENVIRONMENT = undefined;
+      equals(i18n.t("bad key"), "", "Fails silently if not explicitly development");
     } catch(e) {
       ok(false, "Should never get here");
     }
