@@ -1,5 +1,5 @@
 class GenericOfferClick < SimpledbShardedResource
-  
+
   belongs_to :click, :foreign_key => 'click_id'
 
   self.num_domains = NUM_GENERIC_OFFER_CLICK_DOMAINS
@@ -8,7 +8,7 @@ class GenericOfferClick < SimpledbShardedResource
   def initialize(options = {})
     super({ :load_from_memcache => false }.merge(options))
   end
-  
+
   def dynamic_domain_name
     domain_number = @key.matz_silly_hash % NUM_GENERIC_OFFER_CLICK_DOMAINS
 

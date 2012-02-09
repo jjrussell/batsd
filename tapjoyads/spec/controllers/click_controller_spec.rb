@@ -57,7 +57,7 @@ describe ClickController do
           :advertiser_app_id => 'even_more_app_stuff'
         }
       end
-      
+
       it "should should redirect to a guid url" do
         controller.stubs(:verify_params).returns(true)
         Offer.stubs(:find_in_cache).returns(@offer)

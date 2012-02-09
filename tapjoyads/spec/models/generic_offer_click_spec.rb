@@ -35,7 +35,7 @@ describe GenericOfferClick do
       GenericOfferClick.find(:first, :where => "itemname() = '#{@key}'").should be_nil
     end
   end
-  
+
   context "Mulitple new Generic Offer Clicks" do
     before :each do
       @count = GenericOfferClick.count(:consistent => true)
@@ -43,7 +43,7 @@ describe GenericOfferClick do
       @num.times { GenericOfferClick.new.save! }
     end
 
-    it "should be counted correctly" do 
+    it "should be counted correctly" do
       GenericOfferClick.count(:consistent => true).should == @count + @num
     end
 
