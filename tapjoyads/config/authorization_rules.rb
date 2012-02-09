@@ -84,6 +84,7 @@ authorization do
     has_permission_on :tools_rank_boosts, :to => [ :index, :new, :create, :edit, :update, :deactivate ]
     has_permission_on :apps, :to => [ :unarchive ]
     has_permission_on :partners_offer_discounts, :to => [ :index, :new, :create, :deactivate ]
+    has_permission_on :tools_approvals, :to => [ :index, :history, :mine, :assign, :approve, :reject ]
     has_permission_on :tools_offer_lists, :to => [ :index ]
     has_permission_on :tools_premier_partners, :to => [ :index ]
     has_permission_on :tools_generic_offers, :to => [ :index, :new, :create, :edit, :update ]
