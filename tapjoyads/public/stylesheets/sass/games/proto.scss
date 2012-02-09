@@ -147,18 +147,19 @@ body {
   .rank {
     float: left;
     .icon {
-      background: transparent url('/images/games/rank.png') no-repeat scroll center center;
-      padding: 6px 5px;
-      background-size: 100%;
+      vertical-align: center;
     }
   }
   .friends {
     float: left;
-
     .icon {
-      background: transparent url('/images/games/friends.png') no-repeat scroll center center;
-      padding: 6px 8px;
-      background-size: 100%;
+      vertical-align: center;
+    }
+  }
+  .icon {
+    img {
+      max-width: 100%;
+      vertical-align: center;
     }
   }
   .current {
@@ -310,13 +311,15 @@ body {
     border-bottom: 1px solid #6f7072;
     clear: both;
     width: percentage(600/640);
+    height: 75px;
     text-align: left;
     @include gradient(rgba(247, 247, 250, 1.0), rgba(220, 223, 227, 1.0));
     .game-image {
-      margin: 0 percentage(15/640);
+      margin: 0 8px;
       width: percentage(150/640);
       float: left;
       img {
+        width: 75px;
         @include rounded-corners(45%);
       }
     }
@@ -328,18 +331,22 @@ body {
       width: 100%;
     }
     .title {
-      font-size: 15px;
+      font-size: 16px;
       width: 100%;
     }
     .rank, .friends {
       margin: 3% 0 6% 0;
-      width: percentage(80/290);
     }
     .rank .icon {
-      padding: percentage(8/80);
+      padding: 0;
+      img {
+        width: 12px;
+      }
     }
     .friends .icon {
-      padding: percentage(17/80);
+      img {
+        width: 26px;
+      }
     }
     .rank .value {
       margin-left: percentage(6/80);
@@ -361,8 +368,10 @@ body {
       color: white;
       padding: 2px 4px;
       text-align: center;
+      font-size: 15px;
     }
     .collect {
+      line-height: 75px;
       color: #444444;
       margin:0;
       text-align: right;

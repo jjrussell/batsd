@@ -73,9 +73,9 @@ $(document).ready(function() {
 
   $.jsMedia.watch("screen and (max-width: 480px)", 
     function() {
-      $(".title").fitText(1, {minFontSize: "15px", maxFontSize: "25px"});
+      //$(".title").fitText(1, {minFontSize: "15px", maxFontSize: "25px"});
       //$(".current").fitText(.8, {minFontSize: "13.3px"});
-      $(".collect").fitText(.4, {minFontSize: "16px", maxFontSize: "25px"});
+      //$(".collect").fitText(.4, {minFontSize: "16px", maxFontSize: "25px"});
       //$(".item").vAlign();
       //$(".item").fitText(.3);
     },
