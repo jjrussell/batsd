@@ -111,7 +111,7 @@ describe Offer do
     geoip_data = { :user_country_code => "GB" }
     @offer.send(:geoip_reject?, geoip_data).should == true
     geoip_data = { }
-    @offer.send(:geoip_reject?, geoip_data).should == true
+    @offer.send(:geoip_reject?, geoip_data).should == false
   end
 
   it "rejects depending on region" do
