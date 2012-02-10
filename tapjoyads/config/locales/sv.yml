@@ -1,378 +1,63 @@
---- 
-sv: 
-  activerecord: 
-    errors: 
-      full_messages: 
-        format: ~
-      messages: 
-        accepted: ~
-        blank: ~
-        confirmation: ~
-        empty: ~
-        equal_to: ~
-        even: ~
-        exclusion: ~
-        greater_than: ~
-        greater_than_or_equal_to: ~
-        inclusion: ~
-        invalid: ~
-        less_than: ~
-        less_than_or_equal_to: ~
-        not_a_number: ~
-        not_an_integer: ~
-        odd: ~
-        record_invalid: ~
-        taken: ~
-        too_long: ~
-        too_short: ~
-        wrong_length: ~
-      template: 
-        body: ~
-        header: 
-          one: ~
-          other: ~
-  date: 
-    abbr_day_names: ~
-    abbr_month_names: ~
-    day_names: ~
-    formats: 
-      default: ~
-      long: ~
-      short: ~
-    month_names: ~
-    order: ~
-  datetime: 
-    distance_in_words: 
-      about_x_hours: 
-        one: ~
-        other: ~
-      about_x_months: 
-        one: ~
-        other: ~
-      about_x_years: 
-        one: ~
-        other: ~
-      almost_x_years: 
-        one: ~
-        other: ~
-      half_a_minute: ~
-      less_than_x_minutes: 
-        one: ~
-        other: ~
-      less_than_x_seconds: 
-        one: ~
-        other: ~
-      over_x_years: 
-        one: ~
-        other: ~
-      x_days: 
-        one: ~
-        other: ~
-      x_minutes: 
-        one: ~
-        other: ~
-      x_months: 
-        one: ~
-        other: ~
-      x_seconds: 
-        one: ~
-        other: ~
-    prompts: 
-      day: ~
-      hour: ~
-      minute: ~
-      month: ~
-      second: ~
-      year: ~
-  errors: 
-    format: ~
-    messages: 
-      accepted: ~
-      blank: ~
-      confirmation: ~
-      empty: ~
-      equal_to: ~
-      even: ~
-      exclusion: ~
-      greater_than: ~
-      greater_than_or_equal_to: ~
-      inclusion: ~
-      invalid: ~
-      less_than: ~
-      less_than_or_equal_to: ~
-      not_a_number: ~
-      not_an_integer: ~
-      odd: ~
-      too_long: ~
-      too_short: ~
-      wrong_length: ~
-  helpers: 
-    select: 
-      prompt: ~
-    submit: 
-      create: ~
-      submit: ~
-      update: ~
-  number: 
-    currency: 
-      format: 
-        delimiter: ~
-        format: ~
-        precision: ~
-        separator: ~
-        significant: ~
-        strip_insignificant_zeros: ~
-        unit: ~
-    format: 
-      delimiter: ~
-      precision: ~
-      separator: ~
-      significant: ~
-      strip_insignificant_zeros: ~
-    human: 
-      decimal_units: 
-        format: ~
-        units: 
-          billion: ~
-          million: ~
-          quadrillion: ~
-          thousand: ~
-          trillion: ~
-          unit: ~
-      format: 
-        delimiter: ~
-        precision: ~
-        significant: ~
-        strip_insignificant_zeros: ~
-      storage_units: 
-        format: ~
-        units: 
-          byte: 
-            one: ~
-            other: ~
-          gb: ~
-          kb: ~
-          mb: ~
-          tb: ~
-    percentage: 
-      format: 
-        delimiter: ~
-    precision: 
-      format: 
-        delimiter: ~
-  support: 
-    array: 
-      last_word_connector: ~
-      two_words_connector: ~
-      words_connector: ~
-    select: 
-      prompt: ~
-  text: 
-    featured: 
-      download: "Ladda ner"
-      download_and_run: "Ladda ner och starta"
-      earn_currency: "Tjäna %{amount_and_currency}"
-      earn_now: "Tjäna nu"
-      show_more_apps: "Visa fler appar"
-      skip: "Hoppa över"
+sv:
+  text:
+    shared:
+      privacy: "Integritetspolicy"
+      ads_by: "Annonsör"
+
+    offerwall:
       title: "Tjäna %{currency}"
-      try_out: Testa
-    games: 
-        about_body: "Med Tapjoy kan du upptäcka populära appar som Happy Park, City of Wonder, Coin Dozer, Overkill, VIP Poker och Gun Bros, samtidigt som du får tillgång exklusivt material i dina favoritappar. Du får nya appar rekommenderade till dig så om du gillar att spela Magic Zoo så kommer Tapjoy att föreslå andra spel du kommer gilla, så som Safari Zoo, eller Bug Village HD. Så Registrera dig för ett konto nu och upptäck ett bättre sätt att hitta nya favoritappar."
-        about_title: "\"Den vet precis vilka appar jag vill ha\""
-        account_created_body: "Registreringen lyckades!"
-        account_created_title: "Registrering"
-        action_required: "Action Required!"
-        add_to_homescreen: "Lägg till %{tapjoy} som bokmärke."
-        advertisers_body: "Nå ut till miljontals användare och visa dina produkter"
-        advertisers_title: "Marknadsförare"
-        allow_marketing_emails: "Tillåt att Tapjoy sänder mig erbjudanden"
-        already_registered: "%{name} har redan registrerat sig, du följer nu han/henne."
-        already_registered: "%{name} har redan registrerat sig, di följer nu dem."
-        back_to_top: "Tillbaks till överst på sidan"
-        birthdate: "Födelsedatum"
-        call_to_action_body: "A better way to love the apps you have and find the apps you'll love"
-        call_to_action_title: "Unlock Mobile Joy"
-        cant_fetch_offers: "Det uppstod ett fel när du försökte ladda fler erbjudanden. Var vänlig försök igen."
-        change_linked_account: "Ändra Länkade Konton"
-        click_to_try_again: "Var vänlig och tryck här för att försöka igen."
-        connect_my_device: "Koppla ihop min telefon"
-        connect_your_android: "Var vänlig och koppla ihop din Android mobil"
-        connect_your_device: "Var vänlig och koppla ihop din mobil"
-        deactivate: "Deaktivera"
-        del_acct_confirm: "Klicka på knappen nedan för att deaktivera ditt konto. När ett konto varit deaktiverat i XXX dagar kommer det att raderas. Vi kan inte återställa raderade konton."
-        delete_my_account: "Ta bort mitt konto"
-        developers_body: "Öka dina intäkter med våra lösningar"
-        developers_title: "Utvecklare"
-        earn_title: "Genomför något av erbjudandena nedan för att tjäna %{currency} i %{app_name}"
-        enable_javascript: "Gå in och ändra din webläsares inställningar och tillåt JavaSkript för att kunna fortsätta använda Tapjoy."
-        enter_birthdate: "Var vänlig fyll i födelsedatum"
-        enter_email: "Var vänlig och fyll i din email adress"
-        enter_password: "Skapa ett lösenord"
-        enter_platform: "Skapa ett lösenord"
-        enter_tos: "Välj iOS eller Android"
-        enter_valid_email: "Fyll i en giltig email adress"
-        favorite_app: "Favoritapp"
-        favorite_category: "Favoritkategori"
-        follow_us: "Följ oss"
-        forgot_pass: "Glömt Lösenord?"
-        free!: "Gratis!"
-        generic_issue: "Ett fel uppstod, var vanlig försök igen"
-        get_it: "Ladda ner!"
-        get_it: "Ladda ner!"
-        grant_us_access: "Var vänlig och delge oss båda tillstånden innan du skickar ut en inbjudan."
-        how_it_works_body:: "Alla dina spel är listade nedan. Klicka på knapparna bredvid apparna för att börja tjäna valuta."
-        how_it_works_title: "Hur fungerar det?"
-        install_and_run: "Installera och kör %{name}"
-        invite: "Bjud in en vän!"
-        invite: "Bjud in dina vänner!"
-        invite: "Bjud in dina vänner!"
-        invite_button: "Bjud in"
-        invite_email_body: "\"%{name} har bjudit in dig till att gå med i Tapjoy, den BÄSTA platsen för att hitta de hetaste apparna. Det är gratis att gå med och börja upptäcka de bästa apparna på iOS och Android, samtidigt som du kan tjäna virtuel valuta i dina favoriter.
-
-        Du slipper ögna igenom tusentals appar i App store eller Android Market för att hitta nästa nedladdning. Tapjoy fixar det åt dig genom att rekommendera appar vi vet att du gillar
-
-        För att komma igång, skapa ditt konto här:\""
-        invite_email_greet: "Hej,"
-        invite_email_signature: "Team Tapjoy"
-        invite_friends: "Bjud in"
-        invite_friends: "Bjud in %{count} vänner"
-        invite_title: "Skicka en mailinbjudan"
-        invites_sent_to: "En Tapjoy inbjudan har nu skickats till %{name}"
-        invites_sent_to: "En Tapjoy inbjudan har skickats till %{name}"
-        issue_registering: "Det uppstod ett fel när du försökte registrera dig"
-        link_my_facebook: "Länka Min Facebook"
-        load_more: "Ladda fler"
-        meta_description: "Tapjoy: Där du upptäcker appar och spel för Android, iPhone och iPad."
-        meta_keywords: "spel, mobilspel, appar, ios, android, iphone, ipad, itouch"
-        more_apps: "Fler appar"
-        my_apps: "Mina appar"
-        none_selected: "Inga valda"
-        oops: "Oops!"
-        our_tos_changed: "Våra %{terms_of_use} har ändrats. Var vänlig och läs igenom och godkänn här nedan. "
-        privacy_policy_href: "Integritetspolicy"
-        provide_other_email: "Var vänlig och fyll en email adress som inte är din egen"
-        recipients_label: "Använd kommatecken mellan olika mailadresser"
-        recommendation: "Rekommendationer"
-        registering: "Godkänn användarvilkoren ovan"
-        select_current_device: "Var vänlig och välj din nuvarande mobil"
-        select_device: "Var vänlig välj mobiltyp"
-        select_friend: "Van vänlig och välj minst en vän innan du skickar ut inbjudan."
-        social_networks: "Sociala nätverk"
-        social_settings: "Socaila inställningar"
-        tap_that: "Tryck bara på %{icon} och välj %{button}"
-        tapjoy_picks: "Tapjoy Tipsar"
-        terms_of_use_href: "Användarvilkor"
-        tos_acknowledge: "Genom att klicka här godkänner jag {terms of use} & {privacy policy}"
-        tos_change_acknowledge: "Genom att klicka här godkänner jag användarvilkoren"
-        unable_to_process: "Tyvärr kan vi inte fullfölja din förfrågan"
-        wifi_required: "Uppkoppling krävs"
-        wifi_required: "Uppkoppling krävs"
-        wrong_device: "Fel enhet?"
-    instructions: 
-      amount_and_currency: "%{amount} %{currency}"
-      continue_link: "Klicka här för att fortsätta."
-      download_action: här
-      download_link: "Om du inte har denna app, klicka %{download_action} för att ladda ner den."
-      earn_currency: "Tjäna %{amount_and_currency}"
-      footer: "Efter att ha genomfört dessa steg kommer du tjäna %{amount_and_currency}."
-      header: "Följ dessa steg för att tjäna %{currency}:"
-      title: Instruktioner
-    offerwall: 
-      buy_currency: "Köp %{amount} %{currency}"
-      earn_currency: "Tjäna %{amount} %{currency}"
-      free: Gratis
-      instructions: "Genomför något av följande erbjudande för att få %{currency}"
-      instructions_non_rewarded: "Discover what's hot on Tapjoy!"
-      load_error: "Var vänlig försök igen."
-      load_more: "Fler erbjudanden!"
-      loading: Laddar...
-      missing_currency: "Saknade %{currency}?"
+      free: "Gratis"
       next: "Nästa %{items}"
-      popular_apps: "Popular Apps"
       previous: "Föregående %{items}"
-      title: "Tjäna %{currency}"
+      missing_currency: "Saknade %{currency}?"
+      instructions: "Genomför något av följande erbjudande för att få %{currency}"
+      popular_apps: "Popular Apps"
+      instructions_non_rewarded: "Discover what's hot on Tapjoy!"
+      earn_currency: "Tjäna %{amount} %{currency}"
+      buy_currency: "Köp %{amount} %{currency}"
+      load_more: "Fler erbjudanden!"
+      loading: "Laddar..."
+      load_error: "Var vänlig försök igen."
       wifi_required: "Wifi Required"
       wifi_warning: "This app requires a wifi connection to download."
-    shared: 
-        about_link: "\"Om Tapjoy\""
-        android: "Android"
-        back: "Tillbaks"
-        back: "Tillbaks"
-        blog: "Blogg"
-        cancel: "Avbryt"
-        city: "Stad"
-        confirm_password: "Bekräfta Lösenord"
-        continue: "Fortsätt"
-        copyright: "Copyright © 2012 Tapjoy, Inc. All Rights Reserved. Tapjoy and the Tapjoy logo are trademarks or registered trademarks the property of their respective owners."
-        country: "Land"
-        create_account: "Skapa konto"
-        day: "Dag"
-        earn: "Tjäna"
-        email: "Email"
-        facebook_profile: "Facebook profil"
-        female: "Tjej "
-        followers: "Följer dig"
-        following: "Följer"
-        friends: "Vänner"
-        gender: "Kille/Tjej"
-        help: "Hjälp"
-        ios: "iOS"
-        login_noun: "Login"
-        login_verb: "Logga in"
-        logout: "Logga ut"
-        male: "Kille"
-        month: "Månad"
-        my_account: "Mitt Konto"
-        my_profile: "Min Profil"
-        name: "Namn"
-        new_password: "Nytt Lösenord"
-        nickname: "Smeknamn"
-        ok: "OK"
-        options: "Intällningar"
-        other: "Andra"
-        password: "Lösenord"
-        preferences: "Preferenser"
-        privacy_policy: "Integritetsinställningar"
-        recipients: "Mottagare"
-        reset_password: "Återställ Lösenord"
-        save: "Spara"
-        save: "Spara"
-        share: "Dela"
-        sign_in: "Logga in"
-        sign_up: "Skaffa konto"
-        sign_up: "Registrera Dig"
-        success: "Det lyckades!"
-        try_again: "Försök igen"
-        updating: "Updaterar"
-        year: "År"
-        zip_postal: "Postkod"
-    support: 
-      abuse_warning: "Detta formulär är endast till för dem som inte har blivit belönade för ett genomfört erbjudanden. Missbruk kan leda till att ditt konto blir avstängt från att ta del av erbjudanden i framtiden. "
-      description_label: "Beskrivning:"
-      email_address_label: "Email adress:"
+
+    featured:
+      title: "Tjäna %{currency}"
+      download_and_run: "Ladda ner och starta"
+      try_out: "Testa"
+      download: "Ladda ner"
+      skip: "Hoppa över"
+      earn_now: "Tjäna nu"
+      show_more_apps: "Visa fler appar"
+      earn_currency: "Tjäna %{amount_and_currency}"
+
+    unavailable_offer:
+      message: "Vi beklagar men %{offer} är inte längre tillgängligt. Du kan återgå till föregående sida och uppdatera den för att se de senaste erbjudandena."
+      optional_message: "Eller, klicka här för att ladda ner %{offer} ändå."
+
+    instructions:
+      title: "Instruktioner"
+      amount_and_currency: "%{amount} %{currency}"
+      earn_currency: "Tjäna %{amount_and_currency}"
+      header: "Följ dessa steg för att tjäna %{currency}:"
+      footer: "Efter att ha genomfört dessa steg kommer du tjäna %{amount_and_currency}."
+      download_action: "här"
+      download_link: "Om du inte har denna app, klicka %{download_action} för att ladda ner den."
+      continue_link: "Klicka här för att fortsätta."
+
+    support:
+      title: "Saknade %{currency}?"
       instructions_1: "Var vänlig välj det erbjudande du genomförde utan att tilldelas %{currency} och skriv in din email adress. "
       instructions_2: "Om du skickar in din förfrågan utan fullständig information kommer det att resultera i längre behandlingstid. Prioritering ges till förfrågningar med fullständig information."
-      invalid_email: "Var vänlig och fyll i en giltig email adress."
-      missing_description: "Var vänlig och beskriv det erbjudande du genomförde."
-      missing_offer: "Du måste specificera det erbjudande du genomförde."
-      no_incomplete_offers_label: "Inga matchande erbjudanden kunde hittas."
-      select_offer: "Välj erbjudande"
       specify_offer_label: "Specificera erbjudande:"
+      description_label: "Beskrivning:"
+      email_address_label: "Email adress:"
       submit_support_request: "Skicka in Supportförfrågan"
       support_request_submitted: "Supportförfrågan skickad"
       thanks: "Tack för att du fyllt i supportförfrågan! Du kommer tilldelas din %{currency} när vi har verifierat att du genomfört erbjudandet."
-      title: "Saknade %{currency}?"
-    unavailable_offer: 
-      message: "Vi beklagar men %{offer} är inte längre tillgängligt. Du kan återgå till föregående sida och uppdatera den för att se de senaste erbjudandena."
-      optional_message: "Eller, klicka här för att ladda ner %{offer} ändå."
-  time: 
-    am: ~
-    formats: 
-      day: ~
-      day_long: ~
-      day_short: ~
-      default: ~
-      long: ~
-      short: ~
-    pm: ~
+      missing_description: "Var vänlig och beskriv det erbjudande du genomförde."
+      missing_offer: "Du måste specificera det erbjudande du genomförde."
+      invalid_email: "Var vänlig och fyll i en giltig email adress."
+      abuse_warning: "Detta formulär är endast till för dem som inte har blivit belönade för ett genomfört erbjudanden. Missbruk kan leda till att ditt konto blir avstängt från att ta del av erbjudanden i framtiden. "
+      select_offer: "Välj erbjudande"
+      no_incomplete_offers_label: "Inga matchande erbjudanden kunde hittas."

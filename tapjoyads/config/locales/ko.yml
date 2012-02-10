@@ -1,376 +1,63 @@
---- 
-ko: 
-  activerecord: 
-    errors: 
-      full_messages: 
-        format: ~
-      messages: 
-        accepted: ~
-        blank: ~
-        confirmation: ~
-        empty: ~
-        equal_to: ~
-        even: ~
-        exclusion: ~
-        greater_than: ~
-        greater_than_or_equal_to: ~
-        inclusion: ~
-        invalid: ~
-        less_than: ~
-        less_than_or_equal_to: ~
-        not_a_number: ~
-        not_an_integer: ~
-        odd: ~
-        record_invalid: ~
-        taken: ~
-        too_long: ~
-        too_short: ~
-        wrong_length: ~
-      template: 
-        body: ~
-        header: 
-          one: ~
-          other: ~
-  date: 
-    abbr_day_names: ~
-    abbr_month_names: ~
-    day_names: ~
-    formats: 
-      default: ~
-      long: ~
-      short: ~
-    month_names: ~
-    order: ~
-  datetime: 
-    distance_in_words: 
-      about_x_hours: 
-        one: ~
-        other: ~
-      about_x_months: 
-        one: ~
-        other: ~
-      about_x_years: 
-        one: ~
-        other: ~
-      almost_x_years: 
-        one: ~
-        other: ~
-      half_a_minute: ~
-      less_than_x_minutes: 
-        one: ~
-        other: ~
-      less_than_x_seconds: 
-        one: ~
-        other: ~
-      over_x_years: 
-        one: ~
-        other: ~
-      x_days: 
-        one: ~
-        other: ~
-      x_minutes: 
-        one: ~
-        other: ~
-      x_months: 
-        one: ~
-        other: ~
-      x_seconds: 
-        one: ~
-        other: ~
-    prompts: 
-      day: ~
-      hour: ~
-      minute: ~
-      month: ~
-      second: ~
-      year: ~
-  errors: 
-    format: ~
-    messages: 
-      accepted: ~
-      blank: ~
-      confirmation: ~
-      empty: ~
-      equal_to: ~
-      even: ~
-      exclusion: ~
-      greater_than: ~
-      greater_than_or_equal_to: ~
-      inclusion: ~
-      invalid: ~
-      less_than: ~
-      less_than_or_equal_to: ~
-      not_a_number: ~
-      not_an_integer: ~
-      odd: ~
-      too_long: ~
-      too_short: ~
-      wrong_length: ~
-  helpers: 
-    select: 
-      prompt: ~
-    submit: 
-      create: ~
-      submit: ~
-      update: ~
-  number: 
-    currency: 
-      format: 
-        delimiter: ~
-        format: ~
-        precision: ~
-        separator: ~
-        significant: ~
-        strip_insignificant_zeros: ~
-        unit: ~
-    format: 
-      delimiter: ~
-      precision: ~
-      separator: ~
-      significant: ~
-      strip_insignificant_zeros: ~
-    human: 
-      decimal_units: 
-        format: ~
-        units: 
-          billion: ~
-          million: ~
-          quadrillion: ~
-          thousand: ~
-          trillion: ~
-          unit: ~
-      format: 
-        delimiter: ~
-        precision: ~
-        significant: ~
-        strip_insignificant_zeros: ~
-      storage_units: 
-        format: ~
-        units: 
-          byte: 
-            one: ~
-            other: ~
-          gb: ~
-          kb: ~
-          mb: ~
-          tb: ~
-    percentage: 
-      format: 
-        delimiter: ~
-    precision: 
-      format: 
-        delimiter: ~
-  support: 
-    array: 
-      last_word_connector: ~
-      two_words_connector: ~
-      words_connector: ~
-    select: 
-      prompt: ~
-  text: 
-    featured: 
-      download: 다운로드
-      download_and_run: "다운로드 받고 실행해보기."
-      earn_currency: "%{amount_and_currency}를 지급 받기."
-      earn_now: "지금 당장 획득하기."
-      show_more_apps: "앱 리스트를 더 보기"
-      skip: 무시하기.
-      title: "%{currency}를 지급 받기."
-      try_out: "사용해 보기."
-    games: 
-        about_body: "\"탭조이는 여러분이 좋아하는 앱들을 사용하는 동안 해피파크, 코인도저, 건브로스 등의 유명 앱들과 만날 수 있도록 해드립니다. 또한 여러분이 좋아하는 게임들의 유형을 파악하여 그와 비슷한 게임들을 추천해 드립니다.
+ko:
+  text:
+    shared:
+      privacy: "프라이버시"
+      ads_by: "Ads by"
 
-        그러니 지금 탭조이에 가입하셔서 여러분들이 좋아할 앱들을 더 쉽게  만나보세요. \""	
-        about_title: ""	
-        account_created_body: "당신의 탭조이 계정이 성공적으로 생성되었습니다."	
-        account_created_title: "성공!"	
-        action_required: ""	
-        add_to_homescreen: "당신의 홈화면에 {tapjoy}를 추가해주세요"	
-        advertisers_body: "수백만의 유저와 만나고 당신의 상품을 노출해 보세요."	
-        advertisers_title: "광고주"	
-        allow_marketing_emails: "탭조이 마케팅 이메일 수신허용"	
-        already_registered: "%{name}님은 이미 등록되었습니다. 이제 그/그녀를 팔로우 할 수 있습니다."	
-        already_registered: "%{name}님은 이미 등록되었습니다. 이제 그들을 팔로우 할 수 있습니다."	
-        back_to_top: "최상위로 돌아가기"	
-        birthdate: "생일"	
-        call_to_action_body: "당신이 좋아할 앱을 좀 더 쉽게 찾고 사랑할 수 있는 방법"	
-        call_to_action_title: ""	
-        cant_fetch_offers: "문제가 발생하여 더 볼 수가 없습니다. 다시 시도해 주세요."	
-        change_linked_account: "연결 계정 변경하기"	
-        click_to_try_again: "이곳을 클릭해 다시 시도해 주세요"	
-        connect_my_device: "내 기계 연결하기"	
-        connect_your_android: "당신의 안드로이드 기계를 연결해주세요"	
-        connect_your_device: "당신의 기계를 연결해 주세요."	
-        deactivate: "비활성화 하기"	
-        del_acct_confirm: "아래 버튼을 클릭하시면 우선 계정이 비활성화 됩니다. 그리고 다시 XXX일이 경과하면 계정이 영구 삭제됩니다. 계정이 완전 삭제되면 복구가 불가하니 유의해주세요."	
-        delete_my_account: "계정 삭제하기"	
-        developers_body: "탭조이 수익화 툴을 통해 당신의 앱의 수익을 극대화해보세요."	
-        developers_title: "개발자"	
-        earn_title: "아래 오퍼들을 수행하면 {app name}의 {currency}를 얻게 됩니다."	
-        enable_javascript: "탭조이 사용을 위해 당신의 브라우저 세팅에서 자바 스크립트를 허용해 주세요."	
-        enter_birthdate: "생일을 입력해 주세요"	
-        enter_email: "이메일 주소를 입력해 주세요"	
-        enter_password: "비밀번호를 입력해주세요"	
-        enter_platform: "iOS인지 Android인지 선택해 주세요"	
-        enter_tos: "상기 사용 약관에 동의해 주세요"	
-        enter_valid_email: "유효한 이메일 주소를 입력해 주세요"	
-        favorite_app: "선호하는 앱"	
-        favorite_category: "선호하는 카테고리"	
-        follow_us: "팔로우 하기"	
-        forgot_pass: "비밀번호 찾기"	
-        free!: "무료"	
-        generic_issue: "문제가 발생했습니다. 다시 시도해 주세요."	
-        get_it: "다운받기"	
-        get_it: "다운 받기"	
-        grant_us_access: "초대장 발송 전에 저희에게 대행 권한을 부여해주세요"	
-        how_it_works_body:: "당신의 모든 게임이 아래에 리스팅되었습니다. 앱 옆의 버튼을 클릭해 앱의 가상화폐(코인, 골드 등)를 얻어보세요."	
-        how_it_works_title: ""	
-        install_and_run: "{name}을 인스톨하고 실행해주세요"	
-        invite: "친구 초대하기!"	
-        invite: "친구 초대하기!"	
-        invite: "친구 초대하기!"	
-        invite_button: "초대"	
-        invite_email_body: "\"%{name}님이 당신을 가장 인기있는 앱들이 소개되는 탭조이로 초대하셨습니다. 가입은 무료이며, iOS와 안드로이드의 가장 인기있는 앱들을 만나보실 수 있는 것은 물론 여러분이 좋아하는 앱들의 포인트를 얻으실 수도 있습니다.
-
-        수많은 앱들이 난무하는 앱스토어에서 헤매지 말고 탭조이가 추천해드리는 앱들을 통해 쉽게 당신이 좋아할 게임을 만나보세요!
-
-        아래 링크를 통해 가입을 하실 수 있습니다.\""	
-        invite_email_greet: "안녕하세요."	
-        invite_email_signature: "팀 탭조이"	
-        invite_friends: "초대하기"	
-        invite_friends: "%{count}명의 친구들을 초대하기"	
-        invite_title: "초대 이메일 보내기"	
-        invites_sent_to: "탭조이 초대장이 %{name}에게 발송되었습니다."	
-        invites_sent_to: "탭조이 초대장이 %{name}에게 발송되었습니다."	
-        issue_registering: "당신의 계정을 등록하는데 문제가 발생하였습니다."	
-        link_my_facebook: "내 페이스북 연결하기"	
-        load_more: "더 보기"	
-        meta_description: "탭조이: 안드로이드, 아이폰 아이패드의 앱들과 게임을 만날 수 있는 종착역"	
-        meta_keywords: ""	
-        more_apps: "더 많은 앱 보기"	
-        my_apps: "나의 앱"	
-        none_selected: "미설정"	
-        oops: ""	
-        our_tos_changed: "저희의 사용 정책이 변경되었습니다. 아래의 사항을 확인 후 통의해 주세요."	
-        privacy_policy_href: "개인정보 보호정책"	
-        provide_other_email: "다른 이메일을 입력해 주세요"	
-        recipients_label: "여러명에게 보낼 때는 쉼표를 이용해 주세요."	
-        recommendation: "추천 목록"	
-        registering: "입력 중"	
-        select_current_device: "당신의 현재 기계를 선택해주세요"	
-        select_device: "당신의 기계를 선택해주세요"	
-        select_friend: "초대장 발송을 위해 적어도 하나의 친구를 선택해 주세요"	
-        social_networks: "소셜 네트워크"	
-        social_settings: "소셜 기능 설정"	
-        tap_that: "{icon}을 클릭해 {button}을 선택해 주세요"	
-        tapjoy_picks: "스탭 추천"	
-        terms_of_use_href: "사용 약관"	
-        tos_acknowledge: "사용 약관과 개인정보 보호정책에 동의를 위해 체크박스를 체크해주세요"	
-        tos_change_acknowledge: "사용 약관 동의를 위해 체크박스를 체크해주세요"	
-        unable_to_process: "죄송합니다, 당신의 요청을 진행할 수 없습니다."	
-        wifi_required: "와이파이 접속 필요"
-    instructions: 
-      amount_and_currency: "%{amount} %{currency}"
-      continue_link: "계속하시려면 여기를 클릭하십시오."
-      download_action: 여기
-      download_link: "이 앱을 가지고 있지 않다면 %{download_action}를 클릭하여 다운로드 받으십시오."
-      earn_currency: "%{amount_and_currency}를 지급 받기."
-      footer: "다음 스텝들을 완료한 이후에, %{amount_and_currency}를 획득할 수 있습니다."
-      header: "다음 스텝들을 완료하고 %{currency}를 획득하십시오."
-      title: 이용안내
-    offerwall: 
-      buy_currency: "%{amount} %{currency}를 구매하기."
-      earn_currency: "%{amount} %{currency}를 지급 받기"
-      free: 무료
-      instructions: "다음 액션들 중 한 가지를 완료하면 %{currency}를 지급 받을 수 있습니다."
-      instructions_non_rewarded: "Discover what's hot on Tapjoy!"
-      load_error: "다시 한번 시도해주십시오."
-      load_more: "더 보여 주세요!"
-      loading: 로딩중...
-      missing_currency: "Missing %{currency}?"
-      next: "다음 %{items}건"
-      popular_apps: "Popular Apps"
-      previous: "이전 %{items}건"
+    offerwall:
       title: "%{currency}를 지급받기"
+      free: "무료"
+      next: "다음 %{items}건"
+      previous: "이전 %{items}건"
+      missing_currency: "Missing %{currency}?"
+      instructions: "다음 액션들 중 한 가지를 완료하면 %{currency}를 지급 받을 수 있습니다."
+      popular_apps: "Popular Apps"
+      instructions_non_rewarded: "Discover what's hot on Tapjoy!"
+      earn_currency: "%{amount} %{currency}를 지급 받기"
+      buy_currency: "%{amount} %{currency}를 구매하기."
+      load_more: "더 보여 주세요!"
+      loading: "로딩중..."
+      load_error: "다시 한번 시도해주십시오."
       wifi_required: "Wifi Required"
       wifi_warning: "This app requires a wifi connection to download."
-    shared: 
-      about_link: ~
-      ads_by: "Ads by"
-      android: ~
-      back: ~
-      blog: ~
-      cancel: ~
-      city: ~
-      confirm_password: ~
-      continue: ~
-      copyright: ~
-      country: ~
-      day: ~
-      email: ~
-      facebook_profile: ~
-      female: ~
-      followers: ~
-      following: ~
-      friends: ~
-      gender: ~
-      help: ~
-      invite: ~
-      ios: ~
-      login_noun: ~
-      login_verb: ~
-      logout: ~
-      male: ~
-      month: ~
-      my_account: ~
-      my_profile: ~
-      name: ~
-      new_password: ~
-      nickname: ~
-      ok: ~
-      options: ~
-      other: ~
-      password: ~
-      preferences: ~
-      privacy: 프라이버시
-      privacy_policy: ~
-      recipients: ~
-      reset_password: ~
-      save: ~
-      share: ~
-      sign_in: ~
-      sign_up: ~
-      success: ~
-      try_again: ~
-      updating: ~
-      year: ~
-      zip_postal: ~
-    support: 
-      abuse_warning: "이 양식은 제안 안건 절차를 종료 했음에도 불구하고, 가상 통화를받지 못한 고객을위한 것입니다. 부정 사용의 경우에는 앞으로 사용에 제약을 받게됩니다."
-      description_label: 설명
-      email_address_label: "이메일 주소"
+
+    featured:
+      title: "%{currency}를 지급 받기."
+      download_and_run: "다운로드 받고 실행해보기."
+      try_out: "사용해 보기."
+      download: "다운로드"
+      skip: "무시하기."
+      earn_now: "지금 당장 획득하기."
+      show_more_apps: "앱 리스트를 더 보기"
+      earn_currency: "%{amount_and_currency}를 지급 받기."
+
+    unavailable_offer:
+      message: "%{offer}는 더 이상 유효하지 않습니다. 직전 페이지로 돌아가셔서 새 오퍼 리스트를 보실 수 있습니다."
+      optional_message: "혹은, 여기를 클릭하여 %{offer}를 일단 다운로드해 봅니다."
+
+    instructions:
+      title: "이용안내"
+      amount_and_currency: "%{amount} %{currency}"
+      earn_currency: "%{amount_and_currency}를 지급 받기."
+      header: "다음 스텝들을 완료하고 %{currency}를 획득하십시오."
+      footer: "다음 스텝들을 완료한 이후에, %{amount_and_currency}를 획득할 수 있습니다."
+      download_action: "여기"
+      download_link: "이 앱을 가지고 있지 않다면 %{download_action}를 클릭하여 다운로드 받으십시오."
+      continue_link: "계속하시려면 여기를 클릭하십시오."
+
+    support:
+      title: "%{currency}가 지급되지 않았을 경우?"
       instructions_1: "%{currency}를 받지 못한 제안 광고를 선택하고 이메일 주소를 입력하십시오."
       instructions_2: "자세한 정보가 기입되어 있지 않을 때는 시간이 걸리는 경우가 있습니다."
-      invalid_email: "올바른 이메일 주소를 입력해주십시오."
-      missing_description: "제안 광고 내용을 기입해주십시오."
-      missing_offer: "제안 광고 내용을 입력해야합니다."
-      no_incomplete_offers_label: "광고를 제공하지 못했습니다."
-      select_offer: "제안 광고를 선택하여 주십시오."
       specify_offer_label: "제안 광고를 지정하십시오."
+      description_label: "설명"
+      email_address_label: "이메일 주소"
       submit_support_request: "고객지원 요청"
       support_request_submitted: "고객지원 요청이 접수되었습니다."
       thanks: "감사합니다. 지원요청이 접수되었습니다. 사용자님께서 제안광고의 절차를 완료했는지 저희 쪽에서 검증을 한 후, %{currency}를 지급해드리겠습니다."
-      title: "%{currency}가 지급되지 않았을 경우?"
-    unavailable_offer: 
-      message: "%{offer}는 더 이상 유효하지 않습니다. 직전 페이지로 돌아가셔서 새 오퍼 리스트를 보실 수 있습니다."
-      optional_message: "혹은, 여기를 클릭하여 %{offer}를 일단 다운로드해 봅니다."
-  time: 
-    am: ~
-    formats: 
-      day: ~
-      day_long: ~
-      day_short: ~
-      default: ~
-      long: ~
-      short: ~
-    pm: ~
+      missing_description: "제안 광고 내용을 기입해주십시오."
+      missing_offer: "제안 광고 내용을 입력해야합니다."
+      invalid_email: "올바른 이메일 주소를 입력해주십시오."
+      abuse_warning: "이 양식은 제안 안건 절차를 종료 했음에도 불구하고, 가상 통화를받지 못한 고객을위한 것입니다. 부정 사용의 경우에는 앞으로 사용에 제약을 받게됩니다."
+      select_offer: "제안 광고를 선택하여 주십시오."
+      no_incomplete_offers_label: "광고를 제공하지 못했습니다."
