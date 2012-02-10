@@ -140,7 +140,7 @@ class BillingController < WebsiteController
       flash[:error] = "Transfer amount must be less than your Pending Earnings."
     else
       Partner.transaction do
-        payout, order, marketing_order = current_partner.build_transfer(amount)
+        payout, order, marketing_order = current_partner.build_transfer(amount, "Submitted by partner.")
 
         log_activity(payout)
         payout.save!

@@ -15,7 +15,7 @@
         = f.currency_field :amount, {}, :class => 'allow_negative'
         = error_message_on @earnings_adjustment, :amount
     %tr
-      %th= f.label :notes
+      %th= f.label :notes, "Internal notes"
       %td
         = f.text_field :notes, :size => 50
         = error_message_on @earnings_adjustment, :notes

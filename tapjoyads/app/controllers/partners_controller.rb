@@ -134,6 +134,7 @@ class PartnersController < WebsiteController
 
   def new_transfer
     @freeze_enabled = PayoutFreeze.enabled?
+    @transfer = Transfer.new
   end
 
   def create_transfer
@@ -143,10 +144,15 @@ class PartnersController < WebsiteController
       return
     end
 
-    sanitized_params = sanitize_currency_params(params, [ :transfer_amount ])
-    amount = sanitized_params[:transfer_amount].to_i
+    transfer_params = sanitize_currency_params(params[:transfer], [:amount])
+    @transfer = Transfer.new(transfer_params)
+
+    unless @transfer.valid?
+      return render :new_transfer
+    end
+
     Partner.transaction do
-      payout, order, marketing_order = @partner.build_transfer(amount)
+      payout, order, marketing_order = @partner.build_transfer(@transfer.amount, @transfer.internal_notes)
 
       log_activity(payout)
       payout.save!
@@ -155,7 +161,7 @@ class PartnersController < WebsiteController
       order.save!
 
       email = order.partner.users.first.email rescue "(no email)"
-      flash[:notice] = "The transfer of <b>$#{"%.2f" % (amount / 100.0)}</b> to <b>#{email}</b> was successfully created."
+      flash[:notice] = "The transfer of <b>$#{"%.2f" % (@transfer.amount / 100.0)}</b> to <b>#{email}</b> was successfully created."
 
       if marketing_order.present?
         log_activity(marketing_order)
