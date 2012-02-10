@@ -13,12 +13,12 @@ class Games::GamerReviewsController < GamesController
   end
 
   def create
-    @app = App.find(params[:gamer_review][:app_id])
     @gamer_review = GamerReview.new(params[:gamer_review])
+    @app = @gamer_review.app
 
     if @gamer_review.save
       flash[:notice] = 'App review was successfully created.'
-      redirect_to new_games_gamer_review_path(:app_id => params[:gamer_review][:app_id])
+      redirect_to new_games_gamer_review_path(:app_id => @app.id)
     else
       if @gamer_review.errors[:author_id].any?
         flash.now[:notice] = 'You have already reviewed this app.'

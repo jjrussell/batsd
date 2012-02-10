@@ -4,20 +4,20 @@ describe Tools::GamerReviewsController do
   before :each do
     fake_the_web
     activate_authlogic
-    @admin = Factory(:admin)
-    @partner = Factory(:partner, :id => TAPJOY_PARTNER_ID)
-    @admin.partners << @partner
-    login_as(@admin)
+    admin = Factory(:admin)
+    partner = Factory(:partner, :id => TAPJOY_PARTNER_ID)
+    admin.partners << partner
+    login_as(admin)
 
     @app = Factory(:app, :thumb_up_count => 0, :thumb_down_count => 0)
-    @app2 = Factory(:app, :thumb_up_count => 0, :thumb_down_count => 0)
+    app2 = Factory(:app, :thumb_up_count => 0, :thumb_down_count => 0)
     @gamer = Factory(:gamer)
-    @gamer2 = Factory(:gamer)
+    gamer2 = Factory(:gamer)
 
     @gamer_review = Factory(:gamer_review, :author => @gamer, :app => @app)
-    Factory(:gamer_review, :author => @gamer, :app => @app2, :user_rating => 0)
-    Factory(:gamer_review, :author => @gamer2, :app => @app, :user_rating => 0)
-    Factory(:gamer_review, :author => @gamer2, :app => @app2, :user_rating => 0)
+    Factory(:gamer_review, :author => @gamer, :app => app2, :user_rating => 0)
+    Factory(:gamer_review, :author => gamer2, :app => @app, :user_rating => 0)
+    Factory(:gamer_review, :author => gamer2, :app => app2, :user_rating => 0)
   end
 
   describe '#index' do
@@ -37,7 +37,7 @@ describe Tools::GamerReviewsController do
       end
 
       it 'returns gamer reviews written by the author' do
-        assigns[:gamer_reviews].size.should == 2
+        assigns[:gamer_reviews].scoped(:order => 'created_at').should == @gamer.gamer_reviews.scoped(:order => 'created_at')
       end
     end
 
@@ -47,7 +47,7 @@ describe Tools::GamerReviewsController do
       end
 
       it 'returns gamer reviews for app' do
-        assigns[:gamer_reviews].size.should == 2
+        assigns[:gamer_reviews].scoped(:order => 'created_at').should == @app.gamer_reviews.scoped(:order => 'created_at')
       end
     end
   end
@@ -89,11 +89,11 @@ describe Tools::GamerReviewsController do
       end
 
       it 'updates app thumb_up_count' do
-        assigns[:gamer_review].app.thumb_up_count.should == 0
+        @app.reload.thumb_up_count.should == 0
       end
 
       it 'updates app thumb_down_count' do
-        assigns[:gamer_review].app.thumb_down_count.should == 1
+        @app.reload.thumb_down_count.should == 1
       end
     end
   end

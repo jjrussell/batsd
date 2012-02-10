@@ -8,22 +8,21 @@
 %ul.review_list.clearfix
   - gamer_reviews.each do |gamer_review|
     - gamer = gamer_review.author
-    - if gamer
-      %li.review_item.clearfix
-        .others_profile_image
-          = image_tag(gamer.get_avatar_url)
-        .offer_text.clearfix
-          .others_review_meta
-            %span.others_name.left= gamer.get_gamer_name
-            %span.others_review_rating.clearfix{ :id => gamer.id, :rating => gamer_review.user_rating }
-          .others_review_content_collapse{ :id => gamer.id }
-            %span.truncated_text= truncate(gamer_review.text, :length => 100)
-            - if gamer_review.text.length > 100
-              %span.read_more read more
+    %li.review_item.clearfix
+      .others_profile_image
+        = image_tag(gamer.get_avatar_url)
+      .offer_text.clearfix
+        .others_review_meta
+          %span.others_name.left= gamer.get_gamer_name
+          %span.others_review_rating.clearfix{ :id => gamer.id, :rating => gamer_review.user_rating }
+        .others_review_content_collapse{ :id => gamer.id }
+          %span.truncated_text= truncate(gamer_review.text, :length => 100)
           - if gamer_review.text.length > 100
-            .others_review_content_expand.hide{ :id => gamer.id }
-              .full_text= gamer_review.text
-              .collapse collapse  &#8679;
+            %span.read_more read more
+        - if gamer_review.text.length > 100
+          .others_review_content_expand.hide{ :id => gamer.id }
+            .full_text= gamer_review.text
+            .collapse collapse  &#8679;
 
 .pagination_wrapper
   .my_pagination.clearfix

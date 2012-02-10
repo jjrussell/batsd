@@ -26,7 +26,7 @@ describe Games::GamerReviewsController do
     context 'when gamer review not exist' do
       it 'creates a gamer review' do
         flash[:notice].should == 'App review was successfully created.'
-        response.should redirect_to(new_games_gamer_review_path(:app_id => params[:gamer_review][:app_id]))
+        response.should redirect_to(new_games_gamer_review_path(:app_id => @app.id))
       end
 
       it 'copies platform' do
@@ -53,7 +53,7 @@ describe Games::GamerReviewsController do
         post 'create', @options
       end
 
-      it 'sets a flash notice messgae' do
+      it 'sets a flash notice message' do
         response.session[:flash][:notice].should == 'You have already reviewed this app.'
       end
 

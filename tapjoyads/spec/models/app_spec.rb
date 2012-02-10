@@ -136,10 +136,9 @@ describe App do
     end
   end
 
-  context '#total_thumbs_count' do
+  describe '#total_thumbs_count' do
     before :each do
-      @action_offer = Factory(:action_offer)
-      @app = @action_offer.app
+      @app = Factory(:action_offer).app
       @app.thumb_up_count   = 4
       @app.thumb_down_count = 4
     end
@@ -149,10 +148,9 @@ describe App do
     end
   end
 
-  context '#positive_thumbs_percentage' do
+  describe '#positive_thumbs_percentage' do
     before :each do
-      @action_offer = Factory(:action_offer)
-      @app = @action_offer.app
+      @app = Factory(:action_offer).app
       @app.thumb_up_count   = 4
       @app.thumb_down_count = 4
     end
