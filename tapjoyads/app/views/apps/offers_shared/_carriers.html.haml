@@ -98,10 +98,10 @@
             noneChecked = false;
           }
         });
-        if(!noneChecked) {
-           $(this).parent().parent().parent().find('.carrier-label').addClass('some-checked');
-        } else {
+        if(noneChecked) {
           $(this).parent().parent().parent().find('.carrier-label').removeClass('some-checked');
+        } else {
+          $(this).parent().parent().parent().find('.carrier-label').addClass('some-checked');
         }
         setCarriers();
       });
