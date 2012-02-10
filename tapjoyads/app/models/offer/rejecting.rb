@@ -25,7 +25,7 @@ module Offer::Rejecting
     [ 'afde4da8-3943-44fd-a901-08be5470eaa4', '2ff9ad4e-58a2-417b-9333-d65835b71049' ] => [ 'afde4da8-3943-44fd-a901-08be5470eaa4', '2ff9ad4e-58a2-417b-9333-d65835b71049' ]
   }
 
-  def postcache_reject?(publisher_app, device, currency, device_type, geoip_data, app_version, direct_pay_providers, type, hide_rewarded_app_installs, library_version, os_version, screen_layout_size, video_offer_ids, source, all_videos)
+  def postcache_reject?(publisher_app, device, currency, device_type, geoip_data, app_version, direct_pay_providers, type, hide_rewarded_app_installs, library_version, os_version, screen_layout_size, video_offer_ids, source, all_videos, mobile_carrier_code)
     geoip_reject?(geoip_data, device) ||
     already_complete?(device, app_version) ||
     selective_opt_out_reject?(device) ||
@@ -46,7 +46,8 @@ module Offer::Rejecting
     frequency_capping_reject?(device) ||
     tapjoy_games_retargeting_reject?(device) ||
     source_reject?(source) ||
-    non_rewarded_offerwall_rewarded_reject?(currency)
+    non_rewarded_offerwall_rewarded_reject?(currency) ||
+    carriers_reject?(mobile_carrier_code)
   end
 
   def precache_reject?(platform_name, hide_rewarded_app_installs, normalized_device_type)
@@ -252,4 +253,13 @@ module Offer::Rejecting
   def recommendable_types_reject?
     item_type != 'App'
   end
+
+  def carriers_reject?(mobile_carrier_code)
+    if get_carriers.present?
+      return true if Carriers::MCC_MNC_TO_CARRIER_NAME[mobile_carrier_code].blank?
+      return true if !get_carriers.include?(Carriers::MCC_MNC_TO_CARRIER_NAME[mobile_carrier_code])
+    end
+    false
+  end
+
 end

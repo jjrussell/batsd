@@ -122,6 +122,8 @@ private
 
     #TJG app offers will show wifi only icon (except for android there's no cell download limit yet), for offerwall only windows phone will show the icon
     @show_wifi_only = (params[:show_wifi_only] == '1') || (params[:device_type] == 'windows')
+
+    @mobile_carrier_code = params[:mobile_country_code].to_s << params[:mobile_network_code].to_s
   end
 
   def get_offer_list(type = nil)
@@ -141,7 +143,8 @@ private
       :source               => params[:source],
       :screen_layout_size   => params[:screen_layout_size],
       :video_offer_ids      => params[:video_offer_ids].to_s.split(','),
-      :all_videos           => params[:all_videos]
+      :all_videos           => params[:all_videos],
+      :mobile_carrier_code  => @mobile_carrier_code
     )
   end
 

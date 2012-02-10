@@ -64,6 +64,7 @@ class Apps::ActionOffersController < WebsiteController
         :primary_offer_attributes_publisher_app_whitelist,
         :primary_offer_attributes_overall_budget,
         :primary_offer_attributes_min_bid_override,
+        :primary_offer_attributes_carriers,
       ]
     end
     if @action_offer.safe_update_attributes params[:action_offer], safe_attributes
