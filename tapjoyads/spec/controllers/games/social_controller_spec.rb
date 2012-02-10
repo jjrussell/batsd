@@ -9,7 +9,7 @@ describe Games::SocialController do
     login_as(gamer)
   end
 
-  context "#send_facebook_invites" do
+  describe "#send_facebook_invites" do
     before :each do
       mogli_user = mock('mogli user')
       mogli_post = mock('mogli post')
