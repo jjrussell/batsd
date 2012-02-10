@@ -31,7 +31,7 @@ class ActionOffer < ActiveRecord::Base
     primary_offer.save
   end
 
-private
+  private
 
   def create_primary_offer
     offer                  = Offer.new(:item => self)
@@ -41,7 +41,7 @@ private
     offer.url              = app.store_url
     offer.instructions     = instructions
     offer.device_types     = app.primary_offer.device_types
-    offer.price            = prerequisite_offer_id? ? 0 : app.price
+    offer.price            = offer_price
     offer.bid              = offer.min_bid
     offer.name_suffix      = 'action'
     offer.third_party_data = prerequisite_offer_id
@@ -57,7 +57,7 @@ private
       offer.name             = name if name_changed?
       offer.instructions     = instructions if instructions_changed? && !offer.instructions_overridden?
       offer.hidden           = hidden if hidden_changed?
-      offer.price            = (prerequisite_offer_id? ? 0 : app.price) + price
+      offer.price            = offer_price
       if offer.price_changed? && offer.bid < offer.min_bid
         offer.bid = offer.min_bid
       end
@@ -69,4 +69,9 @@ private
   def set_variable_name
     self.variable_name = 'TJC_' + name.gsub(/[^[:alnum:]]/, '_').upcase
   end
+
+  def offer_price
+    (prerequisite_offer_id? ? 0 : app.price) + price
+  end
+
 end
