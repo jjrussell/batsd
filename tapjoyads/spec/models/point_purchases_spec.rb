@@ -1,23 +1,26 @@
-require 'test_helper'
+require 'spec_helper'
 
-class PointPurchasesTest < ActiveSupport::TestCase
+describe PointPurchases do
+  before :each do
+    #fake_the_web
+  end
 
   context "A Point Purchase" do
-    setup do
+    before :each do
       app = Factory(:app, :id => '01234567-89ab-cdef-0123-456789abcdef')
       currency = Factory(:currency, :id => '01234567-89ab-cdef-0123-456789abcdef', :app => app)
       @pp = PointPurchases.new(:key => "0123456789abcdef0123456789abcdef01234567.01234567-89ab-cdef-0123-456789abcdef")
     end
 
-    should "hash to the correct domain" do
-      assert_equal 'point_purchases_1', @pp.dynamic_domain_name
-      assert_equal 1469972363, @pp.key.matz_silly_hash
+    it "hashes to the correct domain" do
+      @pp.dynamic_domain_name.should == 'point_purchases_1'
+      @pp.key.matz_silly_hash.should == 1469972363
     end
 
   end
 
   context "A Point Purchase" do
-    setup do
+    before :each do
       app = Factory(:app)
       currency = Factory(:currency, :id => app.id, :app => app)
       @pp = PointPurchases.new(:key => "udid.#{app.id}")
@@ -25,49 +28,49 @@ class PointPurchasesTest < ActiveSupport::TestCase
       @vg2 = Factory(:virtual_good, :price => 2, :max_purchases => 3)
     end
 
-    teardown do
+    after :each do
       @pp.delete_all
     end
 
-    should "Add and spend points" do
+    it "adds and spends points" do
       PointPurchases.transaction(:key => @pp.key) do |point_purchases|
         point_purchases.points = point_purchases.points + 10
       end
       @pp = PointPurchases.new(:key => @pp.key, :consistent => true)
-      assert_equal(10, @pp.points)
+      @pp.points.should == 10
 
       success, message, pp = PointPurchases.purchase_virtual_good(@pp.key, @vg.key)
-      assert(success, "Should successfully purchase a virtual good")
+      success.should be_true
       @pp = PointPurchases.new(:key => @pp.key, :consistent => true)
-      assert_equal(9, pp.points)
-      assert_equal(9, @pp.points)
+      pp.points.should == 9
+      @pp.points.should == 9
 
       success, message, pp = PointPurchases.purchase_virtual_good(@pp.key, @vg.key)
-      assert(!success, "Should not be able to purchase a virtual good more than max_purchases times.")
+      success.should be_false
       @pp = PointPurchases.new(:key => @pp.key, :consistent => true)
-      assert_equal(9, @pp.points)
+      @pp.points.should == 9
 
       success, message, pp = PointPurchases.spend_points(@pp.key, 4)
-      assert(success, "Should succssfully spend points")
+      success.should be_true
       @pp = PointPurchases.new(:key => @pp.key, :consistent => true)
-      assert_equal(5, pp.points)
-      assert_equal(5, @pp.points)
+      pp.points.should == 5
+      @pp.points.should == 5
 
       success, message, pp = PointPurchases.purchase_virtual_good(@pp.key, @vg2.key, 2)
-      assert(success, "Should successfully purchase multiple virtual goods")
+      success.should be_true
       @pp = PointPurchases.new(:key => @pp.key, :consistent => true)
-      assert_equal(1, pp.points)
-      assert_equal(1, @pp.points)
+      pp.points.should == 1
+      @pp.points.should == 1
 
       success, message, pp = PointPurchases.purchase_virtual_good(@pp.key, @vg2.key)
-      assert(!success, "Should not be able to purchase virtual goods for more than the balance")
+      success.should be_false
       @pp = PointPurchases.new(:key => @pp.key, :consistent => true)
-      assert_equal(1, @pp.points)
+      @pp.points.should == 1
 
       success, message, pp = PointPurchases.spend_points(@pp.key, 4)
-      assert(!success, "Should not be able to spend more than the balance")
+      success.should be_false
       @pp = PointPurchases.new(:key => @pp.key, :consistent => true)
-      assert_equal(1, @pp.points)
+      @pp.points.should == 1
     end
   end
 

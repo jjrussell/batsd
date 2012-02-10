@@ -10,6 +10,7 @@ describe ActionOffer do
   it { should validate_presence_of :partner }
   it { should validate_presence_of :app }
   it { should validate_presence_of :instructions }
+  it { should validate_numericality_of :price }
 
   it "should accept nested attributes for primary_offer" do
     subject.should respond_to(:primary_offer_attributes=)

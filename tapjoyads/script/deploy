@@ -126,7 +126,7 @@ private
   end
 
   def execute_cloudrun
-    command = "script/cloudrun '#{@options[:server_groups]}' 'cd /home/webuser/tapjoyserver && server/deploy.rb #{@options[:version]} 2>&1' 'webuser' 'remove_from_lb'"
+    command = "script/cloudrun '#{@options[:server_groups]}' 'cd /home/webuser/tapjoyserver && server/deploy.rb #{@options[:version]}' 'webuser' 'remove_from_lb'"
     system(command)
   end
 

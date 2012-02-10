@@ -171,6 +171,7 @@ class Offer < ActiveRecord::Base
   before_save :update_payment
   before_save :update_instructions
   before_save :sync_creative_approval # Must be before_save so auto-approval can happen
+  before_save :nullify_banner_creatives
   after_save :update_enabled_rating_offer_id
   after_save :update_pending_enable_requests
   after_save :update_tapjoy_sponsored_associated_offers
@@ -742,6 +743,11 @@ class Offer < ActiveRecord::Base
     else
       []
     end
+  end
+
+  def nullify_banner_creatives
+    write_attribute(:banner_creatives, nil) if banner_creatives.empty?
+    write_attribute(:approved_banner_creatives, nil) if approved_banner_creatives.empty?
   end
 
   def sync_creative_approval
