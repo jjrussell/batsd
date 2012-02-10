@@ -208,7 +208,7 @@ class Currency < ActiveRecord::Base
   end
 
   def sanitize_attributes
-    self.test_devices    = test_devices.gsub(/\s/, '').downcase
+    self.test_devices    = test_devices.gsub(/\s/, '').gsub(/;{2,}/, ';').downcase
     self.disabled_offers = disabled_offers.gsub(/\s/, '')
   end
 

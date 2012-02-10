@@ -1,0 +1,113 @@
+- hide_table ||= false
+
+%table.search
+  %tr
+    %td Use the field to the right to search for gamers.
+
+    %td.gamer_search
+      .spinner
+        %span#spinner= image_tag('spinner.gif', :alt => 'Searching...')
+      = label_tag 'search_box', 'Search email:'
+      = text_field_tag 'search_box', ''
+
+- content_for :page_styles do
+  :plain
+    .gamer_search {
+      float: right;
+      text-align: right;
+    }
+
+    #search_box {
+      width: 300px;
+    }
+    .spinner {
+      display: inline;
+    }
+    span#spinner {
+      display: none;
+      margin: 5px;
+    }
+    table.search {
+      width: 100%;
+    }
+    table.search td {
+      vertical-align: top;
+    }
+
+- content_for :page_javascript do
+  :plain
+    /*
+     jQuery delayed observer
+     (c) 2007 - Maxime Haineault (max@centdessin.com)
+     http://www.studio-cdd.com:8080/haineault/blog/17/
+    */
+
+    // Delays actions that occur after 'keyup' event
+    jQuery.fn.extend({
+      delayedObserver : function(delay, callback) {
+        $this = $(this);
+        if (typeof window.delayedObserverStack == 'undefined') {
+          window.delayedObserverStack = [];
+        }
+        if (typeof window.delayedObserverCallback == 'undefined') {
+          window.delayedObserverCallback = function(stackPos) {
+            observed = window.delayedObserverStack[stackPos];
+            if (observed.timer) clearTimeout(observed.timer);
+            observed.timer = setTimeout(function(){
+              observed.timer = null;
+              observed.callback(observed.obj.val(), observed.obj);
+            }, observed.delay * 1000);
+
+            observed.oldVal = observed.obj.val();
+          }
+        }
+        window.delayedObserverStack.push({
+          obj: $this, timer: null, delay: delay,
+          oldVal: $this.val(), callback: callback });
+
+        stackPos = window.delayedObserverStack.length-1;
+
+        $this.keyup(function() {
+          observed = window.delayedObserverStack[stackPos];
+          if (observed.obj.val() == observed.obj.oldVal) return;
+            else window.delayedObserverCallback(stackPos);
+        });
+      }
+    });
+
+    // Executes the AJAX call to perform search and updates results div
+    function doSearch() {
+      // controller's URI
+      var term = $("#search_box").val();
+      var url = '#{search_gamers_path}';
+      var params = { term: term };
+
+      if(term.length > 1) {
+        // show spinner
+        $('span#spinner').fadeIn('fast', function() {
+          $("#search_results").load(url, params, function() {
+            $('#gamers_table').fadeIn();
+            $('span#spinner').fadeOut();
+            $('#gamers_table').tablesorter({
+              widgets: ['zebra'],
+              headers: {
+                0:  { sorter: false },
+                4:  { sorter: 'usLongDate' },
+                5:  { sorter: 'usLongDate' }
+              },
+              sortList: [[4,0], [2,0]]
+            });
+          });
+        });
+      }
+    }
+
+    $(document).ready(function()
+    {
+      $('#search_box').delayedObserver(0.5, doSearch);
+
+      if($('#search_box').val().length > 1)
+        doSearch();
+      else if(#{!hide_table})
+        $('#gamers_table').fadeIn();
+    });

@@ -104,7 +104,7 @@ describe DisplayAdController do
           # File.open("#{Rails.root}/test/assets/banner_ads/wtf.png", 'w') { |f| f.write(response.body) }
 
           ### The test seems to be failing due to different versions of ImageMagick / different fonts on other developer machines ###
-          # assert(@generated_banner == response.body)
+          # response.body.should == @generated_banner
         end
       end
     end
@@ -190,7 +190,7 @@ describe DisplayAdController do
           # File.open("#{Rails.root}/test/assets/banner_ads/wtf.png", 'w') { |f| f.write(response.body) }
 
           ### The test seems to be failing due to different versions of ImageMagick / different fonts on other developer machines ###
-          # assert(File.read("#{Rails.root}/test/assets/banner_ads/generated_320x50.png") == Base64.decode64(assigns['image']))
+          # Base64.decode64(assigns['image']).should == File.read("#{Rails.root}/test/assets/banner_ads/generated_320x50.png")
         end
 
         it "should return proper image data in xml" do
@@ -209,7 +209,7 @@ describe DisplayAdController do
           # File.open("#{Rails.root}/test/assets/banner_ads/wtf.png", 'w') { |f| f.write(response.body) }
 
           ### The test seems to be failing due to different versions of ImageMagick / different fonts on other developer machines ###
-          # assert(File.read("#{Rails.root}/test/assets/banner_ads/generated_640x100.png") == Base64.decode64(assigns['image']))
+          # Base64.decode64(assigns['image']).should == File.read("#{Rails.root}/test/assets/banner_ads/generated_640x100.png")
         end
       end
     end

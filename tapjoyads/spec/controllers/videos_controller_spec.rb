@@ -32,7 +32,7 @@ describe VideosController do
     end
 
     it 'renders the completion screen' do
-      get :complete, @params.merge(:id => @offer.id)
+      get :complete, @params.merge(:id => @offer.id, :offer_id => @offer.id)
 
       @response.content_type.should == 'text/html'
     end
