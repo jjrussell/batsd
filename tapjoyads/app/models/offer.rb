@@ -50,7 +50,7 @@ class Offer < ActiveRecord::Base
                                   'normal_price', 'over_threshold', 'rewarded', 'reseller_id',
                                   'cookie_tracking', 'min_os_version', 'screen_layout_sizes',
                                   'interval', 'banner_creatives', 'dma_codes', 'regions',
-                                  'wifi_only', 'approved_sources', 'approved_banner_creatives'
+                                  'wifi_only', 'approved_sources', 'approved_banner_creatives', 'sdkless'
                                 ].map { |c| "#{quoted_table_name}.#{c}" }.join(', ')
 
   DIRECT_PAY_PROVIDERS = %w( boku paypal )
@@ -154,6 +154,14 @@ class Offer < ActiveRecord::Base
     record.errors.add(attribute, "is only for GenericOffers and ActionsOffers") unless record.item_type == 'GenericOffer' || record.item_type == 'ActionOffer'
   end
   validate :bid_within_range
+  validates_each :sdkless, :allow_blank => false, :allow_nil => false do |record, attribute, value|
+    if value
+      record.get_device_types(true)
+      record.errors.add(attribute, "can only be enabled for Android-only offers") unless record.get_platform(true) == 'Android'
+      record.errors.add(attribute, "cannot be enabled for pay-per-click offers") if record.pay_per_click?
+      record.errors.add(attribute, "can only be enabled for 'App' offers") unless record.item_type == 'App'
+    end
+  end
 
   before_validation :update_payment
   before_validation_on_create :set_reseller_from_partner
@@ -201,10 +209,6 @@ class Offer < ActiveRecord::Base
 
   json_set_field :device_types, :screen_layout_sizes, :countries, :dma_codes, :regions, :approved_sources
   memoize :get_device_types, :get_screen_layout_sizes, :get_countries, :get_dma_codes, :get_regions, :get_approved_sources
-
-  def self.columns
-    super.reject{|c| c.name == 'tj_games_only'}
-  end
 
   def clone
     clone = super
@@ -306,8 +310,12 @@ class Offer < ActiveRecord::Base
     Offer.enabled_offers.find_by_id(item_id).present?
   end
 
+  def primary?
+    item_id == id
+  end
+
   def send_low_conversion_email?
-    item_id == id || !primary_offer_enabled?
+    primary? || !primary_offer_enabled?
   end
 
   def calculate_min_conversion_rate
@@ -660,7 +668,7 @@ class Offer < ActiveRecord::Base
     return (item_type == 'App' && name.length <= 30) if rewarded?
     item_type != 'VideoOffer'
   end
-  
+
   def to_s
     name
   end
