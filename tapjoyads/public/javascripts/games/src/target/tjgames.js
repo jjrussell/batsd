@@ -1088,9 +1088,13 @@ TJG.utils = {
     result = me.pluralize(result, opt.count);
 
     if(typeof result !== "string") {
-      throw customError("Did not find translation string: ",
-        {key: key, locale: opt.locale, default_locale: me.default_locale, result: result}, 
-        "Tapjoyi18nError");
+      if(w.ENVIRONMENT === "development") {
+        throw customError("Did not find translation string: ",
+          {key: key, locale: opt.locale, default_locale: me.default_locale, result: result}, 
+          "Tapjoyi18nError");
+      }
+
+      result = "";
     }
     return basicTemplate(result, args);
   };
