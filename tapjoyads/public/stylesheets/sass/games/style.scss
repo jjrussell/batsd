@@ -531,6 +531,10 @@ input[type=email]:focus, input[type=password]:focus, input[type=text]:focus {
     font-size: 0.8em;
     text-align: center;
 
+    .truste {
+      margin-top: 10px;
+      text-align: center;
+    }
   }
 }
 
@@ -983,6 +987,7 @@ body.old .content_box {
 }
 
 .center_contact {
+  display: block;
   margin: 6px auto;
   width: 200px;
 }
@@ -996,4 +1001,11 @@ body.old .content_box {
 .forgot_pass {
   font-size: 0.8em;
 }
+}
+.truste {
+  margin-top: 10px;
+  text-align: center;
+}
+.truste img {
+  width: 84px;
 }
