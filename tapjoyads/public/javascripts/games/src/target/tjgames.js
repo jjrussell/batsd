@@ -806,6 +806,14 @@ TJG.utils = {
     return v;
   },
 
+  isArguments : function (obj) {
+    return Object.prototype.toString.call(obj) == '[object Arguments]';
+  },
+
+  isArray : function (obj) {
+    return Object.prototype.toString.call(obj) == '[object Array]';
+  },
+
   hideURLBar : function() {
     setTimeout(function() {
       window.scrollTo(0, 1);
@@ -953,12 +961,24 @@ TJG.utils = {
     }
   },
 
-  toArray: function(args) {
+  toArray: function(iterable) {
     var i, res = [];
 
-    for(i in args) { 
-      if(args.hasOwnProperty(i)) {
-        res.push(args[i]);
+    if (!iterable) {
+      return res;
+    } 
+
+    if (typeof iterable.toArray === "function") {
+      return iterable.toArray();
+    }
+
+    if (this.isArray(iterable) || this.isArguments(iterable)) {
+      return Array.prototype.slice.call(iterable);
+    }
+
+    for(i in iterable) { 
+      if(iterable.hasOwnProperty(i)) {
+        res.push(iterable[i]);
       }
     }
     
@@ -1068,9 +1088,13 @@ TJG.utils = {
     result = me.pluralize(result, opt.count);
 
     if(typeof result !== "string") {
-      throw customError("Did not find translation string: ",
-        {key: key, locale: opt.locale, default_locale: me.default_locale, result: result}, 
-        "Tapjoyi18nError");
+      if(w.ENVIRONMENT === "development") {
+        throw customError("Did not find translation string: ",
+          {key: key, locale: opt.locale, default_locale: me.default_locale, result: result}, 
+          "Tapjoyi18nError");
+      }
+
+      result = "";
     }
     return basicTemplate(result, args);
   };

@@ -247,7 +247,9 @@ describe GetOffersController do
       @currency = Factory(:currency)
       @offer = Factory(:app).primary_offer
       controller.stubs(:get_ip_address).returns('208.90.212.38')
-      OfferCacher.stubs(:get_unsorted_offers_prerejected).returns([@offer])
+      fake_cache_object = mock()
+      fake_cache_object.stubs(:value).returns([@offer])
+      RailsCache.stubs(:get_and_put).returns(fake_cache_object)
       @params = {
         :udid => @device.id,
         :publisher_user_id => 'more_stuff',

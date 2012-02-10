@@ -98,20 +98,9 @@
     - @cached_stats.each do |offer_id, stats|
       :ruby
         metadata = @cached_metadata[offer_id]
-        tr_classes = []
-        tr_classes << (stats['spend'] == '$0.00'             ? 'zero_spend'             : 'nonzero_spend')
-        tr_classes << (stats['conversions'] == '0'           ? 'zero_conversions'       : 'nonzero_conversions')
-        tr_classes << (metadata['overall_store_rank'] == '-' ? 'unranked'               : 'ranked')
-        tr_classes << (metadata['price'] == '$0.00'          ? 'free'                   : 'paid')
-        tr_classes << metadata['platform'].to_s.downcase
-        tr_classes << (stats['published_offers'] == '0'      ? 'zero_published'         : 'nonzero_published')
-        tr_classes << (stats['gross_revenue'] == '$0.00'     ? 'zero_gross_revenue'     : 'nonzero_gross_revenue')
-        tr_classes << (stats['publisher_revenue'] == '$0.00' ? 'zero_publisher_revenue' : 'nonzero_publisher_revenue')
-        tr_classes << (metadata['featured']                  ? 'featured'               : 'nonfeatured')
-        tr_classes << (metadata['rewarded']                  ? 'rewarded'               : 'nonrewarded')
-        tr_classes << metadata['offer_type'].to_s.downcase
+        tr_class = get_tr_class(stats, metadata)
         value = metadata['balance'].gsub(/[\$,]/,'')
-      %tr{ :class => tr_classes.compact.join(' '), :value => value }
+      %tr{ :class => tr_class, :value => value }
         %td
           %img.icon.hidden{ :s => metadata['icon_url'] }
         %td= link_to(metadata['offer_name'], statz_path(offer_id))
