@@ -99,11 +99,10 @@ module Offer::Rejecting
   end
 
   def geoip_reject?(geoip_data)
-    return true if countries.present? && countries != '[]' && !get_countries.include?(geoip_data[:carrier_country_code] || geoip_data[:country] || geoip_data[:user_country_code])
+    return true if get_countries.present? && !get_countries.include?(geoip_data[:carrier_country_code] || geoip_data[:country] || geoip_data[:user_country_code])
     return true if get_countries_blacklist.include?(geoip_data[:carrier_country_code] || geoip_data[:country] || geoip_data[:user_country_code])
-    return true if regions.present? && regions != '[]' && (geoip_data[:region].blank? || !get_regions.include?(geoip_data[:region]))
-    return true if dma_codes.present? && dma_codes != '[]' && (geoip_data[:dma_code].blank? || !get_dma_codes.include?(geoip_data[:dma_code]))
-
+    return true if get_regions.present? && !get_regions.include?(geoip_data[:region])
+    return true if get_dma_codes.present? && !get_dma_codes.include?(geoip_data[:dma_code])
     false
   end
 
