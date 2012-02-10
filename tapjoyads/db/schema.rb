@@ -119,6 +119,31 @@ ActiveRecord::Schema.define(:version => 20120210172034) do
   add_index "apps", ["name"], :name => "index_apps_on_name"
   add_index "apps", ["partner_id"], :name => "index_apps_on_partner_id"
 
+  create_table "carrier_offer_mappings", :id => false, :force => true do |t|
+    t.string "id",         :limit => 36, :null => false
+    t.string "offer_id",   :limit => 36, :null => false
+    t.string "carrier_id", :limit => 36, :null => false
+  end
+
+  add_index "carrier_offer_mappings", ["carrier_id"], :name => "index_carrier_offer_mappings_on_carrier_id"
+  add_index "carrier_offer_mappings", ["id"], :name => "index_carrier_offer_mappings_on_id", :unique => true
+  add_index "carrier_offer_mappings", ["offer_id"], :name => "index_carrier_offer_mappings_on_offer_id"
+
+  create_table "carriers", :id => false, :force => true do |t|
+    t.string   "id",                   :limit => 36, :null => false
+    t.string   "brand",                              :null => false
+    t.string   "operator",                           :null => false
+    t.string   "country",                            :null => false
+    t.text     "mobile_carrier_codes",               :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "carriers", ["brand"], :name => "index_carriers_on_brand"
+  add_index "carriers", ["country"], :name => "index_carriers_on_country"
+  add_index "carriers", ["id"], :name => "index_carriers_on_id", :unique => true
+  add_index "carriers", ["operator"], :name => "index_carriers_on_operator"
+
   create_table "conversions", :id => false, :force => true do |t|
     t.string   "id",                     :limit => 36, :null => false
     t.string   "reward_id",              :limit => 36
@@ -146,9 +171,10 @@ ActiveRecord::Schema.define(:version => 20120210172034) do
   add_index "conversions", ["publisher_partner_id", "created_at"], :name => "index_conversions_on_publisher_partner_id_and_created_at"
 
   create_table "creative_approval_queue", :force => true do |t|
-    t.string "offer_id", :limit => 36, :null => false
-    t.string "user_id",  :limit => 36
-    t.text   "size"
+    t.string   "offer_id",   :limit => 36, :null => false
+    t.string   "user_id",    :limit => 36
+    t.text     "size"
+    t.datetime "created_at"
   end
 
   create_table "currencies", :id => false, :force => true do |t|

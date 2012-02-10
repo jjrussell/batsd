@@ -88,7 +88,7 @@ class DisplayAdController < ApplicationController
         :source              => params[:source],
         :library_version     => params[:library_version],
         :screen_layout_size  => params[:screen_layout_size],
-        :mobile_carrier_code => @mobile_carrier_code
+        :mobile_carrier_code => params[:mobile_country_code].to_s << params[:mobile_network_code].to_s
       ).weighted_rand
     end
 
