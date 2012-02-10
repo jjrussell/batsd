@@ -1,4 +1,4 @@
-%tr.admin
+%tr
   %th
     = f.label(:countries, "Country Targeting")
     #help_country_targeting.help ?
@@ -30,7 +30,7 @@
                   = label_tag "country_#{country_code}", Countries.country_code_to_name[country_code]
 
 - if @offer.app_offer? && @offer.item.platform == 'iphone'
-  %tr.admin
+  %tr
     %th
       Country Blacklist
       #help_countries_blacklist.help ?
