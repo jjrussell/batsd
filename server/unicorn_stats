@@ -48,7 +48,7 @@ while true
   end
 
   out << "\nNGinx Status\n\n"
-  out << "ps aux | grep nginx"
+  out << "ps aux | grep -v grep | grep nginx"
   out << "\n"
   out << `curl http://localhost/nginx_status 2>/dev/null`
   out << "\n"
