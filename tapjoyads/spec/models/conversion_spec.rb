@@ -16,35 +16,33 @@ describe Conversion do
     it { should validate_numericality_of(:tapjoy_amount) }
   end
 
-  context "A Conversion" do
-    before :each do
-      @conversion = Factory.build(:conversion)
+  before :each do
+    @conversion = Factory.build(:conversion)
+  end
+
+  it "provides a mechanism to set reward_type from a string" do
+    @conversion.reward_type.should == 1
+    Conversion::REWARD_TYPES.each do |k, v|
+      @conversion.reward_type_string = k
+      @conversion.reward_type.should == v
+    end
+  end
+
+  context "when saved" do
+    it "updates the publisher's pending earnings" do
+      pub_partner = @conversion.publisher_partner
+      pub_partner.pending_earnings.should == 0
+      @conversion.save!
+      pub_partner.reload
+      pub_partner.pending_earnings.should == 70
     end
 
-    it "provides a mechanism to set reward_type from a string" do
-      @conversion.reward_type.should == 1
-      Conversion::REWARD_TYPES.each do |k, v|
-        @conversion.reward_type_string = k
-        @conversion.reward_type.should == v
-      end
-    end
-
-    context "when saved" do
-      it "updates the publisher's pending earnings" do
-        pub_partner = @conversion.publisher_partner
-        pub_partner.pending_earnings.should == 0
-        @conversion.save!
-        pub_partner.reload
-        pub_partner.pending_earnings.should == 70
-      end
-
-      it "updates the advertiser's balance" do
-        adv_partner = @conversion.advertiser_partner
-        adv_partner.balance.should == 0
-        @conversion.save!
-        adv_partner.reload
-        adv_partner.balance.should == -100
-      end
+    it "updates the advertiser's balance" do
+      adv_partner = @conversion.advertiser_partner
+      adv_partner.balance.should == 0
+      @conversion.save!
+      adv_partner.reload
+      adv_partner.balance.should == -100
     end
   end
 end
