@@ -23,7 +23,7 @@ $page-padding-1024: 0 (40/16)em;
 .clear {
   clear:both;
 }
-.container {
+.wrap {
   max-width: 944px;
   width: 90%;
   margin: 0 auto;
@@ -45,7 +45,7 @@ body {
 .header {
   font-size: 12pt;
 
-  .container {
+  .wrap {
     background: transparent url('/images/games/logo-navbar.png') no-repeat scroll center center;
     background-size: auto 29px;
     color: #fff;
@@ -234,7 +234,7 @@ body {
 
 
 @media only screen and (max-width: 768px) {
-  .container {
+  .wrap {
     padding: 0 percentage(12/768);
     width: percentage(744/768);
   }
@@ -262,12 +262,12 @@ body {
   .main {
     padding: 0;
   }
-  .container {
+  .wrap {
     padding: 0 percentage(20/640);
     width: percentage(600/640);
   }
   .header {
-    .container {
+    .wrap {
       background-image: none;
       height: 44px;
     }
@@ -297,7 +297,7 @@ body {
   }
   .sub-head {
     padding: 0;
-    .container {
+    .wrap {
       padding: 0;
       width: 100%;
     }
@@ -310,7 +310,7 @@ body {
     background: rgba(247, 247, 250, 1.0);
   }
   .main {
-    .container {
+    .wrap {
       width: 100%;
       padding: 0;
     }
