@@ -99,47 +99,14 @@ module Offer::Rejecting
   end
 
   def geoip_reject?(geoip_data)
-    if get_countries.present?
-      if geoip_data[:carrier_country_code].present?
-        return true if !get_countries.include?(geoip_data[:carrier_country_code].to_s.upcase)
-      else
-        if geoip_data[:country].present?
-          return true if !get_countries.include?(geoip_data[:country].to_s.upcase)
-        else
-          if geoip_data[:user_country_code].present?
-            return true if !get_countries.include?(geoip_data[:user_country_code].to_s.upcase)
-          else
-            return true
-          end
-        end
-      end
-    end
-
+    return true if countries.present? && countries != '[]' && !get_countries.include?(geoip_data[:carrier_country_code] || geoip_data[:country] || geoip_data[:user_country_code])
     if get_countries_blacklist.present?
-      if geoip_data[:carrier_country_code].present?
-        return true if get_countries_blacklist.include?(geoip_data[:carrier_country_code].to_s.upcase)
-      else
-        if geoip_data[:country].present?
-          return true if get_countries_blacklist.include?(geoip_data[:country].to_s.upcase)
-        else
-          if geoip_data[:user_country_code].present?
-            return true if get_countries_blacklist.include?(geoip_data[:user_country_code].to_s.upcase)
-          else
-            return true
-          end
-        end
-      end
+      return true if geoip_data[:carrier_country_code].blank? && geoip_data[:country].blank? && geoip_data[:user_country_code].blank?
+      return true if get_countries_blacklist.include?(geoip_data[:carrier_country_code] || geoip_data[:country] || geoip_data[:user_country_code])
     end
+    return true if regions.present? && regions != '[]' && (geoip_data[:region].blank? || !get_regions.include?(geoip_data[:region]))
+    return true if dma_codes.present? && dma_codes != '[]' && (geoip_data[:dma_code].blank? || !get_dma_codes.include?(geoip_data[:dma_code]))
 
-    if get_regions.present?
-      return true if geoip_data[:region].blank?
-      return true if !get_regions.include?(geoip_data[:region])
-    end
-
-    if get_dma_codes.present?
-      return true if geoip_data[:dma_code].blank?
-      return true if !get_dma_codes.include?(geoip_data[:dma_code])
-    end
     false
   end
 
