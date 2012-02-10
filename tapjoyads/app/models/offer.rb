@@ -762,6 +762,11 @@ class Offer < ActiveRecord::Base
     write_attribute(:approved_banner_creatives, nil) if approved_banner_creatives.empty?
   end
 
+  def nullify_banner_creatives
+    write_attribute(:banner_creatives, nil) if banner_creatives.empty?
+    write_attribute(:approved_banner_creatives, nil) if approved_banner_creatives.empty?
+  end
+
   def sync_creative_approval
     # Handle banners on this end
     banner_creatives.each do |size|
