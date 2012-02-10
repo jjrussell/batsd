@@ -18,7 +18,7 @@ class OrderTest < ActiveSupport::TestCase
     should "increase a partner's balance" do
       assert_equal 0, @partner.balance
       assert_equal 0, @partner.orders.count
-      Factory(:order, :partner => @partner, :amount => 100)
+      Factory(:order, :partner => @partner, :amount => 100, :note => 'note')
       @partner.reload
       assert_equal 100, @partner.balance
       assert_equal 1, @partner.orders.count

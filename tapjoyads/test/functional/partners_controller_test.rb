@@ -14,7 +14,7 @@ class PartnersControllerTest < ActionController::TestCase
     should "log transfer and math should work out" do
       amount = rand(100) + 100
 
-      get :create_transfer, { :transfer_amount => amount, :id => @partner.id }
+      get :create_transfer, { :transfer => { :amount => amount.to_s, :internal_notes => 'note' }, :id => @partner.id }
       @partner.reload
 
       assert_response :redirect
@@ -30,7 +30,7 @@ class PartnersControllerTest < ActionController::TestCase
       amount = rand(100) + 100
       bonus = (amount * @partner.transfer_bonus)
 
-      get :create_transfer, { :transfer_amount => amount, :id => @partner.id }
+      get :create_transfer, { :transfer => { :amount => amount.to_s, :internal_notes => 'note' }, :id => @partner.id }
       @partner.reload
 
       assert_equal 2, @partner.orders.length
