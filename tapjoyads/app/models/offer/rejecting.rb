@@ -100,17 +100,35 @@ module Offer::Rejecting
 
   def geoip_reject?(geoip_data)
     if get_countries.present?
-      return true if geoip_data[:carrier_country_code].blank? && geoip_data[:country].blank? && geoip_data[:user_country_code].blank?
-      return true if geoip_data[:carrier_country_code] && !get_countries.include?(geoip_data[:carrier_country_code].to_s.upcase)
-      return true if geoip_data[:country] && !get_countries.include?(geoip_data[:country].to_s.upcase)
-      return true if geoip_data[:user_country_code] && !get_countries.include?(geoip_data[:user_country_code].to_s.upcase)
+      if geoip_data[:carrier_country_code].present?
+        return true if !get_countries.include?(geoip_data[:carrier_country_code].to_s.upcase)
+      else
+        if geoip_data[:country].present?
+          return true if !get_countries.include?(geoip_data[:country].to_s.upcase)
+        else
+          if geoip_data[:user_country_code].present?
+            return true if !get_countries.include?(geoip_data[:user_country_code].to_s.upcase)
+          else
+            return true
+          end
+        end
+      end
     end
 
     if get_countries_blacklist.present?
-      return true if geoip_data[:carrier_country_code].blank? && geoip_data[:country].blank? && geoip_data[:user_country_code].blank?
-      return true if geoip_data[:carrier_country_code] && get_countries_blacklist.include?(geoip_data[:carrier_country_code].to_s.upcase)
-      return true if geoip_data[:country] && get_countries_blacklist.include?(geoip_data[:country].to_s.upcase)
-      return true if geoip_data[:user_country_code] && get_countries_blacklist.include?(geoip_data[:user_country_code].to_s.upcase)
+      if geoip_data[:carrier_country_code].present?
+        return true if get_countries_blacklist.include?(geoip_data[:carrier_country_code].to_s.upcase)
+      else
+        if geoip_data[:country].present?
+          return true if get_countries_blacklist.include?(geoip_data[:country].to_s.upcase)
+        else
+          if geoip_data[:user_country_code].present?
+            return true if get_countries_blacklist.include?(geoip_data[:user_country_code].to_s.upcase)
+          else
+            return true
+          end
+        end
+      end
     end
 
     if get_regions.present?
