@@ -1,6 +1,7 @@
 #!/usr/bin/env ruby
 
-min_mem = 450
+min_mem = 500
+workers_to_kill = 4
 pid = `/home/webuser/tapjoyserver/server/unicorn_master_pid.rb`
 hostname = `hostname`.strip
 
@@ -11,7 +12,7 @@ if pid == ''
 else
   free_mem  = `free -m`.split("\n")[2].split[3].to_i
   count = 0
-  while free_mem < min_mem && count < 4
+  while free_mem < min_mem && count < workers_to_kill
     puts "dropping worker count (##{count}) for memory issue (#{hostname})"
     `kill -TTOU #{pid}`
     sleep 2
