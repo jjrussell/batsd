@@ -1,0 +1,122 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                    "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+  <script src="../tjg.jquery-1.6.2.min.js"></script>
+  <link rel="stylesheet" href="http://code.jquery.com/qunit/git/qunit.css" type="text/css" media="screen" />
+<script type="text/javascript" src="http://code.jquery.com/qunit/git/qunit.js"></script>
+</head>
+<body>
+  <h1 id="qunit-header">QUnit example</h1>
+  <h2 id="qunit-banner"></h2>
+  <div id="qunit-testrunner-toolbar"></div>
+  <h2 id="qunit-userAgent"></h2>
+  <ol id="qunit-tests"></ol>
+  <div id="qunit-fixture">test markup, will be hidden</div>
+<script type="text/javascript" src="../init.js"></script>
+<script type="text/javascript" src="../utils.js"></script>
+<script type="text/javascript" src="../i18n.js"></script>
+<script type="text/javascript">
+(function() {
+  var i18n = window["i18n"] || TJG["i18n"];
+  module("i18n", {
+    setup: function(){
+      window.ENVIRONMENT = "development";
+      i18n.default_locale = "en";
+      i18n.locale = "fr";
+      i18n.en = {"yes":"Yes", "no":"No", "sir":"Sir", yes_honor: "Yes %{honor}"};
+      i18n.fr = {"yes":"Oui", "no":"Non", "sir":"Monsieur", yes_honor: "Oui %{honor}" };
+    },
+    teardown: function() {}
+  });
+
+  test("it will translate for given locale", function() {
+    equals(i18n.t("yes"), "Oui", "Translate successful");
+    i18n.locale = "en";
+    equals(i18n.t("yes"), "Yes", "Can change locales on the fly");
+    equals(i18n.t("yes", null, {"locale":"fr"}), "Oui", "Can change locales with an argument");
+  });
+
+  test("it will accept arguments", function() {
+    i18n.fr.multiples = "%{x}, %{x}, %{x} %{y} %{z}"
+    var exp = "Oui Monsieur";
+    equals(i18n.t("yes_honor", {honor: i18n.t('sir')}), exp, "It should be able to nest calls");
+
+    equals(i18n.t("multiples", {x: "row", y:"your", z:"boat"}), "row, row, row your boat", "Can accept multiple arguments");
+  });
+
+  test("bad template arguments throw custom errors", function() {
+    expect(1);
+    try {
+      i18n.t("yes_honor", {x: "bad"});
+    } catch(e) {
+      equals(e.name, "TapjoyCustomError", e);
+    }
+  });
+
+  test("it will fall back to default if no matching word", function() {
+    var str = "Only in English";
+    i18n.en.en_only = str;
+    equals(str, i18n.t("en_only"), "revert to english when no match");
+  });
+
+  test("it will fall back to default if no matching locale", function() {
+    i18n.locale = "es";
+    equals("Yes", i18n.t("yes"), "This locale isn't here...");
+  });
+
+  test("it will throw error if no match whatsoever", function() {
+    expect(1);
+    try {
+      i18n.t("not a key in the dictionary");
+    } catch(e) {
+      equals(e.name, "Tapjoyi18nError", e);
+    }
+  });
+
+  test("it will fail silently if not in development mode", function() {
+    expect(2);
+    try {
+      window.ENVIRONMENT = "production";
+      equals(i18n.t("bad key"), "", "Fails silently in production mode");
+      window.ENVIRONMENT = undefined;
+      equals(i18n.t("bad key"), "", "Fails silently if not explicitly development");
+    } catch(e) {
+      ok(false, "Should never get here");
+    }
+  });
+
+
+  test("it can pluralize", function() {
+    var t = i18n.t;
+    i18n.en.tooth = {"one":"tooth", "two": "teeth", "other":"teeths"};
+    i18n.locale = "en";
+
+    equals(t('tooth'),"tooth", "Defaults to singular if no count supplies");
+    equals(t('tooth', null, {"count":1}), "tooth", "Properly finds singular version");
+    equals(t('tooth', null, {"count":2}), "teeth", "Properly finds plural version");
+    equals(t('tooth', null, {"count":5}), "teeths", "locks onto other if number not set");
+    equals(t('tooth', null, {"count":12}), "teeths", "works above 9");
+    equals(t('tooth', null, {"count":0}), "teeths", "locks onto other if number not set");
+
+    equals(t('yes', null, {"count":2}), "Yes", "Accept count on non-pluralized entries");
+  });
+
+  test("it supports dot notation for scope", function() {
+    expect(3);
+    var str = "Layered text", t = i18n.t;
+    i18n.en.text = {
+      level1: {
+        level2: str
+      }
+    };
+    equals(t('text.level1.level2', null, {"locale":"en"}), str, "Successfully follows dots into string");
+    equals(t('text.level1.level2'), str, "Successfully defaults if locale not supplied");
+    try { t('text.level1.level2.level3'); } catch (e) {
+      equals(e.name, "Tapjoyi18nError", "Successfully fails");
+    }
+  });
+}());
+</script>
+</body>
+</html>

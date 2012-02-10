@@ -28,6 +28,6 @@ else
     f.write(BUCKET.objects[GEOIP_FILE].read)
   end
   File.rename("#{LOCAL_BASE}#{GEOIP_FILE}.new", "#{LOCAL_BASE}#{GEOIP_FILE}")
-  `touch /home/webuser/tapjoyserver/tapjoyads/tmp/restart.txt`
+  system "/home/webuser/tapjoyserver/server/start_or_reload_unicorn.rb"
   puts "Updated GeoIP database."
 end

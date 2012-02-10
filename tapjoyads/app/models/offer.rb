@@ -50,7 +50,7 @@ class Offer < ActiveRecord::Base
                                   'normal_price', 'over_threshold', 'rewarded', 'reseller_id',
                                   'cookie_tracking', 'min_os_version', 'screen_layout_sizes',
                                   'interval', 'banner_creatives', 'dma_codes', 'regions',
-                                  'wifi_only', 'approved_sources', 'approved_banner_creatives'
+                                  'wifi_only', 'approved_sources', 'approved_banner_creatives', 'sdkless'
                                 ].map { |c| "#{quoted_table_name}.#{c}" }.join(', ')
 
   DIRECT_PAY_PROVIDERS = %w( boku paypal )
@@ -85,8 +85,8 @@ class Offer < ActiveRecord::Base
   belongs_to :partner
   belongs_to :item, :polymorphic => true
   belongs_to :reseller
-  belongs_to :app, :foreign_key => "item_id", :conditions => ['item_type = ?', 'App']
-  belongs_to :action_offer, :foreign_key => "item_id", :conditions => ['item_type = ?', 'ActionOffer']
+  belongs_to :app, :foreign_key => "item_id"
+  belongs_to :action_offer, :foreign_key => "item_id"
 
   validates_presence_of :reseller, :if => Proc.new { |offer| offer.reseller_id? }
   validates_presence_of :partner, :item, :name, :url, :rank_boost
@@ -99,7 +99,7 @@ class Offer < ActiveRecord::Base
   validates_numericality_of :min_conversion_rate, :allow_nil => true, :greater_than_or_equal_to => 0, :less_than_or_equal_to => 1
   validates_numericality_of :show_rate, :greater_than_or_equal_to => 0, :less_than_or_equal_to => 1
   validates_numericality_of :payment_range_low, :payment_range_high, :only_integer => true, :allow_nil => true, :greater_than => 0
-  validates_inclusion_of :pay_per_click, :user_enabled, :tapjoy_enabled, :allow_negative_balance, :self_promote_only, :featured, :multi_complete, :rewarded, :cookie_tracking, :tj_games_only, :in => [ true, false ]
+  validates_inclusion_of :pay_per_click, :user_enabled, :tapjoy_enabled, :allow_negative_balance, :self_promote_only, :featured, :multi_complete, :rewarded, :cookie_tracking, :in => [ true, false ]
   validates_inclusion_of :item_type, :in => ALL_OFFER_TYPES
   validates_inclusion_of :direct_pay, :allow_blank => true, :allow_nil => true, :in => DIRECT_PAY_PROVIDERS
   validates_each :device_types, :allow_blank => false, :allow_nil => false do |record, attribute, value|
@@ -154,6 +154,14 @@ class Offer < ActiveRecord::Base
     record.errors.add(attribute, "is only for GenericOffers and ActionsOffers") unless record.item_type == 'GenericOffer' || record.item_type == 'ActionOffer'
   end
   validate :bid_within_range
+  validates_each :sdkless, :allow_blank => false, :allow_nil => false do |record, attribute, value|
+    if value
+      record.get_device_types(true)
+      record.errors.add(attribute, "can only be enabled for Android-only offers") unless record.get_platform(true) == 'Android'
+      record.errors.add(attribute, "cannot be enabled for pay-per-click offers") if record.pay_per_click?
+      record.errors.add(attribute, "can only be enabled for 'App' offers") unless record.item_type == 'App'
+    end
+  end
 
   before_validation :update_payment
   before_validation_on_create :set_reseller_from_partner
@@ -163,6 +171,7 @@ class Offer < ActiveRecord::Base
   before_save :update_payment
   before_save :update_instructions
   before_save :sync_creative_approval # Must be before_save so auto-approval can happen
+  before_save :nullify_banner_creatives
   after_save :update_enabled_rating_offer_id
   after_save :update_pending_enable_requests
   after_save :update_tapjoy_sponsored_associated_offers
@@ -302,8 +311,12 @@ class Offer < ActiveRecord::Base
     Offer.enabled_offers.find_by_id(item_id).present?
   end
 
+  def primary?
+    item_id == id
+  end
+
   def send_low_conversion_email?
-    item_id == id || !primary_offer_enabled?
+    primary? || !primary_offer_enabled?
   end
 
   def calculate_min_conversion_rate
@@ -657,6 +670,10 @@ class Offer < ActiveRecord::Base
     item_type != 'VideoOffer'
   end
 
+  def to_s
+    name
+  end
+
   def num_support_requests(start_time = 1.day.ago, end_time = Time.zone.now)
     Mc.get_and_put("offer.support_requests.#{id}", false, 1.hour) do
       conditions = [
@@ -726,6 +743,11 @@ class Offer < ActiveRecord::Base
     else
       []
     end
+  end
+
+  def nullify_banner_creatives
+    write_attribute(:banner_creatives, nil) if banner_creatives.empty?
+    write_attribute(:approved_banner_creatives, nil) if approved_banner_creatives.empty?
   end
 
   def sync_creative_approval

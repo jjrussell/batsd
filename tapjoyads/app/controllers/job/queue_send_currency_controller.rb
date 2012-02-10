@@ -11,13 +11,8 @@ class Job::QueueSendCurrencyController < Job::SqsReaderController
 
   def on_message(message)
     params.delete(:callback_url)
-    # TO REMOVE: once all the messages with a serialized reward are gone
-    if message.body =~ /^\{.*\}$/
-      reward = Reward.deserialize(message.body)
-    else
-      reward = Reward.find(message.body, :consistent => true)
-      raise "Reward not found: #{message.body}" if reward.nil?
-    end
+    reward = Reward.find(message.body, :consistent => true)
+    raise "Reward not found: #{message.body}" if reward.nil?
     return if reward.sent_currency? && reward.send_currency_status?
 
     mc_time = Time.zone.now.to_i / 1.hour

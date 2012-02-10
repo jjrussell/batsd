@@ -8,13 +8,8 @@ class Job::QueueConversionTrackingController < Job::SqsReaderController
 
   def on_message(message)
     json = JSON.parse(message.body)
-    # TO REMOVE: once all the messages with a serialized click are gone
-    if json['click'].present?
-      click = Click.deserialize(json['click'])
-    else
-      click = Click.find(json['click_key'], :consistent => true)
-      raise "Click not found: #{json['click_key']}" if click.nil?
-    end
+    click = Click.find(json['click_key'], :consistent => true)
+    raise "Click not found: #{json['click_key']}" if click.nil?
     installed_at_epoch = json['install_timestamp']
 
     offer = Offer.find_in_cache(click.offer_id, true)
@@ -38,13 +33,20 @@ class Job::QueueConversionTrackingController < Job::SqsReaderController
       return
     end
 
+    device = Device.new(:key => click.udid)
+    other_devices = (publisher_user.udids - [ click.udid ]).map { |udid| Device.new(:key => udid) }
+
+    if (other_devices + [ device ]).any?(&:banned?)
+      click.block_reason = "Banned"
+      click.serial_save
+      return
+    end
+
     # Do not reward if user has installed this app for the same publisher user id on another device
     unless offer.multi_complete? || offer.item_type == 'VideoOffer'
-      other_udids = publisher_user.udids - [ click.udid ]
-      other_udids.each do |udid|
-        device = Device.new(:key => udid)
-        if device.has_app?(click.advertiser_app_id)
-          click.block_reason = "AlreadyRewardedForPublisherUserId (UDID=#{udid})"
+      other_devices.each do |d|
+        if d.has_app?(click.advertiser_app_id)
+          click.block_reason = "AlreadyRewardedForPublisherUserId (UDID=#{d.key})"
           click.serial_save
           return
         end

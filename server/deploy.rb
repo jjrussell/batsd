@@ -25,10 +25,10 @@ deploy_version = ARGV.first || current_version
 
 puts "Deploying version: #{deploy_version}"
 
-system "git checkout master 2>&1"
-system "git pull --quiet 2>&1"
-system "git pull --tags origin master 2>&1"
-system "git checkout #{deploy_version} 2>&1"
+system "git checkout master"
+system "git pull --quiet"
+system "git pull --tags origin master"
+system "git checkout #{deploy_version}"
 
 if server_type == 'jobs' || server_type == 'masterjobs'
   `cp tapjoyads/config/newrelic-jobs.yml tapjoyads/config/newrelic.yml`
@@ -54,6 +54,9 @@ else
   `cp tapjoyads/config/database-default.yml tapjoyads/config/database.yml`
 end
 
+puts "Restarting unicorn"
+system "server/start_or_reload_unicorn.rb"
+
 if server_type == 'jobs' || server_type == 'masterjobs'
   puts "Stopping jobs"
   `tapjoyads/script/jobs stop`
@@ -62,6 +65,3 @@ if server_type == 'jobs' || server_type == 'masterjobs'
   puts "Starting jobs"
   `tapjoyads/script/jobs start -- production`
 end
-
-puts "Restarting passenger"
-`touch tapjoyads/tmp/restart.txt`

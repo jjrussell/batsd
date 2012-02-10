@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120202221701) do
+ActiveRecord::Schema.define(:version => 20120210003759) do
 
   create_table "action_offers", :id => false, :force => true do |t|
     t.string   "id",                    :limit => 36,                    :null => false
@@ -22,6 +22,7 @@ ActiveRecord::Schema.define(:version => 20120202221701) do
     t.datetime "updated_at"
     t.string   "variable_name",                                          :null => false
     t.string   "prerequisite_offer_id", :limit => 36
+    t.integer  "price",                               :default => 0
   end
 
   add_index "action_offers", ["app_id"], :name => "index_action_offers_on_app_id"
@@ -641,7 +642,7 @@ ActiveRecord::Schema.define(:version => 20120202221701) do
     t.text     "regions",                                                                                          :null => false
     t.boolean  "instructions_overridden",                                                       :default => false, :null => false
     t.boolean  "tapjoy_sponsored",                                                              :default => false, :null => false
-    t.boolean  "tj_games_only",                                                                 :default => false, :null => false
+    t.boolean  "wifi_only",                                                                     :default => false, :null => false
     t.text     "approved_banner_creatives"
     t.text     "approved_sources",                                                                                 :null => false
     t.boolean  "wifi_only",                                                                     :default => false, :null => false
