@@ -57,19 +57,14 @@ describe Order do
     end
   end
 
-  context 'An Order' do
-    before :each do
-      @partner = Factory(:partner)
-    end
-
-    it 'increases the balance for a partner' do
-      @partner.balance.should == 0
-      @partner.orders.count.should == 0
-      Factory(:order, :partner => @partner, :amount => 100)
-      @partner.reload
-      @partner.balance.should == 100
-      @partner.orders.count.should == 1
-    end
+  it 'increases the balance for a partner' do
+    partner = Factory(:partner)
+    partner.balance.should == 0
+    partner.orders.count.should == 0
+    Factory(:order, :partner => partner, :amount => 100)
+    partner.reload
+    partner.balance.should == 100
+    partner.orders.count.should == 1
   end
 
 end
