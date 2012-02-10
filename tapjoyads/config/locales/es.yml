@@ -1,63 +1,377 @@
-es:
-  text:
-    shared:
-      privacy: "Confidencialidad"
-      ads_by: "Anuncios de"
-
-    offerwall:
-      title: "Gana %{currency}"
-      free: "Gratis"
-      next: "%{items} ofertas siguientes"
-      previous: "%{items} ofertas anteriores"
-      missing_currency: "¿Te falta %{currency}?"
-      instructions: "Completa una de las acciones siguientes para recibir %{currency}"
-      popular_apps: "Popular Apps"
-      instructions_non_rewarded: "Discover what's hot on Tapjoy!"
-      earn_currency: "Gana %{amount} %{currency}"
-      buy_currency: "Compra %{amount} %{currency}"
-      load_more: "Ver más ofertas"
-      loading: "Cargando..."
-      load_error: "Inténtalo otra vez."
-      wifi_required: "Wifi Required"
-      wifi_warning: "This app requires a wifi connection to download."
-
-    featured:
-      title: "Gana %{currency}"
+--- 
+es: 
+  activerecord: 
+    errors: 
+      full_messages: 
+        format: ~
+      messages: 
+        accepted: ~
+        blank: ~
+        confirmation: ~
+        empty: ~
+        equal_to: ~
+        even: ~
+        exclusion: ~
+        greater_than: ~
+        greater_than_or_equal_to: ~
+        inclusion: ~
+        invalid: ~
+        less_than: ~
+        less_than_or_equal_to: ~
+        not_a_number: ~
+        not_an_integer: ~
+        odd: ~
+        record_invalid: ~
+        taken: ~
+        too_long: ~
+        too_short: ~
+        wrong_length: ~
+      template: 
+        body: ~
+        header: 
+          one: ~
+          other: ~
+  date: 
+    abbr_day_names: ~
+    abbr_month_names: ~
+    day_names: ~
+    formats: 
+      default: ~
+      long: ~
+      short: ~
+    month_names: ~
+    order: ~
+  datetime: 
+    distance_in_words: 
+      about_x_hours: 
+        one: ~
+        other: ~
+      about_x_months: 
+        one: ~
+        other: ~
+      about_x_years: 
+        one: ~
+        other: ~
+      almost_x_years: 
+        one: ~
+        other: ~
+      half_a_minute: ~
+      less_than_x_minutes: 
+        one: ~
+        other: ~
+      less_than_x_seconds: 
+        one: ~
+        other: ~
+      over_x_years: 
+        one: ~
+        other: ~
+      x_days: 
+        one: ~
+        other: ~
+      x_minutes: 
+        one: ~
+        other: ~
+      x_months: 
+        one: ~
+        other: ~
+      x_seconds: 
+        one: ~
+        other: ~
+    prompts: 
+      day: ~
+      hour: ~
+      minute: ~
+      month: ~
+      second: ~
+      year: ~
+  errors: 
+    format: ~
+    messages: 
+      accepted: ~
+      blank: ~
+      confirmation: ~
+      empty: ~
+      equal_to: ~
+      even: ~
+      exclusion: ~
+      greater_than: ~
+      greater_than_or_equal_to: ~
+      inclusion: ~
+      invalid: ~
+      less_than: ~
+      less_than_or_equal_to: ~
+      not_a_number: ~
+      not_an_integer: ~
+      odd: ~
+      too_long: ~
+      too_short: ~
+      wrong_length: ~
+  helpers: 
+    select: 
+      prompt: ~
+    submit: 
+      create: ~
+      submit: ~
+      update: ~
+  number: 
+    currency: 
+      format: 
+        delimiter: ~
+        format: ~
+        precision: ~
+        separator: ~
+        significant: ~
+        strip_insignificant_zeros: ~
+        unit: ~
+    format: 
+      delimiter: ~
+      precision: ~
+      separator: ~
+      significant: ~
+      strip_insignificant_zeros: ~
+    human: 
+      decimal_units: 
+        format: ~
+        units: 
+          billion: ~
+          million: ~
+          quadrillion: ~
+          thousand: ~
+          trillion: ~
+          unit: ~
+      format: 
+        delimiter: ~
+        precision: ~
+        significant: ~
+        strip_insignificant_zeros: ~
+      storage_units: 
+        format: ~
+        units: 
+          byte: 
+            one: ~
+            other: ~
+          gb: ~
+          kb: ~
+          mb: ~
+          tb: ~
+    percentage: 
+      format: 
+        delimiter: ~
+    precision: 
+      format: 
+        delimiter: ~
+  support: 
+    array: 
+      last_word_connector: ~
+      two_words_connector: ~
+      words_connector: ~
+    select: 
+      prompt: ~
+  text: 
+    featured: 
+      download: Descarga
       download_and_run: "Descarga y abre"
-      try_out: "Prueba"
-      download: "Descarga"
-      skip: "Salta"
+      earn_currency: "Gana %{amount_and_currency}"
       earn_now: "Gana ahora"
       show_more_apps: "Enseñarme más aplicaciones"
-      earn_currency: "Gana %{amount_and_currency}"
+      skip: Salta
+      title: "Gana %{currency}"
+      try_out: Prueba
+    games: 
+        about_body: "Tapjoy te permite descubrir tan populares como Happy Park, City of Wonder, Coin Dozer, Overkill, VIP Poker y Gun Bros, asi como conseguir gratuitamente contenido extra para tus apps. Si te gusta jugar por ejemplo a Magic Zoo, Tapjoy te recomendará otros juegos como Safari Zoo o Bug Village HD. ¡Regístrate y descubre apps que te encantarán!"
+        about_title: "\"Sabe exactamente cuáles son las apps que me gustan\""
+        account_created_body: "¡Cuenta creada!"
+        account_created_title: "¡Exito!"
+        action_required: "¡Acción requerida!"
+        add_to_homescreen: "Añade %{tapjoy} a tu página de inicio."
+        advertisers_body: "Proponga su producto a millones de usuarios "
+        advertisers_title: "Anunciantes"
+        allow_marketing_emails: "Autorizar Tapjoy a mandarme ofertas por email"
+        already_registered: "%{name} se ha registrado ya, le estás siguiendo ahora."
+        already_registered: "%{name} se han registrado ya, les estás siguiendo ahora."
+        back_to_top: "Volver al inicio"
+        birthdate: "Año de nacimiento"
+        call_to_action_body: "La mejor manera de desbloquear contenido adicional para tus apps, y de encontrar nuevas apps que te gusten"
+        call_to_action_title: "Unlock Mobile Joy"
+        cant_fetch_offers: "Ha ocurrido un error. Por favor, inténtalo otra vez."
+        change_linked_account: "Conectar con otra cuenta de Facebook"
+        click_to_try_again: "Por favor, haz clic aquí para intentarlo otra vez."
+        connect_my_device: "Conectar mi móvil"
+        connect_your_android: "Por favor, conecta tu móvil Android"
+        connect_your_device: "Por favor, conecta tu móvil"
+        deactivate: "Deactivar"
+        del_acct_confirm: "Haz clic en el botón abajo para deactivar tu cuenta. Después de XXX días de inactividad, borraremos por completo tu cuenta. No podremos restaurar tu cuenta luego."
+        delete_my_account: "Borrar mi cuenta"
+        developers_body: "Aumente los ingresos de sus apps mediante nuestras herramientas de monetización."
+        developers_title: "Desarrolladores"
+        earn_title: "Bájate una de las aplicaciones abajo o visualiza uno de los anuncios para ganar %{currency} en %{app_name}"
+        enable_javascript: "Consulta la configuración de tu navegador y autoriza el Javascript para poder usar Tapjoy."
+        enter_birthdate: "Por favor, introduce tu año de nacimiento"
+        enter_email: "Por favor, introduce tu dirección de email"
+        enter_password: "Introduce una contraseña"
+        enter_platform: "Por favor, elige iOS o Android"
+        enter_tos: "Tienes que aceptar las Condiciones de uso"
+        enter_valid_email: "Introduce una dirección de email válida"
+        favorite_app: "App favorita"
+        favorite_category: "Categoría favorita"
+        follow_us: "Síguenos"
+        forgot_pass: "¿Has olvidado tu contraseña?"
+        free!: "¡Gratis!"
+        generic_issue: "Ha ocurrido un error. Por favor, inténtalo otra vez."
+        get_it: "¡Descárgalo!"
+        get_it: "¡Descárgalo!"
+        grant_us_access: "Por favor, danos tu permiso antes de mandar invitaciones."
+        how_it_works_body:: "Todos tus juegos aparecen en la lista abajo. Haz clic en los botones al lado de las apps para empezar a ganar moneda virtual."
+        how_it_works_title: "¿Cómo funciona?"
+        install_and_run: "Instala e inicia %{name}"
+        invite: "¡Invita a tus amigos!"
+        invite: "¡Invita a tus amigos!"
+        invite: "¡Invita a tus amigos!"
+        invite_button: "Invitar"
+        invite_email_body: "\"%{name} te ha invitado a Tapjoy, el MEJOR sitio para descubrir las aplicaciones del momento. Podrás registrarte gratuitamente y descubrir las mejores apps en iOS y Android, asi como ganar moneda virtual para tus apps favoritas. 
 
-    unavailable_offer:
-      message: "Sentimos las molestias, pero %{offer} ya no está disponible. Puedes volver a la pagina anterior y actualizarla para ver la lista de las ofertas más recientes."
-      optional_message: "O, haz clic aquí para descargar %{offer} igual."
-
-    instructions:
-      title: "Instrucciones"
+        Ya no necesitarás recorrer todo el App Store o el Android Market para encontrar nuevas apps. Tapjoy te recomienda que sabemos que te van a gustar. 
+        Para empezar, crea una cuenta aquí:\""
+        invite_email_greet: "Hola,"
+        invite_email_signature: "Equipo Tapjoy"
+        invite_friends: "Invitar"
+        invite_friends: "Invitar a %{count} amigos"
+        invite_title: "Manda una invitación por e-mail"
+        invites_sent_to: "Has mandado una invitación de Tapjoy a %{name}"
+        invites_sent_to: "Has mandado invitaciones de Tapjoy a %{name}"
+        issue_registering: "Ha ocurrido un problema con la creación de tu cuenta"
+        link_my_facebook: "Conectar con mi cuenta de Facebook"
+        load_more: "Más"
+        meta_description: "Tapjoy: el mejor sitio para descargarte aplicaciones y juegos en Android, iPhone y iPad."
+        meta_keywords: "juegos, juegos móviles, aplicaciones, ios, android, iphone, ipad, itouch"
+        more_apps: "Más apps"
+        my_apps: "Mis apps"
+        none_selected: "No has seleccionado ninguno"
+        oops: "Ups!"
+        our_tos_changed: "Nuestras %{terms_of_use} han cambiado. Por favor, revísalas y apruébelas para poder seguir."
+        privacy_policy_href: "Reglas de confidencialidad"
+        provide_other_email: "Por favor, introduce un email que no sea el tuyo"
+        recipients_label: "Usa comas para separar las direcciones de correo electrónico"
+        recommendation: "Apps recomendadas"
+        registering: "Registrándote"
+        select_current_device: "Por favor, selecciona el móvil que estás usando ahora"
+        select_device: "Por favor, selecciona un móvil"
+        select_friend: "Por favor, selecciona como mínimo a un amigo antes de mandar invitaciones."
+        social_networks: "Redes sociales"
+        social_settings: "Redes sociales"
+        tap_that: "Haz clic en %{icon} y selecciona %{button}"
+        tapjoy_picks: "Selecciones de Tapjoy"
+        terms_of_use_href: "Condiciones de uso"
+        tos_acknowledge: "Al marcar la casilla, confirmo que entiendo y estoy de acuerdo con las {terms of use} y las {privacy policy}"
+        tos_change_acknowledge: "Al marcar la casilla, confirmo que entiendo y estoy de acuerdo con las {terms of use} y las {privacy policy}"
+        unable_to_process: "Sentimos no poder procesar su solicitud."
+        wifi_required: "Wifi necesario"
+        wifi_required: "Wifi necesario"
+        wrong_device: "¿Te has equivocado de móvil?"
+    instructions: 
       amount_and_currency: "%{amount} %{currency}"
-      earn_currency: "Gana %{amount_and_currency}"
-      header: "Sigue estas etapas para ganar %{currency}:"
-      footer: "Tras completar estas etapas, ganarás %{amount_and_currency}."
-      download_action: "aquí"
-      download_link: "Si no tienes esta aplicación, haz clic %{download_action} para descargarla."
       continue_link: "Haz clic aquí para seguir."
-
-    support:
-      title: "¿Te falta %{currency}?"
-      instructions_1: "Por favor, selecciona la oferta que has completado y para la cual no has recibido %{currency} e introduce tu dirección de correo electrónico."
-      instructions_2: "Tardaremos más en contestar si nos mandas una solicitud incompleta. Daremos prioridad a las solicitudes más completas."
-      specify_offer_label: "¿Qué oferta es?"
+      download_action: aquí
+      download_link: "Si no tienes esta aplicación, haz clic %{download_action} para descargarla."
+      earn_currency: "Gana %{amount_and_currency}"
+      footer: "Tras completar estas etapas, ganarás %{amount_and_currency}."
+      header: "Sigue estas etapas para ganar %{currency}:"
+      title: Instrucciones
+    offerwall: 
+      buy_currency: "Compra %{amount} %{currency}"
+      earn_currency: "Gana %{amount} %{currency}"
+      free: Gratis
+      instructions: "Completa una de las acciones siguientes para recibir %{currency}"
+      instructions_non_rewarded: "Discover what's hot on Tapjoy!"
+      load_error: "Inténtalo otra vez."
+      load_more: "Ver más ofertas"
+      loading: Cargando...
+      missing_currency: "¿Te falta %{currency}?"
+      next: "%{items} ofertas siguientes"
+      popular_apps: "Popular Apps"
+      previous: "%{items} ofertas anteriores"
+      title: "Gana %{currency}"
+      wifi_required: "Wifi Required"
+      wifi_warning: "This app requires a wifi connection to download."
+    shared: 
+        about_link: "Acerca de Tapjoy"
+        android: "Android"
+        back: "Volver"
+        back: "Volver"
+        blog: "Blog"
+        cancel: "Anular"
+        city: "Ciudad"
+        confirm_password: "Confirmar la contraseña"
+        continue: "Continuar"
+        copyright: "Copyright © 2012 Tapjoy, Inc. All Rights Reserved. Tapjoy and the Tapjoy logo are trademarks or registered trademarks the property of their respective owners."
+        country: "País"
+        create_account: "Crear una cuenta"
+        day: "Día"
+        earn: "Gana"
+        email: "Email"
+        facebook_profile: "Perfil Facebook"
+        female: "Mujer"
+        followers: "Seguidores"
+        following: "Siguiendo a"
+        friends: "Amigos"
+        gender: "Sexo"
+        help: "Ayuda"
+        ios: "iOS"
+        login_noun: "Login"
+        login_verb: "Conectarse"
+        logout: "Desconectarse"
+        male: "Varón"
+        month: "Mes"
+        my_account: "Mi Cuenta"
+        my_profile: "Mi perfil"
+        name: "Nombre"
+        new_password: "Nueva contraseña"
+        nickname: "Apodo"
+        ok: "OK"
+        options: "Opciones"
+        other: "Otro"
+        password: "Contraseña"
+        preferences: "Preferencias"
+        privacy_policy: "Confidencialidad"
+        recipients: "Destinatarios"
+        reset_password: "Cambiar mi contraseña"
+        save: "Guardar"
+        save: "Guardar"
+        share: "Compartir"
+        sign_in: "Conectarse"
+        sign_up: "Registrarte"
+        sign_up: "Registrarte"
+        success: "¡Exito!"
+        try_again: "Volver a intentar"
+        updating: "Actualizando"
+        year: "Año"
+        zip_postal: "Código postal"
+    support: 
+      abuse_warning: "El objetivo de este formulario es solucionar problemas de usuarios que no han recibido su moneda virtual tras completar una oferta. Un uso abusivo de esta página podría causar el baneo de tu cuenta."
       description_label: "Descripción:"
       email_address_label: "Dirección de correo electrónico:"
+      instructions_1: "Por favor, selecciona la oferta que has completado y para la cual no has recibido %{currency} e introduce tu dirección de correo electrónico."
+      instructions_2: "Tardaremos más en contestar si nos mandas una solicitud incompleta. Daremos prioridad a las solicitudes más completas."
+      invalid_email: "Por favor, introduce una dirección de correo electrónico."
+      missing_description: "Por favor, describe la oferta que has completado."
+      missing_offer: "Por favor, indícanos qué oferta has completado."
+      no_incomplete_offers_label: "No se han encontrado ofertas."
+      select_offer: "Seleccionar una oferta"
+      specify_offer_label: "¿Qué oferta es?"
       submit_support_request: "Mandar al soporte"
       support_request_submitted: "Mandado al soporte"
       thanks: "¡Gracias por mandar tu solicitud al soporte! Tras comprobar que has completado la oferta, te mandaremos tu %{currency}."
-      missing_description: "Por favor, describe la oferta que has completado."
-      missing_offer: "Por favor, indícanos qué oferta has completado."
-      invalid_email: "Por favor, introduce una dirección de correo electrónico."
-      abuse_warning: "El objetivo de este formulario es solucionar problemas de usuarios que no han recibido su moneda virtual tras completar una oferta. Un uso abusivo de esta página podría causar el baneo de tu cuenta."
-      select_offer: "Seleccionar una oferta"
-      no_incomplete_offers_label: "No se han encontrado ofertas."
+      title: "¿Te falta %{currency}?"
+    unavailable_offer: 
+      message: "Sentimos las molestias, pero %{offer} ya no está disponible. Puedes volver a la pagina anterior y actualizarla para ver la lista de las ofertas más recientes."
+      optional_message: "O, haz clic aquí para descargar %{offer} igual."
+  time: 
+    am: ~
+    formats: 
+      day: ~
+      day_long: ~
+      day_short: ~
+      default: ~
+      long: ~
+      short: ~
+    pm: ~
