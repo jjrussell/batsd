@@ -53,7 +53,7 @@ authorization do
   role :payout_manager do
     includes :payops
     has_permission_on :tools, :to => [ :payout_info, :publishers_without_payout_info, :publisher_payout_info_changes ]
-    has_permission_on :tools_payouts, :to => [ :create ]
+    has_permission_on :tools_payouts, :to => [ :create, :confirm_payouts ]
     has_permission_on :tools_payout_freezes, :to => [ :create, :disable ]
   end
 

@@ -36,6 +36,7 @@
       %th Payout Info
       %th.do-not-print W9/Bank
       %th Action
+      %th Confirmed
   %tbody
     - @partners.each do |partner|
       - payout_info = partner.payout_info
@@ -84,6 +85,16 @@
               %span.status
           - else
             &nbsp;
+        %td
+          - if permitted_to?(:confirm_payouts, :tools_payouts)
+            - form_tag confirm_payouts_tools_payouts_path( :partner_id => partner.id), :method => :post, :class => 'enable_request' do
+              %span{ :class => 'enabled', :style =>  (!partner.payout_confirmed ? 'display:none;' : 'display:inline;')  } Confirmed
+              %span{ :class => 'disabled', :style => (partner.payout_confirmed ? 'display:none;' : 'display:inline;') } Unconfirmed
+              = submit_tag 'Enable', :class => 'submit', :style => (partner.payout_confirmed ? 'display:none;' : 'display:inline;')
+              %img.spinner{ :src => '/images/spinner.gif', :style => 'display:none;' }
+          - else
+            %span{ :class => 'enabled', :style =>  (!partner.payout_confirmed ? 'display:none;' : 'display:inline;')  } Confirmed
+            %span{ :class => 'disabled', :style => (partner.payout_confirmed ? 'display:none;' : 'display:inline;')  } Uncomfirmed
 
 - content_for :page_javascript do
   :plain
@@ -170,7 +181,7 @@
 
         var spinner = $(this).find('img.spinner');
         var submit = $(this).find('input.submit');
-        var amount = $(this).find('input.amount');
+        var amount = $(this).find('.amount');
         var status = $(this).find('span.status');
 
         $.ajax({
@@ -196,6 +207,41 @@
         });
         return false;
       });
+
+      $('form.enable_request').submit(function() {
+        if (!confirm('Are you sure?')) { return false; }
+
+        var spinner = $(this).find('img.spinner');
+        var submit = $(this).find('input.submit');
+        var status = $(this).find('span.disabled');
+        var enabled = $(this).find('span.enabled');
+
+        $.ajax({
+          dataType: 'json',
+          type: $(this).attr('method'),
+          url: $(this).attr('action'),
+          data: $(this).serialize(),
+          beforeSend: function() {
+            status.hide();
+            submit.hide();
+            spinner.show();
+          },
+          complete: function() {
+            spinner.hide();
+          },
+          success: function(response) {
+            if (response.success == true) {
+              enabled.show();
+            } else {
+              status.html('Error');
+              status.show();
+              submit.show();
+            }
+          }
+        });
+        return false;
+      });
+
     });
 
 - content_for :page_styles do

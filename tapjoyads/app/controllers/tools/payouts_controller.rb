@@ -2,7 +2,7 @@ class Tools::PayoutsController < WebsiteController
   layout 'tabbed'
   current_tab :tools
   filter_access_to :all
-  after_filter :save_activity_logs, :only => [ :create ]
+  after_filter :save_activity_logs, :only => [ :create, :confirm_payouts]
 
   def index
     if params[:year] && params[:month]
@@ -29,6 +29,13 @@ class Tools::PayoutsController < WebsiteController
     payout = partner.payouts.build(:amount => amount, :month => cutoff_date.month, :year => cutoff_date.year)
     log_activity(payout)
     render :json => { :success => payout.save }
+  end
+
+  def confirm_payouts
+    partner = Partner.find(params[:partner_id])
+    partner.payout_confirmed = true
+    log_activity(partner)
+    render :json => { :success => partner.save }
   end
 
 end

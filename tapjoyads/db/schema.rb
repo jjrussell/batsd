@@ -729,6 +729,7 @@ ActiveRecord::Schema.define(:version => 20120216172034) do
     t.date     "negotiated_rev_share_ends_on"
     t.boolean  "accepted_negotiated_tos",                                                  :default => false
     t.string   "cs_contact_email"
+    t.boolean  "payout_confirmed",                                                         :default => false
   end
 
   add_index "partners", ["id"], :name => "index_partners_on_id", :unique => true
