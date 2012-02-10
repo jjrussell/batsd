@@ -7,13 +7,16 @@ describe FeaturedContent do
     @featured_content = Factory(:featured_content)
   end
 
-  context 'when associating' do
+  describe '.belong_to' do
     it { should belong_to :author }
     it { should belong_to :offer }
+  end
+
+  describe '.have_one' do
     it { should have_one :tracking_offer }
   end
 
-  context 'when validating' do
+  describe '#valid?' do
     it { should validate_presence_of :featured_type }
     it { should validate_presence_of :subtitle }
     it { should validate_presence_of :title }
@@ -22,10 +25,29 @@ describe FeaturedContent do
     it { should validate_presence_of :end_date }
     it { should validate_presence_of :weight }
 
-    describe '#valid?' do
-      context 'when platforms is blank' do
+    context 'when platforms is blank' do
+      before :each do
+        @featured_content.platforms = nil
+      end
+
+      it "returns false" do
+        @featured_content.valid?.should be_false
+      end
+
+      it "sets an error message" do
+        @featured_content.valid?
+        @featured_content.errors.on(:platforms).should == "is not valid JSON"
+      end
+    end
+
+    context 'when author is nil' do
+      before :each do
+        @featured_content.update_attributes({ :author => nil })
+      end
+
+      context "when the featured_type is 'STAFFPICK'" do
         before :each do
-          @featured_content.platforms = nil
+          @featured_content.update_attributes({ :featured_type => FeaturedContent::TYPES_MAP[FeaturedContent::STAFFPICK] })
         end
 
         it "returns false" do
@@ -34,124 +56,103 @@ describe FeaturedContent do
 
         it "sets an error message" do
           @featured_content.valid?
-          @featured_content.errors.on(:platforms).should == "is not valid JSON"
+          @featured_content.errors.on(:author).should == "Please select an author."
         end
       end
 
-      context 'when author is nil' do
+      context "when the featured_type is 'PROMO'" do
         before :each do
-          @featured_content.update_attributes({ :author => nil })
+          @featured_content.update_attributes({ :featured_type => FeaturedContent::TYPES_MAP[FeaturedContent::PROMO] })
         end
 
-        context "when the featured_type is 'STAFFPICK'" do
-          before :each do
-            @featured_content.update_attributes({ :featured_type => FeaturedContent::TYPES_MAP[FeaturedContent::STAFFPICK] })
-          end
-
-          it "returns false" do
-            @featured_content.valid?.should be_false
-          end
-
-          it "sets an error message" do
-            @featured_content.valid?
-            @featured_content.errors.on(:author).should == "Please select an author."
-          end
-        end
-
-        context "when the featured_type is 'PROMO'" do
-          before :each do
-            @featured_content.update_attributes({ :featured_type => FeaturedContent::TYPES_MAP[FeaturedContent::PROMO] })
-          end
-
-          it "returns true" do
-            @featured_content.valid?.should be_true
-          end
-        end
-
-        context "when the featured_type is 'NEWS'" do
-          before :each do
-            @featured_content.update_attributes({ :featured_type => FeaturedContent::TYPES_MAP[FeaturedContent::NEWS] })
-          end
-
-          it "returns false" do
-            @featured_content.valid?.should be_false
-          end
-
-          it "sets an error message" do
-            @featured_content.valid?
-            @featured_content.errors.on(:author).should == "Please select an author."
-          end
-        end
-
-        context "when the featured_type is 'CONTEST'" do
-          before :each do
-            @featured_content.update_attributes({ :featured_type => FeaturedContent::TYPES_MAP[FeaturedContent::CONTEST] })
-          end
-
-          it "returns false" do
-            @featured_content.valid?.should be_false
-          end
-
-          it "sets an error message" do
-            @featured_content.valid?
-            @featured_content.errors.on(:author).should == "Please select an author."
-          end
+        it "returns true" do
+          @featured_content.valid?.should be_true
         end
       end
 
-      context 'when offer is nil' do
+      context "when the featured_type is 'NEWS'" do
         before :each do
-          @featured_content.update_attributes({ :offer => nil })
+          @featured_content.update_attributes({ :featured_type => FeaturedContent::TYPES_MAP[FeaturedContent::NEWS] })
         end
 
-        context "when the featured_type is 'STAFFPICK'" do
-          before :each do
-            @featured_content.update_attributes({ :featured_type => FeaturedContent::TYPES_MAP[FeaturedContent::STAFFPICK] })
-          end
-
-          it "returns false" do
-            @featured_content.valid?.should be_false
-          end
-
-          it "sets an error message" do
-            @featured_content.valid?
-            @featured_content.errors.on(:offer).should == "Please select an offer/app."
-          end
+        it "returns false" do
+          @featured_content.valid?.should be_false
         end
 
-        context "when the featured_type is 'PROMO'" do
-          before :each do
-            @featured_content.update_attributes({ :featured_type => FeaturedContent::TYPES_MAP[FeaturedContent::PROMO] })
-          end
+        it "sets an error message" do
+          @featured_content.valid?
+          @featured_content.errors.on(:author).should == "Please select an author."
+        end
+      end
 
-          it "returns false" do
-            @featured_content.valid?.should be_false
-          end
-
-          it "sets an error message" do
-            @featured_content.valid?
-            @featured_content.errors.on(:offer).should == "Please select an offer/app."
-          end
+      context "when the featured_type is 'CONTEST'" do
+        before :each do
+          @featured_content.update_attributes({ :featured_type => FeaturedContent::TYPES_MAP[FeaturedContent::CONTEST] })
         end
 
-        context "when the featured_type is 'NEWS'" do
-          before :each do
-            @featured_content.update_attributes({ :featured_type => FeaturedContent::TYPES_MAP[FeaturedContent::NEWS] })
-          end
-
-          it "returns true" do
-            @featured_content.valid?.should be_true
-          end
+        it "returns false" do
+          @featured_content.valid?.should be_false
         end
 
-        context "when the featured_type is 'CONTEST'" do
-          before :each do
-            @featured_content.update_attributes({ :featured_type => FeaturedContent::TYPES_MAP[FeaturedContent::CONTEST] })
-          end
+        it "sets an error message" do
+          @featured_content.valid?
+          @featured_content.errors.on(:author).should == "Please select an author."
+        end
+      end
+    end
 
-          it "returns true" do
-            @featured_content.valid?.should be_true
-          end
+    context 'when offer is nil' do
+      before :each do
+        @featured_content.update_attributes({ :offer => nil })
+      end
+
+      context "when the featured_type is 'STAFFPICK'" do
+        before :each do
+          @featured_content.update_attributes({ :featured_type => FeaturedContent::TYPES_MAP[FeaturedContent::STAFFPICK] })
+        end
+
+        it "returns false" do
+          @featured_content.valid?.should be_false
+        end
+
+        it "sets an error message" do
+          @featured_content.valid?
+          @featured_content.errors.on(:offer).should == "Please select an offer/app."
+        end
+      end
+
+      context "when the featured_type is 'PROMO'" do
+        before :each do
+          @featured_content.update_attributes({ :featured_type => FeaturedContent::TYPES_MAP[FeaturedContent::PROMO] })
+        end
+
+        it "returns false" do
+          @featured_content.valid?.should be_false
+        end
+
+        it "sets an error message" do
+          @featured_content.valid?
+          @featured_content.errors.on(:offer).should == "Please select an offer/app."
+        end
+      end
+
+      context "when the featured_type is 'NEWS'" do
+        before :each do
+          @featured_content.update_attributes({ :featured_type => FeaturedContent::TYPES_MAP[FeaturedContent::NEWS] })
+        end
+
+        it "returns true" do
+          @featured_content.valid?.should be_true
+        end
+      end
+
+      context "when the featured_type is 'CONTEST'" do
+        before :each do
+          @featured_content.update_attributes({ :featured_type => FeaturedContent::TYPES_MAP[FeaturedContent::CONTEST] })
+        end
+
+        it "returns true" do
+          @featured_content.valid?.should be_true
         end
       end
     end
