@@ -21,44 +21,42 @@ describe PayoutInfo do
 
   subject { Factory(:payout_info) }
 
-  context "Payout Info" do
-    before :each do
-      @info = Factory(:payout_info)
-    end
+  before :each do
+    @info = Factory(:payout_info)
+  end
 
-    it "validates bank info if payout_method is ACH or wire" do
-      @info.payout_method = 'ach'
-      @info.should_not be_valid
-      @info.bank_name = @info.bank_account_number = @info.bank_routing_number = "foo"
-      @info.should be_valid
+  it "validates bank info if payout_method is ACH or wire" do
+    @info.payout_method = 'ach'
+    @info.should_not be_valid
+    @info.bank_name = @info.bank_account_number = @info.bank_routing_number = "foo"
+    @info.should be_valid
 
-      @info.bank_name = @info.bank_account_number = @info.bank_routing_number = nil
+    @info.bank_name = @info.bank_account_number = @info.bank_routing_number = nil
 
-      @info.payout_method = 'wire'
-      @info.should_not be_valid
-      @info.bank_name = @info.bank_account_number = @info.bank_routing_number = "foo"
-      @info.should be_valid
-    end
+    @info.payout_method = 'wire'
+    @info.should_not be_valid
+    @info.bank_name = @info.bank_account_number = @info.bank_routing_number = "foo"
+    @info.should be_valid
+  end
 
-    it "validates payout_method is wire for international users" do
-      @info.payout_method = 'ach'
-      @info.should_not be_valid
-      @info.bank_name = @info.bank_account_number = @info.bank_routing_number = "foo"
-      @info.should be_valid
+  it "validates payout_method is wire for international users" do
+    @info.payout_method = 'ach'
+    @info.should_not be_valid
+    @info.bank_name = @info.bank_account_number = @info.bank_routing_number = "foo"
+    @info.should be_valid
 
-      @info.bank_name = @info.bank_account_number = @info.bank_routing_number = nil
+    @info.bank_name = @info.bank_account_number = @info.bank_routing_number = nil
 
-      @info.payout_method = 'wire'
-      @info.should_not be_valid
-      @info.bank_name = @info.bank_account_number = @info.bank_routing_number = "foo"
-      @info.should be_valid
-    end
+    @info.payout_method = 'wire'
+    @info.should_not be_valid
+    @info.bank_name = @info.bank_account_number = @info.bank_routing_number = "foo"
+    @info.should be_valid
+  end
 
-    it "validates paypal email if paypal" do
-      @info.payout_method = 'paypal'
-      @info.should_not be_valid
-      @info.paypal_email = 'foo'
-      @info.should be_valid
-    end
+  it "validates paypal email if paypal" do
+    @info.payout_method = 'paypal'
+    @info.should_not be_valid
+    @info.paypal_email = 'foo'
+    @info.should be_valid
   end
 end
