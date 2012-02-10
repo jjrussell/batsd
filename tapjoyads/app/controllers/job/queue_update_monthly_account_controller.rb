@@ -2,6 +2,7 @@ class Job::QueueUpdateMonthlyAccountController < Job::SqsReaderController
 
   def initialize
     super QueueNames::UPDATE_MONTHLY_ACCOUNT
+    @num_reads = 10
   end
 
   private

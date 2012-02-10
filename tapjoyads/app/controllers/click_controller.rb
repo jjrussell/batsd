@@ -11,6 +11,7 @@ class ClickController < ApplicationController
   def app
     create_click('install')
     handle_pay_per_click
+    @device.handle_sdkless_click!(@offer, @now)
 
     redirect_to(get_destination_url)
   end
@@ -41,6 +42,13 @@ class ClickController < ApplicationController
     handle_pay_per_click
 
     render :text => 'OK'
+  end
+
+  def survey
+    create_click('survey')
+    handle_pay_per_click
+
+    redirect_to(get_destination_url)
   end
 
   def test_offer

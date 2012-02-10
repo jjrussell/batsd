@@ -27,7 +27,10 @@ authorization do
 
   role :customer_service do
     includes :tools
+    has_permission_on :search, :to => [ :gamers ]
     has_permission_on :tools, :to => [ :resolve_clicks, :device_info, :update_device, :award_currencies, :update_award_currencies, :send_currency_failures ]
+    has_permission_on :tools_gamers, :to => [ :index, :show ]
+    has_permission_on :tools_gamer_devices, :to => [ :create, :edit, :new, :update ]
     has_permission_on :tools_support_requests, :to => [ :index, :mass_resolve ]
   end
 
@@ -72,6 +75,7 @@ authorization do
   role :account_mgr do
     includes :money
     includes :games_editor
+    includes :customer_service
     has_permission_on :statz, :to => [ :index, :show, :edit, :update, :new, :create, :last_run_times, :udids, :download_udids, :global, :publisher, :advertiser, :support_request_reward_ratio ]
     has_permission_on :search, :to => [ :offers, :partners, :users ]
     has_permission_on :tools, :to => [ :disabled_popular_offers, :sanitize_users, :update_user, :resolve_clicks, :new_transfer, :device_info, :update_device, :freemium_android, :award_currencies, :update_award_currencies, :send_currency_failures ]
@@ -94,6 +98,7 @@ authorization do
     has_permission_on :tools_agency_users, :to => [ :index, :show ]
     has_permission_on :tools_partner_program_statz, :to => [ :index, :export ]
     has_permission_on :tools_offers, :to => [ :creative, :approve_creative, :reject_creative ]
+    has_permission_on :tools_survey_offers, :to => [ :index, :show, :new, :create, :edit, :update, :destroy ]
   end
 
   role :games_editor do

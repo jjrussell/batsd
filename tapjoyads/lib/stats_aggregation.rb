@@ -233,7 +233,6 @@ class StatsAggregation
               Conversion.created_between(s_time, e_time).count(:conditions => conditions, :group => :country)
             end
           end
-          # TO REMOVE: the downcasing after 2011-08-12
           if country == 'other'
             values_by_country[key].reject { |c, value| Stats::COUNTRY_CODES[c].present? || Stats::COUNTRY_CODES[c.try(:upcase)].present? }.values.sum
           else

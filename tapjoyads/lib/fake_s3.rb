@@ -33,14 +33,14 @@ end
 
 class FakeObject
   REAL_KEYS = [
-    'icons/checkbox.jpg',
+    'icons/survey-blue.png',
     'display/round_mask.png',
   ]
 
   def initialize(key)
     @key = key
     if REAL_KEYS.include? @key
-      @data = File.open("#{RAILS_ROOT}/public/images/gunbros.png").read
+      @data = File.open("#{Rails.root}/public/images/gunbros.png").read
     end
   end
 

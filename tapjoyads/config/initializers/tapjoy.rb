@@ -1,7 +1,7 @@
 require 'extensions'
 require 'notifier'
 
-GEOIP = GeoIP.new("#{RAILS_ROOT}/data/GeoIPCity.dat")
+GEOIP = GeoIP.new("#{Rails.root}/data/GeoIPCity.dat")
 BANNED_IPS = Set.new(['174.120.96.162', '151.197.180.227', '74.63.224.218', '65.19.143.2'])
 
 UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/
@@ -27,8 +27,6 @@ IPHONE_MARMALADE_EXTENSION = 'https://github.com/downloads/marmalade/Tapjoy-for-
 WINDOWS_CONNECT_SDK = 'https://s3.amazonaws.com/tapjoy/sdks/TapjoyAdvertiserSDK_Windows_v2.0.0.zip'
 WINDOWS_OFFERS_SDK  = 'https://s3.amazonaws.com/tapjoy/sdks/TapjoyPublisherSDK_Windows_v2.0.0.zip'
 
-SCHEMA_VERSION = ActiveRecord::Migrator.current_version
-
 DEV_FORUM_URL = 'https://groups.google.com/group/tapjoy-developer'
 KNOWLEDGE_CENTER_URL = 'http://knowledge.tapjoy.com/'
 TAPJOY_GAMES_REGISTRATION_OFFER_ID = 'f7cc4972-7349-42dd-a696-7fcc9dcc2d03'
@@ -45,8 +43,8 @@ AWS.config(
   :http_handler      => AWS::Core::Http::HTTPartyHandler.new
 )
 
-GAMES_CONFIG = YAML::load_file("#{RAILS_ROOT}/config/games.yaml")[Rails.env]
+GAMES_CONFIG = YAML::load_file("#{Rails.root}/config/games.yaml")[Rails.env]
 
-VERTICA_CONFIG = YAML::load_file("#{RAILS_ROOT}/config/vertica.yml")[Rails.env]
+VERTICA_CONFIG = YAML::load_file("#{Rails.root}/config/vertica.yml")[Rails.env]
 
 TEXTFREE_PUB_APP_ID = '6b69461a-949a-49ba-b612-94c8e7589642'

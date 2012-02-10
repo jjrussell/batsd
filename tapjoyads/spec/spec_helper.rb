@@ -13,16 +13,40 @@ Spork.prefork do
   Spec::Runner.configure do |config|
     config.use_transactional_fixtures = true
     config.use_instantiated_fixtures  = false
-    config.fixture_path = RAILS_ROOT + '/spec/fixtures/'
+    config.fixture_path = "#{Rails.root}/spec/fixtures/"
     config.mock_with :mocha
 
     config.before :each do
       SimpledbResource.reset_connection
+      Mc.cache.flush
     end
   end
 
   def login_as(user)
     UserSession.create(user)
+  end
+
+  def games_login_as(user)
+    GamerSession.create(user)
+  end
+
+  def stub_device
+    mock_answers = {'Where are you from?' => 'the moon'}
+    mock_device = mock()
+    mock_device.stubs(:survey_answers).returns(mock_answers)
+    mock_device.stubs(:survey_answers=)
+    mock_device.stubs(:save)
+    Device.stubs(:new).returns(mock_device)
+  end
+
+  def stub_survey_result
+    mock_result = mock()
+    mock_result.stubs(:udid=)
+    mock_result.stubs(:click_key=)
+    mock_result.stubs(:geoip_data=)
+    mock_result.stubs(:answers=)
+    mock_result.stubs(:save)
+    SurveyResult.stubs(:new).returns(mock_result)
   end
 
   def should_respond_with_json_error(code)
