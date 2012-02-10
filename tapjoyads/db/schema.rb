@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120208032532) do
+ActiveRecord::Schema.define(:version => 20120210011141) do
 
   create_table "action_offers", :id => false, :force => true do |t|
     t.string   "id",                    :limit => 36,                    :null => false
@@ -89,29 +89,30 @@ ActiveRecord::Schema.define(:version => 20120208032532) do
   add_index "app_reviews", ["id"], :name => "index_app_reviews_on_id", :unique => true
 
   create_table "apps", :id => false, :force => true do |t|
-    t.string   "id",                      :limit => 36,                    :null => false
-    t.string   "partner_id",              :limit => 36,                    :null => false
-    t.string   "name",                                                     :null => false
+    t.string   "id",                            :limit => 36,                    :null => false
+    t.string   "partner_id",                    :limit => 36,                    :null => false
+    t.string   "name",                                                           :null => false
     t.text     "description"
-    t.integer  "price",                                 :default => 0
+    t.integer  "price",                                       :default => 0
     t.string   "platform"
     t.string   "store_id"
     t.integer  "color"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "age_rating"
-    t.integer  "rotation_direction",                    :default => 0,     :null => false
-    t.integer  "rotation_time",                         :default => 0,     :null => false
-    t.boolean  "hidden",                                :default => false, :null => false
+    t.integer  "rotation_direction",                          :default => 0,     :null => false
+    t.integer  "rotation_time",                               :default => 0,     :null => false
+    t.boolean  "hidden",                                      :default => false, :null => false
     t.integer  "file_size_bytes"
     t.string   "supported_devices"
-    t.string   "enabled_rating_offer_id", :limit => 36
-    t.string   "secret_key",                                               :null => false
+    t.string   "enabled_rating_offer_id",       :limit => 36
+    t.string   "secret_key",                                                     :null => false
     t.datetime "released_at"
     t.float    "user_rating"
     t.string   "categories"
     t.text     "countries_blacklist"
     t.integer  "papaya_user_count"
+    t.boolean  "reengagement_campaign_enabled"
   end
 
   add_index "apps", ["id"], :name => "index_apps_on_id", :unique => true
@@ -612,21 +613,21 @@ ActiveRecord::Schema.define(:version => 20120208032532) do
     t.float    "normal_avg_revenue",                                                            :default => 0.0,   :null => false
     t.float    "normal_bid",                                                                    :default => 0.0,   :null => false
     t.integer  "over_threshold",                                                                :default => 0,     :null => false
-    t.boolean  "rewarded",                                                                      :default => true
     t.string   "reseller_id",                       :limit => 36
+    t.boolean  "rewarded",                                                                      :default => true
     t.boolean  "cookie_tracking",                                                               :default => false, :null => false
     t.string   "min_os_version",                                                                :default => "",    :null => false
     t.text     "screen_layout_sizes",                                                                              :null => false
-    t.integer  "interval",                                                                      :default => 0,     :null => false
-    t.boolean  "url_overridden",                                                                :default => false, :null => false
-    t.text     "banner_creatives"
-    t.text     "dma_codes",                                                                                        :null => false
     t.text     "regions",                                                                                          :null => false
-    t.boolean  "instructions_overridden",                                                       :default => false, :null => false
+    t.integer  "interval",                                                                      :default => 0,     :null => false
+    t.text     "banner_creatives"
+    t.boolean  "url_overridden",                                                                :default => false, :null => false
+    t.text     "dma_codes",                                                                                        :null => false
     t.boolean  "tapjoy_sponsored",                                                              :default => false, :null => false
-    t.boolean  "wifi_only",                                                                     :default => false, :null => false
-    t.text     "approved_banner_creatives"
+    t.boolean  "instructions_overridden",                                                       :default => false, :null => false
     t.text     "approved_sources",                                                                                 :null => false
+    t.text     "approved_banner_creatives"
+    t.boolean  "wifi_only",                                                                     :default => false, :null => false
     t.boolean  "sdkless",                                                                       :default => false
   end
 
@@ -719,9 +720,9 @@ ActiveRecord::Schema.define(:version => 20120208032532) do
     t.boolean  "approved_publisher",                                                       :default => false,     :null => false
     t.boolean  "apsalar_sharing_adv",                                                      :default => false,     :null => false
     t.boolean  "apsalar_sharing_pub",                                                      :default => false,     :null => false
-    t.string   "reseller_id",                  :limit => 36
     t.string   "billing_email"
     t.integer  "freshbooks_client_id"
+    t.string   "reseller_id",                  :limit => 36
     t.boolean  "accepted_publisher_tos"
     t.string   "sales_rep_id",                 :limit => 36
     t.decimal  "max_deduction_percentage",                   :precision => 8, :scale => 6, :default => 1.0,       :null => false
@@ -840,16 +841,14 @@ ActiveRecord::Schema.define(:version => 20120208032532) do
   add_index "rating_offers", ["partner_id"], :name => "index_rating_offers_on_partner_id"
 
   create_table "reengagement_offers", :id => false, :force => true do |t|
-    t.string   "id",                    :limit => 36,                    :null => false
-    t.string   "app_id",                :limit => 36,                    :null => false
-    t.string   "partner_id",            :limit => 36,                    :null => false
-    t.string   "currency_id",           :limit => 36,                    :null => false
-    t.string   "prerequisite_offer_id", :limit => 36
-    t.text     "instructions"
-    t.integer  "day_number",                                             :null => false
-    t.integer  "reward_value",                                           :null => false
-    t.boolean  "hidden",                              :default => false, :null => false
-    t.boolean  "enabled",                             :default => false, :null => false
+    t.string   "id",           :limit => 36,                    :null => false
+    t.string   "app_id",       :limit => 36,                    :null => false
+    t.string   "partner_id",   :limit => 36,                    :null => false
+    t.string   "currency_id",  :limit => 36,                    :null => false
+    t.text     "instructions",                                  :null => false
+    t.integer  "day_number",                                    :null => false
+    t.integer  "reward_value",                                  :null => false
+    t.boolean  "hidden",                     :default => false, :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -876,19 +875,6 @@ ActiveRecord::Schema.define(:version => 20120208032532) do
 
   add_index "role_assignments", ["id"], :name => "index_role_assignments_on_id", :unique => true
   add_index "role_assignments", ["user_id", "user_role_id"], :name => "index_role_assignments_on_user_id_and_user_role_id", :unique => true
-
-  create_table "sketchy_activities", :force => true do |t|
-    t.string   "app_id"
-    t.string   "type"
-    t.float    "value1"
-    t.float    "value2"
-    t.float    "value3"
-    t.float    "value4"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  add_index "sketchy_activities", ["app_id"], :name => "index_sketchy_activities_on_app_id"
 
   create_table "spend_shares", :id => false, :force => true do |t|
     t.string   "id",             :limit => 36, :null => false

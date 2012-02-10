@@ -160,9 +160,33 @@ class App < ActiveRecord::Base
     end
   end
 
+  def reengagement_campaign
+    @reengagement_campaign ||= reengagement_offers.visible.order_by_day
+  end
+
+  def enable_reengagement_campaign!
+    self.reengagement_campaign_enabled = true
+    update_reengagements_with_enable_or_disable
+    Mc.put("mysql.reengagement_offers.#{id}.#{SCHEMA_VERSION}", reengagement_campaign, false, 1.day)
+  end
+
+  def disable_reengagement_campaign!
+    self.reengagement_campaign_enabled = false
+    update_reengagements_with_enable_or_disable
+    Mc.delete("mysql.reengagement_offers.#{id}.#{SCHEMA_VERSION}")
+  end
+
+  def reengagement_campaign_length
+    reengagement_offers.visible.length
+  end
+
+  def reengagement_campaign_from_cache
+    Mc.get("mysql.reengagement_offers.#{id}.#{SCHEMA_VERSION}")
+  end
+
   def resolve_reengagement(udid, timestamp, publisher_user_id)
     device = Device.new(:key => udid)
-    reengagement_offerz = ReengagementOffer.find_list_in_cache(id)
+    reengagement_offerz = reengagement_campaign_from_cache
     reengagement_offer = reengagement_offerz.detect{ |r| !device.has_app?(r.id) }
     if reengagement_offer && reengagement_offer.resolve
       if reengagement_offer.day_number < reengagement_offerz.length
@@ -271,6 +295,13 @@ class App < ActiveRecord::Base
   end
 
 private
+
+  def update_reengagements_with_enable_or_disable
+    self.save!
+    reengagement_campaign.map(&:update_offers)
+    @reengagement_campaign = nil
+  end
+
 
   def generate_secret_key
     return if secret_key.present?

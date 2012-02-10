@@ -5,13 +5,11 @@ class CreateReengagementOffers < ActiveRecord::Migration
       t.guid :app_id, :null => false
       t.guid :partner_id, :null => false
       t.guid :currency_id, :null => false
-      t.guid :prerequisite_offer_id
-      t.text :instructions
+      t.text :instructions, :null => false
       t.integer :day_number, :null => false
       t.integer :reward_value, :null => false
       t.boolean :hidden, :default => false, :null => false
-      t.boolean :enabled, :default => false, :null => false
-      
+
       t.timestamps
     end
 

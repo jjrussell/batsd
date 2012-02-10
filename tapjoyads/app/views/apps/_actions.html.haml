@@ -34,7 +34,7 @@
         %li.inception= link_to 'Advertiser', integrate_app_path(@app), :class => (request.path_parameters['controller'] == 'apps' && request.path_parameters['action']=='integrate' ? 'selected' : '')
         %li.inception= link_to 'Publisher', publisher_integrate_app_path(@app), :class => (request.path_parameters['controller'] == 'apps' && request.path_parameters['action']=='publisher_integrate' ? 'selected' : '')
       %li
-        - if ReengagementOffer.campaign_length(@app.id) > 1
+        - if @app.reengagement_campaign_length > 1
           = link_to 'Re-Engagement Offers',  app_reengagement_offers_path(:app_id => @app.id)
         - elsif controller.controller_name == 'apps/reengagement_offers'
           = link_to('Re-Engagement Offers', new_app_reengagement_offer_path(:app_id => @app.id), :class => 'selected')

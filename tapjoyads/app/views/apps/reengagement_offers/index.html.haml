@@ -14,9 +14,9 @@
 
   .tjform
     %br
-    %b Enabled: 
-    = @reengagement_offer.enabled? ? 'YES' : 'NO'
-    - if @reengagement_offer.enabled
+    %b Enabled:
+    = @app.reengagement_campaign_enabled? ? 'YES' : 'NO'
+    - if @app.reengagement_campaign_enabled?
       = button_to 'Disable Campaign', {:action => "update_status", :app_id => @app.id, :enabled => 0}, {:method => :post}
     - else
       = button_to 'Enable Campaign', {:action => "update_status", :app_id => @app.id, :enabled => 1}, {:method => :post}
@@ -27,7 +27,7 @@
           Day
         %th
           Reward Currency
-        %th 
+        %th
           Reward Amount
         %th
         %th
@@ -54,7 +54,7 @@
             %td
               - if ro == @reengagement_offers.last
                 = link_to 'Remove', {:action => "destroy", :app_id => @app.id, :id => ro.id}, {:method => :delete}
-        
+
       %tr
         / - if @reengagement_offers.length < 6
         %td{:colspan => "2"}

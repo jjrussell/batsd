@@ -1,11 +1,9 @@
 class ReengagementOffer < ActiveRecord::Base
   include UuidPrimaryKey
-  acts_as_cacheable
 
   belongs_to :app
   belongs_to :partner
   belongs_to :currency
-  belongs_to :prerequisite_offer, :class_name => 'ReengagementOffer'
 
   has_one :primary_offer, :class_name => 'Offer', :as => :item, :conditions => 'id = item_id'
   has_many :offers, :as => :item
@@ -15,72 +13,28 @@ class ReengagementOffer < ActiveRecord::Base
 
   before_create :pre_create
 
+  before_create :disable_campaign
+  before_update :disable_campaign
+
   after_create :create_primary_offer
+
   after_update :update_offers
-  after_destroy :update_offers, :uncache
-  after_save :cache_list
 
   delegate :instructions_overridden, :to => :primary_offer
   delegate :get_offer_device_types, :store_id, :store_url, :large_download?, :supported_devices, :platform, :get_countries_blacklist, :countries_blacklist, :primary_category, :user_rating, :info_url, :to => :app
 
   named_scope :visible, :conditions => { :hidden => false }
-  named_scope :active, :conditions => { :hidden => false, :enabled => true }
-  named_scope :inactive, :conditions => { :hidden => false, :enabled => false }
   named_scope :for_app, lambda { |app_id| {:conditions => [ "app_id = ?", app_id ] } }
   named_scope :order_by_day, :order => "day_number ASC"
 
-  def self.campaign_length(app_id)
-    ReengagementOffer.visible.for_app(app_id).length
-  end
-
-  def campaign_length
-    app.reengagement_offers.visible
-  end
-
-  def self.enable_for_app!(app_id)
-    ReengagementOffer.inactive.for_app(app_id).map(&:enable!)
-  end
-
-  def self.disable_for_app!(app_id)
-    ReengagementOffer.active.for_app(app_id).map(&:disable!)
-    ReengagementOffer.uncache_list(app_id)
-  end
-
   def remove!
     self.hidden = true
-    disable!
-  end
-
-  def uncache
-    ReengagementOffer.uncache(id)
-  end
-
-  def self.uncache(id)
-    Mc.delete("mysql.reengagement_offer.#{id}.#{SCHEMA_VERSION})")
-  end
-
-  def self.uncache_list(app_id)
-    reengagement_offers = ReengagementOffer.active.for_app(app_id)
-    reengagement_offers.map(&:uncache)
-    Mc.delete("mysql.reengagement_offers.#{app_id}.#{SCHEMA_VERSION})")
-  end
-
-  def self.cache_list(app_id)
-    reengagement_offers = ReengagementOffer.active.for_app(app_id)
-    reengagement_offers.map(&:cache)
-    Mc.put("mysql.reengagement_offers.#{app_id}.#{SCHEMA_VERSION}", reengagement_offers, false, 1.day)
-  end
-
-  def self.find_list_in_cache(app_id)
-    Mc.get("mysql.reengagement_offers.#{app_id}.#{SCHEMA_VERSION}")
-  end
-
-  def cache_list
-    app.reengagement_offers.active.map(&:cache)
+    save!
+    disable_campaign
   end
 
   def resolve(udid, timestamp)
-    device = Device.new :key => udid
+    device = Device.new(:key => udid)
     click = Click.find("#{udid}.#{id}")
     return false if click.nil? || click.successfully_rewarded? || !should_reward?(click, timestamp) && day_number > 0
     click.resolve!
@@ -93,13 +47,26 @@ class ReengagementOffer < ActiveRecord::Base
     (Time.at(timestamp) - Time.at(click.clicked_at.to_i)) / 1.day == 1
   end
 
+  def update_offers
+    offers.each do |offer|
+      offer.partner_id       = partner_id
+      offer.user_enabled     = app.reengagement_campaign_enabled
+      offer.hidden           = hidden
+      offer.reward_value     = reward_value
+      offer.instructions     = instructions
+      offer.save! if offer.changed?
+    end
+  end
+
   private
 
+  def disable_campaign
+    app.disable_reengagement_campaign!
+  end
+
   def pre_create
-    reengagement_offers     = app.reengagement_offers.visible.order_by_day
-    self.day_number         = reengagement_offers.length
-    self.prerequisite_offer = reengagement_offers.last
-    self.enabled            = self.prerequisite_offer.enabled
+    reengagement_offers = app.reengagement_campaign
+    reengagement_offers.present? ? self.day_number = reengagement_offers.length : self.day_number = 0
   end
 
   def create_reengagement_click(udid, publisher_user_id, timestamp=Time.zone.now)
@@ -112,24 +79,6 @@ class ReengagementOffer < ActiveRecord::Base
       :viewed_at          =>  timestamp
     }
     Downloader.get_with_retry(primary_offer.click_url(data))
-  end
-
-  def disable!
-    self.enabled = false
-    save_enabled! and uncache if self.changed?
-  end
-
-  def enable!
-    self.enabled = true
-    save_enabled! and cache if self.changed?
-  end
-
-  def save_enabled!
-    self.save!
-    offers.each do |offer|
-      offer.user_enabled = self.enabled
-      offer.save!
-    end
   end
 
   def create_primary_offer
@@ -154,16 +103,5 @@ class ReengagementOffer < ActiveRecord::Base
     offer.save!
   end
 
-  def update_offers
-    offers.each do |offer|
-      offer.partner_id       = partner_id
-      offer.user_enabled     = enabled
-      offer.hidden           = hidden
-      offer.reward_value     = reward_value
-      offer.instructions     = instructions
-      offer.third_party_data = prerequisite_offer_id
-      offer.save! if offer.changed?
-    end
-  end
 
 end
