@@ -7,9 +7,7 @@ class App < ActiveRecord::Base
   BETA_PLATFORMS    = {}
   PLATFORMS         = ALLOWED_PLATFORMS.merge(BETA_PLATFORMS)
   APPSTORE_COUNTRIES_OPTIONS = GeoIP::CountryName.zip(GeoIP::CountryCode).select do |name, code|
-      code.match(/[a-z]{2}/i)
-    end.reject do |name, code|
-      code == 'KP'
+      code.match(/[A-Z]{2}/) && code != 'KP'
     end.map do |name, code|
       ["#{code} -- #{name}", code]
     end.sort.unshift(["Select a country", ""])
