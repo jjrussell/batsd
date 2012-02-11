@@ -57,4 +57,4 @@ end
 puts "Restarting unicorn"
 system "server/start_or_reload_unicorn.rb"
 
-puts `server/restart_job_daemon.rb`
+system "server/restart_job_daemon.rb"

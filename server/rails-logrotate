@@ -6,6 +6,6 @@
     sharedscripts
     postrotate
         su - webuser -c '/home/webuser/tapjoyserver/server/start_or_reload_unicorn.rb'
-        su - webuser -c 'cd /home/webuser/tapjoyserver/ && server/restart_job_daemon.rb'
+        su - webuser -c '/home/webuser/tapjoyserver/server/restart_job_daemon.rb'
     endscript
 }
