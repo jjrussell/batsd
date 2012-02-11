@@ -232,7 +232,7 @@ module Offer::Rejecting
   end
 
   def carriers_reject?(mobile_carrier_code)
-    carriers.present? && carriers != '[]' && !get_carriers.include?(Carriers::MCC_MNC_TO_CARRIER_NAME[mobile_carrier_code])
+    get_carriers.present? && !get_carriers.include?(Carriers::MCC_MNC_TO_CARRIER_NAME[mobile_carrier_code])
   end
 
 end
