@@ -31,7 +31,7 @@ $page-padding-1024: 0 (40/16)em;
   @include linear-gradient(top, #e82c2c, #b41317);
 }
 
-.header {
+.headerwrap {
   .logo {
     position: relative;
     height: 35px;
@@ -67,7 +67,7 @@ ul.menu {
   float: right;
   color: #fff;
   position: relative;
-  left: -14px;
+  left: 14px;
   img {
     height: 23px;
     margin-top: 6px;
@@ -86,46 +86,7 @@ body {
   font-family: 'Gill Sans';
   font-size: 100%;
 }
-.header {
-  font-size: 12pt;
 
-  .wrap {
-    background: transparent url('/images/games/logo-navbar.png') no-repeat scroll center center;
-    background-size: auto 29px;
-    color: #fff;
-  }
-  .logo {
-    display: none;
-  }
-  .nav-menu {
-    height: 100%;
-    .device-icon {
-      background: transparent url('/images/games/iphone-nav.png') no-repeat scroll center center;
-      padding: 0;
-      height:100%;
-      width: 13px;
-      line-height: 35px;
-    }
-    .item {
-      @include txt-shadow();
-      line-height: 35px;
-      float: left;
-      padding: 0 16px;
-    }
-    .selected {
-      background-color: #cd0202;
-    }
-    .left {
-      padding: 0;
-      float: left;
-    }
-    .right {
-      padding: 0;
-      float: right;
-      margin-right: -14px;
-    }
-  }
-}
 .sub-head {
   padding: 14px 0px;
   background-color: #ebeef1;
@@ -279,65 +240,38 @@ body {
 
 @media only screen and (max-width: 768px) {
   .wrap {
-    padding: 0 percentage(12/768);
     width: percentage(744/768);
   }
 
-  .header {
-    .nav-menu {
-      .right {
-        margin-right: 0;
-      }
-    }
+  .device-menu {
+    left:0;
   }
-
-  .app {
-  /*
-  -webkit-transition: all 0.3s ease-in;
-     -moz-transition: all 0.3s ease-in;
-      -ms-transition: all 0.3s ease-in;
-       -o-transition: all 0.3s ease-in;
-          transition: all 0.3s ease-in;*/
-  }
-
-
 }
 @media only screen and (max-width: 480px) {
   .main {
     padding: 0;
   }
   .wrap {
-    padding: 0 percentage(20/640);
     width: percentage(600/640);
   }
-  .header {
-    .wrap {
-      background-image: none;
-      height: 44px;
-    }
+  .nav {
+    line-height: 44px;
+  }
+  .headerwrap {
+    height: 44px;
     .logo {
-      display: block;
-      float: right;
-      padding: 7px percentage(11/640);
-      width: 62px;
+      text-align: right;
+      height: 44px;
+      margin-bottom: -44px;
       img {
+        height: auto;
+        margin-top: 7px;
         width: 70px;
-        max-width: 70px;
-        float: right;
       }
     }
-    .right {
-      display: none;
-    }
-    .left {
-      width: percentage(470/640);
-    }
-    .nav-menu {
-      .item {
-        padding: 0 percentage(20/470);
-        line-height: 44px;
-      }
-    }
+  }
+  .device-menu {
+    display: none;
   }
   .sub-head {
     padding: 0;
@@ -356,7 +290,6 @@ body {
   .main {
     .wrap {
       width: 100%;
-      padding: 0;
     }
   }
   .game-list {

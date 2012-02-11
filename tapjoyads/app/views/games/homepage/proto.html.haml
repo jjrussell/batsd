@@ -3,6 +3,8 @@
   %head
     -# stylesheet_link_tag("games/components/button/button.css")
     %meta{ 'name' => 'viewport', 'content' => 'width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=no;' }
+    = stylesheet_link_tag("games/reset")
+    = stylesheet_link_tag("games/base")
     = stylesheet_link_tag("games/proto")
     = javascript_include_tag("https://raw.github.com/keithclark/selectivizr/master/selectivizr.js")
     = javascript_include_tag("https://raw.github.com/scottjehl/Respond/master/respond.min.js")
@@ -20,23 +22,23 @@
     = javascript_include_tag("games/src/proto")
   %body
     .page
-      .header.tj-red-gradient
-        .wrap
-          .nav-menu.clearfix
-            .left
-              .item
-                %a My Apps
-              .item
-                %a More Apps
+      .header
+        .headerwrap.tj-red-gradient
+          .wrap.clearfix
             .logo
-              = image_tag "games/logo-navbar.png"
-            .right
-              .device-icon
-                &nbsp;
-      .sub-head
-        .wrap
-          .ad
-            &nbsp;
+              = image_tag "e.gif"
+            .nav
+              %ul.menu
+                %li
+                  %a My Apps
+                %li
+                  %a More Apps
+            .device-menu
+              = image_tag "games/iphone-nav.png"
+        .sub-head
+          .wrap
+            .ad
+              &nbsp;
       .main
         .wrap
           .tab-carousel
