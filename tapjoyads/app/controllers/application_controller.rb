@@ -183,7 +183,7 @@ private
       @cached_geoip_data[:dma_code]    = geo_struct[:dma_code]
     end
     @cached_geoip_data[:user_country_code]    = params[:country_code].to_s.upcase if params[:country_code].present?
-    @cached_geoip_data[:carrier_country_code] = params[:carrier_country_code].to_s.upcase if params[:country_code].present?
+    @cached_geoip_data[:carrier_country_code] = params[:carrier_country_code].to_s.upcase if params[:carrier_country_code].present?
 
     @cached_geoip_data
   end
