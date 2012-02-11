@@ -65,7 +65,7 @@ describe GetOffersController do
     it "should return offers targeted to country" do
       get(:index, @params)
       assigns(:offer_list).should == [@offer, @offer3]
-      controller.stubs(:get_geoip_data).returns({ :country => 'GB' })
+      controller.stubs(:get_geoip_data).returns({ :carrier_country_code => 'GB' })
       get(:index, @params)
       assigns(:offer_list).should == [@offer, @offer2]
     end

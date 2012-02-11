@@ -63,10 +63,12 @@ describe Offer do
   it "rejects depending on geoip country only if carrier country code is blank" do
     @offer.countries = ["GB"].to_json
     geoip_data = {
+      :carrier_country_code => "",
       :country => "US",
       :user_country_code => "GB" }
     @offer.send(:geoip_reject?, geoip_data).should == true
     geoip_data = {
+      :carrier_country_code => "",
       :country => "GB",
       :user_country_code => "US" }
     @offer.send(:geoip_reject?, geoip_data).should == false
@@ -74,15 +76,24 @@ describe Offer do
 
   it "rejects depending on locale only if no carrier country code or geoip country presented" do
     @offer.countries = ["GB"].to_json
-    geoip_data = { :user_country_code => "US" }
+    geoip_data = {
+      :carrier_country_code => "",
+      :country => "",
+      :user_country_code => "US" }
     @offer.send(:geoip_reject?, geoip_data).should == true
-    geoip_data = { :user_country_code => "GB" }
+    geoip_data = {
+      :carrier_country_code => "",
+      :country => "",
+      :user_country_code => "GB" }
     @offer.send(:geoip_reject?, geoip_data).should == false
   end
 
   it "rejects if no geoip data or locale or carrier country code is provided" do
     @offer.countries = ["US"].to_json
-    geoip_data = {}
+    geoip_data = {
+      :carrier_country_code => "",
+      :country => "",
+      :user_country_code => "" }
     @offer.send(:geoip_reject?, geoip_data).should == true
   end
 
@@ -99,16 +110,24 @@ describe Offer do
       :user_country_code => "US" }
     @offer.send(:geoip_reject?, geoip_data).should == true
     geoip_data = {
+      :carrier_country_code => "",
       :country => "US",
       :user_country_code => "GB" }
     @offer.send(:geoip_reject?, geoip_data).should == false
     geoip_data = {
+      :carrier_country_code => "",
       :country => "GB",
       :user_country_code => "US" }
     @offer.send(:geoip_reject?, geoip_data).should == true
-    geoip_data = { :user_country_code => "US" }
+    geoip_data = {
+      :carrier_country_code => "",
+      :country => "",
+      :user_country_code => "US" }
     @offer.send(:geoip_reject?, geoip_data).should == false
-    geoip_data = { :user_country_code => "GB" }
+    geoip_data = {
+      :carrier_country_code => "",
+      :country => "",
+      :user_country_code => "GB" }
     @offer.send(:geoip_reject?, geoip_data).should == true
     geoip_data = { }
     @offer.send(:geoip_reject?, geoip_data).should == false
