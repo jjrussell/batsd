@@ -51,7 +51,6 @@ class DisplayAdController < ApplicationController
 
     now = Time.zone.now
     geoip_data = get_geoip_data
-    geoip_data[:country] = params[:country_code] if params[:country_code].present?
 
     if params[:size].blank? || params[:size] == '320x50'
       # Don't show high-res ads to AdMarvel or TextFree, unless they explicitly send a size param.
