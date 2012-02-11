@@ -33,7 +33,7 @@ end
 
 class FakeObject
   REAL_KEYS = [
-    'icons/checkbox.jpg',
+    'icons/survey-blue.png',
     'display/round_mask.png',
   ]
 
