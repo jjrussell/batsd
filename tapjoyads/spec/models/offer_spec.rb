@@ -46,24 +46,98 @@ describe Offer do
     @offer.valid?.should == false
   end
 
+  it "rejects depending on carrier country code if carrier country code is presented" do
+    @offer.countries = ["GB"].to_json
+    geoip_data = {
+      :carrier_country_code => "US",
+      :country => "GB",
+      :user_country_code => "GB" }
+    @offer.send(:geoip_reject?, geoip_data).should == true
+    geoip_data = {
+      :carrier_country_code => "GB",
+      :country => "US",
+      :user_country_code => "US" }
+    @offer.send(:geoip_reject?, geoip_data).should == false
+  end
+
+  it "rejects depending on geoip country only if carrier country code is blank" do
+    @offer.countries = ["GB"].to_json
+    geoip_data = {
+      :country => "US",
+      :user_country_code => "GB" }
+    @offer.send(:geoip_reject?, geoip_data).should == true
+    geoip_data = {
+      :country => "GB",
+      :user_country_code => "US" }
+    @offer.send(:geoip_reject?, geoip_data).should == false
+  end
+
+  it "rejects depending on locale only if no carrier country code or geoip country presented" do
+    @offer.countries = ["GB"].to_json
+    geoip_data = {
+      :user_country_code => "US" }
+    @offer.send(:geoip_reject?, geoip_data).should == true
+    geoip_data = {
+      :user_country_code => "GB" }
+    @offer.send(:geoip_reject?, geoip_data).should == false
+  end
+
+  it "rejects if no geoip data or locale or carrier country code is provided" do
+    @offer.countries = ["US"].to_json
+    geoip_data = { }
+    @offer.send(:geoip_reject?, geoip_data).should == true
+  end
+
   it "rejects depending on countries blacklist" do
-    device = Factory(:device)
-    @offer.item.countries_blacklist = ["GB"]
-    geoip_data = { :country => "US" }
-    @offer.send(:geoip_reject?, geoip_data, device).should == false
-    geoip_data = { :country => "GB" }
-    @offer.send(:geoip_reject?, geoip_data, device).should == true
+    @offer.item.countries_blacklist = ["GB"].to_json
+    geoip_data = {
+      :carrier_country_code => "US",
+      :country => "GB",
+      :user_country_code => "GB" }
+    @offer.send(:geoip_reject?, geoip_data).should == false
+    geoip_data = {
+      :carrier_country_code => "GB",
+      :country => "US",
+      :user_country_code => "US" }
+    @offer.send(:geoip_reject?, geoip_data).should == true
+    geoip_data = {
+      :country => "US",
+      :user_country_code => "GB" }
+    @offer.send(:geoip_reject?, geoip_data).should == false
+    geoip_data = {
+      :country => "GB",
+      :user_country_code => "US" }
+    @offer.send(:geoip_reject?, geoip_data).should == true
+    geoip_data = {
+      :user_country_code => "US" }
+    @offer.send(:geoip_reject?, geoip_data).should == false
+    geoip_data = {
+      :user_country_code => "GB" }
+    @offer.send(:geoip_reject?, geoip_data).should == true
+    geoip_data = { }
+    @offer.send(:geoip_reject?, geoip_data).should == false
   end
 
   it "rejects depending on region" do
-    device = Factory(:device)
-    @offer.regions = ["CA"]
+    @offer.regions = ["CA"].to_json
     geoip_data = { :region => "CA" }
-    @offer.send(:geoip_reject?, geoip_data, device).should == false
+    @offer.send(:geoip_reject?, geoip_data).should == false
     geoip_data = { :region => "OR" }
-    @offer.send(:geoip_reject?, geoip_data, device).should == true
-    @offer.regions = []
-    @offer.send(:geoip_reject?, geoip_data, device).should == false
+    @offer.send(:geoip_reject?, geoip_data).should == true
+    @offer.update_attributes({ :regions => '[]' })
+    @offer.reload
+    @offer.send(:geoip_reject?, geoip_data).should == false
+  end
+
+  it "rejects depending on dma codes" do
+    @offer.dma_codes = ["123"].to_json
+    geoip_data = { :dma_code => "123" }
+    @offer.send(:geoip_reject?, geoip_data).should == false
+    geoip_data = { :dma_code => "234" }
+    @offer.send(:geoip_reject?, geoip_data).should == true
+    @offer.update_attributes({ :dma_codes => '[]' })
+    @offer.reload
+    @offer.send(:geoip_reject?, geoip_data).should == false
   end
 
   it "returns proper linkshare account url" do
