@@ -1,5 +1,13 @@
 %tr.admin
   %td{:colspan => 2} Admin-only fields:
+- if @offer.app_offer? && @offer.item.platform == 'iphone'
+  %tr.admin
+    %th
+      Country Blacklist
+      #help_countries_blacklist.help ?
+    %td
+      - if @offer.item.get_countries_blacklist.present?
+        = @offer.item.countries_blacklist
 %tr.admin
   %th
     = f.label(:regions)
