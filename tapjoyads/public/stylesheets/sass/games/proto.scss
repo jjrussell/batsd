@@ -1,5 +1,8 @@
 @import "tj-mixins.scss";
 
+body {
+  width: 320px;
+}
 @mixin txt-shadow() {
   text-shadow: 0px 1px 1px rgba(37, 37, 37, .4);
 }
@@ -34,8 +37,7 @@ $page-padding-1024: 0 (40/16)em;
 .headerwrap {
   .logo {
     position: relative;
-    height: 35px;
-    margin-bottom: -35px;
+    height: 44px;
     float: none;
     text-align: center;
     img {
@@ -43,15 +45,19 @@ $page-padding-1024: 0 (40/16)em;
       border: 0;
       margin-top: 3px;
       width: 90px;
-      background-size: auto 29px;
+      background-size: auto 38px;
     }
   }
 }
-.nav {
-  color: #fff;
-  position: relative;
-  float:left;
-  line-height: 35px;
+.nav-icon {
+  position: absolute;
+  top: 3px;
+  left: 7px;
+  img {
+    width: 34px;
+    height: 21px;
+    background: url('/images/games/menu-icon.png') no-repeat 0 0;
+  }
 }
 ul.menu {
   text-shadow: 0px 1px 1px rgba(37, 37, 37, .4);
