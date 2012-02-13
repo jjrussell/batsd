@@ -1,0 +1,131 @@
+- url = offer_creatives_form_path(:id => @offer.id, :image_size => @image_size, :label => @label, :app_id => @app)
+- pending = @offer.has_banner_creative?(@image_size) && !@offer.banner_creative_approved?(@image_size)
+
+- if @creative_exists
+  - form_tag(url, :method => :delete, :id => "remove_form_for_#{@image_size}", :class => "hidden") {}
+
+- form_for(@offer, :url => url, :html => { :id => 'upload_form', :class => 'tjform', :method => :post, :multipart => true }) do |f|
+  %table
+    %tbody
+      %tr
+        %th
+          = f.label("custom_creative_#{@image_size}", "#{@label} creative", :class => (pending ? 'pending' : ''))
+        %td
+          %table
+            - unless @success_message.blank?
+              %tr#success_message.hidden
+                %td
+                  = h(@success_message)
+            %tr#controls
+              %td
+                - if @creative_exists
+                  - if @app.present?
+                    = link_to("View existing file", '#', :class => 'view_link')
+                    |
+                  = link_to("Remove existing file", '#', :id => "remove_link")
+                - else
+                  = f.file_field("custom_creative_#{@image_size}")
+                  %td
+                    = f.submit('Upload', :id => "upload_button")
+            %tr
+              %td
+                = image_tag("spinner.gif", :id => "spinner", :class => "hidden")
+
+- content_for :page_javascript do
+  :plain
+    $(function($){
+      toggle_other_forms(false);
+
+      $('.view_link').click(function() {
+        parent.$.facebox({ajax: "#{@preview_path}" })
+        return false;
+      });
+
+      $('#remove_link').click(function() {
+        if(confirm('Are you sure? This will remove the #{@image_size} creative entirely.')) {
+          $('#spinner').show();
+          toggle_other_forms(true);
+          $('#remove_form_for_#{@image_size}')[0].submit();
+          $('#controls').fadeOut('fast');
+        }
+        return false;
+      });
+
+      $('#upload_form').submit(function() {
+        if ($('[type=file]').val() == '') {
+          alert('Please select an image to upload.');
+          return false;
+        }
+
+        $('#spinner').show();
+        toggle_other_forms(true);
+        $('#controls').fadeOut('fast');
+        return true;
+      });
+
+      function toggle_other_forms(disabled) {
+        var iframes = $(parent.document).find('iframe.creative_upload');
+        for(var i = 0; i<iframes.length; i++) {
+          var iframe = $(iframes[i]);
+          var upload_button = iframe.contents().find('#upload_button');
+          if (upload_button.length > 0) {
+            upload_button.attr('disabled', disabled);
+          }
+          var remove_link = iframe.contents().find('#remove_link');
+          if (remove_link.length > 0) {
+            if (disabled) {
+              remove_link.hide();
+            } else {
+              remove_link.show();
+            }
+          }
+        }
+      }
+    });
+
+- unless @success_message.blank?
+  - content_for :page_javascript do
+    :plain
+      $(function($) {
+        $('#controls').hide();
+        $('#success_message').fadeIn('fast').delay(2000).fadeOut('fast', function() {
+          $('#controls').fadeIn('fast');
+        });
+      });
+
+- unless @error_message.blank?
+  - content_for :page_javascript do
+    :plain
+      $(function($){
+        alert("#{@error_message}");
+      });
+
+- content_for :page_styles do
+  :plain
+    body {
+      background: none;
+      overflow: hidden;
+      margin: 0;
+    }
+    table {
+      border: 0;
+      border-collapse: collapse;
+    }
+    th {
+      font-weight: bold;
+      padding-right: 10px;
+      text-align: right;
+      width: 225px;
+    }
+    th label.pending {
+      color: red;
+    }
+    .hidden {
+      display: none;
+    }
+    .tjform input[type="submit"] {
+      margin-top: 0;
+    }
+    #success_message {
+      color: green;
+    }

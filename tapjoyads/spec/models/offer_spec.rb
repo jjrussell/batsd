@@ -497,6 +497,109 @@ describe Offer do
     end
   end
 
+  describe '#add_banner_creative' do
+    context 'given a valid size' do
+      before(:each) do
+        @offer.add_banner_creative('320x50')
+      end
+
+      it 'adds the banner creative size' do
+        @offer.banner_creatives.should include('320x50')
+      end
+
+      it 'does not approve the banner' do
+        @offer.approved_banner_creatives.should_not include('320x50')
+      end
+    end
+
+    context 'given an invalid size' do
+      before(:each) do
+        @offer.add_banner_creative('1x1')
+      end
+
+      it 'does not add the banner creative' do
+        @offer.banner_creatives.should_not include('1x1')
+      end
+    end
+  end
+
+  describe '#remove_banner_creative' do
+    before(:each) do
+      @offer.banner_creatives = ['320x50', '640x100']
+      @offer.remove_banner_creative('320x50')
+    end
+
+    it 'removes the given banner creative' do
+      @offer.banner_creatives.should_not include('320x50')
+    end
+
+    it 'leaves the other banner creatives' do
+      @offer.banner_creatives.should include('640x100')
+    end
+  end
+
+  describe '#approve_banner_creative' do
+    before(:each) do
+      @offer.banner_creatives = ['320x50']
+    end
+
+    it 'is not approved by default' do
+      @offer.approved_banner_creatives.should_not include('320x50')
+    end
+
+    context 'given a banner that is not approved' do
+      before(:each) do
+        @offer.approve_banner_creative('320x50')
+      end
+
+      it 'becomes approved' do
+        @offer.approved_banner_creatives.should include('320x50')
+      end
+    end
+
+    context 'given a banner that is not uploaded' do
+      before(:each) do
+        @offer.approve_banner_creative('640x100')
+      end
+
+      it 'does not become approved' do
+        @offer.approved_banner_creatives.should_not include('640x100')
+      end
+    end
+  end
+
+  describe '#sync_creative_approval' do
+    before(:each) do
+      @offer.banner_creatives = ['320x50', '640x100', '768x90']
+      @offer.approved_banner_creatives = ['320x50', '1x1']
+
+      @valid_remove   = @offer.add_banner_approval(Factory(:user), '320x50')
+      @valid_keep     = @offer.add_banner_approval(Factory(:user), '640x100')
+      @invalid_remove = @offer.add_banner_approval(Factory(:user), '2x2')
+
+      @offer.send(:sync_creative_approval)
+      @offer.approvals.reload
+    end
+
+    it 'removes the approval record for already approved banners' do
+      @offer.approvals.should_not include(@valid_remove)
+    end
+
+    it 'automatically approves banners with no approval record' do
+      @offer.approved_banner_creatives.should include('768x90')
+    end
+
+    context 'given a banner that is no longer present' do
+      it 'removes the approval record' do
+        @offer.approvals.should_not include(@invalid_remove)
+      end
+
+      it 'removes the now invalid approval' do
+        @offer.approved_banner_creatives.should_not include('1x1')
+      end
+    end
+  end
+
   describe '#valid?' do
     context "when SDK-less is enabled" do
       before :each do
