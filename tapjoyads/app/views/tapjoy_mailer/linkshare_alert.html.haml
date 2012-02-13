@@ -1,12 +1,13 @@
-There was an error while polling Linkshare. Details are below.
+There was an error while downloading recent clicks through Linkshare.
 
 = "ERROR: #{@error}"
 
-= "bdate: #{@start_date}"
-= "eDate: #{@stop_date}"
-= "token: --HIDDEN ON PURPOSE-- (Login to Linkshare Dashboard to view)"
-= "nid (optional): #{@network_id}"
-= "reportid: #{@report_id}"
-= "mid (optional): #{@advertiser_id}"
+- if @options
+  = "bdate: #{@options[:bdate]}" if @options[:bdate]
+  = "edate: #{@options[:edate]}" if @options[:edate]
+  = "token: --HIDDEN ON PURPOSE-- (Login to Linkshare Dashboard to view)"
+  = "nid (optional): #{@options[:nid]}" if @options[:nid]
+  = "reportid: #{@options[:reportid]}" if @options[:reportid]
+  = "mid (optional): #{@options[:advertiser_id]}" if @options[:advertiser_id]
 
 = "Complete URL query: #{@url}"

@@ -1,11 +1,11 @@
 class TapjoyMailer < ActionMailer::Base
 
-  def linkshare_alert(error, start_date, stop_date, report_id, url, network_id=nil, advertiser_id=nil, response=nil)
+  def linkshare_alert(error, url, options = {}, response=nil)
     from 'Tapjoy <noreply@tapjoy.com>'
     recipients ["dev@tapjoy.com", "accountmanagers@tapjoy.com", "kris@tapjoy.com"]
     cc "email.receipts@tapjoy.com"
     subject "Linkshare Error"
-    body(:error => error, :start_date => start_date, :stop_date => stop_date, :network_id => network_id, :report_id => report_id, :advertiser_id => advertiser_id, :url => url, :response => response)
+    body(:error => error, :url => url, :options => options, :response => response)
   end
 
   def newrelic_alert(error)
