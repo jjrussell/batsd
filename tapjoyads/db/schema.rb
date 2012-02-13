@@ -204,7 +204,7 @@ ActiveRecord::Schema.define(:version => 20120210003759) do
     t.string   "reseller_id",                                :limit => 36
     t.decimal  "reseller_spend_share",                                     :precision => 8, :scale => 6
     t.boolean  "whitelist_overridden",                                                                   :default => false, :null => false
-    t.string   "state"
+    t.integer  "state"
   end
 
   add_index "currencies", ["app_id"], :name => "index_currencies_on_app_id"

@@ -78,7 +78,6 @@ class Tools::ApprovalsController < WebsiteController
     json
   end
 
-<<<<<<< HEAD
   def setup_conditions
     @conditions ||= {}
 

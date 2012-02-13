@@ -5,6 +5,7 @@
       %th App
       %th Age
       %th Owner
+      %th State
       %th Action
   %tbody
     - @approvals.each do |approval|
@@ -12,10 +13,8 @@
         %td= link_to(approval.item.name, app_currency_path({:app_id => approval.item.app.id, :id => approval.item.id}) )
         %td= approval.item.app.name
         %td #{time_ago_in_words(approval.item.created_at)} ago
-        %td
-          - form_for(approval, :url => assign_tools_approval_path(approval.id), :html => {:class => 'assignment'}) do |f|
-            = f.select('owner_id', options_for_select(Approval.available_owners_for_select.unshift(['(none)', nil]), approval.owner_id))
-            = image_tag('spinner.gif', :class => 'spinner hidden')
+        %td= render :partial => 'owner_select', :locals => {:approval => approval}
+        %td= approval.state
         %td.actions
           - if approval.pending?
             = link_to('Approve', approve_tools_currency_approval_path(approval.id), :class => 'approve')
