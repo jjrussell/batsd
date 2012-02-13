@@ -68,7 +68,6 @@ class OfferCreativesController < WebsiteController
   def send_approval_mail
     approval_link = creative_tools_offers_url(:offer_id => @offer.id)
     emails = @offer.partner.account_managers.map(&:email)
-    emails << 'support@tapjoy.com'
     emails.each do |mgr|
       TapjoyMailer.deliver_approve_offer_creative(mgr, @offer, @app, approval_link)
     end
