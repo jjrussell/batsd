@@ -107,11 +107,7 @@ class Apps::ActionOffersController < WebsiteController
 private
 
   def setup
-    if permitted_to? :edit, :statz
-      @app = App.find(params[:app_id])
-    else
-      @app = current_partner.apps.find(params[:app_id])
-    end
+    @app = find_app(params[:app_id])
 
     if params[:id]
       @action_offer = @app.action_offers.find(params[:id])
