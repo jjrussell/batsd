@@ -20,8 +20,7 @@
           Platform
           #help_platform.help ?
         %td= f.select :platform, platforms.invert.to_a.sort_by(&:last), { :selected => @app.platform }, { :id => 'app_platform' }
-      - if permitted_to?(:edit, :statz)
-        = render :partial => 'select_country'
+      = render :partial => 'select_country'
       %tr
         %th
           Name

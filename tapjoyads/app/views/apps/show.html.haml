@@ -32,8 +32,8 @@
         %td
           = @app.platform_name
           = f.hidden_field :platform
+      = render :partial => 'select_country'
       - if permitted_to?(:edit, :statz) && @app.platform == 'iphone'
-        = render :partial => 'select_country'
         %tr.admin
           %th
             Country blacklist
