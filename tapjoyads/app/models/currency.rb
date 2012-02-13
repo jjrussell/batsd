@@ -1,6 +1,7 @@
 class Currency < ActiveRecord::Base
   include UuidPrimaryKey
   acts_as_cacheable
+  acts_as_approvable :on => :create, :state_field => :state
 
   TAPJOY_MANAGED_CALLBACK_URL = 'TAP_POINTS_CURRENCY'
   NO_CALLBACK_URL = 'NO_CALLBACK'
@@ -55,11 +56,11 @@ class Currency < ActiveRecord::Base
   memoize :postcache_weights, :categories
 
   def self.find_all_in_cache_by_app_id(app_id, do_lookup = !Rails.env.production?)
-    currencies = Mc.distributed_get("mysql.app_currencies.#{app_id}.#{SCHEMA_VERSION}")
+    currencies = Mc.distributed_get("mysql.app_currencies.#{app_id}.#{acts_as_cacheable_version}")
     if currencies.nil?
       if do_lookup
         currencies = find_all_by_app_id(app_id, :order => 'ordinal ASC').each { |c| c.run_callbacks(:before_cache) }
-        Mc.distributed_put("mysql.app_currencies.#{app_id}.#{SCHEMA_VERSION}", currencies, false, 1.day)
+        Mc.distributed_put("mysql.app_currencies.#{app_id}.#{acts_as_cacheable_version}", currencies, false, 1.day)
       else
         currencies = []
       end
@@ -190,25 +191,32 @@ class Currency < ActiveRecord::Base
     self.reseller_spend_share = reseller_id? ? reseller.reseller_rev_share * spend_share_ratio : nil
   end
 
+  def approve!
+    self.tapjoy_enabled = true
+  end
+
+  def reject!
+    TapjoyMailer.deliver_currency_rejected(self.partner.email)
+  end
   private
 
   def cache_by_app_id
     currencies = Currency.find_all_by_app_id(app_id, :order => 'ordinal ASC').each { |c| c.run_callbacks(:before_cache) }
-    Mc.distributed_put("mysql.app_currencies.#{app_id}.#{SCHEMA_VERSION}", currencies, false, 1.day)
+    Mc.distributed_put("mysql.app_currencies.#{app_id}.#{Currency.acts_as_cacheable_version}", currencies, false, 1.day)
 
     if app_id_changed?
       currencies = Currency.find_all_by_app_id(app_id_was, :order => 'ordinal ASC').each { |c| c.run_callbacks(:before_cache) }
-      Mc.distributed_put("mysql.app_currencies.#{app_id_was}.#{SCHEMA_VERSION}", currencies, false, 1.day)
+      Mc.distributed_put("mysql.app_currencies.#{app_id_was}.#{Currency.acts_as_cacheable_version}", currencies, false, 1.day)
     end
   end
 
   def clear_cache_by_app_id
     currencies = Currency.find_all_by_app_id(app_id, :order => 'ordinal ASC').each { |c| c.run_callbacks(:before_cache) }
-    Mc.distributed_put("mysql.app_currencies.#{app_id}.#{SCHEMA_VERSION}", currencies, false, 1.day)
+    Mc.distributed_put("mysql.app_currencies.#{app_id}.#{Currency.acts_as_cacheable_version}", currencies, false, 1.day)
   end
 
   def sanitize_attributes
-    self.test_devices    = test_devices.gsub(/\s/, '').downcase
+    self.test_devices    = test_devices.gsub(/\s/, '').gsub(/;{2,}/, ';').downcase
     self.disabled_offers = disabled_offers.gsub(/\s/, '')
   end
 

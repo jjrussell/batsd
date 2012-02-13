@@ -95,6 +95,8 @@
     %li= link_to 'Agency Users', tools_agency_users_path
   - if permitted_to? :index, :tools_partner_program_statz
     %li= link_to 'Tapjoy Sponsored Publishers', tools_partner_program_statz_index_path
+  - if permitted_to? :index, :tools_currency_approvals
+    %li= link_to 'Virtual Currency Requests', tools_currency_approvals_path
   - if permitted_to? :index, :tools_survey_offers
     %li= link_to 'Survey Offers', tools_survey_offers_path
 

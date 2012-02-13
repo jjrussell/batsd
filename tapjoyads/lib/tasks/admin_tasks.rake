@@ -2,7 +2,7 @@ namespace :admin do
 
   desc "Reloads apache on all the webservers"
   task :reload_apache do
-    system("script/cloudrun 'webserver' 'sudo /etc/init.d/apache2 reload ; curl -s localhost:9898/healthz 2>&1' 'ubuntu' 'serial'")
+    system("script/cloudrun 'webserver' 'sudo /etc/init.d/apache2 reload ; curl -s localhost:9898/healthz' 'ubuntu' 'serial'")
   end
 
   desc "Lists the contents of the tmp dirs on each job machine for *sdb* and *s3*"
@@ -43,7 +43,7 @@ namespace :admin do
   desc "Reconfigure syslog-ng"
   task :reconfigure_syslog_ng, :args do |task, task_args|
     servers = Rails.env.test? ? 'util' : 'masterjobs jobserver website dashboard webserver'
-    system("script/cloudrun '#{servers}' 'sudo /home/webuser/tapjoyserver/server/syslog-ng/configure.rb #{task_args[:args]} 2>&1' 'ubuntu'")
+    system("script/cloudrun '#{servers}' 'sudo /home/webuser/tapjoyserver/server/syslog-ng/configure.rb #{task_args[:args]}' 'ubuntu'")
   end
 
   desc "Update geoip databse"

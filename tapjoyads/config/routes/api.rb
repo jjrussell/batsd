@@ -5,8 +5,6 @@ ActionController::Routing::Routes.draw do |map|
     agency.resources :currencies, :only => [ :index, :show, :create, :update ]
   end
 
-  map.connect 'create_account', :controller => :create_account, :action => :index
-
   map.resources :reporting_data, :only => :index, :collection => { :udids => :get }
 
   map.connect 'adways_data',          :controller => :adways_data,          :action => :index
