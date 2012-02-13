@@ -194,7 +194,7 @@ class Currency < ActiveRecord::Base
   def approve!
     self.tapjoy_enabled = true
   end
-  
+
   def reject!
     TapjoyMailer.deliver_currency_rejected(self.partner.email)
   end
