@@ -2,7 +2,8 @@ authorization do
 
   role :partner do
     has_permission_on :apps, :to => [ :index, :show, :new, :create, :edit, :update, :confirm, :integrate, :publisher_integrate, :search, :sdk_download, :archive ]
-    has_permission_on :apps_offers, :to => [ :new, :create, :edit, :update, :toggle, :percentile, :preview, :upload_creative ]
+    has_permission_on :apps_offers, :to => [ :new, :create, :edit, :update, :toggle, :percentile, :preview ]
+    has_permission_on :offer_creatives, :to => [ :show, :create, :new, :destroy ]
     has_permission_on :apps_currencies, :to => [ :show, :update, :new, :create, :reset_test_device ]
     has_permission_on :apps_virtual_goods, :to => [ :show, :update, :new, :create, :index, :reorder ]
     has_permission_on :enable_offer_requests, :to => [ :create ]
@@ -29,8 +30,9 @@ authorization do
     includes :tools
     has_permission_on :search, :to => [ :gamers ]
     has_permission_on :tools, :to => [ :resolve_clicks, :device_info, :update_device, :award_currencies, :update_award_currencies, :send_currency_failures ]
-    has_permission_on :tools_gamers, :to => [ :index, :show, :mass_resolve ]
+    has_permission_on :tools_gamers, :to => [ :index, :show ]
     has_permission_on :tools_gamer_devices, :to => [ :create, :edit, :new, :update ]
+    has_permission_on :tools_support_requests, :to => [ :index, :mass_resolve ]
   end
 
   role :money do
@@ -83,6 +85,7 @@ authorization do
     has_permission_on :partners, :to => [ :index, :show, :edit, :make_current, :manage, :stop_managing, :mail_chimp_info, :update, :managed_by, :new_transfer, :create_transfer, :reporting, :agency_api, :set_tapjoy_sponsored ]
     has_permission_on :tools_rank_boosts, :to => [ :index, :new, :create, :edit, :update, :deactivate ]
     has_permission_on :apps, :to => [ :unarchive ]
+    has_permission_on :offer_creatives, :to => [ :show, :create, :update, :destroy ]
     has_permission_on :partners_offer_discounts, :to => [ :index, :new, :create, :deactivate ]
     has_permission_on :tools_approvals, :to => [ :index, :history, :mine, :assign, :approve, :reject ]
     has_permission_on :tools_offer_lists, :to => [ :index ]
