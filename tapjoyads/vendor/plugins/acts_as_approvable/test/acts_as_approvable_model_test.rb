@@ -62,6 +62,10 @@ class ActsAsApprovableModelTest < Test::Unit::TestCase
         should 'have an approval' do
           assert_equal 1, @game.approvals.size
         end
+
+        should 'have pending changes' do
+          assert @game.pending_changes?
+        end
       end
 
       context 'which updates an only column and another column' do
@@ -90,6 +94,59 @@ class ActsAsApprovableModelTest < Test::Unit::TestCase
 
         should 'not have an approval object' do
           assert @game.approvals.empty?
+        end
+      end
+
+      context 'with approval queue disabled' do
+        context 'at the record level' do
+          setup do
+            @game.approvals_off
+            @game.update_attributes(:title => 'review')
+          end
+
+          teardown { @game.approvals_on }
+
+          should 'have approvals off' do
+            assert @game.approvals_disabled?
+          end
+
+          should 'not have an approval object' do
+            assert @game.approvals.empty?
+          end
+        end
+
+        context 'at the model level' do
+          setup do
+            Game.approvals_off
+            @game.update_attributes(:title => 'review')
+          end
+
+          teardown { Game.approvals_on }
+
+          should 'have approvals off' do
+            assert @game.approvals_disabled?
+          end
+
+          should 'not have an approval object' do
+            assert @game.approvals.empty?
+          end
+        end
+
+        context 'at the global level' do
+          setup do
+            ActsAsApprovable.disable
+            @game.update_attributes(:title => 'review')
+          end
+
+          teardown { ActsAsApprovable.enable }
+
+          should 'have approvals off' do
+            assert @game.approvals_disabled?
+          end
+
+          should 'not have an approval object' do
+            assert @game.approvals.empty?
+          end
         end
       end
     end
@@ -170,6 +227,30 @@ class ActsAsApprovableModelTest < Test::Unit::TestCase
 
       should 'raise an error if rejected again' do
         assert_raise(ActsAsApprovable::Error::Locked) { @approval.reject! }
+      end
+    end
+
+    context 'that is stale' do
+      setup { @approval.update_attributes(:created_at => 10.days.ago) }
+
+      should 'be stale' do
+        assert @approval.stale?
+        assert !@approval.fresh?
+      end
+
+      should 'raise an error if approved' do
+        assert_raise(ActsAsApprovable::Error::Stale) { @approval.approve! }
+        assert @approval.pending?
+      end
+
+      should 'not raise an error if rejected' do
+        assert_nothing_raised { @approval.reject! }
+        assert @approval.rejected?
+      end
+
+      should 'allow approval when forced' do
+        assert_nothing_raised { @approval.approve!(true) }
+        assert @approval.approved?
       end
     end
   end
