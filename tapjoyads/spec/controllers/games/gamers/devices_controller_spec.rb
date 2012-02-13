@@ -1,17 +1,19 @@
-require 'test_helper'
+require 'spec_helper'
 
-class Games::Gamers::DevicesControllerTest < ActionController::TestCase
-  setup :activate_authlogic
+describe Games::Gamers::DevicesController do
+  before :each do
+    activate_authlogic
+    fake_the_web
+  end
 
   context "when link device" do
-    setup do
+    before :each do
       user = Factory(:admin)
       partner = Factory(:partner, :users => [user])
       generic_offer_for_invite = Factory(:generic_offer, :partner => partner, :url => 'http://ws.tapjoyads.com/healthz?advertiser_app_id=TAPJOY_GENERIC_INVITE')
 
       @inviter = Factory(:gamer)
       @inviter.gamer_profile = GamerProfile.create(:gamer => @inviter, :referral_count => 0)
-
       click = Click.new(:key => "#{@inviter.id}.#{generic_offer_for_invite.id}")
       click.serial_save
 
@@ -22,7 +24,7 @@ class Games::Gamers::DevicesControllerTest < ActionController::TestCase
       games_login_as(gamer)
     end
 
-    should "create sub click key" do
+    it "should create sub click key" do
       data = {
         :udid              => Factory.next(:udid),
         :product           => Factory.next(:name),
@@ -31,7 +33,7 @@ class Games::Gamers::DevicesControllerTest < ActionController::TestCase
         :platform          => 'ios'
       }
       get :finalize, {:data => ObjectEncryptor.encrypt(data)}
-      assert_equal false, Click.new(:key => "#{@inviter.id}.invite[1]", :consistent => true).new_record?
+      Click.new(:key => "#{@inviter.id}.invite[1]", :consistent => true).should_not be_new_record
     end
   end
 end

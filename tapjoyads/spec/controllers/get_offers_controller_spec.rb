@@ -65,7 +65,8 @@ describe GetOffersController do
     it "should return offers targeted to country" do
       get(:index, @params)
       assigns(:offer_list).should == [@offer, @offer3]
-      get(:index, @params.merge(:country_code => 'GB'))
+      controller.stubs(:get_geoip_data).returns({ :carrier_country_code => 'GB' })
+      get(:index, @params)
       assigns(:offer_list).should == [@offer, @offer2]
     end
 
@@ -247,7 +248,9 @@ describe GetOffersController do
       @currency = Factory(:currency)
       @offer = Factory(:app).primary_offer
       controller.stubs(:get_ip_address).returns('208.90.212.38')
-      OfferCacher.stubs(:get_unsorted_offers_prerejected).returns([@offer])
+      fake_cache_object = mock()
+      fake_cache_object.stubs(:value).returns([@offer])
+      RailsCache.stubs(:get_and_put).returns(fake_cache_object)
       @params = {
         :udid => @device.id,
         :publisher_user_id => 'more_stuff',
@@ -311,9 +314,5 @@ describe GetOffersController do
       assigns(:start_index).should == 2
     end
 
-    it "should set country from country_code" do
-      get(:index, @params.merge(:country_code => 'GB'))
-      assigns(:geoip_data)[:country].should == 'GB'
-    end
   end
 end

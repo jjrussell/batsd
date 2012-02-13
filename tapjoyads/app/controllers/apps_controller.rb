@@ -4,7 +4,7 @@ class AppsController < WebsiteController
   filter_access_to :all
   before_filter :grab_partner_apps
   before_filter :has_apps, :only => [:show, :index, :integrate, :publisher_integrate]
-  before_filter :find_app, :only => [:show, :index, :integrate, :publisher_integrate, :update, :confirm, :archive, :unarchive ]
+  before_filter :setup, :only => [:show, :index, :integrate, :publisher_integrate, :update, :confirm, :archive, :unarchive ]
   before_filter :nag_user_about_payout_info, :only => [:show]
   after_filter :save_activity_logs, :only => [ :update, :create, :archive, :unarchive ]
 
@@ -119,13 +119,8 @@ class AppsController < WebsiteController
     session[:last_shown_app] ||= current_partner_apps.first.id unless current_partner_apps.empty?
   end
 
-  def find_app
-    if permitted_to? :edit, :statz
-      @app = App.find(params[:id] || session[:last_shown_app])
-    else
-      @app = current_partner.apps.find(params[:id] || session[:last_shown_app])
-    end
-
+  def setup
+    @app = find_app(params[:id] || session[:last_shown_app])
     session[:last_shown_app] = @app.id
   end
 
