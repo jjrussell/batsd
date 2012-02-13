@@ -4,7 +4,7 @@ describe Tools::SurveyOffersController do
   integrate_views
 
   before :each do
-    stub_offers
+    fake_the_web
     flash.stubs(:sweep)
     activate_authlogic
     user = Factory(:admin)

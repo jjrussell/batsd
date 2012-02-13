@@ -28,7 +28,7 @@ module Offer::Rejecting
   }
 
   def postcache_reject?(publisher_app, device, currency, device_type, geoip_data, app_version, direct_pay_providers, type, hide_rewarded_app_installs, library_version, os_version, screen_layout_size, video_offer_ids, source, all_videos)
-    geoip_reject?(geoip_data, device) ||
+    geoip_reject?(geoip_data) ||
     already_complete?(device, app_version) ||
     selective_opt_out_reject?(device) ||
     show_rate_reject?(device) ||
@@ -55,30 +55,6 @@ module Offer::Rejecting
     app_platform_mismatch?(platform_name) || hide_rewarded_app_installs_reject?(hide_rewarded_app_installs) || device_platform_mismatch?(normalized_device_type)
   end
 
-  def is_valid_for?(publisher_app, device, currency, device_type, geoip_data, app_version, direct_pay_providers, type, hide_rewarded_app_installs, library_version, os_version, screen_layout_size)
-    (is_test_device?(currency, device) &&
-      is_test_video_offer?(type) ) ||
-    (!(is_test_video_offer?(type) ||
-      device_platform_mismatch?(Device.normalize_device_type(device_type)) ||
-      geoip_reject?(geoip_data, device) ||
-      already_complete?(device, app_version) ||
-      flixter_reject?(publisher_app, device) ||
-      minimum_bid_reject?(currency, type) ||
-      jailbroken_reject?(device) ||
-      direct_pay_reject?(direct_pay_providers) ||
-      action_app_reject?(device) ||
-      hide_rewarded_app_installs_reject?(hide_rewarded_app_installs) ||
-      min_os_version_reject?(os_version) ||
-      screen_layout_sizes_reject?(screen_layout_size) ||
-      is_disabled?(publisher_app, currency) ||
-      app_platform_mismatch?(publisher_app) ||
-      age_rating_reject?(currency.max_age_rating) ||
-      publisher_whitelist_reject?(publisher_app) ||
-      currency_whitelist_reject?(currency) ||
-      frequency_capping_reject?(device)) &&
-      accepting_clicks?)
-  end
-
   def frequency_capping_reject?(device)
     return false unless multi_complete? && interval != Offer::FREQUENCIES_CAPPING_INTERVAL['none']
 
@@ -88,7 +64,7 @@ module Offer::Rejecting
   def recommendation_reject?(device, device_type, geoip_data, os_version)
     recommendable_types_reject? ||
       device_platform_mismatch?(device_type) ||
-      geoip_reject?(geoip_data, device) ||
+      geoip_reject?(geoip_data) ||
       already_complete?(device) ||
       min_os_version_reject?(os_version) ||
       age_rating_reject?(3) # reject 17+ apps
@@ -124,12 +100,11 @@ module Offer::Rejecting
     max_age_rating < age_rating
   end
 
-  def geoip_reject?(geoip_data, device)
-    return true if countries.present? && countries != '[]' && !get_countries.include?(geoip_data[:country])
-    return true if geoip_data[:country] && get_countries_blacklist.include?(geoip_data[:country].to_s.upcase)
-    return true if regions.present? && regions != '[]' && !get_regions.include?(geoip_data[:region])
-    return true if dma_codes.present? && dma_codes != '[]' && !get_dma_codes.include?(geoip_data[:dma_code])
-
+  def geoip_reject?(geoip_data)
+    return true if get_countries.present? && !get_countries.include?(geoip_data[:carrier_country_code] || geoip_data[:country] || geoip_data[:user_country_code])
+    return true if get_countries_blacklist.include?(geoip_data[:carrier_country_code] || geoip_data[:country] || geoip_data[:user_country_code])
+    return true if get_regions.present? && !get_regions.include?(geoip_data[:region])
+    return true if get_dma_codes.present? && !get_dma_codes.include?(geoip_data[:dma_code])
     false
   end
 
