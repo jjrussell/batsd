@@ -1,4 +1,17 @@
 class Countries
+
+  CONTINENT_CODES = %w(NA SA EU AS OC AF)
+
+  CONTINENT_CODE_TO_NAME = {
+    "AS" => "Asia",
+    "EU" => "Europe",
+    "SA" => "South America",
+    "AF" => "Africa",
+    "AN" => "Antarctica",
+    "OC" => "Oceana",
+    "NA" => "North America"
+  }
+
   def self.country_code_to_name
     return @@country_code_to_name if defined?(@@country_code_to_name)
 
@@ -10,25 +23,11 @@ class Countries
   end
 
   def self.country_names(usa_first=true)
-    rejects = Set.new(continent_code_to_name.values)
+    rejects = Set.new(CONTINENT_CODE_TO_NAME.values)
     rejects << 'United States' if usa_first
     countries = GeoIP::CountryName.reject{|name| rejects.include?(name)}.sort
     countries.unshift('United States') if usa_first
     countries
-  end
-
-  def self.continent_code_to_name
-    { "AS" => "Asia",
-      "EU" => "Europe",
-      "SA" => "South America",
-      "AF" => "Africa",
-      "AN" => "Antarctica",
-      "OC" => "Oceana",
-      "NA" => "North America" }
-  end
-
-  def self.continent_codes
-    %w(NA SA EU AS OC AF)
   end
 
   def self.contintent_code_to_country_codes
@@ -43,7 +42,7 @@ class Countries
       @@contintent_code_to_country_codes[continent_code] << GeoIP::CountryCode[i]
     end
 
-    continent_codes.each do |continent_code|
+    CONTINENT_CODES.each do |continent_code|
       @@contintent_code_to_country_codes[continent_code].sort! do |c1, c2|
         country_code_to_name[c1] <=> country_code_to_name[c2]
       end
