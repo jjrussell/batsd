@@ -5,7 +5,7 @@
       %th App
       %th Age
       %th Owner
-      %th
+      %th Action
   %tbody
     - @approvals.each do |approval|
       %tr
@@ -17,5 +17,6 @@
             = f.select('owner_id', options_for_select(Approval.available_owners_for_select.unshift(['(none)', nil]), approval.owner_id))
             = image_tag('spinner.gif', :class => 'spinner hidden')
         %td.actions
-          = link_to('Approve', approve_tools_currency_approval_path(approval.id), :class => 'approve')
-          = link_to('Reject', reject_tools_currency_approval_path(approval.id), :class => 'reject')
+          - if approval.pending?
+            = link_to('Approve', approve_tools_currency_approval_path(approval.id), :class => 'approve')
+            = link_to('Reject', reject_tools_currency_approval_path(approval.id), :class => 'reject')

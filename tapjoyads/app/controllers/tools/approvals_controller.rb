@@ -26,14 +26,14 @@ class Tools::ApprovalsController < WebsiteController
     i.approve!
     @approval.approve!
 
-    redirect_to :action => :index
+    redirect_to :action => :index, :type => params[:type]
   end
 
   def reject
     @approval.owner = current_user if respond_to?(:curret_user)
     @approval.reject!(params[:reason])
 
-    redirect_to :action => :index
+    redirect_to :action => :index, :type => params[:type]
   end
 
   private
@@ -54,13 +54,8 @@ class Tools::ApprovalsController < WebsiteController
 
   def find_approval
     @approval = Approval.find(params[:id])
-    set_approval_type
   end
 
-  def set_approval_type
-    @conditions ||= {}
-    @conditions[:item_type] = params[:type].to_s.capitalize if params[:type]
-  end
     # Check for the selected models partial, use the generic one if it doesn't exist
   def setup_partial
     @table_partial = @conditions.fetch(:item_type) { 'table' }.tableize.singularize

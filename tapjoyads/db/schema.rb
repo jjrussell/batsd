@@ -642,9 +642,8 @@ ActiveRecord::Schema.define(:version => 20120210003759) do
     t.text     "regions",                                                                                          :null => false
     t.boolean  "instructions_overridden",                                                       :default => false, :null => false
     t.boolean  "tapjoy_sponsored",                                                              :default => false, :null => false
-    t.boolean  "wifi_only",                                                                     :default => false, :null => false
-    t.text     "approved_banner_creatives"
     t.text     "approved_sources",                                                                                 :null => false
+    t.text     "approved_banner_creatives"
     t.boolean  "wifi_only",                                                                     :default => false, :null => false
     t.boolean  "sdkless",                                                                       :default => false
   end
