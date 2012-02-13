@@ -2,7 +2,11 @@
 # documentation.
 app_dir = "/home/webuser/tapjoyserver/tapjoyads"
 server_type = `/home/webuser/tapjoyserver/server/server_type.rb`
-worker_processes %w(masterjobs jobs).include?(server_type) ? 36 : 18
+if server_type == 'web'
+  worker_processes rand(2) == 0 ? 8 : 18
+else
+  worker_processes %w(masterjobs jobs).include?(server_type) ? 36 : 18
+end
 working_directory app_dir
 
 # Load app into the master before forking workers for super-fast
