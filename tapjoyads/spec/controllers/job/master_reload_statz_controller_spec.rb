@@ -108,7 +108,7 @@ describe Job::MasterReloadStatzController do
           :store_name => 'Market',
           :price => 1),
       ]
-      
+
       apps.each_index do |i| 
         apps[i].add_app_metadata(app_metadatas[i])
         apps[i].reload.save!
