@@ -1,6 +1,0 @@
-[submodule "tapjoyads/public/javascripts/games/src/fittext"]
-	path = tapjoyads/public/javascripts/games/src/fittext
-	url = git@github.com:matchboxmike/FitText.js.git
-[submodule "tapjoyads/public/javascripts/games/src/tapui"]
-	path = tapjoyads/public/javascripts/games/src/tapui
-	url = git@github.com:Tapjoy/tapjoyuiframework.git
