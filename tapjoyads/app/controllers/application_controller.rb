@@ -4,6 +4,8 @@
 class ApplicationController < ActionController::Base
   helper :all # include all helpers, all the time
 
+  helper_method :get_geoip_data
+
   before_filter :set_time_zone
   before_filter :fix_params
   before_filter :set_locale
@@ -18,7 +20,7 @@ class ApplicationController < ActionController::Base
   # from your application log (in this case, all fields with names like "password").
   filter_parameter_logging :password, :password_confirmation
 
-private
+  private
 
   def verify_params(required_params, options = {})
     render_missing_text = options.delete(:render_missing_text) { true }
@@ -138,6 +140,9 @@ private
     return @cached_geoip_data if @cached_geoip_data.present?
 
     @cached_geoip_data = {}
+
+    return @cached_geoip_data if @server_to_server == true && params[:device_ip].blank?
+
     ip_address = params[:device_ip] || get_ip_address
 
     begin
@@ -157,8 +162,9 @@ private
       @cached_geoip_data[:area_code]   = geo_struct[:area_code]
       @cached_geoip_data[:dma_code]    = geo_struct[:dma_code]
     end
-    @cached_geoip_data[:user_country_code]    = params[:country_code].to_s.upcase if params[:country_code].present?
-    @cached_geoip_data[:carrier_country_code] = params[:carrier_country_code].to_s.upcase if params[:carrier_country_code].present?
+    @cached_geoip_data[:user_country_code]    = params[:country_code].present? ? params[:country_code].to_s.upcase : nil
+    @cached_geoip_data[:carrier_country_code] = params[:carrier_country_code].present? ? params[:carrier_country_code].to_s.upcase : nil
+    @cached_geoip_data[:primary_country]      = params[:primary_country] || @cached_geoip_data[:carrier_country_code] || @cached_geoip_data[:country] || @cached_geoip_data[:user_country_code]
 
     @cached_geoip_data
   end
