@@ -33,15 +33,11 @@ class Job::SqsReaderController < Job::JobController
       begin
         on_message(message)
       rescue Exception => e
-        Rails.logger.warn "Error processing message. Error: #{e}"
-        message_params = split_message_into_params(message.body)
+        Rails.logger.error("SqsReaderError: #{e.class} - #{e.message}, queue: #{@queue_name.split('/').last}, message: #{message.body}")
         if @raise_on_error
-          NewRelic::Agent.add_custom_parameters(message_params)
+          NewRelic::Agent.add_custom_parameters(split_message_into_params(message.body))
           raise e
         else
-          unless e.is_a?(SkippedSendCurrency)
-            NewRelic::Agent.agent.error_collector.notice_error(e, { :uri => request.path, :request_params => params.merge(message_params) })
-          end
           next
         end
       end
