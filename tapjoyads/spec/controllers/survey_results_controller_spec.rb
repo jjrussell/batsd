@@ -2,7 +2,7 @@ require 'spec/spec_helper'
 
 describe SurveyResultsController do
   before :each do
-    stub_offers
+    fake_the_web
     user = Factory(:admin)
     partner = Factory(:partner, :id => TAPJOY_PARTNER_ID, :users => [user])
     survey_offer = Factory(:survey_offer)
