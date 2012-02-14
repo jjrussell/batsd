@@ -142,9 +142,9 @@ describe Offer do
 
   it "rejects depending on carriers" do
     @offer.carriers = ["Verizon", "NTT DoCoMo"].to_json
-    mobile_carrier_code = '44001'
+    mobile_carrier_code = '440.01'
     @offer.send(:carriers_reject?, mobile_carrier_code).should == false
-    mobile_carrier_code = '123123'
+    mobile_carrier_code = '123.123'
     @offer.send(:carriers_reject?, mobile_carrier_code).should == true
     @offer.send(:carriers_reject?, nil).should == true
     @offer.carriers = '[]'
