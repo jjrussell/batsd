@@ -8,8 +8,8 @@ describe Job::MasterReloadStatzController do
     @controller.expects(:authenticate).at_least_once.returns(true)
   end
 
-  describe 'when caching stats' do
-    it 'should save memcache values' do
+  describe '#index' do
+    it 'saves memcache values' do
       100.times { Factory(:email_offer) }
       stub_vertica
       get :index
@@ -64,7 +64,7 @@ describe Job::MasterReloadStatzController do
       response.body.should == 'ok'
     end
 
-    it 'should generate weekly and monthly timeframes' do
+    it 'generates weekly and monthly timeframes' do
       start_time = Time.zone.now - 7.days
       end_time = Time.zone.now
 
@@ -80,7 +80,7 @@ describe Job::MasterReloadStatzController do
       response.body.should == 'ok'
     end
 
-    it 'should generate combined ranks' do
+    it 'generates combined ranks' do
       apps = [
         Factory(:app,
           :store_id => 'ios.free',
@@ -120,7 +120,7 @@ describe Job::MasterReloadStatzController do
     end
   end
 
-  describe 'when caching partner stats' do
+  describe '#partner_index' do
     before :each do
       @partner = Factory(:partner)
 
@@ -128,7 +128,7 @@ describe Job::MasterReloadStatzController do
       @mock_appstats.stubs(:stats).returns(stats_hash)
     end
 
-    it 'should save partner values' do
+    it 'saves partner values' do
       stub_conversions
       stub_appstats
 
