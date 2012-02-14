@@ -13,7 +13,7 @@
       = radio_button_tag('country_targeting', 'on', !@offer.countries.blank?)
       - country_selector_class = @offer.countries.blank? ? 'hidden' : ''
       %ul#country_checkboxes{:class => country_selector_class}
-        - Countries.continent_codes.each do |continent_code|
+        - Countries::CONTINENT_CODES.each do |continent_code|
           %li
             .expander.ui-icon.ui-icon-triangle-1-e
             - country_set = @offer.get_countries
@@ -21,7 +21,7 @@
             - none_checked = (Set.new(Countries.contintent_code_to_country_codes[continent_code]) & country_set).empty?
             - class_name = (all_checked || none_checked) ? 'continent-label' : 'continent-label some-checked'
             = check_box_tag "continent_#{continent_code}", '1', all_checked, :class => 'continent'
-            = label_tag "continent_#{continent_code}", Countries.continent_code_to_name[continent_code], :class => class_name
+            = label_tag "continent_#{continent_code}", Countries::CONTINENT_CODE_TO_NAME[continent_code], :class => class_name
             %ul.inner.hidden
               - Countries.contintent_code_to_country_codes[continent_code].each do |country_code|
                 %li
