@@ -8,14 +8,14 @@ class Tools::ApprovalsController < WebsiteController
   before_filter :find_approval, :only => [:approve, :reject, :assign]
 
   def index
-    state = params[:state] || 'pending'
-    @conditions[:state] = state if state != 'any'
+    state = params[:state] || Approval.enumerate_state('pending')
+    @conditions[:state] = state if state > -1
 
     @approvals = Approval.all(:conditions => @conditions, :order => 'created_at ASC')
   end
 
   def history
-    @conditions[:state] = ['approved', 'rejected']
+    @conditions[:state] = Approval.enumerate_state('approved', 'rejected')
 
     @approvals = Approval.all(:conditions => @conditions, :order => 'created_at DESC')
     render :index
