@@ -52,7 +52,12 @@ class StoreRank
                 end
 
                 known_store_ids[store_id].each do |offer_id|
-                  s3_rows[offer_id] ||= S3Stats::Ranks.find_or_initialize_by_id("ranks/#{date_string}/#{offer_id}", :load_from_memcache => false)
+                  begin
+                    s3_rows[offer_id] ||= S3Stats::Ranks.find_or_initialize_by_id("ranks/#{date_string}/#{offer_id}", :load_from_memcache => false)
+                  rescue
+                    log_progress("S3 load failed for iTunes: ranks/#{date_string}/#{offer_id}")
+                    next
+                  end
                   s3_rows[offer_id].update_stat_for_hour(ranks_key, time.hour, rank)
 
                   if time.hour > 0 && s3_rows[offer_id].hourly_values(ranks_key)[time.hour - 1] == 0
@@ -158,7 +163,12 @@ class StoreRank
                   end
 
                   known_android_store_ids[store_id].each do |offer_id|
-                    s3_rows[offer_id] ||= S3Stats::Ranks.find_or_initialize_by_id("ranks/#{date_string}/#{offer_id}", :load_from_memcache => false)
+                    begin
+                      s3_rows[offer_id] ||= S3Stats::Ranks.find_or_initialize_by_id("ranks/#{date_string}/#{offer_id}", :load_from_memcache => false)
+                    rescue
+                      log_progress("S3 load failed for Android: ranks/#{date_string}/#{offer_id}")
+                      next
+                    end
                     s3_rows[offer_id].update_stat_for_hour(ranks_key, time.hour, rank)
                   end
                 end

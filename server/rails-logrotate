@@ -5,6 +5,7 @@
     notifempty
     sharedscripts
     postrotate
-	    touch /home/webuser/tapjoyserver/tapjoyads/tmp/restart.txt
+        su - webuser -c '/home/webuser/tapjoyserver/server/start_or_reload_unicorn.rb'
+        su - webuser -c '/home/webuser/tapjoyserver/server/restart_job_daemon.rb'
     endscript
 }

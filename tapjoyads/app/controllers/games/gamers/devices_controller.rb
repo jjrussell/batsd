@@ -3,9 +3,9 @@ class Games::Gamers::DevicesController < GamesController
   def new
     if current_gamer.present?
       if Rails.env.staging?
-        send_file("#{RAILS_ROOT}/data/TapjoyProfile.mobileconfig.staging.unsigned", :filename => 'TapjoyProfile.mobileconfig', :disposition => 'inline', :type => :mobileconfig)
+        send_file("#{Rails.root}/data/TapjoyProfile.mobileconfig.staging.unsigned", :filename => 'TapjoyProfile.mobileconfig', :disposition => 'inline', :type => :mobileconfig)
       else
-        send_file("#{RAILS_ROOT}/data/TapjoyProfile.mobileconfig", :filename => 'TapjoyProfile.mobileconfig', :disposition => 'inline', :type => :mobileconfig)
+        send_file("#{Rails.root}/data/TapjoyProfile.mobileconfig", :filename => 'TapjoyProfile.mobileconfig', :disposition => 'inline', :type => :mobileconfig)
       end
     else
       flash[:error] = "Please log in and try again. You must have cookies enabled."
@@ -88,7 +88,7 @@ class Games::Gamers::DevicesController < GamesController
         flash[:error] = "Error linking device. Please try again."
       end
 
-      redirect_to games_root_path
+      redirect_to games_root_path, :flash => { :register_device => true }
     else
       flash[:error] = "Please log in to link your device. You must have cookies enabled."
       redirect_to games_login_path(:data => params[:data])
