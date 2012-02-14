@@ -1,16 +1,23 @@
 # See http://unicorn.bogomips.org/Unicorn/Configurator.html for complete
 # documentation.
-app_dir = "/home/webuser/tapjoyserver/tapjoyads"
+
 server_type = `/home/webuser/tapjoyserver/server/server_type.rb`
-worker_processes %w(masterjobs jobs).include?(server_type) ? 36 : 18
+big_server = %w(masterjobs jobs).include?(server_type)
+
+app_dir = "/home/webuser/tapjoyserver/tapjoyads"
 working_directory app_dir
+
+if big_server
+  worker_processes 36
+  timeout 43200
+else
+  worker_processes 8
+  timeout 90
+end
 
 # Load app into the master before forking workers for super-fast
 # worker spawn times
 preload_app true
-
-# kill workers if they have been stuck on a request for too long
-timeout %w(masterjobs jobs).include?(server_type) ? 43200 : 90
 
 # listen on both a Unix domain socket and a TCP port,
 # we use a shorter backlog for quicker failover when busy
