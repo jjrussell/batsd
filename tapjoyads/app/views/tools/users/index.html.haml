@@ -16,7 +16,7 @@
           %ul
             - user.user_roles.sort_by(&:name).each do |role|
               %li{:class => role.name}= role.name
-  %br/
+  %br
 
 - content_for :page_styles do
   :plain

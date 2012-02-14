@@ -18,6 +18,8 @@
           .content
             = render 'my_apps'
             = render(:partial => 'games/gamers/invite_friends')
+    .footer
+      = render :partial => 'footer'
 
   #feat_app
     .page
@@ -25,6 +27,8 @@
       .content_wrapper
         #feat_app.content
           = render 'featured_content'
+    .footer
+      = render :partial => 'footer'
 
   #earn
     .page
@@ -54,7 +58,8 @@
               #recommended_games_button_arrow.tab_button_bottom_arrrow_wrapper
                 .tab_button_bottom_arrrow
           #more_games_content.hide
-
+    .footer
+      = render :partial => 'footer'
 
 #accept_tos_dialog.dialog_wrapper.hide
   .dialog

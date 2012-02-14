@@ -38,7 +38,7 @@ class SupportRequest < SimpledbResource
   end
 
   def get_last_click(udid, offer)
-    conditions = "udid = '#{udid}' and advertiser_app_id = '#{offer.item_id}' and installed_at is null and manually_resolved_at is null"
+    conditions = "udid = '#{udid}' and advertiser_app_id = '#{offer.item_id}' and manually_resolved_at is null"
     clicks = Click.select_all(:conditions => conditions)
     clicks.sort_by { |c| c.clicked_at.to_f }.last
   end
