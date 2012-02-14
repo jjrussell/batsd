@@ -30,6 +30,11 @@ class Tools::AppReviewsController < WebsiteController
       flash[:notice] = 'App review was successfully created.'
       redirect_to tools_app_reviews_path(:app_id => @app_review.app_id)
     else
+      if @app_review.errors[:author_id].any?
+        flash.now[:error] = 'You have already reviewed this app.'
+      else
+        flash.now[:error] = "There is a issue, please try again later."
+      end
       @employees = Employee.active_by_first_name
       render :action => :new
     end

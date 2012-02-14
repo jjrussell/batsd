@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe GamerReview do
+describe AppReview do
   subject { Factory(:gamer_review) }
 
   describe '.belongs_to' do
@@ -24,8 +24,8 @@ describe GamerReview do
   end
 
   before :each do
-    @author = Factory(:gamer)
-    @gamer_review = Factory(:gamer_review, :author => @author)
+    @gamer = Factory(:gamer)
+    @gamer_review = Factory(:gamer_review, :author => @gamer)
   end
 
   describe '#update_app_rating_counts' do
@@ -49,7 +49,17 @@ describe GamerReview do
   describe '#author_name' do
     context 'when author_type is Gamer' do
       it 'returns gamer name' do
-        @gamer_review.author_name.should == @author.get_gamer_name
+        @gamer_review.author_name.should == @gamer.get_gamer_name
+      end
+    end
+
+    context 'when author_type is Employee' do
+      before :each do
+        @employee = Factory(:employee)
+        @employee_review = Factory(:gamer_review, :author => @employee)
+      end
+      it 'returns employee name' do
+        @employee_review.author_name.should == @employee.full_name
       end
     end
   end

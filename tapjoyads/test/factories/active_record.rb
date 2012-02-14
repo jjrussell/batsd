@@ -216,10 +216,28 @@ FactoryGirl.define do
     name 'short survey 1'
   end
 
-  factory :gamer_review do
+  factory :app_review do
     app    { Factory(:app) }
-    author { Factory(:gamer) }
     text   "A sample gamer review"
     user_rating 1
+  end
+
+  factory :gamer_review, :parent => :app_review do
+    author { Factory(:gamer) }
+  end
+
+  factory :employee do
+    first_name    { Factory.next(:name) }
+    last_name     { Factory.next(:name) }
+    email         { Factory.next(:email) }
+    title         'title'
+    superpower    'superpower'
+    current_games 'current_games'
+    weapon        'weapon'
+    biography     'biography'
+  end
+
+  factory :employee_review, :parent => :app_review do
+    author { Factory(:employee) }
   end
 end
