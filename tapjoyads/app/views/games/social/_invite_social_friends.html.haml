@@ -29,10 +29,10 @@
   :plain
     $(function($) {
       var options = {
-        channel:   #{abbreviation.to_json},
-        pageSize:  #{@page_size},
+        channel:       #{abbreviation.to_json},
+        pageSize:      #{@page_size},
         socialFriends: #{friends.to_json},
-        inviteUrl: '#{social_feature_redirect_path}',
+        inviteUrl:     '#{social_feature_redirect_path}',
       };
       TJG.social.setup(options);
     });

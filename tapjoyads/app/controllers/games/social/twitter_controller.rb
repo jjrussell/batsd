@@ -1,6 +1,4 @@
 class Games::Social::TwitterController < GamesController
-  require 'oauth'
-
   rescue_from OAuth::Error, :with => :handle_oauth_exceptions
 
   def start_oauth

@@ -87,7 +87,6 @@ ENV['CONSUMER_KEY'] = twitter['test']['consumer_key']
 ENV['CONSUMER_SECRET'] = twitter['test']['consumer_secret']
 
 DEV_FACEBOOK_ID = '100000459598424'
-TEST_TWITTER_ID = '388167589'
 
 DEVICE_LINK_TRACKING_PIXEL = ''
 

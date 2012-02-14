@@ -90,7 +90,6 @@ ENV['CONSUMER_KEY'] = twitter['staging']['consumer_key']
 ENV['CONSUMER_SECRET'] = twitter['staging']['consumer_secret']
 
 DEV_FACEBOOK_ID = '100000459598424'
-TEST_TWITTER_ID = '388167589'
 
 DEVICE_LINK_TRACKING_PIXEL = 'http://tapjoy.go2cloud.org/SL2P'
 

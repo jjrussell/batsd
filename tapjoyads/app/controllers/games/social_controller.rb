@@ -140,7 +140,6 @@ class Games::SocialController < GamesController
             current_gamer.follow_gamer(gamer)
           end
         else
-          # friend_id = TEST_TWITTER_ID if Rails.env != 'production' # please make sure the TEST_TWITTER_ID is the id of one of current twitter account's followers
           friend_name = Twitter.user(friend_id.to_i).name
           non_gamers << "#{friend_name}"
           invitation = current_gamer.invitation_for(friend_id, Invitation::TWITTER)
