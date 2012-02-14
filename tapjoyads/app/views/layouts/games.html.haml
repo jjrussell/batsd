@@ -14,7 +14,7 @@
 
     = stylesheet_link_tag("games/reset")
     = stylesheet_link_tag("games/base")
-    = stylesheet_link_tag("games/proto")
+    = stylesheet_link_tag("games/marketplace")
 
     = yield :page_head
 
@@ -22,12 +22,14 @@
     %noscript
       .noscript_msg
         Please go into your browser settings and enable JavaScript to continue using Tapjoy.
-    #main.card
+    .main
       .header.tj-red-gradient
         .headerwrap
           .wrap
-            .container
-              .logo=image_tag "e.gif"
-              .nav-icon=image_tag "e.gif"
+            .logo=image_tag "e.gif"
+            .nav-icon=image_tag "e.gif"
 
-    = yield
+      .content
+        .contentwrap.rel
+          .wrap
+            = yield

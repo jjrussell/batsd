@@ -1,0 +1,171 @@
+@import "tj-mixins.scss";
+@mixin txt-shadow() {
+  text-shadow: 0px 1px 1px rgba(37, 37, 37, .4);
+}
+body {
+  width: 320px;
+}
+.page {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+}
+
+div.page.current,
+.current {
+  z-index: 10;
+  display: block;
+}
+
+div.page:not(.current) {
+  display: none;
+}
+.clearfix:after {
+	content: ".";
+	display: block;
+	clear: both;
+	visibility: hidden;
+	line-height: 0;
+	height: 0;
+}
+
+
+
+.clear {
+  clear:both;
+}
+.wrap {
+  max-width: 944px;
+  width: 90%;
+  margin: 0 auto;
+  padding: 0;
+}
+
+.tj-red-gradient {
+  @include linear-gradient(top, #e82c2c, #b41317);
+}
+
+.headerwrap {
+  .logo {
+    position: relative;
+    height: 44px;
+    float: none;
+    text-align: center;
+    img {
+      background: url('/images/games/logo-navbar.png') no-repeat 0 0;
+      border: 0;
+      margin-top: 3px;
+      width: 90px;
+      background-size: auto 38px;
+    }
+  }
+}
+.nav-icon {
+  position: absolute;
+  top: 3px;
+  left: 7px;
+  img {
+    width: 34px;
+    height: 21px;
+    background: url('/images/games/menu-icon.png') no-repeat 0 0;
+  }
+}
+.slats {
+-webkit-box-shadow: 0px -1px 2px #ccc;
+   -moz-box-shadow: 0px -1px 2px #ccc;
+        box-shadow: 0px -1px 2px #ccc;
+}
+li.slat {
+  margin: 0;
+  padding: 17px percentage(20/640);
+  border-bottom: 1px solid #6f7072;
+  clear: both;
+  width: percentage(600/640);
+  height: 75px;
+  text-align: left;
+  @include gradient(rgba(247, 247, 250, 1.0), rgba(220, 223, 227, 1.0));
+  .game-image {
+    margin: 0 8px;
+    width: percentage(150/640);
+    float: left;
+    img {
+      width: 75px;
+      @include rounded-corners(45%);
+    }
+  }
+  .info {
+    width: percentage(290/640);
+    margin: 0;
+    float: left;
+  }
+  .summary {
+    margin: 0px 0;
+    width: 100%;
+  }
+  .title {
+    font-size: 16px;
+    width: 100%;
+  }
+  .rank, .friends {
+    font-size: 12px;
+    width: auto;
+    margin: 3% 0 6% 0;
+  }
+  .rank .icon {
+    padding: 0;
+    img {
+      width: 12px;
+    }
+  }
+  .friends .icon {
+    img {
+      width: 26px;
+    }
+  }
+  .rank .value {
+    margin-left: percentage(6/80);
+  }
+  .friends .value {
+    margin-left: percentage(3/80);
+  }
+  .description {
+    display: none;
+  }
+  .current {
+    display: inline-block;
+    @include txt-shadow();
+    @include gradient(rgba(118, 186, 81, 1.0), rgba(73, 138, 36, 1.0));
+    @include rounded-corners(4px);
+    border: 1px solid rgba(89, 152, 54, 1.0);
+    border-top: 1px solid rgba(154, 225, 119, 1.0);
+    border-bottom: 1px solid rgba(81, 146, 42, 1.0);
+    @include shadow(#047003, 1px);
+    color: white;
+    padding: 1px 4px;
+    text-align: center;
+    font-size: 15px;
+  }
+  .collect {
+    line-height: 75px;
+    color: #444444;
+    margin:0;
+    text-align: right;
+    float:right;
+    padding: 0 20px 0 0;
+    width: percentage(119/640);
+    border: none;
+-webkit-box-shadow: none;
+   -moz-box-shadow: none;
+        box-shadow: none;
+
+    background: transparent url("/images/games/mw-r-arrow.png") no-repeat right center;
+    background-size: percentage(16/119);
+
+    .inner {
+      display: table-cell;
+      vertical-align: middle;
+    }
+  }
+}

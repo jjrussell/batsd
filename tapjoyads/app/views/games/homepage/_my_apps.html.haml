@@ -1,17 +1,18 @@
-.offer_list
-  %ul
-    -@external_publishers.each do |external_publisher|
-      %li.offer_item.clearfix
-        - link_to("#", :id => external_publisher.currencies.first[:id], :class => "get_offerwall_jsonp", :jsonp_url => external_publisher.get_offerwall_url(@device, external_publisher.currencies.first, request.accept_language, request.user_agent, current_gamer.id), :currency => external_publisher.currencies.first[:name], :app_name => external_publisher.app_name) do
-          .offer_image
-            = image_tag(external_publisher.get_icon_url(:source => :cloudfront))
-          .offer_text.clearfix
-            .offer_title.title
-              = external_publisher.app_name
-        .offer_info
-        - external_publisher.currencies.each do |currency|
-          - link_to("#", :id => currency[:id], :class => "get_offerwall_jsonp", :jsonp_url => external_publisher.get_offerwall_url(@device, currency, request.accept_language, request.user_agent, current_gamer.id), :currency => currency[:name], :app_name => external_publisher.app_name) do
-            .currency_item.left
-              .offer_button
-                .button.grey
-                  =t('text.games.earn', :currency => currency[:name])
+%ul.slats
+  -@external_publishers.each do |external_publisher|
+    %li.slat.clearfix
+      - link_to("#", :id => external_publisher.currencies.first[:id], :class => "get_offerwall_jsonp", :jsonp_url => external_publisher.get_offerwall_url(@device, external_publisher.currencies.first, request.accept_language, request.user_agent, current_gamer.id), :currency => external_publisher.currencies.first[:name], :app_name => external_publisher.app_name) do
+        .game_image
+          = image_tag(external_publisher.get_icon_url(:source => :cloudfront))
+        .info
+          .title
+            = external_publisher.app_name
+          .description
+            App Description
+        .collect
+          - external_publisher.currencies.each do |currency|
+            - link_to("#", :id => currency[:id], :class => "get_offerwall_jsonp", :jsonp_url => external_publisher.get_offerwall_url(@device, currency, request.accept_language, request.user_agent, current_gamer.id), :currency => currency[:name], :app_name => external_publisher.app_name) do
+              .currency_item.left
+                .offer_button
+                  .button.grey
+                    =t('collect', :currency => currency[:name])
