@@ -1,4 +1,9 @@
-=render "external_publishers"
+- content_for :footer do
+  .btn
+    =link_to t('text.shared.help'),"#"
+=render "my_apps", :locals => { :current => true }
+
+= render(:partial => 'games/gamers/invite_friends')
 
 #feat_app.page
   .panel

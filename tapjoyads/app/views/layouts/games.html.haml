@@ -15,6 +15,9 @@
     = stylesheet_link_tag("games/reset")
     = stylesheet_link_tag("games/base")
     = stylesheet_link_tag("games/marketplace")
+    = stylesheet_link_tag("games/marketplace-480", :media => "only screen and (min-width: 480px)")
+    = stylesheet_link_tag("games/marketplace-768", :media => "only screen and (min-width: 768px)")
+    = stylesheet_link_tag("games/marketplace-1024", :media => "only screen and (min-width: 1024px)")
 
     = yield :page_head
 
@@ -33,6 +36,10 @@
             =yield :subhead
 
       .content
-        .contentwrap.rel
+        .contentwrap
           .wrap
             = yield
+
+      .footer
+        .footerwrap
+          = yield :footer
