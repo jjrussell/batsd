@@ -147,7 +147,8 @@ describe Offer do
     mobile_carrier_code = '123.123'
     @offer.send(:carriers_reject?, mobile_carrier_code).should == true
     @offer.send(:carriers_reject?, nil).should == true
-    @offer.carriers = '[]'
+    @offer.update_attributes({ :carriers => '[]' })
+    @offer.reload
     @offer.send(:carriers_reject?, mobile_carrier_code).should == false
   end
 
