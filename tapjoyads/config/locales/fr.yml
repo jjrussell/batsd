@@ -187,12 +187,13 @@ fr:
         advertisers_body: "Ciblez des millions d'utilisateurs et faites bénéficiez vos produits d'une large exposition"
         advertisers_title: "Annonceurs"
         allow_marketing_emails: "Permettre à Tapjoy de m'envoyer des emails promotionnels "
-        already_registered: "%{name} s'est déjà enregistré, vous le/la suivez désormais"
-        already_registered: "%{name} sont deja inscrits, vous etes desormais abonnes a leur fil d'actualite"
+        already_registered: 
+            one: "%{name} s'est déjà enregistré, vous le/la suivez désormais"
+            other: "%{name} sont deja inscrits, vous etes desormais abonnes a leur fil d'actualite"
         back_to_top: "Retour "
         birthdate: "Date de naissance"
         call_to_action_body: "Le meilleur moyen de profiter pleinement de tes apps mais aussi d'en découvrir de nouvelles"
-        call_to_action_title: ""
+        call_to_action_title: ~
         cant_fetch_offers: "Il y a eu une erreur dans le chargement de jeux additionnels"
         change_linked_account: "Changer de Compte"
         click_to_try_again: "Merci de cliquer ici pour réessayer"
@@ -202,10 +203,10 @@ fr:
         deactivate: "Désactiver"
         del_acct_confirm: "Clique sur le bouton ci-dessous pour désactiver ton compte"
         delete_my_account: "Supprimer mon Compte"
-        developers_body: ""
+        developers_body: ~
         developers_title: "Développeurs"
         earn_title: "Complétez une des offres ci-dessous pour gagner %{currency} a %{app_name}"
-        enable_javascript: ""
+        enable_javascript: ~
         enter_birthdate: "Merci d'entrer votre adresse mail"
         enter_email: "Merci d'entrer votre adresse mail"
         enter_password: "Merci d'entrer un mot de passe"
@@ -219,13 +220,10 @@ fr:
         free!: "Gratuit!"
         generic_issue: "Il y a eu une erreur"
         get_it: "Télécharge!"
-        get_it: "Télécharge!"
-        grant_us_access: ""
+        grant_us_access: ~
         how_it_works_body:: "Tous vos jeux sont listés-ci dessous"
         how_it_works_title: "Comment ca marche?"
         install_and_run: "Installe et lance %{name}"
-        invite: "Invite tes Amis!"
-        invite: "Invite tes Amis!"
         invite: "Invite tes Amis!"
         invite_button: "Invite"
         invite_email_body: "\"%{name} t'a invité à rejoindre Tapjoy, l'endroit ou il faut être pour découvrir les dernières apps du moment. Inscris toi gratuitement et découvre les meilleurs apps sur iOS et Android, tout en gagnant de la monnaie virtuelle au sein de tes apps favorites.
@@ -235,11 +233,13 @@ fr:
         Pour commencer, crée un compte ici:\""
         invite_email_greet: "Salut,"
         invite_email_signature: "L'équipeTapjoy"
-        invite_friends: "Invite"
-        invite_friends: "Inviter %{count} amis"
+        invite_friends: 
+            one: "Invite"
+            other: "Inviter %{count} amis"
         invite_title: "Envois une invitation par mail"
-        invites_sent_to: "Votre invitation Tapjoy a été envoyée a %{name}"
-        invites_sent_to: "Vos invitations Tapjoy ont été envoyées a %{name}"
+        invites_sent_to: 
+            one: "Votre invitation Tapjoy a été envoyée a %{name}"
+            other: "Vos invitations Tapjoy ont été envoyées a %{name}"
         issue_registering: "Il ya eu une erreur lors de l'enregistrement de votre compte"
         link_my_facebook: "Lier mon Facebook"
         load_more: "Plus de jeux"
@@ -249,9 +249,9 @@ fr:
         my_apps: "Mes apps"
         none_selected: "Aucun sélectionné"
         oops: "Oops!"
-        our_tos_changed: ""
+        our_tos_changed: ~
         privacy_policy_href: "Confidentialité"
-        provide_other_email: ""
+        provide_other_email: ~
         recipients_label: "Utilise des virgules pour separer les adresses mails"
         recommendation: "Recommendations"
         registering: "S'enregistrer"
@@ -267,12 +267,11 @@ fr:
         tos_change_acknowledge: "En cliquant ici je confirme accepter les termes d'utilisation du service"
         unable_to_process: "Désolé, nous somme incapables de procéder a votre requête"
         wifi_required: "Wifi requis"
-        wifi_required: "Wifi requis"
         wrong_device: "Pas le bon appareil?"
     instructions: 
       amount_and_currency: "%{amount} %{currency}"
       continue_link: "Clique ici pour continuer."
-      download_action: ici
+      download_action: "ici"
       download_link: "Si tu n'as pas déjà cette application, clique %{download_action} pour la télécharger."
       earn_currency: "Gagne %{amount_and_currency}"
       footer: "Après avoir complété ces étapes, tu recevras %{amount_and_currency}."
@@ -281,7 +280,7 @@ fr:
     offerwall: 
       buy_currency: "Achète %{amount} %{currency}"
       earn_currency: "Gagne %{amount} %{currency}"
-      free: Gratuit
+      free: "Gratuit"
       instructions: "Complète une des offres suivantes et reçois des %{currency}"
       instructions_non_rewarded: "Discover what's hot on Tapjoy!"
       load_error: "Essaye encore."
@@ -292,19 +291,18 @@ fr:
       popular_apps: "Popular Apps"
       previous: "%{items} offres précédentes"
       title: "Gagne des %{currency}"
-      wifi_required: "Wifi Required"
+      wifi_required: "Wifi requis"
       wifi_warning: "This app requires a wifi connection to download."
     shared: 
         about_link: "A propos"
         android: "Android"
-        back: "Retour"
         back: "Retour"
         blog: "Blog"
         cancel: "Annuler"
         city: "Ville"
         confirm_password: "Confirmer mot de passe"
         continue: "Continue"
-        copyright: ""
+        copyright: ~
         country: "Pays"
         create_account: "Créer un compte"
         day: "Jour"
@@ -337,14 +335,11 @@ fr:
         recipients: "Destinataires"
         reset_password: "Redéfinir mot de passe"
         save: "Sauver"
-        save: "Sauver"
-        share: "Partage"
         sign_in: "Se connecter"
-        sign_up: "S'enregistrer"
         sign_up: "S'enregistrer"
         success: "félicitations"
         try_again: "Essaye encore"
-        updating: ""
+        updating: ~
         year: "Année"
         zip_postal: "Code Postal"
     support: 
