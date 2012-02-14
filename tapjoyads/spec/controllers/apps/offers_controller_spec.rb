@@ -38,15 +38,6 @@ describe Apps::OffersController do
     it 'should not show up as a non-rewarded offer' do
       @app.primary_non_rewarded_offer.should be_nil
     end
-
-    it 'should allow proper custom creative sizes' do
-      @app.reload
-      get :edit, :app_id => @app.id, :id => @app.primary_non_rewarded_featured_offer.id
-      response.should be_success
-      Offer::FEATURED_AD_SIZES.each do |size|
-        assigns(:custom_creative_sizes).collect { |hash| hash[:image_size] }.should include(size)
-      end
-    end
   end
 
   context 'with a rewarded featured offer' do
@@ -69,15 +60,6 @@ describe Apps::OffersController do
     it 'should not show up as a non-rewarded offer' do
       @app.primary_non_rewarded_offer.should be_nil
     end
-
-    it 'should allow proper custom creative sizes' do
-      @app.reload
-      get :edit, :app_id => @app.id, :id => @app.primary_rewarded_featured_offer.id
-      response.should be_success
-      Offer::FEATURED_AD_SIZES.each do |size|
-        assigns(:custom_creative_sizes).collect { |hash| hash[:image_size] }.should include(size)
-      end
-    end
   end
 
   context 'a non-rewarded offer' do
@@ -96,15 +78,6 @@ describe Apps::OffersController do
     it 'should not show up as a featured offer' do
       @app.primary_non_rewarded_featured_offer.should be_nil
       @app.primary_rewarded_featured_offer.should be_nil
-    end
-
-    it 'should have proper custom creative sizes' do
-      @app.reload
-      get :edit, :app_id => @app.id, :id => @app.primary_non_rewarded_offer.id
-      response.should be_success
-      Offer::DISPLAY_AD_SIZES.each do |size|
-        assigns(:custom_creative_sizes).collect { |hash| hash[:image_size] }.should include(size)
-      end
     end
   end
 end

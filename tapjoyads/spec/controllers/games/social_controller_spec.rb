@@ -1,10 +1,12 @@
-require 'test_helper'
+require 'spec_helper'
 
-class Games::SocialControllerTest < ActionController::TestCase
-  setup :activate_authlogic
+describe Games::SocialController do
+  before :each do
+    activate_authlogic
+  end
 
   context "inviting facebook friends" do
-    setup do
+    before :each do
       gamer = Factory(:gamer)
       gamer.gamer_profile = GamerProfile.create(:facebook_id => '0', :gamer => gamer)
       games_login_as(gamer)
@@ -23,17 +25,17 @@ class Games::SocialControllerTest < ActionController::TestCase
     end
 
     context "inviting friends without invitation" do
-      should "return json with gamers and non-gamers" do
+      it "returns json with gamers and non-gamers" do
         foo_gamer = Factory(:gamer)
         foo_gamer.gamer_profile = GamerProfile.create(:facebook_id => 'foo', :gamer => foo_gamer)
         friends = ['foo', 'bar']
         post 'send_facebook_invites', :friends => friends, :content => 'hello'
 
-        assert_response(200)
+        should respond_with(200)
         json = JSON.load(@response.body)
-        assert json['success']
-        assert_equal 1, json['gamers'].length
-        assert_equal 1, json['non_gamers'].length
+        json['success'].should be_true
+        json['gamers'].length.should == 1
+        json['non_gamers'].length.should == 1
       end
     end
   end
