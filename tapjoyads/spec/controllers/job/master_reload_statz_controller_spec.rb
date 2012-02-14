@@ -163,6 +163,7 @@ describe Job::MasterReloadStatzController do
         "sessions"              => "600",
         "spend"                 => "$-6.00",
         "total_revenue"         => "$6.00",
+        "arpdau"                => "-",
       }
 
       actual_stats = Mc.get('statz.partner.cached_stats.24_hours')
