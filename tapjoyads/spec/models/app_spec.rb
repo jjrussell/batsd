@@ -33,6 +33,10 @@ describe App do
       offer.reload
       offer.bid.should equal(200)
     end
+
+    it 'does not list North Korea as a possible appstore country' do
+      App::APPSTORE_COUNTRIES_OPTIONS.map(&:last).should_not include('KP')
+    end
   end
 
   context "An App with Action Offers" do

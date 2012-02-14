@@ -1,4 +1,5 @@
 - @page_title = "Edit offer: #{@offer.name_with_suffix}"
+- content_for :page_head, stylesheet_link_tag('facebox')
 
 .icon= image_tag(@offer.get_icon_url, :size => '57x57')
 
@@ -261,6 +262,9 @@
           = error_message_on @offer, :instructions
     %tr
       %td{ :colspan => 2 }= f.submit('Save Changes')
+    %tr
+      %td{ :colspan => 2}
+        = render('offer_creatives/iframes', :offer => @offer)
 
 .hidden
   #help_tapjoy_enabled_content{ :name => 'Tapjoy Enabled' } Whether or not the offer is enabled for installs by Tapjoy.
@@ -372,4 +376,9 @@
     }
     .details {
       font-size: 12px;
+    }
+    .creative_upload {
+      width: 100%;
+      border: none;
+      height: 35px;
     }

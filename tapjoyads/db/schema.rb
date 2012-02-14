@@ -22,6 +22,7 @@ ActiveRecord::Schema.define(:version => 20120214035249) do
     t.datetime "updated_at"
     t.string   "variable_name",                                          :null => false
     t.string   "prerequisite_offer_id", :limit => 36
+    t.integer  "price",                               :default => 0
   end
 
   add_index "action_offers", ["app_id"], :name => "index_action_offers_on_app_id"
