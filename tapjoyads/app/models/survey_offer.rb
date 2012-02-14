@@ -133,7 +133,7 @@ class SurveyOffer < ActiveRecord::Base
   def create_icon
     reload
     bucket = S3.bucket(BucketNames::TAPJOY)
-    image_data = bucket.objects['icons/checkbox.jpg'].read
+    image_data = bucket.objects['icons/survey-blue.png'].read
     primary_offer.save_icon!(image_data)
   end
 

@@ -56,7 +56,7 @@ class FeaturedContent < ActiveRecord::Base
     featured_contents.delete_if do |fc|
       !!fc.tracking_offer &&
       !!device &&
-      fc.tracking_offer.geoip_reject?(geoip_data, device)
+      fc.tracking_offer.geoip_reject?(geoip_data)
     end
   end
 

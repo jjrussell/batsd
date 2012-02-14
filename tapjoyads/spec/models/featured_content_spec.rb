@@ -225,12 +225,12 @@ describe FeaturedContent do
 
     context 'when there is country targeting' do
       it 'rejects featured content with different country targeting' do
-        @featured_content.tracking_offer.send(:geoip_reject?, @geoip_data, @device).should == false
+        @featured_content.tracking_offer.send(:geoip_reject?, @geoip_data).should == false
       end
 
       it 'accepts featured content within country targeting' do
         @geoip_data[:country] = "GL"
-        @featured_content.tracking_offer.send(:geoip_reject?, @geoip_data, @device).should == false
+        @featured_content.tracking_offer.send(:geoip_reject?, @geoip_data).should == false
       end
 
       it 'returns featured content within country targeting' do
@@ -241,7 +241,7 @@ describe FeaturedContent do
 
     context 'when there is no country targeting' do
       it 'accepts featured content' do
-        @featured_content2.tracking_offer.send(:geoip_reject?, @geoip_data, @device).should == true
+        @featured_content2.tracking_offer.send(:geoip_reject?, @geoip_data).should == true
       end
     end
   end
