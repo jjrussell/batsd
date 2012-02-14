@@ -1,12 +1,20 @@
 - form_for([:tools, @app_review], :html => { :class => 'tjform' }) do |f|
   = f.hidden_field :app_id
-  = f.hidden_field :author_type, :value => 'Employee'
+  = f.hidden_field :author_type, :value => @app_review.author_type ? @app_review.author_type : 'Employee'
   %table
     %tr
       %th= f.label :reviewer
       %td
-        = f.select :author_id, options_from_collection_for_select(@employees, :id, :full_name, @app_review.author_id)
+        - if @app_review.author && @app_review.author_type == 'Gamer'
+          = @app_review.author_name
+        -else
+          = f.select :author_id, options_from_collection_for_select(@employees, :id, :full_name, @app_review.author_id)
         = error_message_on @app_review, :author
+    %tr
+      %th= f.label :user_rating
+      %td
+        = f.select :user_rating, [-1, 0, 1]
+        = error_message_on @gamer_review, :user_rating
     %tr
       %th= f.label :review_text
       %td

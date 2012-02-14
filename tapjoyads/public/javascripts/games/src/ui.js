@@ -1153,7 +1153,7 @@
        updateThumbs(cur_rating);
 
         $(this).parent().attr("rating", cur_rating);
-        $('#gamer_review_user_rating').val($(this).parent().attr("rating"));
+        $('#app_review_user_rating').val($(this).parent().attr("rating"));
       });
 
       $('.active_thumb_down').click(function() {
@@ -1169,7 +1169,7 @@
         updateThumbs(cur_rating);
 
         $(this).parent().attr("rating", cur_rating);
-        $('#gamer_review_user_rating').val($(this).parent().attr("rating"));
+        $('#app_review_user_rating').val($(this).parent().attr("rating"));
       });
 
       function updateThumbs(cur_rating) {

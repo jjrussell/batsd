@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120208032532) do
+ActiveRecord::Schema.define(:version => 20120214035249) do
 
   create_table "action_offers", :id => false, :force => true do |t|
     t.string   "id",                    :limit => 36,                    :null => false
@@ -73,19 +73,18 @@ ActiveRecord::Schema.define(:version => 20120208032532) do
   add_index "app_metadatas", ["store_name", "store_id"], :name => "index_app_metadatas_on_store_name_and_store_id", :unique => true
 
   create_table "app_reviews", :id => false, :force => true do |t|
-    t.string   "id",          :limit => 36, :null => false
-    t.string   "app_id",      :limit => 36, :null => false
-    t.string   "author_id",   :limit => 36, :null => false
-    t.string   "author_type",               :null => false
-    t.text     "text",                      :null => false
-    t.date     "featured_on"
+    t.string   "id",          :limit => 36,                :null => false
+    t.string   "app_id",      :limit => 36,                :null => false
+    t.string   "author_id",   :limit => 36,                :null => false
+    t.string   "author_type",                              :null => false
+    t.text     "text",                                     :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "platform"
+    t.integer  "user_rating",               :default => 0
   end
 
   add_index "app_reviews", ["app_id", "author_id"], :name => "index_app_reviews_on_app_id_and_author_id", :unique => true
-  add_index "app_reviews", ["featured_on", "platform"], :name => "index_app_reviews_on_featured_on_and_platform", :unique => true
   add_index "app_reviews", ["id"], :name => "index_app_reviews_on_id", :unique => true
 
   create_table "apps", :id => false, :force => true do |t|

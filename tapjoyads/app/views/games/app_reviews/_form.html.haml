@@ -1,5 +1,5 @@
 .write_review.clearfix
-  - form_for([:games, @gamer_review]) do |f|
+  - form_for([:games, @app_review]) do |f|
     = f.hidden_field :app_id, :value => params[:app_id]
     = f.hidden_field :author_type, :value => 'Gamer'
     = f.hidden_field :author_id, :value => current_gamer.id
@@ -8,14 +8,14 @@
     .offer_text.clearfix
       .app_meta.clearfix
         .app_rating_wrapper
-          .gamer_rating{ :rating => @gamer_review.user_rating }
-          = f.hidden_field :user_rating, :value => @gamer_review.user_rating
+          .gamer_rating{ :rating => @app_review.user_rating }
+          = f.hidden_field :user_rating, :value => @app_review.user_rating
         .comment_label= 'Comment'
       .gamer_review
         = f.text_area :text, :rows => 10
-        = error_message_on @gamer_review, :text
+        = error_message_on @app_review, :text
       .review_submit
-        - if @gamer_review.new_record?
+        - if @app_review.new_record?
           = f.submit t('text.shared.submit_review')
         - else
           = f.submit t('text.shared.update_review')

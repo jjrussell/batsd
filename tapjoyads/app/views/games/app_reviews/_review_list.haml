@@ -1,32 +1,32 @@
-- pagination_options = { :container => false, :param_name => "gamer_reviews_page", :previous_label => 'Prev&nbsp;&nbsp;|', :next_label => '|&nbsp;&nbsp;Next', :inner_window => 1, :outer_window => 0 }
+- pagination_options = { :container => false, :param_name => "app_reviews_page", :previous_label => 'Prev&nbsp;&nbsp;|', :next_label => '|&nbsp;&nbsp;Next', :inner_window => 1, :outer_window => 0 }
 .pagination_wrapper
   .my_pagination.clearfix
     %span.page_info
-      = page_entries_info(gamer_reviews, :entry_name => 'review')
-    .page_links= will_paginate(gamer_reviews, pagination_options)
+      = page_entries_info(app_reviews, :entry_name => 'review')
+    .page_links= will_paginate(app_reviews, pagination_options)
 
 %ul.review_list.clearfix
-  - gamer_reviews.each do |gamer_review|
-    - gamer = gamer_review.author
+  - app_reviews.each do |app_review|
+    - gamer = app_review.author
     %li.review_item.clearfix
       .others_profile_image
         = image_tag(gamer.get_avatar_url)
       .offer_text.clearfix
         .others_review_meta
           %span.others_name.left= gamer.get_gamer_name
-          %span.others_review_rating.clearfix{ :id => gamer.id, :rating => gamer_review.user_rating }
+          %span.others_review_rating.clearfix{ :id => gamer.id, :rating => app_review.user_rating }
         .others_review_content_collapse{ :id => gamer.id }
-          %span.truncated_text= truncate(gamer_review.text, :length => 100)
-          - if gamer_review.text.length > 100
+          %span.truncated_text= truncate(app_review.text, :length => 100)
+          - if app_review.text.length > 100
             %span.read_more read more
-        - if gamer_review.text.length > 100
+        - if app_review.text.length > 100
           .others_review_content_expand.hide{ :id => gamer.id }
-            .full_text= gamer_review.text
+            .full_text= app_review.text
             .collapse collapse  &#8679;
 
 .pagination_wrapper
   .my_pagination.clearfix
-    .page_links= will_paginate(gamer_reviews, pagination_options)
+    .page_links= will_paginate(app_reviews, pagination_options)
 
 - content_for :page_javascript do
   :plain

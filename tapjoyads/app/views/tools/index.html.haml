@@ -61,8 +61,6 @@
     %li= link_to 'App Reviews', tools_app_reviews_path
   - if permitted_to? :index, :tools_featured_contents
     %li= link_to 'My Apps Featured Content', tools_featured_contents_path
-  - if permitted_to? :index, :tools_gamer_reviews
-    %li= link_to 'Gamer Reviews', tools_gamer_reviews_path
 
 - if has_permissions_for_one_of? :account_mgr
   %h3 Account Management

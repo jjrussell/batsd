@@ -81,7 +81,6 @@ class App < ActiveRecord::Base
   has_many :app_metadata_mappings
   has_many :app_metadatas, :through => :app_metadata_mappings
   has_many :app_reviews
-  has_many :gamer_reviews
 
   belongs_to :partner
 
