@@ -264,4 +264,8 @@ private
   def set_publisher_user_id
     params[:publisher_user_id] = params[:udid] if params[:publisher_user_id].blank?
   end
+
+  def sdkless_supported?
+    return params[:library_version].to_s.version_greater_than_or_equal_to('8.2.0') && params['sdk_type'] != 'connect'
+  end
 end
