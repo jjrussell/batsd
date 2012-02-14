@@ -38,6 +38,7 @@ module ActsAsApprovable
       #
       # @return [Boolean]
       def assign(owner)
+        raise ActsAsApprovable::Error::InvalidOwner unless self.class.available_owners.include?(owner)
         self.owner = owner
         save
       end
@@ -105,7 +106,7 @@ module ActsAsApprovable
       #
       # @return [Array] a 2-index array with a display string and value.
       def option_for_owner(owner)
-        [owner.to_s, owner.id]
+        [owner.to_str, owner.id]
       end
     end
   end

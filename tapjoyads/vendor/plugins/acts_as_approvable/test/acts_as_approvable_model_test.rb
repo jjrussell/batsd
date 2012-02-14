@@ -3,6 +3,12 @@ require 'test_helper'
 class ActsAsApprovableModelTest < Test::Unit::TestCase
   load_schema
 
+  def teardown
+    ActiveRecord::Base.send(:subclasses).each do |klass|
+      klass.delete_all
+    end
+  end
+
   context 'A record with update only approval' do
     context 'and ignored fields' do
       setup { @project = Project.create }
@@ -40,11 +46,18 @@ class ActsAsApprovableModelTest < Test::Unit::TestCase
         end
       end
 
-      context 'that is altered using #without_approvable' do
-        setup { @project.without_approval { update_attribute(:description, 'updated') } }
-
+      context 'that is altered using #without_approval' do
         should 'not have an approval object' do
+          @project.without_approval { update_attribute(:description, 'updated') }
           assert @project.approvals.empty?
+        end
+
+        should 'correctly restore approval queue state' do
+          assert @project.approvals_on?
+          @project.approvals_off
+          assert !@project.approvals_on?
+          @project.without_approval { update_attribute(:description, 'updated') }
+          assert !@project.approvals_on?
         end
       end
     end
@@ -89,7 +102,7 @@ class ActsAsApprovableModelTest < Test::Unit::TestCase
         end
       end
 
-      context 'that is altered using #without_approvable' do
+      context 'that is altered using #without_approval' do
         setup { @game.without_approval { update_attribute(:title, 'updated') } }
 
         should 'not have an approval object' do
@@ -299,6 +312,13 @@ class ActsAsApprovableModelTest < Test::Unit::TestCase
         assert_equal 'rejected', @user.state
       end
     end
+
+    context '.without_approval' do
+      should 'disable approvals for the given block' do
+        @user = User.without_approval { create }
+        assert @user.approval.nil?
+      end
+    end
   end
 
   context 'A record with default settings' do
@@ -363,6 +383,41 @@ class ActsAsApprovableModelTest < Test::Unit::TestCase
         @approval.item.stubs(:before_reject).returns(false)
         @approval.reject!
         assert @approval.item.pending?
+      end
+    end
+  end
+
+  context '.options_for_state' do
+    should 'return an array' do
+      assert_kind_of Array, Approval.options_for_state
+    end
+
+    should 'contain our states' do
+      assert Approval.options_for_state.include?(['All', 'all'])
+      assert Approval.options_for_state.include?(['Pending', 'pending'])
+      assert Approval.options_for_state.include?(['Approved', 'approved'])
+      assert Approval.options_for_state.include?(['Rejected', 'rejected'])
+    end
+  end
+
+  context '.options_for_type' do
+    context 'without approval records' do
+      should 'be empty' do
+        assert Approval.options_for_type.empty?
+      end
+    end
+
+    context 'with approval records' do
+      setup do
+        Project.create.update_attributes(:description => 'review')
+        Game.create.update_attributes(:title => 'review')
+        User.create
+      end
+
+      should 'contain all types with approvals' do
+        assert Approval.options_for_type.include?('Project')
+        assert Approval.options_for_type.include?('Game')
+        assert Approval.options_for_type.include?('User')
       end
     end
   end
