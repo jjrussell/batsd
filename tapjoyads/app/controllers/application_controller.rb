@@ -267,7 +267,17 @@ private
     params[:publisher_user_id] = params[:udid] if params[:publisher_user_id].blank?
   end
 
-  def sdkless_supported?
-    return params[:library_version].to_s.version_greater_than_or_equal_to('8.2.0') && params['sdk_type'] != 'connect'
+  def sdkless_support?
+    return params[:library_version].to_s.version_greater_than_or_equal_to?('8.2.0') && (params['sdk_type'] == 'offer' || params['sdk_type'] == 'virtual_goods')
+  end
+
+  def generate_verifier(more_data = [])
+    hash_bits = [
+      params[:app_id],
+      params[:udid],
+      params[:timestamp],
+      App.find_in_cache(params[:app_id]).secret_key
+    ] + more_data
+    Digest::SHA256.hexdigest(hash_bits.join(':'))
   end
 end

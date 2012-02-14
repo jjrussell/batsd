@@ -19,7 +19,7 @@ class ConnectController < ApplicationController
       web_request.path = path
     end
 
-    if sdkless_supported?
+    if sdkless_support?
       @sdkless_clicks = device.sdkless_clicks
     end
 
