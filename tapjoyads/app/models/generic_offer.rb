@@ -16,7 +16,30 @@ class GenericOffer < ActiveRecord::Base
 
   named_scope :visible, :conditions => { :hidden => false }
 
-private
+  def create_tracking_offer_for(tracked_for, options = {})
+    device_types = options.delete(:device_types) { Offer::ALL_DEVICES.to_json }
+    raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
+
+    offer = Offer.new({
+      :item             => self,
+      :tracking_for     => tracked_for,
+      :partner          => partner,
+      :name             => name,
+      :url              => url,
+      :device_types     => device_types,
+      :price            => 0,
+      :bid              => 0,
+      :min_bid_override => 0,
+      :rewarded         => false,
+      :third_party_data => third_party_data,
+    })
+    offer.id = tracked_for.id
+    offer.save!
+
+    offer
+  end
+
+  private
 
   def create_primary_offer
     offer = Offer.new(:item => self)

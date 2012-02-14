@@ -4,6 +4,8 @@ class Games::HomepageController < GamesController
   rescue_from Errno::ETIMEDOUT, :with => :handle_errno_exceptions
   before_filter :require_gamer, :except => [ :index, :tos, :privacy, :translations ]
 
+  include GetOffersHelper
+
   def translations
     render "translations.js", :layout => false, :content_type=>"application/javascript"
   end
@@ -30,19 +32,17 @@ class Games::HomepageController < GamesController
         @show_offerwall = @device.has_app?(currency.app_id) if currency
         @offerwall_external_publisher = ExternalPublisher.new(currency) if @show_offerwall
       end
-      geoip_data = get_geoip_data
-      featured_contents = FeaturedContent.with_country_targeting(geoip_data, @device)
+      @geoip_data = get_geoip_data
+      featured_contents = FeaturedContent.with_country_targeting(@geoip_data, @device)
       @featured_content = featured_contents.weighted_rand(featured_contents.map(&:weight))
-      if @featured_content.present?
-        @options = {
-          :geoip_data         => geoip_data,
-          :device             => @device,
-          :device_name        => @device_name,
-          :gamer_id           => current_gamer.id,
-          :language_code      => params[:language_code],
-          :display_multiplier => params[:display_multiplier],
-          :library_version    => params[:library_version]
-        }
+      if @featured_content && @featured_content.tracking_offer
+        @publisher_app       = @featured_content.tracking_offer.item
+        params[:udid]        = @device.id
+        @currency            = Currency.find(:first)
+        params[:source]      = 'tj_games'
+        @now                 = Time.zone.now
+        params[:device_name] = @device_name
+        params[:gamer_id]    = current_gamer.id
       end
     end
 

@@ -2,8 +2,6 @@ require 'spec_helper'
 
 describe FeaturedContent do
   before :each do
-    @partner = Factory(:partner, :id => TAPJOY_PARTNER_ID)
-    @generic_offer = Factory(:generic_offer, :id => FEATURED_CONTENT_GENERIC_TRACKING_OFFER_ID, :partner => @partner)
     @featured_content = Factory(:featured_content)
   end
 
@@ -159,57 +157,56 @@ describe FeaturedContent do
   end
 
   describe '#create_tracking_offer' do
-    context 'when button_url does not exist' do
+    context 'when offer and tracking offerdoes not exist' do
+      before :each do
+        @featured_content1 = Factory(:featured_content, :featured_type => FeaturedContent::TYPES_MAP[FeaturedContent::NEWS], :offer => nil )
+      end
+
       it "doesn't create any tracking offer" do
+        @featured_content1.tracking_offer.should be_nil
+      end
+    end
+
+    context 'when offer not exist but tracking offer already exist' do
+      before :each do
+        @featured_content.update_attributes({ :featured_type => FeaturedContent::TYPES_MAP[FeaturedContent::NEWS], :offer => nil })
+        @featured_content.reload
+      end
+
+      it "destroys existing tracking offer" do
         @featured_content.tracking_offer.should be_nil
       end
     end
 
-    context 'when button_url exists' do
-      before :each do
-        @featured_content.update_attributes({ :button_url => "test_url" })
-      end
-
+    context 'when offer exists' do
       it "creates a tracking offer" do
         @featured_content.tracking_offer.should be_present
       end
 
-      it "sets the tracking_offer's name as 'title_subtitle'" do
-        @featured_content.tracking_offer.name.should == "#{@featured_content.title}_#{@featured_content.subtitle}"
-      end
-
-      it "sets the tracking_offer's url with button_url value" do
-        @featured_content.tracking_offer.url.should == @featured_content.button_url
+      it "sets the tracking_offer's url with offer.url value" do
+        @featured_content.tracking_offer.url.should == @featured_content.offer.url
       end
 
       it "sets the tracking_offer's device_types with platforms value" do
         @featured_content.tracking_offer.device_types.should == @featured_content.platforms
       end
 
-      it "sets the tracking_offer's third_party_data with id value" do
-        @featured_content.tracking_offer.third_party_data == @featured_content.id
-      end
-
       it "sets the tracking_offer's rewarded to be false" do
         @featured_content.tracking_offer.rewarded.should be_false
       end
 
-      it "sets the tracking_offer's fc_tracking to be true" do
-        @featured_content.tracking_offer.fc_tracking.should be_true
-      end
-
       context 'when updating a tracking offer' do
         before :each do
-          @old_title = "#{@featured_content.title}_#{@featured_content.subtitle}"
-          @featured_content.update_attributes({ :title => "new_title" })
+          @old_platforms = @featured_content.platforms
+          @featured_content.update_attributes({ :platforms => ["android"] })
         end
 
-        it "doesn't keep the old title" do
-          @featured_content.tracking_offer.name.should_not == @old_title
+        it "doesn't keep the old platform" do
+          @featured_content.tracking_offer.device_types.should_not == @old_platforms.to_json
         end
 
-        it "updates the tracking_offer's name with new title" do
-          @featured_content.tracking_offer.name.should == "#{@featured_content.title}_#{@featured_content.subtitle}"
+        it "updates the tracking_offer's name with new platforms" do
+          @featured_content.tracking_offer.device_types.should == @featured_content.platforms
         end
       end
     end
@@ -217,10 +214,7 @@ describe FeaturedContent do
 
   describe '.with_country_targeting' do
     before :each do
-      @featured_content.update_attributes({ :button_url => "test_url" })
-
       @featured_content2 = Factory(:featured_content)
-      @featured_content2.update_attributes({ :button_url => "test_url" })
       @featured_content2.tracking_offer.countries = %w( GL GD GP GT GY ).to_json
       @featured_content2.tracking_offer.save!
       @featured_content2.reload

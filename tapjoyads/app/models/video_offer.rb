@@ -31,6 +31,28 @@ class VideoOffer < ActiveRecord::Base
     video_buttons.enabled.size <= 2
   end
 
+  def create_tracking_offer_for(tracked_for, options = {})
+    device_types = options.delete(:device_types) { Offer::ALL_DEVICES.to_json }
+    raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
+
+    offer = Offer.new({
+      :item             => self,
+      :tracking_for     => tracked_for,
+      :partner          => partner,
+      :name             => name,
+      :url              => video_url.present? ? video_url : nil,
+      :device_types     => device_types,
+      :price            => 0,
+      :bid              => 0,
+      :min_bid_override => 0,
+      :rewarded         => false,
+    })
+    offer.id = tracked_for.id
+    offer.save!
+
+    offer
+  end
+
   private
 
   def create_primary_offer

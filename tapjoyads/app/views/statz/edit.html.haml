@@ -259,21 +259,24 @@
         %td
           = f.text_area(:instructions)
           = error_message_on @offer, :instructions
-    - if @offer.fc_tracking
+    - if @offer.tracking_for
       %tr
         %th
-          = f.label(:fc_tracking, 'FC Tracking')
-          #help_fc_tracking.help ?
+          = f.label(:tracking_for_type, 'Tracking For')
+          #help_tracking_for_type.help ?
         %td
-          = f.check_box(:fc_tracking)
-          = error_message_on @offer, :fc_tracking
+          = f.text_field(:tracking_for_type, :disabled => true)
+          = error_message_on @offer, :tracking_for_type
       %tr
         %th
-          = f.label(:featured_content_id, 'Featured Content')
-          #help_featured_content_id.help ?
+          = f.label(:tracking_for_id)
+          #help_tracking_for_id.help ?
         %td
-          = link_to(@offer.featured_content_id, edit_tools_featured_content_path(@offer.featured_content_id))
-          = error_message_on @offer, :featured_content_id
+          - if @offer.tracking_for_type == 'FeaturedContent'
+            = link_to(@offer.tracking_for_id, edit_tools_featured_content_path(@offer.tracking_for_id))
+          - else
+            = f.label(@offer.tracking_for_id)
+          = error_message_on @offer, :tracking_for_id
     %tr
       %td{ :colspan => 2 }= f.submit('Save Changes')
 
@@ -322,8 +325,8 @@
     %br
     %br
     Keep your text simple and easy for a user to understand.
-  #help_featured_content_id_content{ :name => 'Featured Content Id' } The featured content this offer belongs to.
-  #help_fc_tracking_content{ :name => 'Featured Content Tracking' } The offer is for the tracking purpose of a featured content.
+  #help_tracking_for_id_content{ :name => 'Tracking For Id' } The Object that is tracked by this offer.
+  #help_tracking_for_type_content{ :name => 'Tracking For Type' } The type of the object that is tracked by this offer.
 
 - if @offer.item_type == 'App' || @offer.item_type == 'GenericOffer'
   - content_for :page_javascript do

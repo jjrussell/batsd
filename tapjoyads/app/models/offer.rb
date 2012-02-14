@@ -87,7 +87,7 @@ class Offer < ActiveRecord::Base
   belongs_to :reseller
   belongs_to :app, :foreign_key => "item_id"
   belongs_to :action_offer, :foreign_key => "item_id"
-  belongs_to :featured_content
+  belongs_to :tracking_for, :polymorphic => true
 
   validates_presence_of :reseller, :if => Proc.new { |offer| offer.reseller_id? }
   validates_presence_of :partner, :item, :name, :url, :rank_boost
@@ -356,7 +356,7 @@ class Offer < ActiveRecord::Base
   end
 
   def accepting_clicks?
-    tapjoy_enabled? && user_enabled? && (payment > 0 || (payment == 0 && reward_value.present? && reward_value > 0)) || fc_tracking
+    tapjoy_enabled? && user_enabled? && (payment > 0 || (payment == 0 && reward_value.present? && reward_value > 0)) || tracking_for
   end
 
   def has_variable_payment?

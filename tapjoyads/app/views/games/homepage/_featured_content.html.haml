@@ -15,8 +15,8 @@
               .app_rating_wrapper
                 .app_rating.hide{ :rating => app.user_rating }
         %div
-        - if @featured_content.button_url.present?
-          - link_to(@featured_content.tracking_url(@options)) do
+        - if @featured_content.tracking_offer
+          - link_to(get_click_url(@featured_content.tracking_offer)) do
             .button.grey
               = @featured_content.button_text
 
@@ -48,8 +48,8 @@
               .app_rating_wrapper
                 .app_rating.hide{ :rating => app.user_rating }
         %div
-        - if @featured_content.button_url.present?
-          - link_to(@featured_content.tracking_url(@options)) do
+        - if @featured_content.tracking_offer
+          - link_to(get_click_url(@featured_content.tracking_offer)) do
             .button.grey
               = @featured_content.button_text
 
@@ -66,8 +66,8 @@
           .app_title.title
             = @featured_content.title
           %div
-          - if @featured_content.button_url.present?
-            - link_to(@featured_content.tracking_url(@options)) do
+          - if @featured_content.tracking_offer
+            - link_to(get_click_url(@featured_content.tracking_offer)) do
               .button.grey
                 = @featured_content.button_text
 

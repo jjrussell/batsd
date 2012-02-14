@@ -256,7 +256,32 @@ class App < ActiveRecord::Base
     !!(file_size_bytes && file_size_bytes > download_limit)
   end
 
-private
+  def create_tracking_offer_for(tracked_for, options = {})
+    device_types = options.delete(:device_types) { get_offer_device_types.to_json }
+    raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
+
+    offer = Offer.new({
+      :item             => self,
+      :tracking_for     => tracked_for,
+      :partner          => partner,
+      :name             => name,
+      :url              => store_url,
+      :device_types     => device_types,
+      :price            => 0,
+      :bid              => 0,
+      :min_bid_override => 0,
+      :rewarded         => false,
+      :third_party_data => store_id,
+      :age_rating       => age_rating,
+      :wifi_only        => wifi_required?
+    })
+    offer.id = tracked_for.id
+    offer.save!
+
+    offer
+  end
+
+  private
 
   def generate_secret_key
     return if secret_key.present?

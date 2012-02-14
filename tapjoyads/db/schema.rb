@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120208032532) do
+ActiveRecord::Schema.define(:version => 20120210192535) do
 
   create_table "action_offers", :id => false, :force => true do |t|
     t.string   "id",                    :limit => 36,                    :null => false
@@ -625,19 +625,19 @@ ActiveRecord::Schema.define(:version => 20120208032532) do
     t.boolean  "instructions_overridden",                                                       :default => false, :null => false
     t.boolean  "tapjoy_sponsored",                                                              :default => false, :null => false
     t.boolean  "wifi_only",                                                                     :default => false, :null => false
-    t.string   "featured_content_id",               :limit => 36
-    t.text     "approved_sources",                                                                                 :null => false
     t.text     "approved_banner_creatives"
-    t.boolean  "fc_tracking",                                                                   :default => false, :null => false
+    t.text     "approved_sources",                                                                                 :null => false
     t.boolean  "sdkless",                                                                       :default => false
+    t.string   "tracking_for_type"
+    t.string   "tracking_for_id",                   :limit => 36
   end
 
-  add_index "offers", ["featured_content_id"], :name => "index_offers_on_featured_content_id", :unique => true
   add_index "offers", ["id"], :name => "index_offers_on_id", :unique => true
   add_index "offers", ["item_id"], :name => "index_offers_on_item_id"
   add_index "offers", ["item_type", "item_id"], :name => "index_offers_on_item_type_and_item_id"
   add_index "offers", ["name"], :name => "index_offers_on_name"
   add_index "offers", ["partner_id"], :name => "index_offers_on_partner_id"
+  add_index "offers", ["tracking_for_type", "tracking_for_id"], :name => "index_offers_on_tracking_for_type_and_tracking_for_id", :unique => true
   add_index "offers", ["user_enabled", "tapjoy_enabled"], :name => "index_offers_on_user_enabled_and_tapjoy_enabled"
 
   create_table "orders", :id => false, :force => true do |t|

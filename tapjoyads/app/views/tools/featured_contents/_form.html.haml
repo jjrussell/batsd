@@ -84,7 +84,7 @@
         = f.label :button_url, 'Action Button Link'
         #help_button_url.help ?
       %td
-        = f.text_field(:button_url)
+        = f.text_field(:button_url, :disabled => true)
         = error_message_on @featured_content, :button_url
     %tr
       %th

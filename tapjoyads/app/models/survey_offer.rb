@@ -75,15 +75,36 @@ class SurveyOffer < ActiveRecord::Base
     end
   end
 
+  def create_tracking_offer_for(tracked_for, options = {})
+    device_types = options.delete(:device_types) { Offer::ALL_DEVICES.to_json }
+    raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
+
+    url = generate_url
+
+    offer = Offer.new({
+      :item             => self,
+      :tracking_for     => tracked_for,
+      :partner          => partner,
+      :name             => name,
+      :url              => url,
+      :device_types     => device_types,
+      :price            => 0,
+      :bid              => 0,
+      :min_bid_override => 0,
+      :rewarded         => false,
+      :name_suffix      => 'Survey',
+    })
+    offer.id = tracked_for.id
+    offer.save!
+
+    offer
+  end
+
   private
 
   def create_primary_offer
-    url_params = [
-      "id=#{id}",
-      "udid=TAPJOY_UDID",
-      "click_key=TAPJOY_SURVEY",
-    ]
-    url = "#{API_URL}/survey_results/new?#{url_params.join('&')}"
+    url = generate_url
+
     offer = Offer.new({
       :item             => self,
       :partner          => partner,
@@ -98,6 +119,15 @@ class SurveyOffer < ActiveRecord::Base
     })
     offer.id = id
     offer.save!
+  end
+
+  def generate_url
+    url_params = [
+      "id=#{id}",
+      "udid=TAPJOY_UDID",
+      "click_key=TAPJOY_SURVEY",
+    ]
+    "#{API_URL}/survey_results/new?#{url_params.join('&')}"
   end
 
   def create_icon

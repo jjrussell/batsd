@@ -58,10 +58,15 @@ class Tools::FeaturedContentsController < WebsiteController
   end
 
   def edit
-    @featured_content = FeaturedContent.find(params[:id])
+    @featured_content = FeaturedContent.find_by_id(params[:id])
+    unless @featured_content
+      flash[:error] = "Could not find a featured content with ID: #{params[:id]}"
+      redirect_to tools_featured_contents_path and return
+    end
     @employees = Employee.active_by_first_name
     if @featured_content.offer
       @search_result_name = @featured_content.offer.search_result_name
+      @featured_content.button_url = @featured_content.tracking_offer.url
     end
   end
 
