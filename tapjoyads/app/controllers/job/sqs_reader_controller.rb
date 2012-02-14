@@ -33,7 +33,7 @@ class Job::SqsReaderController < Job::JobController
       begin
         on_message(message)
       rescue Exception => e
-        Rails.logger.error("SqsReaderError: #{e.class} - #{e.message}, queue: #{@queue_name.split('/').last}, message: #{message.body}")
+        Rails.logger.error("SqsReaderError (#{@queue_name.split('/').last}): #{e.class} - #{e.message}, message: #{message.body}")
         if @raise_on_error
           NewRelic::Agent.add_custom_parameters(split_message_into_params(message.body))
           raise e
