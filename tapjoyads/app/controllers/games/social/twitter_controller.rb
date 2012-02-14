@@ -20,12 +20,12 @@ class Games::Social::TwitterController < GamesController
       access_token = req_token.get_access_token
 
       # Store the OAuth info for the user
-      authhash = {}
-      access_token.token ? authhash[:twitter_id] = access_token.token.split('-')[0] : authhash[:twitter_id] = ''
-      access_token.token ? authhash[:twitter_access_token] = access_token.token : authhash[:twitter_access_token] = ''
-      access_token.secret ? authhash[:twitter_access_secret] = access_token.secret : authhash[:twitter_access_secret] = ''
-
-      if authhash[:twitter_id] != '' and authhash[:twitter_access_token] != '' and authhash[:twitter_access_secret] != ''
+      if access_token.token && access_token.secret
+        authhash = {
+          :twitter_id            => access_token.token.split('-')[0],
+          :twitter_access_token  => access_token.token,
+          :twitter_access_secret => access_token.secret
+        }
         current_gamer.update_twitter_info!(authhash)
         redirect_to games_social_invite_twitter_friends_path
       else
