@@ -80,11 +80,11 @@ class Click < SimpledbShardedResource
 
     # We only resolve clicks in the last 48 hours.
     now = Time.zone.now
-    self.clicked_at = now - 1.minute if clicked_at < now - 47.hours
     self.manually_resolved_at = now
+    self.clicked_at           = now - 1.minute if clicked_at < now - 47.hours
     save!
 
-    Downloader.get_with_retry url_to_resolve if Rails.env.production?
+    Downloader.get_with_retry(url_to_resolve) if Rails.env.production?
   end
 
   def resolved_too_fast?(threshold = 20.seconds)
