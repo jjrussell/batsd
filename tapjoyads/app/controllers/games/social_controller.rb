@@ -141,7 +141,7 @@ class Games::SocialController < GamesController
           end
         else
           friend_name = Twitter.user(friend_id.to_i).name
-          non_gamers << "#{friend_name}"
+          non_gamers << friend_name
           invitation = current_gamer.invitation_for(friend_id, Invitation::TWITTER)
 
           if invitation.pending?
@@ -150,7 +150,10 @@ class Games::SocialController < GamesController
             link = "http://www.tapjoygames.com/login?referrer=#{referrer_value}" if Rails.env != 'production' # we need this because twitter cannot recognize IP addr as a valid url
 
             name = Twitter.user(current_gamer.twitter_id.to_i).name
-            cookies[:twitter_short_url_len] = { :value => Twitter.configuration.short_url_length_https, :expires => 1.day.from_now } unless cookies[:twitter_short_url_len]
+            cookies[:twitter_short_url_len] ||= {
+              :value => Twitter.configuration.short_url_length_https,
+              :expires => 1.day.from_now
+            }
             rem_len = 140 - cookies[:twitter_short_url_len].to_i - name.size - 2
             template = truncate("has invited you to join Tapjoy, the BEST place to find the hottest apps. Signing up is free!", :length => rem_len)
             message = "#{name} #{template} #{link}"
@@ -160,7 +163,7 @@ class Games::SocialController < GamesController
         end
       end
 
-      if gamers.any? || posts.any?{|post| post.id.present? }
+      if gamers.any? || posts.any?
         render :json => { :success => true, :gamers => gamers, :non_gamers => non_gamers }
       else
         render :json => { :success => false, :error => "There was an issue with inviting your friend, please try again later" }
