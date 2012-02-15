@@ -90,6 +90,16 @@ $mobile-scaledown-multiplier: 2;
   filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='$from', endColorstr='$to',GradientType=$gtype ); /* IE6-9 */
 }
 
+@mixin gradient-top($p0, $p25, $p75, $p100) {
+  background: $p0; /* Old browsers */
+  background: -moz-linear-gradient(top,  $p0 0%, $p25 25%, $p75 75%, $p100 100%); /* FF3.6+ */
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,$p0), color-stop(25%,$p25), color-stop(75%,$p75), color-stop(100%,$p100)); /* Chrome,Safari4+ */
+  background: -webkit-linear-gradient(top,  $p0 0%,$p25 25%,$p75 75%,$p100 100%); /* Chrome10+,Safari5.1+ */
+  background: -o-linear-gradient(top,  $p0 0%,$p25 25%,$p75 75%,$p100 100%); /* Opera 11.10+ */
+  background: -ms-linear-gradient(top,  $p0 0%,$p25 25%,$p75 75%,$p100 100%); /* IE10+ */
+  background: linear-gradient(top,  $p0 0%,$p25 25%,$p75 75%,$p100 100%); /* W3C */
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='$p0', endColorstr='$p100',GradientType=0 ); /* IE6-9 */
+  }
 @mixin gradient($from, $to){
   background: -moz-linear-gradient(top, $from 0%, $to 100%);
   background: -webkit-gradient(linear, 0 0, 0 100%, color-stop(0, $from), color-stop(1, $to));

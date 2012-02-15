@@ -9,6 +9,9 @@
         box-shadow: $x $y $spread $color;
 }
 
+body {
+  font-family: "Gill Sans", Arial, Helvetica, sans-serif;
+}
 /* oocss flexible grid */
 .line,.lastUnit{overflow:hidden; *overflow:visible;*zoom:1;}
 .unit{float:left;}
@@ -70,7 +73,7 @@
 }
 
 .tj-red-gradient {
-  @include linear-gradient(top, #e82c2c, #b41317);
+  @include gradient-top(#e9292e, #e62429, #d71012, #cf0404);
 }
 
 .chrome {
@@ -140,16 +143,15 @@
   padding: 20px 10px;
 }
 
-.btn {
-  @include gradient(rgba(198,198,198,1.0), rgba(134,134,134,1.0));
+div.ui-joy-button.grey-action {
+  @include gradient-top(#c9c9c9,#bababa, #999999, #868686);
   @include rounded-corners(4px);
   @include shadow(#ddd, 1px);
   @include txt-shadow(0, -1px, 1px, #999);
   color: white;
   text-align: center;
   border-bottom: 1px solid rgba(85,85,85,1.0);
-  font-size: 15px;
-  padding: 5px;
+  font-size: 18px;
 }
 
 .highlight-green {
