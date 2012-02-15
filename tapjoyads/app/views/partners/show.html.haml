@@ -84,7 +84,20 @@
       Tapjoy sponsored all apps:
       = @partner.tapjoy_sponsored? ? "Yes" : "No"
       = submit_tag('switch')
-
+  .metadata
+    Confirmed for Payout:
+    -if @partner.confirmed_for_payout
+      %span{ :class => 'confirmed' } Confirmed
+      %form#confirmed_for_payout{ :action => set_unconfirmed_for_payout_partner_path, :method => :post}
+        = label_tag('payout_notes', 'Notes for Payout:')
+        = text_area_tag('payout_notes', nil, :rows => 10, :cols => 25)
+        %br
+        = submit_tag('Unconfirm')
+    -else
+      %span{ :class => 'unconfirmed' } Unconfirmed
+      %br
+      Payout Confirmation Notes:
+      = @partner.payout_confirmation_notes
 .clear
 
 - payout_info = @partner.payout_info
@@ -244,4 +257,10 @@
     }
     .user_action, .user_action span {
       display: inline;
+    }
+    span.unconfirmed {
+      color: red;
+    }
+    span.confirmed {
+      color: green;
     }

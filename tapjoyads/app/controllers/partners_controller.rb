@@ -5,10 +5,10 @@ class PartnersController < WebsiteController
 
   filter_access_to :all
 
-  before_filter :find_partner, :only => [ :show, :make_current, :manage, :update, :edit, :new_transfer, :create_transfer, :reporting, :set_tapjoy_sponsored ]
+  before_filter :find_partner, :only => [ :show, :make_current, :manage, :update, :edit, :new_transfer, :create_transfer, :reporting, :set_tapjoy_sponsored, :set_unconfirmed_for_payout ]
   before_filter :get_account_managers, :only => [ :index, :managed_by ]
   before_filter :set_platform, :only => [ :reporting ]
-  after_filter :save_activity_logs, :only => [ :update, :create_transfer ]
+  after_filter :save_activity_logs, :only => [ :update, :create_transfer, :set_unconfirmed_for_payout ]
 
   def index
     if current_user.role_symbols.include?(:agency)
@@ -183,6 +183,18 @@ class PartnersController < WebsiteController
   def set_tapjoy_sponsored
     @partner.set_tapjoy_sponsored_on_offers!(params[:flag])
     flash[:notice] = "Successfully updated all offers"
+    redirect_to partner_path
+  end
+
+  def set_unconfirmed_for_payout
+    log_activity(@partner)
+    @partner.confirmed_for_payout = false
+    @partner.payout_confirmation_notes = params[:payout_notes]
+    if @partner.save
+      flash[:notice] = "Partner is now Unconfirmed for Payouts"
+    else
+      flash[:warning] = "Was unable to Unconfirm for Payouts"
+    end
     redirect_to partner_path
   end
 
