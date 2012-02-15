@@ -5,7 +5,7 @@ describe EnableOfferRequestsController do
     activate_authlogic
   end
 
-  it 'should be able to submit a request' do
+  it 'is not able to submit a request' do
     user = Factory(:user)
     partner = Factory(:partner, :users => [ user ])
     app = Factory(:app, :partner => partner)
