@@ -313,6 +313,7 @@ en:
       select_current_device: Please select your current device
       select_device: Please select your device
       select_friend: Please select at least one friend before sending out an invite
+      share_with_your_friends: Share with your friends
       social_networks: Social Networks
       social_settings: Social Settings
       tap_that: Just tap %{icon} and select %{button}

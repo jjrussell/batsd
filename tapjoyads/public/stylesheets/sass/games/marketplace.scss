@@ -158,17 +158,23 @@
 
 .slats.with-icons .slat {
   height: 75px;
+  padding-top: 17px;
+  padding-bottom: 17px;
   img {
     max-height: 75px;
   }
+}
+.slats.arrow .slat {
+  position: relative;
+  height: 30px;
+  line-height: 30px;
 }
 
 li.slat {
   margin: 0;
   float: none;
-  padding: 17px percentage(20/640);
+  padding: 5px percentage(20/640);
   border-bottom: 1px solid #6f7072;
-  font-size:10pt;
   width: percentage(300/320);
   text-align: left;
   @include gradient(rgba(247, 247, 250, 1.0), rgba(220, 223, 227, 1.0));
@@ -183,4 +189,30 @@ li.slat {
   }
   .ft {
   }
+}
+.ui-list-arrow {
+  padding-right: 20px;
+}
+.ui-list-arrow:after {
+  content: "›";
+  font-family: Futura,"Futura Condensed",Helvetica,Arial,sans-serif;
+  font-size: 30px;
+  font-weight: 200;
+  height: 100%;
+  line-height: 30px;
+  opacity: 0.6;
+  pointer-events: none;
+  position: absolute;
+  right: 0;
+  top: 0;
+  vertical-align: middle;
+  width: 22px;
+  z-index: 10;
+}
+.ui-list-action-label {
+  color: #B6AAAA;
+  display: block;
+  font-size: 90%;
+  font-weight: bold;
+  margin-top: 1px;
 }
