@@ -7,7 +7,7 @@ describe GetOffersController do
     fake_the_web
   end
 
-  describe "index" do
+  describe '#index' do
     before :each do
       @currency = Factory(:currency)
       @offer = Factory(:app).primary_offer
@@ -34,13 +34,13 @@ describe GetOffersController do
 
     end
 
-    it "should return json" do
+    it 'returns json' do
       get(:index, @params.merge(:json => 1))
       should respond_with_content_type :json
       should render_template "get_offers/installs_json"
     end
 
-    it "should render appropriate pages" do
+    it 'renders appropriate pages' do
       get(:index, @params.merge(:type => 0))
       should render_template "get_offers/offers"
       get(:index, @params.merge(:redirect => 1))
@@ -49,7 +49,7 @@ describe GetOffersController do
       should render_template "get_offers/installs"
     end
 
-    it "should return offers targeted to country" do
+    it 'returns offers targeted to country' do
       get(:index, @params)
       assigns(:offer_list).should == [@offer, @offer3]
       controller.stubs(:get_geoip_data).returns({ :primary_country => 'GB' })
@@ -57,7 +57,7 @@ describe GetOffersController do
       assigns(:offer_list).should == [@offer, @offer2]
     end
 
-    it "should ignore country_code if IP is in China" do
+    it 'ignores country_code if IP is in China' do
       controller.stubs(:get_ip_address).returns('60.0.0.1')
       get(:index, @params)
       assigns(:offer_list).should == [@offer, @offer4]
@@ -65,7 +65,7 @@ describe GetOffersController do
       assigns(:offer_list).should == [@offer, @offer4]
     end
 
-    it "should render json with correct fields" do
+    it 'renders json with correct fields' do
       get(:index, @params.merge(:json => 1))
       json = JSON.parse(response.body)
 
@@ -83,14 +83,14 @@ describe GetOffersController do
       json['Message'].should == 'Install one of the apps below to earn TAPJOY_BUCKS'
     end
 
-    it "should return FullScreenAdURL when rendering featured json" do
+    it 'returns FullScreenAdURL when rendering featured json' do
       get(:index, @params.merge(:json => 1, :source => 'featured'))
       json = JSON.parse(response.body)
       json['OfferArray'].should be_present
       json['OfferArray'][0]['FullScreenAdURL'].should be_present
     end
 
-    it "should wrap json in a callback url when requesting jsonp" do
+    it 'wraps json in a callback url when requesting jsonp' do
       get(:index, @params.merge(:json => 1, :source => 'featured',
                                 :callback => '();callbackFunction'))
       match = response.body.match(/(^callbackFunction\()(.*)(\)$)/m)
@@ -100,7 +100,7 @@ describe GetOffersController do
     end
   end
 
-  describe "webpage" do
+  describe '#webpage' do
     before :each do
       @device = Factory(:device)
       @currency = Factory(:currency, :test_devices => @device.id)
@@ -114,13 +114,13 @@ describe GetOffersController do
       @offer = Factory(:app).primary_offer
     end
 
-    it "should assign test offer for test devices" do
+    it 'assigns test offer for test devices' do
       OfferCacher.stubs(:get_unsorted_offers_prerejected).returns([@offer])
       get(:webpage, @params.merge(:udid => @device.id))
       assigns(:test_offers).should_not be_nil
     end
 
-    it "should not log impressions when there are no offers" do
+    it 'does not log impressions when there are no offers' do
       OfferCacher.stubs(:get_unsorted_offers_prerejected).returns([])
       RailsCache.stubs(:get).returns(nil)
       get(:webpage, @params)
@@ -128,7 +128,7 @@ describe GetOffersController do
     end
   end
 
-  describe "featured" do
+  describe '#featured' do
     before :each do
       RailsCache.stubs(:get).returns(nil)
       @device = Factory(:device)
@@ -145,22 +145,22 @@ describe GetOffersController do
       }
     end
 
-    describe "with a featured offer" do
+    context 'with a featured offer' do
       before :each do
         get(:featured, @params)
       end
 
-      it "should return the featured offer" do
+      it 'returns the featured offer' do
         assigns(:web_request).offer_id.should == @offer.id
         assigns(:web_request).path.should include("featured_offer_shown")
       end
 
-      it "should not have more data" do
+      it 'does not have more data' do
         assigns(:more_data_available).should == 0
       end
     end
 
-    describe "without a featured offer, but with a non-featured offer" do
+    context 'without a featured offer, but with a non-featured offer' do
       before :each do
         device_type = 'itouch'
         stub_args_1 = [
@@ -182,24 +182,24 @@ describe GetOffersController do
         get(:featured, @params)
       end
 
-      it "should returns the non-featured offer" do
+      it 'returns the non-featured offer' do
         assigns(:web_request).offer_id.should == @offer.id
         assigns(:web_request).path.should include("featured_offer_shown")
       end
 
-      it "should not have more data" do
+      it 'does not have more data' do
         assigns(:more_data_available).should == 0
       end
     end
 
-    describe "without an offer" do
+    context 'without an offer' do
       before :each do
         OfferCacher.stubs(:get_unsorted_offers_prerejected).returns([])
         RailsCache.stubs(:get).returns(nil)
         get(:featured, @params)
       end
 
-      it "should return no offers" do
+      it 'returns no offers' do
         assigns(:offer_list).should be_empty
         web_request = assigns(:web_request)
         web_request.offer_id.should be_nil
@@ -208,13 +208,13 @@ describe GetOffersController do
       end
     end
 
-    it "should assign test offer for test devices" do
+    it 'assigns test offer for test devices' do
       get(:featured, @params.merge(:udid => @device.id))
       assigns(:offer_list).first.item_type.should == "TestOffer"
       assigns(:offer_list).length.should == 1
     end
 
-    it "should render appropriate views" do
+    it 'renders appropriate views' do
       get(:featured, @params)
       should render_template "get_offers/installs_redirect"
 
@@ -224,7 +224,7 @@ describe GetOffersController do
     end
   end
 
-  describe "setup" do
+  describe '#setup' do
     before :each do
       @device = Factory(:device)
       @currency = Factory(:currency)
@@ -242,7 +242,7 @@ describe GetOffersController do
       get(:index, @params)
     end
 
-    it "should assign web_request" do
+    it 'assigns web_request' do
       get(:index, @params.merge(:exp => 10))
       web_request = assigns(:web_request)
       assigns(:now).to_s.should == web_request.viewed_at.to_s
@@ -259,36 +259,36 @@ describe GetOffersController do
       web_request.path.should include('featured_offer_shown')
     end
 
-    it "should assign max_items" do
+    it 'assigns max_items' do
       assigns(:max_items).should == 25
 
       get(:index, @params.merge(:max => 5))
       assigns(:max_items).should == 5
     end
 
-    it "should assign currency" do
+    it 'assigns currency' do
       assigns(:currency).should == @currency
     end
 
-    it "should assign currencies" do
+    it 'assigns currencies' do
       get(:index, @params.merge(:currency_selector => '1'))
       assigns(:currency).should == @currency
       assigns(:currencies).should_not be_nil
     end
 
-    it "should unassign currency" do
+    it 'unassigns currency' do
       app = Factory(:app)
       get(:index, @params.merge(:app_id => app.id))
       assigns(:currency).should be_nil
     end
 
-    it "should assign currency based on app_id" do
+    it 'assigns currency based on app_id' do
       Factory(:currency, :id => @currency.app_id, :app_id => @currency.app_id)
       get(:index, @params.merge(:currency_id => nil, :debug => '1'))
       assigns(:currency).should_not be_nil
     end
 
-    it "should assign start_index" do
+    it 'assigns start_index' do
       assigns(:device).key.should == @device.key
       assigns(:start_index).should == 0
 

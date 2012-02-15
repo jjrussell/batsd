@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120210192535) do
+ActiveRecord::Schema.define(:version => 20120216172034) do
 
   create_table "action_offers", :id => false, :force => true do |t|
     t.string   "id",                    :limit => 36,                    :null => false
@@ -157,7 +157,6 @@ ActiveRecord::Schema.define(:version => 20120210192535) do
     t.string   "name"
     t.integer  "conversion_rate",                                                                        :default => 100,   :null => false
     t.integer  "initial_balance",                                                                        :default => 0,     :null => false
-    t.boolean  "has_virtual_goods",                                                                      :default => false, :null => false
     t.boolean  "only_free_offers",                                                                       :default => false, :null => false
     t.boolean  "send_offer_data",                                                                        :default => false, :null => false
     t.string   "secret_key"
@@ -629,8 +628,12 @@ ActiveRecord::Schema.define(:version => 20120210192535) do
     t.text     "approved_banner_creatives"
     t.text     "approved_sources",                                                                                 :null => false
     t.boolean  "sdkless",                                                                       :default => false
+<<<<<<< HEAD
     t.string   "tracking_for_type"
     t.string   "tracking_for_id",                   :limit => 36
+=======
+    t.text     "carriers",                                                                                         :null => false
+>>>>>>> 83c7c4534ade208561205ae19de9c686367b0987
   end
 
   add_index "offers", ["id"], :name => "index_offers_on_id", :unique => true

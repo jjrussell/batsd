@@ -32,15 +32,16 @@ class VideosController < ApplicationController
 
   def offer_list
     OfferList.new(
-      :device             => @device,
-      :publisher_app      => @publisher_app,
-      :currency           => @currency,
-      :device_type        => params[:device_type],
-      :geoip_data         => get_geoip_data,
-      :os_version         => params[:os_version],
-      :type               => Offer::VIDEO_OFFER_TYPE,
-      :library_version    => params[:library_version],
-      :screen_layout_size => params[:screen_layout_size])
+      :device              => @device,
+      :publisher_app       => @publisher_app,
+      :currency            => @currency,
+      :device_type         => params[:device_type],
+      :geoip_data          => get_geoip_data,
+      :os_version          => params[:os_version],
+      :type                => Offer::VIDEO_OFFER_TYPE,
+      :library_version     => params[:library_version],
+      :screen_layout_size  => params[:screen_layout_size],
+      :mobile_carrier_code => "#{params[:mobile_country_code]}.#{params[:mobile_network_code]}")
   end
 
 end
