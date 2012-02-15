@@ -41,7 +41,7 @@ class Conversion < ActiveRecord::Base
     'paid_installs'             => { :reward_types => [ 0, 1, 2, 3, 5, 6, 2000, 2001, 2002, 2003, 2005, 2006 ], :attr_name => 'advertiser_offer_id' },
     'jailbroken_installs'       => { :reward_types => [ 4, 2004 ],                                              :attr_name => 'advertiser_offer_id' },
     'offers_revenue'            => { :reward_types => [ 0, 2, 3, 5, 6 ],                                        :attr_name => 'publisher_app_id',    :sum_attr => :publisher_amount },
-    'TJM_offerwall_revenue'     => { :reward_types => [ 0, 2, 3, 5, 6 ],                                        :attr_name => 'publisher_app_id',    :sum_attr => :publisher_amount },
+    #'TJM_offerwall_revenue'     => { :reward_types => [ 0, 2, 3, 5, 6 ],                                        :attr_name => 'publisher_app_id',    :sum_attr => :publisher_amount },
     'installs_revenue'          => { :reward_types => [ 1, 4 ],                                                 :attr_name => 'publisher_app_id',    :sum_attr => :publisher_amount },
     'display_revenue'           => { :reward_types => [ 1000, 1001, 1002, 1003, 1004, 1005, 1006 ],             :attr_name => 'publisher_app_id',    :sum_attr => :publisher_amount },
     'featured_revenue'          => { :reward_types => [ 2000, 2001, 2002, 2003, 2004, 2005, 2006 ],             :attr_name => 'publisher_app_id',    :sum_attr => :publisher_amount },
