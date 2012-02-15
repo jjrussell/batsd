@@ -130,7 +130,7 @@ class PartnersController < WebsiteController
     else
       flash[:error] = 'Could not switch partners.'
     end
-    redirect_to request.referer
+    redirect_to request.referer || root_path
   end
 
   def new_transfer
