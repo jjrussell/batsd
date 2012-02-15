@@ -1,6 +1,15 @@
 FactoryGirl.define do
+  factory :click do
+    key               { Factory.next(:guid) }
+    udid              { Factory(:device).key }
+    currency_id       { Factory(:currency).id }
+    advertiser_app_id { Factory(:app).id }
+    publisher_app_id  { Currency.find(currency_id).app.id }
+    offer_id          { App.find(advertiser_app_id).offers.first.id }
+  end
+
   factory :device do
-    key { "#{Factory.next(:udid)}" }
+    key { Factory.next(:udid) }
   end
 
   factory :email_signup do
