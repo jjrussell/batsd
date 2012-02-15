@@ -49,23 +49,10 @@ describe GetOffersController do
       should render_template "get_offers/installs"
     end
 
-    it "should have proper geoip data" do
-      get(:index, @params.merge(:json => 1))
-      assigns(:geoip_data).should be_empty
-      get(:index, @params)
-      assigns(:geoip_data).should_not be_empty
-      get(:index, @params.merge(:json => 1, :device_ip => '208.90.212.38'))
-      assigns(:geoip_data).should_not be_empty
-      get(:index, @params.merge(:json => 1, :callback => 'wah!'))
-      assigns(:geoip_data).should_not be_empty
-      get(:index, @params.merge(:redirect => 1))
-      assigns(:geoip_data).should be_empty
-    end
-
     it "should return offers targeted to country" do
       get(:index, @params)
       assigns(:offer_list).should == [@offer, @offer3]
-      controller.stubs(:get_geoip_data).returns({ :carrier_country_code => 'GB' })
+      controller.stubs(:get_geoip_data).returns({ :primary_country => 'GB' })
       get(:index, @params)
       assigns(:offer_list).should == [@offer, @offer2]
     end
@@ -235,11 +222,6 @@ describe GetOffersController do
       should render_template "get_offers/installs_json"
       response.content_type.should == "application/json"
     end
-
-    it "should have proper geoip data" do
-      get(:featured, @params)
-      assert !assigns(:geoip_data).empty?
-    end
   end
 
   describe "setup" do
@@ -314,5 +296,21 @@ describe GetOffersController do
       assigns(:start_index).should == 2
     end
 
+    it "should identify server-to-server calls" do
+      get(:index, @params.merge(:json => 1))
+      assigns(:server_to_server).should == true
+      get(:index, @params)
+      assigns(:server_to_server).should == false
+      get(:index, @params.merge(:json => 1, :callback => 'wah!'))
+      assigns(:server_to_server).should == false
+      get(:index, @params.merge(:redirect => 1))
+      assigns(:server_to_server).should == true
+      get(:featured, @params)
+      assigns(:server_to_server).should == false
+      get(:featured, @params.merge(:json => 1))
+      assigns(:server_to_server).should == false
+      get(:webpage, @params)
+      assigns(:server_to_server).should == false
+    end
   end
 end

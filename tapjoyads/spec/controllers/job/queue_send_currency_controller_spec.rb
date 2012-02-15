@@ -148,52 +148,6 @@ describe Job::QueueSendCurrencyController do
       num_reads = @controller.instance_variable_get('@num_reads')
       num_reads.should == 200
     end
-
-    it 'should send errors to NewRelic' do
-      url_params = [
-        "snuid=#{@reward.publisher_user_id}",
-        "currency=#{@reward.currency_reward}",
-      ]
-
-      callback_url = "#{@currency.callback_url}?#{url_params.join('&')}"
-      NewRelic::Agent.agent.error_collector.
-        expects(:notice_error).
-        with(
-          kind_of(TestingError),
-          has_entries({
-            :request_params => has_entries('callback_url' => callback_url)
-          })
-        )
-
-      mock_queue = mock()
-      mock_queue.stubs(:receive_message).returns(AWS::SQS::ReceivedMessage.new(nil, nil, nil, { :body => @reward.id }), nil)
-      mock_queue.stubs(:visibility_timeout).returns(1)
-      Sqs.expects(:queue).returns(mock_queue)
-
-      get 'index'
-    end
-
-    it 'should send errors to NewRelic for TJ managed Currency' do
-      Downloader.get_strict rescue TestingError
-      PointPurchases.expects(:transaction).raises(TestingError)
-      callback_url = Currency::TAPJOY_MANAGED_CALLBACK_URL
-      @currency.update_attribute(:callback_url, callback_url)
-      NewRelic::Agent.agent.error_collector.
-        expects(:notice_error).
-        with(
-          kind_of(TestingError),
-          has_entries({
-            :request_params => has_entries('callback_url' => callback_url)
-          })
-        )
-
-      mock_queue = mock()
-      mock_queue.stubs(:receive_message).returns(AWS::SQS::ReceivedMessage.new(nil, nil, nil, { :body => @reward.id }), nil)
-      mock_queue.stubs(:visibility_timeout).returns(1)
-      Sqs.expects(:queue).returns(mock_queue)
-
-      get 'index'
-    end
   end
 
   describe 'without errors' do
