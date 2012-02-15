@@ -46,98 +46,76 @@ describe Offer do
     @offer.valid?.should == false
   end
 
-  it "rejects depending on carrier country code if carrier country code is presented" do
-    @offer.countries = ["GB"].to_json
-    geoip_data = {
-      :carrier_country_code => "US",
-      :country => "GB",
-      :user_country_code => "GB" }
-    @offer.send(:geoip_reject?, geoip_data).should == true
-    geoip_data = {
-      :carrier_country_code => "GB",
-      :country => "US",
-      :user_country_code => "US" }
+  it "rejects depending on primary country" do
+    geoip_data = { :primary_country => nil }
     @offer.send(:geoip_reject?, geoip_data).should == false
-  end
-
-  it "rejects depending on geoip country only if carrier country code is blank" do
-    @offer.countries = ["GB"].to_json
-    geoip_data = {
-      :country => "US",
-      :user_country_code => "GB" }
-    @offer.send(:geoip_reject?, geoip_data).should == true
-    geoip_data = {
-      :country => "GB",
-      :user_country_code => "US" }
+    geoip_data = { :primary_country => "GB" }
     @offer.send(:geoip_reject?, geoip_data).should == false
-  end
-
-  it "rejects depending on locale only if no carrier country code or geoip country presented" do
-    @offer.countries = ["GB"].to_json
-    geoip_data = {
-      :user_country_code => "US" }
-    @offer.send(:geoip_reject?, geoip_data).should == true
-    geoip_data = {
-      :user_country_code => "GB" }
+    geoip_data = { :primary_country => "US" }
     @offer.send(:geoip_reject?, geoip_data).should == false
-  end
 
-  it "rejects if no geoip data or locale or carrier country code is provided" do
-    @offer.countries = ["US"].to_json
-    geoip_data = { }
+    @offer.countries = ["GB"].to_json
+    @offer.get_countries(true)
+    geoip_data = { :primary_country => nil }
+    @offer.send(:geoip_reject?, geoip_data).should == true
+    geoip_data = { :primary_country => "GB" }
+    @offer.send(:geoip_reject?, geoip_data).should == false
+    geoip_data = { :primary_country => "US" }
     @offer.send(:geoip_reject?, geoip_data).should == true
   end
 
   it "rejects depending on countries blacklist" do
+    geoip_data = { :primary_country => nil }
+    @offer.send(:geoip_reject?, geoip_data).should == false
+    geoip_data = { :primary_country => "GB" }
+    @offer.send(:geoip_reject?, geoip_data).should == false
+    geoip_data = { :primary_country => "US" }
+    @offer.send(:geoip_reject?, geoip_data).should == false
+
     @offer.item.countries_blacklist = ["GB"].to_json
-    geoip_data = {
-      :carrier_country_code => "US",
-      :country => "GB",
-      :user_country_code => "GB" }
+    @offer.get_countries_blacklist(true)
+    geoip_data = { :primary_country => nil }
     @offer.send(:geoip_reject?, geoip_data).should == false
-    geoip_data = {
-      :carrier_country_code => "GB",
-      :country => "US",
-      :user_country_code => "US" }
+    geoip_data = { :primary_country => "GB" }
     @offer.send(:geoip_reject?, geoip_data).should == true
-    geoip_data = {
-      :country => "US",
-      :user_country_code => "GB" }
-    @offer.send(:geoip_reject?, geoip_data).should == false
-    geoip_data = {
-      :country => "GB",
-      :user_country_code => "US" }
-    @offer.send(:geoip_reject?, geoip_data).should == true
-    geoip_data = {
-      :user_country_code => "US" }
-    @offer.send(:geoip_reject?, geoip_data).should == false
-    geoip_data = {
-      :user_country_code => "GB" }
-    @offer.send(:geoip_reject?, geoip_data).should == true
-    geoip_data = { }
+    geoip_data = { :primary_country => "US" }
     @offer.send(:geoip_reject?, geoip_data).should == false
   end
 
   it "rejects depending on region" do
+    geoip_data = { :region => nil }
+    @offer.send(:geoip_reject?, geoip_data).should == false
+    geoip_data = { :region => "CA" }
+    @offer.send(:geoip_reject?, geoip_data).should == false
+    geoip_data = { :region => "OR" }
+    @offer.send(:geoip_reject?, geoip_data).should == false
+
     @offer.regions = ["CA"].to_json
+    @offer.get_regions(true)
+    geoip_data = { :region => nil }
+    @offer.send(:geoip_reject?, geoip_data).should == true
     geoip_data = { :region => "CA" }
     @offer.send(:geoip_reject?, geoip_data).should == false
     geoip_data = { :region => "OR" }
     @offer.send(:geoip_reject?, geoip_data).should == true
-    @offer.update_attributes({ :regions => '[]' })
-    @offer.reload
-    @offer.send(:geoip_reject?, geoip_data).should == false
   end
 
   it "rejects depending on dma codes" do
+    geoip_data = { :dma_code => nil }
+    @offer.send(:geoip_reject?, geoip_data).should == false
+    geoip_data = { :dma_code => "123" }
+    @offer.send(:geoip_reject?, geoip_data).should == false
+    geoip_data = { :dma_code => "234" }
+    @offer.send(:geoip_reject?, geoip_data).should == false
+
     @offer.dma_codes = ["123"].to_json
+    @offer.get_dma_codes(true)
+    geoip_data = { :dma_code => nil }
+    @offer.send(:geoip_reject?, geoip_data).should == true
     geoip_data = { :dma_code => "123" }
     @offer.send(:geoip_reject?, geoip_data).should == false
     geoip_data = { :dma_code => "234" }
     @offer.send(:geoip_reject?, geoip_data).should == true
-    @offer.update_attributes({ :dma_codes => '[]' })
-    @offer.reload
-    @offer.send(:geoip_reject?, geoip_data).should == false
   end
 
   it "returns proper linkshare account url" do

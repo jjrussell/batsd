@@ -32,7 +32,7 @@ class Job::MasterReloadStatzController < Job::JobController
 
     s3_path = "device_counts/#{Time.zone.now.to_s(:no_spaces)}"
     obj = S3.bucket(BucketNames::TAPJOY).objects[s3_path]
-    obj.write(count)
+    obj.write(NumberHelper.number_with_delimiter(count))
 
     render :text => 'ok'
   end

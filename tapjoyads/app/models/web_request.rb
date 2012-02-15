@@ -194,7 +194,7 @@ class WebRequest
     self.mobile_country_code  = params[:mobile_country_code]
     self.mobile_network_code  = params[:mobile_network_code]
     self.country_code         = params[:country_code]
-    self.country              = params[:country_code].present? ? params[:country_code] : geoip_data[:country]
+    self.country              = geoip_data[:primary_country]
     self.geoip_country        = geoip_data[:country]
     self.sdk_type             = params[:sdk_type]
     self.plugin               = params[:plugin]
