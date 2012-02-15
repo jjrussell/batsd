@@ -138,7 +138,6 @@
           - property_row('Min offerwall bid', number_to_currency((c.minimum_offerwall_bid || 0) / 100.0))
           - property_row('Min featured bid', number_to_currency((c.minimum_featured_bid || 0) / 100.0))
           - property_row('Min display ad bid', number_to_currency((c.minimum_display_bid || 0) / 100.0))
-          - property_row('Has virtual goods', c.has_virtual_goods?)
           - property_row('Rev share override', number_to_percentage(c.rev_share_override * 100, :precision => 1)) if c.rev_share_override?
           - property_row('Spend share', number_to_percentage(c.spend_share * 100))
           - property_row('Direct-pay share', c.direct_pay_share)
