@@ -88,16 +88,16 @@
         %td
           - if permitted_to?(:confirm_payouts, :tools_payouts)
             - form_tag confirm_payouts_tools_payouts_path( :partner_id => partner.id), :method => :post, :class => 'enable_request' do
-              %div{ :class => 'enabled', :style =>  (!partner.payout_confirmed ? 'display:none;' : 'display:inline;')}
+              %div{ :class => 'enabled', :style =>  (!partner.confirmed_for_payout ? 'display:none;' : 'display:inline;')}
                 %span{ :class => 'enabled' } Confirmed
                 = submit_tag  'Unconfirm', :class => 'submit'
-              %div{ :class => 'disabled', :style => (partner.payout_confirmed ? 'display:none;' : 'display:inline;') }
+              %div{ :class => 'disabled', :style => (partner.confirmed_for_payout ? 'display:none;' : 'display:inline;') }
                 %span{ :class => 'disabled' } Unconfirmed
                 = submit_tag 'Confirm', :class => 'submit'
               %img.spinner{ :src => '/images/spinner.gif', :style => 'display:none;' }
           - else
-            %span{ :class => 'enabled', :style =>  (!partner.payout_confirmed ? 'display:none;' : 'display:inline;')  } Confirmed
-            %span{ :class => 'disabled', :style => (partner.payout_confirmed ? 'display:none;' : 'display:inline;')  } Uncomfirmed
+            %span{ :class => 'enabled', :style =>  (!partner.confirmed_for_payout ? 'display:none;' : 'display:inline;')  } Confirmed
+            %span{ :class => 'disabled', :style => (partner.confirmed_for_payout ? 'display:none;' : 'display:inline;')  } Uncomfirmed
 
 - content_for :page_javascript do
   :plain
