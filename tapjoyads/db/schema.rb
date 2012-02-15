@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120210003759) do
+ActiveRecord::Schema.define(:version => 20120215022140) do
 
   create_table "action_offers", :id => false, :force => true do |t|
     t.string   "id",                    :limit => 36,                    :null => false
@@ -157,7 +157,6 @@ ActiveRecord::Schema.define(:version => 20120210003759) do
     t.string   "name"
     t.integer  "conversion_rate",                                                                        :default => 100,   :null => false
     t.integer  "initial_balance",                                                                        :default => 0,     :null => false
-    t.boolean  "has_virtual_goods",                                                                      :default => false, :null => false
     t.boolean  "only_free_offers",                                                                       :default => false, :null => false
     t.boolean  "send_offer_data",                                                                        :default => false, :null => false
     t.string   "secret_key"
