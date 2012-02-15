@@ -664,54 +664,43 @@ describe Offer do
   end
   
   describe ".for_display_ads" do
-    def valid_offer()
-      offer = Factory(:app).primary_offer
-      offer.update_attributes({ :conversion_rate => 0.5 })
-      offer
-    end
     
     before :each do
-      @valid_offer = valid_offer()
-      @pricey_offer = valid_offer()
-      @pricey_offer.update_attributes({:price => 5})
-      @unpopular_offer = valid_offer()
-      @unpopular_offer.update_attributes({:conversion_rate => 0.1})
-      @verbose_offer = valid_offer()
-      @verbose_offer.update_attributes({:name => 'Thirty-one characters xxxxxxxxx'})
-      @multibyte_offer = valid_offer()
-      @multibyte_offer.update_attributes({:name => '在这儿IM 人脉既是财富'})
-      @verbose_multibyte_offer = valid_offer()
-      @verbose_multibyte_offer.update_attributes({:name => '在这儿IM 人脉既是财富 在这儿IM 人脉既是财富'})
-      @verbose_but_approved_offer = valid_offer()
-      @verbose_but_approved_offer.update_attributes({:name => 'Long name xxxxxxxxxxxxxxxxxx', :approved_banner_creatives => ['320x50']})
+      @offer.update_attributes(:conversion_rate => 0.5)
     end
     
     it "likes some things" do
-      Offer.for_display_ads.should include(@valid_offer)
+      Offer.for_display_ads.should include(@offer)
     end
     
     it "requires zero price" do
-      Offer.for_display_ads.should_not include(@pricey_offer)
+      @offer.update_attributes(:price => 5)
+      Offer.for_display_ads.should_not include(@offer)
     end
     
     it "requires a minimal conversion rate" do
-      Offer.for_display_ads.should_not include(@unpopular_offer)
+      @offer.update_attributes(:conversion_rate => 0.1)
+      Offer.for_display_ads.should_not include(@offer)
     end
     
     it "requires a short name" do
-      Offer.for_display_ads.should_not include(@verbose_offer)
+      @offer.update_attributes(:name => 'Thirty-one characters xxxxxxxxx')
+      Offer.for_display_ads.should_not include(@offer)
     end
     
-    it "is undaunted by multibyte names (github issue 1153)" do
-      Offer.for_display_ads.should include(@multibyte_offer)
+    it "is undaunted by multibyte names" do
+      @offer.update_attributes(:name => '在这儿IM 人脉既是财富')
+      Offer.for_display_ads.should include(@offer)
     end
     
     it "still doesn't like long multibyte names" do
-      Offer.for_display_ads.should_not include(@verbose_mutibyte_offer)
+      @offer.update_attributes(:name => '在这儿IM 人脉既是财富 在这儿IM 人脉既是财富')
+      Offer.for_display_ads.should_not include(@offer)
     end
     
     it "stops complaining about name length if the creatives are approved" do
-      Offer.for_display_ads.should include(@verbose_but_approved_offer)
+      @offer.update_attributes({:name => 'Long name xxxxxxxxxxxxxxxxxx', :approved_banner_creatives => ['320x50']})
+      Offer.for_display_ads.should include(@offer)
     end
   end
 end
