@@ -9,7 +9,7 @@
     - else
       %ul.slats.with-icons
         -@external_publishers.each do |external_publisher|
-          %li.slat.clearfix.line
+          %li.slat.clearfix.line.chrome
             - link_to("#", :id => external_publisher.currencies.first[:id], :class => "get_offerwall_jsonp", :jsonp_url => external_publisher.get_offerwall_url(@device, external_publisher.currencies.first, request.accept_language, request.user_agent, current_gamer.id), :currency => external_publisher.currencies.first[:name], :app_name => external_publisher.app_name) do
               .hd.size1of4.left.game-icon= image_tag(external_publisher.get_icon_url(:size=>114,:source => :cloudfront))
               .bd.left.size1of2
@@ -27,11 +27,14 @@
                       =t('text.games.earn', :currency => currency[:name])
 
     .footer
-      %ul.slats.arrow
-        %li.slat
+      .section.chrome
+        .btn
+          Review Scrabble
+      %ul.slats.simple
+        %li.slat.chrome
           =link_to t('text.games.share_with_your_friends'), "#"
           .ui-list-arrow
-        %li.slat
+        %li.slat.chrome
           =link_to t('text.shared.help'), "#"
           .ui-list-arrow
 

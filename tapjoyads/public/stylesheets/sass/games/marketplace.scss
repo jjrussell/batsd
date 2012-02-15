@@ -1,6 +1,6 @@
 @import "tj-mixins.scss";
-@mixin txt-shadow() {
-  text-shadow: 0px 1px 1px rgba(37, 37, 37, .4);
+@mixin txt-shadow($x:0, $y:1px, $spread:1px, $color:rgba(37, 37, 37, .4)) {
+  text-shadow: $x $y $spread $color;
 }
 @mixin box-shadow($x:0, $y:0, $spread:2px, $color:#ddd) {
   -webkit-box-shadow: $x $y $spread $color;
@@ -73,6 +73,11 @@
   @include linear-gradient(top, #e82c2c, #b41317);
 }
 
+.chrome {
+  border-bottom: 1px solid #6f7072;
+  @include gradient(rgba(247, 247, 250, 1.0), rgba(220, 223, 227, 1.0));
+}
+
 .headerwrap {
   .logo {
     position: relative;
@@ -121,6 +126,7 @@
   }
 }
 
+
 .game-icon {
   overflow: hidden;
   img {
@@ -128,6 +134,22 @@
     @include rounded-corners(45%);
     max-width:100%;
   }
+}
+
+.section {
+  padding: 20px 10px;
+}
+
+.btn {
+  @include gradient(rgba(198,198,198,1.0), rgba(134,134,134,1.0));
+  @include rounded-corners(4px);
+  @include shadow(#ddd, 1px);
+  @include txt-shadow(0, -1px, 1px, #999);
+  color: white;
+  text-align: center;
+  border-bottom: 1px solid rgba(85,85,85,1.0);
+  font-size: 15px;
+  padding: 5px;
 }
 
 .highlight-green {
@@ -143,8 +165,19 @@
   text-align: center;
   font-size: 15px;
 }
+.slats.with-icons .slat {
+  height: 75px;
+  padding-top: 17px;
+  padding-bottom: 17px;
+  img {
+    max-height: 75px;
+  }
+}
+.slats.simple .slat {
+  line-height: 30px;
+}
 
-.slats {
+ul.slats {
   @include box-shadow(0px, -1px, 2px, #ccc);
   a {
     text-decoration: none;
@@ -155,29 +188,13 @@
     color: #000;
   }
 }
-
-.slats.with-icons .slat {
-  height: 75px;
-  padding-top: 17px;
-  padding-bottom: 17px;
-  img {
-    max-height: 75px;
-  }
-}
-.slats.arrow .slat {
-  position: relative;
-  height: 30px;
-  line-height: 30px;
-}
-
 li.slat {
+  position: relative;
   margin: 0;
   float: none;
   padding: 5px percentage(20/640);
-  border-bottom: 1px solid #6f7072;
   width: percentage(300/320);
   text-align: left;
-  @include gradient(rgba(247, 247, 250, 1.0), rgba(220, 223, 227, 1.0));
   .title {
     font-size: 16px;
   }
