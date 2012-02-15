@@ -198,7 +198,7 @@ describe FeaturedContent do
       context 'when updating a tracking offer' do
         before :each do
           @old_platforms = @featured_content.platforms
-          @featured_content.update_attributes({ :platforms => ["android"] })
+          @featured_content.update_attributes({ :platforms => %w( android ) })
         end
 
         it "doesn't keep the old platform" do

@@ -7,8 +7,6 @@ describe Tools::FeaturedContentsController do
     @partner = Factory(:partner, :id => TAPJOY_PARTNER_ID)
     @admin.partners << @partner
     login_as(@admin)
-
-    @generic_offer = Factory(:generic_offer, :id => FEATURED_CONTENT_GENERIC_TRACKING_OFFER_ID, :partner => @partner)
   end
 
   describe '#create' do
@@ -19,7 +17,7 @@ describe Tools::FeaturedContentsController do
       @options = {
         :featured_content => {
           :featured_type => FeaturedContent::TYPES_MAP[FeaturedContent::STAFFPICK],
-          :platforms     => ["iphone", "ipad", "itouch"],
+          :platforms     => %w( iphone ipad itouch ),
           :subtitle      => 'Subtitle',
           :title         => 'Title',
           :description   => 'Description',
@@ -80,7 +78,7 @@ describe Tools::FeaturedContentsController do
 
       context 'when platforms only contain part of iOS platforms' do
         before :each do
-          @options[:featured_content][:platforms] = ['iphone']
+          @options[:featured_content][:platforms] = %w( iphone )
           post 'create', @options
         end
 
@@ -115,13 +113,12 @@ describe Tools::FeaturedContentsController do
   describe '#update' do
     before :each do
       @featured_content = Factory(:featured_content)
-      @featured_content.update_attributes({ :button_url => "test_url" })
 
       @options = {
         :id => @featured_content.id,
         :featured_content => {
           :featured_type => @featured_content.featured_type,
-          :platforms     => JSON.parse(@featured_content.platforms),
+          :platforms     => %w( android ),
           :subtitle      => 'Subtitle1',
           :title         => 'Title1',
           :description   => @featured_content.description,
@@ -148,8 +145,7 @@ describe Tools::FeaturedContentsController do
       end
 
       it 'updates the tracking_offer associated with the featured_content' do
-        new_name = "#{@options[:featured_content][:title]}_#{@options[:featured_content][:subtitle]}"
-        assigns[:featured_content].tracking_offer.name.should == new_name
+        assigns[:featured_content].tracking_offer.device_types.should == @options[:featured_content][:platforms].to_json
       end
 
       it 'redirects to tools/featured_contents/index' do
@@ -191,7 +187,7 @@ describe Tools::FeaturedContentsController do
 
       context 'when platforms only contain part of iOS platforms' do
         before :each do
-          @options[:featured_content][:platforms] = ['iphone']
+          @options[:featured_content][:platforms] = %w( iphone )
           put 'update', @options
         end
 
@@ -209,7 +205,6 @@ describe Tools::FeaturedContentsController do
   describe '#destroy' do
     before :each do
       @featured_content = Factory(:featured_content)
-      @featured_content.update_attributes({ :button_url => "test_url" })
       @tracking_offer_id = @featured_content.tracking_offer.id
     end
 

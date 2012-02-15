@@ -127,6 +127,6 @@ class Tools::FeaturedContentsController < WebsiteController
   def platforms_validate?
     union = params[:featured_content][:platforms] | Offer::APPLE_DEVICES
     real_len = params[:featured_content][:platforms].length
-    real_len > 1 && ((union.length - 3) == real_len || union.length == real_len)
+    real_len > 0 && ((union.length - 3) == real_len || union.length == real_len)
   end
 end
