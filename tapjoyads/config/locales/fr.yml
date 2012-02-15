@@ -288,6 +288,7 @@ fr:
       load_more: "Voir plus d'offres!"
       loading: Chargement...
       missing_currency: "En manque de %{currency}?"
+      more_offers: ~
       next: "%{items} offres suivantes"
       popular_apps: "Popular Apps"
       previous: "%{items} offres précédentes"

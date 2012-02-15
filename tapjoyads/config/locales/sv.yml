@@ -288,6 +288,7 @@ sv:
       load_more: "Fler erbjudanden!"
       loading: Laddar...
       missing_currency: "Saknade %{currency}?"
+      more_offers: ~
       next: "Nästa %{items}"
       popular_apps: "Popular Apps"
       previous: "Föregående %{items}"

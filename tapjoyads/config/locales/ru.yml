@@ -288,6 +288,7 @@ ru:
       load_more: "Загрузить еще!"
       loading: Загрузка...
       missing_currency: "Не получили %{currency}?"
+      more_offers: ~
       next: "След. %{items}"
       popular_apps: "Popular Apps"
       previous: "Пред. %{items}"

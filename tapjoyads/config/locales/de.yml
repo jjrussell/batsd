@@ -284,6 +284,7 @@ de:
       load_more: "Lade noch mehr!"
       loading: Lade...
       missing_currency: "Fehlende %{currency}?"
+      more_offers: ~
       next: "Nächste %{items} "
       popular_apps: "Popular Apps"
       previous: "Vorherige %{items}"

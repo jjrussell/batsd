@@ -283,6 +283,7 @@ all_caps:
       load_more: "LOAD SOME MORE!"
       loading: LOADING...
       missing_currency: "MISSING %{currency}?"
+      more_offers: ~
       next: "NEXT %{items}"
       popular_apps: "POPULAR APPS"
       previous: "PREVIOUS %{items}"

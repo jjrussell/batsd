@@ -288,6 +288,7 @@ ja:
       load_more: もっと読み込みましょう！
       loading: 読み込み中・・・
       missing_currency: "%{currency}が受取れない場合"
+      more_offers: ~
       next: "次の %{items}件"
       popular_apps: "Popular Apps"
       previous: "前の %{items}件"

@@ -12,6 +12,7 @@ zh:
       next: "下页 %{items}"
       previous: "上页 %{items}"
       missing_currency: "没得到 %{currency}?"
+      more_offers: ~
       instructions: "完成以下的要求其中之一可以得到 %{currency}"
       popular_apps: "最流行的软件"
       instructions_non_rewarded: "发现Tapjoy的热点!"

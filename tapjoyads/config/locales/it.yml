@@ -283,6 +283,7 @@ it:
       load_more: "Carica ancora!"
       loading: "Sta caricando..."
       missing_currency: "Mancano %{currency}?"
+      more_offers: ~
       next: "Prossimo %{items}"
       popular_apps: ~
       previous: "Precedente %{items}"

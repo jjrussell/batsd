@@ -287,6 +287,7 @@ es:
       load_more: "Ver más ofertas"
       loading: Cargando...
       missing_currency: "¿Te falta %{currency}?"
+      more_offers: ~
       next: "%{items} ofertas siguientes"
       popular_apps: "Popular Apps"
       previous: "%{items} ofertas anteriores"
