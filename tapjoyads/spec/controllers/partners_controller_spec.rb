@@ -44,7 +44,7 @@ describe PartnersController do
 
   end
   
-  context "when aagencies act as partners" do
+  context "when agencies act as partners" do
     before :each do
       @user = Factory(:agency_user)
       @partner1 = @partner = Factory(:partner, :pending_earnings => 10000, :balance => 10000, :users => [@user])
