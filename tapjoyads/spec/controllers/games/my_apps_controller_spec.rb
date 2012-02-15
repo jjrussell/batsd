@@ -1,24 +1,27 @@
-require 'spec_helper'
+require 'spec/spec_helper'
 
 describe Games::MyAppsController do
+  describe "#index" do
 
-  #Delete these examples and add some real ones
-  it "should use Games::MyAppsController" do
-    controller.should be_an_instance_of(Games::MyAppsController)
-  end
+    context "logged in" do
+      before :each do
+        activate_authlogic
+      end
+      
+      context "has selected device" do
+      end
 
-
-  describe "GET 'index'" do
-    it "should be successful" do
-      get 'index'
-      response.should be_success
+      context "no selected device" do
+      end
     end
-  end
 
-  describe "GET 'show'" do
-    it "should be successful" do
-      get 'show'
-      response.should be_success
+    context "not logged in" do
+      it "redirects to homepage controller" do
+        get "index"
+        
+        response.should redirect_to(games_login_url(:path=>games_my_apps_path))
+      end
     end
+
   end
 end
