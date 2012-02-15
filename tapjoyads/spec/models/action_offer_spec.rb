@@ -12,24 +12,24 @@ describe ActionOffer do
   it { should validate_presence_of :instructions }
   it { should validate_numericality_of :price }
 
-  it "should accept nested attributes for primary_offer" do
+  it 'accepts nested attributes for primary_offer' do
     subject.should respond_to(:primary_offer_attributes=)
   end
 
-  it "should delegate user_enabled?, tapjoy_enabled?, bid, min_bid, and daily_budget to primary_offer" do
+  it 'delegates user_enabled?, tapjoy_enabled?, bid, min_bid, and daily_budget to primary_offer' do
     delegated_methods = [ :user_enabled?, :tapjoy_enabled?, :bid, :min_bid, :daily_budget ]
     delegated_methods.each do |dm|
       subject.should respond_to dm
     end
   end
 
-  describe "ActionOffer when updated" do
+  context 'when updated' do
     before :each do
       subject.name = "this is a new name"
       subject.save!
     end
 
-    it "should update its associated Offers" do
+    it 'updates its associated Offers' do
       subject.offers.each do |offer|
         offer.name.should == "this is a new name"
       end

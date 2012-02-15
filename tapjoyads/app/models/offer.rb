@@ -50,7 +50,8 @@ class Offer < ActiveRecord::Base
                                   'normal_price', 'over_threshold', 'rewarded', 'reseller_id',
                                   'cookie_tracking', 'min_os_version', 'screen_layout_sizes',
                                   'interval', 'banner_creatives', 'dma_codes', 'regions',
-                                  'wifi_only', 'approved_sources', 'approved_banner_creatives', 'sdkless'
+                                  'wifi_only', 'approved_sources', 'approved_banner_creatives',
+                                  'sdkless', 'carriers'
                                 ].map { |c| "#{quoted_table_name}.#{c}" }.join(', ')
 
   DIRECT_PAY_PROVIDERS = %w( boku paypal )
@@ -208,8 +209,10 @@ class Offer < ActiveRecord::Base
   alias_method :events, :offer_events
   alias_method :random, :rand
 
-  json_set_field :device_types, :screen_layout_sizes, :countries, :dma_codes, :regions, :approved_sources
-  memoize :get_device_types, :get_screen_layout_sizes, :get_countries, :get_dma_codes, :get_regions, :get_approved_sources
+  json_set_field :device_types, :screen_layout_sizes, :countries, :dma_codes, :regions,
+    :approved_sources, :carriers
+  memoize :get_device_types, :get_screen_layout_sizes, :get_countries, :get_dma_codes,
+    :get_regions, :get_approved_sources, :get_carriers
 
   def clone
     super.tap do |clone|
