@@ -84,7 +84,7 @@
     %a{ :href => "javascript:void(0);", :id => "load_more" }
       = t('text.offerwall.load_more')
 
-#more_offers.offer{ :style => "#{'display: none;' if @more_data_available > 0}" }
+%a#more_offers.offer{ :href => "http://www.tapjoy.com", :style => "#{'display: none;' if @more_data_available > 0}" }
   .divider
   .content
     .icon
