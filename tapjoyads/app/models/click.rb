@@ -97,7 +97,7 @@ class Click < SimpledbShardedResource
   private
 
   def url_to_resolve
-    if type == 'generic'
+    if type == 'generic' || type == 'survey'
       "#{API_URL}/offer_completed?click_key=#{key}"
     else
       "#{API_URL}/connect?app_id=#{advertiser_app_id}&udid=#{udid}&consistent=true"

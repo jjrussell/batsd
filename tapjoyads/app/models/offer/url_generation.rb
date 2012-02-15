@@ -71,6 +71,14 @@ module Offer::UrlGeneration
       final_url = url
     elsif item_type == 'SurveyOffer'
       final_url.gsub!('TAPJOY_SURVEY', click_key.to_s)
+      params_array = final_url.split('?').last.split('&')
+      params_hash = {}
+      params_array.each do |param|
+        pair = param.split('=')
+        params_hash[pair.first] = pair.last
+      end
+      final_url = final_url.split('?').first
+      final_url << "?data=#{ObjectEncryptor.encrypt(params_hash)}"
     end
 
     final_url

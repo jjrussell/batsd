@@ -95,6 +95,7 @@ class SurveyOffer < ActiveRecord::Base
       :name_suffix      => 'Survey',
       :device_types     => Offer::ALL_DEVICES.to_json,
       :tapjoy_enabled   => true,
+      :multi_complete   => false,
     })
     offer.id = id
     offer.save!
