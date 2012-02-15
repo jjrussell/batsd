@@ -18,7 +18,7 @@ class Currency < ActiveRecord::Base
   validates_numericality_of :spend_share, :direct_pay_share, :greater_than_or_equal_to => 0, :less_than_or_equal_to => 1
   validates_numericality_of :rev_share_override, :greater_than_or_equal_to => 0, :less_than_or_equal_to => 1, :allow_nil => true
   validates_numericality_of :max_age_rating, :minimum_featured_bid, :minimum_offerwall_bid, :minimum_display_bid, :allow_nil => true, :only_integer => true
-  validates_inclusion_of :has_virtual_goods, :only_free_offers, :send_offer_data, :hide_rewarded_app_installs, :tapjoy_enabled, :in => [ true, false ]
+  validates_inclusion_of :only_free_offers, :send_offer_data, :hide_rewarded_app_installs, :tapjoy_enabled, :in => [ true, false ]
   validates_each :callback_url, :if => :callback_url_changed? do |record, attribute, value|
     unless SPECIAL_CALLBACK_URLS.include?(value)
       if value !~ /^https?:\/\//
@@ -53,6 +53,10 @@ class Currency < ActiveRecord::Base
   delegate :postcache_weights, :to => :currency_group
   delegate :categories, :to => :app
   memoize :postcache_weights, :categories
+
+  def self.columns
+    super.reject { |c| c.name == 'has_virtual_goods' }
+  end
 
   def self.find_all_in_cache_by_app_id(app_id, do_lookup = !Rails.env.production?)
     currencies = Mc.distributed_get("mysql.app_currencies.#{app_id}.#{acts_as_cacheable_version}")
