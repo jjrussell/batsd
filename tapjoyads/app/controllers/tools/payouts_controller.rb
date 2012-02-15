@@ -35,6 +35,7 @@ class Tools::PayoutsController < WebsiteController
     partner = Partner.find(params[:partner_id])
     log_activity(partner)
     partner.confirmed_for_payout = !partner.confirmed_for_payout
+    partner.payout_confirmation_notes = nil if partner.confirmed_for_payout
     render :json => { :success => partner.save, :was_confirmed => partner.confirmed_for_payout}
   end
 
