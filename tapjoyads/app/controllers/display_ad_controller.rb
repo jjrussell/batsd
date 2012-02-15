@@ -50,7 +50,6 @@ class DisplayAdController < ApplicationController
     return unless verify_params([ :app_id, :udid, :currency_id ])
 
     now = Time.zone.now
-    geoip_data = get_geoip_data
 
     if params[:size].blank? || params[:size] == '320x50'
       # Don't show high-res ads to AdMarvel or TextFree, unless they explicitly send a size param.
@@ -70,7 +69,7 @@ class DisplayAdController < ApplicationController
     params[:source] = 'display_ad'
 
     web_request = WebRequest.new(:time => now)
-    web_request.put_values('display_ad_requested', params, get_ip_address, geoip_data, request.headers['User-Agent'])
+    web_request.put_values('display_ad_requested', params, get_ip_address, get_geoip_data, request.headers['User-Agent'])
 
     if currency.get_test_device_ids.include?(params[:udid])
       offer = build_test_offer(publisher_app)
@@ -80,7 +79,7 @@ class DisplayAdController < ApplicationController
         :device             => device,
         :currency           => currency,
         :device_type        => params[:device_type],
-        :geoip_data         => geoip_data,
+        :geoip_data         => get_geoip_data,
         :app_version        => params[:app_version],
         :os_version         => params[:os_version],
         :type               => Offer::DISPLAY_OFFER_TYPE,
@@ -99,7 +98,7 @@ class DisplayAdController < ApplicationController
         :source            => 'display_ad',
         :viewed_at         => now,
         :displayer_app_id  => params[:app_id],
-        :country_code      => geoip_data[:country]
+        :primary_country   => get_geoip_data[:primary_country]
       )
       width, height = parse_size(params[:size])
 
