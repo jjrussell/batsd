@@ -54,7 +54,8 @@ describe GetOffersController do
 
       it "should favor the cross promoted inventory" do
         get(:index, @params)
-        assigns(:offer_list).should == [ @offer2, @offer3, @offer1, @offer4 ]
+        offer_list = assigns(:offer_list)
+        assert( offer_list == [ @offer2, @offer3, @offer1, @offer4 ] || offer_list == [ @offer3, @offer2, @offer1, @offer4 ] )
       end
     end
 

@@ -42,6 +42,8 @@ class InventoryManagementController < WebsiteController
 
   def per_app
     @dropdown_options = { :not_for_nav => true, :submission_form => :per_app_inventory }
+    @global_offers = []
+
     if params[:current_app].present?
       @app = App.find(params[:current_app])
       return unless @app
@@ -49,7 +51,13 @@ class InventoryManagementController < WebsiteController
       app_platform = Offer.get_platform_symbol(@app.primary_offer)
       return unless app_platform
 
+      @partner.global_promoted_offers.each do |promoted_offer|
+        offer = promoted_offer.offer
+        @global_offers.push(offer) if Offer.get_platform_symbol(offer) == app_platform
+      end
+
       @available_offers = @partner.offers_for_promotion[app_platform]
+      @available_offers.reject! { |promoted_offer| @global_offers.include?(promoted_offer) }
       @available_offers.map! { |offer| [offer.name, offer.id] }
       @currently_promoted = @app.promoted_offers.map(&:offer_id)
 

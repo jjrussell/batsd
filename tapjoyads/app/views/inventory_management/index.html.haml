@@ -4,10 +4,10 @@
 .left-indented
   .box-full
     %h3 Prioritized App Cross Promotion (Global)
-    %p This page allows you to control the top 3 slots on the offerwall for all your publisher apps. You can cross-promote apps within your own network at the top of your offerwalls in order to drive user growth. Select the apps you desire to promote globally. Please be aware that this may reduces the visibility of revenue earning offers on your offerwall, and will reduce your publisher revenue.
+    %p This page allows you to prioritize your own apps for cross-pomotion across all of your publisher applications to drive user growth. Please be aware that selecting more slots reduces the visibility of revenue earning offers on your offerwall, and will reduce your publisher revenue.
     - form_tag({}, { :method => :get, :class => 'tjform'}) do
-      %p Selctions here will be cross promoted on ALL of your publisher apps. For more fine grained control, click "Per-App" to the left.
-      %p Note: Apps you have marked as "Self-promo only" on the apps tab will still be shown on your offerwalls, they will just not be prioritized to the top of the wall.
+      %p Selections here will be cross-promoted on ALL of your publisher apps. For more fine-grained control, click "Per-App" to the left.
+      %p Note: Apps you have marked as "self-promo only" on the apps tab will still be shown on your offerwalls, but will also need to be added here to be prioritized to the top of your offerwall.There must be an active install offer for an app to be eligible for cross-promotion; if you do not want to run a paid install campaign, but want to cross-promote an app, select "self-promo only" on the apps tab under the app you would like to promote.
       %table
         %tbody
           - if @available_offers[:ios].present?

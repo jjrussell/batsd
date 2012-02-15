@@ -7,6 +7,13 @@
       = render('shared/dropdown_select', :objects => current_partner_apps, :selected => @app, :options => @dropdown_options)
       %p
         You can customize offers that may be promoted on a Per-App basis. These offers are promoted in addition to the globally promoted offers.
+      - if @global_offers.present?
+        %p
+          The following offers are being promoted currently, based on the global settings:
+        %p
+          %ul
+            - @global_offers.each do |offer|
+              %li= offer.name
       - if @app
         %table
           %tbody
