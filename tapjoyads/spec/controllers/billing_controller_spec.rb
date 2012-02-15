@@ -39,4 +39,19 @@ describe BillingController do
       @partner.balance.should == 10_000
     end
   end
+
+  describe 'updating payout info' do
+    it 'should unconfirm for payouts if already confirmed' do
+      @payout_info = Factory(:payout_info, :partner => @partner)
+      @partner.confirmed_for_payout = true
+      @partner.save
+      @partner.confirmed_for_payout.should be_true
+      @partner.payout_info.stubs(:safe_update_attributes).returns(true)
+
+      post :update_payout_info, { :payout_info => {} }
+      @partner.reload
+      @partner.confirmed_for_payout.should_not be_true
+      @partner.payout_confirmation_notes.should == "SYSTEM: Partner Payout Information has changed."
+    end
+  end
 end
