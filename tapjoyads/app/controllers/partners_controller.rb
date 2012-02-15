@@ -122,6 +122,7 @@ class PartnersController < WebsiteController
       partner_ids.delete(@partner.id)
       partner_ids.pop if partner_ids.length >= 10
       partner_ids.unshift(@partner.id)
+      session[:last_shown_app] = nil
       cookies[:recent_partners] = {
         :value => partner_ids.join(';'),
         :expires => 1.year.from_now
