@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120215022140) do
+ActiveRecord::Schema.define(:version => 20120216172034) do
 
   create_table "action_offers", :id => false, :force => true do |t|
     t.string   "id",                    :limit => 36,                    :null => false
@@ -628,6 +628,7 @@ ActiveRecord::Schema.define(:version => 20120215022140) do
     t.text     "approved_banner_creatives"
     t.text     "approved_sources",                                                                                 :null => false
     t.boolean  "sdkless",                                                                       :default => false
+    t.text     "carriers",                                                                                         :null => false
   end
 
   add_index "offers", ["id"], :name => "index_offers_on_id", :unique => true

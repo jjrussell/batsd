@@ -118,6 +118,18 @@ describe Offer do
     @offer.send(:geoip_reject?, geoip_data).should == true
   end
 
+  it "rejects depending on carriers" do
+    @offer.carriers = ["Verizon", "NTT DoCoMo"].to_json
+    mobile_carrier_code = '440.01'
+    @offer.send(:carriers_reject?, mobile_carrier_code).should == false
+    mobile_carrier_code = '123.123'
+    @offer.send(:carriers_reject?, mobile_carrier_code).should == true
+    @offer.send(:carriers_reject?, nil).should == true
+    @offer.update_attributes({ :carriers => '[]' })
+    @offer.reload
+    @offer.send(:carriers_reject?, mobile_carrier_code).should == false
+  end
+
   it "returns proper linkshare account url" do
     url = 'http://phobos.apple.com/WebObjects/MZStore.woa/wa/viewSoftware?id=TEST&mt=8'
     linkshare_url = Linkshare.add_params(url)
