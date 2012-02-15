@@ -84,6 +84,15 @@
     %a{ :href => "javascript:void(0);", :id => "load_more" }
       = t('text.offerwall.load_more')
 
+#more_offers.offer{ :style => "#{'display: none;' if @more_data_available > 0}" }
+  .divider
+  .content
+    .icon
+      .offer_icon
+    .offer-text
+      %span= t('text.offerwall.more_offers', :default => 'Want to see more offers? Visit Tapjoy to earn rewards and personal app recommendations!')
+    .load
+
 - unless @for_preview
   #footerWrapper
     #footer
@@ -201,7 +210,8 @@
                 avail = data.MoreDataAvailable;
               }
               else {
-               $("#bottom_box").hide();
+                $("#bottom_box").hide();
+                $("#more_offers").show();
                 avail = 0;
               }
               var t = [];
