@@ -14,6 +14,31 @@ class GamesController < ApplicationController
     Rails.env.production?
   end
 
+  def set_locale
+    I18n.locale = (get_language_codes.concat(http_accept_language) & AVAILABLE_LOCALES_ARRAY).first
+  end
+
+  def get_language_codes
+    return [] unless params[:language_code]
+
+    code = params[:language_code]
+
+    [ code, code.split(/-/).first ].uniq
+  end
+
+  def http_accept_language
+    # example env[HTTP_ACCEPT_LANGUAGE] string: en,en-US;q=0.8,es;q=0.6,zh;q=0.4
+    language_list = request.env['HTTP_ACCEPT_LANGUAGE'].split(/\s*,\s*/).map do |pair|
+      language, quality = pair.split(/;q=/)
+      raise "Not correctly formatted" unless language =~ /^[a-z\-]+$/i
+      language = language.downcase.gsub(/-[a-z]+$/i) { |i| i.upcase }
+      quality = 1.0 unless quality.to_s =~ /\d+(\.\d+)?$/
+      [ - quality.to_f, language ]
+    end
+    language_list.sort.map(&:last)
+  rescue # default if header is malformed
+    []
+  end
   def set_current_device(data)
     device_data = ObjectEncryptor.decrypt(data)
     if valid_device_id(device_data[:udid])

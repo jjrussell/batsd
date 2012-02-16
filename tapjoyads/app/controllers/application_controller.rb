@@ -4,6 +4,8 @@
 class ApplicationController < ActionController::Base
   helper :all # include all helpers, all the time
 
+  helper_method :get_geoip_data
+
   before_filter :set_time_zone
   before_filter :fix_params
   before_filter :set_locale
@@ -18,7 +20,7 @@ class ApplicationController < ActionController::Base
   # from your application log (in this case, all fields with names like "password").
   filter_parameter_logging :password, :password_confirmation
 
-private
+  private
 
   def verify_params(required_params, options = {})
     render_missing_text = options.delete(:render_missing_text) { true }
@@ -61,7 +63,7 @@ private
   end
 
   def set_locale
-    language_code = params[:language_code] || get_http_accept_language
+    language_code = params[:language_code]
     I18n.locale = nil
     if AVAILABLE_LOCALES.include?(language_code)
       I18n.locale = language_code
@@ -71,31 +73,6 @@ private
         I18n.locale = language_code
       end
     end
-  end
-
-  def get_http_accept_language
-    # example env[HTTP_ACCEPT_LANGUAGE] string: es,en;q=0.8;en-US;q=0.6
-    language_list = request.env['HTTP_ACCEPT_LANGUAGE'].split(/\s*,\s*/).map do |l|
-      l += ';q=1.0' unless l =~ /;q=\d+\.\d+$/
-      l.split(';q=')
-    end
-
-    prioritized_list = language_list.sort do |x,y|
-      raise "Not correctly formatted" unless x.first =~ /^[a-z\-]+$/i
-      y.last.to_f <=> x.last.to_f
-    end
-
-    formatted_list = prioritized_list.map do |l|
-      l.first.downcase.gsub(/-[a-z]+$/i) { |i| i.upcase }
-    end
-
-    available_list = AVAILABLE_LOCALES.map {|i| i.to_s}
-
-    valid_list = formatted_list & available_list
-
-    valid_list.first
-  rescue # default to blank if header is malformed
-    ""
   end
 
   def lookup_udid
@@ -163,6 +140,9 @@ private
     return @cached_geoip_data if @cached_geoip_data.present?
 
     @cached_geoip_data = {}
+
+    return @cached_geoip_data if @server_to_server == true && params[:device_ip].blank?
+
     ip_address = params[:device_ip] || get_ip_address
 
     begin
@@ -182,6 +162,9 @@ private
       @cached_geoip_data[:area_code]   = geo_struct[:area_code]
       @cached_geoip_data[:dma_code]    = geo_struct[:dma_code]
     end
+    @cached_geoip_data[:user_country_code]    = params[:country_code].present? ? params[:country_code].to_s.upcase : nil
+    @cached_geoip_data[:carrier_country_code] = params[:carrier_country_code].present? ? params[:carrier_country_code].to_s.upcase : nil
+    @cached_geoip_data[:primary_country]      = params[:primary_country] || @cached_geoip_data[:carrier_country_code] || @cached_geoip_data[:country] || @cached_geoip_data[:user_country_code]
 
     @cached_geoip_data
   end
