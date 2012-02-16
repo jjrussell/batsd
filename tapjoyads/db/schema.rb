@@ -613,21 +613,21 @@ ActiveRecord::Schema.define(:version => 20120216172034) do
     t.float    "normal_avg_revenue",                                                            :default => 0.0,   :null => false
     t.float    "normal_bid",                                                                    :default => 0.0,   :null => false
     t.integer  "over_threshold",                                                                :default => 0,     :null => false
-    t.string   "reseller_id",                       :limit => 36
     t.boolean  "rewarded",                                                                      :default => true
+    t.string   "reseller_id",                       :limit => 36
     t.boolean  "cookie_tracking",                                                               :default => false, :null => false
     t.string   "min_os_version",                                                                :default => "",    :null => false
     t.text     "screen_layout_sizes",                                                                              :null => false
-    t.text     "regions",                                                                                          :null => false
     t.integer  "interval",                                                                      :default => 0,     :null => false
-    t.text     "banner_creatives"
     t.boolean  "url_overridden",                                                                :default => false, :null => false
+    t.text     "banner_creatives"
     t.text     "dma_codes",                                                                                        :null => false
-    t.boolean  "tapjoy_sponsored",                                                              :default => false, :null => false
+    t.text     "regions",                                                                                          :null => false
     t.boolean  "instructions_overridden",                                                       :default => false, :null => false
-    t.text     "approved_sources",                                                                                 :null => false
-    t.text     "approved_banner_creatives"
+    t.boolean  "tapjoy_sponsored",                                                              :default => false, :null => false
     t.boolean  "wifi_only",                                                                     :default => false, :null => false
+    t.text     "approved_banner_creatives"
+    t.text     "approved_sources",                                                                                 :null => false
     t.boolean  "sdkless",                                                                       :default => false
     t.text     "carriers",                                                                                         :null => false
   end
@@ -721,9 +721,9 @@ ActiveRecord::Schema.define(:version => 20120216172034) do
     t.boolean  "approved_publisher",                                                       :default => false,     :null => false
     t.boolean  "apsalar_sharing_adv",                                                      :default => false,     :null => false
     t.boolean  "apsalar_sharing_pub",                                                      :default => false,     :null => false
+    t.string   "reseller_id",                  :limit => 36
     t.string   "billing_email"
     t.integer  "freshbooks_client_id"
-    t.string   "reseller_id",                  :limit => 36
     t.boolean  "accepted_publisher_tos"
     t.string   "sales_rep_id",                 :limit => 36
     t.decimal  "max_deduction_percentage",                   :precision => 8, :scale => 6, :default => 1.0,       :null => false

@@ -82,7 +82,7 @@ class ReengagementOffer < ActiveRecord::Base
   end
 
   def create_primary_offer
-    offer = Offer.new ({
+    offer = Offer.new({
       :item             => self,
       :partner          => partner,
       :name             => "reengagement_offer.#{app_id}.#{id}",

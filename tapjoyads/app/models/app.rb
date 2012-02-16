@@ -161,7 +161,7 @@ class App < ActiveRecord::Base
   end
 
   def reengagement_campaign
-    @reengagement_campaign ||= reengagement_offers.visible.order_by_day
+    @reengagement_campaign ||= (reengagement_offers.visible.order_by_day || [])
   end
 
   def enable_reengagement_campaign!

@@ -20,6 +20,12 @@ describe Apps::ReengagementOffersController do
   describe "#create" do
 
     before :each do
+      @user = Factory :admin
+      @partner = Factory(:partner, :users => [@user])
+      @app = Factory(:app, :partner => @partner)
+
+      login_as @user
+
       post :create, :app_id => @app.id, :partner => @partner, :reward_value => 2, :currency_id => @app.primary_currency.id, :instructions => "french toast"
       response.should redirect_to(:action => :index, :app_id => @app.id)
     end
@@ -37,6 +43,14 @@ describe Apps::ReengagementOffersController do
   end
 
   describe "#new" do
+    
+    before :each do
+      @user = Factory :admin
+      @partner = Factory(:partner, :users => [@user])
+      @app = Factory(:app, :partner => @partner)
+
+      login_as @user
+    end
 
     it 'should automatically create a day 0 reengagement offer' do
       ro = @app.reengagement_campaign.first
@@ -129,7 +143,7 @@ describe Apps::ReengagementOffersController do
 
     it 'should enable a campaign'
       post :update_status, :enabled => '1', :app_id => @app.id, :reengagement_offer_id => @ro.id
-      
+
 
     it 'should enable the campaign only when \'1\' is passed'
       post 
