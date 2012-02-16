@@ -18,6 +18,7 @@
     = f.text_field(:dma_codes)
     = error_message_on @offer, :dma_codes
     .details= link_to('DMA Code List', 'http://code.google.com/apis/adwords/docs/appendix/metrocodes.html', :target => '_blank')
+= render('apps/offers_shared/carriers', :f => f)
 %tr.admin
   %th
     = f.label(:tapjoy_enabled)
@@ -131,7 +132,6 @@
   #help_overall_budget_content{ :name => 'Overall Budget' } The maximum number of conversions to complete in the lifetime of this offer. This is merely a hard limit so it is likely that the offer will go over-budget.
   #help_rank_score_content{ :name => 'Rank Score' } The last computed rank score for this offer.
   #help_min_bid_override_content{ :name => 'Min Bid Override' } Manually set the minimum allowed bid for this offer.
-  #help_countries_blacklist_content{ :name => 'Country Blacklist' } This field is auto-filled from iTunes, and updated daily. To manually target countries, use the country targeting field, but note that this offer will not be shown in countries listed in this blacklist, irrespective of country targeting.
 
 - content_for :page_javascript do
   :plain

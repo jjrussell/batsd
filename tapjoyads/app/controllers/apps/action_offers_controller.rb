@@ -64,6 +64,7 @@ class Apps::ActionOffersController < WebsiteController
         :primary_offer_attributes_publisher_app_whitelist,
         :primary_offer_attributes_overall_budget,
         :primary_offer_attributes_min_bid_override,
+        :primary_offer_attributes_carriers,
       ]
     end
     if @action_offer.safe_update_attributes params[:action_offer], safe_attributes
@@ -107,11 +108,7 @@ class Apps::ActionOffersController < WebsiteController
 private
 
   def setup
-    if permitted_to? :edit, :statz
-      @app = App.find(params[:app_id])
-    else
-      @app = current_partner.apps.find(params[:app_id])
-    end
+    @app = find_app(params[:app_id])
 
     if params[:id]
       @action_offer = @app.action_offers.find(params[:id])

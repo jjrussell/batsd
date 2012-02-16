@@ -2,7 +2,7 @@ require 'spec/spec_helper'
 
 describe SurveyResultsController do
   before :each do
-    stub_offers
+    fake_the_web
     user = Factory(:admin)
     partner = Factory(:partner, :id => TAPJOY_PARTNER_ID, :users => [user])
     survey_offer = Factory(:survey_offer)
@@ -11,20 +11,20 @@ describe SurveyResultsController do
     @offer = survey_offer.primary_offer
   end
 
-  describe "new" do
-    it "should verify params" do
+  describe '#new' do
+    it 'verifies params' do
       get 'new'
       response.body.should == 'missing required params'
     end
 
-    it "should assign survey questions" do
+    it 'assigns survey questions' do
       get 'new', :udid => 'something', :click_key => '5', :id => @offer.id
       assigns(:survey_questions).length.should == 1
       response.should render_template('new')
     end
   end
 
-  describe "create" do
+  describe '#create' do
     before :each do
       @udid = UUIDTools::UUID.random_create.to_s
       @request_params = {
@@ -43,30 +43,30 @@ describe SurveyResultsController do
       Currency.stubs(:find_in_cache).with(5).returns('fake currency')
     end
 
-    it "should render error for invalid currency" do
+    it 'renders error for invalid currency' do
       Currency.expects(:find_in_cache).with(5).returns(nil)
       post 'create', :click_key => '5'
       response.body.should == 'record not found'
     end
 
-    it "should render survey_complete" do
+    it 'renders survey_complete' do
       post 'create', :click_key => '5'
       response.should render_template('survey_complete')
     end
 
-    it "should not reward if click is already complete" do
+    it 'does not reward if click is already complete' do
       Offer.expects(:find_in_cache).never
       post 'create', :click_key => '5'
     end
 
-    it "should render new if all questions aren't answered" do
+    it "renders new if all questions aren't answered" do
       @mock_click.expects(:installed_at?).returns(false)
       post 'create', :click_key => '5', :id => @offer.id
       assigns(:missing_params).should be_true
       response.should render_template('new')
     end
 
-    it "should save a SurveyResult" do
+    it 'saves a SurveyResult' do
       stub_device
 
       controller.expects(:get_geoip_data).returns('geoip data')
@@ -83,7 +83,7 @@ describe SurveyResultsController do
       post 'create', @request_params
     end
 
-    it "should save the results to the device" do
+    it 'saves the results to the device' do
       stub_survey_result
 
       controller.expects(:get_geoip_data).returns('geoip data')
@@ -100,7 +100,7 @@ describe SurveyResultsController do
       post 'create', @request_params
     end
 
-    it "should call downloader with the correct url" do
+    it 'calls downloader with the correct url' do
       stub_survey_result
       stub_device
 
