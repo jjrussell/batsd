@@ -87,7 +87,7 @@ class Games::Gamers::DevicesController < GamesController
         flash[:error] = "Error linking device. Please try again."
       end
 
-      redirect_to games_root_path
+      redirect_to games_root_path, :flash => { :register_device => true }
     else
       flash[:error] = "Please log in to link your device. You must have cookies enabled."
       redirect_to games_login_path(:data => params[:data])

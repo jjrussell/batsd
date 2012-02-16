@@ -26,14 +26,14 @@ describe Games::GamersController do
       }
     end
 
-    it 'should create a new gamer' do
+    it 'creates a new gamer' do
       Sqs.expects(:send_message).once
       post 'create', @options
 
       should_respond_with_json_success(200)
     end
 
-    it 'should reject when under 13 years old' do
+    it 'rejects when under 13 years old' do
       @date += 2.days
       @options[:date] = {
         :year  => @date.year,
@@ -45,7 +45,7 @@ describe Games::GamersController do
       should_respond_with_json_error(403)
     end
 
-    it 'should reject when under date is invalid' do
+    it 'rejects when under date is invalid' do
       @options[:date] = {
         :year  => @date.year,
         :month => 11,
@@ -123,12 +123,12 @@ describe Games::GamersController do
       @controller.stubs(:current_gamer).returns(@gamer)
     end
 
-    it 'should display confirmation page' do
+    it 'displays confirmation page' do
       get 'confirm_delete'
       response.should be_success
     end
 
-    it 'should deactivate gamer' do
+    it 'deactivates gamer' do
       delete 'destroy'
 
       response.should be_redirect
