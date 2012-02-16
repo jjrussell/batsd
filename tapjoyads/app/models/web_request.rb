@@ -64,12 +64,8 @@ class WebRequest < SyslogMessage
   self.define_attr :exp
   self.define_attr :country
   self.define_attr :country_code
-<<<<<<< HEAD
-=======
-  self.define_attr :geoip_country
   self.define_attr :sdk_type
   self.define_attr :plugin
->>>>>>> master
   self.define_attr :language
   self.define_attr :screen_density
   self.define_attr :screen_layout_size
