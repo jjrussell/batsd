@@ -1,8 +1,8 @@
 #my_apps.page{:class=>"current"}
   .panel
     - if current_gamer.devices.empty?
-      = render 'register_device'
-    = render 'featured_content_preview'
+      = render 'games/homepage/register_device'
+    = render 'games/homepage/featured_content_preview'
 
     -if @external_publishers.blank?
       =render :no_games
@@ -22,19 +22,7 @@
                     =image_tag("games/social.png")
               .ft.right.rel.size1of4.lastUnit
                 - external_publisher.currencies.each do |currency|
-                  - link_to("#", :id => currency[:id], :class => "get_offerwall_jsonp", :jsonp_url => external_publisher.get_offerwall_url(@device, currency, request.accept_language, request.user_agent, current_gamer.id), :currency => currency[:name], :app_name => external_publisher.app_name) do
+                  - link_to(games_my_app_path(currency[:id]), :id => currency[:id], :class => "get_offerwall_jsonp", :jsonp_url => external_publisher.get_offerwall_url(@device, currency, request.accept_language, request.user_agent, current_gamer.id), :currency => currency[:name], :app_name => external_publisher.app_name) do
                     .rel
                       =t('text.games.earn', :currency => currency[:name])
-
-    .footer
-      .section.chrome
-        .ui-joy-button.grey-action
-          %a.text-center Review Scrabble
-      %ul.slats.simple
-        %li.slat.chrome
-          =link_to t('text.games.share_with_your_friends'), "#"
-          .ui-list-arrow
-        %li.slat.chrome
-          =link_to t('text.shared.help'), "#"
-          .ui-list-arrow
-
+    =render("games/shared/footer")

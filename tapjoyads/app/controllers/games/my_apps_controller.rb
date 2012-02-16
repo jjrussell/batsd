@@ -15,9 +15,19 @@ class Games::MyAppsController < GamesController
         @offerwall_external_publisher = ExternalPublisher.new(currency) if @show_offerwall
       end
     end
+
+    respond_to do |f|
+      f.html {}
+    end
   end
 
   def show
+    @currency = Currency.find_by_id(params[:id])
+    @external_publisher = ExternalPublisher.new(@currency)
+
+    respond_to do |f|
+      f.html {}
+    end
   end
 
 end
