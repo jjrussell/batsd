@@ -9,20 +9,20 @@
     - else
       %ul.slats.with-icons
         -@external_publishers.each do |external_publisher|
-          %li.slat.clearfix.line.chrome
-            - link_to("#") do
-              .hd.size1of4.left.game-icon= image_tag(external_publisher.get_icon_url(:size=>114,:source => :cloudfront))
-              .bd.left.size1of2
-                .title.elip
-                  = external_publisher.app_name
-                .app-summary.clearfix
-                  .rank
-                    =image_tag("games/thumbs-up.png")
-                  .friends
-                    =image_tag("games/social.png")
-              .ft.right.rel.size1of4.lastUnit
-                - external_publisher.currencies.each do |currency|
-                  - link_to(games_my_app_path(currency[:id])) do
-                    .rel
-                      =t('text.games.earn', :currency => currency[:name])
-    =render("games/shared/footer")
+          %li.slat.chrome
+            .hd.game-icon= image_tag(external_publisher.get_icon_url(:size=>114,:source => :cloudfront))
+            .bd
+              .title.elip
+                = external_publisher.app_name
+              .app-summary.clearfix
+                .rank
+                  =image_tag("games/thumbs-up.png")
+                .friends
+                  =image_tag("games/social.png")
+            .ft
+              - currency = external_publisher.currencies.first
+              - link_to(games_my_app_path(currency[:id])) do
+                .ui-list-arrow.right
+                  .ui-list-action-label.right
+                    =t('text.shared.collect', :currency => currency[:name])
+  =render("games/shared/footer")

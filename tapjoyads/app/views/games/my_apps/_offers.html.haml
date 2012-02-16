@@ -1,5 +1,4 @@
 .offer-wall{"data-jsonp-url"=>@external_publisher.get_offerwall_url(@device, @external_publisher.currencies.first, request.accept_language, request.user_agent, current_gamer.id)}
   .ajax-placeholder
     Incoming...
-%script{:type => "text/template"}
-  =render "all_offers"
+=render "all_offers_template"
