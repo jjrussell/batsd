@@ -3,7 +3,7 @@ class GamesMailer < ActionMailer::Base
     from 'Tapjoy <noreply@tapjoy.com>'
     reply_to gamer.email
     recipients "customerservice@tapjoy.com"
-    cc "email.receipts@tapjoy.com"
+    bcc "email.receipts@tapjoy.com"
     subject "User Feedback - Tapjoy"
     content_type 'text/html'
     body(:content => content, :email => gamer.email, :udid => device_id, :user_agent => user_agent)
@@ -13,7 +13,7 @@ class GamesMailer < ActionMailer::Base
     from 'Tapjoy <noreply@tapjoy.com>'
     reply_to gamer.email
     recipients "mobilehelp@tapjoy.com"
-    cc "email.receipts@tapjoy.com"
+    bcc "email.receipts@tapjoy.com"
     subject "Bug Report - Tapjoy"
     content_type 'text/html'
     body(:content => content, :email => gamer.email, :udid => device_id, :user_agent => user_agent)
@@ -23,7 +23,7 @@ class GamesMailer < ActionMailer::Base
     from 'Tapjoy <noreply@tapjoy.com>'
     reply_to gamer.email
     recipients "mobilehelp@tapjoy.com"
-    cc "email.receipts@tapjoy.com"
+    bcc "email.receipts@tapjoy.com"
     subject "User Support - Tapjoy"
     content_type 'text/html'
     body(:content => content, :email => gamer.email, :udid => device_id, :user_agent => user_agent)
@@ -32,7 +32,7 @@ class GamesMailer < ActionMailer::Base
   def password_reset(gamer, reset_link)
     from 'Tapjoy Support <support@tapjoy.com>'
     recipients gamer.email
-    cc "email.receipts@tapjoy.com"
+    bcc "email.receipts@tapjoy.com"
     subject "Password Reset Request - Tapjoy"
     content_type 'text/html'
     body :reset_link => reset_link
@@ -41,7 +41,7 @@ class GamesMailer < ActionMailer::Base
   def link_device(gamer, ios_link, android_link)
     from 'Tapjoy <noreply@tapjoy.com>'
     recipients gamer.email
-    cc "email.receipts@tapjoy.com"
+    bcc "email.receipts@tapjoy.com"
     subject "Tapjoy - Link Device"
     content_type 'text/html'
     body(:ios_link => ios_link, :android_link => android_link)
@@ -50,7 +50,7 @@ class GamesMailer < ActionMailer::Base
   def delete_gamer(gamer)
     from 'Tapjoy <noreply@tapjoy.com>'
     recipients gamer.email
-    cc "email.receipts@tapjoy.com"
+    bcc "email.receipts@tapjoy.com"
     subject "Tapjoy - Delete Account Confirmation"
     content_type 'text/html'
     body(:name => gamer.get_gamer_name)
