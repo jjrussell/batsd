@@ -278,7 +278,6 @@ class App < ActiveRecord::Base
   end
 
   def update_app_metadata(app_store_id)
-    app_metadata = nil
     if !app_metadatas.map(&:store_id).include?(app_store_id)
       # app currently has no app_metadata or associated with a different instance
       app_metadatas.delete_all
@@ -359,7 +358,7 @@ class App < ActiveRecord::Base
 
   def update_all_offers
     update_offers if store_id_changed || partner_id_changed? || name_changed? || hidden_changed?
-    update_rating_offer if (store_id_changed || name_changed?) && rating_offer.present?
+    update_rating_offer if rating_offer.present? && (store_id_changed || name_changed?)
     update_action_offers if store_id_changed || name_changed? || hidden_changed?
   end
 
