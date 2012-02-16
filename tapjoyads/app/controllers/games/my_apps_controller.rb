@@ -22,6 +22,8 @@ class Games::MyAppsController < GamesController
   end
 
   def show
+    device_id = current_device_id
+    @device = Device.new(:key => device_id) if device_id.present?
     @currency = Currency.find_by_id(params[:id])
     @external_publisher = ExternalPublisher.new(@currency)
 

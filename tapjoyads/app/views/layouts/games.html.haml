@@ -20,9 +20,13 @@
     = stylesheet_link_tag("games/marketplace-768", :media => "only screen and (min-width: 768px)")
     = stylesheet_link_tag("games/marketplace-1024", :media => "only screen and (min-width: 1024px)")
 
+    %script{ :type => 'text/javascript', :charset => 'utf-8', :src => games_translations_path(:language_code => I18n.locale) }
+    = javascript_include_tag("games/src/tjg.jquery-1.6.2.min.js")
+    = javascript_include_tag("games/src/i18n")
+    = javascript_include_tag("games/src/marketplace")
     = yield :page_head
 
-  %body
+  %body{"data-env" => "#{Rails.env}"}
     %noscript
       .noscript_msg
         Please go into your browser settings and enable JavaScript to continue using Tapjoy.
