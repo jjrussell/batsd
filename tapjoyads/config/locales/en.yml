@@ -1,10 +1,10 @@
---- 
-en: 
-  activerecord: 
-    errors: 
-      full_messages: 
+---
+en:
+  activerecord:
+    errors:
+      full_messages:
         format: "%{attribute} %{message}"
-      messages: 
+      messages:
         accepted: "must be accepted"
         blank: "can't be blank"
         confirmation: "doesn't match confirmation"
@@ -26,14 +26,14 @@ en:
         too_long: "is too long (maximum is %{count} characters)"
         too_short: "is too short (minimum is %{count} characters)"
         wrong_length: "is the wrong length (should be %{count} characters)"
-      template: 
+      template:
         body: "There were problems with the following fields:"
-        header: 
+        header:
           one: "1 error prohibited this %{model} from being saved"
           other: "%{count} errors prohibited this %{model} from being saved"
-  date: 
+  date:
     abbr_day_names: "Sun Mon Tue Wed Thu Fri Sat"
-    abbr_month_names: 
+    abbr_month_names:
       - ~
       - Jan
       - Feb
@@ -48,11 +48,11 @@ en:
       - Nov
       - Dec
     day_names: "Sunday Monday Tuesday Wednesday Thursday Friday Saturday"
-    formats: 
+    formats:
       default: "%Y-%m-%d"
       long: "%B %d, %Y"
       short: "%b %d"
-    month_names: 
+    month_names:
       - ~
       - January
       - February
@@ -66,56 +66,56 @@ en:
       - October
       - November
       - December
-    order: 
+    order:
       - year
       - month
       - day
-  datetime: 
-    distance_in_words: 
-      about_x_hours: 
+  datetime:
+    distance_in_words:
+      about_x_hours:
         one: "about 1 hour"
         other: "about %{count} hours"
-      about_x_months: 
+      about_x_months:
         one: "about 1 month"
         other: "about %{count} months"
-      about_x_years: 
+      about_x_years:
         one: "about 1 year"
         other: "about %{count} years"
-      almost_x_years: 
+      almost_x_years:
         one: "almost 1 year"
         other: "almost %{count} years"
       half_a_minute: "half a minute"
-      less_than_x_minutes: 
+      less_than_x_minutes:
         one: "less than a minute"
         other: "less than %{count} minutes"
-      less_than_x_seconds: 
+      less_than_x_seconds:
         one: "less than 1 second"
         other: "less than %{count} seconds"
-      over_x_years: 
+      over_x_years:
         one: "over 1 year"
         other: "over %{count} years"
-      x_days: 
+      x_days:
         one: "1 day"
         other: "%{count} days"
-      x_minutes: 
+      x_minutes:
         one: "1 minute"
         other: "%{count} minutes"
-      x_months: 
+      x_months:
         one: "1 month"
         other: "%{count} months"
-      x_seconds: 
+      x_seconds:
         one: "1 second"
         other: "%{count} seconds"
-    prompts: 
+    prompts:
       day: Day
       hour: Hour
       minute: Minute
       month: Month
       second: Second
       year: Year
-  errors: 
+  errors:
     format: "%{attribute} %{message}"
-    messages: 
+    messages:
       accepted: "must be accepted"
       blank: "can't be blank"
       confirmation: "doesn't match confirmation"
@@ -135,16 +135,16 @@ en:
       too_long: "is too long (maximum is %{count} characters)"
       too_short: "is too short (minimum is %{count} characters)"
       wrong_length: "is the wrong length (should be %{count} characters)"
-  helpers: 
-    select: 
+  helpers:
+    select:
       prompt: "Please select"
-    submit: 
+    submit:
       create: "Create %{model}"
       submit: "Save %{model}"
       update: "Update %{model}"
-  number: 
-    currency: 
-      format: 
+  number:
+    currency:
+      format:
         delimiter: ","
         format: "%u%n"
         precision: 2
@@ -152,52 +152,52 @@ en:
         significant: false
         strip_insignificant_zeros: false
         unit: $
-    format: 
+    format:
       delimiter: ","
       precision: 3
       separator: "."
       significant: false
       strip_insignificant_zeros: false
-    human: 
-      decimal_units: 
+    human:
+      decimal_units:
         format: "%n %u"
-        units: 
+        units:
           billion: Billion
           million: Million
           quadrillion: Quadrillion
           thousand: Thousand
           trillion: Trillion
           unit: ""
-      format: 
+      format:
         delimiter: ""
         precision: 3
         significant: true
         strip_insignificant_zeros: true
-      storage_units: 
+      storage_units:
         format: "%n %u"
-        units: 
-          byte: 
+        units:
+          byte:
             one: Byte
             other: Bytes
           gb: GB
           kb: KB
           mb: MB
           tb: TB
-    percentage: 
-      format: 
+    percentage:
+      format:
         delimiter: ""
-    precision: 
-      format: 
+    precision:
+      format:
         delimiter: ""
-  support: 
-    array: 
+  support:
+    array:
       last_word_connector: ", and "
       two_words_connector: " and "
       words_connector: ", "
-    select: 
+    select:
       prompt: "Please select"
-  text: 
-    featured: 
+  text:
+    featured:
       download: Download
       download_and_run: "Just download and run"
       earn_currency: "Earn %{amount_and_currency}"
@@ -206,7 +206,7 @@ en:
       skip: Skip
       title: "Earn %{currency}"
       try_out: "Try out"
-    games: 
+    games:
       about_body: "Tapjoy allows you to discover popular apps like Happy Park, City of Wonder, Coin Dozer, Overkill, VIP Poker, and Gun Bros, while accessing premium content in your favorite apps. It recommends new apps to you so if you like playing Magic Zoo, Tapjoy will suggest other games you'll enjoy, like Safari Zoo or Bug Village HD. So sign up now, and tap into a better way to find the apps you love."
       about_title: "\"Somehow it knows exactly what apps I like.\""
       account_created_body: "Your Tapjoy account was successfully created!"
@@ -216,7 +216,7 @@ en:
       advertisers_body: "Reach millions of users and gain exposure for your products"
       advertisers_title: Advertisers
       allow_marketing_emails: "Allow Tapjoy to send me marketing emails"
-      already_registered: 
+      already_registered:
         one: "%{name} has already registered, you are now following him/her."
         other: "%{name} have already registered, you are now following them."
       back_to_top: "Back to Top"
@@ -256,17 +256,17 @@ en:
       invite: "Invite Your Friends!"
       invite_email_body: |-
           %{name} has invited you to join Tapjoy, the BEST place to find the hottest new apps. Signing up is free and you'll be able discover the best apps on iOS and Android, while also earning currency in your favorite apps.
-          
+
           No need to wade through thousands of apps in the App Store or the Android Market to find your next download. Tapjoy has you covered and recommends apps we know you'll like.
-          
+
           To get started, create your account here:
       invite_email_greet: "Hi,"
       invite_email_signature: "Team Tapjoy"
-      invite_friends: 
+      invite_friends:
         one: Invite
         other: "Invite %{count} friends"
       invite_title: "Send an Email Invite"
-      invites_sent_to: 
+      invites_sent_to:
         one: "A Tapjoy invite has been sent to %{name}"
         other: "Tapjoy invites have been sent to %{name}"
       issue_registering: "There was an issue registering your account"
@@ -298,7 +298,7 @@ en:
       unable_to_process: "Sorry we are unable to process your request"
       wifi_required: "WiFi Required"
       wrong_device: "wrong device?"
-    instructions: 
+    instructions:
       amount_and_currency: "%{amount} %{currency}"
       continue_link: "Click here to continue."
       download_action: here
@@ -307,7 +307,7 @@ en:
       footer: "After completing these steps, you will earn %{amount_and_currency}."
       header: "Follow these steps to earn %{currency}:"
       title: Instructions
-    offerwall: 
+    offerwall:
       buy_currency: "Buy %{amount} %{currency}"
       earn_currency: "Earn %{amount} %{currency}"
       free: Free
@@ -323,7 +323,7 @@ en:
       title: "Earn %{currency}"
       wifi_required: "Wifi Required"
       wifi_warning: "This app requires a wifi connection to download."
-    shared: 
+    shared:
       about_link: "About Tapjoy"
       ads_by: "Ads by"
       android: Android
@@ -374,7 +374,7 @@ en:
       updating: Updating
       year: Year
       zip_postal: "Zip/Postal Code"
-    support: 
+    support:
       abuse_warning: "This form is strictly for users who have not been rewarded for a completed offer. Abuse of this page may lead to your account being banned from engaging in offers in the future."
       description_label: "Description:"
       email_address_label: "Email address:"
@@ -390,12 +390,12 @@ en:
       support_request_submitted: "Support Request Submitted"
       thanks: "Thanks for submitting your support request! You will receive your %{currency} after we have verified that you completed the offer."
       title: "Missing %{currency}?"
-    unavailable_offer: 
+    unavailable_offer:
       message: "We're sorry but %{offer} is no longer available. You can return to the previous page and refresh to view the latest offer list."
       optional_message: "Or, click here to download %{offer} anyway."
-  time: 
+  time:
     am: am
-    formats: 
+    formats:
       day: "%B %d, %Y"
       day_long: "%B %d, %Y"
       day_short: "%b %d"
