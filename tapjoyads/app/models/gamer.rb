@@ -135,7 +135,7 @@ class Gamer < ActiveRecord::Base
   def reward_click(click)
     Downloader.get_with_retry("#{API_URL}/offer_completed?click_key=#{click.key}")
   end
-  
+
   def encrypted_referral_id(advertiser_app_id = nil)
     ObjectEncryptor.encrypt("#{id},#{advertiser_app_id}")
   end
@@ -171,7 +171,8 @@ class Gamer < ActiveRecord::Base
             Invitation.reconcile_pending_invitations(self, :invitation => invitation)
           else
             gamer_id = invitation_id
-            self.referred_by = gamer_id if gamer = Gamer.find_by_id(gamer_id)
+            gamer = Gamer.find_by_id(gamer_id)
+            self.referred_by = gamer_id if gamer
           end
           follow_gamer(gamer) if gamer
         end
