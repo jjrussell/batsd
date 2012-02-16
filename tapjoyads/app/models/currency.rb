@@ -48,6 +48,7 @@ class Currency < ActiveRecord::Base
   before_validation_on_create :assign_default_currency_group
   before_create :set_hide_rewarded_app_installs, :set_values_from_partner_and_reseller
   before_update :update_spend_share
+  after_update :reset_to_pending_if_rejected
   after_cache :cache_by_app_id
   after_cache_clear :clear_cache_by_app_id
 
@@ -191,13 +192,11 @@ class Currency < ActiveRecord::Base
     self.reseller_spend_share = reseller_id? ? reseller.reseller_rev_share * spend_share_ratio : nil
   end
 
-  def approve!
+  def after_approve(approval)
     self.tapjoy_enabled = true
+    self.save
   end
 
-  def reject!
-    TapjoyMailer.deliver_currency_rejected(self.partner.email)
-  end
   private
 
   def cache_by_app_id
@@ -233,6 +232,16 @@ class Currency < ActiveRecord::Base
   def set_hide_rewarded_app_installs
     self.hide_rewarded_app_installs = true if app.platform == 'iphone'
     true
+  end
+
+  def reset_to_pending_if_rejected
+    if self.rejected?
+      self.state = 'pending'   
+      self.approval.destroy
+      new_approval = Approval.new(:item_id => id, :item_type => self.class.name, :event => 'create', :created_at => nil, :updated_at => nil)
+      new_approval.save
+      self.save
+    end
   end
 
 end

@@ -36,7 +36,6 @@ class Apps::CurrenciesController < WebsiteController
     end
 
     if @currency.safe_update_attributes(currency_params, safe_attributes)
-      #TODO reset the approval to pending if updated and the currency has been rejected.
       flash[:notice] = 'Currency was successfully updated.'
       redirect_to app_currency_path(:app_id => @app.id, :id => @currency.id)
     else

@@ -1,5 +1,5 @@
 ActsAsApprovable.view_language = 'haml'
-ActsAsApprovable::Ownership.configure(Approval, User) do
+ActsAsApprovable::Ownership.configure do
   include UuidPrimaryKey
 
   def self.available_owners
