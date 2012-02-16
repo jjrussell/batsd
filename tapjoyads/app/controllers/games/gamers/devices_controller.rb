@@ -70,7 +70,7 @@ class Games::Gamers::DevicesController < GamesController
         if current_gamer.referrer.present? && !current_gamer.referrer.starts_with?('tjreferrer:')
           devices = GamerDevice.find_all_by_device_id(data[:udid])
           if devices.size == 1 && devices[0].gamer_id == current_gamer.id
-            gamer_or_invitation_id, advertiser_app_id = ObjectEncryptor.decrypt(current_gamer.referrer).split(',')
+            invitation_id, advertiser_app_id = ObjectEncryptor.decrypt(current_gamer.referrer).split(',')
             advertiser_app_id = TAPJOY_GAMES_INVITATION_OFFER_ID if advertiser_app_id.blank?
             referred_by_gamer = Gamer.find_by_id(current_gamer.referred_by)
             if advertiser_app_id && referred_by_gamer
