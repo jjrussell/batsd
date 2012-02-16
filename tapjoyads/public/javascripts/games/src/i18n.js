@@ -58,7 +58,7 @@
 
   me.query = function (key, locale, def_locale) {
     var outer_scope = key.split("."),
-        recurse, 
+        recurse,
         result;
 
     // deal with dot notation strings
@@ -81,17 +81,17 @@
 
     opt = $.extend({
       locale: me.locale,
-      count: null 
+      count: null
     }, opt);
 
     result = me.query(key, opt.locale, me.default_locale);
 
     result = me.pluralize(result, opt.count);
 
-    if (typeof result !== "string") {
-      if (env === "development") {
-        throw me.customError("Did not find translation string: ",
-          {key: key, locale: opt.locale, default_locale: me.default_locale, result: result}, 
+    if(typeof result !== "string") {
+      if(w.ENVIRONMENT === "development") {
+        throw customError("Did not find translation string: ",
+          {key: key, locale: opt.locale, default_locale: me.default_locale, result: result},
           "Tapjoyi18nError");
       }
 
