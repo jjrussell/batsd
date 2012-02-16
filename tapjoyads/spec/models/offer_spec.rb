@@ -221,8 +221,8 @@ describe Offer do
         @offer.rewarded = true
       end
 
-      it "has a min_bid of 65" do
-        @offer.min_bid.should == 65
+      it "has a min_bid of 10" do
+        @offer.min_bid.should == 10
       end
     end
 

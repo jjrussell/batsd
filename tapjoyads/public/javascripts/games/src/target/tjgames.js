@@ -966,7 +966,7 @@ TJG.utils = {
 
     if (!iterable) {
       return res;
-    } 
+    }
 
     if (typeof iterable.toArray === "function") {
       return iterable.toArray();
@@ -976,12 +976,12 @@ TJG.utils = {
       return Array.prototype.slice.call(iterable);
     }
 
-    for(i in iterable) { 
+    for(i in iterable) {
       if(iterable.hasOwnProperty(i)) {
         res.push(iterable[i]);
       }
     }
-    
+
     return res;
   },
 
@@ -1014,7 +1014,7 @@ TJG.utils = {
   },
 
   customError: function(msg, options, name) {
-    var info="", 
+    var info="",
         i,
         options = options || {},
         TapjoyCustomError
@@ -1027,7 +1027,7 @@ TJG.utils = {
       this.message = m;
     };
     TapjoyCustomError.prototype = Error.prototype;
-    
+
     for(i in options) {
       if(options.hasOwnProperty(i)) {
         info += "\n[ "+i + ": " + stringify( options[i] ) + " ]";
@@ -1057,7 +1057,7 @@ TJG.utils = {
 
   me.query = function(key, locale, def_locale) {
     var outer_scope = key.split("."),
-        recurse, 
+        recurse,
         result;
 
     // deal with dot notation strings
@@ -1080,7 +1080,7 @@ TJG.utils = {
 
     opt = $.extend({
       locale: me.locale,
-      count: null 
+      count: null
     }, opt);
 
     result = me.query(key, opt.locale, me.default_locale);
@@ -1090,7 +1090,7 @@ TJG.utils = {
     if(typeof result !== "string") {
       if(w.ENVIRONMENT === "development") {
         throw customError("Did not find translation string: ",
-          {key: key, locale: opt.locale, default_locale: me.default_locale, result: result}, 
+          {key: key, locale: opt.locale, default_locale: me.default_locale, result: result},
           "Tapjoyi18nError");
       }
 
