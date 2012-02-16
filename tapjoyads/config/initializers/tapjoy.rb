@@ -44,6 +44,7 @@ AWS.config(
 )
 
 GAMES_CONFIG = YAML::load_file("#{Rails.root}/config/games.yaml")[Rails.env]
+MARKETPLACE_CONFIG = YAML::load_file("#{Rails.root}/config/marketplace.yaml")[Rails.env]
 
 VERTICA_CONFIG = YAML::load_file("#{Rails.root}/config/vertica.yml")[Rails.env]
 
