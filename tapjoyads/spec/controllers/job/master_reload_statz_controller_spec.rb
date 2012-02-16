@@ -91,7 +91,7 @@ describe Job::MasterReloadStatzController do
         Factory(:app,
           :platform => 'android'),
       ]
-      
+
       app_metadatas = [
         Factory(:app_metadata,
           :store_id => 'ios.free',
@@ -109,7 +109,7 @@ describe Job::MasterReloadStatzController do
           :price => 1),
       ]
 
-      apps.each_index do |i| 
+      apps.each_index do |i|
         apps[i].add_app_metadata(app_metadatas[i])
         apps[i].reload.save!
       end
