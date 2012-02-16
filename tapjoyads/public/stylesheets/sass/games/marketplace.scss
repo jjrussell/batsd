@@ -61,15 +61,23 @@ body {
 }
 
 
-.ui-icon {
-  padding-left: 20px;
-  content: "&nbsp;";
-}
 .social {
   background: url('/images/games/social.png') no-repeat 0 0;
 }
+.social-med {
+  background: url('/images/games/social-med.png') no-repeat 0 0;
+}
 .score {
   background: url('/images/games/thumbs-up.png') no-repeat 0 0;
+}
+.score-med {
+  background: url('/images/games/thumbs-up-med.png') no-repeat 0 0;
+}
+.ui-icon {
+  padding-left: 20px;
+}
+.ui-icon-med {
+  padding-left: 28px;
 }
 
 .clear {
@@ -86,14 +94,25 @@ body {
   @include gradient-top(#e9292e, #e62429, #d71012, #cf0404);
 }
 
+@mixin radial-gradient($p0, $p75, $p100) {
+  background: $p0; /* Old browsers */
+  background: -moz-radial-gradient(center, ellipse cover,  $p0 0%, $p75 75%, $p100 100%); /* FF3.6+ */
+  background: -webkit-gradient(radial, center center, 0px, center center, 100%, color-stop(0%,$p0), color-stop(75%,$p75), color-stop(100%,$p100)); /* Chrome,Safari4+ */
+  background: -webkit-radial-gradient(center, ellipse cover,  $p0 0%,$p75 75%,$p100 100%); /* Chrome10+,Safari5.1+ */
+  background: -o-radial-gradient(center, ellipse cover,  $p0 0%,$p75 75%,$p100 100%); /* Opera 12+ */
+  background: -ms-radial-gradient(center, ellipse cover,  $p0 0%,$p75 75%,$p100 100%); /* IE10+ */
+  background: radial-gradient(center, ellipse cover,  $p0 0%,$p75 75%,$p100 100%); /* W3C */
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#{$p0}', endColorstr='#{$p100}',GradientType=1 ); /* IE6-9 fallback on horizontal gradient */
+}
+
 .chrome {
+  @include radial-gradient(#ffffff, #f1f4f6, #e6e9ed);
   border-bottom: 1px solid #6f7072;
-  @include gradient(rgba(247, 247, 250, 1.0), rgba(220, 223, 227, 1.0));
 }
 
 .inset-chrome {
   @include gradient(rgba(247, 247, 250, 1.0), rgba(220, 223, 227, 1.0));
-  box-shadow: 0 1px 0 rgba(169, 169, 169, 1.0);
+  box-shadow: 0 1px 0 rgba(169, 169, 169, 1.0) inset;
 }
 
 .headerwrap {
@@ -147,7 +166,7 @@ body {
   padding: 20px 10px;
 }
 .narrow-section {
-  padding: 5px;
+  line-height: 30px;
 }
 
 div.ui-joy-button.grey-action {

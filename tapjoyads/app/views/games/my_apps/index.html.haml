@@ -15,10 +15,8 @@
               .title.elip
                 = external_publisher.app_name
               .app-summary.clearfix
-                .rank
-                  =image_tag("games/thumbs-up.png")
-                .friends
-                  =image_tag("games/social.png")
+                .ui-icon.score
+                .ui-icon.social
             .ft
               - currency = external_publisher.currencies.first
               - link_to(games_my_app_path(currency[:id])) do

@@ -42,10 +42,12 @@
   };
 
   $(function () {
-    // keyboard keys 1,2,3... etc change the breakpoint
+    // keyboard keys 1,2,3... etc change the media queries
     var responsive_keys = function () {
       var response_iframe = $("<iframe style='display:none; height:2000px; border:0px;' src='" + document.location.href + "'/>")
         , initial_title = $("title").html()
+        , ZERO = 48
+        , NINE = 57
         ;
       $("body").append(response_iframe);
 
@@ -55,7 +57,7 @@
           , breakpoint
           ;
         // 48 is keycode for 0 key, 57 is keycode for 9
-        code = code < 57 && code > 48 ? code - 48 : false;
+        code = code < NINE && code > ZERO ? code - ZERO : false;
         breakpoint = breakpoints[code] || "";
         
         if (!breakpoint) {

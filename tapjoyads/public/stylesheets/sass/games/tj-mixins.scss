@@ -98,7 +98,7 @@ $mobile-scaledown-multiplier: 2;
   background: -o-linear-gradient(top,  $p0 0%,$p25 25%,$p75 75%,$p100 100%); /* Opera 11.10+ */
   background: -ms-linear-gradient(top,  $p0 0%,$p25 25%,$p75 75%,$p100 100%); /* IE10+ */
   background: linear-gradient(top,  $p0 0%,$p25 25%,$p75 75%,$p100 100%); /* W3C */
-  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='$p0', endColorstr='$p100',GradientType=0 ); /* IE6-9 */
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#{$p0}', endColorstr='#{$p100}',GradientType=0 ); /* IE6-9 */
   }
 @mixin gradient($from, $to){
   background: -moz-linear-gradient(top, $from 0%, $to 100%);
