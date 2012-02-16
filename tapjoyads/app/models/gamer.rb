@@ -146,7 +146,7 @@ class Gamer < ActiveRecord::Base
   end
 
   def favorite_apps
-    FavoriteApp.find_all_by_gamer_id(self.id).map(&:app_id)
+    FavoriteApp.new(:key => "#{self.id}").app_ids
   end
 
   private

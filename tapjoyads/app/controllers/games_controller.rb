@@ -112,6 +112,10 @@ class GamesController < ApplicationController
 
   private
 
+  def render_json_error(errors, status = 403)
+    render(:json => { :success => false, :error => errors }, :status => status)
+  end
+
   def current_gamer_session
     @current_gamer_session ||= GamerSession.find
   end
@@ -191,5 +195,15 @@ class GamesController < ApplicationController
     @os_version ||= HeaderParser.os_version(request.user_agent)
   end
 
+  def set_profile
+    if current_gamer.present?
+      @gamer = current_gamer
+      @gamer_profile = @gamer.gamer_profile || GamerProfile.new(:gamer => @gamer)
+      @gamer.gamer_profile = @gamer_profile
+    else
+      flash[:error] = "Please log in and try again. You must have cookies enabled."
+      redirect_to games_root_path
+    end
+  end
 
 end

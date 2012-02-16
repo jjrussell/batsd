@@ -135,32 +135,4 @@ describe Games::GamersController do
       (Time.zone.now - @gamer.deactivated_at).should < 60
     end
   end
-
-  describe 'favorite_app' do
-    before :each do
-      @gamer = Factory(:gamer)
-      @controller.stubs(:current_gamer).returns(@gamer)
-      @app = Factory(:app)
-      @params = {
-        :app_id => @app.id,
-      }
-    end
-
-    it 'should return failure when no app is provided' do
-      get('favorite_app')
-      should_respond_with_json_error(403)
-    end
-
-    it 'should favorite an app when one is provided' do
-      FavoriteApp.expects(:add_favorite_app).once.with(@gamer.id, @app.id)
-      get('favorite_app', @params)
-      should_respond_with_json_success(200)
-    end
-
-    it 'should unmark an app as a favorite when delete param is provided' do
-      FavoriteApp.expects(:delete_favorite_app).once.with(@gamer.id, @app.id)
-      get('favorite_app', @params.merge(:delete => 'true'))
-      should_respond_with_json_success(200)
-    end
-  end
 end
