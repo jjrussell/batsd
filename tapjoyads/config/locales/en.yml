@@ -1,44 +1,38 @@
+---
 en:
   activerecord:
     errors:
       full_messages:
         format: "%{attribute} %{message}"
       messages:
-        accepted: must be accepted
-        blank: can't be blank
-        confirmation: doesn't match confirmation
-        empty: can't be empty
-        equal_to: must be equal to %{count}
-        even: must be even
-        exclusion: is reserved
-        greater_than: must be greater than %{count}
-        greater_than_or_equal_to: must be greater than or equal to %{count}
-        inclusion: is not included in the list
-        invalid: is invalid
-        less_than: must be less than %{count}
-        less_than_or_equal_to: must be less than or equal to %{count}
-        not_a_number: is not a number
-        not_an_integer: must be an integer
-        odd: must be odd
+        accepted: "must be accepted"
+        blank: "can't be blank"
+        confirmation: "doesn't match confirmation"
+        empty: "can't be empty"
+        equal_to: "must be equal to %{count}"
+        even: "must be even"
+        exclusion: "is reserved"
+        greater_than: "must be greater than %{count}"
+        greater_than_or_equal_to: "must be greater than or equal to %{count}"
+        inclusion: "is not included in the list"
+        invalid: "is invalid"
+        less_than: "must be less than %{count}"
+        less_than_or_equal_to: "must be less than or equal to %{count}"
+        not_a_number: "is not a number"
+        not_an_integer: "must be an integer"
+        odd: "must be odd"
         record_invalid: "Validation failed: %{errors}"
-        taken: has already been taken
-        too_long: is too long (maximum is %{count} characters)
-        too_short: is too short (minimum is %{count} characters)
-        wrong_length: is the wrong length (should be %{count} characters)
+        taken: "has already been taken"
+        too_long: "is too long (maximum is %{count} characters)"
+        too_short: "is too short (minimum is %{count} characters)"
+        wrong_length: "is the wrong length (should be %{count} characters)"
       template:
         body: "There were problems with the following fields:"
         header:
-          one: 1 error prohibited this %{model} from being saved
+          one: "1 error prohibited this %{model} from being saved"
           other: "%{count} errors prohibited this %{model} from being saved"
   date:
-    abbr_day_names:
-      Sun
-      Mon
-      Tue
-      Wed
-      Thu
-      Fri
-      Sat
+    abbr_day_names: "Sun Mon Tue Wed Thu Fri Sat"
     abbr_month_names:
       - ~
       - Jan
@@ -53,14 +47,7 @@ en:
       - Oct
       - Nov
       - Dec
-    day_names:
-      Sunday
-      Monday
-      Tuesday
-      Wednesday
-      Thursday
-      Friday
-      Saturday
+    day_names: "Sunday Monday Tuesday Wednesday Thursday Friday Saturday"
     formats:
       default: "%Y-%m-%d"
       long: "%B %d, %Y"
@@ -86,38 +73,38 @@ en:
   datetime:
     distance_in_words:
       about_x_hours:
-        one: about 1 hour
-        other: about %{count} hours
+        one: "about 1 hour"
+        other: "about %{count} hours"
       about_x_months:
-        one: about 1 month
-        other: about %{count} months
+        one: "about 1 month"
+        other: "about %{count} months"
       about_x_years:
-        one: about 1 year
-        other: about %{count} years
+        one: "about 1 year"
+        other: "about %{count} years"
       almost_x_years:
-        one: almost 1 year
-        other: almost %{count} years
-      half_a_minute: half a minute
+        one: "almost 1 year"
+        other: "almost %{count} years"
+      half_a_minute: "half a minute"
       less_than_x_minutes:
-        one: less than a minute
-        other: less than %{count} minutes
+        one: "less than a minute"
+        other: "less than %{count} minutes"
       less_than_x_seconds:
-        one: less than 1 second
-        other: less than %{count} seconds
+        one: "less than 1 second"
+        other: "less than %{count} seconds"
       over_x_years:
-        one: over 1 year
-        other: over %{count} years
+        one: "over 1 year"
+        other: "over %{count} years"
       x_days:
-        one: 1 day
+        one: "1 day"
         other: "%{count} days"
       x_minutes:
-        one: 1 minute
+        one: "1 minute"
         other: "%{count} minutes"
       x_months:
-        one: 1 month
+        one: "1 month"
         other: "%{count} months"
       x_seconds:
-        one: 1 second
+        one: "1 second"
         other: "%{count} seconds"
     prompts:
       day: Day
@@ -129,46 +116,46 @@ en:
   errors:
     format: "%{attribute} %{message}"
     messages:
-      accepted: must be accepted
-      blank: can't be blank
-      confirmation: doesn't match confirmation
-      empty: can't be empty
-      equal_to: must be equal to %{count}
-      even: must be even
-      exclusion: is reserved
-      greater_than: must be greater than %{count}
-      greater_than_or_equal_to: must be greater than or equal to %{count}
-      inclusion: is not included in the list
-      invalid: is invalid
-      less_than: must be less than %{count}
-      less_than_or_equal_to: must be less than or equal to %{count}
-      not_a_number: is not a number
-      not_an_integer: must be an integer
-      odd: must be odd
-      too_long: is too long (maximum is %{count} characters)
-      too_short: is too short (minimum is %{count} characters)
-      wrong_length: is the wrong length (should be %{count} characters)
+      accepted: "must be accepted"
+      blank: "can't be blank"
+      confirmation: "doesn't match confirmation"
+      empty: "can't be empty"
+      equal_to: "must be equal to %{count}"
+      even: "must be even"
+      exclusion: "is reserved"
+      greater_than: "must be greater than %{count}"
+      greater_than_or_equal_to: "must be greater than or equal to %{count}"
+      inclusion: "is not included in the list"
+      invalid: "is invalid"
+      less_than: "must be less than %{count}"
+      less_than_or_equal_to: "must be less than or equal to %{count}"
+      not_a_number: "is not a number"
+      not_an_integer: "must be an integer"
+      odd: "must be odd"
+      too_long: "is too long (maximum is %{count} characters)"
+      too_short: "is too short (minimum is %{count} characters)"
+      wrong_length: "is the wrong length (should be %{count} characters)"
   helpers:
     select:
-      prompt: Please select
+      prompt: "Please select"
     submit:
-      create: Create %{model}
-      submit: Save %{model}
-      update: Update %{model}
+      create: "Create %{model}"
+      submit: "Save %{model}"
+      update: "Update %{model}"
   number:
     currency:
       format:
         delimiter: ","
         format: "%u%n"
         precision: 2
-        separator: .
+        separator: "."
         significant: false
         strip_insignificant_zeros: false
         unit: $
     format:
       delimiter: ","
       precision: 3
-      separator: .
+      separator: "."
       significant: false
       strip_insignificant_zeros: false
     human:
@@ -208,165 +195,149 @@ en:
       two_words_connector: " and "
       words_connector: ", "
     select:
-      prompt: Please select
+      prompt: "Please select"
   text:
     featured:
       download: Download
-      download_and_run: Just download and run
-      earn_currency: Earn %{amount_and_currency}
-      earn_now: Earn now
-      show_more_apps: Show more apps
+      download_and_run: "Just download and run"
+      earn_currency: "Earn %{amount_and_currency}"
+      earn_now: "Earn now"
+      show_more_apps: "Show more apps"
       skip: Skip
-      title: Earn %{currency}
-      try_out: Try out
+      title: "Earn %{currency}"
+      try_out: "Try out"
     games:
-      about_body:
-        Tapjoy allows you to discover popular apps like Happy Park, City of Wonder, Coin Dozer, Overkill, VIP Poker, and Gun Bros, while accessing premium content in your favorite apps. It recommends new apps to you so if you like playing Magic Zoo, Tapjoy will suggest other games you'll enjoy, like Safari Zoo or Bug Village HD. So sign up now, and tap into a better way to find the apps you love.
+      about_body: "Tapjoy allows you to discover popular apps like Happy Park, City of Wonder, Coin Dozer, Overkill, VIP Poker, and Gun Bros, while accessing premium content in your favorite apps. It recommends new apps to you so if you like playing Magic Zoo, Tapjoy will suggest other games you'll enjoy, like Safari Zoo or Bug Village HD. So sign up now, and tap into a better way to find the apps you love."
       about_title: "\"Somehow it knows exactly what apps I like.\""
-      account_created_body: Your Tapjoy account was successfully created!
+      account_created_body: "Your Tapjoy account was successfully created!"
       account_created_title: Success!
-      action_required: Action Required!
-      add_to_homescreen: Add %{tapjoy} to your home screen.
-      advertisers_body: Reach millions of users and gain exposure for your products
+      action_required: "Action Required!"
+      add_to_homescreen: "Add %{tapjoy} to your home screen."
+      advertisers_body: "Reach millions of users and gain exposure for your products"
       advertisers_title: Advertisers
-      allow_marketing_emails: Allow Tapjoy to send me marketing emails
+      allow_marketing_emails: "Allow Tapjoy to send me marketing emails"
       already_registered:
         one: "%{name} has already registered, you are now following him/her."
         other: "%{name} have already registered, you are now following them."
-      back_to_top: Back to Top
+      back_to_top: "Back to Top"
       birthdate: Birthdate
-      call_to_action_body:
-        A better way to love the apps you have and find the apps you'll love
-      call_to_action_title: Unlock Mobile Joy
-      cant_fetch_offers: There was an issue fetching more offers. Please try again.
-      change_linked_account: Change Linked Account
-      connect_my_device: Connect My Device
-      connect_your_android: Please connect your Android device
-      connect_your_device: Please connect your device
+      call_to_action_body: "A better way to love the apps you have and find the apps you'll love"
+      call_to_action_title: "Unlock Mobile Joy"
+      cant_fetch_offers: "There was an issue fetching more offers. Please try again."
+      change_linked_account: "Change Linked Account"
+      connect_my_device: "Connect My Device"
+      connect_your_android: "Please connect your Android device"
+      connect_your_device: "Please connect your device"
       deactivate: Deactivate
-      del_acct_confirm:
-        Click on the button below to deactivate your account. Once an account has been deactivated for %{days_before_deletion} days, it will be completely deleted. We cannot recover your account once it has been deleted.
-      delete_my_account: Delete My Account
-      developers_body:
-        Drive significant revenue to your apps with our monetization tools
+      del_acct_confirm: "Click on the button below to deactivate your account. Once an account has been deactivated for %{days_before_deletion} days, it will be completely deleted. We cannot recover your account once it has been deleted."
+      delete_my_account: "Delete My Account"
+      developers_body: "Drive significant revenue to your apps with our monetization tools"
       developers_title: Developers
-      earn: Earn %{currency}
-      earn_title:
-        Complete any of the offers below to earn %{currency} for %{app_name}
-      enable_javascript:
-        Please go into your browser settings and enable JavaScript to continue using Tapjoy.
-      enter_birthdate: Please enter your birthdate
-      enter_email: Please enter your email address
-      enter_password: Please enter a password
-      enter_platform: Please choose iOS or Android
-      enter_tos: Please agree to the terms and conditions above
-      enter_valid_email: Enter a valid email address
-      favorite_app: Favorite App
-      favorite_category: Favorite Category
-      follow_us: follow us
-      forgot_pass: Forgot Password?
+      earn: "Earn %{currency}"
+      earn_title: "Complete any of the offers below to earn %{currency} for %{app_name}"
+      enable_javascript: "Please go into your browser settings and enable JavaScript to continue using Tapjoy."
+      enter_birthdate: "Please enter your birthdate"
+      enter_email: "Please enter your email address"
+      enter_password: "Please enter a password"
+      enter_platform: "Please choose iOS or Android"
+      enter_tos: "Please agree to the terms and conditions above"
+      enter_valid_email: "Enter a valid email address"
+      favorite_app: "Favorite App"
+      favorite_category: "Favorite Category"
+      follow_us: "follow us"
+      forgot_pass: "Forgot Password?"
       free!: Free!
-      generic_issue: There was an issue. Please try again.
-      get_it: Get it!
-      grant_us_access:
-        Please authorize us/grant us both permissions before sending out an invite.
-      how_it_works_body:
-        All your games are listed below. Click the buttons next to the apps to
-        start earning currency.
-      how_it_works_title: How does it work?
-      install_and_run: Install and run %{name}
-      invite: Invite Your Friends!
+      generic_issue: "There was an issue. Please try again."
+      get_it: "Get it!"
+      grant_us_access: "Please authorize us/grant us both permissions before sending out an invite."
+      how_it_works_body: "All your games are listed below. Click the buttons next to the apps to start earning currency."
+      how_it_works_title: "How does it work?"
+      install_and_run: "Install and run %{name}"
+      invite: "Invite Your Friends!"
       invite_email_body: |-
-        %{name} has invited you to join Tapjoy, the BEST place to find the hottest new apps. Signing up is free and you'll be able discover the best apps on iOS and Android, while also earning currency in your favorite apps.
+          %{name} has invited you to join Tapjoy, the BEST place to find the hottest new apps. Signing up is free and you'll be able discover the best apps on iOS and Android, while also earning currency in your favorite apps.
 
-        No need to wade through thousands of apps in the App Store or the Android Market to find your next download. Tapjoy has you covered and recommends apps we know you'll like.
+          No need to wade through thousands of apps in the App Store or the Android Market to find your next download. Tapjoy has you covered and recommends apps we know you'll like.
 
-        To get started, create your account here:
-      invite_email_greet: Hi,
-      invite_email_signature: Team Tapjoy
+          To get started, create your account here:
+      invite_email_greet: "Hi,"
+      invite_email_signature: "Team Tapjoy"
       invite_friends:
         one: Invite
-        other: Invite %{count} friends
-      invite_title: Send an Email Invite
+        other: "Invite %{count} friends"
+      invite_title: "Send an Email Invite"
       invites_sent_to:
-        one: A Tapjoy invite has been sent to %{name}
-        other: Tapjoy invites have been sent to %{name}
-      issue_registering: There was an issue registering your account
-      link_my_facebook: Link My Facebook
-      load_more: Load More
-      member_since: Member since %{date}
-      meta_description:
-        "Tapjoy: The destination for mobile apps and games on Android, iPhone and iPad."
-      meta_keywords:
-        games, mobile games, mobile apps, ios, android, iphone, ipad, itouch
-      more_apps: More Apps
-      my_apps: My Apps
-      none_selected: None Selected
+        one: "A Tapjoy invite has been sent to %{name}"
+        other: "Tapjoy invites have been sent to %{name}"
+      issue_registering: "There was an issue registering your account"
+      link_my_facebook: "Link My Facebook"
+      load_more: "Load More"
+      member_since: "Member since %{date}"
+      meta_description: "Tapjoy: The destination for mobile apps and games on Android, iPhone and iPad."
+      meta_keywords: "games, mobile games, mobile apps, ios, android, iphone, ipad, itouch"
+      more_apps: "More Apps"
+      my_apps: "My Apps"
+      none_selected: "None Selected"
       oops: Oops!
-      our_tos_changed:
-        Our %{terms_of_use} have changed. Please review and indicate your agreement below.
-      privacy_policy_href: privacy policy
-      provide_other_email: Please provide an email other than yourself
-      recipients_label: Use commas to separate multiple emails
+      our_tos_changed: "Our %{terms_of_use} have changed. Please review and indicate your agreement below."
+      privacy_policy_href: "privacy policy"
+      provide_other_email: "Please provide an email other than yourself"
+      recipients_label: "Use commas to separate multiple emails"
       recommendations: Recommendations
       registering: Registering
-      select_current_device: Please select your current device
-      select_device: Please select your device
-      select_friend: Please select at least one friend before sending out an invite
-      social_networks: Social Networks
-      social_settings: Social Settings
-      tap_that: Just tap %{icon} and select %{button}
-      tapjoy_picks: Tapjoy Picks
-      terms_of_use_href: terms of use
-      tos_acknowledge_html:
-        By checking this box I assert that I agree to the %{terms_of_use} & %{privacy_policy}
-      tos_change_acknowledge:
-        By checking this box I assert that I agree to the terms of service.
-      unable_to_process: Sorry we are unable to process your request
-      wifi_required: WiFi Required
-      wrong_device: wrong device?
+      select_current_device: "Please select your current device"
+      select_device: "Please select your device"
+      select_friend: "Please select at least one friend before sending out an invite"
+      social_networks: "Social Networks"
+      social_settings: "Social Settings"
+      tap_that: "Just tap %{icon} and select %{button}"
+      tapjoy_picks: "Tapjoy Picks"
+      terms_of_use_href: "terms of use"
+      tos_acknowledge_html: "By checking this box I assert that I agree to the %{terms_of_use} & %{privacy_policy}"
+      tos_change_acknowledge: "By checking this box I assert that I agree to the terms of service."
+      unable_to_process: "Sorry we are unable to process your request"
+      wifi_required: "WiFi Required"
+      wrong_device: "wrong device?"
     instructions:
       amount_and_currency: "%{amount} %{currency}"
-      continue_link: Click here to continue.
+      continue_link: "Click here to continue."
       download_action: here
-      download_link:
-        If you don't have this app, click %{download_action} to download it.
-      earn_currency: Earn %{amount_and_currency}
-      footer: After completing these steps, you will earn %{amount_and_currency}.
+      download_link: "If you don't have this app, click %{download_action} to download it."
+      earn_currency: "Earn %{amount_and_currency}"
+      footer: "After completing these steps, you will earn %{amount_and_currency}."
       header: "Follow these steps to earn %{currency}:"
       title: Instructions
     offerwall:
-      buy_currency: Buy %{amount} %{currency}
-      earn_currency: Earn %{amount} %{currency}
+      buy_currency: "Buy %{amount} %{currency}"
+      earn_currency: "Earn %{amount} %{currency}"
       free: Free
-      instructions: Engage in any of the following actions to receive %{currency}
-      instructions_non_rewarded: Discover what's hot on Tapjoy!
-      load_error: Please try again.
-      load_more: Load some more!
+      instructions: "Engage in any of the following actions to receive %{currency}"
+      instructions_non_rewarded: "Discover what's hot on Tapjoy!"
+      load_error: "Please try again."
+      load_more: "Load some more!"
       loading: Loading...
-      missing_currency: Missing %{currency}?
-      next: Next %{items}
-      popular_apps: Popular Apps
-      previous: Previous %{items}
-      title: Earn %{currency}
-      wifi_required: Wifi Required
-      wifi_warning: This app requires a wifi connection to download.
+      missing_currency: "Missing %{currency}?"
+      next: "Next %{items}"
+      popular_apps: "Popular Apps"
+      previous: "Previous %{items}"
+      title: "Earn %{currency}"
+      wifi_required: "Wifi Required"
+      wifi_warning: "This app requires a wifi connection to download."
     shared:
-      about_link: About Tapjoy
-      ads_by: Ads by
+      about_link: "About Tapjoy"
+      ads_by: "Ads by"
       android: Android
       back: Back
       blog: Blog
       cancel: Cancel
       city: City
-      confirm_password: Confirm Password
+      confirm_password: "Confirm Password"
       continue: Continue
-      copyright:
-        Copyright &copy; %{year} Tapjoy, Inc. All Rights Reserved. Tapjoy and the Tapjoy logo are trademarks or registered trademarks of Tapjoy, Inc.  All third party logos and trademarks mentioned are the property of their respective owners.
+      copyright: "Copyright &copy; %{year} Tapjoy, Inc. All Rights Reserved. Tapjoy and the Tapjoy logo are trademarks or registered trademarks of Tapjoy, Inc.  All third party logos and trademarks mentioned are the property of their respective owners."
       country: Country
       day: Day
       email: Email
-      facebook_profile: Facebook profile
+      facebook_profile: "Facebook profile"
       female: Female
       followers: Follower
       following: Following
@@ -376,14 +347,14 @@ en:
       invite: Invite
       ios: iOS
       login_noun: Login
-      login_verb: Log In
-      logout: Log Out
+      login_verb: "Log In"
+      logout: "Log Out"
       male: Male
       month: Month
-      my_account: My Account
-      my_profile: My Profile
+      my_account: "My Account"
+      my_profile: "My Profile"
       name: Name
-      new_password: New Password
+      new_password: "New Password"
       nickname: Nickname
       ok: OK
       options: Options
@@ -391,44 +362,37 @@ en:
       password: Password
       preferences: Preferences
       privacy: Privacy
-      privacy_policy: Privacy Policy
+      privacy_policy: "Privacy Policy"
       recipients: Recipients
-      reset_password: Reset Password
+      reset_password: "Reset Password"
       save: Save
       share: Share
-      sign_in: Sign In
-      sign_up: Sign Up
+      sign_in: "Sign In"
+      sign_up: "Sign Up"
       success: Success!
-      try_again: Try Again
+      try_again: "Try Again"
       updating: Updating
       year: Year
-      zip_postal: Zip/Postal Code
+      zip_postal: "Zip/Postal Code"
     support:
-      abuse_warning:
-        This form is strictly for users who have not been rewarded for a completed offer. Abuse of this page may lead to your account being banned from engaging in offers in the future.
+      abuse_warning: "This form is strictly for users who have not been rewarded for a completed offer. Abuse of this page may lead to your account being banned from engaging in offers in the future."
       description_label: "Description:"
       email_address_label: "Email address:"
-      instructions_1:
-        Please select the offer you completed without receiving %{currency} and enter your email address.
-      instructions_2:
-        If you submit a ticket with incomplete information, it will result in a delay in getting your issue resolved. Priority is given to tickets with complete information.
-      invalid_email: Please enter a real email address.
-      missing_description: Please describe the offer you completed.
-      missing_offer: You must specify the offer you completed.
-      no_incomplete_offers_label: No suitable offers were found.
-      select_offer: Select Offer
+      instructions_1: "Please select the offer you completed without receiving %{currency} and enter your email address."
+      instructions_2: "If you submit a ticket with incomplete information, it will result in a delay in getting your issue resolved. Priority is given to tickets with complete information."
+      invalid_email: "Please enter a real email address."
+      missing_description: "Please describe the offer you completed."
+      missing_offer: "You must specify the offer you completed."
+      no_incomplete_offers_label: "No suitable offers were found."
+      select_offer: "Select Offer"
       specify_offer_label: "Specify offer:"
-      submit_support_request: Submit Support Request
-      support_request_submitted: Support Request Submitted
-      thanks:
-        Thanks for submitting your support request! You will receive your
-        %{currency} after we have verified that you completed the offer.
-      title: Missing %{currency}?
+      submit_support_request: "Submit Support Request"
+      support_request_submitted: "Support Request Submitted"
+      thanks: "Thanks for submitting your support request! You will receive your %{currency} after we have verified that you completed the offer."
+      title: "Missing %{currency}?"
     unavailable_offer:
-      message:
-        We're sorry but %{offer} is no longer available. You can return to the
-        previous page and refresh to view the latest offer list.
-      optional_message: Or, click here to download %{offer} anyway.
+      message: "We're sorry but %{offer} is no longer available. You can return to the previous page and refresh to view the latest offer list."
+      optional_message: "Or, click here to download %{offer} anyway."
   time:
     am: am
     formats:

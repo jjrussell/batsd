@@ -1,0 +1,117 @@
+%tr.admin
+  %th
+    = f.label(:carriers, "Carrier Targeting")
+    #help_carrier_targeting.help ?
+  %td
+    = f.hidden_field(:carriers, :id => 'offer_carriers')
+    = error_message_on @offer, :carriers
+    #change_carriers
+      = label_tag :carrier_targeting_off, 'All Carriers'
+      = radio_button_tag('carrier_targeting', 'off', @offer.carriers.blank?)
+      &nbsp;
+      = label_tag :carrier_targeting_on, 'Some Carriers'
+      = radio_button_tag('carrier_targeting', 'on', !@offer.carriers.blank?)
+      - carrier_selector_class = @offer.carriers.blank? ? 'hidden' : ''
+      %ul#carrier_checkboxes{:class => carrier_selector_class}
+        - Carriers::COUNTRY_NAME_TO_CARRIER_NAME.keys.sort.each do |country_name|
+          %li
+            - carrier_set = @offer.get_carriers
+            - none_checked = (Set.new(Carriers::COUNTRY_NAME_TO_CARRIER_NAME[country_name]) & carrier_set).empty?
+            - class_name = none_checked ? 'carrier-label' : 'carrier-label some-checked'
+            - if none_checked
+              .expander.ui-icon.ui-icon-triangle-1-e
+            - else
+              .expander.ui-icon.ui-icon-triangle-1-s
+            = label_tag "country_#{country_name}", country_name, :class => class_name
+            %ul.inner{:class => none_checked ? 'hidden' : ''}
+              - Carriers::COUNTRY_NAME_TO_CARRIER_NAME[country_name].each do |carrier|
+                %li
+                  - checked = carrier_set.include?(carrier)
+                  = check_box_tag "carrier_#{carrier}", '1', checked,
+                      :class => 'carrier', :carrier_name => carrier
+                  = label_tag "carrier_#{carrier}", carrier
+
+.hidden
+  #help_carrier_targeting_content{ :name => 'Carrier Targeting' } Target this offer to specific carriers.
+
+- content_for :page_styles do
+  :plain
+    #change_carriers {
+      margin-top: 4px;
+    }
+
+    #change_carriers>ul {
+      max-height: 300px;
+      overflow: auto;
+      margin: 10px 0;
+      padding: 0;
+      border-left: 1px dotted black;
+    }
+
+    #change_carriers li {
+      list-style: none;
+    }
+
+    #carrier_checkboxes.expander {
+      width: 16px;
+      height: 16px;
+      display: inline-block;
+    }
+
+    #carrier_checkboxes.some-checked {
+      font-weight: bold;
+      font-style: italic;
+    }
+    #carrier_checkboxes.test {
+      display: block;
+    }
+
+- content_for :page_javascript do
+  :plain
+    $(function($){
+      var setCarriers = function() {
+        carriers = [];
+        if($('#carrier_targeting_on').attr('checked')) {
+          $('input.carrier').each(function() {
+            if($(this).attr('checked')) {
+              carriers.push($(this).attr('carrier_name'));
+            }
+          });
+        }
+        if(carriers.length == 0) {
+          $('#offer_carriers').val('');
+        } else {
+          $('#offer_carriers').val('["' + carriers.join('","') + '"]');
+        }
+      };
+
+      $('#carrier_checkboxes.expander').click(function() {
+        $(this).parent().find('.inner').toggle();
+        $(this).toggleClass('ui-icon-triangle-1-e');
+        $(this).toggleClass('ui-icon-triangle-1-s');
+      });
+
+      $('input.carrier').click(function() {
+        noneChecked = true;
+        $(this).parent().parent().find('.carrier').each(function() {
+          if($(this).attr('checked')) {
+            noneChecked = false;
+          }
+        });
+        if(noneChecked) {
+          $(this).parent().parent().parent().find('.carrier-label').removeClass('some-checked');
+        } else {
+          $(this).parent().parent().parent().find('.carrier-label').addClass('some-checked');
+        }
+        setCarriers();
+      });
+
+      $('#carrier_targeting_on').click(function(){
+        $('#carrier_checkboxes').slideDown();
+        setCarriers();
+      });
+      $('#carrier_targeting_off').click(function(){
+        $('#carrier_checkboxes').slideUp();
+        setCarriers();
+      });
+    });
