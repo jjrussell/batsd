@@ -1,16 +1,23 @@
 # See http://unicorn.bogomips.org/Unicorn/Configurator.html for complete
 # documentation.
-app_dir = "/home/webuser/tapjoyserver/tapjoyads"
+
 server_type = `/home/webuser/tapjoyserver/server/server_type.rb`
-worker_processes %w(test util web).include?(server_type) ? 18 : 36
+big_server = %w(masterjobs jobs).include?(server_type)
+
+app_dir = "/home/webuser/tapjoyserver/tapjoyads"
 working_directory app_dir
+
+if big_server
+  worker_processes 36
+  timeout 43200
+else
+  worker_processes 8
+  timeout 90
+end
 
 # Load app into the master before forking workers for super-fast
 # worker spawn times
 preload_app true
-
-# kill workers if they have been stuck on a request for too long
-timeout %w(masterjobs jobs).include?(server_type) ? 43200 : 90
 
 # listen on both a Unix domain socket and a TCP port,
 # we use a shorter backlog for quicker failover when busy
@@ -19,7 +26,7 @@ listen "/tmp/tapjoy.socket"
 # feel free to point this anywhere accessible on the filesystem
 user 'webuser', 'webuser'
 
-pid "#{app_dir}/pids/unicorn.pid"
+pid "#{app_dir}/pids/unicorn_#{Process.pid}.pid"
 stderr_path "/mnt/log/unicorn/stderr.log"
 stdout_path "/mnt/log/unicorn/stdout.log"
 
@@ -45,14 +52,14 @@ before_fork do |server, worker|
   #
   # Using this method we get 0 downtime deploys.
 
-  old_pid = "#{server.config[:pid]}.oldbin"
-
-  if File.exists?(old_pid) && server.pid != old_pid
-    begin
-      sig = (worker.nr + 1) >= server.worker_processes ? :QUIT : :TTOU
-      Process.kill(sig, File.read(old_pid).to_i)
-    rescue Errno::ENOENT, Errno::ESRCH
-      # someone else did our job for us
+  Dir.glob("#{app_dir}/pids/*.oldbin").each do |old_pid|
+    if File.exists?(old_pid) && server.pid != old_pid
+      begin
+        sig = (worker.nr + 1) >= server.worker_processes ? :QUIT : :TTOU
+        Process.kill(sig, File.read(old_pid).to_i)
+      rescue Errno::ENOENT, Errno::ESRCH
+        # someone else did our job for us
+      end
     end
   end
 end

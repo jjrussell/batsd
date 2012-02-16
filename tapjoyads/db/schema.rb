@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120124191839) do
+ActiveRecord::Schema.define(:version => 20120216172034) do
 
   create_table "action_offers", :id => false, :force => true do |t|
     t.string   "id",                    :limit => 36,                    :null => false
@@ -22,6 +22,7 @@ ActiveRecord::Schema.define(:version => 20120124191839) do
     t.datetime "updated_at"
     t.string   "variable_name",                                          :null => false
     t.string   "prerequisite_offer_id", :limit => 36
+    t.integer  "price",                               :default => 0
   end
 
   add_index "action_offers", ["app_id"], :name => "index_action_offers_on_app_id"
@@ -156,7 +157,6 @@ ActiveRecord::Schema.define(:version => 20120124191839) do
     t.string   "name"
     t.integer  "conversion_rate",                                                                        :default => 100,   :null => false
     t.integer  "initial_balance",                                                                        :default => 0,     :null => false
-    t.boolean  "has_virtual_goods",                                                                      :default => false, :null => false
     t.boolean  "only_free_offers",                                                                       :default => false, :null => false
     t.boolean  "send_offer_data",                                                                        :default => false, :null => false
     t.string   "secret_key"
@@ -624,11 +624,11 @@ ActiveRecord::Schema.define(:version => 20120124191839) do
     t.text     "regions",                                                                                          :null => false
     t.boolean  "instructions_overridden",                                                       :default => false, :null => false
     t.boolean  "tapjoy_sponsored",                                                              :default => false, :null => false
-    t.boolean  "tj_games_only",                                                                 :default => false, :null => false
     t.boolean  "wifi_only",                                                                     :default => false, :null => false
     t.text     "approved_banner_creatives"
     t.text     "approved_sources",                                                                                 :null => false
     t.boolean  "sdkless",                                                                       :default => false
+    t.text     "carriers",                                                                                         :null => false
   end
 
   add_index "offers", ["id"], :name => "index_offers_on_id", :unique => true

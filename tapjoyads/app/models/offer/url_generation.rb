@@ -86,7 +86,7 @@ module Offer::UrlGeneration
     viewed_at          = options.delete(:viewed_at)          { |k| raise "#{k} is a required argument" }
     displayer_app_id   = options.delete(:displayer_app_id)   { nil }
     exp                = options.delete(:exp)                { nil }
-    country_code       = options.delete(:country_code)       { nil }
+    primary_country    = options.delete(:primary_country)    { nil }
     language_code      = options.delete(:language_code)      { nil }
     display_multiplier = options.delete(:display_multiplier) { 1 }
     device_name        = options.delete(:device_name)        { nil }
@@ -125,7 +125,7 @@ module Offer::UrlGeneration
       :app_version        => app_version,
       :viewed_at          => viewed_at.to_f,
       :currency_id        => currency_id,
-      :country_code       => country_code,
+      :primary_country    => primary_country,
       :displayer_app_id   => displayer_app_id,
       :exp                => exp,
       :language_code      => language_code,
@@ -146,8 +146,7 @@ module Offer::UrlGeneration
       url = "#{use_cloudfront ? CLOUDFRONT_URL : "https://s3.amazonaws.com/#{BucketNames::TAPJOY}"}/#{banner_creative_path(size)}"
     else
       display_multiplier = (display_multiplier || 1).to_f
-      # TO REMOVE: displayer_app_id param after rollout.
-      url = "#{API_URL}/display_ad/image?publisher_app_id=#{publisher_app_id}&advertiser_app_id=#{id}&displayer_app_id=#{publisher_app_id}&size=#{size}&display_multiplier=#{display_multiplier}&currency_id=#{currency_id}&offer_type=#{item_type}"
+      url = "#{API_URL}/display_ad/image?publisher_app_id=#{publisher_app_id}&advertiser_app_id=#{id}&size=#{size}&display_multiplier=#{display_multiplier}&currency_id=#{currency_id}&offer_type=#{item_type}"
       delim = '&'
     end
     url << "#{delim}ts=#{Time.now.to_i}" if bust_cache
@@ -181,7 +180,7 @@ module Offer::UrlGeneration
     viewed_at          = options.delete(:viewed_at)          { |k| }
     displayer_app_id   = options.delete(:displayer_app_id)   { nil }
     exp                = options.delete(:exp)                { nil }
-    country_code       = options.delete(:country_code)       { nil }
+    primary_country    = options.delete(:primary_country)    { nil }
     display_multiplier = options.delete(:display_multiplier) { 1 }
     library_version    = options.delete(:library_version)    { nil }
     language_code      = options.delete(:language_code)      { nil }
@@ -198,7 +197,7 @@ module Offer::UrlGeneration
 
     ad_url << "?advertiser_app_id=#{item_id}&publisher_app_id=#{publisher_app_id}&publisher_user_id=#{publisher_user_id}" <<
       "&udid=#{udid}&source=#{source}&offer_id=#{id}&app_version=#{app_version}&viewed_at=#{viewed_at.to_f}" <<
-      "&currency_id=#{currency_id}&country_code=#{country_code}&display_multiplier=#{display_multiplier}" <<
+      "&currency_id=#{currency_id}&primary_country=#{primary_country}&display_multiplier=#{display_multiplier}" <<
       "&library_version=#{library_version}&language_code=#{language_code}"
     ad_url << "&displayer_app_id=#{displayer_app_id}" if displayer_app_id.present?
     ad_url << "&exp=#{exp}" if exp.present?

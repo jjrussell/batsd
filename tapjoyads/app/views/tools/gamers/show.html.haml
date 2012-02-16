@@ -1,0 +1,116 @@
+%h1 Gamer Management
+= render :partial => 'search',  :locals => { :hide_table => true }
+
+#search_results
+  = render('games/gamers/header')
+
+  %table#gamer_profile.tablesorter
+    %tbody
+      %tr
+        %th Name
+        %td{ :class => @gamer.get_gamer_name.blank? ? 'blank' : '' }
+          = @gamer.get_gamer_name.blank? ? 'None specified' : @gamer.get_gamer_name
+      %tr
+        %th Gender
+        %td{ :class => @gamer.gender? ? '' : 'blank' }
+          = @gamer.gender? ? @gamer.gender : 'None specified'
+      %tr
+        %th Birthdate
+        %td{ :class => @gamer.birthdate? ? '' : 'blank' }
+          = @gamer.birthdate? ? @gamer.birthdate.to_s(:pr) : 'None specified'
+      %tr
+        %th City
+        %td{ :class => @gamer.city? ? '' : 'blank' }
+          = @gamer.city? ? @gamer.city : 'None specified'
+      %tr
+        %th Country
+        %td{ :class => @gamer.country? ? '' : 'blank' }
+          = @gamer.country? ? @gamer.country : 'None specified'
+      %tr
+        %th Postal Code
+        %td{ :class => @gamer.postal_code? ? '' : 'blank' }
+          = @gamer.postal_code? ? @gamer.postal_code : 'None specified'
+      %tr
+        %th Favorite Game
+        %td{ :class => @gamer.favorite_game? ? '' : 'blank' }
+          = @gamer.favorite_game? ? @gamer.favorite_game : 'None specified'
+      %tr
+        %th Favorite Category
+        %td{ :class => @gamer.favorite_category? ? '' : 'blank' }
+          = @gamer.favorite_category? ? @gamer.favorite_category : 'None specified'
+      %tr
+        %th Referrals
+        %td= number_with_delimiter @gamer.referral_count
+      %tr
+        %th Referred by
+        %td{ :class => @gamer.referred_by? ? '' : 'blank' }
+          - if @gamer.referred_by?
+            = @gamer.referrer_gamer.get_gamer_name
+            = surround "(", ")" do
+              = link_to @gamer.referred_by, tools_gamer_path(@gamer.referred_by)
+          - else
+            None
+      %tr
+        %th Last Login
+        %td{ :class => @gamer.last_login_at? ? '' : 'blank' }
+          = @gamer.last_login_at? ? @gamer.last_login_at.to_s(:pub_full_ampm_sec_zone) : 'Never'
+      %tr
+        %th Created
+        %td= @gamer.created_at.to_s(:pub_full_ampm_sec_zone)
+      %tr
+        %th Updated
+        %td{ :class => @gamer.updated_at? ? '' : 'blank' }
+          = @gamer.updated_at? ? @gamer.updated_at.to_s(:pub_full_ampm_sec_zone) : 'Never'
+
+  %h3 Linked Devices
+  = link_to 'Link new device', new_tools_gamer_device_path(:gamer_id => @gamer.id)
+  %table.tablesorter.devices
+    %thead
+      %tr
+        %th Device ID
+        %th Name
+        %th Type
+        %th Linked
+        %th Actions
+    %tbody
+      - @gamer.gamer_devices.each do |device|
+        %tr
+          %td= link_to device.device_id, device_info_tools_path(:udid => device.device_id)
+          %td= device.name
+          %td= device.device_type
+          %td= device.created_at.to_s(:pub_full_ampm_sec_zone)
+          %td= link_to 'Edit', edit_tools_gamer_device_path(device)
+
+- content_for :page_styles do
+  :plain
+    .gamer_name {
+      font-size: 20px;
+      font-weight: bold;
+    }
+    .gamer_email {
+      font-size: 16px;
+      font-weight: bold;
+    }
+    .gamer_signup_date {
+      font-size: 10px;
+    }
+    #profile_info_display td {
+      padding-right: 5px;
+    }
+    #gamer_profile th {
+      padding-left: 30px;
+      padding-right: 5px;
+      text-align: right;
+      white-space: nowrap;
+      width: 0%;
+    }
+    #gamer_profile td {
+      width: 100%;
+    }
+    #gamer_profile td.blank {
+      color: #AAAAAA;
+      font-style: italic;
+    }
+    #gamers_table {
+      display: none;
+    }

@@ -1,11 +1,14 @@
 class VideoOffer < ActiveRecord::Base
   include UuidPrimaryKey
+  acts_as_cacheable
 
   has_many :offers, :as => :item
   has_many :video_buttons
   has_one :primary_offer, :class_name => 'Offer', :as => :item, :conditions => 'id = item_id'
 
   belongs_to :partner
+
+  cache_associations :video_buttons
 
   validates_presence_of :partner, :name
   validates_presence_of :video_url, :unless => :new_record?
@@ -19,12 +22,12 @@ class VideoOffer < ActiveRecord::Base
 
   def update_buttons
     offers.each do |offer|
-      offer.third_party_data = xml_for_buttons if is_valid_for_update_buttons?
+      offer.third_party_data = xml_for_buttons if valid_for_update_buttons?
       offer.save! if offer.changed?
     end
   end
 
-  def is_valid_for_update_buttons?
+  def valid_for_update_buttons?
     video_buttons.enabled.size <= 2
   end
 

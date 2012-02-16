@@ -1,0 +1,110 @@
+#previews
+  - publisher_app_id = App::PREVIEW_PUBLISHER_APP_ID
+  - unable_to_show = []
+  - if @offer.featured?
+    - if !@offer.banner_creatives.empty? || @show_generated_ads
+      - width, height = params[:image_size].split("x").collect{|x|x.to_i}
+      - label = "Featured ad preview: (#{width}x#{height})"
+      - label << " <em>(Pending approval)</em>" if @offer.has_banner_creative?(params[:image_size]) and !@offer.banner_creative_approved?(params[:image_size])
+      %span.label #{label}:
+      %iframe.preview{ :src => @offer.fullscreen_ad_url(:publisher_app_id => publisher_app_id, :width => width, :height => height, :preview => true), :width => width, :height => height }
+    - else
+      - unable_to_show << "Featured"
+  - else
+    - if @offer.rewarded? # show offer wall ad
+      - if @show_generated_ads
+        Marketplace ad:
+        %div.img320x76
+          %iframe{:src => @offer.get_offers_webpage_preview_url(publisher_app_id, true), :width => '322', :height => '78', :style => 'width: 322px; height: 78px; border: none;', :frameborder => '0'}
+      - else
+        - unable_to_show << "Marketplace"
+
+    - if @offer.display_banner_ads?
+      - Offer::DISPLAY_AD_SIZES.each do |size|
+        - next if params[:only_one] && size != params[:image_size]
+        - if @show_generated_ads || @offer.has_banner_creative?(size)
+          - label = "#{size} banner ad"
+          - label << " <em>(Pending approval)</em>" if @offer.has_banner_creative?(size) and !@offer.banner_creative_approved?(size)
+          %span.label #{label}:
+          %div{:class => "img#{size}"}
+            - width, height = size.split("x").collect{|x|x.to_i}
+            = image_tag(@offer.preview_display_ad_image_url(publisher_app_id, width, height), :class => 'preview', :alt => '')
+        - else
+          - unable_to_show << "#{size} banner"
+
+  - if unable_to_show.any?
+    #unable_to_show
+      = "Unable to show the following ad#{unable_to_show.length == 1 ? '' : 's'}:"
+      %div
+        = unable_to_show.join(", ")
+      %div
+        %i
+          Please
+          = link_to('find your app', app_path(@app))
+          = "in the app store so we can generate #{unable_to_show.length == 1 ? 'this ad' : 'these ads'} using your app's icon."
+
+  - if !@offer.featured?
+    - if @offer.rewarded?
+      .banner_ad_notes
+        *Banner ads for rewarded installs are only displayed for free apps where the app name is 30 characters or less, and where the conversion rate is 30% or more.
+
+    - else
+      .banner_ad_notes
+        *To provide custom creatives for your non-rewarded ads, please contact
+        = succeed '.' do
+          = mail_to "support@tapjoy.com"
+        Please ensure images have correct dimensions. Custom ads for non-rewarded installs are only displayed for free apps.
+
+%style{ :type => 'text/css' }
+  :plain
+    #previews {
+      text-align: center;
+    }
+
+    #previews span.label em {
+      color: red;
+    }
+
+    #unable_to_show {
+      color: red;
+      min-width: 640px;
+      margin-bottom: 15px;
+    }
+
+    .banner_ad_notes {
+      font-size: 12px;
+    }
+
+    iframe.preview {
+      border: none;
+      overflow: hidden;
+    }
+
+    img.preview {
+      display: none;
+    }
+
+  - (Offer::DISPLAY_AD_SIZES + Offer::FEATURED_AD_SIZES + %w(320x480 320x76)).each do |size|
+    - width, height = size.split("x")
+    - if @show_generated_ads || @offer.banner_creatives.include?(size) # show spinner while images are loading
+      :plain
+        div.img#{size} {
+          background-image: url('/images/spinner.gif');
+          background-repeat: no-repeat;
+          background-position: center;
+        }
+    :plain
+      div.img#{size} {
+        height: #{height}px;
+        margin-bottom: 10px;
+        margin-top: 5px;
+        min-width: #{width}px;
+      }
+
+%script{ :type => 'text/javascript', :charset => 'utf-8' }
+  :plain
+    $(function($){
+      $("img.preview").load(function() {
+        this.setAttribute("style", "display: inline; border: 1px solid;");
+      });
+    });

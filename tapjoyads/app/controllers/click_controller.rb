@@ -11,6 +11,7 @@ class ClickController < ApplicationController
   def app
     create_click('install')
     handle_pay_per_click
+    @device.handle_sdkless_click!(@offer, @now)
 
     redirect_to(get_destination_url)
   end
@@ -99,7 +100,7 @@ class ClickController < ApplicationController
     Sqs.send_message(QueueNames::SEND_CURRENCY, test_reward.key)
   end
 
-private
+  private
 
   def setup
     return false unless verify_params([ :data ])
@@ -255,7 +256,7 @@ private
     @click.reward_key_2           = @displayer_app.present? ? UUIDTools::UUID.random_create.to_s : ''
     @click.source                 = params[:source] || ''
     @click.ip_address             = get_ip_address
-    @click.country                = params[:country_code] || ''
+    @click.country                = params[:primary_country] || params[:country_code] || '' # TO REMOVE: stop checking for params[:country_code] at least 24 hours after rollout
     @click.type                   = type
     @click.advertiser_amount      = @currency.get_advertiser_amount(@offer)
     @click.publisher_amount       = @currency.get_publisher_amount(@offer, @displayer_app)
