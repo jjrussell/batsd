@@ -14,9 +14,13 @@ module ActsAsApprovable
     # If a block is given it will be applied to Approval at the class level,
     # allowing you to override functionality on the fly.
     #
-    # @param [Object] approval the explicit model being used for approval records.
-    # @param [Object] owner the explicit model being used for owner records.
-    def self.configure(approval = Approval, owner = User, &block)
+    # @param [Hash] options a hash of options for configuration
+    # @option options [Object] :model the model being used for Approval records (defaults to `Approval`).
+    # @option options [Object] :owner the model being used for owner records (defaults to `User`).
+    def self.configure(options = {}, &block)
+      approval = options.delete(:model) { Approval }
+      owner = options.delete(:owner) { User }
+
       approval.send(:include, self)
 
       ActsAsApprovable.owner_class = owner
@@ -38,6 +42,7 @@ module ActsAsApprovable
       #
       # @return [Boolean]
       def assign(owner)
+        raise ActsAsApprovable::Error::InvalidOwner unless self.class.available_owners.include?(owner)
         self.owner = owner
         save
       end
@@ -105,7 +110,7 @@ module ActsAsApprovable
       #
       # @return [Array] a 2-index array with a display string and value.
       def option_for_owner(owner)
-        [owner.to_s, owner.id]
+        [owner.to_str, owner.id]
       end
     end
   end

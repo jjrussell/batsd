@@ -8,14 +8,14 @@ class Tools::ApprovalsController < WebsiteController
   before_filter :find_approval, :only => [:approve, :reject, :assign]
 
   def index
-    state = (params[:approval] && params[:approval][:state]) || 'pending'
-    @conditions[:state] = state if state != 'any'
+    state = params[:state] || Approval.enumerate_state('pending')
+    @conditions[:state] = state if state > -1
 
     @approvals = Approval.all(:conditions => @conditions, :order => 'created_at ASC')
   end
 
   def history
-    @conditions[:state] = ['approved', 'rejected']
+    @conditions[:state] = Approval.enumerate_state('approved', 'rejected')
 
     @approvals = Approval.all(:conditions => @conditions, :order => 'created_at DESC')
     render :index
@@ -46,9 +46,7 @@ class Tools::ApprovalsController < WebsiteController
   def approve
     json = json_wrapper do
       @approval.owner = current_user if respond_to?(:curret_user)
-      if success = @approval.approve!
-        approval_mailer
-      end
+      @approval.approve!
     end
 
     render :json => json
@@ -57,9 +55,7 @@ class Tools::ApprovalsController < WebsiteController
   def reject
     json = json_wrapper do
       @approval.owner = current_user if respond_to?(:curret_user)
-      if success = @approval.reject!(params[:reason])
-        rejection_mailer
-      end
+      @approval.reject!(params[:reason])
     end
 
     render :json => json
@@ -125,18 +121,6 @@ class Tools::ApprovalsController < WebsiteController
     if @table_partial != 'table'
       partial_path = Rails.root.join('app', 'views', 'tools', 'approvals', "_#{@table_partial}.html.#{view_language}")
       @table_partial = 'table' unless File.exist?(partial_path)
-    end
-  end
-
-  def approval_mailer
-    case @approval.item_type
-    when 'User'; ApprovalMailer.deliver_approved(@approval.item.email, :user, :subject => 'Your account has been approved on Tapjoy!')
-    end
-  end
-
-  def rejection_mailer
-    case @approval.item_type
-    when 'User'; ApprovalMailer.deliver_rejected(@approval.item.email, :user, :subject => 'Your account has been rejected on Tapjoy!', :reason => params[:reason])
     end
   end
 
