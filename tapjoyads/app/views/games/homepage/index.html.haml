@@ -1,70 +1,39 @@
-- @page_design = 'old'
-#jqt
-  #home.current
-    .page
-      = render :partial => 'nav_bar', :locals => { :show_device => true, :active => 'my_apps' }
-      - if current_gamer.devices.empty?
-        .content_wrapper
-          .content
-            = render 'register_device'
-      - elsif @external_publishers.blank?
-        .content_wrapper
-          = render 'featured_content_preview'
-          .content
-            = render 'no_games'
-      - else
-        .content_wrapper
-          = render 'featured_content_preview'
-          .content
-            = render 'my_apps'
-            = render(:partial => 'games/gamers/invite_friends')
-    .footer
-      = render :partial => 'footer'
+=render "my_apps", :locals => { :current => true }
 
-  #feat_app
-    .page
-      = render :partial => 'nav_bar', :locals => { :show_device => true, :active => 'back', :back_button_destination => '#home' }
-      .content_wrapper
-        #feat_app.content
-          = render 'featured_content'
-    .footer
-      = render :partial => 'footer'
+= render(:partial => 'games/gamers/invite_friends')
 
-  #earn
-    .page
-      = render :partial => 'nav_bar', :locals => { :show_device => true, :active => 'back', :back_button_destination => '#home' }
-      .content_wrapper
-        .content
-          #app_title
-            %span.arrow
-          #earn_content.hide
+#feat_app.page
+  .panel
+    = render 'featured_content'
 
-  #more_games
-    .page
-      = render :partial => 'nav_bar', :locals => { :show_device => true, :active => 'back', :back_button_destination => '#home' }
-      .content_wrapper
-        .content
-          .tab_wrapper.clearfix
-            #top_grossing_games_tab.tab_right
-              #top_grossing_games_button.tab_button.grey
-                .tab_content
-                  =t('text.games.tapjoy_picks')
-              #top_grossing_games_button_arrow.tab_button_bottom_arrrow_wrapper
-                .tab_button_bottom_arrrow
-            #recommended_games_tab.tab_left
-              #recommended_games_button.tab_button.dark_grey
-                .tab_content
-                  =t('text.games.recommendations')
-              #recommended_games_button_arrow.tab_button_bottom_arrrow_wrapper
-                .tab_button_bottom_arrrow
-          #more_games_content.hide
-    .footer
-      = render :partial => 'footer'
+#earn.page
+  .panel
+    #app_title
+      %span.arrow
+    #earn_content.hide
 
-#accept_tos_dialog.dialog_wrapper.hide
-  .dialog
+#more_games.page
+  .panel
+    .tab_wrapper.clearfix
+      #top_grossing_games_tab.tab_right
+        #top_grossing_games_button.tab_button.grey
+          .tab_content
+            =t('text.games.tapjoy_picks')
+        #top_grossing_games_button_arrow.tab_button_bottom_arrrow_wrapper
+          .tab_button_bottom_arrrow
+      #recommended_games_tab.tab_left
+        #recommended_games_button.tab_button.dark_grey
+          .tab_content
+            =t('text.games.recommendations')
+        #recommended_games_button_arrow.tab_button_bottom_arrrow_wrapper
+          .tab_button_bottom_arrrow
+    #more_games_content.hide
+
+
+#accept_tos_dialog.dialog_wrapper.page
+  .panel
     #accept_tos_dialog_content
-#accept_tos_dialog_content_placeholder.hide
+#accept_tos_dialog_content_placeholder.page
   .dialog_header_wrapper
     .dialog_header_right
     .dialog_header_left

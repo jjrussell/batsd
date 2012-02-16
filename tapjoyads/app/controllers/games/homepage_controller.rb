@@ -8,6 +8,28 @@ class Games::HomepageController < GamesController
     render "translations.js", :layout => false, :content_type=>"application/javascript"
   end
 
+  def proto
+    render :proto, :layout=>false
+  end
+
+  def my_apps
+    device_id = current_device_id
+    @device = Device.new(:key => device_id) if device_id.present?
+    if @device.present?
+      @external_publishers = ExternalPublisher.load_all_for_device(@device)
+      if params[:load] == 'earn'
+        currency = Currency.find_by_id(params[:currency_id])
+        @show_offerwall = @device.has_app?(currency.app_id) if currency
+        @offerwall_external_publisher = ExternalPublisher.new(currency) if @show_offerwall
+      end
+    end
+
+    respond_to do |f|
+      f.html { render }
+      f.js { render :layout => false and return }
+    end
+  end
+
   def index
     unless current_gamer
       params[:path] = url_for(params.merge(:only_path => true))
@@ -23,6 +45,7 @@ class Games::HomepageController < GamesController
 
     @device_name = device_info.name if device_info
     @device = Device.new(:key => device_id) if device_id.present?
+
     if @device.present?
       @external_publishers = ExternalPublisher.load_all_for_device(@device)
       if params[:load] == 'earn'
@@ -31,6 +54,7 @@ class Games::HomepageController < GamesController
         @offerwall_external_publisher = ExternalPublisher.new(currency) if @show_offerwall
       end
     end
+
     featured_contents = FeaturedContent.featured_contents(@device.try(:platform)).to_a
     @featured_content = featured_contents.weighted_rand(featured_contents.map(&:weight))
 

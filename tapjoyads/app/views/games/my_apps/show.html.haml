@@ -1,0 +1,21 @@
+#earn.page{:class=>"current"}
+  .panel
+    %ul.slats.with-icons
+      %li.slat.clearfix.line.chrome
+        .hd.left.game-icon
+          = image_tag(@external_publisher.get_icon_url(:size=>114,:source => :cloudfront))
+        .bd.left.lastUnit
+          .title.elip
+            =@external_publisher.app_name
+          .description
+    .narrow-section.inset-chrome
+      %span.ui-icon-med.score-med
+        &nbsp;
+      %span.ui-icon-med.social-med
+        &nbsp;
+    =render("offers")
+    .section.chrome
+      .ui-joy-button.grey-action
+        %a.text-center
+          Review #{@external_publisher.app_name}
+    =render("games/shared/footer")

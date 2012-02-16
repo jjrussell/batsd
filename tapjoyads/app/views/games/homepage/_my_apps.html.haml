@@ -1,17 +1,40 @@
-.offer_list
-  %ul
-    -@external_publishers.each do |external_publisher|
-      %li.offer_item.clearfix
-        - link_to("#", :id => external_publisher.currencies.first[:id], :class => "get_offerwall_jsonp", :jsonp_url => external_publisher.get_offerwall_url(@device, external_publisher.currencies.first, request.accept_language, request.user_agent, current_gamer.id), :currency => external_publisher.currencies.first[:name], :app_name => external_publisher.app_name) do
-          .offer_image
-            = image_tag(external_publisher.get_icon_url(:source => :cloudfront))
-          .offer_text.clearfix
-            .offer_title.title
-              = external_publisher.app_name
-        .offer_info
-        - external_publisher.currencies.each do |currency|
-          - link_to("#", :id => currency[:id], :class => "get_offerwall_jsonp", :jsonp_url => external_publisher.get_offerwall_url(@device, currency, request.accept_language, request.user_agent, current_gamer.id), :currency => currency[:name], :app_name => external_publisher.app_name) do
-            .currency_item.left
-              .offer_button
-                .button.grey
-                  =t('text.games.earn', :currency => currency[:name])
+#my_apps.page{:class=>"current"}
+  .panel
+    - if current_gamer.devices.empty?
+      = render 'register_device'
+    = render 'featured_content_preview'
+
+    -if @external_publishers.blank?
+      =render :no_games
+    - else
+      %ul.slats.with-icons
+        -@external_publishers.each do |external_publisher|
+          %li.slat.clearfix.line.chrome
+            - link_to("#", :id => external_publisher.currencies.first[:id], :class => "get_offerwall_jsonp", :jsonp_url => external_publisher.get_offerwall_url(@device, external_publisher.currencies.first, request.accept_language, request.user_agent, current_gamer.id), :currency => external_publisher.currencies.first[:name], :app_name => external_publisher.app_name) do
+              .hd.size1of4.left.game-icon= image_tag(external_publisher.get_icon_url(:size=>114,:source => :cloudfront))
+              .bd.left.size1of2
+                .title.elip
+                  = external_publisher.app_name
+                .app-summary.clearfix
+                  .rank
+                    =image_tag("games/thumbs-up.png")
+                  .friends
+                    =image_tag("games/social.png")
+              .ft.right.rel.size1of4.lastUnit
+                - external_publisher.currencies.each do |currency|
+                  - link_to("#", :id => currency[:id], :class => "get_offerwall_jsonp", :jsonp_url => external_publisher.get_offerwall_url(@device, currency, request.accept_language, request.user_agent, current_gamer.id), :currency => currency[:name], :app_name => external_publisher.app_name) do
+                    .rel
+                      =t('text.games.earn', :currency => currency[:name])
+
+    .footer
+      .section.chrome
+        .ui-joy-button.grey-action
+          %a.text-center Review Scrabble
+      %ul.slats.simple
+        %li.slat.chrome
+          =link_to t('text.games.share_with_your_friends'), "#"
+          .ui-list-arrow
+        %li.slat.chrome
+          =link_to t('text.shared.help'), "#"
+          .ui-list-arrow
+
