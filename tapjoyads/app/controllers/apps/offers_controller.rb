@@ -47,16 +47,6 @@ class Apps::OffersController < WebsiteController
         @enable_request = @offer.enable_offer_requests.build
       end
     end
-
-    set_custom_creative_sizes
-  end
-
-  def preview
-    @show_generated_ads = @offer.uploaded_icon?
-    unless request.xhr?
-      redirect_to edit_app_offer_path(:id => @offer.id, :app_id => @app.id, :show_preview => 'true', :preview_image_size => params[:image_size]) and return
-    end
-    render 'apps/offers_shared/preview', :layout => false
   end
 
   def update
@@ -70,7 +60,8 @@ class Apps::OffersController < WebsiteController
     if permitted_to? :edit, :statz
       safe_attributes += [ :tapjoy_enabled, :allow_negative_balance, :pay_per_click,
           :name, :name_suffix, :show_rate, :min_conversion_rate, :countries,
-          :device_types, :publisher_app_whitelist, :overall_budget, :min_bid_override, :dma_codes, :regions ]
+          :device_types, :publisher_app_whitelist, :overall_budget, :min_bid_override,
+          :dma_codes, :regions, :carriers ]
     end
 
     if @offer.safe_update_attributes(offer_params, safe_attributes)
@@ -83,58 +74,8 @@ class Apps::OffersController < WebsiteController
         @enable_request = @offer.enable_offer_requests.build
       end
       flash.now[:error] = 'Your offer could not be updated.'
-      set_custom_creative_sizes
       render :action => :edit
     end
-  end
-
-  def upload_creative
-    @image_size = params[:image_size]
-    @label = params[:label]
-    email_managers = false
-    image_data = params[:offer]["custom_creative_#{@image_size}".to_sym].read rescue nil
-
-    modifying = true
-    case request.method
-      when :delete
-        @offer.remove_banner_creative(@image_size)
-      when :post
-        @offer.add_banner_creative(@image_size)
-
-        if permitted_to?(:edit, :statz)
-          @offer.approve_banner_creative(@image_size)
-        else
-          @offer.add_banner_approval(current_user, @image_size)
-          email_managers = true
-        end
-      when :put
-        # do nothing
-      when :get
-        modifying = false
-    end
-
-    if modifying
-      @offer.send("banner_creative_#{@image_size}_blob=", image_data)
-      if @offer.save
-        @success_message = "File #{request.method == :delete ? 'removed' : 'uploaded'} successfully."
-
-        if email_managers
-          approval_link = creative_tools_offers_url(:offer_id => @offer.id)
-          emails = @offer.partner.account_managers.map(&:email)
-          emails << 'support@tapjoy.com'
-          emails.each do |mgr|
-            TapjoyMailer.deliver_approve_offer_creative(mgr, @offer, @app, approval_link)
-          end
-        end
-      else
-        @error_message = @offer.errors["custom_creative_#{@image_size}_blob".to_sym]
-        @offer.reload # we want the form to reset back to the way it was
-      end
-    end
-
-    @creative_exists = @offer.has_banner_creative?(@image_size)
-    @creative_approved = @offer.banner_creative_approved?(@image_size)
-    render :layout => 'simple'
   end
 
   def toggle
@@ -168,18 +109,5 @@ class Apps::OffersController < WebsiteController
       @offer = @app.primary_offer
     end
     log_activity(@offer)
-  end
-
-  def set_custom_creative_sizes
-    if @offer.featured?
-      @custom_creative_sizes = Offer::FEATURED_AD_SIZES.collect do |size|
-        width, height = size.split("x").collect{|x|x.to_i}
-        orientation = width > height ? "(landscape)" : "(portrait)"
-        { :image_size         => size,
-          :label_image_size   => "#{size} #{orientation}" }
-      end
-    elsif !@offer.rewarded?
-      @custom_creative_sizes = Offer::DISPLAY_AD_SIZES.collect { |size| { :image_size => size, :label_image_size => "#{size} creative" }}
-    end
   end
 end

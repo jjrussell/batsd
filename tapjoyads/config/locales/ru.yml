@@ -1,63 +1,378 @@
+---
 ru:
+  activerecord:
+    errors:
+      full_messages:
+        format: ~
+      messages:
+        accepted: ~
+        blank: ~
+        confirmation: ~
+        empty: ~
+        equal_to: ~
+        even: ~
+        exclusion: ~
+        greater_than: ~
+        greater_than_or_equal_to: ~
+        inclusion: ~
+        invalid: ~
+        less_than: ~
+        less_than_or_equal_to: ~
+        not_a_number: ~
+        not_an_integer: ~
+        odd: ~
+        record_invalid: ~
+        taken: ~
+        too_long: ~
+        too_short: ~
+        wrong_length: ~
+      template:
+        body: ~
+        header:
+          one: ~
+          other: ~
+  date:
+    abbr_day_names: ~
+    abbr_month_names: ~
+    day_names: ~
+    formats:
+      default: ~
+      long: ~
+      short: ~
+    month_names: ~
+    order: ~
+  datetime:
+    distance_in_words:
+      about_x_hours:
+        one: ~
+        other: ~
+      about_x_months:
+        one: ~
+        other: ~
+      about_x_years:
+        one: ~
+        other: ~
+      almost_x_years:
+        one: ~
+        other: ~
+      half_a_minute: ~
+      less_than_x_minutes:
+        one: ~
+        other: ~
+      less_than_x_seconds:
+        one: ~
+        other: ~
+      over_x_years:
+        one: ~
+        other: ~
+      x_days:
+        one: ~
+        other: ~
+      x_minutes:
+        one: ~
+        other: ~
+      x_months:
+        one: ~
+        other: ~
+      x_seconds:
+        one: ~
+        other: ~
+    prompts:
+      day: ~
+      hour: ~
+      minute: ~
+      month: ~
+      second: ~
+      year: ~
+  errors:
+    format: ~
+    messages:
+      accepted: ~
+      blank: ~
+      confirmation: ~
+      empty: ~
+      equal_to: ~
+      even: ~
+      exclusion: ~
+      greater_than: ~
+      greater_than_or_equal_to: ~
+      inclusion: ~
+      invalid: ~
+      less_than: ~
+      less_than_or_equal_to: ~
+      not_a_number: ~
+      not_an_integer: ~
+      odd: ~
+      too_long: ~
+      too_short: ~
+      wrong_length: ~
+  helpers:
+    select:
+      prompt: ~
+    submit:
+      create: ~
+      submit: ~
+      update: ~
+  number:
+    currency:
+      format:
+        delimiter: ~
+        format: ~
+        precision: ~
+        separator: ~
+        significant: ~
+        strip_insignificant_zeros: ~
+        unit: ~
+    format:
+      delimiter: ~
+      precision: ~
+      separator: ~
+      significant: ~
+      strip_insignificant_zeros: ~
+    human:
+      decimal_units:
+        format: ~
+        units:
+          billion: ~
+          million: ~
+          quadrillion: ~
+          thousand: ~
+          trillion: ~
+          unit: ~
+      format:
+        delimiter: ~
+        precision: ~
+        significant: ~
+        strip_insignificant_zeros: ~
+      storage_units:
+        format: ~
+        units:
+          byte:
+            one: ~
+            other: ~
+          gb: ~
+          kb: ~
+          mb: ~
+          tb: ~
+    percentage:
+      format:
+        delimiter: ~
+    precision:
+      format:
+        delimiter: ~
+  support:
+    array:
+      last_word_connector: ~
+      two_words_connector: ~
+      words_connector: ~
+    select:
+      prompt: ~
   text:
-    shared:
-      privacy: "Конфиденциальность"
-      ads_by: "Реклама от"
-
-    offerwall:
-      title: "Заработать %{currency}"
-      free: "Free"
-      next: "След. %{items}"
-      previous: "Пред. %{items}"
-      missing_currency: "Не получили %{currency}?"
-      instructions: "Выполните любое из перечисленных предложений и получите %{currency}"
-      popular_apps: "Popular Apps"
-      instructions_non_rewarded: "Discover what's hot on Tapjoy!"
-      earn_currency: "Заработать %{amount} %{currency}"
-      buy_currency: "Купить %{amount} %{currency}"
-      load_more: "Загрузить еще!"
-      loading: "Загрузка..."
-      load_error: "Попробуйте еще раз."
-      wifi_required: "Wifi Required"
-      wifi_warning: "This app requires a wifi connection to download."
-
     featured:
-      title: "Заработать %{currency}"
+      download: Установить
       download_and_run: "Установить и открыть"
-      try_out: "Попробовать"
-      download: "Установить"
-      skip: "Пропустить"
+      earn_currency: "Заработать %{amount_and_currency}"
       earn_now: "Заработать сейчас"
       show_more_apps: "Показать больше приложений"
-      earn_currency: "Заработать %{amount_and_currency}"
+      skip: Пропустить
+      title: "Заработать %{currency}"
+      try_out: Попробовать
+    games:
+        about_body: "Tapjoy познакомит вас с такими популярными приложениями, как Happy Park, City of Wonder, Coin Dozer, Overkill, VIP Poker, и Gun Bros, и в тоже время даст вам доступ к премиум контенту в ваших любимых приложениях. Tapjoy также найдет для вас новые приложения, которые вам понравятся. Например, если вы играете в Magic Zoo, мы посоветум вам другие игры, кторые вам скорее всего тоже понравятся, например Safari Zoo и Bug Village HD. Зарегистрируйтесь сейчас и получите доступ к классным приложениям."
+        about_title: "\"Каким-то образом, Tapjoy знает, какие приложения мне нравятся.\""
+        account_created_body: ""
+        account_created_title: ""
+        action_required: "Необходимо ваше действие!"
+        add_to_homescreen: ""
+        advertisers_body: "Покажите свой продукт миллионам пользователей"
+        advertisers_title: "Рекламодатели"
+        allow_marketing_emails: "Разрешить Tapjoy присылать мне маркетинговый материал"
+        already_registered: ""
+        already_registered: ""
+        back_to_top: ""
+        birthdate: "Дата рождения"
+        call_to_action_body: "Лучший способ радоваться приложениям, которые у вас уже есть и найти приложения, которые вас порадуют"
+        call_to_action_title: "Unlock Mobile Joy"
+        cant_fetch_offers: ""
+        change_linked_account: "Изменить аккаунт"
+        click_to_try_again: ""
+        connect_my_device: ""
+        connect_your_android: ""
+        connect_your_device: ""
+        deactivate: "Деактивировать"
+        del_acct_confirm: "Нажмите кнопку внизу, чтобы деактивировать свой аккаунт. Когда аккаунт будет неактивен XXX дней, он будет полностью удален. Мы не сможем восстановить ваш аккаунт после его удаления."
+        delete_my_account: "Удалить мой аккаунт"
+        developers_body: "Зарабатывайте хорошие деньги своим приложением при поможи нашей монетизации"
+        developers_title: "Разработчики"
+        earn_title: ""
+        enable_javascript: "Пожалуйста, зайдите в настройки своего браузера и разрешите использование JaveScript, чтобы продолжить использовать Tapjoy."
+        enter_birthdate: ""
+        enter_email: ""
+        enter_password: ""
+        enter_platform: ""
+        enter_tos: ""
+        enter_valid_email: ""
+        favorite_app: "Любимое приложение"
+        favorite_category: "Любимая категория"
+        follow_us: "читайте нас в"
+        forgot_pass: "Забыли пароль?"
+        free!: "Бесплатно!"
+        generic_issue: ""
+        get_it: "Получить!"
+        get_it: "Получить!"
+        grant_us_access: ""
+        how_it_works_body:: ""
+        how_it_works_title: ""
+        install_and_run: ""
+        invite: "Пригласи своих друзей!"
+        invite: "Пригласите своих друзей!"
+        invite: "Пригласите своих друзей!"
+        invite_button: "Пригласить"
+        invite_email_body: "\"%{name} пригласил(а) вас присоединиться к Tapjoy, ЛУЧШЕЙ платформе для поиска классных новых приложений. Регистрация бесплатная. Вы сможете скачать лучшие приложения на Android и iOS, а также зарабатывать виртуальные деньги в ваши любимые приложения.
 
-    unavailable_offer:
-      message: "К сожалению, %{offer} более недоступно. Вернитесь и обновите предыдущую страницу для просмотра последних предложений."
-      optional_message: "Или нажмите здесь, чтобы установить %{offer} все равно."
+        Не нужно часами искать хорошие приложения среди многих тысяч приложений в Аппсторе или Андройд Маркете. Tapjoy знает, какие приложения вам понравятся,  исходя из приложений установленных у вас и ваших друзей.
 
+        Чтобы начать, зарегистрируйтесь сейчас:\""
+        invite_email_greet: "Здравствуйте,"
+        invite_email_signature: "Команда Tapjoy"
+        invite_friends: ""
+        invite_friends: ""
+        invite_title: "Пригласить по электронной почте"
+        invites_sent_to: ""
+        invites_sent_to: ""
+        issue_registering: ""
+        link_my_facebook: "Ссылка на мой Facebook"
+        load_more: ""
+        meta_description: ""
+        meta_keywords: ""
+        more_apps: "Больше приложений"
+        my_apps: "Мои приложения"
+        none_selected: "Ничего не выбрано"
+        oops: ""
+        our_tos_changed: "Наше пользовательское соглашение изменилось. Пожалуйста прочитайте его и обознатьче ваше соглашение с изменениями."
+        privacy_policy_href: "конфиденциальность"
+        provide_other_email: ""
+        recipients_label: "Введите электронные адреса через запятую"
+        recommendation: "Рекомендации"
+        registering: ""
+        select_current_device: ""
+        select_device: ""
+        select_friend: ""
+        social_networks: "Социальные сети"
+        social_settings: "Социальные настройки"
+        tap_that: ""
+        tapjoy_picks: "Выбор Tapjoy"
+        terms_of_use_href: "условиями"
+        tos_acknowledge: "Поставив галочку, я подтверждаю, что я соглашаюсь с условиями и политикой конфиденциальности "
+        tos_change_acknowledge: ""
+        unable_to_process: ""
+        wifi_required: "Необходим Wi-fi"
+        wifi_required: ""
+        wrong_device: "не то мобильное устройство?"
     instructions:
-      title: "Инструкции"
       amount_and_currency: "%{amount} %{currency}"
-      earn_currency: "Заработать %{amount_and_currency}"
-      header: "Чтобы заработать %{currency}, сделайте следующее:"
-      footer: "Когда вы полностью выполните задание, вы заработаете %{amount_and_currency}."
-      download_action: "сюда"
-      download_link: "Если у вас нету этого приложения, нажмите %{download_action}, чтобы его установить."
       continue_link: "Нажмите сюда, чтобы продолжить."
-
+      download_action: сюда
+      download_link: "Если у вас нету этого приложения, нажмите %{download_action}, чтобы его установить."
+      earn_currency: "Заработать %{amount_and_currency}"
+      footer: "Когда вы полностью выполните задание, вы заработаете %{amount_and_currency}."
+      header: "Чтобы заработать %{currency}, сделайте следующее:"
+      title: Инструкции
+    offerwall:
+      buy_currency: "Купить %{amount} %{currency}"
+      earn_currency: "Заработать %{amount} %{currency}"
+      free: Free
+      instructions: "Выполните любое из перечисленных предложений и получите %{currency}"
+      instructions_non_rewarded: "Discover what's hot on Tapjoy!"
+      load_error: "Попробуйте еще раз."
+      load_more: "Загрузить еще!"
+      loading: Загрузка...
+      missing_currency: "Не получили %{currency}?"
+      next: "След. %{items}"
+      popular_apps: "Popular Apps"
+      previous: "Пред. %{items}"
+      title: "Заработать %{currency}"
+      wifi_required: "Wifi Required"
+      wifi_warning: "This app requires a wifi connection to download."
+    shared:
+        about_link: "О Tapjoy"
+        android: "Андройд"
+        back: "Назад"
+        back: "Назад"
+        blog: "Блог"
+        cancel: "Отмена"
+        city: "Город"
+        confirm_password: "Подтвердите пароль"
+        continue: ""
+        copyright: "© 2012 Tapjoy, Inc. Все права защищены. Tapjoy и логотип Tapjoy являются торговыми марками или зарегистрированными торговыми марками и собственностью их владельцев."
+        country: "Страна"
+        create_account: "Зарегистрироваться"
+        day: "День"
+        earn: "Заработать"
+        email: "Адрес электронной почты"
+        facebook_profile: "Профиль на Facebook"
+        female: "Женский"
+        followers: "Подписчики"
+        following: "Подписан"
+        friends: "Друзья"
+        gender: "Пол"
+        help: "Помощь"
+        ios: "iOS"
+        login_noun: "Логин"
+        login_verb: "Войти"
+        logout: "Выйти"
+        male: "Мужской"
+        month: "Месяц"
+        my_account: "Мой аккаунт"
+        my_profile: "Мой профиль"
+        name: "Имя"
+        new_password: "Новый пароль"
+        nickname: "Никнейм"
+        ok: "ОК"
+        options: "Опции"
+        other: ""
+        password: "Пароль"
+        preferences: "Предпочтения"
+        privacy_policy: "Конфиденциальность"
+        recipients: "Получатели"
+        reset_password: "Изменить пароль"
+        save: "Сохранить"
+        save: "Сохранить"
+        share: "Поделиться"
+        sign_in: "Войти"
+        sign_up: "Регистрация"
+        sign_up: "Регистрация"
+        success:
+        try_again: ""
+        updating: ""
+        year: "Год"
+        zip_postal: "Почтовый индекс"
     support:
-      title: "Не получили %{currency}?"
-      instructions_1: "Пожалуйста, укажите предложение, которое вы полностью выполнили, не получив при этом %{currency} и укажите адрес вашей электронной почты."
-      instructions_2: "Если вы отправите запрос без детального описание проблемы, ее решение будет происходить с задержкой. Мы отдаем приоритет запросам с детальным описанием проблемы."
-      specify_offer_label: "Укажите предложение:"
+      abuse_warning: "Эта форма предназначена исключительно для пользователей, которые не получили очки за выполнение предложения. Злоупотребление этой формой может привести к деактивации вашей учетной записи и невозможности зарабатывания очков в будущем."
       description_label: "Описание:"
       email_address_label: "Адрес электронной почты:"
+      instructions_1: "Пожалуйста, укажите предложение, которое вы полностью выполнили, не получив при этом %{currency} и укажите адрес вашей электронной почты."
+      instructions_2: "Если вы отправите запрос без детального описание проблемы, ее решение будет происходить с задержкой. Мы отдаем приоритет запросам с детальным описанием проблемы."
+      invalid_email: "Пожалуйста, введите реально существующий адрес электронной почты."
+      missing_description: "Пожалуйста, опишите выполненное предложение."
+      missing_offer: "Вы должны указать выполненное предложение."
+      no_incomplete_offers_label: "Нет подходящих предложений."
+      select_offer: "Выберите предложение"
+      specify_offer_label: "Укажите предложение:"
       submit_support_request: "Отправить сообщение"
       support_request_submitted: "Сообщение отправлено"
       thanks: "Спасибо за отправку вашего сообщения! Вы получите ваши %{currency} после того как мы проверим, что вы полностью выполнили предложение."
-      missing_description: "Пожалуйста, опишите выполненное предложение."
-      missing_offer: "Вы должны указать выполненное предложение."
-      invalid_email: "Пожалуйста, введите реально существующий адрес электронной почты."
-      abuse_warning: "Эта форма предназначена исключительно для пользователей, которые не получили очки за выполнение предложения. Злоупотребление этой формой может привести к деактивации вашей учетной записи и невозможности зарабатывания очков в будущем."
-      select_offer: "Выберите предложение"
-      no_incomplete_offers_label: "Нет подходящих предложений."
+      title: "Не получили %{currency}?"
+    unavailable_offer:
+      message: "К сожалению, %{offer} более недоступно. Вернитесь и обновите предыдущую страницу для просмотра последних предложений."
+      optional_message: "Или нажмите здесь, чтобы установить %{offer} все равно."
+  time:
+    am: ~
+    formats:
+      day: ~
+      day_long: ~
+      day_short: ~
+      default: ~
+      long: ~
+      short: ~
+    pm: ~

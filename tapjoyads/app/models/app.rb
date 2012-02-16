@@ -7,7 +7,7 @@ class App < ActiveRecord::Base
   BETA_PLATFORMS    = {}
   PLATFORMS         = ALLOWED_PLATFORMS.merge(BETA_PLATFORMS)
   APPSTORE_COUNTRIES_OPTIONS = GeoIP::CountryName.zip(GeoIP::CountryCode).select do |name, code|
-      code.match(/[a-z]{2}/i)
+      code.match(/[A-Z]{2}/) && code != 'KP'
     end.map do |name, code|
       ["#{code} -- #{name}", code]
     end.sort.unshift(["Select a country", ""])
@@ -51,7 +51,7 @@ class App < ActiveRecord::Base
         :vg       => WINDOWS_OFFERS_SDK,
       },
       :store_name => 'Marketplace',
-      :info_url => 'http://www.windowsphone.com/en-US/apps/STORE_ID',
+      :info_url => 'http://windowsphone.com/s?appId=STORE_ID',
       :store_url => 'http://social.zune.net/redirect?type=phoneapp&id=STORE_ID',
       :default_actions_file_name => '', #TODO fill this out
       :min_action_offer_bid => 25,

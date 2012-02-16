@@ -47,10 +47,9 @@ Setup PATH and MANPATH
 
 * restart your terminal to pull in the new paths
 
-Install xcode
+Install osx-gcc
 -------------
-* use the dvd that came with your mac or download from apple
-
+* Download and install [osx-gcc](https://github.com/kennethreitz/osx-gcc-installer/downloads).
 
 Git configurations
 ------------------
