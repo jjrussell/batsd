@@ -38,7 +38,9 @@ class LinksharePoller
         click = Click.new(:key => columns[CLICK_KEY_COLUMN])
         Rails.logger.info "Attempting to resolve click #{click.key}"
         if click.rewardable?
-          click.resolve! and Rails.logger.info "Resolved click #{click.key}"
+          message = { :click_key => click.key, :install_timestamp => Time.zone.now.to_f.to_s }.to_json
+          Sqs.send_message(QueueNames::CONVERSION_TRACKING, message)
+          Rails.logger.info "Click #{click.key} sent to conversion queue"
         else
           Rails.logger.info CLICK_NOT_REWARDABLE
         end
