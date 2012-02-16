@@ -47,10 +47,12 @@ class Apps::ReengagementOffersController < WebsiteController
   end
 
   def destroy
-    @reengagement_offer.remove!
-    reengagement_offers = @app.reengagement_campaign
-    reengagement_offers.first.remove! if reengagement_offers.length == 1 && reengagement_offers.first.day_number == 0
-    flash[:notice] = "Removed day #{@reengagement_offer.day_number} re-engagement offer."
+    if @reengagement_offer == @app.reengagement_campaign.last
+      @reengagement_offer.remove!
+      reengagement_offers = @app.reengagement_campaign
+      reengagement_offers.first.remove! if reengagement_offers.length == 1 && reengagement_offers.first.day_number == 0
+      flash[:notice] = "Removed day #{@reengagement_offer.day_number} re-engagement offer."
+    end
     redirect_to(app_reengagement_offers_path(@app))
   end
 
