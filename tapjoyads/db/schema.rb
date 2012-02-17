@@ -628,12 +628,9 @@ ActiveRecord::Schema.define(:version => 20120216172034) do
     t.text     "approved_banner_creatives"
     t.text     "approved_sources",                                                                                 :null => false
     t.boolean  "sdkless",                                                                       :default => false
-<<<<<<< HEAD
+    t.text     "carriers",                                                                                         :null => false
     t.string   "tracking_for_type"
     t.string   "tracking_for_id",                   :limit => 36
-=======
-    t.text     "carriers",                                                                                         :null => false
->>>>>>> 83c7c4534ade208561205ae19de9c686367b0987
   end
 
   add_index "offers", ["id"], :name => "index_offers_on_id", :unique => true
