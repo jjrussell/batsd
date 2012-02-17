@@ -42,22 +42,28 @@ describe App do
       @app = Factory(:app)
     end
 
-    it 'returns true when without currencies' do
-      @app.should be_can_have_new_currency
+    context 'without currencies' do
+      it 'returns true ' do
+        @app.should be_can_have_new_currency
+      end
     end
 
-    it 'returns true when no currency has special callback' do
-      Factory(:currency, :app_id => @app.id, :callback_url => 'http://foo.com')
-      Factory(:currency, :app_id => @app.id, :callback_url => 'http://bar.com')
-      @app.should be_can_have_new_currency
+    context 'without currency that has special callback' do
+      it 'returns true' do
+        Factory(:currency, :app_id => @app.id, :callback_url => 'http://foo.com')
+        Factory(:currency, :app_id => @app.id, :callback_url => 'http://bar.com')
+        @app.should be_can_have_new_currency
+      end
     end
 
-    it 'returns false when any currency has special callback' do
-      special_url = Currency::SPECIAL_CALLBACK_URLS.sample
-      Factory(:currency, :app_id => @app.id, :callback_url => 'http://foo.com')
-      Factory(:currency, :app_id => @app.id, :callback_url => 'http://bar.com')
-      Factory(:currency, :app_id => @app.id, :callback_url => special_url)
-      @app.should_not be_can_have_new_currency
+    context 'with currency that has special callback' do
+      it 'returns false' do
+        special_url = Currency::SPECIAL_CALLBACK_URLS.sample
+        Factory(:currency, :app_id => @app.id, :callback_url => 'http://foo.com')
+        Factory(:currency, :app_id => @app.id, :callback_url => 'http://bar.com')
+        Factory(:currency, :app_id => @app.id, :callback_url => special_url)
+        @app.should_not be_can_have_new_currency
+      end
     end
   end
 
