@@ -16,10 +16,6 @@ class AppReview < ActiveRecord::Base
   delegate :name, :id, :to => :app, :prefix => true
   delegate :full_name, :to => :author, :prefix => true
 
-  def self.columns
-    super.reject{|c| c.name == 'featured_on'}
-  end
-
   private
 
   def copy_platform
