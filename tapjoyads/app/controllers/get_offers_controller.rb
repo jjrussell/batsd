@@ -136,7 +136,8 @@ class GetOffersController < ApplicationController
       :source               => params[:source],
       :screen_layout_size   => params[:screen_layout_size],
       :video_offer_ids      => params[:video_offer_ids].to_s.split(','),
-      :all_videos           => params[:all_videos]
+      :all_videos           => params[:all_videos],
+      :mobile_carrier_code  => "#{params[:mobile_country_code]}.#{params[:mobile_network_code]}"
     )
   end
 
@@ -151,7 +152,7 @@ class GetOffersController < ApplicationController
         @web_request.offer_id = offer.id
         @web_request.offerwall_rank = i + @start_index + 1
         @web_request.offerwall_rank_score = offer.rank_score
-        # @web_request.save
+        @web_request.save
       end
     end
   end
