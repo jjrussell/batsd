@@ -1,0 +1,29 @@
+defaults: &defaults
+  js_version: '1.53'
+  js_files: [
+    'marketplace/src/core/jquery',
+    'marketplace/src/core/foundation',
+    'marketplace/src/core/objects',
+    'marketplace/src/core/components',
+    'marketplace/src/core/strings',
+    'marketplace/src/core/arrays',
+    'marketplace/src/core/functions',
+    'marketplace/src/core/helpers',
+    'marketplace/src/core/utilities',
+    'marketplace/src/core/mobile',
+    'marketplace/src/namespace',
+    'marketplace/src/main'
+  ]
+  js_compile_out_file: 'tjm.min'
+
+test:
+  <<: *defaults
+
+development:
+  <<: *defaults
+
+staging:
+  <<: *defaults
+
+production:
+  <<: *defaults
