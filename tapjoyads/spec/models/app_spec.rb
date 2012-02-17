@@ -37,6 +37,30 @@ describe App do
     end
   end
 
+  describe '#can_have_new_currency?' do
+    before :each do
+      @app = Factory(:app)
+    end
+
+    it 'returns true when without currencies' do
+      @app.should be_can_have_new_currency
+    end
+
+    it 'returns true when no currency has special callback' do
+      Factory(:currency, :app_id => @app.id, :callback_url => 'http://foo.com')
+      Factory(:currency, :app_id => @app.id, :callback_url => 'http://bar.com')
+      @app.should be_can_have_new_currency
+    end
+
+    it 'returns true when any currency has special callback' do
+      special_url = Currency::SPECIAL_CALLBACK_URLS.sample
+      Factory(:currency, :app_id => @app.id, :callback_url => 'http://foo.com')
+      Factory(:currency, :app_id => @app.id, :callback_url => 'http://bar.com')
+      Factory(:currency, :app_id => @app.id, :callback_url => special_url)
+      @app.should_not be_can_have_new_currency
+    end
+  end
+
   context 'with Action Offers' do
     before :each do
       @action_offer = Factory(:action_offer)
