@@ -19,8 +19,8 @@
                 .ui-icon.social
             .ft
               - currency = external_publisher.currencies.first
-              - link_to(games_my_app_path(currency[:id])) do
+              - link_to(games_my_app_path(currency[:id]), :class=>"pop", "data-page" => "#show") do
                 .ui-list-arrow.right
                   .ui-list-action-label.right
                     =t('text.shared.collect', :currency => currency[:name])
-  =render("games/shared/footer")
+    =render("games/shared/footer")

@@ -29,6 +29,7 @@ class Games::MyAppsController < GamesController
 
     respond_to do |f|
       f.html {}
+      f.js {render :layout => false}
     end
   end
 
