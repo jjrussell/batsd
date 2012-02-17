@@ -16,8 +16,8 @@ class AppReview < ActiveRecord::Base
   delegate :name, :id, :to => :app, :prefix => true
   delegate :full_name, :to => :author, :prefix => true
 
-  def self.column_names
-    super.reject{|c| c == 'featured_on'}
+  def self.columns
+    super.reject{|c| c.name == 'featured_on'}
   end
 
   private
