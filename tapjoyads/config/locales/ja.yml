@@ -1,10 +1,10 @@
---- 
-ja: 
-  activerecord: 
-    errors: 
-      full_messages: 
+---
+ja:
+  activerecord:
+    errors:
+      full_messages:
         format: ~
-      messages: 
+      messages:
         accepted: ~
         blank: ~
         confirmation: ~
@@ -26,67 +26,67 @@ ja:
         too_long: ~
         too_short: ~
         wrong_length: ~
-      template: 
+      template:
         body: ~
-        header: 
+        header:
           one: ~
           other: ~
-  date: 
+  date:
     abbr_day_names: ~
     abbr_month_names: ~
     day_names: ~
-    formats: 
+    formats:
       default: ~
       long: ~
       short: ~
     month_names: ~
     order: ~
-  datetime: 
-    distance_in_words: 
-      about_x_hours: 
+  datetime:
+    distance_in_words:
+      about_x_hours:
         one: ~
         other: ~
-      about_x_months: 
+      about_x_months:
         one: ~
         other: ~
-      about_x_years: 
+      about_x_years:
         one: ~
         other: ~
-      almost_x_years: 
+      almost_x_years:
         one: ~
         other: ~
       half_a_minute: ~
-      less_than_x_minutes: 
+      less_than_x_minutes:
         one: ~
         other: ~
-      less_than_x_seconds: 
+      less_than_x_seconds:
         one: ~
         other: ~
-      over_x_years: 
+      over_x_years:
         one: ~
         other: ~
-      x_days: 
+      x_days:
         one: ~
         other: ~
-      x_minutes: 
+      x_minutes:
         one: ~
         other: ~
-      x_months: 
+      x_months:
         one: ~
         other: ~
-      x_seconds: 
+      x_seconds:
         one: ~
         other: ~
-    prompts: 
+    prompts:
       day: ~
       hour: ~
       minute: ~
       month: ~
       second: ~
       year: ~
-  errors: 
+  errors:
     format: ~
-    messages: 
+    messages:
       accepted: ~
       blank: ~
       confirmation: ~
@@ -106,16 +106,16 @@ ja:
       too_long: ~
       too_short: ~
       wrong_length: ~
-  helpers: 
-    select: 
+  helpers:
+    select:
       prompt: ~
-    submit: 
+    submit:
       create: ~
       submit: ~
       update: ~
-  number: 
-    currency: 
-      format: 
+  number:
+    currency:
+      format:
         delimiter: ~
         format: ~
         precision: ~
@@ -123,52 +123,52 @@ ja:
         significant: ~
         strip_insignificant_zeros: ~
         unit: ~
-    format: 
+    format:
       delimiter: ~
       precision: ~
       separator: ~
       significant: ~
       strip_insignificant_zeros: ~
-    human: 
-      decimal_units: 
+    human:
+      decimal_units:
         format: ~
-        units: 
+        units:
           billion: ~
           million: ~
           quadrillion: ~
           thousand: ~
           trillion: ~
           unit: ~
-      format: 
+      format:
         delimiter: ~
         precision: ~
         significant: ~
         strip_insignificant_zeros: ~
-      storage_units: 
+      storage_units:
         format: ~
-        units: 
-          byte: 
+        units:
+          byte:
             one: ~
             other: ~
           gb: ~
           kb: ~
           mb: ~
           tb: ~
-    percentage: 
-      format: 
+    percentage:
+      format:
         delimiter: ~
-    precision: 
-      format: 
+    precision:
+      format:
         delimiter: ~
-  support: 
-    array: 
+  support:
+    array:
       last_word_connector: ~
       two_words_connector: ~
       words_connector: ~
-    select: 
+    select:
       prompt: ~
-  text: 
-    featured: 
+  text:
+    featured:
       download: ダウンロード
       download_and_run: インストールして起動してください。
       earn_currency: "%{amount_and_currency} を獲得"
@@ -177,7 +177,7 @@ ja:
       skip: 戻る
       title: "%{currency} を稼ぐ"
       try_out: 試してみる
-    games: 
+    games:
       about_body: Tapjoyでは、お気に入りアプリのプレミアムコンテンツにアクセスしながら、ハッピーパーク、シティーオブワンダー、コインドーザー、オーバーキル、ＶＩＰポーカー、ガンズブロズのような人気のアプリを発見できます。新しいアプリを紹介してくれるので、もしマジック・ズーがお気に入りなら、TapjoyがサファリズーやバグビレッジＨＤ等のゲームを提案してくれます。今すぐサインアップして、お気に入りのアプリを見つけるためのより良い方法を活用しよう。
       about_title: "\"自分が好きなアプリを正確にわかってくれる\""
       account_created_body: アカウントの登録を完了しました！
@@ -187,7 +187,7 @@ ja:
       advertisers_body: あなたのアプリをTapjoyに露出し、多くのユーザーにリーチしよう
       advertisers_title: 広告主
       allow_marketing_emails: Tapjoyからのお知らせメールを受け取る
-      already_registered: 
+      already_registered:
         one: "%{name}さんはすでに登録済みです。%{name}さんをフォローしました"
         other: "%{name}さんはすでに登録済みです。%{name}さんをフォローしました"
       back_to_top: 上に戻る
@@ -231,17 +231,17 @@ ja:
       invite_button: 招待する
       invite_email_body: |-
           %{name}さんからTapjoyへの招待が届きました。Tapjoyは今最も注目のアプリを見つけるのに最適の場所です。Tapjoyの利用は無料です。また、今使っているアプリ内のポイントを獲得しながら、iOSやAndroidで注目のアプリを発掘することができます。
-          
+
           あなたが次にダウンロードするアプリのために、App StoreやAndroidマーケットの膨大な数のアプリに目を通す必要はありません。 Tapjoyがあなたの好みに応じてアプリをオススメします。　
-          
+
           今すぐ始める方はこちらから：
       invite_email_greet: こんにちは、
       invite_email_signature: Tapjoyチーム
-      invite_friends: 
+      invite_friends:
         one: 招待する
         other: "%{count} 人の友達を招待する"
       invite_title: 友達に招待メールを送る
-      invites_sent_to: 
+      invites_sent_to:
         one: "Tapjoyへの招待状が%{name}さんに送信されました"
         other: "Tapjoyへの招待状が%{name}さんへ送信されました"
       issue_registering: アカウント登録中にエラーが発生しました
@@ -275,7 +275,7 @@ ja:
       unable_to_process: 申し訳ございませんが、登録できません。
       wifi_required: WiFi必須
       wrong_device: 違うデバイス?
-    instructions: 
+    instructions:
       amount_and_currency: "%{amount} %{currency}"
       continue_link: 続くにはクリックしてください
       download_action: こちら
@@ -284,7 +284,7 @@ ja:
       footer: "このステップを完了すると %{amount_and_currency} が獲得できます"
       header: "次のステップを完了すると %{currency} が獲得できます"
       title: 指示
-    offerwall: 
+    offerwall:
       buy_currency: "%{amount} %{currency} を買う"
       earn_currency: "%{amount} %{currency}  を獲得"
       free: 無料
@@ -300,7 +300,7 @@ ja:
       title: "%{currency} を稼ぐ"
       wifi_required: WiFi必須
       wifi_warning: "This app requires a wifi connection to download."
-    shared: 
+    shared:
       about_link: Tapjoyについて
       ads_by: ~
       android: Android
@@ -353,7 +353,7 @@ ja:
       updating: アップデート中
       year: 年
       zip_postal: 郵便番号
-    support: 
+    support:
       abuse_warning: このフォームはオファー案件の手続きを終了したにもかかわらず、仮想通貨を受取れなかったお客様のためのものです。　不正利用の場合にはオファー広告を利用することが出来なくなります。
       description_label: 詳細
       email_address_label: メールアドレス
@@ -369,12 +369,12 @@ ja:
       support_request_submitted: サポートが依頼されました
       thanks: "サポート依頼を受け付けました。オファー広告の手続き完了後に%{currency}を発行をいたします"
       title: "%{currency}が受取れない場合?"
-    unavailable_offer: 
+    unavailable_offer:
       message: "申し訳ございませんが %{offer} が現在提供しておりません。前のページに戻って更新して頂くと最新オファー広告リストがご覧頂けます。"
       optional_message: "又は %{offer} をダウンロードするにはクリックしてください"
-  time: 
+  time:
     am: ~
-    formats: 
+    formats:
       day: ~
       day_long: ~
       day_short: ~

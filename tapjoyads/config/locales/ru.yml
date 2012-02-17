@@ -1,10 +1,10 @@
---- 
-ru: 
-  activerecord: 
-    errors: 
-      full_messages: 
+---
+ru:
+  activerecord:
+    errors:
+      full_messages:
         format: ~
-      messages: 
+      messages:
         accepted: ~
         blank: ~
         confirmation: ~
@@ -26,67 +26,67 @@ ru:
         too_long: ~
         too_short: ~
         wrong_length: ~
-      template: 
+      template:
         body: ~
-        header: 
+        header:
           one: ~
           other: ~
-  date: 
+  date:
     abbr_day_names: ~
     abbr_month_names: ~
     day_names: ~
-    formats: 
+    formats:
       default: ~
       long: ~
       short: ~
     month_names: ~
     order: ~
-  datetime: 
-    distance_in_words: 
-      about_x_hours: 
+  datetime:
+    distance_in_words:
+      about_x_hours:
         one: ~
         other: ~
-      about_x_months: 
+      about_x_months:
         one: ~
         other: ~
-      about_x_years: 
+      about_x_years:
         one: ~
         other: ~
-      almost_x_years: 
+      almost_x_years:
         one: ~
         other: ~
       half_a_minute: ~
-      less_than_x_minutes: 
+      less_than_x_minutes:
         one: ~
         other: ~
-      less_than_x_seconds: 
+      less_than_x_seconds:
         one: ~
         other: ~
-      over_x_years: 
+      over_x_years:
         one: ~
         other: ~
-      x_days: 
+      x_days:
         one: ~
         other: ~
-      x_minutes: 
+      x_minutes:
         one: ~
         other: ~
-      x_months: 
+      x_months:
         one: ~
         other: ~
-      x_seconds: 
+      x_seconds:
         one: ~
         other: ~
-    prompts: 
+    prompts:
       day: ~
       hour: ~
       minute: ~
       month: ~
       second: ~
       year: ~
-  errors: 
+  errors:
     format: ~
-    messages: 
+    messages:
       accepted: ~
       blank: ~
       confirmation: ~
@@ -106,16 +106,16 @@ ru:
       too_long: ~
       too_short: ~
       wrong_length: ~
-  helpers: 
-    select: 
+  helpers:
+    select:
       prompt: ~
-    submit: 
+    submit:
       create: ~
       submit: ~
       update: ~
-  number: 
-    currency: 
-      format: 
+  number:
+    currency:
+      format:
         delimiter: ~
         format: ~
         precision: ~
@@ -123,52 +123,52 @@ ru:
         significant: ~
         strip_insignificant_zeros: ~
         unit: ~
-    format: 
+    format:
       delimiter: ~
       precision: ~
       separator: ~
       significant: ~
       strip_insignificant_zeros: ~
-    human: 
-      decimal_units: 
+    human:
+      decimal_units:
         format: ~
-        units: 
+        units:
           billion: ~
           million: ~
           quadrillion: ~
           thousand: ~
           trillion: ~
           unit: ~
-      format: 
+      format:
         delimiter: ~
         precision: ~
         significant: ~
         strip_insignificant_zeros: ~
-      storage_units: 
+      storage_units:
         format: ~
-        units: 
-          byte: 
+        units:
+          byte:
             one: ~
             other: ~
           gb: ~
           kb: ~
           mb: ~
           tb: ~
-    percentage: 
-      format: 
+    percentage:
+      format:
         delimiter: ~
-    precision: 
-      format: 
+    precision:
+      format:
         delimiter: ~
-  support: 
-    array: 
+  support:
+    array:
       last_word_connector: ~
       two_words_connector: ~
       words_connector: ~
-    select: 
+    select:
       prompt: ~
-  text: 
-    featured: 
+  text:
+    featured:
       download: Установить
       download_and_run: "Установить и открыть"
       earn_currency: "Заработать %{amount_and_currency}"
@@ -177,7 +177,7 @@ ru:
       skip: Пропустить
       title: "Заработать %{currency}"
       try_out: Попробовать
-    games: 
+    games:
       about_body: "Tapjoy познакомит вас с такими популярными приложениями, как Happy Park, City of Wonder, Coin Dozer, Overkill, VIP Poker, и Gun Bros, и в тоже время даст вам доступ к премиум контенту в ваших любимых приложениях. Tapjoy также найдет для вас новые приложения, которые вам понравятся. Например, если вы играете в Magic Zoo, мы посоветум вам другие игры, кторые вам скорее всего тоже понравятся, например Safari Zoo и Bug Village HD. Зарегистрируйтесь сейчас и получите доступ к классным приложениям."
       about_title: "\"Каким-то образом, Tapjoy знает, какие приложения мне нравятся.\""
       account_created_body: ~
@@ -187,7 +187,7 @@ ru:
       advertisers_body: "Покажите свой продукт миллионам пользователей"
       advertisers_title: Рекламодатели
       allow_marketing_emails: "Разрешить Tapjoy присылать мне маркетинговый материал"
-      already_registered: 
+      already_registered:
         one: ~
         other: ~
       back_to_top: ~
@@ -231,9 +231,9 @@ ru:
       invite_button: Пригласить
       invite_email_body: |-
           %{name} пригласил(а) вас присоединиться к Tapjoy, ЛУЧШЕЙ платформе для поиска классных новых приложений. Регистрация бесплатная. Вы сможете скачать лучшие приложения на Android и iOS, а также зарабатывать виртуальные деньги в ваши любимые приложения.
-          
+
           Не нужно часами искать хорошие приложения среди многих тысяч приложений в Аппсторе или Андройд Маркете. Tapjoy знает, какие приложения вам понравятся,  исходя из приложений установленных у вас и ваших друзей.
-          
+
           Чтобы начать, зарегистрируйтесь сейчас:
       invite_email_greet: "Здравствуйте,"
       invite_email_signature: "Команда Tapjoy"
@@ -271,7 +271,7 @@ ru:
       unable_to_process: ~
       wifi_required: "Необходим Wi-fi"
       wrong_device: "не то мобильное устройство?"
-    instructions: 
+    instructions:
       amount_and_currency: "%{amount} %{currency}"
       continue_link: "Нажмите сюда, чтобы продолжить."
       download_action: сюда
@@ -280,7 +280,7 @@ ru:
       footer: "Когда вы полностью выполните задание, вы заработаете %{amount_and_currency}."
       header: "Чтобы заработать %{currency}, сделайте следующее:"
       title: Инструкции
-    offerwall: 
+    offerwall:
       buy_currency: "Купить %{amount} %{currency}"
       earn_currency: "Заработать %{amount} %{currency}"
       free: Free
@@ -296,7 +296,7 @@ ru:
       title: "Заработать %{currency}"
       wifi_required: "Необходим Wi-fi"
       wifi_warning: "This app requires a wifi connection to download."
-    shared: 
+    shared:
       about_link: "О Tapjoy"
       ads_by: ~
       android: Андройд
@@ -349,7 +349,7 @@ ru:
       updating: ~
       year: Год
       zip_postal: "Почтовый индекс"
-    support: 
+    support:
       abuse_warning: "Эта форма предназначена исключительно для пользователей, которые не получили очки за выполнение предложения. Злоупотребление этой формой может привести к деактивации вашей учетной записи и невозможности зарабатывания очков в будущем."
       description_label: "Описание:"
       email_address_label: "Адрес электронной почты:"
@@ -365,12 +365,12 @@ ru:
       support_request_submitted: "Сообщение отправлено"
       thanks: "Спасибо за отправку вашего сообщения! Вы получите ваши %{currency} после того как мы проверим, что вы полностью выполнили предложение."
       title: "Не получили %{currency}?"
-    unavailable_offer: 
+    unavailable_offer:
       message: "К сожалению, %{offer} более недоступно. Вернитесь и обновите предыдущую страницу для просмотра последних предложений."
       optional_message: "Или нажмите здесь, чтобы установить %{offer} все равно."
-  time: 
+  time:
     am: ~
-    formats: 
+    formats:
       day: ~
       day_long: ~
       day_short: ~

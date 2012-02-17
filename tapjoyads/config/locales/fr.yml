@@ -1,10 +1,10 @@
---- 
-fr: 
-  activerecord: 
-    errors: 
-      full_messages: 
+---
+fr:
+  activerecord:
+    errors:
+      full_messages:
         format: ~
-      messages: 
+      messages:
         accepted: ~
         blank: ~
         confirmation: ~
@@ -26,67 +26,67 @@ fr:
         too_long: ~
         too_short: ~
         wrong_length: ~
-      template: 
+      template:
         body: ~
-        header: 
+        header:
           one: ~
           other: ~
-  date: 
+  date:
     abbr_day_names: ~
     abbr_month_names: ~
     day_names: ~
-    formats: 
+    formats:
       default: ~
       long: ~
       short: ~
     month_names: ~
     order: ~
-  datetime: 
-    distance_in_words: 
-      about_x_hours: 
+  datetime:
+    distance_in_words:
+      about_x_hours:
         one: ~
         other: ~
-      about_x_months: 
+      about_x_months:
         one: ~
         other: ~
-      about_x_years: 
+      about_x_years:
         one: ~
         other: ~
-      almost_x_years: 
+      almost_x_years:
         one: ~
         other: ~
       half_a_minute: ~
-      less_than_x_minutes: 
+      less_than_x_minutes:
         one: ~
         other: ~
-      less_than_x_seconds: 
+      less_than_x_seconds:
         one: ~
         other: ~
-      over_x_years: 
+      over_x_years:
         one: ~
         other: ~
-      x_days: 
+      x_days:
         one: ~
         other: ~
-      x_minutes: 
+      x_minutes:
         one: ~
         other: ~
-      x_months: 
+      x_months:
         one: ~
         other: ~
-      x_seconds: 
+      x_seconds:
         one: ~
         other: ~
-    prompts: 
+    prompts:
       day: ~
       hour: ~
       minute: ~
       month: ~
       second: ~
       year: ~
-  errors: 
+  errors:
     format: ~
-    messages: 
+    messages:
       accepted: ~
       blank: ~
       confirmation: ~
@@ -106,16 +106,16 @@ fr:
       too_long: ~
       too_short: ~
       wrong_length: ~
-  helpers: 
-    select: 
+  helpers:
+    select:
       prompt: ~
-    submit: 
+    submit:
       create: ~
       submit: ~
       update: ~
-  number: 
-    currency: 
-      format: 
+  number:
+    currency:
+      format:
         delimiter: ~
         format: ~
         precision: ~
@@ -123,52 +123,52 @@ fr:
         significant: ~
         strip_insignificant_zeros: ~
         unit: ~
-    format: 
+    format:
       delimiter: ~
       precision: ~
       separator: ~
       significant: ~
       strip_insignificant_zeros: ~
-    human: 
-      decimal_units: 
+    human:
+      decimal_units:
         format: ~
-        units: 
+        units:
           billion: ~
           million: ~
           quadrillion: ~
           thousand: ~
           trillion: ~
           unit: ~
-      format: 
+      format:
         delimiter: ~
         precision: ~
         significant: ~
         strip_insignificant_zeros: ~
-      storage_units: 
+      storage_units:
         format: ~
-        units: 
-          byte: 
+        units:
+          byte:
             one: ~
             other: ~
           gb: ~
           kb: ~
           mb: ~
           tb: ~
-    percentage: 
-      format: 
+    percentage:
+      format:
         delimiter: ~
-    precision: 
-      format: 
+    precision:
+      format:
         delimiter: ~
-  support: 
-    array: 
+  support:
+    array:
       last_word_connector: ~
       two_words_connector: ~
       words_connector: ~
-    select: 
+    select:
       prompt: ~
-  text: 
-    featured: 
+  text:
+    featured:
       download: Télécharge
       download_and_run: "Télécharge et lance"
       earn_currency: "Gagne %{amount_and_currency}"
@@ -177,7 +177,7 @@ fr:
       skip: Passe
       title: "Gagne des %{currency}"
       try_out: "A découvrir"
-    games: 
+    games:
       about_body: "Tapjoy te permet de découvrir les apps dont tout le monde parle comme Happy Park, City of Wonder, Coin Dozer, Overkill, VIP Poker & Gun Bros tout en débloquant des niveaux exclusifs dans vos apps favorites"
       about_title: "\"Tapjoy.com sait exactement les apps que j'aime\""
       account_created_body: "Votre compte Tapjoy a bien été crée!"
@@ -187,7 +187,7 @@ fr:
       advertisers_body: "Ciblez des millions d'utilisateurs et faites bénéficiez vos produits d'une large exposition"
       advertisers_title: Annonceurs
       allow_marketing_emails: "Permettre à Tapjoy de m'envoyer des emails promotionnels "
-      already_registered: 
+      already_registered:
         one: "%{name} s'est déjà enregistré, vous le/la suivez désormais"
         other: "%{name} sont deja inscrits, vous etes desormais abonnes a leur fil d'actualite"
       back_to_top: "Retour "
@@ -231,17 +231,17 @@ fr:
       invite_button: Invite
       invite_email_body: |-
           %{name} t'a invité à rejoindre Tapjoy, l'endroit ou il faut être pour découvrir les dernières apps du moment. Inscris toi gratuitement et découvre les meilleurs apps sur iOS et Android, tout en gagnant de la monnaie virtuelle au sein de tes apps favorites.
-          
+
           Plus besoin de fouiller au milieu de milliers d'apps de l'App Store et de l'Android Market pour trouver ton prochain téléchargement. Tapjoy s'occupe de toi et te recommande des apps dont on est sur qu'elles te plairont.
-          
+
           Pour commencer, crée un compte ici:
       invite_email_greet: "Salut,"
       invite_email_signature: L'équipeTapjoy
-      invite_friends: 
+      invite_friends:
         one: Invite
         other: "Inviter %{count} amis"
       invite_title: "Envois une invitation par mail"
-      invites_sent_to: 
+      invites_sent_to:
         one: "Votre invitation Tapjoy a été envoyée a %{name}"
         other: "Vos invitations Tapjoy ont été envoyées a %{name}"
       issue_registering: "Il ya eu une erreur lors de l'enregistrement de votre compte"
@@ -275,7 +275,7 @@ fr:
       unable_to_process: "Désolé, nous somme incapables de procéder a votre requête"
       wifi_required: "Wifi requis"
       wrong_device: "Pas le bon appareil?"
-    instructions: 
+    instructions:
       amount_and_currency: "%{amount} %{currency}"
       continue_link: "Clique ici pour continuer."
       download_action: ici
@@ -284,7 +284,7 @@ fr:
       footer: "Après avoir complété ces étapes, tu recevras %{amount_and_currency}."
       header: "Suis les étapes suivantes et gagne des %{currency}:"
       title: Instructions
-    offerwall: 
+    offerwall:
       buy_currency: "Achète %{amount} %{currency}"
       earn_currency: "Gagne %{amount} %{currency}"
       free: Gratuit
@@ -300,7 +300,7 @@ fr:
       title: "Gagne des %{currency}"
       wifi_required: "Wifi requis"
       wifi_warning: "This app requires a wifi connection to download."
-    shared: 
+    shared:
       about_link: "A propos"
       ads_by: ~
       android: Android
@@ -353,7 +353,7 @@ fr:
       updating: ~
       year: Année
       zip_postal: "Code Postal"
-    support: 
+    support:
       abuse_warning: "Ce formulaire est uniquement dédié aux utilisateurs n'ayant pas été récompensés après avoir complété une offre. L'utilisation abusive de cette page pourrait entraîner un bannissement définitif de votre compte sur les offres futures."
       description_label: "Description:"
       email_address_label: "Adresse email:"
@@ -369,12 +369,12 @@ fr:
       support_request_submitted: "Demande bien reçue"
       thanks: "Merci de votre soumission au support! Vous recevrez vos %{currency} après vérification que l'offre soumise air bien été complétée."
       title: "En manque de %{currency}?"
-    unavailable_offer: 
+    unavailable_offer:
       message: "Désolé, mais l'offre suivante n'est plus disponible: %{offer}. Retourne à la page précédente et rafraîchis la liste pour voir notre offre mise à jour."
       optional_message: "Ou, clique ici pour la télécharger quand même %{offer}."
-  time: 
+  time:
     am: ~
-    formats: 
+    formats:
       day: ~
       day_long: ~
       day_short: ~

@@ -1,10 +1,10 @@
---- 
-zh: 
-  activerecord: 
-    errors: 
-      full_messages: 
+---
+zh:
+  activerecord:
+    errors:
+      full_messages:
         format: ~
-      messages: 
+      messages:
         accepted: ~
         blank: ~
         confirmation: ~
@@ -26,67 +26,67 @@ zh:
         too_long: ~
         too_short: ~
         wrong_length: ~
-      template: 
+      template:
         body: ~
-        header: 
+        header:
           one: ~
           other: ~
-  date: 
+  date:
     abbr_day_names: ~
     abbr_month_names: ~
     day_names: ~
-    formats: 
+    formats:
       default: ~
       long: ~
       short: ~
     month_names: ~
     order: ~
-  datetime: 
-    distance_in_words: 
-      about_x_hours: 
+  datetime:
+    distance_in_words:
+      about_x_hours:
         one: ~
         other: ~
-      about_x_months: 
+      about_x_months:
         one: ~
         other: ~
-      about_x_years: 
+      about_x_years:
         one: ~
         other: ~
-      almost_x_years: 
+      almost_x_years:
         one: ~
         other: ~
       half_a_minute: ~
-      less_than_x_minutes: 
+      less_than_x_minutes:
         one: ~
         other: ~
-      less_than_x_seconds: 
+      less_than_x_seconds:
         one: ~
         other: ~
-      over_x_years: 
+      over_x_years:
         one: ~
         other: ~
-      x_days: 
+      x_days:
         one: ~
         other: ~
-      x_minutes: 
+      x_minutes:
         one: ~
         other: ~
-      x_months: 
+      x_months:
         one: ~
         other: ~
-      x_seconds: 
+      x_seconds:
         one: ~
         other: ~
-    prompts: 
+    prompts:
       day: ~
       hour: ~
       minute: ~
       month: ~
       second: ~
       year: ~
-  errors: 
+  errors:
     format: ~
-    messages: 
+    messages:
       accepted: ~
       blank: ~
       confirmation: ~
@@ -106,16 +106,16 @@ zh:
       too_long: ~
       too_short: ~
       wrong_length: ~
-  helpers: 
-    select: 
+  helpers:
+    select:
       prompt: ~
-    submit: 
+    submit:
       create: ~
       submit: ~
       update: ~
-  number: 
-    currency: 
-      format: 
+  number:
+    currency:
+      format:
         delimiter: ~
         format: ~
         precision: ~
@@ -123,52 +123,52 @@ zh:
         significant: ~
         strip_insignificant_zeros: ~
         unit: ~
-    format: 
+    format:
       delimiter: ~
       precision: ~
       separator: ~
       significant: ~
       strip_insignificant_zeros: ~
-    human: 
-      decimal_units: 
+    human:
+      decimal_units:
         format: ~
-        units: 
+        units:
           billion: ~
           million: ~
           quadrillion: ~
           thousand: ~
           trillion: ~
           unit: ~
-      format: 
+      format:
         delimiter: ~
         precision: ~
         significant: ~
         strip_insignificant_zeros: ~
-      storage_units: 
+      storage_units:
         format: ~
-        units: 
-          byte: 
+        units:
+          byte:
             one: ~
             other: ~
           gb: ~
           kb: ~
           mb: ~
           tb: ~
-    percentage: 
-      format: 
+    percentage:
+      format:
         delimiter: ~
-    precision: 
-      format: 
+    precision:
+      format:
         delimiter: ~
-  support: 
-    array: 
+  support:
+    array:
       last_word_connector: ~
       two_words_connector: ~
       words_connector: ~
-    select: 
+    select:
       prompt: ~
-  text: 
-    featured: 
+  text:
+    featured:
       download: 下载
       download_and_run: 请下载和安装。
       earn_currency: "赚 %{amount_and_currency}"
@@ -177,7 +177,7 @@ zh:
       skip: 跳过
       title: "赚 %{currency}"
       try_out: 试一试
-    games: 
+    games:
       about_body: ~
       about_title: ~
       account_created_body: ~
@@ -187,7 +187,7 @@ zh:
       advertisers_body: ~
       advertisers_title: ~
       allow_marketing_emails: ~
-      already_registered: 
+      already_registered:
         one: ~
         other: ~
       back_to_top: ~
@@ -228,11 +228,11 @@ zh:
       invite_email_body: ~
       invite_email_greet: ~
       invite_email_signature: ~
-      invite_friends: 
+      invite_friends:
         one: ~
         other: ~
       invite_title: ~
-      invites_sent_to: 
+      invites_sent_to:
         one: ~
         other: ~
       issue_registering: ~
@@ -264,7 +264,7 @@ zh:
       unable_to_process: ~
       wifi_required: ~
       wrong_device: ~
-    instructions: 
+    instructions:
       amount_and_currency: "%{amount} %{currency}"
       continue_link: 点击这里继续
       download_action: 这里
@@ -273,7 +273,7 @@ zh:
       footer: "在完成这些步骤后, 您将获得 %{amount_and_currency}."
       header: "按照这些步骤来赚 %{currency}:"
       title: 说明
-    offerwall: 
+    offerwall:
       buy_currency: "买 %{amount} %{currency}"
       earn_currency: "赚 %{amount} %{currency}"
       free: 免费
@@ -289,7 +289,7 @@ zh:
       title: "赚 %{currency}"
       wifi_required: 需要Wifi
       wifi_warning: 下载本软件需要wifi连接。
-    shared: 
+    shared:
       about_link: ~
       ads_by: "Ads by"
       android: ~
@@ -340,7 +340,7 @@ zh:
       updating: ~
       year: ~
       zip_postal: ~
-    support: 
+    support:
       abuse_warning: "本页表格是针对完成了流程但未获得虚拟币奖励的用. 滥用者可导致将来受禁止参与此类活动."
       description_label: "请描述您下载了APP的流程:"
       email_address_label: "电子邮箱:"
@@ -356,12 +356,12 @@ zh:
       support_request_submitted: 支持请求已提交
       thanks: "感谢您提交了支持请求! 我们完成了确认流程后，你将会获取应得的 %{currency}."
       title: "没得到 %{currency}?"
-    unavailable_offer: 
+    unavailable_offer:
       message: "对不起。您找的 %{offer} 目前无法出现。可以回到前一页然后刷新。"
       optional_message: "或您可以点和下载这个 %{offer} 。"
-  time: 
+  time:
     am: ~
-    formats: 
+    formats:
       day: ~
       day_long: ~
       day_short: ~
