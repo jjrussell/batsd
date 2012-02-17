@@ -105,14 +105,27 @@ body {
   filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#{$p0}', endColorstr='#{$p100}',GradientType=1 ); /* IE6-9 fallback on horizontal gradient */
 }
 
+.panel {
+  background-image: url('/images/games/chrome-bg.png');
+}
 .chrome {
-  @include radial-gradient(#ffffff, #f1f4f6, #e6e9ed);
-  border-bottom: 1px solid #6f7072;
+  @include radial-gradient(rgba(255,255,255,0.8), rgba(240,240,240,0.3), rgba(230,230,230,0.2));
 }
 
 .inset-chrome {
-  @include gradient(rgba(247, 247, 250, 1.0), rgba(220, 223, 227, 1.0));
-  box-shadow: 0 1px 0 rgba(169, 169, 169, 1.0) inset;
+  @extend .chrome;
+  box-shadow: 0 0px 1px rgba(169, 169, 169, 1.0) inset, 0 1px 0 rgba(200, 200, 200, 1.0);
+  position: relative;
+  z-index: 30;
+}
+
+.bevel-chrome {
+  @include gradient-top(#dcdce1,#dadadf,#cbced3,#c1c5ca);
+  border-top: 1px solid #f8f8f9;
+  box-shadow: 0 1px 1px #535353;
+  text-shadow: 0 1px 0 #fff;
+  position: relative;
+  z-index: 30;
 }
 
 .headerwrap {
@@ -130,6 +143,9 @@ body {
     }
   }
 }
+.footer {
+  padding-bottom: 100px;
+}
 .nav-icon {
   position: absolute;
   top: 3px;
@@ -142,7 +158,7 @@ body {
 }
 
 .app-summary {
-  margin: 0px 0;
+  margin: 2px 0 6px;
   width: 100%;
   .score, .social {
     float: left;
@@ -166,7 +182,8 @@ body {
   padding: 20px 10px;
 }
 .narrow-section {
-  line-height: 30px;
+  line-height: 35px;
+  padding: 0px percentage(10/320);
 }
 
 div.ui-joy-button.grey-action {
@@ -194,16 +211,17 @@ div.ui-joy-button.grey-action {
 
 .highlight-green {
   @include txt-shadow();
-  @include gradient(rgba(118, 186, 81, 1.0), rgba(73, 138, 36, 1.0));
+  @include gradient-top(#75ba50, #6aae45, #51932c, #51922b);
   @include rounded-corners(4px);
   @include shadow(#047003, 1px);
-  border: 1px solid rgba(89, 152, 54, 1.0);
-  border-top: 1px solid rgba(154, 225, 119, 1.0);
-  border-bottom: 1px solid rgba(81, 146, 42, 1.0);
+  box-shadow: 0 1px 0 rgba(154, 225, 119, 1.0) inset;
+  border: 1px solid rgba(39, 130, 22, 1.0);
+  border-top: 1px solid rgba(86, 155, 49, 1.0);
+  border-bottom: 1px solid rgba(6, 112, 4, 1.0);
   color: white;
   padding: 1px 4px;
   text-align: center;
-  font-size: .9em;
+  font-size: .8em;
   display: inline-block;
 }
 .slats.with-icons .slat {
@@ -218,11 +236,14 @@ div.ui-joy-button.grey-action {
   }
 }
 .slats.simple .slat {
-  line-height: 30px;
+  line-height: 35px;
+  padding-top: 0;
+  padding-bottom: 0;
 }
 
 ul.slats {
-  @include box-shadow(0px, -1px, 2px, #ccc);
+  box-shadow: 0 1px 0 white inset;
+  border-top: 1px solid #a5a6a8;
   a {
     text-decoration: none;
     color: #000;
@@ -239,6 +260,9 @@ li.slat {
   float: none;
   padding: 5px percentage(10/320);
   width: percentage(300/320);
+  /*border-bottom: 1px solid #6f7072;*/
+  border-bottom: 1px solid #a5a6a8;
+  box-shadow: 0 1px 0 white;
   text-align: left;
   .title {
     font-size: 1.2em;

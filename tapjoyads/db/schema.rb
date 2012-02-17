@@ -146,9 +146,10 @@ ActiveRecord::Schema.define(:version => 20120216172034) do
   add_index "conversions", ["publisher_partner_id", "created_at"], :name => "index_conversions_on_publisher_partner_id_and_created_at"
 
   create_table "creative_approval_queue", :force => true do |t|
-    t.string "offer_id", :limit => 36, :null => false
-    t.string "user_id",  :limit => 36
-    t.text   "size"
+    t.string   "offer_id",   :limit => 36, :null => false
+    t.string   "user_id",    :limit => 36
+    t.text     "size"
+    t.datetime "created_at"
   end
 
   create_table "currencies", :id => false, :force => true do |t|

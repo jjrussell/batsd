@@ -222,6 +222,7 @@ en:
       amount_and_currency: %{amount} %{currency}
       back_to_top: Back to Top
       birthdate: Birthdate
+      browse_offers: Browse Offers
       call_to_action_body: "A better way to love the apps you have and find the apps you'll love"
       call_to_action_title: "Unlock Mobile Joy"
       cant_fetch_offers: "There was an issue fetching more offers. Please try again."
