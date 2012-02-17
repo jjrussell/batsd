@@ -208,5 +208,24 @@ describe Currency do
       end
     end
 
+    context 'when approved' do
+      it 'should set currency to Tapjoy Enabled' do
+        @currency.tapjoy_enabled.should_not be_true
+        @currency.after_approve(nil)
+        @currency.reload
+        @currency.tapjoy_enabled.should be_true
+      end
+    end
+
+    context 'when rejected then updated' do
+      it 'should be pending' do
+        approval = mock()
+        approval.expects(:destroy).at_least_once
+        @currency.stubs(:approval).returns(approval)
+        @currency.stubs(:rejected?).returns(true)
+        @currency.run_callbacks(:after_update)
+      end
+    end
+
   end
 end
