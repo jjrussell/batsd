@@ -8,8 +8,8 @@ describe BillingController do
     login_as(user)
   end
 
-  describe "admins creating transfers" do
-    it "should log transfer and math should work out" do
+  describe 'admins creating transfers' do
+    it 'logs transfer and math works out' do
       get :create_transfer, { :transfer_amount => '$1.00' }
       @partner.reload
 
@@ -19,7 +19,7 @@ describe BillingController do
       @partner.balance.should == 10_110
     end
 
-    it "should not allow negative transfer" do
+    it 'does not allow negative transfer' do
       get :create_transfer, { :transfer_amount => '$-1.00' }
       @partner.reload
 
@@ -29,7 +29,7 @@ describe BillingController do
       @partner.balance.should == 10_000
     end
 
-    it "should not allow transfer greater than pending_earnings amount" do
+    it 'does not allow transfer greater than pending_earnings amount' do
       get :create_transfer, { :transfer_amount => '$100.01' }
       @partner.reload
 
