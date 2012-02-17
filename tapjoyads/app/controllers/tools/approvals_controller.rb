@@ -8,8 +8,8 @@ class Tools::ApprovalsController < WebsiteController
   before_filter :find_approval, :only => [:approve, :reject, :assign]
 
   def index
-    state = (params[:approval] && params[:approval][:state].to_i ) || Approval.enumerate_state('pending')
-    @conditions[:state] = state if state.to_i > -1
+    state = (params[:state] && params[:state].to_i ) || Approval.enumerate_state('pending')
+    @conditions[:state] = state if state > -1
 
     @approvals = Approval.all(:conditions => @conditions, :order => 'created_at ASC')
   end
@@ -85,16 +85,6 @@ class Tools::ApprovalsController < WebsiteController
       @conditions[:item_type] = params[:item_type]
     end
     @conditions[:item_type] = params[:type].to_s.capitalize if params[:type]
-    if params[:approval]
-      if params[:approval][:owner_id].present?
-        @conditions[:owner_id] = params[:approval][:owner_id]
-        @conditions[:owner_id] = nil if params[:approval][:owner_id] == 0
-      end
-
-      if params[:approval][:item_type].present?
-        @conditions[:item_type] = params[:approval][:item_type]
-      end
-    end
   end
 
   # Check for the selected models partial, use the generic one if it doesn't exist
