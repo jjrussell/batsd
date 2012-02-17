@@ -226,11 +226,12 @@ sv:
         install_and_run: "Installera och kör %{name}"
         invite: "Bjud in en vän!"
         invite_button: "Bjud in"
-        invite_email_body: "\"%{name} har bjudit in dig till att gå med i Tapjoy, den BÄSTA platsen för att hitta de hetaste apparna. Det är gratis att gå med och börja upptäcka de bästa apparna på iOS och Android, samtidigt som du kan tjäna virtuel valuta i dina favoriter.
+        invite_email_body: |-
+            %{name} har bjudit in dig till att gå med i Tapjoy, den BÄSTA platsen för att hitta de hetaste apparna. Det är gratis att gå med och börja upptäcka de bästa apparna på iOS och Android, samtidigt som du kan tjäna virtuel valuta i dina favoriter.
 
-        Du slipper ögna igenom tusentals appar i App store eller Android Market för att hitta nästa nedladdning. Tapjoy fixar det åt dig genom att rekommendera appar vi vet att du gillar
+            Du slipper ögna igenom tusentals appar i App store eller Android Market för att hitta nästa nedladdning. Tapjoy fixar det åt dig genom att rekommendera appar vi vet att du gillar
 
-        För att komma igång, skapa ditt konto här:\""
+            För att komma igång, skapa ditt konto här:
         invite_email_greet: "Hej,"
         invite_email_signature: "Team Tapjoy"
         invite_friends: 
@@ -263,7 +264,7 @@ sv:
         tap_that: "Tryck bara på %{icon} och välj %{button}"
         tapjoy_picks: "Tapjoy Tipsar"
         terms_of_use_href: "Användarvilkor"
-        tos_acknowledge: "Genom att klicka här godkänner jag {terms of use} & {privacy policy}"
+        tos_acknowledge: "Genom att klicka här godkänner jag %{terms of use} & %{privacy policy}"
         tos_change_acknowledge: "Genom att klicka här godkänner jag användarvilkoren"
         unable_to_process: "Tyvärr kan vi inte fullfölja din förfrågan"
         wifi_required: "Uppkoppling krävs"

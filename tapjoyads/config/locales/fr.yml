@@ -179,7 +179,7 @@ fr:
       try_out: "A découvrir"
     games: 
         about_body: "Tapjoy te permet de découvrir les apps dont tout le monde parle comme Happy Park, City of Wonder, Coin Dozer, Overkill, VIP Poker & Gun Bros tout en débloquant des niveaux exclusifs dans vos apps favorites"
-        about_title: "Tapjoy.com sait exactement les apps que j'aime"
+        about_title: "\"Tapjoy.com sait exactement les apps que j'aime\""
         account_created_body: "Votre compte Tapjoy a bien été crée!"
         account_created_title: "Félicitations!"
         action_required: "Action requise!"
@@ -226,11 +226,12 @@ fr:
         install_and_run: "Installe et lance %{name}"
         invite: "Invite tes Amis!"
         invite_button: "Invite"
-        invite_email_body: "\"%{name} t'a invité à rejoindre Tapjoy, l'endroit ou il faut être pour découvrir les dernières apps du moment. Inscris toi gratuitement et découvre les meilleurs apps sur iOS et Android, tout en gagnant de la monnaie virtuelle au sein de tes apps favorites.
+        invite_email_body: |-
+            %{name} t'a invité à rejoindre Tapjoy, l'endroit ou il faut être pour découvrir les dernières apps du moment. Inscris toi gratuitement et découvre les meilleurs apps sur iOS et Android, tout en gagnant de la monnaie virtuelle au sein de tes apps favorites.
 
-        Plus besoin de fouiller au milieu de milliers d'apps de l'App Store et de l'Android Market pour trouver ton prochain téléchargement. Tapjoy s'occupe de toi et te recommande des apps dont on est sur qu'elles te plairont.
+            Plus besoin de fouiller au milieu de milliers d'apps de l'App Store et de l'Android Market pour trouver ton prochain téléchargement. Tapjoy s'occupe de toi et te recommande des apps dont on est sur qu'elles te plairont.
 
-        Pour commencer, crée un compte ici:\""
+            Pour commencer, crée un compte ici:
         invite_email_greet: "Salut,"
         invite_email_signature: "L'équipeTapjoy"
         invite_friends: 

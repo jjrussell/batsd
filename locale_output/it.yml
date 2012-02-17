@@ -1,0 +1,371 @@
+--- 
+it: 
+  activerecord: 
+    errors: 
+      full_messages: 
+        format: ~
+      messages: 
+        accepted: ~
+        blank: ~
+        confirmation: ~
+        empty: ~
+        equal_to: ~
+        even: ~
+        exclusion: ~
+        greater_than: ~
+        greater_than_or_equal_to: ~
+        inclusion: ~
+        invalid: ~
+        less_than: ~
+        less_than_or_equal_to: ~
+        not_a_number: ~
+        not_an_integer: ~
+        odd: ~
+        record_invalid: ~
+        taken: ~
+        too_long: ~
+        too_short: ~
+        wrong_length: ~
+      template: 
+        body: ~
+        header: 
+          one: ~
+          other: ~
+  date: 
+    abbr_day_names: ~
+    abbr_month_names: ~
+    day_names: ~
+    formats: 
+      default: ~
+      long: ~
+      short: ~
+    month_names: ~
+    order: ~
+  datetime: 
+    distance_in_words: 
+      about_x_hours: 
+        one: ~
+        other: ~
+      about_x_months: 
+        one: ~
+        other: ~
+      about_x_years: 
+        one: ~
+        other: ~
+      almost_x_years: 
+        one: ~
+        other: ~
+      half_a_minute: ~
+      less_than_x_minutes: 
+        one: ~
+        other: ~
+      less_than_x_seconds: 
+        one: ~
+        other: ~
+      over_x_years: 
+        one: ~
+        other: ~
+      x_days: 
+        one: ~
+        other: ~
+      x_minutes: 
+        one: ~
+        other: ~
+      x_months: 
+        one: ~
+        other: ~
+      x_seconds: 
+        one: ~
+        other: ~
+    prompts: 
+      day: ~
+      hour: ~
+      minute: ~
+      month: ~
+      second: ~
+      year: ~
+  errors: 
+    format: ~
+    messages: 
+      accepted: ~
+      blank: ~
+      confirmation: ~
+      empty: ~
+      equal_to: ~
+      even: ~
+      exclusion: ~
+      greater_than: ~
+      greater_than_or_equal_to: ~
+      inclusion: ~
+      invalid: ~
+      less_than: ~
+      less_than_or_equal_to: ~
+      not_a_number: ~
+      not_an_integer: ~
+      odd: ~
+      too_long: ~
+      too_short: ~
+      wrong_length: ~
+  helpers: 
+    select: 
+      prompt: ~
+    submit: 
+      create: ~
+      submit: ~
+      update: ~
+  number: 
+    currency: 
+      format: 
+        delimiter: ~
+        format: ~
+        precision: ~
+        separator: ~
+        significant: ~
+        strip_insignificant_zeros: ~
+        unit: ~
+    format: 
+      delimiter: ~
+      precision: ~
+      separator: ~
+      significant: ~
+      strip_insignificant_zeros: ~
+    human: 
+      decimal_units: 
+        format: ~
+        units: 
+          billion: ~
+          million: ~
+          quadrillion: ~
+          thousand: ~
+          trillion: ~
+          unit: ~
+      format: 
+        delimiter: ~
+        precision: ~
+        significant: ~
+        strip_insignificant_zeros: ~
+      storage_units: 
+        format: ~
+        units: 
+          byte: 
+            one: ~
+            other: ~
+          gb: ~
+          kb: ~
+          mb: ~
+          tb: ~
+    percentage: 
+      format: 
+        delimiter: ~
+    precision: 
+      format: 
+        delimiter: ~
+  support: 
+    array: 
+      last_word_connector: ~
+      two_words_connector: ~
+      words_connector: ~
+    select: 
+      prompt: ~
+  text: 
+    featured: 
+      download: Scarica
+      download_and_run: "Scarica e prova"
+      earn_currency: "Guardagna %{amount_and_currency}"
+      earn_now: "Guardagna ora"
+      show_more_apps: "Mostra altre applicazioni"
+      skip: Salta
+      title: "Guadagna %{currency}"
+      try_out: Prova
+    games: 
+      about_body: ~
+      about_title: ~
+      account_created_body: ~
+      account_created_title: ~
+      action_required: ~
+      add_to_homescreen: ~
+      advertisers_body: ~
+      advertisers_title: ~
+      allow_marketing_emails: ~
+      already_registered: 
+        one: ~
+        other: ~
+      back_to_top: ~
+      birthdate: ~
+      call_to_action_body: ~
+      call_to_action_title: ~
+      cant_fetch_offers: ~
+      change_linked_account: ~
+      connect_my_device: ~
+      connect_your_android: ~
+      connect_your_device: ~
+      deactivate: ~
+      del_acct_confirm: ~
+      delete_my_account: ~
+      developers_body: ~
+      developers_title: ~
+      earn: ~
+      earn_title: ~
+      enable_javascript: ~
+      enter_birthdate: ~
+      enter_email: ~
+      enter_password: ~
+      enter_platform: ~
+      enter_tos: ~
+      enter_valid_email: ~
+      favorite_app: ~
+      favorite_category: ~
+      follow_us: ~
+      forgot_pass: ~
+      free!: ~
+      generic_issue: ~
+      get_it: ~
+      grant_us_access: ~
+      how_it_works_body: ~
+      how_it_works_title: ~
+      install_and_run: ~
+      invite: ~
+      invite_email_body: ~
+      invite_email_greet: ~
+      invite_email_signature: ~
+      invite_friends: 
+        one: ~
+        other: ~
+      invite_title: ~
+      invites_sent_to: 
+        one: ~
+        other: ~
+      issue_registering: ~
+      link_my_facebook: ~
+      load_more: ~
+      member_since: ~
+      meta_description: ~
+      meta_keywords: ~
+      more_apps: ~
+      my_apps: ~
+      none_selected: ~
+      oops: ~
+      our_tos_changed: ~
+      privacy_policy_href: ~
+      provide_other_email: ~
+      recipients_label: ~
+      recommendations: ~
+      registering: ~
+      select_current_device: ~
+      select_device: ~
+      select_friend: ~
+      social_networks: ~
+      social_settings: ~
+      tap_that: ~
+      tapjoy_picks: ~
+      terms_of_use_href: ~
+      tos_acknowledge_html: ~
+      tos_change_acknowledge: ~
+      unable_to_process: ~
+      wifi_required: ~
+      wrong_device: ~
+    instructions: 
+      amount_and_currency: "%{amount} %{currency}"
+      continue_link: "Clicca qui per continuare."
+      download_action: qui
+      download_link: "Se non hai questa app, clicca %{download_action} per scaricarla."
+      earn_currency: "Guadagna %{amount_and_currency}"
+      footer: "Dopo aver completato questi step guadagnerai %{amount_and_currency}."
+      header: "Segui questi step per guadagnare %{currency}:"
+      title: Istruzioni
+    offerwall: 
+      buy_currency: "Compra %{amount} %{currency}"
+      earn_currency: "Guadagna %{amount} %{currency}"
+      free: Gratis
+      instructions: "Fai/compi tutte le seguenti azioni per ricevere %{currency}"
+      instructions_non_rewarded: ~
+      load_error: "Per favore, riprova."
+      load_more: "Carica ancora!"
+      loading: "Sta caricando..."
+      missing_currency: "Mancano %{currency}?"
+      next: "Prossimo %{items}"
+      popular_apps: ~
+      previous: "Precedente %{items}"
+      title: "Guadagna %{currency}"
+      wifi_required: "Wifi Required"
+      wifi_warning: "This app requires a wifi connection to download."
+    shared: 
+      about_link: ~
+      ads_by: "Pubblicità di/Offerto da"
+      android: ~
+      back: ~
+      blog: ~
+      cancel: ~
+      city: ~
+      confirm_password: ~
+      continue: ~
+      copyright: ~
+      country: ~
+      day: ~
+      email: ~
+      facebook_profile: ~
+      female: ~
+      followers: ~
+      following: ~
+      friends: ~
+      gender: ~
+      help: ~
+      invite: ~
+      ios: ~
+      login_noun: ~
+      login_verb: ~
+      logout: ~
+      male: ~
+      month: ~
+      my_account: ~
+      my_profile: ~
+      name: ~
+      new_password: ~
+      nickname: ~
+      ok: ~
+      options: ~
+      other: ~
+      password: ~
+      preferences: ~
+      privacy: Privacy
+      privacy_policy: ~
+      recipients: ~
+      reset_password: ~
+      save: ~
+      share: ~
+      sign_in: ~
+      sign_up: ~
+      success: ~
+      try_again: ~
+      updating: ~
+      year: ~
+      zip_postal: ~
+    support: 
+      abuse_warning: "Questo modulo è riservato agli utenti che non sono stati ricompensati per un'offerta completata. Un utilizzo improprio di questa pagina potrebbe impedirti di partecipare a offerte in futuro."
+      description_label: "Descrizione:"
+      email_address_label: "Indirizzo email:"
+      instructions_1: "Seleziona l'offerta che hai completato senza ricevere %{currency} e inserisci il tuo indirizzo email."
+      instructions_2: "Se le informazioni fornite non sono complete, potrebbe esserci un ritardo. La priorità è data ai ticket con informazioni complete."
+      invalid_email: "Per favore inserisci un indirizzo email reale."
+      missing_description: "Descrivi l'offerta che hai completato."
+      missing_offer: "Devi specificare l'offerta che hai completato."
+      no_incomplete_offers_label: "Non sono state trovate offerte adeguate."
+      select_offer: "Seleziona offerta"
+      specify_offer_label: "Specificare offerta:"
+      submit_support_request: "Richiedi supporto"
+      support_request_submitted: "Supporto richiesto"
+      thanks: "Grazie per aver richiesto supporto! Riceverai %{currency} appena avremo verificato che tu abbia completato l'offerta."
+      title: "Mancano %{currency}?"
+    unavailable_offer: 
+      message: "Siamo spiacenti, ma %{offer} non è più disponibile. Puoi tornare alla pagina precedente o aggiornare la pagina per vedere le ultime offerte."
+      optional_message: "Oppure, clicca qui per scaricare comunque %{offer}."
+  time: 
+    am: ~
+    formats: 
+      day: ~
+      day_long: ~
+      day_short: ~
+      default: ~
+      long: ~
+      short: ~
+    pm: ~

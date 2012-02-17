@@ -1,0 +1,371 @@
+--- 
+zh: 
+  activerecord: 
+    errors: 
+      full_messages: 
+        format: ~
+      messages: 
+        accepted: ~
+        blank: ~
+        confirmation: ~
+        empty: ~
+        equal_to: ~
+        even: ~
+        exclusion: ~
+        greater_than: ~
+        greater_than_or_equal_to: ~
+        inclusion: ~
+        invalid: ~
+        less_than: ~
+        less_than_or_equal_to: ~
+        not_a_number: ~
+        not_an_integer: ~
+        odd: ~
+        record_invalid: ~
+        taken: ~
+        too_long: ~
+        too_short: ~
+        wrong_length: ~
+      template: 
+        body: ~
+        header: 
+          one: ~
+          other: ~
+  date: 
+    abbr_day_names: ~
+    abbr_month_names: ~
+    day_names: ~
+    formats: 
+      default: ~
+      long: ~
+      short: ~
+    month_names: ~
+    order: ~
+  datetime: 
+    distance_in_words: 
+      about_x_hours: 
+        one: ~
+        other: ~
+      about_x_months: 
+        one: ~
+        other: ~
+      about_x_years: 
+        one: ~
+        other: ~
+      almost_x_years: 
+        one: ~
+        other: ~
+      half_a_minute: ~
+      less_than_x_minutes: 
+        one: ~
+        other: ~
+      less_than_x_seconds: 
+        one: ~
+        other: ~
+      over_x_years: 
+        one: ~
+        other: ~
+      x_days: 
+        one: ~
+        other: ~
+      x_minutes: 
+        one: ~
+        other: ~
+      x_months: 
+        one: ~
+        other: ~
+      x_seconds: 
+        one: ~
+        other: ~
+    prompts: 
+      day: ~
+      hour: ~
+      minute: ~
+      month: ~
+      second: ~
+      year: ~
+  errors: 
+    format: ~
+    messages: 
+      accepted: ~
+      blank: ~
+      confirmation: ~
+      empty: ~
+      equal_to: ~
+      even: ~
+      exclusion: ~
+      greater_than: ~
+      greater_than_or_equal_to: ~
+      inclusion: ~
+      invalid: ~
+      less_than: ~
+      less_than_or_equal_to: ~
+      not_a_number: ~
+      not_an_integer: ~
+      odd: ~
+      too_long: ~
+      too_short: ~
+      wrong_length: ~
+  helpers: 
+    select: 
+      prompt: ~
+    submit: 
+      create: ~
+      submit: ~
+      update: ~
+  number: 
+    currency: 
+      format: 
+        delimiter: ~
+        format: ~
+        precision: ~
+        separator: ~
+        significant: ~
+        strip_insignificant_zeros: ~
+        unit: ~
+    format: 
+      delimiter: ~
+      precision: ~
+      separator: ~
+      significant: ~
+      strip_insignificant_zeros: ~
+    human: 
+      decimal_units: 
+        format: ~
+        units: 
+          billion: ~
+          million: ~
+          quadrillion: ~
+          thousand: ~
+          trillion: ~
+          unit: ~
+      format: 
+        delimiter: ~
+        precision: ~
+        significant: ~
+        strip_insignificant_zeros: ~
+      storage_units: 
+        format: ~
+        units: 
+          byte: 
+            one: ~
+            other: ~
+          gb: ~
+          kb: ~
+          mb: ~
+          tb: ~
+    percentage: 
+      format: 
+        delimiter: ~
+    precision: 
+      format: 
+        delimiter: ~
+  support: 
+    array: 
+      last_word_connector: ~
+      two_words_connector: ~
+      words_connector: ~
+    select: 
+      prompt: ~
+  text: 
+    featured: 
+      download: 下载
+      download_and_run: 请下载和安装。
+      earn_currency: "赚 %{amount_and_currency}"
+      earn_now: 赚金币。
+      show_more_apps: 看下一个
+      skip: 跳过
+      title: "赚 %{currency}"
+      try_out: 试一试
+    games: 
+      about_body: ~
+      about_title: ~
+      account_created_body: ~
+      account_created_title: ~
+      action_required: ~
+      add_to_homescreen: ~
+      advertisers_body: ~
+      advertisers_title: ~
+      allow_marketing_emails: ~
+      already_registered: 
+        one: ~
+        other: ~
+      back_to_top: ~
+      birthdate: ~
+      call_to_action_body: ~
+      call_to_action_title: ~
+      cant_fetch_offers: ~
+      change_linked_account: ~
+      connect_my_device: ~
+      connect_your_android: ~
+      connect_your_device: ~
+      deactivate: ~
+      del_acct_confirm: ~
+      delete_my_account: ~
+      developers_body: ~
+      developers_title: ~
+      earn: ~
+      earn_title: ~
+      enable_javascript: ~
+      enter_birthdate: ~
+      enter_email: ~
+      enter_password: ~
+      enter_platform: ~
+      enter_tos: ~
+      enter_valid_email: ~
+      favorite_app: ~
+      favorite_category: ~
+      follow_us: ~
+      forgot_pass: ~
+      free!: ~
+      generic_issue: ~
+      get_it: ~
+      grant_us_access: ~
+      how_it_works_body: ~
+      how_it_works_title: ~
+      install_and_run: ~
+      invite: ~
+      invite_email_body: ~
+      invite_email_greet: ~
+      invite_email_signature: ~
+      invite_friends: 
+        one: ~
+        other: ~
+      invite_title: ~
+      invites_sent_to: 
+        one: ~
+        other: ~
+      issue_registering: ~
+      link_my_facebook: ~
+      load_more: ~
+      member_since: ~
+      meta_description: ~
+      meta_keywords: ~
+      more_apps: ~
+      my_apps: ~
+      none_selected: ~
+      oops: ~
+      our_tos_changed: ~
+      privacy_policy_href: ~
+      provide_other_email: ~
+      recipients_label: ~
+      recommendations: ~
+      registering: ~
+      select_current_device: ~
+      select_device: ~
+      select_friend: ~
+      social_networks: ~
+      social_settings: ~
+      tap_that: ~
+      tapjoy_picks: ~
+      terms_of_use_href: ~
+      tos_acknowledge_html: ~
+      tos_change_acknowledge: ~
+      unable_to_process: ~
+      wifi_required: ~
+      wrong_device: ~
+    instructions: 
+      amount_and_currency: "%{amount} %{currency}"
+      continue_link: 点击这里继续
+      download_action: 这里
+      download_link: "如果您没有这个程序, 点击 %{download_action} 下载"
+      earn_currency: "赚 %{amount_and_currency}"
+      footer: "在完成这些步骤后, 您将获得 %{amount_and_currency}."
+      header: "按照这些步骤来赚 %{currency}:"
+      title: 说明
+    offerwall: 
+      buy_currency: "买 %{amount} %{currency}"
+      earn_currency: "赚 %{amount} %{currency}"
+      free: 免费
+      instructions: "完成以下的要求其中之一可以得到 %{currency}"
+      instructions_non_rewarded: 发现Tapjoy的热点!
+      load_error: 请再试一次。
+      load_more: 下一页！
+      loading: 载入中。。。。
+      missing_currency: "没得到 %{currency}?"
+      next: "下页 %{items}"
+      popular_apps: 最流行的软件
+      previous: "上页 %{items}"
+      title: "赚 %{currency}"
+      wifi_required: 需要Wifi
+      wifi_warning: 下载本软件需要wifi连接。
+    shared: 
+      about_link: ~
+      ads_by: "Ads by"
+      android: ~
+      back: ~
+      blog: ~
+      cancel: ~
+      city: ~
+      confirm_password: ~
+      continue: ~
+      copyright: ~
+      country: ~
+      day: ~
+      email: ~
+      facebook_profile: ~
+      female: ~
+      followers: ~
+      following: ~
+      friends: ~
+      gender: ~
+      help: ~
+      invite: ~
+      ios: ~
+      login_noun: ~
+      login_verb: ~
+      logout: ~
+      male: ~
+      month: ~
+      my_account: ~
+      my_profile: ~
+      name: ~
+      new_password: ~
+      nickname: ~
+      ok: ~
+      options: ~
+      other: ~
+      password: ~
+      preferences: ~
+      privacy: 隐私
+      privacy_policy: ~
+      recipients: ~
+      reset_password: ~
+      save: ~
+      share: ~
+      sign_in: ~
+      sign_up: ~
+      success: ~
+      try_again: ~
+      updating: ~
+      year: ~
+      zip_postal: ~
+    support: 
+      abuse_warning: "本页表格是针对完成了流程但未获得虚拟币奖励的用. 滥用者可导致将来受禁止参与此类活动."
+      description_label: "请描述您下载了APP的流程:"
+      email_address_label: "电子邮箱:"
+      instructions_1: "如果您没得到 %{currency}, 请您让我们知道你下载了哪款APP, 并且留下您的电子邮箱."
+      instructions_2: "我们完成了确认流程后，你将会获取应得的 %{currency}."
+      invalid_email: 请输入您真实的电子邮箱.
+      missing_description: 请描述您下载了APP的流程.
+      missing_offer: 您需要写下您完成的广告。
+      no_incomplete_offers_label: 没法提供其他的广告。
+      select_offer: 选以下的广告
+      specify_offer_label: 选以下的广告：
+      submit_support_request: 支持请求
+      support_request_submitted: 支持请求已提交
+      thanks: "感谢您提交了支持请求! 我们完成了确认流程后，你将会获取应得的 %{currency}."
+      title: "没得到 %{currency}?"
+    unavailable_offer: 
+      message: "对不起。您找的 %{offer} 目前无法出现。可以回到前一页然后刷新。"
+      optional_message: "或您可以点和下载这个 %{offer} 。"
+  time: 
+    am: ~
+    formats: 
+      day: ~
+      day_long: ~
+      day_short: ~
+      default: ~
+      long: ~
+      short: ~
+    pm: ~

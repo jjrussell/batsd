@@ -179,7 +179,7 @@ es:
       try_out: Prueba
     games: 
         about_body: "Tapjoy te permite descubrir tan populares como Happy Park, City of Wonder, Coin Dozer, Overkill, VIP Poker y Gun Bros, asi como conseguir gratuitamente contenido extra para tus apps. Si te gusta jugar por ejemplo a Magic Zoo, Tapjoy te recomendará otros juegos como Safari Zoo o Bug Village HD. ¡Regístrate y descubre apps que te encantarán!"
-        about_title: "\"Sabe exactamente cuáles son las apps que me gustan\~
+        about_title: "\"Sabe exactamente cuáles son las apps que me gustan.\""
         account_created_body: "¡Cuenta creada!"
         account_created_title: "¡Exito!"
         action_required: "¡Acción requerida!"
@@ -205,6 +205,7 @@ es:
         delete_my_account: "Borrar mi cuenta"
         developers_body: "Aumente los ingresos de sus apps mediante nuestras herramientas de monetización."
         developers_title: "Desarrolladores"
+        earn: "Gana %{amount} %{currency}"
         earn_title: "Bájate una de las aplicaciones abajo o visualiza uno de los anuncios para ganar %{currency} en %{app_name}"
         enable_javascript: "Consulta la configuración de tu navegador y autoriza el Javascript para poder usar Tapjoy."
         enter_birthdate: "Por favor, introduce tu año de nacimiento"
@@ -226,10 +227,12 @@ es:
         install_and_run: "Instala e inicia %{name}"
         invite: "¡Invita a tus amigos!"
         invite_button: "Invitar"
-        invite_email_body: "\"%{name} te ha invitado a Tapjoy, el MEJOR sitio para descubrir las aplicaciones del momento. Podrás registrarte gratuitamente y descubrir las mejores apps en iOS y Android, asi como ganar moneda virtual para tus apps favoritas. 
+        invite_email_body: |-
+            %{name} te ha invitado a Tapjoy, el MEJOR sitio para descubrir las aplicaciones del momento. Podrás registrarte gratuitamente y descubrir las mejores apps en iOS y Android, asi como ganar moneda virtual para tus apps favoritas. 
 
-        Ya no necesitarás recorrer todo el App Store o el Android Market para encontrar nuevas apps. Tapjoy te recomienda que sabemos que te van a gustar. 
-        Para empezar, crea una cuenta aquí:\""
+            Ya no necesitarás recorrer todo el App Store o el Android Market para encontrar nuevas apps. Tapjoy te recomienda que sabemos que te van a gustar. 
+            
+            Para empezar, crea una cuenta aquí:
         invite_email_greet: "Hola,"
         invite_email_signature: "Equipo Tapjoy"
         invite_friends: 
@@ -262,8 +265,8 @@ es:
         tap_that: "Haz clic en %{icon} y selecciona %{button}"
         tapjoy_picks: "Selecciones de Tapjoy"
         terms_of_use_href: "Condiciones de uso"
-        tos_acknowledge: "Al marcar la casilla, confirmo que entiendo y estoy de acuerdo con las {terms of use} y las {privacy policy}"
-        tos_change_acknowledge: "Al marcar la casilla, confirmo que entiendo y estoy de acuerdo con las {terms of use} y las {privacy policy}"
+        tos_acknowledge: "Al marcar la casilla, confirmo que entiendo y estoy de acuerdo con las %{terms of use} y las %{privacy policy}"
+        tos_change_acknowledge: "Al marcar la casilla, confirmo que entiendo y estoy de acuerdo con las %{terms of use} y las %{privacy policy}"
         unable_to_process: "Sentimos no poder procesar su solicitud."
         wifi_required: "Wifi necesario"
         wrong_device: "¿Te has equivocado de móvil?"
