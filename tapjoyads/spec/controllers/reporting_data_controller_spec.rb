@@ -18,7 +18,7 @@ describe ReportingDataController do
 
     context 'with missing params' do
       before :each do
-        @response = get(:index)
+        get(:index)
       end
 
       it 'responds with 400 error' do
@@ -28,7 +28,7 @@ describe ReportingDataController do
 
     context 'with bad credentials' do
       before :each do
-        @response = get(:index, :date => "2011-02-15", :username => @user.username, :api_key => 'poo')
+        get(:index, :date => "2011-02-15", :username => @user.username, :api_key => 'poo')
       end
 
       it 'responds with 403 error' do
@@ -38,7 +38,7 @@ describe ReportingDataController do
 
     context 'with invalid date parameter' do
       before :each do
-        @response = get(:index, :date => 'poo', :username => @user.username, :api_key => @user.api_key)
+        get(:index, :date => 'poo', :username => @user.username, :api_key => @user.api_key)
       end
 
       it 'responds with 400 error' do
@@ -46,13 +46,13 @@ describe ReportingDataController do
       end
 
       it 'responds with error message' do
-        @response.body.should == "Invalid date"
+        response.body.should == "Invalid date"
       end
     end
 
     context 'with valid params, xml' do
       before :each do
-        @response = get(:index, :date => "2011-02-15", :username => @user.username, :api_key => @user.api_key, :partner_id => @partner.id)
+        get(:index, :date => "2011-02-15", :username => @user.username, :api_key => @user.api_key, :partner_id => @partner.id)
       end
       it 'has a successful xml response' do
         should respond_with(200)
@@ -62,7 +62,7 @@ describe ReportingDataController do
 
     context 'with valid params, json' do
       before :each do
-        @response = get(:index, :format => 'json', :date => "2011-02-15", :username => @user.username, :api_key => @user.api_key)
+        get(:index, :format => 'json', :date => "2011-02-15", :username => @user.username, :api_key => @user.api_key)
       end
 
       it 'has a successful json response' do
@@ -80,7 +80,7 @@ describe ReportingDataController do
       end
 
       it 'defaults to UTC when param is invalid' do
-        response = get(:index, :format => 'xml', :date => "2011-01-01", :username => @user.username, :api_key => @user.api_key, :timezone => 'invalid')
+        get(:index, :format => 'xml', :date => "2011-01-01", :username => @user.username, :api_key => @user.api_key, :timezone => 'invalid')
         xml = Document.new response.body
         xml.elements.each("MarketingData/Timezone") do |node|
           node.text.should == '(GMT+00:00) Casablanca'
@@ -91,7 +91,7 @@ describe ReportingDataController do
       end
 
       it 'shifts values left by 8 with timezone=-8' do
-        response = get(:index, :format => 'xml', :date => "2011-01-01", :username => @user.username, :api_key => @user.api_key, :timezone => '-8')
+        get(:index, :format => 'xml', :date => "2011-01-01", :username => @user.username, :api_key => @user.api_key, :timezone => '-8')
         xml = Document.new response.body
         xml.elements.each("MarketingData/Timezone") do |node|
           node.text.should == '(GMT-08:00) Pacific Time (US & Canada)'
@@ -102,7 +102,7 @@ describe ReportingDataController do
       end
 
       it 'defaults to user timezone when no timezone specified' do
-        response = get(:index, :format => 'xml', :date => "2011-01-01", :username => @user.username, :api_key => @user.api_key)
+        get(:index, :format => 'xml', :date => "2011-01-01", :username => @user.username, :api_key => @user.api_key)
         xml = Document.new response.body
         xml.elements.each("MarketingData/Timezone") do |node|
           node.text.should == '(GMT+00:00) UTC'
@@ -131,7 +131,7 @@ describe ReportingDataController do
 
     context 'with missing params' do
       before :each do
-        @response = get(:udids)
+        get(:udids)
       end
 
       it 'responds with 400 error' do
@@ -141,7 +141,7 @@ describe ReportingDataController do
 
     context 'with invalid date parameter' do
       before :each do
-        @response = get(:udids, :offer_id => @offer.id, :date => "201-02-15", :username => @user.username, :api_key => @user.api_key)
+        get(:udids, :offer_id => @offer.id, :date => "201-02-15", :username => @user.username, :api_key => @user.api_key)
       end
 
       it 'responds with 404 error' do
@@ -149,13 +149,13 @@ describe ReportingDataController do
       end
 
       it 'returns an error message' do
-        @response.body.should == "Invalid date"
+        response.body.should == "Invalid date"
       end
     end
 
     context 'with invalid offer' do
       before :each do
-        @response = get(:udids, :offer_id => 'poo', :date => "201-02-15", :username => @user.username, :api_key => @user.api_key)
+        get(:udids, :offer_id => 'poo', :date => "201-02-15", :username => @user.username, :api_key => @user.api_key)
       end
 
       it 'responds with 404 error' do
@@ -163,13 +163,13 @@ describe ReportingDataController do
       end
 
       it 'returns an error message' do
-        @response.body.should == "Unknown offer id"
+        response.body.should == "Unknown offer id"
       end
     end
 
     context 'daily with valid params' do
       before :each do
-        @response = get(:udids, :offer_id => @offer.id, :date => "2011-02-15", :username => @user.username, :api_key => @user.api_key)
+        get(:udids, :offer_id => @offer.id, :date => "2011-02-15", :username => @user.username, :api_key => @user.api_key)
       end
 
       it 'responds with 200 success' do
@@ -178,15 +178,15 @@ describe ReportingDataController do
 
       it 'returns a csv object' do
         should respond_with_content_type(:csv)
-        filename = eval(@response.header['Content-Disposition'].split("filename=").last)
+        filename = eval(response.header['Content-Disposition'].split("filename=").last)
         filename.should == "#{@offer.id}_2011-02-15.csv"
-        @response.body.should == 'a,b,c'
+        response.body.should == 'a,b,c'
       end
     end
 
     context 'monthly with valid params' do
       before :each do
-        @response = get(:udids, :offer_id => @offer.id, :date => "2011-02", :username => @user.username, :api_key => @user.api_key)
+        get(:udids, :offer_id => @offer.id, :date => "2011-02", :username => @user.username, :api_key => @user.api_key)
       end
 
       it 'responds with 200 success' do
@@ -195,9 +195,9 @@ describe ReportingDataController do
 
       it 'returns a csv object' do
         should respond_with_content_type(:csv)
-        filename = eval(@response.header['Content-Disposition'].split("filename=").last)
+        filename = eval(response.header['Content-Disposition'].split("filename=").last)
         filename.should == "#{@offer.id}_2011-02.csv"
-        @response.body.should == 'a,b,c'
+        response.body.should == 'a,b,c'
       end
     end
   end
@@ -213,7 +213,7 @@ describe ReportingDataController do
 
     context 'with missing params' do
       before :each do
-        @response = get(:udids)
+        get(:udids)
       end
 
       it 'responds with 400 error' do
@@ -223,7 +223,7 @@ describe ReportingDataController do
 
     context 'daily with valid params' do
       before :each do
-        @response = get(:udids, :offer_id => @offer.id, :date => "2011-02-15", :username => @user.username, :api_key => @user.api_key)
+        get(:udids, :offer_id => @offer.id, :date => "2011-02-15", :username => @user.username, :api_key => @user.api_key)
       end
 
       it 'responds with 404 error' do
@@ -235,13 +235,13 @@ describe ReportingDataController do
       end
 
       it 'has error message' do
-        @response.body.should == "No UDID report exists for this date"
+        response.body.should == "No UDID report exists for this date"
       end
     end
 
     context 'monthly with valid params' do
       before :each do
-        @response = get(:udids, :offer_id => @offer.id, :date => "2011-02", :username => @user.username, :api_key => @user.api_key)
+        get(:udids, :offer_id => @offer.id, :date => "2011-02", :username => @user.username, :api_key => @user.api_key)
       end
 
       it 'responds with 404 error' do
@@ -253,7 +253,7 @@ describe ReportingDataController do
       end
 
       it 'has error message' do
-        @response.body.should == "No UDID report exists for this date"
+        response.body.should == "No UDID report exists for this date"
       end
     end
   end

@@ -48,14 +48,14 @@ describe ReportingController do
     describe '#show' do
       it 'renders html' do
         UdidReports.expects(:get_available_months).with(@app.id).returns(['stuff'])
-        response = get :show, :id => @app.id
+        get(:show, :id => @app.id)
         response.should be_success
         assigns(:udids).should_not be_nil
         session[:last_shown_app].should == @app.id
       end
 
       it 'renders redirect for invalid offer' do
-        response = get :show, :id => 'something'
+        get(:show, :id => 'something')
         response.should redirect_to(reporting_index_path)
         flash[:notice].should == "Unknown offer id"
       end
@@ -71,7 +71,7 @@ describe ReportingController do
 
       it 'renders json' do
         Appstats.any_instance.expects(:graph_data).with(:offer => @app.primary_offer, :admin => false).returns('data!')
-        response = get :show, :id => @app.id, :format => 'json'
+        get(:show, :id => @app.id, :format => 'json')
         response.should be_success
         JSON.parse(response.body)['data'].should_not be_nil
       end
@@ -80,7 +80,7 @@ describe ReportingController do
         Appstats.any_instance.expects(:graph_data).with(:offer => @app.primary_offer, :admin => false).returns('data!')
         start_time = Time.zone.parse('2011-02-15').beginning_of_day
         end_time = Time.zone.parse('2011-02-18').end_of_day
-        response = get :show, :id => @app.id, :format => 'json', :date => '2011-02-15', :end_date => '2011-02-18', :granularity => 'daily'
+        get(:show, :id => @app.id, :format => 'json', :date => '2011-02-15', :end_date => '2011-02-18', :granularity => 'daily')
         appstats = assigns(:appstats)
         appstats.start_time.should == start_time
         appstats.end_time.should == end_time
@@ -101,8 +101,8 @@ describe ReportingController do
       it 'sends a csv response' do
         response.content_type.should =~ /csv/
         response.should be_success
-        @response.body.should == "a\nb"
-        filename = eval(@response.header['Content-Disposition'].split("filename=").last)
+        response.body.should == "a\nb"
+        filename = eval(response.header['Content-Disposition'].split("filename=").last)
         filename.should == "#{@app.id}_#{@start_time.to_s(:yyyy_mm_dd)}_#{@end_time.to_s(:yyyy_mm_dd)}.csv"
       end
 
@@ -129,8 +129,8 @@ describe ReportingController do
       it 'sends a csv response' do
         response.content_type.should =~ /csv/
         response.should be_success
-        @response.body.should == "yay,udids"
-        filename = eval(@response.header['Content-Disposition'].split("filename=").last)
+        response.body.should == "yay,udids"
+        filename = eval(response.header['Content-Disposition'].split("filename=").last)
         filename.should == "#{@app.id}_#{@date}.csv"
       end
     end
@@ -179,7 +179,7 @@ describe ReportingController do
         appstats.instance_variable_get('@stat_prefix').should == "partner"
         appstats.intervals.should_not be_nil
 
-        json = JSON.parse(@response.body)
+        json = JSON.parse(response.body)
         json['data'].should == 'yup'
       end
     end
@@ -198,8 +198,8 @@ describe ReportingController do
         response.content_type.should =~ /csv/
         response.should be_success
 
-        @response.body.should == "a\nb"
-        filename = eval(@response.header['Content-Disposition'].split("filename=").last)
+        response.body.should == "a\nb"
+        filename = eval(response.header['Content-Disposition'].split("filename=").last)
         filename.should == "all_#{@start_time.to_s(:yyyy_mm_dd)}_#{@end_time.to_s(:yyyy_mm_dd)}.csv"
       end
 
