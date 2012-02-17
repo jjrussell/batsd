@@ -2,7 +2,7 @@ class GamesController < ApplicationController
   include Facebooker2::Rails::Controller
   include SslRequirement
 
-  layout 'games'
+  layout :select_layout
 
   skip_before_filter :fix_params
 
@@ -191,5 +191,13 @@ class GamesController < ApplicationController
     @os_version ||= HeaderParser.os_version(request.user_agent)
   end
 
+  def select_layout
+    if params[:ajax].present?
+      return nil
+    elsif params[:old].present?
+      return 'games'
+    end
+    return 'marketplace'
+  end
 
 end
