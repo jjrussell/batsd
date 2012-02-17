@@ -20,7 +20,7 @@ describe Apps::OffersController do
 
   context 'a non-rewarded featured offer' do
     before :each do
-      post :create, :app_id => @app.id, :offer_type => 'non_rewarded_featured'
+      post(:create, :app_id => @app.id, :offer_type => 'non_rewarded_featured')
     end
 
     it 'is created' do
@@ -42,7 +42,7 @@ describe Apps::OffersController do
 
   context 'with a rewarded featured offer' do
     before :each do
-      post :create, :app_id => @app.id, :offer_type => 'rewarded_featured'
+      post(:create, :app_id => @app.id, :offer_type => 'rewarded_featured')
     end
 
     it 'is created' do
@@ -64,7 +64,7 @@ describe Apps::OffersController do
 
   context 'a non-rewarded offer' do
     before :each do
-      post :create, :app_id => @app.id, :offer_type => 'non_rewarded'
+      post(:create, :app_id => @app.id, :offer_type => 'non_rewarded')
     end
 
     it 'is created' do
