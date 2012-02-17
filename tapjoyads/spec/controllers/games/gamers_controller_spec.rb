@@ -28,7 +28,7 @@ describe Games::GamersController do
 
     it 'creates a new gamer' do
       Sqs.expects(:send_message).once
-      post 'create', @options
+      post(:create, @options)
 
       should_respond_with_json_success(200)
     end
@@ -40,7 +40,7 @@ describe Games::GamersController do
         :month => @date.month,
         :day   => @date.day,
       }
-      post 'create', @options
+      post(:create, @options)
 
       should_respond_with_json_error(403)
     end
@@ -51,7 +51,7 @@ describe Games::GamersController do
         :month => 11,
         :day   => 31,
       }
-      post 'create', @options
+      post(:create, @options)
 
       should_respond_with_json_error(403)
     end
@@ -64,12 +64,12 @@ describe Games::GamersController do
     end
 
     it 'displays confirmation page' do
-      get 'confirm_delete'
+      get(:confirm_delete)
       response.should be_success
     end
 
     it 'deactivates gamer' do
-      delete 'destroy'
+      delete(:destroy)
 
       response.should be_redirect
       (Time.zone.now - @gamer.deactivated_at).should < 60

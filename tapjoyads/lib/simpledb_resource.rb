@@ -30,7 +30,7 @@ class SimpledbResource
   #   load_from_memcache: Whether attributes should be loaded from memcache.
   def initialize(options = {})
     should_load                = options.delete(:load)                 { true }
-    load_from_memcache         = options.delete(:load_from_memcache)   { true }
+    load_from_memcache         = options.delete(:load_from_memcache)   { false }
     consistent                 = options.delete(:consistent)           { false }
     run_after_initialize       = options.delete(:after_initialize)     { true }
     @key                       = get_key_from(options.delete(:key))    { nil }
@@ -151,7 +151,7 @@ class SimpledbResource
   #       result in the save getting written to sqs in order to be saved later.
   def serial_save(options = {})
     options_copy     = options.clone
-    save_to_memcache = options.delete(:write_to_memcache) { true }
+    save_to_memcache = options.delete(:write_to_memcache) { false }
     save_to_sdb      = options.delete(:write_to_sdb)      { true }
     catch_exceptions = options.delete(:catch_exceptions)  { true }
     expected_attr    = options.delete(:expected_attr)     { {} }

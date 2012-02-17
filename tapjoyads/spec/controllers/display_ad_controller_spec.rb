@@ -53,7 +53,7 @@ describe DisplayAdController do
         end
 
         it 'returns proper image' do
-          get :image, @params
+          get(:image, @params)
 
           response.content_type.should == 'image/png'
 
@@ -94,7 +94,7 @@ describe DisplayAdController do
         end
 
         it 'returns proper image' do
-          get :image, @params
+          get(:image, @params)
           response.content_type.should == 'image/png'
 
           # Uncomment the following to re-generate the image if needed (e.g. background image changes, text changes, etc)
@@ -124,7 +124,7 @@ describe DisplayAdController do
           bucket_objects = { @offer.banner_creative_path('320x50') => object }
           @bucket.stubs(:objects).returns(bucket_objects)
 
-          get :index, @params.merge(:format => 'json')
+          get(:index, @params.merge(:format => 'json'))
 
           response.content_type.should == 'application/json'
 
@@ -141,7 +141,7 @@ describe DisplayAdController do
           bucket_objects = { @offer.banner_creative_path('640x100') => object }
           @bucket.stubs(:objects).returns(bucket_objects)
 
-          get :index, @params
+          get(:index, @params)
           response.content_type.should == 'application/xml'
 
           # To diagnose a mismatch, uncomment the following and compare the new image to #{Rails.root}/test/assets/banner_ads/custom_640x100.png
@@ -180,7 +180,7 @@ describe DisplayAdController do
           @bucket.stubs(:objects).returns(bucket_objects)
           obj_ad_bg.stubs(:read).returns(ad_bg)
 
-          get :index, @params.merge(:format => 'json')
+          get(:index, @params.merge(:format => 'json'))
           response.content_type.should == 'application/json'
 
           # Uncomment the following to re-generate the image if needed (e.g. background image changes, text changes, etc)
@@ -223,7 +223,7 @@ describe DisplayAdController do
         end
 
         it 'contains proper image link' do
-          get :webview, @params
+          get(:webview, @params)
 
           assigns['image_url'].should be_starts_with(CLOUDFRONT_URL)
           assigns['image_url'].should == @offer.display_ad_image_url(@currency.app.id, 320, 50, @currency.id)
@@ -232,7 +232,7 @@ describe DisplayAdController do
 
       context 'with generated ad' do
         it 'contains proper image link' do
-          get :webview, @params
+          get(:webview, @params)
 
           assigns['image_url'].should be_starts_with(API_URL)
           assigns['image_url'].should == @offer.display_ad_image_url(@currency.app.id, 320, 50, @currency.id)
