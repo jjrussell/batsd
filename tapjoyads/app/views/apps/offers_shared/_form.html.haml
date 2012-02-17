@@ -137,7 +137,6 @@
         %td
           = f.select(:min_os_version, @app.os_versions, :include_blank => 'No Minimum')
           = error_message_on(@offer, :min_os_version)
-      = render('apps/offers_shared/countries', :f => f)
 
       - if permitted_to?(:edit, :statz)
         = render('apps/offers_shared/admin_fields', :f => f)

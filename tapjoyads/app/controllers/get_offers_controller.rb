@@ -3,6 +3,7 @@ class GetOffersController < ApplicationController
   layout 'offerwall', :only => :webpage
 
   prepend_before_filter :decrypt_data_param
+  #before_filter :choose_experiment, :except => :featured
   before_filter :set_featured_params, :only => :featured
   before_filter :setup
   before_filter :choose_papaya_experiment, :only => [:index, :webpage]
@@ -16,6 +17,8 @@ class GetOffersController < ApplicationController
       @test_offers << build_test_video_offer(@publisher_app).primary_offer if params[:all_videos] || params[:video_offer_ids].to_s.split(',').include?('test_video')
     end
 
+    set_geoip_data
+
     if @for_preview
       @offer_list, @more_data_available = [[Offer.find_in_cache(params[:offer_id])], 0]
     else
@@ -24,6 +27,7 @@ class GetOffersController < ApplicationController
   end
 
   def featured
+    set_geoip_data
     if @currency.get_test_device_ids.include?(params[:udid])
       @offer_list = [ build_test_offer(@publisher_app) ]
     else
@@ -47,6 +51,8 @@ class GetOffersController < ApplicationController
   end
 
   def index
+    is_server_to_server = params[:redirect] == '1' || (params[:json] == '1' && params[:callback].blank?)
+    set_geoip_data(is_server_to_server)
     @offer_list, @more_data_available = get_offer_list.get_offers(@start_index, @max_items)
     if @currency.tapjoy_managed? && params[:source] == 'tj_games'
       @tap_points = PointPurchases.new(:key => "#{params[:publisher_user_id]}.#{@currency.id}").points
@@ -63,7 +69,7 @@ class GetOffersController < ApplicationController
     end
   end
 
-  private
+private
 
   def set_featured_params
     params[:type] = Offer::FEATURED_OFFER_TYPE
@@ -74,7 +80,6 @@ class GetOffersController < ApplicationController
   def setup
     @for_preview = (params[:action] == 'webpage' && params[:offer_id].present?)
     @save_web_requests = !@for_preview && params[:no_log] != '1'
-    @server_to_server = params[:action] == 'index' && (params[:redirect] == '1' || (params[:json] == '1' && params[:callback].blank?))
 
     required_params = [:app_id] + (@for_preview ? [:offer_id] : [:udid, :publisher_user_id])
     return unless verify_params(required_params)
@@ -125,7 +130,7 @@ class GetOffersController < ApplicationController
       :device               => @device,
       :currency             => @currency,
       :device_type          => params[:device_type],
-      :geoip_data           => get_geoip_data,
+      :geoip_data           => @geoip_data,
       :type                 => type || params[:type],
       :app_version          => params[:app_version],
       :include_rating_offer => params[:rate_app_offer] != '0',
@@ -136,9 +141,16 @@ class GetOffersController < ApplicationController
       :source               => params[:source],
       :screen_layout_size   => params[:screen_layout_size],
       :video_offer_ids      => params[:video_offer_ids].to_s.split(','),
-      :all_videos           => params[:all_videos],
-      :mobile_carrier_code  => "#{params[:mobile_country_code]}.#{params[:mobile_network_code]}"
+      :all_videos           => params[:all_videos]
     )
+  end
+
+  def set_geoip_data(is_server_to_server = false)
+    if is_server_to_server && params[:device_ip].blank?
+      @geoip_data = {}
+    else
+      @geoip_data = get_geoip_data
+    end
   end
 
   def save_web_request
@@ -152,7 +164,7 @@ class GetOffersController < ApplicationController
         @web_request.offer_id = offer.id
         @web_request.offerwall_rank = i + @start_index + 1
         @web_request.offerwall_rank_score = offer.rank_score
-        @web_request.save
+        # @web_request.save
       end
     end
   end

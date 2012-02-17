@@ -117,8 +117,6 @@ class WebRequest
   self.define_attr :country
   self.define_attr :country_code
   self.define_attr :geoip_country
-  self.define_attr :sdk_type
-  self.define_attr :plugin
   self.define_attr :language
   self.define_attr :screen_density
   self.define_attr :screen_layout_size
@@ -194,10 +192,8 @@ class WebRequest
     self.mobile_country_code  = params[:mobile_country_code]
     self.mobile_network_code  = params[:mobile_network_code]
     self.country_code         = params[:country_code]
-    self.country              = geoip_data[:primary_country]
+    self.country              = params[:country_code].present? ? params[:country_code] : geoip_data[:country]
     self.geoip_country        = geoip_data[:country]
-    self.sdk_type             = params[:sdk_type]
-    self.plugin               = params[:plugin]
   end
 
   def replace_path(replacement)

@@ -1,4 +1,4 @@
-%tr
+%tr.admin
   %th
     = f.label(:countries, "Country Targeting")
     #help_country_targeting.help ?
@@ -29,9 +29,16 @@
                   = check_box_tag "country_#{country_code}", '1', checked, :class => 'country', :country_code => country_code, :country_name => Countries.country_code_to_name[country_code]
                   = label_tag "country_#{country_code}", Countries.country_code_to_name[country_code]
 
+- if @offer.app_offer? && @offer.item.platform == 'iphone'
+  %tr.admin
+    %th
+      Country Blacklist
+      #help_countries_blacklist.help ?
+    %td
+      - if @offer.item.get_countries_blacklist.present?
+        = @offer.item.countries_blacklist
 .hidden
   #help_country_targeting_content{ :name => 'Country Targeting' } Target this offer to specific countries.
-  #help_countries_blacklist_content{ :name => 'Country Blacklist' } This field is auto-filled from iTunes, and updated daily. To manually target countries, use the country targeting field, but note that this offer will not be shown in countries listed in this blacklist, irrespective of country targeting.
 
 - content_for :page_styles do
   :plain

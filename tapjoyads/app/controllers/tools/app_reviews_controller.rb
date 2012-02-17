@@ -49,6 +49,16 @@ class Tools::AppReviewsController < WebsiteController
     end
   end
 
+  def update_featured
+    @app_review = AppReview.find(params[:id])
+    if @app_review.update_attributes(params[:app_review])
+      flash[:notice] = 'App successfully updated'
+    else
+      flash[:error] = "Sorry, that date already has an app featured on it"
+    end
+    redirect_to tools_app_reviews_path(:app_id => @app_review.app_id)
+  end
+
   def destroy
     AppReview.find(params[:id]).destroy
     redirect_to tools_app_reviews_path

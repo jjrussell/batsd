@@ -17,9 +17,11 @@ class ActivityLog < SimpledbResource
 
   SKIP_KEYS = %w(updated-at updated_at perishable_token persistence_token password_salt)
 
-  def after_initialize
+  def initialize(options = {})
     @state_object = nil
     @state_object_new = false
+
+    super({ :load_from_memcache => false }.merge(options))
   end
 
   def diff_keys
@@ -104,11 +106,11 @@ class ActivityLog < SimpledbResource
     return if self.object.respond_to?(:errors) && self.object.errors.is_a?(ActiveRecord::Errors) && self.object.errors.present?
 
     if self.before_state.length > 0 || self.after_state.length > 0
-      super(options)
+      super({ :write_to_memcache => false }.merge(options))
     end
   end
 
-  private
+private
 
   def get_attributes
     attrs = @state_object.attributes

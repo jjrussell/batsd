@@ -11,7 +11,7 @@ describe Tools::GamersController do
         user = Factory :customer_service_user
         login_as user
 
-        get(:index)
+        get :index
       end
 
       it "allows access" do
@@ -24,7 +24,7 @@ describe Tools::GamersController do
         user = Factory :account_mgr_user
         login_as user
 
-        get(:index)
+        get :index
       end
 
       it "allows access" do
@@ -37,7 +37,7 @@ describe Tools::GamersController do
         user = Factory :partner_user
         login_as user
 
-        get(:index)
+        get :index
       end
 
       it "disallows access" do

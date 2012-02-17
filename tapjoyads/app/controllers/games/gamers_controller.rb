@@ -52,7 +52,8 @@ class Games::GamersController < GamesController
 
   def edit
     if @gamer_profile.country.blank?
-      @gamer_profile.country = Countries.country_code_to_name[get_geoip_data[:country]]
+      @geoip_data = get_geoip_data
+      @gamer_profile.country = Countries.country_code_to_name[@geoip_data[:country]]
     end
 
     if @gamer_profile.facebook_id.present?

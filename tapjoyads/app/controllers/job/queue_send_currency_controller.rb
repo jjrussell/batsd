@@ -82,7 +82,6 @@ class Job::QueueSendCurrencyController < Job::SqsReaderController
       if reward.send_currency_status?
         return
       else
-        Notifier.alert_new_relic(e.class, e.message, request, params.merge(:reward_id => reward.id))
         raise e
       end
     end

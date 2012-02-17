@@ -28,10 +28,6 @@ class Device < SimpledbShardedResource
     put('mac_address', new_value)
   end
 
-  def initialize(options = {})
-    super({ :load_from_memcache => true }.merge(options))
-  end
-
   def dynamic_domain_name
     domain_number = @key.matz_silly_hash % NUM_DEVICES_DOMAINS
     "devices_#{domain_number}"
@@ -186,10 +182,9 @@ class Device < SimpledbShardedResource
   end
 
   def serial_save(options = {})
-    return_value = super({ :write_to_memcache => true }.merge(options))
+    super(options)
     Sqs.send_message(QueueNames::CREATE_DEVICE_IDENTIFIERS, {'device_id' => key}.to_json) if @create_device_identifiers
     @create_device_identifiers = false
-    return_value
   end
 
   def create_identifiers!

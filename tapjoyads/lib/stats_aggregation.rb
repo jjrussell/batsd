@@ -254,9 +254,8 @@ class StatsAggregation
 
     range = start_time.hour..(end_time - 1.second).hour
     unless value_over_range == hourly_values[range].sum
-      message = "AppStatsVerifyError: Verification of #{stat_name_or_path.inspect} failed for offer: #{offer.name} (#{offer.id}), for range: #{start_time.to_s(:db)} - #{end_time.to_s(:db)}. "
-      message << "Value is: #{value_over_range}, hourly values are: #{hourly_values[range].inspect}, difference is: #{value_over_range - hourly_values[range].sum}."
-      Rails.logger.info(message)
+      message = "Verification of #{stat_name_or_path.inspect} failed for offer: #{offer.name} (#{offer.id}), for range: #{start_time.to_s(:db)} - #{end_time.to_s(:db)}. Value is: #{value_over_range}, hourly values are: #{hourly_values[range].inspect}, difference is: #{value_over_range - hourly_values[range].sum}"
+      Notifier.alert_new_relic(AppStatsVerifyError, message)
 
       time = start_time
       while time < end_time

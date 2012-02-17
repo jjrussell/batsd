@@ -2,7 +2,7 @@ require 'spec/spec_helper'
 
 describe AgencyApi::PartnersController do
 
-  describe '#index' do
+  describe 'index' do
     before :each do
       agency_user = Factory(:agency_user)
       @partner = Factory(:partner,
@@ -18,18 +18,18 @@ describe AgencyApi::PartnersController do
       }
     end
 
-    it 'responds with error given missing params' do
-      get(:index)
+    it 'should respond with error given missing params' do
+      get :index
       should_respond_with_json_error(400)
     end
 
-    it 'responds with error given bad credentials' do
-      get(:index, @valid_params.merge(:api_key => 'foo'))
+    it 'should respond with error given bad credentials' do
+      get :index, @valid_params.merge(:api_key => 'foo')
       should_respond_with_json_error(403)
     end
 
-    it 'responds with success given valid params' do
-      get(:index, @valid_params)
+    it 'should respond with success given valid params' do
+      get :index, @valid_params
       should_respond_with_json_success(200)
       result = JSON.parse(response.body)
       expected_response = {
@@ -43,7 +43,7 @@ describe AgencyApi::PartnersController do
     end
   end
 
-  describe '#show' do
+  describe 'show' do
     before :each do
       agency_user = Factory(:agency_user)
       @partner = Factory(:partner,
@@ -60,29 +60,29 @@ describe AgencyApi::PartnersController do
       }
     end
 
-    it 'responds with error given missing params' do
-      get(:show)
+    it 'should respond with error given missing params' do
+      get :show
       should_respond_with_json_error(400)
     end
 
-    it 'responds with error given bad credentials' do
-      get(:show, @valid_params.merge(:api_key => 'foo'))
+    it 'should respond with error given bad credentials' do
+      get :show, @valid_params.merge(:api_key => 'foo')
       should_respond_with_json_error(403)
     end
 
-    it 'responds with error given an invalid partner_id' do
-      get(:show, @valid_params.merge(:id => 'foo'))
+    it 'should respond with error given an invalid partner_id' do
+      get :show, @valid_params.merge(:id => 'foo')
       should_respond_with_json_error(403)
     end
 
-    it 'responds with error given partner_id from another agency' do
+    it 'should respond with error given partner_id from another agency' do
       partner2 = Factory(:partner)
-      get(:show, @valid_params.merge(:id => partner2.id))
+      get :show, @valid_params.merge(:id => partner2.id)
       should_respond_with_json_error(403)
     end
 
-    it 'responds with success given valid params' do
-      get(:show, @valid_params)
+    it 'should respond with success given valid params' do
+      get :show, @valid_params
       should_respond_with_json_success(200)
       result = JSON.parse(response.body)
       result['partner_id'].should       == @partner.id
@@ -93,7 +93,7 @@ describe AgencyApi::PartnersController do
     end
   end
 
-  describe '#create' do
+  describe 'create' do
     before :each do
       @reseller = Factory(:reseller)
       agency_user = Factory(:agency_user, :reseller => @reseller)
@@ -105,24 +105,24 @@ describe AgencyApi::PartnersController do
       }
     end
 
-    it 'responds with error given missing params' do
-      post(:create)
+    it 'should respond with error given missing params' do
+      post :create
       should_respond_with_json_error(400)
     end
 
-    it 'responds with error given bad credentials' do
-      post(:create, @valid_params.merge(:api_key => 'foo'))
+    it 'should respond with error given bad credentials' do
+      post :create, @valid_params.merge(:api_key => 'foo')
       should_respond_with_json_error(403)
     end
 
-    it 'responds with error given an existing user email' do
+    it 'should respond with error given an existing user email' do
       Factory(:user, :email => 'email@example.com')
-      post(:create, @valid_params)
+      post :create, @valid_params
       should_respond_with_json_error(400)
     end
 
-    it 'responds with success given valid params' do
-      post(:create, @valid_params)
+    it 'should respond with success given valid params' do
+      post :create, @valid_params
       should_respond_with_json_success(200)
       result = JSON.parse(response.body)
       user = User.find_by_email('email@example.com')
@@ -135,7 +135,7 @@ describe AgencyApi::PartnersController do
     end
   end
 
-  describe '#link' do
+  describe 'link' do
     before :each do
       agency_user = Factory(:agency_user)
       @user = Factory(:user)
@@ -149,42 +149,42 @@ describe AgencyApi::PartnersController do
       }
     end
 
-    it 'responds with error given missing params' do
-      post(:link)
+    it 'should respond with error given missing params' do
+      post :link
       should_respond_with_json_error(400)
     end
 
-    it 'responds with error given bad credentials' do
-      post(:link, @valid_params.merge(:api_key => 'foo'))
+    it 'should respond with error given bad credentials' do
+      post :link, @valid_params.merge(:api_key => 'foo')
       should_respond_with_json_error(403)
     end
 
-    it 'responds with error given bad user credentials' do
-      post(:link, @valid_params.merge(:user_api_key => 'foo'))
+    it 'should respond with error given bad user credentials' do
+      post :link, @valid_params.merge(:user_api_key => 'foo')
       should_respond_with_json_error(403)
     end
 
-    it 'responds with error given invalid email' do
-      post(:link, @valid_params.merge(:email => 'email@example.com'))
+    it 'should respond with error given invalid email' do
+      post :link, @valid_params.merge(:email => 'email@example.com')
       should_respond_with_json_error(400)
     end
 
-    it 'responds with error for a user with too many partner accounts' do
+    it 'should respond with error for a user with too many partner accounts' do
       partner2 = Factory(:partner)
       partner2.users << @user
-      post(:link, @valid_params)
+      post :link, @valid_params
       should_respond_with_json_error(400)
     end
 
-    it 'responds with success given valid params' do
-      post(:link, @valid_params)
+    it 'should respond with success given valid params' do
+      post :link, @valid_params
       should_respond_with_json_success(200)
       result = JSON.parse(response.body)
       result['partner_id'].should == @partner.id
     end
   end
 
-  describe '#update' do
+  describe 'update' do
     before :each do
       agency_user = Factory(:agency_user)
       @partner = Factory(:partner)
@@ -197,29 +197,29 @@ describe AgencyApi::PartnersController do
       }
     end
 
-    it 'responds with error given missing params' do
-      put(:update)
+    it 'should respond with error given missing params' do
+      put :update
       should_respond_with_json_error(400)
     end
 
-    it 'responds with error given bad credentials' do
-      put(:update, @valid_params.merge(:api_key => 'foo'))
+    it 'should respond with error given bad credentials' do
+      put :update, @valid_params.merge(:api_key => 'foo')
       should_respond_with_json_error(403)
     end
 
-    it 'responds with error given invalid id' do
-      put(:update, @valid_params.merge(:id => 'foo'))
+    it 'should respond with error given invalid id' do
+      put :update, @valid_params.merge(:id => 'foo')
       should_respond_with_json_error(403)
     end
 
-    it 'responds with error given id belonging to invalid partner' do
+    it 'should respond with error given id belonging to invalid partner' do
       partner2 = Factory(:partner)
-      put(:update, @valid_params.merge(:id => partner2.id))
+      put :update, @valid_params.merge(:id => partner2.id)
       should_respond_with_json_error(403)
     end
 
-    it 'responds with success given valid params' do
-      put(:update, @valid_params)
+    it 'should respond with success given valid params' do
+      put :update, @valid_params
       should_respond_with_json_success(200)
       @partner.reload
       @partner.name.should == 'partner_rename'

@@ -13,7 +13,7 @@ describe Tools::PayoutsController do
     login_as @user
   end
 
-  it 'renders payouts page' do
-    get(:index)
+  it 'should render payouts page' do
+    get :index
   end
 end

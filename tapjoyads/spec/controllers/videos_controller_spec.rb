@@ -20,9 +20,9 @@ describe VideosController do
 
   describe '#index' do
     it 'returns an XML list' do
-      get(:index, @params)
+      get :index, @params
 
-      response.content_type.should == 'application/xml'
+      @response.content_type.should == 'application/xml'
     end
   end
 
@@ -32,9 +32,9 @@ describe VideosController do
     end
 
     it 'renders the completion screen' do
-      get(:complete, @params.merge(:id => @offer.id, :offer_id => @offer.id))
+      get :complete, @params.merge(:id => @offer.id, :offer_id => @offer.id)
 
-      response.content_type.should == 'text/html'
+      @response.content_type.should == 'text/html'
     end
   end
 end

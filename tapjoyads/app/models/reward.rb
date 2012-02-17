@@ -32,7 +32,8 @@ class Reward < SimpledbShardedResource
   self.sdb_attr :advertiser_reseller_id
   self.sdb_attr :click_key
 
-  def after_initialize
+  def initialize(options = {})
+    super({:load_from_memcache => false}.merge(options))
     put('created', Time.zone.now.to_f.to_s) unless get('created')
   end
 
@@ -40,6 +41,10 @@ class Reward < SimpledbShardedResource
     domain_number = @key.matz_silly_hash % NUM_REWARD_DOMAINS
 
     "rewards_#{domain_number}"
+  end
+
+  def serial_save(options = {})
+    super({ :write_to_memcache => false }.merge(options))
   end
 
   def build_conversions

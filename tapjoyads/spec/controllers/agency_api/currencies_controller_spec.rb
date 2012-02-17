@@ -9,7 +9,7 @@ describe AgencyApi::CurrenciesController do
     @app = Factory(:app, :partner => @partner)
   end
 
-  describe '#index' do
+  describe 'index' do
     before :each do
       @valid_params = {
         :agency_id => @agency_user.id,
@@ -18,32 +18,32 @@ describe AgencyApi::CurrenciesController do
       }
     end
 
-    it 'responds with error given missing params' do
-      get(:index)
+    it 'should respond with error given missing params' do
+      get :index
 
       should_respond_with_json_error(400)
     end
 
-    it 'responds with error given bad credentials' do
-      get(:index, @valid_params.merge(:api_key => 'foo'))
+    it 'should respond with error given bad credentials' do
+      get :index, @valid_params.merge(:api_key => 'foo')
 
       should_respond_with_json_error(403)
     end
 
-    it 'responds with error given invalid app_id' do
-      get(:index, @valid_params.merge(:app_id => 'foo'))
+    it 'should respond with error given invalid app_id' do
+      get :index, @valid_params.merge(:app_id => 'foo')
 
       should_respond_with_json_error(400)
     end
 
-    it 'responds with error given app_id from invalid partner' do
+    it 'should respond with error given app_id from invalid partner' do
       app2 = Factory(:app)
-      get(:index, @valid_params.merge(:app_id => app2.id))
+      get :index, @valid_params.merge(:app_id => app2.id)
 
       should_respond_with_json_error(403)
     end
 
-    it 'responds with success given valid params' do
+    it 'should respond with success given valid params' do
       currency = Factory(:currency,
         :app => @app,
         :partner => @partner,
@@ -54,7 +54,7 @@ describe AgencyApi::CurrenciesController do
         :callback_url => 'http://tapjoy.com',
         :secret_key => 'bar')
 
-      get(:index, @valid_params)
+      get :index, @valid_params
 
       should_respond_with_json_success(200)
 
@@ -73,7 +73,7 @@ describe AgencyApi::CurrenciesController do
     end
   end
 
-  describe '#show' do
+  describe 'show' do
     before :each do
       @currency = Factory(:currency,
         :id => @app.id,
@@ -87,34 +87,34 @@ describe AgencyApi::CurrenciesController do
       }
     end
 
-    it 'responds with error given missing params' do
-      get(:show)
+    it 'should respond with error given missing params' do
+      get :show
 
       should_respond_with_json_error(400)
     end
 
-    it 'responds with error given bad credentials' do
-      get(:show, @valid_params.merge(:api_key => 'foo'))
+    it 'should respond with error given bad credentials' do
+      get :show, @valid_params.merge(:api_key => 'foo')
 
       should_respond_with_json_error(403)
     end
 
-    it 'responds with error given invalid currency_id' do
-      get(:show, @valid_params.merge(:id => 'foo'))
+    it 'should respond with error given invalid currency_id' do
+      get :show, @valid_params.merge(:id => 'foo')
 
       should_respond_with_json_error(400)
     end
 
-    it 'responds with error given currency_id from an invalid partner' do
+    it 'should respond with error given currency_id from an invalid partner' do
       currency2 = Factory(:currency)
 
-      get(:show, @valid_params.merge(:id => currency2.id))
+      get :show, @valid_params.merge(:id => currency2.id)
 
       should_respond_with_json_error(403)
     end
 
-    it 'responds with success given valid params' do
-      get(:show, @valid_params)
+    it 'should respond with success given valid params' do
+      get :show, @valid_params
 
       should_respond_with_json_success(200)
 
@@ -129,7 +129,7 @@ describe AgencyApi::CurrenciesController do
     end
   end
 
-  describe '#create' do
+  describe 'create' do
     before :each do
       @valid_params = {
         :agency_id => @agency_user.id,
@@ -144,48 +144,48 @@ describe AgencyApi::CurrenciesController do
       }
     end
 
-    it 'responds with error given missing params' do
-      post(:create)
+    it 'should respond with error given missing params' do
+      post :create
 
       should_respond_with_json_error(400)
     end
 
-    it 'responds with error given bad credentials' do
-      post(:create, @valid_params.merge(:api_key => 'foo'))
+    it 'should respond with error given bad credentials' do
+      post :create, @valid_params.merge(:api_key => 'foo')
 
       should_respond_with_json_error(403)
     end
 
-    it 'responds with error given invalid app_id' do
-      post(:create, @valid_params.merge(:app_id => 'foo'))
+    it 'should respond with error given invalid app_id' do
+      post :create, @valid_params.merge(:app_id => 'foo')
 
       should_respond_with_json_error(400)
     end
 
-    it 'responds with error given app_id from an invalid partner' do
+    it 'should respond with error given app_id from an invalid partner' do
       partner2 = Factory(:partner)
       app2 = Factory(:app, :partner => partner2)
-      post(:create, @valid_params.merge(:app_id => app2.id))
+      post :create, @valid_params.merge(:app_id => app2.id)
 
       should_respond_with_json_error(403)
     end
 
-    it 'responds with error when an app already has a currency' do
+    it 'should respond with error when an app already has a currency' do
       Factory(:currency, :id => @app.id, :app => @app, :partner => @partner)
 
-      post(:create, @valid_params)
+      post :create, @valid_params
 
       should_respond_with_json_error(400)
     end
 
-    it 'responds with error given an invalid conversion rate' do
-      post(:create, @valid_params.merge(:conversion_rate => -1))
+    it 'should respond with error given an invalid conversion rate' do
+      post :create, @valid_params.merge(:conversion_rate => -1)
 
       should_respond_with_json_error(400)
     end
 
-    it 'responds with success given valid params' do
-      post(:create, @valid_params)
+    it 'should respond with success given valid params' do
+      post :create, @valid_params
 
       should_respond_with_json_success(200)
 
@@ -201,7 +201,7 @@ describe AgencyApi::CurrenciesController do
     end
   end
 
-  describe '#update' do
+  describe 'update' do
     before :each do
       @currency = Factory(:currency,
         :id => @app.id,
@@ -221,40 +221,40 @@ describe AgencyApi::CurrenciesController do
       }
     end
 
-    it 'responds with error given missing params' do
-      put(:update)
+    it 'should respond with error given missing params' do
+      put :update
 
       should_respond_with_json_error(400)
     end
 
-    it 'responds with error given bad credentials' do
-      put(:update, @valid_params.merge(:api_key => 'foo'))
+    it 'should respond with error given bad credentials' do
+      put :update, @valid_params.merge(:api_key => 'foo')
 
       should_respond_with_json_error(403)
     end
 
-    it 'responds with error given invalid id' do
-      put(:update, @valid_params.merge(:id => 'foo'))
+    it 'should respond with error given invalid id' do
+      put :update, @valid_params.merge(:id => 'foo')
 
       should_respond_with_json_error(400)
     end
 
-    it 'responds with error given id from an invalid partner' do
+    it 'should respond with error given id from an invalid partner' do
       currency2 = Factory(:currency)
 
-      put(:update, @valid_params.merge(:id => currency2.id))
+      put :update, @valid_params.merge(:id => currency2.id)
 
       should_respond_with_json_error(403)
     end
 
-    it 'responds with error given an invalid conversion rate' do
-      put(:update, @valid_params.merge(:conversion_rate => -1))
+    it 'should respond with error given an invalid conversion rate' do
+      put :update, @valid_params.merge(:conversion_rate => -1)
 
       should_respond_with_json_error(400)
     end
 
-    it 'responds with success given valid params' do
-      put(:update, @valid_params)
+    it 'should respond with success given valid params' do
+      put :update, @valid_params
 
       should_respond_with_json_success(200)
 

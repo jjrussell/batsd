@@ -1,7 +1,6 @@
 #!/usr/bin/env ruby
 
-hostname = `hostname`.strip
-wait_time = ARGV[0] ? ARGV[0].to_i : 5
+wait_time = ARGV[0] || 5
 def colorize text, color_code
   "#{color_code}#{text}\033[0m"
 end
@@ -22,7 +21,6 @@ end
 
 while true
   out = ""
-  out << "HOST: #{hostname}\n\n"
 
   out << "\nUnicorn Memory Usage\n\n"
   ps = `ps aux | grep unicorn_rails | grep -v grep | awk '{print $2 " " $10 " " $3 " " $12}'`.split("\n")
@@ -48,8 +46,6 @@ while true
   end
 
   out << "\nNGinx Status\n\n"
-  out << `ps aux | grep -v grep | grep nginx`
-  out << "\n"
   out << `curl http://localhost/nginx_status 2>/dev/null`
   out << "\n"
 

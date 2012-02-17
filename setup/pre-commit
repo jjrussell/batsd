@@ -28,7 +28,6 @@ paths = %w(
   lib
   public
   test
-  spec
 )
 
 filetype_regexp = /\.(#{filetypes.join('|')})$/
