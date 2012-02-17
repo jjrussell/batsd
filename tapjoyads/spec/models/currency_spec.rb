@@ -24,6 +24,28 @@ describe Currency do
     it { should validate_numericality_of(:max_age_rating) }
   end
 
+  describe '#has_special_callback?' do
+    before :each do
+      @currency = Factory.build(:currency)
+    end
+
+    context 'when having special callbacks' do
+      it 'returns true' do
+        Currency::SPECIAL_CALLBACK_URLS.each do |url|
+          @currency.callback_url = url
+          @currency.should be_has_special_callback
+        end
+      end
+    end
+
+    context 'when not having special callbacks' do
+      it 'returns true' do
+        @currency.callback_url = 'http://example.com/foo'
+        @currency.should_not be_has_special_callback
+      end
+    end
+  end
+
   context 'A Currency' do
     before :each do
       @currency = Factory.build(:currency)
