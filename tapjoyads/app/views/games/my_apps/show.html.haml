@@ -1,4 +1,4 @@
-#earn.page{:class=>"current"}
+#show.page{:class=>"current"}
   .panel
     %ul.slats.with-icons
       %li.slat.clearfix.line.chrome
@@ -8,15 +8,17 @@
           .title.elip
             =@external_publisher.app_name
           .description
-    .narrow-section.inset-chrome
+    .social-info
       %span.ui-icon-med.score-med
         &nbsp;
       %span.ui-icon-med.social-med
         &nbsp;
-    .narrow-section.bevel-chrome
+    .floating-menu-head
       =t('text.games.browse_offers')
+      .ui-list-down.right
+        &nbsp;
     =render("offers")
-    .section.chrome
+    .button-container
       .ui-joy-button.grey-action
         %a.text-center
           Review #{@external_publisher.app_name}

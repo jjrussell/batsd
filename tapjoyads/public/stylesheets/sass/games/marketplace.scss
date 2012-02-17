@@ -108,22 +108,38 @@ body {
 .panel {
   background-image: url('/images/games/chrome-bg.png');
 }
-.chrome {
+
+.section {
+  padding: 20px 10px;
+}
+.narrow-section {
+  line-height: 35px;
+  padding: 0px percentage(10/320);
+}
+
+.light {
   @include radial-gradient(rgba(255,255,255,0.8), rgba(240,240,240,0.3), rgba(230,230,230,0.2));
 }
 
-.inset-chrome {
-  @extend .chrome;
+.social-info {
+  @extend .light;
+  @extend .narrow-section;
   box-shadow: 0 0px 1px rgba(169, 169, 169, 1.0) inset, 0 1px 0 rgba(200, 200, 200, 1.0);
   position: relative;
   z-index: 30;
 }
 
-.bevel-chrome {
+.button-container {
+  @extend .light;
+  @extend .section;
+}
+
+.floating-menu-head {
+  @extend .narrow-section;
   @include gradient-top(#dcdce1,#dadadf,#cbced3,#c1c5ca);
   border-top: 1px solid #f8f8f9;
   box-shadow: 0 1px 1px #535353;
-  text-shadow: 0 1px 0 #fff;
+  text-shadow: 0 1px 0 #ffffff;
   position: relative;
   z-index: 30;
 }
@@ -178,13 +194,6 @@ body {
   }
 }
 
-.section {
-  padding: 20px 10px;
-}
-.narrow-section {
-  line-height: 35px;
-  padding: 0px percentage(10/320);
-}
 
 div.ui-joy-button.grey-action {
   @include gradient-top(#c9c9c9,#bababa, #999999, #868686);
@@ -201,6 +210,11 @@ div.ui-joy-button.grey-action {
 .ui-list-arrow {
   padding-right: 20px;
   background: url('/images/games/ui-joy-r-arrow.png') no-repeat 96% center;
+}
+
+.ui-list-down {
+  padding-right: 20px;
+  background: url('/images/games/ui-joy-d-arrow.png') no-repeat 96% center;
 }
 
 .ui-list-action-label {
@@ -255,6 +269,7 @@ ul.slats {
 }
 li.slat {
   @extend .clearfix;
+  @extend .light;
   position: relative;
   margin: 0;
   float: none;
