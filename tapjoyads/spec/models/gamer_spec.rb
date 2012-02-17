@@ -7,6 +7,10 @@ describe Gamer do
 
   subject { Factory(:user) }
 
+  it 'associates' do
+    should have_many(:favorite_apps)
+  end
+
   context "Gamer" do
     before :each do
       @gamer = Factory(:gamer)

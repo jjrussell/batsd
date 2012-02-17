@@ -1,6 +1,7 @@
-class FavoriteApp < SimpledbResource
-  self.key_format = 'gamer_id'
-  self.domain_name = 'favorite_apps'
+class FavoriteApp < ActiveRecord::Base
+  include UuidPrimaryKey
+  belongs_to :gamer
+  belongs_to :app
 
-  self.sdb_attr :app_ids, :force_array => true, :replace => false
+  validates_presence_of :gamer, :app
 end

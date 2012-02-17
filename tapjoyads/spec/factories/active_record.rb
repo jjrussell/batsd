@@ -258,4 +258,9 @@ FactoryGirl.define do
   factory :employee_review, :parent => :app_review do
     author { Factory(:employee) }
   end
+
+  factory :favorite_app do
+    gamer { Factory(:gamer) }
+    app   { Factory(:app) }
+  end
 end
