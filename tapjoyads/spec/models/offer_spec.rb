@@ -255,7 +255,7 @@ describe Offer do
     end
 
     it "has a min_bid of 15" do
-      @offer.min_bid.should == 15
+      @offer.min_bid.should == 4
     end
   end
 
