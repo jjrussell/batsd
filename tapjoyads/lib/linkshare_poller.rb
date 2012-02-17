@@ -20,10 +20,11 @@ class LinksharePoller
   end
 
   def self.poll(date=nil)
-    date ||= Date.today.to_s.tr('-', '')
+    today = Date.today
+    yesterday = today - 1.day
     options = {
-      :bdate    => date,
-      :edate    => date,
+      :bdate    => yesterday.to_s.tr('-', ''),
+      :edate    => today.to_s.tr('-', ''),
       :token    => TAPJOY_SECRET_KEY,
       :nid      => 1,
       :reportid => 11,
