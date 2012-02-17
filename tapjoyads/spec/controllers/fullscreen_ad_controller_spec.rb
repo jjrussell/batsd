@@ -4,7 +4,7 @@ describe FullscreenAdController do
   integrate_views
   ignore_html_warning
 
-  describe '#index' do
+  describe "Index" do
     before :each do
       RailsCache.stubs(:get).returns(nil)
       @offer = Factory(:app).primary_offer
@@ -23,20 +23,20 @@ describe FullscreenAdController do
       }
     end
 
-    it 'renders generated ad template' do
+    it "should render generated ad template" do
       get :index, @params
 
       response.should be_success
       response.should render_template("fullscreen_ad/index")
     end
 
-    context 'with custom ads' do
+    describe "with custom ads" do
       before :each do
         @offer.banner_creatives = %w(320x480 480x320)
         @offer.featured = true
       end
 
-      it 'renders custom creative template' do
+      it "should render custom creative template" do
         get :index, @params
 
         response.should be_success
@@ -44,7 +44,7 @@ describe FullscreenAdController do
         response.should have_tag('div', 'x')
       end
 
-      it 'includes call-to-action button for rewarded' do
+      it "should include call-to-action button for rewarded" do
         get :index, @params
 
         reward_amount = @currency.get_visual_reward_amount(@offer)
@@ -53,7 +53,7 @@ describe FullscreenAdController do
         response.should have_tag('a', expected_text)
       end
 
-      it 'includes call-to-action button for non-rewarded offers' do
+      it "should include call-to-action button for non-rewarded offers" do
         @offer.rewarded = false
 
         get :index, @params

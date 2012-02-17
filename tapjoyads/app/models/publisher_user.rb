@@ -10,14 +10,6 @@ class PublisherUser < SimpledbShardedResource
     "publisher_users_#{domain_number}"
   end
 
-  def initialize(options = {})
-    super({ :load_from_memcache => true }.merge(options))
-  end
-
-  def serial_save(options = {})
-    super({ :write_to_memcache => true }.merge(options))
-  end
-
   def update!(udid)
     return false if udids.length >= MAX_UDIDS
     return true  if udids.include?(udid)

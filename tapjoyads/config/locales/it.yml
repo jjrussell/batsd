@@ -1,10 +1,10 @@
----
-it:
-  activerecord:
-    errors:
-      full_messages:
+--- 
+it: 
+  activerecord: 
+    errors: 
+      full_messages: 
         format: ~
-      messages:
+      messages: 
         accepted: ~
         blank: ~
         confirmation: ~
@@ -26,67 +26,67 @@ it:
         too_long: ~
         too_short: ~
         wrong_length: ~
-      template:
+      template: 
         body: ~
-        header:
+        header: 
           one: ~
           other: ~
-  date:
+  date: 
     abbr_day_names: ~
     abbr_month_names: ~
     day_names: ~
-    formats:
+    formats: 
       default: ~
       long: ~
       short: ~
     month_names: ~
     order: ~
-  datetime:
-    distance_in_words:
-      about_x_hours:
+  datetime: 
+    distance_in_words: 
+      about_x_hours: 
         one: ~
         other: ~
-      about_x_months:
+      about_x_months: 
         one: ~
         other: ~
-      about_x_years:
+      about_x_years: 
         one: ~
         other: ~
-      almost_x_years:
+      almost_x_years: 
         one: ~
         other: ~
       half_a_minute: ~
-      less_than_x_minutes:
+      less_than_x_minutes: 
         one: ~
         other: ~
-      less_than_x_seconds:
+      less_than_x_seconds: 
         one: ~
         other: ~
-      over_x_years:
+      over_x_years: 
         one: ~
         other: ~
-      x_days:
+      x_days: 
         one: ~
         other: ~
-      x_minutes:
+      x_minutes: 
         one: ~
         other: ~
-      x_months:
+      x_months: 
         one: ~
         other: ~
-      x_seconds:
+      x_seconds: 
         one: ~
         other: ~
-    prompts:
+    prompts: 
       day: ~
       hour: ~
       minute: ~
       month: ~
       second: ~
       year: ~
-  errors:
+  errors: 
     format: ~
-    messages:
+    messages: 
       accepted: ~
       blank: ~
       confirmation: ~
@@ -106,16 +106,16 @@ it:
       too_long: ~
       too_short: ~
       wrong_length: ~
-  helpers:
-    select:
+  helpers: 
+    select: 
       prompt: ~
-    submit:
+    submit: 
       create: ~
       submit: ~
       update: ~
-  number:
-    currency:
-      format:
+  number: 
+    currency: 
+      format: 
         delimiter: ~
         format: ~
         precision: ~
@@ -123,52 +123,52 @@ it:
         significant: ~
         strip_insignificant_zeros: ~
         unit: ~
-    format:
+    format: 
       delimiter: ~
       precision: ~
       separator: ~
       significant: ~
       strip_insignificant_zeros: ~
-    human:
-      decimal_units:
+    human: 
+      decimal_units: 
         format: ~
-        units:
+        units: 
           billion: ~
           million: ~
           quadrillion: ~
           thousand: ~
           trillion: ~
           unit: ~
-      format:
+      format: 
         delimiter: ~
         precision: ~
         significant: ~
         strip_insignificant_zeros: ~
-      storage_units:
+      storage_units: 
         format: ~
-        units:
-          byte:
+        units: 
+          byte: 
             one: ~
             other: ~
           gb: ~
           kb: ~
           mb: ~
           tb: ~
-    percentage:
-      format:
+    percentage: 
+      format: 
         delimiter: ~
-    precision:
-      format:
+    precision: 
+      format: 
         delimiter: ~
-  support:
-    array:
+  support: 
+    array: 
       last_word_connector: ~
       two_words_connector: ~
       words_connector: ~
-    select:
+    select: 
       prompt: ~
-  text:
-    featured:
+  text: 
+    featured: 
       download: Scarica
       download_and_run: "Scarica e prova"
       earn_currency: "Guardagna %{amount_and_currency}"
@@ -177,7 +177,7 @@ it:
       skip: Salta
       title: "Guadagna %{currency}"
       try_out: Prova
-    games:
+    games: 
       about_body: ~
       about_title: ~
       account_created_body: ~
@@ -187,7 +187,7 @@ it:
       advertisers_body: ~
       advertisers_title: ~
       allow_marketing_emails: ~
-      already_registered:
+      already_registered: 
         one: ~
         other: ~
       back_to_top: ~
@@ -228,11 +228,11 @@ it:
       invite_email_body: ~
       invite_email_greet: ~
       invite_email_signature: ~
-      invite_friends:
+      invite_friends: 
         one: ~
         other: ~
       invite_title: ~
-      invites_sent_to:
+      invites_sent_to: 
         one: ~
         other: ~
       issue_registering: ~
@@ -264,7 +264,7 @@ it:
       unable_to_process: ~
       wifi_required: ~
       wrong_device: ~
-    instructions:
+    instructions: 
       amount_and_currency: "%{amount} %{currency}"
       continue_link: "Clicca qui per continuare."
       download_action: qui
@@ -273,7 +273,7 @@ it:
       footer: "Dopo aver completato questi step guadagnerai %{amount_and_currency}."
       header: "Segui questi step per guadagnare %{currency}:"
       title: Istruzioni
-    offerwall:
+    offerwall: 
       buy_currency: "Compra %{amount} %{currency}"
       earn_currency: "Guadagna %{amount} %{currency}"
       free: Gratis
@@ -289,7 +289,7 @@ it:
       title: "Guadagna %{currency}"
       wifi_required: "Wifi Required"
       wifi_warning: "This app requires a wifi connection to download."
-    shared:
+    shared: 
       about_link: ~
       ads_by: "Pubblicità di/Offerto da"
       android: ~
@@ -340,7 +340,7 @@ it:
       updating: ~
       year: ~
       zip_postal: ~
-    support:
+    support: 
       abuse_warning: "Questo modulo è riservato agli utenti che non sono stati ricompensati per un'offerta completata. Un utilizzo improprio di questa pagina potrebbe impedirti di partecipare a offerte in futuro."
       description_label: "Descrizione:"
       email_address_label: "Indirizzo email:"
@@ -356,12 +356,12 @@ it:
       support_request_submitted: "Supporto richiesto"
       thanks: "Grazie per aver richiesto supporto! Riceverai %{currency} appena avremo verificato che tu abbia completato l'offerta."
       title: "Mancano %{currency}?"
-    unavailable_offer:
+    unavailable_offer: 
       message: "Siamo spiacenti, ma %{offer} non è più disponibile. Puoi tornare alla pagina precedente o aggiornare la pagina per vedere le ultime offerte."
       optional_message: "Oppure, clicca qui per scaricare comunque %{offer}."
-  time:
+  time: 
     am: ~
-    formats:
+    formats: 
       day: ~
       day_long: ~
       day_short: ~

@@ -13,7 +13,7 @@ describe Gamer do
       @gamer.gamer_profile = GamerProfile.create(:gamer => @gamer)
     end
 
-    it 'is compatible with old invitation' do
+    it 'should be compatible with old invitation' do
       invitation = Invitation.create(
         :gamer_id => @gamer.id,
         :channel => Invitation::FACEBOOK,
@@ -28,7 +28,7 @@ describe Gamer do
       Friendship.new(:key => "#{new_gamer.id}.#{@gamer.id}", :consistent => true).should_not be_new_record
     end
 
-    it 'sets up friendships' do
+    it 'should set up friendships' do
       @new_gamer = Factory(:gamer)
       @new_gamer.gamer_profile = GamerProfile.create(:facebook_id => '0', :gamer => @new_gamer)
       @referring_gamer = Factory(:gamer)
@@ -56,7 +56,7 @@ describe Gamer do
       @stalker_gamer.reload.referral_count.should == 0
     end
 
-    it 'is able to deactivate' do
+    it 'should be able to deactivate' do
       @gamer.deactivate!
       @gamer.deactivated_at.should > Time.zone.now - 1.minute
       @gamer.deactivated_at.should < Time.zone.now
@@ -65,7 +65,7 @@ describe Gamer do
   end
 
   context "Deleting Gamers" do
-    it 'only deletes users deactivated 3 days ago' do
+    it 'should only delete users deactivated 3 days ago' do
       5.times.each { Factory(:gamer) }
       5.times.each { Factory(:gamer, :deactivated_at => Time.zone.now) }
       5.times.each { Factory(:gamer, :deactivated_at => Time.zone.now - Gamer::DAYS_BEFORE_DELETION.days - 1.day) }
@@ -74,7 +74,7 @@ describe Gamer do
       Gamer.count.should == 10
     end
 
-    it 'also deletes friendships' do
+    it 'should also delete friendships' do
       gamer = Factory(:gamer, :deactivated_at => Time.zone.now - Gamer::DAYS_BEFORE_DELETION.days - 1.day)
 
       stalker = Factory(:gamer)
@@ -101,7 +101,7 @@ describe Gamer do
       Friendship.count(:where => "gamer_id = '#{gamer.id}' or following_id = '#{gamer.id}'", :consistent => true).should == 0
     end
 
-    it 'also deletes invitations' do
+    it 'should also delete invitations' do
       gamer = Factory(:gamer, :deactivated_at => Time.zone.now - Gamer::DAYS_BEFORE_DELETION.days - 1.day)
       3.times do
         Invitation.create({
@@ -115,7 +115,7 @@ describe Gamer do
       Invitation.count.should == 0
     end
 
-    it 'does not error out when deleted invitations are fulfilled' do
+    it 'should not error out when deleted invitations are fulfilled' do
 
       gamer = Factory(:gamer, :deactivated_at => Time.zone.now - Gamer::DAYS_BEFORE_DELETION.days - 1.day)
       invitation = Invitation.create({

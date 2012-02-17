@@ -6,7 +6,7 @@ describe Games::Gamers::DevicesController do
     fake_the_web
   end
 
-  context 'when linking device' do
+  context "when link device" do
     before :each do
       user = Factory(:admin)
       partner = Factory(:partner, :users => [user])
@@ -24,7 +24,7 @@ describe Games::Gamers::DevicesController do
       games_login_as(gamer)
     end
 
-    it 'creates sub click key' do
+    it "should create sub click key" do
       data = {
         :udid              => Factory.next(:udid),
         :product           => Factory.next(:name),

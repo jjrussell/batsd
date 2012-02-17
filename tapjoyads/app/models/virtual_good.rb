@@ -19,14 +19,6 @@ class VirtualGood < SimpledbResource
   self.sdb_attr :extra_attributes, :cgi_escape => true, :type => :json, :default_value => {}
   self.sdb_attr :data_hash
 
-  def initialize(options = {})
-    super({ :load_from_memcache => true }.merge(options))
-  end
-
-  def serial_save(options = {})
-    super({ :write_to_memcache => true }.merge(options))
-  end
-
   def icon_url(protocol='http://')
     "#{protocol}s3.amazonaws.com/#{RUN_MODE_PREFIX}virtual_goods/icons/#{@key}.png"
   end

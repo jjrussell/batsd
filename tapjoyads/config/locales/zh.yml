@@ -1,8 +1,8 @@
 --- 
 zh: 
-  activerecord:
-    errors:
-      full_messages:
+  activerecord: 
+    errors: 
+      full_messages: 
         format: ~
       messages: 
         accepted: ~
@@ -31,22 +31,22 @@ zh:
         header: 
           one: ~
           other: ~
-  date:
+  date: 
     abbr_day_names: ~
     abbr_month_names: ~
     day_names: ~
-    formats:
+    formats: 
       default: ~
       long: ~
       short: ~
     month_names: ~
     order: ~
-  datetime:
-    distance_in_words:
-      about_x_hours:
+  datetime: 
+    distance_in_words: 
+      about_x_hours: 
         one: ~
         other: ~
-      about_x_months:
+      about_x_months: 
         one: ~
         other: ~
       about_x_years: 

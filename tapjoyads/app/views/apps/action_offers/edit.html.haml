@@ -126,9 +126,8 @@
               .tapjoy-disabled Pending
               (your request was submitted #{@enable_request.created_at.to_s(:pub_ampm_sec)})
 
-      - f.fields_for :primary_offer do |primary_offer_form|
-        = render('apps/offers_shared/countries', :f => primary_offer_form)
-        - if permitted_to? :edit, :statz
+      - if permitted_to? :edit, :statz
+        - f.fields_for :primary_offer do |primary_offer_form|
           = render('apps/offers_shared/admin_fields', :f => primary_offer_form)
 
       %tr

@@ -30,10 +30,6 @@ class RailsCache
       end
     end
 
-    def flush
-      @@rails_cache = Hash.new
-    end
-
   end
 
 end

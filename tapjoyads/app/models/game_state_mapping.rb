@@ -15,4 +15,12 @@ class GameStateMapping < SimpledbShardedResource
     self.save
   end
 
+  def initialize(options = {})
+    super({:load_from_memcache => false}.merge(options))
+  end
+
+  def serial_save(options = {})
+    super(:write_to_memcache => false)
+  end
+
 end

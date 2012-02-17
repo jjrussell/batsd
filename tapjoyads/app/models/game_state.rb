@@ -11,6 +11,10 @@ class GameState < SimpledbShardedResource
     "game_states_#{domain_number}"
   end
 
+  def initialize(options = {})
+    super({:load_from_memcache => false}.merge(options))
+  end
+
   def seconds_elapsed
     if updated_at
       (Time.zone.now - updated_at).to_i
@@ -44,6 +48,10 @@ class GameState < SimpledbShardedResource
     data_hash.each do |k, v|
       put "d_#{k}", v
     end
+  end
+
+  def serial_save(options = {})
+    super({:write_to_memcache => false}.merge(options))
   end
 
 end

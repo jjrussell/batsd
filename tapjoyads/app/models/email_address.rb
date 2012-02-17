@@ -6,8 +6,13 @@ class EmailAddress < SimpledbResource
   self.sdb_attr :created_at,   :type => :time
   self.sdb_attr :confirmed_at, :type => :time
 
-  def after_initialize
+  def initialize(options = {})
+    super({ :load_from_memcache => false }.merge(options))
     self.created_at = Time.zone.now unless created_at?
+  end
+
+  def serial_save(options = {})
+    super({ :write_to_memcache => false }.merge(options))
   end
 
 end

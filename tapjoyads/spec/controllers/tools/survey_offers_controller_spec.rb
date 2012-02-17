@@ -14,8 +14,8 @@ describe Tools::SurveyOffersController do
     login_as(user)
   end
 
-  describe '#index' do
-    it 'returns only visible survey offers' do
+  describe "index" do
+    it "should return only visible survey offers" do
       get 'index'
       assigns(:survey_offers).should == [@survey_offer]
       @survey_offer.hide!
@@ -24,21 +24,21 @@ describe Tools::SurveyOffersController do
     end
   end
 
-  describe '#new' do
-    it 'assigns a new survey offer' do
+  describe "new" do
+    it "should assign a new survey offer" do
       get 'new'
       assigns(:survey_offer).should_not be_nil
       assigns(:survey_offer).bid.should == 0
     end
 
-    it 'builds blank questions' do
+    it "should build blank questions" do
       get 'new'
       assigns(:survey_offer).survey_questions.size.should == 4
     end
   end
 
-  describe '#create' do
-    it 'redirects on success' do
+  describe "create" do
+    it "should redirect on success" do
       survey_offer_attributes = {
         :name => 'quick survey',
         :bid  => '$7.00',
@@ -49,7 +49,7 @@ describe Tools::SurveyOffersController do
       assigns(:survey_offer).bid.should == 700
     end
 
-    it 'renders an error on failure' do
+    it "should render an error on failure" do
       survey_offer_attributes = {
         :bid  => '$0.00',
       }
@@ -59,7 +59,7 @@ describe Tools::SurveyOffersController do
       assigns(:survey_offer).survey_questions.size.should == 4
     end
 
-    it 'creates the correct number of survey questions' do
+    it "should create the correct number of survey questions" do
       survey_offer_attributes = {
         :name => 'quick survey',
         :bid  => '$0.00',
@@ -83,15 +83,15 @@ describe Tools::SurveyOffersController do
     end
   end
 
-  describe '#edit' do
-    it 'builds blank questions' do
+  describe "edit" do
+    it "should build blank questions" do
       get 'edit', :id => @survey_offer.id
       assigns(:survey_offer).survey_questions.size.should == 4
     end
   end
 
-  describe '#update' do
-    it 'adds new questions' do
+  describe "update" do
+    it "should add new questions" do
       survey_offer_attributes = {
         :name => @survey_offer.name,
         :bid  => '$7.00',
@@ -119,7 +119,7 @@ describe Tools::SurveyOffersController do
       @survey_offer.reload.survey_questions.count.should == 2
     end
 
-    it 'removes questions' do
+    it "should remove questions" do
       survey_offer_attributes = {
         :name => @survey_offer.name,
         :bid  => '$0.00',
@@ -144,7 +144,7 @@ describe Tools::SurveyOffersController do
       @survey_offer.reload.survey_questions.count.should == 0
     end
 
-    it 'renders an error' do
+    it "should render an error" do
       survey_offer_attributes = {
         :name => '',
         :bid  => '$0.00',
@@ -157,8 +157,8 @@ describe Tools::SurveyOffersController do
     end
   end
 
-  describe '#destroy' do
-    it 'hides the survey offer' do
+  describe "destroy" do
+    it "should hide the survey offer" do
       get 'destroy', :id => @survey_offer.id
 
       @survey_offer.reload.hidden.should == true

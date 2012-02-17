@@ -23,22 +23,22 @@ describe Account::WhitelistController do
       login_as @user
     end
 
-    it 'assigns all offers by default' do
+    it "should assign all offers by default" do
       get :index
       assigns(:offers).should == [@offer1, @offer2]
     end
 
-    it 'assigns approved offers' do
+    it "should assign approved offers" do
       get :index, :status => 'a'
       assigns(:offers).should == [@offer1]
     end
 
-    it 'assigns blocked offers' do
+    it "should assign blocked offers" do
       get :index, :status => 'b'
       assigns(:offers).should == [@offer2]
     end
 
-    it 'assigns offers by device' do
+    it "should assign offers by device" do
       get :index, :device => 'all'
       assigns(:offers).should == [@offer1, @offer2]
 
@@ -54,7 +54,7 @@ describe Account::WhitelistController do
       assigns(:offers).should == [@offer1]
     end
 
-    it 'assigns offers by name' do
+    it "should assign offers by name" do
       @offer1.name = 'bill'
       @offer1.save!
       @offer2.name = 'sue'
@@ -82,12 +82,12 @@ describe Account::WhitelistController do
       login_as @user
     end
 
-    it 'redirects to account whitelist index' do
+    it "should redirect to account whitelist index" do
       get :enable
       response.should redirect_to(account_whitelist_index_path)
     end
 
-    it 'adds offer to whitelist' do
+    it "should add offer to whitelist" do
       get :index, :status => 'a'
       assigns(:offers).should == []
       get :enable, :id => @offer.id
@@ -97,7 +97,7 @@ describe Account::WhitelistController do
       @partner.get_offer_whitelist.should == Set.new(@offer.id)
     end
 
-    it 'logs activity' do
+    it "should log activity" do
       get :enable, :id => @offer.id
       assigns(:activity_logs).should_not be_nil
     end
@@ -114,12 +114,12 @@ describe Account::WhitelistController do
       login_as @user
     end
 
-    it 'redirects to account whitelist index' do
+    it "should redirect to account whitelist index" do
       get :disable
       response.should redirect_to(account_whitelist_index_path)
     end
 
-    it 'removes offer from whitelist' do
+    it "should remove offer from whitelist" do
       get :enable, :id => @offer.id
       get :index, :status => 'b'
       assigns(:offers).should == []
@@ -130,7 +130,7 @@ describe Account::WhitelistController do
       @partner.get_offer_whitelist.should == Set.new
     end
 
-    it 'logs activity' do
+    it "should log activity" do
       get :disable, :id => @offer.id
       assigns(:activity_logs).should_not be_nil
     end
