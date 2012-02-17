@@ -354,21 +354,6 @@ ActiveRecord::Schema.define(:version => 20120216172034) do
   add_index "gamer_profiles", ["id"], :name => "index_gamer_profiles_on_id", :unique => true
   add_index "gamer_profiles", ["referred_by"], :name => "index_gamer_profiles_on_referred_by"
 
-  create_table "gamer_reviews", :id => false, :force => true do |t|
-    t.string   "id",          :limit => 36,                :null => false
-    t.string   "app_id",      :limit => 36,                :null => false
-    t.string   "author_id",   :limit => 36,                :null => false
-    t.string   "author_type",                              :null => false
-    t.string   "platform",                                 :null => false
-    t.text     "text",                                     :null => false
-    t.integer  "user_rating",               :default => 0
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  add_index "gamer_reviews", ["app_id", "author_id"], :name => "index_gamer_reviews_on_app_id_and_author_id", :unique => true
-  add_index "gamer_reviews", ["id"], :name => "index_gamer_reviews_on_id", :unique => true
-
   create_table "gamers", :id => false, :force => true do |t|
     t.string   "id",                     :limit => 36,                            :null => false
     t.string   "email",                                                           :null => false
