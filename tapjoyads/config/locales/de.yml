@@ -178,98 +178,101 @@ de:
       title: "Erhalte %{currency}"
       try_out: "Jetzt ausprobieren"
     games: 
-        about_body: ~
-        about_title: ~
-        account_created_body: ~
-        account_created_title: "Erfolg!"
-        action_required: ~
-        add_to_homescreen: ~
-        advertisers_body: ~
-        advertisers_title: "Bewerber"
-        allow_marketing_emails: "Erlauben Sie Tapjoy Marketing E-mails durch zuschicken"
-        already_registered:
-            one: ~
-            other: ~
-        already_registered: ~
-        back_to_top: ~
-        birthdate: "Geburtsdatum"
-        call_to_action_body: "Liebe die Apps die Sie haben, finde die Apps die Sie lieben"
-        call_to_action_title: "Entsperren Sie Ihre Handy Freude!"
-        cant_fetch_offers: ~
-        change_linked_account: "Verlinkte Konto ändern"
-        click_to_try_again: ~
-        connect_my_device: ~
-        connect_your_android: ~
-        connect_your_device: ~
-        deactivate: "Deaktivieren"
-        del_acct_confirm: "Klicken Sie auf der untere Taste, um Ihr Konto zu deaktivieren. Sobald ein Konto für XXX Tagen deaktiviert ist, wird es komplett gelöscht werden. Wir können Ihrem Konto nicht wiederherstellen, wenn es gelöscht worden ist."
-        delete_my_account: "Konto löschen"
-        developers_body: ~
-        developers_title: "Entwickler"
-        earn_title: ~
-        enable_javascript: ~
-        enter_birthdate: "Bitte geben Sie Ihrem Geburtsdatum ein"
-        enter_email: "Bitte geben Sie Ihre E-mail Adresse ein"
-        enter_password: "Bitte geben Sie ein Passwort ein"
-        enter_platform: "Bitte wählen Sie iOS oder Android"
-        enter_tos: "Bitte stimmen Sie zu den genannten Bedingungen"
-        enter_valid_email: ~
-        favorite_app: "Lieblingsapp"
-        favorite_category: "Lieblingskategorie"
-        follow_us: "Folge uns"
-        forgot_pass: "Passwort vergessen?"
-        free!: "Gratis!"
-        generic_issue: ~
-        get_it: "Jetzt bekommen!"
-        grant_us_access: ~
-        how_it_works_body:: ~
-        how_it_works_title: ~
-        install_and_run: ~
-        invite: "Meine Freunde einladen!"
-        invite_button: "Einladung"
-        invite_email_body: |-
-            %{name} hat Sie bei Tapjoy eingeladen, der beste Ort um die heißesten neuen apps zu finden. Die Anmeldung ist kostenlos und Sie haben die Möglichkeit die besten Apps auf iOS und Android zu entdecken, während Sie auch Währung in Ihrem Lieblings-Apps verdienen können. Keine 
-        
-            Notwendigkeit, durch Tausende von Apps im App Store oder dem Android Marktplatz zu waten, um Ihren nächsten Download zu finden. Tapjoy wird Ihnen helfen und empfiehlt apps die wir wissen, Sie mögen werden. 
-            
-            Zu Starten, erstellen Sie Ihr Konto hier:
-        invite_email_greet: ~
-        invite_email_signature: "Team Tapjoy"
-        invite_friends: 
-            one: ~
-            other: ~
-        invite_title: "Sende eine E-mail einladung"
-        invites_sent_to:
-            one: ~
-            other: ~
-        issue_registering: ~
-        link_my_facebook: "Mein Facebook Verlinken"
-        load_more: ~
-        meta_description: ~
-        meta_keywords: ~
-        more_apps: "Weitere Apps"
-        my_apps: "Meine Apps"
-        none_selected: "Kein Auswahl"
-        oops: ~
-        our_tos_changed: ~
-        privacy_policy_href: "Datenschutzrichtlinie"
-        provide_other_email: ~
-        recipients_label: "Mit Kommas, mehrere E-mail adressen trennen"
-        recommendation: "Empfehlungen"
-        registering: ~
-        select_current_device: ~
-        select_device: ~
-        select_friend: ~
-        social_networks: "Soziale Netzwerk"
-        social_settings: "Sozialen Einstellungen"
-        tap_that: ~
-        tapjoy_picks: "Tapjoy Empfehlt"
-        terms_of_use_href: "Nutzungsbedingungen"
-        tos_acknowledge: ~
-        tos_change_acknowledge: ~
-        unable_to_process: ~
-        wifi_required: "Wifi nötig"
-        wrong_device: "falsches Gerät?"
+      about_body: ~
+      about_title: ~
+      account_created_body: ~
+      account_created_title: Erfolg!
+      action_required: ~
+      add_to_homescreen: ~
+      advertisers_body: ~
+      advertisers_title: Bewerber
+      allow_marketing_emails: "Erlauben Sie Tapjoy Marketing E-mails durch zuschicken"
+      already_registered: ~
+      back_to_top: ~
+      birthdate: Geburtsdatum
+      call_to_action_body: "Liebe die Apps die Sie haben, finde die Apps die Sie lieben"
+      call_to_action_title: "Entsperren Sie Ihre Handy Freude!"
+      cant_fetch_offers: ~
+      change_linked_account: "Verlinkte Konto ändern"
+      click_to_try_again: ~
+      connect_my_device: ~
+      connect_your_android: ~
+      connect_your_device: ~
+      deactivate: Deaktivieren
+      del_acct_confirm: "Klicken Sie auf der untere Taste, um Ihr Konto zu deaktivieren. Sobald ein Konto für XXX Tagen deaktiviert ist, wird es komplett gelöscht werden. Wir können Ihrem Konto nicht wiederherstellen, wenn es gelöscht worden ist."
+      delete_my_account: "Konto löschen"
+      developers_body: ~
+      developers_title: Entwickler
+      earn: ~
+      earn_title: ~
+      enable_javascript: ~
+      enter_birthdate: "Bitte geben Sie Ihrem Geburtsdatum ein"
+      enter_email: "Bitte geben Sie Ihre E-mail Adresse ein"
+      enter_password: "Bitte geben Sie ein Passwort ein"
+      enter_platform: "Bitte wählen Sie iOS oder Android"
+      enter_tos: "Bitte stimmen Sie zu den genannten Bedingungen"
+      enter_valid_email: ~
+      favorite_app: Lieblingsapp
+      favorite_category: Lieblingskategorie
+      follow_us: "Folge uns"
+      forgot_pass: "Passwort vergessen?"
+      free!: Gratis!
+      generic_issue: ~
+      get_it: "Jetzt bekommen!"
+      grant_us_access: ~
+      how_it_works_body: ~
+      ? "how_it_works_body:"
+      : ~
+      how_it_works_title: ~
+      install_and_run: ~
+      invite: "Meine Freunde einladen!"
+      invite_button: Einladung
+      invite_email_body: |-
+          %{name} hat Sie bei Tapjoy eingeladen, der beste Ort um die heißesten neuen apps zu finden. Die Anmeldung ist kostenlos und Sie haben die Möglichkeit die besten Apps auf iOS und Android zu entdecken, während Sie auch Währung in Ihrem Lieblings-Apps verdienen können. Keine 
+      
+          Notwendigkeit, durch Tausende von Apps im App Store oder dem Android Marktplatz zu waten, um Ihren nächsten Download zu finden. Tapjoy wird Ihnen helfen und empfiehlt apps die wir wissen, Sie mögen werden. 
+      
+          Zu Starten, erstellen Sie Ihr Konto hier:
+      invite_email_greet: ~
+      invite_email_signature: "Team Tapjoy"
+      invite_friends: 
+        one: ~
+        other: ~
+      invite_title: "Sende eine E-mail einladung"
+      invites_sent_to: 
+        one: ~
+        other: ~
+      issue_registering: ~
+      link_my_facebook: "Mein Facebook Verlinken"
+      load_more: ~
+      member_since: ~
+      meta_description: ~
+      meta_keywords: ~
+      more_apps: "Weitere Apps"
+      my_apps: "Meine Apps"
+      none_selected: "Kein Auswahl"
+      oops: ~
+      our_tos_changed: ~
+      privacy_policy_href: Datenschutzrichtlinie
+      provide_other_email: ~
+      recipients_label: "Mit Kommas, mehrere E-mail adressen trennen"
+      recommendation: Empfehlungen
+      recommendations: ~
+      registering: ~
+      select_current_device: ~
+      select_device: ~
+      select_friend: ~
+      social_networks: "Soziale Netzwerk"
+      social_settings: "Sozialen Einstellungen"
+      tap_that: ~
+      tapjoy_picks: "Tapjoy Empfehlt"
+      terms_of_use_href: Nutzungsbedingungen
+      tos_acknowledge: ~
+      tos_acknowledge_html: ~
+      tos_change_acknowledge: ~
+      unable_to_process: ~
+      wifi_required: "Wifi nötig"
+      wrong_device: "falsches Gerät?"
     instructions: 
       amount_and_currency: "%{amount} %{currency}"
       continue_link: "Klicke hier um fortzufahren."
@@ -296,55 +299,58 @@ de:
       wifi_required: "Wifi nötig"
       wifi_warning: "This app requires a wifi connection to download."
     shared: 
-        about_link: "Über Tapjoy"
-        android: "Android"
-        back: "Zurück"
-        blog: "Blog"
-        cancel: "Absagen"
-        city: "Stadt"
-        confirm_password: "Passwort bestätigen"
-        continue: "Weiter"
-        copyright: ~
-        country: "Land"
-        create_account: "Konto erstellen"
-        day: "Tag"
-        earn: "Verdienen"
-        email: "E-mail"
-        facebook_profile: "Facebook Profil"
-        female: "Weiblich"
-        followers: "Follower"
-        following: "Following"
-        friends: "Freunde"
-        gender: "Geschlecht"
-        help: "Hilfe"
-        ios: "iOS"
-        login_noun: "Einloggen"
-        login_verb: "Einloggen"
-        logout: "Ausloggen"
-        male: "Männlich"
-        month: "Monat"
-        my_account: "Mein Konto"
-        my_profile: "Mein Profil"
-        name: "Name"
-        new_password: "Neue Passwort"
-        nickname: "Spitzname"
-        ok: ~
-        options: "Optionen"
-        other: ~
-        password: "Passwort"
-        preferences: ~
-        privacy_policy: "Datenschutzrichtlinie"
-        recipients: "Empfänger"
-        reset_password: "Passwort Zurückstellen"
-        save: "Speichern"
-        share: "Mitteilen"
-        sign_in: "Einloggen"
-        sign_up: "Anmelden"
-        success: "Erfolg!"
-        try_again: "Neu versuchen"
-        updating: ~
-        year: "Jahr"
-        zip_postal: "Postleitzahl"
+      about_link: "Über Tapjoy"
+      ads_by: ~
+      android: Android
+      back: Zurück
+      blog: Blog
+      cancel: Absagen
+      city: Stadt
+      confirm_password: "Passwort bestätigen"
+      continue: Weiter
+      copyright: ~
+      country: Land
+      create_account: "Konto erstellen"
+      day: Tag
+      earn: Verdienen
+      email: E-mail
+      facebook_profile: "Facebook Profil"
+      female: Weiblich
+      followers: Follower
+      following: Following
+      friends: Freunde
+      gender: Geschlecht
+      help: Hilfe
+      invite: ~
+      ios: iOS
+      login_noun: Einloggen
+      login_verb: Einloggen
+      logout: Ausloggen
+      male: Männlich
+      month: Monat
+      my_account: "Mein Konto"
+      my_profile: "Mein Profil"
+      name: Name
+      new_password: "Neue Passwort"
+      nickname: Spitzname
+      ok: ~
+      options: Optionen
+      other: ~
+      password: Passwort
+      preferences: ~
+      privacy: ~
+      privacy_policy: Datenschutzrichtlinie
+      recipients: Empfänger
+      reset_password: "Passwort Zurückstellen"
+      save: Speichern
+      share: Mitteilen
+      sign_in: Einloggen
+      sign_up: Anmelden
+      success: Erfolg!
+      try_again: "Neu versuchen"
+      updating: ~
+      year: Jahr
+      zip_postal: Postleitzahl
     support: 
       abuse_warning: "Dieses Formular ist ausschliesslich für Nutzer, die noch nicht für ein abgeschlossenes Angebot belohnt wurden. Missbrauch dieser Seite kann dazu führen, dass Dein Account für die zukünftige Nutzung der Angebote gesperrt wird."
       description_label: "Beschreibung:"

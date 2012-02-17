@@ -178,97 +178,103 @@ ja:
       title: "%{currency} を稼ぐ"
       try_out: 試してみる
     games: 
-        about_body: "Tapjoyでは、お気に入りアプリのプレミアムコンテンツにアクセスしながら、ハッピーパーク、シティーオブワンダー、コインドーザー、オーバーキル、ＶＩＰポーカー、ガンズブロズのような人気のアプリを発見できます。新しいアプリを紹介してくれるので、もしマジック・ズーがお気に入りなら、TapjoyがサファリズーやバグビレッジＨＤ等のゲームを提案してくれます。今すぐサインアップして、お気に入りのアプリを見つけるためのより良い方法を活用しよう。"
-        about_title: "\"自分が好きなアプリを正確にわかってくれる\""
-        account_created_body: "アカウントの登録を完了しました！"
-        account_created_title: "登録完了！"
-        action_required: "アクションが必要です！"
-        add_to_homescreen: "%{tapjoy}をホーム画面に追加"
-        advertisers_body: "あなたのアプリをTapjoyに露出し、多くのユーザーにリーチしよう"
-        advertisers_title: "広告主"
-        allow_marketing_emails: "Tapjoyからのお知らせメールを受け取る"
-        already_registered: 
-            one: "%{name}さんはすでに登録済みです。%{name}さんをフォローしました"
-            other: "%{name}さんはすでに登録済みです。%{name}さんをフォローしました"
-        back_to_top: "上に戻る"
-        birthdate: "生年月日"
-        call_to_action_body: "あなたが今楽しんでいるアプリをもっと楽しく、あなた好みのアプリに出会える"
-        call_to_action_title: "Mobile Joyを解除"
-        cant_fetch_offers: "ページの読み込みに問題が発生しました。再度試してください。"
-        change_linked_account: "リンクされたアカウントを変更"
-        click_to_try_again: "ここをクリックして再度お試しください"
-        connect_my_device: "端末を接続"
-        connect_your_android: "Android端末を接続してください"
-        connect_your_device: "端末を接続してください"
-        deactivate: "無効にする"
-        del_acct_confirm: "アカウントを無効にするためには、下のボタンをクリックしてください。 XXX日の間、アカウントが無効になるとあなたのアカウントが完全に削除されます。 一旦削除されたアカウントの継続利用はできませんので、ご注意ください。"
-        delete_my_account: "アカウント削除"
-        developers_body: "私達のマネタイズツールであなたのアプリの収益を大幅に向上させよう"
-        developers_title: "開発者"
-        earn_title: "下記のオファー(アプリインストール・会員登録など)を完了して、%{app_name}の%{currency} を獲得しよう"
-        enable_javascript: "Tapjoyの使用を継続するには、ブラウザ設定のJavaScriptを有効化してください。"
-        enter_birthdate: "生年月日を入力してください"
-        enter_email: "メールアドレスを入力してください"
-        enter_password: "パスワードを入力してください"
-        enter_platform: "iOSかAndroidのどちらかお選びください"
-        enter_tos: "上記のご利用条件を承諾してください"
-        enter_valid_email: "有効なメールアドレスを入力してください"
-        favorite_app: "お気に入りアプリ"
-        favorite_category: "お気に入りカテゴリー"
-        follow_us: "フォローする"
-        forgot_pass: "パスワードを忘れた場合はこちら"
-        free!: "無料!"
-        generic_issue: "問題が発生しました。 再度試してください。"
-        get_it: "ゲット!"
-        grant_us_access: "招待メールを送信する前に、Tapjoyに許可を与えてください"
-        how_it_works_body:: "あなたのゲームは全て以下にリストアップされています。アプリの横にあるボタンをクリックして、ポイントの獲得を始めよう"
-        how_it_works_title: "どうやって?"
-        install_and_run: "%{name}をインストールして起動してください。"
-        invite: "友達を招待しよう!"
-        invite_button: "招待する"
-        invite_email_body: |-
-            %{name}さんからTapjoyへの招待が届きました。Tapjoyは今最も注目のアプリを見つけるのに最適の場所です。Tapjoyの利用は無料です。また、今使っているアプリ内のポイントを獲得しながら、iOSやAndroidで注目のアプリを発掘することができます。
-
-            あなたが次にダウンロードするアプリのために、App StoreやAndroidマーケットの膨大な数のアプリに目を通す必要はありません。 Tapjoyがあなたの好みに応じてアプリをオススメします。　
-
-            今すぐ始める方はこちらから：
-        invite_email_greet: "こんにちは、"
-        invite_email_signature: "Tapjoyチーム"
-        invite_friends: 
-            one: "招待する"
-            other: "%{count} 人の友達を招待する"
-        invite_title: "友達に招待メールを送る"
-        invites_sent_to: 
-            one: "Tapjoyへの招待状が%{name}さんに送信されました"
-            other: "Tapjoyへの招待状が%{name}さんへ送信されました"
-        issue_registering: "アカウント登録中にエラーが発生しました"
-        link_my_facebook: "Facebookをリンク"
-        load_more: "もっと見る"
-        meta_description: "Tapjoy： Android, iPhoneやiPad上におけるアプリ・ゲームの目的地"
-        meta_keywords: "ゲーム、モバイルゲーム、モバイルアプリ、iOS、Android、iPhone、iPad、iTouch"
-        more_apps: "もっとアプリを見る"
-        my_apps: "Myアプリ"
-        none_selected: "選択されていません"
-        oops: "おっと！"
-        our_tos_changed: "当社の%{terms_of_use}を変更いたしました。よくお読みいただき、下記からご同意の上、ご利用いただくようお願い申しあげます。"
-        privacy_policy_href: "プライバシーポリシー"
-        provide_other_email: "あなたのメールアドレス以外のメールアドレスを入力してください"
-        recipients_label: "複数のメールアドレスを入力する場合、「 , 」（コンマ）で区切ってください"
-        recommendation: "おすすめ"
-        registering: "登録中"
-        select_current_device: "現在の端末を選んでください"
-        select_device: "あなたの端末を選んでください"
-        select_friend: "招待メールを送信するには最低でも一人の友達を選択してください"
-        social_networks: "ソーシャルネットワーク"
-        social_settings: "ソーシャル設定"
-        tap_that: "%{iconおよび%{button}を選んでください"
-        tapjoy_picks: "Tapjoy一押し"
-        terms_of_use_href: "利用規約"
-        tos_acknowledge: "このボックスをチェックすることで、当サイトのこの利用規約とプライバシーポリシーに同意します。"
-        tos_change_acknowledge: "このボックスをチェックすることで、当サイトのこの利用規約に同意します。"
-        unable_to_process: "申し訳ございませんが、登録できません。"
-        wifi_required: "WiFi必須"
-        wrong_device: "違うデバイス?"
+      about_body: Tapjoyでは、お気に入りアプリのプレミアムコンテンツにアクセスしながら、ハッピーパーク、シティーオブワンダー、コインドーザー、オーバーキル、ＶＩＰポーカー、ガンズブロズのような人気のアプリを発見できます。新しいアプリを紹介してくれるので、もしマジック・ズーがお気に入りなら、TapjoyがサファリズーやバグビレッジＨＤ等のゲームを提案してくれます。今すぐサインアップして、お気に入りのアプリを見つけるためのより良い方法を活用しよう。
+      about_title: "\"自分が好きなアプリを正確にわかってくれる\""
+      account_created_body: アカウントの登録を完了しました！
+      account_created_title: 登録完了！
+      action_required: アクションが必要です！
+      add_to_homescreen: "%{tapjoy}をホーム画面に追加"
+      advertisers_body: あなたのアプリをTapjoyに露出し、多くのユーザーにリーチしよう
+      advertisers_title: 広告主
+      allow_marketing_emails: Tapjoyからのお知らせメールを受け取る
+      already_registered: 
+        one: "%{name}さんはすでに登録済みです。%{name}さんをフォローしました"
+        other: "%{name}さんはすでに登録済みです。%{name}さんをフォローしました"
+      back_to_top: 上に戻る
+      birthdate: 生年月日
+      call_to_action_body: あなたが今楽しんでいるアプリをもっと楽しく、あなた好みのアプリに出会える
+      call_to_action_title: "Mobile Joyを解除"
+      cant_fetch_offers: ページの読み込みに問題が発生しました。再度試してください。
+      change_linked_account: リンクされたアカウントを変更
+      click_to_try_again: ここをクリックして再度お試しください
+      connect_my_device: 端末を接続
+      connect_your_android: Android端末を接続してください
+      connect_your_device: 端末を接続してください
+      deactivate: 無効にする
+      del_acct_confirm: "アカウントを無効にするためには、下のボタンをクリックしてください。 XXX日の間、アカウントが無効になるとあなたのアカウントが完全に削除されます。 一旦削除されたアカウントの継続利用はできませんので、ご注意ください。"
+      delete_my_account: アカウント削除
+      developers_body: 私達のマネタイズツールであなたのアプリの収益を大幅に向上させよう
+      developers_title: 開発者
+      earn: ~
+      earn_title: "下記のオファー(アプリインストール・会員登録など)を完了して、%{app_name}の%{currency} を獲得しよう"
+      enable_javascript: Tapjoyの使用を継続するには、ブラウザ設定のJavaScriptを有効化してください。
+      enter_birthdate: 生年月日を入力してください
+      enter_email: メールアドレスを入力してください
+      enter_password: パスワードを入力してください
+      enter_platform: iOSかAndroidのどちらかお選びください
+      enter_tos: 上記のご利用条件を承諾してください
+      enter_valid_email: 有効なメールアドレスを入力してください
+      favorite_app: お気に入りアプリ
+      favorite_category: お気に入りカテゴリー
+      follow_us: フォローする
+      forgot_pass: パスワードを忘れた場合はこちら
+      free!: 無料!
+      generic_issue: "問題が発生しました。 再度試してください。"
+      get_it: ゲット!
+      grant_us_access: 招待メールを送信する前に、Tapjoyに許可を与えてください
+      how_it_works_body: ~
+      ? "how_it_works_body:"
+      : あなたのゲームは全て以下にリストアップされています。アプリの横にあるボタンをクリックして、ポイントの獲得を始めよう
+      how_it_works_title: どうやって?
+      install_and_run: "%{name}をインストールして起動してください。"
+      invite: 友達を招待しよう!
+      invite_button: 招待する
+      invite_email_body: |-
+          %{name}さんからTapjoyへの招待が届きました。Tapjoyは今最も注目のアプリを見つけるのに最適の場所です。Tapjoyの利用は無料です。また、今使っているアプリ内のポイントを獲得しながら、iOSやAndroidで注目のアプリを発掘することができます。
+          
+          あなたが次にダウンロードするアプリのために、App StoreやAndroidマーケットの膨大な数のアプリに目を通す必要はありません。 Tapjoyがあなたの好みに応じてアプリをオススメします。　
+          
+          今すぐ始める方はこちらから：
+      invite_email_greet: こんにちは、
+      invite_email_signature: Tapjoyチーム
+      invite_friends: 
+        one: 招待する
+        other: "%{count} 人の友達を招待する"
+      invite_title: 友達に招待メールを送る
+      invites_sent_to: 
+        one: "Tapjoyへの招待状が%{name}さんに送信されました"
+        other: "Tapjoyへの招待状が%{name}さんへ送信されました"
+      issue_registering: アカウント登録中にエラーが発生しました
+      link_my_facebook: Facebookをリンク
+      load_more: もっと見る
+      member_since: ~
+      meta_description: "Tapjoy： Android, iPhoneやiPad上におけるアプリ・ゲームの目的地"
+      meta_keywords: ゲーム、モバイルゲーム、モバイルアプリ、iOS、Android、iPhone、iPad、iTouch
+      more_apps: もっとアプリを見る
+      my_apps: Myアプリ
+      none_selected: 選択されていません
+      oops: おっと！
+      our_tos_changed: "当社の%{terms_of_use}を変更いたしました。よくお読みいただき、下記からご同意の上、ご利用いただくようお願い申しあげます。"
+      privacy_policy_href: プライバシーポリシー
+      provide_other_email: あなたのメールアドレス以外のメールアドレスを入力してください
+      recipients_label: "複数のメールアドレスを入力する場合、「 , 」（コンマ）で区切ってください"
+      recommendation: おすすめ
+      recommendations: ~
+      registering: 登録中
+      select_current_device: 現在の端末を選んでください
+      select_device: あなたの端末を選んでください
+      select_friend: 招待メールを送信するには最低でも一人の友達を選択してください
+      social_networks: ソーシャルネットワーク
+      social_settings: ソーシャル設定
+      tap_that: "%{iconおよび%{button}を選んでください"
+      tapjoy_picks: Tapjoy一押し
+      terms_of_use_href: 利用規約
+      tos_acknowledge: このボックスをチェックすることで、当サイトのこの利用規約とプライバシーポリシーに同意します。
+      tos_acknowledge_html: ~
+      tos_change_acknowledge: このボックスをチェックすることで、当サイトのこの利用規約に同意します。
+      unable_to_process: 申し訳ございませんが、登録できません。
+      wifi_required: WiFi必須
+      wrong_device: 違うデバイス?
     instructions: 
       amount_and_currency: "%{amount} %{currency}"
       continue_link: 続くにはクリックしてください
@@ -292,58 +298,61 @@ ja:
       popular_apps: "Popular Apps"
       previous: "前の %{items}件"
       title: "%{currency} を稼ぐ"
-      wifi_required: "WiFi必須"
+      wifi_required: WiFi必須
       wifi_warning: "This app requires a wifi connection to download."
     shared: 
-        about_link: "Tapjoyについて"
-        android: "Android"
-        back: "戻る"
-        blog: "ブログ"
-        cancel: "キャンセル"
-        city: "都道府県"
-        confirm_password: "パスワードを確認"
-        continue: "続ける"
-        copyright: "Copyright © 2012 Tapjoy, Inc. All Rights Reserved. TapjoyとTapjoyのロゴはすべて各オーナーの登録商標です。"
-        country: "国"
-        create_account: "アカウントの作成"
-        day: "日"
-        earn: "獲得する"
-        email: "メールアドレス"
-        facebook_profile: "Facebookプロフィール"
-        female: "女性"
-        followers: "フォロワー"
-        following: "フォロー中"
-        friends: "友達"
-        gender: "性別"
-        help: "ヘルプ"
-        ios: "iOS"
-        login_noun: "ログイン"
-        login_verb: "ログイン"
-        logout: "ログアウト"
-        male: "男性"
-        month: "月"
-        my_account: "マイアカウント"
-        my_profile: "プロフィール"
-        name: "名前"
-        new_password: "新しいパスワード"
-        nickname: "ニックネーム"
-        ok: "OK"
-        options: "オプション"
-        other: "その他"
-        password: "パスワード"
-        preferences: "初期設定"
-        privacy_policy: "プライバシーポリシー"
-        recipients: "宛先"
-        reset_password: "パスワードをリセット"
-        save: "保存"
-        share: "シェア"
-        sign_in: "サインイン"
-        sign_up: "サインアップ"
-        success: "完了！"
-        try_again: "再度お試しください"
-        updating: "アップデート中"
-        year: "年"
-        zip_postal: "郵便番号"
+      about_link: Tapjoyについて
+      ads_by: ~
+      android: Android
+      back: 戻る
+      blog: ブログ
+      cancel: キャンセル
+      city: 都道府県
+      confirm_password: パスワードを確認
+      continue: 続ける
+      copyright: "Copyright © 2012 Tapjoy, Inc. All Rights Reserved. TapjoyとTapjoyのロゴはすべて各オーナーの登録商標です。"
+      country: 国
+      create_account: アカウントの作成
+      day: 日
+      earn: 獲得する
+      email: メールアドレス
+      facebook_profile: Facebookプロフィール
+      female: 女性
+      followers: フォロワー
+      following: フォロー中
+      friends: 友達
+      gender: 性別
+      help: ヘルプ
+      invite: ~
+      ios: iOS
+      login_noun: ログイン
+      login_verb: ログイン
+      logout: ログアウト
+      male: 男性
+      month: 月
+      my_account: マイアカウント
+      my_profile: プロフィール
+      name: 名前
+      new_password: 新しいパスワード
+      nickname: ニックネーム
+      ok: OK
+      options: オプション
+      other: その他
+      password: パスワード
+      preferences: 初期設定
+      privacy: ~
+      privacy_policy: プライバシーポリシー
+      recipients: 宛先
+      reset_password: パスワードをリセット
+      save: 保存
+      share: シェア
+      sign_in: サインイン
+      sign_up: サインアップ
+      success: 完了！
+      try_again: 再度お試しください
+      updating: アップデート中
+      year: 年
+      zip_postal: 郵便番号
     support: 
       abuse_warning: このフォームはオファー案件の手続きを終了したにもかかわらず、仮想通貨を受取れなかったお客様のためのものです。　不正利用の場合にはオファー広告を利用することが出来なくなります。
       description_label: 詳細
