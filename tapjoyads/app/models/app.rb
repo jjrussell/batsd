@@ -201,7 +201,7 @@ class App < ActiveRecord::Base
   end
 
   def can_have_new_currency?
-    currencies.empty? || !currencies.any?(&:has_special_callback?)
+    !currencies.any?(&:has_special_callback?)
   end
 
   def default_actions_file_name
