@@ -39,7 +39,7 @@ describe Currency do
     end
 
     context 'when not having special callbacks' do
-      it 'returns true' do
+      it 'returns false' do
         @currency.callback_url = 'http://example.com/foo'
         @currency.should_not be_has_special_callback
       end

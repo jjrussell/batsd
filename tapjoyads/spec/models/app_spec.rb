@@ -52,7 +52,7 @@ describe App do
       @app.should be_can_have_new_currency
     end
 
-    it 'returns true when any currency has special callback' do
+    it 'returns false when any currency has special callback' do
       special_url = Currency::SPECIAL_CALLBACK_URLS.sample
       Factory(:currency, :app_id => @app.id, :callback_url => 'http://foo.com')
       Factory(:currency, :app_id => @app.id, :callback_url => 'http://bar.com')
