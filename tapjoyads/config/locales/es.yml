@@ -222,9 +222,7 @@ es:
       generic_issue: "Ha ocurrido un error. Por favor, inténtalo otra vez."
       get_it: ¡Descárgalo!
       grant_us_access: "Por favor, danos tu permiso antes de mandar invitaciones."
-      how_it_works_body: ~
-      ? "how_it_works_body:"
-      : "Todos tus juegos aparecen en la lista abajo. Haz clic en los botones al lado de las apps para empezar a ganar moneda virtual."
+      how_it_works_body: "Todos tus juegos aparecen en la lista abajo. Haz clic en los botones al lado de las apps para empezar a ganar moneda virtual."
       how_it_works_title: "¿Cómo funciona?"
       install_and_run: "Instala e inicia %{name}"
       invite: "¡Invita a tus amigos!"

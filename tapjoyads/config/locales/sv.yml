@@ -222,9 +222,7 @@ sv:
       generic_issue: "Ett fel uppstod, var vanlig försök igen"
       get_it: "Ladda ner!"
       grant_us_access: "Var vänlig och delge oss båda tillstånden innan du skickar ut en inbjudan."
-      how_it_works_body: ~
-      ? "how_it_works_body:"
-      : "Alla dina spel är listade nedan. Klicka på knapparna bredvid apparna för att börja tjäna valuta."
+      how_it_works_body: "Alla dina spel är listade nedan. Klicka på knapparna bredvid apparna för att börja tjäna valuta."
       how_it_works_title: "Hur fungerar det?"
       install_and_run: "Installera och kör %{name}"
       invite: "Bjud in en vän!"

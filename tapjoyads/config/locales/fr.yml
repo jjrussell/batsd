@@ -222,9 +222,7 @@ fr:
       generic_issue: "Il y a eu une erreur"
       get_it: Télécharge!
       grant_us_access: ~
-      how_it_works_body: ~
-      ? "how_it_works_body:"
-      : "Tous vos jeux sont listés-ci dessous"
+      how_it_works_body: "Tous vos jeux sont listés-ci dessous"
       how_it_works_title: "Comment ca marche?"
       install_and_run: "Installe et lance %{name}"
       invite: "Invite tes Amis!"

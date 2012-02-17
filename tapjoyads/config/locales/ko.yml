@@ -224,9 +224,7 @@ ko:
       generic_issue: "문제가 발생했습니다. 다시 시도해 주세요."
       get_it: 다운받기
       grant_us_access: "초대장 발송 전에 저희에게 대행 권한을 부여해주세요"
-      how_it_works_body: ~
-      ? "how_it_works_body:"
-      : "당신의 모든 게임이 아래에 리스팅되었습니다. 앱 옆의 버튼을 클릭해 앱의 가상화폐(코인, 골드 등)를 얻어보세요."
+      how_it_works_body: "당신의 모든 게임이 아래에 리스팅되었습니다. 앱 옆의 버튼을 클릭해 앱의 가상화폐(코인, 골드 등)를 얻어보세요."
       how_it_works_title: ~
       install_and_run: "{name}을 인스톨하고 실행해주세요"
       invite: "친구 초대하기!"

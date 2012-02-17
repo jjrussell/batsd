@@ -222,9 +222,7 @@ ja:
       generic_issue: "問題が発生しました。 再度試してください。"
       get_it: ゲット!
       grant_us_access: 招待メールを送信する前に、Tapjoyに許可を与えてください
-      how_it_works_body: ~
-      ? "how_it_works_body:"
-      : あなたのゲームは全て以下にリストアップされています。アプリの横にあるボタンをクリックして、ポイントの獲得を始めよう
+      how_it_works_body: あなたのゲームは全て以下にリストアップされています。アプリの横にあるボタンをクリックして、ポイントの獲得を始めよう
       how_it_works_title: どうやって?
       install_and_run: "%{name}をインストールして起動してください。"
       invite: 友達を招待しよう!

@@ -221,8 +221,6 @@ de:
       get_it: "Jetzt bekommen!"
       grant_us_access: ~
       how_it_works_body: ~
-      ? "how_it_works_body:"
-      : ~
       how_it_works_title: ~
       install_and_run: ~
       invite: "Meine Freunde einladen!"
