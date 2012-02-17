@@ -14,7 +14,7 @@ describe SimpledbResource do
 
   def load_model(options = {})
     if @model
-      options = {:key => @model.key}.merge(options)
+      options = {:key => @model.key, :consistent => true}.merge(options)
     end
     @model = Testing.new(options)
   end
@@ -45,9 +45,6 @@ describe SimpledbResource do
 
       load_model
       @model.get('long_string').should == long_value
-
-      load_model(:load_from_memcache => false, :consistent => true)
-      @model.get('long_string').should == long_value
     end
 
     it 'handles newlines in attributes' do
@@ -58,9 +55,6 @@ describe SimpledbResource do
 
       load_model
       @model.get('newline_string').should == newline_value
-
-      load_model(:load_from_memcache => false, :consistent => true)
-      @model.get('newline_string').should == newline_value
     end
 
     it 'cgi escapes attributes when asked to' do
@@ -69,9 +63,6 @@ describe SimpledbResource do
       @model.save!
 
       load_model
-      @model.get('escaped').should == cgi_escape_val
-
-      load_model(:load_from_memcache => false, :consistent => true)
       @model.get('escaped').should == cgi_escape_val
     end
 
@@ -94,10 +85,6 @@ describe SimpledbResource do
       @model.save!
 
       load_model
-      @model.attributes.delete('updated-at')
-      @model.attributes.should match_hash_with_arrays attrs
-
-      load_model(:load_from_memcache => false, :consistent => true)
       @model.attributes.delete('updated-at')
       @model.attributes.should match_hash_with_arrays attrs
     end
@@ -129,10 +116,6 @@ describe SimpledbResource do
       load_model
       @model.attributes.delete('updated-at')
       @model.attributes.should match_hash_with_arrays attrs
-
-      load_model(:load_from_memcache => false, :consistent => true)
-      @model.attributes.delete('updated-at')
-      @model.attributes.should match_hash_with_arrays attrs
     end
 
     it 'handles adding and replacing attrs in one save operation' do
@@ -156,10 +139,6 @@ describe SimpledbResource do
       load_model
       @model.attributes.delete('updated-at')
       @model.attributes.should match_hash_with_arrays attrs
-
-      load_model(:load_from_memcache => false, :consistent => true)
-      @model.attributes.delete('updated-at')
-      @model.attributes.should match_hash_with_arrays attrs
     end
 
     it 'converts types' do
@@ -170,13 +149,6 @@ describe SimpledbResource do
       @model.put('bool_key', false, :type => :bool)
       @model.save!
 
-      @model.get('string_key', :type => :string).should == 'string_value'
-      @model.get('int_key', :type => :int).should == 16
-      @model.get('float_key', :type => :float).should == 16.1616
-      @model.get('time_key', :type => :time).should == Time.at(16)
-      @model.get('bool_key', :type => :bool).should be_false
-
-      load_model(:load_from_memcache => false, :consistent => true)
       @model.get('string_key', :type => :string).should == 'string_value'
       @model.get('int_key', :type => :int).should == 16
       @model.get('float_key', :type => :float).should == 16.1616
@@ -201,7 +173,7 @@ describe SimpledbResource do
       SortedSet.new(@model.foo_array).should == SortedSet.new(['a', 'b'])
       @model.foo_bool.should == true
 
-      load_model(:load_from_memcache => false, :consistent => true)
+      load_model
       @model.foo_10.should == 10
       @model.foo.should == 'bar'
       @model.foo_time.should == Time.at(16)
@@ -220,14 +192,14 @@ describe SimpledbResource do
 
       @model.save!(:expected_attr => {'version' => nil})
 
-      load_model(:load_from_memcache => false, :consistent => true)
+      load_model
       @model.get('version').should == '1'
 
       Testing.transaction(:key => @model.key, :consistent => true) do |m|
         m.foo = "bar"
       end
 
-      load_model(:load_from_memcache => false, :consistent => true)
+      load_model
       @model.get('version').should == '2'
       @model.foo.should == 'bar'
     end
@@ -244,9 +216,8 @@ describe SimpledbResource do
 
       thread_list.each(&:join)
 
-      m = Testing.new(:key => @model.key, :load_from_memcache => false, :consistent => true)
-
-      m.foo_10.should == 13
+      load_model
+      @model.foo_10.should == 13
     end
   end
 
