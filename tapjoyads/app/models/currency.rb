@@ -236,7 +236,7 @@ class Currency < ActiveRecord::Base
 
   def reset_to_pending_if_rejected
     if self.rejected?
-      self.state = 'pending'   
+      self.state = 'pending'
       self.approval.destroy
       new_approval = Approval.new(:item_id => id, :item_type => self.class.name, :event => 'create', :created_at => nil, :updated_at => nil)
       new_approval.save

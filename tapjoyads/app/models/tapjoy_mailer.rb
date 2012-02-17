@@ -209,14 +209,6 @@ class TapjoyMailer < ActionMailer::Base
     offer_creative_updated(:rejected, email_address, offer, size, offer_link)
   end
 
-  def currency_rejected(email_address, reason = nil)
-    from 'Tapjoy <noreply@tapjoy.com>'
-    recipients email_address
-    content_type 'text/html'
-    subject 'Your Tapjoy currency has been rejected!'
-    body(:reason => reason)
-  end
-
   private
   def offer_creative_updated(status, email_address, offer, size, offer_link)
     from('Tapjoy <noreply@tapjoy.com>')
