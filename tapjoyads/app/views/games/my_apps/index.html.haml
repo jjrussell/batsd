@@ -1,0 +1,26 @@
+#my_apps.page{:class=>"current"}
+  .panel
+    - if current_gamer.devices.empty?
+      = render 'games/homepage/register_device'
+    = render 'games/homepage/featured_content_preview'
+
+    -if @external_publishers.blank?
+      =render "no_games"
+    - else
+      %ul.slats.with-icons
+        -@external_publishers.each do |external_publisher|
+          %li.slat.chrome
+            .hd.game-icon= image_tag(external_publisher.get_icon_url(:size=>114,:source => :cloudfront))
+            .bd
+              .title.elip
+                = external_publisher.app_name
+              .app-summary.clearfix
+                .ui-icon.score
+                .ui-icon.social
+            .ft
+              - currency = external_publisher.currencies.first
+              - link_to(games_my_app_path(currency[:id]), :class=>"pop", "data-page" => "#show") do
+                .ui-list-arrow.right
+                  .ui-list-action-label.right
+                    =t('text.shared.collect', :currency => currency[:name])
+    =render("games/shared/footer")

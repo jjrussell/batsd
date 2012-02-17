@@ -13,6 +13,7 @@ ActionController::Routing::Routes.draw do |map|
     m.more_games_recommended 'recommended', :controller => 'games/more_games', :action => :recommended
 
     m.translations 'translations', :controller => 'games/homepage', :action => :translations
+    m.resources :my_apps, :controller => 'games/my_apps', :only => [ :show, :index ]
 
     m.resources :gamer_sessions, :controller => 'games/gamer_sessions', :only => [ :new, :create, :destroy, :index ]
     m.connect 'login', :controller => 'games/gamer_sessions', :action => :create, :conditions => {:method => :post}
@@ -42,6 +43,7 @@ ActionController::Routing::Routes.draw do |map|
 
     m.resources :android, :controller => 'games/android', :action => :index
 
+    m.resources :social, :only => [:index], :controller => 'games/social'
     map.with_options :controller => 'games/social', :name_prefix => 'games_social_' do |social|
       social.invite_email_friends 'invite_email_friends', :action => :invite_email_friends
       social.send_email_invites 'send_email_invites', :action => :send_email_invites

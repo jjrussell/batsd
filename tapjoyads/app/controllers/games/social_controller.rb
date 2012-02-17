@@ -7,6 +7,9 @@ class Games::SocialController < GamesController
   before_filter :offline_facebook_authenticate, :only => [ :invite_facebook_friends, :send_facebook_invites ]
   before_filter :validate_recipients, :only => [ :send_email_invites ]
 
+  def index
+  end
+
   def invite_facebook_friends
     current_facebook_user.fetch
     @page_size = 25

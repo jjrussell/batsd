@@ -1,0 +1,300 @@
+@import "tj-mixins.scss";
+@mixin txt-shadow($x:0, $y:1px, $spread:1px, $color:rgba(37, 37, 37, .4)) {
+  text-shadow: $x $y $spread $color;
+}
+@mixin box-shadow($x:0, $y:0, $spread:2px, $color:#ddd) {
+  -webkit-box-shadow: $x $y $spread $color;
+   -moz-box-shadow: $x $y $spread $color;
+     -o-box-shadow: $x $y $spread $color;
+        box-shadow: $x $y $spread $color;
+}
+
+body {
+  font-family: "Gill Sans", Arial, Helvetica, sans-serif;
+}
+/* oocss flexible grid */
+.line,.lastUnit{overflow:hidden; *overflow:visible;*zoom:1;}
+.unit{float:left;}
+.unitRight{float:right;}
+.size1of1{float:none;}
+.size1of2{width:50%;}
+.size1of3{width:33.33333%;}
+.size2of3{width:66.66666%;}
+.size1of4{width:25%;}
+.size3of4{width:75%;}
+.size1of5{width:20%;}
+.size2of5{width:40%;}
+.size3of5{width:60%;}
+.size4of5{width:80%;}
+.lastUnit{float:none;width:auto;_position:relative;_left:-3px;_margin-right:-3px;}
+
+.elip {
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+.page {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.page {
+  display: none;
+}
+.page.current,
+.current {
+  z-index: 10;
+  display: block;
+}
+
+.clearfix:after {
+	content: ".";
+	display: block;
+	clear: both;
+	visibility: hidden;
+	line-height: 0;
+	height: 0;
+}
+
+
+.social {
+  background: url('/images/games/social.png') no-repeat 0 0;
+}
+.social-med {
+  background: url('/images/games/social-med.png') no-repeat 0 0;
+}
+.score {
+  background: url('/images/games/thumbs-up.png') no-repeat 0 0;
+}
+.score-med {
+  background: url('/images/games/thumbs-up-med.png') no-repeat 0 0;
+}
+.ui-icon {
+  padding-left: 20px;
+}
+.ui-icon-med {
+  padding-left: 28px;
+}
+
+.clear {
+  clear:both;
+}
+.wrap {
+  position:relative;
+  width: 100%;
+  margin: 0 auto;
+  padding: 0;
+}
+
+.tj-red-gradient {
+  @include gradient-top(#e9292e, #e62429, #d71012, #cf0404);
+}
+
+@mixin radial-gradient($p0, $p75, $p100) {
+  background: $p0; /* Old browsers */
+  background: -moz-radial-gradient(center, ellipse cover,  $p0 0%, $p75 75%, $p100 100%); /* FF3.6+ */
+  background: -webkit-gradient(radial, center center, 0px, center center, 100%, color-stop(0%,$p0), color-stop(75%,$p75), color-stop(100%,$p100)); /* Chrome,Safari4+ */
+  background: -webkit-radial-gradient(center, ellipse cover,  $p0 0%,$p75 75%,$p100 100%); /* Chrome10+,Safari5.1+ */
+  background: -o-radial-gradient(center, ellipse cover,  $p0 0%,$p75 75%,$p100 100%); /* Opera 12+ */
+  background: -ms-radial-gradient(center, ellipse cover,  $p0 0%,$p75 75%,$p100 100%); /* IE10+ */
+  background: radial-gradient(center, ellipse cover,  $p0 0%,$p75 75%,$p100 100%); /* W3C */
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#{$p0}', endColorstr='#{$p100}',GradientType=1 ); /* IE6-9 fallback on horizontal gradient */
+}
+
+.panel {
+  background-image: url('/images/games/chrome-bg.png');
+}
+
+.section {
+  padding: 20px 10px;
+}
+.narrow-section {
+  line-height: 35px;
+  padding: 0px percentage(10/320);
+}
+
+.light {
+  @include radial-gradient(rgba(255,255,255,0.8), rgba(240,240,240,0.3), rgba(230,230,230,0.2));
+}
+
+.social-info {
+  @extend .light;
+  @extend .narrow-section;
+  box-shadow: 0 0px 1px rgba(169, 169, 169, 1.0) inset, 0 1px 0 rgba(200, 200, 200, 1.0);
+  position: relative;
+  z-index: 30;
+}
+
+.button-container {
+  @extend .light;
+  @extend .section;
+}
+
+.floating-menu-head {
+  @extend .narrow-section;
+  @include gradient-top(#dcdce1,#dadadf,#cbced3,#c1c5ca);
+  border-top: 1px solid #f8f8f9;
+  box-shadow: 0 1px 1px #535353;
+  text-shadow: 0 1px 0 #ffffff;
+  position: relative;
+  z-index: 30;
+}
+
+.headerwrap {
+  .logo {
+    position: relative;
+    height: 44px;
+    float: none;
+    text-align: center;
+    img {
+      background: url('/images/games/logo-navbar.png') no-repeat 0 0;
+      border: 0;
+      margin-top: 3px;
+      width: 90px;
+      background-size: auto 38px;
+    }
+  }
+}
+.footer {
+  padding-bottom: 100px;
+}
+.nav-icon {
+  position: absolute;
+  top: 3px;
+  left: 7px;
+  img {
+    width: 34px;
+    height: 21px;
+    background: url('/images/games/menu-icon.png') no-repeat 0 0;
+  }
+}
+
+.app-summary {
+  margin: 2px 0 6px;
+  width: 100%;
+  .score, .social {
+    float: left;
+    font-size: 1em;
+    width: auto;
+  }
+}
+
+
+.game-icon {
+  overflow: hidden;
+  max-width: 75px;
+  img {
+    @include box-shadow(0px, 0px, 3px, #000);
+    @include rounded-corners(45%);
+    max-width:100%;
+  }
+}
+
+
+div.ui-joy-button.grey-action {
+  @include gradient-top(#c9c9c9,#bababa, #999999, #868686);
+  @include rounded-corners(4px);
+  @include shadow(#ddd, 1px);
+  @include txt-shadow(0, -1px, 1px, #a6a6a6);
+  color: white;
+  text-align: center;
+  border-bottom: 1px solid rgba(85,85,85,1.0);
+  font-size: 1.1em;
+}
+
+
+.ui-list-arrow {
+  padding-right: 20px;
+  background: url('/images/games/ui-joy-r-arrow.png') no-repeat 96% center;
+}
+
+.ui-list-down {
+  padding-right: 20px;
+  background: url('/images/games/ui-joy-d-arrow.png') no-repeat 96% center;
+}
+
+.ui-list-action-label {
+  display: block;
+  font-size: 1em;
+  margin-top: 1px;
+}
+
+.highlight-green {
+  @include txt-shadow();
+  @include gradient-top(#75ba50, #6aae45, #51932c, #51922b);
+  @include rounded-corners(4px);
+  @include shadow(#047003, 1px);
+  box-shadow: 0 1px 0 rgba(154, 225, 119, 1.0) inset;
+  border: 1px solid rgba(39, 130, 22, 1.0);
+  border-top: 1px solid rgba(86, 155, 49, 1.0);
+  border-bottom: 1px solid rgba(6, 112, 4, 1.0);
+  color: white;
+  padding: 1px 4px;
+  text-align: center;
+  font-size: .8em;
+  display: inline-block;
+}
+.slats.with-icons .slat {
+  height: 60px;
+  padding-top: 20px;
+  padding-bottom: 20px;
+  img {
+    max-height: 60px;
+  }
+  .ft {
+    line-height: 60px;
+  }
+}
+.slats.simple .slat {
+  line-height: 35px;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+ul.slats {
+  box-shadow: 0 1px 0 white inset;
+  border-top: 1px solid #a5a6a8;
+  a {
+    text-decoration: none;
+    color: #000;
+  }
+  a:hover {
+    text-decoration: none;
+    color: #000;
+  }
+}
+li.slat {
+  @extend .clearfix;
+  @extend .light;
+  position: relative;
+  margin: 0;
+  float: none;
+  padding: 5px percentage(10/320);
+  width: percentage(300/320);
+  /*border-bottom: 1px solid #6f7072;*/
+  border-bottom: 1px solid #a5a6a8;
+  box-shadow: 0 1px 0 white;
+  text-align: left;
+  .title {
+    font-size: 1.2em;
+  }
+  .hd {
+    margin-right: percentage(12/300);
+    width: percentage(69/300);
+    float: left;
+  }
+  .bd {
+    margin-right: 0 percentage(12/300);
+    width: percentage(138/300);
+    float: left;
+  }
+  .ft {
+    width: percentage(69/300);
+    float: right;
+    text-align: right;
+  }
+}
