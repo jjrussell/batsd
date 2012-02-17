@@ -12,7 +12,7 @@ describe Job::MasterReloadStatzController do
     it 'saves memcache values' do
       100.times { Factory(:email_offer) }
       stub_vertica
-      get :index
+      get(:index)
 
       expected_hash = {
         :android=>{:adv_amount=>"$0.00", :count=>"0", :pub_amount=>"$0.00"},
@@ -75,7 +75,7 @@ describe Job::MasterReloadStatzController do
 
       stub_vertica(start_time, end_time)
 
-      get :daily
+      get(:daily)
 
       response.body.should == 'ok'
     end
@@ -111,7 +111,7 @@ describe Job::MasterReloadStatzController do
       hash = {'android.paid' => [1]}
       Mc.put('store_ranks.android.overall.paid.english', hash)
 
-      get :index
+      get(:index)
 
       metadata = Mc.get("statz.metadata.24_hours")
       apps.each do |app|
@@ -132,7 +132,7 @@ describe Job::MasterReloadStatzController do
       stub_conversions
       stub_appstats
 
-      get :partner_index
+      get(:partner_index)
 
       expected_stats = {
         "account_mgr"           => "",
@@ -179,6 +179,117 @@ describe Job::MasterReloadStatzController do
       end
 
       response.body.should == 'ok'
+    end
+
+    it 'displays 0 for cvr without percentage' do
+      stub_conversions
+
+      zero_keys = [
+        'rewards_opened',
+        'featured_offers_opened',
+        'display_clicks',
+        'paid_clicks',
+      ]
+      zero_hash = {}
+      zero_keys.each { |key| zero_hash[key] = [0] }
+
+      @mock_appstats.stubs(:stats).returns(stats_hash.merge(zero_hash))
+      stub_appstats
+
+      zero_keys = [
+        'offerwall_cvr',
+        'featured_cvr',
+        'display_cvr',
+        'cvr',
+      ]
+
+      get :partner_index
+
+      cached_stats = Mc.get('statz.partner.cached_stats.24_hours')
+      partner_stats = cached_stats[@partner.id]
+      zero_keys.each do |key|
+        partner_stats[key].should == 0
+      end
+    end
+
+    it 'generates weekly and monthly timeframes' do
+      start_time = Time.zone.now - 7.days
+      end_time = Time.zone.now
+
+      stub_conversions(start_time, end_time)
+      stub_appstats(:daily)
+
+      start_time = Time.zone.now - 30.days
+      end_time = Time.zone.now
+
+      stub_conversions(start_time, end_time)
+      stub_appstats(:daily)
+
+      get :partner_daily
+      response.body.should == 'ok'
+    end
+
+    it 'stores partner metadata' do
+      stub_conversions
+      stub_appstats
+
+      admin_user = Factory(:admin)
+      admin_user2 = Factory(:admin)
+
+      @partner.account_managers = [admin_user, admin_user2]
+      @partner.sales_rep = admin_user
+      @partner.balance = 1000
+      @partner.save!
+
+      get :partner_index
+      cached_stats = Mc.get('statz.partner.cached_stats.24_hours')
+      partner_stats = cached_stats[@partner.id]
+      partner_stats['partner'].should == @partner.name
+
+      emails = [admin_user.email, admin_user2.email]
+      partner_stats['account_mgr'].split(',').sort.should == emails.sort
+      partner_stats['sales_rep'].should == admin_user.email
+      partner_stats['balance'].should == '$10.00'
+    end
+
+    it 'does not skip if published_offers > 0' do
+      stub_conversions
+
+      get :partner_index
+      Mc.get('statz.partner.cached_stats.24_hours').should be_nil
+
+      hash = stats_hash.merge('paid_installs' => [0])
+      @mock_appstats.stubs(:stats).returns(hash)
+      stub_appstats
+
+      get :partner_index
+      cached_stats = Mc.get('statz.partner.cached_stats.24_hours')
+      cached_stats.keys.should include @partner.id
+    end
+
+    it 'does not skip if conversions > 0' do
+      stub_conversions
+
+      get :partner_index
+      Mc.get('statz.partner.cached_stats.24_hours').should be_nil
+
+      zero_hash = {
+        'rewards' => [0],
+        'featured_published_offers' => [0],
+        'display_conversions' => [0],
+      }
+
+      @mock_appstats.stubs(:stats).returns(stats_hash.merge(zero_hash))
+      stub_appstats
+
+      get :partner_index
+      cached_stats   = Mc.get('statz.partner.cached_stats.24_hours')
+      cached_ios     = Mc.get('statz.partner-ios.cached_stats.24_hours')
+      cached_android = Mc.get('statz.partner-android.cached_stats.24_hours')
+
+      cached_stats.keys.should   include @partner.id
+      cached_ios.keys.should     include @partner.id
+      cached_android.keys.should include @partner.id
     end
   end
 end
