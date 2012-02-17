@@ -36,7 +36,7 @@ class Games::HomepageController < GamesController
       if @featured_content && @featured_content.tracking_offer
         @publisher_app       = @featured_content.tracking_offer.item
         params[:udid]        = @device.id
-        @currency            = Currency.find(:first)
+        @currency            = Currency.find_by_id(TRACKING_OFFER_CURRENCY_ID)
         params[:source]      = 'tj_games'
         @now                 = Time.zone.now
         params[:device_name] = @device_name
