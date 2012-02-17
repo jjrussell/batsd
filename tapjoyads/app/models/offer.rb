@@ -385,7 +385,7 @@ class Offer < ActiveRecord::Base
   end
 
   def accepting_clicks?
-    tapjoy_enabled? && user_enabled? && (payment > 0 || (payment == 0 && reward_value.present? && reward_value > 0)) || tracking_for
+    tapjoy_enabled? && user_enabled? && (payment > 0 || (payment == 0 && reward_value.present? && reward_value > 0))
   end
 
   def has_variable_payment?

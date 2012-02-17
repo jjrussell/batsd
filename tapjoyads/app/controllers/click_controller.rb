@@ -145,10 +145,12 @@ class ClickController < ApplicationController
   end
 
   def validate_click
-    return if currency_disabled?
-    return if offer_disabled?
-    return if offer_completed?
-    return if recently_clicked?
+    unless @offer.tracking_for
+      return if currency_disabled?
+      return if offer_disabled?
+      return if offer_completed?
+      return if recently_clicked?
+    end
 
     wr_path = params[:source] == 'featured' ? 'featured_offer_click' : 'offer_click'
     build_web_request(wr_path)
