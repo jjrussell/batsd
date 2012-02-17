@@ -12,7 +12,7 @@ describe Job::MasterReloadStatzController do
     it 'saves memcache values' do
       100.times { Factory(:email_offer) }
       stub_vertica
-      get :index
+      get(:index)
 
       expected_hash = {
         :android=>{:adv_amount=>"$0.00", :count=>"0", :pub_amount=>"$0.00"},
@@ -75,7 +75,7 @@ describe Job::MasterReloadStatzController do
 
       stub_vertica(start_time, end_time)
 
-      get :daily
+      get(:daily)
 
       response.body.should == 'ok'
     end
@@ -111,7 +111,7 @@ describe Job::MasterReloadStatzController do
       hash = {'android.paid' => [1]}
       Mc.put('store_ranks.android.overall.paid.english', hash)
 
-      get :index
+      get(:index)
 
       metadata = Mc.get("statz.metadata.24_hours")
       apps.each do |app|
@@ -132,7 +132,7 @@ describe Job::MasterReloadStatzController do
       stub_conversions
       stub_appstats
 
-      get :partner_index
+      get(:partner_index)
 
       expected_stats = {
         "account_mgr"           => "",

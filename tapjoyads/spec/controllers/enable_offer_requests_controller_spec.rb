@@ -14,7 +14,7 @@ describe EnableOfferRequestsController do
 
     offer.enable_offer_requests.should be_blank
 
-    post :create, :enable_offer_request => { :offer_id => offer.id }
+    post(:create, :enable_offer_request => { :offer_id => offer.id })
 
     response.should be_redirect
     offer.reload.enable_offer_requests.first.status.should == 0
