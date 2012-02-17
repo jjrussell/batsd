@@ -44,18 +44,10 @@ class Click < SimpledbShardedResource
   self.sdb_attr :publisher_reseller_id
   self.sdb_attr :advertiser_reseller_id
 
-  def initialize(options = {})
-    super({ :load_from_memcache => false }.merge(options))
-  end
-
   def dynamic_domain_name
     domain_number = @key.matz_silly_hash % NUM_CLICK_DOMAINS
 
     "clicks_#{domain_number}"
-  end
-
-  def serial_save(options = {})
-    super({ :write_to_memcache => false }.merge(options))
   end
 
   def rewardable?
@@ -79,22 +71,12 @@ class Click < SimpledbShardedResource
     raise 'Unknown click id.' if new_record?
 
     # We only resolve clicks in the last 48 hours.
-    if clicked_at < Time.zone.now - 47.hours
-      self.clicked_at = Time.zone.now - 1.minute
-    end
-    self.manually_resolved_at = Time.zone.now
-
+    now = Time.zone.now
+    self.manually_resolved_at = now
+    self.clicked_at           = now - 1.minute if clicked_at < now - 47.hours
     save!
 
-    if Rails.env.production?
-      url = "#{API_URL}/"
-      if type == 'generic'
-        url += "offer_completed?click_key=#{key}"
-      else
-        url += "connect?app_id=#{advertiser_app_id}&udid=#{udid}&consistent=true"
-      end
-      Downloader.get_with_retry url
-    end
+    Downloader.get_with_retry(url_to_resolve) if Rails.env.production?
   end
 
   def resolved_too_fast?(threshold = 20.seconds)
@@ -102,5 +84,15 @@ class Click < SimpledbShardedResource
       type != 'video' &&
       !offer.pay_per_click? &&
       (installed_at - clicked_at) < threshold
+  end
+
+  private
+
+  def url_to_resolve
+    if type == 'generic'
+      "#{API_URL}/offer_completed?click_key=#{key}"
+    else
+      "#{API_URL}/connect?app_id=#{advertiser_app_id}&udid=#{udid}&consistent=true"
+    end
   end
 end
