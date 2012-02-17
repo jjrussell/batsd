@@ -33,7 +33,7 @@ class Tools::AppReviewsController < WebsiteController
       if @app_review.errors[:author_id].any?
         flash.now[:error] = 'You have already reviewed this app.'
       else
-        flash.now[:error] = "There is a issue, please try again later."
+        flash.now[:error] = "There is an issue, please try again later."
       end
       @employees = Employee.active_by_first_name
       render :action => :new

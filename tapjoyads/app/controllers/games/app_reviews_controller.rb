@@ -23,7 +23,7 @@ class Games::AppReviewsController < GamesController
       if @app_review.errors[:author_id].any?
         flash.now[:notice] = 'You have already reviewed this app.'
       else
-        flash.now[:notice] = "There is a issue, please try again later."
+        flash.now[:notice] = "There is an issue, please try again later."
       end
       @app_reviews = AppReview.paginate_all_by_app_id(@app.id, :page => params[:app_reviews_page])
       render :action => :new
