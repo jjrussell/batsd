@@ -7,7 +7,7 @@ describe ToolsController do
 
   context 'with a non-logged in user' do
     it 'redirects to login page' do
-      get :index
+      get(:index)
       response.should redirect_to(login_path(:goto => tools_path))
     end
   end
@@ -21,7 +21,7 @@ describe ToolsController do
 
     context 'accessing tools index' do
       it 'redirects to dashboard' do
-        get :index
+        get(:index)
         response.should redirect_to(dashboard_root_path)
       end
     end
@@ -36,7 +36,7 @@ describe ToolsController do
 
     context 'accessing tools index' do
       it 'renders appropriate page' do
-        get :index
+        get(:index)
         response.should render_template 'tools/index'
       end
     end

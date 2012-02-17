@@ -29,7 +29,7 @@ describe Games::SocialController do
         foo_gamer = Factory(:gamer)
         foo_gamer.gamer_profile = GamerProfile.create(:facebook_id => 'foo', :gamer => foo_gamer)
         friends = ['foo', 'bar']
-        post 'send_facebook_invites', :friends => friends, :content => 'hello'
+        post(:send_facebook_invites, :friends => friends, :content => 'hello')
 
         should respond_with(200)
         json = JSON.load(@response.body)

@@ -32,7 +32,7 @@ describe Games::Gamers::DevicesController do
         :mac_address       => Factory.next(:name),
         :platform          => 'ios'
       }
-      get :finalize, {:data => ObjectEncryptor.encrypt(data)}
+      get(:finalize, {:data => ObjectEncryptor.encrypt(data)})
       Click.new(:key => "#{@inviter.id}.invite[1]", :consistent => true).should_not be_new_record
     end
   end
