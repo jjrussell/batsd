@@ -1,6 +1,6 @@
 class AddStateToCurrency < ActiveRecord::Migration
   def self.up
-    add_column :currencies, :state, :string
+    add_column :currencies, :state, :integer
   end
 
   def self.down

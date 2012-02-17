@@ -3,12 +3,14 @@ ENV['RAILS_ROOT'] ||= File.expand_path(File.join(File.dirname(__FILE__), '..', '
 
 require 'rubygems'
 require 'test/unit'
+require 'mocha'
 require 'shoulda'
 require 'active_record'
 
 require File.dirname(__FILE__) + '/../lib/acts_as_approvable'
+require './test/support'
 
-ActiveRecord::Base.logger = Logger.new(File.dirname(__FILE__) + '/debug.log')
+LOGGER = ActiveRecord::Base.logger = Logger.new(File.dirname(__FILE__) + '/debug.log')
 
 def load_schema
   config = YAML::load(IO.read(File.dirname(__FILE__) + '/database.yml'))
@@ -32,5 +34,7 @@ def load_schema
   end
 
   ActiveRecord::Base.establish_connection(config[db_adapter])
-  load(File.dirname(__FILE__) + '/schema.rb')
+  ActiveRecord::Migration.suppress_messages do
+    load(File.dirname(__FILE__) + '/schema.rb')
+  end
 end

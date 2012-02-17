@@ -73,6 +73,14 @@ class User < ActiveRecord::Base
     email
   end
 
+  def after_approve(approval)
+    ApprovalMailer.deliver_approved(email, :user, :subject => 'Your account has been approved on Tapjoy!')
+  end
+
+  def after_reject(approval)
+    ApprovalMailer.deliver_rejected(email, :user, :subject => 'Your account has been rejected on Tapjoy!', :reason => approval.reason)
+  end
+
 private
 
   def update_auth_net_cim_profile

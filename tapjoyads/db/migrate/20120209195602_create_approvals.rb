@@ -1,10 +1,11 @@
 class CreateApprovals < ActiveRecord::Migration
   def self.up
-    create_table :approvals do |t|
+    create_table :approvals, :id => false do |t|
+      t.guid     :id,        :null => false
       t.string   :item_type, :null => false
       t.guid     :item_id,   :null => false
       t.string   :event,     :null => false
-      t.string   :state,     :null => false, :default => 'pending'
+      t.integer  :state,     :null => false, :default => 0
       t.guid     :owner_id
       t.text     :object
       t.text     :reason
@@ -15,7 +16,6 @@ class CreateApprovals < ActiveRecord::Migration
     add_index :approvals, [:state, :event]
     add_index :approvals, [:item_type, :item_id]
     add_index :approvals, [:owner_id]
-    
   end
 
   def self.down

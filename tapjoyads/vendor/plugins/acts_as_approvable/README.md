@@ -9,11 +9,11 @@ Installation
 
 Install the plugin as you would any other Rails plugin:
 
-    script/plugin install git://github.com/jlogsdon/acts_as_approvable.git
+    $ script/plugin install git://github.com/jlogsdon/acts_as_approvable.git
 
 After installing the plugin you should run the generator:
 
-    script/generate acts_as_approvable
+    $ script/generate acts_as_approvable
 
 Generator Options
 =================
@@ -24,41 +24,65 @@ These options are also available by passing `--help` as an option to the generat
     --haml          Generate HAML views instead of ERB.
     --owner [User]  Enable and, optionally, set the model for approval ownerships.
 
-Usage
-=====
+API Documentation
+=================
 
-Configuring a model to use the approval workflow, just put `acts_as_approvable`
-somewhere in the model. By default both creation and update events must be
-approved.
+API Documentation is [available online](http://jlogsdon.github.com/acts_as_approvable).
 
-Once included, you can temporarily disable the approval hooks by calling
-`Model.approvals_off`. To enable call `Model.approvals_on`. It is also possible
-to use `@model.without_approvals { #do things }` to process several elements
-while disabling approvals and then ensuring the approval workflow is enabled
-afterwards.
+Configuration
+=============
 
-Approval hooks may also be globaly disabled and enabled using
-`ActsAsApprovable.enable` and `ActsAsApprovable.disable`.
+The generator creates an initializor at `config/initializers/acts_as_approvable.rb`. A sample
+initializer might look like this:
 
-Controller
-==========
+    ActsAsApprovable.view_language = 'haml'
+    ActsAsApprovable::Ownership.configure
 
-The controller should be able to handle anything you throw at it, but it's created
-in your `app/controllers` folder by the generator to give you easy access to what's
-going on under the hood.
+The `Ownership` functionality expects a `User` model in your project by default, but by providing
+an `:owner` option you can change the expected model to whatever you wish. `.configure` also
+accepts a block which it applies to the `Approval` model, allowing you to override methods as
+you see fit.
 
-Templates
-=========
+For example, to only allow Users with the "admin" role to 'own' an Approval, change your initializer
+to something like this:
 
-The generator will create two templates: `index.html` and `_table.html`. The
-table partial is a generic view usable by any object type and should generally
-be left alone. If you'd like to customize the table for different models, simply
-copy the partial to a new file using the "underscoreized" model name.
+    ActsAsApprovable.view_language = 'haml'
+    ActsAsApprovable::Ownership.configure do
+      def self.available_owners
+        owner_class.all(:conditions => ['role', 'admin'])
+      end
+    end
 
-eg. for a `User` partial, create `_user.html`; for a `FancyName` partial, create
-`_fancy_name.html`.
+Examples
+========
 
-Note that the generic partial will be used unless a model type has been selected.
+Require approval for new Users, but not modifications...
+
+    class User < ActiveRecord::Base
+      acts_as_approvable :on => :create, :state_field => :state
+
+      # Let the user know they've been approved
+      def after_approve(approval)
+        ApprovalMailer.deliver_user_approved(self.email)
+      end
+
+      # Let the user know they were rejected
+      def after_reject(approval)
+        ApprovalMailer.deliver_user_approved(self.email, approval.reason)
+      end
+    end
+
+Require approval when a Game's title or description is changed, but not when view or installation count is changed...
+
+    class Game < ActiveRecord::Base
+        acts_as_approvable :on => :update, :ignore => [:views, :installs]
+    end
+
+Require approval for all changes, except the standard ignored fields (`created_at`, `updated_at` and `:state_field`)...
+
+    class Advertisement < ActiveRecord::Base
+        acts_as_approvable :state_field => :state
+    end
 
 Options
 =======
@@ -76,13 +100,9 @@ basis:
 The fields `:created_at`, `:updated_at` and whatever is set for the `:state_field`
 are automatically ignored.
 
-Examples
-========
+Contributors
+============
 
-    class User < ActiveRecord::Base
-      acts_as_approvable :state_field => :state, :only => :login
-    end
-
-    class Project < ActiveRecord::Base
-      acts_as_approvable :on => :update, :ignore => [:views, :installs]
-    end
+ * [James Logsdon](http://github.com/jlogsdon) (Lead developer)
+ * [Hwan-Joon Choi](http://github.com/hc5duke) (Performance enhancements, bug fixes)
+ * [Neal Wiggins](http://github.com/nwigginsTJ) (Enumeration of states)

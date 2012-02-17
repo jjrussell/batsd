@@ -1,4 +1,4 @@
-%table
+%table.tablesorter
   %thead
     %tr
       %th Type
@@ -11,9 +11,8 @@
       %tr
         %td= approval.item_type.classify
         %td= approval.item.try(:to_s) || approval.item.id
-        %td= approval.owner.try(:to_s)
+        %td= render :partial => 'owner_select', :locals => {:approval => approval}
         %td= approval.state
         %td.actions
-          = link_to('Approve', approve_tools_approval_path(approval))
-          = link_to('Reject', reject_tools_approval_path(approval))
-
+          = link_to('Approve', approve_tools_approval_path(approval), :class => 'approve')
+          = link_to('Reject', reject_tools_approval_path(approval), :class => 'reject')

@@ -78,6 +78,7 @@ ActionController::Routing::Routes.draw do |map|
                      :freemium_android => :get, :award_currencies => :post, :update_award_currencies => :post,
                      :update_user_roles => :post, :update_device => :post, :approvals => :post }
   map.namespace :tools do |tools|
+    tools.resources :approvals, :only => [:index], :collection => [:history, :mine], :member => [:approve, :reject, :assign]
     tools.resources :premier_partners, :only => [ :index ]
     tools.resources :generic_offers, :only => [ :index, :new, :create, :edit, :update ]
     tools.resources :orders, :only => [ :new, :create ],

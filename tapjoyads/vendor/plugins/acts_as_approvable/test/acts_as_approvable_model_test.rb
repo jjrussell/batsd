@@ -1,23 +1,13 @@
 require 'test_helper'
 
-class User < ActiveRecord::Base
-  acts_as_approvable :on => :create, :state_field => :state
-end
-
-class Project < ActiveRecord::Base
-  acts_as_approvable :on => :update, :ignore => :title
-end
-
-class Game < ActiveRecord::Base
-  acts_as_approvable :on => :update, :only => :title
-end
-
-class Employee < ActiveRecord::Base
-  acts_as_approvable
-end
-
 class ActsAsApprovableModelTest < Test::Unit::TestCase
   load_schema
+
+  def teardown
+    ActiveRecord::Base.send(:subclasses).each do |klass|
+      klass.delete_all
+    end
+  end
 
   context 'A record with update only approval' do
     context 'and ignored fields' do
@@ -56,11 +46,18 @@ class ActsAsApprovableModelTest < Test::Unit::TestCase
         end
       end
 
-      context 'that is altered using #without_approvable' do
-        setup { @project.without_approval { update_attribute(:description, 'updated') } }
-
+      context 'that is altered using #without_approval' do
         should 'not have an approval object' do
+          @project.without_approval { update_attribute(:description, 'updated') }
           assert @project.approvals.empty?
+        end
+
+        should 'correctly restore approval queue state' do
+          assert @project.approvals_on?
+          @project.approvals_off
+          assert !@project.approvals_on?
+          @project.without_approval { update_attribute(:description, 'updated') }
+          assert !@project.approvals_on?
         end
       end
     end
@@ -77,6 +74,10 @@ class ActsAsApprovableModelTest < Test::Unit::TestCase
 
         should 'have an approval' do
           assert_equal 1, @game.approvals.size
+        end
+
+        should 'have pending changes' do
+          assert @game.pending_changes?
         end
       end
 
@@ -101,11 +102,64 @@ class ActsAsApprovableModelTest < Test::Unit::TestCase
         end
       end
 
-      context 'that is altered using #without_approvable' do
+      context 'that is altered using #without_approval' do
         setup { @game.without_approval { update_attribute(:title, 'updated') } }
 
         should 'not have an approval object' do
           assert @game.approvals.empty?
+        end
+      end
+
+      context 'with approval queue disabled' do
+        context 'at the record level' do
+          setup do
+            @game.approvals_off
+            @game.update_attributes(:title => 'review')
+          end
+
+          teardown { @game.approvals_on }
+
+          should 'have approvals off' do
+            assert @game.approvals_disabled?
+          end
+
+          should 'not have an approval object' do
+            assert @game.approvals.empty?
+          end
+        end
+
+        context 'at the model level' do
+          setup do
+            Game.approvals_off
+            @game.update_attributes(:title => 'review')
+          end
+
+          teardown { Game.approvals_on }
+
+          should 'have approvals off' do
+            assert @game.approvals_disabled?
+          end
+
+          should 'not have an approval object' do
+            assert @game.approvals.empty?
+          end
+        end
+
+        context 'at the global level' do
+          setup do
+            ActsAsApprovable.disable
+            @game.update_attributes(:title => 'review')
+          end
+
+          teardown { ActsAsApprovable.enable }
+
+          should 'have approvals off' do
+            assert @game.approvals_disabled?
+          end
+
+          should 'not have an approval object' do
+            assert @game.approvals.empty?
+          end
         end
       end
     end
@@ -154,11 +208,11 @@ class ActsAsApprovableModelTest < Test::Unit::TestCase
       end
 
       should 'raise an error if approved again' do
-        assert_raise(RuntimeError) { @approval.approve! }
+        assert_raise(ActsAsApprovable::Error::Locked) { @approval.approve! }
       end
 
       should 'raise an error if rejected' do
-        assert_raise(RuntimeError) { @approval.reject! }
+        assert_raise(ActsAsApprovable::Error::Locked) { @approval.reject! }
       end
     end
 
@@ -181,11 +235,35 @@ class ActsAsApprovableModelTest < Test::Unit::TestCase
       end
 
       should 'raise an error if approved' do
-        assert_raise(RuntimeError) { @approval.approve! }
+        assert_raise(ActsAsApprovable::Error::Locked) { @approval.approve! }
       end
 
       should 'raise an error if rejected again' do
-        assert_raise(RuntimeError) { @approval.reject! }
+        assert_raise(ActsAsApprovable::Error::Locked) { @approval.reject! }
+      end
+    end
+
+    context 'that is stale' do
+      setup { @approval.update_attributes(:created_at => 10.days.ago) }
+
+      should 'be stale' do
+        assert @approval.stale?
+        assert !@approval.fresh?
+      end
+
+      should 'raise an error if approved' do
+        assert_raise(ActsAsApprovable::Error::Stale) { @approval.approve! }
+        assert @approval.pending?
+      end
+
+      should 'not raise an error if rejected' do
+        assert_nothing_raised { @approval.reject! }
+        assert @approval.rejected?
+      end
+
+      should 'allow approval when forced' do
+        assert_nothing_raised { @approval.approve!(true) }
+        assert @approval.approved?
       end
     end
   end
@@ -208,7 +286,7 @@ class ActsAsApprovableModelTest < Test::Unit::TestCase
     end
 
     context 'when approved' do
-      setup { @user.approve! }
+      setup { @user.approve!; @user.reload }
 
       should 'be approved' do
         assert @user.approved?
@@ -222,7 +300,7 @@ class ActsAsApprovableModelTest < Test::Unit::TestCase
     end
 
     context 'when rejected' do
-      setup { @user.reject! }
+      setup { @user.reject!; @user.reload }
 
       should 'be rejected' do
         assert @user.rejected?
@@ -232,6 +310,13 @@ class ActsAsApprovableModelTest < Test::Unit::TestCase
 
       should 'update the local state' do
         assert_equal 'rejected', @user.state
+      end
+    end
+
+    context '.without_approval' do
+      should 'disable approvals for the given block' do
+        @user = User.without_approval { create }
+        assert @user.approval.nil?
       end
     end
   end
@@ -258,6 +343,81 @@ class ActsAsApprovableModelTest < Test::Unit::TestCase
 
       should 'create an approval record' do
         assert_equal 1, @employee.update_approvals.size
+      end
+    end
+
+    context 'when approving' do
+      setup { @approval = @employee.approval }
+
+      should 'call before_approve hook' do
+        @approval.item.expects(:before_approve).once
+        @approval.approve!
+      end
+
+      should 'call after_approve hook' do
+        @approval.item.expects(:after_approve).once
+        @approval.approve!
+      end
+
+      should 'halt if before_approve returns false' do
+        @approval.item.stubs(:before_approve).returns(false)
+        @approval.approve!
+        assert @approval.item.pending?
+      end
+    end
+
+    context 'when rejecting' do
+      setup { @approval = @employee.approval }
+
+      should 'call before_reject hook' do
+        @approval.item.expects(:before_reject).once
+        @approval.reject!
+      end
+
+      should 'call after_reject hook' do
+        @approval.item.expects(:after_reject).once
+        @approval.reject!
+      end
+
+      should 'halt if before_reject returns false' do
+        @approval.item.stubs(:before_reject).returns(false)
+        @approval.reject!
+        assert @approval.item.pending?
+      end
+    end
+  end
+
+  context '.options_for_state' do
+    should 'return an array' do
+      assert_kind_of Array, Approval.options_for_state
+    end
+
+    should 'contain our states' do
+      assert Approval.options_for_state.include?(['All', -1])
+      assert Approval.options_for_state.include?(['Pending', 0])
+      assert Approval.options_for_state.include?(['Approved', 1])
+      assert Approval.options_for_state.include?(['Rejected', 2])
+    end
+  end
+
+  context '.options_for_type' do
+    context 'without approval records' do
+      should 'be empty' do
+        assert Approval.options_for_type.empty?
+      end
+    end
+
+    context 'with approval records' do
+      setup do
+        Project.create.update_attributes(:description => 'review')
+        Game.create.update_attributes(:title => 'review')
+        User.create
+      end
+
+      should 'contain all types with approvals' do
+        assert Approval.options_for_type.include?('Project')
+        assert Approval.options_for_type.include?('Game')
+        assert Approval.options_for_type.include?('User')
       end
     end
   end

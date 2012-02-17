@@ -89,11 +89,12 @@ ActiveRecord::Schema.define(:version => 20120216172034) do
   add_index "app_reviews", ["featured_on", "platform"], :name => "index_app_reviews_on_featured_on_and_platform", :unique => true
   add_index "app_reviews", ["id"], :name => "index_app_reviews_on_id", :unique => true
 
-  create_table "approvals", :force => true do |t|
-    t.string   "item_type",                                       :null => false
-    t.string   "item_id",    :limit => 36,                        :null => false
-    t.string   "event",                                           :null => false
-    t.string   "state",                    :default => "pending", :null => false
+  create_table "approvals", :id => false, :force => true do |t|
+    t.string   "id",         :limit => 36,                :null => false
+    t.string   "item_type",                               :null => false
+    t.string   "item_id",    :limit => 36,                :null => false
+    t.string   "event",                                   :null => false
+    t.integer  "state",                    :default => 0, :null => false
     t.string   "owner_id",   :limit => 36
     t.text     "object"
     t.text     "reason"
@@ -202,7 +203,7 @@ ActiveRecord::Schema.define(:version => 20120216172034) do
     t.string   "reseller_id",                                :limit => 36
     t.decimal  "reseller_spend_share",                                     :precision => 8, :scale => 6
     t.boolean  "whitelist_overridden",                                                                   :default => false, :null => false
-    t.string   "state"
+    t.integer  "state"
   end
 
   add_index "currencies", ["app_id"], :name => "index_currencies_on_app_id"

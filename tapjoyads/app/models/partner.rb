@@ -302,6 +302,10 @@ class Partner < ActiveRecord::Base
     end
   end
 
+  def get_currency_approvals
+#    currency_approvals = Approval.select(
+  end
+
 private
 
   def update_currencies
