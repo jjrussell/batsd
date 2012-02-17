@@ -23,7 +23,7 @@ describe Tools::AppReviewsController do
   describe '#index' do
     context 'when no params' do
       before :each do
-        get 'index'
+        get :index
       end
 
       it 'returns all app reviews' do
@@ -33,7 +33,7 @@ describe Tools::AppReviewsController do
 
     context 'when has author_id and author_type as param' do
       before :each do
-        get 'index', :author_id => @gamer.id, :author_type => 'Gamer'
+        get(:index, :author_id => @gamer.id, :author_type => 'Gamer')
       end
 
       it 'returns app reviews written by the author' do
@@ -43,7 +43,7 @@ describe Tools::AppReviewsController do
 
     context 'when has app_id as param' do
       before :each do
-        get 'index', :app_id => @app.id
+        get(:index, :app_id => @app.id)
       end
 
       it 'returns app reviews for app' do
@@ -64,7 +64,7 @@ describe Tools::AppReviewsController do
           :user_rating => 1
         }
       }
-      post 'create', @options
+      post(:create, @options)
     end
 
     context 'when app review not exist' do
@@ -94,7 +94,7 @@ describe Tools::AppReviewsController do
 
     context 'when the review already exist' do
       before :each do
-        post 'create', @options
+        post(:create, @options)
       end
 
       it 'sets a flash notice message' do
@@ -109,7 +109,7 @@ describe Tools::AppReviewsController do
 
   describe '#edit' do
     before :each do
-      get 'edit', :id => @gamer_review.id
+      get(:edit, :id => @gamer_review.id)
     end
 
     context 'when edit success' do
@@ -127,7 +127,7 @@ describe Tools::AppReviewsController do
           :user_rating => -1
         }
       }
-      put 'update', @options
+      put(:update, @options)
     end
 
     context 'when update success' do
@@ -155,7 +155,7 @@ describe Tools::AppReviewsController do
 
   describe '#destroy' do
     before :each do
-      delete 'destroy', :id => @gamer_review.id
+      delete(:destroy, :id => @gamer_review.id)
       @app.reload
     end
 

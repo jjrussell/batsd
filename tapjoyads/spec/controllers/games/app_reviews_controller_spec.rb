@@ -20,7 +20,7 @@ describe Games::AppReviewsController do
           :user_rating => 1
         }
       }
-      post 'create', @options
+      post(:create, @options)
     end
 
     context 'when app review not exist' do
@@ -50,7 +50,7 @@ describe Games::AppReviewsController do
 
     context 'when the review already exist' do
       before :each do
-        post 'create', @options
+        post(:create, @options)
       end
 
       it 'sets a flash notice message' do
@@ -67,7 +67,7 @@ describe Games::AppReviewsController do
     before :each do
       @gamer_review = Factory(:gamer_review, :author => @gamer, :app => @app)
 
-      get 'edit', :id => @gamer_review
+      get(:edit, :id => @gamer_review)
     end
 
     context 'when edit success' do
@@ -87,7 +87,7 @@ describe Games::AppReviewsController do
           :user_rating => -1
         }
       }
-      put 'update', @options
+      put(:update, @options)
     end
 
     context 'when update success' do
@@ -116,7 +116,7 @@ describe Games::AppReviewsController do
   describe '#destroy' do
     before :each do
       @gamer_review = Factory(:gamer_review, :author => @gamer)
-      delete 'destroy', :id => @gamer_review.id
+      delete(:destroy, :id => @gamer_review.id)
       @app.reload
     end
 
