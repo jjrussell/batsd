@@ -368,9 +368,9 @@ en:
       reset_password: "Reset Password"
       save: Save
       share: Share
-      submit_review: "Submit Review"
       sign_in: "Sign In"
       sign_up: "Sign Up"
+      submit_review: "Submit Review"
       success: Success!
       try_again: "Try Again"
       update_review: Update Review

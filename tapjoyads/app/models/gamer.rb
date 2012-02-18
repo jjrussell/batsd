@@ -137,6 +137,10 @@ class Gamer < ActiveRecord::Base
     Downloader.get_with_retry("#{API_URL}/offer_completed?click_key=#{click.key}")
   end
 
+  def review_for(app_id)
+    app_reviews.find_by_app_id(app_id)
+  end
+
   private
 
   def generate_gravatar_hash

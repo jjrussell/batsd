@@ -9,6 +9,46 @@ describe Games::AppReviewsController do
     @app = Factory(:app, :thumb_up_count => 0, :thumb_down_count => 0)
   end
 
+  describe '#index' do
+    before :each do
+      @gamer2 = Factory(:gamer)
+      app2 = Factory(:app, :thumb_up_count => 0, :thumb_down_count => 0)
+      Factory(:gamer_review, :author => @gamer, :app => @app)
+      Factory(:gamer_review, :author => @gamer, :app => app2)
+      Factory(:gamer_review, :author => @gamer2, :app => @app)
+    end
+
+    context 'when not params' do
+      before :each do
+        get :index
+      end
+
+      it "returns current gamer's reviews" do
+        assigns[:app_reviews].scoped(:order => 'created_at').should == @gamer.app_reviews.scoped(:order => 'created_at')
+      end
+    end
+
+    context 'when has app_id as params' do
+      before :each do
+        get(:index, :app_id => @app.id)
+      end
+
+      it 'returns all the reviews of the app' do
+        assigns[:app_reviews].should == @app.app_reviews.scoped(:order => 'created_at')
+      end
+    end
+
+    context 'when has gamer_id as params' do
+      before :each do
+        get(:index, :gamer_id => @gamer2.id)
+      end
+
+      it 'returns all the reviews written by the gamer' do
+        assigns[:app_reviews].scoped(:order => 'created_at').should == @gamer2.app_reviews.scoped(:order => 'created_at')
+      end
+    end
+  end
+
   describe '#create' do
     before :each do
       @options = {
@@ -26,7 +66,7 @@ describe Games::AppReviewsController do
     context 'when app review not exist' do
       it 'creates a app review' do
         flash[:notice].should == 'App review was successfully created.'
-        response.should redirect_to(new_games_app_review_path(:app_id => @app.id))
+        response.should redirect_to(games_app_reviews_path(:app_id => @app.id))
       end
 
       it 'copies platform' do
@@ -57,8 +97,8 @@ describe Games::AppReviewsController do
         response.session[:flash][:notice].should == 'You have already reviewed this app.'
       end
 
-      it 'renders games/app_reviews/new' do
-        response.should render_template('games/app_reviews/new')
+      it 'renders games/app_reviews/index' do
+        response.should render_template('games/app_reviews/index')
       end
     end
   end
