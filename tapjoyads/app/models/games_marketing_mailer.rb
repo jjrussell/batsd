@@ -34,7 +34,6 @@ class GamesMarketingMailer < ActionMailer::Base
   def welcome_email(gamer, device_info = {})
     from 'Tapjoy <noreply@tapjoy.com>'
     recipients gamer.email
-    bcc "email.receipts@tapjoy.com"
     subject "Welcome to Tapjoy!"
 
     @offer_data = {}
