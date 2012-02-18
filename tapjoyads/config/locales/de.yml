@@ -187,7 +187,9 @@ de:
       advertisers_body: ~
       advertisers_title: Bewerber
       allow_marketing_emails: "Erlauben Sie Tapjoy Marketing E-mails durch zuschicken"
-      already_registered: ~
+      already_registered:
+          one: ~
+          other: ~
       back_to_top: ~
       birthdate: Geburtsdatum
       call_to_action_body: "Liebe die Apps die Sie haben, finde die Apps die Sie lieben"
