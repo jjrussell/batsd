@@ -256,6 +256,7 @@ en:
       how_it_works_title: "How does it work?"
       install_and_run: "Install and run %{name}"
       invite: "Invite Your Friends!"
+      invite_by_email: Invite by Email
       invite_email_body: |-
           %{name} has invited you to join Tapjoy, the BEST place to find the hottest new apps. Signing up is free and you'll be able discover the best apps on iOS and Android, while also earning currency in your favorite apps.
 
@@ -290,6 +291,8 @@ en:
       select_current_device: "Please select your current device"
       select_device: "Please select your device"
       select_friend: "Please select at least one friend before sending out an invite"
+      share_on_twitter: Share on Twitter
+      share_on_facebook: Share on Facebook
       share_with_your_friends: Share with your friends
       social_networks: "Social Networks"
       social_settings: "Social Settings"

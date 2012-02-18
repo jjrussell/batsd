@@ -33,4 +33,7 @@ class Games::MyAppsController < GamesController
     end
   end
 
+  def share
+  end
+
 end
