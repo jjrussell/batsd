@@ -164,7 +164,16 @@ class ApplicationController < ActionController::Base
     end
     @cached_geoip_data[:user_country_code]    = params[:country_code].present? ? params[:country_code].to_s.upcase : nil
     @cached_geoip_data[:carrier_country_code] = params[:carrier_country_code].present? ? params[:carrier_country_code].to_s.upcase : nil
-    @cached_geoip_data[:primary_country]      = params[:primary_country] || @cached_geoip_data[:carrier_country_code] || @cached_geoip_data[:country] || @cached_geoip_data[:user_country_code]
+
+    # TO REMOVE - we ideally should always be using the priority: carrier_country_code -> geoip_country -> user_country_code
+    # However, many of our server-to-server publishers are integrated incorrectly, so we have to switch the priority until they all
+    # fix their integration by properly sending us `library_version=server&device_ip=<ip_address>`.
+    # We will still prioritize geoip_country over user_country_code for Asian locations, due to potential fraud.
+    if @cached_geoip_data[:continent] == 'AS'
+      @cached_geoip_data[:primary_country] = params[:primary_country] || @cached_geoip_data[:carrier_country_code] || @cached_geoip_data[:country] || @cached_geoip_data[:user_country_code]
+    else
+      @cached_geoip_data[:primary_country] = params[:primary_country] || @cached_geoip_data[:carrier_country_code] || @cached_geoip_data[:user_country_code] || @cached_geoip_data[:country]
+    end
 
     @cached_geoip_data
   end
