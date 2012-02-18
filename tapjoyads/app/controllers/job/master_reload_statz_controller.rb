@@ -47,12 +47,13 @@ class Job::MasterReloadStatzController < Job::JobController
       :total    => { :count => 0, :adv_amount => 0, :pub_amount => 0, },
       :iphone   => { :count => 0, :adv_amount => 0, :pub_amount => 0, },
       :android  => { :count => 0, :adv_amount => 0, :pub_amount => 0, },
+      :windows  => { :count => 0, :adv_amount => 0, :pub_amount => 0, },
       :tj_games => { :count => 0, :adv_amount => 0, :pub_amount => 0, },
     }
     VerticaCluster.query('analytics.actions', {
         :select     => 'source, app_platform, count(path), -sum(advertiser_amount) as adv_amount, sum(publisher_amount) as pub_amount',
         :join       => 'analytics.apps_partners on actions.publisher_app_id = apps_partners.app_id',
-        :conditions => "path = '[reward]' and app_platform != 'windows' and #{time_conditions}",
+        :conditions => "path = '[reward]' and #{time_conditions}",
         :group      => 'source, app_platform' }).each do |result|
       cached_money[:total][:count] += result[:count]
       cached_money[:total][:adv_amount] += result[:adv_amount]

@@ -16,7 +16,7 @@ class StatzController < WebsiteController
     prefix = @display == 'summary' ? 'top_' : ''
     @cached_metadata = Mc.distributed_get("statz.#{prefix}metadata.#{@timeframe}") || {}
     @cached_stats = Mc.distributed_get("statz.#{prefix}stats.#{@timeframe}") || []
-    @money_stats = Mc.distributed_get("statz.money.#{@timeframe}") || { :total => {}, :iphone => {}, :android  => {}, :tj_games => {} }
+    @money_stats = Mc.distributed_get("statz.money.#{@timeframe}") || { :total => {}, :iphone => {}, :android  => {}, :windows => {}, :tj_games => {} }
     @last_updated_start = Time.zone.at(Mc.get("statz.last_updated_start.#{@timeframe}") || 0)
     @last_updated_end = Time.zone.at(Mc.get("statz.last_updated_end.#{@timeframe}") || 0)
     @devices_count = Mc.get('statz.devices_count') || 0

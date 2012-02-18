@@ -15,7 +15,7 @@ module StatzHelper
       when :free
         %w(Free Paid)
       when :platform
-        %w(Android iOS All)
+        %w(Android iOS Windows All)
       when :conversions
         [
           [ "0", "zero_conversions"],

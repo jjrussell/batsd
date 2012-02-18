@@ -1,3 +1,3 @@
 = select_tag(:timeframe, options_for_select([['24 hours', '24_hours'], ['7 days', '7_days'], ['30 days', '1_month']], @timeframe))
-= select_tag(:platform, options_for_select([['All Platforms', 'all'], ['iOS', 'ios'], ['Android', 'android']], @platform))
+= select_tag(:platform, options_for_select([['All Platforms', 'all'], ['iOS', 'ios'], ['Android', 'android'], ['Windows','windows']], @platform))
 = submit_tag('Update', :id => :date_submit)
