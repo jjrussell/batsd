@@ -254,8 +254,8 @@ describe Offer do
       @offer = @video.primary_offer
     end
 
-    it "has a min_bid of 15" do
-      @offer.min_bid.should == 15
+    it "has a min_bid of 4" do
+      @offer.min_bid.should == 4
     end
   end
 

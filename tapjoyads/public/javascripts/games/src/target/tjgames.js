@@ -1151,7 +1151,7 @@ TJG.utils = {
       TJG.appOfferWall[appId]['jsonp_url'] = url;
       var boldText = TJG.utils.sprintfTemplate("<span class='bold'>%s</span>"),
         title = _t("games.earn_title", {
-          currency: boldText(currencyName),
+          currency: boldText(currencyName), 
           app_name: boldText(appName)
         });
       $("#app_title").html(title).show();
@@ -1654,7 +1654,7 @@ TJG.utils = {
           '</div><div class="bookmark"><span>'+
             _t("games.tap_that", {
               // teardown/setup spans - important for layout
-              icon:'</span><span class="bookmark_icon"></span><span>',
+              icon:'</span><span class="bookmark_icon"></span><span>', 
               button:'</span><span class="bookmark_btn"></span><span>'
             })+
           '</span></div>',
@@ -2421,7 +2421,7 @@ TJG.utils = {
           ));
         }
         if(non_gamers.length != 0) {
-          notExistDiv = contentTmp(_t("games.invites_sent_to",
+          notExistDiv = contentTmp(_t("games.invites_sent_to", 
             { name: non_gamers.toString().replace(/\,/g, ", ") },
             { count: non_gamers.length }
           ));
@@ -2477,7 +2477,6 @@ TJG.utils = {
           }
         });
       }; // submitFbInvitation
-
 
       var submitEmailInvitation = function(rurl, recipients){
         sending();
@@ -2664,6 +2663,33 @@ TJG.utils = {
           });
         }
       });
+    },
+
+    checkAndPost : function(currentGamerFbId, link, pictureLink) {
+      FB.getLoginStatus(function(response) {
+        var postToFeed = function() { TJG.social.postToFeed(link, pictureLink); };
+        var currentLoginFbId = response.authResponse && response.authResponse.userID;
+        if (currentLoginFbId && currentGamerFbId && currentGamerFbId != currentLoginFbId) {
+          FB.logout(postToFeed);
+        } else {
+          postToFeed();
+        }
+      });
+    },
+
+    postToFeed : function(link, pictureLink) {
+      var obj = {
+        method: 'feed',
+        display: 'popup',
+        name: 'Tapjoy',
+        link: link,
+        picture: pictureLink,
+        caption: ' ',
+        actions: [{ name: _t('shared.join'), link: link}],
+        description: _t('games.post_to_facebook_content')
+      };
+
+      FB.ui(obj);
     },
   };
 }(TJG));
