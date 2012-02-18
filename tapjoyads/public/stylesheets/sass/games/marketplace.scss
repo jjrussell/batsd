@@ -195,17 +195,105 @@ body {
 }
 
 
-div.ui-joy-button.grey-action {
-  @include gradient-top(#c9c9c9,#bababa, #999999, #868686);
+.ui-joy-button {
   @include rounded-corners(4px);
   @include shadow(#ddd, 1px);
-  @include txt-shadow(0, -1px, 1px, #a6a6a6);
+  @include txt-shadow(0, -1px, 1px, #888888);
   color: white;
   text-align: center;
-  border-bottom: 1px solid rgba(85,85,85,1.0);
   font-size: 1.1em;
 }
 
+.grey-action {
+  @extend .ui-joy-button;
+  @include gradient-top(#c9c9c9,#bababa, #999999, #868686);
+  border-bottom: 1px solid rgba(85,85,85,1.0);
+}
+
+div.ui-joy-button.medium {
+  margin-bottom: 13px;
+  font-size: 1.2em;
+
+  a.icon {
+    padding: 0;
+    padding-left: 40px !important;
+    line-height: 34px;
+
+    .label {
+      padding-left: 15px;
+    }
+    div.img {
+      left: 10px;
+      top: 5px;
+    }
+  }
+}
+
+div.ui-joy-button.email-btn {
+  @include gradient-top(#d3d3d3,#c9c9c9, #bdbdbd, #b7b7b7);
+  box-shadow: 0 1px 0 #e9e9e9 inset;
+  border: 1px solid #a5a5a5;
+  border-top: 1px solid #acacac;
+  border-bottom: 1px solid #9b9b9b;
+
+  a.icon {
+    .label {
+      border-left: 1px solid #a5a5a5;
+    }
+    div.img {
+      left: 10px;
+      top: 5px;
+
+      img {
+        width: 21px;
+        height: 23px;
+        background: url("/images/games/at-sign.png") no-repeat;
+      }
+    }
+  }
+}
+
+div.ui-joy-button.twitter-btn {
+  @include gradient-top(#84dbf0,#76d3eb, #5fc7e3, #53c5e6);
+  box-shadow: 0 1px 0 #c2ecf6 inset;
+  border: 1px solid #5cbbd2;
+  border-top: 1px solid #6fc8db;
+  border-bottom: 1px solid #47acc8;
+
+  a.icon {
+    .label {
+      border-left: 1px solid #5cbbd2;
+    }
+    div.img {
+      left: 13px;
+
+      img {
+        background: url("/images/games/twitter-white.png") no-repeat;
+      }
+    }
+  }
+}
+
+div.ui-joy-button.facebook-btn {
+  @include gradient-top(#87a7d8,#7c9cd4, #6281c8, #5372c1);
+  box-shadow: 0 1px 0 #c4d4ec inset;
+  border: 1px solid #526e8e;
+  border-top: 1px solid #688faf;
+  border-bottom: 1px solid #405272;
+
+  a.icon {
+    .label {
+      border-left: 1px solid #526e8e;
+    }
+    div.img {
+      left: 15px;
+
+      img {
+        background: url("/images/games/facebook-white.png") no-repeat;
+      }
+    }
+  }
+}
 
 .ui-list-arrow {
   padding-right: 20px;
