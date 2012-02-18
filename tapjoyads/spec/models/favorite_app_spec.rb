@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe VideoOffer do
+describe FavoriteApp do
   before :each do
     fake_the_web
   end
