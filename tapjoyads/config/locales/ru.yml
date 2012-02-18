@@ -235,9 +235,13 @@ ru:
           Чтобы начать, зарегистрируйтесь сейчас:
       invite_email_greet: "Здравствуйте,"
       invite_email_signature: "Команда Tapjoy"
-      invite_friends: ~
+      invite_friends:
+        one: ~
+        other: ~
       invite_title: "Пригласить по электронной почте"
-      invites_sent_to: ~
+      invites_sent_to:
+          one: ~
+          other: ~
       issue_registering: ~
       link_my_facebook: "Ссылка на мой Facebook"
       load_more: ~

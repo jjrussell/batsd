@@ -237,7 +237,9 @@ ko:
           아래 링크를 통해 가입을 하실 수 있습니다.
       invite_email_greet: 안녕하세요.
       invite_email_signature: "팀 탭조이"
-      invite_friends: "%{count}명의 친구들을 초대하기"
+      invite_friends:
+          one: 초대하기
+          other: "%{count}명의 친구들을 초대하기"
       invite_title: "초대 이메일 보내기"
       invites_sent_to:
         one: "탭조이 초대장이 %{name}에게 발송되었습니다."
