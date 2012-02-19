@@ -7,7 +7,7 @@ class VideosController < ApplicationController
     @offer_list = offer_list.get_offers(0, 100).first
 
     if @currency.get_test_device_ids.include?(params[:udid])
-      @offer_list.insert(0, @publisher_app.build_test_video_offer.primary_offer)
+      @offer_list.unshift(@publisher_app.build_test_video_offer.primary_offer)
     end
   end
 
