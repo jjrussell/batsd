@@ -12,7 +12,7 @@ class GetOffersController < ApplicationController
 
   def webpage
     if @currency.get_test_device_ids.include?(params[:udid])
-      @test_offers = [ build_test_offer(@publisher_app) ]
+      @test_offers = [ @publisher_app.build_test_offer ]
       @test_offers << build_test_video_offer(@publisher_app).primary_offer if params[:all_videos] || params[:video_offer_ids].to_s.split(',').include?('test_video')
     end
 
@@ -25,7 +25,7 @@ class GetOffersController < ApplicationController
 
   def featured
     if @currency.get_test_device_ids.include?(params[:udid])
-      @offer_list = [ build_test_offer(@publisher_app) ]
+      @offer_list = [ @publisher_app.build_test_offer ]
     else
       @offer_list = [ get_offer_list.weighted_rand ].compact
       if @offer_list.empty?

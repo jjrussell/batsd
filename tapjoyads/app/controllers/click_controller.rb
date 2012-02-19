@@ -59,7 +59,7 @@ class ClickController < ApplicationController
       raise "not a test device"
     end
 
-    @test_offer = build_test_offer(publisher_app)
+    @test_offer = publisher_app.build_test_offer
 
     test_reward = Reward.new
     test_reward.type              = 'test_offer'

@@ -328,7 +328,19 @@ class App < ActiveRecord::Base
     end
   end
 
-  private
+  def build_test_offer
+    test_offer = Offer.new(
+      :item_id            => id,
+      :item_type          => 'TestOffer',
+      :name               => 'Test Offer (Visible to Test Devices)',
+      :third_party_data   => id,
+      :price              => 0,
+      :reward_value       => 100)
+    test_offer.id = id
+    test_offer
+  end
+
+private
 
   def generate_secret_key
     return if secret_key.present?
