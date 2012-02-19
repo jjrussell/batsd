@@ -110,7 +110,7 @@ class ClickController < ApplicationController
       publisher_app = App.find_in_cache(params[:publisher_app_id])
       return unless verify_records([ publisher_app ])
 
-      @offer = build_test_video_offer(publisher_app).primary_offer
+      @offer = publisher_app.build_test_video_offer.primary_offer
     else
       @offer = Offer.find_in_cache(params[:offer_id])
     end

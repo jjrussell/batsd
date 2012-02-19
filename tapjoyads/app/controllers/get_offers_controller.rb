@@ -13,7 +13,9 @@ class GetOffersController < ApplicationController
   def webpage
     if @currency.get_test_device_ids.include?(params[:udid])
       @test_offers = [ @publisher_app.build_test_offer ]
-      @test_offers << build_test_video_offer(@publisher_app).primary_offer if params[:all_videos] || params[:video_offer_ids].to_s.split(',').include?('test_video')
+      if params[:all_videos] || params[:video_offer_ids].to_s.split(',').include?('test_video')
+        @test_offers << @publisher_app.build_test_video_offer.primary_offer
+      end
     end
 
     if @for_preview

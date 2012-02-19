@@ -340,7 +340,27 @@ class App < ActiveRecord::Base
     test_offer
   end
 
-private
+  def build_test_video_offer
+    test_video_offer = VideoOffer.new(
+      :name       => 'Test Video Offer (Visible to Test Devices)',
+      :partner_id => partner_id,
+      :video_url  => 'https://s3.amazonaws.com/tapjoy/videos/src/test_video.mp4')
+    test_video_offer.id = 'test_video'
+
+    primary_offer = Offer.new(
+      :item_id          => 'test_video',
+      :name             => 'Test Video Offer (Visible to Test Devices)',
+      :url              => 'https://s3.amazonaws.com/tapjoy/videos/src/test_video.mp4',
+      :reward_value     => 100,
+      :third_party_data => '')
+    primary_offer.id = 'test_video'
+
+    test_video_offer.primary_offer           = primary_offer
+    test_video_offer.primary_offer.item_type = 'TestVideoOffer'
+    test_video_offer
+  end
+
+  private
 
   def generate_secret_key
     return if secret_key.present?
