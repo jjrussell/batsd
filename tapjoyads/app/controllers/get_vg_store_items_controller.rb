@@ -13,7 +13,7 @@ class GetVgStoreItemsController < ApplicationController
     sort_virtual_good_list
 
     web_request = WebRequest.new
-    web_request.put_values('get_vg_items', params, get_ip_address, get_geoip_data, request.headers['User-Agent'])
+    web_request.put_values('get_vg_items', params, ip_address, get_geoip_data, request.headers['User-Agent'])
     web_request.save
   end
 

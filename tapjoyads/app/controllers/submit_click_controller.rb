@@ -12,7 +12,7 @@ class SubmitClickController < ApplicationController
     return unless verify_params([:campaign_id, :app_id, :udid])
 
     web_request = WebRequest.new
-    web_request.put_values('adclick', params, get_ip_address, get_geoip_data, request.headers['User-Agent'])
+    web_request.put_values('adclick', params, ip_address, get_geoip_data, request.headers['User-Agent'])
     web_request.save
 
     render(:template => 'layouts/success')

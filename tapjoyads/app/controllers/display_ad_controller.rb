@@ -69,7 +69,7 @@ class DisplayAdController < ApplicationController
     params[:source] = 'display_ad'
 
     web_request = WebRequest.new(:time => now)
-    web_request.put_values('display_ad_requested', params, get_ip_address, get_geoip_data, request.headers['User-Agent'])
+    web_request.put_values('display_ad_requested', params, ip_address, get_geoip_data, request.headers['User-Agent'])
 
     if currency.get_test_device_ids.include?(params[:udid])
       offer = build_test_offer(publisher_app)

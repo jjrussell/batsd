@@ -51,7 +51,7 @@ class GetadController < ApplicationController
     url = 'http://ads.mp.mydas.mobi/getAd.php5' +
         "?apid=#{CGI::escape(apid)}" +
         "&auid=#{CGI::escape(auid)}" +
-        "&uip=#{get_ip_address_local}" +
+        "&uip=#{ip_address_local}" +
         "&ua=#{USER_AGENT}"
 
     content = Downloader.get(url)
@@ -104,7 +104,7 @@ class GetadController < ApplicationController
         "&width=320&height=50" +
         "&platform=iphone" +
         "&fmt=json" +
-        "&clientip=#{get_ip_address_local}"
+        "&clientip=#{ip_address_local}"
 
     json_string = Downloader.get(url)
     json = JSON.parse(json_string).first
@@ -137,7 +137,7 @@ class GetadController < ApplicationController
 
   def adfonic(slot_id)
     url = "http://adfonic.net/ad/#{CGI::escape(slot_id)}" +
-        "?r.ip=#{get_ip_address_local}" +
+        "?r.ip=#{ip_address_local}" +
         "&r.id=#{CGI::escape(params[:udid])}" +
         "&test=0" +
         "&t.format=json" +
@@ -271,12 +271,12 @@ class GetadController < ApplicationController
   end
 
   private
-  def get_ip_address_local
-    ip_address = get_ip_address
+
+  def ip_address_local
     if ip_address == '127.0.0.1'
-      ip_address = '72.164.173.18'
+      return '72.164.173.18'
     end
-    return ip_address
+    ip_address
   end
 
   def download_image(image_url)

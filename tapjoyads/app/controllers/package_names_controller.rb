@@ -7,7 +7,7 @@ class PackageNamesController < ApplicationController
     @new_refresh_interval = 1.week
 
     web_request = WebRequest.new
-    web_request.put_values('package_names', params, get_ip_address, get_geoip_data, request.headers['User-Agent'])
+    web_request.put_values('package_names', params, ip_address, get_geoip_data, request.headers['User-Agent'])
     web_request.truncated_package_names = false
 
     # We have a strict limit of 8KB when saving a web request.

@@ -24,7 +24,7 @@ describe GetOffersController do
       offers = [ @offer, @offer2, @offer3, @offer4 ]
       OfferCacher.stubs(:get_unsorted_offers_prerejected).returns(offers)
       RailsCache.stubs(:get).returns(nil)
-      controller.stubs(:get_ip_address).returns('208.90.212.38')
+      controller.stubs(:ip_address).returns('208.90.212.38')
       @params = {
         :udid => 'stuff',
         :publisher_user_id => 'more_stuff',
@@ -58,7 +58,7 @@ describe GetOffersController do
     end
 
     it 'ignores country_code if IP is in China' do
-      controller.stubs(:get_ip_address).returns('60.0.0.1')
+      controller.stubs(:ip_address).returns('60.0.0.1')
       get(:index, @params)
       assigns(:offer_list).should == [@offer, @offer4]
       get(:index, @params.merge(:country_code => 'GB'))
@@ -135,7 +135,7 @@ describe GetOffersController do
       @currency = Factory(:currency, :test_devices => @device.id)
       @currency.update_attribute(:hide_rewarded_app_installs, false)
       @offer = Factory(:app).primary_offer
-      controller.stubs(:get_ip_address).returns('208.90.212.38')
+      controller.stubs(:ip_address).returns('208.90.212.38')
       OfferCacher.stubs(:get_unsorted_offers_prerejected).returns([@offer])
       @params = {
         :udid => 'stuff',
@@ -229,7 +229,7 @@ describe GetOffersController do
       @device = Factory(:device)
       @currency = Factory(:currency)
       @offer = Factory(:app).primary_offer
-      controller.stubs(:get_ip_address).returns('208.90.212.38')
+      controller.stubs(:ip_address).returns('208.90.212.38')
       fake_cache_object = mock()
       fake_cache_object.stubs(:value).returns([@offer])
       RailsCache.stubs(:get_and_put).returns(fake_cache_object)

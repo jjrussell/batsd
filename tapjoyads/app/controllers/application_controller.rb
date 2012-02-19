@@ -132,8 +132,8 @@ class ApplicationController < ActionController::Base
     end
   end
 
-  def get_ip_address
-    @request_ip_address ||= (request.headers['X-Forwarded-For'] || request.remote_ip).gsub(/,.*$/, '')
+  def ip_address
+    @cached_ip_address ||= (request.headers['X-Forwarded-For'] || request.remote_ip).gsub(/,.*$/, '')
   end
 
   def get_geoip_data
@@ -143,10 +143,10 @@ class ApplicationController < ActionController::Base
 
     return @cached_geoip_data if @server_to_server == true && params[:device_ip].blank?
 
-    ip_address = params[:device_ip] || get_ip_address
+    ip = params[:device_ip] || ip_address
 
     begin
-      geo_struct = GEOIP.city(ip_address)
+      geo_struct = GEOIP.city(ip)
     rescue Exception => e
       geo_struct = nil
     end
@@ -179,11 +179,11 @@ class ApplicationController < ActionController::Base
   end
 
   def geoip_location
-    "#{get_geoip_data[:city]}, #{get_geoip_data[:region]}, #{get_geoip_data[:country]} (#{get_ip_address})"
+    "#{get_geoip_data[:city]}, #{get_geoip_data[:region]}, #{get_geoip_data[:country]} (#{ip_address})"
   end
 
   def reject_banned_ips
-    render :text => '' if BANNED_IPS.include?(get_ip_address)
+    render :text => '' if BANNED_IPS.include?(ip_address)
   end
 
   def log_activity(object, options={})
@@ -200,7 +200,7 @@ class ApplicationController < ActionController::Base
     activity_log.action           = params[:action]
     activity_log.included_methods = included_methods
     activity_log.object           = object
-    activity_log.ip_address       = get_ip_address
+    activity_log.ip_address       = ip_address
 
     if self.respond_to?(:current_user)
       activity_log.user           = current_user.username
