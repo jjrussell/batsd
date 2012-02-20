@@ -7,16 +7,7 @@ $font_path: "/fonts/marketplace";
 
 //-------------------------------------------
 
-* {
-  margin: 0;
-  padding: 0;
-  font-weight: normal;
-}
-
-body { -webkit-text-stroke:1px transparent;}
-
 body {
-  background: #fff;
   font: .81em/150% "Helvetica", Arial, Helvetica, sans-serif;
   color: #666;
   margin: 0;
@@ -61,7 +52,6 @@ html, body {
          url("#{$font_path}/museo_slab_500-webfont.svg#Museo Slab") format("svg");
     font-weight: normal;
     font-style: normal;
-
 }
 
 .wrapper {
@@ -143,7 +133,7 @@ span.gill {
 }
 
 #content .mobile-joy img {
-  background: url(#{$font_path}/mobile_joy_retina.png) no-repeat center center;
+  background: url(#{$image_path}/mobile_joy_retina.png) no-repeat center center;
   background-size: 318px 297px;
   width: 318px;
   height: 295px;
@@ -151,7 +141,7 @@ span.gill {
 }
 
 #content .tickets img {
-  background: url(#{$font_path}/tickets.png) no-repeat center center;
+  background: url(#{$image_path}/tickets.png) no-repeat center center;
   background-size: 95px 148px;
   height: 148px;
   width: 95px;
@@ -159,7 +149,7 @@ span.gill {
 }
 
 #content .share img {
-  background: url(#{$font_path}/share_friends.png) no-repeat center center;
+  background: url(#{$image_path}/share_friends.png) no-repeat center center;
   background-size: 230px 118px;
   height: 118px;
   width: 220px;
@@ -280,7 +270,7 @@ span.gill {
 
 
 .darrow img {
-  background: url(#{$font_path}/down_arrow.png) no-repeat center center;
+  background: url(#{$image_path}/down_arrow.png) no-repeat center center;
   width: 20px;
   height: 20px;
   margin: 5px;
@@ -310,18 +300,18 @@ span.gill {
 }
 
 #benefits .findapps {
-  background: url(#{$font_path}/apps.png) no-repeat 0 0;
+  background: url(#{$image_path}/apps.png) no-repeat 0 0;
 }
 
 #benefits .sharefriends {
-  background: url(#{$font_path}/shared.png) no-repeat 0 0;
+  background: url(#{$image_path}/shared.png) no-repeat 0 0;
   height: 110px;
   width: 280px;
   margin-top: 20px;
 }
 
 #benefits .collect {
-  background: url(#{$font_path}/rewards.png) no-repeat 0 0;
+  background: url(#{$image_path}/rewards.png) no-repeat 0 0;
 }
 
 #benefits h6 {

@@ -1,6 +1,6 @@
 $(document).ready(function() {
 
-  // Menu
+  // Menu Grid
   $('.menu-grid').bind('click', function(){
     if ($(this).hasClass('active')) {
       $(this).removeClass('active');
@@ -11,7 +11,7 @@ $(document).ready(function() {
       $('.menu-dropdown').removeClass('close').addClass('open');
     }
   });
-  
+  // Menu - Device Toggle
   $('.device-toggle').bind('click', function(){
     if ($(this).hasClass('up')) {
       $(this).removeClass('up').addClass('down');

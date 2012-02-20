@@ -1,4 +1,101 @@
 
+
+#header.header
+  .headerwrap
+    .wrap
+      .container
+        .logo
+          %img{ :src => BLANK_IMAGE }
+          .right
+            #login.button
+              = t('text.shared.sign_up')
+      .header-h-split
+        &nbsp;
+      .container
+        .left.phraseThatPays
+          = t('text.games.about_body')
+        .right
+          #signup.button
+            = t('text.shared.sign_up')
+
+#content
+  #wrapper
+    %h4.museo.center
+      = t('text.games.unlock_mobile_joy')
+    %span.center.gill
+      = t('text.games.about_body')
+    #body.main
+      #tickets.tickets
+        %img{ :src => BLANK_IMAGE }
+        %span= t('text.games.collect_rewards')
+      #mobilejoy.mobile-joy
+        %img{ :src => BLANK_IMAGE }
+        %span= t('text.games.find_new_apps')
+      #share.share
+        %img{ :src => BLANK_IMAGE }
+        %span= t('text.games.share_with_everyone')
+    .gradient-backdrop
+
+
+#favorites
+  .slide
+    .mobilejoy
+      %img{ :src => BLANK_IMAGE }
+  .slide
+    .mobilejoy
+      %img{ :src => BLANK_IMAGE }
+  .slide
+    .mobilejoy
+      %img{ :src => BLANK_IMAGE }
+  .slide
+    .mobilejoy
+      %img{ :src => BLANK_IMAGE }
+
+#pagingContainer
+  #paging
+
+#getting-started
+  .wrapper
+    %span.text.started
+      Start discovering with Tapjoy today
+    %span.signup
+      Sign up now
+    %span.text
+      or learn more
+    %span#arrow.darrow.l10
+      %img{ :src => BLANK_IMAGE }
+
+#benefits
+  .wrapper
+    .container
+      .left.box
+        .collect.center
+          %img{ :src => BLANK_IMAGE }
+        %h6
+          Collect rewards
+        %p
+          Tapjoy gives you a way to earn virtual currency by playing your favorite games like Happy Park, City of Wonder, Coin Dozer, Overkill, VIP Poker, and Gun Bros.
+      .left.box
+        .findapps.center
+          %img{ :src => BLANK_IMAGE }
+        %h6
+          Find new apps
+        %p
+          Tapjoy gives you a way to earn virtual currency by playing your favorite games like Happy Park, City of Wonder, Coin Dozer, Overkill, VIP Poker, and Gun Bros.
+      .left.box
+        .sharefriends.center
+          %img{ :src => BLANK_IMAGE }
+        %h6
+          Share with friends
+        %p
+          Tapjoy gives you a way to earn virtual currency by playing your favorite games like Happy Park, City of Wonder, Coin Dozer, Overkill, VIP Poker, and Gun Bros.
+
+#footer
+  .wrapper
+    .partners
+
+// Modals
+
 .login.hide
   .form_fields
     - form_for([ :games, @gamer_session ], :url => games_login_path) do |f|
@@ -71,13 +168,16 @@
     .register_progess
 
 
-= render :partial => 'games/homepage/footer'
-
 - content_for :page_head do
   %meta{ :name => 'description', :content => t('text.games.meta_description') }
   %meta{ :name => 'keywords', :content => t('text.games.meta_keywords')}
 
-  = stylesheet_link_tag("marketplace/theme/tjm/logged_out")
+  = stylesheet_link_tag('marketplace/theme/tjm/logged_out')
+  = stylesheet_link_tag('marketplace/resources/components/button/button')
+  = stylesheet_link_tag('marketplace/resources/components/carousel/carousel')
+
+- content_for :included_javascripts do
+  = javascript_include_tag('marketplace/logged-out')
 
 - content_for :page_javascript do
   :plain
