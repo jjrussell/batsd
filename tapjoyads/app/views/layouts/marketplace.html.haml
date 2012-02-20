@@ -31,14 +31,12 @@
         :plain
           #jqt {display:none;}
       .noscript_msg
-        Please go into your browser settings and enable JavaScript to continue using Tapjoy.
+        = t('text.games.no_javascript')
 
     = yield
 
-
     :javascript
       window.ENVIRONMENT = "#{Rails.env}";
-
     %script{ :type => 'text/javascript', :charset => 'utf-8', :src => games_translations_path(:language_code => I18n.locale) }
     - if Rails.env.production? || Rails.env.staging?
       = javascript_include_tag "marketplace/#{MARKETPLACE_CONFIG['js_compile_out_file']}-#{MARKETPLACE_CONFIG['js_version']}"
@@ -48,6 +46,7 @@
         = javascript_include_tag f
 
     = yield :included_javascripts
+
     %script{ :type => 'text/javascript', :charset => 'utf-8' }
       = yield :page_javascript
 

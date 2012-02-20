@@ -1,0 +1,100 @@
+div.ui-joy-button {
+}
+
+div.ui-joy-button.disabled a {
+  cursor: default;
+  opacity: .5;
+}
+
+div.ui-joy-button a.text-left {
+  text-align: left;
+}
+
+div.ui-joy-button a.text-right {
+  text-align: right;
+}
+
+div.ui-joy-button a.text-center {
+  text-align: center;
+}
+
+div.ui-joy-button a {
+  display: block;
+  position: relative;
+  text-decoration: none;
+  margin: 0;
+  padding: 6px 8px 7px 8px;
+}
+
+div.ui-joy-button.padfix a {
+  padding: 7px 8px 5px 8px;
+}
+
+div.ui-joy-button a input {
+  background: none;
+  padding: 0;
+  margin: 0;
+  border: 0;
+  font: bold 12px/100% "Helvetica", Arial, Helvetica, sans-serif;
+  padding-bottom: 2px;
+}
+
+div.ui-joy-button a.icon {
+  padding-left: 26px !important;
+}
+
+div.ui-joy-button a.icon div.img {
+  width: 20px;
+  height: 20px;
+  position: absolute;
+  left: 5px;
+  top: 4px;
+  z-index: 2;
+}
+
+div.ui-joy-button a.icon div.img img {
+  width: 20px;
+  height: 20px;
+}
+
+div.ui-joy-button a.icon div.img img.icon-check  {
+  background: url(../../css/images/icons.png) no-repeat -17px -17px;
+}
+
+div.ui-joy-button a.image {
+  padding: 0;
+  margin: 0;
+}
+
+/**
+ * themes
+ */
+div.ui-joy-button.tapjoy-inset {
+  border: 1px solid #a1080c;
+  box-shadow: inset 0 1px 0 #ab1f1f, 0 1px 0 #c84245;
+  border-radius: 6px;
+  background: -moz-linear-gradient(top, #c22424 0%, #b92021 25%, #ab191b 50%, #a41618 75%, #971013 100%);
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#c22424), color-stop(25%,#b92021), color-stop(50%,#ab191b), color-stop(75%,#a41618), color-stop(100%,#971013));
+  background: -webkit-linear-gradient(top, #c22424 0%,#b92021 25%,#ab191b 50%,#a41618 75%,#971013 100%);
+  background: -o-linear-gradient(top, #c22424 0%,#b92021 25%,#ab191b 50%,#a41618 75%,#971013 100%);
+  background: -ms-linear-gradient(top, #c22424 0%,#b92021 25%,#ab191b 50%,#a41618 75%,#971013 100%);
+}
+
+div.ui-joy-button.tapjoy-inset a input {
+  color: #fff;
+  text-shadow: 0 1px 0 #790404;
+}
+
+div.ui-joy-button.tapjoy-inset.hover {
+  opacity: .9;
+}
+
+div.ui-joy-button.tapjoy-inset.active {
+  background: -moz-linear-gradient(top, rgba(138,26,26,1) 0%, rgba(133,23,23,1) 25%, rgba(122,18,19,1) 50%, rgba(116,16,17,1) 75%, rgba(108,12,13,1) 100%);
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(138,26,26,1)), color-stop(25%,rgba(133,23,23,1)), color-stop(50%,rgba(122,18,19,1)), color-stop(75%,rgba(116,16,17,1)), color-stop(100%,rgba(108,12,13,1)));
+  background: -webkit-linear-gradient(top, rgba(138,26,26,1) 0%,rgba(133,23,23,1) 25%,rgba(122,18,19,1) 50%,rgba(116,16,17,1) 75%,rgba(108,12,13,1) 100%);
+  background: -o-linear-gradient(top, rgba(138,26,26,1) 0%,rgba(133,23,23,1) 25%,rgba(122,18,19,1) 50%,rgba(116,16,17,1) 75%,rgba(108,12,13,1) 100%);
+  background: -ms-linear-gradient(top, rgba(138,26,26,1) 0%,rgba(133,23,23,1) 25%,rgba(122,18,19,1) 50%,rgba(116,16,17,1) 75%,rgba(108,12,13,1) 100%);
+  box-shadow: inset 0 1px 0 #790404, 0 1px 0 #c84245;
+  border: 1px solid #790404;
+}

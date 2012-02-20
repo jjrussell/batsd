@@ -86,6 +86,7 @@ class Games::HomepageController < GamesController
   end
 
   def help
+    @gamer = current_gamer
   end
 
   def send_device_link
