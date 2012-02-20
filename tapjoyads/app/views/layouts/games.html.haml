@@ -15,10 +15,7 @@
     = stylesheet_link_tag("games/reset")
     = stylesheet_link_tag("games/base")
     = stylesheet_link_tag("games/button")
-    = stylesheet_link_tag("games/marketplace")
-    = stylesheet_link_tag("games/marketplace-480", :media => "only screen and (min-width: 480px)")
-    = stylesheet_link_tag("games/marketplace-768", :media => "only screen and (min-width: 768px)")
-    = stylesheet_link_tag("games/marketplace-1024", :media => "only screen and (min-width: 1024px)")
+    = yield :styles
 
     %script{ :type => 'text/javascript', :charset => 'utf-8', :src => games_translations_path(:language_code => I18n.locale) }
     = javascript_include_tag("games/src/tjg.jquery-1.6.2.min.js")
