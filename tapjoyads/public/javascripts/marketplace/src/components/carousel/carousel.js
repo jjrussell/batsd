@@ -3,7 +3,6 @@
   $.fn.Carousel = function(config){
     
     config = Tap.extend({}, Tap.Components.Elements, {
-      start: 0,
       direction: 'horizontal'
     }, config || {});
     
@@ -29,7 +28,7 @@
     $t.setupSlideDeck();
     $t.createDirectionArrows();
     
-    if($t.config.showIndex)
+    if($t.config.hasPager)
       $t.createJumper();
     
     $t.updateControls();
@@ -58,7 +57,6 @@
       $t.innerWidth = $t.container.width();
       $t.innerHeight = $t.container.outerHeight(true);
           
-          
       $t.container.addClass('ui-joy-carousel')
       .empty();
       
@@ -68,28 +66,21 @@
       .appendTo($t.container);
 
       $t.slides = wrap.children();
+			
       $t.wrap = wrap;
     },
     
     setupSlideDeck: function(){
-      var $t = this,
-          w = 0
-      
-      $.each($t.slides, function(index, element){
-        $(element).addClass('slide');
-        
-        w += $(element).width();
-      });
-      
-      $t.length = w;
+      this.length = this.slides.length * this.slides.outerWidth(true);
+		  this.dots = Math.round(this.length / this.innerWidth);
     },
     
     createJumper: function(){
       var $t = this,
-          wrap = $(document.createElement('div'));
+          wrap = $(document.createElement('div')),
+					length = Math.abs($t.length / $t.innerWidth);
       
-      
-      for(var i = 0, k = Math.abs($t.length / $t.innerWidth); i < k; i++){
+      for(var i = 0, k = length; i < k; i++){
         var div = $(document.createElement('div'));
       
         div.addClass('dot ' + (i == this.current ? 'active': '' ))
@@ -111,9 +102,12 @@
         .appendTo(wrap);  
       }   
       
-      wrap.addClass('jump-to-slide')
-      .appendTo($t.container)
+      $t.jumpContainer = $t.config.pagerContainer || $t.container;
       
+      wrap.addClass('jump-to-slide')
+      .appendTo($t.jumpContainer)
+      
+			
       $t.jumpTo = wrap;
     },
     createDirectionArrows : function(){
@@ -138,9 +132,11 @@
       $('.back, .forward', $t.container).css('top', ($t.innerHeight - left.height()) / 2)
       
       $('.back', $t.container).bind('click', function(){
+				var position = 0;
+				
         if($t.current > 0){
           $t.current--
-          position = $t.container.width()*$t.current;
+          var position = $t.container.width() * $t.current;
         }else{
           position = 0;               
         }
@@ -151,15 +147,18 @@
       });
 
       $('.forward', $t.container).bind('click', function(){
-        $t.current++
+				$t.current++
 
-        if($t.container.width() * $t.current > $t.length){
+        var screenWidth = $t.container.outerWidth(true) * $t.current,
+				    position = 0;
+
+        if(screenWidth > $t.length || $t.dots === $t.current){
           $t.current--;
           return;
         }else{
-          position = $t.container.width()*$t.current;    
+          position = screenWidth - ($t.current * 2);    
         }
-
+				
         $t.updateControls();
         
         $t.wrap.css('-'+Tap.browser +'-transform', 'translate(-'+ position +'px, 0px)');
@@ -168,13 +167,12 @@
     updateControls: function(){
       var $t = this;
 
-      if($t.config.showIndex){
-        $('.dot', $t.container).removeClass('active');
-        $('.dot:eq(' + $t.current + ')').addClass('active');
+      if($t.config.hasPager){
+        $('.dot', $t.jumpContainer).removeClass('active');
+        $('.dot:eq(' + $t.current + ')', $t.jumpContainer).addClass('active');
       }
-      
-      // check item length against next forward scroll
-      if($t.container.width() * ($t.current + 1) > $t.length){
+			
+      if($t.container.width() * ($t.current + 1) > $t.length || $t.dots - 1 === $t.current){
         $('.back', $t.container).removeClass('disabled');
         $('.forward', $t.container).addClass('disabled');
       }
