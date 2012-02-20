@@ -1,13 +1,14 @@
 $(document).ready(function() {
 
+  // Menu
   $('.menu-grid').bind('click', function(){
     if ($(this).hasClass('active')) {
       $(this).removeClass('active');
-      $('.menu-dropdown').removeClass('open');
+      $('.menu-dropdown').removeClass('open').addClass('close');
     }
     else {
       $(this).addClass('active');
-      $('.menu-dropdown').addClass('open');
+      $('.menu-dropdown').removeClass('close').addClass('open');
     }
   });
   
@@ -20,6 +21,7 @@ $(document).ready(function() {
     }
   });
   
+  // App Icons
   $('.icon img').each(function(n,o){
     $(o).attr("src", $(o).attr("source")).load(function(){
       $(this).fadeIn('slow');
