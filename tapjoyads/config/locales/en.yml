@@ -280,6 +280,7 @@ en:
       meta_keywords: "games, mobile games, mobile apps, ios, android, iphone, ipad, itouch"
       more_apps: "More Apps"
       my_apps: "My Apps"
+      profile: "Me"
       none_selected: "None Selected"
       oops: Oops!
       our_tos_changed: "Our %{terms_of_use} have changed. Please review and indicate your agreement below."
@@ -304,6 +305,8 @@ en:
       unable_to_process: "Sorry we are unable to process your request"
       wifi_required: "WiFi Required"
       wrong_device: "wrong device?"
+      on_my: "on my %{device_name}"
+      change: "change"
     instructions:
       amount_and_currency: "%{amount} %{currency}"
       continue_link: "Click here to continue."

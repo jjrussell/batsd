@@ -11,6 +11,8 @@ defaults: &defaults
     'marketplace/src/core/helpers',
     'marketplace/src/core/utilities',
     'marketplace/src/core/mobile',
+    'marketplace/src/components/carousel/button',
+    'marketplace/src/components/carousel/carousel',
     'marketplace/src/namespace',
     'marketplace/src/main'
   ]

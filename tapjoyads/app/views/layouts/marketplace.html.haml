@@ -38,7 +38,6 @@
 
     :javascript
       window.ENVIRONMENT = "#{Rails.env}";
-
     %script{ :type => 'text/javascript', :charset => 'utf-8', :src => games_translations_path(:language_code => I18n.locale) }
     - if Rails.env.production? || Rails.env.staging?
       = javascript_include_tag "marketplace/#{MARKETPLACE_CONFIG['js_compile_out_file']}-#{MARKETPLACE_CONFIG['js_version']}"
