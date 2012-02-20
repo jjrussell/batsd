@@ -16,9 +16,7 @@ class Games::MyAppsController < GamesController
       end
     end
 
-    respond_to do |f|
-      f.html {}
-    end
+    render :layout => "games"
   end
 
   def show
@@ -28,9 +26,12 @@ class Games::MyAppsController < GamesController
     @external_publisher = ExternalPublisher.new(@currency)
 
     respond_to do |f|
-      f.html {}
-      f.js {render :layout => false}
+      f.html { render :layout => "games" } 
+      f.js { render :layout => false }
     end
+  end
+
+  def offer_detail
   end
 
   def share
