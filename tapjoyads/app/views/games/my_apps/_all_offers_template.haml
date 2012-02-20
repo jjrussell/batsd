@@ -1,6 +1,6 @@
 %script{:type => "text/template"}
   :plain
-    <% for(var i = 0, ii = OfferArray.length; i < ii; i++) { %>
+    <% for (var i = 0, ii = OfferArray.length; i < ii; i++) { %>
       <% if (!OfferArray[i].IconURL || !OfferArray[i].Name) { continue; } %>
       <li class="slat chrome">
         <div class="hd game-icon">
@@ -23,7 +23,7 @@
           </div>
         </div>
         <div class="ft">
-          <a href="<%= OfferArray[i].RedirectURL %>">
+          <a href="#{offer_detail_games_my_apps_path}?id=<%= OfferArray[i].RedirectURL %>">
             <div class="ui-list-arrow">
               <div class="ui-list-action-label">
                 <%= i18n.t("shared.collect") %>

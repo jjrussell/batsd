@@ -134,7 +134,7 @@ body {
   @extend .section;
 }
 
-.floating-menu-head {
+.menu-head {
   @extend .narrow-section;
   @include gradient-top(#dcdce1,#dadadf,#cbced3,#c1c5ca);
   border-top: 1px solid #f8f8f9;
@@ -208,6 +208,13 @@ body {
   @extend .ui-joy-button;
   @include gradient-top(#c9c9c9,#bababa, #999999, #868686);
   border-bottom: 1px solid rgba(85,85,85,1.0);
+}
+
+.orange-action {
+  @include gradient-top(#ffc000,#ffb300, #ff9200, #ff8600);
+  border: 1px solid #f49700;
+  border-top: 1px solid #ffebab;
+  border-bottom: 1px solid #a35500;
 }
 
 div.ui-joy-button.medium {
@@ -326,22 +333,7 @@ div.ui-joy-button.facebook-btn {
   font-size: .8em;
   display: inline-block;
 }
-.slats.with-icons .slat {
-  height: 60px;
-  padding-top: 20px;
-  padding-bottom: 20px;
-  img {
-    max-height: 60px;
-  }
-  .ft {
-    line-height: 60px;
-  }
-}
-.slats.simple .slat {
-  line-height: 35px;
-  padding-top: 0;
-  padding-bottom: 0;
-}
+
 
 ul.slats {
   box-shadow: 0 1px 0 white inset;
@@ -360,13 +352,12 @@ li.slat {
   @extend .light;
   position: relative;
   margin: 0;
-  float: none;
   padding: 5px percentage(10/320);
   width: percentage(300/320);
-  /*border-bottom: 1px solid #6f7072;*/
   border-bottom: 1px solid #a5a6a8;
   box-shadow: 0 1px 0 white;
   text-align: left;
+
   .title {
     font-size: 1.2em;
   }
@@ -384,5 +375,74 @@ li.slat {
     width: percentage(69/300);
     float: right;
     text-align: right;
+  }
+}
+
+.slats.with-icons .slat {
+  height: 60px;
+  padding-top: 20px;
+  padding-bottom: 20px;
+
+  img {
+    max-height: 60px;
+  }
+  .ft {
+    line-height: 60px;
+  }
+}
+.slats.simple .slat {
+  line-height: 35px;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+
+.slats.reviews li.slat {
+  border-bottom: 0px;
+  box-shadow: none;
+
+  .score-summary {
+
+    .percentage {
+      font-size: 1.5em;
+    }
+    .description {
+      color: #a1a1a1;
+    }
+    img {
+      vertical-align: middle;
+      background: url(/images/games/thumbs-up-lg.png) no-repeat 0 0;
+      width: 31px;
+      height: 32px;
+    }
+  }
+  .review.bd, .score-summary.bd {
+    width: auto;
+    float: none;
+    overflow: hidden;
+  }
+  .review {
+    font-size: .9em;
+
+    .author, .date {
+      color: #a1a1a1;
+      float: left;
+    }
+    .author {
+      padding-right: 10px;
+    }
+    .date {
+      text-align: right;
+    }
+    .score {
+      float: left;
+    }
+    .text {
+      clear: both;
+      height: 40px;
+      text-overflow: ellipsis;
+      overflow: hidden;
+      white-space: wrap;
+    }
   }
 }

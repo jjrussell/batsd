@@ -31,6 +31,9 @@ class Games::MyAppsController < GamesController
     end
   end
 
+  def offer_detail
+  end
+
   def share
   end
 

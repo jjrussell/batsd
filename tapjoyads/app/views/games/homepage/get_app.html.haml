@@ -1,0 +1,42 @@
+#offer-detail.page.current
+  .panel
+    %ul.slats.with-icons
+      %li.slat
+        .hd.game-icon
+          Game Image
+        .bd.lastUnit
+          .title.elip
+            Game Title
+          .description
+            Publisher
+    .button-container
+      .ui-joy-button.orange-action
+        %a.text-center Get App
+    .social-info
+      %span.ui-icon-med.social-med
+        Kate and 13 friends played this.
+    .menu-head
+      = t("text.shared.reviews")
+    %ul.slats.with-icons.reviews
+      %li.slat
+        .bd.score-summary
+          %img{:src => BLANK_IMAGE}
+          %span.percentage 100%
+          %span.description from 100,000+ voters
+      %li.slat
+        .hd
+          Photo
+        .bd.review
+          .author
+            By Someone
+          .ui-icon.score
+            &nbsp;
+          .date
+            12/31/12
+          .text
+            Lorum ipsum getsum checksum Lorum ipsum getsum checksum 
+            Lorum ipsum getsum checksum Lorum ipsum getsum checksum 
+            Lorum ipsum getsum checksum Lorum ipsum getsum checksum 
+            Lorum ipsum getsum checksum Lorum ipsum getsum checksum 
+  =render("games/shared/footer")
+      
