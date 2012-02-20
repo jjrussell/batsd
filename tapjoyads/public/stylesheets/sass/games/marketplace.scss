@@ -28,6 +28,11 @@ body {
 .size4of5{width:80%;}
 .lastUnit{float:none;width:auto;_position:relative;_left:-3px;_margin-right:-3px;}
 
+.mod {
+  @extend .light;
+  padding: 10px;
+}
+
 .elip {
   white-space: nowrap;
   text-overflow: ellipsis;
@@ -52,12 +57,12 @@ body {
 }
 
 .clearfix:after {
-	content: ".";
-	display: block;
-	clear: both;
-	visibility: hidden;
-	line-height: 0;
-	height: 0;
+  content: ".";
+  display: block;
+  clear: both;
+  visibility: hidden;
+  line-height: 0;
+  height: 0;
 }
 
 
@@ -185,7 +190,6 @@ body {
 
 
 .game-icon {
-  overflow: hidden;
   max-width: 75px;
   img {
     @include box-shadow(0px, 0px, 3px, #000);
@@ -378,6 +382,78 @@ li.slat {
   }
 }
 
+.line-item {
+  @extend .clearfix;
+  @extend .light;
+  height: 60px;
+  margin: 0;
+  padding: 20px percentage(10/320);
+
+  .title {
+    font-size: 1.2em;
+  }
+  .hd {
+    margin-right: percentage(12/300);
+    width: percentage(69/300);
+    float: left;
+
+    img {
+      @include box-shadow(0px, 0px, 3px, #000);
+      @include rounded-corners(45%);
+      max-height: 60px;
+      max-width: 100%;
+    }
+  }
+  .bd {
+    margin-right: 0 percentage(12/300);
+    width: percentage(138/300);
+    float: left;
+  }
+  .ft {
+    width: percentage(69/300);
+    float: right;
+    text-align: right;
+    line-height: 60px;
+  }
+}
+
+.image-caption {
+  .hd {
+    width: 60px;
+  }
+  .bd {
+    width: auto;
+    overflow: hidden;
+    float: none;
+  }
+}
+
+.review {
+  font-size: .9em;
+
+  .author, .date {
+    color: #a1a1a1;
+    float: left;
+  }
+  .author {
+    padding-right: 10px;
+  }
+  .date {
+    text-align: right;
+    float: right;
+  }
+  .score {
+    float: left;
+  }
+  .text {
+    clear: both;
+    height: 40px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: wrap;
+  }
+}
+
 .slats.with-icons .slat {
   height: 60px;
   padding-top: 20px;
@@ -395,7 +471,6 @@ li.slat {
   padding-top: 0;
   padding-bottom: 0;
 }
-
 
 .slats.reviews li.slat {
   border-bottom: 0px;
@@ -416,33 +491,5 @@ li.slat {
       height: 32px;
     }
   }
-  .review.bd, .score-summary.bd {
-    width: auto;
-    float: none;
-    overflow: hidden;
-  }
-  .review {
-    font-size: .9em;
 
-    .author, .date {
-      color: #a1a1a1;
-      float: left;
-    }
-    .author {
-      padding-right: 10px;
-    }
-    .date {
-      text-align: right;
-    }
-    .score {
-      float: left;
-    }
-    .text {
-      clear: both;
-      height: 40px;
-      text-overflow: ellipsis;
-      overflow: hidden;
-      white-space: wrap;
-    }
-  }
 }
