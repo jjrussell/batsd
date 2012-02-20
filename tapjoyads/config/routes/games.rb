@@ -13,7 +13,7 @@ ActionController::Routing::Routes.draw do |map|
     m.more_games_recommended 'recommended', :controller => 'games/more_games', :action => :recommended
 
     m.translations 'translations', :controller => 'games/homepage', :action => :translations
-    m.resources :my_apps, :controller => 'games/my_apps', :only => [ :show, :index ], :member => { :offer_detail => :get }
+    m.resources :my_apps, :controller => 'games/my_apps', :only => [ :show, :index ]
 
     m.resources :gamer_sessions, :controller => 'games/gamer_sessions', :only => [ :new, :create, :destroy, :index ]
     m.connect 'login', :controller => 'games/gamer_sessions', :action => :create, :conditions => {:method => :post}
