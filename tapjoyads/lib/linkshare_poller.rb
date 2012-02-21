@@ -15,16 +15,17 @@ class LinksharePoller
 
 
    def self.test
-    self.poll("20120130")   # should attempt to resolve one click with key 511865e0-f0d9-4151-94c4-2047081602f8
-    self.poll("20120131")   # should handle no results properly
+    january_thirtieth = Date.civil(2012,1,30)
+    self.poll(january_thirtieth)   # should attempt to resolve one click with key 511865e0-f0d9-4151-94c4-2047081602f8
+    self.poll(january_thirtieth + 1.week)   # should handle no results properly
   end
 
   def self.poll(date=nil)
-    today = Date.today
-    yesterday = today - 1.day
+    edate = date || Date.today
+    bdate = edate - 1.day
     options = {
-      :bdate    => yesterday.to_s.tr('-', ''),
-      :edate    => today.to_s.tr('-', ''),
+      :edate    => edate.to_s.tr('-', ''),
+      :bdate    => bdate.to_s.tr('-', ''),
       :token    => TAPJOY_SECRET_KEY,
       :nid      => 1,
       :reportid => 11,
