@@ -82,7 +82,10 @@ class ListSignupController < ApplicationController
       device = Device.new(:key => @signup.udid)
       device.set_last_run_time!(@signup.advertiser_app_id)
 
-      click = Click.new(:key => "#{@signup.udid}.#{@signup.advertiser_app_id}", :add_to_conversion_queue => true)
+      click = Click.new(:key => "#{@signup.udid}.#{@signup.advertiser_app_id}")
+
+      message = { :click_key => click.key, :install_timestamp => Time.zone.now.to_f.to_s }.to_json
+      Sqs.send_message(QueueNames::CONVERSION_TRACKING, message)
 
       return true
     end

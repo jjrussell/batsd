@@ -44,15 +44,6 @@ class Click < SimpledbShardedResource
   self.sdb_attr :publisher_reseller_id
   self.sdb_attr :advertiser_reseller_id
 
-  def initialize(options = {})
-    if options[:add_to_conversion_queue] == true
-      if rewardable?
-        message = { :click_key => key, :install_timestamp => Time.zone.now.to_f.to_s }.to_json
-        Sqs.send_message(QueueNames::CONVERSION_TRACKING, message)
-      end
-    end
-  end
-
   def dynamic_domain_name
     domain_number = @key.matz_silly_hash % NUM_CLICK_DOMAINS
 
