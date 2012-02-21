@@ -1,3 +1,5 @@
+@import "tjm-mixins";
+
 * {
   margin: 0;
   padding: 0;
@@ -126,6 +128,33 @@ html[xmlns] .clearfix {
 }
 * html .clearfix {
   height: 1%;
+}
+
+#mask {
+  display: none;
+  background: #fff;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 10;
+  width: 100%;
+  height: 100%;
+  opacity: 0.5;
+  z-index: 999;
+}
+
+.modal {
+  display: none;
+  background: #333;
+  padding: 10px;
+  border: 1px solid #c1c11;
+  float: left;
+  min-width: 300px;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  z-index: 99999;
+  //@include rounded-corners(6px);
 }
 
 //-------------------------------------------

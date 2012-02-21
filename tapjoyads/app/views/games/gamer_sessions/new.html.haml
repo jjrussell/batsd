@@ -1,10 +1,84 @@
+// Modals
+
+.login.modal.hide
+  .form_fields
+    - form_for([ :games, @gamer_session ], :url => games_login_path) do |f|
+      - if params[:data].present?
+        = hidden_field_tag :data, params[:data]
+      - if params[:path].present?
+        = hidden_field_tag :path, params[:path]
+      %ul.row.inputs
+        %ul.group.inputs
+          %li.field.sign_in
+            = t("text.shared.sign_in")
+          %li.field.email
+            = f.email_field :email, "autocorrect" => "off", "autocapitalize" => "off", :placeholder => t("text.shared.email"), :required => ""
+          %li.field.password
+            %label{ :for => "password", :class => "hidden" }
+              Password
+            = f.password_field :password, :placeholder => t("text.shared.password"), :required => ""
+        %ul.group
+          %li.field.login_btn
+            = f.submit t("text.shared.login_verb"), :class => ''
+      %ul.row
+        %li.field.forgot_pass
+          = link_to(t("text.games.forgot_pass"), new_games_password_reset_path)
+        %li.field.login_error
+          = error_message_on @gamer_session, :email, :prepend_text => "Email "
+          = error_message_on @gamer_session, :password, :prepend_text => "Password "
+
+.sign_up.modal.hide
+  .sign_up_content.clearfix
+    .register_form
+      - form_for([ :games, @gamer ], :url => games_gamer_path ) do |f|
+        - if params[:data].present?
+          = hidden_field_tag :data, params[:data]
+        - if params[:src].present?
+          = hidden_field_tag :src, params[:src]
+        .field
+          = label_tag :birthdate
+          = select_date nil, { :order => [:month, :day, :year], :start_year => Time.now.year, :end_year => (Time.now.year - 100), :include_blank => false, :prompt => {:day => t("text.shared.day"), :month => t("text.shared.month"), :year => t("text.shared.year")} }
+        .field
+          = f.email_field :email, "autocorrect" => "off", "autocapitalize" => "off", :placeholder => t('text.shared.email')
+        .field
+          %label{ :for => "password", :class => "hidden" }
+            Password
+          = f.password_field :password, :placeholder => t('text.shared.password')
+        - if device_type.nil?
+          .row.platform
+            .field#platform_android
+              = label_tag :default_platform_android, t("text.shared.android")
+              = check_box_tag :default_platform_android, 'android'
+            .field#platform_ios
+              = label_tag :default_platform_ios, t("text.shared.ios")
+              = check_box_tag :default_platform_ios, 'ios'
+        .row
+          .field.field_tos
+            .field_checkbox
+              = f.check_box :terms_of_service
+            .field_tos_text
+              = f.label :terms_of_service, t("text.games.tos_acknowledge_html",
+                :terms_of_use => link_to(t("text.games.terms_of_use_href"), games_tos_path, :target => '_blank'),
+                :privacy_policy => link_to(t("text.games.privacy_policy_href"), games_privacy_path, :target => '_blank'))
+            = f.hidden_field :referrer, :value => params[:referrer]
+          .field.right
+            = f.submit 'Sign Up', :class => ''
+        .email_error
+          = error_message_on @gamer, :email
+          = error_message_on @gamer, :password
+          = error_message_on @gamer, :terms_of_service
+    .register_progess
 
 #header.header
   .headerwrap
     .wrap
       .container
-        .logo
-          %img{ :src => BLANK_IMAGE }
+        #login-web.right
+          #login-web-wrapper
+            %span= t('text.shared.login_verb')
+        - link_to(games_root_path, :class => "") do
+          .logo
+            %img{ :src => BLANK_IMAGE }
         .right
           #login.button
             = t('text.shared.login_verb')
@@ -34,7 +108,6 @@
         %img{ :src => BLANK_IMAGE }
         %span= t('text.games.share_with_everyone')
     .gradient-backdrop
-
 
 #favorites
   .slide
@@ -71,21 +144,21 @@
         .collect.center
           %img{ :src => BLANK_IMAGE }
         %h6
-          Collect rewards
+          = t('text.games.collect_rewards')
         %p
           Tapjoy gives you a way to earn virtual currency by playing your favorite games like Happy Park, City of Wonder, Coin Dozer, Overkill, VIP Poker, and Gun Bros.
       .left.box
         .findapps.center
           %img{ :src => BLANK_IMAGE }
         %h6
-          Find new apps
+          = t('text.games.find_new_apps')
         %p
           Tapjoy gives you a way to earn virtual currency by playing your favorite games like Happy Park, City of Wonder, Coin Dozer, Overkill, VIP Poker, and Gun Bros.
       .left.box
         .sharefriends.center
           %img{ :src => BLANK_IMAGE }
         %h6
-          Share with friends
+          = t('text.games.share_with_your_friends')
         %p
           Tapjoy gives you a way to earn virtual currency by playing your favorite games like Happy Park, City of Wonder, Coin Dozer, Overkill, VIP Poker, and Gun Bros.
 
@@ -93,87 +166,15 @@
   .wrapper
     .partners
 
-// Modals
-
-.login.hide
-  .form_fields
-    - form_for([ :games, @gamer_session ], :url => games_login_path) do |f|
-      - if params[:data].present?
-        = hidden_field_tag :data, params[:data]
-      - if params[:path].present?
-        = hidden_field_tag :path, params[:path]
-      %ul.row.inputs
-        %ul.group.inputs
-          %li.field.sign_in
-            = t("text.shared.sign_in")
-          %li.field.email
-            = f.email_field :email, "autocorrect" => "off", "autocapitalize" => "off", :placeholder => t("text.shared.email"), :required => ""
-          %li.field.password
-            %label{ :for => "password", :class => "hidden" }
-              Password
-            = f.password_field :password, :placeholder => t("text.shared.password"), :required => ""
-        %ul.group
-          %li.field.login_btn
-            = f.submit t("text.shared.login_verb"), :class => 'right button'
-      %ul.row
-        %li.field.forgot_pass
-          = link_to(t("text.games.forgot_pass"), new_games_password_reset_path)
-        %li.field.login_error
-          = error_message_on @gamer_session, :email, :prepend_text => "Email "
-          = error_message_on @gamer_session, :password, :prepend_text => "Password "
-
-.sign_up.hide
-  .sign_up_content.clearfix
-    %h1
-      Sign Up
-    .register_form
-      - form_for([ :games, @gamer ], :url => games_gamer_path ) do |f|
-        - if params[:data].present?
-          = hidden_field_tag :data, params[:data]
-        - if params[:src].present?
-          = hidden_field_tag :src, params[:src]
-        .field
-          = label_tag :birthdate
-          = select_date nil, { :order => [:month, :day, :year], :start_year => Time.now.year, :end_year => (Time.now.year - 100), :include_blank => false, :prompt => {:day => t("text.shared.day"), :month => t("text.shared.month"), :year => t("text.shared.year")} }
-        .field
-          = f.email_field :email, "autocorrect" => "off", "autocapitalize" => "off", :placeholder => t('text.shared.email')
-        .field
-          %label{ :for => "password", :class => "hidden" }
-            Password
-          = f.password_field :password, :placeholder => t('text.shared.password')
-        - if device_type.nil?
-          .row.platform
-            .field#platform_android
-              = label_tag :default_platform_android, t("text.shared.android")
-              = check_box_tag :default_platform_android, 'android'
-            .field#platform_ios
-              = label_tag :default_platform_ios, t("text.shared.ios")
-              = check_box_tag :default_platform_ios, 'ios'
-        .row
-          .field.field_tos
-            .field_checkbox
-              = f.check_box :terms_of_service
-            .field_tos_text
-              = f.label :terms_of_service, t("text.games.tos_acknowledge_html",
-                :terms_of_use => link_to(t("text.games.terms_of_use_href"), games_tos_path, :target => '_blank'),
-                :privacy_policy => link_to(t("text.games.privacy_policy_href"), games_privacy_path, :target => '_blank'))
-            = f.hidden_field :referrer, :value => params[:referrer]
-          .field.right
-            = f.submit 'Sign Up', :class => 'button'
-        .email_error
-          = error_message_on @gamer, :email
-          = error_message_on @gamer, :password
-          = error_message_on @gamer, :terms_of_service
-    .register_progess
-
 
 - content_for :page_head do
   %meta{ :name => 'description', :content => t('text.games.meta_description') }
   %meta{ :name => 'keywords', :content => t('text.games.meta_keywords')}
 
-  = stylesheet_link_tag('marketplace/theme/tjm/logged_out')
   = stylesheet_link_tag('marketplace/resources/components/button/button')
   = stylesheet_link_tag('marketplace/resources/components/carousel/carousel')
+  = stylesheet_link_tag('marketplace/theme/tjm/logged_out')
+
 
 - content_for :included_javascripts do
   = javascript_include_tag('marketplace/logged-out')
