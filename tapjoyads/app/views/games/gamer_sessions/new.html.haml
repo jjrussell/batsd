@@ -3,6 +3,9 @@
   .headerwrap
     .wrap
       .container
+        .right
+          #login-web
+            %span= t('text.shared.login_verb')
         .logo
           %img{ :src => BLANK_IMAGE }
         .right
@@ -34,7 +37,6 @@
         %img{ :src => BLANK_IMAGE }
         %span= t('text.games.share_with_everyone')
     .gradient-backdrop
-
 
 #favorites
   .slide
@@ -71,21 +73,21 @@
         .collect.center
           %img{ :src => BLANK_IMAGE }
         %h6
-          Collect rewards
+          = t('text.games.collect_rewards')
         %p
           Tapjoy gives you a way to earn virtual currency by playing your favorite games like Happy Park, City of Wonder, Coin Dozer, Overkill, VIP Poker, and Gun Bros.
       .left.box
         .findapps.center
           %img{ :src => BLANK_IMAGE }
         %h6
-          Find new apps
+          = t('text.games.find_new_apps')
         %p
           Tapjoy gives you a way to earn virtual currency by playing your favorite games like Happy Park, City of Wonder, Coin Dozer, Overkill, VIP Poker, and Gun Bros.
       .left.box
         .sharefriends.center
           %img{ :src => BLANK_IMAGE }
         %h6
-          Share with friends
+          = t('text.games.share_with_your_friends')
         %p
           Tapjoy gives you a way to earn virtual currency by playing your favorite games like Happy Park, City of Wonder, Coin Dozer, Overkill, VIP Poker, and Gun Bros.
 
@@ -124,8 +126,6 @@
 
 .sign_up.hide
   .sign_up_content.clearfix
-    %h1
-      Sign Up
     .register_form
       - form_for([ :games, @gamer ], :url => games_gamer_path ) do |f|
         - if params[:data].present?
@@ -171,9 +171,10 @@
   %meta{ :name => 'description', :content => t('text.games.meta_description') }
   %meta{ :name => 'keywords', :content => t('text.games.meta_keywords')}
 
-  = stylesheet_link_tag('marketplace/theme/tjm/logged_out')
   = stylesheet_link_tag('marketplace/resources/components/button/button')
   = stylesheet_link_tag('marketplace/resources/components/carousel/carousel')
+  = stylesheet_link_tag('marketplace/theme/tjm/logged_out')
+
 
 - content_for :included_javascripts do
   = javascript_include_tag('marketplace/logged-out')
