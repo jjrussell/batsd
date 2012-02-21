@@ -63,6 +63,12 @@ FactoryGirl.define do
     note 'note'
   end
 
+  factory :earnings_adjustment do
+    association :partner
+    amount 1
+    notes 'notes'
+  end
+
   factory :payout do
     association :partner
     month { Date.today.month }
