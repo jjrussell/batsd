@@ -49,6 +49,8 @@
     %li= link_to 'Job Configuration', tools_jobs_path
   - if permitted_to? :index, :tools_press_releases
     %li= link_to 'Press Releases', tools_press_releases_path
+  - if permitted_to? :index, :tools
+    %li= link_to 'Recommenders', tools_recommenders_path
   - if permitted_to? :index, :survey_offers
     %li= link_to 'Survey Offers', survey_offers_path
 

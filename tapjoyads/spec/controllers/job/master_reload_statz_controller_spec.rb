@@ -8,11 +8,11 @@ describe Job::MasterReloadStatzController do
     @controller.expects(:authenticate).at_least_once.returns(true)
   end
 
-  describe 'when caching stats' do
-    it 'should save memcache values' do
+  describe '#index' do
+    it 'saves memcache values' do
       100.times { Factory(:email_offer) }
       stub_vertica
-      get :index
+      get(:index)
 
       expected_hash = {
         :android=>{:adv_amount=>"$0.00", :count=>"0", :pub_amount=>"$0.00"},
@@ -64,7 +64,7 @@ describe Job::MasterReloadStatzController do
       response.body.should == 'ok'
     end
 
-    it 'should generate weekly and monthly timeframes' do
+    it 'generates weekly and monthly timeframes' do
       start_time = Time.zone.now - 7.days
       end_time = Time.zone.now
 
@@ -75,30 +75,44 @@ describe Job::MasterReloadStatzController do
 
       stub_vertica(start_time, end_time)
 
-      get :daily
+      get(:daily)
 
       response.body.should == 'ok'
     end
 
-    it 'should generate combined ranks' do
+    it 'generates combined ranks' do
       apps = [
         Factory(:app,
+          :platform => 'iphone'),
+        Factory(:app,
+          :platform => 'iphone'),
+        Factory(:app,
+          :platform => 'android'),
+        Factory(:app,
+          :platform => 'android'),
+      ]
+
+      app_metadatas = [
+        Factory(:app_metadata,
           :store_id => 'ios.free',
-          :platform => 'iphone',
           :price => 0),
-        Factory(:app,
+        Factory(:app_metadata,
           :store_id => 'ios.paid',
-          :platform => 'iphone',
           :price => 1),
-        Factory(:app,
+        Factory(:app_metadata,
           :store_id => 'android.free',
-          :platform => 'android',
+          :store_name => 'Market',
           :price => 0),
-        Factory(:app,
+        Factory(:app_metadata,
           :store_id => 'android.paid',
-          :platform => 'android',
+          :store_name => 'Market',
           :price => 1),
       ]
+
+      apps.each_index do |i|
+        apps[i].add_app_metadata(app_metadatas[i])
+        apps[i].reload.save!
+      end
 
       stub_vertica
 
@@ -111,12 +125,185 @@ describe Job::MasterReloadStatzController do
       hash = {'android.paid' => [1]}
       Mc.put('store_ranks.android.overall.paid.english', hash)
 
-      get :index
+      get(:index)
 
       metadata = Mc.get("statz.metadata.24_hours")
       apps.each do |app|
         metadata[app.id]['overall_store_rank'].should == [1]
       end
+    end
+  end
+
+  describe '#partner_index' do
+    before :each do
+      @partner = Factory(:partner)
+
+      @mock_appstats = mock()
+      @mock_appstats.stubs(:stats).returns(stats_hash)
+    end
+
+    it 'saves partner values' do
+      stub_conversions
+      stub_appstats
+
+      get(:partner_index)
+
+      expected_stats = {
+        "account_mgr"           => "",
+        "balance"               => "$0.00",
+        "clicks"                => "600",
+        "cvr"                   => "100.0%",
+        "display_conversions"   => "600",
+        "display_cvr"           => "100.0%",
+        "display_ecpm"          => "$10.00",
+        "display_revenue"       => "$6.00",
+        "display_views"         => "600",
+        "est_gross_revenue"     => "$12.00",
+        "featured_conversions"  => "600",
+        "featured_cvr"          => "100.0%",
+        "featured_ecpm"         => "$10.00",
+        "featured_revenue"      => "$6.00",
+        "featured_views"        => "600",
+        "new_users"             => "600",
+        "offerwall_conversions" => "600",
+        "offerwall_cvr"         => "100.0%",
+        "offerwall_ecpm"        => "$10.00",
+        "offerwall_revenue"     => "$6.00",
+        "offerwall_views"       => "600",
+        "paid_installs"         => "600",
+        "partner"               => @partner.name,
+        "rev_share"             => "50.0%",
+        "sales_rep"             => "",
+        "sessions"              => "600",
+        "spend"                 => "$-6.00",
+        "total_revenue"         => "$6.00",
+        "arpdau"                => "-",
+      }
+
+      actual_stats = Mc.get('statz.partner.cached_stats.24_hours')
+      partner_stats = actual_stats[@partner.id]
+      partner_stats.should == expected_stats
+
+      partner_keys = [ 'partner', 'partner-ios', 'partner-android' ]
+      partner_keys.each do |key|
+        start_time = Mc.get("statz.#{key}.last_updated_start.24_hours")
+        start_time.should == @start_time.to_f
+        end_time = Mc.get("statz.#{key}.last_updated_end.24_hours")
+        end_time.should == @end_time.to_f
+      end
+
+      response.body.should == 'ok'
+    end
+
+    it 'displays 0 for cvr without percentage' do
+      stub_conversions
+
+      zero_keys = [
+        'rewards_opened',
+        'featured_offers_opened',
+        'display_clicks',
+        'paid_clicks',
+      ]
+      zero_hash = {}
+      zero_keys.each { |key| zero_hash[key] = [0] }
+
+      @mock_appstats.stubs(:stats).returns(stats_hash.merge(zero_hash))
+      stub_appstats
+
+      zero_keys = [
+        'offerwall_cvr',
+        'featured_cvr',
+        'display_cvr',
+        'cvr',
+      ]
+
+      get :partner_index
+
+      cached_stats = Mc.get('statz.partner.cached_stats.24_hours')
+      partner_stats = cached_stats[@partner.id]
+      zero_keys.each do |key|
+        partner_stats[key].should == 0
+      end
+    end
+
+    it 'generates weekly and monthly timeframes' do
+      start_time = Time.zone.now - 7.days
+      end_time = Time.zone.now
+
+      stub_conversions(start_time, end_time)
+      stub_appstats(:daily)
+
+      start_time = Time.zone.now - 30.days
+      end_time = Time.zone.now
+
+      stub_conversions(start_time, end_time)
+      stub_appstats(:daily)
+
+      get :partner_daily
+      response.body.should == 'ok'
+    end
+
+    it 'stores partner metadata' do
+      stub_conversions
+      stub_appstats
+
+      admin_user = Factory(:admin)
+      admin_user2 = Factory(:admin)
+
+      @partner.account_managers = [admin_user, admin_user2]
+      @partner.sales_rep = admin_user
+      @partner.balance = 1000
+      @partner.save!
+
+      get :partner_index
+      cached_stats = Mc.get('statz.partner.cached_stats.24_hours')
+      partner_stats = cached_stats[@partner.id]
+      partner_stats['partner'].should == @partner.name
+
+      emails = [admin_user.email, admin_user2.email]
+      partner_stats['account_mgr'].split(',').sort.should == emails.sort
+      partner_stats['sales_rep'].should == admin_user.email
+      partner_stats['balance'].should == '$10.00'
+    end
+
+    it 'does not skip if published_offers > 0' do
+      stub_conversions
+
+      get :partner_index
+      Mc.get('statz.partner.cached_stats.24_hours').should be_nil
+
+      hash = stats_hash.merge('paid_installs' => [0])
+      @mock_appstats.stubs(:stats).returns(hash)
+      stub_appstats
+
+      get :partner_index
+      cached_stats = Mc.get('statz.partner.cached_stats.24_hours')
+      cached_stats.keys.should include @partner.id
+    end
+
+    it 'does not skip if conversions > 0' do
+      stub_conversions
+
+      get :partner_index
+      Mc.get('statz.partner.cached_stats.24_hours').should be_nil
+
+      zero_hash = {
+        'rewards' => [0],
+        'featured_published_offers' => [0],
+        'display_conversions' => [0],
+      }
+
+      @mock_appstats.stubs(:stats).returns(stats_hash.merge(zero_hash))
+      stub_appstats
+
+      get :partner_index
+      cached_stats   = Mc.get('statz.partner.cached_stats.24_hours')
+      cached_ios     = Mc.get('statz.partner-ios.cached_stats.24_hours')
+      cached_android = Mc.get('statz.partner-android.cached_stats.24_hours')
+
+      cached_stats.keys.should   include @partner.id
+      cached_ios.keys.should     include @partner.id
+      cached_android.keys.should include @partner.id
     end
   end
 end
@@ -239,10 +426,73 @@ def query_conditions(start_time, end_time)
   ]
 end
 
+def stats_hash
+  return @hash if @hash
+  @hash = {}
+  stats_keys.each do |key|
+    @hash[key] = [100,200,300]
+  end
+  @hash
+end
+
+def stats_keys
+  @keys ||= Stats::CONVERSION_STATS + Stats::WEB_REQUEST_STATS +
+    [
+      'cvr',
+      'rewards',
+      'rewards_opened',
+      'rewards_revenue',
+      'rewards_ctr',
+      'rewards_cvr',
+      'offerwall_ecpm',
+      'featured_ctr',
+      'featured_cvr',
+      'featured_fill_rate',
+      'featured_ecpm',
+      'display_fill_rate',
+      'display_ctr', 'display_cvr',
+      'display_ecpm',
+      'non_display_revenue',
+      'total_revenue',
+      'daily_active_users'
+    ]
+end
+
+def conversion_query(partner_type, start_time, end_time)
+  insert = partner_type == 'publisher' ? ' ' : ''
+  "SELECT DISTINCT(#{partner_type}_partner_id) #{insert}" +
+    "FROM #{Conversion.quoted_table_name} " +
+    "WHERE created_at >= '#{start_time.to_s(:db)}' " +
+      "AND created_at < '#{end_time.to_s(:db)}'"
+end
+
 def currency(amount)
   NumberHelper.number_to_currency(amount / 100.0)
 end
 
 def percentage(value)
   NumberHelper.number_to_percentage((value || 0) * 100.0, :precision => 1)
+end
+
+def stub_appstats(granularity = :hourly)
+  Appstats.expects(:new).
+    times(3).
+    with(@partner.id, has_entry(:granularity, granularity)).
+    returns(@mock_appstats)
+end
+
+def stub_conversions(start_time = nil, end_time = nil)
+  start_time ||= @start_time
+  end_time ||= @end_time
+  Conversion.slave_connection.
+    expects(:select_values).
+    with(conversion_query('publisher', start_time, end_time)).
+    at_least(1).
+    returns([@partner.id])
+
+  Conversion.slave_connection.
+    expects(:select_values).
+    with(conversion_query('advertiser', start_time, end_time)).
+    at_least(1).
+    returns([@partner.id])
 end
