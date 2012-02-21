@@ -34,7 +34,9 @@ class Tools::ApprovalsController < WebsiteController
         @approval.unassign
       else
         user = User.find(params[:approval][:owner_id])
-        @approval.assign(user)
+        if @approval.assign(user)
+          ApprovalMailer.deliver_assigned(user.email, approval.item_type, mine_tools_approvals_url)
+        end
       end
     end
   end
