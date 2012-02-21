@@ -5,6 +5,8 @@
     %meta{ 'http-equiv' => 'Content-Type', :content => 'text/html; charset=utf-8' }
     %meta{ 'name' => 'viewport', 'content' => 'width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=no;' }
     %meta{ 'name' => 'apple-mobile-web-app-status-bar-style', 'content' => 'black' }
+    %meta{ :name => 'description', :content => t('text.games.meta_description') }
+    %meta{ :name => 'keywords', :content => t('text.games.meta_keywords')}
 
     %link{ :rel => 'shortcut icon', :href => '/favicon.ico', :content => 'image/vnd.microsoft.icon' }
     %link{ :rel => 'apple-touch-icon-precomposed', :href => '/images/tjgames-114x114.png' }
@@ -23,6 +25,8 @@
       = javascript_include_tag "marketplace/src/helpers/html5.js"
       = javascript_include_tag "marketplace/src/helpers/mediaqueries.js"
 
+    = stylesheet_link_tag("marketplace/theme/tjm/style")
+    = stylesheet_link_tag("marketplace/theme/tjm/style-480", :media => "only screen and (min-width: 480px)")
     = yield :page_head
 
   %body{ :id => 'tapjoy', :class => @page_design == 'new' ? 'new' : 'old' }
@@ -33,7 +37,16 @@
       .noscript_msg
         = t('text.games.no_javascript')
 
-    = yield
+    #main.fade-in
+      .header
+        .headerwrap
+          .wrap
+            .container
+              = render :partial => 'nav_bar', :locals => { :show_device => true }
+      .content
+        .contentwrap
+          .wrap
+            = yield
 
     :javascript
       window.ENVIRONMENT = "#{Rails.env}";
