@@ -12,7 +12,7 @@ describe Games::Gamers::FavoriteAppController do
     }
   end
 
-  describe 'create' do
+  describe '#create' do
     it 'fails when no app is provided' do
       get('create')
       should_respond_with_json_error(403)
@@ -45,7 +45,7 @@ describe Games::Gamers::FavoriteAppController do
     end
   end
 
-  describe 'destroy' do
+  describe '#destroy' do
     it 'returns failure when no app is provided' do
       get('destroy')
       should_respond_with_json_error(403)
