@@ -2,48 +2,49 @@
 - show_device ||= false
 
 .nav
-  .menu
-    .menu-grid.clearfix
-      .box
-      .box
-      .box
-      .box
-      .box
-      .box
-  - link_to(games_root_path, :class => "") do
-    .logo
-      %img{ :src => BLANK_IMAGE }
-  .menu-dropdown
-    .menu-dropdown-wrapper
-      .device
-        .device-profile
-          .device-toggle.up
-          .device-info
-            = t('text.games.on_my', :device_name => @device_name)
-            %a.device-change
-              (#{t('text.games.change')})
-          - if @gamer.get_avatar_url.present?
-            .user-icon
-              %img{ :src => @gamer.get_avatar_url }
-        .device-select.hide
-          Select Device
-        .device-form.hide
-      .menu-nav
-        .menu-nav-wrapper
-          - link_to(games_root_path, :class => "") do
-            .my_apps
-              %span= t('text.games.my_apps')
-          - link_to(games_root_path, :class => "") do
-            .more_apps
-              %span= t('text.games.more_apps')
-          - link_to(edit_games_gamer_path, :class => "") do
-            .profile
-              %span= t('text.games.profile')
-      .menu-subnav
-        .menu-subnav-wrapper
-          - link_to(games_help_path, :class => "") do
-            .help
-              %span= t('text.shared.help')
-          - link_to(games_logout_path, :class => "") do
-            .logout
-              %span= t('text.shared.logout')
+  - unless @gamer.nil?
+    .menu
+      .menu-grid.clearfix
+        .box
+        .box
+        .box
+        .box
+        .box
+        .box
+  .logo
+    %img{ :src => BLANK_IMAGE }
+  -unless @gamer.nil?
+    .menu-dropdown
+      .menu-dropdown-wrapper
+        .device
+          .device-profile
+            .device-toggle.up
+            .device-info
+              = t('text.games.on_my', :device_name => @device_name)
+              %a.device-change
+                (#{t('text.games.change')})
+            - if @gamer.get_avatar_url.present?
+              .user-icon
+                %img{ :src => @gamer.get_avatar_url }
+          .device-select.hide
+            Select Device
+          .device-form.hide
+        .menu-nav
+          .menu-nav-wrapper
+            - link_to(games_root_path, :class => "") do
+              .my_apps
+                %span= t('text.games.my_apps')
+            - link_to(games_root_path, :class => "") do
+              .more_apps
+                %span= t('text.games.more_apps')
+            - link_to(edit_games_gamer_path, :class => "") do
+              .profile
+                %span= t('text.games.profile')
+        .menu-subnav
+          .menu-subnav-wrapper
+            - link_to(games_help_path, :class => "") do
+              .help
+                %span= t('text.shared.help')
+            - link_to(games_logout_path, :class => "") do
+              .logout
+                %span= t('text.shared.logout')

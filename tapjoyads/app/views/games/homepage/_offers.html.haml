@@ -1,0 +1,5 @@
+.offer-wall
+  %ul.slats.with-icons{"data-jsonp-url"=>@external_publisher.get_offerwall_url(@device, @external_publisher.currencies.first, request.accept_language, request.user_agent, current_gamer.id)}
+    %li.slat
+      %h2 Loading...
+  =render "all_offers_template"

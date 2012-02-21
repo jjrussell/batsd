@@ -18,6 +18,18 @@ class Games::HomepageController < GamesController
   def review_app
   end
 
+  def earn
+    device_id = current_device_id
+    @device = Device.new(:key => device_id) if device_id.present?
+    @currency = Currency.find_by_id(params[:id])
+    @external_publisher = ExternalPublisher.new(@currency)
+
+    respond_to do |f|
+      f.html { render }
+      f.js { render :layout => false }
+    end
+  end
+
   def my_apps
     device_id = current_device_id
     @device = Device.new(:key => device_id) if device_id.present?

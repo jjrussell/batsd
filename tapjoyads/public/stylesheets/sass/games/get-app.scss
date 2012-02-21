@@ -53,7 +53,7 @@ body {
 
 /* Icons */
 .social {
-  background: url('/images/games/social.png') no-repeat 0 0;
+  background: inline-image("games/social") /*url('/images/games/social.png') no-repeat 0 0*/;
 }
 .social-med {
   background: url('/images/games/social-med.png') no-repeat 0 0;

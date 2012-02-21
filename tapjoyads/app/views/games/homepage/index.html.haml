@@ -1,40 +1,33 @@
 - @page_design = 'new'
 
-#main.fade-in
-  .header
-    .headerwrap
-      .wrap
-        .container
-          = render :partial => 'nav_bar', :locals => { :show_device => true, :active => 'my_apps' }
+#content.current
+  .panel.clearfix
+    - if @external_publishers.blank?
+      = render 'no_games'
+    - else
+      .row.borders.nbb
+        .games
+          - @external_publishers.each do |external_publisher|
+            = puts external_publisher.to_json
+            .apps
+              - link_to(games_earn_path(external_publisher.currencies.first[:id])) do
+                .icon
+                  %img{ :src => BLANK_IMAGE, :source => external_publisher.get_icon_url(:size => 114, :source => :cloudfront)}
+              .label
+                %span
+                  = external_publisher.app_name
+                %small
+                  [PUBLISHER]
+                %span.icon-likes
+                  80%
+                %span.icon-users
+                  15
+                - external_publisher.currencies.each do |currency|
+                  .collect
+                    - link_to(games_earn_path(currency[:id])) do
+                      = t('text.games.earn', :currency => currency[:name])
 
-  #content.current
-    .panel.clearfix
-      - if @external_publishers.blank?
-        = render 'no_games'
-      - else
-        .row.borders.nbb
-          .games
-            - @external_publishers.each do |external_publisher|
-              = puts external_publisher.to_json
-              .apps
-                - link_to("javascript:void(0)", :id => external_publisher.currencies.first[:id], :class => "get_offerwall_jsonp", :jsonp_url => external_publisher.get_offerwall_url(@device, external_publisher.currencies.first, request.accept_language, request.user_agent, current_gamer.id), :currency => external_publisher.currencies.first[:name], :app_name => external_publisher.app_name) do
-                  .icon
-                    %img{ :src => BLANK_IMAGE, :source => external_publisher.get_icon_url(:size => 114, :source => :cloudfront)}
-                .label
-                  %span
-                    = external_publisher.app_name
-                  %small
-                    [PUBLISHER]
-                  %span.icon-likes
-                    80%
-                  %span.icon-users
-                    15
-                  - external_publisher.currencies.each do |currency|
-                    .collect
-                      - link_to("javascript:void(0)", :id => currency[:id], :class => "get_offerwall_jsonp", :jsonp_url => external_publisher.get_offerwall_url(@device, currency, request.accept_language, request.user_agent, current_gamer.id), :currency => currency[:name], :app_name => external_publisher.app_name) do
-                        = t('text.games.earn', :currency => currency[:name])
-
-  = render("games/shared/footer")
+= render("games/shared/footer")
 
 - content_for :page_head do
   %meta{ :name => 'description', :content => t('text.games.meta_description') }
