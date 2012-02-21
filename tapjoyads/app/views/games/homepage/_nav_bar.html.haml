@@ -10,8 +10,9 @@
       .box
       .box
       .box
-  .logo
-    %img{ :src => BLANK_IMAGE }
+  - link_to(games_root_path, :class => "") do
+    .logo
+      %img{ :src => BLANK_IMAGE }
   .menu-dropdown
     .menu-dropdown-wrapper
       .device
