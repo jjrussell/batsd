@@ -136,6 +136,10 @@ class Gamer < ActiveRecord::Base
     Downloader.get_with_retry("#{API_URL}/offer_completed?click_key=#{click.key}")
   end
 
+  def encrypted_referral_id(advertiser_app_id = nil)
+    ObjectEncryptor.encrypt("#{id},#{advertiser_app_id}")
+  end
+
   private
 
   def generate_gravatar_hash
@@ -157,16 +161,20 @@ class Gamer < ActiveRecord::Base
           invitation_id, advertiser_app_id = ObjectEncryptor.decrypt(referrer).split(',')
         rescue OpenSSL::Cipher::CipherError
         end
+
         if invitation_id
-          invitation = Invitation.find_by_id(invitation_id) || (Invitation.find_by_id(advertiser_app_id) if advertiser_app_id)
+          invitation = Invitation.find_by_id(invitation_id)
+          invitation ||= Invitation.find_by_id(advertiser_app_id) if advertiser_app_id
           if invitation
             self.referred_by = invitation.gamer_id
-            referred_by_gamer = Gamer.find_by_id(self.referred_by)
-            if referred_by_gamer
-              follow_gamer(referred_by_gamer)
-              Invitation.reconcile_pending_invitations(self, :invitation => invitation)
-            end
+            gamer = invitation.gamer
+            Invitation.reconcile_pending_invitations(self, :invitation => invitation)
+          else
+            gamer_id = invitation_id
+            gamer = Gamer.find_by_id(gamer_id)
+            self.referred_by = gamer_id if gamer
           end
+          follow_gamer(gamer) if gamer
         end
       end
     end

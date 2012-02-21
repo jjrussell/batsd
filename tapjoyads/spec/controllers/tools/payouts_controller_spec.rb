@@ -14,7 +14,7 @@ describe Tools::PayoutsController do
   end
 
   it 'renders payouts page' do
-    get :index
+    get(:index)
   end
 
   describe 'confirmed for payout' do

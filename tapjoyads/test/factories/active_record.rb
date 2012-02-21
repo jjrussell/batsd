@@ -111,6 +111,14 @@ FactoryGirl.define do
     url 'http://ws.tapjoyads.com/healthz?click_key=TAPJOY_GENERIC'
   end
 
+  factory :invite_offer, :parent => :generic_offer do
+    association :partner
+    id TAPJOY_GAMES_INVITATION_OFFER_ID
+    name { Factory.next(:name) }
+    category 'Social'
+    url "#{WEBSITE_URL}/games/gamer/social?advertiser_app_id=TAPJOY_GENERIC_INVITE"
+  end
+
   factory :video_offer do
     association :partner
     name { Factory.next(:name) }
