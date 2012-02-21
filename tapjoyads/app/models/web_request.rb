@@ -139,6 +139,8 @@ class WebRequest
   self.define_attr :offerwall_rank_score, :type => :float
   self.define_attr :offerwall_start_index, :type => :int
   self.define_attr :offerwall_max_items, :type => :int
+  self.define_attr :sdk_type
+  self.define_attr :package_names
 
   def self.count(conditions = nil)
     VerticaCluster.count('production.web_requests', conditions)
@@ -193,6 +195,8 @@ class WebRequest
     self.mobile_network_code  = params[:mobile_network_code]
     self.country_code         = params[:country_code]
     self.country              = params[:country_code].present? ? params[:country_code] : geoip_data[:country]
+    self.sdk_type             = params[:sdk_type]
+    self.package_names        = params[:package_names]
     self.geoip_country        = geoip_data[:country]
   end
 

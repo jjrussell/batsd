@@ -20,6 +20,8 @@ class ApplicationController < ActionController::Base
 
 private
 
+  SDKLESS_MIN_LIBRARY_VERSION = '8.2.0'
+
   def verify_params(required_params, options = {})
     render_missing_text = options.delete(:render_missing_text) { true }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
@@ -268,7 +270,7 @@ private
   end
 
   def sdkless_support?
-    return params[:library_version].to_s.version_greater_than_or_equal_to?('8.2.0') && (params['sdk_type'] == 'offer' || params['sdk_type'] == 'virtual_goods')
+    return params[:library_version].to_s.version_greater_than_or_equal_to?(SDKLESS_MIN_LIBRARY_VERSION) && (params['sdk_type'] == 'offer' || params['sdk_type'] == 'virtual_goods')
   end
 
   def generate_verifier(more_data = [])

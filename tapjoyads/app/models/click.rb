@@ -46,6 +46,13 @@ class Click < SimpledbShardedResource
 
   def initialize(options = {})
     super({ :load_from_memcache => false }.merge(options))
+
+    if options[:add_to_conversion_queue] == true
+      if rewardable?
+        message = { :click_key => key, :install_timestamp => Time.zone.now.to_f.to_s }.to_json
+        Sqs.send_message(QueueNames::CONVERSION_TRACKING, message)
+      end
+    end
   end
 
   def dynamic_domain_name
