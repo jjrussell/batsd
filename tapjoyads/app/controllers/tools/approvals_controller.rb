@@ -6,7 +6,6 @@ class Tools::ApprovalsController < WebsiteController
   before_filter :setup_conditions, :only => [:index, :history, :mine]
   before_filter :setup_partial, :only => [:index, :history, :mine]
   before_filter :find_approval, :only => [:approve, :reject, :assign]
-  around_filter :json_wrapper, :only => [:approve, :reject, :assign]
 
   def index
     state = params[:state] =~ /^-?\d+$/ ? params[:state].to_i : Approval.enumerate_state('pending')
@@ -30,22 +29,28 @@ class Tools::ApprovalsController < WebsiteController
   end
 
   def assign
-    if params[:approval][:owner_id].empty?
-      @approval.unassign
-    else
-      user = User.find(params[:approval][:owner_id])
-      @approval.assign(user)
+    json_wrapper do
+      if params[:approval][:owner_id].empty?
+        @approval.unassign
+      else
+        user = User.find(params[:approval][:owner_id])
+        @approval.assign(user)
+      end
     end
   end
 
   def approve
-    @approval.owner = current_user if respond_to?(:current_user)
-    @approval.approve!
+    json_wrapper do
+      @approval.owner = current_user if respond_to?(:current_user)
+      @approval.approve!
+    end
   end
 
   def reject
-    @approval.owner = current_user if respond_to?(:current_user)
-    @approval.reject!(params[:reason])
+    json_wrapper do
+      @approval.owner = current_user if respond_to?(:current_user)
+      @approval.reject!(params[:reason])
+    end
   end
 
   private
@@ -56,17 +61,11 @@ class Tools::ApprovalsController < WebsiteController
       json[:success] = yield
     rescue ActsAsApprovable::Error => e
       json[:message] = e.message
-    rescue
+    rescue => e
       json[:message] = 'An unknown error occured'
     end
 
-    respond_to do |format|
-      format.html do
-        flash[:error] = json[:message] if json[:message]
-        redirect_to :action => :index
-      end
-      format.json { render :json => json }
-    end
+    render :json => json
   end
 
   def setup_conditions

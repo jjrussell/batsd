@@ -1,3 +1,5 @@
+- content_for :included_javascripts, javascript_include_tag('jquery.form.min', 'tapjoy/approvals')
+
 %h1 Approval Queue
 
 - form_for(:approval, :url => tools_approvals_path, :html => {:method => :get}) do |f|
