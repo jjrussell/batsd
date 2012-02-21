@@ -87,7 +87,7 @@ input::-webkit-input-placeholder {
 .no_wrap {
   white-space: nowrap; }
 
-clearfix:after {
+.clearfix:after {
   content: ".";
   display: block;
   clear: both;
@@ -148,6 +148,16 @@ a {
 
 a:hover {
   text-decoration: underline; }
+
+.border-box {
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box; }
+
+.elip {
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden; }
 
 .card {
   position: absolute;
@@ -485,3 +495,154 @@ a:hover {
 
 .carousel {
   height: 270px; }
+
+.ui-icon {
+  padding-left: 20px; }
+
+.ui-icon-med {
+  padding-left: 28px; }
+
+.social {
+  background: url("/images/games/social.png") no-repeat 0 0; }
+
+.social-med {
+  background: url("/images/games/social-med.png") no-repeat 0 0; }
+
+.score {
+  background: url("/images/games/thumbs-up.png") no-repeat 0 0; }
+
+.score-med {
+  background: url("/images/games/thumbs-up-med.png") no-repeat 0 0; }
+
+.down-arrow {
+  background: url("/images/games/ui-joy-d-arrow.png") no-repeat 96% center; }
+
+.right-arrow {
+  background: url("/images/games/ui-joy-r-arrow.png") no-repeat 96% center; }
+
+.ui-list-action-label {
+  display: block;
+  font-size: 1em;
+  margin-top: 1px; }
+
+.mod {
+  padding: 10px 10px; }
+
+ul.basic {
+  margin: 0;
+  padding: 0; }
+  ul.basic > li {
+    padding: 0;
+    margin: 0; }
+
+.line-item {
+  height: 60px;
+  margin: 0;
+  padding: 20px 10px; }
+  .line-item a {
+    text-decoration: none;
+    color: #000; }
+  .line-item a:hover {
+    text-decoration: none;
+    color: #000; }
+  .line-item .title {
+    font-size: 1.2em; }
+    .line-item .title .aside {
+      font-size: .7em;
+      font-style: italic; }
+  .line-item .sub-title {
+    font-size: .9em;
+    color: #a1a1a1; }
+  .line-item .hd {
+    margin-right: 4%;
+    width: 23%;
+    float: left; }
+    .line-item .hd img {
+      -webkit-box-shadow: 0px 0px 3px black;
+      -moz-box-shadow: 0px 0px 3px black;
+      -o-box-shadow: 0px 0px 3px black;
+      box-shadow: 0px 0px 3px black;
+      border-radius: 45%;
+      -moz-border-radius-: 45%;
+      -webkit-border-radius: 45%;
+      -ms-border-radius: 45%;
+      -o-border-radius: 45%;
+      max-width: 100%; }
+  .line-item .bd {
+    margin-right: 0 4%;
+    width: 46%;
+    float: left; }
+  .line-item .ft {
+    width: 23%;
+    float: right;
+    line-height: 60px; }
+
+.image-caption .hd, .page-header .hd {
+  width: 60px; }
+.image-caption .bd, .page-header .bd {
+  width: auto;
+  overflow: hidden;
+  float: none; }
+
+.page-header {
+  padding-bottom: 10px; }
+
+.social-info {
+  box-shadow: 0 0px 1px #a9a9a9 inset, 0 1px 0 #c8c8c8;
+  position: relative;
+  z-index: 30; }
+
+.menu-head {
+  background: #dcdce1;
+  /* Old browsers */
+  background: -moz-linear-gradient(top, #dcdce1 0%, #dadadf 25%, #cbced3 75%, #c1c5ca 100%);
+  /* FF3.6+ */
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #dcdce1), color-stop(25%, #dadadf), color-stop(75%, #cbced3), color-stop(100%, #c1c5ca));
+  /* Chrome,Safari4+ */
+  background: -webkit-linear-gradient(top, #dcdce1 0%, #dadadf 25%, #cbced3 75%, #c1c5ca 100%);
+  /* Chrome10+,Safari5.1+ */
+  background: -o-linear-gradient(top, #dcdce1 0%, #dadadf 25%, #cbced3 75%, #c1c5ca 100%);
+  /* Opera 11.10+ */
+  background: -ms-linear-gradient(top, #dcdce1 0%, #dadadf 25%, #cbced3 75%, #c1c5ca 100%);
+  /* IE10+ */
+  background: linear-gradient(top, #dcdce1 0%, #dadadf 25%, #cbced3 75%, #c1c5ca 100%);
+  /* W3C */
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#dcdce1', endColorstr='#c1c5ca',GradientType=0 );
+  /* IE6-9 */
+  border-top: 1px solid #f8f8f9;
+  box-shadow: 0 1px 1px #535353;
+  text-shadow: 0 1px 0 #ffffff;
+  position: relative;
+  z-index: 30; }
+
+.app-summary {
+  margin: 2px 0 6px;
+  width: 100%; }
+  .app-summary .score, .app-summary .social {
+    float: left;
+    font-size: 1em;
+    width: auto; }
+
+.score-summary {
+  padding-top: 20px;
+  padding-bottom: 20px; }
+  .score-summary .percentage {
+    font-size: 1.5em; }
+  .score-summary .description {
+    color: #a1a1a1; }
+  .score-summary img {
+    background: url(/images/games/thumbs-up-lg.png) no-repeat 0 0;
+    width: 31px;
+    height: 32px;
+    vertical-align: middle; }
+
+.beveled {
+  background-color: #eeeeee;
+  border-bottom: 1px solid #c8c4c4;
+  box-shadow: 0 1px 0 #ffffff inset; }
+
+.beveled:first-child {
+  border-top: 1px solid #c8c4c4; }
+
+.beveled:last-child {
+  box-shadow: 0 1px 0 #ffffff inset, 0 1px 0 #ffffff; }

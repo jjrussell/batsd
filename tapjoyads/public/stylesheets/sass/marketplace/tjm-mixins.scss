@@ -73,6 +73,13 @@ $mobile-scaledown-multiplier: 2;
   -webkit-box-shadow: 0 4px 2px -2px $color;
 }
 
+@mixin set-box-shadow($x:0, $y:0, $spread:2px, $color:#ddd) {
+  -webkit-box-shadow: $x $y $spread $color;
+   -moz-box-shadow: $x $y $spread $color;
+     -o-box-shadow: $x $y $spread $color;
+        box-shadow: $x $y $spread $color;
+}
+
 @mixin gradient-inset-shadow {
   background-image: -moz-linear-gradient(top, rgba(160,150,145,.1) 0%, rgba(160,150,145,0) 30%, rgba(160,150,145,.2) 100%);
   background-image: -webkit-gradient(linear,left top, left bottom, color-stop(0%, rgba(160,150,145,0.1)), color-stop(30%, rgba(160,150,145,0)), color-stop(100%, rgba(160,150,145,.2)));

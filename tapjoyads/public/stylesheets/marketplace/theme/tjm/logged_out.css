@@ -87,7 +87,7 @@ input::-webkit-input-placeholder {
 .no_wrap {
   white-space: nowrap; }
 
-clearfix:after {
+.clearfix:after {
   content: ".";
   display: block;
   clear: both;

@@ -14,7 +14,6 @@ body {
   padding: 0;
   overflow: hidden;
 }
-
 body.desktop {
   oveflow: auto;
   overflow-y: auto;
@@ -30,6 +29,17 @@ a {
 
 a:hover {
   text-decoration: underline;
+}
+
+
+.border-box {
+  -moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box;
+}
+
+.elip {
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
 }
 
 .card {
@@ -429,4 +439,185 @@ a:hover {
 .carousel {
   height: 270px;
 }
+
+//-------------------------------------------
+// Icons
+//-------------------------------------------
+.ui-icon {
+  padding-left: 20px;
+}
+.ui-icon-med {
+  padding-left: 28px;
+}
+
+.social {
+  background: url('/images/games/social.png') no-repeat 0 0;
+}
+.social-med {
+  background: url('/images/games/social-med.png') no-repeat 0 0;
+}
+.score {
+  background: url('/images/games/thumbs-up.png') no-repeat 0 0;
+}
+.score-med {
+  background: url('/images/games/thumbs-up-med.png') no-repeat 0 0;
+}
+
+.down-arrow {
+  background: url('/images/games/ui-joy-d-arrow.png') no-repeat 96% center;
+}
+
+.right-arrow {
+  background: url('/images/games/ui-joy-r-arrow.png') no-repeat 96% center;
+}
+
+.ui-list-action-label {
+  display: block;
+  font-size: 1em;
+  margin-top: 1px;
+}
+
+//-------------------------------------------
+// Line Items
+//-------------------------------------------
+.mod {
+  padding: 10px 10px;
+}
+
+ul.basic {
+  margin: 0;
+  padding: 0;
+
+  >li {
+    padding: 0;
+    margin: 0;
+  }
+}
+
+.line-item {
+  height: 60px;
+  margin: 0;
+  padding: 20px 10px;
+
+  a {
+    text-decoration: none;
+    color: #000;
+  }
+  a:hover {
+    text-decoration: none;
+    color: #000;
+  }
+  .title {
+    font-size: 1.2em;
+
+    .aside {
+      font-size: .7em;
+      font-style: italic;
+    }
+  }
+  .sub-title {
+    font-size: .9em;
+    color: #a1a1a1;
+  }
+  .hd {
+    margin-right: percentage(12/300);
+    width: percentage(69/300);
+    float: left;
+
+    img {
+      @include set-box-shadow(0px, 0px, 3px, #000);
+      @include rounded-corners(45%);
+      max-width: 100%;
+    }
+  }
+  .bd {
+    margin-right: 0 percentage(12/300);
+    width: percentage(138/300);
+    float: left;
+  }
+  .ft {
+    width: percentage(69/300);
+    float: right;
+    line-height: 60px;
+  }
+}
+
+.image-caption {
+  .hd {
+    width: 60px;
+  }
+  .bd {
+    width: auto;
+    overflow: hidden;
+    float: none;
+  }
+}
+
+.page-header {
+  @extend .image-caption;
+
+  padding-bottom: 10px;
+}
+
+//-------------------------------------------
+// Individual element structure
+//-------------------------------------------
+.social-info {
+  box-shadow: 0 0px 1px rgba(169, 169, 169, 1.0) inset, 0 1px 0 rgba(200, 200, 200, 1.0);
+  position: relative;
+  z-index: 30;
+}
+
+.menu-head {
+  @include gradient-top(#dcdce1,#dadadf,#cbced3,#c1c5ca);
+  border-top: 1px solid #f8f8f9;
+  box-shadow: 0 1px 1px #535353;
+  text-shadow: 0 1px 0 #ffffff;
+  position: relative;
+  z-index: 30;
+}
+
+.app-summary {
+  margin: 2px 0 6px;
+  width: 100%;
+  .score, .social {
+    float: left;
+    font-size: 1em;
+    width: auto;
+  }
+}
+
+.score-summary {
+  padding-top: 20px;
+  padding-bottom: 20px;
+
+  .percentage {
+    font-size: 1.5em;
+  }
+  .description {
+    color: #a1a1a1;
+  }
+  img {
+    background: url(/images/games/thumbs-up-lg.png) no-repeat 0 0;
+    width: 31px;
+    height: 32px;
+    vertical-align: middle;
+  }
+}
+
+//-------------------------------------------
+// Skins
+//-------------------------------------------
+.beveled {
+  background-color: #eeeeee;
+  border-bottom: 1px solid #c8c4c4;
+  box-shadow: 0 1px 0 #ffffff inset;
+}
+.beveled:first-child {
+  border-top: 1px solid #c8c4c4;
+}
+.beveled:last-child {
+  box-shadow: 0 1px 0 #ffffff inset, 0 1px 0 #ffffff;
+}
+
 
