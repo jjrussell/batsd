@@ -434,7 +434,7 @@ class Offer < ActiveRecord::Base
     display_banner_ads? && banner_creative_approved?(size)
   end
 
-  def get_video_icon_url(options = {})
+  def video_icon_url(options = {})
     if item_type == 'VideoOffer' || item_type == 'TestVideoOffer'
       object = S3.bucket(BucketNames::TAPJOY).objects["icons/src/#{Offer.hashed_icon_id(icon_id)}.jpg"]
       begin
@@ -444,7 +444,7 @@ class Offer < ActiveRecord::Base
       end
     end
   end
-  memoize :get_video_icon_url
+  memoize :video_icon_url
 
   def get_icon_url(options = {})
     Offer.get_icon_url({:icon_id => Offer.hashed_icon_id(icon_id), :item_type => item_type}.merge(options))
