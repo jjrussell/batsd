@@ -101,7 +101,7 @@ describe App do
       offer = @action_offer.primary_offer
       @app_metadata.update_attributes({:price => 400})
       offer.reload
-      offer.bid.should equal(35)
+      offer.bid.should equal(10)
     end
   end
 
