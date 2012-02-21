@@ -73,6 +73,38 @@ describe App do
     end
   end
 
+  describe '#build_test_offer' do
+    before :each do
+      @app = Factory(:app)
+      @test_offer = @app.build_test_offer
+    end
+
+    it 'creates test Offer with the same ID' do
+      @test_offer.id.should == @app.id
+      @test_offer.item_id.should == @app.id
+      @test_offer.item_type.should == 'TestOffer'
+    end
+  end
+
+  describe '#build_test_video_offer' do
+    before :each do
+      @app = Factory(:app)
+      @test_video_offer = @app.build_test_video_offer
+      @test_video_offer_primary_offer = @test_video_offer.primary_offer
+    end
+
+    it 'creates test VideoOffer with ID "test_video"' do
+      @test_video_offer.id.should == 'test_video'
+      @test_video_offer.partner_id.should == @app.partner_id
+    end
+
+    it 'creates test VideoOffer with primary offer ID "test_video"' do
+      @test_video_offer_primary_offer.id.should == 'test_video'
+      @test_video_offer_primary_offer.item_id.should == 'test_video'
+      @test_video_offer_primary_offer.item_type.should == 'TestVideoOffer'
+    end
+  end
+
   context 'with Action Offers' do
     before :each do
       @action_offer = Factory(:action_offer)
