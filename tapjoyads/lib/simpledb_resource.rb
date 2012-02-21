@@ -127,13 +127,8 @@ class SimpledbResource
     end
   end
 
-  ##
-  # Calls serial_save in a separate thread.
   def save(options = {})
-    thread = Thread.new(options) do |opts|
-      serial_save(opts)
-    end
-    return thread
+    serial_save(options)
   end
 
   def save!(options = {})
