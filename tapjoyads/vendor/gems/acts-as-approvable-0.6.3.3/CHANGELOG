@@ -1,0 +1,31 @@
+== 0.6.3.3
+
+ * Don't call #state on nil objects
+
+== 0.6.3.2
+
+ * Fix the Rails 2 initializer
+
+== 0.6.3.1
+
+ * Update rails 2 generator with previous fix
+ * Fix test helper
+
+== 0.6.3
+
+ * Correct state parameter validation for negative numbers
+
+== 0.6.2
+
+ * Rename main file to match gem name
+
+== 0.6.1
+
+ * Change gem name to 'acts-as-approvable'
+
+== 0.6
+
+ * Convert to a gem
+ * Support for Rails 3.x
+ * Validate state parameter is an integer before using
+ * Correct spelling of `current_user` in controller templates

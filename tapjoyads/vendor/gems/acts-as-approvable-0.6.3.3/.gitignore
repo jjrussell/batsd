@@ -1,0 +1,7 @@
+test/*.db
+test/debug.log
+coverage/
+rdoc/
+yardoc/
+.yardoc
+*.gem

@@ -44,6 +44,7 @@ Rails::Initializer.run do |config|
   config.gem 'aws-sdk', :version => '1.1.4'
 
   # These gems should be vendored
+  config.gem 'acts-as-approvable', :version => '0.6.3.3'
   config.gem 'airbrake', :version => '3.0.5'
   config.gem 'after_commit', :version => '1.0.10'
   config.gem 'authlogic', :version => '2.1.3'
