@@ -1,5 +1,26 @@
 $(document).ready(function() {
 
+  // Login
+  $('#login, #login-web').bind('click', function() {
+    
+    var modal = $('.login.modal');
+    var mTop = (modal.height() + 24) / 2; 
+    var mLeft = (modal.width() + 24) / 2; 
+    
+    modal.css({ 
+      'margin-top' : -mTop,
+      'margin-left' : -mLeft
+    });
+
+    $('.login.modal').fadeIn('fast');
+    $('body').append('<div id="mask"></div>');
+    $('#mask').fadeIn('fast').bind('click', function() {
+      $('.login.modal').fadeOut('fast');
+      $(this).fadeOut('fast');
+    });
+
+  });
+  
   // Menu Grid
   $('.menu-grid').bind('click', function(){
     if ($(this).hasClass('active')) {
