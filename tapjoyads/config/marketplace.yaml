@@ -14,6 +14,7 @@ defaults: &defaults
     'marketplace/src/components/button/button',
     'marketplace/src/components/carousel/carousel',
     'marketplace/src/namespace',
+    'marketplace/src/i18n',
     'marketplace/src/main'
   ]
   js_compile_out_file: 'tjm.min'

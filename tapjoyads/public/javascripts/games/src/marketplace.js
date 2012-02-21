@@ -67,10 +67,10 @@
         
         if (!breakpoint) {
           response_iframe.hide();
-          $(".main").show();
+          $("#main").show();
         } else {
           response_iframe.show();
-          $(".main").hide();
+          $("#main").hide();
           response_iframe.css("width", breakpoint);
         }
         $("title").html(breakpoint || initial_title);

@@ -2,7 +2,7 @@
 - show_device ||= false
 
 .nav
-  - unless @gamer.nil?
+  -unless @current_gamer.nil?
     .menu
       .menu-grid.clearfix
         .box
@@ -13,7 +13,7 @@
         .box
   .logo
     %img{ :src => BLANK_IMAGE }
-  -unless @gamer.nil?
+  -unless @current_gamer.nil?
     .menu-dropdown
       .menu-dropdown-wrapper
         .device
@@ -23,9 +23,9 @@
               = t('text.games.on_my', :device_name => @device_name)
               %a.device-change
                 (#{t('text.games.change')})
-            - if @gamer.get_avatar_url.present?
+            - if @current_gamer.get_avatar_url.present?
               .user-icon
-                %img{ :src => @gamer.get_avatar_url }
+                %img{ :src => @current_gamer.get_avatar_url }
           .device-select.hide
             Select Device
           .device-form.hide

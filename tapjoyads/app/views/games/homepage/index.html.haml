@@ -30,14 +30,8 @@
 = render("games/shared/footer")
 
 - content_for :page_head do
-  %meta{ :name => 'description', :content => t('text.games.meta_description') }
-  %meta{ :name => 'keywords', :content => t('text.games.meta_keywords')}
 
-  = stylesheet_link_tag("marketplace/resources/mobile")
-
-  = stylesheet_link_tag("marketplace/theme/tjm/style")
   =# stylesheet_link_tag("marketplace/theme/tjm/style-768", :media => "only screen and (min-width: 768px)")
-  = stylesheet_link_tag("marketplace/theme/tjm/style-480", :media => "only screen and (min-width: 480px)")
   =# stylesheet_link_tag("marketplace/theme/tjm/style-480", :media => "only screen and (min-width: 480px)")
   =# stylesheet_link_tag("marketplace/theme/tjm/images-hd", :media => "-webkit-min-device-pixel-ratio: 2")
 

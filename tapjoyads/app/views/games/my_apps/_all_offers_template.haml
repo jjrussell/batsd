@@ -2,34 +2,36 @@
   :plain
     <% for (var i = 0, ii = OfferArray.length; i < ii; i++) { %>
       <% if (!OfferArray[i].IconURL || !OfferArray[i].Name) { continue; } %>
-      <li class="slat chrome">
-        <div class="hd game-icon">
-          <img src="<%= OfferArray[i].IconURL %>" />
-        </div>
-        <div class="bd">
-          <div class="title elip">
-            <%= OfferArray[i].Name %>
+      <li class="">
+        <div class="mod line-item">
+          <div class="hd game-icon">
+            <img src="<%= OfferArray[i].IconURL %>" />
           </div>
-          <div class="app-summary clearfix">
-            <div class="ui-icon score">
-              &nbsp;
+          <div class="bd">
+            <div class="title elip">
+              <%= OfferArray[i].Name %>
             </div>
-            <div class="ui-icon social">
-              &nbsp;
-            </div>
-          </div>
-          <div class="highlight-green">
-            <%= i18n.t("games.amount_and_currency", {amount: OfferArray[i].Amount, currency: CurrencyName}) %>
-          </div>
-        </div>
-        <div class="ft">
-          <a href="<%= OfferArray[i].RedirectURL %>">
-            <div class="ui-list-arrow">
-              <div class="ui-list-action-label">
-                <%= i18n.t("shared.collect") %>
+            <div class="app-summary clearfix">
+              <div class="ui-icon score">
+                &nbsp;
+              </div>
+              <div class="ui-icon social">
+                &nbsp;
               </div>
             </div>
-          </a>
+            <div class="highlight-green">
+              <%= i18n.t("games.amount_and_currency", {amount: OfferArray[i].Amount, currency: CurrencyName}) %>
+            </div>
+          </div>
+          <div class="ft">
+            <a href="<%= OfferArray[i].RedirectURL %>">
+              <div class="ui-list-arrow">
+                <div class="ui-list-action-label">
+                  <%= i18n.t("shared.collect") %>
+                </div>
+              </div>
+            </a>
+          </div>
         </div>
       </li>
     <% } %>

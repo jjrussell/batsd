@@ -112,7 +112,7 @@ input::-webkit-input-placeholder {
   white-space: nowrap;
 }
 
-clearfix:after {
+.clearfix:after {
   content: ".";
   display: block;
   clear: both;
