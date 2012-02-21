@@ -172,7 +172,9 @@ describe Offer do
 
   context "with a paid app item" do
     before :each do
-      @app = Factory(:app, :price => 150)
+      @app = Factory(:app)
+      @app.add_app_metadata(Factory(:app_metadata, :price => 150))
+      @app.reload.save!
       @offer = @app.primary_offer
     end
 
@@ -211,7 +213,9 @@ describe Offer do
 
   context "with a free app item" do
     before :each do
-      @app = Factory(:app, :price => 0)
+      @app = Factory(:app)
+      @app.add_app_metadata(Factory(:app_metadata, :price => 0))
+      @app.reload.save!
       @offer = @app.primary_offer
     end
 
@@ -221,8 +225,8 @@ describe Offer do
         @offer.rewarded = true
       end
 
-      it "has a min_bid of 65" do
-        @offer.min_bid.should == 65
+      it "has a min_bid of 10" do
+        @offer.min_bid.should == 10
       end
     end
 
@@ -254,8 +258,8 @@ describe Offer do
       @offer = @video.primary_offer
     end
 
-    it "has a min_bid of 15" do
-      @offer.min_bid.should == 15
+    it "has a min_bid of 4" do
+      @offer.min_bid.should == 4
     end
   end
 

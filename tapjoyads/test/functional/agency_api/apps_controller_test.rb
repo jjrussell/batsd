@@ -330,5 +330,4 @@ class AgencyApi::AppsControllerTest < ActionController::TestCase
       end
     end
   end
-
 end
