@@ -228,14 +228,14 @@ class Offer < ActiveRecord::Base
     item_type == 'App' || item_type == 'ActionOffer'
   end
 
-  def get_countries_blacklist
+  def countries_blacklist
     if app_offer?
       item.get_countries_blacklist
     else
       []
     end
   end
-  memoize :get_countries_blacklist
+  memoize :countries_blacklist
 
   def banner_creatives
     self.banner_creatives = [] if super.nil?
