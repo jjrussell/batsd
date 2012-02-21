@@ -45,8 +45,6 @@ class Click < SimpledbShardedResource
   self.sdb_attr :advertiser_reseller_id
 
   def initialize(options = {})
-    super({ :load_from_memcache => false }.merge(options))
-
     if options[:add_to_conversion_queue] == true
       if rewardable?
         message = { :click_key => key, :install_timestamp => Time.zone.now.to_f.to_s }.to_json
