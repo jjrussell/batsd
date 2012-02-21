@@ -35,7 +35,6 @@
         %span= t('text.games.share_with_everyone')
     .gradient-backdrop
 
-
 #favorites
   .slide
     .mobilejoy
@@ -171,9 +170,10 @@
   %meta{ :name => 'description', :content => t('text.games.meta_description') }
   %meta{ :name => 'keywords', :content => t('text.games.meta_keywords')}
 
-  = stylesheet_link_tag('marketplace/theme/tjm/logged_out')
   = stylesheet_link_tag('marketplace/resources/components/button/button')
   = stylesheet_link_tag('marketplace/resources/components/carousel/carousel')
+  = stylesheet_link_tag('marketplace/theme/tjm/logged_out')
+
 
 - content_for :included_javascripts do
   = javascript_include_tag('marketplace/logged-out')

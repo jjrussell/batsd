@@ -14,7 +14,6 @@
 
     = stylesheet_link_tag("marketplace/resources/reset")
     = stylesheet_link_tag("marketplace/resources/base")
-    = stylesheet_link_tag("marketplace/resources/mobile")
 
     /[if IE 8]
       = stylesheet_link_tag('marketplace/ie8')
@@ -25,7 +24,7 @@
 
     = yield :page_head
 
-  %body{ :id => 'tapjoy', :class => @page_design == 'new' ? 'new' : 'old' }
+  %body{ :id => 'tapjoy', :class => '' }
     %noscript
       %style{:type => "text/css", :media => "screen"}
         :plain
