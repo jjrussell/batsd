@@ -149,7 +149,7 @@ class Job::MasterReloadStatzController < Job::JobController
 
     partner_ids.each do |partner_id|
       partner = Partner.find(partner_id)
-      ['partner', 'partner-ios', 'partner-android'].each do |prefix|
+      ['partner', 'partner-ios', 'partner-android', 'partner-windows'].each do |prefix|
         stats            = Appstats.new(partner.id, { :start_time => start_time, :end_time => end_time, :granularity => granularity, :stat_prefix => prefix }).stats
         conversions      = stats['paid_installs'].sum
         published_offers = stats['rewards'].sum + stats['featured_published_offers'].sum + stats['display_conversions'].sum

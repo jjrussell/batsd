@@ -17,6 +17,7 @@ describe Job::MasterReloadStatzController do
       expected_hash = {
         :android=>{:adv_amount=>"$0.00", :count=>"0", :pub_amount=>"$0.00"},
         :iphone=>{:adv_amount=>"$0.00", :count=>"0", :pub_amount=>"$0.00"},
+        :windows=>{:adv_amount=>"$0.00", :count=>"0", :pub_amount=>"$0.00"},
         :total=>{:adv_amount=>"$0.01", :count=>"1", :pub_amount=>"$0.01"},
         :tj_games=>{:adv_amount=>"$0.01", :count=>"1", :pub_amount=>"$0.01"},
       }

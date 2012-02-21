@@ -282,8 +282,9 @@ class StatsAggregation
     global_ios_stat = Stats.new(:key => "global-ios.#{date.strftime('%Y-%m-%d')}", :load_from_memcache => false)
     global_android_stat = Stats.new(:key => "global-android.#{date.strftime('%Y-%m-%d')}", :load_from_memcache => false)
     global_joint_stat = Stats.new(:key => "global-joint.#{date.strftime('%Y-%m-%d')}", :load_from_memcache => false)
+    global_windows_stat = Stats.new(:key => "global-windows.#{date.strftime('%Y-%m-%d')}", :load_from_memcache => false)
 
-    global_stats = [global_stat, global_ios_stat, global_android_stat, global_joint_stat]
+    global_stats = [global_stat, global_ios_stat, global_android_stat, global_windows_stat, global_joint_stat]
 
     global_stats.each do |stat|
       stat.parsed_values.clear
@@ -295,8 +296,9 @@ class StatsAggregation
       partner_ios_stat = Stats.new(:key => "partner-ios.#{date.strftime('%Y-%m-%d')}.#{partner.id}", :load_from_memcache => false)
       partner_android_stat = Stats.new(:key => "partner-android.#{date.strftime('%Y-%m-%d')}.#{partner.id}", :load_from_memcache => false)
       partner_joint_stat = Stats.new(:key => "partner-joint.#{date.strftime('%Y-%m-%d')}.#{partner.id}", :load_from_memcache => false)
+      partner_windows_stat = Stats.new(:key => "partner-windows.#{date.strftime('%Y-%m-%d')}.#{partner.id}", :load_from_memcache => false)
 
-      partner_stats = [partner_stat, partner_ios_stat, partner_android_stat, partner_joint_stat]
+      partner_stats = [partner_stat, partner_ios_stat, partner_android_stat, partner_windows_stat, partner_joint_stat]
 
       partner_stats.each do |stat|
         stat.parsed_values.clear
@@ -311,6 +313,9 @@ class StatsAggregation
         when 'iOS'
           global_platform_stat = global_ios_stat
           partner_platform_stat = partner_ios_stat
+        when 'windows'
+          global_platform_stat = global_windows_stat
+          partner_platform_stat = partner_windows_stat
         else
           global_platform_stat = global_joint_stat
           partner_platform_stat = partner_joint_stat
