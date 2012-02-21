@@ -3,7 +3,7 @@ class Games::Gamers::FavoriteAppController < GamesController
   before_filter :require_gamer, :set_app_id
 
   def create
-    fav_app = get_favorite_app(@app_id) || FavoriteApp.new(:gamer => current_gamer, :app_id => @app_id)
+    fav_app = favorite_app(@app_id) || FavoriteApp.new(:gamer => current_gamer, :app_id => @app_id)
     if fav_app.new_record? && !fav_app.save
       render_json_error(['Error encountered creating a favorite app']) and return
     end
@@ -11,13 +11,13 @@ class Games::Gamers::FavoriteAppController < GamesController
   end
 
   def destroy
-    FavoriteApp.delete(get_favorite_app(@app_id))
+    FavoriteApp.delete(favorite_app(@app_id))
     render(:json => { :success => true }) and return
   end
 
   private
 
-  def get_favorite_app(app_id)
+  def favorite_app(app_id)
     current_gamer.favorite_apps.find_by_app_id(app_id)
   end
 
