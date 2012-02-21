@@ -205,7 +205,7 @@ es:
       delete_my_account: "Borrar mi cuenta"
       developers_body: "Aumente los ingresos de sus apps mediante nuestras herramientas de monetización."
       developers_title: Desarrolladores
-      earn: "Gana %{amount} %{currency}"
+      earn: "Gana %{currency}"
       earn_title: "Bájate una de las aplicaciones abajo o visualiza uno de los anuncios para ganar %{currency} en %{app_name}"
       enable_javascript: "Consulta la configuración de tu navegador y autoriza el Javascript para poder usar Tapjoy."
       enter_birthdate: "Por favor, introduce tu año de nacimiento"
