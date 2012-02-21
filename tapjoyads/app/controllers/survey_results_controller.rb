@@ -64,7 +64,7 @@ class SurveyResultsController < ApplicationController
     survey_result = SurveyResult.new
     survey_result.udid = params[:udid]
     survey_result.click_key = params[:click_key]
-    survey_result.geoip_data = get_geoip_data
+    survey_result.geoip_data = geoip_data
     survey_result.answers = answers
     survey_result.save
   end

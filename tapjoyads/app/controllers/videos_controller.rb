@@ -37,7 +37,7 @@ class VideosController < ApplicationController
       :publisher_app       => @publisher_app,
       :currency            => @currency,
       :device_type         => params[:device_type],
-      :geoip_data          => get_geoip_data,
+      :geoip_data          => geoip_data,
       :os_version          => params[:os_version],
       :type                => Offer::VIDEO_OFFER_TYPE,
       :library_version     => params[:library_version],

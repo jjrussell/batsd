@@ -223,7 +223,7 @@ class ClickController < ApplicationController
 
   def build_web_request(path)
     @web_request = WebRequest.new(:time => @now)
-    @web_request.put_values(path, params, ip_address, get_geoip_data, request.headers['User-Agent'])
+    @web_request.put_values(path, params, ip_address, geoip_data, request.headers['User-Agent'])
     @web_request.viewed_at = Time.zone.at(params[:viewed_at].to_f) if params[:viewed_at].present?
   end
 

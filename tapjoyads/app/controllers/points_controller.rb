@@ -108,7 +108,7 @@ private
   def check_success(path)
     if @success
       web_request = WebRequest.new
-      web_request.put_values(path, params, ip_address, get_geoip_data, request.headers['User-Agent'])
+      web_request.put_values(path, params, ip_address, geoip_data, request.headers['User-Agent'])
       web_request.save
     end
   end

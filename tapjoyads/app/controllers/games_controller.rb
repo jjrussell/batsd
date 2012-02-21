@@ -176,7 +176,7 @@ class GamesController < ApplicationController
   end
 
   def current_recommendations
-    @recommendations ||= Device.new(:key => current_device_id).recommendations(:device_type => device_type, :geoip_data => get_geoip_data, :os_version => os_version)
+    @recommendations ||= Device.new(:key => current_device_id).recommendations(:device_type => device_type, :geoip_data => geoip_data, :os_version => os_version)
   end
 
   def has_multiple_devices?

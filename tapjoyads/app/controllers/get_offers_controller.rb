@@ -107,7 +107,7 @@ class GetOffersController < ApplicationController
     if @save_web_requests
       wr_path = params[:source] == 'featured' ? 'featured_offer_requested' : 'offers'
       @web_request = WebRequest.new(:time => @now)
-      @web_request.put_values(wr_path, params, ip_address, get_geoip_data, request.headers['User-Agent'])
+      @web_request.put_values(wr_path, params, ip_address, geoip_data, request.headers['User-Agent'])
       @web_request.viewed_at = @now
       @web_request.offerwall_start_index = @start_index
       @web_request.offerwall_max_items = @max_items
@@ -125,7 +125,7 @@ class GetOffersController < ApplicationController
       :device               => @device,
       :currency             => @currency,
       :device_type          => params[:device_type],
-      :geoip_data           => get_geoip_data,
+      :geoip_data           => geoip_data,
       :type                 => type || params[:type],
       :app_version          => params[:app_version],
       :include_rating_offer => params[:rate_app_offer] != '0',

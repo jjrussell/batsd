@@ -4,7 +4,7 @@
 class ApplicationController < ActionController::Base
   helper :all # include all helpers, all the time
 
-  helper_method :get_geoip_data
+  helper_method :geoip_data
 
   before_filter :set_time_zone
   before_filter :fix_params
@@ -138,12 +138,12 @@ class ApplicationController < ActionController::Base
     @cached_ip_address = remote_ip.gsub(/,.*$/, '')
   end
 
-  def get_geoip_data
+  def geoip_data
     return @cached_geoip_data if @cached_geoip_data.present?
 
     @cached_geoip_data = {}
 
-    return @cached_geoip_data if @server_to_server == true && params[:device_ip].blank?
+    return @cached_geoip_data if @server_to_server && params[:device_ip].blank?
 
     ip = params[:device_ip] || ip_address
 
@@ -181,7 +181,7 @@ class ApplicationController < ActionController::Base
   end
 
   def geoip_location
-    "#{get_geoip_data[:city]}, #{get_geoip_data[:region]}, #{get_geoip_data[:country]} (#{ip_address})"
+    "#{geoip_data[:city]}, #{geoip_data[:region]}, #{geoip_data[:country]} (#{ip_address})"
   end
 
   def reject_banned_ips
@@ -223,7 +223,7 @@ class ApplicationController < ActionController::Base
   end
 
   def determine_link_affiliates
-    if App::TRADEDOUBLER_COUNTRIES.include?(get_geoip_data[:country])
+    if App::TRADEDOUBLER_COUNTRIES.include?(geoip_data[:country])
       @itunes_link_affiliate = 'tradedoubler'
     else
       @itunes_link_affiliate = 'linksynergy'

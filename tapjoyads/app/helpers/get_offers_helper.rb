@@ -24,7 +24,7 @@ module GetOffersHelper
       :app_version        => params[:app_version],
       :viewed_at          => @now,
       :exp                => params[:exp],
-      :primary_country    => get_geoip_data[:primary_country],
+      :primary_country    => geoip_data[:primary_country],
       :language_code      => params[:language_code],
       :display_multiplier => params[:display_multiplier],
       :device_name        => params[:device_name],
@@ -53,7 +53,7 @@ module GetOffersHelper
         :app_version        => params[:app_version],
         :viewed_at          => @now,
         :exp                => params[:exp],
-        :primary_country    => get_geoip_data[:primary_country],
+        :primary_country    => geoip_data[:primary_country],
         :display_multiplier => params[:display_multiplier],
         :library_version    => params[:library_version],
         :language_code      => params[:language_code])
