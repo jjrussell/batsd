@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120221194719) do
+ActiveRecord::Schema.define(:version => 20120221210048) do
 
   create_table "action_offers", :id => false, :force => true do |t|
     t.string   "id",                    :limit => 36,                    :null => false
@@ -941,6 +941,7 @@ ActiveRecord::Schema.define(:version => 20120221194719) do
     t.string   "api_key",                                                  :null => false
     t.string   "auth_net_cim_id"
     t.string   "reseller_id",             :limit => 36
+    t.string   "state"
   end
 
   add_index "users", ["email"], :name => "index_users_on_email"

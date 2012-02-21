@@ -8,6 +8,7 @@ class User < ActiveRecord::Base
     c.merge_validates_uniqueness_of_login_field_options(:case_sensitive => true)
     c.merge_validates_uniqueness_of_email_field_options(:case_sensitive => true)
   end
+  acts_as_approvable :on => :create, :state_field => :state
 
   has_many :role_assignments, :dependent => :destroy
   has_many :partner_assignments, :dependent => :destroy

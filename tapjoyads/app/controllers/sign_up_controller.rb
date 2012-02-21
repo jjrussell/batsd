@@ -18,13 +18,15 @@ class SignUpController < WebsiteController
     @user.time_zone = params[:user][:time_zone]
     @user.current_partner = Partner.new(:name => params[:partner_name] || @user.email, :contact_name => @user.email, :accepted_publisher_tos => true)
     @user.partners << @user.current_partner
-    if @user.save
+    if @user.save_without_session_maintenance
       flash[:notice] = 'Account successfully created.'
       TapjoyMailer.deliver_partner_signup(@user.email)
-      redirect_to apps_path
+      redirect_to welcome_sign_up_path
     else
       render :action => :new
     end
   end
 
+  def welcome
+  end
 end
