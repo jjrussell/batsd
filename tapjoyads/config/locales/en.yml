@@ -305,6 +305,7 @@ en:
       social_settings: "Social Settings"
       tap_that: "Just tap %{icon} and select %{button}"
       tapjoy_picks: "Tapjoy Picks"
+      thats_you: that's you
       terms_of_use_href: "terms of use"
       tos_acknowledge_html: "By checking this box I assert that I agree to the %{terms_of_use} & %{privacy_policy}"
       tos_change_acknowledge: "By checking this box I assert that I agree to the terms of service."

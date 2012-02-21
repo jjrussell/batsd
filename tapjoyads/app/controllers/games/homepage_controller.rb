@@ -13,11 +13,9 @@ class Games::HomepageController < GamesController
   end
 
   def get_app
-    render :layout => "games"
   end
 
   def review_app
-    render :layout => "games"
   end
 
   def my_apps

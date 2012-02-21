@@ -20,7 +20,7 @@ body {
 }
 
 .mod {
-  padding: 10px percentage(10/320);
+  padding: 10px 10px;
 }
 
 .elip {
@@ -188,7 +188,6 @@ input.ui-joy-button {
 }
 
 .get-app {
-  padding-top: 0;
   padding-bottom: 15px;
 }
 
@@ -198,10 +197,15 @@ input.ui-joy-button {
   @extend .light;
   height: 60px;
   margin: 0;
-  padding: 20px percentage(10/320);
+  padding: 20px 10px;
 
   .title {
     font-size: 1.2em;
+
+    .aside {
+      font-size: .7em;
+      font-style: italic;
+    }
   }
   .sub-title {
     font-size: .9em;
@@ -261,6 +265,12 @@ input.ui-joy-button {
   }
 }
 
+.page-header {
+  @extend .image-caption;
+
+  padding-bottom: 10px;
+}
+
 .review {
   font-size: .9em;
 
@@ -285,4 +295,52 @@ input.ui-joy-button {
     overflow: hidden;
     white-space: wrap;
   }
+}
+
+.titled-group {
+
+  .group-title {
+    padding-left: 10px;
+  }
+  >.bd {
+    position: static;
+    overflow: hidden;
+    margin-top: 10px;
+    @include rounded-corners(4px);
+    border: 1px solid #abacad;
+  }
+}
+
+.short-detail {
+  background-color: #eeeeee;
+  padding: 5px 10px;
+  border-bottom: 1px solid #c8c4c4;
+  box-shadow: 0 1px 0 #ffffff inset;
+
+  .hd {
+    font-size: .9em;
+    color: #a1a1a1;
+  }
+  .bd {
+  }
+}
+.short-detail:last-child {
+  border-bottom: none;
+}
+
+.simple {
+  padding: 10px 20px;
+  background-color: #eeeeee;
+  border-bottom: 1px solid #c8c4c4;
+  box-shadow: 0 1px 0 #ffffff inset;
+}
+.simple:first-child {
+  border-top: 1px solid #c8c4c4;
+}
+.simple:last-child {
+  box-shadow: 0 1px 0 #ffffff inset, 0 1px 0 #ffffff;
+}
+
+.footer-nav {
+  margin-top: 20px;
 }

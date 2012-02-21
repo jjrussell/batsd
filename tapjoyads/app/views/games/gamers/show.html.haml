@@ -1,0 +1,35 @@
+-content_for :styles do
+  = stylesheet_link_tag("games/get-app")
+#main.page.current
+  .mod.line-item.page-header
+    .hd
+      - if @gamer.get_avatar_url.present?
+        %img{ :src => @gamer.get_avatar_url }
+    .bd
+      .title.elip.clearfix
+        = @gamer.nickname
+        %span.aside
+          ="(#{t("text.games.thats_you")})"
+      .sub-title
+        [LAST PLAYED]
+  .mod.titled-group
+    .hd
+      .group-title Friends
+    .bd
+      .mod.short-detail
+        .hd
+          Following
+        .bd
+          343
+      .mod.short-detail
+        .hd
+          Followers
+        .bd
+          343
+  %ul.footer-nav
+    %li.simple
+      My Profile
+    %li.simple
+      Social Settings
+    %li.simple
+      Help
