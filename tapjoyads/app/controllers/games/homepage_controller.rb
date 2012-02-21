@@ -16,6 +16,10 @@ class Games::HomepageController < GamesController
     render :layout => "games"
   end
 
+  def review_app
+    render :layout => "games"
+  end
+
   def my_apps
     device_id = current_device_id
     @device = Device.new(:key => device_id) if device_id.present?
