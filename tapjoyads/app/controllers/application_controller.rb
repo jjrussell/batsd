@@ -133,7 +133,9 @@ class ApplicationController < ActionController::Base
   end
 
   def ip_address
-    @cached_ip_address ||= (request.headers['X-Forwarded-For'] || request.remote_ip).gsub(/,.*$/, '')
+    return @cached_ip_address if @cached_ip_address .present?
+    remote_ip = (request.headers['X-Forwarded-For'] || request.remote_ip)
+    @cached_ip_address = remote_ip.gsub(/,.*$/, '')
   end
 
   def get_geoip_data
