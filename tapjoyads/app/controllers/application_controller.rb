@@ -4,6 +4,8 @@
 class ApplicationController < ActionController::Base
   helper :all # include all helpers, all the time
 
+  helper_method :get_geoip_data
+
   before_filter :set_time_zone
   before_filter :fix_params
   before_filter :set_locale
@@ -18,7 +20,7 @@ class ApplicationController < ActionController::Base
   # from your application log (in this case, all fields with names like "password").
   filter_parameter_logging :password, :password_confirmation
 
-private
+  private
 
   SDKLESS_MIN_LIBRARY_VERSION = '8.2.0'
 
@@ -140,6 +142,9 @@ private
     return @cached_geoip_data if @cached_geoip_data.present?
 
     @cached_geoip_data = {}
+
+    return @cached_geoip_data if @server_to_server == true && params[:device_ip].blank?
+
     ip_address = params[:device_ip] || get_ip_address
 
     begin
@@ -159,8 +164,18 @@ private
       @cached_geoip_data[:area_code]   = geo_struct[:area_code]
       @cached_geoip_data[:dma_code]    = geo_struct[:dma_code]
     end
-    @cached_geoip_data[:user_country_code]    = params[:country_code].to_s.upcase if params[:country_code].present?
-    @cached_geoip_data[:carrier_country_code] = params[:carrier_country_code].to_s.upcase if params[:carrier_country_code].present?
+    @cached_geoip_data[:user_country_code]    = params[:country_code].present? ? params[:country_code].to_s.upcase : nil
+    @cached_geoip_data[:carrier_country_code] = params[:carrier_country_code].present? ? params[:carrier_country_code].to_s.upcase : nil
+
+    # TO REMOVE - we ideally should always be using the priority: carrier_country_code -> geoip_country -> user_country_code
+    # However, many of our server-to-server publishers are integrated incorrectly, so we have to switch the priority until they all
+    # fix their integration by properly sending us `library_version=server&device_ip=<ip_address>`.
+    # We will still prioritize geoip_country over user_country_code for Asian locations, due to potential fraud.
+    if @cached_geoip_data[:continent] == 'AS'
+      @cached_geoip_data[:primary_country] = params[:primary_country] || @cached_geoip_data[:carrier_country_code] || @cached_geoip_data[:country] || @cached_geoip_data[:user_country_code]
+    else
+      @cached_geoip_data[:primary_country] = params[:primary_country] || @cached_geoip_data[:carrier_country_code] || @cached_geoip_data[:user_country_code] || @cached_geoip_data[:country]
+    end
 
     @cached_geoip_data
   end

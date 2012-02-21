@@ -12,6 +12,7 @@ class VideosController < ApplicationController
   end
 
   def complete
+    return unless verify_params([ :id, :offer_id ])
     @video_offer = VideoOffer.find_in_cache(params[:id])
     @offer = Offer.find_in_cache(params[:offer_id])
     return unless verify_records([ @video_offer, @offer ])
@@ -23,9 +24,6 @@ class VideosController < ApplicationController
     params[:currency_id] ||= params[:app_id]
     return unless verify_params([ :app_id, :udid, :currency_id, :publisher_user_id ])
 
-    @geoip_data = get_geoip_data
-    @geoip_data[:country] = params[:country_code] if params[:country_code].present?
-
     @device = Device.new(:key => params[:udid])
     @publisher_app = App.find_in_cache(params[:app_id])
     @currency = Currency.find_in_cache(params[:currency_id])
@@ -35,15 +33,16 @@ class VideosController < ApplicationController
 
   def offer_list
     OfferList.new(
-      :device             => @device,
-      :publisher_app      => @publisher_app,
-      :currency           => @currency,
-      :device_type        => params[:device_type],
-      :geoip_data         => @geoip_data,
-      :os_version         => params[:os_version],
-      :type               => Offer::VIDEO_OFFER_TYPE,
-      :library_version    => params[:library_version],
-      :screen_layout_size => params[:screen_layout_size])
+      :device              => @device,
+      :publisher_app       => @publisher_app,
+      :currency            => @currency,
+      :device_type         => params[:device_type],
+      :geoip_data          => get_geoip_data,
+      :os_version          => params[:os_version],
+      :type                => Offer::VIDEO_OFFER_TYPE,
+      :library_version     => params[:library_version],
+      :screen_layout_size  => params[:screen_layout_size],
+      :mobile_carrier_code => "#{params[:mobile_country_code]}.#{params[:mobile_network_code]}")
   end
 
 end
