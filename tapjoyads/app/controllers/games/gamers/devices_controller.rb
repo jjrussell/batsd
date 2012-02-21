@@ -97,7 +97,7 @@ class Games::Gamers::DevicesController < GamesController
   def create_sub_click(primary_click, referral_count)
     now = Time.zone.now
 
-    click = Click.new(:key => "#{current_gamer.referred_by}.invite[#{referral_count}]")
+    click = Click.new(:key => "#{current_gamer.referred_by}.invite[#{referral_count}]", :add_to_conversion_queue => true)
     click.clicked_at        = now
     click.viewed_at         = now
     click.udid              = primary_click.udid
@@ -122,8 +122,5 @@ class Games::Gamers::DevicesController < GamesController
     click.device_name       = primary_click.device_name
 
     click.save
-
-    message = { :click_key => click.key, :install_timestamp => Time.zone.now.to_f.to_s }.to_json
-    Sqs.send_message(QueueNames::CONVERSION_TRACKING, message)
   end
 end
