@@ -8,12 +8,14 @@ describe App do
   it { should have_many :offers }
   it { should have_many :publisher_conversions }
   it { should have_many :rewarded_featured_offers }
+  it { should have_many :app_metadatas }
   it { should have_one :rating_offer }
   it { should have_one :primary_currency }
   it { should have_one :primary_offer }
   it { should have_one :primary_rewarded_featured_offer }
   it { should have_one :primary_non_rewarded_featured_offer }
   it { should have_one :primary_non_rewarded_offer }
+  it { should have_one :primary_app_metadata }
   it { should belong_to :partner }
 
   # Check validations
@@ -22,14 +24,18 @@ describe App do
 
   context 'An App' do
     before :each do
-      @app = Factory(:app, :price => 200)
+      @app = Factory(:app)
+      @app.app_metadatas << Factory(:app_metadata, :price => 200)
+      @app.save!
+      @app.reload
     end
 
     it "updates its offers' bids when its price changes" do
       offer = @app.primary_offer
-      @app.update_attributes({:price => 400})
+      @app.primary_app_metadata.update_attributes({:price => 400})
       offer.reload
       offer.bid.should equal(200)
+      offer.price.should equal(400)
     end
 
     it 'does not list North Korea as a possible appstore country' do
@@ -37,10 +43,42 @@ describe App do
     end
   end
 
+  describe '#can_have_new_currency?' do
+    before :each do
+      @app = Factory(:app)
+    end
+
+    context 'without currencies' do
+      it 'returns true ' do
+        @app.should be_can_have_new_currency
+      end
+    end
+
+    context 'without currency that has special callback' do
+      it 'returns true' do
+        Factory(:currency, :app_id => @app.id, :callback_url => 'http://foo.com')
+        Factory(:currency, :app_id => @app.id, :callback_url => 'http://bar.com')
+        @app.should be_can_have_new_currency
+      end
+    end
+
+    context 'with currency that has special callback' do
+      it 'returns false' do
+        special_url = Currency::SPECIAL_CALLBACK_URLS.sample
+        Factory(:currency, :app_id => @app.id, :callback_url => 'http://foo.com')
+        Factory(:currency, :app_id => @app.id, :callback_url => 'http://bar.com')
+        Factory(:currency, :app_id => @app.id, :callback_url => special_url)
+        @app.should_not be_can_have_new_currency
+      end
+    end
+  end
+
   context 'with Action Offers' do
     before :each do
       @action_offer = Factory(:action_offer)
       @app = @action_offer.app
+      @app_metadata = Factory(:app_metadata, :price => 200)
+      @app.app_metadatas << @app_metadata
     end
 
     it 'updates action offer hidden field' do
@@ -50,17 +88,18 @@ describe App do
       @action_offer.primary_offer.should_not be_tapjoy_enabled
     end
 
-    it 'updates action offer bids when its price changes' do
-      @app.update_attributes({:price => 400})
+    it "updates action offer bids when its price changes" do
+      @app_metadata.update_attributes({:price => 400})
       @action_offer.reload
       @action_offer.primary_offer.bid.should equal(200)
+      @action_offer.primary_offer.price.should equal(400)
     end
 
     it 'does not update action offer bids if it has a prerequisite offer' do
       @action_offer.prerequisite_offer = @app.primary_offer
       @action_offer.save
       offer = @action_offer.primary_offer
-      @app.update_attributes({:price => 400})
+      @app_metadata.update_attributes({:price => 400})
       offer.reload
       offer.bid.should equal(35)
     end
