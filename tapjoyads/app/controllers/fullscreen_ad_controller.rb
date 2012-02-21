@@ -30,7 +30,7 @@ class FullscreenAdController < ApplicationController
     end
     return unless verify_records(required_records)
 
-    @offer = @publisher_app.build_test_offer
+    @offer = @publisher_app.test_offer
     @now = params[:viewed_at].present? ? Time.zone.at(params[:viewed_at].to_f) : Time.zone.now
     render :action => :index
   end
@@ -45,7 +45,7 @@ class FullscreenAdController < ApplicationController
     end
     return unless verify_records(required_records)
 
-    @offer = @publisher_app.build_test_video_offer.primary_offer
+    @offer = @publisher_app.test_video_offer.primary_offer
     @now = params[:viewed_at].present? ? Time.zone.at(params[:viewed_at].to_f) : Time.zone.now
     render :action => :index
   end

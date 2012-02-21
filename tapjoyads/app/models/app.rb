@@ -328,7 +328,7 @@ class App < ActiveRecord::Base
     end
   end
 
-  def build_test_offer
+  def test_offer
     test_offer = Offer.new(
       :item_id            => id,
       :item_type          => 'TestOffer',
@@ -340,7 +340,7 @@ class App < ActiveRecord::Base
     test_offer
   end
 
-  def build_test_video_offer
+  def test_video_offer
     test_video_offer = VideoOffer.new(
       :name       => 'Test Video Offer (Visible to Test Devices)',
       :partner_id => partner_id,

@@ -73,10 +73,10 @@ describe App do
     end
   end
 
-  describe '#build_test_offer' do
+  describe '#test_offer' do
     before :each do
       @app = Factory(:app)
-      @test_offer = @app.build_test_offer
+      @test_offer = @app.test_offer
     end
 
     it 'creates test Offer with the same ID' do
@@ -86,10 +86,10 @@ describe App do
     end
   end
 
-  describe '#build_test_video_offer' do
+  describe '#test_video_offer' do
     before :each do
       @app = Factory(:app)
-      @test_video_offer = @app.build_test_video_offer
+      @test_video_offer = @app.test_video_offer
       @test_video_offer_primary_offer = @test_video_offer.primary_offer
     end
 
