@@ -79,14 +79,12 @@ ActiveRecord::Schema.define(:version => 20120216172034) do
     t.string   "author_id",   :limit => 36, :null => false
     t.string   "author_type",               :null => false
     t.text     "text",                      :null => false
-    t.date     "featured_on"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "platform"
   end
 
   add_index "app_reviews", ["app_id", "author_id"], :name => "index_app_reviews_on_app_id_and_author_id", :unique => true
-  add_index "app_reviews", ["featured_on", "platform"], :name => "index_app_reviews_on_featured_on_and_platform", :unique => true
   add_index "app_reviews", ["id"], :name => "index_app_reviews_on_id", :unique => true
 
   create_table "apps", :id => false, :force => true do |t|

@@ -24,7 +24,7 @@ describe FullscreenAdController do
     end
 
     it 'renders generated ad template' do
-      get :index, @params
+      get(:index, @params)
 
       response.should be_success
       response.should render_template("fullscreen_ad/index")
@@ -37,7 +37,7 @@ describe FullscreenAdController do
       end
 
       it 'renders custom creative template' do
-        get :index, @params
+        get(:index, @params)
 
         response.should be_success
         response.should render_template("fullscreen_ad/custom_creative")
@@ -45,7 +45,7 @@ describe FullscreenAdController do
       end
 
       it 'includes call-to-action button for rewarded' do
-        get :index, @params
+        get(:index, @params)
 
         reward_amount = @currency.get_visual_reward_amount(@offer)
         expected_text = "Earn #{reward_amount} #{@currency.name}"
@@ -56,7 +56,7 @@ describe FullscreenAdController do
       it 'includes call-to-action button for non-rewarded offers' do
         @offer.rewarded = false
 
-        get :index, @params
+        get(:index, @params)
 
         response.should be_success
         response.should have_tag('a', 'Download')

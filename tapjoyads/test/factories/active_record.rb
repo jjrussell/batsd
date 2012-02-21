@@ -69,11 +69,15 @@ FactoryGirl.define do
     year  { Date.today.year }
   end
 
+  factory :app_metadata do
+    store_name 'App Store'
+    store_id '123'
+  end
+
   factory :app do
     association :partner
     name { Factory.next(:name) }
     platform 'iphone'
-    store_id 'whatevs'
   end
 
   factory :enable_offer_request do
@@ -104,6 +108,14 @@ FactoryGirl.define do
     association :partner
     name { Factory.next(:name) }
     url 'http://ws.tapjoyads.com/healthz?click_key=TAPJOY_GENERIC'
+  end
+
+  factory :invite_offer, :parent => :generic_offer do
+    association :partner
+    id TAPJOY_GAMES_INVITATION_OFFER_ID
+    name { Factory.next(:name) }
+    category 'Social'
+    url "#{WEBSITE_URL}/games/gamer/social?advertiser_app_id=TAPJOY_GENERIC_INVITE"
   end
 
   factory :video_offer do
