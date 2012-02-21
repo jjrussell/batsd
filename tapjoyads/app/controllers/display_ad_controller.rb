@@ -75,17 +75,18 @@ class DisplayAdController < ApplicationController
       offer = build_test_offer(publisher_app)
     else
       offer = OfferList.new(
-        :publisher_app      => publisher_app,
-        :device             => device,
-        :currency           => currency,
-        :device_type        => params[:device_type],
-        :geoip_data         => get_geoip_data,
-        :app_version        => params[:app_version],
-        :os_version         => params[:os_version],
-        :type               => Offer::DISPLAY_OFFER_TYPE,
-        :source             => params[:source],
-        :library_version    => params[:library_version],
-        :screen_layout_size => params[:screen_layout_size]
+        :publisher_app       => publisher_app,
+        :device              => device,
+        :currency            => currency,
+        :device_type         => params[:device_type],
+        :geoip_data          => get_geoip_data,
+        :app_version         => params[:app_version],
+        :os_version          => params[:os_version],
+        :type                => Offer::DISPLAY_OFFER_TYPE,
+        :source              => params[:source],
+        :library_version     => params[:library_version],
+        :screen_layout_size  => params[:screen_layout_size],
+        :mobile_carrier_code => "#{params[:mobile_country_code]}.#{params[:mobile_network_code]}"
       ).weighted_rand
     end
 

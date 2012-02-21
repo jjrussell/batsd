@@ -4,6 +4,6 @@ class DeleteHasVirtualGoods < ActiveRecord::Migration
   end
 
   def self.down
-    add_column :currencies, :has_virtual_goods, :null => false, :default => false
+    add_column :currencies, :has_virtual_goods, :boolean, :null => false, :default => false
   end
 end

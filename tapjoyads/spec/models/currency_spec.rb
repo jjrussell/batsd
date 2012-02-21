@@ -24,6 +24,28 @@ describe Currency do
     it { should validate_numericality_of(:max_age_rating) }
   end
 
+  describe '#has_special_callback?' do
+    before :each do
+      @currency = Factory.build(:currency)
+    end
+
+    context 'when having special callbacks' do
+      it 'returns true' do
+        Currency::SPECIAL_CALLBACK_URLS.each do |url|
+          @currency.callback_url = url
+          @currency.should be_has_special_callback
+        end
+      end
+    end
+
+    context 'when not having special callbacks' do
+      it 'returns false' do
+        @currency.callback_url = 'http://example.com/foo'
+        @currency.should_not be_has_special_callback
+      end
+    end
+  end
+
   context 'A Currency' do
     before :each do
       @currency = Factory.build(:currency)
@@ -34,19 +56,19 @@ describe Currency do
         @offer = Factory(:rating_offer).primary_offer
       end
 
-      it 'should calculate publisher amounts' do
+      it 'calculates publisher amounts' do
         @currency.get_publisher_amount(@offer).should == 0
       end
 
-      it 'should calculate advertiser amounts' do
+      it 'calculates advertiser amounts' do
         @currency.get_advertiser_amount(@offer).should == 0
       end
 
-      it 'should calculate tapjoy amounts' do
+      it 'calculates tapjoy amounts' do
         @currency.get_tapjoy_amount(@offer).should == 0
       end
 
-      it 'should calculate reward amounts' do
+      it 'calculates reward amounts' do
         @currency.get_reward_amount(@offer).should == 15
       end
     end
@@ -57,19 +79,19 @@ describe Currency do
         @offer.update_attributes({:payment => 25})
       end
 
-      it 'should calculate publisher amounts' do
+      it 'calculates publisher amounts' do
         @currency.get_publisher_amount(@offer).should == 0
       end
 
-      it 'should calculate advertiser amounts' do
+      it 'calculates advertiser amounts' do
         @currency.get_advertiser_amount(@offer).should == 0
       end
 
-      it 'should calculate tapjoy amounts' do
+      it 'calculates tapjoy amounts' do
         @currency.get_tapjoy_amount(@offer).should == 0
       end
 
-      it 'should calculate reward amounts' do
+      it 'calculates reward amounts' do
         @currency.get_reward_amount(@offer).should == 25
       end
     end
@@ -80,19 +102,19 @@ describe Currency do
         @offer.update_attributes({:payment => 25})
       end
 
-      it 'should calculate publisher amounts' do
+      it 'calculates publisher amounts' do
         @currency.get_publisher_amount(@offer).should == 12
       end
 
-      it 'should calculate advertiser amounts' do
+      it 'calculates advertiser amounts' do
         @currency.get_advertiser_amount(@offer).should == -25
       end
 
-      it 'should calculate tapjoy amounts' do
+      it 'calculates tapjoy amounts' do
         @currency.get_tapjoy_amount(@offer).should == 13
       end
 
-      it 'should calculate reward amounts' do
+      it 'calculates reward amounts' do
         @currency.get_reward_amount(@offer).should == 12
       end
     end
@@ -104,23 +126,23 @@ describe Currency do
         @displayer_app = Factory(:app)
       end
 
-      it 'should calculate publisher amounts' do
+      it 'calculates publisher amounts' do
         @currency.get_publisher_amount(@offer, @displayer_app).should == 0
       end
 
-      it 'should calculate advertiser amounts' do
+      it 'calculates advertiser amounts' do
         @currency.get_advertiser_amount(@offer).should == -25
       end
 
-      it 'should calculate tapjoy amounts' do
+      it 'calculates tapjoy amounts' do
         @currency.get_tapjoy_amount(@offer, @displayer_app).should == 13
       end
 
-      it 'should calculate reward amounts' do
+      it 'calculates reward amounts' do
         @currency.get_reward_amount(@offer).should == 12
       end
 
-      it 'should calculate displayer amounts' do
+      it 'calculates displayer amounts' do
         @currency.get_displayer_amount(@offer, @displayer_app).should == 12
       end
     end
@@ -132,23 +154,23 @@ describe Currency do
         @displayer_app = @currency.app
       end
 
-      it 'should calculate publisher amounts' do
+      it 'calculates publisher amounts' do
         @currency.get_publisher_amount(@offer, @displayer_app).should == 0
       end
 
-      it 'should calculate advertiser amounts' do
+      it 'calculates advertiser amounts' do
         @currency.get_advertiser_amount(@offer).should == -25
       end
 
-      it 'should calculate tapjoy amounts' do
+      it 'calculates tapjoy amounts' do
         @currency.get_tapjoy_amount(@offer, @displayer_app).should == 13
       end
 
-      it 'should calculate reward amounts' do
+      it 'calculates reward amounts' do
         @currency.get_reward_amount(@offer).should == 12
       end
 
-      it 'should calculate displayer amounts' do
+      it 'calculates displayer amounts' do
         @currency.get_displayer_amount(@offer, @displayer_app).should == 12
       end
     end
@@ -161,19 +183,19 @@ describe Currency do
         @offer.direct_pay = Offer::DIRECT_PAY_PROVIDERS.first
       end
 
-      it 'should calculate publisher amounts' do
+      it 'calculates publisher amounts' do
         @currency.get_publisher_amount(@offer).should == 100
       end
 
-      it 'should calculate advertiser amounts' do
+      it 'calculates advertiser amounts' do
         @currency.get_advertiser_amount(@offer).should == -100
       end
 
-      it 'should calculate tapjoy amounts' do
+      it 'calculates tapjoy amounts' do
         @currency.get_tapjoy_amount(@offer).should == 0
       end
 
-      it 'should calculate reward amounts' do
+      it 'calculates reward amounts' do
         @currency.get_reward_amount(@offer).should == 50
       end
     end
@@ -189,7 +211,7 @@ describe Currency do
         @currency.partner = partner
       end
 
-      it 'should copy values from its partner' do
+      it 'copies values from its partner' do
         @currency.save!
         @currency.spend_share.should == 0.42
         @currency.direct_pay_share.should == 0.8
@@ -199,7 +221,7 @@ describe Currency do
       end
 
       context 'when not tapjoy-managed' do
-        it 'should validate callback url' do
+        it 'validates callback url' do
           Resolv.stubs(:getaddress).raises(URI::InvalidURIError)
           @currency.callback_url = 'http://tapjoy' # invalid url
           @currency.save
