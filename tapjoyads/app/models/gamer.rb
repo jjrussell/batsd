@@ -141,8 +141,8 @@ class Gamer < ActiveRecord::Base
     ObjectEncryptor.encrypt("#{id},#{advertiser_app_id}")
   end
 
-  def review_for(app_id)
-    app_reviews.find_by_app_id(app_id)
+  def review_for(app_metadata_id)
+    app_reviews.find_by_app_metadata_id(app_metadata_id)
   end
 
   private

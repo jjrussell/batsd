@@ -5,7 +5,7 @@
     .offer_title.title
       = app.name
     .review_meta.clearfix
-      %span.gamer_overall_rating{ :rating => app.positive_thumbs_percentage, :threshold => "#{App::RATING_THRESHOLD}", :total => "#{app.total_thumbs_count}" }
+      %span.gamer_overall_rating{ :rating => app_metadata.positive_thumbs_percentage, :threshold => "#{AppMetadata::RATING_THRESHOLD}", :total => "#{app_metadata.total_thumbs_count}" }
 
 - content_for :page_javascript do
   :plain

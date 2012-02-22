@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120216172034) do
+ActiveRecord::Schema.define(:version => 20120222003237) do
 
   create_table "action_offers", :id => false, :force => true do |t|
     t.string   "id",                    :limit => 36,                    :null => false
@@ -68,21 +68,24 @@ ActiveRecord::Schema.define(:version => 20120216172034) do
     t.string   "categories"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "thumbs_up",                       :default => 0
+    t.integer  "thumbs_down",                     :default => 0
   end
 
   add_index "app_metadatas", ["id"], :name => "index_app_metadatas_on_id", :unique => true
   add_index "app_metadatas", ["store_name", "store_id"], :name => "index_app_metadatas_on_store_name_and_store_id", :unique => true
 
   create_table "app_reviews", :id => false, :force => true do |t|
-    t.string   "id",          :limit => 36,                :null => false
-    t.string   "app_id",      :limit => 36,                :null => false
-    t.string   "author_id",   :limit => 36,                :null => false
-    t.string   "author_type",                              :null => false
-    t.text     "text",                                     :null => false
+    t.string   "id",              :limit => 36,                :null => false
+    t.string   "app_id",          :limit => 36
+    t.string   "author_id",       :limit => 36,                :null => false
+    t.string   "author_type",                                  :null => false
+    t.text     "text",                                         :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "platform"
-    t.integer  "user_rating",               :default => 0
+    t.string   "app_metadata_id", :limit => 36,                :null => false
+    t.integer  "user_rating",                   :default => 0
   end
 
   add_index "app_reviews", ["app_id", "author_id"], :name => "index_app_reviews_on_app_id_and_author_id", :unique => true
@@ -112,8 +115,6 @@ ActiveRecord::Schema.define(:version => 20120216172034) do
     t.string   "categories"
     t.text     "countries_blacklist"
     t.integer  "papaya_user_count"
-    t.integer  "thumb_up_count",                        :default => 0
-    t.integer  "thumb_down_count",                      :default => 0
   end
 
   add_index "apps", ["id"], :name => "index_apps_on_id", :unique => true

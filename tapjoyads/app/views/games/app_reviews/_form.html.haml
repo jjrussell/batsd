@@ -1,6 +1,6 @@
 .write_review.clearfix
   - form_for([:games, @app_review]) do |f|
-    = f.hidden_field :app_id, :value => params[:app_id]
+    = f.hidden_field :app_metadata_id, :value => params[:app_metadata_id]
     = f.hidden_field :author_type, :value => 'Gamer'
     = f.hidden_field :author_id, :value => current_gamer.id
     .offer_image

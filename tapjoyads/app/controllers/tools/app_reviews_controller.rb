@@ -4,9 +4,9 @@ class Tools::AppReviewsController < WebsiteController
   filter_access_to :all
 
   def index
-    if params[:app_id]
-      @app = App.find(params[:app_id])
-      @app_reviews = @app.app_reviews.ordered_by_date
+    if params[:app_metadata_id]
+      @app_metadata = AppMetadata.find(params[:app_metadata_id])
+      @app_reviews = @app_metadata.app_reviews.ordered_by_date
     elsif params[:author_type] == 'Employee' && params[:author_id]
       @author = Employee.find(params[:author_id])
       @app_reviews = @author.app_reviews.ordered_by_date
@@ -19,7 +19,7 @@ class Tools::AppReviewsController < WebsiteController
   end
 
   def new
-    @app_review = AppReview.new(:app_id => params[:app_id])
+    @app_review = AppReview.new(:app_metadata_id => params[:app_metadata_id])
     @employees = Employee.active_by_first_name
   end
 

@@ -27,7 +27,7 @@
   %tbody
     - @app_reviews.each do |app_review|
       %tr
-        %td= link_to(app_review.app_name, tools_app_reviews_path(:app_id => app_review.app_id))
+        %td= link_to(app_review.app_metadata_name, tools_app_reviews_path(:app_id => app_review.app_id))
         %td= link_to(app_review.author_name, tools_app_reviews_path(:author_id => app_review.author_id, :author_type => app_review.author_type))
         %td= app_review.platform
         %td= app_review.text

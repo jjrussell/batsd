@@ -2,12 +2,16 @@ class AppMetadata < ActiveRecord::Base
   include UuidPrimaryKey
 
   PLATFORMS = {'App Store' => 'iphone', 'Market' => 'android', 'Marketplace' => 'windows'}
+  RATING_THRESHOLD = 0.6
 
   has_many :app_metadata_mappings
   has_many :apps, :through => :app_metadata_mappings
+  has_many :app_reviews
 
   validates_presence_of :store_name, :store_id
   validates_uniqueness_of :store_id, :scope => [ :store_name ]
+  validates_numericality_of :thumb_up_count, :only_integer => true, :greater_than_or_equal_to => 0, :allow_nil => false
+  validates_numericality_of :thumb_down_count, :only_integer => true, :greater_than_or_equal_to => 0, :allow_nil => false
 
   after_update :update_apps
 
@@ -42,6 +46,15 @@ class AppMetadata < ActiveRecord::Base
     self.user_rating         = data[:user_rating]
     self.categories          = data[:categories]
     self.supported_devices   = data[:supported_devices].present? ? data[:supported_devices].to_json : nil
+  end
+
+  def total_thumbs_count
+    thumbs_up + thumbs_down
+  end
+
+  def positive_thumbs_percentage
+    total = total_thumbs_count
+    total > 0 ? ((thumbs_up.to_f / total) * 100).round(2) : 0
   end
 
   private

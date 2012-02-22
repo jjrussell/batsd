@@ -6,9 +6,9 @@
         Reviews
     #reviews_button_arrow.tab_button_bottom_arrrow_wrapper
       .tab_button_bottom_arrrow
-    = render 'review_summary', :app => @app
+    = render 'review_summary', :app => @app, :app_metadata => @app_metadata
     .write_review_label My Review
-    = render 'form', :app => @app
+    = render 'form'
     .separator.clearfix
     = render 'review_list', :app_reviews => @app_reviews
     #back_to_top_button.tab_button.dark_grey

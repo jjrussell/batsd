@@ -1,4 +1,4 @@
-- if params[:app_id]
+- if params[:app_metadata_id]
   = render 'new'
 - else
   #jqt
@@ -24,7 +24,7 @@
                     %tbody
                       - @app_reviews.each do |app_review|
                         %tr
-                          %td= truncate(app_review.app_name, :length => 20)
+                          %td= truncate(app_review.app_metadata_name, :length => 20)
                           %td{ :align => "center"}
                             - if app_review.user_rating > 0
                               .thumb_up
