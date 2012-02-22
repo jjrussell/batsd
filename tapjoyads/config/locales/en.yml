@@ -294,6 +294,7 @@ en:
       recipients_label: "Use commas to separate multiple emails"
       recommendations: Recommendations
       registering: Registering
+      review_app_name: Review %{app_name}
       select_current_device: "Please select your current device"
       select_device: "Please select your device"
       select_friend: "Please select at least one friend before sending out an invite"

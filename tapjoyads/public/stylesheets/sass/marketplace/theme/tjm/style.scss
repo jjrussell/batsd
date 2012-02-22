@@ -464,10 +464,12 @@ a:hover {
 }
 
 .down-arrow {
+  padding-right: 20px;
   background: url('/images/games/ui-joy-d-arrow.png') no-repeat 96% center;
 }
 
 .right-arrow {
+  padding-right: 25px;
   background: url('/images/games/ui-joy-r-arrow.png') no-repeat 96% center;
 }
 
@@ -484,7 +486,7 @@ a:hover {
   padding: 10px 10px;
 }
 
-ul.basic {
+.basic {
   margin: 0;
   padding: 0;
 
@@ -539,6 +541,7 @@ ul.basic {
     width: percentage(69/300);
     float: right;
     line-height: 60px;
+    text-align: right;
   }
 }
 
@@ -562,10 +565,38 @@ ul.basic {
 //-------------------------------------------
 // Individual element structure
 //-------------------------------------------
+.titled-group {
+
+  .group-title {
+    padding-left: 10px;
+    font-weight: bold;
+  }
+  >.bd {
+    position: static;
+    overflow: hidden;
+    margin-top: 10px;
+    @include rounded-corners(4px);
+    border: 1px solid #abacad;
+  }
+}
+
+.short-detail {
+  padding: 5px 10px;
+
+  .hd {
+    font-size: .9em;
+    color: #5b5b5b;
+  }
+  .bd {
+    font-size: 1.1em;
+    font-weight: bold;
+  }
+}
+
 .social-info {
   box-shadow: 0 0px 1px rgba(169, 169, 169, 1.0) inset, 0 1px 0 rgba(200, 200, 200, 1.0);
   position: relative;
-  z-index: 30;
+  z-index: 10;
 }
 
 .menu-head {
@@ -574,7 +605,7 @@ ul.basic {
   box-shadow: 0 1px 1px #535353;
   text-shadow: 0 1px 0 #ffffff;
   position: relative;
-  z-index: 30;
+  z-index: 10;
 }
 
 .app-summary {
@@ -605,11 +636,96 @@ ul.basic {
   }
 }
 
+.review-area {
+  padding-top: 20px;
+  padding-bottom: 20px;
+}
+
+//-------------------------------------------
+// Buttons
+//-------------------------------------------
+.ui-joy-button {
+  @include rounded-corners(4px);
+  @include shadow(#ddd, 1px);
+  @include text-shadow(0, -1px, 1px, #888888);
+  display: block;
+  color: white;
+  text-align: center;
+  font-size: 1.1em;
+
+  a {
+    color: white;
+  }
+  a.icon-center {
+    @extend a.text-center;
+    padding: 6px 8px 0px 8px;
+  }
+}
+
+input.ui-joy-button {
+  padding: 6px 8px 7px 8px;
+  width: 100%;
+  -webkit-appearance: none;
+}
+
+.button-group {
+  @extend .clearfix;
+  padding: 0;
+
+  .ui-joy-button {
+    @extend .border-box;
+    width: 49%;
+    float: left;
+  }
+  .ui-joy-button:first-child {
+    margin-right: 2%;
+  }
+}
+
+.orange-action {
+  @include gradient-top(#ffc000,#ffb300, #ff9200, #ff8600);
+  border: 1px solid #f49700;
+  border-top: 1px solid #ffebab;
+  border-bottom: 1px solid #a35500;
+}
+
+
+.grey-action {
+  @extend .ui-joy-button;
+  @include gradient-top(#c9c9c9,#bababa, #999999, #868686);
+  border-bottom: 1px solid rgba(85,85,85,1.0);
+
+  .active-image {
+    display: none;
+  }
+  .inactive-image {
+    display: block;
+  }
+}
+
+.grey-action.disabled {
+  @include gradient-top(#d3d3d3,#c9c9c9, #bdbdbd, #b7b7b7);
+  box-shadow: 0 1px 0 #e9e9e9 inset;
+  border: 1px solid #a5a5a5;
+  border-top: 1px solid #acacac;
+  border-bottom: 1px solid #9b9b9b;
+}
+
+li.list-button {
+  @extend .beveled;
+  padding: 10px 20px;
+}
 //-------------------------------------------
 // Skins
 //-------------------------------------------
-.beveled {
+.light {
+ // @include radial-gradient(rgba(255,255,255,0.8), rgba(240,240,240,0.3), rgba(230,230,230,0.2));
+}
+.contrast {
   background-color: #eeeeee;
+}
+
+.beveled {
   border-bottom: 1px solid #c8c4c4;
   box-shadow: 0 1px 0 #ffffff inset;
 }
@@ -620,4 +736,13 @@ ul.basic {
   box-shadow: 0 1px 0 #ffffff inset, 0 1px 0 #ffffff;
 }
 
-
+.inner-split {
+  @extend .beveled;
+}
+.inner-split:first-child {
+  box-shadow: none;
+  border-top: none;
+}
+.inner-split:last-child {
+  border-bottom: none;
+}

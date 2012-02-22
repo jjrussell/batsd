@@ -55,6 +55,10 @@ $mobile-scaledown-multiplier: 2;
   @include rounded-corners($radius)
 }
 
+@mixin text-shadow($x:0, $y:1px, $spread:1px, $color:rgba(37, 37, 37, .4)) {
+  text-shadow: $x $y $spread $color;
+}
+
 @mixin inset-shadow($color: $border-color, $length: 4px) {
   -webkit-box-shadow: inset 0 0 $length $color;
   -moz-box-shadow: inset 0 0 $length $color;
@@ -122,7 +126,16 @@ $mobile-scaledown-multiplier: 2;
   background: linear-gradient(top,  $p0 0%, $p25 25%, $p75 75%, $p100 100%); /* W3C */
   filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#{$p0}', endColorstr='#{$p100}',GradientType=0 ); /* IE6-9 */
 }
-
+@mixin radial-gradient($p0, $p75, $p100) {
+  background: $p0; /* Old browsers */
+  background: -moz-radial-gradient(center, ellipse cover,  $p0 0%, $p75 75%, $p100 100%); /* FF3.6+ */
+  background: -webkit-gradient(radial, center center, 0px, center center, 100%, color-stop(0%,$p0), color-stop(75%,$p75), color-stop(100%,$p100)); /* Chrome,Safari4+ */
+  background: -webkit-radial-gradient(center, ellipse cover,  $p0 0%,$p75 75%,$p100 100%); /* Chrome10+,Safari5.1+ */
+  background: -o-radial-gradient(center, ellipse cover,  $p0 0%,$p75 75%,$p100 100%); /* Opera 12+ */
+  background: -ms-radial-gradient(center, ellipse cover,  $p0 0%,$p75 75%,$p100 100%); /* IE10+ */
+  background: radial-gradient(center, ellipse cover,  $p0 0%,$p75 75%,$p100 100%); /* W3C */
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#{$p0}', endColorstr='#{$p100}',GradientType=1 ); /* IE6-9 fallback on horizontal gradient */
+}
 @mixin gradient($from, $to){
   background: -moz-linear-gradient(top, $from 0%, $to 100%);
   background: -webkit-gradient(linear, 0 0, 0 100%, color-stop(0, $from), color-stop(1, $to));

@@ -37,7 +37,7 @@
             - link_to(games_root_path, :class => "") do
               .more_apps
                 %span= t('text.games.more_apps')
-            - link_to(edit_games_gamer_path, :class => "") do
+            - link_to(games_gamer_path(), :class => "") do
               .profile
                 %span= t('text.games.profile')
         .menu-subnav

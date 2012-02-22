@@ -19,7 +19,7 @@
         &nbsp;
     =render("offers")
     .button-container
-      .ui-joy-button.grey-action
+      .mod.ui-joy-button.grey-action
         %a.text-center
-          Review #{@external_publisher.app_name}
+          = t("text.games.review_app_name", :app_name => @external_publisher.app_name)
     =render("games/shared/footer")

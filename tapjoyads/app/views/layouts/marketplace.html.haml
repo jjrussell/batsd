@@ -16,6 +16,7 @@
 
     = stylesheet_link_tag("marketplace/resources/reset")
     = stylesheet_link_tag("marketplace/resources/base")
+    = stylesheet_link_tag("marketplace/resources/components/button/button")
 
     /[if IE 8]
       = stylesheet_link_tag('marketplace/ie8')
@@ -41,7 +42,7 @@
         .headerwrap
           .wrap
             .container
-              = render :partial => 'nav_bar', :locals => { :show_device => true }
+              = render :partial => 'games/homepage/nav_bar', :locals => { :show_device => true }
       .content
         .contentwrap
           .wrap

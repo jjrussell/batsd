@@ -1,6 +1,6 @@
 -content_for :styles do
   = stylesheet_link_tag("games/get-app")
-#main.page.current
+#show.current
   .mod.line-item.page-header
     .hd
       - if @gamer.get_avatar_url.present?
@@ -15,21 +15,21 @@
   .mod.titled-group
     .hd
       .group-title Friends
-    .bd
-      .mod.short-detail
+    .bd.contrast.beveled
+      .mod.short-detail.inner-split
         .hd
           Following
         .bd
           343
-      .mod.short-detail
+      .mod.short-detail.inner-split
         .hd
           Followers
         .bd
           343
-  %ul.footer-nav
-    %li.simple
+  %ul.basic.contrast
+    %li.list-button
       My Profile
-    %li.simple
+    %li.list-button
       Social Settings
-    %li.simple
+    %li.list-button
       Help
