@@ -27,15 +27,11 @@
                   .collect
                     - link_to(games_earn_path(currency[:id])) do
                       = t('text.games.earn', :currency => currency[:name])
-<<<<<<< HEAD
               .ft
                 - link_to(games_earn_path(external_publisher.currencies.first[:id])) do
                   .right-arrow
                     .ui-list-action-label
                       = t('text.shared.collect')
-=======
-
->>>>>>> 8c3ab4cccfc2805f2ffa49944ab933fb589e36e0
 
 - content_for :included_javascripts do
   = javascript_include_tag "games/src/marketplace"
