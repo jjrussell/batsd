@@ -274,8 +274,8 @@ describe Offer do
         @offer.device_types = %w( windows ).to_json
       end
 
-      it "has a min_bid of 25" do
-        @offer.min_bid.should == 25
+      it "has a min_bid of 10" do
+        @offer.min_bid.should == 10
       end
     end
 
@@ -284,8 +284,8 @@ describe Offer do
         @offer.device_types = %w( android ).to_json
       end
 
-      it "has a min_bid of 25" do
-        @offer.min_bid.should == 25
+      it "has a min_bid of 10" do
+        @offer.min_bid.should == 10
       end
     end
 
@@ -294,8 +294,8 @@ describe Offer do
         @offer.device_types = %w( iphone ).to_json
       end
 
-      it "has a min_bid of 35" do
-        @offer.min_bid.should == 35
+      it "has a min_bid of 10" do
+        @offer.min_bid.should == 10
       end
     end
   end
