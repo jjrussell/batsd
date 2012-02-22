@@ -171,7 +171,7 @@ describe Job::MasterReloadStatzController do
       partner_stats = actual_stats[@partner.id]
       partner_stats.should == expected_stats
 
-      partner_keys = [ 'partner', 'partner-ios', 'partner-android' ]
+      partner_keys = [ 'partner', 'partner-ios', 'partner-android', 'partner-windows' ]
       partner_keys.each do |key|
         start_time = Mc.get("statz.#{key}.last_updated_start.24_hours")
         start_time.should == @start_time.to_f
@@ -462,7 +462,7 @@ end
 
 def stub_appstats(granularity = :hourly)
   Appstats.expects(:new).
-    times(3).
+    times(4).
     with(@partner.id, has_entry(:granularity, granularity)).
     returns(@mock_appstats)
 end
