@@ -13,20 +13,35 @@ describe Games::Gamers::FavoriteAppController do
   end
 
   describe '#create' do
-    it 'fails when no app is provided' do
-      get('create')
-      should_respond_with_json_error(403)
+    context 'when no app is provided' do
+      before :each do
+        get('create')
+      end
+
+      it 'returns an error' do
+        should_respond_with_json_error(403)
+      end
     end
 
-    it 'fails when an invalid app is provided' do
-      get('create', { :app_id => 'NOT_A_GUID' })
-      should_respond_with_json_error(403)
+    context 'when an invalid app is provided' do
+      before :each do
+        get('create', { :app_id => 'NOT_A_GUID' })
+      end
+
+      it 'returns an error' do
+        should_respond_with_json_error(403)
+      end
     end
 
-    it 'fails if it is unable to save' do
-      FavoriteApp.any_instance.stubs(:save).returns(false)
-      get('create', @params)
-      should_respond_with_json_error(403)
+    context 'when unable to save' do
+      before :each do
+        FavoriteApp.any_instance.stubs(:save).returns(false)
+        get('create', @params)
+      end
+
+      it 'returns an error' do
+        should_respond_with_json_error(403)
+      end
     end
 
     it 'adds the app to the gamers favorite apps' do
@@ -41,14 +56,19 @@ describe Games::Gamers::FavoriteAppController do
       num_apps = @gamer.favorite_apps.length
       get('create', @params)
       should_respond_with_json_success(200)
-      assert_equal(@gamer.favorite_apps.length, num_apps)
+      @gamer.favorite_apps.length.should == num_apps
     end
   end
 
   describe '#destroy' do
-    it 'returns failure when no app is provided' do
-      get('destroy')
-      should_respond_with_json_error(403)
+    context 'when no app is provided' do
+      before :each do
+        get('destroy')
+      end
+
+      it 'should return an error' do
+        should_respond_with_json_error(403)
+      end
     end
 
     it 'deletes the app from the gamers favorite apps' do

@@ -5,10 +5,8 @@ describe FavoriteApp do
     fake_the_web
   end
 
-  context 'when associating' do
-    it 'belongs to' do
-      should belong_to :gamer
-      should belong_to :app
-    end
+  describe '.belongs_to' do
+    it { should belong_to :gamer }
+    it { should belong_to :app }
   end
 end
