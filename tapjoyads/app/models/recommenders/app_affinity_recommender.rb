@@ -31,7 +31,8 @@ class Recommenders::AppAffinityRecommender < Recommender
       # each line for the file for app recommendations has the format app;recommendations
       # where recommendations has the form app,weight;app,weight;...;app,weight
       app_id, recommendations = recs.split(/[;,]/, 2)
-      Mc.put("s3.recommendations.raw_list.by_app.#{app_id}", parse_recommendations(recommendations))
+      next if recommendations.nil?
+      Mc.put("s3.recommendations.raw_list.by_app.#{app_id}", parse_recommendations(recommendations)) rescue puts "error parsing recommendations for app \n#{recs}"
     end
   end
 
@@ -40,7 +41,8 @@ class Recommenders::AppAffinityRecommender < Recommender
       # each line for the file for app recommendations has the format app;recommendations
       # where recommendations has the form app,weight;app,weight;...;app,weight
       device_id, recommendations = recs.split(/[;,]/, 2)
-      Mc.put("s3.recommendations.raw_list.by_device.#{device_id}", parse_recommendations(recommendations))
+      next if recommendations.nil?
+      Mc.put("s3.recommendations.raw_list.by_device.#{device_id}", parse_recommendations(recommendations)) rescue puts "error parsing recommendations for device \n#{recs}"
     end
   end
 
