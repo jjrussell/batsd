@@ -31,21 +31,84 @@ class Conversion < ActiveRecord::Base
     'featured_install_jailbroken' => 2004,
     'featured_action'             => 2005,
     'featured_video'              => 2006,
+
+    # TJM types (all base types +3000)
+    'tjm_offer'                   => 3000,
+    'tjm_install'                 => 3001,
+    'tjm_rating'                  => 3002,
+    'tjm_generic'                 => 3003,
+    'tjm_install_jailbroken'      => 3004,
+    'tjm_action'                  => 3005,
+    'tjm_video'                   => 3006,
   }
 
   STAT_TO_REWARD_TYPE_MAP = {
-    'offers'                    => { :reward_types => [ 0, 2, 3, 5, 6 ],                                        :attr_name => 'publisher_app_id' },
-    'published_installs'        => { :reward_types => [ 1, 4 ],                                                 :attr_name => 'publisher_app_id' },
-    'display_conversions'       => { :reward_types => [ 1000, 1001, 1002, 1003, 1004, 1005, 1006 ],             :attr_name => 'publisher_app_id' },
-    'featured_published_offers' => { :reward_types => [ 2000, 2001, 2002, 2003, 2004, 2005, 2006 ],             :attr_name => 'publisher_app_id' },
-    'paid_installs'             => { :reward_types => [ 0, 1, 2, 3, 5, 6, 2000, 2001, 2002, 2003, 2005, 2006 ], :attr_name => 'advertiser_offer_id' },
-    'jailbroken_installs'       => { :reward_types => [ 4, 2004 ],                                              :attr_name => 'advertiser_offer_id' },
-    'offers_revenue'            => { :reward_types => [ 0, 2, 3, 5, 6 ],                                        :attr_name => 'publisher_app_id',    :sum_attr => :publisher_amount },
-    #'TJM_offerwall_revenue'     => { :reward_types => [ 0, 2, 3, 5, 6 ],                                        :attr_name => 'publisher_app_id',    :sum_attr => :publisher_amount },
-    'installs_revenue'          => { :reward_types => [ 1, 4 ],                                                 :attr_name => 'publisher_app_id',    :sum_attr => :publisher_amount },
-    'display_revenue'           => { :reward_types => [ 1000, 1001, 1002, 1003, 1004, 1005, 1006 ],             :attr_name => 'publisher_app_id',    :sum_attr => :publisher_amount },
-    'featured_revenue'          => { :reward_types => [ 2000, 2001, 2002, 2003, 2004, 2005, 2006 ],             :attr_name => 'publisher_app_id',    :sum_attr => :publisher_amount },
-    'installs_spend'            => { :reward_types => [ 0, 1, 2, 3, 5, 6, 2000, 2001, 2002, 2003, 2005, 2006 ], :attr_name => 'advertiser_offer_id', :sum_attr => :advertiser_amount },
+    'offers' => {
+      :reward_types => [ 0, 2, 3, 5, 6 ],
+      :attr_name    => 'publisher_app_id' },
+
+    'published_installs' => {
+      :reward_types => [ 1, 4 ],
+      :attr_name    => 'publisher_app_id' },
+
+    'display_conversions' => {
+      :reward_types => [ 1000, 1001, 1002, 1003, 1004, 1005, 1006 ],
+      :attr_name    => 'publisher_app_id' },
+
+    'featured_published_offers' => {
+      :reward_types => [ 2000, 2001, 2002, 2003, 2004, 2005, 2006 ],
+      :attr_name    => 'publisher_app_id' },
+
+    'paid_installs' => {
+      :reward_types => [ 0, 1, 2, 3, 5, 6, 2000, 2001, 2002, 2003, 2005, 2006, 3000, 3001, 3002, 3003, 3005, 3006 ],
+      :attr_name    => 'advertiser_offer_id' },
+
+    'jailbroken_installs' => {
+      :reward_types => [ 4, 2004, 3004 ],
+      :attr_name    => 'advertiser_offer_id' },
+
+    'offers_revenue' => {
+      :reward_types => [ 0, 2, 3, 5, 6 ],
+      :attr_name    => 'publisher_app_id',
+      :sum_attr     => :publisher_amount },
+
+    'installs_revenue' => {
+      :reward_types => [ 1, 4 ],
+      :attr_name    => 'publisher_app_id',
+      :sum_attr     => :publisher_amount },
+
+    'display_revenue' => {
+      :reward_types => [ 1000, 1001, 1002, 1003, 1004, 1005, 1006 ],
+      :attr_name    => 'publisher_app_id',
+      :sum_attr     => :publisher_amount },
+
+    'featured_revenue' => {
+      :reward_types => [ 2000, 2001, 2002, 2003, 2004, 2005, 2006 ],
+      :attr_name    => 'publisher_app_id',
+      :sum_attr     => :publisher_amount },
+
+    'installs_spend' => {
+      :reward_types => [ 0, 1, 2, 3, 5, 6, 2000, 2001, 2002, 2003, 2005, 2006, 3000, 3001, 3002, 3003, 3005, 3006 ],
+      :attr_name    => 'advertiser_offer_id',
+      :sum_attr     => :advertiser_amount },
+
+    'tjm_offers' => {
+      :reward_types => [ 3000, 3002, 3003, 3005, 3006 ],
+      :attr_name    => 'publisher_app_id' },
+
+    'tjm_published_installs' => {
+      :reward_types => [ 3001, 3004 ],
+      :attr_name    => 'publisher_app_id' },
+
+    'tjm_offers_revenue' => {
+      :reward_types => [ 3000, 3002, 3003, 3005, 3006 ],
+      :attr_name    => 'publisher_app_id',
+      :sum_attr     => :publisher_amount },
+
+    'tjm_installs_revenue' => {
+      :reward_types => [ 3001, 3004 ],
+      :attr_name    => 'publisher_app_id',
+      :sum_attr     => :publisher_amount },
   }
 
   belongs_to :publisher_app, :class_name => 'App'
@@ -90,6 +153,20 @@ class Conversion < ActiveRecord::Base
       [ { :stat => 'jailbroken_installs',       :attr => :advertiser_offer_id },
         { :stat => 'featured_published_offers', :attr => :publisher_app_id },
         { :stat => 'featured_revenue',          :attr => :publisher_app_id, :increment => :publisher_amount } ]
+    when 3000, 3002, 3003, 3005, 3006
+      [ { :stat => 'tjm_offers',         :attr => :publisher_app_id },
+        { :stat => 'paid_installs',      :attr => :advertiser_offer_id },
+        { :stat => 'tjm_offers_revenue', :attr => :publisher_app_id,    :increment => :publisher_amount },
+        { :stat => 'installs_spend',     :attr => :advertiser_offer_id, :increment => :advertiser_amount } ]
+    when 3001
+      [ { :stat => 'tjm_published_installs', :attr => :publisher_app_id },
+        { :stat => 'paid_installs',          :attr => :advertiser_offer_id },
+        { :stat => 'tjm_installs_revenue',   :attr => :publisher_app_id,    :increment => :publisher_amount },
+        { :stat => 'installs_spend',         :attr => :advertiser_offer_id, :increment => :advertiser_amount } ]
+    when 3004
+      [ { :stat => 'jailbroken_installs',    :attr => :advertiser_offer_id },
+        { :stat => 'tjm_published_installs', :attr => :publisher_app_id },
+        { :stat => 'tjm_installs_revenue',   :attr => :publisher_app_id, :increment => :publisher_amount } ]
     else
       []
     end
