@@ -3,9 +3,13 @@
 
 .container
   - if @current_gamer.nil?
-    #login-web.right
-      #login-web-wrapper
-        %span= t('text.shared.login_verb')
+    .right
+      #login.button
+        Log in
+
+      #login-web
+        #login-web-wrapper
+          %span= t('text.shared.login_verb')
 
   .nav
     - if @current_gamer.present?

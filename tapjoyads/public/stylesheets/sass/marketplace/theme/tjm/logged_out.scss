@@ -607,7 +607,7 @@ span.gill {
     background: transparent url(#{$image_path}/noise_bg.png) repeat top left;
   }
 
-  #header {
+  .header {
     position: relative;
 
     .headerwrap {
@@ -631,9 +631,6 @@ span.gill {
             border: 0;
           }
       }
-      #login-web {
-        display: none;
-      }
     }
   }
 
@@ -655,7 +652,8 @@ span.gill {
   #footer,
   #content span.gill,
   #body,
-  #labels {
+  #labels,
+  #login-web {
     display: none !important;
   }
 
@@ -665,7 +663,6 @@ span.gill {
     border-bottom: 0;
     min-height: 50px;
   }
-
 
   #favorites,
   #paging,
@@ -701,7 +698,6 @@ span.gill {
     font-weight: 400;
   }
 
-
 }
 
 @media screen and (max-width: 320px) {
@@ -715,6 +711,7 @@ span.gill {
     font-size: 14px;
     line-height: 15px;
     margin-top: 6px;
+    text-align: center;
   }
 
   #favorites .mobilejoy {
@@ -762,7 +759,7 @@ span.gill {
   background: linear-gradient(top, rgba(232,39,44,1) 0%,rgba(226,31,35,1) 29%,rgba(213,12,14,1) 64%,rgba(205,1,1,1) 100%);
   filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#e8272c', endColorstr='#cd0101',GradientType=0 );
   border-top: 1px solid rgba(255,255,255, .4);
-  text-shadow: 0 -2px 0 #cd0202;
+  text-shadow: 0 -1px 0 #cd0202;
 }
 
 #signup {
@@ -775,7 +772,6 @@ span.gill {
   background: -ms-linear-gradient(top, rgba(255,190,0,1) 0%,rgba(255,173,0,1) 42%,rgba(255,150,0,1) 71%,rgba(255,134,0,1) 100%);
   background: linear-gradient(top, rgba(255,190,0,1) 0%,rgba(255,173,0,1) 42%,rgba(255,150,0,1) 71%,rgba(255,134,0,1) 100%);
   filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffbe00', endColorstr='#ff8600',GradientType=0 );
-  border-bottom: 1px solid #a35500;
   margin: 10px;
   text-shadow: 0 -1px 0 #d47f1b;
   border-top: 1px solid #ffebab;
