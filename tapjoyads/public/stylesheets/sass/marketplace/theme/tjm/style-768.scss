@@ -1,5 +1,10 @@
+//-------------------------------------------
+
 $image_path: "/images/marketplace/themes/tjm";
 @import "../../tjm-mixins.scss";
+
+//-------------------------------------------
+
 //-------------------------------------------
 // Line item structure
 //-------------------------------------------
@@ -79,6 +84,7 @@ $image_path: "/images/marketplace/themes/tjm";
 
 .apps .icon {
   position: relative;
+  top: 1px;
   width:  125px;
   height: 125px;
   margin: 0 auto;
