@@ -25,7 +25,6 @@ body {
   padding: 0;
   overflow: hidden;
   overflow-y: auto;
-  @include animate(all, 0.3s, ease-in);
 }
 
 html, body {
@@ -144,40 +143,34 @@ span.gill {
 
   .mobile-joy,
   .tickets,
-  .share {
+  .share,
+  #labels span {
     display: inline-block;
     vertical-align: middle;
     text-align: center;
     width: 33%;
   }
 
-  .mobile-joy span,
-  .tickets span,
-  .share span {
-    display: block;
-    text-align: center;
+  #labels span {
     font: 400 18px 'Gill Sans', 'Gill Sans MT', Arial , sans-serif;
     color: #363636;
-    margin-top: 10px;
+    margin-bottom: 30px;
   }
 
-  .mobile-joy span {
-    margin-top: -12px;
-  }
  .mobile-joy img {
+   margin-top: 40px;
    background: url(#{$image_path}/mobile_joy_retina.png) no-repeat center center;
    background-size: 318px 297px;
    width: 318px;
    height: 295px;
-   margin-top: 40px;
- }
+  }
 
  .tickets img {
    background: url(#{$image_path}/tickets.png) no-repeat center center;
    background-size: 95px 148px;
    height: 148px;
    width: 95px;
-   margin-top: 165px;
+   margin-top: 160px;
  }
 
  .share img {
@@ -185,8 +178,9 @@ span.gill {
    background-size: 230px 118px;
    height: 118px;
    width: 220px;
-   margin-bottom: 20px;
    margin-top: 175px;
+      margin-bottom: 40px;
+
  }
 }
 
@@ -313,7 +307,7 @@ span.gill {
   background-color: #fff;
   min-height: 400px;
   border-bottom: 1px solid #909090;
-
+    @include animate(all, 0.35s, ease-in);
 
   .box {
     margin-top: 50px;
@@ -475,7 +469,8 @@ span.gill {
 
     .mobile-joy,
     .tickets,
-    .share {
+    .share,
+    #labels span {
       width: 32%;
     }
 
@@ -486,14 +481,10 @@ span.gill {
     }
 
     .mobile-joy img {
-      background-size: 289px 270px;
-      height: 260px;
-      width: 289px;
-      margin-top: 38px;
-    }
-
-    .mobile-joy span {
-      margin-top: 10px;
+      margin-top: 0px;
+      background-size: 96% 96%;
+      width: 96%;
+      height: auto;
     }
 
     .share img {
@@ -501,8 +492,6 @@ span.gill {
       background-size: 203px 104px;
       height: 104px;
       width: 203px;
-      margin-bottom: 30px;
-      margin-top: 165px;
     }
   }
 
@@ -557,22 +546,16 @@ span.gill {
   #content {
     min-height: 510px;
 
-    .mobile-joy,
-    .tickets,
-    .share {
-      width: 32%;
-    }
-
     .tickets img {
       margin-top: 130px;
       margin-bottom: 10px;
     }
 
     .mobile-joy img {
-      background-size: 241px 225px;
-      width: 241px;
-      height: 225px;
-      margin-top: 50px;
+      margin-top: 42px;
+      background-size: 100% 100%;
+      width: 100%;
+      height: auto;
     }
 
     .share img {
@@ -580,7 +563,6 @@ span.gill {
       background-size: 182px 93px;
       height: 93px;
       width: 182px;
-      margin-bottom: 25px;
       margin-top: 156px;
     }
   }
@@ -672,7 +654,8 @@ span.gill {
   #benefits,
   #footer,
   #content span.gill,
-  #body  {
+  #body,
+  #labels {
     display: none !important;
   }
 
@@ -793,7 +776,11 @@ span.gill {
   background: linear-gradient(top, rgba(255,190,0,1) 0%,rgba(255,173,0,1) 42%,rgba(255,150,0,1) 71%,rgba(255,134,0,1) 100%);
   filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffbe00', endColorstr='#ff8600',GradientType=0 );
   border-bottom: 1px solid #a35500;
+<<<<<<< HEAD
   margin: 4px 10px 0;
+=======
+  margin: 10px;
+>>>>>>> 8c3ab4cccfc2805f2ffa49944ab933fb589e36e0
   text-shadow: 0 -1px 0 #d47f1b;
   border-top: 1px solid #ffebab;
 }
