@@ -66,7 +66,7 @@ describe Games::Gamers::FavoriteAppController do
         get('destroy')
       end
 
-      it 'should return an error' do
+      it 'returns an error' do
         should_respond_with_json_error(403)
       end
     end

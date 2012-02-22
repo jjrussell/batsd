@@ -1,29 +1,25 @@
 class Games::Gamers::FavoriteAppController < GamesController
 
-  before_filter :require_gamer, :set_app_id
+  before_filter :require_gamer, :require_app
 
   def create
-    fav_app = favorite_app(@app_id) || FavoriteApp.new(:gamer => current_gamer, :app_id => @app_id)
+    fav_app = current_gamer.favorite_apps.find_or_initialize_by_app_id(params[:app_id])
     if fav_app.new_record? && !fav_app.save
       render_json_error(['Error encountered creating a favorite app']) and return
     end
-    render(:json => { :success => true }) and return
+    render(:json => { :success => true })
   end
 
   def destroy
-    FavoriteApp.delete(favorite_app(@app_id))
-    render(:json => { :success => true }) and return
+    fav_app = current_gamer.favorite_apps.find_by_app_id(params[:app_id])
+    fav_app.destroy if fav_app.present?
+    render(:json => { :success => true })
   end
 
   private
 
-  def favorite_app(app_id)
-    current_gamer.favorite_apps.find_by_app_id(app_id)
-  end
-
-  def set_app_id
-    render_json_error(['An app_id must be provided']) and return if params[:app_id].blank?
-    @app_id = params[:app_id]
+  def require_app
+    render_json_error(['An app_id must be provided']) and return unless verify_params([:app_id], :render_missing_text => false)
   end
 
 end
