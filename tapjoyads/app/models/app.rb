@@ -171,9 +171,13 @@ class App < ActiveRecord::Base
     return false if store_id.blank?
 
     app_metadata = update_app_metadata(store_id) || primary_app_metadata
-    data = AppStore.fetch_app_by_id(store_id, platform, country)
-    if (data.nil?) # might not be available in the US market
-      data = AppStore.fetch_app_by_id(store_id, platform, primary_country)
+    begin
+      data = AppStore.fetch_app_by_id(store_id, platform, country)
+      if (data.nil?) # might not be available in the US market
+        data = AppStore.fetch_app_by_id(store_id, platform, primary_country)
+      end
+    rescue Patron::HostResolutionError
+      return false
     end
     return false if data.nil?
 
