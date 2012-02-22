@@ -44,7 +44,7 @@ namespace :admin do
   task :reconfigure_syslog_ng, :config_args, :servers do |task, args|
     servers = args[:servers] || 'masterjobs jobserver website dashboard webserver'
     config_args = args[:config_args] || ''
-    system("script/cloudrun '#{servers}' 'sudo /home/webuser/tapjoyserver/server/syslog-ng/configure.rb #{config_args}' 'ubuntu'")
+    system("script/cloudrun '#{servers}' 'rvmsudo /home/webuser/tapjoyserver/server/syslog-ng/configure.rb #{config_args}' 'ubuntu'")
   end
 
   desc "Update geoip databse"
