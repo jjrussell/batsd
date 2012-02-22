@@ -9,15 +9,17 @@ describe Tools::AppReviewsController do
     admin.partners << partner
     login_as(admin)
 
-    @app = Factory(:app, :thumb_up_count => 0, :thumb_down_count => 0)
-    @app2 = Factory(:app, :thumb_up_count => 0, :thumb_down_count => 0)
+    @app_metadata = Factory(:app_metadata, :thumbs_up => 0, :thumbs_down => 0)
+    @app_metadata2 = Factory(:app_metadata, :thumbs_up => 0, :thumbs_down => 0)
     @gamer = Factory(:gamer)
     gamer2 = Factory(:gamer)
 
-    @gamer_review = Factory(:gamer_review, :author => @gamer, :app => @app)
-    Factory(:gamer_review, :author => @gamer, :app => @app2, :user_rating => 0)
-    Factory(:gamer_review, :author => gamer2, :app => @app, :user_rating => 0)
-    Factory(:gamer_review, :author => gamer2, :app => @app2, :user_rating => 0)
+    @gamer_review = Factory(:gamer_review, :author => @gamer, :app_metadata => @app_metadata)
+    Factory(:gamer_review, :author => @gamer, :app_metadata => @app_metadata2, :user_rating => 0)
+    Factory(:gamer_review, :author => gamer2, :app_metadata => @app_metadata, :user_rating => 0)
+    Factory(:gamer_review, :author => gamer2, :app_metadata => @app_metadata2, :user_rating => 0)
+    Factory(:app_metadata_mapping, :app_metadata => @app_metadata)
+    Factory(:app_metadata_mapping, :app_metadata => @app_metadata2)
   end
 
   describe '#index' do
@@ -41,13 +43,13 @@ describe Tools::AppReviewsController do
       end
     end
 
-    context 'when has app_id as param' do
+    context 'when has app_metadata_id as param' do
       before :each do
-        get(:index, :app_id => @app.id)
+        get(:index, :app_metadata_id => @app_metadata.id)
       end
 
       it 'returns app reviews for app' do
-        assigns[:app_reviews].scoped(:order => 'created_at').should == @app.app_reviews.scoped(:order => 'created_at')
+        assigns[:app_reviews].scoped(:order => 'created_at').should == @app_metadata.app_reviews.scoped(:order => 'created_at')
       end
     end
   end
@@ -57,11 +59,11 @@ describe Tools::AppReviewsController do
       @employee = Factory(:employee)
       @options = {
         :app_review => {
-          :author_id   => @employee.id,
-          :author_type => 'Employee',
-          :app_id      => @app2.id,
-          :text        => "Sampe review",
-          :user_rating => 1
+          :author_id       => @employee.id,
+          :author_type     => 'Employee',
+          :app_metadata_id => @app_metadata2.id,
+          :text            => "Sampe review",
+          :user_rating     => 1
         }
       }
       post(:create, @options)
@@ -70,25 +72,21 @@ describe Tools::AppReviewsController do
     context 'when app review not exist' do
       it 'creates a app review' do
         flash[:notice].should == 'App review was successfully created.'
-        response.should redirect_to(tools_app_reviews_path(:app_id => @app2.id))
-      end
-
-      it 'copies platform' do
-        assigns[:app_review].platform.should == @app2.platform
+        response.should redirect_to(tools_app_reviews_path(:app_metadata_id => @app_metadata2.id))
       end
 
       it 'sets user_rating' do
         assigns[:app_review].user_rating.should == 1
       end
 
-      it 'increases app thumb_up_count' do
-        @app2.reload
-        @app2.thumb_up_count.should == 1
+      it 'increases app_metadata thumbs_up' do
+        @app_metadata2.reload
+        @app_metadata2.thumbs_up.should == 1
       end
 
-      it 'does not change app thumb_down_count' do
-        @app2.reload
-        @app2.thumb_down_count.should == 0
+      it 'does not change app_metadata thumbs_down' do
+        @app_metadata2.reload
+        @app_metadata2.thumbs_down.should == 0
       end
     end
 
@@ -139,16 +137,16 @@ describe Tools::AppReviewsController do
         flash[:notice].should == 'App review was successfully updated.'
       end
 
-      it "redirects to tools/aoo_reviews/index?app_id=" do
-        response.should redirect_to(tools_app_reviews_path(:app_id => @gamer_review.app_id))
+      it "redirects to tools/aoo_reviews/index?app_metadataz-id=" do
+        response.should redirect_to(tools_app_reviews_path(:app_metadata_id => @gamer_review.app_metadata_id))
       end
 
-      it 'updates app thumb_up_count' do
-        @app.reload.thumb_up_count.should == 0
+      it 'updates app_metadata thumbs_up' do
+        @app_metadata.reload.thumbs_up.should == 0
       end
 
-      it 'updates app thumb_down_count' do
-        @app.reload.thumb_down_count.should == 1
+      it 'updates app_metadata thumbs_down' do
+        @app_metadata.reload.thumbs_down.should == 1
       end
     end
   end
@@ -156,7 +154,7 @@ describe Tools::AppReviewsController do
   describe '#destroy' do
     before :each do
       delete(:destroy, :id => @gamer_review.id)
-      @app.reload
+      @app_metadata.reload
     end
 
     context 'when success delete' do
@@ -164,12 +162,12 @@ describe Tools::AppReviewsController do
         response.should redirect_to(tools_app_reviews_path)
       end
 
-      it 'resets app thumb_up_count' do
-        @app.thumb_up_count.should == 0
+      it 'resets app_metadata thumbs_up' do
+        @app_metadata.thumbs_up.should == 0
       end
 
-      it 'resets app thumb_down_count' do
-        @app.thumb_down_count.should == 0
+      it 'resets app_metadata thumbs_down' do
+        @app_metadata.thumbs_down.should == 0
       end
     end
   end

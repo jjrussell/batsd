@@ -2,14 +2,14 @@
 
 %h1
   All App Reviews
-  - if @app.present?
-    for #{@app.name}
+  - if @app_metadata.present?
+    for #{@app_metadata.name}
   - if @author.present?
     by #{@app_reviews[0].author_name}
 
-- if @app.present?
-  = link_to "[Add new review for #{@app.name}]", new_tools_app_review_path(:app_id => @app.id)
-- if @app.present? || @author.present?
+- if @app_metadata.present?
+  = link_to "[Add new review for #{@app_metadata.name}]", new_tools_app_review_path(:app_metadata_id => @app_metadata.id)
+- if @app_metadata.present? || @author.present?
   = link_to "[All app reviews]", tools_app_reviews_path
 
 %br
@@ -27,7 +27,7 @@
   %tbody
     - @app_reviews.each do |app_review|
       %tr
-        %td= link_to(app_review.app_metadata_name, tools_app_reviews_path(:app_id => app_review.app_id))
+        %td= link_to(app_review.app_metadata_name, tools_app_reviews_path(:app_metadata_id => app_review.app_metadata_id))
         %td= link_to(app_review.author_name, tools_app_reviews_path(:author_id => app_review.author_id, :author_type => app_review.author_type))
         %td= app_review.platform
         %td= app_review.text

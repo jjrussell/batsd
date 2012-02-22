@@ -10,8 +10,8 @@ class AppMetadata < ActiveRecord::Base
 
   validates_presence_of :store_name, :store_id
   validates_uniqueness_of :store_id, :scope => [ :store_name ]
-  validates_numericality_of :thumb_up_count, :only_integer => true, :greater_than_or_equal_to => 0, :allow_nil => false
-  validates_numericality_of :thumb_down_count, :only_integer => true, :greater_than_or_equal_to => 0, :allow_nil => false
+  validates_numericality_of :thumbs_up, :only_integer => true, :greater_than_or_equal_to => 0, :allow_nil => false
+  validates_numericality_of :thumbs_down, :only_integer => true, :greater_than_or_equal_to => 0, :allow_nil => false
 
   after_update :update_apps
 

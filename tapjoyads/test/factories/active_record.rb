@@ -69,8 +69,14 @@ FactoryGirl.define do
   end
 
   factory :app_metadata do
-    store_name 'App Store'
-    store_id '123'
+    store_name { Factory.next(:name) }
+    store_id   '123'
+    name       { Factory.next(:name) }
+  end
+
+  factory :app_metadata_mapping do
+    app          { Factory(:app) }
+    app_metadata { Factory(:app_metadata) }
   end
 
   factory :app do
@@ -229,9 +235,9 @@ FactoryGirl.define do
   end
 
   factory :app_review do
-    app    { Factory(:app) }
-    text   "A sample gamer review"
-    user_rating 1
+    app_metadata { Factory(:app_metadata) }
+    text         "A sample gamer review"
+    user_rating  1
   end
 
   factory :gamer_review, :parent => :app_review do

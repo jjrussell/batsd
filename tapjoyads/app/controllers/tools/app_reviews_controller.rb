@@ -28,7 +28,7 @@ class Tools::AppReviewsController < WebsiteController
     @app_review.author = Employee.find(params[:app_review][:author_id])
     if @app_review.save
       flash[:notice] = 'App review was successfully created.'
-      redirect_to tools_app_reviews_path(:app_id => @app_review.app_id)
+      redirect_to tools_app_reviews_path(:app_metadata_id => @app_review.app_metadata_id)
     else
       if @app_review.errors[:author_id].any?
         flash.now[:error] = 'You have already reviewed this app.'
@@ -52,7 +52,7 @@ class Tools::AppReviewsController < WebsiteController
     end
     if @app_review.update_attributes(params[:app_review])
       flash[:notice] = 'App review was successfully updated.'
-      redirect_to tools_app_reviews_path(:app_id => @app_review.app_id)
+      redirect_to tools_app_reviews_path(:app_metadata_id => @app_review.app_metadata_id)
     else
       @employees = Employee.active_by_first_name
       render :action => :edit

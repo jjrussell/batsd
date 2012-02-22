@@ -5,18 +5,18 @@ describe AppReview do
 
   describe '.belongs_to' do
     it { should belong_to :author }
-    it { should belong_to :app }
+    it { should belong_to :app_metadata }
   end
 
   describe '#valid?' do
     it { should validate_presence_of :author }
-    it { should validate_presence_of :app }
+    it { should validate_presence_of :app_metadata }
     it { should validate_presence_of :text }
   end
 
   describe '.delegate' do
-    it "delegates app_name to app" do
-      delegated_methods = [ :app_name ]
+    it "delegates app_metadata_name to app_metadata" do
+      delegated_methods = [ :app_metadata_name ]
       delegated_methods.each do |dm|
         subject.should respond_to dm
       end
@@ -28,7 +28,7 @@ describe AppReview do
     @gamer_review = Factory(:gamer_review, :author => @gamer)
   end
 
-  describe '#update_app_rating_counts' do
+  describe '#update_app_metadata_rating_counts' do
     context 'when user_rating changed' do
       before :each do
         @gamer_review.user_rating = -1
@@ -36,12 +36,12 @@ describe AppReview do
         @gamer_review.reload
       end
 
-      it 'decreases the app thumb_up_count' do
-        @gamer_review.app.thumb_up_count.should == 0
+      it 'decreases the app thumbs_up' do
+        @gamer_review.app_metadata.thumbs_up.should == 0
       end
 
-      it 'increases the app thumb_down_count' do
-        @gamer_review.app.thumb_down_count.should == 1
+      it 'increases the app thumbs_down' do
+        @gamer_review.app_metadata.thumbs_down.should == 1
       end
     end
   end
