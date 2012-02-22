@@ -8,20 +8,21 @@
       .row.borders.nbb
         .games
           - @external_publishers.each do |external_publisher|
-            = puts external_publisher.to_json
-            .apps
-              - link_to(games_earn_path(external_publisher.currencies.first[:id])) do
-                .icon
-                  %img{ :src => BLANK_IMAGE, :source => external_publisher.get_icon_url(:size => 114, :source => :cloudfront)}
-              .label
-                %span
+            .mod.line-item.image-caption.apps
+              .hd
+                - link_to(games_earn_path(external_publisher.currencies.first[:id])) do
+                  .icon
+                    %img{ :src => BLANK_IMAGE, :source => external_publisher.get_icon_url(:size => 114, :source => :cloudfront)}
+              .bd
+                .title.elip
                   = external_publisher.app_name
-                %small
+                .publisher
                   [PUBLISHER]
-                %span.icon-likes
-                  80%
-                %span.icon-users
-                  15
+                .app-summary.clearfix
+                  .ui-icon.score
+                    80%
+                  .ui-icon.social
+                    15
                 - external_publisher.currencies.each do |currency|
                   .collect
                     - link_to(games_earn_path(currency[:id])) do
@@ -35,5 +36,5 @@
   =# stylesheet_link_tag("marketplace/theme/tjm/style-480", :media => "only screen and (min-width: 480px)")
   =# stylesheet_link_tag("marketplace/theme/tjm/images-hd", :media => "-webkit-min-device-pixel-ratio: 2")
 
-- content_for :page_javascript do
-  :plain
+- content_for :included_javascripts do
+  = javascript_include_tag "games/src/marketplace"
