@@ -68,22 +68,7 @@ class Job::QueueCalculateShowRateController < Job::SqsReaderController
     Rails.logger.info "Seconds left in day: #{seconds_left_in_day}"
     Rails.logger.info "Num installs today: #{num_installs_today}"
 
-    target_installs = 1.0 / 0
-
-    if offer.daily_budget > 0
-      target_installs = [offer.daily_budget.to_f - num_installs_today, target_installs].min
-    end
-
-    unless offer.allow_negative_balance?
-      adjusted_balance = offer.partner.balance
-      if offer.is_free? && adjusted_balance < 50000
-        adjusted_balance = adjusted_balance / 2
-      end
-
-      max_paid_installs = adjusted_balance / offer.payment
-      target_installs = max_paid_installs if target_installs > max_paid_installs
-    end
-
+    target_installs = offer.calculate_target_installs(num_installs_today)
     target_clicks = target_installs / conversion_rate
 
     Rails.logger.info "Daily budget: #{offer.daily_budget}"

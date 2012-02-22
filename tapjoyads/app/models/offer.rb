@@ -726,6 +726,23 @@ class Offer < ActiveRecord::Base
     end
   end
 
+  def calculate_target_installs(num_installs_today)
+    target_installs = 1.0 / 0
+    target_installs = daily_budget - num_installs_today if daily_budget > 0
+
+    unless allow_negative_balance?
+      adjusted_balance = partner.balance
+      if is_free? && adjusted_balance < 50000
+        adjusted_balance = adjusted_balance / 2
+      end
+
+      max_paid_installs = adjusted_balance / payment
+      target_installs = max_paid_installs if target_installs > max_paid_installs
+    end
+
+    target_installs
+  end
+
   def cached_support_requests_rewards
     support_requests = Mc.get("offer.support_requests.#{id}")
     rewards = Mc.get("offer.clicks_rewarded.#{id}")
@@ -747,12 +764,7 @@ class Offer < ActiveRecord::Base
         is_paid? ? (price * 0.50).round : 10
       end
     elsif item_type == 'ActionOffer'
-      if is_paid?
-        (price * 0.50).round
-      else
-        platform = App::PLATFORMS.index(get_platform)
-        platform.nil? ? 35 : App::PLATFORM_DETAILS[platform][:min_action_offer_bid]
-      end
+      is_paid? ? (price * 0.50).round : 10
     elsif item_type == 'VideoOffer'
       4
     else

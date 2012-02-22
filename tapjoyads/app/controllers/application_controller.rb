@@ -232,38 +232,6 @@ class ApplicationController < ActionController::Base
     params[:exp] = Experiments.choose(params[:udid]) unless params[:exp].present?
   end
 
-  def build_test_offer(publisher_app)
-    test_offer = Offer.new(
-      :item_id            => publisher_app.id,
-      :item_type          => 'TestOffer',
-      :name               => 'Test Offer (Visible to Test Devices)',
-      :third_party_data   => publisher_app.id,
-      :price              => 0,
-      :reward_value       => 100)
-    test_offer.id = publisher_app.id
-    test_offer
-  end
-
-  def build_test_video_offer(publisher_app)
-    test_video_offer = VideoOffer.new(
-      :name       => 'Test Video Offer (Visible to Test Devices)',
-      :partner_id => publisher_app.partner_id,
-      :video_url  => 'https://s3.amazonaws.com/tapjoy/videos/src/test_video.mp4')
-    test_video_offer.id = 'test_video'
-
-    primary_offer = Offer.new(
-      :item_id          => 'test_video',
-      :name             => 'Test Video Offer (Visible to Test Devices)',
-      :url              => 'https://s3.amazonaws.com/tapjoy/videos/src/test_video.mp4',
-      :reward_value     => 100,
-      :third_party_data => '')
-    primary_offer.id = 'test_video'
-
-    test_video_offer.primary_offer           = primary_offer
-    test_video_offer.primary_offer.item_type = 'TestVideoOffer'
-    test_video_offer
-  end
-
   def decrypt_data_param
     return unless params[:data].present?
 
