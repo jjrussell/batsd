@@ -12,8 +12,10 @@ class GetOffersController < ApplicationController
 
   def webpage
     if @currency.get_test_device_ids.include?(params[:udid])
-      @test_offers = [ build_test_offer(@publisher_app) ]
-      @test_offers << build_test_video_offer(@publisher_app).primary_offer if params[:all_videos] || params[:video_offer_ids].to_s.split(',').include?('test_video')
+      @test_offers = [ @publisher_app.test_offer ]
+      if params[:all_videos] || params[:video_offer_ids].to_s.split(',').include?('test_video')
+        @test_offers << @publisher_app.test_video_offer.primary_offer
+      end
     end
 
     if @for_preview
@@ -25,7 +27,7 @@ class GetOffersController < ApplicationController
 
   def featured
     if @currency.get_test_device_ids.include?(params[:udid])
-      @offer_list = [ build_test_offer(@publisher_app) ]
+      @offer_list = [ @publisher_app.test_offer ]
     else
       @offer_list = [ get_offer_list.weighted_rand ].compact
       if @offer_list.empty?
@@ -152,7 +154,7 @@ class GetOffersController < ApplicationController
         @web_request.offer_id = offer.id
         @web_request.offerwall_rank = i + @start_index + 1
         @web_request.offerwall_rank_score = offer.rank_score
-        # @web_request.save
+        @web_request.save
       end
     end
   end

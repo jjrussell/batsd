@@ -53,14 +53,14 @@ describe DisplayAdController do
         end
 
         it 'returns proper image' do
-          get :image, @params
+          get(:image, @params)
 
-          @response.content_type.should == 'image/png'
+          response.content_type.should == 'image/png'
 
           # To diagnose a mismatch, uncomment the following and compare the new image to #{Rails.root}/test/assets/banner_ads/custom_320x50.png
           # File.open("#{Rails.root}/test/assets/banner_ads/wtf.png", 'w') { |f| f.write(response.body) }
 
-          @response.body.should == @custom_banner
+          response.body.should == @custom_banner
         end
       end
 
@@ -94,8 +94,8 @@ describe DisplayAdController do
         end
 
         it 'returns proper image' do
-          get :image, @params
-          @response.content_type.should == 'image/png'
+          get(:image, @params)
+          response.content_type.should == 'image/png'
 
           # Uncomment the following to re-generate the image if needed (e.g. background image changes, text changes, etc)
           # File.open("#{Rails.root}/test/assets/banner_ads/generated_320x50.png", 'w') { |f| f.write(response.body) }
@@ -124,9 +124,9 @@ describe DisplayAdController do
           bucket_objects = { @offer.banner_creative_path('320x50') => object }
           @bucket.stubs(:objects).returns(bucket_objects)
 
-          get :index, @params.merge(:format => 'json')
+          get(:index, @params.merge(:format => 'json'))
 
-          @response.content_type.should == 'application/json'
+          response.content_type.should == 'application/json'
 
           # To diagnose a mismatch, uncomment the following and compare the new image to #{Rails.root}/test/assets/banner_ads/custom_320x50.png
           # File.open("#{Rails.root}/test/assets/banner_ads/wtf.png", 'w') { |f| f.write(response.body) }
@@ -141,8 +141,8 @@ describe DisplayAdController do
           bucket_objects = { @offer.banner_creative_path('640x100') => object }
           @bucket.stubs(:objects).returns(bucket_objects)
 
-          get :index, @params
-          @response.content_type.should == 'application/xml'
+          get(:index, @params)
+          response.content_type.should == 'application/xml'
 
           # To diagnose a mismatch, uncomment the following and compare the new image to #{Rails.root}/test/assets/banner_ads/custom_640x100.png
           # File.open("#{Rails.root}/test/assets/banner_ads/wtf.png", 'w') { |f| f.write(response.body) }
@@ -180,8 +180,8 @@ describe DisplayAdController do
           @bucket.stubs(:objects).returns(bucket_objects)
           obj_ad_bg.stubs(:read).returns(ad_bg)
 
-          get :index, @params.merge(:format => 'json')
-          @response.content_type.should == 'application/json'
+          get(:index, @params.merge(:format => 'json'))
+          response.content_type.should == 'application/json'
 
           # Uncomment the following to re-generate the image if needed (e.g. background image changes, text changes, etc)
           # File.open("#{Rails.root}/test/assets/banner_ads/generated_320x50.png", 'w') { |f| f.write(Base64.decode64(assigns['image'])) }
@@ -200,7 +200,7 @@ describe DisplayAdController do
           obj_ad_bg.stubs(:read).returns(ad_bg)
 
           get(:index, @params)
-          @response.content_type.should == 'application/xml'
+          response.content_type.should == 'application/xml'
 
           # Uncomment the following to re-generate the image if needed (e.g. background image changes, text changes, etc)
           # File.open("#{Rails.root}/test/assets/banner_ads/generated_640x100.png", 'w') { |f| f.write(Base64.decode64(assigns['image'])) }
@@ -223,7 +223,7 @@ describe DisplayAdController do
         end
 
         it 'contains proper image link' do
-          get :webview, @params
+          get(:webview, @params)
 
           assigns['image_url'].should be_starts_with(CLOUDFRONT_URL)
           assigns['image_url'].should == @offer.display_ad_image_url(@currency.app.id, 320, 50, @currency.id)
@@ -232,7 +232,7 @@ describe DisplayAdController do
 
       context 'with generated ad' do
         it 'contains proper image link' do
-          get :webview, @params
+          get(:webview, @params)
 
           assigns['image_url'].should be_starts_with(API_URL)
           assigns['image_url'].should == @offer.display_ad_image_url(@currency.app.id, 320, 50, @currency.id)

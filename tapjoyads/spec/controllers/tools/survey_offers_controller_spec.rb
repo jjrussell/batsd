@@ -16,23 +16,23 @@ describe Tools::SurveyOffersController do
 
   describe '#index' do
     it 'returns only visible survey offers' do
-      get 'index'
+      get(:index)
       assigns(:survey_offers).should == [@survey_offer]
       @survey_offer.hide!
-      get 'index'
+      get(:index)
       assigns(:survey_offers).should == []
     end
   end
 
   describe '#new' do
     it 'assigns a new survey offer' do
-      get 'new'
+      get(:new)
       assigns(:survey_offer).should_not be_nil
       assigns(:survey_offer).bid.should == 0
     end
 
     it 'builds blank questions' do
-      get 'new'
+      get(:new)
       assigns(:survey_offer).survey_questions.size.should == 4
     end
   end
@@ -43,7 +43,7 @@ describe Tools::SurveyOffersController do
         :name => 'quick survey',
         :bid  => '$7.00',
       }
-      post 'create', :survey_offer => survey_offer_attributes
+      post(:create, :survey_offer => survey_offer_attributes)
       flash[:notice].should == 'Survey offer created successfully'
       response.should be_redirect
       assigns(:survey_offer).bid.should == 700
@@ -53,7 +53,7 @@ describe Tools::SurveyOffersController do
       survey_offer_attributes = {
         :bid  => '$0.00',
       }
-      post 'create', :survey_offer => survey_offer_attributes
+      post(:create, :survey_offer => survey_offer_attributes)
       flash.now[:error].should == 'Problems creating survey offer'
       response.should render_template('new')
       assigns(:survey_offer).survey_questions.size.should == 4
@@ -71,7 +71,7 @@ describe Tools::SurveyOffersController do
           }
         }
       }
-      post 'create', :survey_offer => survey_offer_attributes
+      post(:create, :survey_offer => survey_offer_attributes)
       flash[:notice].should == 'Survey offer created successfully'
       survey_offer = assigns(:survey_offer)
       survey_offer.survey_questions.count.should == 1
@@ -85,7 +85,7 @@ describe Tools::SurveyOffersController do
 
   describe '#edit' do
     it 'builds blank questions' do
-      get 'edit', :id => @survey_offer.id
+      get(:edit, :id => @survey_offer.id)
       assigns(:survey_offer).survey_questions.size.should == 4
     end
   end
@@ -109,9 +109,10 @@ describe Tools::SurveyOffersController do
           },
         },
       }
-      put 'update',
+      put(:update,
         :id => @survey_offer.id,
         :survey_offer => survey_offer_attributes
+      )
       flash[:notice].should == 'Survey offer updated successfully'
       response.should be_redirect
       assigns(:survey_offer).survey_questions.count.should == 2
@@ -133,9 +134,10 @@ describe Tools::SurveyOffersController do
         },
       }
 
-      put 'update',
+      put(:update,
         :id => @survey_offer.id,
         :survey_offer => survey_offer_attributes
+      )
 
       flash[:notice].should == 'Survey offer updated successfully'
       response.should be_redirect
@@ -149,9 +151,10 @@ describe Tools::SurveyOffersController do
         :name => '',
         :bid  => '$0.00',
       }
-      put 'update',
+      put(:update,
         :id => @survey_offer.id,
         :survey_offer => survey_offer_attributes
+      )
       flash.now[:error].should == 'Problems updating survey offer'
       response.should render_template('edit')
     end
@@ -159,7 +162,7 @@ describe Tools::SurveyOffersController do
 
   describe '#destroy' do
     it 'hides the survey offer' do
-      get 'destroy', :id => @survey_offer.id
+      get(:destroy, :id => @survey_offer.id)
 
       @survey_offer.reload.hidden.should == true
       flash[:notice].should == 'Survey offer removed successfully'

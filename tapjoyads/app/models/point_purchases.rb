@@ -8,9 +8,7 @@ class PointPurchases < SimpledbShardedResource
   self.sdb_attr :points,        :type => :int
   self.sdb_attr :virtual_goods, :type => :json, :default_value => {}
 
-  def initialize(options = {})
-    super({:load_from_memcache => false}.merge(options))
-
+  def after_initialize
     if self.points.nil?
       Rails.logger.info "getting initial_balance from currency"
       app_key = @key.split('.').last

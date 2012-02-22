@@ -8,17 +8,14 @@ class Job::QueueGetStoreInfoController < Job::SqsReaderController
   private
 
   def on_message(message)
-    app = App.find(message.body)
-    log_activity(app)
-
-    return unless app.store_id.present?
+    app_metadata = AppMetadata.find(message.body)
+    log_activity(app_metadata)
 
     begin
-      app.fill_app_store_data
+      app_metadata.update_from_store
     rescue Exception => e
       Rails.logger.info "Exception when fetching app store info: #{e}"
     else
-      app.save!
       save_activity_logs(true)
     end
   end

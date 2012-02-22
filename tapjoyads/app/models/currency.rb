@@ -69,6 +69,10 @@ class Currency < ActiveRecord::Base
     currencies
   end
 
+  def has_special_callback?
+    SPECIAL_CALLBACK_URLS.include?(callback_url)
+  end
+
   def get_spend_share(offer)
     if partner_id == offer.partner_id
       0
