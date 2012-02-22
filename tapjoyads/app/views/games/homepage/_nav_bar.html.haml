@@ -15,16 +15,17 @@
         .box
         .box
         .box
-  .logo
-    %img{ :src => BLANK_IMAGE }
+  - link_to(games_root_path) do
+    .logo
+      %img{ :src => BLANK_IMAGE }
   - if @current_gamer.present?
     .menu-dropdown
       .menu-dropdown-wrapper
         .device
           .device-profile
-            .device-toggle.up
+            .device-toggle.up.hide
             .device-info
-              = t('text.games.on_my', :device_name => @device_name)
+              = t('text.games.on_my', :device_name => current_device_info.name)
               %a.device-change
                 (#{t('text.games.change')})
             - if @current_gamer.get_avatar_url.present?
@@ -35,20 +36,20 @@
           .device-form.hide
         .menu-nav
           .menu-nav-wrapper
-            - link_to(games_root_path, :class => "") do
+            - link_to(games_root_path) do
               .my_apps
                 %span= t('text.games.my_apps')
-            - link_to(games_root_path, :class => "") do
+            - link_to(games_root_path) do
               .more_apps
                 %span= t('text.games.more_apps')
-            - link_to(edit_games_gamer_path, :class => "") do
+            - link_to(edit_games_gamer_path) do
               .profile
                 %span= t('text.games.profile')
         .menu-subnav
           .menu-subnav-wrapper
-            - link_to(games_help_path, :class => "") do
+            - link_to(games_help_path) do
               .help
                 %span= t('text.shared.help')
-            - link_to(games_logout_path, :class => "") do
+            - link_to(games_logout_path) do
               .logout
                 %span= t('text.shared.logout')
