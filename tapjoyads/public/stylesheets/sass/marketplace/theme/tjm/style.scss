@@ -369,6 +369,10 @@ a:hover {
   background: url('/images/games/ui-joy-r-arrow.png') no-repeat 96% center;
 }
 
+.mod.right-arrow, .mod.down-arrow {
+  background-position: 99% center;
+}
+
 .ui-list-action-label {
   display: block;
   font-size: 1em;
@@ -609,7 +613,13 @@ input.ui-joy-button {
 
 li.list-button {
   @extend .beveled;
-  padding: 10px 20px;
+
+  a {
+    color: #252525;
+  }
+  a:hover {
+    text-decoration: none;
+  }
 }
 //-------------------------------------------
 // Skins
