@@ -108,7 +108,7 @@ class TapjoyMailer < ActionMailer::Base
 
   def payout_info_reminder(email_recipients, earnings)
     from 'Tapjoy Support <support@tapjoy.com>'
-    cc 'hwanjoon@tapjoy.com'
+    cc 'accountspayable@tapjoy.com'
     recipients email_recipients
     subject 'Payment Information Needed'
     content_type 'text/html'

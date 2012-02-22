@@ -1,6 +1,6 @@
 class ActionMailer::Base
 
-  def deliver_with_rescue_errors!(mail)
+  def deliver_with_rescue_errors!(mail = @mail)
     begin
       deliver_without_rescue_errors!(mail)
     rescue Exception => e
@@ -11,11 +11,8 @@ class ActionMailer::Base
   end
 
   def deliver_with_receipt!(mail = @mail)
-    if mail.bcc.present?
-      mail.bcc = mail.bcc + ["email.receipts@tapjoy.com"]   # can't use << or += since #bcc isn't an array
-    else
-      mail.bcc = "email.receipts@tapjoy.com"
-    end
+    receipt_email = "email.receipts@tapjoy.com"
+    mail.bcc.nil? ? mail.bcc = receipt_email : mail.bcc += [ receipt_email ]
     deliver_without_receipt!(mail)
   end
 
