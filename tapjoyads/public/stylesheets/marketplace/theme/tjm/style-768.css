@@ -98,6 +98,7 @@
   text-align: center; }
 
 .apps .publisher {
+  display: block;
   font-size: 13px;
   color: #8c8c8c;
   margin-bottom: 5px; }

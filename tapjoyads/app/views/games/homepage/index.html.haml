@@ -16,7 +16,7 @@
               .bd
                 .title.elip
                   = external_publisher.app_name
-                .publisher.hi
+                .publisher
                   [PUBLISHER]
                 .app-summary.clearfix
                   .ui-icon.score
@@ -32,6 +32,3 @@
                   .right-arrow
                     .ui-list-action-label
                       = t('text.shared.collect')
-
-- content_for :included_javascripts do
-  = javascript_include_tag "games/src/marketplace"
