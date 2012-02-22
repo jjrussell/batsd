@@ -36,12 +36,26 @@ describe Currency do
           @currency.should be_has_special_callback
         end
       end
+
+      it 'does not allow multiple currencies' do
+        @currency2 = Factory.build(:currency, :app_id => @currency.app_id, :partner_id=> @currency.partner_id)
+        @currency.save
+        @currency2.save
+        @currency2.errors.on(:callback_url).should == 'cannot be managed if the app has multiple currencies'
+      end
     end
 
     context 'when not having special callbacks' do
       it 'returns false' do
         @currency.callback_url = 'http://example.com/foo'
         @currency.should_not be_has_special_callback
+      end
+
+      it 'does allow multiple currencies' do
+        @currency.callback_url = 'http://example.com/foo'
+        @currency2 = Factory.build(:currency, :app_id => @currency.app_id, :partner_id=> @currency.partner_id, :callback_url => 'http://example.com/foo')
+        @currency.save
+        @currency2.save.should == true
       end
     end
   end

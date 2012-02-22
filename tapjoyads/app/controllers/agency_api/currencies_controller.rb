@@ -84,9 +84,9 @@ class AgencyApi::CurrenciesController < AgencyApiController
 
     if app.currencies.empty?
       currency.id = app.id
-    elsif currency.tapjoy_managed?
-      render_error('cannot have multiple tapjoy managed currencies', 400)
-      return
+      currency.ordinal = 1
+    else
+      currency.ordinal = app.currencies.last.ordinal + 100
     end
 
     unless currency.valid?

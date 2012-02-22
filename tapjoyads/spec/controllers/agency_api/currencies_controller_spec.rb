@@ -216,7 +216,7 @@ describe AgencyApi::CurrenciesController do
       currency.test_devices.should == 'asdf;fdsa'
       currency.callback_url.should == 'http://tapjoy.com'
       currency.secret_key.should == 'bar'
-      currency.ordinal.should == 2
+      currency.ordinal.should == 101
     end
 
 
