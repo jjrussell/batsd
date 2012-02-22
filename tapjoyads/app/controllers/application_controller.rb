@@ -133,26 +133,22 @@ class ApplicationController < ActionController::Base
   end
 
   def ip_address
-    return @cached_ip_address if @cached_ip_address .present?
+    return @cached_ip_address if @cached_ip_address.present?
     remote_ip = (request.headers['X-Forwarded-For'] || request.remote_ip)
     @cached_ip_address = remote_ip.gsub(/,.*$/, '')
   end
 
   def geoip_data
     return @cached_geoip_data if @cached_geoip_data.present?
-
-    @cached_geoip_data = {}
-
-    return @cached_geoip_data if @server_to_server && params[:device_ip].blank?
-
-    ip = params[:device_ip] || ip_address
+    return {} if @server_to_server && params[:device_ip].blank?
 
     begin
-      geo_struct = GEOIP.city(ip)
+      geo_struct = GEOIP.city(params[:device_ip] || ip_address)
     rescue Exception => e
       geo_struct = nil
     end
 
+    @cached_geoip_data = {}
     if geo_struct.present?
       @cached_geoip_data[:country]     = geo_struct[:country_code2]
       @cached_geoip_data[:continent]   = geo_struct[:continent_code]
