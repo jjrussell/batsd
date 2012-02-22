@@ -1089,7 +1089,7 @@
 
         if (total_ratings == 0) {
           t.push('<span class="thumb_up on left"></span>');
-          t.push('<span>- % of ',  total_reviews ,' review</span>');
+          t.push('<span>- % of ',  total_reviews ,' review', plural ,'</span>');
         }
         else if (rating > threshold) {
           t.push('<span class="thumb_up on left"></span>');
