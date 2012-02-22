@@ -252,8 +252,10 @@ private
     response = request(WINDOWS_SEARCH_URL + CGI::escape(term.strip.gsub(/\s/, '+')))
     if response.status == 200
       items = (Hpricot(response.body)/'a:entry'/'a:id').first(10).map do |id|
-        fetch_app_by_id_for_windows(id.inner_text.split(':').last)
-      end
+        store_id = id.inner_text.split(':').last
+        next if store_id == '/'
+        fetch_app_by_id_for_windows(store_id)
+      end.compact
     else
       Notifier.alert_new_relic(AppStoreSearchFailed, "search_windows_marketplace failed for term: #{term}")
       raise "Invalid response."
