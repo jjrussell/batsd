@@ -1,0 +1,25 @@
+#show.page.current
+  .panel
+    %ul.slats.with-icons
+      %li.slat
+        .hd.left.game-icon
+          = image_tag(@external_publisher.get_icon_url(:size=>114,:source => :cloudfront))
+        .bd.left.lastUnit
+          .title.elip
+            =@external_publisher.app_name
+          .description
+    .social-info
+      %span.ui-icon-med.score-med
+        &nbsp;
+      %span.ui-icon-med.social-med
+        &nbsp;
+    .menu-head.always-visible
+      =t('text.games.browse_offers')
+      .ui-list-down.right
+        &nbsp;
+    =render("offers")
+    .button-container
+      .ui-joy-button.grey-action
+        %a.text-center
+          Review #{@external_publisher.app_name}
+    =render("games/shared/footer")

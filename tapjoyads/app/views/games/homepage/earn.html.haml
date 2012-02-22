@@ -1,0 +1,28 @@
+#earn.current
+  .panel
+    .mod.line-item.page-header
+      .hd
+        = image_tag(@external_publisher.get_icon_url(:size=>114,:source => :cloudfront))
+      .bd
+        .title.elip
+          =@external_publisher.app_name
+        .sub-title
+          Publisher
+    .mod.social-info
+      %span.ui-icon-med.score-med
+        &nbsp;
+      %span.ui-icon-med.social-med
+        &nbsp;
+    .mod.menu-head.always-visible
+      =t('text.games.browse_offers')
+      .ui-icon.down-arrow.right
+        &nbsp;
+    =render("offers")
+    .button-container
+      .ui-joy-button.grey-action
+        %a.text-center
+          Review #{@external_publisher.app_name}
+    = render("games/shared/footer")
+
+-content_for :included_javascripts do
+  = javascript_include_tag "games/src/marketplace"

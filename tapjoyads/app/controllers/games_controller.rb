@@ -2,11 +2,11 @@ class GamesController < ApplicationController
   include Facebooker2::Rails::Controller
   include SslRequirement
 
-  layout 'games'
+  layout :select_layout
 
   skip_before_filter :fix_params
 
-  helper_method :current_gamer, :current_device_id, :current_device_id_cookie, :current_device_info, :current_recommendations, :has_multiple_devices, :show_login_page, :device_type, :geoip_data, :os_version, :social_feature_redirect_path
+  helper_method :current_gamer, :set_gamer, :current_device_id, :current_device_id_cookie, :current_device_info, :current_recommendations, :has_multiple_devices, :show_login_page, :device_type, :geoip_data, :os_version, :social_feature_redirect_path
 
   protected
 
@@ -191,5 +191,13 @@ class GamesController < ApplicationController
     @os_version ||= HeaderParser.os_version(request.user_agent)
   end
 
+  def select_layout
+    if params[:ajax].present?
+      return nil
+    elsif params[:old].present?
+      return 'games'
+    end
+    return 'marketplace'
+  end
 
 end

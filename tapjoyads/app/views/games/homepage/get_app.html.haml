@@ -1,0 +1,43 @@
+-content_for :styles do
+  = stylesheet_link_tag("games/get-app")
+#offer-detail.page.current
+  .panel
+    .mod.line-item.page-header
+      .hd
+        =image_tag("games/test-game-image.png")
+      .bd
+        .title.elip
+          Game Title
+        .sub-title
+          Publisher
+    .mod.get-app
+      .ui-joy-button.orange-action
+        %a.text-center Get App
+    .mod.social-info
+      %span.ui-icon-med.social-med
+        Kate and 13 friends played this.
+    .mod.menu-head
+      = t("text.shared.reviews")
+    .mod.score-summary
+      %img{:src => BLANK_IMAGE}
+      %span.percentage 100%
+      %span.description from 100,000+ voters
+    %ul
+      -2.times do |i|
+        %li
+          .mod.line-item.image-caption.review
+            .hd
+              =image_tag("games/test-review-image.png")
+            .bd.review
+              .author
+                By Someone
+              .ui-icon.score
+                &nbsp;
+              .date
+                12/31/12
+              .text
+                Lorum ipsum getsum checksum Lorum ipsum getsum checksum
+                Lorum ipsum getsum checksum Lorum ipsum getsum checksum
+                Lorum ipsum getsum checksum Lorum ipsum getsum checksum
+                Lorum ipsum getsum checksum Lorum ipsum getsum checksum
+  =render("games/shared/footer")

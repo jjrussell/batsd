@@ -1,0 +1,31 @@
+-content_for :styles do
+  = stylesheet_link_tag("games/get-app")
+#review-form.page.current
+  .panel
+    .mod.line-item.page-header
+      .hd
+        =image_tag("games/test-game-image.png")
+      .bd.lastUnit
+        .title.elip
+          Game Title
+        .sub-title
+          Publisher
+    .mod.menu-head
+      = t("text.shared.rate_and_review")
+    .mod.review-form
+      %form
+        .mod.form-section.button-group
+          .ui-joy-button.grey-toggle.active
+            %a.text-center
+              .active-image=image_tag("games/inset-thumbs-up.png")
+              .inactive-image=image_tag("games/grad-thumbs-up.png")
+          .ui-joy-button.grey-toggle
+            %a.text-center
+              .active-image=image_tag("games/inset-thumbs-down.png")
+              .inactive-image=image_tag("games/grad-thumbs-down.png")
+        .mod.form-section
+          %input.ui-joy-input{:name => :title, :placeholder => t('text.shared.title_noun')}
+        .mod.form-section
+          %textarea.ui-joy-input{:name => :comment, :placeholder => t('text.shared.comment')}
+        .mod.form-section
+          %input.ui-joy-button.grey-action{:type => :submit, :value => t('text.shared.submit')}

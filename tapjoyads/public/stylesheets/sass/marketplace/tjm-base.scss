@@ -1,0 +1,189 @@
+@import "tjm-mixins";
+
+* {
+  margin: 0;
+  padding: 0;
+  font-weight: normal;
+}
+
+body {
+  -webkit-text-stroke: 1px transparent;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  -o-user-select: none;
+  user-select: none;
+}
+
+p {
+  margin: 0 0 1em;
+  padding: 0;
+}
+
+ul, ol {
+  margin: 1em 0 1.4em 24px;
+  padding: 0;
+  line-height: 140%;
+}
+
+li {
+  margin: 0 0 .5em 0;
+  padding: 0;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  line-height: 1.4em;
+  color: #111;
+}
+
+h1 {
+  font-size: 2em;
+}
+
+h2 {
+  font-size: 1.6em;
+}
+
+h3 {
+  font-size: 1.4em;
+}
+
+h4 {
+  font-size: 1.2em;
+}
+
+h5 {
+  font-size: 1.1em;
+}
+
+h6 {
+  font-size: 1em;
+}
+
+/* Reset webkit search input styles */
+input[type=search] {
+  -webkit-appearance: none;
+  outline: none;
+}
+
+input[type="search"]::-webkit-search-decoration,
+input[type="search"]::-webkit-search-cancel-button {
+  display: none;
+}
+
+input::-webkit-input-placeholder {
+  color: #aab2c0;
+}
+.right {
+  float: right;
+}
+
+.left {
+  float: left;
+}
+
+.hidden, .hide {
+  display: none;
+}
+
+.notvisible {
+  visibility: hidden;
+}
+
+.noopacity {
+  opacity: 0;
+}
+
+.center {
+  text-align: center;
+}
+
+.block {
+  display: block;
+}
+
+.bold {
+  font-weight: bold;
+}
+
+.no_wrap {
+  white-space: nowrap;
+}
+
+.clearfix:after {
+  content: ".";
+  display: block;
+  clear: both;
+  visibility: hidden;
+  line-height: 0;
+  height: 0;
+}
+.clearfix {
+  display: inline-block;
+}
+html[xmlns] .clearfix {
+  display: block;
+}
+* html .clearfix {
+  height: 1%;
+}
+
+#mask {
+  display: none;
+  background: #fff;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 10;
+  width: 100%;
+  height: 100%;
+  opacity: 0.5;
+  z-index: 999;
+}
+
+.modal {
+  display: none;
+  background: #333;
+  padding: 10px;
+  border: 1px solid #c1c11;
+  float: left;
+  min-width: 300px;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  z-index: 99999;
+  //@include rounded-corners(6px);
+}
+
+//-------------------------------------------
+// Animations
+//-------------------------------------------
+
+@-webkit-keyframes reset {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+@-webkit-keyframes fade-in {
+  0% {
+    opacity: 0;
+  }
+  60% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+.fade-in {
+  -webkit-animation-name: reset, fade-in;
+  -webkit-animation-duration: 0.25s;
+  -webkit-animation-timing-function: ease-in;
+  -webkit-animation-iteration-count: 1;
+}

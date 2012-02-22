@@ -1,0 +1,495 @@
+@import "tj-mixins.scss";
+@mixin txt-shadow($x:0, $y:1px, $spread:1px, $color:rgba(37, 37, 37, .4)) {
+  text-shadow: $x $y $spread $color;
+}
+@mixin box-shadow($x:0, $y:0, $spread:2px, $color:#ddd) {
+  -webkit-box-shadow: $x $y $spread $color;
+   -moz-box-shadow: $x $y $spread $color;
+     -o-box-shadow: $x $y $spread $color;
+        box-shadow: $x $y $spread $color;
+}
+
+body {
+  font-family: "Gill Sans", Arial, Helvetica, sans-serif;
+}
+/* oocss flexible grid */
+.line,.lastUnit{overflow:hidden; *overflow:visible;*zoom:1;}
+.unit{float:left;}
+.unitRight{float:right;}
+.size1of1{float:none;}
+.size1of2{width:50%;}
+.size1of3{width:33.33333%;}
+.size2of3{width:66.66666%;}
+.size1of4{width:25%;}
+.size3of4{width:75%;}
+.size1of5{width:20%;}
+.size2of5{width:40%;}
+.size3of5{width:60%;}
+.size4of5{width:80%;}
+.lastUnit{float:none;width:auto;_position:relative;_left:-3px;_margin-right:-3px;}
+
+.mod {
+  @extend .light;
+  padding: 10px;
+}
+
+.elip {
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+.page {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.page {
+  display: none;
+}
+.page.current,
+.current {
+  z-index: 10;
+  display: block;
+}
+
+.clearfix:after {
+  content: ".";
+  display: block;
+  clear: both;
+  visibility: hidden;
+  line-height: 0;
+  height: 0;
+}
+
+
+.social {
+  background: url('/images/games/social.png') no-repeat 0 0;
+}
+.social-med {
+  background: url('/images/games/social-med.png') no-repeat 0 0;
+}
+.score {
+  background: url('/images/games/thumbs-up.png') no-repeat 0 0;
+}
+.score-med {
+  background: url('/images/games/thumbs-up-med.png') no-repeat 0 0;
+}
+.ui-icon {
+  padding-left: 20px;
+}
+.ui-icon-med {
+  padding-left: 28px;
+}
+
+.clear {
+  clear:both;
+}
+.wrap {
+  position:relative;
+  width: 100%;
+  margin: 0 auto;
+  padding: 0;
+}
+
+.tj-red-gradient {
+  @include gradient-top(#e9292e, #e62429, #d71012, #cf0404);
+}
+
+@mixin radial-gradient($p0, $p75, $p100) {
+  background: $p0; /* Old browsers */
+  background: -moz-radial-gradient(center, ellipse cover,  $p0 0%, $p75 75%, $p100 100%); /* FF3.6+ */
+  background: -webkit-gradient(radial, center center, 0px, center center, 100%, color-stop(0%,$p0), color-stop(75%,$p75), color-stop(100%,$p100)); /* Chrome,Safari4+ */
+  background: -webkit-radial-gradient(center, ellipse cover,  $p0 0%,$p75 75%,$p100 100%); /* Chrome10+,Safari5.1+ */
+  background: -o-radial-gradient(center, ellipse cover,  $p0 0%,$p75 75%,$p100 100%); /* Opera 12+ */
+  background: -ms-radial-gradient(center, ellipse cover,  $p0 0%,$p75 75%,$p100 100%); /* IE10+ */
+  background: radial-gradient(center, ellipse cover,  $p0 0%,$p75 75%,$p100 100%); /* W3C */
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#{$p0}', endColorstr='#{$p100}',GradientType=1 ); /* IE6-9 fallback on horizontal gradient */
+}
+
+.panel {
+  background-image: url('/images/games/chrome-bg.png');
+}
+
+.section {
+  padding: 20px 10px;
+}
+.narrow-section {
+  line-height: 35px;
+  padding: 0px percentage(10/320);
+}
+
+.light {
+  @include radial-gradient(rgba(255,255,255,0.8), rgba(240,240,240,0.3), rgba(230,230,230,0.2));
+}
+
+.social-info {
+  @extend .light;
+  @extend .narrow-section;
+  box-shadow: 0 0px 1px rgba(169, 169, 169, 1.0) inset, 0 1px 0 rgba(200, 200, 200, 1.0);
+  position: relative;
+  z-index: 30;
+}
+
+.button-container {
+  @extend .light;
+  @extend .section;
+}
+
+.menu-head {
+  @extend .narrow-section;
+  @include gradient-top(#dcdce1,#dadadf,#cbced3,#c1c5ca);
+  border-top: 1px solid #f8f8f9;
+  box-shadow: 0 1px 1px #535353;
+  text-shadow: 0 1px 0 #ffffff;
+  position: relative;
+  z-index: 30;
+}
+
+.headerwrap {
+  .logo {
+    position: relative;
+    height: 44px;
+    float: none;
+    text-align: center;
+    img {
+      background: url('/images/games/logo-navbar.png') no-repeat 0 0;
+      border: 0;
+      margin-top: 3px;
+      width: 90px;
+      background-size: auto 38px;
+    }
+  }
+}
+.footer {
+  padding-bottom: 100px;
+}
+.nav-icon {
+  position: absolute;
+  top: 3px;
+  left: 7px;
+  img {
+    width: 34px;
+    height: 21px;
+    background: url('/images/games/menu-icon.png') no-repeat 0 0;
+  }
+}
+
+.app-summary {
+  margin: 2px 0 6px;
+  width: 100%;
+  .score, .social {
+    float: left;
+    font-size: 1em;
+    width: auto;
+  }
+}
+
+
+.game-icon {
+  max-width: 75px;
+  img {
+    @include box-shadow(0px, 0px, 3px, #000);
+    @include rounded-corners(45%);
+    max-width:100%;
+  }
+}
+
+
+.ui-joy-button {
+  @include rounded-corners(4px);
+  @include shadow(#ddd, 1px);
+  @include txt-shadow(0, -1px, 1px, #888888);
+  color: white;
+  text-align: center;
+  font-size: 1.1em;
+}
+
+.grey-action {
+  @extend .ui-joy-button;
+  @include gradient-top(#c9c9c9,#bababa, #999999, #868686);
+  border-bottom: 1px solid rgba(85,85,85,1.0);
+}
+
+.orange-action {
+  @include gradient-top(#ffc000,#ffb300, #ff9200, #ff8600);
+  border: 1px solid #f49700;
+  border-top: 1px solid #ffebab;
+  border-bottom: 1px solid #a35500;
+}
+
+div.ui-joy-button.medium {
+  margin-bottom: 13px;
+  font-size: 1.2em;
+
+  a.icon {
+    padding: 0;
+    padding-left: 40px !important;
+    line-height: 34px;
+
+    .label {
+      padding-left: 15px;
+    }
+    div.img {
+      left: 10px;
+      top: 5px;
+    }
+  }
+}
+
+div.ui-joy-button.email-btn {
+  @include gradient-top(#d3d3d3,#c9c9c9, #bdbdbd, #b7b7b7);
+  box-shadow: 0 1px 0 #e9e9e9 inset;
+  border: 1px solid #a5a5a5;
+  border-top: 1px solid #acacac;
+  border-bottom: 1px solid #9b9b9b;
+
+  a.icon {
+    .label {
+      border-left: 1px solid #a5a5a5;
+    }
+    div.img {
+      left: 10px;
+      top: 5px;
+
+      img {
+        width: 21px;
+        height: 23px;
+        background: url("/images/games/at-sign.png") no-repeat;
+      }
+    }
+  }
+}
+
+div.ui-joy-button.twitter-btn {
+  @include gradient-top(#84dbf0,#76d3eb, #5fc7e3, #53c5e6);
+  box-shadow: 0 1px 0 #c2ecf6 inset;
+  border: 1px solid #5cbbd2;
+  border-top: 1px solid #6fc8db;
+  border-bottom: 1px solid #47acc8;
+
+  a.icon {
+    .label {
+      border-left: 1px solid #5cbbd2;
+    }
+    div.img {
+      left: 13px;
+
+      img {
+        background: url("/images/games/twitter-white.png") no-repeat;
+      }
+    }
+  }
+}
+
+div.ui-joy-button.facebook-btn {
+  @include gradient-top(#87a7d8,#7c9cd4, #6281c8, #5372c1);
+  box-shadow: 0 1px 0 #c4d4ec inset;
+  border: 1px solid #526e8e;
+  border-top: 1px solid #688faf;
+  border-bottom: 1px solid #405272;
+
+  a.icon {
+    .label {
+      border-left: 1px solid #526e8e;
+    }
+    div.img {
+      left: 15px;
+
+      img {
+        background: url("/images/games/facebook-white.png") no-repeat;
+      }
+    }
+  }
+}
+
+.ui-list-arrow {
+  padding-right: 20px;
+  background: url('/images/games/ui-joy-r-arrow.png') no-repeat 96% center;
+}
+
+.ui-list-down {
+  padding-right: 20px;
+  background: url('/images/games/ui-joy-d-arrow.png') no-repeat 96% center;
+}
+
+.ui-list-action-label {
+  display: block;
+  font-size: 1em;
+  margin-top: 1px;
+}
+
+.highlight-green {
+  @include txt-shadow();
+  @include gradient-top(#75ba50, #6aae45, #51932c, #51922b);
+  @include rounded-corners(4px);
+  @include shadow(#047003, 1px);
+  box-shadow: 0 1px 0 rgba(154, 225, 119, 1.0) inset;
+  border: 1px solid rgba(39, 130, 22, 1.0);
+  border-top: 1px solid rgba(86, 155, 49, 1.0);
+  border-bottom: 1px solid rgba(6, 112, 4, 1.0);
+  color: white;
+  padding: 1px 4px;
+  text-align: center;
+  font-size: .8em;
+  display: inline-block;
+}
+
+
+ul.slats {
+  box-shadow: 0 1px 0 white inset;
+  border-top: 1px solid #a5a6a8;
+  a {
+    text-decoration: none;
+    color: #000;
+  }
+  a:hover {
+    text-decoration: none;
+    color: #000;
+  }
+}
+li.slat {
+  @extend .clearfix;
+  @extend .light;
+  position: relative;
+  margin: 0;
+  padding: 5px percentage(10/320);
+  width: percentage(300/320);
+  border-bottom: 1px solid #a5a6a8;
+  box-shadow: 0 1px 0 white;
+  text-align: left;
+
+  .title {
+    font-size: 1.2em;
+  }
+  .hd {
+    margin-right: percentage(12/300);
+    width: percentage(69/300);
+    float: left;
+  }
+  .bd {
+    margin-right: 0 percentage(12/300);
+    width: percentage(138/300);
+    float: left;
+  }
+  .ft {
+    width: percentage(69/300);
+    float: right;
+    text-align: right;
+  }
+}
+
+.line-item {
+  @extend .clearfix;
+  @extend .light;
+  height: 60px;
+  margin: 0;
+  padding: 20px percentage(10/320);
+
+  .title {
+    font-size: 1.2em;
+  }
+  .hd {
+    margin-right: percentage(12/300);
+    width: percentage(69/300);
+    float: left;
+
+    img {
+      @include box-shadow(0px, 0px, 3px, #000);
+      @include rounded-corners(45%);
+      max-height: 60px;
+      max-width: 100%;
+    }
+  }
+  .bd {
+    margin-right: 0 percentage(12/300);
+    width: percentage(138/300);
+    float: left;
+  }
+  .ft {
+    width: percentage(69/300);
+    float: right;
+    text-align: right;
+    line-height: 60px;
+  }
+}
+
+.image-caption {
+  .hd {
+    width: 60px;
+  }
+  .bd {
+    width: auto;
+    overflow: hidden;
+    float: none;
+  }
+}
+
+.review {
+  font-size: .9em;
+
+  .author, .date {
+    color: #a1a1a1;
+    float: left;
+  }
+  .author {
+    padding-right: 10px;
+  }
+  .date {
+    text-align: right;
+    float: right;
+  }
+  .score {
+    float: left;
+  }
+  .text {
+    clear: both;
+    height: 40px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: wrap;
+  }
+}
+
+.slats.with-icons .slat {
+  height: 60px;
+  padding-top: 20px;
+  padding-bottom: 20px;
+
+  img {
+    max-height: 60px;
+  }
+  .ft {
+    line-height: 60px;
+  }
+}
+.slats.simple .slat {
+  line-height: 35px;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+.slats.reviews li.slat {
+  border-bottom: 0px;
+  box-shadow: none;
+
+  .score-summary {
+
+    .percentage {
+      font-size: 1.5em;
+    }
+    .description {
+      color: #a1a1a1;
+    }
+    img {
+      vertical-align: middle;
+      background: url(/images/games/thumbs-up-lg.png) no-repeat 0 0;
+      width: 31px;
+      height: 32px;
+    }
+  }
+
+}
