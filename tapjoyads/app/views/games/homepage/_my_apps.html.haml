@@ -5,7 +5,7 @@
     = render 'featured_content_preview'
 
     -if @external_publishers.blank?
-      =render :no_games
+      = render :no_games
     - else
       %ul.slats.with-icons
         -@external_publishers.each do |external_publisher|
