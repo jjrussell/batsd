@@ -25,6 +25,9 @@
   = submit_tag('Reset', :id => :date_reset)
 #unfiltered.hidden
   = link_to 'Filter by payout info modification', '#'
+- form_tag(export_tools_payouts_path) do
+  = submit_tag('Export to CSV', :id => :export, :action => export_tools_payouts_path)
+
 %table
   %thead
     %tr
@@ -37,6 +40,7 @@
       %th.do-not-print W9/Bank
       %th Action
       %th Confirmed
+      %th Notes
   %tbody
     - @partners.each do |partner|
       - payout_info = partner.payout_info
@@ -98,6 +102,7 @@
           - else
             %span{ :class => 'enabled', :style =>  (!partner.confirmed_for_payout ? 'display:none;' : 'display:inline;')  } Confirmed
             %span{ :class => 'disabled', :style => (partner.confirmed_for_payout ? 'display:none;' : 'display:inline;')  } Uncomfirmed
+        %td= partner.payout_confirmation_notes
 
 - content_for :page_javascript do
   :plain

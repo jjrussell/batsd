@@ -90,7 +90,7 @@
       %span{ :class => 'confirmed' } Confirmed
       %form#confirmed_for_payout{ :action => set_unconfirmed_for_payout_partner_path, :method => :post}
         = label_tag('payout_notes', 'Notes for Payout:')
-        = text_area_tag('payout_notes', nil, :rows => 10, :cols => 25)
+        = text_field_tag('payout_notes', nil, :length => 25)
         %br
         = submit_tag('Unconfirm')
     -else
