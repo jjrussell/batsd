@@ -678,4 +678,64 @@ describe Offer do
       end
     end
   end
+
+  describe '#calculate_target_installs' do
+    before :each do
+      @offer.allow_negative_balance = false
+      @offer.partner.balance = 1_000_00
+      @num_installs_today = 1
+    end
+
+    context 'when negative balance is allowed' do
+      before :each do
+        @offer.allow_negative_balance = true
+      end
+
+      it 'should be infinity' do
+        target = @offer.calculate_target_installs(@num_installs_today)
+        target.should_not be_finite
+      end
+
+      it 'should be limited by daily budget' do
+        @offer.daily_budget = 100
+        expected = @offer.daily_budget - @num_installs_today
+        target = @offer.calculate_target_installs(@num_installs_today)
+        target.should == expected
+      end
+    end
+
+    context 'when negative balance is not allowed' do
+      it 'should be based on the balance' do
+        expected = @offer.partner.balance / @offer.bid
+        target = @offer.calculate_target_installs(@num_installs_today)
+        target.should == expected
+      end
+
+      it 'should be limited by daily budget' do
+        @offer.daily_budget = 100
+        expected = @offer.daily_budget - @num_installs_today
+        target = @offer.calculate_target_installs(@num_installs_today)
+        target.should == expected
+      end
+    end
+
+    context 'low budget with negative balance' do
+      before :each do
+        @offer.partner.balance = 50_00
+      end
+
+      it 'should be based on half of balance' do
+        expected = @offer.partner.balance / @offer.bid / 2
+        target = @offer.calculate_target_installs(@num_installs_today)
+        target.should == expected
+      end
+
+      it 'should ignore if paid offer' do
+        @offer.price = 100
+        expected = @offer.partner.balance / @offer.bid
+        target = @offer.calculate_target_installs(@num_installs_today)
+        target.should == expected
+      end
+    end
+  end
 end
