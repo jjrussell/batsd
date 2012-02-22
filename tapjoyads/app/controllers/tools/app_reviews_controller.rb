@@ -3,7 +3,7 @@ class Tools::AppReviewsController < WebsiteController
   current_tab :tools
   filter_access_to :all
 
-  before_filter :app_review, :only => [ :edit, :update, :destroy ]
+  before_filter :find_app_review, :only => [ :edit, :update, :destroy ]
 
   def index
     if params[:app_metadata_id]
@@ -66,7 +66,7 @@ class Tools::AppReviewsController < WebsiteController
 
   private
 
-  def app_review
+  def find_app_review
     @app_review = AppReview.find(params[:id])
   end
 end

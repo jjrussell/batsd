@@ -1,6 +1,6 @@
 class Games::AppReviewsController < GamesController
   before_filter :require_gamer
-  before_filter :app_review, :only => [ :edit, :update, :destroy ]
+  before_filter :find_app_review, :only => [ :edit, :update, :destroy ]
 
   def index
     if params[:gamer_id]
@@ -20,20 +20,21 @@ class Games::AppReviewsController < GamesController
 
   def create
     @app_review = AppReview.new(params[:app_review])
-    @app_metadata = @app_review.app_metadata
+    @app_review.author = current_gamer
 
     if @app_review.save
       flash[:notice] = 'Successfully reviewed this app.'
-      redirect_to games_app_reviews_path(:app_metadata_id => @app_metadata.id)
+      redirect_to games_app_reviews_path(:app_metadata_id => @app_review.app_metadata_id)
     else
       if @app_review.errors[:author_id].any?
         flash.now[:error] = 'You have already reviewed this app.'
       else
         flash.now[:error] = 'There was an issue. Please try again later.'
       end
-      @app_reviews = AppReview.paginate_all_by_app_metadata_id(@app_metadata.id, :page => params[:app_reviews_page])
-      params[:app_metadata_id] = @app_metadata.id
-      @app = App.find_by_id(AppMetadataMapping.find_by_app_metadata_id(@app_metadata.id).app_id)
+      @app_reviews = AppReview.paginate_all_by_app_metadata_id(@app_review.app_metadata_id, :page => params[:app_reviews_page])
+      params[:app_metadata_id] = @app_review.app_metadata_id
+      @app_metadata = @app_review.app_metadata
+      @app = App.find_by_id(AppMetadataMapping.find_by_app_metadata_id(@app_review.app_metadata_id).app_id)
       render :action => :index
     end
   end
@@ -59,7 +60,7 @@ class Games::AppReviewsController < GamesController
 
   private
 
-  def app_review
+  def find_app_review
     @app_review = current_gamer.app_reviews.find(params[:id])
   end
 end
