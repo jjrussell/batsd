@@ -33,13 +33,5 @@
                     .ui-list-action-label
                       = t('text.shared.collect')
 
-= render("games/shared/footer")
-
-- content_for :page_head do
-
-  =# stylesheet_link_tag("marketplace/theme/tjm/style-768", :media => "only screen and (min-width: 768px)")
-  =# stylesheet_link_tag("marketplace/theme/tjm/style-480", :media => "only screen and (min-width: 480px)")
-  =# stylesheet_link_tag("marketplace/theme/tjm/images-hd", :media => "-webkit-min-device-pixel-ratio: 2")
-
 - content_for :included_javascripts do
   = javascript_include_tag "games/src/marketplace"

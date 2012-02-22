@@ -32,6 +32,7 @@ $(document).ready(function() {
       $('.menu-dropdown').removeClass('close').addClass('open');
     }
   });
+  
   // Menu - Device Toggle
   $('.device-toggle').bind('click', function(){
     if ($(this).hasClass('up')) {

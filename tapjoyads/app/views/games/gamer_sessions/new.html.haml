@@ -69,28 +69,6 @@
           = error_message_on @gamer, :terms_of_service
     .register_progess
 
-#header.header
-  .headerwrap
-    .wrap
-      .container
-        #login-web.right
-          #login-web-wrapper
-            %span= t('text.shared.login_verb')
-        - link_to(games_root_path, :class => "") do
-          .logo
-            %img{ :src => BLANK_IMAGE }
-        .right
-          #login.button
-            = t('text.shared.login_verb')
-      .header-h-split
-        &nbsp;
-      .container
-        .left.phraseThatPays
-          = t('text.games.about_body')
-        .right
-          #signup.button
-            = t('text.shared.sign_up')
-
 #content
   #wrapper
     %h4.museo.center
