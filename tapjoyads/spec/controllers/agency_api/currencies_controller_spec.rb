@@ -198,6 +198,37 @@ describe AgencyApi::CurrenciesController do
       currency.test_devices.should == 'asdf;fdsa'
       currency.callback_url.should == 'http://tapjoy.com'
       currency.secret_key.should == 'bar'
+      currency.ordinal.should == 1
+    end
+
+    it 'allows multiple non-managed currencies' do
+      post(:create, @valid_params)
+      should_respond_with_json_success(200)
+
+      post(:create, @valid_params)
+      should_respond_with_json_success(200)
+      result = JSON.parse(response.body)
+      result['currency_id'].should_not == @app.id
+      currency = Currency.find(result['currency_id'])
+      currency.name.should == 'currency'
+      currency.conversion_rate.should == 100
+      currency.initial_balance.should == 100
+      currency.test_devices.should == 'asdf;fdsa'
+      currency.callback_url.should == 'http://tapjoy.com'
+      currency.secret_key.should == 'bar'
+      currency.ordinal.should == 2
+    end
+
+
+    it 'does not allow multiple managed currencies' do
+      post(:create, @valid_params.merge(:callback_url => nil))
+      should_respond_with_json_success(200)
+
+      post(:create, @valid_params.merge(:callback_url => nil))
+      should_respond_with_json_error(400)
+
+      post(:create, @valid_params.merge(:callback_url => 'TAP_POINTS_CURRENCY'))
+      should_respond_with_json_error(400)
     end
   end
 
