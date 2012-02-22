@@ -127,12 +127,8 @@ class SimpledbResource
     end
   end
 
-  def save(options = {})
-    serial_save(options)
-  end
-
   def save!(options = {})
-    serial_save({ :catch_exceptions => false }.merge(options))
+    save({ :catch_exceptions => false }.merge(options))
   end
 
   ##
@@ -144,7 +140,7 @@ class SimpledbResource
   #   write_to_sdb: Whether to save to sdb. This may be set to false if saves are occuring in a batch put.
   #   catch_exceptions: Whether to catch exceptions. If true, then any failed attempts to save will
   #       result in the save getting written to sqs in order to be saved later.
-  def serial_save(options = {})
+  def save(options = {})
     options_copy     = options.clone
     save_to_memcache = options.delete(:write_to_memcache) { false }
     save_to_sdb      = options.delete(:write_to_sdb)      { true }
@@ -320,7 +316,7 @@ class SimpledbResource
       yield(row)
 
       row.put(version_attr, initial_version.to_i + 1)
-      row.serial_save(:catch_exceptions => false, :expected_attr => {version_attr => initial_version}, :write_to_memcache => false)
+      row.save!(:expected_attr => {version_attr => initial_version}, :write_to_memcache => false)
       return row
     rescue ExpectedAttributeError => e
       Rails.logger.info "ExpectedAttributeError: #{e.to_s}."

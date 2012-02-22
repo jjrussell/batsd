@@ -26,7 +26,7 @@ class Job::QueueFailedSdbSavesController < Job::SqsReaderController
   def save_to_sdb
     obj = @bucket.objects[@incomplete_path]
     queued_sdb_item = SimpledbResource.deserialize(obj.read)
-    queued_sdb_item.serial_save(@options.merge({ :catch_exceptions => false, :from_queue => true }))
+    queued_sdb_item.save!(@options.merge({ :from_queue => true }))
     obj.copy_to(@complete_path)
     obj.delete
   end

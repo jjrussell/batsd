@@ -99,7 +99,7 @@ class ActivityLog < SimpledbResource
     self.after_state = after_hash
   end
 
-  def serial_save(options = {})
+  def save(options = {})
     return unless is_new
     return if self.object.respond_to?(:errors) && self.object.errors.is_a?(ActiveRecord::Errors) && self.object.errors.present?
 

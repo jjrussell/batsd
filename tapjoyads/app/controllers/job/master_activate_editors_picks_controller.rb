@@ -4,7 +4,7 @@ class Job::MasterActivateEditorsPicksController < Job::JobController
     EditorsPick.to_activate.each do |pick|
       log_activity(pick)
       pick.activate!
-      save_activity_logs(true)
+      save_activity_logs
     end
 
     render :text => 'OK'

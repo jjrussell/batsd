@@ -36,7 +36,7 @@ class Job::QueueSendCurrencyController < Job::SqsReaderController
         callback_url = 'http://offer-dynamic-lb.playdom.com/tapjoy/mob/myspace/fp/main' # myspace/iphone url
       else
         reward.send_currency_status = 'InvalidPlaydomUserId'
-        reward.serial_save
+        reward.save
         return
       end
     end
@@ -76,7 +76,7 @@ class Job::QueueSendCurrencyController < Job::SqsReaderController
     reward.sent_currency = Time.zone.now
 
     begin
-      reward.serial_save(:catch_exceptions => false, :expected_attr => {'sent_currency' => nil})
+      reward.save!(:expected_attr => {'sent_currency' => nil})
     rescue Simpledb::ExpectedAttributeError => e
       reward = Reward.new(:key => reward.key, :consistent => true)
       if reward.send_currency_status?
@@ -112,7 +112,7 @@ class Job::QueueSendCurrencyController < Job::SqsReaderController
       params.delete(:callback_url)
     rescue Exception => e
       reward.delete('sent_currency')
-      reward.serial_save
+      reward.save
 
       num_failures = Mc.increment_count("send_currency_failure.#{currency.id}.#{mc_time}")
       if num_failures < 5000
@@ -127,7 +127,7 @@ class Job::QueueSendCurrencyController < Job::SqsReaderController
       raise e
     end
 
-    reward.serial_save
+    reward.save
   end
 
 end

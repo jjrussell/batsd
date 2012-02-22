@@ -18,7 +18,7 @@ class Papaya
       device = Device.new(:key => id.downcase)
       unless device.is_papayan?
         device.is_papayan = true
-        device.serial_save
+        device.save
       end
     end
   end

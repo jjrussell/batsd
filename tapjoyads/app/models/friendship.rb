@@ -10,7 +10,7 @@ class Friendship < SimpledbResource
     if friendship.new_record?
       friendship.gamer_id = gamer_id
       friendship.following_id = following_id
-      friendship.serial_save
+      friendship.save
     end
   end
 

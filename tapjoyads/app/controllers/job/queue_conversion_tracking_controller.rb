@@ -22,14 +22,14 @@ class Job::QueueConversionTrackingController < Job::SqsReaderController
     # Try to stop Playdom users from click-frauding (specifically from Mobsters: Big Apple)
     if currency.callback_url == Currency::PLAYDOM_CALLBACK_URL && click.publisher_user_id !~ /^(F|M|P)[0-9]+$/
       click.block_reason = "InvalidPlaydomUserId"
-      click.serial_save
+      click.save
       return
     end
 
     publisher_user = PublisherUser.new(:key => "#{click.publisher_app_id}.#{click.publisher_user_id}")
     unless publisher_user.update!(click.udid)
       click.block_reason = "TooManyUdidsForPublisherUserId"
-      click.serial_save
+      click.save
       return
     end
 
@@ -38,7 +38,7 @@ class Job::QueueConversionTrackingController < Job::SqsReaderController
 
     if (other_devices + [ device ]).any?(&:banned?)
       click.block_reason = "Banned"
-      click.serial_save
+      click.save
       return
     end
 
@@ -47,7 +47,7 @@ class Job::QueueConversionTrackingController < Job::SqsReaderController
       other_devices.each do |d|
         if d.has_app?(click.advertiser_app_id)
           click.block_reason = "AlreadyRewardedForPublisherUserId (UDID=#{d.key})"
-          click.serial_save
+          click.save
           return
         end
       end
@@ -95,7 +95,7 @@ class Job::QueueConversionTrackingController < Job::SqsReaderController
     reward.spend_share            = click.spend_share || currency.get_spend_share(offer)
 
     begin
-      reward.serial_save(:catch_exceptions => false, :expected_attr => { 'type' => nil })
+      reward.save!(:expected_attr => { 'type' => nil })
     rescue Simpledb::ExpectedAttributeError => e
       return
     end
@@ -110,11 +110,11 @@ class Job::QueueConversionTrackingController < Job::SqsReaderController
     end
 
     click.put('installed_at', installed_at_epoch)
-    click.serial_save
+    click.save
 
     device.set_last_run_time(click.advertiser_app_id)
     device.set_last_run_time(click.publisher_app_id) if !device.has_app?(click.publisher_app_id) || device.last_run_time(click.publisher_app_id) < 1.week.ago
-    device.serial_save
+    device.save
 
     web_request = WebRequest.new(:time => Time.zone.at(installed_at_epoch.to_f))
     web_request.path              = 'reward'

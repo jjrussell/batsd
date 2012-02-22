@@ -16,7 +16,7 @@ class Job::QueueGetStoreInfoController < Job::SqsReaderController
     rescue Exception => e
       Rails.logger.info "Exception when fetching app store info: #{e}"
     else
-      save_activity_logs(true)
+      save_activity_logs
     end
   end
 

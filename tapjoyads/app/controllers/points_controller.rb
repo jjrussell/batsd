@@ -38,7 +38,7 @@ class PointsController < ApplicationController
     reward.country           = params[:country]
 
     begin
-      reward.serial_save(:catch_exceptions => false, :expected_attr => { 'type' => nil })
+      reward.save!(:expected_attr => { 'type' => nil })
     rescue Simpledb::ExpectedAttributeError => e
       @error_message = "points already awarded"
       render :template => 'layouts/error' and return

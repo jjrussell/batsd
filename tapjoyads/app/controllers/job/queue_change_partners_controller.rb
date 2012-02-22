@@ -12,7 +12,7 @@ class Job::QueueChangePartnersController < Job::SqsReaderController
       log_activity(pc)
       log_activity(pc.item)
       pc.complete!
-      save_activity_logs(true)
+      save_activity_logs
     end
   end
 

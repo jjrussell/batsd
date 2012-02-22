@@ -37,7 +37,7 @@ describe PointsController do
     it 'awards points and renders user_account' do
       Sqs.expects(:send_message)
       controller.expects(:check_success).with('award_points')
-      Reward.any_instance.expects(:serial_save).with(:catch_exceptions => false, :expected_attr => { 'type' => nil })
+      Reward.any_instance.expects(:save!).with(:expected_attr => { 'type' => nil })
       get(:award, @params)
       should render_template('get_vg_store_items/user_account')
       assigns(:success).should be_true

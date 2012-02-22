@@ -210,11 +210,11 @@ class ApplicationController < ActionController::Base
     @activity_logs << activity_log
   end
 
-  def save_activity_logs(serial_save = false)
+  def save_activity_logs
     if @activity_logs.present?
       @activity_logs.each do |activity_log|
         activity_log.finalize_states
-        serial_save ? activity_log.serial_save : activity_log.save
+        activity_log.save
       end
       @activity_logs = []
     end
