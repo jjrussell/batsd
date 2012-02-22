@@ -611,7 +611,7 @@ span.gill {
 
     .headerwrap {
       font: .81em/150% Arial, Helvetica, sans-serif;
-      height: 120px;
+      height: 140px;
       box-shadow: inset 0 -2px 0 #dd3438;
 
       .logo {
@@ -635,7 +635,6 @@ span.gill {
       }
     }
   }
-
 
   h4.museo{
     font: 500 22px "Museo Slab";
@@ -776,11 +775,7 @@ span.gill {
   background: linear-gradient(top, rgba(255,190,0,1) 0%,rgba(255,173,0,1) 42%,rgba(255,150,0,1) 71%,rgba(255,134,0,1) 100%);
   filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffbe00', endColorstr='#ff8600',GradientType=0 );
   border-bottom: 1px solid #a35500;
-<<<<<<< HEAD
   margin: 4px 10px 0;
-=======
-  margin: 10px;
->>>>>>> 8c3ab4cccfc2805f2ffa49944ab933fb589e36e0
   text-shadow: 0 -1px 0 #d47f1b;
   border-top: 1px solid #ffebab;
 }

@@ -17,13 +17,8 @@
           .box
           .box
           .box
-<<<<<<< HEAD
     .logo
       - link_to(games_root_path) do
-=======
-    - link_to(games_root_path) do
-      .logo
->>>>>>> 8c3ab4cccfc2805f2ffa49944ab933fb589e36e0
         %img{ :src => BLANK_IMAGE }
     - if @current_gamer.present?
       .menu-dropdown
@@ -60,14 +55,11 @@
               - link_to(games_logout_path) do
                 .logout
                   %span= t('text.shared.logout')
+
 - if @current_gamer.nil?
   .header-h-split
     &nbsp;
-<<<<<<< HEAD
   .container.pad
-=======
-  .container
->>>>>>> 8c3ab4cccfc2805f2ffa49944ab933fb589e36e0
     .left.phraseThatPays
       A better way to love the apps you have and find the apps you'll love.
     .right

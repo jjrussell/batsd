@@ -100,14 +100,14 @@ a:hover {
 .header {
 
   .headerwrap {
-    background: -moz-linear-gradient(top, #e9292e 0%, #de2627 25%, #e6252a 50%, #d71012 75%, #cf0404 100%);
-    background: -webkit-linear-gradient(top, #e9292e 0%, #de2627 25%, #e6252a 50%, #d71012 75%, #cf0404 100%);
-    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #e9292e), color-stop(25%, #de2627), color-stop(50%, #e6252a), color-stop(75%, #d71012), color-stop(100%, #cf0404));
-    border-top: 1px solid #cdcdce;
-    border-bottom: 1px solid #cdcdce;
-    box-shadow: inset 0 -1px 0 #707274;
+    background: -moz-linear-gradient(top, #e82c2c 0%, #de2627 25%, #ce1f21 50%, #c31a1d 75%, #b41317 100%);
+    background: -webkit-linear-gradient(top, #e82c2c 0%, #de2627 25%, #ce1f21 50%, #c31a1d 75%, #b41317 100%);
+    background:  -webkit-gradient(linear, left top, left bottom, color-stop(0%,#e82c2c), color-stop(25%,#de2627), color-stop(50%,#ce1f21), color-stop(75%,#c31a1d), color-stop(100%,#b41317));
+    border-bottom: 1px solid #720101;
+    box-shadow: 0 1px 2px rgba(0,0,0, .7), inset 0 -2px 0 #dd3438;
     color: #fff;
-    min-height: 36px;
+    min-height: 36px; 
+    text-align: center;
   }
 
   .nav {
@@ -117,12 +117,12 @@ a:hover {
     }
     .menu {
       cursor: pointer;
-      left: 6px;
+      left: 0;
       position: absolute;
 
       .menu-grid {
         height: 100%;
-        padding: 8px 18px 0 18px;
+        padding: 8px;
         width: 38px;
         z-index: 9;
 
@@ -143,8 +143,6 @@ a:hover {
         background: -moz-linear-gradient(top, rgba(34, 34, 34, 0.15) 0%, rgba(40, 40, 40, 0.15) 25%, rgba(22, 22, 22, 0.15) 50%, rgba(14, 14, 14, 0.15) 75%, rgba(1, 1, 1, 0.15) 100%);
         background: -webkit-linear-gradient(top, rgba(34, 34, 34, 0.15) 0%, rgba(40, 40, 40, 0.15) 25%, rgba(22, 22, 22, 0.15) 50%, rgba(14, 14, 14, 0.15) 75%, rgba(1, 1, 1, 0.15) 100%);
         background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, rgba(34, 34, 34, 0.15)), color-stop(25%, rgba(40, 40, 40, 0.15)), color-stop(50%, rgba(22, 22, 22, 0.15)), color-stop(75%, rgba(14, 14, 14, 0.15)), color-stop(100%, rgba(1, 1, 1, 0.15)));
-        border-right: 1px solid #ac0202;
-        box-shadow: inset 0 1px 0 #ac0202;
         height: 35px;
 
         .box {
@@ -157,7 +155,8 @@ a:hover {
     .logo {
       text-align: center;
       width: 75px;
-
+      margin: 0 auto;
+      
       img {
         margin-top: 5px;
         background: url(#{$image_path}/tapjoy_large.png) no-repeat 0 0;
@@ -215,10 +214,7 @@ a:hover {
             display: inline-block;
             position: relative;
             top: -8px;
-<<<<<<< HEAD
             margin-right: 12px;
-=======
->>>>>>> 8c3ab4cccfc2805f2ffa49944ab933fb589e36e0
           }
 
           .device-toggle {
@@ -624,6 +620,15 @@ li.list-button {
 
 .contrast {
   background-color: #eeeeee;
+}
+
+.soft-gray-gradient {
+  background: -moz-linear-gradient(top, #fbfbfb 0%, #f2f2f2 100%);
+  background: -webkit-linear-gradient(top, #fbfbfb 0%,#f2f2f2 100%);
+  background:  -webkit-gradient(linear, left top, left bottom, color-stop(0%, #fbfbfb), color-stop(100%, #f2f2f2));
+  background: -o-linear-gradient(top, #fbfbfb 0%,#f2f2f2 100%);
+  background: -ms-linear-gradient(top, #fbfbfb 0%,#f2f2f2 100%);
+  box-shadow: inset 0 1px 0 #fff;
 }
 
 .no-bevel, .no-bevel:before, .no-bevel:after {
