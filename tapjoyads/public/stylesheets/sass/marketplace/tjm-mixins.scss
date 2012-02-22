@@ -77,11 +77,11 @@ $mobile-scaledown-multiplier: 2;
   -webkit-box-shadow: 0 4px 2px -2px $color;
 }
 
-@mixin set-box-shadow($x:0, $y:0, $spread:2px, $color:#ddd) {
-  -webkit-box-shadow: $x $y $spread $color;
-   -moz-box-shadow: $x $y $spread $color;
-     -o-box-shadow: $x $y $spread $color;
-        box-shadow: $x $y $spread $color;
+@mixin set-box-shadow($x:0, $y:0, $spread:2px, $color:#ddd, $inset: '') {
+  -webkit-box-shadow: $x $y $spread $color $inset;
+   -moz-box-shadow: $x $y $spread $color $inset;
+     -o-box-shadow: $x $y $spread $color $inset;
+        box-shadow: $x $y $spread $color $inset;
 }
 
 @mixin gradient-inset-shadow {
