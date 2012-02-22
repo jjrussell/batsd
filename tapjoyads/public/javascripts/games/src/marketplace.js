@@ -43,7 +43,6 @@
   };
 
   $(function () {
-    // keyboard keys 1,2,3... etc change the media queries
     var checkForOfferWall = function () {
       $("[data-jsonp-url]").each(function () {
         var $$ = $(this),

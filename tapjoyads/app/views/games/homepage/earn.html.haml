@@ -15,15 +15,15 @@
       %span.ui-icon-med.social-med
         &nbsp;
     .mod.menu-head.always-visible
-      %span=t('text.games.browse_offers')
-      .ui-icon.down-arrow.right
-        &nbsp;
-    =render("offers")
+      .container
+        .left= t('text.games.browse_offers')
+        .ui-icon.down-arrow.right
+          &nbsp;
+    = render("offers")
     .mod.review-area.light
       .ui-joy-button.grey-action
         %a.text-center
           Review #{@external_publisher.app_name}
-    = render("games/shared/footer")
 
 -content_for :included_javascripts do
   = javascript_include_tag "games/src/marketplace"

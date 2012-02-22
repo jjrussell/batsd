@@ -35,6 +35,12 @@ a:hover {
   -moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box;
 }
 
+ul,
+li {
+  margin: 0;
+  padding: 0;
+}
+
 .elip {
   white-space: nowrap;
   text-overflow: ellipsis;
@@ -94,6 +100,14 @@ a:hover {
   box-shadow: -3px 0 6px rgba(0, 0, 0, 0.4);
 }
 
+/**
+ * colors
+ */
+.charcoal {
+  color: #454545;
+  @include text-shadow(0, 1px, 0, #fff);
+}
+
 //-------------------------------------------
 // Header
 //-------------------------------------------
@@ -104,10 +118,9 @@ a:hover {
     background: -webkit-linear-gradient(top, #e82c2c 0%, #de2627 25%, #ce1f21 50%, #c31a1d 75%, #b41317 100%);
     background:  -webkit-gradient(linear, left top, left bottom, color-stop(0%,#e82c2c), color-stop(25%,#de2627), color-stop(50%,#ce1f21), color-stop(75%,#c31a1d), color-stop(100%,#b41317));
     border-bottom: 1px solid #720101;
-    box-shadow: 0 1px 2px rgba(0,0,0, .7), inset 0 -2px 0 #dd3438;
+    box-shadow: 0 1px 2px rgba(0,0,0, .5), inset 0 -2px 0 rgba(221, 52, 56, 1);
     color: #fff;
-    min-height: 36px;
-    text-align: center;
+    min-height: 36px; 
   }
 
   .nav {
@@ -178,7 +191,7 @@ a:hover {
       width: 100%;
       z-index: 11;
       @include animate(opacity, 0.35s);
-      @include rounded-corners-bottom(4px);
+      @include rounded-corners-bottom(6px);
 
       .menu-dropdown-wrapper {
         height: 0;
@@ -186,7 +199,7 @@ a:hover {
     }
     .menu-dropdown.open {
       border-bottom: 1px solid #111;
-      box-shadow: inset 0 6px 20px 0px rgba(0, 0, 0, 0.2);
+      box-shadow: inset 0 6px 20px 0px rgba(0, 0, 0, 0.2), 1px 1px 3px rgba(0,0,0, .2);
       overflow: visible;
       opacity: 1;
 
@@ -370,6 +383,10 @@ a:hover {
   background: url('/images/games/ui-joy-r-arrow.png') no-repeat 96% center;
 }
 
+.mod.right-arrow, .mod.down-arrow {
+  background-position: 99% center;
+}
+
 .ui-list-action-label {
   display: block;
   font-size: 1em;
@@ -477,16 +494,24 @@ a:hover {
 .titled-group {
 
   .group-title {
-    padding-left: 10px;
     font-weight: bold;
   }
   >.bd {
     position: static;
     overflow: hidden;
     margin-top: 10px;
-    @include rounded-corners(4px);
+    border-radius: 0;
     border: 1px solid #abacad;
   }
+  
+  .bd.row:first-child  {
+     @include custom-rounded-corners(4px, 4px, 0, 0);
+   }
+
+  .bd:last-child {
+     @include custom-rounded-corners(0, 0, 4px, 4px);
+   }
+    
 }
 
 .short-detail {
@@ -619,10 +644,35 @@ input.ui-joy-button {
   border-bottom: 1px solid #9b9b9b;
 }
 
-li.list-button {
+/**
+ * list container
+ */ 
+.list-button-container .list-button {
   @extend .beveled;
-  padding: 10px 20px;
+
+  a {
+    color: #252525;
+  }
+  a:hover {
+    text-decoration: none;
+  }
 }
+
+.list-button-container .list-button:first-child {
+  @include custom-rounded-corners(4px, 4px, 0, 0);
+  border-top: 0;
+}
+
+.list-button-container .list-button:last-child {
+  @include custom-rounded-corners(0, 0, 4px, 4px);
+}
+
+.list-button-container.flush .list-button {
+  border-left: 0;
+  border-right: 0;
+  border-radius: 0 !important;
+}
+
 //-------------------------------------------
 // Skins
 //-------------------------------------------
@@ -634,15 +684,6 @@ li.list-button {
   background-color: #eeeeee;
 }
 
-.soft-gray-gradient {
-  background: -moz-linear-gradient(top, #fbfbfb 0%, #f2f2f2 100%);
-  background: -webkit-linear-gradient(top, #fbfbfb 0%,#f2f2f2 100%);
-  background:  -webkit-gradient(linear, left top, left bottom, color-stop(0%, #fbfbfb), color-stop(100%, #f2f2f2));
-  background: -o-linear-gradient(top, #fbfbfb 0%,#f2f2f2 100%);
-  background: -ms-linear-gradient(top, #fbfbfb 0%,#f2f2f2 100%);
-  box-shadow: inset 0 1px 0 #fff;
-}
-
 .no-bevel, .no-bevel:before, .no-bevel:after {
   border: none;
   box-shadow: none;
@@ -650,15 +691,11 @@ li.list-button {
 
 .beveled {
   border-bottom: 1px solid #c8c4c4;
-  box-shadow: 0 1px 0 #ffffff inset;
+  box-shadow: 0 1px 0 #fff inset, 0 1px 0 #fff;
 }
 
 .beveled:first-child {
   border-top: 1px solid #c8c4c4;
-}
-
-.beveled:last-child {
-  box-shadow: 0 1px 0 #ffffff inset, 0 1px 0 #ffffff;
 }
 
 .inner-split {
@@ -672,4 +709,14 @@ li.list-button {
 
 .inner-split:last-child {
   border-bottom: none;
+}
+
+/* soft gray gradient */
+.soft-gray-gradient {
+  @include linear-gradient(top, #fbfbfb, #f2f2f2);
+}
+
+.soft-gray-gradient:active {
+  background: #f0f0f0;
+  box-shadow: inset 0 1px 1px rgba(0,0,0, .2), 0 1px 0 #fff;
 }

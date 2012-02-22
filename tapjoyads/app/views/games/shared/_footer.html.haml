@@ -1,10 +1,10 @@
 .footer
-  %ul.slats.simple
-    %li.slat.chrome
-      =link_to t('text.games.share_with_your_friends'), games_social_index_path
-      .right.ui-list-arrow
-        &nbsp;
-    %li.slat.chrome
-      =link_to t('text.shared.help'), "#"
-      .right.ui-list-arrow
-        &nbsp;
+  %ul.basic
+    %li.list-button
+      -link_to games_social_index_path do
+        .mod.right-arrow
+          %span= t('text.games.share_with_your_friends')
+    %li.list-button
+      -link_to "#" do
+        .mod.right-arrow
+          %span= t('text.shared.help')
