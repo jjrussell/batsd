@@ -1,0 +1,183 @@
+//-------------------------------------------
+// Global SASS variables and mixins
+//-------------------------------------------
+
+$tj-red: #CD202C;
+$tj-orange: #DD4814;
+$tj-blue: #0088CE;
+$tj-black: #000000;
+
+$main-bg: #FFF;
+$main-title-font-size: 1.2em;
+$main-font-size: 1em;
+$main-font-color: #5A5A5A;
+$main-link-font-color: #787878;
+$main-link-font-color-hover: #262626;
+$main-font-name: "Helvetica Neue", Arial, Helvetica, "Lucida Grande", sans-serif;
+
+$nav-bg-color: #000;
+
+$page-padding-v: 12px;
+$page-padding-h: 8px;
+
+$border-color: #CECECE;
+
+$mobile-scaledown-multiplier: 2;
+
+@function mobile_pad($n) {
+  @return $n/$mobile-scaledown-multiplier;
+}
+
+@mixin rounded-corners($radius: 6px) {
+  border-radius: $radius;
+  -moz-border-radius-: $radius;
+  -webkit-border-radius: $radius;
+  -ms-border-radius: $radius;
+  -o-border-radius: $radius;
+}
+
+@mixin rounded-corners-bottom($radius: 6px) {
+  border-bottom-right-radius: $radius;
+  border-bottom-left-radius: $radius;
+  -moz-border-radius-bottomright: $radius;
+  -moz-border-radius-bottomleft: $radius;
+  -webkit-border-bottom-right-radius: $radius;
+  -webkit-border-bottom-left-radius: $radius;
+  -ms-border-bottom-right-radius: $radius;
+  -ms-border-bottom-left-radius: $radius;
+  -o-border-bottom-right-radius: $radius;
+  -o-border-bottom-left-radius: $radius;
+}
+
+@mixin button ($radius: 6px, $padding: 8px 8px) {
+  padding: $padding;
+  text-align: center;
+  @include rounded-corners($radius)
+}
+
+@mixin text-shadow($x:0, $y:1px, $spread:1px, $color:rgba(37, 37, 37, .4)) {
+  text-shadow: $x $y $spread $color;
+}
+
+@mixin inset-shadow($color: $border-color, $length: 4px) {
+  -webkit-box-shadow: inset 0 0 $length $color;
+  -moz-box-shadow: inset 0 0 $length $color;
+  box-shadow: inset 0 0 $length $color;
+}
+
+@mixin shadow($color: $border-color, $length: 4px) {
+  -webkit-box-shadow: 0 0 $length $color;
+  -moz-box-shadow: 0 0 $length $color;
+  box-shadow: 0 0 $length $color;
+}
+
+@mixin box-shadow($color: #9D9990){
+  -box-shadow: 0 4px 2px -2px $color;
+  -moz-box-shadow: 0 4px 2px -2px $color;
+  -webkit-box-shadow: 0 4px 2px -2px $color;
+}
+
+@mixin set-box-shadow($x:0, $y:0, $spread:2px, $color:#ddd, $inset: '') {
+  -webkit-box-shadow: $x $y $spread $color $inset;
+   -moz-box-shadow: $x $y $spread $color $inset;
+     -o-box-shadow: $x $y $spread $color $inset;
+        box-shadow: $x $y $spread $color $inset;
+}
+
+@mixin gradient-inset-shadow {
+  background-image: -moz-linear-gradient(top, rgba(160,150,145,.1) 0%, rgba(160,150,145,0) 30%, rgba(160,150,145,.2) 100%);
+  background-image: -webkit-gradient(linear,left top, left bottom, color-stop(0%, rgba(160,150,145,0.1)), color-stop(30%, rgba(160,150,145,0)), color-stop(100%, rgba(160,150,145,.2)));
+  background-image: -webkit-linear-gradient(top, rgba(160,150,145,.1) 0%, rgba(160,150,145,0) 30%, rgba(160,150,145,.2) 100%);
+  background-image: -o-linear-gradient(top, rgba(160,150,145,.1) 0%, rgba(160,150,145,0) 30%, rgba(160,150,145,.2) 100%);
+  background-image: linear-gradient(top, rgba(160,150,145,.1) 0%, rgba(160,150,145,0) 30%, rgba(160,150,145,.2) 100%);
+}
+
+@mixin inset-button ($radius: 6px, $padding: 8px 8px) {
+  @include inset-shadow;
+  @include button($radius, $padding)
+}
+
+@mixin inset-text-shadow {
+  text-shadow: rgba(160,150,145,.5) -1px 0, rgba(160,150,145,.3) 0 -1px, rgba(0,0,0,.5) 0 1px, rgba(0,0,0,.3) -1px -1px;
+}
+
+@mixin linear-gradient($dir, $from, $to) {
+  @if $dir == "top" {
+    $gtype: 0;
+  } @else {
+    $gtype: 1;
+  }
+  background: $from; /* Old browsers */
+  background: -moz-linear-gradient($dir, $from, $to); /* FF3.6+ */
+  background: -webkit-linear-gradient($dir, $from, $to); /* Chrome10+,Safari5.1+ */
+  background: -o-linear-gradient($dir, $from,$to); /* Opera 11.10+ */
+  background: -ms-linear-gradient($dir, $from,$to); /* IE10+ */
+  background: linear-gradient($dir, $from,$to); /* W3C */
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='$from', endColorstr='$to',GradientType=$gtype ); /* IE6-9 */
+}
+
+@mixin gradient-top($p0, $p25, $p75, $p100) {
+  background: $p0; /* Old browsers */
+  background: -moz-linear-gradient(top, $p0 0%, $p25 25%, $p75 75%, $p100 100%); /* FF3.6+ */
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,$p0), color-stop(25%,$p25), color-stop(75%,$p75), color-stop(100%,$p100)); /* Chrome,Safari4+ */
+  background: -webkit-linear-gradient(top,$p0 0%, $p25 25%, $p75 75%, $p100 100%); /* Chrome10+,Safari5.1+ */
+  background: -o-linear-gradient(top,  $p0 0%, $p25 25%, $p75 75%, $p100 100%); /* Opera 11.10+ */
+  background: -ms-linear-gradient(top,  $p0 0%, $p25 25%, $p75 75%, $p100 100%); /* IE10+ */
+  background: linear-gradient(top,  $p0 0%, $p25 25%, $p75 75%, $p100 100%); /* W3C */
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#{$p0}', endColorstr='#{$p100}',GradientType=0 ); /* IE6-9 */
+}
+@mixin radial-gradient($p0, $p75, $p100) {
+  background: $p0; /* Old browsers */
+  background: -moz-radial-gradient(center, ellipse cover,  $p0 0%, $p75 75%, $p100 100%); /* FF3.6+ */
+  background: -webkit-gradient(radial, center center, 0px, center center, 100%, color-stop(0%,$p0), color-stop(75%,$p75), color-stop(100%,$p100)); /* Chrome,Safari4+ */
+  background: -webkit-radial-gradient(center, ellipse cover,  $p0 0%,$p75 75%,$p100 100%); /* Chrome10+,Safari5.1+ */
+  background: -o-radial-gradient(center, ellipse cover,  $p0 0%,$p75 75%,$p100 100%); /* Opera 12+ */
+  background: -ms-radial-gradient(center, ellipse cover,  $p0 0%,$p75 75%,$p100 100%); /* IE10+ */
+  background: radial-gradient(center, ellipse cover,  $p0 0%,$p75 75%,$p100 100%); /* W3C */
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#{$p0}', endColorstr='#{$p100}',GradientType=1 ); /* IE6-9 fallback on horizontal gradient */
+}
+@mixin gradient($from, $to){
+  background: -moz-linear-gradient(top, $from 0%, $to 100%);
+  background: -webkit-gradient(linear, 0 0, 0 100%, color-stop(0, $from), color-stop(1, $to));
+}
+
+@mixin content-box {
+  @include box-shadow;
+  @include rounded-corners;
+  @include inset-button;
+}
+
+@mixin rotate($deg: 45) {
+  -webkit-transform: rotate(#{$deg}deg);
+  -moz-transform: rotate(#{$deg}deg);
+  -o-transform: rotate(#{$deg}deg);
+  -ms-transform: rotate(#{$deg}deg);
+  transform: rotate(#{$deg}deg);
+}
+
+@mixin form-field {
+  @include inset-button;
+  background-color: #FFF;
+}
+
+@mixin fadeIn($time: 0.5s, $count: 1, $delay: 0s) {
+  -webkit-animation-delay: $delay;
+  -webkit-animation-name: fadeIn;
+  -webkit-animation-duration: $time;
+  -webkit-animation-iteration-count: $count;
+  -webkit-animation-timing-function: linear;
+  -moz-animation-delay: $delay;
+  -moz-animation-name: fadeIn;
+  -moz-animation-duration: $time;
+  -moz-animation-iteration-count: $count;
+  -moz-animation-timing-function: linear;
+}
+
+@mixin animate ($type: all, $time: 0.65s, $ease: ease-out, $delay: 0s) {
+  transition: $type $time $ease $delay;
+  -moz-transition: $type $time $ease $delay;
+  -o-transition: $type $time $ease $delay;
+  -webkit-transition: $type $time $ease $delay;
+  -ms-transition: $type $time $ease $delay;
+}
+

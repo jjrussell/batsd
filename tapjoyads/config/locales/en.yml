@@ -207,7 +207,7 @@ en:
       title: "Earn %{currency}"
       try_out: "Try out"
     games:
-      about_body: "Tapjoy allows you to discover popular apps like Happy Park, City of Wonder, Coin Dozer, Overkill, VIP Poker, and Gun Bros, while accessing premium content in your favorite apps. It recommends new apps to you so if you like playing Magic Zoo, Tapjoy will suggest other games you'll enjoy, like Safari Zoo or Bug Village HD. So sign up now, and tap into a better way to find the apps you love."
+      about_body: "A better way to love the apps you have and find the apps you'll love."
       about_title: "\"Somehow it knows exactly what apps I like.\""
       account_created_body: "Your Tapjoy account was successfully created!"
       account_created_title: Success!
@@ -219,12 +219,16 @@ en:
       already_registered:
         one: "%{name} has already registered, you are now following him/her."
         other: "%{name} have already registered, you are now following them."
-      back_to_top: "Back to Top"
+      amount_and_currency: "%{amount} %{currency}"
+      back_to_top: Back to Top
       birthdate: Birthdate
+      browse_offers: Browse Offers
       call_to_action_body: "A better way to love the apps you have and find the apps you'll love"
       call_to_action_title: "Unlock Mobile Joy"
       cant_fetch_offers: "There was an issue fetching more offers. Please try again."
+      change: "change"
       change_linked_account: "Change Linked Account"
+      collect_rewards: "Collect rewards"
       connect_my_device: "Connect My Device"
       connect_your_android: "Please connect your Android device"
       connect_your_device: "Please connect your device"
@@ -244,9 +248,10 @@ en:
       enter_valid_email: "Enter a valid email address"
       favorite_app: "Favorite App"
       favorite_category: "Favorite Category"
+      find_new_apps: "Find new apps"
       follow_us: "follow us"
       forgot_pass: "Forgot Password?"
-      free!: Free!
+      free: "Free!"
       generic_issue: "There was an issue. Please try again."
       get_it: "Get it!"
       grant_us_access: "Please authorize us/grant us both permissions before sending out an invite."
@@ -254,10 +259,11 @@ en:
       how_it_works_title: "How does it work?"
       install_and_run: "Install and run %{name}"
       invite: "Invite Your Friends!"
+      invite_by_email: Invite by Email
       invite_email_body: |-
           %{name} has invited you to join Tapjoy, the BEST place to find the hottest new apps. Signing up is free and you'll be able discover the best apps on iOS and Android, while also earning currency in your favorite apps.
 
-          No need to wade through thousands of apps in the App Store or the Android Market to find your next download. Tapjoy has you covered and recommends apps we know you'll like.
+          No need to wade through thousands of apps in the App Store or the Android Market to find your next download. Tapjoy has you covered and recommends apps we know you\'ll like.
 
           To get started, create your account here:
       invite_email_greet: "Hi,"
@@ -277,7 +283,10 @@ en:
       meta_keywords: "games, mobile games, mobile apps, ios, android, iphone, ipad, itouch"
       more_apps: "More Apps"
       my_apps: "My Apps"
+      profile: "Me"
+      no_javascript: "Please go into your browser settings and enable JavaScript to continue using Tapjoy."
       none_selected: "None Selected"
+      on_my: "on my %{device_name}"
       oops: Oops!
       our_tos_changed: "Our %{terms_of_use} have changed. Please review and indicate your agreement below."
       post_to_facebook_content: "Check out Tapjoy where you can discover the best new apps and games, while also earning currency in apps you love. It\'s free to join so visit tapjoy.com today to start getting app recommendations just for you."
@@ -286,24 +295,31 @@ en:
       recipients_label: "Use commas to separate multiple emails"
       recommendations: Recommendations
       registering: Registering
+      review_app_name: Review %{app_name}
       select_current_device: "Please select your current device"
       select_device: "Please select your device"
       select_friend: "Please select at least one friend before sending out an invite"
+      share_on_twitter: "Share on Twitter"
+      share_on_facebook: "Share on Facebook"
+      share_with_everyone: "Share with everyone"
+      share_with_your_friends: "Share with your friends"
       social_networks: "Social Networks"
       social_settings: "Social Settings"
       tap_that: "Just tap %{icon} and select %{button}"
       tapjoy_picks: "Tapjoy Picks"
+      thats_you: that's you
       terms_of_use_href: "terms of use"
       tos_acknowledge_html: "By checking this box I assert that I agree to the %{terms_of_use} & %{privacy_policy}"
       tos_change_acknowledge: "By checking this box I assert that I agree to the terms of service."
       unable_to_process: "Sorry we are unable to process your request"
+      unlock_mobile_joy: "Unlock Mobile Joy"
       wifi_required: "WiFi Required"
       wrong_device: "wrong device?"
     instructions:
       amount_and_currency: "%{amount} %{currency}"
       continue_link: "Click here to continue."
       download_action: here
-      download_link: "If you don't have this app, click %{download_action} to download it."
+      download_link: "If you don\'t have this app, click %{download_action} to download it."
       earn_currency: "Earn %{amount_and_currency}"
       footer: "After completing these steps, you will earn %{amount_and_currency}."
       header: "Follow these steps to earn %{currency}:"
@@ -313,7 +329,7 @@ en:
       earn_currency: "Earn %{amount} %{currency}"
       free: Free
       instructions: "Engage in any of the following actions to receive %{currency}"
-      instructions_non_rewarded: "Discover what's hot on Tapjoy!"
+      instructions_non_rewarded: "Discover what\'s hot on Tapjoy!"
       load_error: "Please try again."
       load_more: "Load some more!"
       loading: Loading...
@@ -332,7 +348,9 @@ en:
       blog: Blog
       cancel: Cancel
       city: City
-      confirm_password: "Confirm Password"
+      collect: Collect
+      comment: Comment
+      confirm_password: Confirm Password
       continue: Continue
       copyright: "Copyright &copy; %{year} Tapjoy, Inc. All Rights Reserved. Tapjoy and the Tapjoy logo are trademarks or registered trademarks of Tapjoy, Inc.  All third party logos and trademarks mentioned are the property of their respective owners."
       country: Country
@@ -365,13 +383,17 @@ en:
       preferences: Preferences
       privacy: Privacy
       privacy_policy: "Privacy Policy"
+      rate_and_review: Rate and Review
       recipients: Recipients
       reset_password: "Reset Password"
+      reviews: Reviews
       save: Save
       share: Share
       sign_in: "Sign In"
       sign_up: "Sign Up"
+      submit: Submit
       success: Success!
+      title_noun: Title
       try_again: "Try Again"
       updating: Updating
       year: Year
@@ -393,7 +415,7 @@ en:
       thanks: "Thanks for submitting your support request! You will receive your %{currency} after we have verified that you completed the offer."
       title: "Missing %{currency}?"
     unavailable_offer:
-      message: "We're sorry but %{offer} is no longer available. You can return to the previous page and refresh to view the latest offer list."
+      message: "We\'re sorry but %{offer} is no longer available. You can return to the previous page and refresh to view the latest offer list."
       optional_message: "Or, click here to download %{offer} anyway."
   time:
     am: am

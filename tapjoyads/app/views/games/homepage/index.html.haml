@@ -1,120 +1,41 @@
-- @page_design = 'old'
-#jqt
-  #home.current
-    .page
-      = render :partial => 'nav_bar', :locals => { :show_device => true, :active => 'my_apps' }
-      - if current_gamer.devices.empty?
-        .content_wrapper
-          .content
-            = render 'register_device'
-      - elsif @external_publishers.blank?
-        .content_wrapper
-          = render 'featured_content_preview'
-          .content
-            = render 'no_games'
-      - else
-        .content_wrapper
-          = render 'featured_content_preview'
-          .content
-            = render 'my_apps'
-            = render(:partial => 'games/gamers/invite_friends')
-    .footer
-      = render :partial => 'footer'
+- @page_design = 'new'
 
-  #feat_app
-    .page
-      = render :partial => 'nav_bar', :locals => { :show_device => true, :active => 'back', :back_button_destination => '#home' }
-      .content_wrapper
-        #feat_app.content
-          = render 'featured_content'
-    .footer
-      = render :partial => 'footer'
+#content.current
+  .panel
+    - if @external_publishers.blank?
+      = render 'no_games'
+    - else
+      .row.borders.nbb
+        .games
+          - @external_publishers.each do |external_publisher|
+            .mod.line-item.apps
+              .hd
+                - link_to(games_earn_path(external_publisher.currencies.first[:id])) do
+                  .icon
+                    %img{ :src => BLANK_IMAGE, :source => external_publisher.get_icon_url(:size => 114, :source => :cloudfront)}
+              .bd
+                .title.elip
+                  = external_publisher.app_name
+                .publisher.hi
+                  [PUBLISHER]
+                .app-summary.clearfix
+                  .ui-icon.score
+                    80%
+                  .ui-icon.social
+                    15
+                - external_publisher.currencies.each do |currency|
+                  .collect
+                    - link_to(games_earn_path(currency[:id])) do
+                      = t('text.games.earn', :currency => currency[:name])
+<<<<<<< HEAD
+              .ft
+                - link_to(games_earn_path(external_publisher.currencies.first[:id])) do
+                  .right-arrow
+                    .ui-list-action-label
+                      = t('text.shared.collect')
+=======
 
-  #earn
-    .page
-      = render :partial => 'nav_bar', :locals => { :show_device => true, :active => 'back', :back_button_destination => '#home' }
-      .content_wrapper
-        .content
-          #app_title
-            %span.arrow
-          #earn_content.hide
+>>>>>>> 8c3ab4cccfc2805f2ffa49944ab933fb589e36e0
 
-  #more_games
-    .page
-      = render :partial => 'nav_bar', :locals => { :show_device => true, :active => 'back', :back_button_destination => '#home' }
-      .content_wrapper
-        .content
-          .tab_wrapper.clearfix
-            #top_grossing_games_tab.tab_right
-              #top_grossing_games_button.tab_button.grey
-                .tab_content
-                  =t('text.games.tapjoy_picks')
-              #top_grossing_games_button_arrow.tab_button_bottom_arrrow_wrapper
-                .tab_button_bottom_arrrow
-            #recommended_games_tab.tab_left
-              #recommended_games_button.tab_button.dark_grey
-                .tab_content
-                  =t('text.games.recommendations')
-              #recommended_games_button_arrow.tab_button_bottom_arrrow_wrapper
-                .tab_button_bottom_arrrow
-          #more_games_content.hide
-    .footer
-      = render :partial => 'footer'
-
-#accept_tos_dialog.dialog_wrapper.hide
-  .dialog
-    #accept_tos_dialog_content
-#accept_tos_dialog_content_placeholder.hide
-  .dialog_header_wrapper
-    .dialog_header_right
-    .dialog_header_left
-    .dialog_title.title_2
-      =t('text.games.action_required')
-  .dialog_header
-    =t('text.games.our_tos_changed', :terms_of_use => link_to(t('text.games.terms_of_use_href'), games_tos_path, :target=>"_blank"))
-  .dialog_content
-    - form_for([ :games, current_gamer ], :url => accept_tos_games_gamer_path, :html => { :method => "put" }, :class => "accept_tos_form") do |f|
-      .field
-        = f.check_box :terms_of_service
-        = f.label :terms_of_service, t('text.games.tos_change_acknowledge')
-      .field.clearfix
-        = f.submit t('text.shared.ok'), :class => 'right button m_width lt_blue'
-      .tos_error.center
-        = error_message_on @gamer_profile, :birthdate
-
-- content_for :page_head do
-  %meta{ :name => 'description', :content => t('text.games.meta_description') }
-  %meta{ :name => 'keywords', :content => t('text.games.meta_keywords')}
-- content_for :page_javascript do
-  - if current_gamer.accepted_tos_version < TAPJOY_GAMES_CURRENT_TOS_VERSION
-    :plain
-      $(window).load(function() {
-        TJG.ui.showAcceptTos();
-      });
-  - else
-    :plain
-      $(window).load(function() {
-    - if flash[:register_device]
-      :plain
-        TJG.register_device = true;
-        TJG.register_device_pixel = "#{DEVICE_LINK_TRACKING_PIXEL}";
-    :plain
-        TJG.select_device = #{@device_data.to_json};
-        TJG.require_select_device = #{@require_select_device.to_json};
-        TJG.more_games_editor_picks = "#{games_more_games_editor_picks_path}";
-        TJG.more_games_recommended = "#{games_more_games_recommended_path}";
-        TJG.ios_link_device_url = "#{new_games_gamer_device_path}";
-        TJG.android_market_url = "#{GAMES_ANDROID_MARKET_URL}";
-        TJG.ui.homeInit();
-    - if @show_offerwall
-      - currency_data = @offerwall_external_publisher.currencies.first
-      - url = @offerwall_external_publisher.get_offerwall_url(@device, currency_data, request.accept_language, request.user_agent)
-      - app_name = escape_javascript(@offerwall_external_publisher.app_name)
-      :plain
-        TJG.ui.getAndShowOfferWall('#{url}', '#{currency_data[:id]}', '#{app_name}', '#{escape_javascript(currency_data[:name])}');
-    - elsif @show_more_apps
-      :plain
-        TJG.moreAppOfferWall = '#{escape_javascript(render :template => 'games/more_games/recommended', :layout => false)}';
-        TJG.ui.showMoreGames();
-    :plain
-      });
+- content_for :included_javascripts do
+  = javascript_include_tag "games/src/marketplace"

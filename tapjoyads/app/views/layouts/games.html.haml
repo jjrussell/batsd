@@ -1,6 +1,6 @@
 !!! 5
 
-%html{ :class => "#{HeaderParser.device_type(request.headers['user-agent'])} device mobile no-os no-touch no-hd" }
+%html
   %head
     %meta{ 'http-equiv' => 'Content-Type', :content => 'text/html; charset=utf-8' }
     %meta{ 'name' => 'viewport', 'content' => 'width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=no;' }
@@ -12,144 +12,33 @@
 
     %title= @page_title.blank? ? 'Tapjoy' : "#{@page_title} - Tapjoy"
 
-    = stylesheet_link_tag("games/style_v1")
-    = stylesheet_link_tag("games/style")
-    = stylesheet_link_tag("games/images")
-    = stylesheet_link_tag("games/style-768", :media => "only screen and (max-width: 768px)")
-    = stylesheet_link_tag("games/style-480", :media => "only screen and (max-width: 480px)")
-    = stylesheet_link_tag("games/style-320", :media => "only screen and (max-width: 320px)")
-    = stylesheet_link_tag("games/images-hd", :media => "(-webkit-min-device-pixel-ratio: 2)")
+    = stylesheet_link_tag("games/reset")
+    = stylesheet_link_tag("games/base")
+    = stylesheet_link_tag("games/button")
+    = yield :styles
 
-    /[if IE 8]
-      = stylesheet_link_tag('games/ie8')
-
+    %script{ :type => 'text/javascript', :charset => 'utf-8', :src => games_translations_path(:language_code => I18n.locale) }
+    = javascript_include_tag("games/src/tjg.jquery-1.6.2.min.js")
+    = javascript_include_tag("games/src/i18n")
+    = javascript_include_tag("games/src/marketplace")
     = yield :page_head
 
-  %body{ :class => @page_design == 'new' ? 'new' : 'old' }
+  %body{"data-env" => "#{Rails.env}"}
     %noscript
-      %style{:type => "text/css", :media => "screen"}
-        :plain
-          #jqt {display:none;}
       .noscript_msg
         Please go into your browser settings and enable JavaScript to continue using Tapjoy.
+    .main
+      .header.tj-red-gradient
+        .headerwrap
+          .wrap
+            =link_to "Gamer", games_gamer_url if current_gamer
+            .logo=image_tag "e.gif"
+            .nav-icon=image_tag "e.gif"
+        .subhead
+          .wrap
+            =yield :subhead
 
-    = yield
-
-    #register_device.dialog_wrapper.hide
-      .close_dialog
-        .close_button
-      .dialog
-        .dialog_header_wrapper
-          .dialog_header_wrapper
-          .dialog_header_right
-          .dialog_header_left
-          .dialog_title.title_2 Hooray!
-        .dialog_header Your device has been linked to your Tapjoy account
-        .dialog_content Now close this box and start earning currency in your favorite games!
-
-    #bad_news.dialog_wrapper.hide
-      .close_dialog
-        .close_button
-      .dialog
-        .dialog_header_wrapper
-          .dialog_header_right
-          .dialog_header_left
-          .dialog_title.title_2 Bad News
-        .dialog_header Incompatible Device
-        .dialog_content To complete account registration please visit us on a supported mobile device.
-
-    #how_works_dialog.dialog_wrapper.hide
-      .close_dialog
-        .close_button
-      .dialog
-        .dialog_header_wrapper
-          .dialog_header_right
-          .dialog_header_left
-          .dialog_title.title_2 How's it work?
-        .dialog_header Using Tapjoy games couldn't be easier!
-        .dialog_content
-          All your games are listed in
-          %span.bold= t('text.games.my_apps')
-          From there, you can start earning currency and discovering new, cool games to play!
-    #link_device_dialog.dialog_wrapper.hide
-      .close_dialog
-        .close_button
-      .dialog
-        .dialog_header_wrapper
-          .dialog_header_right
-          .dialog_header_left
-          .dialog_title.title_2 Personalize your experience
-        .dialog_header On the next screen you will see this:
-        .dialog_content
-          .link_device_image
-          .link_device_content.clearfix
-            .clearfix
-              %span Click
-              %span.link_device_install_icon
-              %span to add your device.
-            %div Don't worry, your device won't be altered in any way.
-          %a{ :href => new_games_gamer_device_path }
-            .link_device_btn.button.grey
-              Personalize my account!
-
-    #loader.dialog_wrapper.hide
-      #progress.dialog
-        .dialog_title.title_2
-          Loading
-        .dialog_image
-
-    #sender.dialog_wrapper.hide
-      #progress.dialog
-        .dialog_title.title_2
-          Sending
-        .dialog_image
-
-    #cookie_error.dialog_wrapper.hide
-      .close_dialog
-        .close_button
-      .dialog
-        .dialog_content
-          It appears that cookies are not enabled on your browser. You will need to enable cookies in order to use Tapjoy.
-
-    - [:notice, :error, :success].each do |key|
-      - unless flash[key].blank?
-        #flash_error.dialog_wrapper.hide
-          .close_dialog
-            .close_button
-          .dialog
-            .dialog_content
-              %div{ :class => "#{key}" }= flash[key]
-    -#
-    -# Until this task is automated for production build, please run this task: $ rake javascript:games_minify
-    -#
-
-    :javascript
-      window.ENVIRONMENT = "#{Rails.env}";
-    %script{ :type => 'text/javascript', :charset => 'utf-8', :src => games_translations_path(:language_code => I18n.locale) }
-    - if Rails.env.production? || Rails.env.staging?
-      = javascript_include_tag "games/#{GAMES_CONFIG['js_compile_out_file']}-#{GAMES_CONFIG['js_version']}"
-    - else
-      - files = GAMES_CONFIG['js_files']
-      - files.each do |f|
-        = javascript_include_tag "games/src/#{f}"
-
-    = yield :included_javascripts
-    %script{ :type => 'text/javascript', :charset => 'utf-8' }
-      = yield :page_javascript
-
-    :javascript
-      TJG.path =  "#{games_root_path}";
-      TJG.logout_path = "#{games_logout_path}"
-      TJG.blank_img = "#{CLOUDFRONT_URL}/images/blank.png";
-
-    - if Rails.env.production?
-      :javascript
-        var _gaq = _gaq || [];
-        _gaq.push(['_setAccount', 'UA-25098478-2']);
-        _gaq.push(['_trackPageview']);
-
-        (function() {
-          var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-          ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-          var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-        })();
+      .content
+        .contentwrap
+          .wrap
+            = yield

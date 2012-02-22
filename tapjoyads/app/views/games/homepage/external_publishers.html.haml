@@ -1,0 +1,12 @@
+#home.current.page
+  .panel
+    - if current_gamer.devices.empty?
+      = render 'register_device'
+    = render 'featured_content_preview'
+
+    - if @external_publishers.blank?
+      = render 'no_games'
+    - else
+      = render 'my_apps'
+
+    = render(:partial => 'games/gamers/invite_friends')

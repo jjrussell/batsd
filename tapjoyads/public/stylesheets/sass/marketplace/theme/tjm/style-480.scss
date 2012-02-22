@@ -1,0 +1,16 @@
+//-------------------------------------------
+// Line item structure
+//-------------------------------------------
+.line-item {
+  .hd {
+    width: percentage(69/480);
+    margin-right: percentage(12/480);
+  }
+  .bd {
+    width: percentage(316/480);
+    margin-right: 0 percentage(12/480);
+  }
+  .ft {
+    width: percentage(69/480);
+  }
+}

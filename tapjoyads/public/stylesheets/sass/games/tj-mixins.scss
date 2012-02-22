@@ -58,6 +58,13 @@ $mobile-scaledown-multiplier: 2;
   -webkit-box-shadow: 0 4px 2px -2px $color;
 }
 
+@mixin set-box-shadow($x:0, $y:0, $spread:2px, $color:#ddd) {
+  -webkit-box-shadow: $x $y $spread $color;
+   -moz-box-shadow: $x $y $spread $color;
+     -o-box-shadow: $x $y $spread $color;
+        box-shadow: $x $y $spread $color;
+}
+
 @mixin gradient-inset-shadow {
   background-image: -moz-linear-gradient(top, rgba(160,150,145,.1) 0%, rgba(160,150,145,0) 30%, rgba(160,150,145,.2) 100%);
   background-image: -webkit-gradient(linear,left top, left bottom, color-stop(0%, rgba(160,150,145,0.1)), color-stop(30%, rgba(160,150,145,0)), color-stop(100%, rgba(160,150,145,.2)));
@@ -70,9 +77,37 @@ $mobile-scaledown-multiplier: 2;
   @include inset-shadow;
   @include button($radius, $padding)
 }
-
+@mixin txt-shadow($x:0, $y:1px, $spread:1px, $color:rgba(37, 37, 37, .4)) {
+  text-shadow: $x $y $spread $color;
+}
 @mixin inset-text-shadow {
   text-shadow: rgba(160,150,145,.5) -1px 0, rgba(160,150,145,.3) 0 -1px, rgba(0,0,0,.5) 0 1px, rgba(0,0,0,.3) -1px -1px;
+}
+
+@mixin linear-gradient($dir, $from, $to) {
+  @if $dir == "top" {
+    $gtype: 0;
+  } @else {
+    $gtype: 1;
+  }
+  background: $from; /* Old browsers */
+  background: -moz-linear-gradient($dir, $from, $to); /* FF3.6+ */
+  background: -webkit-linear-gradient($dir, $from, $to); /* Chrome10+,Safari5.1+ */
+  background: -o-linear-gradient($dir, $from,$to); /* Opera 11.10+ */
+  background: -ms-linear-gradient($dir, $from,$to); /* IE10+ */
+  background: linear-gradient($dir, $from,$to); /* W3C */
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='$from', endColorstr='$to',GradientType=$gtype ); /* IE6-9 */
+}
+
+@mixin gradient-top($p0, $p25, $p75, $p100) {
+  background: $p0; /* Old browsers */
+  background: -moz-linear-gradient(top,  $p0 0%, $p25 25%, $p75 75%, $p100 100%); /* FF3.6+ */
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,$p0), color-stop(25%,$p25), color-stop(75%,$p75), color-stop(100%,$p100)); /* Chrome,Safari4+ */
+  background: -webkit-linear-gradient(top,  $p0 0%,$p25 25%,$p75 75%,$p100 100%); /* Chrome10+,Safari5.1+ */
+  background: -o-linear-gradient(top,  $p0 0%,$p25 25%,$p75 75%,$p100 100%); /* Opera 11.10+ */
+  background: -ms-linear-gradient(top,  $p0 0%,$p25 25%,$p75 75%,$p100 100%); /* IE10+ */
+  background: linear-gradient(top,  $p0 0%,$p25 25%,$p75 75%,$p100 100%); /* W3C */
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#{$p0}', endColorstr='#{$p100}',GradientType=0 ); /* IE6-9 */
 }
 
 @mixin gradient($from, $to){
