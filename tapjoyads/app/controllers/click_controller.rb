@@ -73,7 +73,7 @@ class ClickController < ApplicationController
     test_reward.publisher_amount  = 0
     test_reward.advertiser_amount = 0
     test_reward.tapjoy_amount     = 0
-    test_reward.serial_save
+    test_reward.save
 
     Sqs.send_message(QueueNames::SEND_CURRENCY, test_reward.key)
   end
@@ -95,7 +95,7 @@ class ClickController < ApplicationController
     test_reward.publisher_amount  = 0
     test_reward.advertiser_amount = 0
     test_reward.tapjoy_amount     = 0
-    test_reward.serial_save
+    test_reward.save
 
     Sqs.send_message(QueueNames::SEND_CURRENCY, test_reward.key)
   end

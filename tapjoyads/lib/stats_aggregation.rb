@@ -134,7 +134,7 @@ class StatsAggregation
             (offer.item_type == 'ActionOffer' && stat_row.get_hourly_count('logins').sum > 0)
           is_active = true
         end
-        stat_row.serial_save
+        stat_row.save
       end
 
       offer.active = is_active
@@ -159,7 +159,7 @@ class StatsAggregation
       verify_conversion_stats_over_range(hourly_stat_row, offer, start_time, end_time)
 
       hourly_stat_row.update_daily_stat
-      hourly_stat_row.serial_save
+      hourly_stat_row.save
 
       hourly_ranks = S3Stats::Ranks.find_or_initialize_by_id("ranks/#{start_time.strftime('%Y-%m-%d')}/#{offer.id}", :load_from_memcache => false)
       daily_ranks  = S3Stats::Ranks.find_or_initialize_by_id("ranks/#{start_time.strftime('%Y-%m')}/#{offer.id}", :load_from_memcache => false)
@@ -180,7 +180,7 @@ class StatsAggregation
       verify_conversion_stats_over_range(hourly_stat_row, offer, start_time, end_time)
 
       hourly_stat_row.update_daily_stat if update_daily == true
-      hourly_stat_row.serial_save
+      hourly_stat_row.save
     end
   end
 
@@ -333,11 +333,11 @@ class StatsAggregation
         end
       end
 
-      partner_stats.each { |stat| stat.serial_save }
+      partner_stats.each { |stat| stat.save }
       partner_stats.each { |stat| stat.update_daily_stat } if aggregate_daily
     end
 
-    global_stats.each { |stat| stat.serial_save }
+    global_stats.each { |stat| stat.save }
     global_stats.each { |stat| stat.update_daily_stat } if aggregate_daily
   end
 
