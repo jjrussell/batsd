@@ -38,7 +38,6 @@
       .noscript_msg
         = t('text.games.no_javascript')
 
-
     = render 'games/shared/header'
 
     = yield
@@ -54,6 +53,7 @@
       - files = MARKETPLACE_CONFIG['js_files']
       - files.each do |f|
         = javascript_include_tag f
+      = javascript_include_tag "marketplace/src/dev-tools"
 
     = yield :included_javascripts
 

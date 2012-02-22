@@ -17,8 +17,8 @@
           .box
           .box
           .box
-    .logo
-      - link_to(games_root_path) do
+    - link_to(games_root_path) do
+      .logo
         %img{ :src => BLANK_IMAGE }
     - if @current_gamer.present?
       .menu-dropdown
@@ -59,7 +59,7 @@
 - if @current_gamer.nil?
   .header-h-split
     &nbsp;
-  .container.pad
+  .container
     .left.phraseThatPays
       A better way to love the apps you have and find the apps you'll love.
     .right
