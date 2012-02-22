@@ -28,9 +28,9 @@ class AppReview < ActiveRecord::Base
   def author_name
     case author_type
     when 'Gamer'
-      return author.get_gamer_name
+      author.get_gamer_name
     when 'Employee'
-      return author.full_name
+      author.full_name
     end
   end
 

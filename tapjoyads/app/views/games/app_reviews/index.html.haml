@@ -1,50 +1,47 @@
-- if params[:app_metadata_id]
-  = render 'new'
-- else
-  #jqt
-    #home.current
-      = render :partial => 'games/homepage/nav_bar', :locals => { :active => 'back', :back_button_destination => edit_games_gamer_path }
+#jqt
+  #home.current
+    = render :partial => 'games/homepage/nav_bar', :locals => { :active => 'back', :back_button_destination => edit_games_gamer_path }
 
-      .content_wrapper
-        = render :partial => 'games/gamers/header'
-        #display_reviews.profile
-          .content
-            .title_2
-              My App Reviews
-            .content_box
-              #reviews_display
-                - if @app_reviews.size > 0
-                  %table#gamer_reviews_table
-                    %thead
+    .content_wrapper
+      = render :partial => 'games/gamers/header'
+      #display_reviews.profile
+        .content
+          .title_2
+            My App Reviews
+          .content_box
+            #reviews_display
+              - if @app_reviews.size > 0
+                %table#gamer_reviews_table
+                  %thead
+                    %tr
+                      %th App Name
+                      %th Your Rating
+                      %th Review Text
+                      %th
+                  %tbody
+                    - @app_reviews.each do |app_review|
                       %tr
-                        %th App Name
-                        %th Your Rating
-                        %th Review Text
-                        %th
-                    %tbody
-                      - @app_reviews.each do |app_review|
-                        %tr
-                          %td= truncate(app_review.app_metadata_name, :length => 20)
-                          %td{ :align => "center"}
-                            - if app_review.user_rating > 0
-                              .thumb_up
-                            - elsif app_review.user_rating < 0
-                              .thumb_down
-                            - else
-                              Not Rating Yet
-                          %td= truncate(app_review.text, :length => 20)
-                          %td
-                            - link_to edit_games_app_review_path(app_review) do
-                              .edit_review.left
-                                .edit_review_button
-                                  .button.grey
-                                    %span.currency
-                                      Edit
-                            - link_to games_app_review_path(app_review), :method => :delete, :confirm => "Delete review?" do
-                              .delete_review.left
-                                .delete_review_button
-                                  .button.grey
-                                    %span.currency
-                                      Delete
-                - else
-                  .no_review No Review Available
+                        %td= truncate(app_review.app_metadata_name, :length => 20)
+                        %td{ :align => "center"}
+                          - if app_review.user_rating > 0
+                            .thumb_up
+                          - elsif app_review.user_rating < 0
+                            .thumb_down
+                          - else
+                            Not Rating Yet
+                        %td= truncate(app_review.text, :length => 20)
+                        %td
+                          - link_to edit_games_app_review_path(app_review) do
+                            .edit_review.left
+                              .edit_review_button
+                                .button.grey
+                                  %span.currency
+                                    Edit
+                          - link_to games_app_review_path(app_review), :method => :delete, :confirm => "Delete review?" do
+                            .delete_review.left
+                              .delete_review_button
+                                .button.grey
+                                  %span.currency
+                                    Delete
+              - else
+                .no_review No Review Available

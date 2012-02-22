@@ -10,11 +10,12 @@
         -else
           = f.select :author_id, options_from_collection_for_select(@employees, :id, :full_name, @app_review.author_id)
         = error_message_on @app_review, :author
-    %tr
-      %th= f.label :user_rating
-      %td
-        = f.select :user_rating, [-1, 0, 1]
-        = error_message_on @gamer_review, :user_rating
+    - if @app_review.author && @app_review.author_type == 'Gamer'
+      %tr
+        %th= f.label :user_rating
+        %td
+          = f.select :user_rating, [-1, 0, 1]
+          = error_message_on @gamer_review, :user_rating
     %tr
       %th= f.label :review_text
       %td
