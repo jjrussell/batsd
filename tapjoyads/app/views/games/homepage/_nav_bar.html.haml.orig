@@ -3,12 +3,9 @@
 
 .container
   - if @current_gamer.nil?
-    .right
-      #login.button
-        Log in
-      #login-web
-        #login-web-wrapper
-          %span= t('text.shared.login_verb')
+    #login-web.right
+      #login-web-wrapper
+        %span= t('text.shared.login_verb')
 
   .nav
     - if @current_gamer.present?
@@ -20,8 +17,13 @@
           .box
           .box
           .box
+<<<<<<< HEAD
+    .logo
+      - link_to(games_root_path) do
+=======
     - link_to(games_root_path) do
       .logo
+>>>>>>> ef3cd5ff821d00358ee735c6c20b9fc8e4b7684e
         %img{ :src => BLANK_IMAGE }
     - if @current_gamer.present?
       .menu-dropdown
@@ -62,7 +64,11 @@
 - if @current_gamer.nil?
   .header-h-split
     &nbsp;
+<<<<<<< HEAD
+  .container.pad
+=======
   .container
+>>>>>>> ef3cd5ff821d00358ee735c6c20b9fc8e4b7684e
     .left.phraseThatPays
       A better way to love the apps you have and find the apps you'll love.
     .right
