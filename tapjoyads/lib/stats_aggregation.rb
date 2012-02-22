@@ -313,7 +313,7 @@ class StatsAggregation
         when 'iOS'
           global_platform_stat = global_ios_stat
           partner_platform_stat = partner_ios_stat
-        when 'windows'
+        when 'Windows'
           global_platform_stat = global_windows_stat
           partner_platform_stat = partner_windows_stat
         else
