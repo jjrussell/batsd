@@ -34,10 +34,14 @@
     %noscript
       %style{:type => "text/css", :media => "screen"}
         :plain
-          #tapjoy {display:none;}
+          #jqt {display:none;}
       .noscript_msg
         = t('text.games.no_javascript')
 
+<<<<<<< HEAD
+
+=======
+>>>>>>> ef3cd5ff821d00358ee735c6c20b9fc8e4b7684e
     = render 'games/shared/header'
 
     = yield

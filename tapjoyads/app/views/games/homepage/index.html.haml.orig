@@ -1,0 +1,41 @@
+- @page_design = 'new'
+
+#content.current
+  .panel
+    - if @external_publishers.blank?
+      = render 'no_games'
+    - else
+      .row.borders.nbb
+        .games
+          - @external_publishers.each do |external_publisher|
+            .mod.line-item.apps
+              .hd
+                - link_to(games_earn_path(external_publisher.currencies.first[:id])) do
+                  .icon
+                    %img{ :src => BLANK_IMAGE, :source => external_publisher.get_icon_url(:size => 114, :source => :cloudfront)}
+              .bd
+                .title.elip
+                  = external_publisher.app_name
+                .publisher
+                  [PUBLISHER]
+                .app-summary.clearfix
+                  .ui-icon.score
+                    80%
+                  .ui-icon.social
+                    15
+                - external_publisher.currencies.each do |currency|
+                  .collect
+                    - link_to(games_earn_path(currency[:id])) do
+                      = t('text.games.earn', :currency => currency[:name])
+              .ft
+                - link_to(games_earn_path(external_publisher.currencies.first[:id])) do
+                  .right-arrow
+                    .ui-list-action-label
+                      = t('text.shared.collect')
+<<<<<<< HEAD
+
+
+- content_for :included_javascripts do
+  = javascript_include_tag "games/src/marketplace"
+=======
+>>>>>>> ef3cd5ff821d00358ee735c6c20b9fc8e4b7684e

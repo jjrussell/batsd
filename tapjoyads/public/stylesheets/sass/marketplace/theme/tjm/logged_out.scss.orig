@@ -1,5 +1,4 @@
 //-------------------------------------------
-
 $root_image_path: "/images/marketplace/themes/tjm";
 $image_path: "/images/marketplace/themes/tjm/logged_out";
 $font_path: "/fonts/marketplace";
@@ -607,21 +606,21 @@ span.gill {
     background: transparent url(#{$image_path}/noise_bg.png) repeat top left;
   }
 
-  .header {
+  #header {
     position: relative;
 
     .headerwrap {
       font: .81em/150% Arial, Helvetica, sans-serif;
-      height: 120px;
+      height: 140px;
       box-shadow: inset 0 -2px 0 #dd3438;
-    
+
       .logo {
         position: absolute;
         left: 10px;
         top: 5px;
         width: 89px;
         height: 41px;
-        
+
         img {
             margin-top: 5px;
             width: 89px;
@@ -631,9 +630,12 @@ span.gill {
             border: 0;
           }
       }
+      #login-web {
+        display: none;
+      }
     }
   }
-  
+
   h4.museo{
     font: 500 22px "Museo Slab";
     color: #252525;
@@ -652,8 +654,7 @@ span.gill {
   #footer,
   #content span.gill,
   #body,
-  #labels,
-  #login-web {
+  #labels {
     display: none !important;
   }
 
@@ -664,6 +665,7 @@ span.gill {
     min-height: 50px;
   }
 
+
   #favorites,
   #paging,
   #signup,
@@ -672,7 +674,7 @@ span.gill {
   .phraseThatPays {
     display: block;
   }
- 
+
   #favorites .back,
   #favorites .forward {
     display: none;
@@ -697,6 +699,8 @@ span.gill {
     width: 280px;
     font-weight: 400;
   }
+
+
 }
 
 @media screen and (max-width: 320px) {
@@ -710,7 +714,6 @@ span.gill {
     font-size: 14px;
     line-height: 15px;
     margin-top: 6px;
-    text-align: center;
   }
 
   #favorites .mobilejoy {
@@ -758,7 +761,7 @@ span.gill {
   background: linear-gradient(top, rgba(232,39,44,1) 0%,rgba(226,31,35,1) 29%,rgba(213,12,14,1) 64%,rgba(205,1,1,1) 100%);
   filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#e8272c', endColorstr='#cd0101',GradientType=0 );
   border-top: 1px solid rgba(255,255,255, .4);
-  text-shadow: 0 -1px 0 #cd0202;
+  text-shadow: 0 -2px 0 #cd0202;
 }
 
 #signup {
@@ -771,7 +774,12 @@ span.gill {
   background: -ms-linear-gradient(top, rgba(255,190,0,1) 0%,rgba(255,173,0,1) 42%,rgba(255,150,0,1) 71%,rgba(255,134,0,1) 100%);
   background: linear-gradient(top, rgba(255,190,0,1) 0%,rgba(255,173,0,1) 42%,rgba(255,150,0,1) 71%,rgba(255,134,0,1) 100%);
   filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffbe00', endColorstr='#ff8600',GradientType=0 );
+  border-bottom: 1px solid #a35500;
+<<<<<<< HEAD
+  margin: 4px 10px 0;
+=======
   margin: 10px;
+>>>>>>> ef3cd5ff821d00358ee735c6c20b9fc8e4b7684e
   text-shadow: 0 -1px 0 #d47f1b;
   border-top: 1px solid #ffebab;
 }

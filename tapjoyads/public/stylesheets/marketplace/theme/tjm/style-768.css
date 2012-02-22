@@ -55,6 +55,7 @@
 
 .apps .icon {
   position: relative;
+  top: 1px;
   width: 125px;
   height: 125px;
   margin: 0 auto;
