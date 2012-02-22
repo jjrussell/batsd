@@ -1081,19 +1081,21 @@
         var total = $(this).attr("total");
         var plural = total > 1 ? 's' : '';
         var t = [];
-        if (rating) {
-          rating = parseFloat(rating);
-        }
-        if (threshold) {
-          threshold = parseFloat(threshold) * 100;
-        }
-        if (rating > threshold) {
+
+        rating = parseFloat(rating);
+        threshold = parseFloat(threshold) * 100;
+
+        if (total == 0) {
           t.push('<span class="thumb_up on left"></span>');
-          t.push('<span>'+ rating +'% of ' + total + ' review' + plural + '</span>');
+          t.push('<span>- % of - review</span>');
+        }
+        else if (rating > threshold) {
+          t.push('<span class="thumb_up on left"></span>');
+          t.push('<span>', rating ,'% of ', total ,' review', plural ,'</span>');
         }
         else {
           t.push('<span class="thumb_down on left"></span>');
-          t.push('<span>'+ (100 - rating) +'% of ' + total + ' review' + plural + '</span>');
+          t.push('<span>', (100 - rating) ,'% of ', total ,' review', plural ,'</span>');
         }
         $(this).html(t.join('')).fadeIn("slow");
       });
@@ -1104,14 +1106,14 @@
         var rating = $(this).attr("rating");
         var curId =  $(this).attr('id');
         var t = [];
-        if (rating) {
-          rating = parseInt(rating);
-        }
+
+        rating = parseInt(rating);
+
         if (rating == 1) {
-          t.push('<span class="thumb_up on left" id="' + curId + '"></span>');
+          t.push('<span class="thumb_up on left" id="', curId ,'"></span>');
         }
         else if (rating == -1) {
-          t.push('<span class="thumb_down on left" id="' + curId + '"></span>');
+          t.push('<span class="thumb_down on left" id="', curId ,'"></span>');
         }
         $(this).html(t.join('')).fadeIn("slow");
       });
@@ -1121,9 +1123,9 @@
       $(".gamer_rating").each(function (n,o) {
         var rating = $(this).attr("rating");
         var t = [];
-        if (rating) {
-          rating = parseInt(rating);
-        }
+
+        rating = parseInt(rating);
+
         t.push('<span class="gamer_rating_label">Rating</span>');
         if (rating == 1) {
           t.push('<span class="active_thumb_up on left"></span>');

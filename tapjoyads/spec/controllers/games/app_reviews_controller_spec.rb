@@ -66,7 +66,7 @@ describe Games::AppReviewsController do
 
     context 'when app review not exist' do
       it 'creates a app review' do
-        flash[:notice].should == 'App review was successfully created.'
+        flash[:notice].should == 'Successfully reviewed this app.'
         response.should redirect_to(games_app_reviews_path(:app_metadata_id => @app_metadata.id))
       end
 
@@ -91,7 +91,7 @@ describe Games::AppReviewsController do
       end
 
       it 'sets a flash notice message' do
-        response.session[:flash][:notice].should == 'You have already reviewed this app.'
+        response.session[:flash][:error].should == 'You have already reviewed this app.'
       end
 
       it 'renders games/app_reviews/index' do

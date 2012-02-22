@@ -71,7 +71,7 @@ describe Tools::AppReviewsController do
 
     context 'when app review not exist' do
       it 'creates a app review' do
-        flash[:notice].should == 'App review was successfully created.'
+        flash[:notice].should == 'Successfully reviewed this app.'
         response.should redirect_to(tools_app_reviews_path(:app_metadata_id => @app_metadata2.id))
       end
 
