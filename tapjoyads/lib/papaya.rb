@@ -32,7 +32,7 @@ class Papaya
         raise PapayaAPIError.new("invalid number from Papaya : #{package_name} = #{user_count.inspect} -> #{user_count.class}")
         next
       end
-      apps = App.find_all_by_store_id(package_name)
+      apps = AppMetadata.find_all_by_store_id(package_name)
       apps.each do |app|
         if app.papaya_user_count != user_count
           app.papaya_user_count = user_count
