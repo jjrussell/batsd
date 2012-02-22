@@ -289,6 +289,7 @@ en:
       on_my: "on my %{device_name}"
       oops: Oops!
       our_tos_changed: "Our %{terms_of_use} have changed. Please review and indicate your agreement below."
+      post_to_facebook_content: "Check out Tapjoy where you can discover the best new apps and games, while also earning currency in apps you love. It\'s free to join so visit tapjoy.com today to start getting app recommendations just for you."
       privacy_policy_href: "privacy policy"
       provide_other_email: "Please provide an email other than yourself"
       recipients_label: "Use commas to separate multiple emails"
@@ -364,6 +365,7 @@ en:
       help: Help
       invite: Invite
       ios: iOS
+      join: Join
       login_noun: Login
       login_verb: "Log In"
       logout: "Log Out"

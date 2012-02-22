@@ -11,7 +11,7 @@ describe Games::MyAppsController do
         @user = Factory(:user)
         games_login_as(@user)
       end
-      
+
       it "renders the my_apps view" do
         get "index"
 
@@ -27,7 +27,7 @@ describe Games::MyAppsController do
     context "not logged in" do
       it "redirects to homepage controller with path parameter" do
         get "index"
-        
+
         response.should redirect_to(games_login_url(:path=>games_my_apps_path))
       end
     end

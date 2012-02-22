@@ -9,14 +9,6 @@ class FailedEmail < SimpledbResource
   self.sdb_attr :subject
   self.sdb_attr :serialized_email
 
-  def initialize(options = {})
-    super({:load_from_memcache => false}.merge(options))
-  end
-
-  def serial_save(options = {})
-    super({:write_to_memcache => false}.merge(options))
-  end
-
   def fill(mail)
     self.to               = mail.to
     self.from             = mail.from

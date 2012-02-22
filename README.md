@@ -158,6 +158,7 @@ sudo env ARCHFLAGS="-arch x86_64" gem install memcached -v 1.2.7
 sudo env ARCHFLAGS="-arch x86_64" gem install mysql -v 2.8.1 -- --with-mysql-config=/usr/local/mysql/bin/mysql_config
 sudo gem install rcov -v 0.9.10
 sudo gem install -v 2.3.14 rails
+sudo gem install json -v 1.5.3
 sudo gem install rdoc
 sudo gem install rdoc-data
 sudo rdoc-data --install
