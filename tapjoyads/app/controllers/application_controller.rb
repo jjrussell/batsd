@@ -142,13 +142,9 @@ class ApplicationController < ActionController::Base
     return @cached_geoip_data if @cached_geoip_data.present?
     return {} if @server_to_server && params[:device_ip].blank?
 
-    begin
-      geo_struct = GEOIP.city(params[:device_ip] || ip_address)
-    rescue Exception => e
-      geo_struct = nil
-    end
-
     @cached_geoip_data = {}
+
+    geo_struct = GEOIP.city(params[:device_ip] || ip_address) rescue nil
     if geo_struct.present?
       @cached_geoip_data[:country]     = geo_struct[:country_code2]
       @cached_geoip_data[:continent]   = geo_struct[:continent_code]
