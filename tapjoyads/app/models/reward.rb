@@ -54,7 +54,7 @@ class Reward < SimpledbShardedResource
       c.advertiser_amount      = advertiser_amount
       c.publisher_amount       = publisher_amount
       c.tapjoy_amount          = tapjoy_amount
-      c.reward_type_string     = type
+      c.reward_type_string     = source == 'tj_games' ? "tjm_#{type}" : type
       c.created_at             = created
       c.country                = country
       c.publisher_partner_id   = publisher_partner_id
