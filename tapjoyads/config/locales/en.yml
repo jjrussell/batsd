@@ -318,6 +318,7 @@ en:
       load_more: "Load some more!"
       loading: Loading...
       missing_currency: "Missing %{currency}?"
+      more_offers: "Want to see more offers? Visit Tapjoy to earn rewards and personal app recommendations!'"
       next: "Next %{items}"
       popular_apps: "Popular Apps"
       previous: "Previous %{items}"
