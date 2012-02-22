@@ -1,3 +1,3 @@
-- select_options = question.possible_responses.insert(0, '')
+- select_options = question.possible_responses.unshift('')
 - options = options_for_select(select_options, params[question.id])
 = select_tag(question.id, options)

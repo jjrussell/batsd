@@ -23,7 +23,6 @@ class App < ActiveRecord::Base
       :info_url => 'https://market.android.com/details?id=STORE_ID',
       :store_url => 'market://search?q=STORE_ID',
       :default_actions_file_name => "TapjoyPPA.java",
-      :min_action_offer_bid => 25,
       :versions => [ '1.5', '1.6', '2.0', '2.1', '2.2', '2.3', '3.0' ],
       :cell_download_limit_bytes => 99.gigabyte,
       :screen_layout_sizes => { 'small (320x426)' => '1', 'medium (320x470)' => '2', 'large (480x640)' => '3', 'extra large (720x960)' => '4' }
@@ -39,7 +38,6 @@ class App < ActiveRecord::Base
       :info_url => 'http://phobos.apple.com/WebObjects/MZStore.woa/wa/viewSoftware?id=STORE_ID&mt=8',
       :store_url => 'http://phobos.apple.com/WebObjects/MZStore.woa/wa/viewSoftware?id=STORE_ID&mt=8',
       :default_actions_file_name => "TJCPPA.h",
-      :min_action_offer_bid => 35,
       :versions => [ '2.0', '2.1', '2.2', '3.0', '3.1', '3.2', '4.0', '4.1', '4.2', '4.3', '5.0' ],
       :cell_download_limit_bytes => 20.megabytes
     },
@@ -54,7 +52,6 @@ class App < ActiveRecord::Base
       :info_url => 'http://windowsphone.com/s?appId=STORE_ID',
       :store_url => 'http://social.zune.net/redirect?type=phoneapp&id=STORE_ID',
       :default_actions_file_name => '', #TODO fill this out
-      :min_action_offer_bid => 25,
       :versions => [ '7.0' ],
       :cell_download_limit_bytes => 20.megabytes
     },
@@ -326,6 +323,38 @@ class App < ActiveRecord::Base
       action_offer.hidden = hidden
       action_offer.save!
     end
+  end
+
+  def test_offer
+    test_offer = Offer.new(
+      :item_id            => id,
+      :item_type          => 'TestOffer',
+      :name               => 'Test Offer (Visible to Test Devices)',
+      :third_party_data   => id,
+      :price              => 0,
+      :reward_value       => 100)
+    test_offer.id = id
+    test_offer
+  end
+
+  def test_video_offer
+    test_video_offer = VideoOffer.new(
+      :name       => 'Test Video Offer (Visible to Test Devices)',
+      :partner_id => partner_id,
+      :video_url  => 'https://s3.amazonaws.com/tapjoy/videos/src/test_video.mp4')
+    test_video_offer.id = 'test_video'
+
+    primary_offer = Offer.new(
+      :item_id          => 'test_video',
+      :name             => 'Test Video Offer (Visible to Test Devices)',
+      :url              => 'https://s3.amazonaws.com/tapjoy/videos/src/test_video.mp4',
+      :reward_value     => 100,
+      :third_party_data => '')
+    primary_offer.id = 'test_video'
+
+    test_video_offer.primary_offer           = primary_offer
+    test_video_offer.primary_offer.item_type = 'TestVideoOffer'
+    test_video_offer
   end
 
   def create_tracking_offer_for(tracked_for, options = {})
