@@ -1,0 +1,91 @@
+- @page_title = "Recommenders"
+%h1 Recommenders
+- form_tag(tools_recommenders_path) do
+  %table
+    %tbody
+      %tr
+        %th= label_tag :recommender, "Choose a Recommender"
+        - if params[:recommender].present?
+          %td= select_tag :recommender, options_for_select(@recommenders.invert, params[:recommender].to_sym)
+        -else
+          %td= select_tag :recommender, options_for_select(@recommenders.invert)
+      %tr
+        %th Recommend for
+        %td
+          - app_id_selected = params[:recommend_for].blank? ? true : params[:recommend_for] =~ /app/
+          %div
+            = radio_button_tag :recommend_for, :app_id, app_id_selected
+            = label_tag :recommend_for, "Application"
+          %div
+            = radio_button_tag :recommend_for, :udid, !app_id_selected
+            = label_tag :recommend_for, "Device"
+      %tr
+        %th= label_tag :app_or_device_id, "Enter App ID or Device UDID:"
+        %td= text_field_tag :app_or_device_id, params[:app_or_device_id] , :size => 60
+      %tr
+        %th= label_tag :n, "Max number of recommendations:"
+        %td= text_field_tag :n, params[:n], :size => 3
+      %tr
+        %th= label_tag :with_weights, "Show weights with recommendations?"
+        %td= check_box_tag :with_weights, true, params[:with_weights].present?
+      %tr
+        %td{ :colspan => 2 }= submit_tag('Get Recommendations')
+
+
+- if @recommendations
+  = render('recommendations', :description => @options[:description], :recommendations=>@recommendations)
+
+
+- content_for :page_javascript do
+  :plain
+    $(function() {
+      $.tablesorter.addParser({
+        id: 'currency-column',
+        is: function(s) { return false; },
+        type: 'numeric',
+        format: function(s) {
+          return s.replace(/\$/g, '').replace(/,/g, '');
+        }
+      });
+      $("#recommendations_table").tablesorter({
+        widgets: ['zebra'],
+        headers: {
+          0:  { sorter: false },
+          3:  { sorter: 'currency-column' },
+          4:  { sorter: false },
+          5:  { sorter: 'usLongDate' }
+        },
+        sortList: [[1,0], [5,0]]
+      });
+    });
+
+- content_for :page_styles do
+  :plain
+    table.tablesorter {
+      border-collapse: separate;
+    }
+    table.tablesorter th.up_arrow {
+      background-position: 100% 50%;
+      background-repeat: no-repeat;
+      background-image: url(/stylesheets/themes/blue/asc.gif);
+      background-color: #8DBDD8;
+    }
+    .offer {
+      display: inline-block;
+      padding-right: 10px;
+      padding-top: 5px;
+    }
+    .nowrap {
+      white-space: nowrap;
+    }
+    .act_as_button {
+      font-size: 10px!important;
+      padding:2px!important;
+    }
+    .agency {
+      color: red;
+    }
+    .icon {
+      max-width: 60px;
+      overflow: hidden;
+    }

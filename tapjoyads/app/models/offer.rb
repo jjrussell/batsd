@@ -184,7 +184,7 @@ class Offer < ActiveRecord::Base
   named_scope :by_name, lambda { |offer_name| { :conditions => ["offers.name LIKE ?", "%#{offer_name}%" ] } }
   named_scope :by_device, lambda { |platform| { :conditions => ["offers.device_types LIKE ?", "%#{platform}%" ] } }
   named_scope :for_offer_list, :select => OFFER_LIST_REQUIRED_COLUMNS
-  named_scope :for_display_ads, :conditions => "price = 0 AND conversion_rate >= 0.3 AND ((item_type = 'App' AND LENGTH(offers.name) <= 30) OR approved_banner_creatives IS NOT NULL)"
+  named_scope :for_display_ads, :conditions => "price = 0 AND conversion_rate >= 0.3 AND ((item_type = 'App' AND CHAR_LENGTH(offers.name) <= 30) OR approved_banner_creatives IS NOT NULL)"
   named_scope :non_rewarded, :conditions => "NOT rewarded"
   named_scope :rewarded, :conditions => "rewarded"
   named_scope :featured, :conditions => { :featured => true }
@@ -726,6 +726,23 @@ class Offer < ActiveRecord::Base
     end
   end
 
+  def calculate_target_installs(num_installs_today)
+    target_installs = 1.0 / 0
+    target_installs = daily_budget - num_installs_today if daily_budget > 0
+
+    unless allow_negative_balance?
+      adjusted_balance = partner.balance
+      if is_free? && adjusted_balance < 50000
+        adjusted_balance = adjusted_balance / 2
+      end
+
+      max_paid_installs = adjusted_balance / payment
+      target_installs = max_paid_installs if target_installs > max_paid_installs
+    end
+
+    target_installs
+  end
+
   def cached_support_requests_rewards
     support_requests = Mc.get("offer.support_requests.#{id}")
     rewards = Mc.get("offer.clicks_rewarded.#{id}")
@@ -747,12 +764,7 @@ class Offer < ActiveRecord::Base
         is_paid? ? (price * 0.50).round : 10
       end
     elsif item_type == 'ActionOffer'
-      if is_paid?
-        (price * 0.50).round
-      else
-        platform = App::PLATFORMS.index(get_platform)
-        platform.nil? ? 35 : App::PLATFORM_DETAILS[platform][:min_action_offer_bid]
-      end
+      is_paid? ? (price * 0.50).round : 10
     elsif item_type == 'VideoOffer'
       4
     else

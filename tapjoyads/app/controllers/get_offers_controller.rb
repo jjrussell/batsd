@@ -12,8 +12,10 @@ class GetOffersController < ApplicationController
 
   def webpage
     if @currency.get_test_device_ids.include?(params[:udid])
-      @test_offers = [ build_test_offer(@publisher_app) ]
-      @test_offers << build_test_video_offer(@publisher_app).primary_offer if params[:all_videos] || params[:video_offer_ids].to_s.split(',').include?('test_video')
+      @test_offers = [ @publisher_app.test_offer ]
+      if params[:all_videos] || params[:video_offer_ids].to_s.split(',').include?('test_video')
+        @test_offers << @publisher_app.test_video_offer.primary_offer
+      end
     end
 
     if @for_preview
@@ -25,7 +27,7 @@ class GetOffersController < ApplicationController
 
   def featured
     if @currency.get_test_device_ids.include?(params[:udid])
-      @offer_list = [ build_test_offer(@publisher_app) ]
+      @offer_list = [ @publisher_app.test_offer ]
     else
       @offer_list = [ get_offer_list.weighted_rand ].compact
       if @offer_list.empty?
@@ -114,7 +116,7 @@ class GetOffersController < ApplicationController
       end
       #wr_path = params[:source] == 'featured' ? 'featured_offer_requested' : 'offers'
       @web_request = WebRequest.new(:time => @now)
-      @web_request.put_values(wr_path, params, get_ip_address, get_geoip_data, request.headers['User-Agent'])
+      @web_request.put_values(wr_path, params, ip_address, geoip_data, request.headers['User-Agent'])
       @web_request.viewed_at = @now
       @web_request.offerwall_start_index = @start_index
       @web_request.offerwall_max_items = @max_items
@@ -132,7 +134,7 @@ class GetOffersController < ApplicationController
       :device               => @device,
       :currency             => @currency,
       :device_type          => params[:device_type],
-      :geoip_data           => get_geoip_data,
+      :geoip_data           => geoip_data,
       :type                 => type || params[:type],
       :app_version          => params[:app_version],
       :include_rating_offer => params[:rate_app_offer] != '0',

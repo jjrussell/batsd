@@ -55,7 +55,7 @@ class OneOffs
   def self.delete_ranks(date_string)
     Stats.select(:where => "itemName() like 'app.#{date_string}.%'") do |stats|
       stats.delete('ranks')
-      stats.serial_save
+      stats.save
     end
   end
 
