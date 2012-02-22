@@ -150,6 +150,7 @@
         = f.text_field(:dma_codes)
         = error_message_on @offer, :dma_codes
         .details= link_to('DMA Code List', 'http://code.google.com/apis/adwords/docs/appendix/metrocodes.html', :target => '_blank')
+    = render('apps/offers_shared/carriers', :f => f)
     %tr
       %th
         = f.label(:device_types)

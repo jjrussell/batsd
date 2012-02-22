@@ -118,6 +118,18 @@ describe Offer do
     @offer.send(:geoip_reject?, geoip_data).should == true
   end
 
+  it "rejects depending on carriers" do
+    @offer.carriers = ["Verizon", "NTT DoCoMo"].to_json
+    mobile_carrier_code = '440.01'
+    @offer.send(:carriers_reject?, mobile_carrier_code).should == false
+    mobile_carrier_code = '123.123'
+    @offer.send(:carriers_reject?, mobile_carrier_code).should == true
+    @offer.send(:carriers_reject?, nil).should == true
+    @offer.update_attributes({ :carriers => '[]' })
+    @offer.reload
+    @offer.send(:carriers_reject?, mobile_carrier_code).should == false
+  end
+
   it "returns proper linkshare account url" do
     url = 'http://phobos.apple.com/WebObjects/MZStore.woa/wa/viewSoftware?id=TEST&mt=8'
     linkshare_url = Linkshare.add_params(url)
@@ -160,7 +172,9 @@ describe Offer do
 
   context "with a paid app item" do
     before :each do
-      @app = Factory(:app, :price => 150)
+      @app = Factory(:app)
+      @app.add_app_metadata(Factory(:app_metadata, :price => 150))
+      @app.reload.save!
       @offer = @app.primary_offer
     end
 
@@ -199,7 +213,9 @@ describe Offer do
 
   context "with a free app item" do
     before :each do
-      @app = Factory(:app, :price => 0)
+      @app = Factory(:app)
+      @app.add_app_metadata(Factory(:app_metadata, :price => 0))
+      @app.reload.save!
       @offer = @app.primary_offer
     end
 
@@ -209,8 +225,8 @@ describe Offer do
         @offer.rewarded = true
       end
 
-      it "has a min_bid of 65" do
-        @offer.min_bid.should == 65
+      it "has a min_bid of 10" do
+        @offer.min_bid.should == 10
       end
     end
 
@@ -242,8 +258,8 @@ describe Offer do
       @offer = @video.primary_offer
     end
 
-    it "has a min_bid of 15" do
-      @offer.min_bid.should == 15
+    it "has a min_bid of 4" do
+      @offer.min_bid.should == 4
     end
   end
 
@@ -258,8 +274,8 @@ describe Offer do
         @offer.device_types = %w( windows ).to_json
       end
 
-      it "has a min_bid of 25" do
-        @offer.min_bid.should == 25
+      it "has a min_bid of 10" do
+        @offer.min_bid.should == 10
       end
     end
 
@@ -268,8 +284,8 @@ describe Offer do
         @offer.device_types = %w( android ).to_json
       end
 
-      it "has a min_bid of 25" do
-        @offer.min_bid.should == 25
+      it "has a min_bid of 10" do
+        @offer.min_bid.should == 10
       end
     end
 
@@ -278,8 +294,8 @@ describe Offer do
         @offer.device_types = %w( iphone ).to_json
       end
 
-      it "has a min_bid of 35" do
-        @offer.min_bid.should == 35
+      it "has a min_bid of 10" do
+        @offer.min_bid.should == 10
       end
     end
   end
@@ -659,6 +675,66 @@ describe Offer do
         clone.expects(:upload_banner_creative!).with("image_data", "320x480").returns(nil)
 
         clone.save!
+      end
+    end
+  end
+  
+  describe '#calculate_target_installs' do
+    before :each do
+      @offer.allow_negative_balance = false
+      @offer.partner.balance = 1_000_00
+      @num_installs_today = 1
+    end
+
+    context 'when negative balance is allowed' do
+      before :each do
+        @offer.allow_negative_balance = true
+      end
+
+      it 'should be infinity' do
+        target = @offer.calculate_target_installs(@num_installs_today)
+        target.should_not be_finite
+      end
+
+      it 'should be limited by daily budget' do
+        @offer.daily_budget = 100
+        expected = @offer.daily_budget - @num_installs_today
+        target = @offer.calculate_target_installs(@num_installs_today)
+        target.should == expected
+      end
+    end
+
+    context 'when negative balance is not allowed' do
+      it 'should be based on the balance' do
+        expected = @offer.partner.balance / @offer.bid
+        target = @offer.calculate_target_installs(@num_installs_today)
+        target.should == expected
+      end
+
+      it 'should be limited by daily budget' do
+        @offer.daily_budget = 100
+        expected = @offer.daily_budget - @num_installs_today
+        target = @offer.calculate_target_installs(@num_installs_today)
+        target.should == expected
+      end
+    end
+
+    context 'low budget with negative balance' do
+      before :each do
+        @offer.partner.balance = 50_00
+      end
+
+      it 'should be based on half of balance' do
+        expected = @offer.partner.balance / @offer.bid / 2
+        target = @offer.calculate_target_installs(@num_installs_today)
+        target.should == expected
+      end
+
+      it 'should ignore if paid offer' do
+        @offer.price = 100
+        expected = @offer.partner.balance / @offer.bid
+        target = @offer.calculate_target_installs(@num_installs_today)
+        target.should == expected
       end
     end
   end

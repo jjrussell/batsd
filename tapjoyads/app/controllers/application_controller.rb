@@ -164,7 +164,16 @@ class ApplicationController < ActionController::Base
     end
     @cached_geoip_data[:user_country_code]    = params[:country_code].present? ? params[:country_code].to_s.upcase : nil
     @cached_geoip_data[:carrier_country_code] = params[:carrier_country_code].present? ? params[:carrier_country_code].to_s.upcase : nil
-    @cached_geoip_data[:primary_country]      = params[:primary_country] || @cached_geoip_data[:carrier_country_code] || @cached_geoip_data[:country] || @cached_geoip_data[:user_country_code]
+
+    # TO REMOVE - we ideally should always be using the priority: carrier_country_code -> geoip_country -> user_country_code
+    # However, many of our server-to-server publishers are integrated incorrectly, so we have to switch the priority until they all
+    # fix their integration by properly sending us `library_version=server&device_ip=<ip_address>`.
+    # We will still prioritize geoip_country over user_country_code for Asian locations, due to potential fraud.
+    if @cached_geoip_data[:continent] == 'AS'
+      @cached_geoip_data[:primary_country] = params[:primary_country] || @cached_geoip_data[:carrier_country_code] || @cached_geoip_data[:country] || @cached_geoip_data[:user_country_code]
+    else
+      @cached_geoip_data[:primary_country] = params[:primary_country] || @cached_geoip_data[:carrier_country_code] || @cached_geoip_data[:user_country_code] || @cached_geoip_data[:country]
+    end
 
     @cached_geoip_data
   end
@@ -221,38 +230,6 @@ class ApplicationController < ActionController::Base
 
   def choose_experiment
     params[:exp] = Experiments.choose(params[:udid]) unless params[:exp].present?
-  end
-
-  def build_test_offer(publisher_app)
-    test_offer = Offer.new(
-      :item_id            => publisher_app.id,
-      :item_type          => 'TestOffer',
-      :name               => 'Test Offer (Visible to Test Devices)',
-      :third_party_data   => publisher_app.id,
-      :price              => 0,
-      :reward_value       => 100)
-    test_offer.id = publisher_app.id
-    test_offer
-  end
-
-  def build_test_video_offer(publisher_app)
-    test_video_offer = VideoOffer.new(
-      :name       => 'Test Video Offer (Visible to Test Devices)',
-      :partner_id => publisher_app.partner_id,
-      :video_url  => 'https://s3.amazonaws.com/tapjoy/videos/src/test_video.mp4')
-    test_video_offer.id = 'test_video'
-
-    primary_offer = Offer.new(
-      :item_id          => 'test_video',
-      :name             => 'Test Video Offer (Visible to Test Devices)',
-      :url              => 'https://s3.amazonaws.com/tapjoy/videos/src/test_video.mp4',
-      :reward_value     => 100,
-      :third_party_data => '')
-    primary_offer.id = 'test_video'
-
-    test_video_offer.primary_offer           = primary_offer
-    test_video_offer.primary_offer.item_type = 'TestVideoOffer'
-    test_video_offer
   end
 
   def decrypt_data_param
