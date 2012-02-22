@@ -3,7 +3,7 @@ class App < ActiveRecord::Base
   acts_as_cacheable
   json_set_field :countries_blacklist
 
-  ALLOWED_PLATFORMS = { 'android' => 'Android', 'iphone' => 'iOS', 'windows' => 'Windows Phone' }
+  ALLOWED_PLATFORMS = { 'android' => 'Android', 'iphone' => 'iOS', 'windows' => 'Windows' }
   BETA_PLATFORMS    = {}
   PLATFORMS         = ALLOWED_PLATFORMS.merge(BETA_PLATFORMS)
   APPSTORE_COUNTRIES_OPTIONS = GeoIP::CountryName.zip(GeoIP::CountryCode).select do |name, code|
