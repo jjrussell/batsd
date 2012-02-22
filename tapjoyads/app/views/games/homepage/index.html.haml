@@ -16,7 +16,7 @@
               .bd
                 .title.elip
                   = external_publisher.app_name
-                .publisher
+                .publisher.hi
                   [PUBLISHER]
                 .app-summary.clearfix
                   .ui-icon.score
@@ -28,13 +28,6 @@
                     - link_to(games_earn_path(currency[:id])) do
                       = t('text.games.earn', :currency => currency[:name])
 
-= render("games/shared/footer")
-
-- content_for :page_head do
-
-  =# stylesheet_link_tag("marketplace/theme/tjm/style-768", :media => "only screen and (min-width: 768px)")
-  =# stylesheet_link_tag("marketplace/theme/tjm/style-480", :media => "only screen and (min-width: 480px)")
-  =# stylesheet_link_tag("marketplace/theme/tjm/images-hd", :media => "-webkit-min-device-pixel-ratio: 2")
 
 - content_for :included_javascripts do
   = javascript_include_tag "games/src/marketplace"
