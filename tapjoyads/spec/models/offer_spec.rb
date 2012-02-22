@@ -274,8 +274,8 @@ describe Offer do
         @offer.device_types = %w( windows ).to_json
       end
 
-      it "has a min_bid of 25" do
-        @offer.min_bid.should == 25
+      it "has a min_bid of 10" do
+        @offer.min_bid.should == 10
       end
     end
 
@@ -284,8 +284,8 @@ describe Offer do
         @offer.device_types = %w( android ).to_json
       end
 
-      it "has a min_bid of 25" do
-        @offer.min_bid.should == 25
+      it "has a min_bid of 10" do
+        @offer.min_bid.should == 10
       end
     end
 
@@ -294,8 +294,8 @@ describe Offer do
         @offer.device_types = %w( iphone ).to_json
       end
 
-      it "has a min_bid of 35" do
-        @offer.min_bid.should == 35
+      it "has a min_bid of 10" do
+        @offer.min_bid.should == 10
       end
     end
   end
@@ -676,6 +676,107 @@ describe Offer do
 
         clone.save!
       end
+    end
+  end
+  
+  describe '#calculate_target_installs' do
+    before :each do
+      @offer.allow_negative_balance = false
+      @offer.partner.balance = 1_000_00
+      @num_installs_today = 1
+    end
+
+    context 'when negative balance is allowed' do
+      before :each do
+        @offer.allow_negative_balance = true
+      end
+
+      it 'should be infinity' do
+        target = @offer.calculate_target_installs(@num_installs_today)
+        target.should_not be_finite
+      end
+
+      it 'should be limited by daily budget' do
+        @offer.daily_budget = 100
+        expected = @offer.daily_budget - @num_installs_today
+        target = @offer.calculate_target_installs(@num_installs_today)
+        target.should == expected
+      end
+    end
+
+    context 'when negative balance is not allowed' do
+      it 'should be based on the balance' do
+        expected = @offer.partner.balance / @offer.bid
+        target = @offer.calculate_target_installs(@num_installs_today)
+        target.should == expected
+      end
+
+      it 'should be limited by daily budget' do
+        @offer.daily_budget = 100
+        expected = @offer.daily_budget - @num_installs_today
+        target = @offer.calculate_target_installs(@num_installs_today)
+        target.should == expected
+      end
+    end
+
+    context 'low budget with negative balance' do
+      before :each do
+        @offer.partner.balance = 50_00
+      end
+
+      it 'should be based on half of balance' do
+        expected = @offer.partner.balance / @offer.bid / 2
+        target = @offer.calculate_target_installs(@num_installs_today)
+        target.should == expected
+      end
+
+      it 'should ignore if paid offer' do
+        @offer.price = 100
+        expected = @offer.partner.balance / @offer.bid
+        target = @offer.calculate_target_installs(@num_installs_today)
+        target.should == expected
+      end
+    end
+  end
+  
+  describe ".for_display_ads" do
+    
+    before :each do
+      @offer.update_attributes(:conversion_rate => 0.5)
+    end
+    
+    it "likes some things" do
+      Offer.for_display_ads.should include(@offer)
+    end
+    
+    it "requires zero price" do
+      @offer.update_attributes(:price => 5)
+      Offer.for_display_ads.should_not include(@offer)
+    end
+    
+    it "requires a minimal conversion rate" do
+      @offer.update_attributes(:conversion_rate => 0.1)
+      Offer.for_display_ads.should_not include(@offer)
+    end
+    
+    it "requires a short name" do
+      @offer.update_attributes(:name => 'Thirty-one characters xxxxxxxxx')
+      Offer.for_display_ads.should_not include(@offer)
+    end
+    
+    it "is undaunted by multibyte names" do
+      @offer.update_attributes(:name => '在这儿IM 人脉既是财富')
+      Offer.for_display_ads.should include(@offer)
+    end
+    
+    it "still doesn't like long multibyte names" do
+      @offer.update_attributes(:name => '在这儿IM 人脉既是财富 在这儿IM 人脉既是财富')
+      Offer.for_display_ads.should_not include(@offer)
+    end
+    
+    it "stops complaining about name length if the creatives are approved" do
+      @offer.update_attributes({:name => 'Long name xxxxxxxxxxxxxxxxxx', :approved_banner_creatives => ['320x50']})
+      Offer.for_display_ads.should include(@offer)
     end
   end
 end
