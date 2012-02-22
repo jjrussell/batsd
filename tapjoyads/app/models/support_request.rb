@@ -14,14 +14,6 @@ class SupportRequest < SimpledbResource
   self.sdb_attr :offer_id
   self.sdb_attr :click_id
 
-  def initialize(options = {})
-    super({:load_from_memcache => false}.merge(options))
-  end
-
-  def serial_save(options = {})
-    super({:write_to_memcache => false}.merge(options))
-  end
-
   def fill(params, app, currency, offer)
     self.description       = params[:description]
     self.udid              = params[:udid]

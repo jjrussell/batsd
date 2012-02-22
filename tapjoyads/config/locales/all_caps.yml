@@ -1,10 +1,10 @@
---- 
-all_caps: 
-  activerecord: 
-    errors: 
-      full_messages: 
+---
+all_caps:
+  activerecord:
+    errors:
+      full_messages:
         format: ~
-      messages: 
+      messages:
         accepted: ~
         blank: ~
         confirmation: ~
@@ -26,67 +26,67 @@ all_caps:
         too_long: ~
         too_short: ~
         wrong_length: ~
-      template: 
+      template:
         body: ~
-        header: 
+        header:
           one: ~
           other: ~
-  date: 
+  date:
     abbr_day_names: ~
     abbr_month_names: ~
     day_names: ~
-    formats: 
+    formats:
       default: ~
       long: ~
       short: ~
     month_names: ~
     order: ~
-  datetime: 
-    distance_in_words: 
-      about_x_hours: 
+  datetime:
+    distance_in_words:
+      about_x_hours:
         one: ~
         other: ~
-      about_x_months: 
+      about_x_months:
         one: ~
         other: ~
-      about_x_years: 
+      about_x_years:
         one: ~
         other: ~
-      almost_x_years: 
+      almost_x_years:
         one: ~
         other: ~
       half_a_minute: ~
-      less_than_x_minutes: 
+      less_than_x_minutes:
         one: ~
         other: ~
-      less_than_x_seconds: 
+      less_than_x_seconds:
         one: ~
         other: ~
-      over_x_years: 
+      over_x_years:
         one: ~
         other: ~
-      x_days: 
+      x_days:
         one: ~
         other: ~
-      x_minutes: 
+      x_minutes:
         one: ~
         other: ~
-      x_months: 
+      x_months:
         one: ~
         other: ~
-      x_seconds: 
+      x_seconds:
         one: ~
         other: ~
-    prompts: 
+    prompts:
       day: ~
       hour: ~
       minute: ~
       month: ~
       second: ~
       year: ~
-  errors: 
+  errors:
     format: ~
-    messages: 
+    messages:
       accepted: ~
       blank: ~
       confirmation: ~
@@ -106,16 +106,16 @@ all_caps:
       too_long: ~
       too_short: ~
       wrong_length: ~
-  helpers: 
-    select: 
+  helpers:
+    select:
       prompt: ~
-    submit: 
+    submit:
       create: ~
       submit: ~
       update: ~
-  number: 
-    currency: 
-      format: 
+  number:
+    currency:
+      format:
         delimiter: ~
         format: ~
         precision: ~
@@ -123,52 +123,52 @@ all_caps:
         significant: ~
         strip_insignificant_zeros: ~
         unit: ~
-    format: 
+    format:
       delimiter: ~
       precision: ~
       separator: ~
       significant: ~
       strip_insignificant_zeros: ~
-    human: 
-      decimal_units: 
+    human:
+      decimal_units:
         format: ~
-        units: 
+        units:
           billion: ~
           million: ~
           quadrillion: ~
           thousand: ~
           trillion: ~
           unit: ~
-      format: 
+      format:
         delimiter: ~
         precision: ~
         significant: ~
         strip_insignificant_zeros: ~
-      storage_units: 
+      storage_units:
         format: ~
-        units: 
-          byte: 
+        units:
+          byte:
             one: ~
             other: ~
           gb: ~
           kb: ~
           mb: ~
           tb: ~
-    percentage: 
-      format: 
+    percentage:
+      format:
         delimiter: ~
-    precision: 
-      format: 
+    precision:
+      format:
         delimiter: ~
-  support: 
-    array: 
+  support:
+    array:
       last_word_connector: ~
       two_words_connector: ~
       words_connector: ~
-    select: 
+    select:
       prompt: ~
-  text: 
-    featured: 
+  text:
+    featured:
       download: DOWNLOAD
       download_and_run: "JUST DOWNLOAD AND RUN"
       earn_currency: "EARN %{amount_and_currency}"
@@ -177,7 +177,7 @@ all_caps:
       skip: SKIP
       title: "EARN %{currency}"
       try_out: "TRY OUT"
-    games: 
+    games:
       about_body: ~
       about_title: ~
       account_created_body: ~
@@ -187,7 +187,7 @@ all_caps:
       advertisers_body: ~
       advertisers_title: ~
       allow_marketing_emails: ~
-      already_registered: 
+      already_registered:
         one: ~
         other: ~
       back_to_top: ~
@@ -228,11 +228,11 @@ all_caps:
       invite_email_body: ~
       invite_email_greet: ~
       invite_email_signature: ~
-      invite_friends: 
+      invite_friends:
         one: ~
         other: ~
       invite_title: ~
-      invites_sent_to: 
+      invites_sent_to:
         one: ~
         other: ~
       issue_registering: ~
@@ -264,7 +264,7 @@ all_caps:
       unable_to_process: ~
       wifi_required: ~
       wrong_device: ~
-    instructions: 
+    instructions:
       amount_and_currency: "%{amount} %{currency}"
       continue_link: "CLICK HERE TO CONTINUE."
       download_action: HERE
@@ -273,7 +273,7 @@ all_caps:
       footer: "AFTER COMPLETING THESE STEPS, YOU WILL EARN %{amount_and_currency}."
       header: "FOLLOW THESE STEPS TO EARN %{currency}:"
       title: INSTRUCTIONS
-    offerwall: 
+    offerwall:
       buy_currency: "BUY %{amount} %{currency}"
       earn_currency: "EARN %{amount} %{currency}"
       free: FREE
@@ -290,7 +290,7 @@ all_caps:
       title: "EARN %{currency}"
       wifi_required: "WIFI REQUIRED"
       wifi_warning: "THIS APP REQUIRES A WIFI CONNECTION TO DOWNLOAD."
-    shared: 
+    shared:
       about_link: ~
       ads_by: "ADS BY"
       android: ~
@@ -341,7 +341,7 @@ all_caps:
       updating: ~
       year: ~
       zip_postal: ~
-    support: 
+    support:
       abuse_warning: "THIS FORM IS STRICTLY FOR USERS WHO HAVE NOT BEEN REWARDED FOR A COMPLETED OFFER. ABUSE OF THIS PAGE MAY LEAD TO YOUR ACCOUNT BEING BANNED FROM ENGAGING IN OFFERS IN THE FUTURE."
       description_label: "DESCRIPTION:"
       email_address_label: "EMAIL ADDRESS:"
@@ -357,12 +357,12 @@ all_caps:
       support_request_submitted: "SUPPORT REQUEST SUBMITTED"
       thanks: "THANKS FOR SUBMITTING YOUR SUPPORT REQUEST! YOU WILL RECEIVE YOUR %{currency} AFTER WE HAVE VERIFIED THAT YOU COMPLETED THE OFFER."
       title: "MISSING %{currency}?"
-    unavailable_offer: 
+    unavailable_offer:
       message: "WE'RE SORRY BUT %{offer} IS NO LONGER AVAILABLE. YOU CAN RETURN TO THE PREVIOUS PAGE AND REFRESH TO VIEW THE LATEST OFFER LIST."
       optional_message: "OR, CLICK HERE TO DOWNLOAD %{offer} ANYWAY."
-  time: 
+  time:
     am: ~
-    formats: 
+    formats:
       day: ~
       day_long: ~
       day_short: ~

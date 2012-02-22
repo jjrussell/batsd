@@ -29,7 +29,7 @@ class DisplayAdController < ApplicationController
       currency = Currency.find_in_cache(params[:currency_id])
       currency = nil if currency.present? && currency.app_id != params[:publisher_app_id]
       if params[:offer_type] == "TestOffer"
-        offer = build_test_offer(publisher)
+        offer = publisher.test_offer
       else
         offer = Offer.find_in_cache(params[:advertiser_app_id])
       end
@@ -72,20 +72,21 @@ class DisplayAdController < ApplicationController
     web_request.put_values('display_ad_requested', params, get_ip_address, get_geoip_data, request.headers['User-Agent'])
 
     if currency.get_test_device_ids.include?(params[:udid])
-      offer = build_test_offer(publisher_app)
+      offer = publisher_app.test_offer
     else
       offer = OfferList.new(
-        :publisher_app      => publisher_app,
-        :device             => device,
-        :currency           => currency,
-        :device_type        => params[:device_type],
-        :geoip_data         => get_geoip_data,
-        :app_version        => params[:app_version],
-        :os_version         => params[:os_version],
-        :type               => Offer::DISPLAY_OFFER_TYPE,
-        :source             => params[:source],
-        :library_version    => params[:library_version],
-        :screen_layout_size => params[:screen_layout_size]
+        :publisher_app       => publisher_app,
+        :device              => device,
+        :currency            => currency,
+        :device_type         => params[:device_type],
+        :geoip_data          => get_geoip_data,
+        :app_version         => params[:app_version],
+        :os_version          => params[:os_version],
+        :type                => Offer::DISPLAY_OFFER_TYPE,
+        :source              => params[:source],
+        :library_version     => params[:library_version],
+        :screen_layout_size  => params[:screen_layout_size],
+        :mobile_carrier_code => "#{params[:mobile_country_code]}.#{params[:mobile_network_code]}"
       ).weighted_rand
     end
 

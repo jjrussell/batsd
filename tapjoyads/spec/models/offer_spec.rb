@@ -118,6 +118,18 @@ describe Offer do
     @offer.send(:geoip_reject?, geoip_data).should == true
   end
 
+  it "rejects depending on carriers" do
+    @offer.carriers = ["Verizon", "NTT DoCoMo"].to_json
+    mobile_carrier_code = '440.01'
+    @offer.send(:carriers_reject?, mobile_carrier_code).should == false
+    mobile_carrier_code = '123.123'
+    @offer.send(:carriers_reject?, mobile_carrier_code).should == true
+    @offer.send(:carriers_reject?, nil).should == true
+    @offer.update_attributes({ :carriers => '[]' })
+    @offer.reload
+    @offer.send(:carriers_reject?, mobile_carrier_code).should == false
+  end
+
   it "returns proper linkshare account url" do
     url = 'http://phobos.apple.com/WebObjects/MZStore.woa/wa/viewSoftware?id=TEST&mt=8'
     linkshare_url = Linkshare.add_params(url)
@@ -160,7 +172,9 @@ describe Offer do
 
   context "with a paid app item" do
     before :each do
-      @app = Factory(:app, :price => 150)
+      @app = Factory(:app)
+      @app.add_app_metadata(Factory(:app_metadata, :price => 150))
+      @app.reload.save!
       @offer = @app.primary_offer
     end
 
@@ -199,7 +213,9 @@ describe Offer do
 
   context "with a free app item" do
     before :each do
-      @app = Factory(:app, :price => 0)
+      @app = Factory(:app)
+      @app.add_app_metadata(Factory(:app_metadata, :price => 0))
+      @app.reload.save!
       @offer = @app.primary_offer
     end
 
@@ -209,8 +225,8 @@ describe Offer do
         @offer.rewarded = true
       end
 
-      it "has a min_bid of 65" do
-        @offer.min_bid.should == 65
+      it "has a min_bid of 10" do
+        @offer.min_bid.should == 10
       end
     end
 
@@ -242,8 +258,8 @@ describe Offer do
       @offer = @video.primary_offer
     end
 
-    it "has a min_bid of 15" do
-      @offer.min_bid.should == 15
+    it "has a min_bid of 4" do
+      @offer.min_bid.should == 4
     end
   end
 

@@ -1,0 +1,5 @@
+%tr
+  %td=recommendation[:app_id]
+  %td=recommendation[:app_name]
+  - if @options[:with_weights]
+    %td=recommendation[:weight]
