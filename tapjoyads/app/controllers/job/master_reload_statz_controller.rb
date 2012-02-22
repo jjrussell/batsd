@@ -184,23 +184,33 @@ class Job::MasterReloadStatzController < Job::JobController
       partner_stats['arpdau']          = '-'
     end
 
-    partner_stats['offerwall_views'] = NumberHelper.number_with_delimiter(stats['offerwall_views'].sum)
-    partner_stats['featured_views']  = NumberHelper.number_with_delimiter(stats['featured_offers_shown'].sum)
-    partner_stats['display_views']   = NumberHelper.number_with_delimiter(stats['display_ads_shown'].sum)
+    partner_stats['offerwall_views']     = NumberHelper.number_with_delimiter(stats['offerwall_views'].sum)
+    partner_stats['tjm_offerwall_views'] = NumberHelper.number_with_delimiter(stats['tjm_offerwall_views'].sum)
+    partner_stats['featured_views']      = NumberHelper.number_with_delimiter(stats['featured_offers_shown'].sum)
+    partner_stats['display_views']       = NumberHelper.number_with_delimiter(stats['display_ads_shown'].sum)
 
-    partner_stats['offerwall_conversions'] = NumberHelper.number_with_delimiter(stats['rewards'].sum)
-    partner_stats['featured_conversions']  = NumberHelper.number_with_delimiter(stats['featured_published_offers'].sum)
-    partner_stats['display_conversions']   = NumberHelper.number_with_delimiter(stats['display_conversions'].sum)
+    partner_stats['offerwall_conversions']     = NumberHelper.number_with_delimiter(stats['rewards'].sum)
+    partner_stats['tjm_offerwall_conversions'] = NumberHelper.number_with_delimiter(stats['tjm_rewards'].sum)
+    partner_stats['featured_conversions']      = NumberHelper.number_with_delimiter(stats['featured_published_offers'].sum)
+    partner_stats['display_conversions']       = NumberHelper.number_with_delimiter(stats['display_conversions'].sum)
 
-    partner_stats['offerwall_revenue'] = NumberHelper.number_to_currency(stats['rewards_revenue'].sum / 100.0)
-    partner_stats['featured_revenue']  = NumberHelper.number_to_currency(stats['featured_revenue'].sum / 100.0)
-    partner_stats['display_revenue']   = NumberHelper.number_to_currency(stats['display_revenue'].sum / 100.0)
+    partner_stats['offerwall_revenue']     = NumberHelper.number_to_currency(stats['rewards_revenue'].sum / 100.0)
+    partner_stats['tjm_offerwall_revenue'] = NumberHelper.number_to_currency(stats['tjm_rewards_revenue'].sum / 100.0)
+    partner_stats['featured_revenue']      = NumberHelper.number_to_currency(stats['featured_revenue'].sum / 100.0)
+    partner_stats['display_revenue']       = NumberHelper.number_to_currency(stats['display_revenue'].sum / 100.0)
 
     rewards_opened = stats['rewards_opened'].sum
     if rewards_opened == 0
       partner_stats['offerwall_cvr'] = 0
     else
       partner_stats['offerwall_cvr'] = NumberHelper.number_to_percentage(stats['rewards'].sum.to_f / rewards_opened.to_f * 100.0, :precision => 1)
+    end
+
+    tjm_rewards_opened = stats['tjm_rewards_opened'].sum
+    if tjm_rewards_opened == 0
+      partner_stats['tjm_offerwall_cvr'] = 0
+    else
+      partner_stats['tjm_offerwall_cvr'] = NumberHelper.number_to_percentage(stats['tjm_rewards'].sum.to_f / tjm_rewards_opened.to_f * 100.0, :precision => 1)
     end
 
     featured_offers_opened = stats['featured_offers_opened'].sum
@@ -217,9 +227,10 @@ class Job::MasterReloadStatzController < Job::JobController
       partner_stats['display_cvr'] = NumberHelper.number_to_percentage(stats['display_conversions'].sum.to_f / display_clicks.to_f * 100.0, :precision => 1)
     end
 
-    partner_stats['offerwall_ecpm'] = NumberHelper.number_to_currency((stats['rewards_revenue'].sum / 100.0) / (stats['offerwall_views'].sum / 1000.0))
-    partner_stats['featured_ecpm']  = NumberHelper.number_to_currency((stats['featured_revenue'].sum / 100.0) / (stats['featured_offers_shown'].sum / 1000.0))
-    partner_stats['display_ecpm']   = NumberHelper.number_to_currency((stats['display_revenue'].sum / 100.0) / (stats['display_ads_shown'].sum / 1000.0))
+    partner_stats['offerwall_ecpm']     = NumberHelper.number_to_currency((stats['rewards_revenue'].sum / 100.0) / (stats['offerwall_views'].sum / 1000.0))
+    partner_stats['tjm_offerwall_ecpm'] = NumberHelper.number_to_currency((stats['tjm_rewards_revenue'].sum / 100.0) / (stats['tjm_offerwall_views'].sum / 1000.0))
+    partner_stats['featured_ecpm']      = NumberHelper.number_to_currency((stats['featured_revenue'].sum / 100.0) / (stats['featured_offers_shown'].sum / 1000.0))
+    partner_stats['display_ecpm']       = NumberHelper.number_to_currency((stats['display_revenue'].sum / 100.0) / (stats['display_ads_shown'].sum / 1000.0))
 
     # for advertisers page
     partner_stats['spend']   = NumberHelper.number_to_currency(-stats['installs_spend'].sum / 100.0)

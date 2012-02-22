@@ -837,7 +837,7 @@ private
       :xLabels => @x_labels,
       :main => {
         :unitPrefix => '$',
-        :names => [ 'Total revenue', 'Offerwall revenue', 'TJM offerwall revenue', 'Featured offer revenue', 'Display ad revenue' ],
+        :names => [ 'Total revenue', 'In app offerwall revenue', 'TJM offerwall revenue', 'Featured offer revenue', 'Display ad revenue' ],
         :data => [
           @stats['total_revenue'].map { |i| i / 100.0 },
           @stats['rewards_revenue'].map { |i| i / 100.0 },
@@ -865,7 +865,7 @@ private
 
   def offerwall_data
     {
-      :name => 'Offerwall',
+      :name => 'In app offerwall',
       :intervals => formatted_intervals,
       :xLabels => @x_labels,
       :main => {
@@ -916,7 +916,7 @@ private
 
   def tjm_offerwall_data
     {
-      :name => 'Tapjoy marketplace offerwall',
+      :name => 'TJM offerwall',
       :intervals => formatted_intervals,
       :xLabels => @x_labels,
       :main => {
