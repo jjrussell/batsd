@@ -1,8 +1,12 @@
 - active ||= ""
 - show_device ||= false
 
+- if @current_gamer.nil?
+  #login-web.right
+    #login-web-wrapper
+      %span= t('text.shared.login_verb')
 .nav
-  -unless @current_gamer.nil?
+  - if @current_gamer.present?
     .menu
       .menu-grid.clearfix
         .box
@@ -13,7 +17,7 @@
         .box
   .logo
     %img{ :src => BLANK_IMAGE }
-  -unless @current_gamer.nil?
+  - if @current_gamer.present?
     .menu-dropdown
       .menu-dropdown-wrapper
         .device
@@ -37,7 +41,7 @@
             - link_to(games_root_path, :class => "") do
               .more_apps
                 %span= t('text.games.more_apps')
-            - link_to(games_gamer_path(), :class => "") do
+            - link_to(edit_games_gamer_path, :class => "") do
               .profile
                 %span= t('text.games.profile')
         .menu-subnav

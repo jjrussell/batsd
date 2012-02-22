@@ -38,16 +38,12 @@
       .noscript_msg
         = t('text.games.no_javascript')
 
-    #main.fade-in
-      .header
-        .headerwrap
-          .wrap
-            .container
-              = render :partial => 'games/homepage/nav_bar', :locals => { :show_device => true }
-      .content
-        .contentwrap
-          .wrap
-            = yield
+
+    = render 'games/shared/header'
+
+    = yield
+
+    = render 'games/shared/footer'
 
     :javascript
       window.ENVIRONMENT = "#{Rails.env}";
