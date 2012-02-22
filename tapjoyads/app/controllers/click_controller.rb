@@ -59,7 +59,7 @@ class ClickController < ApplicationController
       raise "not a test device"
     end
 
-    @test_offer = build_test_offer(publisher_app)
+    @test_offer = publisher_app.test_offer
 
     test_reward = Reward.new
     test_reward.type              = 'test_offer'
@@ -110,7 +110,7 @@ class ClickController < ApplicationController
       publisher_app = App.find_in_cache(params[:publisher_app_id])
       return unless verify_records([ publisher_app ])
 
-      @offer = build_test_video_offer(publisher_app).primary_offer
+      @offer = publisher_app.test_video_offer.primary_offer
     else
       @offer = Offer.find_in_cache(params[:offer_id])
     end
