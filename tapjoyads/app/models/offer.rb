@@ -37,14 +37,15 @@ class Offer < ActiveRecord::Base
   DISPLAY_AD_SIZES = ['320x50', '640x100', '768x90'] # data stored as pngs
   FEATURED_AD_SIZES = ['960x640', '640x960', '480x320', '320x480'] # data stored as jpegs
   CUSTOM_AD_SIZES = DISPLAY_AD_SIZES + FEATURED_AD_SIZES
-
-  OFFER_LIST_REQUIRED_COLUMNS = (Offer.column_names - ["active", "allow_negative_balance", "created_at", "daily_budget",
+  OFFER_LIST_EXCLUDED_COLUMNS = ["active", "allow_negative_balance", "created_at", "daily_budget",
                                  "hidden", "instructions", "instructions_overridden", "last_daily_stats_aggregation_time",
                                  "last_stats_aggregation_time", "low_balance", "min_bid_override", "min_conversion_rate",
                                  "name_suffix", "next_daily_stats_aggregation_time", "next_stats_aggregation_time",
                                  "overall_budget", "pay_per_click", "stats_aggregation_interval", "tapjoy_enabled",
                                  "tapjoy_sponsored", "updated_at", "url_overridden", "user_enabled"
-                                 ]).map { |c| "#{quoted_table_name}.#{c}" }.join(', ')
+                                 ]
+
+  OFFER_LIST_REQUIRED_COLUMNS = (Offer.column_names - OFFER_LIST_EXCLUDED_COLUMNS).map { |c| "#{quoted_table_name}.#{c}" }.join(', ')
 
   DIRECT_PAY_PROVIDERS = %w( boku paypal )
 
