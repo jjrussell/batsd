@@ -504,19 +504,6 @@ class Offer < ActiveRecord::Base
     CloudFront.invalidate(id, paths) if existing_icon_blob.present?
   end
 
-  def get_video_url(options = {})
-    Offer.get_video_url({:video_id => Offer.id}.merge(options))
-  end
-
-  def self.get_video_url(options = {})
-    video_id  = options.delete(:video_id)  { |k| raise "#{k} is a required argument" }
-    raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
-
-    prefix = "http://s3.amazonaws.com/#{RUN_MODE_PREFIX}tapjoy"
-
-    "#{prefix}/videos/src/#{video_id}.mp4"
-  end
-
   def save(perform_validation = true)
     super(perform_validation)
   rescue BannerSyncError => bse

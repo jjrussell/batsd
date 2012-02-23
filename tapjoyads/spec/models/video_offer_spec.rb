@@ -41,11 +41,6 @@ describe VideoOffer do
       @video_offer.update_attributes({:hidden => true})
       @video_offer.should be_hidden
     end
-
-    it "has value in video_url after video_offer created" do
-      @video_url = Offer.get_video_url({:video_id => @video_offer.id})
-      @video_offer.video_url.should == @video_url
-    end
   end
 
   context "A Video Offer with a primary_offer" do
@@ -62,8 +57,7 @@ describe VideoOffer do
     end
 
     it "has value stored in url of the primary_offer after video_offer created" do
-      @video_url = Offer.get_video_url({:video_id => @video_offer.id})
-      @offer.url.should == @video_url
+      @offer.url.should == @video_offer.video_url
     end
   end
 
