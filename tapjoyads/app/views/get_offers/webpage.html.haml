@@ -84,7 +84,7 @@
     %a{ :href => "javascript:void(0);", :id => "load_more" }
       = t('text.offerwall.load_more')
 
-- link_to games_root_url, :id => 'more_offers', :class => 'offer', :style => "#{'display: none;' if @more_data_available > 0}" do
+- link_to WEBSITE_URL, :id => 'more_offers', :class => 'offer', :style => "#{'display: none;' if @more_data_available > 0}" do
   .divider
   .content
     .icon

@@ -60,14 +60,14 @@ class AgencyApi::CurrenciesController < AgencyApiController
 
     return unless verify_partner(app.partner_id)
 
-    unless app.primary_currency.nil?
+    unless app.can_have_new_currency?
       render_error('currency already exists', 400)
       return
     end
 
     currency = Currency.new
     log_activity(currency)
-    currency.id = app.id
+
     currency.app = app
     currency.partner = @partner
     currency.name = params[:name]
@@ -80,7 +80,14 @@ class AgencyApi::CurrenciesController < AgencyApiController
       currency.callback_url = Currency::TAPJOY_MANAGED_CALLBACK_URL
     end
     currency.secret_key = params[:secret_key] if params[:secret_key].present?
-    currency.ordinal = 1
+
+    if app.currencies.empty?
+      currency.id = app.id
+      currency.ordinal = 1
+    else
+      currency.ordinal = app.currencies.last.ordinal + 100
+    end
+
     unless currency.valid?
       render_error(currency.errors, 400)
       return
