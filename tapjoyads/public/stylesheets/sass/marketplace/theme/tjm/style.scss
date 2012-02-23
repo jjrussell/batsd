@@ -382,6 +382,10 @@ li {
   background: url('/images/games/ui-joy-r-arrow.png') no-repeat 96% center;
 }
 
+.mod.right-arrow, .mod.down-arrow, .list-button.down-arrow {
+  background-position: 99% center;
+}
+
 .ui-list-action-label {
   display: block;
   font-size: 1em;
@@ -432,7 +436,7 @@ li {
   }
   .hd {
     margin-right: percentage(12/300);
-    width: percentage(69/300);
+    width: 75px;
     float: left;
 
     img {
@@ -638,6 +642,10 @@ input.ui-joy-button {
   border-left: 1px solid #c8c4c4;
   border-right: 1px solid #c8c4c4;
   cursor: pointer;
+
+  .mod {
+    padding: 0;
+  }
 }
 
 .list-button-container .list-button:first-child {
