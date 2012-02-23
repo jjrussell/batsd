@@ -4,7 +4,8 @@
   .mod.line-item.page-header
     .hd
       - if @gamer.get_avatar_url.present?
-        %img{ :src => @gamer.get_avatar_url }
+        .icon
+          %img{ :src => @gamer.get_avatar_url }
     .bd
       .title.elip.clearfix
         = @gamer.nickname
