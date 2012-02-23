@@ -1,6 +1,6 @@
 -content_for :styles do
   = stylesheet_link_tag("games/get-app")
-#review-form.page.current
+#review-form.current
   .panel
     .mod.line-item.page-header
       .hd
@@ -17,12 +17,12 @@
         .mod.form-section.button-group
           .ui-joy-button.grey-toggle.active
             %a.text-center
-              .active-image=image_tag("games/inset-thumbs-up.png")
-              .inactive-image=image_tag("games/grad-thumbs-up.png")
+              .active-image= image_tag("games/inset-thumbs-up.png")
+              .inactive-image= image_tag("games/grad-thumbs-up.png")
           .ui-joy-button.grey-toggle
             %a.text-center
-              .active-image=image_tag("games/inset-thumbs-down.png")
-              .inactive-image=image_tag("games/grad-thumbs-down.png")
+              .active-image= image_tag("games/inset-thumbs-down.png")
+              .inactive-image= image_tag("games/grad-thumbs-down.png")
         .mod.form-section
           %input.ui-joy-input{:name => :title, :placeholder => t('text.shared.title_noun')}
         .mod.form-section

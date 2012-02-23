@@ -21,9 +21,10 @@
           &nbsp;
     = render("offers")
     .mod.review-area.light
-      .ui-joy-button.grey-action
-        %a.text-center
-          Review #{@external_publisher.app_name}
+      -link_to games_app_reviews_path(:app_metadata_id => @app_metadata_id) do
+        .ui-joy-button.grey-action
+          .text-center
+            = t("text.games.review_app_name", {:app_name => @external_publisher.app_name})
 
 -content_for :included_javascripts do
   = javascript_include_tag "games/src/marketplace"
