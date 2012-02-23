@@ -58,7 +58,6 @@ private
       notify_and_render_error(false) and return
     end
 
-    # We know that UUIDs do not have '.' but our own keys do, so we can make this quick check to know to search
     click = Click.new(:key => params[:click_key])
 
     if click.is_new
