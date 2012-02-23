@@ -82,7 +82,6 @@ class App < ActiveRecord::Base
     :through => :app_metadata_mappings,
     :source => :app_metadata,
     :order => "created_at"
-  has_many :app_reviews
 
   belongs_to :partner
 

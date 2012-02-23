@@ -28,6 +28,12 @@
               .field
                 .label
                   =t('text.shared.preferences')
+          - link_to games_app_reviews_path do
+            .slider.clearfix
+              .profile_arrow.right
+              .field
+                .label
+                  =t('text.shared.my_reviews')
     = render :partial => 'games/homepage/footer'
 
 - content_for :page_javascript do

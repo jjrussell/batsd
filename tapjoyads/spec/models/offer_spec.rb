@@ -73,7 +73,7 @@ describe Offer do
     @offer.send(:geoip_reject?, geoip_data).should == false
 
     @offer.item.countries_blacklist = ["GB"].to_json
-    @offer.get_countries_blacklist(true)
+    @offer.countries_blacklist(true)
     geoip_data = { :primary_country => nil }
     @offer.send(:geoip_reject?, geoip_data).should == false
     geoip_data = { :primary_country => "GB" }
@@ -148,6 +148,28 @@ describe Offer do
   it "doesn't reject on source when approved_sources is empty" do
     @offer.send(:source_reject?, 'foo').should be_false
     @offer.send(:source_reject?, 'offerwall').should be_false
+  end
+
+  it "excludes the appropriate columns for the for_offer_list scope" do
+    offer = Offer.for_offer_list.find(@offer.id)
+    fetched_cols = offer.attribute_names & Offer.column_names
+
+    (fetched_cols & Offer::OFFER_LIST_EXCLUDED_COLUMNS).should == []
+    fetched_cols.sort.should == [ 'id', 'item_id', 'item_type', 'partner_id',
+                                  'name', 'url', 'price', 'bid', 'payment',
+                                  'conversion_rate', 'show_rate', 'self_promote_only',
+                                  'device_types', 'countries',
+                                  'age_rating', 'multi_complete', 'featured',
+                                  'publisher_app_whitelist', 'direct_pay', 'reward_value',
+                                  'third_party_data', 'payment_range_low',
+                                  'payment_range_high', 'icon_id_override', 'rank_boost',
+                                  'normal_bid', 'normal_conversion_rate', 'normal_avg_revenue',
+                                  'normal_price', 'over_threshold', 'rewarded', 'reseller_id',
+                                  'cookie_tracking', 'min_os_version', 'screen_layout_sizes',
+                                  'interval', 'banner_creatives', 'dma_codes', 'regions',
+                                  'wifi_only', 'approved_sources', 'approved_banner_creatives',
+                                  'sdkless', 'carriers'
+                                ].sort
   end
 
   context "with min_bid_override set" do
