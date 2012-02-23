@@ -73,8 +73,7 @@ class Games::Gamers::DevicesController < GamesController
             invitation_id, advertiser_app_id = ObjectEncryptor.decrypt(current_gamer.referrer).split(',')
             advertiser_app_id = TAPJOY_GAMES_INVITATION_OFFER_ID if advertiser_app_id.blank?
             referred_by_gamer = Gamer.find_by_id(current_gamer.referred_by)
-            invitation = Invitation.find_by_id_and_gamer_id(invitation_id, current_gamer.referred_by)
-            if advertiser_app_id && referred_by_gamer && invitation
+            if advertiser_app_id && referred_by_gamer
               click = Click.new(:key => "#{current_gamer.referred_by}.#{advertiser_app_id}", :consistent => true)
               unless click.new_record?
                 new_referral_count = referred_by_gamer.referral_count + 1
@@ -88,7 +87,7 @@ class Games::Gamers::DevicesController < GamesController
         flash[:error] = "Error linking device. Please try again."
       end
 
-      redirect_to games_root_path
+      redirect_to games_root_path, :flash => { :register_device => true }
     else
       flash[:error] = "Please log in to link your device. You must have cookies enabled."
       redirect_to games_login_path(:data => params[:data])

@@ -16,7 +16,7 @@ a:hover { text-decoration: underline; }
 
 .header { float: left; }
 
-#header_wrapper { background: #DADADA url('/images/header_bg.png') repeat-x; height: 99px; width: 100%; }
+#header_wrapper { background: #DADADA url('/images/header_bg.png') repeat-x; height: 99px; min-width: 980px; width: 100%; }
 #header { height: 99px; margin: 0px auto; width: 980px; }
 #logo { background: url('/images/logo.png') no-repeat; float: left; height: 61px; margin-top: 21px; width: 136px; }
 #nav { float: right; margin-top: 32px; }
@@ -31,10 +31,10 @@ a:hover { text-decoration: underline; }
 #nav_about { background: url('/images/nav_sprite.png') -626px 0; width: 120px; }
 #nav_about:hover { background-position: -746px 0; }
 
-#content_wrapper { background: #fff; width: 100%; }
+#content_wrapper { background: #fff; min-width: 980px; width: 100%; }
 #content { background: url('/images/content_bg.jpg') no-repeat; margin: 0px auto; width: 980px; }
 
-#footer_wrapper { background: url('/images/footer_bg.jpg') repeat-x; width: 100%; }
+#footer_wrapper { background: url('/images/footer_bg.jpg') repeat-x; min-width: 980px; width: 100%; }
 #footer { margin: 0px auto; width: 980px; }
 
 #footer_content { color: #fff; float: left; font-size: 15px; margin: 43px 0 35px; min-height: 250px; }

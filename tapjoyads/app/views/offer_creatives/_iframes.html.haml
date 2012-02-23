@@ -1,0 +1,2 @@
+- @offer.banner_creative_sizes_with_labels.each do |size_hash|
+  %iframe.creative_upload{:src => offer_creatives_form_path(:id => @offer.id, :image_size => size_hash[:size], :label => size_hash[:label])}

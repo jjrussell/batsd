@@ -30,7 +30,7 @@ class SimpledbResource
   #   load_from_memcache: Whether attributes should be loaded from memcache.
   def initialize(options = {})
     should_load                = options.delete(:load)                 { true }
-    load_from_memcache         = options.delete(:load_from_memcache)   { true }
+    load_from_memcache         = options.delete(:load_from_memcache)   { false }
     consistent                 = options.delete(:consistent)           { false }
     run_after_initialize       = options.delete(:after_initialize)     { true }
     @key                       = get_key_from(options.delete(:key))    { nil }
@@ -127,17 +127,8 @@ class SimpledbResource
     end
   end
 
-  ##
-  # Calls serial_save in a separate thread.
-  def save(options = {})
-    thread = Thread.new(options) do |opts|
-      serial_save(opts)
-    end
-    return thread
-  end
-
   def save!(options = {})
-    serial_save({ :catch_exceptions => false }.merge(options))
+    save({ :catch_exceptions => false }.merge(options))
   end
 
   ##
@@ -149,9 +140,9 @@ class SimpledbResource
   #   write_to_sdb: Whether to save to sdb. This may be set to false if saves are occuring in a batch put.
   #   catch_exceptions: Whether to catch exceptions. If true, then any failed attempts to save will
   #       result in the save getting written to sqs in order to be saved later.
-  def serial_save(options = {})
+  def save(options = {})
     options_copy     = options.clone
-    save_to_memcache = options.delete(:write_to_memcache) { true }
+    save_to_memcache = options.delete(:write_to_memcache) { false }
     save_to_sdb      = options.delete(:write_to_sdb)      { true }
     catch_exceptions = options.delete(:catch_exceptions)  { true }
     expected_attr    = options.delete(:expected_attr)     { {} }
@@ -325,7 +316,7 @@ class SimpledbResource
       yield(row)
 
       row.put(version_attr, initial_version.to_i + 1)
-      row.serial_save(:catch_exceptions => false, :expected_attr => {version_attr => initial_version}, :write_to_memcache => false)
+      row.save!(:expected_attr => {version_attr => initial_version}, :write_to_memcache => false)
       return row
     rescue ExpectedAttributeError => e
       Rails.logger.info "ExpectedAttributeError: #{e.to_s}."

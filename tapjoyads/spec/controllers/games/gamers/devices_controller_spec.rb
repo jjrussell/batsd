@@ -6,7 +6,7 @@ describe Games::Gamers::DevicesController do
     fake_the_web
   end
 
-  context "when link device" do
+  context 'when linking device' do
     before :each do
       user = Factory(:admin)
       partner = Factory(:partner, :users => [user])
@@ -15,7 +15,7 @@ describe Games::Gamers::DevicesController do
       @inviter = Factory(:gamer)
       @inviter.gamer_profile = GamerProfile.create(:gamer => @inviter, :referral_count => 0)
       click = Click.new(:key => "#{@inviter.id}.#{generic_offer_for_invite.id}")
-      click.serial_save
+      click.save
 
       invitation = Factory(:invitation, :gamer_id => @inviter.id)
 
@@ -24,7 +24,7 @@ describe Games::Gamers::DevicesController do
       games_login_as(gamer)
     end
 
-    it "should create sub click key" do
+    it 'creates sub click key' do
       data = {
         :udid              => Factory.next(:udid),
         :product           => Factory.next(:name),
@@ -32,7 +32,7 @@ describe Games::Gamers::DevicesController do
         :mac_address       => Factory.next(:name),
         :platform          => 'ios'
       }
-      get :finalize, {:data => ObjectEncryptor.encrypt(data)}
+      get(:finalize, {:data => ObjectEncryptor.encrypt(data)})
       Click.new(:key => "#{@inviter.id}.invite[1]", :consistent => true).should_not be_new_record
     end
   end

@@ -18,35 +18,34 @@ describe Job::QueueSendCurrencyController do
       :currency_id => @currency.id,
       :publisher_app_id => @currency.id
     )
-    @reward.serial_save
+    @reward.save
   end
 
   describe 'with ExpectedAttributeError' do
     it 'should raise if reward has not already been updated' do
       Reward.
-        any_instance.expects(:serial_save).
+        any_instance.expects(:save!).
         with(
-          :catch_exceptions => false,
           :expected_attr => {'sent_currency' => nil}
         ).
         raises(Simpledb::ExpectedAttributeError)
 
       lambda {
-        get 'run_job', :message => @reward.id
+        get(:run_job, :message => @reward.id)
       }.should raise_error(Simpledb::ExpectedAttributeError)
     end
 
     it 'should return if reward is already updated' do
       @reward.send_currency_status = 'poo'
-      @reward.serial_save
+      @reward.save
 
       Reward.
         any_instance.
-        expects(:serial_save).
+        expects(:save).
         raises(Simpledb::ExpectedAttributeError)
 
       lambda {
-        get 'run_job', :message => @reward.id
+        get(:run_job, :message => @reward.id)
       }.should_not raise_error
     end
   end
@@ -63,7 +62,7 @@ describe Job::QueueSendCurrencyController do
 
     it 'should record an error for Downloader' do
       lambda {
-        get 'run_job', :message => @reward.id
+        get(:run_job, :message => @reward.id)
       }.should raise_error(TestingError)
 
       failures = Mc.get("send_currency_failures.#{@mc_time}")
@@ -71,26 +70,26 @@ describe Job::QueueSendCurrencyController do
     end
 
     it 'should throw SkippedSendCurrency if callback is bad' do
-      get 'run_job', :message => @reward.id rescue TestingError
+      get(:run_job, :message => @reward.id) rescue TestingError
 
       Mc.get_count("send_currency_skip.#{@currency.id}.#{@mc_time}").should == 0
 
       message = "not attempting to ping the callback for #{@currency.id}"
       lambda {
-        get 'run_job', :message => @reward.id
+        get(:run_job, :message => @reward.id)
       }.should raise_error(SkippedSendCurrency, message)
 
       Mc.get_count("send_currency_skip.#{@currency.id}.#{@mc_time}").should == 1
     end
 
     it 'should record errors for multiple currencies' do
-      get 'run_job', :message => @reward.id rescue TestingError
+      get(:run_job, :message => @reward.id) rescue TestingError
 
       currency = Factory(:currency, :callback_url => 'https://www.whatnot.com')
       reward = Factory(:reward, :currency_id => currency.id)
 
       lambda {
-        get 'run_job', :message => reward.id
+        get(:run_job, :message => reward.id)
       }.should raise_error(TestingError)
 
       failures = Mc.get("send_currency_failures.#{@mc_time}")
@@ -102,12 +101,12 @@ describe Job::QueueSendCurrencyController do
     it 'should not record more than 5000 errors' do
       Mc.increment_count(@fail_count_key, false, 1.week, 4998)
 
-      get 'run_job', :message => @reward.id rescue TestingError
+      get(:run_job, :message => @reward.id) rescue TestingError
 
       reward = Factory(:reward, :currency_id => @currency.id)
       @controller.instance_variable_set('@bad_callbacks', Set.new)
 
-      get 'run_job', :message => reward.id rescue TestingError
+      get(:run_job, :message => reward.id) rescue TestingError
 
       failures = Mc.get("send_currency_failures.#{@mc_time}")
       failures[@currency.id].should == Set.new(@reward.key)
@@ -117,82 +116,36 @@ describe Job::QueueSendCurrencyController do
       count = Mc.get_count(@fail_count_key)
       count.should == 0
 
-      get 'run_job', :message => @reward.id rescue TestingError
+      get(:run_job, :message => @reward.id) rescue TestingError
 
       count = Mc.get_count(@fail_count_key)
       count.should == 1
     end
 
     it 'should delete sent_currency from reward' do
-      get 'run_job', :message => @reward.id rescue TestingError
+      get(:run_job, :message => @reward.id) rescue TestingError
 
       reward = Reward.new(:key => @reward.key, :consistent => true)
       reward.sent_currency.should == nil
     end
 
     it 'should increase @num_reads on error' do
-      get 'run_job', :message => @reward.id rescue TestingError
+      get(:run_job, :message => @reward.id) rescue TestingError
 
       num_reads = @controller.instance_variable_get('@num_reads')
       num_reads.should == 100
 
-      get 'run_job', :message => @reward.id rescue TestingError
+      get(:run_job, :message => @reward.id) rescue TestingError
 
       num_reads = @controller.instance_variable_get('@num_reads')
       num_reads.should == 101
 
       @controller.instance_variable_set('@num_reads', 200)
 
-      get 'run_job', :message => @reward.id rescue TestingError
+      get(:run_job, :message => @reward.id) rescue TestingError
 
       num_reads = @controller.instance_variable_get('@num_reads')
       num_reads.should == 200
-    end
-
-    it 'should send errors to NewRelic' do
-      url_params = [
-        "snuid=#{@reward.publisher_user_id}",
-        "currency=#{@reward.currency_reward}",
-      ]
-
-      callback_url = "#{@currency.callback_url}?#{url_params.join('&')}"
-      NewRelic::Agent.agent.error_collector.
-        expects(:notice_error).
-        with(
-          kind_of(TestingError),
-          has_entries({
-            :request_params => has_entries('callback_url' => callback_url)
-          })
-        )
-
-      mock_queue = mock()
-      mock_queue.stubs(:receive_message).returns(AWS::SQS::ReceivedMessage.new(nil, nil, nil, { :body => @reward.id }), nil)
-      mock_queue.stubs(:visibility_timeout).returns(1)
-      Sqs.expects(:queue).returns(mock_queue)
-
-      get 'index'
-    end
-
-    it 'should send errors to NewRelic for TJ managed Currency' do
-      Downloader.get_strict rescue TestingError
-      PointPurchases.expects(:transaction).raises(TestingError)
-      callback_url = Currency::TAPJOY_MANAGED_CALLBACK_URL
-      @currency.update_attribute(:callback_url, callback_url)
-      NewRelic::Agent.agent.error_collector.
-        expects(:notice_error).
-        with(
-          kind_of(TestingError),
-          has_entries({
-            :request_params => has_entries('callback_url' => callback_url)
-          })
-        )
-
-      mock_queue = mock()
-      mock_queue.stubs(:receive_message).returns(AWS::SQS::ReceivedMessage.new(nil, nil, nil, { :body => @reward.id }), nil)
-      mock_queue.stubs(:visibility_timeout).returns(1)
-      Sqs.expects(:queue).returns(mock_queue)
-
-      get 'index'
     end
   end
 
@@ -207,7 +160,7 @@ describe Job::QueueSendCurrencyController do
         with(@currency.id, true).
         returns(@currency)
 
-      get 'run_job', :message => @reward.id
+      get(:run_job, :message => @reward.id)
 
       reward = Reward.new(:key => @reward.key, :consistent => true)
       reward.sent_currency.should == Time.zone.now
@@ -221,17 +174,17 @@ describe Job::QueueSendCurrencyController do
         with(:callback_url).
         times(2)
 
-      get 'run_job', :message => @reward.id
+      get(:run_job, :message => @reward.id)
     end
 
     it 'should not reward twice' do
-      get 'run_job', :message => @reward.id
+      get(:run_job, :message => @reward.id)
 
       reward = Reward.new(:key => @reward.key, :consistent => true)
       reward.sent_currency.should == Time.zone.now
 
       Currency.expects(:find_in_cache).never
-      get 'run_job', :message => reward.id
+      get(:run_job, :message => reward.id)
     end
   end
 
@@ -247,14 +200,14 @@ describe Job::QueueSendCurrencyController do
 
       pp.points.should == 0
 
-      get 'run_job', :message => @reward.id
+      get(:run_job, :message => @reward.id)
 
       pp = PointPurchases.new(:key => pp_key, :consistent => true)
       pp.points.should == 100
     end
 
     it 'should set send_currency_status to OK' do
-      get 'run_job', :message => @reward.id
+      get(:run_job, :message => @reward.id)
 
       reward = Reward.new(:key => @reward.key, :consistent => true)
       reward.send_currency_status.should == 'OK'
@@ -286,11 +239,13 @@ describe Job::QueueSendCurrencyController do
         with(callback_url, { :timeout => 20 }).
         returns(@mock_response)
 
-      get 'run_job', :message => @reward.id
+      get(:run_job, :message => @reward.id)
     end
 
     it 'should send offer data if currency says so' do
       app = Factory(:app)
+      app.add_app_metadata(Factory(:app_metadata))
+      app.reload.save!
       offer = app.primary_offer
 
       @currency.update_attribute(:id, app.id)
@@ -301,7 +256,7 @@ describe Job::QueueSendCurrencyController do
       @reward.currency_id = @currency.id
       @reward.offer_id = offer.id
       @reward.publisher_amount = 150
-      @reward.serial_save
+      @reward.save
 
       url_params = [
         "snuid=#{@reward.publisher_user_id}",
@@ -322,7 +277,7 @@ describe Job::QueueSendCurrencyController do
         with(offer.id, true).
         returns(offer)
 
-      get 'run_job', :message => @reward.id
+      get(:run_job, :message => @reward.id)
     end
 
     it 'should adjust the mark if the callback_url has a ?' do
@@ -342,7 +297,7 @@ describe Job::QueueSendCurrencyController do
         with(callback_url, { :timeout => 20 }).
         returns(@mock_response)
 
-      get 'run_job', :message => @reward.id
+      get(:run_job, :message => @reward.id)
     end
   end
 
@@ -356,7 +311,7 @@ describe Job::QueueSendCurrencyController do
 
     it 'should set callback for facebook' do
       @reward.publisher_user_id = 'Fbill'
-      @reward.serial_save
+      @reward.save
 
       callback_url = "#{@url_start}facebook#{@url_end}"
 
@@ -365,12 +320,12 @@ describe Job::QueueSendCurrencyController do
         with(callback_url, { :timeout => 20 }).
         returns(@mock_response)
 
-      get 'run_job', :message => @reward.id
+      get(:run_job, :message => @reward.id)
     end
 
     it 'should set callback for myspace' do
       @reward.publisher_user_id = 'Mbill'
-      @reward.serial_save
+      @reward.save
 
       callback_url = "#{@url_start}myspace#{@url_end}"
 
@@ -379,12 +334,12 @@ describe Job::QueueSendCurrencyController do
         with(callback_url, { :timeout => 20 }).
         returns(@mock_response)
 
-      get 'run_job', :message => @reward.id
+      get(:run_job, :message => @reward.id)
     end
 
     it 'should set callback for iphone' do
       @reward.publisher_user_id = 'Pbill'
-      @reward.serial_save
+      @reward.save
 
       callback_url = "#{@url_start}myspace#{@url_end}"
 
@@ -393,14 +348,14 @@ describe Job::QueueSendCurrencyController do
         with(callback_url, { :timeout => 20 }).
         returns(@mock_response)
 
-      get 'run_job', :message => @reward.id
+      get(:run_job, :message => @reward.id)
     end
 
     it 'should set InvalidPlaydomUserId' do
       @reward.publisher_user_id = 'Gbill'
-      @reward.serial_save
+      @reward.save
 
-      get 'run_job', :message => @reward.id
+      get(:run_job, :message => @reward.id)
 
       reward = Reward.new(:key => @reward.key, :consistent => true)
       reward.send_currency_status.should == 'InvalidPlaydomUserId'

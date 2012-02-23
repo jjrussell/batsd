@@ -3,7 +3,7 @@
     .content_wrapper
       .content
         .details.clearfix
-          = image_tag @video_offer.primary_offer.get_video_icon_url, :size => '200x125', :id => 'offer-icon'
+          = image_tag @offer.get_video_icon_url, :size => '200x125', :id => 'offer-icon'
 
           .earned You just earned #{@currency.get_visual_reward_amount(@offer, params[:display_multiplier])} #{@currency.name}!
           .quiet= @video_offer.name

@@ -1,12 +1,16 @@
 #!/usr/bin/env ruby
 
-PIDFILE = Dir.glob("/home/webuser/tapjoyserver/tapjoyads/pids/*.pid").first
+pidfiles = Dir.glob("/home/webuser/tapjoyserver/tapjoyads/pids/*.pid")
 
 pid = ''
-unless PIDFILE.nil?
-  pid = `cat #{PIDFILE}`.strip
-  `kill -s 0 #{pid}`
-  pid = '' unless $?.success?
+pidfiles.each do |pidfile|
+  p = `cat #{pidfile}`.strip
+  `kill -s 0 #{p} 2> /dev/null`
+  if $?.success?
+    pid << "#{p} "
+  else
+    File.delete(pidfile)
+  end
 end
 
-print pid
+print pid.strip

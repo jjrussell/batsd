@@ -23,50 +23,50 @@ describe Account::WhitelistController do
       login_as @user
     end
 
-    it "should assign all offers by default" do
-      get :index
+    it 'assigns all offers by default' do
+      get(:index)
       assigns(:offers).should == [@offer1, @offer2]
     end
 
-    it "should assign approved offers" do
-      get :index, :status => 'a'
+    it 'assigns approved offers' do
+      get(:index, :status => 'a')
       assigns(:offers).should == [@offer1]
     end
 
-    it "should assign blocked offers" do
-      get :index, :status => 'b'
+    it 'assigns blocked offers' do
+      get(:index, :status => 'b')
       assigns(:offers).should == [@offer2]
     end
 
-    it "should assign offers by device" do
-      get :index, :device => 'all'
+    it 'assigns offers by device' do
+      get(:index, :device => 'all')
       assigns(:offers).should == [@offer1, @offer2]
 
-      get :index, :device => 'iphone'
+      get(:index, :device => 'iphone')
       assigns(:offers).should == [@offer1, @offer2]
 
-      get :index, :device => 'android'
+      get(:index, :device => 'android')
       assigns(:offers).should == []
 
       @offer1.device_types = ['android'].to_json
       @offer1.save
-      get :index, :device => 'android'
+      get(:index, :device => 'android')
       assigns(:offers).should == [@offer1]
     end
 
-    it "should assign offers by name" do
+    it 'assigns offers by name' do
       @offer1.name = 'bill'
       @offer1.save!
       @offer2.name = 'sue'
       @offer2.save!
 
-      get :index, :name => 'bill'
+      get(:index, :name => 'bill')
       assigns(:offers).should == [@offer1]
-      get :index, :name => 'sue'
+      get(:index, :name => 'sue')
       assigns(:offers).should == [@offer2]
-      get :index, :name => 'sarah'
+      get(:index, :name => 'sarah')
       assigns(:offers).should == []
-      get :index
+      get(:index)
       assigns(:offers).should == [@offer1, @offer2]
     end
   end
@@ -82,23 +82,23 @@ describe Account::WhitelistController do
       login_as @user
     end
 
-    it "should redirect to account whitelist index" do
-      get :enable
+    it 'redirects to account whitelist index' do
+      get(:enable)
       response.should redirect_to(account_whitelist_index_path)
     end
 
-    it "should add offer to whitelist" do
-      get :index, :status => 'a'
+    it 'adds offer to whitelist' do
+      get(:index, :status => 'a')
       assigns(:offers).should == []
-      get :enable, :id => @offer.id
-      get :index, :status => 'a'
+      get(:enable, :id => @offer.id)
+      get(:index, :status => 'a')
       assigns(:offers).should == [@offer]
       @partner.reload
       @partner.get_offer_whitelist.should == Set.new(@offer.id)
     end
 
-    it "should log activity" do
-      get :enable, :id => @offer.id
+    it 'logs activity' do
+      get(:enable, :id => @offer.id)
       assigns(:activity_logs).should_not be_nil
     end
   end
@@ -114,24 +114,24 @@ describe Account::WhitelistController do
       login_as @user
     end
 
-    it "should redirect to account whitelist index" do
-      get :disable
+    it 'redirects to account whitelist index' do
+      get(:disable)
       response.should redirect_to(account_whitelist_index_path)
     end
 
-    it "should remove offer from whitelist" do
-      get :enable, :id => @offer.id
-      get :index, :status => 'b'
+    it 'removes offer from whitelist' do
+      get(:enable, :id => @offer.id)
+      get(:index, :status => 'b')
       assigns(:offers).should == []
-      get :disable, :id => @offer.id
-      get :index, :status => 'b'
+      get(:disable, :id => @offer.id)
+      get(:index, :status => 'b')
       assigns(:offers).should == [@offer]
       @partner.reload
       @partner.get_offer_whitelist.should == Set.new
     end
 
-    it "should log activity" do
-      get :disable, :id => @offer.id
+    it 'logs activity' do
+      get(:disable, :id => @offer.id)
       assigns(:activity_logs).should_not be_nil
     end
   end

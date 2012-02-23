@@ -82,6 +82,10 @@ class Stats < SimpledbResource
       'VN' => 'Vietnam',
   }
 
+  def initialize(options = {})
+    super({ :load_from_memcache => true }.merge(options))
+  end
+
   def after_initialize
     @parsed_values = values
     @parsed_virtual_goods = virtual_goods
@@ -162,7 +166,7 @@ class Stats < SimpledbResource
     return parts[0], date, parts[2]
   end
 
-  def serial_save(options = {})
+  def save(options = {})
     strip_defaults(@parsed_values)
     strip_defaults(@parsed_virtual_goods)
     strip_defaults(@parsed_countries)
@@ -171,7 +175,7 @@ class Stats < SimpledbResource
     self.virtual_goods = @parsed_virtual_goods if self.virtual_goods != @parsed_virtual_goods
     self.countries = @parsed_countries if self.countries != @parsed_countries
 
-    super(options) if changed?
+    super({ :write_to_memcache => true }.merge(options)) if changed?
   end
 
   def hourly?
@@ -185,10 +189,10 @@ class Stats < SimpledbResource
     daily_key << ".#{offer_id}" unless offer_id.blank?
     daily_stat = Stats.new(:key => daily_key, :load_from_memcache => false, :consistent => true)
     daily_stat.populate_daily_from_hourly(self, date.day - 1)
-    daily_stat.serial_save
+    daily_stat.save
   end
 
-private
+  private
 
   def strip_defaults(hash)
     hash.each do |key, value|

@@ -2,7 +2,7 @@ namespace :admin do
 
   desc "Reloads apache on all the webservers"
   task :reload_apache do
-    system("script/cloudrun 'webserver' 'sudo /etc/init.d/apache2 reload ; curl -s localhost:9898/healthz 2>&1' 'ubuntu' 'serial'")
+    system("script/cloudrun 'webserver' 'sudo /etc/init.d/apache2 reload ; curl -s localhost:9898/healthz' 'ubuntu' 'serial'")
   end
 
   desc "Lists the contents of the tmp dirs on each job machine for *sdb* and *s3*"
@@ -41,15 +41,16 @@ namespace :admin do
   end
 
   desc "Reconfigure syslog-ng"
-  task :reconfigure_syslog_ng, :args do |task, task_args|
-    servers = Rails.env.test? ? 'util' : 'masterjobs jobserver website dashboard webserver'
-    system("script/cloudrun '#{servers}' 'sudo /home/webuser/tapjoyserver/server/syslog-ng/configure.rb #{task_args[:args]} 2>&1' 'ubuntu'")
+  task :reconfigure_syslog_ng, :config_args, :servers do |task, args|
+    servers = args[:servers] || 'masterjobs jobserver website dashboard webserver'
+    config_args = args[:config_args] || ''
+    system("script/cloudrun '#{servers}' 'rvmsudo /home/webuser/tapjoyserver/server/syslog-ng/configure.rb #{config_args}' 'ubuntu'")
   end
 
   desc "Update geoip databse"
-  task :geoipupdate do
-    servers = Rails.env.test? ? 'util' : 'masterjobs jobserver website dashboard webserver'
-    system("script/cloudrun '#{servers}' 'tapjoyserver/server/update_geoip.rb' 'webuser' 'serial'")
+  task :geoipupdate, :servers do |task, args|
+    servers = args[:servers] || 'masterjobs jobserver website dashboard webserver'
+    system("script/cloudrun '#{servers}' 'tapjoyserver/server/update_geoip.rb' 'webuser'")
   end
 
 end

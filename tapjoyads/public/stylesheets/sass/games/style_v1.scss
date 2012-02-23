@@ -366,11 +366,12 @@ form#new_gamer input {
 .ipad body.old .content {
   margin: 0 auto;
   width: 640px;
+  min-height: 720px;
   padding: 16px 40px;
 }
 .mobile .content {
   margin: 0 auto;
-  min-height: 480px;
+  min-height: 280px;
   padding: 8px 7px;
 }
 .mobile .tan .content,

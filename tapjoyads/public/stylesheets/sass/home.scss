@@ -15,12 +15,12 @@
 .learn_more { background: url('../images/learn_more_sprite.png'); height: 40px; margin-top: 36px; width: 143px; }
 .learn_more:hover { background-position: -143px 0; height: 40px; width: 143px; }
 
-#press_wrapper { background: url('../images/press_bg.png') repeat-x; height: 67px; width: 100%; }
+#press_wrapper { background: url('../images/press_bg.png') repeat-x; height: 67px; min-width: 980px; width: 100%; }
 #press { margin: 0px auto; width: 980px; }
 #press img { float: left; }
 #press a { float: left; margin: 22px 22px 0 22px; }
 
-#clients_wrapper { width: 100%; }
+#clients_wrapper { min-width: 980px; width: 100%; }
 #clients_holder { margin: 0px auto; width: 980px; }
 #clients { float: left; margin-top: 35px; }
 #clients .header { margin-bottom: 25px; }

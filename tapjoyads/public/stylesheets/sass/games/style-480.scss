@@ -14,10 +14,10 @@
     .nav_container {
 
       .aside_login {
-         float: none;
-         margin: 0 auto;
-         padding: 0;
-         width: 100%;
+        float: none;
+        margin: 0 auto;
+        padding: 0;
+        width: 100%;
 
         .login {
 
@@ -127,81 +127,73 @@
 }
 
 body.old {
-.nav {
-  padding: $nav-padding-v/2 $nav-padding-h/2;
+  .nav {
+    padding: $nav-padding-v/2 $nav-padding-h/2;
 
-  .nav_container {
-    width: 100%;
+    .nav_container {
+      width: 100%;
 
-    .aside_nav {
-      margin-top: 20px;
-      top: 20px;
-    }
-    .aside_login {
-      float: none;
-      margin: 0 auto;
-      text-align: center;
-
-      form#new_gamer_session input {
-        width: 130px;
+      .aside_nav {
+        margin-top: 20px;
+        top: 20px;
       }
-      form#new_gamer_session input[type=submit] {
-        margin-top: 6px;
+      .aside_login {
+        float: none;
+        margin: 0 auto;
+        text-align: center;
+
+        form#new_gamer_session input {
+          width: 130px;
+        }
+        form#new_gamer_session input[type=submit] {
+          margin-top: 6px;
+        }
+        .fieldWithErrors {
+          float: none;
+        }
       }
-      .fieldWithErrors{
+      .logo {
+        background: transparent url('/images/games/old/v2/logo_mobile.png') no-repeat;
+        float: none;
+        height: 38px;
+        margin: 0 auto !important;
+        margin-bottom: $logo-bottom-margin/2;
+        width: 84px;
+      }
+      .nav_buttons {
         float: none;
       }
-    }
-    .logo {
-      background: transparent url('/images/games/old/v2/logo_mobile.png') no-repeat;
-      float: none;
-      height: 38px;
-      margin: 0 auto !important;
-      margin-bottom: $logo-bottom-margin/2;
-      width: 84px;
-    }
-    .nav_buttons {
-      float: none;
-    }
-    .nav_buttons, .nav_buttons ul {
-      float: none;
-    }
-    .nav_buttons ul, .nav_buttons ul ul.pair {
-      float: left;
-    }
-    .nav_buttons ul li {
-      margin-bottom: 0;
-      font-size: 0.7em;
-      width: 70px;
+      .nav_buttons, .nav_buttons ul {
+        float: none;
+      }
+      .nav_buttons ul, .nav_buttons ul ul.pair {
+        float: left;
+      }
+      .nav_buttons ul li {
+        margin-bottom: 0;
+        font-size: 0.7em;
+        width: 70px;
+      }
     }
   }
-}
 
-#login .content_box{
-  margin: 0 auto;
-  padding: 10px;
-  width: 340px;
-}
-.content_wrapper {
-
-  .content {
+  #login .content_box {
+    margin: 0 auto;
+    padding: 10px;
+    width: 340px;
   }
-
-  .register_header {
-    background: transparent url('/images/games/old/v2/register_header.png') no-repeat;
-    background-size: 100%;
-    height: 28px;
-    margin: 0 auto 12px;
-    width: 200px;
+  .content_wrapper {
+    .register_header {
+      background: transparent url('/images/games/old/v2/register_header.png') no-repeat;
+      background-size: 100%;
+      height: 28px;
+      margin: 0 auto 12px;
+      width: 200px;
+    }
   }
-  form#new_gamer {
+  .device_wrapper {
+    .device {
+      margin-right: 6px;
+    }
   }
-
-} //.content_wrapper
-.device_wrapper {
-
-  .device {
-    margin-right: 6px;
-  }
-}
 }

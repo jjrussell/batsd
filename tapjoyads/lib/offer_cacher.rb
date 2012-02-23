@@ -58,7 +58,7 @@ class OfferCacher
 
     def cache_offer_list(key, offers, save_to_s3 = false)
       s3_key = "unsorted_offers.#{key}"
-      mc_key = "s3.#{s3_key}.#{SCHEMA_VERSION}"
+      mc_key = "s3.#{s3_key}.#{Offer.acts_as_cacheable_version}"
       bucket = S3.bucket(BucketNames::OFFER_DATA) if save_to_s3
       group = 0
 
@@ -83,7 +83,7 @@ class OfferCacher
 
     def get_offer_list(key)
       s3_key = "unsorted_offers.#{key}"
-      mc_key = "s3.#{s3_key}.#{SCHEMA_VERSION}"
+      mc_key = "s3.#{s3_key}.#{Offer.acts_as_cacheable_version}"
       group = 0
       offers = []
 

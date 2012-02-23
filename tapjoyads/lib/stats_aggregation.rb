@@ -134,7 +134,7 @@ class StatsAggregation
             (offer.item_type == 'ActionOffer' && stat_row.get_hourly_count('logins').sum > 0)
           is_active = true
         end
-        stat_row.serial_save
+        stat_row.save
       end
 
       offer.active = is_active
@@ -159,7 +159,7 @@ class StatsAggregation
       verify_conversion_stats_over_range(hourly_stat_row, offer, start_time, end_time)
 
       hourly_stat_row.update_daily_stat
-      hourly_stat_row.serial_save
+      hourly_stat_row.save
 
       hourly_ranks = S3Stats::Ranks.find_or_initialize_by_id("ranks/#{start_time.strftime('%Y-%m-%d')}/#{offer.id}", :load_from_memcache => false)
       daily_ranks  = S3Stats::Ranks.find_or_initialize_by_id("ranks/#{start_time.strftime('%Y-%m')}/#{offer.id}", :load_from_memcache => false)
@@ -180,7 +180,7 @@ class StatsAggregation
       verify_conversion_stats_over_range(hourly_stat_row, offer, start_time, end_time)
 
       hourly_stat_row.update_daily_stat if update_daily == true
-      hourly_stat_row.serial_save
+      hourly_stat_row.save
     end
   end
 
@@ -254,8 +254,9 @@ class StatsAggregation
 
     range = start_time.hour..(end_time - 1.second).hour
     unless value_over_range == hourly_values[range].sum
-      message = "Verification of #{stat_name_or_path.inspect} failed for offer: #{offer.name} (#{offer.id}), for range: #{start_time.to_s(:db)} - #{end_time.to_s(:db)}. Value is: #{value_over_range}, hourly values are: #{hourly_values[range].inspect}, difference is: #{value_over_range - hourly_values[range].sum}"
-      Notifier.alert_new_relic(AppStatsVerifyError, message)
+      message = "AppStatsVerifyError: Verification of #{stat_name_or_path.inspect} failed for offer: #{offer.name} (#{offer.id}), for range: #{start_time.to_s(:db)} - #{end_time.to_s(:db)}. "
+      message << "Value is: #{value_over_range}, hourly values are: #{hourly_values[range].inspect}, difference is: #{value_over_range - hourly_values[range].sum}."
+      Rails.logger.info(message)
 
       time = start_time
       while time < end_time
@@ -281,8 +282,9 @@ class StatsAggregation
     global_ios_stat = Stats.new(:key => "global-ios.#{date.strftime('%Y-%m-%d')}", :load_from_memcache => false)
     global_android_stat = Stats.new(:key => "global-android.#{date.strftime('%Y-%m-%d')}", :load_from_memcache => false)
     global_joint_stat = Stats.new(:key => "global-joint.#{date.strftime('%Y-%m-%d')}", :load_from_memcache => false)
+    global_windows_stat = Stats.new(:key => "global-windows.#{date.strftime('%Y-%m-%d')}", :load_from_memcache => false)
 
-    global_stats = [global_stat, global_ios_stat, global_android_stat, global_joint_stat]
+    global_stats = [global_stat, global_ios_stat, global_android_stat, global_windows_stat, global_joint_stat]
 
     global_stats.each do |stat|
       stat.parsed_values.clear
@@ -294,8 +296,9 @@ class StatsAggregation
       partner_ios_stat = Stats.new(:key => "partner-ios.#{date.strftime('%Y-%m-%d')}.#{partner.id}", :load_from_memcache => false)
       partner_android_stat = Stats.new(:key => "partner-android.#{date.strftime('%Y-%m-%d')}.#{partner.id}", :load_from_memcache => false)
       partner_joint_stat = Stats.new(:key => "partner-joint.#{date.strftime('%Y-%m-%d')}.#{partner.id}", :load_from_memcache => false)
+      partner_windows_stat = Stats.new(:key => "partner-windows.#{date.strftime('%Y-%m-%d')}.#{partner.id}", :load_from_memcache => false)
 
-      partner_stats = [partner_stat, partner_ios_stat, partner_android_stat, partner_joint_stat]
+      partner_stats = [partner_stat, partner_ios_stat, partner_android_stat, partner_windows_stat, partner_joint_stat]
 
       partner_stats.each do |stat|
         stat.parsed_values.clear
@@ -310,6 +313,9 @@ class StatsAggregation
         when 'iOS'
           global_platform_stat = global_ios_stat
           partner_platform_stat = partner_ios_stat
+        when 'Windows'
+          global_platform_stat = global_windows_stat
+          partner_platform_stat = partner_windows_stat
         else
           global_platform_stat = global_joint_stat
           partner_platform_stat = partner_joint_stat
@@ -332,11 +338,11 @@ class StatsAggregation
         end
       end
 
-      partner_stats.each { |stat| stat.serial_save }
+      partner_stats.each { |stat| stat.save }
       partner_stats.each { |stat| stat.update_daily_stat } if aggregate_daily
     end
 
-    global_stats.each { |stat| stat.serial_save }
+    global_stats.each { |stat| stat.save }
     global_stats.each { |stat| stat.update_daily_stat } if aggregate_daily
   end
 

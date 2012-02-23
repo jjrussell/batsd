@@ -4,7 +4,7 @@ class Apps::VirtualGoodsController < WebsiteController
 
   filter_access_to :all
 
-  before_filter :find_app, :only => [ :create, :new, :show, :update, :index, :reorder ]
+  before_filter :setup, :only => [ :create, :new, :show, :update, :index, :reorder ]
   before_filter :find_virtual_good, :only => [ :show, :update ]
   before_filter :find_all_virtual_goods, :only => :index
   before_filter :check_virtual_currency
@@ -131,13 +131,8 @@ class Apps::VirtualGoodsController < WebsiteController
     end
   end
 
-  def find_app
-    if permitted_to? :edit, :statz
-      @app = App.find(params[:app_id])
-    else
-      @app = current_partner.apps.find(params[:app_id])
-    end
-
+  def setup
+    @app = find_app(params[:app_id])
     @virtual_good_types = {}
     @app.virtual_goods.each do |vg|
       @virtual_good_types[vg.title] ||= vg.extra_attributes.keys

@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120208032532) do
+ActiveRecord::Schema.define(:version => 20120222003515) do
 
   create_table "action_offers", :id => false, :force => true do |t|
     t.string   "id",                    :limit => 36,                    :null => false
@@ -22,6 +22,7 @@ ActiveRecord::Schema.define(:version => 20120208032532) do
     t.datetime "updated_at"
     t.string   "variable_name",                                          :null => false
     t.string   "prerequisite_offer_id", :limit => 36
+    t.integer  "price",                               :default => 0
   end
 
   add_index "action_offers", ["app_id"], :name => "index_action_offers_on_app_id"
@@ -67,6 +68,7 @@ ActiveRecord::Schema.define(:version => 20120208032532) do
     t.string   "categories"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "papaya_user_count"
   end
 
   add_index "app_metadatas", ["id"], :name => "index_app_metadatas_on_id", :unique => true
@@ -78,14 +80,12 @@ ActiveRecord::Schema.define(:version => 20120208032532) do
     t.string   "author_id",   :limit => 36, :null => false
     t.string   "author_type",               :null => false
     t.text     "text",                      :null => false
-    t.date     "featured_on"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "platform"
   end
 
   add_index "app_reviews", ["app_id", "author_id"], :name => "index_app_reviews_on_app_id_and_author_id", :unique => true
-  add_index "app_reviews", ["featured_on", "platform"], :name => "index_app_reviews_on_featured_on_and_platform", :unique => true
   add_index "app_reviews", ["id"], :name => "index_app_reviews_on_id", :unique => true
 
   create_table "apps", :id => false, :force => true do |t|
@@ -156,7 +156,6 @@ ActiveRecord::Schema.define(:version => 20120208032532) do
     t.string   "name"
     t.integer  "conversion_rate",                                                                        :default => 100,   :null => false
     t.integer  "initial_balance",                                                                        :default => 0,     :null => false
-    t.boolean  "has_virtual_goods",                                                                      :default => false, :null => false
     t.boolean  "only_free_offers",                                                                       :default => false, :null => false
     t.boolean  "send_offer_data",                                                                        :default => false, :null => false
     t.string   "secret_key"
@@ -628,6 +627,7 @@ ActiveRecord::Schema.define(:version => 20120208032532) do
     t.text     "approved_banner_creatives"
     t.text     "approved_sources",                                                                                 :null => false
     t.boolean  "sdkless",                                                                       :default => false
+    t.text     "carriers",                                                                                         :null => false
   end
 
   add_index "offers", ["id"], :name => "index_offers_on_id", :unique => true

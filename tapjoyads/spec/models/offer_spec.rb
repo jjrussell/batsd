@@ -46,24 +46,88 @@ describe Offer do
     @offer.valid?.should == false
   end
 
+  it "rejects depending on primary country" do
+    geoip_data = { :primary_country => nil }
+    @offer.send(:geoip_reject?, geoip_data).should == false
+    geoip_data = { :primary_country => "GB" }
+    @offer.send(:geoip_reject?, geoip_data).should == false
+    geoip_data = { :primary_country => "US" }
+    @offer.send(:geoip_reject?, geoip_data).should == false
+
+    @offer.countries = ["GB"].to_json
+    @offer.get_countries(true)
+    geoip_data = { :primary_country => nil }
+    @offer.send(:geoip_reject?, geoip_data).should == true
+    geoip_data = { :primary_country => "GB" }
+    @offer.send(:geoip_reject?, geoip_data).should == false
+    geoip_data = { :primary_country => "US" }
+    @offer.send(:geoip_reject?, geoip_data).should == true
+  end
+
   it "rejects depending on countries blacklist" do
-    device = Factory(:device)
-    @offer.item.countries_blacklist = ["GB"]
-    geoip_data = { :country => "US" }
-    @offer.send(:geoip_reject?, geoip_data, device).should == false
-    geoip_data = { :country => "GB" }
-    @offer.send(:geoip_reject?, geoip_data, device).should == true
+    geoip_data = { :primary_country => nil }
+    @offer.send(:geoip_reject?, geoip_data).should == false
+    geoip_data = { :primary_country => "GB" }
+    @offer.send(:geoip_reject?, geoip_data).should == false
+    geoip_data = { :primary_country => "US" }
+    @offer.send(:geoip_reject?, geoip_data).should == false
+
+    @offer.item.countries_blacklist = ["GB"].to_json
+    @offer.countries_blacklist(true)
+    geoip_data = { :primary_country => nil }
+    @offer.send(:geoip_reject?, geoip_data).should == false
+    geoip_data = { :primary_country => "GB" }
+    @offer.send(:geoip_reject?, geoip_data).should == true
+    geoip_data = { :primary_country => "US" }
+    @offer.send(:geoip_reject?, geoip_data).should == false
   end
 
   it "rejects depending on region" do
-    device = Factory(:device)
-    @offer.regions = ["CA"]
+    geoip_data = { :region => nil }
+    @offer.send(:geoip_reject?, geoip_data).should == false
     geoip_data = { :region => "CA" }
-    @offer.send(:geoip_reject?, geoip_data, device).should == false
+    @offer.send(:geoip_reject?, geoip_data).should == false
     geoip_data = { :region => "OR" }
-    @offer.send(:geoip_reject?, geoip_data, device).should == true
-    @offer.regions = []
-    @offer.send(:geoip_reject?, geoip_data, device).should == false
+    @offer.send(:geoip_reject?, geoip_data).should == false
+
+    @offer.regions = ["CA"].to_json
+    @offer.get_regions(true)
+    geoip_data = { :region => nil }
+    @offer.send(:geoip_reject?, geoip_data).should == true
+    geoip_data = { :region => "CA" }
+    @offer.send(:geoip_reject?, geoip_data).should == false
+    geoip_data = { :region => "OR" }
+    @offer.send(:geoip_reject?, geoip_data).should == true
+  end
+
+  it "rejects depending on dma codes" do
+    geoip_data = { :dma_code => nil }
+    @offer.send(:geoip_reject?, geoip_data).should == false
+    geoip_data = { :dma_code => "123" }
+    @offer.send(:geoip_reject?, geoip_data).should == false
+    geoip_data = { :dma_code => "234" }
+    @offer.send(:geoip_reject?, geoip_data).should == false
+
+    @offer.dma_codes = ["123"].to_json
+    @offer.get_dma_codes(true)
+    geoip_data = { :dma_code => nil }
+    @offer.send(:geoip_reject?, geoip_data).should == true
+    geoip_data = { :dma_code => "123" }
+    @offer.send(:geoip_reject?, geoip_data).should == false
+    geoip_data = { :dma_code => "234" }
+    @offer.send(:geoip_reject?, geoip_data).should == true
+  end
+
+  it "rejects depending on carriers" do
+    @offer.carriers = ["Verizon", "NTT DoCoMo"].to_json
+    mobile_carrier_code = '440.01'
+    @offer.send(:carriers_reject?, mobile_carrier_code).should == false
+    mobile_carrier_code = '123.123'
+    @offer.send(:carriers_reject?, mobile_carrier_code).should == true
+    @offer.send(:carriers_reject?, nil).should == true
+    @offer.update_attributes({ :carriers => '[]' })
+    @offer.reload
+    @offer.send(:carriers_reject?, mobile_carrier_code).should == false
   end
 
   it "returns proper linkshare account url" do
@@ -108,7 +172,9 @@ describe Offer do
 
   context "with a paid app item" do
     before :each do
-      @app = Factory(:app, :price => 150)
+      @app = Factory(:app)
+      @app.add_app_metadata(Factory(:app_metadata, :price => 150))
+      @app.reload.save!
       @offer = @app.primary_offer
     end
 
@@ -147,7 +213,9 @@ describe Offer do
 
   context "with a free app item" do
     before :each do
-      @app = Factory(:app, :price => 0)
+      @app = Factory(:app)
+      @app.add_app_metadata(Factory(:app_metadata, :price => 0))
+      @app.reload.save!
       @offer = @app.primary_offer
     end
 
@@ -157,8 +225,8 @@ describe Offer do
         @offer.rewarded = true
       end
 
-      it "has a min_bid of 65" do
-        @offer.min_bid.should == 65
+      it "has a min_bid of 10" do
+        @offer.min_bid.should == 10
       end
     end
 
@@ -190,8 +258,8 @@ describe Offer do
       @offer = @video.primary_offer
     end
 
-    it "has a min_bid of 15" do
-      @offer.min_bid.should == 15
+    it "has a min_bid of 4" do
+      @offer.min_bid.should == 4
     end
   end
 
@@ -206,8 +274,8 @@ describe Offer do
         @offer.device_types = %w( windows ).to_json
       end
 
-      it "has a min_bid of 25" do
-        @offer.min_bid.should == 25
+      it "has a min_bid of 10" do
+        @offer.min_bid.should == 10
       end
     end
 
@@ -216,8 +284,8 @@ describe Offer do
         @offer.device_types = %w( android ).to_json
       end
 
-      it "has a min_bid of 25" do
-        @offer.min_bid.should == 25
+      it "has a min_bid of 10" do
+        @offer.min_bid.should == 10
       end
     end
 
@@ -226,8 +294,8 @@ describe Offer do
         @offer.device_types = %w( iphone ).to_json
       end
 
-      it "has a min_bid of 35" do
-        @offer.min_bid.should == 35
+      it "has a min_bid of 10" do
+        @offer.min_bid.should == 10
       end
     end
   end
@@ -423,6 +491,109 @@ describe Offer do
     end
   end
 
+  describe '#add_banner_creative' do
+    context 'given a valid size' do
+      before(:each) do
+        @offer.add_banner_creative('320x50')
+      end
+
+      it 'adds the banner creative size' do
+        @offer.banner_creatives.should include('320x50')
+      end
+
+      it 'does not approve the banner' do
+        @offer.approved_banner_creatives.should_not include('320x50')
+      end
+    end
+
+    context 'given an invalid size' do
+      before(:each) do
+        @offer.add_banner_creative('1x1')
+      end
+
+      it 'does not add the banner creative' do
+        @offer.banner_creatives.should_not include('1x1')
+      end
+    end
+  end
+
+  describe '#remove_banner_creative' do
+    before(:each) do
+      @offer.banner_creatives = ['320x50', '640x100']
+      @offer.remove_banner_creative('320x50')
+    end
+
+    it 'removes the given banner creative' do
+      @offer.banner_creatives.should_not include('320x50')
+    end
+
+    it 'leaves the other banner creatives' do
+      @offer.banner_creatives.should include('640x100')
+    end
+  end
+
+  describe '#approve_banner_creative' do
+    before(:each) do
+      @offer.banner_creatives = ['320x50']
+    end
+
+    it 'is not approved by default' do
+      @offer.approved_banner_creatives.should_not include('320x50')
+    end
+
+    context 'given a banner that is not approved' do
+      before(:each) do
+        @offer.approve_banner_creative('320x50')
+      end
+
+      it 'becomes approved' do
+        @offer.approved_banner_creatives.should include('320x50')
+      end
+    end
+
+    context 'given a banner that is not uploaded' do
+      before(:each) do
+        @offer.approve_banner_creative('640x100')
+      end
+
+      it 'does not become approved' do
+        @offer.approved_banner_creatives.should_not include('640x100')
+      end
+    end
+  end
+
+  describe '#sync_creative_approval' do
+    before(:each) do
+      @offer.banner_creatives = ['320x50', '640x100', '768x90']
+      @offer.approved_banner_creatives = ['320x50', '1x1']
+
+      @valid_remove   = @offer.add_banner_approval(Factory(:user), '320x50')
+      @valid_keep     = @offer.add_banner_approval(Factory(:user), '640x100')
+      @invalid_remove = @offer.add_banner_approval(Factory(:user), '2x2')
+
+      @offer.send(:sync_creative_approval)
+      @offer.approvals.reload
+    end
+
+    it 'removes the approval record for already approved banners' do
+      @offer.approvals.should_not include(@valid_remove)
+    end
+
+    it 'automatically approves banners with no approval record' do
+      @offer.approved_banner_creatives.should include('768x90')
+    end
+
+    context 'given a banner that is no longer present' do
+      it 'removes the approval record' do
+        @offer.approvals.should_not include(@invalid_remove)
+      end
+
+      it 'removes the now invalid approval' do
+        @offer.approved_banner_creatives.should_not include('1x1')
+      end
+    end
+  end
+
   describe '#valid?' do
     context "when SDK-less is enabled" do
       before :each do
@@ -458,6 +629,154 @@ describe Offer do
         @offer.pay_per_click = true
         @offer.should_not be_valid
       end
+    end
+  end
+
+  context "An App Offer for a free app" do
+    before :each do
+      Offer.any_instance.stubs(:cache) # for some reason the acts_as_cacheable stuff screws up the ability to stub methods as expected
+      @offer = Factory(:app).primary_offer.target # need to use the HasOneAssociation's "target" in order for stubbing to work
+    end
+
+    context "with banner_creatives" do
+      before :each do
+        @offer.featured = true
+        @offer.banner_creatives = %w(480x320 320x480)
+      end
+
+      it "fails if asset data not provided" do
+        @offer.save.should be_false
+        @offer.errors[:custom_creative_480x320_blob].should == "480x320 custom creative file not provided."
+        @offer.errors[:custom_creative_320x480_blob].should == "320x480 custom creative file not provided."
+      end
+
+      it "uploads assets to s3 when data is provided" do
+        @offer.banner_creative_480x320_blob = "image_data"
+        @offer.banner_creative_320x480_blob = "image_data"
+
+        @offer.expects(:upload_banner_creative!).with("image_data", "480x320").returns(nil)
+        @offer.expects(:upload_banner_creative!).with("image_data", "320x480").returns(nil)
+
+        @offer.save!
+      end
+
+      it "copies s3 assets over when cloned" do
+        class S3Object
+          def read; return "image_data"; end
+        end
+
+        @offer.stubs(:banner_creative_s3_object).with("480x320").returns(S3Object.new)
+        @offer.stubs(:banner_creative_s3_object).with("320x480").returns(S3Object.new)
+
+        clone = @offer.clone
+        clone.bid = clone.min_bid
+
+        clone.expects(:upload_banner_creative!).with("image_data", "480x320").returns(nil)
+        clone.expects(:upload_banner_creative!).with("image_data", "320x480").returns(nil)
+
+        clone.save!
+      end
+    end
+  end
+  
+  describe '#calculate_target_installs' do
+    before :each do
+      @offer.allow_negative_balance = false
+      @offer.partner.balance = 1_000_00
+      @num_installs_today = 1
+    end
+
+    context 'when negative balance is allowed' do
+      before :each do
+        @offer.allow_negative_balance = true
+      end
+
+      it 'should be infinity' do
+        target = @offer.calculate_target_installs(@num_installs_today)
+        target.should_not be_finite
+      end
+
+      it 'should be limited by daily budget' do
+        @offer.daily_budget = 100
+        expected = @offer.daily_budget - @num_installs_today
+        target = @offer.calculate_target_installs(@num_installs_today)
+        target.should == expected
+      end
+    end
+
+    context 'when negative balance is not allowed' do
+      it 'should be based on the balance' do
+        expected = @offer.partner.balance / @offer.bid
+        target = @offer.calculate_target_installs(@num_installs_today)
+        target.should == expected
+      end
+
+      it 'should be limited by daily budget' do
+        @offer.daily_budget = 100
+        expected = @offer.daily_budget - @num_installs_today
+        target = @offer.calculate_target_installs(@num_installs_today)
+        target.should == expected
+      end
+    end
+
+    context 'low budget with negative balance' do
+      before :each do
+        @offer.partner.balance = 50_00
+      end
+
+      it 'should be based on half of balance' do
+        expected = @offer.partner.balance / @offer.bid / 2
+        target = @offer.calculate_target_installs(@num_installs_today)
+        target.should == expected
+      end
+
+      it 'should ignore if paid offer' do
+        @offer.price = 100
+        expected = @offer.partner.balance / @offer.bid
+        target = @offer.calculate_target_installs(@num_installs_today)
+        target.should == expected
+      end
+    end
+  end
+  
+  describe ".for_display_ads" do
+    
+    before :each do
+      @offer.update_attributes(:conversion_rate => 0.5)
+    end
+    
+    it "likes some things" do
+      Offer.for_display_ads.should include(@offer)
+    end
+    
+    it "requires zero price" do
+      @offer.update_attributes(:price => 5)
+      Offer.for_display_ads.should_not include(@offer)
+    end
+    
+    it "requires a minimal conversion rate" do
+      @offer.update_attributes(:conversion_rate => 0.1)
+      Offer.for_display_ads.should_not include(@offer)
+    end
+    
+    it "requires a short name" do
+      @offer.update_attributes(:name => 'Thirty-one characters xxxxxxxxx')
+      Offer.for_display_ads.should_not include(@offer)
+    end
+    
+    it "is undaunted by multibyte names" do
+      @offer.update_attributes(:name => '在这儿IM 人脉既是财富')
+      Offer.for_display_ads.should include(@offer)
+    end
+    
+    it "still doesn't like long multibyte names" do
+      @offer.update_attributes(:name => '在这儿IM 人脉既是财富 在这儿IM 人脉既是财富')
+      Offer.for_display_ads.should_not include(@offer)
+    end
+    
+    it "stops complaining about name length if the creatives are approved" do
+      @offer.update_attributes({:name => 'Long name xxxxxxxxxxxxxxxxxx', :approved_banner_creatives => ['320x50']})
+      Offer.for_display_ads.should include(@offer)
     end
   end
 end

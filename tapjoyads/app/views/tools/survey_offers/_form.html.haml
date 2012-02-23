@@ -12,23 +12,27 @@
     = f.currency_field :bid
     = error_message_on(@survey_offer, :bid_price)
   %h2 Questions
-  - f.fields_for(:survey_questions) do |q|
-    .question
-      .field
-        = q.label :text
-        #help_text.help ?
-        = q.text_field :text
-      .field
-        = q.label :format
-        #help_format.help ?
-        = q.select :format,
-          SurveyQuestion::QUESTION_FORMATS,
-          {}, { :class => 'format_dropdown' }
-      .field.responses
-        = q.label :possible_responses
-        #help_possible_responses.help ?
-        = q.text_field :possible_responses
-    %hr
+  - @survey_offer.survey_questions.each do |question|
+    - f.fields_for(:survey_questions, question) do |q|
+      .question
+        .field
+          = q.label :text
+          #help_text.help ?
+          = q.text_field :text
+        .field
+          = q.label :format
+          #help_format.help ?
+          - options = { 'dropdown' => 'select',
+                        'radio' => 'radio',
+                        'text' => 'text' }
+          = q.select :format,
+            options_for_select(options, question.format),
+            {}, { :class => 'format_dropdown' }
+        .field.responses
+          = q.label :possible_responses
+          #help_possible_responses.help ?
+          = q.text_field :possible_responses
+      %hr
 
   = submit_tag "Update"
 

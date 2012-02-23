@@ -4,6 +4,8 @@
 class ApplicationController < ActionController::Base
   helper :all # include all helpers, all the time
 
+  helper_method :geoip_data
+
   before_filter :set_time_zone
   before_filter :fix_params
   before_filter :set_locale
@@ -18,7 +20,7 @@ class ApplicationController < ActionController::Base
   # from your application log (in this case, all fields with names like "password").
   filter_parameter_logging :password, :password_confirmation
 
-private
+  private
 
   def verify_params(required_params, options = {})
     render_missing_text = options.delete(:render_missing_text) { true }
@@ -61,7 +63,7 @@ private
   end
 
   def set_locale
-    language_code = params[:language_code] || get_http_accept_language
+    language_code = params[:language_code]
     I18n.locale = nil
     if AVAILABLE_LOCALES.include?(language_code)
       I18n.locale = language_code
@@ -71,31 +73,6 @@ private
         I18n.locale = language_code
       end
     end
-  end
-
-  def get_http_accept_language
-    # example env[HTTP_ACCEPT_LANGUAGE] string: es,en;q=0.8;en-US;q=0.6
-    language_list = request.env['HTTP_ACCEPT_LANGUAGE'].split(/\s*,\s*/).map do |l|
-      l += ';q=1.0' unless l =~ /;q=\d+\.\d+$/
-      l.split(';q=')
-    end
-
-    prioritized_list = language_list.sort do |x,y|
-      raise "Not correctly formatted" unless x.first =~ /^[a-z\-]+$/i
-      y.last.to_f <=> x.last.to_f
-    end
-
-    formatted_list = prioritized_list.map do |l|
-      l.first.downcase.gsub(/-[a-z]+$/i) { |i| i.upcase }
-    end
-
-    available_list = AVAILABLE_LOCALES.map {|i| i.to_s}
-
-    valid_list = formatted_list & available_list
-
-    valid_list.first
-  rescue # default to blank if header is malformed
-    ""
   end
 
   def lookup_udid
@@ -155,22 +132,19 @@ private
     end
   end
 
-  def get_ip_address
-    @request_ip_address ||= (request.headers['X-Forwarded-For'] || request.remote_ip).gsub(/,.*$/, '')
+  def ip_address
+    return @cached_ip_address if @cached_ip_address.present?
+    remote_ip = (request.headers['X-Forwarded-For'] || request.remote_ip)
+    @cached_ip_address = remote_ip.gsub(/,.*$/, '')
   end
 
-  def get_geoip_data
+  def geoip_data
     return @cached_geoip_data if @cached_geoip_data.present?
+    return {} if @server_to_server && params[:device_ip].blank?
 
     @cached_geoip_data = {}
-    ip_address = params[:device_ip] || get_ip_address
 
-    begin
-      geo_struct = GEOIP.city(ip_address)
-    rescue Exception => e
-      geo_struct = nil
-    end
-
+    geo_struct = GEOIP.city(params[:device_ip] || ip_address) rescue nil
     if geo_struct.present?
       @cached_geoip_data[:country]     = geo_struct[:country_code2]
       @cached_geoip_data[:continent]   = geo_struct[:continent_code]
@@ -182,16 +156,28 @@ private
       @cached_geoip_data[:area_code]   = geo_struct[:area_code]
       @cached_geoip_data[:dma_code]    = geo_struct[:dma_code]
     end
+    @cached_geoip_data[:user_country_code]    = params[:country_code].present? ? params[:country_code].to_s.upcase : nil
+    @cached_geoip_data[:carrier_country_code] = params[:carrier_country_code].present? ? params[:carrier_country_code].to_s.upcase : nil
+
+    # TO REMOVE - we ideally should always be using the priority: carrier_country_code -> geoip_country -> user_country_code
+    # However, many of our server-to-server publishers are integrated incorrectly, so we have to switch the priority until they all
+    # fix their integration by properly sending us `library_version=server&device_ip=<ip_address>`.
+    # We will still prioritize geoip_country over user_country_code for Asian locations, due to potential fraud.
+    if @cached_geoip_data[:continent] == 'AS'
+      @cached_geoip_data[:primary_country] = params[:primary_country] || @cached_geoip_data[:carrier_country_code] || @cached_geoip_data[:country] || @cached_geoip_data[:user_country_code]
+    else
+      @cached_geoip_data[:primary_country] = params[:primary_country] || @cached_geoip_data[:carrier_country_code] || @cached_geoip_data[:user_country_code] || @cached_geoip_data[:country]
+    end
 
     @cached_geoip_data
   end
 
   def geoip_location
-    "#{get_geoip_data[:city]}, #{get_geoip_data[:region]}, #{get_geoip_data[:country]} (#{get_ip_address})"
+    "#{geoip_data[:city]}, #{geoip_data[:region]}, #{geoip_data[:country]} (#{ip_address})"
   end
 
   def reject_banned_ips
-    render :text => '' if BANNED_IPS.include?(get_ip_address)
+    render :text => '' if BANNED_IPS.include?(ip_address)
   end
 
   def log_activity(object, options={})
@@ -208,7 +194,7 @@ private
     activity_log.action           = params[:action]
     activity_log.included_methods = included_methods
     activity_log.object           = object
-    activity_log.ip_address       = get_ip_address
+    activity_log.ip_address       = ip_address
 
     if self.respond_to?(:current_user)
       activity_log.user           = current_user.username
@@ -218,18 +204,18 @@ private
     @activity_logs << activity_log
   end
 
-  def save_activity_logs(serial_save = false)
+  def save_activity_logs
     if @activity_logs.present?
       @activity_logs.each do |activity_log|
         activity_log.finalize_states
-        serial_save ? activity_log.serial_save : activity_log.save
+        activity_log.save
       end
       @activity_logs = []
     end
   end
 
   def determine_link_affiliates
-    if App::TRADEDOUBLER_COUNTRIES.include?(get_geoip_data[:country])
+    if App::TRADEDOUBLER_COUNTRIES.include?(geoip_data[:country])
       @itunes_link_affiliate = 'tradedoubler'
     else
       @itunes_link_affiliate = 'linksynergy'
@@ -238,38 +224,6 @@ private
 
   def choose_experiment
     params[:exp] = Experiments.choose(params[:udid]) unless params[:exp].present?
-  end
-
-  def build_test_offer(publisher_app)
-    test_offer = Offer.new(
-      :item_id            => publisher_app.id,
-      :item_type          => 'TestOffer',
-      :name               => 'Test Offer (Visible to Test Devices)',
-      :third_party_data   => publisher_app.id,
-      :price              => 0,
-      :reward_value       => 100)
-    test_offer.id = publisher_app.id
-    test_offer
-  end
-
-  def build_test_video_offer(publisher_app)
-    test_video_offer = VideoOffer.new(
-      :name       => 'Test Video Offer (Visible to Test Devices)',
-      :partner_id => publisher_app.partner_id,
-      :video_url  => 'https://s3.amazonaws.com/tapjoy/videos/src/test_video.mp4')
-    test_video_offer.id = 'test_video'
-
-    primary_offer = Offer.new(
-      :item_id          => 'test_video',
-      :name             => 'Test Video Offer (Visible to Test Devices)',
-      :url              => 'https://s3.amazonaws.com/tapjoy/videos/src/test_video.mp4',
-      :reward_value     => 100,
-      :third_party_data => '')
-    primary_offer.id = 'test_video'
-
-    test_video_offer.primary_offer           = primary_offer
-    test_video_offer.primary_offer.item_type = 'TestVideoOffer'
-    test_video_offer
   end
 
   def decrypt_data_param

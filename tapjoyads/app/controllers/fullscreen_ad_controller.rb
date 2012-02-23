@@ -15,7 +15,6 @@ class FullscreenAdController < ApplicationController
     return unless verify_records(required_records)
 
     @now = params[:viewed_at].present? ? Time.zone.at(params[:viewed_at].to_f) : Time.zone.now
-    @geoip_data = { :country => params[:country_code] }
 
     creative_exists = true if @offer.banner_creatives.any? { |size| Offer::FEATURED_AD_SIZES.include?(size) }
     render :custom_creative, :layout => "blank" if creative_exists
@@ -31,9 +30,8 @@ class FullscreenAdController < ApplicationController
     end
     return unless verify_records(required_records)
 
-    @offer = build_test_offer(@publisher_app)
+    @offer = @publisher_app.test_offer
     @now = params[:viewed_at].present? ? Time.zone.at(params[:viewed_at].to_f) : Time.zone.now
-    @geoip_data = { :country => params[:country_code] }
     render :action => :index
   end
 
@@ -47,9 +45,8 @@ class FullscreenAdController < ApplicationController
     end
     return unless verify_records(required_records)
 
-    @offer = build_test_video_offer(@publisher_app).primary_offer
+    @offer = @publisher_app.test_video_offer.primary_offer
     @now = params[:viewed_at].present? ? Time.zone.at(params[:viewed_at].to_f) : Time.zone.now
-    @geoip_data = { :country => params[:country_code] }
     render :action => :index
   end
 end

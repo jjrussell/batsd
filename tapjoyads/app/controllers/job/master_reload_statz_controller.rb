@@ -30,6 +30,10 @@ class Job::MasterReloadStatzController < Job::JobController
     count = Device.count
     Mc.put('statz.devices_count', count)
 
+    s3_path = "device_counts/#{Time.zone.now.to_s(:no_spaces)}"
+    obj = S3.bucket(BucketNames::TAPJOY).objects[s3_path]
+    obj.write(NumberHelper.number_with_delimiter(count))
+
     render :text => 'ok'
   end
 
@@ -43,12 +47,13 @@ class Job::MasterReloadStatzController < Job::JobController
       :total    => { :count => 0, :adv_amount => 0, :pub_amount => 0, },
       :iphone   => { :count => 0, :adv_amount => 0, :pub_amount => 0, },
       :android  => { :count => 0, :adv_amount => 0, :pub_amount => 0, },
+      :windows  => { :count => 0, :adv_amount => 0, :pub_amount => 0, },
       :tj_games => { :count => 0, :adv_amount => 0, :pub_amount => 0, },
     }
     VerticaCluster.query('analytics.actions', {
         :select     => 'source, app_platform, count(path), -sum(advertiser_amount) as adv_amount, sum(publisher_amount) as pub_amount',
         :join       => 'analytics.apps_partners on actions.publisher_app_id = apps_partners.app_id',
-        :conditions => "path = '[reward]' and app_platform != 'windows' and #{time_conditions}",
+        :conditions => "path = '[reward]' and #{time_conditions}",
         :group      => 'source, app_platform' }).each do |result|
       cached_money[:total][:count] += result[:count]
       cached_money[:total][:adv_amount] += result[:adv_amount]
@@ -144,7 +149,7 @@ class Job::MasterReloadStatzController < Job::JobController
 
     partner_ids.each do |partner_id|
       partner = Partner.find(partner_id)
-      ['partner', 'partner-ios', 'partner-android'].each do |prefix|
+      ['partner', 'partner-ios', 'partner-android', 'partner-windows'].each do |prefix|
         stats            = Appstats.new(partner.id, { :start_time => start_time, :end_time => end_time, :granularity => granularity, :stat_prefix => prefix }).stats
         conversions      = stats['paid_installs'].sum
         published_offers = stats['rewards'].sum + stats['featured_published_offers'].sum + stats['display_conversions'].sum

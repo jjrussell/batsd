@@ -13,24 +13,24 @@ describe ToolsHelper do
       @click.stubs(:block_reason).returns(nil)
     end
 
-    it 'should check rewarded click' do
+    it 'checks rewarded click' do
       @helper.click_tr_class(@click, @reward).should == 'rewarded'
       @helper.click_tr_class(@click, nil).should == 'rewarded-failed'
       @click.stubs(:installed_at?).returns(false)
       @helper.click_tr_class(@click, nil).should == ''
     end
 
-    it 'should check jailbroken' do
+    it 'checks jailbroken' do
       @click.stubs(:type).returns('install_jailbroken')
       @helper.click_tr_class(@click, @reward).should == 'rewarded jailbroken'
     end
 
-    it 'should check param click key' do
+    it 'checks param click key' do
       params[:click_key] = @click.key
       @helper.click_tr_class(@click, @reward).should == 'rewarded click-key-match'
     end
 
-    it 'should check block_reason' do
+    it 'checks block_reason' do
       @click.stubs(:installed_at?).returns(false)
       @click.stubs(:block_reason?).returns(true)
       @click.stubs(:block_reason).returns('Banned')

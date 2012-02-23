@@ -14,14 +14,6 @@ class SupportRequest < SimpledbResource
   self.sdb_attr :offer_id
   self.sdb_attr :click_id
 
-  def initialize(options = {})
-    super({:load_from_memcache => false}.merge(options))
-  end
-
-  def serial_save(options = {})
-    super({:write_to_memcache => false}.merge(options))
-  end
-
   def fill(params, app, currency, offer)
     self.description       = params[:description]
     self.udid              = params[:udid]
@@ -38,7 +30,7 @@ class SupportRequest < SimpledbResource
   end
 
   def get_last_click(udid, offer)
-    conditions = "udid = '#{udid}' and advertiser_app_id = '#{offer.item_id}' and installed_at is null and manually_resolved_at is null"
+    conditions = "udid = '#{udid}' and advertiser_app_id = '#{offer.item_id}' and manually_resolved_at is null"
     clicks = Click.select_all(:conditions => conditions)
     clicks.sort_by { |c| c.clicked_at.to_f }.last
   end

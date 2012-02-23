@@ -122,25 +122,24 @@
 %ul
   %li
     Path:
-    %p POST /agency_api/apps
+    %p PUT /agency_api/apps/&lt;app_id&gt;
   %li
     Required Parameters:
-    %p partner_id: the id for the partner who owns the app
-    %p name: the app name
-    %p platform: the app platform, must be either ‘iphone’ or ‘android’
+    %p app_id: the id of the app to modify
   %li
     Optional Parameters:
+    %p name: the app name
+    %p platform: the app platform, must be either ‘iphone’ or ‘android’
     %p store_id: app store or android market id, ‘297558390’ or ‘com.tapjoy.tapdefense’. If provided, the app will be considered Live.
   %li
     Action:
-    %p create app under the appropriate partner
+    %p updates the app as appropriate
   %li
     Returns:
-    %p app_id: the newly created app’s id
-    %p app_secret_key: the newly created app’s secret key
+    %p nothing
   %li
     Errors:
-    %p invalid platform
+    %p app not found, invalid platform
 
 %h3 Create Currency
 %ul

@@ -36,6 +36,9 @@ end
 `su - webuser -c 'ln -s /mnt/tmp/rails /home/webuser/tapjoyserver/tapjoyads/tmp'`
 `su - webuser -c 'mkdir /home/webuser/tapjoyserver/tapjoyads/pids'`
 
+# configure rails log rotation
+`cp /home/webuser/tapjoyserver/server/rails-logrotate /etc/logrotate.d/rails`
+
 # configure syslog-ng
 `/home/webuser/tapjoyserver/server/syslog-ng/configure.rb`
 
