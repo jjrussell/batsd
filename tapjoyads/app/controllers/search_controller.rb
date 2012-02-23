@@ -16,9 +16,9 @@ class SearchController < WebsiteController
     ).collect do |o|
       if params[:more_details]
         result = { :label => o.search_result_name, :id => o.id, :user_enabled => o.user_enabled, :name => o.name, :description => "", :click_url => "", :icon_url => o.get_icon_url }
-        if o.item_type == 'Generic' || o.item_type == 'Survey'
+        if o.item_type == 'GenericOffer' || o.item_type == 'SurveyOffer'
           result[:click_url] = o.url
-        elsif o.item_type == 'Video' && o.video_url.present?
+        elsif o.item_type == 'VideoOffer' && o.video_url.present?
           result[:click_url] = o.video_url
         elsif o.item_type == 'App'
           app = App.find_by_id(o.item_id)
