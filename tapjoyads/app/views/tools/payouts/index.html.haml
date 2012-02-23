@@ -40,7 +40,6 @@
       %th.do-not-print W9/Bank
       %th Action
       %th Confirmed
-      %th Notes
   %tbody
     - @partners.each do |partner|
       - payout_info = partner.payout_info
@@ -96,14 +95,23 @@
                 %span{ :class => 'enabled' } Confirmed
                 = submit_tag  'Unconfirm', :class => 'submit'
               %div{ :class => 'disabled', :style => (partner.confirmed_for_payout ? 'display:none;' : 'display:inline;') }
-                %span{ :class => 'disabled' } Unconfirmed
+                %span{ :class => "disabled#{' notes' unless partner.payout_confirmation_notes.nil?}" }
+                  Unconfirmed#{'*' unless partner.payout_confirmation_notes.nil?}
+                  - unless partner.payout_confirmation_notes.nil?
+                    %div{ :class => 'notes', :style => 'display:none'} #{partner.payout_confirmation_notes}
                 = submit_tag 'Confirm', :class => 'submit'
               %img.spinner{ :src => '/images/spinner.gif', :style => 'display:none;' }
           - else
-            %span{ :class => 'enabled', :style =>  (!partner.confirmed_for_payout ? 'display:none;' : 'display:inline;')  } Confirmed
-            %span{ :class => 'disabled', :style => (partner.confirmed_for_payout ? 'display:none;' : 'display:inline;')  } Uncomfirmed
-        %td= partner.payout_confirmation_notes
+            - if partner.confirmed_for_payout
+              %span{ :class => 'enabled'} Confirmed
+            - elsif partner.payout_confirmation_notes.nil?
+              %span{ :class => 'disabled'} Uncomfirmed
+            - else
+              %span{ :class => 'disabled notes'}
+                Uncomfirmed*
+                %div{ :class => 'notes', :style => 'display:none'} #{partner.payout_confirmation_notes}
 
+%div{ :class => 'popup', :style => 'display:none'}
 - content_for :page_javascript do
   :plain
     $(function($) {
@@ -129,6 +137,14 @@
         } else {
           $('#unfiltered').show();
         }
+      });
+
+      $('span.notes').click(function(){
+        var content = $('.popup');
+        text = $(this).children('div.notes').text();
+        content.text(text);
+        var position = [$(this).position().left - 300, $(this).position().top - $(window).scrollTop()];
+        content.dialog({title: 'Payout Confirmation Notes', position: position, minHeight: 75, resizable: false});
       });
 
       $('.button-to').submit(function(){
