@@ -69,8 +69,8 @@ FactoryGirl.define do
   end
 
   factory :app_metadata do
-    store_name { Factory.next(:name) }
-    store_id   '123'
+    store_name 'App Store'
+    store_id   { Factory.next(:name) }
     name       { Factory.next(:name) }
   end
 
@@ -83,6 +83,9 @@ FactoryGirl.define do
     association :partner
     name { Factory.next(:name) }
     platform 'iphone'
+    after_build do |app|
+      app.add_app_metadata(Factory(:app_metadata))
+    end
   end
 
   factory :enable_offer_request do
