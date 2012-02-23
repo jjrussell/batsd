@@ -185,7 +185,7 @@ class Device < SimpledbShardedResource
     save!
   end
 
-  def serial_save(options = {})
+  def save(options = {})
     return_value = super({ :write_to_memcache => true }.merge(options))
     Sqs.send_message(QueueNames::CREATE_DEVICE_IDENTIFIERS, {'device_id' => key}.to_json) if @create_device_identifiers
     @create_device_identifiers = false

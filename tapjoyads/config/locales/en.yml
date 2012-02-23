@@ -318,6 +318,7 @@ en:
       load_more: "Load some more!"
       loading: Loading...
       missing_currency: "Missing %{currency}?"
+      more_offers: "Want to see more offers? Visit Tapjoy to earn rewards and personal app recommendations!"
       next: "Next %{items}"
       popular_apps: "Popular Apps"
       previous: "Previous %{items}"
@@ -355,6 +356,7 @@ en:
       month: Month
       my_account: "My Account"
       my_profile: "My Profile"
+      my_reviews: "My Reviews"
       name: Name
       new_password: "New Password"
       nickname: Nickname
@@ -371,9 +373,12 @@ en:
       share: Share
       sign_in: "Sign In"
       sign_up: "Sign Up"
+      submit_review: "Submit Review"
       success: Success!
       try_again: "Try Again"
+      update_review: Update Review
       updating: Updating
+      write_review: Write Review
       year: Year
       zip_postal: "Zip/Postal Code"
     support:

@@ -8,6 +8,8 @@ describe Device do
   describe '#handle_sdkless_click!' do
     before :each do
       app = Factory :app
+      app.add_app_metadata(Factory :app_metadata)
+      app.reload.save!
       @offer = app.primary_offer
       @device = Factory :device
       @now = Time.zone.now

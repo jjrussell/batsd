@@ -59,7 +59,7 @@ class ClickController < ApplicationController
       raise "not a test device"
     end
 
-    @test_offer = build_test_offer(publisher_app)
+    @test_offer = publisher_app.test_offer
 
     test_reward = Reward.new
     test_reward.type              = 'test_offer'
@@ -73,7 +73,7 @@ class ClickController < ApplicationController
     test_reward.publisher_amount  = 0
     test_reward.advertiser_amount = 0
     test_reward.tapjoy_amount     = 0
-    test_reward.serial_save
+    test_reward.save
 
     Sqs.send_message(QueueNames::SEND_CURRENCY, test_reward.key)
   end
@@ -95,7 +95,7 @@ class ClickController < ApplicationController
     test_reward.publisher_amount  = 0
     test_reward.advertiser_amount = 0
     test_reward.tapjoy_amount     = 0
-    test_reward.serial_save
+    test_reward.save
 
     Sqs.send_message(QueueNames::SEND_CURRENCY, test_reward.key)
   end
@@ -110,7 +110,7 @@ class ClickController < ApplicationController
       publisher_app = App.find_in_cache(params[:publisher_app_id])
       return unless verify_records([ publisher_app ])
 
-      @offer = build_test_video_offer(publisher_app).primary_offer
+      @offer = publisher_app.test_video_offer.primary_offer
     else
       @offer = Offer.find_in_cache(params[:offer_id])
     end
@@ -223,7 +223,7 @@ class ClickController < ApplicationController
 
   def build_web_request(path)
     @web_request = WebRequest.new(:time => @now)
-    @web_request.put_values(path, params, get_ip_address, get_geoip_data, request.headers['User-Agent'])
+    @web_request.put_values(path, params, ip_address, geoip_data, request.headers['User-Agent'])
     @web_request.viewed_at = Time.zone.at(params[:viewed_at].to_f) if params[:viewed_at].present?
   end
 
@@ -255,7 +255,7 @@ class ClickController < ApplicationController
     @click.reward_key             = UUIDTools::UUID.random_create.to_s
     @click.reward_key_2           = @displayer_app.present? ? UUIDTools::UUID.random_create.to_s : ''
     @click.source                 = params[:source] || ''
-    @click.ip_address             = get_ip_address
+    @click.ip_address             = ip_address
     @click.country                = params[:primary_country] || params[:country_code] || '' # TO REMOVE: stop checking for params[:country_code] at least 24 hours after rollout
     @click.type                   = type
     @click.advertiser_amount      = @currency.get_advertiser_amount(@offer)

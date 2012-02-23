@@ -75,11 +75,21 @@ FactoryGirl.define do
     year  { Date.today.year }
   end
 
+  factory :app_metadata do
+    store_name { Factory.next(:name) }
+    store_id   '123'
+    name       { Factory.next(:name) }
+  end
+
+  factory :app_metadata_mapping do
+    app          { Factory(:app) }
+    app_metadata { Factory(:app_metadata) }
+  end
+
   factory :app do
     association :partner
     name { Factory.next(:name) }
     platform 'iphone'
-    store_id 'whatevs'
   end
 
   factory :enable_offer_request do
@@ -229,5 +239,30 @@ FactoryGirl.define do
   factory :survey_offer do
     bid_price 0
     name 'short survey 1'
+  end
+
+  factory :app_review do
+    app_metadata { Factory(:app_metadata) }
+    text         "A sample gamer review"
+    user_rating  1
+  end
+
+  factory :gamer_review, :parent => :app_review do
+    author { Factory(:gamer) }
+  end
+
+  factory :employee do
+    first_name    { Factory.next(:name) }
+    last_name     { Factory.next(:name) }
+    email         { Factory.next(:email) }
+    title         'title'
+    superpower    'superpower'
+    current_games 'current_games'
+    weapon        'weapon'
+    biography     'biography'
+  end
+
+  factory :employee_review, :parent => :app_review do
+    author { Factory(:employee) }
   end
 end
