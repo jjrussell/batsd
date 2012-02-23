@@ -38,7 +38,7 @@ class Job::QueueResolveSupportRequestsController < Job::SqsReaderController
       end
       request_successfully_awarded += 1
     end
-    save_activity_logs(true)
+    save_activity_logs
     TapjoyMailer.deliver_resolve_support_requests(json['user_email'], { :successfully_awarded_num => request_successfully_awarded, :requests_not_awarded => request_not_awarded }, support_requests_file.last_modified)
     support_requests_file.delete
   end

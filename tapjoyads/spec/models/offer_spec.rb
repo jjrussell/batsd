@@ -73,7 +73,7 @@ describe Offer do
     @offer.send(:geoip_reject?, geoip_data).should == false
 
     @offer.item.countries_blacklist = ["GB"].to_json
-    @offer.get_countries_blacklist(true)
+    @offer.countries_blacklist(true)
     geoip_data = { :primary_country => nil }
     @offer.send(:geoip_reject?, geoip_data).should == false
     geoip_data = { :primary_country => "GB" }

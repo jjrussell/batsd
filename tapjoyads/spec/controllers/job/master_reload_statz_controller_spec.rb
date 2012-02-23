@@ -17,6 +17,7 @@ describe Job::MasterReloadStatzController do
       expected_hash = {
         :android=>{:adv_amount=>"$0.00", :count=>"0", :pub_amount=>"$0.00"},
         :iphone=>{:adv_amount=>"$0.00", :count=>"0", :pub_amount=>"$0.00"},
+        :windows=>{:adv_amount=>"$0.00", :count=>"0", :pub_amount=>"$0.00"},
         :total=>{:adv_amount=>"$0.01", :count=>"1", :pub_amount=>"$0.01"},
         :tj_games=>{:adv_amount=>"$0.01", :count=>"1", :pub_amount=>"$0.01"},
       }
@@ -39,7 +40,6 @@ describe Job::MasterReloadStatzController do
       offer = Offer.find(item.first)
       metadata_hash = item.last
       metadata_hash.should == {
-        'icon_url'           => offer.get_icon_url,
         'offer_name'         => offer.name_with_suffix,
         'price'              => currency(offer.price),
         'payment'            => currency(offer.payment),
@@ -184,7 +184,7 @@ describe Job::MasterReloadStatzController do
       partner_stats = actual_stats[@partner.id]
       partner_stats.should == expected_stats
 
-      partner_keys = [ 'partner', 'partner-ios', 'partner-android' ]
+      partner_keys = [ 'partner', 'partner-ios', 'partner-android', 'partner-windows' ]
       partner_keys.each do |key|
         start_time = Mc.get("statz.#{key}.last_updated_start.24_hours")
         start_time.should == @start_time.to_f
@@ -321,7 +321,6 @@ def money_options(start_time, end_time)
       'actions.publisher_app_id = apps_partners.app_id',
     :conditions =>
       "path = '[reward]' and " +
-      "app_platform != 'windows' and " +
       "time >= '#{start_time.to_s(:db)}' AND " +
       "time < '#{end_time.to_s(:db)}'",
     :group => 'source, app_platform',
@@ -476,7 +475,7 @@ end
 
 def stub_appstats(granularity = :hourly)
   Appstats.expects(:new).
-    times(3).
+    times(4).
     with(@partner.id, has_entry(:granularity, granularity)).
     returns(@mock_appstats)
 end
