@@ -35,7 +35,7 @@ describe Games::AppReviewsController do
       end
 
       it 'returns all the reviews of the app' do
-        assigns[:app_reviews].should == @app_metadata.app_reviews.scoped(:order => 'created_at')
+        assigns[:app_reviews].collect(&:id).sort.should == @app_metadata.app_reviews.collect(&:id).sort
       end
     end
 
