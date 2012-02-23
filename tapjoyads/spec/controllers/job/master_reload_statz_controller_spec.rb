@@ -218,6 +218,7 @@ describe Job::MasterReloadStatzController do
 
       zero_keys = [
         'rewards_opened',
+        'tjm_rewards_opened',
         'featured_offers_opened',
         'display_clicks',
         'paid_clicks',
@@ -307,6 +308,7 @@ describe Job::MasterReloadStatzController do
 
       zero_hash = {
         'rewards' => [0],
+        'tjm_rewards' => [0],
         'featured_published_offers' => [0],
         'display_conversions' => [0],
       }
@@ -453,6 +455,12 @@ def stats_keys
       'rewards_ctr',
       'rewards_cvr',
       'offerwall_ecpm',
+      'tjm_rewards',
+      'tjm_rewards_opened',
+      'tjm_rewards_revenue',
+      'tjm_rewards_ctr',
+      'tjm_rewards_cvr',
+      'tjm_offerwall_ecpm',
       'featured_ctr',
       'featured_cvr',
       'featured_fill_rate',
