@@ -73,7 +73,7 @@ describe Offer do
     @offer.send(:geoip_reject?, geoip_data).should == false
 
     @offer.item.countries_blacklist = ["GB"].to_json
-    @offer.get_countries_blacklist(true)
+    @offer.countries_blacklist(true)
     geoip_data = { :primary_country => nil }
     @offer.send(:geoip_reject?, geoip_data).should == false
     geoip_data = { :primary_country => "GB" }
@@ -148,6 +148,28 @@ describe Offer do
   it "doesn't reject on source when approved_sources is empty" do
     @offer.send(:source_reject?, 'foo').should be_false
     @offer.send(:source_reject?, 'offerwall').should be_false
+  end
+
+  it "excludes the appropriate columns for the for_offer_list scope" do
+    offer = Offer.for_offer_list.find(@offer.id)
+    fetched_cols = offer.attribute_names & Offer.column_names
+
+    (fetched_cols & Offer::OFFER_LIST_EXCLUDED_COLUMNS).should == []
+    fetched_cols.sort.should == [ 'id', 'item_id', 'item_type', 'partner_id',
+                                  'name', 'url', 'price', 'bid', 'payment',
+                                  'conversion_rate', 'show_rate', 'self_promote_only',
+                                  'device_types', 'countries',
+                                  'age_rating', 'multi_complete', 'featured',
+                                  'publisher_app_whitelist', 'direct_pay', 'reward_value',
+                                  'third_party_data', 'payment_range_low',
+                                  'payment_range_high', 'icon_id_override', 'rank_boost',
+                                  'normal_bid', 'normal_conversion_rate', 'normal_avg_revenue',
+                                  'normal_price', 'over_threshold', 'rewarded', 'reseller_id',
+                                  'cookie_tracking', 'min_os_version', 'screen_layout_sizes',
+                                  'interval', 'banner_creatives', 'dma_codes', 'regions',
+                                  'wifi_only', 'approved_sources', 'approved_banner_creatives',
+                                  'sdkless', 'carriers'
+                                ].sort
   end
 
   context "with min_bid_override set" do
@@ -678,7 +700,7 @@ describe Offer do
       end
     end
   end
-
+  
   describe '#calculate_target_installs' do
     before :each do
       @offer.allow_negative_balance = false
@@ -736,6 +758,47 @@ describe Offer do
         target = @offer.calculate_target_installs(@num_installs_today)
         target.should == expected
       end
+    end
+  end
+  
+  describe ".for_display_ads" do
+    
+    before :each do
+      @offer.update_attributes(:conversion_rate => 0.5)
+    end
+    
+    it "likes some things" do
+      Offer.for_display_ads.should include(@offer)
+    end
+    
+    it "requires zero price" do
+      @offer.update_attributes(:price => 5)
+      Offer.for_display_ads.should_not include(@offer)
+    end
+    
+    it "requires a minimal conversion rate" do
+      @offer.update_attributes(:conversion_rate => 0.1)
+      Offer.for_display_ads.should_not include(@offer)
+    end
+    
+    it "requires a short name" do
+      @offer.update_attributes(:name => 'Thirty-one characters xxxxxxxxx')
+      Offer.for_display_ads.should_not include(@offer)
+    end
+    
+    it "is undaunted by multibyte names" do
+      @offer.update_attributes(:name => '在这儿IM 人脉既是财富')
+      Offer.for_display_ads.should include(@offer)
+    end
+    
+    it "still doesn't like long multibyte names" do
+      @offer.update_attributes(:name => '在这儿IM 人脉既是财富 在这儿IM 人脉既是财富')
+      Offer.for_display_ads.should_not include(@offer)
+    end
+    
+    it "stops complaining about name length if the creatives are approved" do
+      @offer.update_attributes({:name => 'Long name xxxxxxxxxxxxxxxxxx', :approved_banner_creatives => ['320x50']})
+      Offer.for_display_ads.should include(@offer)
     end
   end
 end

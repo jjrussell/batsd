@@ -13,7 +13,7 @@ class ListSignupController < ApplicationController
 
   def signup
     if params[:email_address] =~ /.+@.+/
-      geoip_data = get_geoip_data
+      geoip_data = geoip_data
 
       @currency = Currency.find_in_cache(params[:publisher_app_id])
       @offer = Offer.find_in_cache(params[:advertiser_app_id])
