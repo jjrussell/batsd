@@ -66,8 +66,6 @@ class Offer < ActiveRecord::Base
     "3 days"   => 3.days.to_i,
   }
 
-  PAPAYA_OFFER_COLUMNS = "#{Offer.quoted_table_name}.id, #{App.quoted_table_name}.papaya_user_count"
-
   serialize :banner_creatives, Array
   serialize :approved_banner_creatives, Array
 
@@ -184,7 +182,7 @@ class Offer < ActiveRecord::Base
   named_scope :by_name, lambda { |offer_name| { :conditions => ["offers.name LIKE ?", "%#{offer_name}%" ] } }
   named_scope :by_device, lambda { |platform| { :conditions => ["offers.device_types LIKE ?", "%#{platform}%" ] } }
   named_scope :for_offer_list, :select => OFFER_LIST_REQUIRED_COLUMNS
-  named_scope :for_display_ads, :conditions => "price = 0 AND conversion_rate >= 0.3 AND ((item_type = 'App' AND LENGTH(offers.name) <= 30) OR approved_banner_creatives IS NOT NULL)"
+  named_scope :for_display_ads, :conditions => "price = 0 AND conversion_rate >= 0.3 AND ((item_type = 'App' AND CHAR_LENGTH(offers.name) <= 30) OR approved_banner_creatives IS NOT NULL)"
   named_scope :non_rewarded, :conditions => "NOT rewarded"
   named_scope :rewarded, :conditions => "rewarded"
   named_scope :featured, :conditions => { :featured => true }
@@ -198,10 +196,22 @@ class Offer < ActiveRecord::Base
   named_scope :app_offers, :conditions => "item_type = 'App' or item_type = 'ActionOffer'"
   named_scope :video_offers, :conditions => "item_type = 'VideoOffer'"
   named_scope :non_video_offers, :conditions => "item_type != 'VideoOffer'"
-  named_scope :papaya_app_offers, :joins => :app, :conditions => "item_type = 'App' AND #{App.quoted_table_name}.papaya_user_count > 0", :select => PAPAYA_OFFER_COLUMNS
-  named_scope :papaya_action_offers, :joins => { :action_offer => :app }, :conditions => "item_type = 'ActionOffer' AND #{App.quoted_table_name}.papaya_user_count > 0", :select => PAPAYA_OFFER_COLUMNS
   named_scope :tapjoy_sponsored_offer_ids, :conditions => "tapjoy_sponsored = true", :select => "#{Offer.quoted_table_name}.id"
   named_scope :creative_approval_needed, :conditions => 'banner_creatives != approved_banner_creatives OR (banner_creatives IS NOT NULL AND approved_banner_creatives IS NULL)'
+
+  PAPAYA_OFFER_COLUMNS = "#{Offer.quoted_table_name}.id, #{AppMetadata.quoted_table_name}.papaya_user_count"
+  #TODO: simplify these named scopes when support for multiple appstores is complete and offer includes app_metadata_id
+  named_scope :papaya_app_offers,
+    :joins => "inner join #{AppMetadataMapping.quoted_table_name} on #{Offer.quoted_table_name}.item_id = #{AppMetadataMapping.quoted_table_name}.app_id
+      inner join #{AppMetadata.quoted_table_name} on #{AppMetadataMapping.quoted_table_name}.app_metadata_id = #{AppMetadata.quoted_table_name}.id",
+    :conditions => "#{Offer.quoted_table_name}.item_type = 'App' AND #{AppMetadata.quoted_table_name}.papaya_user_count > 0",
+    :select => PAPAYA_OFFER_COLUMNS
+  named_scope :papaya_action_offers,
+    :joins => "inner join #{ActionOffer.quoted_table_name} on #{Offer.quoted_table_name}.item_id = #{ActionOffer.quoted_table_name}.id
+      inner join #{AppMetadataMapping.quoted_table_name} on #{ActionOffer.quoted_table_name}.app_id = #{AppMetadataMapping.quoted_table_name}.app_id
+      inner join #{AppMetadata.quoted_table_name} on #{AppMetadataMapping.quoted_table_name}.app_metadata_id = #{AppMetadata.quoted_table_name}.id",
+    :conditions => "#{Offer.quoted_table_name}.item_type = 'ActionOffer' AND #{AppMetadata.quoted_table_name}.papaya_user_count > 0",
+    :select => PAPAYA_OFFER_COLUMNS
 
   delegate :balance, :pending_earnings, :name, :cs_contact_email, :approved_publisher?, :rev_share, :to => :partner, :prefix => true
   memoize :partner_balance
@@ -726,6 +736,23 @@ class Offer < ActiveRecord::Base
     end
   end
 
+  def calculate_target_installs(num_installs_today)
+    target_installs = 1.0 / 0
+    target_installs = daily_budget - num_installs_today if daily_budget > 0
+
+    unless allow_negative_balance?
+      adjusted_balance = partner.balance
+      if is_free? && adjusted_balance < 50000
+        adjusted_balance = adjusted_balance / 2
+      end
+
+      max_paid_installs = adjusted_balance / payment
+      target_installs = max_paid_installs if target_installs > max_paid_installs
+    end
+
+    target_installs
+  end
+
   def cached_support_requests_rewards
     support_requests = Mc.get("offer.support_requests.#{id}")
     rewards = Mc.get("offer.clicks_rewarded.#{id}")
@@ -747,12 +774,7 @@ class Offer < ActiveRecord::Base
         is_paid? ? (price * 0.50).round : 10
       end
     elsif item_type == 'ActionOffer'
-      if is_paid?
-        (price * 0.50).round
-      else
-        platform = App::PLATFORMS.index(get_platform)
-        platform.nil? ? 35 : App::PLATFORM_DETAILS[platform][:min_action_offer_bid]
-      end
+      is_paid? ? (price * 0.50).round : 10
     elsif item_type == 'VideoOffer'
       4
     else

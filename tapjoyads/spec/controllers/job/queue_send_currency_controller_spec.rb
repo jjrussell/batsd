@@ -18,15 +18,14 @@ describe Job::QueueSendCurrencyController do
       :currency_id => @currency.id,
       :publisher_app_id => @currency.id
     )
-    @reward.serial_save
+    @reward.save
   end
 
   describe 'with ExpectedAttributeError' do
     it 'should raise if reward has not already been updated' do
       Reward.
-        any_instance.expects(:serial_save).
+        any_instance.expects(:save!).
         with(
-          :catch_exceptions => false,
           :expected_attr => {'sent_currency' => nil}
         ).
         raises(Simpledb::ExpectedAttributeError)
@@ -38,11 +37,11 @@ describe Job::QueueSendCurrencyController do
 
     it 'should return if reward is already updated' do
       @reward.send_currency_status = 'poo'
-      @reward.serial_save
+      @reward.save
 
       Reward.
         any_instance.
-        expects(:serial_save).
+        expects(:save).
         raises(Simpledb::ExpectedAttributeError)
 
       lambda {
@@ -245,6 +244,8 @@ describe Job::QueueSendCurrencyController do
 
     it 'should send offer data if currency says so' do
       app = Factory(:app)
+      app.add_app_metadata(Factory(:app_metadata))
+      app.reload.save!
       offer = app.primary_offer
 
       @currency.update_attribute(:id, app.id)
@@ -255,7 +256,7 @@ describe Job::QueueSendCurrencyController do
       @reward.currency_id = @currency.id
       @reward.offer_id = offer.id
       @reward.publisher_amount = 150
-      @reward.serial_save
+      @reward.save
 
       url_params = [
         "snuid=#{@reward.publisher_user_id}",
@@ -310,7 +311,7 @@ describe Job::QueueSendCurrencyController do
 
     it 'should set callback for facebook' do
       @reward.publisher_user_id = 'Fbill'
-      @reward.serial_save
+      @reward.save
 
       callback_url = "#{@url_start}facebook#{@url_end}"
 
@@ -324,7 +325,7 @@ describe Job::QueueSendCurrencyController do
 
     it 'should set callback for myspace' do
       @reward.publisher_user_id = 'Mbill'
-      @reward.serial_save
+      @reward.save
 
       callback_url = "#{@url_start}myspace#{@url_end}"
 
@@ -338,7 +339,7 @@ describe Job::QueueSendCurrencyController do
 
     it 'should set callback for iphone' do
       @reward.publisher_user_id = 'Pbill'
-      @reward.serial_save
+      @reward.save
 
       callback_url = "#{@url_start}myspace#{@url_end}"
 
@@ -352,7 +353,7 @@ describe Job::QueueSendCurrencyController do
 
     it 'should set InvalidPlaydomUserId' do
       @reward.publisher_user_id = 'Gbill'
-      @reward.serial_save
+      @reward.save
 
       get(:run_job, :message => @reward.id)
 
