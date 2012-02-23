@@ -4,7 +4,11 @@ class ConnectController < ApplicationController
     lookup_udid
     return unless verify_params([:app_id, :udid])
 
-    click = Click.new(:key => "#{params[:udid]}.#{params[:app_id]}", :consistent => params[:consistent], :add_to_conversion_queue => true)
+    click = Click.new(:key => "#{params[:udid]}.#{params[:app_id]}", :consistent => params[:consistent])
+    if click.rewardable?
+      message = { :click_key => click.key, :install_timestamp => Time.zone.now.to_f.to_s }.to_json
+      Sqs.send_message(QueueNames::CONVERSION_TRACKING, message)
+    end
 
     web_request = WebRequest.new
     web_request.put_values('connect', params, ip_address, geoip_data, request.headers['User-Agent'])
@@ -15,10 +19,11 @@ class ConnectController < ApplicationController
       web_request.path = path
     end
 
-    if sdkless_support?
+    web_request.save
+
+    @sdkless_supported = sdkless_supported?
+    if @sdkless_supported
       @sdkless_clicks = device.sdkless_clicks
     end
-
-    web_request.save
   end
 end

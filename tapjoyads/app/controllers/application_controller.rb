@@ -246,7 +246,7 @@ class ApplicationController < ActionController::Base
     params[:publisher_user_id] = params[:udid] if params[:publisher_user_id].blank?
   end
 
-  def sdkless_support?
+  def sdkless_supported?
     return params[:library_version].to_s.version_greater_than_or_equal_to?(SDKLESS_MIN_LIBRARY_VERSION) && (params['sdk_type'] == 'offer' || params['sdk_type'] == 'virtual_goods')
   end
 

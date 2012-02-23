@@ -4,15 +4,14 @@ class AppsInstalledController < ApplicationController
     lookup_udid
     return unless verify_params([:app_id, :udid, :library_version, :package_names, :sdk_type, :verifier])
 
-    unless sdkless_support?
+    unless sdkless_supported?
       @error_message = "sdkless not supported"
       render :template => 'layouts/error' and return
     end
 
     verifier = generate_verifier([ params[:package_names] ])
     unless params[:verifier] == generate_verifier([ params[:package_names] ])
-      @error_message = "invalid verifier; should be #{verifier}"
-      #@error_message = "invalid verifier"
+      @error_message = "invalid verifier"
       render :template => 'layouts/error' and return
     end
 

@@ -3,7 +3,7 @@ xml.TapjoyConnectReturnObject do
   xml.Success true
   xml.ConnectReturnObject do
     xml.PrimaryColor 928844
-    if @sdkless_clicks.present?
+    if @sdkless_supported
       xml.PackageNames @sdkless_clicks.keys.join(',')
     end
   end
