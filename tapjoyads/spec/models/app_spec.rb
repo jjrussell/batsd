@@ -65,8 +65,6 @@ describe App do
     context 'with currency that has special callback' do
       it 'returns false' do
         special_url = Currency::SPECIAL_CALLBACK_URLS.sample
-        Factory(:currency, :app_id => @app.id, :callback_url => 'http://foo.com')
-        Factory(:currency, :app_id => @app.id, :callback_url => 'http://bar.com')
         Factory(:currency, :app_id => @app.id, :callback_url => special_url)
         @app.should_not be_can_have_new_currency
       end
