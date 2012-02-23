@@ -666,6 +666,10 @@ input.ui-joy-button {
   @include custom-rounded-corners(0, 0, 4px, 4px);
 }
 
+.list-button-container.nbb .list-button:last-child {
+  border-bottom: 0;
+}
+
 .list-button-container.flush .list-button {
   border-left: 0;
   border-right: 0;
@@ -778,8 +782,8 @@ input.ui-joy-button {
   img {
     position: relative;
     z-index: -1;
-    width: 90px;
-    height: 90px;
+    width: 89px;
+    height: 89px;
 
   }
 }
