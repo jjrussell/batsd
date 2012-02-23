@@ -33,7 +33,7 @@ class Job::QueueSendFailedEmailsController < Job::SqsReaderController
   def save_failed_email(mail)
     failed_email = FailedEmail.new(:load => false)
     failed_email.fill(mail)
-    failed_email.serial_save
+    failed_email.save
   end
 
 end

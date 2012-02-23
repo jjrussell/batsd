@@ -280,7 +280,7 @@ class ToolsController < WebsiteController
     opted_in_types.each  { |type| device.delete('opt_out_offer_types', type) }
     device.opted_out = params[:opted_out] == '1'
     device.banned = params[:banned] == '1'
-    device.serial_save
+    device.save
     flash[:notice] = 'Device successfully updated.'
     redirect_to :action => :device_info, :udid => params[:udid]
   end
@@ -421,7 +421,7 @@ class ToolsController < WebsiteController
     customer_support_reward.advertiser_amount          =  0
     customer_support_reward.tapjoy_amount              =  0
     customer_support_reward.customer_support_username  =  current_user.username
-    customer_support_reward.serial_save
+    customer_support_reward.save
 
     Sqs.send_message(QueueNames::SEND_CURRENCY, customer_support_reward.key)
 
