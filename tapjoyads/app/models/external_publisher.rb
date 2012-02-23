@@ -108,8 +108,10 @@ class ExternalPublisher
     conditions = "(path = '[offers]' OR path LIKE '%display_ad_requested%' OR path LIKE '%featured_offer_requested%') AND day >= '#{start_time.to_s(:yyyy_mm_dd)}'"
 
     Currency.find_each(:conditions => 'udid_for_user_id = false') do |currency|
-      appstats = Appstats.new(currency.app_id, :start_time => start_time, :stat_types => ['offerwall_views', 'display_ads_requested', 'featured_offers_requested'])
-      next if appstats.stats['offerwall_views'].sum + appstats.stats['display_ads_requested'].sum + appstats.stats['featured_offers_requested'].sum < 100
+      appstats = Appstats.new(currency.app_id, :start_time => start_time,
+        :stat_types => ['offerwall_views', 'tjm_offerwall_views', 'display_ads_requested', 'featured_offers_requested'])
+      next if appstats.stats['offerwall_views'].sum + appstats.stats['tjm_offerwall_views'].sum +
+               appstats.stats['display_ads_requested'].sum + appstats.stats['featured_offers_requested'].sum < 100
 
       valid_currency = true
       count = 0
