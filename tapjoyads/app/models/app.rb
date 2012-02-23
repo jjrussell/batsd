@@ -3,7 +3,7 @@ class App < ActiveRecord::Base
   acts_as_cacheable
   json_set_field :countries_blacklist
 
-  ALLOWED_PLATFORMS = { 'android' => 'Android', 'iphone' => 'iOS', 'windows' => 'Windows Phone' }
+  ALLOWED_PLATFORMS = { 'android' => 'Android', 'iphone' => 'iOS', 'windows' => 'Windows' }
   BETA_PLATFORMS    = {}
   PLATFORMS         = ALLOWED_PLATFORMS.merge(BETA_PLATFORMS)
   APPSTORE_COUNTRIES_OPTIONS = GeoIP::CountryName.zip(GeoIP::CountryCode).select do |name, code|
@@ -107,7 +107,7 @@ class App < ActiveRecord::Base
     :to => :primary_app_metadata, :allow_nil => true
 
   # TODO: remove these columns from apps table definition and remove this method
-  TO_BE_DELETED = %w(description price store_id age_rating file_size_bytes supported_devices released_at user_rating categories)
+  TO_BE_DELETED = %w(description price store_id age_rating file_size_bytes supported_devices released_at user_rating categories papaya_user_count)
   def self.columns
     super.reject do |c|
       TO_BE_DELETED.include?(c.name)
@@ -171,9 +171,13 @@ class App < ActiveRecord::Base
     return false if store_id.blank?
 
     app_metadata = update_app_metadata(store_id) || primary_app_metadata
-    data = AppStore.fetch_app_by_id(store_id, platform, country)
-    if (data.nil?) # might not be available in the US market
-      data = AppStore.fetch_app_by_id(store_id, platform, primary_country)
+    begin
+      data = AppStore.fetch_app_by_id(store_id, platform, country)
+      if (data.nil?) # might not be available in the US market
+        data = AppStore.fetch_app_by_id(store_id, platform, primary_country)
+      end
+    rescue Patron::HostResolutionError
+      return false
     end
     return false if data.nil?
 

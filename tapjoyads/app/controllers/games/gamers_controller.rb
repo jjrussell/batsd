@@ -34,7 +34,7 @@ class Games::GamersController < GamesController
         :user_agent_str => request.user_agent,
         :device_type => device_type,
         :selected_devices => params[:default_platforms].reject { |k, v| v != '1' }.keys,
-        :geoip_data => get_geoip_data,
+        :geoip_data => geoip_data,
         :os_version => os_version }
       Sqs.send_message(QueueNames::SEND_WELCOME_EMAILS, Base64::encode64(Marshal.dump(message)))
 
@@ -52,7 +52,7 @@ class Games::GamersController < GamesController
 
   def edit
     if @gamer_profile.country.blank?
-      @gamer_profile.country = Countries.country_code_to_name[get_geoip_data[:country]]
+      @gamer_profile.country = Countries.country_code_to_name[geoip_data[:country]]
     end
 
     if @gamer_profile.facebook_id.present?

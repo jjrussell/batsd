@@ -2,5 +2,5 @@
 \-
 = text_field_tag(:end_date, @end_time.to_date.to_s(:mdy))
 = select_tag(:granularity, options_for_select({ 'Daily' => :daily, 'Hourly' => :hourly }, @granularity))
-= select_tag(:platform, options_for_select([['All Platforms', 'all'], ['iOS', 'ios'], ['Android', 'android']], @platform))
+= select_tag(:platform, options_for_select([['All Platforms', 'all'], ['iOS', 'ios'], ['Android', 'android'], ['Windows','windows']], @platform))
 = submit_tag('Update', :id => :date_submit)

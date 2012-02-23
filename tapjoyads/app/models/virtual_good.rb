@@ -23,7 +23,7 @@ class VirtualGood < SimpledbResource
     super({ :load_from_memcache => true }.merge(options))
   end
 
-  def serial_save(options = {})
+  def save(options = {})
     super({ :write_to_memcache => true }.merge(options))
   end
 
