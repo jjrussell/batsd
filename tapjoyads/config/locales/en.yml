@@ -277,6 +277,7 @@ en:
         other: "Tapjoy invites have been sent to %{name}"
       issue_registering: "There was an issue registering your account"
       link_my_facebook: "Link My Facebook"
+      loading: Loading...
       load_more: "Load More"
       member_since: "Member since %{date}"
       meta_description: "Tapjoy: The destination for mobile apps and games on Android, iPhone and iPad."

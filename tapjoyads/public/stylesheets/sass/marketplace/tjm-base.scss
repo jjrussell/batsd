@@ -175,9 +175,29 @@ input::-webkit-input-placeholder {
     opacity: 1;
   }
 }
+
+@-webkit-keyframes fade-in-out {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
 .fade-in {
   -webkit-animation-name: reset, fade-in;
   -webkit-animation-duration: 0.25s;
   -webkit-animation-timing-function: ease-in;
   -webkit-animation-iteration-count: 1;
+}
+
+.blink {
+  -webkit-animation-name: fade-in-out;
+  -webkit-animation-duration: 0.65s;
+  -webkit-animation-timing-function: ease-in;
+  -webkit-animation-iteration-count: infinite;
 }
