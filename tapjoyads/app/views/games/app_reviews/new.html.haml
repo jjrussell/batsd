@@ -1,21 +1,18 @@
-= render :partial => 'games/homepage/nav_bar', :locals => { :show_device => true, :active => 'back', :back_button_destination => games_root_path }
-.content_wrapper
-  .content
-    #reviews_button.tab_button.dark_grey
-      .tab_content
-        Reviews
-    #reviews_button_arrow.tab_button_bottom_arrrow_wrapper
-      .tab_button_bottom_arrrow
-    .reviews_summary.clearfix
-      .offer_image
-        = image_tag(@app.get_icon_url(:source => :cloudfront))
-      .offer_text.clearfix
-        .offer_title.title
+#review-form.current
+  .panel
+    .mod.line-item.page-header
+      .hd
+        .app-icon.squircle
+          = image_tag(@app.get_icon_url(:source => :cloudfront))
+      .bd.lastUnit
+        .title.elip
           = @app.name
-        .review_meta.clearfix
-          %span.gamer_overall_rating{ :rating => @app_metadata.positive_thumbs_percentage, :threshold => AppMetadata::RATING_THRESHOLD, :total_ratings => @app_metadata.total_thumbs_count, :total_reviews => @app_metadata.app_reviews.by_gamers.size }
-    .write_review_label My Review
-    = render 'form'
+        .sub-title
+          [Publisher]
+    .mod.menu-head
+      = t("text.shared.rate_and_review")
+    .mod.review-form
+      = render 'form'
     .separator.clearfix
     - pagination_options = { :container => false, :param_name => "app_reviews_page", :previous_label => 'Prev&nbsp;&nbsp;|', :next_label => '|&nbsp;&nbsp;Next', :inner_window => 1, :outer_window => 0 }
     .pagination_wrapper
