@@ -90,11 +90,10 @@
         %td App Name
         %td Last run time
         %td Award Currency
-    %tbody
+    %tbody.show-five
       - @apps.each_with_index do |pair, i|
         - last_run_time, app = pair
-        - tr_class = i > 4 ? 'more-apps' : ''
-        %tr{ :class => tr_class }
+        %tr.last_run_app
           %td
             %strong
               = link_to_statz(app.name, app)
@@ -132,7 +131,7 @@
         %td Details
         %td Click ID
     %tbody
-      - @clicks.each_with_index do |click, i|
+      - @clicks.each do |click|
         :ruby
           adv = @click_apps[click.advertiser_app_id]
           pub = @click_apps[click.publisher_app_id]
@@ -185,8 +184,8 @@
   :plain
     $(function($){
       $('#show_more_apps').click(function(){
-        $('.more-apps').show();
-        $('#show_more_apps').hide();
+        $(this).hide();
+        $('.last_run_app').show();
         return false;
       });
       $('.show-click-detail').click(function(){
