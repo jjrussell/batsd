@@ -37,7 +37,12 @@ module ToolsHelper
     classes.join(' ')
   end
 
-private
+  def link_app_to_statz(app)
+    app.nil? ? '-'  : link_to_statz(app.name, app)
+  end
+
+  private
+
   def concat_li(name, value)
     concat("<li>#{name}: <nobr>#{value}</nobr></li>")
   end

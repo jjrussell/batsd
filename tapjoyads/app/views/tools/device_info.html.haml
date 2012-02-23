@@ -133,8 +133,6 @@
     %tbody
       - @clicks.each do |click|
         :ruby
-          adv = @click_apps[click.advertiser_app_id]
-          pub = @click_apps[click.publisher_app_id]
           reward = @rewards[click.reward_key]
           tr_class = click_tr_class(click, reward)
           install_td_class = 'small'
@@ -149,8 +147,8 @@
               = click.block_reason
             - else
               = click.installed_at? ? click.installed_at.to_s(:pub_abbr_ampm_sec) : '-'
-          %td= adv.nil? ? '-'  : link_to_statz(adv.name, adv)
-          %td= pub.nil? ? '-'  : link_to_statz(pub.name, pub)
+          %td= link_app_to_statz(@click_apps[click.advertiser_app_id])
+          %td= link_app_to_statz(@click_apps[click.publisher_app_id])
           %td
             - if click.manually_resolved_at? && click.installed_at?
               Manually awarded
