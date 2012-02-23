@@ -78,13 +78,14 @@
     #body.main
       #tickets.tickets
         %img{ :src => BLANK_IMAGE }
-        %span= t('text.games.collect_rewards')
       #mobilejoy.mobile-joy
         %img{ :src => BLANK_IMAGE }
-        %span= t('text.games.find_new_apps')
       #share.share
         %img{ :src => BLANK_IMAGE }
-        %span= t('text.games.share_with_everyone')
+    #labels
+      %span= t('text.games.collect_rewards')
+      %span= t('text.games.find_new_apps')      
+      %span= t('text.games.share_with_everyone')
     .gradient-backdrop
 
 #favorites

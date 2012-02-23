@@ -1,20 +1,19 @@
 -content_for :styles do
   = stylesheet_link_tag("games/get-app")
 #show.current
-  /.ui-notification Thanks, your changes have been saved.
   .mod.line-item.page-header
-    .container
-    .left
-      .squircle
-        - if @gamer.get_avatar_url.present?
-          %img{ :src => @gamer.get_avatar_url }
-    .left.ml10
-      .title.mt20
-        = @gamer.nickname.present?  ? @gamer.nickname : 'Chuck Norris'
-        %span.aside
-          ="(#{t("text.games.thats_you")})"
-      .subtitle
-        [LAST PLAYED]
+    .container.pt10
+      .left
+        .squircle
+          - if @gamer.get_avatar_url.present?
+            %img{ :src => @gamer.get_avatar_url }
+      .left.ml10
+        .title.mt20
+          = @gamer.nickname.present?  ? @gamer.nickname : 'Chuck Norris'
+          %span.aside
+            ="(#{t("text.games.thats_you")})"
+        .subtitle
+          [LAST PLAYED]
 
   .container
     .mod.titled-group
@@ -31,7 +30,7 @@
             Followers
           .bold
             343
-    %ul.list-button-container.flush
+    %ul.list-button-container.flush.nbb
       %li.list-button.charcoal.soft-gray-gradient
         My Profile
       %li.list-button.charcoal.soft-gray-gradient
