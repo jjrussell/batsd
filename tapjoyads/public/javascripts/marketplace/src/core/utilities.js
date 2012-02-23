@@ -12,41 +12,42 @@
           window.console.log(result +' :: '+ message);
         }
       },
-			dialog: function(msg, container, delay){
-				var wrap = $(document.createElement('div')),
-				    container = $(container || document.body);
+			notification: function(config){
+				
+				config = Tap.extend({}, {
+          container: $(document.body),
+					delay: 10000,
+          message: '',
+					type: 'normal'
+				}, config || {});
+				
+				var wrap = $(document.createElement('div'));
 				
 				if($('#ui-notification').length == 0){
 	        wrap.attr('id', 'ui-notification')
 	        .addClass('ui-notification')
-	        .html(msg)
-	        .appendTo(container);
+	        .appendTo(config.container);
 				}else{
 					wrap = $('#ui-notification');
-					
-					wrap.html(msg);
 				}
+
+        wrap.html(config.message)
 				
         var width = wrap.outerWidth(true);
         
         wrap.css({
           width: width + 'px',
-          left: ((container.outerWidth(true) - width) / 2) + 'px'
+          left: ((config.container.outerWidth(true) - width) / 2) + 'px'
         });
 				
-				this.dialogbox = wrap;
-				
 				$(window).resize(function(){
-	        wrap.css('left', ((container.outerWidth(true) - width) / 2) + 'px')
+	        wrap.css('left', ((config.container.outerWidth(true) - width) / 2) + 'px')
 				});
 				
 				Tap.delay(function(){
-					Tap.Utils.destroyDialog();
-				}, delay || 10000);
-			},
-			destroyDialog: function(){
-				if(this.dialogbox)
-				  this.dialogbox.empty().remove();
+					if(wrap.length > 0)
+            wrap.empty().remove();
+				}, config.delay);
 			}
     }
   });

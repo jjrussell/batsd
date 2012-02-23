@@ -62,12 +62,15 @@ $(document).ready(function() {
     });
   });
 
-/*	
-	Tapjoy.Utils.dialog('Thanks, your settings have been saved.');
+/*
+	Tapjoy.Utils.notification({
+		message: 'Thanks, your settings have been saved.'
+	});
 
   Tapjoy.delay(function(){
-		Tapjoy.Utils.dialog('Thanks, your settings have been saved #2.');
+	  Tapjoy.Utils.notification({
+	    message: 'Thanks, we would like to save hello again.'
+	  });
 	}, 4000);
-*/
-	
+*/	
 });
