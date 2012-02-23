@@ -38,6 +38,10 @@ module ToolsHelper
     classes.join(' ')
   end
 
+  def install_td_class(click)
+    (click.block_reason? || click.resolved_too_fast?) ? 'small bad' : 'small'
+  end
+
   def link_app_to_statz(app)
     app.nil? ? '-'  : link_to_statz(app.name, app)
   end

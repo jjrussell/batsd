@@ -131,17 +131,11 @@
         %td Details
     %tbody
       - @clicks.each do |click|
-        :ruby
-          reward = @rewards[click.reward_key]
-          tr_class = click_tr_class(click, reward)
-          install_td_class = 'small'
-          if click.block_reason? || click.resolved_too_fast?
-            install_td_class += ' bad'
-          end
-        %tr{ :class => tr_class }
+        - reward = @rewards[click.reward_key]
+        %tr{ :class => click_tr_class(click, reward) }
           %td.small
             %nobr= click_timestamp(click, :clicked_at)
-          %td{ :class => install_td_class }
+          %td{ :class => install_td_class(click) }
             - if click.block_reason?
               = click.block_reason
             - else
@@ -163,7 +157,7 @@
                 = submit_tag 'Award'
           %td.small
             = link_to('show', '#', :class => 'show-click-detail')
-            - click_info_ul(click, @rewards[click.reward_key])
+            - click_info_ul(click, reward)
       %tr
         %td{:colspan => 7}
           - text = "Show #{Time.zone.at(@cut_off_date - 2.month).to_s(:pub)} - #{Time.zone.at(@cut_off_date - 1.month).to_s(:pub)}"
