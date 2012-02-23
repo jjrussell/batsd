@@ -8,16 +8,7 @@ $font_path: "/fonts/marketplace";
 
 //-------------------------------------------
 
-@font-face {
-    font-family: "Museo Slab";
-    src: url("#{$font_path}/museo_slab_500-webfont.eot");
-    src: url("#{$font_path}/museo_slab_500-webfont.eot?#iefix") format("embedded-opentype"),
-         url("#{$font_path}/museo_slab_500-webfont.woff") format("woff"),
-         url("#{$font_path}/museo_slab_500-webfont.ttf") format("truetype"),
-         url("#{$font_path}/museo_slab_500-webfont.svg#Museo Slab") format("svg");
-    font-weight: normal;
-    font-style: normal;
-}
+@include museo;
 
 body {
   font: .81em/150% "Helvetica", Arial, Helvetica, sans-serif;
