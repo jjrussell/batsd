@@ -45,7 +45,7 @@ describe Games::Gamers::FavoriteAppController do
       end
     end
 
-    it 'adds the app to the gamers favorite apps' do
+    it 'adds the app_metadata to the gamers favorite apps' do
       post('create', @params)
       should_respond_with_json_success(200)
       @gamer.favorite_apps.map(&:app_metadata_id).should include(@app_metadata.id)
@@ -62,7 +62,7 @@ describe Games::Gamers::FavoriteAppController do
   end
 
   describe '#destroy' do
-    context 'when no app is provided' do
+    context 'when no app_metadata is provided' do
       before :each do
         delete('destroy')
       end
@@ -72,7 +72,7 @@ describe Games::Gamers::FavoriteAppController do
       end
     end
 
-    it 'deletes the app from the gamers favorite apps' do
+    it 'deletes the app_metadata from the gamers favorite apps' do
       post('create', @params)
       should_respond_with_json_success(200)
       delete('destroy', @params)
