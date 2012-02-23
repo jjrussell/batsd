@@ -11,7 +11,44 @@
         if(window.console && window.console.log){
           window.console.log(result +' :: '+ message);
         }
-      }
+      },
+			notification: function(config){
+				
+				config = Tap.extend({}, {
+          container: $(document.body),
+					delay: 10000,
+          message: '',
+					type: 'normal'
+				}, config || {});
+				
+				var wrap = $(document.createElement('div'));
+				
+				if($('#ui-notification').length == 0){
+	        wrap.attr('id', 'ui-notification')
+	        .addClass('ui-notification')
+	        .appendTo(config.container);
+				}else{
+					wrap = $('#ui-notification');
+				}
+
+        wrap.html(config.message)
+				
+        var width = wrap.outerWidth(true);
+        
+        wrap.css({
+          width: width + 'px',
+          left: ((config.container.outerWidth(true) - width) / 2) + 'px'
+        });
+				
+				$(window).resize(function(){
+	        wrap.css('left', ((config.container.outerWidth(true) - width) / 2) + 'px')
+				});
+				
+				Tap.delay(function(){
+					if(wrap.length > 0)
+            wrap.empty().remove();
+				}, config.delay);
+			}
     }
   });
   

@@ -1,8 +1,7 @@
 $(document).ready(function() {
 
-  // Login
+  // Login Modal
   $('#login, #login-web').bind('click', function() {
-    
     var modal = $('.login.modal');
     var mTop = (modal.height() + 24) / 2; 
     var mLeft = (modal.width() + 24) / 2; 
@@ -18,7 +17,6 @@ $(document).ready(function() {
       $('.login.modal').fadeOut('fast');
       $(this).fadeOut('fast');
     });
-
   });
   
   // Menu Grid
@@ -43,15 +41,36 @@ $(document).ready(function() {
     }
   });
   
+  // Device switch toggle
+  $('.device-change').bind('click', function(){
+    if ($('.device-select').hasClass('closed')) {
+      $('.device-select').removeClass('closed').addClass('open');
+    }
+    else {
+      $('.device-select').removeClass('open').addClass('closed');
+    }
+  });
+  
   // App Icons
-  $('.icon img').each(function(n,o){
-    $(o).attr("src", $(o).attr("source"));
-    $(o).load(function(){
+  $('.app-icon img').each(function(n, o){
+    var el = $(o);
+    el.attr("src", el.attr("source")).load(function(){
       $(this).fadeIn('slow');
     });
-    $(o).error(function(){
-      $(o).attr("src", "data:image/gif;base64,R0lGODlhAQABAID/AMDAwAAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==");
+    el.error(function(){
+      el.attr("src", "data:image/gif;base64,R0lGODlhAQABAID/AMDAwAAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==");
     });
   });
 
+/*
+	Tapjoy.Utils.notification({
+		message: 'Thanks, your settings have been saved.'
+	});
+
+  Tapjoy.delay(function(){
+	  Tapjoy.Utils.notification({
+	    message: 'Thanks, we would like to save hello again.'
+	  });
+	}, 4000);
+*/	
 });
