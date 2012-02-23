@@ -1,7 +1,6 @@
 class App < ActiveRecord::Base
   include UuidPrimaryKey
   acts_as_cacheable
-  json_set_field :countries_blacklist
 
   ALLOWED_PLATFORMS = { 'android' => 'Android', 'iphone' => 'iOS', 'windows' => 'Windows' }
   BETA_PLATFORMS    = {}
@@ -102,11 +101,12 @@ class App < ActiveRecord::Base
   named_scope :by_partner_id, lambda { |partner_id| { :conditions => ["partner_id = ?", partner_id] } }
 
   delegate :conversion_rate, :to => :primary_currency, :prefix => true
-  delegate :store_id, :store_id?, :description, :age_rating, :file_size_bytes, :supported_devices, :supported_devices?, :released_at, :released_at?, :user_rating,
+  delegate :store_id, :store_id?, :description, :age_rating, :file_size_bytes, :supported_devices, :supported_devices?,
+    :released_at, :released_at?, :user_rating, :get_countries_blacklist, :countries_blacklist,
     :to => :primary_app_metadata, :allow_nil => true
 
   # TODO: remove these columns from apps table definition and remove this method
-  TO_BE_DELETED = %w(description price store_id age_rating file_size_bytes supported_devices released_at user_rating categories papaya_user_count)
+  TO_BE_DELETED = %w(description price store_id age_rating file_size_bytes supported_devices released_at user_rating categories countries_blacklist papaya_user_count)
   def self.columns
     super.reject do |c|
       TO_BE_DELETED.include?(c.name)
@@ -197,7 +197,6 @@ class App < ActiveRecord::Base
 
   def fill_app_store_data(data)
     self.name = data[:title]
-    self.countries_blacklist = AppStore.prepare_countries_blacklist(store_id, platform)
     download_icon(data[:icon_url]) unless new_record?
   end
 

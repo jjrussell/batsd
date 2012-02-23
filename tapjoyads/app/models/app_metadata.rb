@@ -1,5 +1,6 @@
 class AppMetadata < ActiveRecord::Base
   include UuidPrimaryKey
+  json_set_field :countries_blacklist
 
   PLATFORMS = {'App Store' => 'iphone', 'Market' => 'android', 'Marketplace' => 'windows'}
   RATING_THRESHOLD = 0.6
@@ -46,6 +47,7 @@ class AppMetadata < ActiveRecord::Base
     self.user_rating         = data[:user_rating]
     self.categories          = data[:categories]
     self.supported_devices   = data[:supported_devices].present? ? data[:supported_devices].to_json : nil
+    self.countries_blacklist = AppStore.prepare_countries_blacklist(store_id, PLATFORMS[store_name])
   end
 
   def total_thumbs_count
