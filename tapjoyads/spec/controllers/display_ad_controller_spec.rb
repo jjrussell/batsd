@@ -1,7 +1,7 @@
 require 'spec/spec_helper'
 
 def read_asset(name, directory='banner_ads')
-  File.read("#{Rails.root}/test/assets/#{directory}/#{name}")
+  File.read("#{Rails.root}/spec/assets/#{directory}/#{name}")
 end
 
 describe DisplayAdController do
@@ -57,8 +57,8 @@ describe DisplayAdController do
 
           response.content_type.should == 'image/png'
 
-          # To diagnose a mismatch, uncomment the following and compare the new image to #{Rails.root}/test/assets/banner_ads/custom_320x50.png
-          # File.open("#{Rails.root}/test/assets/banner_ads/wtf.png", 'w') { |f| f.write(response.body) }
+          # To diagnose a mismatch, uncomment the following and compare the new image to #{Rails.root}/spec/assets/banner_ads/custom_320x50.png
+          # File.open("#{Rails.root}/spec/assets/banner_ads/wtf.png", 'w') { |f| f.write(response.body) }
 
           response.body.should == @custom_banner
         end
@@ -98,10 +98,10 @@ describe DisplayAdController do
           response.content_type.should == 'image/png'
 
           # Uncomment the following to re-generate the image if needed (e.g. background image changes, text changes, etc)
-          # File.open("#{Rails.root}/test/assets/banner_ads/generated_320x50.png", 'w') { |f| f.write(response.body) }
+          # File.open("#{Rails.root}/spec/assets/banner_ads/generated_320x50.png", 'w') { |f| f.write(response.body) }
 
-          # To diagnose a mismatch, uncomment the following and compare the new image to #{Rails.root}/test/assets/banner_ads/generated_320x50.png
-          # File.open("#{Rails.root}/test/assets/banner_ads/wtf.png", 'w') { |f| f.write(response.body) }
+          # To diagnose a mismatch, uncomment the following and compare the new image to #{Rails.root}/spec/assets/banner_ads/generated_320x50.png
+          # File.open("#{Rails.root}/spec/assets/banner_ads/wtf.png", 'w') { |f| f.write(response.body) }
 
           ### The test seems to be failing due to different versions of ImageMagick / different fonts on other developer machines ###
           # response.body.should == @generated_banner
@@ -128,8 +128,8 @@ describe DisplayAdController do
 
           response.content_type.should == 'application/json'
 
-          # To diagnose a mismatch, uncomment the following and compare the new image to #{Rails.root}/test/assets/banner_ads/custom_320x50.png
-          # File.open("#{Rails.root}/test/assets/banner_ads/wtf.png", 'w') { |f| f.write(response.body) }
+          # To diagnose a mismatch, uncomment the following and compare the new image to #{Rails.root}/spec/assets/banner_ads/custom_320x50.png
+          # File.open("#{Rails.root}/spec/assets/banner_ads/wtf.png", 'w') { |f| f.write(response.body) }
 
           Base64.decode64(assigns['image']).should == custom_banner
         end
@@ -144,8 +144,8 @@ describe DisplayAdController do
           get(:index, @params)
           response.content_type.should == 'application/xml'
 
-          # To diagnose a mismatch, uncomment the following and compare the new image to #{Rails.root}/test/assets/banner_ads/custom_640x100.png
-          # File.open("#{Rails.root}/test/assets/banner_ads/wtf.png", 'w') { |f| f.write(response.body) }
+          # To diagnose a mismatch, uncomment the following and compare the new image to #{Rails.root}/spec/assets/banner_ads/custom_640x100.png
+          # File.open("#{Rails.root}/spec/assets/banner_ads/wtf.png", 'w') { |f| f.write(response.body) }
 
           Base64.decode64(assigns['image']).should == custom_banner
         end
@@ -184,17 +184,17 @@ describe DisplayAdController do
           response.content_type.should == 'application/json'
 
           # Uncomment the following to re-generate the image if needed (e.g. background image changes, text changes, etc)
-          # File.open("#{Rails.root}/test/assets/banner_ads/generated_320x50.png", 'w') { |f| f.write(Base64.decode64(assigns['image'])) }
+          # File.open("#{Rails.root}/spec/assets/banner_ads/generated_320x50.png", 'w') { |f| f.write(Base64.decode64(assigns['image'])) }
 
-          # To diagnose a mismatch, uncomment the following and compare the new image to #{Rails.root}/test/assets/banner_ads/generated_320x50.png
-          # File.open("#{Rails.root}/test/assets/banner_ads/wtf.png", 'w') { |f| f.write(response.body) }
+          # To diagnose a mismatch, uncomment the following and compare the new image to #{Rails.root}/spec/assets/banner_ads/generated_320x50.png
+          # File.open("#{Rails.root}/spec/assets/banner_ads/wtf.png", 'w') { |f| f.write(response.body) }
 
           ### The test seems to be failing due to different versions of ImageMagick / different fonts on other developer machines ###
-          # Base64.decode64(assigns['image']).should == File.read("#{Rails.root}/test/assets/banner_ads/generated_320x50.png")
+          # Base64.decode64(assigns['image']).should == File.read("#{Rails.root}/spec/assets/banner_ads/generated_320x50.png")
         end
 
         it 'returns proper image data in xml' do
-          ad_bg = File.read("#{Rails.root}/test/assets/display/self_ad_bg_640x100.png")
+          ad_bg = File.read("#{Rails.root}/spec/assets/display/self_ad_bg_640x100.png")
           obj_ad_bg = @bucket.objects["display/self_ad_bg_640x100.png"]
           @bucket.stubs(:objects).returns({ "display/self_ad_bg_640x100.png" => obj_ad_bg })
           obj_ad_bg.stubs(:read).returns(ad_bg)
@@ -203,13 +203,13 @@ describe DisplayAdController do
           response.content_type.should == 'application/xml'
 
           # Uncomment the following to re-generate the image if needed (e.g. background image changes, text changes, etc)
-          # File.open("#{Rails.root}/test/assets/banner_ads/generated_640x100.png", 'w') { |f| f.write(Base64.decode64(assigns['image'])) }
+          # File.open("#{Rails.root}/spec/assets/banner_ads/generated_640x100.png", 'w') { |f| f.write(Base64.decode64(assigns['image'])) }
 
-          # To diagnose a mismatch, uncomment the following and compare the new image to #{Rails.root}/test/assets/banner_ads/generated_640x100.png
-          # File.open("#{Rails.root}/test/assets/banner_ads/wtf.png", 'w') { |f| f.write(response.body) }
+          # To diagnose a mismatch, uncomment the following and compare the new image to #{Rails.root}/spec/assets/banner_ads/generated_640x100.png
+          # File.open("#{Rails.root}/spec/assets/banner_ads/wtf.png", 'w') { |f| f.write(response.body) }
 
           ### The test seems to be failing due to different versions of ImageMagick / different fonts on other developer machines ###
-          # Base64.decode64(assigns['image']).should == File.read("#{Rails.root}/test/assets/banner_ads/generated_640x100.png")
+          # Base64.decode64(assigns['image']).should == File.read("#{Rails.root}/spec/assets/banner_ads/generated_640x100.png")
         end
       end
     end
