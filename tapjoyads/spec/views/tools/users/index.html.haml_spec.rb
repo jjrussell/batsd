@@ -2,9 +2,9 @@ require 'spec/spec_helper'
 
 describe 'tools/users/index.html.haml' do
   
-  context 'with a role admin user' do
+  context 'with a role manager user' do
     before :each do
-      @user = Factory :role_admin_user
+      @user = Factory :role_mgr_user
       assigns[:tapjoy_users] = [@user]
       render
     end
@@ -14,7 +14,7 @@ describe 'tools/users/index.html.haml' do
     end
     
     it 'displays the roles assigned to that user' do
-      response.should have_tag("li.role_admin")
+      response.should have_tag("li.role_mgr")
     end
   end
 end

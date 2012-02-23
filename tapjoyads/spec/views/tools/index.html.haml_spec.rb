@@ -52,9 +52,9 @@ describe 'tools/index.html.haml' do
     end
   end
   
-  context 'with a role admin user' do
+  context 'with a role manager user' do
     before :each do
-      user = Factory :role_admin_user
+      user = Factory :role_mgr_user
       controller.stubs(:current_user).returns(user)
       template.stubs(:current_user).returns(user)
       render

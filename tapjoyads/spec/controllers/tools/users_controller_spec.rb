@@ -49,9 +49,9 @@ describe Tools::UsersController do
       end
     end
     
-    context 'when role admin' do
+    context 'when role manager' do
       before :each do
-        user = Factory :role_admin_user
+        user = Factory :role_mgr_user
         user.current_partner = Factory :partner
         login_as user
         get(:show, :id => user.id)

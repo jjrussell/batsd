@@ -118,7 +118,7 @@ authorization do
     has_permission_on :tools_featured_contents, :to => [ :index, :new, :create, :edit, :update, :destroy ]
   end
 
-  role :role_admin do
+  role :role_mgr do
     includes :tools
     has_permission_on :tools, :to => [ :manage_user_roles, :update_user_roles ]
     has_permission_on :tools_users, :to => [ :index, :show ]
@@ -133,7 +133,7 @@ authorization do
     includes :account_mgr
     includes :hr
     includes :games_editor
-    includes :role_admin
+    includes :role_mgr
     has_permission_on :pub_offer_whitelist, :to => [ :index, :enable, :disable ]
     has_permission_on :tools, :to => [ :failed_sdb_saves, :sdb_metadata, :reset_device, :sqs_lengths, :elb_status, :ses_status, :as_groups ]
     has_permission_on :tools_offers, :to => [ :creative, :approve_creative, :reject_creative ]
