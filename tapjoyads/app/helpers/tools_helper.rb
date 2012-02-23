@@ -1,6 +1,7 @@
 module ToolsHelper
   def click_info_ul(click, reward)
     concat("<ul class='nobr hidden'>")
+    concat_li("Click ID", "<input type='text' value='#{click.key}'/>")
     concat_li_timestamp("Viewed at", click.viewed_at)
     concat_li_timestamp("Clicked at", click.clicked_at)
     concat_li_timestamp("Installed at", click.installed_at)
@@ -39,6 +40,11 @@ module ToolsHelper
 
   def link_app_to_statz(app)
     app.nil? ? '-'  : link_to_statz(app.name, app)
+  end
+
+  def click_timestamp(click, action)
+    time = click.send(action)
+    time.nil? ? '-' : time.to_s(:pub_abbr_ampm_sec)
   end
 
   private

@@ -129,7 +129,6 @@
         %td Pub.
         %td Resolve
         %td Details
-        %td Click ID
     %tbody
       - @clicks.each do |click|
         :ruby
@@ -141,12 +140,12 @@
           end
         %tr{ :class => tr_class }
           %td.small
-            %nobr= click.clicked_at? ? click.clicked_at.to_s(:pub_abbr_ampm_sec) : '-'
+            %nobr= click_timestamp(click, :clicked_at)
           %td{ :class => install_td_class }
             - if click.block_reason?
               = click.block_reason
             - else
-              = click.installed_at? ? click.installed_at.to_s(:pub_abbr_ampm_sec) : '-'
+              = click_timestamp(click, :installed_at)
           %td= link_app_to_statz(@click_apps[click.advertiser_app_id])
           %td= link_app_to_statz(@click_apps[click.publisher_app_id])
           %td
@@ -165,8 +164,6 @@
           %td.small
             = link_to('show', '#', :class => 'show-click-detail')
             - click_info_ul(click, @rewards[click.reward_key])
-          %td
-            = clippy(click.key)
       %tr
         %td{:colspan => 7}
           - text = "Show #{Time.zone.at(@cut_off_date - 2.month).to_s(:pub)} - #{Time.zone.at(@cut_off_date - 1.month).to_s(:pub)}"
