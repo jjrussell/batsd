@@ -80,7 +80,6 @@ class AgencyApi::CurrenciesController < AgencyApiController
       currency.callback_url = Currency::TAPJOY_MANAGED_CALLBACK_URL
     end
     currency.secret_key = params[:secret_key] if params[:secret_key].present?
-    currency.ordinal = app.currencies.size + 1
 
     if app.currencies.empty?
       currency.id = app.id
