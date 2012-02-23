@@ -293,8 +293,10 @@
     });
 
     Tap.apply(Tap, {
-      browser: (/webkit/i).test(appversion) ? 'webkit' : (/firefox/i).test(agent) ? 'moz' : 'opera' in window ? 'o' : (/msie/i).test(agent) ? 'ms' : ''
+      browser: (/webkit/i).test(appversion) ? 'webkit' : (/firefox/i).test(agent) ? 'moz' : 'opera' in window ? 'o' : (/msie/i).test(agent) ? 'ms' : '',
+      language: (('language' in navigator) ? navigator.language.replace('-', '_').toLowerCase() : undefined )
     });
+    
     
     Tap.apply(Tap, {
       supportsTouch: (!!global.Touch) && (typeof window.TouchEvent != 'undefined') && (agent.indexOf('Mobile') > -1),
@@ -302,14 +304,17 @@
       supportsTransform: Tap.browser + 'Transform' in document.documentElement.style,
       supportsTransitionEnd: (/iphone|ipad|playbook/gi).test(appversion),
       supportsTransform3d: 'WebKitCSSMatrix' in window && 'm11' in new WebKitCSSMatrix(),
-      supportsAnimationEvents: (typeof window.WebKitAnimationEvent != 'undefined')
+      supportsAnimationEvents: (typeof window.WebKitAnimationEvent != 'undefined'),
+      supportsRetina: ('devicePixelRatio' in window && window.devicePixelRatio > 1),
+      supportsHomescreen: ('standalone' in navigator)
     });
     
     Tap.apply(Tap, {
       device: {
         android: (/android/gi).test(appversion),
-        idevice: (/iphone|ipad/gi).test(appversion),
+        idevice: (/iphone|ipad|ipod/gi).test(appversion),
         iphone: (/iphone/gi).test(appversion),
+        ipod: (/ipod/gi).test(appversion),
         ipad: (/ipad/gi).test(appversion),
         playbook: (/playbook/gi).test(appversion),
         touchpad: (/hp-tablet/gi).test(appversion)
@@ -369,6 +374,10 @@
         end: Tap.supportsTouch ? 'touchend' : 'mouseup',
         cancel: Tap.supportsTouch ? 'touchcancel' : 'mouseout'
       }
+    });
+    
+    Tap.apply(Tap, {
+      vars: {}
     });
     
     Tap(document).ready(function(){

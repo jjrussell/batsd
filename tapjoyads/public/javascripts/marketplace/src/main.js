@@ -1,8 +1,7 @@
 $(document).ready(function() {
 
-  // Login
+  // Login Modal
   $('#login, #login-web').bind('click', function() {
-    
     var modal = $('.login.modal');
     var mTop = (modal.height() + 24) / 2; 
     var mLeft = (modal.width() + 24) / 2; 
@@ -18,7 +17,6 @@ $(document).ready(function() {
       $('.login.modal').fadeOut('fast');
       $(this).fadeOut('fast');
     });
-
   });
   
   // Menu Grid
@@ -40,6 +38,16 @@ $(document).ready(function() {
     }
     else {
       $(this).removeClass('down').addClass('up');
+    }
+  });
+  
+  // Device switch toggle
+  $('.device-change').bind('click', function(){
+    if ($('.device-select').hasClass('closed')) {
+      $('.device-select').removeClass('closed').addClass('open');
+    }
+    else {
+      $('.device-select').removeClass('open').addClass('closed');
     }
   });
   
