@@ -85,8 +85,8 @@ ActiveRecord::Schema.define(:version => 20120222185954) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "platform"
-    t.string   "app_metadata_id", :limit => 36,                :null => false
     t.integer  "user_rating",                   :default => 0
+    t.string   "app_metadata_id", :limit => 36,                :null => false
   end
 
   add_index "app_reviews", ["app_id", "author_id"], :name => "index_app_reviews_on_app_id_and_author_id", :unique => true
