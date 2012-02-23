@@ -19,28 +19,25 @@ class Apps::ReengagementOffersController < WebsiteController
   end
 
   def new
-    campaign_length = @app.reengagement_campaign_length
+    campaign_length = @app.reengagement_campaign.length
     if campaign_length > 5
       flash[:info] = "Re-engagement campaigns cannot currently be longer than 5 days."
       redirect_to(app_reengagement_offers_path(@app))
     elsif campaign_length == 0
-      ReengagementOffer.create(
-        :app_id                 => @app.id,
-        :partner                => current_partner,
-        :currency_id            => @app.primary_currency.id,
-        :instructions           => 'Come back each day and get rewards!',
-        :reward_value           => 0,
-        :day_number             => 0
-      )
-    end
-    @reengagement_offer = ReengagementOffer.new
+      @app.build_reengagement_offer( :reward_value => 0 )
+  end
+    @reengagement_offer = @app.build_reengagement_offer
   end
 
   def create
-    params[:reengagement_offer].merge!( :app => @app, :partner => current_partner )
-    reengagement_offer = ReengagementOffer.create(params[:reengagement_offer])
-    flash[:notice] = "Added day #{reengagement_offer.day_number} reengagement offer."
-    redirect_to(app_reengagement_offers_path(@app))
+    @reengagement_offer = @app.build_reengagement_offer(params[:reengagement_offer])
+    if @reengagement_offer.save
+      flash[:notice] = "Added day #{@reengagement_offer.day_number} reengagement offer."
+      redirect_to(app_reengagement_offers_path(@app))
+    else
+      flash[:error] = "Problems encountered while adding reengagement offer."
+      render :action => :new
+    end
   end
 
   def edit

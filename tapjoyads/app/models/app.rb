@@ -164,28 +164,35 @@ class App < ActiveRecord::Base
     end
   end
 
+  def build_reengagement_offer(options = {})
+    default_options = {
+      :partner => partner,
+      :day_number => reengagement_campaign.length,
+    }
+    options[:currency] ||= primary_currency
+    reengagement_offers.build(options.merge(default_options))
+  end
+
   def reengagement_campaign
-    @reengagement_campaign ||= (reengagement_offers.visible.order_by_day || [])
+    reengagement_offers.visible.order_by_day
   end
 
   def enable_reengagement_campaign!
+    return if reengagement_campaign.empty?
     self.reengagement_campaign_enabled = true
     update_reengagements_with_enable_or_disable
-    Mc.put("mysql.reengagement_offers.#{id}.#{SCHEMA_VERSION}", reengagement_campaign, false, 1.day)
+    Mc.put("mysql.reengagement_offers.#{id}.#{@acts_as_cacheable_version}", reengagement_campaign, false, 1.day)
   end
 
   def disable_reengagement_campaign!
+    return if reengagement_campaign.empty?
     self.reengagement_campaign_enabled = false
     update_reengagements_with_enable_or_disable
-    Mc.delete("mysql.reengagement_offers.#{id}.#{SCHEMA_VERSION}")
-  end
-
-  def reengagement_campaign_length
-    reengagement_offers.visible.length
+    Mc.delete("mysql.reengagement_offers.#{id}.#{@acts_as_cacheable_version}")
   end
 
   def reengagement_campaign_from_cache
-    Mc.get("mysql.reengagement_offers.#{id}.#{SCHEMA_VERSION}")
+    Mc.get("mysql.reengagement_offers.#{id}.#{@acts_as_cacheable_version}") || []
   end
 
   def resolve_reengagement(udid, timestamp, publisher_user_id)
@@ -400,7 +407,6 @@ class App < ActiveRecord::Base
   def update_reengagements_with_enable_or_disable
     self.save!
     reengagement_campaign.map(&:update_offers)
-    @reengagement_campaign = nil
   end
 
 

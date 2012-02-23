@@ -5,29 +5,25 @@
     %tbody
       %tr
         %th
-          %h3
-            - if @reengagement_offer && @reengagement_offer.day_number    # if action is 'update'
-              = "Day #{@reengagement_offer.day_number}"
-            - else
-              - day_num = @app.reengagement_campaign_length
-              = f.hidden_field :day_number, :value => day_num
-              = "Day #{day_num}"  # otherwise action is 'create'
+          %h3 Day #{@reengagement_offer.day_number}
       %tr
         %th
           = f.label :currency_id, 'Currency'
         %td
           = f.select :currency_id, options_from_collection_for_select(@app.currencies, :id, :name)
-          = #collection_select(:currency_id, :currency, @app.currencies, :id, :name)
+          = error_message_on @reengagement_offer, :currency_id
       %tr
         %th
           = f.label :reward_value, 'Reward Amount'
         %td
           = f.text_field :reward_value, :required => ""
+          = error_message_on @reengagement_offer, :reward_value
       %tr
         %th
           = f.label :instructions, 'Reward Message'
         %td
           = f.text_area :instructions, :required => ""
+          = error_message_on @reengagement_offer, :instructions
       %tr
         %td{:colspan => "2"}
           = f.submit

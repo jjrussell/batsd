@@ -8,10 +8,34 @@ class ReengagementOffer < ActiveRecord::Base
   has_one :primary_offer, :class_name => 'Offer', :as => :item, :conditions => 'id = item_id'
   has_many :offers, :as => :item
 
-  validates_presence_of :partner, :app, :instructions, :reward_value
+  validates_presence_of :partner, :app, :reward_value, :day_number, :currency
+  validates_presence_of :instructions, :unless => lambda { |r| r.day_number == 0 }
   validates_numericality_of :reward_value, :greater_than_or_equal_to => 0
-
-  before_create :pre_create
+  validates_numericality_of :day_number, :greater_than_or_equal_to => 0
+  validates_each :day_number do |record, attribute, value|
+    campaign = record.app.reengagement_campaign
+    # puts "*" * 100
+    # puts attribute
+    # puts value
+    offer = campaign && campaign[value]
+    record.errors.add(attribute, "already exists.") if offer && offer != record
+  end
+  validates_each :partner_id do |record, attribute, value|
+    # puts "#" * 100
+    # puts attribute
+    # puts value
+    unless value == record.app.partner_id
+      record.errors.add(attribute, "must match App's Partner ID.")
+    end
+  end
+  validates_each :currency_id do |record, attribute, value|
+    # puts "$" * 100
+    # puts attribute
+    # puts value
+    unless record.app.currencies.collect(&:id).include?(value)
+      record.errors.add(attribute, "must belong to App.")
+    end
+  end
 
   before_create :disable_campaign
   before_update :disable_campaign
@@ -62,11 +86,6 @@ class ReengagementOffer < ActiveRecord::Base
 
   def disable_campaign
     app.disable_reengagement_campaign!
-  end
-
-  def pre_create
-    reengagement_offers = app.reengagement_campaign
-    reengagement_offers.present? ? self.day_number = reengagement_offers.length : self.day_number = 0
   end
 
   def create_reengagement_click(udid, publisher_user_id, timestamp=Time.zone.now)

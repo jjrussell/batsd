@@ -73,6 +73,16 @@ FactoryGirl.define do
     store_id '123'
   end
 
+  factory :reengagement_offer do
+    association :currency
+    Rails.logger.info "*" * 100
+    app     { currency.app }
+    partner { currency.partner }
+    instructions 'Do some stuff.'
+    reward_value 5
+    day_number { Factory.next(:integer) }
+  end
+
   factory :app do
     association :partner
     name { Factory.next(:name) }
