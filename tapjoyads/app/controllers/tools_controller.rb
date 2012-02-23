@@ -254,9 +254,6 @@ class ToolsController < WebsiteController
         -click.clicked_at.to_f
       end
 
-      @has_displayer = @clicks.any? do |click|
-        click.displayer_app_id?
-      end
     elsif params[:email_address].present?
       @all_udids = SupportRequest.find_all_by_email_address(params[:email_address]).map(&:udid)
       gamer = Gamer.find_by_email(params[:email_address])
