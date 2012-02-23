@@ -39,8 +39,7 @@ describe ClickController do
         Currency.stubs(:find_in_cache).returns(@currency)
         post(:generic, @params)
         assigns(:click).should_not be_nil
-        assigns(:click).id.should == 'stuff.even_more_stuff'
-        assigns(:generic_offer_click).should_not be_nil
+        assigns(:click).id.should == Digest::MD5.hexdigest('stuff.even_more_stuff')
         response.should be_redirect
       end
     end
@@ -65,7 +64,6 @@ describe ClickController do
         post(:app, @params)
         assigns(:click).should_not be_nil
         assigns(:click).id.should == 'app_stuff.even_more_app_stuff'
-        assigns(:generic_offer_click).should be_nil
         response.should be_redirect
       end
 

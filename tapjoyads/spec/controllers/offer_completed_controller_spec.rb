@@ -28,22 +28,7 @@ describe OfferCompletedController do
         assigns(:error_message).should == "click_key required"
       end
 
-      it "should resolve to the new tracked click" do
-        generic_offer_click = GenericOfferClick.new
-        generic_offer_click.click_id = @click.id
-        GenericOfferClick.stubs(:find).with(generic_offer_click.id).returns(generic_offer_click)
-        Click.stubs(:new).with(:key => @click.id).returns(@click)
-        Offer.stubs(:find_in_cache).returns(@offer)
-        Device.stubs(:new).with(:key => @click.udid).returns(@device)
-        @device.stubs(:has_app?).with(@click.advertiser_app_id).returns(false)
-        parameters = {:click_key => generic_offer_click.id}
-        get(:index, parameters)
-        response.should render_template('layouts/success')
-      end
-
-      it "should default to the random guid if not tracked" do
-        @click.stubs(:id).returns( '123456')
-        GenericOfferClick.stubs(:find).with(@click.id).returns(nil)
+      it "should resolve to the click" do
         Click.stubs(:new).with(:key => @click.id).returns(@click)
         Offer.stubs(:find_in_cache).returns(@offer)
         Device.stubs(:new).with(:key => @click.udid).returns(@device)
@@ -53,16 +38,6 @@ describe OfferCompletedController do
         response.should render_template('layouts/success')
       end
 
-      it "should never attempt conversion when a normal click" do
-        GenericOfferClick.expects(:find).never
-        Click.stubs(:new).with(:key => @click.id).returns(@click)
-        Offer.stubs(:find_in_cache).returns(@offer)
-        Device.stubs(:new).with(:key => @click.udid).returns(@device)
-        @device.stubs(:has_app?).with(@click.advertiser_app_id).returns(false)
-        parameters = {:click_key => @click.id}
-        get(:index, parameters)
-        response.should render_template('layouts/success')
-      end
     end
   end
 end

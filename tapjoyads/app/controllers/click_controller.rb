@@ -238,10 +238,7 @@ class ClickController < ApplicationController
     elsif type == 'generic' && params[:advertiser_app_id] == TAPJOY_GAMES_INVITATION_OFFER_ID
       click_key = "#{params[:gamer_id]}.#{params[:advertiser_app_id]}"
     else
-      external_click =  UUIDTools::UUID.random_create.to_s
-      click_key = "#{params[:udid]}.#{params[:advertiser_app_id]}"
-      @generic_offer_click = GenericOfferClick.new(:key => @external_click)
-      @generic_offer_click.click_id = click_key
+      click_key = Digest::MD5.hexdigest "#{params[:udid]}.#{params[:advertiser_app_id]}"
     end
 
     @click = Click.new(:key => click_key)
@@ -275,7 +272,6 @@ class ClickController < ApplicationController
     @click.spend_share            = @currency.get_spend_share(@offer)
 
     @click.save
-    @generic_offer_click.save if @generic_offer_click
   end
 
   def handle_pay_per_click
@@ -296,7 +292,7 @@ class ClickController < ApplicationController
       :udid                  => params[:udid],
       :publisher_app_id      => params[:publisher_app_id],
       :currency              => @currency,
-      :click_key             => (@generic_offer_click && @generic_offer_click.key) || (@click && @click.key),
+      :click_key             => (@click && @click.key),
       :language_code         => params[:language_code],
       :itunes_link_affiliate => @itunes_link_affiliate,
       :display_multiplier    => params[:display_multiplier],

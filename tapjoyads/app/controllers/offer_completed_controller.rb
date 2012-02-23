@@ -59,13 +59,7 @@ private
     end
 
     # We know that UUIDs do not have '.' but our own keys do, so we can make this quick check to know to search
-    click_key = params[:click_key]
-    unless click_key.include? ?.
-      generic_offer_click = GenericOfferClick.find(click_key)
-      click_key =  (generic_offer_click && generic_offer_click.click_id) || click_key
-    end
-
-    click = Click.new(:key => click_key)
+    click = Click.new(:key => params[:click_key])
 
     if click.is_new
       @error_message = "click not found (#{click.key})"
