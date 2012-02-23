@@ -19,7 +19,9 @@ class Games::Gamers::FavoriteAppController < GamesController
   private
 
   def require_app
-    render_json_error(['An app_id must be provided']) and return unless verify_params([:app_id], :render_missing_text => false)
+    unless verify_params([:app_id], :render_missing_text => false)
+      render_json_error(['An app_id must be provided'])
+    end
   end
 
 end

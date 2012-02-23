@@ -146,10 +146,6 @@ class Gamer < ActiveRecord::Base
     app_reviews.find_by_app_metadata_id(app_metadata_id)
   end
 
-  def favorite_apps
-    FavoriteApp.new(:key => "#{self.id}").app_ids
-  end
-
   private
 
   def generate_gravatar_hash
