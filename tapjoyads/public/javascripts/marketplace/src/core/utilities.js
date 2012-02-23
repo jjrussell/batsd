@@ -71,7 +71,7 @@
         
         remove: function(k) {
           localStorage.removeItem(k);
-        }
+        },
         
         reset: function() {
           localStorage.clear();
