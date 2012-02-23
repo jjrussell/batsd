@@ -1,6 +1,12 @@
 require 'spec/spec_helper'
 
 describe Job::MasterReloadStatzController do
+  let(:stats_hash) do
+    hash = Hash.new([100,200,300])
+    hash['arpdau'] = nil
+    hash
+  end
+
   before :each do
     time = Time.zone.today + 1.day
     Timecop.freeze(time.to_time(:utc))
@@ -156,35 +162,40 @@ describe Job::MasterReloadStatzController do
       get(:partner_index)
 
       expected_stats = {
-        "account_mgr"           => "",
-        "balance"               => "$0.00",
-        "clicks"                => "600",
-        "cvr"                   => "100.0%",
-        "display_conversions"   => "600",
-        "display_cvr"           => "100.0%",
-        "display_ecpm"          => "$10.00",
-        "display_revenue"       => "$6.00",
-        "display_views"         => "600",
-        "est_gross_revenue"     => "$12.00",
-        "featured_conversions"  => "600",
-        "featured_cvr"          => "100.0%",
-        "featured_ecpm"         => "$10.00",
-        "featured_revenue"      => "$6.00",
-        "featured_views"        => "600",
-        "new_users"             => "600",
-        "offerwall_conversions" => "600",
-        "offerwall_cvr"         => "100.0%",
-        "offerwall_ecpm"        => "$10.00",
-        "offerwall_revenue"     => "$6.00",
-        "offerwall_views"       => "600",
-        "paid_installs"         => "600",
-        "partner"               => @partner.name,
-        "rev_share"             => "50.0%",
-        "sales_rep"             => "",
-        "sessions"              => "600",
-        "spend"                 => "-$6.00",
-        "total_revenue"         => "$6.00",
-        "arpdau"                => "-",
+        "account_mgr"               => "",
+        "balance"                   => "$0.00",
+        "clicks"                    => "600",
+        "cvr"                       => "100.0%",
+        "display_conversions"       => "600",
+        "display_cvr"               => "100.0%",
+        "display_ecpm"              => "$10.00",
+        "display_revenue"           => "$6.00",
+        "display_views"             => "600",
+        "est_gross_revenue"         => "$12.00",
+        "featured_conversions"      => "600",
+        "featured_cvr"              => "100.0%",
+        "featured_ecpm"             => "$10.00",
+        "featured_revenue"          => "$6.00",
+        "featured_views"            => "600",
+        "new_users"                 => "600",
+        "offerwall_conversions"     => "600",
+        "offerwall_cvr"             => "100.0%",
+        "offerwall_ecpm"            => "$10.00",
+        "offerwall_revenue"         => "$6.00",
+        "offerwall_views"           => "600",
+        "tjm_offerwall_conversions" => "600",
+        "tjm_offerwall_cvr"         => "100.0%",
+        "tjm_offerwall_ecpm"        => "$10.00",
+        "tjm_offerwall_revenue"     => "$6.00",
+        "tjm_offerwall_views"       => "600",
+        "paid_installs"             => "600",
+        "partner"                   => @partner.name,
+        "rev_share"                 => "50.0%",
+        "sales_rep"                 => "",
+        "sessions"                  => "600",
+        "spend"                     => "-$6.00",
+        "total_revenue"             => "$6.00",
+        "arpdau"                    => "-",
       }
 
       actual_stats = Mc.get('statz.partner.cached_stats.24_hours')
@@ -430,15 +441,6 @@ def query_conditions(start_time, end_time)
     "time >= '#{start_time.to_s(:db)}'",
     "time < '#{end_time.to_s(:db)}'",
   ]
-end
-
-def stats_hash
-  return @hash if @hash
-  @hash = {}
-  stats_keys.each do |key|
-    @hash[key] = [100,200,300]
-  end
-  @hash
 end
 
 def stats_keys

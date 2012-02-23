@@ -118,7 +118,7 @@ class Job::QueueConversionTrackingController < Job::SqsReaderController
     device.save
 
     web_request = WebRequest.new(:time => Time.zone.at(installed_at_epoch.to_f))
-    web_request.path              = 'reward'
+    web_request.path              = 'reward'  #question, is it necessary to separate tjm_reward from rewards here? add reward.source == 'tj_games' ? 'tjm_reward' : 'reward'
     web_request.type              = reward.type
     web_request.publisher_app_id  = reward.publisher_app_id
     web_request.advertiser_app_id = reward.advertiser_app_id
