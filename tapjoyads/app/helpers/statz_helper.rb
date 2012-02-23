@@ -65,6 +65,11 @@ module StatzHelper
           ["$0.00", "zero_offerwall_ecpm"],
           [">$0", "nonzero_offerwall_ecpm"],
         ]
+      when :tjm_offerwall_ecpm
+        [
+          ["$0.00", "zero_tjm_offerwall_ecpm"],
+          [">$0", "nonzero_tjm_offerwall_ecpm"],
+        ]
       when :featured_ecpm
         [
           ["$0.00", "zero_featured_ecpm"],
