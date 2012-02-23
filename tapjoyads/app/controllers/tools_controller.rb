@@ -241,6 +241,8 @@ class ToolsController < WebsiteController
         end
       end
 
+      @clicks = @clicks.sort_by(&:clicked_at).reverse
+
       # find all apps at once and store in look up table
       @click_apps = {}
       Offer.find_all_by_id(click_app_ids.uniq).each do |app|
@@ -250,9 +252,6 @@ class ToolsController < WebsiteController
       @apps = Offer.find_all_by_id(@device.parsed_apps.keys).map do |app|
         [ @device.last_run_time(app.id), app ]
       end.sort.reverse
-      @clicks = @clicks.sort_by do |click|
-        -click.clicked_at.to_f
-      end
 
     elsif params[:email_address].present?
       @all_udids = SupportRequest.find_all_by_email_address(params[:email_address]).map(&:udid)
