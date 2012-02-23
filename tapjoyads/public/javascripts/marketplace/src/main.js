@@ -44,9 +44,8 @@ $(document).ready(function() {
   });
   
   // App Icons
-  $('.icon img').each(function(n, o){
-		var el = $(o);
-		
+  $('.app-icon img').each(function(n, o){
+    var el = $(o);
     el.attr("src", el.attr("source")).load(function(){
       $(this).fadeIn('slow');
     });

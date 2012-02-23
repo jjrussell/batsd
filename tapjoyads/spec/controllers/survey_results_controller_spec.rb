@@ -69,7 +69,7 @@ describe SurveyResultsController do
     it 'saves a SurveyResult' do
       stub_device
 
-      controller.expects(:get_geoip_data).returns('geoip data')
+      controller.expects(:geoip_data).returns('geoip data')
       @mock_click.expects(:installed_at?).returns(false)
       mock_result = mock()
 
@@ -86,7 +86,7 @@ describe SurveyResultsController do
     it 'saves the results to the device' do
       stub_survey_result
 
-      controller.expects(:get_geoip_data).returns('geoip data')
+      controller.expects(:geoip_data).returns('geoip data')
       @mock_click.expects(:installed_at?).returns(false)
       mock_device = mock()
 
@@ -104,7 +104,7 @@ describe SurveyResultsController do
       stub_survey_result
       stub_device
 
-      controller.expects(:get_geoip_data).returns('geoip data')
+      controller.expects(:geoip_data).returns('geoip data')
       @mock_click.expects(:installed_at?).returns(false)
 
       url = "#{API_URL}/offer_completed?click_key=5"

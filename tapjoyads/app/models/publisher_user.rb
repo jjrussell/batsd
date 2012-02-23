@@ -14,7 +14,7 @@ class PublisherUser < SimpledbShardedResource
     super({ :load_from_memcache => true }.merge(options))
   end
 
-  def serial_save(options = {})
+  def save(options = {})
     super({ :write_to_memcache => true }.merge(options))
   end
 
@@ -23,7 +23,7 @@ class PublisherUser < SimpledbShardedResource
     return true  if udids.include?(udid)
 
     self.udids = udid
-    serial_save
+    save
 
     udids.length < MAX_UDIDS
   end

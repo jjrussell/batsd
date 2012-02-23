@@ -14,6 +14,7 @@ body {
   padding: 0;
   overflow: hidden;
 }
+
 body.desktop {
   oveflow: auto;
   overflow-y: auto;
@@ -45,6 +46,10 @@ li {
   white-space: nowrap;
   text-overflow: ellipsis;
   overflow: hidden;
+}
+
+.title {
+  font-family: 'Gill Sans', 'Gill Sans MT', Arial , sans-serif;
 }
 
 .card {
@@ -114,7 +119,7 @@ li {
 .header {
   position: relative;
   z-index: 100;
-  
+
   .headerwrap {
     background: -moz-linear-gradient(top, #e82c2c 0%, #de2627 25%, #ce1f21 50%, #c31a1d 75%, #b41317 100%);
     background: -webkit-linear-gradient(top, #e82c2c 0%, #de2627 25%, #ce1f21 50%, #c31a1d 75%, #b41317 100%);
@@ -122,7 +127,7 @@ li {
     border-bottom: 1px solid #720101;
     box-shadow: 0 1px 2px rgba(0,0,0, .5), inset 0 -2px 0 rgba(221, 52, 56, 1);
     color: #fff;
-    min-height: 36px; 
+    min-height: 36px;
   }
 
   .nav {
@@ -170,7 +175,7 @@ li {
       text-align: center;
       width: 75px;
       margin: 0 auto;
-      
+
       img {
         margin-top: 5px;
         background: url(#{$image_path}/tapjoy_large.png) no-repeat 0 0;
@@ -383,6 +388,10 @@ li {
   background: url('/images/games/ui-joy-r-arrow.png') no-repeat 96% center;
 }
 
+.mod.right-arrow, .mod.down-arrow, .list-button.down-arrow {
+  background-position: 99% center;
+}
+
 .ui-list-action-label {
   display: block;
   font-size: 1em;
@@ -400,16 +409,24 @@ li {
   margin: 0;
   padding: 0;
 
+  h2 {
+    font-size: 1.2em;
+    padding-top: 12px;
+  }
+
   >li {
     padding: 0;
     margin: 0;
+    h2 {
+      text-align: center;
+    }
   }
 }
 
 .line-item {
-  height: 60px;
+  height: 80px;
   margin: 0;
-  padding: 20px 10px;
+  padding: 10px;
 
   a {
     text-decoration: none;
@@ -420,7 +437,7 @@ li {
     color: #000;
   }
   .title {
-    font-size: 1.2em;
+    font-size: 1.3em;
 
     .aside {
       font-size: .7em;
@@ -433,15 +450,8 @@ li {
   }
   .hd {
     margin-right: percentage(12/300);
-    width: percentage(69/300);
+    width: 90px;
     float: left;
-
-    img {
-      @include set-box-shadow(0px, 0px, 3px, #000);
-      @include rounded-corners(45%);
-      max-width: 100%;
-      max-height: 60px;
-    }
   }
   .bd {
     margin-right: 0 percentage(12/300);
@@ -458,7 +468,6 @@ li {
 
 .image-caption {
   .hd {
-    width: 60px;
   }
   .bd {
     width: auto;
@@ -488,7 +497,7 @@ li {
     @include rounded-corners(4px);
     border: 1px solid #abacad;
   }
-  
+
 }
 
 .short-detail {
@@ -623,7 +632,7 @@ input.ui-joy-button {
 
 /**
  * list container
- */ 
+ */
 .list-button-container .list-button {
   @extend .beveled;
   padding: 10px 20px;
@@ -632,6 +641,10 @@ input.ui-joy-button {
   border-left: 1px solid #c8c4c4;
   border-right: 1px solid #c8c4c4;
   cursor: pointer;
+
+  .mod {
+    padding: 0;
+  }
 }
 
 .list-button-container .list-button:first-child {
@@ -711,7 +724,7 @@ input.ui-joy-button {
   color: #222;
   border-radius: 3px 3px 3px 3px;
   font-weight: bold;
-  box-shadow: 0 1px 2px rgba(0,0,0, .1);  
+  box-shadow: 0 1px 2px rgba(0,0,0, .1);
   z-index: 99;
 }
 
@@ -724,7 +737,7 @@ input.ui-joy-button {
 /**
  * layout
  */
- 
+
 .head {
   .title {
     font-size: 1.2em;
@@ -743,21 +756,20 @@ input.ui-joy-button {
 /**
  * squircles for photos
  */
-.squircle {
+.squircle , .app-icon {
   position: relative;
   width: 90px;
   height: 90px;
   margin: 0 auto;
   background: url(#{$image_path}/app_icon_overlay_large.png) no-repeat 0 0;
   background-size: 90px 90px;
+  top: -8px;
 
-  img { 
+  img {
     position: relative;
-    left: 1px;
-    top: 1px;
     z-index: -1;
-    width: 89px;
-    height: 89px;
-    
-  } 
+    width: 90px;
+    height: 90px;
+
+  }
 }
