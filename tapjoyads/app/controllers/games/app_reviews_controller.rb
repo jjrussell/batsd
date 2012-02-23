@@ -21,6 +21,7 @@ class Games::AppReviewsController < GamesController
   def create
     @app_review = AppReview.new(params[:app_review])
     @app_review.author = current_gamer
+    @app_review.author_type = 'Gamer'
 
     if @app_review.save
       flash[:notice] = 'Successfully reviewed this app.'
