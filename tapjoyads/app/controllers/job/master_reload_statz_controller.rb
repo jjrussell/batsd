@@ -152,7 +152,7 @@ class Job::MasterReloadStatzController < Job::JobController
       ['partner', 'partner-ios', 'partner-android', 'partner-windows'].each do |prefix|
         stats            = Appstats.new(partner.id, { :start_time => start_time, :end_time => end_time, :granularity => granularity, :stat_prefix => prefix }).stats
         conversions      = stats['paid_installs'].sum
-        published_offers = stats['rewards'].sum + stats['featured_published_offers'].sum + stats['display_conversions'].sum
+        published_offers = stats['rewards'].sum + stats['tjm_rewards'].sum + stats['featured_published_offers'].sum + stats['display_conversions'].sum
         next unless conversions > 0 || published_offers > 0
         cached_partners[prefix] ||= {}
         cached_partners[prefix][partner.id] = partner_breakdowns(stats, partner)
