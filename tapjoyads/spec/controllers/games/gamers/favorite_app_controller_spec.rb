@@ -3,19 +3,20 @@ require 'spec/spec_helper'
 describe Games::Gamers::FavoriteAppController do
   before :each do
     activate_authlogic
-    @app = Factory(:app)
+    @app_metadata = Factory(:app_metadata)
+
     @gamer = Factory(:gamer)
     @controller.stubs(:current_gamer).returns(@gamer)
 
     @params = {
-      :app_id => @app.id,
+      :app_metadata_id => @app_metadata.id,
     }
   end
 
   describe '#create' do
-    context 'when no app is provided' do
+    context 'when no app_metadata is provided' do
       before :each do
-        get('create')
+        post('create')
       end
 
       it 'returns an error' do
@@ -23,9 +24,9 @@ describe Games::Gamers::FavoriteAppController do
       end
     end
 
-    context 'when an invalid app is provided' do
+    context 'when an invalid app_metadata is provided' do
       before :each do
-        get('create', { :app_id => 'NOT_A_GUID' })
+        post('create', { :app_metadata_id => 'NOT_A_GUID' })
       end
 
       it 'returns an error' do
@@ -36,7 +37,7 @@ describe Games::Gamers::FavoriteAppController do
     context 'when unable to save' do
       before :each do
         FavoriteApp.any_instance.stubs(:save).returns(false)
-        get('create', @params)
+        post('create', @params)
       end
 
       it 'returns an error' do
@@ -45,16 +46,16 @@ describe Games::Gamers::FavoriteAppController do
     end
 
     it 'adds the app to the gamers favorite apps' do
-      get('create', @params)
+      post('create', @params)
       should_respond_with_json_success(200)
-      @gamer.favorite_apps.map(&:app_id).should include(@app.id)
+      @gamer.favorite_apps.map(&:app_metadata_id).should include(@app_metadata.id)
     end
 
     it 'keeps a unique list of favorite apps' do
-      get('create', @params)
+      post('create', @params)
       should_respond_with_json_success(200)
       num_apps = @gamer.favorite_apps.length
-      get('create', @params)
+      post('create', @params)
       should_respond_with_json_success(200)
       @gamer.favorite_apps.length.should == num_apps
     end
@@ -63,7 +64,7 @@ describe Games::Gamers::FavoriteAppController do
   describe '#destroy' do
     context 'when no app is provided' do
       before :each do
-        get('destroy')
+        delete('destroy')
       end
 
       it 'returns an error' do
@@ -72,11 +73,11 @@ describe Games::Gamers::FavoriteAppController do
     end
 
     it 'deletes the app from the gamers favorite apps' do
-      get('create', @params)
+      post('create', @params)
       should_respond_with_json_success(200)
-      get('destroy', @params)
+      delete('destroy', @params)
       should_respond_with_json_success(200)
-      @gamer.favorite_apps.map(&:app_id).should_not include(@app.id)
+      @gamer.favorite_apps.map(&:app_metadata_id).should_not include(@app_metadata.id)
     end
   end
 end

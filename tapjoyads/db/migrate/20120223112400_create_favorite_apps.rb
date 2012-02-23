@@ -4,13 +4,13 @@ class CreateFavoriteApps < ActiveRecord::Migration
 
       t.guid :id, :null => false
       t.guid :gamer_id, :null => false
-      t.guid :app_id, :null => false
+      t.guid :app_metadata_id, :null => false
 
       t.timestamps
     end
     add_index :favorite_apps, :id, :unique => true
-    add_index :favorite_apps, [:gamer_id, :app_id], :unique => true
-    add_index :favorite_apps, :app_id
+    add_index :favorite_apps, [:gamer_id, :app_metadata_id], :unique => true
+    add_index :favorite_apps, :app_metadata_id
   end
 
   def self.down

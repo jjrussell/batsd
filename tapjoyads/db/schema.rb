@@ -294,15 +294,15 @@ ActiveRecord::Schema.define(:version => 20120223112400) do
   add_index "enable_offer_requests", ["status"], :name => "index_enable_offer_requests_on_status"
 
   create_table "favorite_apps", :id => false, :force => true do |t|
-    t.string   "id",         :limit => 36, :null => false
-    t.string   "gamer_id",   :limit => 36, :null => false
-    t.string   "app_id",     :limit => 36, :null => false
+    t.string   "id",              :limit => 36, :null => false
+    t.string   "gamer_id",        :limit => 36, :null => false
+    t.string   "app_metadata_id", :limit => 36, :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
-  add_index "favorite_apps", ["app_id"], :name => "index_favorite_apps_on_app_id"
-  add_index "favorite_apps", ["gamer_id", "app_id"], :name => "index_favorite_apps_on_gamer_id_and_app_id", :unique => true
+  add_index "favorite_apps", ["app_metadata_id"], :name => "index_favorite_apps_on_app_metadata_id"
+  add_index "favorite_apps", ["gamer_id", "app_metadata_id"], :name => "index_favorite_apps_on_gamer_id_and_app_metadata_id", :unique => true
   add_index "favorite_apps", ["id"], :name => "index_favorite_apps_on_id", :unique => true
 
   create_table "featured_contents", :id => false, :force => true do |t|
