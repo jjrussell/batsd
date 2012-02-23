@@ -46,7 +46,7 @@ class ActionOffer < ActiveRecord::Base
       :bid              => 0,
       :min_bid_override => 0,
       :rewarded         => false,
-      :name_suffix      => 'action',
+      :name_suffix      => 'tracking',
       :third_party_data => prerequisite_offer_id,
       :icon_id_override => app_id,
     })

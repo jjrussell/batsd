@@ -376,6 +376,7 @@ class App < ActiveRecord::Base
       :bid              => 0,
       :min_bid_override => 0,
       :rewarded         => false,
+      :name_suffix      => 'tracking',
       :third_party_data => store_id,
       :age_rating       => age_rating,
       :wifi_only        => wifi_required?

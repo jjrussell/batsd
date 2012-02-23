@@ -31,6 +31,7 @@ class GenericOffer < ActiveRecord::Base
       :bid              => 0,
       :min_bid_override => 0,
       :rewarded         => false,
+      :name_suffix      => 'tracking',
       :third_party_data => third_party_data,
     })
     offer.id = tracked_for.id

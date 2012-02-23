@@ -92,7 +92,7 @@ class SurveyOffer < ActiveRecord::Base
       :bid              => 0,
       :min_bid_override => 0,
       :rewarded         => false,
-      :name_suffix      => 'Survey',
+      :name_suffix      => 'tracking',
     })
     offer.id = tracked_for.id
     offer.save!
