@@ -2181,22 +2181,26 @@ TJG.utils = {
       $(".gamer_overall_rating").each(function (n,o) {
         var rating = $(this).attr("rating");
         var threshold = $(this).attr("threshold");
-        var total = $(this).attr("total");
-        var plural = total > 1 ? 's' : '';
+        var total_ratings = $(this).attr("total_ratings");
+        var total_reviews = $(this).attr("total_reviews");
+        var plural = total_reviews > 1 ? 's' : '';
         var t = [];
-        if (rating) {
-          rating = parseFloat(rating);
-        }
-        if (threshold) {
-          threshold = parseFloat(threshold) * 100;
-        }
-        if (rating > threshold) {
+
+        rating = parseFloat(rating);
+        threshold = parseFloat(threshold) * 100;
+        total_reviews = total_reviews == 0 ? '-' : total_reviews;
+
+        if (total_ratings == 0) {
           t.push('<span class="thumb_up on left"></span>');
-          t.push('<span>'+ rating +'% of ' + total + ' review' + plural + '</span>');
+          t.push('<span>- % of ',  total_reviews ,' review', plural ,'</span>');
+        }
+        else if (rating > threshold) {
+          t.push('<span class="thumb_up on left"></span>');
+          t.push('<span>', rating ,'% of ', total_reviews ,' review', plural ,'</span>');
         }
         else {
           t.push('<span class="thumb_down on left"></span>');
-          t.push('<span>'+ (100 - rating) +'% of ' + total + ' review' + plural + '</span>');
+          t.push('<span>', (100 - rating) ,'% of ', total_reviews ,' review', plural ,'</span>');
         }
         $(this).html(t.join('')).fadeIn("slow");
       });
@@ -2207,14 +2211,14 @@ TJG.utils = {
         var rating = $(this).attr("rating");
         var curId =  $(this).attr('id');
         var t = [];
-        if (rating) {
-          rating = parseInt(rating);
-        }
+
+        rating = parseInt(rating);
+
         if (rating == 1) {
-          t.push('<span class="thumb_up on left" id="' + curId + '"></span>');
+          t.push('<span class="thumb_up on left" id="', curId ,'"></span>');
         }
         else if (rating == -1) {
-          t.push('<span class="thumb_down on left" id="' + curId + '"></span>');
+          t.push('<span class="thumb_down on left" id="', curId ,'"></span>');
         }
         $(this).html(t.join('')).fadeIn("slow");
       });
@@ -2224,9 +2228,9 @@ TJG.utils = {
       $(".gamer_rating").each(function (n,o) {
         var rating = $(this).attr("rating");
         var t = [];
-        if (rating) {
-          rating = parseInt(rating);
-        }
+
+        rating = parseInt(rating);
+
         t.push('<span class="gamer_rating_label">Rating</span>');
         if (rating == 1) {
           t.push('<span class="active_thumb_up on left"></span>');
@@ -2256,7 +2260,7 @@ TJG.utils = {
        updateThumbs(cur_rating);
 
         $(this).parent().attr("rating", cur_rating);
-        $('#gamer_review_user_rating').val($(this).parent().attr("rating"));
+        $('#app_review_user_rating').val($(this).parent().attr("rating"));
       });
 
       $('.active_thumb_down').click(function() {
@@ -2272,7 +2276,7 @@ TJG.utils = {
         updateThumbs(cur_rating);
 
         $(this).parent().attr("rating", cur_rating);
-        $('#gamer_review_user_rating').val($(this).parent().attr("rating"));
+        $('#app_review_user_rating').val($(this).parent().attr("rating"));
       });
 
       function updateThumbs(cur_rating) {
