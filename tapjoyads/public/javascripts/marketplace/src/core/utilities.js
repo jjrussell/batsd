@@ -48,7 +48,35 @@
 					if(wrap.length > 0)
             wrap.empty().remove();
 				}, config.delay);
+			},
+			
+			or: function() {
+			  
 			}
+			
+      Storage: {
+        
+        set: function(k) {
+          try {
+            localStorage[k] = v;
+            return true;
+          } catch (e) {
+            return false;
+          }
+        },
+        
+        get: function(k) {
+          return localStorage[k];
+        },
+        
+        remove: function(k) {
+          localStorage.removeItem(k);
+        }
+        
+        reset: function() {
+          localStorage.clear();
+        }
+      }
     }
   });
   

@@ -306,7 +306,8 @@
       supportsTransform3d: 'WebKitCSSMatrix' in window && 'm11' in new WebKitCSSMatrix(),
       supportsAnimationEvents: (typeof window.WebKitAnimationEvent != 'undefined'),
       supportsRetina: ('devicePixelRatio' in window && window.devicePixelRatio > 1),
-      supportsHomescreen: ('standalone' in navigator)
+      supportsHomescreen: ('standalone' in navigator),
+      supportsLocalStorage: (typeof(localStorage) != 'undefined')
     });
     
     Tap.apply(Tap, {
