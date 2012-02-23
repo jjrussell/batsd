@@ -195,8 +195,7 @@ describe Offer do
   context "with a paid app item" do
     before :each do
       @app = Factory(:app)
-      @app.add_app_metadata(Factory(:app_metadata, :price => 150))
-      @app.reload.save!
+      @app.primary_app_metadata.update_attributes({:price => 150})
       @offer = @app.primary_offer
     end
 
@@ -236,8 +235,7 @@ describe Offer do
   context "with a free app item" do
     before :each do
       @app = Factory(:app)
-      @app.add_app_metadata(Factory(:app_metadata, :price => 0))
-      @app.reload.save!
+      @app.primary_app_metadata.update_attributes({:price => 0})
       @offer = @app.primary_offer
     end
 
