@@ -237,13 +237,13 @@ class ToolsController < WebsiteController
               @not_rewarded_count += 1
             end
           end
-          click_app_ids << [click.publisher_app_id, click.advertiser_app_id, click.displayer_app_id]
+          click_app_ids.push(click.publisher_app_id, click.advertiser_app_id, click.displayer_app_id)
         end
       end
 
       # find all apps at once and store in look up table
       @click_apps = {}
-      Offer.find_all_by_id(click_app_ids.flatten.uniq).each do |app|
+      Offer.find_all_by_id(click_app_ids.uniq).each do |app|
         @click_apps[app.id] = app
       end
 
@@ -254,9 +254,6 @@ class ToolsController < WebsiteController
         -click.clicked_at.to_f
       end
 
-      @has_displayer = @clicks.any? do |click|
-        click.displayer_app_id?
-      end
     elsif params[:email_address].present?
       @all_udids = SupportRequest.find_all_by_email_address(params[:email_address]).map(&:udid)
       gamer = Gamer.find_by_email(params[:email_address])

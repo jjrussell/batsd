@@ -70,13 +70,22 @@ FactoryGirl.define do
 
   factory :app_metadata do
     store_name 'App Store'
-    store_id '123'
+    store_id   { Factory.next(:name) }
+    name       { Factory.next(:name) }
+  end
+
+  factory :app_metadata_mapping do
+    app          { Factory(:app) }
+    app_metadata { Factory(:app_metadata) }
   end
 
   factory :app do
     association :partner
     name { Factory.next(:name) }
     platform 'iphone'
+    after_build do |app|
+      app.add_app_metadata(Factory(:app_metadata))
+    end
   end
 
   factory :enable_offer_request do
@@ -234,15 +243,29 @@ FactoryGirl.define do
     size        '320x50'
   end
 
+  factory :app_review do
+    app_metadata { Factory(:app_metadata) }
+    text         "A sample gamer review"
+    user_rating  1
+  end
+
+  factory :gamer_review, :parent => :app_review do
+    author { Factory(:gamer) }
+  end
+
   factory :employee do
     first_name    { Factory.next(:name) }
     last_name     { Factory.next(:name) }
-    title         { Factory.next(:name) }
     email         { Factory.next(:email) }
-    superpower    { Factory.next(:name) }
-    current_games { Factory.next(:name) }
-    weapon        { Factory.next(:name) }
-    biography     { Factory.next(:name) }
+    title         'title'
+    superpower    'superpower'
+    current_games 'current_games'
+    weapon        'weapon'
+    biography     'biography'
+  end
+
+  factory :employee_review, :parent => :app_review do
+    author { Factory(:employee) }
   end
 
   factory :featured_content do
@@ -257,5 +280,4 @@ FactoryGirl.define do
     offer         { Factory(:app).primary_offer }
     author        { Factory(:employee) }
   end
-
 end

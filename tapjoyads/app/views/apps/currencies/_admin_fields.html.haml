@@ -6,6 +6,7 @@
     #help_tapjoy_enabled.help ?
   %td
     = f.check_box :tapjoy_enabled
+    = link_to ' Publisher Form', 'https://docs.google.com/a/tapjoy.com/spreadsheet/viewform?formkey=dGZkcE9zR3FJWmxIMUtaYVRvcnZWZXc6MQ', :popup => true
     = error_message_on(@currency, :tapjoy_enabled)
 %tr.admin
   %th
