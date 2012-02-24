@@ -52,7 +52,7 @@ describe GetOffersController do
         OfferCacher.stubs(:get_unsorted_offers_prerejected).returns([ @offer1, @offer2, @offer3, @offer4 ])
       end
 
-      it "should favor the cross promoted inventory" do
+      it "favors the promoted inventory" do
         get(:index, @params)
         offer_list = assigns(:offer_list)
         assert( offer_list == [ @offer2, @offer3, @offer1, @offer4 ] || offer_list == [ @offer3, @offer2, @offer1, @offer4 ] )

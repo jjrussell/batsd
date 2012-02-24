@@ -247,7 +247,7 @@ describe Partner do
         Offer.any_instance.stubs(:can_be_promoted?).returns(true)
       end
 
-      it "should return available offers with correct platform" do
+      it "returns available offers with correct platform" do
         available_offers = @partner.offers_for_promotion
         available_offers[:wp].should == []
         available_offers[:android].should == [ @offer3 ]
