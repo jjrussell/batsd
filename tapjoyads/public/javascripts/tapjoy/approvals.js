@@ -45,7 +45,11 @@ $(function() {
             actionLinks.removeClass('disabled');
 
             if (!data.success) {
-              alert('There was an issue ' + verbing + ' the approval.');
+              if (data.message) {
+                alert(data.message);
+              } else {
+                alert('There was an issue ' + verbing + ' the approval.');
+              }
             } else {
               row.fadeOut('fast', row.remove);
             }
