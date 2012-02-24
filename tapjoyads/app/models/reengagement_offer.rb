@@ -57,18 +57,23 @@ class ReengagementOffer < ActiveRecord::Base
     disable_campaign
   end
 
-  def resolve(udid, timestamp)
-    device = Device.new(:key => udid)
-    click = Click.find("#{udid}.#{id}")
-    return false if click.nil? || click.successfully_rewarded? || !should_reward?(click, timestamp) && day_number > 0
-    click.resolve!
-    device.set_last_run_time! id
-    true
+  def self.resolve(app, currencies, params, geoip_data)
+    device = Device.new(:key => params[:udid])
+    reengagement_offers = app.reengagement_campaign_from_cache
+    reengagement_offer = reengagement_offers.detect{ |r| !device.has_app?(r.id) }
+
+    if reengagement_offer && reengagement_offer.should_show?(device, reengagement_offers)
+      device.set_last_run_time!(reengagement_offer.id)
+      reengagement_offer.reward(device, params, geoip_data)
+      return reengagement_offer
+    end
+
+    nil
   end
 
-  def should_reward?(click, timestamp)
-    # daylight-savings weirdness and leap years are not accounted for
-    (Time.at(timestamp) - Time.at(click.clicked_at.to_i)) / 1.day == 1
+  def should_show?(device, reengagement_offers)
+    return true if day_number == 0
+    (Time.zone.now - device.last_run_time(reengagement_offers[day_number - 1].id)) / 1.day == 1
   end
 
   def update_offers
@@ -82,22 +87,30 @@ class ReengagementOffer < ActiveRecord::Base
     end
   end
 
+  def reward(device, params, geoip_data)
+    return if day_number == 0
+
+    reward = Reward.new(:key => reward_key(device))
+    reward.type              = 'reengagement'
+    reward.publisher_app_id  = app_id
+    reward.currency_id       = currency_id
+    reward.publisher_user_id = params[:publisher_user_id]
+    reward.currency_reward   = reward_value
+    reward.udid              = params[:udid]
+    reward.country           = geoip_data[:primary_country]
+    reward.save
+
+    Sqs.send_message(QueueNames::SEND_CURRENCY, reward.key)
+  end
+
+  def reward_key(device)
+    "#{device.id}.#{id}"
+  end
+
   private
 
   def disable_campaign
     app.disable_reengagement_campaign!
-  end
-
-  def create_reengagement_click(udid, publisher_user_id, timestamp=Time.zone.now)
-    data = {
-      :publisher_app      =>  App.find_in_cache(app_id),
-      :udid               =>  udid,
-      :publisher_user_id  =>  publisher_user_id,
-      :source             =>  'reengagement',
-      :currency_id        =>  currency_id,
-      :viewed_at          =>  timestamp
-    }
-    Downloader.get_with_retry(primary_offer.click_url(data))
   end
 
   def create_primary_offer
@@ -121,6 +134,5 @@ class ReengagementOffer < ActiveRecord::Base
     offer.id = id
     offer.save!
   end
-
 
 end

@@ -194,19 +194,6 @@ class App < ActiveRecord::Base
     Mc.get("mysql.reengagement_offers.#{id}.#{@acts_as_cacheable_version}") || []
   end
 
-  def resolve_reengagement(udid, timestamp, publisher_user_id)
-    device = Device.new(:key => udid)
-    reengagement_offerz = reengagement_campaign_from_cache
-    reengagement_offer = reengagement_offerz.detect{ |r| !device.has_app?(r.id) }
-    if reengagement_offer && reengagement_offer.resolve
-      if reengagement_offer.day_number < reengagement_offerz.length
-        next_reengagement_offer = reengagement_offerz.detect{ |r| r.day_number == reengagement_offer.day_number + 1 }
-        create_reengagement_click(next_reengagement_offer, Time.at(timestamp), udid, publisher_user_id) if next_reengagement_offer.present?
-      end
-      reengagement_offer
-    end
-  end
-
   ##
   # Grab data from the app store and update app and metadata objects.
   def update_from_store(params)

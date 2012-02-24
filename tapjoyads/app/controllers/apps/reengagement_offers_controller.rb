@@ -78,6 +78,7 @@ class Apps::ReengagementOffersController < WebsiteController
       end
       unless @app.primary_currency && @app.primary_currency.tapjoy_enabled?
         redirect_to(app_reengagement_offers_path(@app)) and return
+      end
     end
 
     if params[:id]

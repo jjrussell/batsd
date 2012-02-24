@@ -48,9 +48,8 @@
     .footer.clearfix
       = image_tag @app.get_icon_url, :alt => "App Icon", :name => "App Icon", :height => "50", :id => "app_icon", :class => "app_icon floatl"
 
-      - if @partner.present?
-        %h5{:name => "Partner Name", :id => "partner_name", :class => "floatl"}
-          = "by #{@partner.name}"
+      %h5{:class => "floatl"}
+        = @app.name
 
       %a{:href => WEBSITE_URL}
         = image_tag "reengagement_rewards/logo-footer.png", :alt => "Tapjoy Logo", :name => "Tapjoy Logo", :height => "50", :id => "Insert Logo", :class => "floatr"

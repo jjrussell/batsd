@@ -74,9 +74,7 @@ class Click < SimpledbShardedResource
     # We only resolve clicks in the last 48 hours.
     now = Time.zone.now
     self.manually_resolved_at = now
-    if source == 'reengagement'
-      self.clicked_at = self.viewed_at
-    elsif clicked_at < now - 47.hours
+    if clicked_at < now - 47.hours
       self.clicked_at = now - 1.minute
     end
     save!
