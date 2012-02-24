@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120222003515) do
+ActiveRecord::Schema.define(:version => 20120222185954) do
 
   create_table "action_offers", :id => false, :force => true do |t|
     t.string   "id",                    :limit => 36,                    :null => false
@@ -68,6 +68,8 @@ ActiveRecord::Schema.define(:version => 20120222003515) do
     t.string   "categories"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "thumbs_up",                       :default => 0
+    t.integer  "thumbs_down",                     :default => 0
     t.integer  "papaya_user_count"
   end
 
@@ -75,17 +77,20 @@ ActiveRecord::Schema.define(:version => 20120222003515) do
   add_index "app_metadatas", ["store_name", "store_id"], :name => "index_app_metadatas_on_store_name_and_store_id", :unique => true
 
   create_table "app_reviews", :id => false, :force => true do |t|
-    t.string   "id",          :limit => 36, :null => false
-    t.string   "app_id",      :limit => 36, :null => false
-    t.string   "author_id",   :limit => 36, :null => false
-    t.string   "author_type",               :null => false
-    t.text     "text",                      :null => false
+    t.string   "id",              :limit => 36,                :null => false
+    t.string   "app_id",          :limit => 36
+    t.string   "author_id",       :limit => 36,                :null => false
+    t.string   "author_type",                                  :null => false
+    t.text     "text",                                         :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "platform"
+    t.integer  "user_rating",                   :default => 0
+    t.string   "app_metadata_id", :limit => 36,                :null => false
   end
 
   add_index "app_reviews", ["app_id", "author_id"], :name => "index_app_reviews_on_app_id_and_author_id", :unique => true
+  add_index "app_reviews", ["app_metadata_id", "author_id"], :name => "index_app_reviews_on_app_metadata_id_and_author_id", :unique => true
   add_index "app_reviews", ["id"], :name => "index_app_reviews_on_id", :unique => true
 
   create_table "apps", :id => false, :force => true do |t|
@@ -145,10 +150,9 @@ ActiveRecord::Schema.define(:version => 20120222003515) do
   add_index "conversions", ["publisher_partner_id", "created_at"], :name => "index_conversions_on_publisher_partner_id_and_created_at"
 
   create_table "creative_approval_queue", :force => true do |t|
-    t.string   "offer_id",   :limit => 36, :null => false
-    t.string   "user_id",    :limit => 36
-    t.text     "size"
-    t.datetime "created_at"
+    t.string "offer_id", :limit => 36, :null => false
+    t.string "user_id",  :limit => 36
+    t.text   "size"
   end
 
   create_table "currencies", :id => false, :force => true do |t|

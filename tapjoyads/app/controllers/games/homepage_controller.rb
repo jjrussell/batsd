@@ -23,6 +23,7 @@ class Games::HomepageController < GamesController
     @device = Device.new(:key => device_id) if device_id.present?
     @currency = Currency.find_by_id(params[:id])
     @external_publisher = ExternalPublisher.new(@currency)
+    @app_metadata_id = App.find_by_id(@external_publisher.app_id).primary_app_metadata.id
 
     respond_to do |f|
       f.html { render }

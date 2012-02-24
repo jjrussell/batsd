@@ -48,11 +48,47 @@
 					if(wrap.length > 0)
             wrap.empty().remove();
 				}, config.delay);
-			}
+			},
+			
+			or: function(v,d) {
+			  console.log(this);
+        if (this.isEmpty(v)) {
+          return d;
+        }
+        return v;
+			},
+			
+			isEmpty: function(v) {
+        return v == undefined || v == null || v == '';
+			},
+			
+      Storage: {
+        set: function(k) {
+          try {
+            localStorage[k] = v;
+            return true;
+          } catch (e) {
+            return false;
+          }
+        },
+      
+        get: function(k) {
+          return localStorage[k];
+        },
+      
+        remove: function(k) {
+          localStorage.removeItem(k);
+        },
+      
+        reset: function() {
+          localStorage.clear();
+        }
+      }
     }
   });
   
   Tap.log = Tap.alias(Tap.Utils, 'log');
+  Tap.ls = Tap.alias(Tap.Utils.Storage, 'ls');
 
   $.fn.extend({
     preventHighlight: function(){

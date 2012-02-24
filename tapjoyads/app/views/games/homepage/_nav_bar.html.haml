@@ -36,9 +36,10 @@
                 = t('text.games.on_my', :device_name => current_device_info.name)
                 %a.device-change
                   (#{t('text.games.change')})
-            .device-select.closed
+          .device-select.closed
+            .device-select-wrapper
               Select Device
-            .device-form.hide
+          .device-form.hide
           .menu-nav
             .menu-nav-wrapper
               - link_to(games_root_path) do

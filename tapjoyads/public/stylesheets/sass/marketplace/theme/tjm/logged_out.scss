@@ -41,11 +41,11 @@ ul.flush li {
     color: #fff;
     min-height: 36px;
   }
-  
+
   #login-web:hover {
     box-shadow: inset 0 6px 20px 0px rgba(0, 0, 0, 0.2);
   }
-  
+
   #login-web-wrapper {
     background: transparent url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyJpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNSBNYWNpbnRvc2giIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6RURCREU5NjU1NDYyMTFFMTg3OUNBQzhGMzg0MTAyQTIiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6RURCREU5NjY1NDYyMTFFMTg3OUNBQzhGMzg0MTAyQTIiPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDpFREJERTk2MzU0NjIxMUUxODc5Q0FDOEYzODQxMDJBMiIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDpFREJERTk2NDU0NjIxMUUxODc5Q0FDOEYzODQxMDJBMiIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/Pm4VyCgAAADbSURBVHjaYmBgYGB8+fKl86dPny6AaBCfAQtggipkB9L6nJyce96+fbvw7t27ylgVfvnyheX///8MIMzCwhIrLCx89vXr183Xr18XQlbI8O/fPxQM1MAP1FAjJiZ2/tmzZykgw8AKYaahY0ZGRjkODo7Zr169OsiCbCIuAHTac7iJ6NaD8IcPH85s3bo1TklJKZ8F2WoY+PXr17OrV69O9fDwWArkfgVhDKvv3bs3va2tbTbQpGcgW4H4JxD/Bckx79+/3/fGjRu7i4qKHIF8KSDmA2I25MAHCDAALjSZVEMQW8cAAAAASUVORK5CYII=) no-repeat 0 0;
     background-position: right 18px;
@@ -104,6 +104,17 @@ h4.museo{
 
 span.gill {
   font: 100 24px 'Gill Sans', 'Gill Sans MT', Arial , sans-serif;
+}
+
+#login-form {
+  background-color: #000000;
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  z-index: 999;
+  @include animate;
 }
 
 #content {
@@ -630,6 +641,9 @@ span.gill {
           }
       }
     }
+    #login-form .headerwrap {
+
+    }
   }
 
   h4.museo{
@@ -739,10 +753,11 @@ span.gill {
   text-align: center;
   padding: 5px 27px 7px;
   margin: 10px;
- -webkit-text-stroke-width: 1px;
+  -webkit-text-stroke-width: 1px;
   border-radius: 4px;
   box-shadow: 0 1px 1px rgba(0,0,0, .4);
   cursor: pointer;
+  white-space:nowrap;
 }
 
 #login {

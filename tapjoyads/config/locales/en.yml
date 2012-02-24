@@ -228,6 +228,7 @@ en:
       cant_fetch_offers: "There was an issue fetching more offers. Please try again."
       change: "change"
       change_linked_account: "Change Linked Account"
+      collect: Collect
       collect_rewards: "Collect rewards"
       connect_my_device: "Connect My Device"
       connect_your_android: "Please connect your Android device"
@@ -277,6 +278,7 @@ en:
         other: "Tapjoy invites have been sent to %{name}"
       issue_registering: "There was an issue registering your account"
       link_my_facebook: "Link My Facebook"
+      loading: Loading...
       load_more: "Load More"
       member_since: "Member since %{date}"
       meta_description: "Tapjoy: The destination for mobile apps and games on Android, iPhone and iPad."
@@ -374,6 +376,7 @@ en:
       month: Month
       my_account: "My Account"
       my_profile: "My Profile"
+      my_reviews: "My Reviews"
       name: Name
       new_password: "New Password"
       nickname: Nickname
@@ -393,10 +396,13 @@ en:
       sign_in: "Sign In"
       sign_up: "Sign Up"
       submit: Submit
+      submit_review: "Submit Review"
       success: Success!
       title_noun: Title
       try_again: "Try Again"
+      update_review: Update Review
       updating: Updating
+      write_review: Write Review
       year: Year
       zip_postal: "Zip/Postal Code"
     support:

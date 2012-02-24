@@ -190,13 +190,13 @@ $mobile-scaledown-multiplier: 2;
 }
 
 @mixin museo {
-  @font-face {
+@font-face {
     font-family: 'Museo Slab';
-    src: url('fonts/museo_slab_500-webfont.eot');
-    src: url('fonts/museo_slab_500-webfont.eot?#iefix') format('embedded-opentype'),
-         url('fonts/museo_slab_500-webfont.woff') format('woff'),
-         url('fonts/museo_slab_500-webfont.ttf') format('truetype'),
-         url('fonts/museo_slab_500-webfont.svg#Museo Slab') format('svg');
+    src: url('/fonts/marketplace/museo_slab_500-webfont.eot');
+    src: url('/fonts/marketplace/museo_slab_500-webfont.eot?#iefix') format('embedded-opentype'),
+         url('/fonts/marketplace/museo_slab_500-webfont.woff') format('woff'),
+         url('/fonts/marketplace/museo_slab_500-webfont.ttf') format('truetype'),
+         url('/fonts/marketplace/museo_slab_500-webfont.svg#MuseoSlab500') format('svg');
     font-weight: normal;
     font-style: normal;
   }
