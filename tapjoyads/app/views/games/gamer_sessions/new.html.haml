@@ -1,32 +1,5 @@
 // Modals
 
-.login.modal.hide
-  .form_fields
-    - form_for([ :games, @gamer_session ], :url => games_login_path) do |f|
-      - if params[:data].present?
-        = hidden_field_tag :data, params[:data]
-      - if params[:path].present?
-        = hidden_field_tag :path, params[:path]
-      %ul.row.inputs
-        %ul.group.inputs
-          %li.field.sign_in
-            = t("text.shared.sign_in")
-          %li.field.email
-            = f.email_field :email, "autocorrect" => "off", "autocapitalize" => "off", :placeholder => t("text.shared.email"), :required => ""
-          %li.field.password
-            %label{ :for => "password", :class => "hidden" }
-              Password
-            = f.password_field :password, :placeholder => t("text.shared.password"), :required => ""
-        %ul.group
-          %li.field.login_btn
-            = f.submit t("text.shared.login_verb"), :class => ''
-      %ul.row
-        %li.field.forgot_pass
-          = link_to(t("text.games.forgot_pass"), new_games_password_reset_path)
-        %li.field.login_error
-          = error_message_on @gamer_session, :email, :prepend_text => "Email "
-          = error_message_on @gamer_session, :password, :prepend_text => "Password "
-
 .sign_up.modal.hide
   .sign_up_content.clearfix
     .register_form
@@ -69,6 +42,40 @@
           = error_message_on @gamer, :terms_of_service
     .register_progess
 
+
+#login-form.login.hide
+  .header
+    .headerwrap
+      .wrap
+        .container
+          .nav
+            .logo
+  .form-fields
+    - form_for([ :games, @gamer_session ], :url => games_login_path) do |f|
+      - if params[:data].present?
+        = hidden_field_tag :data, params[:data]
+      - if params[:path].present?
+        = hidden_field_tag :path, params[:path]
+      %ul.row.inputs
+        %ul.group.inputs
+          %li.field.sign_in
+            = t("text.shared.sign_in")
+          %li.field.email
+            = f.email_field :email, "autocorrect" => "off", "autocapitalize" => "off", :placeholder => t("text.shared.email"), :required => ""
+          %li.field.password
+            %label{ :for => "password", :class => "hidden" }
+              Password
+            = f.password_field :password, :placeholder => t("text.shared.password"), :required => ""
+        %ul.group
+          %li.field.login_btn
+            = f.submit t("text.shared.login_verb"), :class => ''
+      %ul.row
+        %li.field.forgot_pass
+          = link_to(t("text.games.forgot_pass"), new_games_password_reset_path)
+        %li.field.login_error
+          = error_message_on @gamer_session, :email, :prepend_text => "Email "
+          = error_message_on @gamer_session, :password, :prepend_text => "Password "
+
 #content
   #wrapper
     %h4.museo.center
@@ -84,7 +91,7 @@
         %img{ :src => BLANK_IMAGE }
     #labels
       %span= t('text.games.collect_rewards')
-      %span= t('text.games.find_new_apps')      
+      %span= t('text.games.find_new_apps')
       %span= t('text.games.share_with_everyone')
     .gradient-backdrop
 

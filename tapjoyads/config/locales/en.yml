@@ -228,6 +228,7 @@ en:
       cant_fetch_offers: "There was an issue fetching more offers. Please try again."
       change: "change"
       change_linked_account: "Change Linked Account"
+      collect: Collect
       collect_rewards: "Collect rewards"
       connect_my_device: "Connect My Device"
       connect_your_android: "Please connect your Android device"
