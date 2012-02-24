@@ -1,7 +1,6 @@
 module ToolsHelper
   def click_info_ul(click, reward)
     concat("<ul class='nobr hidden'>")
-    concat_li("Click ID", "<input type='text' value='#{click.key}'/>")
     concat_li_timestamp("Viewed at", click.viewed_at)
     concat_li_timestamp("Clicked at", click.clicked_at)
     concat_li_timestamp("Installed at", click.installed_at)
