@@ -10,7 +10,7 @@ class Games::AppReviewsController < GamesController
       @app_metadata = AppMetadata.find_by_id(params[:app_metadata_id])
       @app          = @app_metadata.apps.first
       @app_review   = current_gamer.review_for(@app_metadata.id) || @app_metadata.app_reviews.build
-      @app_reviews  = AppReview.by_gamers.paginate_all_by_app_metadata_id(@app_metadata.id, :page => params[:app_reviews_page])
+      @app_reviews  = @app_metadata.app_reviews.by_gamers.paginate(:page => params[:app_reviews_page])
       render :new and return
     else
       @gamer = current_gamer
