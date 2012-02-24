@@ -4,6 +4,8 @@ class LinksharePoller
 
   TAPJOY_SECRET_KEY         = "d2ad5373a754a1b6a80b925f9793ebe258a42f033a1a14807169d0753843e7c8"
 
+  BASE_URL                  = "https://reportws.linksynergy.com/downloadreport.php?"
+
   ERROR_COULD_NOT_CONNECT   = "Error reaching Linkshare API server."
   NO_RESULTS_FOUND          = "Query yielded no results."
   DOWNLOAD_SUCCESS          = "Successfully downloaded results from Linkshare."
@@ -30,7 +32,6 @@ class LinksharePoller
       :nid      => 1,
       :reportid => 11,
     }
-
     data = self.download_data(options)
     return if data.blank?
     Rails.logger.info DOWNLOAD_SUCCESS
@@ -54,12 +55,7 @@ class LinksharePoller
 
   def self.download_data(options)
     begin
-      url = "https://reportws.linksynergy.com/downloadreport.php?"
-      options.to_a.each do |keyval_pair|
-        url << "#{keyval_pair.join('=')}&"
-      end
-      url.chop!
-      puts "Final URL: #{url}"
+      url = BASE_URL + options.to_query
       raw_data = Downloader.get(url, {:timeout => 10}).chomp
       data = raw_data.split("\n")
       data.slice!(0)
