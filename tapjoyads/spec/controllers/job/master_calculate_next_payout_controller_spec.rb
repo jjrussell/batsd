@@ -25,7 +25,7 @@ describe Job::MasterCalculateNextPayoutController do
         end
 
         it 'will unflag the partner' do
-          @partner.confirmed_for_payout.should_not be_true
+          @partner.confirmed_for_payout.should be_false
         end
 
         it 'will have a system note' do
@@ -65,7 +65,7 @@ describe Job::MasterCalculateNextPayoutController do
         end
 
         it 'will not be confirmed' do
-          @partner.confirmed_for_payout.should_not be_true
+          @partner.confirmed_for_payout.should be_false
         end
 
         it 'will not have the system message' do

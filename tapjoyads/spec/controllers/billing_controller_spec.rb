@@ -52,7 +52,7 @@ describe BillingController do
 
     context 'when payouts are already confirmed for the partner' do
       it 'unconfirms payouts' do
-        @partner.confirmed_for_payout.should_not be_true
+        @partner.confirmed_for_payout.should be_false
       end
 
       it 'adds a system not that the payout info changed' do

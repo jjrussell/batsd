@@ -44,12 +44,10 @@ describe PartnersController do
 
   end
 
-  context "when manually unconfirming a partner" do
+  describe '#set_unconfirmed_for_payout' do
     before :each do
       @user = Factory(:admin)
-      @partner = Factory(:partner, :pending_earnings => 10000, :balance => 10000, :users => [@user])
-      Factory(:app, :partner => @partner)
-      Factory(:app, :partner => @partner)
+      @partner = Factory(:partner, :users => [@user])
       @partner.confirmed_for_payout = true
       @partner.save
       login_as(@user)
@@ -57,16 +55,18 @@ describe PartnersController do
       @partner.reload
     end
 
-    it "will redirect" do
-      response.should be_redirect
-    end
+    context "when partner is not confirmed" do
+      it "redirects to partner page" do
+        response.should redirect_to(partner_path)
+      end
 
-    it "will unconfirm the partner" do
-      @partner.confirmed_for_payout.should_not be_true
-    end
+      it "will unconfirm the partner" do
+        @partner.confirmed_for_payout.should be_false
+      end
 
-    it "will add the given reason" do
-      @partner.payout_confirmation_notes.should == "Test"
+      it "will add the given reason" do
+        @partner.payout_confirmation_notes.should == "Test"
+      end
     end
   end
 
@@ -80,7 +80,7 @@ describe PartnersController do
     end
 
     it "clears the last_shown_app session" do
-      session[:last_shown_app].should == nil
+      session[:last_shown_app].should be_nil
     end
 
     it "changes the current_partner" do
