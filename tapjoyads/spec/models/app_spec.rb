@@ -26,9 +26,6 @@ describe App do
   context 'An App' do
     before :each do
       @app = Factory(:app)
-      @app.app_metadatas << Factory(:app_metadata, :price => 200)
-      @app.save!
-      @app.reload
     end
 
     it "updates its offers' bids when its price changes" do
@@ -66,8 +63,6 @@ describe App do
     context 'with currency that has special callback' do
       it 'returns false' do
         special_url = Currency::SPECIAL_CALLBACK_URLS.sample
-        Factory(:currency, :app_id => @app.id, :callback_url => 'http://foo.com')
-        Factory(:currency, :app_id => @app.id, :callback_url => 'http://bar.com')
         Factory(:currency, :app_id => @app.id, :callback_url => special_url)
         @app.should_not be_can_have_new_currency
       end
@@ -110,8 +105,6 @@ describe App do
     before :each do
       @action_offer = Factory(:action_offer)
       @app = @action_offer.app
-      @app_metadata = Factory(:app_metadata, :price => 200)
-      @app.app_metadatas << @app_metadata
     end
 
     it 'updates action offer hidden field' do
@@ -122,7 +115,7 @@ describe App do
     end
 
     it "updates action offer bids when its price changes" do
-      @app_metadata.update_attributes({:price => 400})
+      @app.primary_app_metadata.update_attributes({:price => 400})
       @action_offer.reload
       @action_offer.primary_offer.bid.should equal(200)
       @action_offer.primary_offer.price.should equal(400)
@@ -132,7 +125,7 @@ describe App do
       @action_offer.prerequisite_offer = @app.primary_offer
       @action_offer.save
       offer = @action_offer.primary_offer
-      @app_metadata.update_attributes({:price => 400})
+      @app.primary_app_metadata.update_attributes({:price => 400})
       offer.reload
       offer.bid.should equal(10)
     end
