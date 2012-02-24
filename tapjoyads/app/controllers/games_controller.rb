@@ -156,9 +156,9 @@ class GamesController < ApplicationController
     else
       device_id_cookie = current_device_id_cookie
       @current_device_id = device_id_cookie if device_id_cookie.present? && valid_device_id(device_id_cookie)
-      @current_device_id ||= current_gamer.devices.first.device_id if current_gamer.devices.present?
+      @current_device_id ||= current_gamer.devices.first.device_id if current_gamer && current_gamer.devices.present?
+      session[:current_device_id] = ObjectEncryptor.encrypt(@current_device_id) if @current_device_id.present?
     end
-    session[:current_device_id] ||= ObjectEncryptor.encrypt(@current_device_id)
     @current_device_id
   end
 
@@ -195,7 +195,7 @@ class GamesController < ApplicationController
 
   def setup_tjm_request
     now = Time.zone.now
-    if tjm_session_expired?
+    if tjm_session_expired?(now)
       session[:tjms_stime] = now.to_i
       session[:tjms_id]    = UUIDTools::UUID.random_create.hexdigest
     end
@@ -219,7 +219,7 @@ class GamesController < ApplicationController
     @tjm_request.save
   end
 
-  def tjm_session_expired?
+  def tjm_session_expired?(now = Time.zone.now)
     session[:tjms_id].blank?    ||
     session[:tjms_stime].blank? ||
     session[:tjms_ltime].blank? ||
