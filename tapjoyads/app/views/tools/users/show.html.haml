@@ -117,7 +117,7 @@
         %th.action &nbsp;
         %th Name
     %tbody
-      - @new_assignments.sort_by{|ra| ra.user_role.name}.each do |assignment|
+      - @new_assignments.each do |assignment|
         %tr
           %td
             - if assignment.user_role.name == 'admin'
