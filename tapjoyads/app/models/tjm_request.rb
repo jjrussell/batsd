@@ -1,5 +1,14 @@
 class TjmRequest < SyslogMessage
 
+  PATH_MAP = {
+    'password_resets' => {
+      'new'    => 'tjm_forgot_password',
+      'create' => 'tjm_send_password_reset',
+      'edit'   => 'tjm_change_password',
+      'update' => 'tjm_password_changed',
+    },
+  }
+
   self.define_attr :session_id
   self.define_attr :session_start_time, :type => :time
   self.define_attr :session_last_active_time, :type => :time
@@ -30,8 +39,15 @@ class TjmRequest < SyslogMessage
     self.controller               = params[:controller]
     self.action                   = params[:action]
     self.referrer                 = params[:referrer]
+    self.path                     = lookup_path
     self.gamer_id                 = gamer.id if gamer.present?
     self.device_id                = device_id if device_id.present?
+  end
+
+  private
+
+  def lookup_path
+    PATH_MAP.include?(controller) && PATH_MAP[controller].include?(action) ? PATH_MAP[controller][action] : 'tjm_unknown'
   end
 
 end
