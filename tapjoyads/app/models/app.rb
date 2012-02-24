@@ -79,7 +79,6 @@ class App < ActiveRecord::Base
   has_one :primary_non_rewarded_offer, :class_name => 'Offer', :as => :item, :conditions => "NOT rewarded AND NOT featured", :order => "created_at"
   has_many :app_metadata_mappings
   has_many :app_metadatas, :through => :app_metadata_mappings
-  has_many :app_reviews
   has_many :promoted_offers, :dependent => :destroy
   has_one :primary_app_metadata,
     :through => :app_metadata_mappings,
