@@ -24,6 +24,8 @@ class User < ActiveRecord::Base
   attr_accessor :terms_of_service
   validates_acceptance_of :terms_of_service, :on => :create
   validates_presence_of :reseller, :if => Proc.new { |user| user.reseller_id? }
+  validates_presence_of :country, :on => :create,
+    :message => 'Please select a country'
 
   before_create :regenerate_api_key
   after_create :create_mail_chimp_entry
