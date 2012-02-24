@@ -137,7 +137,7 @@ describe Tools::AppReviewsController do
         flash[:notice].should == 'App review was successfully updated.'
       end
 
-      it "redirects to tools/aoo_reviews/index?app_metadataz-id=" do
+      it "redirects to tools/app_reviews/index?app_metadata_id=" do
         response.should redirect_to(tools_app_reviews_path(:app_metadata_id => @gamer_review.app_metadata_id))
       end
 
