@@ -1,6 +1,3 @@
-tmp/
-.gitignore
-tapjoyads/.gitignore
 .DS_Store
 .swp
 .idea
