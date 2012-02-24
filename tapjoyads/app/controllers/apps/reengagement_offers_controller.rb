@@ -10,11 +10,9 @@ class Apps::ReengagementOffersController < WebsiteController
   end
 
   def index
-    @reengagement_offers = @app.reengagement_campaign
-    if @reengagement_offers.blank?
-      redirect_to(new_app_reengagement_offer_path(@app))
-    else
-      @reengagement_offer = @reengagement_offers.first
+    if @app.primary_currency && @app.primary_currency.tapjoy_enabled?
+      @campaign = @app.reengagement_campaign
+      redirect_to(new_app_reengagement_offer_path(@app)) if @campaign.empty?
     end
   end
 
@@ -24,7 +22,8 @@ class Apps::ReengagementOffersController < WebsiteController
       flash[:info] = "Re-engagement campaigns cannot currently be longer than 5 days."
       redirect_to(app_reengagement_offers_path(@app))
     elsif campaign_length == 0
-      @app.build_reengagement_offer( :reward_value => 0 )
+      offer = @app.build_reengagement_offer( :reward_value => 0 )
+      offer.save
   end
     @reengagement_offer = @app.build_reengagement_offer
   end
@@ -77,6 +76,8 @@ class Apps::ReengagementOffersController < WebsiteController
       else
         @app = current_partner.apps.find(params[:app_id])
       end
+      unless @app.primary_currency && @app.primary_currency.tapjoy_enabled?
+        redirect_to(app_reengagement_offers_path(@app)) and return
     end
 
     if params[:id]

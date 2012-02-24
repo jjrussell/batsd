@@ -321,6 +321,18 @@ describe App do
     end
   end
 
+  describe '#build_reengagement_offer' do
+    before :each do
+      @app = Factory(:app)
+    end
+
+    it 'builds a new reengagement offer' do
+      reengagement_offers = @app.reengagement_campaign
+      new_reengagement_offer = @app.build_reengagement_offer
+      reengagement_offers.should_not be_include(new_reengagement_offer) and @app.reengagement_campaign.should be_include(new_reengagement_offer)
+    end
+  end
+
   describe '#reengagement_campaign_from_cache' do
     context 'without any reengagement offers' do
       before :each do
