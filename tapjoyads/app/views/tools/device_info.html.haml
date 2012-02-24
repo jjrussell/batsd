@@ -129,6 +129,7 @@
         %td Pub.
         %td Resolve
         %td Details
+        %td Click ID
     %tbody
       - @clicks.each do |click|
         - reward = @rewards[click.reward_key]
@@ -158,6 +159,8 @@
           %td.small
             = link_to('show', '#', :class => 'show-click-detail')
             - click_info_ul(click, reward)
+          %td
+            = clippy(click.key)
       %tr
         %td{:colspan => 7}
           - text = "Show #{Time.zone.at(@cut_off_date - 2.month).to_s(:pub)} - #{Time.zone.at(@cut_off_date - 1.month).to_s(:pub)}"
