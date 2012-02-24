@@ -19,6 +19,9 @@ $(function($){
     if ($('select#app_platform').val() == 'iphone') {
       $('#search_button').val('Search App Store');
       $('span#app_store_name').text('App Store.')
+    } else if ($('select#app_platform').val() == 'android') {
+      $('#search_button').val('Search Market');
+      $('span#app_store_name').text('Market.')
     } else {
       $('#search_button').val('Search Marketplace');
       $('span#app_store_name').text('Marketplace.')
@@ -98,8 +101,10 @@ $(function($){
     offset.left += 1;
     $('#search_results').css({ left: offset.left, top: offset.top, width: width });
 
-    var term = $('input#app_name').val();
-    if (term != "") {
+    var term = $('input#app_name').val().replace(/^ *| *$/g, '');
+    if (term == "") {
+      $('#search_results').hide();
+    } else {
       var platform = $('#app_platform').val();
       var country = $('#app_country').val() || "us";
       $.ajax({

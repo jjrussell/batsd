@@ -26,6 +26,12 @@ class Recommender  #Interface for all recommenders.
       return false if recommender_type.nil?
       ACTIVE_RECOMMENDERS.keys.member?(recommender_type.to_sym)
     end
+
+    def cache_all_active_recommenders
+      ACTIVE_RECOMMENDERS.keys.each do |recommender|
+        Recommender.instance(recommender).cache_all
+      end
+    end
   end
 
   # RECOMMENDER INTERFACE
