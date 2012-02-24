@@ -15,6 +15,7 @@ filetypes = %w(
   rhtml
   rxml
   scss
+  js
   txt
   xml
   yaml
@@ -28,6 +29,7 @@ paths = %w(
   lib
   public
   test
+  spec
 )
 
 filetype_regexp = /\.(#{filetypes.join('|')})$/

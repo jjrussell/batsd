@@ -103,11 +103,12 @@ ActionController::Routing::Routes.draw do |map|
     tools.resources :jobs, :except => [ :show ]
     tools.resources :earnings_adjustments, :only => [ :new, :create ]
     tools.resources :editors_picks, :except => [ :destroy ], :member => { :activate => :post, :expire => :post }
-    tools.resources :app_reviews, :except => [ :show ], :member => { :update_featured => :put }
+    tools.resources :app_reviews, :except => [ :show ]
     tools.resources :featured_contents, :except => [ :show ]
     tools.resources :agency_users, :only => [ :index, :show ]
     tools.resources :support_requests, :only => [ :index ], :collection => { :mass_resolve => [ :get, :post ] }
     tools.resources :press_releases, :only => [ :index, :new, :create, :edit, :update ]
+    tools.resources :recommenders, :only => [:index, :create]
     tools.resources :gamers, :only => [ :index, :show ]
     tools.resources :gamer_devices, :only => [ :create, :edit, :new, :show, :update ]
     tools.resources :network_costs, :only => [ :index, :new, :create ]

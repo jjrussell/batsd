@@ -44,18 +44,10 @@ class Click < SimpledbShardedResource
   self.sdb_attr :publisher_reseller_id
   self.sdb_attr :advertiser_reseller_id
 
-  def initialize(options = {})
-    super({ :load_from_memcache => false }.merge(options))
-  end
-
   def dynamic_domain_name
     domain_number = @key.matz_silly_hash % NUM_CLICK_DOMAINS
 
     "clicks_#{domain_number}"
-  end
-
-  def serial_save(options = {})
-    super({ :write_to_memcache => false }.merge(options))
   end
 
   def rewardable?

@@ -7,11 +7,12 @@ class VideosController < ApplicationController
     @offer_list = offer_list.get_offers(0, 100).first
 
     if @currency.get_test_device_ids.include?(params[:udid])
-      @offer_list.insert(0, build_test_video_offer(@publisher_app).primary_offer)
+      @offer_list.unshift(@publisher_app.test_video_offer.primary_offer)
     end
   end
 
   def complete
+    return unless verify_params([ :id, :offer_id ])
     @video_offer = VideoOffer.find_in_cache(params[:id])
     @offer = Offer.find_in_cache(params[:offer_id])
     return unless verify_records([ @video_offer, @offer ])
@@ -36,7 +37,7 @@ class VideosController < ApplicationController
       :publisher_app       => @publisher_app,
       :currency            => @currency,
       :device_type         => params[:device_type],
-      :geoip_data          => get_geoip_data,
+      :geoip_data          => geoip_data,
       :os_version          => params[:os_version],
       :type                => Offer::VIDEO_OFFER_TYPE,
       :library_version     => params[:library_version],

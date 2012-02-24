@@ -9,7 +9,7 @@ describe Tools::GenericOffersController do
 
   context "with a non-logged in user" do
     it "redirects to login page" do
-      get :index
+      get(:index)
       response.should redirect_to(login_path(:goto => tools_generic_offers_path))
     end
   end
@@ -23,7 +23,7 @@ describe Tools::GenericOffersController do
 
     context "accessing generic offers index" do
       it "redirects to dashboard" do
-        get :index
+        get(:index)
         response.should redirect_to(dashboard_root_path)
       end
     end
@@ -39,12 +39,12 @@ describe Tools::GenericOffersController do
 
     context "accessing generic offers index" do
       it "renders appropriate page" do
-        get :index
+        get(:index)
         response.should render_template "tools/generic_offers/index"
       end
 
       it "displays generic offers" do
-        get :index
+        get(:index)
         assigns(:generic_offers).should include @generic_offer
         response.should have_tag('table#generic_offers_table') do |element|
           element.should have_tag('td', @generic_offer.name)
@@ -54,7 +54,7 @@ describe Tools::GenericOffersController do
 
     # Test that we can update a generic offer's category
     it "updates generic offer category" do
-      post :update, :id => @generic_offer.id, :generic_offer => { :category => GenericOffer::CATEGORIES.first }
+      post(:update, :id => @generic_offer.id, :generic_offer => { :category => GenericOffer::CATEGORIES.first })
       @generic_offer.reload
       GenericOffer::CATEGORIES.first.should == @generic_offer.category
     end

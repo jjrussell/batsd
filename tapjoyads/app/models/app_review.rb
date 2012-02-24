@@ -2,45 +2,60 @@ class AppReview < ActiveRecord::Base
   include UuidPrimaryKey
 
   belongs_to :author, :polymorphic => true
-  belongs_to :app
+  belongs_to :app_metadata
 
-  before_save :copy_platform
+  after_save :update_app_metadata_rating_counts
+  before_destroy :reset_app_metadata_rating_counts
 
-  validates_uniqueness_of :featured_on, :scope => :platform, :allow_nil => true
-  validates_uniqueness_of :author_id, :scope => :app_id, :message => "has already reviewed this app"
-  validates_presence_of :author, :app, :text
+  validates_uniqueness_of :author_id, :scope => :app_metadata_id, :if => :app_metadata, :message => "has already reviewed this app"
+  validates_presence_of :author, :app_metadata, :text
+  validates_inclusion_of :user_rating, :in => [-1, 0, 1]
 
   named_scope :by_employees, :conditions => { :author_type => 'Employee' }
-  named_scope :ordered_by_date, :order => "featured_on DESC"
-  named_scope :not_featured, :conditions => { :featured_on => nil }, :limit => 1, :order => "created_at DESC"
-  named_scope :featured_before,  lambda { |date| { :conditions => [ "featured_on < ?", date.to_date ], :order => "featured_on ASC", :limit => 1 } }
-  named_scope :featured_on, lambda { |date| { :conditions => [ "featured_on = ?", date.to_date ] } }
-  named_scope :for_platform, lambda { |platform| { :conditions => [ "platform = ?", platform ] } }
+  named_scope :by_gamers, :conditions => { :author_type => 'Gamer' }
+  named_scope :ordered_by_date, :order => "created_at DESC"
 
-  delegate :name, :id, :to => :app, :prefix => true
-  delegate :full_name, :to => :author, :prefix => true
+  delegate :name, :to => :app_metadata, :prefix => true
 
-  def self.featured_review(platform)
-    platform = 'iphone' unless %w(android iphone).include?(platform)
-    Mc.get_and_put("featured_app_review.#{platform}", false, 1.hour) do
-      now = Time.now.utc
-      review =  AppReview.featured_on(now).for_platform(platform).first ||
-                AppReview.by_employees.not_featured.for_platform(platform).first ||
-                AppReview.featured_before(now).for_platform(platform).first
+  cattr_reader :per_page
+  @@per_page = 10
 
-      if review.nil?
-        raise AppReviewEmptyError.new("Platform #{platform}, Time #{now}")
-      else
-        review.featured_on = now
-        review.save
-        review
-      end
+  def user_rating=(new_rating)
+    @prev_rating = user_rating || 0
+    super(new_rating)
+  end
+
+  def author_name
+    case author_type
+    when 'Gamer'
+      author.get_gamer_name
+    when 'Employee'
+      author.full_name
     end
   end
 
-private
+  private
 
-  def copy_platform
-    self.platform = app.platform
+  def update_app_metadata_rating_counts
+    return if @prev_rating.nil? || user_rating == @prev_rating
+
+    if user_rating > 0
+      app_metadata.increment!(:thumbs_up)
+      app_metadata.decrement!(:thumbs_down) if @prev_rating < 0
+    elsif user_rating < 0
+      app_metadata.increment!(:thumbs_down)
+      app_metadata.decrement!(:thumbs_up) if @prev_rating > 0
+    else
+      app_metadata.decrement!(:thumbs_down) if @prev_rating < 0
+      app_metadata.decrement!(:thumbs_up) if @prev_rating > 0
+    end
+  end
+
+  def reset_app_metadata_rating_counts
+    if user_rating > 0
+      app_metadata.decrement!(:thumbs_up)
+    elsif user_rating < 0
+      app_metadata.decrement!(:thumbs_down)
+    end
   end
 end

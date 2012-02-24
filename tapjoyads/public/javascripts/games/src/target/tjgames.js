@@ -1151,7 +1151,7 @@ TJG.utils = {
       TJG.appOfferWall[appId]['jsonp_url'] = url;
       var boldText = TJG.utils.sprintfTemplate("<span class='bold'>%s</span>"),
         title = _t("games.earn_title", {
-          currency: boldText(currencyName),
+          currency: boldText(currencyName), 
           app_name: boldText(appName)
         });
       $("#app_title").html(title).show();
@@ -1654,7 +1654,7 @@ TJG.utils = {
           '</div><div class="bookmark"><span>'+
             _t("games.tap_that", {
               // teardown/setup spans - important for layout
-              icon:'</span><span class="bookmark_icon"></span><span>',
+              icon:'</span><span class="bookmark_icon"></span><span>', 
               button:'</span><span class="bookmark_btn"></span><span>'
             })+
           '</span></div>',
@@ -2175,8 +2175,125 @@ TJG.utils = {
         }
         $(this).html(t.join('')).fadeIn("slow");
       });
-    }
+    },
 
+    loadSummaryGamerRating : function() {
+      $(".gamer_overall_rating").each(function (n,o) {
+        var rating = $(this).attr("rating");
+        var threshold = $(this).attr("threshold");
+        var total_ratings = $(this).attr("total_ratings");
+        var total_reviews = $(this).attr("total_reviews");
+        var plural = total_reviews > 1 ? 's' : '';
+        var t = [];
+
+        rating = parseFloat(rating);
+        threshold = parseFloat(threshold) * 100;
+        total_reviews = total_reviews == 0 ? '-' : total_reviews;
+
+        if (total_ratings == 0) {
+          t.push('<span class="thumb_up on left"></span>');
+          t.push('<span>- % of ',  total_reviews ,' review', plural ,'</span>');
+        }
+        else if (rating > threshold) {
+          t.push('<span class="thumb_up on left"></span>');
+          t.push('<span>', rating ,'% of ', total_reviews ,' review', plural ,'</span>');
+        }
+        else {
+          t.push('<span class="thumb_down on left"></span>');
+          t.push('<span>', (100 - rating) ,'% of ', total_reviews ,' review', plural ,'</span>');
+        }
+        $(this).html(t.join('')).fadeIn("slow");
+      });
+    },
+
+    loadExistGamerRating : function() {
+      $('.others_review_rating').each(function() {
+        var rating = $(this).attr("rating");
+        var curId =  $(this).attr('id');
+        var t = [];
+
+        rating = parseInt(rating);
+
+        if (rating == 1) {
+          t.push('<span class="thumb_up on left" id="', curId ,'"></span>');
+        }
+        else if (rating == -1) {
+          t.push('<span class="thumb_down on left" id="', curId ,'"></span>');
+        }
+        $(this).html(t.join('')).fadeIn("slow");
+      });
+    },
+
+    loadActiveGamerRating : function() {
+      $(".gamer_rating").each(function (n,o) {
+        var rating = $(this).attr("rating");
+        var t = [];
+
+        rating = parseInt(rating);
+
+        t.push('<span class="gamer_rating_label">Rating</span>');
+        if (rating == 1) {
+          t.push('<span class="active_thumb_up on left"></span>');
+          t.push('<span class="active_thumb_down off left"></span>');
+        }
+        else if (rating == -1) {
+          t.push('<span class="active_thumb_up off left"></span>');
+          t.push('<span class="active_thumb_down on left"></span>');
+        }
+        else {
+          t.push('<span class="active_thumb_up off left"></span>');
+          t.push('<span class="active_thumb_down off left"></span>');
+        }
+        $(this).html(t.join('')).fadeIn("slow");
+      });
+
+      $('.active_thumb_up').click(function() {
+        var cur_rating = parseFloat($(this).parent().attr("rating"));
+
+        if (cur_rating > 0) {
+          cur_rating = 0;
+        }
+        else {
+          cur_rating = 1;
+        }
+
+       updateThumbs(cur_rating);
+
+        $(this).parent().attr("rating", cur_rating);
+        $('#app_review_user_rating').val($(this).parent().attr("rating"));
+      });
+
+      $('.active_thumb_down').click(function() {
+        var cur_rating = parseFloat($(this).parent().attr("rating"));
+
+        if (cur_rating < 0) {
+          cur_rating = 0;
+        }
+        else {
+          cur_rating = -1;
+        }
+
+        updateThumbs(cur_rating);
+
+        $(this).parent().attr("rating", cur_rating);
+        $('#app_review_user_rating').val($(this).parent().attr("rating"));
+      });
+
+      function updateThumbs(cur_rating) {
+        if (cur_rating > 0) {
+          $('.active_thumb_up').removeClass('off').addClass('on');
+          $('.active_thumb_down').removeClass('on').addClass('off');
+        }
+        else if (cur_rating == 0) {
+          $('.active_thumb_up').removeClass('on').addClass('off');
+          $('.active_thumb_down').removeClass('on').addClass('off');
+        }
+        else {
+          $('.active_thumb_up').removeClass('on').addClass('off');
+          $('.active_thumb_down').removeClass('off').addClass('on');
+        }
+      }
+    }
   };
 }(TJG));
 (function(TJG) {
@@ -2308,7 +2425,7 @@ TJG.utils = {
           ));
         }
         if(non_gamers.length != 0) {
-          notExistDiv = contentTmp(_t("games.invites_sent_to",
+          notExistDiv = contentTmp(_t("games.invites_sent_to", 
             { name: non_gamers.toString().replace(/\,/g, ", ") },
             { count: non_gamers.length }
           ));
@@ -2364,7 +2481,6 @@ TJG.utils = {
           }
         });
       }; // submitFbInvitation
-
 
       var submitEmailInvitation = function(rurl, recipients){
         sending();
@@ -2551,6 +2667,33 @@ TJG.utils = {
           });
         }
       });
+    },
+
+    checkAndPost : function(currentGamerFbId, link, pictureLink) {
+      FB.getLoginStatus(function(response) {
+        var postToFeed = function() { TJG.social.postToFeed(link, pictureLink); };
+        var currentLoginFbId = response.authResponse && response.authResponse.userID;
+        if (currentLoginFbId && currentGamerFbId && currentGamerFbId != currentLoginFbId) {
+          FB.logout(postToFeed);
+        } else {
+          postToFeed();
+        }
+      });
+    },
+
+    postToFeed : function(link, pictureLink) {
+      var obj = {
+        method: 'feed',
+        display: 'popup',
+        name: 'Tapjoy',
+        link: link,
+        picture: pictureLink,
+        caption: ' ',
+        actions: [{ name: _t('shared.join'), link: link}],
+        description: _t('games.post_to_facebook_content')
+      };
+
+      FB.ui(obj);
     },
   };
 }(TJG));

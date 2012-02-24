@@ -38,7 +38,7 @@ class PointsController < ApplicationController
     reward.country           = params[:country]
 
     begin
-      reward.serial_save(:catch_exceptions => false, :expected_attr => { 'type' => nil })
+      reward.save!(:expected_attr => { 'type' => nil })
     rescue Simpledb::ExpectedAttributeError => e
       @error_message = "points already awarded"
       render :template => 'layouts/error' and return
@@ -108,7 +108,7 @@ private
   def check_success(path)
     if @success
       web_request = WebRequest.new
-      web_request.put_values(path, params, get_ip_address, get_geoip_data, request.headers['User-Agent'])
+      web_request.put_values(path, params, ip_address, geoip_data, request.headers['User-Agent'])
       web_request.save
     end
   end

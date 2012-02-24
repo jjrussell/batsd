@@ -68,11 +68,24 @@ FactoryGirl.define do
     year  { Date.today.year }
   end
 
+  factory :app_metadata do
+    store_name 'App Store'
+    store_id   { Factory.next(:name) }
+    name       { Factory.next(:name) }
+  end
+
+  factory :app_metadata_mapping do
+    association :app
+    association :app_metadata
+  end
+
   factory :app do
     association :partner
     name { Factory.next(:name) }
     platform 'iphone'
-    store_id 'whatevs'
+    after_build do |app|
+      app.add_app_metadata(Factory(:app_metadata))
+    end
   end
 
   factory :enable_offer_request do
@@ -103,6 +116,14 @@ FactoryGirl.define do
     association :partner
     name { Factory.next(:name) }
     url 'http://ws.tapjoyads.com/healthz?click_key=TAPJOY_GENERIC'
+  end
+
+  factory :invite_offer, :parent => :generic_offer do
+    association :partner
+    id TAPJOY_GAMES_INVITATION_OFFER_ID
+    name { Factory.next(:name) }
+    category 'Social'
+    url "#{WEBSITE_URL}/games/gamer/social?advertiser_app_id=TAPJOY_GENERIC_INVITE"
   end
 
   factory :video_offer do
@@ -214,5 +235,49 @@ FactoryGirl.define do
   factory :survey_offer do
     bid_price 0
     name 'short survey 1'
+  end
+
+  factory :creative_approval_queue do
+    association :user
+    offer       { Factory(:app).primary_offer }
+    size        '320x50'
+  end
+
+  factory :app_review do
+    app_metadata { Factory(:app_metadata) }
+    text         "A sample gamer review"
+    user_rating  1
+  end
+
+  factory :gamer_review, :parent => :app_review do
+    author { Factory(:gamer) }
+  end
+
+  factory :employee do
+    first_name    { Factory.next(:name) }
+    last_name     { Factory.next(:name) }
+    email         { Factory.next(:email) }
+    title         'title'
+    superpower    'superpower'
+    current_games 'current_games'
+    weapon        'weapon'
+    biography     'biography'
+  end
+
+  factory :employee_review, :parent => :app_review do
+    author { Factory(:employee) }
+  end
+
+  factory :featured_content do
+    featured_type FeaturedContent::STAFFPICK
+    platforms     %w( iphone ipad itouch ).to_json
+    subtitle      'Subtitle'
+    title         'Title'
+    description   'Description'
+    start_date    { Time.zone.now }
+    end_date      { Time.zone.now + 1.day }
+    weight        1
+    offer         { Factory(:app).primary_offer }
+    author        { Factory(:employee) }
   end
 end

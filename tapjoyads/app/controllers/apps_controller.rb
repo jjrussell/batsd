@@ -39,16 +39,15 @@ class AppsController < WebsiteController
 
     @app.partner = current_partner
     @app.platform = params[:app][:platform]
-    @app.store_id = params[:app][:store_id] if params[:state] == 'live'
     @app.name = params[:app][:name]
-    country = params[:app_country]
+
     app_store_data = {}
-    begin
-      app_store_data = @app.fill_app_store_data(country) if params[:state] == 'live'
-    rescue
-      flash.now[:error] = 'Grabbing app data from app store failed. Please try again.'
-      render :action => "new"
-      return
+    if params[:state] == 'live' && params[:app][:store_id].present?
+      unless @app.update_from_store({ :store_id => params[:app][:store_id], :country => params[:app_country] })
+        flash.now[:error] = "Grabbing app data from app store failed. Please try again."
+        render :action => "new"
+        return
+      end
     end
 
     if @app.save
@@ -65,14 +64,13 @@ class AppsController < WebsiteController
     log_activity(@app)
 
     @app.name = params[:app][:name]
-    @app.store_id = params[:app][:store_id] if params[:state] == 'live'
-    country = params[:app_country]
-    begin
-      @app.fill_app_store_data(country) if params[:state] == 'live'
-    rescue
-      flash.now[:error] = 'Grabbing app data from app store failed. Please try again.'
-      render :action => "show"
-      return
+
+    if params[:state] == 'live' && params[:app][:store_id].present?
+      unless @app.update_from_store({ :store_id => params[:app][:store_id], :country => params[:app_country] })
+        flash.now[:error] = "Grabbing app data from app store failed. Please try again."
+        render :action => "show"
+        return
+      end
     end
 
     if @app.save
@@ -115,7 +113,8 @@ class AppsController < WebsiteController
     end
   end
 
-private
+  private
+
   def grab_partner_apps
     session[:last_shown_app] ||= current_partner_apps.first.id unless current_partner_apps.empty?
   end
