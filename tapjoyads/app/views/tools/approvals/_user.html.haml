@@ -1,0 +1,21 @@
+%table
+  %thead
+    %tr
+      %th Email
+      %th Country
+      %th Age
+      %th Owner
+      %th State
+      %th
+  %tbody
+    - @approvals.each do |approval|
+      %tr
+        %td= approval.item.email
+        %td= approval.item.country
+        %td= time_ago_in_words(approval.created_at)
+        %td= render :partial => 'owner_select', :locals => {:approval => approval}
+        %td= approval.state
+        %td.actions
+          = link_to('Approve', approve_tools_approval_path(approval), :class => 'approve')
+          = link_to('Reject', reject_tools_approval_path(approval), :class => 'reject')
+
