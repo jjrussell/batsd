@@ -17,9 +17,9 @@ test:
 staging:
   adapter: mysql
   database: tapjoy_db_staging
-  host: localhost
-  username: root
-  password:
+  host: tapjoy-db-staging.cck8zbm50hdd.us-east-1.rds.amazonaws.com
+  username: tapjoy
+  password: andoverbusiness1
   reconnect: true
 
 production:

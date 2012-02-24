@@ -3,7 +3,7 @@ class App < ActiveRecord::Base
   acts_as_cacheable
   json_set_field :countries_blacklist
 
-  ALLOWED_PLATFORMS = { 'android' => 'Android', 'iphone' => 'iOS', 'windows' => 'Windows Phone' }
+  ALLOWED_PLATFORMS = { 'android' => 'Android', 'iphone' => 'iOS', 'windows' => 'Windows' }
   BETA_PLATFORMS    = {}
   PLATFORMS         = ALLOWED_PLATFORMS.merge(BETA_PLATFORMS)
   APPSTORE_COUNTRIES_OPTIONS = GeoIP::CountryName.zip(GeoIP::CountryCode).select do |name, code|
@@ -23,7 +23,6 @@ class App < ActiveRecord::Base
       :info_url => 'https://market.android.com/details?id=STORE_ID',
       :store_url => 'market://search?q=STORE_ID',
       :default_actions_file_name => "TapjoyPPA.java",
-      :min_action_offer_bid => 25,
       :versions => [ '1.5', '1.6', '2.0', '2.1', '2.2', '2.3', '3.0' ],
       :cell_download_limit_bytes => 99.gigabyte,
       :screen_layout_sizes => { 'small (320x426)' => '1', 'medium (320x470)' => '2', 'large (480x640)' => '3', 'extra large (720x960)' => '4' }
@@ -39,7 +38,6 @@ class App < ActiveRecord::Base
       :info_url => 'http://phobos.apple.com/WebObjects/MZStore.woa/wa/viewSoftware?id=STORE_ID&mt=8',
       :store_url => 'http://phobos.apple.com/WebObjects/MZStore.woa/wa/viewSoftware?id=STORE_ID&mt=8',
       :default_actions_file_name => "TJCPPA.h",
-      :min_action_offer_bid => 35,
       :versions => [ '2.0', '2.1', '2.2', '3.0', '3.1', '3.2', '4.0', '4.1', '4.2', '4.3', '5.0' ],
       :cell_download_limit_bytes => 20.megabytes
     },
@@ -54,7 +52,6 @@ class App < ActiveRecord::Base
       :info_url => 'http://windowsphone.com/s?appId=STORE_ID',
       :store_url => 'http://social.zune.net/redirect?type=phoneapp&id=STORE_ID',
       :default_actions_file_name => '', #TODO fill this out
-      :min_action_offer_bid => 25,
       :versions => [ '7.0' ],
       :cell_download_limit_bytes => 20.megabytes
     },
@@ -85,7 +82,6 @@ class App < ActiveRecord::Base
     :through => :app_metadata_mappings,
     :source => :app_metadata,
     :order => "created_at"
-  has_many :app_reviews
 
   belongs_to :partner
 
@@ -110,7 +106,7 @@ class App < ActiveRecord::Base
     :to => :primary_app_metadata, :allow_nil => true
 
   # TODO: remove these columns from apps table definition and remove this method
-  TO_BE_DELETED = %w(description price store_id age_rating file_size_bytes supported_devices released_at user_rating categories)
+  TO_BE_DELETED = %w(description price store_id age_rating file_size_bytes supported_devices released_at user_rating categories papaya_user_count)
   def self.columns
     super.reject do |c|
       TO_BE_DELETED.include?(c.name)
@@ -174,9 +170,13 @@ class App < ActiveRecord::Base
     return false if store_id.blank?
 
     app_metadata = update_app_metadata(store_id) || primary_app_metadata
-    data = AppStore.fetch_app_by_id(store_id, platform, country)
-    if (data.nil?) # might not be available in the US market
-      data = AppStore.fetch_app_by_id(store_id, platform, primary_country)
+    begin
+      data = AppStore.fetch_app_by_id(store_id, platform, country)
+      if (data.nil?) # might not be available in the US market
+        data = AppStore.fetch_app_by_id(store_id, platform, primary_country)
+      end
+    rescue Patron::HostResolutionError
+      return false
     end
     return false if data.nil?
 
@@ -326,6 +326,64 @@ class App < ActiveRecord::Base
       action_offer.hidden = hidden
       action_offer.save!
     end
+  end
+
+  def test_offer
+    test_offer = Offer.new(
+      :item_id            => id,
+      :item_type          => 'TestOffer',
+      :name               => 'Test Offer (Visible to Test Devices)',
+      :third_party_data   => id,
+      :price              => 0,
+      :reward_value       => 100)
+    test_offer.id = id
+    test_offer
+  end
+
+  def test_video_offer
+    test_video_offer = VideoOffer.new(
+      :name       => 'Test Video Offer (Visible to Test Devices)',
+      :partner_id => partner_id,
+      :video_url  => 'https://s3.amazonaws.com/tapjoy/videos/src/test_video.mp4')
+    test_video_offer.id = 'test_video'
+
+    primary_offer = Offer.new(
+      :item_id          => 'test_video',
+      :name             => 'Test Video Offer (Visible to Test Devices)',
+      :url              => 'https://s3.amazonaws.com/tapjoy/videos/src/test_video.mp4',
+      :reward_value     => 100,
+      :third_party_data => '')
+    primary_offer.id = 'test_video'
+
+    test_video_offer.primary_offer           = primary_offer
+    test_video_offer.primary_offer.item_type = 'TestVideoOffer'
+    test_video_offer
+  end
+
+  def create_tracking_offer_for(tracked_for, options = {})
+    device_types = options.delete(:device_types) { get_offer_device_types.to_json }
+    raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
+
+    offer = Offer.new({
+      :item             => self,
+      :tracking_for     => tracked_for,
+      :partner          => partner,
+      :name             => name,
+      :url              => store_url,
+      :device_types     => device_types,
+      :price            => 0,
+      :bid              => 0,
+      :min_bid_override => 0,
+      :rewarded         => false,
+      :name_suffix      => 'tracking',
+      :third_party_data => store_id,
+      :age_rating       => age_rating,
+      :wifi_only        => wifi_required?
+    })
+    offer.id = tracked_for.id
+    offer.save!
+
+    offer
   end
 
   private
