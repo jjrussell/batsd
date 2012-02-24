@@ -13,12 +13,12 @@ describe SurveyResultsController do
 
   describe '#new' do
     it 'verifies params' do
-      get 'new'
+      get(:new)
       response.body.should == 'missing required params'
     end
 
     it 'assigns survey questions' do
-      get 'new', :udid => 'something', :click_key => '5', :id => @offer.id
+      get(:new, :udid => 'something', :click_key => '5', :id => @offer.id)
       assigns(:survey_questions).length.should == 1
       response.should render_template('new')
     end
@@ -45,23 +45,23 @@ describe SurveyResultsController do
 
     it 'renders error for invalid currency' do
       Currency.expects(:find_in_cache).with(5).returns(nil)
-      post 'create', :click_key => '5'
+      post(:create, :click_key => '5')
       response.body.should == 'record not found'
     end
 
     it 'renders survey_complete' do
-      post 'create', :click_key => '5'
+      post(:create, :click_key => '5')
       response.should render_template('survey_complete')
     end
 
     it 'does not reward if click is already complete' do
       Offer.expects(:find_in_cache).never
-      post 'create', :click_key => '5'
+      post(:create, :click_key => '5')
     end
 
     it "renders new if all questions aren't answered" do
       @mock_click.expects(:installed_at?).returns(false)
-      post 'create', :click_key => '5', :id => @offer.id
+      post(:create, :click_key => '5', :id => @offer.id)
       assigns(:missing_params).should be_true
       response.should render_template('new')
     end
@@ -69,7 +69,7 @@ describe SurveyResultsController do
     it 'saves a SurveyResult' do
       stub_device
 
-      controller.expects(:get_geoip_data).returns('geoip data')
+      controller.expects(:geoip_data).returns('geoip data')
       @mock_click.expects(:installed_at?).returns(false)
       mock_result = mock()
 
@@ -80,13 +80,13 @@ describe SurveyResultsController do
       mock_result.expects(:answers=).with({ @survey_question.text => 'a' })
       mock_result.expects(:save)
 
-      post 'create', @request_params
+      post(:create, @request_params)
     end
 
     it 'saves the results to the device' do
       stub_survey_result
 
-      controller.expects(:get_geoip_data).returns('geoip data')
+      controller.expects(:geoip_data).returns('geoip data')
       @mock_click.expects(:installed_at?).returns(false)
       mock_device = mock()
 
@@ -97,19 +97,19 @@ describe SurveyResultsController do
       mock_device.expects(:survey_answers=).with(expected_answers)
       mock_device.expects(:save)
 
-      post 'create', @request_params
+      post(:create, @request_params)
     end
 
     it 'calls downloader with the correct url' do
       stub_survey_result
       stub_device
 
-      controller.expects(:get_geoip_data).returns('geoip data')
+      controller.expects(:geoip_data).returns('geoip data')
       @mock_click.expects(:installed_at?).returns(false)
 
       url = "#{API_URL}/offer_completed?click_key=5"
       Downloader.expects(:get_with_retry).with(url)
-      post 'create', @request_params
+      post(:create, @request_params)
     end
   end
 end

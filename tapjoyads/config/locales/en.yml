@@ -280,6 +280,7 @@ en:
       none_selected: "None Selected"
       oops: Oops!
       our_tos_changed: "Our %{terms_of_use} have changed. Please review and indicate your agreement below."
+      post_to_facebook_content: "Check out Tapjoy where you can discover the best new apps and games, while also earning currency in apps you love. It\'s free to join so visit tapjoy.com today to start getting app recommendations just for you."
       privacy_policy_href: "privacy policy"
       provide_other_email: "Please provide an email other than yourself"
       recipients_label: "Use commas to separate multiple emails"
@@ -317,6 +318,7 @@ en:
       load_more: "Load some more!"
       loading: Loading...
       missing_currency: "Missing %{currency}?"
+      more_offers: "Want to see more offers? Visit Tapjoy to earn rewards and personal app recommendations!"
       next: "Next %{items}"
       popular_apps: "Popular Apps"
       previous: "Previous %{items}"
@@ -346,6 +348,7 @@ en:
       help: Help
       invite: Invite
       ios: iOS
+      join: Join
       login_noun: Login
       login_verb: "Log In"
       logout: "Log Out"
@@ -353,6 +356,7 @@ en:
       month: Month
       my_account: "My Account"
       my_profile: "My Profile"
+      my_reviews: "My Reviews"
       name: Name
       new_password: "New Password"
       nickname: Nickname
@@ -369,9 +373,12 @@ en:
       share: Share
       sign_in: "Sign In"
       sign_up: "Sign Up"
+      submit_review: "Submit Review"
       success: Success!
       try_again: "Try Again"
+      update_review: Update Review
       updating: Updating
+      write_review: Write Review
       year: Year
       zip_postal: "Zip/Postal Code"
     support:

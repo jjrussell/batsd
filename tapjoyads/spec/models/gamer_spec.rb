@@ -82,19 +82,19 @@ describe Gamer do
       friendship = Friendship.new
       friendship.gamer_id  = stalker.id
       friendship.following_id = gamer.id
-      friendship.serial_save
+      friendship.save
 
       friend = Factory(:gamer)
 
       friendship = Friendship.new
       friendship.gamer_id  = gamer.id
       friendship.following_id = friend.id
-      friendship.serial_save
+      friendship.save
 
       friendship = Friendship.new
       friendship.gamer_id  = friend.id
       friendship.following_id = gamer.id
-      friendship.serial_save
+      friendship.save
 
       Friendship.count(:where => "gamer_id = '#{gamer.id}' or following_id = '#{gamer.id}'", :consistent => true).should == 3
       Gamer.to_delete.each(&:destroy)

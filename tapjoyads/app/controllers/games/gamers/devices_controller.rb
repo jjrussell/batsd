@@ -73,8 +73,7 @@ class Games::Gamers::DevicesController < GamesController
             invitation_id, advertiser_app_id = ObjectEncryptor.decrypt(current_gamer.referrer).split(',')
             advertiser_app_id = TAPJOY_GAMES_INVITATION_OFFER_ID if advertiser_app_id.blank?
             referred_by_gamer = Gamer.find_by_id(current_gamer.referred_by)
-            invitation = Invitation.find_by_id_and_gamer_id(invitation_id, current_gamer.referred_by)
-            if advertiser_app_id && referred_by_gamer && invitation
+            if advertiser_app_id && referred_by_gamer
               click = Click.new(:key => "#{current_gamer.referred_by}.#{advertiser_app_id}", :consistent => true)
               unless click.new_record?
                 new_referral_count = referred_by_gamer.referral_count + 1

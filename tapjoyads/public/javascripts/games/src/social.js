@@ -184,7 +184,6 @@
         });
       }; // submitFbInvitation
 
-
       var submitEmailInvitation = function(rurl, recipients){
         sending();
 
@@ -370,6 +369,33 @@
           });
         }
       });
+    },
+
+    checkAndPost : function(currentGamerFbId, link, pictureLink) {
+      FB.getLoginStatus(function(response) {
+        var postToFeed = function() { TJG.social.postToFeed(link, pictureLink); };
+        var currentLoginFbId = response.authResponse && response.authResponse.userID;
+        if (currentLoginFbId && currentGamerFbId && currentGamerFbId != currentLoginFbId) {
+          FB.logout(postToFeed);
+        } else {
+          postToFeed();
+        }
+      });
+    },
+
+    postToFeed : function(link, pictureLink) {
+      var obj = {
+        method: 'feed',
+        display: 'popup',
+        name: 'Tapjoy',
+        link: link,
+        picture: pictureLink,
+        caption: ' ',
+        actions: [{ name: _t('shared.join'), link: link}],
+        description: _t('games.post_to_facebook_content')
+      };
+
+      FB.ui(obj);
     },
   };
 }(TJG));

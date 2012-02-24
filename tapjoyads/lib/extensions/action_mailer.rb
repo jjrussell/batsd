@@ -1,5 +1,7 @@
 class ActionMailer::Base
 
+  RECEIPT_EMAIL = "email.receipts@tapjoy.com"
+
   def deliver_with_rescue_errors!(mail = @mail)
     begin
       deliver_without_rescue_errors!(mail)
@@ -9,7 +11,18 @@ class ActionMailer::Base
       Notifier.alert_new_relic(e.class, e.message)
     end
   end
+
+  def deliver_with_receipt!(mail = @mail)
+    if mail.bcc
+      mail.bcc += [ RECEIPT_EMAIL ]
+    else
+      mail.bcc = RECEIPT_EMAIL
+    end
+    deliver_without_receipt!(mail)
+  end
+
   alias_method_chain :deliver!, :rescue_errors
+  alias_method_chain :deliver!, :receipt
 
   def self.deliver_without_rescue_errors(mail)
     new.deliver_without_rescue_errors!(mail)
