@@ -1,0 +1,57 @@
+@import "../../tjm-mixins.scss";
+/**
+  DUPLICATE, DESTROY
+*/
+.soft-gray-gradient {
+  @include linear-gradient(top, #fbfbfb, #f2f2f2);
+}
+
+.soft-gray-gradient:hover {
+  background: #f0f0f0;
+  @include linear-gradient(top, #f7f7f7, #efefef);
+}
+
+.soft-gray-gradient:active {
+  background: #f0f0f0;
+}
+
+.border-box {
+  -moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box;
+}
+/**
+  END DUPLICATE
+*/
+
+/* form input elements */
+.ui-joy-input {
+  @extend .border-box;
+  @include rounded-corners(4px);
+  box-shadow: 0 2px 2px #dfdfdf inset;
+  border: 1px solid #bfbfbf;
+  padding: 10px 2.5%;
+  width: 100%;
+}
+
+.form-section {
+  padding: 0;
+  margin-top: 5px;
+}
+
+.review-form {
+
+  input {
+    font-size: 1.0em;
+  }
+  textarea {
+    height: 80px;
+    font-size: 1.0em;
+  }
+}
+
+.grey-action.active {
+  @extend .soft-gray-gradient;
+  box-shadow: 0 1px 0 #c7c9cc inset;
+  border: 1px solid #d5d5d5;
+  border-top: 1px solid #8f8f8f;
+  border-bottom: 1px solid #e4e4e5;
+}
