@@ -75,20 +75,23 @@ FactoryGirl.define do
   end
 
   factory :app_metadata do
-    store_name { Factory.next(:name) }
-    store_id   '123'
+    store_name 'App Store'
+    store_id   { Factory.next(:name) }
     name       { Factory.next(:name) }
   end
 
   factory :app_metadata_mapping do
-    app          { Factory(:app) }
-    app_metadata { Factory(:app_metadata) }
+    association :app
+    association :app_metadata
   end
 
   factory :app do
     association :partner
     name { Factory.next(:name) }
     platform 'iphone'
+    after_build do |app|
+      app.add_app_metadata(Factory(:app_metadata))
+    end
   end
 
   factory :enable_offer_request do
@@ -240,6 +243,12 @@ FactoryGirl.define do
     name 'short survey 1'
   end
 
+  factory :creative_approval_queue do
+    association :user
+    offer       { Factory(:app).primary_offer }
+    size        '320x50'
+  end
+
   factory :app_review do
     app_metadata { Factory(:app_metadata) }
     text         "A sample gamer review"
@@ -263,5 +272,18 @@ FactoryGirl.define do
 
   factory :employee_review, :parent => :app_review do
     author { Factory(:employee) }
+  end
+
+  factory :featured_content do
+    featured_type FeaturedContent::STAFFPICK
+    platforms     %w( iphone ipad itouch ).to_json
+    subtitle      'Subtitle'
+    title         'Title'
+    description   'Description'
+    start_date    { Time.zone.now }
+    end_date      { Time.zone.now + 1.day }
+    weight        1
+    offer         { Factory(:app).primary_offer }
+    author        { Factory(:employee) }
   end
 end

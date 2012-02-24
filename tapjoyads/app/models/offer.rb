@@ -79,6 +79,7 @@ class Offer < ActiveRecord::Base
   belongs_to :reseller
   belongs_to :app, :foreign_key => "item_id"
   belongs_to :action_offer, :foreign_key => "item_id"
+  belongs_to :tracking_for, :polymorphic => true
 
   validates_presence_of :reseller, :if => Proc.new { |offer| offer.reseller_id? }
   validates_presence_of :partner, :item, :name, :url, :rank_boost
@@ -427,7 +428,7 @@ class Offer < ActiveRecord::Base
     display_banner_ads? && banner_creative_approved?(size)
   end
 
-  def get_video_icon_url(options = {})
+  def video_icon_url(options = {})
     if item_type == 'VideoOffer' || item_type == 'TestVideoOffer'
       object = S3.bucket(BucketNames::TAPJOY).objects["icons/src/#{Offer.hashed_icon_id(icon_id)}.jpg"]
       begin
@@ -437,7 +438,7 @@ class Offer < ActiveRecord::Base
       end
     end
   end
-  memoize :get_video_icon_url
+  memoize :video_icon_url
 
   def get_icon_url(options = {})
     Offer.get_icon_url({:icon_id => Offer.hashed_icon_id(icon_id), :item_type => item_type}.merge(options))
