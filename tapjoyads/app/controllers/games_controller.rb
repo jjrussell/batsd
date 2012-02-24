@@ -194,20 +194,36 @@ class GamesController < ApplicationController
   end
 
   def setup_tjm_request
-    now = Time.now.utc
-    if session[:tjm_session_id].blank? || session[:tjm_session_started_at].blank? || session[:tjm_session_last_active_at].blank? ||
-        session[:tjm_session_last_active_at] < now - TJM_SESSION_TIMEOUT
-      session[:tjm_session_started_at] = now
-      session[:tjm_session_id] = UUIDTools::UUID.random_create.hexdigest
+    now = Time.zone.now
+    if tjm_session_expired?
+      session[:tjms_stime] = now.to_i
+      session[:tjms_id]    = UUIDTools::UUID.random_create.hexdigest
     end
-    session[:tjm_session_last_active_at] = now
 
-    @tjm_request = TjmRequest.new(:time => now)
-    @tjm_request.add_standard_attributes(session, request, current_gamer, current_device_id, get_ip_address, get_geoip_data, params)
+    tjm_request_options = {
+      :time       => now,
+      :session    => session,
+      :request    => request,
+      :ip_address => ip_address,
+      :geoip_data => geoip_data,
+      :params     => params,
+      :gamer      => current_gamer,
+      :device_id  => current_device_id,
+    }
+    @tjm_request = TjmRequest.new(tjm_request_options)
+
+    session[:tjms_ltime] = now
   end
 
   def save_tjm_request
     @tjm_request.save
+  end
+
+  def tjm_session_expired?
+    session[:tjms_id].blank?    ||
+    session[:tjms_stime].blank? ||
+    session[:tjms_ltime].blank? ||
+    Time.zone.at(session[:tjms_ltime].to_i) < now - TJM_SESSION_TIMEOUT
   end
 
 end
