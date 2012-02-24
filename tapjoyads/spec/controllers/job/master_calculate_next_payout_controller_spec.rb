@@ -7,41 +7,71 @@ describe Job::MasterCalculateNextPayoutController do
   end
 
   describe '#index' do
-    it 'should unflag partner on payout greater than $50,000' do
-      @partner.confirmed_for_payout = true
-      @partner.save!
-      @partner.confirmed_for_payout.should be_true
+    before :each do
       Partner.stubs(:to_calculate_next_payout_amount).returns([@partner])
-      Partner.stubs(:calculate_next_payout_amount).with(@partner.id).returns(50_000_01)
-      get(:index)
-      @partner.reload
-      @partner.confirmed_for_payout.should_not be_true
-      @partner.payout_confirmation_notes.should == 'SYSTEM: Payout is greater than or equal to $50,000.00'
     end
 
-    it 'should not override notes if already unconfirmed' do
-      @partner.confirmed_for_payout = false
-      @partner.payout_confirmation_notes = 'should stick!'
-      @partner.save!
-      @partner.confirmed_for_payout.should_not be_true
-      Partner.stubs(:to_calculate_next_payout_amount).returns([@partner])
-      Partner.stubs(:calculate_next_payout_amount).with(@partner.id).returns(50_000_01)
-      get(:index)
-      @partner.reload
-      @partner.confirmed_for_payout.should_not be_true
-      @partner.payout_confirmation_notes.should_not == 'SYSTEM: Payout is greater than or equal to $50,000.00'
+    context 'when confirmed for payout' do
+      before :each do
+        @partner.confirmed_for_payout = true
+        @partner.save!
+      end
+
+      context 'when payout greater than $50,000' do
+        before :each do
+          Partner.stubs(:calculate_next_payout_amount).with(@partner.id).returns(50_000_01)
+          get(:index)
+          @partner.reload
+        end
+
+        it 'will unflag the partner' do
+          @partner.confirmed_for_payout.should_not be_true
+        end
+
+        it 'will have a system note' do
+          @partner.payout_confirmation_notes.should == 'SYSTEM: Payout is greater than or equal to $50,000.00'
+        end
+      end
+
+      context 'when payout less than $50,000' do
+        before :each do
+          Partner.stubs(:calculate_next_payout_amount).with(@partner.id).returns(40_000_01)
+          get(:index)
+          @partner.reload
+        end
+
+        it 'will not unflag partner on payout' do
+          @partner.confirmed_for_payout.should be_true
+        end
+
+        it 'will not change the payout notes' do
+          @partner.payout_confirmation_notes.should be_nil
+        end
+      end
     end
 
-    it 'should not unflag partner on payout less than $50,000' do
-      @partner.confirmed_for_payout = true
-      @partner.save!
-      @partner.confirmed_for_payout.should be_true
-      Partner.stubs(:to_calculate_next_payout_amount).returns([@partner])
-      Partner.stubs(:calculate_next_payout_amount).with(@partner.id).returns(40_000_01)
-      get(:index)
-      @partner.reload
-      @partner.confirmed_for_payout.should be_true
-      @partner.payout_confirmation_notes.should be_nil
+    context 'when not confirmed for payout' do
+      before :each do
+        @partner.confirmed_for_payout = false
+        @partner.payout_confirmation_notes = 'should stick!'
+        @partner.save!
+      end
+
+      context 'when payout greater than $50,000' do
+        before :each do
+          Partner.stubs(:calculate_next_payout_amount).with(@partner.id).returns(50_000_01)
+          get(:index)
+          @partner.reload
+        end
+
+        it 'will not be confirmed' do
+          @partner.confirmed_for_payout.should_not be_true
+        end
+
+        it 'will not have the system message' do
+          @partner.payout_confirmation_notes.should_not == 'SYSTEM: Payout is greater than or equal to $50,000.00'
+        end
+      end
     end
   end
 end

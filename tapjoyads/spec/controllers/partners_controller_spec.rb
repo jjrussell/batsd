@@ -53,24 +53,19 @@ describe PartnersController do
       @partner.confirmed_for_payout = true
       @partner.save
       login_as(@user)
+      post :set_unconfirmed_for_payout, {:id => @partner.id, :payout_notes => "Test" }
+      @partner.reload
     end
 
-    it "should unconfirm the partner" do
-      @partner.confirmed_for_payout.should be_true
-      post :set_unconfirmed_for_payout, {:id => @partner.id}
-      @partner.reload
-
+    it "will redirect" do
       response.should be_redirect
+    end
+
+    it "will unconfirm the partner" do
       @partner.confirmed_for_payout.should_not be_true
     end
 
-    it "should add a reason if given" do
-      payout_confirmation_notes = params[:payout_notes]
-      @partner.payout_confirmation_notes.should be_nil
-      post :set_unconfirmed_for_payout, {:id => @partner.id, :payout_notes => "Test" }
-      @partner.reload
-
-      response.should be_redirect
+    it "will add the given reason" do
       @partner.payout_confirmation_notes.should == "Test"
     end
   end
