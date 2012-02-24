@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120223170210) do
+ActiveRecord::Schema.define(:version => 20120224110500) do
 
   create_table "action_offers", :id => false, :force => true do |t|
     t.string   "id",                    :limit => 36,                    :null => false
@@ -663,7 +663,7 @@ ActiveRecord::Schema.define(:version => 20120223170210) do
   add_index "offers", ["item_type", "item_id"], :name => "index_offers_on_item_type_and_item_id"
   add_index "offers", ["name"], :name => "index_offers_on_name"
   add_index "offers", ["partner_id"], :name => "index_offers_on_partner_id"
-  add_index "offers", ["tracking_for_type", "tracking_for_id"], :name => "index_offers_on_tracking_for_type_and_tracking_for_id", :unique => true
+  add_index "offers", ["tracking_for_type", "tracking_for_id"], :name => "index_offers_on_tracking_for_type_and_tracking_for_id"
   add_index "offers", ["user_enabled", "tapjoy_enabled"], :name => "index_offers_on_user_enabled_and_tapjoy_enabled"
 
   create_table "orders", :id => false, :force => true do |t|

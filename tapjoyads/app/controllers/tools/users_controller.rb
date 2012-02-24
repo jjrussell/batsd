@@ -22,8 +22,10 @@ class Tools::UsersController < WebsiteController
       :role_assignments => [ :user_role ],
       :partner_assignments => [ :partner ]
     })
-    @partner_assignments = @user.partner_assignments.sort_by{|assignment|assignment.partner.name||''}
-    @current_assignments = @user.role_assignments.sort_by{|ra| ra.user_role.name}
+    if permitted_to? :create, :tools_users_partner_assignments
+      @partner_assignments = @user.partner_assignments.sort_by{|assignment|assignment.partner.name||''}
+      @current_assignments = @user.role_assignments.sort_by{|ra| ra.user_role.name}
+    end
 
     if permitted_to? :create, :tools_users_role_assignments
       @can_modify_roles = true

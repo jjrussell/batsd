@@ -25,7 +25,7 @@ describe Games::AppReviewsController do
       end
 
       it "returns current gamer's reviews" do
-        assigns[:app_reviews].scoped(:order => 'created_at').should == @gamer.app_reviews.scoped(:order => 'created_at')
+        assigns[:app_reviews].collect(&:id).sort.should == @gamer.app_reviews.collect(&:id).sort
       end
     end
 
@@ -45,7 +45,7 @@ describe Games::AppReviewsController do
       end
 
       it 'returns all the reviews written by the gamer' do
-        assigns[:app_reviews].scoped(:order => 'created_at').should == @gamer2.app_reviews.scoped(:order => 'created_at')
+        assigns[:app_reviews].collect(&:id).sort.should == @gamer2.app_reviews.collect(&:id).sort
       end
     end
   end
