@@ -73,7 +73,7 @@
           %th
             Total Support Requests Filed
           %td
-            #{@support_requests_created}
+            = @support_requests_created
         %tr
           %th
             Internal Notes
@@ -90,21 +90,21 @@
         %td App Name
         %td Last run time
         %td Award Currency
-    %tbody
-      - @apps.each_with_index do |app, i|
-        - tr_class = i > 4 ? 'more-apps' : ''
-        %tr{ :class => tr_class }
+    %tbody.show-five
+      - @apps.each_with_index do |pair, i|
+        - last_run_time, app = pair
+        %tr.last_run_app
           %td
             %strong
-              = link_to_statz(app[1].name, app[1])
-          %td= app[0].to_s(:pub_ampm_sec)
+              = link_to_statz(app.name, app)
+          %td= last_run_time.to_s(:pub_ampm_sec)
           %td
-            - if app[1].is_publisher_offer?
-              - app[1].item.currencies .each do |currency|
-                -form_tag award_currencies_tools_path(:publisher_app_id => app[1].item, :currency_id => currency.id, :udid => params[:udid]) do
-                  =submit_tag currency.name
+            - if app.is_publisher_offer?
+              - app.item.currencies .each do |currency|
+                - form_tag award_currencies_tools_path(:publisher_app_id => app.item, :currency_id => currency.id, :udid => params[:udid]) do
+                  = submit_tag currency.name
   - if @apps.length > 5
-    = link_to('(show all)', '#', {:id => 'show_more_apps'})
+    = link_to('(show all)', '#', { :id => 'show_more_apps' })
 
   %h3
     Clicks (#{@clicks.length})
@@ -131,7 +131,7 @@
         %td Details
         %td Click ID
     %tbody
-      - @clicks.each_with_index do |click, i|
+      - @clicks.each do |click|
         :ruby
           adv = @click_apps[click.advertiser_app_id]
           pub = @click_apps[click.publisher_app_id]
@@ -184,8 +184,8 @@
   :plain
     $(function($){
       $('#show_more_apps').click(function(){
-        $('.more-apps').show();
-        $('#show_more_apps').hide();
+        $(this).hide();
+        $('.last_run_app').show();
         return false;
       });
       $('.show-click-detail').click(function(){

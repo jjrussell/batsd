@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120224183952) do
+ActiveRecord::Schema.define(:version => 20120224022424) do
 
   create_table "action_offers", :id => false, :force => true do |t|
     t.string   "id",                    :limit => 36,                    :null => false
@@ -68,23 +68,29 @@ ActiveRecord::Schema.define(:version => 20120224183952) do
     t.string   "categories"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "papaya_user_count"
+    t.integer  "thumbs_up",                       :default => 0
+    t.integer  "thumbs_down",                     :default => 0
   end
 
   add_index "app_metadatas", ["id"], :name => "index_app_metadatas_on_id", :unique => true
   add_index "app_metadatas", ["store_name", "store_id"], :name => "index_app_metadatas_on_store_name_and_store_id", :unique => true
 
   create_table "app_reviews", :id => false, :force => true do |t|
-    t.string   "id",          :limit => 36, :null => false
-    t.string   "app_id",      :limit => 36, :null => false
-    t.string   "author_id",   :limit => 36, :null => false
-    t.string   "author_type",               :null => false
-    t.text     "text",                      :null => false
+    t.string   "id",              :limit => 36,                :null => false
+    t.string   "app_id",          :limit => 36
+    t.string   "author_id",       :limit => 36,                :null => false
+    t.string   "author_type",                                  :null => false
+    t.text     "text",                                         :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "platform"
+    t.integer  "user_rating",                   :default => 0
+    t.string   "app_metadata_id", :limit => 36,                :null => false
   end
 
   add_index "app_reviews", ["app_id", "author_id"], :name => "index_app_reviews_on_app_id_and_author_id", :unique => true
+  add_index "app_reviews", ["app_metadata_id", "author_id"], :name => "index_app_reviews_on_app_metadata_id_and_author_id", :unique => true
   add_index "app_reviews", ["id"], :name => "index_app_reviews_on_id", :unique => true
 
   create_table "approvals", :id => false, :force => true do |t|
@@ -644,6 +650,8 @@ ActiveRecord::Schema.define(:version => 20120224183952) do
     t.text     "approved_sources",                                                                                 :null => false
     t.boolean  "sdkless",                                                                       :default => false
     t.text     "carriers",                                                                                         :null => false
+    t.string   "tracking_for_type"
+    t.string   "tracking_for_id",                   :limit => 36
   end
 
   add_index "offers", ["id"], :name => "index_offers_on_id", :unique => true
@@ -651,6 +659,7 @@ ActiveRecord::Schema.define(:version => 20120224183952) do
   add_index "offers", ["item_type", "item_id"], :name => "index_offers_on_item_type_and_item_id"
   add_index "offers", ["name"], :name => "index_offers_on_name"
   add_index "offers", ["partner_id"], :name => "index_offers_on_partner_id"
+  add_index "offers", ["tracking_for_type", "tracking_for_id"], :name => "index_offers_on_tracking_for_type_and_tracking_for_id"
   add_index "offers", ["user_enabled", "tapjoy_enabled"], :name => "index_offers_on_user_enabled_and_tapjoy_enabled"
 
   create_table "orders", :id => false, :force => true do |t|

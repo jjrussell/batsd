@@ -35,6 +35,13 @@ FactoryGirl.define do
 
   factory :partner_user, :parent => :user
 
+  factory :role_mgr_user, :parent => :user do
+    after_build do |mgr|
+      role = UserRole.find_or_create_by_name('role_mgr', :employee => true)
+      mgr.user_roles << role
+    end
+  end
+
   factory :partner do
     name { Factory.next(:name) }
     approved_publisher true
@@ -70,13 +77,22 @@ FactoryGirl.define do
 
   factory :app_metadata do
     store_name 'App Store'
-    store_id '123'
+    store_id   { Factory.next(:name) }
+    name       { Factory.next(:name) }
+  end
+
+  factory :app_metadata_mapping do
+    association :app
+    association :app_metadata
   end
 
   factory :app do
     association :partner
     name { Factory.next(:name) }
     platform 'iphone'
+    after_build do |app|
+      app.add_app_metadata(Factory(:app_metadata))
+    end
   end
 
   factory :enable_offer_request do
@@ -226,5 +242,49 @@ FactoryGirl.define do
   factory :survey_offer do
     bid_price 0
     name 'short survey 1'
+  end
+
+  factory :creative_approval_queue do
+    association :user
+    offer       { Factory(:app).primary_offer }
+    size        '320x50'
+  end
+
+  factory :app_review do
+    app_metadata { Factory(:app_metadata) }
+    text         "A sample gamer review"
+    user_rating  1
+  end
+
+  factory :gamer_review, :parent => :app_review do
+    author { Factory(:gamer) }
+  end
+
+  factory :employee do
+    first_name    { Factory.next(:name) }
+    last_name     { Factory.next(:name) }
+    email         { Factory.next(:email) }
+    title         'title'
+    superpower    'superpower'
+    current_games 'current_games'
+    weapon        'weapon'
+    biography     'biography'
+  end
+
+  factory :employee_review, :parent => :app_review do
+    author { Factory(:employee) }
+  end
+
+  factory :featured_content do
+    featured_type FeaturedContent::STAFFPICK
+    platforms     %w( iphone ipad itouch ).to_json
+    subtitle      'Subtitle'
+    title         'Title'
+    description   'Description'
+    start_date    { Time.zone.now }
+    end_date      { Time.zone.now + 1.day }
+    weight        1
+    offer         { Factory(:app).primary_offer }
+    author        { Factory(:employee) }
   end
 end
