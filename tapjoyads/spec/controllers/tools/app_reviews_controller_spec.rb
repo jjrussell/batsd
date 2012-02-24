@@ -39,7 +39,7 @@ describe Tools::AppReviewsController do
       end
 
       it 'returns app reviews written by the author' do
-        assigns[:app_reviews].scoped(:order => 'created_at').should == @gamer.app_reviews.scoped(:order => 'created_at')
+        assigns[:app_reviews].collect(&:id).sort.should == @gamer.app_reviews.collect(&:id).sort
       end
     end
 
@@ -49,7 +49,7 @@ describe Tools::AppReviewsController do
       end
 
       it 'returns app reviews for app' do
-        assigns[:app_reviews].scoped(:order => 'created_at').should == @app_metadata.app_reviews.scoped(:order => 'created_at')
+        assigns[:app_reviews].collect(&:id).sort.should == @app_metadata.app_reviews.collect(&:id).sort
       end
     end
   end

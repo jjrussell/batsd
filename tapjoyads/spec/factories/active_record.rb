@@ -75,8 +75,8 @@ FactoryGirl.define do
   end
 
   factory :app_metadata_mapping do
-    app          { Factory(:app) }
-    app_metadata { Factory(:app_metadata) }
+    association :app
+    association :app_metadata
   end
 
   factory :app do
