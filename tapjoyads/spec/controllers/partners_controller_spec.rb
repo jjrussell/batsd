@@ -53,7 +53,7 @@ describe PartnersController do
       @partner.confirmed_for_payout = true
       @partner.save
       login_as(@user)
-      post :set_unconfirmed_for_payout, {:id => @partner.id, :payout_notes => "Test" }
+      post(:set_unconfirmed_for_payout, :id => @partner.id, :payout_notes => "Test")
       @partner.reload
     end
 
