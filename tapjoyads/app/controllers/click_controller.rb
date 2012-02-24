@@ -128,7 +128,7 @@ class ClickController < ApplicationController
     end
     return unless verify_records(required_records)
 
-    if Time.zone.at(params[:viewed_at]) < (@now - 24.hours)
+    if !@offer.tracking_for && Time.zone.at(params[:viewed_at]) < (@now - 24.hours)
       build_web_request('expired_click')
       save_web_request
       @destination_url = get_destination_url
