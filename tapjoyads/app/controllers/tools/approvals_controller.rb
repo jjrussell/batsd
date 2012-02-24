@@ -73,18 +73,18 @@ class Tools::ApprovalsController < WebsiteController
   def setup_conditions
     @conditions ||= {}
 
-    if params[:owner_id]
+    unless params[:owner_id].nil? || params[:owner_id].empty?
       @conditions[:owner_id] = params[:owner_id]
       @conditions[:owner_id] = nil if params[:owner_id] == 0
     end
-    if params[:item_type]
+    unless params[:item_type].nil? || params[:item_type].empty?
       @conditions[:item_type] = params[:item_type]
     end
   end
 
   # Check for the selected models partial, use the generic one if it doesn't exist
   def setup_partial
-    @table_partial = @conditions.fetch(:item_type) { 'table' }
+    @table_partial = @conditions.fetch(:item_type) { 'table' }.downcase
 
     if @table_partial != 'table'
       partial_path = Rails.root.join('app', 'views', 'tools', 'approvals', "_#{@table_partial}.html.#{view_language}")
