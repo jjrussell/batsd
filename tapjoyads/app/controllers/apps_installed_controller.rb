@@ -21,7 +21,7 @@ class AppsInstalledController < ApplicationController
     params[:package_names].split(',').each do |package_name|
       sdkless_click = temp_sdkless_clicks[package_name]
       if sdkless_click.present?
-        click = Click.new(:key => "#{params[:udid]}.#{sdkless_click[item_id]}", :consistent => params[:consistent])
+        click = Click.new(:key => "#{params[:udid]}.#{sdkless_click[item_id]}")
 
         message = { :click_key => click.key, :install_timestamp => Time.zone.now.to_f.to_s }.to_json
         Sqs.send_message(QueueNames::CONVERSION_TRACKING, message)
