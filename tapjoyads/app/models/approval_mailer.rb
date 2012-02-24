@@ -32,8 +32,9 @@ class ApprovalMailer < ActionMailer::Base
 
   private
   def handle(email, template, data)
-    from          'Tapjoy <noreply@tapjoy.com>'
+    from          data.delete(:from) { 'Tapjoy <noreply@tapjoy.com>' }
     recipients    email
+    cc            data.delete(:cc)
     content_type  'text/html'
     subject       data.delete(:subject)
     body          data
