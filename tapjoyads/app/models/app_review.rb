@@ -3,6 +3,7 @@ class AppReview < ActiveRecord::Base
 
   belongs_to :author, :polymorphic => true
   belongs_to :app_metadata
+  belongs_to :app
 
   after_save :update_app_metadata_rating_counts
   before_destroy :reset_app_metadata_rating_counts

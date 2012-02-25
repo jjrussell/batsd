@@ -1,15 +1,16 @@
 -content_for :styles do
   = stylesheet_link_tag("games/get-app")
-#offer-detail.page.current
+#offer-detail.current
   .panel
     .mod.line-item.page-header
       .hd
-        =image_tag("games/test-game-image.png")
+        .app-icon
+          =image_tag("games/test-game-image.png")
       .bd
         .title.elip
-          Game Title
+          = @app.name
         .sub-title
-          Publisher
+          = @offer.partner_name
     .mod.get-app
       .ui-joy-button.orange-action
         %a.text-center Get App
@@ -22,21 +23,4 @@
       %img{:src => BLANK_IMAGE}
       %span.percentage 100%
       %span.description from 100,000+ voters
-    %ul
-      -2.times do |i|
-        %li
-          .mod.line-item.image-caption.review
-            .hd
-              =image_tag("games/test-review-image.png")
-            .bd.review
-              .author
-                By Someone
-              .ui-icon.score
-                &nbsp;
-              .date
-                12/31/12
-              .text
-                Lorum ipsum getsum checksum Lorum ipsum getsum checksum
-                Lorum ipsum getsum checksum Lorum ipsum getsum checksum
-                Lorum ipsum getsum checksum Lorum ipsum getsum checksum
-                Lorum ipsum getsum checksum Lorum ipsum getsum checksum
+    = render "games/app_reviews/list"

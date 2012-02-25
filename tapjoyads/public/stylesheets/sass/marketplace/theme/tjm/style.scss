@@ -390,6 +390,12 @@ li {
 .score {
   background: url('/images/games/thumbs-up.png') no-repeat 0 0;
 }
+.thumbs-up {
+  @extend .score;
+}
+.thumbs-down {
+  background: url('/images/games/thumbs-down.png') no-repeat 0 0;
+}
 .score-med {
   background: url('/images/games/thumbs-up-med.png') no-repeat 0 0;
 }
@@ -497,6 +503,33 @@ li {
   padding-bottom: 10px;
 }
 
+.review {
+  font-size: .9em;
+
+  .author, .date {
+    color: #a1a1a1;
+    float: left;
+  }
+  .author {
+    max-width: 50%;
+    padding-right: 10px;
+  }
+  .date {
+    text-align: right;
+    float: right;
+  }
+  .score {
+    float: left;
+  }
+  .text {
+    clear: both;
+    height: 40px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: wrap;
+  }
+}
+
 //-------------------------------------------
 // Individual element structure
 //-------------------------------------------
@@ -554,8 +587,8 @@ li {
 }
 
 .score-summary {
-  padding-top: 20px;
-  padding-bottom: 20px;
+  padding-top: 10px;
+  padding-bottom: 10px;
 
   .percentage {
     font-size: 1.5em;
@@ -565,8 +598,7 @@ li {
   }
   img {
     background: url(/images/games/thumbs-up-lg.png) no-repeat 0 0;
-    width: 31px;
-    height: 32px;
+    width: 35px;
     vertical-align: middle;
   }
 }

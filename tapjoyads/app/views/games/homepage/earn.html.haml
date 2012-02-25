@@ -19,9 +19,9 @@
         .left= t('text.games.browse_offers')
         .ui-icon.down-arrow.right
           &nbsp;
-    = render("offers")
+    = render "offers"
     .mod.review-area.light
-      -link_to games_app_reviews_path(:app_metadata_id => @app_metadata_id) do
+      -link_to new_games_app_review_path(:app_metadata_id => @app_metadata_id) do
         .ui-joy-button.grey-action
           .text-center
             = t("text.games.review_app_name", {:app_name => @external_publisher.app_name})
