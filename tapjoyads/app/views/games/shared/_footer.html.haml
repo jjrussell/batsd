@@ -2,9 +2,13 @@
   %ul.list-button-container.flush
     %li.list-button
       -link_to games_social_index_path do
-        .mod.right-arrow.charcoal
+        .charcoal.left
           %span= t('text.games.share_with_your_friends')
+        .right.rightarrow.icon16
+          &nbsp;
     %li.list-button
       -link_to "#" do
-        .mod.right-arrow.charcoal
+        .charcoal.left
           %span= t('text.shared.help')
+        .right.rightarrow.icon16
+          &nbsp;
