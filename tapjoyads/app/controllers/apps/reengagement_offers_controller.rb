@@ -6,6 +6,8 @@ class Apps::ReengagementOffersController < WebsiteController
   before_filter :setup, :except => [ :show ]
   filter_access_to :all
 
+  DAY_0_INSTRUCTIONS = "Come back each day and get rewards!"
+
   def show
   end
 
@@ -22,9 +24,12 @@ class Apps::ReengagementOffersController < WebsiteController
       flash[:info] = "Re-engagement campaigns cannot currently be longer than 5 days."
       redirect_to(app_reengagement_offers_path(@app))
     elsif campaign_length == 0
-      offer = @app.build_reengagement_offer( :reward_value => 0 )
-      offer.save
-  end
+      @app.build_reengagement_offer(
+        :reward_value => 0,
+        :currency     => @app.primary_currency,
+        :instructions => DAY_0_INSTRUCTIONS
+      ).save
+    end
     @reengagement_offer = @app.build_reengagement_offer
   end
 
@@ -44,9 +49,9 @@ class Apps::ReengagementOffersController < WebsiteController
 
   def destroy
     if @reengagement_offer == @app.reengagement_campaign.last
-      @reengagement_offer.remove!
+      @reengagement_offer.hide!
       reengagement_offers = @app.reengagement_campaign
-      reengagement_offers.first.remove! if reengagement_offers.length == 1 && reengagement_offers.first.day_number == 0
+      reengagement_offers.first.hide! if reengagement_offers.length == 1 && reengagement_offers.first.day_number == 0
       flash[:notice] = "Removed day #{@reengagement_offer.day_number} re-engagement offer."
     end
     redirect_to(app_reengagement_offers_path(@app))
@@ -77,7 +82,7 @@ class Apps::ReengagementOffersController < WebsiteController
         @app = current_partner.apps.find(params[:app_id])
       end
       unless @app.primary_currency && @app.primary_currency.tapjoy_enabled?
-        redirect_to(app_reengagement_offers_path(@app)) and return
+        render :action => :index and return
       end
     end
 

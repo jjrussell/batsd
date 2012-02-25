@@ -168,7 +168,6 @@ class App < ActiveRecord::Base
       :partner => partner,
       :day_number => reengagement_campaign.length,
     }
-    options[:currency] ||= primary_currency
     reengagement_offers.build(options.merge(default_options))
   end
 
@@ -177,21 +176,15 @@ class App < ActiveRecord::Base
   end
 
   def enable_reengagement_campaign!
-    return if reengagement_campaign.empty?
-    self.reengagement_campaign_enabled = true
-    update_reengagements_with_enable_or_disable
-    Mc.put("mysql.reengagement_offers.#{id}.#{@acts_as_cacheable_version}", reengagement_campaign, false, 1.day)
+    update_reengagements_with_enable_or_disable(true)
   end
 
   def disable_reengagement_campaign!
-    return if reengagement_campaign.empty?
-    self.reengagement_campaign_enabled = false
-    update_reengagements_with_enable_or_disable
-    Mc.delete("mysql.reengagement_offers.#{id}.#{@acts_as_cacheable_version}")
+    update_reengagements_with_enable_or_disable(false)
   end
 
   def reengagement_campaign_from_cache
-    Mc.get("mysql.reengagement_offers.#{id}.#{@acts_as_cacheable_version}") || []
+    ReengagementOffer.find_all_in_cache_by_app_id(id)
   end
 
   ##
@@ -420,7 +413,9 @@ class App < ActiveRecord::Base
 
   private
 
-  def update_reengagements_with_enable_or_disable
+  def update_reengagements_with_enable_or_disable(enable)
+    return if reengagement_campaign.empty?
+    self.reengagement_campaign_enabled = enable
     self.save!
     reengagement_campaign.map(&:update_offers)
   end

@@ -1,5 +1,6 @@
 class ReengagementOffer < ActiveRecord::Base
   include UuidPrimaryKey
+  acts_as_cacheable
 
   belongs_to :app
   belongs_to :partner
@@ -14,31 +15,21 @@ class ReengagementOffer < ActiveRecord::Base
   validates_numericality_of :day_number, :greater_than_or_equal_to => 0
   validates_each :day_number do |record, attribute, value|
     campaign = record.app.reengagement_campaign
-    # puts "*" * 100
-    # puts attribute
-    # puts value
     offer = campaign && campaign[value]
     record.errors.add(attribute, "already exists.") if offer && offer != record
   end
   validates_each :partner_id do |record, attribute, value|
-    # puts "#" * 100
-    # puts attribute
-    # puts value
     unless value == record.app.partner_id
       record.errors.add(attribute, "must match App's Partner ID.")
     end
   end
   validates_each :currency_id do |record, attribute, value|
-    # puts "$" * 100
-    # puts attribute
-    # puts value
     unless record.app.currencies.collect(&:id).include?(value)
       record.errors.add(attribute, "must belong to App.")
     end
   end
 
-  before_create :disable_campaign
-  before_update :disable_campaign
+  after_cache :cache_by_app_id
 
   after_create :create_primary_offer
 
@@ -51,10 +42,9 @@ class ReengagementOffer < ActiveRecord::Base
   named_scope :for_app, lambda { |app_id| {:conditions => [ "app_id = ?", app_id ] } }
   named_scope :order_by_day, :order => "day_number ASC"
 
-  def remove!
+  def hide!
     self.hidden = true
     save!
-    disable_campaign
   end
 
   def self.resolve(app, currencies, params, geoip_data)
@@ -107,7 +97,25 @@ class ReengagementOffer < ActiveRecord::Base
     "#{device.id}.#{id}"
   end
 
+  def self.find_all_in_cache_by_app_id(app_id, do_lookup = !Rails.env.production?)
+    reengagement_offers = Mc.distributed_get("mysql.reengagement_offers.#{app_id}.#{ReengagementOffer.acts_as_cacheable_version}")
+    if reengagement_offers.nil?
+      if do_lookup
+        reengagement_offers = ReengagementOffer.visible.order_by_day.for_app(app_id).each { |c| c.run_callbacks(:before_cache) }
+        Mc.distributed_put("mysql.reengagement_offers.#{app_id}.#{ReengagementOffer.acts_as_cacheable_version}", reengagement_offers, false, 1.day)
+      else
+        reengagement_offers = []
+      end
+    end
+    reengagement_offers
+  end
+
   private
+
+  def cache_by_app_id
+    reengagement_offers = ReengagementOffer.visible.order_by_day.for_app(app_id).each { |c| c.run_callbacks(:before_cache) }
+    Mc.distributed_put("mysql.reengagement_offers.#{app_id}.#{ReengagementOffer.acts_as_cacheable_version}", reengagement_offers, false, 1.day)
+  end
 
   def disable_campaign
     app.disable_reengagement_campaign!
