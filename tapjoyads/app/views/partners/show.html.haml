@@ -84,6 +84,10 @@
       Tapjoy sponsored all apps:
       = @partner.tapjoy_sponsored? ? "Yes" : "No"
       = submit_tag('switch')
+  - if @partner.client.present?
+    .metadata
+      Client:
+      = link_to(@partner.client.name, tools_client_path(@partner.client.id))
 
 .clear
 

@@ -1,0 +1,35 @@
+%h1= @page_title
+
+%h4= link_to "[Add New Client]", new_tools_client_path
+
+%table#clients_table.tablesorter
+  %thead
+    %tr
+      %th Id
+      %th{ :class => 'headerSortDown header' } Name
+      %th Partners
+      %th{ :colspan => 2 } Actions
+  %tbody
+    - @clients.each do |client|
+      - class_names = cycle('', 'odd')
+      %tr{ :class => class_names }
+        %td= client.id
+        %td= client.name
+        %td
+          - client.partners.each do |partner|
+            = link_to(partner.name||'(no name)', partner)
+        %td= link_to '[Edit]', edit_tools_client_path(client)
+        %td= link_to '[Manage partners]', tools_client_path(client.id)
+
+- content_for :page_javascript do
+  :plain
+    $(function() {
+      $("#clients_table").tablesorter({
+        widgets: ['zebra'],
+        headers: {
+          0: { sorter: false },
+          2: { sorter: false },
+          3: { sorter: false }
+        }
+      });
+    });

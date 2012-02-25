@@ -21,6 +21,7 @@ class Partner < ActiveRecord::Base
   has_many :app_offers, :class_name => 'Offer', :conditions => "item_type = 'App'"
   has_one :payout_info
   belongs_to :sales_rep, :class_name => 'User'
+  belongs_to :client
   has_many :earnings_adjustments
 
   belongs_to :reseller
@@ -300,6 +301,16 @@ class Partner < ActiveRecord::Base
       offer.tapjoy_sponsored = flag
       offer.save! if offer.changed?
     end
+  end
+
+  def set_client(id)
+    self.client_id = id
+    self.save if self.client_id_changed?
+  end
+
+  def delete_client
+    self.client_id = nil
+    self.save if self.client_id_changed?
   end
 
 private
