@@ -1,6 +1,6 @@
 class AddCarriersToOffers < ActiveRecord::Migration
   def self.up
-    add_column :offers, :carriers, :char(36), :null => false, :default => ''
+    add_column :offers, :carriers, :text, :null => false, :default => ''
   end
 
   def self.down

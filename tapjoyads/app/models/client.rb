@@ -16,8 +16,7 @@ class Client < ActiveRecord::Base
 
   def delete_client_from_partners
     self.partners.each do |p|
-      p.client_id = nil
-      p.save
+      p.delete_client
     end
   end
 
