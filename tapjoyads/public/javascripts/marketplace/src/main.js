@@ -1,5 +1,4 @@
 $(document).ready(function() {
-  
   // Login Modal
   $('#login, #login-web').bind('click', function() {
     var modal = $('#login-form');
@@ -62,6 +61,9 @@ $(document).ready(function() {
       el.attr("src", "data:image/gif;base64,R0lGODlhAQABAID/AMDAwAAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==");
     });
   });
+
+  // Button bar
+  
   
   Tapjoy.Plugins = {
     
@@ -229,6 +231,29 @@ $(document).ready(function() {
     }
     
   }
+
+  $(".button-bar").each(function () {
+    var $$ = $(this),
+      radios = $(":radio", $$),
+      buttons = $(".ui-joy-button", $$),
+      value = $(":checked", $$).val(),
+      render_state;
+
+    render_state = function () {
+      $(".active", $$).removeClass("active");
+      $(":checked").attr("checked", false);
+
+      $(".ui-joy-button[value='" + value + "']", $$).addClass("active");
+      $("[value='" + value + "']:radio", $$).attr("checked", "checked");
+    };
+
+    $(".ui-joy-button", $$).click(function () {
+      value = $(this).attr("value");
+
+      render_state();
+    });
+    render_state();
+  });
   
 /*
 	Tapjoy.Utils.notification({
