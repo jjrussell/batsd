@@ -40,7 +40,6 @@ describe Job::MasterReloadStatzController do
       offer = Offer.find(item.first)
       metadata_hash = item.last
       metadata_hash.should == {
-        'icon_url'           => offer.get_icon_url,
         'offer_name'         => offer.name_with_suffix,
         'price'              => currency(offer.price),
         'payment'            => currency(offer.payment),
@@ -111,6 +110,7 @@ describe Job::MasterReloadStatzController do
       ]
 
       apps.each_index do |i|
+        apps[i].app_metadatas.delete_all
         apps[i].add_app_metadata(app_metadatas[i])
         apps[i].reload.save!
       end

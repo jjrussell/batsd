@@ -31,6 +31,7 @@
   - property_row('Enabled', @offer.is_enabled?, nil, @offer.is_enabled?.to_s)
   - property_row('Tapjoy Enabled', @offer.tapjoy_enabled?, nil, @offer.tapjoy_enabled?.to_s)
   - property_row('User Enabled', @offer.user_enabled?, nil, @offer.user_enabled?.to_s)
+  - property_row('Tracking Offer', @offer.tracking_for.present?, false, @offer.tracking_for.present?.to_s)
   - property_row('Bid', number_to_currency(@offer.bid / 100.0))
   - property_row('Payment', number_to_currency(@offer.payment / 100.0))
   - if @offer.reward_value.present?

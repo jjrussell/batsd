@@ -37,22 +37,33 @@ class Offer < ActiveRecord::Base
   DISPLAY_AD_SIZES = ['320x50', '640x100', '768x90'] # data stored as pngs
   FEATURED_AD_SIZES = ['960x640', '640x960', '480x320', '320x480'] # data stored as jpegs
   CUSTOM_AD_SIZES = DISPLAY_AD_SIZES + FEATURED_AD_SIZES
+  OFFER_LIST_EXCLUDED_COLUMNS = %w( active
+                                    allow_negative_balance
+                                    created_at
+                                    daily_budget
+                                    hidden
+                                    instructions
+                                    instructions_overridden
+                                    last_daily_stats_aggregation_time
+                                    last_stats_aggregation_time
+                                    low_balance
+                                    min_bid_override
+                                    min_conversion_rate
+                                    name_suffix
+                                    next_daily_stats_aggregation_time
+                                    next_stats_aggregation_time
+                                    overall_budget
+                                    pay_per_click
+                                    stats_aggregation_interval
+                                    tapjoy_enabled
+                                    tapjoy_sponsored
+                                    updated_at
+                                    url_overridden
+                                    user_enabled
+                                    tracking_for_id
+                                    tracking_for_type )
 
-  OFFER_LIST_REQUIRED_COLUMNS = [ 'id', 'item_id', 'item_type', 'partner_id',
-                                  'name', 'url', 'price', 'bid', 'payment',
-                                  'conversion_rate', 'show_rate', 'self_promote_only',
-                                  'device_types', 'countries',
-                                  'age_rating', 'multi_complete', 'featured',
-                                  'publisher_app_whitelist', 'direct_pay', 'reward_value',
-                                  'third_party_data', 'payment_range_low',
-                                  'payment_range_high', 'icon_id_override', 'rank_boost',
-                                  'normal_bid', 'normal_conversion_rate', 'normal_avg_revenue',
-                                  'normal_price', 'over_threshold', 'rewarded', 'reseller_id',
-                                  'cookie_tracking', 'min_os_version', 'screen_layout_sizes',
-                                  'interval', 'banner_creatives', 'dma_codes', 'regions',
-                                  'wifi_only', 'approved_sources', 'approved_banner_creatives',
-                                  'sdkless', 'carriers'
-                                ].map { |c| "#{quoted_table_name}.#{c}" }.join(', ')
+  OFFER_LIST_REQUIRED_COLUMNS = (Offer.column_names - OFFER_LIST_EXCLUDED_COLUMNS).map { |c| "#{quoted_table_name}.#{c}" }.join(', ')
 
   DIRECT_PAY_PROVIDERS = %w( boku paypal )
 
@@ -86,6 +97,7 @@ class Offer < ActiveRecord::Base
   belongs_to :reseller
   belongs_to :app, :foreign_key => "item_id"
   belongs_to :action_offer, :foreign_key => "item_id"
+  belongs_to :tracking_for, :polymorphic => true
 
   validates_presence_of :reseller, :if => Proc.new { |offer| offer.reseller_id? }
   validates_presence_of :partner, :item, :name, :url, :rank_boost
@@ -434,7 +446,7 @@ class Offer < ActiveRecord::Base
     display_banner_ads? && banner_creative_approved?(size)
   end
 
-  def get_video_icon_url(options = {})
+  def video_icon_url(options = {})
     if item_type == 'VideoOffer' || item_type == 'TestVideoOffer'
       object = S3.bucket(BucketNames::TAPJOY).objects["icons/src/#{Offer.hashed_icon_id(icon_id)}.jpg"]
       begin
@@ -444,7 +456,7 @@ class Offer < ActiveRecord::Base
       end
     end
   end
-  memoize :get_video_icon_url
+  memoize :video_icon_url
 
   def get_icon_url(options = {})
     Offer.get_icon_url({:icon_id => Offer.hashed_icon_id(icon_id), :item_type => item_type}.merge(options))

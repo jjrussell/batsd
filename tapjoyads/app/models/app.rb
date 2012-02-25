@@ -82,7 +82,6 @@ class App < ActiveRecord::Base
     :through => :app_metadata_mappings,
     :source => :app_metadata,
     :order => "created_at"
-  has_many :app_reviews
 
   belongs_to :partner
 
@@ -362,6 +361,32 @@ class App < ActiveRecord::Base
     test_video_offer
   end
 
+  def create_tracking_offer_for(tracked_for, options = {})
+    device_types = options.delete(:device_types) { get_offer_device_types.to_json }
+    raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
+
+    offer = Offer.new({
+      :item             => self,
+      :tracking_for     => tracked_for,
+      :partner          => partner,
+      :name             => name,
+      :url              => store_url,
+      :device_types     => device_types,
+      :price            => 0,
+      :bid              => 0,
+      :min_bid_override => 0,
+      :rewarded         => false,
+      :name_suffix      => 'tracking',
+      :third_party_data => store_id,
+      :age_rating       => age_rating,
+      :wifi_only        => wifi_required?
+    })
+    offer.id = tracked_for.id
+    offer.save!
+
+    offer
+  end
+
   private
 
   def generate_secret_key
@@ -376,6 +401,7 @@ class App < ActiveRecord::Base
   end
 
   def create_primary_offer
+    clear_association_cache
     offer = Offer.new(:item => self)
     offer.id = id
     offer.partner = partner
@@ -391,6 +417,7 @@ class App < ActiveRecord::Base
   end
 
   def update_all_offers
+    clear_association_cache
     update_offers if store_id_changed || partner_id_changed? || name_changed? || hidden_changed?
     update_rating_offer if rating_offer.present? && (store_id_changed || name_changed?)
     update_action_offers if store_id_changed || name_changed? || hidden_changed?
