@@ -9,6 +9,12 @@ class PartnerAssignment < ActiveRecord::Base
 
   before_create :set_reseller
 
+  delegate :name, :to => :partner
+
+  def <=>(other)
+    name.to_s <=> other.name.to_s
+  end
+
   private
 
   def set_reseller

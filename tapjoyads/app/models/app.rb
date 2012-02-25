@@ -399,6 +399,7 @@ class App < ActiveRecord::Base
   end
 
   def create_primary_offer
+    clear_association_cache
     offer = Offer.new(:item => self)
     offer.id = id
     offer.partner = partner
@@ -414,6 +415,7 @@ class App < ActiveRecord::Base
   end
 
   def update_all_offers
+    clear_association_cache
     update_offers if store_id_changed || partner_id_changed? || name_changed? || hidden_changed?
     update_rating_offer if rating_offer.present? && (store_id_changed || name_changed?)
     update_action_offers if store_id_changed || name_changed? || hidden_changed?
