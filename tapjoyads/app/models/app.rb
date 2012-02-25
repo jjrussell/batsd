@@ -90,6 +90,7 @@ class App < ActiveRecord::Base
 
   validates_presence_of :partner, :name, :secret_key
   validates_inclusion_of :platform, :in => PLATFORMS.keys
+  validates_numericality_of :active_gamer_count, :only_integer => true, :greater_than_or_equal_to => 0, :allow_nil => false
 
   before_validation_on_create :generate_secret_key
 
