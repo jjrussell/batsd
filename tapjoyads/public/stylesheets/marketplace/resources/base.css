@@ -558,3 +558,9 @@ input:placeholder {
   overflow: auto;
   overflow-x: hidden;
   overflow-y: hidden; }
+
+.nbb {
+  border-bottom: 0 !important; }
+
+.ntb {
+  border-top: 0 !important; }
