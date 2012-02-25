@@ -24,7 +24,7 @@
       .heading
         Other Options  
     %ul.list-button-container.flush.nbb
-      -link_to games_app_reviews_path(:app_metadata_id => @app_metadata_id) do
+      -link_to new_games_app_review_path(:app_metadata_id => @app_metadata_id) do
         %li.list-button.ntb
           .left.charcoal
             = t("text.games.review_app_name", {:app_name => @external_publisher.app_name})
