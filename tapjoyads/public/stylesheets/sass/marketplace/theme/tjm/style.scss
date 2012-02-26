@@ -1094,6 +1094,7 @@ div.app {
     float: right;
     
     img {
+      cursor: pointer;
       width: 32px;
       height: 32px;
       margin-top: 5px;
@@ -1132,4 +1133,8 @@ div.app {
     height: 89px;
 
   }
+}
+
+.hide {
+  display: none;
 }
