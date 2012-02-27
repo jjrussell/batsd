@@ -17,8 +17,7 @@ class LinksharePoller
 
   MAX_RETRY_ATTEMPTS        = 40
 
-
-   def self.test
+  def self.test
     january_thirtieth = Date.civil(2012,1,30)
     self.poll(january_thirtieth)   # should attempt to resolve one click with key 511865e0-f0d9-4151-94c4-2047081602f8
     self.poll(january_thirtieth + 1.week)   # should handle no results properly
