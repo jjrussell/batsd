@@ -15,7 +15,7 @@
               .button.grey.arrow
                 .arrow_bg Replay Video
           - @video_offer.video_buttons.each do |button|
-            %a{ :href => button.url }
+            %a{ :href => get_click_url(button.tracking_offer) }
               .slider.slider_right
                 .button.grey.arrow
                   .arrow_bg= button.name
