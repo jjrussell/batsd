@@ -2,7 +2,6 @@ class VideoButton < ActiveRecord::Base
   include UuidPrimaryKey
 
   belongs_to :video_offer
-  belongs_to :item, :polymorphic => true
 
   validates_presence_of :name
   validates_length_of :name, :maximum => 20, :message => "Please limit the name to 20 characters"

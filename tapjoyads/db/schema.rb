@@ -1069,8 +1069,6 @@ ActiveRecord::Schema.define(:version => 20120419190829) do
     t.boolean  "enabled",                      :default => true
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "item_id",        :limit => 36
-    t.string   "item_type"
   end
 
   add_index "video_buttons", ["id"], :name => "index_video_buttons_on_id", :unique => true
