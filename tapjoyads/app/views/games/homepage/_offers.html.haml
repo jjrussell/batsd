@@ -1,5 +1,5 @@
 .offer-wall
   %ul.basic{"data-jsonp-url"=>@external_publisher.get_offerwall_url(@device, @external_publisher.currencies.first, request.accept_language, request.user_agent, current_gamer.id)}
     %li
-      %h2.blink= t('text.games.loading')
+      %h2= t('text.games.loading')
   = render "all_offers_template"

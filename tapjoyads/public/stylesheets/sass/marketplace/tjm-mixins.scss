@@ -168,20 +168,20 @@ $mobile-scaledown-multiplier: 2;
   background-color: #FFF;
 }
 
-@mixin fadeIn($time: 0.5s, $count: 1, $delay: 0s) {
+@mixin fade-in($time: 0.5s, $count: 1, $delay: 0s) {
   -webkit-animation-delay: $delay;
-  -webkit-animation-name: fadeIn;
+  -webkit-animation-name: fade-in;
   -webkit-animation-duration: $time;
   -webkit-animation-iteration-count: $count;
   -webkit-animation-timing-function: linear;
   -moz-animation-delay: $delay;
-  -moz-animation-name: fadeIn;
+  -moz-animation-name: fade-in;
   -moz-animation-duration: $time;
   -moz-animation-iteration-count: $count;
   -moz-animation-timing-function: linear;
 }
 
-@mixin animate ($type: all, $time: 0.65s, $ease: ease-out, $delay: 0s) {
+@mixin animate($type: all, $time: 0.65s, $ease: ease-out, $delay: 0s) {
   transition: $type $time $ease $delay;
   -moz-transition: $type $time $ease $delay;
   -o-transition: $type $time $ease $delay;

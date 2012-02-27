@@ -8,10 +8,6 @@ class Games::HomepageController < GamesController
     render "translations.js", :layout => false, :content_type=>"application/javascript"
   end
 
-  def proto
-    render :proto, :layout=>false
-  end
-
   def get_app
   end
 
@@ -21,7 +17,12 @@ class Games::HomepageController < GamesController
   def earn
     device_id = current_device_id
     @device = Device.new(:key => device_id) if device_id.present?
-    @currency = Currency.find_by_id(params[:id])
+    if params[:eid].present?
+      @curr_id = ObjectEncryptor.decrypt(params[:eid])
+    elsif params[:id].present?
+      @curr_id = params[:id]
+    end
+    @currency = Currency.find_by_id(@curr_id)
     @external_publisher = ExternalPublisher.new(@currency)
     @app_metadata_id = App.find_by_id(@external_publisher.app_id).primary_app_metadata.id
 
