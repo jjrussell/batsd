@@ -685,14 +685,14 @@ describe Offer do
     end
 
     context 'with App item' do
-      context 'and overriden url' do
+      context 'and overridden url' do
         it 'is false' do
           @offer.stubs(:url_overridden).returns(true)
           @offer.should_not be_missing_app_store_id
         end
       end
 
-      context 'and url not overriden' do
+      context 'and url not overridden' do
         context 'with App with store_id' do
           it 'is false' do
             @offer.item.stubs(:store_id).returns('foo')
