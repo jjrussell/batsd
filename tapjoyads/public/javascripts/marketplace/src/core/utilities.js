@@ -59,7 +59,7 @@
 			},
 			
 			isEmpty: function(v) {
-        return v == undefined || v == null || v == '';
+        return v == undefined || v == null || v == '' || v == 'undefined';
 			},
 			
       Storage: {
@@ -71,17 +71,53 @@
             return false;
           }
         },
-      
         get: function(k) {
           return localStorage[k];
         },
-      
         remove: function(k) {
           localStorage.removeItem(k);
         },
-      
+        
+        delete: function(k) {
+          this.remove(k);
+        },
         reset: function() {
           localStorage.clear();
+        }
+      },
+      
+      Cookie: {
+        set: function(k, v, days, years) {
+          if (days) {
+            var date = new Date();
+            var time = 0;
+            if (years) {
+              time = years*365*24*60*60*1000;
+            }
+            else {
+              time = days*24*60*60*1000;
+            }
+            date.setTime(date.getTime()+(time));
+            var expires = "; expires=" + date.toGMTString();
+          }
+          else var expires = "";
+          document.cookie = k + "=" + v + expires + "; path=/";
+        },
+        get: function(k) {
+          var name = k + "=";
+          var ca = document.cookie.split(';');
+          for(var i=0;i < ca.length;i++) {
+            var c = ca[i];
+            while (c.charAt(0)==' ') c = c.substring(1,c.length);
+            if (c.indexOf(name) == 0) return c.substring(name.length,c.length);
+          }
+          return null;
+        },
+        remove: function(k) {
+          this.setCookie(k, "", -1);
+        },
+        delete: function(k) {
+          this.remove(k);
         }
       }
     }

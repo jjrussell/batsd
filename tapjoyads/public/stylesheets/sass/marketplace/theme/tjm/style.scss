@@ -369,7 +369,7 @@ li {
 /**
  * icon classes
  */
- 
+
 .score {
   background: url(#{$image_path}/thumbs_up.png) no-repeat 0 0;
 }
@@ -793,13 +793,13 @@ div.ui-joy-button.facebook-btn {
 /**
  * list items
  */
- 
+
 .ui-list-action-label {
   display: block;
   font-size: 1em;
   margin-top: 1px;
 }
- 
+
 /**
  * list-button container
  */
@@ -932,7 +932,7 @@ div.ui-joy-button.facebook-btn {
   padding: 5px 0 10px 0;
   overflow: auto;
 }
- 
+
 .row.borders {
   border-bottom: 1px solid #b1b4b6;
   border-top: 1px solid #fafbfc;
@@ -978,15 +978,15 @@ div.app {
   margin: 0 30px;
   float: left;
   font-family: "Myriad Pro", "Helvetica", arial;
-  
+
   .app-icon {
     position: relative;
     width:  125px;
     height: 125px;
     margin: 0 auto;
     background: url(#{$image_path}/app_icon_overlay_large.png) no-repeat 0 0;
-    
-    img { 
+
+    img {
       position: relative;
       left: 1px;
       top: 1px;
@@ -1003,25 +1003,25 @@ div.app {
     margin-bottom: 5px;
     text-shadow: 0 1px 0 rgba(255,255,255, .6);
     text-align: center;
-  
+
     span {
       color: #252525;
       display: block;
       font-family: "Myriad Pro", "Helvetica", arial;
       line-height: 1.3em;
     }
-    
+
     span.title {
       font-size: 1.2em;
     }
-    
+
     small {
       display: block;
       font-size: 13px;
       color: #8c8c8c;
       margin-bottom: 5px;
     }
-  
+
     span.ui-icon-small {
       padding-left: 20px;
       padding-top: 1px;
@@ -1029,7 +1029,7 @@ div.app {
       font-size: 1.1em;
       vertical-align: text-bottom;
     }
-    
+
     span.ui-icon-small.social {
       margin-left: 10px;
     }
@@ -1042,11 +1042,11 @@ div.app {
     width: 100%;
     margin: 10px auto;
     box-shadow: 0 0 2px rgba(0,0,0, .4);
-    color: #444;  
+    color: #444;
     text-shadow: 0 1px 0 #fff;
     cursor: pointer;
     text-align: center;
-  
+
     a {
       font-size: 1.1em;
       margin: 6px 10px 4px;
@@ -1055,11 +1055,11 @@ div.app {
       display: block;
     }
   }
-  
+
   .btn:hover {
     background: #f5f5f5;
   }
-  
+
   .btn:active {
     background: #666;
     color: #fff;
@@ -1105,7 +1105,7 @@ div.app {
   }
   .toggle {
     float: right;
-    
+
     img {
       cursor: pointer;
       width: 32px;
@@ -1124,7 +1124,7 @@ div.app {
   .heading {
     color: #fff;
     text-shadow: 0 1px 0 rgba(0,0,0, .8);
-  }    
+  }
 }
 
 /**
@@ -1145,7 +1145,7 @@ div.app {
     width: 89px;
     height: 89px;
   }
-  
+
   .action-item {
     position: absolute;
     top: 5px;
@@ -1175,7 +1175,7 @@ div.app {
 /**
  * earn
  */
- 
+
 .list-button-container.earn-theme .squircle {
   background: url(#{$image_path}/app_icon_overlay_large_earn.png) no-repeat 0 0;
 }
@@ -1194,4 +1194,4 @@ div.app {
   text-shadow: 0 1px 0 #fff;
   border-radius: 0 !important;
 }
- 
+

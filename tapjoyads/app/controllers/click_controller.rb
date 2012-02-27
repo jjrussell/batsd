@@ -128,7 +128,7 @@ class ClickController < ApplicationController
     end
     return unless verify_records(required_records)
 
-    if Time.zone.at(params[:viewed_at]) < (@now - 24.hours)
+    if !@offer.tracking_for_id && Time.zone.at(params[:viewed_at]) < (@now - 24.hours)
       build_web_request('expired_click')
       save_web_request
       @destination_url = get_destination_url
@@ -145,10 +145,12 @@ class ClickController < ApplicationController
   end
 
   def validate_click
-    return if currency_disabled?
-    return if offer_disabled?
-    return if offer_completed?
-    return if recently_clicked?
+    unless @offer.tracking_for_id
+      return if currency_disabled?
+      return if offer_disabled?
+      return if offer_completed?
+      return if recently_clicked?
+    end
 
     wr_path = params[:source] == 'featured' ? 'featured_offer_click' : 'offer_click'
     build_web_request(wr_path)

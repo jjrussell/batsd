@@ -28,7 +28,7 @@
   - if permitted_to? :publisher_payout_info_changes, :tools
     %li= link_to 'Payout Info Changes', publisher_payout_info_changes_tools_path
 
-- if has_permissions_for_one_of? :admin
+- if has_permissions_for_one_of? :admin, :role_admin
   %h3 Admin
 %ul
   - if permitted_to? :failed_sdb_saves, :tools
@@ -81,7 +81,7 @@
     %li= link_to 'Manage Rank Boosts', tools_rank_boosts_path
   - if permitted_to? :sanitize_users, :tools
     %li= link_to 'Sanitize Users Table', sanitize_users_tools_path
-  - if permitted_to? :index, :tools_users
+  - if permitted_to? :create, :tools_users_partner_assignments
     %li= link_to 'Manage user partners', tools_users_path
   - if permitted_to? :index, :tools_premier_partners
     %li= link_to 'Premier Partners', tools_premier_partners_path

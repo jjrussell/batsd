@@ -12,7 +12,7 @@
             .left.ui-icon-medium.score.icon24.p5
               80%
             .left.ui-icon-medium.social.icon24.p5.ml5
-              30      
+              30
     .section.dark
       .heading
         = t('text.games.browse_offers')
@@ -36,13 +36,13 @@
                   15
               .container
                 .ui-icon-medium.wifi.icon24.p5.left
-                  Wi-Fi Required   
+                  Wi-Fi Required
             .right
               .collect.center.mt5
                 = t('text.shared.collect')
-                <br>365 Coins 
+                <br>365 Coins
               .greenblock.mt5
-                = t('text.shared.collect')    
+                = t('text.shared.collect')
         %li.list-button
           .container.mt5
             .left.pt3
@@ -61,16 +61,16 @@
                   15
               .container
                 .ui-icon-medium.wifi.icon24.p5.left
-                  Wi-Fi Required   
+                  Wi-Fi Required
             .right
               .collect.center.mt5
                 = t('text.shared.collect')
-                <br>365 Coins 
+                <br>365 Coins
               .greenblock.mt5
-                = t('text.shared.collect')    
+                = t('text.shared.collect')
     .section.dark
       .heading
-        Other Options  
+        Other Options
     %ul.list-button-container.flush.nbb
       -link_to new_games_app_review_path(:app_metadata_id => @app_metadata_id) do
         %li.list-button.ntb
@@ -78,6 +78,6 @@
             = t("text.games.review_app_name", {:app_name => @external_publisher.app_name})
           .right.rightarrow.icon16
             &nbsp;
-          
+
 -content_for :included_javascripts do
   = javascript_include_tag "games/src/marketplace"

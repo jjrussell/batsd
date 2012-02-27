@@ -19,12 +19,17 @@
                 &nbsp;
               </div>
             </div>
+            <div class="app-detail clearfix">
+              <a href="#{games_get_app_path}?eid=<%= OfferArray[i].EId %>">
+                Reviews
+              </a>
+            </div>
             <div class="highlight-green">
               <%= i18n.t("games.amount_and_currency", {amount: OfferArray[i].Amount, currency: CurrencyName}) %>
             </div>
           </div>
           <div class="ft">
-            <a href="#{games_get_app_path}?id=<%= OfferArray[i].Id %>">
+            <a href="<%= OfferArray[i].RedirectURL %>">
               <div class="right-arrow">
                 <div class="ui-list-action-label">
                   <%= i18n.t("shared.collect") %>

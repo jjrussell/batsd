@@ -16,6 +16,7 @@ filetypes = %w(
   rhtml
   rxml
   scss
+  js
   txt
   xml
   yaml
