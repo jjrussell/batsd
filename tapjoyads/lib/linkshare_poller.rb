@@ -15,8 +15,6 @@ class LinksharePoller
   CLICK_KEY_COLUMN          = 0
   SALES_COLUMN              = 4
 
-  MAX_RETRY_ATTEMPTS        = 40
-
   def self.test
     january_thirtieth = Date.civil(2012,1,30)
     self.poll(january_thirtieth)   # should attempt to resolve one click with key 511865e0-f0d9-4151-94c4-2047081602f8
@@ -34,7 +32,8 @@ class LinksharePoller
       :reportid => 11,
     }
     data = self.download_data(options)
-    return if data.blank?
+    Rails.logger.info data
+    Rails.logger.info NO_RESULTS_FOUND and return if data.blank?
     Rails.logger.info DOWNLOAD_SUCCESS
     data.each do |line|
       columns = CSV.parse_line(line)
@@ -58,17 +57,18 @@ class LinksharePoller
     data = self.raw_data(BASE_URL + options.to_query)
     raise ERROR_COULD_NOT_CONNECT unless data
     data = data.split("\n")
-    Rails.logger.info NO_RESULTS_FOUND and return if data.blank?
     data.slice!(0)
-    Rails.logger.info NO_RESULTS_FOUND and return if data.blank?
     data
   end
 
   def self.raw_data(url)
     i = 0
-    while i < MAX_RETRY_ATTEMPTS
+    while i < 5
       return Downloader.get(url, {:timeout => 4}) rescue i += 1
       Rails.logger.info "Linkshare retry attempt #{i}..."
+      delay ||= 0.1
+      sleep(delay)
+      delay *= 2
     end
   end
 end
