@@ -279,7 +279,7 @@ body .swapright.out {
 
   35% {
     -webkit-transform: translate3d(180px, 0px, -400px) rotateY(-20deg);
-    opacity: .5; }
+    opacity: 0.5; }
 
   100% {
     -webkit-transform: translate3d(0px, 0px, -800px) rotateY(-70deg);
@@ -316,7 +316,7 @@ body .swapleft.out {
 
   35% {
     -webkit-transform: translate3d(-180px, 0px, -400px) rotateY(20deg);
-    opacity: .5; }
+    opacity: 0.5; }
 
   100% {
     -webkit-transform: translate3d(0px, 0px, -800px) rotateY(70deg);

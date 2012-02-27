@@ -1,9 +1,9 @@
 (function(Tap){
   var _t = window.i18n.t;
-  
+
   Tap.extend({
     Plugins: {
-  
+
       showAddHomeDialog : function() {
         var startY = startX = 0,
           boldText = TJG.utils.sprintfTemplate("<span class='bold'>%s</span>"),
@@ -14,7 +14,7 @@
               })+
             '</div><div class="bookmark"><span>'+
               _t("games.tap_that", {
-                icon:'</span><span class="bookmark_icon"></span><span>', 
+                icon:'</span><span class="bookmark_icon"></span><span>',
                 button:'</span><span class="bookmark_btn"></span><span>'
               })+
             '</span></div>',
@@ -166,7 +166,7 @@
         }, options.startDelay);
         window.addToHomeClose = addToHomeClose;
       }
-    
+
     }
   });
 })(Tapjoy);

@@ -1,23 +1,23 @@
 $(document).ready(function() {
 
   var _t = window.i18n.t;
-  
+
   // Login Modal
   $('#login, #login-web').bind('click', function() {
     if ($('#login-form').hasClass('show')) {
       $('#login-form').removeClass('show');
     }
     else {
-      $('#login-form').addClass('show').css({ 
+      $('#login-form').addClass('show').css({
         'height' : $(document).height(),
       });
     }
   });
-  
+
   $('#login-form .cancel-btn').bind('click', function() {
     $('#login-form').removeClass('show');
   });
-  
+
   // Login Validation
   if ($('form#new_gamer_session')) {
     $('form#new_gamer_session input').focus(function() {
@@ -60,7 +60,7 @@ $(document).ready(function() {
       }
     });
   }
-  
+
   // Menu Grid
   $('.menu-grid').bind('click', function(){
     if ($(this).hasClass('active')) {
@@ -72,7 +72,7 @@ $(document).ready(function() {
       $('.menu-dropdown').removeClass('close').addClass('open');
     }
   });
-  
+
   // Menu - Device Toggle
   $('.device-toggle').bind('click', function(){
     if ($(this).hasClass('up')) {
@@ -82,7 +82,7 @@ $(document).ready(function() {
       $(this).removeClass('down').addClass('up');
     }
   });
-  
+
   // Device switch toggle
   $('.device-change').bind('click', function(){
     if ($('.device-select').hasClass('open')) {
@@ -92,7 +92,7 @@ $(document).ready(function() {
       $('.device-select').removeClass('closed').addClass('open');
     }
   });
-  
+
   // App Icons
   $('.app-icon img').each(function(n, o){
     var el = $(o);
@@ -109,7 +109,7 @@ $(document).ready(function() {
     var el = $(this),
         img = $('img', el),
         content = $(this).parent().next('div');
-        
+
     if(img.hasClass('uparrow')){
      img.removeClass('uparrow').addClass('downarrow');
      content.removeClass('hide');
@@ -118,11 +118,11 @@ $(document).ready(function() {
       content.addClass('hide');
     }
   });
-  
+
   $('.list-button').bind(Tapjoy.EventsMap.start + ' ' + Tapjoy.EventsMap.end, function(e){
     var el = $(this),
         which = e.type;
-        
+
     if(which === Tapjoy.EventsMap.start){
       el.addClass('active');
     }else{
