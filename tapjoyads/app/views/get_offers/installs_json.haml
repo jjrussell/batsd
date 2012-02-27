@@ -14,7 +14,7 @@
     hash["PapayaUserCount"] = number_with_delimiter(@papaya_offers[offer.id]) if @device.is_papayan? && @show_papaya && @papaya_offers.include?(offer.id)
     hash["WifiOnly"]        = offer.wifi_only? if @show_wifi_only
     if params[:tjm] == '1'
-      hash["EnId"]          = ObjectEncryptor.encrypt(offer.id)
+      hash["EId"]          = ObjectEncryptor.encrypt(offer.id)
     end
     offer_array << hash
   end

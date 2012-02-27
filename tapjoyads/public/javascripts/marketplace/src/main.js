@@ -1,4 +1,5 @@
 $(document).ready(function() {
+
   var _t = window.i18n.t;
   
   // Login Modal
@@ -60,7 +61,6 @@ $(document).ready(function() {
     });
   }
   
-  
   // Menu Grid
   $('.menu-grid').bind('click', function(){
     if ($(this).hasClass('active')) {
@@ -105,7 +105,7 @@ $(document).ready(function() {
     });
   });
 
-  /*
+	/*
 	Tapjoy.Utils.notification({
 		message: 'Thanks, your settings have been saved.'
 	});
