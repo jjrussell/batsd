@@ -35,6 +35,13 @@ FactoryGirl.define do
 
   factory :partner_user, :parent => :user
 
+  factory :role_mgr_user, :parent => :user do
+    after_build do |mgr|
+      role = UserRole.find_or_create_by_name('role_mgr', :employee => true)
+      mgr.user_roles << role
+    end
+  end
+  
   factory :partner do
     name { Factory.next(:name) }
     approved_publisher true
