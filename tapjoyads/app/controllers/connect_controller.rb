@@ -21,8 +21,7 @@ class ConnectController < ApplicationController
 
     web_request.save
 
-    @sdkless_supported = sdkless_supported?
-    if @sdkless_supported
+    if sdkless_supported?
       @sdkless_clicks = device.sdkless_clicks
     end
   end

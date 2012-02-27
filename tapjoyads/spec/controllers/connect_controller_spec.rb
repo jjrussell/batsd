@@ -11,6 +11,8 @@ describe ConnectController do
   describe '#index' do
     context 'with required parameters' do
       before :each do
+        app = Factory(:app)
+        device = Factory(:device)
         @params = { :app_id => 'test_app',
                     :udid   => 'test_device' }
       end
