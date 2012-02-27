@@ -254,8 +254,22 @@ $(document).ready(function() {
     });
     render_state();
   });
-  
-/*
+
+
+  $('.toggle').bind('click', function(){
+		var el = $(this),
+		    img = $('img', el),
+		    content = $(this).parent().next('div');
+				
+		if(img.hasClass('uparrow')){
+		 img.removeClass('uparrow').addClass('downarrow');
+     content.removeClass('hide');
+		}else{
+			img.removeClass('downarrow').addClass('uparrow')
+	    content.addClass('hide');
+		}
+	});
+	/*
 	Tapjoy.Utils.notification({
 		message: 'Thanks, your settings have been saved.'
 	});
@@ -265,5 +279,5 @@ $(document).ready(function() {
 	    message: 'Thanks, we would like to save hello again.'
 	  });
 	}, 4000);
-*/	
+	*/
 });
