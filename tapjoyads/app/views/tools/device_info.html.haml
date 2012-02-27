@@ -132,25 +132,17 @@
         %td Click ID
     %tbody
       - @clicks.each do |click|
-        :ruby
-          adv = @click_apps[click.advertiser_app_id]
-          pub = @click_apps[click.publisher_app_id]
-          reward = @rewards[click.reward_key]
-          tr_class = click_tr_class(click, reward)
-          install_td_class = 'small'
-          if click.block_reason? || click.resolved_too_fast?
-            install_td_class += ' bad'
-          end
-        %tr{ :class => tr_class }
+        - reward = @rewards[click.reward_key]
+        %tr{ :class => click_tr_class(click, reward) }
           %td.small
-            %nobr= click.clicked_at? ? click.clicked_at.to_s(:pub_abbr_ampm_sec) : '-'
-          %td{ :class => install_td_class }
+            %nobr= click_timestamp(click, :clicked_at)
+          %td{ :class => install_td_class(click) }
             - if click.block_reason?
               = click.block_reason
             - else
-              = click.installed_at? ? click.installed_at.to_s(:pub_abbr_ampm_sec) : '-'
-          %td= adv.nil? ? '-'  : link_to_statz(adv.name, adv)
-          %td= pub.nil? ? '-'  : link_to_statz(pub.name, pub)
+              = click_timestamp(click, :installed_at)
+          %td= link_app_to_statz(@click_apps[click.advertiser_app_id])
+          %td= link_app_to_statz(@click_apps[click.publisher_app_id])
           %td
             - if click.manually_resolved_at? && click.installed_at?
               Manually awarded
@@ -166,7 +158,7 @@
                 = submit_tag 'Award'
           %td.small
             = link_to('show', '#', :class => 'show-click-detail')
-            - click_info_ul(click, @rewards[click.reward_key])
+            - click_info_ul(click, reward)
           %td
             = clippy(click.key)
       %tr

@@ -6,7 +6,7 @@ class ReportingDataController < WebsiteController
   before_filter :lookup_user_and_authenticate
   before_filter :lookup_stats, :only => :index
 
-  rate_limit :index, :key => proc { |c| c.params[:username] }, :max_calls => 5, :time_limit => 5.minutes, :wait_time => 1.minute, :status => 420
+  rate_limit :index, :key => proc { |c| "#{c.params[:username]}.#{c.params[:partner_id]}" }, :max_calls => 6, :time_limit => 5.minutes, :wait_time => 1.minute, :status => 420
   rate_limit :udids, :key => proc { |c| "#{c.params[:username]}.#{c.params[:offer_id]}" }, :max_calls => 2, :time_limit => 1.hour, :wait_time => 1.hour, :status => 420
 
   def index
