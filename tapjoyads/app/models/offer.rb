@@ -753,8 +753,9 @@ class Offer < ActiveRecord::Base
   end
 
   def promotion_platform
-    app ? app.platform.to_sym : nil
+    get_platform == 'All' ? nil : App::PLATFORMS.invert[get_platform].to_sym
   end
+  memoize :promotion_platform
 
   def calculate_target_installs(num_installs_today)
     target_installs = 1.0 / 0

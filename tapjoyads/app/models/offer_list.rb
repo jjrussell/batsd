@@ -81,7 +81,6 @@ class OfferList
             end
           end
         end
-
         @promoted_offers =  valid_promoted_offers.sample([ App::PROMOTED_INVENTORY_SIZE, valid_promoted_offers.length ].min)
       end
     end
