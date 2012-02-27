@@ -2,6 +2,7 @@ require 'spec/spec_helper'
 
 describe Games::AppReviewsController do
   before :each do
+    fake_the_web
     activate_authlogic
     @gamer = Factory(:gamer)
     login_as(@gamer)
@@ -28,46 +29,23 @@ describe Games::AppReviewsController do
       end
     end
 
+    context 'when has app_metadata_id as params' do
+      before :each do
+        get(:index, :app_metadata_id => @app_metadata.id)
+      end
+
+      it 'returns all the reviews of the app' do
+        assigns[:app_reviews].collect(&:id).sort.should == @app_metadata.app_reviews.collect(&:id).sort
+      end
+    end
+
     context 'when has gamer_id as params' do
       before :each do
         get(:index, :gamer_id => @gamer2.id)
       end
 
-<<<<<<< HEAD
-      it 'returns all the reviews written by the gamer' do
-        assigns[:app_reviews].scoped(:order => 'created_at').should == @gamer2.app_reviews.scoped(:order => 'created_at')
-=======
-      it 'returns all the reviews of the app' do
-        assigns[:app_reviews].collect(&:id).sort.should == @app_metadata.app_reviews.collect(&:id).sort
->>>>>>> 9478c2cdb935285aa0db154f3be6b8dff179ccba
-      end
-    end
-  end
-
-  describe '#new' do
-    before :each do
-      @gamer2 = Factory(:gamer)
-      app_metadata2 = Factory(:app_metadata, :thumbs_up => 0, :thumbs_down => 0)
-      Factory(:gamer_review, :author => @gamer, :app_metadata => @app_metadata)
-      Factory(:gamer_review, :author => @gamer, :app_metadata => app_metadata2)
-      Factory(:gamer_review, :author => @gamer2, :app_metadata => @app_metadata)
-    end
-    context 'user has not reviewed the app' do
-      before :each do
-        get(:index, :app_metadata_id => @app_metadata.id)
-      end
-
-<<<<<<< HEAD
-      it 'creates new app review' do
-      end
-    end
-
-    context 'user has already reviewed the app' do
-      it 'edits existing app review' do
-=======
       it 'returns all the reviews written by the gamer' do
         assigns[:app_reviews].collect(&:id).sort.should == @gamer2.app_reviews.collect(&:id).sort
->>>>>>> 9478c2cdb935285aa0db154f3be6b8dff179ccba
       end
     end
   end

@@ -69,7 +69,6 @@ class Games::HomepageController < GamesController
 
     @device_name = device_info.name if device_info
     @device = Device.new(:key => device_id) if device_id.present?
-
     if @device.present?
       @external_publishers = ExternalPublisher.load_all_for_device(@device)
       if params[:load] == 'earn'
@@ -90,18 +89,13 @@ class Games::HomepageController < GamesController
         params[:gamer_id]    = current_gamer.id
       end
     end
-<<<<<<< HEAD
-
-    featured_contents = FeaturedContent.featured_contents(@device.try(:platform)).to_a
-    @featured_content = featured_contents.weighted_rand(featured_contents.map(&:weight))
-=======
->>>>>>> 9478c2cdb935285aa0db154f3be6b8dff179ccba
 
     if params[:load] == 'more_apps'
       @show_more_apps = true
       current_recommendations
     end
   end
+
 
   def switch_device
     if params[:data].nil?
