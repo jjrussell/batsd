@@ -24,7 +24,7 @@ describe Games::AppReviewsController do
       end
 
       it "returns current gamer's reviews" do
-        assigns[:app_reviews].scoped(:order => 'created_at').should == @gamer.app_reviews.scoped(:order => 'created_at')
+        assigns[:app_reviews].collect(&:id).sort.should == @gamer.app_reviews.collect(&:id).sort
       end
     end
 
@@ -33,8 +33,13 @@ describe Games::AppReviewsController do
         get(:index, :gamer_id => @gamer2.id)
       end
 
+<<<<<<< HEAD
       it 'returns all the reviews written by the gamer' do
         assigns[:app_reviews].scoped(:order => 'created_at').should == @gamer2.app_reviews.scoped(:order => 'created_at')
+=======
+      it 'returns all the reviews of the app' do
+        assigns[:app_reviews].collect(&:id).sort.should == @app_metadata.app_reviews.collect(&:id).sort
+>>>>>>> 9478c2cdb935285aa0db154f3be6b8dff179ccba
       end
     end
   end
@@ -52,12 +57,17 @@ describe Games::AppReviewsController do
         get(:index, :app_metadata_id => @app_metadata.id)
       end
 
+<<<<<<< HEAD
       it 'creates new app review' do
       end
     end
 
     context 'user has already reviewed the app' do
       it 'edits existing app review' do
+=======
+      it 'returns all the reviews written by the gamer' do
+        assigns[:app_reviews].collect(&:id).sort.should == @gamer2.app_reviews.collect(&:id).sort
+>>>>>>> 9478c2cdb935285aa0db154f3be6b8dff179ccba
       end
     end
   end
