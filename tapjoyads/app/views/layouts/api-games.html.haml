@@ -1,0 +1,95 @@
+!!! 5
+
+%html{ :class => "#{HeaderParser.device_type(request.headers['user-agent'])} device mobile no-os no-touch no-hd" }
+  %head
+    %meta{ 'http-equiv' => 'Content-Type', :content => 'text/html; charset=utf-8' }
+    %meta{ 'name' => 'viewport', 'content' => 'width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=no;' }
+    %meta{ 'name' => 'apple-mobile-web-app-status-bar-style', 'content' => 'black' }
+
+    %link{ :rel => 'shortcut icon', :href => '/favicon.ico', :content => 'image/vnd.microsoft.icon' }
+    %link{ :rel => 'apple-touch-icon-precomposed', :href => '/images/tjgames-114x114.png' }
+    %link{ :rel => 'publisher', :href => 'https://plus.google.com/b/116280135840952950839/' }
+
+    %title= @page_title.blank? ? 'Tapjoy' : "#{@page_title} - Tapjoy"
+
+    = stylesheet_link_tag("games/style_v1")
+    = stylesheet_link_tag("games/style")
+    = stylesheet_link_tag("games/images")
+    = stylesheet_link_tag("games/style-768", :media => "only screen and (max-width: 768px)")
+    = stylesheet_link_tag("games/style-480", :media => "only screen and (max-width: 480px)")
+    = stylesheet_link_tag("games/style-320", :media => "only screen and (max-width: 320px)")
+    = stylesheet_link_tag("games/images-hd", :media => "(-webkit-min-device-pixel-ratio: 2)")
+
+    /[if IE 8]
+      = stylesheet_link_tag('games/ie8')
+
+    = yield :page_head
+
+  %body{ :class => @page_design == 'new' ? 'new' : 'old' }
+    %noscript
+      %style{:type => "text/css", :media => "screen"}
+        :plain
+          #jqt {display:none;}
+      .noscript_msg
+        Please go into your browser settings and enable JavaScript to continue using Tapjoy.
+
+    = yield
+
+    #loader.dialog_wrapper.hide
+      #progress.dialog
+        .dialog_title.title_2
+          Loading
+        .dialog_image
+
+    #sender.dialog_wrapper.hide
+      #progress.dialog
+        .dialog_title.title_2
+          Sending
+        .dialog_image
+
+    #cookie_error.dialog_wrapper.hide
+      .close_dialog
+        .close_button
+      .dialog
+        .dialog_content
+          It appears that cookies are not enabled on your browser. You will need to enable cookies in order to use Tapjoy.
+
+    - [:notice, :error, :success].each do |key|
+      - unless flash[key].blank?
+        #flash_error.dialog_wrapper.hide
+          .close_dialog
+            .close_button
+          .dialog
+            .dialog_content
+              %div{ :class => "#{key}" }= flash[key]
+    -#
+    -# Until this task is automated for production build, please run this task: $ rake javascript:games_minify
+    -#
+
+    :javascript
+      window.ENVIRONMENT = "#{Rails.env}";
+    - if Rails.env.production? || Rails.env.staging?
+      = javascript_include_tag "games/#{GAMES_CONFIG['js_compile_out_file']}-#{GAMES_CONFIG['js_version']}"
+    - else
+      - files = GAMES_CONFIG['js_files']
+      - files.each do |f|
+        = javascript_include_tag "games/src/#{f}"
+
+    = yield :included_javascripts
+    %script{ :type => 'text/javascript', :charset => 'utf-8' }
+      = yield :page_javascript
+
+    :javascript
+      TJG.blank_img = "#{CLOUDFRONT_URL}/images/blank.png";
+
+    - if Rails.env.production?
+      :javascript
+        var _gaq = _gaq || [];
+        _gaq.push(['_setAccount', 'UA-25098478-2']);
+        _gaq.push(['_trackPageview']);
+
+        (function() {
+          var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+          ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+          var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+        })();
