@@ -30,7 +30,7 @@ describe Client do
       @partner3.update_attributes({ :client_id => @client.id })
     end
 
-    it "deletes client_id from all associated partners before destroy" do
+    it "removes client_id from all associated partners before destroy" do
       @client.destroy
       @partner.reload
       @partner2.reload
