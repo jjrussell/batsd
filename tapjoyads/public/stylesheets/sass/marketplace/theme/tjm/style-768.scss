@@ -27,6 +27,12 @@ $image_path: "/images/marketplace/themes/tjm";
   }
 }
 
+.image-caption {
+  .bd {
+    width: auto;
+  }
+}
+
 .no-bevel, .no-bevel:before, .no-bevel:after {
   border: none;
   box-shadow: none;
@@ -50,7 +56,7 @@ div.app {
   overflow: auto;
   overflow-x: hidden;
   overflow-y: hidden;
-  
+
   .app-icon {
     width:  100px;
     height: 100px;
@@ -58,11 +64,11 @@ div.app {
     margin-left: 10px;
     float: left;
     background-size: 100px 100px;
-    
-    img { 
+
+    img {
       width: 99px;
       height: 99px;
-    } 
+    }
   }
 
   .details {
@@ -71,12 +77,12 @@ div.app {
     text-align: left;
     float: left;
   }
-  
+
   span.title {
     padding-left: 2px;
     margin-bottom: 5px;
   }
-  
+
   small.publisher,
   .btn {
     display: none;

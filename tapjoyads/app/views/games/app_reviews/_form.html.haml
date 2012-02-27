@@ -1,24 +1,29 @@
 - form_for([:games, @app_review]) do |f|
   = f.hidden_field :app_metadata_id, :value => params[:app_metadata_id]
-  = f.hidden_field :user_rating, :value => @app_review.user_rating
-
-  .mod.form-section.button-group
-    .ui-joy-button.grey-action.active
-      %a.icon-center
-        .active-image= image_tag("games/inset-thumbs-up.png")
-        .inactive-image= image_tag("games/grad-thumbs-up.png")
-    .ui-joy-button.grey-action
-      %a.icon-center
-        .active-image= image_tag("games/inset-thumbs-down.png")
-        .inactive-image= image_tag("games/grad-thumbs-down.png")
+  = f.hidden_field :app_id, :value => @app.id
+  .button-bar
+    .hidden
+      = f.radio_button :user_rating, 1
+      %span Thumbs Up
+      = f.radio_button :user_rating, -1
+      %span Thumbs Down
+    .mod.form-section.button-group
+      .ui-joy-button.grey-action{:value => 1}
+        %a.icon-center
+          .active-image= image_tag("games/inset-thumbs-up.png")
+          .inactive-image= image_tag("games/grad-thumbs-up.png")
+      .ui-joy-button.grey-action{:value => -1}
+        %a.icon-center
+          .active-image= image_tag("games/inset-thumbs-down.png")
+          .inactive-image= image_tag("games/grad-thumbs-down.png")
   .mod.form-section
     = f.text_area :text, {:placeholder => t('text.shared.comment'), :class => "ui-joy-input"}
     = error_message_on @app_review, :text
   .mod.form-section
     - if @app_review.new_record?
-      = f.submit t('text.shared.submit_review'), :class => "ui-joy-button grey-action"
+      = f.submit t('text.shared.submit_review'), :class => "ui-joy-button grey-action ui-joy-input"
     - else
-      = f.submit t('text.shared.update_review'), :class => "ui-joy-button grey-action"
+      = f.submit t('text.shared.update_review'), :class => "ui-joy-button grey-action ui-joy-input"
 
 -content_for :page_head do
   = stylesheet_link_tag "marketplace/theme/tjm/review-form"

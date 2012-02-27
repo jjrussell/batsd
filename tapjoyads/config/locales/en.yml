@@ -432,6 +432,7 @@ en:
       day: "%B %d, %Y"
       day_long: "%B %d, %Y"
       day_short: "%b %d"
+      classic_short: "%m/%d/%y"
       default: "%a, %d %b %Y %H:%M:%S %z"
       long: "%B %d, %Y %I:%M %p %Z"
       short: "%d %b %H:%M"

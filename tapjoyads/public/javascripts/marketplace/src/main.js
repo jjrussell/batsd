@@ -104,8 +104,8 @@ $(document).ready(function() {
       el.attr("src", "data:image/gif;base64,R0lGODlhAQABAID/AMDAwAAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==");
     });
   });
-  
-/*
+
+  /*
 	Tapjoy.Utils.notification({
 		message: 'Thanks, your settings have been saved.'
 	});
@@ -115,5 +115,5 @@ $(document).ready(function() {
 	    message: 'Thanks, we would like to save hello again.'
 	  });
 	}, 4000);
-*/	
+	*/
 });

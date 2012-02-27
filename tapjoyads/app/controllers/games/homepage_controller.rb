@@ -9,6 +9,10 @@ class Games::HomepageController < GamesController
   end
 
   def get_app
+    @offer = Offer.find_by_id(params[:id])
+    @app = @offer.app
+    @app_metadata = @app.primary_app_metadata
+    @app_reviews = AppReview.by_gamers.paginate_all_by_app_metadata_id(@app_metadata.id, :page => params[:app_reviews_page])
   end
 
   def review_app
