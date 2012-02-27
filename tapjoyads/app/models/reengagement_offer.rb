@@ -125,7 +125,7 @@ class ReengagementOffer < ActiveRecord::Base
     offer = Offer.new({
       :item             => self,
       :partner          => partner,
-      :name             => "reengagement_offer.#{app_id}.#{id}",
+      :name             => "#{@app.name} - Reengagement Day #{day_number}",
       :url              => app.store_url,
       :payment          => 0,
       :instructions     => instructions,
@@ -133,7 +133,7 @@ class ReengagementOffer < ActiveRecord::Base
       :reward_value     => reward_value,
       :price            => 0,
       :bid              => 0,
-      :name_suffix      => 'reengagement',
+      :name_suffix      => '',
       :third_party_data => 0,
       :icon_id_override => app.id,
       :user_enabled     => false,
