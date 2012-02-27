@@ -652,6 +652,68 @@ describe Offer do
     end
   end
 
+  describe '#missing_app_store_id?' do
+    context 'with App item' do
+      context 'and overriden url' do
+        it 'is false' do
+          @offer.stubs(:url_overridden).returns(true)
+          @offer.should_not be_missing_app_store_id
+        end
+      end
+
+      context 'and url not overriden' do
+        context 'with App with store_id' do
+          it 'is true' do
+            @offer.item.stubs(:store_id).returns('foo')
+            @offer.should_not be_missing_app_store_id
+          end
+        end
+
+        context 'with App with missing store_id' do
+          it 'is true' do
+            @offer.item.stubs(:store_id).returns(nil)
+            @offer.should be_missing_app_store_id
+          end
+        end
+      end
+    end
+
+    context 'with non app-related item' do
+      it 'is false' do
+        @offer.stubs(:app_offer?).returns(false)
+        @offer.should_not be_missing_app_store_id
+      end
+    end
+  end
+
+  describe 'changing tapjoy-enabled' do
+    context 'with store_id missing' do
+      context 'when tapjoy-enabling' do
+        it 'is an invalid record' do
+          Offer.any_instance.stubs(:missing_app_store_id?).returns(true)
+          @offer.tapjoy_enabled = true
+          @offer.should_not be_valid
+          @offer.errors.on(:tapjoy_enabled).should =~ /store id/i
+        end
+      end
+
+      context 'when not tapjoy-enabling' do
+        it 'is a valid record' do
+          @offer.stubs(:missing_app_store_id?).returns(true)
+          @offer.should be_valid
+        end
+      end
+    end
+
+    context 'with store_id not missing' do
+      it 'is a valid record' do
+        @offer.stubs(:missing_app_store_id?).returns(false)
+        @offer.should be_valid
+        @offer.errors.on(:tapjoy_enabled)
+      end
+    end
+  end
+
   context "An App Offer for a free app" do
     before :each do
       Offer.any_instance.stubs(:cache) # for some reason the acts_as_cacheable stuff screws up the ability to stub methods as expected
