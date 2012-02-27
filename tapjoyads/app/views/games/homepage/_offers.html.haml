@@ -1,9 +1,16 @@
-.offer-wall
-  %ul.ajax-loader.basic{ "data-jsonp-url"  => @external_publisher.get_offerwall_url(@device, @external_publisher.currencies.first, request.accept_language, request.user_agent, current_gamer.id),
-                         "data-params"     => { :show_wifi_only => 1, :max => 25, :start => 0 }.to_json }
-    .ajax-target
-    .ajax-placeholder
-      %h2.blink= t('text.games.loading')
-    .ajax-load-more.hidden= t("text.games.load_more")
-    .ajax-error.hidden= t("text.games.cant_fetch_offers")
-  = render "all_offers_template"
+%ul.list-button-container.earn-theme.ajax-loader{ "data-jsonp-url"  => @offerwall_url, "data-params" => { :show_wifi_only => 1, :max => 25, :start => 0 }.to_json }
+  .ajax-target
+  .ajax-placeholder
+    %ul.list-button-container.flush.nbb
+      %li.list-button.ntb
+        %h2.center.blink= t('text.games.loading')
+  .ajax-load-more.hidden
+    %ul.list-button-container.flush.nbb
+      %li.list-button.ntb
+        .center.charcoal= t("text.games.load_more")
+  .ajax-error.hidden
+    - link_to :back do
+      %ul.list-button-container.flush.nbb
+        %li.list-button.ntb
+          .center= t("text.games.cant_fetch_offers")
+= render "all_offers_template"

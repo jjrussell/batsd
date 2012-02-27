@@ -1,42 +1,54 @@
 %script{:type => "text/template"}
   :plain
+    <% var freeText = "#{t("text.offerwall.free")}"; %>
     <% for (var i = 0, ii = OfferArray.length; i < ii; i++) { %>
       <% if (!OfferArray[i].IconURL || !OfferArray[i].Name) { continue; } %>
-      <li class="beveled">
-        <div class="mod line-item">
-          <div class="hd app-icon">
-            <img src="<%= OfferArray[i].IconURL %>" />
-          </div>
-          <div class="bd">
-            <div class="title elip">
-              <%= OfferArray[i].Name %>
-            </div>
-            <div class="app-summary clearfix">
-              <div class="ui-icon score">
-                &nbsp;
+      <a href="#{games_get_app_path}?id=<%= OfferArray[i].Id %>">
+        <li class="list-button">
+          <div class="container mt5">
+            <div class="left pt3">
+              <div class="squircle">
+                <img src="<%= OfferArray[i].IconURL %>" />
+                <% if (OfferArray[i].Cost !== freeText) { %>
+                  <div class="action-item">
+                    <%= OfferArray[i].Cost %>
+                  </div>
+                <% } %>
               </div>
-              <div class="ui-icon social">
-                &nbsp;
-              </div>
-              <% if (OfferArray[i].WifiOnly) { %>
-                <div class="wifi-only">
-                  #{t("text.games.wifi_required")}
-                </div>
-              <% } %>
             </div>
-            <div class="highlight-green">
-              <%= i18n.t("games.amount_and_currency", {amount: OfferArray[i].Amount, currency: CurrencyName}) %>
-            </div>
-          </div>
-          <div class="ft">
-            <a href="#{games_get_app_path}?id=<%= OfferArray[i].Id %>">
-              <div class="right-arrow">
-                <div class="ui-list-action-label">
-                  <%= i18n.t("shared.collect") %>
+            <div class="left ml10">
+              <div class="container">
+                <div class="big-title slate elip">
+                  <%= OfferArray[i].Name %>
                 </div>
               </div>
-            </a>
+              <div class="container">
+                <div class="ui-icon-medium score icon24 p5 left">
+                  &nbsp;
+                </div>
+                <div class="ui-icon-medium social icon24 p5 left ml10">
+                  &nbsp;
+                </div>
+                <% if (OfferArray[i].WifiOnly) { %>
+                  <div class="container">
+                    <div class="ui-icon-medium wifi icon24 p5 left">
+                      #{t("text.games.wifi_required")}
+                    </div>
+                  </div>
+                <% } %>
+              </div>
+            </div>
+            <div class="right">
+              <div class="collect center mt5">
+                #{t('text.shared.collect')}
+                </br>
+                  <%= i18n.t("games.amount_and_currency", {amount: OfferArray[i].Amount, currency: CurrencyName}) %>
+              </div>
+              <div class="greenblock mt5">
+                #{t('text.shared.collect')}
+              </div>
+            </div>
           </div>
-        </div>
-      </li>
+        </li>
+      </a>
     <% } %>
