@@ -1,5 +1,9 @@
 .offer-wall
-  %ul.basic{"data-jsonp-url"=>@external_publisher.get_offerwall_url(@device, @external_publisher.currencies.first, request.accept_language, request.user_agent, current_gamer.id)}
-    %li
+  %ul.ajax-loader.basic{ "data-jsonp-url"  => @external_publisher.get_offerwall_url(@device, @external_publisher.currencies.first, request.accept_language, request.user_agent, current_gamer.id),
+                         "data-params"     => { :show_wifi_only => 1, :max => 25, :start => 0 }.to_json }
+    .ajax-target
+    .ajax-placeholder
       %h2.blink= t('text.games.loading')
+    .ajax-load-more.hidden= t("text.games.load_more")
+    .ajax-error.hidden= t("text.games.cant_fetch_offers")
   = render "all_offers_template"

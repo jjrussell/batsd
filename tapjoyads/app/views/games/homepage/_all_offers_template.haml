@@ -18,6 +18,11 @@
               <div class="ui-icon social">
                 &nbsp;
               </div>
+              <% if (OfferArray[i].WifiOnly) { %>
+                <div class="wifi-only">
+                  #{t("text.games.wifi_required")}
+                </div>
+              <% } %>
             </div>
             <div class="highlight-green">
               <%= i18n.t("games.amount_and_currency", {amount: OfferArray[i].Amount, currency: CurrencyName}) %>
