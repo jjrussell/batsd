@@ -1,4 +1,4 @@
-%ul.list-button-container.earn-theme.ajax-loader{ "data-jsonp-url"  => @offerwall_url, "data-params" => { :show_wifi_only => 1, :max => 25, :start => 0 }.to_json }
+%ul.list-button-container.earn-theme.ajax-loader{ "data-url"  => @offerwall_url, "data-is-jsonp" => 1, "data-params" => { :show_wifi_only => 1, :max => 25, :start => 0 }.to_json }
   .ajax-target
   .ajax-placeholder
     %ul.list-button-container.flush.nbb
@@ -7,10 +7,10 @@
   .ajax-load-more.hidden
     %ul.list-button-container.flush.nbb
       %li.list-button.ntb
-        .center.charcoal= t("text.games.load_more")
+        %h2.center.charcoal= t("text.games.load_more")
   .ajax-error.hidden
     - link_to :back do
       %ul.list-button-container.flush.nbb
         %li.list-button.ntb
-          .center= t("text.games.cant_fetch_offers")
+          %h2.center= t("text.games.cant_fetch_offers")
 = render "all_offers_template"
