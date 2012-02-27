@@ -15,6 +15,8 @@ class LinksharePoller
   CLICK_KEY_COLUMN          = 0
   SALES_COLUMN              = 4
 
+  MAX_RETRY_ATTEMPTS        = 40
+
 
    def self.test
     january_thirtieth = Date.civil(2012,1,30)
@@ -54,17 +56,20 @@ class LinksharePoller
   private
 
   def self.download_data(options)
-    begin
-      url = BASE_URL + options.to_query
-      raw_data = Downloader.get(url, {:timeout => 10}).chomp
-      data = raw_data.split("\n")
-      data.slice!(0)
-      Rails.logger.info NO_RESULTS_FOUND if data.blank?
-    rescue
-      TapjoyMailer.deliver_linkshare_alert(ERROR_COULD_NOT_CONNECT, url, options)
-    end
+    data = self.raw_data(BASE_URL + options.to_query)
+    raise ERROR_COULD_NOT_CONNECT unless data
+    data = data.split("\n")
+    Rails.logger.info NO_RESULTS_FOUND and return if data.blank?
+    data.slice!(0)
+    Rails.logger.info NO_RESULTS_FOUND and return if data.blank?
     data
   end
 
-
+  def self.raw_data(url)
+    i = 0
+    while i < MAX_RETRY_ATTEMPTS
+      return Downloader.get(url, {:timeout => 4}) rescue i += 1
+      Rails.logger.info "Linkshare retry attempt #{i}..."
+    end
+  end
 end
