@@ -27,29 +27,46 @@ module Offer::Rejecting
     [ '7df94075-16c9-4c6a-a170-50e1e8fc9991', '3712bd73-eda2-4ca9-934a-3465cf38ef35' ] => [ '7df94075-16c9-4c6a-a170-50e1e8fc9991', '3712bd73-eda2-4ca9-934a-3465cf38ef35' ],
   }
 
+  def postcache_reject_reasons(publisher_app, device, currency, device_type, geoip_data, app_version,
+      direct_pay_providers, type, hide_rewarded_app_installs, library_version, os_version,
+      screen_layout_size, video_offer_ids, source, all_videos, mobile_carrier_code)
+    reasons = []
+    reject_functions = [
+      { :method => :geoip_reject?, :parameters => [geoip_data], :reason => 'geoip' },
+      { :method => :already_complete?, :parameters => [device, app_version], :reason => 'already_complete' },
+      { :method => :selective_opt_out_reject?, :parameters => [device], :reason => 'selective_opt_out' },
+      { :method => :show_rate_reject?, :parameters => [device], :reason => 'show_rate' },
+      { :method => :flixter_reject?, :parameters => [publisher_app, device], :reason => 'flixter' },
+      { :method => :minimum_bid_reject?, :parameters => [currency, type], :reason => 'minimum_bid' },
+      { :method => :jailbroken_reject?, :parameters => [device], :reason => 'jailbroken' },
+      { :method => :direct_pay_reject?, :parameters => [direct_pay_providers], :reason => 'direct_pay' },
+      { :method => :action_app_reject?, :parameters => [device], :reason => 'action_app' },
+      { :method => :min_os_version_reject?, :parameters => [os_version], :reason => 'min_os_version' },
+      { :method => :cookie_tracking_reject?, :parameters => [publisher_app, library_version, source], :reason => 'cookie_tracking' },
+      { :method => :screen_layout_sizes_reject?, :parameters => [screen_layout_size], :reason => 'screen_layout_sizes' },
+      { :method => :is_disabled?, :parameters => [publisher_app, currency], :reason => 'is_disabled' },
+      { :method => :age_rating_reject?, :parameters => [ currency && currency.max_age_rating], :reason => 'age_rating' },
+      { :method => :publisher_whitelist_reject?, :parameters => [publisher_app], :reason => 'publisher_whitelist' },
+      { :method => :currency_whitelist_reject?, :parameters => [currency], :reason => 'currency_whitelist' },
+      { :method => :video_offers_reject?, :parameters => [video_offer_ids, type, all_videos], :reason => 'video_offers' },
+      { :method => :frequency_capping_reject?, :parameters => [device], :reason => 'frequency_capping' },
+      { :method => :tapjoy_games_retargeting_reject?, :parameters => [device], :reason => 'tapjoy_games_retargeting' },
+      { :method => :source_reject?, :parameters => [source], :reason => 'source' },
+      { :method => :non_rewarded_offerwall_rewarded_reject?, :parameters => [currency], :reason => 'non_rewarded_offerwall_rewarded' },
+      { :method => :carriers_reject?, :parameters => [mobile_carrier_code], :reason => 'carriers' },
+    ]
+    reject_functions.each do |function_hash|
+      if self.send(function_hash[:method], *function_hash[:parameters])
+        reasons << function_hash[:reason]
+      end
+    end
+    reasons
+  end
   def postcache_reject?(publisher_app, device, currency, device_type, geoip_data, app_version, direct_pay_providers, type, hide_rewarded_app_installs, library_version, os_version, screen_layout_size, video_offer_ids, source, all_videos, mobile_carrier_code)
-    geoip_reject?(geoip_data) ||
-    already_complete?(device, app_version) ||
-    selective_opt_out_reject?(device) ||
-    show_rate_reject?(device) ||
-    flixter_reject?(publisher_app, device) ||
-    minimum_bid_reject?(currency, type) ||
-    jailbroken_reject?(device) ||
-    direct_pay_reject?(direct_pay_providers) ||
-    action_app_reject?(device) ||
-    min_os_version_reject?(os_version) ||
-    cookie_tracking_reject?(publisher_app, library_version, source) ||
-    screen_layout_sizes_reject?(screen_layout_size) ||
-    is_disabled?(publisher_app, currency) ||
-    age_rating_reject?(currency.max_age_rating) ||
-    publisher_whitelist_reject?(publisher_app) ||
-    currency_whitelist_reject?(currency) ||
-    video_offers_reject?(video_offer_ids, type, all_videos) ||
-    frequency_capping_reject?(device) ||
-    tapjoy_games_retargeting_reject?(device) ||
-    source_reject?(source) ||
-    non_rewarded_offerwall_rewarded_reject?(currency) ||
-    carriers_reject?(mobile_carrier_code)
+    !postcache_reject_reasons(publisher_app, device, currency, device_type, geoip_data,
+        app_version, direct_pay_providers, type, hide_rewarded_app_installs, library_version,
+        os_version, screen_layout_size, video_offer_ids,
+        source, all_videos, mobile_carrier_code).empty?
   end
 
   def precache_reject?(platform_name, hide_rewarded_app_installs, normalized_device_type)
@@ -57,7 +74,7 @@ module Offer::Rejecting
   end
 
   def frequency_capping_reject?(device)
-    return false unless multi_complete? && interval != Offer::FREQUENCIES_CAPPING_INTERVAL['none']
+    return false unless multi_complete? && interval != Offer::FREQUENCIES_CAPPING_INTERVAL['none'] && device
 
     device.has_app?(item_id) && (device.last_run_time(item_id) + interval > Time.zone.now)
   end
@@ -82,6 +99,7 @@ module Offer::Rejecting
   private
 
   def is_disabled?(publisher_app, currency)
+    return false unless currency
     item_id == currency.app_id ||
       currency.get_disabled_offer_ids.include?(item_id) ||
       currency.get_disabled_offer_ids.include?(id) ||
@@ -119,18 +137,19 @@ module Offer::Rejecting
 
     ALREADY_COMPLETE_IDS.each do |target_ids, ids_to_reject|
       if target_ids.include?(app_id_for_device)
-        return true if ids_to_reject.any? { |reject_id| device.has_app?(reject_id) }
+        return true if ids_to_reject.any? { |reject_id| device && device.has_app?(reject_id) }
       end
     end
 
-    device.has_app?(app_id_for_device)
+    device && device.has_app?(app_id_for_device)
   end
 
   def selective_opt_out_reject?(device)
-    device.opt_out_offer_types.include?(item_type)
+    device && device.opt_out_offer_types.include?(item_type)
   end
 
   def show_rate_reject?(device)
+    return false unless device
     srand( (device.key + (Time.now.to_f / 1.hour).to_i.to_s + id).hash )
     should_reject = rand > show_rate
     srand
@@ -155,14 +174,15 @@ module Offer::Rejecting
   end
 
   def publisher_whitelist_reject?(publisher_app)
-    publisher_app_whitelist.present? && !get_publisher_app_whitelist.include?(publisher_app.id)
+    publisher_app && publisher_app_whitelist.present? && !get_publisher_app_whitelist.include?(publisher_app.id)
   end
 
   def currency_whitelist_reject?(currency)
-    currency.use_whitelist? && !currency.get_offer_whitelist.include?(id)
+    currency && currency.use_whitelist? && !currency.get_offer_whitelist.include?(id)
   end
 
   def minimum_bid_reject?(currency, type)
+    return false unless currency
     min_bid = case type
     when Offer::DEFAULT_OFFER_TYPE
       currency.minimum_offerwall_bid
@@ -175,7 +195,7 @@ module Offer::Rejecting
   end
 
   def jailbroken_reject?(device)
-    is_paid? && device.is_jailbroken?
+    is_paid? && device && device.is_jailbroken?
   end
 
   def direct_pay_reject?(direct_pay_providers)
@@ -183,7 +203,7 @@ module Offer::Rejecting
   end
 
   def action_app_reject?(device)
-    item_type == "ActionOffer" && third_party_data.present? && !device.has_app?(third_party_data)
+    item_type == "ActionOffer" && third_party_data.present? && device && !device.has_app?(third_party_data)
   end
 
   def min_os_version_reject?(os_version)
@@ -205,7 +225,7 @@ module Offer::Rejecting
   end
 
   def cookie_tracking_reject?(publisher_app, library_version, source)
-    cookie_tracking? && source != 'tj_games' && publisher_app.platform == 'iphone' && !library_version.version_greater_than_or_equal_to?('8.0.3')
+    publisher_app && cookie_tracking? && source != 'tj_games' && publisher_app.platform == 'iphone' && !library_version.version_greater_than_or_equal_to?('8.0.3')
   end
 
   def video_offers_reject?(video_offer_ids, type, all_videos)
@@ -216,7 +236,7 @@ module Offer::Rejecting
 
   TAPJOY_GAMES_RETARGETED_OFFERS = ['2107dd6a-a8b7-4e31-a52b-57a1a74ddbc1', '12b7ea33-8fde-4297-bae9-b7cb444897dc', '8183ce57-8ee4-46c0-ab50-4b10862e2a27']
   def tapjoy_games_retargeting_reject?(device)
-    TAPJOY_GAMES_RETARGETED_OFFERS.include?(item_id) && !device.has_app?(TAPJOY_GAMES_REGISTRATION_OFFER_ID)
+    TAPJOY_GAMES_RETARGETED_OFFERS.include?(item_id) && device && !device.has_app?(TAPJOY_GAMES_REGISTRATION_OFFER_ID)
   end
 
   def source_reject?(source)
@@ -224,7 +244,7 @@ module Offer::Rejecting
   end
 
   def non_rewarded_offerwall_rewarded_reject?(currency)
-    currency.conversion_rate == 0 && rewarded? && item_type != 'App'
+    currency && currency.conversion_rate == 0 && rewarded? && item_type != 'App'
   end
 
   def recommendable_types_reject?

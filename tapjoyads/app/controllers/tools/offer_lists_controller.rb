@@ -7,8 +7,9 @@ class Tools::OfferListsController < WebsiteController
     if params[:type]
       offer_list_keys = [ 'type', 'device_type', 'platform_name' ]
       offer_list_params = params.reject { |k,v| !offer_list_keys.include?(k) }
-
-      @offers = OfferList.new(offer_list_params).offers.sort_by { |offer| -offer.precache_rank_score_for(params[:currency_group_id]) }
+      offer_list = OfferList.new(offer_list_params)
+      @offers = offer_list.offers.sort_by { |offer| -offer.precache_rank_score_for(params[:currency_group_id]) }
+      @offer_rejections =  offer_list.rejected_reasons(@offers)
     end
   end
 

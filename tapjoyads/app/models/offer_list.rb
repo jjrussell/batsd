@@ -114,11 +114,23 @@ class OfferList
     [ returned_offers, 0 ]
   end
 
+  def rejected_reasons(offers)
+    reasons = {}
+    offers.each { |offer| reasons[offer.id] = populate_reasons(offer) }
+    reasons
+  end
+
   private
   def postcache_reject?(offer)
     offer.postcache_reject?(@publisher_app, @device, @currency, @device_type, @geoip_data, @app_version,
       @direct_pay_providers, @type, @hide_rewarded_app_installs, @library_version, @os_version, @screen_layout_size,
       @video_offer_ids, @source, @all_videos, @mobile_carrier_code)
+  end
+
+  def populate_reasons(offer)
+    offer.postcache_reject_reasons(@publisher_app, @device, @currency, @device_type, @geoip_data, @app_version,
+      @direct_pay_providers, @type, @hide_rewarded_app_installs, @library_version, @os_version, @screen_layout_size,
+      @video_offer_ids, @source, @all_videos, @mobile_carrier_code).join('; ')
   end
 
 end

@@ -35,6 +35,7 @@
         %th Boost
         %th Devices
         %th Type
+        %th Rejection Reasons
     %tbody#offers_tbody
       - @offers.each_with_index do |offer, i|
         %tr
@@ -49,7 +50,7 @@
           %td= offer.rank_boost
           %td= offer.get_device_types.to_a.join(",")
           %td= offer.item_type
-
+          %td= @offer_rejections[offer.id]
 - content_for :page_javascript do
   :plain
     $(function() {
