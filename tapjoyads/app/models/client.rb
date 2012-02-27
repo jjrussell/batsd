@@ -1,8 +1,6 @@
 class Client < ActiveRecord::Base
   include UuidPrimaryKey
 
-  attr_accessor :store_id_changed
-
   has_many :partners
 
   validates_presence_of :name
