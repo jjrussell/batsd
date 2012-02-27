@@ -17,7 +17,7 @@ class Tools::ClientsController < WebsiteController
     @page_title = 'Create Client'
     @client = Client.new(params[:client])
     if @client.save
-      flash[:notice] = "Client added"
+      flash[:notice] = "Client created"
       redirect_to tools_clients_path
     else
       render :action => :new
