@@ -233,6 +233,7 @@ en:
       connect_my_device: "Connect My Device"
       connect_your_android: "Please connect your Android device"
       connect_your_device: "Please connect your device"
+      cookies_required: Please enable cookies in your browswer
       deactivate: Deactivate
       del_acct_confirm: "Click on the button below to deactivate your account. Once an account has been deactivated for %{days_before_deletion} days, it will be completely deleted. We cannot recover your account once it has been deleted."
       delete_my_account: "Delete My Account"
@@ -280,6 +281,7 @@ en:
       link_my_facebook: "Link My Facebook"
       loading: Loading...
       load_more: "Load More"
+      log_in_tapjoy: Log in to Tapjoy
       member_since: "Member since %{date}"
       meta_description: "Tapjoy: The destination for mobile apps and games on Android, iPhone and iPad."
       meta_keywords: "games, mobile games, mobile apps, ios, android, iphone, ipad, itouch"

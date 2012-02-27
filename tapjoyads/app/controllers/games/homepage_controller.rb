@@ -8,10 +8,6 @@ class Games::HomepageController < GamesController
     render "translations.js", :layout => false, :content_type=>"application/javascript"
   end
 
-  def proto
-    render :proto, :layout=>false
-  end
-
   def get_app
     @offer = Offer.find_by_id(params[:id])
     @app = @offer.app
@@ -25,7 +21,12 @@ class Games::HomepageController < GamesController
   def earn
     device_id = current_device_id
     @device = Device.new(:key => device_id) if device_id.present?
-    @currency = Currency.find_by_id(params[:id])
+    if params[:eid].present?
+      @curr_id = ObjectEncryptor.decrypt(params[:eid])
+    elsif params[:id].present?
+      @curr_id = params[:id]
+    end
+    @currency = Currency.find_by_id(@curr_id)
     @external_publisher = ExternalPublisher.new(@currency)
     @offerwall_url = @external_publisher.get_offerwall_url(@device, @external_publisher.currencies.first, request.accept_language, request.user_agent, current_gamer.id)
     @app_metadata_id = App.find_by_id(@external_publisher.app_id).primary_app_metadata.id
@@ -69,7 +70,6 @@ class Games::HomepageController < GamesController
 
     @device_name = device_info.name if device_info
     @device = Device.new(:key => device_id) if device_id.present?
-
     if @device.present?
       @external_publishers = ExternalPublisher.load_all_for_device(@device)
       if params[:load] == 'earn'
@@ -77,16 +77,26 @@ class Games::HomepageController < GamesController
         @show_offerwall = @device.has_app?(currency.app_id) if currency
         @offerwall_external_publisher = ExternalPublisher.new(currency) if @show_offerwall
       end
+      @geoip_data = geoip_data
+      featured_contents = FeaturedContent.with_country_targeting(@geoip_data, @device)
+      @featured_content = featured_contents.weighted_rand(featured_contents.map(&:weight))
+      if @featured_content && @featured_content.tracking_offer
+        @publisher_app       = @featured_content.tracking_offer.item
+        params[:udid]        = @device.id
+        @currency            = Currency.find_by_id(TRACKING_OFFER_CURRENCY_ID)
+        params[:source]      = 'tj_games'
+        @now                 = Time.zone.now
+        params[:device_name] = @device_name
+        params[:gamer_id]    = current_gamer.id
+      end
     end
-
-    featured_contents = FeaturedContent.featured_contents(@device.try(:platform)).to_a
-    @featured_content = featured_contents.weighted_rand(featured_contents.map(&:weight))
 
     if params[:load] == 'more_apps'
       @show_more_apps = true
       current_recommendations
     end
   end
+
 
   def switch_device
     if params[:data].nil?

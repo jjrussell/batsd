@@ -106,17 +106,6 @@ span.gill {
   font: 100 24px 'Gill Sans', 'Gill Sans MT', Arial , sans-serif;
 }
 
-#login-form {
-  background-color: #000000;
-  position: fixed;
-  top: 0;
-  left: 0;
-  height: 100%;
-  width: 100%;
-  z-index: 999;
-  @include animate;
-}
-
 #content {
   position: relative;
   z-index: 2;
@@ -143,6 +132,70 @@ span.gill {
     border-top: 1px solid #f0f0f0;
     z-index: -1;
   }
+}
+
+#login-form {
+  font-family: 'Gill Sans', 'Gill Sans MT', Arial, sans-serif;
+  font-size: 14px;
+  display: none;
+  padding-top: 20px;
+  background-color: #000000;
+  min-height: 480px;
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  overflow: hidden;
+  z-index: 999;
+
+  ul, ol {
+    margin: 0;
+    padding: 0;
+  }
+  form {
+    margin: 0 auto;
+    width: 300px;
+  }
+  input[type=email], input[type=password] {
+    border: 1px solid #bfbfbf;
+    padding: 12px 16px;
+    width: 268px;
+    @include rounded-corners(4px);
+    @include inset-shadow("rgba(0,0,0, .8)", 3px);
+  }
+  input[type=email]:focus, input[type=password]:focus {
+    border: 1px solid #a41d20;
+    outline: none;
+  }
+  .title {
+    color: #fff;
+    font-size: 18px;
+    margin-bottom: 12px;
+  }
+  .field {
+    margin-bottom: 10px;
+  }
+  .cancel-btn, .login-btn {
+    cursor: pointer;
+    float: left;
+    padding: 10px 0;
+    width: 140px;
+  }
+  .cancel-btn {
+    margin-right: 20px;
+  }
+  .cancel-btn .ui-joy-button {
+    padding: 8px 0;
+  }
+  .forgot-pass a {
+    color: #e9292e;
+    float: right;
+    font-size: 13px;
+  }
+}
+
+#login-form.show {
+  display: block;
+  @include fade-in(0.35s);
 }
 
 #content {
@@ -317,7 +370,7 @@ span.gill {
   background-color: #fff;
   min-height: 400px;
   border-bottom: 1px solid #909090;
-    @include animate(all, 0.35s, ease-in);
+  @include animate(all, 0.35s, ease-in);
 
   .box {
     margin-top: 50px;
@@ -755,9 +808,11 @@ span.gill {
   margin: 10px;
   -webkit-text-stroke-width: 1px;
   border-radius: 4px;
-  box-shadow: 0 1px 1px rgba(0,0,0, .4);
+  box-shadow: 0 1px 1px rgba(0,0,0, 0.4);
+  -webkit-box-shadow: 0px 1px 1px rgba(0,0,0, 0.4);
+  -moz-box-shadow: 0px 1px 1px rgba(0,0,0, 0.4);
   cursor: pointer;
-  white-space:nowrap;
+  white-space: nowrap;
 }
 
 #login {
