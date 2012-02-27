@@ -256,7 +256,7 @@ $(document).ready(function() {
   });
 
 
-  $('.toggle').bind('click', function(){
+  $('.toggle').bind(Tapjoy.EventsMap.start, function(){
 		var el = $(this),
 		    img = $('img', el),
 		    content = $(this).parent().next('div');
@@ -269,6 +269,18 @@ $(document).ready(function() {
 	    content.addClass('hide');
 		}
 	});
+	
+	$('.list-button').bind(Tapjoy.EventsMap.start + ' ' + Tapjoy.EventsMap.end, function(e){
+		var el = $(this),
+		    which = e.type;
+				
+		if(which === Tapjoy.EventsMap.start){
+			el.addClass('active');
+		}else{
+			el.removeClass('active');
+		}
+	});
+
 	/*
 	Tapjoy.Utils.notification({
 		message: 'Thanks, your settings have been saved.'
