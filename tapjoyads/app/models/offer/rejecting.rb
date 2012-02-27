@@ -29,7 +29,7 @@ module Offer::Rejecting
 
   def postcache_reject_reasons(publisher_app, device, currency, device_type, geoip_data, app_version,
       direct_pay_providers, type, hide_rewarded_app_installs, library_version, os_version,
-      screen_layout_size, video_offer_ids, source, all_videos, mobile_carrier_code)
+      screen_layout_size, video_offer_ids, source, all_videos, mobile_carrier_code, early_out = true)
     reasons = []
     reject_functions = [
       { :method => :geoip_reject?, :parameters => [geoip_data], :reason => 'geoip' },
@@ -58,6 +58,7 @@ module Offer::Rejecting
     reject_functions.each do |function_hash|
       if self.send(function_hash[:method], *function_hash[:parameters])
         reasons << function_hash[:reason]
+        break if early_out
       end
     end
     reasons

@@ -130,7 +130,7 @@ class OfferList
   def populate_reasons(offer)
     offer.postcache_reject_reasons(@publisher_app, @device, @currency, @device_type, @geoip_data, @app_version,
       @direct_pay_providers, @type, @hide_rewarded_app_installs, @library_version, @os_version, @screen_layout_size,
-      @video_offer_ids, @source, @all_videos, @mobile_carrier_code).join('; ')
+      @video_offer_ids, @source, @all_videos, @mobile_carrier_code, false).join('; ')
   end
 
 end
