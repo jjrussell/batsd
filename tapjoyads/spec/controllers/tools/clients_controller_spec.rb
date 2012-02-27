@@ -143,15 +143,15 @@ describe Tools::ClientsController do
     end
   end
 
-  describe '#delete_partner' do
-    context 'when delete_partner succeeds' do
+  describe '#remove_partner' do
+    context 'when remove_partner succeeds' do
       before :each do
         @options = {
           :id => @client.id,
           :partner_id => @partner.id
         }
         request.env["HTTP_REFERER"] = add_partner_tools_client_path(@client)
-        put(:delete_partner, @options)
+        put(:remove_partner, @options)
       end
 
       it "redirects to client show page" do

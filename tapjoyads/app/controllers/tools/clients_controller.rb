@@ -55,9 +55,9 @@ class Tools::ClientsController < WebsiteController
     redirect_to :back
   end
 
-  def delete_partner
+  def remove_partner
     partner = Partner.find_by_id(params[:partner_id])
-    partner.delete_client
+    partner.remove_client
     redirect_to :back
   end
 

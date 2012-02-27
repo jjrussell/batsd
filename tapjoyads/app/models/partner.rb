@@ -308,7 +308,7 @@ class Partner < ActiveRecord::Base
     self.save if self.client_id_changed?
   end
 
-  def delete_client
+  def remove_client
     self.client_id = nil
     self.save if self.client_id_changed?
   end

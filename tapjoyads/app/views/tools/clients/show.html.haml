@@ -33,7 +33,7 @@
     - @client.partners.each do |partner|
       %tr
         %td
-          - path = delete_partner_tools_client_path(@client)+"?partner_id=#{partner.id}"
+          - path = remove_partner_tools_client_path(@client)+"?partner_id=#{partner.id}"
           = button_to('Remove', path, :method => "post", :confirm => 'Are you sure?')
           - form_tag(make_current_partner_path(partner)) do
             - if current_partner == partner

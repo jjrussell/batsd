@@ -70,8 +70,8 @@ describe Partner do
         @client.partners.should == [ @partner ]
       end
 
-      it 'deletes client' do
-        @partner.delete_client
+      it 'removes client' do
+        @partner.remove_client
         @partner.client.should == nil
         @client.partners.should == []
       end
