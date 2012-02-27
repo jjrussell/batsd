@@ -287,4 +287,9 @@ FactoryGirl.define do
     offer         { Factory(:app).primary_offer }
     author        { Factory(:employee) }
   end
+
+  factory :client do
+    name  { Factory.next(:name) }
+  end
+
 end
