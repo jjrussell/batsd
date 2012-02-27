@@ -748,17 +748,8 @@ class Offer < ActiveRecord::Base
     end
   end
 
-  def self.get_platform_symbol(offer)
-    case offer.get_platform
-    when 'iOS'
-      :ios
-    when 'Android'
-      :android
-    when 'Windows Phone'
-      :wp
-    else
-      nil
-    end
+  def promotion_platform
+    app ? app.platform.to_sym : nil
   end
 
   def calculate_target_installs(num_installs_today)

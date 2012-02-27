@@ -304,9 +304,9 @@ class Partner < ActiveRecord::Base
   end
 
   def offers_for_promotion
-    available_offers = { :android => [], :ios => [], :wp => [] }
+    available_offers = { :android => [], :iphone => [], :windows => [] }
     self.offers.each do |offer|
-      platform = Offer.get_platform_symbol(offer)
+      platform = offer.promotion_platform
       available_offers[platform].push(offer) if platform.present? && offer.can_be_promoted?
     end
     available_offers

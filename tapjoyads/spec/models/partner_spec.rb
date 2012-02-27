@@ -249,11 +249,11 @@ describe Partner do
 
       it "returns available offers with correct platform" do
         available_offers = @partner.offers_for_promotion
-        available_offers[:wp].should == []
+        available_offers[:windows].should == []
         available_offers[:android].should == [ @offer3 ]
-        available_offers[:ios].should include @offer1
-        available_offers[:ios].should include @offer2
-        available_offers[:ios].should include @offer4
+        available_offers[:iphone].should include @offer1
+        available_offers[:iphone].should include @offer2
+        available_offers[:iphone].should include @offer4
       end
     end
   end

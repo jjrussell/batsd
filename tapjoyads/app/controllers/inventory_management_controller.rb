@@ -7,7 +7,7 @@ class InventoryManagementController < WebsiteController
 
   def index
     @available_offers = @partner.offers_for_promotion
-    @selected_offers = { :android => [], :ios => [], :wp => []}
+    @selected_offers = { :android => [], :iphone => [], :windows => []}
     @available_offers.each do |platform, offers|
       offers.map! { |offer| [offer.name, offer.id] }
     end
@@ -28,13 +28,13 @@ class InventoryManagementController < WebsiteController
         promoted_offer = GlobalPromotedOffer.find_by_partner_id_and_offer_id(@partner.id, offer_id)
         GlobalPromotedOffer.delete(promoted_offer) if promoted_offer
       end
-      @selected_offers[:ios] = params[:partner_promoted_offers_ios] if params[:partner_promoted_offers_ios].present?
+      @selected_offers[:iphone] = params[:partner_promoted_offers_ios] if params[:partner_promoted_offers_ios].present?
       @selected_offers[:android] = params[:partner_promoted_offers_android] if params[:partner_promoted_offers_android].present?
-      @selected_offers[:wp] = params[:partner_promoted_offers_wp] if params[:partner_promoted_offers_wp].present?
+      @selected_offers[:windows] = params[:partner_promoted_offers_wp] if params[:partner_promoted_offers_wp].present?
     else
       @partner.global_promoted_offers.each do |promoted_offer|
         offer = promoted_offer.offer
-        platform = Offer.get_platform_symbol(offer)
+        platform = offer.promotion_platform
         @selected_offers[platform].push(offer.id) if platform
       end
     end
@@ -48,12 +48,12 @@ class InventoryManagementController < WebsiteController
       @app = App.find(params[:current_app])
       return unless @app
 
-      app_platform = Offer.get_platform_symbol(@app.primary_offer)
+      app_platform = @app.primary_offer.promotion_platform
       return unless app_platform
 
       @partner.global_promoted_offers.each do |promoted_offer|
         offer = promoted_offer.offer
-        @global_offers.push(offer) if Offer.get_platform_symbol(offer) == app_platform
+        @global_offers.push(offer) if offer.promotion_platform == app_platform
       end
 
       @available_offers = @partner.offers_for_promotion[app_platform]
