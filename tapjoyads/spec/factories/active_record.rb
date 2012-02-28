@@ -136,6 +136,7 @@ FactoryGirl.define do
     association :partner
     name { Factory.next(:name) }
     url 'http://ws.tapjoyads.com/healthz?click_key=TAPJOY_GENERIC'
+    category 'Social'
   end
 
   factory :invite_offer, :parent => :generic_offer do
