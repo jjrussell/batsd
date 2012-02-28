@@ -129,6 +129,7 @@ $(document).ready(function() {
       el.removeClass('active');
     }
   });
+
 	/*
 	Tapjoy.Utils.notification({
 		message: 'Thanks, your settings have been saved.'
