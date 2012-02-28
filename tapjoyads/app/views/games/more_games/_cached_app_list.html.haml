@@ -1,30 +1,32 @@
-#earn.current
-  .panel
-    .page-header
-      .container.mt20
-        ssdsd
-    .section.dark
-      .toggle.left
-        %img.downarrow.icon32{ :src => BLANK_IMAGE}
-      .heading
-        = t('text.games.browse_offers')
-    .review-area
-      - cached_app_list.each do |cached_app|      
-        %ul.list-button-container
-          %li.list-button
-            .container.mt5
-              .left.pt3
-                .squircle
-                  //= image_tag(@external_publisher.get_icon_url(:size => 114, :source => :cloudfront))
-                  %img.downarrow.icon32{ :src => BLANK_IMAGE}
-                  .action-item
-                    $
-              .left.ml10
-                .container
-                  .big-title.slate.elip
-                    Coin Dozer for Pro for iPad
-                .container
-                  sadasdad                
--content_for :included_javascripts do
-  = javascript_include_tag "games/src/marketplace"
-
+%ul
+  - cached_app_list.each do |cached_app|
+    %li.offer_item.clearfix
+      .offer_image
+        .offer_image_loader_wrapper
+          %img{ :src => "#{CLOUDFRONT_URL}/images/blank.png", :s => cached_app.icon_url }
+      .offer_text
+        .offer_title.title
+          = cached_app.name
+        .offer_info
+          .offer_meta.clearfix
+            .offer_category
+              = cached_app.primary_category.try(:titleize)
+            .offer_rating_wrapper
+              .offer_rating.hide{ :rating => cached_app.user_rating }
+          .offer_description
+            = truncate cached_app.description, :length => 300
+          .offer_button.more_games
+            - link_to(cached_app.url, :target => '_blank') do
+              .button.grey
+                - if cached_app.price == 0
+                  %span.amount.free
+                    =t('text.games.free!')
+                - else
+                  %span.amount
+                    = number_to_currency(cached_app.price / 100.0)
+                %span.get_it
+                  =t('text.games.get_it')
+          - if cached_app.wifi_required
+            .wifi_only
+              = t('text.games.wifi_required')
+              .wifi_icon
