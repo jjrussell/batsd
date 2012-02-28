@@ -71,6 +71,13 @@ module Offer::UrlGeneration
       final_url = url
     elsif item_type == 'SurveyOffer'
       final_url.gsub!('TAPJOY_SURVEY', click_key.to_s)
+    elsif item_type == 'VideoOffer'
+      params = {
+        :offer_id           => id,
+        :app_id             => currency,
+        :udid               => udid
+      }
+      final_url = "#{API_URL}/videos/#{id}/complete?#{params.to_query}"
     end
 
     final_url
