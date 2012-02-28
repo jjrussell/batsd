@@ -141,6 +141,8 @@ class WebRequest
   self.define_attr :offerwall_rank_score, :type => :float
   self.define_attr :offerwall_start_index, :type => :int
   self.define_attr :offerwall_max_items, :type => :int
+  self.define_attr :event_type_id
+  self.define_attr :event_data, :type => :json
 
   def self.count(conditions = nil)
     VerticaCluster.count('production.web_requests', conditions)

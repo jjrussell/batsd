@@ -5,6 +5,7 @@ ActionController::Routing::Routes.draw do |map|
   map.resources :survey_results, :only => [ :new, :create ]
   map.resources :opt_outs, :only => :create
   map.resources :videos, :only => [ :index ], :member => { :complete => :get }
+  map.resources :events, :only => [ :new ]
   map.connect 'privacy', :controller => 'documents', :action => 'privacy'
   map.connect 'privacy.html', :controller => 'documents', :action => 'privacy'
 
