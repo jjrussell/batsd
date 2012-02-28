@@ -38,7 +38,6 @@ describe AppsInstalledController do
                   :verifier         => 'verifier',
                 }
 
-
       controller.stubs(:generate_verifier).returns('verifier')
       Device.stubs(:new).returns(@device)
     end
@@ -94,7 +93,13 @@ describe AppsInstalledController do
     end
 
     context 'with required parameters' do
-      it "returns a 200 OK when parameters are valid" do
+      it "returns a 200 OK when sdk_type is offers" do
+        get(:index, @params)
+        response.response_code.should == 200
+      end
+
+      it "returns a 200 OK when sdk_type is virtual_goods" do
+        @params[:sdk_type] = 'virtual_goods'
         get(:index, @params)
         response.response_code.should == 200
       end
