@@ -34,7 +34,7 @@
               :privacy_policy => link_to(t("text.games.privacy_policy_href"), games_privacy_path, :target => '_blank'))
           = f.hidden_field :referrer, :value => params[:referrer]
         .field.right
-          = f.submit 'Sign Up'
+          = f.submit t('text.shared.sign_up')
       .email_error
         = error_message_on @gamer, :email
         = error_message_on @gamer, :password

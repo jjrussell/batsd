@@ -22,6 +22,7 @@
     var $t = this;
 
     $t.config = config;
+    console.log($t.config);
     $t.container = $t.config.container = $(container);
 
     $t.create();
@@ -40,8 +41,10 @@
     if($t.length < $t.innerWidth){
       $('.back, .forward').hide();
     }
-
+    
     $.data(container, 'carousel', $t);
+    if ($t.config.cssClass)
+      $t.container.addClass($t.config.cssClass);
   };
 
   Tap.extend(Carousel.prototype, {

@@ -1,7 +1,5 @@
 #jqt
   #home.current
-    = render :partial => 'games/homepage/nav_bar', :locals => { :active => 'my_account' }
-
     .content_wrapper
       = render(:partial => 'header')
       .content
@@ -34,7 +32,6 @@
               .field
                 .label
                   =t('text.shared.my_reviews')
-    = render :partial => 'games/homepage/footer'
 
 - content_for :page_javascript do
   :plain

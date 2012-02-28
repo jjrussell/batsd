@@ -20,6 +20,3 @@
   .mod.form-section
     - button_text = @app_review.new_record? ? t('text.shared.submit_review') : t('text.shared.update_review')
     = f.submit button_text, :class => "ui-joy-button orange-action enable-when-valid"
-
--content_for :page_head do
-  = stylesheet_link_tag "marketplace/theme/tjm/review-form"

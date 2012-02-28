@@ -165,10 +165,10 @@ input::-webkit-input-placeholder {
 }
 
 @-webkit-keyframes fade-in {
-  0% {
+  from {
     opacity: 0;
   }
-  100% {
+  to {
     opacity: 1;
   }
 }
@@ -186,10 +186,14 @@ input::-webkit-input-placeholder {
 }
 
 .fade-in {
-  -webkit-animation-name: fade-in;
+  -webkit-animation-name: reset, fade-in;
   -webkit-animation-duration: 0.25s;
   -webkit-animation-timing-function: ease-in;
   -webkit-animation-iteration-count: 1;
+  -moz-animation-name: fade-in;
+  -moz-animation-duration: 0.25s;
+  -moz-animation-timing-function: ease-in;
+  -moz-animation-iteration-count: 1;
 }
 
 .blink {
@@ -197,6 +201,10 @@ input::-webkit-input-placeholder {
   -webkit-animation-duration: 0.65s;
   -webkit-animation-timing-function: ease-in;
   -webkit-animation-iteration-count: infinite;
+  -moz-animation-name: fade-in-out;
+  -moz-animation-duration: 0.65s;
+  -moz-animation-timing-function: ease-in;
+  -moz-animation-iteration-count: infinite;
 }
 
 /**

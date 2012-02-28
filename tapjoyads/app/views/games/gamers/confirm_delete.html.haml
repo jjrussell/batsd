@@ -5,13 +5,8 @@
     .content-box
       .field
         =t('text.games.del_acct_confirm', :days_before_deletion => Gamer::DAYS_BEFORE_DELETION)
-      .field &nbsp;
-      .left
+      .field.clearfix
         - form_for([ :games, @gamer ], :url => games_gamer_path, :html => { :method => "delete" }, :id => 'destroy_gamer') do |f|
-          = f.submit t('text.games.deactivate'), :class => 'button', :id => 'delete_account'
-      .left
-        &nbsp;
-      .left
-        = button_to_function t('text.shared.cancel'), 'history.go(-1)', :class => 'button', :id => 'cancel_delete'
-      .clearfix
-      .field &nbsp;
+          .button-group
+            = f.submit t('text.games.deactivate'), :class => 'button', :id => 'delete_account'
+            = button_to_function t('text.shared.cancel'), 'history.go(-1)', :class => 'button', :id => 'cancel_delete'

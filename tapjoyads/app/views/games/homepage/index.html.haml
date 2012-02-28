@@ -1,9 +1,11 @@
 #content.current
   .panel.clearfix
     - if @recommendations.present?
-      .row.borders.pn
-        %h1.museo Smart Recommendations
-        #recommedations.games
+      .section.dark
+        .heading
+          = t('text.games.recommendations')
+      #recommedations.games
+        .carousel
           - @recommendations.each do |reco|
             .app
               - @encrypt_app_id = ObjectEncryptor.encrypt(reco.id)
@@ -11,13 +13,16 @@
                 .app-icon
                   %img{ :src => BLANK_IMAGE, :source => reco.icon_url }
               .details
-                %span.title.elip
+                .title.elip
                   = reco.name
+                .elip
+                  = reco.description
 
 
     - if @external_publishers.present?
       .row.borders.nbb
-        %h1.museo My Games
+        %h1.museo
+          = t('text.games.my_apps')
         .games
           - @external_publishers.each do |external_publisher|
             .app
