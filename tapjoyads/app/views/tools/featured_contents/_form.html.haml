@@ -20,9 +20,10 @@
     %tr.app_select
       %th
         = label_tag 'Offer/App Name', 'Offer/App Name'
-        #help_offer_.help ?
+        #help_offer.help ?
       %td
         = text_field_tag 'app_search_box', @search_result_name, :size => '40'
+        = '(Optional)'
         = error_message_on @featured_content, :offer_id
     %tr
       %th
@@ -120,7 +121,7 @@
 .hidden
   #help_featured_type_content{ :name => 'Featured Type' } The type of this featured placement.
   #help_author_content{ :name => 'Author' } Author will show up in the subtitle area.
-  #help_offer_content{ :name => 'Offer' } App will show up in the subtitle/description area.
+  #help_offer_content{ :name => 'Offer' } Offer/App info will be filled into the subtitle/description/button_url. This field is optional for 'News' and 'Contest' if you don't need a button_url.
   #help_platforms_content{ :name => 'Platforms' } The targeted platforms. If target to iOS, please select 'iphone', 'itouch', and 'ipad'.
   #help_subtitle_content{ :name => 'Subtitle' } The title of the featured placement.
   #help_title_content{ :name => 'Title' } The subtitle of the featured placement.
@@ -198,9 +199,8 @@
 
       function toggleAppSelect() {
         if(type == TYPES.NEWS || type == TYPES.CONTEST){
-          $(".app_select").addClass("hidden");
+          $("#featured_content_button_text").val("");
         }else{
-          $(".app_select").removeClass("hidden");
           $("#featured_content_button_text").val("Download now!");
         }
       }
