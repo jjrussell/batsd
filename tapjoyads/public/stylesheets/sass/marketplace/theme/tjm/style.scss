@@ -1255,15 +1255,14 @@ div.app {
   border-radius: 0 !important;
 }
 
-#support-request {
-    h1.museo {
-    padding: 20px 4px;
+.content {
+  margin: 20px auto;
+  width: 300px;
+
+  h1.museo {
+    padding: 12px 0;
   }
-  .content {
-    margin: 20px auto;
-    width: 300px;
-  }
-  .form-error {
+  .field, .form-error {
     padding: 12px 0;
   }
 }
