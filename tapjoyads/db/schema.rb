@@ -746,6 +746,8 @@ ActiveRecord::Schema.define(:version => 20120225145013) do
     t.date     "negotiated_rev_share_ends_on"
     t.boolean  "accepted_negotiated_tos",                                                  :default => false
     t.string   "cs_contact_email"
+    t.boolean  "confirmed_for_payout",                                                     :default => false,     :null => false
+    t.string   "payout_confirmation_notes"
     t.string   "client_id",                    :limit => 36
   end
 

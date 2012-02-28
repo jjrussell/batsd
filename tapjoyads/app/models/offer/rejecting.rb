@@ -224,7 +224,7 @@ module Offer::Rejecting
   end
 
   def non_rewarded_offerwall_rewarded_reject?(currency)
-    currency.conversion_rate == 0 && rewarded? && item_type != 'App'
+    !currency.rewarded? && rewarded? && item_type != 'App'
   end
 
   def recommendable_types_reject?

@@ -305,7 +305,6 @@ class App < ActiveRecord::Base
       offer.bid = offer.min_bid if offer.bid < offer.min_bid
       offer.bid = offer.max_bid if offer.bid > offer.max_bid
       offer.third_party_data = store_id
-      offer.device_types = get_offer_device_types.to_json
       offer.url = store_url unless offer.url_overridden?
       offer.age_rating = age_rating
       offer.hidden = hidden
