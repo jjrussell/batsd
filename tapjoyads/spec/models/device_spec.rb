@@ -5,6 +5,57 @@ describe Device do
     SimpledbResource.reset_connection
   end
 
+  describe '.normalize_device_type' do
+    context 'type is iPhone' do
+      it 'returns iphone' do
+        param = 'iPhone'
+        Device.normalize_device_type(param).should == 'iphone'
+      end
+    end
+
+    context 'type is iPod' do
+      it 'returns itouch' do
+        param = 'iPod'
+        Device.normalize_device_type(param).should == 'itouch'
+      end
+    end
+
+    context 'type is iTouch' do
+      it 'returns itouch' do
+        param = 'iTouch'
+        Device.normalize_device_type(param).should == 'itouch'
+      end
+    end
+
+    context 'type is iPad' do
+      it 'returns ipad' do
+        param = 'iPad'
+        Device.normalize_device_type(param).should == 'ipad'
+      end
+    end
+
+    context 'type is Android' do
+      it 'returns android' do
+        param = 'Android'
+        Device.normalize_device_type(param).should == 'android'
+      end
+    end
+
+    context 'type is Windows' do
+      it 'returns windows' do
+        param = 'Windows'
+        Device.normalize_device_type(param).should == 'windows'
+      end
+    end
+
+    context 'type is something else' do
+      it 'returns nil' do
+        param = Factory.next(:name)
+        Device.normalize_device_type(param).should be_nil
+      end
+    end
+  end
+
   describe '#handle_sdkless_click!' do
     before :each do
       app = Factory :app
