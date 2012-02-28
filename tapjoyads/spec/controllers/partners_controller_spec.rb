@@ -17,7 +17,7 @@ describe PartnersController do
     it "logs transfer and math should work out" do
       amount = rand(100) + 100
 
-      get(:create_transfer, { :transfer_amount => amount, :id => @partner.id })
+      get(:create_transfer, { :transfer => { :amount => amount.to_s, :internal_notes => 'notes' }, :id => @partner.id })
       @partner.reload
 
       response.should be_redirect
@@ -33,7 +33,7 @@ describe PartnersController do
       amount = rand(100) + 100
       bonus = (amount * @partner.transfer_bonus)
 
-      get(:create_transfer, { :transfer_amount => amount, :id => @partner.id })
+      get(:create_transfer, { :transfer => { :amount => amount.to_s, :internal_notes => 'notes' }, :id => @partner.id })
       @partner.reload
 
       @partner.orders.length.should == 2

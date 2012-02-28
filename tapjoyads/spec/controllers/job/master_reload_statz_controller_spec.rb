@@ -110,6 +110,7 @@ describe Job::MasterReloadStatzController do
       ]
 
       apps.each_index do |i|
+        apps[i].app_metadatas.delete_all
         apps[i].add_app_metadata(app_metadatas[i])
         apps[i].reload.save!
       end

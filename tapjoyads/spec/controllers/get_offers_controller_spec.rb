@@ -227,7 +227,7 @@ describe GetOffersController do
   describe '#setup' do
     before :each do
       @device = Factory(:device)
-      @currency = Factory(:currency)
+      @currency = Factory(:currency, :callback_url => 'http://www.tapjoy.com')
       @offer = Factory(:app).primary_offer
       controller.stubs(:ip_address).returns('208.90.212.38')
       fake_cache_object = mock()
@@ -283,7 +283,7 @@ describe GetOffersController do
     end
 
     it 'assigns currency based on app_id' do
-      Factory(:currency, :id => @currency.app_id, :app_id => @currency.app_id)
+      Factory(:currency, :id => @currency.app_id, :app_id => @currency.app_id, :callback_url => 'http://www.tapjoy.com')
       get(:index, @params.merge(:currency_id => nil, :debug => '1'))
       assigns(:currency).should_not be_nil
     end
