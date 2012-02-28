@@ -1,7 +1,20 @@
 #content.current
   .panel.clearfix
-    .row.borders.pn
-      %h1.museo Smart Recommendations
+    .row.borders.pn.ntb
+      %h1.museo.smart Smart Recommendations
+      #recommendationsHeader
+        .banner
+          .more
+            .text.left.mr10
+              Find out more
+            .circle.btn.right
+              %img.rightarrow-white.icon24{ :src => BLANK_IMAGE }
+          %img.banner-img{ :src => '/images/marketplace/themes/tjm/sample_banner.png' }
+        .section.dark.ntb
+          .dropdown.left.ml5
+            %img.downarrow-white.icon24{ :src => BLANK_IMAGE }
+          .heading
+            Recommendations
       #recommedations.games
         - @recommendations.each do |reco|
           .app
