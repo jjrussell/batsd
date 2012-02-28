@@ -17,10 +17,14 @@ class FeaturedContent < ActiveRecord::Base
 
   belongs_to :author, :polymorphic => true
   belongs_to :offer
+  has_one :tracking_offer, :class_name => 'Offer', :dependent => :destroy, :as => :tracking_for, :conditions => 'id = tracking_for_id'
 
-  validates_presence_of :author, :if => :author_required?, :message => "Please select and author."
+  validates_presence_of :author, :if => :author_required?, :message => "Please select an author."
   validates_presence_of :offer, :if => :offer_required?, :message => "Please select an offer/app."
   validates_presence_of :featured_type, :platforms, :subtitle, :title, :description, :start_date, :end_date, :weight
+
+  after_create :create_tracking_offer
+  after_update :update_tracking_offer
 
   named_scope :ordered_by_date, :order => "start_date DESC, end_date DESC"
   named_scope :upcoming,  lambda { |date| { :conditions => [ "start_date > ?", date.to_date ], :order => "start_date ASC" } }
@@ -44,6 +48,15 @@ class FeaturedContent < ActiveRecord::Base
       else
         featured_contents
       end
+    end
+  end
+
+  def self.with_country_targeting(geoip_data, device, platform)
+    featured_contents = FeaturedContent.featured_contents(platform)
+    featured_contents.delete_if do |fc|
+      !!fc.tracking_offer &&
+      !!device &&
+      fc.tracking_offer.geoip_reject?(geoip_data)
     end
   end
 
@@ -92,7 +105,7 @@ class FeaturedContent < ActiveRecord::Base
     save_icon_in_different_sizes!(icon_src_blob, icon_id, bucket)
     src_obj.write(:data => icon_src_blob, :acl => :public_read)
 
-    Mc.delete("icon.s3.#{id}") # id ==> icon_id
+    Mc.delete("icon.s3.#{id}")
 
     # Invalidate cloudfront
     if existing_icon_blob.present?
@@ -134,5 +147,25 @@ class FeaturedContent < ActiveRecord::Base
 
   def offer_required?
     [ TYPES_MAP[STAFFPICK], TYPES_MAP[PROMO] ].include?(featured_type)
+  end
+
+  def create_tracking_offer
+    if offer && !tracking_offer
+      self.tracking_offer = offer.item.create_tracking_offer_for(self, :device_types => platforms)
+      save
+    end
+  end
+
+  def update_tracking_offer
+    if tracking_offer
+      if offer
+        self.tracking_offer.device_types = platforms if platforms_changed?
+        self.tracking_offer.save! if self.tracking_offer.changed?
+      else
+        tracking_offer.destroy
+      end
+    else
+      create_tracking_offer
+    end
   end
 end

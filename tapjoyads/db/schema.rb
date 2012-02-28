@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120223112400) do
+ActiveRecord::Schema.define(:version => 20120228124800) do
 
   create_table "action_offers", :id => false, :force => true do |t|
     t.string   "id",                    :limit => 36,                    :null => false
@@ -117,6 +117,7 @@ ActiveRecord::Schema.define(:version => 20120223112400) do
     t.string   "categories"
     t.text     "countries_blacklist"
     t.integer  "papaya_user_count"
+    t.integer  "active_gamer_count",                    :default => 0
   end
 
   add_index "apps", ["id"], :name => "index_apps_on_id", :unique => true
@@ -645,6 +646,8 @@ ActiveRecord::Schema.define(:version => 20120223112400) do
     t.text     "approved_sources",                                                                                 :null => false
     t.boolean  "sdkless",                                                                       :default => false
     t.text     "carriers",                                                                                         :null => false
+    t.string   "tracking_for_type"
+    t.string   "tracking_for_id",                   :limit => 36
   end
 
   add_index "offers", ["id"], :name => "index_offers_on_id", :unique => true
@@ -652,6 +655,7 @@ ActiveRecord::Schema.define(:version => 20120223112400) do
   add_index "offers", ["item_type", "item_id"], :name => "index_offers_on_item_type_and_item_id"
   add_index "offers", ["name"], :name => "index_offers_on_name"
   add_index "offers", ["partner_id"], :name => "index_offers_on_partner_id"
+  add_index "offers", ["tracking_for_type", "tracking_for_id"], :name => "index_offers_on_tracking_for_type_and_tracking_for_id"
   add_index "offers", ["user_enabled", "tapjoy_enabled"], :name => "index_offers_on_user_enabled_and_tapjoy_enabled"
 
   create_table "orders", :id => false, :force => true do |t|
@@ -745,6 +749,8 @@ ActiveRecord::Schema.define(:version => 20120223112400) do
     t.date     "negotiated_rev_share_ends_on"
     t.boolean  "accepted_negotiated_tos",                                                  :default => false
     t.string   "cs_contact_email"
+    t.boolean  "confirmed_for_payout",                                                     :default => false,     :null => false
+    t.string   "payout_confirmation_notes"
   end
 
   add_index "partners", ["id"], :name => "index_partners_on_id", :unique => true

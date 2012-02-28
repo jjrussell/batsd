@@ -30,9 +30,20 @@ class Games::HomepageController < GamesController
         @show_offerwall = @device.has_app?(currency.app_id) if currency
         @offerwall_external_publisher = ExternalPublisher.new(currency) if @show_offerwall
       end
+      @geoip_data = geoip_data
+      platform = current_gamer.gamer_devices.find_by_device_id(@device.id).device_type
+      featured_contents = FeaturedContent.with_country_targeting(@geoip_data, @device, platform)
+      @featured_content = featured_contents.weighted_rand(featured_contents.map(&:weight))
+      if @featured_content && @featured_content.tracking_offer
+        @publisher_app       = App.find_by_id(TRACKING_OFFER_CURRENCY_ID)
+        params[:udid]        = @device.id
+        @currency            = Currency.find_by_id(TRACKING_OFFER_CURRENCY_ID)
+        params[:source]      = 'tj_games'
+        @now                 = Time.zone.now
+        params[:device_name] = @device_name
+        params[:gamer_id]    = current_gamer.id
+      end
     end
-    featured_contents = FeaturedContent.featured_contents(@device.try(:platform)).to_a
-    @featured_content = featured_contents.weighted_rand(featured_contents.map(&:weight))
 
     if params[:load] == 'more_apps'
       @show_more_apps = true
