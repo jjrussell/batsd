@@ -15,6 +15,17 @@ class GamerProfile < ActiveRecord::Base
     end
   end
 
+  def city_and_country
+    res = []
+    res << city if city
+    res << country if country
+    res.join ", "
+  end
+
+  def city_and_country?
+    city_and_country.present?
+  end
+
   def update_facebook_info!(facebook_user)
     if facebook_id != facebook_user.id
       self.facebook_id = facebook_user.id

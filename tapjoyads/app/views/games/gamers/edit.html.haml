@@ -1,48 +1,44 @@
-#jqt
-  #home.current
-    = render :partial => 'games/homepage/nav_bar', :locals => { :active => 'my_account' }
-
-    .content_wrapper
-      = render(:partial => 'header')
-      .content
-        = render(:partial => 'invite_friends')
-        = render(:partial => 'profile')
-        .title_2
-          =t('text.shared.options')
-        #account_options.content_box.clearfix
-          - link_to social_games_gamer_path do
-            .slider.bottom_line.clearfix
-              .profile_arrow.right
-              .field
-                .label
-                  =t('text.games.social_settings')
-          - link_to password_games_gamer_path do
-            .slider.bottom_line.clearfix
-              .profile_arrow.right
-              .field
-                .label
-                  =t('text.shared.reset_password')
-          - link_to prefs_games_gamer_path do
-            .slider.bottom_line.clearfix
-              .profile_arrow.right
-              .field
-                .label
-                  =t('text.shared.preferences')
-          - link_to games_app_reviews_path do
-            .slider.clearfix
-              .profile_arrow.right
-              .field
-                .label
-                  =t('text.shared.my_reviews')
-    = render :partial => 'games/homepage/footer'
-
-- content_for :page_javascript do
-  :plain
-    var error = '#{params[:error]}';
-
-    $(document).ready(function() {
-      if(error){
-        $('.error_msg').removeClass('hidden');
-        $('.error_msg').text(error);
-      }
-    });
+#edit-gamer.current
+  .panel
+    .page-header
+      .container
+        .left.ml10.pt3
+          .big-title.mt10
+            = t('text.shared.my_account')
+    .container
+      .mod.titled-group
+        .group-title= t('text.shared.profile')
+        %ul.list-button-container.mb10
+          %li.list-button.soft-gray-gradient.pt5.pl10.pb5
+            .hd= t('text.shared.name')
+            .bd
+              = @gamer.name
+              = link_to change_link(@gamer.name?), "#"
+          %li.list-button.soft-gray-gradient.pt5.pl10.pb5
+            .hd= t('text.shared.nickname')
+            .bd
+              = @gamer.nickname
+              = link_to change_link(@gamer.nickname?), "#"
+          %li.list-button.soft-gray-gradient.pt5.pl10.pb5
+            .hd= t('text.shared.gender')
+            .bd
+              = @gamer.gender || ""
+              = link_to change_link(@gamer.gender?), "#"
+          %li.list-button.soft-gray-gradient.pt5.pl10.pb5
+            .hd= t('text.shared.location')
+            .bd
+              = @gamer.city_and_country || ""
+              = link_to change_link(@gamer.city_and_country?), "#"
+      .mod.titled-group
+        .group-title= t('text.shared.favorites')
+        %ul.list-button-container.mb10
+          %li.list-button.soft-gray-gradient.pt5.pl10.pb5
+            .hd= t('text.games.favorite_app')
+            .bd
+              = @gamer.favorite_game
+              = link_to change_link(@gamer.favorite_game?), "#"
+          %li.list-button.soft-gray-gradient.pt5.pl10.pb5
+            .hd= t('text.games.favorite_category')
+            .bd
+              = @gamer.favorite_category
+              = link_to change_link(@gamer.favorite_category?), "#"

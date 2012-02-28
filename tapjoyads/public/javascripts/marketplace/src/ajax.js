@@ -45,15 +45,7 @@
     };
   };
 
-  me.afterAjax = function (data, $container) {
-    var $load = $(".ajax-load-more", $container);
-
-    $(".ajax-placeholder", $container).hide();
-
-    $load.attr("disabled", false);
-
-    return data.MoreDataAvailable ? $load.show() : $load.hide();
-  };
+  me.afterAjax = function () {};
 
   me.fetchData = function ($container, url, params) {
     var jsonp = $container.data("is-jsonp");
@@ -77,6 +69,12 @@
         template = me.template($("script", $$).html()),
         url = $$.data("url"),
         params = $$.data("params") || {};
+
+      me.afterAjax = function (data, $container) {
+        $placeholder.hide();
+        $load_more.attr("disabled", false);
+        return data.MoreDataAvailable ? $load_more.show() : $load_more.hide();
+      };
 
       $load_more.click(function () {
         $placeholder.show();
