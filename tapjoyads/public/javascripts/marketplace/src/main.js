@@ -182,6 +182,20 @@ $(document).ready(function() {
     };
   };
 
+  $("form.inline-editing").each(function () {
+    var $$ = $(this),
+      $rows = $(".inline-section");
+
+    $($rows).click(function () {
+      $(".show-div", this).hide();
+      $(".edit-div", this).show();
+    });
+
+    function checkDirty() {
+
+    }
+  });
+
   $(".enable-when-valid").each(function () {
     var $$ = $(this),
       $form = $$.closest("form"),
@@ -195,7 +209,7 @@ $(document).ready(function() {
       $$.attr("disabled", "disabled").addClass("disabled");
     }
 
-    function check_valid() {
+    function checkValid() {
       var all_valid = true;
 
       $req.each(function () {
@@ -208,8 +222,8 @@ $(document).ready(function() {
       return all_valid ? enable() : disable();
     }
 
-    $req.bind("change keyup", debounce(check_valid));
-    check_valid();
+    $req.bind("change keyup", debounce(checkValid));
+    checkValid();
   });
 
 	/*

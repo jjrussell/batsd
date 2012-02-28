@@ -601,6 +601,16 @@ p {
   }
 }
 
+.edit-div {
+  padding-top:10px;
+  padding-bottom:10px;
+
+  .ui-joy-input {
+    font-size: 1.0em;
+    margin-bottom: 5px;
+  }
+}
+
 //-------------------------------------------
 // Individual element structure
 //-------------------------------------------
