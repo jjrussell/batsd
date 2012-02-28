@@ -4,12 +4,12 @@ describe Client do
   subject { Factory(:client) }
 
   describe '.has_many' do
-    it { should have_many :partners }
+    it { should have_many(:partners) }
   end
 
   describe '#valid?' do
-    it { should validate_presence_of :name }
-    it { should validate_uniqueness_of :name }
+    it { should validate_presence_of(:name) }
+    it { should validate_uniqueness_of(:name).case_insensitive }
   end
 
   describe '.ordered_by_name' do
