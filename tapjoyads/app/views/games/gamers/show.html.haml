@@ -1,5 +1,3 @@
--content_for :styles do
-  = stylesheet_link_tag("games/get-app")
 #show.current
   .mod.line-item.page-header
     .container.pt10
@@ -11,28 +9,31 @@
         .title.mt20
           = @gamer.nickname.present?  ? @gamer.nickname : 'Chuck Norris'
           %span.aside
-            ="(#{t("text.games.thats_you")})"
+            = "(#{t("text.games.thats_you")})"
         .subtitle
-          [LAST PLAYED]
+          = t('text.games.last_played', :game => @last_app.app_name) if @last_app.present?
   .container
     .mod.titled-group
       .hd
-        .group-title.pb10 Friends
+        .group-title.pb10= t('text.shared.friends')
       %ul.list-button-container.mb10
         %li.list-button.soft-gray-gradient.pt5.pl10.pb5
           .hd
-            Following
+            = t("text.shared.following")
           .bold
-            343
+            = @friends_lists[:following].size
         %li.list-button.soft-gray-gradient.pt5.pl10.pb5
           .hd
-            Followers
+            =t ("text.shared.followers")
           .bold
-            343
+            = @friends_lists[:followers].size
     %ul.list-button-container.flush.nbb
-      %li.list-button.charcoal.soft-gray-gradient
-        My Profile
-      %li.list-button.charcoal.soft-gray-gradient
-        Social Settings
-      %li.list-button.charcoal.soft-gray-gradient
-        Help
+      - link_to(edit_games_gamer_path) do
+        %li.list-button.charcoal.soft-gray-gradient
+          = t('text.shared.my_profile')
+      - link_to(prefs_games_gamer_path) do
+        %li.list-button.charcoal.soft-gray-gradient
+          = t('text.games.social_settings')
+      - link_to(games_help_path) do
+        %li.list-button.charcoal.soft-gray-gradient
+          = t('text.shared.help')

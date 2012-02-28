@@ -43,6 +43,10 @@
         = t('text.games.no_javascript')
 
     = render 'games/shared/header'
+    - flash.each do |name, msg|
+      .flash{ :id => "flash_#{name}", :title => "Click to dismiss this message" }
+        %strong #{name.to_s.humanize}:
+        = msg
 
     = yield
 

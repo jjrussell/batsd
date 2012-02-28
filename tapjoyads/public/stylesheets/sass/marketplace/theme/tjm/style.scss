@@ -97,6 +97,15 @@ li {
   float: right;
 }
 
+h1.museo {
+  font: 500 18px "Museo Slab";
+  color: #252525;
+  text-shadow: 0 1px 0 rgba(255,255,255, .6);
+}
+
+p {
+  padding: 6px 24px;
+}
 
 #main {
   z-index: 10;
@@ -578,6 +587,32 @@ li {
   }
 }
 
+.ui-joy-input, .button {
+  @extend .border-box;
+  @include rounded-corners(4px);
+  box-shadow: 0 2px 2px #dfdfdf inset;
+  border: 1px solid #bfbfbf;
+  cursor: pointer;
+  padding: 10px 2.5%;
+  width: 100%;
+}
+
+.form-section {
+  padding: 0;
+  margin-top: 5px;
+}
+
+.review-form {
+
+  input {
+    font-size: 1.0em;
+  }
+  textarea {
+    height: 80px;
+    font-size: 1.0em;
+  }
+}
+
 //-------------------------------------------
 // Individual element structure
 //-------------------------------------------
@@ -654,7 +689,8 @@ li {
 //-------------------------------------------
 // Buttons
 //-------------------------------------------
-.ui-joy-button {
+.ui-joy-button, .button {
+  @extend .border-box;
   @include rounded-corners(4px);
   @include shadow(#ddd, 1px);
   @include text-shadow(0, -1px, 1px, #888888);
@@ -672,7 +708,7 @@ li {
   }
 }
 
-input.ui-joy-button {
+input.ui-joy-button, input.button {
   padding: 6px 8px 7px 8px;
   width: 100%;
   -webkit-appearance: none;
@@ -699,7 +735,7 @@ input.ui-joy-button {
   border-bottom: 1px solid #a35500;
 }
 
-.grey-action {
+.grey-action, .button {
   @extend .ui-joy-button;
   @include gradient-top(#c9c9c9,#bababa, #999999, #868686);
   border-bottom: 1px solid rgba(85,85,85,1.0);
@@ -712,12 +748,20 @@ input.ui-joy-button {
   }
 }
 
-.grey-action.disabled {
+.orange-action.disabled, .grey-action.disabled {
   @include gradient-top(#d3d3d3,#c9c9c9, #bdbdbd, #b7b7b7);
   box-shadow: 0 1px 0 #e9e9e9 inset;
   border: 1px solid #a5a5a5;
   border-top: 1px solid #acacac;
   border-bottom: 1px solid #9b9b9b;
+}
+
+.grey-action.active {
+  @extend .soft-gray-gradient;
+  box-shadow: 0 1px 0 #c7c9cc inset;
+  border: 1px solid #d5d5d5;
+  border-top: 1px solid #8f8f8f;
+  border-bottom: 1px solid #e4e4e5;
 }
 
 div.ui-joy-button.medium {
@@ -803,6 +847,12 @@ div.ui-joy-button.facebook-btn {
       }
     }
   }
+}
+
+div.ui-joy-button.support-button {
+  padding: 12px 24px;
+  margin: 10px auto;
+  width: 200px;
 }
 /**
  * list items
@@ -947,15 +997,8 @@ div.ui-joy-button.facebook-btn {
   overflow: auto;
 
   h1.museo {
-    font: 500 18px "Museo Slab";
-    color: #252525;
-    text-shadow: 0 1px 0 rgba(255,255,255, .6);
     padding: 20px 0 10px 20px;
   }
-  p {
-    padding: 6px 24px;
-  }
-
 }
 
 .row.borders {
@@ -1300,4 +1343,23 @@ div.app {
   color: #424242;
   text-shadow: 0 1px 0 #fff;
   border-radius: 0 !important;
+}
+
+.content {
+  margin: 20px auto;
+  width: 300px;
+
+  h1.museo {
+    padding: 12px 0;
+  }
+  .field, .form-error {
+    padding: 12px 0;
+  }
+}
+
+.footer {
+  .truste {
+    padding: 12px 0;
+    text-align: center;
+  }
 }

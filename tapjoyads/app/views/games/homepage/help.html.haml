@@ -1,16 +1,10 @@
-#jqt
-  #home.current
-    = render :partial => 'games/homepage/nav_bar'
-
-    .content_wrapper
-      #help
-        %a{ :href => new_games_support_request_path( :type => 'contact_support' ) }
-          .button.grey.center_contact
-            Contact Customer Support
-        %a{ :href => new_games_support_request_path( :type => 'report_bug' ) }
-          .button.grey.center_contact
-            Report a Bug
-        %a{ :href => new_games_support_request_path( :type => 'feedback' ) }
-          .button.grey.center_contact
-            Give us Feedback
-    = render :partial => 'footer'
+#help.current
+  %a{ :href => new_games_support_request_path( :type => 'contact_support' ) }
+    .button.support-button
+      = t('text.games.contact_support')
+  %a{ :href => new_games_support_request_path( :type => 'report_bug' ) }
+    .button.support-button
+      = t('text.games.report_bug')
+  %a{ :href => new_games_support_request_path( :type => 'feedback' ) }
+    .button.support-button
+      = t('text.games.feedback')

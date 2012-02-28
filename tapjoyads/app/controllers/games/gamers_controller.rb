@@ -63,6 +63,13 @@ class Games::GamersController < GamesController
 
   def show
     @gamer = current_gamer
+    @device = Device.new(:key => current_device_id) if current_device_id.present?
+    @last_app = @device.present? ? ExternalPublisher.load_all_for_device(@device).first : nil;
+
+    @friends_lists = {
+      :following => get_friends_info(Friendship.following_ids(@gamer.id)),
+      :followers => get_friends_info(Friendship.follower_ids(@gamer.id))
+    }
   end
 
   def social

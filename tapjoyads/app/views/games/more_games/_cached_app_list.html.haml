@@ -1,30 +1,12 @@
-#earn.current
-  .panel
-    .page-header
-      .container.mt20
-        ssdsd
-    .section.dark
-      .toggle.left
-        %img.downarrow.icon32{ :src => BLANK_IMAGE}
-      .heading
-        = t('text.games.browse_offers')
-    .review-area
+.app-list.current
+  .panel.clearfix
+    .row.borders.pn
       - cached_app_list.each do |cached_app|
-        %ul.list-button-container
-          %li.list-button
-            .container.mt5
-              .left.pt3
-                .squircle
-                  //= image_tag(@external_publisher.get_icon_url(:size => 114, :source => :cloudfront))
-                  %img.downarrow.icon32{ :src => BLANK_IMAGE}
-                  .action-item
-                    $
-              .left.ml10
-                .container
-                  .big-title.slate.elip
-                    Coin Dozer for Pro for iPad
-                .container
-                  sadasdad
--content_for :included_javascripts do
-  = javascript_include_tag "games/src/marketplace"
-
+        .app
+          - @encrypt_app_id = ObjectEncryptor.encrypt(cached_app.id)
+          - link_to(games_get_app_path(:eid => @encrypt_app_id)) do
+            .app-icon
+              %img{ :src => BLANK_IMAGE, :source => cached_app.icon_url }
+          .details
+            %span.title.elip
+              = cached_app.name

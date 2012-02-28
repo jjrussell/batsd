@@ -1,6 +1,7 @@
 $(document).ready(function() {
 
-  var _t = window.i18n.t;
+  var _t = window.i18n.t,
+    debounce;
 
   // Login Modal
   $('#login, #login-web').bind('click', function() {
@@ -131,7 +132,7 @@ $(document).ready(function() {
   });
 
   Tapjoy.delay(function(){
-  	$('#recommedations').Carousel();
+    $('#recommedations').Carousel();
   }, 10);
 
   $(".button-bar").each(function () {
@@ -155,6 +156,60 @@ $(document).ready(function() {
       render_state();
     });
     render_state();
+  });
+
+  // debouncing function from John Hann
+  // http://unscriptable.com/index.php/2009/03/20/debouncing-javascript-methods/
+  debounce = function (func, threshold, execAsap) {
+    var timeout;
+
+    return function debounced() {
+      var obj = this, args = arguments;
+      function delayed() {
+        if (!execAsap) {
+          func.apply(obj, args);
+        }
+        timeout = null;
+      }
+
+      if (timeout) {
+        clearTimeout(timeout);
+      } else if (execAsap) {
+        func.apply(obj, args);
+      }
+
+      timeout = setTimeout(delayed, threshold || 100);
+    };
+  };
+
+  $(".enable-when-valid").each(function () {
+    var $$ = $(this),
+      $form = $$.closest("form"),
+      $req = $("[required]", $form);
+
+    function enable() {
+      $$.removeAttr("disabled").removeClass("disabled");
+    }
+
+    function disable() {
+      $$.attr("disabled", "disabled").addClass("disabled");
+    }
+
+    function check_valid() {
+      var all_valid = true;
+
+      $req.each(function () {
+        if (!$(this).val()) {
+          all_valid = false;
+          return false;
+        }
+      });
+
+      return all_valid ? enable() : disable();
+    }
+
+    $req.bind("change keyup", debounce(check_valid));
+    check_valid();
   });
 
 	/*
