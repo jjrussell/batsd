@@ -1,5 +1,5 @@
 /*jshint evil:true, regexp:false*/
-(function () {
+(function ($) {
   "use strict";
 
   var me = {};
@@ -56,10 +56,11 @@
   };
 
   me.fetchOffers = function ($container, url, params) {
+    var jsonp = $container.data("is-jsonp");
     return $.ajax({
       url: url,
+      dataType: jsonp ? "jsonp" : undefined,
       data: params,
-      dataType: "jsonp",
       error: function () {
         $(".ajax-error", $container).show();
         me.afterAjax({}, $container);
@@ -89,8 +90,8 @@
         $target = $(".ajax-target", $$),
         $placeholder = $(".ajax-placeholder", $$),
         $load_more = $(".ajax-load-more", $$),
-        template = me.template($$.next("script").html()),
-        url = $$.data("jsonp-url"),
+        template = me.template($("script", $$).html()),
+        url = $$.data("url"),
         params = $$.data("params") || {};
 
       $load_more.click(function () {
@@ -113,4 +114,4 @@
   $(function () {
     me.fillElements();
   });
-}());
+}(window.jQuery));

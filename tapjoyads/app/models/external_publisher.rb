@@ -1,10 +1,11 @@
 class ExternalPublisher
 
-  attr_accessor :app_id, :app_name, :currencies, :last_run_time
+  attr_accessor :app_id, :app_name, :partner_name, :currencies, :last_run_time
 
   def initialize(currency)
     self.app_id = currency.app_id
     self.app_name = currency.app.name
+    self.partner_name = currency.app.partner_name
     add_currency(currency)
   end
 

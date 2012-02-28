@@ -360,6 +360,7 @@ en:
       copyright: "Copyright &copy; %{year} Tapjoy, Inc. All Rights Reserved. Tapjoy and the Tapjoy logo are trademarks or registered trademarks of Tapjoy, Inc.  All third party logos and trademarks mentioned are the property of their respective owners."
       country: Country
       day: Day
+      earn_verb: "Earn"
       email: Email
       facebook_profile: "Facebook profile"
       female: Female

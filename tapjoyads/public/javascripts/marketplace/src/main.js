@@ -129,12 +129,38 @@ $(document).ready(function() {
       el.removeClass('active');
     }
   });
-	
+
   Tapjoy.delay(function(){
   	$('#recommedations').Carousel();
   }, 10);
 
+  $(".button-bar").each(function () {
+    var $$ = $(this),
+      radios = $(":radio", $$),
+      buttons = $(".ui-joy-button", $$),
+      value = $(":checked", $$).val(),
+      render_state;
+
+    render_state = function () {
+      $(".active", $$).removeClass("active");
+      $(":checked").attr("checked", false);
+
+      $(".ui-joy-button[value='" + value + "']", $$).addClass("active");
+      $("[value='" + value + "']:radio", $$).attr("checked", "checked");
+    };
+
+    $(".ui-joy-button", $$).click(function () {
+      value = $(this).attr("value");
+
+      render_state();
+    });
+    render_state();
+  });
+
 	/*
+
+
+
 	Tapjoy.Utils.notification({
 		message: 'Thanks, your settings have been saved.'
 	});

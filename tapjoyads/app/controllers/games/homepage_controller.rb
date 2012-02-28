@@ -34,7 +34,7 @@ class Games::HomepageController < GamesController
     @currency = Currency.find_by_id(@curr_id)
     @external_publisher = ExternalPublisher.new(@currency)
     @offerwall_url = @external_publisher.get_offerwall_url(@device, @external_publisher.currencies.first, request.accept_language, request.user_agent, current_gamer.id)
-    @app_metadata_id = App.find_by_id(@external_publisher.app_id).primary_app_metadata.id
+    @app_metadata = App.find_by_id(@external_publisher.app_id).primary_app_metadata
 
     respond_to do |f|
       f.html { render }
