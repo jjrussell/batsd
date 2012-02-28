@@ -45,17 +45,9 @@
     };
   };
 
-  me.afterAjax = function (data, $container) {
-    var $load = $(".ajax-load-more", $container);
+  me.afterAjax = function () {};
 
-    $(".ajax-placeholder", $container).hide();
-
-    $load.attr("disabled", false);
-
-    return data.MoreDataAvailable ? $load.show() : $load.hide();
-  };
-
-  me.fetchOffers = function ($container, url, params) {
+  me.fetchData = function ($container, url, params) {
     var jsonp = $container.data("is-jsonp");
     return $.ajax({
       url: url,
@@ -68,22 +60,6 @@
     });
   };
 
-  me.fetchMore = function ($container, url, params) {
-    var $load_more = $(".ajax-load-more", $container);
-
-    if ($load_more.attr("disabled")) {
-      return;
-    }
-
-    $load_more.attr("disabled", "disabled");
-
-    if (me.isNumber(params.start) && me.isNumber(params.max)) {
-      params.start += params.max;
-    }
-
-    return me.fetchOffers($container, url, params);
-  };
-
   me.fillElements = function () {
     $(".ajax-loader").each(function () {
       var $$ = $(this),
@@ -94,16 +70,27 @@
         url = $$.data("url"),
         params = $$.data("params") || {};
 
+      me.afterAjax = function (data, $container) {
+        $placeholder.hide();
+        $load_more.attr("disabled", false);
+        return data.MoreDataAvailable ? $load_more.show() : $load_more.hide();
+      };
+
       $load_more.click(function () {
         $placeholder.show();
         $load_more.hide();
-        me.fetchMore($$, url, params).then(function (data) {
+
+        if (me.isNumber(params.start) && me.isNumber(params.max)) {
+          params.start += params.max;
+        }
+
+        me.fetchData($$, url, params).then(function (data) {
           $target.append(template(data));
           me.afterAjax(data, $$);
         });
       });
 
-      me.fetchOffers($$, url, params).then(function (data) {
+      me.fetchData($$, url, params).then(function (data) {
         $target.append(template(data));
         me.afterAjax(data, $$);
       });

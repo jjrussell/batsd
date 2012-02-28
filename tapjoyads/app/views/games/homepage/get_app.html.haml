@@ -2,15 +2,16 @@
   = stylesheet_link_tag("games/get-app")
 #offer-detail.current
   .panel
-    .mod.line-item.page-header
-      .hd
-        .app-icon
-          =image_tag("games/test-game-image.png")
-      .bd
-        .title.elip
-          = @app.name
-        .sub-title
-          = @offer.partner_name
+    .page-header
+      .container.mt20
+        .left.ml10.pt3
+          .squircle
+            = image_tag(@app.get_icon_url(:size => 114, :source => :cloudfront))
+        .left.ml10
+          .big-title.elip.slate.mt10
+            = @app.name
+          .sub-title
+            = @offer.partner_name
     .mod.get-app
       .ui-joy-button.orange-action
         %a.text-center Get App

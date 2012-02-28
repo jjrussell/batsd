@@ -213,6 +213,7 @@ en:
       account_created_body: "Your Tapjoy account was successfully created!"
       account_created_title: Success!
       action_required: "Action Required!"
+      add: add
       add_to_homescreen: "Add %{tapjoy} to your home screen."
       advertisers_body: "Reach millions of users and gain exposure for your products"
       advertisers_title: Advertisers
@@ -244,6 +245,7 @@ en:
       developers_title: Developers
       earn: "Earn %{currency}"
       earn_title: "Complete any of the offers below to earn %{currency} for %{app_name}"
+      edit: edit
       enable_javascript: "Please go into your browser settings and enable JavaScript to continue using Tapjoy."
       enter_birthdate: "Please enter your birthdate"
       enter_email: "Please enter your email address"
@@ -253,6 +255,7 @@ en:
       enter_tos: "Please agree to the terms and conditions above"
       enter_valid_email: "Enter a valid email address"
       favorite_app: "Favorite App"
+      favorite_apps: "Favorite Apps"
       favorite_category: "Favorite Category"
       feedback: Feedback
       find_new_apps: "Find new apps"
@@ -293,6 +296,7 @@ en:
       more_apps: "More Apps"
       my_apps: "My Apps"
       profile: "Me"
+      no_device: "No device"
       no_javascript: "Please go into your browser settings and enable JavaScript to continue using Tapjoy."
       none_selected: "None Selected"
       on_my: "on my %{device_name}"
@@ -377,6 +381,7 @@ en:
       earn_verb: "Earn"
       email: Email
       facebook_profile: "Facebook profile"
+      favorites: Favorites
       female: Female
       followers: Follower
       following: Following
@@ -386,6 +391,7 @@ en:
       invite: Invite
       ios: iOS
       join: Join
+      location: Location
       login_noun: Login
       login_verb: "Log In"
       logout: "Log Out"
@@ -404,6 +410,7 @@ en:
       preferences: Preferences
       privacy: Privacy
       privacy_policy: "Privacy Policy"
+      profile: "Profile"
       rate_and_review: Rate and Review
       recipients: Recipients
       reset_password: "Reset Password"
@@ -420,6 +427,7 @@ en:
       try_again: "Try Again"
       update_review: Update Review
       updating: Updating
+      unknown: Unknown
       write_review: Write Review
       year: Year
       zip_postal: "Zip/Postal Code"
