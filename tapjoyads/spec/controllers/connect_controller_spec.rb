@@ -12,9 +12,14 @@ describe ConnectController do
     context 'with required parameters' do
       before :each do
         app = Factory(:app)
+        offer = app.primary_offer
         device = Factory(:device)
+        device.sdkless_clicks = { offer.third_party_data => { 'click_time' => (Time.zone.now - 1.hour).to_i, 'item_id' => offer.id }}
+
         @params = { :app_id => 'test_app',
                     :udid   => 'test_device' }
+
+        Device.stubs(:new).returns(device)
       end
 
       it "returns an XML response" do

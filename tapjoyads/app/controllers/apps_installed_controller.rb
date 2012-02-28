@@ -33,9 +33,9 @@ class AppsInstalledController < ApplicationController
     device.sdkless_clicks = temp_sdkless_clicks
     device.save
 
-    web_request = WebRequest.new
-    web_request.put_values('apps_installed', params, ip_address, geoip_data, request.headers['User-Agent'])
-    web_request.save
+    @web_request = WebRequest.new
+    @web_request.put_values('apps_installed', params, ip_address, geoip_data, request.headers['User-Agent'])
+    @web_request.save
 
     render(:nothing => true, :status => 200)
   end
