@@ -10,21 +10,21 @@
             = @external_publisher.app_name
           .container
             .left.ui-icon-medium.score.icon24.p5
-              80%
+              = "#{@app_metadata.positive_thumbs_percentage.floor}%"
             .left.ui-icon-medium.social.icon24.p5.ml5
-              30
+              = "#{@app_metadata.app_reviews.by_gamers.size}"
     .section.dark
       .heading
         = t('text.games.browse_offers')
       .toggle
-        %img.downarrow.icon32{ :src => BLANK_IMAGE}
+        %img.downarrow.icon32{ :src => BLANK_IMAGE }
     .review-area
       = render "offers"
     .section.dark
       .heading
         Other Options
     %ul.list-button-container.flush.nbb
-      -link_to new_games_app_review_path(:app_metadata_id => @app_metadata_id) do
+      -link_to new_games_app_review_path(:app_metadata_id => @app_metadata.id) do
         %li.list-button.ntb
           .left.charcoal
             = t("text.games.review_app_name", {:app_name => @external_publisher.app_name})
@@ -32,4 +32,4 @@
             &nbsp;
 
 -content_for :included_javascripts do
-  = javascript_include_tag "games/src/marketplace"
+  = javascript_include_tag "marketplace/src/ajax"
