@@ -4,7 +4,7 @@ class Client < ActiveRecord::Base
   has_many :partners
 
   validates_presence_of :name
-  validates_uniqueness_of :name
+  validates_uniqueness_of :name, :case_sensitive => false
 
   named_scope :ordered_by_name, :order => :name
 
