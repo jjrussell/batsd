@@ -125,6 +125,19 @@ ActiveRecord::Schema.define(:version => 20120228124800) do
   add_index "apps", ["name"], :name => "index_apps_on_name"
   add_index "apps", ["partner_id"], :name => "index_apps_on_partner_id"
 
+  create_table "brand_offer_mappings", :id => false, :force => true do |t|
+    t.string "id",       :limit => 36, :null => false
+    t.string "offer_id", :limit => 36, :null => false
+    t.string "brand_id", :limit => 36, :null => false
+  end
+
+  create_table "brands", :id => false, :force => true do |t|
+    t.string   "id",         :limit => 36, :null => false
+    t.string   "name"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "conversions", :id => false, :force => true do |t|
     t.string   "id",                     :limit => 36, :null => false
     t.string   "reward_id",              :limit => 36
