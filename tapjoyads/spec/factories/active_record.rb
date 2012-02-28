@@ -67,6 +67,13 @@ FactoryGirl.define do
   factory :order do
     association :partner
     payment_method 0
+    note 'note'
+  end
+
+  factory :earnings_adjustment do
+    association :partner
+    amount 1
+    notes 'notes'
   end
 
   factory :payout do
