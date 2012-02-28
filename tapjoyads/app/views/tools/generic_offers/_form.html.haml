@@ -16,6 +16,7 @@
       %td
         = f.select :category, GenericOffer::CATEGORIES, :include_blank => true
         = error_message_on @generic_offer, :category
+        .inline_help Classify urls that redirect to video ads outside of our system (such as youtube or vimeo) as Non-Native Video
     %tr
       %th= f.label :price
       %td

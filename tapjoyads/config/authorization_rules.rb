@@ -1,7 +1,7 @@
 authorization do
 
   role :partner do
-    has_permission_on :apps, :to => [ :index, :show, :new, :create, :edit, :update, :confirm, :integrate, :publisher_integrate, :search, :sdk_download, :archive ]
+    has_permission_on :apps, :to => [ :index, :show, :new, :create, :edit, :update, :confirm, :integrate, :publisher_integrate, :integrate_check, :search, :sdk_download, :archive ]
     has_permission_on :apps_offers, :to => [ :new, :create, :edit, :update, :toggle, :percentile, :preview ]
     has_permission_on :offer_creatives, :to => [ :show, :create, :new, :destroy ]
     has_permission_on :apps_currencies, :to => [ :show, :update, :new, :create, :reset_test_device ]
@@ -23,11 +23,16 @@ authorization do
 
   role :tools do
     has_permission_on :tools, :to => [ :index ]
+  end
+
+  role :devices do
+    includes :tools
     has_permission_on :internal_devices, :to => [ :new, :edit, :update, :index, :show, :destroy, :approve ]
   end
 
   role :customer_service do
     includes :tools
+    includes :devices
     has_permission_on :search, :to => [ :gamers ]
     has_permission_on :tools, :to => [ :resolve_clicks, :device_info, :update_device, :award_currencies, :update_award_currencies, :send_currency_failures ]
     has_permission_on :tools_gamers, :to => [ :index, :show ]
@@ -37,6 +42,7 @@ authorization do
 
   role :money do
     includes :tools
+    includes :devices
     has_permission_on :tools, :to => [ :money, :monthly_data ]
     has_permission_on :tools_orders, :to => [ :new, :create ]
     has_permission_on :tools_earnings_adjustments, :to => [ :new, :create ]
@@ -44,7 +50,7 @@ authorization do
 
   role :payops do
     includes :money
-    has_permission_on :tools_payouts, :to => [ :index ]
+    has_permission_on :tools_payouts, :to => [ :index, :export ]
     has_permission_on :tools_orders, :to => [ :failed_invoices, :retry_invoicing, :mark_invoiced ]
     has_permission_on :tools_network_costs, :to => [ :index, :new, :create ]
     has_permission_on :tools_payout_freezes, :to => [ :index ]
@@ -53,7 +59,7 @@ authorization do
   role :payout_manager do
     includes :payops
     has_permission_on :tools, :to => [ :payout_info, :publishers_without_payout_info, :publisher_payout_info_changes ]
-    has_permission_on :tools_payouts, :to => [ :create ]
+    has_permission_on :tools_payouts, :to => [ :create, :confirm_payouts ]
     has_permission_on :tools_payout_freezes, :to => [ :create, :disable ]
   end
 
@@ -64,12 +70,14 @@ authorization do
 
   role :executive do
     includes :tools
+    includes :devices
     includes :reporting
     has_permission_on :tools, :to => [ :money, :monthly_data ]
   end
 
   role :hr do
     includes :tools
+    includes :devices
     has_permission_on :tools_employees, :to => [ :index, :new, :create, :edit, :update, :delete_photo ]
   end
 
@@ -82,7 +90,7 @@ authorization do
     has_permission_on :tools, :to => [ :disabled_popular_offers, :sanitize_users, :update_user, :resolve_clicks, :new_transfer, :device_info, :update_device, :freemium_android, :award_currencies, :update_award_currencies, :send_currency_failures ]
     has_permission_on :tools_enable_offer_requests, :to => [ :index, :update ]
     has_permission_on :activities, :to => [ :index ]
-    has_permission_on :partners, :to => [ :index, :show, :edit, :make_current, :manage, :stop_managing, :mail_chimp_info, :update, :managed_by, :new_transfer, :create_transfer, :reporting, :agency_api, :set_tapjoy_sponsored ]
+    has_permission_on :partners, :to => [ :index, :show, :edit, :make_current, :manage, :stop_managing, :mail_chimp_info, :update, :managed_by, :new_transfer, :create_transfer, :reporting, :agency_api, :set_tapjoy_sponsored, :set_unconfirmed_for_payout ]
     has_permission_on :tools_rank_boosts, :to => [ :index, :new, :create, :edit, :update, :deactivate ]
     has_permission_on :apps, :to => [ :unarchive ]
     has_permission_on :offer_creatives, :to => [ :show, :create, :update, :destroy ]
@@ -104,23 +112,31 @@ authorization do
   end
 
   role :games_editor do
-    has_permission_on :tools, :to => [ :index ]
+    includes :tools
     has_permission_on :tools_editors_picks, :to => [ :index, :new, :create, :show, :edit, :update, :activate, :expire ]
-    has_permission_on :tools_app_reviews, :to => [ :index, :new, :create, :edit, :update, :update_featured, :destroy ]
+    has_permission_on :tools_app_reviews, :to => [ :index, :new, :create, :edit, :update, :destroy ]
     has_permission_on :tools_featured_contents, :to => [ :index, :new, :create, :edit, :update, :destroy ]
+  end
+
+  role :role_mgr do
+    includes :tools
+    has_permission_on :tools, :to => [ :manage_user_roles, :update_user_roles ]
+    has_permission_on :tools_users, :to => [ :index, :show ]
+    has_permission_on :tools_users_role_assignments, :to => [ :create, :destroy ]
   end
 
   role :admin do
     includes :tools
+    includes :devices
     includes :payops
     includes :executive
     includes :account_mgr
     includes :hr
     includes :games_editor
+    includes :role_mgr
     has_permission_on :pub_offer_whitelist, :to => [ :index, :enable, :disable ]
-    has_permission_on :tools, :to => [ :failed_sdb_saves, :sdb_metadata, :reset_device, :sqs_lengths, :elb_status, :ses_status, :as_groups, :manage_user_roles, :update_user_roles ]
+    has_permission_on :tools, :to => [ :failed_sdb_saves, :sdb_metadata, :reset_device, :sqs_lengths, :elb_status, :ses_status, :as_groups ]
     has_permission_on :tools_offers, :to => [ :creative, :approve_creative, :reject_creative ]
-    has_permission_on :tools_users_role_assignments, :to => [ :create, :destroy ]
     has_permission_on :tools_jobs, :to => [ :index, :new, :create, :edit, :update, :destroy ]
     has_permission_on :tools_support_requests, :to => [ :index, :mass_resolve ]
     has_permission_on :tools_press_releases, :to => [ :index, :new, :create, :edit, :update ]

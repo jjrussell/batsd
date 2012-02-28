@@ -22,7 +22,7 @@ ActionController::Routing::Routes.draw do |map|
   end
   map.resources :user_sessions, :only => [ :new, :create, :destroy, :index ]
   map.resources :users, :as => :account, :except => [ :show, :destroy ]
-  map.resources :apps, :except => [ :destroy ], :member => { :confirm => :get, :integrate => :get, :publisher_integrate => :get, :archive => :post, :unarchive => :post }, :collection => { :search => :get } do |app|
+  map.resources :apps, :except => [ :destroy ], :member => { :confirm => :get, :integrate => :get, :publisher_integrate => :get, :integrate_check => :get, :archive => :post, :unarchive => :post }, :collection => { :search => :get } do |app|
     app.resources :offers, :only => [ :new, :create, :edit, :update ] , :member => { :toggle => :post, :percentile => :post }, :controller => 'apps/offers' do |offer|
       offer.resources :offer_events, :only => [ :index, :new, :create, :edit, :update, :destroy ], :controller => 'apps/offers/offer_events', :as => :scheduling
     end
@@ -52,7 +52,7 @@ ActionController::Routing::Routes.draw do |map|
     :collection => { :global => :get, :publisher => :get, :advertiser => :get }
   map.resources :activities, :only => [ :index ]
   map.resources :partners, :only => [ :index, :show, :new, :create, :update, :edit ],
-    :member => { :make_current => :post, :manage => :post, :stop_managing => :post, :mail_chimp_info => :get, :new_transfer => :get, :create_transfer => :post, :reporting => :get, :set_tapjoy_sponsored => :post },
+    :member => { :make_current => :post, :manage => :post, :stop_managing => :post, :mail_chimp_info => :get, :new_transfer => :get, :create_transfer => :post, :reporting => :get, :set_tapjoy_sponsored => :post, :set_unconfirmed_for_payout => :post },
     :collection => { :agency_api => :get } do |partner|
     partner.resources :offer_discounts, :only => [ :index, :new, :create ], :member => { :deactivate => :post }, :controller => 'partners/offer_discounts'
     partner.resources :payout_infos, :only => [ :index, :update ]
@@ -88,7 +88,7 @@ ActionController::Routing::Routes.draw do |map|
     end
     tools.resources :offers,
       :collection => { :creative => :get, :approve_creative => :post, :reject_creative => :post }
-    tools.resources :payouts, :only => [ :index, :create ], :member => { :info => :get }
+    tools.resources :payouts, :only => [ :index, :create ], :member => { :info => :get }, :collection => { :confirm_payouts => :post, :export => :get }
     tools.resources :enable_offer_requests, :only => [ :update, :index ]
     tools.resources :admin_devices, :only => [ :index, :new, :create, :edit, :update, :destroy ]
     tools.resources :offer_events, :only => [ :index, :new, :create, :edit, :update, :destroy ], :as => :scheduling
@@ -103,11 +103,12 @@ ActionController::Routing::Routes.draw do |map|
     tools.resources :jobs, :except => [ :show ]
     tools.resources :earnings_adjustments, :only => [ :new, :create ]
     tools.resources :editors_picks, :except => [ :destroy ], :member => { :activate => :post, :expire => :post }
-    tools.resources :app_reviews, :except => [ :show ], :member => { :update_featured => :put }
+    tools.resources :app_reviews, :except => [ :show ]
     tools.resources :featured_contents, :except => [ :show ]
     tools.resources :agency_users, :only => [ :index, :show ]
     tools.resources :support_requests, :only => [ :index ], :collection => { :mass_resolve => [ :get, :post ] }
     tools.resources :press_releases, :only => [ :index, :new, :create, :edit, :update ]
+    tools.resources :recommenders, :only => [:index, :create]
     tools.resources :gamers, :only => [ :index, :show ]
     tools.resources :gamer_devices, :only => [ :create, :edit, :new, :show, :update ]
     tools.resources :network_costs, :only => [ :index, :new, :create ]

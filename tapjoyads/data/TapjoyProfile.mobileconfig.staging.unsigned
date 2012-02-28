@@ -4,7 +4,7 @@
  <key>PayloadContent</key>
  <dict>
   <key>URL</key>
-  <string>http://staging.tapjoy.com/gamer/device</string>
+  <string>http://staging.tapjoy.com/games/gamer/device</string>
   <key>DeviceAttributes</key>
   <array>
    <string>UDID</string>
@@ -26,7 +26,7 @@
  <key>PayloadIdentifier</key>
  <string>com.tapjoy.profile-service</string>
  <key>PayloadDescription</key>
- <string>This temporary profile will be used to personalize your experience with Tapjoy. WE WILL NOT CHANGE ANY SETTINGS ON YOUR DEVICE.</string>
+ <string>Press Install to enable the settings that link your profile to your Tapjoy account.</string>
  <key>PayloadType</key>
  <string>Profile Service</string>
 </dict>

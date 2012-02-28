@@ -20,7 +20,11 @@ class Currency < ActiveRecord::Base
   validates_numericality_of :max_age_rating, :minimum_featured_bid, :minimum_offerwall_bid, :minimum_display_bid, :allow_nil => true, :only_integer => true
   validates_inclusion_of :only_free_offers, :send_offer_data, :hide_rewarded_app_installs, :tapjoy_enabled, :in => [ true, false ]
   validates_each :callback_url, :if => :callback_url_changed? do |record, attribute, value|
-    unless SPECIAL_CALLBACK_URLS.include?(value)
+    if SPECIAL_CALLBACK_URLS.include?(value)
+      if record.app.currencies.size > 1 || record.new_record? && record.app.currencies.any?
+        record.errors.add(attribute, 'cannot be managed if the app has multiple currencies')
+      end
+    else
       if value !~ /^https?:\/\//
         record.errors.add(attribute, 'is not a valid url')
       else
@@ -67,6 +71,10 @@ class Currency < ActiveRecord::Base
     currencies
   end
 
+  def has_special_callback?
+    SPECIAL_CALLBACK_URLS.include?(callback_url)
+  end
+
   def get_spend_share(offer)
     if partner_id == offer.partner_id
       0
@@ -97,7 +105,7 @@ class Currency < ActiveRecord::Base
   end
 
   def get_reward_amount(offer)
-    return 0 if conversion_rate == 0 || !offer.rewarded?
+    return 0 unless rewarded? && offer.rewarded?
 
     if offer.reward_value.present?
       reward_value = offer.reward_value
@@ -188,6 +196,10 @@ class Currency < ActiveRecord::Base
     spend_share_ratio = [ SpendShare.current_ratio, 1 - partner.max_deduction_percentage ].max
     self.spend_share = (rev_share_override || partner.rev_share) * spend_share_ratio
     self.reseller_spend_share = reseller_id? ? reseller.reseller_rev_share * spend_share_ratio : nil
+  end
+
+  def rewarded?
+    conversion_rate > 0
   end
 
   private

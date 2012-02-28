@@ -8,9 +8,9 @@ describe BillingController do
     login_as(user)
   end
 
-  describe "admins creating transfers" do
-    it "should log transfer and math should work out" do
-      get :create_transfer, { :transfer_amount => '$1.00' }
+  describe 'admins creating transfers' do
+    it 'logs transfer and math works out' do
+      get(:create_transfer, { :transfer_amount => '$1.00' })
       @partner.reload
 
       @partner.orders.length.should == 2
@@ -19,8 +19,8 @@ describe BillingController do
       @partner.balance.should == 10_110
     end
 
-    it "should not allow negative transfer" do
-      get :create_transfer, { :transfer_amount => '$-1.00' }
+    it 'does not allow negative transfer' do
+      get(:create_transfer, { :transfer_amount => '$-1.00' })
       @partner.reload
 
       @partner.orders.should be_blank
@@ -29,14 +29,35 @@ describe BillingController do
       @partner.balance.should == 10_000
     end
 
-    it "should not allow transfer greater than pending_earnings amount" do
-      get :create_transfer, { :transfer_amount => '$100.01' }
+    it 'does not allow transfer greater than pending_earnings amount' do
+      get(:create_transfer, { :transfer_amount => '$100.01' })
       @partner.reload
 
       @partner.orders.should be_blank
       @partner.payouts.should be_blank
       @partner.pending_earnings.should == 10_000
       @partner.balance.should == 10_000
+    end
+  end
+
+  describe '#update_payout_info' do
+    before :each do
+      @payout_info = Factory(:payout_info, :partner => @partner)
+      @partner.confirmed_for_payout = true
+      @partner.save!
+      @partner.payout_info.stubs(:safe_update_attributes).returns(true)
+      post(:update_payout_info, :payout_info => {})
+      @partner.reload
+    end
+
+    context 'when payouts are already confirmed for the partner' do
+      it 'unconfirms payouts' do
+        @partner.confirmed_for_payout.should be_false
+      end
+
+      it 'adds a system not that the payout info changed' do
+        @partner.payout_confirmation_notes.should == "SYSTEM: Partner Payout Information has changed."
+      end
     end
   end
 end

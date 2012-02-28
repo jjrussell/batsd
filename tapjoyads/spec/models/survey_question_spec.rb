@@ -13,7 +13,7 @@ describe SurveyQuestion do
   it { should validate_presence_of :format }
   it { should validate_presence_of :survey_offer }
 
-  it "should validate format" do
+  it 'validates format' do
     %w( select radio text ).each do |format|
       @survey_question.format = format
       @survey_question.should be_valid
@@ -25,12 +25,12 @@ describe SurveyQuestion do
     end
   end
 
-  it "should have a to_s that returns it's text" do
+  it "has a to_s that returns it's text" do
     @survey_question.text = 'blah'
     @survey_question.to_s.should == 'blah'
   end
 
-  it "should split the possible responses" do
+  it 'splits the possible responses' do
     @survey_question.possible_responses = 'a;b;c'
     @survey_question.possible_responses.should == %w( a b c )
   end
