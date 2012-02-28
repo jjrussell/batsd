@@ -55,7 +55,7 @@
     return data.MoreDataAvailable ? $load.show() : $load.hide();
   };
 
-  me.fetchOffers = function ($container, url, params) {
+  me.fetchData = function ($container, url, params) {
     var jsonp = $container.data("is-jsonp");
     return $.ajax({
       url: url,
@@ -66,22 +66,6 @@
         me.afterAjax({}, $container);
       }
     });
-  };
-
-  me.fetchMore = function ($container, url, params) {
-    var $load_more = $(".ajax-load-more", $container);
-
-    if ($load_more.attr("disabled")) {
-      return;
-    }
-
-    $load_more.attr("disabled", "disabled");
-
-    if (me.isNumber(params.start) && me.isNumber(params.max)) {
-      params.start += params.max;
-    }
-
-    return me.fetchOffers($container, url, params);
   };
 
   me.fillElements = function () {
@@ -97,13 +81,18 @@
       $load_more.click(function () {
         $placeholder.show();
         $load_more.hide();
-        me.fetchMore($$, url, params).then(function (data) {
+
+        if (me.isNumber(params.start) && me.isNumber(params.max)) {
+          params.start += params.max;
+        }
+
+        me.fetchData($$, url, params).then(function (data) {
           $target.append(template(data));
           me.afterAjax(data, $$);
         });
       });
 
-      me.fetchOffers($$, url, params).then(function (data) {
+      me.fetchData($$, url, params).then(function (data) {
         $target.append(template(data));
         me.afterAjax(data, $$);
       });
