@@ -119,7 +119,7 @@ $(document).ready(function() {
     }
   });
 
-  $('.list-button').bind(Tapjoy.EventsMap.start + ' ' + Tapjoy.EventsMap.end, function(e){
+  $('.list-button, .app .btn').bind(Tapjoy.EventsMap.start + ' ' + Tapjoy.EventsMap.end, function(e){
     var el = $(this),
         which = e.type;
 
