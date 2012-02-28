@@ -8,14 +8,12 @@ class Client < ActiveRecord::Base
 
   named_scope :ordered_by_name, :order => :name
 
-  before_destroy :remove_client_from_partners
+  before_destroy :remove_from_partners
 
   private
 
-  def remove_client_from_partners
-    self.partners.each do |p|
-      p.remove_client
-    end
+  def remove_from_partners
+    partners.each { |p| p.update_attribute(:client_id, nil) }
   end
 
 end

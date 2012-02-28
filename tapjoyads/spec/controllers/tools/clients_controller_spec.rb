@@ -4,18 +4,16 @@ describe Tools::ClientsController do
   before :each do
     fake_the_web
     activate_authlogic
-    account_mgr_user = Factory(:account_mgr_user)
-    login_as(account_mgr_user)
+    login_as(Factory(:account_mgr_user))
     @client = Factory(:client, :name => 'BBB')
     @client2 = Factory(:client, :name => 'AAA')
-    @partner = Factory(:partner)
-    @partner.update_attributes({ :client_id => @client.id })
+    @partner = Factory(:partner, :client => @client)
     @partner2 = Factory(:partner)
   end
 
   describe '#index' do
-    it 'returns all clients order by name' do
-      get :index
+    it 'returns all clients ordered by name' do
+      get(:index)
       assigns[:clients].should == [ @client2, @client ]
     end
   end
@@ -31,8 +29,11 @@ describe Tools::ClientsController do
     end
 
     context 'when client does not exist' do
-      it 'creates a client' do
+      it 'flashes a notice' do
         flash[:notice].should == 'Client created'
+      end
+
+      it 'redirects to clients index' do
         response.should redirect_to(tools_clients_path)
       end
     end
@@ -77,7 +78,7 @@ describe Tools::ClientsController do
         flash[:notice].should == 'Client saved'
       end
 
-      it "redirects to tools/clients" do
+      it 'redirects to tools/clients' do
         response.should redirect_to(tools_clients_path)
       end
     end
@@ -104,12 +105,12 @@ describe Tools::ClientsController do
           :id => @client2.id,
           :partner_id => @partner2.id
         }
-        request.env["HTTP_REFERER"] = add_partner_tools_client_path(@client2)
+        request.env['HTTP_REFERER'] = tools_client_path(@client2)
         put(:add_partner, @options)
       end
 
-      it "redirects to client show page" do
-        response.should redirect_to(add_partner_tools_client_path(@client2))
+      it 'redirects to client show page' do
+        response.should redirect_to(tools_client_path(@client2))
       end
 
       it 'associates partner with client' do
@@ -118,27 +119,27 @@ describe Tools::ClientsController do
       end
     end
 
-    context 'when partner already associated with another client, add_partner fails' do
+    context 'when partner already associated with another client' do
       before :each do
         @options = {
           :id => @client2.id,
           :partner_id => @partner.id
         }
-        request.env["HTTP_REFERER"] = add_partner_tools_client_path(@client2)
+        request.env['HTTP_REFERER'] = tools_client_path(@client2)
         put(:add_partner, @options)
       end
 
-      it 'sets a error' do
+      it 'sets an error' do
         flash[:error].should == "partner #{@partner.name} already associated with client #{@client.name}"
       end
 
-      it "redirects to client show page" do
-        response.should redirect_to(add_partner_tools_client_path(@client2))
+      it 'redirects to client show page' do
+        response.should redirect_to(tools_client_path(@client2))
       end
 
       it 'does not associate partner with client' do
         @partner.client.should == @client
-        @client2.partners.should == []
+        @client2.partners.should be_empty
       end
     end
   end
@@ -150,18 +151,18 @@ describe Tools::ClientsController do
           :id => @client.id,
           :partner_id => @partner.id
         }
-        request.env["HTTP_REFERER"] = add_partner_tools_client_path(@client)
+        request.env['HTTP_REFERER'] = tools_client_path(@client)
         put(:remove_partner, @options)
       end
 
-      it "redirects to client show page" do
-        response.should redirect_to(add_partner_tools_client_path(@client))
+      it 'redirects to client show page' do
+        response.should redirect_to(tools_client_path(@client))
       end
 
       it 'disassociates partner with client' do
         @partner.reload
-        @partner.client.should == nil
-        @client.partners.should == []
+        @partner.client.should be_nil
+        @client.partners.should be_empty
       end
     end
   end

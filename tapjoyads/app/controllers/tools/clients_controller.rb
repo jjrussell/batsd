@@ -50,14 +50,14 @@ class Tools::ClientsController < WebsiteController
     if partner.client.present?
       flash[:error] = "partner #{partner.name} already associated with client #{partner.client.name}"
     else
-      partner.set_client(client_id)
+      partner.update_attribute(:client_id, client_id)
     end
     redirect_to :back
   end
 
   def remove_partner
     partner = Partner.find_by_id(params[:partner_id])
-    partner.remove_client
+    partner.update_attribute(:client_id, nil)
     redirect_to :back
   end
 

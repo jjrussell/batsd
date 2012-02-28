@@ -59,24 +59,6 @@ describe Partner do
       Partner.calculate_next_payout_amount(@partner.id).should == 10100
     end
 
-    context 'has association with client' do
-      before :each do
-        @client = Factory(:client)
-      end
-
-      it 'adds client' do
-        @partner.set_client(@client.id)
-        @partner.client.should == @client
-        @client.partners.should == [ @partner ]
-      end
-
-      it 'removes client' do
-        @partner.remove_client
-        @partner.client.should == nil
-        @client.partners.should == []
-      end
-    end
-
     context 'with MonthlyAccoutings' do
       before :each do
         reference_time = Conversion.accounting_cutoff_time - 1

@@ -303,16 +303,6 @@ class Partner < ActiveRecord::Base
     end
   end
 
-  def set_client(id)
-    self.client_id = id
-    self.save if self.client_id_changed?
-  end
-
-  def remove_client
-    self.client_id = nil
-    self.save if self.client_id_changed?
-  end
-
 private
 
   def update_currencies
