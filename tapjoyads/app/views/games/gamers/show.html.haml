@@ -28,7 +28,7 @@
           .bold
             = @friends_lists[:followers].size
     %ul.list-button-container.flush.nbb
-      - link_to edit_games_gamer_path(:id => @gamer.id) do
+      - link_to edit_games_gamer_path(current_gamer.id) do
         %li.list-button.charcoal.soft-gray-gradient
           = t('text.shared.my_profile')
       %li.list-button.charcoal.soft-gray-gradient

@@ -5,40 +5,67 @@
         .left.ml10.pt3
           .big-title.mt10
             = t('text.shared.my_account')
-    .container
-      .mod.titled-group
-        .group-title= t('text.shared.profile')
-        %ul.list-button-container.mb10
-          %li.list-button.soft-gray-gradient.pt5.pl10.pb5
-            .hd= t('text.shared.name')
-            .bd
-              = @gamer.name
-              = link_to change_link(@gamer.name?), "#"
-          %li.list-button.soft-gray-gradient.pt5.pl10.pb5
-            .hd= t('text.shared.nickname')
-            .bd
-              = @gamer.nickname
-              = link_to change_link(@gamer.nickname?), "#"
-          %li.list-button.soft-gray-gradient.pt5.pl10.pb5
-            .hd= t('text.shared.gender')
-            .bd
-              = @gamer.gender || ""
-              = link_to change_link(@gamer.gender?), "#"
-          %li.list-button.soft-gray-gradient.pt5.pl10.pb5
-            .hd= t('text.shared.location')
-            .bd
-              = @gamer.city_and_country || ""
-              = link_to change_link(@gamer.city_and_country?), "#"
-      .mod.titled-group
-        .group-title= t('text.shared.favorites')
-        %ul.list-button-container.mb10
-          %li.list-button.soft-gray-gradient.pt5.pl10.pb5
-            .hd= t('text.games.favorite_app')
-            .bd
-              = @gamer.favorite_game
-              = link_to change_link(@gamer.favorite_game?), "#"
-          %li.list-button.soft-gray-gradient.pt5.pl10.pb5
-            .hd= t('text.games.favorite_category')
-            .bd
-              = @gamer.favorite_category
-              = link_to change_link(@gamer.favorite_category?), "#"
+    - form_for [:games, @current_gamer], :html => { :class => "inline-editing" } do |f|
+      .container
+        .mod.titled-group
+          .group-title= t('text.shared.profile')
+          %ul.list-button-container.mb10
+            %li.list-button.soft-gray-gradient.pt5.pl10.pb5
+              .hd= t('text.shared.name')
+              .bd
+                .show-div
+                  = @gamer.name
+                  %a= "(#{t("text.games.edit")})"
+                .edit-div= f.text_field :name
+            %li.list-button.soft-gray-gradient.pt5.pl10.pb5
+              .hd= t('text.shared.nickname')
+              .bd
+                .show-div
+                  = @gamer.nickname
+                  %a= "(#{t("text.games.edit")})"
+                .edit-div= f.text_field :nickname
+            %li.list-button.soft-gray-gradient.pt5.pl10.pb5
+              .hd= t('text.shared.gender')
+              .bd
+                .show-div
+                  = @gamer.gender || ""
+                  %a= "(#{t("text.games.edit")})"
+                .edit-div
+                  .button-bar
+                    .hidden
+                      = f.radio_button :gender, "male"
+                      = f.radio_button :gender, "female"
+                    .mod.button-group
+                      .ui-joy-button.grey-action{:value => 'male'}
+                        %a.text-center= t('text.shared.male')
+                      .ui-joy-button.grey-action{:value => 'female'}
+                        %a.text-center= t('text.shared.female')
+            %li.list-button.soft-gray-gradient.pt5.pl10.pb5
+              .hd= t('text.shared.location')
+              .bd
+                .show-div
+                  = @gamer.city_and_country || ""
+                  %a= "(#{t("text.games.edit")})"
+                .edit-div
+                  = f.text_field :city, :placeholder => t("text.shared.city")
+                  = f.text_field :country, :placeholder => t("text.shared.country")
+        .mod.titled-group
+          .group-title= t('text.shared.favorites')
+          %ul.list-button-container.mb10
+            %li.list-button.soft-gray-gradient.pt5.pl10.pb5
+              .hd= t('text.games.favorite_app')
+              .bd
+                .show-div
+                  = @gamer.favorite_game
+                  %a= "(#{t("text.games.edit")})"
+                .edit-div= f.text_field :favorite_game
+            %li.list-button.soft-gray-gradient.pt5.pl10.pb5
+              .hd= t('text.games.favorite_category')
+              .bd
+                .show-div
+                  = @gamer.favorite_category
+                  %a= "(#{t("text.games.edit")})"
+                .edit-div= f.text_field :favorite_category
+
+        .mod.submit-button
+          = f.submit t('text.shared.save'), :class => "ui-joy-button orange-action enable-when-valid"
