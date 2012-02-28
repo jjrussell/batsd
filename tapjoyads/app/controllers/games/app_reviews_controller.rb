@@ -28,9 +28,9 @@ class Games::AppReviewsController < GamesController
       flash[:notice] = t('text.games.review_created')
     else
       if @app_review.errors[:author_id].any?
-        flash.now[:error] = 'You have already reviewed this app.'
+        flash.now[:error] =t("text.games.reviewed_already")
       else
-        flash.now[:error] = 'There was an issue. Please try again later.'
+        flash.now[:error] =t("text.games.review_issue")
       end
     end
 

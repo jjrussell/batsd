@@ -4,9 +4,7 @@
   .button-bar
     .hidden
       = f.radio_button :user_rating, 1
-      %span Thumbs Up
       = f.radio_button :user_rating, -1
-      %span Thumbs Down
     .mod.form-section.button-group
       .ui-joy-button.grey-action{:value => 1}
         %a.icon-center
