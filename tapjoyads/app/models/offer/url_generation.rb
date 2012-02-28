@@ -30,7 +30,7 @@ module Offer::UrlGeneration
       :language_code         => language_code,
       :display_multiplier    => display_multiplier,
       :library_version       => library_version,
-      :os_version            => os_version,
+      :os_version            => os_version
     }
 
     "#{API_URL}/offer_instructions?data=#{ObjectEncryptor.encrypt(data)}"
@@ -76,6 +76,13 @@ module Offer::UrlGeneration
     elsif item_type == 'SurveyOffer'
       final_url.gsub!('TAPJOY_SURVEY', click_key.to_s)
       final_url = ObjectEncryptor.encrypt_url(final_url)
+    elsif item_type == 'VideoOffer'
+      params = {
+        :offer_id           => id,
+        :app_id             => currency,
+        :udid               => udid
+      }
+      final_url = "#{API_URL}/videos/#{id}/complete?#{params.to_query}"
     end
 
     final_url

@@ -173,6 +173,7 @@ FactoryGirl.define do
 
   factory :video_button do
     association :video_offer
+    item { Factory(:generic_offer) }
     name { Factory.next(:name) }
     url 'http://www.tapjoy.com'
     ordinal 1
