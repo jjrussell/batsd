@@ -995,7 +995,8 @@ div.ui-joy-button.support-button {
 .row {
   padding: 5px 0 10px 0;
   overflow: auto;
-
+  box-shadow: 0 -3px 3px rgba(0,0,0, .07);
+    
   h1.museo {
     padding: 20px 0 10px 20px;
   }

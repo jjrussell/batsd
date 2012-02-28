@@ -259,6 +259,14 @@ $(document).ready(function() {
       $('.heading', tjmSelectContainer).text(li.text())			
 		});
 	});
+	
+	$(window).bind('resize orientationchange', function(){
+    tjmSelectMenu.css('top', tjmSelectContainer.offset().top + (tjmSelectContainer.outerHeight(true) - 4) + 'px');
+    
+    $('.fix', tjmSelectContainer).css({
+      width: tjmSelectContainer.width() - 4 + 'px'
+    });		
+	})
 	/*
 
 
