@@ -290,8 +290,8 @@ FactoryGirl.define do
   end
 
   factory :favorite_app do
-    gamer { Factory(:gamer) }
-    app   { Factory(:app) }
+    gamer         { Factory(:gamer) }
+    app_metadata  { Factory(:app_metadata) }
   end
 
   factory :featured_content do
