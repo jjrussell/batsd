@@ -10,18 +10,18 @@
         %strong Success:
         %span.message
           Device with UDID/IMEI
-          %strong= params[:udid]
+          %strong "#{params[:udid]}"
           and MAC address of
-          %strong= params[:mac_address]
+          %strong "#{params[:mac_address]}"
           was found!
     - else
       .flash#flash_error
         %strong Failure:
         %span.message
           Device with UDID/IMEI
-          %strong= params[:udid]
+          %strong "#{params[:udid]}"
           and MAC address of
-          %strong= params[:mac_address]
+          %strong "#{params[:mac_address]}"
           was NOT found!
   - else
     You can check the integration status of your app here by typing in the
@@ -38,7 +38,7 @@
     %br/
     = text_field_tag :mac_address, params[:mac_address]
     %br/
-    = submit_tag
+    = submit_tag 'Look up'
 
 %p
   Need help?

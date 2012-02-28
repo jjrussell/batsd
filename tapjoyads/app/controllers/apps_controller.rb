@@ -120,9 +120,11 @@ class AppsController < WebsiteController
   end
 
   def integrate_check
-    if params[:udid] && params[:mac_address]
+    if params[:udid].present? && params[:mac_address].present?
       @device = Device.new :key => params[:udid]
-      @matched = @device.mac_address.downcase == params[:mac_address].downcase
+      @matched = @device.mac_address.to_s == params[:mac_address].downcase
+    elsif params[:udid].present? || params[:mac_address].present?
+      @device = Device.new
     end
   end
 
