@@ -1,0 +1,44 @@
+#earn .big-title {
+  width: 200px;
+}
+
+div.app {
+  .ui-list-action {
+    display: none !important;
+  }
+}
+
+.big-title {
+  -webkit-text-size-adjust: 67%;
+  -moz-text-size-adjust: 67%;
+  -o-text-size-adjust: 67%;
+  -ms-text-size-adjust: 67%;
+}
+
+.list-button,
+.collect,
+.greenblock {
+  -webkit-text-size-adjust: 82%;
+  -moz-text-size-adjust: 82%;
+  -o-text-size-adjust: 82%;
+  -ms-text-size-adjust: 82%;
+}
+
+.list-button .collect {
+  margin-top: 2px;
+}
+
+.list-button .big-title {
+  max-width: 150px !important;
+}
+
+.squircle {
+  width: 75px;
+  height: 75px;
+  background-size: 75px 75px;
+}
+
+.squircle img {
+  width: 74px;
+  height: 74px;
+}

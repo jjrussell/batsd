@@ -198,3 +198,96 @@ input::-webkit-input-placeholder {
   -webkit-animation-timing-function: ease-in;
   -webkit-animation-iteration-count: infinite;
 }
+
+/**
+ * loader
+ */
+#tapjoy_loader {
+  width: 90px;
+  margin: 10px auto;
+  overflow: auto;
+  padding: 5px;
+
+  .loader_letter {
+    float:left;
+    height: 25px;
+    border-radius: 90px;
+    width:24px;
+    text-align: center;
+    padding-top: 10px;
+    background: -moz-linear-gradient(top, #e82c2c 0%, #de2627 25%, #ce1f21 50%, #c31a1d 75%, #b41317 100%);
+    background: -webkit-linear-gradient(top, #e82c2c 0%, #de2627 25%, #ce1f21 50%, #c31a1d 75%, #b41317 100%);
+    background:  -webkit-gradient(linear, left top, left bottom, color-stop(0%,#e82c2c), color-stop(25%,#de2627), color-stop(50%,#ce1f21), color-stop(75%,#c31a1d), color-stop(100%,#b41317));
+    border-bottom: 1px solid #720101;
+    box-shadow: 0 1px 2px rgba(0,0,0, .5), inset 0 -2px 0 rgba(221, 52, 56, 1);
+    color: #fff;
+    text-shadow: 0 -1px 0 #9a1818;
+    margin-left: 2px;
+    -webkit-animation-name:bounce;
+    -webkit-animation-duration:1.3s;
+    -webkit-animation-iteration-count:infinite;
+    -webkit-animation-direction:linear;
+    -webkit-transform:scale(0.91);
+    -moz-animation-name:bounce;
+    -moz-animation-duration:1.3s;
+    -moz-animation-iteration-count:infinite;
+    -moz-animation-direction:linear;
+    -moz-transform:scale(0.91);
+    opacity:0.1
+  }
+
+  #loader_t{
+    -webkit-animation-delay:0.20s;
+    -moz-animation-delay:0.20s
+  }
+
+  #loader_a{
+    -webkit-animation-delay:0.40s;
+    -moz-animation-delay:0.40s
+  }
+
+  #loader_p{
+    -webkit-animation-delay:.60s;
+    -moz-animation-delay:0.60s
+  }
+
+  #loader_j{
+    -webkit-animation-delay:.60s;
+    -moz-animation-delay:0.60s
+  }
+
+  #loader_o{
+    -webkit-animation-delay:.40s;
+    -moz-animation-delay:0.40s
+  }
+
+  #loader_y{
+    -webkit-animation-delay:0.20s;
+    -moz-animation-delay:0.20s
+  }
+}
+
+@-webkit-keyframes bounce {
+  0% {
+    -webkit-transform:scale(1.2);
+    opacity:1
+  }
+
+  100% {
+    -webkit-transform:scale(0.7);
+    opacity:0.1
+  }
+
+}
+
+@-moz-keyframes bounce {
+  0% {
+    -moz-transform:scale(2);
+    opacity:1
+  }
+
+  100% {
+    -moz-transform:scale(0.7);
+    opacity:0.1
+  }
+}
