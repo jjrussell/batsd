@@ -32,7 +32,6 @@ class LinksharePoller
       :reportid => 11,
     }
     data = self.download_data(options)
-    Rails.logger.info data
     Rails.logger.info NO_RESULTS_FOUND and return if data.blank?
     Rails.logger.info DOWNLOAD_SUCCESS
     data.each do |line|
@@ -70,5 +69,6 @@ class LinksharePoller
       sleep(delay)
       delay *= 2
     end
+    nil
   end
 end
