@@ -1,6 +1,6 @@
 %h1= @page_title
 
-%h4= link_to "[Add New Client]", new_tools_client_path
+%h4= link_to '[Add New Client]', new_tools_client_path
 
 %table#clients_table.tablesorter
   %thead
@@ -24,7 +24,7 @@
 - content_for :page_javascript do
   :plain
     $(function() {
-      $("#clients_table").tablesorter({
+      $('#clients_table').tablesorter({
         widgets: ['zebra'],
         headers: {
           0: { sorter: false },

@@ -4,7 +4,7 @@ class Tools::ClientsController < WebsiteController
   filter_access_to :all
 
   def index
-    @page_title = "Clients"
+    @page_title = 'Clients'
     @clients = Client.ordered_by_name
   end
 
@@ -17,7 +17,7 @@ class Tools::ClientsController < WebsiteController
     @page_title = 'Create Client'
     @client = Client.new(params[:client])
     if @client.save
-      flash[:notice] = "Client created"
+      flash[:notice] = 'Client created'
       redirect_to tools_clients_path
     else
       render :action => :new
@@ -25,7 +25,7 @@ class Tools::ClientsController < WebsiteController
   end
 
   def edit
-    @page_title = "Edit client"
+    @page_title = 'Edit client'
     @client = Client.find(params[:id])
   end
 
@@ -37,7 +37,7 @@ class Tools::ClientsController < WebsiteController
   def update
     @client = Client.find(params[:id])
     if @client.safe_update_attributes( params[:client], [ :name ] )
-      flash[:notice] = "Client saved"
+      flash[:notice] = 'Client saved'
       redirect_to tools_clients_path
     else
       render :action => :edit

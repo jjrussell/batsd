@@ -34,12 +34,12 @@
       %tr
         %td
           - path = remove_partner_tools_client_path(@client)+"?partner_id=#{partner.id}"
-          = button_to('Remove', path, :method => "post", :confirm => 'Are you sure?')
+          = button_to('Remove', path, :method => 'post', :confirm => 'Are you sure?')
           - form_tag(make_current_partner_path(partner)) do
             - if current_partner == partner
-              = submit_tag("Acting as", :class => 'act_as_button', :disabled => true)
+              = submit_tag('Acting as', :class => 'act_as_button', :disabled => true)
             - else
-              = submit_tag("Act as", :class => 'act_as_button')
+              = submit_tag('Act as', :class => 'act_as_button')
         %td.text= link_to(partner.name||'(no name)', partner)
         %td.money= number_to_currency(partner.balance/100.0)
         %td.money= number_to_currency(partner.pending_earnings/100.0)
