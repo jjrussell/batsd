@@ -15,11 +15,18 @@
     %br
     Balance: #{number_to_currency(@partner.balance / 100.0)}
 
-  - form_tag create_transfer_partner_path, :method => :post, :class => 'tjform' do
+  - form_for @transfer, :url => create_transfer_partner_path, :html => { :class => 'tjform' } do |f|
     %table
       %tr
-        %th= label_tag 'transfer_amount', 'Amount'
-        %td= text_field_tag 'transfer_amount', '$0.00', :class => 'currency_field allow_negative'
+        %th= f.label :amount
+        %td
+          = f.currency_field :amount, {}, {:class => 'allow_negative'}
+          = error_message_on @transfer, :amount
+      %tr
+        %th= f.label :internal_notes
+        %td
+          = f.text_field :internal_notes, :size => 50
+          = error_message_on @transfer, :internal_notes
       %tr
         %td{ :colspan => 2 }= submit_tag 'Create Transfer'
 
