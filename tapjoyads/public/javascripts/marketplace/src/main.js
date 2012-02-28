@@ -9,7 +9,7 @@ $(document).ready(function() {
     }
     else {
       $('#login-form').addClass('show').css({
-        'height' : $(document).height(),
+        'height' : $(document).height()
       });
     }
   });
@@ -129,6 +129,10 @@ $(document).ready(function() {
       el.removeClass('active');
     }
   });
+	
+  Tapjoy.delay(function(){
+  	$('#recommedations').Carousel();
+  }, 10);
 
 	/*
 	Tapjoy.Utils.notification({

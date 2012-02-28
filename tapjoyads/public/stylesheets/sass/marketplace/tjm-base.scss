@@ -203,18 +203,18 @@ input::-webkit-input-placeholder {
  * loader
  */
 #tapjoy_loader {
-  width: 90px;
+  width: 50px;
   margin: 10px auto;
   overflow: auto;
   padding: 5px;
 
   .loader_letter {
     float:left;
-    height: 25px;
+    height: 12px;
     border-radius: 90px;
-    width:24px;
+    width:12px;
     text-align: center;
-    padding-top: 10px;
+    padding-top: 5px;
     background: -moz-linear-gradient(top, #e82c2c 0%, #de2627 25%, #ce1f21 50%, #c31a1d 75%, #b41317 100%);
     background: -webkit-linear-gradient(top, #e82c2c 0%, #de2627 25%, #ce1f21 50%, #c31a1d 75%, #b41317 100%);
     background:  -webkit-gradient(linear, left top, left bottom, color-stop(0%,#e82c2c), color-stop(25%,#de2627), color-stop(50%,#ce1f21), color-stop(75%,#c31a1d), color-stop(100%,#b41317));
