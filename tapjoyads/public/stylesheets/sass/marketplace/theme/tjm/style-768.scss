@@ -45,6 +45,7 @@ $image_path: "/images/marketplace/themes/tjm";
   padding: 0;
 }
 
+#recommendations .app,
 div.app {
   border-top: 1px solid #fff;
   border-bottom: 1px solid #ccc;
@@ -105,4 +106,17 @@ div.app {
 
 div.app:last-child {
   border-bottom: 0;
+}
+
+.row .app:first-child {
+  border-top: 0;
+}
+.ui-joy-carousel {
+  height: auto !important;
+  overflow: visible;
+}
+
+.forward,
+.back {
+  display: none;
 }
