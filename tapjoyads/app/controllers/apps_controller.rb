@@ -121,8 +121,10 @@ class AppsController < WebsiteController
 
   def integrate_check
     if params[:udid].present? && params[:mac_address].present?
-      @device = Device.new :key => params[:udid]
-      @matched = @device.mac_address.to_s == params[:mac_address].downcase
+      # TODO: replace with Vertica check
+      mac = params[:mac_address].downcase.gsub(/[:\s]/, '')
+      @device = Device.new :key => params[:udid].downcase
+      @matched = @device.mac_address.to_s == mac
     elsif params[:udid].present? || params[:mac_address].present?
       @device = Device.new
     end

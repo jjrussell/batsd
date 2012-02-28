@@ -10,22 +10,23 @@
         %strong Success:
         %span.message
           Device with UDID/IMEI
-          %strong "#{params[:udid]}"
+          %strong "#{h(params[:udid])}"
           and MAC address of
-          %strong "#{params[:mac_address]}"
+          %strong "#{h(params[:mac_address])}"
           was found!
     - else
       .flash#flash_error
         %strong Failure:
         %span.message
           Device with UDID/IMEI
-          %strong "#{params[:udid]}"
+          %strong "#{h(params[:udid])}"
           and MAC address of
-          %strong "#{params[:mac_address]}"
+          %strong "#{h(params[:mac_address])}"
           was NOT found!
-  - else
-    You can check the integration status of your app here by typing in the
-    UDID/IMEI and MAC address of the device you are testing.
+
+%p
+  You can check the integration status of your app here by typing in the
+  UDID/IMEI and MAC address of the device you are testing.
 
 %p
   - form_for '', :html => { :method => :get } do
