@@ -37,7 +37,21 @@ module ToolsHelper
     classes.join(' ')
   end
 
-private
+  def install_td_class(click)
+    (click.block_reason? || click.resolved_too_fast?) ? 'small bad' : 'small'
+  end
+
+  def link_app_to_statz(app)
+    app.nil? ? '-'  : link_to_statz(app.name, app)
+  end
+
+  def click_timestamp(click, action)
+    time = click.send(action)
+    time.nil? ? '-' : time.to_s(:pub_abbr_ampm_sec)
+  end
+
+  private
+
   def concat_li(name, value)
     concat("<li>#{name}: <nobr>#{value}</nobr></li>")
   end

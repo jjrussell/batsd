@@ -1,7 +1,7 @@
 authorization do
 
   role :partner do
-    has_permission_on :apps, :to => [ :index, :show, :new, :create, :edit, :update, :confirm, :integrate, :publisher_integrate, :search, :sdk_download, :archive ]
+    has_permission_on :apps, :to => [ :index, :show, :new, :create, :edit, :update, :confirm, :integrate, :publisher_integrate, :integrate_check, :search, :sdk_download, :archive ]
     has_permission_on :apps_offers, :to => [ :new, :create, :edit, :update, :toggle, :percentile, :preview ]
     has_permission_on :offer_creatives, :to => [ :show, :create, :new, :destroy ]
     has_permission_on :apps_currencies, :to => [ :show, :update, :new, :create, :reset_test_device ]
@@ -50,7 +50,7 @@ authorization do
 
   role :payops do
     includes :money
-    has_permission_on :tools_payouts, :to => [ :index ]
+    has_permission_on :tools_payouts, :to => [ :index, :export ]
     has_permission_on :tools_orders, :to => [ :failed_invoices, :retry_invoicing, :mark_invoiced ]
     has_permission_on :tools_network_costs, :to => [ :index, :new, :create ]
     has_permission_on :tools_payout_freezes, :to => [ :index ]
@@ -59,7 +59,7 @@ authorization do
   role :payout_manager do
     includes :payops
     has_permission_on :tools, :to => [ :payout_info, :publishers_without_payout_info, :publisher_payout_info_changes ]
-    has_permission_on :tools_payouts, :to => [ :create ]
+    has_permission_on :tools_payouts, :to => [ :create, :confirm_payouts ]
     has_permission_on :tools_payout_freezes, :to => [ :create, :disable ]
   end
 
@@ -90,7 +90,7 @@ authorization do
     has_permission_on :tools, :to => [ :disabled_popular_offers, :sanitize_users, :update_user, :resolve_clicks, :new_transfer, :device_info, :update_device, :freemium_android, :award_currencies, :update_award_currencies, :send_currency_failures ]
     has_permission_on :tools_enable_offer_requests, :to => [ :index, :update ]
     has_permission_on :activities, :to => [ :index ]
-    has_permission_on :partners, :to => [ :index, :show, :edit, :make_current, :manage, :stop_managing, :mail_chimp_info, :update, :managed_by, :new_transfer, :create_transfer, :reporting, :agency_api, :set_tapjoy_sponsored ]
+    has_permission_on :partners, :to => [ :index, :show, :edit, :make_current, :manage, :stop_managing, :mail_chimp_info, :update, :managed_by, :new_transfer, :create_transfer, :reporting, :agency_api, :set_tapjoy_sponsored, :set_unconfirmed_for_payout ]
     has_permission_on :tools_rank_boosts, :to => [ :index, :new, :create, :edit, :update, :deactivate ]
     has_permission_on :apps, :to => [ :unarchive ]
     has_permission_on :offer_creatives, :to => [ :show, :create, :update, :destroy ]
@@ -124,7 +124,7 @@ authorization do
     has_permission_on :tools_users, :to => [ :index, :show ]
     has_permission_on :tools_users_role_assignments, :to => [ :create, :destroy ]
   end
-  
+
   role :admin do
     includes :tools
     includes :devices
