@@ -15,6 +15,8 @@ class FeaturedContent < ActiveRecord::Base
 
   WEIGHTS = [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 ]
 
+  NO_URL = 'NO_URL'
+
   belongs_to :author, :polymorphic => true
   belongs_to :offer
   has_one :tracking_offer, :class_name => 'Offer', :dependent => :destroy, :as => :tracking_for, :conditions => 'id = tracking_for_id'
@@ -23,6 +25,7 @@ class FeaturedContent < ActiveRecord::Base
   validates_presence_of :offer, :if => :offer_required?, :message => "Please select an offer/app."
   validates_presence_of :featured_type, :platforms, :subtitle, :title, :description, :start_date, :end_date, :weight
 
+  before_save :create_offer
   after_create :create_tracking_offer
   after_update :update_tracking_offer
 
@@ -118,6 +121,10 @@ class FeaturedContent < ActiveRecord::Base
     end
   end
 
+  def has_valid_url?
+    button_url != NO_URL
+  end
+
   private
 
   def save_icon_in_different_sizes!(icon_src_blob, icon_id, bucket)
@@ -147,6 +154,18 @@ class FeaturedContent < ActiveRecord::Base
 
   def offer_required?
     [ TYPES_MAP[STAFFPICK], TYPES_MAP[PROMO] ].include?(featured_type)
+  end
+
+  def create_offer
+    unless offer
+      item = GenericOffer.create(
+        :name       => "For_Featured_Content_#{id}",
+        :url        => NO_URL,
+        :partner_id => TAPJOY_PARTNER_ID
+      )
+      self.offer      = item.primary_offer
+      self.button_url = NO_URL
+    end
   end
 
   def create_tracking_offer
