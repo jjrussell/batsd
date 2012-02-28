@@ -90,7 +90,7 @@
         $target = $(".ajax-target", $$),
         $placeholder = $(".ajax-placeholder", $$),
         $load_more = $(".ajax-load-more", $$),
-        template = me.template($$.next("script").html()),
+        template = me.template($("script", $$).html()),
         url = $$.data("url"),
         params = $$.data("params") || {};
 
