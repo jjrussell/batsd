@@ -1,5 +1,3 @@
--content_for :styles do
-  = stylesheet_link_tag("games/get-app")
 #show.current
   .mod.line-item.page-header
     .container.pt10
@@ -30,9 +28,12 @@
           .bold
             = @friends_lists[:followers].size
     %ul.list-button-container.flush.nbb
-      %li.list-button.charcoal.soft-gray-gradient
-        = t('text.shared.my_profile')
-      %li.list-button.charcoal.soft-gray-gradient
-        = t('text.games.social_settings')
-      %li.list-button.charcoal.soft-gray-gradient
-        = t('text.shared.help')
+      - link_to(edit_games_gamer_path) do
+        %li.list-button.charcoal.soft-gray-gradient
+          = t('text.shared.my_profile')
+      - link_to(prefs_games_gamer_path) do
+        %li.list-button.charcoal.soft-gray-gradient
+          = t('text.games.social_settings')
+      - link_to(games_help_path) do
+        %li.list-button.charcoal.soft-gray-gradient
+          = t('text.shared.help')
