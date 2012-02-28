@@ -1,2 +1,16 @@
 - cached_app_list.each do |cached_app|
-  = cached_app.to_json
+  %ul.list-button-container
+    %li.list-button
+      .container.mt5
+        .left.pt3
+          .squircle
+            //= image_tag(@external_publisher.get_icon_url(:size => 114, :source => :cloudfront))
+            %img.downarrow.icon32{ :src => BLANK_IMAGE}
+            .action-item
+              $
+        .left.ml10
+          .container
+            .big-title.slate.elip
+              Coin Dozer for Pro for iPad
+          .container
+            sadasdad
