@@ -6,6 +6,7 @@ describe Client do
   describe '.has_many' do
     it { should have_many :partners }
   end
+
   describe '#valid?' do
     it { should validate_presence_of :name }
     it { should validate_uniqueness_of :name }
