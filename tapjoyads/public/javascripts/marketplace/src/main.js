@@ -132,7 +132,8 @@ $(document).ready(function() {
   });
 
   Tapjoy.delay(function(){
-    $('#recommedations').Carousel({ cssClass: 'complete' });
+    var config = { cssCls: 'complte '};
+    $('#recommedations').Carousel(config);
   }, 1);
 
   $(".button-bar").each(function () {
