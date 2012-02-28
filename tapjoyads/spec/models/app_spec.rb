@@ -110,12 +110,14 @@ describe App do
       @offer.update_attributes({:device_types => Offer::ANDROID_DEVICES})
       @app.primary_app_metadata.update_attributes({:age_rating => 2})
       @offer.reload
+      @offer.age_rating.should == 2
       @offer.device_types.should == Offer::ANDROID_DEVICES.to_json
     end
 
     it "updates offer's device types if store id changes" do
       @offer.device_types.should == Offer::APPLE_DEVICES.to_json
       @offer.update_attributes({:device_types => Offer::ANDROID_DEVICES})
+      @offer.device_types.should == Offer::ANDROID_DEVICES.to_json
       @app.update_app_metadata('7654321')
       @app.save!
       @offer.reload
