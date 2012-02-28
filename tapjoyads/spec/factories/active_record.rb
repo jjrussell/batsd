@@ -324,4 +324,8 @@ FactoryGirl.define do
     author        { Factory(:employee) }
     button_url    'https://www.tapjoy.com'
   end
+
+  factory :brand do
+    name 'Coca-Cola'
+  end
 end
