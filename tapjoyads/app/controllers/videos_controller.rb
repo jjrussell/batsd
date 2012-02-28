@@ -22,7 +22,7 @@ class VideosController < ApplicationController
 
   def setup
     params[:currency_id] ||= params[:app_id]
-    return unless verify_params([ :app_id, :udid, :currency_id ])
+    return unless verify_params([ :app_id, :udid, :currency_id, :publisher_user_id ])
 
     @device = Device.new(:key => params[:udid])
     @publisher_app = App.find_in_cache(params[:app_id])
