@@ -1,9 +1,26 @@
 #content.current
   .panel.clearfix
+    .row.borders.nbb
+      %h1.museo Smart Recommendations
+      .games
+        - @recommendations.each do |reco|
+          .app
+            - @encrypt_app_id = ObjectEncryptor.encrypt(reco.id)
+            - link_to(games_get_app_path(:eid => @encrypt_app_id)) do
+              .app-icon
+                %img{ :src => BLANK_IMAGE, :source => reco.icon_url }
+            .details
+              %span.title.elip
+                = reco.name
+
+  .panel.clearfix
     - if @external_publishers.blank?
-      = render 'no_games'
+      .row.borders.nbb
+        %h1 No apps found!
+        %p We didn't find any apps on your device that you can earn currency in.
     - else
       .row.borders.nbb
+        %h1.museo My Games
         .games
           - @external_publishers.each do |external_publisher|
             .app
