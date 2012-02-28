@@ -11,28 +11,28 @@
         .title.mt20
           = @gamer.nickname.present?  ? @gamer.nickname : 'Chuck Norris'
           %span.aside
-            ="(#{t("text.games.thats_you")})"
+            = "(#{t("text.games.thats_you")})"
         .subtitle
-          [LAST PLAYED]
+          = t('text.games.last_played', :game => @last_app.app_name) if @last_app.present?
   .container
     .mod.titled-group
       .hd
-        .group-title.pb10 Friends
+        .group-title.pb10= t('text.shared.friends')
       %ul.list-button-container.mb10
         %li.list-button.soft-gray-gradient.pt5.pl10.pb5
           .hd
-            Following
+            = t("text.shared.following")
           .bold
-            343
+            = @friends_lists[:following].size
         %li.list-button.soft-gray-gradient.pt5.pl10.pb5
           .hd
-            Followers
+            =t ("text.shared.followers")
           .bold
-            343
+            = @friends_lists[:followers].size
     %ul.list-button-container.flush.nbb
       %li.list-button.charcoal.soft-gray-gradient
-        My Profile
+        = t('text.shared.my_profile')
       %li.list-button.charcoal.soft-gray-gradient
-        Social Settings
+        = t('text.games.social_settings')
       %li.list-button.charcoal.soft-gray-gradient
-        Help
+        = t('text.shared.help')
