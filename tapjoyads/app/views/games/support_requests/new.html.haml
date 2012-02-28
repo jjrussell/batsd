@@ -1,26 +1,25 @@
-#support_request
+#support-request.current
   .content
-    .title_2
+    %h1.museo
       - if params[:type] === "feedback"
-        Feedback
+        = t('text.games.feedback')
       - elsif params[:type] === "report_bug"
-        Report a Bug
+        = t('text.games.report_bug')
       - elsif params[:type] === "contact_support"
-        Contact Support
+        = t('text.games.contact_support')
       - else
-        Contact Us
-    .content_box
-      .interior
-        - form_for('support_requests', :url => { :action => 'create' } ) do |f|
-          .field
-            - if params[:type].present?
-              = hidden_field_tag :type, params[:type]
-            - else
-              = hidden_field_tag :type, "contact_support"
-            = f.text_area :content, :rows => 5, :value => params[:content]
-          .field
-            = f.submit 'Send', :class => 'button'
-          .form_error.center
+        = t('text.games.contact_us')
+    .support-form
+      - form_for('support_requests', :url => { :action => 'create' } ) do |f|
+        .field
+          - if params[:type].present?
+            = hidden_field_tag :type, params[:type]
+          - else
+            = hidden_field_tag :type, "contact_support"
+          = f.text_area :content, :rows => 5, :value => params[:content], :class => 'ui-joy-input'
+        .field
+          = f.submit t('text.shared.send'), :class => 'button'
+        .form-error.center
 
 - content_for :page_javascript do
   :plain
@@ -37,7 +36,7 @@
           }
           content = values['support_requests[content]'];
             if ( content == '' ) {
-            $(".form_error").html('<div class="pad">Please enter a message</div>');
+            $(".form-error").html('<div class="pad">#{t('text.games.enter_message')}</div>');
             e.preventDefault();
           }
         });
