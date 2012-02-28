@@ -1,6 +1,7 @@
 class Games::MoreGamesController < GamesController
 
   def editor_picks
+    current_gamer
     if using_android?
       @editors_picks = EditorsPick.cached_active('android')
     else
@@ -9,6 +10,7 @@ class Games::MoreGamesController < GamesController
   end
 
   def recommended
+    current_gamer
     current_recommendations
   end
 
