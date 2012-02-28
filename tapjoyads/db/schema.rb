@@ -117,6 +117,7 @@ ActiveRecord::Schema.define(:version => 20120224022424) do
     t.string   "categories"
     t.text     "countries_blacklist"
     t.integer  "papaya_user_count"
+    t.integer  "active_gamer_count",                    :default => 0
   end
 
   add_index "apps", ["id"], :name => "index_apps_on_id", :unique => true
@@ -738,6 +739,8 @@ ActiveRecord::Schema.define(:version => 20120224022424) do
     t.date     "negotiated_rev_share_ends_on"
     t.boolean  "accepted_negotiated_tos",                                                  :default => false
     t.string   "cs_contact_email"
+    t.boolean  "confirmed_for_payout",                                                     :default => false,     :null => false
+    t.string   "payout_confirmation_notes"
   end
 
   add_index "partners", ["id"], :name => "index_partners_on_id", :unique => true

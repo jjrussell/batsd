@@ -33,6 +33,12 @@ FactoryGirl.define do
     end
   end
 
+  factory :payout_manager_user, :parent => :user do
+     after_build do |payout_manager|
+      payout_manager.user_roles << UserRole.find_or_create_by_name('payout_manager')
+    end
+  end
+
   factory :partner_user, :parent => :user
 
   factory :role_mgr_user, :parent => :user do
@@ -130,6 +136,7 @@ FactoryGirl.define do
     association :partner
     name { Factory.next(:name) }
     url 'http://ws.tapjoyads.com/healthz?click_key=TAPJOY_GENERIC'
+    category 'Social'
   end
 
   factory :invite_offer, :parent => :generic_offer do

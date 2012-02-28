@@ -240,7 +240,7 @@ class ClickController < ApplicationController
     elsif type == 'generic' && params[:advertiser_app_id] == TAPJOY_GAMES_INVITATION_OFFER_ID
       click_key = "#{params[:gamer_id]}.#{params[:advertiser_app_id]}"
     else
-      click_key = UUIDTools::UUID.random_create.to_s
+      click_key = Digest::MD5.hexdigest "#{params[:udid]}.#{params[:advertiser_app_id]}"
     end
 
     @click = Click.new(:key => click_key)
