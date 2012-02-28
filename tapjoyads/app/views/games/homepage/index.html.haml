@@ -1,37 +1,34 @@
 #content.current
   .panel.clearfix
-    .row.borders.pn.ntb
-      %h1.museo.smart Smart Recommendations
-      #recommendationsHeader
-        .banner
-          .more
-            .text.left.mr10
-              Find out more
-            .circle.btn.right
-              %img.rightarrow-white.icon24{ :src => BLANK_IMAGE }
-          %img.banner-img{ :src => '/images/marketplace/themes/tjm/sample_banner.png' }
-        .section.dark.ntb
-          .dropdown.left.ml5
-            %img.downarrow-white.icon24{ :src => BLANK_IMAGE }
-          .heading
-            Recommendations
-      #recommedations.games
-        - @recommendations.each do |reco|
-          .app
-            - @encrypt_app_id = ObjectEncryptor.encrypt(reco.id)
-            - link_to(games_get_app_path(:eid => @encrypt_app_id)) do
-              .app-icon
-                %img{ :src => BLANK_IMAGE, :source => reco.icon_url }
-            .details
-              %span.title.elip
-                = reco.name
+    - if @recommendations.present?    
+      .row.borders.pn.ntb
+        %h1.museo.smart Smart Recommendations
+        #recommendationsHeader
+          .banner
+            .more
+              .text.left.mr10
+                Find out more
+              .circle.btn.right
+                %img.rightarrow-white.icon24{ :src => BLANK_IMAGE }
+            %img.banner-img{ :src => '/images/marketplace/themes/tjm/sample_banner.png' }
+          .section.dark.ntb
+            .dropdown.left.ml5
+              %img.downarrow-white.icon24{ :src => BLANK_IMAGE }
+            .heading
+              Recommendations
+        #recommedations.games
+          - @recommendations.each do |reco|
+            .app
+              - @encrypt_app_id = ObjectEncryptor.encrypt(reco.id)
+              - link_to(games_get_app_path(:eid => @encrypt_app_id)) do
+                .app-icon
+                  %img{ :src => BLANK_IMAGE, :source => reco.icon_url }
+              .details
+                %span.title.elip
+                  = reco.name
 
 
-  - if @external_publishers.blank?
-    .row.borders
-      %h1 No apps found!
-      %p We didn't find any apps on your device that you can earn currency in.
-  - else
+  - if @external_publishers.present?
     .row.borders.nbb
       %h1.museo My Games
       .games
