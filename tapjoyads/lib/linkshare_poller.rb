@@ -53,22 +53,28 @@ class LinksharePoller
   private
 
   def self.download_data(options)
-    data = self.raw_data(BASE_URL + options.to_query)
-    raise ERROR_COULD_NOT_CONNECT unless data
+    data = self.download_with_retries(BASE_URL + options.to_query)
     data = data.split("\n")
     data.slice!(0)
     data
   end
 
-  def self.raw_data(url)
-    i = 0
-    while i < 5
-      return Downloader.get(url, {:timeout => 4}) rescue i += 1
-      Rails.logger.info "Linkshare retry attempt #{i}..."
-      delay ||= 0.1
-      sleep(delay)
-      delay *= 2
+  def self.download_with_retries(url)
+    retries = 5
+    begin
+      Downloader.get(url, {:timeout => 4})
+    rescue Exception => e
+      Rails.logger.info("Linkshare data download failed. Will retry #{retries} more times. #{e.class} - #{e.message}\n#{e.backtrace.join("\n")}")
+      if retries > 0
+        delay ||= 0.1
+        retries -= 1
+        sleep(delay)
+        delay *= 2
+        retry
+      else
+        raise e
+      end
     end
-    nil
   end
+
 end
