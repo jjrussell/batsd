@@ -41,7 +41,7 @@ class ClickController < ApplicationController
     create_click('video')
     handle_pay_per_click
 
-    redirect_to(get_destination_url)
+    render :text => 'OK'
   end
 
   def survey

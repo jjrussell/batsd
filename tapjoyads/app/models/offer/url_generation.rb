@@ -38,6 +38,7 @@ module Offer::UrlGeneration
     udid                  = options.delete(:udid)                  { |k| raise "#{k} is a required argument" }
     publisher_app_id      = options.delete(:publisher_app_id)      { |k| raise "#{k} is a required argument" }
     currency              = options.delete(:currency)              { |k| raise "#{k} is a required argument" }
+    publisher_user_id     = options.delete(:publisher_user_id)     { nil }
     click_key             = options.delete(:click_key)             { nil }
     itunes_link_affiliate = options.delete(:itunes_link_affiliate) { nil }
     library_version       = options.delete(:library_version)       { nil }
@@ -75,7 +76,8 @@ module Offer::UrlGeneration
       params = {
         :offer_id           => id,
         :app_id             => currency,
-        :udid               => udid
+        :udid               => udid,
+        :publisher_user_id  => publisher_user_id
       }
       final_url = "#{API_URL}/videos/#{id}/complete?#{params.to_query}"
     end
