@@ -131,7 +131,7 @@ $(document).ready(function() {
   });
 
   Tapjoy.delay(function(){
-  	$('#recommedations').Carousel();
+    $('#recommedations').Carousel();
   }, 10);
 
   $(".button-bar").each(function () {
