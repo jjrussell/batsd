@@ -9,7 +9,12 @@ class Games::HomepageController < GamesController
   end
 
   def get_app
-    @offer = Offer.find_by_id(params[:id])
+    if params[:eid].present?
+      @app_id = ObjectEncryptor.decrypt(params[:eid])
+    elsif params[:id].present?
+      @app_id = params[:id]
+    end
+    @offer = Offer.find_by_id(@app_id)
     @app = @offer.app
     @app_metadata = @app.primary_app_metadata
     @app_reviews = AppReview.by_gamers.paginate_all_by_app_metadata_id(@app_metadata.id, :page => params[:app_reviews_page])
@@ -77,6 +82,7 @@ class Games::HomepageController < GamesController
         @show_offerwall = @device.has_app?(currency.app_id) if currency
         @offerwall_external_publisher = ExternalPublisher.new(currency) if @show_offerwall
       end
+
       @geoip_data = geoip_data
       featured_contents = FeaturedContent.with_country_targeting(@geoip_data, @device)
       @featured_content = featured_contents.weighted_rand(featured_contents.map(&:weight))
@@ -91,10 +97,7 @@ class Games::HomepageController < GamesController
       end
     end
 
-    if params[:load] == 'more_apps'
-      @show_more_apps = true
-      current_recommendations
-    end
+    current_recommendations
   end
 
 

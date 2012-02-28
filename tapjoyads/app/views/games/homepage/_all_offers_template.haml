@@ -3,7 +3,7 @@
     <% var freeText = "#{t("text.offerwall.free")}"; %>
     <% for (var i = 0, ii = OfferArray.length; i < ii; i++) { %>
       <% if (!OfferArray[i].IconURL || !OfferArray[i].Name) { continue; } %>
-      <a href="#{games_get_app_path}?eid=<%= OfferArray[i].EId %>">
+      <a href="<%= OfferArray[i].RedirectURL %>">
         <li class="list-button">
           <div class="container mt5">
             <div class="left pt3">

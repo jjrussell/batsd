@@ -931,11 +931,22 @@ div.ui-joy-button.facebook-btn {
 .row {
   padding: 5px 0 10px 0;
   overflow: auto;
+
+  h1.museo {
+    font: 500 18px "Museo Slab";
+    color: #252525;
+    text-shadow: 0 1px 0 rgba(255,255,255, .6);
+    padding: 20px 0 10px 20px;
+  }
+  p {
+    padding: 6px 24px;
+  }
+
 }
 
 .row.borders {
   border-bottom: 1px solid #b1b4b6;
-  border-top: 1px solid #fafbfc;
+  border-top: 1px solid #b3b6b8;
 }
 
 .row.nbb:last-child {
