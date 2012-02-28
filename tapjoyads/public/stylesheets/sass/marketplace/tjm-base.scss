@@ -219,11 +219,11 @@ input::-webkit-input-placeholder {
  * loader
  */
 #tapjoy_loader {
-  width: 50px;
+  width: 60px;
   margin: 10px auto;
   overflow: auto;
-  padding: 5px;
-
+  padding: 12px;
+  
   .loader_letter {
     float:left;
     height: 12px;

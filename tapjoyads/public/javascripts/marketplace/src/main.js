@@ -261,11 +261,13 @@ $(document).ready(function() {
 	});
 	
 	$(window).bind('resize orientationchange', function(){
-    tjmSelectMenu.css('top', tjmSelectContainer.offset().top + (tjmSelectContainer.outerHeight(true) - 4) + 'px');
-    
-    $('.fix', tjmSelectContainer).css({
-      width: tjmSelectContainer.width() - 4 + 'px'
-    });		
+		if(tjmSelectContainer.length != 0 && window.innerWidth < 800){
+	    tjmSelectMenu.css('top', tjmSelectContainer.offset().top + (tjmSelectContainer.outerHeight(true) - 4) + 'px');
+	    
+	    $('.fix', tjmSelectContainer).css({
+	      width: tjmSelectContainer.width() - 4 + 'px'
+	    });   
+		}
 	})
 	/*
 
