@@ -300,6 +300,8 @@ en:
       recommendations: Recommendations
       registering: Registering
       review_app_name: Review %{app_name}
+      review_created: Successfully reviewed this app.
+      review_updated: App review was successfully updated.
       select_current_device: "Please select your current device"
       select_device: "Please select your device"
       select_friend: "Please select at least one friend before sending out an invite"

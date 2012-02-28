@@ -22,22 +22,19 @@ class Games::AppReviewsController < GamesController
     @app_review = AppReview.new(params[:app_review])
     @app_review.author = current_gamer
     @app_review.author_type = 'Gamer'
+    @app_id = AppMetadataMapping.find_by_app_metadata_id(@app_review.app_metadata_id).app_id
 
     if @app_review.save
-      flash[:notice] = 'Successfully reviewed this app.'
-      redirect_to games_app_reviews_path(:app_metadata_id => @app_review.app_metadata_id)
+      flash[:notice] = t('text.games.review_created')
     else
       if @app_review.errors[:author_id].any?
         flash.now[:error] = 'You have already reviewed this app.'
       else
         flash.now[:error] = 'There was an issue. Please try again later.'
       end
-      @app_reviews = AppReview.paginate_all_by_app_metadata_id(@app_review.app_metadata_id, :page => params[:app_reviews_page])
-      params[:app_metadata_id] = @app_review.app_metadata_id
-      @app_metadata = @app_review.app_metadata
-      @app = App.find_by_id(AppMetadataMapping.find_by_app_metadata_id(@app_review.app_metadata_id).app_id)
-      render :action => :index
     end
+
+    redirect_to games_earn_path(:eid => ObjectEncryptor.encrypt(@app_id))
   end
 
   def edit
@@ -46,8 +43,9 @@ class Games::AppReviewsController < GamesController
 
   def update
     if @app_review.update_attributes(params[:app_review])
-      flash[:notice] = 'App review was successfully updated.'
-      redirect_to games_app_reviews_path
+      @app_id = AppMetadataMapping.find_by_app_metadata_id(@app_review.app_metadata_id).app_id
+      flash[:notice] = t('text.games.review_updated')
+      redirect_to games_earn_path(:eid => ObjectEncryptor.encrypt(@app_id))
     else
       render :action => :edit
     end
