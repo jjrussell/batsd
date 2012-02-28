@@ -326,6 +326,10 @@ FactoryGirl.define do
     button_url            'https://www.tapjoy.com'
   end
 
+  factory :brand do
+    name 'Coca-Cola'
+  end
+
   factory :client do
     name  { Factory.next(:name) }
   end
