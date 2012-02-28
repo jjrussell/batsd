@@ -3,8 +3,8 @@ class AppsController < WebsiteController
 
   filter_access_to :all
   before_filter :grab_partner_apps
-  before_filter :has_apps, :only => [:show, :index, :integrate, :publisher_integrate]
-  before_filter :setup, :only => [:show, :index, :integrate, :publisher_integrate, :update, :confirm, :archive, :unarchive ]
+  before_filter :has_apps, :only => [:show, :index, :integrate, :publisher_integrate, :integrate_check]
+  before_filter :setup, :only => [:show, :index, :integrate, :publisher_integrate, :integrate_check, :update, :confirm, :archive, :unarchive ]
   before_filter :nag_user_about_payout_info, :only => [:show]
   after_filter :save_activity_logs, :only => [ :update, :create, :archive, :unarchive ]
 
@@ -110,6 +110,19 @@ class AppsController < WebsiteController
     else
       flash[:error] = "App #{@app.name} could not be undeleted."
       redirect_to(@app)
+    end
+  end
+
+  def integrate
+  end
+
+  def publisher_integrate
+  end
+
+  def integrate_check
+    if params[:udid] && params[:mac_address]
+      @device = Device.new :key => params[:udid]
+      @matched = @device.mac_address.downcase == params[:mac_address].downcase
     end
   end
 
