@@ -30,9 +30,12 @@
                 .user-icon
                   %img{ :src => @current_gamer.get_avatar_url }
               .device-info
-                = t('text.games.on_my', :device_name => current_device_info.name)
-                %a.device-change
-                  (#{t('text.games.change')})
+                - if current_device_info.nil?
+                  = t('text.games.no_device')
+                - else
+                  = t('text.games.on_my', :device_name => current_device_info.name)
+                  %a.device-change
+                    (#{t('text.games.change')})
           .device-select.closed
             .device-select-wrapper
               Select Device
