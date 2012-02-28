@@ -40,7 +40,7 @@
     if($t.length < $t.innerWidth){
       $('.back, .forward').hide();
     }
-
+		
     $.data(container, 'carousel', $t);
   };
 

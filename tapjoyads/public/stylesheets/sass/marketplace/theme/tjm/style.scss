@@ -1229,7 +1229,7 @@ div.app {
 }
 
 .section {
-  overflow: auto;
+  height: 42px;
   .heading {
     float: left;
     padding: 10px;
@@ -1361,5 +1361,82 @@ div.app {
   .truste {
     padding: 12px 0;
     text-align: center;
+  }
+}
+
+.select-container.active {
+  position: relative;
+  z-index: 11;
+  margin-top: 3px;
+  background: url(#{$image_path}/dropdown_noise_tile.png) repeat 0 0;
+  border-top-left-radius: 6px;
+  border-top-right-radius: 6px;
+  box-shadow: inset 0 1px 0 #242424, inset 1px 0 0 #242424, inset -1px 0 0 #242424, inset 0 2px 0 #555, inset 2px 0 0 #555, inset -2px 0 0 #555, inset 0 1px 0 #555;
+  
+  .heading {
+    color: #c2c2c2;
+    text-shadow: 0 1px 0 rgba(0,0,0, .8);
+  }
+  .dropdown {
+    background: none;
+    border: 1px solid transparent;
+    box-shadow: inset 0 1px 0 transparent, 0 1px 0px transparent;
+    border-radius: 4px;
+    margin: 4px;
+    padding: 2px;
+    opacity: .6;
+  }
+
+  .fix {
+    display: block;
+    width: 99.9%;
+    position: absolute;
+    bottom: -1px;
+    height: 1px;
+    left: 2px;
+    background: #343434;
+  }
+}
+
+#recommendSelectMenu {
+  position: absolute;
+  left: 0;
+  z-index: 10;
+  width: 100%;
+  height: auto;
+  background: url(#{$image_path}/dropdown_noise_tile.png) repeat 0 0;
+  border-bottom-left-radius: 6px;
+  border-bottom-right-radius: 6px;
+  box-shadow: inset 0 -1px 0 #242424, inset 1px 0 0 #242424, inset -1px 0 0 #242424,  inset 0 1px 0 #242424, inset 0 -2px 0 #555, inset -2px 0 0 #555, inset 2px 0 0 #555, inset 0 2px 0 #555, 0 1px 3px rgba(0,0,0, .4);
+
+  ul {
+    li {
+      padding: 15px 10px;
+      font: 500 1.35em "Museo Slab";
+      color: #fff;
+      text-shadow: 0 1px 0 rgba(0,0,0, .5); 
+      border-bottom: 1px solid #242424;
+      border-top: 1px solid #555;
+      margin-left: 1px;
+      margin-right: 1px;
+      cursor: pointer;
+    }
+    li:hover {
+      color: #ff7f7f;
+    }
+    li.active {
+      background-image: url(#{$image_path}/checkmark.png);
+      background-repeat: no-repeat;
+      background-position: 97% center;
+      background-size: 24px 24px;
+    }
+
+    li:first-child {
+      border-top: 0;
+    }
+
+    li:last-child {
+      border-bottom: 0;
+    }
   }
 }
