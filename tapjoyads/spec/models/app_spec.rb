@@ -25,17 +25,6 @@ describe App do
   context 'An App' do
     before :each do
       @app = Factory(:app)
-      @app.app_metadatas << Factory(:app_metadata, :price => 200)
-      @app.save!
-      @app.reload
-    end
-
-    it "updates its offers' bids when its price changes" do
-      offer = @app.primary_offer
-      @app.primary_app_metadata.update_attributes({:price => 400})
-      offer.reload
-      offer.bid.should equal(200)
-      offer.price.should equal(400)
     end
 
     it 'does not list North Korea as a possible appstore country' do
@@ -65,8 +54,6 @@ describe App do
     context 'with currency that has special callback' do
       it 'returns false' do
         special_url = Currency::SPECIAL_CALLBACK_URLS.sample
-        Factory(:currency, :app_id => @app.id, :callback_url => 'http://foo.com')
-        Factory(:currency, :app_id => @app.id, :callback_url => 'http://bar.com')
         Factory(:currency, :app_id => @app.id, :callback_url => special_url)
         @app.should_not be_can_have_new_currency
       end
@@ -105,12 +92,43 @@ describe App do
     end
   end
 
+  context 'with Offers' do
+    before :each do
+      @app = Factory(:app)
+      @offer = @app.primary_offer
+    end
+
+    it "updates its offers' bids when its price changes" do
+      @app.primary_app_metadata.update_attributes({:price => 400})
+      @offer.reload
+      @offer.bid.should equal(200)
+      @offer.price.should equal(400)
+    end
+
+    it "doesn't update offer's device types unless store id changes" do
+      @offer.device_types.should == Offer::APPLE_DEVICES.to_json
+      @offer.update_attributes({:device_types => Offer::ANDROID_DEVICES})
+      @app.primary_app_metadata.update_attributes({:age_rating => 2})
+      @offer.reload
+      @offer.age_rating.should == 2
+      @offer.device_types.should == Offer::ANDROID_DEVICES.to_json
+    end
+
+    it "updates offer's device types if store id changes" do
+      @offer.device_types.should == Offer::APPLE_DEVICES.to_json
+      @offer.update_attributes({:device_types => Offer::ANDROID_DEVICES})
+      @offer.device_types.should == Offer::ANDROID_DEVICES.to_json
+      @app.update_app_metadata('7654321')
+      @app.save!
+      @offer.reload
+      @offer.device_types.should == Offer::APPLE_DEVICES.to_json
+    end
+  end
+
   context 'with Action Offers' do
     before :each do
       @action_offer = Factory(:action_offer)
       @app = @action_offer.app
-      @app_metadata = Factory(:app_metadata, :price => 200)
-      @app.app_metadatas << @app_metadata
     end
 
     it 'updates action offer hidden field' do
@@ -121,7 +139,7 @@ describe App do
     end
 
     it "updates action offer bids when its price changes" do
-      @app_metadata.update_attributes({:price => 400})
+      @app.primary_app_metadata.update_attributes({:price => 400})
       @action_offer.reload
       @action_offer.primary_offer.bid.should equal(200)
       @action_offer.primary_offer.price.should equal(400)
@@ -131,7 +149,7 @@ describe App do
       @action_offer.prerequisite_offer = @app.primary_offer
       @action_offer.save
       offer = @action_offer.primary_offer
-      @app_metadata.update_attributes({:price => 400})
+      @app.primary_app_metadata.update_attributes({:price => 400})
       offer.reload
       offer.bid.should equal(10)
     end

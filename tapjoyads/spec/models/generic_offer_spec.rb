@@ -17,6 +17,7 @@ describe GenericOffer do
   end
 
   describe '#valid?' do
+    it { should validate_presence_of(:category) }
     it { should validate_presence_of(:partner) }
     it { should validate_presence_of(:name) }
     it { should validate_presence_of(:url) }
@@ -24,11 +25,6 @@ describe GenericOffer do
 
   before :each do
     @generic_offer = Factory(:generic_offer)
-  end
-
-  it 'accepts a blank category' do
-    @generic_offer.category = ''
-    @generic_offer.should be_valid
   end
 
   it 'accepts existing categories' do

@@ -33,16 +33,14 @@ describe AppMetadata do
 
     context 'when updating app_metadata and app from AppStore' do
       it 'updates metadata and app name' do
-        app_metadata = Factory(:app_metadata, :name => 'MyApp', :store_id => "abcdefg")
         app = Factory(:app, :name => 'MyApp')
-        app.app_metadatas << app_metadata
-        app.save!
+        app.primary_app_metadata.update_attributes({ :name => 'MyApp', :store_id => 'abcdefg' })
 
         AppStore.expects(:fetch_app_by_id).returns({:title => 'SomeOtherApp', :price => 0, :categories => []})
-        app_metadata.update_from_store
+        app.primary_app_metadata.update_from_store
         app.reload
 
-        app_metadata.name.should == 'SomeOtherApp'
+        app.primary_app_metadata.name.should == 'SomeOtherApp'
         app.name.should == 'SomeOtherApp'
       end
     end
