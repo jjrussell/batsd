@@ -33,6 +33,8 @@
       -if request.path_parameters['controller'] == 'apps' && request.path_parameters['action'][/integrate/]
         %li.inception= link_to 'Advertiser', integrate_app_path(@app), :class => (request.path_parameters['controller'] == 'apps' && request.path_parameters['action']=='integrate' ? 'selected' : '')
         %li.inception= link_to 'Publisher', publisher_integrate_app_path(@app), :class => (request.path_parameters['controller'] == 'apps' && request.path_parameters['action']=='publisher_integrate' ? 'selected' : '')
+        %li.inception= link_to 'Status', integrate_check_app_path(@app), :class => (request.path_parameters['controller'] == 'apps' && request.path_parameters['action']=='integrate_check' ? 'selected' : '')
+
     - else
       %li.disabled Details
       %li.disabled Pay-Per-Install

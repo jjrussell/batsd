@@ -107,7 +107,7 @@ class Currency < ActiveRecord::Base
   end
 
   def get_reward_amount(offer)
-    return 0 if conversion_rate == 0 || !offer.rewarded?
+    return 0 unless rewarded? && offer.rewarded?
 
     if offer.reward_value.present?
       reward_value = offer.reward_value
@@ -198,6 +198,10 @@ class Currency < ActiveRecord::Base
     spend_share_ratio = [ SpendShare.current_ratio, 1 - partner.max_deduction_percentage ].max
     self.spend_share = (rev_share_override || partner.rev_share) * spend_share_ratio
     self.reseller_spend_share = reseller_id? ? reseller.reseller_rev_share * spend_share_ratio : nil
+  end
+
+  def rewarded?
+    conversion_rate > 0
   end
 
   private

@@ -1,5 +1,5 @@
 class VideosController < ApplicationController
-  layout 'games', :only => :complete
+  layout 'api-games', :only => :complete
 
   before_filter :setup
 
