@@ -2,9 +2,9 @@ $(document).ready(function() {
 
   var _t = window.i18n.t,
       debounce,
-			tjmSelectMenu = $('#recommendSelectMenu'),
-			tjmSelectContainer = $('#recommendSelect').parent().closest('.select-container'),
-			selectTrigger = $('#recommendSelect');
+      tjmSelectMenu = $('#recommendSelectMenu'),
+      tjmSelectContainer = $('#recommendSelect').parent().closest('.select-container'),
+      selectTrigger = $('#recommendSelect');
 
   // Login Modal
   $('#login, #login-web').bind('click', function() {
@@ -17,9 +17,23 @@ $(document).ready(function() {
       });
     }
   });
+  $('#signup, #signup-btn').bind('click', function() {
+    if ($('#signup-form').hasClass('show')) {
+      $('#signup-form').removeClass('show');
+    }
+    else {
+      $('#signup-form').addClass('show').css({
+        'height' : $(document).height()
+      });
+    }
+  });
 
   $('#login-form .cancel-btn').bind('click', function() {
     $('#login-form').removeClass('show');
+  });
+
+  $('#signup-form .cancel-btn').bind('click', function() {
+    $('#signup-form').removeClass('show');
   });
 
   // Login Validation
@@ -48,6 +62,9 @@ $(document).ready(function() {
         $(".login-error").html(_t('games.enter_email'));
         $(".form-error").show();
         e.preventDefault();
+        Tapjoy.Utils.notification({
+          message: 'Thanks, your settings have been saved.'
+        });
       }
       else if (Tapjoy.Utils.isEmpty(pass) || pass == 'Password') {
         $(".login-error").html(_t('games.enter_password'));
@@ -60,7 +77,7 @@ $(document).ready(function() {
         e.preventDefault();
       }
       else {
-        Tapjoy.Utils.Cookie.delete('cookies_enabled');
+        Tapjoy.Utils.Cookie.remove('cookies_enabled');
       }
     });
   }

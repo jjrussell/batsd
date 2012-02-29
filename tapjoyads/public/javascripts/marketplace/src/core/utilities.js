@@ -96,10 +96,6 @@
         remove: function(k) {
           localStorage.removeItem(k);
         },
-
-        delete: function(k) {
-          this.remove(k);
-        },
         reset: function() {
           localStorage.clear();
         }
@@ -134,9 +130,6 @@
         },
         remove: function(k) {
           this.setCookie(k, "", -1);
-        },
-        delete: function(k) {
-          this.remove(k);
         }
       }
     }
