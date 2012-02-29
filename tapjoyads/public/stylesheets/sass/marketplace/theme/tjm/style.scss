@@ -893,7 +893,6 @@ div.ui-joy-button.support-button {
  */
 .list-button-container .list-button {
   @extend .beveled;
-  padding: 10px;
   border-radius: 0;
   border-bottom: 1px solid #c8c4c4;
   border-left: 1px solid #c8c4c4;
@@ -902,10 +901,17 @@ div.ui-joy-button.support-button {
   position: relative;
   z-index: 0;
   overflow: auto;
-  font-size: 1.2em;
   .mod {
     padding: 0;
   }
+}
+
+.list-button-container .list-button a:first-child {
+  display: block;
+  padding: 10px;
+  font-size: 1.2em;
+  color: inherit;
+  overflow: auto;
 }
 
 .list-button-container .list-button:first-child {
@@ -921,6 +927,7 @@ div.ui-joy-button.support-button {
   border-bottom: 0;
 }
 
+
 .list-button-container .list-button.active {
   box-shadow: inset 0 1px 1px rgba(0,0,0, .2), 0 1px 0 #fff;
   -webkit-tap-highlight-color: rgba(0,0,0,.1);
@@ -932,7 +939,7 @@ div.ui-joy-button.support-button {
   border-radius: 0 !important;
 }
 
-.list-button-container.flush .list-button a {
+.list-button-container.flush .list-button a:first-child {
   text-decoration: none;
 }
 
@@ -1056,6 +1063,66 @@ div.ui-joy-button.support-button {
     height: 200px;
     visibility: visible;
   }
+}
+
+#recommendationsHeader,
+#recommendationsHeader .banner {
+  display: none;
+}
+
+#recommendationsHeader .banner {
+  background: #626a73 url(#{$image_path}/swirl_tile.png) repeat 0 0;
+  padding: 10px;
+  overflow: hidden;
+  position: relative;
+
+  img.banner-img {
+    border-bottom: 1px solid #262a2f;
+    border-top: 1px solid rgba(255,255,255, .5);
+    border-right: 1px solid #41484f;
+    box-shadow: 0 1px 1px rgba(0,0,0, .2);
+  }
+
+  .more {
+    position: absolute;
+    right: 20px;
+    top: 35%;
+
+    .text {
+      color: #fff;
+      text-shadow: 0 1px 0 rgba(0,0,0, .5);
+      font-size: 2em;
+      padding-top: 3px;
+    }
+
+    .circle {
+      background: -moz-linear-gradient(top, #e82c2c 0%, #de2627 25%, #ce1f21 50%, #c31a1d 75%, #b41317 100%);
+      background: -webkit-linear-gradient(top, #e82c2c 0%, #de2627 25%, #ce1f21 50%, #c31a1d 75%, #b41317 100%);
+      background:  -webkit-gradient(linear, left top, left bottom, color-stop(0%,#e82c2c), color-stop(25%,#de2627), color-stop(50%,#ce1f21), color-stop(75%,#c31a1d), color-stop(100%,#b41317));
+      border-bottom: 1px solid #720101;
+      box-shadow: 0 1px 2px rgba(0,0,0, .5), inset 0 -2px 0 rgba(221, 52, 56, 1);
+      border-radius: 90px;
+
+      img {
+        width: 22px;
+        height: 24x;
+        margin: 3px 5px 1px 6px;
+      }
+    }
+
+    .circle.active {
+      box-shadow: 0 1px 2px #de2627;
+      background: #b41317;
+      box-shadow: 0 1px 2px rgba(255,255,255, .9), inset 0 1px 2px rgba(0,0,0, .8);
+      border-bottom: 1px solid transparent;
+
+      img {
+        margin: 4px 5px 0 6px;
+      }
+    }
+
+  }
+
 }
 
 #recommendationsHeader,
@@ -1499,7 +1566,8 @@ div.app {
 
 .head {
   .title {
-    font-size: 1.25em;
+    font-size: 1.3em;
+    text-shadow: 0 1px 0 #fff;
 
     .aside {
       font-size: .7em;
@@ -1507,8 +1575,9 @@ div.app {
     }
   }
   .subtitle {
-    font-size: .9em;
-    color: #a1a1a1;
+    font-size: 1em;
+    color: #999;
+    text-shadow: 0 1px 0 #fff;
   }
 }
 
