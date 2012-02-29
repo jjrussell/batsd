@@ -13,7 +13,7 @@ class ActionMailer::Base
   end
 
   def deliver_with_receipt!(mail = @mail)
-    if self.class != GamesMarketingMailer
+    unless self.class == GamesMarketingMailer
       if mail.bcc
         mail.bcc += [ RECEIPT_EMAIL ]
       else
