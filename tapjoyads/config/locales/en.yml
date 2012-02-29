@@ -245,6 +245,7 @@ en:
       developers_title: Developers
       earn: "Earn %{currency}"
       earn_title: "Complete any of the offers below to earn %{currency} for %{app_name}"
+      email_notification: Email Notifications
       edit: edit
       enable_javascript: "Please go into your browser settings and enable JavaScript to continue using Tapjoy."
       enter_birthdate: "Please enter your birthdate"
@@ -296,16 +297,18 @@ en:
       more_apps: "More Apps"
       my_apps: "My Apps"
       profile: "Me"
+      no_device: "No device"
       no_javascript: "Please go into your browser settings and enable JavaScript to continue using Tapjoy."
       none_selected: "None Selected"
       on_my: "on my %{device_name}"
       oops: Oops!
+      other_options: Other Options
       our_tos_changed: "Our %{terms_of_use} have changed. Please review and indicate your agreement below."
       post_to_facebook_content: "Check out Tapjoy where you can discover the best new apps and games, while also earning currency in apps you love. It\'s free to join so visit tapjoy.com today to start getting app recommendations just for you."
       privacy_policy_href: "privacy policy"
       provide_other_email: "Please provide an email other than yourself"
       recipients_label: "Use commas to separate multiple emails"
-      recommendations: Recommendations
+      recommendations: Smart Recommendations
       registering: Registering
       report_bug: Report Bug
       review_app_name: Review %{app_name}

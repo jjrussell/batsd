@@ -22,10 +22,10 @@
       = render "offers"
     .section.dark
       .heading
-        Other Options
+        = t('text.games.other_options')
     %ul.list-button-container.flush.nbb
-      -link_to new_games_app_review_path(:app_metadata_id => @app_metadata.id) do
-        %li.list-button.ntb
+      %li.list-button.ntb
+        -link_to new_games_app_review_path(:app_metadata_id => @app_metadata.id) do
           .left.charcoal
             = t("text.games.review_app_name", {:app_name => @external_publisher.app_name})
           .right.rightarrow.icon16

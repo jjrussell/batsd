@@ -12,6 +12,25 @@
           window.console.log(result +' :: '+ message);
         }
       },
+
+			mask: function(){
+			  var wrap = $(document.createElement('div'));
+
+				wrap.attr('id', 'ui-simple-mask')
+				.css({
+          height: $(document).outerHeight() + 'px'
+				})
+				.appendTo(document.body);
+
+			  this.mask.element = wrap;
+
+			},
+			removeMask: function(){
+				if(this.mask.element){
+          this.mask.element.empty().remove();
+					this.mask.element = null;
+				}
+			},
 			notification: function(config){
 
 				config = Tap.extend({}, {

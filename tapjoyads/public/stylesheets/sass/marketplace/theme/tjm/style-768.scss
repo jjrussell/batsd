@@ -43,6 +43,7 @@ $image_path: "/images/marketplace/themes/tjm";
  */
 .row {
   padding: 0;
+  box-shadow: none;
 }
 
 #recommendations .app,
@@ -120,3 +121,15 @@ div.app:last-child {
 .back {
   display: none;
 }
+
+
+
+h1.smart {
+  display: none;
+}
+
+#recommendationsHeader,
+#recommendationsHeader .banner {
+  display: block;
+}
+

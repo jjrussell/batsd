@@ -18,27 +18,31 @@
             = hidden_field_tag :type, "contact_support"
           = f.text_area :content, :rows => 5, :value => params[:content], :class => 'ui-joy-input'
         .field
-          = f.submit t('text.shared.send'), :class => 'button'
+          .button-group
+            = button_to_function t('text.shared.cancel'), 'history.go(-1)', :class => 'button'
+            = f.submit t('text.shared.submit'), :class => 'button disabled'
         .form-error.center
 
 - content_for :page_javascript do
   :plain
     $(window).load(function() {
+      var canProceed = false;
+      $('.ui-joy-input').keypress(function() {
+        if ($(this).val() != '') {
+          $('.button.disabled').removeClass('disabled');
+          canProceed = true;
+        }
+        else {
+          $('.button.disabled').addClass('disabled');
+          canProceed = false;
+        }
+      });
       $('form').submit(function(e){
-        var inputs, content, values = {};
-        inputs = $('form :input*');
-        inputs.each(function() {
-          if (this.type == 'checkbox' || this.type == 'radio') {
-            values[this.name] = $(this).attr("checked");
-          }
-          else {
-            values[this.name] = $(this).val();
-          }
-          content = values['support_requests[content]'];
-            if ( content == '' ) {
-            $(".form-error").html('<div class="pad">#{t('text.games.enter_message')}</div>');
-            e.preventDefault();
-          }
-        });
+        if (!canProceed) {
+          e.preventDefault();
+        }
+        else {
+          e.run();
+        }
       });
     });

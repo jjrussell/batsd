@@ -22,6 +22,7 @@
     var $t = this;
 
     $t.config = config;
+    console.log($t.config);
     $t.container = $t.config.container = $(container);
 
     $t.create();
@@ -42,6 +43,8 @@
     }
 
     $.data(container, 'carousel', $t);
+    if ($t.config.cssClass)
+      $t.container.addClass($t.config.cssClass);
   };
 
   Tap.extend(Carousel.prototype, {
