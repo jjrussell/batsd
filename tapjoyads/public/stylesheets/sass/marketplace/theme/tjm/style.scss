@@ -1553,3 +1553,73 @@ div.app {
   }
 }
 
+#addToHome {
+  border-radius: 6px;
+  font-size: 14px;
+  background-color: #222;
+  border: 3px solid #b6b5b5;
+  color: #FFF;
+  line-height: 130%;
+  padding: 12px 10px;
+  position: absolute;
+  opacity: 0.95;
+  text-align: center;
+  width: 306px;
+  z-index: 9999;
+  -webkit-background-clip: padding-box;
+  -webkit-border-radius: 6px;
+  -moz-border-radius: 6px;
+  -webkit-box-sizing: border-box;
+  -webkit-user-select: none;
+}
+#addToHome.ipad {
+  width: 326px;
+}
+#addToHome .arrow, #newUser .arrow {
+  background-color: #222;
+  border-width: 0 3px 3px 0;
+  border-style: solid;
+  border-color: #b6b5b5;
+  bottom: -12px;
+  height: 16px;
+  left: 50%;
+  margin-left: -8px;
+  position: absolute;
+  width: 16px;
+  -webkit-transform: rotate(45deg);
+  -moz-transform: rotate(45deg);
+  -o-transform: rotate(45deg);
+  -ms-transform: rotate(45deg);
+  transform: rotate(45deg);
+}
+#addToHome.ipad .arrow {
+  top: -12px;
+  bottom: auto;
+  left: 50%;
+  -webkit-transform: rotate(-135deg);
+  -moz-transform: rotate(-135deg);
+  -o-transform: rotate(-135deg);
+  -ms-transform: rotate(-135deg);
+  transform: rotate(-135deg);
+}
+.bookmark {
+  float: left;
+  margin-top: 6px;
+  height: 22px;
+}
+.bookmark span {
+  float: left;
+  display: block;
+}
+.bookmark_icon {
+  background: transparent url("/images/games/old/bookmark_icon_mobile.png") no-repeat;
+  height: 22px;
+  margin: 0 2px;
+  width: 22px;
+}
+.bookmark_btn {
+  background: transparent url("/images/games/old/bookmark_btn_mobile.png") no-repeat;
+  height: 20px;
+  margin: 0 2px;
+  width: 125px;
+}

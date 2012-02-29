@@ -299,6 +299,10 @@ $(document).ready(function() {
     }
   });
 
+  if (Tapjoy.device.idevice) {
+    Tapjoy.Plugins.showAddHomeDialog();
+  }
+
   /*
    Tapjoy.Utils.notification({
       message: 'Thanks, your settings have been saved.'
