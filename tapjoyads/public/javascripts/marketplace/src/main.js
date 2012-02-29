@@ -182,20 +182,6 @@ $(document).ready(function() {
     };
   };
 
-  $("form.inline-editing").each(function () {
-    var $$ = $(this),
-      $rows = $(".inline-section");
-
-    $($rows).click(function () {
-      $(".show-div", this).hide();
-      $(".edit-div", this).show();
-    });
-
-    function checkDirty() {
-
-    }
-  });
-
   $(".enable-when-valid").each(function () {
     var $$ = $(this),
       $form = $$.closest("form"),

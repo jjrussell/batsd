@@ -7,35 +7,23 @@
         .left.ml10.pt3
           .big-title.mt10
             = t('text.shared.my_account')
-    - form_for [:games, @current_gamer], :html => { :class => "inline-editing" } do |f|
+    - form_for([ :games, :gamer, @gamer_profile ], :url => games_gamer_gamer_profile_path, :html => { :method => "put" }) do |f|
       .container
-        .mod
-          .button
-            Edit
         .mod.titled-group
           .group-title= t('text.shared.profile')
           %ul.list-button-container.mb10
             %li.list-button.soft-gray-gradient.pt5.pl10.pb5.inline-section
               .hd= t('text.shared.name')
               .bd
-                .show-div
-                  = @gamer.name
-                  %a= "(#{t("text.games.edit")})"
-                .hidden.edit-div= f.text_field :name, :class => "ui-joy-input"
+                .edit-div= f.text_field :name, :class => "ui-joy-input"
             %li.list-button.soft-gray-gradient.pt5.pl10.pb5.inline-section
               .hd= t('text.shared.nickname')
               .bd
-                .show-div
-                  = @gamer.nickname
-                  %a= "(#{t("text.games.edit")})"
-                .hidden.edit-div= f.text_field :nickname, :class => "ui-joy-input"
+                .edit-div= f.text_field :nickname, :class => "ui-joy-input"
             %li.list-button.soft-gray-gradient.pt5.pl10.pb5.inline-section
               .hd= t('text.shared.gender')
               .bd
-                .show-div
-                  = @gamer.gender || ""
-                  %a= "(#{t("text.games.edit")})"
-                .hidden.edit-div
+                .edit-div
                   .button-bar
                     .hidden
                       = f.radio_button :gender, "male"
@@ -48,10 +36,7 @@
             %li.list-button.soft-gray-gradient.pt5.pl10.pb5.inline-section
               .hd= t('text.shared.location')
               .bd
-                .show-div
-                  = @gamer.city_and_country || ""
-                  %a= "(#{t("text.games.edit")})"
-                .hidden.edit-div
+                .edit-div
                   = f.text_field :city, :placeholder => t("text.shared.city"), :class => "ui-joy-input"
                   = f.text_field :country, :placeholder => t("text.shared.country"), :class => "ui-joy-input"
         .mod.titled-group
@@ -60,17 +45,11 @@
             %li.list-button.soft-gray-gradient.pt5.pl10.pb5.inline-section
               .hd= t('text.games.favorite_app')
               .bd
-                .show-div
-                  = @gamer.favorite_game
-                  %a= "(#{t("text.games.edit")})"
-                .hidden.edit-div= f.text_field :favorite_game, :class => "ui-joy-input"
+                .edit-div= f.text_field :favorite_game, :class => "ui-joy-input"
             %li.list-button.soft-gray-gradient.pt5.pl10.pb5.inline-section
               .hd= t('text.games.favorite_category')
               .bd
-                .show-div
-                  = @gamer.favorite_category
-                  %a= "(#{t("text.games.edit")})"
-                .hidden.edit-div= f.text_field :favorite_category, :class => "ui-joy-input"
+                .edit-div= f.text_field :favorite_category, :class => "ui-joy-input"
 
-        .mod
-          .hidden.show-on-dirty= f.submit t('text.shared.save'), :class => "ui-joy-button orange-action enable-when-valid"
+        .mod.mb20
+          = f.submit t('text.shared.save'), :class => "ui-joy-button orange-action enable-when-valid"
