@@ -114,7 +114,7 @@ $(document).ready(function() {
   // App Icons
   $('.app-icon img').each(function(n, o){
     var el = $(o);
-    console.log(el);
+		
     el.attr("src", el.attr("source"));
     el.load(function(){
       $(this).fadeIn('slow');
@@ -153,7 +153,7 @@ $(document).ready(function() {
     $('#recommedations').Carousel({
       cssClass : 'complete'
     });
-  }, 10);
+  }, 50);
 
   $(".button-bar").each(function () {
     var $$ = $(this),

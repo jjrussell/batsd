@@ -112,6 +112,12 @@ div.app:last-child {
 .row .app:first-child {
   border-top: 0;
 }
+
+#recommedations {
+  .carousel {
+    height: auto !important;
+  }
+}
 .ui-joy-carousel {
   height: auto !important;
   overflow: visible;

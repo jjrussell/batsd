@@ -24,16 +24,15 @@
               %li.active Recommendations
               %li My Apps
         #recommedations.games
-          .carousel
-            - current_recommendations.each do |reco|
-              .app
-                - @encrypt_app_id = ObjectEncryptor.encrypt(reco.id)
-                - link_to(games_get_app_path(:eid => @encrypt_app_id)) do
-                  .app-icon
-                    %img{ :src => BLANK_IMAGE, :source => reco.icon_url }
-                .details
-                  %span.title.elip
-                    = reco.name
+          - current_recommendations.each do |reco|
+            .app
+              - @encrypt_app_id = ObjectEncryptor.encrypt(reco.id)
+              - link_to(games_get_app_path(:eid => @encrypt_app_id)) do
+                .app-icon
+                  %img{ :src => BLANK_IMAGE, :source => reco.icon_url }
+              .details
+                %span.title.elip
+                  = reco.name
 
   - if @external_publishers.present?
     .row.borders.nbb
