@@ -1,10 +1,10 @@
-= fb_connect_async_js
-- js = current_gamer.facebook_id.blank? ? "postToFeed" : "checkAndPost"
 #invites.current
   .panel
     .mod
       .ui-joy-button.medium.facebook-btn
-        - link_to '#', :class => 'icon text-left', :onclick => "#{js}();" do
+        = fb_connect_async_js
+        - js_function = current_gamer.facebook_id.blank? ? "postToFeed" : "checkAndPost"
+        - link_to '#', :class => 'icon text-left', :onclick => "#{js_function}()" do
           .img.facebook
             = image_tag "e.gif"
           .label
