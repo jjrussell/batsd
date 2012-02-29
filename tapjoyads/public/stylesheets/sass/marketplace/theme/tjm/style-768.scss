@@ -46,6 +46,11 @@ $image_path: "/images/marketplace/themes/tjm";
   box-shadow: none;
 }
 
+#recommendationsRow,
+#favortiesRow {
+  display: none;
+}
+
 #recommendations .app,
 div.app {
   border-top: 1px solid #fff;
@@ -133,11 +138,10 @@ div.app:last-child {
 }
 
 h1.smart {
-  display: none;
 }
 
-#recommendationsHeader,
-#recommendationsHeader .banner {
+#tjmTopbar,
+#tjmTopbar .banner {
   display: block;
 }
 

@@ -1135,12 +1135,12 @@ div.ui-joy-button.support-button {
   visibility: visible;
 }
 
-#recommendationsHeader,
-#recommendationsHeader .banner {
+#tjmTopbar,
+#tjmTopbar .banner {
   display: none;
 }
 
-#recommendationsHeader .banner {
+#tjmTopbar .banner {
   background: #626a73 url(#{$image_path}/swirl_tile.png) repeat 0 0;
   padding: 10px;
   padding-bottom: 5px;
@@ -1561,7 +1561,7 @@ div.app {
   }
 }
 
-#recommendSelectMenu {
+#viewSelectMenu {
   position: absolute;
   left: 0;
   z-index: 10;
