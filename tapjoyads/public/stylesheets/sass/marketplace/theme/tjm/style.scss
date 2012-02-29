@@ -1469,7 +1469,11 @@ div.app {
 }
 
 .hide {
-  display: none;
+  display: none !important;
+}
+
+.show {
+  display: block !important;
 }
 
 /**
@@ -1686,3 +1690,11 @@ div.app {
   margin: 0 2px;
   width: 125px;
 }
+
+#recommendationsRow,
+#gamesRow,
+#favortiesRow {
+  display: block;
+}
+
+
