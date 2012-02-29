@@ -30,7 +30,7 @@
         %li.list-button.soft-gray-gradient
           -link_to "#" do
             .ui-icon-medium.twitter
-              = has_fb ? t("text.games.connected_to_twitter") : "&nbsp;"
+              = has_tw ? t("text.games.connected_to_twitter") : "&nbsp;"
               .right{:class => has_tw ? "checkmark" : "plussign"}
                 &nbsp;
         - form_for([ :games, @current_gamer ], :url => dissociate_account_games_gamer_gamer_profile_path(:account_type => Invitation::FACEBOOK), :html => { :class => "logout-of-facebook", :method => "put" }) do |f|
