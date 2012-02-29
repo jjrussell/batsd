@@ -1,4 +1,4 @@
-# This file is auto-generated from the current state of the database. Instead of editing this file,
+# This file is auto-generated from the current state of the database. Instead of editing this file, 
 # please use the migrations feature of Active Record to incrementally modify your database, and
 # then regenerate this schema definition.
 #
@@ -117,8 +117,8 @@ ActiveRecord::Schema.define(:version => 20120228124800) do
     t.string   "categories"
     t.text     "countries_blacklist"
     t.integer  "papaya_user_count"
+    t.integer  "active_gamer_count",                          :default => 0
     t.boolean  "reengagement_campaign_enabled"
-    t.integer  "active_gamer_count",                    :default => 0
   end
 
   add_index "apps", ["id"], :name => "index_apps_on_id", :unique => true
@@ -868,7 +868,7 @@ ActiveRecord::Schema.define(:version => 20120228124800) do
     t.string   "app_id",       :limit => 36,                    :null => false
     t.string   "partner_id",   :limit => 36,                    :null => false
     t.string   "currency_id",  :limit => 36,                    :null => false
-    t.text     "instructions",                                  :null => false
+    t.text     "instructions"
     t.integer  "day_number",                                    :null => false
     t.integer  "reward_value",                                  :null => false
     t.boolean  "hidden",                     :default => false, :null => false
