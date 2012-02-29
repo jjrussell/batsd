@@ -294,9 +294,9 @@
 
     Tap.apply(Tap, {
       browser: {
-        type: (/webkit/i).test(appversion) ? 'webkit' : (/firefox/i).test(agent) ? 'moz' : 'opera' in window ? 'o' : (/msie/i).test(agent) ? 'ms' : '',
+        prefix: (/webkit/i).test(appversion) ? 'webkit' : (/firefox/i).test(agent) ? 'moz' : 'opera' in window ? 'o' : (/msie/i).test(agent) ? 'ms' : '',
         language: (('language' in navigator) ? navigator.language.replace('-', '_').toLowerCase() : undefined ),
-        version: ('appVersion' in navigator) ? ((navigator.appVersion.match(/OS \d+_\d+/g)) ? (navigator.appVersion.match(/OS \d+_\d+/g)) : navigator.appVersion) : '',
+        version: ('appVersion' in navigator) ? ((navigator.appVersion.match(/OS \d+_\d+/g)) ? (navigator.appVersion.match(/OS \d+_\d+/g)) : navigator.appVersion) : ''
       }
     });
 

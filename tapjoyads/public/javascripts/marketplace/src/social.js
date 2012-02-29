@@ -42,7 +42,7 @@
 
       checkAndPost: function(currentGamerFbId, link, pictureLink) {
         FB.getLoginStatus(function(response) {
-          var postToFeed = function() { TJG.social.postToFeed(link, pictureLink); };
+          var postToFeed = function() { Tapjoy.Social.postToFeed(link, pictureLink); };
           var currentLoginFbId = response.authResponse && response.authResponse.userID;
           if (currentLoginFbId && currentGamerFbId && currentGamerFbId != currentLoginFbId) {
             FB.logout(postToFeed);

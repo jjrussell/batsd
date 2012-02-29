@@ -243,4 +243,18 @@ class ApplicationController < ActionController::Base
   def set_publisher_user_id
     params[:publisher_user_id] = params[:udid] if params[:publisher_user_id].blank?
   end
+
+  def sdkless_supported?
+    params[:library_version].to_s.version_greater_than_or_equal_to?(SDKLESS_MIN_LIBRARY_VERSION) && (params[:sdk_type] == 'offers' || params[:sdk_type] == 'virtual_goods')
+  end
+
+  def generate_verifier(more_data = [])
+    hash_bits = [
+      params[:app_id],
+      params[:udid],
+      params[:timestamp],
+      App.find_in_cache(params[:app_id]).secret_key
+    ] + more_data
+    Digest::SHA256.hexdigest(hash_bits.join(':'))
+  end
 end

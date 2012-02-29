@@ -42,9 +42,9 @@
       $('.back, .forward').hide();
     }
 
+    $t.container.addClass($t.config.cssClass);
+
     $.data(container, 'carousel', $t);
-    if ($t.config.cssClass)
-      $t.container.addClass($t.config.cssClass);
   };
 
   Tap.extend(Carousel.prototype, {
@@ -53,7 +53,7 @@
     containerWidth: 0,
     containerHeight: 0,
     create : function(){
-      var $t = this
+      var $t = this,
           wrap = $(document.createElement('div')),
           html = $t.container.html();
 
@@ -95,7 +95,7 @@
           $t.current = circle.index();
 
           position = $t.container.width() * $t.current;
-          $t.wrap.css('-'+Tap.browser +'-transform', 'translate(-'+ position +'px, 0px)');
+          $t.wrap.css('-'+Tap.browser.prefix +'-transform', 'translate(-'+ position +'px, 0px)');
 
           $t.updateControls();
 
@@ -143,10 +143,10 @@
         }else{
           position = 0;
         }
-
+console.log(position)
         $t.updateControls();
 
-        $t.wrap.css('-'+Tap.browser +'-transform', 'translate(-'+ position +'px, 0px)');
+        $t.wrap.css('-'+Tap.browser.prefix +'-transform', 'translate(-'+ position +'px, 0px)');
       });
 
       $('.forward', $t.container).bind('click', function(){
@@ -164,7 +164,7 @@
 
         $t.updateControls();
 
-        $t.wrap.css('-'+Tap.browser +'-transform', 'translate(-'+ position +'px, 0px)');
+        $t.wrap.css('-'+Tap.browser.prefix +'-transform', 'translate(-'+ position +'px, 0px)');
       });
     },
     updateControls: function(){

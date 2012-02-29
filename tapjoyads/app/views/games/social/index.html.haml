@@ -1,5 +1,12 @@
-#invites.current
+#social-index.current
   .panel
+    .page-header
+      .container
+        .left.ml10.pt3
+          .big-title.mt10
+            = t('text.games.social_settings')
+    = render "games/shared/friends_follow"
+
     .mod
       .ui-joy-button.medium.facebook-btn
         = fb_connect_async_js
@@ -23,6 +30,32 @@
           .label
             = t('text.games.invite_by_email')
 
+    .titled-group.ml10
+      .hd
+        .group-title.pb10
+          = t('text.games.social_networks')
+          .aside= t('text.games.find_and_invite_friends')
+
+    .container
+      %ul.list-button-container.m10.mtn
+        - has_fb = @gamer_profile.facebook_id.present?
+        - has_tw = @gamer_profile.facebook_id.present?
+        %li.list-button.soft-gray-gradient
+          -link_to "#" do
+            .ui-icon-medium.twitter
+              = has_fb ? t("text.games.connected_to_twitter") : "&nbsp;"
+              .right{:class => has_tw ? "checkmark" : "plussign"}
+                &nbsp;
+        - form_for([ :games, @current_gamer ], :url => dissociate_account_games_gamer_gamer_profile_path(:account_type => Invitation::FACEBOOK), :html => { :method => "put" }) do |f|
+          %li.list-button.soft-gray-gradient
+            - link_to "#", "data-fb-url" => connect_facebook_account_games_gamer_path, :class => has_fb ? "submit-button" : "login-to-facebook" do
+              .ui-icon-medium.facebook
+                = has_fb ? t("text.games.connected_to_facebook") : "&nbsp;"
+                .right{:class => has_fb ? "checkmark" : "plussign"}
+                  &nbsp;
+
+- content_for :page_head do
+  = fb_connect_async_js
 - content_for :page_javascript do
   :plain
     var icon = '#{WEBSITE_URL}/images/ic_launcher_96x96.png';

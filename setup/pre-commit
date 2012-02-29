@@ -10,7 +10,6 @@ filetypes = %w(
   haml
   html
   json
-  js
   rake
   rb
   rhtml

@@ -6,6 +6,11 @@ class Games::SocialController < GamesController
   before_filter :validate_recipients, :only => [ :send_email_invites ]
 
   def index
+    @gamer_profile = current_gamer.gamer_profile
+    @friends_lists = {
+      :following => get_friends_info(Friendship.following_ids(@current_gamer.id)),
+      :followers => get_friends_info(Friendship.follower_ids(@current_gamer.id))
+    }
   end
 
   def invite_email_friends
