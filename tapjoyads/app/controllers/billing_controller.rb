@@ -73,7 +73,7 @@ class BillingController < WebsiteController
     end
     @selected_profile   = params[:payment_profile]
     @hideable_row_class = @selected_profile == 'new_card' ? 'hideable' : 'hideable hidden'
-    @order              = Order.new(:partner => current_partner, :amount => @credit_card.amount, :status => 1, :payment_method => 0)
+    @order              = Order.new(:partner => current_partner, :amount => @credit_card.amount, :status => 1, :payment_method => 0, :note => 'Created by user from billing controller')
 
     if @order.valid? && ((params[:payment_profile] == 'new_card' && @credit_card.valid?) || (params[:payment_profile] != 'new_card' && @credit_card.valid_amount?))
       begin
