@@ -9,6 +9,7 @@ describe App do
   it { should have_many :publisher_conversions }
   it { should have_many :rewarded_featured_offers }
   it { should have_many :app_metadatas }
+  it { should have_many :reengagement_offers }
   it { should have_one :rating_offer }
   it { should have_one :primary_currency }
   it { should have_one :primary_offer }
@@ -226,4 +227,160 @@ describe App do
       @app.non_rewarded_featured_offers.should be_empty
     end
   end
+
+  describe '#reengagement_campaign' do
+    context 'without any reengagement offers' do
+      before :each do
+        @app = Factory(:app)
+      end
+
+      it 'returns an empty list' do
+        @app.reengagement_campaign.should be_empty
+      end
+    end
+
+    context 'with a full reengagement campaign' do
+      before :each do
+        currency = Factory(:currency)
+        @app = currency.app
+        5.times do
+          offer = @app.build_reengagement_offer(
+            :currency => currency,
+            :reward_value => 3,
+            :instructions => "do some stuff"
+          )
+          puts offer.errors.full_messages unless offer.save
+        end
+        @app.reload
+      end
+
+      it 'returns the entire reengagement campaign as an array' do
+        @app.reengagement_campaign.length.should == 5
+      end
+    end
+  end
+
+  describe '#enable_reengagement_campaign!' do
+    context 'without any reengagement offers' do
+      before :each do
+        @app = Factory(:app)
+      end
+
+      it 'does not change self.reengagement_campaign_enabled' do
+        before = @app.reengagement_campaign_enabled?
+        @app.enable_reengagement_campaign!
+        after = @app.reengagement_campaign_enabled?
+        before.should == after
+      end
+    end
+
+    context 'with a full reengagement campaign' do
+      before :each do
+        currency = Factory(:currency)
+        @app = currency.app
+        5.times do
+          @app.build_reengagement_offer(
+            :currency => currency,
+            :reward_value => 3,
+            :instructions => "do some stuff"
+          ).save
+        end
+        @app.enable_reengagement_campaign!
+        @app.reload
+      end
+
+      it 'enables the reengagement campaign' do
+        @app.reengagement_campaign_enabled.should == true
+      end
+
+      it 'caches the entire reengagement offer array' do
+        ReengagementOffer.find_all_in_cache_by_app_id(@app.id).should == @app.reengagement_campaign
+      end
+    end
+  end
+
+  describe '#disable_reengagement_campaign!' do
+    context 'without any reengagement offers' do
+      before :each do
+        @app = Factory(:app)
+      end
+
+      it 'does not change self.reengagement_campaign_enabled' do
+        before = @app.reengagement_campaign_enabled?
+        @app.disable_reengagement_campaign!
+        after = @app.reengagement_campaign_enabled?
+        before.should == after
+      end
+    end
+
+    context 'with a full reengagement campaign' do
+      before :each do
+        currency = Factory(:currency)
+        @app = currency.app
+        5.times do
+          @app.build_reengagement_offer(
+            :currency => currency,
+            :reward_value => 3,
+            :instructions => "do some stuff"
+          ).save
+        end
+        @app.enable_reengagement_campaign!
+        @app.disable_reengagement_campaign!
+        @app.reload
+      end
+
+      it 'disables the reengagement campaign' do
+        @app.reengagement_campaign_enabled.should == false
+      end
+
+      it 'uncaches the entire reengagement offer array' do
+        Mc.get("mysql.reengagement_offers.#{@app.id}.#{@acts_as_cacheable_version}").should be_nil
+      end
+    end
+  end
+
+  describe '#build_reengagement_offer' do
+    before :each do
+      @app = Factory(:app)
+    end
+
+    it 'builds a new reengagement offer' do
+      reengagement_offers = @app.reengagement_campaign
+      new_reengagement_offer = @app.build_reengagement_offer
+      reengagement_offers.should_not be_include(new_reengagement_offer) and @app.reengagement_campaign.should be_include(new_reengagement_offer)
+    end
+  end
+
+  describe '#reengagement_campaign_from_cache' do
+    context 'without any reengagement offers' do
+      before :each do
+        @app = Factory(:app)
+      end
+
+      it 'returns an empty list' do
+        Mc.get("mysql.reengagement_offers.#{@app.id}.#{@acts_as_cacheable_version}").should be_nil
+      end
+    end
+
+    context 'with a full reengagement campaign' do
+      before :each do
+        currency = Factory(:currency)
+        @app = currency.app
+        5.times do
+          @app.build_reengagement_offer(
+            :currency => currency,
+            :reward_value => 3,
+            :instructions => "do some stuff"
+          ).save
+        end
+        @app.enable_reengagement_campaign!
+        @app.reload
+      end
+
+      it 'returns the entire reengagement campaign as a list' do
+        @app.reengagement_campaign.should == @app.reengagement_campaign_from_cache
+      end
+    end
+  end
+
 end

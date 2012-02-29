@@ -37,7 +37,7 @@
   %table
     %tr
       %td{ :colspan => 2 }
-        = check_box_tag 'agree'
+        = check_box_tag 'agree', 1, false, :disabled => true
         %b
           - if @is_new
             = label_tag :agree, "I agree to the Terms and Conditions above."
@@ -47,7 +47,7 @@
       %td.right
         %b= f.label :exclusivity_level, 'Exclusivity&nbsp;Length'
       %td
-        = f.select :exclusivity_level_type, options_for_select(@levels, @default_level)
+        = f.select :exclusivity_level_type, options_for_select(@levels, @default_level), {}, :disabled => true
         = error_message_on @partner, :exclusivity_level_type
     %tr
       %td.right
@@ -60,7 +60,10 @@
       %td
         %span#discount_level
 
-  = f.submit @submit_text, :class => 'join'
+
+  = f.submit @submit_text, :class => 'join', :disabled => true
+
+  #premier_disabled_message After recent reviews, we have decided to retire our Premier program. Partners that have previously opted in to the program will be supported through their current terms. Our rationale for this change is straight-forward - with the recent reduction of minimum bid pricing, we think this better enables all of our advertisers (large and small) to more predictably reach their ROI goals in a balanced marketplace without the need for systematic bid discounts.
 
 - content_for :page_javascript do
   :plain

@@ -27,6 +27,8 @@ IPHONE_MARMALADE_EXTENSION = 'https://github.com/downloads/marmalade/Tapjoy-for-
 WINDOWS_CONNECT_SDK = 'https://s3.amazonaws.com/tapjoy/sdks/TapjoyAdvertiserSDK_Windows_v2.0.0.zip'
 WINDOWS_OFFERS_SDK  = 'https://s3.amazonaws.com/tapjoy/sdks/TapjoyPublisherSDK_Windows_v2.0.0.zip'
 
+SDKLESS_MIN_LIBRARY_VERSION = '8.2.0'
+
 DEV_FORUM_URL = 'https://groups.google.com/group/tapjoy-developer'
 KNOWLEDGE_CENTER_URL = 'http://knowledge.tapjoy.com/'
 TAPJOY_GAMES_REGISTRATION_OFFER_ID = 'f7cc4972-7349-42dd-a696-7fcc9dcc2d03'
