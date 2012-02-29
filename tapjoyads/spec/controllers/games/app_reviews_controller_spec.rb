@@ -137,7 +137,8 @@ describe Games::AppReviewsController do
       end
 
       it "redirects to games/app_reviews/index" do
-        response.should redirect_to(games_app_reviews_path)
+        app_id = @gamer_review.app_metadata.apps.first.id
+        response.should redirect_to games_earn_path(:eid => ObjectEncryptor.encrypt(app_id))
       end
 
       it 'updates app_metadata thumbs_up' do
