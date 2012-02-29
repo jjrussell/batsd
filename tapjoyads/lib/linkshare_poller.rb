@@ -15,8 +15,7 @@ class LinksharePoller
   CLICK_KEY_COLUMN          = 0
   SALES_COLUMN              = 4
 
-
-   def self.test
+  def self.test
     january_thirtieth = Date.civil(2012,1,30)
     self.poll(january_thirtieth)   # should attempt to resolve one click with key 511865e0-f0d9-4151-94c4-2047081602f8
     self.poll(january_thirtieth + 1.week)   # should handle no results properly
@@ -33,7 +32,7 @@ class LinksharePoller
       :reportid => 11,
     }
     data = self.download_data(options)
-    return if data.blank?
+    Rails.logger.info NO_RESULTS_FOUND and return if data.blank?
     Rails.logger.info DOWNLOAD_SUCCESS
     data.each do |line|
       columns = CSV.parse_line(line)
@@ -54,17 +53,28 @@ class LinksharePoller
   private
 
   def self.download_data(options)
-    begin
-      url = BASE_URL + options.to_query
-      raw_data = Downloader.get(url, {:timeout => 10}).chomp
-      data = raw_data.split("\n")
-      data.slice!(0)
-      Rails.logger.info NO_RESULTS_FOUND if data.blank?
-    rescue
-      TapjoyMailer.deliver_linkshare_alert(ERROR_COULD_NOT_CONNECT, url, options)
-    end
+    data = self.download_with_retries(BASE_URL + options.to_query)
+    data = data.split("\n")
+    data.slice!(0)
     data
   end
 
+  def self.download_with_retries(url)
+    retries = 5
+    begin
+      Downloader.get(url, {:timeout => 4})
+    rescue Exception => e
+      Rails.logger.info("Linkshare data download failed. Will retry #{retries} more times. #{e.class} - #{e.message}\n#{e.backtrace.join("\n")}")
+      if retries > 0
+        delay ||= 0.1
+        retries -= 1
+        sleep(delay)
+        delay *= 2
+        retry
+      else
+        raise e
+      end
+    end
+  end
 
 end

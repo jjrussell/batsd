@@ -43,6 +43,7 @@ class Click < SimpledbShardedResource
   self.sdb_attr :advertiser_partner_id
   self.sdb_attr :publisher_reseller_id
   self.sdb_attr :advertiser_reseller_id
+  self.sdb_attr :client_timestamp,  :type => :time
 
   def dynamic_domain_name
     domain_number = @key.matz_silly_hash % NUM_CLICK_DOMAINS
@@ -73,7 +74,9 @@ class Click < SimpledbShardedResource
     # We only resolve clicks in the last 48 hours.
     now = Time.zone.now
     self.manually_resolved_at = now
-    self.clicked_at           = now - 1.minute if clicked_at < now - 47.hours
+    if clicked_at < now - 47.hours
+      self.clicked_at = now - 1.minute
+    end
     save!
 
     Downloader.get_with_retry(url_to_resolve) if Rails.env.production?
@@ -89,7 +92,7 @@ class Click < SimpledbShardedResource
   private
 
   def url_to_resolve
-    if type == 'generic'
+    if type == 'generic' || type == 'survey'
       "#{API_URL}/offer_completed?click_key=#{key}"
     else
       "#{API_URL}/connect?app_id=#{advertiser_app_id}&udid=#{udid}&consistent=true"

@@ -126,13 +126,7 @@ class Games::GamersController < GamesController
     end
   end
 
-  def get_friends_info(ids)
-    Gamer.find_all_by_id(ids).map do |friend|
-      {
-        :id        => friend.id,
-        :name      => friend.get_gamer_name,
-        :image_url => friend.get_avatar_url
-      }
-    end
+  def render_json_error(errors, status = 403)
+    render(:json => { :success => false, :error => errors }, :status => status)
   end
 end

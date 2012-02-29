@@ -2,24 +2,27 @@ class SurveyResultsController < ApplicationController
 
   layout 'mobile'
 
+  prepend_before_filter :decrypt_data_param
   before_filter :read_click, :only => [ :create ]
+
+  helper_method :testing?
 
   def new
     return unless verify_params([:udid, :click_key])
-    survey_offer = SurveyOffer.find_in_cache(params[:id])
-    @page_title = survey_offer.name
-    @survey_questions = survey_offer.survey_questions
+    @survey_offer = SurveyOffer.find_in_cache(params[:id])
+    @survey_questions = @survey_offer.survey_questions
   end
 
   def create
-    return unless verify_records([ @currency ])
+    return unless verify_records([ @click, @currency ])
     if @click.installed_at?
       render 'survey_complete'
       return
     end
 
-    survey_offer = SurveyOffer.find_in_cache(params[:id])
-    @survey_questions = survey_offer.survey_questions
+    @survey_offer = SurveyOffer.find_in_cache(params[:id])
+    return unless verify_records([ @survey_offer ])
+    @survey_questions = @survey_offer.survey_questions
 
     answers = {}
     @survey_questions.each do |question|
@@ -38,12 +41,11 @@ class SurveyResultsController < ApplicationController
 
     save_survey_result(answers)
 
-    device = Device.new(:key => params[:udid])
-    device.survey_answers = device.survey_answers.merge(answers)
-    device.save
-
-    url = "#{API_URL}/offer_completed?click_key=#{params[:click_key]}"
-    Downloader.get_with_retry(url)
+    message = {
+      :click_key => @click.key,
+      :install_timestamp => Time.zone.now.to_f.to_s
+    }
+    Sqs.send_message(QueueNames::CONVERSION_TRACKING, message.to_json)
 
     render 'survey_complete'
   end
