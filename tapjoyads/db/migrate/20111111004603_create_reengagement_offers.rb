@@ -14,7 +14,7 @@ class CreateReengagementOffers < ActiveRecord::Migration
     end
 
     add_index :reengagement_offers, :id
-    add_index :reengagement_offers, :app_id, :order => 'day_number ASC'
+    add_index :reengagement_offers, :app_id
   end
 
   def self.down
