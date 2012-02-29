@@ -1,0 +1,27 @@
+-content_for :styles do
+  = stylesheet_link_tag("games/get-app")
+#offer-detail.current
+  .panel
+    .page-header
+      .container.mt20
+        .left.ml10.pt3
+          .squircle
+            = image_tag(@app.get_icon_url(:size => 114, :source => :cloudfront))
+        .left.ml10
+          .big-title.elip.slate.mt10
+            = @app.name
+          .sub-title
+            = @offer.partner_name
+    .mod.get-app
+      .ui-joy-button.orange-action
+        %a.text-center Get App
+    .mod.social-info
+      %span.ui-icon-med.social-med
+        [Kate and 13 friends played this.]
+    .mod.menu-head
+      = t("text.shared.reviews")
+    .mod.score-summary
+      %img{:src => BLANK_IMAGE}
+      %span.percentage= "#{@app_metadata.positive_thumbs_percentage.floor}%"
+      %span.description= "from #{@app_metadata.app_reviews.by_gamers.size} voters"
+    = render "games/app_reviews/list"

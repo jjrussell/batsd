@@ -1,6 +1,7 @@
 class Games::SupportRequestsController < GamesController
 
   def new
+    current_gamer
   end
 
   def create

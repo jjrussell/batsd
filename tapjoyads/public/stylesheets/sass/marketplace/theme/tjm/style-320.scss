@@ -1,0 +1,79 @@
+#earn .big-title {
+  width: 200px;
+}
+
+div.app {
+  .ui-list-action {
+    display: none !important;
+  }
+}
+
+.big-title {
+  -webkit-text-size-adjust: 67%;
+  -moz-text-size-adjust: 67%;
+  -o-text-size-adjust: 67%;
+  -ms-text-size-adjust: 67%;
+}
+
+.list-button,
+.collect,
+.greenblock {
+  -webkit-text-size-adjust: 82%;
+  -moz-text-size-adjust: 82%;
+  -o-text-size-adjust: 82%;
+  -ms-text-size-adjust: 82%;
+}
+
+.list-button .collect {
+  margin-top: 2px;
+}
+
+.list-button .big-title {
+  max-width: 130px !important;
+}
+
+.squircle {
+  width: 75px;
+  height: 75px;
+  background-size: 75px 75px;
+}
+
+.squircle img {
+  width: 74px;
+  height: 74px;
+}
+
+#recommendationsHeader .banner {
+  .more {
+    top: 30%;
+    .text {
+      -webkit-text-size-adjust: 60%;
+      -moz-text-size-adjust: 60%;
+      -o-text-size-adjust: 60%;
+      -ms-text-size-adjust: 60%;
+    }
+
+    .circle {
+      background: -moz-linear-gradient(top, #e82c2c 0%, #de2627 25%, #ce1f21 50%, #c31a1d 75%, #b41317 100%);
+      background: -webkit-linear-gradient(top, #e82c2c 0%, #de2627 25%, #ce1f21 50%, #c31a1d 75%, #b41317 100%);
+      background:  -webkit-gradient(linear, left top, left bottom, color-stop(0%,#e82c2c), color-stop(25%,#de2627), color-stop(50%,#ce1f21), color-stop(75%,#c31a1d), color-stop(100%,#b41317));
+      border-bottom: 1px solid #720101;
+      box-shadow: 0 1px 2px rgba(0,0,0, .5), inset 0 -2px 0 rgba(221, 52, 56, 1);
+      border-radius: 90px;
+
+      img {
+        background-size: 18px 18px;
+        width: 18px;
+        height: 18x;
+        margin: 2px 3px 0px 5px;
+      }
+    }
+
+    .circle.active {
+      img {
+        margin: 3px 3px 0px 5px;
+      }
+    }
+
+  }
+}

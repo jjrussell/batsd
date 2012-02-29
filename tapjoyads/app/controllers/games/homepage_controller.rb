@@ -8,6 +8,58 @@ class Games::HomepageController < GamesController
     render "translations.js", :layout => false, :content_type=>"application/javascript"
   end
 
+  def get_app
+    if params[:eid].present?
+      @app_id = ObjectEncryptor.decrypt(params[:eid])
+    elsif params[:id].present?
+      @app_id = params[:id]
+    end
+    @offer = Offer.find_by_id(@app_id)
+    @app = @offer.app
+    @app_metadata = @app.primary_app_metadata
+    @app_reviews = AppReview.by_gamers.paginate_all_by_app_metadata_id(@app_metadata.id, :page => params[:app_reviews_page])
+  end
+
+  def review_app
+  end
+
+  def earn
+    device_id = current_device_id
+    @device = Device.new(:key => device_id) if device_id.present?
+    if params[:eid].present?
+      @curr_id = ObjectEncryptor.decrypt(params[:eid])
+    elsif params[:id].present?
+      @curr_id = params[:id]
+    end
+    @currency = Currency.find_by_id(@curr_id)
+    @external_publisher = ExternalPublisher.new(@currency)
+    @offerwall_url = @external_publisher.get_offerwall_url(@device, @external_publisher.currencies.first, request.accept_language, request.user_agent, current_gamer.id)
+    @app_metadata = App.find_by_id(@external_publisher.app_id).primary_app_metadata
+
+    respond_to do |f|
+      f.html { render }
+      f.js { render :layout => false }
+    end
+  end
+
+  def my_apps
+    device_id = current_device_id
+    @device = Device.new(:key => device_id) if device_id.present?
+    if @device.present?
+      @external_publishers = ExternalPublisher.load_all_for_device(@device)
+      if params[:load] == 'earn'
+        currency = Currency.find_by_id(params[:currency_id])
+        @show_offerwall = @device.has_app?(currency.app_id) if currency
+        @offerwall_external_publisher = ExternalPublisher.new(currency) if @show_offerwall
+      end
+    end
+
+    respond_to do |f|
+      f.html { render }
+      f.js { render :layout => false and return }
+    end
+  end
+
   def index
     unless current_gamer
       params[:path] = url_for(params.merge(:only_path => true))
@@ -30,6 +82,7 @@ class Games::HomepageController < GamesController
         @show_offerwall = @device.has_app?(currency.app_id) if currency
         @offerwall_external_publisher = ExternalPublisher.new(currency) if @show_offerwall
       end
+
       @geoip_data = geoip_data
       platform = current_gamer.gamer_devices.find_by_device_id(@device.id).device_type
       featured_contents = FeaturedContent.with_country_targeting(@geoip_data, @device, platform)
@@ -45,11 +98,9 @@ class Games::HomepageController < GamesController
       end
     end
 
-    if params[:load] == 'more_apps'
-      @show_more_apps = true
-      current_recommendations
-    end
+    current_recommendations
   end
+
 
   def switch_device
     if params[:data].nil?

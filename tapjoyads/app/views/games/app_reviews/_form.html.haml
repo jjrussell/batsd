@@ -1,25 +1,25 @@
-.write_review.clearfix
-  - form_for([:games, @app_review]) do |f|
-    = f.hidden_field :app_metadata_id, :value => params[:app_metadata_id]
-    .offer_image
-      = image_tag(current_gamer.get_avatar_url)
-    .offer_text.clearfix
-      .app_meta.clearfix
-        .app_rating_wrapper
-          .gamer_rating{ :rating => @app_review.user_rating }
-          = f.hidden_field :user_rating, :value => @app_review.user_rating
-        .comment_label= 'Comment'
-      .gamer_review
-        = f.text_area :text, :rows => 10
-        = error_message_on @app_review, :text
-      .review_submit
-        - if @app_review.new_record?
-          = f.submit t('text.shared.submit_review')
-        - else
-          = f.submit t('text.shared.update_review')
+- form_for([:games, @app_review]) do |f|
+  = f.hidden_field :app_metadata_id, :value => params[:app_metadata_id]
+  = f.hidden_field :app_id, :value => @app.id
+  .button-bar
+    .hidden
+      = f.radio_button :user_rating, 1
+      = f.radio_button :user_rating, -1
+    .mod.form-section.button-group
+      .ui-joy-button.grey-action{:value => 1}
+        %a.icon-center
+          .active-image= image_tag("games/inset-thumbs-up.png")
+          .inactive-image= image_tag("games/grad-thumbs-up.png")
+      .ui-joy-button.grey-action{:value => -1}
+        %a.icon-center
+          .active-image= image_tag("games/inset-thumbs-down.png")
+          .inactive-image= image_tag("games/grad-thumbs-down.png")
+  .mod.form-section
+    = f.text_area :text, {:required => true, :placeholder => t('text.shared.comment'), :class => "ui-joy-input"}
+    = error_message_on @app_review, :text
+  .mod.form-section
+    - button_text = @app_review.new_record? ? t('text.shared.submit_review') : t('text.shared.update_review')
+    = f.submit button_text, :class => "ui-joy-button orange-action enable-when-valid"
 
-- content_for :page_javascript do
-  :plain
-    $(function($) {
-      TJG.ui.loadActiveGamerRating();
-    });
+-content_for :page_head do
+  = stylesheet_link_tag "marketplace/theme/tjm/review-form"

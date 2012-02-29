@@ -1,0 +1,29 @@
+//-------------------------------------------
+// Line item structure
+//-------------------------------------------
+.line-item {
+  .hd {
+    margin-right: percentage(12/480);
+  }
+  .bd {
+    width: percentage(316/480);
+    margin-right: 0 percentage(12/480);
+  }
+  .ft {
+    width: percentage(69/480);
+  }
+}
+.image-caption {
+  .bd {
+    width: auto;
+  }
+}
+
+.list-button .big-title {
+  max-width: 240px;
+}
+
+.ui-list-action-label {
+  margin-top: 0;
+  padding-bottom: 2px;
+}

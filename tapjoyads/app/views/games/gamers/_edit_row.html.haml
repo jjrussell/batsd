@@ -1,0 +1,7 @@
+- title ||= ""
+- field ||= ""
+%li.list-button.soft-gray-gradient.pt5.pl10.pb5
+  .hd= title
+  .bd
+    = @gamer[field]
+    = @gamer.send("#{field}?") ? "(#{t('text.games.change')})" : "(#{t('text.games.add')})"
