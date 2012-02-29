@@ -123,7 +123,7 @@ $(document).ready(function() {
     }
   });
 
-  $('.list-button, .btn').bind(Tapjoy.EventsMap.start + ' ' + Tapjoy.EventsMap.end, function(e){
+  $('.list-button, .btn, .greenblock').bind(Tapjoy.EventsMap.start + ' ' + Tapjoy.EventsMap.end, function(e){
     var el = $(this),
         which = e.type;
 
