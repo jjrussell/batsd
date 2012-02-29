@@ -1,7 +1,5 @@
 class ActionMailer::Base
 
-  RECEIPT_EMAIL = "email.receipts@tapjoy.com"
-
   def deliver_with_rescue_errors!(mail = @mail)
     begin
       deliver_without_rescue_errors!(mail)
