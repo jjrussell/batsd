@@ -180,7 +180,17 @@ class GamesController < ApplicationController
   end
 
   def current_recommendations
-    @recommendations ||= Device.new(:key => current_device_id).recommendations(:device_type => device_type, :geoip_data => geoip_data, :os_version => os_version)
+    @recommendations ||= get_recommendations
+  end
+
+  def get_recommendations
+    options = {
+      :device_type => device_type,
+      :geoip_data  => geoip_data,
+      :os_version  => os_version,
+    }
+    device = Device.new(:key => current_device_id)
+    device.recommendations(options)
   end
 
   def has_multiple_devices?
@@ -197,11 +207,11 @@ class GamesController < ApplicationController
 
   def select_layout
     if params[:ajax].present?
-      return nil
+      nil
     elsif params[:old].present?
-      return 'games'
+      'games'
+    else
+      'marketplace'
     end
-    return 'marketplace'
   end
-
 end

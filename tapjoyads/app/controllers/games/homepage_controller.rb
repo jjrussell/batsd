@@ -97,8 +97,6 @@ class Games::HomepageController < GamesController
         params[:gamer_id]    = current_gamer.id
       end
     end
-
-    current_recommendations
   end
 
 
