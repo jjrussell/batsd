@@ -5,6 +5,13 @@ class Games::SocialController < GamesController
   before_filter :require_gamer
   before_filter :validate_recipients, :only => [ :send_email_invites ]
 
+  def index
+    @friends_lists = {
+      :following => get_friends_info(Friendship.following_ids(@current_gamer.id)),
+      :followers => get_friends_info(Friendship.follower_ids(@current_gamer.id))
+    }
+  end
+
   def invite_email_friends
     @gamer_name = current_gamer.get_gamer_name
   end

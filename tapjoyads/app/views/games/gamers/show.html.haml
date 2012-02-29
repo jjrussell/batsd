@@ -13,30 +13,13 @@
         .subtitle
           = t('text.games.last_played', :game => @last_app.app_name) if @last_app.present?
 
-    .titled-group.ml10
-      .hd
-        .group-title.pb10= t('text.shared.friends')
-
-  .container
-    %ul.list-button-container.m10.mtn
-      %li.list-button.soft-gray-gradient
-        -link_to "#" do
-          .hd
-            = t("text.shared.following")
-          .bold
-            = @friends_lists[:following].size
-      %li.list-button.soft-gray-gradient
-        -link_to "#" do
-          .hd
-            =t ("text.shared.followers")
-          .bold
-            = @friends_lists[:followers].size
+  = render "games/shared/friends_follow"
 
   .container
     %ul.list-button-container.flush.nbb
-      - link_to edit_games_gamer_path(:id => current_gamer.id) do
-        %li.list-button.charcoal.soft-gray-gradient
+      %li.list-button.charcoal.soft-gray-gradient
+        - link_to edit_games_gamer_path(:id => current_gamer.id) do
           = t('text.shared.my_profile')
       %li.list-button.charcoal.soft-gray-gradient
-        -link_to "#" do
+        - link_to games_social_index_path do
           = t('text.games.social_settings')
