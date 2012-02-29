@@ -11,7 +11,8 @@ class ActionMailer::Base
   end
 
   def deliver_with_receipt!(mail = @mail)
-    unless self.class == GamesMarketingMailer
+    # let's avoid paying for sending emails to ourselves (RECEIPT_EMAIL), via sendgrid
+    unless self.smtp_settings[:address] == 'smtp.sendgrid.net'
       if mail.bcc
         mail.bcc += [ RECEIPT_EMAIL ]
       else
