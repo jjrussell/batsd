@@ -155,10 +155,15 @@ class GamesController < ApplicationController
   def current_device_id
     if session[:current_device_id]
       @current_device_id = ObjectEncryptor.decrypt(session[:current_device_id])
-    else
+    end
+    if @current_device_id.nil?
       device_id_cookie = current_device_id_cookie
-      @current_device_id = device_id_cookie if device_id_cookie.present? && valid_device_id(device_id_cookie)
-      @current_device_id ||= current_gamer.devices.first.device_id if current_gamer.devices.present?
+      if device_id_cookie.present? && valid_device_id(device_id_cookie)
+        @current_device_id = device_id_cookie
+      end
+      if current_gamer.devices.present?
+        @current_device_id ||= current_gamer.devices.first.device_id
+      end
     end
     session[:current_device_id] ||= ObjectEncryptor.encrypt(@current_device_id)
     @current_device_id
@@ -176,7 +181,13 @@ class GamesController < ApplicationController
   end
 
   def current_device_info
-    current_gamer.devices.find_by_device_id(current_device_id) if current_gamer
+    @current_device_info ||= get_current_device_info
+  end
+
+  def get_current_device_info
+    if current_gamer && current_device_id
+      current_gamer.devices.find_by_device_id(current_device_id)
+    end
   end
 
   def current_recommendations
