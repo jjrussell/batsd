@@ -22,7 +22,7 @@
     var $t = this;
 
     $t.config = config;
-    console.log($t.config);
+
     $t.container = $t.config.container = $(container);
 
     $t.create();
