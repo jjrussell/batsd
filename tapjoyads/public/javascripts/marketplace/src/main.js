@@ -248,70 +248,68 @@ $(document).ready(function() {
 
 
   selectTrigger.bind(Tapjoy.EventsMap.start, function(){
-		var el = $(this),
-				heading = $('.heading', tjmSelectContainer),
-		    fix = $('.fix', tjmSelectContainer);
+      var el = $(this),
+            heading = $('.heading', tjmSelectContainer),
+          fix = $('.fix', tjmSelectContainer);
 
-	  if(tjmSelectContainer.hasClass('active')){
+     if(tjmSelectContainer.hasClass('active')){
       Tapjoy.Utils.removeMask();
 
-			tjmSelectContainer.removeClass('active');
+       tjmSelectContainer.removeClass('active');
 
-			tjmSelectMenu.addClass('hide');
+       tjmSelectMenu.addClass('hide');
 
-			heading.text($('li.active', tjmSelectMenu).text());
+       heading.text($('li.active', tjmSelectMenu).text());
 
-		}else{
-			Tapjoy.Utils.mask();
+    }else{
+      Tapjoy.Utils.mask();
 
       tjmSelectContainer.addClass('active');
-			tjmSelectMenu.removeClass('hide');
+      tjmSelectMenu.removeClass('hide');
 
-			heading.text('Choose a Section');
+      heading.text('Choose a Section');
 
-			tjmSelectMenu.css('top', tjmSelectContainer.offset().top + (tjmSelectContainer.outerHeight(true) - 4) + 'px');
+      tjmSelectMenu.css('top', tjmSelectContainer.offset().top + (tjmSelectContainer.outerHeight(true) - 4) + 'px');
 
-			fix.css({
-				width: tjmSelectContainer.width() - 4 + 'px'
-			});
-		}
-	});
+      fix.css({
+        width: tjmSelectContainer.width() - 4 + 'px'
+      });
+    }
+  });
 
-	$('li', tjmSelectMenu).each(function(){
-		var li = $(this);
+  $('li', tjmSelectMenu).each(function(){
+    var li = $(this);
 
-		li.bind('click', function(){
-			$('li', tjmSelectMenu).removeClass('active');
-			li.addClass('active');
+    li.bind('click', function(){
+      $('li', tjmSelectMenu).removeClass('active');
+      li.addClass('active');
       tjmSelectContainer.removeClass('active');
-			tjmSelectMenu.addClass('hide');
+      tjmSelectMenu.addClass('hide');
       Tapjoy.Utils.removeMask();
 
       $('.heading', tjmSelectContainer).text(li.text())
-		});
-	});
+    });
+  });
 
-	$(window).bind('resize orientationchange', function(){
-		if(tjmSelectContainer.length != 0 && window.innerWidth < 800){
-	    tjmSelectMenu.css('top', tjmSelectContainer.offset().top + (tjmSelectContainer.outerHeight(true) - 4) + 'px');
+  $(window).bind('resize orientationchange', function(){
+    if(tjmSelectContainer.length != 0 && window.innerWidth < 800){
+      tjmSelectMenu.css('top', tjmSelectContainer.offset().top + (tjmSelectContainer.outerHeight(true) - 4) + 'px');
 
-	    $('.fix', tjmSelectContainer).css({
-	      width: tjmSelectContainer.width() - 4 + 'px'
-	    });
-		}
-	})
-	/*
+      $('.fix', tjmSelectContainer).css({
+        width: tjmSelectContainer.width() - 4 + 'px'
+      });
+    }
+  });
 
-
-
-	Tapjoy.Utils.notification({
-		message: 'Thanks, your settings have been saved.'
-	});
+  /*
+   Tapjoy.Utils.notification({
+      message: 'Thanks, your settings have been saved.'
+   });
 
   Tapjoy.delay(function(){
-	  Tapjoy.Utils.notification({
-	    message: 'Thanks, we would like to save hello again.'
-	  });
-	}, 4000);
-	*/
+     Tapjoy.Utils.notification({
+       message: 'Thanks, we would like to save hello again.'
+     });
+   }, 4000);
+   */
 });

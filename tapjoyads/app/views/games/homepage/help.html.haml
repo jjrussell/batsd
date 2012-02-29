@@ -1,10 +1,9 @@
 #help.current
-  %a{ :href => new_games_support_request_path( :type => 'contact_support' ) }
-    .button.support-button
-      = t('text.games.contact_support')
-  %a{ :href => new_games_support_request_path( :type => 'report_bug' ) }
-    .button.support-button
-      = t('text.games.report_bug')
-  %a{ :href => new_games_support_request_path( :type => 'feedback' ) }
-    .button.support-button
-      = t('text.games.feedback')
+  .mod.titled-group
+    %ul.list-button-container.mb10
+      %a{ :href => new_games_support_request_path( :type => 'contact_support' ), :class => 'list-button soft-gray-gradient pt5 pl10 pb5' }
+        = t('text.games.contact_support')
+      %a{ :href => new_games_support_request_path( :type => 'report_bug' ), :class => 'list-button soft-gray-gradient pt5 pl10 pb5' }
+        = t('text.games.report_bug')
+      %a{ :href => new_games_support_request_path( :type => 'feedback' ), :class => 'list-button soft-gray-gradient pt5 pl10 pb5' }
+        = t('text.games.feedback')

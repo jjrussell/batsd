@@ -29,7 +29,15 @@ ul.flush li {
   padding: 0;
 }
 
-.header {
+form input[type=submit] {
+   -webkit-appearance: none;
+   margin: 0;
+   padding: 0;
+   border: 0;
+   display: block;
+}
+
+.header, .header-signup {
   z-index: 10;
 
   .headerwrap {
@@ -137,7 +145,12 @@ span.gill {
     z-index: -1;
   }
 }
-
+#login-form {
+  form {
+    margin: 0 auto;
+    width: 300px;
+  }
+}
 #login-form, #signup-form {
   color: #f1f1f1;
   font-family: 'Gill Sans', 'Gill Sans MT', Arial, sans-serif;
@@ -159,10 +172,6 @@ span.gill {
     margin: 0;
     padding: 0;
   }
-  form {
-    margin: 0 auto;
-    width: 300px;
-  }
   input {
     font: 500 14px 'Gill Sans', 'Gill Sans MT', Arial , sans-serif;
   }
@@ -173,62 +182,78 @@ span.gill {
     @include rounded-corners(4px);
     @include inset-shadow("rgba(0,0,0, .8)", 3px);
   }
+  select {
+    border: 1px solid #bfbfbf;
+    padding: 12px 16px;
+    @include rounded-corners(4px);
+    @include inset-shadow("rgba(0,0,0, .8)", 3px);
+  }
   input[type=email]:focus, input[type=password]:focus {
     border: 1px solid #a41d20;
     outline: none;
   }
-  .bd {
-
-    .title {
-      color: #fff;
-      font-size: 18px;
-      margin-bottom: 12px;
-    }
-    .field {
-      margin-bottom: 10px;
-    }
-    .cancel-btn, .login-btn {
-      cursor: pointer;
-      float: left;
-      padding: 10px 0;
-      width: 140px;
-    }
-    .cancel-btn {
-      margin-right: 20px;
-    }
-    .cancel-btn .ui-joy-button {
-      padding: 8px 0;
-    }
-    .forgot-pass a {
-      color: #e9292e;
-      float: right;
-      font-size: 13px;
-    }
+  input[type=submit] {
+    -webkit-appearance: none;
+  }
+  .title {
+    color: #fff;
+    font-size: 18px;
+    margin-bottom: 12px;
+  }
+  .field {
+    margin-bottom: 10px;
+  }
+  .cancel-btn, .login-btn {
+    cursor: pointer;
+    float: left;
+    padding: 10px 0;
+    width: 140px;
+  }
+  .cancel-btn {
+    margin-right: 20px;
+  }
+  .cancel-btn .ui-joy-button {
+    padding: 8px 0;
+  }
+  .forgot-pass a {
+    color: #e9292e;
+    float: right;
+    font-size: 13px;
   }
 }
 
 #signup-form {
   padding: 0;
 
-  .bd {
-    .signup-nav {
-      background-color: #878787;
+  .signup-nav {
+    background-color: #878787;
 
-      .signup-nav-menu {
+    .signup-nav-menu {
+      color: #fff;
+      height: 65px;
+      margin: 0 auto;
+      width: 300px;
+
+      .title {
+        font: 500 22px "Museo Slab";
         color: #fff;
-        height: 65px;
-        margin: 0 auto;
-        text-align: center;
-        width: 300px;
-
-        .title {
-          font: 500 18px "Museo Slab";
-          color: #fff;
-          position: relative;
-          top: 18px
-        }
+        position: relative;
+        top: 18px;
+      }
+      .next-btn {
+        cursor: default;
+        float: right;
+        display: inline-block;
+        padding: 10px 24px;
+        position: relative;
+        top: 12px;
+        width: auto;
       }
     }
+  }
+  .register-form {
+    margin: 0 auto;
+    width: 300px;
   }
 }
 
