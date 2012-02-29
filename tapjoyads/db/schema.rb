@@ -313,13 +313,13 @@ ActiveRecord::Schema.define(:version => 20120228124800) do
     t.string   "author_id",          :limit => 36
     t.string   "featured_type",                                   :null => false
     t.text     "platforms",                                       :null => false
-    t.string   "subtitle",                                        :null => false
-    t.string   "title",                                           :null => false
+    t.text     "subtitle",                                        :null => false
+    t.text     "title",                                           :null => false
     t.text     "description",                                     :null => false
-    t.string   "main_icon_url"
-    t.string   "secondary_icon_url"
-    t.string   "button_text"
-    t.string   "button_url"
+    t.text     "main_icon_url"
+    t.text     "secondary_icon_url"
+    t.text     "button_text"
+    t.text     "button_url"
     t.date     "start_date",                                      :null => false
     t.date     "end_date",                                        :null => false
     t.integer  "weight",                           :default => 0, :null => false
@@ -640,10 +640,10 @@ ActiveRecord::Schema.define(:version => 20120228124800) do
     t.text     "banner_creatives"
     t.text     "dma_codes",                                                                                        :null => false
     t.text     "regions",                                                                                          :null => false
-    t.boolean  "tapjoy_sponsored",                                                              :default => false, :null => false
     t.boolean  "instructions_overridden",                                                       :default => false, :null => false
-    t.text     "approved_banner_creatives"
+    t.boolean  "tapjoy_sponsored",                                                              :default => false, :null => false
     t.boolean  "wifi_only",                                                                     :default => false, :null => false
+    t.text     "approved_banner_creatives"
     t.text     "approved_sources",                                                                                 :null => false
     t.boolean  "sdkless",                                                                       :default => false
     t.text     "carriers",                                                                                         :null => false
