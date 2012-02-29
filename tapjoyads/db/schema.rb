@@ -1,4 +1,4 @@
-# This file is auto-generated from the current state of the database. Instead of editing this file, 
+# This file is auto-generated from the current state of the database. Instead of editing this file,
 # please use the migrations feature of Active Record to incrementally modify your database, and
 # then regenerate this schema definition.
 #
@@ -68,9 +68,9 @@ ActiveRecord::Schema.define(:version => 20120228124800) do
     t.string   "categories"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "papaya_user_count"
     t.integer  "thumbs_up",                       :default => 0
     t.integer  "thumbs_down",                     :default => 0
-    t.integer  "papaya_user_count"
   end
 
   add_index "app_metadatas", ["id"], :name => "index_app_metadatas_on_id", :unique => true
@@ -151,10 +151,9 @@ ActiveRecord::Schema.define(:version => 20120228124800) do
   add_index "conversions", ["publisher_partner_id", "created_at"], :name => "index_conversions_on_publisher_partner_id_and_created_at"
 
   create_table "creative_approval_queue", :force => true do |t|
-    t.string   "offer_id",   :limit => 36, :null => false
-    t.string   "user_id",    :limit => 36
-    t.text     "size"
-    t.datetime "created_at"
+    t.string "offer_id", :limit => 36, :null => false
+    t.string "user_id",  :limit => 36
+    t.text   "size"
   end
 
   create_table "currencies", :id => false, :force => true do |t|
@@ -646,7 +645,6 @@ ActiveRecord::Schema.define(:version => 20120228124800) do
     t.text     "approved_banner_creatives"
     t.text     "approved_sources",                                                                                 :null => false
     t.boolean  "sdkless",                                                                       :default => false
-    t.text     "mobile_country_codes",                                                                             :null => false
     t.text     "carriers",                                                                                         :null => false
     t.string   "tracking_for_type"
     t.string   "tracking_for_id",                   :limit => 36

@@ -245,7 +245,6 @@ class ApplicationController < ActionController::Base
   end
 
   def sdkless_supported?
-    Rails.logger.info "Params: #{params.inspect}"
     params[:library_version].to_s.version_greater_than_or_equal_to?(SDKLESS_MIN_LIBRARY_VERSION) && (params[:sdk_type] == 'offers' || params[:sdk_type] == 'virtual_goods')
   end
 
