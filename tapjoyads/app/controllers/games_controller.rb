@@ -6,7 +6,7 @@ class GamesController < ApplicationController
 
   skip_before_filter :fix_params
 
-  helper_method :current_gamer, :set_gamer, :current_device_id, :current_device_id_cookie, :current_device_info, :current_recommendations, :has_multiple_devices, :show_login_page, :device_type, :geoip_data, :os_version, :social_feature_redirect_path
+  helper_method :current_gamer, :set_gamer, :current_device_id, :current_device_id_cookie, :current_device, :current_recommendations, :has_multiple_devices, :show_login_page, :device_type, :geoip_data, :os_version, :social_feature_redirect_path
 
   protected
 
@@ -39,6 +39,7 @@ class GamesController < ApplicationController
   rescue # default if header is malformed
     []
   end
+
   def set_current_device(data)
     device_data = ObjectEncryptor.decrypt(data)
     if valid_device_id(device_data[:udid])
@@ -180,13 +181,10 @@ class GamesController < ApplicationController
     end
   end
 
-  def current_device_info
-    @current_device_info ||= get_current_device_info
-  end
-
-  def get_current_device_info
+  def current_device
+    return @current_device if @current_device
     if current_gamer && current_device_id
-      current_gamer.devices.find_by_device_id(current_device_id)
+      @current_device = current_gamer.devices.find_by_device_id(current_device_id)
     end
   end
 
