@@ -365,3 +365,12 @@ table#admin_devices_table tr.mine td {
 select.chosen {
   width: 250px;
 }
+#premier_disabled_message {
+  color: blue;
+  margin: 10px 5px;
+}
+#premier_disabled_message:before {
+  content: 'Notice: ';
+  font-weight: bold;
+  display: block;
+}
