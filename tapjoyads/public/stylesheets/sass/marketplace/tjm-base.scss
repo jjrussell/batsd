@@ -154,15 +154,9 @@ input::-webkit-input-placeholder {
 
 #ui-simple-mask {
   @include advanced-linear-gradient(
-<<<<<<< HEAD
     rgba(0,0,0, .29),
     rgba(0,0,0, .49),
     rgba(0,0,0, .69),
-=======
-    rgba(0,0,0, .29),
-    rgba(0,0,0, .49),
-    rgba(0,0,0, .69),
->>>>>>> 73f13e14fb6c674a17bdab84611ef864017647ca
     rgba(0,0,0, .89)
   );
   position: absolute;
@@ -237,11 +231,7 @@ input::-webkit-input-placeholder {
   margin: 10px auto;
   overflow: auto;
   padding: 12px;
-<<<<<<< HEAD
-
-=======
-
->>>>>>> 73f13e14fb6c674a17bdab84611ef864017647ca
+  
   .loader_letter {
     float:left;
     height: 12px;
