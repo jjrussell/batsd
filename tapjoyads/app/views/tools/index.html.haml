@@ -28,7 +28,7 @@
   - if permitted_to? :publisher_payout_info_changes, :tools
     %li= link_to 'Payout Info Changes', publisher_payout_info_changes_tools_path
 
-- if has_permissions_for_one_of? :admin, :role_admin
+- if has_permissions_for_one_of? :admin, :role_mgr
   %h3 Admin
 %ul
   - if permitted_to? :failed_sdb_saves, :tools
