@@ -114,6 +114,7 @@ $(document).ready(function() {
   // App Icons
   $('.app-icon img').each(function(n, o){
     var el = $(o);
+    console.log(el);
     el.attr("src", el.attr("source"));
     el.load(function(){
       $(this).fadeIn('slow');
@@ -149,7 +150,9 @@ $(document).ready(function() {
   });
 
   Tapjoy.delay(function(){
-    $('#recommedations').Carousel();
+    $('#recommedations').Carousel({
+      cssClass : 'complete'
+    });
   }, 10);
 
   $(".button-bar").each(function () {

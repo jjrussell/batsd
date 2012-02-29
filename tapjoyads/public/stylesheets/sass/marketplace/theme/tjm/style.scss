@@ -1052,22 +1052,27 @@ div.ui-joy-button.support-button {
 
 #recommedations {
   height: 200px;
+  opacity: 0;
+  visibility: hidden;
+  @include animate(opacity, .65s, linear, .65s);
 
   .carousel {
     opacity: 0;
     height: 0;
     overflow: hidden;
+    display: none;
     visibility: hidden;
-    @include animate(height, .5s, linear, .5s);
-    @include animate(opacity, .5s, linear, .5s);
+    @include animate(height, .65s, linear, .65s);
   }
 }
 
 #recommedations.complete {
-  display: block;
+  opacity: 1;
+  visibility: visible;
 
   .carousel {
     opacity: 1;
+    display: block;
     height: 200px;
     visibility: visible;
   }
