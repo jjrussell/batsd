@@ -31,10 +31,10 @@ class Games::Gamers::GamerProfilesController < GamesController
     channel = params[:account_type].present? ? params[:account_type].to_i : Invitation::FACEBOOK
     begin
       @gamer_profile.dissociate_account!(channel)
-      redirect_to social_games_gamer_path(:fb_logout => 'true')
+      redirect_to games_social_index_path(:fb_logout => 'true')
     rescue
-      flash[:error] = 'Failed to change linked Facebook account.'
-      redirect_to social_games_gamer_path
+      flash[:error] = t('text.games.failed_to_change_linked')
+      redirect_to games_social_index_path
     end
   end
 
