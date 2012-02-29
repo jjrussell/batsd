@@ -6,7 +6,7 @@ class GamesController < ApplicationController
 
   skip_before_filter :fix_params
 
-  helper_method :current_gamer, :set_gamer, :current_device_id, :current_device_id_cookie, :current_device_info, :current_recommendations, :has_multiple_devices, :show_login_page, :device_type, :geoip_data, :os_version, :social_feature_redirect_path
+  helper_method :current_gamer, :set_gamer, :current_device_id, :current_device_id_cookie, :current_device, :current_recommendations, :has_multiple_devices, :show_login_page, :device_type, :geoip_data, :os_version, :social_feature_redirect_path
 
   protected
 
@@ -39,6 +39,7 @@ class GamesController < ApplicationController
   rescue # default if header is malformed
     []
   end
+
   def set_current_device(data)
     device_data = ObjectEncryptor.decrypt(data)
     if valid_device_id(device_data[:udid])
@@ -155,10 +156,15 @@ class GamesController < ApplicationController
   def current_device_id
     if session[:current_device_id]
       @current_device_id = ObjectEncryptor.decrypt(session[:current_device_id])
-    else
+    end
+    if @current_device_id.nil?
       device_id_cookie = current_device_id_cookie
-      @current_device_id = device_id_cookie if device_id_cookie.present? && valid_device_id(device_id_cookie)
-      @current_device_id ||= current_gamer.devices.first.device_id if current_gamer.devices.present?
+      if device_id_cookie.present? && valid_device_id(device_id_cookie)
+        @current_device_id = device_id_cookie
+      end
+      if current_gamer.devices.present?
+        @current_device_id ||= current_gamer.devices.first.device_id
+      end
     end
     session[:current_device_id] ||= ObjectEncryptor.encrypt(@current_device_id)
     @current_device_id
@@ -175,8 +181,11 @@ class GamesController < ApplicationController
     end
   end
 
-  def current_device_info
-    current_gamer.devices.find_by_device_id(current_device_id) if current_gamer
+  def current_device
+    return @current_device if @current_device
+    if current_gamer && current_device_id
+      @current_device = current_gamer.devices.find_by_device_id(current_device_id)
+    end
   end
 
   def current_recommendations
