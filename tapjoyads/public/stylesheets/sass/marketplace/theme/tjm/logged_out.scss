@@ -454,7 +454,7 @@ span.gill {
 
 #pagingContainer {
   position: relative;
-  top: -96px;
+  top: -16px;
 }
 
 #paging {
@@ -468,7 +468,7 @@ span.gill {
 
 #favorites {
   width: 480px;
-  height: 320px;
+  height: 330px;
   display: none;
 
   div.slide {
@@ -732,7 +732,7 @@ span.gill {
     border-bottom: 0;
     min-height: 50px;
   }
-
+  
   #favorites,
   #paging,
   #signup,
@@ -803,10 +803,9 @@ span.gill {
 
 }
 
-.button {
+.header-button {
   font: normal 18px 'Gill Sans', 'Gill Sans MT', Arial , sans-serif;
   color: #fff !important;
-  width: 60px;
   text-align: center;
   padding: 5px 27px 7px;
   margin: 10px;
