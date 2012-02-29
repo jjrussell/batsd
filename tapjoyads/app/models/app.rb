@@ -89,6 +89,7 @@ class App < ActiveRecord::Base
 
   validates_presence_of :partner, :name, :secret_key
   validates_inclusion_of :platform, :in => PLATFORMS.keys
+  validates_numericality_of :active_gamer_count, :only_integer => true, :greater_than_or_equal_to => 0, :allow_nil => false
 
   before_validation_on_create :generate_secret_key
 
@@ -305,7 +306,7 @@ class App < ActiveRecord::Base
       offer.bid = offer.min_bid if offer.bid < offer.min_bid
       offer.bid = offer.max_bid if offer.bid > offer.max_bid
       offer.third_party_data = store_id
-      offer.device_types = get_offer_device_types.to_json
+      offer.device_types = get_offer_device_types.to_json if store_id_changed
       offer.url = store_url unless offer.url_overridden?
       offer.age_rating = age_rating
       offer.hidden = hidden

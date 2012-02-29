@@ -625,14 +625,23 @@ describe Offer do
         end
 
         it 'can be made true with store_id' do
-          @offer.stubs(:missing_app_store_id?).returns(true)
+          Offer.any_instance.stubs(:missing_app_store_id?).returns(false)
+          @offer.should be_valid
+        end
+      end
+
+      context 'when already tapjoy-enabled' do
+        it 'is true' do
+          @offer.tapjoy_enabled = true
+          @offer.save!
+          Offer.any_instance.stubs(:missing_app_store_id?).returns(true)
           @offer.should be_valid
         end
       end
 
       context 'when not tapjoy-enabling' do
         it 'is true' do
-          @offer.stubs(:missing_app_store_id?).returns(true)
+          Offer.any_instance.stubs(:missing_app_store_id?).returns(true)
           @offer.should be_valid
         end
       end
