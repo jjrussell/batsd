@@ -1,5 +1,5 @@
 (function(Tap){
-	
+
   Tap.extend({
     Array: {
 
@@ -51,9 +51,9 @@
           }
         }
       }
-    }  
+    }
   });
-  
+
   Tap.toArray = Tap.alias(Tap.Array, 'toArray');
   Tap.inArray = Tap.contains = Tap.alias(Tap.Array, 'inArray');
   Tap.spliceArray = Tap.alias(Tap.Array, 'spliceArray');

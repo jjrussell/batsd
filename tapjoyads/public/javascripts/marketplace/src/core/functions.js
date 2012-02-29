@@ -1,5 +1,5 @@
 (function(Tap){
-	
+
   Tap.extend({
     Function: {
 
@@ -13,5 +13,5 @@
   });
 
   Tap.delay = Tap.alias(Tap.Function, 'delay');
-	
+
 })(Tapjoy);

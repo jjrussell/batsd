@@ -45,7 +45,7 @@
         obj['border-radius'] = args.join('px ') + 'px';
 
         return obj;
-      }     
+      }
     }
   });
 

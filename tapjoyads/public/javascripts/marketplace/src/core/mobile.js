@@ -1,5 +1,5 @@
 (function(Tap, $){
-	
+
   Tapjoy.Mobile = function(config){
 
     var config = Tap.extend({}, {
@@ -52,39 +52,39 @@
       useTouchScroll: true,
       cacheGetRequests: true,
       animations: [{
-        name: 'fade', 
+        name: 'fade',
         selector: '.fade'
       },{
-        name: 'flipleft', 
-        selector: '.flipleft, .flip', 
+        name: 'flipleft',
+        selector: '.flipleft, .flip',
         is3d: true
       },{
-        name: 'flipright', 
-        selector:'.flipright', 
+        name: 'flipright',
+        selector:'.flipright',
         is3d: true
       },{
-        name:'pop', 
-        selector:'.pop', 
+        name:'pop',
+        selector:'.pop',
         is3d: true
       },{
-        name:'swapleft', 
-        selector:'.swap', 
+        name:'swapleft',
+        selector:'.swap',
         is3d: true
       },{
-        name:'slidedown', 
+        name:'slidedown',
         selector:'.slidedown'
       },{
-        name:'slideright', 
+        name:'slideright',
         selector:'.slideright'
       },{
-        name:'slideup', 
+        name:'slideup',
         selector:'.slideup'
       },{
-        name:'slideleft', 
+        name:'slideleft',
         selector:'.slideleft, .slide'
       }]
     }, config || {});
-    
+
     Tap.mobile = {
       animations: [],
       history: [],
@@ -92,7 +92,7 @@
       layout: [],
       init: function(config){
         var $t = this;
-      
+
         $t.head = $('head:eq(0)'),
         $t.body = $('body:eq(0)'),
         $t.tapBuffer = 150,
@@ -114,15 +114,15 @@
         $t.selectors.push($t.config.backSelector);
         $t.selectors.push($t.config.submitSelector);
         $t.selectors = $t.selectors.join(', ');
-        
+
         $($t.selectors).css('-webkit-touch-callout', 'none');
-					
+
         $t.layout.push(Tap.browser);
-        
+
         if(Tap.supportsTransform3d){
           $t.layout.push('supports3d');
         }
-        
+
         if(Tap.supportsiOS5 && $t.config.useTouchScroll){
           $t.layout.push('touchscroll');
         }
@@ -130,7 +130,7 @@
         if($t.config.fullScreenClass && window.navigator.standalone === true) {
           $t.layout.push($t.config.fullScreenClass, $t.config.statusBar);
         }
-				
+
         $t.body.addClass($t.layout.join(' '))
         .bind('click', function(e){
           $t.click(e);
@@ -145,19 +145,19 @@
           $t.turn(e);
         })
         .trigger('orientationchange');
-          
+
          $(window).bind('hashchange', function(e){
            $t.hashChange(e);
          });
-        
+
          var page = location.hash;
-         
+
          if($('body > div.page.current').length === 0){
            $t.currentPage = $t.config.defaultPage ? $($t.config.defaultPage).addClass('current') : $('body div.page:eq(0)').addClass('current');
          }else{
            $t.currentPage = $('body > div.page.current');
          }
-       
+
          $t.historySetHash($t.currentPage.attr('id'));
          $t.addPageToHistory($t.currentPage);
 
@@ -165,7 +165,7 @@
            $t.historyGoTo(page);
         }
       },
-      
+
       getAnimation: function(el){
         var $t = this,
             animation;
@@ -180,10 +180,10 @@
         if(!animation){
           animation = $t.config.defaultAnimation;
         }
-        
+
         return animation;
       },
-     
+
       reverseAnimation: function(animation){
         var map = {
           'up' : 'down',
@@ -196,18 +196,18 @@
 
         return map[animation] || animation;
       },
-      
+
       addAnimation: function(animation){
         var $t = this;
-        
+
         if(Tap.type(animation.selector) === 'string' && Tap.type(animation.name) === 'string'){
           $t.animations.push(animation);
         }
       },
-      
+
       addPageToHistory: function(page, animation){
         var $t = this;
-        
+
         $t.history.unshift({
           page: page,
           animation: animation,
@@ -232,12 +232,12 @@
           return false;
         }
       },
-      
+
       historyGoTo: function(to, animation){
 
         var $t = this,
             from = $t.history[0].page;
-        
+
         if(Tap.type(animation) === 'string'){
           for(var i = 0, k = $t.animations.length; i < k; i++){
             if($t.animations[i].name === animation){
@@ -246,23 +246,23 @@
             }
           }
         }
-        
+
         if(Tap.type(to) === 'string'){
           var next = $(to);
           to = next;
         }
-   
+
         if($t.historyNavigate(from, to, animation)){
           return $t;
         }else{
           return false;
         }
       },
-      
+
       historySetHash: function(hash){
         location.hash = '#' + hash.replace(/^#/, '');
       },
-      
+
      historyNavigate: function(from, to, animation, goBack){
 
        var $t = this;
@@ -287,8 +287,8 @@
       if(Tap.supportsAnimationEvents && animation && $t.config.useAnimations){
         if(!Tap.supportsTransform3d && animation.is3d){
           animation.name = $t.config.defaultAnimation;
-        }      
-				
+        }
+
 				var finalAnimationName = animation.name,
             is3d = animation.is3d ? 'animating3d' : '';
 
@@ -311,7 +311,7 @@
 
         if($t.config.trackScrollPositions === true){
           from.data('lastScroll', lastScroll);
-          
+
           $('.scroll', from).each(function(){
             $(this).data('lastScroll', this.scrollTop);
           });
@@ -325,12 +325,12 @@
         var bufferTime = $t.tapBuffer;
 
         if(Tap.supportsAnimationEvents && animation && $t.config.useAnimations){
-          
+
           from.unbind('webkitAnimationEnd', navigationEndHandler)
           .removeClass('current ' + finalAnimationName + ' out');
 
           to.removeClass(finalAnimationName);
-          
+
           $t.body.removeClass('animating animating3d');
 
           if($t.config.trackScrollPositions === true){
@@ -338,9 +338,9 @@
 
             setTimeout(function(){
               to.css('top', 0);
-              
+
               window.scroll(0, to.data('lastScroll'));
-              
+
               $('.scroll', to).each(function(){
                 this.scrollTop = - $(this).data('lastScroll');
               });
@@ -357,11 +357,11 @@
 
 	        from.trigger('afterAnimation');
 	        to.trigger('afterAnimation');
-					
+
         }, $t.tapBuffer);
 
         $t.currentPage = to;
-      
+
         if(goBack){
           $t.history.shift();
         }else{
@@ -369,16 +369,16 @@
         }
 
         from.unselect();
- 
+
         $t.historySetHash($t.currentPage.attr('id'));
 
         to.trigger('animationend', { direction:'in', animation: animation});
         from.trigger('animationend', { direction:'out', animation: animation});
-  
+
       }
-      
+
       return true;
-    },      
+    },
       getOrientation: function(){
         return orientation;
       },
@@ -395,15 +395,15 @@
         if(el && el.attr('href') && !el.isExternalLink()){
           e.preventDefault();
         }
-      
+
         if(Tapjoy.supportsTouch){
           $(e.target).trigger('tap', e);
         }
-      },   
-      
+      },
+
       touch: function(e){
-        
-        var $t = this, 
+
+        var $t = this,
             el = $(e.target);
 
         if(!el.is($t.selectors)){
@@ -422,7 +422,7 @@
           el.unbind('touchmove mousemove');
         });
       },
-      
+
       tap: function(e){
 
         var $t = this,
@@ -465,7 +465,7 @@
           }else{
             el.addClass('loading active');
 
-            
+
             return false;
           }
         }
@@ -473,42 +473,42 @@
 
       hashChange: function(e){
         var $t = this;
-        
+
         if(location.hash === $t.history[0].hash)
           return true;
-        
+
         if(location.hash === ''){
           $t.historyGoBack();
           return true;
         }
-        
+
         if(($t.history[1] && location.hash === $t.history[1].hash)){
           $t.historyGoBack();
           return true;
         }
-        
+
         $t.historyGoTo($(location.hash), $t.config.defaultAnimation);
       },
-  
+
       turn: function(e) {
         var $t = this;
-        
+
         $('body').css('minHeight', 1000);
-         
+
         scrollTo(0,0);
-        
+
         var bodyHeight = window.innerHeight;
         $('body').css('minHeight', bodyHeight);
-  
+
         $t.orientation = Math.abs(window.orientation) == 90 ? 'landscape' : 'portrait';
         $('body').removeClass('portrait landscape').addClass($t.orientation).trigger('turn', {orientation: $t.orientation});
       }
     };
-    
+
     $(document).ready(function(){
       Tap.mobile.init(config);
     });
-          
+
   };
 
   $.fn.isExternalLink = function() {

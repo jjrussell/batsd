@@ -1,17 +1,17 @@
 /*!
- * 
+ *
  *  Tapjoy Mobile JS Framework v1.0
- *  
- *    _______________________________                                           
- *   /\____  ________________________\                    
- *   \/___/\ \_______________________/   ___   __  __    
- *        \ \ \  / __ \  /\  __ \ /\ \  / __`\/\ \/\ \   
- *         \ \ \/\ \_\ \_\ \ \_\ \\ \ \/\ \_\ \ \ \_\ \  
- *          \ \_\ \__/.\_\\ \  __/_\ \ \ \____/\/`____ \ 
+ *
+ *    _______________________________
+ *   /\____  ________________________\
+ *   \/___/\ \_______________________/   ___   __  __
+ *        \ \ \  / __ \  /\  __ \ /\ \  / __`\/\ \/\ \
+ *         \ \ \/\ \_\ \_\ \ \_\ \\ \ \/\ \_\ \ \ \_\ \
+ *          \ \_\ \__/.\_\\ \  __/_\ \ \ \____/\/`____ \
  *           \/_/\/__/\/_/ \ \ \//\ \_\ \/___/  `/___/> \
  *                          \ \_\\ \____/          /\___/
- *                           \/_/ \/___/           \/__/ 
- *                                
+ *                           \/_/ \/___/           \/__/
+ *
  * @copyright 2012, Tapjoy, Inc.
  * @license   http://www.github.com/Tapjoy
  * @version   1.0
@@ -20,11 +20,11 @@
  * @author   Kieran Boyle <kieran.boyle@tapjoy.com>
  * @author   Van Pham <van.pham@tapjoy.com>
  * @author   Mike Wheeler <mike.wheeler@tapjoy.com>
- * 
+ *
  */
 (function(window, $, undefined){
   "use strict";
-  
+
   var global = window,
       document = global.document,
       navigator = global.navigator,
@@ -34,7 +34,7 @@
       arrayPrototype = Array.prototype,
       functionPrototype = Function.prototype,
       objectPrototype = Object.prototype,
-      stringPrototype = String.prototype, 
+      stringPrototype = String.prototype,
       toString = objectPrototype.toString,
       hasOwn = objectPrototype.hasOwnProperty,
       push = arrayPrototype.push,
@@ -48,14 +48,14 @@
     var _Tapjoy = function(selector, context){
       var $t = this,
           selector_;
-    
+
       if(!selector)
         return $t;
-      
+
       if(selector instanceof _Tapjoy && context == undefined){
         return selector;
       }
-      
+
       if(Tap.isFunction(selector)){
         return Tap(document).ready(selector);
       }
@@ -68,7 +68,7 @@
 
         return $t;
       }
-      
+
       if(Tap.isObject(selector) && Tap.isObject(context)){
         if(selector.length == undefined){
           if(selector.parentNode == context)
@@ -81,12 +81,12 @@
         }
         return $t;
       }
-      
+
       if(Tap.isObject(selector) && context == undefined){
         $t[$t.length++] = selector;
         return $t;
       }
-      
+
       if(context !== undefined){
         if(context instanceof _Tapjoy){
           return context.find(selector);
@@ -94,9 +94,9 @@
       }else{
         context = document;
       }
-      
+
       selector_ = $t.selector(selector, context);
-      
+
       if(!selector_){
         return $t;
       }
@@ -113,7 +113,7 @@
 
     var Tap = function(selector, context) {
       return new _Tapjoy(selector, context);
-    }; 
+    };
 
     Tap.apply = function(object, config, defaults){
       if(defaults){
@@ -135,7 +135,7 @@
             i = 1,
             length = arguments.length,
             deep = false,
-            options, name, src, copy, copyIsArray, clone;   
+            options, name, src, copy, copyIsArray, clone;
 
         if(Tap.type(target) === 'boolean'){
           deep = target;
@@ -151,17 +151,17 @@
           target = this;
           --i;
         }
-    
+
         for(;i < length; i++){
           if((options = arguments[i]) != null){
             for(name in options){
               src = target[name];
               copy = options[name];
-              
+
               if(target === copy){
                 continue;
               }
-              
+
               if(deep && copy && (Tap.isSimple(copy) || (copyIsArray = Tap.isArray(copy)))){
                 if(copyIsArray){
                   copyIsArray = false;
@@ -169,33 +169,33 @@
                 }else{
                   clone = src && Tap.isSimple(src) ? src : {};
                 }
-                
+
                 target[name] = Tap.extend(deep, clone, copy);
-      
+
               }else if(copy !== undefined){
                 target[name] = copy;
               }
             }
           }
         }
-        
+
         return target;
       },
       type: function(value){
 
         if(!value || value == null)
           return 'null';
-        
+
         var type = typeof(value),
             types = [
-              'undefined', 
-              'string', 
-              'number', 
-              'boolean', 
+              'undefined',
+              'string',
+              'number',
+              'boolean',
               'function',
               'object'
             ];
-            
+
         if(type.match(types.join('|'))){
           return type;
         }
@@ -214,7 +214,7 @@
       },
       isString: function(obj){
         return Tap.type(obj) === 'string';
-      },      
+      },
       isWindow: function(obj){
         return obj && Tap.type(obj) === 'object' && 'setInterval' in obj;
       },
@@ -233,19 +233,19 @@
           }
         }
         return array;
-      }      
+      }
     });
 
     Tap.fn = _Tapjoy.prototype;
-    
+
     Tap.apply(Tap.fn, {
       constructor: _Tapjoy,
       extend: Tap.extend,
       foreach: arrayPrototype.forEach,
       selector: function(selector, context){
         var query;
-        
-        try{  
+
+        try{
           if(selector[0] === '#' && selector.indexOf(" ") === -1){
             if(context === document)
               query = context.getElementById(selector.replace('#', ''));
@@ -258,36 +258,36 @@
 
         return query;
       },
-      
+
       ready: function(fn){
         if((/complete|loaded/).test(document.readyState))
           fn.call();
-          
+
         document.addEventListener('DOMContentLoaded', fn, false);
-        
+
         return this;
       },
       each: function(fn){
         this.foreach(function(obj, index) {
           fn.call(obj, index, obj);
         });
-        
+
         return this;
       },
       find: function(el){
         var collection = [],
             temp;
-            
+
         if($t.length === 0)
           return null;
-          
+
         for(var i = 0, k = this.length; i < k; i++){
           temp = Tap(el, this[i]);
           for(var j = 0, l = temp.length; j < l; j++){
             collection.push(temp[j]);
           }
         }
-        
+
         return Tap(Tap.isUnique(collection));
       }
     });
@@ -296,8 +296,8 @@
       browser: (/webkit/i).test(appversion) ? 'webkit' : (/firefox/i).test(agent) ? 'moz' : 'opera' in window ? 'o' : (/msie/i).test(agent) ? 'ms' : '',
       language: (('language' in navigator) ? navigator.language.replace('-', '_').toLowerCase() : undefined )
     });
-    
-    
+
+
     Tap.apply(Tap, {
       supportsTouch: (!!global.Touch) && (typeof window.TouchEvent != 'undefined') && (agent.indexOf('Mobile') > -1),
       supportsiOS5: /OS (5(_\d+)*) like Mac OS X/i.test(agent),
@@ -309,7 +309,7 @@
       supportsHomescreen: ('standalone' in navigator),
       supportsLocalStorage: (typeof(localStorage) != 'undefined')
     });
-    
+
     Tap.apply(Tap, {
       device: {
         android: (/android/gi).test(appversion),
@@ -356,8 +356,8 @@
       },
       /**
        * RegEx object
-       * Commonly used Regular Expressions 
-       */   
+       * Commonly used Regular Expressions
+       */
       RegEx: {
         escape: /('|\\)/g,
         format: /\{(\d+)\}/g,
@@ -366,7 +366,7 @@
         numbers: /[A-Za-z$-]/g
       }
     });
-    
+
     Tap.apply(Tap, {
       EventsMap: {
         resize: 'onorientationchange' in window ? 'orientationchange' : 'resize',
@@ -376,11 +376,11 @@
         cancel: Tap.supportsTouch ? 'touchcancel' : 'mouseout'
       }
     });
-    
+
     Tap.apply(Tap, {
       vars: {}
     });
-    
+
     Tap(document).ready(function(){
       if(!Tap.supportsTouch)
         $('body:eq(0)').addClass('desktop');
@@ -390,7 +390,7 @@
 
     return Tap;
   })();
-  
+
   window.Tapjoy = Tapjoy;
 
 })(window, jQuery);

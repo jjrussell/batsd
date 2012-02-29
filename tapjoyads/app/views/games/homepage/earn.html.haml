@@ -16,14 +16,12 @@
     .section.dark
       .heading
         = t('text.games.browse_offers')
-      .toggle
-        %img.downarrow.icon32{ :src => BLANK_IMAGE }
     .review-area
       = render "offers"
     .section.dark
       .heading
         = t('text.games.other_options')
-    %ul.list-button-container.flush.nbb
+    %ul.list-button-container.flush.nbb.big
       %li.list-button.ntb
         -link_to new_games_app_review_path(:app_metadata_id => @app_metadata.id) do
           .left.charcoal

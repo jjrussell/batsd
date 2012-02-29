@@ -122,6 +122,10 @@ class GamesController < ApplicationController
 
   private
 
+  def render_json_error(errors, status = 403)
+    render(:json => { :success => false, :error => errors }, :status => status)
+  end
+
   def current_gamer_session
     @current_gamer_session ||= GamerSession.find
   end

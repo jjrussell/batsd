@@ -44,7 +44,8 @@ li {
   padding: 0;
 }
 
-.elip, .ellipsis {
+.elip,
+.ellipsis {
   white-space: nowrap;
   text-overflow: ellipsis;
   overflow: hidden;
@@ -601,7 +602,8 @@ p {
   }
 }
 
-.ui-joy-input, .button {
+.ui-joy-input,
+.button {
   @extend .border-box;
   @include rounded-corners(4px);
   box-shadow: 0 2px 2px #dfdfdf inset;
@@ -713,7 +715,8 @@ p {
 //-------------------------------------------
 // Buttons
 //-------------------------------------------
-.ui-joy-button, .button {
+.ui-joy-button,
+.button {
   @extend .border-box;
   @include rounded-corners(4px);
   @include shadow(#ddd, 1px);
@@ -914,6 +917,11 @@ div.ui-joy-button.support-button {
   overflow: auto;
 }
 
+.list-button-container.big .list-button a:first-child {
+  padding-top: 15px;
+  padding-bottom: 15px;
+}
+
 .list-button-container .list-button:first-child {
   @include custom-rounded-corners(4px, 4px, 0, 0);
   border-top: 0;
@@ -1027,6 +1035,7 @@ div.ui-joy-button.support-button {
   padding: 5px 0 10px 0;
   overflow: auto;
   box-shadow: 0 -3px 3px rgba(0,0,0, .07);
+
   h1.museo {
     padding: 20px 0 10px 20px;
   }
@@ -1072,6 +1081,7 @@ div.ui-joy-button.support-button {
 #recommendationsHeader .banner {
   background: #626a73 url(#{$image_path}/swirl_tile.png) repeat 0 0;
   padding: 10px;
+  padding-bottom: 5px;
   overflow: hidden;
   position: relative;
 
@@ -1112,436 +1122,14 @@ div.ui-joy-button.support-button {
     .circle.active {
       box-shadow: 0 1px 2px #de2627;
       background: #b41317;
-      box-shadow: 0 1px 2px rgba(255,255,255, .9), inset 0 1px 2px rgba(0,0,0, .8);
+      box-shadow: 0 1px 2px rgba(255,255,255, .7), inset 0 1px 2px rgba(0,0,0, .8);
       border-bottom: 1px solid transparent;
 
       img {
         margin: 4px 5px 0 6px;
       }
     }
-
   }
-
-}
-
-#recommendationsHeader,
-#recommendationsHeader .banner {
-  display: none;
-}
-
-#recommendationsHeader .banner {
-  background: #626a73 url(#{$image_path}/swirl_tile.png) repeat 0 0;
-  padding: 10px;
-  overflow: hidden;
-  position: relative;
-
-  img.banner-img {
-    border-bottom: 1px solid #262a2f;
-    border-top: 1px solid rgba(255,255,255, .5);
-    border-right: 1px solid #41484f;
-    box-shadow: 0 1px 1px rgba(0,0,0, .2);
-  }
-
-  .more {
-    position: absolute;
-    right: 20px;
-    top: 35%;
-
-    .text {
-      color: #fff;
-      text-shadow: 0 1px 0 rgba(0,0,0, .5);
-      font-size: 2em;
-      padding-top: 3px;
-    }
-
-    .circle {
-      background: -moz-linear-gradient(top, #e82c2c 0%, #de2627 25%, #ce1f21 50%, #c31a1d 75%, #b41317 100%);
-      background: -webkit-linear-gradient(top, #e82c2c 0%, #de2627 25%, #ce1f21 50%, #c31a1d 75%, #b41317 100%);
-      background:  -webkit-gradient(linear, left top, left bottom, color-stop(0%,#e82c2c), color-stop(25%,#de2627), color-stop(50%,#ce1f21), color-stop(75%,#c31a1d), color-stop(100%,#b41317));
-      border-bottom: 1px solid #720101;
-      box-shadow: 0 1px 2px rgba(0,0,0, .5), inset 0 -2px 0 rgba(221, 52, 56, 1);
-      border-radius: 90px;
-
-      img {
-        width: 22px;
-        height: 24x;
-        margin: 3px 5px 1px 6px;
-      }
-    }
-
-    .circle.active {
-      box-shadow: 0 1px 2px #de2627;
-      background: #b41317;
-      box-shadow: 0 1px 2px rgba(255,255,255, .9), inset 0 1px 2px rgba(0,0,0, .8);
-      border-bottom: 1px solid transparent;
-
-      img {
-        margin: 4px 5px 0 6px;
-      }
-    }
-
-  }
-
-}
-
-#recommendationsHeader,
-#recommendationsHeader .banner {
-  display: none;
-}
-
-#recommendationsHeader .banner {
-  background: #626a73 url(#{$image_path}/swirl_tile.png) repeat 0 0;
-  padding: 10px;
-  overflow: hidden;
-  position: relative;
-
-  img.banner-img {
-    border-bottom: 1px solid #262a2f;
-    border-top: 1px solid rgba(255,255,255, .5);
-    border-right: 1px solid #41484f;
-    box-shadow: 0 1px 1px rgba(0,0,0, .2);
-  }
-
-  .more {
-    position: absolute;
-    right: 20px;
-    top: 35%;
-
-    .text {
-      color: #fff;
-      text-shadow: 0 1px 0 rgba(0,0,0, .5);
-      font-size: 2em;
-      padding-top: 3px;
-    }
-
-    .circle {
-      background: -moz-linear-gradient(top, #e82c2c 0%, #de2627 25%, #ce1f21 50%, #c31a1d 75%, #b41317 100%);
-      background: -webkit-linear-gradient(top, #e82c2c 0%, #de2627 25%, #ce1f21 50%, #c31a1d 75%, #b41317 100%);
-      background:  -webkit-gradient(linear, left top, left bottom, color-stop(0%,#e82c2c), color-stop(25%,#de2627), color-stop(50%,#ce1f21), color-stop(75%,#c31a1d), color-stop(100%,#b41317));
-      border-bottom: 1px solid #720101;
-      box-shadow: 0 1px 2px rgba(0,0,0, .5), inset 0 -2px 0 rgba(221, 52, 56, 1);
-      border-radius: 90px;
-
-      img {
-        width: 22px;
-        height: 24x;
-        margin: 3px 5px 1px 6px;
-      }
-    }
-
-    .circle.active {
-      box-shadow: 0 1px 2px #de2627;
-      background: #b41317;
-      box-shadow: 0 1px 2px rgba(255,255,255, .9), inset 0 1px 2px rgba(0,0,0, .8);
-      border-bottom: 1px solid transparent;
-
-      img {
-        margin: 4px 5px 0 6px;
-      }
-    }
-
-  }
-
-}
-
-#recommendationsHeader,
-#recommendationsHeader .banner {
-  display: none;
-}
-
-#recommendationsHeader .banner {
-  background: #626a73 url(#{$image_path}/swirl_tile.png) repeat 0 0;
-  padding: 10px;
-  overflow: hidden;
-  position: relative;
-
-  img.banner-img {
-    border-bottom: 1px solid #262a2f;
-    border-top: 1px solid rgba(255,255,255, .5);
-    border-right: 1px solid #41484f;
-    box-shadow: 0 1px 1px rgba(0,0,0, .2);
-  }
-
-  .more {
-    position: absolute;
-    right: 20px;
-    top: 35%;
-
-    .text {
-      color: #fff;
-      text-shadow: 0 1px 0 rgba(0,0,0, .5);
-      font-size: 2em;
-      padding-top: 3px;
-    }
-
-    .circle {
-      background: -moz-linear-gradient(top, #e82c2c 0%, #de2627 25%, #ce1f21 50%, #c31a1d 75%, #b41317 100%);
-      background: -webkit-linear-gradient(top, #e82c2c 0%, #de2627 25%, #ce1f21 50%, #c31a1d 75%, #b41317 100%);
-      background:  -webkit-gradient(linear, left top, left bottom, color-stop(0%,#e82c2c), color-stop(25%,#de2627), color-stop(50%,#ce1f21), color-stop(75%,#c31a1d), color-stop(100%,#b41317));
-      border-bottom: 1px solid #720101;
-      box-shadow: 0 1px 2px rgba(0,0,0, .5), inset 0 -2px 0 rgba(221, 52, 56, 1);
-      border-radius: 90px;
-
-      img {
-        width: 22px;
-        height: 24x;
-        margin: 3px 5px 1px 6px;
-      }
-    }
-
-    .circle.active {
-      box-shadow: 0 1px 2px #de2627;
-      background: #b41317;
-      box-shadow: 0 1px 2px rgba(255,255,255, .9), inset 0 1px 2px rgba(0,0,0, .8);
-      border-bottom: 1px solid transparent;
-
-      img {
-        margin: 4px 5px 0 6px;
-      }
-    }
-
-  }
-
-}
-
-#recommendationsHeader,
-#recommendationsHeader .banner {
-  display: none;
-}
-
-#recommendationsHeader .banner {
-  background: #626a73 url(#{$image_path}/swirl_tile.png) repeat 0 0;
-  padding: 10px;
-  overflow: hidden;
-  position: relative;
-
-  img.banner-img {
-    border-bottom: 1px solid #262a2f;
-    border-top: 1px solid rgba(255,255,255, .5);
-    border-right: 1px solid #41484f;
-    box-shadow: 0 1px 1px rgba(0,0,0, .2);
-  }
-
-  .more {
-    position: absolute;
-    right: 20px;
-    top: 35%;
-
-    .text {
-      color: #fff;
-      text-shadow: 0 1px 0 rgba(0,0,0, .5);
-      font-size: 2em;
-      padding-top: 3px;
-    }
-
-    .circle {
-      background: -moz-linear-gradient(top, #e82c2c 0%, #de2627 25%, #ce1f21 50%, #c31a1d 75%, #b41317 100%);
-      background: -webkit-linear-gradient(top, #e82c2c 0%, #de2627 25%, #ce1f21 50%, #c31a1d 75%, #b41317 100%);
-      background:  -webkit-gradient(linear, left top, left bottom, color-stop(0%,#e82c2c), color-stop(25%,#de2627), color-stop(50%,#ce1f21), color-stop(75%,#c31a1d), color-stop(100%,#b41317));
-      border-bottom: 1px solid #720101;
-      box-shadow: 0 1px 2px rgba(0,0,0, .5), inset 0 -2px 0 rgba(221, 52, 56, 1);
-      border-radius: 90px;
-
-      img {
-        width: 22px;
-        height: 24x;
-        margin: 3px 5px 1px 6px;
-      }
-    }
-
-    .circle.active {
-      box-shadow: 0 1px 2px #de2627;
-      background: #b41317;
-      box-shadow: 0 1px 2px rgba(255,255,255, .9), inset 0 1px 2px rgba(0,0,0, .8);
-      border-bottom: 1px solid transparent;
-
-      img {
-        margin: 4px 5px 0 6px;
-      }
-    }
-
-  }
-
-}
-
-#recommendationsHeader,
-#recommendationsHeader .banner {
-  display: none;
-}
-
-#recommendationsHeader .banner {
-  background: #626a73 url(#{$image_path}/swirl_tile.png) repeat 0 0;
-  padding: 10px;
-  overflow: hidden;
-  position: relative;
-
-  img.banner-img {
-    border-bottom: 1px solid #262a2f;
-    border-top: 1px solid rgba(255,255,255, .5);
-    border-right: 1px solid #41484f;
-    box-shadow: 0 1px 1px rgba(0,0,0, .2);
-  }
-
-  .more {
-    position: absolute;
-    right: 20px;
-    top: 35%;
-
-    .text {
-      color: #fff;
-      text-shadow: 0 1px 0 rgba(0,0,0, .5);
-      font-size: 2em;
-      padding-top: 3px;
-    }
-
-    .circle {
-      background: -moz-linear-gradient(top, #e82c2c 0%, #de2627 25%, #ce1f21 50%, #c31a1d 75%, #b41317 100%);
-      background: -webkit-linear-gradient(top, #e82c2c 0%, #de2627 25%, #ce1f21 50%, #c31a1d 75%, #b41317 100%);
-      background:  -webkit-gradient(linear, left top, left bottom, color-stop(0%,#e82c2c), color-stop(25%,#de2627), color-stop(50%,#ce1f21), color-stop(75%,#c31a1d), color-stop(100%,#b41317));
-      border-bottom: 1px solid #720101;
-      box-shadow: 0 1px 2px rgba(0,0,0, .5), inset 0 -2px 0 rgba(221, 52, 56, 1);
-      border-radius: 90px;
-
-      img {
-        width: 22px;
-        height: 24x;
-        margin: 3px 5px 1px 6px;
-      }
-    }
-
-    .circle.active {
-      box-shadow: 0 1px 2px #de2627;
-      background: #b41317;
-      box-shadow: 0 1px 2px rgba(255,255,255, .9), inset 0 1px 2px rgba(0,0,0, .8);
-      border-bottom: 1px solid transparent;
-
-      img {
-        margin: 4px 5px 0 6px;
-      }
-    }
-
-  }
-
-}
-
-#recommendationsHeader,
-#recommendationsHeader .banner {
-  display: none;
-}
-
-#recommendationsHeader .banner {
-  background: #626a73 url(#{$image_path}/swirl_tile.png) repeat 0 0;
-  padding: 10px;
-  overflow: hidden;
-  position: relative;
-
-  img.banner-img {
-    border-bottom: 1px solid #262a2f;
-    border-top: 1px solid rgba(255,255,255, .5);
-    border-right: 1px solid #41484f;
-    box-shadow: 0 1px 1px rgba(0,0,0, .2);
-  }
-
-  .more {
-    position: absolute;
-    right: 20px;
-    top: 35%;
-
-    .text {
-      color: #fff;
-      text-shadow: 0 1px 0 rgba(0,0,0, .5);
-      font-size: 2em;
-      padding-top: 3px;
-    }
-
-    .circle {
-      background: -moz-linear-gradient(top, #e82c2c 0%, #de2627 25%, #ce1f21 50%, #c31a1d 75%, #b41317 100%);
-      background: -webkit-linear-gradient(top, #e82c2c 0%, #de2627 25%, #ce1f21 50%, #c31a1d 75%, #b41317 100%);
-      background:  -webkit-gradient(linear, left top, left bottom, color-stop(0%,#e82c2c), color-stop(25%,#de2627), color-stop(50%,#ce1f21), color-stop(75%,#c31a1d), color-stop(100%,#b41317));
-      border-bottom: 1px solid #720101;
-      box-shadow: 0 1px 2px rgba(0,0,0, .5), inset 0 -2px 0 rgba(221, 52, 56, 1);
-      border-radius: 90px;
-
-      img {
-        width: 22px;
-        height: 24x;
-        margin: 3px 5px 1px 6px;
-      }
-    }
-
-    .circle.active {
-      box-shadow: 0 1px 2px #de2627;
-      background: #b41317;
-      box-shadow: 0 1px 2px rgba(255,255,255, .9), inset 0 1px 2px rgba(0,0,0, .8);
-      border-bottom: 1px solid transparent;
-
-      img {
-        margin: 4px 5px 0 6px;
-      }
-    }
-
-  }
-
-}
-
-#recommendationsHeader,
-#recommendationsHeader .banner {
-  display: none;
-}
-
-#recommendationsHeader .banner {
-  background: #626a73 url(#{$image_path}/swirl_tile.png) repeat 0 0;
-  padding: 10px;
-  overflow: hidden;
-  position: relative;
-
-  img.banner-img {
-    border-bottom: 1px solid #262a2f;
-    border-top: 1px solid rgba(255,255,255, .5);
-    border-right: 1px solid #41484f;
-    box-shadow: 0 1px 1px rgba(0,0,0, .2);
-  }
-
-  .more {
-    position: absolute;
-    right: 20px;
-    top: 35%;
-
-    .text {
-      color: #fff;
-      text-shadow: 0 1px 0 rgba(0,0,0, .5);
-      font-size: 2em;
-      padding-top: 3px;
-    }
-
-    .circle {
-      background: -moz-linear-gradient(top, #e82c2c 0%, #de2627 25%, #ce1f21 50%, #c31a1d 75%, #b41317 100%);
-      background: -webkit-linear-gradient(top, #e82c2c 0%, #de2627 25%, #ce1f21 50%, #c31a1d 75%, #b41317 100%);
-      background:  -webkit-gradient(linear, left top, left bottom, color-stop(0%,#e82c2c), color-stop(25%,#de2627), color-stop(50%,#ce1f21), color-stop(75%,#c31a1d), color-stop(100%,#b41317));
-      border-bottom: 1px solid #720101;
-      box-shadow: 0 1px 2px rgba(0,0,0, .5), inset 0 -2px 0 rgba(221, 52, 56, 1);
-      border-radius: 90px;
-
-      img {
-        width: 22px;
-        height: 24x;
-        margin: 3px 5px 1px 6px;
-      }
-    }
-
-    .circle.active {
-      box-shadow: 0 1px 2px #de2627;
-      background: #b41317;
-      box-shadow: 0 1px 2px rgba(255,255,255, .9), inset 0 1px 2px rgba(0,0,0, .8);
-      border-bottom: 1px solid transparent;
-
-      img {
-        margin: 4px 5px 0 6px;
-      }
-    }
-
-  }
-
 }
 
 .greenblock {
@@ -1571,6 +1159,11 @@ div.ui-joy-button.support-button {
   bottom: -10px;
   */
   box-shadow: inset 0px 1px 0 #96db73, inset 0px -1px 0px #4c8f28, 0 1px 4px rgba(0,0,0, .2);
+}
+
+.greenblock.active {
+  background: #393c37;
+  box-shadow: inset 0px 1px 3px rgba(0,0,0, .3), 0 1px 0 #fff;
 }
 
 div.app {
@@ -1748,6 +1341,24 @@ div.app {
   }
 }
 
+.section.blue {
+  @include linear-gradient(top, #3093c7, #1c5a85);
+  border-top: 1px solid #1e5580;
+  border-bottom: 1px solid #1e5580;
+  box-shadow: inset 0 1px 0 rgba(255,255,255, .3), inset 0 -1px 0 rgba(60,130,180, .8), 0 1px 2px rgba(0,0,0, .3);
+  .heading {
+    color: #fff;
+    text-shadow: 0 1px 0 rgba(0,0,0, .8);
+  }
+  .dropdown {
+    @include linear-gradient(top, #3093c7, #1c5a85);
+    border: 1px solid #1a557c;
+    box-shadow: inset 0 1px 0 rgba(255,255,255, .5), 0 1px 0px  rgba(255,255,255, .3);
+    border-radius: 4px;
+    margin: 4px;
+    padding: 2px;
+  }
+}
 /**
  * squircles for photos
  */
@@ -1832,6 +1443,19 @@ div.app {
   .truste {
     padding: 12px 0;
     text-align: center;
+
+    a {
+      border-radius: 8px;
+      box-shadow: inset 0 0 4px rgba(0,0,0, .5), 0 1px 0 rgba(255,255,255, .5);
+      padding: 4px 4px 0;
+      background: #fff;
+      display: block;
+      width: 110px;
+      margin: 0 auto;
+      img {
+        margin: 2px;
+      }
+    }
   }
 }
 
@@ -1895,6 +1519,18 @@ div.app {
     li:hover {
       color: #ff7f7f;
     }
+
+    li:active {
+      background: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/Pgo8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgdmlld0JveD0iMCAwIDEgMSIgcHJlc2VydmVBc3BlY3RSYXRpbz0ibm9uZSI+CiAgPGxpbmVhckdyYWRpZW50IGlkPSJncmFkLXVjZ2ctZ2VuZXJhdGVkIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgeDE9IjAlIiB5MT0iMCUiIHgyPSIwJSIgeTI9IjEwMCUiPgogICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzAwMDAwMCIgc3RvcC1vcGFjaXR5PSIwIi8+CiAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiMwMDAwMDAiIHN0b3Atb3BhY2l0eT0iMC42NSIvPgogIDwvbGluZWFyR3JhZGllbnQ+CiAgPHJlY3QgeD0iMCIgeT0iMCIgd2lkdGg9IjEiIGhlaWdodD0iMSIgZmlsbD0idXJsKCNncmFkLXVjZ2ctZ2VuZXJhdGVkKSIgLz4KPC9zdmc+);
+      background: -moz-linear-gradient(top, rgba(0,0,0,0) 0%, rgba(0,0,0,0.20) 100%);
+      background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(0,0,0,0)), color-stop(100%,rgba(0,0,0,0.20)));
+      background: -webkit-linear-gradient(top, rgba(0,0,0,0) 0%,rgba(0,0,0,0.20) 100%);
+      background: -o-linear-gradient(top, rgba(0,0,0,0) 0%,rgba(0,0,0,0.20) 100%);
+      background: -ms-linear-gradient(top, rgba(0,0,0,0) 0%,rgba(0,0,0,0.20) 100%);
+      background: linear-gradient(top, rgba(0,0,0,0) 0%,rgba(0,0,0,0.20) 100%);
+      filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#00000000', endColorstr='#a6000000',GradientType=0 );
+    }
+
     li.active {
       background-image: url(#{$image_path}/checkmark.png);
       background-repeat: no-repeat;
@@ -1910,23 +1546,4 @@ div.app {
       border-bottom: 0;
     }
   }
-}
-
-/**
- * footer
- */
-
-.truste a {
-  border-radius: 8px;
-  box-shadow: inset 0 0 4px rgba(0,0,0, .5), 0 1px 0 rgba(255,255,255, .5);
-  padding: 4px 4px 0;
-  background: #fff;
-  display: block;
-  width: 110px;
-  margin: 0 auto;
-
-}
-
-.truste a img {
-  margin: 2px;
 }
