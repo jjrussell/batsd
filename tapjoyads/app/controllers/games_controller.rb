@@ -15,6 +15,8 @@ class GamesController < ApplicationController
   end
 
   def set_locale
+    puts "****"*20
+    puts get_language_codes.concat(http_accept_language).inspect
     I18n.locale = (get_language_codes.concat(http_accept_language) & AVAILABLE_LOCALES_ARRAY).first
   end
 
@@ -28,16 +30,17 @@ class GamesController < ApplicationController
 
   def http_accept_language
     # example env[HTTP_ACCEPT_LANGUAGE] string: en,en-US;q=0.8,es;q=0.6,zh;q=0.4
+    splits = []
     language_list = request.env['HTTP_ACCEPT_LANGUAGE'].split(/\s*,\s*/).map do |pair|
       language, quality = pair.split(/;q=/)
       raise "Not correctly formatted" unless language =~ /^[a-z\-]+$/i
       language = language.downcase.gsub(/-[a-z]+$/i) { |i| i.upcase }
       quality = 1.0 unless quality.to_s =~ /\d+(\.\d+)?$/
       result = [ - quality.to_f, language ]
-      result.concat [ - quality.to_f, language.split(/-/).first ] if language =~ /-/
-
+      splits << [ - (quality.to_f - 0.1), language.split(/-/).first ] if language =~ /-/
       result
     end
+    language_list.concat splits
     language_list.sort.map(&:last)
   rescue # default if header is malformed
     []
