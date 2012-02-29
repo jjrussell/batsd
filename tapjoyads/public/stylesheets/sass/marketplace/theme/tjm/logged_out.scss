@@ -163,8 +163,9 @@ span.gill {
     border: 1px solid #bfbfbf;
     padding: 12px 16px;
     width: 268px;
+    font-size: 1.1em;
+    box-shadow: inset 0 1px 1px rgba(0,0,0, .2);
     @include rounded-corners(4px);
-    @include inset-shadow("rgba(0,0,0, .8)", 3px);
   }
   input[type=email]:focus, input[type=password]:focus {
     border: 1px solid #a41d20;
@@ -172,24 +173,25 @@ span.gill {
   }
   .title {
     color: #fff;
-    font-size: 18px;
+    font-size: 20px;
     margin-bottom: 12px;
   }
   .field {
     margin-bottom: 10px;
   }
-  .cancel-btn, .login-btn {
+  
+  .cancel-btn, 
+  .login-btn {
     cursor: pointer;
     float: left;
     padding: 10px 0;
-    width: 140px;
+    width: 144px;
   }
+  
   .cancel-btn {
-    margin-right: 20px;
+    margin-left: 11px;
   }
-  .cancel-btn .ui-joy-button {
-    padding: 8px 0;
-  }
+  
   .forgot-pass a {
     color: #e9292e;
     float: right;
@@ -809,11 +811,10 @@ span.gill {
   text-align: center;
   padding: 5px 27px 7px;
   margin: 10px;
+  width: 60px;
   -webkit-text-stroke-width: 1px;
   border-radius: 4px;
   box-shadow: 0 1px 1px rgba(0,0,0, 0.4);
-  -webkit-box-shadow: 0px 1px 1px rgba(0,0,0, 0.4);
-  -moz-box-shadow: 0px 1px 1px rgba(0,0,0, 0.4);
   cursor: pointer;
   white-space: nowrap;
 }
@@ -832,6 +833,12 @@ span.gill {
   text-shadow: 0 -1px 0 #cd0202;
 }
 
+#login.active {
+  background: rgb(232,39,44);
+  box-shadow: 0 1px 0 rgba(255,255,255, .2), inset 0 1px 4px rgba(0,0,0, .4);
+  border-top: 1px solid #930505;
+}
+
 #signup {
   background: rgb(255,190,0);
   background: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/Pgo8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgdmlld0JveD0iMCAwIDEgMSIgcHJlc2VydmVBc3BlY3RSYXRpbz0ibm9uZSI+CiAgPGxpbmVhckdyYWRpZW50IGlkPSJncmFkLXVjZ2ctZ2VuZXJhdGVkIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgeDE9IjAlIiB5MT0iMCUiIHgyPSIwJSIgeTI9IjEwMCUiPgogICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iI2ZmYmUwMCIgc3RvcC1vcGFjaXR5PSIxIi8+CiAgICA8c3RvcCBvZmZzZXQ9IjQyJSIgc3RvcC1jb2xvcj0iI2ZmYWQwMCIgc3RvcC1vcGFjaXR5PSIxIi8+CiAgICA8c3RvcCBvZmZzZXQ9IjcxJSIgc3RvcC1jb2xvcj0iI2ZmOTYwMCIgc3RvcC1vcGFjaXR5PSIxIi8+CiAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiNmZjg2MDAiIHN0b3Atb3BhY2l0eT0iMSIvPgogIDwvbGluZWFyR3JhZGllbnQ+CiAgPHJlY3QgeD0iMCIgeT0iMCIgd2lkdGg9IjEiIGhlaWdodD0iMSIgZmlsbD0idXJsKCNncmFkLXVjZ2ctZ2VuZXJhdGVkKSIgLz4KPC9zdmc+);
@@ -846,6 +853,14 @@ span.gill {
   text-shadow: 0 -1px 0 #d47f1b;
   border-top: 1px solid #ffebab;
 }
+
+
+#signup.active {
+  background: rgba(255,134,0,1);
+  box-shadow: 0 1px 0 rgba(232,39,44, .5), inset 0 1px 4px rgba(0,0,0, .5);
+  border-top: 1px solid rgba(0,0,0, .6);
+}
+
 
 .login.modal {
   background: #343434 url(#{$root_image_path}/menu_dropdown.jpg) repeat-x 0 0;

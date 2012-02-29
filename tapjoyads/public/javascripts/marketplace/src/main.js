@@ -123,7 +123,7 @@ $(document).ready(function() {
     }
   });
 
-  $('.list-button, .btn, .greenblock').bind(Tapjoy.EventsMap.start + ' ' + Tapjoy.EventsMap.end, function(e){
+  $('.list-button, .btn, .greenblock, #signup, #login, #login-form .ui-joy-button').bind(Tapjoy.EventsMap.start + ' ' + Tapjoy.EventsMap.end + ' ' + Tapjoy.EventsMap.cancel, function(e){
     var el = $(this),
         which = e.type;
 
@@ -249,7 +249,7 @@ $(document).ready(function() {
       tjmSelectContainer.addClass('active');
 			tjmSelectMenu.removeClass('hide');
 
-			heading.text('Choose a Section');
+			heading.text('Choose a Category');
 
 			tjmSelectMenu.css('top', tjmSelectContainer.offset().top + (tjmSelectContainer.outerHeight(true) - 4) + 'px');
 
