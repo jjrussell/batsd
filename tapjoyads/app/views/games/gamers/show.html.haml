@@ -1,35 +1,42 @@
 #show.current
-  .mod.line-item.page-header
-    .container.pt10
-      .left
+  .head
+    .container.mt10.pt10
+      .left.ml10
         .squircle
           - if @gamer.get_avatar_url.present?
             %img{ :src => @gamer.get_avatar_url }
       .left.ml10
-        .title.mt20
+        .title.mt10
           = @gamer.nickname.present?  ? @gamer.nickname : 'Chuck Norris'
           %span.aside
             = "(#{t("text.games.thats_you")})"
         .subtitle
           = t('text.games.last_played', :game => @last_app.app_name) if @last_app.present?
-  .container
-    .mod.titled-group
+
+    .titled-group.ml10
       .hd
         .group-title.pb10= t('text.shared.friends')
-      %ul.list-button-container.mb10
-        %li.list-button.soft-gray-gradient.pt5.pl10.pb5
+
+  .container
+    %ul.list-button-container.m10.mtn
+      %li.list-button.soft-gray-gradient
+        -link_to "#" do
           .hd
             = t("text.shared.following")
           .bold
             = @friends_lists[:following].size
-        %li.list-button.soft-gray-gradient.pt5.pl10.pb5
+      %li.list-button.soft-gray-gradient
+        -link_to "#" do
           .hd
             =t ("text.shared.followers")
           .bold
             = @friends_lists[:followers].size
+
+  .container
     %ul.list-button-container.flush.nbb
-      - link_to edit_games_gamer_path(current_gamer.id) do
-        %li.list-button.charcoal.soft-gray-gradient
+      %li.list-button.charcoal.soft-gray-gradient
+        - link_to edit_games_gamer_path(current_gamer.id) do
           = t('text.shared.my_profile')
       %li.list-button.charcoal.soft-gray-gradient
-        = t('text.games.social_settings')
+        -link_to "#" do    
+          = t('text.games.social_settings')

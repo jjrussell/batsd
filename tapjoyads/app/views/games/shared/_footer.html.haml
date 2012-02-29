@@ -1,13 +1,13 @@
 .footer
   %ul.list-button-container.flush
-    -link_to games_social_index_path do
-      %li.list-button
+    %li.list-button
+      -link_to games_social_index_path do
         .charcoal.left
           %span= t('text.games.share_with_your_friends')
         .right.rightarrow.icon16
           &nbsp;
-    -link_to games_help_path do
-      %li.list-button.ntb
+    %li.list-button.ntb
+      -link_to games_help_path do        
         .charcoal.left
           %span= t('text.shared.help')
         .right.rightarrow.icon16
