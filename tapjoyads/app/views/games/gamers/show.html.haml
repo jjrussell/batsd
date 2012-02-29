@@ -38,5 +38,5 @@
         - link_to edit_games_gamer_path(current_gamer.id) do
           = t('text.shared.my_profile')
       %li.list-button.charcoal.soft-gray-gradient
-        -link_to "#" do
+        -link_to social_games_gamer_path(current_gamer.id) do
           = t('text.games.social_settings')
