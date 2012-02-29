@@ -136,7 +136,7 @@
 
       $('.back', $t.container).bind('click', function(){
         var position = 0;
-				
+
         if($t.current > 0){
           $t.current--
           var position = $t.container.width() * $t.current;

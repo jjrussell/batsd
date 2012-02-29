@@ -114,7 +114,7 @@ $(document).ready(function() {
   // App Icons
   $('.app-icon img').each(function(n, o){
     var el = $(o);
-		
+
     el.attr("src", el.attr("source"));
     el.load(function(){
       $(this).fadeIn('slow');
@@ -202,19 +202,38 @@ $(document).ready(function() {
     };
   };
 
-  $("form.inline-editing").each(function () {
-    var $$ = $(this),
-      $rows = $(".inline-section");
-
-    $($rows).click(function () {
-      $(".show-div", this).hide();
-      $(".edit-div", this).show();
-    });
-
-    function checkDirty() {
-
-    }
+  $(".submit-button").click(function () {
+    $(this).closest("form").submit();
+    return false;
   });
+
+  $(".login-to-facebook").click(function () {
+    var scope = 'offline_access,publish_stream',
+      $$ = $(this),
+      FB = window.FB;
+    FB.login(function (response, scope) {
+      if (response.authResponse) {
+        FB.api('/me', function (response) {
+          window.location = $$.data("fb-url");
+        });
+      } else {
+        Tapjoy.Utils.notification({
+          message: _t('games.grant_us_access')
+        });
+      }
+    }, {scope: scope});
+  });
+
+/*
+    doFbLogout : function(){
+      FB.getLoginStatus(function(response) {
+        if (response.authResponse) {
+          FB.logout(function(response) {
+          });
+        }
+      });
+    },
+    */
 
   $(".enable-when-valid").each(function () {
     var $$ = $(this),
@@ -254,10 +273,9 @@ $(document).ready(function() {
      if(tjmViewContainer.hasClass('active')){
       Tapjoy.Utils.removeMask();
 
-       tjmViewContainer.removeClass('active');
-       tjmViewMenu.addClass('hide');
-
-         heading.text($('li.active', tjmViewMenu).text());
+       tjmSelectContainer.removeClass('active');
+       tjmSelectMenu.addClass('hide');
+       heading.text($('li.active', tjmSelectMenu).text());
 
     }else{
       Tapjoy.Utils.mask();
@@ -297,7 +315,7 @@ $(document).ready(function() {
         $('.row').hide();
         $('#favoritesRow').show();
 			}
-			
+
       $('.heading', tjmViewContainer).text(li.text())
     });
   });
