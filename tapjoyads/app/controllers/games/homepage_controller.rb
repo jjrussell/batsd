@@ -31,7 +31,7 @@ class Games::HomepageController < GamesController
         @offerwall_external_publisher = ExternalPublisher.new(currency) if @show_offerwall
       end
       @geoip_data = geoip_data
-      platform = current_gamer.gamer_devices.find_by_device_id(@device.id).device_type
+      platform = device_info.device_type
       featured_contents = FeaturedContent.with_country_targeting(@geoip_data, @device, platform)
       @featured_content = featured_contents.weighted_rand(featured_contents.map(&:weight))
       if @featured_content && @featured_content.tracking_offer
