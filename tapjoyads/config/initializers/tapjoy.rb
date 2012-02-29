@@ -34,6 +34,7 @@ KNOWLEDGE_CENTER_URL = 'http://knowledge.tapjoy.com/'
 TAPJOY_GAMES_REGISTRATION_OFFER_ID = 'f7cc4972-7349-42dd-a696-7fcc9dcc2d03'
 TAPJOY_GAMES_CURRENT_TOS_VERSION = 2
 TAPJOY_PARTNER_ID = '70f54c6d-f078-426c-8113-d6e43ac06c6d'
+RECEIPT_EMAIL = 'email.receipts@tapjoy.com'
 
 WEB_REQUEST_LOGGER = SyslogLogger.new("#{RUN_MODE_PREFIX}rails-web_requests")
 
