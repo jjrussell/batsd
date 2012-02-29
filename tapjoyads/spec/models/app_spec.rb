@@ -294,7 +294,7 @@ describe App do
       end
 
       it 'caches the entire reengagement offer array' do
-        Mc.get("mysql.reengagement_offers.#{@app.id}.#{@acts_as_cacheable_version}").should == @app.reengagement_campaign
+        ReengagementOffer.find_all_in_cache_by_app_id(@app.id).should == @app.reengagement_campaign
       end
     end
   end
