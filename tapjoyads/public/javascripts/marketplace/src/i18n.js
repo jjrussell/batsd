@@ -4,7 +4,7 @@
     , me = w.i18n || {}
     , env = $("body").data("env")
     ;
-    
+
 
   me.customError = function (msg, options, name) {
     var info = ""
@@ -21,7 +21,7 @@
       this.message = m;
     };
     TapjoyCustomError.prototype = Error.prototype;
-    
+
     for (i in options) {
       if (options.hasOwnProperty(i)) {
         info += "\n[ " + i + ": " + stringify(options[i]) + " ]";

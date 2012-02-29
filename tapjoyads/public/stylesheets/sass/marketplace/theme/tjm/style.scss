@@ -44,7 +44,7 @@ li {
   padding: 0;
 }
 
-.elip, 
+.elip,
 .ellipsis {
   white-space: nowrap;
   text-overflow: ellipsis;
@@ -602,7 +602,7 @@ p {
   }
 }
 
-.ui-joy-input, 
+.ui-joy-input,
 .button {
   @extend .border-box;
   @include rounded-corners(4px);
@@ -715,7 +715,7 @@ p {
 //-------------------------------------------
 // Buttons
 //-------------------------------------------
-.ui-joy-button, 
+.ui-joy-button,
 .button {
   @extend .border-box;
   @include rounded-corners(4px);
@@ -818,7 +818,7 @@ input.ui-joy-button, input.button {
 .candy-red.active {
   background: rgb(232,39,44);
   box-shadow: 0 1px 0 rgba(255,255,255, .1), inset 0 1px 3px rgba(0,0,0, .4);
-  border-top: 1px solid #930505;
+  border: 0;
 }
 
 .orange-action.disabled, .grey-action.disabled, .button.disabled  {
@@ -1081,6 +1081,7 @@ div.ui-joy-button.support-button {
   padding: 5px 0 10px 0;
   overflow: auto;
   box-shadow: 0 -3px 3px rgba(0,0,0, .07);
+
   h1.museo {
     padding: 20px 0 10px 20px;
   }
@@ -1097,22 +1098,27 @@ div.ui-joy-button.support-button {
 
 #recommedations {
   height: 200px;
+  opacity: 0;
+  visibility: hidden;
+  @include animate(opacity, .65s, linear, .65s);
 
   .carousel {
     opacity: 0;
     height: 0;
     overflow: hidden;
+    display: none;
     visibility: hidden;
-    @include animate(height, .5s, linear, .5s);
-    @include animate(opacity, .5s, linear, .5s);
+    @include animate(height, .65s, linear, .65s);
   }
 }
 
 #recommedations.complete {
-  display: block;
+  opacity: 1;
+  visibility: visible;
 
   .carousel {
     opacity: 1;
+    display: block;
     height: 200px;
     visibility: visible;
   }
@@ -1325,7 +1331,7 @@ div.app {
   .title {
     font-size: 1.3em;
     text-shadow: 0 1px 0 #fff;
-    
+
     .aside {
       font-size: .7em;
       font-style: italic;
@@ -1345,7 +1351,7 @@ div.app {
     padding: 10px;
     font: 500 1.35em "Museo Slab";
   }
-  
+
   .dropdown {
     img {
       cursor: pointer;
@@ -1488,7 +1494,7 @@ div.app {
   .truste {
     padding: 12px 0;
     text-align: center;
- 
+
     a {
       border-radius: 8px;
       box-shadow: inset 0 0 4px rgba(0,0,0, .5), 0 1px 0 rgba(255,255,255, .5);
@@ -1500,7 +1506,7 @@ div.app {
       img {
         margin: 2px;
       }
-    }    
+    }
   }
 }
 
@@ -1564,7 +1570,7 @@ div.app {
     li:hover {
       color: #ff7f7f;
     }
-    
+
     li:active {
       background: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/Pgo8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgdmlld0JveD0iMCAwIDEgMSIgcHJlc2VydmVBc3BlY3RSYXRpbz0ibm9uZSI+CiAgPGxpbmVhckdyYWRpZW50IGlkPSJncmFkLXVjZ2ctZ2VuZXJhdGVkIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgeDE9IjAlIiB5MT0iMCUiIHgyPSIwJSIgeTI9IjEwMCUiPgogICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzAwMDAwMCIgc3RvcC1vcGFjaXR5PSIwIi8+CiAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiMwMDAwMDAiIHN0b3Atb3BhY2l0eT0iMC42NSIvPgogIDwvbGluZWFyR3JhZGllbnQ+CiAgPHJlY3QgeD0iMCIgeT0iMCIgd2lkdGg9IjEiIGhlaWdodD0iMSIgZmlsbD0idXJsKCNncmFkLXVjZ2ctZ2VuZXJhdGVkKSIgLz4KPC9zdmc+);
       background: -moz-linear-gradient(top, rgba(0,0,0,0) 0%, rgba(0,0,0,0.20) 100%);
@@ -1575,7 +1581,7 @@ div.app {
       background: linear-gradient(top, rgba(0,0,0,0) 0%,rgba(0,0,0,0.20) 100%);
       filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#00000000', endColorstr='#a6000000',GradientType=0 );
     }
-    
+
     li.active {
       background-image: url(#{$image_path}/checkmark.png);
       background-repeat: no-repeat;
@@ -1593,3 +1599,73 @@ div.app {
   }
 }
 
+#addToHome {
+  border-radius: 6px;
+  font-size: 14px;
+  background-color: #222;
+  border: 3px solid #b6b5b5;
+  color: #FFF;
+  line-height: 130%;
+  padding: 12px 10px;
+  position: absolute;
+  opacity: 0.95;
+  text-align: center;
+  width: 306px;
+  z-index: 9999;
+  -webkit-background-clip: padding-box;
+  -webkit-border-radius: 6px;
+  -moz-border-radius: 6px;
+  -webkit-box-sizing: border-box;
+  -webkit-user-select: none;
+}
+#addToHome.ipad {
+  width: 326px;
+}
+#addToHome .arrow, #newUser .arrow {
+  background-color: #222;
+  border-width: 0 3px 3px 0;
+  border-style: solid;
+  border-color: #b6b5b5;
+  bottom: -12px;
+  height: 16px;
+  left: 50%;
+  margin-left: -8px;
+  position: absolute;
+  width: 16px;
+  -webkit-transform: rotate(45deg);
+  -moz-transform: rotate(45deg);
+  -o-transform: rotate(45deg);
+  -ms-transform: rotate(45deg);
+  transform: rotate(45deg);
+}
+#addToHome.ipad .arrow {
+  top: -12px;
+  bottom: auto;
+  left: 50%;
+  -webkit-transform: rotate(-135deg);
+  -moz-transform: rotate(-135deg);
+  -o-transform: rotate(-135deg);
+  -ms-transform: rotate(-135deg);
+  transform: rotate(-135deg);
+}
+.bookmark {
+  float: left;
+  margin-top: 6px;
+  height: 22px;
+}
+.bookmark span {
+  float: left;
+  display: block;
+}
+.bookmark_icon {
+  background: transparent url("/images/games/old/bookmark_icon_mobile.png") no-repeat;
+  height: 22px;
+  margin: 0 2px;
+  width: 22px;
+}
+.bookmark_btn {
+  background: transparent url("/images/games/old/bookmark_btn_mobile.png") no-repeat;
+  height: 20px;
+  margin: 0 2px;
+  width: 125px;
+}

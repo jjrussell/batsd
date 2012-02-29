@@ -289,6 +289,11 @@ FactoryGirl.define do
     author { Factory(:employee) }
   end
 
+  factory :favorite_app do
+    gamer         { Factory(:gamer) }
+    app_metadata  { Factory(:app_metadata) }
+  end
+
   factory :featured_content do
     featured_type FeaturedContent::STAFFPICK
     platforms     %w( iphone ipad itouch ).to_json

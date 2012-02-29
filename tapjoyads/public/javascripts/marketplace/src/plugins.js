@@ -6,7 +6,7 @@
 
       showAddHomeDialog : function() {
         var startY = startX = 0,
-          boldText = TJG.utils.sprintfTemplate("<span class='bold'>%s</span>"),
+          boldText = Tapjoy.Utils.sprintfTemplate("<span class='bold'>%s</span>"),
         options = {
           message: '<div>'+
               _t('games.add_to_homescreen', {
@@ -28,9 +28,9 @@
           iterations: 5
         },
         theInterval, closeTimeout, el, i, l,
-        expired = TJG.utils.getLocalStorage("tjg.bookmark.expired"),
-        shown = TJG.utils.getLocalStorage("tjg.bookmark.shown");
-        if (TJG.utils.isNull(shown)) {
+        expired = Tapjoy.Utils.Storage.get("tjg.bookmark.expired"),
+        shown = Tapjoy.Utils.Storage.get("tjg.bookmark.shown");
+        if (Tapjoy.Utils.isEmpty(shown)) {
           shown = 0;
         }
         shown = parseInt(shown);
@@ -38,15 +38,15 @@
           return;
         }
         if (shown >= 4) {
-          TJG.utils.setLocalStorage("tjg.bookmark.expired", "true");
+          Tapjoy.Utils.Storage.set("tjg.bookmark.expired", "true");
         }
-        TJG.vars.version =  TJG.vars.version ?  TJG.vars.version[0].replace(/[^\d_]/g,'').replace('_','.')*1 : 0;
+        Tapjoy.browser.version =  Tapjoy.browser.version ?  Tapjoy.browser.version[0].replace(/[^\d_]/g,'').replace('_','.')*1 : 0;
         expired = expired == 'null' ? 0 : expired*1;
         var div = document.createElement('div'), close;
         div.id = 'addToHome';
         div.style.cssText += 'position:absolute;-webkit-transition-property:-webkit-transform,opacity;-webkit-transition-duration:0;-webkit-transform:translate3d(0,0,0);';
         div.style.left = '-9999px';
-        div.className = (TJG.vars.isIPad ? 'ipad wide' : 'iphone');
+        div.className = (Tapjoy.device.ipad ? 'ipad wide' : 'iphone');
         var m =  options.message;
         var a = (options.arrow ? '<span class="arrow"></span>' : '');
         var t = [
@@ -86,14 +86,14 @@
           clearTimeout(closeTimeout);
           closeTimeout = null;
           el.removeEventListener('webkitTransitionEnd', transitionEnd, false);
-          var posY = TJG.vars.isIPad ? window.scrollY - startY : window.scrollY + window.innerHeight - startY,
-          posX = TJG.vars.isIPad ? window.scrollX - startX : window.scrollX + Math.round((window.innerWidth - el.offsetWidth)/2) - startX,
+          var posY = Tapjoy.device.ipad ? window.scrollY - startY : window.scrollY + window.innerHeight - startY,
+          posX = Tapjoy.device.ipad ? window.scrollX - startX : window.scrollX + Math.round((window.innerWidth - el.offsetWidth)/2) - startX,
           opacity = '0.95',
           duration = '0';
           el.style.webkitTransitionProperty = '-webkit-transform,opacity';
           switch (options.animationOut) {
             case 'drop':
-            if (TJG.vars.isIPad) {
+            if (Tapjoy.device.ipad) {
               duration = '0.4s';
               opacity = '0';
               posY = posY + 50;
@@ -103,7 +103,7 @@
             }
             break;
             case 'bubble':
-            if (TJG.vars.isIPad) {
+            if (Tapjoy.device.ipad) {
               duration = '0.8s';
               posY = posY - el.offsetHeight - options.bottomOffset - 50;
             }
@@ -130,7 +130,7 @@
           el.style.left = TJG.vars.isIPad ? startX + (TJG.vars.version >=5 ? 160 : 208) - Math.round(el.offsetWidth/2) + 'px' : startX + 'px';
           switch (options.animationIn) {
             case 'drop':
-            if (TJG.vars.isIPad) {
+            if (Tapjoy.device.ipad) {
               duration = '0.6s';
               el.style.webkitTransform = 'translate3d(0,' + -(window.scrollY + options.bottomOffset + el.offsetHeight) + 'px,0)';
             }
@@ -140,7 +140,7 @@
             }
             break;
             case 'bubble':
-            if (TJG.vars.isIPad) {
+            if (Tapjoy.device.ipad) {
               duration = '0.6s';
               el.style.opacity = '0'
               el.style.webkitTransform = 'translate3d(0,' + (startY + 50) + 'px,0)';
@@ -158,7 +158,7 @@
             el.style.webkitTransitionDuration = duration;
             el.style.opacity = '0.95';
             shown = shown + 1;
-            TJG.utils.setLocalStorage("tjg.bookmark.shown", shown);
+            Tapjoy.Utils.Storage.set("tjg.bookmark.shown", shown);
             el.style.webkitTransform = 'translate3d(0,0,0)';
             el.addEventListener('webkitTransitionEnd', transitionEnd, false);
             }, 0);

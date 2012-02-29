@@ -50,7 +50,7 @@
       },
 
       removeKeyWhere: function(object, prop, value){
-				
+
         for(var property in object){
           if(object.hasOwnProperty(property) && property === prop && object[property] === value){
             delete object[property];
@@ -95,7 +95,7 @@
 
         return values;
       }
-    }	
+    }
   });
 
   Tap.alias = Tap.Object.alias(Tap.Object, 'alias');

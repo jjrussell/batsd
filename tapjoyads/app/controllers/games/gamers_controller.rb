@@ -135,8 +135,4 @@ class Games::GamersController < GamesController
       }
     end
   end
-
-  def render_json_error(errors, status = 403)
-    render(:json => { :success => false, :error => errors }, :status => status)
-  end
 end
