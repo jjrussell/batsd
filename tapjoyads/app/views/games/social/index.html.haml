@@ -33,7 +33,7 @@
               = has_fb ? t("text.games.connected_to_twitter") : "&nbsp;"
               .right{:class => has_tw ? "checkmark" : "plussign"}
                 &nbsp;
-        - form_for([ :games, @current_gamer ], :url => dissociate_account_games_gamer_gamer_profile_path(:account_type => Invitation::FACEBOOK), :html => { :method => "put" }) do |f|
+        - form_for([ :games, @current_gamer ], :url => dissociate_account_games_gamer_gamer_profile_path(:account_type => Invitation::FACEBOOK), :html => { :class => "logout-of-facebook", :method => "put" }) do |f|
           %li.list-button.soft-gray-gradient
             - link_to "#", "data-fb-url" => connect_facebook_account_games_gamer_path, :class => has_fb ? "submit-button" : "login-to-facebook" do
               .ui-icon-medium.facebook
@@ -43,3 +43,5 @@
 
 - content_for :page_head do
   = fb_connect_async_js
+-content_for :included_javascripts do
+  = javascript_include_tag "marketplace/src/fb"

@@ -207,31 +207,10 @@ $(document).ready(function() {
     return false;
   });
 
-  $(".login-to-facebook").click(function () {
-    var scope = 'offline_access,publish_stream',
-      $$ = $(this),
-      FB = window.FB;
-    FB.login(function (response, scope) {
-      if (response.authResponse) {
-        FB.api('/me', function (response) {
-          window.location = $$.data("fb-url");
-        });
-      } else {
-        Tapjoy.Utils.notification({
-          message: _t('games.grant_us_access')
-        });
-      }
-    }, {scope: scope});
-  });
+
 
 /*
     doFbLogout : function(){
-      FB.getLoginStatus(function(response) {
-        if (response.authResponse) {
-          FB.logout(function(response) {
-          });
-        }
-      });
     },
     */
 
@@ -302,19 +281,19 @@ $(document).ready(function() {
       tjmViewContainer.removeClass('active');
       tjmViewMenu.addClass('hide');
       Tapjoy.Utils.removeMask();
-			console.log(li.hasClass('showRecommendations'))
+      console.log(li.hasClass('showRecommendations'))
       if(li.hasClass('showAll')){
-				$('.row').show();
-			}else if(li.hasClass('showRecommendations')){
-				$('.row').hide();
-				$('#recommendationsRow').show();
-			}else if(li.hasClass('showGames')){
+        $('.row').show();
+      }else if(li.hasClass('showRecommendations')){
+        $('.row').hide();
+        $('#recommendationsRow').show();
+      }else if(li.hasClass('showGames')){
         $('.row').hide();
         $('#gamesRow').show();
-			}else if(li.hasClass('showFavorites')){
+      }else if(li.hasClass('showFavorites')){
         $('.row').hide();
         $('#favoritesRow').show();
-			}
+      }
 
       $('.heading', tjmViewContainer).text(li.text())
     });
@@ -327,7 +306,7 @@ $(document).ready(function() {
       $('.fix', tjmViewContainer).css({
         width: tjmViewContainer.width() - 4 + 'px'
       });
-		}
+    }
   });
 
   if (Tapjoy.device.idevice) {
