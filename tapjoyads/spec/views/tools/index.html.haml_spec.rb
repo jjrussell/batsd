@@ -12,7 +12,7 @@ describe 'tools/index.html.haml' do
     it 'displays a link to gamer management' do
       response.should have_tag("a[href=?]", tools_gamers_path)
     end
-    
+
     it 'displays the link to device management' do
       response.should have_tag("a[href=?]", internal_devices_path)
     end
@@ -29,7 +29,7 @@ describe 'tools/index.html.haml' do
     it 'displays a link to gamer management' do
       response.should have_tag("a[href=?]", tools_gamers_path)
     end
-    
+
     it 'displays the link to device management' do
       response.should have_tag("a[href=?]", internal_devices_path)
     end
@@ -46,12 +46,12 @@ describe 'tools/index.html.haml' do
     it 'hides the link to gamer management' do
       response.should_not have_tag("a[href=?]", tools_gamers_path)
     end
-    
+
     it 'hides the link to device management' do
       response.should_not have_tag("a[href=?]", internal_devices_path)
     end
   end
-  
+
   context 'with a role manager user' do
     before :each do
       user = Factory :role_mgr_user
@@ -59,16 +59,16 @@ describe 'tools/index.html.haml' do
       template.stubs(:current_user).returns(user)
       render
     end
-    
+
     it 'displays the link to role management' do
       response.should have_tag("a[href=?]", tools_users_path)
     end
-    
+
     it 'hides the link to device management' do
       response.should_not have_tag("a[href=?]", internal_devices_path)
     end
   end
-  
+
   context 'with an admin user' do
     before :each do
       user = Factory :admin
@@ -76,11 +76,11 @@ describe 'tools/index.html.haml' do
       template.stubs(:current_user).returns(user)
       render
     end
-    
+
     it 'displays the link to role management' do
       response.should have_tag("a[href=?]", tools_users_path)
     end
-    
+
     it 'displays the link to device management' do
       response.should have_tag("a[href=?]", internal_devices_path)
     end
