@@ -2,9 +2,15 @@ $(document).ready(function() {
 
   var _t = window.i18n.t,
       debounce,
+<<<<<<< HEAD
       tjmSelectMenu = $('#recommendSelectMenu'),
       tjmSelectContainer = $('#recommendSelect').parent().closest('.select-container'),
       selectTrigger = $('#recommendSelect');
+=======
+			tjmSelectMenu = $('#recommendSelectMenu'),
+			tjmSelectContainer = $('#recommendSelect').parent().closest('.select-container'),
+			selectTrigger = $('#recommendSelect');
+>>>>>>> 73f13e14fb6c674a17bdab84611ef864017647ca
 
   // Login Modal
   $('#login, #login-web').bind('click', function() {
@@ -229,6 +235,7 @@ $(document).ready(function() {
     checkValid();
   });
 
+<<<<<<< HEAD
   selectTrigger.bind(Tapjoy.EventsMap.start, function(){
       var el = $(this),
             heading = $('.heading', tjmSelectContainer),
@@ -242,6 +249,63 @@ $(document).ready(function() {
          tjmSelectMenu.addClass('hide');
 
          heading.text($('li.active', tjmSelectMenu).text());
+=======
+
+  selectTrigger.bind(Tapjoy.EventsMap.start, function(){
+		var el = $(this),
+				heading = $('.heading', tjmSelectContainer),
+		    fix = $('.fix', tjmSelectContainer);
+
+	  if(tjmSelectContainer.hasClass('active')){
+      Tapjoy.Utils.removeMask();
+
+			tjmSelectContainer.removeClass('active');
+
+			tjmSelectMenu.addClass('hide');
+
+			heading.text($('li.active', tjmSelectMenu).text());
+
+		}else{
+			Tapjoy.Utils.mask();
+
+      tjmSelectContainer.addClass('active');
+			tjmSelectMenu.removeClass('hide');
+
+			heading.text('Choose a Section');
+
+			tjmSelectMenu.css('top', tjmSelectContainer.offset().top + (tjmSelectContainer.outerHeight(true) - 4) + 'px');
+
+			fix.css({
+				width: tjmSelectContainer.width() - 4 + 'px'
+			});
+		}
+	});
+
+	$('li', tjmSelectMenu).each(function(){
+		var li = $(this);
+
+		li.bind('click', function(){
+			$('li', tjmSelectMenu).removeClass('active');
+			li.addClass('active');
+      tjmSelectContainer.removeClass('active');
+			tjmSelectMenu.addClass('hide');
+      Tapjoy.Utils.removeMask();
+
+      $('.heading', tjmSelectContainer).text(li.text())
+		});
+	});
+
+	$(window).bind('resize orientationchange', function(){
+		if(tjmSelectContainer.length != 0 && window.innerWidth < 800){
+	    tjmSelectMenu.css('top', tjmSelectContainer.offset().top + (tjmSelectContainer.outerHeight(true) - 4) + 'px');
+
+	    $('.fix', tjmSelectContainer).css({
+	      width: tjmSelectContainer.width() - 4 + 'px'
+	    });
+		}
+	})
+	/*
+>>>>>>> 73f13e14fb6c674a17bdab84611ef864017647ca
 
       }else{
          Tapjoy.Utils.mask();

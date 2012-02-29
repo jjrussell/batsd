@@ -142,15 +142,25 @@ $mobile-scaledown-multiplier: 2;
   background: -o-linear-gradient($type,  $p0 0%, $p25 25%, $p75 75%, $p100 100%); /* Opera 11.10+ */
   background: -ms-linear-gradient($type,  $p0 0%, $p25 25%, $p75 75%, $p100 100%); /* IE10+ */
   background: linear-gradient($type,  $p0 0%, $p25 25%, $p75 75%, $p100 100%); /* W3C */
+<<<<<<< HEAD
+=======
+
+>>>>>>> 73f13e14fb6c674a17bdab84611ef864017647ca
   @if $type == "top" {
     background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,$p0), color-stop(25%,$p25), color-stop(75%,$p75), color-stop(100%,$p100)); /* Chrome,Safari4+ */
     filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#{$p0}', endColorstr='#{$p100}',GradientType=0 ); /* IE6-9 */
   } @else {
     background: -webkit-gradient(linear, left bottom, left top, color-stop(0%,$p0), color-stop(25%,$p25), color-stop(75%,$p75), color-stop(100%,$p100)); /* Chrome,Safari4+ */
     filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#{$p100}', endColorstr='#{$p0}',GradientType=0 ); /* IE6-9 */
+<<<<<<< HEAD
   }
 }
 
+=======
+  }
+}
+
+>>>>>>> 73f13e14fb6c674a17bdab84611ef864017647ca
 @mixin radial-gradient($p0, $p75, $p100) {
   background: $p0; /* Old browsers */
   background: -moz-radial-gradient(center, ellipse cover,  $p0 0%, $p75 75%, $p100 100%); /* FF3.6+ */

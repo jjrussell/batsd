@@ -245,7 +245,10 @@ en:
       developers_title: Developers
       earn: "Earn %{currency}"
       earn_title: "Complete any of the offers below to earn %{currency} for %{app_name}"
+<<<<<<< HEAD
       email_notification: Email Notifications
+=======
+>>>>>>> 73f13e14fb6c674a17bdab84611ef864017647ca
       edit: edit
       enable_javascript: "Please go into your browser settings and enable JavaScript to continue using Tapjoy."
       enter_birthdate: "Please enter your birthdate"
