@@ -22,7 +22,7 @@ class Games::AppReviewsController < GamesController
     @app_review = AppReview.new(params[:app_review])
     @app_review.author = current_gamer
     @app_review.author_type = 'Gamer'
-    @app_id = AppMetadataMapping.find_by_app_metadata_id(@app_review.app_metadata_id).app_id
+    @app_id = @app_review.app_metadata.apps.first
 
     if @app_review.save
       flash[:notice] = t('text.games.review_created')
