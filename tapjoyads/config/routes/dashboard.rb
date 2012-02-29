@@ -31,6 +31,7 @@ ActionController::Routing::Routes.draw do |map|
     app.resources :virtual_goods, :as => 'virtual-goods', :only => [ :show, :update, :new, :create, :index ],
       :collection => { :reorder => :post }, :controller => 'apps/virtual_goods'
     app.resources :action_offers, :only => [ :new, :create, :edit, :update, :index ], :member => { :toggle => :post, :preview => :get }, :collection => { :TJCPPA => :get, :TapjoyPPA => :get }, :controller => 'apps/action_offers'
+    app.resources :reengagement_offers, :only => [ :new, :create, :edit, :update, :index ], :member => { :toggle => :post }, :controller => 'apps/reengagement_offers'
   end
   map.with_options :controller => :offer_creatives, :path_prefix => 'offer_creatives/:id', :name_prefix => 'offer_creatives_' do |offer|
     offer.preview '', :action => :show, :conditions => { :method => :get }

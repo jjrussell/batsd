@@ -105,6 +105,7 @@ class Device < SimpledbShardedResource
   end
 
   def set_last_run_time(app_id)
+    retry_save_on_fail = true if @parsed_apps[app_id].nil?
     @parsed_apps[app_id] = "%.5f" % Time.zone.now.to_f
     self.apps = @parsed_apps
   end

@@ -82,6 +82,7 @@ class App < ActiveRecord::Base
     :through => :app_metadata_mappings,
     :source => :app_metadata,
     :order => "created_at"
+  has_many :reengagement_offers
 
   belongs_to :partner
 
@@ -161,6 +162,30 @@ class App < ActiveRecord::Base
     else
       "us"
     end
+  end
+
+  def build_reengagement_offer(options = {})
+    default_options = {
+      :partner => partner,
+      :day_number => reengagement_campaign.length,
+    }
+    reengagement_offers.build(options.merge(default_options))
+  end
+
+  def reengagement_campaign
+    reengagement_offers.visible.order_by_day
+  end
+
+  def enable_reengagement_campaign!
+    update_reengagements_with_enable_or_disable(true)
+  end
+
+  def disable_reengagement_campaign!
+    update_reengagements_with_enable_or_disable(false)
+  end
+
+  def reengagement_campaign_from_cache
+    ReengagementOffer.find_all_in_cache_by_app_id(id)
   end
 
   ##
@@ -388,6 +413,14 @@ class App < ActiveRecord::Base
   end
 
   private
+
+  def update_reengagements_with_enable_or_disable(enable)
+    return if reengagement_campaign.empty?
+    self.reengagement_campaign_enabled = enable
+    self.save!
+    reengagement_campaign.map(&:update_offers)
+  end
+
 
   def generate_secret_key
     return if secret_key.present?
