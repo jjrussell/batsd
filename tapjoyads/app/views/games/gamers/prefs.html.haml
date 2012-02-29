@@ -1,19 +1,17 @@
 #prefs.current
-  #edit_preferences.profile
-    .content
-      .content-box
-        .interior
-          - form_for([ :games, :gamer, @gamer_profile ], :url => update_prefs_games_gamer_gamer_profile_path, :html => { :method => "put" }) do |f|
-            .field
-              = f.check_box :allow_marketing_emails
-              = f.label :allow_marketing_emails, t('text.games.allow_marketing_emails')
-            .field
-              = f.submit t('text.shared.save'), :class => 'button'
-  .content_wrapper
-    .content
-      #account_options.content_box.clearfix
+  .content
+    %h1.museo
+      = t('text.games.email_notification')
+    .content-box
+      - form_for([ :games, :gamer, @gamer_profile ], :url => update_prefs_games_gamer_gamer_profile_path, :html => { :method => "put" }) do |f|
+        .field
+          = f.check_box :allow_marketing_emails
+          = f.label :allow_marketing_emails, t('text.games.allow_marketing_emails')
+        .field
+          .button-group
+            = button_to_function t('text.shared.cancel'), 'history.go(-1)', :class => 'button'
+            = f.submit t('text.shared.save'), :class => 'button'
+    .content-box
+      #account_options.content-box.clearfix
         - link_to confirm_delete_games_gamer_path do
-          .slider.clearfix
-            .profile_arrow.right
-            .field
-              .label= t('text.games.delete_my_account')
+          .label= t('text.games.delete_my_account')

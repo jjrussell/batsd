@@ -44,7 +44,7 @@ li {
   padding: 0;
 }
 
-.elip {
+.elip, .ellipsis {
   white-space: nowrap;
   text-overflow: ellipsis;
   overflow: hidden;
@@ -105,6 +105,20 @@ h1.museo {
 
 p {
   padding: 6px 24px;
+}
+
+#flash_notice {
+  padding: 12px 0;
+  text-align: center;
+}
+
+#help {
+  a {
+    color: #454545;
+  }
+  .list-button {
+    display: block;
+  }
 }
 
 #main {
@@ -728,7 +742,7 @@ input.ui-joy-button, input.button {
   @extend .clearfix;
   padding: 0;
 
-  .ui-joy-button {
+  .ui-joy-button, .button {
     @extend .border-box;
     width: 49%;
     float: left;
@@ -758,7 +772,7 @@ input.ui-joy-button, input.button {
   }
 }
 
-.orange-action.disabled, .grey-action.disabled {
+.orange-action.disabled, .grey-action.disabled, .button.disabled  {
   @include gradient-top(#d3d3d3,#c9c9c9, #bdbdbd, #b7b7b7);
   box-shadow: 0 1px 0 #e9e9e9 inset;
   border: 1px solid #a5a5a5;
@@ -766,7 +780,7 @@ input.ui-joy-button, input.button {
   border-bottom: 1px solid #9b9b9b;
 }
 
-.grey-action.active {
+.grey-action.active, .button.active {
   @extend .soft-gray-gradient;
   box-shadow: 0 1px 0 #c7c9cc inset;
   border: 1px solid #d5d5d5;
@@ -860,7 +874,7 @@ div.ui-joy-button.facebook-btn {
 }
 
 div.ui-joy-button.support-button {
-  padding: 12px 24px;
+  padding: 6px 8px 7px 8px;
   margin: 10px auto;
   width: 200px;
 }
@@ -897,7 +911,11 @@ div.ui-joy-button.support-button {
   padding: 10px;
   font-size: 1.2em;
   color: inherit;
-  overflow: auto;  
+<<<<<<< HEAD
+  overflow: auto;
+=======
+  overflow: auto;
+>>>>>>> 73f13e14fb6c674a17bdab84611ef864017647ca
 }
 
 .list-button-container .list-button:first-child {
@@ -1013,7 +1031,11 @@ div.ui-joy-button.support-button {
   padding: 5px 0 10px 0;
   overflow: auto;
   box-shadow: 0 -3px 3px rgba(0,0,0, .07);
-    
+<<<<<<< HEAD
+
+=======
+
+>>>>>>> 73f13e14fb6c674a17bdab84611ef864017647ca
   h1.museo {
     padding: 20px 0 10px 20px;
   }
@@ -1029,7 +1051,26 @@ div.ui-joy-button.support-button {
 }
 
 #recommedations {
-  height: 160px;
+  height: 200px;
+
+  .carousel {
+    opacity: 0;
+    height: 0;
+    overflow: hidden;
+    visibility: hidden;
+    @include animate(height, .5s, linear, .5s);
+    @include animate(opacity, .5s, linear, .5s);
+  }
+}
+
+#recommedations.complete {
+  display: block;
+
+  .carousel {
+    opacity: 1;
+    height: 200px;
+    visibility: visible;
+  }
 }
 
 #recommendationsHeader,
@@ -1042,14 +1083,14 @@ div.ui-joy-button.support-button {
   padding: 10px;
   overflow: hidden;
   position: relative;
-  
+
   img.banner-img {
     border-bottom: 1px solid #262a2f;
     border-top: 1px solid rgba(255,255,255, .5);
     border-right: 1px solid #41484f;
     box-shadow: 0 1px 1px rgba(0,0,0, .2);
   }
-  
+
   .more {
     position: absolute;
     right: 20px;
@@ -1076,20 +1117,440 @@ div.ui-joy-button.support-button {
         margin: 3px 5px 1px 6px;
       }
     }
-    
+
     .circle.active {
       box-shadow: 0 1px 2px #de2627;
       background: #b41317;
-      box-shadow: 0 1px 2px rgba(255,255,255, .9), inset 0 1px 2px rgba(0,0,0, .8); 
+      box-shadow: 0 1px 2px rgba(255,255,255, .9), inset 0 1px 2px rgba(0,0,0, .8);
       border-bottom: 1px solid transparent;
-      
+
       img {
         margin: 4px 5px 0 6px;
       }
     }
-    
+
   }
-  
+
+}
+
+#recommendationsHeader,
+#recommendationsHeader .banner {
+  display: none;
+}
+
+#recommendationsHeader .banner {
+  background: #626a73 url(#{$image_path}/swirl_tile.png) repeat 0 0;
+  padding: 10px;
+  overflow: hidden;
+  position: relative;
+
+  img.banner-img {
+    border-bottom: 1px solid #262a2f;
+    border-top: 1px solid rgba(255,255,255, .5);
+    border-right: 1px solid #41484f;
+    box-shadow: 0 1px 1px rgba(0,0,0, .2);
+  }
+
+  .more {
+    position: absolute;
+    right: 20px;
+    top: 35%;
+
+    .text {
+      color: #fff;
+      text-shadow: 0 1px 0 rgba(0,0,0, .5);
+      font-size: 2em;
+      padding-top: 3px;
+    }
+
+    .circle {
+      background: -moz-linear-gradient(top, #e82c2c 0%, #de2627 25%, #ce1f21 50%, #c31a1d 75%, #b41317 100%);
+      background: -webkit-linear-gradient(top, #e82c2c 0%, #de2627 25%, #ce1f21 50%, #c31a1d 75%, #b41317 100%);
+      background:  -webkit-gradient(linear, left top, left bottom, color-stop(0%,#e82c2c), color-stop(25%,#de2627), color-stop(50%,#ce1f21), color-stop(75%,#c31a1d), color-stop(100%,#b41317));
+      border-bottom: 1px solid #720101;
+      box-shadow: 0 1px 2px rgba(0,0,0, .5), inset 0 -2px 0 rgba(221, 52, 56, 1);
+      border-radius: 90px;
+
+      img {
+        width: 22px;
+        height: 24x;
+        margin: 3px 5px 1px 6px;
+      }
+    }
+
+    .circle.active {
+      box-shadow: 0 1px 2px #de2627;
+      background: #b41317;
+      box-shadow: 0 1px 2px rgba(255,255,255, .9), inset 0 1px 2px rgba(0,0,0, .8);
+      border-bottom: 1px solid transparent;
+
+      img {
+        margin: 4px 5px 0 6px;
+      }
+    }
+
+  }
+
+}
+
+#recommendationsHeader,
+#recommendationsHeader .banner {
+  display: none;
+}
+
+#recommendationsHeader .banner {
+  background: #626a73 url(#{$image_path}/swirl_tile.png) repeat 0 0;
+  padding: 10px;
+  overflow: hidden;
+  position: relative;
+
+  img.banner-img {
+    border-bottom: 1px solid #262a2f;
+    border-top: 1px solid rgba(255,255,255, .5);
+    border-right: 1px solid #41484f;
+    box-shadow: 0 1px 1px rgba(0,0,0, .2);
+  }
+
+  .more {
+    position: absolute;
+    right: 20px;
+    top: 35%;
+
+    .text {
+      color: #fff;
+      text-shadow: 0 1px 0 rgba(0,0,0, .5);
+      font-size: 2em;
+      padding-top: 3px;
+    }
+
+    .circle {
+      background: -moz-linear-gradient(top, #e82c2c 0%, #de2627 25%, #ce1f21 50%, #c31a1d 75%, #b41317 100%);
+      background: -webkit-linear-gradient(top, #e82c2c 0%, #de2627 25%, #ce1f21 50%, #c31a1d 75%, #b41317 100%);
+      background:  -webkit-gradient(linear, left top, left bottom, color-stop(0%,#e82c2c), color-stop(25%,#de2627), color-stop(50%,#ce1f21), color-stop(75%,#c31a1d), color-stop(100%,#b41317));
+      border-bottom: 1px solid #720101;
+      box-shadow: 0 1px 2px rgba(0,0,0, .5), inset 0 -2px 0 rgba(221, 52, 56, 1);
+      border-radius: 90px;
+
+      img {
+        width: 22px;
+        height: 24x;
+        margin: 3px 5px 1px 6px;
+      }
+    }
+
+    .circle.active {
+      box-shadow: 0 1px 2px #de2627;
+      background: #b41317;
+      box-shadow: 0 1px 2px rgba(255,255,255, .9), inset 0 1px 2px rgba(0,0,0, .8);
+      border-bottom: 1px solid transparent;
+
+      img {
+        margin: 4px 5px 0 6px;
+      }
+    }
+
+  }
+
+}
+
+#recommendationsHeader,
+#recommendationsHeader .banner {
+  display: none;
+}
+
+#recommendationsHeader .banner {
+  background: #626a73 url(#{$image_path}/swirl_tile.png) repeat 0 0;
+  padding: 10px;
+  overflow: hidden;
+  position: relative;
+
+  img.banner-img {
+    border-bottom: 1px solid #262a2f;
+    border-top: 1px solid rgba(255,255,255, .5);
+    border-right: 1px solid #41484f;
+    box-shadow: 0 1px 1px rgba(0,0,0, .2);
+  }
+
+  .more {
+    position: absolute;
+    right: 20px;
+    top: 35%;
+
+    .text {
+      color: #fff;
+      text-shadow: 0 1px 0 rgba(0,0,0, .5);
+      font-size: 2em;
+      padding-top: 3px;
+    }
+
+    .circle {
+      background: -moz-linear-gradient(top, #e82c2c 0%, #de2627 25%, #ce1f21 50%, #c31a1d 75%, #b41317 100%);
+      background: -webkit-linear-gradient(top, #e82c2c 0%, #de2627 25%, #ce1f21 50%, #c31a1d 75%, #b41317 100%);
+      background:  -webkit-gradient(linear, left top, left bottom, color-stop(0%,#e82c2c), color-stop(25%,#de2627), color-stop(50%,#ce1f21), color-stop(75%,#c31a1d), color-stop(100%,#b41317));
+      border-bottom: 1px solid #720101;
+      box-shadow: 0 1px 2px rgba(0,0,0, .5), inset 0 -2px 0 rgba(221, 52, 56, 1);
+      border-radius: 90px;
+
+      img {
+        width: 22px;
+        height: 24x;
+        margin: 3px 5px 1px 6px;
+      }
+    }
+
+    .circle.active {
+      box-shadow: 0 1px 2px #de2627;
+      background: #b41317;
+      box-shadow: 0 1px 2px rgba(255,255,255, .9), inset 0 1px 2px rgba(0,0,0, .8);
+      border-bottom: 1px solid transparent;
+
+      img {
+        margin: 4px 5px 0 6px;
+      }
+    }
+
+  }
+
+}
+
+#recommendationsHeader,
+#recommendationsHeader .banner {
+  display: none;
+}
+
+#recommendationsHeader .banner {
+  background: #626a73 url(#{$image_path}/swirl_tile.png) repeat 0 0;
+  padding: 10px;
+  overflow: hidden;
+  position: relative;
+
+  img.banner-img {
+    border-bottom: 1px solid #262a2f;
+    border-top: 1px solid rgba(255,255,255, .5);
+    border-right: 1px solid #41484f;
+    box-shadow: 0 1px 1px rgba(0,0,0, .2);
+  }
+
+  .more {
+    position: absolute;
+    right: 20px;
+    top: 35%;
+
+    .text {
+      color: #fff;
+      text-shadow: 0 1px 0 rgba(0,0,0, .5);
+      font-size: 2em;
+      padding-top: 3px;
+    }
+
+    .circle {
+      background: -moz-linear-gradient(top, #e82c2c 0%, #de2627 25%, #ce1f21 50%, #c31a1d 75%, #b41317 100%);
+      background: -webkit-linear-gradient(top, #e82c2c 0%, #de2627 25%, #ce1f21 50%, #c31a1d 75%, #b41317 100%);
+      background:  -webkit-gradient(linear, left top, left bottom, color-stop(0%,#e82c2c), color-stop(25%,#de2627), color-stop(50%,#ce1f21), color-stop(75%,#c31a1d), color-stop(100%,#b41317));
+      border-bottom: 1px solid #720101;
+      box-shadow: 0 1px 2px rgba(0,0,0, .5), inset 0 -2px 0 rgba(221, 52, 56, 1);
+      border-radius: 90px;
+
+      img {
+        width: 22px;
+        height: 24x;
+        margin: 3px 5px 1px 6px;
+      }
+    }
+
+    .circle.active {
+      box-shadow: 0 1px 2px #de2627;
+      background: #b41317;
+      box-shadow: 0 1px 2px rgba(255,255,255, .9), inset 0 1px 2px rgba(0,0,0, .8);
+      border-bottom: 1px solid transparent;
+
+      img {
+        margin: 4px 5px 0 6px;
+      }
+    }
+
+  }
+
+}
+
+#recommendationsHeader,
+#recommendationsHeader .banner {
+  display: none;
+}
+
+#recommendationsHeader .banner {
+  background: #626a73 url(#{$image_path}/swirl_tile.png) repeat 0 0;
+  padding: 10px;
+  overflow: hidden;
+  position: relative;
+
+  img.banner-img {
+    border-bottom: 1px solid #262a2f;
+    border-top: 1px solid rgba(255,255,255, .5);
+    border-right: 1px solid #41484f;
+    box-shadow: 0 1px 1px rgba(0,0,0, .2);
+  }
+
+  .more {
+    position: absolute;
+    right: 20px;
+    top: 35%;
+
+    .text {
+      color: #fff;
+      text-shadow: 0 1px 0 rgba(0,0,0, .5);
+      font-size: 2em;
+      padding-top: 3px;
+    }
+
+    .circle {
+      background: -moz-linear-gradient(top, #e82c2c 0%, #de2627 25%, #ce1f21 50%, #c31a1d 75%, #b41317 100%);
+      background: -webkit-linear-gradient(top, #e82c2c 0%, #de2627 25%, #ce1f21 50%, #c31a1d 75%, #b41317 100%);
+      background:  -webkit-gradient(linear, left top, left bottom, color-stop(0%,#e82c2c), color-stop(25%,#de2627), color-stop(50%,#ce1f21), color-stop(75%,#c31a1d), color-stop(100%,#b41317));
+      border-bottom: 1px solid #720101;
+      box-shadow: 0 1px 2px rgba(0,0,0, .5), inset 0 -2px 0 rgba(221, 52, 56, 1);
+      border-radius: 90px;
+
+      img {
+        width: 22px;
+        height: 24x;
+        margin: 3px 5px 1px 6px;
+      }
+    }
+
+    .circle.active {
+      box-shadow: 0 1px 2px #de2627;
+      background: #b41317;
+      box-shadow: 0 1px 2px rgba(255,255,255, .9), inset 0 1px 2px rgba(0,0,0, .8);
+      border-bottom: 1px solid transparent;
+
+      img {
+        margin: 4px 5px 0 6px;
+      }
+    }
+
+  }
+
+}
+
+#recommendationsHeader,
+#recommendationsHeader .banner {
+  display: none;
+}
+
+#recommendationsHeader .banner {
+  background: #626a73 url(#{$image_path}/swirl_tile.png) repeat 0 0;
+  padding: 10px;
+  overflow: hidden;
+  position: relative;
+
+  img.banner-img {
+    border-bottom: 1px solid #262a2f;
+    border-top: 1px solid rgba(255,255,255, .5);
+    border-right: 1px solid #41484f;
+    box-shadow: 0 1px 1px rgba(0,0,0, .2);
+  }
+
+  .more {
+    position: absolute;
+    right: 20px;
+    top: 35%;
+
+    .text {
+      color: #fff;
+      text-shadow: 0 1px 0 rgba(0,0,0, .5);
+      font-size: 2em;
+      padding-top: 3px;
+    }
+
+    .circle {
+      background: -moz-linear-gradient(top, #e82c2c 0%, #de2627 25%, #ce1f21 50%, #c31a1d 75%, #b41317 100%);
+      background: -webkit-linear-gradient(top, #e82c2c 0%, #de2627 25%, #ce1f21 50%, #c31a1d 75%, #b41317 100%);
+      background:  -webkit-gradient(linear, left top, left bottom, color-stop(0%,#e82c2c), color-stop(25%,#de2627), color-stop(50%,#ce1f21), color-stop(75%,#c31a1d), color-stop(100%,#b41317));
+      border-bottom: 1px solid #720101;
+      box-shadow: 0 1px 2px rgba(0,0,0, .5), inset 0 -2px 0 rgba(221, 52, 56, 1);
+      border-radius: 90px;
+
+      img {
+        width: 22px;
+        height: 24x;
+        margin: 3px 5px 1px 6px;
+      }
+    }
+
+    .circle.active {
+      box-shadow: 0 1px 2px #de2627;
+      background: #b41317;
+      box-shadow: 0 1px 2px rgba(255,255,255, .9), inset 0 1px 2px rgba(0,0,0, .8);
+      border-bottom: 1px solid transparent;
+
+      img {
+        margin: 4px 5px 0 6px;
+      }
+    }
+
+  }
+
+}
+
+#recommendationsHeader,
+#recommendationsHeader .banner {
+  display: none;
+}
+
+#recommendationsHeader .banner {
+  background: #626a73 url(#{$image_path}/swirl_tile.png) repeat 0 0;
+  padding: 10px;
+  overflow: hidden;
+  position: relative;
+
+  img.banner-img {
+    border-bottom: 1px solid #262a2f;
+    border-top: 1px solid rgba(255,255,255, .5);
+    border-right: 1px solid #41484f;
+    box-shadow: 0 1px 1px rgba(0,0,0, .2);
+  }
+
+  .more {
+    position: absolute;
+    right: 20px;
+    top: 35%;
+
+    .text {
+      color: #fff;
+      text-shadow: 0 1px 0 rgba(0,0,0, .5);
+      font-size: 2em;
+      padding-top: 3px;
+    }
+
+    .circle {
+      background: -moz-linear-gradient(top, #e82c2c 0%, #de2627 25%, #ce1f21 50%, #c31a1d 75%, #b41317 100%);
+      background: -webkit-linear-gradient(top, #e82c2c 0%, #de2627 25%, #ce1f21 50%, #c31a1d 75%, #b41317 100%);
+      background:  -webkit-gradient(linear, left top, left bottom, color-stop(0%,#e82c2c), color-stop(25%,#de2627), color-stop(50%,#ce1f21), color-stop(75%,#c31a1d), color-stop(100%,#b41317));
+      border-bottom: 1px solid #720101;
+      box-shadow: 0 1px 2px rgba(0,0,0, .5), inset 0 -2px 0 rgba(221, 52, 56, 1);
+      border-radius: 90px;
+
+      img {
+        width: 22px;
+        height: 24x;
+        margin: 3px 5px 1px 6px;
+      }
+    }
+
+    .circle.active {
+      box-shadow: 0 1px 2px #de2627;
+      background: #b41317;
+      box-shadow: 0 1px 2px rgba(255,255,255, .9), inset 0 1px 2px rgba(0,0,0, .8);
+      border-bottom: 1px solid transparent;
+
+      img {
+        margin: 4px 5px 0 6px;
+      }
+    }
+
+  }
+
 }
 
 .greenblock {
@@ -1235,7 +1696,11 @@ div.app {
   .title {
     font-size: 1.3em;
     text-shadow: 0 1px 0 #fff;
-    
+<<<<<<< HEAD
+
+=======
+
+>>>>>>> 73f13e14fb6c674a17bdab84611ef864017647ca
     .aside {
       font-size: .7em;
       font-style: italic;
@@ -1255,7 +1720,11 @@ div.app {
     padding: 10px;
     font: 500 1.35em "Museo Slab";
   }
-  
+<<<<<<< HEAD
+
+=======
+
+>>>>>>> 73f13e14fb6c674a17bdab84611ef864017647ca
   .dropdown {
     img {
       cursor: pointer;
@@ -1289,7 +1758,10 @@ div.app {
   .dropdown {
     @include linear-gradient(top, #8a949e, #6e7a87);
     border: 1px solid #555c64;
-    
+<<<<<<< HEAD
+=======
+
+>>>>>>> 73f13e14fb6c674a17bdab84611ef864017647ca
     box-shadow: inset 0 1px 0 #b2bdc7, 0 1px 0px #86929e;
     border-radius: 4px;
     margin: 4px;
@@ -1392,7 +1864,11 @@ div.app {
   border-top-left-radius: 6px;
   border-top-right-radius: 6px;
   box-shadow: inset 0 1px 0 #242424, inset 1px 0 0 #242424, inset -1px 0 0 #242424, inset 0 2px 0 #555, inset 2px 0 0 #555, inset -2px 0 0 #555, inset 0 1px 0 #555;
-  
+<<<<<<< HEAD
+
+=======
+
+>>>>>>> 73f13e14fb6c674a17bdab84611ef864017647ca
   .heading {
     color: #c2c2c2;
     text-shadow: 0 1px 0 rgba(0,0,0, .8);
@@ -1434,7 +1910,11 @@ div.app {
       padding: 15px 10px;
       font: 500 1.35em "Museo Slab";
       color: #fff;
-      text-shadow: 0 1px 0 rgba(0,0,0, .5); 
+<<<<<<< HEAD
+      text-shadow: 0 1px 0 rgba(0,0,0, .5);
+=======
+      text-shadow: 0 1px 0 rgba(0,0,0, .5);
+>>>>>>> 73f13e14fb6c674a17bdab84611ef864017647ca
       border-bottom: 1px solid #242424;
       border-top: 1px solid #555;
       margin-left: 1px;
