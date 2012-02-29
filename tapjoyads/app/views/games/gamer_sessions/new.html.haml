@@ -1,4 +1,3 @@
-
 - if error_message_on(@gamer, :email).present? || error_message_on(@gamer, :password).present? || error_message_on(@gamer, :terms_of_service).present?
   - @signup_form_class_name = "show"
 
@@ -57,7 +56,6 @@
         = error_message_on @gamer, :password
         = error_message_on @gamer, :terms_of_service
       .register_progess
-
 
 - if error_message_on(@gamer_session, :password).present? || error_message_on(@gamer_session, :email).present?
   - @login_form_class_name = "show"
