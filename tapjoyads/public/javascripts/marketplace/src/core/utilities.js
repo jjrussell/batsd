@@ -12,18 +12,18 @@
           window.console.log(result +' :: '+ message);
         }
       },
-			
+
 			mask: function(){
 			  var wrap = $(document.createElement('div'));
-				
+
 				wrap.attr('id', 'ui-simple-mask')
 				.css({
           height: $(document).outerHeight() + 'px'
 				})
 				.appendTo(document.body);
-					
-			  this.mask.element = wrap;		
-				
+
+			  this.mask.element = wrap;
+
 			},
 			removeMask: function(){
 				if(this.mask.element){
@@ -96,10 +96,6 @@
         remove: function(k) {
           localStorage.removeItem(k);
         },
-
-        delete: function(k) {
-          this.remove(k);
-        },
         reset: function() {
           localStorage.clear();
         }
@@ -134,9 +130,6 @@
         },
         remove: function(k) {
           this.setCookie(k, "", -1);
-        },
-        delete: function(k) {
-          this.remove(k);
         }
       }
     }

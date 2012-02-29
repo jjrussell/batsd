@@ -4,13 +4,13 @@ $(document).ready(function(){
       started = $('#getting-started'),
       gradient = $('.gradient-backdrop'),
       group = $('#benefits, #footer');
-      
+
   $('#favorites').Carousel({
     hasPager: true,
     pagerContainer: '#paging'
   });
-  
-  
+
+
   $('#arrow').bind('click', function(){
     if(window.innerHeight < 1000 && window.innerWidth > 1024){
       $('#getting-started').css('position', 'relative');
@@ -22,7 +22,7 @@ $(document).ready(function(){
 
 
   $(window).resize(function(){
-    
+
     if(pager.is(':visible'))
       pager.css('left', (this.innerWidth - pager.outerWidth(true)) / 2)
 
@@ -38,6 +38,6 @@ $(document).ready(function(){
       started.css('position', 'relative');
     }
   });
-  
+
   $(window).trigger('resize');
-}); 
+});

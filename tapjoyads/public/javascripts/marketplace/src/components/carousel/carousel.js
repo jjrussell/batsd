@@ -22,7 +22,7 @@
     var $t = this;
 
     $t.config = config;
-    console.log($t.config);
+
     $t.container = $t.config.container = $(container);
 
     $t.create();
@@ -41,7 +41,7 @@
     if($t.length < $t.innerWidth){
       $('.back, .forward').hide();
     }
-		
+
     $.data(container, 'carousel', $t);
     if ($t.config.cssClass)
       $t.container.addClass($t.config.cssClass);
@@ -75,13 +75,13 @@
 
     setupSlideDeck: function(){
       this.length = this.slides.length * this.slides.outerWidth(true);
-		  this.dots = Math.round(this.length / this.innerWidth);
+      this.dots = Math.round(this.length / this.innerWidth);
     },
 
     createJumper: function(){
       var $t = this,
           wrap = $(document.createElement('div')),
-					length = Math.abs($t.length / $t.innerWidth);
+          length = Math.abs($t.length / $t.innerWidth);
 
       for(var i = 0, k = length; i < k; i++){
         var div = $(document.createElement('div'));
@@ -135,7 +135,7 @@
       $('.back, .forward', $t.container).css('top', ($t.innerHeight - left.height()) / 2)
 
       $('.back', $t.container).bind('click', function(){
-				var position = 0;
+        var position = 0;
 
         if($t.current > 0){
           $t.current--
@@ -150,10 +150,10 @@
       });
 
       $('.forward', $t.container).bind('click', function(){
-				$t.current++
+        $t.current++
 
         var screenWidth = $t.container.outerWidth(true) * $t.current,
-				    position = 0;
+            position = 0;
 
         if(screenWidth > $t.length || $t.dots === $t.current){
           $t.current--;

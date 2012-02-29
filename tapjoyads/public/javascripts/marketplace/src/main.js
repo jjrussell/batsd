@@ -5,7 +5,7 @@ $(document).ready(function() {
       tjmSelectMenu = $('#recommendSelectMenu'),
       tjmSelectContainer = $('#recommendSelect').parent().closest('.select-container'),
       selectTrigger = $('#recommendSelect');
-			
+
   // Login Modal
   $('#login, #login-web').bind('click', function() {
     if ($('#login-form').hasClass('show')) {
@@ -17,9 +17,23 @@ $(document).ready(function() {
       });
     }
   });
+  $('#signup, #signup-btn').bind('click', function() {
+    if ($('#signup-form').hasClass('show')) {
+      $('#signup-form').removeClass('show');
+    }
+    else {
+      $('#signup-form').addClass('show').css({
+        'height' : $(document).height()
+      });
+    }
+  });
 
   $('#login-form .cancel-btn').bind('click', function() {
     $('#login-form').removeClass('show');
+  });
+
+  $('#signup-form .cancel-btn').bind('click', function() {
+    $('#signup-form').removeClass('show');
   });
 
   // Login Validation
@@ -237,51 +251,50 @@ $(document).ready(function() {
      if(tjmSelectContainer.hasClass('active')){
       Tapjoy.Utils.removeMask();
 
-	     tjmSelectContainer.removeClass('active');
-	
-	     tjmSelectMenu.addClass('hide');
-	
-	     heading.text($('li.active', tjmSelectMenu).text());
+       tjmSelectContainer.removeClass('active');
+       tjmSelectMenu.addClass('hide');
 
-		}else{
-			Tapjoy.Utils.mask();
+         heading.text($('li.active', tjmSelectMenu).text());
+
+    }else{
+      Tapjoy.Utils.mask();
 
       tjmSelectContainer.addClass('active');
-			tjmSelectMenu.removeClass('hide');
+      tjmSelectMenu.removeClass('hide');
 
-			heading.text('Choose a Section');
+      heading.text('Choose a Section');
 
-			tjmSelectMenu.css('top', tjmSelectContainer.offset().top + (tjmSelectContainer.outerHeight(true) - 4) + 'px');
+      tjmSelectMenu.css('top', tjmSelectContainer.offset().top + (tjmSelectContainer.outerHeight(true) - 4) + 'px');
 
-			fix.css({
-				width: tjmSelectContainer.width() - 4 + 'px'
-			});
-		}
-	});
+      fix.css({
+        width: tjmSelectContainer.width() - 4 + 'px'
+      });
+    }
+  });
 
-	$('li', tjmSelectMenu).each(function(){
-		var li = $(this);
+  $('li', tjmSelectMenu).each(function(){
+    var li = $(this);
 
-		li.bind('click', function(){
-			$('li', tjmSelectMenu).removeClass('active');
-			li.addClass('active');
+    li.bind('click', function(){
+      $('li', tjmSelectMenu).removeClass('active');
+      li.addClass('active');
       tjmSelectContainer.removeClass('active');
-			tjmSelectMenu.addClass('hide');
+      tjmSelectMenu.addClass('hide');
       Tapjoy.Utils.removeMask();
 
       $('.heading', tjmSelectContainer).text(li.text())
-		});
-	});
+    });
+  });
 
-	$(window).bind('resize orientationchange', function(){
-		if(tjmSelectContainer.length != 0 && window.innerWidth < 800){
-	    tjmSelectMenu.css('top', tjmSelectContainer.offset().top + (tjmSelectContainer.outerHeight(true) - 4) + 'px');
+  $(window).bind('resize orientationchange', function(){
+    if(tjmSelectContainer.length != 0 && window.innerWidth < 800){
+      tjmSelectMenu.css('top', tjmSelectContainer.offset().top + (tjmSelectContainer.outerHeight(true) - 4) + 'px');
 
-	    $('.fix', tjmSelectContainer).css({
-	      width: tjmSelectContainer.width() - 4 + 'px'
-	    });
-		}
-	});
+      $('.fix', tjmSelectContainer).css({
+        width: tjmSelectContainer.width() - 4 + 'px'
+      });
+    }
+  });
 
   /*
    Tapjoy.Utils.notification({
