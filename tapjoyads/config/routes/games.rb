@@ -28,6 +28,7 @@ ActionController::Routing::Routes.draw do |map|
     m.resource :gamer, :controller => 'games/gamers', :only => [ :create, :edit, :update, :destroy ],
       :member => { :password => :get, :prefs => :get, :social => :get, :update_password => :put, :accept_tos => :put, :confirm_delete => :get, :connect_facebook_account => :get } do |gamer|
       gamer.resource :device, :controller => 'games/gamers/devices', :only => [ :new, :create ], :member => { :finalize => :get }
+      gamer.resource :favorite_app, :controller => 'games/gamers/favorite_app', :only => [ :create, :destroy ]
       gamer.resource :gamer_profile, :controller => 'games/gamers/gamer_profiles', :only => [ :update ], :member => { :update_birthdate => :put, :update_prefs => :put, :dissociate_account => :put }
     end
     m.register 'register', :controller => 'games/gamers', :action => :new
@@ -48,5 +49,6 @@ ActionController::Routing::Routes.draw do |map|
     end
 
     map.resources :survey_results, :only => [ :new, :create ]
+    m.resources :app_reviews, :controller => 'games/app_reviews', :only => [ :index, :create, :edit, :update, :destroy]
   end
 end

@@ -3,6 +3,8 @@ class Gamer < ActiveRecord::Base
 
   has_many :gamer_devices, :dependent => :destroy
   has_many :invitations, :dependent => :destroy
+  has_many :app_reviews, :as => :author, :dependent => :destroy
+  has_many :favorite_apps, :dependent => :destroy
   has_one :gamer_profile, :dependent => :destroy
   has_one :referrer_gamer, :class_name => 'Gamer', :primary_key => :referred_by, :foreign_key => :id
 
@@ -138,6 +140,10 @@ class Gamer < ActiveRecord::Base
 
   def encrypted_referral_id(advertiser_app_id = nil)
     ObjectEncryptor.encrypt("#{id},#{advertiser_app_id}")
+  end
+
+  def review_for(app_metadata_id)
+    app_reviews.find_by_app_metadata_id(app_metadata_id)
   end
 
   private

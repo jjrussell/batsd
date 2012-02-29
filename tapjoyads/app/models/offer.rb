@@ -11,7 +11,7 @@ class Offer < ActiveRecord::Base
   ANDROID_DEVICES = %w( android )
   WINDOWS_DEVICES = %w( windows )
   ALL_DEVICES = APPLE_DEVICES + ANDROID_DEVICES + WINDOWS_DEVICES
-  ALL_OFFER_TYPES = %w( App EmailOffer GenericOffer OfferpalOffer RatingOffer ActionOffer VideoOffer SurveyOffer )
+  ALL_OFFER_TYPES = %w( App EmailOffer GenericOffer OfferpalOffer RatingOffer ActionOffer VideoOffer SurveyOffer ReengagementOffer)
   ALL_SOURCES = %w( offerwall display_ad featured tj_games )
 
   CLASSIC_OFFER_TYPE               = '0'
@@ -37,22 +37,33 @@ class Offer < ActiveRecord::Base
   DISPLAY_AD_SIZES = ['320x50', '640x100', '768x90'] # data stored as pngs
   FEATURED_AD_SIZES = ['960x640', '640x960', '480x320', '320x480'] # data stored as jpegs
   CUSTOM_AD_SIZES = DISPLAY_AD_SIZES + FEATURED_AD_SIZES
+  OFFER_LIST_EXCLUDED_COLUMNS = %w( active
+                                    allow_negative_balance
+                                    created_at
+                                    daily_budget
+                                    hidden
+                                    instructions
+                                    instructions_overridden
+                                    last_daily_stats_aggregation_time
+                                    last_stats_aggregation_time
+                                    low_balance
+                                    min_bid_override
+                                    min_conversion_rate
+                                    name_suffix
+                                    next_daily_stats_aggregation_time
+                                    next_stats_aggregation_time
+                                    overall_budget
+                                    pay_per_click
+                                    stats_aggregation_interval
+                                    tapjoy_enabled
+                                    tapjoy_sponsored
+                                    updated_at
+                                    url_overridden
+                                    user_enabled
+                                    tracking_for_id
+                                    tracking_for_type )
 
-  OFFER_LIST_REQUIRED_COLUMNS = [ 'id', 'item_id', 'item_type', 'partner_id',
-                                  'name', 'url', 'price', 'bid', 'payment',
-                                  'conversion_rate', 'show_rate', 'self_promote_only',
-                                  'device_types', 'countries',
-                                  'age_rating', 'multi_complete', 'featured',
-                                  'publisher_app_whitelist', 'direct_pay', 'reward_value',
-                                  'third_party_data', 'payment_range_low',
-                                  'payment_range_high', 'icon_id_override', 'rank_boost',
-                                  'normal_bid', 'normal_conversion_rate', 'normal_avg_revenue',
-                                  'normal_price', 'over_threshold', 'rewarded', 'reseller_id',
-                                  'cookie_tracking', 'min_os_version', 'screen_layout_sizes',
-                                  'interval', 'banner_creatives', 'dma_codes', 'regions',
-                                  'wifi_only', 'approved_sources', 'approved_banner_creatives',
-                                  'sdkless', 'carriers'
-                                ].map { |c| "#{quoted_table_name}.#{c}" }.join(', ')
+  OFFER_LIST_REQUIRED_COLUMNS = (Offer.column_names - OFFER_LIST_EXCLUDED_COLUMNS).map { |c| "#{quoted_table_name}.#{c}" }.join(', ')
 
   DIRECT_PAY_PROVIDERS = %w( boku paypal )
 
@@ -65,8 +76,6 @@ class Offer < ActiveRecord::Base
     "2 days"   => 2.days.to_i,
     "3 days"   => 3.days.to_i,
   }
-
-  PAPAYA_OFFER_COLUMNS = "#{Offer.quoted_table_name}.id, #{App.quoted_table_name}.papaya_user_count"
 
   serialize :banner_creatives, Array
   serialize :approved_banner_creatives, Array
@@ -88,6 +97,7 @@ class Offer < ActiveRecord::Base
   belongs_to :reseller
   belongs_to :app, :foreign_key => "item_id"
   belongs_to :action_offer, :foreign_key => "item_id"
+  belongs_to :tracking_for, :polymorphic => true
 
   validates_presence_of :reseller, :if => Proc.new { |offer| offer.reseller_id? }
   validates_presence_of :partner, :item, :name, :url, :rank_boost
@@ -163,6 +173,11 @@ class Offer < ActiveRecord::Base
       record.errors.add(attribute, "can only be enabled for 'App' offers") unless record.item_type == 'App'
     end
   end
+  validates_each :tapjoy_enabled do |record, attribute, value|
+    if value && record.tapjoy_enabled_changed? && record.missing_app_store_id?
+      record.errors.add(attribute, "cannot be enabled without valid store id")
+    end
+  end
 
   before_validation :update_payment
   before_validation_on_create :set_reseller_from_partner
@@ -198,10 +213,22 @@ class Offer < ActiveRecord::Base
   named_scope :app_offers, :conditions => "item_type = 'App' or item_type = 'ActionOffer'"
   named_scope :video_offers, :conditions => "item_type = 'VideoOffer'"
   named_scope :non_video_offers, :conditions => "item_type != 'VideoOffer'"
-  named_scope :papaya_app_offers, :joins => :app, :conditions => "item_type = 'App' AND #{App.quoted_table_name}.papaya_user_count > 0", :select => PAPAYA_OFFER_COLUMNS
-  named_scope :papaya_action_offers, :joins => { :action_offer => :app }, :conditions => "item_type = 'ActionOffer' AND #{App.quoted_table_name}.papaya_user_count > 0", :select => PAPAYA_OFFER_COLUMNS
   named_scope :tapjoy_sponsored_offer_ids, :conditions => "tapjoy_sponsored = true", :select => "#{Offer.quoted_table_name}.id"
   named_scope :creative_approval_needed, :conditions => 'banner_creatives != approved_banner_creatives OR (banner_creatives IS NOT NULL AND approved_banner_creatives IS NULL)'
+
+  PAPAYA_OFFER_COLUMNS = "#{Offer.quoted_table_name}.id, #{AppMetadata.quoted_table_name}.papaya_user_count"
+  #TODO: simplify these named scopes when support for multiple appstores is complete and offer includes app_metadata_id
+  named_scope :papaya_app_offers,
+    :joins => "inner join #{AppMetadataMapping.quoted_table_name} on #{Offer.quoted_table_name}.item_id = #{AppMetadataMapping.quoted_table_name}.app_id
+      inner join #{AppMetadata.quoted_table_name} on #{AppMetadataMapping.quoted_table_name}.app_metadata_id = #{AppMetadata.quoted_table_name}.id",
+    :conditions => "#{Offer.quoted_table_name}.item_type = 'App' AND #{AppMetadata.quoted_table_name}.papaya_user_count > 0",
+    :select => PAPAYA_OFFER_COLUMNS
+  named_scope :papaya_action_offers,
+    :joins => "inner join #{ActionOffer.quoted_table_name} on #{Offer.quoted_table_name}.item_id = #{ActionOffer.quoted_table_name}.id
+      inner join #{AppMetadataMapping.quoted_table_name} on #{ActionOffer.quoted_table_name}.app_id = #{AppMetadataMapping.quoted_table_name}.app_id
+      inner join #{AppMetadata.quoted_table_name} on #{AppMetadataMapping.quoted_table_name}.app_metadata_id = #{AppMetadata.quoted_table_name}.id",
+    :conditions => "#{Offer.quoted_table_name}.item_type = 'ActionOffer' AND #{AppMetadata.quoted_table_name}.papaya_user_count > 0",
+    :select => PAPAYA_OFFER_COLUMNS
 
   delegate :balance, :pending_earnings, :name, :cs_contact_email, :approved_publisher?, :rev_share, :to => :partner, :prefix => true
   memoize :partner_balance
@@ -228,14 +255,18 @@ class Offer < ActiveRecord::Base
     item_type == 'App' || item_type == 'ActionOffer'
   end
 
-  def get_countries_blacklist
+  def missing_app_store_id?
+    app_offer? && !url_overridden? && item.store_id.blank?
+  end
+
+  def countries_blacklist
     if app_offer?
       item.get_countries_blacklist
     else
       []
     end
   end
-  memoize :get_countries_blacklist
+  memoize :countries_blacklist
 
   def banner_creatives
     self.banner_creatives = [] if super.nil?
@@ -424,7 +455,7 @@ class Offer < ActiveRecord::Base
     display_banner_ads? && banner_creative_approved?(size)
   end
 
-  def get_video_icon_url(options = {})
+  def video_icon_url(options = {})
     if item_type == 'VideoOffer' || item_type == 'TestVideoOffer'
       object = S3.bucket(BucketNames::TAPJOY).objects["icons/src/#{Offer.hashed_icon_id(icon_id)}.jpg"]
       begin
@@ -434,7 +465,7 @@ class Offer < ActiveRecord::Base
       end
     end
   end
-  memoize :get_video_icon_url
+  memoize :video_icon_url
 
   def get_icon_url(options = {})
     Offer.get_icon_url({:icon_id => Offer.hashed_icon_id(icon_id), :item_type => item_type}.merge(options))
@@ -601,12 +632,9 @@ class Offer < ActiveRecord::Base
   end
 
   def update_payment(force_update = false)
-    if (force_update || bid_changed? || new_record?)
-      if (item_type == 'App' || item_type == 'ActionOffer')
-        self.payment = bid * (100 - partner.premier_discount) / 100
-      else
-        self.payment = bid
-      end
+    if partner && (force_update || bid_changed? || new_record?)
+      # payment should be at least one-cent unless the bid is zero
+      self.payment = [bid * (100 - partner.premier_discount) / 100, [bid,1].min].max
     end
   end
 

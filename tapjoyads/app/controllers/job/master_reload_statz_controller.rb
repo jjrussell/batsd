@@ -100,7 +100,6 @@ class Job::MasterReloadStatzController < Job::JobController
     cached_metadata = {}
     Offer.find_each(:conditions => [ 'id IN (?)', cached_stats.keys ], :include => :partner) do |offer|
       cached_metadata[offer.id] = {
-        'icon_url'           => offer.get_icon_url,
         'offer_name'         => offer.name_with_suffix,
         'price'              => NumberHelper.number_to_currency(offer.price / 100.0),
         'payment'            => NumberHelper.number_to_currency(offer.payment / 100.0),

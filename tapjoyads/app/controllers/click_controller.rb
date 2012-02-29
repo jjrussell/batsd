@@ -16,6 +16,14 @@ class ClickController < ApplicationController
     redirect_to(get_destination_url)
   end
 
+  def reengagement
+    params[:advertiser_app_id] = params[:publisher_app_id]
+    create_click('reengagement')
+    handle_pay_per_click
+
+    render :text => 'OK'
+  end
+
   def action
     create_click('action')
     handle_pay_per_click
@@ -128,7 +136,7 @@ class ClickController < ApplicationController
     end
     return unless verify_records(required_records)
 
-    if Time.zone.at(params[:viewed_at]) < (@now - 24.hours)
+    if !@offer.tracking_for_id && Time.zone.at(params[:viewed_at]) < (@now - 24.hours)
       build_web_request('expired_click')
       save_web_request
       @destination_url = get_destination_url
@@ -145,8 +153,10 @@ class ClickController < ApplicationController
   end
 
   def validate_click
-    return if currency_disabled?
-    return if offer_disabled?
+    unless @offer.tracking_for_id
+      return if currency_disabled?
+      return if offer_disabled?
+    end
     return if offer_completed?
     return if recently_clicked?
 
@@ -244,7 +254,7 @@ class ClickController < ApplicationController
     elsif type == 'generic' && params[:advertiser_app_id] == TAPJOY_GAMES_INVITATION_OFFER_ID
       click_key = "#{params[:gamer_id]}.#{params[:advertiser_app_id]}"
     else
-      click_key = UUIDTools::UUID.random_create.to_s
+      click_key = Digest::MD5.hexdigest "#{params[:udid]}.#{params[:advertiser_app_id]}"
     end
 
     @click = Click.new(:key => click_key)
@@ -276,6 +286,7 @@ class ClickController < ApplicationController
     @click.publisher_reseller_id  = @currency.reseller_id || ''
     @click.advertiser_reseller_id = @offer.reseller_id || ''
     @click.spend_share            = @currency.get_spend_share(@offer)
+    @click.local_timestamp        = params[:local_timestamp] if params[:local_timestamp].present?
 
     @click.save
   end

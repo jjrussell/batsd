@@ -32,8 +32,14 @@
       %tbody
         %tr
           %th Device ID
+          %td= params[:udid]
+        %tr
+          %th MAC address
           %td
-            = params[:udid]
+            - if @device.mac_address?
+              = @device.mac_address
+            - else
+              %i unknown
         %tr
           %th Jailbroken?
           %td{:class => @device.is_jailbroken? ? "jailbroken" : ""}= @device.is_jailbroken?
@@ -73,7 +79,7 @@
           %th
             Total Support Requests Filed
           %td
-            #{@support_requests_created}
+            = @support_requests_created
         %tr
           %th
             Internal Notes
@@ -90,21 +96,21 @@
         %td App Name
         %td Last run time
         %td Award Currency
-    %tbody
-      - @apps.each_with_index do |app, i|
-        - tr_class = i > 4 ? 'more-apps' : ''
-        %tr{ :class => tr_class }
+    %tbody.show-five
+      - @apps.each_with_index do |pair, i|
+        - last_run_time, app = pair
+        %tr.last_run_app
           %td
             %strong
-              = link_to_statz(app[1].name, app[1])
-          %td= app[0].to_s(:pub_ampm_sec)
+              = link_to_statz(app.name, app)
+          %td= last_run_time.to_s(:pub_ampm_sec)
           %td
-            - if app[1].is_publisher_offer?
-              - app[1].item.currencies .each do |currency|
-                -form_tag award_currencies_tools_path(:publisher_app_id => app[1].item, :currency_id => currency.id, :udid => params[:udid]) do
-                  =submit_tag currency.name
+            - if app.is_publisher_offer?
+              - app.item.currencies .each do |currency|
+                - form_tag award_currencies_tools_path(:publisher_app_id => app.item, :currency_id => currency.id, :udid => params[:udid]) do
+                  = submit_tag currency.name
   - if @apps.length > 5
-    = link_to('(show all)', '#', {:id => 'show_more_apps'})
+    = link_to('(show all)', '#', { :id => 'show_more_apps' })
 
   %h3
     Clicks (#{@clicks.length})
@@ -131,26 +137,18 @@
         %td Details
         %td Click ID
     %tbody
-      - @clicks.each_with_index do |click, i|
-        :ruby
-          adv = @click_apps[click.advertiser_app_id]
-          pub = @click_apps[click.publisher_app_id]
-          reward = @rewards[click.reward_key]
-          tr_class = click_tr_class(click, reward)
-          install_td_class = 'small'
-          if click.block_reason? || click.resolved_too_fast?
-            install_td_class += ' bad'
-          end
-        %tr{ :class => tr_class }
+      - @clicks.each do |click|
+        - reward = @rewards[click.reward_key]
+        %tr{ :class => click_tr_class(click, reward) }
           %td.small
-            %nobr= click.clicked_at? ? click.clicked_at.to_s(:pub_abbr_ampm_sec) : '-'
-          %td{ :class => install_td_class }
+            %nobr= click_timestamp(click, :clicked_at)
+          %td{ :class => install_td_class(click) }
             - if click.block_reason?
               = click.block_reason
             - else
-              = click.installed_at? ? click.installed_at.to_s(:pub_abbr_ampm_sec) : '-'
-          %td= adv.nil? ? '-'  : link_to_statz(adv.name, adv)
-          %td= pub.nil? ? '-'  : link_to_statz(pub.name, pub)
+              = click_timestamp(click, :installed_at)
+          %td= link_app_to_statz(@click_apps[click.advertiser_app_id])
+          %td= link_app_to_statz(@click_apps[click.publisher_app_id])
           %td
             - if click.manually_resolved_at? && click.installed_at?
               Manually awarded
@@ -166,7 +164,7 @@
                 = submit_tag 'Award'
           %td.small
             = link_to('show', '#', :class => 'show-click-detail')
-            - click_info_ul(click, @rewards[click.reward_key])
+            - click_info_ul(click, reward)
           %td
             = clippy(click.key)
       %tr
@@ -184,8 +182,8 @@
   :plain
     $(function($){
       $('#show_more_apps').click(function(){
-        $('.more-apps').show();
-        $('#show_more_apps').hide();
+        $(this).hide();
+        $('.last_run_app').show();
         return false;
       });
       $('.show-click-detail').click(function(){

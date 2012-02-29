@@ -237,13 +237,13 @@ class ToolsController < WebsiteController
               @not_rewarded_count += 1
             end
           end
-          click_app_ids << [click.publisher_app_id, click.advertiser_app_id, click.displayer_app_id]
+          click_app_ids.push(click.publisher_app_id, click.advertiser_app_id, click.displayer_app_id)
         end
       end
 
       # find all apps at once and store in look up table
       @click_apps = {}
-      Offer.find_all_by_id(click_app_ids.flatten.uniq).each do |app|
+      Offer.find_all_by_id(click_app_ids.uniq).each do |app|
         @click_apps[app.id] = app
       end
 
@@ -254,9 +254,6 @@ class ToolsController < WebsiteController
         -click.clicked_at.to_f
       end
 
-      @has_displayer = @clicks.any? do |click|
-        click.displayer_app_id?
-      end
     elsif params[:email_address].present?
       @all_udids = SupportRequest.find_all_by_email_address(params[:email_address]).map(&:udid)
       gamer = Gamer.find_by_email(params[:email_address])
@@ -394,11 +391,16 @@ class ToolsController < WebsiteController
 
     support_request = SupportRequest.find_by_udid_and_app_id(params[:udid], params[:publisher_app_id])
     if support_request.nil?
-      flash[:error] = "Support request not found. The user must submit a support request for the app in order to award them currency."
-      redirect_to :action => :device_info, :udid => params[:udid]
-      return
+      click = Click.find_by_udid_and_publisher_app_id(params[:udid], params[:publisher_app_id])
+      if click.nil?
+        flash[:error] = "Support request not found. The user must submit a support request for the app in order to award them currency."
+        redirect_to :action => :device_info, :udid => params[:udid] and return
+      else
+        @publisher_user_id = click.publisher_user_id
+      end
+    else
+      @publisher_user_id = support_request.publisher_user_id
     end
-    @publisher_user_id = support_request.publisher_user_id
   end
 
   def update_award_currencies
