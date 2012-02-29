@@ -84,10 +84,11 @@ class Games::HomepageController < GamesController
       end
 
       @geoip_data = geoip_data
-      featured_contents = FeaturedContent.with_country_targeting(@geoip_data, @device)
+      platform = current_gamer.gamer_devices.find_by_device_id(@device.id).device_type
+      featured_contents = FeaturedContent.with_country_targeting(@geoip_data, @device, platform)
       @featured_content = featured_contents.weighted_rand(featured_contents.map(&:weight))
       if @featured_content && @featured_content.tracking_offer
-        @publisher_app       = @featured_content.tracking_offer.item
+        @publisher_app       = App.find_by_id(TRACKING_OFFER_CURRENCY_ID)
         params[:udid]        = @device.id
         @currency            = Currency.find_by_id(TRACKING_OFFER_CURRENCY_ID)
         params[:source]      = 'tj_games'

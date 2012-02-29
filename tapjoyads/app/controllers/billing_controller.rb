@@ -140,7 +140,7 @@ class BillingController < WebsiteController
       flash[:error] = "Transfer amount must be less than your Pending Earnings."
     else
       Partner.transaction do
-        payout, order, marketing_order = current_partner.build_transfer(amount)
+        payout, order, marketing_order = current_partner.build_transfer(amount, "Submitted by partner.")
 
         log_activity(payout)
         payout.save!
@@ -186,6 +186,10 @@ class BillingController < WebsiteController
       :payment_country, :paypal_email,
     ]
     if @payout_info.safe_update_attributes(params[:payout_info], safe_attributes)
+      log_activity(current_partner)
+      current_partner.confirmed_for_payout = false
+      current_partner.payout_confirmation_notes = "SYSTEM: Partner Payout Information has changed."
+      current_partner.save
       flash[:notice] = "Your information has been saved."
       redirect_to payout_info_billing_path
     else

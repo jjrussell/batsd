@@ -41,7 +41,7 @@
     if($t.length < $t.innerWidth){
       $('.back, .forward').hide();
     }
-
+		
     $.data(container, 'carousel', $t);
     if ($t.config.cssClass)
       $t.container.addClass($t.config.cssClass);

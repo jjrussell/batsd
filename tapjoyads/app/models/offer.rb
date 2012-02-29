@@ -173,6 +173,11 @@ class Offer < ActiveRecord::Base
       record.errors.add(attribute, "can only be enabled for 'App' offers") unless record.item_type == 'App'
     end
   end
+  validates_each :tapjoy_enabled do |record, attribute, value|
+    if value && record.missing_app_store_id?
+      record.errors.add(attribute, "cannot be enabled without valid store id")
+    end
+  end
 
   before_validation :update_payment
   before_validation_on_create :set_reseller_from_partner
@@ -249,6 +254,10 @@ class Offer < ActiveRecord::Base
 
   def app_offer?
     item_type == 'App' || item_type == 'ActionOffer'
+  end
+
+  def missing_app_store_id?
+    app_offer? && !url_overridden? && item.store_id.blank?
   end
 
   def countries_blacklist
@@ -624,12 +633,9 @@ class Offer < ActiveRecord::Base
   end
 
   def update_payment(force_update = false)
-    if (force_update || bid_changed? || new_record?)
-      if (item_type == 'App' || item_type == 'ActionOffer')
-        self.payment = bid * (100 - partner.premier_discount) / 100
-      else
-        self.payment = bid
-      end
+    if partner && (force_update || bid_changed? || new_record?)
+      # payment should be at least one-cent unless the bid is zero
+      self.payment = [bid * (100 - partner.premier_discount) / 100, [bid,1].min].max
     end
   end
 

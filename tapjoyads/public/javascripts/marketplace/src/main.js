@@ -2,9 +2,15 @@ $(document).ready(function() {
 
   var _t = window.i18n.t,
       debounce,
+<<<<<<< HEAD
       tjmSelectMenu = $('#recommendSelectMenu'),
       tjmSelectContainer = $('#recommendSelect').parent().closest('.select-container'),
       selectTrigger = $('#recommendSelect');
+=======
+			tjmSelectMenu = $('#recommendSelectMenu'),
+			tjmSelectContainer = $('#recommendSelect').parent().closest('.select-container'),
+			selectTrigger = $('#recommendSelect');
+>>>>>>> 4bc8a05c3a43cf2fcef270de6a3e59e90c44fa51
 
   // Login Modal
   $('#login, #login-web').bind('click', function() {
@@ -284,9 +290,8 @@ $(document).ready(function() {
       });   
     }
   })
-  /*
 
-
+	/*
 
   Tapjoy.Utils.notification({
     message: 'Thanks, your settings have been saved.'
