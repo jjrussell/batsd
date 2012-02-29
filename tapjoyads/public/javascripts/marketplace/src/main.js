@@ -2,9 +2,9 @@ $(document).ready(function() {
 
   var _t = window.i18n.t,
       debounce,
-			tjmSelectMenu = $('#recommendSelectMenu'),
-			tjmSelectContainer = $('#recommendSelect').parent().closest('.select-container'),
-			selectTrigger = $('#recommendSelect');
+      tjmSelectMenu = $('#recommendSelectMenu'),
+      tjmSelectContainer = $('#recommendSelect').parent().closest('.select-container'),
+      selectTrigger = $('#recommendSelect');
 
   // Login Modal
   $('#login, #login-web').bind('click', function() {
@@ -186,6 +186,20 @@ $(document).ready(function() {
     };
   };
 
+  $("form.inline-editing").each(function () {
+    var $$ = $(this),
+      $rows = $(".inline-section");
+
+    $($rows).click(function () {
+      $(".show-div", this).hide();
+      $(".edit-div", this).show();
+    });
+
+    function checkDirty() {
+
+    }
+  });
+
   $(".enable-when-valid").each(function () {
     var $$ = $(this),
       $form = $$.closest("form"),
@@ -199,7 +213,7 @@ $(document).ready(function() {
       $$.attr("disabled", "disabled").addClass("disabled");
     }
 
-    function check_valid() {
+    function checkValid() {
       var all_valid = true;
 
       $req.each(function () {
@@ -212,66 +226,76 @@ $(document).ready(function() {
       return all_valid ? enable() : disable();
     }
 
-    $req.bind("change keyup", debounce(check_valid));
-    check_valid();
+    $req.bind("change keyup", debounce(checkValid));
+    checkValid();
   });
 
   
   selectTrigger.bind(Tapjoy.EventsMap.start, function(){
-		var el = $(this),
-				heading = $('.heading', tjmSelectContainer),
-		    fix = $('.fix', tjmSelectContainer);
-				
-	  if(tjmSelectContainer.hasClass('active')){
+    var el = $(this),
+        heading = $('.heading', tjmSelectContainer),
+        fix = $('.fix', tjmSelectContainer);
+        
+    if(tjmSelectContainer.hasClass('active')){
       Tapjoy.Utils.removeMask();
-			
-			tjmSelectContainer.removeClass('active');
       
-			tjmSelectMenu.addClass('hide');
-      
-			heading.text($('li.active', tjmSelectMenu).text());
-						
-		}else{
-			Tapjoy.Utils.mask();
-			
-      tjmSelectContainer.addClass('active');
-			tjmSelectMenu.removeClass('hide');
-
-			heading.text('Choose a Section');
-
-			tjmSelectMenu.css('top', tjmSelectContainer.offset().top + (tjmSelectContainer.outerHeight(true) - 4) + 'px');
-			
-			fix.css({
-				width: tjmSelectContainer.width() - 4 + 'px'
-			});
-		}
-	});
-	
-	$('li', tjmSelectMenu).each(function(){
-		var li = $(this);
-		
-		li.bind('click', function(){
-			$('li', tjmSelectMenu).removeClass('active');
-			li.addClass('active');
       tjmSelectContainer.removeClass('active');
-			tjmSelectMenu.addClass('hide');
+      
+      tjmSelectMenu.addClass('hide');
+      
+      heading.text($('li.active', tjmSelectMenu).text());
+            
+    }else{
+      Tapjoy.Utils.mask();
+      
+      tjmSelectContainer.addClass('active');
+      tjmSelectMenu.removeClass('hide');
+
+      heading.text('Choose a Section');
+
+      tjmSelectMenu.css('top', tjmSelectContainer.offset().top + (tjmSelectContainer.outerHeight(true) - 4) + 'px');
+      
+      fix.css({
+        width: tjmSelectContainer.width() - 4 + 'px'
+      });
+    }
+  });
+  
+  $('li', tjmSelectMenu).each(function(){
+    var li = $(this);
+    
+    li.bind('click', function(){
+      $('li', tjmSelectMenu).removeClass('active');
+      li.addClass('active');
+      tjmSelectContainer.removeClass('active');
+      tjmSelectMenu.addClass('hide');
       Tapjoy.Utils.removeMask();
 
-      $('.heading', tjmSelectContainer).text(li.text())			
-		});
-	});
-	/*
+      $('.heading', tjmSelectContainer).text(li.text())
+    });
+  });
+  
+  $(window).bind('resize orientationchange', function(){
+    if(tjmSelectContainer.length != 0 && window.innerWidth < 800){
+      tjmSelectMenu.css('top', tjmSelectContainer.offset().top + (tjmSelectContainer.outerHeight(true) - 4) + 'px');
+      
+      $('.fix', tjmSelectContainer).css({
+        width: tjmSelectContainer.width() - 4 + 'px'
+      });   
+    }
+  })
+  /*
 
 
 
-	Tapjoy.Utils.notification({
-		message: 'Thanks, your settings have been saved.'
-	});
+  Tapjoy.Utils.notification({
+    message: 'Thanks, your settings have been saved.'
+  });
 
   Tapjoy.delay(function(){
-	  Tapjoy.Utils.notification({
-	    message: 'Thanks, we would like to save hello again.'
-	  });
-	}, 4000);
-	*/
+    Tapjoy.Utils.notification({
+      message: 'Thanks, we would like to save hello again.'
+    });
+  }, 4000);
+  */
 });
