@@ -124,7 +124,7 @@ authorization do
     has_permission_on :tools_users, :to => [ :index, :show ]
     has_permission_on :tools_users_role_assignments, :to => [ :create, :destroy ]
   end
-  
+
   role :admin do
     includes :tools
     includes :devices

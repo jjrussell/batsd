@@ -174,7 +174,7 @@ class Offer < ActiveRecord::Base
     end
   end
   validates_each :tapjoy_enabled do |record, attribute, value|
-    if value && record.missing_app_store_id?
+    if value && record.tapjoy_enabled_changed? && record.missing_app_store_id?
       record.errors.add(attribute, "cannot be enabled without valid store id")
     end
   end
