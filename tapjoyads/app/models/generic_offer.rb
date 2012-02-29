@@ -1,14 +1,14 @@
 class GenericOffer < ActiveRecord::Base
   include UuidPrimaryKey
 
-  CATEGORIES = [ 'CPA', 'Social', 'Video' ]
+  CATEGORIES = [ 'CPA', 'Social', 'Non-Native Video' ]
 
   has_many :offers, :as => :item
   has_one :primary_offer, :class_name => 'Offer', :as => :item, :conditions => 'id = item_id'
 
   belongs_to :partner
 
-  validates_presence_of :partner, :name, :url
+  validates_presence_of :partner, :name, :url, :category
   validates_inclusion_of :category, :in => CATEGORIES, :allow_blank => true
 
   after_create :create_primary_offer

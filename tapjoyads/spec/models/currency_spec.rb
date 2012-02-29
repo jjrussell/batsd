@@ -1,18 +1,18 @@
 require 'spec_helper'
 
 describe Currency do
+
   before :each do
+    @currency = Factory.build(:currency)
     fake_the_web
   end
 
-  subject { Factory(:currency) }
-
-  context 'when associating' do
+  describe '.belongs_to' do
     it { should belong_to(:app) }
     it { should belong_to(:partner) }
   end
 
-  context 'when validating' do
+  describe '#valid?' do
     it { should validate_presence_of(:app) }
     it { should validate_presence_of(:partner) }
     it { should validate_presence_of(:name) }
@@ -22,13 +22,18 @@ describe Currency do
     it { should validate_numericality_of(:spend_share) }
     it { should validate_numericality_of(:direct_pay_share) }
     it { should validate_numericality_of(:max_age_rating) }
+
+    context 'when not tapjoy-managed' do
+      it 'validates callback url' do
+        Resolv.stubs(:getaddress).raises(URI::InvalidURIError)
+        @currency.callback_url = 'http://tapjoy' # invalid url
+        @currency.save
+        @currency.errors.on(:callback_url).should == 'is not a valid url'
+      end
+    end
   end
 
   describe '#has_special_callback?' do
-    before :each do
-      @currency = Factory.build(:currency)
-    end
-
     context 'when having special callbacks' do
       it 'returns true' do
         Currency::SPECIAL_CALLBACK_URLS.each do |url|
@@ -60,136 +65,64 @@ describe Currency do
     end
   end
 
-  context 'A Currency' do
-    before :each do
-      @currency = Factory.build(:currency)
-    end
-
-    context 'when dealing with a RatingOffer' do
+  describe '#get_publisher_amount' do
+    context 'when given a rating offer' do
       before :each do
         @offer = Factory(:rating_offer).primary_offer
       end
 
-      it 'calculates publisher amounts' do
+      it 'returns the correct amount' do
         @currency.get_publisher_amount(@offer).should == 0
-      end
-
-      it 'calculates advertiser amounts' do
-        @currency.get_advertiser_amount(@offer).should == 0
-      end
-
-      it 'calculates tapjoy amounts' do
-        @currency.get_tapjoy_amount(@offer).should == 0
-      end
-
-      it 'calculates reward amounts' do
-        @currency.get_reward_amount(@offer).should == 15
       end
     end
 
-    context 'when dealing with an offer from the same partner' do
+    context 'when given an offer from the same partner' do
       before :each do
         @offer = Factory(:app, :partner => @currency.partner).primary_offer
-        @offer.update_attributes({:payment => 25})
+        @offer.update_attribute(:payment, 25)
       end
 
-      it 'calculates publisher amounts' do
+      it 'returns the correct amount' do
         @currency.get_publisher_amount(@offer).should == 0
-      end
-
-      it 'calculates advertiser amounts' do
-        @currency.get_advertiser_amount(@offer).should == 0
-      end
-
-      it 'calculates tapjoy amounts' do
-        @currency.get_tapjoy_amount(@offer).should == 0
-      end
-
-      it 'calculates reward amounts' do
-        @currency.get_reward_amount(@offer).should == 25
       end
     end
 
-    context 'when dealing with any other offer' do
+    context 'when given any other offer' do
       before :each do
         @offer = Factory(:app).primary_offer
         @offer.update_attributes({:payment => 25})
       end
 
-      it 'calculates publisher amounts' do
+      it 'returns the correct amount' do
         @currency.get_publisher_amount(@offer).should == 12
-      end
-
-      it 'calculates advertiser amounts' do
-        @currency.get_advertiser_amount(@offer).should == -25
-      end
-
-      it 'calculates tapjoy amounts' do
-        @currency.get_tapjoy_amount(@offer).should == 13
-      end
-
-      it 'calculates reward amounts' do
-        @currency.get_reward_amount(@offer).should == 12
       end
     end
 
-    context 'when dealing with a 3-party displayer offer' do
+    context 'when given a 3-party displayer offer' do
       before :each do
         @offer = Factory(:app).primary_offer
         @offer.update_attributes({:payment => 25})
         @displayer_app = Factory(:app)
       end
 
-      it 'calculates publisher amounts' do
+      it 'returns the correct amount' do
         @currency.get_publisher_amount(@offer, @displayer_app).should == 0
-      end
-
-      it 'calculates advertiser amounts' do
-        @currency.get_advertiser_amount(@offer).should == -25
-      end
-
-      it 'calculates tapjoy amounts' do
-        @currency.get_tapjoy_amount(@offer, @displayer_app).should == 13
-      end
-
-      it 'calculates reward amounts' do
-        @currency.get_reward_amount(@offer).should == 12
-      end
-
-      it 'calculates displayer amounts' do
-        @currency.get_displayer_amount(@offer, @displayer_app).should == 12
       end
     end
 
-    context 'when dealing with a 2-party displayer offer' do
+    context 'when given a 2-party displayer offer' do
       before :each do
         @offer = Factory(:app).primary_offer
         @offer.update_attributes({:payment => 25})
         @displayer_app = @currency.app
       end
 
-      it 'calculates publisher amounts' do
+      it 'returns the correct amount' do
         @currency.get_publisher_amount(@offer, @displayer_app).should == 0
-      end
-
-      it 'calculates advertiser amounts' do
-        @currency.get_advertiser_amount(@offer).should == -25
-      end
-
-      it 'calculates tapjoy amounts' do
-        @currency.get_tapjoy_amount(@offer, @displayer_app).should == 13
-      end
-
-      it 'calculates reward amounts' do
-        @currency.get_reward_amount(@offer).should == 12
-      end
-
-      it 'calculates displayer amounts' do
-        @currency.get_displayer_amount(@offer, @displayer_app).should == 12
       end
     end
 
-    context 'when dealing with a direct-pay offer' do
+    context 'when given a direct-pay offer' do
       before :each do
         @offer = Factory(:app).primary_offer
         @offer.payment = 100
@@ -197,24 +130,253 @@ describe Currency do
         @offer.direct_pay = Offer::DIRECT_PAY_PROVIDERS.first
       end
 
-      it 'calculates publisher amounts' do
+      it 'returns the correct amount' do
         @currency.get_publisher_amount(@offer).should == 100
       end
+    end
+  end
 
-      it 'calculates advertiser amounts' do
-        @currency.get_advertiser_amount(@offer).should == -100
+  describe '#get_advertiser_amount' do
+    context 'when given a RatingOffer' do
+      before :each do
+        @offer = Factory(:rating_offer).primary_offer
       end
 
-      it 'calculates tapjoy amounts' do
-        @currency.get_tapjoy_amount(@offer).should == 0
-      end
-
-      it 'calculates reward amounts' do
-        @currency.get_reward_amount(@offer).should == 50
+      it 'returns the correct amount' do
+        @currency.get_advertiser_amount(@offer).should == 0
       end
     end
 
-    context 'when created' do
+    context 'when given an offer from the same partner' do
+      before :each do
+        @offer = Factory(:app, :partner => @currency.partner).primary_offer
+        @offer.update_attributes({:payment => 25})
+      end
+
+      it 'returns the correct amount' do
+        @currency.get_advertiser_amount(@offer).should == 0
+      end
+    end
+
+    context 'when given any other offer' do
+      before :each do
+        @offer = Factory(:app).primary_offer
+        @offer.update_attributes({:payment => 25})
+      end
+
+      it 'returns the correct amount' do
+        @currency.get_advertiser_amount(@offer).should == -25
+      end
+    end
+
+    context 'when given a 3-party displayer offer' do
+      before :each do
+        @offer = Factory(:app).primary_offer
+        @offer.update_attributes({:payment => 25})
+        @displayer_app = Factory(:app)
+      end
+
+      it 'returns the correct amount' do
+        @currency.get_advertiser_amount(@offer).should == -25
+      end
+    end
+
+    context 'when given a 2-party displayer offer' do
+      before :each do
+        @offer = Factory(:app).primary_offer
+        @offer.update_attributes({:payment => 25})
+        @displayer_app = @currency.app
+      end
+
+      it 'returns the correct amount' do
+        @currency.get_advertiser_amount(@offer).should == -25
+      end
+    end
+
+    context 'when given a direct-pay offer' do
+      before :each do
+        @offer = Factory(:app).primary_offer
+        @offer.payment = 100
+        @offer.reward_value = 50
+        @offer.direct_pay = Offer::DIRECT_PAY_PROVIDERS.first
+      end
+
+      it 'returns the correct amount' do
+        @currency.get_advertiser_amount(@offer).should == -100
+      end
+    end
+  end
+
+  describe '#get_tapjoy_amount' do
+    context 'when given a RatingOffer' do
+      before :each do
+        @offer = Factory(:rating_offer).primary_offer
+      end
+
+      it 'returns the correct amount' do
+        @currency.get_tapjoy_amount(@offer).should == 0
+      end
+    end
+
+    context 'when given an offer from the same partner' do
+      before :each do
+        @offer = Factory(:app, :partner => @currency.partner).primary_offer
+        @offer.update_attributes({:payment => 25})
+      end
+
+      it 'returns the correct amount' do
+        @currency.get_tapjoy_amount(@offer).should == 0
+      end
+    end
+
+    context 'when given any other offer' do
+      before :each do
+        @offer = Factory(:app).primary_offer
+        @offer.update_attributes({:payment => 25})
+      end
+
+      it 'returns the correct amount' do
+        @currency.get_tapjoy_amount(@offer).should == 13
+      end
+    end
+
+    context 'when given a 3-party displayer offer' do
+      before :each do
+        @offer = Factory(:app).primary_offer
+        @offer.update_attributes({:payment => 25})
+        @displayer_app = Factory(:app)
+      end
+
+      it 'returns the correct amount' do
+        @currency.get_tapjoy_amount(@offer, @displayer_app).should == 13
+      end
+    end
+
+    context 'when given a 2-party displayer offer' do
+      before :each do
+        @offer = Factory(:app).primary_offer
+        @offer.update_attributes({:payment => 25})
+        @displayer_app = @currency.app
+      end
+
+      it 'returns the correct amount' do
+        @currency.get_tapjoy_amount(@offer, @displayer_app).should == 13
+      end
+    end
+
+    context 'when given a direct-pay offer' do
+      before :each do
+        @offer = Factory(:app).primary_offer
+        @offer.payment = 100
+        @offer.reward_value = 50
+        @offer.direct_pay = Offer::DIRECT_PAY_PROVIDERS.first
+      end
+
+      it 'returns the correct amount' do
+        @currency.get_tapjoy_amount(@offer).should == 0
+      end
+    end
+  end
+
+  describe '#get_reward_amount' do
+    context 'when given a RatingOffer' do
+      before :each do
+        @offer = Factory(:rating_offer).primary_offer
+      end
+
+      it 'returns the correct amount' do
+        @currency.get_reward_amount(@offer).should == 15
+      end
+    end
+
+    context 'when given an offer from the same partner' do
+      before :each do
+        @offer = Factory(:app, :partner => @currency.partner).primary_offer
+        @offer.update_attributes({:payment => 25})
+      end
+
+      it 'returns the correct amount' do
+        @currency.get_reward_amount(@offer).should == 25
+      end
+    end
+
+    context 'when given any other offer' do
+      before :each do
+        @offer = Factory(:app).primary_offer
+        @offer.update_attributes({:payment => 25})
+      end
+
+      it 'returns the correct amount' do
+        @currency.get_reward_amount(@offer).should == 12
+      end
+    end
+
+    context 'when given a 3-party displayer offer' do
+      before :each do
+        @offer = Factory(:app).primary_offer
+        @offer.update_attributes({:payment => 25})
+        @displayer_app = Factory(:app)
+      end
+
+      it 'returns the correct amount' do
+        @currency.get_reward_amount(@offer).should == 12
+      end
+    end
+
+    context 'when given a 2-party displayer offer' do
+      before :each do
+        @offer = Factory(:app).primary_offer
+        @offer.update_attributes({:payment => 25})
+        @displayer_app = @currency.app
+      end
+
+      it 'returns the correct amount' do
+        @currency.get_reward_amount(@offer).should == 12
+      end
+    end
+
+    context 'when given a direct-pay offer' do
+      before :each do
+        @offer = Factory(:app).primary_offer
+        @offer.payment = 100
+        @offer.reward_value = 50
+        @offer.direct_pay = Offer::DIRECT_PAY_PROVIDERS.first
+      end
+
+      it 'returns the correct amount' do
+        @currency.get_reward_amount(@offer).should == 50
+      end
+    end
+  end
+
+  describe '#get_displayer_amount' do
+    context 'when given a 3-party displayer offer' do
+      before :each do
+        @offer = Factory(:app).primary_offer
+        @offer.update_attributes({:payment => 25})
+        @displayer_app = Factory(:app)
+      end
+
+      it 'returns the correct amount' do
+        @currency.get_displayer_amount(@offer, @displayer_app).should == 12
+      end
+    end
+
+    context 'when given a 2-party displayer offer' do
+      before :each do
+        @offer = Factory(:app).primary_offer
+        @offer.update_attributes({:payment => 25})
+        @displayer_app = @currency.app
+      end
+
+      it 'returns the correct amount' do
+        @currency.get_displayer_amount(@offer, @displayer_app).should == 12
+      end
+    end
+  end
+
+  describe '#set_values_from_partner_and_reseller' do
+    context 'before create' do
       before :each do
         partner = Factory(:partner)
         partner.rev_share = 0.42
@@ -233,16 +395,7 @@ describe Currency do
         @currency.offer_whitelist.should == 'bar'
         @currency.use_whitelist.should == true
       end
-
-      context 'when not tapjoy-managed' do
-        it 'validates callback url' do
-          Resolv.stubs(:getaddress).raises(URI::InvalidURIError)
-          @currency.callback_url = 'http://tapjoy' # invalid url
-          @currency.save
-          @currency.errors.on(:callback_url).should == 'is not a valid url'
-        end
-      end
     end
-
   end
+
 end

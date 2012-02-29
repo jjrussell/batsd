@@ -47,7 +47,7 @@ FactoryGirl.define do
       mgr.user_roles << role
     end
   end
-  
+
   factory :partner do
     name { Factory.next(:name) }
     approved_publisher true
@@ -99,6 +99,16 @@ FactoryGirl.define do
     association :app_metadata
   end
 
+  factory :reengagement_offer do
+    association :currency
+    Rails.logger.info "*" * 100
+    app     { currency.app }
+    partner { currency.partner }
+    instructions 'Do some stuff.'
+    reward_value 5
+    day_number { Factory.next(:integer) }
+  end
+
   factory :app do
     association :partner
     name { Factory.next(:name) }
@@ -136,6 +146,7 @@ FactoryGirl.define do
     association :partner
     name { Factory.next(:name) }
     url 'http://ws.tapjoyads.com/healthz?click_key=TAPJOY_GENERIC'
+    category 'Social'
   end
 
   factory :invite_offer, :parent => :generic_offer do
@@ -286,6 +297,11 @@ FactoryGirl.define do
 
   factory :employee_review, :parent => :app_review do
     author { Factory(:employee) }
+  end
+
+  factory :favorite_app do
+    gamer         { Factory(:gamer) }
+    app_metadata  { Factory(:app_metadata) }
   end
 
   factory :featured_content do
