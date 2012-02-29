@@ -229,7 +229,6 @@ $(document).ready(function() {
     checkValid();
   });
 
-
   selectTrigger.bind(Tapjoy.EventsMap.start, function(){
       var el = $(this),
             heading = $('.heading', tjmSelectContainer),
@@ -283,10 +282,8 @@ $(document).ready(function() {
        });
       }
    })
-   /*
 
-
-
+  /*
    Tapjoy.Utils.notification({
       message: 'Thanks, your settings have been saved.'
    });
