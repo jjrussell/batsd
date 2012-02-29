@@ -28,14 +28,6 @@ describe App do
       @app = Factory(:app)
     end
 
-    it "updates its offers' bids when its price changes" do
-      offer = @app.primary_offer
-      @app.primary_app_metadata.update_attributes({:price => 400})
-      offer.reload
-      offer.bid.should equal(200)
-      offer.price.should equal(400)
-    end
-
     it 'does not list North Korea as a possible appstore country' do
       App::APPSTORE_COUNTRIES_OPTIONS.map(&:last).should_not include('KP')
     end
@@ -98,6 +90,39 @@ describe App do
       @test_video_offer_primary_offer.id.should == 'test_video'
       @test_video_offer_primary_offer.item_id.should == 'test_video'
       @test_video_offer_primary_offer.item_type.should == 'TestVideoOffer'
+    end
+  end
+
+  context 'with Offers' do
+    before :each do
+      @app = Factory(:app)
+      @offer = @app.primary_offer
+    end
+
+    it "updates its offers' bids when its price changes" do
+      @app.primary_app_metadata.update_attributes({:price => 400})
+      @offer.reload
+      @offer.bid.should equal(200)
+      @offer.price.should equal(400)
+    end
+
+    it "doesn't update offer's device types unless store id changes" do
+      @offer.device_types.should == Offer::APPLE_DEVICES.to_json
+      @offer.update_attributes({:device_types => Offer::ANDROID_DEVICES})
+      @app.primary_app_metadata.update_attributes({:age_rating => 2})
+      @offer.reload
+      @offer.age_rating.should == 2
+      @offer.device_types.should == Offer::ANDROID_DEVICES.to_json
+    end
+
+    it "updates offer's device types if store id changes" do
+      @offer.device_types.should == Offer::APPLE_DEVICES.to_json
+      @offer.update_attributes({:device_types => Offer::ANDROID_DEVICES})
+      @offer.device_types.should == Offer::ANDROID_DEVICES.to_json
+      @app.update_app_metadata('7654321')
+      @app.save!
+      @offer.reload
+      @offer.device_types.should == Offer::APPLE_DEVICES.to_json
     end
   end
 

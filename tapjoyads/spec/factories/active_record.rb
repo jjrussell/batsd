@@ -47,7 +47,7 @@ FactoryGirl.define do
       mgr.user_roles << role
     end
   end
-  
+
   factory :partner do
     name { Factory.next(:name) }
     approved_publisher true
@@ -297,6 +297,11 @@ FactoryGirl.define do
 
   factory :employee_review, :parent => :app_review do
     author { Factory(:employee) }
+  end
+
+  factory :favorite_app do
+    gamer         { Factory(:gamer) }
+    app_metadata  { Factory(:app_metadata) }
   end
 
   factory :featured_content do

@@ -149,6 +149,8 @@ class Device < SimpledbShardedResource
   end
 
   def self.normalize_device_type(device_type_param)
+    return nil if device_type_param.nil?
+
     case device_type_param.downcase
     when /iphone/
       'iphone'
