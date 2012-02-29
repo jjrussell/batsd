@@ -1,9 +1,7 @@
 class EventController < ApplicationController
 
   def new
-  	unless verify_params([:app_id, :udid, :publisher_user_id, :event_type_id, :event_data])
-      render :nothing => true, :status => 406 and return
-  	end
+  	verify_params([:app_id, :udid, :publisher_user_id, :event_type_id, :event_data])
   	event = WebRequest.new
   	event.put_values('event_tracking_request', params, ip_address, geoip_data, user_agent)
   	event.event_type_id = params[:event_type_id]
