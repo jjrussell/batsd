@@ -13,42 +13,42 @@
         }
       },
 
-			mask: function(){
-			  var wrap = $(document.createElement('div'));
+      mask: function(){
+        var wrap = $(document.createElement('div'));
 
-				wrap.attr('id', 'ui-simple-mask')
-				.css({
+        wrap.attr('id', 'ui-simple-mask')
+        .css({
           height: $(document).outerHeight() + 'px'
-				})
-				.appendTo(document.body);
+        })
+        .appendTo(document.body);
 
-			  this.mask.element = wrap;
+        this.mask.element = wrap;
 
-			},
-			removeMask: function(){
-				if(this.mask.element){
+      },
+      removeMask: function(){
+        if(this.mask.element){
           this.mask.element.empty().remove();
-					this.mask.element = null;
-				}
-			},
-			notification: function(config){
+          this.mask.element = null;
+        }
+      },
+      notification: function(config){
 
-				config = Tap.extend({}, {
+        config = Tap.extend({}, {
           container: $(document.body),
-					delay: 10000,
+          delay: 10000,
           message: '',
-					type: 'normal'
-				}, config || {});
+          type: 'normal'
+        }, config || {});
 
-				var wrap = $(document.createElement('div'));
+        var wrap = $(document.createElement('div'));
 
-				if($('#ui-notification').length == 0){
-	        wrap.attr('id', 'ui-notification')
-	        .addClass('ui-notification')
-	        .appendTo(config.container);
-				}else{
-					wrap = $('#ui-notification');
-				}
+        if($('#ui-notification').length == 0){
+          wrap.attr('id', 'ui-notification')
+          .addClass('ui-notification')
+          .appendTo(config.container);
+        }else{
+          wrap = $('#ui-notification');
+        }
 
         wrap.html(config.message)
 
@@ -59,27 +59,87 @@
           left: ((config.container.outerWidth(true) - width) / 2) + 'px'
         });
 
-				$(window).resize(function(){
-	        wrap.css('left', ((config.container.outerWidth(true) - width) / 2) + 'px')
-				});
+        $(window).resize(function(){
+          wrap.css('left', ((config.container.outerWidth(true) - width) / 2) + 'px')
+        });
 
-				Tap.delay(function(){
-					if(wrap.length > 0)
+        Tap.delay(function(){
+          if(wrap.length > 0)
             wrap.empty().remove();
-				}, config.delay);
-			},
+        }, config.delay);
+      },
 
-			or: function(v,d) {
-			  console.log(this);
+      or: function(v,d) {
+        console.log(this);
         if (this.isEmpty(v)) {
           return d;
         }
         return v;
-			},
+      },
 
-			isEmpty: function(v) {
+      isEmpty: function(v) {
         return v == undefined || v == null || v == '' || v == 'undefined';
-			},
+      },
+
+      isArguments : function (obj) {
+        return Object.prototype.toString.call(obj) == '[object Arguments]';
+      },
+
+      isArray : function (obj) {
+        return Object.prototype.toString.call(obj) == '[object Array]';
+      },
+
+      toArray: function(iterable) {
+        var i, res = [];
+
+        if (!iterable) {
+          return res;
+        }
+
+        if (typeof iterable.toArray === "function") {
+          return iterable.toArray();
+        }
+
+        if (this.isArray(iterable) || this.isArguments(iterable)) {
+          return Array.prototype.slice.call(iterable);
+        }
+
+        for(i in iterable) {
+          if(iterable.hasOwnProperty(i)) {
+            res.push(iterable[i]);
+          }
+        }
+
+        return res;
+      },
+
+      basicTemplate: function(tpl, object) {
+        object = object || {};
+        return tpl.replace(/%{(.+?)}/g, function(pattern, key) {
+          // undefined is bad m'kay
+          if(object[key] === undefined) {
+            throw TJG.utils.customError("No matching arg for template: ", {key: key, template: tpl, props: object});
+          }
+          return object[key];
+        });
+      },
+
+      sprintf: function(text) {
+        var i=1, args=arguments;
+        return text.replace(/%s/g, function(pattern){
+          return (i < args.length) ? args[i++] : "";
+        });
+      },
+
+      sprintfTemplate: function(text) {
+        var that = this;
+        text = [text];
+        return function() {
+          var args = that.toArray(arguments);
+          args = text.concat(args);
+          return that.sprintf.apply(this, args);
+        };
+      },
 
       Storage: {
         set: function(k) {

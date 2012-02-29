@@ -46,6 +46,11 @@ $image_path: "/images/marketplace/themes/tjm";
   box-shadow: none;
 }
 
+#recommendationsRow,
+#favortiesRow {
+  display: none;
+}
+
 #recommendations .app,
 div.app {
   border-top: 1px solid #fff;
@@ -112,6 +117,12 @@ div.app:last-child {
 .row .app:first-child {
   border-top: 0;
 }
+
+#recommedations {
+  .carousel {
+    height: auto !important;
+  }
+}
 .ui-joy-carousel {
   height: auto !important;
   overflow: visible;
@@ -127,11 +138,10 @@ div.app:last-child {
 }
 
 h1.smart {
-  display: none;
 }
 
-#recommendationsHeader,
-#recommendationsHeader .banner {
+#tjmTopbar,
+#tjmTopbar .banner {
   display: block;
 }
 

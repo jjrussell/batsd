@@ -1,41 +1,45 @@
 #content.current
   .panel.clearfix
-    - if @recommendations.present?
-      .row.borders.pn.ntb.rec
-        %h1.museo.smart Smart Recommendations
-        #recommendationsHeader
-          .banner
-            .more
-              .text.left.mr10
-                Find out more
-              .circle.btn.right
-                %img.rightarrow-white.icon24{ :src => BLANK_IMAGE }
-            %img.banner-img{ :src => '/images/marketplace/themes/tjm/sample_banner.png' }
-          .section.blue.ntb.mb5
-            .select-container.left.ml5
-              #recommendSelect.dropdown.left
-                %img.downarrow-white.icon24{ :src => BLANK_IMAGE }
-              .heading.pl5.pr15
-                Recommendations
-              .fix
-          #recommendSelectMenu.hide
-            %ul
-              %li Favorites
-              %li.active Recommendations
-              %li My Apps
-        #recommedations.games
-          - @recommendations.each do |reco|
-            .app
-              - @encrypt_app_id = ObjectEncryptor.encrypt(reco.id)
-              - link_to(games_get_app_path(:eid => @encrypt_app_id)) do
-                .app-icon
-                  %img{ :src => BLANK_IMAGE, :source => reco.icon_url }
-              .details
-                %span.title.elip
-                  = reco.name
+    #tjmTopbar
+      .banner
+        .more
+          .text.left.mr10
+            Find out more
+          .circle.btn.right
+            %img.rightarrow-white.icon24{ :src => BLANK_IMAGE }
+        = image_tag('marketplace/themes/tjm/sample_banner.png', :class => 'banner-img')
+      .section.blue.ntb
+        .select-container.left.ml5
+          #viewSelect.dropdown.left
+            %img.downarrow-white.icon24{ :src => BLANK_IMAGE }
+          .heading.pl5.pr15
+            My Games
+          .fix
+      #viewSelectMenu.hide
+        %ul
+          %li.showFavorites Favorites
+          - if @external_publishers.present?
+            %li.showGames.active My Games
+          - if current_recommendations.present?
+            %li.showRecommendations Recommendations
+          %li.showAll View All
+
+  - if current_recommendations.present?
+    #recommendationsRow.row.borders.pn.ntb.rec
+      %h1.museo.smart Smart Recommendations
+      #recommedations.games
+        - current_recommendations.each do |reco|
+          .app
+            - @encrypt_app_id = ObjectEncryptor.encrypt(reco.id)
+            - link_to(games_get_app_path(:eid => @encrypt_app_id)) do
+              .app-icon
+                %img{ :src => BLANK_IMAGE, :source => reco.icon_url }
+            .details
+              %span.title.elip
+                = reco.name
 
   - if @external_publishers.present?
-    .row.borders.nbb
+    #gamesRow.row.borders.nbb
       %h1.museo My Games
       .games
         - @external_publishers.each do |external_publisher|

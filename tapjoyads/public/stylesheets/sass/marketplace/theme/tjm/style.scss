@@ -795,6 +795,81 @@ input.ui-joy-button, input.button {
   }
 }
 
+.soft-grey-action {
+  @extend .ui-joy-button;
+  @include advanced-linear-gradient(rgba(246,246,246,1), rgba(241,241,241,1), rgba(233,233,233,1),rgba(229,229,229,1), top);
+  border: 1px solid #ddd;
+  color: #424242;
+  text-shadow: 0 1px 0 #fff;
+  box-shadow: inset 0 1px 0 #fff, 1px solid rgba(0,0,0, .4);
+}
+
+.soft-grey-action:hover {
+  @include advanced-linear-gradient(rgba(246,246,246,.9), rgba(241,241,241,.9), rgba(233,233,233,.9),rgba(229,229,229,.9), top);
+}
+
+.soft-grey-action.active {
+  background: #ddd;
+  border: 1px solid #000;
+  box-shadow: inset 0 1px 4px rgba(0,0,0, .3);
+}
+
+.candy-red {
+  @extend .ui-joy-button;
+  background: rgb(232,39,44);
+  background: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/Pgo8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgdmlld0JveD0iMCAwIDEgMSIgcHJlc2VydmVBc3BlY3RSYXRpbz0ibm9uZSI+CiAgPGxpbmVhckdyYWRpZW50IGlkPSJncmFkLXVjZ2ctZ2VuZXJhdGVkIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgeDE9IjAlIiB5MT0iMCUiIHgyPSIwJSIgeTI9IjEwMCUiPgogICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iI2U4MjcyYyIgc3RvcC1vcGFjaXR5PSIxIi8+CiAgICA8c3RvcCBvZmZzZXQ9IjI5JSIgc3RvcC1jb2xvcj0iI2UyMWYyMyIgc3RvcC1vcGFjaXR5PSIxIi8+CiAgICA8c3RvcCBvZmZzZXQ9IjY0JSIgc3RvcC1jb2xvcj0iI2Q1MGMwZSIgc3RvcC1vcGFjaXR5PSIxIi8+CiAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiNjZDAxMDEiIHN0b3Atb3BhY2l0eT0iMSIvPgogIDwvbGluZWFyR3JhZGllbnQ+CiAgPHJlY3QgeD0iMCIgeT0iMCIgd2lkdGg9IjEiIGhlaWdodD0iMSIgZmlsbD0idXJsKCNncmFkLXVjZ2ctZ2VuZXJhdGVkKSIgLz4KPC9zdmc+);
+  background: -moz-linear-gradient(top, rgba(232,39,44,1) 0%, rgba(226,31,35,1) 29%, rgba(213,12,14,1) 64%, rgba(205,1,1,1) 100%);
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(232,39,44,1)), color-stop(29%,rgba(226,31,35,1)), color-stop(64%,rgba(213,12,14,1)), color-stop(100%,rgba(205,1,1,1)));
+  background: -webkit-linear-gradient(top, rgba(232,39,44,1) 0%,rgba(226,31,35,1) 29%,rgba(213,12,14,1) 64%,rgba(205,1,1,1) 100%);
+  background: -o-linear-gradient(top, rgba(232,39,44,1) 0%,rgba(226,31,35,1) 29%,rgba(213,12,14,1) 64%,rgba(205,1,1,1) 100%);
+  background: -ms-linear-gradient(top, rgba(232,39,44,1) 0%,rgba(226,31,35,1) 29%,rgba(213,12,14,1) 64%,rgba(205,1,1,1) 100%);
+  background: linear-gradient(top, rgba(232,39,44,1) 0%,rgba(226,31,35,1) 29%,rgba(213,12,14,1) 64%,rgba(205,1,1,1) 100%);
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#e8272c', endColorstr='#cd0101',GradientType=0 );
+  border-top: 1px solid rgba(255,255,255, .4);
+  text-shadow: 0 -1px 0 #cd0202;
+  border: 1px solid #9d1e21;
+  box-shadow: inset 0 1px 0 #f6484d, 0 1px 0 rgba(0,0,0, .09);
+}
+
+.candy-red:hover {
+  opacity: .9;
+}
+
+.candy-red.active {
+  background: rgb(232,39,44);
+  box-shadow: 0 1px 0 rgba(255,255,255, .1), inset 0 1px 3px rgba(0,0,0, .4);
+  border: 0;
+}
+
+.ui-button-orange {
+  @extend .ui-joy-button;
+  background: rgb(255,190,0);
+  background: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/Pgo8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgdmlld0JveD0iMCAwIDEgMSIgcHJlc2VydmVBc3BlY3RSYXRpbz0ibm9uZSI+CiAgPGxpbmVhckdyYWRpZW50IGlkPSJncmFkLXVjZ2ctZ2VuZXJhdGVkIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgeDE9IjAlIiB5MT0iMCUiIHgyPSIwJSIgeTI9IjEwMCUiPgogICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iI2ZmYmUwMCIgc3RvcC1vcGFjaXR5PSIxIi8+CiAgICA8c3RvcCBvZmZzZXQ9IjQyJSIgc3RvcC1jb2xvcj0iI2ZmYWQwMCIgc3RvcC1vcGFjaXR5PSIxIi8+CiAgICA8c3RvcCBvZmZzZXQ9IjcxJSIgc3RvcC1jb2xvcj0iI2ZmOTYwMCIgc3RvcC1vcGFjaXR5PSIxIi8+CiAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiNmZjg2MDAiIHN0b3Atb3BhY2l0eT0iMSIvPgogIDwvbGluZWFyR3JhZGllbnQ+CiAgPHJlY3QgeD0iMCIgeT0iMCIgd2lkdGg9IjEiIGhlaWdodD0iMSIgZmlsbD0idXJsKCNncmFkLXVjZ2ctZ2VuZXJhdGVkKSIgLz4KPC9zdmc+);
+  background: -moz-linear-gradient(top, rgba(255,190,0,1) 0%, rgba(255,173,0,1) 42%, rgba(255,150,0,1) 71%, rgba(255,134,0,1) 100%);
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(255,190,0,1)), color-stop(42%,rgba(255,173,0,1)), color-stop(71%,rgba(255,150,0,1)), color-stop(100%,rgba(255,134,0,1)));
+  background: -webkit-linear-gradient(top, rgba(255,190,0,1) 0%,rgba(255,173,0,1) 42%,rgba(255,150,0,1) 71%,rgba(255,134,0,1) 100%);
+  background: -o-linear-gradient(top, rgba(255,190,0,1) 0%,rgba(255,173,0,1) 42%,rgba(255,150,0,1) 71%,rgba(255,134,0,1) 100%);
+  background: -ms-linear-gradient(top, rgba(255,190,0,1) 0%,rgba(255,173,0,1) 42%,rgba(255,150,0,1) 71%,rgba(255,134,0,1) 100%);
+  background: linear-gradient(top, rgba(255,190,0,1) 0%,rgba(255,173,0,1) 42%,rgba(255,150,0,1) 71%,rgba(255,134,0,1) 100%);
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffbe00', endColorstr='#ff8600',GradientType=0 );
+  color: #fff;
+ -webkit-text-stroke-width: 1px;
+ -webkit-text-stroke-color: #fff;
+  border-bottom: 1px solid #a35500;
+  border-radius: 4px;
+  text-shadow: 0 -1px 0 #d47f1b;
+  box-shadow: 0 1px 1px rgba(0,0,0, .3);
+  border-top: 1px solid #ffebab;
+  cursor: pointer;
+}
+
+.ui-button-orange.active {
+  background: rgb(255,134,0);
+  box-shadow: inset 0 1px 2px rgba(0,0,0, .7);
+  border: 0;
+  text-shadow: 0 1px 0 rgba(0,0,0, .4);
+}
+
 .orange-action.disabled, .grey-action.disabled, .button.disabled  {
   @include gradient-top(#d3d3d3,#c9c9c9, #bdbdbd, #b7b7b7);
   box-shadow: 0 1px 0 #e9e9e9 inset;
@@ -1072,33 +1147,20 @@ div.ui-joy-button.support-button {
 
 #recommedations {
   height: 200px;
-
-  .carousel {
-    opacity: 0;
-    height: 0;
-    overflow: hidden;
-    visibility: hidden;
-    @include animate(height, .5s, linear, .5s);
-    @include animate(opacity, .5s, linear, .5s);
-  }
+  width: 100%;
 }
 
-#recommedations.complete {
-  display: block;
-
-  .carousel {
-    opacity: 1;
-    height: 200px;
-    visibility: visible;
-  }
+#recommedations.complete .app {
+  opacity: 1;
+  visibility: visible;
 }
 
-#recommendationsHeader,
-#recommendationsHeader .banner {
+#tjmTopbar,
+#tjmTopbar .banner {
   display: none;
 }
 
-#recommendationsHeader .banner {
+#tjmTopbar .banner {
   background: #626a73 url(#{$image_path}/swirl_tile.png) repeat 0 0;
   padding: 10px;
   padding-bottom: 5px;
@@ -1184,6 +1246,12 @@ div.ui-joy-button.support-button {
 .greenblock.active {
   background: #393c37;
   box-shadow: inset 0px 1px 3px rgba(0,0,0, .3), 0 1px 0 #fff;
+}
+
+#recommedations .app {
+  opacity: 0;
+  visibility: hidden;
+  @include animate(opacity, .65s, linear, .65s);
 }
 
 div.app {
@@ -1513,7 +1581,7 @@ div.app {
   }
 }
 
-#recommendSelectMenu {
+#viewSelectMenu {
   position: absolute;
   left: 0;
   z-index: 10;
@@ -1566,4 +1634,75 @@ div.app {
       border-bottom: 0;
     }
   }
+}
+
+#addToHome {
+  border-radius: 6px;
+  font-size: 14px;
+  background-color: #222;
+  border: 3px solid #b6b5b5;
+  color: #FFF;
+  line-height: 130%;
+  padding: 12px 10px;
+  position: absolute;
+  opacity: 0.95;
+  text-align: center;
+  width: 306px;
+  z-index: 9999;
+  -webkit-background-clip: padding-box;
+  -webkit-border-radius: 6px;
+  -moz-border-radius: 6px;
+  -webkit-box-sizing: border-box;
+  -webkit-user-select: none;
+}
+#addToHome.ipad {
+  width: 326px;
+}
+#addToHome .arrow, #newUser .arrow {
+  background-color: #222;
+  border-width: 0 3px 3px 0;
+  border-style: solid;
+  border-color: #b6b5b5;
+  bottom: -12px;
+  height: 16px;
+  left: 50%;
+  margin-left: -8px;
+  position: absolute;
+  width: 16px;
+  -webkit-transform: rotate(45deg);
+  -moz-transform: rotate(45deg);
+  -o-transform: rotate(45deg);
+  -ms-transform: rotate(45deg);
+  transform: rotate(45deg);
+}
+#addToHome.ipad .arrow {
+  top: -12px;
+  bottom: auto;
+  left: 50%;
+  -webkit-transform: rotate(-135deg);
+  -moz-transform: rotate(-135deg);
+  -o-transform: rotate(-135deg);
+  -ms-transform: rotate(-135deg);
+  transform: rotate(-135deg);
+}
+.bookmark {
+  float: left;
+  margin-top: 6px;
+  height: 22px;
+}
+.bookmark span {
+  float: left;
+  display: block;
+}
+.bookmark_icon {
+  background: transparent url("/images/games/old/bookmark_icon_mobile.png") no-repeat;
+  height: 22px;
+  margin: 0 2px;
+  width: 22px;
+}
+.bookmark_btn {
+  background: transparent url("/images/games/old/bookmark_btn_mobile.png") no-repeat;
+  height: 20px;
+  margin: 0 2px;
+  width: 125px;
 }

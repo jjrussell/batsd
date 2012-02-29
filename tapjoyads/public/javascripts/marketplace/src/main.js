@@ -2,9 +2,9 @@ $(document).ready(function() {
 
   var _t = window.i18n.t,
       debounce,
-      tjmSelectMenu = $('#recommendSelectMenu'),
-      tjmSelectContainer = $('#recommendSelect').parent().closest('.select-container'),
-      selectTrigger = $('#recommendSelect');
+      tjmViewMenu = $('#viewSelectMenu'),
+      tjmViewContainer = $('#viewSelect').parent().closest('.select-container'),
+      selectTrigger = $('#viewSelect');
 
   // Login Modal
   $('#login, #login-web').bind('click', function() {
@@ -114,6 +114,7 @@ $(document).ready(function() {
   // App Icons
   $('.app-icon img').each(function(n, o){
     var el = $(o);
+
     el.attr("src", el.attr("source"));
     el.load(function(){
       $(this).fadeIn('slow');
@@ -137,7 +138,7 @@ $(document).ready(function() {
     }
   });
 
-  $('.list-button, .btn, .greenblock').bind(Tapjoy.EventsMap.start + ' ' + Tapjoy.EventsMap.end, function(e){
+  $('.list-button, .btn, .greenblock, #signup, #login, #login-form .ui-joy-button').bind(Tapjoy.EventsMap.start + ' ' + Tapjoy.EventsMap.end + ' ' + Tapjoy.EventsMap.cancel, function(e){
     var el = $(this),
         which = e.type;
 
@@ -149,8 +150,10 @@ $(document).ready(function() {
   });
 
   Tapjoy.delay(function(){
-    $('#recommedations').Carousel();
-  }, 10);
+    $('#recommedations').Carousel({
+      cssClass : 'complete'
+    });
+  }, 50);
 
   $(".button-bar").each(function () {
     var $$ = $(this),
@@ -264,10 +267,10 @@ $(document).ready(function() {
 
   selectTrigger.bind(Tapjoy.EventsMap.start, function(){
       var el = $(this),
-            heading = $('.heading', tjmSelectContainer),
-          fix = $('.fix', tjmSelectContainer);
+            heading = $('.heading', tjmViewContainer),
+          fix = $('.fix', tjmViewContainer);
 
-     if(tjmSelectContainer.hasClass('active')){
+     if(tjmViewContainer.hasClass('active')){
       Tapjoy.Utils.removeMask();
 
        tjmSelectContainer.removeClass('active');
@@ -277,42 +280,59 @@ $(document).ready(function() {
     }else{
       Tapjoy.Utils.mask();
 
-      tjmSelectContainer.addClass('active');
-      tjmSelectMenu.removeClass('hide');
+      tjmViewContainer.addClass('active');
+      tjmViewMenu.removeClass('hide');
 
       heading.text('Choose a Section');
 
-      tjmSelectMenu.css('top', tjmSelectContainer.offset().top + (tjmSelectContainer.outerHeight(true) - 4) + 'px');
+      tjmViewMenu.css('top', tjmViewContainer.offset().top + (tjmViewContainer.outerHeight(true) - 4) + 'px');
 
       fix.css({
-        width: tjmSelectContainer.width() - 4 + 'px'
+        width: tjmViewContainer.width() - 4 + 'px'
       });
     }
   });
 
-  $('li', tjmSelectMenu).each(function(){
+  $('li', tjmViewMenu).each(function(){
     var li = $(this);
 
     li.bind('click', function(){
-      $('li', tjmSelectMenu).removeClass('active');
+      $('li', tjmViewMenu).removeClass('active');
       li.addClass('active');
-      tjmSelectContainer.removeClass('active');
-      tjmSelectMenu.addClass('hide');
+      tjmViewContainer.removeClass('active');
+      tjmViewMenu.addClass('hide');
       Tapjoy.Utils.removeMask();
+			console.log(li.hasClass('showRecommendations'))
+      if(li.hasClass('showAll')){
+				$('.row').show();
+			}else if(li.hasClass('showRecommendations')){
+				$('.row').hide();
+				$('#recommendationsRow').show();
+			}else if(li.hasClass('showGames')){
+        $('.row').hide();
+        $('#gamesRow').show();
+			}else if(li.hasClass('showFavorites')){
+        $('.row').hide();
+        $('#favoritesRow').show();
+			}
 
-      $('.heading', tjmSelectContainer).text(li.text())
+      $('.heading', tjmViewContainer).text(li.text())
     });
   });
 
   $(window).bind('resize orientationchange', function(){
-    if(tjmSelectContainer.length != 0 && window.innerWidth < 800){
-      tjmSelectMenu.css('top', tjmSelectContainer.offset().top + (tjmSelectContainer.outerHeight(true) - 4) + 'px');
+    if(tjmViewContainer.length != 0 && window.innerWidth < 800){
+      tjmViewMenu.css('top', tjmViewContainer.offset().top + (tjmViewContainer.outerHeight(true) - 4) + 'px');
 
-      $('.fix', tjmSelectContainer).css({
-        width: tjmSelectContainer.width() - 4 + 'px'
+      $('.fix', tjmViewContainer).css({
+        width: tjmViewContainer.width() - 4 + 'px'
       });
-    }
+		}
   });
+
+  if (Tapjoy.device.idevice) {
+    Tapjoy.Plugins.showAddHomeDialog();
+  }
 
   /*
    Tapjoy.Utils.notification({
