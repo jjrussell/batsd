@@ -100,6 +100,10 @@ form input[type=submit] {
   margin: 0 auto;
 }
 
+.container {
+  overflow: hidden;
+}
+
 #login,
 #signup,
 .header-h-split {
@@ -254,6 +258,15 @@ span.gill {
   .register-form {
     margin: 0 auto;
     width: 300px;
+  }
+  .cancel-btn, .login-btn {
+    cursor: pointer;
+    margin: 24px auto 0;
+    padding: 10px 0;
+    width: 140px;
+  }
+  .cancel-btn {
+    margin-right: 0px;
   }
 }
 
@@ -518,7 +531,7 @@ span.gill {
 
 #pagingContainer {
   position: relative;
-  top: -96px;
+  top: -16px;
 }
 
 #paging {
@@ -532,7 +545,7 @@ span.gill {
 
 #favorites {
   width: 480px;
-  height: 320px;
+  height: 330px;
   display: none;
 
   div.slide {
@@ -867,10 +880,9 @@ span.gill {
 
 }
 
-.button {
+.header-button {
   font: normal 18px 'Gill Sans', 'Gill Sans MT', Arial , sans-serif;
   color: #fff !important;
-  width: 60px;
   text-align: center;
   padding: 5px 27px 7px;
   margin: 10px;
