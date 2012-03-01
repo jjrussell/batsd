@@ -257,9 +257,10 @@ en:
       enter_birthdate: "Please enter your birthdate"
       enter_email: "Please enter your email address"
       enter_message: "Please enter a message"
+      enter_name: "Please enter your name"
       enter_password: "Please enter a password"
       enter_platform: "Please choose iOS or Android"
-      enter_tos: "Please agree to the terms and conditions above"
+      enter_tos: "Please agree to the terms and conditions"
       enter_valid_email: "Enter a valid email address"
       failed_to_change_linked: Failed to change linked account.
       favorite_app: "Favorite App"
@@ -276,6 +277,7 @@ en:
       forgot_pass: "Forgot Password?"
       free: "Free!"
       generic_issue: "There was an issue. Please try again."
+      get_app: Get App
       get_it: "Get it!"
       grant_us_access: "Please authorize us/grant us both permissions before sending out an invite."
       how_it_works_body: "All your games are listed below. Click the buttons next to the apps to start earning currency."
@@ -448,6 +450,7 @@ en:
       update_review: Update Review
       updating: Updating
       unknown: Unknown
+      view_all: View All
       write_review: Write Review
       year: Year
       zip_postal: "Zip/Postal Code"
