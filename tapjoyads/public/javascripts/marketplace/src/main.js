@@ -74,7 +74,7 @@ $(document).ready(function() {
         e.preventDefault();
       }
       else {
-        Tapjoy.Utils.Cookie.delete('cookies_enabled');
+        Tapjoy.Utils.Cookie.remove('cookies_enabled');
       }
     });
   }
@@ -105,7 +105,11 @@ $(document).ready(function() {
     });
     $(".signup-error").hide();
     emailReg = /^([\w-\.+]+@([\w-]+\.)+[\w-]{2,4})?$/;
-    if(values['date[day]'] == '' || values['date[month]'] == '' || values['date[year]'] == '') {
+    if(values['gamer[nickname]'] == '' || values['gamer[nickname]'] == "Name") {
+      $(".signup-error").html(_t('games.enter_name'));
+      hasError = true;
+    }
+    else if(values['date[day]'] == '' || values['date[month]'] == '' || values['date[year]'] == '') {
       $(".signup-error").html(_t('games.enter_birthdate'));
       hasError = true;
     }
@@ -133,18 +137,14 @@ $(document).ready(function() {
       Tapjoy.Utils.Cookie.remove('cookies_enabled');
     }
     if (hasError && cookieError) {
-
+      $(".signup-error").html(_t('games.enter_tos'));
     }
     else if (hasError) {
       $(".signup-error").show();
     }
     else if (hasError != true) {
-      var loader = [
-        '<div class="title museo center">'+_t('games.registering')+'</div>',
-        '<div class="loading-animation"></div>'
-      ].join('');
-      //$(".register_form").hide();
-      //$('.register_progess').html(loader);
+      $(".register-form").hide();
+      $('.register-progess').html('Registering...');
       $.ajax({
         type: 'POST',
         url: rurl,
@@ -174,7 +174,7 @@ $(document).ready(function() {
               '<div class="dialog_content center">'+_t('games.account_created_body')+'</div>',
               '<div class="continue_link_device"><div class="button red">'+_t('shared.continue')+'</div></div>',
             ].join('');
-            $('.register_progess').html(msg);
+            $('.register-progess').html(msg);
             if (d.link_device_url) { // Link device
               $('.continue_link_device').click(function(){
                 if (TJG.vars.isAndroid && d.android) {
@@ -306,7 +306,7 @@ $(document).ready(function() {
     }
   });
 
-  $('.list-button, .btn, .greenblock, #signup, #login, #login-form .ui-joy-button').live(Tapjoy.EventsMap.start + ' ' + Tapjoy.EventsMap.end + ' ' + Tapjoy.EventsMap.cancel, function(e){
+  $('.list-button, .btn, .greenblock, #signup, #login, #login-form .ui-joy-button').bind(Tapjoy.EventsMap.start + ' ' + Tapjoy.EventsMap.end + ' ' + Tapjoy.EventsMap.cancel, function(e){
     var el = $(this),
         which = e.type;
 
@@ -325,10 +325,10 @@ $(document).ready(function() {
       render_state;
 
     render_state = function () {
-      $(".active", $$).removeClass("active");
+      $(".orange-action", $$).removeClass("orange-action").addClass("grey-action");
       $(":checked").attr("checked", false);
 
-      $(".ui-joy-button[value='" + value + "']", $$).addClass("active");
+      $(".ui-joy-button[value='" + value + "']", $$).removeClass("grey-action").addClass("orange-action");
       $("[value='" + value + "']:radio", $$).attr("checked", "checked");
     };
 
@@ -365,14 +365,35 @@ $(document).ready(function() {
   };
 
   $(".submit-child-form").click(function () {
-    $(this).children("form").submit();
+    $("form", this).submit();
     return false;
   });
 
-
+  $(".login-to-facebook").click(function () {
+    var scope = 'offline_access,publish_stream',
+      $$ = $(this),
+      FB = window.FB;
+    FB.login(function (response, scope) {
+      if (response.authResponse) {
+        FB.api('/me', function (response) {
+          window.location = $$.data("fb-url");
+        });
+      } else {
+        Tapjoy.Utils.notification({
+          message: _t('games.grant_us_access')
+        });
+      }
+    }, {scope: scope});
+  });
 
   /*
     doFbLogout : function(){
+      FB.getLoginStatus(function(response) {
+        if (response.authResponse) {
+          FB.logout(function(response) {
+          });
+        }
+      });
     },
     */
 
@@ -463,7 +484,7 @@ $(document).ready(function() {
     });
   });
 
-  $(window).bind('resize orientationchange', debounce(function(){
+  $(window).bind('resize orientationchange', function(){
     if(tjmViewContainer.length != 0 && window.innerWidth < 800){
       tjmViewMenu.css('top', tjmViewContainer.offset().top + (tjmViewContainer.outerHeight(true) - 4) + 'px');
 
@@ -484,7 +505,7 @@ $(document).ready(function() {
         $('li.showGames', tjmViewMenu).trigger('click');
       }
     }
-  }));
+  });
 
   Tapjoy.delay(function(){
     $('#recommedations').Carousel({

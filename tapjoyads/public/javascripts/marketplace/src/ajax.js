@@ -145,20 +145,20 @@
     });
   };
 
-  var showSuccessMessage = function(gamers, non_gamers) {
+  var showSuccessMessage = function (gamers, non_gamers) {
     var exist,
         notExist,
         success = _t("shared.success"),
         br = "<br/>",
         msg;
 
-    if (gamers.length != 0) {
+    if (gamers.length !== 0) {
       exist = _t("games.already_registered",
         { name: gamers.toString().replace(/\,/g, ", ") },
         { count: gamers.length }
       );
     }
-    if (non_gamers.length != 0) {
+    if (non_gamers.length !== 0) {
       notExist = _t("games.invites_sent_to",
         { name: non_gamers.toString().replace(/\,/g, ", ") },
         { count: non_gamers.length }

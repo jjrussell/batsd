@@ -189,7 +189,7 @@
           return null;
         },
         remove: function(k) {
-          this.setCookie(k, "", -1);
+          this.set(k, "", -1);
         }
       }
     }
