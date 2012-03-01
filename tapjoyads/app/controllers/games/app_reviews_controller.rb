@@ -22,7 +22,7 @@ class Games::AppReviewsController < GamesController
     @app_review = AppReview.new(params[:app_review])
     @app_review.author = current_gamer
     @app_review.author_type = 'Gamer'
-    @app_id = @app_review.app_metadata.apps.first
+    app_id = @app_review.app_metadata.apps.first.id
 
     if @app_review.save
       flash[:notice] = t('text.games.review_created')
@@ -34,7 +34,7 @@ class Games::AppReviewsController < GamesController
       end
     end
 
-    redirect_to games_earn_path(:eid => ObjectEncryptor.encrypt(@app_id))
+    redirect_to games_earn_path(:eid => ObjectEncryptor.encrypt(app_id))
   end
 
   def edit
