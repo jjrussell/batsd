@@ -44,6 +44,19 @@ $mobile-scaledown-multiplier: 2;
   -o-border-radius: $tl $tr $bl $br;
 }
 
+@mixin rounded-corners-top($radius: 6px) {
+  border-top-right-radius: $radius;
+  border-top-left-radius: $radius;
+  -moz-border-radius-top: $radius;
+  -moz-border-radius-top: $radius;
+  -webkit-border-top-right-radius: $radius;
+  -webkit-border-top-left-radius: $radius;
+  -ms-border-top-right-radius: $radius;
+  -ms-border-top-left-radius: $radius;
+  -o-border-top-right-radius: $radius;
+  -o-border-top-left-radius: $radius;
+}
+
 @mixin rounded-corners-bottom($radius: 6px) {
   border-bottom-right-radius: $radius;
   border-bottom-left-radius: $radius;
