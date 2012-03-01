@@ -8,7 +8,7 @@ class Gamer < ActiveRecord::Base
   has_one :gamer_profile, :dependent => :destroy
   has_one :referrer_gamer, :class_name => 'Gamer', :primary_key => :referred_by, :foreign_key => :id
 
-  delegate :birthdate, :birthdate?, :city, :city?, :country, :country?, :facebook_id, :facebook_id?,
+  delegate :birthdate, :birthdate?, :city, :city?, :country, :country?, :city_and_country, :city_and_country?, :facebook_id, :facebook_id?,
            :fb_access_token, :favorite_category, :favorite_category?, :favorite_game, :favorite_game?,
            :gender, :gender?, :postal_code, :postal_code?, :referral_count,
            :referred_by, :referred_by=, :referred_by?, :to => :gamer_profile, :allow_nil => true

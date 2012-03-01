@@ -1,0 +1,33 @@
+#earn.current
+  .panel
+    .page-header
+      .container.mt20
+        .left.ml10.pt3
+          .squircle
+            = image_tag(@external_publisher.get_icon_url(:size => 114, :source => :cloudfront))
+        .left.ml10
+          .big-title.slate.elip.mt10
+            = @external_publisher.app_name
+          .container
+            .left.ui-icon-medium.score.icon24.p5
+              = "#{@app_metadata.positive_thumbs_percentage.floor}%"
+            .left.ui-icon-medium.social.icon24.p5.ml5
+              = "#{@app_metadata.app_reviews.by_gamers.size}"
+    .section.dark
+      .heading
+        = t('text.games.browse_offers')
+    .review-area
+      = render "offers"
+    .section.dark
+      .heading
+        = t('text.games.other_options')
+    %ul.list-button-container.flush.nbb.big
+      %li.list-button.ntb
+        -link_to new_games_app_review_path(:app_metadata_id => @app_metadata.id) do
+          .left.charcoal
+            = t("text.games.review_app_name", {:app_name => @external_publisher.app_name})
+          .right.rightarrow.icon16
+            &nbsp;
+
+-content_for :included_javascripts do
+  = javascript_include_tag "marketplace/src/ajax"
