@@ -14,8 +14,6 @@
         %a.icon-center
           .active-image= image_tag("games/inset-thumbs-down.png")
           .inactive-image= image_tag("games/grad-thumbs-down.png")
-  .mod.form-section
-    = f.text_area :text, {:required => true, :placeholder => t('text.shared.comment'), :class => "ui-joy-input"}
     = error_message_on @app_review, :text
   .mod.form-section
     - button_text = @app_review.new_record? ? t('text.shared.submit_review') : t('text.shared.update_review')
