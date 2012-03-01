@@ -11,6 +11,7 @@ class Games::GamersController < GamesController
 
   def create
     @gamer = Gamer.new do |g|
+      g.nickname              = params[:gamer][:nickname]
       g.email                 = params[:gamer][:email]
       g.password              = params[:gamer][:password]
       g.password_confirmation = params[:gamer][:password]
