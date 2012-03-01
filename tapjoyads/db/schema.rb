@@ -68,9 +68,9 @@ ActiveRecord::Schema.define(:version => 20120301121324) do
     t.string   "categories"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "papaya_user_count"
     t.integer  "thumbs_up",                       :default => 0
     t.integer  "thumbs_down",                     :default => 0
-    t.integer  "papaya_user_count"
   end
 
   add_index "app_metadatas", ["id"], :name => "index_app_metadatas_on_id", :unique => true
@@ -122,16 +122,6 @@ ActiveRecord::Schema.define(:version => 20120301121324) do
   add_index "apps", ["id"], :name => "index_apps_on_id", :unique => true
   add_index "apps", ["name"], :name => "index_apps_on_name"
   add_index "apps", ["partner_id"], :name => "index_apps_on_partner_id"
-
-  create_table "clients", :id => false, :force => true do |t|
-    t.string   "id",         :limit => 36, :null => false
-    t.string   "name",                     :null => false
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  add_index "clients", ["id"], :name => "index_clients_on_id", :unique => true
-  add_index "clients", ["name"], :name => "index_clients_on_name"
 
   create_table "conversions", :id => false, :force => true do |t|
     t.string   "id",                     :limit => 36, :null => false
@@ -747,7 +737,6 @@ ActiveRecord::Schema.define(:version => 20120301121324) do
     t.date     "negotiated_rev_share_ends_on"
     t.boolean  "accepted_negotiated_tos",                                                  :default => false
     t.string   "cs_contact_email"
-    t.string   "client_id",                    :limit => 36
   end
 
   add_index "partners", ["id"], :name => "index_partners_on_id", :unique => true
