@@ -13,26 +13,3 @@
       = t("text.shared.rate_and_review")
     .mod.review-form
       = render 'form'
-
-- content_for :page_javascript do
-  :plain
-    /*
-    $(function($) {
-      TJG.ui.loadSummaryGamerRating();
-      TJG.ui.loadExistGamerRating();
-
-      $('.read_more').click(function(){
-        $(this).parent().hide();
-        $(this).parent().next().show();
-      });
-
-      $('.collapse').click(function(){
-        $(this).parent().hide();
-        $(this).parent().prev().show();
-      });
-
-      $('#back_to_top_button').click(function(event){
-        $('html, body').animate({ scrollTop: 0 }, 'fast');
-      });
-    });
-    */
