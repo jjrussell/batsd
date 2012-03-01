@@ -42,7 +42,8 @@ class Games::AppReviewsController < GamesController
   end
 
   def update
-    if @app_review.update_attributes(params[:app_review])
+    safe_attributes = [ :user_rating, :text ]
+    if @app_review.safe_update_attributes(params[:app_review], safe_attributes)
       app_id = AppMetadataMapping.find_by_app_metadata_id(@app_review.app_metadata_id).app_id
       flash[:notice] = t('text.games.review_updated')
       redirect_to games_earn_path(:eid => ObjectEncryptor.encrypt(app_id))

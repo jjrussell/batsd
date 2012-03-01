@@ -6,8 +6,8 @@ describe Games::AppReviewsController do
     activate_authlogic
     @gamer = Factory(:gamer)
     login_as(@gamer)
-    @app_metadata = Factory(:app_metadata, :thumbs_up => 0, :thumbs_down => 0)
-    Factory(:app_metadata_mapping, :app_metadata => @app_metadata)
+    app = Factory(:app)
+    @app_metadata = app.app_metadatas.first
   end
 
   describe '#index' do
@@ -26,16 +26,6 @@ describe Games::AppReviewsController do
 
       it "returns current gamer's reviews" do
         assigns[:app_reviews].collect(&:id).sort.should == @gamer.app_reviews.collect(&:id).sort
-      end
-    end
-
-    context 'when has app_metadata_id as params' do
-      before :each do
-        get(:index, :app_metadata_id => @app_metadata.id)
-      end
-
-      it 'returns all the reviews of the app' do
-        assigns[:app_reviews].collect(&:id).sort.should == @app_metadata.app_reviews.collect(&:id).sort
       end
     end
 
@@ -124,10 +114,13 @@ describe Games::AppReviewsController do
           :user_rating => -1
         }
       }
-      put(:update, @options)
     end
 
     context 'when update success' do
+      before :each do
+        put(:update, @options)
+      end
+
       it 'updates the user_rating of app_review' do
         assigns[:app_review].user_rating.should == -1
       end
@@ -147,6 +140,17 @@ describe Games::AppReviewsController do
 
       it 'updates app_metadata thumbs_down' do
         assigns[:app_review].app_metadata.thumbs_down.should == 1
+      end
+    end
+
+    context 'trying to update unsafe attributes' do
+      it 'should not update' do
+        hax0r = Factory(:gamer)
+        @original_author = @gamer_review.author_id
+        @options[:app_review][:author_id] = hax0r.id
+        lambda {
+          put(:update, @options)
+        }.should raise_error(ActiveRecord::RecordNotSaved)
       end
     end
   end
