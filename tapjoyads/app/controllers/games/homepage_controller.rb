@@ -58,7 +58,7 @@ class Games::HomepageController < GamesController
 
     respond_to do |f|
       f.html
-      f.js { render :layout => false and return }
+      f.js { render :layout => false }
     end
   end
 
@@ -124,6 +124,6 @@ class Games::HomepageController < GamesController
   def send_device_link
     ios_link_url = "https://#{request.host}#{games_root_path}"
     GamesMailer.deliver_link_device(current_gamer, ios_link_url, GAMES_ANDROID_MARKET_URL )
-    render(:json => { :success => true }) and return
+    render(:json => { :success => true })
   end
 end
