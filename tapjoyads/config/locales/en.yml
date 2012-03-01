@@ -213,6 +213,7 @@ en:
       account_created_body: "Your Tapjoy account was successfully created!"
       account_created_title: Success!
       action_required: "Action Required!"
+      active_gamers_text: "%{count} other gamers are playing..."
       add: add
       add_to_homescreen: "Add %{tapjoy} to your home screen."
       advertisers_body: "Reach millions of users and gain exposure for your products"
