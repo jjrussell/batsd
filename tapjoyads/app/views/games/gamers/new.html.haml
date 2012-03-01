@@ -14,6 +14,7 @@
         = f.submit t('text.games.next'), :class => "left ui-joy-button soft-grey-action disabled next-btn"
     .register-form
       .form-error.signup-error
+        = error_message_on @gamer, :nickname
         = error_message_on @gamer, :email
         = error_message_on @gamer, :password
         = error_message_on @gamer, :terms_of_service

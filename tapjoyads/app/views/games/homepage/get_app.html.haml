@@ -13,8 +13,9 @@
           .sub-title
             = @offer.partner_name
     .mod.get-app
-      .ui-joy-button.orange-action
-        %a.text-center Get App
+      - link_to(@offer.url) do
+        .ui-joy-button.orange-action
+          .text-center.get-app Get App
     .mod.social-info
       %span.ui-icon-med.social-med
         [Kate and 13 friends played this.]
