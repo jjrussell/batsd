@@ -1,22 +1,12 @@
-#jqt
-  #home.current
-    = render :partial => 'games/homepage/nav_bar', :locals => { :active => 'back', :back_button_destination => edit_games_gamer_path }
-    .content_wrapper
-      = render(:partial => 'header')
-      .content
-        .title_2= t('text.games.delete_my_account')
-        .content_box
-          .interior
-            .field
-              =t('text.games.del_acct_confirm', :days_before_deletion => Gamer::DAYS_BEFORE_DELETION)
-            .field &nbsp;
-            .left
-              - form_for([ :games, @gamer ], :url => games_gamer_path, :html => { :method => "delete" }, :id => 'destroy_gamer') do |f|
-                = f.submit t('text.games.deactivate'), :class => 'button', :id => 'delete_account'
-            .left
-              &nbsp;
-            .left
-              = button_to_function t('text.shared.cancel'), 'history.go(-1)', :class => 'button', :id => 'cancel_delete'
-            .clearfix
-            .field &nbsp;
-    = render :partial => 'games/homepage/footer'
+.current
+  .content
+    %h1.museo
+      = t('text.games.delete_my_account')
+    .content-box
+      .field
+        =t('text.games.del_acct_confirm', :days_before_deletion => Gamer::DAYS_BEFORE_DELETION)
+      .field.clearfix
+        - form_for([ :games, @gamer ], :url => games_gamer_path, :html => { :method => "delete" }, :id => 'destroy_gamer') do |f|
+          .button-group
+            = f.submit t('text.games.deactivate'), :class => 'button', :id => 'delete_account'
+            = button_to_function t('text.shared.cancel'), 'history.go(-1)', :class => 'button', :id => 'cancel_delete'

@@ -273,7 +273,7 @@ describe App do
         before.should == after
       end
     end
-  
+
     context 'with a full reengagement campaign' do
       before :each do
         currency = Factory(:currency)
@@ -312,7 +312,7 @@ describe App do
         before.should == after
       end
     end
-    
+
     context 'with a full reengagement campaign' do
       before :each do
         currency = Factory(:currency)

@@ -127,7 +127,7 @@
           ));
         }
         if(non_gamers.length != 0) {
-          notExistDiv = contentTmp(_t("games.invites_sent_to", 
+          notExistDiv = contentTmp(_t("games.invites_sent_to",
             { name: non_gamers.toString().replace(/\,/g, ", ") },
             { count: non_gamers.length }
           ));

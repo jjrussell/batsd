@@ -1,0 +1,15 @@
+- @app_reviews.each do |app_review|
+  .mod.line-item.image-caption.review
+    .hd
+      .app-icon
+        - if app_review.author.present?
+          %img{ :src => app_review.author.get_avatar_url }
+    .bd
+      .author.elip
+        = app_review.author.name
+      .ui-icon.score{:class => "#{app_review.user_rating == 1 ? 'thumbs-up' : 'thumbs-down'}"}
+        &nbsp;
+      .date
+        = l app_review.created_at, :format => :classic_short
+      .text
+        = app_review.text

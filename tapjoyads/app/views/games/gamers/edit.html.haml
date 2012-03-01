@@ -1,48 +1,53 @@
-#jqt
-  #home.current
-    = render :partial => 'games/homepage/nav_bar', :locals => { :active => 'my_account' }
+#edit-gamer.current
+  .panel
+    .page-header
+      .container
+        .left.ml10.pt3
+          .big-title.mt10
+            = t('text.shared.my_account')
+    - form_for([ :games, :gamer, @gamer_profile ], :url => games_gamer_gamer_profile_path, :html => { :method => "put" }) do |f|
+      .container
+        .mod.titled-group
+          .group-title= t('text.shared.profile')
+          %ul.list-button-container.mb10
+            %li.list-button.soft-gray-gradient.pt5.pl10.pb5.inline-section
+              .hd= t('text.shared.name')
+              .bd
+                .edit-div= f.text_field :name, :class => "ui-joy-input"
+            %li.list-button.soft-gray-gradient.pt5.pl10.pb5.inline-section
+              .hd= t('text.shared.nickname')
+              .bd
+                .edit-div= f.text_field :nickname, :class => "ui-joy-input"
+            %li.list-button.soft-gray-gradient.pt5.pl10.pb5.inline-section
+              .hd= t('text.shared.gender')
+              .bd
+                .edit-div
+                  .button-bar
+                    .hidden
+                      = f.radio_button :gender, "male"
+                      = f.radio_button :gender, "female"
+                    .mod.button-group
+                      .ui-joy-button.grey-action{:value => 'male'}
+                        %a.text-center= t('text.shared.male')
+                      .ui-joy-button.grey-action{:value => 'female'}
+                        %a.text-center= t('text.shared.female')
+            %li.list-button.soft-gray-gradient.pt5.pl10.pb5.inline-section
+              .hd= t('text.shared.location')
+              .bd
+                .edit-div
+                  = f.text_field :city, :placeholder => t("text.shared.city"), :class => "ui-joy-input"
+                  = f.text_field :country, :placeholder => t("text.shared.country"), :class => "ui-joy-input"
+        .mod.titled-group
+          .group-title= t('text.shared.favorites')
+          %ul.list-button-container.mb10
+            %li.list-button.soft-gray-gradient.pt5.pl10.pb5.inline-section
+              .hd= t('text.games.favorite_app')
+              .bd
+                .edit-div= f.text_field :favorite_game, :class => "ui-joy-input"
+            %li.list-button.soft-gray-gradient.pt5.pl10.pb5.inline-section
+              .hd= t('text.games.favorite_category')
+              .bd
+                .edit-div= f.text_field :favorite_category, :class => "ui-joy-input"
 
-    .content_wrapper
-      = render(:partial => 'header')
-      .content
-        = render(:partial => 'invite_friends')
-        = render(:partial => 'profile')
-        .title_2
-          =t('text.shared.options')
-        #account_options.content_box.clearfix
-          - link_to social_games_gamer_path do
-            .slider.bottom_line.clearfix
-              .profile_arrow.right
-              .field
-                .label
-                  =t('text.games.social_settings')
-          - link_to password_games_gamer_path do
-            .slider.bottom_line.clearfix
-              .profile_arrow.right
-              .field
-                .label
-                  =t('text.shared.reset_password')
-          - link_to prefs_games_gamer_path do
-            .slider.bottom_line.clearfix
-              .profile_arrow.right
-              .field
-                .label
-                  =t('text.shared.preferences')
-          - link_to games_app_reviews_path do
-            .slider.clearfix
-              .profile_arrow.right
-              .field
-                .label
-                  =t('text.shared.my_reviews')
-    = render :partial => 'games/homepage/footer'
-
-- content_for :page_javascript do
-  :plain
-    var error = '#{params[:error]}';
-
-    $(document).ready(function() {
-      if(error){
-        $('.error_msg').removeClass('hidden');
-        $('.error_msg').text(error);
-      }
-    });
+        .mod.mb20
+          = f.submit t('text.shared.save'), :class => "ui-joy-button orange-action enable-when-valid"

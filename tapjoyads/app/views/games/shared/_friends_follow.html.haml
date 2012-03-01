@@ -1,0 +1,18 @@
+.titled-group.ml10
+  .hd
+    .group-title.pb10= t('text.shared.friends')
+
+.container
+  %ul.list-button-container.m10.mtn
+    %li.list-button.soft-gray-gradient
+      -link_to "#" do
+        .hd
+          = t("text.shared.following")
+        .bold
+          = @friends_lists[:following].size
+    %li.list-button.soft-gray-gradient
+      -link_to "#" do
+        .hd
+          =t ("text.shared.followers")
+        .bold
+          = @friends_lists[:followers].size
