@@ -149,12 +149,6 @@ $(document).ready(function() {
     }
   });
 
-  Tapjoy.delay(function(){
-    $('#recommedations').Carousel({
-      cssClass : 'complete'
-    });
-  }, 50);
-
   $(".button-bar").each(function () {
     var $$ = $(this),
       radios = $(":radio", $$),
@@ -281,25 +275,26 @@ $(document).ready(function() {
       tjmViewContainer.removeClass('active');
       tjmViewMenu.addClass('hide');
       Tapjoy.Utils.removeMask();
-      console.log(li.hasClass('showRecommendations'))
+
       if(li.hasClass('showAll')){
         $('.row').show();
-      }else if(li.hasClass('showRecommendations')){
+      }else{
         $('.row').hide();
-        $('#recommendationsRow').show();
-      }else if(li.hasClass('showGames')){
-        $('.row').hide();
-        $('#gamesRow').show();
-      }else if(li.hasClass('showFavorites')){
-        $('.row').hide();
-        $('#favoritesRow').show();
+
+        if(li.hasClass('showRecommendations')){
+          $('#recommendationsRow').show();
+        }else if(li.hasClass('showGames')){
+          $('#gamesRow').show();
+        }else if(li.hasClass('showFavorites')){
+          $('#favoritesRow').show();
+        }
       }
 
       $('.heading', tjmViewContainer).text(li.text())
     });
   });
 
-  $(window).bind('resize orientationchange', function(){
+  $(window).bind('resize orientationchange', debounce(function(){
     if(tjmViewContainer.length != 0 && window.innerWidth < 800){
       tjmViewMenu.css('top', tjmViewContainer.offset().top + (tjmViewContainer.outerHeight(true) - 4) + 'px');
 
@@ -307,21 +302,27 @@ $(document).ready(function() {
         width: tjmViewContainer.width() - 4 + 'px'
       });
     }
-  });
+
+    if(window.innerWidth > 770){
+      if($('.row').is(':hidden'))
+        $('.row').show();
+    }else{
+      if(!$('#gamesRow').is(':hidden')){
+        $('.row').hide();
+        $('li.showGames', tjmViewMenu).trigger('click');
+      }
+
+    }
+  }));
+
+  Tapjoy.delay(function(){
+    $('#recommedations').Carousel({
+      cssClass : 'complete'
+    });
+  }, 50);
+
 
   if (Tapjoy.device.idevice) {
     Tapjoy.Plugins.showAddHomeDialog();
   }
-
-  /*
-   Tapjoy.Utils.notification({
-      message: 'Thanks, your settings have been saved.'
-   });
-
-  Tapjoy.delay(function(){
-     Tapjoy.Utils.notification({
-       message: 'Thanks, we would like to save hello again.'
-     });
-   }, 4000);
-   */
 });

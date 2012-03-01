@@ -16,6 +16,7 @@ defaults: &defaults
     'marketplace/src/namespace',
     'marketplace/src/i18n',
     'marketplace/src/plugins',
+    'marketplace/src/social',
     'marketplace/src/main'
   ]
   js_compile_out_file: 'tjm.min'

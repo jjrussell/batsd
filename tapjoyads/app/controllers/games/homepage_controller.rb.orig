@@ -69,6 +69,10 @@ class Games::HomepageController < GamesController
     @device_data = current_gamer.devices.map(&:device_data)
     @require_select_device = current_device_id_cookie.nil?
     device_id = current_device_id
+<<<<<<< HEAD
+    device_info = current_device
+=======
+>>>>>>> 12c4d49d6ce9d539415a63540918d297ee7b113b
     @gamer = current_gamer
     @gamer.gamer_profile ||= GamerProfile.new(:gamer => @gamer)
 
