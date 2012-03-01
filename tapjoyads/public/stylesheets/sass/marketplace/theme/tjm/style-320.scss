@@ -8,6 +8,7 @@ div.app {
   }
 }
 
+
 .big-title {
   -webkit-text-size-adjust: 67%;
   -moz-text-size-adjust: 67%;
@@ -18,18 +19,14 @@ div.app {
 .list-button,
 .collect,
 .greenblock {
-  -webkit-text-size-adjust: 82%;
-  -moz-text-size-adjust: 82%;
-  -o-text-size-adjust: 82%;
-  -ms-text-size-adjust: 82%;
+  -webkit-text-size-adjust: 80%;
+  -moz-text-size-adjust: 80%;
+  -o-text-size-adjust: 80%;
+  -ms-text-size-adjust: 80%;
 }
 
 .list-button .collect {
   margin-top: 2px;
-}
-
-.list-button .big-title {
-  max-width: 130px !important;
 }
 
 .squircle {
@@ -76,3 +73,10 @@ div.app {
     }
   }
 }
+
+.list-button-container.earn-theme .big-title,
+.list-button-container.earn-theme .info {
+  width: 120px !important;
+}
+
+
