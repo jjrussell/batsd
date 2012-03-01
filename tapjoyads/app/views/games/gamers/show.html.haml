@@ -4,7 +4,7 @@
       .left.ml10
         .squircle
           - if current_gamer.get_avatar_url.present?
-            %img{ :src => current_gamer.get_avatar_url }
+            = image_tag(current_gamer.get_avatar_url)
       .left.ml10
         .title.mt10
           = current_gamer.nickname.present?  ? current_gamer.nickname : 'Chuck Norris'

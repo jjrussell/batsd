@@ -28,7 +28,7 @@
               .device-toggle.up.hide
               - if @current_gamer.get_avatar_url.present?
                 .user-icon
-                  %img{ :src => @current_gamer.get_avatar_url }
+                  = image_tag @current_gamer.get_avatar_url
               .device-info
                 - if current_device.nil?
                   = t('text.games.no_device')
