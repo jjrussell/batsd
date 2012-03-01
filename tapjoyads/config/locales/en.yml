@@ -315,6 +315,7 @@ en:
       none_selected: "None Selected"
       on_my: "on my %{device_name}"
       oops: Oops!
+      or_learn_more: or learn more
       other_options: Other Options
       our_tos_changed: "Our %{terms_of_use} have changed. Please review and indicate your agreement below."
       post_to_facebook_content: "Check out Tapjoy where you can discover the best new apps and games, while also earning currency in apps you love. It\'s free to join so visit tapjoy.com today to start getting app recommendations just for you."
@@ -340,6 +341,7 @@ en:
       social_networks: "Social Networks"
       social_settings: "Social Settings"
       spread_mobile_joy: Spread mobile joy
+      start_discovering: Start discovering with Tapjoy for free
       tap_that: "Just tap %{icon} and select %{button}"
       tapjoy_picks: Tapjoy Picks
       thanks_contact_us: Thank you for contacting us.  We'll will get back to you as soon as possible.

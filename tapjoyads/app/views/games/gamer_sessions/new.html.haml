@@ -128,11 +128,11 @@
         .container.mt15
           .left
             %span.text.started
-              Start discovering with Tapjoy today
+              = t('text.games.start_discovering')
         .container
           .left
             %span.text.small
-              or learn more
+              = t('text.games.or_learn_more')
             %span#arrow.darrow.l10
               %img{ :src => BLANK_IMAGE }
       .left
@@ -164,9 +164,24 @@
         = t('text.games.discover_apps')
 
 #footer
-  .wrapper
-    .partners
-
+  .partners
+    %img{ :src => BLANK_IMAGE }
+  .links
+    .container
+      %ul
+        %li
+          Developers      
+        %li
+          Advertisers      
+        %li
+          About Tapjoy      
+        %li
+          Privacy Policy      
+        %li
+          Blog      
+    .container
+      %small
+        = t('text.shared.copyright')
 
 - content_for :page_head do
   %meta{ :name => 'description', :content => t('text.games.meta_description') }
