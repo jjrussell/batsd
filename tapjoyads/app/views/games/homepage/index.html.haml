@@ -40,7 +40,7 @@
 
   - if @external_publishers.present?
     #gamesRow.row.borders.nbb
-      %h1.museo My Games
+      %h1.museo= t('text.games.my_apps')
       .games
         - @external_publishers.each do |external_publisher|
           .app
@@ -51,7 +51,7 @@
             .details
               %span.title.elip
                 = external_publisher.app_name
-              %small.publisher
+              %small.publisher.elip
                 = external_publisher.partner_name
               %span.ui-icon-small.score.icon16
                 -# "#{@app_metadata.positive_thumbs_percentage.floor}%"

@@ -27,7 +27,7 @@ ActionController::Routing::Routes.draw do |map|
     map.connect 'feedback',
       :controller => 'games/support_requests', :action => :new, :type => 'feedback'
 
-    m.resource :gamer, :controller => 'games/gamers', :only => [ :create, :edit, :update, :destroy, :show ],
+    m.resource :gamer, :controller => 'games/gamers', :only => [ :create, :edit, :update, :destroy, :show, :new ],
       :member => { :password => :get, :prefs => :get, :social => :get, :update_password => :put, :accept_tos => :put, :confirm_delete => :get, :connect_facebook_account => :get } do |gamer|
       gamer.resource :device, :controller => 'games/gamers/devices', :only => [ :new, :create ], :member => { :finalize => :get }
       gamer.resource :favorite_app, :controller => 'games/gamers/favorite_app', :only => [ :create, :destroy ]
@@ -50,6 +50,7 @@ ActionController::Routing::Routes.draw do |map|
     map.with_options :controller => 'games/social', :name_prefix => 'games_social_' do |social|
       social.invite_email_friends 'invite_email_friends', :action => :invite_email_friends
       social.send_email_invites 'send_email_invites', :action => :send_email_invites
+      social.invites 'social/invites', :action => :invites
     end
 
     map.resources :survey_results, :only => [ :new, :create ]

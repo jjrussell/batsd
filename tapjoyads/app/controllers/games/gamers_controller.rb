@@ -5,8 +5,13 @@ class Games::GamersController < GamesController
   before_filter :set_profile, :only => [ :edit, :edit_name, :accept_tos, :password, :prefs, :social, :update_password, :confirm_delete ]
   before_filter :offline_facebook_authenticate, :only => :connect_facebook_account
 
+  def new
+    @gamer = Gamer.new
+  end
+
   def create
     @gamer = Gamer.new do |g|
+      g.nickname              = params[:gamer][:nickname]
       g.email                 = params[:gamer][:email]
       g.password              = params[:gamer][:password]
       g.password_confirmation = params[:gamer][:password]
@@ -62,13 +67,12 @@ class Games::GamersController < GamesController
   end
 
   def show
-    @gamer = current_gamer
     @device = Device.new(:key => current_device_id) if current_device_id.present?
     @last_app = @device.present? ? ExternalPublisher.load_all_for_device(@device).first : nil;
 
     @friends_lists = {
-      :following => get_friends_info(Friendship.following_ids(@gamer.id)),
-      :followers => get_friends_info(Friendship.follower_ids(@gamer.id))
+      :following => get_friends_info(Friendship.following_ids(current_gamer.id)),
+      :followers => get_friends_info(Friendship.follower_ids(current_gamer.id))
     }
   end
 

@@ -67,5 +67,7 @@
     .left.phraseThatPays
       A better way to love the apps you have and find the apps you'll love.
     .right
-      #signup.header-button
-        Sign up
+      - link_to(new_games_gamer_path) do
+        #signup.header-button
+          = t('text.shared.sign_up')
+

@@ -29,12 +29,29 @@ ul.flush li {
   padding: 0;
 }
 
-form input[type=submit] {
+input, textarea, select {
+  -webkit-user-select: auto;
+  -webkit-appearance: none;
+  outline: none;
+}
+
+input[type=submit] {
    -webkit-appearance: none;
    margin: 0;
    padding: 0;
    border: 0;
    display: block;
+}
+
+input[type=checkbox] {
+  cursor: pointer;
+  width: 25px;
+  height: 25px;
+  overflow: hidden;
+  background: transparent url(#{$image_path}/checkbox.png) no-repeat 0 0;
+}
+input[type=checkbox]:checked {
+  background: transparent url(#{$image_path}/checkbox-checked.png) no-repeat 0 0;
 }
 
 .header, .header-signup {
@@ -192,23 +209,19 @@ span.gill {
   }
   select {
     border: 1px solid #bfbfbf;
+    color: #a5a5a5;
+    font: 14px 'Gill Sans', 'Gill Sans MT', Arial , sans-serif;
     padding: 12px 16px;
     @include rounded-corners(4px);
     @include inset-shadow("rgba(0,0,0, .8)", 3px);
   }
   input[type=email]:focus, input[type=password]:focus {
     border: 1px solid #a41d20;
-    outline: none;
   }
   input[type=submit] {
     -webkit-appearance: none;
     font-size: 1.1em;
     padding: 11px 8px;
-  }
-  .title {
-    color: #fff;
-    font-size: 20px;
-    margin-bottom: 12px;
   }
   .field {
     margin-bottom: 10px;
@@ -232,7 +245,7 @@ span.gill {
     font-size: 13px;
   }
 
-  .login-error {
+  .login-error, .signup-error {
     text-align: center;
     border-radius: 3px 3px 3px 3px;
     font: normal 1em "Gill Sans", Arial;
@@ -358,19 +371,30 @@ span.gill {
   filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#40898989', endColorstr='#ffffff',GradientType=0 );
   text-align: center;
   box-shadow: inset 0 -1px 4px rgba(0,0,0, .3);
-  padding: 25px 0;
+  padding: 20px 0;
 
-  span {
-    display: inline-block;
-    vertical-align: middle;
-  }
+  .content-box {
+    width: 670px;
+    text-align: center;
+    margin: 0 auto;
+    overflow: auto;
 
-  .text {
-    font: 200 28px "Museo Slab";
-    color: #444;
-    text-shadow: 0 1px 0 rgba(255,255,255, .6);
-    -webkit-text-stroke-width: 1px;
-    -webkit-text-stroke-color: #444;
+    span {
+      display: inline-block;
+      vertical-align: middle;
+    }
+
+    .text {
+      font: 100 1.9em "Museo Slab";
+      color: #444;
+      text-shadow: 0 1px 0 rgba(255,255,255, .6);
+      -webkit-text-stroke-width: 1px;
+      -webkit-text-stroke-color: #444;
+    }
+
+    .text.small {
+      font-size: 1.2em;
+    }
   }
 }
 
@@ -415,14 +439,14 @@ span.gill {
   filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ff8600', endColorstr='#ffbe00',GradientType=0 );
   box-shadow: inset 0 1px 0 rgba(0,0,0, .08);
   border-top: 1px solid #a35500;
-  border-bottom: 1px solid #fff;
+  border-bottom: 1px solid rgba(255,255,255, .4);
   text-shadow: 0 1px 0 #d47f1b;
 }
 
 
 .darrow {
-  width: 30px;
-  height: 30px;
+  width: 24px;
+  height: 24px;
   cursor: pointer;
   background: rgb(246,246,246);
   background: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/Pgo8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgdmlld0JveD0iMCAwIDEgMSIgcHJlc2VydmVBc3BlY3RSYXRpbz0ibm9uZSI+CiAgPGxpbmVhckdyYWRpZW50IGlkPSJncmFkLXVjZ2ctZ2VuZXJhdGVkIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgeDE9IjAlIiB5MT0iMCUiIHgyPSIwJSIgeTI9IjEwMCUiPgogICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iI2Y2ZjZmNiIgc3RvcC1vcGFjaXR5PSIxIi8+CiAgICA8c3RvcCBvZmZzZXQ9IjM2JSIgc3RvcC1jb2xvcj0iI2YxZjFmMSIgc3RvcC1vcGFjaXR5PSIxIi8+CiAgICA8c3RvcCBvZmZzZXQ9IjcxJSIgc3RvcC1jb2xvcj0iI2U5ZTllOSIgc3RvcC1vcGFjaXR5PSIxIi8+CiAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiNlNWU1ZTUiIHN0b3Atb3BhY2l0eT0iMSIvPgogIDwvbGluZWFyR3JhZGllbnQ+CiAgPHJlY3QgeD0iMCIgeT0iMCIgd2lkdGg9IjEiIGhlaWdodD0iMSIgZmlsbD0idXJsKCNncmFkLXVjZ2ctZ2VuZXJhdGVkKSIgLz4KPC9zdmc+);
@@ -461,19 +485,20 @@ span.gill {
 
 .darrow img {
   background: url(#{$image_path}/down_arrow.png) no-repeat center center;
-  width: 20px;
-  height: 20px;
-  margin: 5px;
+  background-size: 16px 16px;
+  width: 16px;
+  height: 16px;
+  margin: 4px;
 }
 
 #benefits {
-  background-color: #fff;
-  min-height: 400px;
+  background: #fff url(#{$root_image_path}/edge_shadow.png) no-repeat top center;
+  min-height: 350px;
   border-bottom: 1px solid #909090;
   @include animate(all, 0.35s, ease-in);
 
   .box {
-    margin-top: 50px;
+    margin-top: 30px;
     width: 33%;
   }
 
@@ -521,20 +546,53 @@ span.gill {
 }
 
 #footer {
-  background: rgb(223,223,223);
-  background: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/Pgo8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgdmlld0JveD0iMCAwIDEgMSIgcHJlc2VydmVBc3BlY3RSYXRpbz0ibm9uZSI+CiAgPGxpbmVhckdyYWRpZW50IGlkPSJncmFkLXVjZ2ctZ2VuZXJhdGVkIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgeDE9IjAlIiB5MT0iMCUiIHgyPSIwJSIgeTI9IjEwMCUiPgogICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iI2RmZGZkZiIgc3RvcC1vcGFjaXR5PSIxIi8+CiAgICA8c3RvcCBvZmZzZXQ9IjMwJSIgc3RvcC1jb2xvcj0iI2U5ZTllOSIgc3RvcC1vcGFjaXR5PSIxIi8+CiAgICA8c3RvcCBvZmZzZXQ9IjY0JSIgc3RvcC1jb2xvcj0iI2UzZTNlMyIgc3RvcC1vcGFjaXR5PSIxIi8+CiAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiNmZGZkZmQiIHN0b3Atb3BhY2l0eT0iMSIvPgogIDwvbGluZWFyR3JhZGllbnQ+CiAgPHJlY3QgeD0iMCIgeT0iMCIgd2lkdGg9IjEiIGhlaWdodD0iMSIgZmlsbD0idXJsKCNncmFkLXVjZ2ctZ2VuZXJhdGVkKSIgLz4KPC9zdmc+);
-  background: -moz-linear-gradient(top, rgba(223,223,223,1) 0%, rgba(233,233,233,1) 30%, rgba(227,227,227,1) 64%, rgba(253,253,253,1) 100%);
-  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(223,223,223,1)), color-stop(30%,rgba(233,233,233,1)), color-stop(64%,rgba(227,227,227,1)), color-stop(100%,rgba(253,253,253,1)));
-  background: -webkit-linear-gradient(top, rgba(223,223,223,1) 0%,rgba(233,233,233,1) 30%,rgba(227,227,227,1) 64%,rgba(253,253,253,1) 100%);
-  background: -o-linear-gradient(top, rgba(223,223,223,1) 0%,rgba(233,233,233,1) 30%,rgba(227,227,227,1) 64%,rgba(253,253,253,1) 100%);
-  background: -ms-linear-gradient(top, rgba(223,223,223,1) 0%,rgba(233,233,233,1) 30%,rgba(227,227,227,1) 64%,rgba(253,253,253,1) 100%);
-  background: linear-gradient(top, rgba(223,223,223,1) 0%,rgba(233,233,233,1) 30%,rgba(227,227,227,1) 64%,rgba(253,253,253,1) 100%);
-  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#dfdfdf', endColorstr='#fdfdfd',GradientType=0 );
-  box-shadow: inset 0 1px 4px rgba(0,0,0, .1);
+  @include linear-gradient(top, #d8d8d8, #fff);
+  box-shadow: inset 0 1px 4px rgba(0,0,0, .3);
 
- .partners {
-   height: 40px;
- }
+  .partners {
+    height: 40px;
+    padding: 10px 0;
+    text-align: center;
+    border-bottom: 1px solid #ccc;
+    img {
+      width: 350px;
+      height: 45px;
+      background: url(#{$root_image_path}/partners.png) no-repeat 0 0;
+    }
+  }
+
+  .links {
+    padding: 5px 0 10px;
+    text-align: center;
+    border-top: 1px solid #fff;
+    ul {
+      margin: 5px;
+      li {
+        display: inline;
+        color: #424242;
+        font: bold .9em "Helvetica", Arial;
+        text-shadow: 0 1px 0 #fff;
+        padding: 0 5px;
+        border-right: 1px solid #424242;
+        border-left: 1px solid #fff;
+      }
+
+      li:first-child {
+        border-left: 0;
+      }
+
+      li:last-child {
+        border-right: 0;
+      }
+    }
+  }
+  small {
+    font: normal .8em "Helvetica", Arial;
+    text-shadow: 0 1px 0 #fff;
+    width: 675px;
+    display: block;
+    margin: 0 auto;
+  }
 }
 
 .header-h-split {
@@ -661,6 +719,8 @@ span.gill {
   #getting-started {
     position: relative;
     padding: 20px 0;
+
+
   }
 
   #getting-started .text {
@@ -730,8 +790,13 @@ span.gill {
     }
   }
 
-  #getting-started .text {
-    font: 200 18px "Museo Slab";
+  #getting-started {
+    .content-box {
+      width: 580px;
+      .text {
+         font: 200 1.6em "Museo Slab";
+      }
+    }
   }
 
   #benefits {
@@ -969,3 +1034,5 @@ span.gill {
 .footer {
   display: none;
 }
+
+

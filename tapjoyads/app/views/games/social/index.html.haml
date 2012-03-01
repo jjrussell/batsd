@@ -7,63 +7,39 @@
             = t('text.games.social_settings')
     = render "games/shared/friends_follow"
 
-    .mod
-      .ui-joy-button.medium.facebook-btn
-        = fb_connect_async_js
-        - js_function = current_gamer.facebook_id.blank? ? "postToFeed()" : "checkAndPost()"
-        - link_to '#', :class => 'icon text-left', :onclick => js_function do
-          .img.facebook
-            = image_tag "e.gif"
-          .label
-            = t('text.games.share_on_facebook')
-      - if false
-        .ui-joy-button.medium.twitter-btn
-          - link_to '#', :class => 'icon text-left' do
-            .img.twitter
-              = image_tag "e.gif"
-            .label
-              = t('text.games.share_on_twitter')
-      .ui-joy-button.medium.email-btn
-        - link_to games_social_invite_email_friends_path, :class => 'icon text-left' do
-          .img.email
-            = image_tag "e.gif"
-          .label
-            = t('text.games.invite_by_email')
-
+    .titled-group.ml10
+      .hd
+        .group-title.pb10
+          = t('text.games.find_and_invite_friends')
+          .aside= t('text.games.more_the_merrier')
+    .container
+      %ul.list-button-container.m10.mtn
+        %li.list-button.soft-gray-gradient
+          -link_to games_social_invites_path do
+            = t("text.games.find_more_friends")
     .titled-group.ml10
       .hd
         .group-title.pb10
           = t('text.games.social_networks')
-          .aside= t('text.games.find_and_invite_friends')
+          .aside= t('text.games.find_friends_on_tapjoy')
 
     .container
       %ul.list-button-container.m10.mtn
         - has_fb = @gamer_profile.facebook_id.present?
-        - has_tw = @gamer_profile.facebook_id.present?
+        - has_tw = false
         %li.list-button.soft-gray-gradient
-          -link_to "#" do
-            .ui-icon-medium.twitter
-              = has_fb ? t("text.games.connected_to_twitter") : "&nbsp;"
-              .right{:class => has_tw ? "checkmark" : "plussign"}
-                &nbsp;
-        - form_for([ :games, @current_gamer ], :url => dissociate_account_games_gamer_gamer_profile_path(:account_type => Invitation::FACEBOOK), :html => { :method => "put" }) do |f|
-          %li.list-button.soft-gray-gradient
-            - link_to "#", "data-fb-url" => connect_facebook_account_games_gamer_path, :class => has_fb ? "submit-button" : "login-to-facebook" do
+          - link_to "#", "data-fb-url" => connect_facebook_account_games_gamer_path, :class => has_fb ? "submit-child-form" : "login-to-facebook" do
+            - form_for([ :games, @current_gamer ], :url => dissociate_account_games_gamer_gamer_profile_path(:account_type => Invitation::FACEBOOK), :html => { :class => "logout-of-facebook", :method => "put" }) do |f|
               .ui-icon-medium.facebook
                 = has_fb ? t("text.games.connected_to_facebook") : "&nbsp;"
                 .right{:class => has_fb ? "checkmark" : "plussign"}
                   &nbsp;
+        %li.list-button.soft-gray-gradient
+          -link_to "#" do
+            .ui-icon-medium.twitter
+              = has_tw ? t("text.games.connected_to_twitter") : "&nbsp;"
+              .right{:class => has_tw ? "checkmark" : "plussign"}
+                &nbsp;
 
 - content_for :page_head do
   = fb_connect_async_js
-- content_for :page_javascript do
-  :plain
-    var icon = '#{WEBSITE_URL}/images/ic_launcher_96x96.png';
-    var callback = '#{games_login_url(:referrer => current_gamer.encrypted_referral_id)}';
-    var facebookId = '#{current_gamer.facebook_id}';
-    var postToFeed = function() {
-      Tapjoy.Social.postToFeed(callback, icon);
-    }
-    var checkAndPost = function() {
-      Tapjoy.Social.checkAndPost(facebookId, callback, icon);
-    }
