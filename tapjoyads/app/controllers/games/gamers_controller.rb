@@ -5,6 +5,10 @@ class Games::GamersController < GamesController
   before_filter :set_profile, :only => [ :edit, :edit_name, :accept_tos, :password, :prefs, :social, :update_password, :confirm_delete ]
   before_filter :offline_facebook_authenticate, :only => :connect_facebook_account
 
+  def new
+    @gamer = Gamer.new
+  end
+
   def create
     @gamer = Gamer.new do |g|
       g.email                 = params[:gamer][:email]
