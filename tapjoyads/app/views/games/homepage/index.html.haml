@@ -40,7 +40,7 @@
 
   - if @external_publishers.present?
     #gamesRow.row.borders.nbb
-      %h1.museo My Games
+      %h1.museo= t('text.games.my_apps')
       .games
         - @external_publishers.each do |external_publisher|
           .app

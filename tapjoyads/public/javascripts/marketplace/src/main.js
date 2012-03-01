@@ -79,6 +79,174 @@ $(document).ready(function() {
     });
   }
 
+  // Signup Validation
+  $('form#new_gamer').submit(function(e){
+    Tapjoy.Utils.Cookie.set('cookies_enabled', 'test', 1);
+    var test_cookie = Tapjoy.Utils.Cookie.get('cookies_enabled');
+    e.preventDefault();
+    var rurl, inputs, values = {}, data, hasError = false, cookieError = false, emailReg;
+    rurl = $(this).attr('action');
+    inputs = $('form#new_gamer :input');
+    inputs.each(function() {
+      if (this.type == 'radio') {
+        values[this.name] = $(this).attr("checked");
+      }
+      else if (this.type == 'checkbox') {
+        if ($(this).attr("checked")) {
+          values[this.name] = '1';
+        }
+        else {
+          values[this.name] = '0';
+        }
+      }
+      else {
+        values[this.name] = $(this).val();
+      }
+    });
+    $(".signup-error").hide();
+    emailReg = /^([\w-\.+]+@([\w-]+\.)+[\w-]{2,4})?$/;
+    if(values['date[day]'] == '' || values['date[month]'] == '' || values['date[year]'] == '') {
+      $(".signup-error").html(_t('games.enter_birthdate'));
+      hasError = true;
+    }
+    else if(values['gamer[email]'] == '' || values['gamer[email]'] == "Email") {
+      $(".signup-error").html(_t('games.enter_email'));
+      hasError = true;
+    }
+    else if(!emailReg.test(values['gamer[email]'])) {
+      $(".signup-error").html(_t('games.enter_valid_email'));
+      hasError = true;
+    }
+    else if(values['gamer[password]'] == '' || values['gamer[password]'] == "Password") {
+      $(".signup-error").html(_t('games.enter_password'));
+      hasError = true;
+    }
+    else if(values['gamer[terms_of_service]'] == false) {
+      $(".signup-error").html(_t('games.enter_tos'));
+      hasError = true;
+    }
+    else if (Tapjoy.Utils.isEmpty(test_cookie)) {
+      hasError = true;
+      cookieError = true;
+    }
+    else {
+      Tapjoy.Utils.Cookie.remove('cookies_enabled');
+    }
+    if (hasError && cookieError) {
+
+    }
+    else if (hasError) {
+      $(".signup-error").show();
+    }
+    else if (hasError != true) {
+      var loader = [
+        '<div class="title museo center">'+_t('games.registering')+'</div>',
+        '<div class="loading-animation"></div>'
+      ].join('');
+      //$(".register_form").hide();
+      //$('.register_progess').html(loader);
+      $.ajax({
+        type: 'POST',
+        url: rurl,
+        cache: false,
+        timeout: 15000,
+        dataType: 'json',
+        data: {
+          'authenticity_token': values['authenticity_token'],
+          'data': values['data'],
+          'src': values['src'],
+          'gamer[email]': values['gamer[email]'],
+          'gamer[password]': values['gamer[password]'],
+          'gamer[referrer]': values['gamer[referrer]'],
+          'gamer[terms_of_service]': values['gamer[terms_of_service]'],
+          'date[day]': values['date[day]'],
+          'date[month]': values['date[month]'],
+          'date[year]': values['date[year]'],
+          'default_platforms[android]': values['default_platform_android'],
+          'default_platforms[ios]': values['default_platform_ios']
+        },
+        success: function(d) {
+          var msg;
+          if (d.success) {
+            hasLinked = false;
+            msg = [
+              '<div class="title_2 center">'+_t('games.account_created_title')+'</div>',
+              '<div class="dialog_content center">'+_t('games.account_created_body')+'</div>',
+              '<div class="continue_link_device"><div class="button red">'+_t('shared.continue')+'</div></div>',
+            ].join('');
+            $('.register_progess').html(msg);
+            if (d.link_device_url) { // Link device
+              $('.continue_link_device').click(function(){
+                if (TJG.vars.isAndroid && d.android) {
+                  document.location.href = d.link_device_url;
+                }
+                else if (TJG.vars.isAndroid && TJG.android_market_url) {
+                  document.location.href = TJG.android_market_url;
+                }
+                else if (TJG.vars.isIos) {
+                  document.location.href = d.link_device_url;
+                }
+                else {
+                  if (TJG.path) {
+                    document.location.href = TJG.path;
+                  }
+                  else {
+                    document.location.href = document.domain;
+                  }
+                }
+              });
+            }
+            else {
+              $('.continue_link_device').click(function(){
+                if (TJG.path) {
+                  document.location.href = TJG.path;
+                }
+                else {
+                  document.location.href = document.domain;
+                }
+              });
+            }
+          }
+          else {
+            var error = _t('games.issue_registering');
+            if (d.error && d.error[0]) {
+              if (d.error[0][0] == 'birthdate') {
+                error = _t('games.unable_to_process');
+              }
+              else if (d.error[0][0] && d.error[0][1]) {
+                error = 'The ' + d.error[0][0] + ' ' + d.error[0][1];
+              }
+            }
+            msg = [
+              '<div class="title_2 center">'+_t('games.oops')+'</div>',
+              '<div class="dialog_content center">', error ,'.</div>',
+              '<div class="sign_up_again"><div class="button red try_again">'+_t('shared.try_again')+'</div></div>',
+            ].join('');
+            $('.register_progess').html(msg);
+          }
+          $('.sign_up_again').click(function(){
+            $('.register_progess').html('');
+            $(".register_form").show();
+          });
+        },
+        error: function() {
+          var error = 'There was an issue';
+          msg = [
+            '<div class="title center">'+_t('games.oops')+'</div>',
+            '<div class="dialog_content center">', error ,'.</div>',
+            '<div class="sign_up_again"><div class="button red try_again">'+_t('shared.try_again')+'</div></div>',
+          ].join('');
+          $('.register_progess').html(msg);
+          $('.sign_up_again').click(function(){
+             $('.register_progess').html('');
+             $(".register_form").show();
+          });
+        }
+      });
+    }
+  });
+
+
   // Menu Grid
   $('.menu-grid').bind('click', function(){
     if ($(this).hasClass('active')) {
@@ -218,7 +386,7 @@ $(document).ready(function() {
     }, {scope: scope});
   });
 
-/*
+  /*
     doFbLogout : function(){
       FB.getLoginStatus(function(response) {
         if (response.authResponse) {
@@ -296,22 +464,22 @@ $(document).ready(function() {
       tjmViewContainer.removeClass('active');
       tjmViewMenu.addClass('hide');
       Tapjoy.Utils.removeMask();
-			
+
       if(li.hasClass('showAll')){
-				$('.row').show();
-				$('#recommendationsRow').removeClass('nbb');
+        $('.row').show();
+        $('#recommendationsRow').removeClass('nbb');
       }else{
-			  $('.row').hide();	
-			  
-				if(li.hasClass('showRecommendations')){
-					$('#recommendationsRow').show().addClass('nbb');
-				}else if(li.hasClass('showGames')){
-	        $('#gamesRow').show();
-				}else if(li.hasClass('showFavorites')){
-	        $('#favoritesRow').show();
-				}
-		  }
-			
+        $('.row').hide();
+
+        if(li.hasClass('showRecommendations')){
+          $('#recommendationsRow').show().addClass('nbb');
+        }else if(li.hasClass('showGames')){
+          $('#gamesRow').show();
+        }else if(li.hasClass('showFavorites')){
+          $('#favoritesRow').show();
+        }
+      }
+
       $('.heading', tjmViewContainer).text(li.text())
     });
   });
@@ -323,21 +491,20 @@ $(document).ready(function() {
       $('.fix', tjmViewContainer).css({
         width: tjmViewContainer.width() - 4 + 'px'
       });
-		}
-		
-		if(window.innerWidth > 770){
-			if($('.row').is(':hidden'))
-  			$('.row').show();
-  	}else{
-			if($('#recommendationsRow').hasClass('nbb'))
-  			$('#recommendationsRow').show().removeClass('nbb');
-			
-			if(!$('#gamesRow').is(':hidden')){
+    }
+
+    if(window.innerWidth > 770){
+      if($('.row').is(':hidden'))
+        $('.row').show();
+    }else{
+      if($('#recommendationsRow').hasClass('nbb'))
+        $('#recommendationsRow').show().removeClass('nbb');
+
+      if(!$('#gamesRow').is(':hidden')){
         $('.row').hide();
-				$('li.showGames', tjmViewMenu).trigger('click');
-			}
-  			
-		}
+        $('li.showGames', tjmViewMenu).trigger('click');
+      }
+    }
   });
 
   Tapjoy.delay(function(){
@@ -347,7 +514,7 @@ $(document).ready(function() {
   }, 50);
 
 
-  if (Tapjoy.device.idevice) {
-    Tapjoy.Plugins.showAddHomeDialog();
-  }
+  //if (Tapjoy.device.idevice) {
+  //  Tapjoy.Plugins.showAddHomeDialog();
+  //}
 });

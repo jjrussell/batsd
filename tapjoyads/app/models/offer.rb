@@ -534,19 +534,6 @@ class Offer < ActiveRecord::Base
     CloudFront.invalidate(id, paths) if existing_icon_blob.present?
   end
 
-  def get_video_url(options = {})
-    Offer.get_video_url({:video_id => Offer.id}.merge(options))
-  end
-
-  def self.get_video_url(options = {})
-    video_id  = options.delete(:video_id)  { |k| raise "#{k} is a required argument" }
-    raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
-
-    prefix = "http://s3.amazonaws.com/#{RUN_MODE_PREFIX}tapjoy"
-
-    "#{prefix}/videos/src/#{video_id}.mp4"
-  end
-
   def save(perform_validation = true)
     super(perform_validation)
   rescue BannerSyncError => bse
@@ -634,9 +621,12 @@ class Offer < ActiveRecord::Base
   end
 
   def update_payment(force_update = false)
-    if partner && (force_update || bid_changed? || new_record?)
-      # payment should be at least one-cent unless the bid is zero
-      self.payment = [bid * (100 - partner.premier_discount) / 100, [bid,1].min].max
+    if (force_update || bid_changed? || new_record?)
+      if (item_type == 'App' || item_type == 'ActionOffer')
+        self.payment = bid == 0 ? 0 : [ bid * (100 - partner.premier_discount) / 100, 1 ].max
+      else
+        self.payment = bid
+      end
     end
   end
 

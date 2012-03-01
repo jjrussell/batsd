@@ -1,7 +1,5 @@
 class ActionMailer::Base
 
-  RECEIPT_EMAIL = "email.receipts@tapjoy.com"
-
   def deliver_with_rescue_errors!(mail = @mail)
     begin
       deliver_without_rescue_errors!(mail)
@@ -13,7 +11,8 @@ class ActionMailer::Base
   end
 
   def deliver_with_receipt!(mail = @mail)
-    unless self.class == GamesMarketingMailer
+    # let's avoid paying for sending emails to ourselves (RECEIPT_EMAIL), via sendgrid
+    unless self.smtp_settings[:address] == 'smtp.sendgrid.net'
       if mail.bcc
         mail.bcc += [ RECEIPT_EMAIL ]
       else
