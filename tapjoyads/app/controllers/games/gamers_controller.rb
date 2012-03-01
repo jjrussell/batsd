@@ -2,7 +2,7 @@ class Games::GamersController < GamesController
   rescue_from Mogli::Client::ClientException, :with => :handle_mogli_exceptions
   rescue_from Errno::ECONNRESET, :with => :handle_errno_exceptions
   rescue_from Errno::ETIMEDOUT, :with => :handle_errno_exceptions
-  before_filter :set_profile, :only => [ :edit, :accept_tos, :password, :prefs, :social, :update_password, :confirm_delete ]
+  before_filter :set_profile, :only => [ :edit, :edit_name, :accept_tos, :password, :prefs, :social, :update_password, :confirm_delete ]
   before_filter :offline_facebook_authenticate, :only => :connect_facebook_account
 
   def create
@@ -61,6 +61,16 @@ class Games::GamersController < GamesController
     end
   end
 
+  def show
+    @device = Device.new(:key => current_device_id) if current_device_id.present?
+    @last_app = @device.present? ? ExternalPublisher.load_all_for_device(@device).first : nil;
+
+    @friends_lists = {
+      :following => get_friends_info(Friendship.following_ids(current_gamer.id)),
+      :followers => get_friends_info(Friendship.follower_ids(current_gamer.id))
+    }
+  end
+
   def social
     @friends_lists = {
       :following => get_friends_info(Friendship.following_ids(current_gamer.id)),
@@ -115,13 +125,7 @@ class Games::GamersController < GamesController
     end
   end
 
-  def get_friends_info(ids)
-    Gamer.find_all_by_id(ids).map do |friend|
-      {
-        :id        => friend.id,
-        :name      => friend.get_gamer_name,
-        :image_url => friend.get_avatar_url
-      }
-    end
+  def render_json_error(errors, status = 403)
+    render(:json => { :success => false, :error => errors }, :status => status)
   end
 end

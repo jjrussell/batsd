@@ -1,0 +1,35 @@
+#my_apps.page{:class=>"current"}
+  .panel
+    - if current_gamer.devices.empty?
+      = render 'games/homepage/register_device'
+    = render 'games/homepage/featured_content_preview'
+
+    - if @external_publishers.blank?
+      = render 'no_games'
+    - else
+      #carousel
+        %ul.carousel
+          -@external_publishers.each do |external_publisher|
+            .apps
+              .icon
+                = image_tag(external_publisher.get_icon_url(:size => 114, :source => :cloudfront))
+                .greenblock
+              .label
+                %span
+                  = external_publisher.app_name
+                %small
+                  PUBLISHER
+                %span.icon-likes
+                  80%
+                %span.icon-users
+                  15
+                .collect
+                  Collect
+
+    = render 'games/shared/footer'
+
+- content_for :page_head do
+  %meta{ :name => 'description', :content => t('text.games.meta_description') }
+  %meta{ :name => 'keywords', :content => t('text.games.meta_keywords')}
+
+

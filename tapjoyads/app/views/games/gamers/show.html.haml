@@ -1,0 +1,25 @@
+#show.current
+  .head
+    .container.mt10.pt10
+      .left.ml10
+        .squircle
+          - if current_gamer.get_avatar_url.present?
+            %img{ :src => current_gamer.get_avatar_url }
+      .left.ml10
+        .title.mt10
+          = current_gamer.nickname.present?  ? current_gamer.nickname : 'Chuck Norris'
+          %span.aside
+            (#{t("text.games.thats_you")})
+        .subtitle
+          = t('text.games.last_played', :game => @last_app.app_name) if @last_app.present?
+
+  = render "games/shared/friends_follow"
+
+  .container
+    %ul.list-button-container.flush.nbb.big
+      %li.list-button.charcoal.soft-gray-gradient
+        - link_to edit_games_gamer_path(:id => current_gamer.id) do
+          = t('text.shared.my_profile')
+      %li.list-button.charcoal.soft-gray-gradient
+        - link_to games_social_index_path do
+          = t('text.games.social_settings')
