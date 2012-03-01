@@ -90,7 +90,7 @@
 
     if(typeof result !== "string") {
       if(w.ENVIRONMENT === "development") {
-        throw customError("Did not find translation string: ",
+        throw me.customError("Did not find translation string: ",
           {key: key, locale: opt.locale, default_locale: me.default_locale, result: result},
           "Tapjoyi18nError");
       }

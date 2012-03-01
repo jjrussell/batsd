@@ -5,6 +5,9 @@ class Games::SocialController < GamesController
   before_filter :require_gamer
   before_filter :validate_recipients, :only => [ :send_email_invites ]
 
+  def invites
+  end
+
   def index
     @gamer_profile = current_gamer.gamer_profile
     @friends_lists = {
