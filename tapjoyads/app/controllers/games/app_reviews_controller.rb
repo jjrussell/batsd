@@ -13,16 +13,15 @@ class Games::AppReviewsController < GamesController
   end
 
   def new
-    @app = AppMetadataMapping.find_by_app_metadata_id(params[:app_metadata_id]).app
+    currency = Currency.find(ObjectEncryptor.decrypt(params[:eid]))
+    @app = currency.app
     @app_metadata = @app.primary_app_metadata
     @app_review = current_gamer.review_for(@app_metadata.id) || @app_metadata.app_reviews.build(:user_rating => 1)
   end
 
   def create
-    @app_review = AppReview.new(params[:app_review])
-    @app_review.author = current_gamer
-    @app_review.author_type = 'Gamer'
-    app_id = @app_review.app_metadata.apps.first.id
+    @app_review = AppReview.new
+    update_app_review
 
     if @app_review.save
       flash[:notice] = t('text.games.review_created')
@@ -34,7 +33,7 @@ class Games::AppReviewsController < GamesController
       end
     end
 
-    redirect_to games_earn_path(:eid => ObjectEncryptor.encrypt(app_id))
+    redirect_to games_earn_path(:eid => params[:app_review][:eid])
   end
 
   def edit
@@ -42,11 +41,11 @@ class Games::AppReviewsController < GamesController
   end
 
   def update
-    safe_attributes = [ :user_rating, :text ]
-    if @app_review.safe_update_attributes(params[:app_review], safe_attributes)
-      app_id = AppMetadataMapping.find_by_app_metadata_id(@app_review.app_metadata_id).app_id
+    update_app_review
+
+    if @app_review.save
       flash[:notice] = t('text.games.review_updated')
-      redirect_to games_earn_path(:eid => ObjectEncryptor.encrypt(app_id))
+      redirect_to games_earn_path(:eid => params[:app_review][:eid])
     else
       render :action => :edit
     end
@@ -61,5 +60,16 @@ class Games::AppReviewsController < GamesController
 
   def find_app_review
     @app_review = current_gamer.app_reviews.find(params[:id])
+  end
+
+  def update_app_review
+    currency = Currency.find(ObjectEncryptor.decrypt(params[:app_review][:eid]))
+
+    @app_review.user_rating = params[:app_review][:user_rating]
+    @app_review.text = params[:app_review][:text]
+    @app_review.app_id = currency.app_id
+    @app_review.app_metadata = currency.app.primary_app_metadata
+    @app_review.author = current_gamer
+    @app_review.author_type = 'Gamer'
   end
 end
