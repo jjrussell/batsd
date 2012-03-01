@@ -164,9 +164,26 @@
         = t('text.games.discover_apps')
 
 #footer
-  .wrapper
-    .partners
-
+  .partners
+    %img{ :src => BLANK_IMAGE }
+  .links
+    .container
+      %ul
+        %li
+          Developers      
+        %li
+          Advertisers      
+        %li
+          About Tapjoy      
+        %li
+          Privacy Policy      
+        %li
+          Blog      
+    .container
+      %small
+        Copyright 2012 Tapjoy, Inc. All Rights Reserved. Tapjoy and the Tapjoy logo are trademarks or registered trademarks of Tapjoy, Inc.
+        %br
+        All third party logos and trademarks mentioned are the property of their respective owners. 
 
 - content_for :page_head do
   %meta{ :name => 'description', :content => t('text.games.meta_description') }
