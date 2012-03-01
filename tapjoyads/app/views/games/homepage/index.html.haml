@@ -13,7 +13,7 @@
           #viewSelect.dropdown.left
             %img.downarrow-white.icon24{ :src => BLANK_IMAGE }
           .heading.pl5.pr15
-            My Games
+            = t('text.games.my_apps')
           .fix
       #viewSelectMenu.hide
         %ul
@@ -22,7 +22,8 @@
             %li.showGames.active My Games
           - if current_recommendations.present?
             %li.showRecommendations Recommendations
-          %li.showAll View All
+          %li.showAll
+            = t('text.shared.view_all')
 
   - if current_recommendations.present?
     #recommendationsRow.row.borders.pn.ntb.rec

@@ -43,9 +43,9 @@
             = check_box_tag :default_platform_ios, 'ios'
       .row
         .field.field_tos
-          .field_checkbox
+          .field_checkbox.left
             = f.check_box :terms_of_service
-          .field_tos_text
+          .field_tos_text.left
             = f.label :terms_of_service, t("text.games.tos_acknowledge_html",
               :terms_of_use => link_to(t("text.games.terms_of_use_href"), games_tos_path, :target => '_blank'),
               :privacy_policy => link_to(t("text.games.privacy_policy_href"), games_privacy_path, :target => '_blank'))
