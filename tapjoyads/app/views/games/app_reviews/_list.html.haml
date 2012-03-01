@@ -3,7 +3,7 @@
     .hd
       .app-icon
         - if app_review.author.present?
-          %img{ :src => app_review.author.get_avatar_url }
+          = image_tag(app_review.author.get_avatar_url)
     .bd
       .author.elip
         = app_review.author.name
