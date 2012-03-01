@@ -364,36 +364,15 @@ $(document).ready(function() {
     };
   };
 
-  $(".submit-button").click(function () {
-    $(this).closest("form").submit();
+  $(".submit-child-form").click(function () {
+    $(this).children("form").submit();
     return false;
   });
 
-  $(".login-to-facebook").click(function () {
-    var scope = 'offline_access,publish_stream',
-      $$ = $(this),
-      FB = window.FB;
-    FB.login(function (response, scope) {
-      if (response.authResponse) {
-        FB.api('/me', function (response) {
-          window.location = $$.data("fb-url");
-        });
-      } else {
-        Tapjoy.Utils.notification({
-          message: _t('games.grant_us_access')
-        });
-      }
-    }, {scope: scope});
-  });
+
 
   /*
     doFbLogout : function(){
-      FB.getLoginStatus(function(response) {
-        if (response.authResponse) {
-          FB.logout(function(response) {
-          });
-        }
-      });
     },
     */
 
@@ -484,7 +463,7 @@ $(document).ready(function() {
     });
   });
 
-  $(window).bind('resize orientationchange', function(){
+  $(window).bind('resize orientationchange', debounce(function(){
     if(tjmViewContainer.length != 0 && window.innerWidth < 800){
       tjmViewMenu.css('top', tjmViewContainer.offset().top + (tjmViewContainer.outerHeight(true) - 4) + 'px');
 
@@ -505,7 +484,7 @@ $(document).ready(function() {
         $('li.showGames', tjmViewMenu).trigger('click');
       }
     }
-  });
+  }));
 
   Tapjoy.delay(function(){
     $('#recommedations').Carousel({

@@ -50,6 +50,7 @@ ActionController::Routing::Routes.draw do |map|
     map.with_options :controller => 'games/social', :name_prefix => 'games_social_' do |social|
       social.invite_email_friends 'invite_email_friends', :action => :invite_email_friends
       social.send_email_invites 'send_email_invites', :action => :send_email_invites
+      social.invites 'social/invites', :action => :invites
     end
 
     map.resources :survey_results, :only => [ :new, :create ]
