@@ -100,13 +100,13 @@
       %tr
         - if @can_modify_roles
           %td
-            - if assignment.admin?
+            - if assignment.user_role.name == 'admin'
               &nbsp;
             - else
               = button_to('remove', tools_user_role_assignment_path(:user_id => @user.id, :id => assignment.id), :method => 'delete', :confirm => 'Are you sure?')
-        %td{:class => assignment.admin? ? 'disabled text' : 'text'}
+        %td{:class => (assignment.user_role.name == 'admin') ? 'disabled text' : 'text'}
           = assignment.user_role.name.titleize
-          - if assignment.admin?
+          - if assignment.user_role.name == 'admin'
             (not modifiable)
 
 - if @can_modify_roles
@@ -117,15 +117,15 @@
         %th.action &nbsp;
         %th Name
     %tbody
-      - @new_assignments.each do |assignment|
+      - @new_assignments.sort_by{|ra| ra.user_role.name}.each do |assignment|
         %tr
           %td
-            - if assignment.admin?
+            - if assignment.user_role.name == 'admin'
               &nbsp;
             - else
               = button_to('add', tools_user_role_assignments_path(:user_id => @user.id, :user_role_id => assignment.user_role.id))
 
-          - class_name = assignment.admin? ? 'disabled text' : 'text'
+          - class_name = (assignment.user_role.name == 'admin') ? 'disabled text' : 'text'
           %td{:class => class_name}= assignment.user_role.name.titleize
 
 - content_for :page_styles do

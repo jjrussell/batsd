@@ -232,9 +232,9 @@ class Offer < ActiveRecord::Base
   alias_method :random, :rand
 
   json_set_field :device_types, :screen_layout_sizes, :countries, :dma_codes, :regions,
-    :approved_sources, :carriers
+    :approved_sources, :carriers, :cities
   memoize :get_device_types, :get_screen_layout_sizes, :get_countries, :get_dma_codes,
-    :get_regions, :get_approved_sources, :get_carriers
+    :get_regions, :get_approved_sources, :get_carriers, :get_cities
 
   def clone
     super.tap do |clone|
