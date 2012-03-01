@@ -196,8 +196,8 @@ $(document).ready(function() {
     };
   };
 
-  $(".submit-button").click(function () {
-    $(this).closest("form").submit();
+  $(".submit-child-form").click(function () {
+    $(this).children("form").submit();
     return false;
   });
 
