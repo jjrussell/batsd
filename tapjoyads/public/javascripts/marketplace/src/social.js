@@ -6,7 +6,6 @@
     Social: {
 
       Invite: function(options){
-        console.log(options);
         // local variables
         var currentPage = 1;
         var selectedFriends = [];
@@ -330,8 +329,8 @@
         onWindowResize();
       },
 
-      doFbLogin: function () {
-        var $$ = $(this);
+      doFbLogin: function (element) {
+        var $$ = $(element);
         FB.login(function (response) {
           if (response.authResponse) {
             FB.api('/me', function (response) {
@@ -388,7 +387,7 @@
     if (!FB) { return; }
 
     $(".login-to-facebook").click(function () {
-      Tap.Social.doFbLogin();
+      Tap.Social.doFbLogin(this);
     });
 
     if (window.location.search.match(/fb_logout/)) {

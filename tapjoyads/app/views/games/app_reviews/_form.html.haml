@@ -1,6 +1,6 @@
 - form_for([:games, @app_review]) do |f|
-  = f.hidden_field :app_metadata_id, :value => params[:app_metadata_id]
-  = f.hidden_field :app_id, :value => @app.id
+  = f.hidden_field :eid, :value => params[:eid]
+
   .button-bar
     .hidden
       = f.radio_button :user_rating, 1

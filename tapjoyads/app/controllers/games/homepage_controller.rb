@@ -33,6 +33,8 @@ class Games::HomepageController < GamesController
     end
     @currency = Currency.find_by_id(@curr_id)
     @external_publisher = ExternalPublisher.new(@currency)
+    render :text => 'not found', :status => 404 if @currency.nil? || @device.nil?
+
     @offerwall_url = @external_publisher.get_offerwall_url(@device, @external_publisher.currencies.first, request.accept_language, request.user_agent, current_gamer.id)
     @app_metadata = App.find_by_id(@external_publisher.app_id).primary_app_metadata
 

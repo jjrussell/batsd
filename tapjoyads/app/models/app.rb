@@ -245,6 +245,14 @@ class App < ActiveRecord::Base
     Offer.get_icon_url({:icon_id => Offer.hashed_icon_id(id)}.merge(options))
   end
 
+  def formatted_active_gamer_count(increment=1000, max=10000)
+    return active_gamer_count if active_gamer_count <= increment
+
+    rounded = [ active_gamer_count - (active_gamer_count % increment), max ].min
+
+    "#{rounded}+"
+  end
+
   def can_have_new_currency?
     !currencies.any?(&:has_special_callback?)
   end

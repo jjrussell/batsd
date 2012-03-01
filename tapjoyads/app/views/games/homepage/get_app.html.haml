@@ -18,8 +18,8 @@
           .text-center.get-app
             = t('text.games.get_app')
     .mod.social-info
-      %span.ui-icon-med.social-med
-        [Kate and 13 friends played this.]
+      %span.ui-icon-medium.social-med
+        = t("text.games.active_gamers_text", :count => @app.formatted_active_gamer_count)
     .mod.menu-head
       = t("text.shared.reviews")
     .mod.score-summary
