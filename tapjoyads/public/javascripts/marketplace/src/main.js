@@ -246,9 +246,9 @@ $(document).ready(function() {
      if(tjmViewContainer.hasClass('active')){
       Tapjoy.Utils.removeMask();
 
-       tjmSelectContainer.removeClass('active');
-       tjmSelectMenu.addClass('hide');
-       heading.text($('li.active', tjmSelectMenu).text());
+       tjmViewContainer.removeClass('active');
+       tjmViewMenu.addClass('hide');
+       heading.text($('li.active', tjmViewMenu).text());
 
     }else{
       Tapjoy.Utils.mask();
@@ -278,11 +278,12 @@ $(document).ready(function() {
 
       if(li.hasClass('showAll')){
         $('.row').show();
+        $('#recommendationsRow').removeClass('nbb');
       }else{
         $('.row').hide();
 
         if(li.hasClass('showRecommendations')){
-          $('#recommendationsRow').show();
+          $('#recommendationsRow').show().addClass('nbb');
         }else if(li.hasClass('showGames')){
           $('#gamesRow').show();
         }else if(li.hasClass('showFavorites')){
@@ -307,6 +308,9 @@ $(document).ready(function() {
       if($('.row').is(':hidden'))
         $('.row').show();
     }else{
+      if($('#recommendationsRow').hasClass('nbb'))
+        $('#recommendationsRow').show().removeClass('nbb');
+
       if(!$('#gamesRow').is(':hidden')){
         $('.row').hide();
         $('li.showGames', tjmViewMenu).trigger('click');

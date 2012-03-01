@@ -245,10 +245,13 @@ en:
       delete_my_account: "Delete My Account"
       developers_body: "Drive significant revenue to your apps with our monetization tools"
       developers_title: Developers
+      discover_apps: Join the millions of mobile app lovers on Tapjoy and discover the best-rated apps. Get started today!
       earn: "Earn %{currency}"
       earn_title: "Complete any of the offers below to earn %{currency} for %{app_name}"
-      email_notification: Email Notifications
+      earn_rewards: Earn rewards
+      earning_rewards: Tapjoy is the ultimate way to earn rewards in your favorite mobile apps all in one place.
       edit: edit
+      email_notification: Email Notifications
       enable_javascript: "Please go into your browser settings and enable JavaScript to continue using Tapjoy."
       enter_birthdate: "Please enter your birthdate"
       enter_email: "Please enter your email address"
@@ -319,6 +322,7 @@ en:
       provide_other_email: "Please provide an email other than yourself"
       recipients_label: "Use commas to separate multiple emails"
       recommendations: Smart Recommendations
+      recommend_apps: Tapjoy personalizes app recommendations for you based on the apps you love to use.
       registering: Registering
       report_bug: Report Bug
       review_app_name: Review %{app_name}
@@ -335,6 +339,7 @@ en:
       share_with_your_friends: "Share with your friends"
       social_networks: "Social Networks"
       social_settings: "Social Settings"
+      spread_mobile_joy: Spread mobile joy
       tap_that: "Just tap %{icon} and select %{button}"
       tapjoy_picks: Tapjoy Picks
       thanks_contact_us: Thank you for contacting us.  We'll will get back to you as soon as possible.

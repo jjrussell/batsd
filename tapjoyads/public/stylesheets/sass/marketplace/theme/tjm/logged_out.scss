@@ -358,19 +358,30 @@ span.gill {
   filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#40898989', endColorstr='#ffffff',GradientType=0 );
   text-align: center;
   box-shadow: inset 0 -1px 4px rgba(0,0,0, .3);
-  padding: 25px 0;
+  padding: 20px 0;
 
-  span {
-    display: inline-block;
-    vertical-align: middle;
-  }
+  .content-box {
+    width: 670px;
+    text-align: center;
+    margin: 0 auto;
+    overflow: auto;
 
-  .text {
-    font: 200 28px "Museo Slab";
-    color: #444;
-    text-shadow: 0 1px 0 rgba(255,255,255, .6);
-    -webkit-text-stroke-width: 1px;
-    -webkit-text-stroke-color: #444;
+    span {
+      display: inline-block;
+      vertical-align: middle;
+    }
+
+    .text {
+      font: 100 1.9em "Museo Slab";
+      color: #444;
+      text-shadow: 0 1px 0 rgba(255,255,255, .6);
+      -webkit-text-stroke-width: 1px;
+      -webkit-text-stroke-color: #444;
+    }
+
+    .text.small {
+      font-size: 1.2em;
+    }
   }
 }
 
@@ -421,8 +432,8 @@ span.gill {
 
 
 .darrow {
-  width: 30px;
-  height: 30px;
+  width: 24px;
+  height: 24px;
   cursor: pointer;
   background: rgb(246,246,246);
   background: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/Pgo8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgdmlld0JveD0iMCAwIDEgMSIgcHJlc2VydmVBc3BlY3RSYXRpbz0ibm9uZSI+CiAgPGxpbmVhckdyYWRpZW50IGlkPSJncmFkLXVjZ2ctZ2VuZXJhdGVkIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgeDE9IjAlIiB5MT0iMCUiIHgyPSIwJSIgeTI9IjEwMCUiPgogICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iI2Y2ZjZmNiIgc3RvcC1vcGFjaXR5PSIxIi8+CiAgICA8c3RvcCBvZmZzZXQ9IjM2JSIgc3RvcC1jb2xvcj0iI2YxZjFmMSIgc3RvcC1vcGFjaXR5PSIxIi8+CiAgICA8c3RvcCBvZmZzZXQ9IjcxJSIgc3RvcC1jb2xvcj0iI2U5ZTllOSIgc3RvcC1vcGFjaXR5PSIxIi8+CiAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiNlNWU1ZTUiIHN0b3Atb3BhY2l0eT0iMSIvPgogIDwvbGluZWFyR3JhZGllbnQ+CiAgPHJlY3QgeD0iMCIgeT0iMCIgd2lkdGg9IjEiIGhlaWdodD0iMSIgZmlsbD0idXJsKCNncmFkLXVjZ2ctZ2VuZXJhdGVkKSIgLz4KPC9zdmc+);
@@ -461,19 +472,20 @@ span.gill {
 
 .darrow img {
   background: url(#{$image_path}/down_arrow.png) no-repeat center center;
-  width: 20px;
-  height: 20px;
-  margin: 5px;
+  background-size: 16px 16px;
+  width: 16px;
+  height: 16px;
+  margin: 4px;
 }
 
 #benefits {
-  background-color: #fff;
-  min-height: 400px;
+  background: #fff url(#{$root_image_path}/edge_shadow.png) no-repeat top center;
+  min-height: 350px;
   border-bottom: 1px solid #909090;
   @include animate(all, 0.35s, ease-in);
 
   .box {
-    margin-top: 50px;
+    margin-top: 30px;
     width: 33%;
   }
 
@@ -661,6 +673,8 @@ span.gill {
   #getting-started {
     position: relative;
     padding: 20px 0;
+
+
   }
 
   #getting-started .text {
@@ -730,8 +744,13 @@ span.gill {
     }
   }
 
-  #getting-started .text {
-    font: 200 18px "Museo Slab";
+  #getting-started {
+    .content-box {
+      width: 580px;
+      .text {
+         font: 200 1.6em "Museo Slab";
+      }
+    }
   }
 
   #benefits {
@@ -969,3 +988,5 @@ span.gill {
 .footer {
   display: none;
 }
+
+
