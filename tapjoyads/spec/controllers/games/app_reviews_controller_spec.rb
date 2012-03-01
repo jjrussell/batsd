@@ -55,9 +55,13 @@ describe Games::AppReviewsController do
     end
 
     context 'when app review not exist' do
-      it 'creates a app review' do
+      it 'creates an app review' do
         flash[:notice].should == 'Successfully reviewed this app.'
-        response.should redirect_to(games_app_reviews_path(:app_metadata_id => @app_metadata.id))
+      end
+
+      it 'should redirect to earn' do
+        encrypted_id = ObjectEncryptor.encrypt(@app_metadata.apps.first.id)
+        response.should redirect_to games_earn_path(:eid => encrypted_id)
       end
 
       it 'sets user_rating' do
@@ -84,8 +88,9 @@ describe Games::AppReviewsController do
         response.session[:flash][:error].should == 'You have already reviewed this app.'
       end
 
-      it 'renders games/app_reviews/index' do
-        response.should render_template('games/app_reviews/index')
+      it 'redirects to earn' do
+        encrypted_id = ObjectEncryptor.encrypt(@app_metadata.apps.first.id)
+        response.should redirect_to games_earn_path(:eid => encrypted_id)
       end
     end
   end
