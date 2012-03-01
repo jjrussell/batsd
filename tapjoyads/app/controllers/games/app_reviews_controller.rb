@@ -16,7 +16,7 @@ class Games::AppReviewsController < GamesController
     currency = Currency.find(ObjectEncryptor.decrypt(params[:eid]))
     @app = currency.app
     @app_metadata = @app.primary_app_metadata
-    @app_review = current_gamer.review_for(@app_metadata.id) || @app_metadata.app_reviews.build(:user_rating => 1)
+    @app_review = current_gamer.review_for(@app_metadata.id) || @app_metadata.app_reviews.build
   end
 
   def create
@@ -66,7 +66,6 @@ class Games::AppReviewsController < GamesController
     currency = Currency.find(ObjectEncryptor.decrypt(params[:app_review][:eid]))
 
     @app_review.user_rating = params[:app_review][:user_rating]
-    @app_review.text = params[:app_review][:text]
     @app_review.app_id = currency.app_id
     @app_review.app_metadata = currency.app.primary_app_metadata
     @app_review.author = current_gamer

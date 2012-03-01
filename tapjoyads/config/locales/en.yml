@@ -257,9 +257,10 @@ en:
       enter_birthdate: "Please enter your birthdate"
       enter_email: "Please enter your email address"
       enter_message: "Please enter a message"
+      enter_name: "Please enter your name"
       enter_password: "Please enter a password"
       enter_platform: "Please choose iOS or Android"
-      enter_tos: "Please agree to the terms and conditions above"
+      enter_tos: "Please agree to the terms and conditions"
       enter_valid_email: "Enter a valid email address"
       failed_to_change_linked: Failed to change linked account.
       favorite_app: "Favorite App"
@@ -276,6 +277,7 @@ en:
       forgot_pass: "Forgot Password?"
       free: "Free!"
       generic_issue: "There was an issue. Please try again."
+      get_app: Get App
       get_it: "Get it!"
       grant_us_access: "Please authorize us/grant us both permissions before sending out an invite."
       how_it_works_body: "All your games are listed below. Click the buttons next to the apps to start earning currency."
@@ -286,7 +288,7 @@ en:
       invite_email_body: |-
           %{name} has invited you to join Tapjoy, the BEST place to find the hottest new apps. Signing up is free and you'll be able discover the best apps on iOS and Android, while also earning currency in your favorite apps.
 
-          No need to wade through thousands of apps in the App Store or the Android Market to find your next download. Tapjoy has you covered and recommends apps we know you\'ll like.
+          No need to wade through thousands of apps in the App Store or the Android Market to find your next download. Tapjoy has you covered and recommends apps we know you'll like.
 
           To get started, create your account here:
       invite_email_greet: "Hi,"
@@ -319,7 +321,7 @@ en:
       or_learn_more: or learn more
       other_options: Other Options
       our_tos_changed: "Our %{terms_of_use} have changed. Please review and indicate your agreement below."
-      post_to_facebook_content: "Check out Tapjoy where you can discover the best new apps and games, while also earning currency in apps you love. It\'s free to join so visit tapjoy.com today to start getting app recommendations just for you."
+      post_to_facebook_content: "Check out Tapjoy where you can discover the best new apps and games, while also earning currency in apps you love. It's free to join so visit tapjoy.com today to start getting app recommendations just for you."
       privacy_policy_href: "privacy policy"
       provide_other_email: "Please provide an email other than yourself"
       recipients_label: "Use commas to separate multiple emails"
@@ -361,7 +363,7 @@ en:
       amount_and_currency: "%{amount} %{currency}"
       continue_link: "Click here to continue."
       download_action: here
-      download_link: "If you don\'t have this app, click %{download_action} to download it."
+      download_link: "If you don't have this app, click %{download_action} to download it."
       earn_currency: "Earn %{amount_and_currency}"
       footer: "After completing these steps, you will earn %{amount_and_currency}."
       header: "Follow these steps to earn %{currency}:"
@@ -371,7 +373,7 @@ en:
       earn_currency: "Earn %{amount} %{currency}"
       free: Free
       instructions: "Engage in any of the following actions to receive %{currency}"
-      instructions_non_rewarded: "Discover what\'s hot on Tapjoy!"
+      instructions_non_rewarded: "Discover what's hot on Tapjoy!"
       load_error: "Please try again."
       load_more: "Load some more!"
       loading: Loading...
@@ -403,7 +405,7 @@ en:
       facebook_profile: "Facebook profile"
       favorites: Favorites
       female: Female
-      followers: Follower
+      followers: Followers
       following: Following
       friends: Friends
       gender: Gender
@@ -448,6 +450,7 @@ en:
       update_review: Update Review
       updating: Updating
       unknown: Unknown
+      view_all: View All
       write_review: Write Review
       year: Year
       zip_postal: "Zip/Postal Code"
@@ -468,7 +471,7 @@ en:
       thanks: "Thanks for submitting your support request! You will receive your %{currency} after we have verified that you completed the offer."
       title: "Missing %{currency}?"
     unavailable_offer:
-      message: "We\'re sorry but %{offer} is no longer available. You can return to the previous page and refresh to view the latest offer list."
+      message: "We're sorry but %{offer} is no longer available. You can return to the previous page and refresh to view the latest offer list."
       optional_message: "Or, click here to download %{offer} anyway."
   time:
     am: am

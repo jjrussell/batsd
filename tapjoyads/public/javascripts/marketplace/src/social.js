@@ -4,12 +4,11 @@
     FB = window.FB;
   Tap.extend({
     Social: {
-      doFbLogin: function (element) {
-        var $$ = $(element);
+      doFbLogin: function (redirect_url) {
         FB.login(function (response) {
           if (response.authResponse) {
             FB.api('/me', function (response) {
-              window.location = $$.data("fb-url");
+              window.location = redirect_url;
             });
           } else {
             Tap.Utils.notification({
@@ -62,7 +61,8 @@
     if (!FB) { return; }
 
     $(".login-to-facebook").click(function () {
-      Tap.Social.doFbLogin(this);
+      var url = $(this).data("fb-url");
+      Tap.Social.doFbLogin(url);
     });
 
     if (window.location.search.match(/fb_logout/)) {
