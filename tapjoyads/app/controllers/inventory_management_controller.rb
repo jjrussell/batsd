@@ -4,85 +4,93 @@ class InventoryManagementController < WebsiteController
 
   filter_access_to :all
   before_filter :set_partner, :get_selected_option
+  before_filter :init_global_promoted_offers, :only => [:index, :global_promoted_offers]
+  before_filter :init_promoted_offers, :only => [:per_app, :promoted_offers]
 
   def index
-    @available_offers = @partner.offers_for_promotion
-    @selected_offers = { :android => [], :iphone => [], :windows => []}
     @available_offers.each do |platform, offers|
       offers.map! { |offer| [offer.name, offer.id] }
     end
-
-    currently_promoted = @partner.global_promoted_offers.map(&:offer_id)
-
-    if params[:commit].present?
-      promoted_offers = []
-      [:partner_promoted_offers_android, :partner_promoted_offers_ios, :partner_promoted_offers_wp].each do |platform|
-        promoted_offers += params[platform] if params[platform].present?
-      end
-      promoted_offers.each do |offer_id|
-        unless currently_promoted.include?(offer_id)
-          flash[:error] = "Unable to save the list of promoted offers" unless GlobalPromotedOffer.new(:partner => @partner, :offer_id => offer_id).save!
-        end
-      end
-      (currently_promoted - promoted_offers).each do |offer_id|
-        promoted_offer = GlobalPromotedOffer.find_by_partner_id_and_offer_id(@partner.id, offer_id)
-        GlobalPromotedOffer.delete(promoted_offer) if promoted_offer
-      end
-      @selected_offers[:iphone] = params[:partner_promoted_offers_ios] if params[:partner_promoted_offers_ios].present?
-      @selected_offers[:android] = params[:partner_promoted_offers_android] if params[:partner_promoted_offers_android].present?
-      @selected_offers[:windows] = params[:partner_promoted_offers_wp] if params[:partner_promoted_offers_wp].present?
-    else
-      @partner.global_promoted_offers.each do |promoted_offer|
-        offer = promoted_offer.offer
-        platform = offer.promotion_platform
-        @selected_offers[platform].push(offer.id) if platform
-      end
+    @partner.global_promoted_offers.each do |promoted_offer|
+      offer = promoted_offer.offer
+      platform = offer.promotion_platform
+      @selected_offers[platform].push(offer.id) if platform
     end
   end
 
-  def per_app
-    @dropdown_options = { :not_for_nav => true, :submission_form => :per_app_inventory }
-    @global_offers = []
-
-    if params[:current_app].present?
-      @app = App.find(params[:current_app])
-      return unless @app
-
-      app_platform = @app.primary_offer.promotion_platform
-      return unless app_platform
-
-      @partner.global_promoted_offers.each do |promoted_offer|
-        offer = promoted_offer.offer
-        @global_offers.push(offer) if offer.promotion_platform == app_platform
+  def global_promoted_offers
+    promoted_offers = []
+    currently_promoted = @partner.global_promoted_offers.map(&:offer_id)
+    [:partner_promoted_offers_android, :partner_promoted_offers_ios, :partner_promoted_offers_wp].each do |platform|
+      promoted_offers += params[platform] if params[platform].present?
+    end
+    promoted_offers.each do |offer_id|
+      unless currently_promoted.include?(offer_id)
+        flash[:error] = "Unable to save the list of promoted offers" unless GlobalPromotedOffer.new(:partner => @partner, :offer_id => offer_id).save!
       end
+    end
+    (currently_promoted - promoted_offers).each do |offer_id|
+      promoted_offer = @partner.global_promoted_offers.find_by_offer_id(offer_id)
+      promoted_offer.destroy if promoted_offer
+    end
+    redirect_to inventory_management_index_path
+  end
 
-      @available_offers = @partner.offers_for_promotion[app_platform]
-      @available_offers.reject! { |promoted_offer| @global_offers.include?(promoted_offer) }
-      @available_offers.map! { |offer| [offer.name, offer.id] }
+  def per_app
+    if @app
+      @currently_promoted = @app.promoted_offers.map(&:offer_id) unless params[:commit].present?
+    end
+  end
+
+  def promoted_offers
+    if @app
       @currently_promoted = @app.promoted_offers.map(&:offer_id)
-
-      if params[:commit].present?
-        unless params[:promoted_offers]
-          @app.promoted_offers.delete_all
-          return
-        end
-
+      if params[:promoted_offers]
         (@currently_promoted - params[:promoted_offers]).each do |offer_id|
-          PromotedOffer.find_by_app_id_and_offer_id(@app.id, offer_id).delete
+          @app.promoted_offers.find_by_offer_id(offer_id).destroy
         end
-
         params[:promoted_offers].each do |offer_id|
           unless @currently_promoted.include?(offer_id)
             flash[:error] = 'Unable to save the list of promoted offers' unless PromotedOffer.new( :app => @app, :offer_id => offer_id).save!
           end
         end
-
         @currently_promoted = params[:promoted_offers]
+      else
+        @app.promoted_offers.delete_all
       end
+      redirect_to :action => :per_app, :current_app => @app.id and return
     end
+    redirect_to per_app_inventory_management_path
   end
 
   private
+
+  def init_global_promoted_offers
+    @selected_offers = { :android => [], :iphone => [], :windows => []}
+    @available_offers = @partner.offers_for_promotion
+  end
+
+  def init_promoted_offers
+    @global_offers = []
+    @dropdown_options = { :not_for_nav => true, :submission_form => :per_app_inventory }
+
+    if params[:current_app].present?
+      @app = App.find(params[:current_app])
+    end
+    return unless @app
+
+    app_platform = @app.primary_offer.promotion_platform
+    return unless app_platform
+
+    @partner.global_promoted_offers.each do |promoted_offer|
+      offer = promoted_offer.offer
+      @global_offers.push(offer) if offer.promotion_platform == app_platform
+    end
+
+    @available_offers = @partner.offers_for_promotion[app_platform]
+    @available_offers.reject! { |promoted_offer| @global_offers.include?(promoted_offer) }
+    @available_offers.map! { |offer| [offer.name, offer.id] }
+  end
 
   def set_partner
     @partner = current_partner

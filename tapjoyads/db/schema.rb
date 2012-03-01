@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120224110500) do
+ActiveRecord::Schema.define(:version => 20120228124800) do
 
   create_table "action_offers", :id => false, :force => true do |t|
     t.string   "id",                    :limit => 36,                    :null => false
@@ -117,6 +117,7 @@ ActiveRecord::Schema.define(:version => 20120224110500) do
     t.string   "categories"
     t.text     "countries_blacklist"
     t.integer  "papaya_user_count"
+    t.integer  "active_gamer_count",                    :default => 0
   end
 
   add_index "apps", ["id"], :name => "index_apps_on_id", :unique => true
@@ -292,6 +293,18 @@ ActiveRecord::Schema.define(:version => 20120224110500) do
   add_index "enable_offer_requests", ["id"], :name => "index_enable_offer_requests_on_id", :unique => true
   add_index "enable_offer_requests", ["offer_id"], :name => "index_enable_offer_requests_on_offer_id"
   add_index "enable_offer_requests", ["status"], :name => "index_enable_offer_requests_on_status"
+
+  create_table "favorite_apps", :id => false, :force => true do |t|
+    t.string   "id",              :limit => 36, :null => false
+    t.string   "gamer_id",        :limit => 36, :null => false
+    t.string   "app_metadata_id", :limit => 36, :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "favorite_apps", ["app_metadata_id"], :name => "index_favorite_apps_on_app_metadata_id"
+  add_index "favorite_apps", ["gamer_id", "app_metadata_id"], :name => "index_favorite_apps_on_gamer_id_and_app_metadata_id", :unique => true
+  add_index "favorite_apps", ["id"], :name => "index_favorite_apps_on_id", :unique => true
 
   create_table "featured_contents", :id => false, :force => true do |t|
     t.string   "id",                 :limit => 36,                :null => false
@@ -745,6 +758,8 @@ ActiveRecord::Schema.define(:version => 20120224110500) do
     t.date     "negotiated_rev_share_ends_on"
     t.boolean  "accepted_negotiated_tos",                                                  :default => false
     t.string   "cs_contact_email"
+    t.boolean  "confirmed_for_payout",                                                     :default => false,     :null => false
+    t.string   "payout_confirmation_notes"
   end
 
   add_index "partners", ["id"], :name => "index_partners_on_id", :unique => true

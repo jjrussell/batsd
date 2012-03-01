@@ -65,26 +65,6 @@ class OfferList
       end.value
     end
 
-    @offer_ids_to_skip = []
-    @promoted_offers = []
-    valid_promoted_offers = []
-    if @publisher_app
-      all_promoted = @publisher_app.all_promoted_offers
-      if all_promoted.present?
-        all_promoted.each do |offer_id|
-          current_offer = @offers.find { |offer| offer.id == offer_id }
-          if current_offer
-            if postcache_reject?(current_offer)
-              @offer_ids_to_skip << offer_id
-            else
-              valid_promoted_offers << current_offer
-            end
-          end
-        end
-        @promoted_offers =  valid_promoted_offers.sample([ App::PROMOTED_INVENTORY_SIZE, valid_promoted_offers.length ].min)
-      end
-    end
-
     if @currency
       @offers.each do |o|
         o.postcache_rank_score(@currency)
@@ -122,12 +102,30 @@ class OfferList
       end
     end
 
-    if start == 0 and @promoted_offers.length > 0
-      num_elements = [@promoted_offers.length, max_offers].min
-      final_promoted_offers = @promoted_offers.slice(0, num_elements)
+    @offer_ids_to_skip = []
+    if start == 0
+      valid_promoted_offers = []
+      if @publisher_app
+        all_promoted = @publisher_app.all_promoted_offers
+        if all_promoted.present?
+          all_promoted.each do |offer_id|
+            current_offer = @offers.find { |offer| offer.id == offer_id }
+            if current_offer
+              if postcache_reject?(current_offer)
+                @offer_ids_to_skip << offer_id
+              else
+                valid_promoted_offers << current_offer
+              end
+            end
+          end
+        end
+      end
+
+      num_elements = [ App::PROMOTED_INVENTORY_SIZE, valid_promoted_offers.length, max_offers].min
+      found_offers += num_elements
+      final_promoted_offers =  valid_promoted_offers.sample(num_elements)
       returned_offers += final_promoted_offers
       @offer_ids_to_skip += final_promoted_offers.map(&:id)
-      found_offers += num_elements
     end
 
     @offers.each_with_index do |offer, i|
