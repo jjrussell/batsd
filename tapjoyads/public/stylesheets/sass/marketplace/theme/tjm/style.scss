@@ -1004,6 +1004,7 @@ div.ui-joy-button.support-button {
   }
 }
 
+
 .list-button-container .list-button a:first-child {
   display: block;
   padding: 10px;
@@ -1227,7 +1228,7 @@ div.ui-joy-button.support-button {
   box-shadow: inset 0px 2px 1px #96db73;
   border-radius: 8px;
   border: 1px solid #378b21;
-  min-width: 65px;
+  min-width: 50px;
   /*padding: 5px 3px 3px 3px;*/
   padding: 0 5px;
   line-height: 2em;
@@ -1245,6 +1246,8 @@ div.ui-joy-button.support-button {
 
 .greenblock.active {
   background: #393c37;
+  border: 1px solid #393c37;
+  text-shadow: 0 1px 0 #000;
   box-shadow: inset 0px 1px 3px rgba(0,0,0, .3), 0 1px 0 #fff;
 }
 
@@ -1519,6 +1522,19 @@ div.app {
   border-radius: 0 !important;
 }
 
+
+.list-button-container.orange .list-button {
+  @include linear-gradient(top, #fb9d23, #ffc579);
+  border-top: 1px solid #2d3134;
+  border-bottom: 1px solid #646567;
+  box-shadow: inset 0 1px 0 rgba(255,255,255, .3), inset 0 -1px 0 rgba(255,255,255, .3);
+  padding:5px;
+}
+
+.list-button-container.orange .list-button h2 {
+  color: #fff;
+  text-shadow: 0 -1px 0 rgba(190,125,38, .9);
+}
 .content {
   margin: 20px auto;
   width: 300px;
