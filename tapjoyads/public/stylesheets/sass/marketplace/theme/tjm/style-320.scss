@@ -1,13 +1,8 @@
-#earn .big-title {
-  width: 200px;
-}
-
 div.app {
   .ui-list-action {
     display: none !important;
   }
 }
-
 
 .big-title {
   -webkit-text-size-adjust: 67%;
@@ -79,4 +74,9 @@ div.app {
   width: 120px !important;
 }
 
+.app {
+  .details {
+    width: 60% !important;
+  }
+}
 

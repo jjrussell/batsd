@@ -492,16 +492,17 @@ $(document).ready(function() {
         width: tjmViewContainer.width() - 4 + 'px'
       });
     }
+		var rows = $('#content .row');
 
     if(window.innerWidth > 770){
-      if($('.row').is(':hidden'))
-        $('.row').show();
+      if(rows.is(':hidden'))
+        rows.show();
     }else{
       if($('#recommendationsRow').hasClass('nbb'))
         $('#recommendationsRow').show().removeClass('nbb');
 
       if(!$('#gamesRow').is(':hidden')){
-        $('.row').hide();
+        rows.hide();
         $('li.showGames', tjmViewMenu).trigger('click');
       }
     }
