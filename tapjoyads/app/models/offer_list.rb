@@ -121,7 +121,7 @@ class OfferList
         end
       end
 
-      num_elements = [ App::PROMOTED_INVENTORY_SIZE, valid_promoted_offers.length, max_offers].min
+      num_elements = [ App::PROMOTED_INVENTORY_SIZE, valid_promoted_offers.length, max_offers - found_offers].min
       found_offers += num_elements
       final_promoted_offers =  valid_promoted_offers.sample(num_elements)
       returned_offers += final_promoted_offers
