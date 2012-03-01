@@ -23,6 +23,12 @@
         = f.text_field :amount
         = error_message_on @offer_discount, :amount
     %tr
+      %th
+      %td
+        = "Will apply to #{@partner.discount_all_offer_types? ? 'all offer types' : 'App and ActionOffers only'}"
+        = link_to('(change)', edit_partner_path(@partner))
+
+    %tr
       %td{ :colspan => 2 }= f.submit 'Create Offer Discount'
 
 .hidden

@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120228124800) do
+ActiveRecord::Schema.define(:version => 20120301195841) do
 
   create_table "action_offers", :id => false, :force => true do |t|
     t.string   "id",                    :limit => 36,                    :null => false
@@ -117,8 +117,8 @@ ActiveRecord::Schema.define(:version => 20120228124800) do
     t.string   "categories"
     t.text     "countries_blacklist"
     t.integer  "papaya_user_count"
-    t.integer  "active_gamer_count",                          :default => 0
     t.boolean  "reengagement_campaign_enabled"
+    t.integer  "active_gamer_count",                          :default => 0
   end
 
   add_index "apps", ["id"], :name => "index_apps_on_id", :unique => true
@@ -752,6 +752,7 @@ ActiveRecord::Schema.define(:version => 20120228124800) do
     t.string   "cs_contact_email"
     t.boolean  "confirmed_for_payout",                                                     :default => false,     :null => false
     t.string   "payout_confirmation_notes"
+    t.boolean  "discount_all_offer_types",                                                 :default => false,     :null => false
   end
 
   add_index "partners", ["id"], :name => "index_partners_on_id", :unique => true
