@@ -13,7 +13,7 @@ class ClickController < ApplicationController
     handle_pay_per_click
     @device.handle_sdkless_click!(@offer, @now)
 
-    redirect_to(get_destination_url)
+    redirect_to(destination_url)
   end
 
   def reengagement
@@ -28,21 +28,21 @@ class ClickController < ApplicationController
     create_click('action')
     handle_pay_per_click
 
-    redirect_to(get_destination_url)
+    redirect_to(destination_url)
   end
 
   def generic
     create_click('generic')
     handle_pay_per_click
 
-    redirect_to(get_destination_url)
+    redirect_to(destination_url)
   end
 
   def rating
     create_click('rating')
     handle_pay_per_click
 
-    redirect_to(get_destination_url)
+    redirect_to(destination_url)
   end
 
   def video
@@ -56,7 +56,7 @@ class ClickController < ApplicationController
     create_click('survey')
     handle_pay_per_click
 
-    redirect_to(get_destination_url)
+    redirect_to(destination_url)
   end
 
   def test_offer
@@ -139,7 +139,7 @@ class ClickController < ApplicationController
     if !@offer.tracking_for_id && Time.zone.at(params[:viewed_at]) < (@now - 24.hours)
       build_web_request('expired_click')
       save_web_request
-      @destination_url = get_destination_url
+      @destination_url = destination_url
       render_unavailable_offer
       return
     end
@@ -169,7 +169,7 @@ class ClickController < ApplicationController
     if disabled
       build_web_request('disabled_currency')
       save_web_request
-      @destination_url = get_destination_url
+      @destination_url = destination_url
       render_unavailable_offer
     end
     disabled
@@ -180,7 +180,7 @@ class ClickController < ApplicationController
     if disabled
       build_web_request('disabled_offer')
       save_web_request
-      @destination_url = get_destination_url
+      @destination_url = destination_url
       render_unavailable_offer
     end
     disabled
@@ -210,7 +210,7 @@ class ClickController < ApplicationController
     if completed
       build_web_request('completed_offer')
       save_web_request
-      @destination_url = get_destination_url
+      @destination_url = destination_url
       render_unavailable_offer
     end
     completed
@@ -226,7 +226,7 @@ class ClickController < ApplicationController
     if recently_clicked
       build_web_request('click_too_recent')
       save_web_request
-      redirect_to(get_destination_url)
+      redirect_to(destination_url)
     end
     recently_clicked
   end
@@ -298,7 +298,7 @@ class ClickController < ApplicationController
     end
   end
 
-  def get_destination_url
+  def destination_url
     @offer.destination_url({
       :udid                  => params[:udid],
       :publisher_app_id      => params[:publisher_app_id],
