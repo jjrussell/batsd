@@ -64,6 +64,7 @@ ActionController::Routing::Routes.draw do |map|
     m.search_offers 'search/offers', :action => 'offers'
     m.search_users 'search/users', :action => 'users'
     m.search_partners 'search/partners', :action => 'partners'
+    m.search_brands 'search/brands', :action => 'brands'
   end
   map.premier 'premier', :controller => :premier, :action => :edit
   map.resources :survey_results, :only => [ :new, :create ]
@@ -115,6 +116,8 @@ ActionController::Routing::Routes.draw do |map|
     tools.resources :partner_program_statz, :only => [ :index ], :collection => { :export => :get }
     tools.resources :survey_offers, :except => [ :show ]
     tools.resources :payout_freezes, :only => [ :index, :create ], :member => { :disable => :post }
+    tools.resources :brand_offers, :only => [ :index ], :collection => { :create_brand => :post, :offers => :get, :add_offer => :post, :remove_offer => :post }
+    tools.resources :brands, :only => [ :index, :new, :create, :edit, :update]
   end
 
   map.connect 'mail_chimp_callback/callback', :controller => :mail_chimp_callback, :action => :callback

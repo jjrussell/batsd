@@ -66,7 +66,7 @@ authorization do
 
   role :reporting do
     has_permission_on :statz, :to => [ :index, :show, :global, :publisher, :advertiser, :support_request_reward_ratio ]
-    has_permission_on :search, :to => [ :offers ]
+    has_permission_on :search, :to => [ :offers, :brands ]
   end
 
   role :executive do
@@ -87,7 +87,7 @@ authorization do
     includes :games_editor
     includes :customer_service
     has_permission_on :statz, :to => [ :index, :show, :edit, :update, :new, :create, :last_run_times, :udids, :download_udids, :global, :publisher, :advertiser, :support_request_reward_ratio ]
-    has_permission_on :search, :to => [ :offers, :partners, :users ]
+    has_permission_on :search, :to => [ :offers, :partners, :users, :brands ]
     has_permission_on :tools, :to => [ :disabled_popular_offers, :sanitize_users, :update_user, :resolve_clicks, :new_transfer, :device_info, :update_device, :freemium_android, :award_currencies, :update_award_currencies, :send_currency_failures ]
     has_permission_on :tools_enable_offer_requests, :to => [ :index, :update ]
     has_permission_on :activities, :to => [ :index ]
@@ -110,6 +110,8 @@ authorization do
     has_permission_on :tools_partner_program_statz, :to => [ :index, :export ]
     has_permission_on :tools_offers, :to => [ :creative, :approve_creative, :reject_creative ]
     has_permission_on :tools_survey_offers, :to => [ :index, :show, :new, :create, :edit, :update, :destroy ]
+    has_permission_on :tools_brand_offers, :to => [ :index, :create_brand, :offers, :add_offer, :remove_offer ]
+    has_permission_on :tools_brands, :to => [ :index, :new, :create, :edit, :update, :show ]
   end
 
   role :games_editor do
