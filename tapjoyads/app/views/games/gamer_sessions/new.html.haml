@@ -128,11 +128,11 @@
         .container.mt15
           .left
             %span.text.started
-              Start discovering with Tapjoy today
+              = t('text.games.start_discovering')
         .container
           .left
             %span.text.small
-              or learn more
+              = t('text.games.or_learn_more')
             %span#arrow.darrow.l10
               %img{ :src => BLANK_IMAGE }
       .left      
@@ -181,9 +181,7 @@
           Blog      
     .container
       %small
-        Copyright 2012 Tapjoy, Inc. All Rights Reserved. Tapjoy and the Tapjoy logo are trademarks or registered trademarks of Tapjoy, Inc.
-        %br
-        All third party logos and trademarks mentioned are the property of their respective owners. 
+        = t('text.shared.copyright')
 
 - content_for :page_head do
   %meta{ :name => 'description', :content => t('text.games.meta_description') }
