@@ -42,7 +42,7 @@ private
   end
 
   def find_incomplete_offers
-    conditions = "udid = '#{params[:udid]}' and currency_id = '#{params[:currency_id]}' and clicked_at > '#{30.days.ago.to_f}' and manually_resolved_at is null"
+    conditions = ActiveRecord::Base.sanitize_conditions("udid = '%s' and currency_id = '%s' and clicked_at > '%s' and manually_resolved_at is null", params[:udid], params[:currency_id], 30.days.ago.to_f)
     advertiser_offer_ids = []
     Click.select_all(:conditions => conditions).sort_by { |click| -click.clicked_at.to_f }.each do |click|
       advertiser_offer_ids << click.advertiser_app_id unless advertiser_offer_ids.include?(click.advertiser_app_id)
