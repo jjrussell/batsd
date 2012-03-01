@@ -93,8 +93,8 @@ authorization do
   end
 
   role :reporting do
-    has_permission_on :dashboard_statz, :to => [ :index, :show, :global, :publisher, :advertiser, :support_request_reward_ratio ]
-    has_permission_on :dashboard_search, :to => [ :offers ]
+    has_permission_on :statz, :to => [ :index, :show, :global, :publisher, :advertiser, :support_request_reward_ratio ]
+    has_permission_on :search, :to => [ :offers, :brands ]
   end
 
   role :executive do

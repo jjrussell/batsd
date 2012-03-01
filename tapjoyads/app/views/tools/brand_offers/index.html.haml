@@ -1,0 +1,104 @@
+- @page_title = 'Brand Offers'
+
+%h2 Associate Brands with Offers
+.tjform
+  = label_tag 'brand_box', 'Brand Name:'
+  = text_field_tag 'brand_box', '', :size => '40'
+#selected-brand.tjform.hidden
+  %table
+    %tbody
+      %tr
+        %th
+          Selected Brand
+        %td
+          #brand None
+      %tr
+        %th
+          Offers
+        %td
+          =select_tag(:offers, [],  {:multiple => true, :style => 'width: 200px'}) #offers
+.tjform
+  = label_tag 'search_box', 'Offer Name:'
+  = text_field_tag 'search_box', '', :size => '40'
+- form_tag create_brand_tools_brand_offers_path, :method => :post, :class => 'create_brand' do
+  %input#brand_name{ :type => 'hidden', :value => ''}
+- content_for :page_javascript do
+  :plain
+    $('#search_box').autocomplete({ source: '#{search_offers_path}', delay: 250, minLength: 2, select: function(event, ui) {
+          var offer = ui.item;
+          var data = $('.create_brand').serialize()+"&brand="+$('#brand').attr('value')+"&offer="+offer.id;
+          $.ajax({
+            dataType: 'json',
+            type: 'POST',
+            url: '/tools/brand_offers/add_offer',
+            data: data,
+            success: function(data) {
+              $('#offers').append(
+                "<option selected value='"+offer.id+"'>"+offer.label+"</option>");
+              $('input#search_box').val('');
+               $('#offers').trigger("liszt:updated");
+            }
+          });
+          return false;
+
+        }
+    });
+    $('#brand_box').autocomplete({ source: '#{search_brands_path}', delay: 250, minLength: 2, select: function(event, ui) {
+        if(ui.item.id == '0') {
+          $('input#brand_name').val($('input#brand_box').val().replace(/^Add:/,''));
+          $('input#brand_box').val($('input#brand_box').val().replace(/^Add:/,''));
+          $('.create_brand').submit();
+          return false;
+        } else {
+          $('#brand').text(ui.item.name);
+          $('#brand').attr('value',ui.item.id);
+          $('#selected-brand').show();
+          $.ajax({
+              dataType: 'json',
+              type: 'GET',
+              url: '/tools/brand_offers/offers?id='+$('#brand').attr('value'),
+              data: {},
+              success: function(data) {
+                var str = ""
+                $('select#offers').empty();
+                for(i = 0; i < data.length; i++) {
+                  str += "<option selected value='"+data[i].offer.id+"'>"+data[i].offer.name+"</option>";
+                }
+                $('#offers').html(str);
+                $('select#offers').chosen();
+              }
+            });
+        }
+      }});
+    $('.create_brand').submit(function(){
+        var form = $(this);
+        var url = form.attr('action');
+        var data = $(this).serialize()+"&name="+$('input#brand_name').val();
+        $.ajax({
+          dataType: 'json',
+          type: 'POST',
+          url: url,
+          data: data,
+          success: function(data){
+           $('#brand').text(data.brand.name);
+           $('#brand').attr('value',data.brand.id);
+           $('#selected-brand').show();
+          }
+        });
+        return false;
+      });
+    $('#offers').change(function(){
+        var removedItem = $('#offers option').not(':selected');
+        var data = $('.create_brand').serialize()+"&brand="+$('#brand').attr('value')+"&offer="+removedItem.val();
+        $.ajax({
+          dataType: 'json',
+          type: 'POST',
+          url: '/tools/brand_offers/remove_offer',
+          data: data,
+          success: function(data) {
+            $('#offers option[value='+removedItem.val()+']').remove();
+             $('#offers').trigger("liszt:updated");
+          }
+        });
+        return false;
+    });
