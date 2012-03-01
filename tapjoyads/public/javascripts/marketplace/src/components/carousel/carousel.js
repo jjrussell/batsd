@@ -143,7 +143,7 @@
         }else{
           position = 0;
         }
-				
+
         $t.updateControls();
 
         $t.wrap.css('-'+Tap.browser.prefix +'-transform', 'translate(-'+ position +'px, 0px)');

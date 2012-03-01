@@ -409,6 +409,11 @@ p {
   background-size: auto 100%;
 }
 
+.email {
+  background: url(#{$image_path}/at-sign.png) no-repeat 0 0;
+  background-size: auto 100%;
+}
+
 .facebook {
   background: url(#{$image_path}/facebook-icon.png) no-repeat 0 0;
   background-size: auto 100%;
@@ -780,6 +785,13 @@ input.ui-joy-button, input.button {
   border: 1px solid #f49700;
   border-top: 1px solid #ffebab;
   border-bottom: 1px solid #a35500;
+
+  .active-image {
+    display: none;
+  }
+  .inactive-image {
+    display: block;
+  }
 }
 
 .grey-action, .button {
@@ -976,6 +988,11 @@ div.ui-joy-button.support-button {
   margin: 10px auto;
   width: 200px;
 }
+
+div.ui-joy-button .get-app {
+  padding: 10px 0;
+}
+
 /**
  * list items
  */
@@ -1004,6 +1021,7 @@ div.ui-joy-button.support-button {
   }
 }
 
+
 .list-button-container .list-button a:first-child {
   display: block;
   padding: 10px;
@@ -1018,12 +1036,12 @@ div.ui-joy-button.support-button {
 }
 
 .list-button-container .list-button:first-child {
-  @include custom-rounded-corners(4px, 4px, 0, 0);
+  @include rounded-corners-top(4px);
   border-top: 0;
 }
 
 .list-button-container .list-button:last-child {
-  @include custom-rounded-corners(0, 0, 4px, 4px);
+  @include rounded-corners-bottom(4px);
 }
 
 .list-button-container.nbb .list-button:last-child {
@@ -1227,7 +1245,7 @@ div.ui-joy-button.support-button {
   box-shadow: inset 0px 2px 1px #96db73;
   border-radius: 8px;
   border: 1px solid #378b21;
-  min-width: 65px;
+  min-width: 50px;
   /*padding: 5px 3px 3px 3px;*/
   padding: 0 5px;
   line-height: 2em;
@@ -1245,6 +1263,8 @@ div.ui-joy-button.support-button {
 
 .greenblock.active {
   background: #393c37;
+  border: 1px solid #393c37;
+  text-shadow: 0 1px 0 #000;
   box-shadow: inset 0px 1px 3px rgba(0,0,0, .3), 0 1px 0 #fff;
 }
 
@@ -1501,12 +1521,31 @@ div.app {
  */
 
 .list-button-container.earn-theme .squircle {
+  position: relative;
+  width: 90px;
+  height: 90px;
+  margin: 0 auto;
   background: url(#{$image_path}/app_icon_overlay_large_earn.png) no-repeat 0 0;
+  background-size: 90px 90px;
+  top: -8px;
+
+  img {
+    position: relative;
+    z-index: -1;
+    width: 89px;
+    height: 89px;
+  }
+
 }
 
 .list-button-container.earn-theme .big-title {
   color: #424242;
   font-size: 1.6em;
+  max-width: 400px;
+}
+
+.list-button-container.earn-theme .list-button:first-child {
+  border-top: 0 !important;
 }
 
 .list-button-container.earn-theme .list-button {
@@ -1517,6 +1556,24 @@ div.app {
   color: #424242;
   text-shadow: 0 1px 0 #fff;
   border-radius: 0 !important;
+}
+
+
+.list-button-container.orange .list-button {
+  @include linear-gradient(top, #fb9d23, #ffc579);
+  border-top: 1px solid #2d3134;
+  border-bottom: 1px solid #646567;
+  box-shadow: inset 0 1px 0 rgba(255,255,255, .3), inset 0 -1px 0 rgba(255,255,255, .3);
+  padding:5px;
+}
+
+.list-button-container.orange .list-button.active {
+  box-shadow: inset 0 1px 5px rgba(0,0,0, .5), inset 0 -1px 0 rgba(255,255,255, .3);
+}
+
+.list-button-container.orange .list-button h2 {
+  color: #fff;
+  text-shadow: 0 -1px 0 rgba(190,125,38, .9);
 }
 
 .content {

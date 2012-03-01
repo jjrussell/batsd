@@ -3,8 +3,8 @@
     <% var freeText = "#{t('text.offerwall.free')}"; %>
     <% for (var i = 0, ii = OfferArray.length; i < ii; i++) { %>
       <% if (!OfferArray[i].IconURL || !OfferArray[i].Name) { continue; } %>
-      <a href="<%= OfferArray[i].RedirectURL %>">
-        <li class="list-button">
+      <li class="list-button">
+        <a href="<%= OfferArray[i].RedirectURL %>">
           <div class="container mt5">
             <div class="left pt3">
               <div class="squircle">
@@ -16,22 +16,22 @@
                 <% } %>
               </div>
             </div>
-            <div class="left ml10">
-              <div class="container">
+            <div class="left ml10 info">
+              <div class="container mt3">
                 <div class="big-title slate elip">
                   <%= OfferArray[i].Name %>
                 </div>
               </div>
               <div class="container">
-                <div class="ui-icon-medium social icon24 p5 left ml10">
-                  &nbsp;
+                <div class="ui-icon-medium social icon24 p5 left">
+                  <%= OfferArray[i].ActiveGamers %>
                 </div>
                 <% if (OfferArray[i].WifiOnly) { %>
-                  <div class="container">
-                    <div class="ui-icon-medium wifi icon24 p5 left">
-                      #{t("text.games.wifi_required")}
-                    </div>
+                <div class="container">
+                  <div class="ui-icon-medium wifi icon24 p5 left">
+                    #{t("text.games.wifi_required")}
                   </div>
+                </div>
                 <% } %>
               </div>
             </div>
@@ -44,6 +44,6 @@
               </div>
             </div>
           </div>
-        </li>
-      </a>
+        </a>
+      </li>
     <% } %>

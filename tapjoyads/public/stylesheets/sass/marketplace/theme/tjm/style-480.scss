@@ -19,12 +19,11 @@
   }
 }
 
-.list-button .big-title {
-  max-width: 240px;
+.list-button-container.earn-theme .big-title {
+  max-width: 250px !important;
 }
 
 .ui-list-action-label {
   margin-top: 0;
   padding-bottom: 2px;
 }
-

@@ -13,7 +13,7 @@
           #viewSelect.dropdown.left
             %img.downarrow-white.icon24{ :src => BLANK_IMAGE }
           .heading.pl5.pr15
-            My Games
+            = t('text.games.my_apps')
           .fix
       #viewSelectMenu.hide
         %ul
@@ -22,7 +22,8 @@
             %li.showGames.active My Games
           - if current_recommendations.present?
             %li.showRecommendations Recommendations
-          %li.showAll View All
+          %li.showAll
+            = t('text.shared.view_all')
 
   - if current_recommendations.present?
     #recommendationsRow.row.borders.pn.ntb.rec
@@ -40,7 +41,7 @@
 
   - if @external_publishers.present?
     #gamesRow.row.borders.nbb
-      %h1.museo My Games
+      %h1.museo= t('text.games.my_apps')
       .games
         - @external_publishers.each do |external_publisher|
           .app
@@ -51,7 +52,7 @@
             .details
               %span.title.elip
                 = external_publisher.app_name
-              %small.publisher
+              %small.publisher.elip
                 = external_publisher.partner_name
               %span.ui-icon-small.score.icon16
                 -# "#{@app_metadata.positive_thumbs_percentage.floor}%"

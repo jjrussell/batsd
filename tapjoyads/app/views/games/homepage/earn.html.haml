@@ -23,11 +23,8 @@
         = t('text.games.other_options')
     %ul.list-button-container.flush.nbb.big
       %li.list-button.ntb
-        -link_to new_games_app_review_path(:app_metadata_id => @app_metadata.id) do
+        -link_to new_games_app_review_path(:eid => params[:eid]) do
           .left.charcoal
             = t("text.games.review_app_name", {:app_name => @external_publisher.app_name})
           .right.rightarrow.icon16
             &nbsp;
-
--content_for :included_javascripts do
-  = javascript_include_tag "marketplace/src/ajax"

@@ -29,12 +29,29 @@ ul.flush li {
   padding: 0;
 }
 
-form input[type=submit] {
+input, textarea, select {
+  -webkit-user-select: auto;
+  -webkit-appearance: none;
+  outline: none;
+}
+
+input[type=submit] {
    -webkit-appearance: none;
    margin: 0;
    padding: 0;
    border: 0;
    display: block;
+}
+
+input[type=checkbox] {
+  cursor: pointer;
+  width: 25px;
+  height: 25px;
+  overflow: hidden;
+  background: transparent url(#{$image_path}/checkbox.png) no-repeat 0 0;
+}
+input[type=checkbox]:checked {
+  background: transparent url(#{$image_path}/checkbox-checked.png) no-repeat 0 0;
 }
 
 .header, .header-signup {
@@ -106,7 +123,11 @@ form input[type=submit] {
 
 .row {
   box-shadow: none;
+
+  .platform {
+  }
 }
+
 #login,
 #signup,
 .header-h-split {
@@ -192,28 +213,36 @@ span.gill {
   }
   select {
     border: 1px solid #bfbfbf;
+    color: #a5a5a5;
+    font: 14px 'Gill Sans', 'Gill Sans MT', Arial , sans-serif;
     padding: 12px 16px;
     @include rounded-corners(4px);
     @include inset-shadow("rgba(0,0,0, .8)", 3px);
   }
   input[type=email]:focus, input[type=password]:focus {
     border: 1px solid #a41d20;
-    outline: none;
   }
   input[type=submit] {
     -webkit-appearance: none;
     font-size: 1.1em;
     padding: 11px 8px;
   }
-  .title {
-    color: #fff;
-    font-size: 20px;
-    margin-bottom: 12px;
-  }
   .field {
     margin-bottom: 10px;
-  }
 
+    .field_checkbox {
+      margin-right: 6px;
+      width: 25px;
+    }
+    .field_tos_text {
+      font-size: 0.85em;
+      width: 260px;
+    }
+  }
+  .title {
+    font: 500 22px "Museo Slab";
+    color: #fff;
+  }
   .cancel-btn,
   .login-btn {
     cursor: pointer;
@@ -232,7 +261,7 @@ span.gill {
     font-size: 13px;
   }
 
-  .login-error {
+  .login-error, .signup-error {
     text-align: center;
     border-radius: 3px 3px 3px 3px;
     font: normal 1em "Gill Sans", Arial;
@@ -245,11 +274,19 @@ span.gill {
   }
 }
 
+#login-form {
+  .title {
+    margin-bottom: 6px;
+  }
+}
+
 #signup-form {
   padding: 0;
 
   .signup-nav {
     background-color: #878787;
+    box-shadow: inset 0 -1px 2px rgba(0,0,0, .3);
+    @include gradient-top(#878787,#7a7a7a,#6c6c6c,#5f5f5f);
 
     .signup-nav-menu {
       color: #fff;
@@ -311,7 +348,7 @@ span.gill {
     display: inline-block;
     vertical-align: middle;
     text-align: center;
-    width: 33%;
+    width: 32%;
   }
 
   #labels span {
@@ -336,15 +373,14 @@ span.gill {
    margin-top: 160px;
  }
 
- .share img {
-   background: url(#{$image_path}/share_friends.png) no-repeat center center;
-   background-size: 230px 118px;
-   height: 118px;
-   width: 220px;
-   margin-top: 175px;
-      margin-bottom: 40px;
-
- }
+  .share img {
+    background: url(#{$image_path}/share_friends.png) no-repeat center center;
+    background-size: 242px 124px;
+    height: 124px;
+    width: 242px;
+    margin-top: 180px;
+    margin-bottom: 40px;
+  }
 }
 
 #getting-started {
@@ -378,7 +414,7 @@ span.gill {
       -webkit-text-stroke-width: 1px;
       -webkit-text-stroke-color: #444;
     }
-    
+
     .text.small {
       font-size: 1.2em;
     }
@@ -426,7 +462,7 @@ span.gill {
   filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ff8600', endColorstr='#ffbe00',GradientType=0 );
   box-shadow: inset 0 1px 0 rgba(0,0,0, .08);
   border-top: 1px solid #a35500;
-  border-bottom: 1px solid #fff;
+  border-bottom: 1px solid rgba(255,255,255, .4);
   text-shadow: 0 1px 0 #d47f1b;
 }
 
@@ -494,6 +530,7 @@ span.gill {
   .collect {
     width: 280px;
     height: 130px;
+    margin: 0 auto;
   }
 
   h6,
@@ -547,7 +584,7 @@ span.gill {
       background: url(#{$root_image_path}/partners.png) no-repeat 0 0;
     }
   }
-  
+
   .links {
     padding: 5px 0 10px;
     text-align: center;
@@ -566,16 +603,19 @@ span.gill {
 
       li:first-child {
         border-left: 0;
-      }      
-      
+      }
+
       li:last-child {
         border-right: 0;
-      }      
+      }
     }
   }
   small {
     font: normal .8em "Helvetica", Arial;
     text-shadow: 0 1px 0 #fff;
+    width: 675px;
+    display: block;
+    margin: 0 auto;
   }
 }
 
@@ -694,17 +734,18 @@ span.gill {
 
     .share img {
       background: url(#{$image_path}/share_friends.png) no-repeat 0 0;
-      background-size: 203px 104px;
-      height: 104px;
-      width: 203px;
+      background-size: 208px 107px;
+      height: 107px;
+      width: 208px;
+      margin-top: 170px;
     }
   }
 
   #getting-started {
     position: relative;
     padding: 20px 0;
-    
-    
+
+
   }
 
   #getting-started .text {
@@ -770,7 +811,7 @@ span.gill {
       background-size: 182px 93px;
       height: 93px;
       width: 182px;
-      margin-top: 156px;
+      margin-top: 160px;
     }
   }
 

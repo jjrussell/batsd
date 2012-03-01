@@ -7,16 +7,15 @@
 
 
   me.customError = function (msg, options, name) {
-    var info = ""
-      , i
-      , TapjoyCustomError
-      , stringify = (window.JSON && window.JSON.stringify) || function (t) { return t; }
-      ;
+    var info = "",
+        i,
+        TapjoyCustomError,
+        stringify = (window.JSON && window.JSON.stringify) || function (t) { return t; };
 
     options = options || {};
     name = name || "TapjoyCustomError";
 
-    me.TapjoyCustomError = function (n, m) {
+    TapjoyCustomError = function (n, m) {
       this.name = n;
       this.message = m;
     };
@@ -88,9 +87,9 @@
 
     result = me.pluralize(result, opt.count);
 
-    if(typeof result !== "string") {
-      if(w.ENVIRONMENT === "development") {
-        throw customError("Did not find translation string: ",
+    if (typeof result !== "string") {
+      if (w.ENVIRONMENT === "development") {
+        throw me.customError("Did not find translation string: ",
           {key: key, locale: opt.locale, default_locale: me.default_locale, result: result},
           "Tapjoyi18nError");
       }

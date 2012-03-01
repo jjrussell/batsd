@@ -1,8 +1,14 @@
 /*jshint evil:true, regexp:false*/
-(function ($) {
+(function (Tap, $) {
   "use strict";
 
-  var me = {};
+  var me = {},
+      _t = window.i18n.t,
+      notify = function (message) {
+        Tap.Utils.notification({
+          message: message
+        });
+      };
 
   me.isNumber = function (value) {
     return Object.prototype.toString.call(value) === "[object Number]";
@@ -97,8 +103,100 @@
     });
   };
 
+  me.argsToArray = function (args) {
+    return Array.prototype.slice.call(args);
+  };
+
+  me.ajaxForms = function () {
+    $("form.ajax-submit").each(function () {
+      var $$ = $(this),
+          type = $$.attr("method") || "GET",
+          url = $$.attr("action"),
+          success_event = $$.data("success-event") || "ajax-success",
+          error_event = $$.data("success-event") || "ajax-error",
+          complete_event = $$.data("success-event") || "ajax-complete";
+
+      $$.submit(function (e) {
+        var data = $$.serialize();
+        e.preventDefault();
+        notify(_t("games.loading"));
+
+        $.ajax({
+          type: type,
+          url: url,
+          data: data,
+          success: function () {
+            var args = me.argsToArray(arguments);
+            args.unshift($$);
+            $(document).trigger(success_event, args);
+          },
+          error: function () {
+            var args = me.argsToArray(arguments);
+            args.unshift($$);
+            $(document).trigger(error_event, args);
+          },
+          complete: function () {
+            var args = me.argsToArray(arguments);
+            args.unshift($$);
+            $(document).trigger(complete_event, args);
+          }
+        });
+      });
+    });
+  };
+
+  var showSuccessMessage = function (gamers, non_gamers) {
+    var exist,
+        notExist,
+        success = _t("shared.success"),
+        br = "<br/>",
+        msg;
+
+    if (gamers.length !== 0) {
+      exist = _t("games.already_registered",
+        { name: gamers.toString().replace(/\,/g, ", ") },
+        { count: gamers.length }
+      );
+    }
+    if (non_gamers.length !== 0) {
+      notExist = _t("games.invites_sent_to",
+        { name: non_gamers.toString().replace(/\,/g, ", ") },
+        { count: non_gamers.length }
+      );
+    }
+
+    msg = [
+      success,
+      exist,
+      notExist,
+    ].join(br);
+
+    notify(msg);
+  };
 
   $(function () {
     me.fillElements();
+    me.ajaxForms();
+
+    $(document).bind("ajax-success", function (ev, form, data, status, xhr) {
+      notify(_t('shared.success'));
+    });
+
+    $(document).bind("ajax-error", function (ev, form, data, status, xhr) {
+      notify(_t('games.generic_issue'));
+    });
+
+    $(document).bind("email-invite-ajax-success", function (ev, form, data) {
+      if (data.success) {
+        if (data.gamers.length === 0 && data.non_gamers.length === 0) {
+          notify(_t('games.provide_other_email'));
+        } else {
+          showSuccessMessage(data.gamers, data.non_gamers);
+          $("#recipients", form).val('');
+        }
+      } else {
+        notify(data.error);
+      }
+    });
   });
-}(window.jQuery));
+}(window.Tapjoy, window.jQuery));
