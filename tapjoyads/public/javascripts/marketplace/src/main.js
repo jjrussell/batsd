@@ -267,9 +267,9 @@ $(document).ready(function() {
      if(tjmViewContainer.hasClass('active')){
       Tapjoy.Utils.removeMask();
 
-       tjmSelectContainer.removeClass('active');
-       tjmSelectMenu.addClass('hide');
-       heading.text($('li.active', tjmSelectMenu).text());
+       tjmViewContainer.removeClass('active');
+       tjmViewMenu.addClass('hide');
+       heading.text($('li.active', tjmViewMenu).text());
 
     }else{
       Tapjoy.Utils.mask();
