@@ -364,8 +364,8 @@ $(document).ready(function() {
     };
   };
 
-  $(".submit-button").click(function () {
-    $(this).closest("form").submit();
+  $(".submit-child-form").click(function () {
+    $("form", this).submit();
     return false;
   });
 
