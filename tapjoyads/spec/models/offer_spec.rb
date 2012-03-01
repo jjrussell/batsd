@@ -43,7 +43,7 @@ describe Offer do
 
   it "doesn't allow bids below min_bid" do
     @offer.bid = @offer.min_bid - 5
-    @offer.valid?.should == false
+    @offer.should_not be_valid
   end
 
   it "rejects depending on primary country" do
@@ -633,6 +633,39 @@ describe Offer do
   end
 
   describe '#valid?' do
+    context 'with store_id missing' do
+      context 'when tapjoy-enabling' do
+        it 'is false' do
+          Offer.any_instance.stubs(:missing_app_store_id?).returns(true)
+          @offer.tapjoy_enabled = true
+          @offer.should_not be_valid
+          @offer.errors.on(:tapjoy_enabled).should =~ /store id/i
+        end
+
+        it 'can be made true with store_id' do
+          Offer.any_instance.stubs(:missing_app_store_id?).returns(false)
+          @offer.should be_valid
+        end
+      end
+
+      context 'when already tapjoy-enabled' do
+        it 'is true' do
+          @offer.tapjoy_enabled = true
+          @offer.save!
+          Offer.any_instance.stubs(:missing_app_store_id?).returns(true)
+          @offer.should be_valid
+        end
+      end
+
+      context 'when not tapjoy-enabling' do
+        it 'is true' do
+          Offer.any_instance.stubs(:missing_app_store_id?).returns(true)
+          @offer.should be_valid
+        end
+      end
+    end
+
+
     context "when SDK-less is enabled" do
       before :each do
         @offer.device_types = %w( android ).to_json
@@ -666,6 +699,40 @@ describe Offer do
       it "disallows pay-per-click offers" do
         @offer.pay_per_click = true
         @offer.should_not be_valid
+      end
+    end
+  end
+
+  describe '#missing_app_store_id?' do
+    context 'with non app-related item' do
+      it 'is false' do
+        @offer.stubs(:app_offer?).returns(false)
+        @offer.should_not be_missing_app_store_id
+      end
+    end
+
+    context 'with App item' do
+      context 'and overridden url' do
+        it 'is false' do
+          @offer.stubs(:url_overridden).returns(true)
+          @offer.should_not be_missing_app_store_id
+        end
+      end
+
+      context 'and url not overridden' do
+        context 'with App with store_id' do
+          it 'is false' do
+            @offer.item.stubs(:store_id).returns('foo')
+            @offer.should_not be_missing_app_store_id
+          end
+        end
+
+        context 'with App with missing store_id' do
+          it 'is true' do
+            @offer.item.stubs(:store_id).returns(nil)
+            @offer.should be_missing_app_store_id
+          end
+        end
       end
     end
   end

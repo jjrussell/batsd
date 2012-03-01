@@ -234,8 +234,15 @@ describe FeaturedContent do
       end
 
       it 'returns featured content within country targeting' do
-        featured_contents = FeaturedContent.with_country_targeting(@geoip_data, @device)
+        featured_contents = FeaturedContent.with_country_targeting(@geoip_data, @device, 'iphone')
         featured_contents.size.should == 1
+      end
+    end
+
+    context 'when the platform is not match' do
+      it 'rejects featured content with different platform' do
+        featured_contents = FeaturedContent.with_country_targeting(@geoip_data, @device, 'android')
+        featured_contents.size.should == 0
       end
     end
 
