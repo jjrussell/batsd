@@ -7,7 +7,7 @@
             = image_tag(current_gamer.get_avatar_url)
       .left.ml10
         .title.mt10
-          = current_gamer.nickname.present?  ? current_gamer.nickname : 'Chuck Norris'
+          = current_gamer.get_gamer_nickname.present?  ? current_gamer.get_gamer_nickname : 'Chuck Norris'
           %span.aside
             (#{t("text.games.thats_you")})
         .subtitle

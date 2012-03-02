@@ -417,10 +417,22 @@ $(document).ready(function() {
     },
     */
 
+
+  (function () {
+    var $flash = $('#flash-notice');
+
+    if ($flash.length === 0) { return; }
+
+    Tapjoy.Utils.notification({
+      message: $flash.html()
+    });
+  }());
+
   $(".enable-when-valid").each(function () {
     var $$ = $(this),
       $form = $$.closest("form"),
-      $req = $("[required]", $form);
+      $req = $("[required]", $form),
+      $psword = $("input[name*='password']", $form);
 
     function enable() {
       $$.removeAttr("disabled").removeClass("disabled");
@@ -439,6 +451,12 @@ $(document).ready(function() {
           return false;
         }
       });
+
+      if (all_valid && $psword.length === 2) {
+        if($psword.first().val() !== $psword.last().val()) {
+          all_valid = false;
+        }
+      }
 
       return all_valid ? enable() : disable();
     }

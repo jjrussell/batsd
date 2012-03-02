@@ -50,6 +50,10 @@ li {
   padding: 0;
 }
 
+label {
+  display: block;
+}
+
 .elip,
 .ellipsis {
   white-space: nowrap;
@@ -1120,6 +1124,7 @@ div.ui-joy-button .get-app {
 
   .list-item {
     @extend .beveled;
+    @extend .ui-no-action;
     border-bottom: 1px solid #c8c4c4;
     border-left: 1px solid #c8c4c4;
     border-right: 1px solid #c8c4c4;
