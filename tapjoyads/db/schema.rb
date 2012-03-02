@@ -94,31 +94,30 @@ ActiveRecord::Schema.define(:version => 20120228124800) do
   add_index "app_reviews", ["id"], :name => "index_app_reviews_on_id", :unique => true
 
   create_table "apps", :id => false, :force => true do |t|
-    t.string   "id",                            :limit => 36,                    :null => false
-    t.string   "partner_id",                    :limit => 36,                    :null => false
-    t.string   "name",                                                           :null => false
+    t.string   "id",                      :limit => 36,                    :null => false
+    t.string   "partner_id",              :limit => 36,                    :null => false
+    t.string   "name",                                                     :null => false
     t.text     "description"
-    t.integer  "price",                                       :default => 0
+    t.integer  "price",                                 :default => 0
     t.string   "platform"
     t.string   "store_id"
     t.integer  "color"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "age_rating"
-    t.integer  "rotation_direction",                          :default => 0,     :null => false
-    t.integer  "rotation_time",                               :default => 0,     :null => false
-    t.boolean  "hidden",                                      :default => false, :null => false
+    t.integer  "rotation_direction",                    :default => 0,     :null => false
+    t.integer  "rotation_time",                         :default => 0,     :null => false
+    t.boolean  "hidden",                                :default => false, :null => false
     t.integer  "file_size_bytes"
     t.string   "supported_devices"
-    t.string   "enabled_rating_offer_id",       :limit => 36
-    t.string   "secret_key",                                                     :null => false
+    t.string   "enabled_rating_offer_id", :limit => 36
+    t.string   "secret_key",                                               :null => false
     t.datetime "released_at"
     t.float    "user_rating"
     t.string   "categories"
     t.text     "countries_blacklist"
     t.integer  "papaya_user_count"
-    t.integer  "active_gamer_count",                          :default => 0
-    t.boolean  "reengagement_campaign_enabled"
+    t.integer  "active_gamer_count",                    :default => 0
   end
 
   add_index "apps", ["id"], :name => "index_apps_on_id", :unique => true
