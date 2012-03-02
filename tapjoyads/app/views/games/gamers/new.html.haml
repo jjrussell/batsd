@@ -12,8 +12,9 @@
       .signup-nav-menu
         %span.title= t('text.shared.sign_up')
         = f.submit t('text.games.next'), :class => "left ui-joy-button soft-grey-action disabled next-btn"
-    .register-form
-      .form-error.signup-error
+    .register-form.clearfix
+      .signup-error.f-out
+        &nbsp;
         = error_message_on @gamer, :nickname
         = error_message_on @gamer, :email
         = error_message_on @gamer, :password
@@ -34,14 +35,14 @@
           = t('text.shared.password')
         = f.password_field :password, :placeholder => t('text.shared.new_password')
       - if device_type.nil?
-        .row.platform
-          #platform_android
-            = label_tag :default_platform_android, t("text.shared.android")
-            = check_box_tag :default_platform_android, 'android'
-          #platform_ios
+        #platform-row.clearfix
+          #platform_ios.ui-joy-button.grey-action
             = label_tag :default_platform_ios, t("text.shared.ios")
             = check_box_tag :default_platform_ios, 'ios'
-      .row
+          #platform_android.ui-joy-button.grey-action
+            = label_tag :default_platform_android, t("text.shared.android")
+            = check_box_tag :default_platform_android, 'android'
+      #tos-row.clearfix
         .field.field_tos
           .field_checkbox.left
             = f.check_box :terms_of_service
@@ -50,7 +51,17 @@
               :terms_of_use => link_to(t("text.games.terms_of_use_href"), games_tos_path, :target => '_blank'),
               :privacy_policy => link_to(t("text.games.privacy_policy_href"), games_privacy_path, :target => '_blank'))
           = f.hidden_field :referrer, :value => params[:referrer]
-      .register-progess
+    .register-progess
+      .register-message.f-out
+        &nbsp;
+      .register-loader.f-out
+        .register-text.left
+          = t('text.games.registering')
+        .left
+          #tapjoy_loader
+            #loader_t.loader_letter
+            #loader_a.loader_letter
+            #loader_p.loader_letter
 
 - content_for :page_head do
   %meta{ :name => 'description', :content => t('text.games.meta_description') }
