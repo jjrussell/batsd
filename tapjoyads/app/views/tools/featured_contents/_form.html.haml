@@ -84,7 +84,8 @@
         = f.label :button_url, 'Action Button Link'
         #help_button_url.help ?
       %td
-        = f.text_field(:button_url, :disabled => true)
+        #button_url
+        = f.hidden_field :button_url
         = error_message_on @featured_content, :button_url
     %tr
       %th
@@ -153,6 +154,7 @@
 
       toggleAppSelect();
       toggleAuthorSelect();
+      $("#button_url").text("#{@featured_content.button_url}");
 
       $("#featured_content_author_id option:selected").each(function () {
         if(type == TYPES.STAFFPICK){
@@ -177,6 +179,7 @@
       $('#app_search_box').autocomplete({ source: '#{search_offers_path(:more_details => true)}', delay: 250, minLength: 2, select: function(event, ui) {
           $("#featured_content_description").val(ui.item.description);
           $("#featured_content_button_url").val(ui.item.click_url);
+          $("#button_url").text(ui.item.click_url);
           $("#featured_content_offer_id").val(ui.item.id);
           if(type == TYPES.PROMO){
             $("#featured_content_subtitle").val(ui.item.name);

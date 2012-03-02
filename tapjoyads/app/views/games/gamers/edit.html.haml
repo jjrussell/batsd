@@ -3,8 +3,9 @@
     .page-header
       .container
         .left.ml10.pt3
-          .big-title.mt10
-            = t('text.shared.my_account')
+          .head.mt10
+            .heading
+              = t('text.shared.my_account')
     - form_for([ :games, :gamer, @gamer_profile ], :url => games_gamer_gamer_profile_path, :html => { :method => "put" }) do |f|
       .container
         .ui-joy-group.p10.ptn

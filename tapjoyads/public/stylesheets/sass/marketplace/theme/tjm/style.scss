@@ -54,6 +54,10 @@ label {
   display: block;
 }
 
+input[type="submit"], input[type="button"] {
+  font-size: 1.1em;
+}
+
 .elip,
 .ellipsis {
   white-space: nowrap;
@@ -638,6 +642,7 @@ p {
 }
 
 .ui-joy-input,
+.ui-joy-textarea,
 .button {
   @extend .border-box;
   @include rounded-corners(4px);
@@ -645,15 +650,21 @@ p {
   border: 1px solid #bfbfbf;
   cursor: pointer;
   padding: 10px;
-  font-size: 1em;
+  font: normal 1.1em "Gill Sans", "Helvetica", Arial;
   width: 100%;
   outline: 0;
   -webkit-appearance: none;
 }
 
-.ui-joy-input:focus {
+.ui-joy-input:focus,
+.ui-joy-textarea:focus {
   border: 1px solid #1f64b2;
   box-shadow: inset 0 1px 3px rgba(56,128,208, .7);
+}
+
+.ui-joy-textarea {
+  cursor: text;
+  resize: none;
 }
 
 .form-section {
@@ -780,6 +791,7 @@ p {
 
 input.ui-joy-button, input.button {
   padding: 6px 8px 7px 8px;
+  font-size: 1.1em;
   width: 100%;
   -webkit-appearance: none;
 }
@@ -810,6 +822,11 @@ input.ui-joy-button, input.button {
 .primary.active {
   background: #d67810;
   box-shadow: inset 0 1px 4px rgba(0,0,0, .4), 0 1px 0 rgba(255,255,255, .1);
+}
+
+.primary.disabled {
+  cursor: default;
+  color: rgba(255,255,255, .7);
 }
 
 .grey-action, .button {
@@ -1478,7 +1495,9 @@ div.app {
       font-style: italic;
     }
   }
-
+  .heading {
+    font: 500 1.35em/150% "Museo Slab";
+  }
   .subtitle {
     font-size: 1em;
     color: #999;
@@ -1674,8 +1693,8 @@ div.app {
 }
 
 .content {
-  margin: 20px auto;
-  width: 300px;
+  margin: 10px auto;
+  max-width: 460px;
 
   h1.museo {
     padding: 12px 0;
@@ -1896,4 +1915,17 @@ div.app {
 }
 .tbt {
   border-top-color: transparent;
+}
+
+.big-msg {
+  font-size: 1.2em;
+  color: #555;
+}
+
+.pillow {
+  @include gradient-top(#fff, #fcfcfc, #f7f7f7, #f0f0f0);
+  border-radius: 6px;
+  box-shadow: 0 1px 2px rgba(0,0,0, .2);
+  border: 1px solid #bbb;
+  padding: 15px;
 }
