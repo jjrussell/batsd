@@ -9,7 +9,7 @@ describe Games::Gamers::FavoriteAppController do
     @controller.stubs(:current_gamer).returns(@gamer)
 
     @params = {
-      :app_metadata_id => @app_metadata.id,
+      :eapp_metadata_id => ObjectEncryptor.encrypt(@app_metadata.id)
     }
   end
 
@@ -26,7 +26,7 @@ describe Games::Gamers::FavoriteAppController do
 
     context 'when an invalid app_metadata is provided' do
       before :each do
-        post('create', { :app_metadata_id => 'NOT_A_GUID' })
+        post('create', { :eapp_metadata_id => 'NOT_A_VALID_VALUE' })
       end
 
       it 'returns an error' do

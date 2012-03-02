@@ -26,10 +26,10 @@ class Games::AppReviewsController < GamesController
     if @app_review.save
       flash[:notice] = t('text.games.review_created')
     else
-      if @app_review.errors[:author_id].any?
-        flash.now[:error] = t("text.games.reviewed_already")
+      if @app_review.errors[:author_id].present?
+        flash[:error] = t("text.games.reviewed_already")
       else
-        flash.now[:error] = t("text.games.review_issue")
+        flash[:error] = t("text.games.review_issue")
       end
     end
 
