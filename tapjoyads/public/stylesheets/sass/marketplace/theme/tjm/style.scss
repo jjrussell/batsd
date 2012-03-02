@@ -1213,11 +1213,17 @@ div.ui-joy-button .get-app {
   overflow: hidden;
   position: relative;
 
-  img.banner-img {
-    border-bottom: 1px solid #262a2f;
-    border-top: 1px solid rgba(255,255,255, .5);
-    border-right: 1px solid #41484f;
-    box-shadow: 0 1px 1px rgba(0,0,0, .2);
+  .banner-img-wrapper {
+    width: 100%;
+    max-width: 768px;
+    margin: 0;
+
+    img.banner-img {
+      border-bottom: 1px solid #262a2f;
+      border-top: 1px solid rgba(255,255,255, .5);
+      border-right: 1px solid #41484f;
+      box-shadow: 0 1px 1px rgba(0,0,0, .2);
+    }
   }
 
   .more {
@@ -1227,7 +1233,7 @@ div.ui-joy-button .get-app {
 
     .text {
       color: #fff;
-      text-shadow: 0 1px 0 rgba(0,0,0, .5);
+      @include text-shadow(1px, 1px, 3px, rgba(0,0,0,1));
       font-size: 2em;
       padding-top: 3px;
     }

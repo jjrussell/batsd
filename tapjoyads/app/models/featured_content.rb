@@ -61,10 +61,9 @@ class FeaturedContent < ActiveRecord::Base
   end
 
   def get_icon_url(icon_id, options = {})
-    size     = options.delete(:size)     { '57' }
-    icon_obj = S3.bucket(BucketNames::TAPJOY).objects["icons/#{size}/#{icon_id}.jpg"]
+    icon_obj = S3.bucket(BucketNames::TAPJOY).objects["icons/src/#{icon_id}.jpg"]
 
-    return FeaturedContent.get_icon_url({:icon_id => icon_id, :size => size}.merge(options)) if icon_obj.exists?
+    return FeaturedContent.get_icon_url({:icon_id => icon_id}.merge(options)) if icon_obj.exists?
     return main_icon_url if icon_id == "#{id}_main" and main_icon_url.present?
     return secondary_icon_url if icon_id == "#{id}_secondary" and secondary_icon_url.present?
     return get_default_icon_url
@@ -73,25 +72,22 @@ class FeaturedContent < ActiveRecord::Base
   def self.get_icon_url(options = {})
     source     = options.delete(:source)   { :s3 }
     icon_id    = options.delete(:icon_id)  { |k| raise "#{k} is a required argument" }
-    size       = options.delete(:size)     { '57' }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
 
     prefix = source == :s3 ? "https://s3.amazonaws.com/#{RUN_MODE_PREFIX}tapjoy" : CLOUDFRONT_URL
 
-    "#{prefix}/icons/#{size}/#{icon_id}.jpg"
+    "#{prefix}/icons/src/#{icon_id}.jpg"
   end
 
   def get_default_icon_url(options = {})
     icon_id = "dynamic_staff_pick_tool"
-    size   = options.delete(:size)     { '57' }
     bucket  = S3.bucket(BucketNames::TAPJOY)
-    icon_obj = bucket.objects["icons/#{size}/#{icon_id}.jpg"]
+    icon_obj = bucket.objects["icons/src/#{icon_id}.jpg"]
     if icon_obj.exists?
-      return FeaturedContent.get_icon_url({:icon_id => icon_id, :size => size}.merge(options))
+      return FeaturedContent.get_icon_url({ :icon_id => icon_id }.merge(options))
     else
       icon_src_blob = bucket.objects["icons/src/#{icon_id}.jpg"].read
-      save_icon_in_different_sizes!(icon_src_blob, icon_id, bucket)
-      return FeaturedContent.get_icon_url({:icon_id => icon_id, :size => size}.merge(options))
+      return FeaturedContent.get_icon_url({ :icon_id => icon_id }.merge(options))
     end
   end
 
@@ -102,20 +98,9 @@ class FeaturedContent < ActiveRecord::Base
 
     return if Digest::MD5.hexdigest(icon_src_blob) == Digest::MD5.hexdigest(existing_icon_blob)
 
-    save_icon_in_different_sizes!(icon_src_blob, icon_id, bucket)
     src_obj.write(:data => icon_src_blob, :acl => :public_read)
 
     Mc.delete("icon.s3.#{id}")
-
-    # Invalidate cloudfront
-    if existing_icon_blob.present?
-      begin
-        acf = RightAws::AcfInterface.new
-        acf.invalidate('E1MG6JDV6GH0F2', ["/icons/256/#{icon_id}.jpg", "/icons/114/#{icon_id}.jpg", "/icons/57/#{icon_id}.jpg", "/icons/57/#{icon_id}.png"], "#{id}.#{Time.now.to_i}")
-      rescue Exception => e
-        Notifier.alert_new_relic(FailedToInvalidateCloudfront, e.message)
-      end
-    end
   end
 
   private
