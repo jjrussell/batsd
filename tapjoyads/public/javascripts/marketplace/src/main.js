@@ -311,14 +311,14 @@ $(document).ready(function() {
     }
   });
 
-  $('.list-button, .btn, .greenblock, #signup, #login').bind(Tapjoy.EventsMap.start + ' ' + Tapjoy.EventsMap.end + ' ' + Tapjoy.EventsMap.cancel, function(e){
+  $('.list-button, .btn, .greenblock, #signup, #login').live(Tapjoy.EventsMap.start + ' ' + Tapjoy.EventsMap.end + ' ' + Tapjoy.EventsMap.cancel, function(e){
     var el = $(this),
 		    target = $(e.target),
         which = e.type;
 
 	   if(el.hasClass('ui-no-action'))
 		  return;
-
+			
     if(which === Tapjoy.EventsMap.start){
       el.addClass('active');
     }else{

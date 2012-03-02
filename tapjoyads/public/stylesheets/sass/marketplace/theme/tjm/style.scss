@@ -41,7 +41,7 @@ a:hover {
 }
 
 .ui-no-action {
-  cursor: default;
+  cursor: default !important;
 }
 
 ul,
@@ -113,7 +113,7 @@ input[type="submit"], input[type="button"] {
 }
 
 h1.museo {
-  font: 500 18px "Museo Slab";
+  font: 500 1.6em "Museo Slab";
   color: #252525;
   text-shadow: 0 1px 0 rgba(255,255,255, .6);
 }
@@ -654,6 +654,7 @@ p {
   width: 100%;
   outline: 0;
   -webkit-appearance: none;
+   cursor: text;
 }
 
 .ui-joy-input:focus,
@@ -663,7 +664,6 @@ p {
 }
 
 .ui-joy-textarea {
-  cursor: text;
   resize: none;
 }
 
@@ -827,6 +827,7 @@ input.ui-joy-button, input.button {
 .primary.disabled {
   cursor: default;
   color: rgba(255,255,255, .7);
+  opacity: .7;
 }
 
 .primary.smaller {
@@ -1358,6 +1359,8 @@ div.ui-joy-button .get-app {
   font-size: 1em;
   text-align: center;
   text-shadow: 0 1px 0 #437643;
+  z-index: 9;
+  position: relative;
 
 /*  position: absolute;
   left: 25px;
