@@ -1,6 +1,6 @@
 class Games::Gamers::GamerProfilesController < GamesController
 
-  before_filter :set_profile, :only => [ :update, :update_birthdate, :update_prefs, :dissociate_account ]
+  before_filter :set_profile, :only => [ :show, :edit, :update, :update_birthdate, :update_prefs, :dissociate_account ]
 
   def update
     @gamer_profile.safe_update_attributes(params[:gamer_profile], [ :name, :nickname, :gender, :city, :country, :postal_code, :favorite_game, :favorite_category ])
@@ -46,6 +46,9 @@ class Games::Gamers::GamerProfilesController < GamesController
       flash[:error] = 'Error updating preferences'
       redirect_to :controller => '/games/gamers', :action => :prefs
     end
+  end
+
+  def show
   end
 
 private

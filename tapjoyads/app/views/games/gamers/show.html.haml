@@ -18,7 +18,7 @@
   .container
     %ul.list-button-container.flush.nbb.big
       %li.list-button.charcoal.soft-gray-gradient
-        - link_to edit_games_gamer_path(:id => current_gamer.id) do
+        - link_to games_gamer_profile_path(current_gamer) do
           = t('text.shared.my_profile')
       %li.list-button.charcoal.soft-gray-gradient
         - link_to games_social_index_path do

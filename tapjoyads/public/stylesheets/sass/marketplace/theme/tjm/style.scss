@@ -655,8 +655,7 @@ p {
 }
 
 .edit-div {
-  padding-top:10px;
-  padding-bottom:10px;
+  padding:5px 0 0;
 
   .ui-joy-input {
     font-size: 1.0em;
@@ -1015,9 +1014,34 @@ div.ui-joy-button .get-app {
   cursor: pointer;
   position: relative;
   z-index: 0;
-  overflow: auto;
+  overflow: hidden;
+
+  .mod .app-link a {
+    color: #026acb;
+    cursor: pointer;
+    text-decoration: none;
+    outline: none;
+    font-size: .9em;
+    display: inline;
+  }
   .mod {
     padding: 0;
+  }
+  .aside {
+    font-size: .8em;
+    color: #026acb;
+  }
+  .squircle {
+    background: url(#{$image_path}/app_icon_overlay_list_button_large.png) no-repeat 0 0;
+    height: 60px;
+    width: 60px;
+    background-size: 60px 60px;
+    top: 0;
+
+    img {
+      width: 59px;
+      height: 59px;
+    }
   }
 }
 
@@ -1062,6 +1086,27 @@ div.ui-joy-button .get-app {
 
 .list-button-container.flush .list-button a:first-child {
   text-decoration: none;
+}
+
+//-------------------------------------------
+// List Container
+//-------------------------------------------
+.list-container {
+
+  .list-item {
+    @extend .beveled;
+    border-bottom: 1px solid #c8c4c4;
+    border-left: 1px solid #c8c4c4;
+    border-right: 1px solid #c8c4c4;
+    padding: 5px 10px;
+  }
+  .list-item:first-child {
+    @include rounded-corners-top(4px);
+    border-top: 0;
+  }
+  .list-item:last-child {
+    @include rounded-corners-bottom(4px);
+  }
 }
 
 //-------------------------------------------
@@ -1535,7 +1580,6 @@ div.app {
     width: 89px;
     height: 89px;
   }
-
 }
 
 .list-button-container.earn-theme .big-title {

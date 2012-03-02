@@ -1,0 +1,19 @@
+#show-profile.current
+  .panel
+    .page-header
+      .container
+        .left.ml10.pt3
+          .big-title.mt10
+            = t('text.shared.my_account')
+    = render "fields"
+    .mod.titled-group
+      .group-title= t('text.shared.password')
+      %ul.list-container.mb10
+        %li.list-item.soft-gray-gradient
+          .hd= t('text.shared.new_password')
+          .bd
+            .edit-div= password_field_tag :create_password, "", :class => "ui-joy-input"
+        %li.list-item.soft-gray-gradient
+          .hd= t('text.shared.confirm_password')
+          .bd
+            .edit-div= password_field_tag :confirm_password, "", :class => "ui-joy-input"

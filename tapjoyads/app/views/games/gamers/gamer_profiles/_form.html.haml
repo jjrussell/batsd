@@ -1,0 +1,45 @@
+- form_for([ :games, :gamer, @gamer_profile ]) do |f|
+  .container
+    .mod.titled-group
+      .group-title= t('text.shared.profile')
+      %ul.list-container.mb10
+        %li.list-item.soft-gray-gradient
+          .hd= t('text.shared.name')
+          .bd
+            .edit-div= f.text_field :name, :class => "ui-joy-input"
+        %li.list-item.soft-gray-gradient
+          .hd= t('text.shared.nickname')
+          .bd
+            .edit-div= f.text_field :nickname, :class => "ui-joy-input"
+        %li.list-item.soft-gray-gradient
+          .hd= t('text.shared.gender')
+          .bd
+            .edit-div
+              .button-bar
+                .hidden
+                  = f.radio_button :gender, "male"
+                  = f.radio_button :gender, "female"
+                .mod.button-group
+                  .ui-joy-button.grey-action{:value => 'male'}
+                    %a.text-center= t('text.shared.male')
+                  .ui-joy-button.grey-action{:value => 'female'}
+                    %a.text-center= t('text.shared.female')
+        %li.list-item.soft-gray-gradient
+          .hd= t('text.shared.location')
+          .bd
+            .edit-div
+              = f.text_field :city, :placeholder => t("text.shared.city"), :class => "ui-joy-input"
+              = f.text_field :country, :placeholder => t("text.shared.country"), :class => "ui-joy-input"
+    .mod.titled-group
+      .group-title= t('text.shared.favorites')
+      %ul.list-container.mb10
+        %li.list-item.soft-gray-gradient
+          .hd= t('text.games.favorite_app')
+          .bd
+            .edit-div= f.text_field :favorite_game, :class => "ui-joy-input"
+        %li.list-item.soft-gray-gradient
+          .hd= t('text.games.favorite_category')
+          .bd
+            .edit-div= f.text_field :favorite_category, :class => "ui-joy-input"
+    .mod.mb20
+      = f.submit t('text.shared.save'), :class => "ui-joy-button orange-action enable-when-valid"

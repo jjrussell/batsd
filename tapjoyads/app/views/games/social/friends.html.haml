@@ -1,0 +1,33 @@
+#social-friends.current
+  .panel
+    .page-header
+      .container
+        .left.ml10.pt3
+          .big-title.mt10
+            = @is_following ? t('text.shared.following') : t('text.shared.followers')
+
+    .titled-group.ml10.pt10
+      .hd
+        .group-title.pb10
+          - if @friends_list.size == 0
+            = t('text.shared.none')
+          - else
+            - i18n_key = @is_following ? "text.games.you_are_following" : "text.games.your_followers"
+            = t(i18n_key, :count => @friends_list.size)
+    .container
+      %ul.list-button-container.m10.mtn.mb20
+        - @friends_list.each do |f|
+          %li.list-button.soft-gray-gradient
+            .left
+              .squircle.ml3
+                %img{ :src => f.get_avatar_url }
+            .left.ml10
+              .bold.mt10
+                = f.get_gamer_nickname || f.get_gamer_name
+              .mod
+                - most_recent = ExternalPublisher.most_recently_run_for_gamer(f)[2]
+                - if most_recent.present?
+                  - encrypt_app_id = ObjectEncryptor.encrypt(most_recent.app_id)
+                  .app-link= t('text.games.last_played', :game => link_to(most_recent.app_name, games_get_app_path(:eid => encrypt_app_id)))
+
+    = render :partial => 'find_more_friends'
