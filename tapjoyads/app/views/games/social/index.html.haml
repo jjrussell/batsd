@@ -26,12 +26,6 @@
                 = has_fb ? t("text.games.connected_to_facebook") : "&nbsp;"
                 .right{:class => has_fb ? "checkmark" : "plussign"}
                   &nbsp;
-        %li.list-button.soft-gray-gradient
-          -link_to "#" do
-            .ui-icon-medium.twitter
-              = has_tw ? t("text.games.connected_to_twitter") : "&nbsp;"
-              .right{:class => has_tw ? "checkmark" : "plussign"}
-                &nbsp;
 
 - content_for :page_head do
   = fb_connect_async_js

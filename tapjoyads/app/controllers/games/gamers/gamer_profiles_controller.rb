@@ -5,10 +5,11 @@ class Games::Gamers::GamerProfilesController < GamesController
   def update
     @gamer_profile.safe_update_attributes(params[:gamer_profile], [ :name, :nickname, :gender, :city, :country, :postal_code, :favorite_game, :favorite_category ])
     if @gamer_profile.save
-      redirect_to games_gamer_path
+      flash[:notice] = t('text.games.profile_update')
+      redirect_to games_gamer_profile_path(@gamer_profile)
     else
-      flash[:error] = 'Error updating profile'
-      redirect_to :controller => '/games/gamers', :action => :edit
+      flash[:error] = t('text.games.profile_error')
+      redirect_to edit_games_gamer_profile_path(@gamer_profile)
     end
   end
 

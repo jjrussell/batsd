@@ -314,6 +314,8 @@ en:
       more_the_merrier: "The more the merrier"
       my_apps: "My Apps"
       profile: "Me"
+      profile_update: Your profile has been updated.
+      profile_error: There was an error updating your profile.
       next: Next
       no_device: "No device"
       no_javascript: "Please go into your browser settings and enable JavaScript to continue using Tapjoy."
