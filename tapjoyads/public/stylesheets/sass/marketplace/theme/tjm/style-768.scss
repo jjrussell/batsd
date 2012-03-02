@@ -52,6 +52,7 @@ $image_path: "/images/marketplace/themes/tjm";
 }
 
 
+
 #recommendations .app,
 div.app {
   border-top: 1px solid #fff;
@@ -84,11 +85,19 @@ div.app {
     margin-left: 10px;
     text-align: left;
     float: left;
+    width: 75%;
   }
 
   span.title {
     padding-left: 2px;
     margin-bottom: 5px;
+  }
+
+  small.description {
+    float: left;
+    display: block;
+    height: 30px;
+    width: 75%;
   }
 
   small.publisher,
@@ -141,8 +150,7 @@ div.app:last-child {
 h1.smart {
 }
 
-#tjmTopbar,
-#tjmTopbar .banner {
+#tjmTopbar .section {
   display: block;
 }
 

@@ -5,16 +5,17 @@
     .hidden
       = f.radio_button :user_rating, 1
       = f.radio_button :user_rating, -1
-    .mod.form-section.button-group
-      .ui-joy-button.grey-action{:value => 1}
+    .button-group
+      .ui-joy-button.secondary.pb5.no-rounded-right{:value => 1}
         %a.icon-center
           .active-image= image_tag("games/inset-thumbs-up.png")
           .inactive-image= image_tag("games/grad-thumbs-up.png")
-      .ui-joy-button.grey-action{:value => -1}
+      .ui-joy-button.secondary.pt3.pb2.no-rounded-left{:value => -1}
         %a.icon-center
           .active-image= image_tag("games/inset-thumbs-down.png")
           .inactive-image= image_tag("games/grad-thumbs-down.png")
-    = error_message_on @app_review, :text
+
+  = error_message_on @app_review, :text
   .mod.form-section
     - button_text = @app_review.new_record? ? t('text.shared.submit_review') : t('text.shared.update_review')
-    = f.submit button_text, :class => "ui-joy-button orange-action enable-when-valid"
+    = f.submit button_text, :class => "ui-joy-button primary pb10 pt10 enable-when-valid"

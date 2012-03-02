@@ -4,7 +4,7 @@
       = t('text.games.delete_my_account')
     .content-box
       .field
-        =t('text.games.del_acct_confirm', :days_before_deletion => Gamer::DAYS_BEFORE_DELETION)
+        = t('text.games.del_acct_confirm', :days_before_deletion => Gamer::DAYS_BEFORE_DELETION)
       .field.clearfix
         - form_for([ :games, @gamer ], :url => games_gamer_path, :html => { :method => "delete" }, :id => 'destroy_gamer') do |f|
           .button-group
