@@ -441,11 +441,13 @@ p {
 .plussign {
   padding-right: 20px;
   background-size: auto 100%;
+  background: url(#{$image_path}/plus-sign.png) no-repeat 98% center;
 }
 
 .checkmark {
   padding-right: 20px;
   background-size: auto 100%;
+  background: url(#{$image_path}/checkmark-grey.png) no-repeat 98% center;
 }
 
 .downarrow {
@@ -1507,6 +1509,7 @@ div.app {
 
 .ui-joy-group {
   .ui-joy-group-title {
+    padding: 8px;
     font-weight: bold;
     font-size: 1em;
     text-shadow: 0 1px 0 #fff;

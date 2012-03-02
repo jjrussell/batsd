@@ -236,7 +236,7 @@ en:
       connect_my_device: "Connect My Device"
       connect_your_android: "Please connect your Android device"
       connect_your_device: "Please connect your device"
-      connected_to_facebook: Connected to Facebook
+      connect_to_facebook: Click to Connect to Facebook
       connected_to_twitter: Connected to Twitter
       contact_support: Contact Support
       contact_us: Contact Us
@@ -263,6 +263,7 @@ en:
       enter_tos: "Please agree to the terms and conditions"
       enter_valid_email: "Enter a valid email address"
       failed_to_change_linked: Failed to change linked account.
+      favorites: Favorites
       favorite_app: "Favorite App"
       favorite_apps: "Favorite Apps"
       favorite_category: "Favorite Category"
