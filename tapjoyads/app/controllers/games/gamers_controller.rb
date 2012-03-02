@@ -29,7 +29,7 @@ class Games::GamersController < GamesController
         raise e
       end
     end
-    @gamer_profile = GamerProfile.new(:birthdate => birthdate)
+    @gamer_profile = GamerProfile.new(:birthdate => birthdate, :nickname => params[:gamer][:nickname])
     @gamer.gamer_profile = @gamer_profile
 
     if @gamer.save

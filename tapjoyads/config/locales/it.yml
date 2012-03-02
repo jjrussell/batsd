@@ -183,6 +183,8 @@ it:
       account_created_body: ~
       account_created_title: ~
       action_required: ~
+      active_gamers_text: ~
+      add: ~
       add_to_homescreen: ~
       advertisers_body: ~
       advertisers_title: ~
@@ -190,41 +192,72 @@ it:
       already_registered:
         one: ~
         other: ~
+      amount_and_currency: ~
       back_to_top: ~
       birthdate: ~
+      browse_offers: ~
       call_to_action_body: ~
       call_to_action_title: ~
       cant_fetch_offers: ~
+      change: ~
       change_linked_account: ~
+      collect: ~
+      collect_rewards: ~
       connect_my_device: ~
       connect_your_android: ~
       connect_your_device: ~
+      connected_to_facebook: ~
+      connected_to_twitter: ~
+      contact_support: ~
+      contact_us: ~
+      cookies_required: ~
       deactivate: ~
       del_acct_confirm: ~
       delete_my_account: ~
       developers_body: ~
       developers_title: ~
+      discover_apps: ~
       earn: ~
+      earn_rewards: ~
       earn_title: ~
+      earning_rewards: ~
+      edit: ~
+      email_notification: ~
       enable_javascript: ~
       enter_birthdate: ~
       enter_email: ~
+      enter_message: ~
+      enter_name: ~
       enter_password: ~
       enter_platform: ~
       enter_tos: ~
       enter_valid_email: ~
+      error_mark_as_favorite: ~
+      error_unmark_as_favorite: ~
+      failed_to_change_linked: ~
       favorite_app: ~
+      favorite_apps: ~
       favorite_category: ~
+      feedback: ~
+      find_and_invite_friends: ~
+      find_friends_from_facebook: ~
+      find_friends_from_twitter: ~
+      find_friends_on_tapjoy: ~
+      find_more_friends: ~
+      find_new_apps: ~
       follow_us: ~
       forgot_pass: ~
+      free: ~
       free!: ~
       generic_issue: ~
+      get_app: ~
       get_it: ~
       grant_us_access: ~
       how_it_works_body: ~
       how_it_works_title: ~
       install_and_run: ~
       invite: ~
+      invite_by_email: ~
       invite_email_body: ~
       invite_email_greet: ~
       invite_email_signature: ~
@@ -236,34 +269,76 @@ it:
         one: ~
         other: ~
       issue_registering: ~
+      join_the_community: ~
+      join_the_community_blurb: ~
+      last_played: ~
       link_my_facebook: ~
       load_more: ~
+      loading: ~
+      log_in_tapjoy: ~
+      mark_as_favorite: ~
       member_since: ~
       meta_description: ~
       meta_keywords: ~
       more_apps: ~
+      more_the_merrier: ~
       my_apps: ~
+      next: ~
+      no_device: ~
+      no_javascript: ~
       none_selected: ~
+      on_my: ~
       oops: ~
+      or_learn_more: ~
+      other_options: ~
       our_tos_changed: ~
+      password_changed: ~
+      post_to_facebook_content: ~
       privacy_policy_href: ~
+      profile: ~
+      profile_error: ~
+      profile_update: ~
       provide_other_email: ~
       recipients_label: ~
+      recommend_apps: ~
       recommendations: ~
       registering: ~
+      report_bug: ~
+      review_app_name: ~
+      review_created: ~
+      review_issue: ~
+      review_updated: ~
+      reviewed_already: ~
       select_current_device: ~
       select_device: ~
       select_friend: ~
+      share_on_facebook: ~
+      share_on_twitter: ~
+      share_with_everyone: ~
+      share_with_your_friends: ~
       social_networks: ~
       social_settings: ~
+      spread_mobile_joy: ~
+      start_discovering: ~
       tap_that: ~
       tapjoy_picks: ~
       terms_of_use_href: ~
+      thanks_contact_support: ~
+      thanks_contact_us: ~
+      thanks_feedback: ~
+      thanks_report_bug: ~
+      thats_you: ~
       tos_acknowledge_html: ~
       tos_change_acknowledge: ~
       unable_to_process: ~
+      unlock_mobile_joy: ~
+      unmark_as_favorite: ~
       wifi_required: ~
       wrong_device: ~
+      you_are_following: ~
+      your_followers:
+        one: ~
+        other: ~
     instructions:
       amount_and_currency: "%{amount} %{currency}"
       continue_link: "Clicca qui per continuare."
@@ -283,6 +358,7 @@ it:
       load_more: "Carica ancora!"
       loading: "Sta caricando..."
       missing_currency: "Mancano %{currency}?"
+      more_offers: ~
       next: "Prossimo %{items}"
       popular_apps: ~
       previous: "Precedente %{items}"
@@ -296,14 +372,19 @@ it:
       back: ~
       blog: ~
       cancel: ~
+      change_password: ~
       city: ~
+      collect: ~
+      comment: ~
       confirm_password: ~
       continue: ~
       copyright: ~
       country: ~
       day: ~
+      earn_verb: ~
       email: ~
       facebook_profile: ~
+      favorites: ~
       female: ~
       followers: ~
       following: ~
@@ -312,6 +393,8 @@ it:
       help: ~
       invite: ~
       ios: ~
+      join: ~
+      location: ~
       login_noun: ~
       login_verb: ~
       logout: ~
@@ -319,9 +402,11 @@ it:
       month: ~
       my_account: ~
       my_profile: ~
+      my_reviews: ~
       name: ~
       new_password: ~
       nickname: ~
+      none: ~
       ok: ~
       options: ~
       other: ~
@@ -329,15 +414,26 @@ it:
       preferences: ~
       privacy: Privacy
       privacy_policy: ~
+      profile: ~
+      rate_and_review: ~
       recipients: ~
       reset_password: ~
+      reviews: ~
       save: ~
+      send: ~
       share: ~
       sign_in: ~
       sign_up: ~
+      submit: ~
+      submit_review: ~
       success: ~
+      title_noun: ~
       try_again: ~
+      unknown: ~
+      update_review: ~
       updating: ~
+      view_all: ~
+      write_review: ~
       year: ~
       zip_postal: ~
     support:
@@ -362,6 +458,7 @@ it:
   time:
     am: ~
     formats:
+      classic_short: ~
       day: ~
       day_long: ~
       day_short: ~
