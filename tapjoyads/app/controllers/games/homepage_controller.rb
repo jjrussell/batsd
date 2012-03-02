@@ -33,7 +33,7 @@ class Games::HomepageController < GamesController
     end
     @currency = Currency.find_by_id(currency_id)
     @external_publisher = ExternalPublisher.new(@currency)
-    return unless verify_records([ @currency, @device ])
+    return unless verify_records([ @currency, device ])
 
     @offerwall_url = @external_publisher.get_offerwall_url(device, @external_publisher.currencies.first, request.accept_language, request.user_agent, current_gamer.id)
     @app_metadata = App.find_by_id(@external_publisher.app_id).primary_app_metadata
