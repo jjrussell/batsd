@@ -34,7 +34,7 @@ ActionController::Routing::Routes.draw do |map|
       gamer.resource :gamer_profile, :controller => 'games/gamers/gamer_profiles', :only => [ :update ], :member => { :update_birthdate => :put, :update_prefs => :put, :dissociate_account => :put }
     end
 
-    m.resources :gamer_profile, :controller => 'games/gamers/gamer_profiles', :only => [:show, :edit, :update]
+    m.resources :gamer_profile, :controller => 'games/gamers/gamer_profiles', :only => [ :show, :edit, :update ]
 
     m.register 'register', :controller => 'games/gamers', :action => :new
 
