@@ -212,7 +212,7 @@ en:
       account_created_body: "Your Tapjoy account was successfully created!"
       account_created_title: Success!
       action_required: "Action Required!"
-      active_gamers_text: "%{count} other gamers are playing..."
+      active_gamers_text: "%{count} people using"
       add: add
       add_to_homescreen: "Add %{tapjoy} to your home screen."
       advertisers_body: "Reach millions of users and gain exposure for your products"
@@ -276,7 +276,11 @@ en:
       forgot_pass: "Forgot Password?"
       free: Free!
       generic_issue: "There was an issue. Please try again."
-      get_app: "Get App"
+      get_app: Get App
+      mark_as_favorite: Mark as Favorite
+      unmark_as_favorite: Unmark as Favorite
+      error_mark_as_favorite: Error marking app as Favorite
+      error_unmark_as_favorite: Error unmarking app as Favorite
       get_it: "Get it!"
       grant_us_access: "Please authorize us/grant us both permissions before sending out an invite."
       how_it_works_body: "All your games are listed below. Click the buttons next to the apps to start earning currency."
@@ -313,6 +317,9 @@ en:
       more_apps: "More Apps"
       more_the_merrier: "The more the merrier"
       my_apps: "My Apps"
+      profile: "Me"
+      profile_update: Your profile has been updated.
+      profile_error: There was an error updating your profile.
       next: Next
       no_device: "No device"
       no_javascript: "Please go into your browser settings and enable JavaScript to continue using Tapjoy."
@@ -322,6 +329,7 @@ en:
       or_learn_more: "or learn more"
       other_options: "Other Options"
       our_tos_changed: "Our %{terms_of_use} have changed. Please review and indicate your agreement below."
+      password_changed: Your password has been changed.
       post_to_facebook_content: "Check out Tapjoy where you can discover the best new apps and games, while also earning currency in apps you love. It's free to join so visit tapjoy.com today to start getting app recommendations just for you."
       privacy_policy_href: "privacy policy"
       profile: Me
@@ -361,6 +369,10 @@ en:
       unlock_mobile_joy: "Unlock Mobile Joy"
       wifi_required: "WiFi Required"
       wrong_device: "wrong device?"
+      you_are_following: You're following (%{count})
+      your_followers:
+        one: Your follower
+        other: Your followers (%{count})
     instructions:
       amount_and_currency: "%{amount} %{currency}"
       continue_link: "Click here to continue."
@@ -395,6 +407,7 @@ en:
       blog: Blog
       cancel: Cancel
       city: City
+      change_password: Change Password
       collect: Collect
       comment: Comment
       confirm_password: "Confirm Password"
@@ -426,6 +439,7 @@ en:
       my_reviews: "My Reviews"
       name: Name
       new_password: "New Password"
+      none: "None"
       nickname: Nickname
       ok: OK
       options: Options

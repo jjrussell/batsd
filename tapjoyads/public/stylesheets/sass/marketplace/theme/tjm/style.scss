@@ -35,13 +35,27 @@ a:hover {
 }
 
 .border-box {
-  -moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box;
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+}
+
+.ui-no-action {
+  cursor: default;
 }
 
 ul,
 li {
   margin: 0;
   padding: 0;
+}
+
+label {
+  display: block;
+}
+
+input[type="submit"], input[type="button"] {
+  font-size: 1.1em;
 }
 
 .elip,
@@ -628,14 +642,29 @@ p {
 }
 
 .ui-joy-input,
+.ui-joy-textarea,
 .button {
   @extend .border-box;
   @include rounded-corners(4px);
-  box-shadow: 0 2px 2px #dfdfdf inset;
+  box-shadow: inset 0 1px 0 #e5e5e5;
   border: 1px solid #bfbfbf;
   cursor: pointer;
-  padding: 10px 2.5%;
+  padding: 10px;
+  font: normal 1.1em "Gill Sans", "Helvetica", Arial;
   width: 100%;
+  outline: 0;
+  -webkit-appearance: none;
+}
+
+.ui-joy-input:focus,
+.ui-joy-textarea:focus {
+  border: 1px solid #1f64b2;
+  box-shadow: inset 0 1px 3px rgba(56,128,208, .7);
+}
+
+.ui-joy-textarea {
+  cursor: text;
+  resize: none;
 }
 
 .form-section {
@@ -655,8 +684,7 @@ p {
 }
 
 .edit-div {
-  padding-top:10px;
-  padding-bottom:10px;
+  padding:5px 0 0;
 
   .ui-joy-input {
     font-size: 1.0em;
@@ -750,6 +778,7 @@ p {
   color: white;
   text-align: center;
   font-size: 1.1em;
+  cursor: pointer;
 
   a {
     color: white;
@@ -762,6 +791,7 @@ p {
 
 input.ui-joy-button, input.button {
   padding: 6px 8px 7px 8px;
+  font-size: 1.1em;
   width: 100%;
   -webkit-appearance: none;
 }
@@ -772,41 +802,57 @@ input.ui-joy-button, input.button {
 
   .ui-joy-button, .button {
     @extend .border-box;
-    width: 49%;
+    width: 50%;
     float: left;
   }
   .ui-joy-button:first-child {
-    margin-right: 2%;
+    border-right: 0;
   }
 }
 
-.orange-action {
-  @include gradient-top(#ffc000,#ffb300, #ff9200, #ff8600);
-  border: 1px solid #f49700;
-  border-top: 1px solid #ffebab;
-  border-bottom: 1px solid #a35500;
+.orange-action,
+.primary {
+  @include gradient-top(#ffc000, #ffb300, #ff9200, #ff8600);
+  border: 1px solid #d67810;
+  border-bottom: 1px solid #c06a0a;
+  box-shadow: inset 0 1px 0 rgba(255,255,255, .4), 0 1px 0 rgba(0,0,0, .1);
+}
 
-  .active-image {
-    display: none;
-  }
-  .inactive-image {
-    display: block;
-  }
+.orange-action.active,
+.primary.active {
+  background: #d67810;
+  box-shadow: inset 0 1px 4px rgba(0,0,0, .4), 0 1px 0 rgba(255,255,255, .1);
+}
+
+.primary.disabled {
+  cursor: default;
+  color: rgba(255,255,255, .7);
 }
 
 .grey-action, .button {
   @extend .ui-joy-button;
   @include gradient-top(#c9c9c9,#bababa, #999999, #868686);
   border-bottom: 1px solid rgba(85,85,85,1.0);
-
-  .active-image {
-    display: none;
-  }
-  .inactive-image {
-    display: block;
-  }
 }
 
+.active-image {
+  display: none;
+}
+.inactive-image {
+  display: block;
+}
+
+.secondary {
+  @include advanced-linear-gradient(rgba(246,246,246,1), rgba(241,241,241,1), rgba(233,233,233,1),rgba(229,229,229,1), top);
+  border: 1px solid #aaa;
+  color: #454545;
+  text-shadow: 0 1px 0 #fff;
+  box-shadow: inset 0 1px 0 rgba(255,255,255, .4), 0 1px 0 rgba(0,0,0, .1);
+}
+
+.secondary.active {
+  box-shadow: inset 0 1px 4px rgba(0,0,0, .4), 0 1px 0 rgba(255,255,255, .1);
+}
 .soft-grey-action {
   @extend .ui-joy-button;
   @include advanced-linear-gradient(rgba(246,246,246,1), rgba(241,241,241,1), rgba(233,233,233,1),rgba(229,229,229,1), top);
@@ -1015,9 +1061,34 @@ div.ui-joy-button .get-app {
   cursor: pointer;
   position: relative;
   z-index: 0;
-  overflow: auto;
+  overflow: hidden;
+
+  .mod .app-link a {
+    color: #026acb;
+    cursor: pointer;
+    text-decoration: none;
+    outline: none;
+    font-size: .9em;
+    display: inline;
+  }
   .mod {
     padding: 0;
+  }
+  .aside {
+    font-size: .8em;
+    color: #026acb;
+  }
+  .squircle {
+    background: url(#{$image_path}/app_icon_overlay_list_button_large.png) no-repeat 0 0;
+    height: 60px;
+    width: 60px;
+    background-size: 60px 60px;
+    top: 0;
+
+    img {
+      width: 59px;
+      height: 59px;
+    }
   }
 }
 
@@ -1048,7 +1119,6 @@ div.ui-joy-button .get-app {
   border-bottom: 0;
 }
 
-
 .list-button-container .list-button.active {
   box-shadow: inset 0 1px 1px rgba(0,0,0, .2), 0 1px 0 #fff;
   -webkit-tap-highlight-color: rgba(0,0,0,.1);
@@ -1062,6 +1132,28 @@ div.ui-joy-button .get-app {
 
 .list-button-container.flush .list-button a:first-child {
   text-decoration: none;
+}
+
+//-------------------------------------------
+// List Container
+//-------------------------------------------
+.list-container {
+
+  .list-item {
+    @extend .beveled;
+    @extend .ui-no-action;
+    border-bottom: 1px solid #c8c4c4;
+    border-left: 1px solid #c8c4c4;
+    border-right: 1px solid #c8c4c4;
+    padding: 5px 10px;
+  }
+  .list-item:first-child {
+    @include rounded-corners-top(4px);
+    border-top: 0;
+  }
+  .list-item:last-child {
+    @include rounded-corners-bottom(4px);
+  }
 }
 
 //-------------------------------------------
@@ -1112,7 +1204,11 @@ div.ui-joy-button .get-app {
   @include linear-gradient(top, #f7f7f7, #efefef);
 }
 
-.soft-gray-gradient:active {
+.list-button-container .list-button.ui-no-action:hover {
+  @include linear-gradient(top, #fbfbfb, #f2f2f2);
+}
+
+.soft-gray-gradient.active {
   background: #f0f0f0;
 }
 
@@ -1173,8 +1269,7 @@ div.ui-joy-button .get-app {
   visibility: visible;
 }
 
-#tjmTopbar,
-#tjmTopbar .banner {
+#tjmTopbar .section {
   display: none;
 }
 
@@ -1185,11 +1280,17 @@ div.ui-joy-button .get-app {
   overflow: hidden;
   position: relative;
 
-  img.banner-img {
-    border-bottom: 1px solid #262a2f;
-    border-top: 1px solid rgba(255,255,255, .5);
-    border-right: 1px solid #41484f;
-    box-shadow: 0 1px 1px rgba(0,0,0, .2);
+  .banner-img-wrapper {
+    width: 100%;
+    max-width: 768px;
+    margin: 0;
+
+    img.banner-img {
+      border-bottom: 1px solid #262a2f;
+      border-top: 1px solid rgba(255,255,255, .5);
+      border-right: 1px solid #41484f;
+      box-shadow: 0 1px 1px rgba(0,0,0, .2);
+    }
   }
 
   .more {
@@ -1199,7 +1300,7 @@ div.ui-joy-button .get-app {
 
     .text {
       color: #fff;
-      text-shadow: 0 1px 0 rgba(0,0,0, .5);
+      @include text-shadow(1px, 1px, 3px, rgba(0,0,0,1));
       font-size: 2em;
       padding-top: 3px;
     }
@@ -1394,11 +1495,27 @@ div.app {
       font-style: italic;
     }
   }
+  .heading {
+    font: 500 1.35em/150% "Museo Slab";
+  }
   .subtitle {
     font-size: 1em;
     color: #999;
     text-shadow: 0 1px 0 #fff;
   }
+}
+
+.ui-joy-group {
+  .ui-joy-group-title {
+    font-weight: bold;
+    font-size: 1em;
+    text-shadow: 0 1px 0 #fff;
+  }
+}
+
+.ui-joy-label {
+  font-size: 1.1em;
+  text-shadow: 0 1px 0 #fff;
 }
 
 .section {
@@ -1535,7 +1652,6 @@ div.app {
     width: 89px;
     height: 89px;
   }
-
 }
 
 .list-button-container.earn-theme .big-title {
@@ -1577,8 +1693,8 @@ div.app {
 }
 
 .content {
-  margin: 20px auto;
-  width: 300px;
+  margin: 10px auto;
+  max-width: 460px;
 
   h1.museo {
     padding: 12px 0;
@@ -1774,4 +1890,42 @@ div.app {
   display: block;
 }
 
+.no-rounded-tops {
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+}
 
+.no-rounded-bottoms {
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.no-rounded-right {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.no-rounded-left {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
+.nbs {
+  box-shadow: inset 0 0 0 rgba(0,0,0,0);
+}
+.tbt {
+  border-top-color: transparent;
+}
+
+.big-msg {
+  font-size: 1.2em;
+  color: #555;
+}
+
+.pillow {
+  @include gradient-top(#fff, #fcfcfc, #f7f7f7, #f0f0f0);
+  border-radius: 6px;
+  box-shadow: 0 1px 2px rgba(0,0,0, .2);
+  border: 1px solid #bbb;
+  padding: 15px;
+}

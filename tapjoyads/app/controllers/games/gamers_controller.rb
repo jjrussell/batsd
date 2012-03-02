@@ -2,7 +2,7 @@ class Games::GamersController < GamesController
   rescue_from Mogli::Client::ClientException, :with => :handle_mogli_exceptions
   rescue_from Errno::ECONNRESET, :with => :handle_errno_exceptions
   rescue_from Errno::ETIMEDOUT, :with => :handle_errno_exceptions
-  before_filter :set_profile, :only => [ :edit, :edit_name, :accept_tos, :password, :prefs, :social, :update_password, :confirm_delete ]
+  before_filter :set_profile, :only => [ :edit, :accept_tos, :password, :prefs, :social, :update_password, :confirm_delete ]
   before_filter :offline_facebook_authenticate, :only => :connect_facebook_account
 
   def new
@@ -76,17 +76,6 @@ class Games::GamersController < GamesController
     }
   end
 
-  def social
-    @friends_lists = {
-      :following => get_friends_info(Friendship.following_ids(current_gamer.id)),
-      :followers => get_friends_info(Friendship.follower_ids(current_gamer.id))
-    }
-    if @gamer_profile.facebook_id.present?
-      fb_create_user_and_client(@gamer_profile.fb_access_token, '', @gamer_profile.facebook_id)
-      current_facebook_user.fetch
-    end
-  end
-
   def connect_facebook_account
     redirect_to :action => :social
   end
@@ -94,7 +83,8 @@ class Games::GamersController < GamesController
   def update_password
     @gamer.safe_update_attributes(params[:gamer], [ :password, :password_confirmation ])
     if @gamer.save
-      redirect_to edit_games_gamer_path
+      flash[:notice] = t('text.games.password_changed')
+      redirect_to games_gamer_profile_path(@gamer)
     else
       flash.now[:error] = 'Error updating password'
       render :action => :password

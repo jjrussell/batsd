@@ -7,16 +7,8 @@
             = t('text.games.social_settings')
     = render "games/shared/friends_follow"
 
-    .titled-group.ml10
-      .hd
-        .group-title.pb10
-          = t('text.games.find_and_invite_friends')
-          .aside= t('text.games.more_the_merrier')
-    .container
-      %ul.list-button-container.m10.mtn
-        %li.list-button.soft-gray-gradient
-          -link_to games_social_invites_path do
-            = t("text.games.find_more_friends")
+    = render :partial => 'find_more_friends'
+
     .titled-group.ml10
       .hd
         .group-title.pb10
@@ -34,12 +26,6 @@
                 = has_fb ? t("text.games.connected_to_facebook") : "&nbsp;"
                 .right{:class => has_fb ? "checkmark" : "plussign"}
                   &nbsp;
-        %li.list-button.soft-gray-gradient
-          -link_to "#" do
-            .ui-icon-medium.twitter
-              = has_tw ? t("text.games.connected_to_twitter") : "&nbsp;"
-              .right{:class => has_tw ? "checkmark" : "plussign"}
-                &nbsp;
 
 - content_for :page_head do
   = fb_connect_async_js

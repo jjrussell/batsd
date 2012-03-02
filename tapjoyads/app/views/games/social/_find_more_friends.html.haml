@@ -1,0 +1,9 @@
+.ui-joy-group.p10
+  .ui-joy-group-title.pb10
+    = t('text.games.find_and_invite_friends')
+    .aside= t('text.games.more_the_merrier')
+  .container
+    %ul.list-button-container.mtn
+      %li.list-button.soft-gray-gradient
+        -link_to games_social_invites_path do
+          = t("text.games.find_more_friends")

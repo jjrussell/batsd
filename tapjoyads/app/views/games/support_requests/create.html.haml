@@ -9,7 +9,7 @@
         = t('text.games.contact_support')
       - else
         = t('text.games.contact_us')
-    .support-form
+    .support-form.pillow.big-msg.mb30
       - if params[:type] === "feedback"
         = t('text.games.thanks_feedback')
       - elsif params[:type] === "report_bug"
@@ -18,3 +18,5 @@
         = t('text.games.thanks_contact_support')
       - else
         = t('text.games.thanks_contact_us')
+
+
