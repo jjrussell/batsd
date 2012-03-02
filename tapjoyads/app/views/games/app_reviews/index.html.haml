@@ -25,7 +25,7 @@
                         - elsif app_review.user_rating < 0
                           .thumb_down
                         - else
-                          Not Rating Yet
+                          No Rating Yet
                       %td= truncate(app_review.text, :length => 20)
                       %td
                         - link_to edit_games_app_review_path(app_review) do

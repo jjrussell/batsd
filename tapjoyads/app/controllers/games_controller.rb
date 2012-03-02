@@ -15,7 +15,7 @@ class GamesController < ApplicationController
       {
         :id        => friend.id,
         :name      => friend.get_gamer_name,
-        :image_url => friend.get_avatar_url
+        :image_url => friend.get_avatar_url,
       }
     end
   end
