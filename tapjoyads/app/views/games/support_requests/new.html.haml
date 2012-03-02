@@ -10,39 +10,16 @@
       - else
         = t('text.games.contact_us')
     .support-form
-      - form_for('support_requests', :url => { :action => 'create' } ) do |f|
-        .field
+      - form_for('support_requests', :url => { :action => 'create' }) do |f|
+        .field.pbn.ptn
           - if params[:type].present?
             = hidden_field_tag :type, params[:type]
           - else
             = hidden_field_tag :type, "contact_support"
-          = f.text_area :content, :rows => 5, :value => params[:content], :class => 'ui-joy-input'
+          = f.text_area :content, :rows => 5, :value => params[:content], :required => 'true', :class => 'ui-joy-textarea'
         .field
-          .button-group
-            = button_to_function t('text.shared.cancel'), 'history.go(-1)', :class => 'button'
-            = f.submit t('text.shared.submit'), :class => 'button disabled'
+          .container.pb10
+            = f.submit t('text.shared.submit'), :class => 'ui-joy-button primary pb10 pt10 disabled enable-when-valid'
+          .container.pb2
+            = button_to_function t('text.shared.cancel'), 'history.go(-1)', :class => 'ui-joy-button pb10 pt10 secondary'
         .form-error.center
-
-- content_for :page_javascript do
-  :plain
-    $(window).load(function() {
-      var canProceed = false;
-      $('.ui-joy-input').keypress(function() {
-        if ($(this).val() != '') {
-          $('.button.disabled').removeClass('disabled');
-          canProceed = true;
-        }
-        else {
-          $('.button.disabled').addClass('disabled');
-          canProceed = false;
-        }
-      });
-      $('form').submit(function(e){
-        if (!canProceed) {
-          e.preventDefault();
-        }
-        else {
-          e.run();
-        }
-      });
-    });
