@@ -6,7 +6,7 @@ class HeaderParser
     when /ipod;/i
       'ipod'
     when /ipad;/i
-      'ipad'
+      'itouch'
     when /android/i
       'android'
     when /windows phone/i
