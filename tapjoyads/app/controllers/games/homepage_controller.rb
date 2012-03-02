@@ -14,8 +14,8 @@ class Games::HomepageController < GamesController
     elsif params[:id].present?
       app_id = params[:id]
     end
-    offer = Offer.find_by_id(app_id)
-    @app = offer.app
+    @offer = Offer.find_by_id(app_id)
+    @app = @offer.app
     @app_metadata = @app.primary_app_metadata
     @app_reviews = AppReview.by_gamers.paginate_all_by_app_metadata_id(@app_metadata.id, :page => params[:app_reviews_page])
   end
