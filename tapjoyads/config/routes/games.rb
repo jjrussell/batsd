@@ -34,6 +34,8 @@ ActionController::Routing::Routes.draw do |map|
       gamer.resource :gamer_profile, :controller => 'games/gamers/gamer_profiles', :only => [ :update ], :member => { :update_birthdate => :put, :update_prefs => :put, :dissociate_account => :put }
     end
 
+    m.resources :gamer_profile, :controller => 'games/gamers/gamer_profiles', :only => [:show, :edit, :update]
+
     m.register 'register', :controller => 'games/gamers', :action => :new
 
     m.resources :confirmations, :controller => 'games/confirmations', :only => [ :create ]
@@ -51,6 +53,7 @@ ActionController::Routing::Routes.draw do |map|
       social.invite_email_friends 'invite_email_friends', :action => :invite_email_friends
       social.send_email_invites 'send_email_invites', :action => :send_email_invites
       social.invites 'social/invites', :action => :invites
+      social.friends 'social/friends', :action => :friends
     end
 
     map.resources :survey_results, :only => [ :new, :create ]
