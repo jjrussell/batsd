@@ -6,26 +6,28 @@
           .squircle
             = image_tag(@external_publisher.get_icon_url(:size => 114, :source => :cloudfront))
         .left.ml10
-          .big-title.slate.elip.mt10
+          .big-title.slate.elip
             = @external_publisher.app_name
           .container
             .left.ui-icon-medium.score.icon24.p5
               #{@app_metadata.positive_thumbs_percentage.floor}%
             .left.ui-icon-medium.social.icon24.p5.ml5
               = @app_metadata.app_reviews.by_gamers.size
+          .container
+            .left.mt1.ml3
+              = hidden_field_tag(:eapp_metadata_id, ObjectEncryptor.encrypt(@app_metadata.id))
+              = hidden_field_tag(:mark_as_fav_path, games_gamer_favorite_app_path)
+              #favorite_app_button.ui-joy-button.primary.smaller{ :onclick => "update_favorite_app();"}
+                - if @mark_as_favorite
+                  = t('text.games.mark_as_favorite')
+                - else
+                  = t('text.games.unmark_as_favorite')
+              
     .section.dark
       .heading
         = t('text.games.browse_offers')
     .review-area
       = render "offers"
-    = hidden_field_tag(:eapp_metadata_id, ObjectEncryptor.encrypt(@app_metadata.id))
-    = hidden_field_tag(:mark_as_fav_path, games_gamer_favorite_app_path)
-    .ui-joy-button.grey-action{ :onclick => "update_favorite_app();"}
-      #favorite_app_button.text-center.get-app
-        - if @mark_as_favorite
-          = t('text.games.mark_as_favorite')
-        - else
-          = t('text.games.unmark_as_favorite')
     .section.dark
       .heading
         = t('text.games.other_options')

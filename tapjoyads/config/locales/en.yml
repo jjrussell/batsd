@@ -309,7 +309,7 @@ en:
       load_more: "Load More"
       loading: Loading...
       log_in_tapjoy: "Log in to Tapjoy"
-      mark_as_favorite: "Mark as Favorite"
+      mark_as_favorite: "Add to Favorites"
       member_since: "Member since %{date}"
       meta_description: "Tapjoy: The destination for mobile apps and games on Android, iPhone and iPad."
       meta_keywords: "games, mobile games, mobile apps, ios, android, iphone, ipad, itouch"
@@ -365,7 +365,7 @@ en:
       tos_change_acknowledge: "By checking this box I assert that I agree to the terms of service."
       unable_to_process: "Sorry we are unable to process your request"
       unlock_mobile_joy: "Unlock Mobile Joy"
-      unmark_as_favorite: "Unmark as Favorite"
+      unmark_as_favorite: "Remove from Favorites"
       wifi_required: "WiFi Required"
       wrong_device: "wrong device?"
       you_are_following: "You're following (%{count})"
