@@ -2,16 +2,16 @@
   .panel.clearfix
     #tjmTopbar
       - if @featured_content.present?
-        .banner
-          .more
-            .text.left.mr10
-              = @featured_content.button_text
-            .circle.btn.right
-              - encrypt_fc_item_id = ObjectEncryptor.encrypt(@featured_content.offer.item_id)
-              - link_to(games_get_app_path(:eid => encrypt_fc_item_id)) do
-                %img.rightarrow-white.icon24{ :src => BLANK_IMAGE }
-          .banner-img-wrapper
-            = image_tag(FeaturedContent.get_icon_url(:icon_id => "#{@featured_content.id}_secondary"), :class => 'banner-img')
+        - encrypt_fc_item_id = ObjectEncryptor.encrypt(@featured_content.offer.item_id)
+        - link_to(games_get_app_path(:eid => encrypt_fc_item_id)) do
+          .banner
+            .banner-img-wrapper
+              .more
+                .text.left.mr10
+                  = @featured_content.button_text
+                .circle.btn.right
+                  %img.rightarrow-white.icon24{ :src => BLANK_IMAGE }
+              = image_tag(FeaturedContent.get_icon_url(:icon_id => "#{@featured_content.id}_secondary"), :class => 'banner-img')
       .section.dark.ntb
         .select-container.left.ml5
           #viewSelect.dropdown.left
