@@ -294,7 +294,7 @@ span.gill {
   }
 
   .cancel-btn {
-    margin-left: 11px;
+    margin-right: 11px;
   }
 
   .forgot-pass a {
@@ -303,7 +303,7 @@ span.gill {
     font-size: 13px;
   }
 
-  .login-error, .signup-error {
+  .form-error {
     text-align: center;
     border-radius: 3px 3px 3px 3px;
     font: normal 1em "Gill Sans", Arial;
@@ -313,15 +313,9 @@ span.gill {
     text-shadow: 0 -1px 0 #c93232;
     line-height: 1.5em;
     margin-bottom: 7px;
-  }
-  .signup-error {
     opacity: 0;
-    display: hidden;
+    visibility: 0;
     @include animate(all, 0.35s, ease-in);
-  }
-  .signup-error{
-    opacity: 1;
-    display: visible !important;
   }
 }
 
@@ -384,14 +378,18 @@ span.gill {
     text-align: center;
     padding-top: 12px;
   }
+
   .register-progess {
     padding-top: 150px;
-  }
-  .register-progess {
 
+    .register-message {
+      font-size: 16px;
+    }
     .register-loader {
       width: 180px;
       margin: 0 auto;
+      opacity: 0;
+      visibility: hidden;
 
       #tapjoy_loader {
         padding: 6px 0;
@@ -431,6 +429,7 @@ span.gill {
   opacity: 1;
   padding-top: 20px;
   visibility: visible;
+  @include animate(all, 0.35s, ease-in);
 }
 
 .register-form.close {
@@ -438,6 +437,7 @@ span.gill {
   opacity: 0;
   overflow: hidden;
   visibility: hidden;
+  @include animate(all, 0.35s, ease-in);
 }
 
 .register-form.open {

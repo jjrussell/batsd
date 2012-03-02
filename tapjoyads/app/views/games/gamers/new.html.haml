@@ -11,9 +11,9 @@
     .signup-nav
       .signup-nav-menu
         %span.title= t('text.shared.sign_up')
-        = f.submit t('text.games.next'), :class => "left ui-joy-button soft-grey-action disabled next-btn"
+        = f.submit t('text.games.next'), :class => "ui-joy-button soft-grey-action next-btn disabled"
     .register-form.clearfix
-      .signup-error.f-out
+      .form-error
         &nbsp;
         = error_message_on @gamer, :nickname
         = error_message_on @gamer, :email
@@ -52,9 +52,9 @@
               :privacy_policy => link_to(t("text.games.privacy_policy_href"), games_privacy_path, :target => '_blank'))
           = f.hidden_field :referrer, :value => params[:referrer]
     .register-progess
-      .register-message.f-out
+      .register-message
         &nbsp;
-      .register-loader.f-out
+      .register-loader
         .register-text.left
           = t('text.games.registering')
         .left
