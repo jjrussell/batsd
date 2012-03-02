@@ -10,9 +10,9 @@
             = @external_publisher.app_name
           .container
             .left.ui-icon-medium.score.icon24.p5
-              = "#{@app_metadata.positive_thumbs_percentage.floor}%"
+              #{@app_metadata.positive_thumbs_percentage.floor}%
             .left.ui-icon-medium.social.icon24.p5.ml5
-              = "#{@app_metadata.app_reviews.by_gamers.size}"
+              = @app_metadata.app_reviews.by_gamers.size
     .section.dark
       .heading
         = t('text.games.browse_offers')

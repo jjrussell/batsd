@@ -306,9 +306,13 @@ $(document).ready(function() {
     }
   });
 
-  $('.list-button, .btn, .greenblock, #signup, #login, #login-form .ui-joy-button').bind(Tapjoy.EventsMap.start + ' ' + Tapjoy.EventsMap.end + ' ' + Tapjoy.EventsMap.cancel, function(e){
+  $('.list-button, .btn, .greenblock, #signup, #login').bind(Tapjoy.EventsMap.start + ' ' + Tapjoy.EventsMap.end + ' ' + Tapjoy.EventsMap.cancel, function(e){
     var el = $(this),
+		    target = $(e.target),
         which = e.type;
+
+	   if(el.hasClass('ui-no-action'))
+		  return;
 
     if(which === Tapjoy.EventsMap.start){
       el.addClass('active');
@@ -317,27 +321,43 @@ $(document).ready(function() {
     }
   });
 
-  $(".button-bar").each(function () {
-    var $$ = $(this),
-      radios = $(":radio", $$),
-      buttons = $(".ui-joy-button", $$),
-      value = $(":checked", $$).val(),
-      render_state;
+	$('.ui-joy-button').bind(Tapjoy.EventsMap.start + ' ' + Tapjoy.EventsMap.end + ' ' + Tapjoy.EventsMap.cancel, function(e){
+		var el = $(this),
+    		which = e.type;
 
-    render_state = function () {
-      $(".orange-action", $$).removeClass("orange-action").addClass("grey-action");
-      $(":checked").attr("checked", false);
+     if(el.hasClass('disabled'))
+      return;
 
-      $(".ui-joy-button[value='" + value + "']", $$).removeClass("grey-action").addClass("orange-action");
-      $("[value='" + value + "']:radio", $$).attr("checked", "checked");
+    if(which === Tapjoy.EventsMap.start){
+      el.addClass('active');
+    }else{
+      el.removeClass('active');
+    }
+
+	});
+
+  $('.button-bar').each(function(){
+    var $t = $(this),
+      radios = $(':radio', $t),
+      buttons = $('.ui-joy-button', $t),
+      value = $(":checked", $t).val(),
+      render;
+
+    render = function(){
+      $('.primary', $t).removeClass('primary').addClass('secondary');
+      $(':checked').attr('checked', false);
+
+      $('.ui-joy-button[value="' + value + '"]', $t).removeClass('secondary').addClass('primary');
+      $('[value="' + value + '"]:radio', $t).attr('checked', 'checked');
     };
 
-    $(".ui-joy-button", $$).click(function () {
+    $('.ui-joy-button', $t).click(function(){
       value = $(this).attr("value");
 
-      render_state();
+      render();
     });
-    render_state();
+
+    render();
   });
 
   // debouncing function from John Hann
@@ -397,10 +417,22 @@ $(document).ready(function() {
     },
     */
 
+
+  (function () {
+    var $flash = $('#flash-notice');
+
+    if ($flash.length === 0) { return; }
+
+    Tapjoy.Utils.notification({
+      message: $flash.html()
+    });
+  }());
+
   $(".enable-when-valid").each(function () {
     var $$ = $(this),
       $form = $$.closest("form"),
-      $req = $("[required]", $form);
+      $req = $("[required]", $form),
+      $psword = $("input[name*='password']", $form);
 
     function enable() {
       $$.removeAttr("disabled").removeClass("disabled");
@@ -419,6 +451,12 @@ $(document).ready(function() {
           return false;
         }
       });
+
+      if (all_valid && $psword.length === 2) {
+        if($psword.first().val() !== $psword.last().val()) {
+          all_valid = false;
+        }
+      }
 
       return all_valid ? enable() : disable();
     }

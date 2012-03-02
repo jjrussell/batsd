@@ -1,0 +1,42 @@
+- form_for([ :games, @gamer_profile ]) do |f|
+  .container
+    .ui-joy-group.p10.ptn
+      .ui-joy-group-title.mb10= t('text.shared.profile')
+      %ul.list-button-container
+        %li.list-button.soft-gray-gradient.ui-no-action.p5
+          .hd= t('text.shared.name')
+          .bd
+            = f.text_field :name, :class => "ui-joy-input"
+        %li.list-button.soft-gray-gradient.ui-no-action.p5
+          .hd= t('text.shared.nickname')
+          .bd
+            = f.text_field :nickname, :class => "ui-joy-input"
+        %li.list-button.soft-gray-gradient.ui-no-action.p5
+          .hd= t('text.shared.gender')
+          .bd
+            .button-bar
+              .hidden
+                = f.radio_button :gender, "male"
+                = f.radio_button :gender, "female"
+              .button-group
+                .ui-joy-button.secondary.no-rounded-right{:value => 'male'}
+                  %a.text-center= t('text.shared.male')
+                .ui-joy-button.secondary.no-rounded-left{:value => 'female'}
+                  %a.text-center= t('text.shared.female')
+        %li.list-button.soft-gray-gradient.ui-no-action.p5
+          .hd= t('text.shared.location')
+          .bd
+            = f.text_field :city, :placeholder => t("text.shared.city"), :class => "ui-joy-input"
+            = f.text_field :country, :placeholder => t("text.shared.country"), :class => "ui-joy-input"
+    .mod.titled-group
+      .group-title= t('text.shared.favorites')
+      %ul.list-button-container.mb10
+        %li.list-button.soft-gray-gradient.ui-no-action.p5
+          .hd= t('text.games.favorite_app')
+          .bd
+            = f.text_field :favorite_game, :class => "ui-joy-input"
+        %li.list-button.soft-gray-gradient.ui-no-action.p5
+          .hd= t('text.games.favorite_category')
+          .bd= f.text_field :favorite_category, :class => "ui-joy-input"
+    .mod.mb20
+      = f.submit t('text.shared.save'), :class => "ui-joy-button orange-action enable-when-valid"

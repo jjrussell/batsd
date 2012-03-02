@@ -44,8 +44,7 @@
 
     = render 'games/shared/header'
     - flash.each do |name, msg|
-      .flash{ :id => "flash_#{name}", :title => "Click to dismiss this message" }
-        %strong #{name.to_s.humanize}:
+      .flash.hidden{ :id => "flash-#{name}" }
         = msg
 
     = yield

@@ -10,11 +10,11 @@ class Games::HomepageController < GamesController
 
   def get_app
     if params[:eid].present?
-      @app_id = ObjectEncryptor.decrypt(params[:eid])
+      app_id = ObjectEncryptor.decrypt(params[:eid])
     elsif params[:id].present?
-      @app_id = params[:id]
+      app_id = params[:id]
     end
-    @offer = Offer.find_by_id(@app_id)
+    @offer = Offer.find_by_id(app_id)
     @app = @offer.app
     @app_metadata = @app.primary_app_metadata
     @app_reviews = AppReview.by_gamers.paginate_all_by_app_metadata_id(@app_metadata.id, :page => params[:app_reviews_page])
@@ -25,21 +25,21 @@ class Games::HomepageController < GamesController
 
   def earn
     device_id = current_device_id
-    @device = Device.new(:key => device_id) if device_id.present?
+    device = Device.new(:key => device_id) if device_id.present?
     if params[:eid].present?
-      @curr_id = ObjectEncryptor.decrypt(params[:eid])
+      currency_id = ObjectEncryptor.decrypt(params[:eid])
     elsif params[:id].present?
-      @curr_id = params[:id]
+      currency_id = params[:id]
     end
-    @currency = Currency.find_by_id(@curr_id)
+    @currency = Currency.find_by_id(currency_id)
     @external_publisher = ExternalPublisher.new(@currency)
-    render :text => 'not found', :status => 404 if @currency.nil? || @device.nil?
+    return unless verify_records([ @currency, device ])
 
-    @offerwall_url = @external_publisher.get_offerwall_url(@device, @external_publisher.currencies.first, request.accept_language, request.user_agent, current_gamer.id)
+    @offerwall_url = @external_publisher.get_offerwall_url(device, @external_publisher.currencies.first, request.accept_language, request.user_agent, current_gamer.id)
     @app_metadata = App.find_by_id(@external_publisher.app_id).primary_app_metadata
 
     respond_to do |f|
-      f.html { render }
+      f.html
       f.js { render :layout => false }
     end
   end
@@ -57,8 +57,8 @@ class Games::HomepageController < GamesController
     end
 
     respond_to do |f|
-      f.html { render }
-      f.js { render :layout => false and return }
+      f.html
+      f.js { render :layout => false }
     end
   end
 
@@ -124,6 +124,6 @@ class Games::HomepageController < GamesController
   def send_device_link
     ios_link_url = "https://#{request.host}#{games_root_path}"
     GamesMailer.deliver_link_device(current_gamer, ios_link_url, GAMES_ANDROID_MARKET_URL )
-    render(:json => { :success => true }) and return
+    render(:json => { :success => true })
   end
 end

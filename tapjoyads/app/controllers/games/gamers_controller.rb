@@ -94,7 +94,8 @@ class Games::GamersController < GamesController
   def update_password
     @gamer.safe_update_attributes(params[:gamer], [ :password, :password_confirmation ])
     if @gamer.save
-      redirect_to edit_games_gamer_path
+      flash[:notice] = t('text.games.password_changed')
+      redirect_to games_gamer_profile_path(@gamer)
     else
       flash.now[:error] = 'Error updating password'
       render :action => :password
