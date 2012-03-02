@@ -79,7 +79,7 @@
             %span#arrow.darrow.l10
               %img{ :src => BLANK_IMAGE }
       .left
-        - link_to(new_games_gamer_path) do
+        - link_to(new_games_gamer_path(:data => params[:data])) do
           %span{ :class => 'signup', :id => 'signup' }
             = t('text.shared.sign_up')
 

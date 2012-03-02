@@ -219,6 +219,7 @@ en:
       advertisers_body: "Reach millions of users and gain exposure for your products"
       advertisers_title: Advertisers
       allow_marketing_emails: "Allow Tapjoy to send me marketing emails"
+      almost_done: Almost done!
       already_registered:
         one: "%{name} has already registered, you are now following him/her."
         other: "%{name} have already registered, you are now following them."
@@ -247,6 +248,7 @@ en:
       developers_body: "Drive significant revenue to your apps with our monetization tools"
       developers_title: Developers
       discover_apps: Join the millions of mobile app lovers on Tapjoy and discover the best-rated apps. Get started today!
+      download_now: Download now
       earn: "Earn %{currency}"
       earn_title: "Complete any of the offers below to earn %{currency} for %{app_name}"
       earn_rewards: Earn rewards
@@ -287,6 +289,8 @@ en:
       how_it_works_body: "All your games are listed below. Click the buttons next to the apps to start earning currency."
       how_it_works_title: "How does it work?"
       install_and_run: "Install and run %{name}"
+      install_android_app: Download the Tapjoy app on your Android device to get started.
+      install_profile: Install your profile on the next page and begin discovering the apps you love!
       invite: "Invite Your Friends!"
       invite_by_email: Invite by Email
       invite_email_body: |-

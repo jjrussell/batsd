@@ -102,7 +102,7 @@ class Gamer < ActiveRecord::Base
     invitation
   end
 
-  def get_gamer_nickname
+  def get_gamer_nick
     if gamer_profile.present? && gamer_profile.nickname.present?
       gamer_profile.nickname
     elsif gamer_profile.present? && gamer_profile.name.present?

@@ -132,9 +132,6 @@ input[type=checkbox]:checked {
   width: 300px;
   margin: 12px auto 0;
   text-align: center;
-  div:first-child {
-    //margin-right: 24px;
-  }
   div {
     float: left;
   }
@@ -210,7 +207,7 @@ span.gill {
   z-index: 999;
 
   a, a:visited {
-    color: #e9292e;
+    color: #fff;
   }
   ul, ol {
     margin: 0;
@@ -249,13 +246,14 @@ span.gill {
     cursor: pointer;
     width: 150px;
     padding: 6px 0 2px;
+    height: 32px;
+
     input[type=checkbox] {
       opacity: 0;
       visibility: hidden;
     }
     label {
       position: relative;
-      left: 12px;
     }
   }
   #platform_ios {
@@ -279,6 +277,9 @@ span.gill {
     .field_tos_text {
       font-size: 0.85em;
       width: 260px;
+      a, a:visited {
+        color: #e9292e;
+      }
     }
   }
   .title {
@@ -372,15 +373,38 @@ span.gill {
       }
     }
   }
-  .register-form, .register-progess {
+
+  .register-form, .register-progress, #register-android, #register-ios {
     margin: 0 auto;
     width: 300px;
     text-align: center;
     padding-top: 12px;
   }
 
-  .register-progess {
+  #register-android, #register-ios {
+    text-align: left;
+    @include animate(all, 0.35s, ease-in);
+    .message {
+       margin-top: 12px;
+    }
+    .install {
+      margin-top: 24px;
+      cursor: pointer;
+    }
+  }
+  #register-ios {
+    .install {
+
+      img {
+        background: url(#{$image_path}/ios_link.png) no-repeat center center;
+        height: 147px;
+        width: 300px;
+      }
+    }
+  }
+  .register-progress {
     padding-top: 150px;
+    @include animate(all, 0.35s, ease-in);
 
     .register-message {
       font-size: 16px;
@@ -430,6 +454,10 @@ span.gill {
   padding-top: 20px;
   visibility: visible;
   @include animate(all, 0.35s, ease-in);
+
+  label[for=birthdate] {
+    display: inline-block;
+  }
 }
 
 .register-form.close {
@@ -444,6 +472,9 @@ span.gill {
   height: auto;
   opacity: 1;
   visibility: visible;
+}
+.install-btn {
+  padding: 10px 24px;
 }
 
 #content {
@@ -1168,7 +1199,7 @@ span.gill {
   }
 }
 
-.footer {
+.submenu, .footer {
   display: none;
 }
 

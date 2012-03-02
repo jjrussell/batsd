@@ -18,14 +18,6 @@
         = t('text.games.browse_offers')
     .review-area
       = render "offers"
-    = hidden_field_tag(:eapp_metadata_id, ObjectEncryptor.encrypt(@app_metadata.id))
-    = hidden_field_tag(:mark_as_fav_path, games_gamer_favorite_app_path)
-    .ui-joy-button.grey-action{ :onclick => "update_favorite_app();"}
-      #favorite_app_button.text-center.get-app
-        - if @mark_as_favorite
-          = t('text.games.mark_as_favorite')
-        - else
-          = t('text.games.unmark_as_favorite')
     .section.dark
       .heading
         = t('text.games.other_options')
@@ -36,6 +28,17 @@
             = t("text.games.review_app_name", {:app_name => @external_publisher.app_name})
           .right.rightarrow.icon16
             &nbsp;
+
+- content_for :above_footer do
+  = hidden_field_tag(:eapp_metadata_id, ObjectEncryptor.encrypt(@app_metadata.id))
+  = hidden_field_tag(:mark_as_fav_path, games_gamer_favorite_app_path)
+  .mod.mb20
+    .favorite-btn.ui-joy-button.grey-action{ :onclick => "update_favorite_app();"}
+      #favorite_app_button.text-center.get-app
+        - if @mark_as_favorite
+          = t('text.games.mark_as_favorite')
+        - else
+          = t('text.games.unmark_as_favorite')
 
 - content_for :page_javascript do
   :plain

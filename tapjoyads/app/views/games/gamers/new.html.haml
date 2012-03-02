@@ -1,5 +1,5 @@
 #signup-form.show
-  .header-signup
+  #header-signup.header-signup
     .headerwrap
       .wrap
         .container
@@ -8,11 +8,12 @@
               %img{ :src => BLANK_IMAGE }
 
   - form_for([ :games, @gamer ], :url => games_gamer_path, :method => :post ) do |f|
-    .signup-nav
+    #signup-nav.signup-nav
       .signup-nav-menu
         %span.title= t('text.shared.sign_up')
         = f.submit t('text.games.next'), :class => "ui-joy-button soft-grey-action next-btn disabled"
-    .register-form.clearfix
+
+    #register-form.register-form.clearfix
       .form-error
         &nbsp;
         = error_message_on @gamer, :nickname
@@ -51,7 +52,8 @@
               :terms_of_use => link_to(t("text.games.terms_of_use_href"), games_tos_path, :target => '_blank'),
               :privacy_policy => link_to(t("text.games.privacy_policy_href"), games_privacy_path, :target => '_blank'))
           = f.hidden_field :referrer, :value => params[:referrer]
-    .register-progess
+
+    #register-progress.register-progress.hidden.clearfix
       .register-message
         &nbsp;
       .register-loader
@@ -63,6 +65,25 @@
             #loader_a.loader_letter
             #loader_p.loader_letter
 
+    - link_to(GAMES_ANDROID_MARKET_URL) do
+      #register-android.hidden.clearfix
+        .title
+          = t('text.games.almost_done')
+        .message
+          = t('text.games.install_android_app')
+        #link-android.install
+          .install-btn.ui-joy-button.orange-action
+            = t('text.games.download_now')
+
+    - link_to(new_games_gamer_device_path) do
+      #register-ios.hidden.clearfix
+        .title
+          = t('text.games.almost_done')
+        .message
+          = t('text.games.install_profile')
+        #link-ios.install
+          %img{ :src => BLANK_IMAGE }
+
 - content_for :page_head do
   %meta{ :name => 'description', :content => t('text.games.meta_description') }
   %meta{ :name => 'keywords', :content => t('text.games.meta_keywords')}
@@ -71,4 +92,3 @@
 
 - content_for :page_javascript do
   :plain
-    Tapjoy.path =

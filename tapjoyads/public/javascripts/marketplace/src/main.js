@@ -49,7 +49,7 @@ $(document).ready(function() {
     $('form#new_gamer_session').submit(function(e){
       Tapjoy.Utils.Cookie.set('cookies_enabled', 'test', 1);
       var test_cookie = Tapjoy.Utils.Cookie.get('cookies_enabled');
-      $(".form-error").css({opacity: '1', visibility: 'visible !important'});
+      $(".form-error").css({opacity: '0', visibility: 'hidden'});
       var inputs, email, pass, values = {};
       var emailRegex = /^([\w-\.+]+@([\w-]+\.)+[\w-]{2,4})?$/;
       inputs = $('form#new_gamer_session :input*');
@@ -64,15 +64,15 @@ $(document).ready(function() {
       email = values['gamer_session[email]'];
       pass = values['gamer_session[password]'];
       if (Tapjoy.Utils.isEmpty(email) || email == 'Email') {
-        $(".form-error").html(_t('games.enter_email'));
+        $(".form-error").html(_t('games.enter_email')).css({opacity: '1', visibility: 'visible !important'});
         e.preventDefault();
       }
       else if (Tapjoy.Utils.isEmpty(pass) || pass == 'Password') {
-        $(".form-error").html(_t('games.enter_password'));
+        $(".form-error").html(_t('games.enter_password')).css({opacity: '1', visibility: 'visible !important'});
         e.preventDefault();
       }
       else if (Tapjoy.Utils.isEmpty(test_cookie)) {
-        $(".form-error").html(_t('games.cookies_required'));
+        $(".form-error").html(_t('games.cookies_required')).css({opacity: '1', visibility: 'visible !important'});
         e.preventDefault();
       }
       else {
@@ -200,6 +200,7 @@ $(document).ready(function() {
     $('form#new_gamer input, form#new_gamer select').bind('focus', function(e){
       $(".form-error").css({opacity: '0', visibility: 'hidden'});
     });
+
     $('form#new_gamer input, form#new_gamer select').bind('input, change', function(e){
       validate(e);
       if(!hasError) {
@@ -212,8 +213,12 @@ $(document).ready(function() {
       }
     });
     // Form Submit
+    var unbindSubmit = false;
     $('form#new_gamer').bind('submit', function(e){
       e.preventDefault();
+      if (unbindSubmit) {
+        return;
+      }
       validate(e);
       if (tempVal['default_platform_android'] || tempVal['default_platform_ios']) {
         values['default_platform_android'] = tempVal['default_platform_android'];
@@ -225,9 +230,10 @@ $(document).ready(function() {
       else if (hasError) {
         $(".form-error").css({opacity: '1', visibility: 'visible !important'});
       }
-      else if (hasError != true) {
+      else if (!hasError) {
         $(".register-form").addClass('close').css({opacity: '0', visibility: 'hidden', height: '0', overflow : 'hidden'});
         $(".form-error").css({opacity: '0', visibility: 'hidden'});
+        $('.register-progress').show().css({opacity: '1', visibility: 'visible !important', height: 'auto'});
         $('.register-loader').css({opacity: '1', visibility: 'visible !important'});
         $.ajax({
           type: 'POST',
@@ -250,35 +256,43 @@ $(document).ready(function() {
             'default_platforms[ios]': values['default_platform_ios']
           },
           success: function(d) {
-            var msg;
+            $('.register-progress').css({opacity: '0', visibility: 'hidden', height: '0', overflow : 'hidden'}).hide();
+            var msg, goHome = false, unbindSubmit = true;
             if (d.success) {
-              if (d.link_device_url) { // Link device
-                $('.continue_link_device').click(function(){
-                  if (Tapjoy.device.idevice) {
+              if (d.link_device_url) { // link device url returned
+                if (Tapjoy.device.idevice) { // is ios device
+                  $('.register-loader').show().css({opacity: '0', visibility: 'hidden', height: '0', overflow : 'hidden'});
+                  $('#register-ios').show().css({opacity: '1', visibility: 'visible !important'});
+                  $('#gamer_submit').click(function() {
                     document.location.href = d.link_device_url;
-                  }
-                  else if (Tapjoy.device.android && Tapjoy.android_market_url) {
-                    document.location.href = Tapjoy.android_market_url;
-                  }
-                  else {
-                    if (Tapjoy.path) {
-                      document.location.href = Tapjoy.path;
-                    }
-                    else {
-                      document.location.href = document.domain;
-                    }
-                  }
-                });
+                  });
+                }
+                else if (Tapjoy.device.android && d.android) { // if coming from tjm android app
+                  document.location.href = d.link_device_url;
+                }
+                else if (Tapjoy.device.android && Tapjoy.androidAppPath) { // if android device
+                  $('.register-loader').css({opacity: '0', visibility: 'hidden', height: '0', overflow : 'hidden'});
+                  $('#register-android').show().css({opacity: '1', visibility: 'visible !important'});
+                  $('#gamer_submit').click(function() {
+                    document.location.href = Tapjoy.androidAppPath;
+                  });
+                }
+                else {
+                  goHome = true;
+                }
+              }
+              else if (Tapjoy.device.android && Tapjoy.androidAppPath){
+                  $('.register-loader').css({opacity: '0', visibility: 'hidden', height: '0', overflow : 'hidden'});
+                  $('#register-android').show().css({opacity: '1', visibility: 'visible !important'});
+              }
+              else if (Tapjoy.rootPath) {
+                document.location.href = Tapjoy.rootPath;
               }
               else {
-                $('.continue_link_device').click(function(){
-                  if (Tapjoy.path) {
-                    document.location.href = Tapjoy.path;
-                  }
-                  else {
-                    document.location.href = document.domain;
-                  }
-                });
+                goHome = true;
+              }
+              if (goHome) {
+                document.location.href = document.domain;
               }
             }
             else {
@@ -296,10 +310,12 @@ $(document).ready(function() {
                 '<div class="error">', error ,'.</div>',
                 '<div class="try-again ui-joy-button soft-grey-action">'+_t('shared.try_again')+'</div>',
               ].join('');
-              $('.register-message').html(msg).fadeIn('slow');
+              $('.register-progress').show().css({opacity: '1', visibility: 'visible !important', height: 'auto'});
+              $('.register-message').html(msg).show().css({opacity: '1', visibility: 'visible !important'});
             }
             $('.try-again').click(function(){
               $('.register-message').html('&nbsp;').css({opacity: '0', visibility: 'hidden'});
+              $('.register-progress').css({opacity: '0', visibility: 'hidden', height: '0', overflow : 'hidden'}).hide();
               $(".register-form").removeClass('close').css({opacity: '1', visibility: 'visible !important', height: 'auto'});
 
             });
@@ -311,10 +327,12 @@ $(document).ready(function() {
               '<div class="error ">', error ,'.</div>',
               '<div class="try-again ui-joy-button orange-action">'+_t('shared.try_again')+'</div>',
             ].join('');
+            $('.register-progress').show().css({opacity: '1', visibility: 'visible !important', height: 'auto'});
             $('.register-message').html(msg).css({opacity: '1', visibility: 'visible !important'});
-            $('.register-loader').css({opacity: '0', visibility: 'hidden'});
+            $('.register-loader').css({opacity: '0', visibility: 'hidden', height: '0', overflow : 'hidden'});
             $('.try-again').click(function(){
               $('.register-message').html('&nbsp;').css({opacity: '0', visibility: 'hidden'});
+              $('.register-progress').css({opacity: '0', visibility: 'hidden', height: '0', overflow : 'hidden'}).hide();
               $(".register-form").removeClass('close').css({opacity: '1', visibility: 'visible !important', height: 'auto'});
             });
           }

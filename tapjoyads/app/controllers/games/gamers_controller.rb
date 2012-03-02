@@ -7,6 +7,7 @@ class Games::GamersController < GamesController
 
   def new
     @gamer = Gamer.new
+    redirect_to games_root_path if current_gamer.present?
   end
 
   def create
