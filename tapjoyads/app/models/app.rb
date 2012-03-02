@@ -396,7 +396,9 @@ class App < ActiveRecord::Base
   end
 
   def create_tracking_offer_for(tracked_for, options = {})
-    device_types = options.delete(:device_types) { get_offer_device_types.to_json }
+    device_types   = options.delete(:device_types)   { get_offer_device_types.to_json }
+    url_overridden = options.delete(:url_overridden) { false }
+    url            = options.delete(:url)            { store_url }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
 
     offer = Offer.new({
@@ -404,7 +406,8 @@ class App < ActiveRecord::Base
       :tracking_for     => tracked_for,
       :partner          => partner,
       :name             => name,
-      :url              => store_url,
+      :url_overridden   => url_overridden,
+      :url              => url,
       :device_types     => device_types,
       :price            => 0,
       :bid              => 0,

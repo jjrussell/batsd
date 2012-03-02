@@ -136,7 +136,15 @@ class FeaturedContent < ActiveRecord::Base
 
   def create_tracking_offer
     if offer && !tracking_offer
-      self.tracking_offer = offer.item.create_tracking_offer_for(self, :device_types => platforms)
+      if offer.item_type == 'App'
+        self.tracking_offer = offer.item.create_tracking_offer_for(self,
+          :device_types => platforms,
+          :url_overridden => true,
+          :url => button_url
+        )
+      else
+        self.tracking_offer = offer.item.create_tracking_offer_for(self, :device_types => platforms)
+      end
       save
     end
   end
