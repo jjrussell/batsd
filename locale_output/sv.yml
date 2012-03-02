@@ -1,10 +1,10 @@
----
-sv:
-  activerecord:
-    errors:
-      full_messages:
+--- 
+sv: 
+  activerecord: 
+    errors: 
+      full_messages: 
         format: ~
-      messages:
+      messages: 
         accepted: ~
         blank: ~
         confirmation: ~
@@ -26,67 +26,67 @@ sv:
         too_long: ~
         too_short: ~
         wrong_length: ~
-      template:
+      template: 
         body: ~
-        header:
+        header: 
           one: ~
           other: ~
-  date:
+  date: 
     abbr_day_names: ~
     abbr_month_names: ~
     day_names: ~
-    formats:
+    formats: 
       default: ~
       long: ~
       short: ~
     month_names: ~
     order: ~
-  datetime:
-    distance_in_words:
-      about_x_hours:
+  datetime: 
+    distance_in_words: 
+      about_x_hours: 
         one: ~
         other: ~
-      about_x_months:
+      about_x_months: 
         one: ~
         other: ~
-      about_x_years:
+      about_x_years: 
         one: ~
         other: ~
-      almost_x_years:
+      almost_x_years: 
         one: ~
         other: ~
       half_a_minute: ~
-      less_than_x_minutes:
+      less_than_x_minutes: 
         one: ~
         other: ~
-      less_than_x_seconds:
+      less_than_x_seconds: 
         one: ~
         other: ~
-      over_x_years:
+      over_x_years: 
         one: ~
         other: ~
-      x_days:
+      x_days: 
         one: ~
         other: ~
-      x_minutes:
+      x_minutes: 
         one: ~
         other: ~
-      x_months:
+      x_months: 
         one: ~
         other: ~
-      x_seconds:
+      x_seconds: 
         one: ~
         other: ~
-    prompts:
+    prompts: 
       day: ~
       hour: ~
       minute: ~
       month: ~
       second: ~
       year: ~
-  errors:
+  errors: 
     format: ~
-    messages:
+    messages: 
       accepted: ~
       blank: ~
       confirmation: ~
@@ -106,16 +106,16 @@ sv:
       too_long: ~
       too_short: ~
       wrong_length: ~
-  helpers:
-    select:
+  helpers: 
+    select: 
       prompt: ~
-    submit:
+    submit: 
       create: ~
       submit: ~
       update: ~
-  number:
-    currency:
-      format:
+  number: 
+    currency: 
+      format: 
         delimiter: ~
         format: ~
         precision: ~
@@ -123,52 +123,52 @@ sv:
         significant: ~
         strip_insignificant_zeros: ~
         unit: ~
-    format:
+    format: 
       delimiter: ~
       precision: ~
       separator: ~
       significant: ~
       strip_insignificant_zeros: ~
-    human:
-      decimal_units:
+    human: 
+      decimal_units: 
         format: ~
-        units:
+        units: 
           billion: ~
           million: ~
           quadrillion: ~
           thousand: ~
           trillion: ~
           unit: ~
-      format:
+      format: 
         delimiter: ~
         precision: ~
         significant: ~
         strip_insignificant_zeros: ~
-      storage_units:
+      storage_units: 
         format: ~
-        units:
-          byte:
+        units: 
+          byte: 
             one: ~
             other: ~
           gb: ~
           kb: ~
           mb: ~
           tb: ~
-    percentage:
-      format:
+    percentage: 
+      format: 
         delimiter: ~
-    precision:
-      format:
+    precision: 
+      format: 
         delimiter: ~
-  support:
-    array:
+  support: 
+    array: 
       last_word_connector: ~
       two_words_connector: ~
       words_connector: ~
-    select:
+    select: 
       prompt: ~
-  text:
-    featured:
+  text: 
+    featured: 
       download: "Ladda ner"
       download_and_run: "Ladda ner och starta"
       earn_currency: "Tjäna %{amount_and_currency}"
@@ -177,7 +177,7 @@ sv:
       skip: "Hoppa över"
       title: "Tjäna %{currency}"
       try_out: Testa
-    games:
+    games: 
       about_body: "A better way to love the apps you have and find the apps you'll love."
       about_title: "\"Den vet precis vilka appar jag vill ha\""
       account_created_body: "Registreringen lyckades!"
@@ -257,9 +257,9 @@ sv:
       invite_by_email: Mailinbjudningar
       invite_email_body: |-
           %{name} har bjudit in dig till att gå med i Tapjoy, den BÄSTA platsen för att hitta de hetaste apparna. Det är gratis att gå med och börja upptäcka de bästa apparna på iOS och Android, samtidigt som du kan tjäna virtuel valuta i dina favoriter.
-
+          
           Du slipper ögna igenom tusentals appar i App store eller Android Market för att hitta nästa nedladdning. Tapjoy fixar det åt dig genom att rekommendera appar vi vet att du gillar
-
+          
           För att komma igång, skapa ditt konto här:
       invite_email_greet: "Hej,"
       invite_email_signature: "Team Tapjoy"
@@ -336,10 +336,10 @@ sv:
       wifi_required: "Uppkoppling krävs"
       wrong_device: "Fel enhet?"
       you_are_following: ~
-      your_followers:
+      your_followers: 
         one: ~
         other: ~
-    instructions:
+    instructions: 
       amount_and_currency: "%{amount} %{currency}"
       continue_link: "Klicka här för att fortsätta."
       download_action: här
@@ -348,7 +348,7 @@ sv:
       footer: "Efter att ha genomfört dessa steg kommer du tjäna %{amount_and_currency}."
       header: "Följ dessa steg för att tjäna %{currency}:"
       title: Instruktioner
-    offerwall:
+    offerwall: 
       buy_currency: "Köp %{amount} %{currency}"
       earn_currency: "Tjäna %{amount} %{currency}"
       free: Gratis
@@ -365,7 +365,7 @@ sv:
       title: "Tjäna %{currency}"
       wifi_required: "Uppkoppling krävs"
       wifi_warning: "This app requires a wifi connection to download."
-    shared:
+    shared: 
       about_link: "\"Om Tapjoy\""
       ads_by: "Ads från"
       android: Android
@@ -436,7 +436,7 @@ sv:
       write_review: "Skriv en recension"
       year: År
       zip_postal: Postkod
-    support:
+    support: 
       abuse_warning: "Detta formulär är endas för användare som inte har blivit belönade för ett slutfört erbjudande. Misskötsel av denna sida kan leda till att ditt konto stängs av"
       description_label: Beskrivning.
       email_address_label: "Mailadress:"
@@ -455,12 +455,12 @@ sv:
       thanks: "Tack för att du skickade in din supportförfrågan! Du kommer få din %{currency} efter att vi verifierat att du genomfört erbjudandet."
       title: "Saknad %{currency}?"
       unavailable_offer: ~
-    unavailable_offer:
+    unavailable_offer: 
       message: ~
       optional_message: ~
-  time:
+  time: 
     am: ~
-    formats:
+    formats: 
       classic_short: ~
       day: ~
       day_long: ~

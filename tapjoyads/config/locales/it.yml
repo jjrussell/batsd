@@ -232,6 +232,8 @@ it:
       enter_platform: ~
       enter_tos: ~
       enter_valid_email: ~
+      error_mark_as_favorite: ~
+      error_unmark_as_favorite: ~
       failed_to_change_linked: ~
       favorite_app: ~
       favorite_apps: ~
@@ -274,6 +276,7 @@ it:
       load_more: ~
       loading: ~
       log_in_tapjoy: ~
+      mark_as_favorite: ~
       member_since: ~
       meta_description: ~
       meta_keywords: ~
@@ -289,9 +292,12 @@ it:
       or_learn_more: ~
       other_options: ~
       our_tos_changed: ~
+      password_changed: ~
       post_to_facebook_content: ~
       privacy_policy_href: ~
       profile: ~
+      profile_error: ~
+      profile_update: ~
       provide_other_email: ~
       recipients_label: ~
       recommend_apps: ~
@@ -326,8 +332,13 @@ it:
       tos_change_acknowledge: ~
       unable_to_process: ~
       unlock_mobile_joy: ~
+      unmark_as_favorite: ~
       wifi_required: ~
       wrong_device: ~
+      you_are_following: ~
+      your_followers:
+        one: ~
+        other: ~
     instructions:
       amount_and_currency: "%{amount} %{currency}"
       continue_link: "Clicca qui per continuare."
@@ -361,6 +372,7 @@ it:
       back: ~
       blog: ~
       cancel: ~
+      change_password: ~
       city: ~
       collect: ~
       comment: ~
@@ -394,6 +406,7 @@ it:
       name: ~
       new_password: ~
       nickname: ~
+      none: ~
       ok: ~
       options: ~
       other: ~

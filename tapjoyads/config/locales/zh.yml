@@ -230,6 +230,8 @@ zh:
       enter_platform: 請選擇iOS或Android
       enter_tos: 請接受上述條款與條件
       enter_valid_email: 請輸入有效的電子郵件地址
+      error_mark_as_favorite: ~
+      error_unmark_as_favorite: ~
       failed_to_change_linked: ~
       favorite_app: 最喜歡的應用
       favorite_apps: 最喜歡的應用
@@ -270,6 +272,7 @@ zh:
       load_more: 請加載更多
       loading: 加載中...
       log_in_tapjoy: 登錄到Tapjoy
+      mark_as_favorite: ~
       member_since: "會員從%{date}起"
       meta_description: "Tapjoy：針對Android、iPhone 和iPad 上移動應用的一站式服務"
       meta_keywords: 遊戲、移動遊戲、移動應用、ios、Android、iPhone、iPad、iTouch
@@ -287,9 +290,12 @@ zh:
       other: "Tapjoy 邀請已發送給了%{name}"
       other_options: 其他選項
       our_tos_changed: "我們的％{terms_of_use}已經修訂。請查閱後接受。"
+      password_changed: ~
       post_to_facebook_content: "造訪Tapjoy來發現最好的應用與遊戲，還可以在你喜愛的應用中賺取虛擬貨幣。加入完全免費，所以現在就來造訪 tapjoy.com，獲得為你量身訂做的應用推薦"
       privacy_policy_href: 隱私政策
       profile: 我
+      profile_error: ~
+      profile_update: ~
       provide_other_email: 請提供另一個電子郵件地址
       recipients_label: 請使用逗號區隔各電子郵件
       recommend_apps: ~
@@ -324,8 +330,13 @@ zh:
       tos_change_acknowledge: 選中此框，確定自己接受服務條款。
       unable_to_process: 抱歉，我們無法處理您的請求
       unlock_mobile_joy: "解放Mobile Joy"
+      unmark_as_favorite: ~
       wifi_required: "需要Wifi 連接"
       wrong_device: 裝置不對?
+      you_are_following: ~
+      your_followers:
+        one: ~
+        other: ~
     instructions:
       amount_and_currency: "%{amount} %{currency}"
       continue_link: 点击这里继续
@@ -359,6 +370,7 @@ zh:
       back: 返回
       blog: 部落格
       cancel: 取消
+      change_password: ~
       city: 城市
       collect: 收集
       comment: 意見
@@ -392,6 +404,7 @@ zh:
       name: 名字
       new_password: 新密碼
       nickname: 暱稱
+      none: ~
       ok: OK
       options: 選項
       other: 其它
