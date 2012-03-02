@@ -76,17 +76,6 @@ class Games::GamersController < GamesController
     }
   end
 
-  def social
-    @friends_lists = {
-      :following => get_friends_info(Friendship.following_ids(current_gamer.id)),
-      :followers => get_friends_info(Friendship.follower_ids(current_gamer.id))
-    }
-    if @gamer_profile.facebook_id.present?
-      fb_create_user_and_client(@gamer_profile.fb_access_token, '', @gamer_profile.facebook_id)
-      current_facebook_user.fetch
-    end
-  end
-
   def connect_facebook_account
     redirect_to :action => :social
   end
