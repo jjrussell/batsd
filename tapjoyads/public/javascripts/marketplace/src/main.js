@@ -381,38 +381,58 @@ $(document).ready(function() {
     }
   });
 
-  $('.list-button, .btn, .greenblock, #signup, #login, #login-form .ui-joy-button').bind(Tapjoy.EventsMap.start + ' ' + Tapjoy.EventsMap.end + ' ' + Tapjoy.EventsMap.cancel, function(e){
+  $('.list-button, .btn, .greenblock, #signup, #login').bind(Tapjoy.EventsMap.start + ' ' + Tapjoy.EventsMap.end + ' ' + Tapjoy.EventsMap.cancel, function(e){
     var el = $(this),
+		    target = $(e.target),
         which = e.type;
 
+	   if(el.hasClass('ui-no-action'))
+		  return;
+			
     if(which === Tapjoy.EventsMap.start){
       el.addClass('active');
     }else{
       el.removeClass('active');
     }
   });
+	
+	$('.ui-joy-button').bind(Tapjoy.EventsMap.start + ' ' + Tapjoy.EventsMap.end + ' ' + Tapjoy.EventsMap.cancel, function(e){
+		var el = $(this),
+    		which = e.type;
 
-  $(".button-bar").each(function () {
-    var $$ = $(this),
-      radios = $(":radio", $$),
-      buttons = $(".ui-joy-button", $$),
-      value = $(":checked", $$).val(),
-      render_state;
+     if(el.hasClass('disabled'))
+      return;
+				
+    if(which === Tapjoy.EventsMap.start){
+      el.addClass('active');
+    }else{
+      el.removeClass('active');
+    }
+		
+	});
 
-    render_state = function () {
-      $(".orange-action", $$).removeClass("orange-action").addClass("grey-action");
-      $(":checked").attr("checked", false);
+  $('.button-bar').each(function(){
+    var $t = $(this),
+      radios = $(':radio', $t),
+      buttons = $('.ui-joy-button', $t),
+      value = $(":checked", $t).val(),
+      render;
 
-      $(".ui-joy-button[value='" + value + "']", $$).removeClass("grey-action").addClass("orange-action");
-      $("[value='" + value + "']:radio", $$).attr("checked", "checked");
+    render = function(){
+      $('.primary', $t).removeClass('primary').addClass('secondary');
+      $(':checked').attr('checked', false);
+
+      $('.ui-joy-button[value="' + value + '"]', $t).removeClass('secondary').addClass('primary');
+      $('[value="' + value + '"]:radio', $t).attr('checked', 'checked');
     };
 
-    $(".ui-joy-button", $$).click(function () {
+    $('.ui-joy-button', $t).click(function(){
       value = $(this).attr("value");
 
-      render_state();
+      render();
     });
-    render_state();
+		
+    render();
   });
 
   // debouncing function from John Hann
@@ -439,8 +459,8 @@ $(document).ready(function() {
     };
   };
 
-  $(".submit-button").click(function () {
-    $(this).closest("form").submit();
+  $(".submit-child-form").click(function () {
+    $("form", this).submit();
     return false;
   });
 
@@ -567,16 +587,17 @@ $(document).ready(function() {
         width: tjmViewContainer.width() - 4 + 'px'
       });
     }
+		var rows = $('#content .row');
 
     if(window.innerWidth > 770){
-      if($('.row').is(':hidden'))
-        $('.row').show();
+      if(rows.is(':hidden'))
+        rows.show();
     }else{
       if($('#recommendationsRow').hasClass('nbb'))
         $('#recommendationsRow').show().removeClass('nbb');
 
       if(!$('#gamesRow').is(':hidden')){
-        $('.row').hide();
+        rows.hide();
         $('li.showGames', tjmViewMenu).trigger('click');
       }
     }

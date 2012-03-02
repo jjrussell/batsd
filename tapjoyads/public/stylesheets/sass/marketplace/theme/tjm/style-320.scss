@@ -1,13 +1,8 @@
-#earn .big-title {
-  width: 200px;
-}
-
 div.app {
   .ui-list-action {
     display: none !important;
   }
 }
-
 
 .big-title {
   -webkit-text-size-adjust: 67%;
@@ -23,6 +18,13 @@ div.app {
   -moz-text-size-adjust: 80%;
   -o-text-size-adjust: 80%;
   -ms-text-size-adjust: 80%;
+}
+
+.list-button a {
+  -webkit-text-size-adjust: 110%;
+  -moz-text-size-adjust: 110%;
+  -o-text-size-adjust: 110%;
+  -ms-text-size-adjust: 110%;
 }
 
 .list-button .collect {
@@ -77,6 +79,12 @@ div.app {
 .list-button-container.earn-theme .big-title,
 .list-button-container.earn-theme .info {
   width: 120px !important;
+}
+
+.app {
+  .details {
+    width: 60% !important;
+  }
 }
 
 

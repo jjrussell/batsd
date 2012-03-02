@@ -28,22 +28,23 @@
 
 #content
   #wrapper
-    %h4.museo.center
-      = t('text.games.unlock_mobile_joy')
-    %span.center.gill
-      = t('text.games.about_body')
-    #body.main
-      #tickets.tickets
-        %img{ :src => BLANK_IMAGE }
-      #mobilejoy.mobile-joy
-        %img{ :src => BLANK_IMAGE }
-      #share.share
-        %img{ :src => BLANK_IMAGE }
-    #labels
-      %span= t('text.games.earn_rewards')
-      %span= t('text.games.find_new_apps')
-      %span= t('text.games.spread_mobile_joy')
-    .gradient-backdrop
+    .wrapper
+      %h4.museo.center
+        = t('text.games.unlock_mobile_joy')
+      %span.center.gill
+        = t('text.games.about_body')
+      #body.main
+        #tickets.tickets
+          %img{ :src => BLANK_IMAGE }
+        #mobilejoy.mobile-joy
+          %img{ :src => BLANK_IMAGE }
+        #share.share
+          %img{ :src => BLANK_IMAGE }
+      #labels
+        %span= t('text.games.earn_rewards')
+        %span= t('text.games.find_new_apps')
+        %span= t('text.games.join_the_community')
+      .gradient-backdrop
 
 #favorites
   .slide
@@ -101,9 +102,9 @@
       .sharefriends.center
         %img{ :src => BLANK_IMAGE }
       %h6.mt20
-        = t('text.games.spread_mobile_joy')
+        = t('text.games.join_the_community')
       %p
-        = t('text.games.discover_apps')
+        = t('text.games.join_the_community_blurb')
 
 #footer
   .partners

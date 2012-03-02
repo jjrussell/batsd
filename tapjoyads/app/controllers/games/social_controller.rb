@@ -11,8 +11,8 @@ class Games::SocialController < GamesController
   def index
     @gamer_profile = current_gamer.gamer_profile
     @friends_lists = {
-      :following => get_friends_info(Friendship.following_ids(@current_gamer.id)),
-      :followers => get_friends_info(Friendship.follower_ids(@current_gamer.id))
+      :following => get_friends_info(Friendship.following_ids(current_gamer.id)),
+      :followers => get_friends_info(Friendship.follower_ids(current_gamer.id))
     }
   end
 

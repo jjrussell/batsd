@@ -459,7 +459,7 @@ span.gill {
     display: inline-block;
     vertical-align: middle;
     text-align: center;
-    width: 33%;
+    width: 32%;
   }
 
   #labels span {
@@ -484,15 +484,14 @@ span.gill {
    margin-top: 160px;
  }
 
- .share img {
-   background: url(#{$image_path}/share_friends.png) no-repeat center center;
-   background-size: 230px 118px;
-   height: 118px;
-   width: 220px;
-   margin-top: 175px;
-      margin-bottom: 40px;
-
- }
+  .share img {
+    background: url(#{$image_path}/share_friends.png) no-repeat center center;
+    background-size: 242px 124px;
+    height: 124px;
+    width: 242px;
+    margin-top: 180px;
+    margin-bottom: 40px;
+  }
 }
 
 #getting-started {
@@ -642,6 +641,7 @@ span.gill {
   .collect {
     width: 280px;
     height: 130px;
+    margin: 0 auto;
   }
 
   h6,
@@ -845,9 +845,10 @@ span.gill {
 
     .share img {
       background: url(#{$image_path}/share_friends.png) no-repeat 0 0;
-      background-size: 203px 104px;
-      height: 104px;
-      width: 203px;
+      background-size: 208px 107px;
+      height: 107px;
+      width: 208px;
+      margin-top: 170px;
     }
   }
 
@@ -921,7 +922,7 @@ span.gill {
       background-size: 182px 93px;
       height: 93px;
       width: 182px;
-      margin-top: 156px;
+      margin-top: 160px;
     }
   }
 
