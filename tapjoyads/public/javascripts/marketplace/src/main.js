@@ -4,7 +4,12 @@ $(document).ready(function() {
       debounce,
       tjmViewMenu = $('#viewSelectMenu'),
       tjmViewContainer = $('#viewSelect').parent().closest('.select-container'),
-      selectTrigger = $('#viewSelect');
+      selectTrigger = $('#viewSelect'),
+      notify = function (message) {
+        Tapjoy.Utils.notification({
+          message: message
+        });
+      };
 
   // Login Modal
   $('#login, #login-web').bind('click', function() {
@@ -336,6 +341,46 @@ $(document).ready(function() {
 
 	});
 
+  (function () {
+    var showSuccessMessage = function (gamers, non_gamers) {
+      var msg = _t("shared.success"),
+          template = function (txt) {
+            return "<div>"+txt+"</div>";
+          };
+
+      if (gamers.length !== 0) {
+        msg += template(_t("games.already_registered",
+          { name: gamers.toString().replace(/\,/g, ", ") },
+          { count: gamers.length }
+        ));
+      }
+      if (non_gamers.length !== 0) {
+        msg += template(_t("games.invites_sent_to",
+          { name: non_gamers.toString().replace(/\,/g, ", ") },
+          { count: non_gamers.length }
+        ));
+      }
+
+      notify(msg);
+    };
+
+    $(document).bind("email-invite-ajax-success", function (ev, form, data) {
+      console.log(arguments);
+      if (data.success === true) {
+        if (data.gamers.length === 0 && data.non_gamers.length === 0) {
+          notify(_t('games.provide_other_email'));
+        } else {
+          showSuccessMessage(data.gamers, data.non_gamers);
+          $("#recipients", form).val('');
+        }
+      } else if (typeof data.error === "string") {
+        notify(data.error);
+      } else {
+        notify(_t('shared.generic_issue'));
+      }
+    });
+  }());
+
   $('.button-bar').each(function(){
     var $t = $(this),
       radios = $(':radio', $t),
@@ -383,6 +428,19 @@ $(document).ready(function() {
       timeout = setTimeout(delayed, threshold || 100);
     };
   };
+
+  $(document).bind("email-invite-ajax-success", function (ev, form, data) {
+    if (data.success) {
+      if (data.gamers.length === 0 && data.non_gamers.length === 0) {
+        notify(_t('games.provide_other_email'));
+      } else {
+        showSuccessMessage(data.gamers, data.non_gamers);
+        $("#recipients", form).val('');
+      }
+    } else {
+      notify(data.error);
+    }
+  });
 
   $(".submit-child-form").click(function () {
     $("form", this).submit();

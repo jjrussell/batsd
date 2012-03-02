@@ -25,7 +25,7 @@
               <div class="container">
                 <% if (OfferArray[i].Type === "App") { %>
                   <div class="ui-icon-medium social icon24 p5 left">
-                    <%= OfferArray[i].ActiveGamers %>
+                    <%= i18n.t('games.active_gamers_text', {count: OfferArray[i].ActiveGamers}) %>
                   </div>
                 <% } %>
                 <% if (OfferArray[i].WifiOnly) { %>

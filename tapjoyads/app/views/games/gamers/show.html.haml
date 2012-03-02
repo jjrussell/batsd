@@ -7,9 +7,15 @@
             = image_tag(current_gamer.get_avatar_url)
       .left.ml10
         .title.mt10
-          = current_gamer.get_gamer_nickname.present?  ? current_gamer.get_gamer_nickname : 'Chuck Norris'
-          %span.aside
-            (#{t("text.games.thats_you")})
+          - if current_gamer.get_gamer_nickname.present?
+            = current_gamer.get_gamer_nickname
+            %span.aside
+              (#{t("text.games.thats_you")})
+          - else
+            Chuck Norris
+            %span.aside
+              (#{t("text.games.thats_you")})
+              = link_to "(#{t("text.games.change")})", edit_games_gamer_profile_path(current_gamer)
         .subtitle
           = t('text.games.last_played', :game => @last_app.app_name) if @last_app.present?
 
