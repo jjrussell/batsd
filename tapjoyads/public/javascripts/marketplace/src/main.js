@@ -214,7 +214,6 @@ $(document).ready(function() {
         values['default_platform_android'] = tempVal['default_platform_android'];
         values['default_platform_ios'] = tempVal['default_platform_ios'];
       }
-      hasError = false;
       if (hasError && cookieError) {
         $(".form-error").html(_t('games.cookies_required')).css({opacity: '1', visibility: 'visible !important'});
       }
@@ -284,7 +283,7 @@ $(document).ready(function() {
                   error = _t('games.unable_to_process');
                 }
                 else if (d.error[0][0] && d.error[0][1]) {
-                  error = 'The ' + d.error[0][0] + ' ' + d.error[0][1];
+                  error = d.error[0][0] + ' ' + d.error[0][1];
                 }
               }
               msg = [
