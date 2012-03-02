@@ -2,8 +2,7 @@
   .panel.clearfix
     #tjmTopbar
       - if @featured_content.present?
-        - encrypt_fc_item_id = ObjectEncryptor.encrypt(@featured_content.offer.item_id)
-        - link_to(games_get_app_path(:eid => encrypt_fc_item_id)) do
+        - link_to(get_click_url(@featured_content.tracking_offer)) do
           .banner
             .more
               .text.left.mr10
