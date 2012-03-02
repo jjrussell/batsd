@@ -28,11 +28,13 @@ ActionController::Routing::Routes.draw do |map|
       :controller => 'games/support_requests', :action => :new, :type => 'feedback'
 
     m.resource :gamer, :controller => 'games/gamers', :only => [ :create, :edit, :update, :destroy, :show, :new ],
-      :member => { :password => :get, :prefs => :get, :social => :get, :update_password => :put, :accept_tos => :put, :confirm_delete => :get, :connect_facebook_account => :get } do |gamer|
+      :member => { :password => :get, :prefs => :get, :update_password => :put, :accept_tos => :put, :confirm_delete => :get, :connect_facebook_account => :get } do |gamer|
       gamer.resource :device, :controller => 'games/gamers/devices', :only => [ :new, :create ], :member => { :finalize => :get }
       gamer.resource :favorite_app, :controller => 'games/gamers/favorite_app', :only => [ :create, :destroy ]
       gamer.resource :gamer_profile, :controller => 'games/gamers/gamer_profiles', :only => [ :update ], :member => { :update_birthdate => :put, :update_prefs => :put, :dissociate_account => :put }
     end
+
+    m.resources :gamer_profile, :controller => 'games/gamers/gamer_profiles', :only => [ :show, :edit, :update ]
 
     m.register 'register', :controller => 'games/gamers', :action => :new
 
@@ -51,6 +53,7 @@ ActionController::Routing::Routes.draw do |map|
       social.invite_email_friends 'invite_email_friends', :action => :invite_email_friends
       social.send_email_invites 'send_email_invites', :action => :send_email_invites
       social.invites 'social/invites', :action => :invites
+      social.friends 'social/friends', :action => :friends
     end
 
     map.resources :survey_results, :only => [ :new, :create ]

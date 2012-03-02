@@ -5,7 +5,7 @@
     .hidden
       = f.radio_button :user_rating, 1
       = f.radio_button :user_rating, -1
-    .button-group
+    .button-group.pb5
       .ui-joy-button.secondary.pb5.no-rounded-right{:value => 1}
         %a.icon-center
           .active-image= image_tag("games/inset-thumbs-up.png")
@@ -14,7 +14,7 @@
         %a.icon-center
           .active-image= image_tag("games/inset-thumbs-down.png")
           .inactive-image= image_tag("games/grad-thumbs-down.png")
- 
+
   = error_message_on @app_review, :text
   .mod.form-section
     - button_text = @app_review.new_record? ? t('text.shared.submit_review') : t('text.shared.update_review')

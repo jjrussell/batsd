@@ -8,11 +8,18 @@ class Games::SocialController < GamesController
   def invites
   end
 
+  def friends
+    @is_following = params[:following].present?
+
+    friends_key = @is_following ? Friendship.following_ids(@current_gamer.id) : Friendship.follower_ids(@current_gamer.id)
+    @friends_list = Gamer.find_all_by_id(friends_key)
+  end
+
   def index
     @gamer_profile = current_gamer.gamer_profile
     @friends_lists = {
-      :following => get_friends_info(Friendship.following_ids(current_gamer.id)),
-      :followers => get_friends_info(Friendship.follower_ids(current_gamer.id))
+      :following => Gamer.find_all_by_id(Friendship.following_ids(@current_gamer.id)),
+      :followers => Gamer.find_all_by_id(Friendship.follower_ids(@current_gamer.id))
     }
   end
 

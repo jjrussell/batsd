@@ -10,17 +10,6 @@
         .mod.pb3
           = t('text.shared.recipients')
         .mod.form-section
-          = text_field_tag :recipients, @recipients, :placeholder => t('text.games.recipients_label'), :class => "ui-joy-input"
+          = text_field_tag :recipients, @recipients, :placeholder => t('text.games.recipients_label'), :class => "ui-joy-input", :required => :required
         .mod.form-section.pt20.pb20
-          = submit_tag t("text.shared.submit"), :class => "ui-joy-button soft-grey-action"
-
-- content_for :page_javascript do
-  :plain
-    $(function($) {
-      var options = {
-        channel:   'EMAIL',
-        inviteUrl: '#{social_feature_redirect_path}',
-        advertiserAppId: #{params[:advertiser_app_id].to_json},
-      };
-      Tapjoy.Social.Invite(options);
-    });
+          = submit_tag t("text.shared.submit"), :class => "ui-joy-button primary enable-when-valid"
