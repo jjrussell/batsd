@@ -278,6 +278,10 @@ en:
       free: "Free!"
       generic_issue: "There was an issue. Please try again."
       get_app: Get App
+      mark_as_favorite: Mark as Favorite
+      unmark_as_favorite: Unmark as Favorite
+      error_mark_as_favorite: Error marking app as Favorite
+      error_unmark_as_favorite: Error unmarking app as Favorite
       get_it: "Get it!"
       grant_us_access: "Please authorize us/grant us both permissions before sending out an invite."
       how_it_works_body: "All your games are listed below. Click the buttons next to the apps to start earning currency."
