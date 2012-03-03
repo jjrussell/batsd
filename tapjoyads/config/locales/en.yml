@@ -299,6 +299,7 @@ en:
       install_and_run: "Install and run %{name}"
       install_android_app: Download the Tapjoy app on your Android device to get started.
       install_profile: Install your profile on the next page and begin discovering the apps you love!
+      invalid_fields: Invalid entry
       invite: "Invite Your Friends!"
       invite_by_email: "Invite by Email"
       invite_email_body: |-
@@ -345,6 +346,7 @@ en:
       other_options: "Other Options"
       our_tos_changed: "Our %{terms_of_use} have changed. Please review and indicate your agreement below."
       password_changed: "Your password has been changed."
+      password_non_match: Password and Confirmation do not match
       post_to_facebook_content: "Check out Tapjoy where you can discover the best new apps and games, while also earning currency in apps you love. It's free to join so visit tapjoy.com today to start getting app recommendations just for you."
       privacy_policy_href: privacy policy
       profile: Me

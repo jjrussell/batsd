@@ -20,7 +20,7 @@
             .ui-joy-label.small.charcoal= t('text.shared.gender')
             .ui-joy-label
               - gender_key = @gamer_profile.gender
-              = t("text.shared.#{gender_key}") if gender_key.present?              
+              = t("text.shared.#{gender_key}") if gender_key.present?
 
       %li.list-button.soft-gray-gradient
         - link_to edit_games_gamer_profile_path(@gamer_profile) do
@@ -28,7 +28,7 @@
             .ui-joy-label.small.charcoal= t('text.shared.location')
             .ui-joy-label
               = @gamer_profile.city_and_country
-            
+
   .ui-joy-group.ptn
     .ui-joy-group-title= t('text.shared.favorites')
     %ul.list-button-container.mb10

@@ -326,7 +326,7 @@ p {
             a {
               li {
                 border-top: 1px solid #1a1b1c;
-                box-shadow: inset 0 1p 0px #424242;
+                box-shadow: inset 0 1px 0px #424242;
                 color: #fff;
                 font-size: 1.2em;
                 padding: 8px 0;
@@ -714,6 +714,10 @@ p {
     height: 80px;
     font-size: 1.0em;
   }
+}
+
+.invalid-input {
+  border: 2px solid #ff5555;
 }
 
 .edit-div {
@@ -1299,7 +1303,7 @@ div.ui-joy-button .get-app {
   .banner-img-wrapper {
     width: 100%;
     max-width: 768px;
-    margin: 0;
+    margin: 0 auto;
 
     img.banner-img {
       border-bottom: 1px solid #262a2f;
@@ -1510,7 +1514,7 @@ div.app {
 .ui-joy-group {
   padding: 10px;
   padding-top: 0;
-  
+
   .ui-joy-group-title {
     font-weight: bold;
     font-size: 1em;
