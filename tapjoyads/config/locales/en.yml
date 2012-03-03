@@ -354,7 +354,7 @@ en:
       recipients_label: Use commas to separate multiple emails"
       recommend_apps: Tapjoy personalizes app recommendations for you based on the apps you love to use.
       recommendations_smart: Smart Recommendations
-      recommendations: Recommendations"
+      recommendations: Recommendations
       registering: Registering
       report_bug: "Report Bug"
       review_app_name: "Review %{app_name}"
