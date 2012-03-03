@@ -1073,10 +1073,10 @@ span.gill {
 
   #favorites .back,
   #favorites .forward {
-    display: none;
-    margin: 0;
-    padding: 0;
+    display: block;
+    top: 100px !important;
   }
+
 
   #favorites .mobilejoy {
     text-align: center;
