@@ -315,7 +315,7 @@ en:
       issue_registering: "There was an issue registering your account"
       join_the_community: "Join the community"
       join_the_community_blurb: "Discover more with Tapjoy community app ratings and reviews. Get started today and include your own!"
-      last_played: "Last played: %{game}"
+      last_played: "Last played %{game}"
       link_my_facebook: "Link My Facebook"
       load_more: "Load More"
       loading: Loading...
