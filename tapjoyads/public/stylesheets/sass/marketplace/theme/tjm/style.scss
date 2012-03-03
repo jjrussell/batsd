@@ -1521,11 +1521,14 @@ div.app {
 }
 
 .ui-joy-group {
+  padding: 10px;
+  padding-top: 0;
+
   .ui-joy-group-title {
-    padding: 8px;
     font-weight: bold;
     font-size: 1em;
     text-shadow: 0 1px 0 #fff;
+    margin-bottom: 5px;
   }
 }
 
