@@ -38,7 +38,6 @@
                     (#{t('text.games.change')})
           #device-select.device-select.closed
             #device-select-list.device-select-wrapper
-              Select Device
           .device-form.hide
           .menu-nav
             .menu-nav-wrapper
@@ -51,7 +50,7 @@
               - link_to(games_gamer_path) do
                 .profile
                   %span= t('text.games.profile')
-          .menu-subnav
+          .menu-subnav.clearfix
             .menu-subnav-wrapper
               - link_to(games_help_path) do
                 .help
@@ -70,9 +69,3 @@
       - link_to(new_games_gamer_path) do
         #signup.header-button
           = t('text.shared.sign_up')
-
-- content_for :page_javascript do
-  :plain
-     Tapjoy.select_device = #{@device_data.to_json};
-     Tapjoy.require_select_device = #{@require_select_device.to_json};
-
