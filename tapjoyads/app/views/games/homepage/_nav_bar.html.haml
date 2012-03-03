@@ -71,7 +71,8 @@
         #signup.header-button
           = t('text.shared.sign_up')
 
-:javascript
-   Tapjoy.select_device = #{@device_data.to_json};
-   Tapjoy.require_select_device = #{@require_select_device.to_json};
+- content_for :page_javascript do
+  :plain
+     Tapjoy.select_device = #{@device_data.to_json};
+     Tapjoy.require_select_device = #{@require_select_device.to_json};
 
