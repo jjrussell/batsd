@@ -99,6 +99,7 @@ class ApplicationController < ActionController::Base
     downcase_param(:publisher_user_record_id)
     downcase_param(:offer_id)
     downcase_param(:type)
+    downcase_param(:library_version)
     set_param(:udid, :DeviceTag, true)
     set_param(:app_id, :AppID, true)
     set_param(:device_os_version, :DeviceOSVersion)

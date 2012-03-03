@@ -9,23 +9,22 @@
 
     = render :partial => 'find_more_friends'
 
-    .titled-group.ml10
-      .hd
-        .group-title.pb10
-          = t('text.games.social_networks')
-          .aside= t('text.games.find_friends_on_tapjoy')
+    .ui-joy-group.p10
+      .ui-joy-group-title.pb10
+        = t('text.games.social_networks')
+        .aside= t('text.games.find_friends_on_tapjoy')
 
-    .container
-      %ul.list-button-container.m10.mtn
-        - has_fb = @gamer_profile.facebook_id.present?
-        - has_tw = false
-        %li.list-button.soft-gray-gradient
-          - link_to "#", "data-fb-url" => connect_facebook_account_games_gamer_path, :class => has_fb ? "submit-child-form" : "login-to-facebook" do
-            - form_for([ :games, @current_gamer ], :url => dissociate_account_games_gamer_gamer_profile_path(:account_type => Invitation::FACEBOOK), :html => { :class => "logout-of-facebook", :method => "put" }) do |f|
-              .ui-icon-medium.facebook
-                = has_fb ? t("text.games.connected_to_facebook") : "&nbsp;"
-                .right{:class => has_fb ? "checkmark" : "plussign"}
-                  &nbsp;
+      .container
+        %ul.list-button-container.mtn
+          - has_fb = @gamer_profile.facebook_id.present?
+          - has_tw = false
+          %li.list-button.soft-gray-gradient
+            - link_to "#", "data-fb-url" => connect_facebook_account_games_gamer_path, :class => has_fb ? "submit-child-form" : "login-to-facebook" do
+              - form_for([ :games, @current_gamer ], :url => dissociate_account_games_gamer_gamer_profile_path(:account_type => Invitation::FACEBOOK), :html => { :class => "logout-of-facebook", :method => "put" }) do |f|
+                .ui-icon-medium.facebook
+                  = has_fb ? t("text.games.connected_to_facebook") : t("text.games.connect_to_facebook")
+                  .right{:class => has_fb ? "checkmark" : "plussign"}
+                    &nbsp;
 
 - content_for :page_head do
   = fb_connect_async_js

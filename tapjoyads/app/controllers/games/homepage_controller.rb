@@ -20,42 +20,22 @@ class Games::HomepageController < GamesController
     @app_reviews = AppReview.by_gamers.paginate_all_by_app_metadata_id(@app_metadata.id, :page => params[:app_reviews_page])
   end
 
-  def review_app
-  end
-
   def earn
     device_id = current_device_id
-    device = Device.new(:key => device_id) if device_id.present?
+    @device = Device.new(:key => device_id) if device_id.present?
     if params[:eid].present?
       currency_id = ObjectEncryptor.decrypt(params[:eid])
     elsif params[:id].present?
       currency_id = params[:id]
     end
-    @currency = Currency.find_by_id(currency_id)
-    @external_publisher = ExternalPublisher.new(@currency)
-    return unless verify_records([ @currency, device ])
+    @active_currency = Currency.find_by_id(currency_id)
+    @external_publisher = ExternalPublisher.new(@active_currency)
+    return unless verify_records([ @active_currency, @device ])
 
-    @offerwall_url = @external_publisher.get_offerwall_url(device, @external_publisher.currencies.first, request.accept_language, request.user_agent, current_gamer.id)
-    @app_metadata = App.find_by_id(@external_publisher.app_id).primary_app_metadata
+    @offerwall_url = @external_publisher.get_offerwall_url(@device, @external_publisher.currencies.first, request.accept_language, request.user_agent, current_gamer.id)
+    @app = App.find_by_id(@external_publisher.app_id)
+    @app_metadata = @app.primary_app_metadata
     @mark_as_favorite = !current_gamer.favorite_apps.map(&:app_metadata_id).include?(@app_metadata.id)
-
-    respond_to do |f|
-      f.html
-      f.js { render :layout => false }
-    end
-  end
-
-  def my_apps
-    device_id = current_device_id
-    @device = Device.new(:key => device_id) if device_id.present?
-    if @device.present?
-      @external_publishers = ExternalPublisher.load_all_for_device(@device)
-      if params[:load] == 'earn'
-        currency = Currency.find_by_id(params[:currency_id])
-        @show_offerwall = @device.has_app?(currency.app_id) if currency
-        @offerwall_external_publisher = ExternalPublisher.new(currency) if @show_offerwall
-      end
-    end
 
     respond_to do |f|
       f.html
@@ -78,9 +58,11 @@ class Games::HomepageController < GamesController
     @device_name = current_device.name if current_device
     @device = Device.new(:key => device_id) if device_id.present?
     if @device.present?
+      favorite_app_metadata_ids = current_gamer.favorite_apps.map(&:app_metadata_id)
       @external_publishers = ExternalPublisher.load_all_for_device(@device)
+      @favorite_publishers = @external_publishers.select { |e| favorite_app_metadata_ids.include?(e.app_metadata_id) }
       if params[:load] == 'earn'
-        currency = Currency.find_by_id(params[:currency_id])
+        currency = Currency.find_in_cache(params[:currency_id])
         @show_offerwall = @device.has_app?(currency.app_id) if currency
         @offerwall_external_publisher = ExternalPublisher.new(currency) if @show_offerwall
       end
@@ -90,9 +72,9 @@ class Games::HomepageController < GamesController
       featured_contents = FeaturedContent.with_country_targeting(@geoip_data, @device, platform)
       @featured_content = featured_contents.weighted_rand(featured_contents.map(&:weight))
       if @featured_content && @featured_content.tracking_offer
-        @publisher_app       = App.find_by_id(TRACKING_OFFER_CURRENCY_ID)
+        @publisher_app       = App.find_in_cache(TRACKING_OFFER_CURRENCY_ID)
         params[:udid]        = @device.id
-        @currency            = Currency.find_by_id(TRACKING_OFFER_CURRENCY_ID)
+        @currency            = Currency.find_in_cache(TRACKING_OFFER_CURRENCY_ID)
         params[:source]      = 'tj_games'
         @now                 = Time.zone.now
         params[:device_name] = @device_name

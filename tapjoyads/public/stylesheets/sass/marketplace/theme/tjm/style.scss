@@ -308,10 +308,8 @@ p {
         }
       }
       .device-select {
-        border-top: 1px solid #1a1b1c;
-        border-bottom: 1px solid #9b9b9b;
         box-shadow: inset 0 1px 0px #424242;
-        height: 40px;
+        height: auto;
         position: relative;
         opacity: 1;
         top: -2px;
@@ -320,7 +318,27 @@ p {
 
         .device-select-wrapper {
           box-shadow: inset 0 -6px 20px 0 rgba(255, 255, 255, 0.2);
+          border-bottom: 1px solid #9b9b9b;
           height: 100%;
+          text-align: center;
+
+          ul {
+            a {
+              li {
+                border-top: 1px solid #1a1b1c;
+                box-shadow: inset 0 1p 0px #424242;
+                color: #fff;
+                font-size: 1.2em;
+                padding: 8px 0;
+              }
+            }
+            a:hover {
+              li {
+                @extend .orange-action;
+                padding: 8px 0 7px;
+              }
+            }
+          }
         }
       }
       .device-select.open {
@@ -350,7 +368,7 @@ p {
             }
           }
           div:hover {
-            opacity: 0.75;
+            background-color: rgba(255, 255, 255, 0.05);
           }
           .my_apps {
             background: transparent url(#{$image_path}/profile_my_apps.png) no-repeat center 16px;
@@ -367,17 +385,21 @@ p {
         padding: 0 12px;
 
         .menu-subnav-wrapper {
-          height: 20px;
-          padding: 10px 0;
-
-          div {
-            float: left;
-            text-align: center;
-            width: 49%;
+          clear: both;
+          a {
+            div {
+              float: left;
+              padding: 10px 0;
+              text-align: center;
+              width: 49%;
+            }
+            .logout {
+              border-left: 1px solid #1a1b1c;
+              box-shadow: inset 1px 0 0 #424242;
+            }
           }
-          .logout {
-            border-left: 1px solid #1a1b1c;
-            box-shadow: inset 1px 0 0 #424242;
+          a:hover, div:hover {
+            background-color: rgba(255, 255, 255, 0.05);
           }
         }
       }
@@ -443,11 +465,13 @@ p {
 .plussign {
   padding-right: 20px;
   background-size: auto 100%;
+  background: url(#{$image_path}/plus-sign.png) no-repeat 98% center;
 }
 
 .checkmark {
   padding-right: 20px;
   background-size: auto 100%;
+  background: url(#{$image_path}/checkmark-grey.png) no-repeat 98% center;
 }
 
 .downarrow {
@@ -1494,6 +1518,7 @@ div.app {
 
 .ui-joy-group {
   .ui-joy-group-title {
+    padding: 8px;
     font-weight: bold;
     font-size: 1em;
     text-shadow: 0 1px 0 #fff;
@@ -1699,11 +1724,11 @@ div.app {
     padding: 5px 0 10px;
     text-align: center;
     border-top: 1px solid #fff;
-    
+
     ul {
       margin: 5px;
       margin-top: 10px;
-      
+
       li {
         display: inline;
         color: #424242;
@@ -1723,7 +1748,7 @@ div.app {
       }
     }
   }
-  
+
   small {
     font: normal .8em "Helvetica", Arial;
     text-shadow: 0 1px 0 #fff;
@@ -1806,6 +1831,14 @@ div.app {
       margin-left: 1px;
       margin-right: 1px;
       cursor: pointer;
+
+      a {
+        color: #fff;
+        text-shadow: 0 1px 0 rgba(0,0,0, .5);
+      }
+      a:hover {
+        color: #ff7f7f;
+      }
     }
     li:hover {
       color: #ff7f7f;

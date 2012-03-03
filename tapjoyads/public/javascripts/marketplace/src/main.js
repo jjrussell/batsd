@@ -3,7 +3,7 @@ $(document).ready(function() {
   var _t = window.i18n.t,
       debounce,
       tjmViewMenu = $('#viewSelectMenu'),
-      tjmViewContainer = $('#viewSelect').parent().closest('.select-container'),
+      tjmViewContainer = $('#viewSelect').closest('.select-container'),
       selectTrigger = $('#viewSelect'),
       notify = function (message) {
         Tapjoy.Utils.notification({
@@ -172,7 +172,7 @@ $(document).ready(function() {
         $(".form-error").html(_t('games.enter_birthdate'));
         hasError = true;
       }
-      else if(values['gamer[email]'] == '' || values['gamer[email]'] == "Email") {
+      else if(values['gamer[email]'] == '' || values['gamer[email]'] == _t("shared.email")) {
         $(".form-error").html(_t('games.enter_email'));
         hasError = true;
       }
@@ -180,7 +180,7 @@ $(document).ready(function() {
         $(".form-error").html(_t('games.enter_valid_email'));
         hasError = true;
       }
-      else if(values['gamer[password]'] == '' || values['gamer[password]'] == "Password") {
+      else if(values['gamer[password]'] == '' || values['gamer[password]'] == _t("shared.password")) {
         $(".form-error").html(_t('games.enter_password'));
         hasError = true;
       }
@@ -365,11 +365,13 @@ $(document).ready(function() {
 
   // Device switch toggle
   $('.device-change').bind('click', function(){
-    if ($('.device-select').hasClass('open')) {
-      $('.device-select').removeClass('open').addClass('closed');
+    if ($('#device-select').hasClass('open')) {
+      $('#device-select').removeClass('open').addClass('closed');
+      $('.device-change').html('(' + _t('games.change') + ')');
     }
     else {
-      $('.device-select').removeClass('closed').addClass('open');
+      $('#device-select').removeClass('closed').addClass('open');
+      $('.device-change').html('(' + _t('games.close') + ')');
     }
   });
 
@@ -402,12 +404,12 @@ $(document).ready(function() {
 
   $('.list-button, .btn, .greenblock, #signup, #login').live(Tapjoy.EventsMap.start + ' ' + Tapjoy.EventsMap.end + ' ' + Tapjoy.EventsMap.cancel, function(e){
     var el = $(this),
-		    target = $(e.target),
+        target = $(e.target),
         which = e.type;
 
-	   if(el.hasClass('ui-no-action'))
-		  return;
-			
+     if(el.hasClass('ui-no-action'))
+      return;
+
     if(which === Tapjoy.EventsMap.start){
       el.addClass('active');
     }else{
@@ -415,9 +417,9 @@ $(document).ready(function() {
     }
   });
 
-	$('.ui-joy-button').bind(Tapjoy.EventsMap.start + ' ' + Tapjoy.EventsMap.end + ' ' + Tapjoy.EventsMap.cancel, function(e){
-		var el = $(this),
-    		which = e.type;
+  $('.ui-joy-button').bind(Tapjoy.EventsMap.start + ' ' + Tapjoy.EventsMap.end + ' ' + Tapjoy.EventsMap.cancel, function(e){
+    var el = $(this),
+        which = e.type;
 
      if(el.hasClass('disabled'))
       return;
@@ -428,7 +430,7 @@ $(document).ready(function() {
       el.removeClass('active');
     }
 
-	});
+  });
 
   (function () {
     var showSuccessMessage = function (gamers, non_gamers) {
@@ -454,7 +456,6 @@ $(document).ready(function() {
     };
 
     $(document).bind("email-invite-ajax-success", function (ev, form, data) {
-      console.log(arguments);
       if (data.success === true) {
         if (data.gamers.length === 0 && data.non_gamers.length === 0) {
           notify(_t('games.provide_other_email'));
@@ -630,7 +631,7 @@ $(document).ready(function() {
       tjmViewContainer.addClass('active');
       tjmViewMenu.removeClass('hide');
 
-      heading.text('Choose a Section');
+      heading.text(_t('games.choose_section'));
 
       tjmViewMenu.css('top', tjmViewContainer.offset().top + (tjmViewContainer.outerHeight(true) - 4) + 'px');
 
@@ -639,6 +640,16 @@ $(document).ready(function() {
       });
     }
   });
+
+  function handleTabs($anchor) {
+    if (!$anchor) { return; }
+
+    var targetSelector = $anchor.attr("href"),
+        $target = $(targetSelector);
+    $(".buffer").hide();
+    $target.show();
+    $(".ajax-loader", $target).trigger("ajax-initiate");
+  }
 
   $('li', tjmViewMenu).each(function(){
     var li = $(this);
@@ -651,10 +662,10 @@ $(document).ready(function() {
       Tapjoy.Utils.removeMask();
 
       if(li.hasClass('showAll')){
-        $('.row').show();
+        $('.row').show().addClass('view-all');
         $('#recommendationsRow').removeClass('nbb');
       }else{
-        $('.row').hide();
+        $('.row').hide().removeClass('view-all');
 
         if(li.hasClass('showRecommendations')){
           $('#recommendationsRow').show().addClass('nbb');
@@ -665,11 +676,14 @@ $(document).ready(function() {
         }
       }
 
+      handleTabs($("a.ui-joy-reveal", li));
+
       $('.heading', tjmViewContainer).text(li.text())
+      return false;
     });
   });
 
-  $(window).bind('resize orientationchange', function(){
+  function manageResize() {
     if(tjmViewContainer.length != 0 && window.innerWidth < 800){
       tjmViewMenu.css('top', tjmViewContainer.offset().top + (tjmViewContainer.outerHeight(true) - 4) + 'px');
 
@@ -677,8 +691,7 @@ $(document).ready(function() {
         width: tjmViewContainer.width() - 4 + 'px'
       });
     }
-		var rows = $('#content .row');
-
+    var rows = $('#content .row');
     if(window.innerWidth > 770){
       if(rows.is(':hidden'))
         rows.show();
@@ -691,13 +704,106 @@ $(document).ready(function() {
         $('li.showGames', tjmViewMenu).trigger('click');
       }
     }
-  });
+  }
+
+  $(window).bind('resize orientationchange', debounce(manageResize));
+  // run logic on ready
+  manageResize();
+
+  setTimeout(function(){
+    // Hide the ios address bar!
+    window.scrollTo(0, 1);
+  }, 0);
 
   Tapjoy.delay(function(){
     $('#recommedations').Carousel({
       cssClass : 'complete'
     });
   }, 50);
+
+  // Device Switcher
+  Tapjoy.selectDevice = [{"device_type":"ipod","name":"Android (R800x)","data":"cccf46abc68d9cba60b699fd808f6403b84528be420d5f6ba9a40b70193df3b2c877d558565789e6a4cfc2c87b5c90a542e7c3a8e0fdb07ce2e052d4cf59390cba9898494eb7f47de59c8488dc8b85fd63f6ef6fc3eb15898a48ceaded3b08ba"},{"device_type":"ipod","name":"iPod Touch","data":"cccf46abc68d9cba60b699fd808f64037ba278d7c09a8e878acba677a272aa13077f9a3bc645e11142e971e402d8c7d49404e5fa59c9347e185e325e92abdbc668094f84bf8c60f31c5f3784d741d3ec34ba27ae691788ebcdc0f077cca68d60a05f1def37b19844eca6cfc7d03adc8d950d4740616b5b37f8f78458998ba89c"}];
+
+  Tapjoy.device.name = 'ipod';
+  Tapjoy.device.idevice = true;
+  Tapjoy.supportsTouch = true;
+  Tapjoy.device.android = false;
+
+  if (Tapjoy.selectDevice) {
+    var path, device_found = false, device_count = 0, device_data, matched_data;
+    var d = [], a = [], m = [];
+    if (Tapjoy.rootPath) {
+      path = Tapjoy.rootPath.replace(/\/$/, '');
+    }
+    else {
+      path = location.pathname.replace(/\/$/, '');
+    }
+    $.each(Tapjoy.selectDevice, function(i,v){
+      var device_type = v.device_type;
+      if (!Tapjoy.Utils.isEmpty(device_type) && Tapjoy.device.name && (device_type.toLowerCase() == Tapjoy.device.name.toLowerCase())) {
+        device_count++;
+        device_found = true;
+        d.push('<a href="', path ,'/switch_device?data=', v.data ,'">');
+          d.push('<li class="device-item">');
+            d.push(v.name);
+          d.push('</li>');
+        d.push('</a>');
+      }
+      else if (!Tapjoy.supportsTouch) { // Web
+        a.push('<a href="', path ,'/switch_device?data=', v.data ,'">');
+          a.push('<li class="device-item">');
+            a.push(v.name);
+          a.push('</li>');
+        a.push('</a>');
+      }
+    });
+    if (!device_found) {
+      if (Tapjoy.device.idevice && Tapjoy.iosLinkDevicePath) {
+        link_device = '<a href="' + Tapjoy.iosLinkDevicePath + '"><li class="device-item">'+_t('games.connect_my_device')+'</li></a>';
+        m =  [
+          '<ul>',
+            link_device,
+          '</ul>'
+        ].join('');
+      }
+      else if (Tapjoy.device.android &&  Tapjoy.androidAppPath) {
+        link_device = '<a href="' + Tapjoy.androidAppPath + '"><li class="device-item">'+_t('games.connect_my_device')+'</li></a>';
+        m =  [
+          '<ul>',
+            link_device,
+          '</ul>'
+        ].join('');
+      }
+      else if (!Tapjoy.supportsTouch) { // Web - Allow user to select device
+        m =  [
+          '<ul>',
+            a.join(''),
+          '</ul>'
+        ].join('');
+      }
+    }
+    else {
+      var other = "";
+      if (Tapjoy.device.android &&  Tapjoy.androidAppPath) {
+        other = '<a href="' +  Tapjoy.androidAppPath + '"><li class="device-item add">'+_t('shared.other')+'</li></a>';
+      }
+      else if (Tapjoy.device.idevice && Tapjoy.iosLinkDevicePath) {
+        other = '<a href="' +  Tapjoy.iosLinkDevicePath + '"><li class="device-item add">'+_t('shared.other')+'</li></a>';
+      }
+      m =  [
+        '<ul>',
+          d.join(''),
+          other,
+        '</ul>',
+      ].join('');
+    }
+    $('#device-select-list').html(m);
+  }
+  // If on mobile device and cookie missing, prompt user to select closest matching device
+  if (Tapjoy.requireSelectDevice && Tapjoy.selectDevice.length > 0 && (Tapjoy.device.idevice || Tapjoy.device.android)) {
+    Tapjoy.Utils.mask();
+  }
+
 
 
   //if (Tapjoy.device.idevice) {

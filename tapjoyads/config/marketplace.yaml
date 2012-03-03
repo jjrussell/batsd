@@ -1,5 +1,5 @@
 defaults: &defaults
-  js_version: '1.53'
+  js_version: '1.57'
   js_files: [
     'marketplace/src/core/jquery',
     'marketplace/src/core/foundation',

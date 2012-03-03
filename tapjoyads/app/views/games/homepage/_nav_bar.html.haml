@@ -36,9 +36,8 @@
                   = t('text.games.on_my', :device_name => current_device.name)
                   %a.device-change
                     (#{t('text.games.change')})
-          .device-select.closed
-            .device-select-wrapper
-              Select Device
+          #device-select.device-select.closed
+            #device-select-list.device-select-wrapper
           .device-form.hide
           .menu-nav
             .menu-nav-wrapper
@@ -51,7 +50,7 @@
               - link_to(games_gamer_path) do
                 .profile
                   %span= t('text.games.profile')
-          .menu-subnav
+          .menu-subnav.clearfix
             .menu-subnav-wrapper
               - link_to(games_help_path) do
                 .help
@@ -65,9 +64,8 @@
     &nbsp;
   .container.mt2
     .left.phraseThatPays
-      A better way to love the apps you have and find the apps you'll love.
+      = t('text.games.about_body')
     .right
       - link_to(new_games_gamer_path) do
         #signup.header-button
           = t('text.shared.sign_up')
-

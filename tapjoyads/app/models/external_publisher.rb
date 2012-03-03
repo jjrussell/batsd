@@ -1,12 +1,13 @@
 class ExternalPublisher
 
-  attr_accessor :app_id, :app_name, :partner_name, :currencies, :last_run_time, :active_gamer_count
+  attr_accessor :app_id, :app_name, :partner_name, :currencies, :last_run_time, :active_gamer_count, :app_metadata_id
 
   def initialize(currency)
     self.app_id = currency.app_id
     self.app_name = currency.app.name
     self.partner_name = currency.app.partner_name
     self.active_gamer_count = currency.app.active_gamer_count
+    self.app_metadata_id = currency.app.primary_app_metadata.id if currency.app.primary_app_metadata
     add_currency(currency)
   end
 
