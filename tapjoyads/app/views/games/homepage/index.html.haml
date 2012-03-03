@@ -39,7 +39,7 @@
   - if current_recommendations.present?
     #recommendationsRow.row.borders.pn.ntb.rec
       %h1.museo.smart.row-title= t('text.games.recommendations_smart')
-      #recommedations.games
+      #recommendations.games
         - current_recommendations.each do |reco|
           .app
             - encrypt_app_id = ObjectEncryptor.encrypt(reco.id)

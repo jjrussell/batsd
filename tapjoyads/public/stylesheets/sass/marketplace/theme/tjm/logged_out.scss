@@ -735,12 +735,15 @@ span.gill {
       margin: 5px;
       li {
         display: inline;
-        color: #424242;
-        font: bold .9em "Helvetica", Arial;
-        text-shadow: 0 1px 0 #fff;
         padding: 0 5px;
         border-right: 1px solid #424242;
         border-left: 1px solid #fff;
+        a {
+          color: #424242;
+          font: bold .9em "Helvetica", Arial;
+          text-shadow: 0 1px 0 #fff;
+          text-decoration: none;
+        }
       }
 
       li:first-child {
@@ -1073,10 +1076,10 @@ span.gill {
 
   #favorites .back,
   #favorites .forward {
-    display: none;
-    margin: 0;
-    padding: 0;
+    display: block;
+    top: 100px !important;
   }
+
 
   #favorites .mobilejoy {
     text-align: center;

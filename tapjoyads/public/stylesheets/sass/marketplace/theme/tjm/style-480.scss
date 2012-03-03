@@ -47,3 +47,46 @@
     font: normal .5em "Helvetica", Arial;
   }
 }
+
+#recommendations .app,
+.app {
+  height: 106px !important;
+  .app-icon {
+    width: 100px !important;
+    height: 100px !important;
+    background-size: 100px 100px !important;
+
+    img {
+      left: 1px;
+      width: 98px !important;
+      height: 98px !important;
+    }
+  }
+}
+
+.list-button-container.earn-theme {
+  .squircle {
+    width: 100px !important;
+    height: 100px !important;
+    background-size: 100px 100px !important;
+
+    img {
+      left: 1px;
+      width: 98px !important;
+      height: 98px !important;
+    }
+  }
+}
+
+.squircle {
+  width:  100px;
+  height: 100px;
+  background-size: 100px 100px !important;
+
+  img {
+    left: 1px;
+    width: 98px !important;
+    height: 98px !important;
+  }
+}
+

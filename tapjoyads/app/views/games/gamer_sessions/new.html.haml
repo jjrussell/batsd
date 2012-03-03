@@ -109,20 +109,30 @@
 
 #footer
   .partners
-    %img{ :src => BLANK_IMAGE }
+    %img{ :src => BLANK_IMAGE, :usemap => '#partnersmap' }
+    %map{ :name => 'partnersmap' }
+      %area{ :shape => 'rect', :coords => '0,0,60,42', :href => 'http://glu.com', :alt => 'Glu', :target => '_blank' }
+      %area{ :shape => 'rect', :coords => '60,0,170,42', :href => 'https://papayamobile.com/', :alt => 'Papaya', :target => '_blank' }
+      %area{ :shape => 'rect', :coords => '170,0,255,42', :href => 'http://www.zynga.com/', :alt => 'Zynga', :target => '_blank' }
+      %area{ :shape => 'rect', :coords => '255,0,350,42', :href => 'http://www.ngmoco.com', :alt => 'ngmoco:)', :target => '_blank' }
   .links
     .container
       %ul
         %li
-          = t('text.footer.developers')
+          - link_to('/site/app_developers') do
+            = t('text.footer.developers')
         %li
-          = t('text.footer.advertisers')
+          - link_to('/site/advertisers') do
+            = t('text.footer.advertisers')
         %li
-          = t('text.footer.about')
+          - link_to('/site/about_us') do
+            = t('text.footer.about')
         %li
-          = t('text.footer.privacy')
+          - link_to('/site/privacy') do
+            = t('text.footer.privacy')
         %li
-          = t('text.footer.blog')
+          - link_to('http://blog.tapjoy.com') do
+            = t('text.footer.blog')
     .container
       %small
         = t('text.footer.copyright')
@@ -138,6 +148,3 @@
 
 - content_for :included_javascripts do
   = javascript_include_tag('marketplace/logged-out')
-
-- content_for :page_javascript do
-  :plain
