@@ -24,8 +24,9 @@
           .fix
       #viewSelectMenu.hide
         %ul
-          %li.showFavorites
-            = t('text.shared.favorites')
+          - if @favorite_publishers.present?
+            %li.showFavorites
+              = t("text.games.favorites")
           - if @external_publishers.present?
             %li.showGames.active
               = t('text.games.my_apps')
@@ -48,6 +49,22 @@
             .details
               %span.title.elip
                 = reco.name
+
+  - if @favorite_publishers.present?
+    #favoritesRow.row.borders
+      %h1.museo= t('text.games.favorite_apps')
+      .games
+        - @favorite_publishers.each do |external_publisher|
+          .app
+            - @first_encrypt_currency_id = ObjectEncryptor.encrypt(external_publisher.currencies.first[:id])
+            - link_to(games_earn_path(:eid => @first_encrypt_currency_id)) do
+              .app-icon
+                %img{ :src => BLANK_IMAGE, :source => external_publisher.get_icon_url(:size => 114, :source => :cloudfront)}
+            .details
+              %span.title.elip
+                = external_publisher.app_name
+              %small.publisher.elip
+                = external_publisher.partner_name
 
   - if @external_publishers.present?
     #gamesRow.row.borders.nbb

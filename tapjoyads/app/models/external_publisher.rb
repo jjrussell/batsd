@@ -1,12 +1,13 @@
 class ExternalPublisher
 
-  attr_accessor :app_id, :app_name, :partner_name, :currencies, :last_run_time, :active_gamer_count
+  attr_accessor :app_id, :app_name, :partner_name, :currencies, :last_run_time, :active_gamer_count, :app_metadata_id
 
   def initialize(currency)
     self.app_id = currency.app_id
     self.app_name = currency.app.name
     self.partner_name = currency.app.partner_name
     self.active_gamer_count = currency.app.active_gamer_count
+    self.app_metadata_id = currency.app.primary_app_metadata.id if currency.app.primary_app_metadata
     add_currency(currency)
   end
 
@@ -65,20 +66,26 @@ class ExternalPublisher
     arr
   end
 
-  def self.load_all_for_device(device)
+  def self.load_all_for_device(device, favorite_app_metadata_ids=[])
     external_publishers = []
+    favorite_publishers = []
     self.load_all.each do |app_id, external_publisher|
       next unless device.has_app?(app_id)
       next unless device.publisher_user_ids[app_id].present? || external_publisher.currencies.all? { |h| h[:udid_for_user_id] }
 
       external_publisher.last_run_time = device.parsed_apps[app_id].to_i
       external_publishers << external_publisher
+      favorite_publishers << external_publisher if favorite_app_metadata_ids.present? && favorite_app_metadata_ids.include?(external_publisher.app_metadata_id)
     end
 
     external_publishers.sort! do |e1, e2|
       e2.last_run_time <=> e1.last_run_time
     end
-    external_publishers
+    if favorite_app_metadata_ids.present?
+      [external_publishers, favorite_publishers]
+    else
+      external_publishers
+    end
   end
 
   def self.load_all
