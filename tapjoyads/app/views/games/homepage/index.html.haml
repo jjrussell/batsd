@@ -36,61 +36,61 @@
         %li.showAll
           = t('text.shared.view_all')
 
-- if current_recommendations.present?
-  #recommendationsRow.row.borders.pn.ntb.rec
-    %h1.museo.smart= t('text.games.recommendations_smart')
-    #recommedations.games
-      - current_recommendations.each do |reco|
-        .app
-          - encrypt_app_id = ObjectEncryptor.encrypt(reco.id)
-          - link_to(games_get_app_path(:eid => encrypt_app_id)) do
-            .app-icon
-              %img{ :src => BLANK_IMAGE, :source => reco.icon_url }
-          .details
-            %span.title.elip
-              = reco.name
+  - if current_recommendations.present?
+    #recommendationsRow.row.borders.pn.ntb.rec
+      %h1.museo.smart= t('text.games.recommendations_smart')
+      #recommedations.games
+        - current_recommendations.each do |reco|
+          .app
+            - encrypt_app_id = ObjectEncryptor.encrypt(reco.id)
+            - link_to(games_get_app_path(:eid => encrypt_app_id)) do
+              .app-icon
+                %img{ :src => BLANK_IMAGE, :source => reco.icon_url }
+            .details
+              %span.title.elip
+                = reco.name
 
-- if @favorite_publishers.present?
-  #favoritesRow.row.borders
-    %h1.museo= t('text.games.favorite_apps')
-    .games
-      - @favorite_publishers.each do |external_publisher|
-        .app
-          - @first_encrypt_currency_id = ObjectEncryptor.encrypt(external_publisher.currencies.first[:id])
-          - link_to(games_earn_path(:eid => @first_encrypt_currency_id)) do
-            .app-icon
-              %img{ :src => BLANK_IMAGE, :source => external_publisher.get_icon_url(:size => 114, :source => :cloudfront)}
-          .details
-            %span.title.elip
-              = external_publisher.app_name
-            %small.publisher.elip
-              = external_publisher.partner_name
+  - if @favorite_publishers.present?
+    #favoritesRow.row.borders
+      %h1.museo= t('text.games.favorite_apps')
+      .games
+        - @favorite_publishers.each do |external_publisher|
+          .app
+            - @first_encrypt_currency_id = ObjectEncryptor.encrypt(external_publisher.currencies.first[:id])
+            - link_to(games_earn_path(:eid => @first_encrypt_currency_id)) do
+              .app-icon
+                %img{ :src => BLANK_IMAGE, :source => external_publisher.get_icon_url(:size => 114, :source => :cloudfront)}
+            .details
+              %span.title.elip
+                = external_publisher.app_name
+              %small.publisher.elip
+                = external_publisher.partner_name
 
-- if @external_publishers.present?
-  #gamesRow.row.borders.nbb
-    %h1.museo= t('text.games.my_apps')
-    .games
-      - @external_publishers.each do |external_publisher|
-        .app
-          - @first_encrypt_currency_id = ObjectEncryptor.encrypt(external_publisher.currencies.first[:id])
-          - link_to(games_earn_path(:eid => @first_encrypt_currency_id)) do
-            .app-icon
-              %img{ :src => BLANK_IMAGE, :source => external_publisher.get_icon_url(:size => 114, :source => :cloudfront)}
-          .details
-            %span.title.elip
-              = external_publisher.app_name
-            %small.publisher.elip
-              = external_publisher.partner_name
-            %span.ui-icon-small.score.icon16
-              -# "#{@app_metadata.positive_thumbs_percentage.floor}%"
-            %span.ui-icon-small.social.icon16
-              -# "#{@app_metadata.app_reviews.by_gamers.size}"
-          - @encrypt_currency_id = ObjectEncryptor.encrypt(external_publisher.currencies.first[:id])
-          .btn
-            - link_to(games_earn_path(:eid => @encrypt_currency_id)) do
-              = t('text.shared.earn_verb')
-          .ui-list-action
-            - link_to(games_earn_path(:eid => @encrypt_currency_id)) do
-              .rightarrow.icon16
-                .ui-list-action-label.pt3
-                  = t('text.shared.earn_verb')
+  - if @external_publishers.present?
+    #gamesRow.row.borders.nbb
+      %h1.museo= t('text.games.my_apps')
+      .games
+        - @external_publishers.each do |external_publisher|
+          .app
+            - @first_encrypt_currency_id = ObjectEncryptor.encrypt(external_publisher.currencies.first[:id])
+            - link_to(games_earn_path(:eid => @first_encrypt_currency_id)) do
+              .app-icon
+                %img{ :src => BLANK_IMAGE, :source => external_publisher.get_icon_url(:size => 114, :source => :cloudfront)}
+            .details
+              %span.title.elip
+                = external_publisher.app_name
+              %small.publisher.elip
+                = external_publisher.partner_name
+              %span.ui-icon-small.score.icon16
+                -# "#{@app_metadata.positive_thumbs_percentage.floor}%"
+              %span.ui-icon-small.social.icon16
+                -# "#{@app_metadata.app_reviews.by_gamers.size}"
+            - @encrypt_currency_id = ObjectEncryptor.encrypt(external_publisher.currencies.first[:id])
+            .btn
+              - link_to(games_earn_path(:eid => @encrypt_currency_id)) do
+                = t('text.shared.earn_verb')
+            .ui-list-action
+              - link_to(games_earn_path(:eid => @encrypt_currency_id)) do
+                .rightarrow.icon16
+                  .ui-list-action-label.pt3
+                    = t('text.shared.earn_verb')
