@@ -67,24 +67,16 @@ div.app {
   margin: 0;
   padding: 0;
   width: auto;
-  height: 106px;
+  height: 128px;
   float: none;
   overflow: auto;
   overflow-x: hidden;
   overflow-y: hidden;
 
   .app-icon {
-    width:  100px;
-    height: 100px;
     margin: 0;
     margin-left: 10px;
     float: left;
-    background-size: 100px 100px;
-
-    img {
-      width: 99px;
-      height: 99px;
-    }
   }
 
   .details {
@@ -92,7 +84,6 @@ div.app {
     margin-left: 10px;
     text-align: left;
     float: left;
-    width: 75%;
   }
 
   span.title {
@@ -128,18 +119,17 @@ div.app {
 }
 
 div.app:last-child {
-  border-bottom: 0;
+  border-bottom: 0 !important;
+}
+
+.row .games .app:first-child {
+  margin-top: 2px;
 }
 
 .row .app:first-child {
-  border-top: 0;
+  border-top: 0 !important;
 }
 
-#recommedations {
-  .carousel {
-    height: auto !important;
-  }
-}
 .ui-joy-carousel {
   height: auto !important;
   overflow: visible;
@@ -160,4 +150,3 @@ h1.smart {
 #tjmTopbar .section {
   display: block;
 }
-

@@ -1121,18 +1121,6 @@ div.ui-joy-button .get-app {
     font-size: .8em;
     color: #026acb;
   }
-  .squircle {
-    background: url(#{$image_path}/app_icon_overlay_list_button_large.png) no-repeat 0 0;
-    height: 60px;
-    width: 60px;
-    background-size: 60px 60px;
-    top: 0;
-
-    img {
-      width: 59px;
-      height: 59px;
-    }
-  }
 }
 
 
@@ -1284,7 +1272,7 @@ div.ui-joy-button .get-app {
  */
 
 .row {
-  padding: 5px 0 10px 0;
+  padding: 8px 0 10px 0;
   overflow: auto;
   box-shadow: 0 -3px 3px rgba(0,0,0, .07);
 
@@ -1300,16 +1288,6 @@ div.ui-joy-button .get-app {
 
 .row.nbb:last-child {
   border-bottom: 0 !important;
-}
-
-#recommedations {
-  height: 200px;
-  width: 100%;
-}
-
-#recommedations.complete .app {
-  opacity: 1;
-  visibility: visible;
 }
 
 #tjmTopbar .section {
@@ -1384,10 +1362,23 @@ div.ui-joy-button .get-app {
   box-shadow: inset 0px 1px 3px rgba(0,0,0, .3), 0 1px 0 #fff;
 }
 
-#recommedations .app {
+
+#recommendations {
+  height: 200px;
+  width: 100%;
+}
+
+#recommendations .app {
+/*  @include animate(opacity, .65s, linear, .65s);*/  
   opacity: 0;
+  height: 0;
   visibility: hidden;
-  @include animate(opacity, .65s, linear, .65s);
+}
+
+#recommendations.complete .app {
+  opacity: 1;
+  height: auto;
+  visibility: visible;
 }
 
 div.app {
@@ -1610,18 +1601,19 @@ div.app {
  */
 .squircle {
   position: relative;
-  width: 90px;
-  height: 90px;
+  width: 125px;
+  height: 125px;
   margin: 0 auto;
   background: url(#{$image_path}/app_icon_overlay_large.png) no-repeat 0 0;
-  background-size: 90px 90px;
+  background-size: 125px 125px;
   top: -8px;
-
+  overflow: hidden;
+  
   img {
     position: relative;
     z-index: -1;
-    width: 89px;
-    height: 89px;
+    width: 123px;
+    height: 123px;
   }
 
   .action-item {
@@ -1646,6 +1638,20 @@ div.app {
   }
 }
 
+#show {
+  .squircle {
+    width: 100px;
+    height: 100px;
+    background-size: 100px 100px;
+    overflow: hidden;
+    
+    .img {
+      width: 98px !important;
+      height: 98px !important;
+    }
+  }
+}
+
 .hide {
   display: none !important;
 }
@@ -1658,20 +1664,9 @@ div.app {
  * earn
  */
 
-.list-button-container.earn-theme .squircle {
-  position: relative;
-  width: 90px;
-  height: 90px;
-  margin: 0 auto;
-  background: url(#{$image_path}/app_icon_overlay_large_earn.png) no-repeat 0 0;
-  background-size: 90px 90px;
-  top: -8px;
-
-  img {
-    position: relative;
-    z-index: -1;
-    width: 89px;
-    height: 89px;
+.list-button-container.earn-theme {
+  .squircle {
+    background: url(#{$image_path}/app_icon_overlay_large_earn.png) no-repeat 0 0 !important;
   }
 }
 
