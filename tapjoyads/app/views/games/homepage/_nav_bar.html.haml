@@ -36,8 +36,8 @@
                   = t('text.games.on_my', :device_name => current_device.name)
                   %a.device-change
                     (#{t('text.games.change')})
-          .device-select.closed
-            .device-select-wrapper
+          #device-select.device-select.closed
+            #device-select-list.device-select-wrapper
               Select Device
           .device-form.hide
           .menu-nav
@@ -65,9 +65,13 @@
     &nbsp;
   .container.mt2
     .left.phraseThatPays
-      A better way to love the apps you have and find the apps you'll love.
+      = t('text.games.about_body')
     .right
       - link_to(new_games_gamer_path) do
         #signup.header-button
           = t('text.shared.sign_up')
+
+:javascript
+   Tapjoy.select_device = #{@device_data.to_json};
+   Tapjoy.require_select_device = #{@require_select_device.to_json};
 

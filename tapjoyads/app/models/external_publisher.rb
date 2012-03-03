@@ -66,7 +66,7 @@ class ExternalPublisher
     arr
   end
 
-  def self.load_all_for_device(device, favorite_app_metadata_ids=[])
+  def self.load_all_for_device(device)
     external_publishers = []
     favorite_publishers = []
     self.load_all.each do |app_id, external_publisher|
@@ -75,17 +75,12 @@ class ExternalPublisher
 
       external_publisher.last_run_time = device.parsed_apps[app_id].to_i
       external_publishers << external_publisher
-      favorite_publishers << external_publisher if favorite_app_metadata_ids.present? && favorite_app_metadata_ids.include?(external_publisher.app_metadata_id)
     end
 
     external_publishers.sort! do |e1, e2|
       e2.last_run_time <=> e1.last_run_time
     end
-    if favorite_app_metadata_ids.present?
-      [external_publishers, favorite_publishers]
-    else
-      external_publishers
-    end
+    external_publishers
   end
 
   def self.load_all
