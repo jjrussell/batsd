@@ -680,7 +680,7 @@ $(document).ready(function() {
     });
   });
 
-  $(window).bind('resize orientationchange', function(){
+  function manageResize() {
     if(tjmViewContainer.length != 0 && window.innerWidth < 800){
       tjmViewMenu.css('top', tjmViewContainer.offset().top + (tjmViewContainer.outerHeight(true) - 4) + 'px');
 
@@ -702,7 +702,11 @@ $(document).ready(function() {
         $('li.showGames', tjmViewMenu).trigger('click');
       }
     }
-  });
+  }
+
+  $(window).bind('resize orientationchange', debounce(manageResize));
+  // run logic on ready
+  manageResize();
 
   Tapjoy.delay(function(){
     $('#recommedations').Carousel({

@@ -75,11 +75,17 @@ class Games::HomepageController < GamesController
     device_id = current_device_id
     @gamer = current_gamer
     @gamer.gamer_profile ||= GamerProfile.new(:gamer => @gamer)
+    @favorite_publishers = []
 
     @device_name = current_device.name if current_device
     @device = Device.new(:key => device_id) if device_id.present?
     if @device.present?
-      @external_publishers = ExternalPublisher.load_all_for_device(@device)
+      favorite_app_metadata_ids = current_gamer.favorite_apps.map(&:app_metadata_id)
+      if favorite_app_metadata_ids.present?
+        @external_publishers, @favorite_publishers = ExternalPublisher.load_all_for_device(@device, favorite_app_metadata_ids)
+      else
+        @external_publishers = ExternalPublisher.load_all_for_device(@device)
+      end
       if params[:load] == 'earn'
         currency = Currency.find_by_id(params[:currency_id])
         @show_offerwall = @device.has_app?(currency.app_id) if currency
