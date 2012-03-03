@@ -87,7 +87,7 @@ class Games::HomepageController < GamesController
       end
 
       @geoip_data = geoip_data
-      platform = current_gamer.gamer_devices.find_by_device_id(@device.id).device_type
+      platform = current_device ? current_device.device_type : ''
       featured_contents = FeaturedContent.with_country_targeting(@geoip_data, @device, platform)
       @featured_content = featured_contents.weighted_rand(featured_contents.map(&:weight))
       if @featured_content && @featured_content.tracking_offer

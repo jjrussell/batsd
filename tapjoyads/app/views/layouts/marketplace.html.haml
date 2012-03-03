@@ -49,7 +49,12 @@
 
     = yield
 
+    = render 'games/shared/submenu'
+
+    = yield :above_footer
+
     = render 'games/shared/footer'
+
 
     :javascript
       window.ENVIRONMENT = "#{Rails.env}";
@@ -68,9 +73,8 @@
       = yield :page_javascript
 
     :javascript
-      TJG.path =  "#{games_root_path}";
-      TJG.logout_path = "#{games_logout_path}"
-      TJG.blank_img = "#{CLOUDFRONT_URL}/images/blank.png";
+      Tapjoy.rootPath =  "#{games_root_path}";
+      Tapjoy.androidAppPath = "#{GAMES_ANDROID_MARKET_URL}";
 
     - if Rails.env.production?
       :javascript

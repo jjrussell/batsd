@@ -3,12 +3,17 @@
     .page-header
       .container
         .left.ml10.pt3
-          .big-title.mt10
+          %h1.museo.mt10
             = t('text.shared.my_account')
     = render "fields"
-    .container
-      .ui-joy-group.p10.ptn
-        .ui-joy-group-title= t('text.shared.password')
-        %ul.list-button-container.mb10
-          %li.list-button.soft-gray-gradient
-            = link_to t('text.shared.change_password'), password_games_gamer_path
+  .container.mb10
+    .ui-joy-group.p10.ptn
+      .ui-joy-group-title.mb5= t('text.shared.password')
+      %ul.list-button-container
+        %li.list-button.soft-gray-gradient
+          .left
+            .ui-joy-label
+              = link_to t('text.shared.change_password'), password_games_gamer_path
+          .right.rightarrow.icon24.mt10.icon-pos-100.mr10
+            &nbsp;
+
