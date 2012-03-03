@@ -660,10 +660,10 @@ $(document).ready(function() {
       Tapjoy.Utils.removeMask();
 
       if(li.hasClass('showAll')){
-        $('.row').show();
+        $('.row').show().addClass('view-all');
         $('#recommendationsRow').removeClass('nbb');
       }else{
-        $('.row').hide();
+        $('.row').hide().removeClass('view-all');
 
         if(li.hasClass('showRecommendations')){
           $('#recommendationsRow').show().addClass('nbb');

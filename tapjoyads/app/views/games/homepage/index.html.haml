@@ -38,7 +38,7 @@
 
   - if current_recommendations.present?
     #recommendationsRow.row.borders.pn.ntb.rec
-      %h1.museo.smart= t('text.games.recommendations_smart')
+      %h1.museo.smart.row-title= t('text.games.recommendations_smart')
       #recommedations.games
         - current_recommendations.each do |reco|
           .app
@@ -52,7 +52,7 @@
 
   - if @favorite_publishers.present?
     #favoritesRow.row.borders
-      %h1.museo= t('text.games.favorite_apps')
+      %h1.museo.row-title= t('text.games.favorite_apps')
       .games
         - @favorite_publishers.each do |external_publisher|
           .app
@@ -68,7 +68,7 @@
 
   - if @external_publishers.present?
     #gamesRow.row.borders.nbb
-      %h1.museo= t('text.games.my_apps')
+      %h1.museo.row-title= t('text.games.my_apps')
       .games
         - @external_publishers.each do |external_publisher|
           .app

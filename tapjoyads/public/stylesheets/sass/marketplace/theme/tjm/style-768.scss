@@ -5,6 +5,13 @@ $image_path: "/images/marketplace/themes/tjm";
 
 //-------------------------------------------
 
+.row-title {
+  display: none;
+}
+
+.view-all .row-title {
+  display: block;
+}
 //-------------------------------------------
 // Line item structure
 //-------------------------------------------
