@@ -18,17 +18,21 @@
           .fix
       #viewSelectMenu.hide
         %ul
-          %li.showFavorites Favorites
+          %li.showFavorites
+            = t("text.games.favorites")
           - if @external_publishers.present?
-            %li.showGames.active My Games
+            %li.showGames.active
+              = t("text.games.my_apps")
           - if current_recommendations.present?
-            %li.showRecommendations Recommendations
+            %li.showRecommendations
+              = t("text.games.my_apps")
           %li.showAll
             = t('text.shared.view_all')
 
   - if current_recommendations.present?
     #recommendationsRow.row.borders.pn.ntb.rec
-      %h1.museo.smart Smart Recommendations
+      %h1.museo.smart
+        = t("text.games.recommendations")
       #recommedations.games
         - current_recommendations.each do |reco|
           .app

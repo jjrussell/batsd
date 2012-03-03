@@ -1,9 +1,8 @@
 (function (w, $) {
   "use strict";
-  var NUM_MAP = ["zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine"]
-    , me = w.i18n || {}
-    , env = $("body").data("env")
-    ;
+  var NUM_MAP = ["zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine"],
+      me = w.i18n || {},
+      env = $("body").data("env");
 
 
   me.customError = function (msg, options, name) {

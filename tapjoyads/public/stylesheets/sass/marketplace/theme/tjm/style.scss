@@ -443,11 +443,13 @@ p {
 .plussign {
   padding-right: 20px;
   background-size: auto 100%;
+  background: url(#{$image_path}/plus-sign.png) no-repeat 98% center;
 }
 
 .checkmark {
   padding-right: 20px;
   background-size: auto 100%;
+  background: url(#{$image_path}/checkmark-grey.png) no-repeat 98% center;
 }
 
 .downarrow {
@@ -1494,6 +1496,7 @@ div.app {
 
 .ui-joy-group {
   .ui-joy-group-title {
+    padding: 8px;
     font-weight: bold;
     font-size: 1em;
     text-shadow: 0 1px 0 #fff;
@@ -1699,11 +1702,11 @@ div.app {
     padding: 5px 0 10px;
     text-align: center;
     border-top: 1px solid #fff;
-    
+
     ul {
       margin: 5px;
       margin-top: 10px;
-      
+
       li {
         display: inline;
         color: #424242;
@@ -1723,7 +1726,7 @@ div.app {
       }
     }
   }
-  
+
   small {
     font: normal .8em "Helvetica", Arial;
     text-shadow: 0 1px 0 #fff;
@@ -1806,6 +1809,14 @@ div.app {
       margin-left: 1px;
       margin-right: 1px;
       cursor: pointer;
+
+      a {
+        color: #fff;
+        text-shadow: 0 1px 0 rgba(0,0,0, .5);
+      }
+      a:hover {
+        color: #ff7f7f;
+      }
     }
     li:hover {
       color: #ff7f7f;
