@@ -1,8 +1,8 @@
 - form_for([ :games, @gamer_profile ]) do |f|
   .container
-    .ui-joy-group.p10.ptn
-      .ui-joy-group-title.mb5= t('text.shared.profile')
-      %ul.list-button-container
+    .ui-joy-group.ptn
+      .ui-joy-group-title= t('text.shared.profile')
+      %ul.list-button-container.mb10
         %li.list-button.soft-gray-gradient.pt5.pb5.inline-section.ui-no-action
           .container
             .m10.mt5
@@ -40,8 +40,8 @@
             %div.m10.mtn
               = f.text_field :city, :placeholder => t("text.shared.city"), :class => "ui-joy-input no-rounded-bottoms"
               = f.text_field :country, :placeholder => t("text.shared.country"), :class => "ui-joy-input no-rounded-tops ntb nbs"
-    .ui-joy-group.p10.ptn
-      .ui-joy-group-title.mb5= t('text.shared.favorites')
+    .ui-joy-group.ptn
+      .ui-joy-group-title= t('text.shared.favorites')
       %ul.list-button-container
         %li.list-button.soft-gray-gradient.pt5.pb5.inline-section.ui-no-action
           .container
