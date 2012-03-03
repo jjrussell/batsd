@@ -3,7 +3,7 @@ $(document).ready(function() {
   var _t = window.i18n.t,
       debounce,
       tjmViewMenu = $('#viewSelectMenu'),
-      tjmViewContainer = $('#viewSelect').parent().closest('.select-container'),
+      tjmViewContainer = $('#viewSelect').closest('.select-container'),
       selectTrigger = $('#viewSelect'),
       notify = function (message) {
         Tapjoy.Utils.notification({
@@ -172,7 +172,7 @@ $(document).ready(function() {
         $(".form-error").html(_t('games.enter_birthdate'));
         hasError = true;
       }
-      else if(values['gamer[email]'] == '' || values['gamer[email]'] == "Email") {
+      else if(values['gamer[email]'] == '' || values['gamer[email]'] == _t("shared.email")) {
         $(".form-error").html(_t('games.enter_email'));
         hasError = true;
       }
@@ -180,7 +180,7 @@ $(document).ready(function() {
         $(".form-error").html(_t('games.enter_valid_email'));
         hasError = true;
       }
-      else if(values['gamer[password]'] == '' || values['gamer[password]'] == "Password") {
+      else if(values['gamer[password]'] == '' || values['gamer[password]'] == _t("shared.password")) {
         $(".form-error").html(_t('games.enter_password'));
         hasError = true;
       }
