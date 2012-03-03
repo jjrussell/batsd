@@ -7,6 +7,7 @@ class Games::GamersController < GamesController
 
   def new
     @gamer = Gamer.new
+    redirect_to games_root_path if current_gamer.present?
   end
 
   def create
@@ -28,7 +29,7 @@ class Games::GamersController < GamesController
         raise e
       end
     end
-    @gamer_profile = GamerProfile.new(:birthdate => birthdate)
+    @gamer_profile = GamerProfile.new(:birthdate => birthdate, :nickname => params[:gamer][:nickname])
     @gamer.gamer_profile = @gamer_profile
 
     if @gamer.save
