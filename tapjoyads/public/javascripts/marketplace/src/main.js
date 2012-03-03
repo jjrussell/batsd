@@ -640,6 +640,8 @@ $(document).ready(function() {
   });
 
   function handleTabs($anchor) {
+    if (!$anchor) { return; }
+
     var targetSelector = $anchor.attr("href"),
         $target = $(targetSelector);
     $(".buffer").hide();
@@ -688,7 +690,6 @@ $(document).ready(function() {
       });
     }
     var rows = $('#content .row');
-
     if(window.innerWidth > 770){
       if(rows.is(':hidden'))
         rows.show();
@@ -706,6 +707,11 @@ $(document).ready(function() {
   $(window).bind('resize orientationchange', debounce(manageResize));
   // run logic on ready
   manageResize();
+
+  setTimeout(function(){
+    // Hide the ios address bar!
+    window.scrollTo(0, 1);
+  }, 0);
 
   Tapjoy.delay(function(){
     $('#recommedations').Carousel({
