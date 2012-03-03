@@ -1,27 +1,20 @@
-#register_message
-  .message_title.title
-    Welcome to Tapjoy!
-  .message_header
-    Tapjoy is your one stop shop to discover the hottest apps while also earning currency in apps you already play. To get the full Tapjoy experience, you'll need to connect your device.
-  .message_content.link_device
-    %a{ :href => "#", :id => "link_device" }
-      .button.grey.arrow
-        .arrow_bg
-          Connect My Device
+#register-message.mod.mb20
+  .message-header
+    = t('text.games.link_account_header')
+  .message-content.link-device
+    %a{ :href => "#", :id => "link-device" }
+      .register-btn.ui-joy-button.orange-action.pt10.pb10
+        = t('text.games.connect_my_device')
+
+- messaging_text = t('text.games.link_account_messaging', :android_market_url => link_to(t("text.games.link_account_messaging_android_href"), GAMES_ANDROID_MARKET_URL, :target => '_blank'), :tjm_url => link_to(t("text.games.link_account_messaging_tjm_href"), WEBSITE_URL)).gsub(/\"/,"\'")
 
 - content_for :page_javascript do
   :plain
-    if (!TJG.vars.isTouch) {
-      var msg = [
-        "Tapjoy is your one stop shop to discover the hottest apps on iOS and Android while also earning currency in apps you already play. ",
-        'In order to get the full Tapjoy experience, you\'ll need to connect your iOS or Android device. Simply return to <a href="#{WEBSITE_URL}" class="red-link">www.tapjoy.com</a> on your iOS device or ',
-        '<a href="#{GAMES_ANDROID_MARKET_URL}" target="_blank" class="red-link"> download the Tapjoy app </a>',
-        " on your Android device to get started. In the mean time, feel free to check out the site and create your profile so we can offer you personalized recommendations."
-      ].join('');
-      $('#register_message .message_header').html(msg);
-      $('#register_message .message_content .button .arrow_bg').html('Email device link');
-      $('#register_message .message_content.link_device').css({ 'width' : '160px' });
-      $('#link_device').unbind('click');
+    if (!Tapjoy.device.idevice && !Tapjoy.device.android) {
+      var msg = "#{messaging_text}";
+      $('#register-message .message-header').html(msg);
+      $('#register-message .message-content .register-btn').html('#{t('text.games.email_device_link')}');
+      $('#link-device').unbind('click');
       function sendLinkDevice() {
         var url = "#{games_send_device_link_path}";
         $.ajax({
@@ -32,21 +25,25 @@
           dataType: 'json',
           success: function(d) {
             if (d.success) {
-              $('#link_device').unbind('click');
-              $('#register_message .message_content .button .arrow_bg').html('Sent!');
+              $('#link-device').unbind('click');
+              $('#register-message .message-content .register-btn').html('#{t('text.shared.sent')}');
             }
             else {
-              $('#register_message .message_content .button .arrow_bg').html('Please try again');
+              $('#register-message .message-content .register-btn').html('#{t('text.shared.please_try_again')}');
             }
           },
           error: function(d) {
-            $('#register_message .message_content .button .arrow_bg').html('Please try again');
+            $('#register-message .message-content .register-btn').html('#{t('text.shared.please_try_again')}');
           }
         });
       }
-      $('#link_device').click(function() {
-        $('#register_message .message_content .button .arrow_bg').html('Sending...');
+      $('#link-device').click(function() {
+        $('#register-message .message-content .register-btn').html('#{t('text.shared.sending')}');
         sendLinkDevice();
       });
     }
 
+:css
+  #register-message .message-content .register-btn {
+    margin: 12px auto;
+  }

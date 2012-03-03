@@ -1,5 +1,11 @@
 #content.current
   .panel.clearfix
+  - if current_device.nil?
+    #noDevice.row.border.nbb
+      %h1.museo
+        = t ('text.games.welcome_tapjoy')
+      = render 'register_device'
+
     #tjmTopbar
       - if @featured_content.present?
         - link_to(get_click_url(@featured_content.tracking_offer)) do
@@ -23,17 +29,16 @@
               = t("text.games.favorites")
           - if @external_publishers.present?
             %li.showGames.active
-              = t("text.games.my_apps")
+              = t('text.games.my_apps')
           - if current_recommendations.present?
             %li.showRecommendations
-              = t("text.games.my_apps")
+              = t('text.games.recommendations')
           %li.showAll
             = t('text.shared.view_all')
 
   - if current_recommendations.present?
     #recommendationsRow.row.borders.pn.ntb.rec
-      %h1.museo.smart
-        = t("text.games.recommendations")
+      %h1.museo.smart = t('text.games.recommendations_smart')
       #recommedations.games
         - current_recommendations.each do |reco|
           .app
