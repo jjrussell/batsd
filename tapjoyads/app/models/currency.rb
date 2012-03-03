@@ -49,7 +49,7 @@ class Currency < ActiveRecord::Base
   end
 
   def has_invalid_test_devices?
-    get_test_device_ids.any? do |device_id|
+    get_test_device_ids(:reload).any? do |device_id|
       device_id.blank? || device_id.length > 100
     end
   end

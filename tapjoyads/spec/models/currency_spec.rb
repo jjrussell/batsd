@@ -45,14 +45,21 @@ describe Currency do
   end
 
   describe '#has_invalid_test_devices?' do
-    context 'when one test device key is too long' do
-      before :each do
-        long_key = 'a' * 200
-        @currency.stubs(:get_test_device_ids).returns(Set.new([long_key]))
-      end
+    before :each do
+      @currency.test_devices = Factory.next(:guid) * 5
+    end
 
+    context 'when one test device key is too long' do
       it 'returns true' do
         @currency.has_invalid_test_devices?.should be_true
+      end
+    end
+
+    context 'fixing bad list' do
+      it 'returns true' do
+        @currency.get_test_device_ids # load once
+        @currency.test_devices = Factory.next(:guid)
+        @currency.has_invalid_test_devices?.should be_false
       end
     end
   end
