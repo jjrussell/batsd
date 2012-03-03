@@ -6,35 +6,35 @@
         = t ('text.games.welcome_tapjoy')
       = render 'register_device'
 
-    #tjmTopbar
-      - if @featured_content.present?
-        - link_to(get_click_url(@featured_content.tracking_offer)) do
-          .banner
-            .more
-              .text.left.mr10
-                = @featured_content.button_text
-            .banner-img-wrapper
-              = image_tag(FeaturedContent.get_icon_url(:icon_id => "#{@featured_content.id}_secondary"), :class => 'banner-img')
-      .section.dark.ntb
-        .select-container.left.ml5
-          #viewSelect.dropdown.left
-            %img.downarrow-white.icon24{ :src => BLANK_IMAGE }
-          .heading.pl5.pr15
+  #tjmTopbar
+    - if @featured_content.present?
+      - link_to(get_click_url(@featured_content.tracking_offer)) do
+        .banner
+          .more
+            .text.left.mr10
+              = @featured_content.button_text
+          .banner-img-wrapper
+            = image_tag(FeaturedContent.get_icon_url(:icon_id => "#{@featured_content.id}_secondary"), :class => 'banner-img')
+    .section.dark.ntb
+      .select-container.left.ml5
+        #viewSelect.dropdown.left
+          %img.downarrow-white.icon24{ :src => BLANK_IMAGE }
+        .heading.pl5.pr15
+          = t('text.games.my_apps')
+        .fix
+    #viewSelectMenu.hide
+      %ul
+        - if @favorite_publishers.present?
+          %li.showFavorites
+            = t("text.games.favorites")
+        - if @external_publishers.present?
+          %li.showGames.active
             = t('text.games.my_apps')
-          .fix
-      #viewSelectMenu.hide
-        %ul
-          - if @favorite_publishers.present?
-            %li.showFavorites
-              = t("text.games.favorites")
-          - if @external_publishers.present?
-            %li.showGames.active
-              = t('text.games.my_apps')
-          - if current_recommendations.present?
-            %li.showRecommendations
-              = t('text.games.recommendations')
-          %li.showAll
-            = t('text.shared.view_all')
+        - if current_recommendations.present?
+          %li.showRecommendations
+            = t('text.games.recommendations')
+        %li.showAll
+          = t('text.shared.view_all')
 
   - if current_recommendations.present?
     #recommendationsRow.row.borders.pn.ntb.rec
