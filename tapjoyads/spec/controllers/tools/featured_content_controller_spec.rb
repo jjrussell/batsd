@@ -25,7 +25,8 @@ describe Tools::FeaturedContentsController do
           :end_date      => @end_date.to_s,
           :weight        => 1,
           :offer         => Factory(:app).primary_offer,
-          :author        => Factory(:employee)
+          :author        => Factory(:employee),
+          :button_url    => 'https://www.tapjoy.com',
         }
       }
     end

@@ -7,6 +7,7 @@ describe Games::AppReviewsController do
     @gamer = Factory(:gamer)
     login_as(@gamer)
     app = Factory(:app)
+    @currency = Factory(:currency, :app => app)
     @app_metadata = app.app_metadatas.first
   end
 
@@ -48,7 +49,8 @@ describe Games::AppReviewsController do
           :author_type     => 'Gamer',
           :app_metadata_id => @app_metadata.id,
           :text            => "Sampe review",
-          :user_rating     => 1
+          :user_rating     => 1,
+          :eid             => ObjectEncryptor.encrypt(@currency.id),
         }
       }
       post(:create, @options)
@@ -60,8 +62,7 @@ describe Games::AppReviewsController do
       end
 
       it 'should redirect to earn' do
-        encrypted_id = ObjectEncryptor.encrypt(@app_metadata.apps.first.id)
-        response.should redirect_to games_earn_path(:eid => encrypted_id)
+        response.should redirect_to games_earn_path(:eid => ObjectEncryptor.encrypt(@currency.id))
       end
 
       it 'sets user_rating' do
@@ -89,8 +90,7 @@ describe Games::AppReviewsController do
       end
 
       it 'redirects to earn' do
-        encrypted_id = ObjectEncryptor.encrypt(@app_metadata.apps.first.id)
-        response.should redirect_to games_earn_path(:eid => encrypted_id)
+        response.should redirect_to games_earn_path(:eid => ObjectEncryptor.encrypt(@currency.id))
       end
     end
   end
@@ -116,7 +116,8 @@ describe Games::AppReviewsController do
       @options = {
         :id => @gamer_review.id,
         :app_review => {
-          :user_rating => -1
+          :eid => ObjectEncryptor.encrypt(@currency.id),
+          :user_rating => -1,
         }
       }
     end
@@ -135,8 +136,7 @@ describe Games::AppReviewsController do
       end
 
       it "redirects to games/app_reviews/index" do
-        app_id = @gamer_review.app_metadata.apps.first.id
-        response.should redirect_to games_earn_path(:eid => ObjectEncryptor.encrypt(app_id))
+        response.should redirect_to games_earn_path(:eid => ObjectEncryptor.encrypt(@currency.id))
       end
 
       it 'updates app_metadata thumbs_up' do
@@ -151,11 +151,11 @@ describe Games::AppReviewsController do
     context 'trying to update unsafe attributes' do
       it 'should not update' do
         hax0r = Factory(:gamer)
-        @original_author = @gamer_review.author_id
+        original_author_id = @gamer_review.author_id
         @options[:app_review][:author_id] = hax0r.id
-        lambda {
-          put(:update, @options)
-        }.should raise_error(ActiveRecord::RecordNotSaved)
+        put(:update, @options)
+        @gamer_review.reload
+        @gamer_review.author_id.should == original_author_id
       end
     end
   end
