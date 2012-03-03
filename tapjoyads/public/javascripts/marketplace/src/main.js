@@ -716,7 +716,7 @@ $(document).ready(function() {
   }, 0);
 
   Tapjoy.delay(function(){
-    $('#recommedations').Carousel({
+    $('#recommendations').Carousel({
       cssClass : 'complete'
     });
   }, 50);
