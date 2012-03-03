@@ -4,10 +4,10 @@
       .container.mt20
         .left.ml10.pt3
           .squircle
-            = image_tag(@external_publisher.get_icon_url(:size => 114, :source => :cloudfront))
+            = image_tag(@app.get_icon_url(:size => 114, :source => :cloudfront))
         .left.ml10
           .big-title.slate.elip
-            = @external_publisher.app_name
+            = @app.name
           .container
             .left.ui-icon-medium.score.icon24.p5
               #{@app_metadata.positive_thumbs_percentage.floor}%
@@ -23,11 +23,24 @@
                 - else
                   = t('text.games.unmark_as_favorite')
 
-    .section.dark
-      .heading
-        = t('text.games.browse_offers')
+    .section.dark.ntb
+      .select-container.left.ml5
+        #viewSelect.dropdown.left
+          %img.downarrow-white.icon24{ :src => BLANK_IMAGE }
+        .heading.pl5.pr15
+          = "#{t('text.games.browse_offers')} - #{@active_currency.name}"
+        .fix
+    #viewSelectMenu.hide
+      %ul
+        - @app.currencies.each_with_index do |c, i|
+          %li{ :class => "#{"active" if c == @active_currency}" }
+            = link_to "#{t('text.games.browse_offers')} - #{c[:name]}", "#target#{i}", :class => "ui-joy-reveal"
+
     .review-area
-      = render "offers"
+      - @app.currencies.each_with_index do |c, i|
+        .buffer{ :id => "target#{i}", :class => "#{"hidden" if c != @active_currency}" }
+          - url = @external_publisher.get_offerwall_url(@device, c, request.accept_language, request.user_agent, current_gamer.id)
+          = render :partial => "offers", :locals => { :offerwall_url => url, :immediate_load => c == @active_currency }
     .section.dark
       .heading
         = t('text.games.other_options')
@@ -35,7 +48,7 @@
       %li.list-button.ntb
         -link_to new_games_app_review_path(:eid => params[:eid]) do
           .left.charcoal
-            = t("text.games.review_app_name", {:app_name => @external_publisher.app_name})
+            = t("text.games.review_app_name", {:app_name => @app.name})
           .right.rightarrow.icon16
             &nbsp;
 

@@ -313,11 +313,11 @@ $(document).ready(function() {
 
   $('.list-button, .btn, .greenblock, #signup, #login').bind(Tapjoy.EventsMap.start + ' ' + Tapjoy.EventsMap.end + ' ' + Tapjoy.EventsMap.cancel, function(e){
     var el = $(this),
-		    target = $(e.target),
+        target = $(e.target),
         which = e.type;
 
-	   if(el.hasClass('ui-no-action'))
-		  return;
+     if(el.hasClass('ui-no-action'))
+      return;
 
     if(which === Tapjoy.EventsMap.start){
       el.addClass('active');
@@ -326,9 +326,9 @@ $(document).ready(function() {
     }
   });
 
-	$('.ui-joy-button').bind(Tapjoy.EventsMap.start + ' ' + Tapjoy.EventsMap.end + ' ' + Tapjoy.EventsMap.cancel, function(e){
-		var el = $(this),
-    		which = e.type;
+  $('.ui-joy-button').bind(Tapjoy.EventsMap.start + ' ' + Tapjoy.EventsMap.end + ' ' + Tapjoy.EventsMap.cancel, function(e){
+    var el = $(this),
+        which = e.type;
 
      if(el.hasClass('disabled'))
       return;
@@ -339,7 +339,7 @@ $(document).ready(function() {
       el.removeClass('active');
     }
 
-	});
+  });
 
   (function () {
     var showSuccessMessage = function (gamers, non_gamers) {
@@ -541,7 +541,7 @@ $(document).ready(function() {
       tjmViewContainer.addClass('active');
       tjmViewMenu.removeClass('hide');
 
-      heading.text('Choose a Section');
+      heading.text(_t('games.choose_section'));
 
       tjmViewMenu.css('top', tjmViewContainer.offset().top + (tjmViewContainer.outerHeight(true) - 4) + 'px');
 
@@ -550,6 +550,14 @@ $(document).ready(function() {
       });
     }
   });
+
+  function handleTabs($anchor) {
+    var targetSelector = $anchor.attr("href"),
+        $target = $(targetSelector);
+    $(".buffer").hide();
+    $target.show();
+    $(".ajax-loader", $target).trigger("ajax-initiate");
+  }
 
   $('li', tjmViewMenu).each(function(){
     var li = $(this);
@@ -576,7 +584,10 @@ $(document).ready(function() {
         }
       }
 
+      handleTabs($("a.ui-joy-reveal", li));
+
       $('.heading', tjmViewContainer).text(li.text())
+      return false;
     });
   });
 
@@ -588,7 +599,7 @@ $(document).ready(function() {
         width: tjmViewContainer.width() - 4 + 'px'
       });
     }
-		var rows = $('#content .row');
+    var rows = $('#content .row');
 
     if(window.innerWidth > 770){
       if(rows.is(':hidden'))

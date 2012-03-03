@@ -1788,6 +1788,14 @@ div.app {
       margin-left: 1px;
       margin-right: 1px;
       cursor: pointer;
+
+      a {
+        color: #fff;
+        text-shadow: 0 1px 0 rgba(0,0,0, .5);
+      }
+      a:hover {
+        color: #ff7f7f;
+      }
     }
     li:hover {
       color: #ff7f7f;
