@@ -104,6 +104,15 @@
   %ul
     - @associated_offers.each do |offer|
       %li= link_to(offer.name_with_suffix, statz_path(offer.id))
+.clear
+
+%a#show_associated_brands{:href => '#'} [#{@offer.brands.size} associated brands]
+#associated_brands_list.hidden
+  %h5 Associated Brands:
+  %ul
+    - @offer.brands.each do |brand|
+      %li= brand.name
+
 
 %h4 Partner
 = link_to('[Activity Log]', activities_path(:partner_id => @offer.partner_id))
@@ -197,6 +206,12 @@
       $('#associated_list').toggle();
       return false;
     });
+
+    $('#show_associated_brands').click(function() {
+      $('#associated_brands_list').toggle();
+      return false;
+    });
+
 
     $('#show_boosts').click(function() {
       $('#boosts_list').toggle();

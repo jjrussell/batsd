@@ -1,6 +1,9 @@
 - @page_title = 'Brand Offers'
 
 %h2 Associate Brands with Offers
+
+= link_to('Manage Brands', tools_brands_path)
+
 .tjform
   = label_tag 'brand_box', 'Brand Name:'
   = text_field_tag 'brand_box', '', :size => '40'

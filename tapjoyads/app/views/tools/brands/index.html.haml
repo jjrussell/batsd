@@ -15,7 +15,7 @@
       - @brands.each do |brand|
         %tr{ :class => cycle('even', 'odd') }
           %td= brand.name
-          %td= truncate(brand.offers.join(', '), :length => 50)
+          %td= "(#{brand.offers.size}) " + truncate(brand.offers.join(', '), :length => 300)
           %td.nowrap= brand.created_at.to_s(:pub)
           %td= link_to('Edit', edit_tools_brand_path(brand.id))
 
@@ -33,9 +33,9 @@
       $("#brands_table").tablesorter({
         widgets: ['zebra'],
         headers: {
-          0:  { sorter: false },
-          4:  { sorter: false },
-          5:  { sorter: 'usLongDate' }
+          1:  { sorter: false },
+          2:  { sorter: 'usLongDate' },
+          3:  { sorter: false }
         },
         sortList: [[1,0], [5,0]]
       });

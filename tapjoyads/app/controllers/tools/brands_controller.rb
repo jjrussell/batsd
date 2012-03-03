@@ -30,33 +30,11 @@ class Tools::BrandsController < WebsiteController
     @brand = Brand.find(params[:id], :include => :offers)
     if @brand.update_attributes(params[:brand])
       flash[:notice] = 'Successfully updated'
+      redirect_to tools_brands_path
     else
       flash[:error] = 'Unsuccessful'
+      render :action => :edit
     end
-    render :action => :edit
   end
 
-  def remove_offer
-    @brand = Brand.find(params[:id], :include => :offers)
-    offer = Offer.find(params[:offer_id])
-    @brand.offers.delete(offer)
-    if @brand.save
-      flash[:notice] = "#{offer.name} was removed"
-    else
-      flash[:error] = 'Removal unsuccessful'
-    end
-    render :action => :edit
-  end
-
-  def add_offer
-    @brand = Brand.find(params[:id], :include => :offers)
-    offer = Offer.find(params[:offer_id])
-    @brand.offers << offer
-    if @brand.save
-      flash[:notice] = "#{offer.name} was added"
-    else
-      flash[:error] = 'Addition unsuccessful'
-    end
-    render :action => :edit
-  end
-end
+ end
