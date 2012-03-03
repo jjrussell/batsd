@@ -19,7 +19,7 @@
           = f.text_area :content, :rows => 5, :value => params[:content], :required => 'true', :class => 'ui-joy-textarea'
         .field
           .container.pb10
-            = f.submit t('text.shared.submit'), :class => 'ui-joy-button primary pb10 pt10 disabled enable-when-valid'
+            = f.submit t('text.shared.submit'), :class => 'ui-joy-button primary pb10 pt10'
           .container.pb2
             = button_to_function t('text.shared.cancel'), 'history.go(-1)', :class => 'ui-joy-button pb10 pt10 secondary'
         .form-error.center
