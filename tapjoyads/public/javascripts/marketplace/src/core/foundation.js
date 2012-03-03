@@ -295,7 +295,7 @@
     Tap.apply(Tap, {
       browser: {
         prefix: (/webkit/i).test(appversion) ? 'webkit' : (/firefox/i).test(agent) ? 'moz' : 'opera' in window ? 'o' : (/msie/i).test(agent) ? 'ms' : '',
-        language: (('language' in navigator) ? navigator.language.replace('-', '_').toLowerCase() : undefined ),
+        language: (('language' in navigator) ? navigator.language.toLowerCase() : undefined ),
         version: ('appVersion' in navigator) ? ((navigator.appVersion.match(/OS \d+_\d+/g)) ? (navigator.appVersion.match(/OS \d+_\d+/g)) : navigator.appVersion) : ''
       }
     });
@@ -315,6 +315,7 @@
 
     Tap.apply(Tap, {
       device: {
+        name: (('platform' in navigator) ? navigator.platform.toLowerCase() : undefined ),
         android: (/android/gi).test(appversion),
         idevice: (/iphone|ipad|ipod/gi).test(appversion),
         iphone: (/iphone/gi).test(appversion),
