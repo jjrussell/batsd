@@ -20,9 +20,6 @@ class Games::HomepageController < GamesController
     @app_reviews = AppReview.by_gamers.paginate_all_by_app_metadata_id(@app_metadata.id, :page => params[:app_reviews_page])
   end
 
-  def review_app
-  end
-
   def earn
     device_id = current_device_id
     @device = Device.new(:key => device_id) if device_id.present?
@@ -39,24 +36,6 @@ class Games::HomepageController < GamesController
     @app = App.find_by_id(@external_publisher.app_id)
     @app_metadata = @app.primary_app_metadata
     @mark_as_favorite = !current_gamer.favorite_apps.map(&:app_metadata_id).include?(@app_metadata.id)
-
-    respond_to do |f|
-      f.html
-      f.js { render :layout => false }
-    end
-  end
-
-  def my_apps
-    device_id = current_device_id
-    @device = Device.new(:key => device_id) if device_id.present?
-    if @device.present?
-      @external_publishers = ExternalPublisher.load_all_for_device(@device)
-      if params[:load] == 'earn'
-        currency = Currency.find_by_id(params[:currency_id])
-        @show_offerwall = @device.has_app?(currency.app_id) if currency
-        @offerwall_external_publisher = ExternalPublisher.new(currency) if @show_offerwall
-      end
-    end
 
     respond_to do |f|
       f.html
