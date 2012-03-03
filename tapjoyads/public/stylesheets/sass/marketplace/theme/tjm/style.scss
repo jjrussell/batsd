@@ -511,6 +511,13 @@ p {
   background-position: 98% center;
 }
 
+.pos-icon-99 {
+  background-position: 99% center;
+}
+
+.pos-icon-100 {
+  background-position: 100% center;
+}
 /**
  * icon sizing
  */
@@ -1359,9 +1366,6 @@ div.ui-joy-button .get-app {
   font-size: 1em;
   text-align: center;
   text-shadow: 0 1px 0 #437643;
-  z-index: 9;
-  position: relative;
-
 /*  position: absolute;
   left: 25px;
   bottom: -10px;
@@ -1524,7 +1528,9 @@ div.app {
   font-size: 1.1em;
   text-shadow: 0 1px 0 #fff;
 }
-
+.ui-joy-label.small {
+  font-size: .8em;
+}
 .section {
   height: 42px;
   .heading {
