@@ -145,7 +145,12 @@
           - property_row('Max age rating', c.max_age_rating)
           - property_row('Disabled offers', c.disabled_offers)
           - property_row('Disabled partners', c.disabled_partners)
-          - property_row('Test devices', c.test_devices)
+          %tr
+            %td Test devices
+            %td
+              %ul
+                - c.get_test_device_ids.each do |device_id|
+                  %li= link_to(device_id, device_info_tools_path(:udid => device_id))
           - property_row('id', c.id + ' - ' + clippy(c.id))
 
 .load-circle= image_tag('load-circle.gif')
