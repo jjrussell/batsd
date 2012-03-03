@@ -51,18 +51,12 @@
     };
   };
 
-  me.afterAjax = function () {};
-
   me.fetchData = function ($container, url, params) {
     var jsonp = $container.data("is-jsonp");
     return $.ajax({
       url: url,
       dataType: jsonp ? "jsonp" : undefined,
-      data: params,
-      error: function () {
-        $(".ajax-error", $container).show();
-        me.afterAjax({}, $container);
-      }
+      data: params
     });
   };
 
@@ -74,13 +68,23 @@
         $load_more = $(".ajax-load-more", $$),
         template = me.template($("script", $$).html()),
         url = $$.data("url"),
-        params = $$.data("params") || {};
+        immediate = $$.data("immediate-load"),
+        params = $$.data("params") || {},
+        getSome;
 
-      me.afterAjax = function (data, $container) {
-        $placeholder.hide();
-        $load_more.attr("disabled", false);
-        return data.MoreDataAvailable ? $load_more.show() : $load_more.hide();
+      getSome = function () {
+        me.fetchData($$, url, params).then(function (data) {
+          $target.append(template(data));
+        }).fail(function () {
+          $(".ajax-error", $$).show();
+        }).always(function (data) {
+          $placeholder.hide();
+          return data.MoreDataAvailable ? $load_more.show() : $load_more.hide();
+        });
+
+        $$.unbind("ajax-initiate", getSome);
       };
+      $$.bind("ajax-initiate", getSome);
 
       $load_more.click(function () {
         $placeholder.show();
@@ -90,16 +94,10 @@
           params.start += params.max;
         }
 
-        me.fetchData($$, url, params).then(function (data) {
-          $target.append(template(data));
-          me.afterAjax(data, $$);
-        });
+        getSome();
       });
 
-      me.fetchData($$, url, params).then(function (data) {
-        $target.append(template(data));
-        me.afterAjax(data, $$);
-      });
+      if (immediate) { getSome(); }
     });
   };
 

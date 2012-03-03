@@ -206,6 +206,13 @@ en:
       skip: Skip
       title: "Earn %{currency}"
       try_out: "Try out"
+    footer:
+      about: About Tapjoy
+      advertisers: Advertisers
+      blog: Blog
+      developers: Developers
+      privacy: Privacy Policy
+      copyright: "Copyright &copy; 2012 Tapjoy, Inc. All Rights Reserved. Tapjoy and the Tapjoy logo are trademarks or registered trademarks of Tapjoy, Inc.  All third party logos and trademarks mentioned are the property of their respective owners."
     games:
       about_body: "A better way to love the apps you have and find the apps you'll love."
       about_title: "\"Somehow it knows exactly what apps I like.\""
@@ -231,16 +238,18 @@ en:
       cant_fetch_offers: "There was an issue fetching more offers. Please try again."
       change: change
       change_linked_account: "Change Linked Account"
+      choose_section: Choose a Section
       collect: Collect
       collect_rewards: "Collect rewards"
       connect_my_device: "Connect My Device"
       connect_your_android: "Please connect your Android device"
       connect_your_device: "Please connect your device"
+      connect_to_facebook: Click to Connect to Facebook
+      connected_to_twitter: Connected to Twitter
+      contact_support: Contact Support
+      contact_us: Contact Us
+      cookies_required: Please enable cookies in your browser
       connected_to_facebook: "Connected to Facebook"
-      connected_to_twitter: "Connected to Twitter"
-      contact_support: "Contact Support"
-      contact_us: "Contact Us"
-      cookies_required: "Please enable cookies in your browswer"
       deactivate: Deactivate
       del_acct_confirm: "Click on the button below to deactivate your account. Once an account has been deactivated for %{days_before_deletion} days, it will be completely deleted. We cannot recover your account once it has been deleted."
       delete_my_account: "Delete My Account"
@@ -264,6 +273,7 @@ en:
       enter_platform: "Please choose iOS or Android"
       enter_tos: "Please agree to the terms and conditions"
       enter_valid_email: "Enter a valid email address"
+      favorites: Favorites
       error_mark_as_favorite: "Error marking app as Favorite"
       error_unmark_as_favorite: "Error unmarking app as Favorite"
       failed_to_change_linked: "Failed to change linked account."

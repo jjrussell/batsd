@@ -3,11 +3,11 @@
     .page-header
       .container
         .left.ml10.pt3
-          .big-title.mt10
+          %h1.museo.mt10
             = @is_following ? t('text.shared.following') : t('text.shared.followers')
 
     .ui-joy-group.p10
-      .ui-joy-group-title.pb10
+      .ui-joy-group-title.pb5
         - if @friends_list.size == 0
           = t('text.shared.none')
         - else

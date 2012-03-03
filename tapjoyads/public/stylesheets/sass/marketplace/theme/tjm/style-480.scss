@@ -33,3 +33,17 @@
     width: 60% !important;
   }
 }
+
+.footer {
+  .links {
+    ul {
+      li {
+        font: bold .7em "Helvetica", Arial;
+      }
+    }
+  }
+
+  small {
+    font: normal .5em "Helvetica", Arial;
+  }
+}
