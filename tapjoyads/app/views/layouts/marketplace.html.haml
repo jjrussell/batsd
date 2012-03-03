@@ -73,7 +73,7 @@
       = yield :page_javascript
 
     :javascript
-      Tapjoy.rootPath =  "#{games_root_path}";
+      Tapjoy.rootPath =  "#{WEBSITE_URL}";
       Tapjoy.androidAppPath = "#{GAMES_ANDROID_MARKET_URL}";
 
     - if Rails.env.production?
