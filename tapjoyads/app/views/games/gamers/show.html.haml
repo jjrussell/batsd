@@ -12,7 +12,7 @@
             %span.aside
               (#{t("text.games.thats_you")})
           - else
-            Chuck Norris
+            = current_gamer.email
             %span.aside
               (#{t("text.games.thats_you")})
               = link_to "(#{t("text.games.change")})", edit_games_gamer_profile_path(current_gamer)
