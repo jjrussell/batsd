@@ -56,7 +56,7 @@ describe Currency do
     end
 
     context 'fixing bad list' do
-      it 'returns true' do
+      it 'returns false' do
         @currency.get_test_device_ids # load once
         @currency.test_devices = Factory.next(:guid)
         @currency.has_invalid_test_devices?.should be_false
