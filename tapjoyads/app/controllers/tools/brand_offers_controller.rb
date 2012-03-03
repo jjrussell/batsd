@@ -3,10 +3,7 @@ class Tools::BrandOffersController < WebsiteController
   current_tab :tools
   filter_access_to :all
 
-#  def index
-#  end
   def create_brand
-    puts "\n\n\n\n\n\n\n\n#{params.inspect}\n\n\n\n\n\n\n\n\n\n"
     brand_name = params[:name]
     puts brand_name
     brand = Brand.new(:name => brand_name)
@@ -27,7 +24,10 @@ class Tools::BrandOffersController < WebsiteController
   end
   def offers
     brand = Brand.find(params[:id])
-    offers = brand.offers
+    offers = []
+    brand.offers.each do |offer|
+      offers << {:id => offer.id, :name => offer.search_result_name }
+    end
     render(:json => offers.to_json)
   end
 end

@@ -5,6 +5,8 @@ class SearchController < WebsiteController
   def offers
     if params[:app_offers_only]
       conditions = [ "name LIKE ? AND item_type = ?", "%#{params[:term]}%", 'app' ]
+    elsif params[:selected_offers]
+      conditions = [ "name LIKE ? AND id NOT IN (?)", "%#{params[:term]}%", params[:selected_offers] ]
     else
       conditions = [ "name LIKE ?", "%#{params[:term]}%" ]
     end
