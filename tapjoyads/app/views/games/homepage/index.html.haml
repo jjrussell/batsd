@@ -19,7 +19,8 @@
       #viewSelectMenu.hide
         %ul
           - if @favorite_publishers.present?
-            %li.showFavorites Favorites
+            %li.showFavorites
+              = t("text.games.favorites")
           - if @external_publishers.present?
             %li.showGames.active
               = t("text.games.my_apps")
