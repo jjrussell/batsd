@@ -29,14 +29,17 @@ ul.flush li {
   padding: 0;
 }
 
-input, textarea, select {
-  -webkit-user-select: auto;
+input, textarea, select, option {
   -webkit-appearance: none;
   outline: none;
+  -webkit-outline: none;
+  -moz-outline: none;
+  -o-user-outline: none;
 }
 
 input[type=submit] {
    -webkit-appearance: none;
+   -moz-appearance: none;
    margin: 0;
    padding: 0;
    border: 0;
@@ -123,9 +126,19 @@ input[type=checkbox]:checked {
 
 .row {
   box-shadow: none;
+}
 
-  .platform {
+#platform-row {
+  width: 300px;
+  margin: 12px auto 0;
+  text-align: center;
+  div {
+    float: left;
   }
+}
+
+#tos-row {
+  margin-top: 12px;
 }
 
 #login,
@@ -194,7 +207,7 @@ span.gill {
   z-index: 999;
 
   a, a:visited {
-    color: #e9292e;
+    color: #fff;
   }
   ul, ol {
     margin: 0;
@@ -215,7 +228,8 @@ span.gill {
     border: 1px solid #bfbfbf;
     color: #a5a5a5;
     font: 14px 'Gill Sans', 'Gill Sans MT', Arial , sans-serif;
-    padding: 12px 16px;
+    padding: 8px;
+    margin-right: 4px;
     @include rounded-corners(4px);
     @include inset-shadow("rgba(0,0,0, .8)", 3px);
   }
@@ -227,6 +241,32 @@ span.gill {
     font-size: 1.1em;
     padding: 11px 8px;
   }
+  #platform_ios,
+  #platform_android {
+    cursor: pointer;
+    width: 150px;
+    padding: 6px 0 2px;
+    height: 32px;
+
+    input[type=checkbox] {
+      opacity: 0;
+      visibility: hidden;
+    }
+    label {
+      position: relative;
+    }
+  }
+  #platform_ios {
+    border-top-right-radius: 0px;
+    border-bottom-right-radius: 0px;
+  }
+  #platform_android {
+    border-top-left-radius: 0px;
+    border-bottom-left-radius: 0px;
+  }
+  #platform_ios.orange-action, #platform_android.orange-action {
+    padding: 5px 0 2px;
+  }
   .field {
     margin-bottom: 10px;
 
@@ -237,6 +277,9 @@ span.gill {
     .field_tos_text {
       font-size: 0.85em;
       width: 260px;
+      a, a:visited {
+        color: #e9292e;
+      }
     }
   }
   .title {
@@ -252,7 +295,7 @@ span.gill {
   }
 
   .cancel-btn {
-    margin-left: 11px;
+    margin-right: 11px;
   }
 
   .forgot-pass a {
@@ -261,7 +304,7 @@ span.gill {
     font-size: 13px;
   }
 
-  .login-error, .signup-error {
+  .form-error {
     text-align: center;
     border-radius: 3px 3px 3px 3px;
     font: normal 1em "Gill Sans", Arial;
@@ -271,6 +314,9 @@ span.gill {
     text-shadow: 0 -1px 0 #c93232;
     line-height: 1.5em;
     margin-bottom: 7px;
+    opacity: 0;
+    visibility: 0;
+    @include animate(all, 0.35s, ease-in);
   }
 }
 
@@ -290,15 +336,31 @@ span.gill {
 
     .signup-nav-menu {
       color: #fff;
-      height: 65px;
+      height: 60px;
       margin: 0 auto;
+      padding-top: 24px;
       width: 300px;
+
+      #gamer_submit {
+        position: relative;
+        top: 0;
+      }
+      #gamer_submit.enabled {
+        -webkit-animation-name: bounce-up;
+        -webkit-animation-duration: .5s;
+        -webkit-transition-delay: 2s;
+        -webkit-animation-iteration-count: 3;
+        -webkit-animation-timing-function: ease-in-out;
+        -moz-animation-name: bounce-scale;
+        -moz-animation-duration: .5s;
+        -moz-transition-delay: 2s;
+        -moz-animation-iteration-count: 3;
+        -moz-animation-timing-function: ease-in-out;
+      }
 
       .title {
         font: 500 22px "Museo Slab";
         color: #fff;
-        position: relative;
-        top: 18px;
       }
       .next-btn {
         cursor: default;
@@ -311,9 +373,64 @@ span.gill {
       }
     }
   }
-  .register-form {
+
+  .register-form, .register-progress, #register-android, #register-ios {
     margin: 0 auto;
     width: 300px;
+    text-align: center;
+    padding-top: 12px;
+  }
+
+  #register-android, #register-ios {
+    text-align: left;
+    @include animate(all, 0.35s, ease-in);
+    .message {
+       margin-top: 12px;
+    }
+    .install {
+      margin-top: 24px;
+      cursor: pointer;
+    }
+  }
+  #register-ios {
+    .install {
+
+      img {
+        background: url(#{$image_path}/ios_link.png) no-repeat center center;
+        height: 147px;
+        width: 300px;
+      }
+    }
+  }
+  .register-progress {
+    padding-top: 150px;
+    @include animate(all, 0.35s, ease-in);
+
+    .register-message {
+      font-size: 16px;
+    }
+    .register-loader {
+      width: 180px;
+      margin: 0 auto;
+      opacity: 0;
+      visibility: hidden;
+
+      #tapjoy_loader {
+        padding: 6px 0;
+        width: 50px;
+        text-align: center;
+      }
+      .register-text {
+        font-size: 24px;
+        margin-right: 8px;
+        position: relative;
+        top: 8px;
+      }
+    }
+  }
+  .try-again {
+    margin-top: 12px;
+    padding: 8px 0;
   }
   .cancel-btn, .login-btn {
     cursor: pointer;
@@ -332,7 +449,32 @@ span.gill {
 }
 
 .register-form {
+  height: auto;
+  opacity: 1;
   padding-top: 20px;
+  visibility: visible;
+  @include animate(all, 0.35s, ease-in);
+
+  label[for=birthdate] {
+    display: inline-block;
+  }
+}
+
+.register-form.close {
+  height: 0;
+  opacity: 0;
+  overflow: hidden;
+  visibility: hidden;
+  @include animate(all, 0.35s, ease-in);
+}
+
+.register-form.open {
+  height: auto;
+  opacity: 1;
+  visibility: visible;
+}
+.install-btn {
+  padding: 10px 24px;
 }
 
 #content {
@@ -854,6 +996,7 @@ span.gill {
 }
 
 @media screen and (max-width: 480px) {
+  @include gill;
 
   body {
     background: transparent url(#{$image_path}/noise_bg.png) repeat top left;
@@ -1056,7 +1199,7 @@ span.gill {
   }
 }
 
-.footer {
+.submenu, .footer {
   display: none;
 }
 
