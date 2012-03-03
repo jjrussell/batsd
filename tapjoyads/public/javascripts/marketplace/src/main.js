@@ -580,33 +580,40 @@ $(document).ready(function() {
     var $$ = $(this),
       $form = $$.closest("form"),
       $req = $("[required]", $form),
-      $psword = $("input[name*='password']", $form);
+      $psword = $("input[name*='password']", $form),
+      invalid;
+
+    $$.click(function () {
+      if(invalid.length > 0) {
+        notify(_t('games.invalid_fields'));
+        return false;
+      }
+    });
 
     function enable() {
-      $$.removeAttr("disabled").removeClass("disabled");
+      $$.removeClass("disabled");
     }
 
     function disable() {
-      $$.attr("disabled", "disabled").addClass("disabled");
+      $$.addClass("disabled");
     }
 
     function checkValid() {
-      var all_valid = true;
+      invalid = [];
 
       $req.each(function () {
         if (!$(this).val()) {
-          all_valid = false;
-          return false;
+          invalid.push($(this));
         }
       });
 
-      if (all_valid && $psword.length === 2) {
+      if ($psword.length === 2) {
         if($psword.first().val() !== $psword.last().val()) {
-          all_valid = false;
+          invalid = invalid.concat($psword);
         }
       }
 
-      return all_valid ? enable() : disable();
+      return invalid.length === 0 ? enable() : disable();
     }
 
     $req.bind("change keyup", debounce(checkValid));
@@ -801,7 +808,7 @@ $(document).ready(function() {
   }
   // If on mobile device and cookie missing, prompt user to select closest matching device
   if (Tapjoy.requireSelectDevice && Tapjoy.selectDevice.length > 0 && (Tapjoy.device.idevice || Tapjoy.device.android)) {
-    Tapjoy.Utils.mask();
+    //Tapjoy.Utils.mask();
   }
 
 
