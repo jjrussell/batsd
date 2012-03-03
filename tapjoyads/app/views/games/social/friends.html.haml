@@ -6,8 +6,8 @@
           %h1.museo.mt10
             = @is_following ? t('text.shared.following') : t('text.shared.followers')
 
-    .ui-joy-group.p10
-      .ui-joy-group-title.pb5
+    .ui-joy-group.ptn
+      .ui-joy-group-title
         - if @friends_list.size == 0
           = t('text.shared.none')
         - else

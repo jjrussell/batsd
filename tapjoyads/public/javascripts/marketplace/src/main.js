@@ -799,9 +799,11 @@ $(document).ready(function() {
     }
     $('#device-select-list').html(m);
   }
-  // If on mobile device and cookie missing, prompt user to select closest matching device
+	
+	// If on mobile device and cookie missing, prompt user to select closest matching device
   if (Tapjoy.requireSelectDevice && Tapjoy.selectDevice.length > 0 && (Tapjoy.device.idevice || Tapjoy.device.android)) {
-    Tapjoy.Utils.mask();
+ //commenting out until we can talk to Van 
+	//  Tapjoy.Utils.mask();
   }
 
 
