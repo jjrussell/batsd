@@ -11,9 +11,8 @@
       .ui-joy-group-title.mb5= t('text.shared.password')
       %ul.list-button-container
         %li.list-button.soft-gray-gradient
-          .left
-            .ui-joy-label
-              = link_to t('text.shared.change_password'), password_games_gamer_path
-          .right.rightarrow.icon24.mt10.icon-pos-100.mr10
-            &nbsp;
+          - link_to password_games_gamer_path(@gamers_gamer) do
+            .left
+              .ui-joy-label.small.charcoal= t('text.shared.password')
+              .ui-joy-label= t('text.shared.change_password')
           
