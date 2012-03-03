@@ -216,10 +216,6 @@ describe Tools::FeaturedContentsController do
       it 'redirect to tools/featured_contents/index' do
         response.should redirect_to(tools_featured_contents_path)
       end
-
-      it 'deletes associated tracking offer' do
-        Offer.find_by_id(@tracking_offer_id).should be_nil
-      end
     end
   end
 end

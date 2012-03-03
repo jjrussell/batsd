@@ -17,7 +17,7 @@ class FeaturedContent < ActiveRecord::Base
 
   belongs_to :author, :polymorphic => true
   belongs_to :offer
-  has_one :tracking_offer, :class_name => 'Offer', :dependent => :destroy, :as => :tracking_for, :conditions => 'id = tracking_for_id'
+  has_one :tracking_offer, :class_name => 'Offer', :as => :tracking_for, :conditions => 'id = tracking_for_id'
 
   validates_presence_of :author, :if => :author_required?, :message => "Please select an author."
   validates_presence_of :offer, :if => :offer_required?, :message => "Please select an offer/app."
@@ -103,6 +103,15 @@ class FeaturedContent < ActiveRecord::Base
     Mc.delete("icon.s3.#{id}")
   end
 
+  def expired?
+    end_date < Time.zone.now.to_date
+  end
+
+  def expire!
+    self.end_date = Time.zone.now - 2.days
+    save!
+  end
+
   private
 
   def save_icon_in_different_sizes!(icon_src_blob, icon_id, bucket)
@@ -154,8 +163,6 @@ class FeaturedContent < ActiveRecord::Base
       if offer
         self.tracking_offer.device_types = platforms if platforms_changed?
         self.tracking_offer.save! if self.tracking_offer.changed?
-      else
-        tracking_offer.destroy
       end
     else
       create_tracking_offer
