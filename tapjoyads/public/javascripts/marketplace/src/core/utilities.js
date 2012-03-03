@@ -8,8 +8,11 @@
        * @param {mixed} message Can be elements, functions, arrays, objects, you name it
        */
       log : function(result, message){
-        if(window.console && window.console.log){
-          window.console.log(result +' :: '+ message);
+        // Get around YUI compressor
+        var cnsl = window.console;
+        if(window.ENVIRONMENT !== "development") { return; }
+        if(cnsl && cnsl.log){
+          cnsl.log(result +' :: '+ message);
         }
       },
 
@@ -70,7 +73,6 @@
       },
 
       or: function(v,d) {
-        console.log(this);
         if (this.isEmpty(v)) {
           return d;
         }
