@@ -42,6 +42,17 @@ class Currency < ActiveRecord::Base
   validates_each :disabled_offers, :allow_blank => true do |record, attribute, value|
     record.errors.add(attribute, "must be blank when using whitelisting") if record.use_whitelist? && value.present?
   end
+  validates_each :test_devices do |record, attribute, value|
+    if record.has_invalid_test_devices?
+      record.errors.add(attribute, "includes invalid device IDs")
+    end
+  end
+
+  def has_invalid_test_devices?
+    get_test_device_ids.any? do |device_id|
+      device_id.blank? || device_id.length > 100
+    end
+  end
 
   named_scope :for_ios, :joins => :app, :conditions => "#{App.quoted_table_name}.platform = 'iphone'"
   named_scope :just_app_ids, :select => :app_id, :group => :app_id
