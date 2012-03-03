@@ -1,2 +1,19 @@
 .footer
-  = render '/shared/truste'
+  .links
+    %ul
+      %li
+        = t('text.footer.developers')
+      %li
+        = t('text.footer.advertisers')
+      %li
+        = t('text.footer.about')
+      %li
+        = t('text.footer.privacy')
+      %li
+        = t('text.footer.blog')
+    %small
+      = t('text.footer.copyright')
+  .center
+    = render '/shared/truste'
+
+  

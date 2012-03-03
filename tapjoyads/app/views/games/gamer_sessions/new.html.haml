@@ -114,18 +114,18 @@
     .container
       %ul
         %li
-          Developers
+          = t('text.footer.developers')
         %li
-          Advertisers
+          = t('text.footer.advertisers')
         %li
-          About Tapjoy
+          = t('text.footer.about')
         %li
-          Privacy Policy
+          = t('text.footer.privacy')
         %li
-          Blog
+          = t('text.footer.blog')
     .container
       %small
-        = t('text.shared.copyright')
+        = t('text.footer.copyright')
 
 - content_for :page_head do
   %meta{ :name => 'description', :content => t('text.games.meta_description') }

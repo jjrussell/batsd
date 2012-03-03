@@ -206,6 +206,13 @@ en:
       skip: Skip
       title: "Earn %{currency}"
       try_out: "Try out"
+    footer:
+      about: About Tapjoy
+      advertisers: Advertisers
+      blog: Blog
+      developers: Developers
+      privacy: Privacy Policy
+      copyright: "Copyright &copy; 2012 Tapjoy, Inc. All Rights Reserved. Tapjoy and the Tapjoy logo are trademarks or registered trademarks of Tapjoy, Inc.  All third party logos and trademarks mentioned are the property of their respective owners."      
     games:
       about_body: "A better way to love the apps you have and find the apps you'll love."
       about_title: "\"Somehow it knows exactly what apps I like.\""

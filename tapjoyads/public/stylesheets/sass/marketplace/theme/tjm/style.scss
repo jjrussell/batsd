@@ -1695,8 +1695,44 @@ div.app {
 }
 
 .footer {
+  .links {
+    padding: 5px 0 10px;
+    text-align: center;
+    border-top: 1px solid #fff;
+    
+    ul {
+      margin: 5px;
+      margin-top: 10px;
+      
+      li {
+        display: inline;
+        color: #424242;
+        font: bold .9em "Helvetica", Arial;
+        text-shadow: 0 1px 0 #fff;
+        padding: 0 5px;
+        border-right: 1px solid #424242;
+        border-left: 1px solid #fff;
+      }
+
+      li:first-child {
+        border-left: 0;
+      }
+
+      li:last-child {
+        border-right: 0;
+      }
+    }
+  }
+  
+  small {
+    font: normal .8em "Helvetica", Arial;
+    text-shadow: 0 1px 0 #fff;
+    max-width: 675px;
+    display: block;
+    margin: 0 auto;
+  }
   .truste {
-    padding: 12px 0;
+    padding: 0 0 12px;
     text-align: center;
 
     a {
