@@ -9,6 +9,6 @@ module ApplicationHelper
   end
 
   def get_games_hide_login
-    return @gamer_header_hide || {}
+    return @gamer_header_hide || false
   end
 end
