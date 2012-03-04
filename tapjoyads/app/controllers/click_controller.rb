@@ -219,7 +219,7 @@ class ClickController < ApplicationController
 
   def recently_clicked?
     click = Click.find(click_key)
-    cutoff_time = @offer.multi_complete? && @offer.interval < 1.hour.to_i ? @now - @offer.interval : @now - 1.hour
+    cutoff_time = @now - (@offer.multi_complete? && @offer.interval < 1.hour.to_i ? @offer.interval : 1.hour)
     recently_clicked = click.present? &&
                        click.clicked_at > cutoff_time &&
                        click.publisher_app_id == params[:publisher_app_id] &&
