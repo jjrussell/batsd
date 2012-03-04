@@ -1,7 +1,7 @@
 - hide_login = get_games_hide_login
 
 .container
-  - if current_gamer.nil? && !hide_login
+  - if current_gamer.nil? && !@hide_login
     .right
       #login.header-button
         %span= t('text.shared.login_verb')
@@ -61,7 +61,7 @@
                 .logout
                   %span= t('text.shared.logout')
 
-- if current_gamer.nil? && !hide_login
+- if current_gamer.nil? && !@hide_login
   .header-h-split
     &nbsp;
   .container.mt2
