@@ -732,25 +732,25 @@ $(document).ready(function() {
   if (Tapjoy.selectDevice) {
     var path, device_found = false, device_count = 0, device_data, matched_data;
     var d = [], a = [], m = [];
-    if (Tapjoy.rootPath) {
-      path = Tapjoy.rootPath.replace(/\/$/, '');
+    if (Tapjoy.selectDevicePath) {
+      path = Tapjoy.selectDevicePath;
     }
     else {
-      path = location.pathname.replace(/\/$/, '');
+      path = '/switch_device';
     }
     $.each(Tapjoy.selectDevice, function(i,v){
       var device_type = v.device_type;
       if (!Tapjoy.Utils.isEmpty(device_type) && Tapjoy.device.name && (device_type.toLowerCase() == Tapjoy.device.name.toLowerCase())) {
         device_count++;
         device_found = true;
-        d.push('<a href="', path ,'/switch_device?data=', v.data ,'">');
+        d.push('<a href="', path ,'?data=', v.data ,'">');
           d.push('<li class="device-item">');
             d.push(v.name);
           d.push('</li>');
         d.push('</a>');
       }
       else if (!Tapjoy.supportsTouch) { // Web
-        a.push('<a href="', path ,'/switch_device?data=', v.data ,'">');
+        a.push('<a href="', path ,'?data=', v.data ,'">');
           a.push('<li class="device-item">');
             a.push(v.name);
           a.push('</li>');
