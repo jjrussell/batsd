@@ -60,8 +60,7 @@
       $t.innerWidth = $t.container.width();
       $t.innerHeight = $t.container.outerHeight(true);
 
-      $t.container.addClass('ui-joy-carousel')
-      .empty();
+      $t.container.empty().addClass('ui-joy-carousel');
 
       wrap.addClass('wrapper')
       .append(html)
@@ -75,26 +74,18 @@
 		
     turn : function(){
 			var $t = this,
-			    diff = 0,
-					windowW = window.innerWidth;
-			
-			if($t.screenW !== windowW){
-				diff = (windowW - $t.screenW) / 2;
-				$t.screenW = windowW;
-			}
+			    diff = 0;
 			
 		  $t.wrap.css('-'+Tap.browser.prefix +'-transform', 'translate(0px, 0px)');
 			$t.current = 0;
-
+			$t.setupSlideDeck();
 			$t.updateControls();
-	
+			
 		},
     setupSlideDeck: function(){
 			var $t = this;
 			
 			$t.screenW = window.innerWidth;
-			
-			
       $t.length = $t.slides.length * $t.slides.outerWidth(true);
       $t.dots = Math.round($t.length / $t.innerWidth);
     },
@@ -116,7 +107,7 @@
           $t.current = circle.index();
 
           position = $t.container.width() * $t.current;
-          $t.wrap.css('-'+Tap.browser.prefix +'-transform', 'translate(-'+ position +'px, 0px)');
+          $t.wrap.css('-' + Tap.browser.prefix + '-transform', 'translate(-'+ position +'px, 0px)');
 
           $t.updateControls();
 
@@ -176,11 +167,11 @@
         var screenWidth = $t.container.outerWidth(true) * $t.current,
             position = 0;
 
-        if(screenWidth > $t.length || $t.dots === $t.current){
+        if(screenWidth > $t.length || $t.dots === $t.current-1){
           $t.current--;
           return;
         }else{
-          position = screenWidth - ($t.current * 2);
+          position = screenWidth - $t.current;
         }
 
         $t.updateControls();
@@ -190,21 +181,22 @@
     },
     updateControls: function(){
       var $t = this,
-			    current = $t.current+1;
+			    current = $t.current + 1;
 
       if($t.config.hasPager){
         $('.dot', $t.jumpContainer).removeClass('active');
         $('.dot:eq(' + $t.current + ')', $t.jumpContainer).addClass('active');
       }
-      if(($t.container.width() * current) > $t.length || $t.dots === current){
+			
+      if(($t.container.width() * current) > $t.length || $t.dots > 1 && $t.dots === current){
         $('.back', $t.container).removeClass('disabled');
         $('.forward', $t.container).addClass('disabled');
-      }
-      else if($t.current <= 0){
-        $('.back', $t.container).addClass('disabled');
-        $('.forward', $t.container).removeClass('disabled');
-      }else if($t.current > 0 && $t.container.width()*$t.current < $t.length){
+      }else if($t.current > 0 && ($t.container.width() * $t.current) < $t.length){
         $('.back', $t.container).removeClass('disabled');
+        $('.forward', $t.container).removeClass('disabled');
+      }
+      else if($t.current === 0){
+        $('.back', $t.container).addClass('disabled');
         $('.forward', $t.container).removeClass('disabled');
       }
     }

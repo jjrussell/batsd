@@ -1048,7 +1048,6 @@ span.gill {
   #favorites .back,
   #favorites .forward {
     display: block;
-    top: 100px !important;
   }
 
 
@@ -1112,6 +1111,8 @@ span.gill {
 
   #favorites div.slide {
     width: 320px;
+    height: 280px;
+    margin-bottom: 20px;
   }
 
 }
