@@ -1,5 +1,11 @@
 - if error_message_on(@gamer_session, :password).present? || error_message_on(@gamer_session, :email).present?
   - @login_form_class_name = "show"
+  %style{:type => "text/css"}
+    :plain
+      .form-error {
+        opacity: 1 !important;
+        visibility: visible !important;
+      }
 
 #login-form{ :class => @login_form_class_name }
   .bd
