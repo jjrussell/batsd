@@ -17,8 +17,8 @@
           .box
           .box
           .box
-    - link_to(games_root_path) do
-      .logo
+    .logo
+      - link_to(games_root_path) do
         %img{ :src => BLANK_IMAGE }
     - if current_gamer.present?
       .menu-dropdown

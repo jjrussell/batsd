@@ -240,7 +240,7 @@ p {
       position: absolute;
       opacity: 0;
       width: 100%;
-      z-index: 11;
+      z-index: 999;
       @include animate(opacity, 0.35s);
       @include rounded-corners-bottom(6px);
 
@@ -1432,11 +1432,11 @@ div.app {
       color: #8c8c8c;
       margin-bottom: 5px;
     }
-    
+
     small.description {
-      text-align: left; 
+      text-align: left;
       padding-left: 2px;
-      height: 60px; 
+      height: 60px;
       width: 170px;
       overflow: hidden;
       white-space: normal;
