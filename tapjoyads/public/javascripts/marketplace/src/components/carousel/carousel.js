@@ -35,7 +35,7 @@
     $t.updateControls();
 
     $(window).bind('orientationchange', function(){
-      $t.setupSlideDeck();
+      $t.turn();
     });
 
     if($t.length < $t.innerWidth){
@@ -69,13 +69,34 @@
       .appendTo($t.container);
 
       $t.slides = wrap.children();
-
+			
       $t.wrap = wrap;
     },
+		
+    turn : function(){
+			var $t = this,
+			    diff = 0,
+					windowW = window.innerWidth;
+			
+			if($t.screenW !== windowW){
+				diff = (windowW - $t.screenW) / 2;
+				$t.screenW = windowW;
+			}
+			
+		  $t.wrap.css('-'+Tap.browser.prefix +'-transform', 'translate(0px, 0px)');
+			$t.current = 0;
 
+			$t.updateControls();
+	
+		},
     setupSlideDeck: function(){
-      this.length = this.slides.length * this.slides.outerWidth(true);
-      this.dots = Math.round(this.length / this.innerWidth);
+			var $t = this;
+			
+			$t.screenW = window.innerWidth;
+			
+			
+      $t.length = $t.slides.length * $t.slides.outerWidth(true);
+      $t.dots = Math.round($t.length / $t.innerWidth);
     },
 
     createJumper: function(){
@@ -168,14 +189,14 @@
       });
     },
     updateControls: function(){
-      var $t = this;
+      var $t = this,
+			    current = $t.current+1;
 
       if($t.config.hasPager){
         $('.dot', $t.jumpContainer).removeClass('active');
         $('.dot:eq(' + $t.current + ')', $t.jumpContainer).addClass('active');
       }
-
-      if($t.container.width() * ($t.current + 1) > $t.length || $t.dots - 1 === $t.current){
+      if(($t.container.width() * current) > $t.length || $t.dots === current){
         $('.back', $t.container).removeClass('disabled');
         $('.forward', $t.container).addClass('disabled');
       }
