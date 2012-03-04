@@ -359,6 +359,10 @@ en:
       recommendations: Recommendations
       registering: Registering
       report_bug: "Report Bug"
+      reset_password_message: Enter the email address associated with your account and we will send you a link to reset your password.
+      reset_password_message_submit: You should receive an email with instructions to reset your password in the next few minutes.
+      reset_password_retry: "If you are still having problems logging in, you can %{reset_password_url} or email"
+      reset_password_retry_url_text: request another password reset email
       review_app_name: "Review %{app_name}"
       review_created: "Successfully reviewed this app."
       review_issue: "There was an issue. Please try again later."

@@ -1,31 +1,29 @@
 :javascript
   var noMessage = false;
 #reset_password.current
-  #static.container
-    .content
-      .content_box
-        - if @gamer
-          %div
-            You should receive an email with instructions to reset your password in the next few minutes.
-          %div
-            If you are still having problems logging in, you can
-            = link_to("request another password reset email", new_games_password_reset_path)
-            or email
-            = mail_to("mobilehelp@tapjoy.com") + "."
-            :javascript
-              var noMessage = true;
-        - else
-          %div
-            Enter the email address associated with your account and we will send you a link to reset your password.
-          %div
-            - form_tag(games_password_resets_path) do
-              .field
-                = label_tag(:email)
-                = email_field_tag(:email, nil, "autocorrect" => "off", "autocapitalize" => "off", :class => 'ui-joy-input')
-              .field
-                = submit_tag('Submit', :class => 'ui-joy-button orange-action')
-            .formError.form-error.hide
-              .email_error
+  .w300.pad
+    - if @gamer
+      .mt10
+        = t('text.games.reset_password_message_submit')
+      .mt10
+        = t('text.games.reset_password_retry', :reset_password_url => link_to(t('text.games.reset_password_retry_url_text'), new_games_password_reset_path))
+        = mail_to("mobilehelp@tapjoy.com") + "."
+        :javascript
+          var noMessage = true;
+    - else
+      %h1.museo
+        = t('text.shared.reset_password')
+      .mt10
+        = t('text.games.reset_password_message')
+      .mt10
+        - form_tag(games_password_resets_path) do
+          .field
+            = label_tag(:email)
+            = email_field_tag(:email, nil, "autocorrect" => "off", "autocapitalize" => "off", :class => 'ui-joy-input')
+          .field
+            = submit_tag('Submit', :class => 'ui-joy-button orange-action mt10 mb10')
+        .formError.form-error.hide
+          .email_error.error-msg
 
 - content_for :page_javascript do
   :plain

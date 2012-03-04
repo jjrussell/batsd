@@ -1,24 +1,21 @@
-#update_password.account.current
-  #static.container
-    .content.narrow.pad
-      .content_box
-        .header_wrapper
-          %h1.museo
-            Update Password
-        %div
-          - form_for(:gamer, @gamer, :url => { :action => :update }, :html => { :method => :put }) do |f|
-            .field
-              = f.label :password, 'New Password'
-              = f.password_field :password
-            .field
-              = f.label :password_confirmation, 'Confirm Password'
-              = f.password_field :password_confirmation
-            .field
-              = submit_tag('Submit', :class => 'button grey')
-            .field
-              = error_message_on @gamer, :password
-          .formError.form-error.hide
-            .account_error
+#update_password.current
+  .w300.pad
+    %h1.museo
+      Update Password
+    .mt10
+      - form_for(:gamer, @gamer, :url => { :action => :update }, :html => { :method => :put }) do |f|
+        .field
+          = f.label :password, 'New Password'
+          = f.password_field :password, :class => 'ui-joy-input'
+        .field
+          = f.label :password_confirmation, 'Confirm Password'
+          = f.password_field :password_confirmation, :class => 'ui-joy-input'
+        .field
+          = submit_tag('Submit', :class => 'ui-joy-button orange-action mt10 mb10')
+        .field
+          = error_message_on @gamer, :password
+      .formError.form-error.hide
+        .account_error.error-msg
 
 - content_for :page_javascript do
   :plain
