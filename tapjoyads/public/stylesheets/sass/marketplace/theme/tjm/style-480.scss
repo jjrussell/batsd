@@ -19,6 +19,10 @@
   }
 }
 
+.app-info {
+  position: absolute;
+  left: 112px;
+}
 
 .row-title {
   display: none;
@@ -96,6 +100,8 @@ div.app {
     margin-left: 10px;
     text-align: left;
     float: left;
+    position: absolute;
+    left: 100px;
 
     span.title {
       padding-left: 2px;

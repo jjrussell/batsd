@@ -86,10 +86,8 @@
                 %span.ui-icon-small.social.icon16
                   -# "#{@app_metadata.app_reviews.by_gamers.size}"
               .btn
-                - link_to(games_earn_path(:eid => @encrypt_currency_id)) do
-                  = t('text.shared.earn_verb')
-              .ui-list-action
-                - link_to(games_earn_path(:eid => @encrypt_currency_id)) do
-                  .rightarrow.icon16
-                    .ui-list-action-label.pt3
-                      = t('text.shared.earn_verb')
+                = t('text.shared.earn_verb')
+              .ui-list-action.myapps-earn
+                .rightarrow.icon16
+                  .ui-list-action-label.pt3
+                    = t('text.shared.earn_verb')
