@@ -88,7 +88,7 @@ div.app {
       width: 98px !important;
       height: 98px !important;
     }
-    
+
   }
 
   .details {
@@ -97,7 +97,7 @@ div.app {
     text-align: left;
     float: left;
 
-    span.title {      
+    span.title {
       padding-left: 2px;
       margin-bottom: 5px;
     }
@@ -157,13 +157,13 @@ div.app:last-child {
     text-align: left;
     float: none;
 
-    span.title {      
+    span.title {
       padding-left: 2px;
       margin-bottom: 5px;
     }
 
     small.description {
-      height: 75px; 
+      height: 75px;
       word-wrap: break-word;
       width: 70%;
     }
@@ -217,7 +217,7 @@ div.app:last-child {
     margin: 0;
     .details {
       small.description {
-        height: 40px; 
+        height: 40px;
         overflow: hidden;
         width: 70%;
       }
