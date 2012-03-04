@@ -5,7 +5,8 @@
         .container
           .nav
             .logo
-              %img{ :src => BLANK_IMAGE }
+              - link_to(games_root_path) do
+                %img{ :src => BLANK_IMAGE }
 
   - form_for([ :games, @gamer ], :url => games_gamer_path, :method => :post ) do |f|
     #signup-nav.signup-nav
