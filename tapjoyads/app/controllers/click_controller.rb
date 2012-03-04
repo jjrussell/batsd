@@ -2,6 +2,7 @@ class ClickController < ApplicationController
   layout 'iphone'
 
   prepend_before_filter :decrypt_data_param
+  before_filter :reengagement_setup, :only => [ :reengagement ]
   before_filter :setup
   before_filter :validate_click, :except => [ :test_offer, :test_video_offer ]
   before_filter :determine_link_affiliates, :only => :app
@@ -17,7 +18,6 @@ class ClickController < ApplicationController
   end
 
   def reengagement
-    params[:advertiser_app_id] = params[:publisher_app_id]
     create_click('reengagement')
     handle_pay_per_click
 
@@ -110,8 +110,14 @@ class ClickController < ApplicationController
 
   private
 
+  def reengagement_setup
+    params[:advertiser_app_id] = params[:publisher_app_id]
+  end
+
   def setup
-    return false unless verify_params([ :data ])
+    required_params = [ :data ]
+    required_params << :gamer_id if params[:advertiser_app_id] == TAPJOY_GAMES_INVITATION_OFFER_ID
+    return false unless verify_params(required_params)
 
     @now = Time.zone.now
     if params[:offer_id] == 'test_video'
@@ -121,11 +127,6 @@ class ClickController < ApplicationController
       @offer = publisher_app.test_video_offer.primary_offer
     else
       @offer = Offer.find_in_cache(params[:offer_id])
-    end
-
-    if params[:source] == 'tj_games' && params[:advertiser_app_id] == TAPJOY_GAMES_INVITATION_OFFER_ID && params[:gamer_id].blank?
-      render :text => "missing required params", :status => 400
-      return
     end
 
     @currency = Currency.find_in_cache(params[:currency_id])
@@ -217,9 +218,10 @@ class ClickController < ApplicationController
   end
 
   def recently_clicked?
-    click = Click.find("#{params[:udid]}.#{params[:advertiser_app_id]}")
+    click = Click.find(click_key)
+    cutoff_time = @offer.multi_complete? && @offer.interval < 1.hour.to_i ? @now - @offer.interval : @now - 1.hour
     recently_clicked = click.present? &&
-                       click.clicked_at > @now - 1.hour &&
+                       click.clicked_at > cutoff_time &&
                        click.publisher_app_id == params[:publisher_app_id] &&
                        click.publisher_user_id == params[:publisher_user_id]
 
@@ -243,14 +245,6 @@ class ClickController < ApplicationController
   end
 
   def create_click(type)
-    if type != 'generic' || params[:advertiser_app_id] == TAPJOY_GAMES_REGISTRATION_OFFER_ID
-      click_key = "#{params[:udid]}.#{params[:advertiser_app_id]}"
-    elsif type == 'generic' && params[:advertiser_app_id] == TAPJOY_GAMES_INVITATION_OFFER_ID
-      click_key = "#{params[:gamer_id]}.#{params[:advertiser_app_id]}"
-    else
-      click_key = Digest::MD5.hexdigest "#{params[:udid]}.#{params[:advertiser_app_id]}"
-    end
-
     @click = Click.new(:key => click_key)
     @click.delete('installed_at') if @click.installed_at?
     @click.clicked_at             = @now
@@ -313,6 +307,16 @@ class ClickController < ApplicationController
 
   def render_unavailable_offer
     render 'unavailable_offer', :status => 403
+  end
+
+  def click_key
+    if params[:advertiser_app_id] == TAPJOY_GAMES_INVITATION_OFFER_ID
+      "#{params[:gamer_id]}.#{params[:advertiser_app_id]}"
+    elsif @offer.item_type == 'GenericOffer' && params[:advertiser_app_id] != TAPJOY_GAMES_REGISTRATION_OFFER_ID
+      Digest::MD5.hexdigest("#{params[:udid]}.#{params[:advertiser_app_id]}")
+    else
+      "#{params[:udid]}.#{params[:advertiser_app_id]}"
+    end
   end
 
 end
