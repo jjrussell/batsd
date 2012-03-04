@@ -61,7 +61,7 @@
       %tr
         %th
           = label_tag "Current Main Icon", "Current Main Icon"
-        %td= image_tag @featured_content.get_icon_url("#{@featured_content.id}_main")
+        %td= image_tag @featured_content.get_icon_url("#{@featured_content.id}_main", :source => :s3)
     %tr
       %th
         = label_tag :secondary_icon, @featured_content.new_record? ? 'Upload Secondary Icon' : 'Upload New Secondary Icon'
@@ -71,7 +71,7 @@
       %tr
         %th
           = label_tag "Current Secondary Icon", "Current Secondary Icon"
-        %td= image_tag @featured_content.get_icon_url("#{@featured_content.id}_secondary")
+        %td= image_tag @featured_content.get_icon_url("#{@featured_content.id}_secondary", :source => :s3)
     %tr
       %th
         = f.label :button_text, 'Action Button Text'
@@ -144,7 +144,7 @@
       CONTEST   : 'Contest'
     };
 
-    var default_icon_url = "https://s3.amazonaws.com/tapjoy/icons/57/src/dynamic_staff_pick_tool.jpg";
+    var default_icon_url = "https://s3.amazonaws.com/tapjoy/icons/src/dynamic_staff_pick_tool.jpg";
 
     $(function() {
       var type = $("#featured_content_featured_type").val();
