@@ -86,11 +86,14 @@ div.app {
 
 
 #more-games {
-  .details {
-    small.description {
-      height: 40px; 
-      overflow: hidden;
-      width: 60%;
+  .app {
+    margin: 0;
+    .details {
+      small.description {
+        height: 40px;
+        overflow: hidden;
+        width: 60%;
+      }
     }
   }
 }

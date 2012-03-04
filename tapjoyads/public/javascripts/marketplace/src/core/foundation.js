@@ -302,7 +302,7 @@
 
 
     Tap.apply(Tap, {
-      supportsTouch: (!!global.Touch) && (typeof window.TouchEvent != 'undefined') && (agent.indexOf('Mobile') > -1),
+      supportsTouch: (!!global.Touch) && (typeof window.TouchEvent != 'undefined'),
       supportsiOS5: /OS (5(_\d+)*) like Mac OS X/i.test(agent),
       supportsTransform: Tap.browser + 'Transform' in document.documentElement.style,
       supportsTransitionEnd: (/iphone|ipad|playbook/gi).test(appversion),
