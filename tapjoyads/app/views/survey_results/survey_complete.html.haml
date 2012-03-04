@@ -1,9 +1,11 @@
+- @page_title = 'Survey Complete!'
+
 .container
   #main
     #survey_complete
-      - @currency_reward = @click.currency_reward.present? ? @click.currency_reward : ''
-      - @currency = @currency.name.present? ? @currency.name : 'credits'
-      Thank you for completing the survey. You will receive your #{@currency_reward} #{@currency} shortly.
+      - currency_reward = @click.currency_reward.present? ? @click.currency_reward : ''
+      - currency_name = testing? ? 'credits' : @currency.name
+      Thank you for completing the survey. You will receive your #{currency_reward} #{currency_name} shortly.
   #footer
     = render '/shared/truste'
 

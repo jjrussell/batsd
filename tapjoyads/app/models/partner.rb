@@ -206,12 +206,12 @@ class Partner < ActiveRecord::Base
     end
   end
 
-  def build_transfer(amount)
+  def build_transfer(amount, internal_notes)
     records = []
     records << payouts.build(:amount => amount, :month => Time.zone.now.month, :year => Time.zone.now.year, :payment_method => 3)
-    records << orders.build(:amount => amount, :status => 1, :payment_method => 3)
+    records << orders.build(:amount => amount, :status => 1, :payment_method => 3, :note => internal_notes)
     marketing_amount = (amount * transfer_bonus).to_i
-    records << orders.build(:amount => marketing_amount, :status => 1, :payment_method => 5) unless marketing_amount == 0
+    records << orders.build(:amount => marketing_amount, :status => 1, :payment_method => 5, :note => internal_notes) unless marketing_amount == 0
     records
   end
 

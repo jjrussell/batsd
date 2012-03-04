@@ -30,13 +30,17 @@ class GamesController < ApplicationController
 
   def http_accept_language
     # example env[HTTP_ACCEPT_LANGUAGE] string: en,en-US;q=0.8,es;q=0.6,zh;q=0.4
+    splits = []
     language_list = request.env['HTTP_ACCEPT_LANGUAGE'].split(/\s*,\s*/).map do |pair|
       language, quality = pair.split(/;q=/)
       raise "Not correctly formatted" unless language =~ /^[a-z\-]+$/i
       language = language.downcase.gsub(/-[a-z]+$/i) { |i| i.upcase }
       quality = 1.0 unless quality.to_s =~ /\d+(\.\d+)?$/
-      [ - quality.to_f, language ]
+      result = [ - quality.to_f, language ]
+      splits << [ - (quality.to_f - 0.1), language.split(/-/).first ] if language =~ /-/
+      result
     end
+    language_list.concat splits
     language_list.sort.map(&:last)
   rescue # default if header is malformed
     []
@@ -113,6 +117,10 @@ class GamesController < ApplicationController
   end
 
   private
+
+  def render_json_error(errors, status = 403)
+    render(:json => { :success => false, :error => errors }, :status => status)
+  end
 
   def current_gamer_session
     @current_gamer_session ||= GamerSession.find
@@ -227,3 +235,4 @@ class GamesController < ApplicationController
   end
 
 end
+

@@ -51,8 +51,8 @@ class FeaturedContent < ActiveRecord::Base
     end
   end
 
-  def self.with_country_targeting(geoip_data, device)
-    featured_contents = FeaturedContent.featured_contents(device.try(:platform))
+  def self.with_country_targeting(geoip_data, device, platform)
+    featured_contents = FeaturedContent.featured_contents(platform)
     featured_contents.delete_if do |fc|
       !!fc.tracking_offer &&
       !!device &&

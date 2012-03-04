@@ -13,28 +13,36 @@ class ClickController < ApplicationController
     handle_pay_per_click
     @device.handle_sdkless_click!(@offer, @now)
 
-    redirect_to(get_destination_url)
+    redirect_to(destination_url)
+  end
+
+  def reengagement
+    params[:advertiser_app_id] = params[:publisher_app_id]
+    create_click('reengagement')
+    handle_pay_per_click
+
+    render :text => 'OK'
   end
 
   def action
     create_click('action')
     handle_pay_per_click
 
-    redirect_to(get_destination_url)
+    redirect_to(destination_url)
   end
 
   def generic
     create_click('generic')
     handle_pay_per_click
 
-    redirect_to(get_destination_url)
+    redirect_to(destination_url)
   end
 
   def rating
     create_click('rating')
     handle_pay_per_click
 
-    redirect_to(get_destination_url)
+    redirect_to(destination_url)
   end
 
   def video
@@ -48,7 +56,7 @@ class ClickController < ApplicationController
     create_click('survey')
     handle_pay_per_click
 
-    redirect_to(get_destination_url)
+    redirect_to(destination_url)
   end
 
   def test_offer
@@ -128,10 +136,10 @@ class ClickController < ApplicationController
     end
     return unless verify_records(required_records)
 
-    if Time.zone.at(params[:viewed_at]) < (@now - 24.hours)
+    if !@offer.tracking_for_id && Time.zone.at(params[:viewed_at]) < (@now - 24.hours)
       build_web_request('expired_click')
       save_web_request
-      @destination_url = get_destination_url
+      @destination_url = destination_url
       render_unavailable_offer
       return
     end
@@ -145,12 +153,12 @@ class ClickController < ApplicationController
   end
 
   def validate_click
-    unless @offer.tracking_for
+    unless @offer.tracking_for_id
       return if currency_disabled?
       return if offer_disabled?
-      return if offer_completed?
-      return if recently_clicked?
     end
+    return if offer_completed?
+    return if recently_clicked?
 
     wr_path = params[:source] == 'featured' ? 'featured_offer_click' : 'offer_click'
     build_web_request(wr_path)
@@ -161,7 +169,7 @@ class ClickController < ApplicationController
     if disabled
       build_web_request('disabled_currency')
       save_web_request
-      @destination_url = get_destination_url
+      @destination_url = destination_url
       render_unavailable_offer
     end
     disabled
@@ -172,7 +180,7 @@ class ClickController < ApplicationController
     if disabled
       build_web_request('disabled_offer')
       save_web_request
-      @destination_url = get_destination_url
+      @destination_url = destination_url
       render_unavailable_offer
     end
     disabled
@@ -202,7 +210,7 @@ class ClickController < ApplicationController
     if completed
       build_web_request('completed_offer')
       save_web_request
-      @destination_url = get_destination_url
+      @destination_url = destination_url
       render_unavailable_offer
     end
     completed
@@ -218,7 +226,7 @@ class ClickController < ApplicationController
     if recently_clicked
       build_web_request('click_too_recent')
       save_web_request
-      redirect_to(get_destination_url)
+      redirect_to(destination_url)
     end
     recently_clicked
   end
@@ -240,7 +248,7 @@ class ClickController < ApplicationController
     elsif type == 'generic' && params[:advertiser_app_id] == TAPJOY_GAMES_INVITATION_OFFER_ID
       click_key = "#{params[:gamer_id]}.#{params[:advertiser_app_id]}"
     else
-      click_key = UUIDTools::UUID.random_create.to_s
+      click_key = Digest::MD5.hexdigest "#{params[:udid]}.#{params[:advertiser_app_id]}"
     end
 
     @click = Click.new(:key => click_key)
@@ -272,6 +280,7 @@ class ClickController < ApplicationController
     @click.publisher_reseller_id  = @currency.reseller_id || ''
     @click.advertiser_reseller_id = @offer.reseller_id || ''
     @click.spend_share            = @currency.get_spend_share(@offer)
+    @click.local_timestamp        = params[:local_timestamp] if params[:local_timestamp].present?
 
     @click.save
   end
@@ -289,7 +298,7 @@ class ClickController < ApplicationController
     end
   end
 
-  def get_destination_url
+  def destination_url
     @offer.destination_url({
       :udid                  => params[:udid],
       :publisher_app_id      => params[:publisher_app_id],
