@@ -1065,18 +1065,10 @@ span.gill {
   .phraseThatPays {
     margin-top: 6px;
     margin-left: 12px;
-    width: 280px;
+    width: percentage(200/456);
     font-weight: 400;
-  }
-}
-
-@media screen and (max-width: 480px) {
-  .phraseThatPays {
     font-size: 13px;
     text-align: center;
-    width: 200px;
-    margin-left: 8px;
-    margin-top: 10px;
   }
 }
 
@@ -1087,7 +1079,6 @@ span.gill {
   }
 
   .phraseThatPays {
-    width: 150px;
     font-size: 14px;
     line-height: 15px;
     margin-top: 4px;

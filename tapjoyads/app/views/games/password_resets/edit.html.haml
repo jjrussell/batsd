@@ -1,3 +1,4 @@
+- @hide_login = true
 #update_password.current
   .w300.pad
     %h1.museo
@@ -5,13 +6,13 @@
     .mt10
       - form_for(:gamer, @gamer, :url => { :action => :update }, :html => { :method => :put }) do |f|
         .field
-          = f.label :password, 'New Password'
+          = f.label :password, t('text.shared.new_password')
           = f.password_field :password, :class => 'ui-joy-input'
         .field
-          = f.label :password_confirmation, 'Confirm Password'
+          = f.label :password_confirmation, t('text.shared.new_password')
           = f.password_field :password_confirmation, :class => 'ui-joy-input'
         .field
-          = submit_tag('Submit', :class => 'ui-joy-button orange-action mt10 mb10')
+          = submit_tag(t('text.shared.submit'), :class => 'ui-joy-button orange-action mt10 mb10')
         .field
           = error_message_on @gamer, :password
       .formError.form-error.hide
