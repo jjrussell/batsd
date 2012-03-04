@@ -34,10 +34,11 @@
 #content
   #wrapper
     .wrapper
-      %h4.museo.center
-        = t('text.games.unlock_mobile_joy')
-      %span.center.gill
-        = t('text.games.about_body')
+      #body-title
+        %h4.museo.center
+          = t('text.games.unlock_mobile_joy')
+        %span.center.gill
+          = t('text.games.about_body')
       #body.main
         #tickets.tickets
           %img{ :src => BLANK_IMAGE }
@@ -53,17 +54,31 @@
 
 #favorites
   .slide
+    .title-text
+      %h4.museo= t('text.games.unlock_mobile_joy')
     .mobilejoy
       %img{ :src => BLANK_IMAGE }
   .slide
-    .mobilejoy
+    .title-text.mt20.mb10
+      %h4.museo= t('text.games.earn_rewards')
+    .earnrewards
       %img{ :src => BLANK_IMAGE }
+    .description-text
+      = t('text.games.earning_rewards')
   .slide
-    .mobilejoy
+    .title-text.mt20.mb20
+      %h4.museo= t('text.games.find_new_apps')
+    .findapps
       %img{ :src => BLANK_IMAGE }
+    .description-text.mt20
+      = t('text.games.recommend_apps')
   .slide
-    .mobilejoy
+    .title-text.mt20.mb10
+      %h4.museo= t('text.games.join_the_community')
+    .sharefriends
       %img{ :src => BLANK_IMAGE }
+    .description-text
+      = t('text.games.join_the_community_blurb')
 
 #pagingContainer
   #paging

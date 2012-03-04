@@ -760,8 +760,43 @@ span.gill {
     padding: 0;
     float: left;
     width: 480px;
+    text-align: center;
+
+    .title-text {
+    }
+    .description-text {
+      text-align: left;
+      margin-left: auto;
+      margin-right: auto;
+      margin-top: 10px;
+      max-width: 180px;
+    }
   }
 
+  .findapps {
+    img {
+      background: url(#{$image_path}/apps-retina.png) no-repeat center center;
+      background-size: 119px 59px;
+      width: 119px;
+      height: 59px;
+    }
+  }
+  .sharefriends {
+    img {
+      background: url(#{$image_path}/share-friends-retina.png) no-repeat center center;
+      background-size: 198px 81px;
+      width: 198px;
+      height: 81px;
+    }
+  }
+  .earnrewards {
+    img {
+      background: url(#{$image_path}/reward-tix.png) no-repeat center center;
+      background-size: 131px 87px;
+      width: 131px;
+      height: 87px;
+    }
+  }
   .mobilejoy img {
     background: url(#{$image_path}/mobile_joy_retina.png) no-repeat center center;
     background-size: 241px 225px;
@@ -982,13 +1017,13 @@ span.gill {
   #share,
   #mobile-joy,
   #tickets,
-  #body,
   #content .gradient-backdrop,
   #getting-started,
   #benefits,
   #footer,
-  #content span.gill,
+  #content,
   #body,
+  #body-title,
   #labels,
   #login-web {
     display: none !important;
