@@ -38,6 +38,10 @@
 
 
   $(function () {
+    // no need in mobile
+    if ("ontouchstart" in window) {
+      return;
+    }
     // recursive iframes are bad, m'kay
     if (window.self === window.top) {
       responsive_keys();
