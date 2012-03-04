@@ -70,7 +70,7 @@ class FeaturedContent < ActiveRecord::Base
   end
 
   def self.get_icon_url(options = {})
-    source     = options.delete(:source)   { :s3 }
+    source     = options.delete(:source)   { :cloudfront }
     icon_id    = options.delete(:icon_id)  { |k| raise "#{k} is a required argument" }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
 
@@ -80,15 +80,7 @@ class FeaturedContent < ActiveRecord::Base
   end
 
   def get_default_icon_url(options = {})
-    icon_id = "dynamic_staff_pick_tool"
-    bucket  = S3.bucket(BucketNames::TAPJOY)
-    icon_obj = bucket.objects["icons/src/#{icon_id}.jpg"]
-    if icon_obj.exists?
-      return FeaturedContent.get_icon_url({ :icon_id => icon_id }.merge(options))
-    else
-      icon_src_blob = bucket.objects["icons/src/#{icon_id}.jpg"].read
-      return FeaturedContent.get_icon_url({ :icon_id => icon_id }.merge(options))
-    end
+    FeaturedContent.get_icon_url({ :icon_id => 'dynamic_staff_pick_tool', :source => :cloudfront }.merge(options))
   end
 
   def save_icon!(icon_src_blob, icon_id)
@@ -113,27 +105,6 @@ class FeaturedContent < ActiveRecord::Base
   end
 
   private
-
-  def save_icon_in_different_sizes!(icon_src_blob, icon_id, bucket)
-    icon_256 = Magick::Image.from_blob(icon_src_blob)[0].resize(256, 256).opaque('#ffffff00', 'white')
-    icon_obj = S3.bucket(BucketNames::TAPJOY).objects[icon_id]
-
-    corner_mask_blob = bucket.objects["display/round_mask.png"].read
-    corner_mask = Magick::Image.from_blob(corner_mask_blob)[0].resize(256, 256)
-    icon_256.composite!(corner_mask, 0, 0, Magick::CopyOpacityCompositeOp)
-    icon_256 = icon_256.opaque('#ffffff00', 'white')
-    icon_256.alpha(Magick::OpaqueAlphaChannel)
-
-    icon_256_blob = icon_256.to_blob{|i| i.format = 'JPG'}
-    icon_114_blob = icon_256.resize(114, 114).to_blob{|i| i.format = 'JPG'}
-    icon_57_blob = icon_256.resize(57, 57).to_blob{|i| i.format = 'JPG'}
-    icon_57_png_blob = icon_256.resize(57, 57).to_blob{|i| i.format = 'PNG'}
-
-    bucket.objects["icons/256/#{icon_id}.jpg"].write(:data => icon_256_blob, :acl => :public_read)
-    bucket.objects["icons/114/#{icon_id}.jpg"].write(:data => icon_114_blob, :acl => :public_read)
-    bucket.objects["icons/57/#{icon_id}.jpg"].write(:data => icon_57_blob, :acl => :public_read)
-    bucket.objects["icons/57/#{icon_id}.png"].write(:data => icon_57_png_blob, :acl => :public_read)
-  end
 
   def author_required?
     [ TYPES_MAP[STAFFPICK], TYPES_MAP[NEWS], TYPES_MAP[CONTEST] ].include?(featured_type)
