@@ -42,7 +42,7 @@
       .noscript_msg
         = t('text.games.no_javascript')
 
-    = render 'games/shared/header'
+    = render :partial => 'games/shared/header'
     - flash.each do |name, msg|
       .flash.hidden{ :id => "flash-#{name}" }
         = msg
