@@ -79,14 +79,20 @@ div.app {
   font-size: 1.8em;
 }
 
-.app {
-  .details {
-    width: 60% !important;
-  }
-}
 
 .content {
   width: 300px;
+}
+
+
+#more-games {
+  .details {
+    small.description {
+      height: 40px; 
+      overflow: hidden;
+      width: 60%;
+    }
+  }
 }
 
 

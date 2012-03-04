@@ -28,12 +28,6 @@
   padding-bottom: 2px;
 }
 
-.app {
-  .details {
-    width: 60% !important;
-  }
-}
-
 .footer {
   .links {
     ul {
@@ -62,6 +56,8 @@
       height: 98px !important;
     }
   }
+  .details {
+  }
 }
 
 .list-button-container.earn-theme {
@@ -79,8 +75,8 @@
 }
 
 .squircle {
-  width:  100px;
-  height: 100px;
+  width: 100px !important;
+  height: 100px !important;
   background-size: 100px 100px !important;
 
   img {
@@ -90,3 +86,12 @@
   }
 }
 
+#more-games {
+  .details {
+    small.description {
+      height: 40px; 
+      overflow: hidden;
+      width: 70%;
+    }
+  }
+}

@@ -1432,6 +1432,15 @@ div.app {
       color: #8c8c8c;
       margin-bottom: 5px;
     }
+    
+    small.description {
+      text-align: left; 
+      padding-left: 2px;
+      height: 60px; 
+      width: 170px;
+      overflow: hidden;
+      white-space: normal;
+    }
 
     span.ui-icon-small {
       padding-left: 20px;
