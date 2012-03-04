@@ -58,6 +58,5 @@ ActionController::Routing::Routes.draw do |map|
 
     map.resources :survey_results, :only => [ :new, :create ]
     m.resources :app_reviews, :controller => 'games/app_reviews', :only => [ :index, :create, :edit, :update, :new, :destroy]
-
   end
 end

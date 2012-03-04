@@ -76,6 +76,7 @@ div.app {
   width: auto !important;
   height: 106px !important;
   float: none;
+  position: static;
   overflow: auto;
   overflow-x: hidden;
   overflow-y: hidden;
@@ -126,6 +127,10 @@ div.app {
       color: #454545;
       text-shadow: 0 1px 0 #fff;
     }
+  }
+  .myapps-earn {
+    position: absolute;
+    right: 8px;
   }
 }
 
