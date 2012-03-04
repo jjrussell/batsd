@@ -201,8 +201,8 @@ div.app:last-child {
 }
 
 .squircle {
-  width:  100px;
-  height: 100px;
+  width:  100px !important;
+  height: 100px !important;
   background-size: 100px 100px !important;
 
   img {
