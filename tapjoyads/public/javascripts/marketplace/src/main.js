@@ -42,10 +42,18 @@ $(document).ready(function() {
   });
 
   // Login Validation
-  if ($('form#new_gamer_session')) {
-    $('form#new_gamer_session input').focus(function() {
-      $('form#new_gamer_session .form-error').html('&nbsp;').css({opacity: '0', visibility: 'hidden'});
+  $("form#new_gamer_session").each(function () {
+    var $this = $(this),
+        $serverError = $(".form-error .formError", $this);
+
+    if ($serverError.length > 0) {
+      $(".form-error", $this).html($serverError.html()).css({opacity: '1', visibility: 'visible !important'});
+    }
+
+    $('input', $this).focus(function() {
+      $('.form-error', $this).html('&nbsp;').css({opacity: '0', visibility: 'hidden'});
     });
+
     $('form#new_gamer_session').submit(function(e){
       Tapjoy.Utils.Cookie.set('cookies_enabled', 'test', 1);
       var test_cookie = Tapjoy.Utils.Cookie.get('cookies_enabled');
@@ -79,7 +87,7 @@ $(document).ready(function() {
         Tapjoy.Utils.Cookie.remove('cookies_enabled');
       }
     });
-  }
+  });
 
   // Signup Validation
   if($('form#new_gamer')) {
