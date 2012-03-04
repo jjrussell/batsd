@@ -729,8 +729,6 @@ $(document).ready(function() {
   }, 50);
 
   // Device Switcher
-  Tapjoy.selectDevice = [{"device_type":"ipod","name":"Android (R800x)","data":"cccf46abc68d9cba60b699fd808f6403b84528be420d5f6ba9a40b70193df3b2c877d558565789e6a4cfc2c87b5c90a542e7c3a8e0fdb07ce2e052d4cf59390cba9898494eb7f47de59c8488dc8b85fd63f6ef6fc3eb15898a48ceaded3b08ba"},{"device_type":"ipod","name":"iPod Touch","data":"cccf46abc68d9cba60b699fd808f64037ba278d7c09a8e878acba677a272aa13077f9a3bc645e11142e971e402d8c7d49404e5fa59c9347e185e325e92abdbc668094f84bf8c60f31c5f3784d741d3ec34ba27ae691788ebcdc0f077cca68d60a05f1def37b19844eca6cfc7d03adc8d950d4740616b5b37f8f78458998ba89c"}];
-
   Tapjoy.device.name = 'ipod';
   Tapjoy.device.idevice = true;
   Tapjoy.supportsTouch = true;
