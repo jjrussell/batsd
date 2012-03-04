@@ -2,12 +2,6 @@
   width: 200px;
 }
 
-div.app {
-  .ui-list-action {
-    display: none !important;
-  }
-}
-
 .big-title {
   -webkit-text-size-adjust: 67%;
   -moz-text-size-adjust: 67%;
@@ -28,7 +22,7 @@ div.app {
   margin-top: 2px;
 }
 
-.list-button .big-title {
+.list-button .big-title, div.app .title {
   max-width: 150px !important;
 }
 

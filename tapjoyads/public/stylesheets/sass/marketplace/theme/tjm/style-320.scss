@@ -1,7 +1,4 @@
 div.app {
-  .ui-list-action {
-    display: none !important;
-  }
 }
 
 .big-title {
@@ -67,7 +64,8 @@ div.app {
 }
 
 .list-button-container.earn-theme .big-title,
-.list-button-container.earn-theme .info {
+.list-button-container.earn-theme .info,
+div.app .title {
   width: 120px !important;
 }
 

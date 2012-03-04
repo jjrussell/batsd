@@ -12,7 +12,7 @@
     $("body").append(overlay);
 
     $(window).keydown(function (e) {
-      var breakpoints = [320, 480, 768, 1024, 1200],
+      var breakpoints = [320, 360, 480, 768, 1024, 1200, 340, 520, 825],
         code = parseInt(e.keyCode, 10),
         breakpoint,
         target = e.target.nodeName.toLowerCase();
