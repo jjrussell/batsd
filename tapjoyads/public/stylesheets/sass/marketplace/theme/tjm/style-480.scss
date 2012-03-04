@@ -207,8 +207,8 @@ div.app:last-child {
 }
 
 .squircle {
-  width:  100px;
-  height: 100px;
+  width:  100px !important;
+  height: 100px !important;
   background-size: 100px 100px !important;
 
   img {
@@ -226,6 +226,18 @@ div.app:last-child {
         height: 40px;
         overflow: hidden;
         width: 70%;
+      }
+    }
+  }
+}
+
+#footer {
+  .links {
+    ul {
+      li {
+        a {
+          font-size: .7em;
+        }
       }
     }
   }

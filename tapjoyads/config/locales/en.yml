@@ -352,7 +352,7 @@ en:
       profile: Me
       profile_error: There was an error updating your profile.
       profile_update: Your profile has been updated.
-      provide_other_email: Please provide an email other than yourself"
+      provide_other_email: Please provide an email other than yourself
       recipients_label: Use commas to separate multiple emails"
       recommend_apps: Tapjoy personalizes app recommendations for you based on the apps you love to use.
       recommendations_smart: Smart Recommendations

@@ -1,6 +1,3 @@
-div.app {
-}
-
 .big-title {
   -webkit-text-size-adjust: 67%;
   -moz-text-size-adjust: 67%;
@@ -101,3 +98,29 @@ div.app .title {
   left: 106px;
   font-size: 0.9em;
 }
+
+#recommendations .app {
+  .details {
+    span.title {
+      width: 200px !important;
+    }
+  }
+}
+
+#footer {
+  .links {
+    ul {
+      li {
+        a {
+          font-size: .5em;
+        }
+      }
+    }
+  }
+  small {
+    font-size: .4em;
+  }
+}
+
+
+>>>>>>> 5d0cefe7495a6f197d440ee80b8eca091ef4406d
