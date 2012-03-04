@@ -101,4 +101,19 @@ div.app .title {
   }
 }
 
+#footer {
+  .links {
+    ul {
+      li {
+        a {
+          font-size: .5em;
+        }
+      }
+    }
+  }
+  small {
+    font-size: .4em;
+  }
+}
+
 
