@@ -45,13 +45,11 @@
 
         var wrap = $(document.createElement('div'));
 
-        if($('#ui-notification').length == 0){
-          wrap.attr('id', 'ui-notification')
-          .addClass('ui-notification')
-          .appendTo(config.container);
-        }else{
-          wrap = $('#ui-notification');
-        }
+        $('#ui-notification').remove();
+
+        wrap.attr('id', 'ui-notification')
+        .addClass('ui-notification')
+        .appendTo(config.container);
 
         wrap.html(config.message)
 

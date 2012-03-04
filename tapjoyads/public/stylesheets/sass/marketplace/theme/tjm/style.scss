@@ -1129,6 +1129,20 @@ div.ui-joy-button .get-app {
     font-size: .8em;
     color: #026acb;
   }
+
+  .list-squircle {
+    @extend .squircle;
+    background: url(#{$image_path}/app_icon_overlay_list_button_large.png) no-repeat 0 0 !important;
+    height: 60px !important;
+    width: 60px !important;
+    background-size: 60px 60px !important;
+    top: 0 !important;
+
+    img {
+      width: 59px !important;
+      height: 59px !important;
+    }
+  }
 }
 
 
@@ -1255,6 +1269,7 @@ div.ui-joy-button .get-app {
  * notifications
  */
 .ui-notification {
+  @extend .border-box;
   position: absolute;
   top: 40px;
   text-align: center;
