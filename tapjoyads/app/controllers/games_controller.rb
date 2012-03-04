@@ -232,8 +232,6 @@ class GamesController < ApplicationController
   def select_layout
     if params[:ajax].present?
       nil
-    elsif params[:old].present?
-      'games'
     else
       'marketplace'
     end

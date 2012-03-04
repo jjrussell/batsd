@@ -691,7 +691,7 @@ $(document).ready(function() {
   });
 
   function manageResize() {
-    if(tjmViewContainer.length != 0 && window.innerWidth < 800){
+    if(tjmViewContainer.length != 0 && window.innerWidth < 480){
       tjmViewMenu.css('top', tjmViewContainer.offset().top + (tjmViewContainer.outerHeight(true) - 4) + 'px');
 
       $('.fix', tjmViewContainer).css({
@@ -699,7 +699,7 @@ $(document).ready(function() {
       });
     }
     var rows = $('#content .row');
-    if(window.innerWidth > 770){
+    if(window.innerWidth > 480){
       if(rows.is(':hidden'))
         rows.show();
     }else{
@@ -729,11 +729,6 @@ $(document).ready(function() {
   }, 50);
 
   // Device Switcher
-  Tapjoy.device.name = 'ipod';
-  Tapjoy.device.idevice = true;
-  Tapjoy.supportsTouch = true;
-  Tapjoy.device.android = false;
-
   if (Tapjoy.selectDevice) {
     var path, device_found = false, device_count = 0, device_data, matched_data;
     var d = [], a = [], m = [];
