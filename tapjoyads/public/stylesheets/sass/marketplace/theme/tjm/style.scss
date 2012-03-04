@@ -1,5 +1,6 @@
 //-------------------------------------------
 
+$root_image_path: "/images/marketplace/themes/tjm";
 $image_path: "/images/marketplace/themes/tjm";
 @import "../../tjm-mixins.scss";
 @import "../../tjm-base.scss";
@@ -1369,7 +1370,7 @@ div.ui-joy-button .get-app {
 }
 
 #recommendations .app {
-/*  @include animate(opacity, .65s, linear, .65s);*/  
+/*  @include animate(opacity, .65s, linear, .65s);*/
   opacity: 0;
   height: 0;
   visibility: hidden;
@@ -1608,7 +1609,7 @@ div.app {
   background-size: 125px 125px;
   top: -8px;
   overflow: hidden;
-  
+
   img {
     position: relative;
     z-index: -1;
@@ -1644,7 +1645,7 @@ div.app {
     height: 100px;
     background-size: 100px 100px;
     overflow: hidden;
-    
+
     .img {
       width: 98px !important;
       height: 98px !important;
@@ -1721,7 +1722,19 @@ div.app {
   }
 }
 
-.footer {
+#footer {
+
+  .partners {
+    height: 40px;
+    padding: 10px 0;
+    text-align: center;
+    border-bottom: 1px solid #ccc;
+    img {
+      width: 350px;
+      height: 45px;
+      background: url(#{$root_image_path}/partners.png) no-repeat 0 0;
+    }
+  }
   .links {
     padding: 5px 0 10px;
     text-align: center;
@@ -1733,12 +1746,16 @@ div.app {
 
       li {
         display: inline;
-        color: #424242;
-        font: bold .9em "Helvetica", Arial;
-        text-shadow: 0 1px 0 #fff;
         padding: 0 5px;
         border-right: 1px solid #424242;
         border-left: 1px solid #fff;
+
+        a {
+          text-decoration: none;
+          color: #424242;
+          font: bold .9em "Helvetica", Arial;
+          text-shadow: 0 1px 0 #fff;
+        }
       }
 
       li:first-child {

@@ -107,36 +107,6 @@
       %p
         = t('text.games.join_the_community_blurb')
 
-#footer
-  .partners
-    %img{ :src => BLANK_IMAGE, :usemap => '#partnersmap' }
-    %map{ :name => 'partnersmap' }
-      %area{ :shape => 'rect', :coords => '0,0,60,42', :href => 'http://glu.com', :alt => 'Glu', :target => '_blank' }
-      %area{ :shape => 'rect', :coords => '60,0,170,42', :href => 'https://papayamobile.com/', :alt => 'Papaya', :target => '_blank' }
-      %area{ :shape => 'rect', :coords => '170,0,255,42', :href => 'http://www.zynga.com/', :alt => 'Zynga', :target => '_blank' }
-      %area{ :shape => 'rect', :coords => '255,0,350,42', :href => 'http://www.ngmoco.com', :alt => 'ngmoco:)', :target => '_blank' }
-  .links
-    .container
-      %ul
-        %li
-          - link_to('/site/app_developers') do
-            = t('text.footer.developers')
-        %li
-          - link_to('/site/advertisers') do
-            = t('text.footer.advertisers')
-        %li
-          - link_to('/site/about_us') do
-            = t('text.footer.about')
-        %li
-          - link_to('/site/privacy') do
-            = t('text.footer.privacy')
-        %li
-          - link_to('http://blog.tapjoy.com') do
-            = t('text.footer.blog')
-    .container
-      %small
-        = t('text.footer.copyright')
-
 - content_for :page_head do
   %meta{ :name => 'description', :content => t('text.games.meta_description') }
   %meta{ :name => 'keywords', :content => t('text.games.meta_keywords')}
