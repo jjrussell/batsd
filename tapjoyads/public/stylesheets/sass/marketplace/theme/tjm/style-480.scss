@@ -19,6 +19,10 @@
   }
 }
 
+.app-info {
+  position: absolute;
+  left: 112px;
+}
 
 .row-title {
   display: none;
@@ -72,6 +76,7 @@ div.app {
   width: auto !important;
   height: 106px !important;
   float: none;
+  position: static;
   overflow: auto;
   overflow-x: hidden;
   overflow-y: hidden;
@@ -96,6 +101,8 @@ div.app {
     margin-left: 10px;
     text-align: left;
     float: left;
+    position: absolute;
+    left: 100px;
 
     span.title {
       padding-left: 2px;
@@ -120,6 +127,10 @@ div.app {
       color: #454545;
       text-shadow: 0 1px 0 #fff;
     }
+  }
+  .myapps-earn {
+    position: absolute;
+    right: 8px;
   }
 }
 
@@ -165,7 +176,7 @@ div.app:last-child {
     small.description {
       height: 75px;
       word-wrap: break-word;
-      width: 70%;
+      width: 96%;
     }
   }
 }
