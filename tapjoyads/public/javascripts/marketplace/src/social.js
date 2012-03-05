@@ -63,6 +63,7 @@
     $(".login-to-facebook").click(function () {
       var url = $(this).data("fb-url");
       Tap.Social.doFbLogin(url);
+      return false;
     });
 
     if (window.location.search.match(/fb_logout/)) {
