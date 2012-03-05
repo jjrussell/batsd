@@ -45,13 +45,14 @@
     .section.dark
       .heading
         = t('text.games.other_options')
-    %ul.list-button-container.flush.nbb.big
-      %li.list-button.ntb
-        -link_to new_games_app_review_path(:eid => params[:eid]) do
-          .left.charcoal
-            = t("text.games.review_app_name", {:app_name => @app.name})
-          .right.rightarrow.icon16
-            &nbsp;
+    - if @app_metadata
+      %ul.list-button-container.flush.nbb.big
+        %li.list-button.ntb
+          -link_to new_games_app_review_path(:eid => params[:eid]) do
+            .left.charcoal
+              = t("text.games.review_app_name", {:app_name => @app.name})
+            .right.rightarrow.icon16
+              &nbsp;
 
 - content_for :above_footer do
   - if @app_metadata
