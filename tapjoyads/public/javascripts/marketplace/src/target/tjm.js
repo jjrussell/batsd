@@ -306,7 +306,7 @@ f.event={add:function(a,c,d,e,g){var h,i,j,k,l,m,n,o,p,q,r,s;if(!(a.nodeType===3
 
 
     Tap.apply(Tap, {
-      supportsTouch: (!!global.Touch) && (typeof window.TouchEvent != 'undefined') && (agent.indexOf('Mobile') > -1),
+      supportsTouch: (!!global.Touch) && (typeof window.TouchEvent != 'undefined'),
       supportsiOS5: /OS (5(_\d+)*) like Mac OS X/i.test(agent),
       supportsTransform: Tap.browser + 'Transform' in document.documentElement.style,
       supportsTransitionEnd: (/iphone|ipad|playbook/gi).test(appversion),
@@ -942,13 +942,11 @@ f.event={add:function(a,c,d,e,g){var h,i,j,k,l,m,n,o,p,q,r,s;if(!(a.nodeType===3
 
         var wrap = $(document.createElement('div'));
 
-        if($('#ui-notification').length == 0){
-          wrap.attr('id', 'ui-notification')
-          .addClass('ui-notification')
-          .appendTo(config.container);
-        }else{
-          wrap = $('#ui-notification');
-        }
+        $('#ui-notification').remove();
+
+        wrap.attr('id', 'ui-notification')
+        .addClass('ui-notification')
+        .appendTo(config.container);
 
         wrap.html(config.message)
 
@@ -2096,7 +2094,7 @@ f.event={add:function(a,c,d,e,g){var h,i,j,k,l,m,n,o,p,q,r,s;if(!(a.nodeType===3
     $t.updateControls();
 
     $(window).bind('orientationchange', function(){
-      $t.setupSlideDeck();
+      $t.turn();
     });
 
     if($t.length < $t.innerWidth){
@@ -2121,8 +2119,7 @@ f.event={add:function(a,c,d,e,g){var h,i,j,k,l,m,n,o,p,q,r,s;if(!(a.nodeType===3
       $t.innerWidth = $t.container.width();
       $t.innerHeight = $t.container.outerHeight(true);
 
-      $t.container.addClass('ui-joy-carousel')
-      .empty();
+      $t.container.empty().addClass('ui-joy-carousel');
 
       wrap.addClass('wrapper')
       .append(html)
@@ -2130,13 +2127,28 @@ f.event={add:function(a,c,d,e,g){var h,i,j,k,l,m,n,o,p,q,r,s;if(!(a.nodeType===3
       .appendTo($t.container);
 
       $t.slides = wrap.children();
-
+			
       $t.wrap = wrap;
     },
-
+		
+    turn : function(){
+			var $t = this,
+			    diff = 0;
+			
+		  $t.wrap.css('-'+Tap.browser.prefix +'-transform', 'translate(0px, 0px)');
+			$t.current = 0;
+			$t.setupSlideDeck();
+			$t.updateControls();
+			
+		},
     setupSlideDeck: function(){
-      this.length = this.slides.length * this.slides.outerWidth(true);
-      this.dots = Math.round(this.length / this.innerWidth);
+      var $t = this;
+
+      $t.innerWidth = $t.container.width();
+      $t.innerHeight = $t.container.outerHeight(true);
+      $t.slides = $t.wrap.children();
+      $t.length = $t.slides.length * $t.slides.outerWidth(true);
+      $t.dots = Math.round($t.length / $t.innerWidth);
     },
 
     createJumper: function(){
@@ -2156,7 +2168,7 @@ f.event={add:function(a,c,d,e,g){var h,i,j,k,l,m,n,o,p,q,r,s;if(!(a.nodeType===3
           $t.current = circle.index();
 
           position = $t.container.width() * $t.current;
-          $t.wrap.css('-'+Tap.browser.prefix +'-transform', 'translate(-'+ position +'px, 0px)');
+          $t.wrap.css('-' + Tap.browser.prefix + '-transform', 'translate(-'+ position +'px, 0px)');
 
           $t.updateControls();
 
@@ -2198,6 +2210,9 @@ f.event={add:function(a,c,d,e,g){var h,i,j,k,l,m,n,o,p,q,r,s;if(!(a.nodeType===3
       $('.back', $t.container).bind('click', function(){
         var position = 0;
 
+        if($(this).hasClass('disabled'))
+				  return;
+					
         if($t.current > 0){
           $t.current--
           var position = $t.container.width() * $t.current;
@@ -2212,15 +2227,18 @@ f.event={add:function(a,c,d,e,g){var h,i,j,k,l,m,n,o,p,q,r,s;if(!(a.nodeType===3
 
       $('.forward', $t.container).bind('click', function(){
         $t.current++
+				
+				if($(this).hasClass('disabled'))
+				  return;
 
         var screenWidth = $t.container.outerWidth(true) * $t.current,
             position = 0;
 
-        if(screenWidth > $t.length || $t.dots === $t.current){
+        if(screenWidth > $t.length || $t.dots === $t.current-1){
           $t.current--;
           return;
         }else{
-          position = screenWidth - ($t.current * 2);
+          position = screenWidth - $t.current;
         }
 
         $t.updateControls();
@@ -2229,22 +2247,23 @@ f.event={add:function(a,c,d,e,g){var h,i,j,k,l,m,n,o,p,q,r,s;if(!(a.nodeType===3
       });
     },
     updateControls: function(){
-      var $t = this;
+      var $t = this,
+			    current = $t.current + 1;
 
       if($t.config.hasPager){
         $('.dot', $t.jumpContainer).removeClass('active');
         $('.dot:eq(' + $t.current + ')', $t.jumpContainer).addClass('active');
       }
-
-      if($t.container.width() * ($t.current + 1) > $t.length || $t.dots - 1 === $t.current){
+			
+      if(($t.container.width() * current) > $t.length || $t.dots > 1 && $t.dots === current){
         $('.back', $t.container).removeClass('disabled');
         $('.forward', $t.container).addClass('disabled');
-      }
-      else if($t.current <= 0){
-        $('.back', $t.container).addClass('disabled');
-        $('.forward', $t.container).removeClass('disabled');
-      }else if($t.current > 0 && $t.container.width()*$t.current < $t.length){
+      }else if($t.current > 0 && ($t.container.width() * $t.current) < $t.length){
         $('.back', $t.container).removeClass('disabled');
+        $('.forward', $t.container).removeClass('disabled');
+      }
+      else if($t.current === 0){
+        $('.back', $t.container).addClass('disabled');
         $('.forward', $t.container).removeClass('disabled');
       }
     }
@@ -3470,7 +3489,7 @@ $(document).ready(function() {
   });
 
   function manageResize() {
-    if(tjmViewContainer.length != 0 && window.innerWidth < 800){
+    if(tjmViewContainer.length != 0 && window.innerWidth < 480){
       tjmViewMenu.css('top', tjmViewContainer.offset().top + (tjmViewContainer.outerHeight(true) - 4) + 'px');
 
       $('.fix', tjmViewContainer).css({
@@ -3478,7 +3497,7 @@ $(document).ready(function() {
       });
     }
     var rows = $('#content .row');
-    if(window.innerWidth > 770){
+    if(window.innerWidth > 480){
       if(rows.is(':hidden'))
         rows.show();
     }else{
@@ -3502,41 +3521,34 @@ $(document).ready(function() {
   }, 0);
 
   Tapjoy.delay(function(){
-    $('#recommedations').Carousel({
+    $('#recommendations').Carousel({
       cssClass : 'complete'
     });
   }, 50);
 
   // Device Switcher
-  Tapjoy.selectDevice = [{"device_type":"ipod","name":"Android (R800x)","data":"cccf46abc68d9cba60b699fd808f6403b84528be420d5f6ba9a40b70193df3b2c877d558565789e6a4cfc2c87b5c90a542e7c3a8e0fdb07ce2e052d4cf59390cba9898494eb7f47de59c8488dc8b85fd63f6ef6fc3eb15898a48ceaded3b08ba"},{"device_type":"ipod","name":"iPod Touch","data":"cccf46abc68d9cba60b699fd808f64037ba278d7c09a8e878acba677a272aa13077f9a3bc645e11142e971e402d8c7d49404e5fa59c9347e185e325e92abdbc668094f84bf8c60f31c5f3784d741d3ec34ba27ae691788ebcdc0f077cca68d60a05f1def37b19844eca6cfc7d03adc8d950d4740616b5b37f8f78458998ba89c"}];
-
-  Tapjoy.device.name = 'ipod';
-  Tapjoy.device.idevice = true;
-  Tapjoy.supportsTouch = true;
-  Tapjoy.device.android = false;
-
   if (Tapjoy.selectDevice) {
     var path, device_found = false, device_count = 0, device_data, matched_data;
     var d = [], a = [], m = [];
-    if (Tapjoy.rootPath) {
-      path = Tapjoy.rootPath.replace(/\/$/, '');
+    if (Tapjoy.selectDevicePath) {
+      path = Tapjoy.selectDevicePath;
     }
     else {
-      path = location.pathname.replace(/\/$/, '');
+      path = '/switch_device';
     }
     $.each(Tapjoy.selectDevice, function(i,v){
       var device_type = v.device_type;
       if (!Tapjoy.Utils.isEmpty(device_type) && Tapjoy.device.name && (device_type.toLowerCase() == Tapjoy.device.name.toLowerCase())) {
         device_count++;
         device_found = true;
-        d.push('<a href="', path ,'/switch_device?data=', v.data ,'">');
+        d.push('<a href="', path ,'?data=', v.data ,'">');
           d.push('<li class="device-item">');
             d.push(v.name);
           d.push('</li>');
         d.push('</a>');
       }
       else if (!Tapjoy.supportsTouch) { // Web
-        a.push('<a href="', path ,'/switch_device?data=', v.data ,'">');
+        a.push('<a href="', path ,'?data=', v.data ,'">');
           a.push('<li class="device-item">');
             a.push(v.name);
           a.push('</li>');
