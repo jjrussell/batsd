@@ -157,8 +157,8 @@ class ClickController < ApplicationController
     unless @offer.tracking_for_id
       return if currency_disabled?
       return if offer_disabled?
+      return if offer_completed?
     end
-    return if offer_completed?
     return if recently_clicked?
 
     wr_path = params[:source] == 'featured' ? 'featured_offer_click' : 'offer_click'
