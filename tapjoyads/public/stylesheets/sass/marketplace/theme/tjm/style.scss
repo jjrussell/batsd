@@ -1789,9 +1789,11 @@ div.app {
 
       li {
         display: inline;
-        padding: 0 5px;
-        border-right: 1px solid #424242;
-        border-left: 1px solid #fff;
+        padding: 0 7px;
+        border: {
+          right: 1px solid #424242;
+          left: 1px solid #fff;
+        }
 
         a {
           text-decoration: none;
