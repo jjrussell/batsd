@@ -49,7 +49,6 @@ class Games::HomepageController < GamesController
       render_login_page and return
     end
 
-    @device_data = current_gamer.devices.map(&:device_data)
     @require_select_device = current_device_id_cookie.nil?
     device_id = current_device_id
     @gamer = current_gamer
