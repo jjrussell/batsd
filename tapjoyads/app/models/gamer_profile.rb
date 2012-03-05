@@ -17,8 +17,8 @@ class GamerProfile < ActiveRecord::Base
 
   def city_and_country
     res = []
-    res << city if city
-    res << country if country
+    res << city if city.present?
+    res << country if country.present?
     res.join ", "
   end
 
