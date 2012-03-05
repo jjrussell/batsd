@@ -11,21 +11,11 @@
   .container
     .links
       %ul
-        %li
-          - link_to('/site/app_developers') do
-            = t('text.footer.developers')
-        %li
-          - link_to('/site/advertisers') do
-            = t('text.footer.advertisers')
-        %li
-          - link_to('/site/about_us') do
-            = t('text.footer.about')
-        %li
-          - link_to('/site/privacy') do
-            = t('text.footer.privacy')
-        %li
-          - link_to('http://blog.tapjoy.com') do
-            = t('text.footer.blog')
+        %li>= link_to(t('text.footer.developers'), '/site/app_developers')
+        %li>= link_to(t('text.footer.advertisers'), '/site/advertisers')
+        %li>= link_to(t('text.footer.about'), '/site/about_us')
+        %li>= link_to(t('text.footer.privacy'), '/site/privacy')
+        %li>= link_to(t('text.footer.blog'), 'http://blog.tapjoy.com')
       %small
         = t('text.footer.copyright')
 
