@@ -25,7 +25,7 @@ class CachedApp
   end
 
   def icon_url
-    Offer.get_icon_url(:source => :cloudfront, :icon_id => Offer.hashed_icon_id(self.id))
+    Offer.get_icon_url(:source => :cloudfront, :icon_id => Offer.hashed_icon_id(self.id), :size => '114')
   end
 
 end

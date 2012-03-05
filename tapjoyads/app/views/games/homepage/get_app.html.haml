@@ -1,0 +1,27 @@
+#offer-detail.current
+  .panel
+    .page-header
+      .container.mt20
+        .left.ml10.pt3
+          .squircle
+            = image_tag(@app.get_icon_url(:size => 114, :source => :cloudfront))
+        .left.ml10
+          .big-title.elip.slate.mt10
+            = @app.name
+          .sub-title
+            = @offer.partner_name
+    .mod.get-app
+      - link_to(@offer.url) do
+        .ui-joy-button.orange-action
+          .text-center.get-app
+            = t('text.games.get_app')
+    .mod.social-info
+      %span.ui-icon-medium.social-med
+        = t("text.games.active_gamers_text", :count => @app.formatted_active_gamer_count)
+    .mod.menu-head
+      = t("text.shared.reviews")
+    .mod.score-summary
+      %img{:src => BLANK_IMAGE}
+      %span.percentage= "#{@app_metadata.positive_thumbs_percentage.floor}%"
+      %span.description= "from #{@app_metadata.app_reviews.by_gamers.size} voters"
+    = render "games/app_reviews/list"

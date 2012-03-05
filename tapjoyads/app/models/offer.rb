@@ -232,7 +232,8 @@ class Offer < ActiveRecord::Base
     :select => PAPAYA_OFFER_COLUMNS
 
   delegate :balance, :pending_earnings, :name, :cs_contact_email, :approved_publisher?, :rev_share, :to => :partner, :prefix => true
-  memoize :partner_balance
+  delegate :name, :id, :formatted_active_gamer_count, :to => :app, :prefix => true, :allow_nil => true
+  memoize :partner_balance, :app_formatted_active_gamer_count
 
   alias_method :events, :offer_events
   alias_method :random, :rand
