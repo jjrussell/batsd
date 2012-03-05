@@ -190,12 +190,12 @@ fr:
       advertisers_title: Annonceurs
       allow_marketing_emails: "Permettre à Tapjoy de m'envoyer des emails promotionnels "
       already_registered: ~
-      amount_and_currency: "DON'T THINK WE SHOULD TRANSLATE THAT (JV)"
+      amount_and_currency: ~
       back_to_top: Retour
       birthdate: "Date de naissance"
       browse_offers: ~
       call_to_action_body: "Le meilleur moyen de profiter pleinement de tes apps mais aussi d'en découvrir de nouvelles"
-      call_to_action_title: "DON'T THINK WE SHOULD TRANSLATE THAT (JV)"
+      call_to_action_title: ~
       cant_fetch_offers: "Il y a eu un problème pour retrouver plus d'offres. Essaye encore."
       change: changer
       change_linked_account: "Changer de Compte"
