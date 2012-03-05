@@ -3090,7 +3090,12 @@ $(document).ready(function() {
                 goHome = true;
               }
               if (goHome) {
-                document.location.href = document.domain;
+                if (Tapjoy.rootPath) {
+                  document.location.href = Tapjoy.rootPath;
+                }
+                else {
+                  document.location.href = location.protocol + '//' + location.hostname + (location.port ? ':' + location.port : '')
+                }
               }
             }
             else {

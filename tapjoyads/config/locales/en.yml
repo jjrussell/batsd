@@ -341,6 +341,7 @@ en:
       no_javascript: "Please go into your browser settings and enable JavaScript to continue using Tapjoy."
       none_selected: "None Selected"
       on_my: "on my %{device_name}"
+      close: "close"
       oops: Oops!
       or_learn_more: "or learn more"
       other_options: "Other Options"
