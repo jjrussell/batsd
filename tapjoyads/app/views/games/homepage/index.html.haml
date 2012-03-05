@@ -33,7 +33,7 @@
         - if current_recommendations.present?
           %li.showRecommendations
             = t('text.games.recommendations')
-        %li.showAll
+        %li.showAll.hide
           = t('text.shared.view_all')
 
   - if current_recommendations.present?
