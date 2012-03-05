@@ -6,7 +6,9 @@
       .register-btn.ui-joy-button.orange-action.pt10.pb10
         = t('text.games.connect_my_device')
 
-- messaging_text = t('text.games.link_account_messaging', :android_market_url => link_to(t("text.games.link_account_messaging_android_href"), GAMES_ANDROID_MARKET_URL, :target => '_blank'), :tjm_url => link_to(t("text.games.link_account_messaging_tjm_href"), WEBSITE_URL)).gsub(/\"/,"\'")
+- android_market_url = link_to(t("text.games.link_account_messaging_android_href"), GAMES_ANDROID_MARKET_URL, :target => '_blank')
+- tjm_url = link_to(t("text.games.link_account_messaging_tjm_href"), WEBSITE_URL)
+- messaging_text = t('text.games.link_account_messaging', :android_market_url => android_market_url, :tjm_url => tjm_url).gsub(/\"/, "\'")
 
 - content_for :page_javascript do
   :plain
