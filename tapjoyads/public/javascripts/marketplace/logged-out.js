@@ -4,6 +4,7 @@ $(document).ready(function(){
       gradient = $('.gradient-backdrop');
 
   $('#favorites').Carousel({
+		forceSlideWidth: true,
     hasPager: true,
     pagerContainer: '#paging'
   });

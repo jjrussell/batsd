@@ -2,9 +2,7 @@
 
   $.fn.Carousel = function(config){
 
-    config = Tap.extend({}, Tap.Components.Elements, {
-      direction: 'horizontal'
-    }, config || {});
+    config = Tap.extend({}, Tap.Components.Elements, Tap.Components.Carousel, config || {});
 
     return this.each(function(){
 
@@ -37,6 +35,8 @@
     $(window).bind('orientationchange', function(){
       $t.turn();
     });
+    
+    $(window).bind('resize', $t.debounce($t.resize, 100, false, $t));
 
     if($t.length < $t.innerWidth){
       $('.back, .forward').hide();
@@ -66,30 +66,32 @@
       .append(html)
       .preventHighlight()
       .appendTo($t.container);
-
-      $t.slides = wrap.children();
-			
+      
       $t.wrap = wrap;
     },
-		
+    
     turn : function(){
-			var $t = this,
-			    diff = 0;
-			
-		  $t.wrap.css('-'+Tap.browser.prefix +'-transform', 'translate(0px, 0px)');
-			$t.current = 0;
-			$t.setupSlideDeck();
-			$t.updateControls();
-			
-		},
+      var $t = this;
+      
+      $t.wrap.css('-'+Tap.browser.prefix +'-transform', 'translate(0px, 0px)');
+      $t.current = 0;
+      $t.setupSlideDeck();
+      $t.updateControls();
+      
+    },
     setupSlideDeck: function(){
       var $t = this;
 
-      $t.innerWidth = $t.container.width();
+      $t.innerWidth = $t.container.outerWidth(true);
       $t.innerHeight = $t.container.outerHeight(true);
       $t.slides = $t.wrap.children();
+      
+      if($t.config.forceSlideWidth)
+        $t.slides.css('width', $t.innerWidth + 'px');
+
       $t.length = $t.slides.length * $t.slides.outerWidth(true);
-      $t.dots = Math.round($t.length / $t.innerWidth);
+               
+      $t.pages = Math.round($t.length / $t.innerWidth);
     },
 
     createJumper: function(){
@@ -97,12 +99,16 @@
           wrap = $(document.createElement('div')),
           length = Math.abs($t.length / $t.innerWidth);
 
+      if($t.jumpContainer && $t.jumpContainer.length !== 0)
+        $('.jump-to-slide', $t.jumpContainer).empty();
+      
       for(var i = 0, k = length; i < k; i++){
         var div = $(document.createElement('div'));
 
-        div.addClass('dot ' + (i == this.current ? 'active': '' ))
+        div.addClass('ui-joy-carousel-index ' + (i == this.current ? 'active': '' ))
         .html('<a href="#">&nbsp;</a>')
-        .bind('click', function(){
+        .unbind(Tapjoy.EventsMap.start)
+				.bind(Tapjoy.EventsMap.start, function(){
           var circle = $(this),
               position = 0;
 
@@ -113,7 +119,7 @@
 
           $t.updateControls();
 
-          $('.dot', wrap).removeClass('active');
+          $('.ui-joy-carousel-index', wrap).removeClass('active');
           circle.addClass('active');
         })
         .appendTo(wrap);
@@ -148,12 +154,12 @@
 
       $('.back, .forward', $t.container).css('top', ($t.innerHeight - left.height()) / 2)
 
-      $('.back', $t.container).bind('click', function(){
+      $('.back', $t.container).bind(Tapjoy.EventsMap.start, function(){
         var position = 0;
 
         if($(this).hasClass('disabled'))
-				  return;
-					
+          return;
+          
         if($t.current > 0){
           $t.current--
           var position = $t.container.width() * $t.current;
@@ -166,47 +172,84 @@
         $t.wrap.css('-'+Tap.browser.prefix +'-transform', 'translate(-'+ position +'px, 0px)');
       });
 
-      $('.forward', $t.container).bind('click', function(){
-        $t.current++
-				
-				if($(this).hasClass('disabled'))
-				  return;
+      $('.forward', $t.container).bind(Tapjoy.EventsMap.start, function(){
 
-        var screenWidth = $t.container.outerWidth(true) * $t.current,
-            position = 0;
-
-        if(screenWidth > $t.length || $t.dots === $t.current-1){
-          $t.current--;
+        var position = 0;
+        
+        if($(this).hasClass('disabled') || $t.pages === $t.current)
           return;
-        }else{
-          position = screenWidth - $t.current;
-        }
-
+					
+        $t.current++;
+				
+        position = $t.container.outerWidth(true) * $t.current;
+        
         $t.updateControls();
 
         $t.wrap.css('-'+Tap.browser.prefix +'-transform', 'translate(-'+ position +'px, 0px)');
       });
     },
+		
     updateControls: function(){
       var $t = this,
-			    current = $t.current + 1;
-
+			    next = ($t.container.width() * ($t.current + 1)),
+					back = $('.back', $t.container),
+					forward = $('.forward', $t.container);
+      
       if($t.config.hasPager){
-        $('.dot', $t.jumpContainer).removeClass('active');
-        $('.dot:eq(' + $t.current + ')', $t.jumpContainer).addClass('active');
+        $('.ui-joy-carousel-index', $t.jumpContainer).removeClass('active');
+        $('.ui-joy-carousel-index:eq(' + $t.current + ')', $t.jumpContainer).addClass('active');
       }
 			
-      if(($t.container.width() * current) > $t.length || $t.dots > 1 && $t.dots === current){
-        $('.back', $t.container).removeClass('disabled');
-        $('.forward', $t.container).addClass('disabled');
-      }else if($t.current > 0 && ($t.container.width() * $t.current) < $t.length){
-        $('.back', $t.container).removeClass('disabled');
-        $('.forward', $t.container).removeClass('disabled');
+      if(next > $t.length || $t.config.forceSlideWidth && $t.pages == ($t.current + 1)){
+        back.removeClass('disabled');
+        forward.addClass('disabled');
+      }else if($t.current > 0 && next < $t.length){
+        back.removeClass('disabled');
+        forward.removeClass('disabled');
+      }else if($t.current === 0){
+        back.addClass('disabled');
+        forward.removeClass('disabled');
       }
-      else if($t.current === 0){
-        $('.back', $t.container).addClass('disabled');
-        $('.forward', $t.container).removeClass('disabled');
-      }
+			
+			if(next > $t.length && next < window.innerWidth){
+				back.addClass('disabled');
+			}
+    },
+    
+    debounce: function(fn, delay, execASAP, scope){
+      var timeout;
+
+      return function debounced() {
+        var obj = scope || this, 
+            args = arguments;
+      
+        function delayedFn(){
+          if(!execASAP){
+            fn.apply(obj, args);
+          }
+          
+          timeout = null;
+        }
+
+        if(timeout){
+          clearTimeout(timeout);
+        }else if(execASAP){
+          fn.apply(obj, args);
+        }
+
+        timeout = setTimeout(delayedFn, delay || 100);
+      };
+    },
+		
+    resize: function(){
+      var $t = this;
+      
+      $t.setupSlideDeck();
+
+      if($t.config.hasPager)
+				$t.createJumper();
+
+      $t.updateControls();
     }
   });
 

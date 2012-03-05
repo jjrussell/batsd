@@ -40,7 +40,13 @@
       toggle: function(event, ui, state){},
       touch: function(event, ui){},
       type: 'button'
-    }
+    },
+		Carousel: {
+			forceSlideWidth: false,
+			hasPager: false,
+			pagerContainer: null,
+			animationDuration: 250
+		}
   };
 
   // shared methods
