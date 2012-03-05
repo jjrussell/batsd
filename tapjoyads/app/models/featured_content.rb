@@ -96,7 +96,7 @@ class FeaturedContent < ActiveRecord::Base
   end
 
   def expired?
-    end_date < Time.zone.now.to_date
+    end_date < Time.zone.now
   end
 
   def expire!
