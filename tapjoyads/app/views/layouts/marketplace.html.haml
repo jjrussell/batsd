@@ -77,7 +77,7 @@
       Tapjoy.rootPath =  "#{WEBSITE_URL}";
       Tapjoy.iosLinkDevicePath = "#{new_games_gamer_device_path}";
       Tapjoy.androidAppPath = "#{GAMES_ANDROID_MARKET_URL}";
-      Tapjoy.selectDevice = #{current_gamer.all_device_data.to_json};
+      Tapjoy.selectDevice = #{current_gamer ? current_gamer.all_device_data.to_json : []};
       Tapjoy.selectDevicePath = "#{games_switch_device_path}";
       Tapjoy.requireSelectDevice = #{@require_select_device.to_json};
 
