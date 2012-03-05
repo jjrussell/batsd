@@ -2127,19 +2127,19 @@ f.event={add:function(a,c,d,e,g){var h,i,j,k,l,m,n,o,p,q,r,s;if(!(a.nodeType===3
       .appendTo($t.container);
 
       $t.slides = wrap.children();
-
+			
       $t.wrap = wrap;
     },
-
+		
     turn : function(){
 			var $t = this,
 			    diff = 0;
-
+			
 		  $t.wrap.css('-'+Tap.browser.prefix +'-transform', 'translate(0px, 0px)');
 			$t.current = 0;
 			$t.setupSlideDeck();
 			$t.updateControls();
-
+			
 		},
     setupSlideDeck: function(){
       var $t = this;
@@ -2212,7 +2212,7 @@ f.event={add:function(a,c,d,e,g){var h,i,j,k,l,m,n,o,p,q,r,s;if(!(a.nodeType===3
 
         if($(this).hasClass('disabled'))
 				  return;
-
+					
         if($t.current > 0){
           $t.current--
           var position = $t.container.width() * $t.current;
@@ -2227,7 +2227,7 @@ f.event={add:function(a,c,d,e,g){var h,i,j,k,l,m,n,o,p,q,r,s;if(!(a.nodeType===3
 
       $('.forward', $t.container).bind('click', function(){
         $t.current++
-
+				
 				if($(this).hasClass('disabled'))
 				  return;
 
@@ -2254,7 +2254,7 @@ f.event={add:function(a,c,d,e,g){var h,i,j,k,l,m,n,o,p,q,r,s;if(!(a.nodeType===3
         $('.dot', $t.jumpContainer).removeClass('active');
         $('.dot:eq(' + $t.current + ')', $t.jumpContainer).addClass('active');
       }
-
+			
       if(($t.container.width() * current) > $t.length || $t.dots > 1 && $t.dots === current){
         $('.back', $t.container).removeClass('disabled');
         $('.forward', $t.container).addClass('disabled');
