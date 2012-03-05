@@ -1,0 +1,249 @@
+//-------------------------------------------
+// Line item structure
+//-------------------------------------------
+.line-item {
+  .hd {
+    margin-right: percentage(12/480);
+  }
+  .bd {
+    width: percentage(316/480);
+    margin-right: 0 percentage(12/480);
+  }
+  .ft {
+    width: percentage(69/480);
+  }
+}
+.image-caption {
+  .bd {
+    width: auto;
+  }
+}
+
+.app-info {
+  position: absolute;
+  left: 112px;
+}
+
+.row-title {
+  display: none;
+}
+
+.list-button-container.earn-theme .big-title {
+  max-width: 250px !important;
+}
+
+.ui-list-action-label {
+  margin-top: 0;
+  padding-bottom: 2px;
+}
+
+.footer {
+  .links {
+    ul {
+      li {
+        font: bold .7em "Helvetica", Arial;
+      }
+    }
+  }
+
+  small {
+    font: normal .5em "Helvetica", Arial;
+  }
+}
+
+
+/**
+ * marketplace
+ */
+.row {
+  padding: 0;
+  box-shadow: none;
+}
+
+#recommendationsRow,
+#favortiesRow {
+  display: none;
+}
+
+
+
+#recommendations .app,
+div.app {
+  border-top: 1px solid #fff;
+  border-bottom: 1px solid #ccc;
+  margin: 0;
+  padding: 0;
+  width: auto !important;
+  height: 106px !important;
+  float: none;
+  position: static;
+  overflow: auto;
+  overflow-x: hidden;
+  overflow-y: hidden;
+
+  .app-icon {
+    margin: 0;
+    margin-left: 10px;
+    float: left;
+    width: 100px !important;
+    height: 100px !important;
+    background-size: 100px 100px !important;
+    img {
+      left: 1px;
+      width: 98px !important;
+      height: 98px !important;
+    }
+
+  }
+
+  .details {
+    margin-top: 25px;
+    margin-left: 10px;
+    text-align: left;
+    float: left;
+    position: absolute;
+    left: 100px;
+
+    span.title {
+      padding-left: 2px;
+      margin-bottom: 5px;
+    }
+  }
+
+  small.publisher,
+  .btn {
+    display: none;
+  }
+
+  .ui-list-action {
+    display: block;
+    margin-top: 44px;
+    float: right;
+    margin-right: 10px;
+
+    .ui-list-action-label {
+      font-size: 1.15em;
+      margin-top: 1px;
+      color: #454545;
+      text-shadow: 0 1px 0 #fff;
+    }
+  }
+  .myapps-earn {
+    position: absolute;
+    right: 8px;
+  }
+}
+
+
+div.app:last-child {
+  border-bottom: 0 !important;
+}
+
+.row .app:first-child {
+  border-top: 0 !important;
+}
+
+.ui-joy-carousel {
+  height: auto !important;
+  overflow: visible;
+}
+
+.forward,
+.back {
+  display: none;
+}
+
+.row {
+  box-shadow: inset 0 1px 10px rgba(255,255,255, 1);
+}
+
+#tjmTopbar .section {
+  display: block;
+}
+
+
+#more-games {
+  .details {
+    margin-top: 15px;
+    text-align: left;
+    float: none;
+
+    span.title {
+      padding-left: 2px;
+      margin-bottom: 5px;
+    }
+
+    small.description {
+      height: 75px;
+      word-wrap: break-word;
+      width: 96%;
+    }
+  }
+}
+
+#recommendations .app,
+.app {
+  height: 106px !important;
+  .app-icon {
+    width: 100px !important;
+    height: 100px !important;
+    background-size: 100px 100px !important;
+
+    img {
+      left: 1px;
+      width: 98px !important;
+      height: 98px !important;
+    }
+  }
+}
+
+.list-button-container.earn-theme {
+  .squircle {
+    width: 100px !important;
+    height: 100px !important;
+    background-size: 100px 100px !important;
+
+    img {
+      left: 1px;
+      width: 98px !important;
+      height: 98px !important;
+    }
+  }
+}
+
+.squircle {
+  width:  100px !important;
+  height: 100px !important;
+  background-size: 100px 100px !important;
+
+  img {
+    left: 1px;
+    width: 98px !important;
+    height: 98px !important;
+  }
+}
+
+#more-games {
+  .app {
+    margin: 0;
+    .details {
+      small.description {
+        height: 40px;
+        overflow: hidden;
+        width: 70%;
+      }
+    }
+  }
+}
+
+#footer {
+  .links {
+    ul {
+      li {
+        a {
+          font-size: .7em;
+        }
+      }
+    }
+  }
+}
