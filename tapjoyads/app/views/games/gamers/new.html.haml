@@ -28,7 +28,7 @@
       .field
         = f.text_field :nickname, "autocorrect" => "off", "autocapitalize" => "off", :placeholder => t('text.shared.name')
       .field
-        = label_tag :birthdate
+        = label_tag :birthdate, t("text.games.birthdate")
         = select_date nil, { :order => [:month, :day, :year], :start_year => Time.now.year, :end_year => (Time.now.year - 100), :include_blank => false, :prompt => {:day => t("text.shared.day"), :month => t("text.shared.month"), :year => t("text.shared.year")} }
       .field
         = f.email_field :email, "autocorrect" => "off", "autocapitalize" => "off", :placeholder => t('text.shared.email')

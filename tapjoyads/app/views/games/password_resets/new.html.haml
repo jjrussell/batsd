@@ -22,7 +22,7 @@
             = label_tag(:email)
             = email_field_tag(:email, nil, "autocorrect" => "off", "autocapitalize" => "off", :class => 'ui-joy-input')
           .field
-            = submit_tag('Submit', :class => 'ui-joy-button orange-action mt10 mb10')
+            = submit_tag(t('text.shared.submit'), :class => 'ui-joy-button orange-action mt10 mb10')
         .formError.form-error.hide
           .email_error.error-msg
 
@@ -50,12 +50,12 @@
           email = values['email'];
           var test = emailReg.test(email);
           if( values['email'] == '' ) {
-            $(".email_error").html('Please enter your email address');
+            $(".email_error").html('#{t('text.games.enter_email')}');
             $(".formError").show().removeClass('hide').css({opacity: '1', visibility: 'visible !important'});
             e.preventDefault();
           }
           else if ( !emailReg.test(email) ) {
-            $(".email_error").html('Enter a valid email address');
+            $(".email_error").html('#{t('text.games.enter_valid_email')}');
             $(".formError").show().removeClass('hide').css({opacity: '1', visibility: 'visible !important'});
             e.preventDefault();
           }
