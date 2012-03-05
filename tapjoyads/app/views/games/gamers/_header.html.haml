@@ -4,15 +4,15 @@
       %table
         %tr
           %td
-            - link_to @gamer.get_avatar_profile_url, :target => '_blank' do
+            - link_to current_gamer.get_avatar_profile_url, :target => '_blank' do
               .large_avatar
-                = image_tag @gamer.get_avatar_url
+                = image_tag current_gamer.get_avatar_url
           %td
             .gamer_name
-              = @gamer.get_gamer_nickname
+              = current_gamer.get_gamer_nickname
             .gamer_email
-              = @gamer.email
+              = current_gamer.email
             .gamer_signup_date
-              = t('text.games.member_since', :date => l(@gamer.created_at, :format => :day_long))
+              = t('text.games.member_since', :date => l(current_gamer.created_at, :format => :day_long))
   .info_expand_bottom_arrow_wrapper
     .info_expand_bottom_arrow
