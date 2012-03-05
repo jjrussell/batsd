@@ -177,21 +177,27 @@ ja:
       skip: 戻る
       title: "%{currency} を稼ぐ"
       try_out: 試してみる
+    footer:
+      about: ~
+      advertisers: ~
+      blog: ~
+      copyright: ~
+      developers: ~
+      privacy: ~
     games:
       about_body: 使用中のアプリをより楽しみ、自分好みの新しいアプリに出会える
       about_title: "\"自分が好きなアプリを正確にわかってくれる\""
       account_created_body: アカウントの登録を完了しました！
       account_created_title: 登録完了！
       action_required: アクションが必要です！
-      active_gamers_text: ~
+      active_gamers_text: "%{count}人がプレイしています"
       add: 追加
-      add_to_homescreen: "%{tapjoy}をホーム画面に追加"
+      add_to_homescreen: Tapjoyをホーム画面に追加
       advertisers_body: あなたのアプリをTapjoyに露出し、多くのユーザーにリーチしよう
       advertisers_title: 広告主
       allow_marketing_emails: Tapjoyからのお知らせメールを受け取る
-      already_registered:
-        one: "%{name}さんはすでに登録済みです。%{name}さんをフォローしました"
-        other: "%{name}さんはすでに登録済みです。%{name}さんをフォローしました"
+      almost_done: ~
+      already_registered: ~
       amount_and_currency: "%{amount} %{currency}"
       back_to_top: 上に戻る
       birthdate: 生年月日
@@ -201,9 +207,12 @@ ja:
       cant_fetch_offers: ページの読み込みに問題が発生しました。再度試してください。
       change: 変更
       change_linked_account: リンクされたアカウントを変更
+      choose_section: セクションを選ぶ
+      close: ~
       collect: 受け取る
       collect_rewards: ポイントを受け取る
       connect_my_device: 端末を接続
+      connect_to_facebook: クリックしてFacebookにつなげる
       connect_your_android: Android端末を接続してください
       connect_your_device: 端末を接続してください
       connected_to_facebook: ~
@@ -212,16 +221,18 @@ ja:
       contact_us: お問い合わせ
       cookies_required: ブラウザのクッキーの設定を有効にしてください
       deactivate: 無効にする
-      del_acct_confirm: "アカウントを無効にするためには、下のボタンをクリックしてください。 XXX日の間、アカウントが無効になるとあなたのアカウントが完全に削除されます。 一旦削除されたアカウントの継続利用はできませんので、ご注意ください。"
+      del_acct_confirm: "アカウントを無効にするためには、下のボタンをクリックしてください。 %{days_before_deletion}日の間、アカウントが無効になるとあなたのアカウントが完全に削除されます。 一旦削除されたアカウントの継続利用はできませんので、ご注意ください。"
       delete_my_account: アカウント削除
       developers_body: 私達のマネタイズツールであなたのアプリの収益を大幅に向上させよう
       developers_title: 開発者
       discover_apps: ~
+      download_now: ~
       earn: "%{currency}を獲得"
       earn_rewards: ~
       earn_title: "下記のオファー(アプリインストール・会員登録など)を完了して、%{app_name}の%{currency} を獲得しよう"
       earning_rewards: ~
       edit: 編集
+      email_device_link: ~
       email_notification: Eメール通知
       enable_javascript: Tapjoyの使用を継続するには、ブラウザ設定のJavaScriptを有効化してください。
       enter_birthdate: 生年月日を入力してください
@@ -238,23 +249,27 @@ ja:
       favorite_app: お気に入りアプリ
       favorite_apps: お気に入りアプリ
       favorite_category: お気に入りカテゴリー
-      feedback: ご意見・ご提案
-      find_and_invite_friends: ~
+      favorites: ~
+      feedback: ご意見・ご要望
+      find_and_invite_friends: 友達を検索して招待する
       find_friends_from_facebook: ~
       find_friends_from_twitter: ~
-      find_friends_on_tapjoy: ~
-      find_more_friends: ~
+      find_friends_on_tapjoy: 他のネットワークを使ってすでにTapjoyを使っている友達を検索する
+      find_more_friends: もっと友達を検索する
       find_new_apps: 新しいアプリを見つける
       follow_us: フォローする
       forgot_pass: パスワードを忘れた場合はこちら
       free: 無料!
       generic_issue: "問題が発生しました。 再度試してください。"
-      get_app: ~
+      get_app: このアプリをゲットする
       get_it: ゲット!
       grant_us_access: 招待メールを送信する前に、Tapjoyに許可を与えてください
       how_it_works_body: あなたのゲームは全て以下にリストアップされています。アプリの横にあるボタンをクリックして、ポイントの獲得を始めよう
       how_it_works_title: どうやって?
       install_and_run: "%{name}をインストールして起動してください。"
+      install_android_app: ~
+      install_profile: ~
+      invalid_fields: ~
       invite: 友達を招待しよう!
       invite_by_email: Eメールで招待する
       invite_email_body: |-
@@ -265,38 +280,41 @@ ja:
           今すぐ始める方はこちらから："
       invite_email_greet: こんにちは、
       invite_email_signature: Tapjoyチーム
-      invite_friends:
-        one: 招待する
-        other: "%{count} 人の友達を招待する"
+      invite_friends: ~
       invite_title: 友達に招待メールを送る
-      invites_sent_to:
-        one: "Tapjoyへの招待状が%{name}さんに送信されました"
-        other: "Tapjoyへの招待状が%{name}さんへ送信されました"
+      invites_sent_to: ~
       issue_registering: アカウント登録中にエラーが発生しました
       join_the_community: ~
       join_the_community_blurb: ~
       last_played: "最後のプレイ：%{game}"
+      link_account_header: ~
+      link_account_messaging: ~
+      link_account_messaging_android_href: ~
+      link_account_messaging_tjm_href: ~
       link_my_facebook: Facebookをリンク
       load_more: もっと見る
       loading: ロード中…
       log_in_tapjoy: Tapjoyにログイン
-      mark_as_favorite: ~
+      mark_as_favorite: お気に入りに追加する
       member_since: "%{date}からメンバー"
       meta_description: "Tapjoy： Android, iPhoneやiPad上におけるアプリ・ゲームの目的地"
       meta_keywords: ゲーム、モバイルゲーム、モバイルアプリ、iOS、Android、iPhone、iPad、iTouch
       more_apps: もっとアプリを見る
-      more_the_merrier: ~
+      more_the_merrier: 人数が多いほど楽しい！
       my_apps: Myアプリ
       next: 次へ
       no_device: デバイス不在
       no_javascript: Tapjoyの使用を継続するには、ブラウザ設定にからJavaScriptを有効化してください
       none_selected: 選択されていません
       on_my: "%{device_name}を使用中"
+      one: "Tapjoyへの招待状が%{name}さんに送信されました"
       oops: おっと！
       or_learn_more: ~
+      other: "Tapjoyへの招待状が%{name}さんへ送信されました"
       other_options: 他のオプション
       our_tos_changed: "当社の%{terms_of_use}を変更いたしました。よくお読みいただき、下記からご同意の上、ご利用いただくようお願い申しあげます。"
       password_changed: ~
+      password_non_match: ~
       post_to_facebook_content: お気に入りのアプリのカレンシー（仮想通貨）を獲得しながら、最新のアプリを発掘することができるTapjoyをチェックしよう！参加はフリー。今すぐTapjoy.comから始めて、あなたの好みに応じたオススメアプリをゲットしよう。
       privacy_policy_href: プライバシーポリシー
       profile: 自分
@@ -306,8 +324,13 @@ ja:
       recipients_label: "複数のメールアドレスを入力する場合、「 , 」（コンマ）で区切ってください"
       recommend_apps: ~
       recommendations: スマートなおススメ
+      recommendations_smart: スマートなおススメ
       registering: 登録中
       report_bug: バグ報告
+      reset_password_message: アカウントに登録したメールアドレスを入力すると、パスワードを変更できるリンクが送信されます
+      reset_password_message_submit: 数分以内にそのアドレスにパスワードを変更するためのメールが届きますので、メールの手順に従ってください。
+      reset_password_retry: "ログイン時に未だ問題が発生している場合は、こちらから再度パスワードの変更のメールをリクエストするか、{email address}にお問い合わせください。"
+      reset_password_retry_url_text: 再度パスワードの変更のメールをリクエストする
       review_app_name: "%{app_name}をレビュー"
       review_created: このアプリのレビューに成功
       review_issue: 問題が発生しました。後ほど再びお試しください。
@@ -337,6 +360,7 @@ ja:
       unable_to_process: 申し訳ございませんが、登録できません。
       unlock_mobile_joy: "Mobile Joyを解除"
       unmark_as_favorite: ~
+      welcome_tapjoy: ~
       wifi_required: WiFi必須
       wrong_device: 違うデバイス?
       you_are_following: ~
@@ -376,7 +400,7 @@ ja:
       back: 戻る
       blog: ブログ
       cancel: キャンセル
-      change_password: ~
+      change_password: パスワードを変更する
       city: 都道府県
       collect: 集める
       comment: コメント
@@ -390,7 +414,7 @@ ja:
       facebook_profile: Facebookプロフィール
       favorites: お気に入り
       female: 女性
-      followers: フォロワー
+      followers: フォロワー"
       following: フォロー中
       friends: 友達
       gender: 性別
@@ -415,6 +439,7 @@ ja:
       options: オプション
       other: その他
       password: パスワード
+      please_try_again: ~
       preferences: 初期設定
       privacy: プライバシー
       privacy_policy: プライバシーポリシー
@@ -425,10 +450,12 @@ ja:
       reviews: レビュー
       save: 保存
       send: 送信
+      sending: ~
+      sent: ~
       share: シェア
       sign_in: サインイン
       sign_up: サインアップ
-      submit: 寄稿
+      submit: 投稿する
       submit_review: レビューを寄稿する
       success: 完了！
       title_noun: タイトル
@@ -441,24 +468,24 @@ ja:
       year: 年
       zip_postal: 郵便番号
     support:
-      abuse_warning: このフォームはオファー案件の手続きを終了したにもかかわらず、仮想通貨を受取れなかったお客様のためのものです。　不正利用の場合にはオファー広告を利用することが出来なくなります。
-      description_label: 詳細
+      abuse_warning: "このフォームは、完了されたオファーから報奨を受け取っていないユーザー用のみと厳しく制限しています。 このページの乱用者は、オファー参加から禁止される可能性があります。　"
+      description_label: 記述
       email_address_label: メールアドレス
-      instructions_1: "%{currency}が受取れなかったオファー広告を選択し、メールアドレスを記入してください"
-      instructions_2: 詳細情報が記入されていない時は、時間が'掛かる場合があります。
-      invalid_email: 正しいメールアドレスを記入してください
-      message: "申し訳ございませんが %{offer} が現在提供しておりません。前のページに戻って更新して頂くと最新オファー広告リストがご覧頂けます。"
-      missing_description: オファー広告の内容を記入してください
-      missing_offer: オファー広告の内容を記入する必要があります
-      no_incomplete_offers_label: 適当なオファー広告がありません
-      optional_message: "又は %{offer} をダウンロードするにはクリックしてください"
-      select_offer: オファー広告を選択してください
-      specify_offer_label: オファー広告を指定してください
-      submit_support_request: サポートを依頼する
-      support_request_submitted: サポートが依頼されました
-      thanks: "サポート依頼を受け付けました。オファー広告の手続き完了後に%{currency}を発行をいたします"
-      title: "%{currency}が受取れない場合?"
-      unavailable_offer: "message: 大変申し訳ございませんがこちらのオファーは現在取り扱っておりません。前のページに戻り、リフレッシュして最新のオファーリストをご覧ください。"
+      instructions_1: "%{currency}を受け取っていない完了したオファーを選択し、メールアドレスを入力してください"
+      instructions_2: 不十分な情報によりチケットを投稿した場合、問題解決に遅延を生じてしまいます。十分な情報が確認されたチケットが優先されます。
+      invalid_email: 有効なメールアドレスを入力してください
+      message: 大変申し訳ございませんがこちらのオファーは現在取り扱っておりません。前のページに戻り、リフレッシュして最新のオファーリストをご覧ください。
+      missing_description: 完了したオファーについて説明してください
+      missing_offer: 完了したオファーを指定してください
+      no_incomplete_offers_label: 適切なオファーは見つかりません
+      optional_message: "または、とにかく%{offer}をダウンロードするには、こちらをクリックしてください。"
+      select_offer: オファーを選択
+      specify_offer_label: オファーを指定
+      submit_support_request: サポートリクエストを投稿
+      support_request_submitted: サポートリクエストが投稿されました
+      thanks: "サポートリクエストを投稿いただきありがとうございます。こちらでオファー完了を確認後、 %{currency} を受け取ることができます。"
+      title: "%{currency}が受け取れない？"
+      unavailable_offer: ~
     unavailable_offer:
       message: ~
       optional_message: ~

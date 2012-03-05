@@ -177,19 +177,29 @@ zh:
       skip: 跳过
       title: "赚 %{currency}"
       try_out: 试一试
+    footer:
+      about: ~
+      advertisers: ~
+      blog: ~
+      copyright: ~
+      developers: ~
+      privacy: ~
     games:
       about_body: 愛您擁有的，覓您喜歡的
       about_title: "\"真有意思，它就是知道我喜歡什麼應用。 \""
       account_created_body: "您的Tapjoy 帳戶已成功創建！"
       account_created_title: 成功了！
       action_required: 請開始！
-      active_gamers_text: ~
+      active_gamers_text: "%{count} 人正在玩"
       add: 新增
       add_to_homescreen: "把 %{tapjoy} 加到你的首頁"
       advertisers_body: 讓您的產品深入百萬用戶，家喻戶曉！
       advertisers_title: 廣告商
       allow_marketing_emails: "允許Tapjoy 向我發送市場營銷電子郵件"
-      already_registered: ~
+      almost_done: ~
+      already_registered:
+        one: "%{name} 已註冊。您現在關注他/她."
+        other: "%{name} 已註冊。您現在關注他們."
       amount_and_currency: "%{amount} %{currency}"
       back_to_top: 返回頁首
       birthdate: 生日
@@ -199,9 +209,12 @@ zh:
       cant_fetch_offers: 獲取更多廣告要求時遇到了問題。請再試.
       change: 變更
       change_linked_account: 變更連接帳戶
+      choose_section: 功能選擇
+      close: ~
       collect: 收集
       collect_rewards: 收集獎勵
       connect_my_device: 連接我的終端
+      connect_to_facebook: 點擊以連結到Facebook
       connect_your_android: 請連接您的Andr​​oid終端
       connect_your_device: 請連接您的終端
       connected_to_facebook: ~
@@ -210,20 +223,22 @@ zh:
       contact_us: 聯繫我們
       cookies_required: 請打開瀏覽器的cookie設定
       deactivate: 停用
-      del_acct_confirm: 請點擊下面的按鈕來停用您的帳戶。帳戶停用XXX天后將被徹底刪除。您的帳戶一旦刪除就無法恢復。
+      del_acct_confirm: "請點擊下面的按鈕來停用您的帳戶。帳戶停用%{days_before_deletion}天后將被徹底刪除。您的帳戶一旦刪除就無法恢復。"
       delete_my_account: 刪除我的帳戶
       developers_body: 用我們的增值工具為您的應用創造可觀收益
       developers_title: 開發者
       discover_apps: ~
+      download_now: ~
       earn: "賺取%{currency} "
       earn_rewards: ~
       earn_title: "請完成以下任何廣告要求為您的%{app_name}賺取%{currency} "
       earning_rewards: ~
       edit: 編輯
+      email_device_link: ~
       email_notification: 電郵通知
       enable_javascript: 請在瀏覽器設置菜單中啟用JavaScript以便繼續使用Tapjoy。
       enter_birthdate: 請輸入您的生日
-      enter_email: 請輸入您的電子郵件地址
+      enter_email: 請輸入你的電子郵件地址
       enter_message: 請輸入一道訊息
       enter_name: ~
       enter_password: 請輸入密碼
@@ -236,61 +251,74 @@ zh:
       favorite_app: 最喜歡的應用
       favorite_apps: 最喜歡的應用
       favorite_category: 最喜歡的類型
+      favorites: ~
       feedback: 反饋
-      find_and_invite_friends: ~
+      find_and_invite_friends: 尋找並邀請朋友
       find_friends_from_facebook: ~
       find_friends_from_twitter: ~
-      find_friends_on_tapjoy: ~
-      find_more_friends: ~
+      find_friends_on_tapjoy: 尋找在其他網路中使用Tapjoy的朋友
+      find_more_friends: 尋找更多朋友
       find_new_apps: 找新應用
       follow_us: 關注我們
       forgot_pass: 忘記密碼了？
       free: 免費！
       generic_issue: 有問題了。請再試。
-      get_app: ~
+      get_app: 獲取應用
       get_it: 下載！
       grant_us_access: 在發送邀請前請給予我們相應的授權/許可。
       how_it_works_body: 您的所有遊戲如下所列。按應用旁的按鈕開始賺取虛擬貨幣。
       how_it_works_title: 它的原理？
       install_and_run: "安裝並運行 %{name}"
+      install_android_app: ~
+      install_profile: ~
+      invalid_fields: ~
       invite: 邀請好友！
       invite_by_email: 用電郵邀請
       invite_email_body: |-
-          |- 		%{name}已邀請您加入Tapjoy，這是發現最熱門新應用的絕佳所在。免費註冊後您就能發現針對iOS 和Android系統的最好應用，而且您可以在自己最喜愛的應用中賺取現金。
-          		 無需在App Store 或Android Market 中的成千上萬應用堆裡艱難跋涉才能找到您的下一個下載。 Tapjoy 在乎您，會向您推薦您喜歡的應用。
-          		 請在此創建您的帳戶，然後開始吧。 
+          %{name}已邀請您加入Tapjoy，這是發現最熱門新應用的絕佳所在。免費註冊後您就能發現針對iOS 和Android系統的最好應用，而且您可以在自己最喜愛的應用中賺取現金。
+
+           無需在App Store 或Android Market 中的成千上萬應用堆裡艱難跋涉才能找到您的下一個下載。 Tapjoy 在乎您，會向您推薦您喜歡的應用。
+
+           請在此創建您的帳戶，然後開始吧。
       invite_email_greet: 你好
       invite_email_signature: Tapjoy團隊
-      invite_friends: ~
+      invite_friends:
+        one: 邀請
+        other: "邀請 %{count} 個朋友"
       invite_title: 發送一封電子郵件邀請
-      invites_sent_to: ~
+      invites_sent_to:
+        one: "一個Tapjoy 邀請已發送給了%{name}"
+        other: "Tapjoy 邀請已發送給了%{name}"
       issue_registering: 註冊帳戶發生問題
       join_the_community: ~
       join_the_community_blurb: ~
       last_played: "最近玩的遊戲: %{game}"
+      link_account_header: ~
+      link_account_messaging: ~
+      link_account_messaging_android_href: ~
+      link_account_messaging_tjm_href: ~
       link_my_facebook: 請連接到我的Facebook
       load_more: 請加載更多
       loading: 加載中...
       log_in_tapjoy: 登錄到Tapjoy
-      mark_as_favorite: ~
+      mark_as_favorite: 加到我的最愛
       member_since: "會員從%{date}起"
       meta_description: "Tapjoy：針對Android、iPhone 和iPad 上移動應用的一站式服務"
       meta_keywords: 遊戲、移動遊戲、移動應用、ios、Android、iPhone、iPad、iTouch
       more_apps: 更多應用
-      more_the_merrier: ~
+      more_the_merrier: 獨戲樂不如眾戲樂
       my_apps: 我的應用
       next: 下一頁
       no_device: 沒有裝置
       no_javascript: 請在瀏覽器設置菜單中啟用JavaScript以便繼續使用Tapjoy。
       none_selected: 沒有選中
       on_my: "在我的 %{device_name} 上"
-      one: "一個Tapjoy 邀請已發送給了%{name}"
       oops: 哦！
       or_learn_more: ~
-      other: "Tapjoy 邀請已發送給了%{name}"
       other_options: 其他選項
       our_tos_changed: "我們的％{terms_of_use}已經修訂。請查閱後接受。"
       password_changed: ~
+      password_non_match: ~
       post_to_facebook_content: "造訪Tapjoy來發現最好的應用與遊戲，還可以在你喜愛的應用中賺取虛擬貨幣。加入完全免費，所以現在就來造訪 tapjoy.com，獲得為你量身訂做的應用推薦"
       privacy_policy_href: 隱私政策
       profile: 我
@@ -300,8 +328,13 @@ zh:
       recipients_label: 請使用逗號區隔各電子郵件
       recommend_apps: ~
       recommendations: 智能推薦
+      recommendations_smart: 智能推薦
       registering: 註冊中
       report_bug: 回報臭蟲
+      reset_password_message: 輸入跟你帳號關聯的郵箱地址，我們便會將重置密碼的聯結發送給你
+      reset_password_message_submit: 你將在幾分鐘之後收到指引你重置密碼的電子郵件
+      reset_password_retry: "如果你還是無法登入，可以 %{reset_password_url} 或發送電子郵件"
+      reset_password_retry_url_text: 請求另一封密碼重置郵件
       review_app_name: "評論 %{app_name}"
       review_created: 成功評論此應用
       review_issue: 有點問題，請稍後重試
@@ -331,6 +364,7 @@ zh:
       unable_to_process: 抱歉，我們無法處理您的請求
       unlock_mobile_joy: "解放Mobile Joy"
       unmark_as_favorite: ~
+      welcome_tapjoy: ~
       wifi_required: "需要Wifi 連接"
       wrong_device: 裝置不對?
       you_are_following: ~
@@ -370,7 +404,7 @@ zh:
       back: 返回
       blog: 部落格
       cancel: 取消
-      change_password: ~
+      change_password: 更改密碼
       city: 城市
       collect: 收集
       comment: 意見
@@ -384,7 +418,7 @@ zh:
       facebook_profile: "Facebook 個人資料"
       favorites: 我的最愛
       female: 女性
-      followers: 關注者
+      followers: 被關注
       following: 關注
       friends: 朋友
       gender: 性別
@@ -409,6 +443,7 @@ zh:
       options: 選項
       other: 其它
       password: 密碼
+      please_try_again: ~
       preferences: 首選
       privacy: 隱私
       privacy_policy: 隱私政策
@@ -419,6 +454,8 @@ zh:
       reviews: 評論
       save: 保存
       send: 發送
+      sending: ~
+      sent: ~
       share: 共享
       sign_in: 註冊
       sign_up: 註冊
@@ -435,24 +472,27 @@ zh:
       year: 年
       zip_postal: 郵政編碼
     support:
-      abuse_warning: "本页表格是针对完成了流程但未获得虚拟币奖励的用. 滥用者可导致将来受禁止参与此类活动."
-      description_label: "请描述您下载了APP的流程:"
-      email_address_label: "电子邮箱:"
-      instructions_1: "如果您没得到 %{currency}, 请您让我们知道你下载了哪款APP, 并且留下您的电子邮箱."
-      instructions_2: "我们完成了确认流程后，你将会获取应得的 %{currency}."
-      invalid_email: 请输入您真实的电子邮箱.
-      missing_description: 请描述您下载了APP的流程.
-      missing_offer: 您需要写下您完成的广告。
-      no_incomplete_offers_label: 没法提供其他的广告。
-      select_offer: 选以下的广告
-      specify_offer_label: 选以下的广告：
-      submit_support_request: 支持请求
-      support_request_submitted: 支持请求已提交
-      thanks: "感谢您提交了支持请求! 我们完成了确认流程后，你将会获取应得的 %{currency}."
-      title: "没得到 %{currency}?"
+      abuse_warning: 本表格僅供那些完成廣告但未獲得獎勵的用戶使用，濫用本頁可能導致你的帳戶未來無法與廣告互動
+      description_label: "描述:"
+      email_address_label: "電郵地址:"
+      instructions_1: "請選擇你完成要求但未獲得%{currency}的廣告並輸入你的電子郵件地址"
+      instructions_2: 如果你提交申請的資料不完整，可能延誤你問題的解決速度。我們會優先處理資料完整的要求
+      invalid_email: 請輸入真實的電郵地址
+      message: "很抱歉，但 %{offer} 已經失效了，你可以回到上一頁，重新整理，以查看最新的廣告要求列表"
+      missing_description: 請描述你完成的廣告要求
+      missing_offer: 你必須指出你完成的廣告要求
+      no_incomplete_offers_label: 我們沒找到合適的廣告要求
+      optional_message: "或不管一切，還是點擊這裡來下載 %{offer}"
+      select_offer: 選擇廣告要求
+      specify_offer_label: "指出要求:"
+      submit_support_request: 提交客戶支持請求
+      support_request_submitted: 客戶支持請求已提交
+      thanks: "感謝你提交客戶支持請求! 等我們核實你已經完成廣告要求之後，你就可以收到你的 %{currency}"
+      title: "沒收到 %{currency}?"
+      unavailable_offer: ~
     unavailable_offer:
-      message: "对不起。您找的 %{offer} 目前无法出现。可以回到前一页然后刷新。"
-      optional_message: "或您可以点和下载这个 %{offer} 。"
+      message: ~
+      optional_message: ~
   time:
     am: ~
     formats:

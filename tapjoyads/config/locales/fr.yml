@@ -177,31 +177,42 @@ fr:
       skip: Passe
       title: "Gagne des %{currency}"
       try_out: "A découvrir"
+    footer:
+      about: ~
+      advertisers: ~
+      blog: ~
+      copyright: ~
+      developers: ~
+      privacy: ~
     games:
       about_body: "La meilleure maniere de profiter de tes apps favorites et de trouver celles que tu aimeras demain"
       about_title: "\"Tapjoy.com connait deja les apps que j'aime\""
       account_created_body: "Ton compte Tapjoy a bien été crée!"
       account_created_title: Félicitations!
       action_required: "Action requise!"
-      active_gamers_text: ~
+      active_gamers_text: "This just means the number of people playing this app"
       add: ajouter
-      add_to_homescreen: "Ajoutez %{tapjoy} sur votre écran d'accueil"
+      add_to_homescreen: "add TJM to your homescreen"
       advertisers_body: "Ciblez des millions d'utilisateurs et faites bénéficiez vos produits d'une large exposition"
       advertisers_title: Annonceurs
       allow_marketing_emails: "Permettre à Tapjoy de m'envoyer des emails promotionnels "
+      almost_done: ~
       already_registered: ~
-      amount_and_currency: "DON'T THINK WE SHOULD TRANSLATE THAT (JV)"
+      amount_and_currency: "%{amount} %{currency}"
       back_to_top: Retour
       birthdate: "Date de naissance"
-      browse_offers: ~
+      browse_offers: "Parcourir les offres disponibles!"
       call_to_action_body: "Le meilleur moyen de profiter pleinement de tes apps mais aussi d'en découvrir de nouvelles"
-      call_to_action_title: "DON'T THINK WE SHOULD TRANSLATE THAT (JV)"
+      call_to_action_title: "Unlock Mobile Joy"
       cant_fetch_offers: "Il y a eu un problème pour retrouver plus d'offres. Essaye encore."
       change: changer
       change_linked_account: "Changer de Compte"
+      choose_section: "Choose a Section (choose a page...Smart Recommendations, My Apps, etc)"
+      close: ~
       collect: Recevoir
       collect_rewards: "Recevoir des recompenses"
       connect_my_device: "Connecter mon appareil"
+      connect_to_facebook: "Cliquer ici pour se connecter sur Facebook"
       connect_your_android: "Merci de connecter votre appareil Android"
       connect_your_device: "Merci de connecter votre appareil"
       connected_to_facebook: ~
@@ -215,15 +226,17 @@ fr:
       developers_body: ~
       developers_title: Développeurs
       discover_apps: ~
+      download_now: ~
       earn: ~
       earn_rewards: ~
       earn_title: "Complétez une des offres ci-dessous pour gagner %{currency} a %{app_name}"
       earning_rewards: ~
       edit: ~
+      email_device_link: ~
       email_notification: ~
       enable_javascript: ~
       enter_birthdate: "Merci d'entrer ta date de naissance"
-      enter_email: "Merci d'entrer ton adresse mail"
+      enter_email: "Merci d'inscrire ici votre adresse email"
       enter_message: ~
       enter_name: ~
       enter_password: "Merci d'entrer un mot de passe"
@@ -236,31 +249,32 @@ fr:
       favorite_app: App
       favorite_apps: ~
       favorite_category: "Catégorie Favorite"
-      feedback: ~
-      find_and_invite_friends: ~
+      favorites: ~
+      feedback: "this will direct to ways to give us feedback"
+      find_and_invite_friends: "Trouve et invite tes amis"
       find_friends_from_facebook: ~
       find_friends_from_twitter: ~
-      find_friends_on_tapjoy: ~
-      find_more_friends: ~
-      find_new_apps: ~
+      find_friends_on_tapjoy: "Trouve tes amis qui utilisent deja Tapjoy!"
+      find_more_friends: "Trouver plus d'amis"
+      find_new_apps: "Trouver de nouvelles apps"
       follow_us: Suis-nous
       forgot_pass: "Mot de passe oublié?"
       free: Gratuit!
       generic_issue: "Il y a eu une erreur"
-      get_app: ~
+      get_app: "Telecharge cette application"
       get_it: Télécharge!
-      grant_us_access: ~
+      grant_us_access: "Merci de nous autoriser a envoyer les invitations!"
       how_it_works_body: "Tous vos jeux sont listés-ci dessous"
       how_it_works_title: "Comment ca marche?"
       install_and_run: "Installe et lance %{name}"
+      install_android_app: ~
+      install_profile: ~
+      invalid_fields: ~
       invite: "Invite tes Amis!"
-      invite_by_email: ~
-      invite_email_body:
-        ? |-
-            %{name} t'a invité à rejoindre Tapjoy, l'endroit ou il faut être pour découvrir les dernières apps du moment. Inscris toi gratuitement et découvre les meilleurs apps sur iOS et Android, tout en gagnant de la monnaie virtuelle au sein de tes apps favorites.
-            Plus besoin de fouiller au milieu de milliers d'apps de l'App Store et de l'Android Market pour trouver ton prochain téléchargement. Tapjoy s'occupe de toi et te recommande des apps dont on est sur qu'elles te plairont.
-            Pour commencer, crée un compte ici
-        : ~
+      invite_by_email: "Inviter par email"
+      invite_email_body: "%{name} t'a invité à rejoindre Tapjoy, l'endroit ou il faut être pour découvrir les dernières apps du moment. Inscris toi gratuitement et découvre les meilleurs apps sur iOS et Android, tout en gagnant de la monnaie virtuelle au sein de tes apps favorites.\n\n\
+          Plus besoin de fouiller au milieu de milliers d'apps de l'App Store et de l'Android Market pour trouver ton prochain téléchargement. Tapjoy s'occupe de toi et te recommande des apps dont on est sur qu'elles te plairont.\n\n\
+          Pour commencer, crée un compte ici: "
       invite_email_greet: "Salut,"
       invite_email_signature: L'équipeTapjoy
       invite_friends: ~
@@ -270,16 +284,20 @@ fr:
       join_the_community: ~
       join_the_community_blurb: ~
       last_played: "Dernier jeu joué: %{game}"
+      link_account_header: ~
+      link_account_messaging: ~
+      link_account_messaging_android_href: ~
+      link_account_messaging_tjm_href: ~
       link_my_facebook: "Lier mon Facebook"
       load_more: "Encore plus de jeux"
       loading: Chargement
-      log_in_tapjoy: ~
-      mark_as_favorite: ~
+      log_in_tapjoy: "Se logger sur Tapjoy.com"
+      mark_as_favorite: "Ajouter aux favoris"
       member_since: ~
       meta_description: "Tapjoy:  La destination idéale pour les apps et jeux sur Android, iPhone et iPad"
       meta_keywords: "jeux, jeux mobiles, applications mobiles, android, iphone,ipad, itouch"
       more_apps: "Plus d'apps"
-      more_the_merrier: ~
+      more_the_merrier: "Plus on est de fous, plus on rit!"
       my_apps: "Mes apps"
       next: Suivant
       no_device: "Pas d'appareil"
@@ -290,9 +308,10 @@ fr:
       oops: Oops!
       or_learn_more: ~
       other: "Tes invitations Tapjoy ont été envoyées a %{name}"
-      other_options: ~
+      other_options: "Autres options"
       our_tos_changed: "Nos %{termes} ont changé. Merci de les revoir et de confirmer votre accord"
       password_changed: ~
+      password_non_match: ~
       post_to_facebook_content: "Fais un tour sur Tapjoy OÙ tu peux decouvrir les meilleurs apps & jeux les plus récents tout en gagnant des crédits à dépenser dans tes apps favorites. C'est gratuit, donc visite Tapjoy aujourd'hui et commence a recevoir des recommendations personnalisées"
       privacy_policy_href: Confidentialité
       profile: "Mon Profile"
@@ -302,8 +321,13 @@ fr:
       recipients_label: "Utilise des virgules pour separer les adresses mails"
       recommend_apps: ~
       recommendations: "Recommendations futées"
+      recommendations_smart: Recommendations
       registering: S'enregistrer
       report_bug: "Signaler un bug"
+      reset_password_message: "Rentre ici l'email associé a ton compte et nous vous enverrons un lien pour changer ton mot de passe"
+      reset_password_message_submit: "Tu devrais recevoir un email d'instructions pour changer de mot de passe dans quelques minutes"
+      reset_password_retry: ~
+      reset_password_retry_url_text: "Demander un nouvel email pour changer de mot de passe"
       review_app_name: "Ecrire une revue sur %{app_name}"
       review_created: "Cette app a été revue!"
       review_issue: "Il y a eu un problème. Essaye encore."
@@ -322,17 +346,18 @@ fr:
       start_discovering: ~
       tap_that: "Clique simplement sur %{icon} et sélectionne %{button}"
       tapjoy_picks: "La sélection Tapjoy"
-      terms_of_use_href: "termes et conditions"
+      terms_of_use_href: "Conditions d'utilisation"
       thanks_contact_support: "Merci d'avoir contacté noter equipe support. Nous allons te répondre dès que possible"
-      thanks_contact_us: "Merci de nous avoir  contacté. Nous allons te répondre dès que possible\""
+      thanks_contact_us: "Merci de nous avoir  contacté. Nous allons te répondre dès que possible"
       thanks_feedback: "Merci pour tes commentaires!"
       thanks_report_bug: "Merci d'avoir signalé ce bug. Nous allons te répondre dès que possible"
       thats_you: "c'est toi"
       tos_acknowledge_html: "En cochant cette case je reconnais avoir pris connaissance des %{terms_of_use} & %{privacy_policy}"
       tos_change_acknowledge: "En cochant cette case je confirmer avoir accepté  %{terms_of_use} & %{privacy_policy}"
       unable_to_process: "Désolé, nous somme incapables de procéder a votre requête"
-      unlock_mobile_joy: na
+      unlock_mobile_joy: ~
       unmark_as_favorite: ~
+      welcome_tapjoy: ~
       wifi_required: "Wifi requis"
       wrong_device: "Pas le bon appareil?"
       you_are_following: ~
@@ -372,7 +397,7 @@ fr:
       back: Retour
       blog: Blog
       cancel: Annuler
-      change_password: ~
+      change_password: "Change de mot de passe"
       city: Ville
       collect: Collecter
       comment: Commentaire
@@ -386,15 +411,15 @@ fr:
       facebook_profile: "Profil Facebook"
       favorites: Favoris
       female: Femme
-      followers: Abonnés
-      following: Abonnements
+      followers: Followers
+      following: Following
       friends: Amis
       gender: Sexe
       help: Aide
       invite: Invite
       ios: iOS
       join: "Inscris toi"
-      location: ~
+      location: Ville
       login_noun: Login
       login_verb: "Se connecter"
       logout: "Fermer la session"
@@ -411,6 +436,7 @@ fr:
       options: Options
       other: Autre
       password: "Mot de passe"
+      please_try_again: ~
       preferences: Préférences
       privacy: Confidentialité
       privacy_policy: "Règles de Confidentialité"
@@ -421,10 +447,12 @@ fr:
       reviews: Revues
       save: Sauvegarder
       send: Envoyer
+      sending: ~
+      sent: ~
       share: Partager
       sign_in: "Se connecter"
       sign_up: S'enregistrer
-      submit: Soumettre
+      submit: "submit appears on a button when you submit a review or any info"
       submit_review: "Soumettre une revue"
       success: félicitations
       title_noun: Titre

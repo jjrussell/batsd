@@ -177,19 +177,29 @@ ru:
       skip: Пропустить
       title: "Заработать %{currency}"
       try_out: Попробовать
+    footer:
+      about: ~
+      advertisers: ~
+      blog: ~
+      copyright: ~
+      developers: ~
+      privacy: ~
     games:
       about_body: "Лучший способ радоваться приложениям, которые у вас уже есть и найти приложения, которые вас порадуют."
       about_title: "\"Каким-то образом, Tapjoy знает, какие приложения мне нравятся.\""
       account_created_body: "Ваша учетная запись с Tapjoy была успешно создана!"
       account_created_title: Ура!
       action_required: "Необходимо ваше действие!"
-      active_gamers_text: ~
+      active_gamers_text: "%{count} людей используют приложение"
       add: добавить
       add_to_homescreen: "Добавьте %{tapjoy} на домашний экран."
-      advertisers_body: "Покажите свой продукт миллионам пользователей"
+      advertisers_body: "Представьте свой продукт миллионам пользователей"
       advertisers_title: Рекламодателям
       allow_marketing_emails: "Разрешить Tapjoy присылать мне маркетинговый материал"
-      already_registered: ~
+      almost_done: ~
+      already_registered:
+        one: "%{name} уже зарегистрирован(а), теперь вы подписаны на новости от этого пользователя."
+        other: "%{name} уже зарегистрированы, теперь вы подписаны на новости от этих пользователей."
       amount_and_currency: "%{amount} %{currency}"
       back_to_top: Наверх
       birthdate: "Дата рождения"
@@ -199,9 +209,12 @@ ru:
       cant_fetch_offers: "Не получилось загрузить дополнительные предложения. Пожалуйста, попробуйте еще раз."
       change: изменить
       change_linked_account: "Изменить ассоциированную учетную запись"
+      choose_section: "Выберете раздел"
+      close: ~
       collect: Получить
-      collect_rewards: "Получить вознаграждение"
+      collect_rewards: "Получайте вознаграждения"
       connect_my_device: "Установить соединение с моим мобильным устройством"
+      connect_to_facebook: "Нажмите здесь, чтобы соединиться с Facebook"
       connect_your_android: "Пожалуйста, присоедините свое мобильное устройство Android"
       connect_your_device: "Пожалуйста, присоедините свое мобильное устройство"
       connected_to_facebook: ~
@@ -210,20 +223,22 @@ ru:
       contact_us: "Написать нам"
       cookies_required: "Пожалуйста, зайдите в настройки своего браузера и разрешите использование cookies"
       deactivate: Деактивировать
-      del_acct_confirm: "Нажмите кнопку ниже, чтобы деактивировать свою учетную запись. Когда ваша учетная запись будет неактивна XXX дней, она будет полностью удалена. Мы не сможем восстановить вашу учетную запись после ее удаления."
+      del_acct_confirm: "Нажмите кнопку ниже, чтобы деактивировать свою учетную запись. Когда ваша учетная запись будет неактивна %{days_before_deletion} дней, она будет полностью удалена. Мы не сможем восстановить вашу учетную запись после ее удаления."
       delete_my_account: "Удалить мою учетную запись"
       developers_body: "Увеличте доход от ваших приложений при помощи нашей монетизации"
       developers_title: Разработчикам
       discover_apps: ~
+      download_now: ~
       earn: "Заработать %{currency}"
       earn_rewards: ~
       earn_title: "Выполните любые предложения ниже, чтобы заработать %{currency} в %{app_name}"
       earning_rewards: ~
       edit: изменить
+      email_device_link: ~
       email_notification: "Уведомления по электронной почте"
       enable_javascript: "Пожалуйста, зайдите в настройки своего браузера и разрешите использование JaveScript, чтобы продолжить использовать Tapjoy."
       enter_birthdate: "Пожалуйста, введите дату вашего рождения"
-      enter_email: "Пожалуйста, введите адрес вашей электронной почты"
+      enter_email: "Пожалуйста, введите адрес своей электронный почты."
       enter_message: "Пожалуйста, введите сообщение"
       enter_name: ~
       enter_password: "Пожалуйста, введите пароль"
@@ -236,23 +251,27 @@ ru:
       favorite_app: "Любимое приложение"
       favorite_apps: "Любимые приложения"
       favorite_category: "Любимая категория"
+      favorites: ~
       feedback: Отзывы
-      find_and_invite_friends: ~
+      find_and_invite_friends: "Найдите и пригласите друзей"
       find_friends_from_facebook: ~
       find_friends_from_twitter: ~
-      find_friends_on_tapjoy: ~
-      find_more_friends: ~
-      find_new_apps: "Найдите новые приложения"
+      find_friends_on_tapjoy: "Найдите друзей, использующих Tapjoy, через другие социальные сети"
+      find_more_friends: "Найти больше друзей"
+      find_new_apps: "Находите новые приложения"
       follow_us: "читайте нас в"
       forgot_pass: "Забыли пароль?"
       free: Бесплатно!
       generic_issue: "Возникла проблема. Пожалуйста, попробуйте еще раз."
-      get_app: ~
+      get_app: "Получить приложение"
       get_it: Получить!
       grant_us_access: "Пожалуйста, авторизируйте нас полностью перед отправкой приглашения."
       how_it_works_body: "Все ваши приложения перечислены внизу. Нажмите на кнопку напротив приложения, чтобы заработать в него виртуальную валюту."
       how_it_works_title: "Как это работает?"
       install_and_run: "Установите и запустите %{name}"
+      install_android_app: ~
+      install_profile: ~
+      invalid_fields: ~
       invite: "Пригласите своих друзей!"
       invite_by_email: "Пригласить по электронной почте"
       invite_email_body: |-
@@ -263,23 +282,29 @@ ru:
           Чтобы начать, зарегистрируйтесь сейчас
       invite_email_greet: "Здравствуйте,"
       invite_email_signature: "Команда Tapjoy"
-      invite_friends: ~
+      invite_friends:
+        one: Пригласить
+        other: "Пригласить %{count} друзей"
       invite_title: "Пригласить друзей по электронной почте"
       invites_sent_to: ~
       issue_registering: "Возникла ошибка при регистрации вашей учетной записи"
       join_the_community: ~
       join_the_community_blurb: ~
       last_played: "Играли в прошлый раз: %{game}"
+      link_account_header: ~
+      link_account_messaging: ~
+      link_account_messaging_android_href: ~
+      link_account_messaging_tjm_href: ~
       link_my_facebook: "Соединиться с Facebook"
       load_more: "Загрузить еще"
       loading: Загрузка...
       log_in_tapjoy: "Войти в Tapjoy"
-      mark_as_favorite: ~
+      mark_as_favorite: "Добавить в избранное"
       member_since: "Зарегистрирован с %{date}"
       meta_description: "Tapjoy: Сообщество мобильных игр и приложений для Android, iPhone и iPad."
       meta_keywords: "игры, мобильные игры, приложения, ios, android, iphone, ipad, itouch"
       more_apps: "Больше приложений"
-      more_the_merrier: ~
+      more_the_merrier: "Чем больше, тем веселее"
       my_apps: "Мои приложения"
       next: Дальше
       no_device: "Нет мобильного устройства"
@@ -293,6 +318,7 @@ ru:
       other_options: "Другие опции"
       our_tos_changed: "Наше пользовательское соглашение изменилось. Пожалуйста прочитайте его и обозначьте ваше соглашение с изменениями."
       password_changed: ~
+      password_non_match: ~
       post_to_facebook_content: "Присоединяйтесь к Tapjoy, где вы найдете самые лучшие и новые приложения для мобильных устройств iOS и Android, а также сможете зарабатывать виртуальную валюту в ваши любимые приложения. Зарегистрируйтесь сейчас бесплатно и получите приложения, рекомендованные специально для вас."
       privacy_policy_href: конфиденциальность
       profile: Я
@@ -302,8 +328,13 @@ ru:
       recipients_label: "Введите адреса электронной почты через запятую"
       recommend_apps: ~
       recommendations: "Умные рекомендации"
+      recommendations_smart: "Умные рекомендации"
       registering: Регистрация
       report_bug: "Сообщить об ошибке"
+      reset_password_message: "Введите адрес электронной почты, используемый при регистрации учетной записи, и мы вышлем на него ссылку для восстановления пароля."
+      reset_password_message_submit: "В течение нескольких минут вы получите письмо с инструкциями по восстановлению вашего пароля."
+      reset_password_retry: "Если вы по-прежнему испытываете затруднения со входом в вашу учетную запись, вы можете %{восстановить свой пароль} или адрес электронного ящика"
+      reset_password_retry_url_text: "Получить повторно письмо с инструкциями по восстановлению пароля"
       review_app_name: "Написать отзыв о %{app_name}"
       review_created: "Обзор успешно добавлен."
       review_issue: "Возникла ошибка. Пожалуйста, попробуйте еще раз."
@@ -314,8 +345,8 @@ ru:
       select_friend: "Пожалуйста, выберите хотя бы одного адресата для отправки приглашения"
       share_on_facebook: "Поделиться в Facebook"
       share_on_twitter: "Поделиться в Twitter"
-      share_with_everyone: "Поделиться со всеми"
-      share_with_your_friends: "Поделиться с друзьями"
+      share_with_everyone: "Рассказывайте всем"
+      share_with_your_friends: "Приглашайте друзей"
       social_networks: "Социальные сети"
       social_settings: "Социальные настройки"
       spread_mobile_joy: ~
@@ -328,11 +359,12 @@ ru:
       thanks_feedback: "Спасибо за ваш отзыв!"
       thanks_report_bug: "Спасибо за сообщение об ошибке. Мы постараемся быстро ее верифицировать и устранить."
       thats_you: "это вы"
-      tos_acknowledge_html: "Поставив галочку, я подтверждаю, что я соглашаюсь с условиями пользовательского соглашения и с политикой конфиденциальности."
+      tos_acknowledge_html: "Поставив галочку, я подтверждаю, что я соглашаюсь с условиями %{terms_of_use} и с %{privacy_policy}."
       tos_change_acknowledge: "Поставив галочку, я подтверждаю, что я соглашаюсь с условиями использования сервиса."
       unable_to_process: "К сожалению, ваш запрос не был выполнен"
       unlock_mobile_joy: "Unlock Mobile Joy"
       unmark_as_favorite: ~
+      welcome_tapjoy: ~
       wifi_required: "Необходим Wi-fi"
       wrong_device: "не то мобильное устройство?"
       you_are_following: ~
@@ -372,7 +404,7 @@ ru:
       back: Назад
       blog: Блог
       cancel: Отмена
-      change_password: ~
+      change_password: "Изменить пароль"
       city: Город
       collect: Получить
       comment: Комментарий
@@ -411,16 +443,19 @@ ru:
       options: Опции
       other: Другое
       password: Пароль
+      please_try_again: ~
       preferences: Предпочтения
       privacy: Конфиденциальность
       privacy_policy: "Политика конфиденциальности"
       profile: Профиль
       rate_and_review: "Оценить и оставить отзыв"
       recipients: Получатели
-      reset_password: "Изменить пароль"
+      reset_password: "Восстановить пароль"
       reviews: Отзывы
       save: Сохранить
       send: Отправить
+      sending: ~
+      sent: ~
       share: Поделиться
       sign_in: Войти
       sign_up: Зарегистрироваться

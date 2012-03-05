@@ -177,19 +177,29 @@ ko:
       skip: 무시하기.
       title: "%{currency}를 지급 받기."
       try_out: "사용해 보기."
+    footer:
+      about: ~
+      advertisers: ~
+      blog: ~
+      copyright: ~
+      developers: ~
+      privacy: ~
     games:
       about_body: "당신의 앱을 사랑하고 당신이 좋아할 앱을 찾는 더 나은 방법."
       about_title: "\"어떻게 된 일인지 내가 좋아하는 앱을 정확히 알고 있다.\""
       account_created_body: "당신의 탭조이 계정이 성공적으로 생성되었습니다."
       account_created_title: 성공!
       action_required: "행동이 요청됩니다!"
-      active_gamers_text: ~
+      active_gamers_text: "%{count}명의 유저가 플레이하고 있습니다."
       add: 추가
-      add_to_homescreen: "당신의 홈화면에 %{tapjoy}를 추가해주세요"
+      add_to_homescreen: "홈화면에 %{tapjoy}즐겨찾기 추가하세요."
       advertisers_body: "수백만의 유저와 만나고 당신의 상품을 노출해 보세요."
       advertisers_title: 광고주
       allow_marketing_emails: "탭조이 마케팅 이메일 수신허용"
-      already_registered: ~
+      almost_done: ~
+      already_registered:
+        one: "%{name}님은 이미 등록되었습니다. 이제 그 사람을 팔로우 할 수 있습니다."
+        other: "%{name}님은 이미 등록되었습니다. 이제 그들을 팔로우 할 수 있습니다."
       amount_and_currency: "%{amount} %{currency}"
       back_to_top: "최상위로 돌아가기"
       birthdate: 생일
@@ -199,9 +209,12 @@ ko:
       cant_fetch_offers: "문제가 발생하여 광고를 더 볼 수가 없습니다. 다시 시도해 주세요."
       change: 변경
       change_linked_account: "연결 계정 변경하기"
+      choose_section: "메뉴 선택"
+      close: ~
       collect: 획득
       collect_rewards: "보상 획득"
       connect_my_device: "내 기계 연결하기"
+      connect_to_facebook: "클릭하시면 페이스북으로 연결됩니다"
       connect_your_android: "당신의 안드로이드 기계를 연결해주세요"
       connect_your_device: "당신의 기계를 연결해 주세요."
       connected_to_facebook: ~
@@ -215,11 +228,13 @@ ko:
       developers_body: "탭조이 수익화 툴을 통해 당신의 앱의 수익을 극대화해보세요."
       developers_title: 개발자
       discover_apps: ~
+      download_now: ~
       earn: "%{currency} 획득"
       earn_rewards: ~
       earn_title: "아래 오퍼들을 수행하면 %{app_name}의 %{currency}를 얻게 됩니다."
       earning_rewards: ~
       edit: 수정
+      email_device_link: ~
       email_notification: "이메일 알림"
       enable_javascript: "탭조이 사용을 위해 당신의 브라우저 세팅에서 자바 스크립트를 허용해 주세요."
       enter_birthdate: "생일을 입력해 주세요"
@@ -236,23 +251,27 @@ ko:
       favorite_app: "선호하는 앱"
       favorite_apps: "선호하는 앱들"
       favorite_category: "선호하는 카테고리"
-      feedback: 의견
-      find_and_invite_friends: ~
+      favorites: ~
+      feedback: "탭조이로 의견 제안"
+      find_and_invite_friends: "친구를 찾아 초대해 주세요"
       find_friends_from_facebook: ~
       find_friends_from_twitter: ~
-      find_friends_on_tapjoy: ~
-      find_more_friends: ~
+      find_friends_on_tapjoy: "다른 네트워크를 통해 이미 탭조이를 사용하고 있는 친구를 찾아보세요"
+      find_more_friends: "더 많은 친구 찾기"
       find_new_apps: "새로운 앱 찾기"
       follow_us: "팔로우 하기"
       forgot_pass: "비밀번호 찾기"
       free: 무료
       generic_issue: "문제가 발생했습니다. 다시 시도해 주세요."
-      get_app: ~
+      get_app: "앱 다운로드"
       get_it: 다운받기
       grant_us_access: "초대장 발송 전에 저희에게 대행 권한을 부여해주세요"
       how_it_works_body: "당신의 모든 게임이 아래에 리스팅되었습니다. 앱 옆의 버튼을 클릭해 앱의 가상화폐(코인, 골드 등)를 얻어보세요."
       how_it_works_title: "어떻게 작동되나요?"
-      install_and_run: "{name}을 인스톨하고 실행해주세요"
+      install_and_run: "%{name}을 인스톨하고 실행해주세요"
+      install_android_app: ~
+      install_profile: ~
+      invalid_fields: ~
       invite: "친구 초대하기!"
       invite_by_email: "이메일로 초대하기"
       invite_email_body: |-
@@ -270,16 +289,20 @@ ko:
       join_the_community: ~
       join_the_community_blurb: ~
       last_played: "마지막으로 플레이한 게임: %{game}"
+      link_account_header: ~
+      link_account_messaging: ~
+      link_account_messaging_android_href: ~
+      link_account_messaging_tjm_href: ~
       link_my_facebook: "내 페이스북 연결하기"
       load_more: "더 보기"
       loading: "불러오는 중..."
       log_in_tapjoy: "탭조이 로그인"
-      mark_as_favorite: ~
+      mark_as_favorite: "좋아하는 앱에 추가"
       member_since: "%{date}에 가입하셨습니다"
       meta_description: "탭조이:  안드로이드, 아이폰 아이패드의 앱들과 게임을 만날 수 있는 종착역"
       meta_keywords: "게임, 모바일 게임, 모바일 앱, ios, 안드로이드, 아이폰, 아이패드, 아이터치"
-      more_apps: "더 많은 앱 보기"
-      more_the_merrier: ~
+      more_apps: "앱 더 보기"
+      more_the_merrier: "더 많은 사람들과 함께하면 더 즐겁습니다"
       my_apps: "나의 앱"
       next: 다음
       no_device: "기계 없음"
@@ -293,6 +316,7 @@ ko:
       other_options: "다른 옵션들"
       our_tos_changed: "저희의 %{사용_약관}이 변경되었습니다. 아래의 사항을 확인 후 통의해 주세요."
       password_changed: ~
+      password_non_match: ~
       post_to_facebook_content: "최고의 게임들과 앱을 만나고 무료로 앱의 가상화폐를 얻을 수 있는 탭조이를 방문해보세요! 탭조이는 tapjoy.com에 방문하시면 언제든 무료로 사용이 가능합니다."
       privacy_policy_href: "개인정보 보호정책"
       profile: 나
@@ -302,8 +326,13 @@ ko:
       recipients_label: "여러명에게 보낼 때는 쉼표를 이용해 주세요."
       recommend_apps: ~
       recommendations: "스마트한 추천"
+      recommendations_smart: "스마트 추천"
       registering: 등록중
       report_bug: "버그 전송"
+      reset_password_message: "계정 생성시 입력한 이메일 주소를 입력하시면, 해당 이메일 주소로 비밀번호를 수정할 수 있는 링크를 보내드립니다."
+      reset_password_message_submit: "수 분내에 당신의 패스워드를 수정할 수 있는 이메일을 받으실 수 있습니다."
+      reset_password_retry: "여전히 로그인에 문제가 있다면, 당신은 %{reset_password_url}하거나 이메일을 보낼 수 있습니다"
+      reset_password_retry_url_text: "또 다른 비밀번호 수정 이메일 요청"
       review_app_name: "%{app_name} 리뷰"
       review_created: "이 앱의 리뷰가 성공적으로 완료되었습니다."
       review_issue: "문제가 발생하였습니다. 나중에 다시 시도해 주세요."
@@ -333,6 +362,7 @@ ko:
       unable_to_process: "죄송합니다, 당신의 요청을 수행할 수 없습니다"
       unlock_mobile_joy: "모바일의 즐거움을 열어보세요"
       unmark_as_favorite: ~
+      welcome_tapjoy: ~
       wifi_required: "와이파이 접속 필요"
       wrong_device: "기기 확인"
       you_are_following: ~
@@ -372,7 +402,7 @@ ko:
       back: "뒤로 가기"
       blog: 블로그
       cancel: 취소하기
-      change_password: ~
+      change_password: "비밀번호 변경"
       city: 도시
       collect: 수집
       comment: "한 마디"
@@ -411,6 +441,7 @@ ko:
       options: 옵션
       other: 기타
       password: 비밀번호
+      please_try_again: ~
       preferences: "이메일 수신 설정"
       privacy: 개인정보
       privacy_policy: "개인정보 보호정책"
@@ -421,6 +452,8 @@ ko:
       reviews: 리뷰
       save: 저장
       send: 보내기
+      sending: ~
+      sent: ~
       share: 공유
       sign_in: 로그인
       sign_up: 가입하기
