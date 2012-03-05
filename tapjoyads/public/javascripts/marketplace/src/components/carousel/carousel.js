@@ -83,9 +83,11 @@
 			
 		},
     setupSlideDeck: function(){
-			var $t = this;
-			
-			$t.screenW = window.innerWidth;
+      var $t = this;
+
+      $t.innerWidth = $t.container.width();
+      $t.innerHeight = $t.container.outerHeight(true);
+      $t.slides = $t.wrap.children();
       $t.length = $t.slides.length * $t.slides.outerWidth(true);
       $t.dots = Math.round($t.length / $t.innerWidth);
     },
@@ -149,6 +151,9 @@
       $('.back', $t.container).bind('click', function(){
         var position = 0;
 
+        if($(this).hasClass('disabled'))
+				  return;
+					
         if($t.current > 0){
           $t.current--
           var position = $t.container.width() * $t.current;
@@ -163,6 +168,9 @@
 
       $('.forward', $t.container).bind('click', function(){
         $t.current++
+				
+				if($(this).hasClass('disabled'))
+				  return;
 
         var screenWidth = $t.container.outerWidth(true) * $t.current,
             position = 0;
