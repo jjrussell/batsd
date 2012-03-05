@@ -17,7 +17,9 @@ class Games::HomepageController < GamesController
     @offer = Offer.find_by_id(app_id)
     @app = @offer.app
     @app_metadata = @app.primary_app_metadata
-    @app_reviews = AppReview.by_gamers.paginate_all_by_app_metadata_id(@app_metadata.id, :page => params[:app_reviews_page])
+    if @app_metadata
+      @app_reviews = AppReview.by_gamers.paginate_all_by_app_metadata_id(@app_metadata.id, :page => params[:app_reviews_page])
+    end
   end
 
   def earn
@@ -35,7 +37,9 @@ class Games::HomepageController < GamesController
     @offerwall_url = @external_publisher.get_offerwall_url(@device, @external_publisher.currencies.first, request.accept_language, request.user_agent, current_gamer.id)
     @app = App.find_by_id(@external_publisher.app_id)
     @app_metadata = @app.primary_app_metadata
-    @mark_as_favorite = !current_gamer.favorite_apps.map(&:app_metadata_id).include?(@app_metadata.id)
+    if @app_metadata
+      @mark_as_favorite = !current_gamer.favorite_apps.map(&:app_metadata_id).include?(@app_metadata.id)
+    end
 
     respond_to do |f|
       f.html
