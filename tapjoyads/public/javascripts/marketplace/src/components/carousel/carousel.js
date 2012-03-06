@@ -57,9 +57,6 @@
           wrap = $(document.createElement('div')),
           html = $t.container.html();
 
-      $t.innerWidth = $t.container.width();
-      $t.innerHeight = $t.container.outerHeight(true);
-
       $t.container.empty().addClass('ui-joy-carousel');
 
       wrap.addClass('wrapper')
@@ -81,16 +78,21 @@
     },
     setupSlideDeck: function(){
       var $t = this;
+			
+      $t.innerWidth = $t.container.width();
+      $t.innerHeight = $t.container.height() > 0 ? $t.container.outerHeight(true) : $t.config.minHeight;
+
+      $t.container.css('height', $t.innerHeight + 'px');
 
       $t.innerWidth = $t.container.outerWidth(true);
-      $t.innerHeight = $t.container.outerHeight(true);
+      $t.innerHeight = $t.config.minHeight ? $t.config.minHeight : $t.container.outerHeight(true);
       $t.slides = $t.wrap.children();
       
       if($t.config.forceSlideWidth)
         $t.slides.css('width', $t.innerWidth + 'px');
 
       $t.length = $t.slides.length * $t.slides.outerWidth(true);
-               
+
       $t.pages = Math.round($t.length / $t.innerWidth);
     },
 
@@ -99,8 +101,8 @@
           wrap = $(document.createElement('div')),
           length = Math.abs($t.length / $t.innerWidth);
 
-      if($t.jumpContainer && $t.jumpContainer.length !== 0)
-        $('.jump-to-slide', $t.jumpContainer).empty();
+      if($t.pagingContainer && $t.pagingContainer.length !== 0)
+        $('.jump-to-slide', $t.pagingContainer).empty();
       
       for(var i = 0, k = length; i < k; i++){
         var div = $(document.createElement('div'));
@@ -125,10 +127,10 @@
         .appendTo(wrap);
       }
 
-      $t.jumpContainer = $t.config.pagerContainer || $t.container;
+      $t.pagingContainer = $t.config.pagerContainer || $t.container;
 
       wrap.addClass('jump-to-slide')
-      .appendTo($t.jumpContainer)
+      .appendTo($t.pagingContainer)
 
 
       $t.jumpTo = wrap;
@@ -152,7 +154,7 @@
       .append(arrow_)
       .appendTo($t.container);
 
-      $('.back, .forward', $t.container).css('top', ($t.innerHeight - left.height()) / 2)
+      $('.back, .forward', $t.container).css('top', ($t.innerHeight - left.height()) / 2);
 
       $('.back', $t.container).bind(Tapjoy.EventsMap.start, function(){
         var position = 0;
@@ -199,8 +201,8 @@
 					forward = $('.forward', $t.container);
       
       if($t.config.hasPager){
-        $('.ui-joy-carousel-index', $t.jumpContainer).removeClass('active');
-        $('.ui-joy-carousel-index:eq(' + $t.current + ')', $t.jumpContainer).addClass('active');
+        $('.ui-joy-carousel-index', $t.pagingContainer).removeClass('active');
+        $('.ui-joy-carousel-index:eq(' + $t.current + ')', $t.pagingContainer).addClass('active');
       }
 			
       if(next > $t.length || $t.config.forceSlideWidth && $t.pages == ($t.current + 1)){

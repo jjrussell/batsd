@@ -4,11 +4,12 @@ $(document).ready(function(){
       gradient = $('.gradient-backdrop');
 
   $('#favorites').Carousel({
-		forceSlideWidth: true,
+    forceSlideWidth: true,
     hasPager: true,
+    minHeight: 300,
     pagerContainer: '#paging'
   });
-
+	
   $('#arrow').bind('click', function(){
     $('body').animate({scrollTop: $('#getting-started').offset().top}, 200);
   });
