@@ -377,11 +377,12 @@ f.event={add:function(a,c,d,e,g){var h,i,j,k,l,m,n,o,p,q,r,s;if(!(a.nodeType===3
 
     Tap.apply(Tap, {
       EventsMap: {
+        cancel: Tap.supportsTouch ? 'touchcancel' : 'mouseout',
+        end: Tap.supportsTouch ? 'touchend' : 'mouseup',
+        move: Tap.supportsTouch ? 'touchmove' : 'mousemove',
         resize: 'onorientationchange' in window ? 'orientationchange' : 'resize',
         start: Tap.supportsTouch ? 'touchstart' : 'mousedown',
-        move: Tap.supportsTouch ? 'touchmove' : 'mousemove',
-        end: Tap.supportsTouch ? 'touchend' : 'mouseup',
-        cancel: Tap.supportsTouch ? 'touchcancel' : 'mouseout'
+				touch : Tap.supportsTouch ? 'tap' : 'click'
       }
     });
 
@@ -547,7 +548,14 @@ f.event={add:function(a,c,d,e,g){var h,i,j,k,l,m,n,o,p,q,r,s;if(!(a.nodeType===3
       toggle: function(event, ui, state){},
       touch: function(event, ui){},
       type: 'button'
-    }
+    },
+		Carousel: {
+			forceSlideWidth: false,
+			hasPager: false,
+			pagerContainer: null,
+			animationDuration: 250,
+			minHeight: 200
+		}
   };
 
   // shared methods
@@ -1038,6 +1046,32 @@ f.event={add:function(a,c,d,e,g){var h,i,j,k,l,m,n,o,p,q,r,s;if(!(a.nodeType===3
         };
       },
 
+	    
+	    debounce: function(fn, delay, execASAP, scope){
+	      var timeout;
+	
+	      return function debounced() {
+	        var obj = scope || this, 
+	            args = arguments;
+	      
+	        function delayedFn(){
+	          if(!execASAP){
+	            fn.apply(obj, args);
+	          }
+	          
+	          timeout = null;
+	        }
+	
+	        if(timeout){
+	          clearTimeout(timeout);
+	        }else if(execASAP){
+	          fn.apply(obj, args);
+	        }
+	
+	        timeout = setTimeout(delayedFn, delay || 100);
+	      };
+	    },
+			
       Storage: {
         set: function(k) {
           try {
@@ -2061,9 +2095,7 @@ f.event={add:function(a,c,d,e,g){var h,i,j,k,l,m,n,o,p,q,r,s;if(!(a.nodeType===3
 
   $.fn.Carousel = function(config){
 
-    config = Tap.extend({}, Tap.Components.Elements, {
-      direction: 'horizontal'
-    }, config || {});
+    config = Tap.extend({}, Tap.Components.Elements, Tap.Components.Carousel, config || {});
 
     return this.each(function(){
 
@@ -2086,20 +2118,21 @@ f.event={add:function(a,c,d,e,g){var h,i,j,k,l,m,n,o,p,q,r,s;if(!(a.nodeType===3
 
     $t.create();
     $t.setupSlideDeck();
-    $t.createDirectionArrows();
+    $t.createNavigation();
 
     if($t.config.hasPager)
-      $t.createJumper();
+      $t.createPager();
 
-    $t.updateControls();
+    $t.updateNavigation();
+
+    if($t.length < $t.innerWidth)
+      $('.back, .forward').hide();
 
     $(window).bind('orientationchange', function(){
       $t.turn();
     });
 
-    if($t.length < $t.innerWidth){
-      $('.back, .forward').hide();
-    }
+    $(window).bind('resize', Tapjoy.Utils.debounce($t.resize, 100, false, $t));
 
     $t.container.addClass($t.config.cssClass);
 
@@ -2116,9 +2149,6 @@ f.event={add:function(a,c,d,e,g){var h,i,j,k,l,m,n,o,p,q,r,s;if(!(a.nodeType===3
           wrap = $(document.createElement('div')),
           html = $t.container.html();
 
-      $t.innerWidth = $t.container.width();
-      $t.innerHeight = $t.container.outerHeight(true);
-
       $t.container.empty().addClass('ui-joy-carousel');
 
       wrap.addClass('wrapper')
@@ -2126,42 +2156,53 @@ f.event={add:function(a,c,d,e,g){var h,i,j,k,l,m,n,o,p,q,r,s;if(!(a.nodeType===3
       .preventHighlight()
       .appendTo($t.container);
 
-      $t.slides = wrap.children();
-			
       $t.wrap = wrap;
     },
-		
+
     turn : function(){
-			var $t = this,
-			    diff = 0;
-			
-		  $t.wrap.css('-'+Tap.browser.prefix +'-transform', 'translate(0px, 0px)');
-			$t.current = 0;
-			$t.setupSlideDeck();
-			$t.updateControls();
-			
-		},
+      var $t = this;
+
+      $t.wrap.css('-'+Tap.browser.prefix +'-transform', 'translate(0px, 0px)');
+      $t.current = 0;
+      $t.setupSlideDeck();
+      $t.updateNavigation();
+
+    },
     setupSlideDeck: function(){
       var $t = this;
 
       $t.innerWidth = $t.container.width();
-      $t.innerHeight = $t.container.outerHeight(true);
+      $t.innerHeight = $t.container.height() > 0 ? $t.container.outerHeight(true) : $t.config.minHeight;
+
+      $t.container.css('height', $t.innerHeight + 'px');
+
+      $t.innerWidth = $t.container.outerWidth(true);
+      $t.innerHeight = $t.config.minHeight ? $t.config.minHeight : $t.container.outerHeight(true);
       $t.slides = $t.wrap.children();
+
+      if($t.config.forceSlideWidth)
+        $t.slides.css('width', $t.innerWidth + 'px');
+
       $t.length = $t.slides.length * $t.slides.outerWidth(true);
-      $t.dots = Math.round($t.length / $t.innerWidth);
+
+      $t.pages = Math.round($t.length / $t.innerWidth);
     },
 
-    createJumper: function(){
+    createPager: function(){
       var $t = this,
           wrap = $(document.createElement('div')),
           length = Math.abs($t.length / $t.innerWidth);
 
+      if($t.pagingContainer && $t.pagingContainer.length !== 0)
+        $('.jump-to-slide', $t.pagingContainer).empty();
+
       for(var i = 0, k = length; i < k; i++){
         var div = $(document.createElement('div'));
 
-        div.addClass('dot ' + (i == this.current ? 'active': '' ))
+        div.addClass('ui-joy-carousel-index ' + (i == this.current ? 'active': '' ))
         .html('<a href="#">&nbsp;</a>')
-        .bind('click', function(){
+        .unbind(Tapjoy.EventsMap.start)
+        .bind(Tapjoy.EventsMap.start, function(){
           var circle = $(this),
               position = 0;
 
@@ -2170,49 +2211,49 @@ f.event={add:function(a,c,d,e,g){var h,i,j,k,l,m,n,o,p,q,r,s;if(!(a.nodeType===3
           position = $t.container.width() * $t.current;
           $t.wrap.css('-' + Tap.browser.prefix + '-transform', 'translate(-'+ position +'px, 0px)');
 
-          $t.updateControls();
+          $t.updateNavigation();
 
-          $('.dot', wrap).removeClass('active');
+          $('.ui-joy-carousel-index', wrap).removeClass('active');
           circle.addClass('active');
         })
         .appendTo(wrap);
       }
 
-      $t.jumpContainer = $t.config.pagerContainer || $t.container;
+      $t.pagingContainer = $t.config.pagerContainer || $t.container;
 
       wrap.addClass('jump-to-slide')
-      .appendTo($t.jumpContainer)
+      .appendTo($t.pagingContainer)
 
-
-      $t.jumpTo = wrap;
+      $t.pager = wrap;
     },
-    createDirectionArrows : function(){
+		
+    createNavigation : function(){
       var $t = this,
-          left = $(document.createElement('div')),
-          right = $(document.createElement('div')),
+          back = $(document.createElement('div')),
+          forward = $(document.createElement('div')),
           arrow = $(document.createElement('img')),
           arrow_ = $(document.createElement('img'));
 
       arrow.attr('src', Tap.blankIMG);
 
-      left.addClass('back')
+      back.addClass('back')
       .append(arrow)
       .appendTo($t.container);
 
       arrow_.attr('src', Tap.blankIMG);
 
-      right.addClass('forward')
+      forward.addClass('forward')
       .append(arrow_)
       .appendTo($t.container);
 
-      $('.back, .forward', $t.container).css('top', ($t.innerHeight - left.height()) / 2)
+      $('.back, .forward', $t.container).css('top', ($t.innerHeight - back.height()) / 2);
 
-      $('.back', $t.container).bind('click', function(){
+      $('.back', $t.container).bind(Tapjoy.EventsMap.start, function(){
         var position = 0;
 
         if($(this).hasClass('disabled'))
-				  return;
-					
+          return;
+
         if($t.current > 0){
           $t.current--
           var position = $t.container.width() * $t.current;
@@ -2220,52 +2261,79 @@ f.event={add:function(a,c,d,e,g){var h,i,j,k,l,m,n,o,p,q,r,s;if(!(a.nodeType===3
           position = 0;
         }
 
-        $t.updateControls();
+        $t.updateNavigation();
 
         $t.wrap.css('-'+Tap.browser.prefix +'-transform', 'translate(-'+ position +'px, 0px)');
       });
 
-      $('.forward', $t.container).bind('click', function(){
-        $t.current++
-				
-				if($(this).hasClass('disabled'))
-				  return;
+      $('.forward', $t.container).bind(Tapjoy.EventsMap.start, function(){
 
-        var screenWidth = $t.container.outerWidth(true) * $t.current,
-            position = 0;
+        var position = 0;
 
-        if(screenWidth > $t.length || $t.dots === $t.current-1){
-          $t.current--;
+        if($(this).hasClass('disabled') || $t.pages === $t.current)
           return;
-        }else{
-          position = screenWidth - $t.current;
-        }
 
-        $t.updateControls();
+        $t.current++;
+
+        position = $t.container.outerWidth(true) * $t.current;
+
+        $t.updateNavigation();
 
         $t.wrap.css('-'+Tap.browser.prefix +'-transform', 'translate(-'+ position +'px, 0px)');
       });
+
+      $t.back = back;
+      $t.forward = forward;
     },
-    updateControls: function(){
+
+    updateNavigation: function(){
       var $t = this,
-			    current = $t.current + 1;
+          next = ($t.container.width() * ($t.current + 1)),
+          back = $('.back', $t.container),
+          forward = $('.forward', $t.container);
 
       if($t.config.hasPager){
-        $('.dot', $t.jumpContainer).removeClass('active');
-        $('.dot:eq(' + $t.current + ')', $t.jumpContainer).addClass('active');
+        $('.ui-joy-carousel-index', $t.pagingContainer).removeClass('active');
+        $('.ui-joy-carousel-index:eq(' + $t.current + ')', $t.pagingContainer).addClass('active');
       }
-			
-      if(($t.container.width() * current) > $t.length || $t.dots > 1 && $t.dots === current){
-        $('.back', $t.container).removeClass('disabled');
-        $('.forward', $t.container).addClass('disabled');
-      }else if($t.current > 0 && ($t.container.width() * $t.current) < $t.length){
-        $('.back', $t.container).removeClass('disabled');
-        $('.forward', $t.container).removeClass('disabled');
+
+      if(next > $t.length || $t.config.forceSlideWidth && $t.pages == ($t.current + 1)){
+        back.removeClass('disabled');
+        forward.addClass('disabled');
+      }else if($t.current > 0 && next < $t.length){
+        back.removeClass('disabled');
+        forward.removeClass('disabled');
+      }else if($t.current === 0){
+        back.addClass('disabled');
+        forward.removeClass('disabled');
       }
-      else if($t.current === 0){
-        $('.back', $t.container).addClass('disabled');
-        $('.forward', $t.container).removeClass('disabled');
+
+      if(next > $t.length && next < window.innerWidth){
+        back.addClass('disabled');
       }
+    },
+
+    resize: function(){
+      var $t = this;
+
+      $t.setupSlideDeck();
+
+      if($t.config.hasPager)
+        $t.createPager();
+
+      if($t.length < $t.innerWidth){
+        if($t.back.is(':visible')){
+          $t.back.hide();
+          $t.forward.hide();
+        }
+			}else{
+				if($t.back.is(':hidden')){
+					$t.back.show();
+					$t.forward.show();
+				}
+			}
+
+      $t.updateNavigation();
     }
   });
 
@@ -2620,6 +2688,7 @@ var TJG = typeof TJG === "object" ? TJG : {}; TJG.vars = {};
     $(".login-to-facebook").click(function () {
       var url = $(this).data("fb-url");
       Tap.Social.doFbLogin(url);
+      return false;
     });
 
     if (window.location.search.match(/fb_logout/)) {
@@ -3205,7 +3274,7 @@ $(document).ready(function() {
     }
   });
 
-  $('.list-button, .btn, .greenblock, #signup, #login').live(Tapjoy.EventsMap.start + ' ' + Tapjoy.EventsMap.end + ' ' + Tapjoy.EventsMap.cancel, function(e){
+  $('.list-button, .btn, .greenblock, #signup, #login').live("mousedown mouseup mouseout", function(e){
     var el = $(this),
         target = $(e.target),
         which = e.type;
@@ -3213,7 +3282,7 @@ $(document).ready(function() {
      if(el.hasClass('ui-no-action'))
       return;
 
-    if(which === Tapjoy.EventsMap.start){
+    if(which === "mousedown"){
       el.addClass('active');
     }else{
       el.removeClass('active');
@@ -3321,19 +3390,6 @@ $(document).ready(function() {
       timeout = setTimeout(delayed, threshold || 100);
     };
   };
-
-  $(document).bind("email-invite-ajax-success", function (ev, form, data) {
-    if (data.success) {
-      if (data.gamers.length === 0 && data.non_gamers.length === 0) {
-        notify(_t('games.provide_other_email'));
-      } else {
-        showSuccessMessage(data.gamers, data.non_gamers);
-        $("#recipients", form).val('');
-      }
-    } else {
-      notify(data.error);
-    }
-  });
 
   $(".submit-child-form").click(function () {
     $("form", this).submit();
@@ -3527,7 +3583,8 @@ $(document).ready(function() {
 
   Tapjoy.delay(function(){
     $('#recommendations').Carousel({
-      cssClass : 'complete'
+      cssClass : 'complete',
+      minHeight: 175
     });
   }, 50);
 
