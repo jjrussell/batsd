@@ -35,7 +35,7 @@ class TapjoyMailer < ActionMailer::Base
     from 'Tapjoy <noreply@tapjoy.com>'
     reply_to recipient_emails
     recipients recipient_emails
-    bcc 'hwanjoon@tapjoy.com'
+    cc 'dev@tapjoy.com'
     subject "Low Conversion Rate Warning! - #{offer.name_with_suffix_and_platform}"
     body(:offer => offer, :stats => stats)
   end
