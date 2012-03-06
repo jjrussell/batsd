@@ -134,6 +134,10 @@ class Gamer < ActiveRecord::Base
     end
   end
 
+  def all_device_data
+    devices.map(&:device_data)
+  end
+
   def reward_click(click)
     Downloader.get_with_retry("#{API_URL}/offer_completed?click_key=#{click.key}")
   end

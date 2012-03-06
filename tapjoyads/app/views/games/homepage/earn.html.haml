@@ -8,20 +8,21 @@
         .left.ml10
           .big-title.slate.elip
             = @app.name
-          .container
-            .left.ui-icon-medium.score.icon24.p5
-              #{@app_metadata.positive_thumbs_percentage.floor}%
-            .left.ui-icon-medium.social.icon24.p5.ml5
-              = @app_metadata.app_reviews.by_gamers.size
-          .container
-            .left.mt1.ml3.pb1
-              = hidden_field_tag(:eapp_metadata_id, ObjectEncryptor.encrypt(@app_metadata.id))
-              = hidden_field_tag(:mark_as_fav_path, games_gamer_favorite_app_path)
-              #favorite_app_button.ui-joy-button.primary.smaller{ :onclick => "update_favorite_app();"}
-                - if @mark_as_favorite
-                  = t('text.games.mark_as_favorite')
-                - else
-                  = t('text.games.unmark_as_favorite')
+          - if @app_metadata
+            .container
+              .left.ui-icon-medium.score.icon24.p5
+                #{@app_metadata.positive_thumbs_percentage.floor}%
+              .left.ui-icon-medium.social.icon24.p5.ml5
+                = @app_metadata.app_reviews.by_gamers.size
+            .container
+              .left.mt1.ml3.pb1
+                = hidden_field_tag(:eapp_metadata_id, ObjectEncryptor.encrypt(@app_metadata.id))
+                = hidden_field_tag(:mark_as_fav_path, games_gamer_favorite_app_path)
+                #favorite_app_button.ui-joy-button.primary.smaller{ :onclick => "updateFavoriteApp();"}
+                  - if @mark_as_favorite
+                    = t('text.games.mark_as_favorite')
+                  - else
+                    = t('text.games.unmark_as_favorite')
 
     .section.dark
       .select-container.left.ml5
@@ -44,19 +45,21 @@
     .section.dark
       .heading
         = t('text.games.other_options')
-    %ul.list-button-container.flush.nbb.big
-      %li.list-button.ntb
-        -link_to new_games_app_review_path(:eid => params[:eid]) do
-          .left.charcoal
-            = t("text.games.review_app_name", {:app_name => @app.name})
-          .right.rightarrow.icon16
-            &nbsp;
+    - if @app_metadata
+      %ul.list-button-container.flush.nbb.big
+        %li.list-button.ntb
+          -link_to new_games_app_review_path(:eid => params[:eid]) do
+            .left.charcoal
+              = t("text.games.review_app_name", {:app_name => @app.name})
+            .right.rightarrow.icon16
+              &nbsp;
 
 - content_for :above_footer do
-  = hidden_field_tag(:eapp_metadata_id, ObjectEncryptor.encrypt(@app_metadata.id))
+  - if @app_metadata
+    = hidden_field_tag(:eapp_metadata_id, ObjectEncryptor.encrypt(@app_metadata.id))
   = hidden_field_tag(:mark_as_fav_path, games_gamer_favorite_app_path)
   .mod.mb20.hide
-    .favorite-btn.ui-joy-button.grey-action{ :onclick => "update_favorite_app();"}
+    .favorite-btn.ui-joy-button.grey-action{ :onclick => "updateFavoriteApp();"}
       #favorite_app_button.text-center.get-app
         - if @mark_as_favorite
           = t('text.games.mark_as_favorite')
@@ -73,27 +76,29 @@
       });
     };
 
-    var update_favorite_app = function() {
-      $.ajax({
-        type: is_create ? 'POST' : 'DELETE',
-        url: $('#mark_as_fav_path').val(),
-        cache: false,
-        timeout: 15000,
-        dataType: 'json',
-        data: {
-          'eapp_metadata_id': $('#eapp_metadata_id').val()
-        },
-        success: function(d) {
-          if (d.success) {
-            is_create = !is_create;
-            $('#favorite_app_button').html(is_create ? "#{t('text.games.mark_as_favorite')}" : "#{t('text.games.unmark_as_favorite')}");
-          } else {
+  - if @app_metadata
+    :plain
+      var updateFavoriteApp = function() {
+        $.ajax({
+          type: is_create ? 'POST' : 'DELETE',
+          url: $('#mark_as_fav_path').val(),
+          cache: false,
+          timeout: 15000,
+          dataType: 'json',
+          data: {
+            'eapp_metadata_id': $('#eapp_metadata_id').val()
+          },
+          success: function(d) {
+            if (d.success) {
+              is_create = !is_create;
+              $('#favorite_app_button').html(is_create ? "#{t('text.games.mark_as_favorite')}" : "#{t('text.games.unmark_as_favorite')}");
+            } else {
+              raise_favoriting_error();
+            }
+          },
+          error: function(d) {
             raise_favoriting_error();
           }
-        },
-        error: function(d) {
-          raise_favoriting_error();
-        }
-      });
-    };
+        });
+      };
 
