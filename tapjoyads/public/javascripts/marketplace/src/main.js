@@ -407,7 +407,7 @@ $(document).ready(function() {
     }
   });
 
-  $('.list-button, .btn, .greenblock, #signup, #login').live(Tapjoy.EventsMap.start + ' ' + Tapjoy.EventsMap.end + ' ' + Tapjoy.EventsMap.cancel, function(e){
+  $('.list-button, .btn, .greenblock, #signup, #login').live("mousedown mouseup", function(e){
     var el = $(this),
         target = $(e.target),
         which = e.type;
@@ -415,7 +415,7 @@ $(document).ready(function() {
      if(el.hasClass('ui-no-action'))
       return;
 
-    if(which === Tapjoy.EventsMap.start){
+    if(which === "mousedown"){
       el.addClass('active');
     }else{
       el.removeClass('active');
