@@ -5,23 +5,27 @@ class Tools::BrandOffersController < WebsiteController
 
   def create_brand
     brand_name = params[:name]
-    puts brand_name
     brand = Brand.new(:name => brand_name)
-    brand.save!
-    render(:json => brand.to_json)
+    success = brand.save
+    json = { :success => success, :brand => brand.to_json }
+    json.merge!({:error => brand.errors.first}) unless success
+    render(:json => json)
   end
 
   def add_offer
     brand = Brand.find(params[:brand])
     brand.offers << Offer.find(params[:offer])
-    render(:json => brand.save.to_json)
+    json = { :success => brand.save}.to_json
+    render(:json => json)
   end
 
   def remove_offer
     brand = Brand.find(params[:brand])
     brand.offers.delete(Offer.find(params[:offer]))
-    render(:json => brand.save.to_json)
+    json = { :success => brand.save}.to_json
+    render(:json => json)
   end
+
   def offers
     brand = Brand.find(params[:id])
     offers = []
