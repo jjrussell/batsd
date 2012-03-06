@@ -1,10 +1,10 @@
----
-ko:
-  activerecord:
-    errors:
-      full_messages:
+--- 
+ko: 
+  activerecord: 
+    errors: 
+      full_messages: 
         format: ~
-      messages:
+      messages: 
         accepted: ~
         blank: ~
         confirmation: ~
@@ -26,67 +26,67 @@ ko:
         too_long: ~
         too_short: ~
         wrong_length: ~
-      template:
+      template: 
         body: ~
-        header:
+        header: 
           one: ~
           other: ~
-  date:
+  date: 
     abbr_day_names: ~
     abbr_month_names: ~
     day_names: ~
-    formats:
+    formats: 
       default: ~
       long: ~
       short: ~
     month_names: ~
     order: ~
-  datetime:
-    distance_in_words:
-      about_x_hours:
+  datetime: 
+    distance_in_words: 
+      about_x_hours: 
         one: ~
         other: ~
-      about_x_months:
+      about_x_months: 
         one: ~
         other: ~
-      about_x_years:
+      about_x_years: 
         one: ~
         other: ~
-      almost_x_years:
+      almost_x_years: 
         one: ~
         other: ~
       half_a_minute: ~
-      less_than_x_minutes:
+      less_than_x_minutes: 
         one: ~
         other: ~
-      less_than_x_seconds:
+      less_than_x_seconds: 
         one: ~
         other: ~
-      over_x_years:
+      over_x_years: 
         one: ~
         other: ~
-      x_days:
+      x_days: 
         one: ~
         other: ~
-      x_minutes:
+      x_minutes: 
         one: ~
         other: ~
-      x_months:
+      x_months: 
         one: ~
         other: ~
-      x_seconds:
+      x_seconds: 
         one: ~
         other: ~
-    prompts:
+    prompts: 
       day: ~
       hour: ~
       minute: ~
       month: ~
       second: ~
       year: ~
-  errors:
+  errors: 
     format: ~
-    messages:
+    messages: 
       accepted: ~
       blank: ~
       confirmation: ~
@@ -106,16 +106,16 @@ ko:
       too_long: ~
       too_short: ~
       wrong_length: ~
-  helpers:
-    select:
+  helpers: 
+    select: 
       prompt: ~
-    submit:
+    submit: 
       create: ~
       submit: ~
       update: ~
-  number:
-    currency:
-      format:
+  number: 
+    currency: 
+      format: 
         delimiter: ~
         format: ~
         precision: ~
@@ -123,52 +123,52 @@ ko:
         significant: ~
         strip_insignificant_zeros: ~
         unit: ~
-    format:
+    format: 
       delimiter: ~
       precision: ~
       separator: ~
       significant: ~
       strip_insignificant_zeros: ~
-    human:
-      decimal_units:
+    human: 
+      decimal_units: 
         format: ~
-        units:
+        units: 
           billion: ~
           million: ~
           quadrillion: ~
           thousand: ~
           trillion: ~
           unit: ~
-      format:
+      format: 
         delimiter: ~
         precision: ~
         significant: ~
         strip_insignificant_zeros: ~
-      storage_units:
+      storage_units: 
         format: ~
-        units:
-          byte:
+        units: 
+          byte: 
             one: ~
             other: ~
           gb: ~
           kb: ~
           mb: ~
           tb: ~
-    percentage:
-      format:
+    percentage: 
+      format: 
         delimiter: ~
-    precision:
-      format:
+    precision: 
+      format: 
         delimiter: ~
-  support:
-    array:
+  support: 
+    array: 
       last_word_connector: ~
       two_words_connector: ~
       words_connector: ~
-    select:
+    select: 
       prompt: ~
-  text:
-    featured:
+  text: 
+    featured: 
       download: 다운로드
       download_and_run: "다운로드 받고 실행해보기."
       earn_currency: "%{amount_and_currency}를 지급 받기."
@@ -177,14 +177,14 @@ ko:
       skip: 무시하기.
       title: "%{currency}를 지급 받기."
       try_out: "사용해 보기."
-    footer:
+    footer: 
       about: ~
       advertisers: ~
       blog: ~
       copyright: ~
       developers: ~
       privacy: ~
-    games:
+    games: 
       about_body: "당신의 앱을 사랑하고 당신이 좋아할 앱을 찾는 더 나은 방법."
       about_title: "\"어떻게 된 일인지 내가 좋아하는 앱을 정확히 알고 있다.\""
       account_created_body: "당신의 탭조이 계정이 성공적으로 생성되었습니다."
@@ -197,7 +197,7 @@ ko:
       advertisers_title: 광고주
       allow_marketing_emails: "탭조이 마케팅 이메일 수신허용"
       almost_done: ~
-      already_registered:
+      already_registered: 
         one: "%{name}님은 이미 등록되었습니다. 이제 그 사람을 팔로우 할 수 있습니다."
         other: "%{name}님은 이미 등록되었습니다. 이제 그들을 팔로우 할 수 있습니다."
       amount_and_currency: "%{amount} %{currency}"
@@ -276,9 +276,9 @@ ko:
       invite_by_email: "이메일로 초대하기"
       invite_email_body: |-
           %{name}님이 당신을 가장 인기있는 앱들이 소개되는 탭조이로 초대하셨습니다. 가입은 무료이며, iOS와 안드로이드의 가장 인기있는 앱들을 만나보실 수 있는 것은 물론 여러분이 좋아하는 앱들의 포인트를 얻으실 수도 있습니다.
-
+          
           수많은 앱들이 난무하는 앱스토어에서 헤매지 말고 탭조이가 추천해드리는 앱들을 통해 쉽게 당신이 좋아할 게임을 만나보세요!
-
+          
           이곳에서 계정을 생성하여 탭조이를 시작해 보세요
       invite_email_greet: "안녕하세요,"
       invite_email_signature: "탭조이 팀"
@@ -314,9 +314,10 @@ ko:
       or_learn_more: ~
       other: "탭조이 초대장이 %{name}에게 발송되었습니다."
       other_options: "다른 옵션들"
-      our_tos_changed: "저희의 %{terms_of_use} 변경되었습니다. 아래의 사항을 확인 후 통의해 주세요."
+      our_tos_changed: "저희의 %{사용_약관}이 변경되었습니다. 아래의 사항을 확인 후 통의해 주세요."
       password_changed: ~
       password_non_match: ~
+      post_to_facebook: ~
       post_to_facebook_content: "최고의 게임들과 앱을 만나고 무료로 앱의 가상화폐를 얻을 수 있는 탭조이를 방문해보세요! 탭조이는 tapjoy.com에 방문하시면 언제든 무료로 사용이 가능합니다."
       privacy_policy_href: "개인정보 보호정책"
       profile: 나
@@ -366,10 +367,10 @@ ko:
       wifi_required: "와이파이 접속 필요"
       wrong_device: "기기 확인"
       you_are_following: ~
-      your_followers:
+      your_followers: 
         one: ~
         other: ~
-    instructions:
+    instructions: 
       amount_and_currency: "%{amount} %{currency}"
       continue_link: "계속하시려면 여기를 클릭하십시오."
       download_action: 여기
@@ -378,7 +379,7 @@ ko:
       footer: "다음 스텝들을 완료한 이후에, %{amount_and_currency}를 획득할 수 있습니다."
       header: "다음 스텝들을 완료하고 %{currency}를 획득하십시오."
       title: 이용안내
-    offerwall:
+    offerwall: 
       buy_currency: "%{amount} %{currency}를 구매하기."
       earn_currency: "%{amount} %{currency}를 지급 받기"
       free: 무료
@@ -395,7 +396,7 @@ ko:
       title: "%{currency}를 지급받기"
       wifi_required: "와이파이 접속 필요"
       wifi_warning: "This app requires a wifi connection to download."
-    shared:
+    shared: 
       about_link: 탭조이란
       ads_by: "Ads by"
       android: 안드로이드
@@ -469,7 +470,7 @@ ko:
       write_review: "리뷰 작성"
       year: 년
       zip_postal: 우편번호
-    support:
+    support: 
       abuse_warning: "이 양식은 확실하게 광고를 수행했음에도 보상을 받지 못한 유저들을 위한 것입니다. 만일 부정한 목적로 이 요청을 사용하면, 추후 당신의 계정이 정지될 수도 있으니 유의 바랍니다."
       description_label: 설명
       email_address_label: "이메일 주소"
@@ -488,12 +489,12 @@ ko:
       thanks: "서포트 요청을 제출해주셔서 감사합니다! 확인 후에 요청을 주신 %{currency}가 지급될 수 있도록 하겠습니다."
       title: "받지 못한 %{currency}?"
       unavailable_offer: ~
-    unavailable_offer:
+    unavailable_offer: 
       message: ~
       optional_message: ~
-  time:
+  time: 
     am: ~
-    formats:
+    formats: 
       classic_short: ~
       day: ~
       day_long: ~

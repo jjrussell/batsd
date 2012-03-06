@@ -1,10 +1,10 @@
----
-zh:
-  activerecord:
-    errors:
-      full_messages:
+--- 
+zh: 
+  activerecord: 
+    errors: 
+      full_messages: 
         format: ~
-      messages:
+      messages: 
         accepted: ~
         blank: ~
         confirmation: ~
@@ -26,67 +26,67 @@ zh:
         too_long: ~
         too_short: ~
         wrong_length: ~
-      template:
+      template: 
         body: ~
-        header:
+        header: 
           one: ~
           other: ~
-  date:
+  date: 
     abbr_day_names: ~
     abbr_month_names: ~
     day_names: ~
-    formats:
+    formats: 
       default: ~
       long: ~
       short: ~
     month_names: ~
     order: ~
-  datetime:
-    distance_in_words:
-      about_x_hours:
+  datetime: 
+    distance_in_words: 
+      about_x_hours: 
         one: ~
         other: ~
-      about_x_months:
+      about_x_months: 
         one: ~
         other: ~
-      about_x_years:
+      about_x_years: 
         one: ~
         other: ~
-      almost_x_years:
+      almost_x_years: 
         one: ~
         other: ~
       half_a_minute: ~
-      less_than_x_minutes:
+      less_than_x_minutes: 
         one: ~
         other: ~
-      less_than_x_seconds:
+      less_than_x_seconds: 
         one: ~
         other: ~
-      over_x_years:
+      over_x_years: 
         one: ~
         other: ~
-      x_days:
+      x_days: 
         one: ~
         other: ~
-      x_minutes:
+      x_minutes: 
         one: ~
         other: ~
-      x_months:
+      x_months: 
         one: ~
         other: ~
-      x_seconds:
+      x_seconds: 
         one: ~
         other: ~
-    prompts:
+    prompts: 
       day: ~
       hour: ~
       minute: ~
       month: ~
       second: ~
       year: ~
-  errors:
+  errors: 
     format: ~
-    messages:
+    messages: 
       accepted: ~
       blank: ~
       confirmation: ~
@@ -106,16 +106,16 @@ zh:
       too_long: ~
       too_short: ~
       wrong_length: ~
-  helpers:
-    select:
+  helpers: 
+    select: 
       prompt: ~
-    submit:
+    submit: 
       create: ~
       submit: ~
       update: ~
-  number:
-    currency:
-      format:
+  number: 
+    currency: 
+      format: 
         delimiter: ~
         format: ~
         precision: ~
@@ -123,52 +123,52 @@ zh:
         significant: ~
         strip_insignificant_zeros: ~
         unit: ~
-    format:
+    format: 
       delimiter: ~
       precision: ~
       separator: ~
       significant: ~
       strip_insignificant_zeros: ~
-    human:
-      decimal_units:
+    human: 
+      decimal_units: 
         format: ~
-        units:
+        units: 
           billion: ~
           million: ~
           quadrillion: ~
           thousand: ~
           trillion: ~
           unit: ~
-      format:
+      format: 
         delimiter: ~
         precision: ~
         significant: ~
         strip_insignificant_zeros: ~
-      storage_units:
+      storage_units: 
         format: ~
-        units:
-          byte:
+        units: 
+          byte: 
             one: ~
             other: ~
           gb: ~
           kb: ~
           mb: ~
           tb: ~
-    percentage:
-      format:
+    percentage: 
+      format: 
         delimiter: ~
-    precision:
-      format:
+    precision: 
+      format: 
         delimiter: ~
-  support:
-    array:
+  support: 
+    array: 
       last_word_connector: ~
       two_words_connector: ~
       words_connector: ~
-    select:
+    select: 
       prompt: ~
-  text:
-    featured:
+  text: 
+    featured: 
       download: 下载
       download_and_run: 请下载和安装。
       earn_currency: "赚 %{amount_and_currency}"
@@ -177,14 +177,14 @@ zh:
       skip: 跳过
       title: "赚 %{currency}"
       try_out: 试一试
-    footer:
+    footer: 
       about: ~
       advertisers: ~
       blog: ~
       copyright: ~
       developers: ~
       privacy: ~
-    games:
+    games: 
       about_body: 愛您擁有的，覓您喜歡的
       about_title: "\"真有意思，它就是知道我喜歡什麼應用。 \""
       account_created_body: "您的Tapjoy 帳戶已成功創建！"
@@ -195,9 +195,9 @@ zh:
       add_to_homescreen: "把 %{tapjoy} 加到你的首頁"
       advertisers_body: 讓您的產品深入百萬用戶，家喻戶曉！
       advertisers_title: 廣告商
-      allow_marketing_emails: "允許Tapjoy向我發送市場營銷電子郵件"
+      allow_marketing_emails: "允許Tapjoy 向我發送市場營銷電子郵件"
       almost_done: ~
-      already_registered:
+      already_registered: 
         one: "%{name} 已註冊。您現在關注他/她."
         other: "%{name} 已註冊。您現在關注他們."
       amount_and_currency: "%{amount} %{currency}"
@@ -276,17 +276,17 @@ zh:
       invite_by_email: 用電郵邀請
       invite_email_body: |-
           %{name}已邀請您加入Tapjoy，這是發現最熱門新應用的絕佳所在。免費註冊後您就能發現針對iOS 和Android系統的最好應用，而且您可以在自己最喜愛的應用中賺取現金。
-
+          
            無需在App Store 或Android Market 中的成千上萬應用堆裡艱難跋涉才能找到您的下一個下載。 Tapjoy 在乎您，會向您推薦您喜歡的應用。
-
+          
            請在此創建您的帳戶，然後開始吧。
       invite_email_greet: 你好
       invite_email_signature: Tapjoy團隊
-      invite_friends:
+      invite_friends: 
         one: 邀請
         other: "邀請 %{count} 個朋友"
       invite_title: 發送一封電子郵件邀請
-      invites_sent_to:
+      invites_sent_to: 
         one: "一個Tapjoy 邀請已發送給了%{name}"
         other: "Tapjoy 邀請已發送給了%{name}"
       issue_registering: 註冊帳戶發生問題
@@ -319,6 +319,7 @@ zh:
       our_tos_changed: "我們的％{terms_of_use}已經修訂。請查閱後接受。"
       password_changed: ~
       password_non_match: ~
+      post_to_facebook: ~
       post_to_facebook_content: "造訪Tapjoy來發現最好的應用與遊戲，還可以在你喜愛的應用中賺取虛擬貨幣。加入完全免費，所以現在就來造訪 tapjoy.com，獲得為你量身訂做的應用推薦"
       privacy_policy_href: 隱私政策
       profile: 我
@@ -368,10 +369,10 @@ zh:
       wifi_required: "需要Wifi 連接"
       wrong_device: 裝置不對?
       you_are_following: ~
-      your_followers:
+      your_followers: 
         one: ~
         other: ~
-    instructions:
+    instructions: 
       amount_and_currency: "%{amount} %{currency}"
       continue_link: 点击这里继续
       download_action: 这里
@@ -380,7 +381,7 @@ zh:
       footer: "在完成这些步骤后, 您将获得 %{amount_and_currency}."
       header: "按照这些步骤来赚 %{currency}:"
       title: 说明
-    offerwall:
+    offerwall: 
       buy_currency: "买 %{amount} %{currency}"
       earn_currency: "赚 %{amount} %{currency}"
       free: 免费
@@ -397,7 +398,7 @@ zh:
       title: "赚 %{currency}"
       wifi_required: 需要Wifi
       wifi_warning: 下载本软件需要wifi连接。
-    shared:
+    shared: 
       about_link: 關於Tapjoy
       ads_by: 廣告提供
       android: Android
@@ -471,7 +472,7 @@ zh:
       write_review: 撰寫評論
       year: 年
       zip_postal: 郵政編碼
-    support:
+    support: 
       abuse_warning: 本表格僅供那些完成廣告但未獲得獎勵的用戶使用，濫用本頁可能導致你的帳戶未來無法與廣告互動
       description_label: "描述:"
       email_address_label: "電郵地址:"
@@ -490,12 +491,12 @@ zh:
       thanks: "感謝你提交客戶支持請求! 等我們核實你已經完成廣告要求之後，你就可以收到你的 %{currency}"
       title: "沒收到 %{currency}?"
       unavailable_offer: ~
-    unavailable_offer:
+    unavailable_offer: 
       message: ~
       optional_message: ~
-  time:
+  time: 
     am: ~
-    formats:
+    formats: 
       classic_short: ~
       day: ~
       day_long: ~

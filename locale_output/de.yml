@@ -1,10 +1,10 @@
----
-de:
-  activerecord:
-    errors:
-      full_messages:
+--- 
+de: 
+  activerecord: 
+    errors: 
+      full_messages: 
         format: ~
-      messages:
+      messages: 
         accepted: ~
         blank: ~
         confirmation: ~
@@ -26,67 +26,67 @@ de:
         too_long: ~
         too_short: ~
         wrong_length: ~
-      template:
+      template: 
         body: ~
-        header:
+        header: 
           one: ~
           other: ~
-  date:
+  date: 
     abbr_day_names: ~
     abbr_month_names: ~
     day_names: ~
-    formats:
+    formats: 
       default: ~
       long: ~
       short: ~
     month_names: ~
     order: ~
-  datetime:
-    distance_in_words:
-      about_x_hours:
+  datetime: 
+    distance_in_words: 
+      about_x_hours: 
         one: ~
         other: ~
-      about_x_months:
+      about_x_months: 
         one: ~
         other: ~
-      about_x_years:
+      about_x_years: 
         one: ~
         other: ~
-      almost_x_years:
+      almost_x_years: 
         one: ~
         other: ~
       half_a_minute: ~
-      less_than_x_minutes:
+      less_than_x_minutes: 
         one: ~
         other: ~
-      less_than_x_seconds:
+      less_than_x_seconds: 
         one: ~
         other: ~
-      over_x_years:
+      over_x_years: 
         one: ~
         other: ~
-      x_days:
+      x_days: 
         one: ~
         other: ~
-      x_minutes:
+      x_minutes: 
         one: ~
         other: ~
-      x_months:
+      x_months: 
         one: ~
         other: ~
-      x_seconds:
+      x_seconds: 
         one: ~
         other: ~
-    prompts:
+    prompts: 
       day: ~
       hour: ~
       minute: ~
       month: ~
       second: ~
       year: ~
-  errors:
+  errors: 
     format: ~
-    messages:
+    messages: 
       accepted: ~
       blank: ~
       confirmation: ~
@@ -106,16 +106,16 @@ de:
       too_long: ~
       too_short: ~
       wrong_length: ~
-  helpers:
-    select:
+  helpers: 
+    select: 
       prompt: ~
-    submit:
+    submit: 
       create: ~
       submit: ~
       update: ~
-  number:
-    currency:
-      format:
+  number: 
+    currency: 
+      format: 
         delimiter: ~
         format: ~
         precision: ~
@@ -123,52 +123,52 @@ de:
         significant: ~
         strip_insignificant_zeros: ~
         unit: ~
-    format:
+    format: 
       delimiter: ~
       precision: ~
       separator: ~
       significant: ~
       strip_insignificant_zeros: ~
-    human:
-      decimal_units:
+    human: 
+      decimal_units: 
         format: ~
-        units:
+        units: 
           billion: ~
           million: ~
           quadrillion: ~
           thousand: ~
           trillion: ~
           unit: ~
-      format:
+      format: 
         delimiter: ~
         precision: ~
         significant: ~
         strip_insignificant_zeros: ~
-      storage_units:
+      storage_units: 
         format: ~
-        units:
-          byte:
+        units: 
+          byte: 
             one: ~
             other: ~
           gb: ~
           kb: ~
           mb: ~
           tb: ~
-    percentage:
-      format:
+    percentage: 
+      format: 
         delimiter: ~
-    precision:
-      format:
+    precision: 
+      format: 
         delimiter: ~
-  support:
-    array:
+  support: 
+    array: 
       last_word_connector: ~
       two_words_connector: ~
       words_connector: ~
-    select:
+    select: 
       prompt: ~
-  text:
-    featured:
+  text: 
+    featured: 
       download: Download
       download_and_run: "Einfach downloaden und los"
       earn_currency: "Erhalte %{amount_and_currency}"
@@ -177,14 +177,14 @@ de:
       skip: Weiter
       title: "Erhalte %{currency}"
       try_out: "Jetzt ausprobieren"
-    footer:
+    footer: 
       about: ~
       advertisers: ~
       blog: ~
       copyright: ~
       developers: ~
       privacy: ~
-    games:
+    games: 
       about_body: "Liebe die Apps die Sie haben, finde die Apps die Sie lieben"
       about_title: "Irgendwie weiß es genau was für Apps Ich mag."
       account_created_body: "Ihre Tapjoy Konto wurde erfolgreich erstellt!"
@@ -197,7 +197,7 @@ de:
       advertisers_title: Werbetreibende
       allow_marketing_emails: "Erlauben Sie Tapjoy Marketing E-mails durch zusenden"
       almost_done: ~
-      already_registered:
+      already_registered: 
         one: "%{name} hat bereits registriert, ab sofort folgen Sie ihm / ihr"
         other: "%{name} hat bereits registriert, ab sofort folgen Sie ihnen"
       amount_and_currency: "%{amount} %{currency}"
@@ -276,9 +276,9 @@ de:
       invite_by_email: "Einladung per E-mail"
       invite_email_body: |-
           %{name} hat Sie bei Tapjoy eingeladen, der beste Ort um die heißesten neuen apps zu finden. Die Anmeldung ist kostenlos und Sie haben die Möglichkeit die besten Apps auf iOS und Android zu entdecken, während Sie auch Währung in Ihrem Lieblings-Apps verdienen können. Keine
-
+          
           Notwendigkeit, durch Tausende von Apps im App Store oder dem Android Marktplatz zu waten, um Ihren nächsten Download zu finden. Tapjoy wird Ihnen helfen und empfiehlt apps die wir wissen, Sie mögen werden.
-
+          
           Zu Starten, erstellen Sie Ihr Konto hier:
       invite_email_greet: Hallo
       invite_email_signature: "Team Tapjoy"
@@ -317,6 +317,7 @@ de:
       our_tos_changed: "Unsere %{terms_of_use} haben sich geändert. Bitte lesen Sie und geben Sie Ihre Zustimmung unten."
       password_changed: ~
       password_non_match: ~
+      post_to_facebook: ~
       post_to_facebook_content: "Checken Sie Tapjoy, wo Sie die besten neuen Apps und Spiele entdecken kann, während Sie auch Währung für die Apps die Sie Lieben verdienen können. Melden Sie sich Gratis bei tapjoy.com um die richtige App Empfehlungen jetzt zu bekommen!"
       privacy_policy_href: Datenschutzrichtlinie
       profile: Ich
@@ -366,10 +367,10 @@ de:
       wifi_required: "Wifi nötig"
       wrong_device: "Falsches Gerät?"
       you_are_following: ~
-      your_followers:
+      your_followers: 
         one: ~
         other: ~
-    instructions:
+    instructions: 
       amount_and_currency: "%{amount} %{currency}"
       continue_link: "Klicke hier um fortzufahren."
       download_action: hier
@@ -378,7 +379,7 @@ de:
       footer: "Nachdem Du diese Schritte abgeschlossen hast, erhältst Du %{amount_and_currency}."
       header: "Folge diesen Schritten um %{currency} zu erhalten:"
       title: Anleitung
-    offerwall:
+    offerwall: 
       buy_currency: "Kaufe %{amount} %{currency}"
       earn_currency: "Erhalte %{amount} %{currency}"
       free: Kostenlos
@@ -395,7 +396,7 @@ de:
       title: "Erhalte %{currency}"
       wifi_required: "Wifi nötig"
       wifi_warning: "This app requires a wifi connection to download."
-    shared:
+    shared: 
       about_link: "Über Tapjoy"
       ads_by: "Werbung von"
       android: Android
@@ -469,11 +470,11 @@ de:
       write_review: "Bewertung Schreiben"
       year: Jahr
       zip_postal: Postleitzahl
-    support:
+    support: 
       abuse_warning: "Dieses Formular ist nur für Benutzer, die nicht für eine abgeschlossene Angebot belohnt wurden sind. Missbrauch dieser Seite können Zu den Schließung Ihres Kontos führen und dass verboten bei weiteren Angeboten in der Zukunft zu Beteilen."
       description_label: "Beschreibung:"
       email_address_label: "E-Mail-Adresse:"
-      instructions_1: "Bitte wählen Sie das Angebot wo Sie keine %{currency} Erhalten haben und geben Sie Ihre E-Mail-Adresse."
+      instructions_1: "Bitte wählen Sie das Angebot wo Sie keine % {Währung} Erhalten haben und geben Sie Ihre E-Mail-Adresse."
       instructions_2: "Wenn Sie ein Ticket mit unvollständigen Angaben schicken, kann es zu einer Verzögerung bei der Problem führen. Priorität werden für alle vollständige Angaben gegeben."
       invalid_email: "Bitte geben Sie eine gültige E-Mail-Adresse."
       message: "Leider ist %{offer} nicht mehr verfügbar. Sie können auf die vorherige Seite zurückkehren und aktualisieren um das neueste Angebot anzuzeigen."
@@ -485,15 +486,15 @@ de:
       specify_offer_label: "Angebot angeben"
       submit_support_request: "Kundenservice Anfrage angeben"
       support_request_submitted: "Kundenservice Anfrage eingereicht"
-      thanks: "Vielen Dank für Ihre Kundenservice Anfrage . Sie erhalten Ihre %{currency}, nachdem wir überprüft haben, dass Sie das Angebot fertig gestellt haben."
+      thanks: "Vielen Dank für Ihre Kundenservice Anfrage . Sie erhalten Ihre % {Währung}, nachdem wir überprüft haben, dass Sie das Angebot fertig gestellt haben."
       title: "Verlorene %{currency}?"
       unavailable_offer: ~
-    unavailable_offer:
+    unavailable_offer: 
       message: ~
       optional_message: ~
-  time:
+  time: 
     am: ~
-    formats:
+    formats: 
       classic_short: ~
       day: ~
       day_long: ~
