@@ -407,7 +407,7 @@ $(document).ready(function() {
     }
   });
 
-  $('.list-button, .btn, .greenblock, #signup, #login').live("mousedown mouseup", function(e){
+  $('.list-button, .btn, .greenblock, #signup, #login').live("mousedown mouseup mouseout", function(e){
     var el = $(this),
         target = $(e.target),
         which = e.type;
