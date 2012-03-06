@@ -47,7 +47,7 @@ class TjmRequest < SyslogMessage
   private
 
   def lookup_path
-    PATH_MAP.include?(controller) && PATH_MAP[controller].include?(action) ? PATH_MAP[controller][action] : 'tjm_unknown'
+    PATH_MAP.include?(controller) && PATH_MAP[controller].include?(action) ? PATH_MAP[controller][action] : "tjm_#{controller}_#{action}"
   end
 
 end
