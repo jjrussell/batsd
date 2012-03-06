@@ -9,49 +9,6 @@ describe Games::SocialController do
     login_as(gamer)
   end
 
-  describe "#send_facebook_invites" do
-    before :each do
-      mogli_user = mock('mogli user')
-      mogli_post = mock('mogli post')
-      mogli_user.stubs(:feed_create).returns(mogli_post)
-      mogli_user.stubs(:first_name).returns('f')
-      mogli_user.stubs(:last_name).returns('l')
-      mogli_user.stubs(:name).returns('name')
-      mogli_post.stubs(:id).returns('a')
-      Mogli::User.stubs(:find).returns(mogli_user)
-      Mogli::Post.stubs(:new).returns(mogli_post)
-      Mogli::User.any_instance.stubs(:fetch)
-    end
-
-    context "when inviting friends without invitation" do
-      before :each do
-        foo_gamer = Factory(:gamer)
-        foo_gamer.gamer_profile = GamerProfile.create(:facebook_id => 'foo', :gamer => foo_gamer)
-        friends = ['foo', 'bar']
-        post 'send_facebook_invites', :friends => friends, :content => 'hello'
-      end
-
-      it "returns 200 as response code 200" do
-        response.code.should == "200"
-      end
-
-      it "returns json with success" do
-        json = JSON.load(response.body)
-        json['success'].should be_true
-      end
-
-      it "returns json with gamers and non-gamers" do
-        json = JSON.load(response.body)
-        json['gamers'].length.should == 1
-      end
-
-      it "returns json with non-gamers" do
-        json = JSON.load(response.body)
-        json['non_gamers'].length.should == 1
-      end
-    end
-  end
-
   describe '#send_email_invites' do
     context "when inviting friends without invitation" do
       before :each do

@@ -28,6 +28,10 @@ class Device < SimpledbShardedResource
     put('mac_address', new_value)
   end
 
+  def initialize(options = {})
+    super({ :load_from_memcache => true }.merge(options))
+  end
+
   def dynamic_domain_name
     domain_number = @key.matz_silly_hash % NUM_DEVICES_DOMAINS
     "devices_#{domain_number}"
@@ -101,6 +105,7 @@ class Device < SimpledbShardedResource
   end
 
   def set_last_run_time(app_id)
+    retry_save_on_fail = true if @parsed_apps[app_id].nil?
     @parsed_apps[app_id] = "%.5f" % Time.zone.now.to_f
     self.apps = @parsed_apps
   end
@@ -144,20 +149,19 @@ class Device < SimpledbShardedResource
   end
 
   def self.normalize_device_type(device_type_param)
-    if device_type_param =~ /iphone/i
+    return nil if device_type_param.nil?
+
+    case device_type_param.downcase
+    when /iphone/
       'iphone'
-    elsif device_type_param =~ /ipod/i
+    when /ipod/, /itouch/
       'itouch'
-    elsif device_type_param =~ /ipad/i
+    when /ipad/
       'ipad'
-    elsif device_type_param =~ /itouch/i
-      'itouch'
-    elsif device_type_param =~ /android/i
+    when /android/
       'android'
-    elsif device_type_param =~ /windows/i
+    when /windows/
       'windows'
-    else
-      nil
     end
   end
 
@@ -171,7 +175,7 @@ class Device < SimpledbShardedResource
   end
 
   def gamers
-    Gamer.find(:all, :joins => [:gamer_devices], :conditions => ['gamer_devices.device_id = ?', key])
+    @gamers ||= Gamer.find(:all, :joins => [:gamer_devices], :conditions => ['gamer_devices.device_id = ?', key])
   end
 
   def update_package_names!(package_names)
@@ -181,10 +185,11 @@ class Device < SimpledbShardedResource
     save!
   end
 
-  def serial_save(options = {})
-    super(options)
+  def save(options = {})
+    return_value = super({ :write_to_memcache => true }.merge(options))
     Sqs.send_message(QueueNames::CREATE_DEVICE_IDENTIFIERS, {'device_id' => key}.to_json) if @create_device_identifiers
     @create_device_identifiers = false
+    return_value
   end
 
   def create_identifiers!

@@ -3,7 +3,7 @@ require 'spec_helper'
 describe Partner do
   subject { Factory(:partner) }
 
-  it 'should associate' do
+  it 'associates' do
     should have_many(:orders)
     should have_many(:payouts)
     should have_many(:partner_assignments)
@@ -19,7 +19,7 @@ describe Partner do
     should have_many(:monthly_accountings)
   end
 
-  it 'should validate' do
+  it 'validates' do
     should validate_numericality_of(:balance)
     should validate_numericality_of(:pending_earnings)
     should validate_numericality_of(:next_payout_amount)
@@ -27,7 +27,7 @@ describe Partner do
     should validate_numericality_of(:direct_pay_share)
   end
 
-  describe "A Partner" do
+  describe 'A Partner' do
     before :each do
       mock_slave = mock()
       mock_slave.stubs(:execute)
@@ -41,31 +41,31 @@ describe Partner do
       @partner.reload
     end
 
-    it "should add account_mgr as account manager" do
+    it 'adds account_mgr as account manager' do
       manager_role = Factory(:user_role, :name => "account_mgr")
       manager_user = Factory(:user, :user_roles => [manager_role])
       @partner.users << manager_user
       @partner.account_managers.length.should == 1
     end
 
-    it "should add normal users but not as account manager" do
+    it 'adds normal users but not as account manager' do
       @partner.users << Factory(:user)
       @partner.account_managers.length.should == 0
     end
 
-    it "should calculate the next payout amount" do
+    it 'calculates the next payout amount' do
       @partner.pending_earnings.should == 10300
       Partner.calculate_next_payout_amount(@partner.id).should == 10100
     end
 
-    context "with MonthlyAccoutings" do
+    context 'with MonthlyAccoutings' do
       before :each do
         reference_time = Conversion.accounting_cutoff_time - 1
         monthly_accounting = MonthlyAccounting.new(:partner => @partner, :month => reference_time.month, :year => reference_time.year)
         monthly_accounting.calculate_totals!
       end
 
-      it "should verify balances" do
+      it 'verifies balances' do
         @partner.pending_earnings.should == 10300
         @partner.balance.should == 10000
         p = Partner.verify_balances(@partner.id)
@@ -73,7 +73,7 @@ describe Partner do
         p.balance.should == 0
       end
 
-      it "should reset balances" do
+      it 'resets balances' do
         @partner.pending_earnings.should == 10300
         @partner.balance.should == 10000
         @partner.reset_balances
@@ -82,12 +82,12 @@ describe Partner do
       end
     end
 
-    context "with monthly payouts" do
+    context 'with monthly payouts' do
       before :each do
         @partner.update_attributes({:payout_frequency => 'monthly'})
       end
 
-      it "should determine payout cutoff dates from a reference date" do
+      it 'determines payout cutoff dates from a reference date' do
         @partner.payout_cutoff_date(Time.zone.parse('2010-02-02')).should == Time.zone.parse('2010-01-01')
         @partner.payout_cutoff_date(Time.zone.parse('2010-02-03')).should == Time.zone.parse('2010-01-01')
         @partner.payout_cutoff_date(Time.zone.parse('2010-02-04')).should == Time.zone.parse('2010-02-01')
@@ -95,12 +95,12 @@ describe Partner do
       end
     end
 
-    context "with semimonthly payouts" do
+    context 'with semimonthly payouts' do
       before :each do
         @partner.update_attributes({:payout_frequency => 'semimonthly'})
       end
 
-      it "should determine payout cutoff dates from a reference date" do
+      it 'determines payout cutoff dates from a reference date' do
         @partner.payout_cutoff_date(Time.zone.parse('2010-02-17')).should == Time.zone.parse('2010-02-01')
         @partner.payout_cutoff_date(Time.zone.parse('2010-02-18')).should == Time.zone.parse('2010-02-01')
         @partner.payout_cutoff_date(Time.zone.parse('2010-02-19')).should == Time.zone.parse('2010-02-16')
@@ -108,13 +108,13 @@ describe Partner do
       end
     end
 
-    context "with currencies" do
+    context 'with currencies' do
       before :each do
         @currency1 = Factory(:currency, :partner => @partner)
         @currency2 = Factory(:currency, :partner => @partner)
       end
 
-      it "should update its currencies's spend_share when saved" do
+      it "updates its currencies's spend_share when saved" do
         @partner.rev_share = 0.42
         @partner.save!
 
@@ -124,7 +124,7 @@ describe Partner do
         @currency2.spend_share.should == 0.42
       end
 
-      it "should update its currencies's direct_pay_share when saved" do
+      it "updates its currencies's direct_pay_share when saved" do
         @partner.direct_pay_share = 0.42
         @partner.save!
 
@@ -135,81 +135,81 @@ describe Partner do
       end
     end
 
-    context "without an ExclusivityLevel" do
-      context "who is assigned a ThreeMonth ExclusivityLevel" do
+    context 'without an ExclusivityLevel' do
+      context 'who is assigned a ThreeMonth ExclusivityLevel' do
         before :each do
           @partner.set_exclusivity_level! "ThreeMonth"
         end
 
-        it "should be switched to a ThreeMonth ExclusivityLevel" do
+        it 'is switched to a ThreeMonth ExclusivityLevel' do
           @partner.exclusivity_level.class.should == ThreeMonth
         end
 
-        it "should have an expires_on three months in the future" do
+        it 'has an expires_on three months in the future' do
           @partner.exclusivity_expires_on.should == Date.today + 3.months
         end
       end
 
-      it "should raise a InvalidExclusivityLevelError when assigned a NotReal ExclusivityLevel" do
+      it 'raises a InvalidExclusivityLevelError when assigned a NotReal ExclusivityLevel' do
         expect {
           @partner.set_exclusivity_level! "NotReal"
         }.to raise_error(InvalidExclusivityLevelError)
       end
 
-      it "should not be able to set exclusivity_level_type without exclusivity_expires_on" do
+      it 'is not able to set exclusivity_level_type without exclusivity_expires_on' do
         @partner.exclusivity_level_type = "ThreeMonth"
         @partner.should_not be_valid
       end
 
-      it "should not be able to set exclusivity_expires_on without exclusivity_level_type" do
+      it 'is not able to set exclusivity_expires_on without exclusivity_level_type' do
         @partner.exclusivity_expires_on = 3.months.from_now
         @partner.should_not be_valid
       end
 
     end
 
-    context "with a SixMonth ExclusivityLevel" do
+    context 'with a SixMonth ExclusivityLevel' do
       before :each do
         @partner.set_exclusivity_level! "SixMonth"
       end
 
-      it "should not be able to switch to a ThreeMonth ExclusivityLevel" do
+      it 'is not able to switch to a ThreeMonth ExclusivityLevel' do
         @partner.set_exclusivity_level!("ThreeMonth").should be_false
         @partner.reload
         @partner.exclusivity_level.class.should == SixMonth
         @partner.exclusivity_expires_on.should == Date.today + 6.months
       end
 
-      it "should be able to switch to a NineMonth ExclusivityLevel" do
+      it 'is able to switch to a NineMonth ExclusivityLevel' do
         @partner.set_exclusivity_level!("NineMonth").should be_true
         @partner.reload
         @partner.exclusivity_level.class.should == NineMonth
         @partner.exclusivity_expires_on.should == Date.today + 9.months
       end
 
-      it "should have exclusivity_level and exclusivity_expires_on set to nil when expired" do
+      it 'has exclusivity_level and exclusivity_expires_on set to nil when expired' do
         @partner.expire_exclusivity_level!
         @partner.reload
         @partner.exclusivity_level.should be_nil
         @partner.exclusivity_expires_on.should be_nil
       end
 
-      it "should not need its exclusivity expired" do
+      it 'does not need its exclusivity expired' do
         @partner.needs_exclusivity_expired?.should be_false
       end
 
-      context "with exclusivity_expires_on in the past" do
+      context 'with exclusivity_expires_on in the past' do
         before :each do
           @partner.exclusivity_expires_on = 1.month.ago
         end
 
-        it "should need its exclusivity expired" do
+        it 'needs its exclusivity expired' do
           @partner.needs_exclusivity_expired?.should be_true
         end
       end
     end
 
-    context "when assigning a reseller user" do
+    context 'when assigning a reseller user' do
       before :each do
         @partner.users << Factory(:user)
         @reseller = Factory(:reseller)
@@ -217,7 +217,7 @@ describe Partner do
         @currency = Factory(:currency, :partner => @partner)
       end
 
-      it "should modify reseller of partner and partner's dependent records" do
+      it "modifies reseller of partner and partner's dependent records" do
         @partner.users << @reseller_user
         @partner.reload
         @currency.reload

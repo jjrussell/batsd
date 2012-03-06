@@ -12,7 +12,7 @@ describe Apps::OffersController do
     login_as @user
   end
 
-  it 'should not have any offers initially' do
+  it 'does not have any offers initially' do
     @app.primary_non_rewarded_featured_offer.should be_nil
     @app.primary_rewarded_featured_offer.should be_nil
     @app.primary_non_rewarded_offer.should be_nil
@@ -20,10 +20,10 @@ describe Apps::OffersController do
 
   context 'a non-rewarded featured offer' do
     before :each do
-      post :create, :app_id => @app.id, :offer_type => 'non_rewarded_featured'
+      post(:create, :app_id => @app.id, :offer_type => 'non_rewarded_featured')
     end
 
-    it 'should be created' do
+    it 'is created' do
       offer = @app.primary_non_rewarded_featured_offer
       offer.should be_a Offer
       offer.should_not be_rewarded
@@ -31,21 +31,21 @@ describe Apps::OffersController do
       response.should redirect_to(:action => :edit, :id => offer.id)
     end
 
-    it 'should not show up as rewarded featured offer' do
+    it 'does not show up as a rewarded featured offer' do
       @app.primary_rewarded_featured_offer.should be_nil
     end
 
-    it 'should not show up as a non-rewarded offer' do
+    it 'does not show up as a non-rewarded offer' do
       @app.primary_non_rewarded_offer.should be_nil
     end
   end
 
   context 'with a rewarded featured offer' do
     before :each do
-      post :create, :app_id => @app.id, :offer_type => 'rewarded_featured'
+      post(:create, :app_id => @app.id, :offer_type => 'rewarded_featured')
     end
 
-    it 'should be created' do
+    it 'is created' do
       offer = @app.primary_rewarded_featured_offer
       offer.should be_a Offer
       offer.should be_rewarded
@@ -53,21 +53,21 @@ describe Apps::OffersController do
       response.should redirect_to(:action => :edit, :id => offer.id)
     end
 
-    it 'should not show up as non-rewarded feautred offer' do
+    it 'does not show up as a non-rewarded featured offer' do
       @app.primary_non_rewarded_featured_offer.should be_nil
     end
 
-    it 'should not show up as a non-rewarded offer' do
+    it 'does not show up as a non-rewarded offer' do
       @app.primary_non_rewarded_offer.should be_nil
     end
   end
 
   context 'a non-rewarded offer' do
     before :each do
-      post :create, :app_id => @app.id, :offer_type => 'non_rewarded'
+      post(:create, :app_id => @app.id, :offer_type => 'non_rewarded')
     end
 
-    it 'should be created' do
+    it 'is created' do
       offer = @app.primary_non_rewarded_offer
       offer.should be_a Offer
       offer.should_not be_rewarded
@@ -75,7 +75,7 @@ describe Apps::OffersController do
       response.should redirect_to(:action => :edit, :id => offer.id)
     end
 
-    it 'should not show up as a featured offer' do
+    it 'does not show up as a featured offer' do
       @app.primary_non_rewarded_featured_offer.should be_nil
       @app.primary_rewarded_featured_offer.should be_nil
     end

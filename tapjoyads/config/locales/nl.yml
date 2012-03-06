@@ -1,10 +1,10 @@
---- 
-nl: 
-  activerecord: 
-    errors: 
-      full_messages: 
+---
+nl:
+  activerecord:
+    errors:
+      full_messages:
         format: ~
-      messages: 
+      messages:
         accepted: ~
         blank: ~
         confirmation: ~
@@ -26,67 +26,67 @@ nl:
         too_long: ~
         too_short: ~
         wrong_length: ~
-      template: 
+      template:
         body: ~
-        header: 
+        header:
           one: ~
           other: ~
-  date: 
+  date:
     abbr_day_names: ~
     abbr_month_names: ~
     day_names: ~
-    formats: 
+    formats:
       default: ~
       long: ~
       short: ~
     month_names: ~
     order: ~
-  datetime: 
-    distance_in_words: 
-      about_x_hours: 
+  datetime:
+    distance_in_words:
+      about_x_hours:
         one: ~
         other: ~
-      about_x_months: 
+      about_x_months:
         one: ~
         other: ~
-      about_x_years: 
+      about_x_years:
         one: ~
         other: ~
-      almost_x_years: 
+      almost_x_years:
         one: ~
         other: ~
       half_a_minute: ~
-      less_than_x_minutes: 
+      less_than_x_minutes:
         one: ~
         other: ~
-      less_than_x_seconds: 
+      less_than_x_seconds:
         one: ~
         other: ~
-      over_x_years: 
+      over_x_years:
         one: ~
         other: ~
-      x_days: 
+      x_days:
         one: ~
         other: ~
-      x_minutes: 
+      x_minutes:
         one: ~
         other: ~
-      x_months: 
+      x_months:
         one: ~
         other: ~
-      x_seconds: 
+      x_seconds:
         one: ~
         other: ~
-    prompts: 
+    prompts:
       day: ~
       hour: ~
       minute: ~
       month: ~
       second: ~
       year: ~
-  errors: 
+  errors:
     format: ~
-    messages: 
+    messages:
       accepted: ~
       blank: ~
       confirmation: ~
@@ -106,16 +106,16 @@ nl:
       too_long: ~
       too_short: ~
       wrong_length: ~
-  helpers: 
-    select: 
+  helpers:
+    select:
       prompt: ~
-    submit: 
+    submit:
       create: ~
       submit: ~
       update: ~
-  number: 
-    currency: 
-      format: 
+  number:
+    currency:
+      format:
         delimiter: ~
         format: ~
         precision: ~
@@ -123,52 +123,52 @@ nl:
         significant: ~
         strip_insignificant_zeros: ~
         unit: ~
-    format: 
+    format:
       delimiter: ~
       precision: ~
       separator: ~
       significant: ~
       strip_insignificant_zeros: ~
-    human: 
-      decimal_units: 
+    human:
+      decimal_units:
         format: ~
-        units: 
+        units:
           billion: ~
           million: ~
           quadrillion: ~
           thousand: ~
           trillion: ~
           unit: ~
-      format: 
+      format:
         delimiter: ~
         precision: ~
         significant: ~
         strip_insignificant_zeros: ~
-      storage_units: 
+      storage_units:
         format: ~
-        units: 
-          byte: 
+        units:
+          byte:
             one: ~
             other: ~
           gb: ~
           kb: ~
           mb: ~
           tb: ~
-    percentage: 
-      format: 
+    percentage:
+      format:
         delimiter: ~
-    precision: 
-      format: 
+    precision:
+      format:
         delimiter: ~
-  support: 
-    array: 
+  support:
+    array:
       last_word_connector: ~
       two_words_connector: ~
       words_connector: ~
-    select: 
+    select:
       prompt: ~
-  text: 
-    featured: 
+  text:
+    featured:
       download: Download
       download_and_run: "Download en start"
       earn_currency: "Verdien %{amount_and_currency}"
@@ -177,94 +177,169 @@ nl:
       skip: Overslaan
       title: "Verdien %{currency}"
       try_out: Probeer
-    games: 
+    games:
       about_body: ~
       about_title: ~
       account_created_body: ~
       account_created_title: ~
       action_required: ~
+      active_gamers_text: ~
+      add: ~
       add_to_homescreen: ~
       advertisers_body: ~
       advertisers_title: ~
       allow_marketing_emails: ~
-      already_registered: 
+      already_registered:
         one: ~
         other: ~
+      amount_and_currency: ~
       back_to_top: ~
       birthdate: ~
+      browse_offers: ~
       call_to_action_body: ~
       call_to_action_title: ~
       cant_fetch_offers: ~
+      change: ~
       change_linked_account: ~
+      collect: ~
+      collect_rewards: ~
       connect_my_device: ~
       connect_your_android: ~
       connect_your_device: ~
+      connected_to_facebook: ~
+      connected_to_twitter: ~
+      contact_support: ~
+      contact_us: ~
+      cookies_required: ~
       deactivate: ~
       del_acct_confirm: ~
       delete_my_account: ~
       developers_body: ~
       developers_title: ~
+      discover_apps: ~
       earn: ~
+      earn_rewards: ~
       earn_title: ~
+      earning_rewards: ~
+      edit: ~
+      email_notification: ~
       enable_javascript: ~
       enter_birthdate: ~
       enter_email: ~
+      enter_message: ~
+      enter_name: ~
       enter_password: ~
       enter_platform: ~
       enter_tos: ~
       enter_valid_email: ~
+      error_mark_as_favorite: ~
+      error_unmark_as_favorite: ~
+      failed_to_change_linked: ~
       favorite_app: ~
+      favorite_apps: ~
       favorite_category: ~
+      feedback: ~
+      find_and_invite_friends: ~
+      find_friends_from_facebook: ~
+      find_friends_from_twitter: ~
+      find_friends_on_tapjoy: ~
+      find_more_friends: ~
+      find_new_apps: ~
       follow_us: ~
       forgot_pass: ~
+      free: ~
       free!: ~
       generic_issue: ~
+      get_app: ~
       get_it: ~
       grant_us_access: ~
       how_it_works_body: ~
       how_it_works_title: ~
       install_and_run: ~
       invite: ~
+      invite_by_email: ~
       invite_email_body: ~
       invite_email_greet: ~
       invite_email_signature: ~
-      invite_friends: 
+      invite_friends:
         one: ~
         other: ~
       invite_title: ~
-      invites_sent_to: 
+      invites_sent_to:
         one: ~
         other: ~
       issue_registering: ~
+      join_the_community: ~
+      join_the_community_blurb: ~
+      last_played: ~
       link_my_facebook: ~
       load_more: ~
+      loading: ~
+      log_in_tapjoy: ~
+      mark_as_favorite: ~
       member_since: ~
       meta_description: ~
       meta_keywords: ~
       more_apps: ~
+      more_the_merrier: ~
       my_apps: ~
+      next: ~
+      no_device: ~
+      no_javascript: ~
       none_selected: ~
+      on_my: ~
       oops: ~
+      or_learn_more: ~
+      other_options: ~
       our_tos_changed: ~
+      password_changed: ~
+      post_to_facebook_content: ~
       privacy_policy_href: ~
+      profile: ~
+      profile_error: ~
+      profile_update: ~
       provide_other_email: ~
       recipients_label: ~
+      recommend_apps: ~
       recommendations: ~
       registering: ~
+      report_bug: ~
+      review_app_name: ~
+      review_created: ~
+      review_issue: ~
+      review_updated: ~
+      reviewed_already: ~
       select_current_device: ~
       select_device: ~
       select_friend: ~
+      share_on_facebook: ~
+      share_on_twitter: ~
+      share_with_everyone: ~
+      share_with_your_friends: ~
       social_networks: ~
       social_settings: ~
+      spread_mobile_joy: ~
+      start_discovering: ~
       tap_that: ~
       tapjoy_picks: ~
       terms_of_use_href: ~
+      thanks_contact_support: ~
+      thanks_contact_us: ~
+      thanks_feedback: ~
+      thanks_report_bug: ~
+      thats_you: ~
       tos_acknowledge_html: ~
       tos_change_acknowledge: ~
       unable_to_process: ~
+      unlock_mobile_joy: ~
+      unmark_as_favorite: ~
       wifi_required: ~
       wrong_device: ~
-    instructions: 
+      you_are_following: ~
+      your_followers:
+        one: ~
+        other: ~
+    instructions:
       amount_and_currency: "%{amount} %{currency}"
       continue_link: "Klik hier om verder te gaan."
       download_action: hier
@@ -273,7 +348,7 @@ nl:
       footer: "Na het doorlopen van deze stappen ontvang je %{amount_and_currency}."
       header: "Volg deze stappen om de %{currency} te krijgen:"
       title: Instructies
-    offerwall: 
+    offerwall:
       buy_currency: "Koop  %{amount} %{currency}"
       earn_currency: "Verdien %{amount} %{currency}"
       free: Gratis
@@ -283,27 +358,33 @@ nl:
       load_more: "Laad meer!"
       loading: Laden...
       missing_currency: "Ontbrekende %{currency}?"
+      more_offers: ~
       next: "Volgende %{items}"
       popular_apps: ~
       previous: "Vorige %{items}"
       title: "Verdien %{currency}"
       wifi_required: "Wifi Required"
       wifi_warning: "This app requires a wifi connection to download."
-    shared: 
+    shared:
       about_link: ~
       ads_by: "Advertenties van"
       android: ~
       back: ~
       blog: ~
       cancel: ~
+      change_password: ~
       city: ~
+      collect: ~
+      comment: ~
       confirm_password: ~
       continue: ~
       copyright: ~
       country: ~
       day: ~
+      earn_verb: ~
       email: ~
       facebook_profile: ~
+      favorites: ~
       female: ~
       followers: ~
       following: ~
@@ -312,6 +393,8 @@ nl:
       help: ~
       invite: ~
       ios: ~
+      join: ~
+      location: ~
       login_noun: ~
       login_verb: ~
       logout: ~
@@ -319,9 +402,11 @@ nl:
       month: ~
       my_account: ~
       my_profile: ~
+      my_reviews: ~
       name: ~
       new_password: ~
       nickname: ~
+      none: ~
       ok: ~
       options: ~
       other: ~
@@ -329,18 +414,29 @@ nl:
       preferences: ~
       privacy: Privacy
       privacy_policy: ~
+      profile: ~
+      rate_and_review: ~
       recipients: ~
       reset_password: ~
+      reviews: ~
       save: ~
+      send: ~
       share: ~
       sign_in: ~
       sign_up: ~
+      submit: ~
+      submit_review: ~
       success: ~
+      title_noun: ~
       try_again: ~
+      unknown: ~
+      update_review: ~
       updating: ~
+      view_all: ~
+      write_review: ~
       year: ~
       zip_postal: ~
-    support: 
+    support:
       abuse_warning: "Dit formulier is alleen voor mensen die hun beloning nog niet hebben ontvangen. Misbruik kan er toe leiden dat u in de toekomst geen gebruik meer kunt maken van aanbiedingen."
       description_label: "Beschrijving:"
       email_address_label: "Email adres:"
@@ -356,12 +452,13 @@ nl:
       support_request_submitted: "U vraag is verstuurd"
       thanks: "Dank voor uw vraag! U ontvangt de %{currency} nadat we hebben geverifieerd dat u alle stappen m.b.t. de aanbieding hebt doorlopen."
       title: "Ontbreken er %{currency}?"
-    unavailable_offer: 
+    unavailable_offer:
       message: "Sorry, maar %{offer} is niet langer beschikbaar. Je kunt nu terug naar de vorige pagina en deze verversen om de laatste aanbiedingen te zien."
       optional_message: "Of, klik hier om %{offer} toch te downloaden."
-  time: 
+  time:
     am: ~
-    formats: 
+    formats:
+      classic_short: ~
       day: ~
       day_long: ~
       day_short: ~

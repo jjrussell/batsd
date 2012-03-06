@@ -25,6 +25,9 @@
   = submit_tag('Reset', :id => :date_reset)
 #unfiltered.hidden
   = link_to 'Filter by payout info modification', '#'
+- form_tag(export_tools_payouts_path, :method => :get) do
+  = submit_tag('Export to CSV', :id => :export, :action => export_tools_payouts_path)
+
 %table
   %thead
     %tr
@@ -36,6 +39,7 @@
       %th Payout Info
       %th.do-not-print W9/Bank
       %th Action
+      %th Confirmed
   %tbody
     - @partners.each do |partner|
       - payout_info = partner.payout_info
@@ -55,7 +59,7 @@
             = payout_info.doing_business_as
           %br/
           %strong ID:
-          = partner.id
+          = link_to(partner.id, partner_path(partner.id))
 
         %td= number_to_currency(partner.pending_earnings / 100.0)
         %td= (partner.payout_cutoff_date - 1.day).to_s(:pub)
@@ -84,7 +88,30 @@
               %span.status
           - else
             &nbsp;
+        %td
+          - if permitted_to?(:confirm_payouts, :tools_payouts)
+            - form_tag confirm_payouts_tools_payouts_path( :partner_id => partner.id), :method => :post, :class => 'enable_request' do
+              %div{ :class => 'enabled', :style =>  (!partner.confirmed_for_payout ? 'display:none;' : 'display:inline;')}
+                %span{ :class => 'enabled' } Confirmed
+                = submit_tag  'Unconfirm', :class => 'submit'
+              %div{ :class => 'disabled', :style => (partner.confirmed_for_payout ? 'display:none;' : 'display:inline;') }
+                %span{ :class => "disabled#{' notes' unless partner.payout_confirmation_notes.nil?}" }
+                  Unconfirmed#{'*' unless partner.payout_confirmation_notes.nil?}
+                  - unless partner.payout_confirmation_notes.nil?
+                    %div{ :class => 'notes', :style => 'display:none'} #{partner.payout_confirmation_notes}
+                = submit_tag 'Confirm', :class => 'submit'
+              %img.spinner{ :src => '/images/spinner.gif', :style => 'display:none;' }
+          - else
+            - if partner.confirmed_for_payout
+              %span{ :class => 'enabled'} Confirmed
+            - elsif partner.payout_confirmation_notes.nil?
+              %span{ :class => 'disabled'} Uncomfirmed
+            - else
+              %span{ :class => 'disabled notes'}
+                Uncomfirmed*
+                %div{ :class => 'notes', :style => 'display:none'} #{partner.payout_confirmation_notes}
 
+%div{ :class => 'popup', :style => 'display:none'}
 - content_for :page_javascript do
   :plain
     $(function($) {
@@ -110,6 +137,14 @@
         } else {
           $('#unfiltered').show();
         }
+      });
+
+      $('span.notes').click(function(){
+        var content = $('.popup');
+        text = $(this).children('div.notes').text();
+        content.text(text);
+        var position = [$(this).position().left - 300, $(this).position().top - $(window).scrollTop()];
+        content.dialog({title: 'Payout Confirmation Notes', position: position, minHeight: 75, resizable: false});
       });
 
       $('.button-to').submit(function(){
@@ -191,6 +226,41 @@
               status.html('Complete');
             } else {
               status.html('Error');
+            }
+          }
+        });
+        return false;
+      });
+
+      $('form.enable_request').submit(function() {
+        if (!confirm('Are you sure?')) { return false; }
+
+        var spinner = $(this).find('img.spinner');
+        var disabled = $(this).find('div.disabled');
+        var enabled = $(this).find('div.enabled');
+
+        $.ajax({
+          dataType: 'json',
+          type: $(this).attr('method'),
+          url: $(this).attr('action'),
+          data: $(this).serialize(),
+          beforeSend: function() {
+            disabled.hide();
+            enabled.hide();
+            spinner.show();
+          },
+          complete: function() {
+            spinner.hide();
+          },
+          success: function(response) {
+            if (response.success == true) {
+              if(!response.was_confirmed) {
+                disabled.show();
+              } else {
+                enabled.show();
+              }
+            } else {
+              $(this).parent().html('Error');
             }
           }
         });

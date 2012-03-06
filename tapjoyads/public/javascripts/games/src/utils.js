@@ -197,7 +197,7 @@ TJG.utils = {
 
     if (!iterable) {
       return res;
-    } 
+    }
 
     if (typeof iterable.toArray === "function") {
       return iterable.toArray();
@@ -207,12 +207,12 @@ TJG.utils = {
       return Array.prototype.slice.call(iterable);
     }
 
-    for(i in iterable) { 
+    for(i in iterable) {
       if(iterable.hasOwnProperty(i)) {
         res.push(iterable[i]);
       }
     }
-    
+
     return res;
   },
 
@@ -245,7 +245,7 @@ TJG.utils = {
   },
 
   customError: function(msg, options, name) {
-    var info="", 
+    var info="",
         i,
         options = options || {},
         TapjoyCustomError
@@ -258,7 +258,7 @@ TJG.utils = {
       this.message = m;
     };
     TapjoyCustomError.prototype = Error.prototype;
-    
+
     for(i in options) {
       if(options.hasOwnProperty(i)) {
         info += "\n[ "+i + ": " + stringify( options[i] ) + " ]";

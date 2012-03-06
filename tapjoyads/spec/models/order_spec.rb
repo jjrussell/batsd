@@ -12,13 +12,14 @@ describe Order do
 
   describe '#valid?' do
     it { should validate_presence_of :partner }
+    it { should validate_presence_of :note }
     it { should validate_numericality_of :amount }
     it { should ensure_inclusion_of(:status).in_range(Order::STATUS_CODES.keys) }
     it { should ensure_inclusion_of(:payment_method).in_range(Order::PAYMENT_METHODS.keys) }
   end
 
   describe 'an invoice' do
-    it 'should be created if the client exists in freshbooks' do
+    it 'is created if the client exists in freshbooks' do
       FreshBooks.expects(:get_client_id).returns(5)
       FreshBooks.expects(:create_invoice).returns(7)
 
@@ -33,7 +34,7 @@ describe Order do
       @order.freshbooks_client_id.should == 5
     end
 
-    it 'should not be created if there is not a freshbooks client' do
+    it 'is not created if there is not a freshbooks client' do
       FreshBooks.expects(:get_client_id).returns(nil)
       FreshBooks.expects(:create_invoice).never
 
@@ -42,7 +43,7 @@ describe Order do
       @order.status.should == 0
     end
 
-    it 'should deal if the client disappears from freshbooks' do
+    it 'deals if the client disappears from freshbooks' do
       FreshBooks.expects(:get_client_id).times(2).returns(2, nil)
       FreshBooks.expects(:create_invoice).once
 

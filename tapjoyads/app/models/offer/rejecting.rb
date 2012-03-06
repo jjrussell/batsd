@@ -27,7 +27,7 @@ module Offer::Rejecting
     [ '7df94075-16c9-4c6a-a170-50e1e8fc9991', '3712bd73-eda2-4ca9-934a-3465cf38ef35' ] => [ '7df94075-16c9-4c6a-a170-50e1e8fc9991', '3712bd73-eda2-4ca9-934a-3465cf38ef35' ],
   }
 
-  def postcache_reject?(publisher_app, device, currency, device_type, geoip_data, app_version, direct_pay_providers, type, hide_rewarded_app_installs, library_version, os_version, screen_layout_size, video_offer_ids, source, all_videos)
+  def postcache_reject?(publisher_app, device, currency, device_type, geoip_data, app_version, direct_pay_providers, type, hide_rewarded_app_installs, library_version, os_version, screen_layout_size, video_offer_ids, source, all_videos, mobile_carrier_code)
     geoip_reject?(geoip_data) ||
     already_complete?(device, app_version) ||
     selective_opt_out_reject?(device) ||
@@ -48,7 +48,8 @@ module Offer::Rejecting
     frequency_capping_reject?(device) ||
     tapjoy_games_retargeting_reject?(device) ||
     source_reject?(source) ||
-    non_rewarded_offerwall_rewarded_reject?(currency)
+    non_rewarded_offerwall_rewarded_reject?(currency) ||
+    carriers_reject?(mobile_carrier_code)
   end
 
   def precache_reject?(platform_name, hide_rewarded_app_installs, normalized_device_type)
@@ -68,6 +69,14 @@ module Offer::Rejecting
       already_complete?(device) ||
       min_os_version_reject?(os_version) ||
       age_rating_reject?(3) # reject 17+ apps
+  end
+
+  def geoip_reject?(geoip_data)
+    return true if get_countries.present? && !get_countries.include?(geoip_data[:primary_country])
+    return true if countries_blacklist.include?(geoip_data[:primary_country])
+    return true if get_regions.present? && !get_regions.include?(geoip_data[:region])
+    return true if get_dma_codes.present? && !get_dma_codes.include?(geoip_data[:dma_code])
+    false
   end
 
   private
@@ -98,14 +107,6 @@ module Offer::Rejecting
     return false unless max_age_rating && age_rating
 
     max_age_rating < age_rating
-  end
-
-  def geoip_reject?(geoip_data)
-    return true if get_countries.present? && !get_countries.include?(geoip_data[:carrier_country_code] || geoip_data[:country] || geoip_data[:user_country_code])
-    return true if get_countries_blacklist.include?(geoip_data[:carrier_country_code] || geoip_data[:country] || geoip_data[:user_country_code])
-    return true if get_regions.present? && !get_regions.include?(geoip_data[:region])
-    return true if get_dma_codes.present? && !get_dma_codes.include?(geoip_data[:dma_code])
-    false
   end
 
   def already_complete?(device, app_version = nil)
@@ -223,10 +224,15 @@ module Offer::Rejecting
   end
 
   def non_rewarded_offerwall_rewarded_reject?(currency)
-    currency.conversion_rate == 0 && rewarded? && item_type != 'App'
+    !currency.rewarded? && rewarded? && item_type != 'App'
   end
 
   def recommendable_types_reject?
     item_type != 'App'
   end
+
+  def carriers_reject?(mobile_carrier_code)
+    get_carriers.present? && !get_carriers.include?(Carriers::MCC_MNC_TO_CARRIER_NAME[mobile_carrier_code])
+  end
+
 end

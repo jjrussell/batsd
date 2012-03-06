@@ -5,7 +5,7 @@ class Job::MasterRunOfferEventsController < Job::JobController
       log_activity(event.offer)
       log_activity(event)
       event.run!
-      save_activity_logs(true)
+      save_activity_logs
     end
 
     render :text => 'OK'
