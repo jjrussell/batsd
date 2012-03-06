@@ -117,8 +117,8 @@ ActiveRecord::Schema.define(:version => 20120301195841) do
     t.string   "categories"
     t.text     "countries_blacklist"
     t.integer  "papaya_user_count"
-    t.boolean  "reengagement_campaign_enabled"
     t.integer  "active_gamer_count",                          :default => 0
+    t.boolean  "reengagement_campaign_enabled"
   end
 
   add_index "apps", ["id"], :name => "index_apps_on_id", :unique => true
