@@ -25,13 +25,17 @@ class TapjoyMailer < ActionMailer::Base
 
   def low_conversion_rate_warning(offer, stats)
     partner = Partner.find_by_id(offer.partner_id, :include => [ :users ])
-    account_managers = partner.account_managers.map(&:email)
-    account_managers.delete "oso@tapjoy.com"
-    account_managers = account_managers.join(', ')
+    recipient_emails = partner.account_managers.map(&:email)
+    sales_rep = partner.sales_rep
+    sales_rep_email = sales_rep.email if sales_rep
+    recipient_emails += [ sales_rep_email ] unless sales_rep_email.blank? || recipient_emails.include?(sales_rep_email)   # happens when sales rep is also account manager
+    recipient_emails.delete "oso@tapjoy.com"
+    recipient_emails = recipient_emails.join(', ')
 
     from 'Tapjoy <noreply@tapjoy.com>'
-    reply_to account_managers
-    recipients account_managers
+    reply_to recipient_emails
+    recipients recipient_emails
+    bcc 'hwanjoon@tapjoy.com'
     subject "Low Conversion Rate Warning! - #{offer.name_with_suffix_and_platform}"
     body(:offer => offer, :stats => stats)
   end
