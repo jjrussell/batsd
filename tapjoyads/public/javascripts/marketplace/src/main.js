@@ -524,19 +524,6 @@ $(document).ready(function() {
     };
   };
 
-  $(document).bind("email-invite-ajax-success", function (ev, form, data) {
-    if (data.success) {
-      if (data.gamers.length === 0 && data.non_gamers.length === 0) {
-        notify(_t('games.provide_other_email'));
-      } else {
-        showSuccessMessage(data.gamers, data.non_gamers);
-        $("#recipients", form).val('');
-      }
-    } else {
-      notify(data.error);
-    }
-  });
-
   $(".submit-child-form").click(function () {
     $("form", this).submit();
     return false;
