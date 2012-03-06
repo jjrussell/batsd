@@ -266,7 +266,7 @@ de:
       get_app: "App holen"
       get_it: "Jetzt bekommen!"
       grant_us_access: "Bitte gestatten Sie uns / gib uns beide Berechtigungen vor Zusendung einer Einladung"
-      how_it_works_body: "Alle Ihre Spiele sind unten gelistet. Klicken Sie auf die Tasten neben den Apps um Währung zu verdienen .\""
+      how_it_works_body: "Alle Ihre Spiele sind unten gelistet. Klicken Sie auf die Tasten neben den Apps um Währung zu verdienen ."
       how_it_works_title: "Wie funktioniert es?"
       install_and_run: "Installieren und starten Sie %{name}"
       install_android_app: ~
@@ -314,7 +314,7 @@ de:
       or_learn_more: ~
       other: "Tapjoy Einladungen wurden an %{name} gesendet"
       other_options: "Weiter Optionen"
-      our_tos_changed: "Unsere %{terms_of_use} haben sich geändert. Bitte lesen Sie und geben Sie Ihre Zustimmung unten.\""
+      our_tos_changed: "Unsere %{terms_of_use} haben sich geändert. Bitte lesen Sie und geben Sie Ihre Zustimmung unten."
       password_changed: ~
       password_non_match: ~
       post_to_facebook_content: "Checken Sie Tapjoy, wo Sie die besten neuen Apps und Spiele entdecken kann, während Sie auch Währung für die Apps die Sie Lieben verdienen können. Melden Sie sich Gratis bei tapjoy.com um die richtige App Empfehlungen jetzt zu bekommen!"
@@ -357,9 +357,9 @@ de:
       thanks_feedback: "Vielen Dank für Ihren Feedback!"
       thanks_report_bug: "Vielen Dank für den Hinweis auf Fehler. Wir werden dass so bald wie möglich überprüfen."
       thats_you: "das sind Sie"
-      tos_acknowledge_html: "Wenn dieses Feld markiert ist, behaupte ich dass ich zu dem % {terms_of_use} &% {} privacy_policy zu stimme\""
+      tos_acknowledge_html: "Wenn dieses Feld markiert ist, behaupte ich dass ich zu dem % {terms_of_use} &% {} privacy_policy zu stimme"
       tos_change_acknowledge: "Wenn dieses Feld markiert ist, behaupte ich dass ich zu dem Nutzungsbedingungen zu stimme"
-      unable_to_process: "Leider könnten wir Ihre Anfrage nicht verarbeiten\""
+      unable_to_process: "Leider könnten wir Ihre Anfrage nicht verarbeiten"
       unlock_mobile_joy: "Handy Freude Entsperren!"
       unmark_as_favorite: ~
       welcome_tapjoy: ~
@@ -388,7 +388,7 @@ de:
       load_more: "Lade noch mehr!"
       loading: Lade...
       missing_currency: "Fehlende %{currency}?"
-      more_offers: "Möchten Sie mehr Angebote sehen? Besuchen Sie Tapjoy um Belohnungen zu verdienen und persönliche Apps Empfehlungen zu bekommen!\""
+      more_offers: "Möchten Sie mehr Angebote sehen? Besuchen Sie Tapjoy um Belohnungen zu verdienen und persönliche Apps Empfehlungen zu bekommen!"
       next: "Nächste %{items} "
       popular_apps: "Popular Apps"
       previous: "Vorherige %{items}"
@@ -470,23 +470,23 @@ de:
       year: Jahr
       zip_postal: Postleitzahl
     support:
-      abuse_warning: "Dieses Formular ist nur für Benutzer, die nicht für eine abgeschlossene Angebot belohnt wurden sind. Missbrauch dieser Seite können Zu den Schließung Ihres Kontos führen und dass verboten bei weiteren Angeboten in der Zukunft zu Beteilen.\""
-      description_label: "Beschreibung:\""
-      email_address_label: "E-Mail-Adresse:\""
-      instructions_1: "Bitte wählen Sie das Angebot wo Sie keine % {Währung} Erhalten haben und geben Sie Ihre E-Mail-Adresse.\""
+      abuse_warning: "Dieses Formular ist nur für Benutzer, die nicht für eine abgeschlossene Angebot belohnt wurden sind. Missbrauch dieser Seite können Zu den Schließung Ihres Kontos führen und dass verboten bei weiteren Angeboten in der Zukunft zu Beteilen."
+      description_label: "Beschreibung:"
+      email_address_label: "E-Mail-Adresse:"
+      instructions_1: "Bitte wählen Sie das Angebot wo Sie keine % {Währung} Erhalten haben und geben Sie Ihre E-Mail-Adresse."
       instructions_2: "Wenn Sie ein Ticket mit unvollständigen Angaben schicken, kann es zu einer Verzögerung bei der Problem führen. Priorität werden für alle vollständige Angaben gegeben."
       invalid_email: "Bitte geben Sie eine gültige E-Mail-Adresse."
       message: "Leider ist %{offer} nicht mehr verfügbar. Sie können auf die vorherige Seite zurückkehren und aktualisieren um das neueste Angebot anzuzeigen."
       missing_description: "Bitte beschreiben Sie das Angebot dass Sie fertig gestellt haben."
       missing_offer: "Sie müssen das abgeschlossen Angebot angeben"
-      no_incomplete_offers_label: "Es wurden keine passenden Angebote gefunden.\""
-      optional_message: "Oder, hier klicken um %{offer} sowieso herunter zu laden.\""
+      no_incomplete_offers_label: "Es wurden keine passenden Angebote gefunden."
+      optional_message: "Oder, hier klicken um %{offer} sowieso herunter zu laden."
       select_offer: "Angebot Auswählen"
       specify_offer_label: "Angebot angeben"
       submit_support_request: "Kundenservice Anfrage angeben"
       support_request_submitted: "Kundenservice Anfrage eingereicht"
-      thanks: "Vielen Dank für Ihre Kundenservice Anfrage . Sie erhalten Ihre % {Währung}, nachdem wir überprüft haben, dass Sie das Angebot fertig gestellt haben.\""
-      title: "Verlorene %{currency}?\""
+      thanks: "Vielen Dank für Ihre Kundenservice Anfrage . Sie erhalten Ihre % {Währung}, nachdem wir überprüft haben, dass Sie das Angebot fertig gestellt haben."
+      title: "Verlorene %{currency}?"
       unavailable_offer: ~
     unavailable_offer:
       message: ~

@@ -62,8 +62,8 @@ class LinksharePoller
   def self.download_with_retries(url)
     retries = 5
     begin
-      Downloader.get(url, {:timeout => 4})
-    rescue Exception => e
+      Downloader.get(url, {:timeout => 45})
+    rescue Patron::HostResolutionError => e
       Rails.logger.info("Linkshare data download failed. Will retry #{retries} more times. #{e.class} - #{e.message}\n#{e.backtrace.join("\n")}")
       if retries > 0
         delay ||= 0.1

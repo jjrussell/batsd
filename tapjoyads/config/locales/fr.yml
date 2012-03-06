@@ -190,24 +190,24 @@ fr:
       account_created_body: "Ton compte Tapjoy a bien été crée!"
       account_created_title: Félicitations!
       action_required: "Action requise!"
-      active_gamers_text: "This just means the number of people playing this app"
+      active_gamers_text: ~
       add: ajouter
-      add_to_homescreen: "add TJM to your homescreen"
+      add_to_homescreen: ~
       advertisers_body: "Ciblez des millions d'utilisateurs et faites bénéficiez vos produits d'une large exposition"
       advertisers_title: Annonceurs
       allow_marketing_emails: "Permettre à Tapjoy de m'envoyer des emails promotionnels "
       almost_done: ~
       already_registered: ~
-      amount_and_currency: "%{amount} %{currency}"
+      amount_and_currency: ~
       back_to_top: Retour
       birthdate: "Date de naissance"
       browse_offers: "Parcourir les offres disponibles!"
       call_to_action_body: "Le meilleur moyen de profiter pleinement de tes apps mais aussi d'en découvrir de nouvelles"
-      call_to_action_title: "Unlock Mobile Joy"
+      call_to_action_title: ~
       cant_fetch_offers: "Il y a eu un problème pour retrouver plus d'offres. Essaye encore."
       change: changer
       change_linked_account: "Changer de Compte"
-      choose_section: "Choose a Section (choose a page...Smart Recommendations, My Apps, etc)"
+      choose_section: ~
       close: ~
       collect: Recevoir
       collect_rewards: "Recevoir des recompenses"
@@ -250,7 +250,7 @@ fr:
       favorite_apps: ~
       favorite_category: "Catégorie Favorite"
       favorites: ~
-      feedback: "this will direct to ways to give us feedback"
+      feedback: ~
       find_and_invite_friends: "Trouve et invite tes amis"
       find_friends_from_facebook: ~
       find_friends_from_twitter: ~
@@ -321,7 +321,7 @@ fr:
       recipients_label: "Utilise des virgules pour separer les adresses mails"
       recommend_apps: ~
       recommendations: "Recommendations futées"
-      recommendations_smart: Recommendations
+      recommendations_smart: ~
       registering: S'enregistrer
       report_bug: "Signaler un bug"
       reset_password_message: "Rentre ici l'email associé a ton compte et nous vous enverrons un lien pour changer ton mot de passe"
@@ -452,7 +452,7 @@ fr:
       share: Partager
       sign_in: "Se connecter"
       sign_up: S'enregistrer
-      submit: "submit appears on a button when you submit a review or any info"
+      submit: ~
       submit_review: "Soumettre une revue"
       success: félicitations
       title_noun: Titre
