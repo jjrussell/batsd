@@ -35,7 +35,7 @@
     $(window).bind('orientationchange', function(){
       $t.turn();
     });
-		
+
     $(window).bind('resize', Tapjoy.Utils.debounce($t.resize, 100, false, $t));
 
     if($t.length < $t.innerWidth){
@@ -63,22 +63,22 @@
       .append(html)
       .preventHighlight()
       .appendTo($t.container);
-      
+
       $t.wrap = wrap;
     },
-    
+
     turn : function(){
       var $t = this;
-      
+
       $t.wrap.css('-'+Tap.browser.prefix +'-transform', 'translate(0px, 0px)');
       $t.current = 0;
       $t.setupSlideDeck();
       $t.updateNavigation();
-      
+
     },
     setupSlideDeck: function(){
       var $t = this;
-			
+
       $t.innerWidth = $t.container.width();
       $t.innerHeight = $t.container.height() > 0 ? $t.container.outerHeight(true) : $t.config.minHeight;
 
@@ -87,7 +87,7 @@
       $t.innerWidth = $t.container.outerWidth(true);
       $t.innerHeight = $t.config.minHeight ? $t.config.minHeight : $t.container.outerHeight(true);
       $t.slides = $t.wrap.children();
-      
+
       if($t.config.forceSlideWidth)
         $t.slides.css('width', $t.innerWidth + 'px');
 
@@ -103,14 +103,14 @@
 
       if($t.pagingContainer && $t.pagingContainer.length !== 0)
         $('.jump-to-slide', $t.pagingContainer).empty();
-      
+
       for(var i = 0, k = length; i < k; i++){
         var div = $(document.createElement('div'));
 
         div.addClass('ui-joy-carousel-index ' + (i == this.current ? 'active': '' ))
         .html('<a href="#">&nbsp;</a>')
         .unbind(Tapjoy.EventsMap.start)
-				.bind(Tapjoy.EventsMap.start, function(){
+        .bind(Tapjoy.EventsMap.start, function(){
           var circle = $(this),
               position = 0;
 
@@ -161,7 +161,7 @@
 
         if($(this).hasClass('disabled'))
           return;
-          
+
         if($t.current > 0){
           $t.current--
           var position = $t.container.width() * $t.current;
@@ -177,34 +177,34 @@
       $('.forward', $t.container).bind(Tapjoy.EventsMap.start, function(){
 
         var position = 0;
-        
+
         if($(this).hasClass('disabled') || $t.pages === $t.current)
           return;
-					
+
         $t.current++;
-				
+
         position = $t.container.outerWidth(true) * $t.current;
-        
+
         $t.updateNavigation();
 
         $t.wrap.css('-'+Tap.browser.prefix +'-transform', 'translate(-'+ position +'px, 0px)');
       });
-			
-			$t.left = left;
-			$t.right = right;
+
+      $t.left = left;
+      $t.right = right;
     },
-		
+
     updateNavigation: function(){
       var $t = this,
-			    next = ($t.container.width() * ($t.current + 1)),
-					back = $('.back', $t.container),
-					forward = $('.forward', $t.container);
-      
+          next = ($t.container.width() * ($t.current + 1)),
+          back = $('.back', $t.container),
+          forward = $('.forward', $t.container);
+
       if($t.config.hasPager){
         $('.ui-joy-carousel-index', $t.pagingContainer).removeClass('active');
         $('.ui-joy-carousel-index:eq(' + $t.current + ')', $t.pagingContainer).addClass('active');
       }
-			
+
       if(next > $t.length || $t.config.forceSlideWidth && $t.pages == ($t.current + 1)){
         back.removeClass('disabled');
         forward.addClass('disabled');
@@ -215,19 +215,19 @@
         back.addClass('disabled');
         forward.removeClass('disabled');
       }
-			
-			if(next > $t.length && next < window.innerWidth){
-				back.addClass('disabled');
-			}
+
+      if(next > $t.length && next < window.innerWidth){
+        back.addClass('disabled');
+      }
     },
-		
+
     resize: function(){
       var $t = this;
-      
+
       $t.setupSlideDeck();
 
       if($t.config.hasPager)
-				$t.createJumper();
+        $t.createJumper();
 
       $t.updateNavigation();
     }
