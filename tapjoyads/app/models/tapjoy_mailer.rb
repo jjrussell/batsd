@@ -27,7 +27,6 @@ class TapjoyMailer < ActionMailer::Base
     partner = Partner.find_by_id(offer.partner_id, :include => [ :users ])
     account_managers = partner.account_managers.map(&:email)
     account_managers.delete "oso@tapjoy.com"
-    account_managers += [ 'accountmanagers@tapjoy.com', 'dev@tapjoy.com' ]
     account_managers = account_managers.join(', ')
 
     from 'Tapjoy <noreply@tapjoy.com>'
