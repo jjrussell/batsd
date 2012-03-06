@@ -4,6 +4,7 @@ class Games::SocialController < GamesController
 
   before_filter :require_gamer
   before_filter :validate_recipients, :only => [ :send_email_invites ]
+  before_filter :offline_facebook_authenticate, :only => :connect_facebook_account
 
   def invites
   end
@@ -21,6 +22,10 @@ class Games::SocialController < GamesController
       :following => Gamer.find_all_by_id(Friendship.following_ids(@current_gamer.id)),
       :followers => Gamer.find_all_by_id(Friendship.follower_ids(@current_gamer.id))
     }
+  end
+
+  def connect_facebook_account
+    redirect_to games_social_index_path
   end
 
   def invite_email_friends
