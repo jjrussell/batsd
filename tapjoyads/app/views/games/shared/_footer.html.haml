@@ -11,16 +11,14 @@
   .container
     .links
       %ul
-        %li>= link_to(t('text.footer.developers'), 'http://developers.tapjoy.com/')
+        %li>= link_to(t('text.footer.developers'),  'http://developers.tapjoy.com/')
         %li>= link_to(t('text.footer.advertisers'), 'http://advertisers.tapjoy.com/')
-        %li>= link_to(t('text.footer.about'), ' http://info.tapjoy.com/')
-        %li>= link_to(t('text.footer.privacy'), 'http://info.tapjoy.com/about-tapjoy/privacy-policy/')
-        %li>= link_to(t('text.footer.blog'), 'http://blog.tapjoy.com/')
+        %li>= link_to(t('text.footer.about'),       'http://info.tapjoy.com/about-tapjoy/')
+        %li>= link_to(t('text.footer.privacy'),     'http://info.tapjoy.com/about-tapjoy/privacy-policy/')
+        %li>= link_to(t('text.footer.blog'),        'http://blog.tapjoy.com/')
       %small
         = t('text.footer.copyright')
 
   - unless current_gamer.blank?
     .center
       = render '/shared/truste'
-
-
