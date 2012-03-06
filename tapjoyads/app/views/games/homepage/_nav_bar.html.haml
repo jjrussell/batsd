@@ -34,9 +34,8 @@
                   = t('text.games.no_device')
                 - else
                   = t('text.games.on_my', :device_name => current_device.name)
-                  - if current_gamer.devices.length > 1
-                    %a.device-change
-                      (#{t('text.games.change')})
+                %a.device-change
+                  (#{t('text.games.change')})
           #device-select.device-select.closed
             #device-select-list.device-select-wrapper
           .device-form.hide
