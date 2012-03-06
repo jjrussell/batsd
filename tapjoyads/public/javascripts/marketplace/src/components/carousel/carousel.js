@@ -28,19 +28,18 @@
     $t.createNavigation();
 
     if($t.config.hasPager)
-      $t.createJumper();
+      $t.createPager();
 
     $t.updateNavigation();
+
+    if($t.length < $t.innerWidth)
+      $('.back, .forward').hide();
 
     $(window).bind('orientationchange', function(){
       $t.turn();
     });
 
     $(window).bind('resize', Tapjoy.Utils.debounce($t.resize, 100, false, $t));
-
-    if($t.length < $t.innerWidth){
-      $('.back, .forward').hide();
-    }
 
     $t.container.addClass($t.config.cssClass);
 
@@ -96,7 +95,7 @@
       $t.pages = Math.round($t.length / $t.innerWidth);
     },
 
-    createJumper: function(){
+    createPager: function(){
       var $t = this,
           wrap = $(document.createElement('div')),
           length = Math.abs($t.length / $t.innerWidth);
@@ -132,29 +131,29 @@
       wrap.addClass('jump-to-slide')
       .appendTo($t.pagingContainer)
 
-
-      $t.jumpTo = wrap;
+      $t.pager = wrap;
     },
+		
     createNavigation : function(){
       var $t = this,
-          left = $(document.createElement('div')),
-          right = $(document.createElement('div')),
+          back = $(document.createElement('div')),
+          forward = $(document.createElement('div')),
           arrow = $(document.createElement('img')),
           arrow_ = $(document.createElement('img'));
 
       arrow.attr('src', Tap.blankIMG);
 
-      left.addClass('back')
+      back.addClass('back')
       .append(arrow)
       .appendTo($t.container);
 
       arrow_.attr('src', Tap.blankIMG);
 
-      right.addClass('forward')
+      forward.addClass('forward')
       .append(arrow_)
       .appendTo($t.container);
 
-      $('.back, .forward', $t.container).css('top', ($t.innerHeight - left.height()) / 2);
+      $('.back, .forward', $t.container).css('top', ($t.innerHeight - back.height()) / 2);
 
       $('.back', $t.container).bind(Tapjoy.EventsMap.start, function(){
         var position = 0;
@@ -190,8 +189,8 @@
         $t.wrap.css('-'+Tap.browser.prefix +'-transform', 'translate(-'+ position +'px, 0px)');
       });
 
-      $t.left = left;
-      $t.right = right;
+      $t.back = back;
+      $t.forward = forward;
     },
 
     updateNavigation: function(){
@@ -227,7 +226,19 @@
       $t.setupSlideDeck();
 
       if($t.config.hasPager)
-        $t.createJumper();
+        $t.createPager();
+
+      if($t.length < $t.innerWidth){
+        if($t.back.is(':visible')){
+          $t.back.hide();
+          $t.forward.hide();
+        }
+			}else{
+				if($t.back.is(':hidden')){
+					$t.back.show();
+					$t.forward.show();
+				}
+			}
 
       $t.updateNavigation();
     }
