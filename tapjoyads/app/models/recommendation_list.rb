@@ -84,7 +84,7 @@ class RecommendationList
 
   def recommendation_reject?(offer)
     rejected = offer.store_id_for_feed.blank?
-    rejected ||= @store_ids.include?(offer.store_id_for_feed) ||
+    rejected ||= @store_ids.include?(offer.store_id_for_feed)
     rejected ||= offer.recommendation_reject?(@device, @device_type, @geoip_data, @os_version)
     @store_ids << offer.store_id_for_feed unless rejected
 
