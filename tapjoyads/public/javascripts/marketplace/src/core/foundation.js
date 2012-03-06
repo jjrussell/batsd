@@ -373,11 +373,12 @@
 
     Tap.apply(Tap, {
       EventsMap: {
+        cancel: Tap.supportsTouch ? 'touchcancel' : 'mouseout',
+        end: Tap.supportsTouch ? 'touchend' : 'mouseup',
+        move: Tap.supportsTouch ? 'touchmove' : 'mousemove',
         resize: 'onorientationchange' in window ? 'orientationchange' : 'resize',
         start: Tap.supportsTouch ? 'touchstart' : 'mousedown',
-        move: Tap.supportsTouch ? 'touchmove' : 'mousemove',
-        end: Tap.supportsTouch ? 'touchend' : 'mouseup',
-        cancel: Tap.supportsTouch ? 'touchcancel' : 'mouseout'
+				touch : Tap.supportsTouch ? 'tap' : 'click'
       }
     });
 
