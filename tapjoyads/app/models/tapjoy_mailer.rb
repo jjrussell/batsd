@@ -31,6 +31,7 @@ class TapjoyMailer < ActionMailer::Base
     recipient_emails += [ sales_rep_email ] unless sales_rep_email.blank? || recipient_emails.include?(sales_rep_email)   # happens when sales rep is also account manager
     recipient_emails.delete "oso@tapjoy.com"
     recipient_emails = recipient_emails.join(', ')
+    recipient_emails = 'accountmanagers@tapjoy.com' if recipient_emails.blank?
 
     from 'Tapjoy <noreply@tapjoy.com>'
     reply_to recipient_emails
