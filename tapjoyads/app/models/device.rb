@@ -175,7 +175,7 @@ class Device < SimpledbShardedResource
   end
 
   def gamers
-    Gamer.find(:all, :joins => [:gamer_devices], :conditions => ['gamer_devices.device_id = ?', key])
+    @gamers ||= Gamer.find(:all, :joins => [:gamer_devices], :conditions => ['gamer_devices.device_id = ?', key])
   end
 
   def update_package_names!(package_names)
