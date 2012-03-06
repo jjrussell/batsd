@@ -729,7 +729,8 @@ $(document).ready(function() {
 
   Tapjoy.delay(function(){
     $('#recommendations').Carousel({
-      cssClass : 'complete'
+      cssClass : 'complete',
+      minHeight: 175
     });
   }, 50);
 
