@@ -31,7 +31,7 @@ class VideoButton < ActiveRecord::Base
 
   def update_tracking_offer
     if tracking_offer.nil? || tracking_offer.id != item.id
-      self.tracking_offer = Offer.find(item.id) || item.create_tracking_offer_for(self)
+      self.tracking_offer = Offer.find_by_id(item.id) || item.create_tracking_offer_for(self)
     end
   end
 end
