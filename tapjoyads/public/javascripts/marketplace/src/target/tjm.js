@@ -2639,8 +2639,7 @@ var TJG = typeof TJG === "object" ? TJG : {}; TJG.vars = {};
     });
   });
 }(window.Tapjoy, window.jQuery));
-/*jshint evil:true, regexp:false*/
-(function (Tap, $) {
+(function (Tap, $, preload) {
   "use strict";
 
   var me = {},
@@ -2694,6 +2693,7 @@ var TJG = typeof TJG === "object" ? TJG : {}; TJG.vars = {};
 
   me.fetchData = function ($container, url, params) {
     var jsonp = $container.data("is-jsonp");
+
     return $.ajax({
       url: url,
       dataType: jsonp ? "jsonp" : undefined,
@@ -2711,17 +2711,28 @@ var TJG = typeof TJG === "object" ? TJG : {}; TJG.vars = {};
         url = $$.data("url"),
         immediate = $$.data("immediate-load"),
         params = $$.data("params") || {},
+        preloaded = false,
         getSome;
 
       getSome = function () {
-        me.fetchData($$, url, params).then(function (data) {
-          $target.append(template(data));
-        }).fail(function () {
-          $(".ajax-error", $$).show();
-        }).always(function (data) {
-          $placeholder.hide();
-          return data.MoreDataAvailable ? $load_more.show() : $load_more.hide();
-        });
+        if (preload && !preloaded) {
+          preload.ready(function (data) {
+            $target.append(template(data));
+            $placeholder.hide();
+            return data.MoreDataAvailable ? $load_more.show() : $load_more.hide();
+          });
+
+          preloaded = true;
+        } else {
+          me.fetchData($$, url, params).then(function (data) {
+            $target.append(template(data));
+          }).fail(function () {
+            $(".ajax-error", $$).show();
+          }).always(function (data) {
+            $placeholder.hide();
+            return data.MoreDataAvailable ? $load_more.show() : $load_more.hide();
+          });
+        }
 
         $$.unbind("ajax-initiate", getSome);
       };
@@ -2796,7 +2807,7 @@ var TJG = typeof TJG === "object" ? TJG : {}; TJG.vars = {};
       notify(_t('games.generic_issue'));
     });
   });
-}(window.Tapjoy, window.jQuery));
+}(window.Tapjoy, window.jQuery, window.jsonp_preloaded));
 $(document).ready(function() {
 
   var _t = window.i18n.t,
