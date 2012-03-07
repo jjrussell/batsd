@@ -18,12 +18,12 @@ class SearchController < WebsiteController
         result = { :label => o.search_result_name, :id => o.id, :user_enabled => o.user_enabled, :name => o.name, :description => "", :click_url => "", :icon_url => o.get_icon_url }
         if o.item_type == 'GenericOffer' || o.item_type == 'SurveyOffer'
           result[:click_url] = o.url
-        elsif o.item_type == 'VideoOffer' && o.video_url.present?
-          result[:click_url] = o.video_url
+        elsif o.item_type == 'VideoOffer'
+          result[:click_url] = o.item.video_url
         elsif o.item_type == 'App'
           app = App.find_by_id(o.item_id)
           result[:description] = app.description
-          result[:click_url]   = Linkshare.add_params(app.store_url)
+          result[:click_url]   = games_get_app_path(:eid => ObjectEncryptor.encrypt(o.item_id))
         elsif o.item_type == 'ActionOffer'
           action = ActionOffer.find_by_id(o.item_id)
           result[:click_url] = Linkshare.add_params(action.app.store_url)

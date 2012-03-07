@@ -15,3 +15,5 @@ config/local.yml
 data/GeoIPCity.dat
 public/stylesheets/*.css
 public/stylesheets/*/*.css
+.sass-cache
+.orig

@@ -6,8 +6,9 @@ describe Games::AppReviewsController do
     activate_authlogic
     @gamer = Factory(:gamer)
     login_as(@gamer)
-    @app_metadata = Factory(:app_metadata, :thumbs_up => 0, :thumbs_down => 0)
-    Factory(:app_metadata_mapping, :app_metadata => @app_metadata)
+    app = Factory(:app)
+    @currency = Factory(:currency, :app => app)
+    @app_metadata = app.app_metadatas.first
   end
 
   describe '#index' do
@@ -26,16 +27,6 @@ describe Games::AppReviewsController do
 
       it "returns current gamer's reviews" do
         assigns[:app_reviews].collect(&:id).sort.should == @gamer.app_reviews.collect(&:id).sort
-      end
-    end
-
-    context 'when has app_metadata_id as params' do
-      before :each do
-        get(:index, :app_metadata_id => @app_metadata.id)
-      end
-
-      it 'returns all the reviews of the app' do
-        assigns[:app_reviews].collect(&:id).sort.should == @app_metadata.app_reviews.collect(&:id).sort
       end
     end
 
@@ -58,16 +49,20 @@ describe Games::AppReviewsController do
           :author_type     => 'Gamer',
           :app_metadata_id => @app_metadata.id,
           :text            => "Sampe review",
-          :user_rating     => 1
+          :user_rating     => 1,
+          :eid             => ObjectEncryptor.encrypt(@currency.id),
         }
       }
       post(:create, @options)
     end
 
     context 'when app review not exist' do
-      it 'creates a app review' do
+      it 'creates an app review' do
         flash[:notice].should == 'Successfully reviewed this app.'
-        response.should redirect_to(games_app_reviews_path(:app_metadata_id => @app_metadata.id))
+      end
+
+      it 'should redirect to earn' do
+        response.should redirect_to games_earn_path(:eid => ObjectEncryptor.encrypt(@currency.id))
       end
 
       it 'sets user_rating' do
@@ -94,8 +89,8 @@ describe Games::AppReviewsController do
         response.session[:flash][:error].should == 'You have already reviewed this app.'
       end
 
-      it 'renders games/app_reviews/index' do
-        response.should render_template('games/app_reviews/index')
+      it 'redirects to earn' do
+        response.should redirect_to games_earn_path(:eid => ObjectEncryptor.encrypt(@currency.id))
       end
     end
   end
@@ -121,13 +116,17 @@ describe Games::AppReviewsController do
       @options = {
         :id => @gamer_review.id,
         :app_review => {
-          :user_rating => -1
+          :eid => ObjectEncryptor.encrypt(@currency.id),
+          :user_rating => -1,
         }
       }
-      put(:update, @options)
     end
 
     context 'when update success' do
+      before :each do
+        put(:update, @options)
+      end
+
       it 'updates the user_rating of app_review' do
         assigns[:app_review].user_rating.should == -1
       end
@@ -137,7 +136,7 @@ describe Games::AppReviewsController do
       end
 
       it "redirects to games/app_reviews/index" do
-        response.should redirect_to(games_app_reviews_path)
+        response.should redirect_to games_earn_path(:eid => ObjectEncryptor.encrypt(@currency.id))
       end
 
       it 'updates app_metadata thumbs_up' do
@@ -146,6 +145,17 @@ describe Games::AppReviewsController do
 
       it 'updates app_metadata thumbs_down' do
         assigns[:app_review].app_metadata.thumbs_down.should == 1
+      end
+    end
+
+    context 'trying to update unsafe attributes' do
+      it 'should not update' do
+        hax0r = Factory(:gamer)
+        original_author_id = @gamer_review.author_id
+        @options[:app_review][:author_id] = hax0r.id
+        put(:update, @options)
+        @gamer_review.reload
+        @gamer_review.author_id.should == original_author_id
       end
     end
   end

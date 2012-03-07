@@ -82,6 +82,7 @@ class App < ActiveRecord::Base
     :through => :app_metadata_mappings,
     :source => :app_metadata,
     :order => "created_at"
+  has_many :reengagement_offers
 
   belongs_to :partner
 
@@ -89,6 +90,7 @@ class App < ActiveRecord::Base
 
   validates_presence_of :partner, :name, :secret_key
   validates_inclusion_of :platform, :in => PLATFORMS.keys
+  validates_numericality_of :active_gamer_count, :only_integer => true, :greater_than_or_equal_to => 0, :allow_nil => false
 
   before_validation_on_create :generate_secret_key
 
@@ -104,6 +106,7 @@ class App < ActiveRecord::Base
   delegate :conversion_rate, :to => :primary_currency, :prefix => true
   delegate :store_id, :store_id?, :description, :age_rating, :file_size_bytes, :supported_devices, :supported_devices?, :released_at, :released_at?, :user_rating,
     :to => :primary_app_metadata, :allow_nil => true
+  delegate :name, :to => :partner, :prefix => true
 
   # TODO: remove these columns from apps table definition and remove this method
   TO_BE_DELETED = %w(description price store_id age_rating file_size_bytes supported_devices released_at user_rating categories papaya_user_count)
@@ -162,6 +165,30 @@ class App < ActiveRecord::Base
     end
   end
 
+  def build_reengagement_offer(options = {})
+    default_options = {
+      :partner => partner,
+      :day_number => reengagement_campaign.length,
+    }
+    reengagement_offers.build(options.merge(default_options))
+  end
+
+  def reengagement_campaign
+    reengagement_offers.visible.order_by_day
+  end
+
+  def enable_reengagement_campaign!
+    update_reengagements_with_enable_or_disable(true)
+  end
+
+  def disable_reengagement_campaign!
+    update_reengagements_with_enable_or_disable(false)
+  end
+
+  def reengagement_campaign_from_cache
+    ReengagementOffer.find_all_in_cache_by_app_id(id)
+  end
+
   ##
   # Grab data from the app store and update app and metadata objects.
   def update_from_store(params)
@@ -216,6 +243,14 @@ class App < ActiveRecord::Base
 
   def get_icon_url(options = {})
     Offer.get_icon_url({:icon_id => Offer.hashed_icon_id(id)}.merge(options))
+  end
+
+  def formatted_active_gamer_count(increment = 1000, max = 10000)
+    return active_gamer_count if active_gamer_count <= increment
+
+    rounded = [ active_gamer_count - (active_gamer_count % increment), max ].min
+
+    "#{rounded}+"
   end
 
   def can_have_new_currency?
@@ -305,7 +340,7 @@ class App < ActiveRecord::Base
       offer.bid = offer.min_bid if offer.bid < offer.min_bid
       offer.bid = offer.max_bid if offer.bid > offer.max_bid
       offer.third_party_data = store_id
-      offer.device_types = get_offer_device_types.to_json
+      offer.device_types = get_offer_device_types.to_json if store_id_changed
       offer.url = store_url unless offer.url_overridden?
       offer.age_rating = age_rating
       offer.hidden = hidden
@@ -361,7 +396,9 @@ class App < ActiveRecord::Base
   end
 
   def create_tracking_offer_for(tracked_for, options = {})
-    device_types = options.delete(:device_types) { get_offer_device_types.to_json }
+    device_types   = options.delete(:device_types)   { get_offer_device_types.to_json }
+    url_overridden = options.delete(:url_overridden) { false }
+    url            = options.delete(:url)            { store_url }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
 
     offer = Offer.new({
@@ -369,7 +406,8 @@ class App < ActiveRecord::Base
       :tracking_for     => tracked_for,
       :partner          => partner,
       :name             => name,
-      :url              => store_url,
+      :url_overridden   => url_overridden,
+      :url              => url,
       :device_types     => device_types,
       :price            => 0,
       :bid              => 0,
@@ -387,6 +425,14 @@ class App < ActiveRecord::Base
   end
 
   private
+
+  def update_reengagements_with_enable_or_disable(enable)
+    return if reengagement_campaign.empty?
+    self.reengagement_campaign_enabled = enable
+    self.save!
+    reengagement_campaign.map(&:update_offers)
+  end
+
 
   def generate_secret_key
     return if secret_key.present?
