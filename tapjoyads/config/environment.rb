@@ -75,6 +75,8 @@ Rails::Initializer.run do |config|
   config.gem 'faraday_middleware', :version => '0.7.0'
   config.gem 'simple_oauth', :version => '0.1.5'
   config.gem 'twitter', :version => '1.7.2'
+  config.gem 'hike', :version => '1.2.1'
+  config.gem 'sprockets', :version => '2.3.1'
   config.gem 'oauth', :version => '0.4.5'
 
   # Only load the plugins named here, in the order given. By default, all plugins
