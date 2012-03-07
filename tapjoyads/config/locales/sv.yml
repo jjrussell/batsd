@@ -197,7 +197,9 @@ sv:
       advertisers_title: Marknadsförare
       allow_marketing_emails: "Tillåt att Tapjoy sänder mig erbjudanden"
       almost_done: ~
-      already_registered: ~
+      already_registered:
+       one:"%{name} har redan registrerat sig, du följer nu han/henne."
+       other: "%{name} har redan registrerat sig, di följer nu dem."
       amount_and_currency: "%{amount} %{currency}"
       back_to_top: "Tillbaks till överst på sidan"
       birthdate: Födelsedatum
@@ -307,10 +309,8 @@ sv:
       no_javascript: "Var vänlig och gå in under din webbläsares inställningar och tillåt JavaScript"
       none_selected: "Inga valda"
       on_my: "på min %{device_name}"
-      one: "En Tapjoy inbjudan har nu skickats till %{name}"
       oops: Oops!
       or_learn_more: ~
-      other: "En Tapjoy inbjudan har skickats till %{name}"
       other_options: "Anda alternativ"
       our_tos_changed: "Våra %{terms_of_use} har ändrats. Var vänlig och läs igenom och godkänn här nedan. "
       password_changed: ~

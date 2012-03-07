@@ -333,7 +333,7 @@ ja:
       report_bug: バグ報告
       reset_password_message: アカウントに登録したメールアドレスを入力すると、パスワードを変更できるリンクが送信されます
       reset_password_message_submit: 数分以内にそのアドレスにパスワードを変更するためのメールが届きますので、メールの手順に従ってください。
-      reset_password_retry: "ログイン時に未だ問題が発生している場合は、こちらから再度パスワードの変更のメールをリクエストするか、{email address}にお問い合わせください。"
+      reset_password_retry: "ログイン時に未だ問題が発生している場合は、こちらから再度パスワードの変更のメールをリクエストするか%{reset_password_url}、にお問い合わせください。"
       reset_password_retry_url_text: 再度パスワードの変更のメールをリクエストする
       review_app_name: "%{app_name}をレビュー"
       review_created: このアプリのレビューに成功

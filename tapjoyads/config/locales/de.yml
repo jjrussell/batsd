@@ -261,7 +261,7 @@ de:
       find_new_apps: "Finden Sie Neue Apps"
       follow_us: "Folge uns"
       forgot_pass: "Passwort vergessen?"
-      free: Gratis!
+      free: ~
       generic_issue: "Es gab ein Problem. Bitte versuchen Sie es erneut."
       get_app: "App holen"
       get_it: "Jetzt bekommen!"
@@ -309,10 +309,8 @@ de:
       no_javascript: "Bitte gehen Sie in Ihren Browser-Einstellungen und aktivieren Sie JavaScript, um weiter mit Tapjoy zu verwenden."
       none_selected: "Keine Auswahl"
       on_my: "Auf mein %{device}"
-      one: "Ein Tapjoy Einladung wurde an %{name} gesendet"
       oops: Oops!
       or_learn_more: ~
-      other: "Tapjoy Einladungen wurden an %{name} gesendet"
       other_options: "Weiter Optionen"
       our_tos_changed: "Unsere %{terms_of_use} haben sich geändert. Bitte lesen Sie und geben Sie Ihre Zustimmung unten."
       password_changed: ~

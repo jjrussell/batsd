@@ -309,10 +309,8 @@ ko:
       no_javascript: "당신의 브라우저 설정으로 이동하여 자바 스크립트를 탭조이에서 계속 사용하는 것으로 설정해 주세요."
       none_selected: 미설정
       on_my: "나의 %{device_name}에서"
-      one: "탭조이 초대장이 %{name}에게 발송되었습니다."
       oops: 이런!
       or_learn_more: ~
-      other: "탭조이 초대장이 %{name}에게 발송되었습니다."
       other_options: "다른 옵션들"
       our_tos_changed: "저희의 %{terms_of_use} 변경되었습니다. 아래의 사항을 확인 후 통의해 주세요."
       password_changed: ~

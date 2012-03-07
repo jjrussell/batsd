@@ -197,7 +197,9 @@ es:
       advertisers_title: Anunciantes
       allow_marketing_emails: "Autorizar Tapjoy a mandarme ofertas por email"
       almost_done: ~
-      already_registered: ~
+      already_registered:
+        one: "Has mandado una invitación de Tapjoy a %{name}"
+        other: "Has mandado invitaciones de Tapjoy a %{name}"
       amount_and_currency: "%{amount} %{currency}"
       back_to_top: "Volver al inicio"
       birthdate: "Fecha de nacimiento"
@@ -307,10 +309,8 @@ es:
       no_javascript: "Por favor abre la configuración de tu navegador y autoriza JavaScript para continuar utilizando Tapjoy."
       none_selected: "No has seleccionado ninguno"
       on_my: "en mi %{device_name}"
-      one: "Has mandado una invitación de Tapjoy a %{name}"
       oops: Ups!
       or_learn_more: ~
-      other: "Has mandado invitaciones de Tapjoy a %{name}"
       other_options: "Otras Opciones"
       our_tos_changed: "Nuestras %{terms_of_use} han cambiado. Por favor, revísalas y apruébelas para poder seguir."
       password_changed: ~

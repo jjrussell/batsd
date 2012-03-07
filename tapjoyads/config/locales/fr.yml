@@ -313,10 +313,8 @@ fr:
       no_javascript: "Merci d'aller dans les paramètres de ton navigateur et d'autoriser Javascript pour continuer à d'utiliser Tapjoy"
       none_selected: "Aucune app sélectionné"
       on_my: "sur mon %{device_name}"
-      one: "Ton invitation Tapjoy a été envoyée a %{name}"
       oops: Oops!
       or_learn_more: ~
-      other: "Tes invitations Tapjoy ont été envoyées a %{name}"
       other_options: "Autres options"
       our_tos_changed: "Nos %{terms} ont changé. Merci de les revoir et de confirmer ton accord ci-dessous"
       password_changed: ~
@@ -412,7 +410,7 @@ fr:
       comment: Commentaire
       confirm_password: "Confirmes ton mot de passe"
       continue: Continues
-      copyright: "Copyright &copie; %{year} Tapjoy, Inc. Tous droits réservés. Tapjoy et le logo Tapjoy sont des marques déposées de Tapjoy, Inc. Tous les logos et marques mentionnés appartiennent à leurs propriétaires respectifs."
+      copyright: "Copyright &copy; %{year} Tapjoy, Inc. Tous droits réservés. Tapjoy et le logo Tapjoy sont des marques déposées de Tapjoy, Inc. Tous les logos et marques mentionnés appartiennent à leurs propriétaires respectifs."
       country: Pays
       day: Jour
       earn_verb: "Gagner"

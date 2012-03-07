@@ -197,7 +197,10 @@ zh:
       advertisers_title: 广告商
       allow_marketing_emails: "允许Tapjoy向我发送市场营销电子邮件"
       almost_done: ~
-      already_registered: ~
+      already_registered:
+
+        one: "一个Tapjoy 邀请已发送给了%{name}"
+        other: "多个Tapjoy 邀请已发送给了%{name}"
       amount_and_currency: "%{amount} %{currency}"
       back_to_top: 返回页首
       birthdate: 生日
@@ -307,12 +310,10 @@ zh:
       no_javascript: 请在您的浏览器中启用JavaScript以继续访问Tapjoy
       none_selected: 没有选中
       on_my: "在我的%{device_name}上"
-      one: "一个Tapjoy 邀请已发送给了%{name}"
       oops: 哦！
       or_learn_more: ~
-      other: "多个Tapjoy 邀请已发送给了%{name}"
       other_options: 其它选项
-      our_tos_changed: "我们的％{terms_of_use}已经修订。请查阅后接受。"
+      our_tos_changed: "我们的%{terms_of_use}已经修订。请查阅后接受。"
       password_changed: ~
       password_non_match: ~
       post_to_facebook_content: 访问Tapjoy以发现最好的应用与游戏，还可以在您喜爱的应用中赚取虚拟货币。免费加入，所以现在就来Tapjoy.com并获得为您特别推荐的应用
