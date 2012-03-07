@@ -1,4 +1,4 @@
-Rails.environment = Sprockets::Environment.new
+assets = Sprockets::Environment.new
 
-environment.append_path 'app/assets/javascripts'
-environment.append_path 'app/assets/stylesheets'
+assets.append_path 'app/assets/javascripts'
+assets.append_path 'app/assets/stylesheets'
