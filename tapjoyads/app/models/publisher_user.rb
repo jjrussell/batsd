@@ -28,4 +28,8 @@ class PublisherUser < SimpledbShardedResource
     udids.length < MAX_UDIDS
   end
 
+  def self.for_click(click)
+    raise "click missing PublisherUser details" unless click.publisher_user_id.present? && click.publisher_app_id.present?
+    PublisherUser.new(:key => "#{click.publisher_app_id}.#{click.publisher_user_id}")
+  end
 end
