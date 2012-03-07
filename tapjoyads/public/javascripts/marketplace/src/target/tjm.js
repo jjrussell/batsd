@@ -2127,19 +2127,19 @@ f.event={add:function(a,c,d,e,g){var h,i,j,k,l,m,n,o,p,q,r,s;if(!(a.nodeType===3
       .appendTo($t.container);
 
       $t.slides = wrap.children();
-			
+
       $t.wrap = wrap;
     },
-		
+
     turn : function(){
 			var $t = this,
 			    diff = 0;
-			
+
 		  $t.wrap.css('-'+Tap.browser.prefix +'-transform', 'translate(0px, 0px)');
 			$t.current = 0;
 			$t.setupSlideDeck();
 			$t.updateControls();
-			
+
 		},
     setupSlideDeck: function(){
       var $t = this;
@@ -2212,7 +2212,7 @@ f.event={add:function(a,c,d,e,g){var h,i,j,k,l,m,n,o,p,q,r,s;if(!(a.nodeType===3
 
         if($(this).hasClass('disabled'))
 				  return;
-					
+
         if($t.current > 0){
           $t.current--
           var position = $t.container.width() * $t.current;
@@ -2227,7 +2227,7 @@ f.event={add:function(a,c,d,e,g){var h,i,j,k,l,m,n,o,p,q,r,s;if(!(a.nodeType===3
 
       $('.forward', $t.container).bind('click', function(){
         $t.current++
-				
+
 				if($(this).hasClass('disabled'))
 				  return;
 
@@ -2254,7 +2254,7 @@ f.event={add:function(a,c,d,e,g){var h,i,j,k,l,m,n,o,p,q,r,s;if(!(a.nodeType===3
         $('.dot', $t.jumpContainer).removeClass('active');
         $('.dot:eq(' + $t.current + ')', $t.jumpContainer).addClass('active');
       }
-			
+
       if(($t.container.width() * current) > $t.length || $t.dots > 1 && $t.dots === current){
         $('.back', $t.container).removeClass('disabled');
         $('.forward', $t.container).addClass('disabled');
@@ -2620,6 +2620,7 @@ var TJG = typeof TJG === "object" ? TJG : {}; TJG.vars = {};
     $(".login-to-facebook").click(function () {
       var url = $(this).data("fb-url");
       Tap.Social.doFbLogin(url);
+      return false;
     });
 
     if (window.location.search.match(/fb_logout/)) {
@@ -3205,7 +3206,7 @@ $(document).ready(function() {
     }
   });
 
-  $('.list-button, .btn, .greenblock, #signup, #login').live(Tapjoy.EventsMap.start + ' ' + Tapjoy.EventsMap.end + ' ' + Tapjoy.EventsMap.cancel, function(e){
+  $('.list-button, .btn, .greenblock, #signup, #login').live("mousedown mouseup mouseout", function(e){
     var el = $(this),
         target = $(e.target),
         which = e.type;
@@ -3213,7 +3214,7 @@ $(document).ready(function() {
      if(el.hasClass('ui-no-action'))
       return;
 
-    if(which === Tapjoy.EventsMap.start){
+    if(which === "mousedown"){
       el.addClass('active');
     }else{
       el.removeClass('active');
@@ -3321,19 +3322,6 @@ $(document).ready(function() {
       timeout = setTimeout(delayed, threshold || 100);
     };
   };
-
-  $(document).bind("email-invite-ajax-success", function (ev, form, data) {
-    if (data.success) {
-      if (data.gamers.length === 0 && data.non_gamers.length === 0) {
-        notify(_t('games.provide_other_email'));
-      } else {
-        showSuccessMessage(data.gamers, data.non_gamers);
-        $("#recipients", form).val('');
-      }
-    } else {
-      notify(data.error);
-    }
-  });
 
   $(".submit-child-form").click(function () {
     $("form", this).submit();
