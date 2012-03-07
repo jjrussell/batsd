@@ -78,16 +78,19 @@ ActiveRecord::Schema.define(:version => 20120406004520) do
   add_index "app_metadatas", ["store_name", "store_id"], :name => "index_app_metadatas_on_store_name_and_store_id", :unique => true
 
   create_table "app_reviews", :id => false, :force => true do |t|
-    t.string   "id",              :limit => 36,                :null => false
-    t.string   "app_id",          :limit => 36
-    t.string   "author_id",       :limit => 36,                :null => false
-    t.string   "author_type",                                  :null => false
-    t.text     "text",                                         :null => false
+    t.string   "id",                  :limit => 36,                :null => false
+    t.string   "app_id",              :limit => 36
+    t.string   "author_id",           :limit => 36,                :null => false
+    t.string   "author_type",                                      :null => false
+    t.text     "text",                                             :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "platform"
-    t.integer  "user_rating",                   :default => 0
-    t.string   "app_metadata_id", :limit => 36,                :null => false
+    t.integer  "user_rating",                       :default => 0
+    t.string   "app_metadata_id",     :limit => 36,                :null => false
+    t.integer  "helpful_votes_count",               :default => 0
+    t.integer  "bury_votes_count",                  :default => 0
+    t.integer  "helpful_values_sum",                :default => 0
   end
 
   add_index "app_reviews", ["app_id", "author_id"], :name => "index_app_reviews_on_app_id_and_author_id", :unique => true
@@ -431,6 +434,8 @@ ActiveRecord::Schema.define(:version => 20120406004520) do
     t.string   "twitter_access_token"
     t.string   "twitter_access_secret"
     t.text     "extra_attributes",       :limit => 2147483647
+    t.integer  "helpful_votes_count",                          :default => 0
+    t.integer  "bury_votes_count",                             :default => 0
   end
 
   add_index "gamers", ["confirmation_token"], :name => "index_gamers_on_confirmation_token", :unique => true
@@ -918,6 +923,15 @@ ActiveRecord::Schema.define(:version => 20120406004520) do
   end
 
   add_index "resellers", ["id"], :name => "index_resellers_on_id", :unique => true
+
+  create_table "review_moderation_votes", :force => true do |t|
+    t.string   "app_review_id", :limit => 36, :null => false
+    t.string   "gamer_id",      :limit => 36, :null => false
+    t.string   "type",          :limit => 32
+    t.integer  "value"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "role_assignments", :id => false, :force => true do |t|
     t.string "id",           :limit => 36, :null => false

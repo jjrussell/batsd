@@ -16,7 +16,21 @@ class Tools::AppReviewsController < WebsiteController
       @author = Gamer.find(params[:author_id])
       @app_reviews = @author.app_reviews.ordered_by_date
     else
-      @app_reviews = AppReview.ordered_by_date
+      @app_reviews = AppReview.ordered_by_date.paginate({:page => params[:page], :per_page=>100})
+    end
+  end
+
+  def search
+    if params[:term].present? and
+      begin
+        result = AppMetaData.first(:conditions=>{:id => params[:term]})
+        result = AppMetaData.first(:conditions=>['name LIKE "%?%" ', params[:term]]) unless result
+        render :json => result
+      rescue
+        render :json => { :error => true }
+      end
+    else
+      render :json => { :error => true }
     end
   end
 
@@ -28,6 +42,7 @@ class Tools::AppReviewsController < WebsiteController
   def create
     @app_review = AppReview.new(params[:app_review])
     @app_review.author = Employee.find(params[:app_review][:author_id])
+    @app_review.app_metadata = AppMetadata.find(params[:app_review][:app_metadata_id])
     if @app_review.save
       flash[:notice] = 'Successfully reviewed this app.'
       redirect_to tools_app_reviews_path(:app_metadata_id => @app_review.app_metadata_id)

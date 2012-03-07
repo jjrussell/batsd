@@ -1,3 +1,6 @@
+# Multiple STI subclasses in one file needs this line to be findable in development mode
+require_dependency 'review_moderation_vote'
+
 # Filters added to this controller apply to all controllers in the application.
 # Likewise, all the methods added will be available for all controllers.
 
