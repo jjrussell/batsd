@@ -125,7 +125,7 @@
       for(var i = 0, k = length; i < k; i++){
         var div = $(document.createElement('div'));
 
-        div.addClass('ui-joy-carousel-index ' + (i == this.current ? 'active': '' ))
+        div.addClass('ui-joy-carousel-index ' + (i == this.current ? 'highlight': '' ))
         .html('<a href="#">&nbsp;</a>')
         .unbind(Tapjoy.EventsMap.start)
         .bind(Tapjoy.EventsMap.start, function(){
