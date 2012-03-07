@@ -1,5 +1,4 @@
-/*jshint evil:true, regexp:false*/
-(function (Tap, $) {
+(function (Tap, $, preload) {
   "use strict";
 
   var me = {},
@@ -53,6 +52,7 @@
 
   me.fetchData = function ($container, url, params) {
     var jsonp = $container.data("is-jsonp");
+
     return $.ajax({
       url: url,
       dataType: jsonp ? "jsonp" : undefined,
@@ -70,17 +70,28 @@
         url = $$.data("url"),
         immediate = $$.data("immediate-load"),
         params = $$.data("params") || {},
+        preloaded = false,
         getSome;
 
       getSome = function () {
-        me.fetchData($$, url, params).then(function (data) {
-          $target.append(template(data));
-        }).fail(function () {
-          $(".ajax-error", $$).show();
-        }).always(function (data) {
-          $placeholder.hide();
-          return data.MoreDataAvailable ? $load_more.show() : $load_more.hide();
-        });
+        if (preload && !preloaded) {
+          preload.ready(function (data) {
+            $target.append(template(data));
+            $placeholder.hide();
+            return data.MoreDataAvailable ? $load_more.show() : $load_more.hide();
+          });
+
+          preloaded = true;
+        } else {
+          me.fetchData($$, url, params).then(function (data) {
+            $target.append(template(data));
+          }).fail(function () {
+            $(".ajax-error", $$).show();
+          }).always(function (data) {
+            $placeholder.hide();
+            return data.MoreDataAvailable ? $load_more.show() : $load_more.hide();
+          });
+        }
 
         $$.unbind("ajax-initiate", getSome);
       };
@@ -155,4 +166,4 @@
       notify(_t('games.generic_issue'));
     });
   });
-}(window.Tapjoy, window.jQuery));
+}(window.Tapjoy, window.jQuery, window.jsonp_preloaded));
