@@ -659,12 +659,17 @@ describe Offer do
         @offer.should be_valid
       end
 
+      it "allows iOS-only offers" do
+         @offer.device_types = %w( iphone ipad itouch ).to_json
+         @offer.should be_valid
+      end
+
       it "allows app offers" do
         @offer.should be_valid
       end
 
-      it "disallows non-Android offers" do
-        @offer.device_types = %w( iphone ipad itouch ).to_json
+      it "disallows offers that are not Android or iOS" do
+        @offer.device_types = %w( windows ).to_json
         @offer.should_not be_valid
       end
 

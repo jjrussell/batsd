@@ -169,7 +169,7 @@ class Offer < ActiveRecord::Base
   validates_each :sdkless, :allow_blank => false, :allow_nil => false do |record, attribute, value|
     if value
       record.get_device_types(true)
-      record.errors.add(attribute, "can only be enabled for Android-only offers") unless record.get_platform(true) == 'Android'
+      record.errors.add(attribute, "can only be enabled for Android or iOS offers") unless record.get_platform(true) == 'Android'|| record.get_platform(true) == 'iOS'
       record.errors.add(attribute, "cannot be enabled for pay-per-click offers") if record.pay_per_click?
       record.errors.add(attribute, "can only be enabled for 'App' offers") unless record.item_type == 'App'
     end
