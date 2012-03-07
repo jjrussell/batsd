@@ -1,6 +1,8 @@
 - @page_title = 'Brand Offers'
 
 %h2 Associate Brands with Offers
+.message
+  %p
 
 = link_to('Manage Brands', tools_brands_path)
 
@@ -57,7 +59,9 @@
               $('#offers').append(
                 "<option selected value='"+offer.id+"'>"+offer.label+"</option>");
               $('input#search_box').val('');
-               $('#offers').trigger("liszt:updated");
+              $('#offers').trigger("liszt:updated");
+              $('#flash_notice .message').html('You have just added the association <b>'+offer.label+'</b> to <b>'+$('#brand').text()+'</b>!');
+              $('#flash_notice').fadeIn(600).delay(8000).slideUp(600);
             }
           });
           return false;
@@ -123,7 +127,10 @@
           data: data,
           success: function(data) {
             $('#offers option[value='+removedItem.val()+']').remove();
-             $('#offers').trigger("liszt:updated");
+            $('#offers').trigger("liszt:updated");
+            $('#flash_warning .message').html('You have just removed the association <b>'+removedItem.text()+'</b> from <b>'+$('#brand').text()+'</b>!');
+            $('#flash_warning').fadeIn(600).delay(8000).slideUp(600);
+
           }
         });
         return false;

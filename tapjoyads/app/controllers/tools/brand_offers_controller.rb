@@ -7,7 +7,7 @@ class Tools::BrandOffersController < WebsiteController
     brand_name = params[:name]
     brand = Brand.new(:name => brand_name)
     success = brand.save
-    json = { :success => success, :brand => brand.to_json }
+    json = { :success => success, :brand => { :name => brand.name, :id => brand.id } }
     json.merge!({:error => brand.errors.first}) unless success
     render(:json => json)
   end
