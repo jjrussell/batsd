@@ -2,6 +2,7 @@ class ClickController < ApplicationController
   layout 'iphone'
 
   prepend_before_filter :decrypt_data_param
+  before_filter :reengagement_setup, :only => [ :reengagement ]
   before_filter :setup
   before_filter :validate_click, :except => [ :test_offer, :test_video_offer ]
   before_filter :determine_link_affiliates, :only => :app
@@ -13,28 +14,35 @@ class ClickController < ApplicationController
     handle_pay_per_click
     @device.handle_sdkless_click!(@offer, @now)
 
-    redirect_to(get_destination_url)
+    redirect_to(destination_url)
+  end
+
+  def reengagement
+    create_click('reengagement')
+    handle_pay_per_click
+
+    render :text => 'OK'
   end
 
   def action
     create_click('action')
     handle_pay_per_click
 
-    redirect_to(get_destination_url)
+    redirect_to(destination_url)
   end
 
   def generic
     create_click('generic')
     handle_pay_per_click
 
-    redirect_to(get_destination_url)
+    redirect_to(destination_url)
   end
 
   def rating
     create_click('rating')
     handle_pay_per_click
 
-    redirect_to(get_destination_url)
+    redirect_to(destination_url)
   end
 
   def video
@@ -48,7 +56,7 @@ class ClickController < ApplicationController
     create_click('survey')
     handle_pay_per_click
 
-    redirect_to(get_destination_url)
+    redirect_to(destination_url)
   end
 
   def test_offer
@@ -102,8 +110,14 @@ class ClickController < ApplicationController
 
   private
 
+  def reengagement_setup
+    params[:advertiser_app_id] = params[:publisher_app_id]
+  end
+
   def setup
-    return false unless verify_params([ :data ])
+    required_params = [ :data ]
+    required_params << :gamer_id if params[:advertiser_app_id] == TAPJOY_GAMES_INVITATION_OFFER_ID
+    return false unless verify_params(required_params)
 
     @now = Time.zone.now
     if params[:offer_id] == 'test_video'
@@ -113,11 +127,6 @@ class ClickController < ApplicationController
       @offer = publisher_app.test_video_offer.primary_offer
     else
       @offer = Offer.find_in_cache(params[:offer_id])
-    end
-
-    if params[:source] == 'tj_games' && params[:advertiser_app_id] == TAPJOY_GAMES_INVITATION_OFFER_ID && params[:gamer_id].blank?
-      render :text => "missing required params", :status => 400
-      return
     end
 
     @currency = Currency.find_in_cache(params[:currency_id])
@@ -131,7 +140,7 @@ class ClickController < ApplicationController
     if !@offer.tracking_for_id && Time.zone.at(params[:viewed_at]) < (@now - 24.hours)
       build_web_request('expired_click')
       save_web_request
-      @destination_url = get_destination_url
+      @destination_url = destination_url
       render_unavailable_offer
       return
     end
@@ -148,8 +157,8 @@ class ClickController < ApplicationController
     unless @offer.tracking_for_id
       return if currency_disabled?
       return if offer_disabled?
+      return if offer_completed?
     end
-    return if offer_completed?
     return if recently_clicked?
 
     wr_path = params[:source] == 'featured' ? 'featured_offer_click' : 'offer_click'
@@ -161,7 +170,7 @@ class ClickController < ApplicationController
     if disabled
       build_web_request('disabled_currency')
       save_web_request
-      @destination_url = get_destination_url
+      @destination_url = destination_url
       render_unavailable_offer
     end
     disabled
@@ -172,7 +181,7 @@ class ClickController < ApplicationController
     if disabled
       build_web_request('disabled_offer')
       save_web_request
-      @destination_url = get_destination_url
+      @destination_url = destination_url
       render_unavailable_offer
     end
     disabled
@@ -202,23 +211,24 @@ class ClickController < ApplicationController
     if completed
       build_web_request('completed_offer')
       save_web_request
-      @destination_url = get_destination_url
+      @destination_url = destination_url
       render_unavailable_offer
     end
     completed
   end
 
   def recently_clicked?
-    click = Click.find("#{params[:udid]}.#{params[:advertiser_app_id]}")
+    click = Click.find(click_key)
+    cutoff_time = @now - (@offer.multi_complete? && @offer.interval < 1.hour.to_i ? @offer.interval : 1.hour)
     recently_clicked = click.present? &&
-                       click.clicked_at > @now - 1.hour &&
+                       click.clicked_at > cutoff_time &&
                        click.publisher_app_id == params[:publisher_app_id] &&
                        click.publisher_user_id == params[:publisher_user_id]
 
     if recently_clicked
       build_web_request('click_too_recent')
       save_web_request
-      redirect_to(get_destination_url)
+      redirect_to(destination_url)
     end
     recently_clicked
   end
@@ -235,14 +245,6 @@ class ClickController < ApplicationController
   end
 
   def create_click(type)
-    if type != 'generic' || params[:advertiser_app_id] == TAPJOY_GAMES_REGISTRATION_OFFER_ID
-      click_key = "#{params[:udid]}.#{params[:advertiser_app_id]}"
-    elsif type == 'generic' && params[:advertiser_app_id] == TAPJOY_GAMES_INVITATION_OFFER_ID
-      click_key = "#{params[:gamer_id]}.#{params[:advertiser_app_id]}"
-    else
-      click_key = Digest::MD5.hexdigest "#{params[:udid]}.#{params[:advertiser_app_id]}"
-    end
-
     @click = Click.new(:key => click_key)
     @click.delete('installed_at') if @click.installed_at?
     @click.clicked_at             = @now
@@ -272,6 +274,7 @@ class ClickController < ApplicationController
     @click.publisher_reseller_id  = @currency.reseller_id || ''
     @click.advertiser_reseller_id = @offer.reseller_id || ''
     @click.spend_share            = @currency.get_spend_share(@offer)
+    @click.local_timestamp        = params[:local_timestamp] if params[:local_timestamp].present?
 
     @click.save
   end
@@ -289,7 +292,7 @@ class ClickController < ApplicationController
     end
   end
 
-  def get_destination_url
+  def destination_url
     @offer.destination_url({
       :udid                  => params[:udid],
       :publisher_app_id      => params[:publisher_app_id],
@@ -304,6 +307,16 @@ class ClickController < ApplicationController
 
   def render_unavailable_offer
     render 'unavailable_offer', :status => 403
+  end
+
+  def click_key
+    if params[:advertiser_app_id] == TAPJOY_GAMES_INVITATION_OFFER_ID
+      "#{params[:gamer_id]}.#{params[:advertiser_app_id]}"
+    elsif @offer.item_type == 'GenericOffer' && params[:advertiser_app_id] != TAPJOY_GAMES_REGISTRATION_OFFER_ID
+      Digest::MD5.hexdigest("#{params[:udid]}.#{params[:advertiser_app_id]}")
+    else
+      "#{params[:udid]}.#{params[:advertiser_app_id]}"
+    end
   end
 
 end

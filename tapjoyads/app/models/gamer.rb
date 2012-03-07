@@ -128,10 +128,14 @@ class Gamer < ActiveRecord::Base
 
   def get_avatar_url
     if gamer_profile.present? && gamer_profile.facebook_id.present?
-      "https://graph.facebook.com/#{gamer_profile.facebook_id}/picture?size=square"
+      "https://graph.facebook.com/#{gamer_profile.facebook_id}/picture?type=normal"
     else
-      "https://secure.gravatar.com/avatar/#{generate_gravatar_hash}?d=mm&s=50"
+      "https://secure.gravatar.com/avatar/#{generate_gravatar_hash}?d=mm&s=123"
     end
+  end
+
+  def all_device_data
+    devices.map(&:device_data)
   end
 
   def reward_click(click)

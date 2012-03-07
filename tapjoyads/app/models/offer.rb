@@ -11,7 +11,7 @@ class Offer < ActiveRecord::Base
   ANDROID_DEVICES = %w( android )
   WINDOWS_DEVICES = %w( windows )
   ALL_DEVICES = APPLE_DEVICES + ANDROID_DEVICES + WINDOWS_DEVICES
-  ALL_OFFER_TYPES = %w( App EmailOffer GenericOffer OfferpalOffer RatingOffer ActionOffer VideoOffer SurveyOffer )
+  ALL_OFFER_TYPES = %w( App EmailOffer GenericOffer OfferpalOffer RatingOffer ActionOffer VideoOffer SurveyOffer ReengagementOffer)
   ALL_SOURCES = %w( offerwall display_ad featured tj_games )
 
   CLASSIC_OFFER_TYPE               = '0'
@@ -159,6 +159,7 @@ class Offer < ActiveRecord::Base
     if value
       record.errors.add(attribute, "is not for App offers") unless record.multi_completable?
       record.errors.add(attribute, "cannot be used for non-interval pay-per-click offers") if record.pay_per_click? && record.interval == 0
+      record.errors.add(attribute, 'cannot be used for Survey offers') if record.item_type == 'SurveyOffer'
     end
   end
   validates_each :instructions_overridden, :if => :instructions_overridden? do |record, attribute, value|
@@ -174,7 +175,7 @@ class Offer < ActiveRecord::Base
     end
   end
   validates_each :tapjoy_enabled do |record, attribute, value|
-    if value && record.missing_app_store_id?
+    if value && record.tapjoy_enabled_changed? && record.missing_app_store_id?
       record.errors.add(attribute, "cannot be enabled without valid store id")
     end
   end
@@ -231,7 +232,8 @@ class Offer < ActiveRecord::Base
     :select => PAPAYA_OFFER_COLUMNS
 
   delegate :balance, :pending_earnings, :name, :cs_contact_email, :approved_publisher?, :rev_share, :to => :partner, :prefix => true
-  memoize :partner_balance
+  delegate :name, :id, :formatted_active_gamer_count, :to => :app, :prefix => true, :allow_nil => true
+  memoize :partner_balance, :app_formatted_active_gamer_count
 
   alias_method :events, :offer_events
   alias_method :random, :rand
@@ -532,19 +534,6 @@ class Offer < ActiveRecord::Base
     CloudFront.invalidate(id, paths) if existing_icon_blob.present?
   end
 
-  def get_video_url(options = {})
-    Offer.get_video_url({:video_id => Offer.id}.merge(options))
-  end
-
-  def self.get_video_url(options = {})
-    video_id  = options.delete(:video_id)  { |k| raise "#{k} is a required argument" }
-    raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
-
-    prefix = "http://s3.amazonaws.com/#{RUN_MODE_PREFIX}tapjoy"
-
-    "#{prefix}/videos/src/#{video_id}.mp4"
-  end
-
   def save(perform_validation = true)
     super(perform_validation)
   rescue BannerSyncError => bse
@@ -632,9 +621,12 @@ class Offer < ActiveRecord::Base
   end
 
   def update_payment(force_update = false)
-    if partner && (force_update || bid_changed? || new_record?)
-      # payment should be at least one-cent unless the bid is zero
-      self.payment = [bid * (100 - partner.premier_discount) / 100, [bid,1].min].max
+    if (force_update || bid_changed? || new_record?)
+      if (item_type == 'App' || item_type == 'ActionOffer')
+        self.payment = bid == 0 ? 0 : [ bid * (100 - partner.premier_discount) / 100, 1 ].max
+      else
+        self.payment = bid
+      end
     end
   end
 

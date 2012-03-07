@@ -105,6 +105,7 @@ class Device < SimpledbShardedResource
   end
 
   def set_last_run_time(app_id)
+    retry_save_on_fail = true if @parsed_apps[app_id].nil?
     @parsed_apps[app_id] = "%.5f" % Time.zone.now.to_f
     self.apps = @parsed_apps
   end
@@ -148,6 +149,8 @@ class Device < SimpledbShardedResource
   end
 
   def self.normalize_device_type(device_type_param)
+    return nil if device_type_param.nil?
+
     case device_type_param.downcase
     when /iphone/
       'iphone'
@@ -172,7 +175,7 @@ class Device < SimpledbShardedResource
   end
 
   def gamers
-    Gamer.find(:all, :joins => [:gamer_devices], :conditions => ['gamer_devices.device_id = ?', key])
+    @gamers ||= Gamer.find(:all, :joins => [:gamer_devices], :conditions => ['gamer_devices.device_id = ?', key])
   end
 
   def update_package_names!(package_names)

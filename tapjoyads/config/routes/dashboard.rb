@@ -31,6 +31,7 @@ ActionController::Routing::Routes.draw do |map|
     app.resources :virtual_goods, :as => 'virtual-goods', :only => [ :show, :update, :new, :create, :index ],
       :collection => { :reorder => :post }, :controller => 'apps/virtual_goods'
     app.resources :action_offers, :only => [ :new, :create, :edit, :update, :index ], :member => { :toggle => :post, :preview => :get }, :collection => { :TJCPPA => :get, :TapjoyPPA => :get }, :controller => 'apps/action_offers'
+    app.resources :reengagement_offers, :only => [ :new, :create, :edit, :update, :index ], :member => { :toggle => :post }, :controller => 'apps/reengagement_offers'
   end
   map.with_options :controller => :offer_creatives, :path_prefix => 'offer_creatives/:id', :name_prefix => 'offer_creatives_' do |offer|
     offer.preview '', :action => :show, :conditions => { :method => :get }
@@ -64,7 +65,6 @@ ActionController::Routing::Routes.draw do |map|
     m.search_users 'search/users', :action => 'users'
     m.search_partners 'search/partners', :action => 'partners'
   end
-  map.resource :premier, :controller => :premier, :only => [ :update ]
   map.premier 'premier', :controller => :premier, :action => :edit
   map.resources :survey_results, :only => [ :new, :create ]
 
@@ -108,7 +108,7 @@ ActionController::Routing::Routes.draw do |map|
     tools.resources :agency_users, :only => [ :index, :show ]
     tools.resources :support_requests, :only => [ :index ], :collection => { :mass_resolve => [ :get, :post ] }
     tools.resources :press_releases, :only => [ :index, :new, :create, :edit, :update ]
-    tools.resources :recommenders, :only => [:index, :create]
+    tools.resources :recommenders, :only => [ :index, :create ]
     tools.resources :gamers, :only => [ :index, :show ]
     tools.resources :gamer_devices, :only => [ :create, :edit, :new, :show, :update ]
     tools.resources :network_costs, :only => [ :index, :new, :create ]
