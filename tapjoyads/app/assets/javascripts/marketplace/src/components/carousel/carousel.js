@@ -68,19 +68,19 @@
       .appendTo($t.container);
 
       $t.slides = wrap.children();
-			
+
       $t.wrap = wrap;
     },
-		
+
     turn : function(){
 			var $t = this,
 			    diff = 0;
-			
+
 		  $t.wrap.css('-'+Tap.browser.prefix +'-transform', 'translate(0px, 0px)');
 			$t.current = 0;
 			$t.setupSlideDeck();
 			$t.updateControls();
-			
+
 		},
     setupSlideDeck: function(){
       var $t = this;
@@ -153,7 +153,7 @@
 
         if($(this).hasClass('disabled'))
 				  return;
-					
+
         if($t.current > 0){
           $t.current--
           var position = $t.container.width() * $t.current;
@@ -168,7 +168,7 @@
 
       $('.forward', $t.container).bind('click', function(){
         $t.current++
-				
+
 				if($(this).hasClass('disabled'))
 				  return;
 
@@ -195,7 +195,7 @@
         $('.dot', $t.jumpContainer).removeClass('active');
         $('.dot:eq(' + $t.current + ')', $t.jumpContainer).addClass('active');
       }
-			
+
       if(($t.container.width() * current) > $t.length || $t.dots > 1 && $t.dots === current){
         $('.back', $t.container).removeClass('disabled');
         $('.forward', $t.container).addClass('disabled');
