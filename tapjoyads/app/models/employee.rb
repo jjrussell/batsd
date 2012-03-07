@@ -43,6 +43,13 @@ class Employee < ActiveRecord::Base
     "#{first_name.downcase}_#{last_name.downcase}"
   end
 
+  def get_avatar_url
+    "https://secure.gravatar.com/avatar/#{generate_gravatar_hash}?d=mm&s=123"
+  end
+  def generate_gravatar_hash
+    Digest::MD5.hexdigest email.strip.downcase
+  end
+
   def get_photo_url(options = {})
     source   = options.delete(:source)   { :s3 }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?

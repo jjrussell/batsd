@@ -46,7 +46,7 @@ class GamesController < ApplicationController
     language_list = request.env['HTTP_ACCEPT_LANGUAGE'].split(/\s*,\s*/).map do |pair|
       language, quality = pair.split(/;q=/)
       raise "Not correctly formatted" unless language =~ /^[a-z\-]+$/i
-      language = language.downcase.gsub(/-[a-z]+$/i) { |i| i.upcase }
+      language = language.downcase #.gsub(/-[a-z]+$/i) { |i| i.upcase } why upcase??  No good reason
       quality = unset_priority -= 0.1 unless quality.to_s =~ /\d+(\.\d+)?$/
       result = [ - quality.to_f, language ]
       splits << [ - (quality.to_f - 0.1), language.split(/-/).first ] if language =~ /-/
@@ -163,7 +163,11 @@ class GamesController < ApplicationController
       path = url_for(params.merge(:only_path => true))
       options = { :path => path } unless path == games_path
       options[:referrer] = params[:referrer] if params[:referrer].present?
-      redirect_to games_login_path(options)
+      if request.xhr?
+        render :json=> "Unauthorized", :status=> 401
+      else
+        redirect_to games_login_path(options)
+      end
     end
   end
 

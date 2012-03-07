@@ -4,6 +4,11 @@ class Gamer < ActiveRecord::Base
   has_many :gamer_devices, :dependent => :destroy
   has_many :invitations, :dependent => :destroy
   has_many :app_reviews, :as => :author, :dependent => :destroy
+
+  has_many :review_moderation_votes
+  has_many :helpful_review_votes, :class_name=>'HelpfulVote'
+  has_many :bury_review_votes, :class_name=>'BuryVote'
+
   has_many :favorite_apps, :dependent => :destroy
   has_one :gamer_profile, :dependent => :destroy
   has_one :referrer_gamer, :class_name => 'Gamer', :primary_key => :referred_by, :foreign_key => :id
@@ -130,6 +135,8 @@ class Gamer < ActiveRecord::Base
       gamer_profile.nickname
     elsif gamer_profile.present? && gamer_profile.name.present?
       gamer_profile.name
+    else
+      email.sub(/@.*/,'')
     end
   end
 

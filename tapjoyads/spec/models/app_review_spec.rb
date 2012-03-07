@@ -48,7 +48,7 @@ describe AppReview do
   describe '#author_name' do
     context 'when author_type is Gamer' do
       it 'returns gamer name' do
-        @gamer_review.author_name.should == @gamer.get_gamer_name
+        @gamer_review.author_name.should == @gamer.get_gamer_nickname
       end
     end
 
