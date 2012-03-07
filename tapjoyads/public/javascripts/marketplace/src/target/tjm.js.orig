@@ -342,7 +342,7 @@ f.event={add:function(a,c,d,e,g){var h,i,j,k,l,m,n,o,p,q,r,s;if(!(a.nodeType===3
       /**
        * Component types, I refer to them as xtypes.
        */
-      xtypes: ['Button', 'Carousel'],
+      xtypes: ['Button'],
       /**
        * input placeholders bucket
        * Manage place-holder text of inputs on browsers which do not support the placeholder attributes.
@@ -382,7 +382,7 @@ f.event={add:function(a,c,d,e,g){var h,i,j,k,l,m,n,o,p,q,r,s;if(!(a.nodeType===3
         move: Tap.supportsTouch ? 'touchmove' : 'mousemove',
         resize: 'onorientationchange' in window ? 'orientationchange' : 'resize',
         start: Tap.supportsTouch ? 'touchstart' : 'mousedown',
-        touch : Tap.supportsTouch ? 'tap' : 'click'
+				touch : Tap.supportsTouch ? 'tap' : 'click'
       }
     });
 
@@ -1680,180 +1680,6 @@ f.event={add:function(a,c,d,e,g){var h,i,j,k,l,m,n,o,p,q,r,s;if(!(a.nodeType===3
     }
   };
 })(Tapjoy, jQuery);
-(function(Tapjoy, $){
-
-  var config = {
-    moveThreshold: 10,
-    hoverDelay: 50,
-    pressDelay: 750
-  };
-            
-  function _eventStart(e){
-        
-    var target = $(e.target);
-    
-    if(!Tapjoy.supportsTouch || !target.length)
-      return;
-
-    var timestamp = new Date().getTime(),
-        hover = null,
-        press = null,
-        touch,
-        startX,
-        startY,
-        deltaX = 0,
-        deltaY = 0,
-        deltaT = 0,
-        touch = Tapjoy.supportsTouch ? e.originalEvent.changedTouches[0] : e,
-        startX = touch.pageX,
-        startY = touch.pageY;
-
-    bindEvents(target);
-
-    hover = setTimeout(function(){
-      target.applyActive();
-    }, 50);
-    
-    press = setTimeout(function(){
-      unbindEvents(target);
-      target.removeActive();
-      clearTimeout(hover);
-      target.trigger('press');
-    }, 750);
-    
-    function _eventCancel(e){
-      clearTimeout(hover);
-      target.removeActive();
-      unbindEvents(target);
-    }
-
-    function _eventEnd(e) {
-      unbindEvents(target);
-      clearTimeout(hover);
-      clearTimeout(press);
-
-      if(Math.abs(deltaX) < config.moveThreshold && Math.abs(deltaY) < config.moveThreshold && deltaT < config.pressDelay){
-        if(Tapjoy.supportsTouch){
-          target.trigger('tap', e);
-        }
-      }else{
-        target.removeActive();
-      }
-    }
-    
-    function _eventMove(e) {
-      _eventUpdate(e);
-
-      var absX = Math.abs(deltaX),
-          absY = Math.abs(deltaY),
-          direction;
-
-      if(absX > absY && (absX > 30) && deltaT < 1000){
-        if(deltaX < 0){
-          direction = 'left';
-        }else{
-          direction = 'right';
-        }
-
-        unbindEvents(target);
-
-        target.trigger('swipe', {
-          direction: direction, 
-          deltaX: deltaX, 
-          deltaY: deltaY
-        });
-      }
-
-      target.removeActive();
-
-      clearTimeout(hover);
-
-      if(absX > config.moveThreshold || absY > config.moveThreshold){
-        clearTimeout(press);
-      }
-    }
-
-    function _eventUpdate(e){
-      var _touch = Tapjoy.supportsTouch ? e.originalEvent.changedTouches[0]: e;
-
-      deltaX = _touch.pageX - startX;
-      deltaY = _touch.pageY - startY;
-      deltaT = new Date().getTime() - timestamp;
-    }
-
-    function bindEvents(element){
-      element.bind(Tapjoy.EventsMap.move, _eventMove)
-      .bind(Tapjoy.EventsMap.end, _eventEnd);
-
-      if(Tapjoy.supportsTouch){
-        element.bind(Tapjoy.EventsMap.cancel, _eventCancel);
-      }else{
-        $(document).bind(Tapjoy.EventsMap.cancel, _eventCancel);
-      }
-    }
-        
-    function unbindEvents(element){
-      if(!element)
-        return;
-    
-      element.unbind(Tapjoy.EventsMap.move, _eventMove)
-      .unbind(Tapjoy.EventsMap.end, _eventEnd);
-
-      if(Tapjoy.supportsTouch){
-        element.unbind(Tapjoy.EventsMap.cancel, _eventCancel);
-      }else{
-        $(document).unbind(Tapjoy.EventsMap.end, _eventCancel);
-      }
-    }
-  }
-
-  $.fn.press = function(fn) {
-    return this.each(function(){
-      if($.isFunction(fn)){
-        return $(this).live('press', fn);
-      }else{
-        return $(this).trigger('press');
-      }
-    });
-  };
-
-  $.fn.swipe = function(fn){
-    return this.each(function(){
-      if($.isFunction(fn)){
-        return $(this).live('swipe', fn);
-      }else{
-        return $(this).trigger('swipe');
-      }
-    });
-  };
-
-  $.fn.tap = function(fn) {
-    return this.each(function(){
-      if($.isFunction(fn)){
-        return $(this).live('tap', fn);
-      }else{
-        return $(this).trigger('tap');
-      }
-    });
-  };
-
-  $.fn.applyActive = function() {
-    return $(this).addClass('active');
-  };
-
-  $.fn.removeActive = function(obj) {
-    if(obj){
-      obj.removeClass('active');
-    }else{
-      $('.active').removeClass('active');
-    }
-  };    
-
-  $(document).ready(function(){
-    $(document).bind(Tapjoy.EventsMap.start, _eventStart);    
-  });
-
-})(Tapjoy, jQuery);
 (function(Tap, $){
 
   $.fn.Button = function(config){
@@ -2300,35 +2126,13 @@ f.event={add:function(a,c,d,e,g){var h,i,j,k,l,m,n,o,p,q,r,s;if(!(a.nodeType===3
     $t.updateNavigation();
 
     if($t.length < $t.innerWidth)
-      $('.back, .forward', $t.container).hide();
+      $('.back, .forward').hide();
 
     $(window).bind('orientationchange', function(){
       $t.turn();
     });
 
-    $(window).bind('resize', Tap.Utils.debounce($t.resize, 100, false, $t));
-
-    if(Tap.supportsTouch){
-      $t.container.live('swipe', function(e, data){
-
-        if(data.direction === 'left'){
-          if($t.forward.hasClass('disabled'))
-            return;
-
-          $t.current++;
-          $t.wrap[0].style.webkitTransform = 'translate3d(-' + ($t.current * $t.container.width()) + 'px, 0, 0)';
-        }else{
-
-          if($t.back.hasClass('disabled'))
-            return;        
-
-          $t.current--;
-          $t.wrap[0].style.webkitTransform = 'translate3d(-' + ($t.current * $t.container.width()) + 'px, 0, 0)';
-        }
-				
-        $t.updateNavigation();
-      });
-    }
+    $(window).bind('resize', Tapjoy.Utils.debounce($t.resize, 100, false, $t));
 
     $t.container.addClass($t.config.cssClass);
 
@@ -2337,6 +2141,9 @@ f.event={add:function(a,c,d,e,g){var h,i,j,k,l,m,n,o,p,q,r,s;if(!(a.nodeType===3
 
   Tap.extend(Carousel.prototype, {
     current: 0,
+    last: null,
+    containerWidth: 0,
+    containerHeight: 0,
     create : function(){
       var $t = this,
           wrap = $(document.createElement('div')),
@@ -2349,11 +2156,16 @@ f.event={add:function(a,c,d,e,g){var h,i,j,k,l,m,n,o,p,q,r,s;if(!(a.nodeType===3
       .preventHighlight()
       .appendTo($t.container);
 
-      $t.current = 0;
+<<<<<<< HEAD
+=======
+      $t.slides = wrap.children();
+
+>>>>>>> master
       $t.wrap = wrap;
     },
 
     turn : function(){
+<<<<<<< HEAD
       var $t = this;
 
       $t.wrap.css('-'+Tap.browser.prefix +'-transform', 'translate(0px, 0px)');
@@ -2362,6 +2174,17 @@ f.event={add:function(a,c,d,e,g){var h,i,j,k,l,m,n,o,p,q,r,s;if(!(a.nodeType===3
       $t.updateNavigation();
 
     },
+=======
+			var $t = this,
+			    diff = 0;
+
+		  $t.wrap.css('-'+Tap.browser.prefix +'-transform', 'translate(0px, 0px)');
+			$t.current = 0;
+			$t.setupSlideDeck();
+			$t.updateControls();
+
+		},
+>>>>>>> master
     setupSlideDeck: function(){
       var $t = this;
 
@@ -2378,6 +2201,7 @@ f.event={add:function(a,c,d,e,g){var h,i,j,k,l,m,n,o,p,q,r,s;if(!(a.nodeType===3
         $t.slides.css('width', $t.innerWidth + 'px');
 
       $t.length = $t.slides.length * $t.slides.outerWidth(true);
+
       $t.pages = Math.round($t.length / $t.innerWidth);
     },
 
@@ -2392,7 +2216,7 @@ f.event={add:function(a,c,d,e,g){var h,i,j,k,l,m,n,o,p,q,r,s;if(!(a.nodeType===3
       for(var i = 0, k = length; i < k; i++){
         var div = $(document.createElement('div'));
 
-        div.addClass('ui-joy-carousel-index ' + (i == this.current ? 'highlight': '' ))
+        div.addClass('ui-joy-carousel-index ' + (i == this.current ? 'active': '' ))
         .html('<a href="#">&nbsp;</a>')
         .unbind(Tapjoy.EventsMap.start)
         .bind(Tapjoy.EventsMap.start, function(){
@@ -2406,7 +2230,7 @@ f.event={add:function(a,c,d,e,g){var h,i,j,k,l,m,n,o,p,q,r,s;if(!(a.nodeType===3
 
           $t.updateNavigation();
 
-          $('.ui-joy-carousel-index', wrap).removeClass('highlight');
+          $('.ui-joy-carousel-index', wrap).removeClass('active');
           circle.addClass('active');
         })
         .appendTo(wrap);
@@ -2419,7 +2243,7 @@ f.event={add:function(a,c,d,e,g){var h,i,j,k,l,m,n,o,p,q,r,s;if(!(a.nodeType===3
 
       $t.pager = wrap;
     },
-    
+		
     createNavigation : function(){
       var $t = this,
           back = $(document.createElement('div')),
@@ -2445,7 +2269,11 @@ f.event={add:function(a,c,d,e,g){var h,i,j,k,l,m,n,o,p,q,r,s;if(!(a.nodeType===3
         var position = 0;
 
         if($(this).hasClass('disabled'))
+<<<<<<< HEAD
           return;
+=======
+				  return;
+>>>>>>> master
 
         if($t.current > 0){
           $t.current--
@@ -2459,7 +2287,15 @@ f.event={add:function(a,c,d,e,g){var h,i,j,k,l,m,n,o,p,q,r,s;if(!(a.nodeType===3
         $t.wrap.css('-'+Tap.browser.prefix +'-transform', 'translate(-'+ position +'px, 0px)');
       });
 
+<<<<<<< HEAD
       $('.forward', $t.container).bind(Tapjoy.EventsMap.start, function(){
+=======
+      $('.forward', $t.container).bind('click', function(){
+        $t.current++
+
+				if($(this).hasClass('disabled'))
+				  return;
+>>>>>>> master
 
         var position = 0;
 
@@ -2486,10 +2322,11 @@ f.event={add:function(a,c,d,e,g){var h,i,j,k,l,m,n,o,p,q,r,s;if(!(a.nodeType===3
           forward = $('.forward', $t.container);
 
       if($t.config.hasPager){
-        $('.ui-joy-carousel-index', $t.pagingContainer).removeClass('highlight');
-        $('.ui-joy-carousel-index:eq(' + $t.current + ')', $t.pagingContainer).addClass('highlight');
+        $('.ui-joy-carousel-index', $t.pagingContainer).removeClass('active');
+        $('.ui-joy-carousel-index:eq(' + $t.current + ')', $t.pagingContainer).addClass('active');
       }
-			
+
+<<<<<<< HEAD
       if(next > $t.length || $t.config.forceSlideWidth && $t.pages == ($t.current + 1)){
         back.removeClass('disabled');
         forward.addClass('disabled');
@@ -2499,6 +2336,14 @@ f.event={add:function(a,c,d,e,g){var h,i,j,k,l,m,n,o,p,q,r,s;if(!(a.nodeType===3
       }else if($t.current === 0){
         back.addClass('disabled');
         forward.removeClass('disabled');
+=======
+      if(($t.container.width() * current) > $t.length || $t.dots > 1 && $t.dots === current){
+        $('.back', $t.container).removeClass('disabled');
+        $('.forward', $t.container).addClass('disabled');
+      }else if($t.current > 0 && ($t.container.width() * $t.current) < $t.length){
+        $('.back', $t.container).removeClass('disabled');
+        $('.forward', $t.container).removeClass('disabled');
+>>>>>>> master
       }
 
       if(next > $t.length && next < window.innerWidth){
@@ -2519,22 +2364,22 @@ f.event={add:function(a,c,d,e,g){var h,i,j,k,l,m,n,o,p,q,r,s;if(!(a.nodeType===3
           $t.back.hide();
           $t.forward.hide();
         }
-      }else{
-        if($t.back.is(':hidden')){
-          $t.back.show();
-          $t.forward.show();
-        }
-      }
+			}else{
+				if($t.back.is(':hidden')){
+					$t.back.show();
+					$t.forward.show();
+				}
+			}
 
       $t.updateNavigation();
-    }   
+    }
   });
 
   Tap.apply(Tap, {
     Carousel : function(config){
 
       var $t = $(config.container),
-          config = Tap.extend(this, Tap.Components.Elements, Tap.Components.Carousel, config || {});
+          config = Tap.extend(this, {}, config || {});
 
       return $t.Carousel(config);
     }
@@ -2900,7 +2745,8 @@ var TJG = typeof TJG === "object" ? TJG : {}; TJG.vars = {};
     });
   });
 }(window.Tapjoy, window.jQuery));
-(function (Tap, $, preload) {
+/*jshint evil:true, regexp:false*/
+(function (Tap, $) {
   "use strict";
 
   var me = {},
@@ -2954,7 +2800,6 @@ var TJG = typeof TJG === "object" ? TJG : {}; TJG.vars = {};
 
   me.fetchData = function ($container, url, params) {
     var jsonp = $container.data("is-jsonp");
-
     return $.ajax({
       url: url,
       dataType: jsonp ? "jsonp" : undefined,
@@ -2972,28 +2817,17 @@ var TJG = typeof TJG === "object" ? TJG : {}; TJG.vars = {};
         url = $$.data("url"),
         immediate = $$.data("immediate-load"),
         params = $$.data("params") || {},
-        preloaded = false,
         getSome;
 
       getSome = function () {
-        if (preload && !preloaded) {
-          preload.ready(function (data) {
-            $target.append(template(data));
-            $placeholder.hide();
-            return data.MoreDataAvailable ? $load_more.show() : $load_more.hide();
-          });
-
-          preloaded = true;
-        } else {
-          me.fetchData($$, url, params).then(function (data) {
-            $target.append(template(data));
-          }).fail(function () {
-            $(".ajax-error", $$).show();
-          }).always(function (data) {
-            $placeholder.hide();
-            return data.MoreDataAvailable ? $load_more.show() : $load_more.hide();
-          });
-        }
+        me.fetchData($$, url, params).then(function (data) {
+          $target.append(template(data));
+        }).fail(function () {
+          $(".ajax-error", $$).show();
+        }).always(function (data) {
+          $placeholder.hide();
+          return data.MoreDataAvailable ? $load_more.show() : $load_more.hide();
+        });
 
         $$.unbind("ajax-initiate", getSome);
       };
@@ -3068,7 +2902,7 @@ var TJG = typeof TJG === "object" ? TJG : {}; TJG.vars = {};
       notify(_t('games.generic_issue'));
     });
   });
-}(window.Tapjoy, window.jQuery, window.jsonp_preloaded));
+}(window.Tapjoy, window.jQuery));
 $(document).ready(function() {
 
   var _t = window.i18n.t,
