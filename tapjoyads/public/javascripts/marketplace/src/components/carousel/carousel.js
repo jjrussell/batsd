@@ -140,7 +140,7 @@
           $t.updateNavigation();
 
           $('.ui-joy-carousel-index', wrap).removeClass('highlight');
-          circle.addClass('active');
+          circle.addClass('highlight');
         })
         .appendTo(wrap);
       }
