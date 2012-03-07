@@ -43,3 +43,85 @@ tbody.show-five tr:nth-child(n+6) {
 table.with-border ul.nobr li {
   white-space:nowrap;
 }
+$hpad: 15px;
+#wfh_list {
+  padding: 10px;
+  .desk {
+    border: 1px solid #ccc;
+    font-size: 12px;
+    line-height: 12px;
+    text-align: center;
+    float: left;
+    position: relative;
+    &.long {
+      font-size: 10px;
+    }
+    &.me {
+      border: 3px solid #888;
+      font-weight: bold;
+      a {
+        padding: $hpad - 2px 0px;
+        width: 91px;
+      }
+    }
+    &.space {
+      margin-right: 10px;
+    }
+    a {
+      display: block;
+      padding: $hpad 0px;
+      width: 95px;
+      overflow-x: none;
+      white-space: nowrap;
+    }
+    &.not-here {
+      background-color: #ccc;
+    }
+    &:hover {
+      background-color: #ff8;
+    }
+    &.nodesk {
+      background-color: transparent;
+      border: 1px solid transparent;
+      padding: $hpad 0px;
+      width: 95px;
+    }
+    .wfh {
+      display: inline-block;
+      position: absolute;
+      right: 0;
+      top: 0;
+    }
+    .arrow {
+      display: none;
+      position: absolute;
+      right: -5px;
+      bottom: -15px;
+    }
+  }
+  .blank {
+    width: 10px;
+    float: left;
+    min-height: 20px;
+  }
+  .clear {
+    clear: both;
+  }
+  .wfh {
+    padding: 1px 5px;
+    font-size: 10px;
+    font-weight: bold;
+    background-color: #00f;
+    color: white;
+    &.pto {
+      background-color: #f00;
+    }
+    &.conference {
+      background-color: #0b0;
+    }
+  }
+  th, td {
+    border: 1px solid #888;
+    padding: 2px 5px;
+  }
+}

@@ -50,6 +50,16 @@ module ToolsHelper
     time.nil? ? '-' : time.to_s(:pub_abbr_ampm_sec)
   end
 
+  def wfh_classes(wfh)
+    classes = [ 'wfh' ]
+    if wfh.pto?
+      classes << 'pto'
+    elsif wfh.conference?
+      classes << 'conference'
+    end
+    classes.join(' ')
+  end
+
   private
 
   def concat_li(name, value)

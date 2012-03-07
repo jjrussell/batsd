@@ -1,0 +1,30 @@
+- if wfhs.empty?
+  %p None!
+- else
+  %table{ :cellspan => 0, :cellspacing => 0}
+    %thead
+      %tr
+        - if editable
+          %th action
+        %th type
+        %th date(s)
+        %th description
+    %tbody
+      - wfhs.each do |wfh|
+        %tr
+          - if editable
+            %td
+              = link_to '[edit]', edit_tools_wfh_path(wfh)
+              - path = { :controller => 'tools/wfhs', :action => "destroy", :id => wfh.id }
+              = link_to '[delete]', path, :confirm => "Are you sure?", :method => 'delete'
+          %td
+            %span{ :class => wfh_classes(wfh) }
+              = wfh.category
+          %td
+            = wfh.start_date.to_s(:amd)
+            - unless wfh.start_date == wfh.end_date
+              &ndash;
+              = wfh.end_date.to_s(:amd)
+          %td
+            - if wfh.description.present?
+              .description= wfh.description
