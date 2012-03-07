@@ -89,8 +89,8 @@ private
     partner_ids = partners.map(&:id)
 
     Offer.find(:all, :conditions => ["partner_id IN (?)", partner_ids], :limit => "#{need_to_skip},#{need_to_show}").each do |offer|
-      appstats = maybe_cache(offer.id) do
-        Appstats.new("reporting_data.#{offer.id}.#{start_time.to_i}", {
+      appstats = maybe_cache("reporting_data.#{offer.id}.#{start_time.to_i}") do
+        Appstats.new(offer.id, {
           :start_time => start_time,
           :end_time   => start_time + 24.hours,
           :stat_types => (Stats::STAT_TYPES - ['ranks']),
