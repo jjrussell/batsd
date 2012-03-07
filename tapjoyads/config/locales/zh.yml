@@ -374,7 +374,7 @@ zh:
       download_link: "如果您没有这个程序, 点击 %{download_action} 下载"
       earn_currency: "赚 %{amount_and_currency}"
       footer: "在完成这些步骤后, 您将获得 %{amount_and_currency}."
-      header: "按照这些步骤来赚 %{currency}:"
+      header: "按照这些步骤来赚 %{currency}："
       title: 说明
     offerwall:
       buy_currency: "买 %{amount} %{currency}"
@@ -469,8 +469,8 @@ zh:
       zip_postal: 邮政编码
     support:
       abuse_warning: "本页表格是针对完成了流程但未获得虚拟币奖励的用. 滥用者可导致将来受禁止参与此类活动."
-      description_label: "请描述您下载了APP的流程:"
-      email_address_label: "电子邮箱:"
+      description_label: "请描述您下载了APP的流程："
+      email_address_label: "电子邮箱："
       instructions_1: "如果您没得到 %{currency}, 请您让我们知道你下载了哪款APP, 并且留下您的电子邮箱."
       instructions_2: "我们完成了确认流程后，你将会获取应得的 %{currency}."
       invalid_email: 请输入您真实的电子邮箱.
@@ -478,7 +478,7 @@ zh:
       missing_offer: 您需要写下您完成的广告。
       no_incomplete_offers_label: 没法提供其他的广告。
       select_offer: 选以下的广告
-      specify_offer_label: "指出要求:"
+      specify_offer_label: "指出要求："
       submit_support_request: 支持请求
       support_request_submitted: 支持请求已提交
       thanks: "感谢您提交了支持请求! 我们完成了确认流程后，你将会获取应得的 %{currency}."

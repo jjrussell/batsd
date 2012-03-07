@@ -199,7 +199,7 @@ ja:
       almost_done: ~
       already_registered:
         one: "%{name}さんはすでに登録済みです。%{name}さんをフォローしました"
-        other:"%{name}さんはすでに登録済みです。%{name}さんをフォローしました"
+        other: "%{name}さんはすでに登録済みです。%{name}さんをフォローしました"
       amount_and_currency: "%{amount} %{currency}"
       back_to_top: 上に戻る
       birthdate: 生年月日
@@ -382,7 +382,7 @@ ja:
       title: 指示
     offerwall:
       buy_currency: "%{amount} %{currency} を買う"
-      earn_currency: "%{amount} %{currency}  を獲得"
+      earn_currency: "%{amount} %{currency} を獲得"
       free: 無料
       instructions: "次のアクションで %{currency} を獲得する"
       instructions_non_rewarded: "Discover what's hot on Tapjoy!"

@@ -281,7 +281,7 @@ fr:
 
           Pour commencer, crées un compte ici
       invite_email_greet: "Salut,"
-      invite_email_signature: L'équipeTapjoy
+      invite_email_signature: L'équipe Tapjoy
       invite_friends:
         one: Invites
         other: "Invites %{count} amis"
