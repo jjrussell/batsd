@@ -18,9 +18,9 @@ class Games::SupportRequestsController < GamesController
     when "report_bug"
       GamesMailer.deliver_report_bug(@gamer, data[:content], request.env["HTTP_USER_AGENT"], current_device_id)
     when "contact_support"
-      GamesMailer.deliver_contact_support(@gamer, data[:content], request.env["HTTP_USER_AGENT"], current_device_id)
+      GamesMailer.deliver_contact_support(@gamer, current_device, data[:content], request.env["HTTP_USER_AGENT"], params[:language_code])
     else
-      GamesMailer.deliver_contact_support(@gamer, data[:content], request.env["HTTP_USER_AGENT"], current_device_id)
+      GamesMailer.deliver_contact_support(@gamer, current_device, data[:content], request.env["HTTP_USER_AGENT"], params[:language_code])
     end
   end
 
