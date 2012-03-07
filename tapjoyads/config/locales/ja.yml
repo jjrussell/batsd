@@ -277,7 +277,7 @@ ja:
       invite_email_body: |-
           %{name}さんからTapjoyへの招待が届きました。Tapjoyは今最も注目のアプリを見つけるのに最適の場所です。Tapjoyの利用は無料です。また、今使っているアプリ内のポイントを獲得しながら、iOSやAndroidで注目のアプリを発掘することができます。
 
-          あなたが次にダウンロードするアプリのために、App StoreやAndroidマーケットの膨大な数のアプリに目を通す必要はありません。 Tapjoyがあなたの好みに応じてアプリをオススメします.
+          あなたが次にダウンロードするアプリのために、App StoreやAndroidマーケットの膨大な数のアプリに目を通す必要はありません。 Tapjoyがあなたの好みに応じてアプリをオススメします
 
           今すぐ始める方はこちらから：
       invite_email_greet: こんにちは、
@@ -313,10 +313,8 @@ ja:
       no_javascript: Tapjoyの使用を継続するには、ブラウザ設定にからJavaScriptを有効化してください
       none_selected: 選択されていません
       on_my: "%{device_name}を使用中"
-      one: "Tapjoyへの招待状が%{name}さんに送信されました"
       oops: おっと！
       or_learn_more: ~
-      other: "Tapjoyへの招待状が%{name}さんへ送信されました"
       other_options: 他のオプション
       our_tos_changed: "当社の%{terms_of_use}を変更いたしました。よくお読みいただき、下記からご同意の上、ご利用いただくようお願い申しあげます。"
       password_changed: ~

@@ -214,14 +214,14 @@ fr:
       collect: Recevoir
       collect_rewards: "Recevoir des recompenses"
       connect_my_device: "Connecter mon appareil"
-      connect_to_facebook: "Cliques ici pour te connecter sur Facebook
+      connect_to_facebook: "Cliques ici pour te connecter sur Facebook"
       connect_your_android: "Merci de connecter ton appareil Android"
       connect_your_device: "Merci de connecter ton appareil"
       connected_to_facebook: ~
       connected_to_twitter: ~
       contact_support: "Contacter l'equipe support"
       contact_us: "Nous contacter"
-      cookies_required: "Merci d'autoriser les cookies dans ton navigateur
+      cookies_required: "Merci d'autoriser les cookies dans ton navigateur"
       deactivate: Désactiver
       del_acct_confirm: "Cliques sur le bouton ci-dessous pour désactiver ton compte"
       delete_my_account: "Supprimer mon Compte"
@@ -412,7 +412,7 @@ fr:
       comment: Commentaire
       confirm_password: "Confirmes ton mot de passe"
       continue: Continues
-      copyright: "Copyright & copie; %{year} Tapjoy, Inc. Tous droits réservés. Tapjoy et le logo Tapjoy sont des marques déposées de Tapjoy, Inc. Tous les logos et marques mentionnés appartiennent à leurs propriétaires respectifs."
+      copyright: "Copyright &copie; %{year} Tapjoy, Inc. Tous droits réservés. Tapjoy et le logo Tapjoy sont des marques déposées de Tapjoy, Inc. Tous les logos et marques mentionnés appartiennent à leurs propriétaires respectifs."
       country: Pays
       day: Jour
       earn_verb: "Gagner"

@@ -286,7 +286,7 @@ es:
       issue_registering: "Ha ocurrido un problema con la creación de tu cuenta"
       join_the_community: ~
       join_the_community_blurb: ~
-      last_played: ~
+      last_played: "Último jugado: %{game}"
       link_account_header: ~
       link_account_messaging: ~
       link_account_messaging_android_href: ~
