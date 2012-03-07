@@ -2,13 +2,34 @@
   %h3
     Tapjoy Support
   %div
-    Email: #{ @email }
+    Email: #{ @gamer.email }
     %br
-    UDID: #{ @udid }
+    UDID:
+    = link_to(@device.device_id, device_info_tools_url(:udid => @device.device_id, :host => URI.parse(DASHBOARD_URL).host))
+    %br
+    Offer: STUFF - ADD HYPERLINK
+    %br
+    Publisher Partner: STUFF - ADD HYPERLINK
+    %br
+    Publisher App: STUFF - ADD HYPERLINK
+    %br
+    Publisher User: STUFF - ADD HYPERLINK
+    %br
+    Currency: STUFF - ADD HYPERLINK
+    %br
+    Language Code: #{ @language_code }
     %br
     User Agent: #{ @user_agent }
     %br
-    \-----------------------------------------------------------------
+    Device Type: #{ @device.device_type }
     %br
+    Support Request: STUFF - ADD HYPERLINK
+    %br
+    Click: STUFF - ADD HYPERLINK
+    %br
+    %br
+    Description
+    %br
+    \-----------------------------------------------------------------
 
 %p= @content
