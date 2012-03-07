@@ -338,7 +338,7 @@
       /**
        * Component types, I refer to them as xtypes.
        */
-      xtypes: ['Button'],
+      xtypes: ['Button', 'Carousel'],
       /**
        * input placeholders bucket
        * Manage place-holder text of inputs on browsers which do not support the placeholder attributes.
@@ -378,7 +378,7 @@
         move: Tap.supportsTouch ? 'touchmove' : 'mousemove',
         resize: 'onorientationchange' in window ? 'orientationchange' : 'resize',
         start: Tap.supportsTouch ? 'touchstart' : 'mousedown',
-				touch : Tap.supportsTouch ? 'tap' : 'click'
+        touch : Tap.supportsTouch ? 'tap' : 'click'
       }
     });
 

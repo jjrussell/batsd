@@ -33,13 +33,35 @@
     $t.updateNavigation();
 
     if($t.length < $t.innerWidth)
-      $('.back, .forward').hide();
+      $('.back, .forward', $t.container).hide();
 
     $(window).bind('orientationchange', function(){
       $t.turn();
     });
 
-    $(window).bind('resize', Tapjoy.Utils.debounce($t.resize, 100, false, $t));
+    $(window).bind('resize', Tap.Utils.debounce($t.resize, 100, false, $t));
+
+    if(Tap.supportsTouch){
+      $t.container.live('swipe', function(e, data){
+
+        if(data.direction === 'left'){
+          if($t.forward.hasClass('disabled'))
+            return;
+
+          $t.current++;
+          $t.wrap[0].style.webkitTransform = 'translate3d(-' + ($t.current * $t.container.width()) + 'px, 0, 0)';
+        }else{
+
+          if($t.back.hasClass('disabled'))
+            return;        
+
+          $t.current--;
+          $t.wrap[0].style.webkitTransform = 'translate3d(-' + ($t.current * $t.container.width()) + 'px, 0, 0)';
+        }
+				
+        $t.updateNavigation();
+      });
+    }
 
     $t.container.addClass($t.config.cssClass);
 
@@ -48,9 +70,6 @@
 
   Tap.extend(Carousel.prototype, {
     current: 0,
-    last: null,
-    containerWidth: 0,
-    containerHeight: 0,
     create : function(){
       var $t = this,
           wrap = $(document.createElement('div')),
@@ -63,6 +82,7 @@
       .preventHighlight()
       .appendTo($t.container);
 
+      $t.current = 0;
       $t.wrap = wrap;
     },
 
@@ -91,7 +111,6 @@
         $t.slides.css('width', $t.innerWidth + 'px');
 
       $t.length = $t.slides.length * $t.slides.outerWidth(true);
-
       $t.pages = Math.round($t.length / $t.innerWidth);
     },
 
@@ -120,7 +139,7 @@
 
           $t.updateNavigation();
 
-          $('.ui-joy-carousel-index', wrap).removeClass('active');
+          $('.ui-joy-carousel-index', wrap).removeClass('highlight');
           circle.addClass('active');
         })
         .appendTo(wrap);
@@ -133,7 +152,7 @@
 
       $t.pager = wrap;
     },
-		
+    
     createNavigation : function(){
       var $t = this,
           back = $(document.createElement('div')),
@@ -200,10 +219,10 @@
           forward = $('.forward', $t.container);
 
       if($t.config.hasPager){
-        $('.ui-joy-carousel-index', $t.pagingContainer).removeClass('active');
-        $('.ui-joy-carousel-index:eq(' + $t.current + ')', $t.pagingContainer).addClass('active');
+        $('.ui-joy-carousel-index', $t.pagingContainer).removeClass('highlight');
+        $('.ui-joy-carousel-index:eq(' + $t.current + ')', $t.pagingContainer).addClass('highlight');
       }
-
+			
       if(next > $t.length || $t.config.forceSlideWidth && $t.pages == ($t.current + 1)){
         back.removeClass('disabled');
         forward.addClass('disabled');
@@ -233,22 +252,22 @@
           $t.back.hide();
           $t.forward.hide();
         }
-			}else{
-				if($t.back.is(':hidden')){
-					$t.back.show();
-					$t.forward.show();
-				}
-			}
+      }else{
+        if($t.back.is(':hidden')){
+          $t.back.show();
+          $t.forward.show();
+        }
+      }
 
       $t.updateNavigation();
-    }
+    }   
   });
 
   Tap.apply(Tap, {
     Carousel : function(config){
 
       var $t = $(config.container),
-          config = Tap.extend(this, {}, config || {});
+          config = Tap.extend(this, Tap.Components.Elements, Tap.Components.Carousel, config || {});
 
       return $t.Carousel(config);
     }
