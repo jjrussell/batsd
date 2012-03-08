@@ -748,7 +748,7 @@ class Offer < ActiveRecord::Base
   end
 
   def promotion_platform
-    get_platform == 'All' ? nil : App::PLATFORMS.invert[get_platform].to_sym
+    self.app ?  self.app.platform.to_sym : nil
   end
   memoize :promotion_platform
 

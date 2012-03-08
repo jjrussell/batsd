@@ -37,14 +37,10 @@ class InventoryManagementController < WebsiteController
   end
 
   def per_app
-    if @app
-      @currently_promoted = @app.promoted_offers.map(&:offer_id) unless params[:commit].present?
-    end
   end
 
   def promoted_offers
     if @app
-      @currently_promoted = @app.promoted_offers.map(&:offer_id)
       if params[:promoted_offers]
         (@currently_promoted - params[:promoted_offers]).each do |offer_id|
           @app.promoted_offers.find_by_offer_id(offer_id).destroy
@@ -72,14 +68,15 @@ class InventoryManagementController < WebsiteController
 
   def init_promoted_offers
     @global_offers = []
-    @dropdown_options = { :not_for_nav => true, :submission_form => :per_app_inventory }
+    @dropdown_options = { :not_for_nav => true }
 
     if params[:current_app].present?
       @app = App.find(params[:current_app])
     end
     return unless @app
+    @currently_promoted = @app.promoted_offers.map(&:offer_id)
 
-    app_platform = @app.primary_offer.promotion_platform
+    app_platform = @app.platform.to_sym
     return unless app_platform
 
     @partner.global_promoted_offers.each do |promoted_offer|

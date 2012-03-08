@@ -76,7 +76,7 @@ describe PartnersController do
       @partner1 = @partner = Factory(:partner, :pending_earnings => 10000, :balance => 10000, :users => [@user])
       @partner2 = @partner = Factory(:partner, :pending_earnings => 10000, :balance => 10000, :users => [@user])
 
-      post :make_current, {:id => @partner2.id}
+      post(:make_current, {:id => @partner2.id})
     end
 
     it "clears the last_shown_app session" do
