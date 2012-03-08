@@ -751,7 +751,6 @@ span.gill {
 }
 
 #favorites {
-  width: 480px;
   height: 330px;
   display: none;
 
@@ -759,7 +758,6 @@ span.gill {
     margin: 0;
     padding: 0;
     float: left;
-    width: 480px;
     text-align: center;
 
     .title-text {
@@ -1020,7 +1018,7 @@ span.gill {
   #content .gradient-backdrop,
   #getting-started,
   #benefits,
-  #footer,
+  #footer .partners,
   #content,
   #body,
   #body-title,
@@ -1087,6 +1085,7 @@ span.gill {
 
   #favorites .mobilejoy {
     margin: 5px auto;
+    width: 100%;
   }
 
   #favorites .mobilejoy img {
@@ -1097,11 +1096,9 @@ span.gill {
   }
 
   #favorites {
-    width: 320px;
   }
 
   #favorites div.slide {
-    width: 320px;
     height: 280px;
     margin-bottom: 20px;
   }

@@ -2,7 +2,9 @@ $(document).ready(function(){
   var pager = $('#paging');
 
   $('#favorites').Carousel({
+    forceSlideWidth: true,
     hasPager: true,
+    minHeight: 300,
     pagerContainer: '#paging'
   });
 

@@ -15,9 +15,14 @@ class StoreRank
 
     log_progress "Populate store rankings for iTunes. Task starting."
 
-    App.find_each(:conditions => "platform = 'iphone' AND store_id IS NOT NULL") do |app|
-      known_store_ids[app.store_id] ||= []
-      known_store_ids[app.store_id] += app.offer_ids
+
+    conditions = [ "platform = ? AND #{AppMetadata.quoted_table_name}.store_id IS NOT NULL", 'iphone' ]
+    App.find_each(:joins => [ :app_metadatas ], :conditions => conditions) do |app|
+      app.app_metadatas.each do |data|
+        store_id = data.store_id
+        known_store_ids[store_id] ||= []
+        known_store_ids[store_id] += app.offer_ids
+      end
     end
     log_progress "Finished loading known_store_ids."
 
@@ -276,7 +281,7 @@ class StoreRank
     JSON.load(object.read)
   end
 
-private
+  private
 
   ##
   # Parses an itunes top 200 response, and returns a hash of store_id => rank.

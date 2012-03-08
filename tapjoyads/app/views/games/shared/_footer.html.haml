@@ -3,7 +3,7 @@
     .partners
       %img{ :src => BLANK_IMAGE, :usemap => '#partnersmap' }
       %map{ :name => 'partnersmap' }
-        %area{ :shape => 'rect', :coords => '0,0,60,42', :href => 'http://glu.com', :alt => 'Glu', :target => '_blank' }
+        %area{ :shape => 'rect', :coords => '0,0,60,42', :href => 'http://www.glu.com', :alt => 'Glu', :target => '_blank' }
         %area{ :shape => 'rect', :coords => '60,0,170,42', :href => 'https://papayamobile.com/', :alt => 'Papaya', :target => '_blank' }
         %area{ :shape => 'rect', :coords => '170,0,255,42', :href => 'http://www.zynga.com/', :alt => 'Zynga', :target => '_blank' }
         %area{ :shape => 'rect', :coords => '255,0,350,42', :href => 'http://www.ngmoco.com', :alt => 'ngmoco:)', :target => '_blank' }
@@ -18,7 +18,5 @@
         %li>= link_to(t('text.footer.blog'),        'http://blog.tapjoy.com/')
       %small
         = t('text.footer.copyright')
-
-  - unless current_gamer.blank?
-    .center
-      = render '/shared/truste'
+  .container.center
+    = render '/shared/truste'
