@@ -46,6 +46,10 @@ a:hover {
   cursor: default !important;
 }
 
+.ui-with-action {
+  cursor: pointer !important;
+}
+
 ul,
 li {
   margin: 0;
@@ -1200,11 +1204,24 @@ div.ui-joy-button .get-app {
     border-right: 1px solid #c8c4c4;
     padding: 5px 10px;
   }
-  .list-item:first-child {
+  .social-list-item {
+    @extend .beveled;
+    @extend .ui-with-action;
+    border-bottom: 1px solid #c8c4c4;
+    border-left: 1px solid #c8c4c4;
+    border-right: 1px solid #c8c4c4;
+    padding: 5px 10px;
+  }
+  .social-list-item.checked {
+    background-color: yellow;
+  }
+  .list-item:first-child,
+  .social-list-item:first-child {
     @include rounded-corners-top(4px);
     border-top: 0;
   }
-  .list-item:last-child {
+  .list-item:last-child,
+  .social-list-item:last-child {
     @include rounded-corners-bottom(4px);
   }
 }
@@ -2079,4 +2096,18 @@ div.app {
 #more-games .app {
   margin: 0 25px;
   text-align: center;
+}
+/**
+ * twitter invite
+ */
+.friend-pagination {
+  @extend .clearfix;
+
+  #prev, #next {
+    float: left;
+  }
+
+  #top {
+    float: right;
+  }
 }

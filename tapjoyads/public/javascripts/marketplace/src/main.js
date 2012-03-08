@@ -474,6 +474,21 @@ $(document).ready(function() {
         notify(_t('shared.generic_issue'));
       }
     });
+
+    $(document).bind("twitter-invite-ajax-success", function (ev, form, data) {
+      if (data.success === true) {
+        if (data.gamers.length === 0 && data.non_gamers.length === 0) {
+          notify(_t('shared.generic_issue'));
+        } else {
+          showSuccessMessage(data.gamers, data.non_gamers);
+          $("#friend_filter").val('');
+        }
+      } else if (typeof data.error === "string") {
+        notify(data.error);
+      } else {
+        notify(_t('shared.generic_issue'));
+      }
+    });
   }());
 
   $('.button-bar').each(function(){

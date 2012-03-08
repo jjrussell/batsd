@@ -1,4 +1,6 @@
 class Games::SocialController < GamesController
+  include ActionView::Helpers::TextHelper
+
   rescue_from Errno::ECONNRESET, :with => :handle_errno_exceptions
   rescue_from Errno::ETIMEDOUT, :with => :handle_errno_exceptions
   rescue_from Twitter::Error, :with => :handle_twitter_exceptions
@@ -8,6 +10,11 @@ class Games::SocialController < GamesController
   before_filter :twitter_authenticate, :only => [:invite_twitter_friends, :send_twitter_invites ]
 
   def invites
+    if current_gamer.twitter_id.blank?
+      @twitter_redirect_path = games_social_twitter_start_oauth_path(:advertiser_app_id => "#{params[:advertiser_app_id]}")
+    else
+      @twitter_redirect_path = games_social_invite_twitter_friends_path(:advertiser_app_id => "#{params[:advertiser_app_id]}")
+    end
   end
 
   def friends
@@ -79,7 +86,7 @@ class Games::SocialController < GamesController
   end
 
   def send_twitter_invites
-    friends = params[:friends]
+    friends = params[:friend_selected]
 
     if friends.blank?
       render(:json => { :success => false, :error => "You must select at least one friend before sending out an invite" })

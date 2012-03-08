@@ -291,6 +291,7 @@ en:
       follow_us: "follow us"
       forgot_pass: "Forgot Password?"
       free: Free!
+      friend_filter_label: 'Start Typing a Name'
       generic_issue: "There was an issue. Please try again."
       get_app: "Get App"
       get_it: "Get it!"
@@ -315,6 +316,7 @@ en:
         one: Invite
         other: "Invite %{count} friends"
       invite_title: "Send an Email Invite"
+      invite_twitter_followers: "Invite Twitter Followers!"
       invites_sent_to:
         one: "A Tapjoy invite has been sent to %{name}"
         other: "Tapjoy invites have been sent to %{name}"
@@ -379,6 +381,9 @@ en:
       share_with_your_friends: "Share with your friends"
       social_networks: "Social Networks"
       social_settings: "Social Settings"
+      social_to_next: "NEXT %{page_size}"
+      social_to_prev: "PREV %{page_size}"
+      social_to_top: "TOP &#8679;"
       spread_mobile_joy: "Spread mobile joy"
       start_discovering: "Start discovering with Tapjoy for free"
       tap_that: "Just tap %{icon} and select %{button}"
@@ -391,6 +396,7 @@ en:
       thats_you: "that's you"
       tos_acknowledge_html: "By checking this box I assert that I agree to the %{terms_of_use} & %{privacy_policy}"
       tos_change_acknowledge: "By checking this box I assert that I agree to the terms of service."
+      twitter_invite_title: "Please Select Twitter Friends to Invite"
       unable_to_process: "Sorry we are unable to process your request"
       unlock_mobile_joy: "Unlock Mobile Joy"
       unmark_as_favorite: "Remove from Favorites"

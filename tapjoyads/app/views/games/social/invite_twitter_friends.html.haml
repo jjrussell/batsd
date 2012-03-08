@@ -1,1 +1,31 @@
-= render 'invite_social_friends', :channel => 'twitter', :friends => @twitter_friends, :send_path => games_social_send_twitter_invites_path, :invite_path => games_social_invite_twitter_friends_path, :abbreviation => "TWITTER"
+.panel
+  .page-header
+    .container
+      .left.ml10.pt3
+        .big-title.mt10
+          = t('text.games.twitter_invite_title')
+  .container
+    .mod
+      - form_tag games_social_send_twitter_invites_path, :class => "ajax-submit twitter-invite-form", "data-success-event" => "twitter-invite-ajax-success" do
+        .mod.pb3
+          = t('text.shared.friends')
+        .mod.form-section.pb5
+          = text_field_tag 'friend_filter', nil, :placeholder => t('text.games.friend_filter_label'), :class => "ui-joy-input"
+          = text_field_tag 'friend_selected', nil, :required => :required, :hidden => true
+          = text_field_tag 'advertiser_app_id', params[:advertiser_app_id], :hidden => true
+          = text_field_tag 'ajax', true, :hidden => true
+        .mod.friend-pagination
+          = link_to(t('text.games.social_to_prev', :page_size => @page_size), '#', :id => 'prev')
+        %ul.list-container.friend_list
+        .mod.friend-pagination
+          = link_to(t('text.games.social_to_next', :page_size => @page_size), '#', :id => 'next')
+          = link_to(t('text.games.social_to_top'), '#', :id => 'top')
+        .mod.form-section.pb5
+          = submit_tag t("text.shared.submit"), :class => "ui-joy-button primary enable-when-valid"
+
+- content_for :page_javascript do
+  :plain
+    window.twitterOptions = {
+      pageSize:      #{@page_size},
+      socialFriends: #{@twitter_friends.to_json},
+    };

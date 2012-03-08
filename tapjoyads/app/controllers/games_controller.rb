@@ -180,7 +180,7 @@ class GamesController < ApplicationController
 
   def social_feature_redirect_path
     return request.env['HTTP_REFERER'] if request.env['HTTP_REFERER']
-    "#{WEBSITE_URL}#{edit_games_gamer_path}"
+    "#{WEBSITE_URL}#{games_social_index_path}"
   end
 
   def current_gamer
