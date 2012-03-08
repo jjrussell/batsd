@@ -286,6 +286,9 @@ en:
       find_and_invite_friends: "Find and Invite Friends"
       find_friends_from_facebook: "Find friends from Facebook"
       post_to_facebook: Post to Facebook!
+      facebook_connect_failed: Failed to connect to your Facebook profile
+      please_connect_facebook: Please connect your Facebook account
+      grant_permissions_for_invite: "Please grant us both permissions before sending out an invite."
       find_friends_from_twitter: "Find friends from Twitter"
       find_friends_on_tapjoy: "Find friends already using Tapjoy via other networks"
       find_more_friends: "Find more friends"
