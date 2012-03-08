@@ -214,6 +214,7 @@ en:
       developers: Developers
       privacy: "Privacy Policy"
     games:
+      scheduled_for_deletion: 'Your account has been deactivated and scheduled for deletion!'
       about_body: "A better way to love the apps you have and find the apps you'll love."
       about_title: "\"Somehow it knows exactly what apps I like.\""
       account_created_body: "Your Tapjoy account was successfully created!"
