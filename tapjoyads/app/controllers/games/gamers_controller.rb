@@ -3,8 +3,7 @@ class Games::GamersController < GamesController
   rescue_from Twitter::Error, :with => :handle_twitter_exceptions
   rescue_from Errno::ECONNRESET, :with => :handle_errno_exceptions
   rescue_from Errno::ETIMEDOUT, :with => :handle_errno_exceptions
-  before_filter :set_profile, :only => [ :show, :edit, :accept_tos, :password, :prefs, :social, :update_password, :confirm_delete ]
-  before_filter :offline_facebook_authenticate, :only => :connect_facebook_account
+  before_filter :set_profile, :only => [ :show, :edit, :accept_tos, :password, :prefs, :update_password, :confirm_delete ]
 
   def new
     @gamer = Gamer.new
@@ -78,9 +77,6 @@ class Games::GamersController < GamesController
     }
   end
 
-  def connect_facebook_account
-    redirect_to :action => :social
-  end
 
   def update_password
     @gamer.safe_update_attributes(params[:gamer], [ :password, :password_confirmation ])
@@ -96,7 +92,7 @@ class Games::GamersController < GamesController
   def destroy
     current_gamer.deactivate!
     GamesMailer.deliver_delete_gamer(current_gamer)
-    flash[:notice] = 'Your account has been deactivated and scheduled for deletion!'
+    flash[:notice] = t('text.games.scheduled_for_deletion')
     redirect_to games_logout_path
   end
 

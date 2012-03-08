@@ -68,7 +68,7 @@ class GamesController < ApplicationController
       begin
         current_gamer.gamer_profile.update_facebook_info!(current_facebook_user)
       rescue
-        flash[:error] = @error_msg || 'Failed connecting to Facebook profile'
+        flash[:error] = @error_msg || t('text.games.facebook_connect_failed')
         redirect_to social_feature_redirect_path
       end
       unless has_permissions?
@@ -80,7 +80,7 @@ class GamesController < ApplicationController
         dissociate_and_redirect
       end
     else
-      flash[:error] = @error_msg ||'Please connect Facebook with Tapjoy.'
+      flash[:error] = @error_msg || t('text.games.please_connect_facebook')
       redirect_to social_feature_redirect_path
     end
   end
@@ -88,7 +88,7 @@ class GamesController < ApplicationController
   def has_permissions?
     begin
       unless current_facebook_user.has_permission?(:offline_access) && current_facebook_user.has_permission?(:publish_stream)
-        @error_msg = "Please grant us both permissions before sending out an invite."
+        @error_msg = t('grant_permissions_for_invite')
       end
     rescue
     end

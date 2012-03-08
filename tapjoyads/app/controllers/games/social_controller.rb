@@ -4,10 +4,12 @@ class Games::SocialController < GamesController
   rescue_from Errno::ECONNRESET, :with => :handle_errno_exceptions
   rescue_from Errno::ETIMEDOUT, :with => :handle_errno_exceptions
   rescue_from Twitter::Error, :with => :handle_twitter_exceptions
+  rescue_from Mogli::Client::ClientException, :with => :handle_mogli_exceptions
 
   before_filter :require_gamer
   before_filter :validate_recipients, :only => [ :send_email_invites ]
   before_filter :twitter_authenticate, :only => [:invite_twitter_friends, :send_twitter_invites ]
+  before_filter :offline_facebook_authenticate, :only => :connect_facebook_account
 
   def invites
     if current_gamer.twitter_id.blank?
@@ -30,6 +32,11 @@ class Games::SocialController < GamesController
       :following => Gamer.find_all_by_id(Friendship.following_ids(@current_gamer.id)),
       :followers => Gamer.find_all_by_id(Friendship.follower_ids(@current_gamer.id))
     }
+  end
+
+  def connect_facebook_account
+    flash[:notice] = t 'text.games.connected_to_facebook'
+    redirect_to games_social_index_path
   end
 
   def invite_email_friends

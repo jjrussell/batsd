@@ -207,13 +207,14 @@ en:
       title: "Earn %{currency}"
       try_out: "Try out"
     footer:
-      about: About Tapjoy
+      about: "About Tapjoy"
       advertisers: Advertisers
       blog: Blog
-      developers: Developers
-      privacy: Privacy Policy
       copyright: "Copyright &copy; 2012 Tapjoy, Inc. All Rights Reserved. Tapjoy and the Tapjoy logo are trademarks or registered trademarks of Tapjoy, Inc.  All third party logos and trademarks mentioned are the property of their respective owners."
+      developers: Developers
+      privacy: "Privacy Policy"
     games:
+      scheduled_for_deletion: 'Your account has been deactivated and scheduled for deletion!'
       about_body: "A better way to love the apps you have and find the apps you'll love."
       about_title: "\"Somehow it knows exactly what apps I like.\""
       account_created_body: "Your Tapjoy account was successfully created!"
@@ -225,7 +226,7 @@ en:
       advertisers_body: "Reach millions of users and gain exposure for your products"
       advertisers_title: Advertisers
       allow_marketing_emails: "Allow Tapjoy to send me marketing emails"
-      almost_done: Almost done!
+      almost_done: "Almost done!"
       already_registered:
         one: "%{name} has already registered, you are now following him/her."
         other: "%{name} have already registered, you are now following them."
@@ -238,31 +239,32 @@ en:
       cant_fetch_offers: "There was an issue fetching more offers. Please try again."
       change: change
       change_linked_account: "Change Linked Account"
-      choose_section: Choose a Section
+      choose_section: "Choose a Section"
+      close: close
       collect: Collect
       collect_rewards: "Collect rewards"
       connect_my_device: "Connect My Device"
+      connect_to_facebook: "Click to Connect to Facebook"
       connect_your_android: "Please connect your Android device"
       connect_your_device: "Please connect your device"
-      connect_to_facebook: Click to Connect to Facebook
-      connected_to_twitter: Connected to Twitter
-      contact_support: Contact Support
-      contact_us: Contact Us
-      cookies_required: Please enable cookies in your browser
       connected_to_facebook: "Connected to Facebook"
+      connected_to_twitter: "Connected to Twitter"
+      contact_support: "Contact Support"
+      contact_us: "Contact Us"
+      cookies_required: "Please enable cookies in your browser"
       deactivate: Deactivate
       del_acct_confirm: "Click on the button below to deactivate your account. Once an account has been deactivated for %{days_before_deletion} days, it will be completely deleted. We cannot recover your account once it has been deleted."
       delete_my_account: "Delete My Account"
       developers_body: "Drive significant revenue to your apps with our monetization tools"
       developers_title: Developers
-      discover_apps: Join the millions of mobile app lovers on Tapjoy and discover the best-rated apps. Get started today!
-      download_now: Download now
+      discover_apps: "Join the millions of mobile app lovers on Tapjoy and discover the best-rated apps. Get started today!"
+      download_now: "Download now"
       earn: "Earn %{currency}"
       earn_rewards: "Earn rewards"
       earn_title: "Complete any of the offers below to earn %{currency} for %{app_name}"
       earning_rewards: "Tapjoy is the ultimate way to earn rewards in your favorite mobile apps all in one place."
       edit: edit
-      email_device_link: Email device link
+      email_device_link: "Email device link"
       email_notification: "Email Notifications"
       enable_javascript: "Please go into your browser settings and enable JavaScript to continue using Tapjoy."
       enter_birthdate: "Please enter your birthdate"
@@ -273,17 +275,20 @@ en:
       enter_platform: "Please choose iOS or Android"
       enter_tos: "Please agree to the terms and conditions"
       enter_valid_email: "Enter a valid email address"
-      favorites: Favorites
       error_mark_as_favorite: "Error marking app as Favorite"
       error_unmark_as_favorite: "Error unmarking app as Favorite"
       failed_to_change_linked: "Failed to change linked account."
       favorite_app: "Favorite App"
       favorite_apps: "Favorite Apps"
       favorite_category: "Favorite Category"
+      favorites: Favorites
       feedback: Feedback
       find_and_invite_friends: "Find and Invite Friends"
       find_friends_from_facebook: "Find friends from Facebook"
       post_to_facebook: Post to Facebook!
+      facebook_connect_failed: Failed to connect to your Facebook profile
+      please_connect_facebook: Please connect your Facebook account
+      grant_permissions_for_invite: "Please grant us both permissions before sending out an invite."
       find_friends_from_twitter: "Find friends from Twitter"
       find_friends_on_tapjoy: "Find friends already using Tapjoy via other networks"
       find_more_friends: "Find more friends"
@@ -299,9 +304,9 @@ en:
       how_it_works_body: "All your games are listed below. Click the buttons next to the apps to start earning currency."
       how_it_works_title: "How does it work?"
       install_and_run: "Install and run %{name}"
-      install_android_app: Download the Tapjoy app on your Android device to get started.
-      install_profile: Install your profile on the next page and begin discovering the apps you love!
-      invalid_fields: Invalid entry
+      install_android_app: "Download the Tapjoy app on your Android device to get started."
+      install_profile: "Install your profile on the next page and begin discovering the apps you love!"
+      invalid_fields: "Invalid entry"
       invite: "Invite Your Friends!"
       invite_by_email: "Invite by Email"
       invite_email_body: |-
@@ -324,10 +329,10 @@ en:
       join_the_community: "Join the community"
       join_the_community_blurb: "Discover more with Tapjoy community app ratings and reviews. Get started today and include your own!"
       last_played: "Last played: %{game}"
-      link_account_header: Tapjoy is your one stop shop to discover the hottest apps while also earning currency in apps you already play. To get the full Tapjoy experience, you'll need to connect your device.
-      link_account_messaging: Tapjoy is your one stop shop to discover the hottest apps on iOS and Android while also earning currency in apps you already play. In order to get the full Tapjoy experience, you\'ll need to connect your iOS or Android device. Simply return to %{tjm_url} on your iOS device or %{android_market_url} on your Android device to get started. In the mean time, feel free to check out the site and create your profile so we can offer you personalized recommendations.
+      link_account_header: "Tapjoy is your one stop shop to discover the hottest apps while also earning currency in apps you already play. To get the full Tapjoy experience, you'll need to connect your device."
+      link_account_messaging: "Tapjoy is your one stop shop to discover the hottest apps on iOS and Android while also earning currency in apps you already play. In order to get the full Tapjoy experience, you'll need to connect your iOS or Android device. Simply return to %{tjm_url} on your iOS device or %{android_market_url} on your Android device to get started. In the mean time, feel free to check out the site and create your profile so we can offer you personalized recommendations."
+      link_account_messaging_android_href: "download the Android app"
       link_account_messaging_tjm_href: www.tapjoy.com
-      link_account_messaging_android_href: download the Android app
       link_my_facebook: "Link My Facebook"
       load_more: "Load More"
       loading: Loading...
@@ -344,29 +349,28 @@ en:
       no_javascript: "Please go into your browser settings and enable JavaScript to continue using Tapjoy."
       none_selected: "None Selected"
       on_my: "on my %{device_name}"
-      close: "close"
       oops: Oops!
       or_learn_more: "or learn more"
       other_options: "Other Options"
       our_tos_changed: "Our %{terms_of_use} have changed. Please review and indicate your agreement below."
       password_changed: "Your password has been changed."
-      password_non_match: Password and Confirmation do not match
+      password_non_match: "Password and Confirmation do not match"
       post_to_facebook_content: "Check out Tapjoy where you can discover the best new apps and games, while also earning currency in apps you love. It's free to join so visit tapjoy.com today to start getting app recommendations just for you."
-      privacy_policy_href: privacy policy
+      privacy_policy_href: "privacy policy"
       profile: Me
-      profile_error: There was an error updating your profile.
-      profile_update: Your profile has been updated.
-      provide_other_email: Please provide an email other than yourself
-      recipients_label: Use commas to separate multiple emails"
-      recommend_apps: Tapjoy personalizes app recommendations for you based on the apps you love to use.
-      recommendations_smart: Smart Recommendations
+      profile_error: "There was an error updating your profile."
+      profile_update: "Your profile has been updated."
+      provide_other_email: "Please provide an email other than yourself"
+      recipients_label: "Use commas to separate multiple emails"
+      recommend_apps: "Tapjoy personalizes app recommendations for you based on the apps you love to use."
       recommendations: Recommendations
+      recommendations_smart: "Smart Recommendations"
       registering: Registering
       report_bug: "Report Bug"
-      reset_password_message: Enter the email address associated with your account and we will send you a link to reset your password.
-      reset_password_message_submit: You should receive an email with instructions to reset your password in the next few minutes.
+      reset_password_message: "Enter the email address associated with your account and we will send you a link to reset your password."
+      reset_password_message_submit: "You should receive an email with instructions to reset your password in the next few minutes."
       reset_password_retry: "If you are still having problems logging in, you can %{reset_password_url} or email"
-      reset_password_retry_url_text: request another password reset email
+      reset_password_retry_url_text: "request another password reset email"
       review_app_name: "Review %{app_name}"
       review_created: "Successfully reviewed this app."
       review_issue: "There was an issue. Please try again later."
@@ -400,7 +404,7 @@ en:
       unable_to_process: "Sorry we are unable to process your request"
       unlock_mobile_joy: "Unlock Mobile Joy"
       unmark_as_favorite: "Remove from Favorites"
-      welcome_tapjoy: Welcome to Tapjoy!
+      welcome_tapjoy: "Welcome to Tapjoy!"
       wifi_required: "WiFi Required"
       wrong_device: "wrong device?"
       you_are_following: "You're following (%{count})"
