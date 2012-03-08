@@ -191,7 +191,6 @@ class OneOffs
 
     if object.changed?
       puts "#{object.class.name} #{object.id} has changed."
-      puts object.test_devices
       object.save!
       activity_log.finalize_states
       activity_log.save
