@@ -66,23 +66,5 @@ describe SurveyResultsController do
       response.should render_template('new')
     end
 
-    it 'saves a SurveyResult' do
-      stub_device
-
-      controller.expects(:geoip_data).returns('geoip data')
-      @mock_click.expects(:installed_at?).returns(false)
-      @mock_click.expects(:key).returns('5')
-      mock_result = mock()
-
-      SurveyResult.expects(:new).returns(mock_result)
-      mock_result.expects(:udid=).with(@udid)
-      mock_result.expects(:click_key=).with('5')
-      mock_result.expects(:geoip_data=).with('geoip data')
-      mock_result.expects(:answers=).with({ @survey_question.text => 'a' })
-      mock_result.expects(:save)
-
-      post(:create, @request_params)
-    end
-
   end
 end
