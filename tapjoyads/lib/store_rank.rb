@@ -281,7 +281,7 @@ class StoreRank
     JSON.load(object.read)
   end
 
-private
+  private
 
   ##
   # Parses an itunes top 200 response, and returns a hash of store_id => rank.
