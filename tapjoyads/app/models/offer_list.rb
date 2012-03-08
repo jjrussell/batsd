@@ -1,6 +1,8 @@
 class OfferList
   attr_reader :offers
 
+  OFFER_LIST_KEYS = %w( type device_type platform_name udid source )
+
   def initialize(options = {})
     @publisher_app              = options.delete(:publisher_app)
     @device                     = options.delete(:device)

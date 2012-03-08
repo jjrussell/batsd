@@ -5,8 +5,7 @@ class Tools::OfferListsController < WebsiteController
 
   def index
     if params[:type]
-      offer_list_keys = [ 'type', 'device_type', 'platform_name', 'udid' ]
-      offer_list_params = params.reject { |k,v| !offer_list_keys.include?(k) }
+      offer_list_params = params.reject { |k,v| !OfferList::OFFER_LIST_KEYS.include?(k) }
       udid = offer_list_params.delete(:udid)
       offer_list_params[:device] = Device.new(:key => udid) if params[:udid].present?
       offer_list = OfferList.new(offer_list_params)

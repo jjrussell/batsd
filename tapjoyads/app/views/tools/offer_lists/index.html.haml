@@ -20,6 +20,9 @@
       %td= label_tag :udid, 'Device ID'
       %td= text_field_tag :udid, params[:udid], :size => '55'
     %tr
+      %td= label_tag :source, 'Offer Source'
+      %td= select_tag :source, options_for_select(Offer::ALL_SOURCES.collect { |source| [source, source] }.insert(0, ['[none]','']), params[:source])
+    %tr
       %td{ :colspan => 2 }= submit_tag('Submit')
 
 - if @offers

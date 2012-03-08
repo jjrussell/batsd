@@ -27,6 +27,8 @@ module Offer::Rejecting
     [ '7df94075-16c9-4c6a-a170-50e1e8fc9991', '3712bd73-eda2-4ca9-934a-3465cf38ef35' ] => [ '7df94075-16c9-4c6a-a170-50e1e8fc9991', '3712bd73-eda2-4ca9-934a-3465cf38ef35' ],
   }
 
+  TAPJOY_GAMES_RETARGETED_OFFERS = ['2107dd6a-a8b7-4e31-a52b-57a1a74ddbc1', '12b7ea33-8fde-4297-bae9-b7cb444897dc', '8183ce57-8ee4-46c0-ab50-4b10862e2a27']
+
   def postcache_reject_reasons(publisher_app, device, currency, device_type, geoip_data, app_version,
       direct_pay_providers, type, hide_rewarded_app_installs, library_version, os_version,
       screen_layout_size, video_offer_ids, source, all_videos, mobile_carrier_code, early_out = true)
@@ -56,7 +58,7 @@ module Offer::Rejecting
       { :method => :carriers_reject?, :parameters => [mobile_carrier_code], :reason => 'carriers' },
     ]
     reject_functions.each do |function_hash|
-      if self.send(function_hash[:method], *function_hash[:parameters])
+      if send(function_hash[:method], *function_hash[:parameters])
         reasons << function_hash[:reason]
         break if early_out
       end
@@ -235,7 +237,6 @@ module Offer::Rejecting
     item_type == 'VideoOffer' && !video_offer_ids.include?(id)
   end
 
-  TAPJOY_GAMES_RETARGETED_OFFERS = ['2107dd6a-a8b7-4e31-a52b-57a1a74ddbc1', '12b7ea33-8fde-4297-bae9-b7cb444897dc', '8183ce57-8ee4-46c0-ab50-4b10862e2a27']
   def tapjoy_games_retargeting_reject?(device)
     TAPJOY_GAMES_RETARGETED_OFFERS.include?(item_id) && device && !device.has_app?(TAPJOY_GAMES_REGISTRATION_OFFER_ID)
   end
