@@ -18,7 +18,7 @@
           %td= "(#{brand.offers.size}) " + truncate(brand.offers.join(', '), :length => 300)
           %td.nowrap= brand.created_at.to_s(:pub)
           %td= link_to('Edit', edit_tools_brand_path(brand.id))
-
+= will_paginate(@brands)
 - content_for :page_javascript do
   :plain
     $(function() {
