@@ -206,7 +206,13 @@ class Device < SimpledbShardedResource
   def handle_sdkless_click!(offer, now)
     if offer.sdkless?
       temp_sdkless_clicks = sdkless_clicks
-      temp_sdkless_clicks[offer.third_party_data] = { 'click_time' => now.to_i, 'item_id' => offer.item_id }
+
+      hash_key = offer.third_party_data
+      if offer.get_platform == 'iOS'
+        hash_key = "tjc#{offer.third_party_data}"
+      end
+
+      temp_sdkless_clicks[hash_key] = { 'click_time' => now.to_i, 'item_id' => offer.item_id }
       temp_sdkless_clicks.reject! { |key, value| value['click_time'] <= (now - 2.days).to_i }
       self.sdkless_clicks = temp_sdkless_clicks
       @retry_save_on_fail = true
