@@ -169,7 +169,7 @@ class Offer < ActiveRecord::Base
   validates_each :sdkless, :allow_blank => false, :allow_nil => false do |record, attribute, value|
     if value
       record.get_device_types(true)
-      record.errors.add(attribute, "can only be enabled for Android-only offers") unless record.get_platform(true) == 'Android'
+      record.errors.add(attribute, "can only be enabled for Android or iOS offers") unless record.get_platform(true) == 'Android'|| record.get_platform(true) == 'iOS'
       record.errors.add(attribute, "cannot be enabled for pay-per-click offers") if record.pay_per_click?
       record.errors.add(attribute, "can only be enabled for 'App' offers") unless record.item_type == 'App'
     end
@@ -232,15 +232,16 @@ class Offer < ActiveRecord::Base
     :select => PAPAYA_OFFER_COLUMNS
 
   delegate :balance, :pending_earnings, :name, :cs_contact_email, :approved_publisher?, :rev_share, :to => :partner, :prefix => true
-  memoize :partner_balance
+  delegate :name, :id, :formatted_active_gamer_count, :to => :app, :prefix => true, :allow_nil => true
+  memoize :partner_balance, :app_formatted_active_gamer_count
 
   alias_method :events, :offer_events
   alias_method :random, :rand
 
   json_set_field :device_types, :screen_layout_sizes, :countries, :dma_codes, :regions,
-    :approved_sources, :carriers
+    :approved_sources, :carriers, :cities
   memoize :get_device_types, :get_screen_layout_sizes, :get_countries, :get_dma_codes,
-    :get_regions, :get_approved_sources, :get_carriers
+    :get_regions, :get_approved_sources, :get_carriers, :get_cities
 
   def clone
     super.tap do |clone|

@@ -170,6 +170,24 @@ describe Offer do
     @offer.send(:geoip_reject?, geoip_data).should == true
   end
 
+  it "rejects depending on cities" do
+    geoip_data = { :city => nil }
+    @offer.send(:geoip_reject?, geoip_data).should == false
+    geoip_data = { :city => "San Francisco" }
+    @offer.send(:geoip_reject?, geoip_data).should == false
+    geoip_data = { :city => "Tokyo" }
+    @offer.send(:geoip_reject?, geoip_data).should == false
+
+    @offer.cities = ["San Francisco"].to_json
+    @offer.get_cities(true)
+    geoip_data = { :city => nil }
+    @offer.send(:geoip_reject?, geoip_data).should == true
+    geoip_data = { :city => "San Francisco" }
+    @offer.send(:geoip_reject?, geoip_data).should == false
+    geoip_data = { :city => "Tokyo" }
+    @offer.send(:geoip_reject?, geoip_data).should == true
+  end
+
   it "rejects depending on carriers" do
     @offer.carriers = ["Verizon", "NTT DoCoMo"].to_json
     mobile_carrier_code = '440.01'
@@ -220,7 +238,7 @@ describe Offer do
                                   'cookie_tracking', 'min_os_version', 'screen_layout_sizes',
                                   'interval', 'banner_creatives', 'dma_codes', 'regions',
                                   'wifi_only', 'approved_sources', 'approved_banner_creatives',
-                                  'sdkless', 'carriers'
+                                  'sdkless', 'carriers', 'cities'
                                 ].sort
   end
 
@@ -711,12 +729,17 @@ describe Offer do
         @offer.should be_valid
       end
 
+      it "allows iOS-only offers" do
+         @offer.device_types = %w( iphone ipad itouch ).to_json
+         @offer.should be_valid
+      end
+
       it "allows app offers" do
         @offer.should be_valid
       end
 
-      it "disallows non-Android offers" do
-        @offer.device_types = %w( iphone ipad itouch ).to_json
+      it "disallows offers that are not Android or iOS" do
+        @offer.device_types = %w( windows ).to_json
         @offer.should_not be_valid
       end
 

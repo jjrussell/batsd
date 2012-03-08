@@ -4,7 +4,7 @@ class HeaderParser
     when /iphone;/i
       'iphone'
     when /ipod;/i
-      'ipod'
+      'itouch'
     when /ipad;/i
       'ipad'
     when /android/i

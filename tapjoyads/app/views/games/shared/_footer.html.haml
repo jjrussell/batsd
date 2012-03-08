@@ -1,0 +1,22 @@
+#footer
+  - if current_gamer.blank?
+    .partners
+      %img{ :src => BLANK_IMAGE, :usemap => '#partnersmap' }
+      %map{ :name => 'partnersmap' }
+        %area{ :shape => 'rect', :coords => '0,0,60,42', :href => 'http://www.glu.com', :alt => 'Glu', :target => '_blank' }
+        %area{ :shape => 'rect', :coords => '60,0,170,42', :href => 'https://papayamobile.com/', :alt => 'Papaya', :target => '_blank' }
+        %area{ :shape => 'rect', :coords => '170,0,255,42', :href => 'http://www.zynga.com/', :alt => 'Zynga', :target => '_blank' }
+        %area{ :shape => 'rect', :coords => '255,0,350,42', :href => 'http://www.ngmoco.com', :alt => 'ngmoco:)', :target => '_blank' }
+
+  .container
+    .links
+      %ul
+        %li>= link_to(t('text.footer.developers'),  'http://developers.tapjoy.com/')
+        %li>= link_to(t('text.footer.advertisers'), 'http://advertisers.tapjoy.com/')
+        %li>= link_to(t('text.footer.about'),       'http://info.tapjoy.com/about-tapjoy/')
+        %li>= link_to(t('text.footer.privacy'),     'http://info.tapjoy.com/about-tapjoy/privacy-policy/')
+        %li>= link_to(t('text.footer.blog'),        'http://blog.tapjoy.com/')
+      %small
+        = t('text.footer.copyright')
+  .container.center
+    = render '/shared/truste'
