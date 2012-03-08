@@ -33,11 +33,9 @@
 - content_for :page_javascript do
   :plain
       $('#search_box').autocomplete({ source: function(request,response){
-          var url = '#{search_offers_path}';
+          var url = '#{search_offers_path}' + '?term=' + request.term +  '&selected_offers[]=' + offers.join('&selected_offers[]=');
           var offers = $('#offers').val() || [];
-          if(offers.length > 0){
-            url += '?term='+request.term+'&selected_offers[]=' + offers.join('&selected_offers[]=');
-          }
+          ;
           $.ajax({
             url: url,
             dataType: "json",
