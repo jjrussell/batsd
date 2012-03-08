@@ -81,6 +81,7 @@ Rails::Initializer.run do |config|
   config.gem 'oauth', :version => '0.4.5'
   config.gem 'execjs', :version => '1.3.0'
   config.gem 'uglifier', :version => '1.2.3'
+  config.gem 'tilt', :version => '1.3.3'
 
   # Only load the plugins named here, in the order given. By default, all plugins
   # in vendor/plugins are loaded in alphabetical order.
