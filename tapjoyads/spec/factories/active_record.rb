@@ -332,5 +332,6 @@ FactoryGirl.define do
     weight        1
     offer         { Factory(:app).primary_offer }
     author        { Factory(:employee) }
+    button_url    'https://www.tapjoy.com'
   end
 end

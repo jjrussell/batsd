@@ -39,7 +39,7 @@ class App < ActiveRecord::Base
       :store_url => 'http://phobos.apple.com/WebObjects/MZStore.woa/wa/viewSoftware?id=STORE_ID&mt=8',
       :default_actions_file_name => "TJCPPA.h",
       :versions => [ '2.0', '2.1', '2.2', '3.0', '3.1', '3.2', '4.0', '4.1', '4.2', '4.3', '5.0' ],
-      :cell_download_limit_bytes => 20.megabytes
+      :cell_download_limit_bytes => 50.megabytes
     },
     'windows' => {
       :expected_device_types => Offer::WINDOWS_DEVICES,
@@ -108,6 +108,7 @@ class App < ActiveRecord::Base
   delegate :conversion_rate, :to => :primary_currency, :prefix => true
   delegate :store_id, :store_id?, :description, :age_rating, :file_size_bytes, :supported_devices, :supported_devices?, :released_at, :released_at?, :user_rating,
     :to => :primary_app_metadata, :allow_nil => true
+  delegate :name, :to => :partner, :prefix => true
 
   # TODO: remove these columns from apps table definition and remove this method
   TO_BE_DELETED = %w(description price store_id age_rating file_size_bytes supported_devices released_at user_rating categories papaya_user_count)
@@ -244,6 +245,14 @@ class App < ActiveRecord::Base
 
   def get_icon_url(options = {})
     Offer.get_icon_url({:icon_id => Offer.hashed_icon_id(id)}.merge(options))
+  end
+
+  def formatted_active_gamer_count(increment = 1000, max = 10000)
+    return active_gamer_count if active_gamer_count <= increment
+
+    rounded = [ active_gamer_count - (active_gamer_count % increment), max ].min
+
+    "#{rounded}+"
   end
 
   def can_have_new_currency?
@@ -394,7 +403,9 @@ class App < ActiveRecord::Base
   end
 
   def create_tracking_offer_for(tracked_for, options = {})
-    device_types = options.delete(:device_types) { get_offer_device_types.to_json }
+    device_types   = options.delete(:device_types)   { get_offer_device_types.to_json }
+    url_overridden = options.delete(:url_overridden) { false }
+    url            = options.delete(:url)            { store_url }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
 
     offer = Offer.new({
@@ -402,7 +413,8 @@ class App < ActiveRecord::Base
       :tracking_for     => tracked_for,
       :partner          => partner,
       :name             => name,
-      :url              => store_url,
+      :url_overridden   => url_overridden,
+      :url              => url,
       :device_types     => device_types,
       :price            => 0,
       :bid              => 0,

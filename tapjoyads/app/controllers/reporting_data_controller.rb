@@ -4,10 +4,11 @@ class ReportingDataController < WebsiteController
   layout false
 
   before_filter :lookup_user_and_authenticate
-  before_filter :lookup_stats, :only => :index
 
-  rate_limit :index, :key => proc { |c| "#{c.params[:username]}.#{c.params[:partner_id]}" }, :max_calls => 6, :time_limit => 5.minutes, :wait_time => 1.minute, :status => 420
+  rate_limit :index, :key => proc { |c| "#{c.params[:username]}.#{c.params[:partner_id]}" }, :max_calls => 6, :time_limit => 5.minutes, :wait_time => 1.minute, :status => 420, :unless => proc {|c| c.params[:cache] == '1'}
   rate_limit :udids, :key => proc { |c| "#{c.params[:username]}.#{c.params[:offer_id]}" }, :max_calls => 2, :time_limit => 1.hour, :wait_time => 1.hour, :status => 420
+
+  before_filter :lookup_stats, :only => :index
 
   def index
     respond_to do |format|
@@ -88,11 +89,25 @@ private
     partner_ids = partners.map(&:id)
 
     Offer.find(:all, :conditions => ["partner_id IN (?)", partner_ids], :limit => "#{need_to_skip},#{need_to_show}").each do |offer|
-      appstats = Appstats.new(offer.id, {
-        :start_time => start_time,
-        :end_time => start_time + 24.hours})
+      appstats = maybe_cache("reporting_data.#{offer.id}.#{start_time.to_i}") do
+        Appstats.new(offer.id, {
+          :start_time => start_time,
+          :end_time   => start_time + 24.hours,
+          :stat_types => (Stats::STAT_TYPES - ['ranks']),
+        })
+      end
 
       @appstats_list << [ offer, appstats ]
+    end
+  end
+
+  def maybe_cache(key)
+    if params[:cache] == '1'
+      Mc.get_and_put(key, false, 2.minutes) do
+        yield
+      end
+    else
+      yield
     end
   end
 end

@@ -336,6 +336,10 @@ describe GetOffersController do
       assigns(:server_to_server).should == false
       get(:webpage, @params)
       assigns(:server_to_server).should == false
+      get(:index, {:data => ObjectEncryptor.encrypt(@params.merge(:json => 1)) } )
+      assigns(:server_to_server).should == false
+      get(:webpage, @params.merge(:library_version => 'SERVER'))
+      assigns(:server_to_server).should == true
     end
   end
 end

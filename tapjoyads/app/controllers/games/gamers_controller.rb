@@ -2,11 +2,17 @@ class Games::GamersController < GamesController
   rescue_from Mogli::Client::ClientException, :with => :handle_mogli_exceptions
   rescue_from Errno::ECONNRESET, :with => :handle_errno_exceptions
   rescue_from Errno::ETIMEDOUT, :with => :handle_errno_exceptions
-  before_filter :set_profile, :only => [ :edit, :accept_tos, :password, :prefs, :social, :update_password, :confirm_delete ]
+  before_filter :set_profile, :only => [ :show, :edit, :accept_tos, :password, :prefs, :social, :update_password, :confirm_delete ]
   before_filter :offline_facebook_authenticate, :only => :connect_facebook_account
+
+  def new
+    @gamer = Gamer.new
+    redirect_to games_root_path if current_gamer.present?
+  end
 
   def create
     @gamer = Gamer.new do |g|
+      g.nickname              = params[:gamer][:nickname]
       g.email                 = params[:gamer][:email]
       g.password              = params[:gamer][:password]
       g.password_confirmation = params[:gamer][:password]
@@ -23,7 +29,7 @@ class Games::GamersController < GamesController
         raise e
       end
     end
-    @gamer_profile = GamerProfile.new(:birthdate => birthdate)
+    @gamer_profile = GamerProfile.new(:birthdate => birthdate, :nickname => params[:gamer][:nickname])
     @gamer.gamer_profile = @gamer_profile
 
     if @gamer.save
@@ -61,15 +67,14 @@ class Games::GamersController < GamesController
     end
   end
 
-  def social
+  def show
+    @device = Device.new(:key => current_device_id) if current_device_id.present?
+    @last_app = @device.present? ? ExternalPublisher.load_all_for_device(@device).first : nil;
+
     @friends_lists = {
       :following => get_friends_info(Friendship.following_ids(current_gamer.id)),
       :followers => get_friends_info(Friendship.follower_ids(current_gamer.id))
     }
-    if @gamer_profile.facebook_id.present?
-      fb_create_user_and_client(@gamer_profile.fb_access_token, '', @gamer_profile.facebook_id)
-      current_facebook_user.fetch
-    end
   end
 
   def connect_facebook_account
@@ -79,7 +84,8 @@ class Games::GamersController < GamesController
   def update_password
     @gamer.safe_update_attributes(params[:gamer], [ :password, :password_confirmation ])
     if @gamer.save
-      redirect_to edit_games_gamer_path
+      flash[:notice] = t('text.games.password_changed')
+      redirect_to games_gamer_profile_path(@gamer)
     else
       flash.now[:error] = 'Error updating password'
       render :action => :password
@@ -115,13 +121,7 @@ class Games::GamersController < GamesController
     end
   end
 
-  def get_friends_info(ids)
-    Gamer.find_all_by_id(ids).map do |friend|
-      {
-        :id        => friend.id,
-        :name      => friend.get_gamer_name,
-        :image_url => friend.get_avatar_url
-      }
-    end
+  def render_json_error(errors, status = 403)
+    render(:json => { :success => false, :error => errors }, :status => status)
   end
 end

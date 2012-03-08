@@ -8,7 +8,7 @@ class AppReview < ActiveRecord::Base
   before_destroy :reset_app_metadata_rating_counts
 
   validates_uniqueness_of :author_id, :scope => :app_metadata_id, :if => :app_metadata, :message => "has already reviewed this app"
-  validates_presence_of :author, :app_metadata, :text
+  validates_presence_of :author, :app_metadata
   validates_inclusion_of :user_rating, :in => [-1, 0, 1]
 
   named_scope :by_employees, :conditions => { :author_type => 'Employee' }

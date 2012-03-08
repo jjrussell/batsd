@@ -6,38 +6,34 @@ class Games::AppReviewsController < GamesController
     if params[:gamer_id]
       @gamer = Gamer.find_by_id(params[:gamer_id])
       @app_reviews = @gamer ? @gamer.app_reviews.ordered_by_date : []
-    elsif params[:app_metadata_id]
-      @app_metadata = AppMetadata.find_by_id(params[:app_metadata_id])
-      @app          = @app_metadata.apps.first
-      @app_review   = current_gamer.review_for(@app_metadata.id) || @app_metadata.app_reviews.build
-      @app_reviews  = @app_metadata.app_reviews.by_gamers.paginate(:page => params[:app_reviews_page])
-      render :new and return
     else
       @gamer = current_gamer
       @app_reviews = @gamer.app_reviews.ordered_by_date
     end
   end
 
+  def new
+    currency = Currency.find(ObjectEncryptor.decrypt(params[:eid]))
+    @app = currency.app
+    @app_metadata = @app.primary_app_metadata
+    @app_review = current_gamer.review_for(@app_metadata.id) || @app_metadata.app_reviews.build
+  end
+
   def create
-    @app_review = AppReview.new(params[:app_review])
-    @app_review.author = current_gamer
-    @app_review.author_type = 'Gamer'
+    @app_review = AppReview.new
+    update_app_review
 
     if @app_review.save
-      flash[:notice] = 'Successfully reviewed this app.'
-      redirect_to games_app_reviews_path(:app_metadata_id => @app_review.app_metadata_id)
+      flash[:notice] = t('text.games.review_created')
     else
-      if @app_review.errors[:author_id].any?
-        flash.now[:error] = 'You have already reviewed this app.'
+      if @app_review.errors[:author_id].present?
+        flash[:error] = t("text.games.reviewed_already")
       else
-        flash.now[:error] = 'There was an issue. Please try again later.'
+        flash[:error] = t("text.games.review_issue")
       end
-      @app_reviews = AppReview.paginate_all_by_app_metadata_id(@app_review.app_metadata_id, :page => params[:app_reviews_page])
-      params[:app_metadata_id] = @app_review.app_metadata_id
-      @app_metadata = @app_review.app_metadata
-      @app = App.find_by_id(AppMetadataMapping.find_by_app_metadata_id(@app_review.app_metadata_id).app_id)
-      render :action => :index
     end
+
+    redirect_to games_earn_path(:eid => params[:app_review][:eid])
   end
 
   def edit
@@ -45,10 +41,11 @@ class Games::AppReviewsController < GamesController
   end
 
   def update
-    if @app_review.update_attributes(params[:app_review])
-      flash[:notice] = 'App review was successfully updated.'
-      redirect_to request.env['HTTP_REFERER'] and return if request.env['HTTP_REFERER']
-      redirect_to games_app_reviews_path
+    update_app_review
+
+    if @app_review.save
+      flash[:notice] = t('text.games.review_updated')
+      redirect_to games_earn_path(:eid => params[:app_review][:eid])
     else
       render :action => :edit
     end
@@ -63,5 +60,15 @@ class Games::AppReviewsController < GamesController
 
   def find_app_review
     @app_review = current_gamer.app_reviews.find(params[:id])
+  end
+
+  def update_app_review
+    currency = Currency.find(ObjectEncryptor.decrypt(params[:app_review][:eid]))
+
+    @app_review.user_rating = params[:app_review][:user_rating]
+    @app_review.app_id = currency.app_id
+    @app_review.app_metadata = currency.app.primary_app_metadata
+    @app_review.author = current_gamer
+    @app_review.author_type = 'Gamer'
   end
 end
