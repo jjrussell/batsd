@@ -683,7 +683,9 @@ $(document).ready(function() {
     });
   });
 
-  function manageResize() {
+  function manageResize(){
+    var recommendationsRow = $('#recommendationsRow');
+
     if(tjmViewContainer.length != 0 && window.innerWidth < 480){
       tjmViewMenu.css('top', tjmViewContainer.offset().top + (tjmViewContainer.outerHeight(true) - 4) + 'px');
 
@@ -691,13 +693,20 @@ $(document).ready(function() {
         width: tjmViewContainer.width() - 4 + 'px'
       });
     }
+
+    if(window.innerWidth > 500){
+      $('#recommendations').enableTouchScroll();
+    }else{
+      $('#recommendations').disableTouchScroll();
+    }
+
     var rows = $('#content .row');
     if(window.innerWidth > 480){
       if(rows.is(':hidden'))
         rows.show();
     }else{
-      if($('#recommendationsRow').hasClass('nbb'))
-        $('#recommendationsRow').show().removeClass('nbb');
+      if(recommendationsRow.hasClass('nbb'))
+        recommendationsRow.show().removeClass('nbb');
 
       if(!$('#gamesRow').is(':hidden')){
         rows.hide();

@@ -41,26 +41,8 @@
 
     $(window).bind('resize', Tap.Utils.debounce($t.resize, 100, false, $t));
 
-    if(Tap.supportsTouch){
-      $t.container.live('swipe', function(e, data){
-
-        if(data.direction === 'left'){
-          if($t.forward.hasClass('disabled'))
-            return;
-
-          $t.current++;
-          $t.wrap[0].style.webkitTransform = 'translate3d(-' + ($t.current * $t.container.width()) + 'px, 0, 0)';
-        }else{
-
-          if($t.back.hasClass('disabled'))
-            return;        
-
-          $t.current--;
-          $t.wrap[0].style.webkitTransform = 'translate3d(-' + ($t.current * $t.container.width()) + 'px, 0, 0)';
-        }
-				
-        $t.updateNavigation();
-      });
+    if(Tap.supportsTouch && $t.config.enableTouchScroll){
+      $t.enableTouchScroll();
     }
 
     $t.container.addClass($t.config.cssClass);
@@ -90,6 +72,7 @@
       var $t = this;
 
       $t.wrap.css('-'+Tap.browser.prefix +'-transform', 'translate(0px, 0px)');
+      $t.wrap[0].style.webkitTransform = 'translate3d(0, 0, 0)';
       $t.current = 0;
       $t.setupSlideDeck();
       $t.updateNavigation();
@@ -140,7 +123,7 @@
           $t.updateNavigation();
 
           $('.ui-joy-carousel-index', wrap).removeClass('highlight');
-          circle.addClass('active');
+          circle.addClass('highlight');
         })
         .appendTo(wrap);
       }
@@ -238,7 +221,29 @@
         back.addClass('disabled');
       }
     },
+    enableTouchScroll: function(){
+      var $t = this;
 
+      $t.container.live('swipe', function(e, data){
+
+        if(data.direction === 'left'){
+          if($t.forward.hasClass('disabled'))
+            return;
+
+          $t.current++;
+          $t.wrap[0].style.webkitTransform = 'translate3d(-' + ($t.current * $t.container.width()) + 'px, 0, 0)';
+        }else{
+
+          if($t.back.hasClass('disabled'))
+            return;        
+
+          $t.current--;
+          $t.wrap[0].style.webkitTransform = 'translate3d(-' + ($t.current * $t.container.width()) + 'px, 0, 0)';
+        }
+        
+        $t.updateNavigation();
+      });
+    },
     resize: function(){
       var $t = this;
 
@@ -262,6 +267,29 @@
       $t.updateNavigation();
     }   
   });
+
+  $.fn.extend({
+    disableTouchScroll: function(){
+      return this.each(function(){
+        var $t = $.data(this, 'carousel');
+
+        if(!$t)
+          return;
+
+        $t.container.unbind('swipe');
+      });
+    },
+    enableTouchScroll: function(){
+      return this.each(function(){
+        var $t = $.data(this, 'carousel');
+
+        if(!$t)
+          return;
+
+        $t.enableTouchScroll();
+      });
+    }    
+  })
 
   Tap.apply(Tap, {
     Carousel : function(config){
