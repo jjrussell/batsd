@@ -150,7 +150,7 @@ div.app:last-child {
 
 .forward,
 .back {
-  display: none;
+  display: none !important;
 }
 
 .row {
