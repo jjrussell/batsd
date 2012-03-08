@@ -40,6 +40,7 @@ rescue Errno::ENOENT
   local_config = {}
 end
 
+ASSET_HOST = local_config['asset_host'] || local_config['website_url']
 RUN_MODE_PREFIX = 'staging_'
 API_URL = local_config['api_url'] || 'http://localhost:3000'
 DASHBOARD_URL = local_config['dashboard_url'] || 'http://localhost:3000'

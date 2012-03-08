@@ -1,7 +1,5 @@
 module SprocketHelper
   def js_tag(src, options={})
-    attributes = create_attributes(options)
-
     begin
       digest = ASSETS["#{src}.js"].digest
     rescue
@@ -9,12 +7,12 @@ module SprocketHelper
     end
 
     src = "#{ASSET_HOST}/assets/#{src}-#{digest}.js"
-    "<script type='text/javascript' #{attributes} src='#{src}'></script>"
+    options.merge!({:type => "text/javascript", :src => src})
+
+    content_tag :script, "", options
   end
 
   def css_tag(src, options={})
-    attributes = create_attributes(options)
-
     begin
       digest = ASSETS["#{src}.css"].digest
     rescue
@@ -22,12 +20,9 @@ module SprocketHelper
     end
 
     src = "#{ASSET_HOST}/assets/#{src}-#{digest}.css"
+    options.merge!({:rel => "stylesheet", :href => src})
 
-    "<link rel='stylesheet' #{attributes} href='#{src}' />"
+    content_tag :link, "", options
   end
 
-  private
-  def create_attributes(options)
-    options.map { |k, v| "#{k}='#{v}'" }.join " "
-  end
 end
