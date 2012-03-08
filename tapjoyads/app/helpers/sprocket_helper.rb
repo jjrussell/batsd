@@ -1,30 +1,32 @@
 module SprocketHelper
   def js_tag(src, options={})
-    digest = digest_for("#{src}.js")
-
-    src = "#{ASSET_HOST}/assets/#{src}-#{digest}.js"
+    src = src.sub /\.js$/, ""
+    src = path_for("#{src}", "js")
 
     content_tag :script, "", options.merge({:type => "text/javascript", :src => src})
   end
 
   def css_tag(src, options={})
-    digest = digest_for("#{src}.css")
-
-    src = "#{ASSET_HOST}/assets/#{src}-#{digest}.css"
+    src = src.sub /\.css$/, ""
+    src = path_for("#{src}", "css")
 
     content_tag :link, "", options.merge({:rel => "stylesheet", :href => src})
   end
 
   private
 
-  def digest_for(logical_path)
-    digest = CACHE_ASSETS && ASSETS.digest_list && ASSETS.digest_list[logical_path]
+  def path_for(logical_path, ext)
+    src = CACHE_ASSETS && ASSETS.digest_list && ASSETS.digest_list[logical_path]
 
-    digest = ASSETS[logical_path].digest if digest.blank?
+    if src.blank?
+      digest = ASSETS[logical_path].digest
 
-    raise "Cannot find file: " + logical_path if digest.blank?
+      raise "Cannot find file: " + logical_path if digest.blank?
 
-    return digest
+      src = "#{logical_path}-#{digest}.#{ext}"
+    end
+
+    "#{ASSET_HOST}/assets/#{src}"
   end
 
 end
