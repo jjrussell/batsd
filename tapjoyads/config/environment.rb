@@ -42,6 +42,7 @@ Rails::Initializer.run do |config|
   config.gem 'sqlite3', :version => '1.3.3'
   config.gem 'typhoeus', :version => '0.2.4'
   config.gem 'aws-sdk', :version => '1.1.4'
+  config.gem 'therubyracer', :version => '0.9.10'
 
   # These gems should be vendored
   config.gem 'airbrake', :version => '3.0.5'
