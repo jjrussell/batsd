@@ -18,6 +18,8 @@ module SprocketHelper
   def path_for(logical_path, ext)
     full_logical_path = "#{logical_path}.#{ext}" unless logical_path.split('.').last == ext
 
+    return "#{ASSET_HOST}/assets/#{full_logical_path}" unless CACHE_ASSETS
+
     src = CACHE_ASSETS && ASSETS.digest_list && ASSETS.digest_list[full_logical_path]
 
     if src.blank?
@@ -30,5 +32,4 @@ module SprocketHelper
 
     "#{ASSET_HOST}/assets/#{src}"
   end
-
 end

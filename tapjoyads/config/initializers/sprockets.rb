@@ -11,6 +11,7 @@ ASSETS.append_path 'app/assets/stylesheets'
 ASSETS_PATH = "#{Rails.root}/public/assets/"
 
 if CACHE_ASSETS
+  ASSETS.js_compressor = Uglifier.new
   compiler = Sprockets::Joy::StaticCompiler.new(ASSETS, ASSETS_PATH, {:digest => true})
   compiler.compile
 

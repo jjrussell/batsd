@@ -4,18 +4,17 @@ class SprocketController < ApplicationController
   def show
     full_filename = params[:filename].join("/")
     extension = full_filename.split(/\./).last
-    full_filename.sub! /^(.*)-.*$/, '\1'
-    full_filename = "#{full_filename}.#{extension}"
+
+    if CACHE_ASSETS
+      full_filename.sub! /^(.*)-.*$/, '\1'
+      full_filename = "#{full_filename}.#{extension}"
+    end
 
     sprocket = ASSETS[full_filename]
     contents = sprocket.to_s
 
-    if Rails.env.production? || Rails.env.staging?
-      contents = Uglifier.new.compile(contents) if  extension == "js"
-    end
-
     content_types = {
-      "js" => "text/javascript",
+      "js" => "application/javascript",
       "css" => "text/css"
     }
 
