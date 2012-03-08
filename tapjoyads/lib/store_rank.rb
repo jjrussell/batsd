@@ -13,7 +13,7 @@ class StoreRank
     ranks_file = open("tmp/#{ranks_file_name}", 'w')
 
     log_progress "Populate store rankings for iTunes. Task starting."
-    known_store_ids = App.all_known_store_ids_for('iphone')
+    known_store_ids = all_known_store_ids_for('iphone')
     log_progress "Finished loading known_store_ids."
 
     ITUNES_CATEGORY_IDS.each do |category_key, category_id|
@@ -106,7 +106,7 @@ class StoreRank
     android_ranks_file = open("tmp/#{android_ranks_file_name}", 'w')
 
     log_progress "Populate store rankings for Android. Task starting."
-    known_android_store_ids = App.all_known_store_ids_for('android')
+    known_android_store_ids = all_known_store_ids_for('android')
     log_progress "Finished loading known_store_ids."
 
     GOOGLE_CATEGORY_IDS.each do |category_key, category_name|
@@ -200,7 +200,7 @@ class StoreRank
     error_count = 0
     offset = 0
     freemium_android_app = []
-    known_android_store_ids = App.all_known_store_ids_for('android')
+    known_android_store_ids = all_known_store_ids_for('android')
 
     while offset < 456
       url = google_rank_url("apps_topgrossing", "", "en", offset)
