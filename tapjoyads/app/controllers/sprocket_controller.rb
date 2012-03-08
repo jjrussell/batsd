@@ -10,7 +10,7 @@ class SprocketController < ApplicationController
     sprocket = ASSETS[full_filename]
     contents = sprocket.to_s
 
-    if Rails.env.production?
+    if Rails.env.production? || Rails.env.staging?
       contents = Uglifier.new.compile(contents) if  extension == "js"
     end
 
