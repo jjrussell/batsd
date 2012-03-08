@@ -308,7 +308,7 @@ de:
       no_device: "Kein Gerät Gefunden"
       no_javascript: "Bitte gehen Sie in Ihren Browser-Einstellungen und aktivieren Sie JavaScript, um weiter mit Tapjoy zu verwenden."
       none_selected: "Keine Auswahl"
-      on_my: "Auf mein %{device}"
+      on_my: "Auf mein %{device_name}"
       oops: Oops!
       or_learn_more: ~
       other_options: "Weiter Optionen"
