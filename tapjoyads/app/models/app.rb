@@ -102,6 +102,8 @@ class App < ActiveRecord::Base
   named_scope :visible, :conditions => { :hidden => false }
   named_scope :by_platform, lambda { |platform| { :conditions => ["platform = ?", platform] } }
   named_scope :by_partner_id, lambda { |partner_id| { :conditions => ["partner_id = ?", partner_id] } }
+  named_scope :live, :joins => [ :app_metadatas ], :conditions =>
+    "#{AppMetadata.quoted_table_name}.store_id IS NOT NULL"
 
   delegate :conversion_rate, :to => :primary_currency, :prefix => true
   delegate :store_id, :store_id?, :description, :age_rating, :file_size_bytes, :supported_devices, :supported_devices?, :released_at, :released_at?, :user_rating,
