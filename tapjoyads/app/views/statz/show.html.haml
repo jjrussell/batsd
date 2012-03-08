@@ -57,8 +57,9 @@
   - property_row('Show rate', "%.1f%" % ((@offer.show_rate || 0) * 100.0), "100.0%", @offer.show_rate < 0.001 ? 'warning' : '')
   - property_row('Min CVR', @offer.min_conversion_rate, nil)
   - property_row('Countries', @offer.countries, '')
-  - property_row('DMA Codes', @offer.dma_codes, '')
   - property_row('Regions', @offer.regions, '')
+  - property_row('DMA Codes', @offer.dma_codes, '')
+  - property_row('Cities', @offer.cities, '')
   - property_row('Carriers', @offer.carriers, '')
   - if @srr_ratio
     - property_row("Offer Health", "#{@srr_ratio}")
