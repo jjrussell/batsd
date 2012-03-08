@@ -16,12 +16,14 @@ module SprocketHelper
   private
 
   def path_for(logical_path, ext)
-    src = CACHE_ASSETS && ASSETS.digest_list && ASSETS.digest_list[logical_path]
+    full_logical_path = "#{logical_path}.#{ext}" unless logical_path.split('.').last == ext
+
+    src = CACHE_ASSETS && ASSETS.digest_list && ASSETS.digest_list[full_logical_path]
 
     if src.blank?
-      digest = ASSETS[logical_path].digest
+      digest = ASSETS[full_logical_path].digest
 
-      raise "Cannot find file: " + logical_path if digest.blank?
+      raise "Cannot find file: " + full_logical_path if digest.blank?
 
       src = "#{logical_path}-#{digest}.#{ext}"
     end
