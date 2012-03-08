@@ -95,7 +95,7 @@ describe Device do
       end
 
       context 'on an Android device' do
-        it "sets key for the target app in sdkless_clicks column of the device model to the app's app store ID" do
+        it "sets target app key in sdkless_clicks column to the app's app store ID" do
           @device.handle_sdkless_click!(@offer, @now)
           @device.sdkless_clicks.should have_key @offer.third_party_data
         end
@@ -107,12 +107,17 @@ describe Device do
           @offer.save
         end
 
-        context 'where the app has a protocol_handler defined' do
-          it "sets the key for the target app in sdkless_clicks column of the device model to the protocol_handler name"
+        context 'where a protocol_handler defined' do
+          it "sets the target app key in sdkless_clicks column to the protocol_handler name" do
+            @offer.item.protocol_handler = "handler.name"
+            @offer.item.save
+            @device.handle_sdkless_click!(@offer, @now)
+            @device.sdkless_clicks.should have_key "handler.name"
+          end
         end
 
-        context "where the app doesn't have a protocol_handler defined" do
-          it "sets the key for the target app in sdkless_clicks column of the device model to 'tjc<store_id>'" do
+        context "where a protocol_handler isn't defined" do
+          it "sets the target app key in sdkless_clicks column to 'tjc<store_id>'" do
             @device.handle_sdkless_click!(@offer, @now)
             @device.sdkless_clicks.should have_key "tjc#{@offer.third_party_data}"
           end
@@ -230,5 +235,5 @@ describe Device do
       @non_jb_device.handle_connect!('e96062c5-45f0-43ba-ae8f-32bc71b72c99', {})
       @non_jb_device.is_jailbroken?.should be_false
     end
-   end
+  end
 end

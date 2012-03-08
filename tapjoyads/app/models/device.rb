@@ -209,7 +209,7 @@ class Device < SimpledbShardedResource
 
       hash_key = offer.third_party_data
       if offer.get_platform == 'iOS'
-        hash_key = "tjc#{offer.third_party_data}"
+        hash_key = offer.app_protocol_handler.present? ? offer.app_protocol_handler : "tjc#{offer.third_party_data}"
       end
 
       temp_sdkless_clicks[hash_key] = { 'click_time' => now.to_i, 'item_id' => offer.item_id }
