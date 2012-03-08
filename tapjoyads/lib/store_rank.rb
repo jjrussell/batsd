@@ -306,9 +306,13 @@ class StoreRank
   end
 
   def self.google_rank_url(type, category, language, offset)
-    url = "https://market.android.com/details?id=#{type}&start=#{offset}"
-    url += "&cat=#{category}" unless category.blank?
-    url
+    # e.g. https://play.google.com/store/apps/category/ARCADE/collection/topgrossing?start=24
+    url = [ "https://play.google.com/store/apps" ]
+    unless category.blank?
+      url << "category/#{category}"
+    end
+    url << "collection/#{type}?start=#{offset}"
+    url.join('/')
   end
 
   def self.save_to_bucket(ranks_file_name)
