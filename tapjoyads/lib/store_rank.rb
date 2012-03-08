@@ -492,31 +492,31 @@ class StoreRank
   }
 
   GOOGLE_POP_OPTIONS = {
-    "free" => { :id => "apps_topselling_free" },
-    "paid" => { :id => "apps_topselling_paid" },
+    "free" => { :id => "topselling_free" },
+    "paid" => { :id => "topselling_paid" },
     "top_grossing" => {
-      :id => "apps_topgrossing",
+      :id => "topgrossing",
       :skip_lang => true,
       :skip_cat => true,
     },
     "top_new_paid" => {
-      :id => "apps_topselling_new_paid",
+      :id => "topselling_new_paid",
       :skip_lang => true,
       :cat_pages => 1,
     },
     "top_new_free" => {
-      :id => "apps_topselling_new_free",
+      :id => "topselling_new_free",
       :skip_lang => true,
       :cat_pages => 1,
     },
     "trending" => {
-      :id => "apps_movers_shakers",
+      :id => "movers_shakers",
       :skip_lang => true,
       :cat_pages => 1,
       :pages => 2,
     },
     "featured" => {
-      :id => "apps_featured",
+      :id => "featured",
       :skip_lang => true,
       :skip_cat => true,
       :pages => 2,
