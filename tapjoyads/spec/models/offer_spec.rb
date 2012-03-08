@@ -92,7 +92,6 @@ describe Offer do
     @offer.payment.should == 1
   end
 
-
   it "doesn't allow bids below min_bid" do
     @offer.bid = @offer.min_bid - 5
     @offer.should_not be_valid
