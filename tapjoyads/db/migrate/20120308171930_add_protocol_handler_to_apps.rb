@@ -1,6 +1,6 @@
 class AddProtocolHandlerToApps < ActiveRecord::Migration
   def self.up
-    add_column :apps, :protocol_handler, :string, :default => ''
+    add_column :apps, :protocol_handler, :string
   end
 
   def self.down

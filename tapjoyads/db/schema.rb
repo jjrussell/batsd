@@ -119,7 +119,7 @@ ActiveRecord::Schema.define(:version => 20120308171930) do
     t.integer  "papaya_user_count"
     t.integer  "active_gamer_count",                          :default => 0
     t.boolean  "reengagement_campaign_enabled"
-    t.string   "protocol_handler",                            :default => ""
+    t.string   "protocol_handler"
   end
 
   add_index "apps", ["id"], :name => "index_apps_on_id", :unique => true
