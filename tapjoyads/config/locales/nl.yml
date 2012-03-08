@@ -177,6 +177,13 @@ nl:
       skip: Overslaan
       title: "Verdien %{currency}"
       try_out: Probeer
+    footer:
+      about: ~
+      advertisers: ~
+      blog: ~
+      copyright: ~
+      developers: ~
+      privacy: ~
     games:
       about_body: ~
       about_title: ~
@@ -189,6 +196,7 @@ nl:
       advertisers_body: ~
       advertisers_title: ~
       allow_marketing_emails: ~
+      almost_done: ~
       already_registered:
         one: ~
         other: ~
@@ -201,9 +209,12 @@ nl:
       cant_fetch_offers: ~
       change: ~
       change_linked_account: ~
+      choose_section: ~
+      close: ~
       collect: ~
       collect_rewards: ~
       connect_my_device: ~
+      connect_to_facebook: ~
       connect_your_android: ~
       connect_your_device: ~
       connected_to_facebook: ~
@@ -217,11 +228,13 @@ nl:
       developers_body: ~
       developers_title: ~
       discover_apps: ~
+      download_now: ~
       earn: ~
       earn_rewards: ~
       earn_title: ~
       earning_rewards: ~
       edit: ~
+      email_device_link: ~
       email_notification: ~
       enable_javascript: ~
       enter_birthdate: ~
@@ -238,6 +251,7 @@ nl:
       favorite_app: ~
       favorite_apps: ~
       favorite_category: ~
+      favorites: ~
       feedback: ~
       find_and_invite_friends: ~
       find_friends_from_facebook: ~
@@ -256,6 +270,9 @@ nl:
       how_it_works_body: ~
       how_it_works_title: ~
       install_and_run: ~
+      install_android_app: ~
+      install_profile: ~
+      invalid_fields: ~
       invite: ~
       invite_by_email: ~
       invite_email_body: ~
@@ -272,6 +289,10 @@ nl:
       join_the_community: ~
       join_the_community_blurb: ~
       last_played: ~
+      link_account_header: ~
+      link_account_messaging: ~
+      link_account_messaging_android_href: ~
+      link_account_messaging_tjm_href: ~
       link_my_facebook: ~
       load_more: ~
       loading: ~
@@ -293,6 +314,7 @@ nl:
       other_options: ~
       our_tos_changed: ~
       password_changed: ~
+      password_non_match: ~
       post_to_facebook_content: ~
       privacy_policy_href: ~
       profile: ~
@@ -302,8 +324,13 @@ nl:
       recipients_label: ~
       recommend_apps: ~
       recommendations: ~
+      recommendations_smart: ~
       registering: ~
       report_bug: ~
+      reset_password_message: ~
+      reset_password_message_submit: ~
+      reset_password_retry: ~
+      reset_password_retry_url_text: ~
       review_app_name: ~
       review_created: ~
       review_issue: ~
@@ -333,6 +360,7 @@ nl:
       unable_to_process: ~
       unlock_mobile_joy: ~
       unmark_as_favorite: ~
+      welcome_tapjoy: ~
       wifi_required: ~
       wrong_device: ~
       you_are_following: ~
@@ -411,6 +439,7 @@ nl:
       options: ~
       other: ~
       password: ~
+      please_try_again: ~
       preferences: ~
       privacy: Privacy
       privacy_policy: ~
@@ -421,6 +450,8 @@ nl:
       reviews: ~
       save: ~
       send: ~
+      sending: ~
+      sent: ~
       share: ~
       sign_in: ~
       sign_up: ~
