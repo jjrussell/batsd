@@ -373,16 +373,6 @@ class ToolsController < WebsiteController
     redirect_to manage_user_roles_tool_path(:email => user.email)
   end
 
-  def freemium_android
-    results = StoreRank.top_freemium_android_apps
-    @apps = results['apps']
-    @created_at = Time.zone.parse(results['created_at'])
-    @tapjoy_apps = {}
-    Offer.find_all_by_id(@apps.map{|app|app['tapjoy_apps']}.flatten).each do |app|
-      @tapjoy_apps[app.id] = app
-    end
-  end
-
   def award_currencies
     @publisher_app = App.find_in_cache(params[:publisher_app_id])
     return unless verify_records([ @publisher_app ])
