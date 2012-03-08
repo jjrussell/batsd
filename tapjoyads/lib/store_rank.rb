@@ -5,7 +5,6 @@ class StoreRank
     hydra.disable_memoization
     date_string = time.to_date.to_s(:db)
     error_count = 0
-    known_store_ids = {}
     s3_rows = {}
     overall_us_free = {}
     overall_us_paid = {}
@@ -14,11 +13,7 @@ class StoreRank
     ranks_file = open("tmp/#{ranks_file_name}", 'w')
 
     log_progress "Populate store rankings for iTunes. Task starting."
-
-    App.find_each(:conditions => "platform = 'iphone' AND store_id IS NOT NULL") do |app|
-      known_store_ids[app.store_id] ||= []
-      known_store_ids[app.store_id] += app.offer_ids
-    end
+    known_store_ids = all_known_store_ids_for('iphone')
     log_progress "Finished loading known_store_ids."
 
     ITUNES_CATEGORY_IDS.each do |category_key, category_id|
@@ -103,8 +98,6 @@ class StoreRank
     hydra.disable_memoization
     date_string = time.to_date.to_s(:db)
     error_count = 0
-    known_store_ids = {}
-    known_android_store_ids = {}
     s3_rows = {}
     overall_en_free = {}
     overall_en_paid = {}
@@ -113,12 +106,7 @@ class StoreRank
     android_ranks_file = open("tmp/#{android_ranks_file_name}", 'w')
 
     log_progress "Populate store rankings for Android. Task starting."
-
-    App.find_each(:conditions => "platform = 'android' AND store_id IS NOT NULL") do |app|
-      known_android_store_ids[app.store_id] ||= []
-      known_android_store_ids[app.store_id] += app.offer_ids
-    end
-
+    known_android_store_ids = all_known_store_ids_for('android')
     log_progress "Finished loading known_store_ids."
 
     GOOGLE_CATEGORY_IDS.each do |category_key, category_name|
@@ -212,11 +200,7 @@ class StoreRank
     error_count = 0
     offset = 0
     freemium_android_app = []
-    known_android_store_ids = {}
-    App.find_each(:conditions => "platform = 'android' AND store_id IS NOT NULL") do |app|
-      known_android_store_ids[app.store_id] ||= []
-      known_android_store_ids[app.store_id] += app.offer_ids
-    end
+    known_android_store_ids = all_known_store_ids_for('android')
 
     while offset < 456
       url = google_rank_url("apps_topgrossing", "", "en", offset)
@@ -276,7 +260,19 @@ class StoreRank
     JSON.load(object.read)
   end
 
-private
+  private
+
+  def self.all_known_store_ids_for(platform)
+    known_store_ids = {}
+    App.live.by_platform(platform).find_each do |app|
+      app.app_metadatas.each do |data|
+        store_id = data.store_id
+        known_store_ids[store_id] ||= []
+        known_store_ids[store_id] += app.offer_ids
+      end
+    end
+    known_store_ids
+  end
 
   ##
   # Parses an itunes top 200 response, and returns a hash of store_id => rank.
