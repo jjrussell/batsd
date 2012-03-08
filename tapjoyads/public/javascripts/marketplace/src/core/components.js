@@ -46,6 +46,7 @@
 			hasPager: false,
 			pagerContainer: null,
 			animationDuration: 250,
+      enableTouchScroll: true,
 			minHeight: 200
 		}
   };

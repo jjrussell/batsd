@@ -78,8 +78,7 @@
             head = document.getElementsByTagName('head')[0],
             contents = document.createTextNode(text);
 
-         
-        if(cache.map[extension] === 'script'){
+        if(cache.typesMap[extension] === 'script'){
           file.defer = true;
         }else{
           file.type = 'text/css';
