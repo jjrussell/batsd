@@ -1,0 +1,19 @@
+// Omg a comment!
+//= require marketplace/core/jquery
+//= require marketplace/core/foundation
+//= require marketplace/core/objects
+//= require marketplace/core/components
+//= require marketplace/core/strings
+//= require marketplace/core/arrays
+//= require marketplace/core/functions
+//= require marketplace/core/helpers
+//= require marketplace/core/utilities
+//= require marketplace/core/mobile
+//= require marketplace/components/button/button
+//= require marketplace/components/carousel/carousel
+//= require marketplace/namespace
+//= require marketplace/i18n
+//= require marketplace/plugins
+//= require marketplace/social
+//= require marketplace/ajax
+//= require marketplace/main
