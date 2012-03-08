@@ -70,12 +70,15 @@
         - tabs << { :billing   => billing_index_path }   if permitted_to?(:index, :billing)
         - tabs << { :account   => users_path }           if permitted_to?(:index, :users)
         - tabs << { :partners  => partners_path }        if permitted_to?(:index, :partners)
-        - tabs << { :premier   => premier_path }         if permitted_to?(:edit,  :premier)
+        - tabs << { :premier   => premier_path }         if permitted_to?(:edit,  :premier) and current_partner.is_premier?
         - tabs << { :tools     => tools_path }           if permitted_to?(:index, :tools)
         - tabs << { :statz     => statz_index_path }     if permitted_to?(:index, :statz)
         = navigation(tabs)
 
       #content
+        - if PARTNERS_TO_MESSAGE.include?(current_partner.id)
+          .flash.notice
+            A credit has been applied to your account due to invalid clicks and/or conversions. If you have any questions please contact your account manager or #{mail_to("support@tapjoy.com")}
         - flash.each do |name, msg|
           .flash{ :id => "flash_#{name}", :title => "Click to dismiss this message" }
             %strong #{name.to_s.humanize}:

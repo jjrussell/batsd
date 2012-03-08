@@ -139,26 +139,6 @@ describe Device do
     end
   end
 
-  context 'Multiple new Devices' do
-    before :each do
-      @count = Device.count(:consistent => true)
-      @num = 5
-      @num.times { Device.new.save! }
-    end
-
-    it 'is counted correctly' do
-      Device.count(:consistent => true).should == @count + @num
-    end
-
-    it 'is counted correctly per-domain' do
-      sum = 0
-      Device.all_domain_names.each do |name|
-        sum += Device.count(:domain_name => name, :consistent => true)
-      end
-      sum.should == @count + @num
-    end
-  end
-
   context 'Publisher user ids' do
     before :each do
       @device = Device.new

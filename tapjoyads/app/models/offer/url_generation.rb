@@ -71,6 +71,7 @@ module Offer::UrlGeneration
       final_url = url
     elsif item_type == 'SurveyOffer'
       final_url.gsub!('TAPJOY_SURVEY', click_key.to_s)
+      final_url = ObjectEncryptor.encrypt_url(final_url)
     end
 
     final_url
