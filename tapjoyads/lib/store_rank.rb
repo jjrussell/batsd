@@ -119,7 +119,8 @@ class StoreRank
 
     log_progress "Populate store rankings for Android. Task starting."
 
-    App.find_each(:conditions => "platform = 'android' AND store_id IS NOT NULL") do |app|
+    conditions = [ "platform = ? AND #{AppMetadata.quoted_table_name}.store_id IS NOT NULL", 'android' ]
+    App.find_each(:joins => [ :app_metadatas ], :conditions => conditions) do |app|
       known_android_store_ids[app.store_id] ||= []
       known_android_store_ids[app.store_id] += app.offer_ids
     end
@@ -218,7 +219,8 @@ class StoreRank
     offset = 0
     freemium_android_app = []
     known_android_store_ids = {}
-    App.find_each(:conditions => "platform = 'android' AND store_id IS NOT NULL") do |app|
+    conditions = [ "platform = ? AND #{AppMetadata.quoted_table_name}.store_id IS NOT NULL", 'android' ]
+    App.find_each(:joins => [ :app_metadatas ], :conditions => conditions) do |app|
       known_android_store_ids[app.store_id] ||= []
       known_android_store_ids[app.store_id] += app.offer_ids
     end
