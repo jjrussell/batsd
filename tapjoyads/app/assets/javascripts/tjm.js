@@ -1,4 +1,3 @@
-// Omg a comment!
 //= require marketplace/core/jquery
 //= require marketplace/core/foundation
 //= require marketplace/core/objects

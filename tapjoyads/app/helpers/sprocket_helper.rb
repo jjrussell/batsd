@@ -1,10 +1,10 @@
 module SprocketHelper
   def js_tag(src, options={})
-    begin
-      digest = ASSETS["#{src}.js"].digest
-    rescue
-      raise "Error reading js: #{src}"
-    end
+    asset = ASSETS["#{src}.js"]
+
+    raise "Cannot find js file: #{src}.js" if asset.blank?
+
+    digest = asset.digest
 
     src = "#{ASSET_HOST}/assets/#{src}-#{digest}.js"
     options.merge!({:type => "text/javascript", :src => src})
@@ -13,11 +13,11 @@ module SprocketHelper
   end
 
   def css_tag(src, options={})
-    begin
-      digest = ASSETS["#{src}.css"].digest
-    rescue
-      raise "Error reading css: #{src}"
-    end
+    asset = ASSETS["#{src}.css"]
+
+    raise "Cannot find js file: #{src}.js" if asset.blank?
+
+    digest = asset.digest
 
     src = "#{ASSET_HOST}/assets/#{src}-#{digest}.css"
     options.merge!({:rel => "stylesheet", :href => src})

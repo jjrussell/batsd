@@ -15,9 +15,7 @@
 
     %title= @page_title.blank? ? 'Tapjoy Marketplace' : "#{@page_title} - Tapjoy"
 
-    = css_tag("marketplace/resources/reset")
-    = css_tag("marketplace/resources/base")
-    = css_tag("marketplace/resources/components/button/button")
+    = css_tag("marketplace/core")
 
     /[if lt IE 9]
       = js_tag "marketplace/helpers/html5"
@@ -59,9 +57,6 @@
       window.ENVIRONMENT = "#{Rails.env}";
     %script{ :type => 'text/javascript', :charset => 'utf-8', :src => games_translations_path(:language_code => I18n.locale) }
     = js_tag "tjm"
-    - if Rails.env.production? || Rails.env.staging?
-    - else
-      = js_tag "marketplace/dev-tools"
 
     = yield :included_javascripts
 
