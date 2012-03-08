@@ -39,6 +39,7 @@ rescue Errno::ENOENT
   local_config = {}
 end
 
+CACHE_ASSETS = false
 ASSET_HOST = local_config['asset_host'] || local_config['website_url']
 RUN_MODE_PREFIX = 'test_'
 API_URL = local_config['api_url'] || 'http://localhost:3000'
