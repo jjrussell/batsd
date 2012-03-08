@@ -18,7 +18,5 @@
         %li>= link_to(t('text.footer.blog'),        'http://blog.tapjoy.com/')
       %small
         = t('text.footer.copyright')
-
-  - unless current_gamer.blank?
-    .center
-      = render '/shared/truste'
+  .container.center
+    = render '/shared/truste'
