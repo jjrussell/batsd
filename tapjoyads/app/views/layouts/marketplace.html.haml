@@ -32,6 +32,8 @@
     = stylesheet_link_tag("marketplace/theme/tjm/style-360", :media => "only screen and (max-width: 360px)")
     = stylesheet_link_tag("marketplace/theme/tjm/style-320", :media => "only screen and (max-width: 320px)")
     = stylesheet_link_tag("marketplace/resources/components/carousel/carousel.css")
+    
+    = stylesheet_link_tag("marketplace/locale/#{I18n.locale.to_s}.css") if ['en', 'jp', 'es', 'fr'].include? I18n.locale.to_s
 
     %script{ :id => "analytics-goes-here" }
     = yield :page_head
