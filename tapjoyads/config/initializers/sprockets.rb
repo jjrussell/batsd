@@ -1,29 +1,16 @@
-module Sprockets
-  # Monkey patch sprockets to properly minify in Production mode.
-  class SassTemplate
-    def evaluate(context, locals, &block)
-      # Use custom importer that knows about Sprockets Caching
-      cache_store = SassCacheStore.new(context.environment)
-
-      options = {
-        :style => CACHE_ASSETS ? :compressed : :nested,
-        :filename => eval_file,
-        :line => line,
-        :syntax => syntax,
-        :cache_store => cache_store,
-        :importer => SassImporter.new(context, context.pathname),
-        :load_paths => context.environment.paths.map { |path| SassImporter.new(context, path) }
-      }
-
-      ::Sass::Engine.new(data, options).render
-    rescue ::Sass::SyntaxError => e
-      # Annotates exception message with parse line number
-      context.__LINE__ = e.sass_backtrace.first[:line]
-      raise e
+class CompressCss
+  def compress(css)
+    if css.count("\n") > 2
+      Sass::Engine.new(css,
+         :syntax => :scss,
+         :cache => false,
+         :read_cache => false,
+         :style => :compressed).render
+    else
+      css
     end
   end
 end
-
 
 ASSETS = Sprockets::Environment.new
 
@@ -33,4 +20,14 @@ ASSETS_PATH = "#{Rails.root}/public/assets/"
 
 if CACHE_ASSETS
   ASSETS.js_compressor = Uglifier.new
+  ASSETS.css_compressor = CompressCss.new
+
+  # minify all on startup
+  print "Loading static assets "
+  ASSETS.each_logical_path do |l|
+    print "."
+    STDOUT.flush
+    ASSETS[l]
+  end
+  puts
 end

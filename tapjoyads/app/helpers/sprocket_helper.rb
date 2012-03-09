@@ -1,5 +1,4 @@
 module SprocketHelper
-  extend ActiveSupport::Memoizable
   def js_tag(src, options={})
     src = src.sub /\.js$/, ""
     src = path_for("#{src}", "js")
@@ -12,6 +11,12 @@ module SprocketHelper
     src = path_for("#{src}", "css")
 
     content_tag :link, "", options.merge({:rel => "stylesheet", :href => src})
+  end
+
+  def embed_js(src, options={})
+    src_code = ASSETS[src].to_s
+
+    content_tag :script, src_code, options.merge({:type => "text/javascript"})
   end
 
   private
