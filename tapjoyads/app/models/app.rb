@@ -211,7 +211,9 @@ class App < ActiveRecord::Base
 
     fill_app_store_data(data)
     app_metadata.fill_app_store_data(data)
-    app_metadata.save
+    return false unless app_metadata.save
+
+    data
   end
 
   def queue_store_update(app_store_id)
