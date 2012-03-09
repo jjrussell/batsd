@@ -3,35 +3,15 @@ class Tools::BrandOffersController < WebsiteController
   current_tab :tools
   filter_access_to :all
 
-  def create_brand
-    brand_name = params[:name]
-    brand = Brand.new(:name => brand_name)
-    success = brand.save
-    json = { :success => success, :brand => { :name => brand.name, :id => brand.id } }
-    json.merge!({:error => brand.errors.first}) unless success
+  def create
+    brand_offer = BrandOfferMapping.new(:offer_id => params[:offer], :brand_id => params[:brand])
+    json = { :success => brand_offer.save}.to_json
     render(:json => json)
   end
 
-  def add_offer
-    brand = Brand.find(params[:brand])
-    brand.offers << Offer.find(params[:offer])
-    json = { :success => brand.save}.to_json
+  def delete
+    brand_offer = BrandOfferMapping.find_by_brand_id_and_offer_id(params[:brand], params[:offer])
+    json = { :success => brand_offer.destroy}.to_json
     render(:json => json)
-  end
-
-  def remove_offer
-    brand = Brand.find(params[:brand])
-    brand.offers.delete(Offer.find(params[:offer]))
-    json = { :success => brand.save}.to_json
-    render(:json => json)
-  end
-
-  def offers
-    brand = Brand.find(params[:id])
-    offers = []
-    brand.offers.each do |offer|
-      offers << {:id => offer.id, :name => offer.search_result_name }
-    end
-    render(:json => offers.to_json)
   end
 end

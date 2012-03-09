@@ -28,14 +28,13 @@
         %td
           =select_tag(:offers, [],  :multiple => true, :style => 'width: 200px')
 
-- form_tag create_brand_tools_brand_offers_path, :method => :post, :class => 'create_brand' do
+- form_tag tools_brands_path, :method => :post, :class => 'create_brand' do
   %input#brand_name{ :type => 'hidden', :value => ''}
 - content_for :page_javascript do
   :plain
       $('#search_box').autocomplete({ source: function(request,response){
-          var url = '#{search_offers_path}' + '?term=' + request.term +  '&selected_offers[]=' + offers.join('&selected_offers[]=');
           var offers = $('#offers').val() || [];
-          ;
+          var url = '#{search_offers_path}' + '?term=' + request.term +  '&selected_offers[]=' + offers.join('&selected_offers[]=');
           $.ajax({
             url: url,
             dataType: "json",
@@ -51,7 +50,7 @@
           $.ajax({
             dataType: 'json',
             type: 'POST',
-            url: '#{add_offer_tools_brand_offers_path}',
+            url: '#{tools_brand_offers_path}',
             data: data,
             success: function(data) {
               $('#offers').append(
@@ -68,20 +67,20 @@
     });
     $('#brand_box').autocomplete({ source: '#{search_brands_path}', delay: 250, minLength: 1, select: function(event, ui) {
         if(ui.item.id == '0') {
-          $('input#brand_name').val($('input#brand_box').val().replace(/^Add:/,''));
-          $('input#brand_box').val($('input#brand_box').val().replace(/^Add:/,''));
+          $('input#brand_name').val($('input#brand_box').val().replace(/^Add:\s*/,''));
+          $('input#brand_box').val($('input#brand_box').val().replace(/^Add:\s*/,''));
           $('.create_brand').submit();
           return false;
         } else {
           $('#brand').text(ui.item.name);
           $('#brand').attr('value', ui.item.id);
           $('#selected-brand').show();
-          var data = $('.create_brand').serialize()+'&id='+$('#brand').attr('value');
+          var url = '#{tools_brand_path('REPLACE')}'.replace(/REPLACE/,$('#brand').attr('value'));
           $.ajax({
               dataType: 'json',
-              type: 'POST',
-              url: '#{offers_tools_brand_offers_path}',
-              data: data,
+              type: 'GET',
+              url: url,
+              data: {},
               success: function(data) {
                 var str = ""
                 $('select#offers').empty();
@@ -98,7 +97,7 @@
     $('.create_brand').submit(function(){
         var form = $(this);
         var url = form.attr('action');
-        var data = $(this).serialize()+"&name="+$('input#brand_name').val();
+        var data = $(this).serialize()+"&brand[name]="+$('input#brand_name').val();
         $.ajax({
           dataType: 'json',
           type: 'POST',
@@ -121,7 +120,7 @@
         $.ajax({
           dataType: 'json',
           type: 'POST',
-          url: '#{remove_offer_tools_brand_offers_path}',
+          url: '#{delete_tools_brand_offers_path}',
           data: data,
           success: function(data) {
             $('#offers option[value='+removedItem.val()+']').remove();
