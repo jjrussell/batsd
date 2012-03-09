@@ -64,6 +64,12 @@ server_list.each do |server|
     puts "Running on #{server[:group]} #{server[:dns_name]} (#{server[:server_num]} / #{server_list.length})", `ssh #{user}@#{server[:dns_name]} 'source /etc/profile ; #{command}' 2>&1`, "\n"
   end
   server[:serial] ? thread.join : thread_list.push(thread)
+  if thread_list.size > 20
+    thread_list.each do |thread|
+      thread.join
+    end
+    thread_list.clear
+  end
 end
 thread_list.each do |thread|
   thread.join
