@@ -60,7 +60,7 @@ class Click < SimpledbShardedResource
   end
 
   def publisher_user_udids
-    PublisherUser.new(:key => "#{publisher_app_id}.#{publisher_user_id}").udids
+    PublisherUser.for_click(self).udids
   end
 
   def tapjoy_games_invitation_primary_click?

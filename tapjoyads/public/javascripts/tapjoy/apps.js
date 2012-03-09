@@ -20,8 +20,8 @@ $(function($){
       $('#search_button').val('Search App Store');
       $('span#app_store_name').text('App Store.')
     } else if ($('select#app_platform').val() == 'android') {
-      $('#search_button').val('Search Market');
-      $('span#app_store_name').text('Market.')
+      $('#search_button').val('Search Google Play');
+      $('span#app_store_name').text('Google Play.')
     } else {
       $('#search_button').val('Search Marketplace');
       $('span#app_store_name').text('Marketplace.')
