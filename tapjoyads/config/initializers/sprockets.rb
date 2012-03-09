@@ -1,11 +1,4 @@
-require 'static_compiler'
-
 module Sprockets
-  class Environment
-    attr_accessor :digest_list
-    @digest_list = {}
-  end
-
   # Monkey patch sprockets to properly minify in Production mode.
   class SassTemplate
     def evaluate(context, locals, &block)
@@ -40,10 +33,4 @@ ASSETS_PATH = "#{Rails.root}/public/assets/"
 
 if CACHE_ASSETS
   ASSETS.js_compressor = Uglifier.new
-  compiler = Sprockets::Joy::StaticCompiler.new(ASSETS, ASSETS_PATH, {:digest => true})
-  compiler.compile
-
-  if File.exists?("#{ASSETS_PATH}asset_manifest.yml")
-    ASSETS.digest_list = YAML::load_file("#{ASSETS_PATH}asset_manifest.yml")
-  end
 end
