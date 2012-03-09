@@ -26,7 +26,7 @@ class InventoryManagementController < WebsiteController
     end
     promoted_offers.each do |offer_id|
       unless currently_promoted.include?(offer_id)
-        flash[:error] = "Unable to save the list of promoted offers" unless GlobalPromotedOffer.new(:partner => @partner, :offer_id => offer_id).save!
+        flash[:error] = "Unable to save the list of promoted offers" unless GlobalPromotedOffer.new(:partner => @partner, :offer_id => offer_id).save
       end
     end
     (currently_promoted - promoted_offers).each do |offer_id|
@@ -47,7 +47,7 @@ class InventoryManagementController < WebsiteController
         end
         params[:promoted_offers].each do |offer_id|
           unless @currently_promoted.include?(offer_id)
-            flash[:error] = 'Unable to save the list of promoted offers' unless PromotedOffer.new( :app => @app, :offer_id => offer_id).save!
+            flash[:error] = 'Unable to save the list of promoted offers' unless PromotedOffer.new( :app => @app, :offer_id => offer_id).save
           end
         end
         @currently_promoted = params[:promoted_offers]
@@ -68,7 +68,7 @@ class InventoryManagementController < WebsiteController
 
   def init_promoted_offers
     @global_offers = []
-    @dropdown_options = { :not_for_nav => true }
+    @dropdown_options = { :not_for_nav => true, :with_new_app_button => false }
 
     if params[:current_app].present?
       @app = App.find(params[:current_app])
