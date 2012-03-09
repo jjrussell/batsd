@@ -938,6 +938,7 @@ ActiveRecord::Schema.define(:version => 20120309000351) do
     t.boolean  "hidden",                   :default => false, :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.boolean  "locked",                   :default => false, :null => false
   end
 
   add_index "survey_offers", ["id"], :name => "index_survey_offers_on_id", :unique => true

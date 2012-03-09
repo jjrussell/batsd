@@ -77,9 +77,6 @@
         = navigation(tabs)
 
       #content
-        - if PARTNERS_TO_MESSAGE.include?(current_partner.id)
-          .flash.notice
-            A credit has been applied to your account due to invalid clicks and/or conversions. If you have any questions please contact your account manager or #{mail_to("support@tapjoy.com")}
         - flash.each do |name, msg|
           .flash{ :id => "flash_#{name}", :title => "Click to dismiss this message" }
             %strong #{name.to_s.humanize}:
