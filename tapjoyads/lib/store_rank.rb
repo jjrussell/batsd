@@ -5,7 +5,6 @@ class StoreRank
     hydra.disable_memoization
     date_string = time.to_date.to_s(:db)
     error_count = 0
-    known_store_ids = {}
     s3_rows = {}
     overall_us_free = {}
     overall_us_paid = {}
@@ -14,11 +13,7 @@ class StoreRank
     ranks_file = open("tmp/#{ranks_file_name}", 'w')
 
     log_progress "Populate store rankings for iTunes. Task starting."
-
-    App.find_each(:conditions => "platform = 'iphone' AND store_id IS NOT NULL") do |app|
-      known_store_ids[app.store_id] ||= []
-      known_store_ids[app.store_id] += app.offer_ids
-    end
+    known_store_ids = all_known_store_ids_for('iphone')
     log_progress "Finished loading known_store_ids."
 
     ITUNES_CATEGORY_IDS.each do |category_key, category_id|
@@ -103,8 +98,6 @@ class StoreRank
     hydra.disable_memoization
     date_string = time.to_date.to_s(:db)
     error_count = 0
-    known_store_ids = {}
-    known_android_store_ids = {}
     s3_rows = {}
     overall_en_free = {}
     overall_en_paid = {}
@@ -113,12 +106,7 @@ class StoreRank
     android_ranks_file = open("tmp/#{android_ranks_file_name}", 'w')
 
     log_progress "Populate store rankings for Android. Task starting."
-
-    App.find_each(:conditions => "platform = 'android' AND store_id IS NOT NULL") do |app|
-      known_android_store_ids[app.store_id] ||= []
-      known_android_store_ids[app.store_id] += app.offer_ids
-    end
-
+    known_android_store_ids = all_known_store_ids_for('android')
     log_progress "Finished loading known_store_ids."
 
     GOOGLE_CATEGORY_IDS.each do |category_key, category_name|
@@ -206,77 +194,19 @@ class StoreRank
     `rm 'tmp/#{android_ranks_file_name}.gz'`
   end
 
-  def self.populate_top_freemium_android_apps
-    hydra = Typhoeus::Hydra.new(:max_concurrency => 20)
-    hydra.disable_memoization
-    error_count = 0
-    offset = 0
-    freemium_android_app = []
-    known_android_store_ids = {}
-    App.find_each(:conditions => "platform = 'android' AND store_id IS NOT NULL") do |app|
-      known_android_store_ids[app.store_id] ||= []
-      known_android_store_ids[app.store_id] += app.offer_ids
-    end
+  private
 
-    while offset < 456
-      url = google_rank_url("apps_topgrossing", "", "en", offset)
-      offset += 24
-
-      request = Typhoeus::Request.new(url)
-      request.on_complete do |response|
-        current_offset = response.effective_url.split('start=').last.split('&').first.to_i
-        if response.code != 200
-          error_count += 1
-          if error_count > 50
-            raise "Too many errors attempting to download android ranks, giving up. App store down?"
-          end
-          log_progress "Error downloading topgrossing data from google for Error code: #{response.code}. Retrying."
-          hydra.queue(request)
-        else
-          items = Hpricot(response.body)/".snippet.snippet-medium"
-          items.each_with_index do |item, index|
-            anchor = item/".details"
-            price = (anchor/"span.buy-button-price").inner_html[/\d+\.\d+/]
-            next unless price.nil?
-
-            rank      = index + current_offset + 1
-            store_id  = (anchor/"a.title").attr('href').split("id=").second.split("&").first
-            name      = (anchor/"a.title").inner_html
-
-            freemium_android_app << {:rank => rank, :name => name, :store_id => store_id}
-          end
-        end
+  def self.all_known_store_ids_for(platform)
+    known_store_ids = {}
+    App.live.by_platform(platform).find_each do |app|
+      app.app_metadatas.each do |data|
+        store_id = data.store_id
+        known_store_ids[store_id] ||= []
+        known_store_ids[store_id] += app.offer_ids
       end
-      hydra.queue(request)
     end
-
-    log_progress "Finished queuing requests."
-    hydra.run
-    log_progress "Finished making requests."
-    apps = freemium_android_app.sort_by{|app| app[:rank]}.map do |hash|
-      hash[:tapjoy_apps] = known_android_store_ids[hash[:store_id]]
-      hash
-    end
-
-    time = Time.zone.now
-    results = { :apps => apps, :created_at => time }
-    bucket = S3.bucket(BucketNames::STORE_RANKS)
-    object = bucket.objects["android/freemium/#{time.strftime('%Y-%m-%d')}"]
-    object.write(:data => results.to_json)
+    known_store_ids
   end
-
-  def self.top_freemium_android_apps(time=nil)
-    time ||= Time.zone.now - 5.minutes
-    bucket = S3.bucket(BucketNames::STORE_RANKS)
-    object = bucket.objects["android/freemium/#{time.strftime('%Y-%m-%d')}"]
-    unless object.exists?
-      time -= 1.day
-      object = bucket.objects["android/freemium/#{time.strftime('%Y-%m-%d')}"]
-    end
-    JSON.load(object.read)
-  end
-
-private
 
   ##
   # Parses an itunes top 200 response, and returns a hash of store_id => rank.
