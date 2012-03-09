@@ -24,9 +24,7 @@ module SprocketHelper
 
     if src.blank?
       digest = ASSETS[full_logical_path].digest
-
       raise "Cannot find file: " + full_logical_path if digest.blank?
-
       src = "#{logical_path}-#{digest}.#{ext}"
     end
 
