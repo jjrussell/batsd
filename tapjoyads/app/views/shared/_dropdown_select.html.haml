@@ -43,7 +43,7 @@
             = hidden_field_tag 'app_id', (o.is_a?(App) ? o.id : o), :disabled => true
           = link_to('#', url, :class => "hidden")
     - if options[:not_for_nav]
-      = label_tag 'empty_space', '&nbsp;', :style => "display: inline-block; height: 40px"
+      #app_box_placeholder
     - else
       #new_app_box
         .app{ :class => "new_app #{selected.nil? ? 'selected' : ''}", :title => 'Add a new App' }
@@ -130,6 +130,9 @@
       }
       #filter_box input {
         width: 180px;
+      }
+      #app_box_placeholder {
+        height: 42px;
       }
       #apps_dropdown {
         -webkit-user-select: none;

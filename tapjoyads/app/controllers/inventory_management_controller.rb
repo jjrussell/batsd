@@ -1,6 +1,6 @@
 class InventoryManagementController < WebsiteController
   layout 'tabbed'
-  current_tab :inventory_mgmt
+  current_tab :inventory
 
   filter_access_to :all
   before_filter :set_partner, :get_selected_option
