@@ -754,6 +754,7 @@ ActiveRecord::Schema.define(:version => 20120308212750) do
     t.string   "cs_contact_email"
     t.boolean  "confirmed_for_payout",                                                     :default => false,     :null => false
     t.string   "payout_confirmation_notes"
+    t.boolean  "discount_all_offer_types",                                                 :default => false,     :null => false
   end
 
   add_index "partners", ["id"], :name => "index_partners_on_id", :unique => true
