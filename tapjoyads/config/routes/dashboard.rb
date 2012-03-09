@@ -110,58 +110,6 @@ Tapjoyad::Application.routes.draw do
           get :export_adjustments
         end
 
-  map.namespace :account do |account|
-    account.resources :whitelist, :controller => 'whitelist', :only => [ :index ], :collection => [ :enable, :disable ]
-  end
-  map.resources :user_sessions, :only => [ :new, :create, :destroy, :index ]
-  map.resources :users, :as => :account, :except => [ :show, :destroy ]
-  map.resources :apps, :except => [ :destroy ], :member => { :confirm => :get, :integrate => :get, :publisher_integrate => :get, :integrate_check => :get, :archive => :post, :unarchive => :post }, :collection => { :search => :get } do |app|
-    app.resources :offers, :only => [ :new, :create, :edit, :update ] , :member => { :toggle => :post, :percentile => :post }, :controller => 'apps/offers' do |offer|
-      offer.resources :offer_events, :only => [ :index, :new, :create, :edit, :update, :destroy ], :controller => 'apps/offers/offer_events', :as => :scheduling
-    end
-    app.resources :currencies, :only => [ :show, :update, :new, :create ],
-      :member => { :reset_test_device => :post }, :controller => 'apps/currencies'
-    app.resources :virtual_goods, :as => 'virtual-goods', :only => [ :show, :update, :new, :create, :index ],
-      :collection => { :reorder => :post }, :controller => 'apps/virtual_goods'
-    app.resources :action_offers, :only => [ :new, :create, :edit, :update, :index ], :member => { :toggle => :post, :preview => :get }, :collection => { :TJCPPA => :get, :TapjoyPPA => :get }, :controller => 'apps/action_offers'
-    app.resources :reengagement_offers, :only => [ :new, :create, :edit, :update, :index ], :member => { :toggle => :post }, :controller => 'apps/reengagement_offers'
-  end
-  map.with_options :controller => :offer_creatives, :path_prefix => 'offer_creatives/:id', :name_prefix => 'offer_creatives_' do |offer|
-    offer.preview '', :action => :show, :conditions => { :method => :get }
-    offer.with_options :path_prefix => 'offer_creatives/:id/:image_size' do |s|
-      s.form '',    :action => :new, :conditions => { :method => :get }
-      s.connect '', :action => :create, :conditions => { :method => :post }
-      s.connect '', :action => :destroy, :conditions => { :method => :delete }
-    end
-  end
-  map.resources :enable_offer_requests, :only => [ :create ]
-  map.resources :reporting, :only => [ :index, :show ], :member => { :export => :post, :download_udids => :get }, :collection => { :aggregate => :get, :export_aggregate => :post, :api => :get, :regenerate_api_key => :post }
-  map.resources :billing, :only => [ :index ],
-    :collection => { :create_order => :post, :create_transfer => :post, :update_payout_info => :put, :forget_credit_card => :post, :export_statements => :get, :export_orders => :get, :export_payouts => :get, :export_adjustments => :get }
-  map.add_funds_billing 'billing/add-funds', :controller => :billing, :action => :add_funds
-  map.transfer_funds_billing 'billing/transfer-funds', :controller => :billing, :action => :transfer_funds
-  map.payout_info_billing 'billing/payment-info', :controller => :billing, :action => :payout_info
-  map.resources :statz, :only => [ :index, :show, :edit, :update, :new, :create ],
-    :member => { :last_run_times => :get, :udids => :get, :download_udids => :get, :support_request_reward_ratio => :get },
-    :collection => { :global => :get, :publisher => :get, :advertiser => :get }
-  map.resources :activities, :only => [ :index ]
-  map.resources :partners, :only => [ :index, :show, :new, :create, :update, :edit ],
-    :member => { :make_current => :post, :manage => :post, :stop_managing => :post, :mail_chimp_info => :get, :new_transfer => :get, :create_transfer => :post, :reporting => :get, :set_tapjoy_sponsored => :post, :set_unconfirmed_for_payout => :post },
-    :collection => { :agency_api => :get } do |partner|
-    partner.resources :offer_discounts, :only => [ :index, :new, :create ], :member => { :deactivate => :post }, :controller => 'partners/offer_discounts'
-    partner.resources :payout_infos, :only => [ :index, :update ]
-  end
-  map.connect 'partners/managed_by/:id', :controller => :partners, :action => :managed_by
-  map.with_options(:controller => 'search') do |m|
-    m.search_gamers 'search/gamers', :action => 'gamers'
-    m.search_offers 'search/offers', :action => 'offers'
-    m.search_users 'search/users', :action => 'users'
-    m.search_partners 'search/partners', :action => 'partners'
-    m.search_brands 'search/brands', :action => 'brands'
-  end
-  map.premier 'premier', :controller => :premier, :action => :edit
-  map.resources :survey_results, :only => [ :new, :create ]
-
       end
 
       match 'billing/add-funds' => 'billing#add_funds', :as => :add_funds_billing
