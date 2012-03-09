@@ -230,6 +230,7 @@ span.gill {
     font: 14px 'Gill Sans', 'Gill Sans MT', Arial , sans-serif;
     padding: 8px;
     margin-right: 4px;
+    background: #fff;
     @include rounded-corners(4px);
     @include inset-shadow("rgba(0,0,0, .8)", 3px);
   }
@@ -931,7 +932,7 @@ span.gill {
 
   #getting-started {
     .content-box {
-      width: 580px;
+      width: 600px;
       .text {
          font: 200 1.6em "Museo Slab";
       }

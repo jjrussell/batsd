@@ -33,8 +33,6 @@
     = stylesheet_link_tag("marketplace/theme/tjm/style-320", :media => "only screen and (max-width: 320px)")
     = stylesheet_link_tag("marketplace/resources/components/carousel/carousel.css")
     
-    = stylesheet_link_tag("marketplace/locale/#{I18n.locale.to_s}.css") if ['en', 'jp', 'es', 'fr'].include? I18n.locale.to_s
-
     %script{ :id => "analytics-goes-here" }
     = yield :page_head
 
@@ -59,6 +57,7 @@
 
     = render 'games/shared/footer'
 
+    = stylesheet_link_tag("marketplace/locale/#{I18n.locale.to_s}.css") if ['en', 'ja', 'es', 'fr'].include? I18n.locale.to_s
 
     :javascript
       window.ENVIRONMENT = "#{Rails.env}";
@@ -75,7 +74,7 @@
 
     %script{ :type => 'text/javascript', :charset => 'utf-8' }
       = yield :page_javascript
-
+    
     :javascript
       Tapjoy.rootPath =  "#{WEBSITE_URL}";
       Tapjoy.iosLinkDevicePath = "#{new_games_gamer_device_path}";
