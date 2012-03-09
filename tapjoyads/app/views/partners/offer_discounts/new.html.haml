@@ -25,7 +25,7 @@
     %tr
       %th
       %td
-        = "Will apply to #{@partner.discount_all_offer_types? ? 'all offer types' : 'App and ActionOffers only'}"
+        = "Will apply to #{@partner.discount_all_offer_types? ? 'all offer types' : 'App and Pay-Per-Action offers only'}"
         = link_to('(change)', edit_partner_path(@partner))
 
     %tr
