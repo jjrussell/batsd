@@ -17,12 +17,23 @@ class Tools::BrandsController < WebsiteController
 
   def create
     @brand = Brand.new(:name => params[:brand][:name])
-    if @brand.save
-      flash[:notice] = 'Successfully created Brand'
-      redirect_to tools_brands_path
-    else
-      flash[:error] = 'Brand was not saved'
-      render :action => :new
+    success = @brand.save
+
+    respond_to do |format|
+      format.html do
+        if success
+          flash[:notice] = 'Successfully created Brand'
+          redirect_to tools_brands_path
+        else
+          flash[:error] = 'Brand was not saved'
+          render :action => :new
+        end
+      end
+      format.js do
+        json = { :success => success, :brand => { :name => @brand.name, :id => @brand.id } }
+        json.merge!({:error => @brand.errors.first}) unless success
+        render(:json => json)
+      end
     end
   end
 
@@ -37,4 +48,16 @@ class Tools::BrandsController < WebsiteController
     end
   end
 
+  def show
+    @brand = Brand.find(params[:id])
+    respond_to do |format|
+      format.js do
+        offers = []
+        @brand.offers.each do |offer|
+          offers << {:id => offer.id, :name => offer.search_result_name }
+        end
+        render(:json => offers.to_json)
+      end
+    end
+  end
  end

@@ -116,8 +116,8 @@ ActionController::Routing::Routes.draw do |map|
     tools.resources :partner_program_statz, :only => [ :index ], :collection => { :export => :get }
     tools.resources :survey_offers, :except => [ :show ]
     tools.resources :payout_freezes, :only => [ :index, :create ], :member => { :disable => :post }
-    tools.resources :brand_offers, :only => [ :index ], :collection => { :create_brand => :post, :offers => :get, :add_offer => :post, :remove_offer => :post }
-    tools.resources :brands, :only => [ :index, :new, :create, :edit, :update]
+    tools.resources :brand_offers, :only => [ :create ], :collection => { :delete => :post }
+    tools.resources :brands, :only => [ :index, :new, :create, :edit, :update, :show ]
   end
 
   map.connect 'mail_chimp_callback/callback', :controller => :mail_chimp_callback, :action => :callback
