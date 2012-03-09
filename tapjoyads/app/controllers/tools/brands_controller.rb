@@ -29,7 +29,7 @@ class Tools::BrandsController < WebsiteController
           render :action => :new
         end
       end
-      format.js do
+      format.json do
         json = { :success => success, :brand => { :name => @brand.name, :id => @brand.id } }
         json.merge!({:error => @brand.errors.first}) unless success
         render(:json => json)
@@ -60,4 +60,4 @@ class Tools::BrandsController < WebsiteController
       end
     end
   end
- end
+end

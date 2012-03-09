@@ -328,4 +328,9 @@ FactoryGirl.define do
   factory :brand do
     name 'Coca-Cola'
   end
+
+  factory :brand_offer_mapping do
+    brand {Factory(:brand).id}
+    offer {Factory(:app).primary_offer.id }
+  end
 end
