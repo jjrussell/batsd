@@ -12,22 +12,21 @@ class CompressCss
   end
 end
 
-ASSETS = Sprockets::Environment.new
+ass = Sprockets::Environment.new
 
-ASSETS.append_path 'app/assets/javascripts'
-ASSETS.append_path 'app/assets/stylesheets'
+ass.append_path 'app/assets/javascripts'
+ass.append_path 'app/assets/stylesheets'
 ASSETS_PATH = "#{Rails.root}/public/assets/"
 
 if CACHE_ASSETS
-  ASSETS.js_compressor = Uglifier.new
-  ASSETS.css_compressor = CompressCss.new
+  ass.js_compressor = Uglifier.new
+  ass.css_compressor = CompressCss.new
 
-  # minify all on startup
-  print "Loading static assets "
-  ASSETS.each_logical_path do |l|
-    print "."
+  # build immutable index on startup
+  ass = ass.index
+  ass.each_logical_path do |l|
     STDOUT.flush
-    ASSETS[l]
+    ass[l]
   end
-  puts
 end
+ASSETS = ass
