@@ -177,6 +177,13 @@ sv:
       skip: "Hoppa över"
       title: "Tjäna %{currency}"
       try_out: Testa
+    footer:
+      about: ~
+      advertisers: ~
+      blog: ~
+      copyright: ~
+      developers: ~
+      privacy: ~
     games:
       about_body: "A better way to love the apps you have and find the apps you'll love."
       about_title: "\"Den vet precis vilka appar jag vill ha\""
@@ -189,7 +196,10 @@ sv:
       advertisers_body: "Nå ut till miljontals användare och visa dina produkter"
       advertisers_title: Marknadsförare
       allow_marketing_emails: "Tillåt att Tapjoy sänder mig erbjudanden"
-      already_registered: ~
+      almost_done: ~
+      already_registered:
+       one:"%{name} har redan registrerat sig, du följer nu han/henne."
+       other: "%{name} har redan registrerat sig, di följer nu dem."
       amount_and_currency: "%{amount} %{currency}"
       back_to_top: "Tillbaks till överst på sidan"
       birthdate: Födelsedatum
@@ -199,9 +209,12 @@ sv:
       cant_fetch_offers: "Det uppstod ett fel när du försökte ladda fler erbjudanden. Var vänlig försök igen."
       change: ändra
       change_linked_account: "Ändra Länkade Konton"
+      choose_section: ~
+      close: ~
       collect: Samla
       collect_rewards: "Samla belöningar"
       connect_my_device: "Koppla ihop min telefon"
+      connect_to_facebook: ~
       connect_your_android: "Var vänlig och koppla ihop din Android mobil"
       connect_your_device: "Var vänlig och koppla ihop din mobil"
       connected_to_facebook: ~
@@ -210,16 +223,18 @@ sv:
       contact_us: "Kontakta Oss"
       cookies_required: "Var vänlig och tillåt cookies i din webbläsare"
       deactivate: Deaktivera
-      del_acct_confirm: "Klicka på knappen nedan för att deaktivera ditt konto. När ett konto varit deaktiverat i XXX dagar kommer det att raderas. Vi kan inte återställa raderade konton."
+      del_acct_confirm: "Klicka på knappen nedan för att deaktivera ditt konto. När ett konto varit deaktiverat i %{days_before_deletion} dagar kommer det att raderas. Vi kan inte återställa raderade konton."
       delete_my_account: "Ta bort mitt konto"
       developers_body: "Öka dina intäkter med våra lösningar"
       developers_title: Utvecklare
       discover_apps: ~
+      download_now: ~
       earn: "Tjäna %{currency}"
       earn_rewards: ~
       earn_title: "Genomför något av erbjudandena nedan för att tjäna %{currency} i %{app_name}"
       earning_rewards: ~
       edit: Ändra
+      email_device_link: ~
       email_notification: "Mail notificering"
       enable_javascript: "Gå in och ändra din webläsares inställningar och tillåt JavaSkript för att kunna fortsätta använda Tapjoy."
       enter_birthdate: "Var vänlig fyll i födelsedatum"
@@ -236,6 +251,7 @@ sv:
       favorite_app: Favoritapp
       favorite_apps: Fovoritapps
       favorite_category: Favoritkategori
+      favorites: ~
       feedback: Feedback
       find_and_invite_friends: ~
       find_friends_from_facebook: ~
@@ -253,6 +269,9 @@ sv:
       how_it_works_body: "Alla dina spel är listade nedan. Klicka på knapparna bredvid apparna för att börja tjäna valuta."
       how_it_works_title: "Hur fungerar det?"
       install_and_run: "Installera och kör %{name}"
+      install_android_app: ~
+      install_profile: ~
+      invalid_fields: ~
       invite: "Bjud in en vän!"
       invite_by_email: Mailinbjudningar
       invite_email_body: |-
@@ -270,6 +289,10 @@ sv:
       join_the_community: ~
       join_the_community_blurb: ~
       last_played: "Spelade senast %{game}"
+      link_account_header: ~
+      link_account_messaging: ~
+      link_account_messaging_android_href: ~
+      link_account_messaging_tjm_href: ~
       link_my_facebook: "Länka Min Facebook"
       load_more: "Ladda fler"
       loading: Laddar...
@@ -286,13 +309,12 @@ sv:
       no_javascript: "Var vänlig och gå in under din webbläsares inställningar och tillåt JavaScript"
       none_selected: "Inga valda"
       on_my: "på min %{device_name}"
-      one: "En Tapjoy inbjudan har nu skickats till %{name}"
       oops: Oops!
       or_learn_more: ~
-      other: "En Tapjoy inbjudan har skickats till %{name}"
       other_options: "Anda alternativ"
       our_tos_changed: "Våra %{terms_of_use} har ändrats. Var vänlig och läs igenom och godkänn här nedan. "
       password_changed: ~
+      password_non_match: ~
       post_to_facebook_content: "Kolla in Tapjoy där du kan upptäcka de bästa nya apparna och spelen, medan du också tjänar virtuell valuta i dina favorit appar. Det är gratis att gå med så gå in på tapjoy.com och börja få personliga apprekommendationer."
       privacy_policy_href: Integritetspolicy
       profile: Jag
@@ -302,8 +324,13 @@ sv:
       recipients_label: "Använd kommatecken mellan olika mailadresser"
       recommend_apps: ~
       recommendations: "Smarta rekommendationer"
+      recommendations_smart: ~
       registering: "Godkänn användarvilkoren ovan"
       report_bug: "Rapportera en bugg"
+      reset_password_message: ~
+      reset_password_message_submit: ~
+      reset_password_retry: ~
+      reset_password_retry_url_text: ~
       review_app_name: "Recensera %{app_name}"
       review_created: "Din recension lyckades"
       review_issue: "Det uppstod ett problem. Var vänlig försök igen senare."
@@ -333,6 +360,7 @@ sv:
       unable_to_process: "Tyvärr kan vi inte fullfölja din förfrågan"
       unlock_mobile_joy: "Unlock Mobile Joy"
       unmark_as_favorite: ~
+      welcome_tapjoy: ~
       wifi_required: "Uppkoppling krävs"
       wrong_device: "Fel enhet?"
       you_are_following: ~
@@ -411,6 +439,7 @@ sv:
       options: Intällningar
       other: Andra
       password: Lösenord
+      please_try_again: ~
       preferences: Preferenser
       privacy: Integritet
       privacy_policy: Integritetsinställningar
@@ -421,6 +450,8 @@ sv:
       reviews: Recensioner
       save: Spara
       send: Skicka
+      sending: ~
+      sent: ~
       share: Dela
       sign_in: "Logga in"
       sign_up: "Skaffa konto"
