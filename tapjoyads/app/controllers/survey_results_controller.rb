@@ -85,6 +85,7 @@ class SurveyResultsController < ApplicationController
     web_request.advertiser_amount = @click.advertiser_amount
     web_request.tapjoy_amount     = @click.tapjoy_amount
     web_request.currency_reward   = @click.currency_reward
+    web_request.click_key         = @click.key
     @survey_questions.each do |question|
       web_request.survey_question_id = question.id
       web_request.survey_answer      = answers[question.text]
