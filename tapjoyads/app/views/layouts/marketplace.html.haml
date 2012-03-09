@@ -32,7 +32,7 @@
     = stylesheet_link_tag("marketplace/theme/tjm/style-360", :media => "only screen and (max-width: 360px)")
     = stylesheet_link_tag("marketplace/theme/tjm/style-320", :media => "only screen and (max-width: 320px)")
     = stylesheet_link_tag("marketplace/resources/components/carousel/carousel.css")
-
+    
     %script{ :id => "analytics-goes-here" }
     = yield :page_head
 
@@ -57,6 +57,7 @@
 
     = render 'games/shared/footer'
 
+    = stylesheet_link_tag("marketplace/locale/#{I18n.locale.to_s}.css") if ['en', 'ja', 'es', 'fr'].include? I18n.locale.to_s
 
     :javascript
       window.ENVIRONMENT = "#{Rails.env}";
@@ -73,12 +74,12 @@
 
     %script{ :type => 'text/javascript', :charset => 'utf-8' }
       = yield :page_javascript
-
+    
     :javascript
       Tapjoy.rootPath =  "#{WEBSITE_URL}";
       Tapjoy.iosLinkDevicePath = "#{new_games_gamer_device_path}";
       Tapjoy.androidAppPath = "#{GAMES_ANDROID_MARKET_URL}";
-      Tapjoy.selectDevice = #{current_gamer ? current_gamer.all_device_data.to_json : []};
+      Tapjoy.selectDevice = #{current_gamer ? current_gamer.all_device_data.to_json : [].to_json};
       Tapjoy.selectDevicePath = "#{games_switch_device_path}";
       Tapjoy.requireSelectDevice = #{@require_select_device.to_json};
 

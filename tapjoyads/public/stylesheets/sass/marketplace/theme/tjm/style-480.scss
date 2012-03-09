@@ -19,19 +19,13 @@
   }
 }
 
-.app-info {
-  position: absolute;
-  left: 112px;
-}
-
 .row-title {
   display: none;
 }
 
-.list-button-container.earn-theme .big-title {
-  max-width: 250px !important;
-}
-
+/**
+ * General
+ */
 .ui-list-action-label {
   margin-top: 0;
   padding-bottom: 2px;
@@ -51,9 +45,35 @@
   }
 }
 
+/**
+ * Earnings screen
+ */
+.app-info {
+  position: absolute;
+  left: 112px;
+
+  .big-title {
+    width: percentage(350/480);
+    font-size: 1.4em;
+  }
+}
+
+.earn-btn {
+  top: 25px;
+
+  .collect {
+    font-size: 1.1em;
+    line-height: 1.2em;
+  }
+
+  .greenblock {
+    font-size: 1em;
+    line-height: 1.8em;
+  }  
+}
 
 /**
- * marketplace
+ * Marketplace
  */
 .row {
   padding: 0;
@@ -247,3 +267,4 @@ div.app:last-child {
     }
   }
 }
+

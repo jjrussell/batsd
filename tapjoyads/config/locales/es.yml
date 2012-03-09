@@ -323,7 +323,7 @@ es:
       provide_other_email: "Por favor, introduce un email que no sea el tuyo"
       recipients_label: "Usa comas para separar las direcciones de correo electrónico"
       recommend_apps: ~
-      recommendations: "Recomendaciones Inteligentes"
+      recommendations: "Recomendaciones"
       recommendations_smart: "Juegos recomendados"
       registering: Registrándote
       report_bug: "Reportar Problema"

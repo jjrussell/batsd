@@ -21,10 +21,6 @@
   -ms-text-size-adjust: 110%;
 }
 
-.list-button .collect {
-  margin-top: 2px;
-}
-
 
 #tjmTopbar .banner {
   .more {
@@ -93,11 +89,6 @@ div.app .title {
   }
 }
 
-.app-info {
-  position: absolute;
-  left: 106px;
-  font-size: 0.9em;
-}
 
 #recommendations .app {
   .details {
@@ -120,4 +111,41 @@ div.app .title {
   small {
     font-size: .4em;
   }
+}
+
+/**
+ * Earnings screen
+ */
+.app-info {
+  left: 96px;
+  margin: 0;
+
+  .big-title {
+    width: percentage(280/320);
+    font-size: 1.8em;
+  }
+}
+
+.earn-btn {
+  top: 25px;
+
+  .collect {
+    font-size: 1.2em;
+    line-height: 1.3em;
+    margin-top: 2px;
+  }
+
+  .greenblock {
+    width: 50px;
+    font-size: 1.3em;
+    line-height: 2em;
+  }  
+}
+
+.list-button-container.earn-theme .list-button {
+  padding: 0;
+}
+
+.list-button-container.earn-theme .list-button a {
+  padding: 7px 0 0 3px;
 }
