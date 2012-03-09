@@ -148,9 +148,9 @@ div.app:last-child {
   overflow: visible;
 }
 
-.forward,
-.back {
-  display: none;
+#recommendations .forward,
+#recommendations .back {
+  display: none !important;
 }
 
 .row {

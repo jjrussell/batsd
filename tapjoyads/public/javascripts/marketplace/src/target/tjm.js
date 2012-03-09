@@ -554,6 +554,7 @@ f.event={add:function(a,c,d,e,g){var h,i,j,k,l,m,n,o,p,q,r,s;if(!(a.nodeType===3
 			hasPager: false,
 			pagerContainer: null,
 			animationDuration: 250,
+      enableTouchScroll: true,
 			minHeight: 200
 		}
   };
@@ -1046,32 +1047,32 @@ f.event={add:function(a,c,d,e,g){var h,i,j,k,l,m,n,o,p,q,r,s;if(!(a.nodeType===3
         };
       },
 
-	    
+
 	    debounce: function(fn, delay, execASAP, scope){
 	      var timeout;
-	
+
 	      return function debounced() {
-	        var obj = scope || this, 
+	        var obj = scope || this,
 	            args = arguments;
-	      
+
 	        function delayedFn(){
 	          if(!execASAP){
 	            fn.apply(obj, args);
 	          }
-	          
+
 	          timeout = null;
 	        }
-	
+
 	        if(timeout){
 	          clearTimeout(timeout);
 	        }else if(execASAP){
 	          fn.apply(obj, args);
 	        }
-	
+
 	        timeout = setTimeout(delayedFn, delay || 100);
 	      };
 	    },
-			
+
       Storage: {
         set: function(k) {
           try {
@@ -1687,11 +1688,11 @@ f.event={add:function(a,c,d,e,g){var h,i,j,k,l,m,n,o,p,q,r,s;if(!(a.nodeType===3
     hoverDelay: 50,
     pressDelay: 750
   };
-            
+
   function _eventStart(e){
-        
+
     var target = $(e.target);
-    
+
     if(!Tapjoy.supportsTouch || !target.length)
       return;
 
@@ -1713,14 +1714,14 @@ f.event={add:function(a,c,d,e,g){var h,i,j,k,l,m,n,o,p,q,r,s;if(!(a.nodeType===3
     hover = setTimeout(function(){
       target.applyActive();
     }, 50);
-    
+
     press = setTimeout(function(){
       unbindEvents(target);
       target.removeActive();
       clearTimeout(hover);
       target.trigger('press');
     }, 750);
-    
+
     function _eventCancel(e){
       clearTimeout(hover);
       target.removeActive();
@@ -1740,7 +1741,7 @@ f.event={add:function(a,c,d,e,g){var h,i,j,k,l,m,n,o,p,q,r,s;if(!(a.nodeType===3
         target.removeActive();
       }
     }
-    
+
     function _eventMove(e) {
       _eventUpdate(e);
 
@@ -1758,8 +1759,8 @@ f.event={add:function(a,c,d,e,g){var h,i,j,k,l,m,n,o,p,q,r,s;if(!(a.nodeType===3
         unbindEvents(target);
 
         target.trigger('swipe', {
-          direction: direction, 
-          deltaX: deltaX, 
+          direction: direction,
+          deltaX: deltaX,
           deltaY: deltaY
         });
       }
@@ -1791,11 +1792,11 @@ f.event={add:function(a,c,d,e,g){var h,i,j,k,l,m,n,o,p,q,r,s;if(!(a.nodeType===3
         $(document).bind(Tapjoy.EventsMap.cancel, _eventCancel);
       }
     }
-        
+
     function unbindEvents(element){
       if(!element)
         return;
-    
+
       element.unbind(Tapjoy.EventsMap.move, _eventMove)
       .unbind(Tapjoy.EventsMap.end, _eventEnd);
 
@@ -1847,10 +1848,10 @@ f.event={add:function(a,c,d,e,g){var h,i,j,k,l,m,n,o,p,q,r,s;if(!(a.nodeType===3
     }else{
       $('.active').removeClass('active');
     }
-  };    
+  };
 
   $(document).ready(function(){
-    $(document).bind(Tapjoy.EventsMap.start, _eventStart);    
+    $(document).bind(Tapjoy.EventsMap.start, _eventStart);
   });
 
 })(Tapjoy, jQuery);
@@ -2308,26 +2309,8 @@ f.event={add:function(a,c,d,e,g){var h,i,j,k,l,m,n,o,p,q,r,s;if(!(a.nodeType===3
 
     $(window).bind('resize', Tap.Utils.debounce($t.resize, 100, false, $t));
 
-    if(Tap.supportsTouch){
-      $t.container.live('swipe', function(e, data){
-
-        if(data.direction === 'left'){
-          if($t.forward.hasClass('disabled'))
-            return;
-
-          $t.current++;
-          $t.wrap[0].style.webkitTransform = 'translate3d(-' + ($t.current * $t.container.width()) + 'px, 0, 0)';
-        }else{
-
-          if($t.back.hasClass('disabled'))
-            return;        
-
-          $t.current--;
-          $t.wrap[0].style.webkitTransform = 'translate3d(-' + ($t.current * $t.container.width()) + 'px, 0, 0)';
-        }
-				
-        $t.updateNavigation();
-      });
+    if(Tap.supportsTouch && $t.config.enableTouchScroll){
+      $t.enableTouchScroll();
     }
 
     $t.container.addClass($t.config.cssClass);
@@ -2357,6 +2340,7 @@ f.event={add:function(a,c,d,e,g){var h,i,j,k,l,m,n,o,p,q,r,s;if(!(a.nodeType===3
       var $t = this;
 
       $t.wrap.css('-'+Tap.browser.prefix +'-transform', 'translate(0px, 0px)');
+      $t.wrap[0].style.webkitTransform = 'translate3d(0, 0, 0)';
       $t.current = 0;
       $t.setupSlideDeck();
       $t.updateNavigation();
@@ -2407,7 +2391,7 @@ f.event={add:function(a,c,d,e,g){var h,i,j,k,l,m,n,o,p,q,r,s;if(!(a.nodeType===3
           $t.updateNavigation();
 
           $('.ui-joy-carousel-index', wrap).removeClass('highlight');
-          circle.addClass('active');
+          circle.addClass('highlight');
         })
         .appendTo(wrap);
       }
@@ -2419,7 +2403,7 @@ f.event={add:function(a,c,d,e,g){var h,i,j,k,l,m,n,o,p,q,r,s;if(!(a.nodeType===3
 
       $t.pager = wrap;
     },
-    
+
     createNavigation : function(){
       var $t = this,
           back = $(document.createElement('div')),
@@ -2489,7 +2473,7 @@ f.event={add:function(a,c,d,e,g){var h,i,j,k,l,m,n,o,p,q,r,s;if(!(a.nodeType===3
         $('.ui-joy-carousel-index', $t.pagingContainer).removeClass('highlight');
         $('.ui-joy-carousel-index:eq(' + $t.current + ')', $t.pagingContainer).addClass('highlight');
       }
-			
+
       if(next > $t.length || $t.config.forceSlideWidth && $t.pages == ($t.current + 1)){
         back.removeClass('disabled');
         forward.addClass('disabled');
@@ -2505,7 +2489,29 @@ f.event={add:function(a,c,d,e,g){var h,i,j,k,l,m,n,o,p,q,r,s;if(!(a.nodeType===3
         back.addClass('disabled');
       }
     },
+    enableTouchScroll: function(){
+      var $t = this;
 
+      $t.container.live('swipe', function(e, data){
+
+        if(data.direction === 'left'){
+          if($t.forward.hasClass('disabled'))
+            return;
+
+          $t.current++;
+          $t.wrap[0].style.webkitTransform = 'translate3d(-' + ($t.current * $t.container.width()) + 'px, 0, 0)';
+        }else{
+
+          if($t.back.hasClass('disabled'))
+            return;
+
+          $t.current--;
+          $t.wrap[0].style.webkitTransform = 'translate3d(-' + ($t.current * $t.container.width()) + 'px, 0, 0)';
+        }
+
+        $t.updateNavigation();
+      });
+    },
     resize: function(){
       var $t = this;
 
@@ -2527,8 +2533,31 @@ f.event={add:function(a,c,d,e,g){var h,i,j,k,l,m,n,o,p,q,r,s;if(!(a.nodeType===3
       }
 
       $t.updateNavigation();
-    }   
+    }
   });
+
+  $.fn.extend({
+    disableTouchScroll: function(){
+      return this.each(function(){
+        var $t = $.data(this, 'carousel');
+
+        if(!$t)
+          return;
+
+        $t.container.unbind('swipe');
+      });
+    },
+    enableTouchScroll: function(){
+      return this.each(function(){
+        var $t = $.data(this, 'carousel');
+
+        if(!$t)
+          return;
+
+        $t.enableTouchScroll();
+      });
+    }
+  })
 
   Tap.apply(Tap, {
     Carousel : function(config){
@@ -3753,7 +3782,9 @@ $(document).ready(function() {
     });
   });
 
-  function manageResize() {
+  function manageResize(){
+    var recommendationsRow = $('#recommendationsRow');
+
     if(tjmViewContainer.length != 0 && window.innerWidth < 480){
       tjmViewMenu.css('top', tjmViewContainer.offset().top + (tjmViewContainer.outerHeight(true) - 4) + 'px');
 
@@ -3761,13 +3792,20 @@ $(document).ready(function() {
         width: tjmViewContainer.width() - 4 + 'px'
       });
     }
+
+    if(window.innerWidth > 500){
+      $('#recommendations').enableTouchScroll();
+    }else{
+      $('#recommendations').disableTouchScroll();
+    }
+
     var rows = $('#content .row');
     if(window.innerWidth > 480){
       if(rows.is(':hidden'))
         rows.show();
     }else{
-      if($('#recommendationsRow').hasClass('nbb'))
-        $('#recommendationsRow').show().removeClass('nbb');
+      if(recommendationsRow.hasClass('nbb'))
+        recommendationsRow.show().removeClass('nbb');
 
       if(!$('#gamesRow').is(':hidden')){
         rows.hide();
