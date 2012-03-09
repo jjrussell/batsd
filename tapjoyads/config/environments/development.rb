@@ -10,7 +10,7 @@ config.whiny_nils = true
 # Show full error reports and disable caching
 config.action_controller.consider_all_requests_local = true
 config.action_view.debug_rjs                         = true
-config.action_controller.perform_caching             = true
+config.action_controller.perform_caching             = false
 
 # Don't care if the mailer can't send
 config.action_mailer.raise_delivery_errors = false
@@ -33,7 +33,7 @@ rescue Errno::ENOENT
 end
 
 
-CACHE_ASSETS = true
+CACHE_ASSETS = false
 ASSET_HOST = local_config['asset_host'] || local_config['website_url'] || 'http://localhost:3000'
 RUN_MODE_PREFIX = 'dev_'
 API_URL = local_config['api_url'] || 'http://localhost:3000'
