@@ -16,20 +16,24 @@
   Global Required Parameters
   %span (required by all API actions)
 %ul
-  %li agency_id: your agency user’s id
-  %li api_key: you agency user’s API key
+  %li agency_id: your agency user's id
+  %li api_key: you agency user's API key
 
 %h3 JSON Responses
 %ul
-  %li Error: 400/403 - { “success” : false, “error” : whatever }
-  %li Success: 200 - { “success” : true [, “return_value” : whatever, ...] }
+  %li
+    Error: 400/403 -
+    %tt { &quot;success&quot; : false, &quot;error&quot; : whatever }
+  %li
+    Success: 200 -
+    %tt { &quot;success&quot; : true [, &quot;return_value&quot; : whatever, ...] }
 
 
 %h3 Common Errors
 %ul
-  %li not authorized: wrong agency_id or api_key doesn’t match
+  %li not authorized: wrong agency_id or api_key doesn't match
   %li access denied: you are not permitted to access the requested resource
-  %li missing required parameters: you’re missing a required parameter
+  %li missing required parameters: you're missing a required parameter
 
 
 %h2 Actions
@@ -42,13 +46,13 @@
   %li
     Required Parameters:
     %p name: company name
-    %p email: primary contact’s email address
+    %p email: primary contact's email address
   %li
     Action:
     %p create new user and partner accounts and link the new partner to both the new user and the agency user, also send new user an email with a password reset link.
   %li
     Returns:
-    %p partner_id: the newly created partner’s id
+    %p partner_id: the newly created partner's id
   %li
     Errors:
     %p duplicate email address
@@ -81,11 +85,11 @@
     %p POST /agency_api/partners/link
   %li
     Required Parameters:
-    %p email: user’s current tapjoy email address
-    %p user_api_key: user’s api key
+    %p email: user's current tapjoy email address
+    %p user_api_key: user's api key
   %li
     Action:
-    %p link existing tapjoy user’s partner account to the agency user
+    %p link existing tapjoy user's partner account to the agency user
 
   %li
     Returns:
@@ -103,17 +107,17 @@
     Required Parameters:
     %p partner_id: the id for the partner who owns the app
     %p name: the app name
-    %p platform: the app platform, must be either ‘iphone’ or ‘android’
+    %p platform: the app platform, must be either 'iphone' or 'android'
   %li
     Optional Parameters:
-    %p store_id: app store or android market id, ‘297558390’ or ‘com.tapjoy.tapdefense’. If provided, the app will be considered Live.
+    %p store_id: app store or Google Play id, '297558390' or 'com.tapjoy.tapdefense'. If provided, the app will be considered Live.
   %li
     Action:
     %p create app under the appropriate partner
   %li
     Returns:
-    %p app_id: the newly created app’s id
-    %p app_secret_key: the newly created app’s secret key
+    %p app_id: the newly created app's id
+    %p app_secret_key: the newly created app's secret key
   %li
     Errors:
     %p invalid platform
@@ -129,8 +133,8 @@
   %li
     Optional Parameters:
     %p name: the app name
-    %p platform: the app platform, must be either ‘iphone’ or ‘android’
-    %p store_id: app store or android market id, ‘297558390’ or ‘com.tapjoy.tapdefense’. If provided, the app will be considered Live.
+    %p platform: the app platform, must be either 'iphone' or 'android'
+    %p store_id: app store or Google Play id, '297558390' or 'com.tapjoy.tapdefense'. If provided, the app will be considered Live.
   %li
     Action:
     %p updates the app as appropriate
@@ -154,7 +158,7 @@
   %li
     Optional Parameters:
     %p initial_balance: the starting balance for new users
-    %p test_devices: a semi-colon “;” separated list of device id
+    %p test_devices: a semi-colon &quot;;&quot; separated list of device id
     %p callback_url: a callback url to call when the user earns currency, or the constant 'TAP_POINTS_CURRENCY' if the currency is to be managed by Tapjoy
     %p secret_key: a secret key used to sign the callback url
   %li
@@ -162,7 +166,7 @@
     %p create a new currency for the given app with the same id as the app_id
   %li
     Returns:
-    %p currency_id: the newly created currency’s id
+    %p currency_id: the newly created currency's id
   %li
     Errors:
     %p app not found, currency exists, invalid conversion rate/initial balance
@@ -180,7 +184,7 @@
     %p name: the currency name
     %p conversion_rate: the amount of currency to award for $1 in earnings
     %p initial_balance: the starting balance for new users
-    %p test_devices: a semi-colon “;” separated list of device id
+    %p test_devices: a semi-colon &quot;;&quot; separated list of device id
     %p callback_url: a callback url to call when the user earns currency, or the constant 'TAP_POINTS_CURRENCY' if the currency is to be managed by Tapjoy
     %p secret_key: a secret key used to sign the callback url
   %li
@@ -239,12 +243,12 @@
     %p find app by id
   %li
     Returns:
-    %p app_id: the app’s id
+    %p app_id: the app's id
     %p name: the app name
-    %p platform: the app’s platform
-    %p store_id: the app’s store id
-    %p app_secret_key: the app’s secret key
-    %p integrated: whether we have seen activity from this app in the last 24 hours. ‘true’ or ‘false’
+    %p platform: the app's platform
+    %p store_id: the app's store id
+    %p app_secret_key: the app's secret key
+    %p integrated: whether we have seen activity from this app in the last 24 hours. 'true' or 'false'
   %li
     Errors:
     %p app not found
@@ -262,13 +266,13 @@
     %p find currency by id
   %li
     Returns:
-    %p currency_id: the currency’s id
+    %p currency_id: the currency's id
     %p name: the currency name
-    %p conversion_rate: the currency’s conversion rate
+    %p conversion_rate: the currency's conversion rate
     %p initial_balance: the starting balance for a new user
-    %p test_devices: a semi-colon “;” separated list of device ids
-    %p callback_url: the currency’s callback url, or the constant 'TAP_POINTS_CURRENCY' if the currency is managed by Tapjoy
-    %p secret_key: the currency’s secret key used to sign the callback
+    %p test_devices: a semi-colon &quot;;&quot; separated list of device ids
+    %p callback_url: the currency's callback url, or the constant 'TAP_POINTS_CURRENCY' if the currency is managed by Tapjoy
+    %p secret_key: the currency's secret key used to sign the callback
   %li
     Errors:
     %p currency not found
@@ -298,9 +302,9 @@
     %p find partner by id
   %li
     Returns:
-    %p partner_id: the currency’s id
+    %p partner_id: the currency's id
     %p name: the partner name
-    %p balance: the partner’s balance, in USD cents (100 = $1.00)
+    %p balance: the partner's balance, in USD cents (100 = $1.00)
     %p pending_earnings: the partner's pending earnings, in USD cents (100 = $1.00)
     %p contact_email: the partner's primary contact email address
   %li
