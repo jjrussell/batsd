@@ -337,7 +337,7 @@ class App < ActiveRecord::Base
   end
 
   def all_promoted_offers
-    self.partner.promoted_offers(primary_offer.get_platform).map(&:offer_id) | self.promoted_offers.map(&:offer_id)
+    self.partner.promoted_offers(platform.to_sym).map(&:offer_id) | self.promoted_offers.map(&:offer_id)
   end
   memoize :all_promoted_offers
 

@@ -313,7 +313,7 @@ class Partner < ActiveRecord::Base
   end
 
   def promoted_offers(platform)
-    self.global_promoted_offers.reject { |promoted_offer| promoted_offer.offer.get_platform != platform }
+    self.global_promoted_offers.reject { |promoted_offer| promoted_offer.offer.promotion_platform != platform }
   end
 
 private
