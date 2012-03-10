@@ -55,6 +55,7 @@ class Deploy
       create_deploy_tag
     end
     execute_cloudrun
+    system("script/record_deploy -e #{@options[:environment]} -v #{@options[:version]}")
     puts "Done deploying: #{Time.now}"
   end
 

@@ -4,6 +4,7 @@ class Games::SocialController < GamesController
 
   before_filter :require_gamer
   before_filter :validate_recipients, :only => [ :send_email_invites ]
+  before_filter :offline_facebook_authenticate, :only => :connect_facebook_account
 
   def invites
   end
@@ -21,6 +22,11 @@ class Games::SocialController < GamesController
       :following => Gamer.find_all_by_id(Friendship.following_ids(@current_gamer.id)),
       :followers => Gamer.find_all_by_id(Friendship.follower_ids(@current_gamer.id))
     }
+  end
+
+  def connect_facebook_account
+    flash[:notice] = t 'text.games.connected_to_facebook'
+    redirect_to games_social_index_path
   end
 
   def invite_email_friends
@@ -71,10 +77,10 @@ class Games::SocialController < GamesController
       end
 
       if not_valid.any?
-        render :json => { :success => false, :error => "Invalid email(s):  #{not_valid.join(', ')}" }
+        render :json => { :success => false, :error => t('text.games.invalid_emails') }
       end
     else
-      render :json => { :success => false, :error => "Please provide at least one email" }
+      render :json => { :success => false, :error => t('text.games.provide_one_email') }
     end
   end
 end

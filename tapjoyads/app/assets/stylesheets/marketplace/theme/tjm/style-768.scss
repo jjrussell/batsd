@@ -40,10 +40,21 @@ $image_path: "/images/marketplace/themes/tjm";
   }
 }
 
+.forward,
+.back {
+  display: block !important;
+}
+
 .no-bevel, .no-bevel:before, .no-bevel:after {
   border: none;
   box-shadow: none;
 }
+
+.row {
+  width: 100%;
+  clear: all;
+}
+
 
 .row .games .app:first-child {
   margin-top: 2px;

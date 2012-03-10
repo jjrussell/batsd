@@ -263,7 +263,7 @@
         if((/complete|loaded/).test(document.readyState))
           fn.call();
 
-        document.addEventListener('DOMContentLoaded', fn, false);
+        document[($.browser.msie ? 'attachEvent' : 'addEventListener')]('DOMContentLoaded', fn, false);
 
         return this;
       },
@@ -338,7 +338,7 @@
       /**
        * Component types, I refer to them as xtypes.
        */
-      xtypes: ['Button'],
+      xtypes: ['Button', 'Carousel'],
       /**
        * input placeholders bucket
        * Manage place-holder text of inputs on browsers which do not support the placeholder attributes.
@@ -373,11 +373,12 @@
 
     Tap.apply(Tap, {
       EventsMap: {
+        cancel: Tap.supportsTouch ? 'touchcancel' : 'mouseout',
+        end: Tap.supportsTouch ? 'touchend' : 'mouseup',
+        move: Tap.supportsTouch ? 'touchmove' : 'mousemove',
         resize: 'onorientationchange' in window ? 'orientationchange' : 'resize',
         start: Tap.supportsTouch ? 'touchstart' : 'mousedown',
-        move: Tap.supportsTouch ? 'touchmove' : 'mousemove',
-        end: Tap.supportsTouch ? 'touchend' : 'mouseup',
-        cancel: Tap.supportsTouch ? 'touchcancel' : 'mouseout'
+        touch : Tap.supportsTouch ? 'tap' : 'click'
       }
     });
 
