@@ -55,7 +55,7 @@ puts "Command: #{command}"
 print "Run command? [y/N] "
 answer = STDIN.gets
 if answer !~ /^(y|yes)$/i
-  exit
+  exit 1
 end
 
 thread_list = []
