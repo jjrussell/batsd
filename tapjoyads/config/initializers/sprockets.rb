@@ -16,6 +16,7 @@ ass = Sprockets::Environment.new
 
 ass.append_path 'app/assets/javascripts'
 ass.append_path 'app/assets/stylesheets'
+
 ASSETS_PATH = "#{Rails.root}/public/assets/"
 
 if CACHE_ASSETS
