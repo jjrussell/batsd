@@ -61,6 +61,7 @@ input[type=checkbox]:checked {
   z-index: 10;
 
   .headerwrap {
+    background: #b41317;
     background: -moz-linear-gradient(top, #e82c2c 0%, #de2627 25%, #ce1f21 50%, #c31a1d 75%, #b41317 100%);
     background: -webkit-linear-gradient(top, #e82c2c 0%, #de2627 25%, #ce1f21 50%, #c31a1d 75%, #b41317 100%);
     background:  -webkit-gradient(linear, left top, left bottom, color-stop(0%,#e82c2c), color-stop(25%,#de2627), color-stop(50%,#ce1f21), color-stop(75%,#c31a1d), color-stop(100%,#b41317));
@@ -502,6 +503,7 @@ span.gill {
  .mobile-joy img {
    margin-top: 40px;
    background: url(#{$image_path}/mobile_joy_retina.png) no-repeat center center;
+   *background: url(#{$image_path}/mobile_joy_medium.png) no-repeat center center;
    background-size: 318px 297px;
    width: 318px;
    height: 295px;
@@ -533,7 +535,7 @@ span.gill {
   background: -o-linear-gradient(top, rgba(137,137,137,0.25) 0%,rgba(251,251,251,0) 63%,rgba(255,255,255,0.05) 65%,rgba(255,255,255,0.46) 80%,rgba(255,255,255,1) 100%);
   background: -ms-linear-gradient(top, rgba(137,137,137,0.25) 0%,rgba(251,251,251,0) 63%,rgba(255,255,255,0.05) 65%,rgba(255,255,255,0.46) 80%,rgba(255,255,255,1) 100%);
   background: linear-gradient(top, rgba(137,137,137,0.25) 0%,rgba(251,251,251,0) 63%,rgba(255,255,255,0.05) 65%,rgba(255,255,255,0.46) 80%,rgba(255,255,255,1) 100%);
-  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#40898989', endColorstr='#ffffff',GradientType=0 );
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#40898989', endColorstr='#ffffff',GradientType=0);
   text-align: center;
   box-shadow: inset 0 -1px 4px rgba(0,0,0, .3);
   padding: 20px 0;
@@ -714,7 +716,14 @@ span.gill {
 }
 
 #footer {
-  @include linear-gradient(top, #d8d8d8, #fff);
+  background: rgb(216,216,216);
+  background: -moz-linear-gradient(top, rgba(216,216,216,1) 0%, rgba(255,255,255,1) 100%);
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(216,216,216,1)), color-stop(100%,rgba(255,255,255,1)));
+  background: -webkit-linear-gradient(top, rgba(216,216,216,1) 0%,rgba(255,255,255,1) 100%);
+  background: -o-linear-gradient(top, rgba(216,216,216,1) 0%,rgba(255,255,255,1) 100%);
+  background: -ms-linear-gradient(top, rgba(216,216,216,1) 0%,rgba(255,255,255,1) 100%);
+  background: linear-gradient(top, rgba(216,216,216,1) 0%,rgba(255,255,255,1) 100%);
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#d8d8d8', endColorstr='#ffffff',GradientType=0 );
   box-shadow: inset 0 1px 4px rgba(0,0,0, .3);
 
   .links {

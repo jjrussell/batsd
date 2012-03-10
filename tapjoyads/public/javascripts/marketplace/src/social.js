@@ -211,7 +211,7 @@
 
         // call functions
         showFriendList();
-      },
+      }
     }
   });
 

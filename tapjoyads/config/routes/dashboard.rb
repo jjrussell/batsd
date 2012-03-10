@@ -75,7 +75,7 @@ ActionController::Routing::Routes.draw do |map|
                      :sdb_metadata => :get, :reset_device => :get, :send_currency_failures => :get, :sanitize_users => :get,
                      :resolve_clicks => :post, :sqs_lengths => :get, :elb_status => :get, :ses_status => :get,
                      :publishers_without_payout_info => :get, :publisher_payout_info_changes => :get, :device_info => :get,
-                     :freemium_android => :get, :award_currencies => :post, :update_award_currencies => :post,
+                     :award_currencies => :post, :update_award_currencies => :post,
                      :update_user_roles => :post, :update_device => :post }
   map.namespace :tools do |tools|
     tools.resources :premier_partners, :only => [ :index ]
@@ -113,7 +113,7 @@ ActionController::Routing::Routes.draw do |map|
     tools.resources :gamer_devices, :only => [ :create, :edit, :new, :show, :update ]
     tools.resources :network_costs, :only => [ :index, :new, :create ]
     tools.resources :partner_program_statz, :only => [ :index ], :collection => { :export => :get }
-    tools.resources :survey_offers, :except => [ :show ]
+    tools.resources :survey_offers, :except => [ :show ], :member => { :toggle_enabled => :put }
     tools.resources :payout_freezes, :only => [ :index, :create ], :member => { :disable => :post }
   end
 

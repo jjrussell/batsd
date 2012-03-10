@@ -34,11 +34,62 @@ describe Offer do
     @offer.payment.should == 500
   end
 
-  it "updates its payment correctly with respect to premier discounts" do
-    @offer.partner.premier_discount = 10
+
+  describe "applies discounts correctly" do  
+    context "to_json an app offer item" do
+      before :each do
+        Offer.any_instance.stubs(:app_offer?).returns true
+        @offer.partner.premier_discount = 10
+      end
+
+      context "with a partner who has the discount_all_offer_types flag set" do
+        it "applies the partner discount to the offer" do
+          @offer.partner.discount_all_offer_types = true
+          @offer.update_attributes({:bid => 500})
+          @offer.reload
+          @offer.payment.should == 450
+        end
+      end  
+      context "with a partner who does not have the discount_all_offer_types flag set" do
+        it "applies the partner discount to the offer" do
+          @offer.partner.discount_all_offer_types = false 
+          @offer.update_attributes({:bid => 500})
+          @offer.reload
+          @offer.payment.should == 450
+        end
+      end  
+    end
+
+    context "to a non app offer item" do
+      before :each do
+        Offer.any_instance.stubs(:app_offer?).returns false
+        @offer.partner.premier_discount = 10
+      end
+
+      context "with a partner who has the discount_all_offer_types flag set" do
+        it "applies the partner discount to the offer" do
+          @offer.partner.discount_all_offer_types = true
+          @offer.update_attributes({:bid => 500})
+          @offer.reload
+          @offer.payment.should == 450
+        end
+      end  
+      context "with a partner who does not have the discount_all_offer_types flag set" do
+        it "does not apply the partner discount to the offer" do
+          @offer.partner.discount_all_offer_types = false
+          @offer.update_attributes({:bid => 500})
+          @offer.reload
+          @offer.payment.should == 500
+        end
+      end  
+    end
+  end
+
+  it "enforces a minimum payment of one cent if the bid is greater than zero" do
+    @offer.partner.premier_discount = 100
     @offer.update_attributes({:bid => 500})
     @offer.reload
-    @offer.payment.should == 450
+    @offer.payment.should == 1
   end
 
   it "doesn't allow bids below min_bid" do
