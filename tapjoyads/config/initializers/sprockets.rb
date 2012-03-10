@@ -25,8 +25,7 @@ if CACHE_ASSETS
   # build immutable index on startup
   ass = ass.index
   ass.each_logical_path do |l|
-    STDOUT.flush
-    ass[l]
+    ass[l].digest
   end
 end
 ASSETS = ass
