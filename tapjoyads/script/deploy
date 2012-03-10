@@ -54,12 +54,11 @@ class Deploy
       check_syntax
       create_deploy_tag
     end
-    execute_cloudrun
-    system("script/record_deploy -e #{@options[:environment]} -v #{@options[:version]}")
+    system("script/record_deploy -e #{@options[:environment]} -v #{@options[:version]}") if execute_cloudrun
     puts "Done deploying: #{Time.now}"
   end
 
-private
+  private
 
   def print_usage_and_exit
     puts "USAGE: script/deploy [options]"
@@ -71,14 +70,14 @@ private
   def prompt_and_exit_if_not_yes
     answer = STDIN.gets
     if answer !~ /^(y|yes)$/i
-      exit
+      exit 1
     end
   end
 
   def check_syntax
     unless system("script/runner 'Utils.check_syntax'")
       puts "Syntax Check: FAILED"
-      exit
+      exit 1
     end
     puts "Syntax Check: PASSED"
   end
@@ -88,11 +87,11 @@ private
     git_status = `git status`
     if git_status !~ /On branch master/
       puts "You must be on the master branch!"
-      exit
+      exit 1
     end
     if git_status !~ /working directory clean/
       puts "You must have a clean working directory!"
-      exit
+      exit 1
     end
     system("git pull tapjoy master")
   end
@@ -107,7 +106,7 @@ private
     puts "Updating webserver.sqlite file."
     unless system("script/runner 'Utils.update_sqlite_schema' > /dev/null")
       puts "Failed to update webserver.sqlite!"
-      exit
+      exit 1
     end
     system("git add db/webserver.sqlite")
 
