@@ -50,11 +50,17 @@
  */
 .app-info {
   position: absolute;
+  top: 20px;  
   left: 112px;
+  width: percentage(340/480);
 
   .big-title {
-    width: percentage(350/480);
+    width: percentage(340/480);
     font-size: 1.4em;
+  }
+
+  .ui-icon-medium {
+    width: percentage(300/480);
   }
 }
 
@@ -261,7 +267,7 @@ div.app:last-child {
     ul {
       li {
         a {
-          font-size: .7em;
+          font-size: .5em;
         }
       }
     }
