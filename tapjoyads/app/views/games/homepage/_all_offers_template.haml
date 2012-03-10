@@ -22,18 +22,15 @@
                   <%= OfferArray[i].Name %>
                 </div>
               </div>
-              <div class="container">
                 <% if (OfferArray[i].Type === "App") { %>
-                  <div class="ui-icon-medium social icon24 p5 left">
+                  <div class="ui-icon-medium social icon24 p5">
                     <%= i18n.t('games.active_gamers_text', {count: (OfferArray[i].ActiveGamers == null) ? '0' : OfferArray[i].ActiveGamers}) %>
                   </div>
                 <% } %>
                 <% if (OfferArray[i].WifiOnly) { %>
-                <div class="container">
-                  <div class="ui-icon-medium wifi icon24 p5 left">
+                  <div class="ui-icon-medium wifi icon24 p5">
                     #{t("text.games.wifi_required")}
                   </div>
-                </div>
                 <% } %>
               </div>
             </div>
