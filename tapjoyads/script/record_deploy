@@ -45,7 +45,7 @@ class DeployRecorder
 
   def record_deploy
     @options[:app_names].each do |app_name|
-      system("vendor/gems/newrelic_rpm-3.3.0/bin/newrelic deployments -a #{app_name} -e #{@options[:environment]}")
+      system("vendor/gems/newrelic_rpm-3.3.0/bin/newrelic deployments -a #{app_name} -e #{@options[:environment]} -r #{@options[:version]}")
     end
   end
 
@@ -54,7 +54,7 @@ class DeployRecorder
   def print_usage_and_exit
     puts "USAGE: script/record_deploy [options]"
     puts "    -e, --environment (optional): The environment being deployed to. Can be 'test', 'util', or 'production'. Default is 'test'."
-    puts "    -v, --version (optional): The version being deployed. Defaults to 'master' for test and util deploys."
+    puts "    -r, --version (optional): The version being deployed. Defaults to 'master' for test and util deploys."
     exit
   end
 
