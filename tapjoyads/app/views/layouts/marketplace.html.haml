@@ -52,7 +52,7 @@
 
     = render 'games/shared/footer'
 
-    = stylesheet_link_tag("marketplace/locale/#{I18n.locale.to_s}.css") if ['ja', 'es', 'fr'].include? I18n.locale.to_s
+    = css_tag("marketplace/locale/#{I18n.locale.to_s}.css") if ['ja', 'es', 'fr'].include? I18n.locale.to_s
 
     :javascript
       window.ENVIRONMENT = "#{Rails.env}";
