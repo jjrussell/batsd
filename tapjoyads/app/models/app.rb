@@ -19,8 +19,8 @@ class App < ActiveRecord::Base
         :offers   => ANDROID_OFFERS_SDK,
         :vg       => ANDROID_VG_SDK,
       },
-      :store_name => 'Market',
-      :info_url => 'https://market.android.com/details?id=STORE_ID',
+      :store_name => 'Google Play',
+      :info_url => 'https://play.google.com/store/apps/details?id=STORE_ID',
       :store_url => 'market://search?q=STORE_ID',
       :default_actions_file_name => "TapjoyPPA.java",
       :versions => [ '1.5', '1.6', '2.0', '2.1', '2.2', '2.3', '3.0' ],
@@ -211,7 +211,9 @@ class App < ActiveRecord::Base
 
     fill_app_store_data(data)
     app_metadata.fill_app_store_data(data)
-    app_metadata.save
+    return false unless app_metadata.save
+
+    data
   end
 
   def queue_store_update(app_store_id)

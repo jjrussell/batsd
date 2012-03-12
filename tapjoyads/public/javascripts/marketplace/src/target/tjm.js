@@ -267,7 +267,7 @@ f.event={add:function(a,c,d,e,g){var h,i,j,k,l,m,n,o,p,q,r,s;if(!(a.nodeType===3
         if((/complete|loaded/).test(document.readyState))
           fn.call();
 
-        document.addEventListener('DOMContentLoaded', fn, false);
+        document[($.browser.msie ? 'attachEvent' : 'addEventListener')]('DOMContentLoaded', fn, false);
 
         return this;
       },
@@ -1839,14 +1839,14 @@ f.event={add:function(a,c,d,e,g){var h,i,j,k,l,m,n,o,p,q,r,s;if(!(a.nodeType===3
   };
 
   $.fn.applyActive = function() {
-    return $(this).addClass('active');
+    return $(this).addClass('ui-joy-touch-active');
   };
 
   $.fn.removeActive = function(obj) {
     if(obj){
-      obj.removeClass('active');
+      obj.removeClass('ui-joy-touch-active');
     }else{
-      $('.active').removeClass('active');
+      $('.ui-joy-touch-active').removeClass('ui-joy-touch-active');
     }
   };
 
@@ -2899,7 +2899,7 @@ var TJG = typeof TJG === "object" ? TJG : {}; TJG.vars = {};
         };
 
         FB.ui(obj);
-      },
+      }
     }
   });
 
@@ -3714,7 +3714,7 @@ $(document).ready(function() {
 
   selectTrigger.bind(Tapjoy.EventsMap.start, function(){
       var el = $(this),
-            heading = $('.heading', tjmViewContainer),
+          heading = $('.heading', tjmViewContainer),
           fix = $('.fix', tjmViewContainer);
 
      if(tjmViewContainer.hasClass('active')){
@@ -3732,7 +3732,8 @@ $(document).ready(function() {
 
       heading.text(_t('games.choose_section'));
 
-      tjmViewMenu.css('top', tjmViewContainer.offset().top + (tjmViewContainer.outerHeight(true) - 4) + 'px');
+      tjmViewMenu.css('top', tjmViewContainer.offset().top + (tjmViewContainer.outerHeight(true) - 4) + 'px')
+      .css('position', 'absolute')
 
       fix.css({
         width: tjmViewContainer.width() - 4 + 'px'
