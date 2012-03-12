@@ -1047,32 +1047,32 @@ f.event={add:function(a,c,d,e,g){var h,i,j,k,l,m,n,o,p,q,r,s;if(!(a.nodeType===3
         };
       },
 
-	    
+
 	    debounce: function(fn, delay, execASAP, scope){
 	      var timeout;
-	
+
 	      return function debounced() {
-	        var obj = scope || this, 
+	        var obj = scope || this,
 	            args = arguments;
-	      
+
 	        function delayedFn(){
 	          if(!execASAP){
 	            fn.apply(obj, args);
 	          }
-	          
+
 	          timeout = null;
 	        }
-	
+
 	        if(timeout){
 	          clearTimeout(timeout);
 	        }else if(execASAP){
 	          fn.apply(obj, args);
 	        }
-	
+
 	        timeout = setTimeout(delayedFn, delay || 100);
 	      };
 	    },
-			
+
       Storage: {
         set: function(k) {
           try {
@@ -1688,11 +1688,11 @@ f.event={add:function(a,c,d,e,g){var h,i,j,k,l,m,n,o,p,q,r,s;if(!(a.nodeType===3
     hoverDelay: 50,
     pressDelay: 750
   };
-            
+
   function _eventStart(e){
-        
+
     var target = $(e.target);
-    
+
     if(!Tapjoy.supportsTouch || !target.length)
       return;
 
@@ -1714,14 +1714,14 @@ f.event={add:function(a,c,d,e,g){var h,i,j,k,l,m,n,o,p,q,r,s;if(!(a.nodeType===3
     hover = setTimeout(function(){
       target.applyActive();
     }, 50);
-    
+
     press = setTimeout(function(){
       unbindEvents(target);
       target.removeActive();
       clearTimeout(hover);
       target.trigger('press');
     }, 750);
-    
+
     function _eventCancel(e){
       clearTimeout(hover);
       target.removeActive();
@@ -1741,7 +1741,7 @@ f.event={add:function(a,c,d,e,g){var h,i,j,k,l,m,n,o,p,q,r,s;if(!(a.nodeType===3
         target.removeActive();
       }
     }
-    
+
     function _eventMove(e) {
       _eventUpdate(e);
 
@@ -1759,8 +1759,8 @@ f.event={add:function(a,c,d,e,g){var h,i,j,k,l,m,n,o,p,q,r,s;if(!(a.nodeType===3
         unbindEvents(target);
 
         target.trigger('swipe', {
-          direction: direction, 
-          deltaX: deltaX, 
+          direction: direction,
+          deltaX: deltaX,
           deltaY: deltaY
         });
       }
@@ -1792,11 +1792,11 @@ f.event={add:function(a,c,d,e,g){var h,i,j,k,l,m,n,o,p,q,r,s;if(!(a.nodeType===3
         $(document).bind(Tapjoy.EventsMap.cancel, _eventCancel);
       }
     }
-        
+
     function unbindEvents(element){
       if(!element)
         return;
-    
+
       element.unbind(Tapjoy.EventsMap.move, _eventMove)
       .unbind(Tapjoy.EventsMap.end, _eventEnd);
 
@@ -1848,10 +1848,10 @@ f.event={add:function(a,c,d,e,g){var h,i,j,k,l,m,n,o,p,q,r,s;if(!(a.nodeType===3
     }else{
       $('.ui-joy-touch-active').removeClass('ui-joy-touch-active');
     }
-  };    
+  };
 
   $(document).ready(function(){
-    $(document).bind(Tapjoy.EventsMap.start, _eventStart);    
+    $(document).bind(Tapjoy.EventsMap.start, _eventStart);
   });
 
 })(Tapjoy, jQuery);
@@ -2403,7 +2403,7 @@ f.event={add:function(a,c,d,e,g){var h,i,j,k,l,m,n,o,p,q,r,s;if(!(a.nodeType===3
 
       $t.pager = wrap;
     },
-    
+
     createNavigation : function(){
       var $t = this,
           back = $(document.createElement('div')),
@@ -2473,7 +2473,7 @@ f.event={add:function(a,c,d,e,g){var h,i,j,k,l,m,n,o,p,q,r,s;if(!(a.nodeType===3
         $('.ui-joy-carousel-index', $t.pagingContainer).removeClass('highlight');
         $('.ui-joy-carousel-index:eq(' + $t.current + ')', $t.pagingContainer).addClass('highlight');
       }
-			
+
       if(next > $t.length || $t.config.forceSlideWidth && $t.pages == ($t.current + 1)){
         back.removeClass('disabled');
         forward.addClass('disabled');
@@ -2503,12 +2503,12 @@ f.event={add:function(a,c,d,e,g){var h,i,j,k,l,m,n,o,p,q,r,s;if(!(a.nodeType===3
         }else{
 
           if($t.back.hasClass('disabled'))
-            return;        
+            return;
 
           $t.current--;
           $t.wrap[0].style.webkitTransform = 'translate3d(-' + ($t.current * $t.container.width()) + 'px, 0, 0)';
         }
-        
+
         $t.updateNavigation();
       });
     },
@@ -2533,7 +2533,7 @@ f.event={add:function(a,c,d,e,g){var h,i,j,k,l,m,n,o,p,q,r,s;if(!(a.nodeType===3
       }
 
       $t.updateNavigation();
-    }   
+    }
   });
 
   $.fn.extend({
@@ -2556,7 +2556,7 @@ f.event={add:function(a,c,d,e,g){var h,i,j,k,l,m,n,o,p,q,r,s;if(!(a.nodeType===3
 
         $t.enableTouchScroll();
       });
-    }    
+    }
   })
 
   Tap.apply(Tap, {
@@ -2981,48 +2981,56 @@ var TJG = typeof TJG === "object" ? TJG : {}; TJG.vars = {};
     };
   };
 
-  me.fetchData = function ($container, url, params) {
-    var jsonp = $container.data("is-jsonp");
-
-    return $.ajax({
-      url: url,
-      dataType: jsonp ? "jsonp" : undefined,
-      data: params
+  me.processPreload = function (options, success, error, always) {
+    var timeoutTimer = window.setTimeout(function () {
+      error({});
+      always({});
+    }, 15000);
+    preload.ready(function (data) {
+      window.clearTimeout(timeoutTimer);
+      success(data);
+      always(data);
     });
+    preload.consumed = true;
+  };
+
+  me.fetchData = function (options, success, error, always) {
+    if (preload && !preload.consumed) {
+      return me.processPreload.apply(this, arguments);
+    }
+
+    $.ajax({
+      url: options.url,
+      dataType: options.is_jsonp ? "jsonp" : undefined,
+      data: options.params,
+      timeout: 15000
+    }).done(success).fail(error).always(always);
   };
 
   me.fillElements = function () {
     $(".ajax-loader").each(function () {
       var $$ = $(this),
+        options = {
+          url: $$.data("url"),
+          params: $$.data("params") || {},
+          is_jsonp: $$.data("is-jsonp") || true,
+          immediate: $$.data("immediate-load")
+        },
         $target = $(".ajax-target", $$),
         $placeholder = $(".ajax-placeholder", $$),
         $load_more = $(".ajax-load-more", $$),
         template = me.template($("script", $$).html()),
-        url = $$.data("url"),
-        immediate = $$.data("immediate-load"),
-        params = $$.data("params") || {},
-        preloaded = false,
         getSome;
 
       getSome = function () {
-        if (preload && !preloaded) {
-          preload.ready(function (data) {
-            $target.append(template(data));
-            $placeholder.hide();
-            return data.MoreDataAvailable ? $load_more.show() : $load_more.hide();
-          });
-
-          preloaded = true;
-        } else {
-          me.fetchData($$, url, params).then(function (data) {
-            $target.append(template(data));
-          }).fail(function () {
-            $(".ajax-error", $$).show();
-          }).always(function (data) {
-            $placeholder.hide();
-            return data.MoreDataAvailable ? $load_more.show() : $load_more.hide();
-          });
-        }
+        me.fetchData(options, function success(data) {
+          $target.append(template(data));
+        }, function fail() {
+          $(".ajax-error", $$).show();
+        }, function always(data) {
+          $placeholder.hide();
+          return data.MoreDataAvailable ? $load_more.show() : $load_more.hide();
+        });
 
         $$.unbind("ajax-initiate", getSome);
       };
@@ -3032,14 +3040,14 @@ var TJG = typeof TJG === "object" ? TJG : {}; TJG.vars = {};
         $placeholder.show();
         $load_more.hide();
 
-        if (me.isNumber(params.start) && me.isNumber(params.max)) {
-          params.start += params.max;
+        if (me.isNumber(options.params.start) && me.isNumber(options.params.max)) {
+          options.params.start += options.params.max;
         }
 
         getSome();
       });
 
-      if (immediate) { getSome(); }
+      if (options.immediate) { getSome(); }
     });
   };
 
