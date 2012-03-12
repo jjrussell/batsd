@@ -77,10 +77,10 @@ class Games::SocialController < GamesController
       end
 
       if not_valid.any?
-        render :json => { :success => false, :error => "Invalid email(s):  #{not_valid.join(', ')}" }
+        render :json => { :success => false, :error => t('text.games.invalid_emails') }
       end
     else
-      render :json => { :success => false, :error => "Please provide at least one email" }
+      render :json => { :success => false, :error => t('text.games.provide_one_email') }
     end
   end
 end

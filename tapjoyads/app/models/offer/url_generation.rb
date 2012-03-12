@@ -49,7 +49,7 @@ module Offer::UrlGeneration
     if item_type == 'App'
       final_url = Linkshare.add_params(final_url, itunes_link_affiliate)
       if library_version.nil? || library_version.version_greater_than_or_equal_to?('8.1.1')
-        final_url.sub!('market://search?q=', 'http://market.android.com/details?id=')
+        final_url.sub!('market://search?q=', 'https://play.google.com/store/apps/details?id=')
       end
     elsif item_type == 'EmailOffer'
       final_url += "&publisher_app_id=#{publisher_app_id}"
