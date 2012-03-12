@@ -1,6 +1,5 @@
 %tr.admin
   %td{:colspan => 2} Admin-only fields:
-  - Rails.logger.info "App: #{@app.inspect}"
   - if @app.platform_name == 'iOS'
     %tr.admin
       %th
@@ -8,7 +7,7 @@
         #help_admin_protocol_handler_name.help ?
       %td
         = f.text_field(:protocol_handler)
-        = error_message_on @offer, :protocol_handler
+        = error_message_on @app, :protocol_handler
 
 .hidden
-  #help_admin_protocol_handler_name_content{ :name => 'Protocol Handler' } Protocol handler names are used to track SDK-less offers on iOS devices.
+  #help_admin_protocol_handler_name_content{ :name => 'Protocol Handler' } Protocol handler names are used to track SDK-less offers on iOS devices. The associated offer must be set to 'SDK-less' in order for this to have any effect.  If this field is left blank, a default protocol handler will be used. <br><br> Default protocol handler: <code>tjc&lt;store_id&gt;</code>
