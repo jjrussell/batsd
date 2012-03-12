@@ -258,7 +258,7 @@ class GamesController < ApplicationController
   end
 
   def save_tjm_request
-    @tjm_request.save
+    @tjm_request.save if @tjm_request.present?
   end
 
   def tjm_session_expired?(now = Time.zone.now)
