@@ -25,8 +25,8 @@
                     = t('text.games.unmark_as_favorite')
 
     .section.dark
-      .select-container.left.ml5
-        #viewSelect.dropdown.left
+      #viewSelect.select-container.left.ml5
+        .dropdown.left
           %img.downarrow-white.icon24{ :src => BLANK_IMAGE }
         .heading.pl5.pr15
           = "#{t('text.games.browse_offers')} - #{@active_currency.name}"
@@ -36,23 +36,23 @@
         - @app.currencies.each_with_index do |c, i|
           %li{ :class => "#{"active" if c == @active_currency}" }
             = link_to "#{t('text.games.browse_offers')} - #{c[:name]}", "#target#{i}", :class => "ui-joy-reveal"
-
-    .review-area
-      - @app.currencies.each_with_index do |c, i|
-        .buffer{ :id => "target#{i}", :class => "#{"hidden" if c != @active_currency}" }
-          - url = @external_publisher.get_offerwall_url(@device, c, request.accept_language, request.user_agent, current_gamer.id)
-          = render :partial => "offers", :locals => { :offerwall_url => url, :immediate_load => c == @active_currency }
-    .section.dark
-      .heading
-        = t('text.games.other_options')
-    - if @app_metadata
-      %ul.list-button-container.flush.nbb.big
-        %li.list-button.ntb
-          -link_to new_games_app_review_path(:eid => params[:eid]) do
-            .left.charcoal
-              = t("text.games.review_app_name", {:app_name => @app.name})
-            .right.rightarrow.icon16
-              &nbsp;
+    .container
+      .review-area
+        - @app.currencies.each_with_index do |c, i|
+          .buffer{ :id => "target#{i}", :class => "#{"hidden" if c != @active_currency}" }
+            - url = @external_publisher.get_offerwall_url(@device, c, request.accept_language, request.user_agent, current_gamer.id)
+            = render :partial => "offers", :locals => { :offerwall_url => url, :immediate_load => c == @active_currency }
+      .section.dark
+        .heading
+          = t('text.games.other_options')
+      - if @app_metadata
+        %ul.list-button-container.flush.nbb.big
+          %li.list-button.ntb
+            -link_to new_games_app_review_path(:eid => params[:eid]) do
+              .left.charcoal
+                = t("text.games.review_app_name", {:app_name => @app.name})
+              .right.rightarrow.icon16
+                &nbsp;
 
 - content_for :above_footer do
   - if @app_metadata

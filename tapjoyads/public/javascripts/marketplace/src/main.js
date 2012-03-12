@@ -407,7 +407,7 @@ $(document).ready(function() {
     }
   });
 
-  $('.list-button, .btn, .greenblock, #signup, #login').live(Tapjoy.EventsMap.start + ' ' + Tapjoy.EventsMap.end + ' ' + Tapjoy.EventsMap.cancel, function(e){
+  $('.list-button, .btn, .greenblock, #signup, #login').live("mousedown mouseup mouseout", function(e){
     var el = $(this),
         target = $(e.target),
         which = e.type;
@@ -415,7 +415,7 @@ $(document).ready(function() {
      if(el.hasClass('ui-no-action'))
       return;
 
-    if(which === Tapjoy.EventsMap.start){
+    if(which === "mousedown"){
       el.addClass('active');
     }else{
       el.removeClass('active');
@@ -524,19 +524,6 @@ $(document).ready(function() {
     };
   };
 
-  $(document).bind("email-invite-ajax-success", function (ev, form, data) {
-    if (data.success) {
-      if (data.gamers.length === 0 && data.non_gamers.length === 0) {
-        notify(_t('games.provide_other_email'));
-      } else {
-        showSuccessMessage(data.gamers, data.non_gamers);
-        $("#recipients", form).val('');
-      }
-    } else {
-      notify(data.error);
-    }
-  });
-
   $(".submit-child-form").click(function () {
     $("form", this).submit();
     return false;
@@ -627,7 +614,7 @@ $(document).ready(function() {
 
   selectTrigger.bind(Tapjoy.EventsMap.start, function(){
       var el = $(this),
-            heading = $('.heading', tjmViewContainer),
+          heading = $('.heading', tjmViewContainer),
           fix = $('.fix', tjmViewContainer);
 
      if(tjmViewContainer.hasClass('active')){
@@ -645,7 +632,8 @@ $(document).ready(function() {
 
       heading.text(_t('games.choose_section'));
 
-      tjmViewMenu.css('top', tjmViewContainer.offset().top + (tjmViewContainer.outerHeight(true) - 4) + 'px');
+      tjmViewMenu.css('top', tjmViewContainer.offset().top + (tjmViewContainer.outerHeight(true) - 4) + 'px')
+      .css('position', 'absolute')
 
       fix.css({
         width: tjmViewContainer.width() - 4 + 'px'
@@ -695,7 +683,9 @@ $(document).ready(function() {
     });
   });
 
-  function manageResize() {
+  function manageResize(){
+    var recommendationsRow = $('#recommendationsRow');
+
     if(tjmViewContainer.length != 0 && window.innerWidth < 480){
       tjmViewMenu.css('top', tjmViewContainer.offset().top + (tjmViewContainer.outerHeight(true) - 4) + 'px');
 
@@ -703,13 +693,20 @@ $(document).ready(function() {
         width: tjmViewContainer.width() - 4 + 'px'
       });
     }
+
+    if(window.innerWidth > 500){
+      $('#recommendations').enableTouchScroll();
+    }else{
+      $('#recommendations').disableTouchScroll();
+    }
+
     var rows = $('#content .row');
     if(window.innerWidth > 480){
       if(rows.is(':hidden'))
         rows.show();
     }else{
-      if($('#recommendationsRow').hasClass('nbb'))
-        $('#recommendationsRow').show().removeClass('nbb');
+      if(recommendationsRow.hasClass('nbb'))
+        recommendationsRow.show().removeClass('nbb');
 
       if(!$('#gamesRow').is(':hidden')){
         rows.hide();
@@ -729,7 +726,8 @@ $(document).ready(function() {
 
   Tapjoy.delay(function(){
     $('#recommendations').Carousel({
-      cssClass : 'complete'
+      cssClass : 'complete',
+      minHeight: 175
     });
   }, 50);
 

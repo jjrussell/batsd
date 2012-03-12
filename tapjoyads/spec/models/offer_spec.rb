@@ -34,11 +34,62 @@ describe Offer do
     @offer.payment.should == 500
   end
 
-  it "updates its payment correctly with respect to premier discounts" do
-    @offer.partner.premier_discount = 10
+
+  describe "applies discounts correctly" do  
+    context "to_json an app offer item" do
+      before :each do
+        Offer.any_instance.stubs(:app_offer?).returns true
+        @offer.partner.premier_discount = 10
+      end
+
+      context "with a partner who has the discount_all_offer_types flag set" do
+        it "applies the partner discount to the offer" do
+          @offer.partner.discount_all_offer_types = true
+          @offer.update_attributes({:bid => 500})
+          @offer.reload
+          @offer.payment.should == 450
+        end
+      end  
+      context "with a partner who does not have the discount_all_offer_types flag set" do
+        it "applies the partner discount to the offer" do
+          @offer.partner.discount_all_offer_types = false 
+          @offer.update_attributes({:bid => 500})
+          @offer.reload
+          @offer.payment.should == 450
+        end
+      end  
+    end
+
+    context "to a non app offer item" do
+      before :each do
+        Offer.any_instance.stubs(:app_offer?).returns false
+        @offer.partner.premier_discount = 10
+      end
+
+      context "with a partner who has the discount_all_offer_types flag set" do
+        it "applies the partner discount to the offer" do
+          @offer.partner.discount_all_offer_types = true
+          @offer.update_attributes({:bid => 500})
+          @offer.reload
+          @offer.payment.should == 450
+        end
+      end  
+      context "with a partner who does not have the discount_all_offer_types flag set" do
+        it "does not apply the partner discount to the offer" do
+          @offer.partner.discount_all_offer_types = false
+          @offer.update_attributes({:bid => 500})
+          @offer.reload
+          @offer.payment.should == 500
+        end
+      end  
+    end
+  end
+
+  it "enforces a minimum payment of one cent if the bid is greater than zero" do
+    @offer.partner.premier_discount = 100
     @offer.update_attributes({:bid => 500})
     @offer.reload
-    @offer.payment.should == 450
+    @offer.payment.should == 1
   end
 
   it "doesn't allow bids below min_bid" do
@@ -118,6 +169,24 @@ describe Offer do
     @offer.send(:geoip_reject?, geoip_data).should == true
   end
 
+  it "rejects depending on cities" do
+    geoip_data = { :city => nil }
+    @offer.send(:geoip_reject?, geoip_data).should == false
+    geoip_data = { :city => "San Francisco" }
+    @offer.send(:geoip_reject?, geoip_data).should == false
+    geoip_data = { :city => "Tokyo" }
+    @offer.send(:geoip_reject?, geoip_data).should == false
+
+    @offer.cities = ["San Francisco"].to_json
+    @offer.get_cities(true)
+    geoip_data = { :city => nil }
+    @offer.send(:geoip_reject?, geoip_data).should == true
+    geoip_data = { :city => "San Francisco" }
+    @offer.send(:geoip_reject?, geoip_data).should == false
+    geoip_data = { :city => "Tokyo" }
+    @offer.send(:geoip_reject?, geoip_data).should == true
+  end
+
   it "rejects depending on carriers" do
     @offer.carriers = ["Verizon", "NTT DoCoMo"].to_json
     mobile_carrier_code = '440.01'
@@ -168,7 +237,7 @@ describe Offer do
                                   'cookie_tracking', 'min_os_version', 'screen_layout_sizes',
                                   'interval', 'banner_creatives', 'dma_codes', 'regions',
                                   'wifi_only', 'approved_sources', 'approved_banner_creatives',
-                                  'sdkless', 'carriers'
+                                  'sdkless', 'carriers', 'cities'
                                 ].sort
   end
 
@@ -659,12 +728,17 @@ describe Offer do
         @offer.should be_valid
       end
 
+      it "allows iOS-only offers" do
+         @offer.device_types = %w( iphone ipad itouch ).to_json
+         @offer.should be_valid
+      end
+
       it "allows app offers" do
         @offer.should be_valid
       end
 
-      it "disallows non-Android offers" do
-        @offer.device_types = %w( iphone ipad itouch ).to_json
+      it "disallows offers that are not Android or iOS" do
+        @offer.device_types = %w( windows ).to_json
         @offer.should_not be_valid
       end
 

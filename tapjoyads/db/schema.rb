@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120228124800) do
+ActiveRecord::Schema.define(:version => 20120308212750) do
 
   create_table "action_offers", :id => false, :force => true do |t|
     t.string   "id",                    :limit => 36,                    :null => false
@@ -119,6 +119,7 @@ ActiveRecord::Schema.define(:version => 20120228124800) do
     t.integer  "papaya_user_count"
     t.integer  "active_gamer_count",                          :default => 0
     t.boolean  "reengagement_campaign_enabled"
+    t.string   "protocol_handler"
   end
 
   add_index "apps", ["id"], :name => "index_apps_on_id", :unique => true
@@ -649,6 +650,7 @@ ActiveRecord::Schema.define(:version => 20120228124800) do
     t.text     "carriers",                                                                                         :null => false
     t.string   "tracking_for_type"
     t.string   "tracking_for_id",                   :limit => 36
+    t.text     "cities",                                                                                           :null => false
   end
 
   add_index "offers", ["id"], :name => "index_offers_on_id", :unique => true
@@ -752,6 +754,7 @@ ActiveRecord::Schema.define(:version => 20120228124800) do
     t.string   "cs_contact_email"
     t.boolean  "confirmed_for_payout",                                                     :default => false,     :null => false
     t.string   "payout_confirmation_notes"
+    t.boolean  "discount_all_offer_types",                                                 :default => false,     :null => false
   end
 
   add_index "partners", ["id"], :name => "index_partners_on_id", :unique => true
@@ -918,6 +921,7 @@ ActiveRecord::Schema.define(:version => 20120228124800) do
     t.boolean  "hidden",                   :default => false, :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.boolean  "locked",                   :default => false, :null => false
   end
 
   add_index "survey_offers", ["id"], :name => "index_survey_offers_on_id", :unique => true

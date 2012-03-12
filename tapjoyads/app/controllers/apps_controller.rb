@@ -43,7 +43,7 @@ class AppsController < WebsiteController
 
     app_store_data = {}
     if params[:state] == 'live' && params[:app][:store_id].present?
-      unless @app.update_from_store({ :store_id => params[:app][:store_id], :country => params[:app_country] })
+      unless app_store_data = @app.update_from_store({ :store_id => params[:app][:store_id], :country => params[:app_country] })
         flash.now[:error] = "Grabbing app data from app store failed. Please try again."
         render :action => "new"
         return
