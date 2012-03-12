@@ -189,6 +189,7 @@ class Offer < ActiveRecord::Base
   before_save :update_instructions
   before_save :sync_creative_approval # Must be before_save so auto-approval can happen
   before_save :nullify_banner_creatives
+  after_update :lock_survey_offer
   after_save :update_enabled_rating_offer_id
   after_save :update_pending_enable_requests
   after_save :update_tapjoy_sponsored_associated_offers
@@ -621,8 +622,8 @@ class Offer < ActiveRecord::Base
   end
 
   def update_payment(force_update = false)
-    if (force_update || bid_changed? || new_record?)
-      if (item_type == 'App' || item_type == 'ActionOffer')
+    if partner && (force_update || bid_changed? || new_record?)
+      if partner.discount_all_offer_types? || app_offer?
         self.payment = bid == 0 ? 0 : [ bid * (100 - partner.premier_discount) / 100, 1 ].max
       else
         self.payment = bid
@@ -1025,6 +1026,15 @@ class Offer < ActiveRecord::Base
     offer.save!
     offer
   end
+
+  def lock_survey_offer
+    if item_type == 'SurveyOffer' && (tapjoy_enabled_changed? || user_enabled_changed?)
+      if tapjoy_enabled? && user_enabled? && !item.locked?
+        item.update_attribute(:locked, true)
+      end
+    end
+  end
+
 end
 
 class BannerSyncError < StandardError;

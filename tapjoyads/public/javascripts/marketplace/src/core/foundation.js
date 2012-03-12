@@ -263,7 +263,7 @@
         if((/complete|loaded/).test(document.readyState))
           fn.call();
 
-        document.addEventListener('DOMContentLoaded', fn, false);
+        document[($.browser.msie ? 'attachEvent' : 'addEventListener')]('DOMContentLoaded', fn, false);
 
         return this;
       },

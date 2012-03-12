@@ -267,7 +267,7 @@ f.event={add:function(a,c,d,e,g){var h,i,j,k,l,m,n,o,p,q,r,s;if(!(a.nodeType===3
         if((/complete|loaded/).test(document.readyState))
           fn.call();
 
-        document.addEventListener('DOMContentLoaded', fn, false);
+        document[($.browser.msie ? 'attachEvent' : 'addEventListener')]('DOMContentLoaded', fn, false);
 
         return this;
       },
@@ -554,6 +554,7 @@ f.event={add:function(a,c,d,e,g){var h,i,j,k,l,m,n,o,p,q,r,s;if(!(a.nodeType===3
 			hasPager: false,
 			pagerContainer: null,
 			animationDuration: 250,
+      enableTouchScroll: true,
 			minHeight: 200
 		}
   };
@@ -1838,14 +1839,14 @@ f.event={add:function(a,c,d,e,g){var h,i,j,k,l,m,n,o,p,q,r,s;if(!(a.nodeType===3
   };
 
   $.fn.applyActive = function() {
-    return $(this).addClass('active');
+    return $(this).addClass('ui-joy-touch-active');
   };
 
   $.fn.removeActive = function(obj) {
     if(obj){
-      obj.removeClass('active');
+      obj.removeClass('ui-joy-touch-active');
     }else{
-      $('.active').removeClass('active');
+      $('.ui-joy-touch-active').removeClass('ui-joy-touch-active');
     }
   };    
 
@@ -2308,26 +2309,8 @@ f.event={add:function(a,c,d,e,g){var h,i,j,k,l,m,n,o,p,q,r,s;if(!(a.nodeType===3
 
     $(window).bind('resize', Tap.Utils.debounce($t.resize, 100, false, $t));
 
-    if(Tap.supportsTouch){
-      $t.container.live('swipe', function(e, data){
-
-        if(data.direction === 'left'){
-          if($t.forward.hasClass('disabled'))
-            return;
-
-          $t.current++;
-          $t.wrap[0].style.webkitTransform = 'translate3d(-' + ($t.current * $t.container.width()) + 'px, 0, 0)';
-        }else{
-
-          if($t.back.hasClass('disabled'))
-            return;        
-
-          $t.current--;
-          $t.wrap[0].style.webkitTransform = 'translate3d(-' + ($t.current * $t.container.width()) + 'px, 0, 0)';
-        }
-				
-        $t.updateNavigation();
-      });
+    if(Tap.supportsTouch && $t.config.enableTouchScroll){
+      $t.enableTouchScroll();
     }
 
     $t.container.addClass($t.config.cssClass);
@@ -2357,6 +2340,7 @@ f.event={add:function(a,c,d,e,g){var h,i,j,k,l,m,n,o,p,q,r,s;if(!(a.nodeType===3
       var $t = this;
 
       $t.wrap.css('-'+Tap.browser.prefix +'-transform', 'translate(0px, 0px)');
+      $t.wrap[0].style.webkitTransform = 'translate3d(0, 0, 0)';
       $t.current = 0;
       $t.setupSlideDeck();
       $t.updateNavigation();
@@ -2407,7 +2391,7 @@ f.event={add:function(a,c,d,e,g){var h,i,j,k,l,m,n,o,p,q,r,s;if(!(a.nodeType===3
           $t.updateNavigation();
 
           $('.ui-joy-carousel-index', wrap).removeClass('highlight');
-          circle.addClass('active');
+          circle.addClass('highlight');
         })
         .appendTo(wrap);
       }
@@ -2505,7 +2489,29 @@ f.event={add:function(a,c,d,e,g){var h,i,j,k,l,m,n,o,p,q,r,s;if(!(a.nodeType===3
         back.addClass('disabled');
       }
     },
+    enableTouchScroll: function(){
+      var $t = this;
 
+      $t.container.live('swipe', function(e, data){
+
+        if(data.direction === 'left'){
+          if($t.forward.hasClass('disabled'))
+            return;
+
+          $t.current++;
+          $t.wrap[0].style.webkitTransform = 'translate3d(-' + ($t.current * $t.container.width()) + 'px, 0, 0)';
+        }else{
+
+          if($t.back.hasClass('disabled'))
+            return;        
+
+          $t.current--;
+          $t.wrap[0].style.webkitTransform = 'translate3d(-' + ($t.current * $t.container.width()) + 'px, 0, 0)';
+        }
+        
+        $t.updateNavigation();
+      });
+    },
     resize: function(){
       var $t = this;
 
@@ -2529,6 +2535,29 @@ f.event={add:function(a,c,d,e,g){var h,i,j,k,l,m,n,o,p,q,r,s;if(!(a.nodeType===3
       $t.updateNavigation();
     }   
   });
+
+  $.fn.extend({
+    disableTouchScroll: function(){
+      return this.each(function(){
+        var $t = $.data(this, 'carousel');
+
+        if(!$t)
+          return;
+
+        $t.container.unbind('swipe');
+      });
+    },
+    enableTouchScroll: function(){
+      return this.each(function(){
+        var $t = $.data(this, 'carousel');
+
+        if(!$t)
+          return;
+
+        $t.enableTouchScroll();
+      });
+    }    
+  })
 
   Tap.apply(Tap, {
     Carousel : function(config){
@@ -2870,7 +2899,7 @@ var TJG = typeof TJG === "object" ? TJG : {}; TJG.vars = {};
         };
 
         FB.ui(obj);
-      },
+      }
     }
   });
 
@@ -3685,7 +3714,7 @@ $(document).ready(function() {
 
   selectTrigger.bind(Tapjoy.EventsMap.start, function(){
       var el = $(this),
-            heading = $('.heading', tjmViewContainer),
+          heading = $('.heading', tjmViewContainer),
           fix = $('.fix', tjmViewContainer);
 
      if(tjmViewContainer.hasClass('active')){
@@ -3703,7 +3732,8 @@ $(document).ready(function() {
 
       heading.text(_t('games.choose_section'));
 
-      tjmViewMenu.css('top', tjmViewContainer.offset().top + (tjmViewContainer.outerHeight(true) - 4) + 'px');
+      tjmViewMenu.css('top', tjmViewContainer.offset().top + (tjmViewContainer.outerHeight(true) - 4) + 'px')
+      .css('position', 'absolute')
 
       fix.css({
         width: tjmViewContainer.width() - 4 + 'px'
@@ -3753,7 +3783,9 @@ $(document).ready(function() {
     });
   });
 
-  function manageResize() {
+  function manageResize(){
+    var recommendationsRow = $('#recommendationsRow');
+
     if(tjmViewContainer.length != 0 && window.innerWidth < 480){
       tjmViewMenu.css('top', tjmViewContainer.offset().top + (tjmViewContainer.outerHeight(true) - 4) + 'px');
 
@@ -3761,13 +3793,20 @@ $(document).ready(function() {
         width: tjmViewContainer.width() - 4 + 'px'
       });
     }
+
+    if(window.innerWidth > 500){
+      $('#recommendations').enableTouchScroll();
+    }else{
+      $('#recommendations').disableTouchScroll();
+    }
+
     var rows = $('#content .row');
     if(window.innerWidth > 480){
       if(rows.is(':hidden'))
         rows.show();
     }else{
-      if($('#recommendationsRow').hasClass('nbb'))
-        $('#recommendationsRow').show().removeClass('nbb');
+      if(recommendationsRow.hasClass('nbb'))
+        recommendationsRow.show().removeClass('nbb');
 
       if(!$('#gamesRow').is(':hidden')){
         rows.hide();
