@@ -12,6 +12,23 @@
         };
       },
 
+      sprintf: function(text) {
+        var i=1, args=arguments;
+        return text.replace(/%s/g, function(pattern){
+          return (i < args.length) ? args[i++] : "";
+        });
+      },
+
+      sprintfTemplate: function(text) {
+        var that = this;
+        text = [text];
+        return function() {
+          var args = that.toArray(arguments);
+          args = text.concat(args);
+          return that.sprintf.apply(this, args);
+        };
+      },
+
       format: function(tpl, object){
         object = object || {};
 
