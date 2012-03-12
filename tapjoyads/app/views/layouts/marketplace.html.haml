@@ -15,6 +15,8 @@
 
     %title= @page_title.blank? ? 'Tapjoy Marketplace' : "#{@page_title} - Tapjoy"
 
+    = yield :early_load
+
     = css_tag("marketplace/core")
 
     /[if lt IE 9]

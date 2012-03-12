@@ -1,4 +1,4 @@
-- content_for :page_head do
+- content_for :early_load do
   = embed_js "marketplace/ajax-preload"
   :javascript
     window.jsonp_preloaded = ajaxPreload("#{offerwall_url}");
