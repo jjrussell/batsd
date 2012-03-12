@@ -12,7 +12,7 @@ describe BrandOfferMapping do
   it { should validate_numericality_of :allocation }
 
   describe '#get_new_allocation' do
-    context 'before create' do
+    context 'before validation' do
       before :each do
         @brand_offer_mapping = BrandOfferMapping.new
         @offer = Factory(:app).primary_offer
@@ -59,19 +59,20 @@ describe BrandOfferMapping do
         @brand_offer_mapping.expects(:allocation=).never
       end
 
-      context 'when first brand for an offer' do
+     context 'when no brand for an offer' do
         it 'will not distribute allocation to other mappings' do
-          @offer_mappings.stubs(:count).returns(1)
+          @offer_mappings.stubs(:count).returns(0)
           @offer_mappings.expects(:each).never
           @brand_offer_mapping.send(:redistribute_allocation).should be_true
         end
       end
 
-      context 'when no brand for an offer' do
+      context 'when first brand for an offer' do
         it 'will not distribute allocation to other mappings' do
-          @offer_mappings.stubs(:count).returns(0)
-          @offer_mappings.expects(:each).never
-          @brand_offer_mapping.send(:redistribute_allocation).should be_true
+          @offer_mappings = [@brand_offer_mapping]
+          @offer_mappings.stubs(:count).returns(1)
+          BrandOfferMapping.stubs(:mappings_by_offer).with(@offer).returns(@offer_mappings)
+          @brand_offer_mapping.send(:redistribute_allocation).should_not be_false
         end
       end
 
