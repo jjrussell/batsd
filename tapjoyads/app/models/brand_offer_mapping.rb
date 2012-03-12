@@ -5,6 +5,7 @@ class BrandOfferMapping < ActiveRecord::Base
   belongs_to :brand
 
   validates_presence_of :offer, :brand
+  validates_numericality_of :allocation, :greater_than => 0, :less_than_or_equal_to => 100
   before_create :get_new_allocation
   after_commit_on_create  :redistribute_allocation
   after_commit_on_destroy :redistribute_allocation
@@ -20,7 +21,7 @@ class BrandOfferMapping < ActiveRecord::Base
   def redistribute_allocation
     offer_mappings = BrandOfferMapping.mappings_by_offer(offer)
     cardinality = offer_mappings.count
-    return true if cardinality == 0
+    return true if cardinality <= 1
 
     base_allocation = 100 / cardinality
     excess = (100 - (base_allocation * cardinality))

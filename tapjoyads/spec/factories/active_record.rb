@@ -331,8 +331,9 @@ FactoryGirl.define do
   end
 
   factory :brand_offer_mapping do
-    brand {Factory(:brand).id}
-    offer {Factory(:app).primary_offer.id }
+    brand {Factory(:brand)}
+    offer {Factory(:app).primary_offer }
+    allocation 1
   end
 
   factory :client do
