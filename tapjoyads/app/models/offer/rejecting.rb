@@ -50,7 +50,7 @@ module Offer::Rejecting
     source_reject?(source) ||
     non_rewarded_offerwall_rewarded_reject?(currency) ||
     carriers_reject?(mobile_carrier_code) ||
-    sdkless_reject(library_version)
+    sdkless_reject?(library_version)
   end
 
   def precache_reject?(platform_name, hide_rewarded_app_installs, normalized_device_type)
