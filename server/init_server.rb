@@ -39,9 +39,6 @@ end
 # configure rails log rotation
 `cp /home/webuser/tapjoyserver/server/rails-logrotate /etc/logrotate.d/rails`
 
-# configure syslog-ng
-`/home/webuser/tapjoyserver/server/syslog-ng/configure.rb`
-
 # configure geoip database
 `su - webuser -c '/home/webuser/tapjoyserver/server/update_geoip.rb'`
 `rm -rf /home/webuser/tapjoyserver/tapjoyads/data/GeoIPCity.dat`

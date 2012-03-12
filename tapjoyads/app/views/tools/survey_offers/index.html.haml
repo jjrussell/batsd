@@ -24,10 +24,14 @@
         %td= link_to('Offerwall view', new_survey_result_path(:id => survey_offer.id, :udid => 'just_looking', :click_key => 'just_looking'))
         %td
           - if survey_offer.enabled?
-            = link_to('Disable', tools_survey_offer_path(survey_offer, 'survey_offer[enabled]' => 'false'), :method => :put)
+            = link_to('Disable', toggle_enabled_tools_survey_offer_path(survey_offer), :method => :put)
           - else
-            = link_to('Enable', tools_survey_offer_path(survey_offer, 'survey_offer[enabled]' => 'true'), :method => :put, :confirm => 'Make this offer live?')
-        %td= link_to('Edit', edit_tools_survey_offer_path(survey_offer))
+            = link_to('Enable', toggle_enabled_tools_survey_offer_path(survey_offer), :method => :put, :confirm => 'Are you sure? Surveys cannot be modified once they have been enabled.')
+        %td
+          - if survey_offer.locked?
+            Locked
+          - else
+            = link_to('Edit', edit_tools_survey_offer_path(survey_offer))
         %td= link_to('Remove', tools_survey_offer_path(survey_offer),
           :method => :delete,
           :confirm => 'Are you sure you want to remove this survey?')

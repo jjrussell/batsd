@@ -27,11 +27,15 @@ IPHONE_MARMALADE_EXTENSION = 'https://github.com/downloads/marmalade/Tapjoy-for-
 WINDOWS_CONNECT_SDK = 'https://s3.amazonaws.com/tapjoy/sdks/TapjoyAdvertiserSDK_Windows_v2.0.0.zip'
 WINDOWS_OFFERS_SDK  = 'https://s3.amazonaws.com/tapjoy/sdks/TapjoyPublisherSDK_Windows_v2.0.0.zip'
 
+SDKLESS_MIN_LIBRARY_VERSION = '8.2.0'
+
 DEV_FORUM_URL = 'https://groups.google.com/group/tapjoy-developer'
 KNOWLEDGE_CENTER_URL = 'http://knowledge.tapjoy.com/'
 TAPJOY_GAMES_REGISTRATION_OFFER_ID = 'f7cc4972-7349-42dd-a696-7fcc9dcc2d03'
 TAPJOY_GAMES_CURRENT_TOS_VERSION = 2
 TAPJOY_PARTNER_ID = '70f54c6d-f078-426c-8113-d6e43ac06c6d'
+RECEIPT_EMAIL = 'email.receipts@tapjoy.com'
+GAMES_ANDROID_MARKET_URL = 'https://play.google.com/store/apps/details?id=com.tapjoy.tapjoy'
 
 WEB_REQUEST_LOGGER = SyslogLogger.new("#{RUN_MODE_PREFIX}rails-web_requests")
 
@@ -44,7 +48,10 @@ AWS.config(
 )
 
 GAMES_CONFIG = YAML::load_file("#{Rails.root}/config/games.yaml")[Rails.env]
+MARKETPLACE_CONFIG = YAML::load_file("#{Rails.root}/config/marketplace.yaml")[Rails.env]
 
 VERTICA_CONFIG = YAML::load_file("#{Rails.root}/config/vertica.yml")[Rails.env]
 
 TEXTFREE_PUB_APP_ID = '6b69461a-949a-49ba-b612-94c8e7589642'
+
+BLANK_IMAGE = 'data:image/gif;base64,R0lGODlhAQABAID/AMDAwAAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw=='

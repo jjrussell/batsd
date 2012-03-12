@@ -14,4 +14,8 @@ FactoryGirl.define do
   sequence :guid do |n|
     "#{UUIDTools::UUID.random_create}"
   end
+
+  sequence :integer do |n|
+    n
+  end
 end

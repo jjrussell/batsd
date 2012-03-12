@@ -215,8 +215,6 @@ class ToolsController < WebsiteController
       @rewarded_failed_clicks_count = 0
       @rewards = {}
       @support_requests_created = SupportRequest.count(:where => "udid = '#{udid}'")
-      @gamer_emails = @device.gamers.map(&:email).join(',')
-      @gamer_emails = 'Not connected to any Tapjoy Marketplace Gamer' if @gamer_emails.empty?
       click_app_ids = []
       NUM_CLICK_DOMAINS.times do |i|
         Click.select(:domain_name => "clicks_#{i}", :where => conditions) do |click|
@@ -373,16 +371,6 @@ class ToolsController < WebsiteController
     end
     flash[:notice] = "Added #{user_roles.map(&:name).sort.to_json} to #{user.email}"
     redirect_to manage_user_roles_tool_path(:email => user.email)
-  end
-
-  def freemium_android
-    results = StoreRank.top_freemium_android_apps
-    @apps = results['apps']
-    @created_at = Time.zone.parse(results['created_at'])
-    @tapjoy_apps = {}
-    Offer.find_all_by_id(@apps.map{|app|app['tapjoy_apps']}.flatten).each do |app|
-      @tapjoy_apps[app.id] = app
-    end
   end
 
   def award_currencies

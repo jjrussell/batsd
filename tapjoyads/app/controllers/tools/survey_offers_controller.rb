@@ -5,7 +5,7 @@ class Tools::SurveyOffersController < WebsiteController
 
   filter_access_to :all
 
-  before_filter :find_survey_offer, :only => [ :edit, :update, :destroy ]
+  before_filter :find_survey_offer, :only => [ :edit, :update, :destroy, :toggle_enabled ]
 
   def index
     @survey_offers = SurveyOffer.visible
@@ -38,6 +38,10 @@ class Tools::SurveyOffersController < WebsiteController
   end
 
   def update
+    if @survey_offer.locked?
+      flash[:error] = 'This survey is locked. Please create a new survey to make changes.'
+      redirect_to tools_survey_offers_path and return
+    end
     sanitize_currency_params(params[:survey_offer], [ :bid ])
     if @survey_offer.update_attributes(params[:survey_offer])
       flash[:notice] = 'Survey offer updated successfully'
@@ -51,6 +55,12 @@ class Tools::SurveyOffersController < WebsiteController
   def destroy
     @survey_offer.hide!
     flash[:notice] = 'Survey offer removed successfully'
+    redirect_to tools_survey_offers_path
+  end
+
+  def toggle_enabled
+    @survey_offer.enabled = !@survey_offer.enabled?
+    flash[:notice] = 'Survey offer updated.'
     redirect_to tools_survey_offers_path
   end
 
