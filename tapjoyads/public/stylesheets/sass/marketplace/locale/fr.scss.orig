@@ -13,7 +13,11 @@
   font-size: 1.3em; 
 }
 
+<<<<<<< HEAD
+@media screen and (max-width: 500px) {
+=======
 @media screen and (max-width: 480px) {
+>>>>>>> 2b45e4f9af4fa7642437b85b5f3bd2cc98f16995
   .phraseThatPays {
     font-size: 1em;
   }
