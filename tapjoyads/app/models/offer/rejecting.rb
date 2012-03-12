@@ -96,6 +96,7 @@ module Offer::Rejecting
     return true if countries_blacklist.include?(geoip_data[:primary_country])
     return true if get_regions.present? && !get_regions.include?(geoip_data[:region])
     return true if get_dma_codes.present? && !get_dma_codes.include?(geoip_data[:dma_code])
+    return true if get_cities.present? && !get_cities.include?(geoip_data[:city])
     false
   end
 

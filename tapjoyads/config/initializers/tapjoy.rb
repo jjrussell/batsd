@@ -35,8 +35,9 @@ TAPJOY_GAMES_REGISTRATION_OFFER_ID = 'f7cc4972-7349-42dd-a696-7fcc9dcc2d03'
 TAPJOY_GAMES_CURRENT_TOS_VERSION = 2
 TAPJOY_PARTNER_ID = '70f54c6d-f078-426c-8113-d6e43ac06c6d'
 RECEIPT_EMAIL = 'email.receipts@tapjoy.com'
+GAMES_ANDROID_MARKET_URL = 'https://play.google.com/store/apps/details?id=com.tapjoy.tapjoy'
 
-WEB_REQUEST_LOGGER = SyslogLogger.new("#{RUN_MODE_PREFIX}rails-web_requests")
+SYSLOG_NG_LOGGER = SyslogLogger.new("#{RUN_MODE_PREFIX}rails-web_requests")
 
 Mc.cache.flush if CLEAR_MEMCACHE
 
@@ -54,3 +55,5 @@ VERTICA_CONFIG = YAML::load_file("#{Rails.root}/config/vertica.yml")[Rails.env]
 TEXTFREE_PUB_APP_ID = '6b69461a-949a-49ba-b612-94c8e7589642'
 
 BLANK_IMAGE = 'data:image/gif;base64,R0lGODlhAQABAID/AMDAwAAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw=='
+
+TJM_SESSION_TIMEOUT = 1.hour.to_i

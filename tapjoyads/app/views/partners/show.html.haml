@@ -73,6 +73,8 @@
     = "#{@partner.premier_discount}%"
     = "(#{link_to('edit', partner_offer_discounts_path(@partner))})"
   .metadata
+    Discount All Offer Types: #{@partner.discount_all_offer_types?}
+  .metadata
     Current Exclusivity Level:
     = @partner.exclusivity_level_type || "None"
   .metadata
