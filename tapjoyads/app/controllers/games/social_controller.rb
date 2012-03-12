@@ -1,6 +1,7 @@
 class Games::SocialController < GamesController
   rescue_from Errno::ECONNRESET, :with => :handle_errno_exceptions
   rescue_from Errno::ETIMEDOUT, :with => :handle_errno_exceptions
+  rescue_from Mogli::Client::ClientException, :with => :handle_mogli_exceptions
 
   before_filter :require_gamer
   before_filter :validate_recipients, :only => [ :send_email_invites ]
