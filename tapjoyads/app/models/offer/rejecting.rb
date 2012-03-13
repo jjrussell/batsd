@@ -53,7 +53,7 @@ module Offer::Rejecting
   end
 
   def precache_reject?(platform_name, hide_rewarded_app_installs, normalized_device_type)
-    app_platform_mismatch?(platform_name) || hide_rewarded_app_installs_reject?(hide_rewarded_app_installs) || device_platform_mismatch?(normalized_device_type) || tracking_offer_reject?
+    app_platform_mismatch?(platform_name) || hide_rewarded_app_installs_reject?(hide_rewarded_app_installs) || device_platform_mismatch?(normalized_device_type)
   end
 
   def frequency_capping_reject?(device)
@@ -234,10 +234,6 @@ module Offer::Rejecting
 
   def carriers_reject?(mobile_carrier_code)
     get_carriers.present? && !get_carriers.include?(Carriers::MCC_MNC_TO_CARRIER_NAME[mobile_carrier_code])
-  end
-
-  def tracking_offer_reject?
-    tracking_for_id.present?
   end
 
 end
