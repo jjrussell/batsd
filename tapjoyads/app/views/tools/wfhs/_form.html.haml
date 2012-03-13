@@ -4,7 +4,7 @@
     %tbody
       %tr
         %th= f.label :category
-        %td= f.select :category, options_for_select(Wfh::CATEGORIES)
+        %td= f.select :category, options_for_select(Wfh::CATEGORIES, @wfh.category)
       %tr
         %th= f.label :description
         %td= f.text_field :description, :placeholder => 'e.g. going to GDC'

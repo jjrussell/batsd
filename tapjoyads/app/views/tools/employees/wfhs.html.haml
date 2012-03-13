@@ -1,4 +1,4 @@
-- editable = @employee == current_user.employee
+- editable = @employee.is_user?(current_user)
 #wfh_list
   %h1 Upcoming Schedule for #{@employee.full_name}
   = render :partial => 'wfhs', :locals => { :editable => editable }

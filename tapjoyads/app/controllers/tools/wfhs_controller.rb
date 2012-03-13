@@ -46,16 +46,16 @@ class Tools::WfhsController < WebsiteController
     @wfh = Wfh.new(params[:wfh])
 
     if @wfh.save
-      redirect_to({ :action => 'index' }, :notice => 'Wfh was successfully created.')
+      redirect_to_index('Wfh was successfully created.')
     else
       render :action => "new"
     end
   end
 
   def update
-
-    if @wfh.update_attributes(params[:wfh])
-      redirect_to({ :action => 'index' }, :notice => 'Wfh was successfully updated.')
+    safe_attributes = [ :category, :description, :start_date, :end_date ]
+    if @wfh.safe_update_attributes(params[:wfh], safe_attributes)
+      redirect_to_index('Wfh was successfully updated.')
     else
       render :action => "edit"
     end
@@ -64,12 +64,16 @@ class Tools::WfhsController < WebsiteController
   def destroy
     @wfh.destroy
 
-    redirect_to({ :action => 'index' }, :notice => 'Wfh was successfully deleted.')
+    redirect_to_index('Wfh was successfully deleted.')
   end
 
   private
 
   def find_wfh
     @wfh = current_user.employee.wfhs.find(params[:id])
+  end
+
+  def redirect_to_index(notice)
+    redirect_to({ :action => 'index' }, :notice => notice)
   end
 end

@@ -1,10 +1,15 @@
 class Wfh < ActiveRecord::Base
   include UuidPrimaryKey
-
   belongs_to :employee
 
-  CATEGORIES = %w( WFH PTO Conference )
-  validates_inclusion_of :category, :in => CATEGORIES
+  CATEGORIES = [
+    [ 'Working From Home', 'wfh'   ],
+    [ 'Paid Time Off',     'pto'   ],
+    [ 'Out Of Office',     'ooo'   ],
+    [ 'Arriving late',     'late'  ],
+    [ 'Leaving early',     'early' ],
+  ]
+  validates_inclusion_of :category, :in => CATEGORIES.map(&:last)
 
   named_scope :today_and_after, lambda {
     { :conditions => [ 'end_date >= ?', Date.today ] }
@@ -23,9 +28,9 @@ class Wfh < ActiveRecord::Base
     }
   }
 
-
-  def pto?; category == 'PTO'; end
-  def conference?; category == 'Conference'; end
+  def multi_day?
+    start_date != end_date
+  end
 
   def <=>(other)
     [ employee_id, start_date, end_date ] <=>

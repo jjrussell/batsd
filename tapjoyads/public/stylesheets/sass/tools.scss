@@ -116,8 +116,14 @@ $hpad: 15px;
     &.pto {
       background-color: #f00;
     }
-    &.conference {
+    &.ooo {
       background-color: #0b0;
+    }
+    &.late {
+      background-color: #222;
+    }
+    &.early {
+      background-color: #dd0;
     }
   }
   th, td {

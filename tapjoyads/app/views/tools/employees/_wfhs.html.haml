@@ -18,13 +18,9 @@
               - path = { :controller => 'tools/wfhs', :action => "destroy", :id => wfh.id }
               = link_to '[delete]', path, :confirm => "Are you sure?", :method => 'delete'
           %td
-            %span{ :class => wfh_classes(wfh) }
-              = wfh.category
+            = wfh_span(wfh)
           %td
-            = wfh.start_date.to_s(:amd)
-            - unless wfh.start_date == wfh.end_date
-              &ndash;
-              = wfh.end_date.to_s(:amd)
+            = formatted_wfh_dates(wfh)
           %td
             - if wfh.description.present?
               .description= wfh.description

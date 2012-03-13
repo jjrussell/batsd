@@ -51,13 +51,7 @@ module ToolsHelper
   end
 
   def wfh_classes(wfh)
-    classes = [ 'wfh' ]
-    if wfh.pto?
-      classes << 'pto'
-    elsif wfh.conference?
-      classes << 'conference'
-    end
-    classes.join(' ')
+    [ 'wfh', wfh.category.downcase ].uniq.join(' ')
   end
 
   private
