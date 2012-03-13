@@ -27,8 +27,6 @@ module SprocketHelper
     content_tag :script, src_code, options.merge({:type => "text/javascript"})
   end
 
-  private
-
   def path_for(src, ext)
     src = src.logical_path if src.respond_to? :logical_path
     src = src.sub /\.(js|css)$/, ""
