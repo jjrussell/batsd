@@ -13,7 +13,7 @@ class SprocketController < ApplicationController
     sprocket = ASSETS[full_filename]
 
     # skip files with dependencies in debug mode; they are handled by the helpers
-    contents = DEBUG_ASSETS && sprocket.to_a.size > 1 ? "" : sprocket.to_s
+    contents = DEBUG_ASSETS ? sprocket.to_a.last.to_s : sprocket.to_s
 
     content_types = {
       "js" => "application/javascript",

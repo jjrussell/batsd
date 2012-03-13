@@ -13,11 +13,14 @@ class CompressCss
 end
 
 ass = Sprockets::Environment.new
+ASSETS_PATH = "#{Rails.root}/public/assets/"
 
 ass.append_path 'app/assets/javascripts'
 ass.append_path 'app/assets/stylesheets'
 
-ASSETS_PATH = "#{Rails.root}/public/assets/"
+if DEBUG_ASSETS
+  ass.cache = ActiveSupport::Cache::FileStore.new(File.join(Rails.root, "tmp", "cache", "assets"))
+end
 
 if CACHE_ASSETS
   ass.js_compressor = Uglifier.new
