@@ -60,7 +60,6 @@ class Offer < ActiveRecord::Base
                                     updated_at
                                     url_overridden
                                     user_enabled
-                                    tracking_for_id
                                     tracking_for_type )
 
   OFFER_LIST_REQUIRED_COLUMNS = (Offer.column_names - OFFER_LIST_EXCLUDED_COLUMNS).map { |c| "#{quoted_table_name}.#{c}" }.join(', ')
