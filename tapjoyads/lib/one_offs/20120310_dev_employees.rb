@@ -60,11 +60,11 @@ class OneOffs
       %w( John        Gronberg     7 1 ),
       %w( Daniel      Lim          7 2 ),
 
-      %w( Jeffrey     Boyce        8 0 ),
+      %w( Kevin       Tu           8 0 ),
       %w( Shane       Booth        8 1 ),
-      %w( Kevin       Tu           8 2 ),
+      %w( Jeffrey     Boyce        8 2 ),
+      %w( Stephen     Zito         9 0 ),
       %w( Chris       Portugal     9 1 ),
-      %w( Stephen     Zito         9 2 ),
 
       %w( Eric        Tipton       4 6 ),
       %w( Brian       Stebar       4 7 ),
