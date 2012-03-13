@@ -127,6 +127,12 @@ authorization do
     has_permission_on :tools_users_role_assignments, :to => [ :create, :destroy ]
   end
 
+  role :products do
+    includes :tools
+    has_permission_on :tools_wfhs, :to => [ :index, :new, :create, :edit, :update, :destroy ]
+    has_permission_on :tools_employees, :to => [ :wfhs ]
+  end
+
   role :admin do
     includes :tools
     includes :devices
@@ -136,6 +142,7 @@ authorization do
     includes :hr
     includes :games_editor
     includes :role_mgr
+    includes :products
     has_permission_on :pub_offer_whitelist, :to => [ :index, :enable, :disable ]
     has_permission_on :tools, :to => [ :failed_sdb_saves, :sdb_metadata, :reset_device, :sqs_lengths, :elb_status, :ses_status, :as_groups ]
     has_permission_on :tools_offers, :to => [ :creative, :approve_creative, :reject_creative ]
