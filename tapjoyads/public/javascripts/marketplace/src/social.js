@@ -3,6 +3,7 @@
   var _t = window.i18n.t,
     FB = window.FB,
     twitterOptions = window.twitterOptions;
+
   Tap.extend({
     Social: {
       doFbLogin: function (redirect_url) {
@@ -93,7 +94,6 @@
         };
 
         var showFriendList = function() {
-          console.log("inside showFriendList");
           $('.friend_list').fadeOut(animateSpeed, function() {
             hasNext = false;
             var text      = [],
@@ -136,12 +136,12 @@
             for (var i in friends) {
               var friend = friends[i];
               var liClass = '';
-              if ($.inArray(friend.social_id, selectedFriends) != -1) {
+              if ($.inArray(friend.social_id.toString(), selectedFriends) != -1) {
                 liClass = ' checked';
               }
-              text.push('<li class="friend social-list-item',liClass,'" id="', friend.social_id, '">');
-              text.push('<img src="', friend.image_url, '" width="50" height="50"/>');
-              text.push('<span>', friend.name, '</span>');
+              text.push('<li class="friend clearfix social-list-item',liClass,'" id="', friend.social_id, '">');
+              text.push('<div class="left"><img src="', friend.image_url, '" width="50" height="50"/></div>');
+              text.push('<div class="left bold mt10 ml10">', friend.name, '</div>');
               text.push('</li>');
             }
 
@@ -153,16 +153,16 @@
 
             $('li.friend').click(function(){
               var li = $(this);
-              var fbId = li.attr('id');
-              var index = $.inArray(fbId, selectedFriends);
+              var socialId = li.attr('id');
+              var index = $.inArray(socialId, selectedFriends);
               var found = index != -1;
 
-              if (found && li.hasClass('checked')) {
+              if (found) {
                 li.removeClass('checked');
                 selectedFriends.splice(index, 1);
-              } else if (!found && !li.hasClass('checked')) {
+              } else if (!found) {
                 li.addClass('checked');
-                selectedFriends.push(fbId);
+                selectedFriends.push(socialId);
               }
               var friend_count = selectedFriends.length;
               var text = _t('games.invite_friends', {count: friend_count}, {count: friend_count});
