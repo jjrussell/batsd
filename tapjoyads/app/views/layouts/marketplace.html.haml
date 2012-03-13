@@ -2,6 +2,7 @@
 
 %html{ :class => "#{HeaderParser.device_type(request.headers['user-agent'])} device mobile no-os no-touch no-hd" }
   %head
+    = NewRelic::Agent.browser_timing_header rescue ""
     %meta{ 'http-equiv' => 'Content-Type', :content => 'text/html; charset=utf-8' }
     %meta{ :name => 'viewport', 'content' => 'width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=no;' }
     %meta{ :name => 'apple-mobile-web-app-status-bar-style', 'content' => 'black' }
@@ -31,7 +32,7 @@
 
     /[if IE 8]
       = stylesheet_link_tag('marketplace/theme/tjm/ie.css')
-    
+
     %script{ :id => "analytics-goes-here" }
     = yield :page_head
 
@@ -73,7 +74,7 @@
 
     %script{ :type => 'text/javascript', :charset => 'utf-8' }
       = yield :page_javascript
-    
+
     :javascript
       Tapjoy.rootPath =  "#{WEBSITE_URL}";
       Tapjoy.iosLinkDevicePath = "#{new_games_gamer_device_path}";
@@ -93,3 +94,7 @@
           ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
           var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
         })();
+
+
+    -# keep this as the last call in the file
+    = NewRelic::Agent.browser_timing_footer rescue ""
