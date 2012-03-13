@@ -1,0 +1,48 @@
+module Sprockets
+  class TjCompressCss
+    def compress(css)
+      if css.count("\n") > 2
+        Sass::Engine.new(css,
+           :syntax => :scss,
+           :cache => false,
+           :read_cache => false,
+           :style => :compressed).render
+        else
+          css
+      end
+    end
+  end
+
+  module Tj
+    class << self
+      attr_accessor :is_cached, :debug, :host
+
+      def assets
+        @asset_env || init_assets
+      end
+
+      def init_assets
+        @asset_env = Sprockets::Environment.new
+
+        @asset_env.append_path 'app/assets/javascripts'
+        @asset_env.append_path 'app/assets/stylesheets'
+
+        if debug
+          @asset_env.cache = ActiveSupport::Cache::FileStore.new(File.join(Rails.root, "tmp", "cache", "assets"))
+        end
+
+        if is_cached
+          @asset_env.js_compressor = Uglifier.new
+          @asset_env.css_compressor = Sprockets::TjCompressCss.new
+
+          # build immutable index on startup
+          @asset_env = @asset_env.index
+          @asset_env.each_logical_path do |l|
+            @asset_env[l].digest
+          end
+        end
+        @asset_env
+      end
+    end
+  end
+end
