@@ -1,5 +1,5 @@
 class OneOffs
-  def self.dev_employees
+  def self.prod_wfh
     self.fix_employee_emails
     self.assign_prod_employees
   end
