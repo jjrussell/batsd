@@ -355,7 +355,7 @@ private
   end
 
   def client_id_legal
-    errors.add :client_id, "is illegal to update client id for a Partner already associated with a client" if client_id_was.present?
+    errors.add :client_id, "is illegal to update client_id, Partner already associated with #{client.name}" if client_id_was.present?
   end
 
 end
