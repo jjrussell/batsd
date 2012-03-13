@@ -47,7 +47,7 @@ class Tools::ClientsController < WebsiteController
   def add_partner
     client_id = params[:id]
     partner = Partner.find(params[:partner_id])
-    if !partner.update_attribute(:client_id, client_id)
+    if !partner.update_attributes({ :client_id => client_id })
       flash[:error] = partner.errors.full_messages
     end
     redirect_to :back
@@ -55,7 +55,7 @@ class Tools::ClientsController < WebsiteController
 
   def remove_partner
     partner = Partner.find(params[:partner_id])
-    partner.update_attribute(:client_id, nil)
+    partner.update_attributes({ :client_id => nil })
     redirect_to :back
   end
 
