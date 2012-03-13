@@ -1,15 +1,19 @@
 # See http://unicorn.bogomips.org/Unicorn/Configurator.html for complete
 # documentation.
 
-server_type = `/home/webuser/tapjoyserver/server/server_type.rb`
+base_dir = File.expand_path("../../../", __FILE__)
+server_type = `#{base_dir}/server/server_type.rb`
 big_server = %w(masterjobs jobs).include?(server_type)
 
-app_dir = "/home/webuser/tapjoyserver/tapjoyads"
+app_dir = "#{base_dir}/tapjoyads"
 working_directory app_dir
 
 if big_server
   worker_processes 36
   timeout 43200
+elsif server_type == "dev"
+  worker_processes 2
+  timeout 90
 else
   worker_processes 10
   timeout 90
@@ -24,11 +28,21 @@ preload_app true
 listen "/tmp/tapjoy.socket"
 
 # feel free to point this anywhere accessible on the filesystem
-user 'webuser', 'webuser'
+user 'webuser', 'webuser'  unless server_type == "dev"
 
+# set up pids directory just for sure
+FileUtils.mkdir_p("#{app_dir}/pids")
 pid "#{app_dir}/pids/unicorn_#{Process.pid}.pid"
-stderr_path "/mnt/log/unicorn/stderr.log"
-stdout_path "/mnt/log/unicorn/stdout.log"
+
+# Use the local logs for dev
+if server_type == "dev"
+  FileUtils.mkdir_p("#{app_dir}/log/unicorn")
+  stderr_path "#{app_dir}/log/unicorn/stderr.log"
+  stdout_path "#{app_dir}/log/unicorn/stdout.log"
+else
+  stderr_path "/mnt/log/unicorn/stderr.log"
+  stdout_path "/mnt/log/unicorn/stdout.log"
+end
 
 # http://www.rubyenterpriseedition.com/faq.html#adapt_apps_for_cow
 if GC.respond_to?(:copy_on_write_friendly=)
