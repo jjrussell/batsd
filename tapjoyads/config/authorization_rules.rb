@@ -110,7 +110,6 @@ authorization do
     has_permission_on :tools_partner_program_statz, :to => [ :index, :export ]
     has_permission_on :tools_offers, :to => [ :creative, :approve_creative, :reject_creative ]
     has_permission_on :tools_survey_offers, :to => [ :index, :show, :new, :create, :edit, :update, :destroy, :toggle_enabled ]
-    has_permission_on :tools_wfhs, :to => [ :index, :new, :create, :edit, :update, :destroy ]
   end
 
   role :games_editor do
@@ -125,6 +124,12 @@ authorization do
     has_permission_on :tools, :to => [ :manage_user_roles, :update_user_roles ]
     has_permission_on :tools_users, :to => [ :index, :show ]
     has_permission_on :tools_users_role_assignments, :to => [ :create, :destroy ]
+  end
+
+  role :products do
+    includes :tools
+    has_permission_on :tools_wfhs, :to => [ :index, :new, :create, :edit, :update, :destroy ]
+    has_permission_on :tools_employees, :to => [ :wfhs ]
   end
 
   role :admin do

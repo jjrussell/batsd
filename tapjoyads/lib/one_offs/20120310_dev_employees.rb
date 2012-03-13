@@ -1,4 +1,11 @@
 class OneOffs
+  def self.dev_employees
+    self.fix_employee_emails
+    self.assign_prod_employees
+  end
+
+  private
+
   def self.fix_employee_emails
     list = {
       'steve.tan@tapjoy.com' => 'steve@tapjoy.com',
@@ -71,12 +78,16 @@ class OneOffs
       %w( James       Logsdon      4 8 ),
       %w( Brian       Sanders      5 6 ),
     ]
+    products_role = UserRole.find_or_create_by_name('products')
     team.each do |data|
-      engineer = Employee.find_by_first_name_and_last_name(data[0], data[1]) || create_employee(data[0], data[1])
-      raise "could not find or create #{data[0]} #{data[1]}" unless engineer
-      engineer.department = 'product'
-      engineer.location = data.slice(2, 2)
-      engineer.save!
+      employee = Employee.find_by_first_name_and_last_name(data[0], data[1]) || create_employee(data[0], data[1])
+      raise "could not find or create #{data[0]} #{data[1]}" unless employee
+      employee.department = 'product'
+      employee.location = data.slice(2, 2)
+      employee.save!
+      unless employee.user.nil?
+        employee.user.user_roles << products_role
+      end
     end
   end
 
