@@ -41,8 +41,10 @@ rescue Errno::ENOENT
   local_config = {}
 end
 
-CACHE_ASSETS = true
-ASSET_HOST = local_config['asset_host'] || local_config['website_url']
+Sprockets::Tj.debug = false
+Sprockets::Tj.is_cached = true
+Sprockets::Tj.host = local_config['asset_host'] || local_config['website_url']
+
 RUN_MODE_PREFIX = ''
 API_URL = local_config['api_url'] || 'https://ws.tapjoyads.com'
 DASHBOARD_URL = local_config['dashboard_url'] || 'https://dashboard.tapjoy.com'

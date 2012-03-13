@@ -2,17 +2,17 @@ require File.dirname(__FILE__) + '/../spec_helper'
 
 describe SprocketHelper do
   before :each do
-    ASSETS.append_path "#{Rails.root}/spec/assets/javascripts"
-    ASSETS.append_path "#{Rails.root}/spec/assets/stylesheets"
+    Sprockets::Tj.assets.append_path "#{Rails.root}/spec/assets/javascripts"
+    Sprockets::Tj.assets.append_path "#{Rails.root}/spec/assets/stylesheets"
   end
-  context "with CACHE_ASSETS off" do
+  context "with is_cached set to false" do
     before :all do
-      CACHE_ASSETS = false
+      Sprockets::Tj.is_cached = false
     end
 
-    context "with DEBUG_ASSETS set to true" do
+    context "with debug set to true" do
       before :all do
-        DEBUG_ASSETS = true
+        Sprockets::Tj.debug = true
       end
 
       describe "#js_tag" do
@@ -36,9 +36,9 @@ describe SprocketHelper do
 
     end
 
-    context "with DEBUG_ASSETS set to false" do
+    context "with debug set to false" do
       before :all do
-        DEBUG_ASSETS = false
+        Sprockets::Tj.debug = false
       end
       describe "#js_tag" do
         it "should return a single compiled script tag" do

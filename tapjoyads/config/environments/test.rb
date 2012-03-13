@@ -39,8 +39,10 @@ rescue Errno::ENOENT
   local_config = {}
 end
 
-CACHE_ASSETS = false
-ASSET_HOST = local_config['asset_host'] || local_config['website_url']
+Sprockets::Tj.debug = false
+Sprockets::Tj.is_cached = false
+Sprockets::Tj.host = local_config['asset_host'] || local_config['website_url']
+
 RUN_MODE_PREFIX = 'test_'
 API_URL = local_config['api_url'] || 'http://localhost:3000'
 DASHBOARD_URL = local_config['dashboard_url'] || 'http://localhost:3000'
