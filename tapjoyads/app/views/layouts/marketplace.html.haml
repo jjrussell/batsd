@@ -8,6 +8,7 @@
     %meta{ :name => 'description', :content => t('text.games.meta_description') }
     %meta{ :name => 'keywords', :content => t('text.games.meta_keywords') }
     %meta{ :property => 'og:image', :content => "https://www.tapjoy.com/images/ic_launcher_96x96.png" }
+    = NewRelic::Agent.browser_timing_header rescue ""
 
     %link{ :rel => 'shortcut icon', :href => '/favicon.ico', :content => 'image/vnd.microsoft.icon' }
     %link{ :rel => 'apple-touch-icon-precomposed', :href => '/images/tjgames-114x114.png' }
@@ -31,7 +32,7 @@
 
     /[if IE 8]
       = stylesheet_link_tag('marketplace/theme/tjm/ie.css')
-    
+
     %script{ :id => "analytics-goes-here" }
     = yield :page_head
 
@@ -73,7 +74,7 @@
 
     %script{ :type => 'text/javascript', :charset => 'utf-8' }
       = yield :page_javascript
-    
+
     :javascript
       Tapjoy.rootPath =  "#{WEBSITE_URL}";
       Tapjoy.iosLinkDevicePath = "#{new_games_gamer_device_path}";
@@ -93,3 +94,7 @@
           ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
           var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
         })();
+
+
+    -# keep this as the last call in the file
+    = NewRelic::Agent.browser_timing_footer rescue ""
