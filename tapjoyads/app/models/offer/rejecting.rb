@@ -238,7 +238,7 @@ module Offer::Rejecting
   end
 
   def sdkless_reject?(library_version)
-    !library_version.to_s.version_greater_than_or_equal_to?(SDKLESS_MIN_LIBRARY_VERSION)
+    sdkless? && !library_version.to_s.version_greater_than_or_equal_to?(SDKLESS_MIN_LIBRARY_VERSION)
   end
 
 end
