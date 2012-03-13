@@ -15,7 +15,7 @@ ja:
         greater_than: ~
         greater_than_or_equal_to: ~
         inclusion: ~
-        invalid: は無効です
+        invalid: ~
         less_than: ~
         less_than_or_equal_to: ~
         not_a_number: ~
@@ -97,7 +97,7 @@ ja:
       greater_than: ~
       greater_than_or_equal_to: ~
       inclusion: ~
-      invalid: は無効です
+      invalid: ~
       less_than: ~
       less_than_or_equal_to: ~
       not_a_number: ~
@@ -196,7 +196,7 @@ ja:
       advertisers_body: あなたのアプリをTapjoyに露出し、多くのユーザーにリーチしよう
       advertisers_title: 広告主
       allow_marketing_emails: Tapjoyからのお知らせメールを受け取る
-      almost_done: もうすぐで完成！
+      almost_done: ~
       already_registered:
         one: "%{name}さんはすでに登録済みです。%{name}さんをフォローしました"
         other: "%{name}さんはすでに登録済みです。%{name}さんをフォローしました"
@@ -210,7 +210,7 @@ ja:
       change: 変更
       change_linked_account: リンクされたアカウントを変更
       choose_section: セクションを選ぶ
-      close: 閉じる
+      close: ~
       collect: 受け取る
       collect_rewards: ポイントを受け取る
       connect_my_device: 端末を接続
@@ -230,9 +230,9 @@ ja:
       discover_apps: ~
       download_now: ~
       earn: "%{currency}を獲得"
-      earn_rewards: ポイントを獲得する
+      earn_rewards: ~
       earn_title: "下記のオファー(アプリインストール・会員登録など)を完了して、%{app_name}の%{currency} を獲得しよう"
-      earning_rewards: Tapjoyは、一ヶ所ですべてのお気に入りのモバイルアプリのポイントを獲得するために最適の場所です。
+      earning_rewards: ~
       edit: 編集
       email_device_link: ~
       email_notification: Eメール通知
@@ -270,8 +270,8 @@ ja:
       how_it_works_title: どうやって?
       install_and_run: "%{name}をインストールして起動してください。"
       install_android_app: ~
-      install_profile: 次のページでプロフィールをインストールし、お気に入りアプリの発掘を始めよう！
-      invalid_fields: この入力は無効です
+      install_profile: ~
+      invalid_fields: ~
       invite: 友達を招待しよう!
       invite_by_email: Eメールで招待する
       invite_email_body: |-
@@ -290,11 +290,11 @@ ja:
         one: "Tapjoyへの招待状が%{name}さんに送信されました"
         other: "Tapjoyへの招待状が%{name}さんへ送信されました"
       issue_registering: アカウント登録中にエラーが発生しました
-      join_the_community: コミュニティに参加する
-      join_the_community_blurb: Tapjoyコミュニティでアプリ評価とレビューを使ってもっと楽しもう！今すぐトライして自らレビューを投稿してみよう！
-      last_played: "最後に開いたアプリ: %{game}"
-      link_account_header: Tapjoyは、すでに使用中のアプリの仮想通貨を獲得しながら、最も人気のアプリを発掘することができる、ワンストップショップです。 Tapjoyを十分に満喫するためには、デバイスを接続する必要があります。
-      link_account_messaging: Tapjoyは、iOSまたはアンドロイドですでに使用中のアプリの仮想通貨を獲得しながら、最も人気のアプリを発掘することができる、ワンストップショップです。　Tapjoyを十分に満喫するためには、デバイスを接続する必要があります。iOSデバイスから%{tjm_url}、アンドロイドデバイスから%{android_market_url}にアクセスして始めよう。その間、Tapjoyのサイトからプロフィールを作成してカスタマイズされたおススメアプリを体験しよう。
+      join_the_community: ~
+      join_the_community_blurb: ~
+      last_played: "最後のプレイ：%{game}"
+      link_account_header: ~
+      link_account_messaging: ~
       link_account_messaging_android_href: ~
       link_account_messaging_tjm_href: ~
       link_my_facebook: Facebookをリンク
@@ -317,17 +317,17 @@ ja:
       or_learn_more: ~
       other_options: 他のオプション
       our_tos_changed: "当社の%{terms_of_use}を変更いたしました。よくお読みいただき、下記からご同意の上、ご利用いただくようお願い申しあげます。"
-      password_changed: あなたのパスワードは変更されました
+      password_changed: ~
       password_non_match: ~
-      post_to_facebook: Facebookに投稿する！
+      post_to_facebook: ~
       post_to_facebook_content: お気に入りのアプリのカレンシー（仮想通貨）を獲得しながら、最新のアプリを発掘することができるTapjoyをチェックしよう！参加はフリー。今すぐTapjoy.comから始めて、あなたの好みに応じたオススメアプリをゲットしよう。
       privacy_policy_href: プライバシーポリシー
       profile: 自分
       profile_error: ~
-      profile_update: あなたのプロフィールは更新されました
+      profile_update: ~
       provide_other_email: あなたのメールアドレス以外のメールアドレスを入力してください
       recipients_label: "複数のメールアドレスを入力する場合、「 , 」（コンマ）で区切ってください"
-      recommend_apps: Tapjoyは、あなたの好みに基づいて、カスタマイズされたアプリのおススメをご提供します。
+      recommend_apps: ~
       recommendations: スマートなおススメ
       recommendations_smart: スマートなおススメ
       registering: 登録中
@@ -439,7 +439,7 @@ ja:
       name: 名前
       new_password: 新しいパスワード
       nickname: ニックネーム
-      none: 誰もフォローしていません
+      none: ~
       ok: OK
       options: オプション
       other: その他

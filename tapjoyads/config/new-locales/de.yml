@@ -15,7 +15,7 @@ de:
         greater_than: ~
         greater_than_or_equal_to: ~
         inclusion: ~
-        invalid: "Ungültige Eingabe"
+        invalid: ~
         less_than: ~
         less_than_or_equal_to: ~
         not_a_number: ~
@@ -97,7 +97,7 @@ de:
       greater_than: ~
       greater_than_or_equal_to: ~
       inclusion: ~
-      invalid: "Ungültige Eingabe"
+      invalid: ~
       less_than: ~
       less_than_or_equal_to: ~
       not_a_number: ~
@@ -185,7 +185,7 @@ de:
       developers: ~
       privacy: ~
     games:
-      about_body: "Finde Deine Apps, Liebe Deine Apps"
+      about_body: "Liebe die Apps die Sie haben, finde die Apps die Sie lieben"
       about_title: "Irgendwie weiß es genau was für Apps Ich mag."
       account_created_body: "Ihre Tapjoy Konto wurde erfolgreich erstellt!"
       account_created_title: Erfolg!
@@ -196,7 +196,7 @@ de:
       advertisers_body: "Erreiche Millionen von User und bekomme Engagement für Ihre Produkte"
       advertisers_title: Werbetreibende
       allow_marketing_emails: "Erlauben Sie Tapjoy Marketing E-mails durch zusenden"
-      almost_done: Fast fertig!
+      almost_done: ~
       already_registered:
         one: "%{name} hat bereits registriert, ab sofort folgen Sie ihm / ihr"
         other: "%{name} hat bereits registriert, ab sofort folgen Sie ihnen"
@@ -204,13 +204,13 @@ de:
       back_to_top: "Nach Oben Gehen"
       birthdate: Geburtsdatum
       browse_offers: "Angebote durchsuchen"
-      call_to_action_body: "Finde Deine Apps, Liebe Deine Apps"
+      call_to_action_body: "Liebe die Apps die Sie haben, finde die Apps die Sie lieben"
       call_to_action_title: "Entsperren Sie Ihre Handy Freude!"
       cant_fetch_offers: "Es gab ein Problem weitere Angebote zu holen. Bitte versuchen Sie es erneut."
       change: ändern
       change_linked_account: "Verlinkte Konto ändern"
       choose_section: "Wählen Sie eine Seite"
-      close: Schließen
+      close: ~
       collect: Sammele
       collect_rewards: "Belohnungen sammeln"
       connect_my_device: "Mein Gerät verbinden"
@@ -230,9 +230,9 @@ de:
       discover_apps: ~
       download_now: ~
       earn: "%{currency} Verdienen"
-      earn_rewards: Belohnungen Verdienen
+      earn_rewards: ~
       earn_title: "Führen Sie eine der folgenden Angebote um %{currency} für %{app_name} zu verdienen"
-      earning_rewards: Tapjoy ist der ultimative Weg um Belohnungen für Ihrem Lieblings-Apps zu verdienen, alle an einem Ort.
+      earning_rewards: ~
       edit: bearbeiten
       email_device_link: ~
       email_notification: "E-Mail Benachrichtigungen"
@@ -241,7 +241,7 @@ de:
       enter_email: "Bitte geben Sie Ihre E-address ein"
       enter_message: "Bitte geben Sie eine Nachricht"
       enter_name: ~
-      enter_password: "Bitte geben Sie ein Kennwort"
+      enter_password: "Bitte geben Sie ein Passwort"
       enter_platform: "Bitte wählen Sie iOS oder Android"
       enter_tos: "Bitte stimmen Sie zu den genannten Bedingungen"
       enter_valid_email: "Geben Sie eine gültige E-Mail-Adresse"
@@ -258,9 +258,9 @@ de:
       find_friends_from_twitter: ~
       find_friends_on_tapjoy: "Finde Freunde über andere Netze die bereits Tapjoy schon nutzen"
       find_more_friends: "Finde mehr Freunde"
-      find_new_apps: "Finde Neue Apps"
+      find_new_apps: "Finden Sie Neue Apps"
       follow_us: "Folge uns"
-      forgot_pass: "Kennwort vergessen?"
+      forgot_pass: "Passwort vergessen?"
       free: ~
       generic_issue: "Es gab ein Problem. Bitte versuchen Sie es erneut."
       get_app: "App holen"
@@ -270,8 +270,8 @@ de:
       how_it_works_title: "Wie funktioniert es?"
       install_and_run: "Installieren und starten Sie %{name}"
       install_android_app: ~
-      install_profile: Installieren Sie Ihr Profil auf der nächsten Seite und beginne mit der Entdecken von Apps die Sie lieben werden!
-      invalid_fields: Ungültige Eingabe
+      install_profile: ~
+      invalid_fields: ~
       invite: "Meine Freunde einladen!"
       invite_by_email: "Einladung per E-mail"
       invite_email_body: |-
@@ -286,23 +286,23 @@ de:
       invite_title: "Sende eine E-mail einladung"
       invites_sent_to: ~
       issue_registering: "Es gab ein Problem bei der Registrierung von Ihren Konto"
-      join_the_community: Beitritt zur Gemeinschaft
-      join_the_community_blurb: Entdecken Sie mehr mit Tapjoy Gemeinde App-Bewertungen und Rezensionen. Starten Sie noch heute und geben Sie Ihre eigenen!
-      last_played: "Letztens Geöffnett: %{game}"
-      link_account_header: Tapjoy ist Ihre zentralen Stelle, um die heißesten Apps zu entdecken und gleichzeitig Virtuelle Währung für Apps die Sie schon spielen, verdienen. Um den vollen Tapjoy Erfahrung zu bekommen, müssen Sie Ihr Gerät verbinden.
-      link_account_messaging: Tapjoy ist Ihre zentralen Stelle, um die heißesten Apps zu entdecken und gleichzeitig Virtuelle Währung für Apps die Sie schon spielen, verdienen. Um den vollen Tapjoy Erfahrung zu bekommen, müssen Sie Ihre iOS oder Android-Gerät verbinden. Einfach auf %{tjm_url} auf Ihrem iOS-Gerät oder %{android_market_url} auf Ihrem Android-Gerät zurückkehren, um loszulegen. In der Zwischenzeit, besuchen Sie die Website und erstellen Sie Ihr Profil, so dass wir Ihnen persönliche Empfehlungen anbieten können.
+      join_the_community: ~
+      join_the_community_blurb: ~
+      last_played: "Letztens Gespielt"
+      link_account_header: ~
+      link_account_messaging: ~
       link_account_messaging_android_href: ~
       link_account_messaging_tjm_href: ~
       link_my_facebook: "Mein Facebook Verlinken"
       load_more: "Mehr Laden"
-      loading: Laden..
+      loading: Lädt..
       log_in_tapjoy: "Bei Tapjoy Einloggen"
       mark_as_favorite: "Zu Favoriten hinzufügen"
       member_since: "Mitglied Seid %{date}"
       meta_description: "Tapjoy: Das Ziel für Handy Apps und Spiele auf Android, iPhone und iPad."
       meta_keywords: "Spiele, Handy Spiele, Handy Apps, iOS, Android, iPhone, iTouch"
       more_apps: "Weitere Apps"
-      more_the_merrier: "Je mehr, desto besser!"
+      more_the_merrier: "Es macht Spass mit mehr!"
       my_apps: "Meine Apps"
       next: Nächste
       no_device: "Kein Gerät Gefunden"
@@ -313,29 +313,29 @@ de:
       or_learn_more: ~
       other_options: "Weiter Optionen"
       our_tos_changed: "Unsere %{terms_of_use} haben sich geändert. Bitte lesen Sie und geben Sie Ihre Zustimmung unten."
-      password_changed: Ihren Kennwort wurde Erfolgreich geändert.
+      password_changed: ~
       password_non_match: ~
       post_to_facebook: ~
       post_to_facebook_content: "Checken Sie Tapjoy, wo Sie die besten neuen Apps und Spiele entdecken kann, während Sie auch Währung für die Apps die Sie Lieben verdienen können. Melden Sie sich Gratis bei tapjoy.com um die richtige App Empfehlungen jetzt zu bekommen!"
       privacy_policy_href: Datenschutzrichtlinie
       profile: Ich
       profile_error: ~
-      profile_update: Dein Profil wurde aktualisiert.
+      profile_update: ~
       provide_other_email: "Bitte geben Sie eine andere E-Mail Adresse"
       recipients_label: "Mit Kommas, mehrere E-mail adressen trennen"
-      recommend_apps: Tapjoy personalisiert App Empfehlungen für Sie auf der basis von den Apps, die Sie gerne benutzten.
+      recommend_apps: ~
       recommendations: "Heiße Empfehlungen"
       recommendations_smart: "Heiße Empfehlungen"
       registering: "Registrierung folgt.."
       report_bug: "Fehler melden"
-      reset_password_message: Geben Sie die E-Mail-Adresse die mit Ihrem Konto verbunden ist und wir schicken Ihnen einen Link zum Zurücksetzen Ihres Kennworts.
-      reset_password_message_submit: Sie werden in den nächsten Minuten eine E-Mail mit Anweisungen erhalten, um Ihren Kennwort zurückzusetzen.
+      reset_password_message: "Geben Sie die E-Mail-Adresse die mit Ihrem Konto verbunden ist und wir schicken Ihnen einen Link zum Zurücksetzen Ihres Passworts."
+      reset_password_message_submit: "Sie werden in den nächsten Minuten eine E-Mail mit Anweisungen erhalten, um Ihren Passwort  zurückzusetzen."
       reset_password_retry: "Wenn Sie immer noch Probleme bei der Anmeldung haben, Sie können %{reset_password_url} oder E-Mail"
-      reset_password_retry_url_text: Fordern Sie eine neue E-Mail-Kennwort-Zurücksetzung
+      reset_password_retry_url_text: "Fordern Sie eine neue E-Mail-Passwort-Zurücksetzung"
       review_app_name: "Bewerte %{app_name}"
-      review_created: Rezension dieses App ist Erfolgreiche
+      review_created: "Bewertung dieses App ist Erfolgreiche"
       review_issue: "Es gab ein Problem. Bitte versuchen Sie es später erneut."
-      review_updated: App Rezension wurde erfolgreich aktualisiert
+      review_updated: "App Bewertung wurde erfolgreich aktualisiert"
       reviewed_already: "Sie haben bereits diese App bewertet."
       select_current_device: "Bitte wählen Sie Ihr aktuelles Gerät"
       select_device: "Bitte wählen Sie Ihr Gerät"
@@ -359,7 +359,8 @@ de:
       tos_acknowledge_html: "Wenn dieses Feld markiert ist, behaupte ich dass ich zu dem %{terms_of_use} & %{privacy_policy} zu stimme"
       tos_change_acknowledge: "Wenn dieses Feld markiert ist, behaupte ich dass ich zu dem Nutzungsbedingungen zu stimme"
       unable_to_process: "Leider könnten wir Ihre Anfrage nicht verarbeiten"
-      unlock_mobile_joy: "Entsperren Sie Ihre Handy Freude!"unmark_as_favorite: ~
+      unlock_mobile_joy: "Handy Freude Entsperren!"
+      unmark_as_favorite: ~
       welcome_tapjoy: ~
       wifi_required: "Wifi nötig"
       wrong_device: "Falsches Gerät?"
@@ -383,7 +384,7 @@ de:
       instructions: "Nimm an einer der folgenden Aktionen teil um %{currency} zu erhalten"
       instructions_non_rewarded: "Discover what's hot on Tapjoy!"
       load_error: "Bitte versuche es nochmal!"
-      load_more: Mehr Laden...
+      load_more: "Lade noch mehr!"
       loading: Lade...
       missing_currency: "Fehlende %{currency}?"
       more_offers: "Möchten Sie mehr Angebote sehen? Besuchen Sie Tapjoy um Belohnungen zu verdienen und persönliche Apps Empfehlungen zu bekommen!"
@@ -399,12 +400,12 @@ de:
       android: Android
       back: Zurück
       blog: Blog
-      cancel:  Abbrechen
+      cancel: Absagen
       change_password: "Passwort ändern"
       city: Stadt
       collect: Sammele
       comment: Kommentar
-      confirm_password: "Kennwort bestätigen"
+      confirm_password: "Passwort bestätigen"
       continue: Weiter
       copyright: "Urheberrecht %{year} Tapjoy, Inc. Alle Rechte vorbehalten. Tapjoy und dass Tapjoy logo sind Warenzeichen oder eingetragenen Warenzeichen von Tapjoy, Inc.  Alle Drittwerbenden Logos und Warenzeichen erwähnt sind das Eigentum ihrer jeweiligen Besitzer."
       country: Land
@@ -414,8 +415,8 @@ de:
       facebook_profile: "Facebook Profil"
       favorites: Favoriten
       female: Weiblich
-      followers: Follower
-      following: Ich Folge
+      followers: Folger
+      following: Folgen
       friends: Freunde
       gender: Geschlecht
       help: Hilfe
@@ -432,39 +433,39 @@ de:
       my_profile: "Mein Profil"
       my_reviews: "Meine Bewertungen"
       name: Name
-      new_password: "Neue Kennwort"
+      new_password: "Neue Passwort"
       nickname: Spitzname
-      none: Keine Ergebnisse
+      none: ~
       ok: Ok
       options: Optionen
       other: Sonstiges
-      password: Kennwort
+      password: Passwort
       please_try_again: ~
       preferences: Einstellungen
       privacy: Privat
       privacy_policy: Datenschutzrichtlinie
       profile: Profil
-      rate_and_review: Bewertung und Rezension
+      rate_and_review: Bewertung
       recipients: Empfänger
-      reset_password: "Kennwort Zurückstellen"
-      reviews: Rezensionen
+      reset_password: "Passwort Zurückstellen"
+      reviews: Bewertungen
       save: Speichern
       send: Schicken
       sending: ~
       sent: ~
       share: Mitteilen
-      sign_in: "Anmelden"
-      sign_up: "Anmeldung"
+      sign_in: Einloggen
+      sign_up: Anmelden
       submit: Abgeben
-      submit_review: "Rezension Abgeben"
+      submit_review: "Bewertung Abgeben"
       success: Erfolg!
       title_noun: Titel
       try_again: "Neu versuchen"
       unknown: Unbekannt
-      update_review: "Rezension Aktualisieren"
+      update_review: "Bewertung Aktualisieren"
       updating: Aktualisierung
       view_all: ~
-      write_review: Eine Rezension schreiben
+      write_review: "Bewertung Schreiben"
       year: Jahr
       zip_postal: Postleitzahl
     support:

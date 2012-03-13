@@ -15,7 +15,7 @@ fr:
         greater_than: ~
         greater_than_or_equal_to: ~
         inclusion: ~
-        invalid: "est invalide"
+        invalid: ~
         less_than: ~
         less_than_or_equal_to: ~
         not_a_number: ~
@@ -97,7 +97,7 @@ fr:
       greater_than: ~
       greater_than_or_equal_to: ~
       inclusion: ~
-      invalid: "est invalide"
+      invalid: ~
       less_than: ~
       less_than_or_equal_to: ~
       not_a_number: ~
@@ -196,10 +196,12 @@ fr:
       advertisers_body: "Ciblez des millions d'utilisateurs et faites bénéficiez vos produits d'une large exposition"
       advertisers_title: Annonceurs
       allow_marketing_emails: "Permettre à Tapjoy de m'envoyer des emails promotionnels "
-      almost_done: C'est presque terminé!
+      almost_done: ~
       already_registered:
-        one: "%{name} s'est déjà enregistré, tu le/la suis désormais\" other"
-        other: "%{name} sont deja inscrits, tu es désormais abonné à leur fil d'actualité"
+        one: ~
+        ? "one:\"%{name} s'est déjà enregistré, tu le/la suis désormais\" other"
+        : "%{name} sont deja inscrits, tu es désormais abonné à leur fil d'actualité"
+        other: ~
       amount_and_currency: ~
       back_to_top: Retour
       birthdate: "Date de naissance"
@@ -210,7 +212,7 @@ fr:
       change: changer
       change_linked_account: "Changer de Compte"
       choose_section: "Choisis une section"
-      close: Ferme
+      close: ~
       collect: Recevoir
       collect_rewards: "Recevoir des recompenses"
       connect_my_device: "Connecter mon appareil"
@@ -230,9 +232,9 @@ fr:
       discover_apps: ~
       download_now: ~
       earn: "Gagnez %{currency}"
-      earn_rewards: Gagne des récompenses
+      earn_rewards: ~
       earn_title: "Complétes une des offres ci-dessous pour gagner %{currency} à %{app_name}"
-      earning_rewards: Tapjoy est le moyen idéal de gagner des récompenses dans tes applications favorites.
+      earning_rewards: ~
       edit: Edites
       email_device_link: ~
       email_notification: "Notifications par email"
@@ -270,8 +272,8 @@ fr:
       how_it_works_title: "Comment ca marche?"
       install_and_run: "Installes et lance %{name}"
       install_android_app: ~
-      install_profile: Installe ton profil sur la page suivante et découvres de nouvelles applications
-      invalid_fields: Entrée non valide
+      install_profile: ~
+      invalid_fields: ~
       invite: "Invites tes Amis!"
       invite_by_email: "Invites par email"
       invite_email_body: |-
@@ -290,11 +292,11 @@ fr:
         one: "Ton invitation Tapjoy a été envoyée à %{name}"
         other: "Tes invitations Tapjoy ont été envoyées à %{name}"
       issue_registering: "Il ya eu une erreur lors de l'enregistrement de ton compte"
-      join_the_community: Rejoins la communauté
-      join_the_community_blurb: Tapjoy personnalise ses recommendations en fonction des apps que tu aimes et que tu utilises le plus.
-      last_played: "Derniere app.ouverte: %{game}"
-      link_account_header: Tapjoy est le store idéal pour découvrir les apps tendances du moment mais aussi gagner de la monnaie virtuelle au sein de tes apps. actuelles. Pour bénéficier pleinement de l’expérience Tapjoy connecte ton appareil maintenant.
-      link_account_messaging: Tapjoy est le store idéal pour découvrir les apps tendances du moment sur iOS et Androïd mais aussi gagner de la monnaie virtuelle au sein de tes apps. actuelles. Pour bénéficier pleinement de l’expérience Tapjoy connecte ton appareil iOS ou Android maintenant. Retournes simplement sur %{tjm_url} sur ton appareil iOS ou sur %{android_market_url} sur ton appareil Androïd pour débuter. Et n’oublie pas de créer un profil complet sur le site afin que l’on puisse t’envoyer des recommandations personnalisées.
+      join_the_community: ~
+      join_the_community_blurb: ~
+      last_played: "Dernier jeu joué: %{game}"
+      link_account_header: ~
+      link_account_messaging: ~
       link_account_messaging_android_href: ~
       link_account_messaging_tjm_href: ~
       link_my_facebook: "Lier mon Facebook"
@@ -317,14 +319,14 @@ fr:
       or_learn_more: ~
       other_options: "Autres options"
       our_tos_changed: "Nos %{terms} ont changé. Merci de les revoir et de confirmer ton accord ci-dessous"
-      password_changed: Ton mot de passe a été changé
+      password_changed: ~
       password_non_match: ~
-      post_to_facebook: "Poster sur Facebook!"
+      post_to_facebook: ~
       post_to_facebook_content: "Rends toi sur Tapjoy pour découvrir les meilleurs apps & jeux du moment tout en gagnant des crédits dans tes apps favorites. C'est gratuit, donc visites Tapjoy immédiatement pour commencer à recevoir des recommendations personnalisées."
       privacy_policy_href: Confidentialité
       profile: "Mon Profil"
       profile_error: ~
-      profile_update: Ton profil a été mis à jour
+      profile_update: ~
       provide_other_email: "Merci de rentrer un email autre que le tiens"
       recipients_label: "Utilise des virgules pour separer les adresses mails"
       recommend_apps: ~
@@ -439,7 +441,7 @@ fr:
       name: Nom
       new_password: "Nouveau mot de passe"
       nickname: Pseudo
-      none: Aucun
+      none: ~
       ok: OK
       options: Options
       other: Autre

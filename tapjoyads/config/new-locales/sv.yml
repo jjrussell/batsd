@@ -15,7 +15,7 @@ sv:
         greater_than: ~
         greater_than_or_equal_to: ~
         inclusion: ~
-        invalid: "är ogiltig"
+        invalid: ~
         less_than: ~
         less_than_or_equal_to: ~
         not_a_number: ~
@@ -97,7 +97,7 @@ sv:
       greater_than: ~
       greater_than_or_equal_to: ~
       inclusion: ~
-      invalid: "är ogiltig"
+      invalid: ~
       less_than: ~
       less_than_or_equal_to: ~
       not_a_number: ~
@@ -190,13 +190,13 @@ sv:
       account_created_body: "Registreringen lyckades!"
       account_created_title: Registrering
       action_required: "Action Required!"
-      active_gamers_text: "%{count} antal användare"
+      active_gamers_text: ~
       add: "Lägg till"
       add_to_homescreen: "Lägg till %{tapjoy} som bokmärke."
       advertisers_body: "Nå ut till miljontals användare och visa dina produkter"
       advertisers_title: Marknadsförare
       allow_marketing_emails: "Tillåt att Tapjoy sänder mig erbjudanden"
-      almost_done: Nästan klar!
+      almost_done: ~
       already_registered:
         one: ~
         ? "one:\"%{name} har redan registrerat sig, du följer nu han/henne.\" other"
@@ -211,12 +211,12 @@ sv:
       cant_fetch_offers: "Det uppstod ett fel när du försökte ladda fler erbjudanden. Var vänlig försök igen."
       change: ändra
       change_linked_account: "Ändra Länkade Konton"
-      choose_section: Välj en sektion
-      close: "stäng"
+      choose_section: ~
+      close: ~
       collect: Samla
       collect_rewards: "Samla belöningar"
       connect_my_device: "Koppla ihop min telefon"
-      connect_to_facebook: Klicka för att koppla ditt konto till Facebook
+      connect_to_facebook: ~
       connect_your_android: "Var vänlig och koppla ihop din Android mobil"
       connect_your_device: "Var vänlig och koppla ihop din mobil"
       connected_to_facebook: ~
@@ -232,9 +232,9 @@ sv:
       discover_apps: ~
       download_now: ~
       earn: "Tjäna %{currency}"
-      earn_rewards: "Få belöningar"
+      earn_rewards: ~
       earn_title: "Genomför något av erbjudandena nedan för att tjäna %{currency} i %{app_name}"
-      earning_rewards: "Tapjoy är det bästa sättet att få belöningar i dina favoritappar, allt på ett ställe"
+      earning_rewards: ~
       edit: Ändra
       email_device_link: ~
       email_notification: "Mail notificering"
@@ -255,25 +255,25 @@ sv:
       favorite_category: Favoritkategori
       favorites: ~
       feedback: Feedback
-      find_and_invite_friends: "Hitta och bjud in vänner"
+      find_and_invite_friends: ~
       find_friends_from_facebook: ~
       find_friends_from_twitter: ~
-      find_friends_on_tapjoy: "Hitta vänner som redan använder Tapjoy genom andra nätverk"
-      find_more_friends: "Hitta fler vänner"
+      find_friends_on_tapjoy: ~
+      find_more_friends: ~
       find_new_apps: "Upptäck nya appar"
       follow_us: "Följ oss"
       forgot_pass: "Glömt Lösenord?"
       free: Gratis!
       generic_issue: "Ett fel uppstod, var vanlig försök igen"
-      get_app: "Ladda ner app"
+      get_app: ~
       get_it: "Ladda ner!"
       grant_us_access: "Var vänlig och delge oss båda tillstånden innan du skickar ut en inbjudan."
       how_it_works_body: "Alla dina spel är listade nedan. Klicka på knapparna bredvid apparna för att börja tjäna valuta."
       how_it_works_title: "Hur fungerar det?"
       install_and_run: "Installera och kör %{name}"
       install_android_app: ~
-      install_profile: Installera din profil på nästa sida och upptäck nya favoritappar.
-      invalid_fields: Ogiltig text
+      install_profile: ~
+      invalid_fields: ~
       invite: "Bjud in en vän!"
       invite_by_email: Mailinbjudningar
       invite_email_body: |-
@@ -288,23 +288,23 @@ sv:
       invite_title: "Skicka en mailinbjudan"
       invites_sent_to: ~
       issue_registering: "Det uppstod ett fel när du försökte registrera dig"
-      join_the_community: "Gå med i gemenskapen"
-      join_the_community_blurb: "Upptäck mer genom Tapjoys app recensioner. Kom igång redan idag med att skriva en egen!"
-      last_played: "Senast använa: %{game}"
-      link_account_header: Tapjoy är det enda stället du behöver för att upptäcka de hetaste apparna
-      link_account_messaging: Tapjoy är det enda stället du behöver för att upptäcka de hetaste apparna till iOS
+      join_the_community: ~
+      join_the_community_blurb: ~
+      last_played: "Spelade senast %{game}"
+      link_account_header: ~
+      link_account_messaging: ~
       link_account_messaging_android_href: ~
       link_account_messaging_tjm_href: ~
       link_my_facebook: "Länka Min Facebook"
       load_more: "Ladda fler"
       loading: Laddar...
       log_in_tapjoy: "Logga in till Tapjoy"
-      mark_as_favorite: "Lägg till i favoriter"
+      mark_as_favorite: ~
       member_since: "Medlem sedan %{date}"
       meta_description: "Tapjoy:  Där du upptäcker appar och spel för Android, iPhone och iPad."
       meta_keywords: "spel, mobilspel, appar, ios, android, iphone, ipad, itouch"
       more_apps: "Fler appar"
-      more_the_merrier: "Ju fler desto bättre"
+      more_the_merrier: ~
       my_apps: "Mina appar"
       next: Nästa
       no_device: "Ingen enhet"
@@ -315,25 +315,25 @@ sv:
       or_learn_more: ~
       other_options: "Anda alternativ"
       our_tos_changed: "Våra %{terms_of_use} har ändrats. Var vänlig och läs igenom och godkänn här nedan. "
-      password_changed: "Ditt lösenord har ändrats"
+      password_changed: ~
       password_non_match: ~
-      post_to_facebook: "Dela på Facebook"
+      post_to_facebook: ~
       post_to_facebook_content: "Kolla in Tapjoy där du kan upptäcka de bästa nya apparna och spelen, medan du också tjänar virtuell valuta i dina favorit appar. Det är gratis att gå med så gå in på tapjoy.com och börja få personliga apprekommendationer."
       privacy_policy_href: Integritetspolicy
       profile: Jag
       profile_error: ~
-      profile_update: Din profil har uppdaterats
+      profile_update: ~
       provide_other_email: "Var vänlig och fyll en email adress som inte är din egen"
       recipients_label: "Använd kommatecken mellan olika mailadresser"
-      recommend_apps: Tapjoy anpassar de apprekommendationer du får baserat på vilka appar du gillar.
+      recommend_apps: ~
       recommendations: "Smarta rekommendationer"
       recommendations_smart: ~
       registering: "Godkänn användarvilkoren ovan"
       report_bug: "Rapportera en bugg"
-      reset_password_message: Skriv in den mail adress du använder för ditt konto så skickar vi en länk för att återställa ditt lösenord
-      reset_password_message_submit: Du kommer att få ett mail med instruktion för att återställa ditt lösenord inom några minuter
-      reset_password_retry: "Om du fortfarande har problem med att logga in kan du %{reset_password_url}
-      reset_password_retry_url_text: Begär ett nytt mail för att återställa ditt lösenord
+      reset_password_message: ~
+      reset_password_message_submit: ~
+      reset_password_retry: ~
+      reset_password_retry_url_text: ~
       review_app_name: "Recensera %{app_name}"
       review_created: "Din recension lyckades"
       review_issue: "Det uppstod ett problem. Var vänlig försök igen senare."
@@ -403,7 +403,7 @@ sv:
       back: Tillbaks
       blog: Blogg
       cancel: Avbryt
-      change_password: "Ändra lösenord"
+      change_password: ~
       city: Stad
       collect: Samla
       comment: Kommentera
@@ -437,7 +437,7 @@ sv:
       name: Namn
       new_password: "Nytt Lösenord"
       nickname: Smeknamn
-      none: Ingen
+      none: ~
       ok: OK
       options: Intällningar
       other: Andra
@@ -458,7 +458,7 @@ sv:
       share: Dela
       sign_in: "Logga in"
       sign_up: "Skaffa konto"
-      submit: Skicka in
+      submit: Posta
       submit_review: "Posta din recension"
       success: "Det lyckades!"
       title_noun: Titel

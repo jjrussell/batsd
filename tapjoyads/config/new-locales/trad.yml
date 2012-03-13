@@ -15,7 +15,7 @@ zh:
         greater_than: ~
         greater_than_or_equal_to: ~
         inclusion: ~
-        invalid: "是無效的"
+        invalid: ~
         less_than: ~
         less_than_or_equal_to: ~
         not_a_number: ~
@@ -97,7 +97,7 @@ zh:
       greater_than: ~
       greater_than_or_equal_to: ~
       inclusion: ~
-      invalid: "是無效的"
+      invalid: ~
       less_than: ~
       less_than_or_equal_to: ~
       not_a_number: ~
