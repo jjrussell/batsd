@@ -1,6 +1,6 @@
 class AddClientIdToPartners < ActiveRecord::Migration
   def self.up
-    add_column :partners, :client_id, 'char(36) binary'
+    add_guid_column :partners, :client_id
   end
 
   def self.down
