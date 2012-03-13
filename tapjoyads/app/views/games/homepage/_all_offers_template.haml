@@ -16,28 +16,25 @@
                 <% } %>
               </div>
             </div>
-            <div class="left ml10 info app-info">
-              <div class="container mt3">
+            <div class="ml10 info app-info">
+              <div class="mt3">
                 <div class="big-title slate elip">
                   <%= OfferArray[i].Name %>
                 </div>
               </div>
-              <div class="container">
                 <% if (OfferArray[i].Type === "App") { %>
-                  <div class="ui-icon-medium social icon24 p5 left">
+                  <div class="ui-icon-medium social icon24 p5">
                     <%= i18n.t('games.active_gamers_text', {count: (OfferArray[i].ActiveGamers == null) ? '0' : OfferArray[i].ActiveGamers}) %>
                   </div>
                 <% } %>
                 <% if (OfferArray[i].WifiOnly) { %>
-                <div class="container">
-                  <div class="ui-icon-medium wifi icon24 p5 left">
+                  <div class="ui-icon-medium wifi icon24 p5">
                     #{t("text.games.wifi_required")}
                   </div>
-                </div>
                 <% } %>
               </div>
             </div>
-            <div class="right earn-btn">
+            <div class="earn-btn">
               <div class="collect center mt5">
                   <%= i18n.t("games.amount_and_currency", {amount: OfferArray[i].Amount, currency: CurrencyName}) %>
               </div>

@@ -23,7 +23,7 @@ class SearchController < WebsiteController
         elsif o.item_type == 'App'
           app = App.find_by_id(o.item_id)
           result[:description] = app.description
-          result[:click_url]   = games_get_app_path(:eid => ObjectEncryptor.encrypt(o.item_id))
+          result[:click_url]   = "#{WEBSITE_URL}/games/get_app?eid=#{ObjectEncryptor.encrypt(o.item_id)}"
         elsif o.item_type == 'ActionOffer'
           action = ActionOffer.find_by_id(o.item_id)
           result[:click_url] = Linkshare.add_params(action.app.store_url)

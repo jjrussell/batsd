@@ -89,8 +89,6 @@
     %li= link_to 'Enable Requests', tools_enable_offer_requests_path
   - if permitted_to? :index, :tools_offer_events
     %li= link_to 'Schedule Offer Events', tools_offer_events_path
-  - if permitted_to? :freemium_android, :tools
-    %li= link_to 'Freemium Android Apps', freemium_android_tools_path
   - if permitted_to? :index, :tools_external_publishers
     %li= link_to 'External Publishers', tools_external_publishers_path
   - if permitted_to? :index, :tools_agency_users

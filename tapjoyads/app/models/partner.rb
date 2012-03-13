@@ -315,8 +315,8 @@ private
   end
 
   def update_offers
-    return true if !(premier_discount_changed? || reseller_id_changed?)
-    if premier_discount_changed?
+    return true unless (premier_discount_changed? || reseller_id_changed? || discount_all_offer_types_changed?)
+    if premier_discount_changed? || discount_all_offer_types_changed?
       offers.each { |o| o.update_payment(true) }
     end
     if reseller_id_changed?

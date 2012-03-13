@@ -9,7 +9,6 @@ $(document).ready(function(){
   });
 
   $('#arrow').bind(Tapjoy.EventsMap.start, function(){
-		
 		// html tag for firefox, body for chrome/safari
     $('html, body').animate({
 			scrollTop: $('#getting-started').offset().top +'px'
@@ -23,4 +22,5 @@ $(document).ready(function(){
   });
 
   $(window).trigger('resize');
+
 });

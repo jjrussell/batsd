@@ -1,0 +1,63 @@
+#!/usr/bin/env ruby
+
+require 'optparse'
+
+class DeployRecorder
+
+  def initialize(args)
+    @options = {
+      :environment => 'staging',
+      :version => 'master',
+      :app_names => [ 'TapjoyStaging']
+    }
+
+    option_parser = OptionParser.new do |opts|
+      opts.on('-e', '--environment [ENVIRONMENT]') do |environment|
+        case environment
+        when 'production'
+          @options[:environment] = 'production'
+          @options[:app_names] = [ 'TapjoyApiWeb', 'TapjoyApiJobs', 'TapjoyWebsite', 'TapjoyDashboard']
+        when 'util'
+          @options[:environment] = 'production'
+          @options[:app_names] = [ 'TapjoyUtil' ]
+        when 'test'
+          @options[:environment] = 'staging'
+          @options[:app_names] = [ 'TapjoyStaging' ]
+        else
+          print_usage_and_exit
+        end
+      end
+
+      opts.on('-v', '--version [VERSION]') do |version|
+        @options[:version] = version
+      end
+
+      opts.on_tail('-h', '--help') do
+        print_usage_and_exit
+      end
+    end
+
+    unless option_parser.parse!(args).empty?
+      puts "Unknown options given."
+      print_usage_and_exit
+    end
+  end
+
+  def record_deploy
+    @options[:app_names].each do |app_name|
+      system("vendor/gems/newrelic_rpm-3.3.0/bin/newrelic deployments -a #{app_name} -e #{@options[:environment]} -r #{@options[:version]}")
+    end
+  end
+
+  private
+
+  def print_usage_and_exit
+    puts "USAGE: script/record_deploy [options]"
+    puts "    -e, --environment (optional): The environment being deployed to. Can be 'test', 'util', or 'production'. Default is 'test'."
+    puts "    -v, --version (optional): The version being deployed. Defaults to 'master' for test and util deploys."
+    exit
+  end
+
+end
+
+DeployRecorder.new(ARGV).record_deploy
