@@ -11,7 +11,7 @@ if big_server
   worker_processes 36
   timeout 43200
 else
-  worker_processes 8
+  worker_processes 10
   timeout 90
 end
 

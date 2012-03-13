@@ -19,8 +19,8 @@ class App < ActiveRecord::Base
         :offers   => ANDROID_OFFERS_SDK,
         :vg       => ANDROID_VG_SDK,
       },
-      :store_name => 'Market',
-      :info_url => 'https://market.android.com/details?id=STORE_ID',
+      :store_name => 'Google Play',
+      :info_url => 'https://play.google.com/store/apps/details?id=STORE_ID',
       :store_url => 'market://search?q=STORE_ID',
       :default_actions_file_name => "TapjoyPPA.java",
       :versions => [ '1.5', '1.6', '2.0', '2.1', '2.2', '2.3', '3.0' ],
@@ -39,7 +39,7 @@ class App < ActiveRecord::Base
       :store_url => 'http://phobos.apple.com/WebObjects/MZStore.woa/wa/viewSoftware?id=STORE_ID&mt=8',
       :default_actions_file_name => "TJCPPA.h",
       :versions => [ '2.0', '2.1', '2.2', '3.0', '3.1', '3.2', '4.0', '4.1', '4.2', '4.3', '5.0' ],
-      :cell_download_limit_bytes => 20.megabytes
+      :cell_download_limit_bytes => 50.megabytes
     },
     'windows' => {
       :expected_device_types => Offer::WINDOWS_DEVICES,
@@ -102,6 +102,8 @@ class App < ActiveRecord::Base
   named_scope :visible, :conditions => { :hidden => false }
   named_scope :by_platform, lambda { |platform| { :conditions => ["platform = ?", platform] } }
   named_scope :by_partner_id, lambda { |partner_id| { :conditions => ["partner_id = ?", partner_id] } }
+  named_scope :live, :joins => [ :app_metadatas ], :conditions =>
+    "#{AppMetadata.quoted_table_name}.store_id IS NOT NULL"
 
   delegate :conversion_rate, :to => :primary_currency, :prefix => true
   delegate :store_id, :store_id?, :description, :age_rating, :file_size_bytes, :supported_devices, :supported_devices?, :released_at, :released_at?, :user_rating,
@@ -209,7 +211,9 @@ class App < ActiveRecord::Base
 
     fill_app_store_data(data)
     app_metadata.fill_app_store_data(data)
-    app_metadata.save
+    return false unless app_metadata.save
+
+    data
   end
 
   def queue_store_update(app_store_id)

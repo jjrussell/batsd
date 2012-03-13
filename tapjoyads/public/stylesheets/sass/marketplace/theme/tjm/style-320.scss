@@ -1,28 +1,8 @@
-.big-title {
-  -webkit-text-size-adjust: 67%;
-  -moz-text-size-adjust: 67%;
-  -o-text-size-adjust: 67%;
-  -ms-text-size-adjust: 67%;
-}
-
-.list-button,
-.collect,
-.greenblock {
-  -webkit-text-size-adjust: 80%;
-  -moz-text-size-adjust: 80%;
-  -o-text-size-adjust: 80%;
-  -ms-text-size-adjust: 80%;
-}
-
 .list-button a {
   -webkit-text-size-adjust: 110%;
   -moz-text-size-adjust: 110%;
   -o-text-size-adjust: 110%;
   -ms-text-size-adjust: 110%;
-}
-
-.list-button .collect {
-  margin-top: 2px;
 }
 
 
@@ -63,7 +43,7 @@
 .list-button-container.earn-theme .big-title,
 .list-button-container.earn-theme .info,
 div.app .title {
-  width: 120px !important;
+  width: 136px !important;
 }
 
 .list-button-container.earn-theme .list-button a {
@@ -93,11 +73,6 @@ div.app .title {
   }
 }
 
-.app-info {
-  position: absolute;
-  left: 106px;
-  font-size: 0.9em;
-}
 
 #recommendations .app {
   .details {
@@ -120,4 +95,41 @@ div.app .title {
   small {
     font-size: .4em;
   }
+}
+
+/**
+ * Earnings screen
+ */
+.app-info {
+  width: percentage(300/320);
+  left: 96px;
+  margin: 0;
+
+  .big-title {
+    width: percentage(300/320);
+    font-size: 1.8em;
+  }
+}
+.earn-btn {
+  top: 25px;
+
+  .collect {
+    font-size: 1.2em;
+    line-height: 1.3em;
+    margin-top: 2px;
+  }
+
+  .greenblock {
+    width: 50px;
+    font-size: 1.3em;
+    line-height: 2em;
+  }
+}
+
+.list-button-container.earn-theme .list-button {
+  padding: 0;
+}
+
+.list-button-container.earn-theme .list-button a {
+  padding: 7px 0 0 3px;
 }

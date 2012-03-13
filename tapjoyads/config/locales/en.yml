@@ -214,6 +214,9 @@ en:
       developers: Developers
       privacy: "Privacy Policy"
     games:
+      invalid_emails: The email(s) provided were invalid
+      provide_single_email: Please provide at least one email
+      scheduled_for_deletion: 'Your account has been deactivated and scheduled for deletion!'
       about_body: "A better way to love the apps you have and find the apps you'll love."
       about_title: "\"Somehow it knows exactly what apps I like.\""
       account_created_body: "Your Tapjoy account was successfully created!"
@@ -284,6 +287,10 @@ en:
       feedback: Feedback
       find_and_invite_friends: "Find and Invite Friends"
       find_friends_from_facebook: "Find friends from Facebook"
+      post_to_facebook: Post to Facebook!
+      facebook_connect_failed: Failed to connect to your Facebook profile
+      please_connect_facebook: Please connect your Facebook account
+      grant_permissions_for_invite: "Please grant us both permissions before sending out an invite."
       find_friends_from_twitter: "Find friends from Twitter"
       find_friends_on_tapjoy: "Find friends already using Tapjoy via other networks"
       find_more_friends: "Find more friends"
@@ -306,7 +313,7 @@ en:
       invite_email_body: |-
           %{name} has invited you to join Tapjoy, the BEST place to find the hottest new apps. Signing up is free and you'll be able discover the best apps on iOS and Android, while also earning currency in your favorite apps.
 
-          No need to wade through thousands of apps in the App Store or the Android Market to find your next download. Tapjoy has you covered and recommends apps we know you'll like.
+          No need to wade through thousands of apps in the App Store or Google Play to find your next download. Tapjoy has you covered and recommends apps we know you'll like.
 
           To get started, create your account here:
       invite_email_greet: "Hi,"

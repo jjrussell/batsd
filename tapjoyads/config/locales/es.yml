@@ -277,7 +277,7 @@ es:
       invite_email_body: |-
           %{name} te ha invitado a Tapjoy, el MEJOR sitio para descubrir las aplicaciones del momento. Podrás registrarte gratuitamente y descubrir las mejores apps en iOS y Android, asi como ganar moneda virtual para tus apps favoritas.
 
-          Ya no necesitarás recorrer todo el App Store o el Android Market para encontrar nuevas apps. Tapjoy te recomienda que sabemos que te van a gustar.
+          Ya no necesitarás recorrer todo el App Store o el Google Play para encontrar nuevas apps. Tapjoy te recomienda que sabemos que te van a gustar.
 
           Para empezar, crea una cuenta aquí:
       invite_email_greet: "Hola,"
@@ -324,7 +324,7 @@ es:
       provide_other_email: "Por favor, introduce un email que no sea el tuyo"
       recipients_label: "Usa comas para separar las direcciones de correo electrónico"
       recommend_apps: Tapjoy se basa en las aplicaciones que ya usas para proponerte nuevas apps
-      recommendations: "Recomendaciones Inteligentes"
+      recommendations: "Recomendaciones"
       recommendations_smart: "Juegos recomendados"
       registering: Registrándote
       report_bug: "Reportar Problema"

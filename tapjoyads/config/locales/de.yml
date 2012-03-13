@@ -251,7 +251,7 @@ de:
       favorite_app: Lieblingsapp
       favorite_apps: Lieblingsapps
       favorite_category: Lieblingskategorie
-      favorites: ~
+      favorites: Favoriten
       feedback: Feedback
       find_and_invite_friends: "Finde und Lade Freunde Ein"
       find_friends_from_facebook: ~
@@ -277,7 +277,7 @@ de:
       invite_email_body: |-
           %{name} hat Sie bei Tapjoy eingeladen, der beste Ort um die heißesten neuen apps zu finden. Die Anmeldung ist kostenlos und Sie haben die Möglichkeit die besten Apps auf iOS und Android zu entdecken, während Sie auch Währung in Ihrem Lieblings-Apps verdienen können. Keine
 
-          Notwendigkeit, durch Tausende von Apps im App Store oder dem Android Marktplatz zu waten, um Ihren nächsten Download zu finden. Tapjoy wird Ihnen helfen und empfiehlt apps die wir wissen, Sie mögen werden.
+          Notwendigkeit, durch Tausende von Apps im App Store oder dem Google Play zu waten, um Ihren nächsten Download zu finden. Tapjoy wird Ihnen helfen und empfiehlt apps die wir wissen, Sie mögen werden.
 
           Zu Starten, erstellen Sie Ihr Konto hier:
       invite_email_greet: Hallo
@@ -308,7 +308,7 @@ de:
       no_device: "Kein Gerät Gefunden"
       no_javascript: "Bitte gehen Sie in Ihren Browser-Einstellungen und aktivieren Sie JavaScript, um weiter mit Tapjoy zu verwenden."
       none_selected: "Keine Auswahl"
-      on_my: "Auf mein %{device}"
+      on_my: "Auf mein %{device_name}"
       oops: Oops!
       or_learn_more: ~
       other_options: "Weiter Optionen"

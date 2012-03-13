@@ -15,9 +15,9 @@
               = @featured_content.button_text
           .banner-img-wrapper
             = image_tag(FeaturedContent.get_icon_url(:icon_id => "#{@featured_content.id}_secondary"), :class => 'banner-img')
-    .section.dark.ntb
-      .select-container.left.ml5
-        #viewSelect.dropdown.left
+    .section.dark
+      #viewSelect.select-container.left.ml5
+        .dropdown.left
           %img.downarrow-white.icon24{ :src => BLANK_IMAGE }
         .heading.pl5.pr15
           = t('text.games.my_apps')
@@ -37,7 +37,7 @@
           = t('text.shared.view_all')
 
   - if current_recommendations.present?
-    #recommendationsRow.row.borders.pn.ntb.rec
+    #recommendationsRow.row.borders.pn.ntb.boxshadow
       %h1.museo.smart.row-title= t('text.games.recommendations_smart')
       #recommendations.games
         - current_recommendations.each do |reco|

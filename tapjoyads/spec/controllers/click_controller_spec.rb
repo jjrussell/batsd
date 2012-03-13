@@ -36,8 +36,8 @@ describe ClickController do
         Offer.stubs(:find_in_cache).returns(@offer)
         Currency.stubs(:find_in_cache).returns(@currency)
         get(:generic, @params)
-        assigns(:click).should_not be_nil
-        assigns(:click).id.should == "#{@params[:gamer_id]}.#{TAPJOY_GAMES_INVITATION_OFFER_ID}"
+        assigns(:click_key).should_not be_nil
+        assigns(:click_key).should == "#{@params[:gamer_id]}.#{TAPJOY_GAMES_INVITATION_OFFER_ID}"
         response.should be_redirect
       end
     end
@@ -62,8 +62,8 @@ describe ClickController do
         Offer.stubs(:find_in_cache).returns(@offer)
         Currency.stubs(:find_in_cache).returns(@currency)
         get(:generic, @params)
-        assigns(:click).should_not be_nil
-        assigns(:click).id.should == "stuff.#{TAPJOY_GAMES_REGISTRATION_OFFER_ID}"
+        assigns(:click_key).should_not be_nil
+        assigns(:click_key).should == "stuff.#{TAPJOY_GAMES_REGISTRATION_OFFER_ID}"
         response.should be_redirect
       end
     end
@@ -88,8 +88,8 @@ describe ClickController do
         Offer.stubs(:find_in_cache).returns(@offer)
         Currency.stubs(:find_in_cache).returns(@currency)
         get(:generic, @params)
-        assigns(:click).should_not be_nil
-        assigns(:click).id.should == Digest::MD5.hexdigest('stuff.even_more_stuff')
+        assigns(:click_key).should_not be_nil
+        assigns(:click_key).should == Digest::MD5.hexdigest('stuff.even_more_stuff')
         response.should be_redirect
       end
     end
@@ -115,8 +115,8 @@ describe ClickController do
       Offer.stubs(:find_in_cache).returns(@offer)
       Currency.stubs(:find_in_cache).returns(@currency)
       get(:app, @params)
-      assigns(:click).should_not be_nil
-      assigns(:click).id.should == 'app_stuff.even_more_app_stuff'
+      assigns(:click_key).should_not be_nil
+      assigns(:click_key).should == 'app_stuff.even_more_app_stuff'
       response.should be_redirect
     end
   end

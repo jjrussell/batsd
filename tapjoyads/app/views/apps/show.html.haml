@@ -17,7 +17,7 @@
     = link_to('Developer Forum', DEV_FORUM_URL)
 
 - form_for(@app, :html => { :class => 'tjform' }) do |f|
-  = f.hidden_field :store_id
+  = f.hidden_field :store_id, {:value=>@app.store_id}
   %table
     %tbody
       %tr

@@ -279,7 +279,7 @@ sv:
       invite_email_body: |-
           %{name} har bjudit in dig till att gå med i Tapjoy, den BÄSTA platsen för att hitta de hetaste apparna. Det är gratis att gå med och börja upptäcka de bästa apparna på iOS och Android, samtidigt som du kan tjäna virtuel valuta i dina favoriter.
 
-          Du slipper ögna igenom tusentals appar i App store eller Android Market för att hitta nästa nedladdning. Tapjoy fixar det åt dig genom att rekommendera appar vi vet att du gillar
+          Du slipper ögna igenom tusentals appar i App store eller Google Play för att hitta nästa nedladdning. Tapjoy fixar det åt dig genom att rekommendera appar vi vet att du gillar
 
           För att komma igång, skapa ditt konto här:
       invite_email_greet: "Hej,"

@@ -31,6 +31,37 @@ describe Currency do
         @currency.errors.on(:callback_url).should == 'is not a valid url'
       end
     end
+
+    context 'when test devices are not valid' do
+      before :each do
+        @currency.stubs(:has_invalid_test_devices?).returns(true)
+      end
+
+      it 'is false' do
+        @currency.should_not be_valid
+        @currency.errors.on(:test_devices).should be_present
+      end
+    end
+  end
+
+  describe '#has_invalid_test_devices?' do
+    before :each do
+      @currency.test_devices = Factory.next(:guid) * 5
+    end
+
+    context 'when one test device key is too long' do
+      it 'returns true' do
+        @currency.has_invalid_test_devices?.should be_true
+      end
+    end
+
+    context 'fixing bad list' do
+      it 'returns false' do
+        @currency.get_test_device_ids # load once
+        @currency.test_devices = Factory.next(:guid)
+        @currency.has_invalid_test_devices?.should be_false
+      end
+    end
   end
 
   describe '#has_special_callback?' do

@@ -277,7 +277,7 @@ zh:
       invite_email_body: |-
           %{name}已邀请您加入Tapjoy，这是发现最热门新应用的绝佳所在。免费注册后您就能发现针对iOS 和Android系统的最好应用，而且您可以在自己最喜爱的应用中赚取现金。
 
-          无需在App Store 或Android Market 中的成千上万应用堆里艰难跋涉才能找到您的下一个下载。Tapjoy 在乎您，会向您推荐您喜欢的应用。
+          无需在App Store 或Google Play 中的成千上万应用堆里艰难跋涉才能找到您的下一个下载。Tapjoy 在乎您，会向您推荐您喜欢的应用。
 
           请在此创建您的帐户，然后开始吧.
       invite_email_greet: 你好

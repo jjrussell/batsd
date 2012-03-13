@@ -203,7 +203,7 @@ fr:
       amount_and_currency: ~
       back_to_top: Retour
       birthdate: "Date de naissance"
-      browse_offers: "Parcourir les offres disponibles!"
+      browse_offers: "Parcourir les offres!"
       call_to_action_body: "Le meilleur moyen de profiter pleinement de tes apps mais aussi d'en découvrir de nouvelles"
       call_to_action_title: ~
       cant_fetch_offers: "Il y a eu un problème pour trouver plus d'offres. Merci de réessayer."
@@ -275,7 +275,7 @@ fr:
       invite: "Invites tes Amis!"
       invite_by_email: "Invites par email"
       invite_email_body: |-
-          %{name} t'a invité à rejoindre Tapjoy, l'endroit où il faut être pour découvrir les dernières apps du moment. Inscris toi gratuitement et découvre les meilleurs apps de l'App Store et de l'Android Market, tout en gagnant des credits à dépenser au sein de tes apps favorites.
+          %{name} t'a invité à rejoindre Tapjoy, l'endroit où il faut être pour découvrir les dernières apps du moment. Inscris toi gratuitement et découvre les meilleurs apps de l'App Store et du Google Play, tout en gagnant des credits à dépenser au sein de tes apps favorites.
 
           Plus besoin de trier parmi les milliers d'apps de l'App Store et de l'Android Market pour trouver ta prochaine app favorite. Tapjoy est là pour toi pour te recommender des apps qui devraient te plaire.
 
@@ -327,8 +327,8 @@ fr:
       profile_update: Ton profil a été mis à jour
       provide_other_email: "Merci de rentrer un email autre que le tiens"
       recipients_label: "Utilise des virgules pour separer les adresses mails"
-      recommend_apps: ~
-      recommendations: "Recommendations intelligentes"
+      recommend_apps: Tapjoy personnalise ses recommendations en fonction des apps que tu aimes et que tu utilises le plus.
+      recommendations: Recommandations
       recommendations_smart: ~
       registering: S'enregistrer
       report_bug: "Signaler un bug"

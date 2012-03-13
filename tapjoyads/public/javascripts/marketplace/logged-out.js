@@ -2,12 +2,13 @@ $(document).ready(function(){
   var pager = $('#paging');
 
   $('#favorites').Carousel({
+    forceSlideWidth: true,
     hasPager: true,
+    minHeight: 300,
     pagerContainer: '#paging'
   });
 
   $('#arrow').bind(Tapjoy.EventsMap.start, function(){
-		
 		// html tag for firefox, body for chrome/safari
     $('html, body').animate({
 			scrollTop: $('#getting-started').offset().top +'px'
@@ -21,4 +22,5 @@ $(document).ready(function(){
   });
 
   $(window).trigger('resize');
+
 });
