@@ -6,8 +6,8 @@ class Tools::WfhsController < WebsiteController
   before_filter :find_wfh, :only => [ :show, :edit, :update, :destroy ]
 
   def index
-    product_team = Employee.product_team
-    grouped_team = product_team.group_by{ |employee| employee.location[0] }
+    products_team = Employee.products_team
+    grouped_team = products_team.group_by{ |employee| employee.location[0] }
     @team = grouped_team.keys.sort.map do |row_num|
       row = []
       grouped_team[row_num].each do |employee|
@@ -16,7 +16,7 @@ class Tools::WfhsController < WebsiteController
       row
     end
 
-    histogram       = product_team.map.histogram(&:first_name)
+    histogram       = products_team.map.histogram(&:first_name)
     first_names     = histogram.select{ |k, v| v > 1 }.map(&:first)
     @repeated_names = Set.new(first_names)
 

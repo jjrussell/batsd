@@ -1,7 +1,7 @@
 class Employee < ActiveRecord::Base
   include UuidPrimaryKey
 
-  DEPARTMENTS = %w( product marketing sales )
+  DEPARTMENTS = %w( products marketing sales )
 
   has_many :app_reviews, :as => :author
 
@@ -13,7 +13,7 @@ class Employee < ActiveRecord::Base
   named_scope :active_only, :conditions => 'active = true', :order => 'display_order desc, last_name, first_name'
   named_scope :active_by_first_name, :conditions => 'active = true', :order => 'first_name, last_name'
   named_scope :all_ordered, :order => 'display_order desc, last_name, first_name'
-  named_scope :product_team, :conditions => [ 'active = ? and department = ?', true, 'product' ]
+  named_scope :products_team, :conditions => [ 'active = ? and department = ?', true, 'products' ]
 
   has_one :user, :primary_key => :email, :foreign_key => :email
   has_many :wfhs

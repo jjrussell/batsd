@@ -1,6 +1,6 @@
 class OneOffs
   def self.prod_wfh
-    self.fix_employee_emails
+    # self.fix_employee_emails
     self.assign_prod_employees
   end
 
@@ -82,10 +82,10 @@ class OneOffs
     team.each do |data|
       employee = Employee.find_by_first_name_and_last_name(data[0], data[1]) || create_employee(data[0], data[1])
       raise "could not find or create #{data[0]} #{data[1]}" unless employee
-      employee.department = 'product'
+      employee.department = 'products'
       employee.location = data.slice(2, 2)
       employee.save!
-      unless employee.user.nil?
+      unless employee.user.nil? || employee.user.role_symbols.include?(:products)
         employee.user.user_roles << products_role
       end
     end
