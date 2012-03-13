@@ -32,7 +32,7 @@ rescue Errno::ENOENT
   local_config = {}
 end
 
-DEBUG_ASSETS = true
+DEBUG_ASSETS = false
 CACHE_ASSETS = false
 ASSET_HOST = local_config['asset_host'] || local_config['website_url'] || 'http://localhost:3000'
 RUN_MODE_PREFIX = 'dev_'
