@@ -27,6 +27,7 @@ class Partner < ActiveRecord::Base
   belongs_to :reseller
 
   validates_presence_of :reseller, :if => Proc.new { |partner| partner.reseller_id? }
+  validates_presence_of :client, :if => Proc.new { |partner| partner.client_id? }
   validates_numericality_of :balance, :pending_earnings, :next_payout_amount, :only_integer => true, :allow_nil => false
   validates_numericality_of :premier_discount, :greater_than_or_equal_to => 0, :only_integer => true, :allow_nil => false
   validates_numericality_of :rev_share, :transfer_bonus, :direct_pay_share, :max_deduction_percentage, :greater_than_or_equal_to => 0, :less_than_or_equal_to => 1

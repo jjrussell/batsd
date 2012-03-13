@@ -68,9 +68,9 @@ ActiveRecord::Schema.define(:version => 20120314145013) do
     t.string   "categories"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "papaya_user_count"
     t.integer  "thumbs_up",                       :default => 0
     t.integer  "thumbs_down",                     :default => 0
+    t.integer  "papaya_user_count"
   end
 
   add_index "app_metadatas", ["id"], :name => "index_app_metadatas_on_id", :unique => true
@@ -117,8 +117,8 @@ ActiveRecord::Schema.define(:version => 20120314145013) do
     t.string   "categories"
     t.text     "countries_blacklist"
     t.integer  "papaya_user_count"
-    t.integer  "active_gamer_count",                          :default => 0
     t.boolean  "reengagement_campaign_enabled"
+    t.integer  "active_gamer_count",                          :default => 0
     t.string   "protocol_handler"
   end
 
