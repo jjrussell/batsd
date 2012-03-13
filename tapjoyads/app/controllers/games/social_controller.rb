@@ -125,7 +125,7 @@ class Games::SocialController < GamesController
               :expires => 1.day.from_now
             }
             rem_len = 140 - cookies[:twitter_short_url_len].to_i - name.size - 2
-            template = truncate("has invited you to join Tapjoy, the BEST place to find the hottest apps. Signing up is free!", :length => rem_len)
+            template = truncate(t('text.games.twitter_invite_msg'), :length => rem_len)
             message = "#{name} #{template} #{link}"
 
             posts << Twitter.direct_message_create(friend_id.to_i, message)
@@ -136,7 +136,7 @@ class Games::SocialController < GamesController
       if gamers.any? || posts.any?
         render :json => { :success => true, :gamers => gamers, :non_gamers => non_gamers }
       else
-        render :json => { :success => false, :error => "There was an issue with inviting your friend, please try again later" }
+        render :json => { :success => false, :error => t('text.games.social_invite_friend_error') }
       end
     end
   end
