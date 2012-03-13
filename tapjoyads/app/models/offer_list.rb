@@ -116,10 +116,11 @@ class OfferList
     [ returned_offers, 0 ]
   end
 
-  def rejected_reasons(offers)
-    reasons = {}
-    offers.each { |offer| reasons[offer.id] = populate_reasons(offer) }
-    reasons
+  def rejected_reasons!(offers)
+    offers.each do |offer|
+      class << offer; attr_accessor :rejection_reasons; end
+      offer.rejection_reasons = populate_reasons(offer)
+    end
   end
 
   private
@@ -134,5 +135,4 @@ class OfferList
       @direct_pay_providers, @type, @hide_rewarded_app_installs, @library_version, @os_version, @screen_layout_size,
       @video_offer_ids, @source, @all_videos, @mobile_carrier_code, false).join('; ')
   end
-
 end

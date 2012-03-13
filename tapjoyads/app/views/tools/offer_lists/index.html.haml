@@ -55,7 +55,7 @@
           %td= offer.rank_boost
           %td= offer.get_device_types.to_a.join(",")
           %td= offer.item_type
-          %td= @offer_rejections[offer.id]
+          %td= offer.rejection_reasons
 - content_for :page_javascript do
   :plain
     $(function() {
