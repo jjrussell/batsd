@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120308212750) do
+ActiveRecord::Schema.define(:version => 20120310163832) do
 
   create_table "action_offers", :id => false, :force => true do |t|
     t.string   "id",                    :limit => 36,                    :null => false
@@ -277,6 +277,8 @@ ActiveRecord::Schema.define(:version => 20120308212750) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "display_order"
+    t.string   "desk_location"
+    t.string   "department"
   end
 
   add_index "employees", ["email"], :name => "index_employees_on_email", :unique => true
@@ -1003,5 +1005,21 @@ ActiveRecord::Schema.define(:version => 20120308212750) do
 
   add_index "video_offers", ["id"], :name => "index_video_offers_on_id", :unique => true
   add_index "video_offers", ["partner_id"], :name => "index_video_offers_on_partner_id"
+
+  create_table "wfhs", :id => false, :force => true do |t|
+    t.string   "id",          :limit => 36, :null => false
+    t.string   "employee_id", :limit => 36, :null => false
+    t.string   "category",                  :null => false
+    t.string   "description"
+    t.date     "start_date",                :null => false
+    t.date     "end_date",                  :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "wfhs", ["employee_id"], :name => "index_wfhs_on_employee_id"
+  add_index "wfhs", ["end_date"], :name => "index_wfhs_on_end_date"
+  add_index "wfhs", ["id"], :name => "index_wfhs_on_id", :unique => true
+  add_index "wfhs", ["start_date"], :name => "index_wfhs_on_start_date"
 
 end
