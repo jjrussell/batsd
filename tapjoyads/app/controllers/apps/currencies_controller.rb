@@ -102,8 +102,7 @@ class Apps::CurrenciesController < WebsiteController
     redirect_to app_currency_path(:app_id => @app.id, :id => @currency.id)
   end
 
-private
-
+  private
   def setup
     @app = find_app(params[:app_id])
 

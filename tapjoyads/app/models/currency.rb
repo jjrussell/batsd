@@ -65,7 +65,7 @@ class Currency < ActiveRecord::Base
   before_validation_on_create :assign_default_currency_group
   before_create :set_hide_rewarded_app_installs, :set_values_from_partner_and_reseller
   before_update :update_spend_share
-  after_update :reset_to_pending_if_rejected
+  before_update :reset_to_pending_if_rejected
   after_cache :cache_by_app_id
   after_cache_clear :clear_cache_by_app_id
 
@@ -268,5 +268,4 @@ class Currency < ActiveRecord::Base
       self.save
     end
   end
-
 end

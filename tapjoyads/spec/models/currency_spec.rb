@@ -443,7 +443,7 @@ describe Currency do
         approval.expects(:destroy).at_least_once
         @currency.stubs(:approval).returns(approval)
         @currency.stubs(:rejected?).returns(true)
-        @currency.run_callbacks(:after_update)
+        @currency.run_callbacks(:before_update)
       end
     end
   end
