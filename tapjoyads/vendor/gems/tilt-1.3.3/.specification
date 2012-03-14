@@ -1,0 +1,480 @@
+--- !ruby/object:Gem::Specification 
+name: tilt
+version: !ruby/object:Gem::Version 
+  hash: 29
+  prerelease: false
+  segments: 
+  - 1
+  - 3
+  - 3
+  version: 1.3.3
+platform: ruby
+authors: 
+- Ryan Tomayko
+autorequire: 
+bindir: bin
+cert_chain: []
+
+date: 2011-08-25 00:00:00 Z
+default_executable: tilt
+dependencies: 
+- !ruby/object:Gem::Dependency 
+  name: contest
+  prerelease: false
+  requirement: &id001 !ruby/object:Gem::Requirement 
+    none: false
+    requirements: 
+    - - ">="
+      - !ruby/object:Gem::Version 
+        hash: 3
+        segments: 
+        - 0
+        version: "0"
+  type: :development
+  version_requirements: *id001
+- !ruby/object:Gem::Dependency 
+  name: builder
+  prerelease: false
+  requirement: &id002 !ruby/object:Gem::Requirement 
+    none: false
+    requirements: 
+    - - ">="
+      - !ruby/object:Gem::Version 
+        hash: 3
+        segments: 
+        - 0
+        version: "0"
+  type: :development
+  version_requirements: *id002
+- !ruby/object:Gem::Dependency 
+  name: erubis
+  prerelease: false
+  requirement: &id003 !ruby/object:Gem::Requirement 
+    none: false
+    requirements: 
+    - - ">="
+      - !ruby/object:Gem::Version 
+        hash: 3
+        segments: 
+        - 0
+        version: "0"
+  type: :development
+  version_requirements: *id003
+- !ruby/object:Gem::Dependency 
+  name: haml
+  prerelease: false
+  requirement: &id004 !ruby/object:Gem::Requirement 
+    none: false
+    requirements: 
+    - - ">="
+      - !ruby/object:Gem::Version 
+        hash: 17
+        segments: 
+        - 2
+        - 2
+        - 11
+        version: 2.2.11
+  type: :development
+  version_requirements: *id004
+- !ruby/object:Gem::Dependency 
+  name: sass
+  prerelease: false
+  requirement: &id005 !ruby/object:Gem::Requirement 
+    none: false
+    requirements: 
+    - - ">="
+      - !ruby/object:Gem::Version 
+        hash: 3
+        segments: 
+        - 0
+        version: "0"
+  type: :development
+  version_requirements: *id005
+- !ruby/object:Gem::Dependency 
+  name: rdiscount
+  prerelease: false
+  requirement: &id006 !ruby/object:Gem::Requirement 
+    none: false
+    requirements: 
+    - - ">="
+      - !ruby/object:Gem::Version 
+        hash: 3
+        segments: 
+        - 0
+        version: "0"
+  type: :development
+  version_requirements: *id006
+- !ruby/object:Gem::Dependency 
+  name: liquid
+  prerelease: false
+  requirement: &id007 !ruby/object:Gem::Requirement 
+    none: false
+    requirements: 
+    - - ">="
+      - !ruby/object:Gem::Version 
+        hash: 3
+        segments: 
+        - 0
+        version: "0"
+  type: :development
+  version_requirements: *id007
+- !ruby/object:Gem::Dependency 
+  name: less
+  prerelease: false
+  requirement: &id008 !ruby/object:Gem::Requirement 
+    none: false
+    requirements: 
+    - - ">="
+      - !ruby/object:Gem::Version 
+        hash: 3
+        segments: 
+        - 0
+        version: "0"
+  type: :development
+  version_requirements: *id008
+- !ruby/object:Gem::Dependency 
+  name: radius
+  prerelease: false
+  requirement: &id009 !ruby/object:Gem::Requirement 
+    none: false
+    requirements: 
+    - - ">="
+      - !ruby/object:Gem::Version 
+        hash: 3
+        segments: 
+        - 0
+        version: "0"
+  type: :development
+  version_requirements: *id009
+- !ruby/object:Gem::Dependency 
+  name: nokogiri
+  prerelease: false
+  requirement: &id010 !ruby/object:Gem::Requirement 
+    none: false
+    requirements: 
+    - - ">="
+      - !ruby/object:Gem::Version 
+        hash: 3
+        segments: 
+        - 0
+        version: "0"
+  type: :development
+  version_requirements: *id010
+- !ruby/object:Gem::Dependency 
+  name: markaby
+  prerelease: false
+  requirement: &id011 !ruby/object:Gem::Requirement 
+    none: false
+    requirements: 
+    - - ">="
+      - !ruby/object:Gem::Version 
+        hash: 3
+        segments: 
+        - 0
+        version: "0"
+  type: :development
+  version_requirements: *id011
+- !ruby/object:Gem::Dependency 
+  name: coffee-script
+  prerelease: false
+  requirement: &id012 !ruby/object:Gem::Requirement 
+    none: false
+    requirements: 
+    - - ">="
+      - !ruby/object:Gem::Version 
+        hash: 3
+        segments: 
+        - 0
+        version: "0"
+  type: :development
+  version_requirements: *id012
+- !ruby/object:Gem::Dependency 
+  name: bluecloth
+  prerelease: false
+  requirement: &id013 !ruby/object:Gem::Requirement 
+    none: false
+    requirements: 
+    - - ">="
+      - !ruby/object:Gem::Version 
+        hash: 3
+        segments: 
+        - 0
+        version: "0"
+  type: :development
+  version_requirements: *id013
+- !ruby/object:Gem::Dependency 
+  name: RedCloth
+  prerelease: false
+  requirement: &id014 !ruby/object:Gem::Requirement 
+    none: false
+    requirements: 
+    - - ">="
+      - !ruby/object:Gem::Version 
+        hash: 3
+        segments: 
+        - 0
+        version: "0"
+  type: :development
+  version_requirements: *id014
+- !ruby/object:Gem::Dependency 
+  name: maruku
+  prerelease: false
+  requirement: &id015 !ruby/object:Gem::Requirement 
+    none: false
+    requirements: 
+    - - ">="
+      - !ruby/object:Gem::Version 
+        hash: 3
+        segments: 
+        - 0
+        version: "0"
+  type: :development
+  version_requirements: *id015
+- !ruby/object:Gem::Dependency 
+  name: creole
+  prerelease: false
+  requirement: &id016 !ruby/object:Gem::Requirement 
+    none: false
+    requirements: 
+    - - ">="
+      - !ruby/object:Gem::Version 
+        hash: 3
+        segments: 
+        - 0
+        version: "0"
+  type: :development
+  version_requirements: *id016
+- !ruby/object:Gem::Dependency 
+  name: kramdown
+  prerelease: false
+  requirement: &id017 !ruby/object:Gem::Requirement 
+    none: false
+    requirements: 
+    - - ">="
+      - !ruby/object:Gem::Version 
+        hash: 3
+        segments: 
+        - 0
+        version: "0"
+  type: :development
+  version_requirements: *id017
+- !ruby/object:Gem::Dependency 
+  name: redcarpet
+  prerelease: false
+  requirement: &id018 !ruby/object:Gem::Requirement 
+    none: false
+    requirements: 
+    - - ">="
+      - !ruby/object:Gem::Version 
+        hash: 3
+        segments: 
+        - 0
+        version: "0"
+  type: :development
+  version_requirements: *id018
+- !ruby/object:Gem::Dependency 
+  name: creole
+  prerelease: false
+  requirement: &id019 !ruby/object:Gem::Requirement 
+    none: false
+    requirements: 
+    - - ">="
+      - !ruby/object:Gem::Version 
+        hash: 3
+        segments: 
+        - 0
+        version: "0"
+  type: :development
+  version_requirements: *id019
+- !ruby/object:Gem::Dependency 
+  name: yajl-ruby
+  prerelease: false
+  requirement: &id020 !ruby/object:Gem::Requirement 
+    none: false
+    requirements: 
+    - - ">="
+      - !ruby/object:Gem::Version 
+        hash: 3
+        segments: 
+        - 0
+        version: "0"
+  type: :development
+  version_requirements: *id020
+- !ruby/object:Gem::Dependency 
+  name: wikicloth
+  prerelease: false
+  requirement: &id021 !ruby/object:Gem::Requirement 
+    none: false
+    requirements: 
+    - - ">="
+      - !ruby/object:Gem::Version 
+        hash: 3
+        segments: 
+        - 0
+        version: "0"
+  type: :development
+  version_requirements: *id021
+- !ruby/object:Gem::Dependency 
+  name: redcarpet
+  prerelease: false
+  requirement: &id022 !ruby/object:Gem::Requirement 
+    none: false
+    requirements: 
+    - - ">="
+      - !ruby/object:Gem::Version 
+        hash: 3
+        segments: 
+        - 0
+        version: "0"
+  type: :development
+  version_requirements: *id022
+- !ruby/object:Gem::Dependency 
+  name: kramdown
+  prerelease: false
+  requirement: &id023 !ruby/object:Gem::Requirement 
+    none: false
+    requirements: 
+    - - ">="
+      - !ruby/object:Gem::Version 
+        hash: 3
+        segments: 
+        - 0
+        version: "0"
+  type: :development
+  version_requirements: *id023
+description: Generic interface to multiple Ruby template engines
+email: r@tomayko.com
+executables: 
+- tilt
+extensions: []
+
+extra_rdoc_files: []
+
+files: 
+- COPYING
+- Gemfile
+- README.md
+- Rakefile
+- TEMPLATES.md
+- bin/tilt
+- lib/tilt.rb
+- lib/tilt/builder.rb
+- lib/tilt/coffee.rb
+- lib/tilt/css.rb
+- lib/tilt/erb.rb
+- lib/tilt/haml.rb
+- lib/tilt/liquid.rb
+- lib/tilt/markaby.rb
+- lib/tilt/markdown.rb
+- lib/tilt/nokogiri.rb
+- lib/tilt/radius.rb
+- lib/tilt/rdoc.rb
+- lib/tilt/string.rb
+- lib/tilt/template.rb
+- lib/tilt/textile.rb
+- lib/tilt/wiki.rb
+- lib/tilt/yajl.rb
+- test/contest.rb
+- test/markaby/locals.mab
+- test/markaby/markaby.mab
+- test/markaby/markaby_other_static.mab
+- test/markaby/render_twice.mab
+- test/markaby/scope.mab
+- test/markaby/yielding.mab
+- test/tilt_blueclothtemplate_test.rb
+- test/tilt_buildertemplate_test.rb
+- test/tilt_cache_test.rb
+- test/tilt_coffeescripttemplate_test.rb
+- test/tilt_compilesite_test.rb
+- test/tilt_creoletemplate_test.rb
+- test/tilt_erbtemplate_test.rb
+- test/tilt_erubistemplate_test.rb
+- test/tilt_fallback_test.rb
+- test/tilt_hamltemplate_test.rb
+- test/tilt_kramdown_test.rb
+- test/tilt_lesstemplate_test.rb
+- test/tilt_liquidtemplate_test.rb
+- test/tilt_markaby_test.rb
+- test/tilt_markdown_test.rb
+- test/tilt_marukutemplate_test.rb
+- test/tilt_nokogiritemplate_test.rb
+- test/tilt_radiustemplate_test.rb
+- test/tilt_rdiscounttemplate_test.rb
+- test/tilt_rdoctemplate_test.rb
+- test/tilt_redcarpettemplate_test.rb
+- test/tilt_redclothtemplate_test.rb
+- test/tilt_sasstemplate_test.rb
+- test/tilt_stringtemplate_test.rb
+- test/tilt_template_test.rb
+- test/tilt_test.rb
+- test/tilt_wikiclothtemplate_test.rb
+- test/tilt_yajltemplate_test.rb
+- tilt.gemspec
+has_rdoc: true
+homepage: http://github.com/rtomayko/tilt/
+licenses: []
+
+post_install_message: 
+rdoc_options: 
+- --line-numbers
+- --inline-source
+- --title
+- Tilt
+- --main
+- Tilt
+require_paths: 
+- lib
+required_ruby_version: !ruby/object:Gem::Requirement 
+  none: false
+  requirements: 
+  - - ">="
+    - !ruby/object:Gem::Version 
+      hash: 3
+      segments: 
+      - 0
+      version: "0"
+required_rubygems_version: !ruby/object:Gem::Requirement 
+  none: false
+  requirements: 
+  - - ">="
+    - !ruby/object:Gem::Version 
+      hash: 3
+      segments: 
+      - 0
+      version: "0"
+requirements: []
+
+rubyforge_project: 
+rubygems_version: 1.3.7
+signing_key: 
+specification_version: 2
+summary: Generic interface to multiple Ruby template engines
+test_files: 
+- test/tilt_blueclothtemplate_test.rb
+- test/tilt_buildertemplate_test.rb
+- test/tilt_cache_test.rb
+- test/tilt_coffeescripttemplate_test.rb
+- test/tilt_compilesite_test.rb
+- test/tilt_creoletemplate_test.rb
+- test/tilt_erbtemplate_test.rb
+- test/tilt_erubistemplate_test.rb
+- test/tilt_fallback_test.rb
+- test/tilt_hamltemplate_test.rb
+- test/tilt_kramdown_test.rb
+- test/tilt_lesstemplate_test.rb
+- test/tilt_liquidtemplate_test.rb
+- test/tilt_markaby_test.rb
+- test/tilt_markdown_test.rb
+- test/tilt_marukutemplate_test.rb
+- test/tilt_nokogiritemplate_test.rb
+- test/tilt_radiustemplate_test.rb
+- test/tilt_rdiscounttemplate_test.rb
+- test/tilt_rdoctemplate_test.rb
+- test/tilt_redcarpettemplate_test.rb
+- test/tilt_redclothtemplate_test.rb
+- test/tilt_sasstemplate_test.rb
+- test/tilt_stringtemplate_test.rb
+- test/tilt_template_test.rb
+- test/tilt_test.rb
+- test/tilt_wikiclothtemplate_test.rb
+- test/tilt_yajltemplate_test.rb

@@ -203,7 +203,7 @@ fr:
       amount_and_currency: ~
       back_to_top: Retour
       birthdate: "Date de naissance"
-      browse_offers: "Parcourir les offres disponibles!"
+      browse_offers: "Parcourir les offres!"
       call_to_action_body: "Le meilleur moyen de profiter pleinement de tes apps mais aussi d'en découvrir de nouvelles"
       call_to_action_title: ~
       cant_fetch_offers: "Il y a eu un problème pour trouver plus d'offres. Merci de réessayer."
@@ -327,7 +327,7 @@ fr:
       provide_other_email: "Merci de rentrer un email autre que le tiens"
       recipients_label: "Utilise des virgules pour separer les adresses mails"
       recommend_apps: ~
-      recommendations: Recommendations intelligentes
+      recommendations: Recommandations du jeu
       recommendations_smart: ~
       registering: S'enregistrer
       report_bug: "Signaler un bug"

@@ -626,8 +626,8 @@ class Offer < ActiveRecord::Base
   end
 
   def update_payment(force_update = false)
-    if (force_update || bid_changed? || new_record?)
-      if (item_type == 'App' || item_type == 'ActionOffer')
+    if partner && (force_update || bid_changed? || new_record?)
+      if partner.discount_all_offer_types? || app_offer?
         self.payment = bid == 0 ? 0 : [ bid * (100 - partner.premier_discount) / 100, 1 ].max
       else
         self.payment = bid
@@ -800,11 +800,6 @@ class Offer < ActiveRecord::Base
     else
       0
     end
-  end
-
-  def nullify_banner_creatives
-    write_attribute(:banner_creatives, nil) if banner_creatives.empty?
-    write_attribute(:approved_banner_creatives, nil) if approved_banner_creatives.empty?
   end
 
   def nullify_banner_creatives

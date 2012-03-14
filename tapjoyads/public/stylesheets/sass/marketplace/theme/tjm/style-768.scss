@@ -50,6 +50,16 @@ $image_path: "/images/marketplace/themes/tjm";
   box-shadow: none;
 }
 
+.row {
+  width: 100%;
+  clear: all;
+}
+
+.row.borders {
+  border-bottom: 1px solid #b1b4b6;
+  border-top: 1px solid #fff;
+}
+
 .row .games .app:first-child {
   margin-top: 2px;
 }
