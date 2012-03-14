@@ -1,8 +1,7 @@
 class Currency < ActiveRecord::Base
   include UuidPrimaryKey
   acts_as_cacheable
-  acts_as_approvable :on => :create, :state_field => :state
-
+  acts_as_approvable :on => :create
   TAPJOY_MANAGED_CALLBACK_URL = 'TAP_POINTS_CURRENCY'
   NO_CALLBACK_URL = 'NO_CALLBACK'
   PLAYDOM_CALLBACK_URL = 'PLAYDOM_DEFINED'
@@ -220,6 +219,14 @@ class Currency < ActiveRecord::Base
 
   def rewarded?
     conversion_rate > 0
+  end
+
+  def state=(state)
+    self.approval.state = state
+  end
+
+  def state
+    self.approval.state
   end
 
   private
