@@ -1,0 +1,10 @@
+- editable = @employee.is_user?(current_user)
+#wfh_list
+  %h1 Upcoming Schedule for #{@employee.full_name}
+  = render :partial => 'wfhs', :locals => { :editable => editable }
+  - if editable
+    = link_to 'New WFH', new_tools_wfh_path
+
+= link_to 'Back', tools_wfhs_path
+
+- content_for :page_head, stylesheet_link_tag('tools')

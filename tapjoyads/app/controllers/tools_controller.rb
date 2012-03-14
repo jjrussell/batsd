@@ -215,8 +215,6 @@ class ToolsController < WebsiteController
       @rewarded_failed_clicks_count = 0
       @rewards = {}
       @support_requests_created = SupportRequest.count(:where => "udid = '#{udid}'")
-      @gamer_emails = @device.gamers.map(&:email).join(',')
-      @gamer_emails = 'Not connected to any Tapjoy Marketplace Gamer' if @gamer_emails.empty?
       click_app_ids = []
       NUM_CLICK_DOMAINS.times do |i|
         Click.select(:domain_name => "clicks_#{i}", :where => conditions) do |click|
@@ -237,26 +235,23 @@ class ToolsController < WebsiteController
               @not_rewarded_count += 1
             end
           end
-          click_app_ids << [click.publisher_app_id, click.advertiser_app_id, click.displayer_app_id]
+          click_app_ids.push(click.publisher_app_id, click.advertiser_app_id, click.displayer_app_id)
         end
       end
 
       # find all apps at once and store in look up table
       @click_apps = {}
-      Offer.find_all_by_id(click_app_ids.flatten.uniq).each do |app|
+      Offer.find_all_by_id(click_app_ids.uniq).each do |app|
         @click_apps[app.id] = app
       end
 
       @apps = Offer.find_all_by_id(@device.parsed_apps.keys).map do |app|
         [ @device.last_run_time(app.id), app ]
-      end.sort.reverse
+      end.sort_by(&:first).reverse
       @clicks = @clicks.sort_by do |click|
         -click.clicked_at.to_f
       end
 
-      @has_displayer = @clicks.any? do |click|
-        click.displayer_app_id?
-      end
     elsif params[:email_address].present?
       @all_udids = SupportRequest.find_all_by_email_address(params[:email_address]).map(&:udid)
       gamer = Gamer.find_by_email(params[:email_address])
@@ -280,7 +275,7 @@ class ToolsController < WebsiteController
     opted_in_types.each  { |type| device.delete('opt_out_offer_types', type) }
     device.opted_out = params[:opted_out] == '1'
     device.banned = params[:banned] == '1'
-    device.serial_save
+    device.save
     flash[:notice] = 'Device successfully updated.'
     redirect_to :action => :device_info, :udid => params[:udid]
   end
@@ -378,27 +373,22 @@ class ToolsController < WebsiteController
     redirect_to manage_user_roles_tool_path(:email => user.email)
   end
 
-  def freemium_android
-    results = StoreRank.top_freemium_android_apps
-    @apps = results['apps']
-    @created_at = Time.zone.parse(results['created_at'])
-    @tapjoy_apps = {}
-    Offer.find_all_by_id(@apps.map{|app|app['tapjoy_apps']}.flatten).each do |app|
-      @tapjoy_apps[app.id] = app
-    end
-  end
-
   def award_currencies
     @publisher_app = App.find_in_cache(params[:publisher_app_id])
     return unless verify_records([ @publisher_app ])
 
     support_request = SupportRequest.find_by_udid_and_app_id(params[:udid], params[:publisher_app_id])
     if support_request.nil?
-      flash[:error] = "Support request not found. The user must submit a support request for the app in order to award them currency."
-      redirect_to :action => :device_info, :udid => params[:udid]
-      return
+      click = Click.find_by_udid_and_publisher_app_id(params[:udid], params[:publisher_app_id])
+      if click.nil?
+        flash[:error] = "Support request not found. The user must submit a support request for the app in order to award them currency."
+        redirect_to :action => :device_info, :udid => params[:udid] and return
+      else
+        @publisher_user_id = click.publisher_user_id
+      end
+    else
+      @publisher_user_id = support_request.publisher_user_id
     end
-    @publisher_user_id = support_request.publisher_user_id
   end
 
   def update_award_currencies
@@ -421,7 +411,7 @@ class ToolsController < WebsiteController
     customer_support_reward.advertiser_amount          =  0
     customer_support_reward.tapjoy_amount              =  0
     customer_support_reward.customer_support_username  =  current_user.username
-    customer_support_reward.serial_save
+    customer_support_reward.save
 
     Sqs.send_message(QueueNames::SEND_CURRENCY, customer_support_reward.key)
 

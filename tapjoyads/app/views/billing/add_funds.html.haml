@@ -12,6 +12,10 @@
     If you would like to use alternate forms of payment,
     please email #{ mail_to 'support@tapjoy.com' }.
 
+  %p
+    Pre-paid account balances are non-refundable.
+    = link_to 'Tapjoy Advertising Terms and Conditions', '/tos-advertiser.html', :target => '_blank'
+
   %h3 Current Balance: #{number_to_currency(current_partner.balance / 100.0)}
 
   - form_for(:credit_card, @credit_card, :url => { :action => :create_order }, :html => { :class => 'tjform' }) do |f|

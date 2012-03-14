@@ -13,6 +13,8 @@ class Currency < ActiveRecord::Base
   belongs_to :currency_group
   belongs_to :reseller
 
+  has_many :reengagement_offers
+
   validates_presence_of :reseller, :if => Proc.new { |currency| currency.reseller_id? }
   validates_presence_of :app, :partner, :name, :currency_group, :callback_url
   validates_numericality_of :conversion_rate, :initial_balance, :ordinal, :only_integer => true, :greater_than_or_equal_to => 0
@@ -21,7 +23,11 @@ class Currency < ActiveRecord::Base
   validates_numericality_of :max_age_rating, :minimum_featured_bid, :minimum_offerwall_bid, :minimum_display_bid, :allow_nil => true, :only_integer => true
   validates_inclusion_of :only_free_offers, :send_offer_data, :hide_rewarded_app_installs, :tapjoy_enabled, :in => [ true, false ]
   validates_each :callback_url, :if => :callback_url_changed? do |record, attribute, value|
-    unless SPECIAL_CALLBACK_URLS.include?(value)
+    if SPECIAL_CALLBACK_URLS.include?(value)
+      if record.app.currencies.size > 1 || record.new_record? && record.app.currencies.any?
+        record.errors.add(attribute, 'cannot be managed if the app has multiple currencies')
+      end
+    else
       if value !~ /^https?:\/\//
         record.errors.add(attribute, 'is not a valid url')
       else
@@ -36,6 +42,17 @@ class Currency < ActiveRecord::Base
   end
   validates_each :disabled_offers, :allow_blank => true do |record, attribute, value|
     record.errors.add(attribute, "must be blank when using whitelisting") if record.use_whitelist? && value.present?
+  end
+  validates_each :test_devices do |record, attribute, value|
+    if record.has_invalid_test_devices?
+      record.errors.add(attribute, "includes invalid device IDs")
+    end
+  end
+
+  def has_invalid_test_devices?
+    get_test_device_ids(:reload).any? do |device_id|
+      device_id.blank? || device_id.length > 100
+    end
   end
 
   named_scope :for_ios, :joins => :app, :conditions => "#{App.quoted_table_name}.platform = 'iphone'"
@@ -69,6 +86,10 @@ class Currency < ActiveRecord::Base
     currencies
   end
 
+  def has_special_callback?
+    SPECIAL_CALLBACK_URLS.include?(callback_url)
+  end
+
   def get_spend_share(offer)
     if partner_id == offer.partner_id
       0
@@ -99,7 +120,7 @@ class Currency < ActiveRecord::Base
   end
 
   def get_reward_amount(offer)
-    return 0 if conversion_rate == 0 || !offer.rewarded?
+    return 0 unless rewarded? && offer.rewarded?
 
     if offer.reward_value.present?
       reward_value = offer.reward_value
@@ -195,6 +216,10 @@ class Currency < ActiveRecord::Base
   def after_approve(approval)
     self.tapjoy_enabled = true
     self.save
+  end
+
+  def rewarded?
+    conversion_rate > 0
   end
 
   private

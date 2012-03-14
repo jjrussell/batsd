@@ -4,7 +4,8 @@
     hash                    = {}
     hash["Cost"]            = visual_cost(offer)
     hash["Amount"]          = @currency.get_visual_reward_amount(offer, params[:display_multiplier])
-    hash["IconURL"]         = offer.item_type == 'VideoOffer' ? offer.get_video_icon_url : offer.get_icon_url(:source => :cloudfront, :size => '57')
+    hash["IconURL"]         = offer.item_type == 'VideoOffer' ? offer.video_icon_url : offer.get_icon_url(:source => :cloudfront, :size => '57')
+    hash["IconURLMedium"]   = offer.item_type == 'VideoOffer' ? offer.video_icon_url : offer.get_icon_url(:source => :cloudfront, :size => '114')
     hash["Name"]            = offer.name
     hash["RedirectURL"]     = get_click_url(offer)
     hash["StoreID"]         = offer.store_id_for_feed
@@ -13,6 +14,7 @@
     hash["FullScreenAdURL"] = get_fullscreen_ad_url(offer) if params[:source] == 'featured'
     hash["PapayaUserCount"] = number_with_delimiter(@papaya_offers[offer.id]) if @device.is_papayan? && @show_papaya && @papaya_offers.include?(offer.id)
     hash["WifiOnly"]        = offer.wifi_only? if @show_wifi_only
+    hash["ActiveGamers"]    = offer.app_formatted_active_gamer_count if params[:source] == 'tj_games'
     offer_array << hash
   end
 

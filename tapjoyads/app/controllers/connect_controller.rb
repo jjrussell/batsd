@@ -11,7 +11,7 @@ class ConnectController < ApplicationController
     end
 
     web_request = WebRequest.new
-    web_request.put_values('connect', params, get_ip_address, get_geoip_data, request.headers['User-Agent'])
+    web_request.put_values('connect', params, ip_address, geoip_data, request.headers['User-Agent'])
 
     device = Device.new(:key => params[:udid])
     path_list = device.handle_connect!(params[:app_id], params)
@@ -20,5 +20,9 @@ class ConnectController < ApplicationController
     end
 
     web_request.save
+
+    if sdkless_supported?
+      @sdkless_clicks = device.sdkless_clicks
+    end
   end
 end

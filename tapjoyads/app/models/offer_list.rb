@@ -19,7 +19,7 @@ class OfferList
     @platform_name              = options.delete(:platform_name)
     @video_offer_ids            = options.delete(:video_offer_ids) { [] }
     @all_videos                 = options.delete(:all_videos) { false }
-    @mobile_carrier_code        = options.delete(:mobile_carrier_code) 
+    @mobile_carrier_code        = options.delete(:mobile_carrier_code)
 
     @hide_rewarded_app_installs = @currency ? @currency.hide_rewarded_app_installs_for_version?(@app_version, @source) : false
     @normalized_device_type     = Device.normalize_device_type(@device_type)
@@ -59,7 +59,7 @@ class OfferList
     end
 
     #append NON_REWARDED_DISPLAY_OFFER_TYPE for non rewarded offerwall
-    if @type == Offer::DEFAULT_OFFER_TYPE && @currency && @currency.conversion_rate == 0
+    if @type == Offer::DEFAULT_OFFER_TYPE && @currency && !@currency.rewarded?
       @offers += RailsCache.get_and_put("offers.#{Offer::NON_REWARDED_DISPLAY_OFFER_TYPE}.#{@platform_name}.#{@hide_rewarded_app_installs}.#{@normalized_device_type}") do
         OfferCacher.get_unsorted_offers_prerejected(Offer::NON_REWARDED_DISPLAY_OFFER_TYPE, @platform_name, @hide_rewarded_app_installs, @normalized_device_type)
       end.value

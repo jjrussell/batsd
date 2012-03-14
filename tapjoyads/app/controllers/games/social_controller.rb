@@ -1,67 +1,33 @@
 class Games::SocialController < GamesController
-  rescue_from Mogli::Client::ClientException, :with => :handle_mogli_exceptions
   rescue_from Errno::ECONNRESET, :with => :handle_errno_exceptions
   rescue_from Errno::ETIMEDOUT, :with => :handle_errno_exceptions
+  rescue_from Mogli::Client::ClientException, :with => :handle_mogli_exceptions
 
   before_filter :require_gamer
-  before_filter :offline_facebook_authenticate, :only => [ :invite_facebook_friends, :send_facebook_invites ]
   before_filter :validate_recipients, :only => [ :send_email_invites ]
+  before_filter :offline_facebook_authenticate, :only => :connect_facebook_account
 
-  def invite_facebook_friends
-    current_facebook_user.fetch
-    @page_size = 25
-    @fb_friends = current_facebook_user.friends.map do |friend|
-      {
-        :fb_id => friend.id,
-        :name => friend.name
-      }
-    end.sort_by do |friend|
-      friend[:name].downcase
-    end
+  def invites
   end
 
-  def send_facebook_invites
-    friends = params[:friends]
+  def friends
+    @is_following = params[:following].present?
 
-    if friends.blank?
-      render(:json => { :success => false, :error => "Please select at least one friend before sending out an invite" })
-    else
-      posts = []
-      gamers = []
-      non_gamers = []
+    friends_key = @is_following ? Friendship.following_ids(@current_gamer.id) : Friendship.follower_ids(@current_gamer.id)
+    @friends_list = Gamer.find_all_by_id(friends_key)
+  end
 
-      current_facebook_user.fetch
+  def index
+    @gamer_profile = current_gamer.gamer_profile
+    @friends_lists = {
+      :following => Gamer.find_all_by_id(Friendship.following_ids(@current_gamer.id)),
+      :followers => Gamer.find_all_by_id(Friendship.follower_ids(@current_gamer.id))
+    }
+  end
 
-      friends.each do |friend_id|
-        exist_gamers = Gamer.find_all_gamer_based_on_facebook(friend_id)
-        if exist_gamers.any?
-          exist_gamers.each do |gamer|
-            gamers << gamer.get_gamer_name
-            current_gamer.follow_gamer(gamer)
-          end
-        else
-          friend_id = DEV_FACEBOOK_ID if !Rails.env.production?
-          friend = Mogli::User.find(friend_id.to_i, current_facebook_client)
-          non_gamers << friend.name
-          invitation = current_gamer.facebook_invitation_for(friend_id)
-          if invitation.pending?
-            name = WEBSITE_URL
-            link = params[:advertiser_app_id] == "null" ? games_login_url(:referrer => invitation.encrypted_referral_id) : games_login_url(:referrer => invitation.encrypted_referral_id(params[:advertiser_app_id]))
-            message = "#{current_facebook_user.name} has invited you to join Tapjoy, the BEST place to find the hottest new apps. Signing up is free and you'll be able discover the best apps on iOS and Android, while also earning currency in your favorite apps."
-
-            description = "Experience the best of mobile apps!"
-            post = Mogli::Post.new(:name => name, :link => link, :message => message, :description => description, :caption => " ", :picture => "#{WEBSITE_URL}/images/ic_launcher_96x96.png")
-            posts << friend.feed_create(post)
-          end
-        end
-      end
-
-      if gamers.any? || posts.any?{|post| post.id.present? }
-        render :json => { :success => true, :gamers => gamers, :non_gamers => non_gamers }
-      else
-        render :json => { :success => false, :error => "There was an issue with inviting your friend. Please try again later" }
-      end
-    end
+  def connect_facebook_account
+    flash[:notice] = t 'text.games.connected_to_facebook'
+    redirect_to games_social_index_path
   end
 
   def invite_email_friends
@@ -112,10 +78,10 @@ class Games::SocialController < GamesController
       end
 
       if not_valid.any?
-        render :json => { :success => false, :error => "Invalid email(s):  #{not_valid.join(', ')}" }
+        render :json => { :success => false, :error => t('text.games.invalid_emails') }
       end
     else
-      render :json => { :success => false, :error => "Please provide at least one email" }
+      render :json => { :success => false, :error => t('text.games.provide_one_email') }
     end
   end
 end

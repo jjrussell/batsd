@@ -43,10 +43,6 @@
           %td
             = primary_offer_form.currency_field :payment, {}, :disabled => 'disabled'
             = error_message_on @action_offer, :primary_offer_payment
-            - if @action_offer.partner.offer_discounts.active.blank?
-              .premier
-                Want to reduce your payment?
-                = link_to 'Learn more about the Tapjoy Premier Program', premier_path
       %tr
         %th
           = f.label :name, 'Action Name'
@@ -126,8 +122,9 @@
               .tapjoy-disabled Pending
               (your request was submitted #{@enable_request.created_at.to_s(:pub_ampm_sec)})
 
-      - if permitted_to? :edit, :statz
-        - f.fields_for :primary_offer do |primary_offer_form|
+      - f.fields_for :primary_offer do |primary_offer_form|
+        = render('apps/offers_shared/countries', :f => primary_offer_form)
+        - if permitted_to? :edit, :statz
           = render('apps/offers_shared/admin_fields', :f => primary_offer_form)
 
       %tr

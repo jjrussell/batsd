@@ -22,38 +22,38 @@ describe AppsController do
       end
 
       it 'redirects to show an app they own' do
-        get('index')
+        get(:index)
         response.should be_redirect
       end
 
       it 'assigns an arbitrary app they own' do
-        get('index')
+        get(:index)
         @partner.apps.should include(assigns(:app))
       end
 
       it 'assigns the last app visited' do
         last_app = @partner.apps.last
-        get('show', :id => last_app.id)
-        get('index')
+        get(:show, :id => last_app.id)
+        get(:index)
         last_app.should == assigns(:app)
       end
     end
 
     context 'with a user with apps' do
       it 'redirects to show an app they own' do
-        get('index')
+        get(:index)
         response.should be_redirect
       end
 
       it 'assigns an arbitrary app' do
-        get('index')
+        get(:index)
         @partner.apps.should include(assigns(:app))
       end
 
       it 'assigns the last app visited' do
         last_app = @partner.apps.last
-        get('show', :id => last_app.id)
-        get('index')
+        get(:show, :id => last_app.id)
+        get(:index)
         last_app.should == assigns(:app)
       end
     end
@@ -64,7 +64,7 @@ describe AppsController do
       end
 
       it 'redirects to app creation page' do
-        get('index')
+        get(:index)
         response.should redirect_to(new_app_path)
       end
     end
@@ -82,19 +82,19 @@ describe AppsController do
           :balance => 10000
         )
         not_my_app = Factory(:app, :partner => someone_else)
-        get('show', :id => not_my_app.id)
+        get(:show, :id => not_my_app.id)
         response.should be_success
       end
 
       it 'assigns the last app visited' do
         last_app = @partner.apps.last
-        get('show', :id => last_app.id)
+        get(:show, :id => last_app.id)
         last_app.should == assigns(:app)
       end
 
       it 'saves the id of the last app visited in the session' do
         last_app = @partner.apps.last
-        get('show', :id => last_app.id)
+        get(:show, :id => last_app.id)
         last_app.id.should == session[:last_shown_app]
       end
     end
@@ -102,13 +102,13 @@ describe AppsController do
     context 'with a user with apps' do
       it 'assigns the last app visited' do
         last_app = @partner.apps.last
-        get('show', :id => last_app.id)
+        get(:show, :id => last_app.id)
         last_app.should == assigns(:app)
       end
 
       it 'saves the id of the last app visited in the session' do
         last_app = @partner.apps.last
-        get('show', :id => last_app.id)
+        get(:show, :id => last_app.id)
         last_app.id.should == session[:last_shown_app]
       end
 
@@ -119,7 +119,7 @@ describe AppsController do
         )
         not_my_app = Factory(:app, :partner => someone_else)
         expect {
-          get('show', :id => not_my_app.id)
+          get(:show, :id => not_my_app.id)
         }.to raise_error(ActiveRecord::RecordNotFound)
       end
     end
@@ -135,7 +135,7 @@ describe AppsController do
           :balance => 10000
         )
         not_my_app = Factory(:app, :partner => someone_else)
-        get('show', :id => not_my_app.id)
+        get(:show, :id => not_my_app.id)
         response.should redirect_to(new_app_path)
       end
     end

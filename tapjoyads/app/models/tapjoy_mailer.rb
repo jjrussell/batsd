@@ -25,14 +25,17 @@ class TapjoyMailer < ActionMailer::Base
 
   def low_conversion_rate_warning(offer, stats)
     partner = Partner.find_by_id(offer.partner_id, :include => [ :users ])
-    account_managers = partner.account_managers.map(&:email)
-    account_managers.delete "oso@tapjoy.com"
-    account_managers += [ 'accountmanagers@tapjoy.com', 'dev@tapjoy.com' ]
-    account_managers = account_managers.join(', ')
+    recipient_emails = partner.account_managers.map(&:email).tap do |emails|
+      sales_rep_email = partner.sales_rep.try(:email)
+      emails << partner.sales_rep.email unless sales_rep_email.blank? || emails.include?(sales_rep_email)
+      emails.delete('oso@tapjoy.com')
+      emails << 'accountmanagers@tapjoy.com' if emails.empty?
+    end.join(', ')
 
     from 'Tapjoy <noreply@tapjoy.com>'
-    reply_to account_managers
-    recipients account_managers
+    reply_to recipient_emails
+    recipients recipient_emails
+    cc 'dev@tapjoy.com'
     subject "Low Conversion Rate Warning! - #{offer.name_with_suffix_and_platform}"
     body(:offer => offer, :stats => stats)
   end
@@ -55,11 +58,7 @@ class TapjoyMailer < ActionMailer::Base
 
   def contact_us(info)
     from 'Tapjoy <noreply@tapjoy.com>'
-    if !Rails.env.production?
-      recipients "dev@tapjoy.com"
-    else
-      recipients "support+contactus@tapjoy.com"
-    end
+    recipients "support+contactus@tapjoy.com"
     content_type 'text/html'
     subject "Contact us from #{info[:name]}"
     body(:info => info)
@@ -67,11 +66,7 @@ class TapjoyMailer < ActionMailer::Base
 
   def publisher_application(info)
     from 'Tapjoy <noreply@tapjoy.com>'
-    if !Rails.env.production?
-      recipients "dev@tapjoy.com"
-    else
-      recipients "publishing@tapjoy.com"
-    end
+    recipients "publishing@tapjoy.com"
     content_type 'text/html'
     subject "Publisher form inquiry from #{info[:first]} #{info[:last]} at #{info[:company]}"
     body(:info => info)
@@ -79,11 +74,7 @@ class TapjoyMailer < ActionMailer::Base
 
   def whitepaper_request(info)
     from 'Tapjoy <noreply@tapjoy.com>'
-    if !Rails.env.production?
-      recipients "dev@tapjoy.com"
-    else
-      recipients "sunny.cha@tapjoy.com, raghu.nayani@tapjoy.com"
-    end
+    recipients "sunny.cha@tapjoy.com, raghu.nayani@tapjoy.com"
     info[:name] = [info[:first_name], info[:last_name]].join(' ').strip || info[:email]
     content_type 'text/html'
     subject_text = "Whitepaper request from #{info[:name]}"
@@ -94,11 +85,7 @@ class TapjoyMailer < ActionMailer::Base
 
   def advertiser_application(info)
     from 'Tapjoy <noreply@tapjoy.com>'
-    if Rails.env.production?
-      recipients "insidesales@tapjoy.com"
-    else
-      recipients "dev@tapjoy.com"
-    end
+    recipients "insidesales@tapjoy.com"
     content_type 'text/html'
     subject "Advertiser inquiry from #{info[:name]} at #{info[:company]}"
     body(:info => info)
@@ -106,11 +93,7 @@ class TapjoyMailer < ActionMailer::Base
 
   def androidfund_application(info)
     from 'Tapjoy <noreply@tapjoy.com>'
-    if !Rails.env.production?
-      recipients "dev+androidfund@tapjoy.com"
-    else
-      recipients "marketing@tapjoy.com, publishing@tapjoy.com"
-    end
+    recipients "marketing@tapjoy.com, publishing@tapjoy.com"
     content_type 'text/html'
     subject "Publisher form inquiry from #{info[:first]} #{info[:last]} at #{info[:company]}"
     body(:info => info)
@@ -128,7 +111,7 @@ class TapjoyMailer < ActionMailer::Base
 
   def payout_info_reminder(email_recipients, earnings)
     from 'Tapjoy Support <support@tapjoy.com>'
-    cc 'hwanjoon@tapjoy.com'#'accountspayable@tapjoy.com'
+    cc 'accountspayable@tapjoy.com'
     recipients email_recipients
     subject 'Payment Information Needed'
     content_type 'text/html'
@@ -164,11 +147,7 @@ class TapjoyMailer < ActionMailer::Base
 
   def partner_name_change_notification(partner, name_was, acct_mgr_email, partner_link)
     from 'Tapjoy <noreply@tapjoy.com>'
-    if Rails.env.production?
-      recipients 'accounting@tapjoy.com'
-    else
-      recipients 'dev@tapjoy.com'
-    end
+    recipients 'accounting@tapjoy.com'
     content_type 'text/html'
     subject 'Partner Name Change Notification'
     body(:partner => partner, :name_was => name_was, :acct_mgr_email => acct_mgr_email, :partner_link => partner_link)
@@ -185,9 +164,7 @@ class TapjoyMailer < ActionMailer::Base
     upload_time_stamp = upload_time.to_s(:pub_ampm)
     from 'Tapjoy <noreply@tapjoy.com>'
     recipients user_email
-    if Rails.env.production?
-      cc 'customerservice@tapjoy.com'
-    end
+    cc 'customerservice@tapjoy.com'
     content_type 'text/html'
     subject "Support Request for Mass Resolution initiated on #{upload_time_stamp}"
     body(:mass_resolve_results => mass_resolve_results, :upload_time_stamp => upload_time_stamp)

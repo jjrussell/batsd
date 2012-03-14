@@ -127,7 +127,7 @@
           ));
         }
         if(non_gamers.length != 0) {
-          notExistDiv = contentTmp(_t("games.invites_sent_to", 
+          notExistDiv = contentTmp(_t("games.invites_sent_to",
             { name: non_gamers.toString().replace(/\,/g, ", ") },
             { count: non_gamers.length }
           ));
@@ -183,7 +183,6 @@
           }
         });
       }; // submitFbInvitation
-
 
       var submitEmailInvitation = function(rurl, recipients){
         sending();
@@ -316,12 +315,9 @@
         }
       });
 
-      $('#recipients').keypress(function(event){
-          code= (event.keyCode ? event.keyCode : event.which);
-          if (code == 13){
-            $('#recipients').blur();
-            sendInvite(event);
-          }
+      $('#invite_friends').submit(function (event) {
+        $('#recipients').blur();
+        sendInvite(event);
       });
 
       // call functions
@@ -370,6 +366,33 @@
           });
         }
       });
+    },
+
+    checkAndPost : function(currentGamerFbId, link, pictureLink) {
+      FB.getLoginStatus(function(response) {
+        var postToFeed = function() { TJG.social.postToFeed(link, pictureLink); };
+        var currentLoginFbId = response.authResponse && response.authResponse.userID;
+        if (currentLoginFbId && currentGamerFbId && currentGamerFbId != currentLoginFbId) {
+          FB.logout(postToFeed);
+        } else {
+          postToFeed();
+        }
+      });
+    },
+
+    postToFeed : function(link, pictureLink) {
+      var obj = {
+        method: 'feed',
+        display: 'popup',
+        name: 'Tapjoy',
+        link: link,
+        picture: pictureLink,
+        caption: ' ',
+        actions: [{ name: _t('shared.join'), link: link}],
+        description: _t('games.post_to_facebook_content')
+      };
+
+      FB.ui(obj);
     },
   };
 }(TJG));

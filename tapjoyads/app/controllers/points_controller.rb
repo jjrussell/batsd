@@ -4,17 +4,8 @@ class PointsController < ApplicationController
 
   def award
     return unless verify_params([ :app_id, :udid, :publisher_user_id, :tap_points, :guid, :timestamp, :verifier ])
-    hash_bits = [
-      params[:app_id],
-      params[:udid],
-      params[:timestamp],
-      App.find_in_cache(params[:app_id]).secret_key,
-      params[:tap_points],
-      params[:guid],
-    ]
-    generated_key = Digest::SHA256.hexdigest(hash_bits.join(':'))
 
-    unless params[:verifier] == generated_key
+    unless params[:verifier] == generate_verifier([ params[:tap_points], params[:guid] ])
       @error_message = "invalid verifier"
       render :template => 'layouts/error' and return
     end
@@ -38,7 +29,7 @@ class PointsController < ApplicationController
     reward.country           = params[:country]
 
     begin
-      reward.serial_save(:catch_exceptions => false, :expected_attr => { 'type' => nil })
+      reward.save!(:expected_attr => { 'type' => nil })
     rescue Simpledb::ExpectedAttributeError => e
       @error_message = "points already awarded"
       render :template => 'layouts/error' and return
@@ -108,7 +99,7 @@ private
   def check_success(path)
     if @success
       web_request = WebRequest.new
-      web_request.put_values(path, params, get_ip_address, get_geoip_data, request.headers['User-Agent'])
+      web_request.put_values(path, params, ip_address, geoip_data, request.headers['User-Agent'])
       web_request.save
     end
   end

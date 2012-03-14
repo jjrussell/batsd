@@ -6,7 +6,7 @@ class Tools::Users::RoleAssignmentsController < WebsiteController
   after_filter :save_activity_logs, :only => [ :create, :destroy ]
 
   def create
-    if @user_role.name == 'admin'
+    if @user_role.admin?
       flash[:error] = "Admin roles cannot be added with this tool"
     elsif @user.user_roles << @user_role
       flash[:notice] = "<b>#{@user.email}</b> now has <b>#{@user_role.name}</b> privilege."
@@ -17,7 +17,7 @@ class Tools::Users::RoleAssignmentsController < WebsiteController
   end
 
   def destroy
-    if @user_role.name == 'admin'
+    if @user_role.admin?
       flash[:error] = "Admin roles cannot be revoked with this tool"
     elsif @user.user_roles.delete(@user_role)
       flash[:notice] = "<b>#{@user.email}</b> no longer has <b>#{@user_role.name}</b> privilege."

@@ -1,57 +1,25 @@
-#jqt
-  #support_request.current
-    = render :partial => 'games/homepage/nav_bar', :locals => { :active => 'back', :back_button_destination => games_help_path }
-
-    .content_wrapper
-      #support_request
-        .content
-          .title_2
-            - if params[:type] === "feedback"
-              Feedback
-            - elsif params[:type] === "report_bug"
-              Report a Bug
-            - elsif params[:type] === "contact_support"
-              Contact Support
-            - else
-              Contact Us
-          .content_box
-            .interior
-              - form_for('support_requests', :url => { :action => 'create' } ) do |f|
-                .field
-                  - if params[:type].present?
-                    = hidden_field_tag :type, params[:type]
-                  - else
-                    = hidden_field_tag :type, "contact_support"
-                  = f.text_area :content, :rows => 5, :value => params[:content]
-                .field
-                  = f.submit 'Send', :class => 'button'
-                .form_error.center
-      = render :partial => 'games/homepage/footer'
-
-#loader.dialog_wrapper.hide
-  #progress.dialog
-    .dialog_title
-      Loading
-    .dialog_image
-
-- content_for :page_javascript do
-  :plain
-    $(window).load(function() {
-      $('form').submit(function(e){
-        var inputs, content, values = {};
-        inputs = $('form :input*');
-        inputs.each(function() {
-          if (this.type == 'checkbox' || this.type == 'radio') {
-            values[this.name] = $(this).attr("checked");
-          }
-          else {
-            values[this.name] = $(this).val();
-          }
-          content = values['support_requests[content]'];
-            if ( content == '' ) {
-            $(".form_error").html('<div class="pad">Please enter a message</div>');
-            e.preventDefault();
-          }
-        });
-      });
-    });
+#support-request.current
+  .content
+    %h1.museo
+      - if params[:type] === "feedback"
+        = t('text.games.feedback')
+      - elsif params[:type] === "report_bug"
+        = t('text.games.report_bug')
+      - elsif params[:type] === "contact_support"
+        = t('text.games.contact_support')
+      - else
+        = t('text.games.contact_us')
+    .support-form
+      - form_for('support_requests', :url => { :action => 'create' }) do |f|
+        .field.pbn.ptn
+          - if params[:type].present?
+            = hidden_field_tag :type, params[:type]
+          - else
+            = hidden_field_tag :type, "contact_support"
+          = f.text_area :content, :rows => 5, :value => params[:content], :required => 'true', :class => 'ui-joy-textarea'
+        .field
+          .container.pb10
+            = f.submit t('text.shared.submit'), :class => 'ui-joy-button primary pb10 pt10'
+          .container.pb2
+            = button_to_function t('text.shared.cancel'), 'history.go(-1)', :class => 'ui-joy-button pb10 pt10 secondary'
+        .form-error.center

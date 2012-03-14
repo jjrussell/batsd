@@ -12,11 +12,12 @@ describe Job::MasterReloadStatzController do
     it 'saves memcache values' do
       100.times { Factory(:email_offer) }
       stub_vertica
-      get :index
+      get(:index)
 
       expected_hash = {
         :android=>{:adv_amount=>"$0.00", :count=>"0", :pub_amount=>"$0.00"},
         :iphone=>{:adv_amount=>"$0.00", :count=>"0", :pub_amount=>"$0.00"},
+        :windows=>{:adv_amount=>"$0.00", :count=>"0", :pub_amount=>"$0.00"},
         :total=>{:adv_amount=>"$0.01", :count=>"1", :pub_amount=>"$0.01"},
         :tj_games=>{:adv_amount=>"$0.01", :count=>"1", :pub_amount=>"$0.01"},
       }
@@ -39,7 +40,6 @@ describe Job::MasterReloadStatzController do
       offer = Offer.find(item.first)
       metadata_hash = item.last
       metadata_hash.should == {
-        'icon_url'           => offer.get_icon_url,
         'offer_name'         => offer.name_with_suffix,
         'price'              => currency(offer.price),
         'payment'            => currency(offer.payment),
@@ -75,7 +75,7 @@ describe Job::MasterReloadStatzController do
 
       stub_vertica(start_time, end_time)
 
-      get :daily
+      get(:daily)
 
       response.body.should == 'ok'
     end
@@ -83,22 +83,37 @@ describe Job::MasterReloadStatzController do
     it 'generates combined ranks' do
       apps = [
         Factory(:app,
+          :platform => 'iphone'),
+        Factory(:app,
+          :platform => 'iphone'),
+        Factory(:app,
+          :platform => 'android'),
+        Factory(:app,
+          :platform => 'android'),
+      ]
+
+      app_metadatas = [
+        Factory(:app_metadata,
           :store_id => 'ios.free',
-          :platform => 'iphone',
           :price => 0),
-        Factory(:app,
+        Factory(:app_metadata,
           :store_id => 'ios.paid',
-          :platform => 'iphone',
           :price => 1),
-        Factory(:app,
+        Factory(:app_metadata,
           :store_id => 'android.free',
-          :platform => 'android',
+          :store_name => 'Market',
           :price => 0),
-        Factory(:app,
+        Factory(:app_metadata,
           :store_id => 'android.paid',
-          :platform => 'android',
+          :store_name => 'Market',
           :price => 1),
       ]
+
+      apps.each_index do |i|
+        apps[i].app_metadatas.delete_all
+        apps[i].add_app_metadata(app_metadatas[i])
+        apps[i].reload.save!
+      end
 
       stub_vertica
 
@@ -111,7 +126,7 @@ describe Job::MasterReloadStatzController do
       hash = {'android.paid' => [1]}
       Mc.put('store_ranks.android.overall.paid.english', hash)
 
-      get :index
+      get(:index)
 
       metadata = Mc.get("statz.metadata.24_hours")
       apps.each do |app|
@@ -132,7 +147,7 @@ describe Job::MasterReloadStatzController do
       stub_conversions
       stub_appstats
 
-      get :partner_index
+      get(:partner_index)
 
       expected_stats = {
         "account_mgr"           => "",
@@ -170,7 +185,7 @@ describe Job::MasterReloadStatzController do
       partner_stats = actual_stats[@partner.id]
       partner_stats.should == expected_stats
 
-      partner_keys = [ 'partner', 'partner-ios', 'partner-android' ]
+      partner_keys = [ 'partner', 'partner-ios', 'partner-android', 'partner-windows' ]
       partner_keys.each do |key|
         start_time = Mc.get("statz.#{key}.last_updated_start.24_hours")
         start_time.should == @start_time.to_f
@@ -307,7 +322,6 @@ def money_options(start_time, end_time)
       'actions.publisher_app_id = apps_partners.app_id',
     :conditions =>
       "path = '[reward]' and " +
-      "app_platform != 'windows' and " +
       "time >= '#{start_time.to_s(:db)}' AND " +
       "time < '#{end_time.to_s(:db)}'",
     :group => 'source, app_platform',
@@ -462,7 +476,7 @@ end
 
 def stub_appstats(granularity = :hourly)
   Appstats.expects(:new).
-    times(3).
+    times(4).
     with(@partner.id, has_entry(:granularity, granularity)).
     returns(@mock_appstats)
 end

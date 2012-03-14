@@ -45,7 +45,6 @@ API_URL = local_config['api_url'] || 'http://localhost:3000'
 DASHBOARD_URL = local_config['dashboard_url'] || 'http://localhost:3000'
 WEBSITE_URL = local_config['website_url'] || 'http://localhost:3000'
 CLOUDFRONT_URL = 'https://s3.amazonaws.com/staging_tapjoy'
-GAMES_ANDROID_MARKET_URL = 'http://market.android.com/details?id=com.tapjoy.tapjoy'
 
 # Amazon services:
 amazon = YAML::load_file("#{Rails.root}/config/amazon.yaml")
@@ -92,3 +91,4 @@ DEVICE_LINK_TRACKING_PIXEL = 'http://tapjoy.go2cloud.org/SL2P'
 Sass::Plugin.options[:style] = :compressed
 
 TAPJOY_GAMES_INVITATION_OFFER_ID = '3839e884-2310-4de4-873f-8b0ca44c1a1a'
+TRACKING_OFFER_CURRENCY_ID = '2fa3e3cc-9376-470b-b3f1-b6f5a6369d70'

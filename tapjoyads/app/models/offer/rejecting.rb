@@ -71,6 +71,15 @@ module Offer::Rejecting
       age_rating_reject?(3) # reject 17+ apps
   end
 
+  def geoip_reject?(geoip_data)
+    return true if get_countries.present? && !get_countries.include?(geoip_data[:primary_country])
+    return true if countries_blacklist.include?(geoip_data[:primary_country])
+    return true if get_regions.present? && !get_regions.include?(geoip_data[:region])
+    return true if get_dma_codes.present? && !get_dma_codes.include?(geoip_data[:dma_code])
+    return true if get_cities.present? && !get_cities.include?(geoip_data[:city])
+    false
+  end
+
   private
 
   def is_disabled?(publisher_app, currency)
@@ -99,14 +108,6 @@ module Offer::Rejecting
     return false unless max_age_rating && age_rating
 
     max_age_rating < age_rating
-  end
-
-  def geoip_reject?(geoip_data)
-    return true if get_countries.present? && !get_countries.include?(geoip_data[:primary_country])
-    return true if get_countries_blacklist.include?(geoip_data[:primary_country])
-    return true if get_regions.present? && !get_regions.include?(geoip_data[:region])
-    return true if get_dma_codes.present? && !get_dma_codes.include?(geoip_data[:dma_code])
-    false
   end
 
   def already_complete?(device, app_version = nil)
@@ -224,7 +225,7 @@ module Offer::Rejecting
   end
 
   def non_rewarded_offerwall_rewarded_reject?(currency)
-    currency.conversion_rate == 0 && rewarded? && item_type != 'App'
+    !currency.rewarded? && rewarded? && item_type != 'App'
   end
 
   def recommendable_types_reject?

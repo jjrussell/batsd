@@ -73,6 +73,8 @@
     = "#{@partner.premier_discount}%"
     = "(#{link_to('edit', partner_offer_discounts_path(@partner))})"
   .metadata
+    Discount All Offer Types: #{@partner.discount_all_offer_types?}
+  .metadata
     Current Exclusivity Level:
     = @partner.exclusivity_level_type || "None"
   .metadata
@@ -84,7 +86,24 @@
       Tapjoy sponsored all apps:
       = @partner.tapjoy_sponsored? ? "Yes" : "No"
       = submit_tag('switch')
-
+  - if @partner.client.present?
+    .metadata
+      Client:
+      = link_to(@partner.client.name, tools_client_path(@partner.client.id))
+  .metadata
+    Confirmed for Payout:
+    -if @partner.confirmed_for_payout
+      %span{ :class => 'confirmed' } Confirmed
+      %form#confirmed_for_payout{ :action => set_unconfirmed_for_payout_partner_path, :method => :post}
+        = label_tag('payout_notes', 'Notes for Payout:')
+        = text_field_tag('payout_notes', nil, :length => 25)
+        %br
+        = submit_tag('Unconfirm')
+    -else
+      %span{ :class => 'unconfirmed' } Unconfirmed
+      %br
+      Payout Confirmation Notes:
+      = @partner.payout_confirmation_notes
 .clear
 
 - payout_info = @partner.payout_info
@@ -244,4 +263,10 @@
     }
     .user_action, .user_action span {
       display: inline;
+    }
+    span.unconfirmed {
+      color: red;
+    }
+    span.confirmed {
+      color: green;
     }

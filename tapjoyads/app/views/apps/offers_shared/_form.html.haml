@@ -55,10 +55,6 @@
         %td
           = f.currency_field :payment, {}, :disabled => 'disabled'
           = error_message_on @offer, :payment
-          - if @offer.partner.offer_discounts.active.blank?
-            .premier
-              Want to reduce your payment?
-              = link_to 'Learn more about the Tapjoy Premier Program', premier_path, :tabindex => 97
       %tr
         %th
           Offer Name
@@ -137,6 +133,7 @@
         %td
           = f.select(:min_os_version, @app.os_versions, :include_blank => 'No Minimum')
           = error_message_on(@offer, :min_os_version)
+      = render('apps/offers_shared/countries', :f => f)
 
       - if permitted_to?(:edit, :statz)
         = render('apps/offers_shared/admin_fields', :f => f)
@@ -207,9 +204,6 @@
       requestAppEnable = function() {
         $('form#new_enable_offer_request').submit();
       };
-      if (#{!current_partner.is_premier?} && $('#flash_notice').is(':hidden')) {
-        $('#flash_notice').html('<b>Notice:</b> #{link_to 'Learn more about the Tapjoy Premier Program', premier_path}').show();
-      }
 
       var toggleUserEnabled = function() {
         if ($('#offer_user_enabled').attr('checked')) {

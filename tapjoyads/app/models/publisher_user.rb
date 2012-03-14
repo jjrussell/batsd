@@ -10,14 +10,25 @@ class PublisherUser < SimpledbShardedResource
     "publisher_users_#{domain_number}"
   end
 
+  def initialize(options = {})
+    super({ :load_from_memcache => true }.merge(options))
+  end
+
+  def save(options = {})
+    super({ :write_to_memcache => true }.merge(options))
+  end
+
   def update!(udid)
     return false if udids.length >= MAX_UDIDS
     return true  if udids.include?(udid)
 
     self.udids = udid
-    serial_save
+    save
 
     udids.length < MAX_UDIDS
   end
 
+  def self.for_click(click)
+    PublisherUser.new(:key => "#{click.publisher_app_id}.#{click.publisher_user_id}")
+  end
 end
