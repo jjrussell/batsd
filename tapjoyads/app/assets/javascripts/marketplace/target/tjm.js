@@ -2981,48 +2981,56 @@ var TJG = typeof TJG === "object" ? TJG : {}; TJG.vars = {};
     };
   };
 
-  me.fetchData = function ($container, url, params) {
-    var jsonp = $container.data("is-jsonp");
-
-    return $.ajax({
-      url: url,
-      dataType: jsonp ? "jsonp" : undefined,
-      data: params
+  me.processPreload = function (options, success, error, always) {
+    var timeoutTimer = window.setTimeout(function () {
+      error({});
+      always({});
+    }, 15000);
+    preload.ready(function (data) {
+      window.clearTimeout(timeoutTimer);
+      success(data);
+      always(data);
     });
+    preload.consumed = true;
+  };
+
+  me.fetchData = function (options, success, error, always) {
+    if (preload && !preload.consumed) {
+      return me.processPreload.apply(this, arguments);
+    }
+
+    $.ajax({
+      url: options.url,
+      dataType: options.is_jsonp ? "jsonp" : undefined,
+      data: options.params,
+      timeout: 15000
+    }).done(success).fail(error).always(always);
   };
 
   me.fillElements = function () {
     $(".ajax-loader").each(function () {
       var $$ = $(this),
+        options = {
+          url: $$.data("url"),
+          params: $$.data("params") || {},
+          is_jsonp: $$.data("is-jsonp") || true,
+          immediate: $$.data("immediate-load")
+        },
         $target = $(".ajax-target", $$),
         $placeholder = $(".ajax-placeholder", $$),
         $load_more = $(".ajax-load-more", $$),
         template = me.template($("script", $$).html()),
-        url = $$.data("url"),
-        immediate = $$.data("immediate-load"),
-        params = $$.data("params") || {},
-        preloaded = false,
         getSome;
 
       getSome = function () {
-        if (preload && !preloaded) {
-          preload.ready(function (data) {
-            $target.append(template(data));
-            $placeholder.hide();
-            return data.MoreDataAvailable ? $load_more.show() : $load_more.hide();
-          });
-
-          preloaded = true;
-        } else {
-          me.fetchData($$, url, params).then(function (data) {
-            $target.append(template(data));
-          }).fail(function () {
-            $(".ajax-error", $$).show();
-          }).always(function (data) {
-            $placeholder.hide();
-            return data.MoreDataAvailable ? $load_more.show() : $load_more.hide();
-          });
-        }
+        me.fetchData(options, function success(data) {
+          $target.append(template(data));
+        }, function fail() {
+          $(".ajax-error", $$).show();
+        }, function always(data) {
+          $placeholder.hide();
+          return data.MoreDataAvailable ? $load_more.show() : $load_more.hide();
+        });
 
         $$.unbind("ajax-initiate", getSome);
       };
@@ -3032,14 +3040,14 @@ var TJG = typeof TJG === "object" ? TJG : {}; TJG.vars = {};
         $placeholder.show();
         $load_more.hide();
 
-        if (me.isNumber(params.start) && me.isNumber(params.max)) {
-          params.start += params.max;
+        if (me.isNumber(options.params.start) && me.isNumber(options.params.max)) {
+          options.params.start += options.params.max;
         }
 
         getSome();
       });
 
-      if (immediate) { getSome(); }
+      if (options.immediate) { getSome(); }
     });
   };
 
