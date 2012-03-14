@@ -116,6 +116,7 @@ ActionController::Routing::Routes.draw do |map|
     tools.resources :survey_offers, :except => [ :show ], :member => { :toggle_enabled => :put }
     tools.resources :payout_freezes, :only => [ :index, :create ], :member => { :disable => :post }
     tools.resources :wfhs, :only => [ :index, :new, :create, :edit, :update, :destroy ]
+    tools.resources :clients, :only => [ :index, :show, :new, :create, :edit, :update], :member => { :add_partner => :post, :remove_partner => :post }
   end
 
   map.connect 'mail_chimp_callback/callback', :controller => :mail_chimp_callback, :action => :callback

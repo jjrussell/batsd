@@ -110,6 +110,7 @@ authorization do
     has_permission_on :tools_partner_program_statz, :to => [ :index, :export ]
     has_permission_on :tools_offers, :to => [ :creative, :approve_creative, :reject_creative ]
     has_permission_on :tools_survey_offers, :to => [ :index, :show, :new, :create, :edit, :update, :destroy, :toggle_enabled ]
+    has_permission_on :tools_clients, :to => [ :index, :show, :new, :create, :edit, :update, :add_partner, :remove_partner ]
   end
 
   role :games_editor do
