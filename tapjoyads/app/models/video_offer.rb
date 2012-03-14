@@ -56,6 +56,10 @@ class VideoOffer < ActiveRecord::Base
     offer
   end
 
+  def get_icon_url(options = {})
+    Offer.get_icon_url({:icon_id => Offer.hashed_icon_id(id)}.merge(options))
+  end
+
   private
 
   def create_primary_offer

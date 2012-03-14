@@ -14,7 +14,7 @@ class RatingOffer < ActiveRecord::Base
   after_update :update_offers
 
   delegate :save_icon!, :to => :primary_offer
-  delegate :get_offer_device_types, :platform, :store_url, :to => :app
+  delegate :get_offer_device_types, :platform, :store_url, :get_icon_url, :to => :app
 
   named_scope :visible, :conditions => { :hidden => false }
 
