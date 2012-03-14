@@ -94,7 +94,7 @@ class Games::SocialController < GamesController
   end
 
   def send_twitter_invites
-    friends = params[:friend_selected]
+    friends = params[:friend_selected].split(',')
 
     if friends.blank?
       render(:json => { :success => false, :error => "You must select at least one friend before sending out an invite" })
