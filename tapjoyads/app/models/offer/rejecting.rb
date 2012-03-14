@@ -76,6 +76,7 @@ module Offer::Rejecting
     return true if countries_blacklist.include?(geoip_data[:primary_country])
     return true if get_regions.present? && !get_regions.include?(geoip_data[:region])
     return true if get_dma_codes.present? && !get_dma_codes.include?(geoip_data[:dma_code])
+    return true if get_cities.present? && !get_cities.include?(geoip_data[:city])
     false
   end
 
@@ -224,7 +225,7 @@ module Offer::Rejecting
   end
 
   def non_rewarded_offerwall_rewarded_reject?(currency)
-    currency.conversion_rate == 0 && rewarded? && item_type != 'App'
+    !currency.rewarded? && rewarded? && item_type != 'App'
   end
 
   def recommendable_types_reject?

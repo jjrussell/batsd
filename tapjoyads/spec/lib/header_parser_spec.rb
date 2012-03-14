@@ -33,7 +33,7 @@ describe HeaderParser do
   describe '.device_type' do
     context 'given a header with a known user-agent' do
       it 'returns the appropriate device_type' do
-        HeaderParser.device_type(@user_agents[:itouch]).      should == 'ipod'
+        HeaderParser.device_type(@user_agents[:itouch]).      should == 'itouch'
         HeaderParser.device_type(@user_agents[:iphone_ios_4]).should == 'iphone'
         HeaderParser.device_type(@user_agents[:iphone_ios_5]).should == 'iphone'
         HeaderParser.device_type(@user_agents[:ipad_ios_4]).  should == 'ipad'

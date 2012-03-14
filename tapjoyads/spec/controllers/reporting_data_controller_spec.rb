@@ -116,6 +116,20 @@ describe ReportingDataController do
         @stats.delete_all
       end
     end
+
+    context 'with cache param' do
+      it 'calls Mc.get_and_put' do
+        Mc.expects(:get_and_put).once
+        get(:index, :format => 'xml', :date => "2011-01-01", :username => @user.username, :api_key => @user.api_key, :cache => '1')
+      end
+    end
+
+    context 'without cache param' do
+      it 'does not call Mc.get_and_put' do
+        Mc.expects(:get_and_put).never
+        get(:index, :format => 'xml', :date => "2011-01-01", :username => @user.username, :api_key => @user.api_key)
+      end
+    end
   end
 
   describe '#udids with data' do

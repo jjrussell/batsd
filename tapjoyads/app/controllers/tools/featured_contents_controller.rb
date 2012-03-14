@@ -106,7 +106,7 @@ class Tools::FeaturedContentsController < WebsiteController
   end
 
   def destroy
-    FeaturedContent.find(params[:id]).destroy
+    FeaturedContent.find(params[:id]).expire!
     redirect_to tools_featured_contents_path
   end
 

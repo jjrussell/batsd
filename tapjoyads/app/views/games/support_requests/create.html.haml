@@ -1,33 +1,22 @@
-#jqt
-  #support_request.current
-    = render :partial => 'games/homepage/nav_bar', :locals => { :active => 'back', :back_button_destination => games_help_path }
+#support-request.current
+  .content
+    %h1.museo
+      - if params[:type] === "feedback"
+        = t('text.games.feedback')
+      - elsif params[:type] === "report_bug"
+        = t('text.games.report_bug')
+      - elsif params[:type] === "contact_support"
+        = t('text.games.contact_support')
+      - else
+        = t('text.games.contact_us')
+    .support-form.pillow.big-msg.mb30
+      - if params[:type] === "feedback"
+        = t('text.games.thanks_feedback')
+      - elsif params[:type] === "report_bug"
+        = t('text.games.thanks_report_bug')
+      - elsif params[:type] === "contact_support"
+        = t('text.games.thanks_contact_support')
+      - else
+        = t('text.games.thanks_contact_us')
 
-    .content_wrapper
-      #support_request
-        .content
-          .title_2
-            - if params[:type] === "feedback"
-              Feedback
-            - elsif params[:type] === "report_bug"
-              Report a Bug
-            - elsif params[:type] === "contact_support"
-              Contact Support
-            - else
-              Contact Us
-          .content_box.fixed
-            .interior
-              - if params[:type] === "feedback"
-                Thanks for your feedback!
-              - elsif params[:type] === "report_bug"
-                Thank you for reporting the bug.  We'll examine and verify it as soon as possible.
-              - elsif params[:type] === "contact_support"
-                Thank you for contacting our support.  One of our agents will get back to you as soon as possible.
-              - else
-                Contact Us
-    = render :partial => 'games/homepage/footer'
 
-#loader.dialog_wrapper.hide
-  #progress.dialog
-    .dialog_title
-      Loading
-    .dialog_image

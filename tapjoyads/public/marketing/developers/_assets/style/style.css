@@ -1,0 +1,56 @@
+body{
+	font-family: 'Arvo', serif;
+}
+
+#wrapper{
+	top: 0px;
+	left: 0px;
+	width:100%;
+	height:100%;
+	background-image: url('layout.jpg');
+	background-repeat: no-repeat;
+}
+
+#button_container{
+	position: absolute;
+	top: 340px;
+	left: 230px;
+	width: 256px;
+	height: 70px;
+}
+
+a.button{
+	background-image: url('button_background[inactive].png');
+	background-repeat: no-repeat;
+	display: block; width: 200px; height: 70px;
+	text-decoration: none;
+}
+
+a.button:link{
+	background-image: u90rl('button_background[inactive].png');
+	background-repeat: no-repeat;
+	display: block; width: 200px; height: 70px;
+	text-decoration: none;
+}
+
+
+a.button:hover{
+	background-image: url('button_background[active].png');
+	background-repeat: no-repeat;
+	display: block; width: 200px; height: 70px;
+	text-decoration: none;
+}
+
+a.button:visited{
+	background-image: url('button_background[inactive].png');
+	background-repeat: no-repeat;
+	display: block; width: 200px; height: 70px;
+	text-decoration: none;
+}
+
+a.button:active{
+	background-image: url('button_background[inactive].png');
+	background-repeat: no-repeat;
+	display: block; width: 200px; height: 70px;
+	text-decoration: none;
+}

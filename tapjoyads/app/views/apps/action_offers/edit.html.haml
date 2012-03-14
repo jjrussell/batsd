@@ -43,10 +43,6 @@
           %td
             = primary_offer_form.currency_field :payment, {}, :disabled => 'disabled'
             = error_message_on @action_offer, :primary_offer_payment
-            - if @action_offer.partner.offer_discounts.active.blank?
-              .premier
-                Want to reduce your payment?
-                = link_to 'Learn more about the Tapjoy Premier Program', premier_path
       %tr
         %th
           = f.label :name, 'Action Name'

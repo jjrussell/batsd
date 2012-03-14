@@ -11,7 +11,6 @@ describe AppReview do
   describe '#valid?' do
     it { should validate_presence_of :author }
     it { should validate_presence_of :app_metadata }
-    it { should validate_presence_of :text }
   end
 
   describe '.delegate' do
