@@ -13,6 +13,7 @@ class RatingOffer < ActiveRecord::Base
   after_create :create_primary_offer, :create_icon
   after_update :update_offers
 
+  delegate :save_icon!, :to => :primary_offer
   delegate :get_offer_device_types, :platform, :store_url, :to => :app
 
   named_scope :visible, :conditions => { :hidden => false }
@@ -68,9 +69,5 @@ class RatingOffer < ActiveRecord::Base
 
     image_data = bucket.objects['icons/114/ratestar.jpg'].read
     save_icon!(image_data)
-  end
-
-  def save_icon!(img_data)
-    primary_offer.save_icon!(img_data)
   end
 end

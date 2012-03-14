@@ -25,6 +25,8 @@ class SurveyOffer < ActiveRecord::Base
 
   named_scope :visible, :conditions => { :hidden => false }
 
+  delegate :save_icon!, :to => :primary_offer
+
   def bid
     if @bid_price
       @bid_price
@@ -136,10 +138,6 @@ class SurveyOffer < ActiveRecord::Base
     bucket = S3.bucket(BucketNames::TAPJOY)
     image_data = bucket.objects['icons/survey-blue.png'].read
     save_icon!(image_data)
-  end
-
-  def save_icon!(img_data)
-    primary_offer.save_icon!(img_data)
   end
 
   def update_offer

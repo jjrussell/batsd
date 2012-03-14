@@ -20,6 +20,8 @@ class VideoOffer < ActiveRecord::Base
 
   named_scope :visible, :conditions => { :hidden => false }
 
+  delegate :save_icon!, :to => :primary_offer
+
   def update_buttons
     offers.each do |offer|
       offer.third_party_data = xml_for_buttons if valid_for_update_buttons?
@@ -52,10 +54,6 @@ class VideoOffer < ActiveRecord::Base
     offer.save!
 
     offer
-  end
-
-  def save_icon!(img_data)
-    primary_offer.save_icon!(img_data)
   end
 
   private

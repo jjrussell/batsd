@@ -16,6 +16,8 @@ class GenericOffer < ActiveRecord::Base
 
   named_scope :visible, :conditions => { :hidden => false }
 
+  delegate :save_icon!, :to => :primary_offer
+
   def create_tracking_offer_for(tracked_for, options = {})
     device_types = options.delete(:device_types) { Offer::ALL_DEVICES.to_json }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
@@ -38,10 +40,6 @@ class GenericOffer < ActiveRecord::Base
     offer.save!
 
     offer
-  end
-
-  def save_icon!(img_data)
-    primary_offer.save_icon!(img_data)
   end
 
   private
