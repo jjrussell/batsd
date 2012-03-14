@@ -8,14 +8,14 @@ class Tools::ApprovalsController < WebsiteController
   before_filter :find_approval, :only => [:approve, :reject, :assign]
 
   def index
-    state = (params[:state] && params[:state].to_i ) || Approval.enumerate_state('pending')
+    state = params[:state] =~ /^-?\d+$/ ? params[:state].to_i : Approval.enumerate_state('pending')
     @conditions[:state] = state if state > -1
 
     @approvals = Approval.all(:conditions => @conditions, :order => 'created_at ASC')
   end
 
   def history
-    @conditions[:state] = Approval.enumerate_state('approved', 'rejected')
+    @conditions[:state] = Approval.enumerate_states('approved', 'rejected')
 
     @approvals = Approval.all(:conditions => @conditions, :order => 'created_at DESC')
     render :index
@@ -29,36 +29,30 @@ class Tools::ApprovalsController < WebsiteController
   end
 
   def assign
-    json = json_wrapper do
+    json_wrapper do
       if params[:approval][:owner_id].empty?
         @approval.unassign
       else
         user = User.find(params[:approval][:owner_id])
-        if success = @approval.assign(user)
-          ApprovalMailer.deliver_assigned(user.email, @approval.item_type, mine_tools_approvals_url)
+        if @approval.assign(user)
+          ApprovalMailer.deliver_assigned(user.email, approval.item_type, mine_tools_approvals_url)
         end
       end
     end
-
-    render :json => json
   end
 
   def approve
-    json = json_wrapper do
-      @approval.owner = current_user if respond_to?(:curret_user)
+    json_wrapper do
+      @approval.owner = current_user if respond_to?(:current_user)
       @approval.approve!
     end
-
-    render :json => json
   end
 
   def reject
-    json = json_wrapper do
-      @approval.owner = current_user if respond_to?(:curret_user)
+    json_wrapper do
+      @approval.owner = current_user if respond_to?(:current_user)
       @approval.reject!(params[:reason])
     end
-
-    render :json => json
   end
 
   private
@@ -69,9 +63,11 @@ class Tools::ApprovalsController < WebsiteController
       json[:success] = yield
     rescue ActsAsApprovable::Error => e
       json[:message] = e.message
+    rescue
+      json[:message] = 'An unknown error occured'
     end
 
-    json
+    render :json => json
   end
 
   def setup_conditions

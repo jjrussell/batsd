@@ -6,7 +6,6 @@ ActsAsApprovable::Ownership.configure do
     owner_class.account_managers
   end
 
-  private
   def self.option_for_owner(owner)
     [owner.email, owner.id]
   end
