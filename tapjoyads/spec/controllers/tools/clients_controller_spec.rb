@@ -130,7 +130,7 @@ describe Tools::ClientsController do
       end
 
       it 'sets an error' do
-        flash[:error].should == "cannot be switched to another client."
+        flash[:error].should == ["Client cannot be switched to another client."]
       end
 
       it 'redirects to client show page' do
