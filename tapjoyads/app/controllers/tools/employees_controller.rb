@@ -4,9 +4,10 @@ class Tools::EmployeesController < WebsiteController
   current_tab :tools
   filter_access_to :all
 
+  before_filter :find_employee, :only => [ :edit, :update, :wfhs ]
+
   def index
-    @employees = Employee.find(:all,
-                               :order => 'display_order desc, last_name, first_name')
+    @employees = Employee.all_ordered
   end
 
   def new
@@ -14,7 +15,6 @@ class Tools::EmployeesController < WebsiteController
   end
 
   def edit
-    @employee = Employee.find(params[:id])
   end
 
   def create
@@ -33,7 +33,6 @@ class Tools::EmployeesController < WebsiteController
   end
 
   def update
-    @employee = Employee.find(params[:id])
     if @employee.update_attributes(params[:employee])
       unless params[:upload_photo].blank?
         @employee.save_photo!(params[:upload_photo].read)
@@ -46,18 +45,25 @@ class Tools::EmployeesController < WebsiteController
   end
 
   def delete_photo
-    @employee = Employee.find(params[:id])
     clear_photo(@employee)
 
     flash[:notice] = 'Employee photo was successfully removed.'
     redirect_to(edit_tools_employee_url(@employee))
   end
 
-private
+  def wfhs
+    @wfhs = @employee.wfhs.today_and_after
+  end
+
+  private
 
   def clear_photo(employee)
     File.open("public/images/site/blank_image.jpg", 'rb') do |file|
       employee.save_photo!(file.read)
     end
+  end
+
+  def find_employee
+    @employee = Employee.find(params[:id])
   end
 end

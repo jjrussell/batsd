@@ -4,6 +4,7 @@ class EarningsAdjustment < ActiveRecord::Base
   belongs_to :partner
 
   validates_presence_of :partner
+  validates_presence_of :notes
   validates_numericality_of :amount, :only_integer => true, :allow_nil => false
 
   after_create :update_balance

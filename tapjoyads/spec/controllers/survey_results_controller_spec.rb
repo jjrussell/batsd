@@ -66,50 +66,5 @@ describe SurveyResultsController do
       response.should render_template('new')
     end
 
-    it 'saves a SurveyResult' do
-      stub_device
-
-      controller.expects(:geoip_data).returns('geoip data')
-      @mock_click.expects(:installed_at?).returns(false)
-      mock_result = mock()
-
-      SurveyResult.expects(:new).returns(mock_result)
-      mock_result.expects(:udid=).with(@udid)
-      mock_result.expects(:click_key=).with('5')
-      mock_result.expects(:geoip_data=).with('geoip data')
-      mock_result.expects(:answers=).with({ @survey_question.text => 'a' })
-      mock_result.expects(:save)
-
-      post(:create, @request_params)
-    end
-
-    it 'saves the results to the device' do
-      stub_survey_result
-
-      controller.expects(:geoip_data).returns('geoip data')
-      @mock_click.expects(:installed_at?).returns(false)
-      mock_device = mock()
-
-      Device.expects(:new).with(:key => @udid).returns(mock_device)
-      previous_answers = {'where are you from?' => 'the moon'}
-      expected_answers = previous_answers.merge(@survey_question.text => 'a')
-      mock_device.expects(:survey_answers).returns(previous_answers)
-      mock_device.expects(:survey_answers=).with(expected_answers)
-      mock_device.expects(:save)
-
-      post(:create, @request_params)
-    end
-
-    it 'calls downloader with the correct url' do
-      stub_survey_result
-      stub_device
-
-      controller.expects(:geoip_data).returns('geoip data')
-      @mock_click.expects(:installed_at?).returns(false)
-
-      url = "#{API_URL}/offer_completed?click_key=5"
-      Downloader.expects(:get_with_retry).with(url)
-      post(:create, @request_params)
-    end
   end
 end

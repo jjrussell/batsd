@@ -99,6 +99,7 @@ class ApplicationController < ActionController::Base
     downcase_param(:publisher_user_record_id)
     downcase_param(:offer_id)
     downcase_param(:type)
+    downcase_param(:library_version)
     set_param(:udid, :DeviceTag, true)
     set_param(:app_id, :AppID, true)
     set_param(:device_os_version, :DeviceOSVersion)
@@ -140,21 +141,22 @@ class ApplicationController < ActionController::Base
 
   def geoip_data
     return @cached_geoip_data if @cached_geoip_data.present?
-    return {} if @server_to_server && params[:device_ip].blank?
 
     @cached_geoip_data = {}
 
-    geo_struct = GEOIP.city(params[:device_ip] || ip_address) rescue nil
-    if geo_struct.present?
-      @cached_geoip_data[:country]     = geo_struct[:country_code2]
-      @cached_geoip_data[:continent]   = geo_struct[:continent_code]
-      @cached_geoip_data[:region]      = geo_struct[:region_name]
-      @cached_geoip_data[:city]        = geo_struct[:city_name]
-      @cached_geoip_data[:postal_code] = geo_struct[:postal_code]
-      @cached_geoip_data[:lat]         = geo_struct[:latitude]
-      @cached_geoip_data[:long]        = geo_struct[:longitude]
-      @cached_geoip_data[:area_code]   = geo_struct[:area_code]
-      @cached_geoip_data[:dma_code]    = geo_struct[:dma_code]
+    unless @server_to_server && params[:device_ip].blank?
+      geo_struct = GEOIP.city(params[:device_ip] || ip_address) rescue nil
+      if geo_struct.present?
+        @cached_geoip_data[:country]     = geo_struct[:country_code2]
+        @cached_geoip_data[:continent]   = geo_struct[:continent_code]
+        @cached_geoip_data[:region]      = geo_struct[:region_name]
+        @cached_geoip_data[:city]        = geo_struct[:city_name]
+        @cached_geoip_data[:postal_code] = geo_struct[:postal_code]
+        @cached_geoip_data[:lat]         = geo_struct[:latitude]
+        @cached_geoip_data[:long]        = geo_struct[:longitude]
+        @cached_geoip_data[:area_code]   = geo_struct[:area_code]
+        @cached_geoip_data[:dma_code]    = geo_struct[:dma_code]
+      end
     end
     @cached_geoip_data[:user_country_code]    = params[:country_code].present? ? params[:country_code].to_s.upcase : nil
     @cached_geoip_data[:carrier_country_code] = params[:carrier_country_code].present? ? params[:carrier_country_code].to_s.upcase : nil
@@ -242,5 +244,19 @@ class ApplicationController < ActionController::Base
 
   def set_publisher_user_id
     params[:publisher_user_id] = params[:udid] if params[:publisher_user_id].blank?
+  end
+
+  def sdkless_supported?
+    params[:library_version].to_s.version_greater_than_or_equal_to?(SDKLESS_MIN_LIBRARY_VERSION) && (params[:sdk_type] == 'offers' || params[:sdk_type] == 'virtual_goods')
+  end
+
+  def generate_verifier(more_data = [])
+    hash_bits = [
+      params[:app_id],
+      params[:udid],
+      params[:timestamp],
+      App.find_in_cache(params[:app_id]).secret_key
+    ] + more_data
+    Digest::SHA256.hexdigest(hash_bits.join(':'))
   end
 end

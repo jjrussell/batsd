@@ -5,6 +5,57 @@ describe Device do
     SimpledbResource.reset_connection
   end
 
+  describe '.normalize_device_type' do
+    context 'type is iPhone' do
+      it 'returns iphone' do
+        param = 'iPhone'
+        Device.normalize_device_type(param).should == 'iphone'
+      end
+    end
+
+    context 'type is iPod' do
+      it 'returns itouch' do
+        param = 'iPod'
+        Device.normalize_device_type(param).should == 'itouch'
+      end
+    end
+
+    context 'type is iTouch' do
+      it 'returns itouch' do
+        param = 'iTouch'
+        Device.normalize_device_type(param).should == 'itouch'
+      end
+    end
+
+    context 'type is iPad' do
+      it 'returns ipad' do
+        param = 'iPad'
+        Device.normalize_device_type(param).should == 'ipad'
+      end
+    end
+
+    context 'type is Android' do
+      it 'returns android' do
+        param = 'Android'
+        Device.normalize_device_type(param).should == 'android'
+      end
+    end
+
+    context 'type is Windows' do
+      it 'returns windows' do
+        param = 'Windows'
+        Device.normalize_device_type(param).should == 'windows'
+      end
+    end
+
+    context 'type is something else' do
+      it 'returns nil' do
+        param = Factory.next(:name)
+        Device.normalize_device_type(param).should be_nil
+      end
+    end
+  end
+
   describe '#handle_sdkless_click!' do
     before :each do
       app = Factory :app
@@ -85,26 +136,6 @@ describe Device do
 
     it "is not found when it doesn't exist" do
       Device.find(:first, :where => "itemname() = '#{@key}'").should be_nil
-    end
-  end
-
-  context 'Multiple new Devices' do
-    before :each do
-      @count = Device.count(:consistent => true)
-      @num = 5
-      @num.times { Device.new.save! }
-    end
-
-    it 'is counted correctly' do
-      Device.count(:consistent => true).should == @count + @num
-    end
-
-    it 'is counted correctly per-domain' do
-      sum = 0
-      Device.all_domain_names.each do |name|
-        sum += Device.count(:domain_name => name, :consistent => true)
-      end
-      sum.should == @count + @num
     end
   end
 

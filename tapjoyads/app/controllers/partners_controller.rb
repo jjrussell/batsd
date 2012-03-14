@@ -5,10 +5,10 @@ class PartnersController < WebsiteController
 
   filter_access_to :all
 
-  before_filter :find_partner, :only => [ :show, :make_current, :manage, :update, :edit, :new_transfer, :create_transfer, :reporting, :set_tapjoy_sponsored ]
+  before_filter :find_partner, :only => [ :show, :make_current, :manage, :update, :edit, :new_transfer, :create_transfer, :reporting, :set_tapjoy_sponsored, :set_unconfirmed_for_payout ]
   before_filter :get_account_managers, :only => [ :index, :managed_by ]
   before_filter :set_platform, :only => [ :reporting ]
-  after_filter :save_activity_logs, :only => [ :update, :create_transfer ]
+  after_filter :save_activity_logs, :only => [ :update, :create_transfer, :set_unconfirmed_for_payout ]
 
   def index
     if current_user.role_symbols.include?(:agency)
@@ -83,7 +83,7 @@ class PartnersController < WebsiteController
       params[:partner][:sales_rep] = sales_rep
     end
 
-    safe_attributes = [ :name, :account_managers, :account_manager_notes, :accepted_negotiated_tos, :negotiated_rev_share_ends_on, :rev_share, :transfer_bonus, :disabled_partners, :direct_pay_share, :approved_publisher, :billing_email, :accepted_publisher_tos, :cs_contact_email, :sales_rep, :max_deduction_percentage ]
+    safe_attributes = [ :name, :account_managers, :account_manager_notes, :accepted_negotiated_tos, :negotiated_rev_share_ends_on, :rev_share, :transfer_bonus, :disabled_partners, :direct_pay_share, :approved_publisher, :billing_email, :accepted_publisher_tos, :cs_contact_email, :sales_rep, :max_deduction_percentage, :discount_all_offer_types ]
     name_was = @partner.name
     if @partner.safe_update_attributes(params[:partner], safe_attributes)
       if name_was != @partner.name
@@ -135,6 +135,7 @@ class PartnersController < WebsiteController
 
   def new_transfer
     @freeze_enabled = PayoutFreeze.enabled?
+    @transfer = Transfer.new
   end
 
   def create_transfer
@@ -144,10 +145,15 @@ class PartnersController < WebsiteController
       return
     end
 
-    sanitized_params = sanitize_currency_params(params, [ :transfer_amount ])
-    amount = sanitized_params[:transfer_amount].to_i
+    transfer_params = sanitize_currency_params(params[:transfer], [:amount])
+    @transfer = Transfer.new(transfer_params)
+
+    unless @transfer.valid?
+      return render :new_transfer
+    end
+
     Partner.transaction do
-      payout, order, marketing_order = @partner.build_transfer(amount)
+      payout, order, marketing_order = @partner.build_transfer(@transfer.amount, @transfer.internal_notes)
 
       log_activity(payout)
       payout.save!
@@ -156,7 +162,7 @@ class PartnersController < WebsiteController
       order.save!
 
       email = order.partner.users.first.email rescue "(no email)"
-      flash[:notice] = "The transfer of <b>$#{"%.2f" % (amount / 100.0)}</b> to <b>#{email}</b> was successfully created."
+      flash[:notice] = "The transfer of <b>$#{"%.2f" % (@transfer.amount / 100.0)}</b> to <b>#{email}</b> was successfully created."
 
       if marketing_order.present?
         log_activity(marketing_order)
@@ -184,6 +190,18 @@ class PartnersController < WebsiteController
   def set_tapjoy_sponsored
     @partner.set_tapjoy_sponsored_on_offers!(params[:flag])
     flash[:notice] = "Successfully updated all offers"
+    redirect_to partner_path
+  end
+
+  def set_unconfirmed_for_payout
+    log_activity(@partner)
+    @partner.confirmed_for_payout = false
+    @partner.payout_confirmation_notes = params[:payout_notes]
+    if @partner.save
+      flash[:notice] = "Partner is now Unconfirmed for Payouts"
+    else
+      flash[:warning] = "Was unable to Unconfirm for Payouts"
+    end
     redirect_to partner_path
   end
 
