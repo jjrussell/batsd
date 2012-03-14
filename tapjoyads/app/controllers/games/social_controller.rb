@@ -75,7 +75,7 @@ class Games::SocialController < GamesController
   end
 
   def invite_twitter_friends
-    @page_size = 25
+    @page_size = 10
 
     twitter_friends = Twitter.follower_ids.ids.map do |id|
       Twitter.user(id)
@@ -84,8 +84,9 @@ class Games::SocialController < GamesController
     @twitter_friends = twitter_friends.map do |friend|
       {
         :social_id => friend.id,
-        :name => friend.name,
-        :image_url => friend.profile_image_url_https
+        :name      => friend.name,
+        :image_url => friend.profile_image_url_https,
+        :sent      => is_sent?(Invitation::TWITTER, friend.id)
       }
     end.sort_by do |friend|
       friend[:name].downcase
@@ -165,5 +166,9 @@ class Games::SocialController < GamesController
     else
       render :json => { :success => false, :error => t('text.games.provide_one_email') }
     end
+  end
+
+  def is_sent?(channel, external_info)
+    Invitation.by_channel(channel).find_by_gamer_id_and_external_info(current_gamer.id, external_info).present?
   end
 end

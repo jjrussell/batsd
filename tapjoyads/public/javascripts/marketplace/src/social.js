@@ -135,13 +135,20 @@
 
             for (var i in friends) {
               var friend = friends[i];
-              var liClass = '';
+
+              text.push('<li class="friend clearfix list-button soft-gray-gradient" id="', friend.social_id, '">');
+              text.push('<div class="left list-squircle"><img src="', friend.image_url, '" width="50" height="50"/></div>');
+              text.push('<div class="left bold mt20 ml10">', friend.name, '</div>');
               if ($.inArray(friend.social_id.toString(), selectedFriends) != -1) {
-                liClass = ' checked';
+                text.push('<div class="item-check plussign right mt20 mr10">&nbsp;</div>');
               }
-              text.push('<li class="friend clearfix social-list-item',liClass,'" id="', friend.social_id, '">');
-              text.push('<div class="left"><img src="', friend.image_url, '" width="50" height="50"/></div>');
-              text.push('<div class="left bold mt10 ml10">', friend.name, '</div>');
+              else if (friend.sent == true) {
+                text.push('<div class="item-check plussign right mt20 mr10 hidden">&nbsp;</div>');
+                text.push('<div class="item-sent right mt20 mr10">', _t('shared.sent'), '</div>');
+              }
+              else {
+                text.push('<div class="item-check plussign right mt20 mr10 hidden">&nbsp;</div>');
+              }
               text.push('</li>');
             }
 
@@ -158,15 +165,17 @@
               var found = index != -1;
 
               if (found) {
-                li.removeClass('checked');
+                li.children('.item-check').addClass('hidden');
+                if (li.children('.item-sent')) {
+                  li.children('.item-sent').removeClass('hidden');
+                }
                 selectedFriends.splice(index, 1);
               } else if (!found) {
-                li.addClass('checked');
+                li.children('.item-check').removeClass('hidden');
+                li.children('.item-sent').addClass('hidden');
                 selectedFriends.push(socialId);
               }
               var friend_count = selectedFriends.length;
-              var text = _t('games.invite_friends', {count: friend_count}, {count: friend_count});
-              $('.invite_button').text(text);
               if (friend_count > 0) {
                 $('#friend_selected').val(selectedFriends);
               }

@@ -16,7 +16,7 @@
           = text_field_tag 'ajax', true, :hidden => true
         .mod.friend-pagination
           = link_to(t('text.games.social_to_prev', :page_size => @page_size), '#', :id => 'prev')
-        %ul.list-container.friend_list
+        %ul.list-button-container.friend_list
         .mod.friend-pagination
           = link_to(t('text.games.social_to_next', :page_size => @page_size), '#', :id => 'next')
           = link_to(t('text.games.social_to_top'), '#', :id => 'top')
