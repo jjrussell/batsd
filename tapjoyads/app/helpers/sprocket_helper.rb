@@ -1,5 +1,6 @@
 module SprocketHelper
   def js_tag(src, options={})
+    puts "WTF?"
     if Sprockets::Tj.debug
       # extract individual files from sprockets directives
       Sprockets::Tj.assets[src].to_a.map do |js|

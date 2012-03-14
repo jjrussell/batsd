@@ -27,8 +27,8 @@ module Sprockets
         @asset_env.append_path 'app/assets/javascripts'
         @asset_env.append_path 'app/assets/stylesheets'
 
-        if debug
-          @asset_env.cache = ActiveSupport::Cache::FileStore.new(File.join(Rails.root, "tmp", "cache", "assets"))
+        if !is_cached
+          @asset_env.cache = ActiveSupport::Cache::FileStore.new(File.join(Rails.root, "tmp", "cache", "assets")).silence!
         end
 
         if is_cached

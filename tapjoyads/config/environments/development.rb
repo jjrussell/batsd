@@ -32,7 +32,7 @@ rescue Errno::ENOENT
   local_config = {}
 end
 
-Sprockets::Tj.debug = false
+Sprockets::Tj.debug = true
 Sprockets::Tj.is_cached = false
 Sprockets::Tj.host = local_config['asset_host'] || local_config['website_url'] || 'http://localhost:3000'
 RUN_MODE_PREFIX = 'dev_'
