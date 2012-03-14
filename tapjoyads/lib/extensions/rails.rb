@@ -119,6 +119,10 @@ module ActiveRecord
       end
       self.update_attributes(attributes)
     end
+
+    def self.sanitize_conditions(*ary)
+      self.sanitize_sql_array(ary.first.is_a?(Array) ? ary.first : ary)
+    end
   end
 end
 

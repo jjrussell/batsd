@@ -177,5 +177,24 @@ class OneOffs
   def self.populate_instructions
     ActionOffer.connection.execute("update action_offers set instructions = 'Enter your instructions here.' where instructions is null")
   end
+
+  def self.log_activity_and_save!(object, action)
+    activity_log                  = ActivityLog.new({ :load => false })
+    activity_log.request_id       = UUIDTools::UUID.random_create.to_s
+    activity_log.user             = 'script'
+    activity_log.controller       = 'one_off'
+    activity_log.action           = action
+    activity_log.object           = object
+    activity_log.included_methods = []
+
+    yield
+
+    if object.changed?
+      puts "#{object.class.name} #{object.id} has changed."
+      object.save!
+      activity_log.finalize_states
+      activity_log.save
+    end
+  end
 end
 

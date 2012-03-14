@@ -1,11 +1,60 @@
-require 'spec_helper'
+require File.dirname(__FILE__) + '/../spec_helper'
 
 describe SprocketHelper do
-
-  #Delete this example and add some real ones or delete this file
-  it "should be included in the object returned by #helper" do
-    included_modules = (class << helper; self; end).send :included_modules
-    included_modules.should include(SprocketHelper)
+  before :each do
+    ASSETS.append_path "#{Rails.root}/spec/assets/javascripts"
+    ASSETS.append_path "#{Rails.root}/spec/assets/stylesheets"
   end
+  context "with CACHE_ASSETS off" do
+    before :all do
+      CACHE_ASSETS = false
+    end
 
+    context "with DEBUG_ASSETS set to true" do
+      before :all do
+        DEBUG_ASSETS = true
+      end
+
+      describe "#js_tag" do
+        it "should return a list of script tags" do
+          tags = helper.js_tag("test-master.js")
+          tags.should match /test1\.js/
+          tags.should match /test2\.js/
+          tags.should match /test3\.js/
+          tags.should match /test-master\.js/
+        end
+      end
+      describe "#css_tag" do
+        it "should return a list of style tags" do
+          tags = helper.css_tag("test-master.css")
+          tags.should match /style1\.css/
+          tags.should match /style2\.css/
+          tags.should match /style3\.css/
+          tags.should match /test-master\.css/
+        end
+      end
+
+    end
+
+    context "with DEBUG_ASSETS set to false" do
+      before :all do
+        DEBUG_ASSETS = false
+      end
+      describe "#js_tag" do
+        it "should return a single compiled script tag" do
+          tag = helper.js_tag("test-master.js")
+          tag.should_not match /test1|test2|test3/
+          tag.should match /test-master\.js/
+        end
+      end
+      describe "#css_tag" do
+        it "should return a single compiled style tag" do
+          tag = helper.css_tag("test-master.css")
+          tag.should_not match /style1|style2|style3/
+          tag.should match /test-master\.css/
+        end
+      end
+    end
+
+  end
 end

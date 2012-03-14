@@ -1,0 +1,42 @@
+// logged out view
+.header-button {
+  font-size: 1.4em;
+  text-align: center;
+  padding: 5px 32px 5px 28px;
+  margin-bottom: 12px;
+}
+
+#signup.header-button {
+  padding: 5px 45px 5px 15px;
+}
+
+.menu-dropdown a {
+  font-size: .8em;
+}
+
+#getting-started #signup {
+  font-size: 1.1em; 
+}
+
+@media screen and (max-width: 500px) {
+  #viewSelectMenu ul li a,
+  .heading {
+    font-size: 1.1em !important;
+  }
+
+  .phraseThatPays {
+    font-size: 1em;
+  }
+}
+
+@media screen and (max-width: 320px) {
+  .phraseThatPays {
+    font-size: 1em;
+  }
+
+  #viewSelectMenu ul li a,
+  .heading {
+    font-size: 1.1em !important;
+  }
+
+}
