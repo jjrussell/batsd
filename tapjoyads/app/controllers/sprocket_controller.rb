@@ -5,15 +5,13 @@ class SprocketController < ApplicationController
     full_filename = params[:filename].join("/")
     extension = full_filename.split(/\./).last
 
-    if Sprockets::Tj.is_cached
-      full_filename.sub! /^(.*)-.*$/, '\1'
-      full_filename = "#{full_filename}.#{extension}"
-    end
+    full_filename.sub! /^(.*)-.*$/, '\1'
+    full_filename = "#{full_filename}.#{extension}"
 
     sprocket = Sprockets::Tj.assets[full_filename]
 
-    # skip files with dependencies in debug mode; they are handled by the helpers
-    contents = Sprockets::Tj.debug ? sprocket.to_a.last.to_s : sprocket.to_s
+    # skip files with dependencies in combine mode; they are handled by sprockets
+    contents = Sprockets::Tj.combine? ? sprocket.to_s : sprocket.to_a.last.to_s
 
     content_types = {
       "js" => "application/javascript",

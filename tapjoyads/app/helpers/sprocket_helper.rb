@@ -1,23 +1,21 @@
 module SprocketHelper
   def js_tag(src, options={})
-    if Sprockets::Tj.debug
-      # extract individual files from sprockets directives
+    if Sprockets::Tj.combine?
+      content_tag :script, "", options.merge({:type => "text/javascript", :src => path_for(src, "js")})
+    else
       Sprockets::Tj.assets[src].to_a.map do |js|
         content_tag :script, "", options.merge({:type => "text/javascript", :src => path_for(js, "js")})
       end.join("\n").html_safe
-    else
-      content_tag :script, "", options.merge({:type => "text/javascript", :src => path_for(src, "js")})
     end
   end
 
   def css_tag(src, options={})
-    if Sprockets::Tj.debug
-      # extract individual files from sprockets directives
+    if Sprockets::Tj.combine?
+      content_tag :link, "", options.merge({ :rel => "stylesheet", :href => path_for(src, "css") })
+    else
       Sprockets::Tj.assets[src].to_a.map do |css|
         content_tag :link, "", options.merge({ :rel => "stylesheet", :href => path_for(css, "css") })
       end.join("\n").html_safe
-    else
-      content_tag :link, "", options.merge({ :rel => "stylesheet", :href => path_for(src, "css") })
     end
   end
 
@@ -30,10 +28,11 @@ module SprocketHelper
   def path_for(src, ext)
     src = src.logical_path if src.respond_to? :logical_path
     src = src.sub /\.(js|css)$/, ""
-    if Sprockets::Tj.is_cached
+
+    if Sprockets::Tj.precompile?
       "#{Sprockets::Tj.host}/assets/#{src}-#{Sprockets::Tj.assets[src].digest}.#{ext}"
     else
-      "#{Sprockets::Tj.host}/assets/#{src}.#{ext}"
+      "#{Sprockets::Tj.host}/assets/#{src}-#{Time.now.to_i}.#{ext}"
     end
   end
 end

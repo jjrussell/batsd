@@ -15,7 +15,21 @@ module Sprockets
 
   module Tj
     class << self
-      attr_accessor :is_cached, :debug, :host
+      def combine?
+        @combine ||= SPROCKETS_CONFIG[:combine]
+      end
+
+      def compile?
+        @compile ||= SPROCKETS_CONFIG[:compile]
+      end
+
+      def precompile?
+        Rails.configuration.action_controller.perform_caching
+      end
+
+      def host
+        @host ||= SPROCKETS_CONFIG[:host]
+      end
 
       def assets
         @asset_env || init_assets
@@ -27,18 +41,18 @@ module Sprockets
         @asset_env.append_path 'app/assets/javascripts'
         @asset_env.append_path 'app/assets/stylesheets'
 
-        if !is_cached
-          @asset_env.cache = ActiveSupport::Cache::FileStore.new(File.join(Rails.root, "tmp", "cache", "assets")).silence!
-        end
-
-        if is_cached
+        if compile?
           @asset_env.js_compressor = Uglifier.new
           @asset_env.css_compressor = Sprockets::TjCompressCss.new
+        end
 
+        if precompile?
           # build immutable index on startup
           @asset_env = @asset_env.index
           precompiled_assets = YAML::load_file(File.join(Rails.root, 'config', 'precompiled_assets.yml'))
           precompiled_assets.each { |l| @asset_env[l] }
+        else
+          @asset_env.cache = ActiveSupport::Cache::FileStore.new(File.join(Rails.root, "tmp", "cache", "assets")).silence!
         end
         @asset_env
       end

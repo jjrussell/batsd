@@ -40,9 +40,11 @@ rescue Errno::ENOENT
   local_config = {}
 end
 
-Sprockets::Tj.debug = false
-Sprockets::Tj.is_cached = true
-Sprockets::Tj.host = local_config['asset_host'] || local_config['website_url']
+SPROCKETS_CONFIG = {
+  :compile => true,
+  :combine => true,
+  :host => local_config['asset_host'] || local_config['website_url'] || 'http://localhost:3000'
+}
 
 RUN_MODE_PREFIX = 'staging_'
 API_URL = local_config['api_url'] || 'http://localhost:3000'
