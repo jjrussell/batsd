@@ -100,11 +100,11 @@ ActiveRecord::Schema.define(:version => 20120221194719) do
     t.string   "event",                                           :null => false
     t.integer  "state",                            :default => 0, :null => false
     t.string   "owner_id",   :limit => 36
+    t.text     "object",     :limit => 2147483647
+    t.text     "original",   :limit => 2147483647
     t.text     "reason"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.text     "object",     :limit => 2147483647
-    t.text     "original",   :limit => 2147483647
   end
 
   add_index "approvals", ["item_type", "item_id"], :name => "index_approvals_on_item_type_and_item_id"
