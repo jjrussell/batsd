@@ -11,7 +11,7 @@ class Client < ActiveRecord::Base
   before_destroy :remove_from_partners
 
   def remove_from_partners
-    partners.each { |p| p.update_attributes!({ :client_id, nil }) }
+    partners.each { |p| p.update_attributes!({ :client_id => nil }) }
   end
 
 end
