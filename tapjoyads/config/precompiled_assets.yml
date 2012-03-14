@@ -1,6 +1,7 @@
 # javascripts
 - 'tjm'
 - 'marketplace/logged-out'
+- 'marketplace/ajax-preload'
 
 # stylesheets
 - 'marketplace/core'
