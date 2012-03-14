@@ -45,7 +45,7 @@ Rails::Initializer.run do |config|
   config.gem 'therubyracer', :version => '0.9.10', :lib => 'v8'
 
   # These gems should be vendored
-  config.gem 'acts-as-approvable', :version => '0.6.7'
+  config.gem 'acts-as-approvable', :version => '0.6.8.1'
   config.gem 'airbrake', :version => '3.0.5'
   config.gem 'after_commit', :version => '1.0.10'
   config.gem 'authlogic', :version => '2.1.3'
