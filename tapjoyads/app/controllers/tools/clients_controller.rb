@@ -55,7 +55,7 @@ class Tools::ClientsController < WebsiteController
 
   def remove_partner
     partner = Partner.find(params[:partner_id])
-    partner.update_attributes({ :client_id => nil })
+    partner.update_attributes!({ :client_id => nil })
     redirect_to :back
   end
 

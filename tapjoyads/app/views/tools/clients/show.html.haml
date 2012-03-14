@@ -12,10 +12,10 @@
       %tbody
         %tr
           %td.right= label_tag(:partner_id, 'Partner ID')
-          %td= text_field_tag(:partner_id, '', :size => 60)
+          %td= text_field_tag(:partner_id, '', :size => 60, :readonly => true)
         %tr
           %td.right= label_tag(:partner_name)
-          %td= text_field_tag(:partner_name, '', :size => 60)
+          %td= text_field_tag(:partner_name, '', :size => 60, :readonly => true)
     .left= submit_tag('Add')
   .left= button_to('Cancel', '#', :id => 'reset_partner_search')
   .clear
