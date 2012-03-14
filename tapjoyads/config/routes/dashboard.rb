@@ -97,7 +97,7 @@ ActionController::Routing::Routes.draw do |map|
       user.resources :role_assignments, :only => [ :create, :destroy ], :controller => 'users/role_assignments'
       user.resources :partner_assignments, :only => [ :create, :destroy ], :controller => 'users/partner_assignments'
     end
-    tools.resources :employees, :only => [ :index, :new, :create, :edit, :update ], :member => [ :delete_photo ]
+    tools.resources :employees, :only => [ :index, :new, :create, :edit, :update ], :member => [ :delete_photo, :wfhs ]
     tools.resources :offer_lists, :only => [ :index ]
     tools.resources :rank_boosts, :except => [ :show, :destroy ], :member => { :deactivate => :post }
     tools.resources :external_publishers, :only => [ :index, :update ]
@@ -118,6 +118,7 @@ ActionController::Routing::Routes.draw do |map|
     tools.resources :payout_freezes, :only => [ :index, :create ], :member => { :disable => :post }
     tools.resources :brand_offers, :only => [ :create ], :collection => { :delete => :post }
     tools.resources :brands, :only => [ :index, :new, :create, :edit, :update, :show ]
+    tools.resources :wfhs, :only => [ :index, :new, :create, :edit, :update, :destroy ]
   end
 
   map.connect 'mail_chimp_callback/callback', :controller => :mail_chimp_callback, :action => :callback
