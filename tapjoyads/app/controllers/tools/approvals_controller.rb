@@ -63,7 +63,7 @@ class Tools::ApprovalsController < WebsiteController
       json[:success] = yield
     rescue ActsAsApprovable::Error => e
       json[:message] = e.message
-    rescue => e
+    rescue
       json[:message] = 'An unknown error occured'
     end
 
