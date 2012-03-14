@@ -31,6 +31,7 @@
   - property_row('Enabled', @offer.is_enabled?, nil, @offer.is_enabled?.to_s)
   - property_row('Tapjoy Enabled', @offer.tapjoy_enabled?, nil, @offer.tapjoy_enabled?.to_s)
   - property_row('User Enabled', @offer.user_enabled?, nil, @offer.user_enabled?.to_s)
+  - property_row('SDK-less Enabled', @offer.sdkless?, nil, @offer.sdkless?.to_s)
   - property_row('Tracking Offer', @offer.tracking_for.present?, false, @offer.tracking_for.present?.to_s)
   - property_row('Bid', number_to_currency(@offer.bid / 100.0))
   - property_row('Payment', number_to_currency(@offer.payment / 100.0))
@@ -57,8 +58,9 @@
   - property_row('Show rate', "%.1f%" % ((@offer.show_rate || 0) * 100.0), "100.0%", @offer.show_rate < 0.001 ? 'warning' : '')
   - property_row('Min CVR', @offer.min_conversion_rate, nil)
   - property_row('Countries', @offer.countries, '')
-  - property_row('DMA Codes', @offer.dma_codes, '')
   - property_row('Regions', @offer.regions, '')
+  - property_row('DMA Codes', @offer.dma_codes, '')
+  - property_row('Cities', @offer.cities, '')
   - property_row('Carriers', @offer.carriers, '')
   - if @srr_ratio
     - property_row("Offer Health", "#{@srr_ratio}")
@@ -145,7 +147,12 @@
           - property_row('Max age rating', c.max_age_rating)
           - property_row('Disabled offers', c.disabled_offers)
           - property_row('Disabled partners', c.disabled_partners)
-          - property_row('Test devices', c.test_devices)
+          %tr
+            %td Test devices
+            %td
+              %ul
+                - c.get_test_device_ids.each do |device_id|
+                  %li= link_to(device_id, device_info_tools_path(:udid => device_id))
           - property_row('id', c.id + ' - ' + clippy(c.id))
 
 .load-circle= image_tag('load-circle.gif')

@@ -4,7 +4,7 @@ ActionController::Routing::Routes.draw do |map|
   map.connect 'site/privacy.html', :controller => 'documents', :action => 'privacy'
   map.connect 'site/privacy_mobile', :controller => 'documents', :action => 'privacy_mobile'
   map.connect 'site/:action', :controller => 'homepage'
-  map.connect 'index.html', :controller => 'homepage', :action => 'index'
+  map.connect 'index.html', :controller => 'homepage', :action => 'index_redirect'
   map.connect 'site/advertisers/whitepaper', :controller => 'homepage', :action => 'whitepaper'
   map.connect 'press', :controller => 'homepage/press', :action => 'index'
   map.connect 'press/:id', :controller => 'homepage/press', :action => 'show'

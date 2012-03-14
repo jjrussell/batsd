@@ -42,6 +42,11 @@
     = f.text_field :billing_email
     = error_message_on(@partner, :billing_email) if @partner.errors.on :billing_email
   .field
+    = f.label :discount_all_offer_types
+    #help_discount_all_offer_types.help ?
+    = f.check_box :discount_all_offer_types
+    = error_message_on(@partner, :discount_all_offer_types) if @partner.errors.on :discount_all_offer_types
+  .field
     = f.label :accepted_negotiated_tos, 'Accepted Negotiated Rev Share ToS'
     #help_accepted_negotiated_tos.help ?
     = f.check_box :accepted_negotiated_tos
@@ -99,6 +104,8 @@
     Offers belonging to partners that are in this list will not be shown in this partner's offerwalls.
   #help_billing_email_content{:name => 'Billing email'}
     The email contact used for invoicing.
+  #help_discount_all_offer_types_content{:name => 'Discount all offer types'}
+    If checked, any discounts for this partner will be applied to offers of all types, instead of just App and Pay-Per-Action types.
   #help_accepted_negotiated_tos_content{:name => 'Accepted Negotiated ToS'}
     Checked if the partner has accepted the ToS for having a negotiated rev share.
   #help_negotiated_rev_share_ends_on_content{:name => 'Negotiated Rev Share End Date'}

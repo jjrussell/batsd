@@ -2,13 +2,26 @@ class GamesController < ApplicationController
   include Facebooker2::Rails::Controller
   include SslRequirement
 
-  layout 'games'
+  layout :select_layout
 
   skip_before_filter :fix_params
+  before_filter :setup_tjm_request
+  after_filter :save_tjm_request
 
-  helper_method :current_gamer, :current_device_id, :current_device_id_cookie, :current_device_info, :current_recommendations, :has_multiple_devices, :show_login_page, :device_type, :geoip_data, :os_version, :social_feature_redirect_path
+  helper_method :current_gamer, :set_gamer, :current_device_id, :current_device_id_cookie, :current_device, :current_recommendations, :has_multiple_devices, :show_login_page, :device_type, :geoip_data, :os_version, :social_feature_redirect_path, :get_friends_info
 
   protected
+
+  def get_friends_info(ids)
+    Gamer.find_all_by_id(ids).map do |friend|
+      {
+        :id        => friend.id,
+        :name      => friend.get_gamer_name,
+        :nickname  => friend.get_gamer_nickname,
+        :image_url => friend.get_avatar_url
+      }
+    end
+  end
 
   def ssl_required?
     Rails.env.production?
@@ -28,17 +41,22 @@ class GamesController < ApplicationController
 
   def http_accept_language
     # example env[HTTP_ACCEPT_LANGUAGE] string: en,en-US;q=0.8,es;q=0.6,zh;q=0.4
+    splits = []
     language_list = request.env['HTTP_ACCEPT_LANGUAGE'].split(/\s*,\s*/).map do |pair|
       language, quality = pair.split(/;q=/)
       raise "Not correctly formatted" unless language =~ /^[a-z\-]+$/i
       language = language.downcase.gsub(/-[a-z]+$/i) { |i| i.upcase }
       quality = 1.0 unless quality.to_s =~ /\d+(\.\d+)?$/
-      [ - quality.to_f, language ]
+      result = [ - quality.to_f, language ]
+      splits << [ - (quality.to_f - 0.1), language.split(/-/).first ] if language =~ /-/
+      result
     end
+    language_list.concat splits
     language_list.sort.map(&:last)
   rescue # default if header is malformed
     []
   end
+
   def set_current_device(data)
     device_data = ObjectEncryptor.decrypt(data)
     if valid_device_id(device_data[:udid])
@@ -52,7 +70,7 @@ class GamesController < ApplicationController
       begin
         current_gamer.gamer_profile.update_facebook_info!(current_facebook_user)
       rescue
-        flash[:error] = @error_msg || 'Failed connecting to Facebook profile'
+        flash[:error] = @error_msg || t('text.games.facebook_connect_failed')
         redirect_to social_feature_redirect_path
       end
       unless has_permissions?
@@ -64,7 +82,7 @@ class GamesController < ApplicationController
         dissociate_and_redirect
       end
     else
-      flash[:error] = @error_msg ||'Please connect Facebook with Tapjoy.'
+      flash[:error] = @error_msg || t('text.games.please_connect_facebook')
       redirect_to social_feature_redirect_path
     end
   end
@@ -72,7 +90,7 @@ class GamesController < ApplicationController
   def has_permissions?
     begin
       unless current_facebook_user.has_permission?(:offline_access) && current_facebook_user.has_permission?(:publish_stream)
-        @error_msg = "Please grant us both permissions before sending out an invite."
+        @error_msg = t('grant_permissions_for_invite')
       end
     rescue
     end
@@ -145,7 +163,7 @@ class GamesController < ApplicationController
 
   def social_feature_redirect_path
     return request.env['HTTP_REFERER'] if request.env['HTTP_REFERER']
-    "#{WEBSITE_URL}#{edit_games_gamer_path}"
+    "#{WEBSITE_URL}#{games_social_index_path}"
   end
 
   def current_gamer
@@ -155,12 +173,13 @@ class GamesController < ApplicationController
   def current_device_id
     if session[:current_device_id]
       @current_device_id = ObjectEncryptor.decrypt(session[:current_device_id])
-    else
+    end
+    if @current_device_id.nil?
       device_id_cookie = current_device_id_cookie
       @current_device_id = device_id_cookie if device_id_cookie.present? && valid_device_id(device_id_cookie)
-      @current_device_id ||= current_gamer.devices.first.device_id if current_gamer.devices.present?
+      @current_device_id ||= current_gamer.devices.first.device_id if current_gamer && current_gamer.devices.present?
+      session[:current_device_id] = ObjectEncryptor.encrypt(@current_device_id) if @current_device_id.present?
     end
-    session[:current_device_id] ||= ObjectEncryptor.encrypt(@current_device_id)
     @current_device_id
   end
 
@@ -175,12 +194,25 @@ class GamesController < ApplicationController
     end
   end
 
-  def current_device_info
-    current_gamer.devices.find_by_device_id(current_device_id) if current_gamer
+  def current_device
+    return @current_device if @current_device
+    if current_gamer && current_device_id
+      @current_device = current_gamer.devices.find_by_device_id(current_device_id)
+    end
   end
 
   def current_recommendations
-    @recommendations ||= Device.new(:key => current_device_id).recommendations(:device_type => device_type, :geoip_data => geoip_data, :os_version => os_version)
+    @recommendations ||= get_recommendations
+  end
+
+  def get_recommendations
+    options = {
+      :device_type => device_type,
+      :geoip_data  => geoip_data,
+      :os_version  => os_version,
+    }
+    device = Device.new(:key => current_device_id)
+    device.recommendations(options)
   end
 
   def has_multiple_devices?
@@ -194,4 +226,46 @@ class GamesController < ApplicationController
   def os_version
     @os_version ||= HeaderParser.os_version(request.user_agent)
   end
+
+  def select_layout
+    if params[:ajax].present?
+      nil
+    else
+      'marketplace'
+    end
+  end
+
+  def setup_tjm_request
+    now = Time.zone.now
+    if tjm_session_expired?(now)
+      session[:tjms_stime] = now.to_i
+      session[:tjms_id]    = UUIDTools::UUID.random_create.hexdigest
+    end
+
+    tjm_request_options = {
+      :time       => now,
+      :session    => session,
+      :request    => request,
+      :ip_address => ip_address,
+      :geoip_data => geoip_data,
+      :params     => params,
+      :gamer      => current_gamer,
+      :device_id  => current_device_id,
+    }
+    @tjm_request = TjmRequest.new(tjm_request_options)
+
+    session[:tjms_ltime] = now
+  end
+
+  def save_tjm_request
+    @tjm_request.save if @tjm_request.present?
+  end
+
+  def tjm_session_expired?(now = Time.zone.now)
+    session[:tjms_id].blank?    ||
+    session[:tjms_stime].blank? ||
+    session[:tjms_ltime].blank? ||
+    Time.zone.at(session[:tjms_ltime].to_i) < now - TJM_SESSION_TIMEOUT
+  end
+
 end

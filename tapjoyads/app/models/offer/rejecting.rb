@@ -49,7 +49,8 @@ module Offer::Rejecting
     tapjoy_games_retargeting_reject?(device) ||
     source_reject?(source) ||
     non_rewarded_offerwall_rewarded_reject?(currency) ||
-    carriers_reject?(mobile_carrier_code)
+    carriers_reject?(mobile_carrier_code) ||
+    sdkless_reject?(library_version)
   end
 
   def precache_reject?(platform_name, hide_rewarded_app_installs, normalized_device_type)
@@ -76,6 +77,7 @@ module Offer::Rejecting
     return true if countries_blacklist.include?(geoip_data[:primary_country])
     return true if get_regions.present? && !get_regions.include?(geoip_data[:region])
     return true if get_dma_codes.present? && !get_dma_codes.include?(geoip_data[:dma_code])
+    return true if get_cities.present? && !get_cities.include?(geoip_data[:city])
     false
   end
 
@@ -233,6 +235,10 @@ module Offer::Rejecting
 
   def carriers_reject?(mobile_carrier_code)
     get_carriers.present? && !get_carriers.include?(Carriers::MCC_MNC_TO_CARRIER_NAME[mobile_carrier_code])
+  end
+
+  def sdkless_reject?(library_version)
+    sdkless? && !library_version.to_s.version_greater_than_or_equal_to?(SDKLESS_MIN_LIBRARY_VERSION)
   end
 
 end

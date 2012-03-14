@@ -60,7 +60,7 @@ class Click < SimpledbShardedResource
   end
 
   def publisher_user_udids
-    PublisherUser.new(:key => "#{publisher_app_id}.#{publisher_user_id}").udids
+    PublisherUser.for_click(self).udids
   end
 
   def tapjoy_games_invitation_primary_click?
@@ -92,7 +92,7 @@ class Click < SimpledbShardedResource
   private
 
   def url_to_resolve
-    if type == 'generic'
+    if type == 'generic' || type == 'survey'
       "#{API_URL}/offer_completed?click_key=#{key}"
     else
       "#{API_URL}/connect?app_id=#{advertiser_app_id}&udid=#{udid}&consistent=true"

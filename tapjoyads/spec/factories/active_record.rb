@@ -39,7 +39,14 @@ FactoryGirl.define do
     end
   end
 
-  factory :partner_user, :parent => :user
+  factory :partner_user, :parent => :user do
+    association :current_partner, :factory => :partner
+    factory :premier_partner_user, :parent => :user do
+      after_build do |user|
+        OfferDiscount.create! :partner => user.current_partner, :source => 'Exclusivity', :amount => 1, :expires_on => Time.now + 8 * 60 * 60 * 24
+      end
+    end
+  end
 
   factory :role_mgr_user, :parent => :user do
     after_build do |mgr|
@@ -315,5 +322,11 @@ FactoryGirl.define do
     weight        1
     offer         { Factory(:app).primary_offer }
     author        { Factory(:employee) }
+    button_url    'https://www.tapjoy.com'
   end
+
+  factory :client do
+    name  { Factory.next(:name) }
+  end
+
 end

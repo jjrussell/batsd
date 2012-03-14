@@ -1,4 +1,4 @@
-class WebRequest
+class WebRequest < SyslogMessage
 
   PATH_TO_STAT_MAP = {
     'connect'                  => [ { :stat => 'logins',                    :attr => :app_id } ],
@@ -37,54 +37,6 @@ class WebRequest
     'featured_offers_opened'    => { :paths => [ 'featured_offer_click' ],                :attr_name => 'publisher_app_id', :use_like => false },
     'paid_clicks'               => { :paths => [ 'offer_click', 'featured_offer_click' ], :attr_name => 'offer_id',         :use_like => false },
   }
-  CGI_ESCAPED_PREFIX = '^^TAPJOY_ESCAPED^^'
-
-  attr_reader :id, :attributes
-
-  def self.define_attr(name, options = {})
-    type        = options.delete(:type)        { :string }
-    cgi_escape  = options.delete(:cgi_escape)  { false }
-    force_array = options.delete(:force_array) { false }
-    replace     = options.delete(:replace)     { true }
-    raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
-
-    module_eval %Q{
-      def #{name}
-        if @attributes[#{name.inspect}].nil?
-          #{force_array} ? [] : nil
-        else
-          values = @attributes[#{name.inspect}].map do |value|
-            value = CGI::unescape(value.gsub('#{CGI_ESCAPED_PREFIX}', '')) if value.starts_with?('#{CGI_ESCAPED_PREFIX}')
-            TypeConverters::TYPES[#{type.inspect}].from_string(value)
-          end
-          values.size == 1 && !#{force_array} ? values.first : values
-        end
-      end
-    }
-
-    module_eval %Q{
-      def #{name}=(value)
-        return if value.nil?
-        value = TypeConverters::TYPES[#{type.inspect}].to_string(value)
-        if value.present?
-          value.gsub!(/\n|\r|\t/, '')
-          value = "#{CGI_ESCAPED_PREFIX}\#{CGI::escape(value)}" if #{cgi_escape}
-          if #{replace}
-            @attributes[#{name.inspect}] = [ value ]
-          else
-            @attributes[#{name.inspect}] ||= []
-            @attributes[#{name.inspect}] << value
-          end
-        end
-      end
-    }
-
-    module_eval %Q{
-      def #{name}?
-        @attributes[#{name.inspect}].present?
-      end
-    }
-  end
 
   self.define_attr :udid
   self.define_attr :mac_address
@@ -99,7 +51,6 @@ class WebRequest
   self.define_attr :campaign_id
   self.define_attr :publisher_user_id
   self.define_attr :virtual_good_id
-  self.define_attr :ip_address
   self.define_attr :device_type
   self.define_attr :device_name, :cgi_escape => true
   self.define_attr :library_version
@@ -108,15 +59,11 @@ class WebRequest
   self.define_attr :type
   self.define_attr :status_items
   self.define_attr :device_ip
-  self.define_attr :user_agent, :cgi_escape => true
-  self.define_attr :time, :type => :time
   self.define_attr :viewed_at, :type => :time
-  self.define_attr :path, :force_array => true, :replace => false
   self.define_attr :source
   self.define_attr :exp
   self.define_attr :country
   self.define_attr :country_code
-  self.define_attr :geoip_country
   self.define_attr :sdk_type
   self.define_attr :plugin
   self.define_attr :language
@@ -141,8 +88,8 @@ class WebRequest
   self.define_attr :offerwall_rank_score, :type => :float
   self.define_attr :offerwall_start_index, :type => :int
   self.define_attr :offerwall_max_items, :type => :int
-  self.define_attr :sdk_type
-  self.define_attr :package_names
+  self.define_attr :survey_question_id
+  self.define_attr :survey_answer
 
   def self.count(conditions = nil)
     VerticaCluster.count('production.web_requests', conditions)
@@ -150,13 +97,6 @@ class WebRequest
 
   def self.select(options = {})
     VerticaCluster.query('production.web_requests', options)
-  end
-
-  def initialize(options = {})
-    @attributes = {}
-    @id         = options.delete(:id)   || UUIDTools::UUID.random_create.to_s
-    self.time   = options.delete(:time) || Time.zone.now
-    raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
   end
 
   def put_values(path, params, ip_address, geoip_data, user_agent)
@@ -197,8 +137,6 @@ class WebRequest
     self.mobile_network_code  = params[:mobile_network_code]
     self.country_code         = params[:country_code]
     self.country              = geoip_data[:primary_country]
-    self.sdk_type             = params[:sdk_type]
-    self.package_names        = params[:package_names]
     self.geoip_country        = geoip_data[:country]
     self.sdk_type             = params[:sdk_type]
     self.plugin               = params[:plugin]
@@ -210,17 +148,12 @@ class WebRequest
   end
 
   def save
-    @attributes['updated-at'] = [ Time.zone.now.to_f.to_s ]
+    super
     begin
-      WEB_REQUEST_LOGGER << to_json
       update_realtime_stats
     rescue Exception => e
       Notifier.alert_new_relic(e.class, e.message)
     end
-  end
-
-  def to_json
-    { :key => @id, :attrs => @attributes }.to_json
   end
 
   private

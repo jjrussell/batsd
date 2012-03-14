@@ -66,7 +66,6 @@ ActionController::Routing::Routes.draw do |map|
     m.search_users 'search/users', :action => 'users'
     m.search_partners 'search/partners', :action => 'partners'
   end
-  map.resource :premier, :controller => :premier, :only => [ :update ]
   map.premier 'premier', :controller => :premier, :action => :edit
   map.resources :survey_results, :only => [ :new, :create ]
 
@@ -77,9 +76,10 @@ ActionController::Routing::Routes.draw do |map|
                      :sdb_metadata => :get, :reset_device => :get, :send_currency_failures => :get, :sanitize_users => :get,
                      :resolve_clicks => :post, :sqs_lengths => :get, :elb_status => :get, :ses_status => :get,
                      :publishers_without_payout_info => :get, :publisher_payout_info_changes => :get, :device_info => :get,
-                     :freemium_android => :get, :award_currencies => :post, :update_award_currencies => :post,
+                     :award_currencies => :post, :update_award_currencies => :post,
                      :update_user_roles => :post, :update_device => :post }
   map.namespace :tools do |tools|
+    tools.resources :approvals, :only => [:index], :collection => [:history, :mine], :member => [:approve, :reject, :assign]
     tools.resources :premier_partners, :only => [ :index ]
     tools.resources :generic_offers, :only => [ :index, :new, :create, :edit, :update ]
     tools.resources :orders, :only => [ :new, :create ],
@@ -98,7 +98,7 @@ ActionController::Routing::Routes.draw do |map|
       user.resources :role_assignments, :only => [ :create, :destroy ], :controller => 'users/role_assignments'
       user.resources :partner_assignments, :only => [ :create, :destroy ], :controller => 'users/partner_assignments'
     end
-    tools.resources :employees, :only => [ :index, :new, :create, :edit, :update ], :member => [ :delete_photo ]
+    tools.resources :employees, :only => [ :index, :new, :create, :edit, :update ], :member => [ :delete_photo, :wfhs ]
     tools.resources :offer_lists, :only => [ :index ]
     tools.resources :rank_boosts, :except => [ :show, :destroy ], :member => { :deactivate => :post }
     tools.resources :external_publishers, :only => [ :index, :update ]
@@ -110,13 +110,15 @@ ActionController::Routing::Routes.draw do |map|
     tools.resources :agency_users, :only => [ :index, :show ]
     tools.resources :support_requests, :only => [ :index ], :collection => { :mass_resolve => [ :get, :post ] }
     tools.resources :press_releases, :only => [ :index, :new, :create, :edit, :update ]
-    tools.resources :recommenders, :only => [:index, :create]
+    tools.resources :recommenders, :only => [ :index, :create ]
     tools.resources :gamers, :only => [ :index, :show ]
     tools.resources :gamer_devices, :only => [ :create, :edit, :new, :show, :update ]
     tools.resources :network_costs, :only => [ :index, :new, :create ]
     tools.resources :partner_program_statz, :only => [ :index ], :collection => { :export => :get }
-    tools.resources :survey_offers, :except => [ :show ]
+    tools.resources :survey_offers, :except => [ :show ], :member => { :toggle_enabled => :put }
     tools.resources :payout_freezes, :only => [ :index, :create ], :member => { :disable => :post }
+    tools.resources :wfhs, :only => [ :index, :new, :create, :edit, :update, :destroy ]
+    tools.resources :clients, :only => [ :index, :show, :new, :create, :edit, :update], :member => { :add_partner => :post, :remove_partner => :post }
   end
 
   map.connect 'mail_chimp_callback/callback', :controller => :mail_chimp_callback, :action => :callback

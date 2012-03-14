@@ -40,11 +40,10 @@ namespace :admin do
     system("rm -f #{dump_file2}")
   end
 
-  desc "Reconfigure syslog-ng"
-  task :reconfigure_syslog_ng, :config_args, :servers do |task, args|
+  desc "Force chef client run"
+  task :run_chef_client, :servers do |task, args|
     servers = args[:servers] || 'masterjobs jobserver website dashboard webserver'
-    config_args = args[:config_args] || ''
-    system("script/cloudrun '#{servers}' 'rvmsudo /home/webuser/tapjoyserver/server/syslog-ng/configure.rb #{config_args}' 'ubuntu'")
+    system("script/cloudrun '#{servers}' 'rvmsudo /usr/local/rvm/gems/ruby-1.8.7-p358/bin/chef-client' 'ubuntu'")
   end
 
   desc "Update geoip databse"
