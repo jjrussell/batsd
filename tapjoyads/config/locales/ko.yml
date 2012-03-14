@@ -15,7 +15,7 @@ ko:
         greater_than: ~
         greater_than_or_equal_to: ~
         inclusion: ~
-        invalid: 는 사용할 수 없습니다
+        invalid: 는 사용할수 없습니다
         less_than: ~
         less_than_or_equal_to: ~
         not_a_number: ~
@@ -97,7 +97,7 @@ ko:
       greater_than: ~
       greater_than_or_equal_to: ~
       inclusion: ~
-      invalid: 는 사용할 수 없습니다
+      invalid: 는 사용할수 없습니다
       less_than: ~
       less_than_or_equal_to: ~
       not_a_number: ~

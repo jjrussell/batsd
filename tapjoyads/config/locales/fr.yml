@@ -198,7 +198,7 @@ fr:
       allow_marketing_emails: "Permettre à Tapjoy de m'envoyer des emails promotionnels "
       almost_done: C'est presque terminé!
       already_registered:
-        one: "%{name} s'est déjà enregistré, tu le/la suis désormais\" other"
+        one: "%{name} s'est déjà enregistré, tu le/la suis désormais\"
         other: "%{name} sont deja inscrits, tu es désormais abonné à leur fil d'actualité"
       amount_and_currency: ~
       back_to_top: Retour

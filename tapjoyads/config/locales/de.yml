@@ -359,7 +359,8 @@ de:
       tos_acknowledge_html: "Wenn dieses Feld markiert ist, behaupte ich dass ich zu dem %{terms_of_use} & %{privacy_policy} zu stimme"
       tos_change_acknowledge: "Wenn dieses Feld markiert ist, behaupte ich dass ich zu dem Nutzungsbedingungen zu stimme"
       unable_to_process: "Leider könnten wir Ihre Anfrage nicht verarbeiten"
-      unlock_mobile_joy: "Entsperren Sie Ihre Handy Freude!"unmark_as_favorite: ~
+      unlock_mobile_joy: "Entsperren Sie Ihre Handy Freude!"
+      unmark_as_favorite: ~
       welcome_tapjoy: ~
       wifi_required: "Wifi nötig"
       wrong_device: "Falsches Gerät?"

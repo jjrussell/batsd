@@ -232,7 +232,7 @@ es:
       earn: "Gana %{currency}"
       earn_rewards: Conseguir recompensas
       earn_title: "Bájate una de las aplicaciones abajo o visualiza uno de los anuncios para ganar %{currency} en %{app_name}"
-      earning_rewards: ¿Quieres conseguir moneda virtual gratuita para tus apps? Tapjoy es el mejor sitio para ello!
+      earning_rewards: ¡¿Quieres conseguir moneda virtual gratuita para tus apps? Tapjoy es el mejor sitio para ello!
       edit: editar
       email_device_link: ~
       email_notification: "Notificaciones por Email"
@@ -290,7 +290,7 @@ es:
       join_the_community_blurb: ¡Únete a la comunidad Tapjoy y descubre nuevas apps recomendadas. Regístrate ahora!
       last_played: "Recién abierto: %{game}"
       link_account_header: ¿Quieres descubrir las mejores aplicaciones y conseguir contenidos extras para las aplicaciones que ya tienes? ¡Conecta tu móvil a Tapjoy.com!
-      link_account_messaging: Tapjoy te permite descubrir las mejores aplicaciones para iOS y Android, y conseguir contenidos extras para las aplicaciones que ya tienes. Necesitarás conectar tu telefono o tableta iOS o Android a Tapjoy.com. ¡Vuelve a %{tjm_url} desde tu iphone o ipad, o a %{android_market_url} desde tu telefono o tableta Android! No te olvides de crear un perfil y de indicarnos cuáles son tus preferencias, para que podamos sugerirte nuevas aplicaciones.
+      link_account_messaging: Tapjoy te permite descubrir las mejores aplicaciones para iOS y Android, y conseguir contenidos extras para las aplicaciones que ya tienes. Necesitarás conectar tu telefono o tableta iOS o Android a Tapjoy.com. ¡Vuelve a %{tjm_url} desde tu iPhone o iPad, o a %{android_market_url} desde tu telefono o tableta Android! No te olvides de crear un perfil y de indicarnos cuáles son tus preferencias, para que podamos sugerirte nuevas aplicaciones.
       link_account_messaging_android_href: ~
       link_account_messaging_tjm_href: ~
       link_my_facebook: "Conectar con mi cuenta de Facebook"

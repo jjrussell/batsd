@@ -198,10 +198,8 @@ sv:
       allow_marketing_emails: "Tillåt att Tapjoy sänder mig erbjudanden"
       almost_done: Nästan klar!
       already_registered:
-        one: ~
-        ? "one:\"%{name} har redan registrerat sig, du följer nu han/henne.\" other"
-        : "%{name} har redan registrerat sig, di följer nu dem."
-        other: ~
+        one: "%{name} har redan registrerat sig, du följer nu han/henne."
+        other: "%{name} har redan registrerat sig, di följer nu dem."
       amount_and_currency: "%{amount} %{currency}"
       back_to_top: "Tillbaks till överst på sidan"
       birthdate: Födelsedatum

@@ -316,7 +316,7 @@ zh:
       oops: 哦！
       or_learn_more: ~
       other_options: 其他選項
-      our_tos_changed: "我們的％{terms_of_use}已經修訂。請查閱後接受。"
+      our_tos_changed: "我們的%{terms_of_use}已經修訂。請查閱後接受。"
       password_changed: 你的密碼已經變更了
       password_non_match: ~
       post_to_facebook: ~
