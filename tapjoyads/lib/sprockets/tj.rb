@@ -37,9 +37,8 @@ module Sprockets
 
           # build immutable index on startup
           @asset_env = @asset_env.index
-          @asset_env.each_logical_path do |l|
-            @asset_env[l].digest
-          end
+          precompiled_assets = YAML::load_file(File.join(Rails.root, 'config', 'precompiled_assets.yml'))
+          precompiled_assets.each { |l| @asset_env[l] }
         end
         @asset_env
       end
