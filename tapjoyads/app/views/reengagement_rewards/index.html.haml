@@ -10,11 +10,13 @@
       %ul.days.clearfix
         - @reengagement_offers.each do |r|
           - if r.day_number > 0
+            - currency_name = r.currency.name
+            - currency_name = currency_name.chop if r.reward_value == 1 && currency_name.last == 's'
             - if @reengagement_offer.day_number > r.day_number
               %li.box.past
                 .credits.past
                   %h4
-                    = "+ #{r.reward_value}"
+                    = "#{r.reward_value} #{currency_name}"
                 .day.past
                 .date.past
                   %h4
@@ -23,7 +25,7 @@
               %li.box.current
                 .credits.current
                   %h4
-                    = "+ #{r.reward_value}"
+                    = "#{r.reward_value} #{currency_name}"
                 .day.current
                 .date.current
                   %h4
@@ -32,7 +34,7 @@
               %li.box
                 .credits
                   %h4
-                    = "+ #{r.reward_value}"
+                    = "#{r.reward_value} #{currency_name}"
                 .day
                 .date
                   %h4
