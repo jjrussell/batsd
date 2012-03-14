@@ -24,9 +24,7 @@ if CACHE_ASSETS
 
   # build immutable index on startup
   ass = ass.index
-  ass.each_logical_path do |l|
-    STDOUT.flush
-    ass[l]
-  end
+  precompiled_assets = YAML::load_file(File.join(Rails.root, 'config', 'precompiled_assets.yml'))
+  precompiled_assets.each { |l| ass[l] }
 end
 ASSETS = ass
