@@ -137,17 +137,17 @@
               var friend = friends[i];
 
               text.push('<li class="friend clearfix list-button soft-gray-gradient" id="', friend.social_id, '">');
-              text.push('<div class="left list-squircle"><img src="', friend.image_url, '" width="50" height="50"/></div>');
+              text.push('<div class="left list-squircle"><img src="', friend.image_url, '"/></div>');
               text.push('<div class="left bold mt20 ml10">', friend.name, '</div>');
               if ($.inArray(friend.social_id.toString(), selectedFriends) != -1) {
-                text.push('<div class="item-check plussign right mt20 mr10">&nbsp;</div>');
+                text.push('<div class="right mt10 mr10 item-check checkmark">&nbsp;</div>');
               }
               else if (friend.sent == true) {
-                text.push('<div class="item-check plussign right mt20 mr10 hidden">&nbsp;</div>');
-                text.push('<div class="item-sent right mt20 mr10">', _t('shared.sent'), '</div>');
+                text.push('<div class="right mt10 mr10 item-check checkmark hidden">&nbsp;</div>');
+                text.push('<div class="right mt20 mr10 item-sent">', _t('shared.sent'), '</div>');
               }
               else {
-                text.push('<div class="item-check plussign right mt20 mr10 hidden">&nbsp;</div>');
+                text.push('<div class="right mt10 mr10 item-check checkmark hidden">&nbsp;</div>');
               }
               text.push('</li>');
             }
