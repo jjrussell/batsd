@@ -42,6 +42,7 @@ Rails::Initializer.run do |config|
   config.gem 'sqlite3', :version => '1.3.3'
   config.gem 'typhoeus', :version => '0.2.4'
   config.gem 'aws-sdk', :version => '1.1.4'
+  config.gem 'therubyracer', :version => '0.9.10', :lib => 'v8'
 
   # These gems should be vendored
   config.gem 'acts-as-approvable', :version => '0.6.7'
@@ -55,6 +56,7 @@ Rails::Initializer.run do |config|
   config.gem 'geoip', :version => '1.1.1'
   config.gem 'haml', :version => '3.1.3'
   config.gem 'hominid', :version => '3.0.2'
+  config.gem 'htmlentities', :version => '4.3.1'
   config.gem 'mogli', :version => '0.0.33'
   config.gem 'newrelic_rpm', :version => '3.3.0'
   config.gem 'plist', :version => '3.1.0'
@@ -76,6 +78,11 @@ Rails::Initializer.run do |config|
   config.gem 'simple_oauth', :version => '0.1.5'
   config.gem 'twitter', :version => '1.7.2'
   config.gem 'oauth', :version => '0.4.5'
+  config.gem 'hike', :version => '1.2.1'
+  config.gem 'sprockets', :version => '2.3.1'
+  config.gem 'execjs', :version => '1.3.0'
+  config.gem 'uglifier', :version => '1.2.3'
+  config.gem 'tilt', :version => '1.3.3'
 
   # Only load the plugins named here, in the order given. By default, all plugins
   # in vendor/plugins are loaded in alphabetical order.

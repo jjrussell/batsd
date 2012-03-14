@@ -24,7 +24,7 @@ describe GetOffersController do
       offers = [ @offer, @offer2, @offer3, @offer4 ]
       OfferCacher.stubs(:get_unsorted_offers_prerejected).returns(offers)
       RailsCache.stubs(:get).returns(nil)
-      controller.stubs(:get_ip_address).returns('208.90.212.38')
+      controller.stubs(:ip_address).returns('208.90.212.38')
       @params = {
         :udid => 'stuff',
         :publisher_user_id => 'more_stuff',
@@ -52,13 +52,13 @@ describe GetOffersController do
     it 'returns offers targeted to country' do
       get(:index, @params)
       assigns(:offer_list).should == [@offer, @offer3]
-      controller.stubs(:get_geoip_data).returns({ :primary_country => 'GB' })
+      controller.stubs(:geoip_data).returns({ :primary_country => 'GB' })
       get(:index, @params)
       assigns(:offer_list).should == [@offer, @offer2]
     end
 
     it 'ignores country_code if IP is in China' do
-      controller.stubs(:get_ip_address).returns('60.0.0.1')
+      controller.stubs(:ip_address).returns('60.0.0.1')
       get(:index, @params)
       assigns(:offer_list).should == [@offer, @offer4]
       get(:index, @params.merge(:country_code => 'GB'))
@@ -135,7 +135,7 @@ describe GetOffersController do
       @currency = Factory(:currency, :test_devices => @device.id)
       @currency.update_attribute(:hide_rewarded_app_installs, false)
       @offer = Factory(:app).primary_offer
-      controller.stubs(:get_ip_address).returns('208.90.212.38')
+      controller.stubs(:ip_address).returns('208.90.212.38')
       OfferCacher.stubs(:get_unsorted_offers_prerejected).returns([@offer])
       @params = {
         :udid => 'stuff',
@@ -227,9 +227,9 @@ describe GetOffersController do
   describe '#setup' do
     before :each do
       @device = Factory(:device)
-      @currency = Factory(:currency)
+      @currency = Factory(:currency, :callback_url => 'http://www.tapjoy.com')
       @offer = Factory(:app).primary_offer
-      controller.stubs(:get_ip_address).returns('208.90.212.38')
+      controller.stubs(:ip_address).returns('208.90.212.38')
       fake_cache_object = mock()
       fake_cache_object.stubs(:value).returns([@offer])
       RailsCache.stubs(:get_and_put).returns(fake_cache_object)
@@ -283,7 +283,7 @@ describe GetOffersController do
     end
 
     it 'assigns currency based on app_id' do
-      Factory(:currency, :id => @currency.app_id, :app_id => @currency.app_id)
+      Factory(:currency, :id => @currency.app_id, :app_id => @currency.app_id, :callback_url => 'http://www.tapjoy.com')
       get(:index, @params.merge(:currency_id => nil, :debug => '1'))
       assigns(:currency).should_not be_nil
     end
@@ -311,6 +311,10 @@ describe GetOffersController do
       assigns(:server_to_server).should == false
       get(:webpage, @params)
       assigns(:server_to_server).should == false
+      get(:index, {:data => ObjectEncryptor.encrypt(@params.merge(:json => 1)) } )
+      assigns(:server_to_server).should == false
+      get(:webpage, @params.merge(:library_version => 'SERVER'))
+      assigns(:server_to_server).should == true
     end
   end
 end

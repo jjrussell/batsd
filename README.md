@@ -1,24 +1,24 @@
 ```
-   $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$                               
- $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$                               
-.$$$?        $$$$                                                              
+   $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+.$$$?        $$$$
 =$$$         $$$I
  $$$$.      =$$$. , .$$$$$$$7 .$$$.$$$$$   .$$$   .$$$$$$I   $$$    $$$$
  +$$$$$     $$$$   $$$$$$$$$,  $$$$$$$$$I  I$$$  ~$$$$$$$$$  $$$,  :$$$
-   7$$$     $$$$  $$$$  ?$$$   $$$.  $$$$  $$$= .$$$$  7$$$  $$$~  $$$, 
+   7$$$     $$$$  $$$$  ?$$$   $$$.  $$$$  $$$= .$$$$  7$$$  $$$~  $$$,
            +$$$7 .$$$   $$$7  =$$$   $$$$ .$$$  $$$$   7$$$  $$$+ $$$$
            $$$$: I$$I   $$$,  $$$+   $$$. I$$$  $$$$   $$$$  $$$I,$$$
            $$$$  I$$$?,7$$$  .$$$: ?$$$$  $$$$  $$$$: 7$$$.  +$$$$$$
            $$$?   $$$$$:$$$~ I$$$$$$$$.   $$$=  .$$$$$$$$    .$$$$$,
                              $$$$        .$$$                 $$$$,
-                             $$$+        I$$$                $$$$7             
-                             +++     ,~~~$$$+~~~~~~~~~~~~+I$$$$$,              
-                                 ~$$$$$$$$$$$$$$$$$$$$$$$$$$$$$                
-                               ,$$$$$$$$$$$$$$$$$$$$$$$$$$$7~                  
+                             $$$+        I$$$                $$$$7
+                             +++     ,~~~$$$+~~~~~~~~~~~~+I$$$$$,
+                                 ~$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+                               ,$$$$$$$$$$$$$$$$$$$$$$$$$$$7~
                                $$$$     $$$$
                               ?$$$      $$$=
-                              7$$$     $$$$             
-                               $$$$$$$$$$$             
+                              7$$$     $$$$
+                               $$$$$$$$$$$
                                .$$$$$$$$:
 ```
 
@@ -158,6 +158,7 @@ sudo env ARCHFLAGS="-arch x86_64" gem install memcached -v 1.2.7
 sudo env ARCHFLAGS="-arch x86_64" gem install mysql -v 2.8.1 -- --with-mysql-config=/usr/local/mysql/bin/mysql_config
 sudo gem install rcov -v 0.9.10
 sudo gem install -v 2.3.14 rails
+sudo gem install json -v 1.5.3
 sudo gem install rdoc
 sudo gem install rdoc-data
 sudo rdoc-data --install
@@ -232,7 +233,7 @@ sudo passenger-install-apache2-module (follow on-screen instructions)
     </VirtualHost>
 ```
 
-* Open `/etc/hosts` and add `127.0.0.1   tapjoy.local` to the end of the file 
+* Open `/etc/hosts` and add `127.0.0.1   tapjoy.local` to the end of the file
 * To start Apache in OSX, System Preferences -> Sharing -> Check checkbox for 'Web Sharing'
 
 OPTIONAL: To install sinatra-rubygems (for easy access to local gem Rdocs)

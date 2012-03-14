@@ -61,7 +61,7 @@ class Apps::OffersController < WebsiteController
       safe_attributes += [ :tapjoy_enabled, :allow_negative_balance, :pay_per_click,
           :name, :name_suffix, :show_rate, :min_conversion_rate,
           :device_types, :publisher_app_whitelist, :overall_budget, :min_bid_override,
-          :dma_codes, :regions, :carriers ]
+          :dma_codes, :regions, :carriers, :cities ]
     end
 
     if @offer.safe_update_attributes(offer_params, safe_attributes)

@@ -37,10 +37,18 @@ class FakeObject
     'display/round_mask.png',
   ]
 
+  DATA_KEYS = [
+    'most_popular.txt',
+    'app_app_matrix.txt',
+    'daily/udid_apps_reco.dat'
+  ]
+
   def initialize(key)
     @key = key
     if REAL_KEYS.include? @key
       @data = File.open("#{Rails.root}/public/images/gunbros.png").read
+    elsif DATA_KEYS.include? @key
+      @data = File.open("#{Rails.root}/spec/data/#{@key}").read
     end
   end
 

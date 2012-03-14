@@ -23,6 +23,12 @@ describe Games::HomepageController do
       I18n.locale.should == :zh
     end
 
+    it 'attempts to split locale based on HTTP_ACCEPT_LANGUAGE' do
+      request.env["HTTP_ACCEPT_LANGUAGE"] = "ko-KR,es;q=0.5,zh;q=0.9"
+      get(:index)
+      I18n.locale.should == :ko
+    end
+
     it 'overrides HTTP_ACCEPT_LANGUAGE with language code' do
       request.env["HTTP_ACCEPT_LANGUAGE"] = "en"
       get(:index, :language_code => "zh")

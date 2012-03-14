@@ -49,7 +49,12 @@
       %td= @money_stats[:iphone][:adv_amount] || '-'
       %td= @money_stats[:iphone][:pub_amount] || '-'
     %tr
-      %th TJ Games
+      %th Windows
+      %td= @money_stats[:windows][:count] || '-'
+      %td= @money_stats[:windows][:adv_amount] || '-'
+      %td= @money_stats[:windows][:pub_amount] || '-'
+    %tr
+      %th TJM
       %td= @money_stats[:tj_games][:count] || '-'
       %td= @money_stats[:tj_games][:adv_amount] || '-'
       %td= @money_stats[:tj_games][:pub_amount] || '-'
@@ -57,8 +62,6 @@
 %table#apps_table.tablesorter
   %thead
     %tr
-      %th
-        %a{ :id => 'toggle_icons', :href => '#' } Icon
       %th Offer
       %th{ :class => 'headerSortUp header' } Spend
       %th Conversions
@@ -76,7 +79,7 @@
       %th Offer type
       %th Sales rep
     %tr
-      %td.filter#filters_title{:colspan => 2}
+      %td.filter#filters_title
         %b Filters
         (#{link_to('reset all', '#', :id => 'reset_filters')})
       %td.filter= select_tag('spend_filter', options_for_select(filter_options(:spend)))
@@ -101,8 +104,6 @@
         tr_class = get_tr_class(stats, metadata)
         value = metadata['balance'].gsub(/[\$,]/,'')
       %tr{ :class => tr_class, :value => value }
-        %td
-          %img.icon.hidden{ :s => metadata['icon_url'] }
         %td= link_to(metadata['offer_name'], statz_path(offer_id))
         %td= stats['spend']
         %td= stats['conversions']
@@ -152,36 +153,16 @@
       $("#apps_table").tablesorter({
         widgets: ['zebra'],
         headers: {
-          0:  { sorter: false },
-          2:  { sorter: 'currency-column' },
-          3:  { sorter: 'formatted-number-column' },
-          4:  { sorter: 'rank-column' },
+          1:  { sorter: 'currency-column' },
+          2:  { sorter: 'formatted-number-column' },
+          3:  { sorter: 'rank-column' },
+          4:  { sorter: 'currency-column' },
           5:  { sorter: 'currency-column' },
           6:  { sorter: 'currency-column' },
-          7:  { sorter: 'currency-column' },
-          10: { sorter: 'formatted-number-column' },
-          11: { sorter: 'currency-column' },
-          12: { sorter: 'currency-column' }
+          9:  { sorter: 'formatted-number-column' },
+          10: { sorter: 'currency-column' },
+          11: { sorter: 'currency-column' }
         },
-      });
-
-      var iconsLoaded = false;
-      var iconsVisible = false;
-      $('#toggle_icons').click(function() {
-        if (iconsVisible) {
-          $('img.icon').hide();
-          iconsVisible = false;
-        } else {
-          if (!iconsLoaded) {
-            $('img.icon').each(function() {
-              $(this).attr('src', $(this).attr('s'));
-            });
-            iconsLoaded = true;
-          }
-          $('img.icon').show();
-          iconsVisible = true;
-        }
-        return false;
       });
 
       $('#reset_filters').click(function(){

@@ -15,7 +15,7 @@ class Job::QueueSendFailedEmailsController < Job::SqsReaderController
     begin
       mailer.deliver_without_rescue_errors(mail)
     rescue AWS::SimpleEmailService::Errors::MessageRejected => e
-      recipients = mail.to.to_a + mail.cc.to_a + mail.bcc.to_a
+      recipients = mail.to.to_a + mail.cc.to_a + mail.bcc.to_a - [ RECEIPT_EMAIL ]
       if e.to_s =~ /Address blacklisted/ && recipients.size == 1
         save_failed_email(mail)
       else
@@ -33,7 +33,7 @@ class Job::QueueSendFailedEmailsController < Job::SqsReaderController
   def save_failed_email(mail)
     failed_email = FailedEmail.new(:load => false)
     failed_email.fill(mail)
-    failed_email.serial_save
+    failed_email.save
   end
 
 end

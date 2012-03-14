@@ -66,58 +66,6 @@ describe SimpledbResource do
       @model.get('escaped').should == cgi_escape_val
     end
 
-    it 'handles concurrent saves' do
-      attrs = {}
-
-      thread_list = []
-      10.times do |i|
-        m = Testing.new(:key => @model.key)
-        m.put("#{i}", 'value', {:replace => false})
-        m.put("#{i}", 'value2', {:replace => false})
-        thread_list.push(m.save)
-        attrs["#{i}"] = ['value', 'value2']
-      end
-
-      thread_list.each(&:join)
-
-      @model.put("9", 'value3', {:replace => false})
-      attrs['9'].push('value3')
-      @model.save!
-
-      load_model
-      @model.attributes.delete('updated-at')
-      @model.attributes.should match_hash_with_arrays attrs
-    end
-
-    it 'handles concurrent deletes' do
-      attrs = {}
-
-      10.times do |i|
-        @model.put("#{i}", 'value', {:replace => false})
-        @model.put("#{i}", 'value2', {:replace => false})
-        attrs["#{i}"] = ['value', 'value2']
-      end
-      @model.save!
-
-      load_model
-      thread_list = []
-
-      @model.delete('9')
-      thread_list.push(@model.save)
-      attrs.delete('9')
-      3.times do |i|
-        m = Testing.new(:key => @model.key)
-        m.delete("#{i}", "value2")
-        thread_list.push(m.save)
-        attrs["#{i}"] = ['value']
-      end
-      thread_list.each(&:join)
-
-      load_model
-      @model.attributes.delete('updated-at')
-      @model.attributes.should match_hash_with_arrays attrs
-    end
-
     it 'handles adding and replacing attrs in one save operation' do
       attrs = {}
 
