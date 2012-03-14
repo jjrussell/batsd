@@ -73,14 +73,9 @@ class Tools::ApprovalsController < WebsiteController
   def setup_conditions
     @conditions ||= {}
 
-    if params[:owner_id].present?
-      @conditions[:owner_id] = params[:owner_id]
-      @conditions[:owner_id] = nil if params[:owner_id] == 0
-    end
-    if params[:item_type].present?
-      @conditions[:item_type] = params[:item_type]
-    end
+    @conditions[:owner_id] = params[:owner_id] if params[:owner_id].present?
     @conditions[:item_type] = params[:type].to_s.capitalize if params[:type]
+    @conditions[:item_type] ||= params[:item_type] if params[:item_type].present?
   end
 
   # Check for the selected models partial, use the generic one if it doesn't exist

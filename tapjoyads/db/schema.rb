@@ -674,9 +674,9 @@ ActiveRecord::Schema.define(:version => 20120314201830) do
     t.text     "regions",                                                                                          :null => false
     t.boolean  "instructions_overridden",                                                       :default => false, :null => false
     t.boolean  "tapjoy_sponsored",                                                              :default => false, :null => false
-    t.text     "approved_sources",                                                                                 :null => false
-    t.text     "approved_banner_creatives"
     t.boolean  "wifi_only",                                                                     :default => false, :null => false
+    t.text     "approved_banner_creatives"
+    t.text     "approved_sources",                                                                                 :null => false
     t.boolean  "sdkless",                                                                       :default => false
     t.text     "carriers",                                                                                         :null => false
     t.string   "tracking_for_type"
