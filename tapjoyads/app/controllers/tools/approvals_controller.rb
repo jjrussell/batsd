@@ -63,7 +63,7 @@ class Tools::ApprovalsController < WebsiteController
       json[:success] = yield
     rescue ActsAsApprovable::Error => e
       json[:message] = e.message
-    rescue => e
+    rescue
       json[:message] = 'An unknown error occured'
     end
 
@@ -73,13 +73,8 @@ class Tools::ApprovalsController < WebsiteController
   def setup_conditions
     @conditions ||= {}
 
-    unless params[:owner_id].nil? || params[:owner_id].empty?
-      @conditions[:owner_id] = params[:owner_id]
-      @conditions[:owner_id] = nil if params[:owner_id] == 0
-    end
-    unless params[:item_type].nil? || params[:item_type].empty?
-      @conditions[:item_type] = params[:item_type]
-    end
+    @conditions[:owner_id] = params[:owner_id] if params[:owner_id].present?
+    @conditions[:item_type] = params[:item_type] if params[:item_type].present?
   end
 
   # Check for the selected models partial, use the generic one if it doesn't exist

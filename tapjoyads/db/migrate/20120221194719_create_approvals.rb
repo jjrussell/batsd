@@ -7,7 +7,8 @@ class CreateApprovals < ActiveRecord::Migration
       t.string   :event,     :null => false
       t.integer  :state,     :null => false, :default => 0
       t.guid     :owner_id
-      t.text     :object
+      t.text     :object,    :limit => 16777216
+      t.text     :original,  :limit => 16777216
       t.text     :reason
 
       t.timestamps
