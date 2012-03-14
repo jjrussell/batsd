@@ -1,5 +1,6 @@
 # javascripts
 - 'tjm'
+- 'marketplace/logged-out'
 
 # stylesheets
 - 'marketplace/core'
@@ -11,3 +12,5 @@
 - 'marketplace/theme/tjm/style-360'
 - 'marketplace/theme/tjm/style-320'
 - 'marketplace/resources/components/carousel/carousel'
+- 'marketplace/theme/tjm/ie.css'
+- 'marketplace/theme/tjm/logged_out'
