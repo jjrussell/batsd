@@ -25,7 +25,7 @@ class ReengagementRewardsController < ApplicationController
     @reengagement_offers = @app.reengagement_campaign_from_cache if @reengagement_offer
     @button_link = 'http://ok'
 
-    render :nothing => true, :status => 204 and return unless @reengagement_offers && @app.reengagement_campaign_enabled?
+    render :nothing => true, :status => 204 and return unless @reengagement_offers.present? && @app.reengagement_campaign_enabled?
   end
 
 end
