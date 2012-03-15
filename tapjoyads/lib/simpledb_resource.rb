@@ -467,7 +467,7 @@ class SimpledbResource
     domain_name = get_real_domain_name(domain_name)
 
     query = "SELECT #{attrs} FROM `#{domain_name}`"
-    query += " WHERE #{where}" if where
+    query += " WHERE #{sanitize_conditions(where)}" if where
     query += " ORDER BY #{order_by}" if order_by
     query += " LIMIT #{limit}" if limit
 
@@ -522,6 +522,13 @@ class SimpledbResource
   rescue => e
     Rails.logger.error("Error while processing query: #{query}")
     raise e
+  end
+
+  def self.sanitize_conditions(*ary)
+    return nil if ary.compact.empty?
+    ary = ary.first.is_a?(Array) ? ary.first : ary
+    ary = [ary.shift, *ary.map(&:to_s)] # SimpleDB expects all values to be strings
+    ActiveRecord::Base.sanitize_conditions(ary)
   end
 
   def self.create_domain(domain_name)
