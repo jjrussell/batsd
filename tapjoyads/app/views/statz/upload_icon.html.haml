@@ -1,0 +1,107 @@
+- url = upload_icon_statz_path(:id => @offer.id)
+- if @has_icon
+  - form_tag(url, :method => :delete, :id => "remove_icon", :class => "hidden") {}
+
+- form_for(@offer, :url => url, :html => { :id => 'upload_form', :class => 'tjform', :method => (@has_icon ? :put : :post), :multipart => true }) do |f|
+  %table
+    %tbody
+      %tr
+        %th
+          = f.label(:icon)
+        %td
+          %table
+            - unless @success_message.blank?
+              %tr#success_message.hidden
+                %td
+                  = h(@success_message)
+            - if @has_icon
+              %tr.controls
+                %td{:colspan => '2'}
+                  = link_to("View existing file", '#', :class => 'view_link')
+                  |
+                  = link_to("Remove existing file", '#', :id => 'remove_link')
+            %tr.controls
+              %td
+                = f.file_field("upload_icon")
+              %td
+                = f.submit('Upload', :id => "upload_button")
+            %tr
+              %td
+                = image_tag("spinner.gif", :id => "spinner", :class => "hidden")
+
+- content_for :page_javascript do
+  :plain
+    $(function($){
+      $('#remove_link').click(function() {
+        if(confirm('Are you sure? This will remove the image entirely.')) {
+          $('#spinner').show();
+          $('#remove_icon')[0].submit();
+          $('.controls').fadeOut('fast');
+        }
+        return false;
+      });
+
+      $('#upload_form').submit(function() {
+        if ($('[type=file]').val() == '') {
+          alert('Please select an image to upload.');
+          return false;
+        }
+
+        $('#spinner').show();
+        $('.controls').fadeOut('fast');
+        return true;
+      });
+
+      var frame = $(parent.document).find('iframe#icon_upload').first();
+      frame.height(#{@has_icon ? '55' : '35'});
+    });
+
+- unless @success_message.blank?
+  - content_for :page_javascript do
+    :plain
+      $(function($) {
+        $('.controls').hide();
+        $('#success_message').fadeIn('fast').delay(2000).fadeOut('fast', function() {
+          $('.controls').fadeIn('fast');
+          var icon_img = $(parent.document).find('img#icon').first();
+          icon_img.attr('src', '#{escape_javascript(@offer.get_icon_url(:bust_cache => true))}');
+        });
+      });
+
+- unless @error_message.blank?
+  - content_for :page_javascript do
+    :plain
+      $(function($){
+        alert("#{@error_message}");
+      });
+
+- content_for :page_styles do
+  :plain
+    body {
+      background: none;
+      overflow: hidden;
+      margin: 0;
+    }
+    table {
+      border: 0;
+      border-collapse: collapse;
+    }
+    th {
+      font-weight: bold;
+      padding-right: 10px;
+      text-align: right;
+      width: 225px;
+    }
+    th label.pending {
+      color: red;
+    }
+    .hidden {
+      display: none;
+    }
+    .tjform input[type="submit"] {
+      margin-top: 0;
+    }
+    #success_message td {
+      padding-top: 5px;
+      color: green;
+    }

@@ -1,7 +1,7 @@
 - @page_title = "Edit offer: #{@offer.name_with_suffix}"
 - content_for :page_head, stylesheet_link_tag('facebox')
 
-.icon= image_tag(@offer.get_icon_url, :size => '57x57')
+.icon= image_tag(@offer.get_icon_url, :size => '57x57', :id => 'icon')
 
 %h1= @offer.name_with_suffix
 
@@ -375,7 +375,10 @@
     %tr
       %td{ :colspan => 2 }= f.submit('Save Changes')
     %tr
-      %td{ :colspan => 2}
+      %td{ :colspan => 2 }
+        %iframe#icon_upload{:src => upload_icon_statz_path(:id => @offer.id)}
+    %tr
+      %td{ :colspan => 2 }
         = render('dashboard/offer_creatives/iframes', :offer => @offer)
 
 .hidden
@@ -572,4 +575,9 @@
       width: 100%;
       border: none;
       height: 35px;
+    }
+    #icon_upload {
+      border: medium none;
+      height: #{@offer.uploaded_icon? ? '55' : '35'}px;
+      width: 100%;
     }
