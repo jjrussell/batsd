@@ -141,32 +141,32 @@
         };
       },
 
-	    
+
 	    debounce: function(fn, delay, execASAP, scope){
 	      var timeout;
-	
+
 	      return function debounced() {
-	        var obj = scope || this, 
+	        var obj = scope || this,
 	            args = arguments;
-	      
+
 	        function delayedFn(){
 	          if(!execASAP){
 	            fn.apply(obj, args);
 	          }
-	          
+
 	          timeout = null;
 	        }
-	
+
 	        if(timeout){
 	          clearTimeout(timeout);
 	        }else if(execASAP){
 	          fn.apply(obj, args);
 	        }
-	
+
 	        timeout = setTimeout(delayedFn, delay || 100);
 	      };
 	    },
-			
+
       Storage: {
         set: function(k) {
           try {

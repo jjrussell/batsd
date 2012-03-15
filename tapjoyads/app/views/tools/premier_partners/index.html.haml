@@ -29,7 +29,7 @@
         %td
           .discount= partner.premier_discount
           .sources= "(#{link_to('view sources', partner_offer_discounts_path(partner)) })" if permitted_to? :index, :partners_offer_discounts
-        %td= partner.discount_expires_on.to_s :pub_ampm_sec
+        %td= partner.discount_expires_on.to_s :pub_ampm_sec if partner.discount_expires_on.present?
         %td
           - partner.offer_discounts.select{ |discount| discount.active? }.each do |discount|
             %div

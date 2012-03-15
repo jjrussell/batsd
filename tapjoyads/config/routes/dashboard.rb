@@ -78,6 +78,7 @@ ActionController::Routing::Routes.draw do |map|
                      :award_currencies => :post, :update_award_currencies => :post,
                      :update_user_roles => :post, :update_device => :post }
   map.namespace :tools do |tools|
+    tools.resources :approvals, :only => [:index], :collection => [:history, :mine], :member => [:approve, :reject, :assign]
     tools.resources :premier_partners, :only => [ :index ]
     tools.resources :generic_offers, :only => [ :index, :new, :create, :edit, :update ]
     tools.resources :orders, :only => [ :new, :create ],
@@ -116,6 +117,7 @@ ActionController::Routing::Routes.draw do |map|
     tools.resources :survey_offers, :except => [ :show ], :member => { :toggle_enabled => :put }
     tools.resources :payout_freezes, :only => [ :index, :create ], :member => { :disable => :post }
     tools.resources :wfhs, :only => [ :index, :new, :create, :edit, :update, :destroy ]
+    tools.resources :clients, :only => [ :index, :show, :new, :create, :edit, :update], :member => { :add_partner => :post, :remove_partner => :post }
   end
 
   map.connect 'mail_chimp_callback/callback', :controller => :mail_chimp_callback, :action => :callback

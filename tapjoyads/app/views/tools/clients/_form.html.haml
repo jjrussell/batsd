@@ -1,0 +1,8 @@
+- form_for [ :tools, @client ], :html => { :class => 'tjform', :multipart => false } do |f|
+  %table
+    %tr
+      %th= f.label :name
+      %td= f.text_field :name, :size => 42
+      %td= error_message_on @client, :name
+    %tr
+      %td{ :colspan => 2 }= f.submit 'Save'
