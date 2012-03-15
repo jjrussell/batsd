@@ -44,6 +44,7 @@ class SimpledbShardedResource < SimpledbResource
   end
 
   def self.sanitize_conditions(*ary)
+    return nil if ary.compact.empty?
     ary = ary.first.is_a?(Array) ? ary.first : ary
     ary = [ary.shift, *ary.map(&:to_s)] # SimpleDB expects all values to be strings
     ActiveRecord::Base.sanitize_conditions(ary)
