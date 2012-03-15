@@ -497,10 +497,10 @@ class Offer < ActiveRecord::Base
   end
 
   def remove_icon!
-    save_icon!(nil, true, nil, true)
+    save_icon!(nil, true, true)
   end
 
-  def save_icon!(icon_src_blob, override = false, guid = nil, remove = false)
+  def save_icon!(icon_src_blob, override = false, remove = false)
     # From what I can tell, here's how this works...
     # When an offer's icon is requested, it will use the 'icon_id' method,
     # which, by default, uses item_id as the guid to be passed into Offer.hashed_icon_id()
@@ -515,29 +515,26 @@ class Offer < ActiveRecord::Base
     # in other words, item_type won't be "App" and item_id won't be the app_id. e.g. ActionOffers, ReengagementOffers, etc.
     # It is *also* for offers where the icon has been manually overridden
 
+    guid = id # use already-generated guid ('id'), if possible
     if remove
       guid = icon_id_override
       return if guid.nil? || guid == app_id # only allow removing of manually-uploaded icons (i.e. not auto-downloaded from app store)
     end
 
-    if override && guid.nil? && id == item_id
-      guid = UUIDTools::UUID.random_create.to_s
+    if override && primary?
+      guid = UUIDTools::UUID.random_create.to_s # in this case, we need to generate a guid
     end
-
-    guid ||= id # use already-generated guid ('id'), if possible
 
     icon_id = Offer.hashed_icon_id(guid)
     bucket  = S3.bucket(BucketNames::TAPJOY)
     src_obj = bucket.objects["icons/src/#{icon_id}.jpg"]
 
     existing_icon_blob = src_obj.exists? ? src_obj.read : ''
-    if remove
-      return if existing_icon_blob.blank?
-    elsif Digest::MD5.hexdigest(icon_src_blob) == Digest::MD5.hexdigest(existing_icon_blob)
+    if !remove && Digest::MD5.hexdigest(icon_src_blob) == Digest::MD5.hexdigest(existing_icon_blob)
       return
     end
 
-    src_obj.delete if remove
+    src_obj.delete if remove && src_obj.exists?
 
     if item_type == 'VideoOffer'
       unless remove
@@ -557,7 +554,10 @@ class Offer < ActiveRecord::Base
     else
       paths = ["icons/256/#{icon_id}.jpg", "icons/114/#{icon_id}.jpg", "icons/57/#{icon_id}.jpg", "icons/57/#{icon_id}.png"]
       if remove
-        paths.each { |path| bucket.objects[path].delete }
+        paths.each do |path|
+          obj = bucket.objects[path]
+          obj.delete if obj.exists?
+        end
       else
         icon_256 = Magick::Image.from_blob(icon_src_blob)[0].resize(256, 256).opaque('#ffffff00', 'white')
 
@@ -583,9 +583,9 @@ class Offer < ActiveRecord::Base
       CloudFront.invalidate(id, paths) if (remove || existing_icon_blob.present?)
     end
 
-    if (override && guid != item_id) || remove
+    if (guid != item_id) || remove
       icon_id_override =  if remove
-                            item_type == 'App' ? nil : app_id
+                            item_type == 'App' ? nil : app_id # for "app offers" set this back to its default value
                           else
                             guid
                           end
