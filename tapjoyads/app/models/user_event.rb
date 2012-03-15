@@ -2,45 +2,41 @@ class UserEvent < SyslogMessage
 
   self.define_attr :udid
   self.define_attr :app_id
-  self.define_attr :event_type_id
-  self.define_attr :event_data, :type => :json
-  self.define_attr :timestamp, :type => :time
-
-
-  self.define_attr :session_start_time, :type => :time
-  self.define_attr :session_last_active_time, :type => :time
-  self.define_attr :http_referrer, :cgi_escape => true
-  self.define_attr :controller
-  self.define_attr :action
-  self.define_attr :referrer
-  self.define_attr :gamer_id
-  self.define_attr :device_id
+  self.define_attr :type_id
+  self.define_attr :data, :type => :json
 
   def initialize(options = {})
-    session    = options.delete(:session)    { |k| raise "#{k} is a required argument" }
-    request    = options.delete(:request)    { |k| raise "#{k} is a required argument" }
-    ip_address = options.delete(:ip_address) { |k| raise "#{k} is a required argument" }
-    geoip_data = options.delete(:geoip_data) { |k| raise "#{k} is a required argument" }
-    params     = options.delete(:params)     { |k| raise "#{k} is a required argument" }
-    gamer      = options.delete(:gamer)
-    device_id  = options.delete(:device_id)
+    options.delete(:action)
+    options.delete(:controller)
+    udid          = options.delete(:udid)           { |k| raise "#{k} is a required argument" }
+    app_id        = options.delete(:app_id)         { |k| raise "#{k} is a required argument" }
+    event_type_id = options.delete(:event_type_id)  { |k| raise "#{k} is a required argument" }
+    event_data    = options.delete(:event_data)     { [] }
+
     super(options)
 
-    self.session_id               = session[:tjms_id]
-    self.session_start_time       = session[:tjms_stime]
-    self.session_last_active_time = session[:tjms_ltime]
-    self.user_agent               = request.user_agent
-    self.http_referrer            = request.referrer
-    self.ip_address               = ip_address
-    self.geoip_country            = geoip_data[:country]
-    self.controller               = params[:controller]
-    self.action                   = params[:action]
-    self.referrer                 = params[:referrer]
-    self.path                     = lookup_path
-    self.gamer_id                 = gamer.id if gamer.present?
-    self.device_id                = device_id if device_id.present?
+    self.udid     = udid
+    self.app_id   = app_id
+    self.type_id  = event_type_id
+    self.data     = event_data
+  end
+
+  def valid?
+    ### TODO temporary code follows, will change when publishers can make their own events
+    if self.type_id == '0'   # IAP event
+      self.data.present? && self.data[:name] && price_valid? && self.data[:currency]
+    else
+      self.type_id == '1' && self.data.blank?   # shutdown event
+    end
+    ### END TODO
   end
 
   private
+
+  def price_valid?
+    # this could be module-ized and used as a general #is_numeric? method
+    true if Float(self.data[:price]) rescue false
+  end
+
 
 end
