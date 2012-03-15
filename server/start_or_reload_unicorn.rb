@@ -2,15 +2,25 @@
 
 min_mem = 500
 workers_to_kill = 4
-pid = `/home/webuser/tapjoyserver/server/unicorn_master_pid.rb`
+base_dir = File.expand_path("../../", __FILE__)
+pid = `#{base_dir}/server/unicorn_master_pid.rb`
 hostname = `hostname`.strip
+server_type = `#{base_dir}/server/server_type.rb`
 
 if pid == ''
-  server_type = `/home/webuser/tapjoyserver/server/server_type.rb`
-  env = server_type == 'test' ? 'staging' : 'production'
-  `unicorn_rails -E #{env} -c /home/webuser/tapjoyserver/tapjoyads/config/unicorn.rb -D`
+  env = case server_type
+        when "test": "staging"
+        when "dev" : "development"
+        else         "production"
+        end
+  `unicorn_rails -E #{env} -c #{base_dir}/tapjoyads/config/unicorn.rb -D`
 else
-  free_mem  = `free -m`.split("\n")[2].split[3].to_i
+  if server_type == "dev"
+    puts "Dev environment, memory management is up to you"
+    free_mem = min_mem
+  else
+    free_mem  = `free -m`.split("\n")[2].split[3].to_i
+  end
   count = 0
   while free_mem < min_mem && count < workers_to_kill
     puts "dropping worker count (##{count}) for memory issue (#{hostname})"
