@@ -30,7 +30,6 @@ describe Tools::BrandOffersController do
     end
   end
 
-
   describe '#create' do
     context 'when normal user' do
       before :each do
@@ -42,18 +41,17 @@ describe Tools::BrandOffersController do
         Brand.expects(:find).with('123').never
         post(:create, :brand => '123')
       end
+
       it 'will not succeed' do
         post(:create, :brand => '123')
         response.should_not be_success
       end
-
     end
 
     context 'when account manager role' do
       before :each do
         @user = Factory(:account_mgr_user)
         login_as(@user)
-
       end
 
       context 'when offer id is valid' do
@@ -62,13 +60,13 @@ describe Tools::BrandOffersController do
           @brand = Factory(:brand)
           @brand_offer_mapping = mock()
           BrandOfferMapping.stubs(:new).with(:brand_id => @brand.id, :offer_id => @offer.id).returns(@brand_offer_mapping)
-
-
         end
+
         it 'will add the offer' do
           @brand_offer_mapping.expects(:save).once.returns(true)
           post(:create, :brand => @brand.id, :offer => @offer.id)
         end
+
         it 'will succeed' do
           @brand_offer_mapping.stubs(:save).returns(true)
           post(:create, :brand => @brand.id, :offer => @offer.id)
