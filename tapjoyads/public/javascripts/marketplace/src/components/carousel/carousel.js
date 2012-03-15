@@ -135,7 +135,7 @@
 
       $t.pager = wrap;
     },
-    
+
     createNavigation : function(){
       var $t = this,
           back = $(document.createElement('div')),
@@ -205,7 +205,7 @@
         $('.ui-joy-carousel-index', $t.pagingContainer).removeClass('highlight');
         $('.ui-joy-carousel-index:eq(' + $t.current + ')', $t.pagingContainer).addClass('highlight');
       }
-			
+
       if(next > $t.length || $t.config.forceSlideWidth && $t.pages == ($t.current + 1)){
         back.removeClass('disabled');
         forward.addClass('disabled');
@@ -235,12 +235,12 @@
         }else{
 
           if($t.back.hasClass('disabled'))
-            return;        
+            return;
 
           $t.current--;
           $t.wrap[0].style.webkitTransform = 'translate3d(-' + ($t.current * $t.container.width()) + 'px, 0, 0)';
         }
-        
+
         $t.updateNavigation();
       });
     },
@@ -265,7 +265,7 @@
       }
 
       $t.updateNavigation();
-    }   
+    }
   });
 
   $.fn.extend({
@@ -288,7 +288,7 @@
 
         $t.enableTouchScroll();
       });
-    }    
+    }
   })
 
   Tap.apply(Tap, {

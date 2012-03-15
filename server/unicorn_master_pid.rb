@@ -1,6 +1,7 @@
 #!/usr/bin/env ruby
 
-pidfiles = Dir.glob("/home/webuser/tapjoyserver/tapjoyads/pids/*.pid")
+base_dir = File.expand_path("../../", __FILE__)
+pidfiles = Dir.glob("#{base_dir}/tapjoyads/pids/*.pid")
 
 pid = ''
 pidfiles.each do |pidfile|

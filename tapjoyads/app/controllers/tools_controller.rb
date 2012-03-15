@@ -247,7 +247,7 @@ class ToolsController < WebsiteController
 
       @apps = Offer.find_all_by_id(@device.parsed_apps.keys).map do |app|
         [ @device.last_run_time(app.id), app ]
-      end.sort.reverse
+      end.sort_by(&:first).reverse
       @clicks = @clicks.sort_by do |click|
         -click.clicked_at.to_f
       end
