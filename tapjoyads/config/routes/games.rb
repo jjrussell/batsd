@@ -1,5 +1,8 @@
 ActionController::Routing::Routes.draw do |map|
+  map.assets "assets/*filename", :controller => "sprocket", :action => :show
   map.with_options({:path_prefix => MACHINE_TYPE == 'website' ? '' : 'games', :name_prefix => 'games_'}) do |m|
+
+
     m.root :controller => 'games/homepage', :action => :index
     m.tos 'tos', :controller => 'games/homepage', :action => :tos
     m.privacy 'privacy', :controller => 'games/homepage', :action => :privacy

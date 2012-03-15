@@ -1,7 +1,16 @@
 ---
 en:
+  authlogic:
+    error_messages:
+      password_invalid: Password is invalid
+      login_not_found: Email is invalid
   activerecord:
     errors:
+      models:
+        gamer_sessions:
+          attributes:
+            password: Password
+            email: Email
       full_messages:
         format: "%{attribute} %{message}"
       messages:
@@ -216,6 +225,7 @@ en:
     games:
       invalid_emails: The email(s) provided were invalid
       provide_single_email: Please provide at least one email
+      reactivated_account: Your account has been reactivated!
       scheduled_for_deletion: 'Your account has been deactivated and scheduled for deletion!'
       about_body: "A better way to love the apps you have and find the apps you'll love."
       about_title: "\"Somehow it knows exactly what apps I like.\""

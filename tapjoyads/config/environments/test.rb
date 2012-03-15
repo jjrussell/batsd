@@ -39,6 +39,12 @@ rescue Errno::ENOENT
   local_config = {}
 end
 
+SPROCKETS_CONFIG = {
+  :compile => false,
+  :combine => false,
+  :host => local_config['asset_host'] || local_config['website_url'] || 'http://localhost:3000'
+}
+
 RUN_MODE_PREFIX = 'test_'
 API_URL = local_config['api_url'] || 'http://localhost:3000'
 DASHBOARD_URL = local_config['dashboard_url'] || 'http://localhost:3000'
