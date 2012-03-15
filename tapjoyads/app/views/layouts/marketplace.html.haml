@@ -18,13 +18,10 @@
 
     = yield :early_load
 
-    = css_tag("marketplace/core")
+    = css_tag("marketplace/style-master")
 
     /[if lt IE 9]
       = js_tag "marketplace/helpers/html5"
-
-    = css_tag("marketplace/style-master")
-    = css_tag("marketplace/resources/components/carousel/carousel")
 
     /[if IE 8]
       = css_tag('marketplace/theme/tjm/ie.css')
