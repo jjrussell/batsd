@@ -65,11 +65,6 @@ class Games::HomepageController < GamesController
       favorite_app_metadata_ids = current_gamer.favorite_apps.map(&:app_metadata_id)
       @external_publishers = ExternalPublisher.load_all_for_device(@device)
       @favorite_publishers = @external_publishers.select { |e| favorite_app_metadata_ids.include?(e.app_metadata_id) }
-      if params[:load] == 'earn'
-        currency = Currency.find_in_cache(params[:currency_id])
-        @show_offerwall = @device.has_app?(currency.app_id) if currency
-        @offerwall_external_publisher = ExternalPublisher.new(currency) if @show_offerwall
-      end
 
       @geoip_data = geoip_data
       platform = current_device ? current_device.device_type : ''
