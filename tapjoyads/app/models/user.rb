@@ -83,10 +83,16 @@ class User < ActiveRecord::Base
   end
 
   def after_reject(approval)
-    ApprovalMailer.deliver_rejected(email, :user, :subject => 'Your account has been rejected on Tapjoy!', :reason => params[:reason], :cc => approval_ccs(approval))
+    ApprovalMailer.deliver_rejected(email, :user, :subject => 'Your account has been rejected on Tapjoy!', :reason => approval.reason, :cc => approval_ccs(approval))
   end
 
 private
+  def approval_ccs(approval)
+    ccs = [approval.owner.try(:email)]
+    ccs << current_partner.account_managers.map(&:email)
+
+    ccs.flatten.compact.uniq
+  end
 
   def update_auth_net_cim_profile
     if auth_net_cim_id.present? && (email_changed? || id_changed?)

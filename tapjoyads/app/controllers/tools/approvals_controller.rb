@@ -35,7 +35,7 @@ class Tools::ApprovalsController < WebsiteController
       else
         user = User.find(params[:approval][:owner_id])
         if @approval.assign(user)
-          ApprovalMailer.deliver_assigned(user.email, approval.item_type, mine_tools_approvals_url)
+          ApprovalMailer.deliver_assigned(user.email, @approval.item_type, :url => mine_tools_approvals_url)
         end
       end
     end
@@ -63,7 +63,9 @@ class Tools::ApprovalsController < WebsiteController
       json[:success] = yield
     rescue ActsAsApprovable::Error => e
       json[:message] = e.message
-    rescue
+    rescue => e
+      ::Rails.logger.debug e.message
+      ::Rails.logger.debug e.backtrace.join("\n")
       json[:message] = 'An unknown error occured'
     end
 
