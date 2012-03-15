@@ -21,11 +21,13 @@ class Partner < ActiveRecord::Base
   has_many :app_offers, :class_name => 'Offer', :conditions => "item_type = 'App'"
   has_one :payout_info
   belongs_to :sales_rep, :class_name => 'User'
+  belongs_to :client
   has_many :earnings_adjustments
 
   belongs_to :reseller
 
   validates_presence_of :reseller, :if => Proc.new { |partner| partner.reseller_id? }
+  validates_presence_of :client, :if => Proc.new { |partner| partner.client_id? }
   validates_numericality_of :balance, :pending_earnings, :next_payout_amount, :only_integer => true, :allow_nil => false
   validates_numericality_of :premier_discount, :greater_than_or_equal_to => 0, :only_integer => true, :allow_nil => false
   validates_numericality_of :rev_share, :transfer_bonus, :direct_pay_share, :max_deduction_percentage, :greater_than_or_equal_to => 0, :less_than_or_equal_to => 1
@@ -33,6 +35,7 @@ class Partner < ActiveRecord::Base
   validates_inclusion_of :use_whitelist, :approved_publisher, :in => [ true, false ]
   validate :exclusivity_level_legal
   validate :sales_rep_is_employee, :if => :sales_rep_id_changed?
+  validate :client_id_legal
   validates_format_of :billing_email, :cs_contact_email, :with => Authlogic::Regex.email, :message => "should look like an email address.", :allow_blank => true, :allow_nil => true
   # validates_format_of :name, :with => /^[[:print:]]*$/, :message => "Partner name must be alphanumeric."
   validates_each :disabled_partners, :allow_blank => true do |record, attribute, value|
@@ -350,4 +353,9 @@ private
       errors.add(:sales_rep, 'must be an employee')
     end
   end
+
+  def client_id_legal
+    errors.add :client_id, "cannot be switched to another client." if client_id_was.present? && client_id.present?
+  end
+
 end

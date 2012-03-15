@@ -96,6 +96,7 @@ authorization do
     has_permission_on :apps, :to => [ :unarchive ]
     has_permission_on :offer_creatives, :to => [ :show, :create, :update, :destroy ]
     has_permission_on :partners_offer_discounts, :to => [ :index, :new, :create, :deactivate ]
+    has_permission_on :tools_approvals, :to => [ :index, :history, :mine, :assign, :approve, :reject ]
     has_permission_on :tools_offer_lists, :to => [ :index ]
     has_permission_on :tools_premier_partners, :to => [ :index ]
     has_permission_on :tools_generic_offers, :to => [ :index, :new, :create, :edit, :update ]
@@ -112,6 +113,7 @@ authorization do
     has_permission_on :tools_survey_offers, :to => [ :index, :show, :new, :create, :edit, :update, :destroy, :toggle_enabled ]
     has_permission_on :tools_brand_offers, :to => [ :index, :create, :delete ]
     has_permission_on :tools_brands, :to => [ :index, :new, :create, :edit, :update, :show ]
+    has_permission_on :tools_clients, :to => [ :index, :show, :new, :create, :edit, :update, :add_partner, :remove_partner ]
   end
 
   role :games_editor do

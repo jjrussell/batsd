@@ -334,4 +334,8 @@ FactoryGirl.define do
     offer {Factory(:app).primary_offer }
     allocation 1
   end
+
+  factory :client do
+    name  { Factory.next(:name) }
+  end
 end
