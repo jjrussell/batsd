@@ -17,9 +17,8 @@
             - if @has_icon
               %tr.controls
                 %td{:colspan => '2'}
-                  = link_to("View existing file", '#', :class => 'view_link')
-                  |
                   = link_to("Remove existing file", '#', :id => 'remove_link')
+                  (will revert back to default icon)
             %tr.controls
               %td
                 = f.file_field("upload_icon")
