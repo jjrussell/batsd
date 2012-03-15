@@ -29,6 +29,7 @@ module SprocketHelper
     src = src.logical_path if src.respond_to? :logical_path
     src = src.sub /\.(js|css)$/, ""
 
+    Rails.logger.error "Asset #{src} not in config/precompiled_assets.yml" unless Sprockets::Tj.asset_precompiled?(src)
     if Sprockets::Tj.precompile?
       "#{Sprockets::Tj.host}/assets/#{src}-#{Sprockets::Tj.assets[src].digest}.#{ext}"
     else
