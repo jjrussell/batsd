@@ -2,6 +2,7 @@ class Games::SupportRequestsController < GamesController
 
   def new
     current_gamer
+    #find_incomplete_offers
   end
 
   def create
@@ -12,6 +13,13 @@ class Games::SupportRequestsController < GamesController
       flash.now[:notice] = t("text.games.enter_message");
       render :new and return
     end
+
+    # Get the click of concern
+
+    #support_request = SupportRequest.new
+    #support_request.fill(params, @app, @currency, @offer)
+    #support_request.save
+
     case params[:type]
     when "feedback"
       GamesMailer.deliver_feedback(@gamer, data[:content], request.env["HTTP_USER_AGENT"], current_device_id)
