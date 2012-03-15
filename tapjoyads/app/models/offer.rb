@@ -233,8 +233,8 @@ class Offer < ActiveRecord::Base
     :select => PAPAYA_OFFER_COLUMNS
 
   delegate :balance, :pending_earnings, :name, :cs_contact_email, :approved_publisher?, :rev_share, :to => :partner, :prefix => true
-  delegate :name, :id, :formatted_active_gamer_count, :to => :app, :prefix => true, :allow_nil => true
-  memoize :partner_balance, :app_formatted_active_gamer_count
+  delegate :name, :id, :formatted_active_gamer_count, :protocol_handler, :to => :app, :prefix => true, :allow_nil => true
+  memoize :partner_balance, :app_formatted_active_gamer_count, :app_protocol_handler
 
   alias_method :events, :offer_events
   alias_method :random, :rand
@@ -791,11 +791,6 @@ class Offer < ActiveRecord::Base
     else
       0
     end
-  end
-
-  def nullify_banner_creatives
-    write_attribute(:banner_creatives, nil) if banner_creatives.empty?
-    write_attribute(:approved_banner_creatives, nil) if approved_banner_creatives.empty?
   end
 
   def nullify_banner_creatives

@@ -17,6 +17,7 @@ describe Partner do
     should have_many(:publisher_conversions)
     should have_many(:advertiser_conversions)
     should have_many(:monthly_accountings)
+    should belong_to(:client)
   end
 
   it 'validates' do
