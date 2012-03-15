@@ -3,15 +3,13 @@ class Tools::OfferListsController < WebsiteController
   current_tab :tools
   filter_access_to :all
 
+  OFFER_LIST_KEYS = %w( type device_type platform_name udid source )
+
   def index
     if params[:type]
-      offer_list_params = params.reject { |k,v| !OfferList::OFFER_LIST_KEYS.include?(k) }
-      udid = offer_list_params.delete(:udid)
-      offer_list_params[:device] = Device.new(:key => udid) if params[:udid].present?
+      offer_list_params = params.reject { |k,v| !OFFER_LIST_KEYS.include?(k) }
       offer_list = OfferList.new(offer_list_params)
-      @offers = offer_list.offers.sort_by { |offer| -offer.precache_rank_score_for(params[:currency_group_id]) }
-      offer_list.rejected_reasons!(@offers)
+      @offers = offer_list.rank_sorted_offers_with_rejections(params[:currency_group_id])
     end
   end
-
 end

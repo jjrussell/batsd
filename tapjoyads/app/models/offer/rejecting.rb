@@ -31,45 +31,59 @@ module Offer::Rejecting
 
   def postcache_reject_reasons(publisher_app, device, currency, device_type, geoip_data, app_version,
       direct_pay_providers, type, hide_rewarded_app_installs, library_version, os_version,
-      screen_layout_size, video_offer_ids, source, all_videos, mobile_carrier_code, early_out = true)
+      screen_layout_size, video_offer_ids, source, all_videos, mobile_carrier_code)
     reasons = []
     reject_functions = [
-      { :method => :geoip_reject?, :parameters => [geoip_data], :reason => 'geoip' },
-      { :method => :already_complete?, :parameters => [device, app_version], :reason => 'already_complete' },
-      { :method => :selective_opt_out_reject?, :parameters => [device], :reason => 'selective_opt_out' },
-      { :method => :show_rate_reject?, :parameters => [device], :reason => 'show_rate' },
-      { :method => :flixter_reject?, :parameters => [publisher_app, device], :reason => 'flixter' },
-      { :method => :minimum_bid_reject?, :parameters => [currency, type], :reason => 'minimum_bid' },
-      { :method => :jailbroken_reject?, :parameters => [device], :reason => 'jailbroken' },
-      { :method => :direct_pay_reject?, :parameters => [direct_pay_providers], :reason => 'direct_pay' },
-      { :method => :action_app_reject?, :parameters => [device], :reason => 'action_app' },
-      { :method => :min_os_version_reject?, :parameters => [os_version], :reason => 'min_os_version' },
-      { :method => :cookie_tracking_reject?, :parameters => [publisher_app, library_version, source], :reason => 'cookie_tracking' },
-      { :method => :screen_layout_sizes_reject?, :parameters => [screen_layout_size], :reason => 'screen_layout_sizes' },
-      { :method => :is_disabled?, :parameters => [publisher_app, currency], :reason => 'is_disabled' },
-      { :method => :age_rating_reject?, :parameters => [ currency && currency.max_age_rating], :reason => 'age_rating' },
-      { :method => :publisher_whitelist_reject?, :parameters => [publisher_app], :reason => 'publisher_whitelist' },
-      { :method => :currency_whitelist_reject?, :parameters => [currency], :reason => 'currency_whitelist' },
-      { :method => :video_offers_reject?, :parameters => [video_offer_ids, type, all_videos], :reason => 'video_offers' },
-      { :method => :frequency_capping_reject?, :parameters => [device], :reason => 'frequency_capping' },
-      { :method => :tapjoy_games_retargeting_reject?, :parameters => [device], :reason => 'tapjoy_games_retargeting' },
-      { :method => :source_reject?, :parameters => [source], :reason => 'source' },
-      { :method => :non_rewarded_offerwall_rewarded_reject?, :parameters => [currency], :reason => 'non_rewarded_offerwall_rewarded' },
-      { :method => :carriers_reject?, :parameters => [mobile_carrier_code], :reason => 'carriers' },
+      { :method => :geoip_reject?, :parameters => [geoip_data], :reason => 'geoip'.humanize },
+      { :method => :already_complete?, :parameters => [device, app_version], :reason => 'already_complete'.humanize },
+      { :method => :selective_opt_out_reject?, :parameters => [device], :reason => 'selective_opt_out'.humanize },
+      { :method => :flixter_reject?, :parameters => [publisher_app, device], :reason => 'flixter'.humanize },
+      { :method => :minimum_bid_reject?, :parameters => [currency, type], :reason => 'minimum_bid'.humanize },
+      { :method => :jailbroken_reject?, :parameters => [device], :reason => 'jailbroken'.humanize },
+      { :method => :direct_pay_reject?, :parameters => [direct_pay_providers], :reason => 'direct_pay'.humanize },
+      { :method => :action_app_reject?, :parameters => [device], :reason => 'action_app'.humanize },
+      { :method => :min_os_version_reject?, :parameters => [os_version], :reason => 'min_os_version'.humanize },
+      { :method => :cookie_tracking_reject?, :parameters => [publisher_app, library_version, source], :reason => 'cookie_tracking'.humanize },
+      { :method => :screen_layout_sizes_reject?, :parameters => [screen_layout_size], :reason => 'screen_layout_sizes'.humanize },
+      { :method => :is_disabled?, :parameters => [publisher_app, currency], :reason => 'is_disabled'.humanize },
+      { :method => :age_rating_reject?, :parameters => [ currency && currency.max_age_rating], :reason => 'age_rating'.humanize },
+      { :method => :publisher_whitelist_reject?, :parameters => [publisher_app], :reason => 'publisher_whitelist'.humanize },
+      { :method => :currency_whitelist_reject?, :parameters => [currency], :reason => 'currency_whitelist'.humanize },
+      { :method => :frequency_capping_reject?, :parameters => [device], :reason => 'frequency_capping'.humanize },
+      { :method => :tapjoy_games_retargeting_reject?, :parameters => [device], :reason => 'tapjoy_games_retargeting'.humanize },
+      { :method => :source_reject?, :parameters => [source], :reason => 'source'.humanize },
+      { :method => :non_rewarded_offerwall_rewarded_reject?, :parameters => [currency], :reason => 'non_rewarded_offerwall_rewarded'.humanize },
+      { :method => :carriers_reject?, :parameters => [mobile_carrier_code], :reason => 'carriers'.humanize },
     ]
     reject_functions.each do |function_hash|
-      if send(function_hash[:method], *function_hash[:parameters])
-        reasons << function_hash[:reason]
-        break if early_out
-      end
+        reasons << function_hash[:reason] if send(function_hash[:method], *function_hash[:parameters])
     end
     reasons
   end
+
   def postcache_reject?(publisher_app, device, currency, device_type, geoip_data, app_version, direct_pay_providers, type, hide_rewarded_app_installs, library_version, os_version, screen_layout_size, video_offer_ids, source, all_videos, mobile_carrier_code)
-    !postcache_reject_reasons(publisher_app, device, currency, device_type, geoip_data,
-        app_version, direct_pay_providers, type, hide_rewarded_app_installs, library_version,
-        os_version, screen_layout_size, video_offer_ids,
-        source, all_videos, mobile_carrier_code).empty?
+    geoip_reject?(geoip_data) ||
+    already_complete?(device, app_version) ||
+    selective_opt_out_reject?(device) ||
+    show_rate_reject?(device) ||
+    flixter_reject?(publisher_app, device) ||
+    minimum_bid_reject?(currency, type) ||
+    jailbroken_reject?(device) ||
+    direct_pay_reject?(direct_pay_providers) ||
+    action_app_reject?(device) ||
+    min_os_version_reject?(os_version) ||
+    cookie_tracking_reject?(publisher_app, library_version, source) ||
+    screen_layout_sizes_reject?(screen_layout_size) ||
+    is_disabled?(publisher_app, currency) ||
+    age_rating_reject?(currency.max_age_rating) ||
+    publisher_whitelist_reject?(publisher_app) ||
+    currency_whitelist_reject?(currency) ||
+    video_offers_reject?(video_offer_ids, type, all_videos) ||
+    frequency_capping_reject?(device) ||
+    tapjoy_games_retargeting_reject?(device) ||
+    source_reject?(source) ||
+    non_rewarded_offerwall_rewarded_reject?(currency) ||
+    carriers_reject?(mobile_carrier_code)
   end
 
   def precache_reject?(platform_name, hide_rewarded_app_installs, normalized_device_type)

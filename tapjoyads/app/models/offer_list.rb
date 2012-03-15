@@ -1,7 +1,6 @@
 class OfferList
   attr_reader :offers
 
-  OFFER_LIST_KEYS = %w( type device_type platform_name udid source )
 
   def initialize(options = {})
     @publisher_app              = options.delete(:publisher_app)
@@ -22,6 +21,7 @@ class OfferList
     @video_offer_ids            = options.delete(:video_offer_ids) { [] }
     @all_videos                 = options.delete(:all_videos) { false }
     @mobile_carrier_code        = options.delete(:mobile_carrier_code)
+    udid                        = options.delete(:udid)
 
     @hide_rewarded_app_installs = @currency ? @currency.hide_rewarded_app_installs_for_version?(@app_version, @source) : false
     @normalized_device_type     = Device.normalize_device_type(@device_type)
@@ -52,6 +52,7 @@ class OfferList
       end
     end
 
+    @device ||= Device.new(:key => udid) if udid.present?
     if (@device && (@device.opted_out? || @device.banned?)) || (@currency && !@currency.tapjoy_enabled?)
       @offers = []
     else
@@ -116,11 +117,12 @@ class OfferList
     [ returned_offers, 0 ]
   end
 
-  def rejected_reasons!(offers)
-    offers.each do |offer|
+  def rank_sorted_offers_with_rejections(currency_group_id)
+    @offers.each do |offer|
       class << offer; attr_accessor :rejection_reasons; end
       offer.rejection_reasons = populate_reasons(offer)
     end
+    @offers.sort_by { |offer| -offer.precache_rank_score_for(currency_group_id) }
   end
 
   private
@@ -133,6 +135,6 @@ class OfferList
   def populate_reasons(offer)
     offer.postcache_reject_reasons(@publisher_app, @device, @currency, @device_type, @geoip_data, @app_version,
       @direct_pay_providers, @type, @hide_rewarded_app_installs, @library_version, @os_version, @screen_layout_size,
-      @video_offer_ids, @source, @all_videos, @mobile_carrier_code, false).join('; ')
+      @video_offer_ids, @source, @all_videos, @mobile_carrier_code).join('; ')
   end
 end
