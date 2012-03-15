@@ -55,9 +55,7 @@ class VideoOffer < ActiveRecord::Base
   end
 
   def save_icon!(img_data)
-    affected_offer = offers.find(:first, :conditions => ['(icon_id_override IS NULL OR icon_id_override = ?)', id])
-    return unless affected_offer.present?
-    affected_offer.save_icon!(img_data, false, id)
+    primary_offer.save_icon!(img_data)
   end
 
   private

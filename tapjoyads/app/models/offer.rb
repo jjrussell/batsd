@@ -583,12 +583,12 @@ class Offer < ActiveRecord::Base
       CloudFront.invalidate(id, paths) if (remove || existing_icon_blob.present?)
     end
 
-    icon_id_override =  if remove
-                          item_type == 'App' ? nil : app_id
-                        else
-                          guid
-                        end
-    if guid != item_id || remove
+    if (override && guid != item_id) || remove
+      icon_id_override =  if remove
+                            item_type == 'App' ? nil : app_id
+                          else
+                            guid
+                          end
       self.update_attributes!(:icon_id_override => icon_id_override)
     end
   end
