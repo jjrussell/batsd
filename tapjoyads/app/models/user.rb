@@ -27,6 +27,8 @@ class User < ActiveRecord::Base
   validates_presence_of :reseller, :if => Proc.new { |user| user.reseller_id? }
 
   before_create :regenerate_api_key
+  before_create { |user| user.state = 'approved' }
+
   after_create :create_mail_chimp_entry
   after_save :update_auth_net_cim_profile
 
