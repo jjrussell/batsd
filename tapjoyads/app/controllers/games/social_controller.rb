@@ -8,7 +8,7 @@ class Games::SocialController < GamesController
 
   before_filter :require_gamer
   before_filter :validate_recipients, :only => [ :send_email_invites ]
-  before_filter :twitter_authenticate, :only => [:invite_twitter_friends, :send_twitter_invites ]
+  before_filter :twitter_authenticate, :only => [ :send_twitter_invites, :get_twitter_friends ]
   before_filter :offline_facebook_authenticate, :only => :connect_facebook_account
 
   def invites
@@ -75,8 +75,10 @@ class Games::SocialController < GamesController
   end
 
   def invite_twitter_friends
-    @page_size = 10
+    @page_size = 25
+  end
 
+  def get_twitter_friends
     twitter_friends = Twitter.follower_ids.ids.map do |id|
       Twitter.user(id)
     end
@@ -91,13 +93,15 @@ class Games::SocialController < GamesController
     end.sort_by do |friend|
       friend[:name].downcase
     end
+
+    render :json => @twitter_friends, :callback => params[:callback]
   end
 
   def send_twitter_invites
     friends = params[:friend_selected].split(',')
 
     if friends.blank?
-      render(:json => { :success => false, :error => "You must select at least one friend before sending out an invite" })
+      render(:json => { :success => false, :error => t('text.games.twitter_at_least_one_friend_error') })
     else
       posts = []
       gamers = []

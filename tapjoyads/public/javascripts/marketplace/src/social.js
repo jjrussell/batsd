@@ -56,7 +56,25 @@
         FB.ui(obj);
       },
 
-      initSocialPage: function(options){
+      loadFriends: function(url, pageSize, authUrl) {
+        $.ajax({
+         type: 'GET',
+         url: url,
+         success: function(data) {
+           window.renderFriendListOptions = {
+             pageSize:      pageSize,
+             socialFriends: data,
+           };
+           Tapjoy.Social.renderFriendList(window.renderFriendListOptions);
+           $('.ajax-placeholder').hide();
+         },
+         error: function(data) {
+           document.location.href = authUrl;
+         }
+        });
+      },
+
+      renderFriendList: function(options){
         // local variables
         var currentPage = 1;
         var selectedFriends = [];
@@ -250,8 +268,9 @@
   });
 
   $(function () {
-    if (window.twitterOptions) {
-      Tap.Social.initSocialPage(window.twitterOptions);
+    var loadFriendsOptions = window.loadFriendsOptions;
+    if (loadFriendsOptions) {
+      Tap.Social.loadFriends(loadFriendsOptions.getTwitterFriendsURL, loadFriendsOptions.pageSize, loadFriendsOptions.authTwitterPath);
     }
 
     $(".invite-twitter-followers").click(function (event) {
