@@ -214,6 +214,22 @@ describe Offer do
     @offer.send(:source_reject?, 'tj_games').should be_false
   end
 
+  it "rejects SDK-less offers when SDK version is older than 8.2.0" do
+    @offer.sdkless = true
+    @offer.send(:sdkless_reject?, '8.1.0').should be_true
+  end
+
+  it "accepts non-SDK-less offers when SDK version is older than 8.2.0" do
+    @offer.sdkless = false
+    @offer.send(:sdkless_reject?, '8.1.0').should be_false
+  end
+
+  it "doesn't reject SDK-less when SDK version is at least 8.2.0" do
+    @offer.sdkless = true
+    @offer.send(:sdkless_reject?, '8.2.0').should be_false
+  end
+
+
   it "doesn't reject on source when approved_sources is empty" do
     @offer.send(:source_reject?, 'foo').should be_false
     @offer.send(:source_reject?, 'offerwall').should be_false

@@ -30,6 +30,8 @@ class User < ActiveRecord::Base
     :message => 'Please select a country'
 
   before_create :regenerate_api_key
+  before_create { |user| user.state = 'approved' }
+
   after_create :create_mail_chimp_entry
   after_save :update_auth_net_cim_profile
 

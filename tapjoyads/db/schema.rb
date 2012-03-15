@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120221194719) do
+ActiveRecord::Schema.define(:version => 20120314201830) do
 
   create_table "action_offers", :id => false, :force => true do |t|
     t.string   "id",                    :limit => 36,                    :null => false
@@ -107,6 +107,7 @@ ActiveRecord::Schema.define(:version => 20120221194719) do
     t.datetime "updated_at"
   end
 
+  add_index "approvals", ["id"], :name => "index_approvals_on_id", :unique => true
   add_index "approvals", ["item_type", "item_id"], :name => "index_approvals_on_item_type_and_item_id"
   add_index "approvals", ["owner_id"], :name => "index_approvals_on_owner_id"
   add_index "approvals", ["state", "event"], :name => "index_approvals_on_state_and_event"
