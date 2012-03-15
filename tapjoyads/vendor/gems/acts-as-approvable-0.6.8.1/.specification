@@ -1,0 +1,383 @@
+--- !ruby/object:Gem::Specification 
+name: acts-as-approvable
+version: !ruby/object:Gem::Version 
+  prerelease: false
+  segments: 
+  - 0
+  - 6
+  - 8
+  - 1
+  version: 0.6.8.1
+platform: ruby
+authors: 
+- James Logsdon
+- Hwan-Joon Choi
+- Neal Wiggins
+autorequire: 
+bindir: bin
+cert_chain: []
+
+date: 2012-02-14 00:00:00 Z
+default_executable: 
+dependencies: 
+- !ruby/object:Gem::Dependency 
+  name: activerecord
+  prerelease: false
+  requirement: &id001 !ruby/object:Gem::Requirement 
+    requirements: 
+    - - ~>
+      - !ruby/object:Gem::Version 
+        segments: 
+        - 2
+        - 3
+        - 14
+        version: 2.3.14
+  type: :development
+  version_requirements: *id001
+- !ruby/object:Gem::Dependency 
+  name: appraisal
+  prerelease: false
+  requirement: &id002 !ruby/object:Gem::Requirement 
+    requirements: 
+    - - ~>
+      - !ruby/object:Gem::Version 
+        segments: 
+        - 0
+        - 4
+        - 1
+        version: 0.4.1
+  type: :development
+  version_requirements: *id002
+- !ruby/object:Gem::Dependency 
+  name: redcarpet
+  prerelease: false
+  requirement: &id003 !ruby/object:Gem::Requirement 
+    requirements: 
+    - - ~>
+      - !ruby/object:Gem::Version 
+        segments: 
+        - 2
+        - 1
+        - 0
+        version: 2.1.0
+  type: :development
+  version_requirements: *id003
+- !ruby/object:Gem::Dependency 
+  name: shoulda
+  prerelease: false
+  requirement: &id004 !ruby/object:Gem::Requirement 
+    requirements: 
+    - - ~>
+      - !ruby/object:Gem::Version 
+        segments: 
+        - 2
+        - 0
+        version: "2.0"
+  type: :development
+  version_requirements: *id004
+- !ruby/object:Gem::Dependency 
+  name: rspec
+  prerelease: false
+  requirement: &id005 !ruby/object:Gem::Requirement 
+    requirements: 
+    - - ~>
+      - !ruby/object:Gem::Version 
+        segments: 
+        - 2
+        - 8
+        - 0
+        version: 2.8.0
+  type: :development
+  version_requirements: *id005
+- !ruby/object:Gem::Dependency 
+  name: timecop
+  prerelease: false
+  requirement: &id006 !ruby/object:Gem::Requirement 
+    requirements: 
+    - - ~>
+      - !ruby/object:Gem::Version 
+        segments: 
+        - 0
+        - 3
+        - 5
+        version: 0.3.5
+  type: :development
+  version_requirements: *id006
+- !ruby/object:Gem::Dependency 
+  name: cucumber
+  prerelease: false
+  requirement: &id007 !ruby/object:Gem::Requirement 
+    requirements: 
+    - - ~>
+      - !ruby/object:Gem::Version 
+        segments: 
+        - 1
+        - 1
+        - 0
+        version: 1.1.0
+  type: :development
+  version_requirements: *id007
+- !ruby/object:Gem::Dependency 
+  name: rake
+  prerelease: false
+  requirement: &id008 !ruby/object:Gem::Requirement 
+    requirements: 
+    - - ~>
+      - !ruby/object:Gem::Version 
+        segments: 
+        - 0
+        - 9
+        - 2
+        version: 0.9.2
+  type: :development
+  version_requirements: *id008
+- !ruby/object:Gem::Dependency 
+  name: yard
+  prerelease: false
+  requirement: &id009 !ruby/object:Gem::Requirement 
+    requirements: 
+    - - ">="
+      - !ruby/object:Gem::Version 
+        segments: 
+        - 0
+        version: "0"
+  type: :development
+  version_requirements: *id009
+- !ruby/object:Gem::Dependency 
+  name: pry
+  prerelease: false
+  requirement: &id010 !ruby/object:Gem::Requirement 
+    requirements: 
+    - - ~>
+      - !ruby/object:Gem::Version 
+        segments: 
+        - 0
+        - 9
+        - 8
+        - 1
+        version: 0.9.8.1
+  type: :development
+  version_requirements: *id010
+- !ruby/object:Gem::Dependency 
+  name: pry-syntax-hacks
+  prerelease: false
+  requirement: &id011 !ruby/object:Gem::Requirement 
+    requirements: 
+    - - ">="
+      - !ruby/object:Gem::Version 
+        segments: 
+        - 0
+        version: "0"
+  type: :development
+  version_requirements: *id011
+- !ruby/object:Gem::Dependency 
+  name: simplecov
+  prerelease: false
+  requirement: &id012 !ruby/object:Gem::Requirement 
+    requirements: 
+    - - ">="
+      - !ruby/object:Gem::Version 
+        segments: 
+        - 0
+        version: "0"
+  type: :development
+  version_requirements: *id012
+- !ruby/object:Gem::Dependency 
+  name: pry-coolline
+  prerelease: false
+  requirement: &id013 !ruby/object:Gem::Requirement 
+    requirements: 
+    - - ">="
+      - !ruby/object:Gem::Version 
+        segments: 
+        - 0
+        version: "0"
+  type: :development
+  version_requirements: *id013
+- !ruby/object:Gem::Dependency 
+  name: pry-stack_explorer
+  prerelease: false
+  requirement: &id014 !ruby/object:Gem::Requirement 
+    requirements: 
+    - - ">="
+      - !ruby/object:Gem::Version 
+        segments: 
+        - 0
+        version: "0"
+  type: :development
+  version_requirements: *id014
+- !ruby/object:Gem::Dependency 
+  name: pry-nav
+  prerelease: false
+  requirement: &id015 !ruby/object:Gem::Requirement 
+    requirements: 
+    - - ~>
+      - !ruby/object:Gem::Version 
+        segments: 
+        - 0
+        - 1
+        - 0
+        version: 0.1.0
+  type: :development
+  version_requirements: *id015
+- !ruby/object:Gem::Dependency 
+  name: plymouth
+  prerelease: false
+  requirement: &id016 !ruby/object:Gem::Requirement 
+    requirements: 
+    - - ">="
+      - !ruby/object:Gem::Version 
+        segments: 
+        - 0
+        version: "0"
+  type: :development
+  version_requirements: *id016
+description: Generic approval queues for record creation and updates
+email: dwarf@girsbrain.org
+executables: []
+
+extensions: []
+
+extra_rdoc_files: []
+
+files: 
+- .gitignore
+- .rspec
+- .travis.yml
+- Appraisals
+- CHANGELOG
+- Gemfile
+- Gemfile.lock
+- MIT-LICENSE
+- README.md
+- Rakefile
+- VERSION
+- acts-as-approvable.gemspec
+- features/create_approval.feature
+- features/step_definitions/cucumber_steps.rb
+- features/support/env.rb
+- features/support/large.txt
+- features/support/second_large.txt
+- features/update_approval.feature
+- gemfiles/Gemfile.ci
+- gemfiles/Gemfile.ci.lock
+- gemfiles/mysql2.gemfile
+- gemfiles/mysql2.gemfile.lock
+- gemfiles/rails2.gemfile
+- gemfiles/rails2.gemfile.lock
+- gemfiles/rails30.gemfile
+- gemfiles/rails30.gemfile.lock
+- gemfiles/rails31.gemfile
+- gemfiles/rails31.gemfile.lock
+- gemfiles/sqlite.gemfile
+- generators/acts_as_approvable/USAGE
+- generators/acts_as_approvable/acts_as_approvable_generator.rb
+- generators/acts_as_approvable/templates/approvals.js
+- generators/acts_as_approvable/templates/approvals_controller.rb
+- generators/acts_as_approvable/templates/create_approvals.rb
+- generators/acts_as_approvable/templates/initializer.rb
+- generators/acts_as_approvable/templates/jquery.form.js
+- generators/acts_as_approvable/templates/views/erb/_owner_select.html.erb
+- generators/acts_as_approvable/templates/views/erb/_table.html.erb
+- generators/acts_as_approvable/templates/views/erb/index.html.erb
+- generators/acts_as_approvable/templates/views/haml/_owner_select.html.haml
+- generators/acts_as_approvable/templates/views/haml/_table.html.haml
+- generators/acts_as_approvable/templates/views/haml/index.html.haml
+- init.rb
+- lib/acts-as-approvable.rb
+- lib/acts-as-approvable/version.rb
+- lib/acts_as_approvable/approval.rb
+- lib/acts_as_approvable/error.rb
+- lib/acts_as_approvable/model.rb
+- lib/acts_as_approvable/model/class_methods.rb
+- lib/acts_as_approvable/model/create_instance_methods.rb
+- lib/acts_as_approvable/model/instance_methods.rb
+- lib/acts_as_approvable/model/update_instance_methods.rb
+- lib/acts_as_approvable/ownership.rb
+- lib/acts_as_approvable/railtie.rb
+- lib/generators/acts_as_approvable/USAGE
+- lib/generators/acts_as_approvable/acts_as_approvable_generator.rb
+- lib/generators/acts_as_approvable/base.rb
+- lib/generators/acts_as_approvable/templates/approvals.js
+- lib/generators/acts_as_approvable/templates/approvals_controller.rb
+- lib/generators/acts_as_approvable/templates/create_approvals.rb
+- lib/generators/acts_as_approvable/templates/jquery.form.js
+- lib/generators/erb/acts_as_approvable_generator.rb
+- lib/generators/erb/templates/_owner_select.html.erb
+- lib/generators/erb/templates/_table.html.erb
+- lib/generators/erb/templates/index.html.erb
+- lib/generators/haml/acts_as_approvable_generator.rb
+- lib/generators/haml/templates/_owner_select.html.haml
+- lib/generators/haml/templates/_table.html.haml
+- lib/generators/haml/templates/index.html.haml
+- lib/tasks/acts_as_approvable.rake
+- rails/init.rb
+- spec/acts_as_approvable/approval_spec.rb
+- spec/acts_as_approvable/model/class_methods_spec.rb
+- spec/acts_as_approvable/model/create_instance_methods_spec.rb
+- spec/acts_as_approvable/model/instance_methods_spec.rb
+- spec/acts_as_approvable/model/update_instance_methods_spec.rb
+- spec/acts_as_approvable/model_spec.rb
+- spec/acts_as_approvable/ownership/class_methods_spec.rb
+- spec/acts_as_approvable/ownership/instance_methods_spec.rb
+- spec/acts_as_approvable/ownership_spec.rb
+- spec/acts_as_approvable_spec.rb
+- spec/spec_helper.rb
+- spec/support/database.rb
+- spec/support/database.yml
+- spec/support/matchers.rb
+- spec/support/models.rb
+- spec/support/schema.rb
+has_rdoc: true
+homepage: http://github.com/jlogsdon/acts_as_approvable
+licenses: []
+
+post_install_message: 
+rdoc_options: []
+
+require_paths: 
+- lib
+required_ruby_version: !ruby/object:Gem::Requirement 
+  requirements: 
+  - - ">="
+    - !ruby/object:Gem::Version 
+      segments: 
+      - 0
+      version: "0"
+required_rubygems_version: !ruby/object:Gem::Requirement 
+  requirements: 
+  - - ">="
+    - !ruby/object:Gem::Version 
+      segments: 
+      - 0
+      version: "0"
+requirements: []
+
+rubyforge_project: 
+rubygems_version: 1.3.6
+signing_key: 
+specification_version: 3
+summary: Generic approval queues for record creation and updates
+test_files: 
+- features/create_approval.feature
+- features/step_definitions/cucumber_steps.rb
+- features/support/env.rb
+- features/support/large.txt
+- features/support/second_large.txt
+- features/update_approval.feature
+- spec/acts_as_approvable/approval_spec.rb
+- spec/acts_as_approvable/model/class_methods_spec.rb
+- spec/acts_as_approvable/model/create_instance_methods_spec.rb
+- spec/acts_as_approvable/model/instance_methods_spec.rb
+- spec/acts_as_approvable/model/update_instance_methods_spec.rb
+- spec/acts_as_approvable/model_spec.rb
+- spec/acts_as_approvable/ownership/class_methods_spec.rb
+- spec/acts_as_approvable/ownership/instance_methods_spec.rb
+- spec/acts_as_approvable/ownership_spec.rb
+- spec/acts_as_approvable_spec.rb
+- spec/spec_helper.rb
+- spec/support/database.rb
+- spec/support/database.yml
+- spec/support/matchers.rb
+- spec/support/models.rb
+- spec/support/schema.rb
