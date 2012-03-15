@@ -259,7 +259,7 @@ class Offer < ActiveRecord::Base
   end
 
   def app_offer?
-    client_facing_app_offer? || %w(RatingOffer ReengagementOffer).include? item_type
+    client_facing_app_offer? || %w(RatingOffer ReengagementOffer).include?(item_type)
   end
 
   def app_id
