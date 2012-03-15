@@ -32,7 +32,7 @@ class SimpledbShardedResource < SimpledbResource
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
 
     records = []
-    select_options = { :where => conditions, :consistent => consistent }
+    select_options = { :where => sanitize_conditions(conditions), :consistent => consistent }
     all_domain_names.each do |current_domain_name|
       select_options[:domain_name] = current_domain_name
       select(select_options.dup) do |record|
@@ -43,6 +43,11 @@ class SimpledbShardedResource < SimpledbResource
     records
   end
 
+  def self.sanitize_conditions(*ary)
+    ary = ary.first.is_a?(Array) ? ary.first : ary
+    ary = [ary.shift, *ary.map(&:to_s)] # SimpleDB expects all values to be strings
+    ActiveRecord::Base.sanitize_conditions(ary)
+  end
 
   private
 
