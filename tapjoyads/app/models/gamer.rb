@@ -4,6 +4,7 @@ class Gamer < ActiveRecord::Base
   has_many :gamer_devices, :dependent => :destroy
   has_many :invitations, :dependent => :destroy
   has_many :app_reviews, :as => :author, :dependent => :destroy
+  has_many :favorite_apps, :dependent => :destroy
   has_one :gamer_profile, :dependent => :destroy
   has_one :referrer_gamer, :class_name => 'Gamer', :primary_key => :referred_by, :foreign_key => :id
 
@@ -127,10 +128,14 @@ class Gamer < ActiveRecord::Base
 
   def get_avatar_url
     if gamer_profile.present? && gamer_profile.facebook_id.present?
-      "https://graph.facebook.com/#{gamer_profile.facebook_id}/picture?size=square"
+      "https://graph.facebook.com/#{gamer_profile.facebook_id}/picture?type=normal"
     else
-      "https://secure.gravatar.com/avatar/#{generate_gravatar_hash}?d=mm&s=50"
+      "https://secure.gravatar.com/avatar/#{generate_gravatar_hash}?d=mm&s=123"
     end
+  end
+
+  def all_device_data
+    devices.map(&:device_data)
   end
 
   def reward_click(click)

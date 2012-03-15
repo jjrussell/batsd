@@ -1,0 +1,9 @@
+#wfh_list
+  %h1 New WFH
+  = render :partial => 'form', :locals => { :action => 'Create' }
+
+  %h1 My Upcoming WFH
+  = render :partial => 'tools/employees/wfhs', :locals => { :editable => true }
+
+= link_to 'Back', tools_wfhs_path
+- content_for :page_head, stylesheet_link_tag('tools')

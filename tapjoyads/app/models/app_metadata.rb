@@ -2,7 +2,7 @@ class AppMetadata < ActiveRecord::Base
   include UuidPrimaryKey
   json_set_field :countries_blacklist
 
-  PLATFORMS = {'App Store' => 'iphone', 'Market' => 'android', 'Marketplace' => 'windows'}
+  PLATFORMS = {'App Store' => 'iphone', 'Market' => 'android', 'Google Play' => 'android', 'Marketplace' => 'windows'}
   RATING_THRESHOLD = 0.6
 
   has_many :app_metadata_mappings
