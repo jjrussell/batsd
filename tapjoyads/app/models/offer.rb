@@ -556,7 +556,7 @@ class Offer < ActiveRecord::Base
       end
 
       Mc.delete("icon.s3.#{guid}")
-      CloudFront.invalidate(id, paths) if (remove || existing_icon_blob.present?)
+      CloudFront.invalidate(guid, paths) if (remove || existing_icon_blob.present?)
     end
   end
 
