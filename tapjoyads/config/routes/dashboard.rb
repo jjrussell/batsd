@@ -76,7 +76,7 @@ ActionController::Routing::Routes.draw do |map|
                      :resolve_clicks => :post, :sqs_lengths => :get, :elb_status => :get, :ses_status => :get,
                      :publishers_without_payout_info => :get, :publisher_payout_info_changes => :get, :device_info => :get,
                      :award_currencies => :post, :update_award_currencies => :post,
-                     :update_user_roles => :post, :update_device => :post, :approvals => :post }
+                     :update_user_roles => :post, :update_device => :post }
 
   map.namespace :tools do |tools|
     tools.resources :approvals, :only => [:index], :collection => [:history, :mine], :member => [:approve, :reject, :assign]

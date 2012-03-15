@@ -221,16 +221,7 @@ class Currency < ActiveRecord::Base
     conversion_rate > 0
   end
 
-  def state=(state)
-    self.approval.state = state
-  end
-
-  def state
-    self.approval.state
-  end
-
   private
-
   def cache_by_app_id
     currencies = Currency.find_all_by_app_id(app_id, :order => 'ordinal ASC').each { |c| c.run_callbacks(:before_cache) }
     Mc.distributed_put("mysql.app_currencies.#{app_id}.#{Currency.acts_as_cacheable_version}", currencies, false, 1.day)
