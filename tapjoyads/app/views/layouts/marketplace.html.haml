@@ -18,17 +18,10 @@
 
     = yield :early_load
 
-    = css_tag("marketplace/core")
+    = css_tag("marketplace/style-master")
 
     /[if lt IE 9]
       = js_tag "marketplace/helpers/html5"
-
-    = css_tag("marketplace/theme/tjm/style")
-    = css_tag("marketplace/theme/tjm/style-768", :media => "only screen and (max-width: 768px)")
-    = css_tag("marketplace/theme/tjm/style-480", :media => "only screen and (max-width: 480px)")
-    = css_tag("marketplace/theme/tjm/style-360", :media => "only screen and (max-width: 360px)")
-    = css_tag("marketplace/theme/tjm/style-320", :media => "only screen and (max-width: 320px)")
-    = css_tag("marketplace/resources/components/carousel/carousel")
 
     /[if IE 8]
       = css_tag('marketplace/theme/tjm/ie.css')
