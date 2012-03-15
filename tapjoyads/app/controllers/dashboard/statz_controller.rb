@@ -79,7 +79,7 @@ class Dashboard::StatzController < Dashboard::DashboardController
     if [:put, :post].include? request.method
       image_data = params[:offer][:upload_icon].try(:read)
       begin
-        @offer.save_icon!(image_data)
+        @offer.save_icon!(image_data, true)
         @success_message = "Icon uploaded successfully."
       rescue
         @error_message = "Error uploading icon, please try again."
@@ -95,7 +95,7 @@ class Dashboard::StatzController < Dashboard::DashboardController
       end
     end
 
-    @has_icon = @offer.uploaded_icon?
+    @has_icon = @offer.icon_id_override? && @offer.uploaded_icon?
     render :layout => 'simple'
   end
 
