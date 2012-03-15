@@ -487,11 +487,36 @@ class Offer < ActiveRecord::Base
   end
 
   def remove_icon!
-    save_icon!(nil, true)
+    save_icon!(nil, true, nil, true)
   end
 
-  def save_icon!(icon_src_blob, remove = false)
-    icon_id = Offer.hashed_icon_id(id)
+  def save_icon!(icon_src_blob, override = false, guid = nil, remove = false)
+    # From what I can tell, here's how this works...
+    # When an offer's icon is requested, it will use the 'icon_id' method,
+    # which, by default, uses item_id as the guid to be passed into Offer.hashed_icon_id()
+    #
+    # This method ('save_icon!') will use id by default, however.
+    #
+    # What this means is that when 'save_icon!' is called on an app's primary offer, any secondary offers
+    # belonging to that app will request / utilize the same file, since they will use the item_id (aka app_id) guid,
+    # which will be the same guid as the primary offer's id.
+    #
+    # But wait! There's more! The 'icon_id_override' field is for offers tied to apps whose immediate parents aren't apps...
+    # in other words, item_type won't be "App" and item_id won't be the app_id. e.g. ActionOffers, ReengagementOffers, etc.
+    # It is *also* for offers where the icon has been manually overridden
+
+    if remove
+      guid = icon_id_override
+      return unless guid
+    end
+
+    if override && guid.nil? && id == item_id
+      guid = UUIDTools::UUID.random_create.to_s
+    end
+
+    guid ||= id # use already-generated guid ('id'), if possible
+
+    icon_id = Offer.hashed_icon_id(guid)
     bucket  = S3.bucket(BucketNames::TAPJOY)
     src_obj = bucket.objects["icons/src/#{icon_id}.jpg"]
 
@@ -502,10 +527,10 @@ class Offer < ActiveRecord::Base
       return
     end
 
+    src_obj.delete if remove
+
     if item_type == 'VideoOffer'
-      if remove
-        src_obj.delete
-      else
+      unless remove
         icon_200 = Magick::Image.from_blob(icon_src_blob)[0].resize(200, 125).opaque('#ffffff00', 'white')
         corner_mask_blob = bucket.objects["display/round_mask_200x125.png"].read
         corner_mask = Magick::Image.from_blob(corner_mask_blob)[0].resize(200, 125)
@@ -519,36 +544,39 @@ class Offer < ActiveRecord::Base
       end
 
       Mc.delete("icon.s3.#{id}")
-      return
-    end
-
-    paths = ["icons/256/#{icon_id}.jpg", "icons/114/#{icon_id}.jpg", "icons/57/#{icon_id}.jpg", "icons/57/#{icon_id}.png"]
-    if remove
-      paths.each { |path| bucket.objects[path].delete }
-      src_obj.delete
     else
-      icon_256 = Magick::Image.from_blob(icon_src_blob)[0].resize(256, 256).opaque('#ffffff00', 'white')
+      paths = ["icons/256/#{icon_id}.jpg", "icons/114/#{icon_id}.jpg", "icons/57/#{icon_id}.jpg", "icons/57/#{icon_id}.png"]
+      if remove
+        paths.each { |path| bucket.objects[path].delete }
+      else
+        icon_256 = Magick::Image.from_blob(icon_src_blob)[0].resize(256, 256).opaque('#ffffff00', 'white')
 
-      corner_mask_blob = bucket.objects["display/round_mask.png"].read
-      corner_mask = Magick::Image.from_blob(corner_mask_blob)[0].resize(256, 256)
-      icon_256.composite!(corner_mask, 0, 0, Magick::CopyOpacityCompositeOp)
-      icon_256 = icon_256.opaque('#ffffff00', 'white')
-      icon_256.alpha(Magick::OpaqueAlphaChannel)
+        corner_mask_blob = bucket.objects["display/round_mask.png"].read
+        corner_mask = Magick::Image.from_blob(corner_mask_blob)[0].resize(256, 256)
+        icon_256.composite!(corner_mask, 0, 0, Magick::CopyOpacityCompositeOp)
+        icon_256 = icon_256.opaque('#ffffff00', 'white')
+        icon_256.alpha(Magick::OpaqueAlphaChannel)
 
-      icon_256_blob = icon_256.to_blob{|i| i.format = 'JPG'}
-      icon_114_blob = icon_256.resize(114, 114).to_blob{|i| i.format = 'JPG'}
-      icon_57_blob = icon_256.resize(57, 57).to_blob{|i| i.format = 'JPG'}
-      icon_57_png_blob = icon_256.resize(57, 57).to_blob{|i| i.format = 'PNG'}
+        icon_256_blob = icon_256.to_blob{|i| i.format = 'JPG'}
+        icon_114_blob = icon_256.resize(114, 114).to_blob{|i| i.format = 'JPG'}
+        icon_57_blob = icon_256.resize(57, 57).to_blob{|i| i.format = 'JPG'}
+        icon_57_png_blob = icon_256.resize(57, 57).to_blob{|i| i.format = 'PNG'}
 
-      bucket.objects["icons/256/#{icon_id}.jpg"].write(:data => icon_256_blob, :acl => :public_read)
-      bucket.objects["icons/114/#{icon_id}.jpg"].write(:data => icon_114_blob, :acl => :public_read)
-      bucket.objects["icons/57/#{icon_id}.jpg"].write(:data => icon_57_blob, :acl => :public_read)
-      bucket.objects["icons/57/#{icon_id}.png"].write(:data => icon_57_png_blob, :acl => :public_read)
-      src_obj.write(:data => icon_src_blob, :acl => :public_read)
+        bucket.objects["icons/256/#{icon_id}.jpg"].write(:data => icon_256_blob, :acl => :public_read)
+        bucket.objects["icons/114/#{icon_id}.jpg"].write(:data => icon_114_blob, :acl => :public_read)
+        bucket.objects["icons/57/#{icon_id}.jpg"].write(:data => icon_57_blob, :acl => :public_read)
+        bucket.objects["icons/57/#{icon_id}.png"].write(:data => icon_57_png_blob, :acl => :public_read)
+        src_obj.write(:data => icon_src_blob, :acl => :public_read)
+      end
+
+      Mc.delete("icon.s3.#{id}")
+      CloudFront.invalidate(id, paths) if (remove || existing_icon_blob.present?)
     end
 
-    Mc.delete("icon.s3.#{id}")
-    CloudFront.invalidate(id, paths) if (remove || existing_icon_blob.present?)
+    icon_id_override = remove ? nil : guid
+    if guid != item_id || remove
+      self.update_attributes!(:icon_id_override => icon_id_override)
+    end
   end
 
   def save(perform_validation = true)
