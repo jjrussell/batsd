@@ -16,8 +16,8 @@
         = t("text.games.log_in_tapjoy")
       .form-error
         &nbsp;
-        = error_message_on @gamer_session, :email, :prepend_text => "Email "
-        = error_message_on @gamer_session, :password, :prepend_text => "Password "
+        = error_message_on @gamer_session, :email
+        = error_message_on @gamer_session, :password
       .field.email
         = f.email_field :email, "autocorrect" => "off", "autocapitalize" => "off", :placeholder => t("text.shared.email"), :required => ""
       .field.password
