@@ -205,6 +205,7 @@
         $('.ui-joy-carousel-index', $t.pagingContainer).removeClass('highlight');
         $('.ui-joy-carousel-index:eq(' + $t.current + ')', $t.pagingContainer).addClass('highlight');
       }
+
       if(next > $t.length || $t.config.forceSlideWidth && $t.pages == ($t.current + 1)){
         back.removeClass('disabled');
         forward.addClass('disabled');

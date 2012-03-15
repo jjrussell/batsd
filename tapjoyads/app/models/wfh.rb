@@ -12,14 +12,14 @@ class Wfh < ActiveRecord::Base
   validates_inclusion_of :category, :in => CATEGORIES.map(&:last)
 
   named_scope :today_and_after, lambda {
-    { :conditions => [ 'end_date >= ?', Date.today ] }
+    { :conditions => [ 'end_date >= ?', Time.zone.today ] }
   }
   named_scope :today, lambda {
-    today = Date.today
+    today = Time.zone.today
     { :conditions => [ 'start_date <= ? AND end_date >= ?', today, today ] }
   }
   named_scope :upcoming_week, lambda {
-    start_date = Date.today + 1.day
+    start_date = Time.zone.today + 1.day
     end_date   = start_date + 7.days
     {
       :joins => [ :employee ],

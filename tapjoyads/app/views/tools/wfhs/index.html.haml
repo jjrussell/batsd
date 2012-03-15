@@ -1,6 +1,6 @@
 #wfh_list
   %h1
-    = Date.today.to_s(:amd)
+    = Time.zone.today.to_s(:amd)
     Dev/Prod availability
   - @team.each_with_index do |row, row_num|
     .clear
