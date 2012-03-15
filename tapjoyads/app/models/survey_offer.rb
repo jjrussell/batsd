@@ -135,7 +135,13 @@ class SurveyOffer < ActiveRecord::Base
     reload
     bucket = S3.bucket(BucketNames::TAPJOY)
     image_data = bucket.objects['icons/survey-blue.png'].read
-    primary_offer.save_icon!(image_data)
+    save_icon!(image_data)
+  end
+
+  def save_icon!(img_data)
+    affected_offer = offers.find(:first, :conditions => ['(icon_id_override IS NULL OR icon_id_override = ?)', id])
+    return unless affected_offer.present?
+    affected_offer.save_icon!(img_data, false, id)
   end
 
   def update_offer

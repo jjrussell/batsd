@@ -23,7 +23,7 @@ class Tools::VideoOffersController < WebsiteController
 
     if @video_offer.save
       @video_offer.primary_offer.save_video!(params[:video].read)
-      @video_offer.primary_offer.save_icon!(params[:icon].read) if params[:icon].present?
+      @video_offer.save_icon!(params[:icon].read) if params[:icon].present?
       flash[:notice] = 'Successfully created Video Offer'
       redirect_to edit_tools_video_offer_path(@video_offer.id)
     else
@@ -37,7 +37,7 @@ class Tools::VideoOffersController < WebsiteController
 
     if @video_offer.update_attributes(params[:video_offer])
       @video_offer.primary_offer.save_video!(params[:video].read) if params[:video].present?
-      @video_offer.primary_offer.save_icon!(params[:icon].read) if params[:icon].present?
+      @video_offer.save_icon!(params[:icon].read) if params[:icon].present?
       flash[:notice] = 'Successfully updated Video Offer'
       redirect_to statz_path(@video_offer.primary_offer)
     else
