@@ -1,0 +1,94 @@
+!!! 5
+
+%html{ :class => "#{HeaderParser.device_type(request.headers['user-agent'])} device mobile no-os no-touch no-hd" }
+  %head
+    %meta{ 'http-equiv' => 'Content-Type', :content => 'text/html; charset=utf-8' }
+    %meta{ :name => 'viewport', 'content' => 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no' }
+    %meta{ :name => 'apple-mobile-web-app-status-bar-style', 'content' => 'black' }
+    %meta{ :name => 'description', :content => t('text.games.meta_description') }
+    %meta{ :name => 'keywords', :content => t('text.games.meta_keywords') }
+    %meta{ :property => 'og:image', :content => "https://www.tapjoy.com/images/ic_launcher_96x96.png" }
+    = NewRelic::Agent.browser_timing_header rescue ""
+
+    %link{ :rel => 'shortcut icon', :href => '/favicon.ico', :content => 'image/vnd.microsoft.icon' }
+    %link{ :rel => 'apple-touch-icon-precomposed', :href => '/images/tjgames-114x114.png' }
+    %link{ :rel => 'publisher', :href => 'https://plus.google.com/b/116280135840952950839/' }
+
+    %title= @page_title.blank? ? 'Tapjoy Marketplace' : "#{@page_title} - Tapjoy"
+
+    = yield :early_load
+
+    = css_tag("marketplace/core")
+
+    /[if lt IE 9]
+      = js_tag "marketplace/helpers/html5"
+
+    = css_tag("marketplace/theme/tjm/style")
+    = css_tag("marketplace/theme/tjm/style-768", :media => "only screen and (max-width: 768px)")
+    = css_tag("marketplace/theme/tjm/style-480", :media => "only screen and (max-width: 480px)")
+    = css_tag("marketplace/theme/tjm/style-360", :media => "only screen and (max-width: 360px)")
+    = css_tag("marketplace/theme/tjm/style-320", :media => "only screen and (max-width: 320px)")
+    = css_tag("marketplace/resources/components/carousel/carousel")
+
+    /[if IE 8]
+      = css_tag('marketplace/theme/tjm/ie.css')
+
+    %script{ :id => "analytics-goes-here" }
+    = yield :page_head
+
+  %body{ :id => 'tapjoy' }
+    %noscript
+      %style{:type => "text/css", :media => "screen"}
+        :plain
+          #tapjoy {display:none;}
+      .noscript_msg
+        = t('text.games.no_javascript')
+
+    = render :partial => 'games/shared/header'
+    - flash.each do |name, msg|
+      .flash.hidden{ :id => "flash-#{name}" }
+        = msg
+
+    = yield
+
+    = render 'games/shared/submenu'
+
+    = yield :above_footer
+
+    = render 'games/shared/footer'
+
+    = css_tag("marketplace/locale/#{I18n.locale.to_s}.css") if ['de', 'es', 'fr', 'ja', 'ko'].include? I18n.locale.to_s
+
+    :javascript
+      window.ENVIRONMENT = "#{Rails.env}";
+    %script{ :type => 'text/javascript', :charset => 'utf-8', :src => games_translations_path(:language_code => I18n.locale) }
+    = js_tag "tjm"
+
+    = yield :included_javascripts
+
+    %script{ :type => 'text/javascript', :charset => 'utf-8' }
+      = yield :page_javascript
+
+    :javascript
+      Tapjoy.rootPath =  "#{WEBSITE_URL}";
+      Tapjoy.iosLinkDevicePath = "#{new_games_gamer_device_path}";
+      Tapjoy.androidAppPath = "#{GAMES_ANDROID_MARKET_URL}";
+      Tapjoy.selectDevice = #{current_gamer ? current_gamer.all_device_data.to_json : [].to_json};
+      Tapjoy.selectDevicePath = "#{games_switch_device_path}";
+      Tapjoy.requireSelectDevice = #{@require_select_device.to_json};
+
+    - if Rails.env.production?
+      :javascript
+        var _gaq = _gaq || [];
+        _gaq.push(['_setAccount', 'UA-25098478-2']);
+        _gaq.push(['_trackPageview']);
+
+        (function() {
+          var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+          ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+          var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+        })();
+
+
+    -# keep this as the last call in the file
+    = NewRelic::Agent.browser_timing_footer rescue ""

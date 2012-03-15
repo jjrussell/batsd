@@ -23,7 +23,7 @@
         %td= featured_content.subtitle
         %td= featured_content.weight
         %td= link_to('Edit', edit_tools_featured_content_path(featured_content))
-        %td= link_to('Delete', tools_featured_content_path(featured_content), :method => :delete, :confirm => "Delete featured_content?")
+        %td= featured_content.expired? ? '' : link_to('Expire', tools_featured_content_path(featured_content), :method => :delete, :confirm => "Are you sure you want to expire this featured content?")
 
 = will_paginate(list, :param_name => "#{list_name}_page")
 

@@ -20,7 +20,7 @@ class Job < ActiveRecord::Base
 
   named_scope :active, :conditions => 'active = true'
   named_scope :by_job_type, lambda { |type| { :conditions => [ "job_type = ?", type ] } }
-  named_scope :for_index, :order => "job_type, frequency, seconds"
+  named_scope :for_index, :order => "active desc, job_type, frequency, seconds"
 
   attr_reader :next_run_time
 

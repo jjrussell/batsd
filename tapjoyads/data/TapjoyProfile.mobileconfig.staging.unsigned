@@ -26,7 +26,7 @@
  <key>PayloadIdentifier</key>
  <string>com.tapjoy.profile-service</string>
  <key>PayloadDescription</key>
- <string>This temporary profile will be used to personalize your experience with Tapjoy. WE WILL NOT CHANGE ANY SETTINGS ON YOUR DEVICE.</string>
+ <string>Press to Install your profile. This will enable settings on your device to personalize your Tapjoy experience.</string>
  <key>PayloadType</key>
  <string>Profile Service</string>
 </dict>

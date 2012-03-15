@@ -1,0 +1,17 @@
+.ui-joy-group
+  .ui-joy-group-title= t('text.shared.friends')
+
+  .container
+    %ul.list-button-container.mtn
+      %li.list-button.soft-gray-gradient
+        -link_to games_social_friends_path(:following => 1) do
+          .hd
+            = t("text.shared.following")
+          .bold
+            = @friends_lists[:following].size
+      %li.list-button.soft-gray-gradient
+        -link_to games_social_friends_path do
+          .hd
+            =t("text.shared.followers")
+          .bold
+            = @friends_lists[:followers].size

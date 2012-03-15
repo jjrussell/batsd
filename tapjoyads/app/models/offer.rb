@@ -11,7 +11,7 @@ class Offer < ActiveRecord::Base
   ANDROID_DEVICES = %w( android )
   WINDOWS_DEVICES = %w( windows )
   ALL_DEVICES = APPLE_DEVICES + ANDROID_DEVICES + WINDOWS_DEVICES
-  ALL_OFFER_TYPES = %w( App EmailOffer GenericOffer OfferpalOffer RatingOffer ActionOffer VideoOffer SurveyOffer )
+  ALL_OFFER_TYPES = %w( App EmailOffer GenericOffer OfferpalOffer RatingOffer ActionOffer VideoOffer SurveyOffer ReengagementOffer)
   ALL_SOURCES = %w( offerwall display_ad featured tj_games )
 
   CLASSIC_OFFER_TYPE               = '0'
@@ -37,13 +37,31 @@ class Offer < ActiveRecord::Base
   DISPLAY_AD_SIZES = ['320x50', '640x100', '768x90'] # data stored as pngs
   FEATURED_AD_SIZES = ['960x640', '640x960', '480x320', '320x480'] # data stored as jpegs
   CUSTOM_AD_SIZES = DISPLAY_AD_SIZES + FEATURED_AD_SIZES
-  OFFER_LIST_EXCLUDED_COLUMNS = ["active", "allow_negative_balance", "created_at", "daily_budget",
-                                 "hidden", "instructions", "instructions_overridden", "last_daily_stats_aggregation_time",
-                                 "last_stats_aggregation_time", "low_balance", "min_bid_override", "min_conversion_rate",
-                                 "name_suffix", "next_daily_stats_aggregation_time", "next_stats_aggregation_time",
-                                 "overall_budget", "pay_per_click", "stats_aggregation_interval", "tapjoy_enabled",
-                                 "tapjoy_sponsored", "updated_at", "url_overridden", "user_enabled"
-                                 ]
+  OFFER_LIST_EXCLUDED_COLUMNS = %w( active
+                                    allow_negative_balance
+                                    created_at
+                                    daily_budget
+                                    hidden
+                                    instructions
+                                    instructions_overridden
+                                    last_daily_stats_aggregation_time
+                                    last_stats_aggregation_time
+                                    low_balance
+                                    min_bid_override
+                                    min_conversion_rate
+                                    name_suffix
+                                    next_daily_stats_aggregation_time
+                                    next_stats_aggregation_time
+                                    overall_budget
+                                    pay_per_click
+                                    stats_aggregation_interval
+                                    tapjoy_enabled
+                                    tapjoy_sponsored
+                                    updated_at
+                                    url_overridden
+                                    user_enabled
+                                    tracking_for_id
+                                    tracking_for_type )
 
   OFFER_LIST_REQUIRED_COLUMNS = (Offer.column_names - OFFER_LIST_EXCLUDED_COLUMNS).map { |c| "#{quoted_table_name}.#{c}" }.join(', ')
 
@@ -141,6 +159,7 @@ class Offer < ActiveRecord::Base
     if value
       record.errors.add(attribute, "is not for App offers") unless record.multi_completable?
       record.errors.add(attribute, "cannot be used for non-interval pay-per-click offers") if record.pay_per_click? && record.interval == 0
+      record.errors.add(attribute, 'cannot be used for Survey offers') if record.item_type == 'SurveyOffer'
     end
   end
   validates_each :instructions_overridden, :if => :instructions_overridden? do |record, attribute, value|
@@ -150,9 +169,14 @@ class Offer < ActiveRecord::Base
   validates_each :sdkless, :allow_blank => false, :allow_nil => false do |record, attribute, value|
     if value
       record.get_device_types(true)
-      record.errors.add(attribute, "can only be enabled for Android-only offers") unless record.get_platform(true) == 'Android'
+      record.errors.add(attribute, "can only be enabled for Android or iOS offers") unless record.get_platform(true) == 'Android'|| record.get_platform(true) == 'iOS'
       record.errors.add(attribute, "cannot be enabled for pay-per-click offers") if record.pay_per_click?
       record.errors.add(attribute, "can only be enabled for 'App' offers") unless record.item_type == 'App'
+    end
+  end
+  validates_each :tapjoy_enabled do |record, attribute, value|
+    if value && record.tapjoy_enabled_changed? && record.missing_app_store_id?
+      record.errors.add(attribute, "cannot be enabled without valid store id")
     end
   end
 
@@ -165,6 +189,7 @@ class Offer < ActiveRecord::Base
   before_save :update_instructions
   before_save :sync_creative_approval # Must be before_save so auto-approval can happen
   before_save :nullify_banner_creatives
+  after_update :lock_survey_offer
   after_save :update_enabled_rating_offer_id
   after_save :update_pending_enable_requests
   after_save :update_tapjoy_sponsored_associated_offers
@@ -208,15 +233,16 @@ class Offer < ActiveRecord::Base
     :select => PAPAYA_OFFER_COLUMNS
 
   delegate :balance, :pending_earnings, :name, :cs_contact_email, :approved_publisher?, :rev_share, :to => :partner, :prefix => true
-  memoize :partner_balance
+  delegate :name, :id, :formatted_active_gamer_count, :protocol_handler, :to => :app, :prefix => true, :allow_nil => true
+  memoize :partner_balance, :app_formatted_active_gamer_count, :app_protocol_handler
 
   alias_method :events, :offer_events
   alias_method :random, :rand
 
   json_set_field :device_types, :screen_layout_sizes, :countries, :dma_codes, :regions,
-    :approved_sources, :carriers
+    :approved_sources, :carriers, :cities
   memoize :get_device_types, :get_screen_layout_sizes, :get_countries, :get_dma_codes,
-    :get_regions, :get_approved_sources, :get_carriers
+    :get_regions, :get_approved_sources, :get_carriers, :get_cities
 
   def clone
     super.tap do |clone|
@@ -230,6 +256,10 @@ class Offer < ActiveRecord::Base
 
   def app_offer?
     item_type == 'App' || item_type == 'ActionOffer'
+  end
+
+  def missing_app_store_id?
+    app_offer? && !url_overridden? && item.store_id.blank?
   end
 
   def countries_blacklist
@@ -505,19 +535,6 @@ class Offer < ActiveRecord::Base
     CloudFront.invalidate(id, paths) if existing_icon_blob.present?
   end
 
-  def get_video_url(options = {})
-    Offer.get_video_url({:video_id => Offer.id}.merge(options))
-  end
-
-  def self.get_video_url(options = {})
-    video_id  = options.delete(:video_id)  { |k| raise "#{k} is a required argument" }
-    raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
-
-    prefix = "http://s3.amazonaws.com/#{RUN_MODE_PREFIX}tapjoy"
-
-    "#{prefix}/videos/src/#{video_id}.mp4"
-  end
-
   def save(perform_validation = true)
     super(perform_validation)
   rescue BannerSyncError => bse
@@ -605,9 +622,9 @@ class Offer < ActiveRecord::Base
   end
 
   def update_payment(force_update = false)
-    if (force_update || bid_changed? || new_record?)
-      if (item_type == 'App' || item_type == 'ActionOffer')
-        self.payment = bid * (100 - partner.premier_discount) / 100
+    if partner && (force_update || bid_changed? || new_record?)
+      if partner.discount_all_offer_types? || app_offer?
+        self.payment = bid == 0 ? 0 : [ bid * (100 - partner.premier_discount) / 100, 1 ].max
       else
         self.payment = bid
       end
@@ -774,11 +791,6 @@ class Offer < ActiveRecord::Base
     else
       0
     end
-  end
-
-  def nullify_banner_creatives
-    write_attribute(:banner_creatives, nil) if banner_creatives.empty?
-    write_attribute(:approved_banner_creatives, nil) if approved_banner_creatives.empty?
   end
 
   def nullify_banner_creatives
@@ -1009,6 +1021,15 @@ class Offer < ActiveRecord::Base
     offer.save!
     offer
   end
+
+  def lock_survey_offer
+    if item_type == 'SurveyOffer' && (tapjoy_enabled_changed? || user_enabled_changed?)
+      if tapjoy_enabled? && user_enabled? && !item.locked?
+        item.update_attribute(:locked, true)
+      end
+    end
+  end
+
 end
 
 class BannerSyncError < StandardError;

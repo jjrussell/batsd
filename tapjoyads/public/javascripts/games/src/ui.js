@@ -48,7 +48,7 @@
       TJG.appOfferWall[appId]['jsonp_url'] = url;
       var boldText = TJG.utils.sprintfTemplate("<span class='bold'>%s</span>"),
         title = _t("games.earn_title", {
-          currency: boldText(currencyName), 
+          currency: boldText(currencyName),
           app_name: boldText(appName)
         });
       $("#app_title").html(title).show();
@@ -551,7 +551,7 @@
           '</div><div class="bookmark"><span>'+
             _t("games.tap_that", {
               // teardown/setup spans - important for layout
-              icon:'</span><span class="bookmark_icon"></span><span>', 
+              icon:'</span><span class="bookmark_icon"></span><span>',
               button:'</span><span class="bookmark_btn"></span><span>'
             })+
           '</span></div>',

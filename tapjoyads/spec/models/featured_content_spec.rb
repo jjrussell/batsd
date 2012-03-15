@@ -173,8 +173,8 @@ describe FeaturedContent do
         @featured_content.reload
       end
 
-      it "destroys existing tracking offer" do
-        @featured_content.tracking_offer.should be_nil
+      it "does not destroys existing tracking offer" do
+        @featured_content.tracking_offer.should_not be_nil
       end
     end
 
@@ -184,7 +184,7 @@ describe FeaturedContent do
       end
 
       it "sets the tracking_offer's url with offer.url value" do
-        @featured_content.tracking_offer.url.should == @featured_content.offer.url
+        @featured_content.tracking_offer.url.should == @featured_content.button_url
       end
 
       it "sets the tracking_offer's device_types with platforms value" do
@@ -256,9 +256,8 @@ describe FeaturedContent do
   describe '#get_default_icon_url' do
     before :each do
       prefix = "https://s3.amazonaws.com/#{RUN_MODE_PREFIX}tapjoy"
-      size = "57"
       icon_id = "dynamic_staff_pick_tool"
-      @default_icon_url = "#{prefix}/icons/#{size}/#{icon_id}.jpg"
+      @default_icon_url = "#{prefix}/icons/src/#{icon_id}.jpg"
     end
 
     context 'when main/secondary url are nil' do

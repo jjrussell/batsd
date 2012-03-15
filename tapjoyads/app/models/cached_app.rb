@@ -1,6 +1,6 @@
 class CachedApp
 
-  attr_accessor :id, :name, :description, :primary_category, :user_rating, :price, :url, :wifi_required
+  attr_accessor :id, :name, :description, :primary_category, :user_rating, :price, :url, :wifi_required, :active_gamer_count
 
   def initialize(offer, description = nil)
     self.id = offer.id
@@ -15,6 +15,7 @@ class CachedApp
       self.user_rating = app.user_rating
       self.description ||= app.description
       self.wifi_required = app.wifi_required?
+      self.active_gamer_count = app.active_gamer_count
     else
       self.url = offer.url
       self.primary_category = nil
@@ -24,7 +25,7 @@ class CachedApp
   end
 
   def icon_url
-    Offer.get_icon_url(:source => :cloudfront, :icon_id => Offer.hashed_icon_id(self.id))
+    Offer.get_icon_url(:source => :cloudfront, :icon_id => Offer.hashed_icon_id(self.id), :size => '114')
   end
 
 end

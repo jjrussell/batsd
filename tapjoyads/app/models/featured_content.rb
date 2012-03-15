@@ -19,7 +19,7 @@ class FeaturedContent < ActiveRecord::Base
 
   belongs_to :author, :polymorphic => true
   belongs_to :offer
-  has_one :tracking_offer, :class_name => 'Offer', :dependent => :destroy, :as => :tracking_for, :conditions => 'id = tracking_for_id'
+  has_one :tracking_offer, :class_name => 'Offer', :as => :tracking_for, :conditions => 'id = tracking_for_id'
 
   validates_presence_of :author, :if => :author_required?, :message => "Please select an author."
   validates_presence_of :offer, :if => :offer_required?, :message => "Please select an offer/app."
@@ -64,38 +64,26 @@ class FeaturedContent < ActiveRecord::Base
   end
 
   def get_icon_url(icon_id, options = {})
-    size     = options.delete(:size)     { '57' }
-    icon_obj = S3.bucket(BucketNames::TAPJOY).objects["icons/#{size}/#{icon_id}.jpg"]
+    icon_obj = S3.bucket(BucketNames::TAPJOY).objects["icons/src/#{icon_id}.jpg"]
 
-    return FeaturedContent.get_icon_url({:icon_id => icon_id, :size => size}.merge(options)) if icon_obj.exists?
+    return FeaturedContent.get_icon_url({:icon_id => icon_id}.merge(options)) if icon_obj.exists?
     return main_icon_url if icon_id == "#{id}_main" and main_icon_url.present?
     return secondary_icon_url if icon_id == "#{id}_secondary" and secondary_icon_url.present?
     return get_default_icon_url
   end
 
   def self.get_icon_url(options = {})
-    source     = options.delete(:source)   { :s3 }
+    source     = options.delete(:source)   { :cloudfront }
     icon_id    = options.delete(:icon_id)  { |k| raise "#{k} is a required argument" }
-    size       = options.delete(:size)     { '57' }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
 
     prefix = source == :s3 ? "https://s3.amazonaws.com/#{RUN_MODE_PREFIX}tapjoy" : CLOUDFRONT_URL
 
-    "#{prefix}/icons/#{size}/#{icon_id}.jpg"
+    "#{prefix}/icons/src/#{icon_id}.jpg"
   end
 
   def get_default_icon_url(options = {})
-    icon_id = "dynamic_staff_pick_tool"
-    size   = options.delete(:size)     { '57' }
-    bucket  = S3.bucket(BucketNames::TAPJOY)
-    icon_obj = bucket.objects["icons/#{size}/#{icon_id}.jpg"]
-    if icon_obj.exists?
-      return FeaturedContent.get_icon_url({:icon_id => icon_id, :size => size}.merge(options))
-    else
-      icon_src_blob = bucket.objects["icons/src/#{icon_id}.jpg"].read
-      save_icon_in_different_sizes!(icon_src_blob, icon_id, bucket)
-      return FeaturedContent.get_icon_url({:icon_id => icon_id, :size => size}.merge(options))
-    end
+    FeaturedContent.get_icon_url({ :icon_id => 'dynamic_staff_pick_tool', :source => :cloudfront }.merge(options))
   end
 
   def save_icon!(icon_src_blob, icon_id)
@@ -105,20 +93,18 @@ class FeaturedContent < ActiveRecord::Base
 
     return if Digest::MD5.hexdigest(icon_src_blob) == Digest::MD5.hexdigest(existing_icon_blob)
 
-    save_icon_in_different_sizes!(icon_src_blob, icon_id, bucket)
     src_obj.write(:data => icon_src_blob, :acl => :public_read)
 
     Mc.delete("icon.s3.#{id}")
+  end
 
-    # Invalidate cloudfront
-    if existing_icon_blob.present?
-      begin
-        acf = RightAws::AcfInterface.new
-        acf.invalidate('E1MG6JDV6GH0F2', ["/icons/256/#{icon_id}.jpg", "/icons/114/#{icon_id}.jpg", "/icons/57/#{icon_id}.jpg", "/icons/57/#{icon_id}.png"], "#{id}.#{Time.now.to_i}")
-      rescue Exception => e
-        Notifier.alert_new_relic(FailedToInvalidateCloudfront, e.message)
-      end
-    end
+  def expired?
+    end_date < Time.zone.now.to_date
+  end
+
+  def expire!
+    self.end_date = Time.zone.now - 2.days
+    save!
   end
 
   def has_valid_url?
@@ -126,27 +112,6 @@ class FeaturedContent < ActiveRecord::Base
   end
 
   private
-
-  def save_icon_in_different_sizes!(icon_src_blob, icon_id, bucket)
-    icon_256 = Magick::Image.from_blob(icon_src_blob)[0].resize(256, 256).opaque('#ffffff00', 'white')
-    icon_obj = S3.bucket(BucketNames::TAPJOY).objects[icon_id]
-
-    corner_mask_blob = bucket.objects["display/round_mask.png"].read
-    corner_mask = Magick::Image.from_blob(corner_mask_blob)[0].resize(256, 256)
-    icon_256.composite!(corner_mask, 0, 0, Magick::CopyOpacityCompositeOp)
-    icon_256 = icon_256.opaque('#ffffff00', 'white')
-    icon_256.alpha(Magick::OpaqueAlphaChannel)
-
-    icon_256_blob = icon_256.to_blob{|i| i.format = 'JPG'}
-    icon_114_blob = icon_256.resize(114, 114).to_blob{|i| i.format = 'JPG'}
-    icon_57_blob = icon_256.resize(57, 57).to_blob{|i| i.format = 'JPG'}
-    icon_57_png_blob = icon_256.resize(57, 57).to_blob{|i| i.format = 'PNG'}
-
-    bucket.objects["icons/256/#{icon_id}.jpg"].write(:data => icon_256_blob, :acl => :public_read)
-    bucket.objects["icons/114/#{icon_id}.jpg"].write(:data => icon_114_blob, :acl => :public_read)
-    bucket.objects["icons/57/#{icon_id}.jpg"].write(:data => icon_57_blob, :acl => :public_read)
-    bucket.objects["icons/57/#{icon_id}.png"].write(:data => icon_57_png_blob, :acl => :public_read)
-  end
 
   def author_required?
     [ TYPES_MAP[STAFFPICK], TYPES_MAP[NEWS], TYPES_MAP[CONTEST] ].include?(featured_type)
@@ -170,7 +135,15 @@ class FeaturedContent < ActiveRecord::Base
 
   def create_tracking_offer
     if offer && !tracking_offer
-      self.tracking_offer = offer.item.create_tracking_offer_for(self, :device_types => platforms)
+      if offer.item_type == 'App'
+        self.tracking_offer = offer.item.create_tracking_offer_for(self,
+          :device_types => platforms,
+          :url_overridden => true,
+          :url => button_url
+        )
+      else
+        self.tracking_offer = offer.item.create_tracking_offer_for(self, :device_types => platforms)
+      end
       save
     end
   end
@@ -180,8 +153,6 @@ class FeaturedContent < ActiveRecord::Base
       if offer
         self.tracking_offer.device_types = platforms if platforms_changed?
         self.tracking_offer.save! if self.tracking_offer.changed?
-      else
-        tracking_offer.destroy
       end
     else
       create_tracking_offer

@@ -39,7 +39,7 @@ describe Tools::AppReviewsController do
       end
 
       it 'returns app reviews written by the author' do
-        assigns[:app_reviews].scoped(:order => 'created_at').should == @gamer.app_reviews.scoped(:order => 'created_at')
+        assigns[:app_reviews].collect(&:id).sort.should == @gamer.app_reviews.collect(&:id).sort
       end
     end
 
@@ -49,7 +49,7 @@ describe Tools::AppReviewsController do
       end
 
       it 'returns app reviews for app' do
-        assigns[:app_reviews].scoped(:order => 'created_at').should == @app_metadata.app_reviews.scoped(:order => 'created_at')
+        assigns[:app_reviews].collect(&:id).sort.should == @app_metadata.app_reviews.collect(&:id).sort
       end
     end
   end
@@ -137,7 +137,7 @@ describe Tools::AppReviewsController do
         flash[:notice].should == 'App review was successfully updated.'
       end
 
-      it "redirects to tools/aoo_reviews/index?app_metadataz-id=" do
+      it "redirects to tools/app_reviews/index?app_metadata_id=" do
         response.should redirect_to(tools_app_reviews_path(:app_metadata_id => @gamer_review.app_metadata_id))
       end
 

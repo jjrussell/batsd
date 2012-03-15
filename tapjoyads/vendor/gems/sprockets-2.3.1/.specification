@@ -1,0 +1,305 @@
+--- !ruby/object:Gem::Specification 
+name: sprockets
+version: !ruby/object:Gem::Version 
+  hash: 1
+  prerelease: false
+  segments: 
+  - 2
+  - 3
+  - 1
+  version: 2.3.1
+platform: ruby
+authors: 
+- Sam Stephenson
+- Joshua Peek
+autorequire: 
+bindir: bin
+cert_chain: []
+
+date: 2012-02-10 00:00:00 -08:00
+default_executable: sprockets
+dependencies: 
+- !ruby/object:Gem::Dependency 
+  name: hike
+  prerelease: false
+  requirement: &id001 !ruby/object:Gem::Requirement 
+    none: false
+    requirements: 
+    - - ~>
+      - !ruby/object:Gem::Version 
+        hash: 11
+        segments: 
+        - 1
+        - 2
+        version: "1.2"
+  type: :runtime
+  version_requirements: *id001
+- !ruby/object:Gem::Dependency 
+  name: multi_json
+  prerelease: false
+  requirement: &id002 !ruby/object:Gem::Requirement 
+    none: false
+    requirements: 
+    - - ~>
+      - !ruby/object:Gem::Version 
+        hash: 15
+        segments: 
+        - 1
+        - 0
+        version: "1.0"
+  type: :runtime
+  version_requirements: *id002
+- !ruby/object:Gem::Dependency 
+  name: rack
+  prerelease: false
+  requirement: &id003 !ruby/object:Gem::Requirement 
+    none: false
+    requirements: 
+    - - ~>
+      - !ruby/object:Gem::Version 
+        hash: 15
+        segments: 
+        - 1
+        - 0
+        version: "1.0"
+  type: :runtime
+  version_requirements: *id003
+- !ruby/object:Gem::Dependency 
+  name: tilt
+  prerelease: false
+  requirement: &id004 !ruby/object:Gem::Requirement 
+    none: false
+    requirements: 
+    - - ~>
+      - !ruby/object:Gem::Version 
+        hash: 13
+        segments: 
+        - 1
+        - 1
+        version: "1.1"
+    - - "!="
+      - !ruby/object:Gem::Version 
+        hash: 27
+        segments: 
+        - 1
+        - 3
+        - 0
+        version: 1.3.0
+  type: :runtime
+  version_requirements: *id004
+- !ruby/object:Gem::Dependency 
+  name: coffee-script
+  prerelease: false
+  requirement: &id005 !ruby/object:Gem::Requirement 
+    none: false
+    requirements: 
+    - - ~>
+      - !ruby/object:Gem::Version 
+        hash: 3
+        segments: 
+        - 2
+        - 0
+        version: "2.0"
+  type: :development
+  version_requirements: *id005
+- !ruby/object:Gem::Dependency 
+  name: coffee-script-source
+  prerelease: false
+  requirement: &id006 !ruby/object:Gem::Requirement 
+    none: false
+    requirements: 
+    - - ~>
+      - !ruby/object:Gem::Version 
+        hash: 31
+        segments: 
+        - 1
+        - 2
+        - 0
+        version: 1.2.0
+  type: :development
+  version_requirements: *id006
+- !ruby/object:Gem::Dependency 
+  name: eco
+  prerelease: false
+  requirement: &id007 !ruby/object:Gem::Requirement 
+    none: false
+    requirements: 
+    - - ~>
+      - !ruby/object:Gem::Version 
+        hash: 15
+        segments: 
+        - 1
+        - 0
+        version: "1.0"
+  type: :development
+  version_requirements: *id007
+- !ruby/object:Gem::Dependency 
+  name: ejs
+  prerelease: false
+  requirement: &id008 !ruby/object:Gem::Requirement 
+    none: false
+    requirements: 
+    - - ~>
+      - !ruby/object:Gem::Version 
+        hash: 15
+        segments: 
+        - 1
+        - 0
+        version: "1.0"
+  type: :development
+  version_requirements: *id008
+- !ruby/object:Gem::Dependency 
+  name: execjs
+  prerelease: false
+  requirement: &id009 !ruby/object:Gem::Requirement 
+    none: false
+    requirements: 
+    - - ~>
+      - !ruby/object:Gem::Version 
+        hash: 15
+        segments: 
+        - 1
+        - 0
+        version: "1.0"
+  type: :development
+  version_requirements: *id009
+- !ruby/object:Gem::Dependency 
+  name: json
+  prerelease: false
+  requirement: &id010 !ruby/object:Gem::Requirement 
+    none: false
+    requirements: 
+    - - ">="
+      - !ruby/object:Gem::Version 
+        hash: 3
+        segments: 
+        - 0
+        version: "0"
+  type: :development
+  version_requirements: *id010
+- !ruby/object:Gem::Dependency 
+  name: rack-test
+  prerelease: false
+  requirement: &id011 !ruby/object:Gem::Requirement 
+    none: false
+    requirements: 
+    - - ">="
+      - !ruby/object:Gem::Version 
+        hash: 3
+        segments: 
+        - 0
+        version: "0"
+  type: :development
+  version_requirements: *id011
+- !ruby/object:Gem::Dependency 
+  name: rake
+  prerelease: false
+  requirement: &id012 !ruby/object:Gem::Requirement 
+    none: false
+    requirements: 
+    - - ">="
+      - !ruby/object:Gem::Version 
+        hash: 3
+        segments: 
+        - 0
+        version: "0"
+  type: :development
+  version_requirements: *id012
+- !ruby/object:Gem::Dependency 
+  name: sass
+  prerelease: false
+  requirement: &id013 !ruby/object:Gem::Requirement 
+    none: false
+    requirements: 
+    - - ~>
+      - !ruby/object:Gem::Version 
+        hash: 5
+        segments: 
+        - 3
+        - 1
+        version: "3.1"
+  type: :development
+  version_requirements: *id013
+description: Sprockets is a Rack-based asset packaging system that concatenates and serves JavaScript, CoffeeScript, CSS, LESS, Sass, and SCSS.
+email: 
+- sstephenson@gmail.com
+- josh@joshpeek.com
+executables: 
+- sprockets
+extensions: []
+
+extra_rdoc_files: []
+
+files: 
+- README.md
+- LICENSE
+- lib/rake/sprocketstask.rb
+- lib/sprockets/asset.rb
+- lib/sprockets/asset_attributes.rb
+- lib/sprockets/base.rb
+- lib/sprockets/bundled_asset.rb
+- lib/sprockets/cache/file_store.rb
+- lib/sprockets/caching.rb
+- lib/sprockets/charset_normalizer.rb
+- lib/sprockets/context.rb
+- lib/sprockets/directive_processor.rb
+- lib/sprockets/eco_template.rb
+- lib/sprockets/ejs_template.rb
+- lib/sprockets/engines.rb
+- lib/sprockets/environment.rb
+- lib/sprockets/errors.rb
+- lib/sprockets/index.rb
+- lib/sprockets/jst_processor.rb
+- lib/sprockets/manifest.rb
+- lib/sprockets/mime.rb
+- lib/sprockets/processed_asset.rb
+- lib/sprockets/processing.rb
+- lib/sprockets/processor.rb
+- lib/sprockets/safety_colons.rb
+- lib/sprockets/sass_cache_store.rb
+- lib/sprockets/sass_importer.rb
+- lib/sprockets/sass_template.rb
+- lib/sprockets/scss_template.rb
+- lib/sprockets/server.rb
+- lib/sprockets/static_asset.rb
+- lib/sprockets/trail.rb
+- lib/sprockets/utils.rb
+- lib/sprockets/version.rb
+- lib/sprockets.rb
+- bin/sprockets
+has_rdoc: true
+homepage: http://getsprockets.org/
+licenses: []
+
+post_install_message: 
+rdoc_options: []
+
+require_paths: 
+- lib
+required_ruby_version: !ruby/object:Gem::Requirement 
+  none: false
+  requirements: 
+  - - ">="
+    - !ruby/object:Gem::Version 
+      hash: 3
+      segments: 
+      - 0
+      version: "0"
+required_rubygems_version: !ruby/object:Gem::Requirement 
+  none: false
+  requirements: 
+  - - ">="
+    - !ruby/object:Gem::Version 
+      hash: 3
+      segments: 
+      - 0
+      version: "0"
+requirements: []
+
+rubyforge_project: sprockets
+rubygems_version: 1.3.7
+signing_key: 
+specification_version: 3
+summary: Rack-based asset packaging system
+test_files: []
+

@@ -173,7 +173,7 @@ class DisplayAdController < ApplicationController
 
       if offer.item_type == 'TestOffer'
         text = offer.name
-      elsif offer.rewarded?
+      elsif offer.rewarded? && currency.rewarded?
         text = "Earn #{currency.get_visual_reward_amount(offer, display_multiplier)} #{currency.name} download \\n#{offer.name}"
       else
         text = "Try #{offer.name} today"

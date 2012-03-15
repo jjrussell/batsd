@@ -1,8 +1,8 @@
-GAMES_YAML_CONFIG = "config/games.yaml"
-GAMES_JS_DIR = "public/javascripts/games"
-GAMES_JS_SRC_DIR = "public/javascripts/games/src"
-GAMES_JS_CAT_DIR = "public/javascripts/games/src/target"
-GAMES_JS_CAT_FILE = 'tjgames.js'
+GAMES_YAML_CONFIG = "config/marketplace.yaml"
+GAMES_JS_DIR = "public/javascripts/marketplace"
+GAMES_JS_SRC_DIR = "public/javascripts"
+GAMES_JS_CAT_DIR = "public/javascripts/marketplace/src/target"
+GAMES_JS_CAT_FILE = 'tjm.js'
 COMPILER_JAR_PATH = "vendor/plugins/yuicompressor/yuicompressor-2.4.6.jar"
 JS_EXT = '.js'
 
