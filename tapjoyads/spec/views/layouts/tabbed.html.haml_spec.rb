@@ -8,7 +8,7 @@ describe 'layouts/tabbed.html.haml' do
       template.stubs(:current_user).returns(user)
       controller.stubs(:current_partner).returns(user.current_partner)
       template.stubs(:current_partner).returns(user.current_partner)
-      current_partner_app_offers = user.current_partner.offers.visible.app_offers.sort_by{|app| app.name.downcase}
+      current_partner_app_offers = user.current_partner.offers.visible.client_facing_app_offers.sort_by{|app| app.name.downcase}
       controller.stubs(:current_partner_active_app_offers).returns(current_partner_app_offers.select(&:is_enabled?))
       template.stubs(:current_partner_active_app_offers).returns(current_partner_app_offers.select(&:is_enabled?))
       controller.stubs(:premier_enabled?).returns(true)
@@ -28,7 +28,7 @@ describe 'layouts/tabbed.html.haml' do
       template.stubs(:current_user).returns(user)
       controller.stubs(:current_partner).returns(user.current_partner)
       template.stubs(:current_partner).returns(user.current_partner)
-      current_partner_app_offers = user.current_partner.offers.visible.app_offers.sort_by{|app| app.name.downcase}
+      current_partner_app_offers = user.current_partner.offers.visible.client_facing_app_offers.sort_by{|app| app.name.downcase}
       controller.stubs(:current_partner_active_app_offers).returns(current_partner_app_offers.select(&:is_enabled?))
       template.stubs(:current_partner_active_app_offers).returns(current_partner_app_offers.select(&:is_enabled?))
       controller.stubs(:premier_enabled?).returns(true)

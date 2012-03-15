@@ -1,6 +1,6 @@
 %tr.admin
   %td{:colspan => 2} Admin-only fields:
-- if @offer.app_offer? && @offer.item.platform == 'iphone'
+- if @offer.client_facing_app_offer? && @offer.item.platform == 'iphone'
   %tr.admin
     %th
       Country Blacklist

@@ -212,7 +212,7 @@ class Offer < ActiveRecord::Base
   named_scope :to_aggregate_hourly_stats, lambda { { :conditions => [ "next_stats_aggregation_time < ?", Time.zone.now ], :select => :id } }
   named_scope :to_aggregate_daily_stats, lambda { { :conditions => [ "next_daily_stats_aggregation_time < ?", Time.zone.now ], :select => :id } }
   named_scope :updated_before, lambda { |time| { :conditions => [ "#{quoted_table_name}.updated_at < ?", time ] } }
-  named_scope :app_offers, :conditions => "item_type = 'App' or item_type = 'ActionOffer'"
+  named_scope :client_facing_app_offers, :conditions => "item_type = 'App' or item_type = 'ActionOffer'"
   named_scope :video_offers, :conditions => "item_type = 'VideoOffer'"
   named_scope :non_video_offers, :conditions => "item_type != 'VideoOffer'"
   named_scope :tapjoy_sponsored_offer_ids, :conditions => "tapjoy_sponsored = true", :select => "#{Offer.quoted_table_name}.id"
@@ -254,8 +254,18 @@ class Offer < ActiveRecord::Base
     end
   end
 
+  def client_facing_app_offer?
+    %w(App ActionOffer).include? item_type
+  end
+
   def app_offer?
-    item_type == 'App' || item_type == 'ActionOffer'
+    client_facing_app_offer? || %w(RatingOffer ReengagementOffer).include? item_type
+  end
+
+  def app_id
+    return unless app_offer?
+    return item_id if item_type == 'App'
+    item.app_id
   end
 
   def missing_app_store_id?
@@ -507,7 +517,7 @@ class Offer < ActiveRecord::Base
 
     if remove
       guid = icon_id_override
-      return unless guid
+      return if guid.nil? || guid == app_id # only allow removing of manually-uploaded icons (i.e. not auto-downloaded from app store)
     end
 
     if override && guid.nil? && id == item_id
@@ -573,7 +583,11 @@ class Offer < ActiveRecord::Base
       CloudFront.invalidate(id, paths) if (remove || existing_icon_blob.present?)
     end
 
-    icon_id_override = remove ? nil : guid
+    icon_id_override =  if remove
+                          item_type == 'App' ? nil : app_id
+                        else
+                          guid
+                        end
     if guid != item_id || remove
       self.update_attributes!(:icon_id_override => icon_id_override)
     end
@@ -667,7 +681,7 @@ class Offer < ActiveRecord::Base
 
   def update_payment(force_update = false)
     if partner && (force_update || bid_changed? || new_record?)
-      if partner.discount_all_offer_types? || app_offer?
+      if partner.discount_all_offer_types? || client_facing_app_offer?
         self.payment = bid == 0 ? 0 : [ bid * (100 - partner.premier_discount) / 100, 1 ].max
       else
         self.payment = bid

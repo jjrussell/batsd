@@ -38,7 +38,7 @@ describe Offer do
   describe "applies discounts correctly" do
     context "to_json an app offer item" do
       before :each do
-        Offer.any_instance.stubs(:app_offer?).returns true
+        Offer.any_instance.stubs(:client_facing_app_offer?).returns true
         @offer.partner.premier_discount = 10
       end
 
@@ -62,7 +62,7 @@ describe Offer do
 
     context "to a non app offer item" do
       before :each do
-        Offer.any_instance.stubs(:app_offer?).returns false
+        Offer.any_instance.stubs(:client_facing_app_offer?).returns false
         @offer.partner.premier_discount = 10
       end
 
@@ -778,7 +778,7 @@ describe Offer do
   describe '#missing_app_store_id?' do
     context 'with non app-related item' do
       it 'is false' do
-        @offer.stubs(:app_offer?).returns(false)
+        @offer.stubs(:client_facing_app_offer?).returns(false)
         @offer.should_not be_missing_app_store_id
       end
     end

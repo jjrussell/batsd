@@ -73,6 +73,7 @@ class ReengagementOffer < ActiveRecord::Base
       offer.hidden           = hidden
       offer.reward_value     = reward_value
       offer.instructions     = instructions
+      offer.icon_id_override = app_id if app_id_changed? && app_id_was == offer.icon_id_override
       offer.save! if offer.changed?
     end
   end
