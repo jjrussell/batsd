@@ -500,31 +500,7 @@ class Offer < ActiveRecord::Base
     save_icon!(nil, true, true)
   end
 
-  def save_icon!(icon_src_blob, override = false, remove = false)
-    # From what I can tell, here's how this works...
-    # When an offer's icon is requested, it will use the 'icon_id' method,
-    # which, by default, uses item_id as the guid to be passed into Offer.hashed_icon_id()
-    #
-    # This method ('save_icon!') will use id by default, however.
-    #
-    # What this means is that when 'save_icon!' is called on an app's primary offer, any secondary offers
-    # belonging to that app will request / utilize the same file, since they will use the item_id (aka app_id) guid,
-    # which will be the same guid as the primary offer's id.
-    #
-    # But wait! There's more! The 'icon_id_override' field is for offers tied to apps whose immediate parents aren't apps...
-    # in other words, item_type won't be "App" and item_id won't be the app_id. e.g. ActionOffers, ReengagementOffers, etc.
-    # It is *also* for offers where the icon has been manually overridden
-
-    guid = id # use already-generated guid ('id'), if possible
-    if remove
-      guid = icon_id_override
-      return if guid.nil? || guid == app_id # only allow removing of manually-uploaded icons (i.e. not auto-downloaded from app store)
-    end
-
-    if override && primary?
-      guid = UUIDTools::UUID.random_create.to_s # in this case, we need to generate a guid
-    end
-
+  def self.upload_icon!(icon_src_blob, guid, video_offer = false, remove = false)
     icon_id = Offer.hashed_icon_id(guid)
     bucket  = S3.bucket(BucketNames::TAPJOY)
     src_obj = bucket.objects["icons/src/#{icon_id}.jpg"]
@@ -536,7 +512,7 @@ class Offer < ActiveRecord::Base
 
     src_obj.delete if remove && src_obj.exists?
 
-    if item_type == 'VideoOffer'
+    if video_offer
       unless remove
         icon_200 = Magick::Image.from_blob(icon_src_blob)[0].resize(200, 125).opaque('#ffffff00', 'white')
         corner_mask_blob = bucket.objects["display/round_mask_200x125.png"].read
@@ -550,7 +526,7 @@ class Offer < ActiveRecord::Base
         src_obj.write(:data => icon_src_blob, :acl => :public_read)
       end
 
-      Mc.delete("icon.s3.#{id}")
+      Mc.delete("icon.s3.#{guid}")
     else
       paths = ["icons/256/#{icon_id}.jpg", "icons/114/#{icon_id}.jpg", "icons/57/#{icon_id}.jpg", "icons/57/#{icon_id}.png"]
       if remove
@@ -579,9 +555,37 @@ class Offer < ActiveRecord::Base
         src_obj.write(:data => icon_src_blob, :acl => :public_read)
       end
 
-      Mc.delete("icon.s3.#{id}")
+      Mc.delete("icon.s3.#{guid}")
       CloudFront.invalidate(id, paths) if (remove || existing_icon_blob.present?)
     end
+  end
+
+  def save_icon!(icon_src_blob, override = false, remove = false)
+    # Here's how this works...
+    # When an offer's icon is requested, it will use the 'icon_id' method,
+    # which, by default, uses item_id as the guid to be passed into Offer.hashed_icon_id()
+    # The icon_id_override field will be used, however, if it is not nil.
+    #
+    # This method ('save_icon!') will therefore use item_id by default when uploading the icon,
+    # and icon_id_override only if override == true
+    #
+    # What this allows for is one icon file to be shared between offers with the same parent.
+    #
+    # This also means that if an individual offer's icon is overridden, then removed, the icon shown will fall back to the shared file
+    guid = icon_id
+
+    if remove
+      # only allow removing of offer-specific, manually-uploaded icons
+      return if guid == item_id || guid == app_id
+    elsif override
+      if primary?
+        guid = UUIDTools::UUID.random_create.to_s # in this case, we need to generate a guid
+      else
+        guid = id # use already-generated guid ('id'), if possible
+      end
+    end
+
+    Offer.upload_icon!(icon_src_blob, guid, (item_type == 'VideoOffer'), remove)
 
     if (guid != item_id) || remove
       icon_id_override =  if remove

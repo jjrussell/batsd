@@ -13,7 +13,6 @@ class RatingOffer < ActiveRecord::Base
   after_create :create_primary_offer, :create_icon
   after_update :update_offers
 
-  delegate :save_icon!, :to => :primary_offer
   delegate :get_offer_device_types, :platform, :store_url, :get_icon_url, :to => :app
 
   named_scope :visible, :conditions => { :hidden => false }
@@ -24,6 +23,10 @@ class RatingOffer < ActiveRecord::Base
 
   def self.get_id_with_app_version(id, app_version)
     app_version.blank? ? id : (id + '.' + app_version)
+  end
+
+  def save_icon!(icon_src_blob)
+    Offer.upload_icon!(icon_src_blob, id)
   end
 
   private

@@ -20,8 +20,6 @@ class VideoOffer < ActiveRecord::Base
 
   named_scope :visible, :conditions => { :hidden => false }
 
-  delegate :save_icon!, :to => :primary_offer
-
   def update_buttons
     offers.each do |offer|
       offer.third_party_data = xml_for_buttons if valid_for_update_buttons?
@@ -58,6 +56,10 @@ class VideoOffer < ActiveRecord::Base
 
   def get_icon_url(options = {})
     Offer.get_icon_url({:icon_id => Offer.hashed_icon_id(id)}.merge(options))
+  end
+
+  def save_icon!(icon_src_blob)
+    Offer.upload_icon!(icon_src_blob, id, true)
   end
 
   private

@@ -56,7 +56,7 @@ describe Offer do
       end
 
       context "for a primary offer" do
-        it "does not change icon_id_override" do
+        it "uses id for guid" do
           Offer.expects(:hashed_icon_id).with(@offer.id).once.returns(@icon_id)
           @offer.save_icon!(@image_data)
 
@@ -65,18 +65,27 @@ describe Offer do
       end
 
       context "for a secondary offer" do
-        it "uses id for icon_id_override (forces override)" do
-          Offer.expects(:hashed_icon_id).with(@secondary_offer.id).once.returns(@icon_id)
+        it "uses item_id for guid" do
+          Offer.expects(:hashed_icon_id).with(@secondary_offer.item_id).once.returns(@icon_id)
           @secondary_offer.save_icon!(@image_data)
 
-          @secondary_offer.icon_id_override.should == @secondary_offer.id
-          @secondary_offer.changed?.should be_false # offer was saved
+          @secondary_offer.icon_id_override.should be_nil
+        end
+      end
+
+      context "for an offer with icon_id_override already set" do
+        it "uses icon_id_override for guid" do
+          guid = "guid"
+          @offer.update_attributes!(:icon_id_override => guid)
+          Offer.expects(:hashed_icon_id).with(guid).once.returns(@icon_id)
+          @offer.save_icon!(@image_data)
+
+          @offer.icon_id_override.should == guid
         end
       end
     end
 
     context "with override = true" do
-
       before :each do
         @s3object.expects(:write).with(:data => @image_data, :acl => :public_read).once
       end

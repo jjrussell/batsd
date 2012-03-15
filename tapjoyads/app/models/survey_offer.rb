@@ -25,8 +25,6 @@ class SurveyOffer < ActiveRecord::Base
 
   named_scope :visible, :conditions => { :hidden => false }
 
-  delegate :save_icon!, :to => :primary_offer
-
   def bid
     if @bid_price
       @bid_price
@@ -104,6 +102,10 @@ class SurveyOffer < ActiveRecord::Base
 
   def get_icon_url(options = {})
     Offer.get_icon_url({:icon_id => Offer.hashed_icon_id(id)}.merge(options))
+  end
+
+  def save_icon!(icon_src_blob)
+    Offer.upload_icon!(icon_src_blob, id)
   end
 
   private

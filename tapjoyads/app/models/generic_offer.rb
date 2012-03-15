@@ -16,8 +16,6 @@ class GenericOffer < ActiveRecord::Base
 
   named_scope :visible, :conditions => { :hidden => false }
 
-  delegate :save_icon!, :to => :primary_offer
-
   def create_tracking_offer_for(tracked_for, options = {})
     device_types = options.delete(:device_types) { Offer::ALL_DEVICES.to_json }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
@@ -44,6 +42,10 @@ class GenericOffer < ActiveRecord::Base
 
   def get_icon_url(options = {})
     Offer.get_icon_url({:icon_id => Offer.hashed_icon_id(id)}.merge(options))
+  end
+
+  def save_icon!(icon_src_blob)
+    Offer.upload_icon!(icon_src_blob, id)
   end
 
   private

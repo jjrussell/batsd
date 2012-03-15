@@ -241,7 +241,7 @@ class App < ActiveRecord::Base
       Rails.logger.info "Failed to download icon for url: #{url}. Error: #{e}"
       Notifier.alert_new_relic(AppDataFetchError, "icon url #{url} for app id #{id}. Error: #{e}")
     else
-      primary_offer.save_icon!(icon_src_blob)
+      Offer.upload_icon!(icon_src_blob, id)
     end
   end
 
