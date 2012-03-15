@@ -86,6 +86,10 @@
       %tr.app_data.hidden
         %th Description
         %td#app_description= (@app.description || '').gsub("\n", '<br>')
+
+      - if permitted_to?(:edit, :statz)
+        = render('apps/admin_fields', :f => f)
+
       %tr
         %td{ :colspan => 2 }= f.submit @app.store_id.present? ? "Update from #{@app.store_name}" : 'Save', :id => 'submit_button'
 

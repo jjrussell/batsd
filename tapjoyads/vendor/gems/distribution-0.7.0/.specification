@@ -1,0 +1,257 @@
+--- !ruby/object:Gem::Specification 
+name: distribution
+version: !ruby/object:Gem::Version 
+  hash: 3
+  prerelease: false
+  segments: 
+  - 0
+  - 7
+  - 0
+  version: 0.7.0
+platform: ruby
+authors: 
+- Claudio Bustos
+autorequire: 
+bindir: bin
+cert_chain: 
+- |
+  -----BEGIN CERTIFICATE-----
+  MIIDMjCCAhqgAwIBAgIBADANBgkqhkiG9w0BAQUFADA/MREwDwYDVQQDDAhjbGJ1
+  c3RvczEVMBMGCgmSJomT8ixkARkWBWdtYWlsMRMwEQYKCZImiZPyLGQBGRYDY29t
+  MB4XDTEwMDMyOTIxMzg1NVoXDTExMDMyOTIxMzg1NVowPzERMA8GA1UEAwwIY2xi
+  dXN0b3MxFTATBgoJkiaJk/IsZAEZFgVnbWFpbDETMBEGCgmSJomT8ixkARkWA2Nv
+  bTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBALf8JVMGqE7m5kYb+PNN
+  neZv2pcXV5fQCi6xkyG8bi2/SIFy/LyxuvLzEeOxBeaz1Be93bayIUquOIqw3dyw
+  /KXWa31FxuNuvAm6CN8fyeRYX/ou4cw3OIUUnIvB7RMNIu4wbgeM6htV/QEsNLrv
+  at1/mh9JpqawPrcjIOVMj4BIp67vmzJCaUf+S/H2uYtSO09F+YQE3tv85TPeRmqU
+  yjyXyTc/oJiw1cXskUL8UtMWZmrwNLHXuZWWIMzkjiz3UNdhJr/t5ROk8S2WPznl
+  0bMy/PMIlAbqWolRn1zl2VFJ3TaXScbqImY8Wf4g62b/1ZSUlGrtnLNsCYXrWiso
+  UPUCAwEAAaM5MDcwCQYDVR0TBAIwADALBgNVHQ8EBAMCBLAwHQYDVR0OBBYEFGu9
+  rrJ1H64qRmNNu3Jj/Qjvh0u5MA0GCSqGSIb3DQEBBQUAA4IBAQCV0Unka5isrhZk
+  GjqSDqY/6hF+G2pbFcbWUpjmC8NWtAxeC+7NGV3ljd0e1SLfoyBj4gnFtFmY8qX4
+  K02tgSZM0eDV8TpgFpWXzK6LzHvoanuahHLZEtk/+Z885lFene+nHadkem1n9iAB
+  cs96JO9/JfFyuXM27wFAwmfHCmJfPF09R4VvGHRAvb8MGzSVgk2i06OJTqkBTwvv
+  JHJdoyw3+8bw9RJ+jLaNoQ+xu+1pQdS2bb3m7xjZpufml/m8zFCtjYM/7qgkKR8z
+  /ZZt8lCiKfFArppRrZayE2FVsps4X6WwBdrKTMZ0CKSXTRctbEj1BAZ67eoTvBBt
+  rpP0jjs0
+  -----END CERTIFICATE-----
+
+date: 2011-11-29 00:00:00 -08:00
+default_executable: distribution
+dependencies: 
+- !ruby/object:Gem::Dependency 
+  name: rubyforge
+  prerelease: false
+  requirement: &id001 !ruby/object:Gem::Requirement 
+    none: false
+    requirements: 
+    - - ">="
+      - !ruby/object:Gem::Version 
+        hash: 7
+        segments: 
+        - 2
+        - 0
+        - 4
+        version: 2.0.4
+  type: :development
+  version_requirements: *id001
+- !ruby/object:Gem::Dependency 
+  name: rspec
+  prerelease: false
+  requirement: &id002 !ruby/object:Gem::Requirement 
+    none: false
+    requirements: 
+    - - ">="
+      - !ruby/object:Gem::Version 
+        hash: 3
+        segments: 
+        - 2
+        - 0
+        version: "2.0"
+  type: :development
+  version_requirements: *id002
+- !ruby/object:Gem::Dependency 
+  name: rubyforge
+  prerelease: false
+  requirement: &id003 !ruby/object:Gem::Requirement 
+    none: false
+    requirements: 
+    - - ">="
+      - !ruby/object:Gem::Version 
+        hash: 3
+        segments: 
+        - 0
+        version: "0"
+  type: :development
+  version_requirements: *id003
+- !ruby/object:Gem::Dependency 
+  name: hoe
+  prerelease: false
+  requirement: &id004 !ruby/object:Gem::Requirement 
+    none: false
+    requirements: 
+    - - ">="
+      - !ruby/object:Gem::Version 
+        hash: 47
+        segments: 
+        - 2
+        - 8
+        - 0
+        version: 2.8.0
+  type: :development
+  version_requirements: *id004
+description: |-
+  Statistical Distributions library. Includes Normal univariate and bivariate, T, F, Chi Square, Binomial, Hypergeometric, Exponential, Poisson, Beta, LogNormal and Gamma.
+  
+  Uses Ruby by default and C (statistics2/GSL) or Java extensions where available.
+  
+  Includes code from statistics2 on Normal, T, F and Chi Square ruby code [http://blade.nagaokaut.ac.jp/~sinara/ruby/math/statistics2]
+email: 
+- clbustos_at_gmail.com
+executables: 
+- distribution
+extensions: []
+
+extra_rdoc_files: 
+- History.txt
+- Manifest.txt
+- README.txt
+files: 
+- .autotest
+- History.txt
+- Manifest.txt
+- README.txt
+- Rakefile
+- benchmark/binomial_coefficient.rb
+- benchmark/binomial_coefficient/binomial_coefficient.ds
+- benchmark/binomial_coefficient/binomial_coefficient.xls
+- benchmark/binomial_coefficient/experiment.rb
+- benchmark/factorial_hash.rb
+- benchmark/factorial_method.rb
+- benchmark/odd.rb
+- benchmark/power.rb
+- bin/distribution
+- data/template/distribution.erb
+- data/template/distribution/gsl.erb
+- data/template/distribution/ruby.erb
+- data/template/spec.erb
+- lib/distribution.rb
+- lib/distribution/beta.rb
+- lib/distribution/beta/gsl.rb
+- lib/distribution/beta/java.rb
+- lib/distribution/beta/ruby.rb
+- lib/distribution/binomial.rb
+- lib/distribution/binomial/gsl.rb
+- lib/distribution/binomial/java.rb
+- lib/distribution/binomial/ruby.rb
+- lib/distribution/bivariatenormal.rb
+- lib/distribution/bivariatenormal/gsl.rb
+- lib/distribution/bivariatenormal/java.rb
+- lib/distribution/bivariatenormal/ruby.rb
+- lib/distribution/bivariatenormal/statistics2.rb
+- lib/distribution/chisquare.rb
+- lib/distribution/chisquare/gsl.rb
+- lib/distribution/chisquare/java.rb
+- lib/distribution/chisquare/ruby.rb
+- lib/distribution/chisquare/statistics2.rb
+- lib/distribution/exponential.rb
+- lib/distribution/exponential/gsl.rb
+- lib/distribution/exponential/ruby.rb
+- lib/distribution/f.rb
+- lib/distribution/f/gsl.rb
+- lib/distribution/f/java.rb
+- lib/distribution/f/ruby.rb
+- lib/distribution/f/statistics2.rb
+- lib/distribution/gamma.rb
+- lib/distribution/gamma/gsl.rb
+- lib/distribution/gamma/java.rb
+- lib/distribution/gamma/ruby.rb
+- lib/distribution/hypergeometric.rb
+- lib/distribution/hypergeometric/gsl.rb
+- lib/distribution/hypergeometric/java.rb
+- lib/distribution/hypergeometric/ruby.rb
+- lib/distribution/logistic.rb
+- lib/distribution/logistic/ruby.rb
+- lib/distribution/lognormal.rb
+- lib/distribution/lognormal/gsl.rb
+- lib/distribution/lognormal/ruby.rb
+- lib/distribution/math_extension.rb
+- lib/distribution/math_extension/chebyshev_series.rb
+- lib/distribution/math_extension/erfc.rb
+- lib/distribution/math_extension/exponential_integral.rb
+- lib/distribution/math_extension/gammastar.rb
+- lib/distribution/math_extension/gsl_utilities.rb
+- lib/distribution/math_extension/incomplete_beta.rb
+- lib/distribution/math_extension/incomplete_gamma.rb
+- lib/distribution/math_extension/log_utilities.rb
+- lib/distribution/normal.rb
+- lib/distribution/normal/gsl.rb
+- lib/distribution/normal/java.rb
+- lib/distribution/normal/ruby.rb
+- lib/distribution/normal/statistics2.rb
+- lib/distribution/normalmultivariate.rb
+- lib/distribution/poisson.rb
+- lib/distribution/poisson/gsl.rb
+- lib/distribution/poisson/java.rb
+- lib/distribution/poisson/ruby.rb
+- lib/distribution/t.rb
+- lib/distribution/t/gsl.rb
+- lib/distribution/t/java.rb
+- lib/distribution/t/ruby.rb
+- lib/distribution/t/statistics2.rb
+- spec/beta_spec.rb
+- spec/binomial_spec.rb
+- spec/bivariatenormal_spec.rb
+- spec/chisquare_spec.rb
+- spec/distribution_spec.rb
+- spec/exponential_spec.rb
+- spec/f_spec.rb
+- spec/gamma_spec.rb
+- spec/hypergeometric_spec.rb
+- spec/logistic_spec.rb
+- spec/lognormal_spec.rb
+- spec/math_extension_spec.rb
+- spec/normal_spec.rb
+- spec/poisson_spec.rb
+- spec/shorthand_spec.rb
+- spec/spec.opts
+- spec/spec_helper.rb
+- spec/t_spec.rb
+- vendor/java/commons-math-2.2.jar
+has_rdoc: true
+homepage: https://github.com/clbustos/distribution
+licenses: []
+
+post_install_message: 
+rdoc_options: 
+- --main
+- README.txt
+require_paths: 
+- lib
+required_ruby_version: !ruby/object:Gem::Requirement 
+  none: false
+  requirements: 
+  - - ">="
+    - !ruby/object:Gem::Version 
+      hash: 3
+      segments: 
+      - 0
+      version: "0"
+required_rubygems_version: !ruby/object:Gem::Requirement 
+  none: false
+  requirements: 
+  - - ">="
+    - !ruby/object:Gem::Version 
+      hash: 3
+      segments: 
+      - 0
+      version: "0"
+requirements: []
+
+rubyforge_project: distribution
+rubygems_version: 1.3.7
+signing_key: 
+specification_version: 3
+summary: Statistical Distributions library
+test_files: []
+
