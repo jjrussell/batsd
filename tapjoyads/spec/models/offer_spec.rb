@@ -1,9 +1,5 @@
 require 'spec_helper'
 
-def read_asset(name, directory='display')
-  File.read("#{Rails.root}/spec/assets/#{directory}/#{name}")
-end
-
 describe Offer do
 
   it { should have_many :advertiser_conversions }
@@ -39,29 +35,16 @@ describe Offer do
   end
 
   describe ".save_icon!" do
-    class S3Object
-      def read; return @image_data; end
-      def write(options); @image_data = options[:data]; end
-      def exists?; !@image_data.nil?; end
-    end
-
     before :each do
       @image_data = "fake image data"
       @icon_id = "icon_id"
 
-      img = Magick::Image.from_blob(read_asset('round_mask.png'))
+      img = Magick::Image.from_blob(read_asset('round_mask.png', 'display'))
       Magick::Image.stubs(:from_blob).returns(img)
 
-      bucket = S3.bucket(BucketNames::TAPJOY)
+      bucket = FakeBucket.new
       S3.stubs(:bucket).with(BucketNames::TAPJOY).returns(bucket)
-
-      @s3object = S3Object.new
-      bucket.stubs(:objects).returns({"icons/src/#{@icon_id}.jpg" => @s3object,
-                                        "icons/256/#{@icon_id}.jpg" => S3Object.new,
-                                        "icons/114/#{@icon_id}.jpg" => S3Object.new,
-                                        "icons/57/#{@icon_id}.jpg" => S3Object.new,
-                                        "icons/57/#{@icon_id}.png" => S3Object.new,
-                                        "display/round_mask.png" => S3Object.new})
+      @s3object = bucket.objects["icons/src/#{@icon_id}.jpg"]
 
       @secondary_offer = @offer.clone
       @secondary_offer.save!
@@ -122,10 +105,6 @@ describe Offer do
     end
 
     context "with remove = true" do
-      before :each do
-        @s3object.expects(:write).never
-      end
-
       context "for a direct-parent offer" do
         context "without icon_id_override set" do
           it "does nothing" do
@@ -143,7 +122,7 @@ describe Offer do
 
           context "with pre-existing image" do
             it "removes image" do
-              @s3object.expects(:exists?).at_least_once.returns(true)
+              @s3object.write("pre-existing image data")
               @s3object.expects(:delete).once
               @offer.save_icon!(nil, false, true)
 
@@ -188,7 +167,7 @@ describe Offer do
 
           context "with pre-existing image" do
             it "removes image" do
-              @s3object.expects(:exists?).at_least_once.returns(true)
+              @s3object.write("pre-existing image data")
               @s3object.expects(:delete).once
               @action_offer.save_icon!(nil, false, true)
 
@@ -1012,12 +991,10 @@ describe Offer do
       end
 
       it "copies s3 assets over when cloned" do
-        class S3Object
-          def read; return "image_data"; end
-        end
-
-        @offer.stubs(:banner_creative_s3_object).with("480x320").returns(S3Object.new)
-        @offer.stubs(:banner_creative_s3_object).with("320x480").returns(S3Object.new)
+        s3object = FakeObject.new("")
+        s3object.write("image_data")
+        @offer.stubs(:banner_creative_s3_object).with("480x320").returns(s3object)
+        @offer.stubs(:banner_creative_s3_object).with("320x480").returns(s3object)
 
         clone = @offer.clone
         clone.bid = clone.min_bid

@@ -1,9 +1,5 @@
 require 'spec/spec_helper'
 
-def read_asset(name, directory='banner_ads')
-  File.read("#{Rails.root}/spec/assets/#{directory}/#{name}")
-end
-
 describe DisplayAdController do
   integrate_views
   before :each do
@@ -17,7 +13,7 @@ describe DisplayAdController do
       Offer.stubs(:find_in_cache).with(@offer.id).returns(@offer)
       OfferCacher.stubs(:get_unsorted_offers_prerejected).returns([ @offer ])
 
-      @bucket = S3.bucket(BucketNames::TAPJOY)
+      @bucket = FakeBucket.new
       S3.stubs(:bucket).with(BucketNames::TAPJOY).returns(@bucket)
 
       @currency = Factory(:currency)
@@ -45,7 +41,7 @@ describe DisplayAdController do
           @offer.rewarded = false
 
           object = @bucket.objects[@offer.banner_creative_path('320x50')]
-          @custom_banner = read_asset('custom_320x50.png')
+          @custom_banner = read_asset('custom_320x50.png', 'banner_ads')
 
           object.stubs(:read).returns(@custom_banner)
           bucket_objects = { @offer.banner_creative_path('320x50') => object }
@@ -90,7 +86,7 @@ describe DisplayAdController do
           obj_round_mask.stubs(:read).returns(round_mask)
           obj_icon_shadow.stubs(:read).returns(icon_shadow)
 
-          @generated_banner = read_asset('generated_320x50.png')
+          @generated_banner = read_asset('generated_320x50.png', 'banner_ads')
         end
 
         it 'returns proper image' do
@@ -119,7 +115,7 @@ describe DisplayAdController do
 
         it 'returns proper image data in json' do
           object = @bucket.objects[@offer.banner_creative_path('320x50')]
-          custom_banner = read_asset('custom_320x50.png')
+          custom_banner = read_asset('custom_320x50.png', 'banner_ads')
           object.stubs(:read).returns(custom_banner)
           bucket_objects = { @offer.banner_creative_path('320x50') => object }
           @bucket.stubs(:objects).returns(bucket_objects)
@@ -136,7 +132,7 @@ describe DisplayAdController do
 
         it 'returns proper image data in xml' do
           object = @bucket.objects[@offer.banner_creative_path('640x100')]
-          custom_banner = read_asset('custom_640x100.png')
+          custom_banner = read_asset('custom_640x100.png', 'banner_ads')
           object.stubs(:read).returns(custom_banner)
           bucket_objects = { @offer.banner_creative_path('640x100') => object }
           @bucket.stubs(:objects).returns(bucket_objects)

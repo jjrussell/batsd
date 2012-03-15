@@ -72,6 +72,10 @@ Spork.prefork do
     AWS::S3.stubs(:new).returns(FakeS3.new)
   end
 
+  def read_asset(name, directory)
+    File.read("#{Rails.root}/spec/assets/#{directory}/#{name}")
+  end
+
   module Spec
     module Rails
       module Example
