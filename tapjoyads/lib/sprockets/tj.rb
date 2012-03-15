@@ -15,6 +15,7 @@ module Sprockets
 
   module Tj
     class << self
+      attr_accessor :combine, :compile, :precompile, :host
       def combine?
         @combine ||= SPROCKETS_CONFIG[:combine]
       end
