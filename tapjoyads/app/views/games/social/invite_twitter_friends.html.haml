@@ -40,7 +40,7 @@
 
                   <% var is_checked = $.inArray(friend.social_id.toString(), selectedFriends) !== -1; %>
 
-                  <div class="right mt10 mr10 item-check checkmark <%= is_checked ? "" : "hidden" %>">&nbsp;</div>
+                  <div class="right mt20 mr10 item-check checkmark <%= is_checked ? "" : "hidden" %>">&nbsp;</div>
                   <% if (friend.sent === true) { %>
                     <div class="right mt20 mr10 item-sent">#{t('text.shared.sent')}</div>
                   <% } %>
