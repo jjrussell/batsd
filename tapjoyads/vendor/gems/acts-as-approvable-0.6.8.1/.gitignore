@@ -1,4 +1,0 @@
-debug.log
-spec/*.db
-coverage/
-*.gem
