@@ -19,27 +19,6 @@ class AppStore
     'NZD' => [ 1.29, 2.59, 4.19, 5.29, 6.49 ],
   }
 
-  APPSTORE_COUNTRIES = {
-    :hk => "HK - Hong Kong",
-    :il => "IL - Israel",
-    :us => "US - United States",
-    :br => "BR - Brazil",
-    :tw => "TW - Taiwan",
-    :it => "IT - Italy",
-    :cn => "CN - China",
-    :fr => "FR - France",
-    :jp => "JP - Japan",
-    :gb => "GB - United Kingdom",
-    :ae => "AE - United Arab Emirates",
-    :kr => "KR - Korea, Republic of",
-    :ca => "CA - Canada",
-    :mx => "MX - Mexico",
-    :de => "DE - Germany",
-    :es => "ES - Spain",
-    :ru => "RU - Russian Federation",
-    :au => "AU - Australia"
-  }
-
   # returns hash of app info
   def self.fetch_app_by_id(id, platform, country='')
     case platform.downcase
