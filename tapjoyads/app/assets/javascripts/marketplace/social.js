@@ -124,50 +124,50 @@
         };
 
         var showFriendList = function() {
-          $('.friend-list').fadeOut(animateSpeed, function() {
-            hasNext = false;
-            var $$ = $(this),
-              text      = [],
-              friends     = [],
-              counter     = 0,
-              counterMax  = currentPage * pageSize,
-              counterMin  = counterMax - pageSize;
+          hasNext = false;
+          var $list = $('.friend-list'),
+            text      = [],
+            friends     = [],
+            counter     = 0,
+            counterMax  = currentPage * pageSize,
+            counterMin  = counterMax - pageSize;
 
-            var search = function(regex, text) {
-              for (var i in socialFriends) {
-                if (counter > counterMax) { break; }
-                var friend = socialFriends[i];
-                var included = $.inArray(friend, friends) != -1;
-                var matched = regex ?
-                  friend.name.match(regex) :
-                  friend.name.toLowerCase().match(RegExp.escape(currentFilter, $$));
-                if (!included && matched) {
-                  counter++;
-                  if (counter > counterMin && counter <= counterMax) {
-                    friends.push(friend);
-                  }
+          var search = function(regex, text) {
+            for (var i in socialFriends) {
+              if (counter > counterMax) { break; }
+              var friend = socialFriends[i];
+              var included = $.inArray(friend, friends) != -1;
+              var matched = regex ?
+                friend.name.match(regex) :
+                friend.name.toLowerCase().match(RegExp.escape(currentFilter, $list));
+              if (!included && matched) {
+                counter++;
+                if (counter > counterMin && counter <= counterMax) {
+                  friends.push(friend);
                 }
               }
-            };
-
-            // match first names
-            var filter = RegExp.escape(currentFilter, $('.friend_list'));
-            search(new RegExp('^' + filter, 'i'));
-
-            if (currentFilter != '') {
-              // then other names
-              search(new RegExp('\\b' + filter, 'i'));
-
-              // then any part of any name
-              search(false)
             }
+          };
 
-            hasNext = counter >= counterMax;
+          // match first names
+          var filter = RegExp.escape(currentFilter, $('.friend_list'));
+          search(new RegExp('^' + filter, 'i'));
 
+          if (currentFilter != '') {
+            // then other names
+            search(new RegExp('\\b' + filter, 'i'));
+
+            // then any part of any name
+            search(false)
+          }
+
+          hasNext = counter >= counterMax;
+
+          $list.fadeOut(animateSpeed, function() {
             // unregister events
-            $('li.friend').unbind();
-            $$.html(template({friends: friends, pageSize: pageSize, start: 0, selectedFriends: selectedFriends}));
-            $$.fadeIn(animateSpeed);
+            $('li.friend', $list).unbind();
+            $list.html(template({friends: friends, pageSize: pageSize, start: 0, selectedFriends: selectedFriends}));
+            $list.fadeIn(animateSpeed);
 
             resetDirectionButtons();
             resetListButtons();
