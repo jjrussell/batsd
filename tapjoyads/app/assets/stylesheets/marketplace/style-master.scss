@@ -1,0 +1,22 @@
+@import "tjm-base.scss";
+@import "tjm-mixins.scss";
+
+@import "resources/reset";
+@import "resources/base";
+@import "resources/components/button/button";
+
+@import "theme/tjm/style.scss";
+@media screen and (max-width: 768px) {
+  @import "theme/tjm/style-768.scss";
+}
+@media screen and (max-width: 480px) {
+  @import "theme/tjm/style-480.scss";
+}
+@media screen and (max-width: 360px) {
+  @import "theme/tjm/style-360.scss";
+}
+@media screen and (max-width: 320px) {
+  @import "theme/tjm/style-320.scss";
+}
+
+@import "resources/components/carousel/carousel";
