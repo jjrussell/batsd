@@ -54,12 +54,12 @@ ActiveRecord::Schema.define(:version => 20120314201830) do
   add_index "app_metadata_mappings", ["id"], :name => "index_app_metadata_mappings_on_id", :unique => true
 
   create_table "app_metadatas", :id => false, :force => true do |t|
-    t.string   "id",                :limit => 36,                :null => false
+    t.string   "id",                  :limit => 36,                :null => false
     t.string   "name"
     t.text     "description"
-    t.integer  "price",                           :default => 0
-    t.string   "store_name",                                     :null => false
-    t.string   "store_id",                                       :null => false
+    t.integer  "price",                             :default => 0
+    t.string   "store_name",                                       :null => false
+    t.string   "store_id",                                         :null => false
     t.integer  "age_rating"
     t.integer  "file_size_bytes"
     t.string   "supported_devices"
@@ -69,8 +69,9 @@ ActiveRecord::Schema.define(:version => 20120314201830) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "papaya_user_count"
-    t.integer  "thumbs_up",                       :default => 0
-    t.integer  "thumbs_down",                     :default => 0
+    t.integer  "thumbs_up",                         :default => 0
+    t.integer  "thumbs_down",                       :default => 0
+    t.text     "countries_blacklist"
   end
 
   add_index "app_metadatas", ["id"], :name => "index_app_metadatas_on_id", :unique => true
