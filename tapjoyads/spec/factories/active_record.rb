@@ -2,6 +2,7 @@ FactoryGirl.define do
   factory :user do
     email    { Factory.next(:email) }
     username { |u| u.email }
+    state 'approved'
     password 'asdf'
     password_confirmation 'asdf'
   end
