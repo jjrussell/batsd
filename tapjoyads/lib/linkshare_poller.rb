@@ -7,64 +7,54 @@ class LinksharePoller
   BASE_URL                  = "https://reportws.linksynergy.com/downloadreport.php?"
 
   ERROR_COULD_NOT_CONNECT   = "Error reaching Linkshare API server."
-  NO_RESULTS_FOUND          = "Query yielded no results."
+  NO_RESULTS_FOUND          = "Linkshare query yielded no results."
   DOWNLOAD_SUCCESS          = "Successfully downloaded results from Linkshare."
-  CLICK_NOT_REWARDABLE      = "Click is not rewardable."
 
   SIGNATURE_ACTIVITY_REPORT = 11
+  REGION_ID                 = 1
   CLICK_KEY_COLUMN          = 0
   SALES_COLUMN              = 4
 
-  def self.test
-    january_thirtieth = Date.civil(2012,1,30)
-    self.poll(january_thirtieth)   # should attempt to resolve one click with key 511865e0-f0d9-4151-94c4-2047081602f8
-    self.poll(january_thirtieth + 1.week)   # should handle no results properly
-  end
-
-  def self.poll(date=nil)
-    edate = date || Date.today
-    bdate = edate - 1.day
-    options = {
-      :edate    => edate.to_s.tr('-', ''),
-      :bdate    => bdate.to_s.tr('-', ''),
-      :token    => TAPJOY_SECRET_KEY,
-      :nid      => 1,
-      :reportid => 11,
-    }
-    data = self.download_data(options)
-    Rails.logger.info NO_RESULTS_FOUND and return if data.blank?
-    Rails.logger.info DOWNLOAD_SUCCESS
-    data.each do |line|
-      columns = CSV.parse_line(line)
-      if columns[SALES_COLUMN].to_f > 0
-        click = Click.new(:key => columns[CLICK_KEY_COLUMN])
-        Rails.logger.info "Attempting to resolve click #{click.key}"
-        if click.rewardable?
-          message = { :click_key => click.key, :install_timestamp => Time.zone.now.to_f.to_s }.to_json
-          Sqs.send_message(QueueNames::CONVERSION_TRACKING, message)
-          Rails.logger.info "Click #{click.key} sent to conversion queue"
-        else
-          Rails.logger.info CLICK_NOT_REWARDABLE
+  def self.poll
+    data = self.download_data
+    if data.blank?
+      Rails.logger.info(NO_RESULTS_FOUND)
+    else
+      Rails.logger.info(DOWNLOAD_SUCCESS)
+      data.each do |line|
+        columns = CSV.parse_line(line)
+        if columns[SALES_COLUMN].to_f > 0
+          click = Click.find(:key => columns[CLICK_KEY_COLUMN])
+          next unless click
+          Rails.logger.info("Checking whether or not to reward click #{click.key} from Linkshare...")
+          unless click.installed_at?
+            message = { :click_key => click.key, :install_timestamp => Time.zone.now.to_f.to_s}.to_json
+            Sqs.send_message(QueueNames::CONVERSION_TRACKING, message)
+            Rails.logger.info("Linkshare click #{click.key} sent to conversion queue")
+          else
+            Rails.logger.info("Linkshare click #{click.key} is not rewardable")
+          end
         end
       end
     end
   end
 
-  private
-
-  def self.download_data(options)
-    data = self.download_with_retries(BASE_URL + options.to_query)
+  def self.download_data(bdate=nil, edate=nil)
+    edate ||= Date.today
+    bdate ||= edate - 7.days
+    data = self.download_with_retries(bdate, edate)
     data = data.split("\n")
     data.slice!(0)
     data
   end
 
-  def self.download_with_retries(url)
+  def self.download_with_retries(bdate, edate)
     retries = 5
+    url = "#{BASE_URL}bdate=#{bdate.to_s(:linkshare)}&edate=#{edate.to_s(:linkshare)}&nid=#{REGION_ID}&reportid=#{SIGNATURE_ACTIVITY_REPORT}&token=#{TAPJOY_SECRET_KEY}"
     begin
       Downloader.get(url, {:timeout => 45})
-    rescue Patron::HostResolutionError => e
-      Rails.logger.info("Linkshare data download failed. Will retry #{retries} more times. #{e.class} - #{e.message}\n#{e.backtrace.join("\n")}")
+    rescue
+      Rails.logger.info("Linkshare data download failed. Will retry #{retries} more times.")
       if retries > 0
         delay ||= 0.1
         retries -= 1
