@@ -142,6 +142,7 @@ class GamesController < ApplicationController
     unless current_gamer
       path = url_for(params.merge(:only_path => true))
       options = { :path => path } unless path == games_root_path
+      options[:referrer] = params[:referrer] if params[:referrer].present?
       redirect_to games_login_path(options)
     end
   end
