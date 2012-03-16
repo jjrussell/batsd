@@ -299,7 +299,7 @@ sv:
       log_in_tapjoy: "Logga in till Tapjoy"
       mark_as_favorite: "Lägg till i favoriter"
       member_since: "Medlem sedan %{date}"
-      meta_description: "Tapjoy:  Där du upptäcker appar och spel för Android, iPhone och iPad."
+      meta_description: "Tapjoy: Där du upptäcker appar och spel för Android, iPhone och iPad."
       meta_keywords: "spel, mobilspel, appar, ios, android, iphone, ipad, itouch"
       more_apps: "Fler appar"
       more_the_merrier: "Ju fler desto bättre"
