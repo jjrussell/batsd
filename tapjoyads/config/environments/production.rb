@@ -44,7 +44,7 @@ end
 SPROCKETS_CONFIG = {
   :compile => true,
   :combine => true,
-  :host => local_config['asset_host'] || local_config['website_url'] || 'http://localhost:3000'
+  :host => local_config['asset_host'] || local_config['website_url'] || 'https://www.tapjoy.com'
 }
 
 RUN_MODE_PREFIX = ''
