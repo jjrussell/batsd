@@ -53,7 +53,7 @@ class LinksharePoller
     url = "#{BASE_URL}bdate=#{bdate.to_s(:linkshare)}&edate=#{edate.to_s(:linkshare)}&nid=#{REGION_ID}&reportid=#{SIGNATURE_ACTIVITY_REPORT}&token=#{TAPJOY_SECRET_KEY}"
     begin
       Downloader.get(url, {:timeout => 45})
-    rescue
+    rescue Exception => e
       Rails.logger.info("Linkshare data download failed. Will retry #{retries} more times.")
       if retries > 0
         delay ||= 0.1
