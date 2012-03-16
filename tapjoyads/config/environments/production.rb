@@ -41,6 +41,12 @@ rescue Errno::ENOENT
   local_config = {}
 end
 
+SPROCKETS_CONFIG = {
+  :compile => true,
+  :combine => true,
+  :host => local_config['asset_host'] || local_config['website_url'] || 'https://www.tapjoy.com'
+}
+
 RUN_MODE_PREFIX = ''
 API_URL = local_config['api_url'] || 'https://ws.tapjoyads.com'
 DASHBOARD_URL = local_config['dashboard_url'] || 'https://dashboard.tapjoy.com'
