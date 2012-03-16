@@ -264,7 +264,7 @@ class Offer < ActiveRecord::Base
 
   def countries_blacklist
     if app_offer?
-      item.get_countries_blacklist
+      item.get_countries_blacklist || []
     else
       []
     end
