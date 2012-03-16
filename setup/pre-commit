@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
-# copy this file to .git/hooks/ to automatically strip spaces from the end of
-# lines and add newlines to the end of files as necessary
+# copy or symlink this file to .git/hooks/
 
+# automatically strip spaces from the end of lines and add newlines to the end of files as necessary
 filetypes = %w(
   builder
   conf
@@ -57,5 +57,26 @@ files.each do |f|
       end
       `git add #{f}`
     end
+  end
+end
+
+# don't allow migrations to be added without a change to schema.rb, or vice-versa
+def schema_modified?
+  %x[ git diff --cached | egrep '^(\-\-\- a|\+\+\+ b)\/tapjoyads\/db\/schema\.rb$' ] != ""
+end
+
+def migrations_modified?
+  %x[ git diff --cached | egrep '^(\-\-\- a|\+\+\+ b)\/tapjoyads\/db\/migrate\/.+$' ] != ""
+end
+
+if schema_modified?
+  unless migrations_modified?
+    puts "COMMIT FAILED: You've modified schema.rb without adding / altering any migrations. (To commit without checking for this, use the --no-verify flag.)"
+    exit 1
+  end
+elsif migrations_modified?
+  unless schema_modified?
+    puts "COMMIT FAILED: You've added / altered a migration without modifying schema.rb. (To commit without checking for this, use the --no-verify flag.)"
+    exit 1
   end
 end
