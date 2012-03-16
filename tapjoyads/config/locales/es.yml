@@ -407,7 +407,7 @@ es:
       comment: Comentario
       confirm_password: "Confirmar la contraseña"
       continue: Continuar
-      copyright: "Copyright &copy; %{year} Tapjoy, Inc. Todos Los Derechos Reservados. Tapjoy y el logo de Tapjoy son marcas registradas de Tapjoy, Inc.  Todos los logos y marcas de terceras personas mencionadas son propiedad de sus respectivos dueños."
+      copyright: "Copyright &copy; %{year} Tapjoy, Inc. Todos Los Derechos Reservados. Tapjoy y el logo de Tapjoy son marcas registradas de Tapjoy, Inc. Todos los logos y marcas de terceras personas mencionadas son propiedad de sus respectivos dueños."
       country: País
       day: Día
       earn_verb: Gana

@@ -219,7 +219,7 @@ en:
       about: "About Tapjoy"
       advertisers: Advertisers
       blog: Blog
-      copyright: "Copyright &copy; 2012 Tapjoy, Inc. All Rights Reserved. Tapjoy and the Tapjoy logo are trademarks or registered trademarks of Tapjoy, Inc.  All third party logos and trademarks mentioned are the property of their respective owners."
+      copyright: "Copyright &copy; 2012 Tapjoy, Inc. All Rights Reserved. Tapjoy and the Tapjoy logo are trademarks or registered trademarks of Tapjoy, Inc. All third party logos and trademarks mentioned are the property of their respective owners."
       developers: Developers
       privacy: "Privacy Policy"
     games:
@@ -401,8 +401,8 @@ en:
       tap_that: "Just tap %{icon} and select %{button}"
       tapjoy_picks: "Tapjoy Picks"
       terms_of_use_href: "terms of use"
-      thanks_contact_support: "Thank you for contacting our support.  One of our agents will get back to you as soon as possible."
-      thanks_contact_us: "Thank you for contacting us.  We'll will get back to you as soon as possible."
+      thanks_contact_support: "Thank you for contacting our support. One of our agents will get back to you as soon as possible."
+      thanks_contact_us: "Thank you for contacting us. We'll will get back to you as soon as possible."
       thanks_feedback: "Thanks for your feedback!"
       thanks_report_bug: "Thank you for reporting the bug. We'll examine and verify it as soon as possible."
       thats_you: "that's you"
@@ -457,7 +457,7 @@ en:
       comment: Comment
       confirm_password: "Confirm Password"
       continue: Continue
-      copyright: "Copyright &copy; %{year} Tapjoy, Inc. All Rights Reserved. Tapjoy and the Tapjoy logo are trademarks or registered trademarks of Tapjoy, Inc.  All third party logos and trademarks mentioned are the property of their respective owners."
+      copyright: "Copyright &copy; %{year} Tapjoy, Inc. All Rights Reserved. Tapjoy and the Tapjoy logo are trademarks or registered trademarks of Tapjoy, Inc. All third party logos and trademarks mentioned are the property of their respective owners."
       country: Country
       day: Day
       earn_verb: Earn
