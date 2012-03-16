@@ -41,6 +41,11 @@ authorization do
     has_permission_on :tools_support_requests, :to => [ :index, :mass_resolve ]
   end
 
+  role :customer_service_manager do
+    includes :customer_service
+    has_permission_on :tools, :to => [ :award_currencies, :update_award_currencies ]
+  end
+
   role :money do
     includes :tools
     includes :devices
