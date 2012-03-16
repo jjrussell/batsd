@@ -35,10 +35,15 @@ authorization do
     includes :tools
     includes :devices
     has_permission_on :search, :to => [ :gamers ]
-    has_permission_on :tools, :to => [ :resolve_clicks, :device_info, :update_device, :award_currencies, :update_award_currencies, :send_currency_failures ]
+    has_permission_on :tools, :to => [ :resolve_clicks, :device_info, :update_device, :send_currency_failures ]
     has_permission_on :tools_gamers, :to => [ :index, :show ]
     has_permission_on :tools_gamer_devices, :to => [ :create, :edit, :new, :update ]
     has_permission_on :tools_support_requests, :to => [ :index, :mass_resolve ]
+  end
+
+  role :customer_service_manager do
+    includes :customer_service
+    has_permission_on :tools, :to => [ :award_currencies, :update_award_currencies ]
   end
 
   role :money do
@@ -88,7 +93,7 @@ authorization do
     includes :customer_service
     has_permission_on :statz, :to => [ :index, :show, :edit, :update, :new, :create, :last_run_times, :udids, :download_udids, :global, :publisher, :advertiser, :support_request_reward_ratio ]
     has_permission_on :search, :to => [ :offers, :partners, :users ]
-    has_permission_on :tools, :to => [ :disabled_popular_offers, :sanitize_users, :update_user, :resolve_clicks, :new_transfer, :device_info, :update_device, :freemium_android, :award_currencies, :update_award_currencies, :send_currency_failures ]
+    has_permission_on :tools, :to => [ :disabled_popular_offers, :sanitize_users, :update_user, :resolve_clicks, :new_transfer, :device_info, :update_device, :send_currency_failures ]
     has_permission_on :tools_enable_offer_requests, :to => [ :index, :update ]
     has_permission_on :activities, :to => [ :index ]
     has_permission_on :partners, :to => [ :index, :show, :edit, :make_current, :manage, :stop_managing, :mail_chimp_info, :update, :managed_by, :new_transfer, :create_transfer, :reporting, :agency_api, :set_tapjoy_sponsored, :set_unconfirmed_for_payout ]
@@ -96,6 +101,7 @@ authorization do
     has_permission_on :apps, :to => [ :unarchive ]
     has_permission_on :offer_creatives, :to => [ :show, :create, :update, :destroy ]
     has_permission_on :partners_offer_discounts, :to => [ :index, :new, :create, :deactivate ]
+    has_permission_on :tools_approvals, :to => [ :index, :history, :mine, :assign, :approve, :reject ]
     has_permission_on :tools_offer_lists, :to => [ :index ]
     has_permission_on :tools_premier_partners, :to => [ :index ]
     has_permission_on :tools_generic_offers, :to => [ :index, :new, :create, :edit, :update ]
@@ -109,7 +115,8 @@ authorization do
     has_permission_on :tools_agency_users, :to => [ :index, :show ]
     has_permission_on :tools_partner_program_statz, :to => [ :index, :export ]
     has_permission_on :tools_offers, :to => [ :creative, :approve_creative, :reject_creative ]
-    has_permission_on :tools_survey_offers, :to => [ :index, :show, :new, :create, :edit, :update, :destroy ]
+    has_permission_on :tools_survey_offers, :to => [ :index, :show, :new, :create, :edit, :update, :destroy, :toggle_enabled ]
+    has_permission_on :tools_clients, :to => [ :index, :show, :new, :create, :edit, :update, :add_partner, :remove_partner ]
   end
 
   role :games_editor do
@@ -126,6 +133,12 @@ authorization do
     has_permission_on :tools_users_role_assignments, :to => [ :create, :destroy ]
   end
 
+  role :products do
+    includes :tools
+    has_permission_on :tools_wfhs, :to => [ :index, :new, :create, :edit, :update, :destroy ]
+    has_permission_on :tools_employees, :to => [ :wfhs ]
+  end
+
   role :admin do
     includes :tools
     includes :devices
@@ -135,9 +148,11 @@ authorization do
     includes :hr
     includes :games_editor
     includes :role_mgr
+    includes :products
     has_permission_on :pub_offer_whitelist, :to => [ :index, :enable, :disable ]
     has_permission_on :tools, :to => [ :failed_sdb_saves, :sdb_metadata, :reset_device, :sqs_lengths, :elb_status, :ses_status, :as_groups ]
     has_permission_on :tools_offers, :to => [ :creative, :approve_creative, :reject_creative ]
+    has_permission_on :tools_recommenders, :to => [ :index, :create ]
     has_permission_on :tools_jobs, :to => [ :index, :new, :create, :edit, :update, :destroy ]
     has_permission_on :tools_support_requests, :to => [ :index, :mass_resolve ]
     has_permission_on :tools_press_releases, :to => [ :index, :new, :create, :edit, :update ]

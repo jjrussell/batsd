@@ -1,7 +1,7 @@
 class AppStore
 
-  ANDROID_APP_URL     = 'https://market.android.com/details?id='
-  ANDROID_SEARCH_URL  = 'https://market.android.com/search?num=40&q='
+  ANDROID_APP_URL     = 'https://play.google.com/store/apps/details?id='
+  ANDROID_SEARCH_URL  = 'https://play.google.com/store/search?c=apps&q='
   ITUNES_APP_URL      = 'http://ax.itunes.apple.com/WebObjects/MZStoreServices.woa/wa/wsLookup'
   ITUNES_SEARCH_URL   = 'http://ax.itunes.apple.com/WebObjects/MZStoreServices.woa/wa/wsSearch'
   WINDOWS_APP_URL     = 'http://catalog.zune.net/v3.2/en-US/apps/_APPID_?store=Zest&clientType=WinMobile+7.0'
@@ -222,7 +222,7 @@ private
   def self.search_android_market(term)
     response = request(ANDROID_SEARCH_URL + CGI::escape(term))
     if response.status == 200
-      items = Hpricot(response.body)/"div.results-section.apps"/"li.goog-inline-block"
+      items = Hpricot(response.body)/"ul.search-results-list"/"li.search-results-item"
       return items.map do |item|
         icon_link   = (item/"div"/"div.thumbnail-wrapper"/"a")
         icon_url    = (icon_link/"img").attr('src')

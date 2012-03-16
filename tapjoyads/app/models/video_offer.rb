@@ -80,7 +80,8 @@ class VideoOffer < ActiveRecord::Base
   end
 
   def update_video_url
-    self.video_url = Offer.get_video_url({:video_id => id})
+    prefix = "http://s3.amazonaws.com/#{RUN_MODE_PREFIX}tapjoy"
+    self.video_url = "#{prefix}/videos/src/#{id}.mp4"
   end
 
   def xml_for_buttons

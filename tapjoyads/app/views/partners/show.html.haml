@@ -73,6 +73,8 @@
     = "#{@partner.premier_discount}%"
     = "(#{link_to('edit', partner_offer_discounts_path(@partner))})"
   .metadata
+    Discount All Offer Types: #{@partner.discount_all_offer_types?}
+  .metadata
     Current Exclusivity Level:
     = @partner.exclusivity_level_type || "None"
   .metadata
@@ -84,6 +86,10 @@
       Tapjoy sponsored all apps:
       = @partner.tapjoy_sponsored? ? "Yes" : "No"
       = submit_tag('switch')
+  - if @partner.client.present?
+    .metadata
+      Client:
+      = link_to(@partner.client.name, tools_client_path(@partner.client.id))
   .metadata
     Confirmed for Payout:
     -if @partner.confirmed_for_payout

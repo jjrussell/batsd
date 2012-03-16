@@ -40,12 +40,17 @@ rescue Errno::ENOENT
   local_config = {}
 end
 
+SPROCKETS_CONFIG = {
+  :compile => true,
+  :combine => true,
+  :host => local_config['asset_host'] || local_config['website_url'] || 'http://localhost:3000'
+}
+
 RUN_MODE_PREFIX = 'staging_'
 API_URL = local_config['api_url'] || 'http://localhost:3000'
 DASHBOARD_URL = local_config['dashboard_url'] || 'http://localhost:3000'
 WEBSITE_URL = local_config['website_url'] || 'http://localhost:3000'
 CLOUDFRONT_URL = 'https://s3.amazonaws.com/staging_tapjoy'
-GAMES_ANDROID_MARKET_URL = 'http://market.android.com/details?id=com.tapjoy.tapjoy'
 
 # Amazon services:
 amazon = YAML::load_file("#{Rails.root}/config/amazon.yaml")

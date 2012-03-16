@@ -96,6 +96,14 @@
       %td
         = f.check_box(:tapjoy_sponsored)
         = error_message_on @offer, :tapjoy_sponsored
+    - if @offer.item_type == 'App'
+      %tr
+        %th
+          = f.label(:sdkless, 'SDK-less enabled')
+          #help_sdkless.help ?
+        %td
+          = f.check_box(:sdkless)
+          = error_message_on @offer, :sdkless
     - if @offer.item_type == 'GenericOffer'
       %tr
         %th
@@ -150,6 +158,13 @@
         = f.text_field(:dma_codes)
         = error_message_on @offer, :dma_codes
         .details= link_to('DMA Code List', 'http://code.google.com/apis/adwords/docs/appendix/metrocodes.html', :target => '_blank')
+    %tr
+      %th
+        = f.label(:cities)
+        #help_cities.help ?
+      %td
+        = f.text_field(:cities)
+        = error_message_on @offer, :cities
     = render('apps/offers_shared/carriers', :f => f)
     %tr
       %th
@@ -293,6 +308,7 @@
   #help_pay_per_click_content{ :name => 'Pay-Per-Click' } Charge the advertiser and award the user immediately on click.
   #help_multi_complete_content{ :name => 'Multi-complete' } Allow this offer to be completed multiple times per device.
   #help_tapjoy_sponsored_content{ :name => 'Tapjoy sponsored' } Whether or not the offer is Tapjoy sponsored.
+  #help_sdkless_content{ :name => 'SDK-less enabled' } Enabling SDK-less capability allows advertisers to bypass integrating the Tapjoy Advertiser SDK into their apps. App installations will be tracked by publisher apps when users engage with the advertiser's offer.  SDK-less offers will only be displayed in publisher apps using SDK version #{SDKLESS_MIN_LIBRARY_VERSION} or later.
   #help_direct_pay_content{ :name => 'Direct-pay' } Select a direct-pay provider from the list to designate this offer as a direct-pay offer. Revenue generated will be split up using the publisher's direct-pay share.
   #help_approved_sources_content{ :name => 'Approved sources' } Which sources should this offer be shown from.
   #help_featured_content{ :name => 'Featured' } Enables this offer in our featured offers feed.
@@ -303,6 +319,7 @@
   #help_show_rate_content{ :name => 'Show Rate' } The probability that this offer will be shown on an offerwall impression. This is set automatically by the system and is used for budgeting. Allowed values are 0.0 - 1.0.
   #help_min_conversion_rate_content{ :name => 'Min CVR' } This is used to prevent low conversion rate warnings. A warning will only be issued if the conversion rate falls below this threshold. Allowed values are blank or 0.0 - 1.0
   #help_dma_codes_content{ :name => 'DMA Codes' } Targets this offer to these designated market areas (DMAs). Must be an array of DMA codes or blank for no targeting. i.e. [807,515]
+  #help_cities_content{ :name => 'Cities' } Targets this offer to these designated cities. Must be an array of cities or blank for no targeting. i.e. ["New York","San Francisco"]
   #help_regions_content{ :name => 'Regions' } Targets this offer to these designated regions or blank for all regions. Must be an array of state and province codes. i.e. ["CA","OH"]
   #help_device_types_content{ :name => 'Device Types' } Targets this offer to these device types. At least one device type must be selected.
   #help_publisher_app_whitelist_content{ :name => 'Publisher App Whitelist' } Restrict this offer to these publisher apps. Must be a ";" separated list of publisher app IDs.

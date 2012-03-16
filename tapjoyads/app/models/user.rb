@@ -20,11 +20,15 @@ class User < ActiveRecord::Base
   belongs_to :current_partner, :class_name => 'Partner'
   belongs_to :reseller
 
+  has_one :employee, :primary_key => :email, :foreign_key => :email
+
   attr_accessor :terms_of_service
   validates_acceptance_of :terms_of_service, :on => :create
   validates_presence_of :reseller, :if => Proc.new { |user| user.reseller_id? }
 
   before_create :regenerate_api_key
+  before_create { |user| user.state = 'approved' }
+
   after_create :create_mail_chimp_entry
   after_save :update_auth_net_cim_profile
 

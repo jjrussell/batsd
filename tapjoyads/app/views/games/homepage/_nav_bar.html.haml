@@ -1,52 +1,71 @@
-- active ||= ""
-- show_device ||= false
+.container
+  - if current_gamer.nil? && !@hide_login
+    .right
+      #login.header-button
+        %span= t('text.shared.login_verb')
+      #login-web
+        #login-web-wrapper
+          %span= t('text.shared.login_verb')
 
-- if show_device
-  .device_wrapper
-    .device.clearfix
-      .mobile_icon
-      .device_info
-        .device_name
-          = @device_name
-        .device_switch
-          = t('text.games.wrong_device')
-      .plus
+  .nav
+    - if current_gamer.present?
+      .menu
+        .menu-grid.clearfix
+          .box
+          .box
+          .box
+          .box
+          .box
+          .box
+    .logo
+      - link_to(games_root_path) do
+        %img{ :src => BLANK_IMAGE }
+    - if current_gamer.present?
+      .menu-dropdown
+        .menu-dropdown-wrapper
+          .device
+            .device-profile
+              .device-toggle.up.hide
+              - if current_gamer.get_avatar_url.present?
+                .user-icon
+                  = image_tag current_gamer.get_avatar_url
+              .device-info
+                - if current_device.nil?
+                  = t('text.games.no_device')
+                - else
+                  = t('text.games.on_my', :device_name => current_device.name)
+                %a.device-change
+                  (#{t('text.games.change')})
+          #device-select.device-select.closed
+            #device-select-list.device-select-wrapper
+          .device-form.hide
+          .menu-nav
+            .menu-nav-wrapper
+              - link_to(games_root_path) do
+                .my_apps
+                  %span= t('text.games.my_apps')
+              - link_to(games_more_games_editor_picks_path) do
+                .more_apps
+                  %span= t('text.games.more_apps')
+              - link_to(games_gamer_path) do
+                .profile
+                  %span= t('text.games.profile')
+          .menu-subnav.clearfix
+            .menu-subnav-wrapper
+              - link_to(games_help_path) do
+                .help
+                  %span= t('text.shared.help')
+              - link_to(games_logout_path) do
+                .logout
+                  %span= t('text.shared.logout')
 
-.nav
-  .nav_container.clearfix
-    .aside_nav
-      %span
-        = link_to(t('text.shared.help'), games_help_path )
-      %span
-        |
-      - link_to(games_logout_path) do
-        %span= t('text.shared.logout')
-    - link_to(games_root_path, :class => "slideright") do
-      .logo
-    .nav_buttons
-      .nav_list.clearfix
-        %ul
-          %ul.pair
-            - if active == 'back'
-              - link_to(back_button_destination, :class => "slideright") do
-                %li.my_apps= t('text.shared.back')
-            - else
-              - if active == 'my_apps'
-                %li.my_apps.active_button= t('text.games.my_apps')
-              - else
-                - link_to(games_root_path, :class => "slideright") do
-                  %li.my_apps= t('text.games.my_apps')
-              - if active == 'more_apps'
-                %li.more_apps.more_apps_path.active_button= t('text.games.more_apps')
-              - elsif active == 'my_apps'
-                %li.more_apps.more_apps_path= t('text.games.more_apps')
-              - if active == 'my_account'
-                %li.my_account.active_button= t('text.shared.my_account')
-              - else
-                - link_to(edit_games_gamer_path) do
-                  %li.my_account= t('text.shared.my_account')
-              - if false # hide social share button until ready
-                - if active == 'share'
-                  %li.share.active_button Share
-                - elsif active != 'my_account'
-                  %li.share= t('text.shared.share')
+- if current_gamer.nil? && !@hide_login
+  .header-h-split
+    &nbsp;
+  .container.mt2
+    .left.phraseThatPays
+      = t('text.games.about_body')
+    .right
+      - link_to(new_games_gamer_path) do
+        #signup.header-button
+          = t('text.shared.sign_up')

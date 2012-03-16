@@ -76,7 +76,7 @@ class GetOffersController < ApplicationController
   def setup
     @for_preview = (params[:action] == 'webpage' && params[:offer_id].present?)
     @save_web_requests = !@for_preview && params[:no_log] != '1'
-    @server_to_server = params[:action] == 'index' && (params[:redirect] == '1' || (params[:json] == '1' && params[:callback].blank?))
+    @server_to_server = server_to_server?
 
     required_params = [:app_id] + (@for_preview ? [:offer_id] : [:udid, :publisher_user_id])
     return unless verify_params(required_params)
@@ -173,6 +173,14 @@ class GetOffersController < ApplicationController
         @papaya_offers = OfferCacher.get_papaya_offers || {}
       end
     end
+  end
+
+  def server_to_server?
+    if params[:action] == 'index'
+      return false if params[:data].present?
+      return true if params[:redirect] == '1' || (params[:json] == '1' && params[:callback].blank?)
+    end
+    params[:library_version] == 'server'
   end
 
 end
