@@ -111,13 +111,13 @@ class GamesController < ApplicationController
   def handle_mogli_exceptions(e)
     case e
     when Mogli::Client::FeedActionRequestLimitExceeded
-      @error_msg = "You've reached the limit. Please try again later."
+      @error_msg = t('text.games.mogli_reach_limit_error')
     when Mogli::Client::HTTPException
-      @error_msg = "There was an issue with inviting your friend. Please try again later."
+      @error_msg = t('text.games.social_invite_friend_error')
     when Mogli::Client::SessionInvalidatedDueToPasswordChange, Mogli::Client::OAuthException
-      @error_msg = "Please authorize us before sending out an invite."
+      @error_msg = t('text.games.social_need_authorize_error')
     else
-      @error_msg = "There was an issue with inviting your friend. Please try again later."
+      @error_msg = t('text.games.social_invite_friend_error')
     end
 
     dissociate_and_redirect
@@ -126,24 +126,24 @@ class GamesController < ApplicationController
   def handle_twitter_exceptions(e)
     case e
     when Twitter::Forbidden
-      render :json => { :success => false, :error => "Requests are being denied due to update limits." }
+      render :json => { :success => false, :error => t('text.games.twitter_forbidden_error') }
     when Twitter::Unauthorized
       current_gamer.dissociate_account!(Invitation::TWITTER)
       render :json => { :success => false, :errorRedirectPath => games_social_get_twitter_friends_path } and return if params[:ajax].present?
       redirect_to games_social_get_twitter_friends_path
     when Twitter::InternalServerError, Twitter::BadGateway, Twitter::ServiceUnavailable
-      flash[:error] = 'Something happened to Twitter. Please try again later.'
-      render :json => { :success => false, :error => "Something happened to Twttier. Please try again later" } and return if params[:ajax].present?
+      flash[:error] = t('text.games.twitter_internal_error')
+      render :json => { :success => false, :error => t('text.games.twitter_internal_error') } and return if params[:ajax].present?
       redirect_to social_feature_redirect_path
     else
-      flash[:error] = 'There was an issue with inviting your friend, please try again later.'
-      render :json => { :success => false, :error => "There was an issue with inviting your friend, please try again later" } and return if params[:ajax].present?
+      flash[:error] = t('text.games.social_invite_friend_error')
+      render :json => { :success => false, :error => t('text.games.social_invite_friend_error') } and return if params[:ajax].present?
       redirect_to social_feature_redirect_path
     end
   end
 
   def handle_errno_exceptions
-    flash[:error] = "There was a connection issue. Please try again later."
+    flash[:error] = t('text.games.errno_error')
     redirect_to social_feature_redirect_path
   end
 
