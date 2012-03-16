@@ -1001,6 +1001,7 @@ ActiveRecord::Schema.define(:version => 20120314201830) do
     t.string   "api_key",                                                  :null => false
     t.string   "auth_net_cim_id"
     t.string   "reseller_id",             :limit => 36
+    t.string   "state"
   end
 
   add_index "users", ["email"], :name => "index_users_on_email"
