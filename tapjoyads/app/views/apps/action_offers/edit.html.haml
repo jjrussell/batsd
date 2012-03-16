@@ -36,13 +36,13 @@
           %td
             = primary_offer_form.currency_field :bid, {}, :class => 'togglable'
             = error_message_on @action_offer, :primary_offer_bid
-          %tr{ :class => current_partner.premier_discount > 0 ? '' : 'hidden' }
-            %th
-              = primary_offer_form.label :payment, 'Payment'
-              #help_payment.help ?
-            %td
-              = primary_offer_form.currency_field :payment, {}, :disabled => 'disabled'
-              = error_message_on @action_offer, :primary_offer_payment
+        %tr{ :class => current_partner.premier_discount > 0 ? '' : 'hidden' }
+          %th
+            = primary_offer_form.label :payment, 'Payment'
+            #help_payment.help ?
+          %td
+            = primary_offer_form.currency_field :payment, {}, :disabled => 'disabled'
+            = error_message_on @action_offer, :primary_offer_payment
       %tr
         %th
           = f.label :name, 'Action Name'
