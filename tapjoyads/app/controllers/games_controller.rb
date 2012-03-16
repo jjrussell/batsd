@@ -129,15 +129,15 @@ class GamesController < ApplicationController
       render :json => { :success => false, :error => "Requests are being denied due to update limits." }
     when Twitter::Unauthorized
       current_gamer.dissociate_account!(Invitation::TWITTER)
-      render :json => { :success => false, :error_redirect => true } and return if params[:ajax].present?
-      redirect_to games_social_invite_twitter_friends_path
+      render :json => { :success => false, :errorRedirectPath => games_social_get_twitter_friends_path } and return if params[:ajax].present?
+      redirect_to games_social_get_twitter_friends_path
     when Twitter::InternalServerError, Twitter::BadGateway, Twitter::ServiceUnavailable
+      flash[:error] = 'Something happened to Twitter. Please try again later.'
       render :json => { :success => false, :error => "Something happened to Twttier. Please try again later" } and return if params[:ajax].present?
-      flash[:error] = 'Something happened to Twttier. Please try again later.'
       redirect_to social_feature_redirect_path
     else
-      render :json => { :success => false, :error => "There was an issue with inviting your friend, please try again later" } and return if params[:ajax].present?
       flash[:error] = 'There was an issue with inviting your friend, please try again later.'
+      render :json => { :success => false, :error => "There was an issue with inviting your friend, please try again later" } and return if params[:ajax].present?
       redirect_to social_feature_redirect_path
     end
   end

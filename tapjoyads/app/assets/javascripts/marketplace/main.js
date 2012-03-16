@@ -574,12 +574,14 @@ $(document).ready(function() {
 
 
   (function () {
-    var $flash = $('#flash-notice');
-
+    var $flash = $('#flash-notice, #flash-error');
     if ($flash.length === 0) { return; }
 
-    Tapjoy.Utils.notification({
-      message: $flash.html()
+    $flash.each(function () {
+      Tapjoy.Utils.notification({
+        message: $(this).html(),
+        type: $(this).attr("id").match(/error/) ? "error" : "normal"
+      });
     });
   }());
 

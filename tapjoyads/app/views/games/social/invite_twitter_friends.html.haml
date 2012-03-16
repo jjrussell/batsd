@@ -16,14 +16,36 @@
           = text_field_tag 'ajax', true, :hidden => true
         .mod.friend-pagination
           = link_to(t('text.games.social_to_prev', :page_size => @page_size), '#', :id => 'prev')
-        .ajax-placeholder
-          %ul.list-button-container.flush.nbb
+        .ajax-loader{ "data-url"  => games_social_get_twitter_friends_path, "data-immediate-load" => true, "data-params" => { :ajax => true, :pageSize => @page_size}.to_json }
+          %ul.list-button-container.ajax-target.nbb.friend-list
+          .ajax-placeholder
             %li.list-button.ntb
               #tapjoy_loader
                 #loader_t.loader_letter
                 #loader_a.loader_letter
                 #loader_p.loader_letter
-        %ul.list-button-container.friend_list
+          .ajax-error.hidden
+            - link_to :back do
+              %ul.list-button-container.flush.nbb
+                %li.list-button.ntb
+                  %h2.center= t('text.games.generic_issue');
+          %script{:type => "text/template" }
+            :plain
+              <% if(typeof friends === "undefined") { return; }%>
+              <% for (var i = start, ii = Math.min(pageSize, friends.length); i<ii; i++) { %>
+                <% friend = friends[i]; %>
+                <li class="friend clearfix list-button soft-gray-gradient" id="<%= friend.social_id %>">
+                  <div class="left list-squircle"><img src="<%= friend.image_url %>"/></div>
+                  <div class="left bold mt20 ml10"><%= friend.name %></div>
+
+                  <% var is_checked = $.inArray(friend.social_id.toString(), selectedFriends) !== -1; %>
+
+                  <div class="right mt10 mr10 item-check checkmark <%= is_checked ? "" : "hidden" %>">&nbsp;</div>
+                  <% if (friend.sent === true) { %>
+                    <div class="right mt20 mr10 item-sent">#{t('text.shared.sent')}</div>
+                  <% } %>
+                </li>
+              <% } %>
         .mod.friend-pagination
           = link_to(t('text.games.social_to_next', :page_size => @page_size), '#', :id => 'next')
           = link_to(t('text.games.social_to_top'), '#', :id => 'top')
@@ -34,6 +56,5 @@
   :plain
     window.loadFriendsOptions = {
        getTwitterFriendsURL : "#{games_social_get_twitter_friends_path}",
-       pageSize             : #{@page_size},
-       authTwitterPath      : "#{games_social_twitter_start_oauth_path}"
-     };
+       pageSize             : #{@page_size}
+    };

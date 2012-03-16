@@ -4,6 +4,7 @@
     FB = window.FB,
     twitterOptions = window.twitterOptions;
 
+
   Tap.extend({
     Social: {
       doFbLogin: function (redirect_url) {
@@ -56,33 +57,16 @@
         FB.ui(obj);
       },
 
-      loadFriends: function(url, pageSize, authUrl) {
-        $.ajax({
-         type: 'GET',
-         url: url,
-         success: function(data) {
-           window.renderFriendListOptions = {
-             pageSize:      pageSize,
-             socialFriends: data,
-           };
-           Tapjoy.Social.renderFriendList(window.renderFriendListOptions);
-           $('.ajax-placeholder').hide();
-         },
-         error: function(data) {
-           document.location.href = authUrl;
-         }
-        });
-      },
-
       renderFriendList: function(options){
         // local variables
         var currentPage = 1;
         var selectedFriends = [];
         var animateSpeed = "fast";
         var currentFilter = '';
-        var hasNext = false;
         var pageSize = options.pageSize;
         var socialFriends = options.socialFriends;
+        var hasNext = socialFriends.length >= pageSize;
+        var template = Tap.Utils.underscoreTemplate($(".ajax-loader script").html());
 
         // local functions
         var resetDirectionButtons = function() {
@@ -98,6 +82,34 @@
           }
         }; // resetDirectionButtons
 
+        var resetListButtons = function () {
+          $('li.friend').click(function () {
+            var li = $(this);
+            var socialId = li.attr('id');
+            var index = $.inArray(socialId, selectedFriends);
+            var found = index != -1;
+
+            if (found) {
+              li.children('.item-check').addClass('hidden');
+              li.children('.item-sent').removeClass('hidden');
+              selectedFriends.splice(index, 1);
+            } else if (!found) {
+              li.children('.item-check').removeClass('hidden');
+              li.children('.item-sent').addClass('hidden');
+              selectedFriends.push(socialId);
+            }
+            var friend_count = selectedFriends.length;
+            if (friend_count > 0) {
+              $('#friend_selected').val(selectedFriends);
+            }
+            else {
+              $('#friend_selected').val('');
+            }
+            $('#friend_selected').change();
+            return false;
+          });
+        };
+
         RegExp.escape = function(text, callee) {
           if (!callee.sRE) {
             var specials = [
@@ -112,9 +124,10 @@
         };
 
         var showFriendList = function() {
-          $('.friend_list').fadeOut(animateSpeed, function() {
+          $('.friend-list').fadeOut(animateSpeed, function() {
             hasNext = false;
-            var text      = [],
+            var $$ = $(this),
+              text      = [],
               friends     = [],
               counter     = 0,
               counterMax  = currentPage * pageSize,
@@ -127,7 +140,7 @@
                 var included = $.inArray(friend, friends) != -1;
                 var matched = regex ?
                   friend.name.match(regex) :
-                  friend.name.toLowerCase().match(RegExp.escape(currentFilter, $(this)));
+                  friend.name.toLowerCase().match(RegExp.escape(currentFilter, $$));
                 if (!included && matched) {
                   counter++;
                   if (counter > counterMin && counter <= counterMax) {
@@ -151,58 +164,13 @@
 
             hasNext = counter >= counterMax;
 
-            for (var i in friends) {
-              var friend = friends[i];
-
-              text.push('<li class="friend clearfix list-button soft-gray-gradient" id="', friend.social_id, '">');
-              text.push('<div class="left list-squircle"><img src="', friend.image_url, '"/></div>');
-              text.push('<div class="left bold mt20 ml10">', friend.name, '</div>');
-              if ($.inArray(friend.social_id.toString(), selectedFriends) != -1) {
-                text.push('<div class="right mt10 mr10 item-check checkmark">&nbsp;</div>');
-              }
-              else if (friend.sent == true) {
-                text.push('<div class="right mt10 mr10 item-check checkmark hidden">&nbsp;</div>');
-                text.push('<div class="right mt20 mr10 item-sent">', _t('shared.sent'), '</div>');
-              }
-              else {
-                text.push('<div class="right mt10 mr10 item-check checkmark hidden">&nbsp;</div>');
-              }
-              text.push('</li>');
-            }
-
             // unregister events
             $('li.friend').unbind();
-            $('.friend_list').html(text.join('')).fadeIn(animateSpeed);
+            $$.html(template({friends: friends, pageSize: pageSize, start: 0, selectedFriends: selectedFriends}));
+            $$.fadeIn(animateSpeed);
 
             resetDirectionButtons();
-
-            $('li.friend').click(function(){
-              var li = $(this);
-              var socialId = li.attr('id');
-              var index = $.inArray(socialId, selectedFriends);
-              var found = index != -1;
-
-              if (found) {
-                li.children('.item-check').addClass('hidden');
-                if (li.children('.item-sent')) {
-                  li.children('.item-sent').removeClass('hidden');
-                }
-                selectedFriends.splice(index, 1);
-              } else if (!found) {
-                li.children('.item-check').removeClass('hidden');
-                li.children('.item-sent').addClass('hidden');
-                selectedFriends.push(socialId);
-              }
-              var friend_count = selectedFriends.length;
-              if (friend_count > 0) {
-                $('#friend_selected').val(selectedFriends);
-              }
-              else {
-                $('#friend_selected').val('');
-              }
-              $('#friend_selected').change();
-              return false;
-            });
+            resetListButtons();
           });
         }; // showFriendList
 
@@ -237,7 +205,8 @@
         });
 
         // call functions
-        showFriendList();
+        resetDirectionButtons();
+        resetListButtons();
       }
     }
   });
@@ -269,16 +238,27 @@
 
   $(function () {
     var loadFriendsOptions = window.loadFriendsOptions;
-    if (loadFriendsOptions) {
-      Tap.Social.loadFriends(loadFriendsOptions.getTwitterFriendsURL, loadFriendsOptions.pageSize, loadFriendsOptions.authTwitterPath);
-    }
+    $(".ajax-loader").bind("ajax-loader-success", function (ev, data) {
+      if(data.success === false){
+        if(data.error) {
+          Tap.Utils.notification({ message: data.error });
+        }
+
+        if(data.errorRedirectPath) {
+          window.location = data.errorRedirectPath;
+        }
+      }
+      else {
+        Tap.Social.renderFriendList({pageSize: loadFriendsOptions.pageSize, socialFriends: data.friends});
+      }
+    });
 
     $(".invite-twitter-followers").click(function (event) {
       event.preventDefault();
       var $$ = $(this),
-          callback = $$.data("callback");
+          redirectPath = $$.data("redirect-path");
 
-      document.location.href = callback;
+      document.location.href = redirectPath;
     });
   });
 }(window.Tapjoy, window.jQuery));

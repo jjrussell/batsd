@@ -94,7 +94,7 @@ class Games::SocialController < GamesController
       friend[:name].downcase
     end
 
-    render :json => @twitter_friends, :callback => params[:callback]
+    render :json => {:friends => @twitter_friends, :start => 0, :selectedFriends => [], :pageSize => params[:pageSize]}, :callback => params[:callback]
   end
 
   def send_twitter_invites
@@ -150,6 +150,7 @@ class Games::SocialController < GamesController
 
   def twitter_authenticate
     if current_gamer.require_twitter_authenticate?
+      render :json => { :success => false, :errorRedirectPath => games_social_twitter_start_oauth_path } and return if params[:ajax].present?
       redirect_to games_social_twitter_start_oauth_path
     end
   end
