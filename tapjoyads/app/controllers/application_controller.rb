@@ -272,6 +272,13 @@ class ApplicationController < ActionController::Base
       advertiser_offer_ids << click.advertiser_app_id unless advertiser_offer_ids.include?(click.advertiser_app_id)
       break if advertiser_offer_ids.length == 20
     end
-    @incomplete_offers = advertiser_offer_ids.collect { |offer_id| Offer.find_in_cache(offer_id) }
+
+    @incomplete_offers = advertiser_offer_ids.collect do |offer_id|
+      begin
+        Offer.find_in_cache(offer_id)
+      rescue ActiveRecord::RecordNotFound
+        nil
+      end
+    end.compact
   end
 end

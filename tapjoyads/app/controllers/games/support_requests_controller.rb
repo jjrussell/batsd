@@ -1,8 +1,17 @@
 class Games::SupportRequestsController < GamesController
 
   def new
-    current_gamer
-    #find_incomplete_offers
+    respond_to do |format|
+      format.js do
+        Rails.logger.info "Format: JS"
+        find_incomplete_offers
+        render(:partial => 'select_offer', :layout => false)
+      end
+      format.html do
+        Rails.logger.info "Format: HTML"
+        current_gamer
+      end
+    end
   end
 
   def create

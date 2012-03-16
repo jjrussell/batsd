@@ -1,3 +1,5 @@
+- offer_dropdown_params = { :udid => current_device_id, :format => 'js' }
+
 #support-request.current
   .content
     %h1.museo
@@ -21,9 +23,8 @@
           - if @incomplete_offers.nil?
             .field
               = label_tag :offer_id, t('text.games.contact_support.incomplete_offers_label')
-              = button_to t('text.games.contact_support.select_offer_button'), request.url, :id => 'show_offers', :class => 'ui-joy-button secondary mt10 pt10 pb10'
+              = submit_tag t('text.games.contact_support.select_offer_button'), :id => 'show_offers', :type => 'button', :class => 'ui-joy-button secondary mt10 pt10 pb10'
             #offer_dropdown.hidden
-              STUFF
         .field
           .container.pb10
             = f.submit t('text.shared.submit'), :class => 'ui-joy-button primary pb10 pt10'
@@ -34,20 +35,21 @@
 - content_for :page_javascript do
   :plain
     $(function($){
+      $('#show_offers').removeAttr("disabled");
       $('#show_offers').click(function() {
         $(this).attr("disabled", "disabled");
         $.ajax({
           type: "GET",
           dataType: "html",
-          url: "#{new_games_support_request_url}",
+          url: "#{new_games_support_request_url(offer_dropdown_params)}",
           success: function(html) {
-            //$('#support_request').replaceWith(html);
+            $('#offer_dropdown').replaceWith(html);
             $('#offer_dropdown').show();
             $('#show_offers').hide();
           },
           error: function() {
             $('#show_offers').removeAttr("disabled");
-            //$('#offer_dropdown').hide();
+            $('#offer_dropdown').hide();
           }
         });
         return false;
