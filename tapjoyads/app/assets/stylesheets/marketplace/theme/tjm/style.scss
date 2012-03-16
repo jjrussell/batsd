@@ -481,14 +481,14 @@ p {
 
 .plussign {
   padding-right: 20px;
-  background-size: auto 100%;
   background: url(#{$image_path}/plus-sign.png) no-repeat 98% center;
+  background-size: auto 100%;
 }
 
 .checkmark {
   padding-right: 20px;
-  background-size: auto 100%;
   background: url(#{$image_path}/checkmark-grey.png) no-repeat 98% center;
+  background-size: auto 100%;
 }
 
 .downarrow {
@@ -2131,9 +2131,4 @@ div.app {
   #top {
     float: right;
   }
-}
-
-.item-check {
-  width: 50px;
-  height: 50px;
 }
