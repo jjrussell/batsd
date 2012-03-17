@@ -65,7 +65,11 @@ class Job::QueueConversionTrackingController < Job::SqsReaderController
       Notifier.alert_new_relic(JailbrokenInstall, "Device: #{click.udid} is jailbroken and installed a paid app: #{click.advertiser_app_id}, for click: #{click.key}", request, params)
     end
 
-    click.type = "featured_#{click.type}" if click.source == 'featured'
+    if click.source == 'featured'
+      click.type = "featured_#{click.type}"
+    elsif click.source == 'tj_games'
+      click.type = "tjm_#{click.type}"
+    end
 
     reward = Reward.new(:key => click.reward_key)
     reward.put('created', installed_at_epoch)
@@ -117,7 +121,7 @@ class Job::QueueConversionTrackingController < Job::SqsReaderController
     device.save
 
     web_request = WebRequest.new(:time => Time.zone.at(installed_at_epoch.to_f))
-    web_request.path              = 'reward'  #question, is it necessary to separate tjm_reward from rewards here? add reward.source == 'tj_games' ? 'tjm_reward' : 'reward'
+    web_request.path              = 'reward'
     web_request.type              = reward.type
     web_request.publisher_app_id  = reward.publisher_app_id
     web_request.advertiser_app_id = reward.advertiser_app_id
