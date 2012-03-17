@@ -19,7 +19,7 @@
     var timeoutTimer = window.setTimeout(function () {
       error({});
       always({});
-    }, 15000);
+    }, options.timeout);
     preload.ready(function (data) {
       window.clearTimeout(timeoutTimer);
       success(data);
@@ -37,7 +37,7 @@
       url: options.url,
       dataType: options.is_jsonp ? "jsonp" : undefined,
       data: options.params,
-      timeout: 15000
+      timeout: options.timeout
     }).done(success).fail(error).always(always);
   };
 
@@ -51,7 +51,8 @@
           immediate: $$.data("immediate-load"),
           success_event: $$.data("success-event") || "ajax-loader-success",
           error_event: $$.data("error-event") || "ajax-loader-error",
-          complete_event: $$.data("complete-event") || "ajax-loader-complete"
+          complete_event: $$.data("complete-event") || "ajax-loader-complete",
+          timeout: $$.data("timeout") || 15000
         },
         $target = $(".ajax-target", $$),
         $placeholder = $(".ajax-placeholder", $$),
