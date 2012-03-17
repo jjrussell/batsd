@@ -105,18 +105,15 @@ class Games::SocialController < GamesController
     else
       posts = []
       gamers = []
-      non_gamers = []
 
       friends.each do |friend_id|
         exist_gamers = Gamer.find_all_gamer_based_on_channel(Invitation::TWITTER, friend_id)
         if exist_gamers.any?
           exist_gamers.each do |gamer|
-            gamers << gamer.get_gamer_name
+            gamers << friend_id
             current_gamer.follow_gamer(gamer)
           end
         else
-          friend_name = Twitter.user(friend_id.to_i).name
-          non_gamers << friend_name
           invitation = current_gamer.invitation_for(friend_id, Invitation::TWITTER)
 
           if invitation.pending?
@@ -138,8 +135,12 @@ class Games::SocialController < GamesController
         end
       end
 
+      posts.each do |post|
+        gamers << post.recipient.id_str
+      end
+
       if gamers.any? || posts.any?
-        render :json => { :success => true, :gamers => gamers, :non_gamers => non_gamers }
+        render :json => { :success => true, :gamers => gamers }
       else
         render :json => { :success => false, :error => t('text.games.social_invite_friend_error') }
       end

@@ -2,7 +2,12 @@
   "use strict";
   var _t = window.i18n.t,
     FB = window.FB,
-    twitterOptions = window.twitterOptions;
+    twitterOptions = window.twitterOptions,
+    notify = function (message) {
+      Tapjoy.Utils.notification({
+        message: message
+      });
+    };
 
 
   Tap.extend({
@@ -174,6 +179,21 @@
           });
         }; // showFriendList
 
+        var updateAfterSuccess = function(invitedFriends) {
+          for (var i in socialFriends) {
+            var friend = socialFriends[i];
+            var socialId = friend.social_id.toString();
+            var index = $.inArray(socialId, invitedFriends);
+            var found = index != -1;
+            if (found) {
+              socialFriends[i].sent = true;
+              selectedFriends.splice($.inArray(socialId, selectedFriends), 1);
+            }
+          }
+          $("#friend_filter").val('');
+          showFriendList();
+        }; // updateAfterSuccess
+
         $('#prev').click(function(event){
           event.preventDefault();
           if(currentPage > 1) {
@@ -201,6 +221,21 @@
             currentFilter = newFilter;
             currentPage = 1;
             showFriendList();
+          }
+        });
+
+        $(document).bind("twitter-invite-ajax-success", function (ev, form, data) {
+          if (data.success === true) {
+            if (data.gamers.length === 0 ) {
+              notify(_t('shared.generic_issue'));
+            } else {
+              notify(_t('shared.success'));
+              updateAfterSuccess(data.gamers);
+            }
+          } else if (typeof data.error === "string") {
+            notify(data.error);
+          } else {
+            notify(_t('shared.generic_issue'));
           }
         });
 

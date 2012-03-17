@@ -132,12 +132,12 @@ class GamesController < ApplicationController
       render :json => { :success => false, :errorRedirectPath => games_social_get_twitter_friends_path } and return if params[:ajax].present?
       redirect_to games_social_get_twitter_friends_path
     when Twitter::InternalServerError, Twitter::BadGateway, Twitter::ServiceUnavailable
-      flash[:error] = t('text.games.twitter_internal_error')
       render :json => { :success => false, :error => t('text.games.twitter_internal_error') } and return if params[:ajax].present?
+      flash[:error] = t('text.games.twitter_internal_error')
       redirect_to social_feature_redirect_path
     else
-      flash[:error] = t('text.games.social_invite_friend_error')
       render :json => { :success => false, :error => t('text.games.social_invite_friend_error') } and return if params[:ajax].present?
+      flash[:error] = t('text.games.social_invite_friend_error')
       redirect_to social_feature_redirect_path
     end
   end
