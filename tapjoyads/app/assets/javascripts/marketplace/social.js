@@ -19,9 +19,7 @@
               window.location = redirect_url;
             });
           } else {
-            Tap.Utils.notification({
-              message: _t('games.grant_us_access')
-            });
+            notify(_t('games.grant_us_access'));
           }
         }, {scope: 'offline_access,publish_stream'});
       },
@@ -276,7 +274,7 @@
     $(".ajax-loader").bind("ajax-loader-success", function (ev, data) {
       if(data.success === false){
         if(data.error) {
-          Tap.Utils.notification({ message: data.error });
+          notify(data.error);
         }
 
         if(data.errorRedirectPath) {
