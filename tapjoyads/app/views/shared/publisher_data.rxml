@@ -14,14 +14,10 @@ xml.MarketingData do
       xml.SpendHourly appstats.stats['installs_spend'].join(',')
       xml.PublishedInstalls appstats.stats['published_installs'].sum
       xml.PublishedInstallsHourly appstats.stats['published_installs'].join(',')
-      xml.TJMPublishedInstalls appstats.stats['tjm_published_installs'].sum
-      xml.TJMPublishedInstallsHourly appstats.stats['tjm_published_installs'].join(',')
       xml.Revenue appstats.stats['non_display_revenue'].sum
       xml.RevenueHourly appstats.stats['non_display_revenue'].join(',')
       xml.OfferwallRevenue appstats.stats['rewards_revenue'].sum
       xml.OfferwallRevenueHourly appstats.stats['rewards_revenue'].join(',')
-      xml.TJMOfferwallRevenue appstats.stats['tjm_rewards_revenue'].sum
-      xml.TJMOfferwallRevenueHourly appstats.stats['tjm_rewards_revenue'].join(',')
       xml.FeaturedOfferRevenue appstats.stats['featured_revenue'].sum
       xml.FeaturedOfferRevenueHourly appstats.stats['featured_revenue'].join(',')
       xml.DisplayRevenue appstats.stats['display_revenue'].sum

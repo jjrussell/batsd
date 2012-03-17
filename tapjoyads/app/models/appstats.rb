@@ -65,8 +65,6 @@ class Appstats
     if @stats['tjm_published_installs'] and @stats['tjm_offers']
       @stats['tjm_rewards'] = []
       @stats['tjm_published_installs'].length.times do |i|
-        #no need to substract @stats['display_conversions'][i] because display_conversions is only when source == display_ad,
-        #which won't be double counting since souce == tj_games for tjm_offers
         @stats['tjm_rewards'][i] = @stats['tjm_published_installs'][i] + @stats['tjm_offers'][i]
       end
     end
@@ -83,8 +81,6 @@ class Appstats
     if @stats['tjm_offers_opened']
       @stats['tjm_rewards_opened'] = []
       @stats['tjm_offers_opened'].length.times do |i|
-        #no need to substract @stats['display_conversions'][i] because display_conversions is only when source == display_ad,
-        #which won't be double counting since souce == tj_games for tjm_offers
         @stats['tjm_rewards_opened'][i] = @stats['tjm_offers_opened'][i]
       end
     end
