@@ -181,7 +181,7 @@ ja:
       about: ~
       advertisers: ~
       blog: ~
-      copyright: ~
+      copyright: "Copyright &copy; %{year} Tapjoy, Inc. All Rights Reserved. TapjoyとTapjoyのロゴはすべて各オーナーの登録商標です。"
       developers: ~
       privacy: ~
     games:
@@ -411,7 +411,7 @@ ja:
       comment: コメント
       confirm_password: パスワードを確認
       continue: 続ける
-      copyright: "Copyright © 2012 Tapjoy, Inc. All Rights Reserved. TapjoyとTapjoyのロゴはすべて各オーナーの登録商標です。"
+      copyright: "Copyright &copy; %{year} Tapjoy, Inc. All Rights Reserved. TapjoyとTapjoyのロゴはすべて各オーナーの登録商標です。"
       country: 国
       day: 日
       earn_verb: 獲得

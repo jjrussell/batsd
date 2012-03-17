@@ -181,7 +181,7 @@ fr:
       about: ~
       advertisers: ~
       blog: ~
-      copyright: ~
+      copyright: "Copyright &copy; %{year} Tapjoy, Inc. Tous droits réservés. Tapjoy et le logo Tapjoy sont des marques déposées de Tapjoy, Inc. Tous les logos et marques mentionnés appartiennent à leurs propriétaires respectifs."
       developers: ~
       privacy: ~
     games:

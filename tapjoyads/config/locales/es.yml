@@ -181,7 +181,7 @@ es:
       about: ~
       advertisers: ~
       blog: ~
-      copyright: ~
+      copyright: "Copyright &copy; %{year} Tapjoy, Inc. Todos Los Derechos Reservados. Tapjoy y el logo de Tapjoy son marcas registradas de Tapjoy, Inc. Todos los logos y marcas de terceras personas mencionadas son propiedad de sus respectivos dueños."
       developers: ~
       privacy: ~
     games:
@@ -232,7 +232,7 @@ es:
       earn: "Gana %{currency}"
       earn_rewards: Conseguir recompensas
       earn_title: "Bájate una de las aplicaciones abajo o visualiza uno de los anuncios para ganar %{currency} en %{app_name}"
-      earning_rewards: ¡¿Quieres conseguir moneda virtual gratuita para tus apps? Tapjoy es el mejor sitio para ello!
+      earning_rewards: ¿Quieres conseguir moneda virtual gratuita para tus apps? ¡Tapjoy es el mejor sitio para ello!
       edit: editar
       email_device_link: ~
       email_notification: "Notificaciones por Email"
