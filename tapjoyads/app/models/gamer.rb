@@ -24,6 +24,8 @@ class Gamer < ActiveRecord::Base
 
   after_destroy :delete_friends
 
+  MAX_DEVICE_THRESHOLD = 15
+  MAX_REFERRAL_THRESHOLD = 50
   DAYS_BEFORE_DELETION = 3
   named_scope :to_delete, lambda {
     {

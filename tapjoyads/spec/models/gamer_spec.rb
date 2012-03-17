@@ -13,6 +13,42 @@ describe Gamer do
       @gamer.gamer_profile = GamerProfile.create(:facebook_id => '0', :gamer => @gamer)
     end
 
+    context 'suspicious activities' do
+      before :each do
+        @queue = QueueNames::SUSPICIOUS_GAMERS
+        @json = { :gamer_id => @gamer.id }
+      end
+
+      context 'when referral count > 50' do
+        it 'should alert suspicious behavior' do
+          threshold_count = Gamer::MAX_REFERRAL_THRESHOLD
+          @json[:gamer_id]        = @gamer.id
+          @json[:behavior_type]   = 'referral_count'
+          @json[:behavior_result] = threshold_count
+          Sqs.expects(:send_message).with(@queue, @json.to_json)
+          @gamer.gamer_profile.referral_count = threshold_count
+          @gamer.gamer_profile.save
+        end
+      end
+
+      context 'when devices count > 15' do
+        it 'should alert suspicious behavior' do
+          threshold_count = Gamer::MAX_DEVICE_THRESHOLD
+          @json[:gamer_id]        = @gamer.id
+          @json[:behavior_type]   = 'devices_count'
+          @json[:behavior_result] = threshold_count
+          Sqs.expects(:send_message).with(@queue, @json.to_json)
+          threshold_count.times do
+            options = {
+              :device_id => Factory.next(:guid),
+              :name => Factory.next(:name),
+            }
+            device = @gamer.gamer_devices.build(options)
+            device.save
+          end
+        end
+      end
+    end
     it 'is compatible with old invitation' do
       invitation = Invitation.create(
         :gamer_id => @gamer.id,
