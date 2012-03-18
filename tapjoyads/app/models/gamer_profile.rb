@@ -8,7 +8,8 @@ class GamerProfile < ActiveRecord::Base
   validate :at_least_age_thirteen
   validates_inclusion_of :gender, :in => %w{ male female }, :allow_nil => true, :allow_blank => true
 
-  after_save :check_suspicious_activities
+  delegate :blocked?, :to => :gamer
+  after_save :check_suspicious_activities, :unless => :blocked?
 
   def at_least_age_thirteen
     unless birthdate.nil?
@@ -51,16 +52,13 @@ class GamerProfile < ActiveRecord::Base
   private
 
   def check_suspicious_activities
-    return if gamer.blocked?
-
-    message = {}
     if referral_count >= Gamer::MAX_REFERRAL_THRESHOLD && referral_count % 10 == 0
-      message[:gamer_id]        = gamer_id
-      message[:behavior_type]   = 'referral_count'
-      message[:behavior_result] = referral_count
+      message = {
+        :gamer_id        => gamer_id,
+        :behavior_type   => 'referral_count',
+        :behavior_result => referral_count,
+      }
+      Sqs.send_message(QueueNames::SUSPICIOUS_GAMERS, message.to_json)
     end
-
-    Sqs.send_message(QueueNames::SUSPICIOUS_GAMERS, message.to_json) unless message.blank?
   end
-
 end

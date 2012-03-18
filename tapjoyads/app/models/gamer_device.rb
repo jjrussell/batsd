@@ -53,7 +53,8 @@ class GamerDevice < ActiveRecord::Base
   validates_presence_of :gamer, :device_id, :name
   validates_uniqueness_of :device_id, :scope => [:gamer_id]
 
-  after_save :check_suspicious_activities
+  delegate :blocked?, :to => :gamer
+  after_save :check_suspicious_activities, :unless => :blocked?
 
   def device=(new_device)
     self.device_id = new_device.id
@@ -78,16 +79,14 @@ class GamerDevice < ActiveRecord::Base
   private
 
   def check_suspicious_activities
-    return if gamer.blocked?
-
-    message = {}
     devices_count = gamer.devices.count
     if devices_count >= Gamer::MAX_DEVICE_THRESHOLD && devices_count % 5 == 0
-      message[:gamer_id]        = gamer_id
-      message[:behavior_type]   = 'devices_count'
-      message[:behavior_result] = devices_count
+      message = {
+        :gamer_id        => gamer_id,
+        :behavior_type   => 'devices_count',
+        :behavior_result => devices_count,
+      }
+      Sqs.send_message(QueueNames::SUSPICIOUS_GAMERS, message.to_json)
     end
-
-    Sqs.send_message(QueueNames::SUSPICIOUS_GAMERS, message.to_json) unless message.blank?
   end
 end

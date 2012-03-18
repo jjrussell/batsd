@@ -20,31 +20,60 @@ describe Gamer do
       end
 
       context 'when referral count > 50' do
-        it 'should alert suspicious behavior' do
-          threshold_count = Gamer::MAX_REFERRAL_THRESHOLD
+        before :each do
+          @threshold_count = Gamer::MAX_REFERRAL_THRESHOLD
           @json[:gamer_id]        = @gamer.id
           @json[:behavior_type]   = 'referral_count'
-          @json[:behavior_result] = threshold_count
+          @json[:behavior_result] = @threshold_count
+        end
+
+        it 'should alert suspicious behavior' do
           Sqs.expects(:send_message).with(@queue, @json.to_json)
-          @gamer.gamer_profile.referral_count = threshold_count
-          @gamer.gamer_profile.save
+          @gamer.gamer_profile.update_attributes(:referral_count => @threshold_count)
+        end
+
+        context 'when gamer has already been blocked' do
+          it 'should not alert suspicious behavior' do
+            @gamer.update_attributes(:blocked => true)
+            Sqs.expects(:send_message).never
+            @gamer.gamer_profile.update_attributes(:referral_count => @threshold_count)
+          end
         end
       end
 
       context 'when devices count > 15' do
-        it 'should alert suspicious behavior' do
+        before :each do
           threshold_count = Gamer::MAX_DEVICE_THRESHOLD
           @json[:gamer_id]        = @gamer.id
           @json[:behavior_type]   = 'devices_count'
           @json[:behavior_result] = threshold_count
-          Sqs.expects(:send_message).with(@queue, @json.to_json)
-          threshold_count.times do
+          (threshold_count - 1).times do
             options = {
               :device_id => Factory.next(:guid),
               :name => Factory.next(:name),
             }
-            device = @gamer.gamer_devices.build(options)
-            device.save
+            @gamer.gamer_devices.build(options).save
+          end
+        end
+
+        it 'should alert suspicious behavior' do
+          Sqs.expects(:send_message).with(@queue, @json.to_json)
+          options = {
+            :device_id => Factory.next(:guid),
+            :name => Factory.next(:name),
+          }
+          @gamer.gamer_devices.build(options).save
+        end
+
+        context 'when gamer has already been blocked' do
+          it 'should not alert suspicious behavior' do
+            @gamer.update_attributes(:blocked => true)
+            Sqs.expects(:send_message).never
+            options = {
+              :device_id => Factory.next(:guid),
+              :name => Factory.next(:name),
+            }
+            @gamer.gamer_devices.build(options).save
           end
         end
       end
