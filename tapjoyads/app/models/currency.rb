@@ -69,7 +69,8 @@ class Currency < ActiveRecord::Base
 
   delegate :postcache_weights, :to => :currency_group
   delegate :categories, :to => :app
-  memoize :postcache_weights, :categories
+  delegate :promoted_offer_ids, :to => :partner, :prefix => true
+  memoize :postcache_weights, :categories, :partner_promoted_offer_ids
 
   def self.find_all_in_cache_by_app_id(app_id, do_lookup = !Rails.env.production?)
     currencies = Mc.distributed_get("mysql.app_currencies.#{app_id}.#{acts_as_cacheable_version}")
@@ -181,6 +182,15 @@ class Currency < ActiveRecord::Base
 
   def tapjoy_managed?
     callback_url == TAPJOY_MANAGED_CALLBACK_URL
+  end
+
+  def promoted_offer_ids
+    Set.new(promoted_offers.split(';'))
+  end
+
+  def update_promoted_offers(offer_ids)
+    self.promoted_offers = offer_ids.sort.join(';')
+    save if changed?
   end
 
   def set_values_from_partner_and_reseller

@@ -79,7 +79,6 @@ class App < ActiveRecord::Base
   has_one :primary_non_rewarded_offer, :class_name => 'Offer', :as => :item, :conditions => "NOT rewarded AND NOT featured", :order => "created_at"
   has_many :app_metadata_mappings
   has_many :app_metadatas, :through => :app_metadata_mappings
-  has_many :promoted_offers, :dependent => :destroy
   has_one :primary_app_metadata,
     :through => :app_metadata_mappings,
     :source => :app_metadata,
@@ -338,10 +337,9 @@ class App < ActiveRecord::Base
     !!(file_size_bytes && file_size_bytes > download_limit)
   end
 
-  def all_promoted_offers
-    self.partner.promoted_offers(platform.to_sym).map(&:offer_id) | self.promoted_offers.map(&:offer_id)
+  def update_promoted_offers(offer_ids)
+    currencies.each { |currency| currency.update_promoted_offers(offer_ids)}
   end
-  memoize :all_promoted_offers
 
   def update_offers
     offers.each do |offer|

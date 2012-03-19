@@ -275,16 +275,6 @@ FactoryGirl.define do
     name 'short survey 1'
   end
 
-  factory :global_promoted_offer do
-    association :partner
-    offer       { Factory(:app).primary_offer }
-  end
-
-  factory :promoted_offer do
-    association :app
-    offer       { Factory(:app).primary_offer }
-  end
-
   factory :creative_approval_queue do
     association :user
     offer       { Factory(:app).primary_offer }

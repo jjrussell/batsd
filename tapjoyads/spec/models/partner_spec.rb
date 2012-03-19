@@ -17,7 +17,6 @@ describe Partner do
     should have_many(:publisher_conversions)
     should have_many(:advertiser_conversions)
     should have_many(:monthly_accountings)
-    should have_many(:global_promoted_offers)
     should belong_to(:client)
   end
 

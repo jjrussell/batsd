@@ -23,7 +23,6 @@ class Partner < ActiveRecord::Base
   belongs_to :sales_rep, :class_name => 'User'
   belongs_to :client
   has_many :earnings_adjustments
-  has_many :global_promoted_offers, :dependent => :destroy
 
   belongs_to :reseller
 
@@ -69,7 +68,7 @@ class Partner < ActiveRecord::Base
 
   before_validation :remove_whitespace_from_attributes, :update_rev_share
   before_save :check_billing_email
-  after_save :update_currencies, :update_offers
+  after_save :update_currencies, :update_offers, :recache_currencies
 
   cattr_reader :per_page
   attr_protected :exclusivity_level_type, :exclusivity_expires_on, :premier_discount
@@ -315,8 +314,13 @@ class Partner < ActiveRecord::Base
     available_offers
   end
 
-  def promoted_offers(platform)
-    self.global_promoted_offers.reject { |promoted_offer| promoted_offer.offer.promotion_platform != platform }
+  def promoted_offer_ids
+    Set.new(promoted_offers.split(';'))
+  end
+
+  def update_promoted_offers(offer_ids)
+    self.promoted_offers = offer_ids.sort.join(';')
+    changed? ? save : true
   end
 
 private
@@ -339,6 +343,10 @@ private
       offers.each(&:set_reseller_from_partner)
     end
     offers.each(&:save!)
+  end
+
+  def recache_currencies
+    currencies.each { |c| c.cache }
   end
 
   def update_rev_share

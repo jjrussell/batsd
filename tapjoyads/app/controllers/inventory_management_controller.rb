@@ -3,36 +3,23 @@ class InventoryManagementController < WebsiteController
   current_tab :inventory
 
   filter_access_to :all
-  before_filter :set_partner, :get_selected_option
-  before_filter :init_global_promoted_offers, :only => [:index, :global_promoted_offers]
+  before_filter :get_selected_option
+  before_filter :init_partner_promoted_offers, :only => [:index, :partner_promoted_offers]
   before_filter :init_promoted_offers, :only => [:per_app, :promoted_offers]
 
   def index
     @available_offers.each do |platform, offers|
       offers.map! { |offer| [offer.name, offer.id] }
     end
-    @partner.global_promoted_offers.each do |promoted_offer|
-      offer = promoted_offer.offer
-      platform = offer.promotion_platform
-      @selected_offers[platform].push(offer.id) if platform
-    end
   end
 
-  def global_promoted_offers
+  def partner_promoted_offers
     promoted_offers = []
-    currently_promoted = @partner.global_promoted_offers.map(&:offer_id)
     [:partner_promoted_offers_android, :partner_promoted_offers_ios, :partner_promoted_offers_wp].each do |platform|
       promoted_offers += params[platform] if params[platform].present?
     end
-    promoted_offers.each do |offer_id|
-      unless currently_promoted.include?(offer_id)
-        flash[:error] = "Unable to save the list of promoted offers" unless GlobalPromotedOffer.new(:partner => @partner, :offer_id => offer_id).save
-      end
-    end
-    (currently_promoted - promoted_offers).each do |offer_id|
-      promoted_offer = @partner.global_promoted_offers.find_by_offer_id(offer_id)
-      promoted_offer.destroy if promoted_offer
-    end
+
+    flash[:error] = "Unable to save the list of promoted offers" unless current_partner.update_promoted_offers(promoted_offers)
     redirect_to inventory_management_index_path
   end
 
@@ -41,19 +28,7 @@ class InventoryManagementController < WebsiteController
 
   def promoted_offers
     if @app
-      if params[:promoted_offers]
-        (@currently_promoted - params[:promoted_offers]).each do |offer_id|
-          @app.promoted_offers.find_by_offer_id(offer_id).destroy
-        end
-        params[:promoted_offers].each do |offer_id|
-          unless @currently_promoted.include?(offer_id)
-            flash[:error] = 'Unable to save the list of promoted offers' unless PromotedOffer.new( :app => @app, :offer_id => offer_id).save
-          end
-        end
-        @currently_promoted = params[:promoted_offers]
-      else
-        @app.promoted_offers.delete_all
-      end
+      @app.update_promoted_offers(params[:promoted_offers] || [])
       redirect_to :action => :per_app, :current_app => @app.id and return
     end
     redirect_to per_app_inventory_management_path
@@ -61,9 +36,9 @@ class InventoryManagementController < WebsiteController
 
   private
 
-  def init_global_promoted_offers
-    @selected_offers = { :android => [], :iphone => [], :windows => []}
-    @available_offers = @partner.offers_for_promotion
+  def init_partner_promoted_offers
+    @selected_offers = current_partner.promoted_offer_ids
+    @available_offers = current_partner.offers_for_promotion
   end
 
   def init_promoted_offers
@@ -73,27 +48,24 @@ class InventoryManagementController < WebsiteController
     if params[:current_app].present?
       @app = App.find(params[:current_app])
     end
-    return unless @app
-    @currently_promoted = @app.promoted_offers.map(&:offer_id)
+    return unless @app && @app.primary_currency
+
+    @currently_promoted = @app.primary_currency.promoted_offer_ids
 
     app_platform = @app.platform.to_sym
     return unless app_platform
 
-    @partner.global_promoted_offers.each do |promoted_offer|
-      offer = promoted_offer.offer
+    current_partner.promoted_offer_ids.each do |promoted_offer|
+      offer = Offer.find(promoted_offer)
       @global_offers.push(offer) if offer.promotion_platform == app_platform
     end
 
-    @available_offers = @partner.offers_for_promotion[app_platform]
+    @available_offers = current_partner.offers_for_promotion[app_platform]
     @available_offers.reject! { |promoted_offer| @global_offers.include?(promoted_offer) }
     @available_offers.map! { |offer| [offer.name, offer.id] }
   end
 
-  def set_partner
-    @partner = current_partner
-  end
-
-  def get_symbol_by_platform(prefix, platform)
+ def get_symbol_by_platform(prefix, platform)
     "#{prefix}#{platform}".to_sym
   end
 

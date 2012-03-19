@@ -15,14 +15,22 @@
             - @global_offers.each do |offer|
               %li= offer.name
       - if @app
-        = hidden_field_tag :current_app, @app.id
-        %table
-          %tbody
-            %tr
-              %th
-                Promoted Offers
-              %td
-                = select_tag :promoted_offers, options_for_select(@available_offers, @currently_promoted), {:multiple => true, :class => 'chosen', :style => "width: 450px;"}
-            %tr
-              %td{ :colspan => 2 }
-                = submit_tag('Save', :class => 'button')
+        - if @available_offers
+          = hidden_field_tag :current_app, @app.id
+          %table
+            %tbody
+              %tr
+                %th
+                  Promoted Offers
+                %td
+                  = select_tag :promoted_offers, options_for_select(@available_offers, @currently_promoted), {:multiple => true, :class => 'chosen', :style => "width: 450px;"}
+              %tr
+                %td{ :colspan => 2 }
+                  = submit_tag('Save', :class => 'button')
+        - else
+          - if @app.primary_currency
+            %p
+              No offers are available for promotion. Please select a different app.
+          - else
+            %p
+              A valid currency must be associated with the app for curstomization.
