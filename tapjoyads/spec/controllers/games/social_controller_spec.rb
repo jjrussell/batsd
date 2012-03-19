@@ -51,7 +51,8 @@ describe Games::SocialController do
       Twitter.stubs(:configuration).returns(config)
       config.stubs(:short_url_length_https).returns("20")
       twitter_user.stubs(:name).returns('name')
-      twitter_msg.stubs(:id).returns('a')
+      twitter_user.stubs(:id_str).returns('a')
+      twitter_msg.stubs(:recipient).returns(twitter_user)
       controller.stubs(:twitter_authenticate)
     end
 
@@ -59,8 +60,8 @@ describe Games::SocialController do
       before :each do
         foo_gamer = Factory(:gamer, :twitter_id => 'foo')
         foo_gamer.gamer_profile = GamerProfile.create(:gamer => foo_gamer)
-        friends = ['foo', 'bar']
-        post 'send_twitter_invites', :friends => friends, :content => 'hello'
+        friends = 'foo,bar'
+        post 'send_twitter_invites', :friend_selected => friends, :ajax => true
       end
 
       it "returns 200 as response code 200" do
@@ -72,14 +73,9 @@ describe Games::SocialController do
         json['success'].should be_true
       end
 
-      it "returns json with gamers and non-gamers" do
+      it "returns json with gamers" do
         json = JSON.load(response.body)
-        json['gamers'].length.should == 1
-      end
-
-      it "returns json with non-gamers" do
-        json = JSON.load(response.body)
-        json['non_gamers'].length.should == 1
+        json['gamers'].length.should == 2
       end
     end
   end
