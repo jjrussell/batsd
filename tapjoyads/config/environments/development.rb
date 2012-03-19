@@ -32,6 +32,12 @@ rescue Errno::ENOENT
   local_config = {}
 end
 
+SPROCKETS_CONFIG = {
+  :compile => false,
+  :combine => false,
+  :host => local_config['asset_host'] || local_config['website_url'] || 'http://localhost:3000'
+}
+
 RUN_MODE_PREFIX = 'dev_'
 API_URL = local_config['api_url'] || 'http://localhost:3000'
 DASHBOARD_URL = local_config['dashboard_url'] || 'http://localhost:3000'
@@ -68,6 +74,10 @@ PAPAYA_API_URL = 'https://papayamobile.com'
 PAPAYA_SECRET = 'RT4oNOKx0QK2nJ51'
 
 CLEAR_MEMCACHE = !(local_config['clear_memcache'] == false)
+
+twitter = YAML::load_file("#{RAILS_ROOT}/config/twitter.yaml")
+ENV['CONSUMER_KEY'] = twitter['dev']['consumer_key']
+ENV['CONSUMER_SECRET'] = twitter['dev']['consumer_secret']
 
 DEV_FACEBOOK_ID = '100000459598424'
 

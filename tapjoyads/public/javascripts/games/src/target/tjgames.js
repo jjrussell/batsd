@@ -1151,7 +1151,7 @@ TJG.utils = {
       TJG.appOfferWall[appId]['jsonp_url'] = url;
       var boldText = TJG.utils.sprintfTemplate("<span class='bold'>%s</span>"),
         title = _t("games.earn_title", {
-          currency: boldText(currencyName), 
+          currency: boldText(currencyName),
           app_name: boldText(appName)
         });
       $("#app_title").html(title).show();
@@ -1654,7 +1654,7 @@ TJG.utils = {
           '</div><div class="bookmark"><span>'+
             _t("games.tap_that", {
               // teardown/setup spans - important for layout
-              icon:'</span><span class="bookmark_icon"></span><span>', 
+              icon:'</span><span class="bookmark_icon"></span><span>',
               button:'</span><span class="bookmark_btn"></span><span>'
             })+
           '</span></div>',
@@ -2307,7 +2307,7 @@ TJG.utils = {
       var currentFilter = '';
       var hasNext = false;
       var pageSize = options.pageSize;
-      var fbFriends = options.fbFriends;
+      var socialFriends = options.socialFriends;
       var inviteUrl = options.inviteUrl;
       var channel = options.channel;
       var advertiserAppId = options.advertiserAppId;
@@ -2340,9 +2340,9 @@ TJG.utils = {
             counterMax  = currentPage * pageSize,
             counterMin  = counterMax - pageSize;
           var search = function(regex, text) {
-            for (var i in fbFriends) {
+            for (var i in socialFriends) {
               if (counter > counterMax) { break; }
-              var friend = fbFriends[i];
+              var friend = socialFriends[i];
               var included = $.inArray(friend, friends) != -1;
               var matched = regex ?
                 friend.name.match(regex) :
@@ -2373,11 +2373,11 @@ TJG.utils = {
           for (var i in friends) {
             var friend = friends[i];
             var liClass = '';
-            if ($.inArray(friend.fb_id, selectedFriends) != -1) {
+            if ($.inArray(friend.social_id, selectedFriends) != -1) {
               liClass = ' checked';
             }
-            text.push('<li class="fb_select',liClass,'" id="', friend.fb_id, '">');
-            text.push('<img src="http://graph.facebook.com/', friend.fb_id, '/picture" width="50" height="50"/>');
+            text.push('<li class="fb_select',liClass,'" id="', friend.social_id, '">');
+            text.push('<img src="', friend.image_url, '" width="50" height="50"/>');
             text.push('<span>', friend.name, '</span>');
             text.push('</li>');
           }
@@ -2398,7 +2398,6 @@ TJG.utils = {
               li.removeClass('checked');
               selectedFriends.splice(index, 1);
             } else if (!found && !li.hasClass('checked')) {
-
 
               li.addClass('checked');
               selectedFriends.push(fbId);
@@ -2425,7 +2424,7 @@ TJG.utils = {
           ));
         }
         if(non_gamers.length != 0) {
-          notExistDiv = contentTmp(_t("games.invites_sent_to", 
+          notExistDiv = contentTmp(_t("games.invites_sent_to",
             { name: non_gamers.toString().replace(/\,/g, ", ") },
             { count: non_gamers.length }
           ));
@@ -2450,7 +2449,7 @@ TJG.utils = {
         });
       };
 
-      var submitFbInvitation = function(url) {
+      var submitSocialInvitation = function(url) {
         loading();
 
         $.ajax({
@@ -2555,14 +2554,14 @@ TJG.utils = {
         event.preventDefault();
         var url = $('form#invite_friends').attr('action');
 
-        if(channel == 'FB'){
+        if (channel == 'EMAIL') {
+          submitEmailInvitation(url, $('#recipients').val());
+        } else {
           if(selectedFriends.length == 0) {
             showErrorDialog(_t('games.select_friend'), TJG.ui.hideLoader());
           } else {
-            submitFbInvitation(url);
+            submitSocialInvitation(url);
           }
-        }else if(channel == 'EMAIL'){
-          submitEmailInvitation(url, $('#recipients').val());
         }
       }; // sendInvite
 

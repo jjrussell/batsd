@@ -197,7 +197,7 @@ class Offer < ActiveRecord::Base
   before_cache :clear_creative_blobs
 
   named_scope :enabled_offers, :joins => :partner,
-    :readonly => false, :conditions => "tapjoy_enabled = true AND user_enabled = true AND item_type != 'RatingOffer' AND ((payment > 0 AND #{Partner.quoted_table_name}.balance > payment) OR (payment = 0 AND reward_value > 0))"
+    :readonly => false, :conditions => "tapjoy_enabled = true AND user_enabled = true AND item_type != 'RatingOffer' AND ((payment > 0 AND #{Partner.quoted_table_name}.balance > payment) OR (payment = 0 AND reward_value > 0)) AND tracking_for_id IS NULL"
   named_scope :by_name, lambda { |offer_name| { :conditions => ["offers.name LIKE ?", "%#{offer_name}%" ] } }
   named_scope :by_device, lambda { |platform| { :conditions => ["offers.device_types LIKE ?", "%#{platform}%" ] } }
   named_scope :for_offer_list, :select => OFFER_LIST_REQUIRED_COLUMNS
@@ -233,8 +233,8 @@ class Offer < ActiveRecord::Base
     :select => PAPAYA_OFFER_COLUMNS
 
   delegate :balance, :pending_earnings, :name, :cs_contact_email, :approved_publisher?, :rev_share, :to => :partner, :prefix => true
-  delegate :name, :id, :formatted_active_gamer_count, :to => :app, :prefix => true, :allow_nil => true
-  memoize :partner_balance, :app_formatted_active_gamer_count
+  delegate :name, :id, :formatted_active_gamer_count, :protocol_handler, :to => :app, :prefix => true, :allow_nil => true
+  memoize :partner_balance, :app_formatted_active_gamer_count, :app_protocol_handler
 
   alias_method :events, :offer_events
   alias_method :random, :rand
@@ -264,7 +264,7 @@ class Offer < ActiveRecord::Base
 
   def countries_blacklist
     if app_offer?
-      item.get_countries_blacklist
+      item.get_countries_blacklist || []
     else
       []
     end

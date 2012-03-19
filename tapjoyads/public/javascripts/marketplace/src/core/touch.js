@@ -5,11 +5,11 @@
     hoverDelay: 50,
     pressDelay: 750
   };
-            
+
   function _eventStart(e){
-        
+
     var target = $(e.target);
-    
+
     if(!Tapjoy.supportsTouch || !target.length)
       return;
 
@@ -31,14 +31,14 @@
     hover = setTimeout(function(){
       target.applyActive();
     }, 50);
-    
+
     press = setTimeout(function(){
       unbindEvents(target);
       target.removeActive();
       clearTimeout(hover);
       target.trigger('press');
     }, 750);
-    
+
     function _eventCancel(e){
       clearTimeout(hover);
       target.removeActive();
@@ -58,7 +58,7 @@
         target.removeActive();
       }
     }
-    
+
     function _eventMove(e) {
       _eventUpdate(e);
 
@@ -76,8 +76,8 @@
         unbindEvents(target);
 
         target.trigger('swipe', {
-          direction: direction, 
-          deltaX: deltaX, 
+          direction: direction,
+          deltaX: deltaX,
           deltaY: deltaY
         });
       }
@@ -109,11 +109,11 @@
         $(document).bind(Tapjoy.EventsMap.cancel, _eventCancel);
       }
     }
-        
+
     function unbindEvents(element){
       if(!element)
         return;
-    
+
       element.unbind(Tapjoy.EventsMap.move, _eventMove)
       .unbind(Tapjoy.EventsMap.end, _eventEnd);
 
@@ -165,10 +165,10 @@
     }else{
       $('.ui-joy-touch-active').removeClass('ui-joy-touch-active');
     }
-  };    
+  };
 
   $(document).ready(function(){
-    $(document).bind(Tapjoy.EventsMap.start, _eventStart);    
+    $(document).bind(Tapjoy.EventsMap.start, _eventStart);
   });
 
 })(Tapjoy, jQuery);

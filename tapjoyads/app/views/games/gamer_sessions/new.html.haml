@@ -16,8 +16,8 @@
         = t("text.games.log_in_tapjoy")
       .form-error
         &nbsp;
-        = error_message_on @gamer_session, :email, :prepend_text => "Email "
-        = error_message_on @gamer_session, :password, :prepend_text => "Password "
+        = error_message_on @gamer_session, :email
+        = error_message_on @gamer_session, :password
       .field.email
         = f.email_field :email, "autocorrect" => "off", "autocapitalize" => "off", :placeholder => t("text.shared.email"), :required => ""
       .field.password
@@ -100,7 +100,7 @@
             %span#arrow.darrow.l10
               %img{ :src => BLANK_IMAGE }
       .left
-        - link_to(new_games_gamer_path(:data => params[:data])) do
+        - link_to(new_games_gamer_path(:data => params[:data], :referrer => params[:referrer])) do
           %span{ :class => 'signup', :id => 'signup' }
             = t('text.shared.sign_up')
 
@@ -132,10 +132,8 @@
   %meta{ :name => 'description', :content => t('text.games.meta_description') }
   %meta{ :name => 'keywords', :content => t('text.games.meta_keywords')}
 
-  = stylesheet_link_tag('marketplace/resources/components/button/button')
-  = stylesheet_link_tag('marketplace/resources/components/carousel/carousel')
-  = stylesheet_link_tag('marketplace/theme/tjm/logged_out')
+  = css_tag('marketplace/theme/tjm/logged_out')
 
 
 - content_for :included_javascripts do
-  = javascript_include_tag('marketplace/logged-out')
+  = js_tag('marketplace/logged-out')

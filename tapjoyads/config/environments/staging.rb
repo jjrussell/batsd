@@ -40,6 +40,12 @@ rescue Errno::ENOENT
   local_config = {}
 end
 
+SPROCKETS_CONFIG = {
+  :compile => true,
+  :combine => true,
+  :host => local_config['asset_host'] || local_config['website_url'] || 'http://localhost:3000'
+}
+
 RUN_MODE_PREFIX = 'staging_'
 API_URL = local_config['api_url'] || 'http://localhost:3000'
 DASHBOARD_URL = local_config['dashboard_url'] || 'http://localhost:3000'
@@ -83,6 +89,10 @@ FRESHBOOKS_API_URL = 'tjdev.freshbooks.com'
 FRESHBOOKS_AUTH_TOKEN = '59548f1150fa38c3feb2a67d6b1a0f8b'
 
 CLEAR_MEMCACHE = false
+
+twitter = YAML::load_file("#{RAILS_ROOT}/config/twitter.yaml")
+ENV['CONSUMER_KEY'] = twitter['staging']['consumer_key']
+ENV['CONSUMER_SECRET'] = twitter['staging']['consumer_secret']
 
 DEV_FACEBOOK_ID = '100000459598424'
 

@@ -1,7 +1,16 @@
 ---
 en:
+  authlogic:
+    error_messages:
+      password_invalid: Password is invalid
+      login_not_found: Email is invalid
   activerecord:
     errors:
+      models:
+        gamer_sessions:
+          attributes:
+            password: Password
+            email: Email
       full_messages:
         format: "%{attribute} %{message}"
       messages:
@@ -216,6 +225,7 @@ en:
     games:
       invalid_emails: The email(s) provided were invalid
       provide_single_email: Please provide at least one email
+      reactivated_account: Your account has been reactivated!
       scheduled_for_deletion: 'Your account has been deactivated and scheduled for deletion!'
       about_body: "A better way to love the apps you have and find the apps you'll love."
       about_title: "\"Somehow it knows exactly what apps I like.\""
@@ -277,6 +287,7 @@ en:
       enter_platform: "Please choose iOS or Android"
       enter_tos: "Please agree to the terms and conditions"
       enter_valid_email: "Enter a valid email address"
+      errno_error: "There was a connection issue. Please try again later."
       error_mark_as_favorite: "Error marking app as Favorite"
       error_unmark_as_favorite: "Error unmarking app as Favorite"
       failed_to_change_linked: "Failed to change linked account."
@@ -298,6 +309,7 @@ en:
       follow_us: "follow us"
       forgot_pass: "Forgot Password?"
       free: Free!
+      friend_filter_label: 'Start Typing a Name'
       generic_issue: "There was an issue. Please try again."
       get_app: "Get App"
       get_it: "Get it!"
@@ -322,6 +334,7 @@ en:
         one: Invite
         other: "Invite %{count} friends"
       invite_title: "Send an Email Invite"
+      invite_twitter_followers: "Invite Twitter Followers!"
       invites_sent_to:
         one: "A Tapjoy invite has been sent to %{name}"
         other: "Tapjoy invites have been sent to %{name}"
@@ -341,6 +354,7 @@ en:
       member_since: "Member since %{date}"
       meta_description: "Tapjoy: The destination for mobile apps and games on Android, iPhone and iPad."
       meta_keywords: "games, mobile games, mobile apps, ios, android, iphone, ipad, itouch"
+      mogli_reach_limit_error: "You have reached the limit. Please try again later."
       more_apps: "More Apps"
       more_the_merrier: "The more the merrier"
       my_apps: "My Apps"
@@ -383,8 +397,13 @@ en:
       share_on_twitter: "Share on Twitter"
       share_with_everyone: "Share with everyone"
       share_with_your_friends: "Share with your friends"
+      social_need_authorize_error: "Please authorize us before sending out an invite."
+      social_invite_friend_error: "There was an issue with inviting your friend, please try again later."
       social_networks: "Social Networks"
       social_settings: "Social Settings"
+      social_to_next: "NEXT %{page_size}"
+      social_to_prev: "PREV %{page_size}"
+      social_to_top: "TOP &#8679;"
       spread_mobile_joy: "Spread mobile joy"
       start_discovering: "Start discovering with Tapjoy for free"
       tap_that: "Just tap %{icon} and select %{button}"
@@ -397,6 +416,13 @@ en:
       thats_you: "that's you"
       tos_acknowledge_html: "By checking this box I assert that I agree to the %{terms_of_use} & %{privacy_policy}"
       tos_change_acknowledge: "By checking this box I assert that I agree to the terms of service."
+      twitter_at_least_one_friend_error: "You must select at least one friend before sending out an invite"
+      twitter_authenticate_error: "Error while authenticating via TWITTER. The service did not return valid data."
+      twitter_forbidden_error: "Requests are being denied due to update limits."
+      twitter_internal_error: "Something happened to Twttier. Please try again later"
+      twitter_invite_msg: "has invited you to join Tapjoy, the BEST place to find the hottest apps. Signing up is free!"
+      twitter_invite_title: "Please Select Twitter Friends to Invite via DM"
+      twitter_general_error: "Something happened to Twitter. Please try again later."
       unable_to_process: "Sorry we are unable to process your request"
       unlock_mobile_joy: "Unlock Mobile Joy"
       unmark_as_favorite: "Remove from Favorites"

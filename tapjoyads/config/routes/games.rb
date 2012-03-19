@@ -1,14 +1,17 @@
 ActionController::Routing::Routes.draw do |map|
+  map.assets "assets/*filename", :controller => "sprocket", :action => :show
   map.with_options({:path_prefix => MACHINE_TYPE == 'website' ? '' : 'games', :name_prefix => 'games_'}) do |m|
+
+
     m.root :controller => 'games/homepage', :action => :index
     m.tos 'tos', :controller => 'games/homepage', :action => :tos
     m.privacy 'privacy', :controller => 'games/homepage', :action => :privacy
     m.help 'help', :controller => 'games/homepage', :action => :help
     m.switch_device 'switch_device', :controller => 'games/homepage', :action => :switch_device
     m.send_device_link 'send_device_link', :controller => 'games/homepage', :action => :send_device_link
-    m.earn 'earn/:id', :controller => 'games/homepage', :action => :earn, :load => 'earn'
-    m.more_apps 'more_apps', :controller => 'games/homepage', :action => :index, :load => 'more_apps'
-    m.get_app 'get_app', :controller => 'games/homepage', :action => :get_app, :load => 'get_app'
+    m.earn 'earn/:id', :controller => 'games/homepage', :action => :earn
+    m.more_apps 'more_apps', :controller => 'games/homepage', :action => :index
+    m.get_app 'get_app', :controller => 'games/homepage', :action => :get_app
 
     m.more_games_editor_picks 'editor_picks', :controller => 'games/more_games', :action => :editor_picks
     m.more_games_recommended 'recommended', :controller => 'games/more_games', :action => :recommended
@@ -53,8 +56,16 @@ ActionController::Routing::Routes.draw do |map|
       social.invite_email_friends 'invite_email_friends', :action => :invite_email_friends
       social.connect_facebook_account 'social/connect_facebook_account', :action => :connect_facebook_account
       social.send_email_invites 'send_email_invites', :action => :send_email_invites
+      social.invite_twitter_friends 'invite_twitter_friends', :action => :invite_twitter_friends
+      social.send_twitter_invites 'send_twitter_invites', :action => :send_twitter_invites
+      social.get_twitter_friends 'get_twitter_friends', :action => :get_twitter_friends
       social.invites 'social/invites', :action => :invites
       social.friends 'social/friends', :action => :friends
+    end
+
+    map.with_options :controller => 'games/social/twitter', :name_prefix => 'games_social_twitter_' do |twitter|
+      twitter.start_oauth 'twitter/start_oauth', :action => :start_oauth
+      twitter.finish_oauth 'twitter/finish_oauth', :action => :finish_oauth
     end
 
     map.resources :survey_results, :only => [ :new, :create ]
