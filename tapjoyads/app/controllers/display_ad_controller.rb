@@ -169,7 +169,7 @@ class DisplayAdController < ApplicationController
       img.format = 'png'
       img.composite!(background, 0, 0, Magick::AtopCompositeOp)
 
-      font = (Rails.env.production? || Rails.env.staging?) ? 'Helvetica' : ''
+      font = (Rails.env.production? || Rails.env.staging?) ? 'Arial-Unicode' : ''
 
       if offer.item_type == 'TestOffer'
         text = offer.name
