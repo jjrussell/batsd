@@ -35,4 +35,25 @@ describe VideoButton do
     end
   end
 
+   context 'with an item present' do
+     before(:each) do
+       subject.item = Factory(:generic_offer)
+     end
+
+     it 'should validate with an empty url' do
+       subject.url = nil
+       subject.should be_valid
+     end
+   end
+
+  context 'without an item present' do
+     before(:each) do
+       subject.item = nil
+     end
+
+     it 'should not validate with an empty url' do
+       subject.url = nil
+       subject.should_not be_valid
+     end
+  end
 end
