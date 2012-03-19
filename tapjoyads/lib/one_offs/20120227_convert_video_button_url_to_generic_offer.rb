@@ -5,7 +5,7 @@ class OneOffs
     VideoButton.all(:conditions => ['url IS NOT NULL']).each do |button|
       button.item = GenericOffer.new(
         :partner  => button.video_offer.partner,
-        :name     => "#{button.video_offer.name} - #{button.name}",
+        :name     => button.name,
         :url      => button.url
       )
       failed << button unless button.save
