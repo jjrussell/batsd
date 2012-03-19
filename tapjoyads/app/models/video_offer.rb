@@ -21,15 +21,6 @@ class VideoOffer < ActiveRecord::Base
 
   scope :visible, :conditions => { :hidden => false }
 
-  def items_for_tracking
-    items = []
-    items += partner.apps.map { |o| ["App - #{o.name}", "App:#{o.id}"] }
-    items += partner.generic_offers.map { |o| ["Generic - #{o.name}", "GenericOffer:#{o.id}"] }
-    items += partner.action_offers.map { |o| ["Action - #{o.name}", "ActionOffer:#{o.id}"] }
-    items += partner.video_offers.reject { |o| o == self }.map { |o| ["Video - #{o.name}", "VideoOffer:#{o.id}"] }
-    items
-  end
-
   def update_buttons
     offers.each do |offer|
       offer.third_party_data = xml_for_buttons if valid_for_update_buttons?
