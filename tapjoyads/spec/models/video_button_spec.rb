@@ -3,6 +3,8 @@ require 'spec_helper'
 describe VideoButton do
   describe '.belongs_to' do
     it { should belong_to :video_offer }
+    it { should belong_to :item }
+    it { should belong_to :tracking_offer }
   end
 
   describe '#valid?' do
