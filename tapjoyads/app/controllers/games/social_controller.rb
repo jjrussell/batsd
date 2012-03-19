@@ -119,7 +119,7 @@ class Games::SocialController < GamesController
           if invitation.pending?
             referrer_value = params[:advertiser_app_id] == "null" ? invitation.encrypted_referral_id : invitation.encrypted_referral_id(params[:advertiser_app_id])
             link = games_login_url :referrer => referrer_value
-            link = "http://www.tapjoygames.com/login?referrer=#{referrer_value}" if Rails.env != 'production' # we need this because twitter cannot recognize IP addr as a valid url
+            link = "http://www.tapjoy.com/login?referrer=#{referrer_value}" if Rails.env != 'production' # we need this because twitter cannot recognize IP addr as a valid url
 
             name = Twitter.user(current_gamer.twitter_id.to_i).name
             cookies[:twitter_short_url_len] ||= {
