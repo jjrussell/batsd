@@ -7,10 +7,9 @@ class BrandOfferMapping < ActiveRecord::Base
   validates_presence_of :offer, :brand
   validates_numericality_of :allocation, :greater_than => 0, :less_than_or_equal_to => 100
   before_validation :get_new_allocation
-  after_commit_on_create  :redistribute_allocation
-  after_commit_on_destroy :redistribute_allocation
+  after_commit  :redistribute_allocation, :on => :create
 
-  named_scope :mappings_by_offer, lambda { |offer_id| {:conditions => [ "offer_id = ?", offer_id ] }}
+  scope :mappings_by_offer, lambda { |offer_id| {:conditions => [ "offer_id = ?", offer_id ] }}
 
   private
   def get_new_allocation

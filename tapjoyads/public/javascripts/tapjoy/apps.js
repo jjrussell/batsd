@@ -16,7 +16,7 @@ $(function($){
 
   // app platform
   var toggleAppPlatform = function() {
-    var platform = $('#app_platform').val();
+    var platform = $('select#app_platform').val();
     if (platform == 'iphone') {
       $('#search_button').val('Search App Store');
       $('span#app_store_name').text('App Store.');
