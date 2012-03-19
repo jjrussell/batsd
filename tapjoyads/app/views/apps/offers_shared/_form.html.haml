@@ -48,17 +48,13 @@
               Estimating new offerwall placement...
             .percentile-details
               The bid is just one of many factors affecting your offerwall ranking.
-      %tr
+      %tr{ :class => current_partner.premier_discount > 0 ? '' : 'hidden' }
         %th
           = f.label :payment, 'Payment'
           #help_payment.help ?
         %td
           = f.currency_field :payment, {}, :disabled => 'disabled'
           = error_message_on @offer, :payment
-          - if @offer.partner.offer_discounts.active.blank?
-            .premier
-              Want to reduce your payment?
-              = link_to 'Learn more about the Tapjoy Premier Program', premier_path, :tabindex => 97
       %tr
         %th
           Offer Name
@@ -167,8 +163,7 @@
     The amount you are willing to pay for an install. A higher bid will result in more traffic. The minimum bid is
     = number_to_currency(0.01 * @offer.min_bid)
   #help_payment_content{:name => 'Payment'}
-    The amount that you pay for install. This value is equal to the Bid
-    unless you participate in the Tapjoy Premier program, or reach monthly spend figures
+    The amount that you pay per install.
   #help_user_enabled_content{:name => 'Enable Installs'}
     Enable installs to get your campaign started.
   #help_enabled_content{:name => 'Tapjoy Enabled'}
@@ -208,9 +203,6 @@
       requestAppEnable = function() {
         $('form#new_enable_offer_request').submit();
       };
-      if (#{!current_partner.is_premier?} && $('#flash_notice').is(':hidden')) {
-        $('#flash_notice').html('<b>Notice:</b> #{link_to 'Learn more about the Tapjoy Premier Program', premier_path}').show();
-      }
 
       var toggleUserEnabled = function() {
         if ($('#offer_user_enabled').attr('checked')) {

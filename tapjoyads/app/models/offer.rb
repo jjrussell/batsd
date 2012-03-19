@@ -189,6 +189,7 @@ class Offer < ActiveRecord::Base
   before_save :update_instructions
   before_save :sync_creative_approval # Must be before_save so auto-approval can happen
   before_save :nullify_banner_creatives
+  after_update :lock_survey_offer
   after_save :update_enabled_rating_offer_id
   after_save :update_pending_enable_requests
   after_save :update_tapjoy_sponsored_associated_offers
@@ -196,7 +197,7 @@ class Offer < ActiveRecord::Base
   before_cache :clear_creative_blobs
 
   named_scope :enabled_offers, :joins => :partner,
-    :readonly => false, :conditions => "tapjoy_enabled = true AND user_enabled = true AND item_type != 'RatingOffer' AND ((payment > 0 AND #{Partner.quoted_table_name}.balance > payment) OR (payment = 0 AND reward_value > 0))"
+    :readonly => false, :conditions => "tapjoy_enabled = true AND user_enabled = true AND item_type != 'RatingOffer' AND ((payment > 0 AND #{Partner.quoted_table_name}.balance > payment) OR (payment = 0 AND reward_value > 0)) AND tracking_for_id IS NULL"
   named_scope :by_name, lambda { |offer_name| { :conditions => ["offers.name LIKE ?", "%#{offer_name}%" ] } }
   named_scope :by_device, lambda { |platform| { :conditions => ["offers.device_types LIKE ?", "%#{platform}%" ] } }
   named_scope :for_offer_list, :select => OFFER_LIST_REQUIRED_COLUMNS
@@ -232,8 +233,8 @@ class Offer < ActiveRecord::Base
     :select => PAPAYA_OFFER_COLUMNS
 
   delegate :balance, :pending_earnings, :name, :cs_contact_email, :approved_publisher?, :rev_share, :to => :partner, :prefix => true
-  delegate :name, :id, :formatted_active_gamer_count, :to => :app, :prefix => true, :allow_nil => true
-  memoize :partner_balance, :app_formatted_active_gamer_count
+  delegate :name, :id, :formatted_active_gamer_count, :protocol_handler, :to => :app, :prefix => true, :allow_nil => true
+  memoize :partner_balance, :app_formatted_active_gamer_count, :app_protocol_handler
 
   alias_method :events, :offer_events
   alias_method :random, :rand
@@ -263,7 +264,7 @@ class Offer < ActiveRecord::Base
 
   def countries_blacklist
     if app_offer?
-      item.get_countries_blacklist
+      item.get_countries_blacklist || []
     else
       []
     end
@@ -621,8 +622,8 @@ class Offer < ActiveRecord::Base
   end
 
   def update_payment(force_update = false)
-    if (force_update || bid_changed? || new_record?)
-      if (item_type == 'App' || item_type == 'ActionOffer')
+    if partner && (force_update || bid_changed? || new_record?)
+      if partner.discount_all_offer_types? || app_offer?
         self.payment = bid == 0 ? 0 : [ bid * (100 - partner.premier_discount) / 100, 1 ].max
       else
         self.payment = bid
@@ -790,11 +791,6 @@ class Offer < ActiveRecord::Base
     else
       0
     end
-  end
-
-  def nullify_banner_creatives
-    write_attribute(:banner_creatives, nil) if banner_creatives.empty?
-    write_attribute(:approved_banner_creatives, nil) if approved_banner_creatives.empty?
   end
 
   def nullify_banner_creatives
@@ -1025,6 +1021,15 @@ class Offer < ActiveRecord::Base
     offer.save!
     offer
   end
+
+  def lock_survey_offer
+    if item_type == 'SurveyOffer' && (tapjoy_enabled_changed? || user_enabled_changed?)
+      if tapjoy_enabled? && user_enabled? && !item.locked?
+        item.update_attribute(:locked, true)
+      end
+    end
+  end
+
 end
 
 class BannerSyncError < StandardError;

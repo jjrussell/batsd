@@ -1,7 +1,16 @@
 ---
 en:
+  authlogic:
+    error_messages:
+      password_invalid: Password is invalid
+      login_not_found: Email is invalid
   activerecord:
     errors:
+      models:
+        gamer_sessions:
+          attributes:
+            password: Password
+            email: Email
       full_messages:
         format: "%{attribute} %{message}"
       messages:
@@ -214,6 +223,9 @@ en:
       developers: Developers
       privacy: "Privacy Policy"
     games:
+      invalid_emails: The email(s) provided were invalid
+      provide_single_email: Please provide at least one email
+      reactivated_account: Your account has been reactivated!
       scheduled_for_deletion: 'Your account has been deactivated and scheduled for deletion!'
       about_body: "A better way to love the apps you have and find the apps you'll love."
       about_title: "\"Somehow it knows exactly what apps I like.\""
@@ -311,7 +323,7 @@ en:
       invite_email_body: |-
           %{name} has invited you to join Tapjoy, the BEST place to find the hottest new apps. Signing up is free and you'll be able discover the best apps on iOS and Android, while also earning currency in your favorite apps.
 
-          No need to wade through thousands of apps in the App Store or the Android Market to find your next download. Tapjoy has you covered and recommends apps we know you'll like.
+          No need to wade through thousands of apps in the App Store or Google Play to find your next download. Tapjoy has you covered and recommends apps we know you'll like.
 
           To get started, create your account here:
       invite_email_greet: "Hi,"

@@ -34,11 +34,62 @@ describe Offer do
     @offer.payment.should == 500
   end
 
-  it "updates its payment correctly with respect to premier discounts" do
-    @offer.partner.premier_discount = 10
+
+  describe "applies discounts correctly" do
+    context "to_json an app offer item" do
+      before :each do
+        Offer.any_instance.stubs(:app_offer?).returns true
+        @offer.partner.premier_discount = 10
+      end
+
+      context "with a partner who has the discount_all_offer_types flag set" do
+        it "applies the partner discount to the offer" do
+          @offer.partner.discount_all_offer_types = true
+          @offer.update_attributes({:bid => 500})
+          @offer.reload
+          @offer.payment.should == 450
+        end
+      end
+      context "with a partner who does not have the discount_all_offer_types flag set" do
+        it "applies the partner discount to the offer" do
+          @offer.partner.discount_all_offer_types = false
+          @offer.update_attributes({:bid => 500})
+          @offer.reload
+          @offer.payment.should == 450
+        end
+      end
+    end
+
+    context "to a non app offer item" do
+      before :each do
+        Offer.any_instance.stubs(:app_offer?).returns false
+        @offer.partner.premier_discount = 10
+      end
+
+      context "with a partner who has the discount_all_offer_types flag set" do
+        it "applies the partner discount to the offer" do
+          @offer.partner.discount_all_offer_types = true
+          @offer.update_attributes({:bid => 500})
+          @offer.reload
+          @offer.payment.should == 450
+        end
+      end
+      context "with a partner who does not have the discount_all_offer_types flag set" do
+        it "does not apply the partner discount to the offer" do
+          @offer.partner.discount_all_offer_types = false
+          @offer.update_attributes({:bid => 500})
+          @offer.reload
+          @offer.payment.should == 500
+        end
+      end
+    end
+  end
+
+  it "enforces a minimum payment of one cent if the bid is greater than zero" do
+    @offer.partner.premier_discount = 100
     @offer.update_attributes({:bid => 500})
     @offer.reload
-    @offer.payment.should == 450
+    @offer.payment.should == 1
   end
 
   it "doesn't allow bids below min_bid" do
@@ -72,7 +123,7 @@ describe Offer do
     geoip_data = { :primary_country => "US" }
     @offer.send(:geoip_reject?, geoip_data).should == false
 
-    @offer.item.countries_blacklist = ["GB"].to_json
+    @offer.item.primary_app_metadata.countries_blacklist = ["GB"].to_json
     @offer.countries_blacklist(true)
     geoip_data = { :primary_country => nil }
     @offer.send(:geoip_reject?, geoip_data).should == false
@@ -162,6 +213,22 @@ describe Offer do
     @offer.send(:source_reject?, 'offerwall').should be_true
     @offer.send(:source_reject?, 'tj_games').should be_false
   end
+
+  it "rejects SDK-less offers when SDK version is older than 8.2.0" do
+    @offer.sdkless = true
+    @offer.send(:sdkless_reject?, '8.1.0').should be_true
+  end
+
+  it "accepts non-SDK-less offers when SDK version is older than 8.2.0" do
+    @offer.sdkless = false
+    @offer.send(:sdkless_reject?, '8.1.0').should be_false
+  end
+
+  it "doesn't reject SDK-less when SDK version is at least 8.2.0" do
+    @offer.sdkless = true
+    @offer.send(:sdkless_reject?, '8.2.0').should be_false
+  end
+
 
   it "doesn't reject on source when approved_sources is empty" do
     @offer.send(:source_reject?, 'foo').should be_false

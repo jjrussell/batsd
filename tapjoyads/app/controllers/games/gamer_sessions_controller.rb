@@ -17,7 +17,7 @@ class Games::GamerSessionsController < GamesController
     if @gamer_session.save
       if current_gamer.deactivated_at?
         current_gamer.reactivate!
-        flash[:notice] = 'Your account has been reactivated!'
+        flash[:notice] = t('text.games.reactivated_account')
       end
       destroy and return if current_gamer.blocked?
       if params[:data].present? && cookies[:data].blank?

@@ -247,7 +247,7 @@ class ToolsController < WebsiteController
 
       @apps = Offer.find_all_by_id(@device.parsed_apps.keys).map do |app|
         [ @device.last_run_time(app.id), app ]
-      end.sort.reverse
+      end.sort_by(&:first).reverse
       @clicks = @clicks.sort_by do |click|
         -click.clicked_at.to_f
       end
@@ -371,16 +371,6 @@ class ToolsController < WebsiteController
     end
     flash[:notice] = "Added #{user_roles.map(&:name).sort.to_json} to #{user.email}"
     redirect_to manage_user_roles_tool_path(:email => user.email)
-  end
-
-  def freemium_android
-    results = StoreRank.top_freemium_android_apps
-    @apps = results['apps']
-    @created_at = Time.zone.parse(results['created_at'])
-    @tapjoy_apps = {}
-    Offer.find_all_by_id(@apps.map{|app|app['tapjoy_apps']}.flatten).each do |app|
-      @tapjoy_apps[app.id] = app
-    end
   end
 
   def award_currencies

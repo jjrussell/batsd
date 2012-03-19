@@ -1,7 +1,6 @@
 class App < ActiveRecord::Base
   include UuidPrimaryKey
   acts_as_cacheable
-  json_set_field :countries_blacklist
 
   ALLOWED_PLATFORMS = { 'android' => 'Android', 'iphone' => 'iOS', 'windows' => 'Windows' }
   BETA_PLATFORMS    = {}
@@ -19,8 +18,8 @@ class App < ActiveRecord::Base
         :offers   => ANDROID_OFFERS_SDK,
         :vg       => ANDROID_VG_SDK,
       },
-      :store_name => 'Market',
-      :info_url => 'https://market.android.com/details?id=STORE_ID',
+      :store_name => 'Google Play',
+      :info_url => 'https://play.google.com/store/apps/details?id=STORE_ID',
       :store_url => 'market://search?q=STORE_ID',
       :default_actions_file_name => "TapjoyPPA.java",
       :versions => [ '1.5', '1.6', '2.0', '2.1', '2.2', '2.3', '3.0' ],
@@ -102,14 +101,17 @@ class App < ActiveRecord::Base
   named_scope :visible, :conditions => { :hidden => false }
   named_scope :by_platform, lambda { |platform| { :conditions => ["platform = ?", platform] } }
   named_scope :by_partner_id, lambda { |partner_id| { :conditions => ["partner_id = ?", partner_id] } }
+  named_scope :live, :joins => [ :app_metadatas ], :conditions =>
+    "#{AppMetadata.quoted_table_name}.store_id IS NOT NULL"
 
   delegate :conversion_rate, :to => :primary_currency, :prefix => true
-  delegate :store_id, :store_id?, :description, :age_rating, :file_size_bytes, :supported_devices, :supported_devices?, :released_at, :released_at?, :user_rating,
+  delegate :store_id, :store_id?, :description, :age_rating, :file_size_bytes, :supported_devices, :supported_devices?,
+    :released_at, :released_at?, :user_rating, :get_countries_blacklist, :countries_blacklist,
     :to => :primary_app_metadata, :allow_nil => true
   delegate :name, :to => :partner, :prefix => true
 
   # TODO: remove these columns from apps table definition and remove this method
-  TO_BE_DELETED = %w(description price store_id age_rating file_size_bytes supported_devices released_at user_rating categories papaya_user_count)
+  TO_BE_DELETED = %w(description price store_id age_rating file_size_bytes supported_devices released_at user_rating categories countries_blacklist papaya_user_count)
   def self.columns
     super.reject do |c|
       TO_BE_DELETED.include?(c.name)
@@ -209,7 +211,9 @@ class App < ActiveRecord::Base
 
     fill_app_store_data(data)
     app_metadata.fill_app_store_data(data)
-    app_metadata.save
+    return false unless app_metadata.save
+
+    data
   end
 
   def queue_store_update(app_store_id)
@@ -224,7 +228,6 @@ class App < ActiveRecord::Base
 
   def fill_app_store_data(data)
     self.name = data[:title]
-    self.countries_blacklist = AppStore.prepare_countries_blacklist(store_id, platform)
     download_icon(data[:icon_url]) unless new_record?
   end
 

@@ -1,14 +1,17 @@
 ActionController::Routing::Routes.draw do |map|
+  map.assets "assets/*filename", :controller => "sprocket", :action => :show
   map.with_options({:path_prefix => MACHINE_TYPE == 'website' ? '' : 'games', :name_prefix => 'games_'}) do |m|
+
+
     m.root :controller => 'games/homepage', :action => :index
     m.tos 'tos', :controller => 'games/homepage', :action => :tos
     m.privacy 'privacy', :controller => 'games/homepage', :action => :privacy
     m.help 'help', :controller => 'games/homepage', :action => :help
     m.switch_device 'switch_device', :controller => 'games/homepage', :action => :switch_device
     m.send_device_link 'send_device_link', :controller => 'games/homepage', :action => :send_device_link
-    m.earn 'earn/:id', :controller => 'games/homepage', :action => :earn, :load => 'earn'
-    m.more_apps 'more_apps', :controller => 'games/homepage', :action => :index, :load => 'more_apps'
-    m.get_app 'get_app', :controller => 'games/homepage', :action => :get_app, :load => 'get_app'
+    m.earn 'earn/:id', :controller => 'games/homepage', :action => :earn
+    m.more_apps 'more_apps', :controller => 'games/homepage', :action => :index
+    m.get_app 'get_app', :controller => 'games/homepage', :action => :get_app
 
     m.more_games_editor_picks 'editor_picks', :controller => 'games/more_games', :action => :editor_picks
     m.more_games_recommended 'recommended', :controller => 'games/more_games', :action => :recommended

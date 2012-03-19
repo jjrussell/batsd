@@ -2,6 +2,7 @@ FactoryGirl.define do
   factory :user do
     email    { Factory.next(:email) }
     username { |u| u.email }
+    state 'approved'
     password 'asdf'
     password_confirmation 'asdf'
   end
@@ -324,4 +325,9 @@ FactoryGirl.define do
     author        { Factory(:employee) }
     button_url    'https://www.tapjoy.com'
   end
+
+  factory :client do
+    name  { Factory.next(:name) }
+  end
+
 end

@@ -156,14 +156,14 @@
   };
 
   $.fn.applyActive = function() {
-    return $(this).addClass('active');
+    return $(this).addClass('ui-joy-touch-active');
   };
 
   $.fn.removeActive = function(obj) {
     if(obj){
-      obj.removeClass('active');
+      obj.removeClass('ui-joy-touch-active');
     }else{
-      $('.active').removeClass('active');
+      $('.ui-joy-touch-active').removeClass('ui-joy-touch-active');
     }
   };
 

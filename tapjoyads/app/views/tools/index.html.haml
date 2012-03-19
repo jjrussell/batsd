@@ -73,6 +73,8 @@
     %li= link_to 'View Generic Offers', tools_generic_offers_path
   - if permitted_to? :edit, :statz
     %li= link_to "Approve Creatives (#{CreativeApprovalQueue.count})", creative_tools_offers_path
+  - if permitted_to? :approve, :tools_approvals
+    %li= link_to 'Approval Queues', tools_approvals_path
   - if permitted_to? :index, :activities
     %li= link_to 'Activity Log', activities_path
   - if permitted_to? :disabled_popular_offers, :tools
@@ -89,8 +91,6 @@
     %li= link_to 'Enable Requests', tools_enable_offer_requests_path
   - if permitted_to? :index, :tools_offer_events
     %li= link_to 'Schedule Offer Events', tools_offer_events_path
-  - if permitted_to? :freemium_android, :tools
-    %li= link_to 'Freemium Android Apps', freemium_android_tools_path
   - if permitted_to? :index, :tools_external_publishers
     %li= link_to 'External Publishers', tools_external_publishers_path
   - if permitted_to? :index, :tools_agency_users
@@ -99,6 +99,8 @@
     %li= link_to 'Tapjoy Sponsored Publishers', tools_partner_program_statz_index_path
   - if permitted_to? :index, :tools_survey_offers
     %li= link_to 'Survey Offers', tools_survey_offers_path
+  - if permitted_to? :index, :tools_clients
+    %li= link_to 'Manage Clients', tools_clients_path
 
 - if has_permissions_for_one_of? :account_mgr, :customer_service, :admin
   %h3 Customer Support
@@ -127,6 +129,8 @@
     %li= link_to 'My approved devices', internal_device_path(current_user.id)
   - if permitted_to? :index, :internal_devices
     %li= link_to 'All approved devices', internal_devices_path
+  - if permitted_to? :index, :tools_wfhs
+    %li= link_to 'WFH', tools_wfhs_path
 
 - content_for :page_javascript do
   - if permitted_to? :show, :statz
