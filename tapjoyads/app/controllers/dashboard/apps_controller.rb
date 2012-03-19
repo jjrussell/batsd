@@ -20,8 +20,14 @@ class Dashboard::AppsController < Dashboard::DashboardController
   def search
     if params[:term].present?
       begin
-        results = AppStore.search(params[:term], params[:platform], params[:country])
-        render :json => results
+        platform = params[:platform]
+        case platform
+        when 'windows'
+          country = params[:language]
+        when 'iphone'
+          country = params[:country]
+        end
+        render :json => AppStore.search(params[:term], platform, country)
       rescue
         render :json => { :error => true }
       end
