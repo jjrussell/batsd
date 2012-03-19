@@ -13,7 +13,7 @@
         = f.label :item_id
         #help_item.help ?
       %td
-        = f.select :item_id, @video_offer.items_for_tracking, {:selected => "#{@video_button.item_type}:#{@video_button.item_id}"}
+        = f.select :item_id, formatted_items_for_tracking(@video_offer.partner), {:selected => "#{@video_button.item_type}:#{@video_button.item_id}"}
         = error_message_on @video_button, :item_id
     %tr
       %th

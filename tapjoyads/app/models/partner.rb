@@ -305,6 +305,10 @@ class Partner < ActiveRecord::Base
     end
   end
 
+  def trackable_items
+    apps + generic_offers + action_offers + video_offers
+  end
+
 private
 
   def update_currencies
