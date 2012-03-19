@@ -45,6 +45,12 @@ describe VideoButton do
        subject.url = nil
        subject.should be_valid
      end
+
+     it 'should generate a tracking offer' do
+       @video_button.tracking_offer.should_not be
+       @video_button.save
+       @video_button.tracking_offer.should be
+     end
    end
 
   context 'without an item present' do
