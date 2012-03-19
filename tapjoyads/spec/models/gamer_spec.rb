@@ -22,7 +22,6 @@ describe Gamer do
       context 'when referral count > 50' do
         before :each do
           @threshold_count = Gamer::MAX_REFERRAL_THRESHOLD
-          @json[:gamer_id]        = @gamer.id
           @json[:behavior_type]   = 'referral_count'
           @json[:behavior_result] = @threshold_count
         end
