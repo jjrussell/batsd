@@ -94,6 +94,10 @@ PAPAYA_SECRET = 'RT4oNOKx0QK2nJ51'
 
 CLEAR_MEMCACHE = false
 
+twitter = YAML::load_file("#{RAILS_ROOT}/config/twitter.yaml")
+ENV['CONSUMER_KEY'] = twitter['production']['consumer_key']
+ENV['CONSUMER_SECRET'] = twitter['production']['consumer_secret']
+
 DEVICE_LINK_TRACKING_PIXEL = 'http://tapjoy.go2cloud.org/SL2P'
 
 Sass::Plugin.options[:style] = :compressed
