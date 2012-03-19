@@ -80,7 +80,7 @@ class GamerDevice < ActiveRecord::Base
 
   def check_suspicious_activities
     devices_count = gamer.devices.count
-    if devices_count >= Gamer::MAX_DEVICE_THRESHOLD && devices_count % 5 == 0
+    if gamer.too_many_devices? && devices_count % 5 == 0
       message = {
         :gamer_id        => gamer_id,
         :behavior_type   => 'devices_count',

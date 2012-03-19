@@ -40,7 +40,7 @@
           = @gamer.favorite_category? ? @gamer.favorite_category : 'None specified'
       %tr
         %th Referrals
-        %td{ :class => @gamer.referral_count > Gamer::MAX_REFERRAL_THRESHOLD ? 'fraud' : '' }
+        %td{ :class => @gamer.gamer_profile.too_many_referrals? ? 'fraud' : '' }
           = number_with_delimiter @gamer.referral_count
       %tr
         %th Referred by
@@ -65,7 +65,7 @@
 
   %h3 Linked Devices
   = link_to 'Link new device', new_tools_gamer_device_path(:gamer_id => @gamer.id)
-  - if @gamer.gamer_devices.count > Gamer::MAX_DEVICE_THRESHOLD
+  - if @gamer.too_many_devices?
     .fraud
       = @gamer.gamer_devices.count
       devices linked

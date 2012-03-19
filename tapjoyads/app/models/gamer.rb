@@ -193,6 +193,10 @@ class Gamer < ActiveRecord::Base
     app_reviews.find_by_app_metadata_id(app_metadata_id)
   end
 
+  def too_many_devices?
+    gamer_devices.count >= MAX_DEVICE_THRESHOLD
+  end
+
   private
 
   def generate_gravatar_hash

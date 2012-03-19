@@ -49,10 +49,14 @@ class GamerProfile < ActiveRecord::Base
     save!
   end
 
+  def too_many_referrals?
+    referral_count >= Gamer::MAX_REFERRAL_THRESHOLD
+  end
+
   private
 
   def check_suspicious_activities
-    if referral_count >= Gamer::MAX_REFERRAL_THRESHOLD && referral_count % 10 == 0
+    if too_many_referrals? && referral_count % 10 == 0
       message = {
         :gamer_id        => gamer_id,
         :behavior_type   => 'referral_count',
