@@ -8,7 +8,6 @@ describe App do
   it { should have_many :offers }
   it { should have_many :publisher_conversions }
   it { should have_many :rewarded_featured_offers }
-  it { should have_many :promoted_offers }
   it { should have_many :app_metadatas }
   it { should have_many :reengagement_offers }
   it { should have_one :rating_offer }
