@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 describe VideoButton do
-
   describe '.belongs_to' do
     it { should belong_to :video_offer }
   end
@@ -32,4 +31,25 @@ describe VideoButton do
     end
   end
 
+   context 'with an item present' do
+     before(:each) do
+       @video_button.item = Factory(:generic_offer)
+     end
+
+     it 'should validate with an empty url' do
+       @video_button.url = nil
+       @video_button.should be_valid
+     end
+   end
+
+  context 'without an item present' do
+     before(:each) do
+       @video_button.item = nil
+     end
+
+     it 'should not validate with an empty url' do
+       @video_button.url = nil
+       @video_button.should_not be_valid
+     end
+  end
 end

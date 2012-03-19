@@ -5,11 +5,11 @@ class VideoButton < ActiveRecord::Base
   belongs_to :item, :polymorphic => true
   belongs_to :tracking_offer, :class_name => 'Offer'
 
-  validates_presence_of :name, :url
+  validates_presence_of :name
+  validates_presence_of :url, :if => 'item_id.blank?'
   validates_length_of :name, :maximum => 20, :message => "Please limit the name to 20 characters"
   validates_numericality_of :ordinal, :only_integer => true
 
-  before_save :ensure_url_validates_with_tracking_offer
   before_save :update_tracking_offer
   after_save :update_offer
 
@@ -26,10 +26,6 @@ class VideoButton < ActiveRecord::Base
   end
 
   private
-  def ensure_url_validates_with_tracking_offer
-    self.url = '' if self.tracking_offer.present? && self.url.empty?
-  end
-
   def update_offer
     video_offer.update_buttons
   end
