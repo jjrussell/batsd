@@ -171,12 +171,10 @@ class DisplayAdController < ApplicationController
 
       font = (Rails.env.production? || Rails.env.staging?) ? 'Arial-Unicode' : ''
 
-      if offer.item_type == 'TestOffer'
-        text = offer.name
-      elsif offer.rewarded? && currency.rewarded?
+      if (offer.rewarded? && currency.rewarded?) && offer.item_type != 'TestOffer'
         text = "Earn #{currency.get_visual_reward_amount(offer, display_multiplier)} #{currency.name} download \\n#{offer.name}"
       else
-        text = "Try #{offer.name} today"
+        text = offer.name
       end
 
       image_label = get_image_label(text, text_area_size, font_size, font, false)
