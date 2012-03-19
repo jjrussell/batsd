@@ -273,7 +273,7 @@ class StatsAggregation
   end
 
   def get_web_request_count(s3_path, stat_name, key, range)
-    (@counts[s3_path][stat_name][key] || [])[range].sum
+    ((@counts[s3_path][stat_name][key] || [])[range] || []).sum
   end
 
   def self.aggregate_hourly_group_stats(date = nil, aggregate_daily = false)
