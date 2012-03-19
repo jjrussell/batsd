@@ -24,6 +24,7 @@ class Tools::VideoOffers::VideoButtonsController < WebsiteController
 
   def create
     @video_button = VideoButton.new(params[:video_button])
+    @video_button.item = params[:video_button][:item]
     log_activity(@video_button)
 
     if @video_button.save
@@ -42,6 +43,7 @@ class Tools::VideoOffers::VideoButtonsController < WebsiteController
   def update
     log_activity(@video_button)
 
+    @video_button.item = params[:video_button][:item]
     if @video_button.update_attributes(params[:video_button])
       unless @video_offer.valid_for_update_buttons?
         flash.now[:warning] = 'Support at most 2 enabled buttons.'
@@ -59,8 +61,7 @@ private
   def handle_params
     if item_id = params[:video_button][:item_id]
       type, id = item_id.split(':')
-      params[:video_button][:item_id] = id
-      params[:video_button][:item_type] = type
+      params[:video_button][:item] = type.constantize.find(id)
     end
   end
 
