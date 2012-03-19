@@ -5,7 +5,7 @@ class AppStore
   ITUNES_APP_URL      = 'http://ax.itunes.apple.com/WebObjects/MZStoreServices.woa/wa/wsLookup'
   ITUNES_SEARCH_URL   = 'http://ax.itunes.apple.com/WebObjects/MZStoreServices.woa/wa/wsSearch'
   WINDOWS_APP_URL     = 'http://catalog.zune.net/v3.2/en-US/apps/_APPID_?store=Zest&clientType=WinMobile+7.0'
-  WINDOWS_SEARCH_URL  = 'http://catalog.zune.net/v3.2/en-US/?includeApplications=true&prefix='
+  WINDOWS_SEARCH_URL  = 'http://catalog.zune.net/v3.2/_ACCEPT_LANGUAGE_/?includeApplications=true&prefix='
 
   # NOTE: these numbers change every once in a while. Last update: 2011-08-11
   PRICE_TIERS = {
@@ -61,7 +61,7 @@ class AppStore
     when 'iphone'
       self.search_apple_app_store(term, country)
     when 'windows'
-      self.search_windows_marketplace(term)
+      self.search_windows_marketplace(term, country)
     end
   end
 
@@ -227,8 +227,12 @@ private
     end
   end
 
-  def self.search_windows_marketplace(term)
-    response = request(WINDOWS_SEARCH_URL + CGI::escape(term.strip.gsub(/\s/, '+')))
+  def self.search_windows_marketplace(term, accept_language)
+    unless App::WINDOWS_ACCEPT_LANGUAGES.include?(accept_language)
+      accept_language = 'en-us'
+    end
+    url = WINDOWS_SEARCH_URL.gsub('_ACCEPT_LANGUAGE_', accept_language)
+    response = request(url + CGI::escape(term.strip.gsub(/\s/, '+')))
     if response.status == 200
       items = (Hpricot(response.body)/'a:entry'/'a:id').first(10).map do |id|
         store_id = id.inner_text.split(':').last
