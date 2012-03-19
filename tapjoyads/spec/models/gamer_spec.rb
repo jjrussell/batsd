@@ -13,6 +13,69 @@ describe Gamer do
       @gamer.gamer_profile = GamerProfile.create(:facebook_id => '0', :gamer => @gamer)
     end
 
+    context 'suspicious activities' do
+      before :each do
+        @queue = QueueNames::SUSPICIOUS_GAMERS
+        @json = { :gamer_id => @gamer.id }
+      end
+
+      context 'when referral count > 50' do
+        before :each do
+          @threshold_count = Gamer::MAX_REFERRAL_THRESHOLD
+          @json[:behavior_type]   = 'referral_count'
+          @json[:behavior_result] = @threshold_count
+        end
+
+        it 'should alert suspicious behavior' do
+          Sqs.expects(:send_message).with(@queue, @json.to_json)
+          @gamer.gamer_profile.update_attributes(:referral_count => @threshold_count)
+        end
+
+        context 'when gamer has already been blocked' do
+          it 'should not alert suspicious behavior' do
+            @gamer.update_attributes(:blocked => true)
+            Sqs.expects(:send_message).never
+            @gamer.gamer_profile.update_attributes(:referral_count => @threshold_count)
+          end
+        end
+      end
+
+      context 'when devices count > 15' do
+        before :each do
+          threshold_count = Gamer::MAX_DEVICE_THRESHOLD
+          @json[:behavior_type]   = 'devices_count'
+          @json[:behavior_result] = threshold_count
+          (threshold_count - 1).times do
+            options = {
+              :device_id => Factory.next(:guid),
+              :name => Factory.next(:name),
+            }
+            @gamer.gamer_devices.build(options).save
+          end
+        end
+
+        it 'should alert suspicious behavior' do
+          Sqs.expects(:send_message).with(@queue, @json.to_json)
+          options = {
+            :device_id => Factory.next(:guid),
+            :name => Factory.next(:name),
+          }
+          @gamer.gamer_devices.build(options).save
+        end
+
+        context 'when gamer has already been blocked' do
+          it 'should not alert suspicious behavior' do
+            @gamer.update_attributes(:blocked => true)
+            Sqs.expects(:send_message).never
+            options = {
+              :device_id => Factory.next(:guid),
+              :name => Factory.next(:name),
+            }
+            @gamer.gamer_devices.build(options).save
+          end
+        end
+      end
+    end
     it 'is compatible with old invitation' do
       invitation = Invitation.create(
         :gamer_id => @gamer.id,
