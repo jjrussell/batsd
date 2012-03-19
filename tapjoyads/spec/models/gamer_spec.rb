@@ -43,7 +43,6 @@ describe Gamer do
       context 'when devices count > 15' do
         before :each do
           threshold_count = Gamer::MAX_DEVICE_THRESHOLD
-          @json[:gamer_id]        = @gamer.id
           @json[:behavior_type]   = 'devices_count'
           @json[:behavior_result] = threshold_count
           (threshold_count - 1).times do
