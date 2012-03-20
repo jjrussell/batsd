@@ -64,12 +64,6 @@
         %td= @app.secret_key
       %tr
         %th
-          Encrypted App ID
-          #help_app_encrypted_id.help ?
-        %td
-          %textarea{:disabled => 'disabled'}= ObjectEncryptor.encrypt(@app.id)
-      %tr
-        %th
           Integrated?
           #help_integrated.help ?
         - if @integrated
