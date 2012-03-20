@@ -83,7 +83,7 @@ class User < ActiveRecord::Base
   end
 
   def after_reject(approval)
-    ApprovalMailer.deliver_rejected(email, :user, :subject => 'Your account has been rejected on Tapjoy!', :reason => approval.reason, :cc => approval_ccs(approval))
+    ApprovalMailer.deliver_rejected(email, :user, :subject => 'Your account has been rejected on Tapjoy!', :cc => approval_ccs(approval))
   end
 
 private
