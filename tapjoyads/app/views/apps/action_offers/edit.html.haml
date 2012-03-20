@@ -36,7 +36,7 @@
           %td
             = primary_offer_form.currency_field :bid, {}, :class => 'togglable'
             = error_message_on @action_offer, :primary_offer_bid
-        %tr
+        %tr{ :class => current_partner.premier_discount > 0 ? '' : 'hidden' }
           %th
             = primary_offer_form.label :payment, 'Payment'
             #help_payment.help ?
@@ -156,8 +156,7 @@
   #help_bid_content{ :name => 'Bid' }
     The amount you are willing to pay for a completed action. A higher bid will result in more completed actions.
   #help_payment_content{ :name => 'Payment' }
-    The amount that you pay for install. This value is equal to the Bid
-    unless you participate in the Tapjoy Premier program, or reach monthly spend figures
+    The amount that you pay per install.
   #help_daily_content{ :name => 'Daily Budget' }
     The maximum number of paid conversions per day.
   #help_enabled_content{ :name => 'Tapjoy Enabled' }

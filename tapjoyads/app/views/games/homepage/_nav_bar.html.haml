@@ -66,6 +66,6 @@
     .left.phraseThatPays
       = t('text.games.about_body')
     .right
-      - link_to(new_games_gamer_path) do
+      - link_to(new_games_gamer_path(:data => params[:data], :referrer => params[:referrer])) do
         #signup.header-button
           = t('text.shared.sign_up')
