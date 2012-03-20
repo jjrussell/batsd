@@ -25,6 +25,8 @@ class Games::SupportRequestsController < GamesController
 
     # Get the click of concern
 
+
+    # Build support request
     #support_request = SupportRequest.new
     #support_request.fill(params, @app, @currency, @offer)
     #support_request.save
