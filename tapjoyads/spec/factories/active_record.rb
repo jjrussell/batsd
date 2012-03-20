@@ -5,6 +5,7 @@ FactoryGirl.define do
     state 'approved'
     password 'asdf'
     password_confirmation 'asdf'
+    country 'earth'
   end
 
   factory :admin, :parent => :user do
