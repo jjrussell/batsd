@@ -64,6 +64,12 @@
         %td= @app.secret_key
       %tr
         %th
+          Encrypted App ID
+          #help_app_encrypted_id.help ?
+        %td
+          %textarea{:disabled => 'disabled'}= ObjectEncryptor.encrypt(@app.id)
+      %tr
+        %th
           Integrated?
           #help_integrated.help ?
         - if @integrated
@@ -107,6 +113,8 @@
     App ID. Use this when integrating.
   #help_app_secret_key_content{:name => 'App Secret Key'}
     A shared secret used to verify requests from your app. Use this when integrating.
+  #help_app_encrypted_id_content{:name => 'Encrypted App ID'}
+    Encrypted App ID for use in building URLs
   #help_integrated_content{:name => 'Integrated'}
     Integration status - shows if the app has connected with our servers within the last 24-hours.
 .clear
