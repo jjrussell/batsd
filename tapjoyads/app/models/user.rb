@@ -89,7 +89,7 @@ class User < ActiveRecord::Base
 private
   def approval_ccs(approval)
     ccs = [approval.owner.try(:email)]
-    ccs << current_partner.account_managers.map(&:email)
+    ccs << current_partner.account_managers.map(&:email) if current_partner.present?
 
     ccs.flatten.compact.uniq
   end
