@@ -315,6 +315,7 @@ nl:
       our_tos_changed: ~
       password_changed: ~
       password_non_match: ~
+      post_to_facebook: ~
       post_to_facebook_content: ~
       privacy_policy_href: ~
       profile: ~

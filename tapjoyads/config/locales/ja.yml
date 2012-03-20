@@ -15,7 +15,7 @@ ja:
         greater_than: ~
         greater_than_or_equal_to: ~
         inclusion: ~
-        invalid: ~
+        invalid: は無効です
         less_than: ~
         less_than_or_equal_to: ~
         not_a_number: ~
@@ -97,7 +97,7 @@ ja:
       greater_than: ~
       greater_than_or_equal_to: ~
       inclusion: ~
-      invalid: ~
+      invalid: は無効です
       less_than: ~
       less_than_or_equal_to: ~
       not_a_number: ~
@@ -181,7 +181,7 @@ ja:
       about: ~
       advertisers: ~
       blog: ~
-      copyright: ~
+      copyright: "Copyright &copy; %{year} Tapjoy, Inc. All Rights Reserved. TapjoyとTapjoyのロゴはすべて各オーナーの登録商標です。"
       developers: ~
       privacy: ~
     games:
@@ -196,7 +196,7 @@ ja:
       advertisers_body: あなたのアプリをTapjoyに露出し、多くのユーザーにリーチしよう
       advertisers_title: 広告主
       allow_marketing_emails: Tapjoyからのお知らせメールを受け取る
-      almost_done: ~
+      almost_done: もうすぐで完成！
       already_registered:
         one: "%{name}さんはすでに登録済みです。%{name}さんをフォローしました"
         other: "%{name}さんはすでに登録済みです。%{name}さんをフォローしました"
@@ -210,7 +210,7 @@ ja:
       change: 変更
       change_linked_account: リンクされたアカウントを変更
       choose_section: セクションを選ぶ
-      close: ~
+      close: 閉じる
       collect: 受け取る
       collect_rewards: ポイントを受け取る
       connect_my_device: 端末を接続
@@ -230,9 +230,9 @@ ja:
       discover_apps: ~
       download_now: ~
       earn: "%{currency}を獲得"
-      earn_rewards: ~
+      earn_rewards: ポイントを獲得する
       earn_title: "下記のオファー(アプリインストール・会員登録など)を完了して、%{app_name}の%{currency} を獲得しよう"
-      earning_rewards: ~
+      earning_rewards: Tapjoyは、一ヶ所ですべてのお気に入りのモバイルアプリのポイントを獲得するために最適の場所です。
       edit: 編集
       email_device_link: ~
       email_notification: Eメール通知
@@ -270,8 +270,8 @@ ja:
       how_it_works_title: どうやって?
       install_and_run: "%{name}をインストールして起動してください。"
       install_android_app: ~
-      install_profile: ~
-      invalid_fields: ~
+      install_profile: 次のページでプロフィールをインストールし、お気に入りアプリの発掘を始めよう！
+      invalid_fields: この入力は無効です
       invite: 友達を招待しよう!
       invite_by_email: Eメールで招待する
       invite_email_body: |-
@@ -290,18 +290,18 @@ ja:
         one: "Tapjoyへの招待状が%{name}さんに送信されました"
         other: "Tapjoyへの招待状が%{name}さんへ送信されました"
       issue_registering: アカウント登録中にエラーが発生しました
-      join_the_community: ~
-      join_the_community_blurb: ~
-      last_played: "最後のプレイ：%{game}"
-      link_account_header: ~
-      link_account_messaging: ~
+      join_the_community: コミュニティに参加する
+      join_the_community_blurb: Tapjoyコミュニティでアプリ評価とレビューを使ってもっと楽しもう！今すぐトライして自らレビューを投稿してみよう！
+      last_played: "最後に開いたアプリ: %{game}"
+      link_account_header: Tapjoyは、すでに使用中のアプリの仮想通貨を獲得しながら、最も人気のアプリを発掘することができる、ワンストップショップです。 Tapjoyを十分に満喫するためには、デバイスを接続する必要があります。
+      link_account_messaging: Tapjoyは、iOSまたはアンドロイドですでに使用中のアプリの仮想通貨を獲得しながら、最も人気のアプリを発掘することができる、ワンストップショップです。　Tapjoyを十分に満喫するためには、デバイスを接続する必要があります。iOSデバイスから%{tjm_url}、アンドロイドデバイスから%{android_market_url}にアクセスして始めよう。その間、Tapjoyのサイトからプロフィールを作成してカスタマイズされたおススメアプリを体験しよう。
       link_account_messaging_android_href: ~
       link_account_messaging_tjm_href: ~
       link_my_facebook: Facebookをリンク
       load_more: もっと見る
       loading: ロード中…
       log_in_tapjoy: Tapjoyにログイン
-      mark_as_favorite: "お気に入りに追加する"
+      mark_as_favorite: お気に入りに追加する
       member_since: "%{date}からメンバー"
       meta_description: "Tapjoy： Android, iPhoneやiPad上におけるアプリ・ゲームの目的地"
       meta_keywords: ゲーム、モバイルゲーム、モバイルアプリ、iOS、Android、iPhone、iPad、iTouch
@@ -317,16 +317,17 @@ ja:
       or_learn_more: ~
       other_options: 他のオプション
       our_tos_changed: "当社の%{terms_of_use}を変更いたしました。よくお読みいただき、下記からご同意の上、ご利用いただくようお願い申しあげます。"
-      password_changed: ~
+      password_changed: あなたのパスワードは変更されました
       password_non_match: ~
+      post_to_facebook: Facebookに投稿する！
       post_to_facebook_content: お気に入りのアプリのカレンシー（仮想通貨）を獲得しながら、最新のアプリを発掘することができるTapjoyをチェックしよう！参加はフリー。今すぐTapjoy.comから始めて、あなたの好みに応じたオススメアプリをゲットしよう。
       privacy_policy_href: プライバシーポリシー
       profile: 自分
       profile_error: ~
-      profile_update: ~
+      profile_update: あなたのプロフィールは更新されました
       provide_other_email: あなたのメールアドレス以外のメールアドレスを入力してください
       recipients_label: "複数のメールアドレスを入力する場合、「 , 」（コンマ）で区切ってください"
-      recommend_apps: ~
+      recommend_apps: Tapjoyは、あなたの好みに基づいて、カスタマイズされたアプリのおススメをご提供します。
       recommendations: スマートなおススメ
       recommendations_smart: スマートなおススメ
       registering: 登録中
@@ -410,7 +411,7 @@ ja:
       comment: コメント
       confirm_password: パスワードを確認
       continue: 続ける
-      copyright: "Copyright © 2012 Tapjoy, Inc. All Rights Reserved. TapjoyとTapjoyのロゴはすべて各オーナーの登録商標です。"
+      copyright: "Copyright &copy; %{year} Tapjoy, Inc. All Rights Reserved. TapjoyとTapjoyのロゴはすべて各オーナーの登録商標です。"
       country: 国
       day: 日
       earn_verb: 獲得
@@ -438,7 +439,7 @@ ja:
       name: 名前
       new_password: 新しいパスワード
       nickname: ニックネーム
-      none: ~
+      none: 誰もフォローしていません
       ok: OK
       options: オプション
       other: その他
@@ -478,11 +479,11 @@ ja:
       instructions_1: "%{currency}を受け取っていない完了したオファーを選択し、メールアドレスを入力してください"
       instructions_2: 不十分な情報によりチケットを投稿した場合、問題解決に遅延を生じてしまいます。十分な情報が確認されたチケットが優先されます。
       invalid_email: 有効なメールアドレスを入力してください
-      message: 大変申し訳ございませんがこちらのオファーは現在取り扱っておりません。前のページに戻り、リフレッシュして最新のオファーリストをご覧ください。
+      message: ~
       missing_description: 完了したオファーについて説明してください
       missing_offer: 完了したオファーを指定してください
       no_incomplete_offers_label: 適切なオファーは見つかりません
-      optional_message: "または、とにかく%{offer}をダウンロードするには、こちらをクリックしてください。"
+      optional_message: ~
       select_offer: オファーを選択
       specify_offer_label: オファーを指定
       submit_support_request: サポートリクエストを投稿
@@ -490,6 +491,7 @@ ja:
       thanks: "サポートリクエストを投稿いただきありがとうございます。こちらでオファー完了を確認後、 %{currency} を受け取ることができます。"
       title: "%{currency}が受け取れない？"
       unavailable_offer: ~
+    unavailable_offer:
       message: ~
       optional_message: ~
   time:
