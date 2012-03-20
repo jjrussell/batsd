@@ -75,6 +75,10 @@ PAPAYA_SECRET = 'RT4oNOKx0QK2nJ51'
 
 CLEAR_MEMCACHE = !(local_config['clear_memcache'] == false)
 
+twitter = YAML::load_file("#{RAILS_ROOT}/config/twitter.yaml")
+ENV['CONSUMER_KEY'] = twitter['dev']['consumer_key']
+ENV['CONSUMER_SECRET'] = twitter['dev']['consumer_secret']
+
 DEV_FACEBOOK_ID = '100000459598424'
 
 DEVICE_LINK_TRACKING_PIXEL = ''
