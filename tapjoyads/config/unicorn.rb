@@ -25,7 +25,7 @@ preload_app true
 
 # listen on both a Unix domain socket and a TCP port,
 # we use a shorter backlog for quicker failover when busy
-listen "/tmp/tapjoy.socket"
+listen("/tmp/tapjoy.socket", :backlog => 2048)
 
 # feel free to point this anywhere accessible on the filesystem
 user 'webuser', 'webuser'  unless server_type == "dev"
