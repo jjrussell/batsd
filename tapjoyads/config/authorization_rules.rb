@@ -26,6 +26,10 @@ authorization do
     has_permission_on :tools, :to => [ :index ]
   end
 
+  role :ops do
+    has_permission_on :ops, :to => [ :index, :elb_status, :as_groups, :service_stats, :http_codes]
+  end
+
   role :devices do
     includes :tools
     has_permission_on :internal_devices, :to => [ :new, :edit, :update, :index, :show, :destroy, :approve ]
@@ -143,6 +147,7 @@ authorization do
     includes :tools
     includes :devices
     includes :payops
+    includes :ops
     includes :executive
     includes :account_mgr
     includes :hr
