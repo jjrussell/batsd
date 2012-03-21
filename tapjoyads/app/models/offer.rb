@@ -236,6 +236,8 @@ class Offer < ActiveRecord::Base
   memoize :get_device_types, :get_screen_layout_sizes, :get_countries, :get_dma_codes,
     :get_regions, :get_approved_sources, :get_carriers, :get_cities
 
+  serialize :third_party_tracking_urls, Array
+
   def clone
     return super if new_record?
 
@@ -246,6 +248,17 @@ class Offer < ActiveRecord::Base
         clone.send("banner_creative_#{size}_blob=", blob)
       end
     end
+  end
+
+  def third_party_tracking_urls
+    self.third_party_tracking_urls = [] if super.nil?
+    super.sort
+  end
+
+  def third_party_tracking_urls_was
+    ret_val = super
+    return [] if ret_val.nil?
+    ret_val
   end
 
   def app_offer?
