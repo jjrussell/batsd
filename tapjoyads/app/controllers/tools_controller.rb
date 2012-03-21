@@ -128,41 +128,12 @@ class ToolsController < WebsiteController
     end
   end
 
-  def elb_status
-    elb_interface  = RightAws::ElbInterface.new
-    ec2_interface  = RightAws::Ec2.new
-    @lb_names      = Rails.env.production? ? %w( masterjob-lb job-lb website-lb dashboard-lb api-lb test-lb util-lb ) : []
-    @lb_instances  = {}
-    @ec2_instances = {}
-    @lb_names.each do |lb_name|
-      @lb_instances[lb_name] = elb_interface.describe_instance_health(lb_name)
-      instance_ids = @lb_instances[lb_name].map { |i| i[:instance_id] }
-      instance_ids.in_groups_of(70) do |instances|
-        instances.compact!
-        ec2_interface.describe_instances(instances).each do |instance|
-          @ec2_instances[instance[:aws_instance_id]] = instance
-        end
-      end
-
-      @lb_instances[lb_name].sort! { |a, b| a[:instance_id] <=> b[:instance_id] }
-    end
-  end
-
   def ses_status
     ses = AWS::SimpleEmailService.new
     @quotas = ses.quotas
     @statistics = ses.statistics.sort_by { |s| -s[:sent].to_i }
     @verified_senders = ses.email_addresses.collect
     @queue = Sqs.queue(QueueNames::FAILED_EMAILS)
-  end
-
-  def as_groups
-    as_interface = RightAws::AsInterface.new
-    @as_groups = as_interface.describe_auto_scaling_groups
-    @as_groups.each do |group|
-      group[:triggers] = as_interface.describe_triggers(group[:auto_scaling_group_name])
-    end
-    @as_groups.sort! { |a, b| a[:auto_scaling_group_name] <=> b[:auto_scaling_group_name] }
   end
 
   def disabled_popular_offers

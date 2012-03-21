@@ -15,7 +15,7 @@ zh:
         greater_than: ~
         greater_than_or_equal_to: ~
         inclusion: ~
-        invalid: ~
+        invalid: "是無效的"
         less_than: ~
         less_than_or_equal_to: ~
         not_a_number: ~
@@ -97,7 +97,7 @@ zh:
       greater_than: ~
       greater_than_or_equal_to: ~
       inclusion: ~
-      invalid: ~
+      invalid: "是無效的"
       less_than: ~
       less_than_or_equal_to: ~
       not_a_number: ~
@@ -181,7 +181,7 @@ zh:
       about: ~
       advertisers: ~
       blog: ~
-      copyright: ~
+      copyright: "版權宣告; %{year} Tapjoy, Inc. All Rights Reserved. Tapjoy and the Tapjoy logo are trademarks or registered trademarks of Tapjoy, Inc. All third party logos and trademarks mentioned are the property of their respective owners."
       developers: ~
       privacy: ~
     games:
@@ -195,8 +195,8 @@ zh:
       add_to_homescreen: "把 %{tapjoy} 加到你的首頁"
       advertisers_body: 讓您的產品深入百萬用戶，家喻戶曉！
       advertisers_title: 廣告商
-      allow_marketing_emails: "允許Tapjoy向我發送市場營銷電子郵件"
-      almost_done: ~
+      allow_marketing_emails: 允許Tapjoy向我發送市場營銷電子郵件
+      almost_done: 就快好了!
       already_registered:
         one: "%{name} 已註冊。您現在關注他/她."
         other: "%{name} 已註冊。您現在關注他們."
@@ -210,7 +210,7 @@ zh:
       change: 變更
       change_linked_account: 變更連接帳戶
       choose_section: 功能選擇
-      close: ~
+      close: 關閉
       collect: 收集
       collect_rewards: 收集獎勵
       connect_my_device: 連接我的終端
@@ -230,9 +230,9 @@ zh:
       discover_apps: ~
       download_now: ~
       earn: "賺取%{currency} "
-      earn_rewards: ~
+      earn_rewards: 賺取獎勵
       earn_title: "請完成以下任何廣告要求為您的%{app_name}賺取%{currency} "
-      earning_rewards: ~
+      earning_rewards: Tapjoy提供賺取你所有喜愛的行動應用的獎勵的一站式服務
       edit: 編輯
       email_device_link: ~
       email_notification: 電郵通知
@@ -270,8 +270,8 @@ zh:
       how_it_works_title: 它的原理？
       install_and_run: "安裝並運行 %{name}"
       install_android_app: ~
-      install_profile: ~
-      invalid_fields: ~
+      install_profile: 在下一頁登錄你的資料就可以開始探索你喜愛的應用！
+      invalid_fields: 輸入無效
       invite: 邀請好友！
       invite_by_email: 用電郵邀請
       invite_email_body: |-
@@ -290,11 +290,11 @@ zh:
         one: "一個Tapjoy 邀請已發送給了%{name}"
         other: "Tapjoy 邀請已發送給了%{name}"
       issue_registering: 註冊帳戶發生問題
-      join_the_community: ~
-      join_the_community_blurb: ~
-      last_played: "最近玩的遊戲: %{game}"
-      link_account_header: ~
-      link_account_messaging: ~
+      join_the_community: 加入社群
+      join_the_community_blurb: 透過Tapjoy社群的應用評分與評論來探索更多的應用，今天就開始並親自參與！
+      last_played: "最後進行: %{game}"
+      link_account_header: Tapjoy提供你一面賺取正在進行的應用的貨幣，一面探索最熱門應用的一站式服務。為了感受完整的Tapjoy體驗，你必須連結你的裝置
+      link_account_messaging: "Tapjoy提供你一面賺取正在進行的應用的貨幣，一面探索最熱門iOS與Android應用的一站式服務。為了感受完整的Tapjoy體驗，你必須連結你的iOS或Android裝置。只要在你的iOS裝置上回訪 %{tjm_url} 或在你的Android裝置上回訪 %{android_market_url} 就可以開始了。同時，請隨性瀏覽本網站，創造你的個人檔案，以便我們提供你個性化的推薦。"
       link_account_messaging_android_href: ~
       link_account_messaging_tjm_href: ~
       link_my_facebook: 請連接到我的Facebook
@@ -316,14 +316,15 @@ zh:
       oops: 哦！
       or_learn_more: ~
       other_options: 其他選項
-      our_tos_changed: "我們的％{terms_of_use}已經修訂。請查閱後接受。"
-      password_changed: ~
+      our_tos_changed: "我們的%{terms_of_use}已經修訂。請查閱後接受。"
+      password_changed: 你的密碼已經變更了
       password_non_match: ~
+      post_to_facebook: ~
       post_to_facebook_content: "造訪Tapjoy來發現最好的應用與遊戲，還可以在你喜愛的應用中賺取虛擬貨幣。加入完全免費，所以現在就來造訪 tapjoy.com，獲得為你量身訂做的應用推薦"
       privacy_policy_href: 隱私政策
       profile: 我
       profile_error: ~
-      profile_update: ~
+      profile_update: 你的資料已經更新了
       provide_other_email: 請提供另一個電子郵件地址
       recipients_label: 請使用逗號區隔各電子郵件
       recommend_apps: ~
@@ -410,7 +411,7 @@ zh:
       comment: 意見
       confirm_password: 確認密碼
       continue: 繼續
-      copyright: "版權宣告; %{year} Tapjoy, Inc. All Rights Reserved. Tapjoy and the Tapjoy logo are trademarks or registered trademarks of Tapjoy, Inc.  All third party logos and trademarks mentioned are the property of their respective owners."
+      copyright: "版權宣告; %{year} Tapjoy, Inc. All Rights Reserved. Tapjoy and the Tapjoy logo are trademarks or registered trademarks of Tapjoy, Inc. All third party logos and trademarks mentioned are the property of their respective owners."
       country: 國家
       day: 日
       earn_verb: 賺取
@@ -438,7 +439,7 @@ zh:
       name: 名字
       new_password: 新密碼
       nickname: 暱稱
-      none: ~
+      none: 沒有
       ok: OK
       options: 選項
       other: 其它

@@ -177,54 +177,104 @@ all_caps:
       skip: SKIP
       title: "EARN %{currency}"
       try_out: "TRY OUT"
+    footer:
+      about: ~
+      advertisers: ~
+      blog: ~
+      copyright: ~
+      developers: ~
+      privacy: ~
     games:
       about_body: ~
       about_title: ~
       account_created_body: ~
       account_created_title: ~
       action_required: ~
+      active_gamers_text: ~
+      add: ~
       add_to_homescreen: ~
       advertisers_body: ~
       advertisers_title: ~
       allow_marketing_emails: ~
+      almost_done: ~
       already_registered:
         one: ~
         other: ~
+      amount_and_currency: ~
       back_to_top: ~
       birthdate: ~
+      browse_offers: ~
       call_to_action_body: ~
       call_to_action_title: ~
       cant_fetch_offers: ~
+      change: ~
       change_linked_account: ~
+      choose_section: ~
+      close: ~
+      collect: ~
+      collect_rewards: ~
       connect_my_device: ~
+      connect_to_facebook: ~
       connect_your_android: ~
       connect_your_device: ~
+      connected_to_facebook: ~
+      connected_to_twitter: ~
+      contact_support: ~
+      contact_us: ~
+      cookies_required: ~
       deactivate: ~
       del_acct_confirm: ~
       delete_my_account: ~
       developers_body: ~
       developers_title: ~
+      discover_apps: ~
+      download_now: ~
       earn: ~
+      earn_rewards: ~
       earn_title: ~
+      earning_rewards: ~
+      edit: ~
+      email_device_link: ~
+      email_notification: ~
       enable_javascript: ~
       enter_birthdate: ~
       enter_email: ~
+      enter_message: ~
+      enter_name: ~
       enter_password: ~
       enter_platform: ~
       enter_tos: ~
       enter_valid_email: ~
+      error_mark_as_favorite: ~
+      error_unmark_as_favorite: ~
+      failed_to_change_linked: ~
       favorite_app: ~
+      favorite_apps: ~
       favorite_category: ~
+      favorites: ~
+      feedback: ~
+      find_and_invite_friends: ~
+      find_friends_from_facebook: ~
+      find_friends_from_twitter: ~
+      find_friends_on_tapjoy: ~
+      find_more_friends: ~
+      find_new_apps: ~
       follow_us: ~
       forgot_pass: ~
+      free: ~
       free!: ~
       generic_issue: ~
+      get_app: ~
       get_it: ~
       grant_us_access: ~
       how_it_works_body: ~
       how_it_works_title: ~
       install_and_run: ~
+      install_android_app: ~
+      install_profile: ~
+      invalid_fields: ~
       invite: ~
+      invite_by_email: ~
       invite_email_body: ~
       invite_email_greet: ~
       invite_email_signature: ~
@@ -236,34 +286,88 @@ all_caps:
         one: ~
         other: ~
       issue_registering: ~
+      join_the_community: ~
+      join_the_community_blurb: ~
+      last_played: ~
+      link_account_header: ~
+      link_account_messaging: ~
+      link_account_messaging_android_href: ~
+      link_account_messaging_tjm_href: ~
       link_my_facebook: ~
       load_more: ~
+      loading: ~
+      log_in_tapjoy: ~
+      mark_as_favorite: ~
       member_since: ~
       meta_description: ~
       meta_keywords: ~
       more_apps: ~
+      more_the_merrier: ~
       my_apps: ~
+      next: ~
+      no_device: ~
+      no_javascript: ~
       none_selected: ~
+      on_my: ~
       oops: ~
+      or_learn_more: ~
+      other_options: ~
       our_tos_changed: ~
+      password_changed: ~
+      password_non_match: ~
+      post_to_facebook: ~
+      post_to_facebook_content: ~
       privacy_policy_href: ~
+      profile: ~
+      profile_error: ~
+      profile_update: ~
       provide_other_email: ~
       recipients_label: ~
+      recommend_apps: ~
       recommendations: ~
+      recommendations_smart: ~
       registering: ~
+      report_bug: ~
+      reset_password_message: ~
+      reset_password_message_submit: ~
+      reset_password_retry: ~
+      reset_password_retry_url_text: ~
+      review_app_name: ~
+      review_created: ~
+      review_issue: ~
+      review_updated: ~
+      reviewed_already: ~
       select_current_device: ~
       select_device: ~
       select_friend: ~
+      share_on_facebook: ~
+      share_on_twitter: ~
+      share_with_everyone: ~
+      share_with_your_friends: ~
       social_networks: ~
       social_settings: ~
+      spread_mobile_joy: ~
+      start_discovering: ~
       tap_that: ~
       tapjoy_picks: ~
       terms_of_use_href: ~
+      thanks_contact_support: ~
+      thanks_contact_us: ~
+      thanks_feedback: ~
+      thanks_report_bug: ~
+      thats_you: ~
       tos_acknowledge_html: ~
       tos_change_acknowledge: ~
       unable_to_process: ~
+      unlock_mobile_joy: ~
+      unmark_as_favorite: ~
+      welcome_tapjoy: ~
       wifi_required: ~
       wrong_device: ~
+      you_are_following: ~
+      your_followers:
+        one: ~
+        other: ~
     instructions:
       amount_and_currency: "%{amount} %{currency}"
       continue_link: "CLICK HERE TO CONTINUE."
@@ -283,6 +387,7 @@ all_caps:
       load_more: "LOAD SOME MORE!"
       loading: LOADING...
       missing_currency: "MISSING %{currency}?"
+      more_offers: ~
       next: "NEXT %{items}"
       popular_apps: "POPULAR APPS"
       previous: "PREVIOUS %{items}"
@@ -296,14 +401,19 @@ all_caps:
       back: ~
       blog: ~
       cancel: ~
+      change_password: ~
       city: ~
+      collect: ~
+      comment: ~
       confirm_password: ~
       continue: ~
       copyright: ~
       country: ~
       day: ~
+      earn_verb: ~
       email: ~
       facebook_profile: ~
+      favorites: ~
       female: ~
       followers: ~
       following: ~
@@ -312,6 +422,8 @@ all_caps:
       help: ~
       invite: ~
       ios: ~
+      join: ~
+      location: ~
       login_noun: ~
       login_verb: ~
       logout: ~
@@ -319,25 +431,41 @@ all_caps:
       month: ~
       my_account: ~
       my_profile: ~
+      my_reviews: ~
       name: ~
       new_password: ~
       nickname: ~
+      none: ~
       ok: ~
       options: ~
       other: ~
       password: ~
+      please_try_again: ~
       preferences: ~
       privacy: PRIVACY
       privacy_policy: ~
+      profile: ~
+      rate_and_review: ~
       recipients: ~
       reset_password: ~
+      reviews: ~
       save: ~
+      send: ~
+      sending: ~
+      sent: ~
       share: ~
       sign_in: ~
       sign_up: ~
+      submit: ~
+      submit_review: ~
       success: ~
+      title_noun: ~
       try_again: ~
+      unknown: ~
+      update_review: ~
       updating: ~
+      view_all: ~
+      write_review: ~
       year: ~
       zip_postal: ~
     support:
@@ -362,6 +490,7 @@ all_caps:
   time:
     am: ~
     formats:
+      classic_short: ~
       day: ~
       day_long: ~
       day_short: ~

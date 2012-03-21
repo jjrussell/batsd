@@ -72,7 +72,7 @@ class SyslogMessage
   end
 
   def to_json
-    { :key => @id, :attrs => @attributes }.to_json
+    { :key => @id, :attrs => @attributes, :hostname => HOSTNAME }.to_json
   end
 
 end

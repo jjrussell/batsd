@@ -101,7 +101,7 @@ class ReengagementOffer < ActiveRecord::Base
     reengagement_offers = Mc.distributed_get("mysql.reengagement_offers.#{app_id}.#{ReengagementOffer.acts_as_cacheable_version}")
     if reengagement_offers.nil?
       if do_lookup
-        reengagement_offers = ReengagementOffer.visible.order_by_day.for_app(app_id).each { |c| c.run_callbacks(:before_cache) }
+        reengagement_offers = ReengagementOffer.visible.order_by_day.for_app(app_id)
         Mc.distributed_put("mysql.reengagement_offers.#{app_id}.#{ReengagementOffer.acts_as_cacheable_version}", reengagement_offers, false, 1.day)
       else
         reengagement_offers = []
@@ -113,7 +113,7 @@ class ReengagementOffer < ActiveRecord::Base
   private
 
   def cache_by_app_id
-    reengagement_offers = ReengagementOffer.visible.order_by_day.for_app(app_id).each { |c| c.run_callbacks(:before_cache) }
+    reengagement_offers = ReengagementOffer.visible.order_by_day.for_app(app_id)
     Mc.distributed_put("mysql.reengagement_offers.#{app_id}.#{ReengagementOffer.acts_as_cacheable_version}", reengagement_offers, false, 1.day)
   end
 
