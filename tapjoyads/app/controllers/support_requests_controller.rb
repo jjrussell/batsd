@@ -48,10 +48,7 @@ private
       advertiser_offer_ids << click.advertiser_app_id unless advertiser_offer_ids.include?(click.advertiser_app_id)
       break if advertiser_offer_ids.length == 20
     end
-
-    @incomplete_offers = advertiser_offer_ids.collect do |offer_id|
-      Offer.find_in_cache(offer_id, false)
-    end.compact
+    @incomplete_offers = advertiser_offer_ids.collect { |offer_id| Offer.find_in_cache(offer_id, false) }.compact
   end
 
   def render_new_with_error(message)
