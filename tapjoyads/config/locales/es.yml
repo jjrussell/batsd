@@ -15,7 +15,7 @@ es:
         greater_than: ~
         greater_than_or_equal_to: ~
         inclusion: ~
-        invalid: ~
+        invalid: "es incorrecto"
         less_than: ~
         less_than_or_equal_to: ~
         not_a_number: ~
@@ -97,7 +97,7 @@ es:
       greater_than: ~
       greater_than_or_equal_to: ~
       inclusion: ~
-      invalid: ~
+      invalid: "es incorrecto"
       less_than: ~
       less_than_or_equal_to: ~
       not_a_number: ~
@@ -181,7 +181,7 @@ es:
       about: ~
       advertisers: ~
       blog: ~
-      copyright: ~
+      copyright: "Copyright &copy; %{year} Tapjoy, Inc. Todos Los Derechos Reservados. Tapjoy y el logo de Tapjoy son marcas registradas de Tapjoy, Inc. Todos los logos y marcas de terceras personas mencionadas son propiedad de sus respectivos dueños."
       developers: ~
       privacy: ~
     games:
@@ -196,7 +196,7 @@ es:
       advertisers_body: "Proponga su producto a millones de usuarios "
       advertisers_title: Anunciantes
       allow_marketing_emails: "Autorizar Tapjoy a mandarme ofertas por email"
-      almost_done: ~
+      almost_done: Ya está casi terminado.
       already_registered:
         one: "Has mandado una invitación de Tapjoy a %{name}"
         other: "Has mandado invitaciones de Tapjoy a %{name}"
@@ -210,9 +210,9 @@ es:
       change: cambiar
       change_linked_account: "Conectar con otra cuenta de Facebook"
       choose_section: "Elige una sección"
-      close: ~
+      close: cerrar
       collect: Colectar
-      collect_rewards: "Colectar ganancias"
+      collect_rewards: Conseguir mis recompensas
       connect_my_device: "Conectar mi móvil"
       connect_to_facebook: "Haz clic para conectarte a Facebook"
       connect_your_android: "Por favor, conecta tu móvil Android"
@@ -230,9 +230,9 @@ es:
       discover_apps: ~
       download_now: ~
       earn: "Gana %{currency}"
-      earn_rewards: ~
+      earn_rewards: Conseguir recompensas
       earn_title: "Bájate una de las aplicaciones abajo o visualiza uno de los anuncios para ganar %{currency} en %{app_name}"
-      earning_rewards: ~
+      earning_rewards: ¿Quieres conseguir moneda virtual gratuita para tus apps? ¡Tapjoy es el mejor sitio para ello!
       edit: editar
       email_device_link: ~
       email_notification: "Notificaciones por Email"
@@ -270,8 +270,8 @@ es:
       how_it_works_title: "¿Cómo funciona?"
       install_and_run: "Instala e inicia %{name}"
       install_android_app: ~
-      install_profile: ~
-      invalid_fields: ~
+      install_profile: ¡Crea tu perfil en la página siguiente, y empieza a descubrir nuevas aplicaciones!
+      invalid_fields: Incorrecto
       invite: "¡Invita a tus amigos!"
       invite_by_email: "Invita por Email"
       invite_email_body: |-
@@ -286,11 +286,11 @@ es:
       invite_title: "Manda una invitación por e-mail"
       invites_sent_to: ~
       issue_registering: "Ha ocurrido un problema con la creación de tu cuenta"
-      join_the_community: ~
-      join_the_community_blurb: ~
-      last_played: "Último jugado: %{game}"
-      link_account_header: ~
-      link_account_messaging: ~
+      join_the_community: Únete a la comunidad
+      join_the_community_blurb: ¡Únete a la comunidad Tapjoy y descubre nuevas apps recomendadas. Regístrate ahora!
+      last_played: "Recién abierto: %{game}"
+      link_account_header: ¿Quieres descubrir las mejores aplicaciones y conseguir contenidos extras para las aplicaciones que ya tienes? ¡Conecta tu móvil a Tapjoy.com!
+      link_account_messaging: Tapjoy te permite descubrir las mejores aplicaciones para iOS y Android, y conseguir contenidos extras para las aplicaciones que ya tienes. Necesitarás conectar tu telefono o tableta iOS o Android a Tapjoy.com. ¡Vuelve a %{tjm_url} desde tu iPhone o iPad, o a %{android_market_url} desde tu telefono o tableta Android! No te olvides de crear un perfil y de indicarnos cuáles son tus preferencias, para que podamos sugerirte nuevas aplicaciones.
       link_account_messaging_android_href: ~
       link_account_messaging_tjm_href: ~
       link_my_facebook: "Conectar con mi cuenta de Facebook"
@@ -313,16 +313,17 @@ es:
       or_learn_more: ~
       other_options: "Otras Opciones"
       our_tos_changed: "Nuestras %{terms_of_use} han cambiado. Por favor, revísalas y apruébelas para poder seguir."
-      password_changed: ~
+      password_changed: Contraseña cambiada.
       password_non_match: ~
+      post_to_facebook: ~
       post_to_facebook_content: "Visita Tapjoy, donde puedes descubrir las mejores apps y juegos nuevos, y tambien ganar moneda en las apps que te gustan. Es gratis, así que visita tapjoy.com hoy para comenzar a recibir recomendaciones de apps personalizadas solo para tí"
       privacy_policy_href: "Reglas de confidencialidad"
       profile: Yo
       profile_error: ~
-      profile_update: ~
+      profile_update: Tu perfil está actualizado
       provide_other_email: "Por favor, introduce un email que no sea el tuyo"
       recipients_label: "Usa comas para separar las direcciones de correo electrónico"
-      recommend_apps: ~
+      recommend_apps: Tapjoy se basa en las aplicaciones que ya usas para proponerte nuevas apps
       recommendations: "Recomendaciones"
       recommendations_smart: "Juegos recomendados"
       registering: Registrándote
@@ -406,7 +407,7 @@ es:
       comment: Comentario
       confirm_password: "Confirmar la contraseña"
       continue: Continuar
-      copyright: "Copyright &copy; %{year} Tapjoy, Inc. Todos Los Derechos Reservados. Tapjoy y el logo de Tapjoy son marcas registradas de Tapjoy, Inc.  Todos los logos y marcas de terceras personas mencionadas son propiedad de sus respectivos dueños."
+      copyright: "Copyright &copy; %{year} Tapjoy, Inc. Todos Los Derechos Reservados. Tapjoy y el logo de Tapjoy son marcas registradas de Tapjoy, Inc. Todos los logos y marcas de terceras personas mencionadas son propiedad de sus respectivos dueños."
       country: País
       day: Día
       earn_verb: Gana
@@ -434,7 +435,7 @@ es:
       name: Nombre
       new_password: "Nueva contraseña"
       nickname: Apodo
-      none: ~
+      none: Ninguno
       ok: OK
       options: Opciones
       other: Otro

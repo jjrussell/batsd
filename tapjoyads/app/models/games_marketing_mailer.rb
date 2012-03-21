@@ -1,15 +1,17 @@
 class GamesMarketingMailer < ActionMailer::Base
   include SendGrid
 
-  self.delivery_method = :smtp
-  self.smtp_settings = {
-    :address => 'smtp.sendgrid.net',
-    :port => 587,
-    :domain => 'tapjoy.com',
-    :authentication => :plain,
-    :user_name => SEND_GRID_USER,
-    :password => SEND_GRID_PASSWD
-  }
+  if Rails.env.production?
+    self.delivery_method = :smtp
+    self.smtp_settings = {
+      :address => 'smtp.sendgrid.net',
+      :port => 587,
+      :domain => 'tapjoy.com',
+      :authentication => :plain,
+      :user_name => SENDGRID_USER,
+      :password => SENDGRID_PASSWD
+    }
+  end
 
   sendgrid_category :use_subject_lines
   sendgrid_enable :clicktrack, :opentrack, :subscriptiontrack
