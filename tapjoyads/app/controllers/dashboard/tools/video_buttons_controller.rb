@@ -24,7 +24,6 @@ class Dashboard::Tools::VideoButtonsController < Dashboard::DashboardController
 
   def create
     @video_button = VideoButton.new(params[:video_button])
-    @video_button.item = params[:video_button][:item]
     log_activity(@video_button)
 
     if @video_button.save
@@ -43,7 +42,6 @@ class Dashboard::Tools::VideoButtonsController < Dashboard::DashboardController
   def update
     log_activity(@video_button)
 
-    @video_button.item = params[:video_button][:item]
     if @video_button.update_attributes(params[:video_button])
       unless @video_offer.valid_for_update_buttons?
         flash.now[:warning] = 'Support at most 2 enabled buttons.'
