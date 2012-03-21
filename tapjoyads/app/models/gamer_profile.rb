@@ -8,6 +8,9 @@ class GamerProfile < ActiveRecord::Base
   validate :at_least_age_thirteen
   validates_inclusion_of :gender, :in => %w{ male female }, :allow_nil => true, :allow_blank => true
 
+  delegate :blocked?, :to => :gamer
+  after_save :check_suspicious_activities, :unless => :blocked?
+
   def at_least_age_thirteen
     unless birthdate.nil?
       turns_thirteen = birthdate.years_since(13)
@@ -44,5 +47,22 @@ class GamerProfile < ActiveRecord::Base
     end
 
     save!
+  end
+
+  def too_many_referrals?
+    referral_count >= Gamer::MAX_REFERRAL_THRESHOLD
+  end
+
+  private
+
+  def check_suspicious_activities
+    if too_many_referrals? && referral_count % 10 == 0
+      message = {
+        :gamer_id        => gamer_id,
+        :behavior_type   => 'referral_count',
+        :behavior_result => referral_count,
+      }
+      Sqs.send_message(QueueNames::SUSPICIOUS_GAMERS, message.to_json)
+    end
   end
 end

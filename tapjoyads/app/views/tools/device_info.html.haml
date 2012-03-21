@@ -98,7 +98,8 @@
       %tr
         %td App Name
         %td Last run time
-        %td Award Currency
+        - if permitted_to? :award_currencies, :tools
+          %td Award Currency
     %tbody.show-five
       - @apps.each_with_index do |pair, i|
         - last_run_time, app = pair
@@ -107,11 +108,12 @@
             %strong
               = link_to_statz(app.name, app)
           %td= last_run_time.to_s(:pub_ampm_sec)
-          %td
-            - if app.is_publisher_offer?
-              - app.item.currencies .each do |currency|
-                - form_tag award_currencies_tools_path(:publisher_app_id => app.item, :currency_id => currency.id, :udid => params[:udid]) do
-                  = submit_tag currency.name
+          - if permitted_to? :award_currencies, :tools
+            %td
+              - if app.is_publisher_offer?
+                - app.item.currencies .each do |currency|
+                  - form_tag award_currencies_tools_path(:publisher_app_id => app.item, :currency_id => currency.id, :udid => params[:udid]) do
+                    = submit_tag currency.name
   - if @apps.length > 5
     = link_to('(show all)', '#', { :id => 'show_more_apps' })
 
