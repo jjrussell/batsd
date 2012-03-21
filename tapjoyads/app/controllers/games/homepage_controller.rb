@@ -109,4 +109,22 @@ class Games::HomepageController < GamesController
     GamesMailer.deliver_link_device(current_gamer, ios_link_url, GAMES_ANDROID_MARKET_URL )
     render(:json => { :success => true })
   end
+
+  def record_local_request
+    error = 'missing params'
+    if params[:request_path]
+      begin
+        path = ActionController::Routing::Routes.recognize_path(params[:request_path])
+        params[:request_controller] = path[:controller]
+        params[:request_action] = path[:action]
+      rescue ActionController::RoutingError
+        error = 'unable to find corresponding controller/action'
+      end
+    end
+    if params[:request_controller].present? && params[:request_action].present?
+      @tjm_request.update_path(params[:request_controller], params[:request_action])
+      render(:json => { :success => true }, :status => 200) and return
+    end
+    render_json_error([error], status = 400)
+  end
 end

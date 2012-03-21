@@ -44,6 +44,12 @@ class TjmRequest < SyslogMessage
     self.device_id                = device_id if device_id.present?
   end
 
+  def update_path(request_controller, request_action)
+    self.controller = request_controller
+    self.action = request_action
+    self.path = lookup_path
+  end
+
   private
 
   def lookup_path
