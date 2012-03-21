@@ -259,26 +259,4 @@ class ApplicationController < ActionController::Base
     ] + more_data
     Digest::SHA256.hexdigest(hash_bits.join(':'))
   end
-
-  def find_incomplete_offers
-    if params[:currency_id].present?
-      conditions = ActiveRecord::Base.sanitize_conditions("udid = ? and currency_id = ? and clicked_at > ? and manually_resolved_at is null", params[:udid], params[:currency_id], 30.days.ago.to_f.to_s)
-    else
-      conditions = ActiveRecord::Base.sanitize_conditions("udid = ? and clicked_at > ? and manually_resolved_at is null", params[:udid], 30.days.ago.to_f.to_s)
-    end
-
-    advertiser_offer_ids = []
-    Click.select_all(:conditions => conditions).sort_by { |click| -click.clicked_at.to_f }.each do |click|
-      advertiser_offer_ids << click.advertiser_app_id unless advertiser_offer_ids.include?(click.advertiser_app_id)
-      break if advertiser_offer_ids.length == 20
-    end
-
-    @incomplete_offers = advertiser_offer_ids.collect do |offer_id|
-      begin
-        Offer.find_in_cache(offer_id)
-      rescue ActiveRecord::RecordNotFound
-        nil
-      end
-    end.compact
-  end
 end
