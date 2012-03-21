@@ -28,16 +28,15 @@ class InventoryManagementController < WebsiteController
 
   def promoted_offers
     if @app
-      @app.update_promoted_offers(params[:promoted_offers] || [])
-      redirect_to :action => :per_app, :current_app => @app.id and return
+      flash[:error] = "Unable to save the list of promoted offers" unless @app.update_promoted_offers(params[:promoted_offers] || [])
     end
-    redirect_to per_app_inventory_management_path
+    redirect_to per_app_inventory_management_path(@app ? { :current_app => @app.id } : nil)
   end
 
   private
 
   def init_partner_promoted_offers
-    @selected_offers = current_partner.promoted_offer_ids
+    @selected_offers = current_partner.get_promoted_offers
     @available_offers = current_partner.offers_for_promotion
   end
 
@@ -50,12 +49,12 @@ class InventoryManagementController < WebsiteController
     end
     return unless @app && @app.primary_currency
 
-    @currently_promoted = @app.primary_currency.promoted_offer_ids
+    @currently_promoted = @app.primary_currency.get_promoted_offers
 
     app_platform = @app.platform.to_sym
     return unless app_platform
 
-    current_partner.promoted_offer_ids.each do |promoted_offer|
+    current_partner.get_promoted_offers.each do |promoted_offer|
       offer = Offer.find(promoted_offer)
       @global_offers.push(offer) if offer.promotion_platform == app_platform
     end
@@ -65,7 +64,7 @@ class InventoryManagementController < WebsiteController
     @available_offers.map! { |offer| [offer.name, offer.id] }
   end
 
- def get_symbol_by_platform(prefix, platform)
+  def get_symbol_by_platform(prefix, platform)
     "#{prefix}#{platform}".to_sym
   end
 

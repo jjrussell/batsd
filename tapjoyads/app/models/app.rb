@@ -337,7 +337,9 @@ class App < ActiveRecord::Base
   end
 
   def update_promoted_offers(offer_ids)
-    currencies.each { |currency| currency.update_promoted_offers(offer_ids)}
+    success = true
+    currencies.each { |currency| success &= currency.update_promoted_offers(offer_ids)}
+    success
   end
 
   def update_offers

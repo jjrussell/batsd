@@ -44,8 +44,8 @@ describe GetOffersController do
         @offer3 = Factory(:app, :partner => @partner).primary_offer
         @offer4 = Factory(:app, :partner => @partner).primary_offer
 
-        @currency.stubs(:partner_promoted_offer_ids).returns([@offer2.id])
-        @currency.stubs(:promoted_offer_ids).returns([@offer3.id])
+        @currency.stubs(:partner_get_promoted_offers).returns([@offer2.id])
+        @currency.stubs(:get_promoted_offers).returns([@offer3.id])
         OfferCacher.stubs(:get_unsorted_offers_prerejected).returns([@offer1, @offer2, @offer3, @offer4])
         App.stubs(:find_in_cache).returns(@app)
         Currency.stubs(:find_in_cache).returns(@currency)
@@ -54,8 +54,6 @@ describe GetOffersController do
       it "favors the promoted inventory" do
         get(:index, @params)
         offer_list = assigns(:offer_list)
-        offer_list.each do |offer|
-        end
         assert( offer_list == [ @offer2, @offer3, @offer1, @offer4 ] || offer_list == [ @offer3, @offer2, @offer1, @offer4 ] )
       end
     end

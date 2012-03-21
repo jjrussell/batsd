@@ -1,6 +1,8 @@
 class Partner < ActiveRecord::Base
   include UuidPrimaryKey
 
+  json_set_field :promoted_offers
+
   has_many :orders
   has_many :payouts
   has_many :currencies
@@ -314,12 +316,8 @@ class Partner < ActiveRecord::Base
     available_offers
   end
 
-  def promoted_offer_ids
-    Set.new(promoted_offers.split(';'))
-  end
-
   def update_promoted_offers(offer_ids)
-    self.promoted_offers = offer_ids.sort.join(';')
+    self.promoted_offers = offer_ids.sort
     changed? ? save : true
   end
 
