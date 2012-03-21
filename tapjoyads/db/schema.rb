@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120319160900) do
+ActiveRecord::Schema.define(:version => 20120321160600) do
 
   create_table "action_offers", :id => false, :force => true do |t|
     t.string   "id",                    :limit => 36,                    :null => false
@@ -117,29 +117,18 @@ ActiveRecord::Schema.define(:version => 20120319160900) do
     t.string   "id",                            :limit => 36,                    :null => false
     t.string   "partner_id",                    :limit => 36,                    :null => false
     t.string   "name",                                                           :null => false
-    t.text     "description"
-    t.integer  "price",                                       :default => 0
     t.string   "platform"
-    t.string   "store_id"
     t.integer  "color"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "age_rating"
     t.integer  "rotation_direction",                          :default => 0,     :null => false
     t.integer  "rotation_time",                               :default => 0,     :null => false
     t.boolean  "hidden",                                      :default => false, :null => false
-    t.integer  "file_size_bytes"
-    t.string   "supported_devices"
     t.string   "enabled_rating_offer_id",       :limit => 36
     t.string   "secret_key",                                                     :null => false
-    t.datetime "released_at"
-    t.float    "user_rating"
-    t.string   "categories"
-    t.text     "countries_blacklist"
-    t.integer  "papaya_user_count"
-    t.boolean  "reengagement_campaign_enabled"
     t.integer  "active_gamer_count",                          :default => 0
     t.string   "protocol_handler"
+    t.boolean  "reengagement_campaign_enabled",               :default => false
   end
 
   add_index "apps", ["id"], :name => "index_apps_on_id", :unique => true

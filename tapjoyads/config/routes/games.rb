@@ -52,7 +52,7 @@ ActionController::Routing::Routes.draw do |map|
     m.resources :android, :controller => 'games/android', :action => :index
 
     m.resources :social, :only => [:index], :controller => 'games/social'
-    map.with_options :controller => 'games/social', :name_prefix => 'games_social_' do |social|
+    m.with_options :controller => 'games/social', :name_prefix => 'games_social_' do |social|
       social.invite_email_friends 'invite_email_friends', :action => :invite_email_friends
       social.connect_facebook_account 'social/connect_facebook_account', :action => :connect_facebook_account
       social.send_email_invites 'send_email_invites', :action => :send_email_invites

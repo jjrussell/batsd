@@ -1,0 +1,12 @@
+- @page_title = 'Ops'
+
+%h1 Operations Utilities
+
+- if has_permissions_for_one_of? :admin, :ops
+  %ul
+    - if permitted_to? :elb_status, :ops
+      %li= link_to 'ELB Status', elb_status_ops_path
+    - if permitted_to? :as_groups, :ops
+      %li= link_to 'Auto-Scaling Groups', as_groups_ops_path
+    - if permitted_to? :service_stats, :ops
+      %li= link_to 'Service Stats', service_stats_ops_path

@@ -43,6 +43,8 @@ Rails::Initializer.run do |config|
   config.gem 'typhoeus', :version => '0.2.4'
   config.gem 'aws-sdk', :version => '1.1.4'
   config.gem 'therubyracer', :version => '0.9.10', :lib => 'v8'
+  config.gem 'SystemTimer', :version => '1.2.3', :lib => 'system_timer'
+  config.gem 'redis', :version => '2.2.2'
 
   # These gems should be vendored
   config.gem 'acts-as-approvable', :version => '0.6.9'
@@ -62,7 +64,7 @@ Rails::Initializer.run do |config|
   config.gem 'plist', :version => '3.1.0'
   config.gem 'read_from_slave', :version => '0.4.0'
   config.gem 'ruby-hmac', :version => '0.4.0', :lib => 'ruby_hmac'
-  config.gem 'sass', :version => '3.1.7'
+  config.gem 'sass', :version => '3.1.15'
   config.gem 'sendgrid', :version => '1.0.1'
   config.gem 'syslog-logger', :version => '1.6.4', :lib => 'syslog_logger'
   config.gem 'uuidtools', :version => '2.1.2'

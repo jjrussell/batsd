@@ -219,7 +219,7 @@ en:
       about: "About Tapjoy"
       advertisers: Advertisers
       blog: Blog
-      copyright: "Copyright &copy; 2012 Tapjoy, Inc. All Rights Reserved. Tapjoy and the Tapjoy logo are trademarks or registered trademarks of Tapjoy, Inc.  All third party logos and trademarks mentioned are the property of their respective owners."
+      copyright: "Copyright &copy; %{year} Tapjoy, Inc. All Rights Reserved. Tapjoy and the Tapjoy logo are trademarks or registered trademarks of Tapjoy, Inc. All third party logos and trademarks mentioned are the property of their respective owners."
       developers: Developers
       privacy: "Privacy Policy"
     games:
@@ -341,7 +341,7 @@ en:
       issue_registering: "There was an issue registering your account"
       join_the_community: "Join the community"
       join_the_community_blurb: "Discover more with Tapjoy community app ratings and reviews. Get started today and include your own!"
-      last_played: "Last played: %{game}"
+      last_played: "Last opened: %{game}"
       link_account_header: "Tapjoy is your one stop shop to discover the hottest apps while also earning currency in apps you already play. To get the full Tapjoy experience, you'll need to connect your device."
       link_account_messaging: "Tapjoy is your one stop shop to discover the hottest apps on iOS and Android while also earning currency in apps you already play. In order to get the full Tapjoy experience, you'll need to connect your iOS or Android device. Simply return to %{tjm_url} on your iOS device or %{android_market_url} on your Android device to get started. In the mean time, feel free to check out the site and create your profile so we can offer you personalized recommendations."
       link_account_messaging_android_href: "download the Android app"
@@ -369,6 +369,7 @@ en:
       our_tos_changed: "Our %{terms_of_use} have changed. Please review and indicate your agreement below."
       password_changed: "Your password has been changed."
       password_non_match: "Password and Confirmation do not match"
+      post_to_facebook: "Post to Facebook!"
       post_to_facebook_content: "Check out Tapjoy where you can discover the best new apps and games, while also earning currency in apps you love. It's free to join so visit tapjoy.com today to start getting app recommendations just for you."
       privacy_policy_href: "privacy policy"
       profile: Me
@@ -409,8 +410,8 @@ en:
       tap_that: "Just tap %{icon} and select %{button}"
       tapjoy_picks: "Tapjoy Picks"
       terms_of_use_href: "terms of use"
-      thanks_contact_support: "Thank you for contacting our support.  One of our agents will get back to you as soon as possible."
-      thanks_contact_us: "Thank you for contacting us.  We'll will get back to you as soon as possible."
+      thanks_contact_support: "Thank you for contacting our support. One of our agents will get back to you as soon as possible."
+      thanks_contact_us: "Thank you for contacting us. We'll will get back to you as soon as possible."
       thanks_feedback: "Thanks for your feedback!"
       thanks_report_bug: "Thank you for reporting the bug. We'll examine and verify it as soon as possible."
       thats_you: "that's you"
@@ -472,7 +473,7 @@ en:
       comment: Comment
       confirm_password: "Confirm Password"
       continue: Continue
-      copyright: "Copyright &copy; %{year} Tapjoy, Inc. All Rights Reserved. Tapjoy and the Tapjoy logo are trademarks or registered trademarks of Tapjoy, Inc.  All third party logos and trademarks mentioned are the property of their respective owners."
+      copyright: "Copyright &copy; %{year} Tapjoy, Inc. All Rights Reserved. Tapjoy and the Tapjoy logo are trademarks or registered trademarks of Tapjoy, Inc. All third party logos and trademarks mentioned are the property of their respective owners."
       country: Country
       day: Day
       earn_verb: Earn

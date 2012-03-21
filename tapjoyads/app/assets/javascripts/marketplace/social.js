@@ -69,7 +69,7 @@
         var pageSize = options.pageSize;
         var socialFriends = options.socialFriends;
         var hasNext = socialFriends.length >= pageSize;
-        var template = Tap.Utils.underscoreTemplate($(".ajax-loader script").html());
+        var template = Tap.Utils.underscoreTemplate($("#twitter-friends script").html());
 
         // local functions
         var resetDirectionButtons = function() {
@@ -271,7 +271,7 @@
 
   $(function () {
     var loadFriendsOptions = window.loadFriendsOptions;
-    $(".ajax-loader").bind("ajax-loader-success", function (ev, data) {
+    $("#twitter-friends").bind("ajax-loader-success", function (ev, data) {
       if(data.success === false){
         if(data.error) {
           notify(data.error);

@@ -1,6 +1,7 @@
 class Currency < ActiveRecord::Base
   include UuidPrimaryKey
   acts_as_cacheable
+  acts_as_approvable :on => :create
 
   json_set_field :promoted_offers
 
@@ -66,6 +67,7 @@ class Currency < ActiveRecord::Base
   before_validation_on_create :assign_default_currency_group
   before_create :set_hide_rewarded_app_installs, :set_values_from_partner_and_reseller, :set_promoted_offers
   before_update :update_spend_share
+  before_update :reset_to_pending_if_rejected
   after_cache :cache_by_app_id
   after_cache_clear :clear_cache_by_app_id
 
@@ -224,12 +226,16 @@ class Currency < ActiveRecord::Base
     self.reseller_spend_share = reseller_id? ? reseller.reseller_rev_share * spend_share_ratio : nil
   end
 
+  def after_approve(approval)
+    self.tapjoy_enabled = true
+    self.save
+  end
+
   def rewarded?
     conversion_rate > 0
   end
 
   private
-
   def cache_by_app_id
     currencies = Currency.find_all_by_app_id(app_id, :order => 'ordinal ASC').each { |c| c.run_callbacks(:before_cache) }
     Mc.distributed_put("mysql.app_currencies.#{app_id}.#{Currency.acts_as_cacheable_version}", currencies, false, 1.day)
@@ -265,4 +271,11 @@ class Currency < ActiveRecord::Base
     true
   end
 
+  def reset_to_pending_if_rejected
+    if self.rejected?
+      self.approval.destroy
+      new_approval = Approval.new(:item_id => id, :item_type => self.class.name, :event => 'create', :created_at => nil, :updated_at => nil)
+      new_approval.save
+    end
+  end
 end

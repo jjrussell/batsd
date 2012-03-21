@@ -172,7 +172,9 @@ class DisplayAdController < ApplicationController
       font = (Rails.env.production? || Rails.env.staging?) ? 'Arial-Unicode' : ''
 
       if (offer.rewarded? && currency.rewarded?) && offer.item_type != 'TestOffer'
-        text = "Earn #{currency.get_visual_reward_amount(offer, display_multiplier)} #{currency.name} download \\n#{offer.name}"
+        text = "Earn #{currency.get_visual_reward_amount(offer, display_multiplier)} #{currency.name}"
+        text << ' download' if text.length <= 20
+        text << "\n#{offer.name}"
       else
         text = offer.name
       end
