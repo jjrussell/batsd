@@ -14,7 +14,7 @@
         %td= approval.item.app.name
         %td #{time_ago_in_words(approval.item.created_at)} ago
         %td= render :partial => 'owner_select', :locals => {:approval => approval}
-        %td= approval.state
+        %td= approval.state.gsub(/^approved$/, 'accepted')
         %td.actions
           - if approval.pending?
             = link_to('Approve', approve_tools_currency_approval_path(approval.id), :class => 'approve')
