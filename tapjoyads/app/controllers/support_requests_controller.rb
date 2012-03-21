@@ -41,12 +41,6 @@ private
     return unless verify_records([@currency, @app])
   end
 
-  def render_new_with_error(message)
-    find_incomplete_offers
-    flash.now[:error] = message
-    render(:action => :new) and return
-  end
-
   def find_incomplete_offers
     conditions = ActiveRecord::Base.sanitize_conditions("udid = ? and currency_id = ? and clicked_at > ? and manually_resolved_at is null", params[:udid], params[:currency_id], 30.days.ago.to_f.to_s)
     advertiser_offer_ids = []
@@ -58,5 +52,11 @@ private
     @incomplete_offers = advertiser_offer_ids.collect do |offer_id|
       Offer.find_in_cache(offer_id, false)
     end.compact
+  end
+
+  def render_new_with_error(message)
+    find_incomplete_offers
+    flash.now[:error] = message
+    render(:action => :new) and return
   end
 end
