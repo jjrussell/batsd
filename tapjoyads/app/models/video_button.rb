@@ -5,7 +5,6 @@ class VideoButton < ActiveRecord::Base
   belongs_to :tracking_offer, :class_name => 'Offer'
 
   validates_presence_of :name
-  validates_presence_of :url, :if => :validate_url?
   validates_length_of :name, :maximum => 20, :message => "Please limit the name to 20 characters"
   validates_numericality_of :ordinal, :only_integer => true
 
@@ -42,10 +41,6 @@ class VideoButton < ActiveRecord::Base
   end
 
   private
-  def validate_url?
-    self.tracking_offer.blank? && @item.blank?
-  end
-
   def update_offer
     video_offer.update_buttons
   end

@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120314201830) do
+ActiveRecord::Schema.define(:version => 20120321183409) do
 
   create_table "action_offers", :id => false, :force => true do |t|
     t.string   "id",                    :limit => 36,                    :null => false
@@ -1015,7 +1015,7 @@ ActiveRecord::Schema.define(:version => 20120314201830) do
     t.string   "id",                :limit => 36,                   :null => false
     t.string   "video_offer_id",    :limit => 36,                   :null => false
     t.string   "name",                                              :null => false
-    t.string   "url",                                               :null => false
+    t.string   "url"
     t.integer  "ordinal"
     t.boolean  "enabled",                         :default => true
     t.datetime "created_at"
