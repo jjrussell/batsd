@@ -23,6 +23,7 @@ class Tools::ApprovalsController < WebsiteController
 
   def mine
     @conditions[:owner_id] = current_user.id
+    @hide_owner = true
 
     @approvals = Approval.all(:conditions => @conditions, :order => 'created_at ASC')
     render :index
@@ -76,7 +77,10 @@ class Tools::ApprovalsController < WebsiteController
     @conditions ||= {}
 
     @conditions[:owner_id] = params[:owner_id] if params[:owner_id].present?
-    @conditions[:item_type] = params[:item_type] if params[:item_type].present?
+    @conditions[:item_type] = params[:type].to_s.capitalize if params[:type].present?
+    @conditions[:item_type] ||= params[:item_type] if params[:item_type].present?
+
+    @hide_type = params[:type].present?
   end
 
   # Check for the selected models partial, use the generic one if it doesn't exist
