@@ -1014,6 +1014,8 @@ ActiveRecord::Schema.define(:version => 20120406173403) do
     t.boolean  "enabled",                         :default => true
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "item_id",           :limit => 36
+    t.string   "item_type"
     t.string   "tracking_offer_id", :limit => 36
   end
 

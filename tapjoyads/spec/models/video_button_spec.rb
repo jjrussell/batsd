@@ -12,12 +12,7 @@ describe VideoButton do
   end
 
   describe '#valid?' do
-    it "should require name to be set" do
-      pending "failed during Rails 3 integration"
-      should validate_presence_of :url
-    end
     it { should validate_presence_of :name }
-
     it { should validate_numericality_of :ordinal }
   end
 
@@ -47,20 +42,9 @@ describe VideoButton do
      end
 
      it 'should generate a tracking offer' do
-       @video_button.tracking_offer.should_not be
-       @video_button.save
-       @video_button.tracking_offer.should be
+       subject.tracking_offer = nil
+       subject.save
+       subject.tracking_offer.should be_present
      end
    end
-
-  context 'without an item present' do
-     before(:each) do
-       subject.item = nil
-     end
-
-     it 'should not validate with an empty url' do
-       subject.url = nil
-       subject.should_not be_valid
-     end
-  end
 end
