@@ -128,7 +128,11 @@ ActiveRecord::Schema.define(:version => 20120321163140) do
     t.string   "secret_key",                                                     :null => false
     t.integer  "active_gamer_count",                          :default => 0
     t.string   "protocol_handler"
+<<<<<<< HEAD
     t.boolean  "reengagement_campaign_enabled",               :default => false
+=======
+    t.string   "enabled_deeplink_offer_id",     :limit => 36
+>>>>>>> Added DeeplinkOffer
   end
 
   add_index "apps", ["id"], :name => "index_apps_on_id", :unique => true
@@ -212,6 +216,7 @@ ActiveRecord::Schema.define(:version => 20120321163140) do
     t.string   "reseller_id",                                :limit => 36
     t.decimal  "reseller_spend_share",                                     :precision => 8, :scale => 6
     t.boolean  "whitelist_overridden",                                                                   :default => false, :null => false
+    t.string   "enabled_deeplink_offer_id",                  :limit => 36
   end
 
   add_index "currencies", ["app_id"], :name => "index_currencies_on_app_id"
@@ -235,6 +240,21 @@ ActiveRecord::Schema.define(:version => 20120321163140) do
   end
 
   add_index "currency_groups", ["id"], :name => "index_currency_groups_on_id", :unique => true
+
+  create_table "deeplink_offers", :id => false, :force => true do |t|
+    t.string   "id",          :limit => 36, :null => false
+    t.string   "app_id",      :limit => 36, :null => false
+    t.string   "currency_id", :limit => 36, :null => false
+    t.string   "partner_id",  :limit => 36, :null => false
+    t.string   "name",                      :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "deeplink_offers", ["app_id"], :name => "index_deeplink_offers_on_app_id"
+  add_index "deeplink_offers", ["currency_id"], :name => "index_deeplink_offers_on_currency_id"
+  add_index "deeplink_offers", ["id"], :name => "index_deeplink_offers_on_id", :unique => true
+  add_index "deeplink_offers", ["partner_id"], :name => "index_deeplink_offers_on_partner_id"
 
   create_table "earnings_adjustments", :id => false, :force => true do |t|
     t.string   "id",         :limit => 36, :null => false
