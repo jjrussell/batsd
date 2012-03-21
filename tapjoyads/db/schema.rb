@@ -129,7 +129,11 @@ ActiveRecord::Schema.define(:version => 20120419190829) do
     t.string   "secret_key",                                                     :null => false
     t.integer  "active_gamer_count",                          :default => 0
     t.string   "protocol_handler"
+<<<<<<< HEAD
     t.boolean  "reengagement_campaign_enabled",               :default => false
+=======
+    t.string   "enabled_deeplink_offer_id",     :limit => 36
+>>>>>>> Added DeeplinkOffer
   end
 
   add_index "apps", ["id"], :name => "index_apps_on_id", :unique => true
@@ -235,6 +239,7 @@ ActiveRecord::Schema.define(:version => 20120419190829) do
     t.string   "reseller_id",                                :limit => 36
     t.decimal  "reseller_spend_share",                                     :precision => 8, :scale => 6
     t.boolean  "whitelist_overridden",                                                                   :default => false, :null => false
+    t.string   "enabled_deeplink_offer_id",                  :limit => 36
     t.text     "promoted_offers",                                                                                           :null => false
   end
 
