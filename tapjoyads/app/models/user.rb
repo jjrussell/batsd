@@ -81,7 +81,7 @@ class User < ActiveRecord::Base
   end
 
   def after_approve(approval)
-    ApprovalMailer.deliver_approved(email, :user, :subject => 'Your account has been approved on Tapjoy!', :cc => approval_ccs(approval))
+    ApprovalMailer.deliver_approved(email, :user, :subject => 'Your account has been accepted on Tapjoy!', :cc => approval_ccs(approval))
   end
 
   def after_reject(approval)
