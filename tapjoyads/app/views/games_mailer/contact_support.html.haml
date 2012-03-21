@@ -7,7 +7,8 @@
     UDID:
     = link_to(@device.device_id, device_info_tools_url(:udid => @device.device_id, :host => URI.parse(DASHBOARD_URL).host))
     %br
-    Offer: STUFF - ADD HYPERLINK
+    Offer:
+    = link_to(@offer.name, statz_url(:id => @offer.id, :host => URI.parse(DASHBOARD_URL).host))
     %br
     Publisher Partner: STUFF - ADD HYPERLINK
     %br
@@ -15,7 +16,8 @@
     %br
     Publisher User: STUFF - ADD HYPERLINK
     %br
-    Currency: STUFF - ADD HYPERLINK
+    Currency:
+    = @offer.item.currency.present?
     %br
     Language Code: #{ @language_code }
     %br
@@ -25,7 +27,7 @@
     %br
     Support Request: STUFF - ADD HYPERLINK
     %br
-    Click: STUFF - ADD HYPERLINK
+    Click: STUFF
     %br
     %br
     Description
