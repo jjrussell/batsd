@@ -3,6 +3,7 @@
     %tr
       %th Email
       %th Country
+      %th Type
       %th Age
       %th Owner
       %th State
@@ -12,6 +13,7 @@
       %tr
         %td= approval.item.email
         %td= approval.item.country
+        %td= approval.item.account_type.join(', ')
         %td= time_ago_in_words(approval.created_at)
         %td= render :partial => 'owner_select', :locals => {:approval => approval}
         %td= approval.state
