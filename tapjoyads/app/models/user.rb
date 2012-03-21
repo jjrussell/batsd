@@ -81,11 +81,11 @@ class User < ActiveRecord::Base
   end
 
   def after_approve(approval)
-    ApprovalMailer.deliver_approved(email, :user, :subject => 'Your account has been accepted on Tapjoy!', :cc => approval_ccs(approval))
+    ApprovalMailer.deliver_approved(email, :user, :subject => 'Your account has been accepted at Tapjoy!', :cc => approval_ccs(approval))
   end
 
   def after_reject(approval)
-    ApprovalMailer.deliver_rejected(email, :user, :subject => 'Your account has been rejected on Tapjoy!', :cc => approval_ccs(approval))
+    ApprovalMailer.deliver_rejected(email, :user, :subject => 'Your account has been rejected at Tapjoy!', :cc => approval_ccs(approval))
   end
 
   # Make sure nil comes back as an empty array
