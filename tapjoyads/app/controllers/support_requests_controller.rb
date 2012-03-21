@@ -56,11 +56,7 @@ private
     end
 
     @incomplete_offers = advertiser_offer_ids.collect do |offer_id|
-      begin
-        Offer.find_in_cache(offer_id)
-      rescue ActiveRecord::RecordNotFound
-        nil
-      end
+      Offer.find_in_cache(offer_id, false)
     end.compact
   end
 end
