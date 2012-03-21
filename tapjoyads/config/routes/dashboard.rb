@@ -31,8 +31,9 @@ ActionController::Routing::Routes.draw do |map|
     app.resources :virtual_goods, :as => 'virtual-goods', :only => [ :show, :update, :new, :create, :index ],
       :collection => { :reorder => :post }, :controller => 'apps/virtual_goods'
     app.resources :action_offers, :only => [ :new, :create, :edit, :update, :index ], :member => { :toggle => :post, :preview => :get }, :collection => { :TJCPPA => :get, :TapjoyPPA => :get }, :controller => 'apps/action_offers'
-    app.resources :reengagement_offers, :only => [ :new, :create, :edit, :update, :index ], :member => { :toggle => :post }, :controller => 'apps/reengagement_offers'
+    app.resources :reengagement_offers, :except => [ :show ], :collection => { :update_status => :post }, :controller => 'apps/reengagement_offers'
   end
+  map.resources :reengagement_rewards, :only => [ :show ]
   map.with_options :controller => :offer_creatives, :path_prefix => 'offer_creatives/:id', :name_prefix => 'offer_creatives_' do |offer|
     offer.preview '', :action => :show, :conditions => { :method => :get }
     offer.with_options :path_prefix => 'offer_creatives/:id/:image_size' do |s|
@@ -71,9 +72,9 @@ ActionController::Routing::Routes.draw do |map|
   # Admin tools routes
   map.resources :tools, :only => :index,
     :collection => { :monthly_data => :get, :new_transfer => :get,
-                     :money => :get, :failed_sdb_saves => :get, :disabled_popular_offers => :get, :as_groups => :get,
+                     :money => :get, :failed_sdb_saves => :get, :disabled_popular_offers => :get,
                      :sdb_metadata => :get, :reset_device => :get, :send_currency_failures => :get, :sanitize_users => :get,
-                     :resolve_clicks => :post, :sqs_lengths => :get, :elb_status => :get, :ses_status => :get,
+                     :resolve_clicks => :post, :sqs_lengths => :get, :ses_status => :get,
                      :publishers_without_payout_info => :get, :publisher_payout_info_changes => :get, :device_info => :get,
                      :award_currencies => :post, :update_award_currencies => :post,
                      :update_user_roles => :post, :update_device => :post }
@@ -125,6 +126,15 @@ ActionController::Routing::Routes.draw do |map|
     tools.resources :wfhs, :only => [ :index, :new, :create, :edit, :update, :destroy ]
     tools.resources :clients, :only => [ :index, :show, :new, :create, :edit, :update], :member => { :add_partner => :post, :remove_partner => :post }
   end
+
+  # Operations tools routes
+  map.resources :ops, :only => :index,
+    :collection => {
+      :as_groups => :get,
+      :service_stats => :get,
+      :elb_status => :get,
+      :http_codes => :get,
+    }
 
   map.connect 'mail_chimp_callback/callback', :controller => :mail_chimp_callback, :action => :callback
 end

@@ -43,6 +43,8 @@ Rails::Initializer.run do |config|
   config.gem 'typhoeus', :version => '0.2.4'
   config.gem 'aws-sdk', :version => '1.1.4'
   config.gem 'therubyracer', :version => '0.9.10', :lib => 'v8'
+  config.gem 'SystemTimer', :version => '1.2.3', :lib => 'system_timer'
+  config.gem 'redis', :version => '2.2.2'
 
   # These gems should be vendored
   config.gem 'acts-as-approvable', :version => '0.6.9'
