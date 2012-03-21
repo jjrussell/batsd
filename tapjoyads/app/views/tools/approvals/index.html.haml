@@ -5,7 +5,10 @@
   - if @conditions[:item_type]
     for #{@conditions[:item_type].pluralize}
 
-- form_url = @hide_type ? tools_typed_approvals_path(:type => @conditions[:item_type].downcase) : tools_approvals_path
+- if @hide_type
+  - form_url = tools_typed_approvals_path(:type => @conditions[:item_type].downcase)
+- else
+  - form_url = {:action => :index, :controller => params[:calling_controller] || params[:controller] }
 - form_for(:approval, :url => form_url, :html => {:method => :get}) do |f|
   - unless @conditions[:state].is_a?(Array) # History page shouldn't allow selecting different states
     = label_tag('state', 'State')
@@ -19,3 +22,4 @@
   %button{:type => 'Submit'} Filter
 
 = render :partial => @table_partial
+
