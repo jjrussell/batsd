@@ -47,6 +47,16 @@
         = error_message_on @user, :country
     %tr
       %td &nbsp;
+      %td
+        = check_box_tag :account_type_advertiser
+        = label_tag :account_type_advertiser, 'I am an Advertiser'
+    %tr
+      %td &nbsp;
+      %td
+        = check_box_tag :account_type_publisher
+        = label_tag :account_type_publisher, 'I am an Publisher'
+    %tr
+      %td &nbsp;
       %td.terms
         = f.check_box :terms_of_service
         = f.label :terms_of_service, 'I Agree to the Tapjoy Terms of Service:'

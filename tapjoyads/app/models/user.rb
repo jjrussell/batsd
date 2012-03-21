@@ -29,6 +29,8 @@ class User < ActiveRecord::Base
   validates_presence_of :country, :on => :create,
     :message => 'Please select a country'
 
+  serialize :account_type, Array
+
   before_create :regenerate_api_key
   after_create :create_mail_chimp_entry
   after_save :update_auth_net_cim_profile

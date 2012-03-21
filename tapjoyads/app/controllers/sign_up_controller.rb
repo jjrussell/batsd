@@ -19,6 +19,11 @@ class SignUpController < WebsiteController
     @user.country = params[:user][:country]
     @user.current_partner = Partner.new(:name => params[:partner_name] || @user.email, :contact_name => @user.email, :accepted_publisher_tos => true)
     @user.partners << @user.current_partner
+
+    @user.account_type = []
+    @user.account_type << 'advertiser' if params[:account_type_advertiser] == '1'
+    @user.account_type << 'publisher' if params[:account_type_publisher] == '1'
+
     if @user.save_without_session_maintenance
       flash[:notice] = 'Account successfully created.'
       TapjoyMailer.deliver_partner_signup(@user.email)
