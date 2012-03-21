@@ -88,6 +88,11 @@ class User < ActiveRecord::Base
     ApprovalMailer.deliver_rejected(email, :user, :subject => 'Your account has been rejected on Tapjoy!', :cc => approval_ccs(approval))
   end
 
+  # Make sure nil comes back as an empty array
+  def account_type
+    (super || [])
+  end
+
 private
   def approval_ccs(approval)
     ccs = [approval.owner.try(:email)]
