@@ -59,7 +59,7 @@ class Dashboard::Tools::VideoButtonsController < Dashboard::DashboardController
 
 private
   def handle_params
-    if item_id = params[:video_button][:item_id]
+    if item_id = params[:video_button].delete(:item_id)
       type, id = item_id.split(':')
       params[:video_button][:item] = type.constantize.find(id)
     end
