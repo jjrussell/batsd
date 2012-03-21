@@ -53,6 +53,9 @@ class GamerDevice < ActiveRecord::Base
   validates_presence_of :gamer, :device_id, :name
   validates_uniqueness_of :device_id, :scope => [:gamer_id]
 
+  delegate :blocked?, :to => :gamer
+  after_save :check_suspicious_activities, :unless => :blocked?
+
   def device=(new_device)
     self.device_id = new_device.id
     if new_device.platform == 'android'
@@ -71,5 +74,19 @@ class GamerDevice < ActiveRecord::Base
       :device_type => device_type,
       :data        => ObjectEncryptor.encrypt(data),
     }
+  end
+
+  private
+
+  def check_suspicious_activities
+    devices_count = gamer.devices.count
+    if gamer.too_many_devices? && devices_count % 5 == 0
+      message = {
+        :gamer_id        => gamer_id,
+        :behavior_type   => 'devices_count',
+        :behavior_result => devices_count,
+      }
+      Sqs.send_message(QueueNames::SUSPICIOUS_GAMERS, message.to_json)
+    end
   end
 end
