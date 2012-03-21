@@ -80,9 +80,9 @@ ActionController::Routing::Routes.draw do |map|
   map.namespace :tools do |tools|
     tools.resources :approvals, :only => [:index], :collection => [:history, :mine], :member => [:approve, :reject, :assign]
     tools.with_options(:controller => 'approvals') do |a|
-      a.typed_approvals         ':type',          :action => :index
-      a.history_typed_approvals ':type/history',  :action => :history
-      a.mine_typed_approvals    ':type/mine',     :action => :mine
+      a.typed_approvals         'approvals/:type',          :action => :index
+      a.history_typed_approvals 'approvals/:type/history',  :action => :history
+      a.mine_typed_approvals    'approvals/:type/mine',     :action => :mine
     end
 
     tools.resources :premier_partners, :only => [ :index ]
