@@ -50,7 +50,7 @@
 
     = render 'games/shared/footer'
 
-    = css_tag("marketplace/locale/#{I18n.locale.to_s}.css") if ['de', 'es', 'fr', 'ja', 'ko'].include? I18n.locale.to_s
+    = css_tag("marketplace/locale/#{I18n.locale.to_s}.css") if ['de', 'es', 'fr', 'ja', 'ko', 'zh'].include? I18n.locale.to_s
 
     :javascript
       window.ENVIRONMENT = "#{Rails.env}";
