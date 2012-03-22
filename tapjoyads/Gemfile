@@ -80,3 +80,7 @@ group :test do
   gem 'rspec-rails', '1.3.4'
   gem 'spork', '0.8.5'
 end
+
+group :ops do
+  gem 'unicorn', '4.2.0'
+end
