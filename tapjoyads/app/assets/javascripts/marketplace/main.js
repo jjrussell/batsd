@@ -707,11 +707,10 @@ $(document).ready(function() {
         width: tjmViewContainer.width() - 4 + 'px'
       });
     }
-
     if(window.innerWidth > 500){
-      $('#recommendations').enableTouchScroll();
+      $('#recommendations').enableCarouselSwipe();
     }else{
-      $('#recommendations').disableTouchScroll();
+      $('#recommendations').disableCarouselSwipe();
     }
 
     var rows = $('#content .row');
@@ -743,6 +742,12 @@ $(document).ready(function() {
       cssClass : 'complete',
       minHeight: 175
     });
+
+    if(window.innerWidth > 500){
+      $('#recommendations').enableCarouselSwipe();
+    }else{
+      $('#recommendations').disableCarouselSwipe();
+    }
   }, 50);
 
   // Device Switcher
