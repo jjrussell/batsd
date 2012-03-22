@@ -18,3 +18,7 @@ public/stylesheets/*/*.css
 .sass-cache
 public/assets/*
 **.orig
+
+# Bundler
+vendor/bundle
+.bundle
