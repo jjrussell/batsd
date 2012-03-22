@@ -474,6 +474,7 @@ $(document).ready(function() {
         notify(_t('shared.generic_issue'));
       }
     });
+
   }());
 
   $('.button-bar').each(function(){
@@ -559,12 +560,14 @@ $(document).ready(function() {
 
 
   (function () {
-    var $flash = $('#flash-notice');
-
+    var $flash = $('#flash-notice, #flash-error');
     if ($flash.length === 0) { return; }
 
-    Tapjoy.Utils.notification({
-      message: $flash.html()
+    $flash.each(function () {
+      Tapjoy.Utils.notification({
+        message: $(this).html(),
+        type: $(this).attr("id").match(/error/) ? "error" : "normal"
+      });
     });
   }());
 
@@ -576,8 +579,19 @@ $(document).ready(function() {
       invalid;
 
     $$.click(function () {
-      if(invalid.length > 0) {
-        notify(_t('games.invalid_fields'));
+      var i, ii,
+          msg = "",
+          failed = invalid.length > 0,
+          curr_msg;
+
+      for (i = 0, ii = invalid.length; i<ii; i++) {
+        if (curr_msg = $(invalid[i]).data("validation-message")) {
+          msg += curr_msg + "<br />";
+        }
+      }
+
+      if (failed) {
+        notify(msg || _t('games.invalid_fields'));
         return false;
       }
     });

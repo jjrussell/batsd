@@ -19,9 +19,9 @@
       %b Enabled:
       = @app.reengagement_campaign_enabled? ? 'YES' : 'NO'
       - if @app.reengagement_campaign_enabled?
-        = button_to 'Disable Campaign', {:action => "update_status", :app_id => @app.id, :enabled => 0}, {:method => :post}
+        = button_to 'Disable Campaign', update_status_app_reengagement_offers_path({:app_id => @app.id, :enabled => 0})
       - else
-        = button_to 'Enable Campaign', {:action => "update_status", :app_id => @app.id, :enabled => 1}, {:method => :post}
+        = button_to 'Enable Campaign', update_status_app_reengagement_offers_path({:app_id => @app.id, :enabled => 1})
       %br
       %table
         %tr
@@ -48,17 +48,17 @@
                 = ro.reward_value
               %td
               %td
-                = link_to 'Preview', reengagement_rewards_path({:id => ro.id})
+                = link_to 'Preview', reengagement_reward_path(:id => ro.id)
               %td
               %td
-                = link_to 'Edit', :action => "edit", :id => ro.id
+                = link_to 'Edit', edit_app_reengagement_offer_path(:id => ro.id)
               %td
               %td
                 - if ro == @campaign.last
-                  = link_to 'Remove', {:action => "destroy", :app_id => @app.id, :id => ro.id}, {:method => :delete}
+                  = link_to 'Remove', app_reengagement_offer_path(:app_id => @app.id, :id => ro.id), {:method => :delete}
 
         %tr
           %td{:colspan => "2"}
-            = link_to 'Add A Day', {:action => "new"}, :method => :get
+            = link_to 'Add A Day', new_app_reengagement_offer_path(:app_id => @app.id), {:method => :get}
 - else
   This app does not have a currency enabled. It must have a currency enabled before a Reengagement Campaign can be created.

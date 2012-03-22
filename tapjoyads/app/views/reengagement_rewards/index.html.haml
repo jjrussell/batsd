@@ -8,37 +8,40 @@
           = "Daily Bonus!"
     .main
       %ul.days.clearfix
+        - todays_day_number = @reengagement_offer.day_number
         - @reengagement_offers.each do |r|
-          - if r.day_number > 0
-            - if @reengagement_offer.day_number > r.day_number
+          - day_number = r.day_number
+          - if day_number > 0
+            - reward = pluralize(r.reward_value, r.currency.name.singularize)
+            - if todays_day_number > day_number
               %li.box.past
                 .credits.past
                   %h4
-                    = "+ #{r.reward_value}"
+                    = "#{reward}"
                 .day.past
                 .date.past
                   %h4
-                    = "Day #{r.day_number}"
-            - elsif @reengagement_offer.day_number == r.day_number
+                    = "Day #{day_number}"
+            - elsif todays_day_number == day_number
               %li.box.current
                 .credits.current
                   %h4
-                    = "+ #{r.reward_value}"
+                    = "#{reward}"
                 .day.current
                 .date.current
                   %h4
-                    = "Day #{r.day_number}"
+                    = "Day #{day_number}"
             - else
               %li.box
                 .credits
                   %h4
-                    = "+ #{r.reward_value}"
+                    = "#{reward}"
                 .day
                 .date
                   %h4
-                    = "Day #{r.day_number}"
+                    = "Day #{day_number}"
       .textc
-        - if @reengagement_offer.day_number == 0
+        - if todays_day_number == 0
           Come back each day and get rewards!
         - else
           = @reengagement_offer.instructions
