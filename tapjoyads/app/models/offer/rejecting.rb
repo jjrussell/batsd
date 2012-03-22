@@ -147,7 +147,7 @@ module Offer::Rejecting
   end
 
   def already_complete?(device, app_version = nil)
-    return false if multi_complete?
+    return false if multi_complete? || device.nil?
 
     app_id_for_device = item_id
     if item_type == 'RatingOffer'
@@ -156,7 +156,7 @@ module Offer::Rejecting
 
     ALREADY_COMPLETE_IDS.each do |target_ids, ids_to_reject|
       if target_ids.include?(app_id_for_device)
-        return true if ids_to_reject.any? { |reject_id| device && device.has_app?(reject_id) }
+        return true if ids_to_reject.any? { |reject_id| device.has_app?(reject_id) }
       end
     end
 
@@ -168,7 +168,6 @@ module Offer::Rejecting
   end
 
   def show_rate_reject?(device)
-    return false unless device
     srand( (device.key + (Time.now.to_f / 1.hour).to_i.to_s + id).hash )
     should_reject = rand > show_rate
     srand
