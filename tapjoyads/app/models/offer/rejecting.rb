@@ -56,7 +56,7 @@ module Offer::Rejecting
       { :method => :carriers_reject?, :parameters => [mobile_carrier_code], :reason => 'carriers'.humanize },
     ]
     reject_functions.each do |function_hash|
-        reasons << function_hash[:reason] if send(function_hash[:method], *function_hash[:parameters])
+      reasons << function_hash[:reason] if send(function_hash[:method], *function_hash[:parameters])
     end
     reasons
   end
