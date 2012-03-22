@@ -43,7 +43,7 @@ end
 SPROCKETS_CONFIG = {
   :compile => true,
   :combine => true,
-  :host => local_config['asset_host'] || local_config['website_url'] || 'http://localhost:3000'
+  :host => local_config['asset_host'] || local_config['website_url'] || 'http://d10hyk8bs4mjhv.cloudfront.net'
 }
 
 RUN_MODE_PREFIX = 'staging_'
