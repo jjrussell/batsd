@@ -9,7 +9,7 @@ class Tools::OfferListsController < WebsiteController
     if params[:type]
       offer_list_params = params.reject { |k,v| !OFFER_LIST_KEYS.include?(k) }
       offer_list = OfferList.new(offer_list_params)
-      @offers = offer_list.rank_sorted_offers_with_rejections(params[:currency_group_id])
+      @offers = offer_list.sorted_offers_with_rejections(params[:currency_group_id])
     end
   end
 end
