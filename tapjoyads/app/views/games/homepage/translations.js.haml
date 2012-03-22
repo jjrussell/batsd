@@ -10,6 +10,6 @@ w.i18n["#{I18n.default_locale}"] = buildLocale(
   w.i18n["#{I18n.locale}"] = buildLocale(
   #{I18n.t("text.games").to_json},
   #{I18n.t("text.shared").to_json}
-  }
+  )
 function buildLocale(games,shared){return{games:games,shared:shared};}
 }(this));
