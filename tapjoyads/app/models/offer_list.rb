@@ -117,10 +117,10 @@ class OfferList
     [ returned_offers, 0 ]
   end
 
-  def rank_sorted_offers_with_rejections(currency_group_id)
+  def sorted_offers_with_rejections(currency_group_id)
     @offers.each do |offer|
-      class << offer; attr_accessor :rejection_reasons; end
-      offer.rejection_reasons = populate_reasons(offer)
+      class << offer; attr_accessor :rejections; end
+      offer.rejections = reasons_for(offer)
     end
     @offers.sort_by { |offer| -offer.precache_rank_score_for(currency_group_id) }
   end
@@ -132,9 +132,9 @@ class OfferList
       @video_offer_ids, @source, @all_videos, @mobile_carrier_code)
   end
 
-  def populate_reasons(offer)
-    offer.postcache_reject_reasons(@publisher_app, @device, @currency, @device_type, @geoip_data, @app_version,
+  def reasons_for(offer)
+    offer.postcache_rejections(@publisher_app, @device, @currency, @device_type, @geoip_data, @app_version,
       @direct_pay_providers, @type, @hide_rewarded_app_installs, @library_version, @os_version, @screen_layout_size,
-      @video_offer_ids, @source, @all_videos, @mobile_carrier_code).join('; ')
+      @video_offer_ids, @source, @all_videos, @mobile_carrier_code)
   end
 end
