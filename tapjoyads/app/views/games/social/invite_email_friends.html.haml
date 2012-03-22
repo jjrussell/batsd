@@ -10,6 +10,6 @@
         .mod.pb3
           = t('text.shared.recipients')
         .mod.form-section
-          = text_field_tag :recipients, @recipients, :placeholder => t('text.games.recipients_label'), :class => "ui-joy-input", :required => :required
+          = text_field_tag :recipients, @recipients, :placeholder => t('text.games.recipients_label'), :class => "ui-joy-input", :required => :required, "data-validation-message" => t("text.games.provide_single_email")
         .mod.form-section.pt20.pb20
           = submit_tag t("text.shared.submit"), :class => "ui-joy-button primary enable-when-valid"
