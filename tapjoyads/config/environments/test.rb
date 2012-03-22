@@ -71,10 +71,6 @@ MAIL_CHIMP_PARTNERS_LIST_ID = mail_chimp['partners_list_id']
 MAIL_CHIMP_SETTINGS_KEY = mail_chimp['settings_key']
 MAIL_CHIMP_WEBHOOK_KEY = mail_chimp['webhook_key']
 
-send_grid = YAML::load_file("#{Rails.root}/config/send_grid.yaml")['test']
-SEND_GRID_USER = send_grid['user']
-SEND_GRID_PASSWD = send_grid['passwd']
-
 SYMMETRIC_CRYPTO_SECRET = '63fVhp;QqC8N;cV2A0R.q(@6Vd;6K.\\_'
 ICON_HASH_SALT = 'Gi97taauc9VFnb1vDbxWE1ID8Jjv06Il0EehMIKQ'
 UDID_SALT = 'yeJaf+ux5W!a_62eZacra9ep8w@Z&?'
@@ -86,6 +82,10 @@ PAPAYA_API_URL = 'https://papayamobile.com'
 PAPAYA_SECRET = 'RT4oNOKx0QK2nJ51'
 
 CLEAR_MEMCACHE = true
+
+twitter = YAML::load_file("#{RAILS_ROOT}/config/twitter.yaml")
+ENV['CONSUMER_KEY'] = twitter['test']['consumer_key']
+ENV['CONSUMER_SECRET'] = twitter['test']['consumer_secret']
 
 DEV_FACEBOOK_ID = '100000459598424'
 

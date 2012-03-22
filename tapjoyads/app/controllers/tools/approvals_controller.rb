@@ -74,13 +74,13 @@ class Tools::ApprovalsController < WebsiteController
     @conditions ||= {}
 
     @conditions[:owner_id] = params[:owner_id] if params[:owner_id].present?
-    @conditions[:item_type] = params[:item_type] if params[:item_type].present?
+    @conditions[:item_type] = params[:type].to_s.capitalize if params[:type]
+    @conditions[:item_type] ||= params[:item_type] if params[:item_type].present?
   end
 
   # Check for the selected models partial, use the generic one if it doesn't exist
   def setup_partial
     @table_partial = @conditions.fetch(:item_type) { 'table' }.downcase
-
     if @table_partial != 'table'
       partial_path = Rails.root.join('app', 'views', 'tools', 'approvals', "_#{@table_partial}.html.#{view_language}")
       @table_partial = 'table' unless File.exist?(partial_path)

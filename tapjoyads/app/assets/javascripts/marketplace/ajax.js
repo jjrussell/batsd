@@ -13,48 +13,13 @@
     return Object.prototype.toString.call(value) === "[object Number]";
   };
   // Underscore.js template code
-  me.template = function (str, data) {
-    var config = {
-      evaluate    : /<%([\s\S]+?)%>/g,
-      interpolate : /<%=([\s\S]+?)%>/g,
-      escape      : /<%-([\s\S]+?)%>/g
-    },
-    noMatch = /.^/,
-    tmpl,
-    func,
-    unescape = function (code) {
-      return code.replace(/\\\\/g, '\\').replace(/\\'/g, "'");
-    };
-
-    tmpl = 'var __p=[],print=function(){__p.push.apply(__p,arguments);};' +
-      'with(obj||{}){__p.push(\'' +
-      str.replace(/\\/g, '\\\\')
-         .replace(/'/g, "\\'")
-         .replace(config.escape || noMatch, function (match, code) {
-          return "',_.escape(" + unescape(code) + "),'";
-        })
-         .replace(config.interpolate || noMatch, function (match, code) {
-          return "'," + unescape(code) + ",'";
-        })
-         .replace(config.evaluate || noMatch, function (match, code) {
-          return "');" + unescape(code).replace(/[\r\n\t]/g, ' ') + ";__p.push('";
-        })
-         .replace(/\r/g, '\\r')
-         .replace(/\n/g, '\\n')
-         .replace(/\t/g, '\\t') +
-         "');}return __p.join('');";
-    func = new Function('obj', tmpl);
-    if (data) { return func(data); }
-    return function (data) {
-      return func.call(this, data);
-    };
-  };
+  me.template = Tap.Utils.underscoreTemplate;
 
   me.processPreload = function (options, success, error, always) {
     var timeoutTimer = window.setTimeout(function () {
       error({});
       always({});
-    }, 15000);
+    }, options.timeout);
     preload.ready(function (data) {
       window.clearTimeout(timeoutTimer);
       success(data);
@@ -72,7 +37,7 @@
       url: options.url,
       dataType: options.is_jsonp ? "jsonp" : undefined,
       data: options.params,
-      timeout: 15000
+      timeout: options.timeout
     }).done(success).fail(error).always(always);
   };
 
@@ -82,22 +47,30 @@
         options = {
           url: $$.data("url"),
           params: $$.data("params") || {},
-          is_jsonp: $$.data("is-jsonp") || true,
-          immediate: $$.data("immediate-load")
+          is_jsonp: $$.data("is-jsonp"),
+          immediate: $$.data("immediate-load"),
+          success_event: $$.data("success-event") || "ajax-loader-success",
+          error_event: $$.data("error-event") || "ajax-loader-error",
+          complete_event: $$.data("complete-event") || "ajax-loader-complete",
+          timeout: $$.data("timeout") || 15000
         },
         $target = $(".ajax-target", $$),
         $placeholder = $(".ajax-placeholder", $$),
         $load_more = $(".ajax-load-more", $$),
-        template = me.template($("script", $$).html()),
+        $script_tag = $("script", $$),
+        template = $script_tag.length > 0 ? me.template($script_tag.html()) : function () {},
         getSome;
 
       getSome = function () {
         me.fetchData(options, function success(data) {
           $target.append(template(data));
+          $$.trigger(options.success_event, arguments);
         }, function fail() {
           $(".ajax-error", $$).show();
+          $$.trigger(options.error_event, arguments);
         }, function always(data) {
           $placeholder.hide();
+          $$.trigger(options.complete_event, arguments);
           return data.MoreDataAvailable ? $load_more.show() : $load_more.hide();
         });
 

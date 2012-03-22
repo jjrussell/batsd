@@ -123,7 +123,7 @@ describe Offer do
     geoip_data = { :primary_country => "US" }
     @offer.send(:geoip_reject?, geoip_data).should == false
 
-    @offer.item.countries_blacklist = ["GB"].to_json
+    @offer.item.primary_app_metadata.countries_blacklist = ["GB"].to_json
     @offer.countries_blacklist(true)
     geoip_data = { :primary_country => nil }
     @offer.send(:geoip_reject?, geoip_data).should == false

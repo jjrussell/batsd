@@ -43,7 +43,7 @@ end
 SPROCKETS_CONFIG = {
   :compile => true,
   :combine => true,
-  :host => local_config['asset_host'] || local_config['website_url'] || 'http://localhost:3000'
+  :host => local_config['asset_host'] || local_config['website_url'] || 'http://d10hyk8bs4mjhv.cloudfront.net'
 }
 
 RUN_MODE_PREFIX = 'staging_'
@@ -77,10 +77,6 @@ MAIL_CHIMP_PARTNERS_LIST_ID = mail_chimp['partners_list_id']
 MAIL_CHIMP_SETTINGS_KEY = mail_chimp['settings_key']
 MAIL_CHIMP_WEBHOOK_KEY = mail_chimp['webhook_key']
 
-send_grid = YAML::load_file("#{Rails.root}/config/send_grid.yaml")['staging']
-SEND_GRID_USER = send_grid['user']
-SEND_GRID_PASSWD = send_grid['passwd']
-
 SYMMETRIC_CRYPTO_SECRET = '63fVhp;QqC8N;cV2A0R.q(@6Vd;6K.\\_'
 ICON_HASH_SALT = 'Gi97taauc9VFnb1vDbxWE1ID8Jjv06Il0EehMIKQ'
 UDID_SALT = 'a#X4cHdun84eB9=2bv3fG^RjNe46$T'
@@ -89,6 +85,10 @@ FRESHBOOKS_API_URL = 'tjdev.freshbooks.com'
 FRESHBOOKS_AUTH_TOKEN = '59548f1150fa38c3feb2a67d6b1a0f8b'
 
 CLEAR_MEMCACHE = false
+
+twitter = YAML::load_file("#{RAILS_ROOT}/config/twitter.yaml")
+ENV['CONSUMER_KEY'] = twitter['staging']['consumer_key']
+ENV['CONSUMER_SECRET'] = twitter['staging']['consumer_secret']
 
 DEV_FACEBOOK_ID = '100000459598424'
 

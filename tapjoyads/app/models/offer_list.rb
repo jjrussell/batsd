@@ -70,7 +70,7 @@ class OfferList
 
     if @currency
       @offers.each do |o|
-        o.postcache_rank_score(@currency)
+        o.postcache_rank_score(@currency, @source)
       end
     end
   end

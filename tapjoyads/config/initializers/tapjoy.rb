@@ -8,6 +8,7 @@ UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/
 APP_ID_FOR_DEVICES_REGEX = /^(\w|\.|-)*$/
 
 MASTER_HEALTHZ_FILE = "#{Rails.root}/tmp/master_healthz_status.txt"
+EPHEMERAL_HEALTHZ_FILE = "#{Rails.root}/tmp/eph_test.txt"
 
 # SDK URLs
 ANDROID_CONNECT_SDK         = 'https://s3.amazonaws.com/tapjoy/sdks/TapjoyConnectSDK_Android_v8.1.7.zip'
@@ -57,3 +58,5 @@ TEXTFREE_PUB_APP_ID = '6b69461a-949a-49ba-b612-94c8e7589642'
 BLANK_IMAGE = 'data:image/gif;base64,R0lGODlhAQABAID/AMDAwAAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw=='
 
 TJM_SESSION_TIMEOUT = 1.hour.to_i
+
+HOSTNAME = `hostname`.strip
