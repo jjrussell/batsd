@@ -17,7 +17,7 @@ class GamesMailer < ActionMailer::Base
     body(:content => content, :email => gamer.email, :udid => device_id, :user_agent => user_agent)
   end
 
-  def contact_support(gamer, device, content, user_agent, language_code, offer)
+  def contact_support(gamer, device, content, user_agent, language_code, click)
     from 'Tapjoy <noreply@tapjoy.com>'
     #reply_to gamer.email
     #recipients "mobilehelp@tapjoy.com"
@@ -29,7 +29,7 @@ class GamesMailer < ActionMailer::Base
          :device        => device,
          :user_agent    => user_agent,
          :language_code => language_code,
-         :offer         => offer)
+         :click         => click)
   end
 
   def password_reset(gamer, reset_link)
