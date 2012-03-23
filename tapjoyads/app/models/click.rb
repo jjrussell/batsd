@@ -89,6 +89,14 @@ class Click < SimpledbShardedResource
       (installed_at - clicked_at) < threshold
   end
 
+  def advertiser_app
+    begin
+      App.find_in_cache(advertiser_app_id, true)
+    rescue ActiveRecord::RecordNotFound
+      nil
+    end
+  end
+
   private
 
   def url_to_resolve

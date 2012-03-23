@@ -22,7 +22,10 @@ class Games::SupportRequestsController < GamesController
     end
 
     # Retrieve relevant objects
-    offer = params[:offer_id].present? ? Offer.find(params[:offer_id]) : nil
+    click = nil
+    if params[:click_id].present?
+      click = Click.new(:key => params[:click_id])
+    end
 
     # Build support request
     #support_request = SupportRequest.new
@@ -35,9 +38,9 @@ class Games::SupportRequestsController < GamesController
     when "report_bug"
       GamesMailer.deliver_report_bug(@gamer, data[:content], request.env["HTTP_USER_AGENT"], current_device_id)
     when "contact_support"
-      GamesMailer.deliver_contact_support(@gamer, current_device, data[:content], request.env["HTTP_USER_AGENT"], params[:language_code], offer)
+      GamesMailer.deliver_contact_support(@gamer, current_device, data[:content], request.env["HTTP_USER_AGENT"], params[:language_code], click)
     else
-      GamesMailer.deliver_contact_support(@gamer, current_device, data[:content], request.env["HTTP_USER_AGENT"], params[:language_code], offer)
+      GamesMailer.deliver_contact_support(@gamer, current_device, data[:content], request.env["HTTP_USER_AGENT"], params[:language_code], click)
     end
   end
 
@@ -50,7 +53,7 @@ class Games::SupportRequestsController < GamesController
 
     @unresolved_clicks = []
     clicks.each do |click|
-      if Offer.find_in_cache(click.advertiser_app_id, false).present? && !@unresolved_clicks.any? { |clk| clk.advertiser_app_id == click.advertiser_app_id }
+      if click.advertiser_app.present? && !@unresolved_clicks.any? { |clk| clk.advertiser_app_id == click.advertiser_app_id }
         @unresolved_clicks << click
       end
 
