@@ -50,11 +50,11 @@
 
     = render 'games/shared/footer'
 
-    = css_tag("marketplace/locale/#{I18n.locale.to_s}.css") if ['de', 'es', 'fr', 'ja', 'ko'].include? I18n.locale.to_s
+    = css_tag("marketplace/locale/#{I18n.locale.to_s}.css") if ['de', 'es', 'fr', 'ja', 'ko', 'zh'].include? I18n.locale.to_s
 
     :javascript
       window.ENVIRONMENT = "#{Rails.env}";
-    %script{ :type => 'text/javascript', :charset => 'utf-8', :src => games_translations_path(:language_code => I18n.locale) }
+    %script{ :type => 'text/javascript', :charset => 'utf-8', :src => games_translations_path(:language_code => I18n.locale, :hash => AVAILABLE_LOCALES_HASHES[I18n.locale.to_s]) }
     = js_tag "tjm"
 
     = yield :included_javascripts
