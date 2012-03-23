@@ -103,13 +103,12 @@
         .unbind('click')
         .bind('click', function(){
           var circle = $(this),
-              position = 0;
+              index = circle.index();
 
-          $t.current = circle.index();
+          $t.current = index;
 
-          position =  $t.current * $t.container.width();
-
-          $t.wrap.css($t.prefix + '-transform', 'translate(-'+ position +'px, 0px)');
+          $t.wrap.css($t.prefix + '-transition', $t.config.animation)
+          .css($.browser.safari ? 'webkitTransform' : $t.prefix + '-transform', 'translate3d(-' + ($t.current * $t.container.width()) + 'px, 0, 0)');
 
           $t.updateNavigation();
 
