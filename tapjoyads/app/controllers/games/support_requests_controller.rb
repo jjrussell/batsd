@@ -3,12 +3,10 @@ class Games::SupportRequestsController < GamesController
   def new
     respond_to do |format|
       format.js do
-        Rails.logger.info "Format: JS"
-        find_incomplete_offers
+        find_unresolved_clicks
         render(:partial => 'select_offer', :layout => false)
       end
       format.html do
-        Rails.logger.info "Format: HTML"
         current_gamer
       end
     end
@@ -43,4 +41,20 @@ class Games::SupportRequestsController < GamesController
     end
   end
 
+  private
+
+  def find_unresolved_clicks
+    #conditions = ActiveRecord::Base.sanitize_conditions("udid = ? and clicked_at > ? and manually_resolved_at is null", params[:udid], 30.days.ago.to_f.to_s)
+    conditions = ActiveRecord::Base.sanitize_conditions("udid = ? and clicked_at > ? and manually_resolved_at is null", "statz_test_udid", 30.days.ago.to_f.to_s)
+    clicks = Click.select_all(:conditions => conditions).sort_by { |click| -click.clicked_at.to_f }
+
+    @unresolved_clicks = []
+    clicks.each do |click|
+      if Offer.find_in_cache(click.advertiser_app_id, false).present? && !@unresolved_clicks.any? { |clk| clk.advertiser_app_id == click.advertiser_app_id }
+        @unresolved_clicks << click
+      end
+
+      break if @unresolved_clicks.length == 20
+    end.compact
+  end
 end
