@@ -1,6 +1,6 @@
-- if @incomplete_offers.any?
+- if @unresolved_clicks.any?
   .container.mb25.pb3
-    = select_tag :offer_id, options_for_select(@incomplete_offers.collect { |o| [ o.name, o.id ] }, params[:offer_id].present? ? params[:offer_id] : @incomplete_offers.first.id)
+    = select_tag :click_id, options_for_select(@unresolved_clicks.collect { |c| [ c.advertiser_app.name, c.id ] }, params[:click_id].present? ? params[:click_id] : @unresolved_clicks.first.id)
 
 - else
   .field.mb20
