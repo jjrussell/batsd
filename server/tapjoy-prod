@@ -1,5 +1,0 @@
-<VirtualHost *:9898>
-  DocumentRoot /home/webuser/tapjoyserver/tapjoyads/public
-  RailsEnv production
-  RailsBaseURI /
-</VirtualHost>

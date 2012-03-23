@@ -18,7 +18,7 @@ class Apps::CurrenciesController < WebsiteController
       [id, last_run_time]
     end
     unless @currency.tapjoy_enabled?
-      flash.now[:warning] = "This virtual currency is currently disabled. Please email <a href='mailto:publishersupport@tapjoy.com'>publishersupport@tapjoy.com</a> to have it enabled."
+      flash.now[:warning] = "This virtual currency is currently under review."
     end
   end
 
@@ -102,8 +102,7 @@ class Apps::CurrenciesController < WebsiteController
     redirect_to app_currency_path(:app_id => @app.id, :id => @currency.id)
   end
 
-private
-
+  private
   def setup
     @app = find_app(params[:app_id])
 
