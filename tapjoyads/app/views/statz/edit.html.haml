@@ -257,11 +257,12 @@
           = f.label(:third_party_tracking_urls, 'Tracking Pixel URLs')
           #help_third_party_tracking_urls.help ?
         %td
+          = error_message_on @offer, :third_party_tracking_urls
           = link_to('Add URL', '', :class => 'add_third_party_tracking_url', :onclick => 'return false;')
       %tr{:id => 'third_party_tracking_url_template', :class => 'hidden'}
         %th
         %td
-          = text_field_tag('offer[third_party_tracking_urls][]', '', :size => 30)
+          = text_field_tag('offer[third_party_tracking_urls][]', '', :size => 58)
           = link_to('(remove)', '', :class => 'remove_third_party_tracking_url', :onclick => 'return false;')
 
     - if @offer.item_type == 'App' && @offer.item.screen_layout_sizes.any?

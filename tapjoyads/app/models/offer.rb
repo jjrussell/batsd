@@ -169,6 +169,11 @@ class Offer < ActiveRecord::Base
       record.errors.add(attribute, "cannot be enabled without valid store id")
     end
   end
+  validates_each :third_party_tracking_urls do |record, attribute, value|
+    if value.any? { |url| URI.parse(url).scheme != "https" }
+      record.errors.add(attribute, "must all be ssl (https://) urls")
+    end
+  end
 
   before_validation :update_payment
   before_validation_on_create :set_reseller_from_partner
