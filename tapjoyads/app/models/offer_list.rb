@@ -1,7 +1,6 @@
 class OfferList
   attr_reader :offers
 
-
   def initialize(options = {})
     @publisher_app              = options.delete(:publisher_app)
     @device                     = options.delete(:device)

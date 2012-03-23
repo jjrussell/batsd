@@ -160,7 +160,7 @@ module Offer::Rejecting
       end
     end
 
-    device && device.has_app?(app_id_for_device)
+    device.has_app?(app_id_for_device)
   end
 
   def selective_opt_out_reject?(device)
