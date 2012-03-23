@@ -418,7 +418,12 @@
 
       var setTrackingPixelURLs = function() {
         var urls = "#{escape_javascript((@offer.third_party_tracking_urls).collect{ |url| h(url) }.join(','))}".split(",");
-        for(var i=0; i < urls.length; i++) {
+
+        for(var i = 0; i < urls.length; i++) {
+          if (urls[i] == "") {
+            continue;
+          }
+
           var template = $('#third_party_tracking_url_template');
           var templateClone = template.clone();
 
