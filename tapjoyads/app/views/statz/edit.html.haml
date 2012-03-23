@@ -214,7 +214,7 @@
           = label_tag('estimated_budget', 'Daily Budget')
           #help_estimated_budget.help ?
         %td
-          = text_field_tag('estimated_budget')
+          = text_field_tag('estimated_budget', '', :size => 30)
       %tr
         %th
           = f.label(:overall_budget, 'Overall Conversions')
@@ -252,6 +252,17 @@
               = h(@offer.item.store_url)
             - elsif @offer.item_type == 'GenericOffer'
               = h(@offer.item.url)
+      %tr{:id => 'third_party_tracking_urls_row'}
+        %th
+          = f.label(:third_party_tracking_urls, 'Tracking Pixel URLs')
+          #help_third_party_tracking_urls.help ?
+        %td
+          = link_to('Add URL', '', :class => 'add_third_party_tracking_url', :onclick => 'return false;')
+      %tr{:id => 'third_party_tracking_url_template', :class => 'hidden'}
+        %th
+        %td
+          = text_field_tag('offer[third_party_tracking_urls][]', '', :size => 30)
+          = link_to('(remove)', '', :class => 'remove_third_party_tracking_url', :onclick => 'return false;')
 
     - if @offer.item_type == 'App' && @offer.item.screen_layout_sizes.any?
       %tr
@@ -329,6 +340,7 @@
   #help_interval_content{ :name => 'Interval' } The interval for frequency capping.
   #help_url_overridden_content{ :name => 'Override Destination URL' } Allows for manual override of Completion URL field
   #help_url_content{ :name => 'Destination URL' } The URL that the user will be redirected to upon clicking an ad (typically links to Market Place / App store search results page)
+  #help_third_party_tracking_urls_content{ :name => 'Tracking Pixel URLs' } Tracking Pixel URLs will be called client-side, via an #{h('<img>')} tag, whenever the ad is displayed.
   #help_bid_content{ :name => 'Bid' } The bid affects your payment and your offerwall rank.
   #help_min_bid_override_content{ :name => 'Min Bid Override' } Manually set the minimum allowed bid for this offer.
   #help_min_os_version_content{:name => 'Minimum OS Version'} Your offer will only be shown to devices with an OS at this version or higher.
@@ -403,6 +415,38 @@
       });
 
       setEstimatedBudget();
+
+      var setTrackingPixelURLs = function() {
+        var urls = "#{escape_javascript((@offer.third_party_tracking_urls).collect{ |url| h(url) }.join(','))}".split(",");
+        for(var i=0; i < urls.length; i++) {
+          var template = $('#third_party_tracking_url_template');
+          var templateClone = template.clone();
+
+          templateClone.find('td input').attr('value', urls[i]);
+          templateClone.removeAttr('id');
+          templateClone.removeClass('hidden');
+
+          template.before(templateClone);
+        }
+      }
+
+      setTrackingPixelURLs();
+
+      $('.add_third_party_tracking_url').click(function() {
+        var template = $('#third_party_tracking_url_template');
+        var templateClone = template.clone(true);
+
+        templateClone.removeAttr('id');
+        templateClone.removeClass('hidden');
+
+        template.before(templateClone);
+      });
+
+      $('.remove_third_party_tracking_url').click(function() {
+        var url = $(this).parent().parent();
+        url.addClass('hidden');
+        url.find('td input').attr('name', '');
+      });
 
     })
 

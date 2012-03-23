@@ -246,6 +246,10 @@ class Offer < ActiveRecord::Base
     end
   end
 
+  def third_party_tracking_urls=(urls)
+    super(urls.select{ |url| url.present? })
+  end
+
   def third_party_tracking_urls
     self.third_party_tracking_urls = [] if super.nil?
     super.sort
