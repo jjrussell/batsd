@@ -6,6 +6,13 @@ class Dashboard::OffersController < Dashboard::DashboardController
   before_filter :setup, :except => [ :toggle ]
   after_filter :save_activity_logs, :only => [ :create, :update, :toggle ]
 
+  BASE_SAFE_ATTRIBUTES     = [ :daily_budget, :user_enabled, :bid, :self_promote_only,
+                               :min_os_version, :screen_layout_sizes, :countries]
+  ELEVATED_SAFE_ATTRIBUTES = [ :tapjoy_enabled, :allow_negative_balance, :pay_per_click,
+                               :name, :name_suffix, :show_rate, :min_conversion_rate,
+                               :device_types, :publisher_app_whitelist, :overall_budget, :min_bid_override,
+                               :dma_codes, :regions, :carriers, :cities ] | BASE_SAFE_ATTRIBUTES
+
   def new
     offer_params = {}
     if params[:offer_type] == 'rewarded_featured'
