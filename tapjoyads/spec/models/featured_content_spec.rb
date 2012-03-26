@@ -157,7 +157,7 @@ describe FeaturedContent do
   end
 
   describe '#create_tracking_offer' do
-    context 'when offer and tracking offerdoes not exist' do
+    context 'when offer and tracking offer does not exist' do
       before :each do
         @featured_content1 = Factory(:featured_content, :featured_type => FeaturedContent::TYPES_MAP[FeaturedContent::NEWS], :offer => nil )
       end
@@ -268,6 +268,16 @@ describe FeaturedContent do
       it "returns default secondary icon url" do
         @featured_content.get_icon_url("#{@featured_content.id}_secondary").should == @default_icon_url
       end
+    end
+  end
+
+  describe '#has_valid_url?' do
+    before :each do
+      @featured_content.update_attributes({ :button_url => FeaturedContent::NO_URL })
+    end
+
+    it 'returns false' do
+      @featured_content.has_valid_url?.should be_false
     end
   end
 end
