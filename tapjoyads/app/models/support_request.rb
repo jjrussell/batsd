@@ -1,18 +1,29 @@
 class SupportRequest < SimpledbResource
+  belongs_to :device, :foreign_key => 'udid'
+  belongs_to :publisher_app, :class_name => 'App'
+  belongs_to :publisher_partner, :class_name => 'Partner'
+  belongs_to :currency
+  belongs_to :offer
+  belongs_to :click, :foreign_key => 'key'
+  belongs_to :gamer
 
   self.domain_name = 'support_requests'
 
   self.sdb_attr :udid
   self.sdb_attr :description
   self.sdb_attr :email_address
+  self.sdb_attr :publisher_app_id
+  self.sdb_attr :publisher_partner_id
   self.sdb_attr :publisher_user_id
   self.sdb_attr :device_type
+  self.sdb_attr :user_agent
   self.sdb_attr :language_code
   self.sdb_attr :offer_name
   self.sdb_attr :app_id
   self.sdb_attr :currency_id
   self.sdb_attr :offer_id
   self.sdb_attr :click_id
+  self.sdb_attr :gamer_id
 
   def fill(params, app, currency, offer)
     self.description       = params[:description]
@@ -26,7 +37,6 @@ class SupportRequest < SimpledbResource
     self.offer_id          = offer.id if offer.present?
     click                  = offer.present? ? get_last_click(params[:udid], offer) : nil
     self.click_id          = click ? click.id : nil
-
   end
 
   def get_last_click(udid, offer)
