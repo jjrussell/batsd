@@ -3,6 +3,7 @@
 module Sprockets::Tj::Helpers
   def inline_image(path, mime_type = nil)
     path = path.value
+    return Sass::Script::String.new("url('#{path}')") if Rails.env.development?
 
     real_path = File.join("public/", path)
     val = data(real_path)
