@@ -18,7 +18,7 @@ class Apps::CurrenciesController < WebsiteController
       [id, last_run_time]
     end
     unless @currency.tapjoy_enabled?
-      flash.now[:warning] = "This virtual currency is currently under review."
+      flash.now[:warning] = "Please email support+enable@tapjoy.com to have this currency approved."
     end
   end
 
