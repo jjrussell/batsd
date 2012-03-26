@@ -59,7 +59,6 @@ class App < ActiveRecord::Base
   TRADEDOUBLER_COUNTRIES = Set.new(%w( GB FR DE IT IE ES NL AT CH BE DK FI NO SE LU PT GR ))
   MAXIMUM_INSTALLS_PER_PUBLISHER = 4000
   PREVIEW_PUBLISHER_APP_ID = "bba49f11-b87f-4c0f-9632-21aa810dd6f1" # EasyAppPublisher... used for "ad preview" generation
-  PROMOTED_INVENTORY_SIZE = 3
 
   attr_accessor :store_id_changed
 
