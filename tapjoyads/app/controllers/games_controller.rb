@@ -53,8 +53,6 @@ class GamesController < ApplicationController
       result
     end
     language_list.concat splits
-    puts "***"*20
-    puts language_list.sort.map(&:last).inspect
     language_list.sort.map(&:last)
   rescue # default if header is malformed
     []
