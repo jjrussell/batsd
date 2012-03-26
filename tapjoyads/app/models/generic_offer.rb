@@ -1,7 +1,7 @@
 class GenericOffer < ActiveRecord::Base
   include UuidPrimaryKey
 
-  CATEGORIES = [ 'CPA', 'Social', 'Non-Native Video' ]
+  CATEGORIES = [ 'CPA', 'Social', 'Non-Native Video', 'Other' ]
 
   has_many :offers, :as => :item
   has_one :primary_offer, :class_name => 'Offer', :as => :item, :conditions => 'id = item_id'

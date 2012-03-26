@@ -10,6 +10,8 @@ class SprocketController < ApplicationController
 
     sprocket = Sprockets::Tj.assets[full_filename]
 
+    return render :text => "404 Not Found", :status => 404 unless sprocket
+
     # skip files with dependencies in combine mode; they are handled by sprockets
     contents = Sprockets::Tj.combine? ? sprocket.to_s : sprocket.to_a.last.to_s
 

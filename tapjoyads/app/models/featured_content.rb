@@ -126,7 +126,8 @@ class FeaturedContent < ActiveRecord::Base
       item = GenericOffer.create(
         :name       => "For_Featured_Content_#{id}",
         :url        => NO_URL,
-        :partner_id => TAPJOY_PARTNER_ID
+        :partner_id => TAPJOY_PARTNER_ID,
+        :category   => 'Other'
       )
       self.offer      = item.primary_offer
       self.button_url = NO_URL
