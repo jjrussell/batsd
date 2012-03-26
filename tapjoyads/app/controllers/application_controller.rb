@@ -88,6 +88,10 @@ class ApplicationController < ActionController::Base
         break
       end
     end
+
+    if params[:udid].blank? && params[:mac_address].present?
+      params[:udid] = params[:mac_address]
+    end
   end
 
   def fix_params

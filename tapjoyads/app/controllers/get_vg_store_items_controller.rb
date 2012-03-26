@@ -1,6 +1,6 @@
 class GetVgStoreItemsController < ApplicationController
 
-  before_filter :set_publisher_user_id, :setup
+  before_filter :lookup_udid, :set_publisher_user_id, :setup
 
   ##
   # All virtual goods that are available to be purchased for this app from this device.

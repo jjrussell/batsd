@@ -203,6 +203,14 @@ class Device < SimpledbShardedResource
     end
   end
 
+  def copy_mac_address_device!
+    return if mac_address.nil? || key == mac_address
+    mac_device = Device.new(:key => mac_address)
+    self.apps = mac_device.parsed_apps.merge(@parsed_apps)
+    save!
+    mac_device.delete_all
+  end
+
   def handle_sdkless_click!(offer, now)
     if offer.sdkless?
       temp_sdkless_clicks = sdkless_clicks
