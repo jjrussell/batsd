@@ -80,11 +80,11 @@ ActionController::Routing::Routes.draw do |map|
                      :update_user_roles => :post, :update_device => :post }
 
   map.namespace :tools do |tools|
-    tools.resources :approvals, :only => [:index], :collection => [:history, :mine], :member => [:approve, :reject, :assign]
+    tools.resources :approvals, :as => 'acceptance', :only => [:index], :collection => [:history, :mine], :member => [:approve, :reject, :assign]
     tools.with_options(:controller => 'approvals') do |a|
-      a.typed_approvals         'approvals/:type',          :action => :index
-      a.history_typed_approvals 'approvals/:type/history',  :action => :history
-      a.mine_typed_approvals    'approvals/:type/mine',     :action => :mine
+      a.typed_approvals         'acceptance/:type',          :action => :index
+      a.history_typed_approvals 'acceptance/:type/history',  :action => :history
+      a.mine_typed_approvals    'acceptance/:type/mine',     :action => :mine
     end
 
     tools.resources :premier_partners, :only => [ :index ]
