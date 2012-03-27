@@ -22,7 +22,7 @@ class SupportRequestsController < ApplicationController
       render_new_with_error(I18n.t('text.support.invalid_email'))
     else
       support_request = SupportRequest.new
-      support_request.fill(params, @app, @currency, @offer)
+      support_request.fill_from_params(params, @app, @currency, @offer, request.env["HTTP_USER_AGENT"])
       support_request.save
 
       TapjoyMailer.deliver_support_request(params[:description], params[:email_address], @app, @currency, params[:udid],
