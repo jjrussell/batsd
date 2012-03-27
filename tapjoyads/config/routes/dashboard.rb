@@ -7,7 +7,7 @@ ActionController::Routing::Routes.draw do |map|
   map.connect 'tos-publisher.html', :controller => 'documents', :action => 'tos_publisher'
   map.connect 'publisher-guidelines.html', :controller => 'documents', :action => 'publisher_guidelines'
 
-  map.resource :sign_up, :controller => :sign_up, :only => :create
+  map.resource :sign_up, :controller => :sign_up, :only => :create, :collection => [:welcome]
   map.register 'register', :controller => :sign_up, :action => :new
   map.login 'login', :controller => :user_sessions, :action => :new
   map.logout 'logout', :controller => :user_sessions, :action => :destroy
@@ -80,7 +80,13 @@ ActionController::Routing::Routes.draw do |map|
                      :update_user_roles => :post, :update_device => :post }
 
   map.namespace :tools do |tools|
-    tools.resources :approvals, :only => [:index], :collection => [:history, :mine], :member => [:approve, :reject, :assign]
+    tools.resources :approvals, :as => 'acceptance', :only => [:index], :collection => [:history, :mine], :member => [:approve, :reject, :assign]
+    tools.with_options(:controller => 'approvals') do |a|
+      a.typed_approvals         'acceptance/:type',          :action => :index
+      a.history_typed_approvals 'acceptance/:type/history',  :action => :history
+      a.mine_typed_approvals    'acceptance/:type/mine',     :action => :mine
+    end
+
     tools.resources :premier_partners, :only => [ :index ]
     tools.resources :generic_offers, :only => [ :index, :new, :create, :edit, :update ]
     tools.resources :orders, :only => [ :new, :create ],

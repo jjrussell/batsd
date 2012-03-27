@@ -1,16 +1,20 @@
 %table.tablesorter
   %thead
     %tr
+      %th Email
+      %th Country
       %th Type
-      %th Record
+      %th Age
       %th Reviewing User (optional)
       %th State
       %th
   %tbody
     - @approvals.each do |approval|
       %tr
-        %td= approval.item_type.classify
-        %td= approval.item.try(:to_s) || approval.item.id
+        %td= approval.item.email
+        %td= approval.item.country
+        %td= approval.item.account_type.join(', ')
+        %td= time_ago_in_words(approval.created_at)
         %td= render :partial => 'owner_select', :locals => {:approval => approval}
         %td= approval.state.gsub(/^approved$/, 'accepted')
         %td.actions
