@@ -8,6 +8,8 @@ class DeeplinkOffer < ActiveRecord::Base
   belongs_to :app
   belongs_to :currency
 
+  delegate :user_enabled, :to => :primary_offer
+
   validates_presence_of :partner, :app, :currency, :name
   before_validation :set_name_from_currency
   after_create :create_primary_offer
