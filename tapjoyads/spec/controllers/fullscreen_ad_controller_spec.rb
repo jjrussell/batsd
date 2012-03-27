@@ -37,7 +37,7 @@ describe FullscreenAdController do
 
         get(:index, @params)
         pending "TODO: Load #image_tag correctly"
-        response.body.should match image_tag(url, :style => 'display:none;')
+        response.body.should include(image_tag(url, :style => 'display:none;'))
       end
     end
 

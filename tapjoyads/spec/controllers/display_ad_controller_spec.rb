@@ -222,8 +222,8 @@ describe DisplayAdController do
           @offer.save!
 
           get(:webview, @params)
-          pending "TODO: Load #image_tag correctly"
-          response.body.should match image_tag(url, :style => 'display:none;')
+          pending "TODO: Load #image_tag method correctly"
+          response.body.should include(image_tag(url, :style => 'display:none;'))
         end
       end
 
