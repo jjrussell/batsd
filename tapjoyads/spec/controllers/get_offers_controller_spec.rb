@@ -1,6 +1,8 @@
 require 'spec/spec_helper'
 
 describe GetOffersController do
+  include ActionView::Helpers
+
   integrate_views
 
   before :each do
@@ -147,6 +149,19 @@ describe GetOffersController do
         :app_id => @currency.app.id
       }
       @offer = Factory(:app).primary_offer
+    end
+
+    context 'with third party tracking URLs' do
+      it 'should generate hidden image tags' do
+        url = "https://dummyurl.com"
+        @offer.third_party_tracking_urls = [url]
+        @offer.save!
+
+        OfferCacher.stubs(:get_unsorted_offers_prerejected).returns([@offer])
+        get(:webpage, @params)
+
+        response.body.should include(image_tag('', :style => 'display:none;', :s => url))
+      end
     end
 
     it 'assigns test offer for test devices' do
