@@ -1,5 +1,5 @@
 - if @unresolved_clicks.any?
-  .container.mb25.pb3
+  .container.mt3.pb3
     = select_tag :click_id, options_for_select(@unresolved_clicks.collect { |c| [ c.advertiser_app.name, c.id ] }, params[:click_id].present? ? params[:click_id] : @unresolved_clicks.first.id)
 
 - else
