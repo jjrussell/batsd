@@ -4,16 +4,22 @@ class ConnectController < ApplicationController
     lookup_udid
     return unless verify_params([:app_id, :udid])
 
-    click = Click.new(:key => "#{params[:udid]}.#{params[:app_id]}", :consistent => params[:consistent])
-    if click.rewardable?
-      message = { :click_key => click.key, :install_timestamp => Time.zone.now.to_f.to_s }.to_json
-      Sqs.send_message(QueueNames::CONVERSION_TRACKING, message)
+    device = Device.new(:key => params[:udid])
+
+    unless device.has_app?(params[:app_id])
+      click = Click.new(:key => "#{params[:udid]}.#{params[:app_id]}", :consistent => params[:consistent])
+      if click.new_record? && params[:mac_address].present? && params[:mac_address] != params[:udid]
+        click = Click.new(:key => "#{params[:mac_address]}.#{params[:app_id]}", :consistent => params[:consistent])
+      end
+      if click.rewardable?
+        message = { :click_key => click.key, :install_timestamp => Time.zone.now.to_f.to_s }.to_json
+        Sqs.send_message(QueueNames::CONVERSION_TRACKING, message)
+      end
     end
 
     web_request = WebRequest.new
     web_request.put_values('connect', params, ip_address, geoip_data, request.headers['User-Agent'])
 
-    device = Device.new(:key => params[:udid])
     path_list = device.handle_connect!(params[:app_id], params)
     path_list.each do |path|
       web_request.path = path
