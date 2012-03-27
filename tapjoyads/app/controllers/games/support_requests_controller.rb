@@ -27,10 +27,9 @@ class Games::SupportRequestsController < GamesController
       click = Click.new(:key => params[:click_id])
     end
 
-    # Build support request
-    #support_request = SupportRequest.new
-    #support_request.fill(params, @app, @currency, @offer)
-    #support_request.save
+    support_request = SupportRequest.new
+    support_request.fill_from_click(click, params, current_device, @gamer, request.env["HTTP_USER_AGENT"])
+    support_request.save
 
     case params[:type]
     when "feedback"
@@ -38,17 +37,16 @@ class Games::SupportRequestsController < GamesController
     when "report_bug"
       GamesMailer.deliver_report_bug(@gamer, data[:content], request.env["HTTP_USER_AGENT"], current_device_id)
     when "contact_support"
-      GamesMailer.deliver_contact_support(@gamer, current_device, data[:content], request.env["HTTP_USER_AGENT"], params[:language_code], click)
+      GamesMailer.deliver_contact_support(@gamer, current_device, data[:content], request.env["HTTP_USER_AGENT"], params[:language_code], click, support_request)
     else
-      GamesMailer.deliver_contact_support(@gamer, current_device, data[:content], request.env["HTTP_USER_AGENT"], params[:language_code], click)
+      GamesMailer.deliver_contact_support(@gamer, current_device, data[:content], request.env["HTTP_USER_AGENT"], params[:language_code], click, support_request)
     end
   end
 
   private
 
   def find_unresolved_clicks
-    #conditions = ActiveRecord::Base.sanitize_conditions("udid = ? and clicked_at > ? and manually_resolved_at is null", params[:udid], 30.days.ago.to_f.to_s)
-    conditions = ActiveRecord::Base.sanitize_conditions("udid = ? and clicked_at > ? and manually_resolved_at is null", "statz_test_udid", 30.days.ago.to_f.to_s)
+    conditions = ActiveRecord::Base.sanitize_conditions("udid = ? and clicked_at > ? and manually_resolved_at is null", params[:udid], 30.days.ago.to_f.to_s)
     clicks = Click.select_all(:conditions => conditions).sort_by { |click| -click.clicked_at.to_f }
 
     @unresolved_clicks = []
