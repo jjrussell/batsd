@@ -1,8 +1,6 @@
 require 'spec/spec_helper'
 
 describe GetOffersController do
-  include ActionView::Helpers
-
   integrate_views
 
   before :each do
@@ -160,7 +158,7 @@ describe GetOffersController do
         OfferCacher.stubs(:get_unsorted_offers_prerejected).returns([@offer])
         get(:webpage, @params)
 
-        response.body.should include(image_tag('', :style => 'display:none;', :s => url))
+        response.body.should include("<img t='https://dummyurl.com' />")
       end
     end
 
