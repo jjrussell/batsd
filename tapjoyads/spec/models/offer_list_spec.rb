@@ -99,4 +99,116 @@ describe OfferList do
       end
     end
   end
+
+  describe '#get_offers' do
+    before :each do
+      @offers = []
+      10.times { @offers << Factory(:video_offer).primary_offer }
+      RailsCache.stubs(:get_and_put).returns(RailsCacheValue.new(@offers))
+      #Offer.any_instance.stubs(:postcache_reject?).returns(false)
+      @currency = Factory(:currency)
+      @app = @currency.app
+      @base_params = {:device => Factory(:device), :publisher_app => @app, :currency => @currency, :video_offer_ids => @offers.map { |o| o.id }}
+    end
+
+    context 'with a bad device' do
+      before :each do
+        @banned_device = Factory(:device, :banned => true)
+        @opted_out_device = Factory(:device, :opted_out => true)
+      end
+
+      it 'returns no offers for a banned device' do
+        list = OfferList.new(:device => @banned_device).get_offers(0, 5)
+        list.should == [[], 0]
+      end
+
+      it 'returns no offers for an opted-out device' do
+        list = OfferList.new(:device => @opted_out_device).get_offers(0, 5)
+        list.should == [[], 0]
+      end
+    end
+
+    context 'first page' do
+
+      context 'with a deeplink offer' do
+        before :each do
+          @deeplink = @currency.deeplink_offer
+          Offer.stubs(:find_in_cache).with(@deeplink.primary_offer.id).returns(@deeplink.primary_offer)
+        end
+
+        it 'returns the deeplink offer in the offerwall' do
+          list = OfferList.new({:source => 'offerwall'}.merge(@base_params))
+          offers, remaining = list.get_offers(0, 3)
+          offers.should == [@deeplink.primary_offer] + @offers[0..1]
+        end
+
+        it 'skips the deeplink offer when not on the offerwall' do
+          list = OfferList.new({:source => 'featured'}.merge(@base_params))
+          offers, remaining = list.get_offers(0, 3)
+          offers.should == @offers[0..2]
+        end
+      end
+
+      context 'with a rating offer' do
+        before :each do
+          @rating = Factory(:rating_offer)
+          @app.enabled_rating_offer_id = @rating.id
+          Offer.stubs(:find_in_cache).with(@rating.primary_offer.id).returns(@rating.primary_offer)
+          @rating.primary_offer.stubs(:postcache_reject?).returns(false)
+        end
+
+        it 'should return the rating offer first, but there is a defect so it raises a NameError' do
+          list = OfferList.new({:include_rating_offer => true}.merge(@base_params))
+
+          #I think the intended logic is:
+          #  offers.should == [@rating.primary_offer] + @offers[0..1]
+          #but there's a defect; see offer_list.rb
+          lambda {
+            list.get_offers(0, 3)
+          }.should raise_error(NameError)
+        end
+      end
+
+      context 'with no special offers' do
+        it 'returns the normal first page' do
+          list = OfferList.new(@base_params)
+          offers, remaining = list.get_offers(0, 3)
+          offers.should == @offers[0..2]
+        end
+      end
+    end
+
+    context 'second page' do
+      context 'with a deeplink and rating offer' do
+        before :each do
+          @deeplink = @currency.deeplink_offer
+          Offer.stubs(:find_in_cache).with(@deeplink.primary_offer.id).returns(@deeplink.primary_offer)
+          @rating = Factory(:rating_offer)
+
+          @app.enabled_rating_offer_id = @rating.id
+          Offer.stubs(:find_in_cache).with(@rating.primary_offer.id).returns(@rating.primary_offer)
+          @rating.primary_offer.stubs(:postcache_reject?).returns(false)
+        end
+
+        it 'skips the special offers' do
+          list = OfferList.new({:source => 'offerwall'}.merge(@base_params))
+          offers, remaining = list.get_offers(3, 3)
+          #first page should have been: deeplink, rating, offers[0]
+          #so, second page should be: offers[1], offers[2], offers[3]
+          #EXCEPT there is a defect that always skips rating offers (see above), so:
+          #first page is: deeplink, offers[0], offers[1]
+          #second page is: offers[2..4]
+          offers.should == @offers[2..4]
+        end
+      end
+
+      context 'with no special offers' do
+        it 'returns the correct range of offers' do
+          list = OfferList.new(@base_params)
+          offers, remaining = list.get_offers(3, 3)
+          offers.should == @offers[3..5]
+        end
+      end
+    end
+  end
 end

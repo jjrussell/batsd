@@ -14,7 +14,7 @@ class Offer < ActiveRecord::Base
   ANDROID_DEVICES = %w( android )
   WINDOWS_DEVICES = %w( windows )
   ALL_DEVICES = APPLE_DEVICES + ANDROID_DEVICES + WINDOWS_DEVICES
-  ALL_OFFER_TYPES = %w( App EmailOffer GenericOffer OfferpalOffer RatingOffer ActionOffer VideoOffer SurveyOffer ReengagementOffer)
+  ALL_OFFER_TYPES = %w( App EmailOffer GenericOffer OfferpalOffer RatingOffer ActionOffer VideoOffer SurveyOffer ReengagementOffer DeeplinkOffer)
   ALL_SOURCES = %w( offerwall display_ad featured tj_games )
 
   CLASSIC_OFFER_TYPE                          = '0'
@@ -187,6 +187,7 @@ class Offer < ActiveRecord::Base
   before_save :nullify_banner_creatives
   after_update :lock_survey_offer
   after_save :update_enabled_rating_offer_id
+  after_save :update_enabled_deeplink_offer_id
   after_save :update_pending_enable_requests
   after_save :update_tapjoy_sponsored_associated_offers
   after_save :sync_banner_creatives! # NOTE: this should always be the last thing run by the after_save callback chain
@@ -744,6 +745,13 @@ class Offer < ActiveRecord::Base
     if item_type == 'RatingOffer' && (tapjoy_enabled_changed? || user_enabled_changed? || reward_value_changed? || payment_changed?)
       item.app.enabled_rating_offer_id = accepting_clicks? ? id : nil
       item.app.save! if item.app.changed?
+    end
+  end
+
+  def update_enabled_deeplink_offer_id
+    if item_type == 'DeeplinkOffer' && (tapjoy_enabled_changed? || user_enabled_changed? || reward_value_changed? || payment_changed?)
+      item.currency.enabled_deeplink_offer_id = accepting_clicks? ? id : nil
+      item.currency.save! if item.currency.changed?
     end
   end
 

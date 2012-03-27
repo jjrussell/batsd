@@ -16,6 +16,7 @@ class Currency < ActiveRecord::Base
   belongs_to :reseller
 
   has_many :reengagement_offers
+  has_one :deeplink_offer
 
   validates_presence_of :reseller, :if => Proc.new { |currency| currency.reseller_id? }
   validates_presence_of :app, :partner, :name, :currency_group, :callback_url
@@ -84,6 +85,7 @@ class Currency < ActiveRecord::Base
   before_create :set_hide_rewarded_app_installs, :set_values_from_partner_and_reseller, :set_promoted_offers
   before_update :update_spend_share
   before_update :reset_to_pending_if_rejected
+  after_create :create_deeplink_offer
   after_update  :approve_on_tapjoy_enabled
   set_callback :cache, :after, :cache_by_app_id
   set_callback :cache_clear, :after, :clear_cache_by_app_id
@@ -298,6 +300,13 @@ class Currency < ActiveRecord::Base
       new_approval = Approval.new(:item_id => id, :item_type => self.class.name, :event => 'create', :created_at => nil, :updated_at => nil)
       new_approval.save
     end
+  end
+
+  def create_deeplink_offer
+    self.deeplink_offer = DeeplinkOffer.new(:partner => self.partner, :app => self.app, :currency => self)
+    self.deeplink_offer.save!
+    self.enabled_deeplink_offer_id = self.deeplink_offer.id
+    self.save!
   end
 
   def approve_on_tapjoy_enabled

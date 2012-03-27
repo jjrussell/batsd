@@ -129,6 +129,8 @@ module Offer::UrlGeneration
       click_url += 'reengagement'
     elsif item_type == 'SurveyOffer'
       click_url += "survey"
+    elsif item_type == 'DeeplinkOffer'
+      click_url += 'deeplink'
     else
       raise "click_url requested for an offer that should not be enabled. offer_id: #{id}"
     end
