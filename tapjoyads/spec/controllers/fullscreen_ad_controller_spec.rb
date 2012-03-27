@@ -1,6 +1,8 @@
 require 'spec/spec_helper'
 
 describe FullscreenAdController do
+  include ActionView::Helpers
+
   integrate_views
   ignore_html_warning
 
@@ -28,6 +30,17 @@ describe FullscreenAdController do
 
       response.should be_success
       response.should render_template("fullscreen_ad/index")
+    end
+
+    context 'with third party tracking URLs' do
+      it 'should generate hidden image tags' do
+        url = "https://dummyurl.com"
+        @offer.third_party_tracking_urls = [url]
+        @offer.save!
+
+        get(:index, @params)
+        response.body.should match image_tag(url, :style => 'display:none;')
+      end
     end
 
     context 'with custom ads' do

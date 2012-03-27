@@ -18,6 +18,7 @@
   .adsby
     %span= t('text.shared.ads_by')
     #logo
+= render :partial => 'shared/tracking_pixel_tags', :locals => { :offer => @offer }
 
 - content_for :page_javascript do
   :plain
