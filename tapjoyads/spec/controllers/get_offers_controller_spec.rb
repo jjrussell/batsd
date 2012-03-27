@@ -10,6 +10,7 @@ describe GetOffersController do
   describe '#index' do
     before :each do
       @currency = Factory(:currency)
+      @deeplink = @currency.deeplink_offer.primary_offer
       @offer = Factory(:app).primary_offer
       @offer2 = Factory(:app).primary_offer
       @offer2.countries = ["GB"].to_json
@@ -51,25 +52,25 @@ describe GetOffersController do
 
     it 'returns offers targeted to country' do
       get(:index, @params)
-      assigns(:offer_list).should == [@offer, @offer3]
+      assigns(:offer_list).should == [@deeplink, @offer, @offer3]
       controller.stubs(:geoip_data).returns({ :primary_country => 'GB' })
       get(:index, @params)
-      assigns(:offer_list).should == [@offer, @offer2]
+      assigns(:offer_list).should == [@deeplink, @offer, @offer2]
     end
 
     it 'ignores country_code if IP is in China' do
       controller.stubs(:ip_address).returns('60.0.0.1')
       get(:index, @params)
-      assigns(:offer_list).should == [@offer, @offer4]
+      assigns(:offer_list).should == [@deeplink, @offer, @offer4]
       get(:index, @params.merge(:country_code => 'GB'))
-      assigns(:offer_list).should == [@offer, @offer4]
+      assigns(:offer_list).should == [@deeplink, @offer, @offer4]
     end
 
     it 'renders json with correct fields' do
       get(:index, @params.merge(:json => 1))
       json = JSON.parse(response.body)
 
-      json_offer = json['OfferArray'][0]
+      json_offer = json['OfferArray'][1]
       json_offer['Cost'       ].should == 'Free'
       json_offer['Amount'     ].should == '5'
       json_offer['Name'       ].should == @offer.name
@@ -123,6 +124,8 @@ describe GetOffersController do
     it 'does not log impressions when there are no offers' do
       OfferCacher.stubs(:get_unsorted_offers_prerejected).returns([])
       RailsCache.stubs(:get).returns(nil)
+      @currency.deeplink_offer.primary_offer.tapjoy_enabled = false
+      @currency.deeplink_offer.primary_offer.save!
       get(:webpage, @params)
       assigns(:web_request).path.should include 'offers'
     end
@@ -250,7 +253,7 @@ describe GetOffersController do
       web_request.user_agent.should == @request.headers["User-Agent"]
       web_request.ip_address.should == '208.90.212.38'
       web_request.source.should == 'offerwall'
-      web_request.offerwall_rank.should == 1
+      web_request.offerwall_rank.should == 2
       web_request.path.should include('offerwall_impression')
 
       get(:featured, @params)

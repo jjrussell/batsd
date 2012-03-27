@@ -20,6 +20,7 @@ class Apps::CurrenciesController < WebsiteController
     unless @currency.tapjoy_enabled?
       flash.now[:warning] = "This virtual currency is currently disabled. Please email <a href='mailto:support+enable@tapjoy.com'>support+enable@tapjoy.com</a> to have it enabled."
     end
+    @enable_deeplink = @currency.deeplink_offer.present?
   end
 
   def update
