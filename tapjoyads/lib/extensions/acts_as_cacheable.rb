@@ -15,9 +15,9 @@ module ActsAsCacheable
 
       define_callbacks :before_cache, :after_cache, :before_cache_clear, :after_cache_clear, :cache_associations
 
-      after_commit_on_create :cache
-      after_commit_on_update :cache
-      after_commit_on_destroy :clear_cache
+      after_commit :cache, :on => :create
+      after_commit :cache, :on => :update
+      after_commit :clear_cache, :on => :destroy
 
       class << self
         attr_reader :acts_as_cacheable_columns, :acts_as_cacheable_memoized_methods
@@ -47,7 +47,8 @@ module ActsAsCacheable
         def memoize_with_cache(*methods)
           @acts_as_cacheable_version = nil
           @acts_as_cacheable_memoized_methods |= methods
-          before_cache(*methods)
+          #TODO: rails3
+          #before_cache(*methods)
           memoize_without_cache(*methods)
         end
         alias_method_chain :memoize, :cache

@@ -5,7 +5,8 @@ class SimpledbResource
   cattr_reader :sdb
   attr_accessor :key, :attributes, :this_domain_name, :is_new, :key_hash
   cattr_accessor :domain_name, :key_format
-  superclass_delegating_accessor :domain_name, :key_format
+  #TODO: rails3
+  #superclass_delegating_accessor :domain_name, :key_format
   class_inheritable_accessor :attribute_names
 
   def self.reset_connection
