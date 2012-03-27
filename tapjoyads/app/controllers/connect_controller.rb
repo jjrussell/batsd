@@ -5,7 +5,7 @@ class ConnectController < ApplicationController
     return unless verify_params([:app_id, :udid])
 
     click = Click.new(:key => "#{params[:udid]}.#{params[:app_id]}", :consistent => params[:consistent])
-    if click.new_record? && params[:mac_address].present?
+    if click.new_record? && params[:mac_address].present? && params[:mac_address] != params[:udid]
       click = Click.new(:key => "#{params[:mac_address]}.#{params[:app_id]}", :consistent => params[:consistent])
     end
     if click.rewardable?
