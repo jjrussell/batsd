@@ -28,7 +28,7 @@
     %br
     Device Type: #{ @device.device_type }
     %br
-    Support Request: STUFF - ADD HYPERLINK
+    Support Request: #{ @support_request.id }
     %br
     Click:
     = @click.present? ? link_to(@click.key, device_info_tools_url(:click_key => @click.key, :host => URI.parse(DASHBOARD_URL).host)) : ""
