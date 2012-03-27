@@ -57,6 +57,7 @@
                 = image_tag(icon_url)
               - else
                 %img{ :src => "#{CLOUDFRONT_URL}/images/blank.png", :s => icon_url }
+              = render :partial => 'shared/tracking_pixel_tags', :locals => { :offer => offer, :load_image => false }
         .offer-text
           - if @currency.conversion_rate > 0
             %span
@@ -77,7 +78,6 @@
                 = t('text.offerwall.wifi_required')
                 .wifi_icon
         .load
-    = render :partial => 'shared/tracking_pixel_tags', :locals => { :offer => offer, :load_image => false }
     - unless index == (@offer_list.size-1)
       .divider
 
@@ -139,16 +139,24 @@
         if (!window.scrollY) {
           scrollY = document.body.parentNode.scrollTop;
         }
-        if (scrollY + window.innerHeight + 480 > image.offsetTop) {
+        var vertOffset = scrollY + window.innerHeight;
+        // 480 is a buffer so we can pre-load images *before* they are displayed
+        if (vertOffset + 480 > image.offsetTop && image.getAttribute('s') && image.src != image.getAttribute('s')) {
           loadImage(image);
+        }
+        if (vertOffset > image.offsetTop && image.getAttribute('t') && image.src != image.getAttribute('t')) {
+          loadTrackingImage(image);
         }
       }
     }
 
     function loadImage(image) {
-      if (image.getAttribute('s') && image.src != image.getAttribute('s')) {
-        image.src = image.getAttribute('s');
-      }
+      image.src = image.getAttribute('s');
+    }
+
+    function loadTrackingImage(image) {
+      image.className = 'hidden';
+      image.src = image.getAttribute('t');
     }
 
     function loadJQ(ref){
