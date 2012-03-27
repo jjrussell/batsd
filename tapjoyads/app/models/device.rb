@@ -220,6 +220,7 @@ class Device < SimpledbShardedResource
     end
 
     self.apps = mac_device.parsed_apps.merge(@parsed_apps)
+    self.publisher_user_ids = mac_device.publisher_user_ids.merge(publisher_user_ids)
     save!
     mac_device.delete_all
   end
