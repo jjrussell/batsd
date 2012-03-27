@@ -1,2 +1,5 @@
 - offer.third_party_tracking_urls.each do |url|
-  = image_tag(h(url), :style => 'display:none;')
+  - if defined?(load_image) && !load_image
+    = image_tag('', :style => 'display:none;', :s => h(url))
+  - else
+    = image_tag(h(url), :style => 'display:none;')
