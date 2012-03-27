@@ -110,8 +110,8 @@ class DisplayAdController < ApplicationController
         @image = get_ad_image(publisher_app, offer, width, height, currency, params[:display_multiplier])
       end
 
+      @offer = offer
       if params[:details] == '1'
-        @offer = offer
         @amount = currency.get_visual_reward_amount(offer, params[:display_multiplier])
         if offer.item_type == 'App'
           advertiser_app = App.find_in_cache(@offer.item_id)

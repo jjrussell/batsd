@@ -1,3 +1,14 @@
+# TODO: This is obviously a stupid hack. @erictip HALP PLZ
+class Object
+  def third_party_tracking_urls
+    []
+  end
+
+  def third_party_tracking_urls=(foo)
+    []
+  end
+end
+
 class Offer < ActiveRecord::Base
   include UuidPrimaryKey
   include Offer::Ranking
