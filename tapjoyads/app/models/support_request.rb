@@ -25,18 +25,25 @@ class SupportRequest < SimpledbResource
   self.sdb_attr :click_id
   self.sdb_attr :gamer_id
 
-  def fill(params, app, currency, offer)
-    self.description       = params[:description]
-    self.udid              = params[:udid]
-    self.email_address     = params[:email_address]
-    self.publisher_user_id = params[:publisher_user_id]
-    self.device_type       = params[:device_type]
-    self.language_code     = params[:language_code]
-    self.app_id            = app.id
-    self.currency_id       = currency.id
-    self.offer_id          = offer.id if offer.present?
-    click                  = offer.present? ? get_last_click(params[:udid], offer) : nil
-    self.click_id          = click ? click.id : nil
+  def fill_from_params(params, app, currency, offer, user_agent)
+    self.description            = params[:description]
+    self.udid                   = params[:udid]
+    self.email_address          = params[:email_address]
+    self.publisher_app_id       = params[:publisher_app_id]
+    self.publisher_partner_id   = params[:publisher_partner_id]
+    self.publisher_user_id      = params[:publisher_user_id]
+    self.device_type            = params[:device_type]
+    self.user_agent             = user_agent
+    self.language_code          = params[:language_code]
+    self.app_id                 = app.id
+    self.currency_id            = currency.id
+    self.offer_id               = offer.id if offer.present?
+    click                       = offer.present? ? get_last_click(params[:udid], offer) : nil
+    self.click_id               = click ? click.id : nil
+  end
+
+  def fill_from_click(click, gamer, user_agent)
+    # Fill stuff in
   end
 
   def get_last_click(udid, offer)
