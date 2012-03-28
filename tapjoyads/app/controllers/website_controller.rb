@@ -12,6 +12,11 @@ class WebsiteController < ApplicationController
   before_filter :set_recent_partners
   before_filter :inform_of_new_sdk
 
+  NEW_SDK_NOTICE = "A new iOS SDK (v8.1.8) update is now available <a href='/sdk'>here</a> for both Publishers and Advertisers.
+                    Moving forward, please update the Tapjoy SDK for all apps you're submitting to Apple. Our updated SDK now tracks w/ MAC Address.
+                    If you have any questions/concerns, please contact <a href='mailto:support@tapjoy.com'>support@tapjoy.com</a>.
+                    <br><br>Read more at our blog: <a href='http://blog.tapjoy.com/for-developers/tapjoy-sdk-update/'>http://blog.tapjoy.com/for-developers/tapjoy-sdk-update/</a>"
+
   def sanitize_currency_params(object, fields)
     unless object.nil?
       fields.each do |field|
@@ -121,7 +126,7 @@ class WebsiteController < ApplicationController
 
   def inform_of_new_sdk
     if current_user && flash.now[:notice].blank? && (!cookies[:informed_sdk].present? || ObjectEncryptor.decrypt(cookies[:informed_sdk]) != '8.1.8')
-      flash.now[:notice] = "A new iOS SDK (v8.1.8) update is now available <a href='/sdk'>here</a> for both Publishers and Advertisers. Moving forward, please update the Tapjoy SDK for all apps you're submitting to Apple. Our updated SDK now tracks w/ MAC Address. If you have any questions/concerns, please contact support@tapjoy.com."
+      flash.now[:notice] = NEW_SDK_NOTICE
       cookies[:informed_sdk] = {:value => ObjectEncryptor.encrypt('8.1.8'), :expires => 1.year.from_now }
     end
   end
