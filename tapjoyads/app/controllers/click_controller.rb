@@ -48,6 +48,7 @@ class ClickController < ApplicationController
   def video
     create_click('video')
     handle_pay_per_click
+    handle_multi_complete_video
 
     render :text => 'OK'
   end
@@ -318,6 +319,13 @@ class ClickController < ApplicationController
       Digest::MD5.hexdigest("#{params[:udid]}.#{params[:advertiser_app_id]}")
     else
       "#{params[:udid]}.#{params[:advertiser_app_id]}"
+    end
+  end
+
+  def handle_multi_complete_video
+    app_id_for_device = params[:advertiser_app_id]
+    if @offer.multi_complete? && @device.has_app?(app_id_for_device)
+      @device.unset_last_run_time!(app_id_for_device)
     end
   end
 
