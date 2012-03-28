@@ -10,6 +10,7 @@ class WebsiteController < ApplicationController
   before_filter { |c| Authorization.current_user = c.send(:current_user) }
   before_filter :check_employee_device
   before_filter :set_recent_partners
+  before_filter :inform_of_new_sdk
 
   def sanitize_currency_params(object, fields)
     unless object.nil?
@@ -116,6 +117,13 @@ class WebsiteController < ApplicationController
 
   def set_platform
     @platform = params[:platform] || 'all'
+  end
+
+  def inform_of_new_sdk
+    if current_user && flash.now[:notice].blank? && (!cookies[:informed_sdk].present? || ObjectEncryptor.decrypt(cookies[:informed_sdk]) != '8.1.8')
+      flash.now[:notice] = "A new iOS SDK (v8.1.8) update is now available <a href='/sdk'>here</a> for both Publishers and Advertisers. Moving forward, please update the Tapjoy SDK for all apps you're submitting to Apple. Our updated SDK now tracks w/ MAC Address. If you have any questions/concerns, please contact support@tapjoy.com."
+      cookies[:informed_sdk] = {:value => ObjectEncryptor.encrypt('8.1.8'), :expires => 1.year.from_now }
+    end
   end
 
   def nag_user_about_payout_info
