@@ -50,7 +50,7 @@ class Games::GamersController < GamesController
         render(:json => { :success => true, :link_device_url => new_games_gamer_device_path })
       end
     else
-      errors = @gamer.errors.reject{|error|error[0] == 'gamer_profile'}
+      errors = @gamer.errors.reject{|error|error[0] == 'gamer_profile'}.to_a
       errors |= @gamer_profile.errors.to_a
       render_json_error(errors) and return
     end

@@ -1,6 +1,8 @@
 require 'spec/spec_helper'
 
 describe Apps::OffersController do
+  include Authlogic::TestCase
+
   before :each do
     activate_authlogic
   end

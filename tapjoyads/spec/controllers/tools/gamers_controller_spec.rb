@@ -1,6 +1,8 @@
 require 'spec/spec_helper'
 
 describe Tools::GamersController do
+  include Authlogic::TestCase
+
   before :each do
     activate_authlogic
   end

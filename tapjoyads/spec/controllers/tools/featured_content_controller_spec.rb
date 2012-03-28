@@ -1,6 +1,8 @@
 require 'spec/spec_helper'
 
 describe Tools::FeaturedContentsController do
+  include Authlogic::TestCase
+
   before :each do
     activate_authlogic
     @admin = Factory(:admin)

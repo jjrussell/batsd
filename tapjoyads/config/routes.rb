@@ -402,7 +402,7 @@ Tapjoyad::Application.routes.draw do
     match 'help' => 'games/homepage#help', :as => :help, :path_prefix => 'games', :name_prefix => 'games_'
     match 'switch_device' => 'games/homepage#switch_device', :as => :switch_device, :path_prefix => 'games', :name_prefix => 'games_'
     match 'send_device_link' => 'games/homepage#send_device_link', :as => :send_device_link, :path_prefix => 'games', :name_prefix => 'games_'
-    match 'earn/:id' => 'games/homepage#earn', :as => :earn, :path_prefix => 'games', :name_prefix => 'games_'
+    match 'earn/:eid' => 'games/homepage#earn', :as => :earn
     match 'more_apps' => 'games/homepage#index', :as => :more_apps, :path_prefix => 'games', :name_prefix => 'games_'
     match 'get_app' => 'games/homepage#get_app', :as => :get_app, :path_prefix => 'games', :name_prefix => 'games_'
     match 'editor_picks' => 'games/more_games#editor_picks', :as => :more_games_editor_picks, :path_prefix => 'games', :name_prefix => 'games_'
@@ -464,9 +464,10 @@ Tapjoyad::Application.routes.draw do
     match 'social/friends' => 'games/social#friends', :as => :friends, :path_prefix => 'games', :name_prefix => 'games_social_'
     match 'twitter/start_oauth' => 'games/social/twitter#start_oauth', :as => :start_oauth, :name_prefix => 'games_social_twitter_'
     match 'twitter/finish_oauth' => 'games/social/twitter#finish_oauth', :as => :finish_oauth, :name_prefix => 'games_social_twitter_'
+    resources :survey_results, :only => [:new, :create]
+    resources :app_reviews, :only => [:index, :create, :edit, :update, :new, :destroy]
   end
-  resources :survey_results, :only => [:new, :create]
-  resources :app_reviews, :only => [:index, :create, :edit, :update, :new, :destroy]
+
   match 'service1.asmx/Connect' => 'connect#index'
   match 'Service1.asmx/Connect' => 'connect#index'
   match 'service1.asmx/AdShown' => 'adshown#index'

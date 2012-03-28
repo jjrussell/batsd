@@ -25,7 +25,7 @@ describe ClickController do
 
       it "requires gamer_id" do
         get(:generic, @params)
-        response.status.should == '400 Bad Request'
+        response.status.should == 400
         response.body.should == 'missing required params'
       end
 

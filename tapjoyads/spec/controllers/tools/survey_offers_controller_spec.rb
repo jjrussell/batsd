@@ -1,6 +1,8 @@
 require 'spec/spec_helper'
 
 describe Tools::SurveyOffersController do
+  include Authlogic::TestCase
+
   render_views
 
   before :each do

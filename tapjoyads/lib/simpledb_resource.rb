@@ -5,8 +5,8 @@ class SimpledbResource
   cattr_reader :sdb
   attr_accessor :key, :attributes, :this_domain_name, :is_new, :key_hash
   cattr_accessor :domain_name, :key_format
-  #TODO: rails3
-  #superclass_delegating_accessor :domain_name, :key_format
+  superclass_delegating_accessor :domain_name
+  superclass_delegating_accessor :key_format
   class_inheritable_accessor :attribute_names
 
   def self.reset_connection
@@ -106,6 +106,10 @@ class SimpledbResource
     @key = key
   end
 
+  def persisted?
+    true
+  end
+
   def new_record?
     @is_new
   end
@@ -175,6 +179,7 @@ class SimpledbResource
     end
     raise e
   rescue Exception => e
+    raise e
     if e.is_a?(RightAws::AwsError)
       Mc.increment_count("failed_sdb_saves.sdb.#{@this_domain_name}.#{(now.to_f / 1.hour).to_i}", false, 1.day)
     else

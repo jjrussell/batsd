@@ -40,7 +40,7 @@ describe FullscreenAdController do
 
         response.should be_success
         response.should render_template("fullscreen_ad/custom_creative")
-        response.should have_tag('div', 'x')
+        response.body.should have_selector('div#main')
       end
 
       it 'includes call-to-action button for rewarded' do
@@ -49,7 +49,7 @@ describe FullscreenAdController do
         reward_amount = @currency.get_visual_reward_amount(@offer)
         expected_text = "Earn #{reward_amount} #{@currency.name}"
         response.should be_success
-        response.should have_tag('a', expected_text)
+        response.body.should have_content(expected_text)
       end
 
       it 'includes call-to-action button for non-rewarded offers' do
@@ -58,7 +58,7 @@ describe FullscreenAdController do
         get(:index, @params)
 
         response.should be_success
-        response.should have_tag('a', 'Download')
+        response.body.should have_content('Download')
       end
     end
   end

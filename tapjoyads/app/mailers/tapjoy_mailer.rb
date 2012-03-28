@@ -1,4 +1,5 @@
 class TapjoyMailer < ActionMailer::Base
+  default :from => 'Tapjoy <noreply@tapjoy.com>'
 
   def newrelic_alert(error)
     from 'Tapjoy <noreply@tapjoy.com>'
@@ -57,11 +58,8 @@ class TapjoyMailer < ActionMailer::Base
   end
 
   def new_secondary_account(user_email, reset_link)
-    from 'Tapjoy Support <support@tapjoy.com>'
-    recipients user_email
-    subject "New Account Created - Tapjoy.com"
-    content_type 'text/html'
-    body(:reset_link => reset_link)
+    @reset_link = reset_link
+    mail :to => user_email, :from => 'Tapjoy Support <support@tapjoy.com', :subject => "New Account Created - Tapjoy.com"
   end
 
   def contact_us(info)

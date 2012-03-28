@@ -1,6 +1,8 @@
 require 'spec/spec_helper'
 
 describe Games::AppReviewsController do
+  include Authlogic::TestCase
+
   before :each do
     fake_the_web
     activate_authlogic

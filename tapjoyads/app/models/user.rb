@@ -12,7 +12,7 @@ class User < ActiveRecord::Base
   has_many :role_assignments, :dependent => :destroy
   has_many :partner_assignments, :dependent => :destroy
   has_many :user_roles, :through => :role_assignments
-  has_many :partners, :through => :partner_assignments
+  has_many :partners, :through => :partner_assignments, :readonly => false
   has_many :enable_offer_requests
   has_many :admin_devices
   has_many :internal_devices

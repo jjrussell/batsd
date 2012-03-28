@@ -274,15 +274,14 @@ describe AgencyApi::AppsController do
 
     context 'with invalid app' do
       before :each do
-        @app.platform = 'pizza'
-        @app.send(:update_without_callbacks)
+        @app.update_attribute(:platform, 'pizza')
         put(:update, @valid_params)
       end
 
       it 'responds with error' do
         should_respond_with_json_error(400)
         result = JSON.parse(response.body)
-        result['error'].join(' ').should == 'platform is not included in the list'
+        result['error']['platform'].first.should == 'is not included in the list'
       end
     end
 

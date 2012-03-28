@@ -162,7 +162,7 @@ class PartnersController < WebsiteController
       order.save!
 
       email = order.partner.users.first.email rescue "(no email)"
-      flash[:notice] = "The transfer of <b>$#{"%.2f" % (@transfer.amount / 100.0)}</b> to <b>#{email}</b> was successfully created."
+      flash[:notice] = "The transfer of <b>$#{"%.2f" % (@transfer.amount.to_i / 100.0)}</b> to <b>#{email}</b> was successfully created."
 
       if marketing_order.present?
         log_activity(marketing_order)

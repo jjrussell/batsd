@@ -1,6 +1,8 @@
 require 'spec_helper'
 
 describe Tools::GenericOffersController do
+  include Authlogic::TestCase
+
   render_views
 
   before :each do
