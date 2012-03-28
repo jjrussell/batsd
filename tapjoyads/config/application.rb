@@ -72,6 +72,10 @@ module Tapjoyad
     config.action_mailer.perform_deliveries = true
 
     config.filter_parameters = :password, :password_confirmation
+
+    config.generators do |g|
+      g.test_framework :rspec
+    end
   end
 
 end

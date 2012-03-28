@@ -1,5 +1,6 @@
 source :gemcutter
 
+gem 'rake', '0.8.7'
 gem 'rcov', '0.9.11'
 gem 'rdoc', '3.12'
 gem 'rails', '3.0.6'
@@ -69,7 +70,7 @@ group :development do
   gem 'mongrel', '1.1.5'
 end
 
-group :test do
+group :development, :test do
   gem 'factory_girl_rails', '~>1'
   gem 'shoulda', '2.11.1'
   gem 'shoulda-addons', '0.2.2', :require => 'shoulda_addons'
@@ -77,6 +78,9 @@ group :test do
   gem 'rspec'
   gem 'rspec-rails'
   gem 'spork'
+  gem 'capybara'
+  gem 'cucumber-rails'
+  gem 'database_cleaner'
 end
 
 group :ops do
