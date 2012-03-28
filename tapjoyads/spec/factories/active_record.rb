@@ -1,10 +1,17 @@
 FactoryGirl.define do
-  factory :user do
+  factory :pending_user, :class => User  do
     email    { Factory.next(:email) }
     username { |u| u.email }
-    state 'approved'
     password 'asdf'
     password_confirmation 'asdf'
+    country  'earth'
+  end
+
+  factory :user, :parent => :pending_user do
+    after_build do |user|
+      user.approvals_off
+      user.state = 'approved'
+    end
   end
 
   factory :admin, :parent => :user do
