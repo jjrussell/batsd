@@ -56,6 +56,14 @@
             $('#offer_dropdown').hide();
           }
         });
+
+        // Do AJAX request
+        $("#offer_dropdown").load('#{new_games_support_request_url(offer_dropdown_params)}', function() {
+          $('#tapjoy_loader').fadeOut('fast', function() {
+            $("#offer_dropdown").fadeIn('fast');
+          });
+        });
+
         return false;
       });
     });
