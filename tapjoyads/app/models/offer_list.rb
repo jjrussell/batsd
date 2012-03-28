@@ -71,10 +71,12 @@ class OfferList
 
     if @currency
       promoted_offers = []
-      @offers.each do |o|
-        promoted_offers.push(o.id) if can_be_promoted?(o)
+      if @currency.get_promoted_offers.present? || @currency.partner_get_promoted_offers.present?
+        @offers.each do |o|
+          promoted_offers.push(o.id) if can_be_promoted?(o)
+        end
+        promoted_offers = promoted_offers.shuffle.slice(0, PROMOTED_INVENTORY_SIZE)
       end
-      promoted_offers = promoted_offers.shuffle.slice(0, PROMOTED_INVENTORY_SIZE)
 
       @offers.each do |o|
         o.postcache_rank_score(@currency, @source, promoted_offers.include?(o.id))
