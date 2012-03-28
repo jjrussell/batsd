@@ -57,7 +57,8 @@ class Job::QueueCalculateShowRateController < Job::SqsReaderController
 
     possible_installs_per_second = possible_clicks_per_second * conversion_rate * old_show_rate
     potential_spend = possible_installs_per_second * 48.hours * offer.payment
-    offer.low_balance = potential_spend > offer.partner.balance
+    partner_balance = offer.partner.balance
+    offer.low_balance = potential_spend > partner_balance || partner_balance < 500000
 
     # Assume all apps are CST for now.
     end_of_cst_day = Time.parse('00:00 CST', now + 18.hours).utc
