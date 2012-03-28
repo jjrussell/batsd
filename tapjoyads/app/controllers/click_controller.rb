@@ -275,6 +275,7 @@ class ClickController < ApplicationController
     click.advertiser_reseller_id = @offer.reseller_id || ''
     click.spend_share            = @currency.get_spend_share(@offer)
     click.local_timestamp        = params[:local_timestamp] if params[:local_timestamp].present?
+    click.mac_address            = params[:mac_address]
 
     click.save
   end

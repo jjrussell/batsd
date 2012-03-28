@@ -135,7 +135,8 @@ module Offer::UrlGeneration
       :display_multiplier => display_multiplier,
       :device_name        => device_name,
       :library_version    => library_version,
-      :gamer_id           => gamer_id
+      :gamer_id           => gamer_id,
+      :mac_address        => mac_address,
     }
 
     "#{click_url}?data=#{ObjectEncryptor.encrypt(data)}"

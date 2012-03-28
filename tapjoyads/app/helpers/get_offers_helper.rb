@@ -29,7 +29,8 @@ module GetOffersHelper
       :display_multiplier => params[:display_multiplier],
       :device_name        => params[:device_name],
       :library_version    => params[:library_version],
-      :gamer_id           => params[:gamer_id])
+      :gamer_id           => params[:gamer_id],
+      :mac_address        => params[:mac_address])
 
     if offer.item_type == 'VideoOffer' || offer.item_type == 'TestVideoOffer'
       if @publisher_app.platform == 'windows'

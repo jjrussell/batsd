@@ -44,6 +44,7 @@ class Click < SimpledbShardedResource
   self.sdb_attr :publisher_reseller_id
   self.sdb_attr :advertiser_reseller_id
   self.sdb_attr :client_timestamp,  :type => :time
+  self.sdb_attr :mac_address
 
   def dynamic_domain_name
     domain_number = @key.matz_silly_hash % NUM_CLICK_DOMAINS
