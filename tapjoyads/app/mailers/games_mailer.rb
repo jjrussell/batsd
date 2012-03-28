@@ -19,9 +19,8 @@ class GamesMailer < ActionMailer::Base
 
   def contact_support(gamer, device, content, user_agent, language_code, click, support_request)
     from 'Tapjoy <noreply@tapjoy.com>'
-    #reply_to gamer.email
-    #recipients "mobilehelp@tapjoy.com"
-    recipients "brian.stebar@tapjoy.com"
+    reply_to gamer.email
+    recipients "mobilehelp@tapjoy.com"
     subject "User Support - Tapjoy"
     content_type 'text/html'
     body(:content         => content,
