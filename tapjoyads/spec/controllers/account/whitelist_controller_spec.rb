@@ -1,6 +1,7 @@
 require 'spec_helper'
 
 describe Account::WhitelistController do
+  include Authlogic::TestCase
   before :each do
     activate_authlogic
     fake_the_web

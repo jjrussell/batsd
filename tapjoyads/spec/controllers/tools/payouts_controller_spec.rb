@@ -1,7 +1,7 @@
 require 'spec/spec_helper'
 
 describe Tools::PayoutsController do
-  integrate_views
+  render_views
 
   before :each do
     activate_authlogic

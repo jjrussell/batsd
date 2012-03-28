@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe VideosController do
-  integrate_views
+  render_views
 
   before(:all) do
     fake_the_web

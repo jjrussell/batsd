@@ -11,7 +11,7 @@ class PartnerChange < ActiveRecord::Base
   validates_inclusion_of :item_type, :in => SUPPORTED_TYPES
   validate :source_partner_owns_item
 
-  named_scope :to_complete, lambda { { :conditions => ["scheduled_for <= ?", Time.zone.now] } }
+  scope :to_complete, lambda { { :conditions => ["scheduled_for <= ?", Time.zone.now] } }
 
   def complete!
     return if completed_at?

@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Tools::GenericOffersController do
-  integrate_views
+  render_views
 
   before :each do
     activate_authlogic

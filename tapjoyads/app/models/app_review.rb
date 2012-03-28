@@ -11,9 +11,9 @@ class AppReview < ActiveRecord::Base
   validates_presence_of :author, :app_metadata
   validates_inclusion_of :user_rating, :in => [-1, 0, 1]
 
-  named_scope :by_employees, :conditions => { :author_type => 'Employee' }
-  named_scope :by_gamers, :conditions => { :author_type => 'Gamer' }
-  named_scope :ordered_by_date, :order => "created_at DESC"
+  scope :by_employees, :conditions => { :author_type => 'Employee' }
+  scope :by_gamers, :conditions => { :author_type => 'Gamer' }
+  scope :ordered_by_date, :order => "created_at DESC"
 
   delegate :name, :to => :app_metadata, :prefix => true
 

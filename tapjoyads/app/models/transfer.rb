@@ -1,7 +1,7 @@
-class Transfer < ActiveRecord::BaseWithoutTable
+class Transfer
+  include ActiveModel::Validations
 
-  column :amount, :integer
-  column :internal_notes, :string
+  attr_accessor :amount, :internal_notes
 
   validates_presence_of :amount
   validates_presence_of :internal_notes

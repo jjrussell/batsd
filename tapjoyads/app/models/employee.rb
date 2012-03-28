@@ -10,10 +10,10 @@ class Employee < ActiveRecord::Base
   validates_uniqueness_of :desk_location, :allow_blank => true
   validates_inclusion_of :department, :in => DEPARTMENTS, :allow_nil => true
 
-  named_scope :active_only, :conditions => 'active = true', :order => 'display_order desc, last_name, first_name'
-  named_scope :active_by_first_name, :conditions => 'active = true', :order => 'first_name, last_name'
-  named_scope :all_ordered, :order => 'display_order desc, last_name, first_name'
-  named_scope :products_team, :conditions => [ 'active = ? and department = ?', true, 'products' ]
+  scope :active_only, :conditions => 'active = true', :order => 'display_order desc, last_name, first_name'
+  scope :active_by_first_name, :conditions => 'active = true', :order => 'first_name, last_name'
+  scope :all_ordered, :order => 'display_order desc, last_name, first_name'
+  scope :products_team, :conditions => [ 'active = ? and department = ?', true, 'products' ]
 
   has_one :user, :primary_key => :email, :foreign_key => :email
   has_many :wfhs

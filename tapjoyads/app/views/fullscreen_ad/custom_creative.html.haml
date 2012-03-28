@@ -1,8 +1,8 @@
 .close#close
-  - link_to(params[:preview] == 'true' ? '#' : 'dismiss', :class => 'close', :id => 'close-link') do
+  = link_to(params[:preview] == 'true' ? '#' : 'dismiss', :class => 'close', :id => 'close-link') do
     .close_inner#close_inner x
 #main
-  - link_to((params[:preview] == 'true' ? '#' : get_click_url(@offer)), :class => 'image-link') do
+  = link_to((params[:preview] == 'true' ? '#' : get_click_url(@offer)), :class => 'image-link') do
     %img{ :src => "#{CLOUDFRONT_URL}/images/blank.png", :class => 'creative', :id => 'creative' }
 .buttons#buttons
   - action_text = @offer.rewarded? && @currency.rewarded? ? "Earn #{@currency.get_visual_reward_amount(@offer, params[:display_multiplier])} #{@currency.name}" : "Download"

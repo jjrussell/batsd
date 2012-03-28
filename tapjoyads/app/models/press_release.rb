@@ -11,8 +11,8 @@ class PressRelease < ActiveRecord::Base
     end
   end
 
-  named_scope :ordered, :order => "link_id DESC"
-  named_scope :not_future, :conditions => ["published_at < ?", Time.zone.now]
+  scope :ordered, :order => "link_id DESC"
+  scope :not_future, :conditions => ["published_at < ?", Time.zone.now]
 
   def self.most_recent_and_not_future
     PressRelease.first( :order => "link_id DESC",

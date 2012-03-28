@@ -54,19 +54,20 @@ class Currency < ActiveRecord::Base
     end
   end
 
-  named_scope :for_ios, :joins => :app, :conditions => "#{App.quoted_table_name}.platform = 'iphone'"
-  named_scope :just_app_ids, :select => :app_id, :group => :app_id
-  named_scope :tapjoy_enabled, :conditions => 'tapjoy_enabled'
-  named_scope :udid_for_user_id, :conditions => "udid_for_user_id"
-  named_scope :external_publishers, :conditions => "external_publisher"
+  scope :for_ios, :joins => :app, :conditions => "#{App.quoted_table_name}.platform = 'iphone'"
+  scope :just_app_ids, :select => :app_id, :group => :app_id
+  scope :tapjoy_enabled, :conditions => 'tapjoy_enabled'
+  scope :udid_for_user_id, :conditions => "udid_for_user_id"
+  scope :external_publishers, :conditions => "external_publisher"
 
   before_validation :sanitize_attributes
-  before_validation_on_create :assign_default_currency_group
+  before_validation :assign_default_currency_group, :on => :create
   before_create :set_hide_rewarded_app_installs, :set_values_from_partner_and_reseller
   before_update :update_spend_share
   before_update :reset_to_pending_if_rejected
-  after_cache :cache_by_app_id
-  after_cache_clear :clear_cache_by_app_id
+  #TODO: rails3
+  #after_cache :cache_by_app_id
+  #after_cache_clear :clear_cache_by_app_id
 
   delegate :postcache_weights, :to => :currency_group
   delegate :categories, :to => :app

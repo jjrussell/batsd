@@ -8,8 +8,8 @@ class MonthlyAccounting < ActiveRecord::Base
   validates_numericality_of :year, :only_integer => true, :allow_nil => false, :greater_than => 2007
   validates_uniqueness_of :partner_id, :scope => [ :month, :year ]
 
-  named_scope :since, lambda { |time| { :conditions => ["(year = ? AND month >= ?) OR (year > ?)", time.year, time.month, time.year] } }
-  named_scope :prior_to, lambda { |time| { :conditions => ["(year = ? AND month < ?) OR (year < ?)", time.year, time.month, time.year] } }
+  scope :since, lambda { |time| { :conditions => ["(year = ? AND month >= ?) OR (year > ?)", time.year, time.month, time.year] } }
+  scope :prior_to, lambda { |time| { :conditions => ["(year = ? AND month < ?) OR (year < ?)", time.year, time.month, time.year] } }
 
   def self.expected_count
     now = Time.zone.now

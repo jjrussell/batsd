@@ -57,8 +57,7 @@ class User < ActiveRecord::Base
   def self.account_managers
     role = UserRole.find_by_name("account_mgr")
     conditions = [ "#{RoleAssignment.quoted_table_name}.user_role_id = ?", role.id]
-    users = User.find(:all, :joins => [:role_assignments],
-                      :conditions => conditions, :order => 'email')
+    users = User.joins(:role_assignments).where(conditions).order(:email)
   end
 
   def self.sales_reps

@@ -29,7 +29,8 @@ class ReengagementOffer < ActiveRecord::Base
     end
   end
 
-  after_cache :cache_by_app_id
+  #TODO: rails3
+  #after_cache :cache_by_app_id
 
   after_create :create_primary_offer
 
@@ -38,9 +39,9 @@ class ReengagementOffer < ActiveRecord::Base
   delegate :instructions_overridden, :to => :primary_offer
   delegate :get_offer_device_types, :store_id, :store_url, :large_download?, :supported_devices, :platform, :get_countries_blacklist, :countries_blacklist, :primary_category, :user_rating, :info_url, :to => :app
 
-  named_scope :visible, :conditions => { :hidden => false }
-  named_scope :for_app, lambda { |app_id| {:conditions => [ "app_id = ?", app_id ] } }
-  named_scope :order_by_day, :order => "day_number ASC"
+  scope :visible, :conditions => { :hidden => false }
+  scope :for_app, lambda { |app_id| {:conditions => [ "app_id = ?", app_id ] } }
+  scope :order_by_day, :order => "day_number ASC"
 
   def hide!
     self.hidden = true

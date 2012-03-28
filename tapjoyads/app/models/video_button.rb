@@ -9,8 +9,8 @@ class VideoButton < ActiveRecord::Base
 
   after_save :update_offer
 
-  named_scope :ordered, :order => "enabled DESC, ordinal"
-  named_scope :enabled, :conditions => { :enabled => true }
+  scope :ordered, :order => "enabled DESC, ordinal"
+  scope :enabled, :conditions => { :enabled => true }
 
   def xml_for_offer
     builder = Builder::XmlMarkup.new

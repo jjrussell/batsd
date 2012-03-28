@@ -14,7 +14,7 @@ class GenericOffer < ActiveRecord::Base
   after_create :create_primary_offer
   after_update :update_offers
 
-  named_scope :visible, :conditions => { :hidden => false }
+  scope :visible, :conditions => { :hidden => false }
 
   def create_tracking_offer_for(tracked_for, options = {})
     device_types = options.delete(:device_types) { Offer::ALL_DEVICES.to_json }

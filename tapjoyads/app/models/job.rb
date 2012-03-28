@@ -18,9 +18,9 @@ class Job < ActiveRecord::Base
   end
   validate :check_job_path
 
-  named_scope :active, :conditions => 'active = true'
-  named_scope :by_job_type, lambda { |type| { :conditions => [ "job_type = ?", type ] } }
-  named_scope :for_index, :order => "active desc, job_type, frequency, seconds"
+  scope :active, :conditions => 'active = true'
+  scope :by_job_type, lambda { |type| { :conditions => [ "job_type = ?", type ] } }
+  scope :for_index, :order => "active desc, job_type, frequency, seconds"
 
   attr_reader :next_run_time
 

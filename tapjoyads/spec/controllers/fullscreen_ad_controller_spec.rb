@@ -1,8 +1,7 @@
 require 'spec/spec_helper'
 
 describe FullscreenAdController do
-  integrate_views
-  ignore_html_warning
+  render_views
 
   describe '#index' do
     before :each do

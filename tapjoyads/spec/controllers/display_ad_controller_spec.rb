@@ -5,7 +5,7 @@ def read_asset(name, directory='banner_ads')
 end
 
 describe DisplayAdController do
-  integrate_views
+  render_views
   before :each do
     fake_the_web
   end

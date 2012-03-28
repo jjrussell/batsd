@@ -6,11 +6,11 @@ class EditorsPick < ActiveRecord::Base
   validates_presence_of :scheduled_for, :offer
   validate :scheduled_for_the_future
 
-  named_scope :upcoming, :conditions => 'activated_at IS NULL and expired_at IS NULL', :order => 'scheduled_for'
-  named_scope :to_activate, lambda { { :conditions => [ 'scheduled_for <= ? AND activated_at IS NULL AND expired_at IS NULL', Time.zone.now ], :order => 'scheduled_for' } }
-  named_scope :active, :conditions => [ 'activated_at IS NOT NULL AND expired_at IS NULL' ], :order => 'display_order desc'
-  named_scope :expired, :conditions => 'expired_at', :order => 'expired_at desc'
-  named_scope :by_platform, lambda { |platform| {
+  scope :upcoming, :conditions => 'activated_at IS NULL and expired_at IS NULL', :order => 'scheduled_for'
+  scope :to_activate, lambda { { :conditions => [ 'scheduled_for <= ? AND activated_at IS NULL AND expired_at IS NULL', Time.zone.now ], :order => 'scheduled_for' } }
+  scope :active, :conditions => [ 'activated_at IS NOT NULL AND expired_at IS NULL' ], :order => 'display_order desc'
+  scope :expired, :conditions => 'expired_at', :order => 'expired_at desc'
+  scope :by_platform, lambda { |platform| {
     :conditions => ["apps.platform = ? AND activated_at IS NOT NULL", platform],
     :joins => "join apps ON editors_picks.offer_id = apps.id",
     :order => "display_order DESC", :limit => 10

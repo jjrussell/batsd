@@ -8,7 +8,8 @@ class VideoOffer < ActiveRecord::Base
 
   belongs_to :partner
 
-  cache_associations :video_buttons
+  #TODO: rails3
+  #cache_associations :video_buttons
 
   validates_presence_of :partner, :name
   validates_presence_of :video_url, :unless => :new_record?
@@ -18,7 +19,7 @@ class VideoOffer < ActiveRecord::Base
   after_create :create_primary_offer
   after_update :update_offers
 
-  named_scope :visible, :conditions => { :hidden => false }
+  scope :visible, :conditions => { :hidden => false }
 
   def update_buttons
     offers.each do |offer|

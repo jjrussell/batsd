@@ -85,23 +85,24 @@ class App < ActiveRecord::Base
 
   belongs_to :partner
 
-  cache_associations :app_metadatas, :primary_app_metadata
+  #TODO: rails3
+  #cache_associations :app_metadatas, :primary_app_metadata
 
   validates_presence_of :partner, :name, :secret_key
   validates_inclusion_of :platform, :in => PLATFORMS.keys
   validates_numericality_of :active_gamer_count, :only_integer => true, :greater_than_or_equal_to => 0, :allow_nil => false
 
-  before_validation_on_create :generate_secret_key
+  before_validation :generate_secret_key, :on => :create
 
   after_create :create_primary_offer
   after_update :update_all_offers
   after_update :update_currencies
   after_save :clear_dirty_flags
 
-  named_scope :visible, :conditions => { :hidden => false }
-  named_scope :by_platform, lambda { |platform| { :conditions => ["platform = ?", platform] } }
-  named_scope :by_partner_id, lambda { |partner_id| { :conditions => ["partner_id = ?", partner_id] } }
-  named_scope :live, :joins => [ :app_metadatas ], :conditions =>
+  scope :visible, :conditions => { :hidden => false }
+  scope :by_platform, lambda { |platform| { :conditions => ["platform = ?", platform] } }
+  scope :by_partner_id, lambda { |partner_id| { :conditions => ["partner_id = ?", partner_id] } }
+  scope :live, :joins => [ :app_metadatas ], :conditions =>
     "#{AppMetadata.quoted_table_name}.store_id IS NOT NULL"
 
   delegate :conversion_rate, :to => :primary_currency, :prefix => true

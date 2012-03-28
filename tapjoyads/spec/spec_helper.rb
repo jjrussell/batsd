@@ -3,23 +3,18 @@ require 'spork'
 
 Spork.prefork do
   ENV["RAILS_ENV"] ||= 'test'
-  require File.expand_path(File.join(File.dirname(__FILE__),'..','config','environment'))
-  require 'spec/autorun'
-  require 'spec/rails'
-  require "authlogic/test_case"
+  require File.expand_path("../../config/environment", __FILE__)
+  require 'rspec/rails'
+  require 'rspec/autorun'
+  require 'factory_girl'
+  require 'authlogic/test_case'
 
-  Dir[File.expand_path(File.join(File.dirname(__FILE__),'support','**','*.rb'))].each {|f| require f}
+  Dir[Rails.root.join("spec/support/**/*.rb")].each {|f| require f}
 
-  Spec::Runner.configure do |config|
+  RSpec.configure do |config|
+    config.fixture_path = "#{::Rails.root}/spec/fixtures"
     config.use_transactional_fixtures = true
-    config.use_instantiated_fixtures  = false
-    config.fixture_path = "#{Rails.root}/spec/fixtures/"
-    config.mock_with :mocha
-
-    config.before :each do
-      SimpledbResource.reset_connection
-      Mc.cache.flush
-    end
+    config.infer_base_class_for_anonymous_controllers = false
   end
 
   def login_as(user)
@@ -70,69 +65,6 @@ Spork.prefork do
     RightAws::SdbInterface.stubs(:new).returns(FakeSdb.new)
     SimpledbResource.reset_connection
     AWS::S3.stubs(:new).returns(FakeS3.new)
-  end
-
-  module Spec
-    module Rails
-      module Example
-        class ControllerExampleGroup
-          class << self
-            # Rails uses a tag parser which is more strict than necessary.
-            # Silence the warnings with this.
-            def ignore_html_warning
-              @verbosity = $-v
-
-              class_eval <<-EOV
-                before :each do
-                  $-v = nil
-                end
-
-                after :each do
-                  $-v = #{@verbosity}
-                end
-              EOV
-            end
-          end
-        end
-      end
-    end
-  end
-
-  def match_hash_with_arrays(expected)
-    MatchHashWithArrays.new(expected)
-  end
-
-  class MatchHashWithArrays
-    def initialize(expected)
-      @expected = expected
-    end
-
-    def matches?(actual)
-      @actual = actual
-      match_keys && match_arrays
-    end
-
-    def failure_message_for_should
-      if match_keys
-        "Values do not match for key '#@bad_key'."
-      else
-        "Keys do not match"
-      end
-    end
-
-    def match_keys
-      @actual.keys.sort == @expected.keys.sort
-    end
-
-    def match_arrays
-      @expected.each do |key, value|
-        unless value.sort == @actual[key].sort
-          @bad_key = key
-          return false
-        end
-      end
-      true
-    end
   end
 end
 

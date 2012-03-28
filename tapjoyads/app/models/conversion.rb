@@ -61,8 +61,8 @@ class Conversion < ActiveRecord::Base
 
   after_create :update_partner_amounts
 
-  named_scope :created_since, lambda { |date| { :conditions => [ "created_at >= ?", date ] } }
-  named_scope :created_between, lambda { |start_time, end_time| { :conditions => [ "created_at >= ? AND created_at < ?", start_time, end_time ] } }
+  scope :created_since, lambda { |date| { :conditions => [ "created_at >= ?", date ] } }
+  scope :created_between, lambda { |start_time, end_time| { :conditions => [ "created_at >= ? AND created_at < ?", start_time, end_time ] } }
 
   def self.get_stat_definitions(reward_type)
     case reward_type

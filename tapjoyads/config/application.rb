@@ -38,7 +38,7 @@ module Tapjoyad
   
     # Disable the IP spoofing check because a lot of cell phone proxies don't set up HTTP headers correctly.
     # http://guides.rubyonrails.org/2_3_release_notes.html#other-action-controller-changes
-    config.action_controller.ip_spoofing_check = false
+    config.action_dispatch.ip_spoofing_check = false
   
     # Use the database for sessions instead of the cookie-based default,
     # which shouldn't be used to store highly confidential information
@@ -70,5 +70,8 @@ module Tapjoyad
     config.action_mailer.delivery_method = :amazon_ses
     config.action_mailer.raise_delivery_errors = true
     config.action_mailer.perform_deliveries = true
+
+    config.filter_parameters = :password, :password_confirmation
   end
+
 end

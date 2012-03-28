@@ -554,4 +554,5 @@ Tapjoyad::Application.routes.draw do
   match 'privacy' => 'documents#privacy'
   match 'privacy.html' => 'documents#privacy'
   resources :opt_outs, :only => :create
+  match ':controller(/:action(/:id))'
 end
