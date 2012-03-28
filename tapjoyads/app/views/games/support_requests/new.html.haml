@@ -21,15 +21,17 @@
           = f.text_area :content, :rows => 5, :value => params[:content], :required => 'true', :class => 'ui-joy-textarea'
         - if params[:type] === "contact_support"
           .container.h120
-            - if @incomplete_offers.nil?
-              .field
-                = label_tag :offer_id, t('text.games.contact_support.incomplete_offers_label')
-                = submit_tag t('text.games.contact_support.select_offer_button'), :id => 'show_offers', :type => 'button', :class => 'ui-joy-button secondary mt15 pt10 pb10'
-              #tapjoy_loader.hidden
-                #loader_t.loader_letter
-                #loader_a.loader_letter
-                #loader_p.loader_letter
+            .field
+              = label_tag :offer_id, t('text.games.contact_support.incomplete_offers_label')
+            #tapjoy_loader.hidden
+              #loader_t.loader_letter
+              #loader_a.loader_letter
+              #loader_p.loader_letter
+            - if @clicks_list.nil?
+              = submit_tag t('text.games.contact_support.select_offer_button'), :id => 'show_offers', :type => 'button', :class => 'ui-joy-button secondary mt15 pt10 pb10'
               #offer_dropdown.hidden
+            - else
+              = render :partial => 'select_offer'
         .field
           .container.pb10
             = f.submit t('text.shared.submit'), :class => 'ui-joy-button primary pb10 pt10'
@@ -50,7 +52,6 @@
         });
 
         // Do AJAX request
-
         $("#offer_dropdown").load('#{new_games_support_request_url(offer_dropdown_params)}', function() {
           $('#tapjoy_loader').fadeOut('fast', function() {
             $("#offer_dropdown").fadeIn('fast');
