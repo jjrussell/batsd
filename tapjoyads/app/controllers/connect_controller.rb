@@ -7,7 +7,7 @@ class ConnectController < ApplicationController
     device = Device.new(:key => params[:udid])
     offer = Offer.find_in_cache(params[:app_id])
 
-    unless device.has_app?(params[:app_id]) || offer.item_type == 'VideoOffer'
+    if !device.has_app?(params[:app_id]) || (offer.present? && offer.item_type == 'VideoOffer')
       click = Click.new(:key => "#{params[:udid]}.#{params[:app_id]}", :consistent => params[:consistent])
       if click.new_record? && params[:mac_address].present? && params[:mac_address] != params[:udid]
         click = Click.new(:key => "#{params[:mac_address]}.#{params[:app_id]}", :consistent => params[:consistent])
