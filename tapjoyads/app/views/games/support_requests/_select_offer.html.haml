@@ -1,10 +1,9 @@
 - clicks_list = @clicks_list.present? ? JSON.parse(@clicks_list) : @unresolved_clicks.collect { |c| [ c.advertiser_app.name, c.id ] }
+
 - if clicks_list.any?
   .container.mt3.pb3
     = select_tag :click_id, options_for_select(clicks_list, params[:click_id].present? ? params[:click_id] : clicks_list.first.id)
-
 - else
   .field.mb20
     = label_tag 'no_incomplete_offers', t('text.games.contact_support.no_incomplete_offers_label')
-
 = hidden_field_tag :clicks_list, clicks_list.to_json
