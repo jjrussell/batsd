@@ -62,6 +62,8 @@ module WebsiteHelper
         } );
 
         yAxis.render();
+
+        $('#loading_#{element_suffix}').remove();
       }
     } );
 

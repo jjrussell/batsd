@@ -5,11 +5,13 @@
 %h2 HTTP Codes
 
 %h3 Last 60 Seconds
-#chart_60sec
-#legend_60sec
-- include_rickshaw_js('http_codes.json', '60sec')
+= render :partial => 'rickshaw/graph', :locals => {:period => 60.seconds, :data_source => 'http_codes'}
 
 %h3 Last 5 Minutes
-#chart_300sec
-#legend_300sec
-- include_rickshaw_js('http_codes.json?period=300', '300sec')
+= render :partial => 'rickshaw/graph', :locals => {:period => 5.minutes, :data_source => 'http_codes'}
+
+%h3 Last 60 Minutes
+= render :partial => 'rickshaw/graph', :locals => {:period => 60.minutes, :data_source => 'http_codes'}
+
+%h3 Last 12 Hours
+= render :partial => 'rickshaw/graph', :locals => {:period => 12.hours, :data_source => 'http_codes'}

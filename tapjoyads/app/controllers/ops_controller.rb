@@ -39,10 +39,8 @@ class OpsController < WebsiteController
   end
 
   def http_codes
-    redis = Redis.new(:host => "ec2-75-101-244-223.compute-1.amazonaws.com", :port => 6380)
-
     # Since the data is buffered by 10 seconds, start from 10 seconds ago
-    @period = params[:period] ? params[:period].to_i.seconds : 60.seconds
+    @period = params[:period] ? params[:period].to_i : 60.seconds
     @end_time = Time.zone.now - 10.seconds
     @start_time = @end_time - @period
 
@@ -50,24 +48,18 @@ class OpsController < WebsiteController
       format.json do
         @stats = {}
         keys = []
-        time = @start_time.to_i
-        while time <= @end_time.to_i
-          if (time % 100 == 0) && (time + 100 < @end_time.to_i)
-            keys += redis.keys("api.status.*.#{time.to_s[0..-3]}*")
-            time += 100
-          elsif (time % 10 == 0) && (time + 10 < @end_time.to_i)
-            keys += redis.keys("api.status.*.#{time.to_s[0..-2]}*")
-            time += 10
-          else
-            keys += redis.keys("api.status.*.#{time}")
-            time += 1
+        statuses = redis.smembers "api.statuses"
+
+        @start_time.to_i.upto(@end_time.to_i) do |t|
+          statuses.each do |status|
+            keys << "api.status.#{status}.#{t}"
           end
         end
 
-        values = redis.mapped_mget(*keys)
+        values = safe_mapped_mget(*keys)
         keys.each do |key|
           time = key.split(".")[3].to_i
-          if @period >= 10.minutes
+          if @period > 30.minutes
             time -= time % 60
           end
           @stats[time] ||= {}
@@ -78,6 +70,32 @@ class OpsController < WebsiteController
         render :json => @stats.to_json
       end
     end
+  end
+
+  def redis
+    @redis ||= Redis.new(:host => "redis.tapjoy.net", :port => 6380)
+  end
+
+  # Splits redis#mapped_mget into sections of 50_000 if necessary
+  #
+  # @param [Array] *keys the list of keys needed from redis
+  # @return [Hash] mapped hash of keys => values
+  def safe_mapped_mget(*keys)
+    values = {}
+
+    if keys.length >= 50_000
+      working_keys = keys.dup
+      while working_keys.length > 0
+        puts "#{working_keys.length} keys left"
+        working_values = redis.mapped_mget(*working_keys[0..49_999])
+        values.update(working_values)
+        working_keys.slice!(0..49_999)
+      end
+    else
+      values = redis.mapped_mget(*keys)
+    end
+
+    values
   end
 
 end
