@@ -95,6 +95,7 @@ authorization do
     includes :money
     includes :games_editor
     includes :customer_service
+    has_permission_on :users, :to => [ :approve ]
     has_permission_on :statz, :to => [ :index, :show, :edit, :update, :new, :create, :last_run_times, :udids, :download_udids, :global, :publisher, :advertiser, :support_request_reward_ratio ]
     has_permission_on :search, :to => [ :offers, :partners, :users ]
     has_permission_on :tools, :to => [ :disabled_popular_offers, :sanitize_users, :update_user, :resolve_clicks, :new_transfer, :device_info, :update_device, :send_currency_failures ]

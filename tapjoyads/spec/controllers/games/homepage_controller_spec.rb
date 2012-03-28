@@ -64,5 +64,10 @@ describe Games::HomepageController do
       I18n.locale.should == :zh
     end
 
+    it 'Handles request strings w/o numbers' do
+      request.env["HTTP_ACCEPT_LANGUAGE"] = "ko-KR, en-US"
+      get(:index)
+      I18n.locale.should == :ko
+    end
   end
 end
