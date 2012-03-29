@@ -59,7 +59,7 @@ class Currency < ActiveRecord::Base
   named_scope :tapjoy_enabled, :conditions => 'tapjoy_enabled'
   named_scope :udid_for_user_id, :conditions => "udid_for_user_id"
   named_scope :external_publishers, :conditions => "external_publisher and tapjoy_enabled"
-  named_scope :ordered_by_name, :include => [ :app, :partner ], :order => 'apps.name, partners.name'
+  named_scope :ordered_by_app_name, :include => [ :app, :partner ], :order => 'apps.name, partners.name'
 
   before_validation :sanitize_attributes
   before_validation_on_create :assign_default_currency_group
