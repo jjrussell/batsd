@@ -58,7 +58,6 @@ ActionController::Routing::Routes.draw do |map|
       social.send_email_invites 'send_email_invites', :action => :send_email_invites
       social.invite_twitter_friends 'invite_twitter_friends', :action => :invite_twitter_friends
       social.send_twitter_invites 'send_twitter_invites', :action => :send_twitter_invites
-      social.get_twitter_friends 'get_twitter_friends', :action => :get_twitter_friends
       social.invites 'social/invites', :action => :invites
       social.friends 'social/friends', :action => :friends
     end

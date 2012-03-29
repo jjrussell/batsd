@@ -129,8 +129,8 @@ class GamesController < ApplicationController
       render :json => { :success => false, :error => t('text.games.twitter_forbidden_error') }
     when Twitter::Unauthorized
       current_gamer.dissociate_account!(Invitation::TWITTER)
-      render :json => { :success => false, :errorRedirectPath => games_social_get_twitter_friends_path } and return if params[:ajax].present?
-      redirect_to games_social_get_twitter_friends_path
+      render :json => { :success => false, :errorRedirectPath => games_social_twitter_start_oauth_path } and return if params[:ajax].present?
+      redirect_to games_social_twitter_start_oauth_path
     when Twitter::InternalServerError, Twitter::BadGateway, Twitter::ServiceUnavailable
       render :json => { :success => false, :error => t('text.games.twitter_internal_error') } and return if params[:ajax].present?
       flash[:error] = t('text.games.twitter_internal_error')

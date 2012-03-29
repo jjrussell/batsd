@@ -8,7 +8,7 @@ class Games::SocialController < GamesController
 
   before_filter :require_gamer
   before_filter :validate_recipients, :only => [ :send_email_invites ]
-  before_filter :twitter_authenticate, :only => [ :send_twitter_invites, :get_twitter_friends ]
+  before_filter :twitter_authenticate, :only => [ :send_twitter_invites, :invite_twitter_friends ]
   before_filter :offline_facebook_authenticate, :only => :connect_facebook_account
 
   def invites
@@ -76,25 +76,6 @@ class Games::SocialController < GamesController
 
   def invite_twitter_friends
     @page_size = 25
-  end
-
-  def get_twitter_friends
-    twitter_friends = Twitter.follower_ids.ids.map do |id|
-      Twitter.user(id)
-    end
-
-    @twitter_friends = twitter_friends.map do |friend|
-      {
-        :social_id => friend.id,
-        :name      => friend.name,
-        :image_url => friend.profile_image_url_https,
-        :sent      => is_sent?(Invitation::TWITTER, friend.id)
-      }
-    end.sort_by do |friend|
-      friend[:name].downcase
-    end
-
-    render :json => {:friends => @twitter_friends, :start => 0, :selectedFriends => [], :pageSize => params[:pageSize]}, :callback => params[:callback]
   end
 
   def send_twitter_invites
@@ -175,7 +156,4 @@ class Games::SocialController < GamesController
     end
   end
 
-  def is_sent?(channel, external_info)
-    Invitation.by_channel(channel).find_by_gamer_id_and_external_info(current_gamer.id, external_info).present?
-  end
 end

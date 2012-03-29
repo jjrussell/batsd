@@ -16,8 +16,8 @@
           = text_field_tag 'ajax', true, :hidden => true
         .mod.friend-pagination
           = link_to(t('text.games.social_to_prev', :page_size => @page_size), '#', :id => 'prev')
-        .ajax-loader{ "data-url"  => games_social_get_twitter_friends_path, "data-immediate-load" => true, "data-timeout" => 55000, "data-params" => { :ajax => true, :pageSize => @page_size}.to_json }
-          %ul.list-button-container.ajax-target.nbb.friend-list
+        #twitter-list
+          %ul.list-button-container.friend-list
           .ajax-placeholder
             %li.list-button.ntb
               #tapjoy_loader
@@ -55,6 +55,6 @@
 - content_for :page_javascript do
   :plain
     window.loadFriendsOptions = {
-       getTwitterFriendsURL : "#{games_social_get_twitter_friends_path}",
-       pageSize             : #{@page_size}
+       pageSize  : #{@page_size},
+       twitterId : #{current_gamer.twitter_id}
     };

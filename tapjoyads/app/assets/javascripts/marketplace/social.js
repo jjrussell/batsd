@@ -68,8 +68,9 @@
         var currentFilter = '';
         var pageSize = options.pageSize;
         var socialFriends = options.socialFriends;
+        var twitterId = options.twitterId;
         var hasNext = socialFriends.length >= pageSize;
-        var template = Tap.Utils.underscoreTemplate($(".ajax-loader script").html());
+        var template = Tap.Utils.underscoreTemplate($("#twitter-list script").html());
 
         // local functions
         var resetDirectionButtons = function() {
@@ -129,7 +130,7 @@
         var showFriendList = function() {
           hasNext = false;
           var $list = $('.friend-list'),
-            text      = [],
+            text        = [],
             friends     = [],
             counter     = 0,
             counterMax  = currentPage * pageSize,
@@ -161,7 +162,7 @@
             search(new RegExp('\\b' + filter, 'i'));
 
             // then any part of any name
-            search(false)
+            search(false);
           }
 
           hasNext = counter >= counterMax;
@@ -170,6 +171,7 @@
             // unregister events
             $('li.friend', $list).unbind();
             $list.html(template({friends: friends, pageSize: pageSize, start: 0, selectedFriends: selectedFriends}));
+            $('.ajax-placeholder').hide();
             $list.fadeIn(animateSpeed);
 
             resetDirectionButtons();
@@ -225,7 +227,7 @@
         $(document).bind("twitter-invite-ajax-success", function (ev, form, data) {
           if (data.success === true) {
             if (data.gamers.length === 0 ) {
-              notify(_t('shared.generic_issue'));
+              notify(_t('games.generic_issue'));
             } else {
               notify(_t('shared.success'));
               updateAfterSuccess(data.gamers);
@@ -233,13 +235,16 @@
           } else if (typeof data.error === "string") {
             notify(data.error);
           } else {
-            notify(_t('shared.generic_issue'));
+            if (data.errorRedirectPath != undefined){
+              document.location.href = data.errorRedirectPath;
+            } else {
+              notify(_t('games.generic_issue'));
+            }
           }
         });
 
         // call functions
-        resetDirectionButtons();
-        resetListButtons();
+        showFriendList();
       }
     }
   });
@@ -270,21 +275,46 @@
   });
 
   $(function () {
-    var loadFriendsOptions = window.loadFriendsOptions;
-    $(".ajax-loader").bind("ajax-loader-success", function (ev, data) {
-      if(data.success === false){
-        if(data.error) {
-          notify(data.error);
-        }
+    var loadFriendsOptions = window.loadFriendsOptions, startTime = new Date().getTime();
+    if (loadFriendsOptions != undefined) {
+      var socialFriends = [];
+      var twitterNextCursor = -1;
+      fetchTwitterFriendList();
+    }
 
-        if(data.errorRedirectPath) {
-          window.location = data.errorRedirectPath;
+    function fetchTwitterFriendList() {
+      var url = 'http://api.twitter.com/1/statuses/followers.json?user_id=' + loadFriendsOptions.twitterId + '&cursor=' + twitterNextCursor;
+      $.ajax({
+        url: url,
+        dataType: 'jsonp',
+        timeout: 60000,
+        success: function(d) {
+          for(var i in d.users) {
+            var user = d.users[i];
+            var userSimple = {
+             "social_id" : user.id,
+             "name"      : user.name,
+             "image_url" : user.profile_image_url_https
+            }
+            socialFriends.push(userSimple);
+          }
+          twitterNextCursor = d.next_cursor;
+          url = 'http://api.twitter.com/1/statuses/followers.json?user_id=' + loadFriendsOptions.twitterId + '&cursor=' + twitterNextCursor;
+          if (d.next_cursor_str !== "0") {
+            fetchTwitterFriendList();
+          } else {
+            socialFriends = socialFriends.sort(function(a, b) {
+              var nameA = a.name.toLowerCase(), nameB = b.name.toLowerCase();
+              if (nameA > nameB) return 1;
+              if (nameA < nameB) return -1;
+              return 0;
+            });
+            Tap.Social.renderFriendList({pageSize: loadFriendsOptions.pageSize, socialFriends: socialFriends, twitterId: loadFriendsOptions.twitterId});
+            Tap.Utils.googleLog("TwitterFollowers", "load", "Time in Milliseconds", (new Date().getTime() - startTime));
+          }
         }
-      }
-      else {
-        Tap.Social.renderFriendList({pageSize: loadFriendsOptions.pageSize, socialFriends: data.friends});
-      }
-    });
+      });
+    }; // fetchTwitterFriendList
 
     $(".invite-twitter-followers").click(function (event) {
       event.preventDefault();
