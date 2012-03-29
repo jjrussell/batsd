@@ -60,6 +60,21 @@ class Currency < ActiveRecord::Base
   named_scope :udid_for_user_id, :conditions => "udid_for_user_id"
   named_scope :external_publishers, :conditions => "external_publisher and tapjoy_enabled"
   named_scope :ordered_by_app_name, :include => [ :app, :partner ], :order => 'apps.name, partners.name'
+  named_scope :search_name, lambda { |term|
+    { :conditions => [ "tapjoy_enabled and name like ?", term ] }
+  }
+  named_scope :search_app_name, lambda { |term|
+    {
+      :joins => [ :app ],
+      :conditions => [ "tapjoy_enabled and apps.name like ?", term ]
+    }
+  }
+  named_scope :search_partner_name, lambda { |term|
+    {
+      :joins => [ :partner ],
+      :conditions => [ "tapjoy_enabled and partners.name like ?", term ]
+    }
+  }
 
   before_validation :sanitize_attributes
   before_validation_on_create :assign_default_currency_group

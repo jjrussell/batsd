@@ -118,14 +118,9 @@ class SearchController < WebsiteController
       term = "%#{term}%".gsub(' ', '%')
       find_options = { :include => [ :app, :partner ], :limit => 20 }
 
-      find_options[:conditions] = [ "tapjoy_enabled and name like ?", term ]
-      @currencies = Currency.find(:all, find_options)
-
-      find_options[:conditions] = [ "tapjoy_enabled and apps.name like ?", term ]
-      @currencies |= Currency.find(:all, find_options)
-
-      find_options[:conditions] = [ "tapjoy_enabled and partners.name like ?", term ]
-      @currencies |= Currency.find(:all, find_options)
+      @currencies  = Currency.search_name(term).find(:all, find_options)
+      @currencies |= Currency.search_app_name(term).find(:all, find_options)
+      @currencies |= Currency.search_partner_name(term).find(:all, find_options)
     end
 
     render :partial => 'currencies'
