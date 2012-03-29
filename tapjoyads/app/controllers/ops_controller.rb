@@ -68,6 +68,7 @@ class OpsController < WebsiteController
         first_time = nil
         last_time = 0
         keys.each do |key|
+          next  if values[key].to_i == 0
           code = key.split(".")[2].to_i
           next  unless code > 0
 
