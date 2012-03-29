@@ -1,7 +1,7 @@
 class OneOffs
   def self.backfill_deeplink_offers
     #find and disable the manually-created deeplinks
-    handmade = GenericOffer.all.find { |go| go.url =~ /earn/ && go.name =~ '^Earn' }
+    handmade = GenericOffer.all.find { |go| go.url =~ /earn/ && go.name =~ /^Earn/ }
     puts "Disabling #{handmade.count} manually-created deeplinks"
     handmade.each { |go|
       go.primary_offer.tapjoy_enabled = false
