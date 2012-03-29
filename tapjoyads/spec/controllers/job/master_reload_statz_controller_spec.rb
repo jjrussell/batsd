@@ -176,7 +176,7 @@ describe Job::MasterReloadStatzController do
         "rev_share"             => "50.0%",
         "sales_rep"             => "",
         "sessions"              => "600",
-        "spend"                 => "$-6.00",
+        "spend"                 => "-$6.00",
         "total_revenue"         => "$6.00",
         "arpdau"                => "-",
       }

@@ -65,9 +65,8 @@ class Currency < ActiveRecord::Base
   before_create :set_hide_rewarded_app_installs, :set_values_from_partner_and_reseller
   before_update :update_spend_share
   before_update :reset_to_pending_if_rejected
-  #TODO: rails3
-  #after_cache :cache_by_app_id
-  #after_cache_clear :clear_cache_by_app_id
+  after_cache :cache_by_app_id
+  after_cache_clear :clear_cache_by_app_id
 
   delegate :postcache_weights, :to => :currency_group
   delegate :categories, :to => :app

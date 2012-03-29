@@ -47,8 +47,7 @@ module ActsAsCacheable
         def memoize_with_cache(*methods)
           @acts_as_cacheable_version = nil
           @acts_as_cacheable_memoized_methods |= methods
-          #TODO: rails3
-          #before_cache(*methods)
+          before_cache(*methods)
           memoize_without_cache(*methods)
         end
         alias_method_chain :memoize, :cache

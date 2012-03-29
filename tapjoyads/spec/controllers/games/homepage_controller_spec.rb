@@ -7,6 +7,11 @@ describe Games::HomepageController do
       I18n.locale = :en
     end
 
+    after :each do
+      I18n.locale = :en
+      request.env["HTTP_ACCEPT_LANGUAGE"] = nil
+    end
+
     it 'sets locale based on language code' do
       get(:index, :language_code => "zh")
       I18n.locale.should == :zh

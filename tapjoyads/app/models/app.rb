@@ -85,8 +85,7 @@ class App < ActiveRecord::Base
 
   belongs_to :partner
 
-  #TODO: rails3
-  #cache_associations :app_metadatas, :primary_app_metadata
+  cache_associations :app_metadatas, :primary_app_metadata
 
   validates_presence_of :partner, :name, :secret_key
   validates_inclusion_of :platform, :in => PLATFORMS.keys

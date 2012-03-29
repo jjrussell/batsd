@@ -21,8 +21,7 @@ class SurveyOffer < ActiveRecord::Base
   before_validation :assign_partner_id
   after_create :create_primary_offer, :create_icon
   after_update :update_offer
-  #TODO: rails3
-  #cache_associations :survey_questions
+  cache_associations :survey_questions
 
   scope :visible, :conditions => { :hidden => false }
 
