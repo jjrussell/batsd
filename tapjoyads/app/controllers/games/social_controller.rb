@@ -68,7 +68,7 @@ class Games::SocialController < GamesController
 
           app_id = params[:advertiser_app_id] == "null" ? nil : params[:advertiser_app_id]
           link = new_games_gamer_url(:referrer => invitation.encrypted_referral_id(app_id))
-          GamesMarketingMailer.deliver_invite(current_gamer.get_gamer_name, recipient, link)
+          GamesMarketingMailer.invite(current_gamer.get_gamer_name, recipient, link).deliver
         end
       end
     end

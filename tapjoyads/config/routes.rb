@@ -454,16 +454,20 @@ Tapjoyad::Application.routes.draw do
     resources :support_requests, :only => [:new, :create]
     resources :android
     resources :social, :only => [:index]
-    match 'invite_email_friends' => 'games/social#invite_email_friends', :as => :invite_email_friends, :path_prefix => 'games', :name_prefix => 'games_social_'
-    match 'social/connect_facebook_account' => 'games/social#connect_facebook_account', :as => :connect_facebook_account, :path_prefix => 'games', :name_prefix => 'games_social_'
-    match 'send_email_invites' => 'games/social#send_email_invites', :as => :send_email_invites, :path_prefix => 'games', :name_prefix => 'games_social_'
-    match 'invite_twitter_friends' => 'games/social#invite_twitter_friends', :as => :invite_twitter_friends, :path_prefix => 'games', :name_prefix => 'games_social_'
-    match 'send_twitter_invites' => 'games/social#send_twitter_invites', :as => :send_twitter_invites, :path_prefix => 'games', :name_prefix => 'games_social_'
-    match 'get_twitter_friends' => 'games/social#get_twitter_friends', :as => :get_twitter_friends, :path_prefix => 'games', :name_prefix => 'games_social_'
-    match 'social/invites' => 'games/social#invites', :as => :invites, :path_prefix => 'games', :name_prefix => 'games_social_'
-    match 'social/friends' => 'games/social#friends', :as => :friends, :path_prefix => 'games', :name_prefix => 'games_social_'
-    match 'twitter/start_oauth' => 'games/social/twitter#start_oauth', :as => :start_oauth, :name_prefix => 'games_social_twitter_'
-    match 'twitter/finish_oauth' => 'games/social/twitter#finish_oauth', :as => :finish_oauth, :name_prefix => 'games_social_twitter_'
+    namespace :social do
+      match 'invite_email_friends' => 'games/social#invite_email_friends', :as => :invite_email_friends
+      match 'connect_facebook_account' => 'games/social#connect_facebook_account', :as => :connect_facebook_account
+      match 'send_email_invites' => 'games/social#send_email_invites', :as => :send_email_invites
+      match 'invite_twitter_friends' => 'games/social#invite_twitter_friends', :as => :invite_twitter_friends
+      match 'send_twitter_invites' => 'games/social#send_twitter_invites', :as => :send_twitter_invites
+      match 'get_twitter_friends' => 'games/social#get_twitter_friends', :as => :get_twitter_friends
+      match 'invites' => 'games/social#invites', :as => :invites
+      match 'friends' => 'games/social#friends', :as => :friends
+      namespace :twitter do
+        match 'start_oauth' => 'games/social/twitter#start_oauth', :as => :start_oauth
+        match 'finish_oauth' => 'games/social/twitter#finish_oauth', :as => :finish_oauth
+      end
+    end
     resources :survey_results, :only => [:new, :create]
     resources :app_reviews, :only => [:index, :create, :edit, :update, :new, :destroy]
   end

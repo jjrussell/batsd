@@ -41,7 +41,7 @@
         - click_options = { :onclick => "return wifiPopUp(this);" }
       - else
         - click_options = { :onclick => "this.className += ' clicked';" }
-    - link_to(click_url, click_options.merge(:class => link_class)) do
+    = link_to(click_url, click_options.merge(:class => link_class)) do
       .content
         .banner
           .cost

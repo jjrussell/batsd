@@ -66,11 +66,9 @@ class GamesMarketingMailer < ActionMailer::Base
   end
 
   def invite(gamer_name, recipients_email, link)
-    from "#{gamer_name} <noreply@tapjoy.com>"
-    recipients recipients_email
     sendgrid_category 'Invite'
-    subject "#{gamer_name} has invited you to join Tapjoy"
-    content_type 'text/html'
-    body(:gamer_name => gamer_name, :link => link)
+    @gamer_name = gamer_name
+    @link = link
+    mail(:from => from, :to => recipients_email, :subject => subject)
   end
 end

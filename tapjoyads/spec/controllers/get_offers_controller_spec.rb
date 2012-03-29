@@ -35,15 +35,15 @@ describe GetOffersController do
     end
 
     it 'returns json' do
-      get(:index, @params.merge(:json => 1))
+      get(:index, @params.merge(:json => '1'))
       should respond_with_content_type :json
       should render_template "get_offers/installs_json"
     end
 
     it 'renders appropriate pages' do
-      get(:index, @params.merge(:type => 0))
+      get(:index, @params.merge(:type => '0'))
       should render_template "get_offers/offers"
-      get(:index, @params.merge(:redirect => 1))
+      get(:index, @params.merge(:redirect => '1'))
       should render_template "get_offers/installs_redirect"
       get(:index, @params)
       should render_template "get_offers/installs"
@@ -66,7 +66,7 @@ describe GetOffersController do
     end
 
     it 'renders json with correct fields' do
-      get(:index, @params.merge(:json => 1))
+      get(:index, @params.merge(:json => '1'))
       json = JSON.parse(response.body)
 
       json_offer = json['OfferArray'][0]
@@ -84,14 +84,14 @@ describe GetOffersController do
     end
 
     it 'returns FullScreenAdURL when rendering featured json' do
-      get(:index, @params.merge(:json => 1, :source => 'featured'))
+      get(:index, @params.merge(:json => '1', :source => 'featured'))
       json = JSON.parse(response.body)
       json['OfferArray'].should be_present
       json['OfferArray'][0]['FullScreenAdURL'].should be_present
     end
 
     it 'wraps json in a callback url when requesting jsonp' do
-      get(:index, @params.merge(:json => 1, :source => 'featured',
+      get(:index, @params.merge(:json => '1', :source => 'featured',
                                 :callback => '();callbackFunction'))
       match = response.body.match(/(^callbackFunction\()(.*)(\)$)/m)
       match.should_not be_nil
@@ -218,7 +218,7 @@ describe GetOffersController do
       get(:featured, @params)
       should render_template "get_offers/installs_redirect"
 
-      get(:featured, @params.merge(:json => 1))
+      get(:featured, @params.merge(:json => '1'))
       should render_template "get_offers/installs_json"
       response.content_type.should == "application/json"
     end
@@ -297,21 +297,21 @@ describe GetOffersController do
     end
 
     it "should identify server-to-server calls" do
-      get(:index, @params.merge(:json => 1))
+      get(:index, @params.merge(:json => '1'))
       assigns(:server_to_server).should == true
       get(:index, @params)
       assigns(:server_to_server).should == false
-      get(:index, @params.merge(:json => 1, :callback => 'wah!'))
+      get(:index, @params.merge(:json => '1', :callback => 'wah!'))
       assigns(:server_to_server).should == false
-      get(:index, @params.merge(:redirect => 1))
+      get(:index, @params.merge(:redirect => '1'))
       assigns(:server_to_server).should == true
       get(:featured, @params)
       assigns(:server_to_server).should == false
-      get(:featured, @params.merge(:json => 1))
+      get(:featured, @params.merge(:json => '1'))
       assigns(:server_to_server).should == false
       get(:webpage, @params)
       assigns(:server_to_server).should == false
-      get(:index, {:data => ObjectEncryptor.encrypt(@params.merge(:json => 1)) } )
+      get(:index, {:data => ObjectEncryptor.encrypt(@params.merge(:json => '1')) } )
       assigns(:server_to_server).should == false
       get(:webpage, @params.merge(:library_version => 'SERVER'))
       assigns(:server_to_server).should == true
