@@ -98,7 +98,7 @@ describe Tools::AppReviewsController do
       end
 
       it 'sets a flash notice message' do
-        response.session[:flash][:error].should == 'You have already reviewed this app.'
+        request.session[:flash][:error].should == 'You have already reviewed this app.'
       end
 
       it 'renders tools/app_reviews/new' do

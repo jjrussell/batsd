@@ -113,7 +113,7 @@ class Tools::FeaturedContentsController < WebsiteController
   private
 
   def setup_before_render(error_msg = nil)
-    flash.now[:error] = @featured_content.errors[:offer] || error_msg
+    flash.now[:error] = @featured_content.errors.any? ? @featured_content.errors[:offer] : error_msg
     @employees = Employee.active_by_first_name
     if params[:featured_content][:offer_id].present?
       @search_result_name = Offer.find_in_cache(params[:featured_content][:offer_id]).search_result_name

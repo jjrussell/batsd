@@ -72,7 +72,7 @@ describe Tools::FeaturedContentsController do
         end
 
         it 'flashes an error' do
-          response.session[:flash][:error].should == 'End Date must be equal to or greater than Start Date.'
+          request.session[:flash][:error].should == 'End Date must be equal to or greater than Start Date.'
         end
 
         it 'renders tools/featured_content/new' do
@@ -87,7 +87,7 @@ describe Tools::FeaturedContentsController do
         end
 
         it 'flashes an error' do
-          response.session[:flash][:error].should =~ /select at least one platform/
+          request.session[:flash][:error].should =~ /select at least one platform/
         end
 
         it 'renders tools/featured_content/new' do
@@ -102,7 +102,7 @@ describe Tools::FeaturedContentsController do
         end
 
         it 'flashes an error' do
-          response.session[:flash][:error].should =~ /select at least one platform/
+          request.session[:flash][:error].should =~ /select at least one platform/
         end
 
         it 'renders tools/featured_content/new' do
@@ -181,7 +181,7 @@ describe Tools::FeaturedContentsController do
         end
 
         it 'flashes an error' do
-          response.session[:flash][:error].should == 'End Date must be equal to or greater than Start Date.'
+          request.session[:flash][:error].should == 'End Date must be equal to or greater than Start Date.'
         end
 
         it 'renders tools/featured_content/edit' do
@@ -196,7 +196,7 @@ describe Tools::FeaturedContentsController do
         end
 
         it 'flashes an error' do
-          response.session[:flash][:error].should =~ /select at least one platform/
+          request.session[:flash][:error].should =~ /select at least one platform/
         end
 
         it 'renders tools/featured_content/edit' do
@@ -211,7 +211,7 @@ describe Tools::FeaturedContentsController do
         end
 
         it 'flashes an error' do
-          response.session[:flash][:error].should =~ /select at least one platform/
+          request.session[:flash][:error].should =~ /select at least one platform/
         end
 
         it 'renders tools/featured_content/edit' do
