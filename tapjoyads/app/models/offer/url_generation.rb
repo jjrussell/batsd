@@ -93,6 +93,7 @@ module Offer::UrlGeneration
     device_name        = options.delete(:device_name)        { nil }
     library_version    = options.delete(:library_version)    { nil }
     gamer_id           = options.delete(:gamer_id)           { nil }
+    mac_address        = options.delete(:mac_address)        { nil }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
 
     click_url = "#{API_URL}/click/"
