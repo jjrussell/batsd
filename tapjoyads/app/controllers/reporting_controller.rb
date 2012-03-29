@@ -53,7 +53,7 @@ class ReportingController < WebsiteController
     else
       flash[:error] = "Error regenerating the API key. Please try again."
     end
-    redirect_to api_reporting_path
+    redirect_to api_reporting_index_path
   end
 
   def aggregate

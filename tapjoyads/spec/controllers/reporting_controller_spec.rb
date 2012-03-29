@@ -147,7 +147,7 @@ describe ReportingController do
         @user.reload
         @user.api_key.should_not == @api_key
         flash[:notice].should == "You have successfully regenerated your API key."
-        response.should redirect_to(api_reporting_path)
+        response.should redirect_to(api_reporting_index_path)
       end
 
       it 'renders error for invalid user' do
@@ -156,7 +156,7 @@ describe ReportingController do
         @user.reload
         @user.api_key.should == @api_key
         flash[:error].should == "Error regenerating the API key. Please try again."
-        response.should redirect_to(api_reporting_path)
+        response.should redirect_to(api_reporting_index_path)
       end
     end
 
