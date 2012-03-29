@@ -33,6 +33,8 @@
           - form_for([ :tools, :currency ], :url => tools_external_publisher_path(currency)) do |f|
             = f.submit(currency.external_publisher? ? 'Disable' : 'Enable')
 
+= will_paginate(@currencies)
+
 - content_for :page_styles do
   :plain
     table.with-border {
