@@ -115,7 +115,7 @@ class SearchController < WebsiteController
     end
 
     if @currencies.blank?
-      term = "#{term}%"
+      term = "%#{term}%".gsub(' ', '%')
       find_options = { :include => [ :app, :partner ], :limit => 20 }
 
       find_options[:conditions] = [ "tapjoy_enabled and name like ?", term ]
