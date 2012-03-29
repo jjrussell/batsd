@@ -128,11 +128,7 @@ ActiveRecord::Schema.define(:version => 20120321163140) do
     t.string   "secret_key",                                                     :null => false
     t.integer  "active_gamer_count",                          :default => 0
     t.string   "protocol_handler"
-<<<<<<< HEAD
     t.boolean  "reengagement_campaign_enabled",               :default => false
-=======
-    t.string   "enabled_deeplink_offer_id",     :limit => 36
->>>>>>> Added DeeplinkOffer
   end
 
   add_index "apps", ["id"], :name => "index_apps_on_id", :unique => true
