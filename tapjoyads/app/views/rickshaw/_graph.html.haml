@@ -3,4 +3,5 @@
 %div{:id => "loading_ds#{data_source}_p#{period}"}
   %img{:src => "/images/facebox/loading.gif"}
 
-- include_rickshaw_js("#{data_source}.json?period=#{period}", "ds#{data_source}_p#{period}")
+- transform = true  if transform.nil?
+- include_rickshaw_js("#{data_source}.json?period=#{period}", "ds#{data_source}_p#{period}", :transform => transform)

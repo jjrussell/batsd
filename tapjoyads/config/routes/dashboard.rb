@@ -136,6 +136,7 @@ ActionController::Routing::Routes.draw do |map|
       :service_stats => :get,
       :elb_status => :get,
       :http_codes => :get,
+      :bytes_sent => :get,
     }
 
   map.connect 'mail_chimp_callback/callback', :controller => :mail_chimp_callback, :action => :callback
