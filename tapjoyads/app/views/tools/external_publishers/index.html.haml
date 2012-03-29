@@ -6,32 +6,19 @@
   The below currencies are potential external publishers. If they are enabled, users will be able to earn currency outside the app though Tapjoy Games.
 
 %p
+  .spinner
+    %span#spinner.hidden= image_tag('spinner.gif', :alt => 'Searching...')
+  = label_tag 'search_box', 'Search currencies:'
+  = text_field_tag 'search_box', ''
+
+  #search_table
+
+%p
   = "Total currencies: #{@num_tapjoy_enabled}"
   &nbsp;
   = "Total enabled as external pubs: #{@num_external_pubs}"
 
-%table.tablesorter.currencies_table
-  %thead
-    %tr
-      %th App
-      %th Platform
-      %th Currency
-      %th Partner
-      %th Currency Enabled?
-      %th TJM Enabled?
-      %th Enable/Disable
-  %tbody
-    - @currencies.each do |currency|
-      %tr
-        %td= link_to(currency.app.name, statz_path(currency.app_id))
-        %td= currency.app.platform
-        %td= currency.name
-        %td= currency.partner.name
-        %td= currency.tapjoy_enabled? ? 'enabled' : 'disabled'
-        %td= currency.external_publisher? ? 'enabled' : 'disabled'
-        %td
-          - form_for([ :tools, :currency ], :url => tools_external_publisher_path(currency)) do |f|
-            = f.submit(currency.external_publisher? ? 'Disable' : 'Enable')
+= render 'search/currencies'
 
 = will_paginate(@currencies)
 
@@ -46,13 +33,26 @@
       overflow: hidden;
     }
 
+- content_for :included_javascripts, javascript_include_tag('jquery.delayedobserver')
 - content_for :page_javascript do
   :plain
     $(function($) {
-      $(".currencies_table").tablesorter({
-        widgets: ['zebra'],
-        headers: {
-          6: { sorter: false }
-        }
-      });
+      $('#search_box').delayedObserver(0.5, doSearch);
     });
+
+    // Executes the AJAX call to perform search and updates results div
+    function doSearch() {
+      // controller's URI
+      var term = $("#search_box").val();
+      var url = '#{search_currencies_path}';
+      var params = { term: term };
+
+      if(term.length > 1) {
+        // show spinner
+        $('span#spinner').fadeIn('fast', function() {
+          $("#search_table").load(url, params, function() {
+            $('span#spinner').fadeOut();
+          });
+        });
+      }
+    }
