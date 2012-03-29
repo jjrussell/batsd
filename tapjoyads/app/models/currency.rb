@@ -65,8 +65,8 @@ class Currency < ActiveRecord::Base
   before_create :set_hide_rewarded_app_installs, :set_values_from_partner_and_reseller
   before_update :update_spend_share
   before_update :reset_to_pending_if_rejected
-  after_cache :cache_by_app_id
-  after_cache_clear :clear_cache_by_app_id
+  set_callback :cache, :after, :cache_by_app_id
+  set_callback :cache_clear, :after, :clear_cache_by_app_id
 
   delegate :postcache_weights, :to => :currency_group
   delegate :categories, :to => :app
@@ -76,7 +76,7 @@ class Currency < ActiveRecord::Base
     currencies = Mc.distributed_get("mysql.app_currencies.#{app_id}.#{acts_as_cacheable_version}")
     if currencies.nil?
       if do_lookup
-        currencies = find_all_by_app_id(app_id, :order => 'ordinal ASC').each { |c| c.run_callbacks(:before_cache) }
+        currencies = find_all_by_app_id(app_id, :order => 'ordinal ASC').each { |c| c }
         Mc.distributed_put("mysql.app_currencies.#{app_id}.#{acts_as_cacheable_version}", currencies, false, 1.day)
       else
         currencies = []
@@ -223,17 +223,17 @@ class Currency < ActiveRecord::Base
 
   private
   def cache_by_app_id
-    currencies = Currency.find_all_by_app_id(app_id, :order => 'ordinal ASC').each { |c| c.run_callbacks(:before_cache) }
+    currencies = Currency.find_all_by_app_id(app_id, :order => 'ordinal ASC').each { |c| c }
     Mc.distributed_put("mysql.app_currencies.#{app_id}.#{Currency.acts_as_cacheable_version}", currencies, false, 1.day)
 
     if app_id_changed?
-      currencies = Currency.find_all_by_app_id(app_id_was, :order => 'ordinal ASC').each { |c| c.run_callbacks(:before_cache) }
+      currencies = Currency.find_all_by_app_id(app_id_was, :order => 'ordinal ASC').each { |c| c }
       Mc.distributed_put("mysql.app_currencies.#{app_id_was}.#{Currency.acts_as_cacheable_version}", currencies, false, 1.day)
     end
   end
 
   def clear_cache_by_app_id
-    currencies = Currency.find_all_by_app_id(app_id, :order => 'ordinal ASC').each { |c| c.run_callbacks(:before_cache) }
+    currencies = Currency.find_all_by_app_id(app_id, :order => 'ordinal ASC').each { |c| c }
     Mc.distributed_put("mysql.app_currencies.#{app_id}.#{Currency.acts_as_cacheable_version}", currencies, false, 1.day)
   end
 

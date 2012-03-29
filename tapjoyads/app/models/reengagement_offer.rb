@@ -29,7 +29,7 @@ class ReengagementOffer < ActiveRecord::Base
     end
   end
 
-  after_cache :cache_by_app_id
+  set_callback :cache, :after, :cache_by_app_id
 
   after_create :create_primary_offer
 
