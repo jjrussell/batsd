@@ -822,7 +822,6 @@ $(document).ready(function() {
     $('#device-select-list').html(m);
   }
 
-  window._gaq = [];
   (function () {
     if (window._tjHtmlDone && window._tjStartTime) {
       Tapjoy.Utils.googleLog("Page Html", "load", "Time in ms", (_tjHtmlDone - _tjStartTime));
