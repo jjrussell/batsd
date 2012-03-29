@@ -19,9 +19,8 @@ class SurveyOffer < ActiveRecord::Base
   validates_presence_of :bid_price, :on => :create
 
   before_validation :assign_partner_id
+  after_create :create_primary_offer, :create_icon
   after_update :update_offer
-  set_callback :create, :after, :create_primary_offer
-  set_callback :create, :after, :create_icon
   set_callback :cache_associations, :before, :survey_questions
 
   scope :visible, :conditions => { :hidden => false }
