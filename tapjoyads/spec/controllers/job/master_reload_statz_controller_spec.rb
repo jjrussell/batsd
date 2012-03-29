@@ -2,10 +2,12 @@ require 'spec/spec_helper'
 
 describe Job::MasterReloadStatzController do
   before :each do
-    Timecop.freeze(Time.zone.today.to_time(:utc))
+    time = Time.zone.today + 1.day
+    Timecop.freeze(time.to_time(:utc))
     @start_time = Time.zone.now - 1.day
     @end_time = Time.zone.now
     @controller.expects(:authenticate).at_least_once.returns(true)
+    Mc.flush('totally_serious')
   end
 
   after :each do
@@ -249,12 +251,11 @@ describe Job::MasterReloadStatzController do
     end
 
     it 'stores partner metadata' do
-      Timecop.return
       stub_conversions
       stub_appstats
 
       admin_user = Factory(:admin)
-      admin_user2 = Factory(:admin)
+      admin_user2 = Factory(:admin, :email => 'admin0123@tapjoy.com')
 
       @partner.account_managers = [admin_user, admin_user2]
       @partner.sales_rep = admin_user

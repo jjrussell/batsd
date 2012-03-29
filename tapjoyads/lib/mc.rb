@@ -203,4 +203,8 @@ class Mc
     nil
   end
 
+  def self.flush(totally_serious)
+    @@cache.flush if totally_serious == 'totally_serious'
+  end
+
 end
