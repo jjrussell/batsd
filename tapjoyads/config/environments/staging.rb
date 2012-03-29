@@ -43,7 +43,7 @@ end
 SPROCKETS_CONFIG = {
   :compile => true,
   :combine => true,
-  :host => local_config['asset_host'] || local_config['website_url'] || 'http://localhost:3000'
+  :host => local_config['asset_host'] || local_config['website_url'] || 'http://d10hyk8bs4mjhv.cloudfront.net'
 }
 
 RUN_MODE_PREFIX = 'staging_'
@@ -76,10 +76,6 @@ MAIL_CHIMP_API_KEY = mail_chimp['api_key']
 MAIL_CHIMP_PARTNERS_LIST_ID = mail_chimp['partners_list_id']
 MAIL_CHIMP_SETTINGS_KEY = mail_chimp['settings_key']
 MAIL_CHIMP_WEBHOOK_KEY = mail_chimp['webhook_key']
-
-send_grid = YAML::load_file("#{Rails.root}/config/send_grid.yaml")['staging']
-SEND_GRID_USER = send_grid['user']
-SEND_GRID_PASSWD = send_grid['passwd']
 
 SYMMETRIC_CRYPTO_SECRET = '63fVhp;QqC8N;cV2A0R.q(@6Vd;6K.\\_'
 ICON_HASH_SALT = 'Gi97taauc9VFnb1vDbxWE1ID8Jjv06Il0EehMIKQ'

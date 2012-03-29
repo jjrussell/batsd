@@ -4,7 +4,7 @@
 - 'marketplace/ajax-preload'
 
 # stylesheets
-- 'marketplace/core'
+- 'marketplace/style-master'
 - 'marketplace/helpers/html5'
 - 'marketplace/helpers/mediaqueries'
 - 'marketplace/theme/tjm/style'

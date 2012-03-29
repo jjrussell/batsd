@@ -110,14 +110,6 @@ class App < ActiveRecord::Base
     :to => :primary_app_metadata, :allow_nil => true
   delegate :name, :to => :partner, :prefix => true
 
-  # TODO: remove these columns from apps table definition and remove this method
-  TO_BE_DELETED = %w(description price store_id age_rating file_size_bytes supported_devices released_at user_rating categories countries_blacklist papaya_user_count)
-  def self.columns
-    super.reject do |c|
-      TO_BE_DELETED.include?(c.name)
-    end
-  end
-
   def is_ipad_only?
     supported_devices? && JSON.load(supported_devices).all?{ |i| i.match(/^ipad/i) }
   end
@@ -467,8 +459,8 @@ class App < ActiveRecord::Base
   def update_all_offers
     clear_association_cache
     update_offers if store_id_changed || partner_id_changed? || name_changed? || hidden_changed?
-    update_rating_offer if rating_offer.present? && (store_id_changed || name_changed?)
-    update_action_offers if store_id_changed || name_changed? || hidden_changed?
+    update_rating_offer if rating_offer.present? && (store_id_changed || partner_id_changed? || name_changed?)
+    update_action_offers if store_id_changed || partner_id_changed? || hidden_changed?
   end
 
   def update_currencies

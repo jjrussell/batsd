@@ -7,7 +7,7 @@ ActionController::Routing::Routes.draw do |map|
   map.connect 'tos-publisher.html', :controller => 'documents', :action => 'tos_publisher'
   map.connect 'publisher-guidelines.html', :controller => 'documents', :action => 'publisher_guidelines'
 
-  map.resource :sign_up, :controller => :sign_up, :only => :create
+  map.resource :sign_up, :controller => :sign_up, :only => :create, :collection => [:welcome]
   map.register 'register', :controller => :sign_up, :action => :new
   map.login 'login', :controller => :user_sessions, :action => :new
   map.logout 'logout', :controller => :user_sessions, :action => :destroy
@@ -31,8 +31,9 @@ ActionController::Routing::Routes.draw do |map|
     app.resources :virtual_goods, :as => 'virtual-goods', :only => [ :show, :update, :new, :create, :index ],
       :collection => { :reorder => :post }, :controller => 'apps/virtual_goods'
     app.resources :action_offers, :only => [ :new, :create, :edit, :update, :index ], :member => { :toggle => :post, :preview => :get }, :collection => { :TJCPPA => :get, :TapjoyPPA => :get }, :controller => 'apps/action_offers'
-    app.resources :reengagement_offers, :only => [ :new, :create, :edit, :update, :index ], :member => { :toggle => :post }, :controller => 'apps/reengagement_offers'
+    app.resources :reengagement_offers, :except => [ :show ], :collection => { :update_status => :post }, :controller => 'apps/reengagement_offers'
   end
+  map.resources :reengagement_rewards, :only => [ :show ]
   map.with_options :controller => :offer_creatives, :path_prefix => 'offer_creatives/:id', :name_prefix => 'offer_creatives_' do |offer|
     offer.preview '', :action => :show, :conditions => { :method => :get }
     offer.with_options :path_prefix => 'offer_creatives/:id/:image_size' do |s|
@@ -71,14 +72,21 @@ ActionController::Routing::Routes.draw do |map|
   # Admin tools routes
   map.resources :tools, :only => :index,
     :collection => { :monthly_data => :get, :new_transfer => :get,
-                     :money => :get, :failed_sdb_saves => :get, :disabled_popular_offers => :get, :as_groups => :get,
+                     :money => :get, :failed_sdb_saves => :get, :disabled_popular_offers => :get,
                      :sdb_metadata => :get, :reset_device => :get, :send_currency_failures => :get, :sanitize_users => :get,
-                     :resolve_clicks => :post, :sqs_lengths => :get, :elb_status => :get, :ses_status => :get,
+                     :resolve_clicks => :post, :sqs_lengths => :get, :ses_status => :get,
                      :publishers_without_payout_info => :get, :publisher_payout_info_changes => :get, :device_info => :get,
                      :award_currencies => :post, :update_award_currencies => :post,
                      :update_user_roles => :post, :update_device => :post }
+
   map.namespace :tools do |tools|
-    tools.resources :approvals, :only => [:index], :collection => [:history, :mine], :member => [:approve, :reject, :assign]
+    tools.resources :approvals, :as => 'acceptance', :only => [:index], :collection => [:history, :mine], :member => [:approve, :reject, :assign]
+    tools.with_options(:controller => 'approvals') do |a|
+      a.typed_approvals         'acceptance/:type',          :action => :index
+      a.history_typed_approvals 'acceptance/:type/history',  :action => :history
+      a.mine_typed_approvals    'acceptance/:type/mine',     :action => :mine
+    end
+
     tools.resources :premier_partners, :only => [ :index ]
     tools.resources :generic_offers, :only => [ :index, :new, :create, :edit, :update ]
     tools.resources :orders, :only => [ :new, :create ],
@@ -116,9 +124,19 @@ ActionController::Routing::Routes.draw do |map|
     tools.resources :partner_program_statz, :only => [ :index ], :collection => { :export => :get }
     tools.resources :survey_offers, :except => [ :show ], :member => { :toggle_enabled => :put }
     tools.resources :payout_freezes, :only => [ :index, :create ], :member => { :disable => :post }
+    tools.resources :currency_approvals, :only => [:index], :collection => [:mine, :history], :member => [:approve, :reject, :assign], :controller => :approvals, :requirements => { :type => :currency, :calling_controller => 'tools/currency_approvals' }
     tools.resources :wfhs, :only => [ :index, :new, :create, :edit, :update, :destroy ]
     tools.resources :clients, :only => [ :index, :show, :new, :create, :edit, :update], :member => { :add_partner => :post, :remove_partner => :post }
   end
+
+  # Operations tools routes
+  map.resources :ops, :only => :index,
+    :collection => {
+      :as_groups => :get,
+      :service_stats => :get,
+      :elb_status => :get,
+      :http_codes => :get,
+    }
 
   map.connect 'mail_chimp_callback/callback', :controller => :mail_chimp_callback, :action => :callback
 end

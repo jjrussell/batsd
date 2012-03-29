@@ -26,6 +26,10 @@ authorization do
     has_permission_on :tools, :to => [ :index ]
   end
 
+  role :ops do
+    has_permission_on :ops, :to => [ :index, :elb_status, :as_groups, :service_stats, :http_codes]
+  end
+
   role :devices do
     includes :tools
     has_permission_on :internal_devices, :to => [ :new, :edit, :update, :index, :show, :destroy, :approve ]
@@ -91,6 +95,7 @@ authorization do
     includes :money
     includes :games_editor
     includes :customer_service
+    has_permission_on :users, :to => [ :approve ]
     has_permission_on :statz, :to => [ :index, :show, :edit, :update, :new, :create, :last_run_times, :udids, :download_udids, :global, :publisher, :advertiser, :support_request_reward_ratio ]
     has_permission_on :search, :to => [ :offers, :partners, :users ]
     has_permission_on :tools, :to => [ :disabled_popular_offers, :sanitize_users, :update_user, :resolve_clicks, :new_transfer, :device_info, :update_device, :send_currency_failures ]
@@ -115,6 +120,7 @@ authorization do
     has_permission_on :tools_agency_users, :to => [ :index, :show ]
     has_permission_on :tools_partner_program_statz, :to => [ :index, :export ]
     has_permission_on :tools_offers, :to => [ :creative, :approve_creative, :reject_creative ]
+    has_permission_on :tools_currency_approvals, :to => [ :index, :history, :approve, :reject]
     has_permission_on :tools_survey_offers, :to => [ :index, :show, :new, :create, :edit, :update, :destroy, :toggle_enabled ]
     has_permission_on :tools_clients, :to => [ :index, :show, :new, :create, :edit, :update, :add_partner, :remove_partner ]
   end
@@ -143,6 +149,7 @@ authorization do
     includes :tools
     includes :devices
     includes :payops
+    includes :ops
     includes :executive
     includes :account_mgr
     includes :hr

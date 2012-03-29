@@ -233,7 +233,23 @@
           }
         }
         return array;
-      }
+      },
+
+      polyfill: function(type, name, method){
+
+        var type = null ? 'array' : type,
+            map = {
+              'array': arrayPrototype,
+              'string': stringPrototype,
+              'object': objectPrototype,
+              'function': functionPrototype
+            };
+
+        if(!map[type][name])
+          map[type][name] = method;
+
+        Tap['supports'+ String(name).charAt(0).toUpperCase() + String(name).substr(1)] = true;
+      }     
     });
 
     Tap.fn = _Tapjoy.prototype;
@@ -246,7 +262,7 @@
         var query;
 
         try{
-          if(selector[0] === '#' && selector.indexOf(" ") === -1){
+          if(selector[0] === '#' && selector.indexOf(' ') === -1){
             if(context === document)
               query = context.getElementById(selector.replace('#', ''));
             else
@@ -384,6 +400,58 @@
 
     Tap.apply(Tap, {
       vars: {}
+    });
+
+    /**
+     * Polyfills - Feature support
+     */
+    Tap.polyfill('array', 'every', function(fn, scope){
+      for(var i = 0, k = this.length; i < k; i++)
+        if(!fn.call(scope || window, this[i], i, this)){
+          return false;
+        }
+      return true;
+    });
+
+    Tap.polyfill('array', 'filter', function(fn, scope){
+      var array = [];
+      
+      for(var i = 0, k = this.length; i < k; i++){
+        if(fn.call(scope || window, this[i], i, this)){
+          array.push(this[i]);
+        }
+      }
+      return array;
+    });
+
+    Tap.polyfill('array', 'forEach', function(fn, scope){
+      for(var i = 0, k = this.length; i < k; i++){
+        fn.call(scope || window, this[i], i, this);
+      }
+    });
+
+    Tap.polyfill('array', 'indexOf', function(search, start){
+      for(var i = start || 0, k = this.length; i < k; i++){
+        if(this[i] === search){
+          return i;
+        }
+      }
+      return -1;
+    });
+
+    Tap.polyfill('array', 'map', function(fn, scope){
+      var array = new Array(this.length);
+      
+      for(var i = 0, k = this.length; i < k ; i++){
+        if(i in this)
+          array[i] = fn.call(scope || window, this[i], i, this);
+      }
+          
+      return array;
+    });
+
+    Tap.polyfill('string', 'trim', function(){
+      return this.replace(/^\s+/, '').replace(/\s+$/, '');
     });
 
     Tap(document).ready(function(){
