@@ -32,6 +32,7 @@ Tapjoyad::Application.configure do
 
   # Print deprecation notices to the stderr
   config.active_support.deprecation = :stderr
+  config.time_zone = 'UTC'
 end
 
 MEMCACHE_SERVERS = ['127.0.0.1']

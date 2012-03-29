@@ -91,6 +91,7 @@ end
 group :test do
   gem 'cucumber-rails'
   gem 'launchy'
+  gem 'timecop'
 end
 
 group :ops do

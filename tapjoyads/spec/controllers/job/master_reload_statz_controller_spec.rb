@@ -2,10 +2,14 @@ require 'spec/spec_helper'
 
 describe Job::MasterReloadStatzController do
   before :each do
-    Time.zone.stubs(:now).returns(Time.zone.parse('2011-02-15'))
+    Timecop.freeze(Time.zone.today.to_time(:utc))
     @start_time = Time.zone.now - 1.day
     @end_time = Time.zone.now
     @controller.expects(:authenticate).at_least_once.returns(true)
+  end
+
+  after :each do
+    Timecop.return
   end
 
   describe '#index' do
@@ -245,6 +249,7 @@ describe Job::MasterReloadStatzController do
     end
 
     it 'stores partner metadata' do
+      Timecop.return
       stub_conversions
       stub_appstats
 
@@ -391,7 +396,7 @@ def stub_vertica(start_time = nil, end_time = nil)
     expects(:query).
     once.
     with('analytics.actions', :select => 'max(time)').
-    returns([{ :max => Time.zone.parse('2011-02-15') }])
+    returns([{ :max => Time.zone.now }])
 
   VerticaCluster.
     expects(:query).
