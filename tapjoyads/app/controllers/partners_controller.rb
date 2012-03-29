@@ -153,7 +153,7 @@ class PartnersController < WebsiteController
     end
 
     Partner.transaction do
-      payout, order, marketing_order = @partner.build_transfer(@transfer.amount, @transfer.internal_notes)
+      payout, order, marketing_order = @partner.build_transfer(@transfer.amount.to_i, @transfer.internal_notes)
 
       log_activity(payout)
       payout.save!
