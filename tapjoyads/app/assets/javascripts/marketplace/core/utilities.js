@@ -16,6 +16,14 @@
         }
       },
 
+      googleLog : function (category, action, label, value) {
+        var args;
+        if(typeof _gaq === "object" && _gaq.push) {
+          args = Array.prototype.slice.call(arguments);
+          _gaq.push(["_trackEvent"].concat(args));
+        }
+      },
+
       mask: function(){
         var wrap = $(document.createElement('div'));
 
@@ -178,7 +186,7 @@
           return func.call(this, data);
         };
       },
-      
+
 	    debounce: function(fn, delay, execASAP, scope){
 	      var timeout;
 
