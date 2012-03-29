@@ -51,7 +51,7 @@
         }
         if (typeof window.delayedObserverCallback == 'undefined') {
           window.delayedObserverCallback = function(stackPos) {
-            observed = window.delayedObserverStack[stackPos];
+            var observed = window.delayedObserverStack[stackPos];
             if (observed.timer) clearTimeout(observed.timer);
             observed.timer = setTimeout(function(){
               observed.timer = null;
@@ -65,12 +65,15 @@
           obj: $this, timer: null, delay: delay,
           oldVal: $this.val(), callback: callback });
 
-        stackPos = window.delayedObserverStack.length-1;
+        var stackPos = window.delayedObserverStack.length - 1;
 
-        $this.keyup(function() {
-          observed = window.delayedObserverStack[stackPos];
-          if (observed.obj.val() == observed.obj.oldVal) return;
-            else window.delayedObserverCallback(stackPos);
+        $this.keyup(function(){
+          var observed = window.delayedObserverStack[stackPos];
+          if (observed.obj.val() == observed.obj.oldVal) {
+            return;
+          } else {
+            window.delayedObserverCallback(stackPos);
+          }
         });
       }
     });
