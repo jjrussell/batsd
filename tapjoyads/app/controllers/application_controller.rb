@@ -60,11 +60,11 @@ class ApplicationController < ActionController::Base
   def set_locale
     language_code = params[:language_code]
     I18n.locale = nil
-    if AVAILABLE_LOCALES.include?(language_code)
+    if I18n.available_locales.include?(language_code)
       I18n.locale = language_code
     elsif language_code.present? && language_code['-']
       language_code = language_code.split('-').first
-      if AVAILABLE_LOCALES.include?(language_code)
+      if I18n.available_locales.include?(language_code)
         I18n.locale = language_code
       end
     end

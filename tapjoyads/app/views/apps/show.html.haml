@@ -16,7 +16,7 @@
   = succeed '.' do
     = link_to('Developer Forum', DEV_FORUM_URL)
 
-- form_for(@app, :html => { :class => 'tjform' }) do |f|
+= form_for(@app, :html => { :class => 'tjform' }) do |f|
   = f.hidden_field :store_id, {:value=>@app.store_id}
   %table
     %tbody
@@ -112,11 +112,11 @@
 .clear
 - if @app.hidden?
   - if permitted_to?(:unarchive, :apps)
-    - form_tag unarchive_app_path(@app) do
+    = form_tag unarchive_app_path(@app) do
       %strong Admin:
       = submit_tag 'Undelete this app'
 - else
-  - form_tag archive_app_path(@app) do
+  = form_tag archive_app_path(@app) do
     = submit_tag '', :class => "trash", :title => "Delete this app", :confirm => "Are you sure you want to delete this app?"
 
 - content_for :page_head, stylesheet_link_tag('apps')

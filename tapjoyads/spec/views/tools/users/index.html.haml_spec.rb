@@ -10,11 +10,11 @@ describe 'tools/users/index.html.haml' do
     end
 
     it 'displays the link to edit a user' do
-      response.should have_tag("a[href=?]", tools_user_path(@user))
+      response.should have_link(tools_user_path(@user))
     end
 
     it 'displays the roles assigned to that user' do
-      response.should have_tag("li.role_mgr")
+      response.should have_selector("li.role_mgr")
     end
   end
 end

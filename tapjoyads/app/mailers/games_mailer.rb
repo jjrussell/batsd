@@ -1,6 +1,7 @@
 class GamesMailer < ActionMailer::Base
+  default :from => 'Tapjoy <noreply@tapjoy.com'
+
   def feedback(gamer, content, user_agent, device_id)
-    from 'Tapjoy <noreply@tapjoy.com>'
     reply_to gamer.email
     recipients "customerservice@tapjoy.com"
     subject "User Feedback - Tapjoy"
@@ -9,7 +10,6 @@ class GamesMailer < ActionMailer::Base
   end
 
   def report_bug(gamer, content, user_agent, device_id)
-    from 'Tapjoy <noreply@tapjoy.com>'
     reply_to gamer.email
     recipients "mobilehelp@tapjoy.com"
     subject "Bug Report - Tapjoy"
@@ -18,7 +18,6 @@ class GamesMailer < ActionMailer::Base
   end
 
   def contact_support(gamer, content, user_agent, device_id)
-    from 'Tapjoy <noreply@tapjoy.com>'
     reply_to gamer.email
     recipients "mobilehelp@tapjoy.com"
     subject "User Support - Tapjoy"
@@ -27,7 +26,6 @@ class GamesMailer < ActionMailer::Base
   end
 
   def password_reset(gamer, reset_link)
-    from 'Tapjoy Support <support@tapjoy.com>'
     recipients gamer.email
     subject "Password Reset Request - Tapjoy"
     content_type 'text/html'
@@ -35,7 +33,6 @@ class GamesMailer < ActionMailer::Base
   end
 
   def link_device(gamer, ios_link, android_link)
-    from 'Tapjoy <noreply@tapjoy.com>'
     recipients gamer.email
     subject "Tapjoy - Link Device"
     content_type 'text/html'
@@ -43,10 +40,7 @@ class GamesMailer < ActionMailer::Base
   end
 
   def delete_gamer(gamer)
-    from 'Tapjoy <noreply@tapjoy.com>'
-    recipients gamer.email
-    subject "Tapjoy - Delete Account Confirmation"
-    content_type 'text/html'
-    body(:name => gamer.get_gamer_name)
+    @name = gamer.get_gamer_name
+    mail(:to => gamer.email, :subject => "Tapjoy - Delete Account Confirmation")
   end
 end

@@ -450,7 +450,7 @@ Tapjoyad::Application.routes.draw do
     resources :confirmations, :only => [:create]
     match 'confirm' => 'games/confirmations#create', :as => :confirm, :path_prefix => 'games', :name_prefix => 'games_'
     resources :password_resets, :only => [:new, :create, :edit, :update]
-    match 'password-reset' => 'games/password_resets#new', :as => :password_reset, :path_prefix => 'games', :name_prefix => 'games_'
+    match 'password-reset' => 'password_resets#new', :as => :password_reset
     resources :support_requests, :only => [:new, :create]
     resources :android
     resources :social, :only => [:index]

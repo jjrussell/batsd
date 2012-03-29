@@ -48,8 +48,8 @@ describe Tools::GenericOffersController do
       it "displays generic offers" do
         get(:index)
         assigns(:generic_offers).should include @generic_offer
-        response.should have_tag('table#generic_offers_table') do |element|
-          element.should have_tag('td', @generic_offer.name)
+        response.should have_selector('table#generic_offers_table') do |element|
+          element.should have_content(@generic_offer.name)
         end
       end
     end

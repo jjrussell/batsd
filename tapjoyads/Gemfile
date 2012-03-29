@@ -28,6 +28,7 @@ gem 'authlogic', :git => 'git://github.com/odorcicd/authlogic.git', :branch => '
 gem 'curbit', '0.2.0'
 gem 'declarative_authorization'
 gem 'differ', '0.1.2'
+gem 'dynamic_form'
 gem 'geoip', '1.1.1'
 gem 'haml', '3.1.3'
 gem 'hominid', '3.0.2'
@@ -68,6 +69,10 @@ end
 
 group :development do
   gem 'mongrel', '1.1.5'
+  gem 'guard-cucumber'
+  gem 'guard-spork'
+  gem 'guard-rspec'
+  gem 'ruby_gntp'
 end
 
 group :development, :test do
@@ -81,15 +86,11 @@ group :development, :test do
   gem 'spork'
   gem 'capybara'
   gem 'database_cleaner'
-  gem 'guard-cucumber'
-  gem 'guard-spork'
-  gem 'guard-rspec'
-  gem 'ruby_gntp'
-  gem 'launchy'
 end
 
 group :test do
   gem 'cucumber-rails'
+  gem 'launchy'
 end
 
 group :ops do

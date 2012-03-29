@@ -1,6 +1,8 @@
 require 'spec_helper'
 
 describe ReportingController do
+  include Authlogic::TestCase
+
   before :each do
     fake_the_web
   end
