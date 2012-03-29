@@ -223,6 +223,13 @@ en:
       developers: Developers
       privacy: "Privacy Policy"
     games:
+      app_review_h_no: "No"
+      app_review_h_yes: "Yes"
+      app_review_concern_reported: "Concern Reported"
+      app_review_thanks_for_feedback: "Thank you for your feedback"
+      app_review_report_concern: "Report concern"
+      app_review_was_helpful: "Was this review helpful?"
+      app_review_more: "more..."
       invalid_emails: The email(s) provided were invalid
       provide_single_email: Please provide at least one email
       reactivated_account: Your account has been reactivated!
