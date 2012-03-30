@@ -1,6 +1,6 @@
 require 'spec/spec_helper'
 
-describe Games::Gamers::FavoriteAppController do
+describe Games::FavoriteAppController do
   include Authlogic::TestCase
 
   before :each do

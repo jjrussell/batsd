@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Games::Gamers::DevicesController do
+describe Games::DevicesController do
   include Authlogic::TestCase
 
   before :each do

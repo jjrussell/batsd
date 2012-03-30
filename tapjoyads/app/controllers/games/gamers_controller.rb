@@ -47,7 +47,7 @@ class Games::GamersController < GamesController
       if params[:data].present? && params[:src] == 'android_app'
         render(:json => { :success => true, :link_device_url => finalize_games_gamer_device_path(:data => params[:data]), :android => true })
       else
-        render(:json => { :success => true, :link_device_url => new_games_gamer_device_path })
+        render(:json => { :success => true, :link_device_url => new_games_device_path })
       end
     else
       errors = @gamer.errors.reject { |k,v| k == :gamer_profile }

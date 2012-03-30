@@ -1,4 +1,4 @@
-class Games::Gamers::GamerProfilesController < GamesController
+class Games::GamerProfilesController < GamesController
 
   before_filter :set_profile, :only => [ :show, :edit, :update, :update_birthdate, :update_prefs, :dissociate_account ]
 

@@ -72,16 +72,6 @@ describe AgencyApi::AppsController do
       }
     end
 
-    context 'with missing params' do
-      before :each do
-        get(:show)
-      end
-
-      it 'responds with error' do
-        should_respond_with_json_error(400)
-      end
-    end
-
     context 'with bad credentials' do
       before :each do
         get(:show, @valid_params.merge(:api_key => 'foo'))
@@ -227,16 +217,6 @@ describe AgencyApi::AppsController do
         :api_key => agency_user.api_key,
         :name => 'foo'
       }
-    end
-
-    context 'with missing params' do
-      before :each do
-        put(:update)
-      end
-
-      it 'responds with error' do
-        should_respond_with_json_error(400)
-      end
     end
 
     context 'with bad credentials' do

@@ -21,8 +21,8 @@ Tapjoyad::Application.routes.draw do
   namespace :account do
     resources :whitelist, :only => [:index] do
       collection do
-        :enable
-        :disable
+        match :enable
+        match :disable
       end
     end
   end

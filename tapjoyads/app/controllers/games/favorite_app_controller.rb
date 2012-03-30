@@ -1,4 +1,4 @@
-class Games::Gamers::FavoriteAppController < GamesController
+class Games::FavoriteAppController < GamesController
 
   before_filter :require_gamer, :require_eapp_metadata
 

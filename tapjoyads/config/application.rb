@@ -4,28 +4,11 @@ require 'rails/all'
 
 Bundler.require(:default, Rails.env) if defined?(Bundler)
 
-MACHINE_TYPE = `"#{Rails.root}/../server/server_type.rb"`
-
 module Tapjoyad
   class Application < Rails::Application
     config.autoload_paths += [config.root.join('lib')]
 
     config.encoding = 'utf-8'
-
-    routes = case MACHINE_TYPE
-             when 'dashboard'
-               %w( dashboard sdk )
-             when 'website'
-               %w( website sdk )
-             when 'web'
-               %w( web legacy )
-             else
-               %w( sdk dashboard website web legacy )
-             end
-
-    routes.each do |route|
-      config.paths.config.routes << Rails.root.join("config/routes/#{route}.rb")
-    end
 
     config.time_zone = 'UTC'
     config.i18n.default_locale = :en

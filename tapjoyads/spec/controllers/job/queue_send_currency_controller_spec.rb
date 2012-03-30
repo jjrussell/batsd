@@ -2,7 +2,6 @@ require 'spec/spec_helper'
 
 describe Job::QueueSendCurrencyController do
   before :each do
-    RightAws::SdbInterface.unstub(:new)
     SimpledbResource.reset_connection
     @controller.expects(:authenticate).at_least_once.returns(true)
     @mock_response = mock()

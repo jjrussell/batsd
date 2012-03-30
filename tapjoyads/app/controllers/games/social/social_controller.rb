@@ -1,4 +1,4 @@
-class Games::SocialController < GamesController
+class Games::Social::SocialController < GamesController
   include ActionView::Helpers::TextHelper
 
   rescue_from Errno::ECONNRESET, :with => :handle_errno_exceptions

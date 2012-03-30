@@ -1,4 +1,4 @@
-class Games::Gamers::DevicesController < GamesController
+class Games::DevicesController < GamesController
 
   def new
     if current_gamer.present?

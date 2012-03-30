@@ -19,27 +19,30 @@ Tapjoyad::Application.routes.draw do
   match 'privacy' => 'documents#privacy'
   match 'privacy.html' => 'documents#privacy'
   resources :opt_outs, :only => :create
+  namespace :apps do
+    resources :offers
+  end
   namespace :games do
-    match '/' => 'games/homepage#index'
-    match 'tos' => 'games/homepage#tos', :as => :tos
-    match 'privacy' => 'games/homepage#privacy', :as => :privacy
-    match 'help' => 'games/homepage#help', :as => :help
-    match 'switch_device' => 'games/homepage#switch_device', :as => :switch_device
-    match 'send_device_link' => 'games/homepage#send_device_link', :as => :send_device_link
-    match 'earn/:id' => 'games/homepage#earn', :as => :earn
-    match 'more_apps' => 'games/homepage#index', :as => :more_apps
-    match 'get_app' => 'games/homepage#get_app', :as => :get_app
-    match 'editor_picks' => 'games/more_games#editor_picks', :as => :more_games_editor_picks
-    match 'recommended' => 'games/more_games#recommended', :as => :more_games_recommended
-    match 'translations' => 'games/homepage#translations', :as => :translations
+    match '/' => 'homepage#index'
+    match 'tos' => 'homepage#tos', :as => :tos
+    match 'privacy' => 'homepage#privacy', :as => :privacy
+    match 'help' => 'homepage#help', :as => :help
+    match 'switch_device' => 'homepage#switch_device', :as => :switch_device
+    match 'send_device_link' => 'homepage#send_device_link', :as => :send_device_link
+    match 'earn/:eid' => 'homepage#earn', :as => :earn
+    match 'more_apps' => 'homepage#index', :as => :more_apps
+    match 'get_app' => 'homepage#get_app', :as => :get_app
+    match 'editor_picks' => 'more_games#editor_picks', :as => :more_games_editor_picks
+    match 'recommended' => 'more_games#recommended', :as => :more_games_recommended
+    match 'translations' => 'homepage#translations', :as => :translations
     resources :my_apps, :only => [:show, :index]
     resources :gamer_sessions, :only => [:new, :create, :destroy, :index]
-    get 'login' => 'games/gamer_sessions#new', :as => :login
-    post 'login' => 'games/gamer_sessions#create'
-    match 'logout' => 'games/gamer_sessions#destroy', :as => :logout
-    match 'support' => 'games/support_requests#new', :type => 'contact_support'
-    match 'bugs' => 'games/support_requests#new', :type => 'report_bug'
-    match 'feedback' => 'games/support_requests#new', :type => 'feedback'
+    get 'login' => 'gamer_sessions#new', :as => :login
+    post 'login' => 'gamer_sessions#create'
+    match 'logout' => 'gamer_sessions#destroy', :as => :logout
+    match 'support' => 'support_requests#new', :type => 'contact_support'
+    match 'bugs' => 'support_requests#new', :type => 'report_bug'
+    match 'feedback' => 'support_requests#new', :type => 'feedback'
     resource :gamer, :only => [:create, :edit, :update, :destroy, :show, :new] do
       member do
         put :update_password
@@ -47,43 +50,46 @@ Tapjoyad::Application.routes.draw do
         get :password
         get :confirm_delete
         get :prefs
-      end
-      resource :device, :only => [:new, :create] do
-        member do
-          get :finalize
+        resource :device, :only => [:new, :create] do
+          member do
+            get :finalize
+          end
         end
-      end
 
-      resource :favorite_app, :only => [:create, :destroy]
-      resource :gamer_profile, :only => [:update] do
-        member do
-          put :update_prefs
-          put :dissociate_account
-          put :update_birthdate
+        resource :favorite_app, :controller => :favorite_app, :only => [:create, :destroy]
+        resource :gamer_profile, :only => [:update] do
+          member do
+            put :update_prefs
+            put :dissociate_account
+            put :update_birthdate
+          end
         end
       end
     end
 
     resources :gamer_profile, :only => [:show, :edit, :update]
-    match 'register' => 'games/gamers#new', :as => :register
+    match 'register' => 'gamers#new', :as => :register
     resources :confirmations, :only => [:create]
-    match 'confirm' => 'games/confirmations#create', :as => :confirm
+    match 'confirm' => 'confirmations#create', :as => :confirm
     resources :password_resets, :only => [:new, :create, :edit, :update]
-    match 'password-reset' => 'games/password_resets#new', :as => :password_reset
+    match 'password-reset' => 'password_resets#new', :as => :password_reset
     resources :support_requests, :only => [:new, :create]
     resources :android
-    resources :social, :only => [:index]
-    match 'invite_email_friends' => 'games/social#invite_email_friends', :as => :invite_email_friends
-    match 'social/connect_facebook_account' => 'games/social#connect_facebook_account', :as => :connect_facebook_account
-    match 'send_email_invites' => 'games/social#send_email_invites', :as => :send_email_invites
-    match 'invite_twitter_friends' => 'games/social#invite_twitter_friends', :as => :invite_twitter_friends
-    match 'send_twitter_invites' => 'games/social#send_twitter_invites', :as => :send_twitter_invites
-    match 'get_twitter_friends' => 'games/social#get_twitter_friends', :as => :get_twitter_friends
-    match 'social/invites' => 'games/social#invites', :as => :invites
-    match 'social/friends' => 'games/social#friends', :as => :friends
-    match 'twitter/start_oauth' => 'games/social/twitter#start_oauth', :as => :start_oauth
-    match 'twitter/finish_oauth' => 'games/social/twitter#finish_oauth', :as => :finish_oauth
     resources :survey_results, :only => [:new, :create]
     resources :app_reviews, :only => [:index, :create, :edit, :update, :new, :destroy]
+    namespace :social do
+      match 'invite_email_friends' => 'social#invite_email_friends', :as => :invite_email_friends
+      match 'connect_facebook_account' => 'social#connect_facebook_account', :as => :connect_facebook_account
+      match 'send_email_invites' => 'social#send_email_invites', :as => :send_email_invites
+      match 'invite_twitter_friends' => 'social#invite_twitter_friends', :as => :invite_twitter_friends
+      match 'send_twitter_invites' => 'social#send_twitter_invites', :as => :send_twitter_invites
+      match 'get_twitter_friends' => 'social#get_twitter_friends', :as => :get_twitter_friends
+      match 'invites' => 'social#invites', :as => :invites
+      match 'friends' => 'social#friends', :as => :friends
+      scope :twitter do
+        match 'start_oauth' => 'twitter#start_oauth', :as => :twitter_start_oauth
+        match 'finish_oauth' => 'twitter#finish_oauth', :as => :twitter_finish_oauth
+      end
+    end
   end
 end

@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Games::SocialController do
+describe Games::Social::SocialController do
   include Authlogic::TestCase
 
   before :each do

@@ -1,4 +1,22 @@
+MACHINE_TYPE = `"#{Rails.root}/../server/server_type.rb"`
+
 Tapjoyads::Application.configure do
+
+  routes = case MACHINE_TYPE
+           when 'dashboard'
+             %w( dashboard sdk )
+           when 'website'
+             %w( website sdk )
+           when 'web'
+             %w( web legacy )
+           else
+             %w( sdk dashboard website web legacy )
+           end
+
+  routes.each do |route|
+    config.paths.config.routes << Rails.root.join("config/routes/#{route}.rb")
+  end
+
   # Settings specified here will take precedence over those in config/application.rb
 
   # The production environment is meant for finished, "live" apps.
