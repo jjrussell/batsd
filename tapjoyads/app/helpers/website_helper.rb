@@ -18,19 +18,27 @@ module WebsiteHelper
     content_for :included_javascripts, javascript_include_tag('rickshaw/rickshaw.min')
   end
 
-  def include_rickshaw_js(json_source, element_suffix)
+  # Render the necessary javascript to make Rickshaw work
+  #
+  # @param [String] json_source the json url to load
+  # @param [String] element_suffix substring of elements to allow multiple graphs
+  # @option opts [Boolean] :transform convert the data into a compatible object
+  def include_rickshaw_js(json_source, element_suffix, opts = {})
+    options = {
+      :transform => true
+    }.merge(opts)
     include_rickshaw_libs  unless @rickshaw_libs_included
     content_for :page_javascript do
 <<-EOJS
-    var palette = new Rickshaw.Color.Palette( { scheme: 'httpStatus' } );
+    var palette_#{element_suffix} = new Rickshaw.Color.Palette( { scheme: 'httpStatus' } );
 
-    var wrapper = new Rickshaw.Graph.Ajax( {
+    var wrapper_#{element_suffix} = new Rickshaw.Graph.Ajax( {
       element: document.getElementById("chart_#{element_suffix}"),
       dataURL: '#{json_source}',
       width: 820,
       height: 250,
       renderer: 'area',
-      onData: function(d) { return transformData(d) },
+      #{"onData: function(d) { return transformData_#{element_suffix}(d) }," if options[:transform]}
       onComplete: function(w) {
         var legend = new Rickshaw.Graph.Legend( {
           element: document.querySelector('#legend_#{element_suffix}'),
@@ -62,10 +70,12 @@ module WebsiteHelper
         } );
 
         yAxis.render();
+
+        $('#loading_#{element_suffix}').remove();
       }
     } );
 
-    function transformData(d) {
+    function transformData_#{element_suffix}(d) {
       var data = [];
       var statusCounts = {};
 
@@ -80,7 +90,7 @@ module WebsiteHelper
         data.push( {
           name: status,
           data: statusCounts[status],
-          color: palette.color(status)
+          color: palette_#{element_suffix}.color(status)
         } );
       } );
 
