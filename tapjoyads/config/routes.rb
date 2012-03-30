@@ -539,7 +539,6 @@ Tapjoyad::Application.routes.draw do
   match 'game_state/save' => 'game_state#save', :as => :save_game_state
   match 'log_device_app/:action/:id' => 'connect#index'
   match 'confirm_email_validation' => 'list_signup#confirm_api'
-  match '/' => 'homepage#start'
   match 'site/privacy' => 'documents#privacy'
   match 'site/privacy.html' => 'documents#privacy'
   match 'site/privacy_mobile' => 'documents#privacy_mobile'
@@ -560,5 +559,6 @@ Tapjoyad::Application.routes.draw do
   resources :opt_outs, :only => :create
   match ':controller(/:action(/:id))'
 
-  root :to => 'dashboard/homepage#index'
+  match 'dashboard' => 'dashboard/homepage#index'
+  root :to => 'homepage#start'
 end
