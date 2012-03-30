@@ -1,0 +1,5 @@
+source :rubygems
+
+group :ops do
+  gem 'unicorn', '4.2.0'
+end
