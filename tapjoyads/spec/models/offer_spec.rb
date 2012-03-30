@@ -706,7 +706,7 @@ describe Offer do
           Offer.any_instance.stubs(:missing_app_store_id?).returns(true)
           @offer.tapjoy_enabled = true
           @offer.should_not be_valid
-          @offer.errors.on(:tapjoy_enabled).should =~ /store id/i
+          @offer.errors[:tapjoy_enabled].join.should =~ /store id/i
         end
 
         it 'can be made true with store_id' do
@@ -823,8 +823,8 @@ describe Offer do
 
       it "fails if asset data not provided" do
         @offer.save.should be_false
-        @offer.errors[:custom_creative_480x320_blob].should == "480x320 custom creative file not provided."
-        @offer.errors[:custom_creative_320x480_blob].should == "320x480 custom creative file not provided."
+        @offer.errors[:custom_creative_480x320_blob].join.should == "480x320 custom creative file not provided."
+        @offer.errors[:custom_creative_320x480_blob].join.should == "320x480 custom creative file not provided."
       end
 
       it "uploads assets to s3 when data is provided" do
