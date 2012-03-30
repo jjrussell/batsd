@@ -44,7 +44,6 @@ FactoryGirl.define do
     association :current_partner, :factory => :partner
     factory :premier_partner_user, :parent => :user do
       after_build do |user|
-        puts user.inspect
         OfferDiscount.create! :partner => user.current_partner, :source => 'Exclusivity', :amount => 1, :expires_on => Time.now + 8 * 60 * 60 * 24
       end
     end
