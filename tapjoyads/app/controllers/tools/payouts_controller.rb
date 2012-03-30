@@ -9,13 +9,6 @@ class Tools::PayoutsController < WebsiteController
     @freeze_enabled = PayoutFreeze.enabled?
   end
 
-  def info
-    payout_info = PayoutInfo.find(params[:id])
-    respond_to do |format|
-      format.json { render :json => payout_info.decrypted_payment_details }
-    end
-  end
-
   def create
     partner = Partner.find(params[:partner_id])
     cutoff_date = partner.payout_cutoff_date - 1.day
@@ -28,16 +21,15 @@ class Tools::PayoutsController < WebsiteController
   def confirm_payouts
     partner = Partner.find(params[:partner_id])
     log_activity(partner)
-    partner.confirmed_for_payout = !partner.confirmed_for_payout
-    partner.payout_confirmation_notes = nil if partner.confirmed_for_payout
+    partner.toggle_confirmed_for_payout
     render :json => { :success => partner.save, :was_confirmed => partner.confirmed_for_payout}
   end
 
   def export
     data = [
-      "Partner_Name,Partner_id,Pending_Earnings,Cutoff_Date,Payout_Amount," <<
-      "Current_Payout_Created," <<
-      "Confirmed,Notes,Account_Manager_Email"
+      'Partner_Name,Partner_id,Pending_Earnings,Cutoff_Date,Payout_Amount,' <<
+      'Current_Payout_Created,' <<
+      'Confirmed,Notes,Account_Manager_Email'
     ]
     @partners.each do |partner|
       line = [
@@ -47,14 +39,13 @@ class Tools::PayoutsController < WebsiteController
           (partner.payout_cutoff_date - 1.day).to_s(:yyyy_mm_dd),
           NumberHelper.number_to_currency((partner.pending_earnings / 100.0 - partner.next_payout_amount / 100.0), :delimiter => ''),
           NumberHelper.number_to_currency((partner.next_payout_amount / 100.0), :delimiter => ''),
-          partner.confirmed_for_payout? ? "Confirmed" : "Unconfirmed",
+          partner.confirmed_for_payout? ? 'Confirmed' : 'Unconfirmed',
           partner.payout_confirmation_notes.present? ? partner.payout_confirmation_notes.gsub(/[,]/, '_') : '' ,
           partner.account_managers.present? ? (partner.account_managers.first.email) : ''
         ]
       data << line.join(',')
     end
-    send_data(data.join("\n"), :type => 'text/csv', :filename =>
-      "Payouts.csv")
+    send_data(data.join("\n"), :type => 'text/csv', :filename => 'Payouts.csv')
   end
 
   private

@@ -37,7 +37,6 @@
       %th Payout Amount
       %th Current Payout Created
       %th Payout Info
-      %th.do-not-print W9/Bank
       %th Action
       %th Confirmed
   %tbody
@@ -72,13 +71,8 @@
             %br/
             %strong Updated:
             = payout_info.updated_at.to_s(:pub)
-          %td.do-not-print
-            .button= button_to('Show info', info_tools_payout_path(payout_info.id))
-            %img.spinner{ :src => '/images/spinner.gif', :style => 'display:none;' }
-            .text.hidden &nbsp;
         - else
           %td &nbsp;
-          %td.do-not-print &nbsp;
         %td
           - if permitted_to?(:create, :tools_payouts)
             - form_tag tools_payouts_path(:partner_id => partner.id), :method => :post, :class => 'json', :style => 'height:45px;' do

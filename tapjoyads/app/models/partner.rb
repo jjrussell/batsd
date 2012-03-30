@@ -325,6 +325,11 @@ class Partner < ActiveRecord::Base
     changed? ? save : true
   end
 
+  def toggle_confirmed_for_payout
+    self.confirmed_for_payout = !self.confirmed_for_payout
+    self.payout_confirmation_notes = nil if self.confirmed_for_payout
+  end
+
 private
 
   def update_currencies
