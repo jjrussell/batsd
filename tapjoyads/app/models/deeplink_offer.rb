@@ -27,8 +27,8 @@ class DeeplinkOffer < ActiveRecord::Base
     offer.name = name
     offer.url = "#{WEBSITE_URL}/earn?eid=#{ObjectEncryptor.encrypt(currency_id)}&udid=TAPJOY_UDID"
     offer.price = 0
-    offer.payment = 1
-    offer.rewarded = false
+    offer.bid = 1
+    offer.rewarded = true
     offer.publisher_app_whitelist = self.app_id
     offer.approved_sources = %w(offerwall)
     offer.tapjoy_enabled = true
