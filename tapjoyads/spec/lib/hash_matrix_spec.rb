@@ -38,12 +38,12 @@ describe HashMatrix::HashVector do
     context "given a number in valid range >= 1" do
       it "returns the correct value for the p_norm" do
         @vector.p_norm(1).should == 13
-        @vector.p_norm(1.000001).should be_within(13, 0.001)
+        @vector.p_norm(1.000001).should be_within(0.001).of(13)
         @vector.p_norm(2).should == 7
-        @vector.p_norm(2.000001).should be_within(7, 0.001)
-        @vector.p_norm(3).should be_within(5.896, 0.001)
+        @vector.p_norm(2.000001).should be_within(0.001).of(7)
+        @vector.p_norm(3).should be_within(0.001).of(5.896)
         @vector.p_norm(1000).should == 5
-        @vector.p_norm(90).should be_within(5, 0.001)
+        @vector.p_norm(90).should be_within(0.001).of(5)
       end
     end
 
@@ -121,7 +121,7 @@ describe HashMatrix::HashVector do
           [0.2899, 0.2899, 1.0, 1.0, 1.41, 1.92, 1.96, 1.96, 1.96] #scalar products for different p-norms
         ]
         pnorms_and_dots.transpose.each do |p, dot|
-          (@vector.p_normalize(p) * @vector.p_normalize(p)).should be_within(dot, 0.001)
+          (@vector.p_normalize(p) * @vector.p_normalize(p)).should be_within(0.001).of(dot)
         end
       end
     end
