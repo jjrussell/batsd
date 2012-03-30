@@ -33,7 +33,6 @@ Tapjoyad::Application.routes.draw do
   match 'sgn_data' => 'sgn_data#index'
   match 'zynga_data' => 'zynga_data#index'
   match 'tapulous_marketing' => 'tapulous_marketing#index'
-  match '/' => 'dashboard/homepage#index', :path_prefix => 'dashboard', :name_prefix => 'dashboard_'
   match 'tos-advertiser.html' => 'documents#tos_advertiser'
   match 'tos-publisher.html' => 'documents#tos_publisher'
   match 'publisher-guidelines.html' => 'documents#publisher_guidelines'
@@ -560,4 +559,6 @@ Tapjoyad::Application.routes.draw do
   match 'privacy.html' => 'documents#privacy'
   resources :opt_outs, :only => :create
   match ':controller(/:action(/:id))'
+
+  root :to => 'dashboard/homepage#index'
 end

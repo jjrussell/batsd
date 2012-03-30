@@ -10,7 +10,7 @@ class InternalDevicesController < WebsiteController
       set_cookie( { :value => @device.id, :expires => 1.year.from_now } )
       send_email
     elsif @device.approved?
-      redirect_to dashboard_root_path
+      redirect_to root_path
     elsif params[:resend]
       send_email
     end
@@ -24,7 +24,7 @@ class InternalDevicesController < WebsiteController
     device = InternalDevice.find(params[:id])
     device.update_attributes(params[:internal_device])
     flash[:notice] = "Device updated! To see the devices and computers you've logged in with <a href=#{internal_device_path(current_user.id)}>click here</a>"
-    redirect_to dashboard_root_path
+    redirect_to root_path
   end
 
   def index

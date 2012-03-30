@@ -26,7 +26,7 @@ describe Tools::GenericOffersController do
     context "accessing generic offers index" do
       it "redirects to dashboard" do
         get(:index)
-        response.should redirect_to(dashboard_root_path)
+        response.should redirect_to(root_path)
       end
     end
   end
@@ -48,7 +48,7 @@ describe Tools::GenericOffersController do
       it "displays generic offers" do
         get(:index)
         assigns(:generic_offers).should include @generic_offer
-        response.should have_selector('table#generic_offers_table') do |element|
+        response.body.should have_selector('table#generic_offers_table') do |element|
           element.should have_content(@generic_offer.name)
         end
       end

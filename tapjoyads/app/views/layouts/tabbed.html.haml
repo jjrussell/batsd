@@ -58,7 +58,7 @@
         .clear
         - if current_user.can_manage_account?
           %span#acting_as
-            - form_tag('') do
+            = form_tag('') do
               acting as
               = select_tag(:recent_partners, options_for_select(@recent_partners))
               = link_to('Partner page', partner_path(current_partner))

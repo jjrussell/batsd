@@ -20,7 +20,7 @@ describe Tools::UsersController do
       end
 
       it 'redirects to the dashboard' do
-        response.should redirect_to(dashboard_root_path)
+        response.should redirect_to(root_path)
       end
     end
 
@@ -47,7 +47,7 @@ describe Tools::UsersController do
       end
 
       it 'redirects to the dashboard' do
-        response.should redirect_to(dashboard_root_path)
+        response.should redirect_to(root_path)
       end
     end
 

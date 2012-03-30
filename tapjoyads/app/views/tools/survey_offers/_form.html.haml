@@ -1,6 +1,6 @@
 %h1= @page_title
 
-- form_for( [ :tools, @survey_offer], :html => { :class => 'tjform' }) do |f|
+= form_for( [ :tools, @survey_offer], :html => { :class => 'tjform' }) do |f|
   .field
     = f.label :name
     #help_name.help ?
@@ -13,7 +13,7 @@
     = error_message_on(@survey_offer, :bid_price)
   %h2 Questions
   - @survey_offer.survey_questions.each do |question|
-    - f.fields_for(:survey_questions, question) do |q|
+    = f.fields_for(:survey_questions, question) do |q|
       .question
         .field
           = q.label :text

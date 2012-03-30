@@ -24,7 +24,7 @@ describe ToolsController do
     context 'accessing tools index' do
       it 'redirects to dashboard' do
         get(:index)
-        response.should redirect_to(dashboard_root_path)
+        response.should redirect_to(root_path)
       end
     end
   end
