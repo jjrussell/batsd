@@ -12,18 +12,12 @@
 #
 module ActiveSupport
   class BufferedLogger
-
-    for severity in Severity.constants
-      class_eval <<-EOT, __FILE__, __LINE__
-        def #{severity.downcase}_with_time(message)                 # def debug_with_time(message)
-          start_time = Time.zone.now                                #   start_time = Time.zone.now
-          yield                                                     #   yield
-          message += ' (' + (Time.zone.now - start_time).to_s + ')' #   message += ' (' + (Time.zone.now - start_time).to_s + ')'
-          add(#{severity}, message)                                 #   add(DEBUG, message)
-        end                                                         # end
-      EOT
+    def info_with_time(message)
+      start_time = Time.zone.now
+      yield
+      message += " (#{Time.zone.now - start_time})"
+      add(INFO, message)
     end
-
   end
 end
 
