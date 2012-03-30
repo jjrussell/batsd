@@ -499,4 +499,13 @@ describe Currency do
       @currency.approve!
     end
   end
+
+  describe '#create_deeplink_offer' do
+    it 'should create a corresponding DeeplinkOffer' do
+      @currency.save!
+      @currency.enabled_deeplink_offer_id.should_not be_nil
+      dl = DeeplinkOffer.find_by_id(@currency.enabled_deeplink_offer_id)
+      dl.currency.should == @currency
+    end
+  end
 end

@@ -63,8 +63,7 @@
             %span
               - amount = capture_haml do
                 %label= @currency.get_visual_reward_amount(offer, params[:display_multiplier])
-              - unless offer.item_type == 'DeeplinkOffer'
-                = offer.direct_pay? ? t('text.offerwall.buy_currency', :amount => amount, :currency => @currency.name) : t('text.offerwall.earn_currency', :amount => amount, :currency => @currency.name)
+              = offer.direct_pay? ? t('text.offerwall.buy_currency', :amount => amount, :currency => @currency.name) : t('text.offerwall.earn_currency', :amount => amount, :currency => @currency.name)
           %p
             %b= offer.name
             - if !@for_preview && @device.is_papayan? && @show_papaya && @papaya_offers.include?(offer.id)

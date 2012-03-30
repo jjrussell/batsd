@@ -105,7 +105,6 @@ describe OfferList do
       @offers = []
       10.times { @offers << Factory(:video_offer).primary_offer }
       RailsCache.stubs(:get_and_put).returns(RailsCacheValue.new(@offers))
-      #Offer.any_instance.stubs(:postcache_reject?).returns(false)
       @currency = Factory(:currency)
       @app = @currency.app
       @base_params = {:device => Factory(:device), :publisher_app => @app, :currency => @currency, :video_offer_ids => @offers.map { |o| o.id }}
@@ -133,6 +132,7 @@ describe OfferList do
       context 'with a deeplink offer' do
         before :each do
           @deeplink = @currency.deeplink_offer
+          @deeplink.partner.balance = 100
           Offer.stubs(:find_in_cache).with(@deeplink.primary_offer.id).returns(@deeplink.primary_offer)
         end
 
