@@ -1,0 +1,351 @@
+Tapjoyad::Application.routes.draw do
+  root :to => 'dashboard/homepage#index'
+  match 'dashboard' => 'dashboard/homepage#index'
+  match 'tos-advertiser.html' => 'documents#tos_advertiser'
+  match 'tos-publisher.html' => 'documents#tos_publisher'
+  match 'publisher-guidelines.html' => 'documents#publisher_guidelines'
+  resource :sign_up, :only => :create
+  match 'register' => 'sign_up#new', :as => :register
+  match 'login' => 'user_sessions#new', :as => :login
+  match 'logout' => 'user_sessions#destroy', :as => :logout
+  resources :password_resets, :only => [:new, :create, :edit, :update]
+  match 'password-reset' => 'password_resets#new', :as => :password_reset
+  resources :internal_devices, :only => [:index, :show, :destroy, :edit, :update] do
+    member do
+      get :block
+    end
+  end
+
+  match 'approve_device' => 'internal_devices#new', :as => :new_internal_device, :via => :get
+  match 'approve_device/:id' => 'internal_devices#approve', :as => :approve_internal_device, :via => :get
+  namespace :account do
+    resources :whitelist, :only => [:index] do
+      collection do
+        :enable
+        :disable
+      end
+    end
+  end
+
+  resources :user_sessions, :only => [:new, :create, :destroy, :index]
+  resources :users, :except => [:show, :destroy]
+  resources :apps, :except => [:destroy] do
+    collection do
+      get :search
+    end
+    member do
+      get :publisher_integrate
+      get :integrate_check
+      get :confirm
+      post :unarchive
+      post :archive
+      get :integrate
+    end
+    resources :offers, :only => [:new, :create, :edit, :update] do
+
+      member do
+        post :toggle
+        post :percentile
+      end
+      resources :offer_events, :only => [:index, :new, :create, :edit, :update, :destroy]
+    end
+
+    resources :currencies, :only => [:show, :update, :new, :create] do
+
+      member do
+        post :reset_test_device
+      end
+
+    end
+
+    resources :virtual_goods, :only => [:show, :update, :new, :create, :index] do
+      collection do
+        post :reorder
+      end
+
+
+    end
+
+    resources :action_offers, :only => [:new, :create, :edit, :update, :index] do
+      collection do
+        get :TJCPPA
+        get :TapjoyPPA
+      end
+      member do
+        get :preview
+        post :toggle
+      end
+
+    end
+
+    resources :reengagement_offers, :except => [:show] do
+      collection do
+        post :update_status
+      end
+
+
+    end
+  end
+
+  resources :reengagement_rewards, :only => [:show]
+  resources :offer_creatives do
+    member do
+      match ':image_size' => 'offer_creatives#create', :name_prefix => 'offer_creatives_', :via => :post
+      match ':image_size' => 'offer_creatives#destroy', :name_prefix => 'offer_creatives_', :via => :delete
+    end
+    match 'offer_creatives' => 'offer_creatives/:id', :as => :preview, :name_prefix => 'offer_creatives_', :via => :get
+    match 'offer_creatives' => 'offer_creatives/:id/:image_size', :as => :form, :name_prefix => 'offer_creatives_', :via => :get
+  end
+  resources :enable_offer_requests, :only => [:create]
+  resources :reporting, :only => [:index, :show] do
+    collection do
+      get :api
+      post :export_aggregate
+      get :aggregate
+      post :regenerate_api_key
+    end
+    member do
+      post :export
+      get :download_udids
+    end
+
+  end
+
+  resources :billing, :only => [:index] do
+    collection do
+      put :update_payout_info
+      post :forget_credit_card
+      get :export_statements
+      get :export_orders
+      post :create_order
+      get :export_payouts
+      post :create_transfer
+      get :export_adjustments
+    end
+
+
+  end
+
+  match 'billing/add-funds' => 'billing#add_funds', :as => :add_funds_billing
+  match 'billing/transfer-funds' => 'billing#transfer_funds', :as => :transfer_funds_billing
+  match 'billing/payment-info' => 'billing#payout_info', :as => :payout_info_billing
+  resources :statz, :only => [:index, :show, :edit, :update, :new, :create] do
+    collection do
+      get :advertiser
+      get :global
+      get :publisher
+    end
+    member do
+      get :last_run_times
+      get :udids
+      get :support_request_reward_ratio
+      get :download_udids
+    end
+
+  end
+
+  resources :activities, :only => [:index]
+  resources :partners, :only => [:index, :show, :new, :create, :update, :edit] do
+    collection do
+      get :agency_api
+    end
+    member do
+      get :mail_chimp_info
+      get :new_transfer
+      post :set_tapjoy_sponsored
+      post :make_current
+      post :set_unconfirmed_for_payout
+      post :manage
+      get :reporting
+      post :create_transfer
+      post :stop_managing
+    end
+    resources :offer_discounts, :only => [:index, :new, :create] do
+
+      member do
+        post :deactivate
+      end
+
+    end
+
+    resources :payout_infos, :only => [:index, :update]
+  end
+
+  match 'partners/managed_by/:id' => 'partners#managed_by'
+  match 'search/gamers' => 'search#gamers', :as => :search_gamers
+  match 'search/offers' => 'search#offers', :as => :search_offers
+  match 'search/users' => 'search#users', :as => :search_users
+  match 'search/partners' => 'search#partners', :as => :search_partners
+  match 'premier' => 'premier#edit', :as => :premier
+  resources :survey_results, :only => [:new, :create]
+  resources :tools, :only => :index do
+    collection do
+      post :update_user_roles
+      get :reset_device
+      get :publishers_without_payout_info
+      get :monthly_data
+      post :update_device
+      get :send_currency_failures
+      get :new_transfer
+      get :publisher_payout_info_changes
+      get :money
+      get :sanitize_users
+      get :device_info
+      get :failed_sdb_saves
+      post :resolve_clicks
+      post :award_currencies
+      get :disabled_popular_offers
+      get :sqs_lengths
+      post :update_award_currencies
+      get :sdb_metadata
+      get :ses_status
+    end
+
+
+  end
+
+  namespace :tools do
+    resources :approvals, :only => [:index] do
+      collection do
+        :history
+        :mine
+      end
+      member do
+        :approve
+        :reject
+        :assign
+      end
+
+    end
+    resources :premier_partners, :only => [:index]
+    resources :generic_offers, :only => [:index, :new, :create, :edit, :update]
+    resources :orders, :only => [:new, :create] do
+      collection do
+        get :failed_invoices
+      end
+      member do
+        put :mark_invoiced
+        put :retry_invoicing
+      end
+
+    end
+    resources :video_offers, :only => [:new, :create, :edit, :update] do
+
+
+      resources :video_buttons
+    end
+    resources :offers do
+      collection do
+        get :creative
+        post :approve_creative
+        post :reject_creative
+      end
+
+
+    end
+    resources :payouts, :only => [:index, :create] do
+      collection do
+        get :export
+        post :confirm_payouts
+      end
+      member do
+        get :info
+      end
+
+    end
+    resources :enable_offer_requests, :only => [:update, :index]
+    resources :admin_devices, :only => [:index, :new, :create, :edit, :update, :destroy]
+    resources :offer_events, :only => [:index, :new, :create, :edit, :update, :destroy]
+    resources :users, :only => [:index, :show] do
+
+
+      resources :role_assignments, :only => [:create, :destroy]
+      resources :partner_assignments, :only => [:create, :destroy]
+    end
+    resources :employees, :only => [:index, :new, :create, :edit, :update] do
+
+      member do
+        :delete_photo
+        :wfhs
+      end
+
+    end
+    resources :offer_lists, :only => [:index]
+    resources :rank_boosts, :except => [:show, :destroy] do
+
+      member do
+        post :deactivate
+      end
+
+    end
+    resources :external_publishers, :only => [:index, :update]
+    resources :jobs, :except => [:show]
+    resources :earnings_adjustments, :only => [:new, :create]
+    resources :editors_picks, :except => [:destroy] do
+
+      member do
+        post :activate
+        post :expire
+      end
+
+    end
+    resources :app_reviews, :except => [:show]
+    resources :featured_contents, :except => [:show]
+    resources :agency_users, :only => [:index, :show]
+    resources :support_requests, :only => [:index] do
+      collection do
+        get :mass_resolve
+        post :mass_resolve
+      end
+    end
+    resources :press_releases, :only => [:index, :new, :create, :edit, :update]
+    resources :recommenders, :only => [:index, :create]
+    resources :gamers, :only => [:index, :show]
+    resources :gamer_devices, :only => [:create, :edit, :new, :show, :update]
+    resources :network_costs, :only => [:index, :new, :create]
+    resources :partner_program_statz, :only => [:index] do
+      collection do
+        get :export
+      end
+    end
+    resources :survey_offers, :except => [:show] do
+      member do
+        put :toggle_enabled
+      end
+    end
+    resources :payout_freezes, :only => [:index, :create] do
+      member do
+        post :disable
+      end
+    end
+    resources :currency_approvals, :only => [:index] do
+      collection do
+        :mine
+        :history
+      end
+      member do
+        :approve
+        :reject
+        :assign
+      end
+    end
+    resources :wfhs, :only => [:index, :new, :create, :edit, :update, :destroy]
+    resources :clients, :only => [:index, :show, :new, :create, :edit, :update] do
+      member do
+        post :add_partner
+        post :remove_partner
+      end
+    end
+  end
+
+  resources :ops, :only => :index do
+    collection do
+      get :elb_status
+      get :http_codes
+      get :as_groups
+      get :service_stats
+    end
+  end
+
+  match 'mail_chimp_callback/callback' => 'mail_chimp_callback#callback'
+end

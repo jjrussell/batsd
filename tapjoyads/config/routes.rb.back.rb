@@ -1,5 +1,32 @@
+ActionController::Routing::Routes.draw do |map|
+  map.connect 'healthz', :controller => :healthz, :action => :index
+
+  MACHINE_TYPE = 'test'
+  routes = 'api'
+
+  routes.each do |route|
+    load Rails.root.join('config', 'routes', "#{route}.rb.rails2")
+  end
+end
+
 Tapjoyad::Application.routes.draw do
   match 'healthz' => 'healthz#index'
+
+  routes = case MACHINE_TYPE
+  when 'dashboard'
+    %w( dashboard api sdks )
+  when 'website'
+    %w( games website api sdks )
+  when 'web'
+    %w( web legacy )
+  else
+    %w( api sdks dashboard games website web legacy )
+  end
+  routes.each do |route|
+    load Rails.root.join('config', 'routes', "#{route}.rb")
+  end
+
+
   namespace :agency_api do
     resources :apps, :only => [:index, :show, :create, :update]
     resources :partners, :only => [:index, :show, :create, :update] do
