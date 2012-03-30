@@ -51,18 +51,6 @@ module ActiveRecord
 
   class Base
 
-    # See https://rails.lighthouseapp.com/projects/8994/tickets/2919
-    # allows [attribute]_changed? to behave as expected after cloning a model instance
-    if Rails.version == "2.3.14"
-      def clone
-        attrs = clone_attributes(:read_attribute_before_type_cast)
-        attrs.delete(self.class.primary_key)
-        record = self.class.new
-        record.attributes = attrs # original version is 'record.send :instance_variable_set, '@attributes', attrs'
-        record
-      end
-    end
-
     # ensure API servers are readonly
     alias_method :orig_readonly?, :readonly?
 
