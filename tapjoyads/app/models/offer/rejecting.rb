@@ -7,8 +7,12 @@ module Offer::Rejecting
     [ 'b23efaf0-b82b-4525-ad8c-4cd11b0aca91' ] => [ 'b23efaf0-b82b-4525-ad8c-4cd11b0aca91', 'a994587c-390c-4295-a6b6-dd27713030cb', '6703401f-1cb2-42ec-a6a4-4c191f8adc27' ],
     # Clubworld
     [ '3885c044-9c8e-41d4-b136-c877915dda91' ] => [ '3885c044-9c8e-41d4-b136-c877915dda91', 'a3980ac5-7d33-43bc-8ba1-e4598c7ed279' ],
-    # Groupon
-    [ '7f44c068-6fa1-482c-b2d2-770edcf8f83d', '192e6d0b-cc2f-44c2-957c-9481e3c223a0' ] => [ '7f44c068-6fa1-482c-b2d2-770edcf8f83d', '192e6d0b-cc2f-44c2-957c-9481e3c223a0' ],
+    # Groupon iOS Apps
+    [ '7f44c068-6fa1-482c-b2d2-770edcf8f83d', '192e6d0b-cc2f-44c2-957c-9481e3c223a0', '05d8d649-766a-40d2-9fc3-1009307ff966', 'a07cfeda-8f35-4490-99ea-f75ee7463fa4' ] => [ '7f44c068-6fa1-482c-b2d2-770edcf8f83d', '192e6d0b-cc2f-44c2-957c-9481e3c223a0', '05d8d649-766a-40d2-9fc3-1009307ff966', 'a07cfeda-8f35-4490-99ea-f75ee7463fa4' ],
+    # Groupon iOS ActionOffers
+    [ 'a13bd597-183a-41ce-a6e1-48797e61be9d', 'aa136cec-6241-4cb9-b790-e8ed1532f64e', '43a65418-3863-42b5-80fc-ea4b02828db2' ] => [ 'a13bd597-183a-41ce-a6e1-48797e61be9d', 'aa136cec-6241-4cb9-b790-e8ed1532f64e', '43a65418-3863-42b5-80fc-ea4b02828db2' ],
+    # Groupon Android Apps
+    [ '3368863b-0c69-4a54-8a14-2ec809140d8f', 'bbadbb72-4f96-49e3-90b8-fb45a82b195e' ] => [ '3368863b-0c69-4a54-8a14-2ec809140d8f', 'bbadbb72-4f96-49e3-90b8-fb45a82b195e' ],
     # My Town 2
     [ 'cab56716-8e27-4a4c-8477-457e1d311209', '069eafb8-a9b8-4293-8d2a-e9d9ed659ac8' ] => [ 'cab56716-8e27-4a4c-8477-457e1d311209', '069eafb8-a9b8-4293-8d2a-e9d9ed659ac8' ],
     # Snoopy's Street Fair
