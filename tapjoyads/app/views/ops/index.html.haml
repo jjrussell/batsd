@@ -1,12 +1,98 @@
-- @page_title = 'Ops'
+- @page_title = 'Operations Dashboard'
 
-%h1 Operations Utilities
+- count = 0
+- @as_groups.each do |group|
+  - count += 1
+  .details.left
+    %table.tablesorter
+      %thead
+        %tr
+          %th.name{ :colspan => "3" }= "#{group[:auto_scaling_group_name]} / #{group[:load_balancer_names].join(', ')}"
+      %tbody
+        %tr
+          %td= group[:min_size]
+          -# TODO: Make this understand multiple triggers
+          %td{ :class => "#{group[:triggers].first[:status].downcase unless group[:triggers].empty?}" }= group[:desired_capacity]
+          %td= group[:max_size]
 
-- if has_permissions_for_one_of? :admin, :ops
-  %ul
-    - if permitted_to? :elb_status, :ops
-      %li= link_to 'ELB Status', elb_status_ops_path
-    - if permitted_to? :as_groups, :ops
-      %li= link_to 'Auto-Scaling Groups', as_groups_ops_path
-    - if permitted_to? :service_stats, :ops
-      %li= link_to 'Service Stats', service_stats_ops_path
+    - unless group[:instances].empty?
+      %table.tablesorter
+        %tbody
+          - group[:instances].each do |instance|
+            %tr{ :class => cycle('', 'odd', :name => 'instances') }
+              %td= instance[:instance_id]
+              %td= instance[:lifecycle_state]
+              %td= instance[:availability_zone]
+          - reset_cycle('instances')
+
+    - lb_name = group[:load_balancer_names].first
+    - @lb_instances[lb_name].each do |lb_instance|
+      - ec2_instance = @ec2_instances[lb_instance[:instance_id]] || {}
+      %table.tablesorter
+        %thead
+          %tr
+            %th{ :colspan => "3" }
+              %a{ :href => "ssh://ubuntu@#{ec2_instance[:dns_name]}" }= ec2_instance[:dns_name]
+        %tbody
+          %tr{ :class => cycle('', 'odd', :name => 'instances') }
+            %td= lb_instance[:instance_id]
+            %td= lb_instance[:state]
+            %td= ec2_instance[:aws_state]
+          - unless lb_instance[:description] == "N/A"
+            %tr{ :class => cycle('', 'odd', :name => 'instances') }
+              %td{ :colspan => "3" }= lb_instance[:description]
+          -# This is coming soon - %tr
+            %td{ :colspan => "3"}
+              actions »
+              = link_to 'deregister', ''
+              = link_to 'reboot', ''
+              = link_to 'replace', ''
+              = link_to 'remove', ''
+        - reset_cycle('instances')
+
+  - if count % 3 == 0
+    .clear
+
+.clear
+
+.right
+  more info »
+  = link_to 'auto-scaler', as_groups_ops_path
+  = link_to 'load-balancer', elb_status_ops_path
+  = link_to 'service-stats', service_stats_ops_path
+
+As of: #{Time.zone.now.to_s(:pub_ampm_sec)}
+
+- content_for :page_styles do
+  :plain
+    table.tablesorter {
+      border-collapse: separate;
+    }
+
+    .details {
+      width: 310px;
+      margin-left: 5px;
+      margin-right: 5px;
+    }
+
+    .lowbreaching {
+      color: #ff0000 !important;
+    }
+
+    .highbreaching {
+      color: #008000 !important;
+    }
+
+    #content a:visited {
+      color: blue;
+    }
+    #content a:hover {
+      color: yellow;
+    }
+    #content a {
+      color: blue;
+    }
+
+    th.name {
+      width: 65%;
+    }
