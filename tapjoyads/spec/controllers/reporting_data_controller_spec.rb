@@ -52,7 +52,7 @@ describe ReportingDataController do
 
     context 'with valid params, xml' do
       before :each do
-        get(:index, :date => "2011-02-15", :username => @user.username, :api_key => @user.api_key, :partner_id => @partner.id)
+        get(:index, :format => 'xml', :date => "2011-02-15", :username => @user.username, :api_key => @user.api_key, :partner_id => @partner.id)
       end
       it 'has a successful xml response' do
         should respond_with(200)
