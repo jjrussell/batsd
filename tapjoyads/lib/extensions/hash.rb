@@ -4,4 +4,8 @@ class Hash
 
     Hash[*select(&block).flatten]
   end
+
+  def keep!(&block)
+    replace(keep(&block))
+  end
 end
