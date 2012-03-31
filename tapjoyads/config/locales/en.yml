@@ -264,6 +264,7 @@ en:
       contact_support: "Contact Support"
       contact_us: "Contact Us"
       cookies_required: "Please enable cookies in your browser"
+      try_again_with_cookies: "Please log in and try again. You must have cookies enabled."
       deactivate: Deactivate
       del_acct_confirm: "Click on the button below to deactivate your account. Once an account has been deactivated for %{days_before_deletion} days, it will be completely deleted. We cannot recover your account once it has been deleted."
       delete_my_account: "Delete My Account"

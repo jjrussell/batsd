@@ -1,15 +1,22 @@
 class Games::Gamers::DevicesController < GamesController
 
+  def mock
+  end
+
   def new
-    if current_gamer.present?
-      if Rails.env.staging?
-        send_file("#{Rails.root}/data/TapjoyProfile.mobileconfig.staging.unsigned", :filename => 'TapjoyProfile.mobileconfig', :disposition => 'inline', :type => :mobileconfig)
-      else
-        send_file("#{Rails.root}/data/TapjoyProfile.mobileconfig", :filename => 'TapjoyProfile.mobileconfig', :disposition => 'inline', :type => :mobileconfig)
-      end
+    if current_gamer.blank?
+      flash[:error] = t('text.games.try_again_with_cookies')
+      redirect_to games_root_path and return
+    end
+
+    file_url = "#{Rails.root}/data/TapjoyProfile.mobileconfig"
+    file_url += '.staging.unsigned' if Rails.env.staging?
+
+      raise "mock!"
+    if params[:mock] && !Rails.env.production?
+      redirect_to mock_games_gamer_device_path(:file => file_url)
     else
-      flash[:error] = "Please log in and try again. You must have cookies enabled."
-      redirect_to games_root_path
+      send_file(file_url, :filename => 'TapjoyProfile.mobileconfig', :disposition => 'inline', :type => :mobileconfig)
     end
   end
 
