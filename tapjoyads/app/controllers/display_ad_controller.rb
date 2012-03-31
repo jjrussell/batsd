@@ -1,6 +1,7 @@
 class DisplayAdController < ApplicationController
 
   before_filter :set_device_type, :lookup_udid, :set_publisher_user_id, :setup, :except => :image
+  after_filter :queue_third_party_tracking, :except => :image
 
   def index
   end
@@ -232,4 +233,10 @@ class DisplayAdController < ApplicationController
     end
   end
 
+  def queue_third_party_tracking
+    @offer.third_party_tracking_urls.each do |url|
+      message = { :url => url, :headers => request.http_headers, :orig_url => request.url }
+      Sqs.send_message(QueueNames::THIRD_PARTY_TRACKING, Base64::encode64(Marshal.dump(message)))
+    end
+  end
 end

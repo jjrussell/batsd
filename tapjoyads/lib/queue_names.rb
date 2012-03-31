@@ -21,6 +21,7 @@ class QueueNames
   SELECT_VG_ITEMS            = "#{BASE_NAME}SelectVgItems"
   SEND_CURRENCY              = "#{BASE_NAME}SendCurrency"
   SUSPICIOUS_GAMERS          = "#{BASE_NAME}SuspiciousGamers"
+  THIRD_PARTY_TRACKING       = "#{BASE_NAME}ThirdPartyTracking"
   UDID_REPORTS               = "#{BASE_NAME}UdidReports"
   UPDATE_MONTHLY_ACCOUNT     = "#{BASE_NAME}UpdateMonthlyAccount"
   SEND_WELCOME_EMAILS        = "#{BASE_NAME}SendWelcomeEmails"
