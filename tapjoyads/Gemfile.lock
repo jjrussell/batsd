@@ -182,7 +182,7 @@ GEM
       thor (~> 0.14.4)
     raindrops (0.8.0)
     rake (0.8.7)
-    rcov (0.9.11)
+    rcov (1.0.0)
     rdoc (3.12)
       json (~> 1.4)
     read_from_slave (0.4.0)
@@ -316,7 +316,7 @@ DEPENDENCIES
   plist (= 3.1.0)
   rails (~> 3.0.12)
   rake (= 0.8.7)
-  rcov (= 0.9.11)
+  rcov
   rdoc (= 3.12)
   read_from_slave (= 0.4.0)
   redis (= 2.2.2)
