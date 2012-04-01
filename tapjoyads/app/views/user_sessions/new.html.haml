@@ -4,7 +4,7 @@
   %h2
     Log in to Tapjoy Dashboard:
   #login_mobile
-    - form_for(@user_session, :html => { :id => '', :class => 'tjform' }) do |f|
+    = form_for(@user_session, :html => { :id => '', :class => 'tjform' }) do |f|
       = hidden_field_tag 'goto', @goto unless @goto.nil?
 
       %table
@@ -29,7 +29,7 @@
             = f.check_box :remember_me, :checked => true
             = f.submit 'Log in'
   #forgot_password_mobile.hidden
-    - form_tag(password_resets_path, :id => '', :class => 'tjform') do
+    = form_tag(password_resets_path, :id => '', :class => 'tjform') do
       %table
         %tr
           %th= label_tag(:email, 'Email Address')
