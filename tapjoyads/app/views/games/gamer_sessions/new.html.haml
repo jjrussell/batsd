@@ -7,7 +7,7 @@
 
 #login-form{ :class => @login_form_class_name }
   .bd.clearfix
-    - form_for([ :games, @gamer_session ], :url => games_login_path) do |f|
+    = form_for([ :games, @gamer_session ], :url => games_login_path) do |f|
       - if params[:data].present?
         = hidden_field_tag :data, params[:data]
       - if params[:path].present?
@@ -100,7 +100,7 @@
             %span#arrow.darrow.l10
               %img{ :src => BLANK_IMAGE }
       .left
-        - link_to(new_games_gamer_path(:data => params[:data], :referrer => params[:referrer])) do
+        = link_to(new_games_gamer_path(:data => params[:data], :referrer => params[:referrer])) do
           %span{ :class => 'signup', :id => 'signup' }
             = t('text.shared.sign_up')
 
