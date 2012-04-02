@@ -8,7 +8,7 @@ class ApprovalMailer < ActionMailer::Base
 
   def notification(email, type, url)
     data = {
-      :subject  => "New #{type.to_s.humanize} requires approval",
+      :subject  => "New #{type.to_s.humanize} ready for review",
       :type     => type,
       :url      => url
     }
@@ -17,7 +17,7 @@ class ApprovalMailer < ActionMailer::Base
   end
 
   def approved(email, type, data = {})
-    data[:subject] ||= "#{type.to_s.humanize} has been approved on Tapjoy"
+    data[:subject] ||= "#{type.to_s.humanize} has been acccepted on Tapjoy"
     data[:type] = type
 
     handle(email, "#{type}_approved", data)

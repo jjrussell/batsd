@@ -42,11 +42,12 @@ class GamesController < ApplicationController
   def http_accept_language
     # example env[HTTP_ACCEPT_LANGUAGE] string: en,en-US;q=0.8,es;q=0.6,zh;q=0.4
     splits = []
+    unset_priority = 2.0
     language_list = request.env['HTTP_ACCEPT_LANGUAGE'].split(/\s*,\s*/).map do |pair|
       language, quality = pair.split(/;q=/)
       raise "Not correctly formatted" unless language =~ /^[a-z\-]+$/i
       language = language.downcase.gsub(/-[a-z]+$/i) { |i| i.upcase }
-      quality = 1.0 unless quality.to_s =~ /\d+(\.\d+)?$/
+      quality = unset_priority -= 0.1 unless quality.to_s =~ /\d+(\.\d+)?$/
       result = [ - quality.to_f, language ]
       splits << [ - (quality.to_f - 0.1), language.split(/-/).first ] if language =~ /-/
       result

@@ -822,6 +822,13 @@ $(document).ready(function() {
     $('#device-select-list').html(m);
   }
 
+  (function () {
+    if (window._tjHtmlDone && window._tjStartTime) {
+      Tapjoy.Utils.googleLog("Page Html", "load", "Time in ms", (_tjHtmlDone - _tjStartTime));
+      Tapjoy.Utils.googleLog("Main.js", "load", "Time in ms", (new Date().getTime() - _tjStartTime));
+    }
+  }());
+
   // If on mobile device and cookie missing, prompt user to select closest matching device
   if (Tapjoy.requireSelectDevice && Tapjoy.selectDevice.length > 0 && (Tapjoy.device.idevice || Tapjoy.device.android)) {
  //commenting out until we can talk to Van

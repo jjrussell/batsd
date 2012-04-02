@@ -1,0 +1,7 @@
+%div{:id => "chart_ds#{data_source}_p#{period}"}
+%div{:id => "legend_ds#{data_source}_p#{period}"}
+%div{:id => "loading_ds#{data_source}_p#{period}"}
+  %img{:src => "/images/facebox/loading.gif"}
+
+- transform = true  if transform.nil?
+- include_rickshaw_js("#{data_source}.json?period=#{period}", "ds#{data_source}_p#{period}", :transform => transform)

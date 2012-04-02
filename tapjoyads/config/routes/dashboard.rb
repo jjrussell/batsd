@@ -4,7 +4,11 @@ Tapjoyad::Application.routes.draw do
   match 'tos-advertiser.html' => 'documents#tos_advertiser'
   match 'tos-publisher.html' => 'documents#tos_publisher'
   match 'publisher-guidelines.html' => 'documents#publisher_guidelines'
-  resource :sign_up, :only => :create
+  resource :sign_up, :only => :create do
+    collection do
+      match :welcome
+    end
+  end
   match 'register' => 'sign_up#new', :as => :register
   match 'login' => 'user_sessions#new', :as => :login
   match 'logout' => 'user_sessions#destroy', :as => :logout
@@ -205,7 +209,7 @@ Tapjoyad::Application.routes.draw do
   end
 
   namespace :tools do
-    resources :approvals, :only => [:index] do
+    resources :approvals, :as => 'acceptance', :only => [:index] do
       collection do
         :history
         :mine
@@ -215,8 +219,10 @@ Tapjoyad::Application.routes.draw do
         :reject
         :assign
       end
-
     end
+    match 'acceptance/:type' => 'approvals#index'
+    match 'acceptance/:type/history' => 'approvals#history'
+    match 'acceptance/:type/mine' => 'approvals#mine'
     resources :premier_partners, :only => [:index]
     resources :generic_offers, :only => [:index, :new, :create, :edit, :update]
     resources :orders, :only => [:new, :create] do
@@ -344,6 +350,7 @@ Tapjoyad::Application.routes.draw do
       get :http_codes
       get :as_groups
       get :service_stats
+      get :bytes_sent
     end
   end
 

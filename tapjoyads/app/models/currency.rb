@@ -58,7 +58,7 @@ class Currency < ActiveRecord::Base
   scope :just_app_ids, :select => :app_id, :group => :app_id
   scope :tapjoy_enabled, :conditions => 'tapjoy_enabled'
   scope :udid_for_user_id, :conditions => "udid_for_user_id"
-  scope :external_publishers, :conditions => "external_publisher"
+  scope :external_publishers, :conditions => { :external_publisher => true, :tapjoy_enabled => true }
 
   before_validation :sanitize_attributes
   before_validation :assign_default_currency_group, :on => :create
