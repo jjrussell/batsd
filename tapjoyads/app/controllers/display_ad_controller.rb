@@ -1,7 +1,7 @@
 class DisplayAdController < ApplicationController
 
   before_filter :set_device_type, :lookup_udid, :set_publisher_user_id, :setup, :except => :image
-  after_filter :queue_third_party_tracking, :except => :image
+  after_filter :queue_third_party_tracking, :except => [:image, :webview]
 
   def index
   end
