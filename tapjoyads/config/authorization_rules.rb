@@ -27,7 +27,14 @@ authorization do
   end
 
   role :ops do
-    has_permission_on :ops, :to => [ :index, :elb_status, :as_groups, :service_stats, :http_codes]
+    has_permission_on :ops, :to => [
+                                     :index,
+                                     :elb_status,
+                                     :as_groups,
+                                     :service_stats,
+                                     :http_codes,
+                                     :bytes_sent
+                                   ]
   end
 
   role :devices do

@@ -4,14 +4,15 @@
 
 require 'yaml'
 
-if ENV['PWD'] != '/home/webuser/tapjoyserver'
-  puts "This script must be run from /home/webuser/tapjoyserver"
-  exit
-end
+# This points to /<dir>/tapjoyserver
+base_dir = File.expand_path("../../", __FILE__)
+
 if ENV['USER'] != 'webuser'
   puts "This script must be run by webuser."
   exit
 end
+
+Dir.chdir base_dir
 
 if File.exists?('deploy.lock')
   puts "Deploying to this server has been locked."
@@ -52,6 +53,14 @@ if server_type == 'web'
   `cp tapjoyads/config/database-webserver.yml tapjoyads/config/database.yml`
 else
   `cp tapjoyads/config/database-default.yml tapjoyads/config/database.yml`
+end
+
+Dir.chdir "tapjoyads" do
+  if server_type == "dev"
+    `bundle install`
+  else
+    `bundle install --deployment`
+  end
 end
 
 puts "Restarting unicorn"
