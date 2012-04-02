@@ -260,6 +260,7 @@ describe Job::QueueSendCurrencyController do
       url_params = [
         "snuid=#{@reward.publisher_user_id}",
         "currency=#{@reward.currency_reward}",
+        "mac_address=",
         "storeId=#{CGI::escape(offer.store_id_for_feed)}",
         "application=#{CGI::escape(offer.name)}",
         "rev=1.5",
