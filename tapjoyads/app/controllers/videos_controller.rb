@@ -1,7 +1,7 @@
 class VideosController < ApplicationController
   layout 'api-games', :only => :complete
 
-  before_filter :setup
+  before_filter :lookup_udid, :set_publisher_user_id, :setup
 
   def index
     @offer_list = offer_list.get_offers(0, 100).first
