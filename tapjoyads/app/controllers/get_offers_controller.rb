@@ -179,7 +179,9 @@ class GetOffersController < ApplicationController
   end
 
   def queue_third_party_tracking
-    @offer.queue_third_party_tracking_requests(request)
+    @offer_list.each do |offer|
+      offer.queue_third_party_tracking_requests(request)
+    end
   end
 
 end
