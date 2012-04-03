@@ -86,6 +86,8 @@ describe Games::SupportRequestsController do
   #         get :new, @params
   #         assigns(:unresolved_clicks).should_not include @click1_dupe_old
   #       end
+  #
+  #       it "limits the number of clicks in the list to 20"
   #     end
   #   end
   #
