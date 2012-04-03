@@ -1,0 +1,67 @@
+= Hominid
+
+Hominid is a Ruby gem that provides a wrapper for interacting with the Mailchimp[http://eepurl.com/ew8J] API.
+
+== Requirements
+
+You will need a {Mailchimp}[http://eepurl.com/ew8J] account. Once you have your Mailchimp account set up, you will need to {generate an API key}[http://admin.mailchimp.com/account/api/] in order to get started using Hominid.
+
+== Installation
+
+  (sudo) gem install hominid
+
+== Usage
+
+Please refer to the {Mailchimp API Documentation}[http://www.mailchimp.com/api/1.3/] for information about what methods are available, the arguments that can be passed to each method, and the output that the API will return. Start by creating a Hominid object:
+
+  h = Hominid::API.new('your_api_key')
+
+You can also override the default configuration by passing in your own when initializing:
+
+  h = Hominid::API.new('your_api_key', {:secure => true, :timeout => 60})
+
+Finally, and we're not sure why you would want to, but you can use the older versions of the API if you would like:
+
+  h = Hominid::API.new('your_api_key', {:api_version => '1.2'})
+
+You can then run any of the methods that you find in the {Mailchimp API Documentation}[http://www.mailchimp.com/api/1.3/] against it. Simply convert the names to the more Ruby-like underscored versions. You do not need to pass your api_key to each method, as that is done automatically for you:
+
+  h.get_account_details
+  h.lists
+  h.list_subscribe('XXXXXXXXXX', 'joe@public.com', [], 'html', false, true, true, false)
+  h.list_batch_subscribe('XXXXXXXXXX', [{:EMAIL => 'joe@public.com', :EMAIL_TYPE => 'html'}, {:EMAIL => 'jane@doe.com', :EMAIL_TYPE => 'html'}])
+  h.campaign_create('regular', {:list_id => 'XXXXXXXXXX', ...}, {:html => 'Campaign HTML content', ...})
+  h.template_add('template_name', 'Template HTML Code')
+  h.list_interest_grouping_add('XXXXXXXXXX', 'Grouping Title', 'hidden', ['First Group', 'Second Group', 'Third Group'])
+  h.list_static_segment_add('Sample Static Segment')
+	
+The {Mailchimp API}[http://www.mailchimp.com/api/1.3/] now supports pagination for some methods, so certain methods will have the following response:
+
+  h.lists['total']        => 4
+  h.lists['data']         => outputs an array of your mailing lists
+  h.lists['data'].first   => {"id" => "XXXXXXX", "web_id" => 1234567, "name" => "My Mailing List", ...}
+
+Please note that as of version 3.0.0 Hominid no longer includes support for the {Mailchimp Export API}[http://www.mailchimp.com/api/export/].
+
+== Examples
+
+Hominid includes some finder methods for campaigns (see Hominid::Campaign) and lists (see Hominid::List) to help with finding each of these resources:
+
+  h.find_list_by_name('my_mailing_list')
+  h.find_list_id_by_name('my_mailing_list')
+  h.find_campaigns_by_list_name('my_mailing_list')
+
+== Contributing to hominid
+ 
+* Check out the latest master to make sure the feature hasn't been implemented or the bug hasn't been fixed yet
+* Check out the issue tracker to make sure someone already hasn't requested it and/or contributed it
+* Fork the project
+* Start a feature/bugfix branch
+* Commit and push until you are happy with your contribution
+* Make sure to add tests for it. This is important so I don't break it in a future version unintentionally.
+* Please try not to mess with the Rakefile, version, or history. If you want to have your own version, or is otherwise necessary, that is fine, but please isolate to its own commit so I can cherry-pick around it.
+
+== Copyright
+
+Copyright (c) 2010 Brian Getting. See LICENSE.txt for further details.
+

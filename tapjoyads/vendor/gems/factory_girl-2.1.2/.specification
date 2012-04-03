@@ -1,0 +1,421 @@
+--- !ruby/object:Gem::Specification 
+name: factory_girl
+version: !ruby/object:Gem::Version 
+  hash: 15
+  prerelease: false
+  segments: 
+  - 2
+  - 1
+  - 2
+  version: 2.1.2
+platform: ruby
+authors: 
+- Joe Ferris
+autorequire: 
+bindir: bin
+cert_chain: []
+
+date: 2011-09-22 00:00:00 -07:00
+default_executable: 
+dependencies: 
+- !ruby/object:Gem::Dependency 
+  name: activesupport
+  prerelease: false
+  requirement: &id001 !ruby/object:Gem::Requirement 
+    none: false
+    requirements: 
+    - - ">="
+      - !ruby/object:Gem::Version 
+        hash: 3
+        segments: 
+        - 0
+        version: "0"
+  type: :runtime
+  version_requirements: *id001
+- !ruby/object:Gem::Dependency 
+  name: rspec
+  prerelease: false
+  requirement: &id002 !ruby/object:Gem::Requirement 
+    none: false
+    requirements: 
+    - - ~>
+      - !ruby/object:Gem::Version 
+        hash: 3
+        segments: 
+        - 2
+        - 0
+        version: "2.0"
+  type: :development
+  version_requirements: *id002
+- !ruby/object:Gem::Dependency 
+  name: cucumber
+  prerelease: false
+  requirement: &id003 !ruby/object:Gem::Requirement 
+    none: false
+    requirements: 
+    - - ~>
+      - !ruby/object:Gem::Version 
+        hash: 23
+        segments: 
+        - 1
+        - 0
+        - 0
+        version: 1.0.0
+  type: :development
+  version_requirements: *id003
+- !ruby/object:Gem::Dependency 
+  name: timecop
+  prerelease: false
+  requirement: &id004 !ruby/object:Gem::Requirement 
+    none: false
+    requirements: 
+    - - ">="
+      - !ruby/object:Gem::Version 
+        hash: 3
+        segments: 
+        - 0
+        version: "0"
+  type: :development
+  version_requirements: *id004
+- !ruby/object:Gem::Dependency 
+  name: rcov
+  prerelease: false
+  requirement: &id005 !ruby/object:Gem::Requirement 
+    none: false
+    requirements: 
+    - - ">="
+      - !ruby/object:Gem::Version 
+        hash: 3
+        segments: 
+        - 0
+        version: "0"
+  type: :development
+  version_requirements: *id005
+- !ruby/object:Gem::Dependency 
+  name: aruba
+  prerelease: false
+  requirement: &id006 !ruby/object:Gem::Requirement 
+    none: false
+    requirements: 
+    - - ">="
+      - !ruby/object:Gem::Version 
+        hash: 3
+        segments: 
+        - 0
+        version: "0"
+  type: :development
+  version_requirements: *id006
+- !ruby/object:Gem::Dependency 
+  name: mocha
+  prerelease: false
+  requirement: &id007 !ruby/object:Gem::Requirement 
+    none: false
+    requirements: 
+    - - ">="
+      - !ruby/object:Gem::Version 
+        hash: 3
+        segments: 
+        - 0
+        version: "0"
+  type: :development
+  version_requirements: *id007
+- !ruby/object:Gem::Dependency 
+  name: bourne
+  prerelease: false
+  requirement: &id008 !ruby/object:Gem::Requirement 
+    none: false
+    requirements: 
+    - - ">="
+      - !ruby/object:Gem::Version 
+        hash: 3
+        segments: 
+        - 0
+        version: "0"
+  type: :development
+  version_requirements: *id008
+- !ruby/object:Gem::Dependency 
+  name: appraisal
+  prerelease: false
+  requirement: &id009 !ruby/object:Gem::Requirement 
+    none: false
+    requirements: 
+    - - ~>
+      - !ruby/object:Gem::Version 
+        hash: 3
+        segments: 
+        - 0
+        - 3
+        - 8
+        version: 0.3.8
+  type: :development
+  version_requirements: *id009
+- !ruby/object:Gem::Dependency 
+  name: sqlite3-ruby
+  prerelease: false
+  requirement: &id010 !ruby/object:Gem::Requirement 
+    none: false
+    requirements: 
+    - - ">="
+      - !ruby/object:Gem::Version 
+        hash: 3
+        segments: 
+        - 0
+        version: "0"
+  type: :development
+  version_requirements: *id010
+- !ruby/object:Gem::Dependency 
+  name: yard
+  prerelease: false
+  requirement: &id011 !ruby/object:Gem::Requirement 
+    none: false
+    requirements: 
+    - - ">="
+      - !ruby/object:Gem::Version 
+        hash: 3
+        segments: 
+        - 0
+        version: "0"
+  type: :development
+  version_requirements: *id011
+- !ruby/object:Gem::Dependency 
+  name: bluecloth
+  prerelease: false
+  requirement: &id012 !ruby/object:Gem::Requirement 
+    none: false
+    requirements: 
+    - - ">="
+      - !ruby/object:Gem::Version 
+        hash: 3
+        segments: 
+        - 0
+        version: "0"
+  type: :development
+  version_requirements: *id012
+description: |-
+  factory_girl provides a framework and DSL for defining and
+                         using factories - less error-prone, more explicit, and
+                         all-around easier to work with than fixtures.
+email: jferris@thoughtbot.com
+executables: []
+
+extensions: []
+
+extra_rdoc_files: []
+
+files: 
+- .autotest
+- .gitignore
+- .rspec
+- .travis.yml
+- .yardopts
+- CONTRIBUTION_GUIDELINES.md
+- Changelog
+- GETTING_STARTED.md
+- Gemfile
+- Gemfile.lock
+- LICENSE
+- README.md
+- Rakefile
+- lib/factory_girl.rb
+- lib/factory_girl/aliases.rb
+- lib/factory_girl/attribute.rb
+- lib/factory_girl/attribute/association.rb
+- lib/factory_girl/attribute/dynamic.rb
+- lib/factory_girl/attribute/sequence.rb
+- lib/factory_girl/attribute/static.rb
+- lib/factory_girl/attribute_list.rb
+- lib/factory_girl/callback.rb
+- lib/factory_girl/declaration.rb
+- lib/factory_girl/declaration/association.rb
+- lib/factory_girl/declaration/dynamic.rb
+- lib/factory_girl/declaration/implicit.rb
+- lib/factory_girl/declaration/static.rb
+- lib/factory_girl/definition_proxy.rb
+- lib/factory_girl/deprecated.rb
+- lib/factory_girl/factory.rb
+- lib/factory_girl/find_definitions.rb
+- lib/factory_girl/proxy.rb
+- lib/factory_girl/proxy/attributes_for.rb
+- lib/factory_girl/proxy/build.rb
+- lib/factory_girl/proxy/create.rb
+- lib/factory_girl/proxy/stub.rb
+- lib/factory_girl/rails2.rb
+- lib/factory_girl/registry.rb
+- lib/factory_girl/reload.rb
+- lib/factory_girl/sequence.rb
+- lib/factory_girl/step_definitions.rb
+- lib/factory_girl/syntax.rb
+- lib/factory_girl/syntax/blueprint.rb
+- lib/factory_girl/syntax/default.rb
+- lib/factory_girl/syntax/generate.rb
+- lib/factory_girl/syntax/make.rb
+- lib/factory_girl/syntax/methods.rb
+- lib/factory_girl/syntax/sham.rb
+- lib/factory_girl/syntax/vintage.rb
+- lib/factory_girl/trait.rb
+- lib/factory_girl/version.rb
+- Appraisals
+- cucumber.yml
+- features/factory_girl_steps.feature
+- features/find_definitions.feature
+- features/step_definitions/database_steps.rb
+- features/step_definitions/factory_girl_steps.rb
+- features/support/env.rb
+- features/support/factories.rb
+- gemfiles/2.1.gemfile
+- gemfiles/2.1.gemfile.lock
+- gemfiles/2.3.gemfile
+- gemfiles/2.3.gemfile.lock
+- gemfiles/3.0.gemfile
+- gemfiles/3.0.gemfile.lock
+- gemfiles/3.1.gemfile
+- gemfiles/3.1.gemfile.lock
+- spec/acceptance/attribute_aliases_spec.rb
+- spec/acceptance/attributes_for_spec.rb
+- spec/acceptance/attributes_ordered_spec.rb
+- spec/acceptance/build_list_spec.rb
+- spec/acceptance/build_spec.rb
+- spec/acceptance/build_stubbed_spec.rb
+- spec/acceptance/callbacks_spec.rb
+- spec/acceptance/create_list_spec.rb
+- spec/acceptance/create_spec.rb
+- spec/acceptance/default_strategy_spec.rb
+- spec/acceptance/definition_spec.rb
+- spec/acceptance/definition_without_block_spec.rb
+- spec/acceptance/modify_factories_spec.rb
+- spec/acceptance/modify_inherited_spec.rb
+- spec/acceptance/overrides_spec.rb
+- spec/acceptance/parent_spec.rb
+- spec/acceptance/sequence_spec.rb
+- spec/acceptance/stub_spec.rb
+- spec/acceptance/syntax/blueprint_spec.rb
+- spec/acceptance/syntax/generate_spec.rb
+- spec/acceptance/syntax/make_spec.rb
+- spec/acceptance/syntax/sham_spec.rb
+- spec/acceptance/syntax/vintage_spec.rb
+- spec/acceptance/traits_spec.rb
+- spec/acceptance/transient_attributes_spec.rb
+- spec/factory_girl/aliases_spec.rb
+- spec/factory_girl/attribute/association_spec.rb
+- spec/factory_girl/attribute/dynamic_spec.rb
+- spec/factory_girl/attribute/sequence_spec.rb
+- spec/factory_girl/attribute/static_spec.rb
+- spec/factory_girl/attribute_list_spec.rb
+- spec/factory_girl/attribute_spec.rb
+- spec/factory_girl/callback_spec.rb
+- spec/factory_girl/declaration/implicit_spec.rb
+- spec/factory_girl/definition_proxy_spec.rb
+- spec/factory_girl/deprecated_spec.rb
+- spec/factory_girl/factory_spec.rb
+- spec/factory_girl/find_definitions_spec.rb
+- spec/factory_girl/proxy/attributes_for_spec.rb
+- spec/factory_girl/proxy/build_spec.rb
+- spec/factory_girl/proxy/create_spec.rb
+- spec/factory_girl/proxy/stub_spec.rb
+- spec/factory_girl/proxy_spec.rb
+- spec/factory_girl/registry_spec.rb
+- spec/factory_girl/sequence_spec.rb
+- spec/factory_girl_spec.rb
+- spec/spec_helper.rb
+- spec/support/macros/define_constant.rb
+- spec/support/shared_examples/proxy.rb
+has_rdoc: true
+homepage: https://github.com/thoughtbot/factory_girl
+licenses: []
+
+post_install_message: 
+rdoc_options: []
+
+require_paths: 
+- lib
+required_ruby_version: !ruby/object:Gem::Requirement 
+  none: false
+  requirements: 
+  - - ">="
+    - !ruby/object:Gem::Version 
+      hash: 3
+      segments: 
+      - 0
+      version: "0"
+required_rubygems_version: !ruby/object:Gem::Requirement 
+  none: false
+  requirements: 
+  - - ">="
+    - !ruby/object:Gem::Version 
+      hash: 3
+      segments: 
+      - 0
+      version: "0"
+requirements: []
+
+rubyforge_project: 
+rubygems_version: 1.3.7
+signing_key: 
+specification_version: 3
+summary: factory_girl provides a framework and DSL for defining and using model instance factories.
+test_files: 
+- Appraisals
+- cucumber.yml
+- features/factory_girl_steps.feature
+- features/find_definitions.feature
+- features/step_definitions/database_steps.rb
+- features/step_definitions/factory_girl_steps.rb
+- features/support/env.rb
+- features/support/factories.rb
+- gemfiles/2.1.gemfile
+- gemfiles/2.1.gemfile.lock
+- gemfiles/2.3.gemfile
+- gemfiles/2.3.gemfile.lock
+- gemfiles/3.0.gemfile
+- gemfiles/3.0.gemfile.lock
+- gemfiles/3.1.gemfile
+- gemfiles/3.1.gemfile.lock
+- spec/acceptance/attribute_aliases_spec.rb
+- spec/acceptance/attributes_for_spec.rb
+- spec/acceptance/attributes_ordered_spec.rb
+- spec/acceptance/build_list_spec.rb
+- spec/acceptance/build_spec.rb
+- spec/acceptance/build_stubbed_spec.rb
+- spec/acceptance/callbacks_spec.rb
+- spec/acceptance/create_list_spec.rb
+- spec/acceptance/create_spec.rb
+- spec/acceptance/default_strategy_spec.rb
+- spec/acceptance/definition_spec.rb
+- spec/acceptance/definition_without_block_spec.rb
+- spec/acceptance/modify_factories_spec.rb
+- spec/acceptance/modify_inherited_spec.rb
+- spec/acceptance/overrides_spec.rb
+- spec/acceptance/parent_spec.rb
+- spec/acceptance/sequence_spec.rb
+- spec/acceptance/stub_spec.rb
+- spec/acceptance/syntax/blueprint_spec.rb
+- spec/acceptance/syntax/generate_spec.rb
+- spec/acceptance/syntax/make_spec.rb
+- spec/acceptance/syntax/sham_spec.rb
+- spec/acceptance/syntax/vintage_spec.rb
+- spec/acceptance/traits_spec.rb
+- spec/acceptance/transient_attributes_spec.rb
+- spec/factory_girl/aliases_spec.rb
+- spec/factory_girl/attribute/association_spec.rb
+- spec/factory_girl/attribute/dynamic_spec.rb
+- spec/factory_girl/attribute/sequence_spec.rb
+- spec/factory_girl/attribute/static_spec.rb
+- spec/factory_girl/attribute_list_spec.rb
+- spec/factory_girl/attribute_spec.rb
+- spec/factory_girl/callback_spec.rb
+- spec/factory_girl/declaration/implicit_spec.rb
+- spec/factory_girl/definition_proxy_spec.rb
+- spec/factory_girl/deprecated_spec.rb
+- spec/factory_girl/factory_spec.rb
+- spec/factory_girl/find_definitions_spec.rb
+- spec/factory_girl/proxy/attributes_for_spec.rb
+- spec/factory_girl/proxy/build_spec.rb
+- spec/factory_girl/proxy/create_spec.rb
+- spec/factory_girl/proxy/stub_spec.rb
+- spec/factory_girl/proxy_spec.rb
+- spec/factory_girl/registry_spec.rb
+- spec/factory_girl/sequence_spec.rb
+- spec/factory_girl_spec.rb
+- spec/spec_helper.rb
+- spec/support/macros/define_constant.rb
+- spec/support/shared_examples/proxy.rb
