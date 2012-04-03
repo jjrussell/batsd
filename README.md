@@ -177,12 +177,8 @@ sudo rdoc-data --install
 
 ### RVM
 ```
-gem install bundler -v 1.1
 env ARCHFLAGS="-arch x86_64" gem install memcached -v 1.2.7
 env ARCHFLAGS="-arch x86_64" gem install mysql -v 2.8.1 -- --with-mysql-config=/usr/local/mysql/bin/mysql_config
-gem install rcov -v 0.9.10
-gem install -v 2.3.14 rails
-gem install json -v 1.5.3
 gem install rdoc
 gem install rdoc-data
 rdoc-data --install
