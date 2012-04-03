@@ -50,7 +50,7 @@ describe FullscreenAdController do
         get(:index, @params)
 
         response.should be_success
-        response.body.should have_selector('div#main')
+        response.body.should have_selector('div#close', :content => 'x')
       end
 
       it 'includes call-to-action button for rewarded' do
@@ -71,15 +71,6 @@ describe FullscreenAdController do
         response.body.should have_content('Download')
       end
 
-      context 'with third party tracking URLs' do
-        it 'should generate hidden image tags' do
-          url = "https://dummyurl.com"
-          @offer.third_party_tracking_urls = [url]
-
-          get(:index, @params)
-          response.body.should include(image_tag(url, :style => 'display:none;'))
-        end
-      end
     end
   end
 end
