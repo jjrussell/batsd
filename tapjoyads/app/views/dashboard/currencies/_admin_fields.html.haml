@@ -84,8 +84,9 @@
 %tr.admin
   %th
     Show Deeplink on Offerwall?
+    #help_show_deeplink.help ?
   %td
-    %input{:type => "checkbox", :disabled => 'disabled', :checked => @currency.deeplink_offer.present? && @currency.deeplink_offer.user_enabled}
+    %input{:type => "checkbox", :disabled => 'disabled', :checked => @currency.deeplink_offer.present? && @currency.deeplink_offer.user_enabled && @currency.deeplink_offer.tapjoy_enabled }
     = link_to('Edit deeplink offer', statz_path(@currency.deeplink_offer))
 %tr.admin
   %th
@@ -138,6 +139,8 @@
   #help_minimum_hide_rewarded_app_installs_version_content{:name => 'Min hide rewarded installs version'}
     Pay-per-install offers will only be hidden for versions of this publisher app higher than this value.
     Leaving this field blank will disable pay-per-install offers for all versions of this publisher app.
+  #help_show_deeplink_content{:name => 'Show Deeplink'}
+    The in-app offerwall will, by default, display a rewarded link to the Tapjoy Marketplace as the first offer. To disable this functionality, disable the associated offer through the provided link.
   #help_encrypted_id_content{:name => 'Encrypted ID'}
     Encrypted Currency ID for use in building URLs
 
