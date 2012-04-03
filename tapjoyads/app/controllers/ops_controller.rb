@@ -3,36 +3,37 @@ class OpsController < WebsiteController
 
   filter_access_to :all
 
-  def index
-  end
-
   def elb_status
-    elb_interface  = RightAws::ElbInterface.new
-    ec2_interface  = RightAws::Ec2.new
-    @lb_names      = Rails.env.production? ? %w( masterjob-lb job-lb website-lb dashboard-lb api-lb test-lb util-lb ) : []
-    @lb_instances  = {}
-    @ec2_instances = {}
-    @lb_names.each do |lb_name|
-      @lb_instances[lb_name] = elb_interface.describe_instance_health(lb_name)
-      instance_ids = @lb_instances[lb_name].map { |i| i[:instance_id] }
-      instance_ids.in_groups_of(70) do |instances|
-        instances.compact!
-        ec2_interface.describe_instances(instances).each do |instance|
-          @ec2_instances[instance[:aws_instance_id]] = instance
-        end
-      end
+    @lb_names     = Rails.env.production? ? %w( masterjob-lb job-lb website-lb dashboard-lb api-lb test-lb util-lb ) : []
+    instance_ids  = []
 
-      @lb_instances[lb_name].sort! { |a, b| a[:instance_id] <=> b[:instance_id] }
+    @lb_instances = get_lb_instances(@lb_names)
+    @lb_names.each do |lb_name|
+      instance_ids += @lb_instances[lb_name].map { |i| i[:instance_id] }
     end
+    @ec2_instances = get_ec2_instances(instance_ids)
   end
 
   def as_groups
-    as_interface = RightAws::AsInterface.new
-    @as_groups = as_interface.describe_auto_scaling_groups
+    @as_groups = get_as_groups
+  end
+
+  def index
+    @as_groups = get_as_groups
     @as_groups.each do |group|
-      group[:triggers] = as_interface.describe_triggers(group[:auto_scaling_group_name])
+      group[:instances].reject! { |instance| instance[:lifecycle_state] == "InService" }
     end
-    @as_groups.sort! { |a, b| a[:auto_scaling_group_name] <=> b[:auto_scaling_group_name] }
+
+    @lb_names = @as_groups.map { |group| group[:load_balancer_names].first }
+    instance_ids = []
+
+    @lb_instances = get_lb_instances(@lb_names)
+    @lb_names.each do |lb_name|
+      instance_ids += @lb_instances[lb_name].map { |i| i[:instance_id] }
+
+      @lb_instances[lb_name].reject! { |i| i[:state] == 'InService' }
+    end
+    @ec2_instances = get_ec2_instances(instance_ids)
   end
 
   def service_stats
@@ -157,6 +158,39 @@ class OpsController < WebsiteController
 
   def redis
     @redis ||= Redis.new(:host => "redis.tapjoy.net", :port => 6380)
+  end
+
+  def get_as_groups
+    as_interface = RightAws::AsInterface.new
+    @as_groups = as_interface.describe_auto_scaling_groups
+    @as_groups.each do |group|
+      group[:triggers] = as_interface.describe_triggers(group[:auto_scaling_group_name])
+    end
+    @as_groups.sort! { |a, b| a[:auto_scaling_group_name] <=> b[:auto_scaling_group_name] }
+  end
+
+  def get_lb_instances(lb_names)
+    elb_interface  = RightAws::ElbInterface.new
+    lb_instances = {}
+
+    lb_names.each do |lb_name|
+      lb_instances[lb_name] = elb_interface.describe_instance_health(lb_name).sort { |a, b| a[:instance_id] <=> b[:instance_id] }
+    end
+
+    lb_instances
+  end
+
+  def get_ec2_instances(instance_ids)
+    ec2_interface  = RightAws::Ec2.new
+    ec2_instances = {}
+
+    instance_ids.in_groups_of(70, false) do |instances|
+      ec2_interface.describe_instances(instances).each do |instance|
+        ec2_instances[instance[:aws_instance_id]] = instance
+      end
+    end
+
+    ec2_instances
   end
 
   # Creates list of keys to lookup in redis based on time

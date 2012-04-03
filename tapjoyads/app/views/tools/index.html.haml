@@ -69,8 +69,6 @@
     %li= link_to 'View Generic Offers', tools_generic_offers_path
   - if permitted_to? :edit, :statz
     %li= link_to "Approve Creatives (#{CreativeApprovalQueue.count})", creative_tools_offers_path
-  - if permitted_to? :approve, :users
-    %li= link_to 'New Publisher Queue', tools_approvals_path(:type => 'user')
   - if permitted_to? :index, :activities
     %li= link_to 'Activity Log', activities_path
   - if permitted_to? :disabled_popular_offers, :tools

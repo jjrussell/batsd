@@ -7,7 +7,7 @@ ActionController::Routing::Routes.draw do |map|
   map.connect 'tos-publisher.html', :controller => 'documents', :action => 'tos_publisher'
   map.connect 'publisher-guidelines.html', :controller => 'documents', :action => 'publisher_guidelines'
 
-  map.resource :sign_up, :controller => :sign_up, :only => :create, :collection => [:welcome]
+  map.resource :sign_up, :controller => :sign_up, :only => :create
   map.register 'register', :controller => :sign_up, :action => :new
   map.login 'login', :controller => :user_sessions, :action => :new
   map.logout 'logout', :controller => :user_sessions, :action => :destroy
