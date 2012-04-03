@@ -80,6 +80,13 @@ describe Tools::PayoutsController do
         response.body.should == {:success => true}.to_json
       end
 
+      context 'when payout is greater than 50k' do
+        it 'increases the threshold' do
+          post(:create, :partner_id => @partner.id, :amount => '49001.00')
+          @partner.reload
+          @partner.payout_threshold.should == (49_001_00 * 1.2)
+        end
+      end
       context 'when payout not saved properly' do
         before :each do
           payout = Factory(:payout, :partner => @partner)

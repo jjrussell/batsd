@@ -356,5 +356,54 @@ describe Partner do
         end
       end
     end
+
+    describe '#toggle_confirmed_for_payout' do
+      context 'when partner is confirmed' do
+        before :each do
+          @partner.confirmed_for_payout = true
+        end
+
+        it 'unconfirms the partner' do
+          @partner.toggle_confirmed_for_payout
+          @partner.confirmed_for_payout.should be_false
+        end
+      end
+
+      context 'when partner is unconfirmed' do
+        before :each do
+          @partner.confirmed_for_payout = false
+          @partner.payout_confirmation_notes = 'some crap'
+        end
+
+        it 'confirms the partner' do
+          @partner.toggle_confirmed_for_payout
+          @partner.confirmed_for_payout.should be_true
+        end
+
+        it 'clears out confirmation notes' do
+          @partner.toggle_confirmed_for_payout
+          @partner.payout_confirmation_notes.should be_nil
+        end
+
+        context 'when system notes are threshold' do
+          before :each do
+            @partner.payout_confirmation_notes = 'SYSTEM: Payout is greater than or equal to $50,000.00'
+            @partner.next_payout_amount = 50_000_01
+          end
+
+          it 'will increase the threshold by 10%' do
+            @partner.toggle_confirmed_for_payout
+            @partner.payout_threshold.should == 55_000_01
+          end
+        end
+
+        context 'when system notes are not threshold' do
+          it 'will not increase the threshold' do
+            @partner.toggle_confirmed_for_payout
+            @partner.payout_threshold.should == 50_000_00
+          end
+        end
+      end
+    end
   end
 end

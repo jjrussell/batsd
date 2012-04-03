@@ -327,6 +327,7 @@ class Partner < ActiveRecord::Base
 
   def toggle_confirmed_for_payout
     self.confirmed_for_payout = !self.confirmed_for_payout
+    self.payout_threshold = self.next_payout_amount * 1.1 if self.payout_confirmation_notes =~ /SYSTEM: Payout is greater.*/
     self.payout_confirmation_notes = nil if self.confirmed_for_payout
   end
 

@@ -15,7 +15,13 @@ class Tools::PayoutsController < WebsiteController
     amount = (params[:amount].to_f * 100).round
     payout = partner.payouts.build(:amount => amount, :month => cutoff_date.month, :year => cutoff_date.year)
     log_activity(payout)
-    render :json => { :success => payout.save }
+    if (payout_saved = payout.save)
+      log_activity(partner)
+      payout_threshold = payout.amount * 1.2
+      partner.payout_threshold = payout_threshold > 50_000_00 ? payout_threshold : 50_000_00
+      partner.save
+    end
+    render :json => { :success => payout_saved }
   end
 
   def confirm_payouts

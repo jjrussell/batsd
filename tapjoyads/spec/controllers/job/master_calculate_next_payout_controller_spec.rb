@@ -17,7 +17,7 @@ describe Job::MasterCalculateNextPayoutController do
         @partner.save!
       end
 
-      context 'when payout greater than $50,000' do
+      context 'when payout greater than threshold' do
         before :each do
           Partner.stubs(:calculate_next_payout_amount).with(@partner.id).returns(50_000_01)
           get(:index)
@@ -33,7 +33,7 @@ describe Job::MasterCalculateNextPayoutController do
         end
       end
 
-      context 'when payout less than $50,000' do
+      context 'when payout less than threshold' do
         before :each do
           Partner.stubs(:calculate_next_payout_amount).with(@partner.id).returns(40_000_01)
           get(:index)
@@ -57,7 +57,7 @@ describe Job::MasterCalculateNextPayoutController do
         @partner.save!
       end
 
-      context 'when payout greater than $50,000' do
+      context 'when payout greater than threshold' do
         before :each do
           Partner.stubs(:calculate_next_payout_amount).with(@partner.id).returns(50_000_01)
           get(:index)
@@ -73,5 +73,40 @@ describe Job::MasterCalculateNextPayoutController do
         end
       end
     end
+
+    context 'when payout greater than non-standard threshold' do
+      before :each do
+        @partner.confirmed_for_payout = true
+        Partner.stubs(:calculate_next_payout_amount).with(@partner.id).returns(65_000_01)
+        @partner.payout_threshold = 65_000_00
+        get(:index)
+      end
+
+      it 'will unflag the partner' do
+        @partner.confirmed_for_payout.should be_false
+      end
+
+      it 'will have a system note' do
+        @partner.payout_confirmation_notes.should == 'SYSTEM: Payout is greater than or equal to $65,000.00'
+      end
+    end
+
+    context 'when payout less than non-standard threshold' do
+      before :each do
+        @partner.confirmed_for_payout = true
+        Partner.stubs(:calculate_next_payout_amount).with(@partner.id).returns(55_000_01)
+        @partner.payout_threshold = 65_000_00
+        get(:index)
+      end
+
+      it 'will not unflag the partner' do
+        @partner.confirmed_for_payout.should be_true
+      end
+
+      it 'will not have a system note' do
+        @partner.payout_confirmation_notes.should be_nil
+      end
+    end
+
   end
 end
