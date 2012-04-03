@@ -51,8 +51,7 @@ class Games::SupportRequestsController < GamesController
   private
 
   def find_unresolved_clicks
-    #conditions = ActiveRecord::Base.sanitize_conditions("udid = ? and clicked_at > ? and manually_resolved_at is null", params[:udid], 30.days.ago.to_f.to_s)
-    conditions = ActiveRecord::Base.sanitize_conditions("udid = ? and clicked_at > ? and manually_resolved_at is null", 'statz_test_udid', 30.days.ago.to_f.to_s)
+    conditions = ActiveRecord::Base.sanitize_conditions("udid = ? and clicked_at > ? and manually_resolved_at is null", params[:udid], 30.days.ago.to_f.to_s)
     clicks = Click.select_all(:conditions => conditions).sort_by { |click| -click.clicked_at.to_f }
 
     @unresolved_clicks = []
