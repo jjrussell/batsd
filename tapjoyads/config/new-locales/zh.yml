@@ -1,0 +1,151 @@
+--- 
+zh: 
+  activerecord: 
+    errors: 
+      full_messages: 
+        format: "%{attribute} %{message}"
+      messages: 
+        accepted: "必须接受"
+        blank: "不可以为空白"
+        confirmation: "与确认内容不匹配"
+        empty: "不可以是空的"
+        equal_to: "必须等于 %{count}"
+        even: "必须是偶数"
+        exclusion: "被预定了"
+        greater_than: "必须大于 %{count}"
+        greater_than_or_equal_to: "必须大于或等于 %{count}"
+        inclusion: "未包括在本列表中"
+        less_than: "必须小于 %{count}"
+        less_than_or_equal_to: "必须小于或等于 %{count}"
+        not_a_number: "不是个数字"
+        not_an_integer: "必须是个整数"
+        odd: "必须是奇数"
+        record_invalid: "认定失败: %{errors}"
+        taken: "已经被人用了"
+        too_long: "̫太长了 (最大长度是 %{count} 字符"
+        too_short: "̫太短了 (最小长度是 %{count} 字符)"
+        wrong_length: "的长度错误 (应该是 %{count} 字符)"
+      models: 
+        gamer_sessions: 
+          attributes: 
+            email: Email
+            password: Password
+      template: 
+        body: "以下的字段有问题"
+        header: 
+          one: "发生一个让 %{model} 无法储存的错误"
+          other: "发生 %{count}个让 %{model}无法储存的错误"
+  authlogic: 
+    error_messages: 
+      login_not_found: "无效的电子邮件"
+      password_invalid: "无效的密码"
+  errors: 
+    format: "%{attribute} %{message}"
+    messages: 
+      accepted: "必须接受"
+      blank: "不可以为空白"
+      confirmation: "与确认内容不匹配"
+      empty: "不可以是空的"
+      equal_to: "必须等于 %{count}"
+      even: "必须是偶数"
+      exclusion: "被预定了"
+      greater_than: "必须大于 %{count}"
+      greater_than_or_equal_to: "必须大于或等于 %{count}"
+      inclusion: "未包括在本列表中"
+      less_than: "必须小于 %{count}"
+      less_than_or_equal_to: "必须小于或等于 %{count}"
+      not_a_number: "不是个数字"
+      not_an_integer: "必须是个整数"
+      odd: "必须是奇数"
+      too_long: "太长了 (最大长度是 %{count} 字符)"
+      too_short: "太短了 (最小长度是 %{count} 字符)"
+      wrong_length: "的长度错误 (应该是 %{count} 字符)"
+  helpers: 
+    select: 
+      prompt: "请选择"
+    submit: 
+      create: "创造 %{model}"
+      submit: "储存 %{model}"
+      update: "更新 %{model}"
+  support: 
+    array: 
+      last_word_connector: ", 与 "
+      two_words_connector: " 与 "
+      words_connector: ", "
+    select: 
+      prompt: "请选择"
+  text: 
+    footer: 
+      about: "关于Tapjoy"
+      advertisers: Advertisers
+      blog: Blog
+      developers: Developers
+      privacy: "隐私政策"
+    games: 
+      app_review_concern_reported: "意见已回报"
+      app_review_h_no: "不"
+      app_review_h_yes: "是"
+      app_review_more: more...
+      app_review_report_concern: "回报意见"
+      app_review_thanks_for_feedback: "多谢你的反馈"
+      app_review_was_helpful: "这个评论有帮助吗?"
+      connected_to_facebook: "连结到Facebook"
+      connected_to_twitter: "连结到Twitter"
+      discover_apps: "一同加入这个有数百万行动应用爱好者的Tapjoy园地，来探索评价最好的应用。今天就开始吧!"
+      download_now: "正在下载"
+      email_device_link: "把联结发给装置"
+      enter_name: "请输入姓名"
+      errno_error: "发生了联结问题，请稍候再试。"
+      error_mark_as_favorite: "将应用标为最爱时发生错误"
+      error_unmark_as_favorite: "将应用取消最爱时发生错误"
+      facebook_connect_failed: "与你Facebook 个人档案连结时发生错误"
+      failed_to_change_linked: "切换联结账户时发生错误"
+      favorites: Favorites
+      find_friends_from_facebook: "从Facebook上找朋友"
+      find_friends_from_twitter: "从Twitter上找朋友"
+      friend_filter_label: "开始输入姓名"
+      grant_permissions_for_invite: "请在送出邀请前授权我们。"
+      install_android_app: "在你的Android装置上下载Tapjoy应用以便开始"
+      invalid_emails: "提供的电子邮件无效"
+      invite_twitter_followers: "邀请Twitter关注者!"
+      link_account_messaging_android_href: "下载Android应用"
+      link_account_messaging_tjm_href: www.tapjoy.com
+      mogli_reach_limit_error: "你已经到达上限了，请稍后再试"
+      or_learn_more: "或者了解更多"
+      password_non_match: "密码与确认内容不匹配"
+      please_connect_facebook: "请连结到你的Facebook账号"
+      post_to_facebook: "贴文到Facebook!"
+      profile_error: "在更新你的个人档案时发生问题"
+      provide_single_email: "请至少提供一个电子邮件地址"
+      reactivated_account: "你的账号已经被激活了!"
+      recommend_apps: "Tapjoy会根据你喜爱使用的应用内容，对你作个人化的智能推荐"
+      scheduled_for_deletion: "你的账号已被关闭并进入删除排程!"
+      social_invite_friend_error: "在邀请你的朋友时发生问题，请稍后再试。"
+      social_need_authorize_error: "在送出邀请前，请授权我们"
+      social_to_next: "下一页 %{page_size}"
+      social_to_prev: "前一页 %{page_size}"
+      social_to_top: "回顶端 &#8679;"
+      spread_mobile_joy: "散布行动娱乐"
+      start_discovering: "现在就开始免费与Tapjoy一同探索吧 "
+      twitter_at_least_one_friend_error: "在送出邀请前，请至少选择一名朋友"
+      twitter_authenticate_error: "透过TWITTER取得授权时发生错误，服务并未传回有效的数据"
+      twitter_forbidden_error: "由于更新限制，要求已经被否决"
+      twitter_general_error: "Twitter那边有点问题，请稍后再试"
+      twitter_internal_error: "Twitter那边有点问题，请稍后再试"
+      twitter_invite_msg: "已经邀请你加入Tapjoy，寻找热门应用的最佳场所，现在就免费加入!"
+      twitter_invite_title: "请选择Twitter朋友，以便用直接讯息邀请他们"
+      unmark_as_favorite: "从最爱中移除"
+      welcome_tapjoy: "欢迎来到Tapjoy!"
+      you_are_following: "你正在关注 (%{count})"
+      your_followers: 
+        one: "你的关注者"
+        other: "你的关注者 (%{count})"
+    shared: 
+      please_try_again: "请再试一次"
+      sending: Sending
+      sent: Sent
+      view_all: "观看全部"
+    unavailable_offer: 
+      message: "很抱歉，但 %{offer} 已经失效了，你可以回到前一页并更新，来观看最新的广告列表"
+      optional_message: "或者，还是点击这里来下载 %{offer}"
+

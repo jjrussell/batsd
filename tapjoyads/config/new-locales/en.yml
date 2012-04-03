@@ -1,5 +1,5 @@
 --- 
-nl: 
+en: 
   activerecord: 
     errors: 
       full_messages: 
@@ -40,59 +40,6 @@ nl:
     error_messages: 
       login_not_found: "Email is invalid"
       password_invalid: "Password is invalid"
-  date: 
-    abbr_day_names: ~
-    abbr_month_names: ~
-    day_names: ~
-    formats: 
-      default: ~
-      long: ~
-      short: ~
-    month_names: ~
-    order: ~
-  datetime: 
-    distance_in_words: 
-      about_x_hours: 
-        one: ~
-        other: ~
-      about_x_months: 
-        one: ~
-        other: ~
-      about_x_years: 
-        one: ~
-        other: ~
-      almost_x_years: 
-        one: ~
-        other: ~
-      half_a_minute: ~
-      less_than_x_minutes: 
-        one: ~
-        other: ~
-      less_than_x_seconds: 
-        one: ~
-        other: ~
-      over_x_years: 
-        one: ~
-        other: ~
-      x_days: 
-        one: ~
-        other: ~
-      x_minutes: 
-        one: ~
-        other: ~
-      x_months: 
-        one: ~
-        other: ~
-      x_seconds: 
-        one: ~
-        other: ~
-    prompts: 
-      day: ~
-      hour: ~
-      minute: ~
-      month: ~
-      second: ~
-      year: ~
   errors: 
     format: "%{attribute} %{message}"
     messages: 
@@ -122,53 +69,6 @@ nl:
       create: "Create %{model}"
       submit: "Save %{model}"
       update: "Update %{model}"
-  number: 
-    currency: 
-      format: 
-        delimiter: ~
-        format: ~
-        precision: ~
-        separator: ~
-        significant: ~
-        strip_insignificant_zeros: ~
-        unit: ~
-    format: 
-      delimiter: ~
-      precision: ~
-      separator: ~
-      significant: ~
-      strip_insignificant_zeros: ~
-    human: 
-      decimal_units: 
-        format: ~
-        units: 
-          billion: ~
-          million: ~
-          quadrillion: ~
-          thousand: ~
-          trillion: ~
-          unit: ~
-      format: 
-        delimiter: ~
-        precision: ~
-        significant: ~
-        strip_insignificant_zeros: ~
-      storage_units: 
-        format: ~
-        units: 
-          byte: 
-            one: ~
-            other: ~
-          gb: ~
-          kb: ~
-          mb: ~
-          tb: ~
-    percentage: 
-      format: 
-        delimiter: ~
-    precision: 
-      format: 
-        delimiter: ~
   support: 
     array: 
       last_word_connector: ", and "
@@ -179,13 +79,13 @@ nl:
   text: 
     featured: 
       download: Download
-      download_and_run: "Download en start"
-      earn_currency: "Verdien %{amount_and_currency}"
-      earn_now: "Verdien nu"
-      show_more_apps: "Laat meer apps zien"
-      skip: Overslaan
-      title: "Verdien %{currency}"
-      try_out: Probeer
+      download_and_run: "Just download and run"
+      earn_currency: "Earn %{amount_and_currency}"
+      earn_now: "Earn now"
+      show_more_apps: "Show more apps"
+      skip: Skip
+      title: "Earn %{currency}"
+      try_out: "Try out"
     footer: 
       about: "About Tapjoy"
       advertisers: Advertisers
@@ -280,7 +180,6 @@ nl:
       follow_us: "follow us"
       forgot_pass: "Forgot Password?"
       free: Free!
-      free!: ~
       friend_filter_label: "Start Typing a Name"
       generic_issue: "There was an issue. Please try again."
       get_app: "Get App"
@@ -414,33 +313,33 @@ nl:
         other: "Your followers (%{count})"
     instructions: 
       amount_and_currency: "%{amount} %{currency}"
-      continue_link: "Klik hier om verder te gaan."
-      download_action: hier
-      download_link: "Als je deze app nog niet hebt, klik %{download_action} om hem te downloaden."
-      earn_currency: "Verdien %{amount_and_currency}"
-      footer: "Na het doorlopen van deze stappen ontvang je %{amount_and_currency}."
-      header: "Volg deze stappen om de %{currency} te krijgen:"
-      title: Instructies
+      continue_link: "Click here to continue."
+      download_action: here
+      download_link: "If you don't have this app, click %{download_action} to download it."
+      earn_currency: "Earn %{amount_and_currency}"
+      footer: "After completing these steps, you will earn %{amount_and_currency}."
+      header: "Follow these steps to earn %{currency}:"
+      title: Instructions
     offerwall: 
-      buy_currency: "Koop  %{amount} %{currency}"
-      earn_currency: "Verdien %{amount} %{currency}"
-      free: Gratis
-      instructions: "Onderneem de volgende stappen om de %{currency} te ontvangen"
+      buy_currency: "Buy %{amount} %{currency}"
+      earn_currency: "Earn %{amount} %{currency}"
+      free: Free
+      instructions: "Engage in any of the following actions to receive %{currency}"
       instructions_non_rewarded: "Discover what's hot on Tapjoy!"
-      load_error: "Probeer het a.u.b. opnieuw"
-      load_more: "Laad meer!"
-      loading: Laden...
-      missing_currency: "Ontbrekende %{currency}?"
+      load_error: "Please try again."
+      load_more: "Load some more!"
+      loading: Loading...
+      missing_currency: "Missing %{currency}?"
       more_offers: "Want to see more offers? Visit Tapjoy to earn rewards and personal app recommendations!"
-      next: "Volgende %{items}"
+      next: "Next %{items}"
       popular_apps: "Popular Apps"
-      previous: "Vorige %{items}"
-      title: "Verdien %{currency}"
+      previous: "Previous %{items}"
+      title: "Earn %{currency}"
       wifi_required: "Wifi Required"
       wifi_warning: "This app requires a wifi connection to download."
     shared: 
       about_link: "About Tapjoy"
-      ads_by: "Advertenties van"
+      ads_by: "Powered by"
       android: Android
       back: Back
       blog: Blog
@@ -513,32 +412,21 @@ nl:
       year: Year
       zip_postal: "Zip/Postal Code"
     support: 
-      abuse_warning: "Dit formulier is alleen voor mensen die hun beloning nog niet hebben ontvangen. Misbruik kan er toe leiden dat u in de toekomst geen gebruik meer kunt maken van aanbiedingen."
-      description_label: "Beschrijving:"
-      email_address_label: "Email adres:"
-      instructions_1: "Selecteer a.u.b. de aanbieding die u gekozen hebt, maar waarvoor u niet de %{currency} hebt ontvangen en geef uw email adres op."
-      instructions_2: "Onvolledige informatie resulteert in een vertraging bij de oplossing van het probleem. Aanvragen met volledige informatie hebben voorrang."
-      invalid_email: "Geef a.u.b. een geldig email adres op."
-      missing_description: "Beschrijf a.u.b. de acties die u voltooid hebt. "
-      missing_offer: "Specificeer a.u.b. de door u ondernomen acties."
-      no_incomplete_offers_label: "Er zijn geen passende aanbiedingen gevonden."
-      select_offer: "Selecteer de aanbieding"
-      specify_offer_label: "Omschrijf aanbieding:"
-      submit_support_request: "Verstuur mijn vraag"
-      support_request_submitted: "U vraag is verstuurd"
-      thanks: "Dank voor uw vraag! U ontvangt de %{currency} nadat we hebben geverifieerd dat u alle stappen m.b.t. de aanbieding hebt doorlopen."
-      title: "Ontbreken er %{currency}?"
+      abuse_warning: "This form is strictly for users who have not been rewarded for a completed offer. Abuse of this page may lead to your account being banned from engaging in offers in the future."
+      description_label: "Description:"
+      email_address_label: "Email address:"
+      instructions_1: "Please select the offer you completed without receiving %{currency} and enter your email address."
+      instructions_2: "If you submit a ticket with incomplete information, it will result in a delay in getting your issue resolved. Priority is given to tickets with complete information."
+      invalid_email: "Please enter a real email address."
+      missing_description: "Please describe the offer you completed."
+      missing_offer: "You must specify the offer you completed."
+      no_incomplete_offers_label: "No suitable offers were found."
+      select_offer: "Select Offer"
+      specify_offer_label: "Specify offer:"
+      submit_support_request: "Submit Support Request"
+      support_request_submitted: "Support Request Submitted"
+      thanks: "Thanks for submitting your support request! You will receive your %{currency} after we have verified that you completed the offer."
+      title: "Missing %{currency}?"
     unavailable_offer: 
-      message: "Sorry, maar %{offer} is niet langer beschikbaar. Je kunt nu terug naar de vorige pagina en deze verversen om de laatste aanbiedingen te zien."
-      optional_message: "Of, klik hier om %{offer} toch te downloaden."
-  time: 
-    am: ~
-    formats: 
-      classic_short: ~
-      day: ~
-      day_long: ~
-      day_short: ~
-      default: ~
-      long: ~
-      short: ~
-    pm: ~
+      message: "We're sorry but %{offer} is no longer available. You can return to the previous page and refresh to view the latest offer list."
+      optional_message: "Or, click here to download %{offer} anyway."
