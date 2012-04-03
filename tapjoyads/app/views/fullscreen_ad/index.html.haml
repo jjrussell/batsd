@@ -1,1 +1,2 @@
 = render :partial => @custom_creative_exists ? 'custom_creative' : 'generated_creative'
+= render :partial => 'shared/tracking_pixel_tags', :locals => { :offer => @offer }
