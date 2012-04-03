@@ -59,7 +59,7 @@ class AgencyApi::PartnersController < AgencyApiController
 
     user.current_partner = partner
     user.state = 'approved'
-    user.save_without_approval!
+    user.save!
 
     PartnerAssignment.create!(:user => user, :partner => partner)
     PartnerAssignment.create!(:user => @agency_user, :partner => partner)
