@@ -257,7 +257,7 @@ class ApplicationController < ActionController::Base
   def generate_verifier(more_data = [])
     hash_bits = [
       params[:app_id],
-      params[:udid],
+      request.query_parameters[:udid] || params[:mac_address],
       params[:timestamp],
       App.find_in_cache(params[:app_id]).secret_key
     ] + more_data
