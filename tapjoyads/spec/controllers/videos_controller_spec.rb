@@ -3,12 +3,9 @@ require 'spec_helper'
 describe VideosController do
   render_views
 
-  before(:all) do
+  before(:each) do
     fake_the_web
     OfferCacher.stubs(:get_offer_list).returns([])
-  end
-
-  before(:each) do
     @currency = Factory(:currency)
     @params = {
       :udid => 'stuff',
