@@ -7,7 +7,7 @@ end
 
 if Gem::Version.new(Bundler::VERSION) <= Gem::Version.new("0.9.24")
   raise RuntimeError, "Your bundler version is too old for Rails 2.3." +
-   "Run `gem install bundler` to upgrade."
+    "Run `gem install bundler` to upgrade."
 end
 
 begin
