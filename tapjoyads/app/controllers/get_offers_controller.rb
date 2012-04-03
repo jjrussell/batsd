@@ -185,9 +185,4 @@ class GetOffersController < ApplicationController
     end
     params[:library_version] == 'server'
   end
-
-  def queue_third_party_tracking
-    @offer.queue_third_party_tracking_requests(request)
-  end
-
 end

@@ -160,7 +160,6 @@ describe GetOffersController do
       it 'should generate hidden image tags' do
         url = "https://dummyurl.com"
         @offer.third_party_tracking_urls = [url]
-        @offer.save!
 
         OfferCacher.stubs(:get_unsorted_offers_prerejected).returns([@offer])
         get(:webpage, @params)
