@@ -24,10 +24,10 @@ class SignUpController < WebsiteController
     @user.account_type << 'advertiser' if params[:account_type_advertiser] == '1'
     @user.account_type << 'publisher' if params[:account_type_publisher] == '1'
 
-    if @user.save_without_session_maintenance
+    if @user.save
       flash[:notice] = 'Account successfully created.'
       TapjoyMailer.deliver_partner_signup(@user.email)
-      redirect_to welcome_sign_up_path
+      redirect_to apps_path
     else
       render :action => :new
     end
