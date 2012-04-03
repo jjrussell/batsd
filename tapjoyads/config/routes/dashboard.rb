@@ -4,11 +4,7 @@ Tapjoyad::Application.routes.draw do
   match 'tos-advertiser.html' => 'documents#tos_advertiser'
   match 'tos-publisher.html' => 'documents#tos_publisher'
   match 'publisher-guidelines.html' => 'documents#publisher_guidelines'
-  resource :sign_up, :only => :create do
-    collection do
-      match :welcome
-    end
-  end
+  resource :sign_up, :only => :create
   match 'register' => 'sign_up#new', :as => :register
   match 'login' => 'user_sessions#new', :as => :login
   match 'logout' => 'user_sessions#destroy', :as => :logout

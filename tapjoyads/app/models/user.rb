@@ -8,7 +8,6 @@ class User < ActiveRecord::Base
     c.merge_validates_uniqueness_of_login_field_options(:case_sensitive => true)
     c.merge_validates_uniqueness_of_email_field_options(:case_sensitive => true)
   end
-  acts_as_approvable :on => :create, :state_field => :state
 
   has_many :role_assignments, :dependent => :destroy
   has_many :partner_assignments, :dependent => :destroy
@@ -79,27 +78,12 @@ class User < ActiveRecord::Base
     email
   end
 
-  def after_approve(approval)
-    ApprovalMailer.deliver_approved(email, :user, :subject => 'Your account has been accepted at Tapjoy!', :cc => approval_ccs(approval))
-  end
-
-  def after_reject(approval)
-    ApprovalMailer.deliver_rejected(email, :user, :subject => 'Your account has been rejected at Tapjoy!', :cc => approval_ccs(approval))
-  end
-
   # Make sure nil comes back as an empty array
   def account_type
     (super || [])
   end
 
 private
-  def approval_ccs(approval)
-    ccs = [approval.owner.try(:email)]
-    ccs << current_partner.account_managers.map(&:email) if current_partner.present?
-
-    ccs.flatten.compact.uniq
-  end
-
   def update_auth_net_cim_profile
     if auth_net_cim_id.present? && (email_changed? || id_changed?)
       Billing.update_customer_profile(self)
