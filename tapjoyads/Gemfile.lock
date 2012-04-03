@@ -1,5 +1,5 @@
 GIT
-  remote: git://github.com/freefrancisco/distribution.git
+  remote: git://github.com/Tapjoy/distribution.git
   revision: b26645f81810fe46a533ebf4128727763c3239c8
   specs:
     distribution (0.7.0)
