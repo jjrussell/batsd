@@ -462,7 +462,7 @@ en:
       wifi_warning: "This app requires a wifi connection to download."
     shared:
       about_link: "About Tapjoy"
-      ads_by: "Ads by"
+      ads_by: Powered by
       android: Android
       back: Back
       blog: Blog

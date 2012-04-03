@@ -396,7 +396,7 @@ all_caps:
       wifi_warning: "THIS APP REQUIRES A WIFI CONNECTION TO DOWNLOAD."
     shared:
       about_link: ~
-      ads_by: "ADS BY"
+      ads_by: POWERED BY
       android: ~
       back: ~
       blog: ~

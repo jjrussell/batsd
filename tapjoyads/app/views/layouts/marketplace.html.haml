@@ -8,7 +8,8 @@
     %meta{ :name => 'description', :content => t('text.games.meta_description') }
     %meta{ :name => 'keywords', :content => t('text.games.meta_keywords') }
     %meta{ :property => 'og:image', :content => "https://www.tapjoy.com/images/ic_launcher_96x96.png" }
-    = NewRelic::Agent.browser_timing_header rescue ""
+    :javascript
+      window._tjStartTime = new Date().getTime();
 
     %link{ :rel => 'shortcut icon', :href => '/favicon.ico', :content => 'image/vnd.microsoft.icon' }
     %link{ :rel => 'apple-touch-icon-precomposed', :href => '/images/tjgames-114x114.png' }
@@ -50,7 +51,7 @@
 
     = render 'games/shared/footer'
 
-    = css_tag("marketplace/locale/#{I18n.locale.to_s}.css") if ['de', 'es', 'fr', 'ja', 'ko'].include? I18n.locale.to_s
+    = css_tag("marketplace/locale/#{I18n.locale.to_s}.css") if ['de', 'es', 'fr', 'ja', 'ko', 'zh'].include? I18n.locale.to_s
 
     :javascript
       window.ENVIRONMENT = "#{Rails.env}";
@@ -84,4 +85,5 @@
 
 
     -# keep this as the last call in the file
-    = NewRelic::Agent.browser_timing_footer rescue ""
+    :javascript
+      window._tjHtmlDone = new Date().getTime();

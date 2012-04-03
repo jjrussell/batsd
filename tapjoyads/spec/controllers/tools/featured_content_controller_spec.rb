@@ -43,6 +43,22 @@ describe Tools::FeaturedContentsController do
       it 'redirects to tools/featured_contents/index' do
         response.should redirect_to(tools_featured_contents_path)
       end
+
+      context 'when called without offer' do
+        before :each do
+          @options[:featured_content][:featured_type] = FeaturedContent::TYPES_MAP[FeaturedContent::NEWS]
+          @options[:featured_content][:offer]         = nil
+          post 'create', @options
+        end
+
+        it 'creates a default offer' do
+          assigns[:featured_content].offer.item_type.should == 'GenericOffer'
+        end
+
+        it 'sets button_url to be NO_URL' do
+          assigns[:featured_content].button_url.should == FeaturedContent::NO_URL
+        end
+      end
     end
 
     context 'when called with invalid parameters' do

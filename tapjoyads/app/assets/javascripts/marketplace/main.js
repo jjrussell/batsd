@@ -579,8 +579,19 @@ $(document).ready(function() {
       invalid;
 
     $$.click(function () {
-      if(invalid.length > 0) {
-        notify(_t('games.invalid_fields'));
+      var i, ii,
+          msg = "",
+          failed = invalid.length > 0,
+          curr_msg;
+
+      for (i = 0, ii = invalid.length; i<ii; i++) {
+        if (curr_msg = $(invalid[i]).data("validation-message")) {
+          msg += curr_msg + "<br />";
+        }
+      }
+
+      if (failed) {
+        notify(msg || _t('games.invalid_fields'));
         return false;
       }
     });
@@ -696,11 +707,10 @@ $(document).ready(function() {
         width: tjmViewContainer.width() - 4 + 'px'
       });
     }
-
     if(window.innerWidth > 500){
-      $('#recommendations').enableTouchScroll();
+      $('#recommendations').enableCarouselSwipe();
     }else{
-      $('#recommendations').disableTouchScroll();
+      $('#recommendations').disableCarouselSwipe();
     }
 
     var rows = $('#content .row');
@@ -732,6 +742,12 @@ $(document).ready(function() {
       cssClass : 'complete',
       minHeight: 175
     });
+
+    if(window.innerWidth > 500){
+      $('#recommendations').enableCarouselSwipe();
+    }else{
+      $('#recommendations').disableCarouselSwipe();
+    }
   }, 50);
 
   // Device Switcher
@@ -805,6 +821,13 @@ $(document).ready(function() {
     }
     $('#device-select-list').html(m);
   }
+
+  (function () {
+    if (window._tjHtmlDone && window._tjStartTime) {
+      Tapjoy.Utils.googleLog("Page Html", "load", "Time in ms", (_tjHtmlDone - _tjStartTime));
+      Tapjoy.Utils.googleLog("Main.js", "load", "Time in ms", (new Date().getTime() - _tjStartTime));
+    }
+  }());
 
   // If on mobile device and cookie missing, prompt user to select closest matching device
   if (Tapjoy.requireSelectDevice && Tapjoy.selectDevice.length > 0 && (Tapjoy.device.idevice || Tapjoy.device.android)) {

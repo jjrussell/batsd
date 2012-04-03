@@ -30,7 +30,7 @@ class LinksharePoller
     now = Time.zone.now.to_f.to_s
     CSV.parse(raw_table) do |row|
       next if row.length != 6 || row[SALES_COLUMN].to_f <= 0
-      click = Click.find(:key => row[CLICK_KEY_COLUMN])
+      click = Click.find(row[CLICK_KEY_COLUMN])
       next unless click && !click.installed_at?
       message = { :click_key => click.key, :install_timestamp => now}.to_json
       Rails.logger.info("Sending Linkshare click #{click.key} to conversion queue.")
