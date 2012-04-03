@@ -74,17 +74,17 @@ class FakeSdb
     options = {}
     while word = query_array.shift do
       case word
-      when /SELECT/i
+      when "SELECT"
         options[:select] ||= []
         options_array = options[:select]
-      when /FROM/i
+      when "FROM"
         options[:from] ||= []
         options_array = options[:from]
-      when /WHERE/i
+      when "WHERE"
         options[:where] ||= []
         options_array = []
         options[:where] << [ options_array ]
-      when /OR/i
+      when "OR"
         options_array = []
         options[:where] << :or << options_array
       else
