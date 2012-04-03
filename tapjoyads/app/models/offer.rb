@@ -699,6 +699,13 @@ class Offer < ActiveRecord::Base
     !%w(App ActionOffer SurveyOffer).include?(item_type) || Offer::Rejecting::TAPJOY_GAMES_RETARGETED_OFFERS.include?(item_id)
   end
 
+  def queue_third_party_tracking_requests(request)
+    third_party_tracking_urls.each do |url|
+      message = { :url => url, :headers => request.http_headers, :orig_url => request.url }
+      Sqs.send_message(QueueNames::THIRD_PARTY_TRACKING, Base64::encode64(Marshal.dump(message)))
+    end
+  end
+
   private
 
   def calculated_min_bid
