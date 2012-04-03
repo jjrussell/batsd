@@ -219,7 +219,6 @@ describe DisplayAdController do
         it 'should generate hidden image tags' do
           url = "https://dummyurl.com"
           @offer.third_party_tracking_urls = [url]
-          @offer.save!
 
           get(:webview, @params)
           pending "TODO: Load #image_tag method correctly"
