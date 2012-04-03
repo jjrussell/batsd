@@ -164,6 +164,7 @@ Install required gems
 ### System Ruby
 
 ```
+sudo gem install bundler -v 1.1
 sudo env ARCHFLAGS="-arch x86_64" gem install memcached -v 1.2.7
 sudo env ARCHFLAGS="-arch x86_64" gem install mysql -v 2.8.1 -- --with-mysql-config=/usr/local/mysql/bin/mysql_config
 sudo gem install rcov -v 0.9.10
@@ -176,6 +177,7 @@ sudo rdoc-data --install
 
 ### RVM
 ```
+gem install bundler -v 1.1
 env ARCHFLAGS="-arch x86_64" gem install memcached -v 1.2.7
 env ARCHFLAGS="-arch x86_64" gem install mysql -v 2.8.1 -- --with-mysql-config=/usr/local/mysql/bin/mysql_config
 gem install rcov -v 0.9.10
