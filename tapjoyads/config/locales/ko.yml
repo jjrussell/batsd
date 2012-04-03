@@ -1,121 +1,130 @@
----
-ko:
-  activerecord:
-    errors:
-      full_messages:
-        format: ~
-      messages:
-        accepted: ~
-        blank: ~
-        confirmation: ~
-        empty: ~
-        equal_to: ~
-        even: ~
-        exclusion: ~
-        greater_than: ~
-        greater_than_or_equal_to: ~
-        inclusion: ~
-        invalid: 는 사용할수 없습니다
-        less_than: ~
-        less_than_or_equal_to: ~
-        not_a_number: ~
-        not_an_integer: ~
-        odd: ~
-        record_invalid: ~
-        taken: ~
-        too_long: ~
-        too_short: ~
-        wrong_length: ~
-      template:
-        body: ~
-        header:
-          one: ~
-          other: ~
-  date:
+--- 
+ko: 
+  activerecord: 
+    errors: 
+      full_messages: 
+        format: "%{attribute} %{message}"
+      messages: 
+        accepted: "필수동의 사항"
+        blank: "필수 입력"
+        confirmation: "입력하신 내용이 일치하지 않습니다"
+        empty: "필수 입력"
+        equal_to: "%{count}와(과) 일치해야 합니다."
+        even: "짝수여야 합니다."
+        exclusion: "은(는) 사용 중입니다"
+        greater_than: "%{count}보다 커야 합니다"
+        greater_than_or_equal_to: "%{count}와(과) 같거나 커야 합니다"
+        inclusion: "은(는) 목록에 없습니다"
+        invalid: "는 사용할수 없습니다"
+        less_than: "%{count}보다 작아야 합니다"
+        less_than_or_equal_to: "%{count}와(과) 같거나 작아야 합니다"
+        not_a_number: "은(는) 숫자가 아닙니다"
+        not_an_integer: "정수여야만 합니다(소수점은 사용할 수 없습니다)"
+        odd: "홀수여야만 합니다"
+        record_invalid: "유효하지 않음: %{errors}"
+        taken: "은(는) 이미 사용 중입니다"
+        too_long: "은(는) 너무 깁니다 (최대 글자수 %{count})"
+        too_short: "은(는) 너무 짧습니다 (최소 글자수 %{count})"
+        wrong_length: "글자수가 다릅니다(글자수가 %{count}여야 합니다)"
+      models: 
+        gamer_sessions: 
+          attributes: 
+            email: Email
+            password: Password
+      template: 
+        body: "다음 필드에 문제가 있습니다:"
+        header: 
+          one: "한 가지 에러가 있어 저장할 수가 없습니다"
+          other: "%{count}개의 에러들이 있어 저장할 수 없습니다"
+  authlogic: 
+    error_messages: 
+      login_not_found: "유효하지 않은 이메일입니다"
+      password_invalid: "유효하지 않은 비밀번호입니다"
+  date: 
     abbr_day_names: ~
     abbr_month_names: ~
     day_names: ~
-    formats:
+    formats: 
       default: ~
       long: ~
       short: ~
     month_names: ~
     order: ~
-  datetime:
-    distance_in_words:
-      about_x_hours:
+  datetime: 
+    distance_in_words: 
+      about_x_hours: 
         one: ~
         other: ~
-      about_x_months:
+      about_x_months: 
         one: ~
         other: ~
-      about_x_years:
+      about_x_years: 
         one: ~
         other: ~
-      almost_x_years:
+      almost_x_years: 
         one: ~
         other: ~
       half_a_minute: ~
-      less_than_x_minutes:
+      less_than_x_minutes: 
         one: ~
         other: ~
-      less_than_x_seconds:
+      less_than_x_seconds: 
         one: ~
         other: ~
-      over_x_years:
+      over_x_years: 
         one: ~
         other: ~
-      x_days:
+      x_days: 
         one: ~
         other: ~
-      x_minutes:
+      x_minutes: 
         one: ~
         other: ~
-      x_months:
+      x_months: 
         one: ~
         other: ~
-      x_seconds:
+      x_seconds: 
         one: ~
         other: ~
-    prompts:
+    prompts: 
       day: ~
       hour: ~
       minute: ~
       month: ~
       second: ~
       year: ~
-  errors:
-    format: ~
-    messages:
-      accepted: ~
-      blank: ~
-      confirmation: ~
-      empty: ~
-      equal_to: ~
-      even: ~
-      exclusion: ~
-      greater_than: ~
-      greater_than_or_equal_to: ~
-      inclusion: ~
-      invalid: 는 사용할수 없습니다
-      less_than: ~
-      less_than_or_equal_to: ~
-      not_a_number: ~
-      not_an_integer: ~
-      odd: ~
-      too_long: ~
-      too_short: ~
-      wrong_length: ~
-  helpers:
-    select:
-      prompt: ~
-    submit:
-      create: ~
-      submit: ~
-      update: ~
-  number:
-    currency:
-      format:
+  errors: 
+    format: "%{attribute} %{message}"
+    messages: 
+      accepted: "필수동의 사항"
+      blank: "필수 입력"
+      confirmation: "입력하신 내용이 일치하지 않습니다"
+      empty: "필수 입력"
+      equal_to: "%{count}와(과) 같아야 합니다"
+      even: "짝수여야 합니다"
+      exclusion: "은(는) 사용 중입니다"
+      greater_than: "%{count}보다 커야 합니다"
+      greater_than_or_equal_to: "%{count}와(과) 같거나 커야 합니다"
+      inclusion: "은(는) 리스트에 포함되어 있지 않습니다"
+      invalid: "는 사용할수 없습니다"
+      less_than: "%{count}보다 작아야만 합니다"
+      less_than_or_equal_to: "%{count}와(과) 같거나 작아야 합니다"
+      not_a_number: "은(는) 숫자가 아닙니다"
+      not_an_integer: "정수여야 합니다(소수점을 사용할 수 없습니다)"
+      odd: "홀수여야 합니다"
+      too_long: "은(는) 너무 깁니다 (최대 글자수 %{count})"
+      too_short: "은(는) 너무 짧습니다 (최소 글자수 %{count})"
+      wrong_length: "은(는) 글자수가 다릅니다 (글자수가 %{count}여야 합니다)"
+  helpers: 
+    select: 
+      prompt: "선택해 주세요"
+    submit: 
+      create: "%{model} 생성"
+      submit: "%{model} 저장"
+      update: "%{model} 업데이트"
+  number: 
+    currency: 
+      format: 
         delimiter: ~
         format: ~
         precision: ~
@@ -123,52 +132,52 @@ ko:
         significant: ~
         strip_insignificant_zeros: ~
         unit: ~
-    format:
+    format: 
       delimiter: ~
       precision: ~
       separator: ~
       significant: ~
       strip_insignificant_zeros: ~
-    human:
-      decimal_units:
+    human: 
+      decimal_units: 
         format: ~
-        units:
+        units: 
           billion: ~
           million: ~
           quadrillion: ~
           thousand: ~
           trillion: ~
           unit: ~
-      format:
+      format: 
         delimiter: ~
         precision: ~
         significant: ~
         strip_insignificant_zeros: ~
-      storage_units:
+      storage_units: 
         format: ~
-        units:
-          byte:
+        units: 
+          byte: 
             one: ~
             other: ~
           gb: ~
           kb: ~
           mb: ~
           tb: ~
-    percentage:
-      format:
+    percentage: 
+      format: 
         delimiter: ~
-    precision:
-      format:
+    precision: 
+      format: 
         delimiter: ~
-  support:
-    array:
-      last_word_connector: ~
-      two_words_connector: ~
-      words_connector: ~
-    select:
-      prompt: ~
-  text:
-    featured:
+  support: 
+    array: 
+      last_word_connector: ", 그리고 "
+      two_words_connector: " 그리고 "
+      words_connector: ", "
+    select: 
+      prompt: "선택해 주세요"
+  text: 
+    featured: 
       download: 다운로드
       download_and_run: "다운로드 받고 실행해보기."
       earn_currency: "%{amount_and_currency}를 지급 받기."
@@ -177,14 +186,14 @@ ko:
       skip: 무시하기.
       title: "%{currency}를 지급 받기."
       try_out: "사용해 보기."
-    footer:
-      about: ~
-      advertisers: ~
-      blog: ~
-      copyright: ~
-      developers: ~
-      privacy: ~
-    games:
+    footer: 
+      about: "Tapjoy에 대해"
+      advertisers: Advertisers
+      blog: Blog
+      copyright: "Copyright &copy; %{year} Tapjoy, Inc. All Rights Reserved. Tapjoy and the Tapjoy logo are trademarks or registered trademarks of Tapjoy, Inc. All third party logos and trademarks mentioned are the property of their respective owners."
+      developers: Developers
+      privacy: "개인정보 보호"
+    games: 
       about_body: "당신의 앱을 사랑하고 당신이 좋아할 앱을 찾는 더 나은 방법."
       about_title: "\"어떻게 된 일인지 내가 좋아하는 앱을 정확히 알고 있다.\""
       account_created_body: "당신의 Tapjoy 계정이 성공적으로 생성되었습니다."
@@ -196,11 +205,18 @@ ko:
       advertisers_body: "수백만의 유저와 만나고 당신의 상품을 노출해 보세요."
       advertisers_title: 광고주
       allow_marketing_emails: "Tapjoy 마케팅 이메일 수신허용"
-      almost_done: ~
-      already_registered:
+      almost_done: "거의 끝났습니다!"
+      already_registered: 
         one: "%{name}님은 이미 등록되었습니다. 이제 그 사람을 팔로우 할 수 있습니다."
         other: "%{name}님은 이미 등록되었습니다. 이제 그들을 팔로우 할 수 있습니다."
       amount_and_currency: "%{amount} %{currency}"
+      app_review_concern_reported: "특이사항 리포트"
+      app_review_h_no: 아니오
+      app_review_h_yes: 예
+      app_review_more: more...
+      app_review_report_concern: "특이사항 리포트"
+      app_review_thanks_for_feedback: "피드백을 주셔서 감사합니다"
+      app_review_was_helpful: "이 리뷰가 도움이 되셨나요?"
       back_to_top: "최상위로 돌아가기"
       birthdate: 생일
       browse_offers: "광고 탐색"
@@ -217,8 +233,8 @@ ko:
       connect_to_facebook: "클릭하시면 페이스북으로 연결됩니다"
       connect_your_android: "당신의 안드로이드 기계를 연결해주세요"
       connect_your_device: "당신의 기계를 연결해 주세요."
-      connected_to_facebook: ~
-      connected_to_twitter: ~
+      connected_to_facebook: "페이스북으로 연결"
+      connected_to_twitter: "트위터로 연결"
       contact_support: "지원 요청하기"
       contact_us: "Tapjoy로 연락하기"
       cookies_required: "브라우저에서 쿠키를 활성화해주세요"
@@ -227,72 +243,82 @@ ko:
       delete_my_account: "계정 삭제하기"
       developers_body: "Tapjoy 수익화 툴을 통해 당신의 앱의 수익을 극대화해보세요."
       developers_title: 개발자
-      discover_apps: ~
-      download_now: ~
+      discover_apps: "지금 바로 Tapjoy에서 수백만의 앱 유저와 함께하고 최고의 평가를 받는 앱들을 만나보세요!"
+      download_now: 다운로드
       earn: "%{currency} 획득"
       earn_rewards: "보상 획득"
       earn_title: "아래 오퍼들을 수행하면 %{app_name}의 %{currency}를 얻게 됩니다."
       earning_rewards: "Tapjoy는 당신이 좋아하는 모바일 앱들의 보상을 한 곳에서 얻을 수 있는 최적의 장소입니다."
       edit: 수정
-      email_device_link: ~
+      email_device_link: "기계링크 이메일 보내기"
       email_notification: "이메일 알림"
       enable_javascript: "Tapjoy 사용을 위해 당신의 브라우저 세팅에서 자바 스크립트를 허용해 주세요."
       enter_birthdate: "생일을 입력해 주세요"
       enter_email: "이메일 주소를 입력해 주세요"
       enter_message: "메세지를 입력해 주세요"
-      enter_name: ~
+      enter_name: "이름을 입력해 주세요"
       enter_password: "비밀번호를 입력해주세요"
       enter_platform: "iOS인지 Android인지 선택해 주세요"
       enter_tos: "상기 사용 약관에 동의해 주세요"
       enter_valid_email: "유효한 이메일 주소를 입력해 주세요"
-      error_mark_as_favorite: ~
-      error_unmark_as_favorite: ~
-      failed_to_change_linked: ~
+      errno_error: "연결에 문제가 있습니다. 나중에 다시 시도해 주세요."
+      error_mark_as_favorite: "선호 앱에 추가하는데 문제가 발생했습니다"
+      error_unmark_as_favorite: "선호 앱에서 제외하는데 문제가 발생했습니다"
+      facebook_connect_failed: "당신의 페이스북 프로필로 연결하는데 실패했습니다"
+      failed_to_change_linked: "계정 변경에 실패했습니다"
       favorite_app: "선호하는 앱"
       favorite_apps: "선호하는 앱들"
       favorite_category: "선호하는 카테고리"
-      favorites: ~
+      favorites: Favorites
       feedback: "Tapjoy로 의견 제안"
       find_and_invite_friends: "친구를 찾아 초대해 주세요"
-      find_friends_from_facebook: ~
-      find_friends_from_twitter: ~
+      find_friends_from_facebook: "페이스북에서 친구찾기"
+      find_friends_from_twitter: "트위터에서 친구찾기"
       find_friends_on_tapjoy: "다른 네트워크를 통해 이미 Tapjoy를 사용하고 있는 친구를 찾아보세요"
       find_more_friends: "더 많은 친구 찾기"
       find_new_apps: "새로운 앱 찾기"
       follow_us: "팔로우 하기"
       forgot_pass: "비밀번호 찾기"
       free: 무료
+      friend_filter_label: "이름 입력하기"
       generic_issue: "문제가 발생했습니다. 다시 시도해 주세요."
       get_app: "앱 다운로드"
       get_it: 다운받기
+      grant_permissions_for_invite: "초대 메일 발송 전에 저희에게 두 가지 권한을 부여해주세요."
       grant_us_access: "초대장 발송 전에 저희에게 대행 권한을 부여해주세요"
       how_it_works_body: "당신의 모든 게임이 아래에 리스팅되었습니다. 앱 옆의 버튼을 클릭해 앱의 가상화폐(코인, 골드 등)를 얻어보세요."
       how_it_works_title: "어떻게 작동되나요?"
       install_and_run: "%{name}을 인스톨하고 실행해주세요"
-      install_android_app: ~
+      install_android_app: "당신의 안드로이드 기기에 Tapjoy앱 다운로드가 시작되었습니다."
       install_profile: "다음 페이지에서 당신의 프로필을 입력하고 추천 앱들을 만나보세요!"
+      invalid_emails: "이메일이 잘못 입력되었습니다"
       invalid_fields: "유효하지 않은 접근"
       invite: "친구 초대하기!"
       invite_by_email: "이메일로 초대하기"
       invite_email_body: |-
           %{name}님이 당신을 가장 인기있는 앱들이 소개되는 Tapjoy로 초대하셨습니다. 가입은 무료이며, iOS와 안드로이드의 가장 인기있는 앱들을 만나보실 수 있는 것은 물론 여러분이 좋아하는 앱들의 포인트를 얻으실 수도 있습니다.
-
+          
           수많은 앱들이 난무하는 앱스토어에서 헤매지 말고 Tapjoy가 추천해드리는 앱들을 통해 쉽게 당신이 좋아할 게임을 만나보세요!
-
+          
           이곳에서 계정을 생성하여 Tapjoy를 시작해 보세요
       invite_email_greet: "안녕하세요,"
       invite_email_signature: "Tapjoy 팀"
-      invite_friends: ~
+      invite_friends: 
+        one: Invite
+        other: "%{count}명의 친구 초대"
       invite_title: "초대 이메일 보내기"
-      invites_sent_to: ~
+      invite_twitter_followers: "트위터 팔로우 초대!"
+      invites_sent_to: 
+        one: "탭조이 초대장이 %{name}에게 발송되었습니다"
+        other: "탭조이 초대장이 %{name}에게 발송되었습니다"
       issue_registering: "당신의 계정을 등록하는데 문제가 발생하였습니다."
       join_the_community: "커뮤니티 가입하기"
       join_the_community_blurb: "Tapjoy는 당신이 사랑하는 앱 정보에 기반하여 당신에게 최적화된 새로운 앱들을 추천해 드립니다."
       last_played: "마지막 실행: %{game}"
       link_account_header: "Tapjoy는 당신이 즐기고 있는 앱들의 가상화폐를 무료로 획득하는 동시에 가장 트렌디한 앱들을 만날 수 있는 최적의 장소입니다. Tapjoy의 모든 메뉴를 이용하기 위해서 당신의 기계를 인식시켜 주세요."
       link_account_messaging: "Tapjoy는 당신이 즐기고 있는 앱들의 가상화폐를 무료로 획득하는 동시에 iOS와 안드로이드의 가장 트렌디한 앱들을 만날 수 있는 최적의 장소입니다. Tapjoy의 모든 메뉴를 이용하기 위해서 당신의 기계를 인식시켜 주세요."
-      link_account_messaging_android_href: ~
-      link_account_messaging_tjm_href: ~
+      link_account_messaging_android_href: "안드로이드 앱 다운로드"
+      link_account_messaging_tjm_href: www.tapjoy.com
       link_my_facebook: "내 페이스북 연결하기"
       load_more: "더 보기"
       loading: "불러오는 중..."
@@ -301,6 +327,7 @@ ko:
       member_since: "%{date}에 가입하셨습니다"
       meta_description: "Tapjoy: 안드로이드, 아이폰 아이패드의 앱들과 게임을 만날 수 있는 종착역"
       meta_keywords: "게임, 모바일 게임, 모바일 앱, ios, 안드로이드, 아이폰, 아이패드, 아이터치"
+      mogli_reach_limit_error: "제한에 도달하였습니다. 나중에 다시 시도해 주세요."
       more_apps: "앱 더 보기"
       more_the_merrier: "더 많은 사람들과 함께하면 더 즐겁습니다"
       my_apps: "나의 앱"
@@ -310,20 +337,23 @@ ko:
       none_selected: 미설정
       on_my: "나의 %{device_name}에서"
       oops: 이런!
-      or_learn_more: ~
+      or_learn_more: "또는 더 배우기"
       other_options: "다른 옵션들"
       our_tos_changed: "저희의 %{terms_of_use} 변경되었습니다. 아래의 사항을 확인 후 통의해 주세요."
       password_changed: "패스워드가 변경되었습니다."
-      password_non_match: ~
-      post_to_facebook: ~
+      password_non_match: "입력하신 패스워드가 일치하지 않습니다"
+      please_connect_facebook: "당신의 페이스북 계정을 연결해 주세요"
+      post_to_facebook: "페이스북에 올리기!"
       post_to_facebook_content: "최고의 게임들과 앱을 만나고 무료로 앱의 가상화폐를 얻을 수 있는 Tapjoy를 방문해보세요! Tapjoy는 tapjoy.com에 방문하시면 언제든 무료로 사용이 가능합니다."
       privacy_policy_href: "개인정보 보호정책"
       profile: 나
-      profile_error: ~
+      profile_error: "당신의 프로필을 업데이트하는데 에러가 발생했습니다."
       profile_update: "프로필이 수정되었습니다."
       provide_other_email: "다른 이메일을 입력해 주세요"
+      provide_single_email: "적어도 하나의 이메일을 입력해 주세요"
+      reactivated_account: "당신의 계정이 다시 활성화 되었습니다!"
       recipients_label: "여러명에게 보낼 때는 쉼표를 이용해 주세요."
-      recommend_apps: ~
+      recommend_apps: "탭조이는 여러분이 좋아하고 자주 사용하는 앱들을 통해 개별적인 앱 추천을 해드립니다."
       recommendations: "스마트한 추천"
       recommendations_smart: "스마트 추천"
       registering: 등록중
@@ -337,6 +367,7 @@ ko:
       review_issue: "문제가 발생하였습니다. 나중에 다시 시도해 주세요."
       review_updated: "앱 리뷰가 성공적으로 업데이트 되었습니다."
       reviewed_already: "당신은 이 앱의 리뷰를 이미 남기셨습니다."
+      scheduled_for_deletion: "당신의 계정은 비활성화 되었으며, 삭제가 예정되었습니다!"
       select_current_device: "당신의 현재 기계를 선택해주세요"
       select_device: "당신의 기계를 선택해주세요"
       select_friend: "초대장 발송을 위해 적어도 하나의 친구를 선택해 주세요"
@@ -344,10 +375,15 @@ ko:
       share_on_twitter: "트위터로 공유하기"
       share_with_everyone: "모두에게 공유하기"
       share_with_your_friends: "당신의 친구와 공유하기"
+      social_invite_friend_error: "친구 초대에 문제가 발생하였습니다. 나중에 다시 시도해 주세요."
+      social_need_authorize_error: "초대장 발송 전에 권한을 부여해 주세요."
       social_networks: "소셜 네트워크"
       social_settings: "소셜 기능 설정"
-      spread_mobile_joy: ~
-      start_discovering: ~
+      social_to_next: "다음 %{page_size}"
+      social_to_prev: "이전 %{page_size}"
+      social_to_top: "최상단 &#8679;"
+      spread_mobile_joy: "모바일의 즐거움을 나누세요"
+      start_discovering: "무료로 탭조이를 즐겨보세요"
       tap_that: "%{icon}을 클릭해 %{button}을 선택해 주세요"
       tapjoy_picks: "Tapjoy 추천"
       terms_of_use_href: "사용 약관"
@@ -358,17 +394,24 @@ ko:
       thats_you: 당신이에요
       tos_acknowledge_html: "%{terms_of_use} & %{privacy_policy} 동의를 위해 체크박스를 체크해주세요"
       tos_change_acknowledge: "사용 약관 동의를 위해 체크박스를 체크해주세요"
+      twitter_at_least_one_friend_error: "초대장 발송 전에 적어도 한 명의 친구가 선택되어야 합니다"
+      twitter_authenticate_error: "트위터 인증에 실패하였습니다. 서비스가 유효한 값을 리턴해오지 못했습니다."
+      twitter_forbidden_error: "업데이트 제한에 걸려 요청이 거부되었습니다."
+      twitter_general_error: "트위터에 무언가 이상이 있습니다. 나중에 다시 시도해 주세요."
+      twitter_internal_error: "트위터에 무언가 이상이 있습니다. 나중에 다시 시도해 주세요."
+      twitter_invite_msg: "가 당신을 최고로 핫한 앱들을 만날 수 있는 탭조이로 초대하였습니다, 가입은 무료입니다!"
+      twitter_invite_title: "트위터 친구를 선택해 메일을 통해 초대해 보세요"
       unable_to_process: "죄송합니다, 당신의 요청을 수행할 수 없습니다"
       unlock_mobile_joy: "모바일의 즐거움을 열어보세요"
-      unmark_as_favorite: ~
-      welcome_tapjoy: ~
+      unmark_as_favorite: "선호에서 삭제하기"
+      welcome_tapjoy: "Tapjoy에 오신 것을 환영합니다!"
       wifi_required: "와이파이 접속 필요"
       wrong_device: "기기 확인"
-      you_are_following: ~
-      your_followers:
-        one: ~
-        other: ~
-    instructions:
+      you_are_following: "당신은 (%{count}명을 팔로잉 하고 있습니다)"
+      your_followers: 
+        one: "당신의 팔로워"
+        other: "당신의 팔로워 (%{count}명)"
+    instructions: 
       amount_and_currency: "%{amount} %{currency}"
       continue_link: "계속하시려면 여기를 클릭하십시오."
       download_action: 여기
@@ -377,7 +420,7 @@ ko:
       footer: "다음 스텝들을 완료한 이후에, %{amount_and_currency}를 획득할 수 있습니다."
       header: "다음 스텝들을 완료하고 %{currency}를 획득하십시오."
       title: 이용안내
-    offerwall:
+    offerwall: 
       buy_currency: "%{amount} %{currency}를 구매하기."
       earn_currency: "%{amount} %{currency}를 지급 받기"
       free: 무료
@@ -394,7 +437,7 @@ ko:
       title: "%{currency}를 지급받기"
       wifi_required: "와이파이 접속 필요"
       wifi_warning: "This app requires a wifi connection to download."
-    shared:
+    shared: 
       about_link: Tapjoy란
       ads_by: "Ads by"
       android: 안드로이드
@@ -440,7 +483,7 @@ ko:
       options: 옵션
       other: 기타
       password: 비밀번호
-      please_try_again: ~
+      please_try_again: "다시 시도해 주세요."
       preferences: "이메일 수신 설정"
       privacy: 개인정보
       privacy_policy: "개인정보 보호정책"
@@ -451,8 +494,8 @@ ko:
       reviews: 리뷰
       save: 저장
       send: 보내기
-      sending: ~
-      sent: ~
+      sending: Sending
+      sent: Sent
       share: 공유
       sign_in: 로그인
       sign_up: 가입하기
@@ -464,11 +507,11 @@ ko:
       unknown: "확인되지 않음"
       update_review: "리뷰 업데이트"
       updating: 갱신하기
-      view_all: ~
+      view_all: "전체 보기"
       write_review: "리뷰 작성"
       year: 년
       zip_postal: 우편번호
-    support:
+    support: 
       abuse_warning: "이 양식은 확실하게 광고를 수행했음에도 보상을 받지 못한 유저들을 위한 것입니다. 만일 부정한 목적로 이 요청을 사용하면, 추후 당신의 계정이 정지될 수도 있으니 유의 바랍니다."
       description_label: 설명
       email_address_label: "이메일 주소"
@@ -487,12 +530,12 @@ ko:
       thanks: "서포트 요청을 제출해주셔서 감사합니다! 확인 후에 요청을 주신 %{currency}가 지급될 수 있도록 하겠습니다."
       title: "받지 못한 %{currency}?"
       unavailable_offer: ~
-    unavailable_offer:
-      message: ~
-      optional_message: ~
-  time:
+    unavailable_offer: 
+      message: "죄송합니다 %{offer}는 더 이상 이용이 불가능합니다. 이전 페이지로 돌아가거나 페이지를 리프레쉬하여 최신 리스트를 불러와 주세요."
+      optional_message: "혹은, 보상이 없어도 괜찮다면 이곳을 클릭해 %{offer}을(를) 다운로드 받으세요."
+  time: 
     am: ~
-    formats:
+    formats: 
       classic_short: ~
       day: ~
       day_long: ~

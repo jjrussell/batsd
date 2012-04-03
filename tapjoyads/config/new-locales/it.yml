@@ -1,5 +1,5 @@
 --- 
-en: 
+it: 
   activerecord: 
     errors: 
       full_messages: 
@@ -40,88 +40,6 @@ en:
     error_messages: 
       login_not_found: "Email is invalid"
       password_invalid: "Password is invalid"
-  date: 
-    abbr_day_names: "Sun Mon Tue Wed Thu Fri Sat"
-    abbr_month_names: 
-      - ~
-      - Jan
-      - Feb
-      - Mar
-      - Apr
-      - May
-      - Jun
-      - Jul
-      - Aug
-      - Sep
-      - Oct
-      - Nov
-      - Dec
-    day_names: "Sunday Monday Tuesday Wednesday Thursday Friday Saturday"
-    formats: 
-      default: "%Y-%m-%d"
-      long: "%B %d, %Y"
-      short: "%b %d"
-    month_names: 
-      - ~
-      - January
-      - February
-      - March
-      - April
-      - May
-      - June
-      - July
-      - August
-      - September
-      - October
-      - November
-      - December
-    order: 
-      - year
-      - month
-      - day
-  datetime: 
-    distance_in_words: 
-      about_x_hours: 
-        one: "about 1 hour"
-        other: "about %{count} hours"
-      about_x_months: 
-        one: "about 1 month"
-        other: "about %{count} months"
-      about_x_years: 
-        one: "about 1 year"
-        other: "about %{count} years"
-      almost_x_years: 
-        one: "almost 1 year"
-        other: "almost %{count} years"
-      half_a_minute: "half a minute"
-      less_than_x_minutes: 
-        one: "less than a minute"
-        other: "less than %{count} minutes"
-      less_than_x_seconds: 
-        one: "less than 1 second"
-        other: "less than %{count} seconds"
-      over_x_years: 
-        one: "over 1 year"
-        other: "over %{count} years"
-      x_days: 
-        one: "1 day"
-        other: "%{count} days"
-      x_minutes: 
-        one: "1 minute"
-        other: "%{count} minutes"
-      x_months: 
-        one: "1 month"
-        other: "%{count} months"
-      x_seconds: 
-        one: "1 second"
-        other: "%{count} seconds"
-    prompts: 
-      day: Day
-      hour: Hour
-      minute: Minute
-      month: Month
-      second: Second
-      year: Year
   errors: 
     format: "%{attribute} %{message}"
     messages: 
@@ -151,53 +69,6 @@ en:
       create: "Create %{model}"
       submit: "Save %{model}"
       update: "Update %{model}"
-  number: 
-    currency: 
-      format: 
-        delimiter: ","
-        format: "%u%n"
-        precision: 2
-        separator: "."
-        significant: false
-        strip_insignificant_zeros: false
-        unit: $
-    format: 
-      delimiter: ","
-      precision: 3
-      separator: "."
-      significant: false
-      strip_insignificant_zeros: false
-    human: 
-      decimal_units: 
-        format: "%n %u"
-        units: 
-          billion: Billion
-          million: Million
-          quadrillion: Quadrillion
-          thousand: Thousand
-          trillion: Trillion
-          unit: ""
-      format: 
-        delimiter: ""
-        precision: 3
-        significant: true
-        strip_insignificant_zeros: true
-      storage_units: 
-        format: "%n %u"
-        units: 
-          byte: 
-            one: Byte
-            other: Bytes
-          gb: GB
-          kb: KB
-          mb: MB
-          tb: TB
-    percentage: 
-      format: 
-        delimiter: ""
-    precision: 
-      format: 
-        delimiter: ""
   support: 
     array: 
       last_word_connector: ", and "
@@ -206,15 +77,6 @@ en:
     select: 
       prompt: "Please select"
   text: 
-    featured: 
-      download: Download
-      download_and_run: "Just download and run"
-      earn_currency: "Earn %{amount_and_currency}"
-      earn_now: "Earn now"
-      show_more_apps: "Show more apps"
-      skip: Skip
-      title: "Earn %{currency}"
-      try_out: "Try out"
     footer: 
       about: "About Tapjoy"
       advertisers: Advertisers
@@ -264,12 +126,7 @@ en:
       connect_your_device: "Please connect your device"
       connected_to_facebook: "Connected to Facebook"
       connected_to_twitter: "Connected to Twitter"
-      contact_support:
-        incomplete_offers_label: "Having trouble with a specific offer?"
-        no_incomplete_offers_label: "We didn't find any offers tied to your device."
-        page_title: "Contact Support"
-        select_offer_button: "Choose an Offer"
-        thanks: "Thank you for contacting our support.  One of our agents will get back to you as soon as possible."
+      contact_support: "Contact Support"
       contact_us: "Contact Us"
       cookies_required: "Please enable cookies in your browser"
       deactivate: Deactivate
@@ -421,7 +278,8 @@ en:
       tap_that: "Just tap %{icon} and select %{button}"
       tapjoy_picks: "Tapjoy Picks"
       terms_of_use_href: "terms of use"
-      thanks_contact_us: "Thank you for contacting us.  We'll will get back to you as soon as possible."
+      thanks_contact_support: "Thank you for contacting our support. One of our agents will get back to you as soon as possible."
+      thanks_contact_us: "Thank you for contacting us. We'll will get back to you as soon as possible."
       thanks_feedback: "Thanks for your feedback!"
       thanks_report_bug: "Thank you for reporting the bug. We'll examine and verify it as soon as possible."
       thats_you: "that's you"
@@ -444,35 +302,12 @@ en:
       your_followers: 
         one: "Your follower"
         other: "Your followers (%{count})"
-    instructions: 
-      amount_and_currency: "%{amount} %{currency}"
-      continue_link: "Click here to continue."
-      download_action: here
-      download_link: "If you don't have this app, click %{download_action} to download it."
-      earn_currency: "Earn %{amount_and_currency}"
-      footer: "After completing these steps, you will earn %{amount_and_currency}."
-      header: "Follow these steps to earn %{currency}:"
-      title: Instructions
     offerwall: 
-      buy_currency: "Buy %{amount} %{currency}"
-      earn_currency: "Earn %{amount} %{currency}"
-      free: Free
-      instructions: "Engage in any of the following actions to receive %{currency}"
       instructions_non_rewarded: "Discover what's hot on Tapjoy!"
-      load_error: "Please try again."
-      load_more: "Load some more!"
-      loading: Loading...
-      missing_currency: "Missing %{currency}?"
       more_offers: "Want to see more offers? Visit Tapjoy to earn rewards and personal app recommendations!"
-      next: "Next %{items}"
       popular_apps: "Popular Apps"
-      previous: "Previous %{items}"
-      title: "Earn %{currency}"
-      wifi_required: "Wifi Required"
-      wifi_warning: "This app requires a wifi connection to download."
     shared: 
       about_link: "About Tapjoy"
-      ads_by: "Powered by"
       android: Android
       back: Back
       blog: Blog
@@ -518,7 +353,6 @@ en:
       password: Password
       please_try_again: "Please try again."
       preferences: Preferences
-      privacy: Privacy
       privacy_policy: "Privacy Policy"
       profile: Profile
       rate_and_review: "Rate and Review"
@@ -544,33 +378,3 @@ en:
       write_review: "Write Review"
       year: Year
       zip_postal: "Zip/Postal Code"
-    support: 
-      abuse_warning: "This form is strictly for users who have not been rewarded for a completed offer. Abuse of this page may lead to your account being banned from engaging in offers in the future."
-      description_label: "Description:"
-      email_address_label: "Email address:"
-      instructions_1: "Please select the offer you completed without receiving %{currency} and enter your email address."
-      instructions_2: "If you submit a ticket with incomplete information, it will result in a delay in getting your issue resolved. Priority is given to tickets with complete information."
-      invalid_email: "Please enter a real email address."
-      missing_description: "Please describe the offer you completed."
-      missing_offer: "You must specify the offer you completed."
-      no_incomplete_offers_label: "No suitable offers were found."
-      select_offer: "Select Offer"
-      specify_offer_label: "Specify offer:"
-      submit_support_request: "Submit Support Request"
-      support_request_submitted: "Support Request Submitted"
-      thanks: "Thanks for submitting your support request! You will receive your %{currency} after we have verified that you completed the offer."
-      title: "Missing %{currency}?"
-    unavailable_offer: 
-      message: "We're sorry but %{offer} is no longer available. You can return to the previous page and refresh to view the latest offer list."
-      optional_message: "Or, click here to download %{offer} anyway."
-  time: 
-    am: am
-    formats: 
-      classic_short: "%m/%d/%y"
-      day: "%B %d, %Y"
-      day_long: "%B %d, %Y"
-      day_short: "%b %d"
-      default: "%a, %d %b %Y %H:%M:%S %z"
-      long: "%B %d, %Y %I:%M %p %Z"
-      short: "%d %b %H:%M"
-    pm: pm
