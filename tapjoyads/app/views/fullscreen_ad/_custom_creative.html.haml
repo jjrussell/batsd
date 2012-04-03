@@ -7,7 +7,6 @@
 .buttons#buttons
   - action_text = @offer.rewarded? && @currency.rewarded? ? "Earn #{@currency.get_visual_reward_amount(@offer, params[:display_multiplier])} #{@currency.name}" : "Download"
   = link_to("#{action_text}", (params[:preview] == 'true' ? '#' : get_click_url(@offer)), :class => 'download gradient', :id => 'download')
-  = render :partial => 'shared/tracking_pixel_tags', :locals => { :offer => @offer }
 
 - content_for :page_javascript do
   :plain
