@@ -9,6 +9,7 @@ class GetOffersController < ApplicationController
 
   after_filter :save_web_request
   after_filter :save_impressions, :only => [:index, :webpage]
+  after_filter :queue_third_party_tracking, :except => :webpage
 
   def webpage
     if @currency.get_test_device_ids.include?(params[:udid])
@@ -175,6 +176,10 @@ class GetOffersController < ApplicationController
       return true if params[:redirect] == '1' || (params[:json] == '1' && params[:callback].blank?)
     end
     params[:library_version] == 'server'
+  end
+
+  def queue_third_party_tracking
+    @offer.queue_third_party_tracking_requests(request)
   end
 
 end

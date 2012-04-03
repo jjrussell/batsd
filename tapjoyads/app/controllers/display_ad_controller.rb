@@ -234,9 +234,6 @@ class DisplayAdController < ApplicationController
   end
 
   def queue_third_party_tracking
-    @offer.third_party_tracking_urls.each do |url|
-      message = { :url => url, :headers => request.http_headers, :orig_url => request.url }
-      Sqs.send_message(QueueNames::THIRD_PARTY_TRACKING, Base64::encode64(Marshal.dump(message)))
-    end
+    @offer.queue_third_party_tracking_requests(request)
   end
 end
