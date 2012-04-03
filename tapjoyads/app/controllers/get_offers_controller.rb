@@ -9,7 +9,7 @@ class GetOffersController < ApplicationController
 
   after_filter :save_web_request
   after_filter :save_impressions, :only => [:index, :webpage]
-  after_filter :queue_third_party_tracking, :except => :webpage
+  after_filter :queue_third_party_tracking, :only => :index
 
   def webpage
     if @currency.get_test_device_ids.include?(params[:udid])
