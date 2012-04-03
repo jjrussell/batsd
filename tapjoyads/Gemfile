@@ -80,5 +80,6 @@ group :test do
 end
 
 group :ops do
+  gem 'pry'
   gem 'unicorn', '4.2.0'
 end
