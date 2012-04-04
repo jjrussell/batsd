@@ -4,16 +4,33 @@
 - @as_groups.each do |group|
   - count += 1
   .details.left
-    %table.tablesorter
-      %thead
-        %tr
-          %th.name{ :colspan => "3" }= "#{group[:auto_scaling_group_name]} / #{group[:load_balancer_names].join(', ')}"
-      %tbody
-        %tr
-          %td= group[:min_size]
-          -# TODO: Make this understand multiple triggers
-          %td{ :class => "#{group[:triggers].first[:status].downcase unless group[:triggers].empty?}" }= group[:desired_capacity]
-          %td= group[:max_size]
+    - unless group[:triggers].empty? || group[:desired_capacity] == group[:min_size]
+      - if group[:triggers].first[:status].downcase == "highbreaching"
+        - progress_class = "progress-success"
+        .right{:style => "margin-top: 12px"}
+          = image_tag('unicorn_blaster_right.jpg')
+      - elsif group[:triggers].first[:status].downcase == "lowbreaching"
+        - progress_class = "progress-danger"
+        .right{:style => "margin-top: 12px"}
+          = image_tag('unicorn_blaster_left.jpg')
+    %h3= "#{group[:auto_scaling_group_name]} / #{group[:load_balancer_names].join(', ')}"
+    .progress{:class => progress_class}
+      - if group[:min_size] == group[:max_size]
+        .bar{ :style => "width: 100%"}
+      - elsif group[:min_size] == 1
+        .bar{ :style => "width: #{(group[:desired_capacity].to_f / group[:max_size].to_f) * 100}%"}
+      - else
+        - max = group[:max_size] - group[:min_size] + 1
+        - cap = group[:desired_capacity] - group[:min_size] + 1
+        .bar{ :style => "width: #{(cap.to_f / max.to_f) * 100}%"}
+    .labels
+      .left
+        #{group[:min_size]}
+      .right
+        #{group[:max_size]}
+      -# TODO: Make this understand multiple triggers
+      .center{ :class => "#{group[:triggers].first[:status].downcase unless group[:triggers].empty? || group[:desired_capacity] == group[:min_size]}" }
+        #{group[:desired_capacity]}
 
     - unless group[:instances].empty?
       %table.tablesorter
@@ -55,6 +72,8 @@
 
 .clear
 
+%hr/
+
 .right
   more info »
   = link_to 'auto-scaler', as_groups_ops_path
@@ -62,6 +81,8 @@
   = link_to 'service-stats', service_stats_ops_path
 
 As of: #{Time.zone.now.to_s(:pub_ampm_sec)}
+
+- content_for :page_head, stylesheet_link_tag('bootstrap.min')
 
 - content_for :page_styles do
   :plain
@@ -73,6 +94,7 @@ As of: #{Time.zone.now.to_s(:pub_ampm_sec)}
       width: 310px;
       margin-left: 5px;
       margin-right: 5px;
+      font-size: 11px;
     }
 
     .lowbreaching {
@@ -91,6 +113,18 @@ As of: #{Time.zone.now.to_s(:pub_ampm_sec)}
     }
     #content a {
       color: blue;
+    }
+    .progress {
+      margin-bottom: 0px !important;
+    }
+    .center {
+      text-align: center;
+    }
+    .labels {
+      padding: 2px;
+    }
+    h3 {
+      margin-bottom: 2px;
     }
 
     th.name {

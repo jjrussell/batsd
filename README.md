@@ -80,9 +80,17 @@ Downgrade rubygems
   * use `gem list` to determine if versions exist
   * if applicable, use `gem uninstall rubygems-update -v [version]` to remove
 
+### System Ruby
+
 ```
 sudo gem install rubygems-update -v 1.3.7
 sudo update_rubygems _1.3.7_
+```
+
+### RVM
+
+```
+rvm rubygems 1.3.7
 ```
 
 Install MySQL
@@ -153,7 +161,10 @@ Download GeoIP database
 Install required gems
 ---------------------
 
+### System Ruby
+
 ```
+sudo gem install bundler -v 1.1
 sudo env ARCHFLAGS="-arch x86_64" gem install memcached -v 1.2.7
 sudo env ARCHFLAGS="-arch x86_64" gem install mysql -v 2.8.1 -- --with-mysql-config=/usr/local/mysql/bin/mysql_config
 sudo gem install rcov -v 0.9.10
@@ -161,12 +172,21 @@ sudo gem install -v 2.3.14 rails
 sudo gem install json -v 1.5.3
 sudo gem install rdoc
 sudo gem install rdoc-data
-sudo gem install foreman -v 0.36.1
 sudo rdoc-data --install
 ```
-Then from within the tapjoyserver/tapjoyads directory:
+
+### RVM
 ```
-sudo rake gems:install
+env ARCHFLAGS="-arch x86_64" gem install memcached -v 1.2.7
+env ARCHFLAGS="-arch x86_64" gem install mysql -v 2.8.1 -- --with-mysql-config=/usr/local/mysql/bin/mysql_config
+gem install rdoc
+gem install rdoc-data
+rdoc-data --install
+```
+
+Then from within the `tapjoyserver/tapjoyads` directory:
+```
+bundle install
 ```
 
 Set up accounts and database
