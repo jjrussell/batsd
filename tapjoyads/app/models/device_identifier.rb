@@ -1,5 +1,5 @@
 class DeviceIdentifier < SimpledbShardedResource
-  # key_format: (hashed_udid | mac_address)
+  # key_format: (hashed_udid | mac_address | sha1_hashed_raw_mac_address)
 
   self.num_domains = NUM_DEVICE_IDENTIFIER_DOMAINS
 

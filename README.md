@@ -80,9 +80,17 @@ Downgrade rubygems
   * use `gem list` to determine if versions exist
   * if applicable, use `gem uninstall rubygems-update -v [version]` to remove
 
+### System Ruby
+
 ```
 sudo gem install rubygems-update -v 1.3.7
 sudo update_rubygems _1.3.7_
+```
+
+### RVM
+
+```
+rvm rubygems 1.3.7
 ```
 
 Install MySQL
@@ -153,7 +161,10 @@ Download GeoIP database
 Install required gems
 ---------------------
 
+### System Ruby
+
 ```
+sudo gem install bundler -v 1.1
 sudo env ARCHFLAGS="-arch x86_64" gem install memcached -v 1.2.7
 sudo env ARCHFLAGS="-arch x86_64" gem install mysql -v 2.8.1 -- --with-mysql-config=/usr/local/mysql/bin/mysql_config
 sudo gem install rcov -v 0.9.10
@@ -163,9 +174,19 @@ sudo gem install rdoc
 sudo gem install rdoc-data
 sudo rdoc-data --install
 ```
-Then from within the tapjoyserver/tapjoyads directory:
+
+### RVM
 ```
-sudo rake gems:install
+env ARCHFLAGS="-arch x86_64" gem install memcached -v 1.2.7
+env ARCHFLAGS="-arch x86_64" gem install mysql -v 2.8.1 -- --with-mysql-config=/usr/local/mysql/bin/mysql_config
+gem install rdoc
+gem install rdoc-data
+rdoc-data --install
+```
+
+Then from within the `tapjoyserver/tapjoyads` directory:
+```
+bundle install
 ```
 
 Set up accounts and database
@@ -198,8 +219,42 @@ cp tapjoyserver/setup/pre-commit tapjoyserver/.git/hooks/
 
 Alternatively, use `ln -s` instead of `cp` so any updates to the script in the repo get automatically changed in the git folder.
 
-OPTIONAL: to install Passenger (so you can use alternate local domains instead of `http://localhost:3000`)
---------------------------------------------------------------------------------------------------------
+# Running tapjoyads
+Using Unicorn and Foreman, you can run the application directly from the `tapjoyserver/tapjoyads` directory by running:
+
+```
+foreman start
+```
+
+If you need to restart the application, simply `ctrl+c` and then re-run the command.
+
+To access directly, go to [http://127.0.0.1:8080]().  Otherwise, use one of the following methods.
+
+## OPTIONAL: Using Apache for alternate local domains (instead of `http://localhost:3000`)
+### Routing to Unicorn (prefered)
+
+* Open `/etc/apache2/httpd.conf`, make sure `Include /private/etc/apache2/extra/httpd-vhosts.conf` is commented.
+* In the same file, add `Include /private/etc/apache2/extra/httpd-proxy.conf` after `httpd-vhosts.conf`.
+* Open `/etc/apache2/extra/httpd-proxy.conf` and add the following contents:
+
+```
+ProxyRequests Off
+
+<Proxy *>
+  Order deny,allow
+  Allow from all
+</Proxy>
+
+ProxyPass / http://localhost:8080/
+ProxyPassReverse / http://localhost:8080/
+ProxyPreserveHost On
+ProxyStatus On
+```
+
+* Open `/etc/hosts` and add `127.0.0.1   tapjoy.local` to the end of the file
+* To start Apache in OS X, System Preferences -> Sharing -> Check checkbox for 'Web Sharing'
+
+### Using Passenger
 
 ```
 sudo gem install passenger
