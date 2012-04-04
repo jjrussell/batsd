@@ -137,12 +137,10 @@ describe DisplayAdController do
         obj_ad_bg.stubs(:read).returns(ad_bg)
       end
 
-      context 'with third party tracking URLs' do
-        it 'should queue up tracking url calls' do
-          @offer.expects(:queue_third_party_tracking_requests).once
+      it 'should queue up tracking url calls' do
+        @offer.expects(:queue_third_party_tracking_requests).once
 
-          get(:index, @params)
-        end
+        get(:index, @params)
       end
 
       context 'with custom ad' do
