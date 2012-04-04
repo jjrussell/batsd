@@ -1,6 +1,6 @@
 class PointsController < ApplicationController
 
-  before_filter :set_publisher_user_id, :only => [ :spend, :purchase_vg, :consume_vg ]
+  before_filter :lookup_udid, :set_publisher_user_id
 
   def award
     return unless verify_params([ :app_id, :udid, :publisher_user_id, :tap_points, :guid, :timestamp, :verifier ])
