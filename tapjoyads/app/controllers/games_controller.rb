@@ -1,6 +1,7 @@
 class GamesController < ApplicationController
   include Facebooker2::Rails::Controller
   include SslRequirement
+  include AuthlogicFacebookConnect
 
   layout :select_layout
 
@@ -89,7 +90,10 @@ class GamesController < ApplicationController
 
   def has_permissions?
     begin
-      unless current_facebook_user.has_permission?(:offline_access) && current_facebook_user.has_permission?(:publish_stream)
+      unless current_facebook_user.has_permission?(:offline_access) &&
+        current_facebook_user.has_permission?(:publish_stream) &&
+        current_facebook_user.has_permission?(:email) &&
+        current_facebook_user.has_permission?(:user_birthday)
         @error_msg = t('grant_permissions_for_invite')
       end
     rescue
@@ -166,7 +170,11 @@ class GamesController < ApplicationController
     end
   end
 
-  def render_login_page
+  def render_login_page(prefill_facebook_email = false)
+    if prefill_facebook_email
+      current_facebook_user.fetch
+      params[:email] = current_facebook_user.email
+    end
     @gamer_session ||= GamerSession.new
     @gamer ||= Gamer.new
     render 'games/gamer_sessions/new'

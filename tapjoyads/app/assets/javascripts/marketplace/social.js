@@ -1,7 +1,6 @@
 (function (Tap, $) {
   "use strict";
   var _t = window.i18n.t,
-    FB = window.FB,
     twitterOptions = window.twitterOptions,
     notify = function (message) {
       Tapjoy.Utils.notification({
@@ -12,16 +11,54 @@
 
   Tap.extend({
     Social: {
-      doFbLogin: function (redirect_url) {
+      initiateFacebook: function (options, onReady) {
+        window.fbAsyncInit = function() {
+          FB.init({
+            appId  : options.appId,
+            status : true,
+            cookie : true,
+            oauth : true,
+            xfbml : true
+          });
+
+          onReady();
+        };
+
+        (function() {
+          var e = document.createElement('script'); e.async = true;
+          e.src = document.location.protocol + '//connect.facebook.net/' + options.locale + '/all.js';
+          document.getElementById('fb-root').appendChild(e);
+        }());
+      },
+
+      doFbLogin: function (redirect_url, submitFormId, source) {
         FB.login(function (response) {
           if (response.authResponse) {
             FB.api('/me', function (response) {
-              window.location = redirect_url;
+              if (redirect_url != undefined) {
+                Tap.Social.checkPermission(function () {
+                  window.location = redirect_url;
+                });
+              } else if (submitFormId != undefined) {
+                Tap.Social.checkPermission(function () {
+                  $("#" + submitFormId).submit();
+                });
+              }
             });
           } else {
-            notify(_t('games.grant_us_access'));
+            if(source !== 'register') {
+              notify(_t('games.grant_us_access'));
+            }
           }
-        }, {scope: 'offline_access,publish_stream'});
+        }, {scope: 'offline_access,publish_stream,email,user_birthday'});
+      },
+
+      checkPermission: function (withPerm) {
+        FB.api('/me/permissions', function (response) {
+          if (response['data'][0]['offline_access'] && response['data'][0]['publish_stream']) {
+            withPerm();
+          }
+        });
       },
 
       doFbLogout: function () {
@@ -245,35 +282,41 @@
   });
 
   $(function () {
-    if (!FB) { return; }
+    var fbOpts = $("#fb-root").data("fb-options");
 
-    $(".login-to-facebook").click(function () {
-      var url = $(this).data("fb-url");
-      Tap.Social.doFbLogin(url);
-      return false;
-    });
+    if (!fbOpts) { return; }
 
-    if (window.location.search.match(/fb_logout/)) {
-      Tap.Social.doFbLogout();
-    }
+    Tap.Social.initiateFacebook(fbOpts, function () {
+      $(".login-to-facebook, .register-with-facebook, .log-in-with-facebook").on("click", function () {
+        var url = $(this).data("fb-url");
+        var submitFormId = $(this).data("submit-form-id");
+        var source = $(this).data("source");
+        Tap.Social.doFbLogin(url, submitFormId, source);
+        return false;
+      });
 
-    $(".post-to-facebook").click(function () {
-      var $$ = $(this),
-          icon = $$.data("icon"),
-          callback = $$.data("callback"),
-          facebookId = $$.data("fb-id"),
-          res;
+      if (window.location.search.match(/fb_logout/)) {
+        Tap.Social.doFbLogout();
+      }
 
-      res = facebookId ? Tap.Social.checkAndPost(facebookId, callback, icon) : Tap.Social.postToFeed(callback, icon);
-      return false;
+      $(".post-to-facebook").click(function () {
+        var $$ = $(this),
+            icon = $$.data("icon"),
+            callback = $$.data("callback"),
+            facebookId = $$.data("fb-id"),
+            res;
+
+        res = facebookId ? Tap.Social.checkAndPost(facebookId, callback, icon) : Tap.Social.postToFeed(callback, icon);
+        return false;
+      });
     });
   });
 
   $(function () {
     var loadFriendsOptions = window.loadFriendsOptions;
     $("#twitter-friends").bind("ajax-loader-success", function (ev, data) {
-      if(data.success === false){
-        if(data.error) {
+      if (data.success === false) {
+        if (data.error) {
           notify(data.error);
         }
 

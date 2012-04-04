@@ -6,8 +6,24 @@ class Games::GamersController < GamesController
   before_filter :set_profile, :only => [ :show, :edit, :accept_tos, :password, :prefs, :update_password, :confirm_delete ]
 
   def new
-    @gamer = Gamer.new
-    redirect_to games_root_path if current_gamer.present?
+    if params[:prefill_with_facebook]
+      current_facebook_user.fetch
+      params[:gamer] = {
+        :nickname        => current_facebook_user.name,
+        :email           => current_facebook_user.email,
+        :facebook_id     => current_facebook_user.id,
+        :fb_access_token => current_facebook_user.client.access_token
+      }
+      params[:birthday] = current_facebook_user.birthday
+      @gamer = Gamer.find_by_email(current_facebook_user.email)
+    end
+    @gamer ||= Gamer.new(params[:gamer])
+    if @gamer.new_record?
+      @birthday = Date.parse(params[:birthday]) if params[:birthday]
+      redirect_to games_root_path if current_gamer.present?
+    else
+      render_login_page(true)
+    end
   end
 
   def create
@@ -29,7 +45,12 @@ class Games::GamersController < GamesController
         raise e
       end
     end
-    @gamer_profile = GamerProfile.new(:birthdate => birthdate, :nickname => params[:gamer][:nickname])
+    @gamer_profile = GamerProfile.new(
+      :birthdate       => birthdate,
+      :nickname        => params[:gamer][:nickname],
+      :facebook_id     => params[:gamer][:facebook_id],
+      :fb_access_token => params[:gamer][:fb_access_token]
+    )
     @gamer.gamer_profile = @gamer_profile
 
     if @gamer.save
@@ -76,7 +97,6 @@ class Games::GamersController < GamesController
       :followers => get_friends_info(Friendship.follower_ids(current_gamer.id))
     }
   end
-
 
   def update_password
     @gamer.safe_update_attributes(params[:gamer], [ :password, :password_confirmation ])

@@ -15,6 +15,9 @@
         = f.submit t('text.games.next'), :class => "ui-joy-button soft-grey-action next-btn disabled"
 
     #register-form.register-form.clearfix
+      - unless params[:prefill_with_facebook]
+        .register-with-facebook{ 'data-fb-url' => new_games_gamer_path(:prefill_with_facebook => true), 'data-source' => 'register' }= t('text.games.sign_up_with_facebook')
+
       .form-error
         &nbsp;
         = error_message_on @gamer, :nickname
@@ -25,11 +28,21 @@
         = hidden_field_tag :data, params[:data]
       - if params[:src].present?
         = hidden_field_tag :src, params[:src]
+      - if @gamer[:facebook_id]
+        = f.hidden_field :facebook_id
+      - if @gamer[:fb_access_token]
+        = f.hidden_field :fb_access_token
+      - if params[:no_match]
+        .field
+          = label_tag "prefill-message", t('text.games.facebook_login_no_match_tjm_acct_error')
+      - elsif params[:prefill_with_facebook]
+        .field
+          = label_tag "prefill-message", t('text.games.facebook_sign_up_prefilled_form_msg')
       .field
         = f.text_field :nickname, "autocorrect" => "off", "autocapitalize" => "off", :placeholder => t('text.shared.name')
       .field
         = label_tag :birthdate, t("text.games.birthdate")
-        = select_date nil, { :order => [:month, :day, :year], :start_year => Time.now.year, :end_year => (Time.now.year - 100), :include_blank => false, :prompt => {:day => t("text.shared.day"), :month => t("text.shared.month"), :year => t("text.shared.year")} }
+        = select_date @birthday, { :order => [:month, :day, :year], :start_year => Time.now.year, :end_year => (Time.now.year - 100), :include_blank => false, :prompt => {:day => t("text.shared.day"), :month => t("text.shared.month"), :year => t("text.shared.year")} }
       .field
         = f.email_field :email, "autocorrect" => "off", "autocapitalize" => "off", :placeholder => t('text.shared.email')
       .field
@@ -53,6 +66,7 @@
               :terms_of_use => link_to(t("text.games.terms_of_use_href"), games_tos_path, :target => '_blank'),
               :privacy_policy => link_to(t("text.games.privacy_policy_href"), games_privacy_path, :target => '_blank'))
           = f.hidden_field :referrer, :value => params[:referrer]
+
   .container.mt20.center
     = render '/shared/truste'
 
@@ -93,5 +107,4 @@
 
   = css_tag('marketplace/theme/tjm/logged_out')
 
-- content_for :page_javascript do
-  :plain
+- @load_facebook = true
