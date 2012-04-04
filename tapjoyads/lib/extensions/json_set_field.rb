@@ -23,7 +23,7 @@ module JsonSetField
         define_method "get_#{f}" do
           begin
             Set.new((send(f).blank? || send(f) == '[]') ? nil : JSON.parse(send(f)))
-          rescue JSON::ParserError => e
+          rescue JSON::ParserError
             Set.new()
           end
         end
