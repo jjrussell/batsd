@@ -1,7 +1,6 @@
-# Rails.root/config.ru
-if Rails.env.development?
-  require 'config/environment'
+require 'config/environment'
 
+if Rails.env.development?
   use Rails::Rack::LogTailer
 
   map '/' do
