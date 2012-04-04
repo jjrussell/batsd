@@ -16,6 +16,7 @@ class Device < SimpledbShardedResource
   self.sdb_attr :product
   self.sdb_attr :version
   self.sdb_attr :mac_address
+  self.sdb_attr :open_udid
   self.sdb_attr :platform
   self.sdb_attr :is_papayan, :type => :bool, :default_value => false
   self.sdb_attr :all_packages, :type => :json, :default_value => []
@@ -26,6 +27,11 @@ class Device < SimpledbShardedResource
     new_value = new_value ? new_value.downcase.gsub(/:/,"") : ''
     @create_device_identifiers ||= (self.mac_address != new_value)
     put('mac_address', new_value)
+  end
+
+  def open_udid=(new_value)
+    @create_device_identifiers ||= (self.open_udid != new_value)
+    put('open_udid', new_value)
   end
 
   def initialize(options = {})
@@ -54,6 +60,12 @@ class Device < SimpledbShardedResource
     path_list = []
 
     self.mac_address = params[:mac_address] if params[:mac_address].present?
+
+    if params[:open_udid].present?
+      open_udid_was = self.open_udid
+      self.open_udid = params[:open_udid]
+      path_list << 'open_udid_change' if open_udid_was.present? && open_udid_was != open_udid
+    end
 
     is_jailbroken_was = is_jailbroken
     country_was = country
@@ -198,6 +210,7 @@ class Device < SimpledbShardedResource
 
   def create_identifiers!
     all_identifiers = [ Digest::SHA2.hexdigest(key) ]
+    all_identifiers.push(open_udid) if self.open_udid.present?
     if self.mac_address.present?
       all_identifiers.push(mac_address)
       all_identifiers.push(Digest::SHA1.hexdigest(Device.formatted_mac_address(mac_address)))
