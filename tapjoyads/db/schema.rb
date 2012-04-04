@@ -783,6 +783,7 @@ ActiveRecord::Schema.define(:version => 20120406173403) do
     t.boolean  "discount_all_offer_types",                                                 :default => false,     :null => false
     t.string   "client_id",                    :limit => 36
     t.text     "promoted_offers",                                                                                 :null => false
+    t.integer  "payout_threshold",                                                         :default => 5000000,   :null => false
   end
 
   add_index "partners", ["id"], :name => "index_partners_on_id", :unique => true
