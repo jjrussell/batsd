@@ -192,9 +192,16 @@ class Device < SimpledbShardedResource
     return_value
   end
 
+  def self.formatted_mac_address(mac_address)
+    mac_address.to_s.empty? ? nil : mac_address.strip.upcase.scan(/.{2}/).join(':')
+  end
+
   def create_identifiers!
     all_identifiers = [ Digest::SHA2.hexdigest(key) ]
-    all_identifiers.push(mac_address) if self.mac_address.present?
+    if self.mac_address.present?
+      all_identifiers.push(mac_address)
+      all_identifiers.push(Digest::SHA1.hexdigest(Device.formatted_mac_address(mac_address)))
+    end
     all_identifiers.each do |identifier|
       device_identifier = DeviceIdentifier.new(:key => identifier)
       next if device_identifier.udid == key
