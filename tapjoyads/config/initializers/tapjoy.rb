@@ -60,3 +60,7 @@ BLANK_IMAGE = 'data:image/gif;base64,R0lGODlhAQABAID/AMDAwAAAACH5BAEAAAAALAAAAAA
 TJM_SESSION_TIMEOUT = 1.hour.to_i
 
 HOSTNAME = `hostname`.strip
+
+# Add "RightAws::AwsError: sdb.amazonaws.com temporarily unavailable: (getaddrinfo: Temporary failure in name resolution)"
+# to the list of transient problems which will automatically get retried by RightAws.
+RightAws::RightAwsBase.amazon_problems = RightAws::RightAwsBase.amazon_problems | ['temporarily unavailable', 'InvalidClientTokenId', 'InternalError', 'QueryTimeout']

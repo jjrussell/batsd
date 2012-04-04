@@ -6,6 +6,8 @@ coverage/
 *.swp
 *.swo
 coverage.data
+vendor/bundle
+.bundle
 config/newrelic.yml
 config/database.yml
 db/production.sqlite
@@ -18,3 +20,7 @@ public/stylesheets/*/*.css
 .sass-cache
 public/assets/*
 **.orig
+
+# Bundler
+vendor/bundle
+.bundle
