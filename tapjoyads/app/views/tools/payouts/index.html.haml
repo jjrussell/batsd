@@ -64,15 +64,20 @@
         %td= (partner.payout_cutoff_date - 1.day).to_s(:pub)
         %td= number_to_currency(partner.pending_earnings / 100.0 - partner.next_payout_amount / 100.0)
         %td= number_to_currency(partner.next_payout_amount / 100.0)
-        - if payout_info.present?
+        - if payout_info.present? && payout_info.valid?
           %td
+            %span.present
+              %strong Present
+            %br/
             %strong Type:
             = payout_info.payout_method
             %br/
             %strong Updated:
             = payout_info.updated_at.to_s(:pub)
         - else
-          %td &nbsp;
+          %td
+            %span.not_present
+              %strong Not Present
         %td
           - if permitted_to?(:create, :tools_payouts)
             - form_tag tools_payouts_path(:partner_id => partner.id), :method => :post, :class => 'json', :style => 'height:45px;' do
@@ -276,11 +281,11 @@
       font-size: 12px;
     }
 
-    span.enabled {
+    span.enabled, span.present {
       color: green;
     }
 
-    span.disabled {
+    span.disabled, span.not_present {
       color: red;
     }
 
