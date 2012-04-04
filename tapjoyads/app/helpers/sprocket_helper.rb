@@ -25,15 +25,43 @@ module SprocketHelper
     content_tag :script, src_code, options.merge({:type => "text/javascript"})
   end
 
-  def path_for(src, ext)
+  ['js', 'css'].each do |type|
+    define_method "#{type}_cache" do |src, *first|
+      @require_arrays ||= {}
+      @require_arrays[type] ||= []
+      val = path_for(src, type, false)
+
+      first[0] ? @require_arrays[type].unshift(val) : @require_arrays[type] << val
+    end
+
+    define_method "#{type}_cache!" do |src, *first|
+      @require_arrays ||= {}
+      @require_arrays[type] ||= []
+      first[0] ? @require_arrays[type].unshift(src) : @require_arrays[type] << src
+    end
+
+    define_method "#{type}_requires" do
+      @require_arrays ||= {}
+      @require_arrays[type] || []
+    end
+  end
+
+  def all_requires
+    @require_arrays ||= {}
+
+    (@require_arrays['css'] || []).concat (@require_arrays['js'] || [])
+  end
+
+  def path_for(src, ext, use_cdn = true)
     src = src.logical_path if src.respond_to? :logical_path
     src = src.sub /\.(js|css)$/, ""
+    host = use_cdn ? Sprockets::Tj.host : ''
 
     Rails.logger.error "Asset #{src} not in config/precompiled_assets.yml" unless Sprockets::Tj.asset_precompiled?(src)
     if Sprockets::Tj.precompile?
-      "#{Sprockets::Tj.host}/assets/#{src}-#{Sprockets::Tj.assets[src].digest}.#{ext}"
+      "#{host}/assets/#{src}-#{Sprockets::Tj.assets[src].digest}.#{ext}"
     else
-      "#{Sprockets::Tj.host}/assets/#{src}-#{Time.now.to_i}.#{ext}"
+      "#{host}/assets/#{src}-#{Time.now.to_i}.#{ext}"
     end
   end
 end
