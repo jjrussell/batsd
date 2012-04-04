@@ -33,7 +33,6 @@ gem 'multi_json', '1.0.3'
 gem 'multi_xml', '0.4.0'
 gem 'multipart-post', '1.1.0', :require => 'net/http/post/multipart'
 gem 'mysql', '2.8.1'
-gem 'newrelic_rpm', '3.3.0'
 gem 'nokogiri', '1.5.0'
 gem 'oauth', '0.4.5'
 gem 'patron', '0.4.4'
@@ -60,6 +59,9 @@ gem 'uglifier', '1.2.3'
 gem 'uuidtools', '2.1.2'
 gem 'vertica', '0.8.1'
 gem 'will_paginate', '2.3.16'
+
+# This needs to be down here to get sdb stuff
+gem 'newrelic_rpm', '3.3.0'
 
 group :development, :staging do
   gem 'mail_safe', '0.3.1'
