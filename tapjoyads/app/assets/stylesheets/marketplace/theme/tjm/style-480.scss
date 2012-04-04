@@ -108,8 +108,7 @@ div.app {
   overflow-y: hidden;
 
   .app-icon {
-    margin: 0px;
-    margin-top: 10px;
+    margin: 0;
     margin-left: 10px;
     float: left;
     width: 100px !important;
@@ -117,6 +116,8 @@ div.app {
     background-size: 100px 100px !important;
     img {
       left: 1px;
+      width: 98px !important;
+      height: 98px !important;
     }
 
   }
