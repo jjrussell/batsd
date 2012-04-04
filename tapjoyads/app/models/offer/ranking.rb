@@ -38,10 +38,11 @@ module Offer::Ranking
     precache_rank_scores[currency_group_id]
   end
 
-  def postcache_rank_score(currency, source)
+  def postcache_rank_score(currency, source, is_promoted)
     self.rank_score = precache_rank_score_for(currency.currency_group_id) || 0
     self.rank_score += (categories & currency.categories).length.to_f / currency.categories.length * (currency.postcache_weights[:category_match] || 0) if currency.categories.any?
     self.rank_score += 1000000 if !featured? && !rewarded? && currency.conversion_rate == 0 && item_type == 'App' && price == 0
+    self.rank_score += 1000000 if is_promoted
     self.rank_score -= 100 if source == 'tj_games' && item_type == 'GenericOffer' && !pay_per_click?
     rank_score
   end

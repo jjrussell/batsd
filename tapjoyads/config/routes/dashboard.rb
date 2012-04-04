@@ -129,6 +129,13 @@ Tapjoyad::Application.routes.draw do
   match 'billing/add-funds' => 'billing#add_funds', :as => :add_funds_billing
   match 'billing/transfer-funds' => 'billing#transfer_funds', :as => :transfer_funds_billing
   match 'billing/payment-info' => 'billing#payout_info', :as => :payout_info_billing
+  resources :inventory_management, :only => :index do
+    collection do
+      get :per_app
+      post :promoted_offers
+      post :partner_promoted_offers
+    end
+  end
   resources :statz, :only => [:index, :show, :edit, :update, :new, :create] do
     collection do
       get :advertiser

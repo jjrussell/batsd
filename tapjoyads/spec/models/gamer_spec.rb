@@ -151,7 +151,7 @@ describe Gamer do
           @facebook_id = '2'
           gamer1 = Factory(:gamer)
           gamer1.gamer_profile = GamerProfile.create(:facebook_id => @facebook_id, :gamer => gamer1)
-    
+
           gamer2 = Factory(:gamer)
           gamer2.gamer_profile = GamerProfile.create(:facebook_id => @facebook_id, :gamer => gamer2)
         end
