@@ -34,6 +34,12 @@ describe GetOffersController do
 
     end
 
+    it 'should queue up tracking url calls' do
+      @offer.expects(:queue_third_party_tracking_requests).once
+
+      get(:index, @params)
+    end
+
     describe "with promoted offers" do
       before :each do
         @partner = Factory(:partner)
