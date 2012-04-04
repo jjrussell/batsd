@@ -41,6 +41,7 @@ class WebRequest < SyslogMessage
   self.define_attr :udid
   self.define_attr :mac_address
   self.define_attr :sha2_udid
+  self.define_attr :sha1_mac_address
   self.define_attr :android_id
   self.define_attr :open_udid
   self.define_attr :open_udid_count
@@ -110,6 +111,7 @@ class WebRequest < SyslogMessage
     self.udid                 = params[:udid]
     self.mac_address          = params[:mac_address]
     self.sha2_udid            = params[:sha2_udid]
+    self.sha1_mac_address     = params[:sha1_mac_address]
     self.android_id           = params[:android_id]
     self.open_udid            = params[:open_udid]
     self.open_udid_count      = params[:open_udid_count]
