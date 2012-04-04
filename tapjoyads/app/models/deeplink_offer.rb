@@ -37,6 +37,7 @@ class DeeplinkOffer < ActiveRecord::Base
     offer.multi_complete = true
     offer.interval = 1.hour.to_i
     offer.device_types = Offer::ALL_DEVICES.to_json
+    offer.icon_id_override = app_id
     offer.save!
   end
 end
