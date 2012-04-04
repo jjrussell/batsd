@@ -1,5 +1,5 @@
-(function() {
-  $(function() {
+(function($){
+  $(document).ready(function(){
     var pager;
     pager = $('#paging');
     $('#favorites').Carousel({
@@ -20,4 +20,4 @@
     });
     return $(window).trigger('resize');
   });
-})();
+})(jQuery);

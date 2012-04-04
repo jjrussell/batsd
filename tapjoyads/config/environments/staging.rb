@@ -56,10 +56,6 @@ ENV['AWS_ACCESS_KEY_ID'] = amazon['staging']['access_key_id']
 ENV['AWS_SECRET_ACCESS_KEY'] = amazon['staging']['secret_access_key']
 AWS_ACCOUNT_ID = '331510376354'
 
-# Add "RightAws::AwsError: sdb.amazonaws.com temporarily unavailable: (getaddrinfo: Temporary failure in name resolution)"
-# to the list of transient problems which will automatically get retried by RightAws.
-RightAws::RightAwsBase.amazon_problems = RightAws::RightAwsBase.amazon_problems | ['temporarily unavailable', 'InvalidClientTokenId', 'InternalError', 'QueryTimeout']
-
 NUM_POINT_PURCHASES_DOMAINS = 2
 NUM_CLICK_DOMAINS = 2
 NUM_REWARD_DOMAINS = 2
