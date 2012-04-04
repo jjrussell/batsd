@@ -122,14 +122,18 @@ describe Job::QueueSendCurrencyController do
     end
 
     it 'should delete sent_currency from reward' do
-      get(:run_job, :message => @reward.id) rescue TestingError
+      expect {
+        get(:run_job, :message => @reward.id)
+      }.to raise_error(TestingError)
 
       reward = Reward.new(:key => @reward.key, :consistent => true)
       reward.sent_currency.should == nil
     end
 
     it 'should increase @num_reads on error' do
-      get(:run_job, :message => @reward.id) rescue TestingError
+      expect {
+        get(:run_job, :message => @reward.id)
+      }.to raise_error(TestingError)
 
       num_reads = @controller.instance_variable_get('@num_reads')
       num_reads.should == 100
