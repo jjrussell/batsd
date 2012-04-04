@@ -57,10 +57,7 @@ describe Games::SupportRequestsController do
 
       it 'creates a SupportRequest' do
         post :create, @params
-        support_request = SupportRequest.select(:where =>"udid = '#{@device.key}'")
-        puts "Support Request: #{support_request.inspect}"
-        support_request.count.should == 1
-        #support_request.email_address.should == @gamer.email
+        SupportRequest.count(:where =>"gamer_id = '#{@gamer.id}'").should == 1
       end
     end
   end
