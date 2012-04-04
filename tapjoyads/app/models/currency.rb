@@ -2,6 +2,9 @@ class Currency < ActiveRecord::Base
   include UuidPrimaryKey
   acts_as_cacheable
   acts_as_approvable :on => :create
+
+  json_set_field :promoted_offers
+
   TAPJOY_MANAGED_CALLBACK_URL = 'TAP_POINTS_CURRENCY'
   NO_CALLBACK_URL = 'NO_CALLBACK'
   PLAYDOM_CALLBACK_URL = 'PLAYDOM_DEFINED'
@@ -62,7 +65,7 @@ class Currency < ActiveRecord::Base
 
   before_validation :sanitize_attributes
   before_validation_on_create :assign_default_currency_group
-  before_create :set_hide_rewarded_app_installs, :set_values_from_partner_and_reseller
+  before_create :set_hide_rewarded_app_installs, :set_values_from_partner_and_reseller, :set_promoted_offers
   before_update :update_spend_share
   before_update :reset_to_pending_if_rejected
   after_cache :cache_by_app_id
@@ -70,7 +73,8 @@ class Currency < ActiveRecord::Base
 
   delegate :postcache_weights, :to => :currency_group
   delegate :categories, :to => :app
-  memoize :postcache_weights, :categories
+  delegate :get_promoted_offers, :to => :partner, :prefix => true
+  memoize :postcache_weights, :categories, :partner_get_promoted_offers
 
   def self.find_all_in_cache_by_app_id(app_id, do_lookup = !Rails.env.production?)
     currencies = Mc.distributed_get("mysql.app_currencies.#{app_id}.#{acts_as_cacheable_version}")
@@ -184,6 +188,11 @@ class Currency < ActiveRecord::Base
     callback_url == TAPJOY_MANAGED_CALLBACK_URL
   end
 
+  def update_promoted_offers(offer_ids)
+    self.promoted_offers = offer_ids.sort
+    changed? ? save : true
+  end
+
   def set_values_from_partner_and_reseller
     self.disabled_partners = partner.disabled_partners
     self.reseller          = partner.reseller
@@ -198,6 +207,11 @@ class Currency < ActiveRecord::Base
       self.external_publisher = partner.accepted_publisher_tos?
     end
 
+    true
+  end
+
+  def set_promoted_offers
+    self.promoted_offers = app.currencies.present? ? app.currencies.first.get_promoted_offers : ''
     true
   end
 
