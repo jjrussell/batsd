@@ -110,6 +110,41 @@ describe DisplayAdController do
     end
 
     describe '#index' do
+
+      before :each do
+        td_icon     = read_asset('tap_defense.jpg', 'icons')
+        round_mask  = read_asset('round_mask.png',  'display')
+        icon_shadow = read_asset('icon_shadow.png', 'display')
+
+        offer_icon_id = Offer.hashed_icon_id(@offer.icon_id)
+
+        obj_td_icon = @bucket.objects["icons/src/#{offer_icon_id}.jpg"]
+        obj_round_mask = @bucket.objects["display/round_mask.png"]
+        obj_icon_shadow = @bucket.objects["display/icon_shadow.png"]
+        objects = {
+          "icons/src/#{offer_icon_id}.jpg" => obj_td_icon,
+          "display/round_mask.png" => obj_round_mask,
+          "display/icon_shadow.png" => obj_icon_shadow,
+        }
+        @bucket.stubs(:objects).returns(objects)
+        obj_td_icon.stubs(:read).returns(td_icon)
+        obj_round_mask.stubs(:read).returns(round_mask)
+        obj_icon_shadow.stubs(:read).returns(icon_shadow)
+
+        ad_bg = read_asset('self_ad_bg_640x100.png', 'display')
+        obj_ad_bg = @bucket.objects["display/self_ad_bg_640x100.png"]
+        @bucket.stubs(:objects).returns({ "display/self_ad_bg_640x100.png" => obj_ad_bg })
+        obj_ad_bg.stubs(:read).returns(ad_bg)
+      end
+
+      context 'with third party tracking URLs' do
+        it 'should queue up tracking url calls' do
+          @offer.expects(:queue_third_party_tracking_requests).once
+
+          get(:index, @params)
+        end
+      end
+
       context 'with custom ad' do
         before :each do
           @offer.banner_creatives = %w(320x50 640x100)
@@ -152,27 +187,6 @@ describe DisplayAdController do
       end
 
       context 'with generated ad' do
-        before :each do
-          td_icon     = read_asset('tap_defense.jpg', 'icons')
-          round_mask  = read_asset('round_mask.png',  'display')
-          icon_shadow = read_asset('icon_shadow.png', 'display')
-
-          offer_icon_id = Offer.hashed_icon_id(@offer.icon_id)
-
-          obj_td_icon = @bucket.objects["icons/src/#{offer_icon_id}.jpg"]
-          obj_round_mask = @bucket.objects["display/round_mask.png"]
-          obj_icon_shadow = @bucket.objects["display/icon_shadow.png"]
-          objects = {
-            "icons/src/#{offer_icon_id}.jpg" => obj_td_icon,
-            "display/round_mask.png" => obj_round_mask,
-            "display/icon_shadow.png" => obj_icon_shadow,
-          }
-          @bucket.stubs(:objects).returns(objects)
-          obj_td_icon.stubs(:read).returns(td_icon)
-          obj_round_mask.stubs(:read).returns(round_mask)
-          obj_icon_shadow.stubs(:read).returns(icon_shadow)
-        end
-
         it 'returns proper image data in json' do
           ad_bg = read_asset('self_ad_bg_320x50.png', 'display')
           obj_ad_bg = @bucket.objects["display/self_ad_bg_320x50.png"]
@@ -194,11 +208,6 @@ describe DisplayAdController do
         end
 
         it 'returns proper image data in xml' do
-          ad_bg = File.read("#{Rails.root}/spec/assets/display/self_ad_bg_640x100.png")
-          obj_ad_bg = @bucket.objects["display/self_ad_bg_640x100.png"]
-          @bucket.stubs(:objects).returns({ "display/self_ad_bg_640x100.png" => obj_ad_bg })
-          obj_ad_bg.stubs(:read).returns(ad_bg)
-
           get(:index, @params)
           response.content_type.should == 'application/xml'
 
