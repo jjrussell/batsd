@@ -34,7 +34,6 @@ describe Offer do
     @offer.payment.should == 500
   end
 
-
   describe "applies discounts correctly" do
     context "to_json an app offer item" do
       before :each do
@@ -228,7 +227,6 @@ describe Offer do
     @offer.sdkless = true
     @offer.send(:sdkless_reject?, '8.2.0').should be_false
   end
-
 
   it "doesn't reject on source when approved_sources is empty" do
     @offer.send(:source_reject?, 'foo').should be_false
@@ -954,6 +952,24 @@ describe Offer do
     it "stops complaining about name length if the creatives are approved" do
       @offer.update_attributes({:name => 'Long name xxxxxxxxxxxxxxxxxx', :approved_banner_creatives => ['320x50']})
       Offer.for_display_ads.should include(@offer)
+    end
+  end
+
+  describe ".queue_third_party_tracking_requests" do
+    it "should send the proper messages to the queue" do
+      request = Object.new
+      request.stubs(:http_headers).returns({'User-Agent' => 'Bob'})
+      request.stubs(:url).returns('http://williamshat.com')
+
+      urls = ['https://dummyurl.com', 'https://example.com']
+      @offer.third_party_tracking_urls = urls
+
+      urls.each do |url|
+        message = { :url => url, :headers => request.http_headers, :orig_url => request.url }
+        Sqs.expects(:send_message).with(QueueNames::THIRD_PARTY_TRACKING, Base64::encode64(Marshal.dump(message))).once
+      end
+
+      @offer.queue_third_party_tracking_requests(request)
     end
   end
 end

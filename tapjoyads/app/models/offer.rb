@@ -170,8 +170,10 @@ class Offer < ActiveRecord::Base
     end
   end
   validates_each :third_party_tracking_urls do |record, attribute, value|
-    if value.any? { |url| URI.parse(url).scheme != "https" }
-      record.errors.add(attribute, "must all be ssl (https://) urls")
+    begin
+      value.each { |url| raise 'error' if URI.parse(url).scheme != 'https' }
+    rescue
+      record.errors.add(attribute, "must all be valid ssl (https://) urls")
     end
   end
 
@@ -242,6 +244,8 @@ class Offer < ActiveRecord::Base
   serialize :third_party_tracking_urls, Array
 
   def clone
+    return super if new_record?
+
     super.tap do |clone|
       # set up banner_creatives to be copied on save
       banner_creatives.each do |size|
