@@ -18,14 +18,14 @@ module ToolsHelper
     if click.last_clicked_at?
       concat("<ul>")
       click.last_clicked_at.each_with_index do |last_click_time, idx|
-        concat_li_timestamp("Previous click #{idx}", last_click_time)
+        concat_li_timestamp("Previous click #{idx + 1}", last_click_time)
       end
       concat("</ul>")
     end
     if click.last_installed_at?
       concat("<ul>")
       click.last_installed_at.each_with_index do |last_install_time, idx|
-        concat_li_timestamp("Previous install #{idx}", last_install_time)
+        concat_li_timestamp("Previous install #{idx + 1}", last_install_time)
       end
       concat("</ul>")
     end
