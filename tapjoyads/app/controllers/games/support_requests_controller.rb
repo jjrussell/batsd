@@ -61,6 +61,8 @@ class Games::SupportRequestsController < GamesController
       end
 
       break if @unresolved_clicks.length == 20
-    end.compact
+    end
+
+    @unresolved_clicks.compact
   end
 end
