@@ -6,7 +6,7 @@ GIT
 
 GIT
   remote: git://github.com/Tapjoy/right_aws.git
-  revision: 18446dbb2a86b6873dc9bbb06cdf4a4ed4efa666
+  revision: b0920537a579fe804e1ea1eb96afe781b2424e02
   specs:
     right_aws (3.0.3)
       right_http_connection (>= 1.2.5)
