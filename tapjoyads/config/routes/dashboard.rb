@@ -66,6 +66,7 @@ ActionController::Routing::Routes.draw do |map|
     m.search_offers 'search/offers', :action => 'offers'
     m.search_users 'search/users', :action => 'users'
     m.search_partners 'search/partners', :action => 'partners'
+    m.search_currencies 'search/currencies', :action => 'currencies'
   end
   map.premier 'premier', :controller => :premier, :action => :edit
   map.resources :survey_results, :only => [ :new, :create ]
