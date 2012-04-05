@@ -16,8 +16,8 @@ class FullscreenAdController < ApplicationController
 
     @now = params[:viewed_at].present? ? Time.zone.at(params[:viewed_at].to_f) : Time.zone.now
 
-    creative_exists = true if @offer.banner_creatives.any? { |size| Offer::FEATURED_AD_SIZES.include?(size) }
-    render :custom_creative, :layout => "blank" if creative_exists
+    @custom_creative_exists = true if @offer.banner_creatives.any? { |size| Offer::FEATURED_AD_SIZES.include?(size) }
+    render :layout => false if @custom_creative_exists
   end
 
   def test_offer
