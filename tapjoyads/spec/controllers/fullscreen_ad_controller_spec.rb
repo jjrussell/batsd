@@ -32,7 +32,7 @@ describe FullscreenAdController do
     context 'with third party tracking URLs' do
       it 'should generate hidden image tags' do
         url = "https://dummyurl.com"
-        @offer.third_party_tracking_urls = [url]
+        @offer.impression_tracking_urls = [url]
 
         get(:index, @params)
         response.body.should include(image_tag(url, :style => 'display:none;'))
@@ -73,7 +73,7 @@ describe FullscreenAdController do
       context 'with third party tracking URLs' do
         it 'should generate hidden image tags' do
           url = "https://dummyurl.com"
-          @offer.third_party_tracking_urls = [url]
+          @offer.impression_tracking_urls = [url]
 
           get(:index, @params)
           response.body.should include(image_tag(url, :style => 'display:none;'))

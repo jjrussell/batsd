@@ -175,13 +175,6 @@ class Offer < ActiveRecord::Base
       record.errors.add(attribute, "cannot be enabled without valid store id")
     end
   end
-  validates_each :third_party_tracking_urls do |record, attribute, value|
-    begin
-      value.each { |url| raise 'error' if URI.parse(url).scheme != 'https' }
-    rescue
-      record.errors.add(attribute, "must all be valid ssl (https://) urls")
-    end
-  end
 
   before_validation :update_payment
   before_validation :set_reseller_from_partner, :on => :create
@@ -248,7 +241,7 @@ class Offer < ActiveRecord::Base
   memoize :get_device_types, :get_screen_layout_sizes, :get_countries, :get_dma_codes,
     :get_regions, :get_approved_sources, :get_carriers, :get_cities
 
-  serialize :third_party_tracking_urls, Array
+  serialize :impression_tracking_urls, Array
 
   def clone
     return super if new_record?
@@ -262,16 +255,16 @@ class Offer < ActiveRecord::Base
     end
   end
 
-  def third_party_tracking_urls=(urls)
+  def impression_tracking_urls=(urls)
     super(urls.select{ |url| url.present? })
   end
 
-  def third_party_tracking_urls
-    self.third_party_tracking_urls = [] if super.nil?
+  def impression_tracking_urls
+    self.impression_tracking_urls = [] if super.nil?
     super.sort
   end
 
-  def third_party_tracking_urls_was
+  def impression_tracking_urls_was
     ret_val = super
     return [] if ret_val.nil?
     ret_val
@@ -695,6 +688,7 @@ class Offer < ActiveRecord::Base
     !%w(App ActionOffer SurveyOffer).include?(item_type) || Offer::Rejecting::TAPJOY_GAMES_RETARGETED_OFFERS.include?(item_id)
   end
 
+<<<<<<< HEAD
   def video_button_tracking_offers
     @video_button_tracking_offers || []
   end
@@ -702,6 +696,14 @@ class Offer < ActiveRecord::Base
   def update_video_button_tracking_offers
     return unless item_type == 'VideoOffer'
     @video_button_tracking_offers = item.video_buttons.enabled.ordered.collect(&:tracking_offer).compact
+=======
+  def queue_impression_tracking_requests(request)
+    now = Time.zone.now.to_i.to_s
+    impression_tracking_urls.each do |url|
+      message = { :url => url.gsub("[timestamp]", now), :headers => request.http_headers, :orig_url => request.url }
+      Sqs.send_message(QueueNames::THIRD_PARTY_TRACKING, Base64::encode64(Marshal.dump(message)))
+    end
+>>>>>>> s/third_party_tracking/impression_tracking/g
   end
 
   private

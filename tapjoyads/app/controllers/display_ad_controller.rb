@@ -234,7 +234,7 @@ class DisplayAdController < ApplicationController
     end
   end
 
-  def queue_third_party_tracking
-    @offer.queue_third_party_tracking_requests(request)
+  def queue_impression_tracking
+    @offer.queue_impression_tracking_requests(request)
   end
 end

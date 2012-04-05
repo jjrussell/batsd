@@ -1,4 +1,4 @@
-class AddImpressionTrackingUrlsToOffer < ActiveRecord::Migration
+class AddThirdPartyTrackingUrlsToOffer < ActiveRecord::Migration
   def self.up
     add_column :offers, :impression_tracking_urls, :text
   end

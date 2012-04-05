@@ -185,4 +185,9 @@ class GetOffersController < ApplicationController
     end
     params[:library_version] == 'server'
   end
+
+  def queue_impression_tracking
+    @offer_list.each { |offer| offer.queue_impression_tracking_requests(request) }
+  end
+
 end
