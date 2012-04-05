@@ -66,11 +66,24 @@
 
       xhr.onreadystatechange = function(e){
         if(xhr.readyState === 4){
-          callback(xhr.responseText, uri);
+          callback(xhr.responseText, uri, xhr.status);
         }
       };
 
       xhr.send(null);
+    },
+
+    getKeys: function(object) {
+      var keys = [],
+          property;
+
+      for(property in object){
+        if(object.hasOwnProperty(property)){
+          keys.push(property);
+        }
+      }
+
+      return keys;
     },
 
     inject: function(text, extension, uri, options){
@@ -130,6 +143,15 @@
         }
       }
     },
+    
+    log: function(message){
+      // get around YUI compressor
+      var c = window.console;
+
+      if(c && c.log){
+        c.log(message);
+      }
+    },
 
     require: function(unknown, callback){
 
@@ -181,11 +203,24 @@
         // store file total
         stash.files = options.wait = options.files.length;
 
+        // internal property for validating file types
+        var valid = stash.getKeys(options.typesMap).join('|');
+
         setTimeout(function(){
           // where the magic happens
           stash.each(options.files, function(file){
+
+            if(String(file).match(valid) === null){
+              // manage count
+              options.wait--
+              // print error
+              stash.log('Error: File was not loaded because of structure - {filename}-{digest}.{ext}.\nResource: ' + file);
+              // move to next
+              return;
+            }
+              
             var regexResult = options.versionRegex.exec(file),
-                logicalURI = regexResult[1] + "." + regexResult[3],
+                logicalURI = regexResult[1] + '.' + regexResult[3],
                 key = options.prefix + logicalURI,
                 hash = regexResult[2],
                 extension = regexResult[3],
@@ -197,19 +232,24 @@
               stash.inject(storage.content, extension, null, options);
             }else{
               // fetch uncached file
-              stash.fetch(file, function(text, uri){
-                // create new entry -> path/file + extension. We remove the digest from the filename and store it as our hash property.
-                localStorage.setItem(key,
-                  // create new storage object with hash + content
-                  JSON.stringify({
-                    // versioning hash <- extracted from filename
-                    hash: hash,
-                    // file contents
-                    content: text
-                  })
-                );
+              stash.fetch(file, function(text, uri, status){
+                // check for errors
+                if(status === 404){
+                  stash.log('Error: 404\nCould not load resource: ' + uri);
+                }else{
+                  // create new entry -> path/file + extension. We remove the digest from the filename and store it as our hash property.
+                  localStorage.setItem(key,
+                    // create new storage object with hash + content
+                    JSON.stringify({
+                      // versioning hash <- extracted from filename
+                      hash: hash,
+                      // file contents
+                      content: text
+                    })
+                  );
 
-                stash.inject(text, extension, uri, options);
+                  stash.inject(text, extension, uri, options);
+                }
               });
             }
           });

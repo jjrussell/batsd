@@ -22,10 +22,12 @@
     = embed_js "marketplace/cache"
     = embed_js "marketplace/preload"
 
+    - css_cache "marketplace/locale/#{I18n.locale.to_s}.css", true if ['de', 'es', 'fr', 'ja', 'ko', 'zh'].include? I18n.locale.to_s
     - css_cache 'marketplace/style-master', true
-
-    - js_cache 'tjm', true
     
+    - js_cache 'tjm', true
+    - js_cache! "#{games_translations_path(:language_code => I18n.locale)}", true
+
     = yield :preload_images
 
     /[if lt IE 9]
@@ -67,7 +69,6 @@
     :javascript
       window.ENVIRONMENT = "#{Rails.env}";
 
-    %script{ :type => 'text/javascript', :charset => 'utf-8', :src => games_translations_path(:language_code => I18n.locale) }
     %script{ :type => 'text/javascript', :charset => 'utf-8' }
 
     :javascript
