@@ -169,7 +169,7 @@ class Offer < ActiveRecord::Base
       record.errors.add(attribute, "cannot be enabled without valid store id")
     end
   end
-  validates_each :third_party_tracking_urls do |record, attribute, value|
+  validates_each :impression_tracking_urls do |record, attribute, value|
     trusted_vendors = %w(phluantmobile.net)
     value.each do |url|
       uri = URI.parse(url) rescue (record.errors.add(attribute, "must all be valid urls") and return)
@@ -245,7 +245,7 @@ class Offer < ActiveRecord::Base
   memoize :get_device_types, :get_screen_layout_sizes, :get_countries, :get_dma_codes,
     :get_regions, :get_approved_sources, :get_carriers, :get_cities
 
-  serialize :third_party_tracking_urls, Array
+  serialize :impression_tracking_urls, Array
 
   def clone
     return super if new_record?
@@ -259,16 +259,16 @@ class Offer < ActiveRecord::Base
     end
   end
 
-  def third_party_tracking_urls=(urls)
+  def impression_tracking_urls=(urls)
     super(urls.select{ |url| url.present? })
   end
 
-  def third_party_tracking_urls
-    self.third_party_tracking_urls = [] if super.nil?
+  def impression_tracking_urls
+    self.impression_tracking_urls = [] if super.nil?
     super.sort
   end
 
-  def third_party_tracking_urls_was
+  def impression_tracking_urls_was
     ret_val = super
     return [] if ret_val.nil?
     ret_val
@@ -692,9 +692,9 @@ class Offer < ActiveRecord::Base
     !%w(App ActionOffer SurveyOffer).include?(item_type) || Offer::Rejecting::TAPJOY_GAMES_RETARGETED_OFFERS.include?(item_id)
   end
 
-  def queue_third_party_tracking_requests(request)
+  def queue_impression_tracking_requests(request)
     now = Time.zone.now.to_i.to_s
-    third_party_tracking_urls.each do |url|
+    impression_tracking_urls.each do |url|
       message = { :url => url.gsub("[timestamp]", now), :headers => request.http_headers, :orig_url => request.url }
       Sqs.send_message(QueueNames::THIRD_PARTY_TRACKING, Base64::encode64(Marshal.dump(message)))
     end

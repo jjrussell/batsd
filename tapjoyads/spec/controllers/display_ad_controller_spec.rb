@@ -127,7 +127,7 @@ describe DisplayAdController do
       end
 
       it 'should queue up tracking url calls' do
-        @offer.expects(:queue_third_party_tracking_requests).once
+        @offer.expects(:queue_impression_tracking_requests).once
 
         get(:index, @params)
       end
@@ -188,7 +188,7 @@ describe DisplayAdController do
       context 'with third party tracking URLs' do
         it 'should generate hidden image tags' do
           url = "https://dummyurl.com"
-          @offer.third_party_tracking_urls = [url]
+          @offer.impression_tracking_urls = [url]
 
           get(:webview, @params)
           response.body.should include(image_tag(url, :style => 'display:none;'))

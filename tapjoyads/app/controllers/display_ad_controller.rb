@@ -1,7 +1,7 @@
 class DisplayAdController < ApplicationController
 
   before_filter :set_device_type, :lookup_udid, :set_publisher_user_id, :setup, :except => :image
-  after_filter :queue_third_party_tracking, :only => :index
+  after_filter :queue_impression_tracking, :only => :index
 
   def index
   end
@@ -233,7 +233,7 @@ class DisplayAdController < ApplicationController
     end
   end
 
-  def queue_third_party_tracking
-    @offer.queue_third_party_tracking_requests(request)
+  def queue_impression_tracking
+    @offer.queue_impression_tracking_requests(request)
   end
 end

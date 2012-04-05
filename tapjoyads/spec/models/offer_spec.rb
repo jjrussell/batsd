@@ -251,7 +251,7 @@ describe Offer do
                                   'cookie_tracking', 'min_os_version', 'screen_layout_sizes',
                                   'interval', 'banner_creatives', 'dma_codes', 'regions',
                                   'wifi_only', 'approved_sources', 'approved_banner_creatives',
-                                  'sdkless', 'carriers', 'cities'
+                                  'sdkless', 'carriers', 'cities', 'impression_tracking_urls'
                                 ].sort
   end
 
@@ -955,21 +955,21 @@ describe Offer do
     end
   end
 
-  describe ".queue_third_party_tracking_requests" do
+  describe ".queue_impression_tracking_requests" do
     it "should send the proper messages to the queue" do
       request = Object.new
       request.stubs(:http_headers).returns({'User-Agent' => 'Bob'})
       request.stubs(:url).returns('http://williamshat.com')
 
       urls = ['https://dummyurl.com', 'https://example.com']
-      @offer.third_party_tracking_urls = urls
+      @offer.impression_tracking_urls = urls
 
       urls.each do |url|
         message = { :url => url, :headers => request.http_headers, :orig_url => request.url }
         Sqs.expects(:send_message).with(QueueNames::THIRD_PARTY_TRACKING, Base64::encode64(Marshal.dump(message))).once
       end
 
-      @offer.queue_third_party_tracking_requests(request)
+      @offer.queue_impression_tracking_requests(request)
     end
   end
 end

@@ -673,6 +673,10 @@ ActiveRecord::Schema.define(:version => 20120328111003) do
     t.string   "tracking_for_type"
     t.string   "tracking_for_id",                   :limit => 36
     t.text     "cities",                                                                                           :null => false
+<<<<<<< HEAD
+=======
+    t.text     "impression_tracking_urls"
+>>>>>>> s/third_party_tracking/impression_tracking/g
   end
 
   add_index "offers", ["id"], :name => "index_offers_on_id", :unique => true
