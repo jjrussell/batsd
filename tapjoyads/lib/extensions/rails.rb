@@ -6,29 +6,29 @@
 #   limited_route.resources :some_resource
 # end
 #
-module ActionController
-  module Routing
+# module ActionController
+#   module Routing
 
-    class RouteSet
-      alias_method :orig_extract_request_environment, :extract_request_environment
+#     class RouteSet
+#       alias_method :orig_extract_request_environment, :extract_request_environment
 
-      def extract_request_environment(request)
-        orig_extract_request_environment(request).merge({ :host => request.host })
-      end
-    end
+#       def extract_request_environment(request)
+#         orig_extract_request_environment(request).merge({ :host => request.host })
+#       end
+#     end
 
-    class Route
-      alias_method :orig_recognition_conditions, :recognition_conditions
+#     class Route
+#       alias_method :orig_recognition_conditions, :recognition_conditions
 
-      def recognition_conditions
-        result = orig_recognition_conditions
-        result << "conditions[:hosts].include?(env[:host])" if conditions[:hosts] && Rails.env.production?
-        result
-      end
-    end
+#       def recognition_conditions
+#         result = orig_recognition_conditions
+#         result << "conditions[:hosts].include?(env[:host])" if conditions[:hosts] && Rails.env.production?
+#         result
+#       end
+#     end
 
-  end
-end
+#   end
+# end
 
 #
 # This adds a _with_time logging method for each log severity level.
@@ -83,16 +83,14 @@ module ActiveRecord
 
   class Base
 
-    # See https://rails.lighthouseapp.com/projects/8994/tickets/2919
-    # allows [attribute]_changed? to behave as expected after cloning a model instance
-    if Rails.version == "2.3.14"
-      def clone
-        attrs = clone_attributes # original version is 'attrs = clone_attributes(:read_attribute_before_type_cast)'
-        attrs.delete(self.class.primary_key)
-        record = self.class.new
-        record.attributes = attrs # original version is 'record.send :instance_variable_set, '@attributes', attrs'
-        record
-      end
+    # TODO: Investigate. Monkey-patched during merge of rails3 and master
+    # in order to handle this before_filter in ApplicationController:
+    # def set_readonly_db
+    #   ActiveRecord::Base.readonly = Rails.configuration.db_readonly_hostnames.include?(request.host_with_port)
+    # end
+    cattr_accessor :readonly
+    def self.readonly?
+      readonly
     end
 
     # ensure API servers are readonly

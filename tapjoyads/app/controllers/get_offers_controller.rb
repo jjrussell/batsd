@@ -9,7 +9,7 @@ class GetOffersController < ApplicationController
 
   after_filter :save_web_request
   after_filter :save_impressions, :only => [:index, :webpage]
-  after_filter :queue_third_party_tracking, :only => :index
+  after_filter :queue_impression_tracking, :only => :index
 
   def webpage
     if @currency.get_test_device_ids.include?(params[:udid])
@@ -178,8 +178,8 @@ class GetOffersController < ApplicationController
     params[:library_version] == 'server'
   end
 
-  def queue_third_party_tracking
-    @offer_list.each { |offer| offer.queue_third_party_tracking_requests(request) }
+  def queue_impression_tracking
+    @offer_list.each { |offer| offer.queue_impression_tracking_requests(request) }
   end
 
 end
