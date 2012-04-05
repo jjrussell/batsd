@@ -16,6 +16,6 @@ class Job::QueueThirdPartyTrackingController < Job::SqsReaderController
     sess = Patron::Session.new
     response = sess.get(message[:url], headers)
 
-    raise "Error hitting third party tracking url" unless response.status == 200
+    raise "Error hitting third party tracking url: #{message[:url]}" unless response.status == 200
   end
 end

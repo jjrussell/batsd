@@ -170,11 +170,14 @@ class Offer < ActiveRecord::Base
     end
   end
   validates_each :third_party_tracking_urls do |record, attribute, value|
-    # wrap in begin...rescue because URI.parse will fail if url is of an invalid format
-    begin
-      value.each { |url| raise 'error' if URI.parse(url).scheme != 'https' }
-    rescue
-      record.errors.add(attribute, "must all be valid ssl (https://) urls")
+    trusted_vendors = %w(phluantmobile.net)
+    value.each do |url|
+      uri = URI.parse(url) rescue (record.errors.add(attribute, "must all be valid urls") and return)
+      unless uri.hostname =~ /(^|\.)(#{trusted_vendors.join('|').gsub('.','\\.')})$/
+        vendors_list = trusted_vendors.to_sentence(:two_words_connector => ' or ', :last_word_connector => ', or ')
+        record.errors.add(attribute, "must all use a trusted vendor (#{vendors_list})")
+        return
+      end
     end
   end
 
@@ -690,8 +693,9 @@ class Offer < ActiveRecord::Base
   end
 
   def queue_third_party_tracking_requests(request)
+    now = Time.zone.now.to_i.to_s
     third_party_tracking_urls.each do |url|
-      message = { :url => url, :headers => request.http_headers, :orig_url => request.url }
+      message = { :url => url.gsub("[timestamp]", now), :headers => request.http_headers, :orig_url => request.url }
       Sqs.send_message(QueueNames::THIRD_PARTY_TRACKING, Base64::encode64(Marshal.dump(message)))
     end
   end
