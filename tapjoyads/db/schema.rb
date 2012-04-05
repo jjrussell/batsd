@@ -68,9 +68,9 @@ ActiveRecord::Schema.define(:version => 20120328111003) do
     t.string   "categories"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "papaya_user_count"
     t.integer  "thumbs_up",                         :default => 0
     t.integer  "thumbs_down",                       :default => 0
-    t.integer  "papaya_user_count"
     t.text     "countries_blacklist"
   end
 
