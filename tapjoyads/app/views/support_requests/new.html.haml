@@ -9,7 +9,7 @@
     %p= t('text.support.instructions_1', :currency => @currency.name)
 
   - if @incomplete_offers.nil?
-    = button_to(t('text.games.contact_support.select_offer_button'), request.url, :id => 'show_offers')
+    = button_to(t('text.games.contact_support_select_offer_button'), request.url, :id => 'show_offers')
 
   - form_tag({ :action => :create }, :id => 'support_request') do
     - [ :udid, :publisher_user_id, :currency_id, :app_id, :device_type, :language_code ].each do |field|
