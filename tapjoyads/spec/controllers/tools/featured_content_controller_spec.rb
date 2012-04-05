@@ -87,22 +87,7 @@ describe Tools::FeaturedContentsController do
         end
 
         it 'flashes an error' do
-          request.session[:flash][:error].should =~ /select at least one platform/
-        end
-
-        it 'renders tools/featured_content/new' do
-          response.should render_template('tools/featured_contents/new')
-        end
-      end
-
-      context 'when platforms only contain part of iOS platforms' do
-        before :each do
-          @options[:featured_content][:platforms] = %w( iphone )
-          post 'create', @options
-        end
-
-        it 'flashes an error' do
-          request.session[:flash][:error].should =~ /select at least one platform/
+          assigns[:featured_content].errors[:platforms].join.should == "can't be blank"
         end
 
         it 'renders tools/featured_content/new' do
@@ -196,22 +181,7 @@ describe Tools::FeaturedContentsController do
         end
 
         it 'flashes an error' do
-          request.session[:flash][:error].should =~ /select at least one platform/
-        end
-
-        it 'renders tools/featured_content/edit' do
-          response.should render_template('tools/featured_contents/edit')
-        end
-      end
-
-      context 'when platforms only contain part of iOS platforms' do
-        before :each do
-          @options[:featured_content][:platforms] = %w( iphone )
-          put 'update', @options
-        end
-
-        it 'flashes an error' do
-          request.session[:flash][:error].should =~ /select at least one platform/
+          assigns[:featured_content].errors[:platforms].join.should == "can't be blank"
         end
 
         it 'renders tools/featured_content/edit' do
