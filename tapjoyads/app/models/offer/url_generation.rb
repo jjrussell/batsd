@@ -280,4 +280,9 @@ module Offer::UrlGeneration
       "#{params[:udid]}.#{item_id_str}"
     end
   end
+
+  def image_hash(currency)
+    currency_string = "#{currency.get_visual_reward_amount(self)}.#{currency.name}" if !currency.blank?
+    Digest::MD5.hexdigest("#{currency_string}.#{name}.#{Offer.hashed_icon_id(icon_id)}")
+  end
 end
