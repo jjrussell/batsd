@@ -10,7 +10,7 @@ class Job::QueueThirdPartyTrackingController < Job::SqsReaderController
 
     # simulate an <img> pixel tag client-side web call...
     # we lose cookie functionality, unless we implement cookie storage on our end...
-    headers = message[:headers].keep { |k,v| %w(User-Agent X-Do-Not-Track DNT).include? k }
+    headers = message[:headers].slice('User-Agent', 'X-Do-Not-Track', 'DNT')
     headers['Referer'] = message[:orig_url]
 
     sess = Patron::Session.new
