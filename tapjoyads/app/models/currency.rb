@@ -251,6 +251,10 @@ class Currency < ActiveRecord::Base
     conversion_rate > 0
   end
 
+  def approve!
+    self.approval.approve!(true)
+  end
+
   private
   def cache_by_app_id
     currencies = Currency.find_all_by_app_id(app_id, :order => 'ordinal ASC').each { |c| c.run_callbacks(:before_cache) }
