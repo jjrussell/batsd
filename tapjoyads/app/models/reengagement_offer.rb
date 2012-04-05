@@ -47,12 +47,11 @@ class ReengagementOffer < ActiveRecord::Base
     save!
   end
 
-  def self.resolve(app, currencies, params, geoip_data)
+  def self.resolve(app, currencies, reengagement_offers, params, geoip_data)
     device = Device.new(:key => params[:udid])
-    reengagement_offers = app.reengagement_campaign_from_cache
     reengagement_offer = reengagement_offers.detect{ |r| !device.has_app?(r.id) }
 
-    if reengagement_offer && reengagement_offer.should_show?(device, reengagement_offers)
+    if reengagement_offer.try(:should_show?, device, reengagement_offers)
       device.set_last_run_time!(reengagement_offer.id)
       reengagement_offer.reward(device, params, geoip_data)
       return reengagement_offer
