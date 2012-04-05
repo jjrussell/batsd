@@ -183,6 +183,7 @@ class Offer < ActiveRecord::Base
     end
   end
   validates_each :third_party_tracking_urls do |record, attribute, value|
+    # wrap in begin...rescue because URI.parse will fail if url is of an invalid format
     begin
       value.each { |url| raise 'error' if URI.parse(url).scheme != 'https' }
     rescue
