@@ -31,7 +31,7 @@ module Offer::Rejecting
     [ '7df94075-16c9-4c6a-a170-50e1e8fc9991', '3712bd73-eda2-4ca9-934a-3465cf38ef35' ] => [ '7df94075-16c9-4c6a-a170-50e1e8fc9991', '3712bd73-eda2-4ca9-934a-3465cf38ef35' ],
     # Top Girl
     [ 'c7b2a54e-8faf-4959-86ab-e862473c9dd4', '9f47822c-2183-4969-98b1-ce64430e4e58' ] => [ 'c7b2a54e-8faf-4959-86ab-e862473c9dd4', '9f47822c-2183-4969-98b1-ce64430e4e58' ],
-    # Adperio
+    # Saving Star
     [ 'c2ef96ba-5c6b-4479-bffa-9b1beca08f1b', '1d63a4fa-82ed-4442-955c-ef0d75978fad' ] => [ 'c2ef96ba-5c6b-4479-bffa-9b1beca08f1b', '1d63a4fa-82ed-4442-955c-ef0d75978fad' ],
   }
 
