@@ -7,7 +7,7 @@ class OneOffs
         begin
           hashed_mac = Digest::SHA1.hexdigest(Device.formatted_mac_address(device.mac_address))
           device_identifier = DeviceIdentifier.new(:key => hashed_mac)
-          unless device_identifier.udid == device_identifier.id
+          unless device_identifier.udid == device.key
             device_identifier.udid = device.key
             device_identifier.save!
           end

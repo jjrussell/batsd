@@ -1,6 +1,8 @@
 class Partner < ActiveRecord::Base
   include UuidPrimaryKey
 
+  json_set_field :promoted_offers
+
   has_many :orders
   has_many :payouts
   has_many :currencies
@@ -68,7 +70,7 @@ class Partner < ActiveRecord::Base
 
   before_validation :remove_whitespace_from_attributes, :update_rev_share
   before_save :check_billing_email
-  after_save :update_currencies, :update_offers
+  after_save :update_currencies, :update_offers, :recache_currencies
 
   cattr_reader :per_page
   attr_protected :exclusivity_level_type, :exclusivity_expires_on, :premier_discount
@@ -305,6 +307,20 @@ class Partner < ActiveRecord::Base
     end
   end
 
+  def offers_for_promotion
+    available_offers = { :android => [], :iphone => [], :windows => [] }
+    self.offers.each do |offer|
+      platform = offer.promotion_platform
+      available_offers[platform].push(offer) if platform.present? && offer.can_be_promoted?
+    end
+    available_offers
+  end
+
+  def update_promoted_offers(offer_ids)
+    self.promoted_offers = offer_ids.sort
+    changed? ? save : true
+  end
+
 private
 
   def update_currencies
@@ -325,6 +341,10 @@ private
       offers.each(&:set_reseller_from_partner)
     end
     offers.each(&:save!)
+  end
+
+  def recache_currencies
+    currencies.each { |c| c.cache }
   end
 
   def update_rev_share
