@@ -66,6 +66,7 @@ GEM
     childprocess (0.3.1)
       ffi (~> 1.0.6)
     coderay (1.0.5)
+    country-select (1.1.1)
     crack (0.1.8)
     cucumber (1.1.9)
       builder (>= 2.1.2)
@@ -287,6 +288,7 @@ DEPENDENCIES
   authlogic!
   aws-sdk (= 1.1.4)
   capybara
+  country-select
   cucumber-rails
   curbit (= 0.2.0)
   daemons (= 1.0.10)

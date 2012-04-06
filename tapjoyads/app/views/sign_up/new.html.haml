@@ -7,7 +7,7 @@
   = succeed '!' do
     = link_to('website', WEBSITE_URL)
 
-- form_for(:user, @user, :url => { :action => :create }, :html => { :method => :post, :class => 'tjform' }) do |f|
+= form_for @user, :url => { :action => :create }, :html => { :method => :post, :class => 'tjform' } do |f|
   %table
     %tr
       %th
