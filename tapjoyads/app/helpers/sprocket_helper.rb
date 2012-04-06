@@ -49,7 +49,7 @@ module SprocketHelper
   def all_requires
     @require_arrays ||= {}
 
-    (@require_arrays['css'] || []).concat (@require_arrays['js'] || [])
+    (@require_arrays['css'] || []).concat(@require_arrays['js'] || [])
   end
 
   def path_for(src, ext, use_cdn = true)

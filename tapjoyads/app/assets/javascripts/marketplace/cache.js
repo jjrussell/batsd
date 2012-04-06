@@ -175,7 +175,7 @@
               'js': 'script',
               'css': 'style'
             },
-            // versioning regex: [complete, name, version, extension]
+            // versioning regex: [complete, name, md5 digest, extension] - ex: file-1333661824.js
             versionRegex: /(.*)-([\s\S]+).(js|css)/
           };
 
@@ -209,7 +209,8 @@
         setTimeout(function(){
           // where the magic happens
           stash.each(options.files, function(file){
-
+            
+            // check if valid file
             if(String(file).match(valid) === null){
               // manage count
               options.wait--
