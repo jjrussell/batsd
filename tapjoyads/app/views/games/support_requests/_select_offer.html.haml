@@ -5,5 +5,5 @@
     = select_tag :click_id, options_for_select(clicks_list, params[:click_id].present? ? params[:click_id] : clicks_list.first.id)
 - else
   .field.mb20
-    = label_tag 'no_incomplete_offers', t('text.games.contact_support.no_incomplete_offers_label')
+    = label_tag 'no_incomplete_offers', t('text.games.contact_support_no_incomplete_offers_label')
 = hidden_field_tag :clicks_list, clicks_list.to_json
