@@ -159,7 +159,7 @@ module Offer::UrlGeneration
 
     now = Time.now.to_i.to_s
     click_tracking_urls.each do |url|
-      click_url = url.sub('[destination_url]', click_url).gsub('[timestamp]', now)
+      click_url = url.sub('[destination]', click_url).gsub('[timestamp]', now)
     end
 
     click_url
