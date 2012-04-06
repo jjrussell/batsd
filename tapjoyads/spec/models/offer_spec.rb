@@ -237,8 +237,6 @@ describe Offer do
     offer = Offer.for_offer_list.find(@offer.id)
     fetched_cols = offer.attribute_names & Offer.column_names
 
-    pending "hard-coding list from master during rebase"
-
     (fetched_cols & Offer::OFFER_LIST_EXCLUDED_COLUMNS).should == []
     fetched_cols.sort.should == [ 'id', 'item_id', 'item_type', 'partner_id',
                                   'name', 'url', 'price', 'bid', 'payment',
@@ -254,7 +252,7 @@ describe Offer do
                                   'interval', 'banner_creatives', 'dma_codes', 'regions',
                                   'wifi_only', 'approved_sources', 'approved_banner_creatives',
                                   'sdkless', 'carriers', 'cities', 'impression_tracking_urls',
-                                  'click_tracking_urls', 'conversion_tracking_urls'
+                                  'click_tracking_urls'
                                 ].sort
   end
 
