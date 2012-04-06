@@ -160,10 +160,7 @@ class TapjoyMailer < ActionMailer::Base
   end
 
   def partner_signup(email_address)
-    from 'Tapjoy <noreply@tapjoy.com>'
-    recipients email_address
-    content_type 'text/html'
-    subject 'Thanks for signing up with Tapjoy!'
+    mail :to => email_address, :subject => 'Thanks for signing up with Tapjoy!'
   end
 
   def resolve_support_requests(user_email, mass_resolve_results, upload_time)

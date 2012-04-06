@@ -4,8 +4,8 @@ Tapjoyad::Application.routes.draw do
   match 'tos-advertiser.html' => 'documents#tos_advertiser'
   match 'tos-publisher.html' => 'documents#tos_publisher'
   match 'publisher-guidelines.html' => 'documents#publisher_guidelines'
-  resource :sign_up, :only => :create
-  match 'register' => 'sign_up#new', :as => :register
+  get 'register' => 'sign_up#new', :as => :register
+  post 'register' => 'sign_up#create'
   match 'login' => 'user_sessions#new', :as => :login
   match 'logout' => 'user_sessions#destroy', :as => :logout
   resources :password_resets, :only => [:new, :create, :edit, :update]
@@ -183,6 +183,7 @@ Tapjoyad::Application.routes.draw do
   match 'search/offers' => 'search#offers', :as => :search_offers
   match 'search/users' => 'search#users', :as => :search_users
   match 'search/partners' => 'search#partners', :as => :search_partners
+  match 'search/currencies' => 'search#currencies', :as => :search_currencies
   match 'premier' => 'premier#edit', :as => :premier
   resources :survey_results, :only => [:new, :create]
   resources :tools, :only => :index do

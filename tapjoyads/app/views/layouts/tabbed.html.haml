@@ -80,13 +80,13 @@
         - flash.each do |name, msg|
           .flash{ :id => "flash_#{name}", :title => "Click to dismiss this message" }
             %strong #{name.to_s.humanize}:
-            = msg
+            = raw msg
         - [:error, :warning, :notice].each do |name|
           - if flash[name].blank?
             .flash.hidden{ :id => "flash_#{name}", :title => "Click to dismiss this message" }
               %strong #{name.to_s.humanize}:
               %span.message &nbsp;
-        = content_for_exists?(:apps_layout) ? yield(:apps_layout) : yield
+        = content_for?(:apps_layout) ? yield(:apps_layout) : yield
         .clear
 
       #footer

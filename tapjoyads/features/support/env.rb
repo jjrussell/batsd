@@ -3,6 +3,7 @@ require 'spork'
 
 Spork.prefork do
   require 'cucumber/rails'
+  require 'authlogic/test_case'
 
   Capybara.default_selector = :css
   ActionController::Base.allow_rescue = false
