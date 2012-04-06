@@ -61,6 +61,11 @@ describe Games::SupportRequestsController do
         support_request = SupportRequest.select(:where =>"udid = '#{@device.key}'")
         puts "Support Request: #{support_request.inspect}"
       end
+
+      it 'sends a customer service email' do
+        GamesMailer.expects(:deliver_contact_support).once
+        post :create, @params
+      end
     end
   end
 
