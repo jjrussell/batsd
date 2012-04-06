@@ -263,9 +263,13 @@ class Offer < ActiveRecord::Base
     super(urls.select{ |url| url.present? })
   end
 
-  def impression_tracking_urls
+  def impression_tracking_urls(replace_macros = false)
     self.impression_tracking_urls = [] if super.nil?
-    super.sort
+    urls = super.sort
+
+    now = Time.zone.now.to_i.to_s
+    urls = urls.collect { |url| url.gsub("[timestamp]", now) } if replace_macros
+    urls
   end
 
   def impression_tracking_urls_was
@@ -693,9 +697,8 @@ class Offer < ActiveRecord::Base
   end
 
   def queue_impression_tracking_requests(request)
-    now = Time.zone.now.to_i.to_s
-    impression_tracking_urls.each do |url|
-      message = { :url => url.gsub("[timestamp]", now), :headers => request.http_headers, :orig_url => request.url }
+    impression_tracking_urls(true).each do |url|
+      message = { :url => url, :headers => request.http_headers, :orig_url => request.url }
       Sqs.send_message(QueueNames::THIRD_PARTY_TRACKING, Base64::encode64(Marshal.dump(message)))
     end
   end
