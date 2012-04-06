@@ -45,7 +45,7 @@ class Tools::ApprovalsController < WebsiteController
   def approve
     json_wrapper do
       @approval.owner = current_user if respond_to?(:current_user)
-      @approval.create? && @approval.item.respond_to?(:approve!) ? @approval.item.approve! : @approval.approve!
+      @approval.item.approve!
     end
   end
 
