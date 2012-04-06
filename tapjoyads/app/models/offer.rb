@@ -177,7 +177,7 @@ class Offer < ActiveRecord::Base
   validates_each :click_tracking_urls do |record, attribute, value|
     record.validate_third_party_tracking_urls(attribute, value)
     value.each do |url|
-      unless url.scan '[destination]' == 1
+      unless (url.scan '[destination]').size == 1
         record.errors.add(attribute, "must each contain \"[destination]\" text only once")
         return
       end
