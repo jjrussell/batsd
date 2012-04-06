@@ -79,6 +79,11 @@ describe Games::SupportRequestsController do
         post :create, @params
         SupportRequest.count(:where =>"gamer_id = '#{@gamer.id}'").should == 1
       end
+
+      it 'sends a customer service email' do
+        GamesMailer.expects(:deliver_contact_support).once
+        post :create, @params
+      end
     end
   end
 
