@@ -238,22 +238,18 @@ describe Offer do
     fetched_cols = offer.attribute_names & Offer.column_names
 
     (fetched_cols & Offer::OFFER_LIST_EXCLUDED_COLUMNS).should == []
-    fetched_cols.sort.should == [ 'id', 'item_id', 'item_type', 'partner_id',
-                                  'name', 'url', 'price', 'bid', 'payment',
-                                  'conversion_rate', 'show_rate', 'self_promote_only',
-                                  'device_types', 'countries',
-                                  'age_rating', 'multi_complete', 'featured',
-                                  'publisher_app_whitelist', 'direct_pay', 'reward_value',
-                                  'third_party_data', 'payment_range_low',
-                                  'payment_range_high', 'icon_id_override', 'rank_boost',
-                                  'normal_bid', 'normal_conversion_rate', 'normal_avg_revenue',
-                                  'normal_price', 'over_threshold', 'rewarded', 'reseller_id',
-                                  'cookie_tracking', 'min_os_version', 'screen_layout_sizes',
-                                  'interval', 'banner_creatives', 'dma_codes', 'regions',
-                                  'wifi_only', 'approved_sources', 'approved_banner_creatives',
-                                  'sdkless', 'carriers', 'cities', 'impression_tracking_urls',
-                                  'click_tracking_urls', 'conversion_tracking_urls'
-                                ].sort
+    fetched_cols.sort.should == ["age_rating", "approved_banner_creatives",
+      "approved_sources", "banner_creatives", "bid", "carriers", "cities",
+      "click_tracking_urls", "conversion_rate", "cookie_tracking", "countries",
+      "device_types", "direct_pay", "dma_codes", "featured", "icon_id_override",
+      "id", "impression_tracking_urls", "interval", "item_id", "item_type",
+      "min_os_version", "multi_complete", "name", "normal_avg_revenue",
+      "normal_bid", "normal_conversion_rate", "normal_price", "over_threshold",
+      "partner_id", "payment", "payment_range_high", "payment_range_low",
+      "price", "publisher_app_whitelist", "rank_boost", "regions", "reseller_id",
+      "reward_value", "rewarded", "screen_layout_sizes", "sdkless",
+      "self_promote_only", "show_rate", "third_party_data", "url", "wifi_only"
+      ].sort
   end
 
   context "with min_bid_override set" do
@@ -972,14 +968,6 @@ describe Offer do
       end
     end
 
-    describe ".queue_click_tracking_requests" do
-      it "should queue up the proper GET requests" do
-        @offer.click_tracking_urls = @urls
-        @urls.each { |url| Downloader.expects(:queue_get_with_retry).with(url, { :headers => @request.http_headers.merge('Referer' => @request.url) }).once }
-
-        @offer.queue_click_tracking_requests(@request)
-      end
-    end
   end
 end
 
