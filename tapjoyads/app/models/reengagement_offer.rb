@@ -48,7 +48,7 @@ class ReengagementOffer < ActiveRecord::Base
   end
 
   def self.resolve(app, currencies, reengagement_offers, params, geoip_data)
-    device = Device.find(params[:udid])
+    device = Device.find(params[:udid])    # change this to '... Device.new(:key => ...)' for testing
     reengagement_offer = reengagement_offers.detect{ |r| !device.has_app?(r.id) } if device
 
     if reengagement_offer.try(:should_show?, device, reengagement_offers)
