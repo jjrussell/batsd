@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120406173403) do
+ActiveRecord::Schema.define(:version => 20120406173403) do # 20120406004520
 
   create_table "action_offers", :id => false, :force => true do |t|
     t.string   "id",                    :limit => 36,                    :null => false
@@ -675,6 +675,7 @@ ActiveRecord::Schema.define(:version => 20120406173403) do
     t.string   "tracking_for_id",                   :limit => 36
     t.text     "cities",                                                                                           :null => false
     t.text     "impression_tracking_urls"
+    t.text     "click_tracking_urls"
   end
 
   add_index "offers", ["id"], :name => "index_offers_on_id", :unique => true
