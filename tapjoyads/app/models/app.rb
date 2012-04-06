@@ -327,6 +327,12 @@ class App < ActiveRecord::Base
     !!(file_size_bytes && file_size_bytes > download_limit)
   end
 
+  def update_promoted_offers(offer_ids)
+    success = true
+    currencies.each { |currency| success &= currency.update_promoted_offers(offer_ids)}
+    success
+  end
+
   def update_offers
     offers.each do |offer|
       offer.partner_id = partner_id

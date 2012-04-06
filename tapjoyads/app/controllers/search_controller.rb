@@ -61,7 +61,7 @@ class SearchController < WebsiteController
     term = params[:term].to_s.strip
 
     if term =~ UUID_REGEX
-      conditions = [ "id = ?", "#{term}" ]
+      conditions = [ "id = ?", term ]
       results = Partner.find(:all,
         :conditions => conditions,
         :include => ['offers', 'users'],
@@ -99,5 +99,30 @@ class SearchController < WebsiteController
     )
 
     render :partial => 'gamers'
+  end
+
+  def currencies
+    term = params[:term].to_s.strip
+
+    if term =~ UUID_REGEX
+      conditions = [ "id = ? OR app_id = ?", term, term ]
+      find_options = {
+        :conditions => conditions,
+        :include => [ :app, :partner ],
+        :limit => 1,
+      }
+      @currencies = Currency.find(:all, find_options)
+    end
+
+    if @currencies.blank?
+      term = "%#{term}%".gsub(' ', '%')
+      find_options = { :include => [ :app, :partner ], :limit => 20 }
+
+      @currencies  = Currency.search_name(term).find(:all, find_options)
+      @currencies |= Currency.search_app_name(term).find(:all, find_options)
+      @currencies |= Currency.search_partner_name(term).find(:all, find_options)
+    end
+
+    render :partial => 'currencies'
   end
 end

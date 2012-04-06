@@ -8,7 +8,7 @@
       images[i].src = arguments[0][i];
     }
   }
-    
+
   window.load = function(fn){
     var onload = window.onload;
 
