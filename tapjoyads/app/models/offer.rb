@@ -173,7 +173,7 @@ class Offer < ActiveRecord::Base
     trusted_vendors = %w(phluantmobile.net)
     value.each do |url|
       uri = URI.parse(url) rescue (record.errors.add(attribute, "must all be valid urls") and return)
-      unless uri.hostname =~ /(^|\.)(#{trusted_vendors.join('|').gsub('.','\\.')})$/
+      unless uri.host =~ /(^|\.)(#{trusted_vendors.join('|').gsub('.','\\.')})$/
         vendors_list = trusted_vendors.to_sentence(:two_words_connector => ' or ', :last_word_connector => ', or ')
         record.errors.add(attribute, "must all use a trusted vendor (#{vendors_list})")
         return
