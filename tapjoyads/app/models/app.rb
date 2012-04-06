@@ -196,7 +196,7 @@ class App < ActiveRecord::Base
       if (data.nil?) # might not be available in the US market
         data = AppStore.fetch_app_by_id(store_id, platform, primary_country)
       end
-    rescue Exception
+    rescue Patron::HostResolutionError, RuntimeError
       return false
     end
     return false if data.nil?
