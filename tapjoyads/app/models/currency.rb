@@ -84,6 +84,7 @@ class Currency < ActiveRecord::Base
   before_create :set_hide_rewarded_app_installs, :set_values_from_partner_and_reseller, :set_promoted_offers
   before_update :update_spend_share
   before_update :reset_to_pending_if_rejected
+  after_update  :approve_on_tapjoy_enabled
   after_cache :cache_by_app_id
   after_cache_clear :clear_cache_by_app_id
 
@@ -251,6 +252,10 @@ class Currency < ActiveRecord::Base
     conversion_rate > 0
   end
 
+  def approve!
+    self.approval.approve!(true)
+  end
+
   private
   def cache_by_app_id
     currencies = Currency.find_all_by_app_id(app_id, :order => 'ordinal ASC').each { |c| c.run_callbacks(:before_cache) }
@@ -292,6 +297,12 @@ class Currency < ActiveRecord::Base
       self.approval.destroy
       new_approval = Approval.new(:item_id => id, :item_type => self.class.name, :event => 'create', :created_at => nil, :updated_at => nil)
       new_approval.save
+    end
+  end
+
+  def approve_on_tapjoy_enabled
+    if self.tapjoy_enabled_changed? && self.tapjoy_enabled_change
+      self.approve!
     end
   end
 end

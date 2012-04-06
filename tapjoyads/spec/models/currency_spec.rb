@@ -470,4 +470,23 @@ describe Currency do
       end
     end
   end
+
+  describe '#approve_on_tapjoy_enabled' do
+    context 'when tapjoy_enabled is toggled true' do
+      it 'will call approve!' do
+        @currency.expects(:approve!).once
+        @currency.tapjoy_enabled =true
+        @currency.run_callbacks(:after_update)
+      end
+    end
+  end
+
+  describe '#approve!' do
+    it 'calls approve!(true) on approval attribute' do
+      mock_approval = mock('approval')
+      mock_approval.expects(:approve!).with(true).once
+      @currency.stubs(:approval).returns(mock_approval)
+      @currency.approve!
+    end
+  end
 end
