@@ -255,19 +255,25 @@ class Offer < ActiveRecord::Base
     end
   end
 
-  def impression_tracking_urls=(urls)
-    super(urls.select{ |url| url.present? })
-  end
+  %w(click_tracking_urls impression_tracking_urls).each do |method_name|
+    define_method method_name do
+      self.send("#{method_name}=", []) if super.nil?
+      urls = super.sort
 
-  def impression_tracking_urls
-    self.impression_tracking_urls = [] if super.nil?
-    super.sort
-  end
+      now = Time.zone.now.to_i.to_s
+      urls = urls.collect { |url| url.gsub("[timestamp]", now) } if replace_macros
+      urls
+    end
 
-  def impression_tracking_urls_was
-    ret_val = super
-    return [] if ret_val.nil?
-    ret_val
+    define_method "#{method_name}=" do |vals|
+      super(vals.select { |val| val.present? })
+    end
+
+    define_method "#{method_name}_was" do
+      ret_val = super
+      return [] if ret_val.nil?
+      ret_val
+    end
   end
 
   def app_offer?
