@@ -245,6 +245,7 @@ class Offer < ActiveRecord::Base
 
   serialize :impression_tracking_urls, Array
   serialize :click_tracking_urls, Array
+  serialize :conversion_tracking_urls, Array
 
   def clone
     return super if new_record?
@@ -258,10 +259,9 @@ class Offer < ActiveRecord::Base
     end
   end
 
-  %w(click_tracking_urls impression_tracking_urls).each do |method_name|
-    define_method method_name do
-      self.send("#{method_name}=", []) if super().nil?
-      urls = super().sort
+  %w(click_tracking_urls impression_tracking_urls conversion_tracking_urls).each do |method_name|
+    define_method method_name do |*args|
+      replace_macros = args.first || false
 
       now = Time.zone.now.to_i.to_s
       urls = urls.collect { |url| url.gsub("[timestamp]", now) }
