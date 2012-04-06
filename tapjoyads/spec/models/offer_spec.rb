@@ -252,7 +252,7 @@ describe Offer do
                                   'interval', 'banner_creatives', 'dma_codes', 'regions',
                                   'wifi_only', 'approved_sources', 'approved_banner_creatives',
                                   'sdkless', 'carriers', 'cities', 'impression_tracking_urls',
-                                  'click_tracking_urls'
+                                  'click_tracking_urls', 'conversion_tracking_urls'
                                 ].sort
   end
 
