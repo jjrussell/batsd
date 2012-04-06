@@ -61,13 +61,30 @@ class Currency < ActiveRecord::Base
   scope :just_app_ids, :select => :app_id, :group => :app_id
   scope :tapjoy_enabled, :conditions => 'tapjoy_enabled'
   scope :udid_for_user_id, :conditions => "udid_for_user_id"
-  scope :external_publishers, :conditions => { :external_publisher => true, :tapjoy_enabled => true }
+  scope :external_publishers, :conditions => "external_publisher and tapjoy_enabled"
+  scope :ordered_by_app_name, :include => [ :app, :partner ], :order => 'apps.name, partners.name'
+  scope :search_name, lambda { |term|
+    { :conditions => [ "tapjoy_enabled and name like ?", term ] }
+  }
+  scope :search_app_name, lambda { |term|
+    {
+      :joins => [ :app ],
+      :conditions => [ "tapjoy_enabled and apps.name like ?", term ]
+    }
+  }
+  scope :search_partner_name, lambda { |term|
+    {
+      :joins => [ :partner ],
+      :conditions => [ "tapjoy_enabled and partners.name like ?", term ]
+    }
+  }
 
   before_validation :sanitize_attributes
   before_validation :assign_default_currency_group, :on => :create
   before_create :set_hide_rewarded_app_installs, :set_values_from_partner_and_reseller, :set_promoted_offers
   before_update :update_spend_share
   before_update :reset_to_pending_if_rejected
+  after_update  :approve_on_tapjoy_enabled
   set_callback :cache, :after, :cache_by_app_id
   set_callback :cache_clear, :after, :clear_cache_by_app_id
 
@@ -235,6 +252,10 @@ class Currency < ActiveRecord::Base
     conversion_rate > 0
   end
 
+  def approve!
+    self.approval.approve!(true)
+  end
+
   private
   def cache_by_app_id
     currencies = Currency.find_all_by_app_id(app_id, :order => 'ordinal ASC').each { |c| c }
@@ -276,6 +297,12 @@ class Currency < ActiveRecord::Base
       self.approval.destroy
       new_approval = Approval.new(:item_id => id, :item_type => self.class.name, :event => 'create', :created_at => nil, :updated_at => nil)
       new_approval.save
+    end
+  end
+
+  def approve_on_tapjoy_enabled
+    if self.tapjoy_enabled_changed? && self.tapjoy_enabled_change
+      self.approve!
     end
   end
 end

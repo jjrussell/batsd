@@ -183,6 +183,7 @@ Tapjoyad::Application.routes.draw do
   match 'search/offers' => 'search#offers', :as => :search_offers
   match 'search/users' => 'search#users', :as => :search_users
   match 'search/partners' => 'search#partners', :as => :search_partners
+  match 'search/currencies' => 'search#currencies', :as => :search_currencies
   match 'premier' => 'premier#edit', :as => :premier
   resources :survey_results, :only => [:new, :create]
   resources :tools, :only => :index do
