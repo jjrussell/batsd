@@ -676,6 +676,7 @@ ActiveRecord::Schema.define(:version => 20120406173403) do
     t.text     "cities",                                                                                           :null => false
     t.text     "impression_tracking_urls"
     t.text     "click_tracking_urls"
+    t.text     "conversion_tracking_urls"
   end
 
   add_index "offers", ["id"], :name => "index_offers_on_id", :unique => true
