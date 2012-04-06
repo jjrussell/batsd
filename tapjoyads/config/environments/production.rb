@@ -4,13 +4,13 @@ Tapjoyads::Application.configure do
 
   routes = case MACHINE_TYPE
            when 'dashboard'
-             %w( dashboard sdk )
+             %w( dashboard api )
            when 'website'
-             %w( website sdk )
+             %w( website api )
            when 'web'
              %w( web legacy )
            else
-             %w( sdk dashboard website web legacy )
+             %w( api dashboard website web legacy )
            end
 
   routes.each do |route|

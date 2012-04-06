@@ -36,7 +36,7 @@ Tapjoyad::Application.configure do
   config.active_support.deprecation = :stderr
   config.time_zone = 'UTC'
 
-  %w( sdk dashboard website web legacy ).each do |route|
+  %w( api dashboard website web legacy ).each do |route|
     config.paths.config.routes << Rails.root.join("config/routes/#{route}.rb")
   end
 end
