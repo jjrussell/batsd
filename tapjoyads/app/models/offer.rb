@@ -256,7 +256,7 @@ class Offer < ActiveRecord::Base
     end
   end
 
-  %w(click_tracking_urls impression_tracking_urls).each do |method_name|
+  %w(click_tracking_urls impression_tracking_urls conversion_tracking_urls).each do |method_name|
     define_method method_name do |*args|
       replace_macros = args.first || false
 
