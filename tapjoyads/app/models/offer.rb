@@ -256,7 +256,9 @@ class Offer < ActiveRecord::Base
   end
 
   %w(click_tracking_urls impression_tracking_urls).each do |method_name|
-    define_method method_name do
+    define_method method_name do |*args|
+      replace_macros = args.first || false
+
       self.send("#{method_name}=", []) if super.nil?
       urls = super.sort
 
@@ -265,8 +267,8 @@ class Offer < ActiveRecord::Base
       urls
     end
 
-    define_method "#{method_name}=" do |vals|
-      super(vals.select { |val| val.present? })
+    define_method "#{method_name}=" do |urls|
+      super(urls.select { |url| url.present? })
     end
 
     define_method "#{method_name}_was" do
