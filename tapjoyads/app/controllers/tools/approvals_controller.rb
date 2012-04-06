@@ -23,6 +23,7 @@ class Tools::ApprovalsController < WebsiteController
 
   def mine
     @conditions[:owner_id] = current_user.id
+    @hide_owner = true
 
     @approvals = Approval.all(:conditions => @conditions, :order => 'created_at ASC')
     render :index
@@ -35,7 +36,7 @@ class Tools::ApprovalsController < WebsiteController
       else
         user = User.find(params[:approval][:owner_id])
         if @approval.assign(user)
-          ApprovalMailer.deliver_assigned(user.email, approval.item_type, mine_tools_approvals_url)
+          ApprovalMailer.deliver_assigned(user.email, @approval.item_type, :url => mine_tools_approvals_url)
         end
       end
     end
@@ -63,7 +64,9 @@ class Tools::ApprovalsController < WebsiteController
       json[:success] = yield
     rescue ActsAsApprovable::Error => e
       json[:message] = e.message
-    rescue
+    rescue => e
+      ::Rails.logger.debug e.message
+      ::Rails.logger.debug e.backtrace.join("\n")
       json[:message] = 'An unknown error occured'
     end
 
@@ -74,8 +77,10 @@ class Tools::ApprovalsController < WebsiteController
     @conditions ||= {}
 
     @conditions[:owner_id] = params[:owner_id] if params[:owner_id].present?
-    @conditions[:item_type] = params[:type].to_s.capitalize if params[:type]
+    @conditions[:item_type] = params[:type].to_s.capitalize if params[:type].present?
     @conditions[:item_type] ||= params[:item_type] if params[:item_type].present?
+
+    @hide_type = params[:type].present?
   end
 
   # Check for the selected models partial, use the generic one if it doesn't exist

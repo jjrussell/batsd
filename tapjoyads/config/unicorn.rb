@@ -25,7 +25,11 @@ preload_app true
 
 # listen on both a Unix domain socket and a TCP port,
 # we use a shorter backlog for quicker failover when busy
-listen("/tmp/tapjoy.socket", :backlog => 2048)
+if server_type == "dev"
+  listen "0.0.0.0:8080"
+else
+  listen("/tmp/tapjoy.socket", :backlog => 2048)
+end
 
 # feel free to point this anywhere accessible on the filesystem
 user 'webuser', 'webuser'  unless server_type == "dev"
@@ -34,12 +38,8 @@ user 'webuser', 'webuser'  unless server_type == "dev"
 FileUtils.mkdir_p("#{app_dir}/pids")
 pid "#{app_dir}/pids/unicorn_#{Process.pid}.pid"
 
-# Use the local logs for dev
-if server_type == "dev"
-  FileUtils.mkdir_p("#{app_dir}/log/unicorn")
-  stderr_path "#{app_dir}/log/unicorn/stderr.log"
-  stdout_path "#{app_dir}/log/unicorn/stdout.log"
-else
+# When in dev, send logs to the console
+unless server_type == "dev"
   stderr_path "/mnt/log/unicorn/stderr.log"
   stdout_path "/mnt/log/unicorn/stdout.log"
 end

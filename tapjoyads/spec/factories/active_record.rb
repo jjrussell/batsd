@@ -2,9 +2,9 @@ FactoryGirl.define do
   factory :user do
     email    { Factory.next(:email) }
     username { |u| u.email }
-    state 'approved'
     password 'asdf'
     password_confirmation 'asdf'
+    country  'earth'
   end
 
   factory :admin, :parent => :user do
@@ -314,7 +314,7 @@ FactoryGirl.define do
 
   factory :featured_content do
     featured_type FeaturedContent::STAFFPICK
-    platforms     %w( iphone ipad itouch ).to_json
+    platforms     %w( iphone itouch ).to_json
     subtitle      'Subtitle'
     title         'Title'
     description   'Description'

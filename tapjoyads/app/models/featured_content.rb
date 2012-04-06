@@ -39,7 +39,7 @@ class FeaturedContent < ActiveRecord::Base
   json_set_field :platforms
 
   def self.featured_contents(platform)
-    platform = 'iphone' unless %w(android iphone windows).include?(platform)
+    platform = 'iphone' unless %w(android iphone itouch ipad windows).include?(platform)
     Mc.get_and_put("featured_contents.#{platform}", false, 1.hour) do
       now = Time.now.utc
       featured_contents =  FeaturedContent.active(now).for_platform(platform) ||
@@ -126,7 +126,8 @@ class FeaturedContent < ActiveRecord::Base
       item = GenericOffer.create(
         :name       => "For_Featured_Content_#{id}",
         :url        => NO_URL,
-        :partner_id => TAPJOY_PARTNER_ID
+        :partner_id => TAPJOY_PARTNER_ID,
+        :category   => 'Other'
       )
       self.offer      = item.primary_offer
       self.button_url = NO_URL

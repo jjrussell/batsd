@@ -145,6 +145,23 @@ class Utils
     puts "moved #{count} orphaned items from #{BucketNames::FAILED_SDB_SAVES}"
   end
 
+  def self.resend_failed_callbacks(currency_id, status)
+    count = 0
+    Reward.select_all(:conditions => "currency_id = '#{currency_id}' and send_currency_status = '#{status}'") do |reward|
+      reward.delete('sent_currency')
+      reward.delete('send_currency_status')
+      begin
+        reward.save!
+      rescue
+        puts "save failed... retrying"
+        sleep 0.1
+        retry
+      end
+      Sqs.send_message(QueueNames::SEND_CURRENCY, reward.key)
+      count += 1
+    end
+    count
+  end
 
   class Memcache
     # Use these functions to facilitate switching memcache servers.
