@@ -19,7 +19,7 @@ class ReengagementRewardsController < ApplicationController
   end
 
   def index
-    verify_params([:udid, :timestamp, :publisher_user_id, :app_id])
+    verify_params([:udid, :publisher_user_id, :app_id])
     @app = App.find_in_cache(params[:app_id])
     @currencies = Currency.find_all_in_cache_by_app_id(params[:app_id]) if @app
     @reengagement_offers = @app.reengagement_campaign_from_cache if @currencies.try(:present?)

@@ -48,8 +48,8 @@ class ReengagementOffer < ActiveRecord::Base
   end
 
   def self.resolve(app, currencies, reengagement_offers, params, geoip_data)
-    device = Device.new(:key => params[:udid])
-    reengagement_offer = reengagement_offers.detect{ |r| !device.has_app?(r.id) }
+    device = Device.find(params[:udid])
+    reengagement_offer = reengagement_offers.detect{ |r| !device.has_app?(r.id) } if device
 
     if reengagement_offer.try(:should_show?, device, reengagement_offers)
       device.set_last_run_time!(reengagement_offer.id)
@@ -61,8 +61,10 @@ class ReengagementOffer < ActiveRecord::Base
   end
 
   def should_show?(device, reengagement_offers)
-    return true if day_number == 0
-    (Time.zone.now - device.last_run_time(reengagement_offers[day_number - 1].id)) / 1.day == 1
+    return true if 0 == day_number
+    previous_reengagement_offer = reengagement_offers.detect { |ro| ro.day_number + 1 == day_number }
+    last_run_time = device.last_run_time(previous_reengagement_offer.id)
+    (Time.zone.now - last_run_time) / 1.day == 1
   end
 
   def update_offers
