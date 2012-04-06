@@ -173,16 +173,8 @@ class Offer < ActiveRecord::Base
       record.errors.add(attribute, "cannot be enabled without valid store id")
     end
   end
-  validates_each :impression_tracking_urls do |record, attribute, value|
-    value.each do |url|
-      uri = URI.parse(url) rescue (record.errors.add(attribute, "must all be valid urls") and break)
-      unless uri.host =~ /(^|\.)(#{TRUSTED_TRACKING_VENDORS.join('|').gsub('.','\\.')})$/
-        vendors_list = TRUSTED_TRACKING_VENDORS.to_sentence(:two_words_connector => ' or ', :last_word_connector => ', or ')
-        record.errors.add(attribute, "must all use a trusted vendor (#{vendors_list})")
-        break
-      end
-    end
-  end
+  # validates_each :impression_tracking_urls do |record, attribute, value| record.validate_third_party_tracking_urls(attribute, value); end
+  # validates_each :click_tracking_urls do |record, attribute, value| record.validate_third_party_tracking_urls(attribute, value); end
 
   before_validation :update_payment
   before_validation :set_reseller_from_partner, :on => :create
@@ -249,6 +241,7 @@ class Offer < ActiveRecord::Base
     :get_regions, :get_approved_sources, :get_carriers, :get_cities
 
   serialize :impression_tracking_urls, Array
+  serialize :click_tracking_urls, Array
 
   def clone
     return super if new_record?
@@ -262,23 +255,25 @@ class Offer < ActiveRecord::Base
     end
   end
 
-  def impression_tracking_urls=(urls)
-    super(urls.select{ |url| url.present? })
-  end
+  %w(click_tracking_urls impression_tracking_urls).each do |method_name|
+    define_method method_name do
+      self.send("#{method_name}=", []) if super().nil?
+      urls = super().sort
 
-  def impression_tracking_urls(replace_macros = false)
-    self.impression_tracking_urls = [] if super().nil?
-    urls = super().sort
+      now = Time.zone.now.to_i.to_s
+      urls = urls.collect { |url| url.gsub("[timestamp]", now) }
+      urls
+    end
 
-    now = Time.zone.now.to_i.to_s
-    urls = urls.collect { |url| url.gsub("[timestamp]", now) } if replace_macros
-    urls
-  end
+    define_method "#{method_name}=" do |vals|
+      super(vals.select { |val| val.present? })
+    end
 
-  def impression_tracking_urls_was
-    ret_val = super
-    return [] if ret_val.nil?
-    ret_val
+    define_method "#{method_name}_was" do
+      ret_val = super
+      return [] if ret_val.nil?
+      ret_val
+    end
   end
 
   def app_offer?
