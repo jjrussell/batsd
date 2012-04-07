@@ -789,6 +789,15 @@ ActiveRecord::Schema.define(:version => 20120406173403) do
   add_index "partners", ["id"], :name => "index_partners_on_id", :unique => true
   add_index "partners", ["reseller_id"], :name => "index_partners_on_reseller_id"
 
+  create_table "payout_confirmations", :id => false, :force => true do |t|
+    t.string   "id",         :limit => 36,                    :null => false
+    t.string   "partner_id", :limit => 36,                    :null => false
+    t.string   "type",                                        :null => false
+    t.boolean  "confirmed",                :default => false, :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "payout_freezes", :id => false, :force => true do |t|
     t.string   "id",          :limit => 36,                   :null => false
     t.boolean  "enabled",                   :default => true, :null => false

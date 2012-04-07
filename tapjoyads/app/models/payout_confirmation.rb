@@ -1,7 +1,13 @@
 class PayoutConfirmation < ActiveRecord::Base
   include UuidPrimaryKey
 
-  CONFIRMATION_TYPES = { 1 => 'Payout Info', 2 => 'Payout Threshold' }
+  belongs_to :partner
 
+  def confirm
+    self.confirmed = true
+  end
 
+  def unconfirm(reason=nil)
+    self.confirmed = false
+  end
 end

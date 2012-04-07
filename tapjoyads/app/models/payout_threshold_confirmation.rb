@@ -1,0 +1,3 @@
+class PayoutThresholdConfirmation < PayoutConfirmation
+
+end

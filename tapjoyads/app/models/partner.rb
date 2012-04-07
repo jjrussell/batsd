@@ -25,11 +25,15 @@ class Partner < ActiveRecord::Base
   belongs_to :sales_rep, :class_name => 'User'
   belongs_to :client
   has_many :earnings_adjustments
+  has_one :payout_info_confirmation
+  has_one :payout_threshold_confirmation
 
   belongs_to :reseller
 
   validates_presence_of :reseller, :if => Proc.new { |partner| partner.reseller_id? }
   validates_presence_of :client, :if => Proc.new { |partner| partner.client_id? }
+#validates_presence_of :payout_info_confirmation
+# validates_presence_of :payout_threshold_confirmation
   validates_numericality_of :balance, :pending_earnings, :next_payout_amount, :only_integer => true, :allow_nil => false
   validates_numericality_of :premier_discount, :greater_than_or_equal_to => 0, :only_integer => true, :allow_nil => false
   validates_numericality_of :rev_share, :transfer_bonus, :direct_pay_share, :max_deduction_percentage, :greater_than_or_equal_to => 0, :less_than_or_equal_to => 1

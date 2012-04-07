@@ -1,0 +1,4 @@
+class PayoutInfoConfirmation < PayoutConfirmation
+
+
+end

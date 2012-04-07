@@ -18,6 +18,8 @@ describe Partner do
     should have_many(:advertiser_conversions)
     should have_many(:monthly_accountings)
     should belong_to(:client)
+    should have_one(:payout_info_confirmation)
+    should have_one(:payout_threshold_confirmation)
   end
 
   it 'validates' do
