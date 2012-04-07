@@ -214,6 +214,7 @@ module Offer::UrlGeneration
     ad_url << "&width=#{width}" if width.present?
     ad_url << "&height=#{height}" if height.present?
     ad_url << "&preview=#{preview}" if preview.present?
+    ad_url << "&os_version=#{os_version}" if os_version.present?
     ad_url
   end
 
