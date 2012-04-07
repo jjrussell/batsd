@@ -700,7 +700,8 @@ class Offer < ActiveRecord::Base
 
   def queue_impression_tracking_requests(request)
     impression_tracking_urls(true).each do |url|
-      message = { :url => url, :headers => request.http_headers, :orig_url => request.url }
+      forwarded_headers = request.http_headers.slice('User-Agent', 'X-Do-Not-Track', 'DNT')
+      message = { :url => url, :forwarded_headers => forwarded_headers, :orig_url => request.url }
       Sqs.send_message(QueueNames::THIRD_PARTY_TRACKING, Base64::encode64(Marshal.dump(message)))
     end
   end

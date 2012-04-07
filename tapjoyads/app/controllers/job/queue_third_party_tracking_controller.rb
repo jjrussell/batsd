@@ -8,11 +8,11 @@ class Job::QueueThirdPartyTrackingController < Job::SqsReaderController
   def on_message(message)
     message = Marshal.restore(Base64::decode64(message.body))
 
-    # simulate an <img> pixel tag client-side web call...
-    # we lose cookie functionality, unless we implement cookie storage on our end...
-    headers = message[:headers].slice('User-Agent', 'X-Do-Not-Track', 'DNT')
+    headers = message[:forwarded_headers]
     headers['Referer'] = message[:orig_url]
 
+    # simulate an <img> pixel tag client-side web call...
+    # we lose cookie functionality, unless we implement cookie storage on our end...
     sess = Patron::Session.new
     response = sess.get(message[:url], headers)
 
