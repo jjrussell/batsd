@@ -3,10 +3,11 @@ class OneOffs
     failed = []
 
     VideoButton.all(:conditions => ['url IS NOT NULL']).each do |button|
-      button.item = GenericOffer.new(
+      button.tracking_item = GenericOffer.new(
         :partner  => button.video_offer.partner,
         :name     => button.name,
-        :url      => button.url
+        :url      => button.url,
+        :category => 'Other'
       )
       failed << button unless button.save
     end
