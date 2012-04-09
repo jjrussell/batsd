@@ -8,8 +8,8 @@ class OneOffs
 
         date_time = Time.now.to_s(:db)
 
-        payout_confirmations << "('#{UUIDTools::UUID.random_create.to_s }','#{partner.id}', '#{PayoutInfoConfirmation.name}', #{payout_info_confirmation ? 1 : 0}, '#{date_time}','#{date_time}' )"
-        payout_confirmations << "('#{UUIDTools::UUID.random_create.to_s }', '#{partner.id}', '#{PayoutThresholdConfirmation.name}', #{payout_threshold_confirmation ? 1 : 0}, '#{date_time}', '#{date_time}')"
+        payout_confirmations << "('#{self.generate_random_UUID }','#{partner.id}','#{PayoutInfoConfirmation.name}',#{payout_info_confirmation ? 1 : 0},'#{date_time}','#{date_time}')"
+        payout_confirmations << "('#{self.generate_random_UUID }','#{partner.id}','#{PayoutThresholdConfirmation.name}',#{payout_threshold_confirmation ? 1 : 0},'#{date_time}','#{date_time}')"
         if payout_confirmations.size >= 10000
           PayoutConfirmation.connection.execute("INSERT INTO PAYOUT_CONFIRMATIONS (`id`, `partner_id`, `type`, `confirmed`, `created_at`, `updated_at`) VALUES #{payout_confirmations.join(', ')} ")
           payout_confirmations = []
