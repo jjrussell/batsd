@@ -1,5 +1,6 @@
 class FeaturedContent < ActiveRecord::Base
   include UuidPrimaryKey
+  has_tracking_offers
 
   STAFFPICK = 0
   NEWS      = 1
@@ -18,16 +19,13 @@ class FeaturedContent < ActiveRecord::Base
   NO_URL = 'NO_URL'
 
   belongs_to :author, :class_name => 'Employee'
-  belongs_to :offer
-  has_one :tracking_offer, :class_name => 'Offer', :as => :tracking_for, :conditions => 'id = tracking_for_id'
+  has_one :tracking_offer, :class_name => 'Offer', :as => :tracking_for, :conditions => 'tapjoy_enabled = true'
 
   validates_presence_of :author, :if => :author_required?, :message => "Please select an author."
-  validates_presence_of :offer, :if => :offer_required?, :message => "Please select an offer/app."
+  validates_presence_of :tracking_offer, :if => :offer_required?, :message => "Please select an offer/app."
   validates_presence_of :featured_type, :platforms, :subtitle, :title, :description, :start_date, :end_date, :weight
 
   before_save :create_offer
-  after_create :create_tracking_offer
-  after_update :update_tracking_offer
 
   named_scope :ordered_by_date, :order => "start_date DESC, end_date DESC"
   named_scope :upcoming,  lambda { |date| { :conditions => [ "start_date > ?", date.to_date ], :order => "start_date ASC" } }
@@ -122,41 +120,15 @@ class FeaturedContent < ActiveRecord::Base
   end
 
   def create_offer
-    unless offer
+    unless tracking_offer.present?
       item = GenericOffer.create(
         :name       => "For_Featured_Content_#{id}",
         :url        => NO_URL,
         :partner_id => TAPJOY_PARTNER_ID,
         :category   => 'Other'
       )
-      self.offer      = item.primary_offer
+      self.tracking_source_offer = item.primary_offer
       self.button_url = NO_URL
-    end
-  end
-
-  def create_tracking_offer
-    if offer && !tracking_offer
-      if offer.item_type == 'App'
-        self.tracking_offer = offer.item.create_tracking_offer_for(self,
-          :device_types => platforms,
-          :url_overridden => true,
-          :url => button_url
-        )
-      else
-        self.tracking_offer = offer.item.create_tracking_offer_for(self, :device_types => platforms)
-      end
-      save
-    end
-  end
-
-  def update_tracking_offer
-    if tracking_offer
-      if offer
-        self.tracking_offer.device_types = platforms if platforms_changed?
-        self.tracking_offer.save! if self.tracking_offer.changed?
-      end
-    else
-      create_tracking_offer
     end
   end
 end
