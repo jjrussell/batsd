@@ -418,6 +418,7 @@ en:
       tos_acknowledge_html: "By checking this box I assert that I agree to the %{terms_of_use} & %{privacy_policy}"
       tos_change_acknowledge: "By checking this box I assert that I agree to the terms of service."
       twitter_at_least_one_friend_error: "You must select at least one friend before sending out an invite"
+      twitter_account_protected_error: "We are unable to fetch your Twitter Followers list. Please check your Twitter privacy settings and make sure the 'Protect my Tweets' box is unchecked."
       twitter_authenticate_error: "Error while authenticating via TWITTER. The service did not return valid data."
       twitter_forbidden_error: "Requests are being denied due to update limits."
       twitter_internal_error: "Something happened to Twttier. Please try again later"

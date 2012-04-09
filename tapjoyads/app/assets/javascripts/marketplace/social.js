@@ -288,7 +288,7 @@
       $.ajax({
         url: url,
         dataType: 'jsonp',
-        timeout: 60000,
+        timeout: 15000,
         success: function(d) {
           twitterFollowerIds = twitterFollowerIds.concat(d.ids);
           twitterNextCursor = d.next_cursor;
@@ -298,6 +298,12 @@
           } else {
             fetchTwitterUsersInfo();
           }
+        },
+        error: function(request, status, error) {
+          $('.ajax-placeholder').hide();
+          Tapjoy.Utils.notification({
+            message: window.i18n.t('games.twitter_account_protected_error')
+          });
         }
       });
     }; // fetchTwitterFriendList
