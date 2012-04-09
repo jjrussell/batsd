@@ -87,9 +87,6 @@ group :test do
   gem 'factory_girl_rails', '~>1'
   gem 'launchy'
   gem 'mocha', '0.9.12'
-  gem 'shoulda', '2.11.1'
-  gem 'shoulda-addons', '0.2.2', :require => 'shoulda_addons'
-  gem 'shoulda-matchers'
   gem 'spork'
   gem 'timecop'
 end
@@ -98,6 +95,7 @@ group :development, :test do
   gem 'rspec'
   gem 'rspec-rails'
   gem 'rspec-rails-mocha'
+  gem 'shoulda-matchers'
 end
 
 group :ops do

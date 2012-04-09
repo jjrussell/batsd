@@ -242,8 +242,6 @@ GEM
     sendgrid (1.0.1)
       json
       json
-    shoulda (2.11.1)
-    shoulda-addons (0.2.2)
     shoulda-matchers (1.0.0)
     simple_oauth (0.1.5)
     slop (2.4.4)
@@ -363,8 +361,6 @@ DEPENDENCIES
   ruby_gntp
   sass (= 3.1.15)
   sendgrid (= 1.0.1)
-  shoulda (= 2.11.1)
-  shoulda-addons (= 0.2.2)
   shoulda-matchers
   simple_oauth (= 0.1.5)
   spork
