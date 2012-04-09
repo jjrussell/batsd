@@ -68,7 +68,7 @@
           = t('text.games.unmark_as_favorite')
 
 - content_for :page_javascript do
-  :plain
+  :javascript
     var is_create = #{@mark_as_favorite.to_s};
 
     var raise_favoriting_error = function() {
@@ -78,7 +78,7 @@
     };
 
   - if @app_metadata
-    :plain
+    :javascript
       var updateFavoriteApp = function() {
         $.ajax({
           type: is_create ? 'POST' : 'DELETE',
