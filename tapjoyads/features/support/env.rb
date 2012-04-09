@@ -8,7 +8,6 @@ Spork.prefork do
 
   Capybara.default_selector = :css
   ActionController::Base.allow_rescue = false
-  DatabaseCleaner.strategy = :transaction
   Cucumber::Rails::Database.javascript_strategy = :truncation
 
   Resolv.stubs(:getaddress).returns('1.1.1.1')
