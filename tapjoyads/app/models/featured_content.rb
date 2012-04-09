@@ -19,7 +19,6 @@ class FeaturedContent < ActiveRecord::Base
   NO_URL = 'NO_URL'
 
   belongs_to :author, :class_name => 'Employee'
-  has_one :tracking_offer, :class_name => 'Offer', :as => :tracking_for, :conditions => 'tapjoy_enabled = true'
 
   validates_presence_of :author, :if => :author_required?, :message => "Please select an author."
   validates_presence_of :tracking_offer, :if => :offer_required?, :message => "Please select an offer/app."
