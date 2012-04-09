@@ -266,8 +266,8 @@ class Offer < ActiveRecord::Base
   end
 
   def impression_tracking_urls(replace_macros = false)
-    self.impression_tracking_urls = [] if super.nil?
-    urls = super.sort
+    self.impression_tracking_urls = [] if super().nil?
+    urls = super().sort
 
     now = Time.zone.now.to_i.to_s
     urls = urls.collect { |url| url.gsub("[timestamp]", now) } if replace_macros

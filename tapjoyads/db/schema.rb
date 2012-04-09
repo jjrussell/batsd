@@ -1010,7 +1010,7 @@ ActiveRecord::Schema.define(:version => 20120406173403) do
     t.string   "id",                :limit => 36,                   :null => false
     t.string   "video_offer_id",    :limit => 36,                   :null => false
     t.string   "name",                                              :null => false
-    t.string   "url",                                               :null => false
+    t.string   "url"
     t.integer  "ordinal"
     t.boolean  "enabled",                         :default => true
     t.datetime "created_at"

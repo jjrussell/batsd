@@ -964,10 +964,7 @@ describe Offer do
       urls = ['https://dummyurl.com', 'https://example.com']
       @offer.impression_tracking_urls = urls
 
-      urls.each do |url|
-        message = { :url => url, :headers => request.http_headers, :orig_url => request.url }
-        Sqs.expects(:send_message).with(QueueNames::THIRD_PARTY_TRACKING, Base64::encode64(Marshal.dump(message))).once
-      end
+      Sqs.expects(:send_message).times(urls.length)
 
       @offer.queue_impression_tracking_requests(request)
     end
