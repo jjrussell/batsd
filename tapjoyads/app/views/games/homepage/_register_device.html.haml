@@ -11,7 +11,7 @@
 - messaging_text = t('text.games.link_account_messaging', :android_market_url => android_market_url, :tjm_url => tjm_url).gsub(/\"/, "\'")
 
 - content_for :page_javascript do
-  :plain
+  :javascript
     if (!Tapjoy.device.idevice && !Tapjoy.device.android) {
       var msg = "#{messaging_text}";
       $('#register-message .message-header').html(msg);
