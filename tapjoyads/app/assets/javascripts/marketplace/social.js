@@ -278,19 +278,40 @@
     var loadFriendsOptions = window.loadFriendsOptions, startTime = new Date().getTime();
     if (loadFriendsOptions != undefined) {
       var socialFriends = [];
+      var twitterFollowerIds = [];
       var twitterNextCursor = -1;
       fetchTwitterFriendList();
     }
 
     function fetchTwitterFriendList() {
-      var url = 'http://api.twitter.com/1/statuses/followers.json?user_id=' + loadFriendsOptions.twitterId + '&cursor=' + twitterNextCursor;
+      var url = 'http://api.twitter.com/1/followers/ids.json?user_id=' + loadFriendsOptions.twitterId + '&cursor=' + twitterNextCursor;
       $.ajax({
         url: url,
         dataType: 'jsonp',
         timeout: 60000,
         success: function(d) {
-          for(var i in d.users) {
-            var user = d.users[i];
+          twitterFollowerIds = twitterFollowerIds.concat(d.ids);
+          twitterNextCursor = d.next_cursor;
+          url = 'http://api.twitter.com/1/followers/ids.json?user_id=' + loadFriendsOptions.twitterId + '&cursor=' + twitterNextCursor;
+          if (d.next_cursor_str !== "0") {
+            fetchTwitterFriendList();
+          } else {
+            fetchTwitterUsersInfo();
+          }
+        }
+      });
+    }; // fetchTwitterFriendList
+
+    function fetchTwitterUsersInfo() {
+      var url = 'http://api.twitter.com/1/users/lookup.json?user_id=' + twitterFollowerIds.splice(0, 100).join();
+      $.ajax({
+        url: url,
+        type: 'POST',
+        dataType: 'jsonp',
+        timeout: 60000,
+        success: function(d) {
+          for(var i in d) {
+            var user = d[i];
             var userSimple = {
              "social_id" : user.id,
              "name"      : user.name,
@@ -298,10 +319,8 @@
             }
             socialFriends.push(userSimple);
           }
-          twitterNextCursor = d.next_cursor;
-          url = 'http://api.twitter.com/1/statuses/followers.json?user_id=' + loadFriendsOptions.twitterId + '&cursor=' + twitterNextCursor;
-          if (d.next_cursor_str !== "0") {
-            fetchTwitterFriendList();
+          if (twitterFollowerIds.length > 0) {
+            fetchTwitterUsersInfo(twitterFollowerIds);
           } else {
             socialFriends = socialFriends.sort(function(a, b) {
               var nameA = a.name.toLowerCase(), nameB = b.name.toLowerCase();
