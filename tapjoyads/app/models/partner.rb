@@ -32,8 +32,8 @@ class Partner < ActiveRecord::Base
 
   validates_presence_of :reseller, :if => Proc.new { |partner| partner.reseller_id? }
   validates_presence_of :client, :if => Proc.new { |partner| partner.client_id? }
-#validates_presence_of :payout_info_confirmation
-# validates_presence_of :payout_threshold_confirmation
+  validates_presence_of :payout_info_confirmation
+  validates_presence_of :payout_threshold_confirmation
   validates_numericality_of :balance, :pending_earnings, :next_payout_amount, :only_integer => true, :allow_nil => false
   validates_numericality_of :premier_discount, :greater_than_or_equal_to => 0, :only_integer => true, :allow_nil => false
   validates_numericality_of :rev_share, :transfer_bonus, :direct_pay_share, :max_deduction_percentage, :greater_than_or_equal_to => 0, :less_than_or_equal_to => 1
@@ -72,7 +72,7 @@ class Partner < ActiveRecord::Base
     record.errors.add(attribute, 'You can not choose a date in the past for negotiated rev share expiration time.') if value.to_time < Time.zone.now
   end
 
-  before_validation :remove_whitespace_from_attributes, :update_rev_share
+  before_validation :remove_whitespace_from_attributes, :update_rev_share, :add_confirmations
   before_save :check_billing_email
   after_save :update_currencies, :update_offers, :recache_currencies
 
@@ -392,4 +392,8 @@ private
     errors.add :client_id, "cannot be switched to another client." if client_id_changed? && client_id_was.present? && client_id.present?
   end
 
+  def add_confirmations
+    payout_threshold_confirmation ||= build_payout_threshold_confirmation
+    payout_info_confirmation ||= build_payout_info_confirmation
+  end
 end
