@@ -43,28 +43,4 @@ describe User do
       end
     end
   end
-
-  context 'with a newly registered user' do
-    subject { Factory(:pending_user) }
-
-    it { should be_pending }
-
-    context 'after approval' do
-      before(:each) do
-        subject.approve!
-        subject.reload
-      end
-
-      it { should be_approved }
-    end
-
-    context 'after rejection' do
-      before(:each) do
-        subject.reject!
-        subject.reload
-      end
-
-      it { should be_rejected }
-    end
-  end
 end
