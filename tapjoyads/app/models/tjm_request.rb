@@ -1,11 +1,68 @@
 class TjmRequest < SyslogMessage
 
   PATH_MAP = {
+    'homepage' => {
+      'index'             => 'home',
+      'show'              => 'my_profile',
+      'send_device_link'  => 'email_device_link',
+      'switch_device'     => 'switch_device',
+      'help'              => 'help',
+      'earn'              => 'view_installed_app',
+      'get_app'           => 'get_app',
+      'privacy'           => 'privacy_policy',
+      'tos'               => 'terms_of_use',
+    },
+    'app_reviews' => {
+      'new'       => 'app_review',
+      'update'    => 'update_app_review',
+    },
+    'more_games'  => {
+      'editor_picks'    => 'view_more_apps',
+      'recommended'     => 'recommended_apps',
+    },
+    'gamers' => {
+      'new'             => 'signup_form',
+      'show'            => 'view_profile',
+      'create'          => 'signup_attempt',
+      'confirm_delete'  => 'pre_delete_confirm',
+      'destroy'         => 'account_delete',
+      'password'        => 'change_password_attempt',
+      'update_password' => 'password_changed',
+    },
+    'gamer_sessions' => {
+      'create'    => 'login_attempt',
+      'destroy'   => 'logout',
+    },
+    'gamers/favorite_app' => {
+      'create'    => 'mark_app_favorite',
+      'destroy'   => 'remove_app_favorite',
+    },
+    'gamers/gamer_profiles' => {
+      'show'      => 'view_account',
+      'edit'      => 'edit_account',
+      'update'    => 'account_info_changed',
+    },
     'password_resets' => {
-      'new'    => 'tjm_forgot_password',
-      'create' => 'tjm_send_password_reset',
-      'edit'   => 'tjm_change_password',
-      'update' => 'tjm_password_changed',
+      'new'       => 'forgot_password',
+      'create'    => 'send_password_reset',
+      'edit'      => 'change_password',
+      'update'    => 'password_changed',
+    },
+    'social' => {
+      'index'                       => 'social_home',
+      'friends'                     => 'view_friends',
+      'invites'                     => 'find_friends',
+      'invite_email_friends'        => 'invite_by_email',
+      'send_email_invites'          => 'invite_email_sent',
+      'connect_facebook_account'    => 'facebook_connect',
+      'invite_twitter_friends'      => 'view_twitter_invite',
+      'get_twitter_friends'         => 'get_twitter_friends',
+      'send_twitter_invites'        => 'invite_twitter_sent',
+
+    },
+    'support_requests' => {
+      'new'       => 'view_contact_form',
+      'create'    => 'contact_tapjoy',
     },
   }
 
@@ -47,7 +104,8 @@ class TjmRequest < SyslogMessage
   private
 
   def lookup_path
-    PATH_MAP.include?(controller) && PATH_MAP[controller].include?(action) ? PATH_MAP[controller][action] : "tjm_#{controller}_#{action}"
+    subbed_controller = controller.sub(/^games\//,'')
+    PATH_MAP.include?(subbed_controller) && PATH_MAP[subbed_controller].include?(action) ? PATH_MAP[subbed_controller][action] : "tjm_#{controller}_#{action}"
   end
 
 end
