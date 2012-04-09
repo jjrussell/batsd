@@ -17,7 +17,7 @@ class FeaturedContent < ActiveRecord::Base
 
   NO_URL = 'NO_URL'
 
-  belongs_to :author, :polymorphic => true
+  belongs_to :author, :class_name => 'Employee'
   belongs_to :offer
   has_one :tracking_offer, :class_name => 'Offer', :as => :tracking_for, :conditions => 'id = tracking_for_id'
 

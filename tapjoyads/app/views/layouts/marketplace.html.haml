@@ -60,8 +60,7 @@
 
     = yield :included_javascripts
 
-    %script{ :type => 'text/javascript', :charset => 'utf-8' }
-      = yield :page_javascript
+    = yield :page_javascript
 
     :javascript
       Tapjoy.rootPath =  "#{WEBSITE_URL}";

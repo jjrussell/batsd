@@ -353,7 +353,10 @@ Tapjoyad::Application.routes.draw do
       get :elb_status
       get :http_codes
       get :as_groups
-      get :service_stats
+      get :as_instances
+      get :elb_deregister_instance
+      get :ec2_reboot_instance
+      get :as_terminate_instance
       get :bytes_sent
     end
   end

@@ -3,6 +3,7 @@ class ToolsController < WebsiteController
 
   filter_access_to :all
 
+  before_filter :downcase_udid, :only => [ :device_info, :update_device, :reset_device ]
   after_filter :save_activity_logs, :only => [ :update_user, :update_device, :resolve_clicks, :award_currencies, :update_award_currencies ]
 
   def index
@@ -143,7 +144,7 @@ class ToolsController < WebsiteController
 
   def reset_device
     if params[:udid]
-      udid = params[:udid].downcase
+      udid = params[:udid]
       clicks_deleted = 0
 
       device = Device.new(:key => udid)
@@ -165,7 +166,7 @@ class ToolsController < WebsiteController
       params[:udid] = click.udid if click.present?
     end
     if params[:udid].present?
-      udid = params[:udid].downcase
+      udid = params[:udid]
       @device = Device.new(:key => udid)
       if @device.is_new
         flash.now[:error] = "Device with ID #{udid} not found"
@@ -389,4 +390,9 @@ class ToolsController < WebsiteController
     flash[:notice] = " Successfully awarded #{params[:amount]} currency. "
     redirect_to :action => :device_info, :udid => params[:udid]
   end
+
+  def downcase_udid
+    params[:udid] = params[:udid].downcase if params[:udid].present?
+  end
+
 end

@@ -53,7 +53,7 @@
           = submit_tag t("text.shared.submit"), :class => "ui-joy-button primary enable-when-valid"
 
 - content_for :page_javascript do
-  :plain
+  :javascript
     window.loadFriendsOptions = {
        getTwitterFriendsURL : "#{games_social_get_twitter_friends_path}",
        pageSize             : #{@page_size}
