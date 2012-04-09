@@ -9,7 +9,7 @@
       %td= @video_button.name
     %tr
       %th Offer:
-      %td= @video_button.item.name
+      %td= @video_button.item.try(:name)
     %tr
       %th Ordinal:
       %td= @video_button.ordinal
