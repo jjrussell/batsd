@@ -2,6 +2,7 @@ require 'rubygems'
 require 'spork'
 
 Spork.prefork do
+  require 'pry'
   require 'cucumber/rails'
   require 'authlogic/test_case'
 

@@ -75,7 +75,9 @@ group :development do
   gem 'guard-spork'
   gem 'guard-rspec'
   gem 'ruby_gntp'
+  gem 'pry'
   gem 'pry-rails'
+  gem 'pry-remote'
   gem 'pry-nav'
 end
 
