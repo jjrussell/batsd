@@ -193,6 +193,7 @@ module Offer::UrlGeneration
     display_multiplier = options.delete(:display_multiplier) { 1 }
     library_version    = options.delete(:library_version)    { nil }
     language_code      = options.delete(:language_code)      { nil }
+    os_version         = options.delete(:os_version)         { nil }
 
     # Allow screen size to be specified for ad previews
     width              = options.delete(:width)              { nil }
@@ -213,6 +214,7 @@ module Offer::UrlGeneration
     ad_url << "&width=#{width}" if width.present?
     ad_url << "&height=#{height}" if height.present?
     ad_url << "&preview=#{preview}" if preview.present?
+    ad_url << "&os_version=#{os_version}" if os_version.present?
     ad_url
   end
 
