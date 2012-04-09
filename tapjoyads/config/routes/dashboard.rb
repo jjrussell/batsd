@@ -49,6 +49,7 @@ ActionController::Routing::Routes.draw do |map|
   map.add_funds_billing 'billing/add-funds', :controller => :billing, :action => :add_funds
   map.transfer_funds_billing 'billing/transfer-funds', :controller => :billing, :action => :transfer_funds
   map.payout_info_billing 'billing/payment-info', :controller => :billing, :action => :payout_info
+  map.resources :inventory_management, :only => [ :index ], :collection => { :per_app => :get, :partner_promoted_offers => :post, :promoted_offers => :post }
   map.resources :statz, :only => [ :index, :show, :edit, :update, :new, :create ],
     :member => { :last_run_times => :get, :udids => :get, :download_udids => :get, :support_request_reward_ratio => :get },
     :collection => { :global => :get, :publisher => :get, :advertiser => :get }
@@ -65,6 +66,7 @@ ActionController::Routing::Routes.draw do |map|
     m.search_offers 'search/offers', :action => 'offers'
     m.search_users 'search/users', :action => 'users'
     m.search_partners 'search/partners', :action => 'partners'
+    m.search_currencies 'search/currencies', :action => 'currencies'
   end
   map.premier 'premier', :controller => :premier, :action => :edit
   map.resources :survey_results, :only => [ :new, :create ]

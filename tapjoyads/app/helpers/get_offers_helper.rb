@@ -29,7 +29,8 @@ module GetOffersHelper
       :display_multiplier => params[:display_multiplier],
       :device_name        => params[:device_name],
       :library_version    => params[:library_version],
-      :gamer_id           => params[:gamer_id])
+      :gamer_id           => params[:gamer_id],
+      :os_version         => params[:os_version])
 
     if offer.item_type == 'VideoOffer' || offer.item_type == 'TestVideoOffer'
       if @publisher_app.platform == 'windows'
@@ -70,7 +71,8 @@ module GetOffersHelper
         :primary_country    => geoip_data[:primary_country],
         :display_multiplier => params[:display_multiplier],
         :library_version    => params[:library_version],
-        :language_code      => params[:language_code])
+        :language_code      => params[:language_code],
+        :os_version         => params[:os_version])
   end
 
   def visual_cost(offer)

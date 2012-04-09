@@ -80,6 +80,7 @@ class ApplicationController < ActionController::Base
     lookup_keys = []
     lookup_keys.push(params[:sha2_udid]) if params[:sha2_udid].present?
     lookup_keys.push(params[:mac_address]) if params[:mac_address].present?
+    lookup_keys.push(params[:sha1_mac_address]) if params[:sha1_mac_address].present?
 
     lookup_keys.each do |lookup_key|
       identifier = DeviceIdentifier.new(:key => lookup_key)
@@ -97,6 +98,8 @@ class ApplicationController < ActionController::Base
   def fix_params
     downcase_param(:udid)
     downcase_param(:sha2_udid)
+    downcase_param(:sha1_mac_address)
+    downcase_param(:open_udid)
     downcase_param(:app_id)
     downcase_param(:campaign_id)
     downcase_param(:publisher_app_id)
