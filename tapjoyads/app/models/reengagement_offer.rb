@@ -125,6 +125,7 @@ class ReengagementOffer < ActiveRecord::Base
   def create_primary_offer
     offer = Offer.new({
       :item             => self,
+      :item_type        => 'ReengagementOffer',
       :partner          => partner,
       :name             => "#{@app.name} - Reengagement Day #{day_number}",
       :url              => app.store_url,
