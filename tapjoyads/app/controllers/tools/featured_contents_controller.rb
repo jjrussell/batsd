@@ -40,12 +40,6 @@ class Tools::FeaturedContentsController < WebsiteController
       end
     end
 
-    unless platforms_validate?
-      setup_before_render("Please select at least one platform, and make sure include [#{Offer::APPLE_DEVICES.join(", ")}] for iOS platform.")
-      render :action => :new
-      return
-    end
-
     if @featured_content.save
       @featured_content.save_icon!(params[:main_icon].read, "#{@featured_content.id}_main")  if params[:main_icon].present?
       @featured_content.save_icon!(params[:secondary_icon].read, "#{@featured_content.id}_secondary") if params[:secondary_icon].present?
@@ -88,12 +82,6 @@ class Tools::FeaturedContentsController < WebsiteController
       end
     end
 
-    unless platforms_validate?
-      setup_before_render("Please select at least one platform, and make sure include [#{Offer::APPLE_DEVICES.join(", ")}] for iOS platform.")
-      render :action => :edit, :id => params[:id]
-      return
-    end
-
     if @featured_content.update_attributes(params[:featured_content])
       @featured_content.save_icon!(params[:main_icon].read, "#{@featured_content.id}_main")  if params[:main_icon].present?
       @featured_content.save_icon!(params[:secondary_icon].read, "#{@featured_content.id}_secondary") if params[:secondary_icon].present?
@@ -124,9 +112,4 @@ class Tools::FeaturedContentsController < WebsiteController
     Date.parse(params[:featured_content][:end_date]) >= Date.parse(params[:featured_content][:start_date])
   end
 
-  def platforms_validate?
-    union = params[:featured_content][:platforms] | Offer::APPLE_DEVICES
-    real_len = params[:featured_content][:platforms].length
-    real_len > 0 && ((union.length - 3) == real_len || union.length == real_len)
-  end
 end
