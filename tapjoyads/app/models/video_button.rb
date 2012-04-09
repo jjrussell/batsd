@@ -1,6 +1,7 @@
 class VideoButton < ActiveRecord::Base
   include UuidPrimaryKey
 
+  has_tracking_offers
   belongs_to :video_offer
 
   validates_presence_of :url, :name

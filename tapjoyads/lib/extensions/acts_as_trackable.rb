@@ -6,16 +6,14 @@ module ActsAsTrackable
 
   module ClassMethods
     def acts_as_trackable(options = {})
-
       include ActsAsTrackable::InstanceMethods
-
       cattr_accessor :acts_as_trackable_options
       self.acts_as_trackable_options = options
     end
   end
 
   module InstanceMethods
-    def create_tracking_offer_for(tracked_for, options = {})
+    def build_tracking_offer_for(tracked_for, options = {})
       offer_options       = {
         :item             => self,
         :tracking_for     => tracked_for,
@@ -31,10 +29,23 @@ module ActsAsTrackable
         :tapjoy_enabled   => true,
       }
       trackable_options = acts_as_trackable_options.inject({}) { |result, (key,val)| result[key] = instance_eval(&val); result }
-      Offer.create!(offer_options.merge(trackable_options).merge(options))
+      Offer.new(offer_options.merge(trackable_options).merge(options))
+    end
+
+    def find_tracking_offer_for(tracked_for)
+      offers.tracked_for(tracked_for).first
+    end
+
+    def create_tracking_offer_for(tracked_for, options = {})
+      build_tracking_offer_for(tracked_for, options).tap do |offer|
+        offer.save!
+      end
+    end
+
+    def find_or_build_tracking_offer_for(tracked_for, options = {})
+      find_tracking_offer_for(tracked_for) || build_tracking_offer_for(tracked_for, options)
     end
   end
-
 end
 
 module ActsAsTracking
@@ -45,11 +56,8 @@ module ActsAsTracking
   module ClassMethods
     def acts_as_tracking
       include ActsAsTracking::InstanceMethods
-
       belongs_to :tracking_for, :polymorphic => true
-      
       validates_presence_of :tracking_for, :if => Proc.new { |offer| offer.tracking_for_id? || offer.tracking_for_type? }
-      
       after_save :disable_other_tracking_offers
     end
   end
@@ -69,5 +77,51 @@ module ActsAsTracking
   end
 end
 
+module HasTrackingOffers
+  def self.included(base)
+    base.extend HasTrackingOffers::ClassMethods
+  end
+
+  module ClassMethods
+    def has_tracking_offers
+      include HasTrackingOffers::InstanceMethods
+      has_many :tracking_offers, :class_name => 'Offer', :as => :tracking_for
+      has_one :tracking_offer, :class_name => 'Offer', :as => :tracking_for, :conditions => 'tapjoy_enabled = true'
+      after_save :enable_tracking_offer
+    end
+  end
+
+  module InstanceMethods
+    def tracking_item=(tracking_item)
+      self.tracking_offer = tracking_item.find_or_build_tracking_offer_for(self) if tracking_item.present?
+    end
+
+    def tracking_source_offer=(tracking_source_offer)
+      self.tracking_item = tracking_source_offer.item if tracking_source_offer.present?
+    end
+
+    def tracking_source_offer_id=(tracking_source_offer_id)
+      self.tracking_source_offer = Offer.find(tracking_source_offer_id) if tracking_source_offer_id.present?
+    end
+
+    def tracking_item
+      tracking_offer.try :item
+    end
+
+    def tracking_source_offer_id
+      tracking_offer.try :item_id
+    end
+
+    def enable_tracking_offer
+      if tracking_offer.present?
+        tracking_offer.tapjoy_enabled = true 
+        tracking_offer.save
+      end
+    end
+  end
+end
+
 ActiveRecord::Base.send(:include, ActsAsTrackable)
 ActiveRecord::Base.send(:include, ActsAsTracking)
+ActiveRecord::Base.send(:include, HasTrackingOffers)
+
