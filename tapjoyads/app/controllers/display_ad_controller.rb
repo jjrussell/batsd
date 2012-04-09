@@ -1,6 +1,6 @@
 class DisplayAdController < ApplicationController
 
-  before_filter :set_device_type, :set_publisher_user_id, :setup, :except => :image
+  before_filter :set_device_type, :lookup_udid, :set_publisher_user_id, :setup, :except => :image
 
   def index
   end

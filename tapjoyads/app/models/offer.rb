@@ -148,9 +148,8 @@ class Offer < ActiveRecord::Base
   end
   validates_each :multi_complete do |record, attribute, value|
     if value
-      record.errors.add(attribute, "is not for App offers") unless record.multi_completable?
+      record.errors.add(attribute, "is not for App offers, Action offers, or Survey offers") unless record.multi_completable?
       record.errors.add(attribute, "cannot be used for non-interval pay-per-click offers") if record.pay_per_click? && record.interval == 0
-      record.errors.add(attribute, 'cannot be used for Survey offers') if record.item_type == 'SurveyOffer'
     end
   end
   validates_each :instructions_overridden, :if => :instructions_overridden? do |record, attribute, value|
@@ -326,6 +325,10 @@ class Offer < ActiveRecord::Base
 
   def is_enabled?
     tapjoy_enabled? && user_enabled? && ((payment > 0 && partner_balance > 0) || (payment == 0 && reward_value.present? && reward_value > 0))
+  end
+
+  def can_be_promoted?
+    primary? && rewarded? && is_enabled?
   end
 
   def accepting_clicks?
@@ -627,6 +630,11 @@ class Offer < ActiveRecord::Base
     end
   end
 
+  def promotion_platform
+    self.app ?  self.app.platform.to_sym : nil
+  end
+  memoize :promotion_platform
+
   def calculate_target_installs(num_installs_today)
     target_installs = 1.0 / 0
     target_installs = daily_budget - num_installs_today if daily_budget > 0
@@ -651,7 +659,7 @@ class Offer < ActiveRecord::Base
   end
 
   def multi_completable?
-    item_type != 'App' || Offer::Rejecting::TAPJOY_GAMES_RETARGETED_OFFERS.include?(item_id)
+    !%w(App ActionOffer SurveyOffer).include?(item_type) || Offer::Rejecting::TAPJOY_GAMES_RETARGETED_OFFERS.include?(item_id)
   end
 
   private

@@ -16,7 +16,12 @@
     %tr
       %td= label_tag :currency_group_id, 'Currency Group'
       %td= select_tag :currency_group_id, options_for_select(CurrencyGroup.all.collect { |cg| [ cg.name, cg.id ] })
-
+    %tr
+      %td= label_tag :udid, 'Device ID'
+      %td= text_field_tag :udid, params[:udid], :size => '55'
+    %tr
+      %td= label_tag :source, 'Offer Source'
+      %td= select_tag :source, options_for_select(Offer::ALL_SOURCES.collect { |source| [source, source] }.insert(0, ['[none]','']), params[:source])
     %tr
       %td{ :colspan => 2 }= submit_tag('Submit')
 
@@ -35,6 +40,7 @@
         %th Boost
         %th Devices
         %th Type
+        %th Rejection Reasons
     %tbody#offers_tbody
       - @offers.each_with_index do |offer, i|
         %tr
@@ -49,7 +55,7 @@
           %td= offer.rank_boost
           %td= offer.get_device_types.to_a.join(",")
           %td= offer.item_type
-
+          %td= offer.rejections.join('; ')
 - content_for :page_javascript do
   :plain
     $(function() {

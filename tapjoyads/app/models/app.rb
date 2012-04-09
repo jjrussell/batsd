@@ -197,7 +197,7 @@ class App < ActiveRecord::Base
       if (data.nil?) # might not be available in the US market
         data = AppStore.fetch_app_by_id(store_id, platform, primary_country)
       end
-    rescue Patron::HostResolutionError
+    rescue Patron::HostResolutionError, RuntimeError
       return false
     end
     return false if data.nil?
@@ -328,6 +328,12 @@ class App < ActiveRecord::Base
     !!(file_size_bytes && file_size_bytes > download_limit)
   end
 
+  def update_promoted_offers(offer_ids)
+    success = true
+    currencies.each { |currency| success &= currency.update_promoted_offers(offer_ids)}
+    success
+  end
+
   def update_offers
     offers.each do |offer|
       offer.partner_id = partner_id
@@ -431,8 +437,8 @@ class App < ActiveRecord::Base
   def update_all_offers
     clear_association_cache
     update_offers if store_id_changed || partner_id_changed? || name_changed? || hidden_changed?
-    update_rating_offer if rating_offer.present? && (store_id_changed || name_changed?)
-    update_action_offers if store_id_changed || name_changed? || hidden_changed?
+    update_rating_offer if rating_offer.present? && (store_id_changed || partner_id_changed? || name_changed?)
+    update_action_offers if store_id_changed || partner_id_changed? || hidden_changed?
   end
 
   def update_currencies

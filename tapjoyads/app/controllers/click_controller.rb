@@ -48,6 +48,7 @@ class ClickController < ApplicationController
   def video
     create_click('video')
     handle_pay_per_click
+    handle_multi_complete_video
 
     render :text => 'OK'
   end
@@ -246,7 +247,11 @@ class ClickController < ApplicationController
 
   def create_click(type)
     click = Click.new(:key => click_key)
-    click.delete('installed_at') if click.installed_at?
+    if click.installed_at?
+      click.last_installed_at    = click.installed_at
+      click.delete('installed_at')
+    end
+    click.last_clicked_at        = click.clicked_at if click.clicked_at?
     click.clicked_at             = @now
     click.viewed_at              = Time.zone.at(params[:viewed_at].to_f)
     click.udid                   = params[:udid]
@@ -302,6 +307,7 @@ class ClickController < ApplicationController
       :itunes_link_affiliate => @itunes_link_affiliate,
       :display_multiplier    => params[:display_multiplier],
       :library_version       => params[:library_version],
+      :os_version            => params[:os_version]
     })
   end
 
@@ -318,6 +324,13 @@ class ClickController < ApplicationController
       Digest::MD5.hexdigest("#{params[:udid]}.#{params[:advertiser_app_id]}")
     else
       "#{params[:udid]}.#{params[:advertiser_app_id]}"
+    end
+  end
+
+  def handle_multi_complete_video
+    app_id_for_device = params[:advertiser_app_id]
+    if @offer.multi_complete? && @device.has_app?(app_id_for_device)
+      @device.unset_last_run_time!(app_id_for_device)
     end
   end
 
