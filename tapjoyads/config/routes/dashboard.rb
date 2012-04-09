@@ -135,6 +135,11 @@ ActionController::Routing::Routes.draw do |map|
   map.resources :ops, :only => :index,
     :collection => {
       :as_groups => :get,
+      :as_header => :get,
+      :as_instances => :get,
+      :elb_deregister_instance => :get,
+      :ec2_reboot_instance => :get,
+      :as_terminate_instance => :get,
       :service_stats => :get,
       :elb_status => :get,
       :http_codes => :get,

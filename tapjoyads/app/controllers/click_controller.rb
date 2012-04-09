@@ -307,6 +307,7 @@ class ClickController < ApplicationController
       :itunes_link_affiliate => @itunes_link_affiliate,
       :display_multiplier    => params[:display_multiplier],
       :library_version       => params[:library_version],
+      :os_version            => params[:os_version]
     })
   end
 
