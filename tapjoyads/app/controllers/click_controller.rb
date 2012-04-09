@@ -247,7 +247,11 @@ class ClickController < ApplicationController
 
   def create_click(type)
     click = Click.new(:key => click_key)
-    click.delete('installed_at') if click.installed_at?
+    if click.installed_at?
+      click.last_installed_at    = click.installed_at
+      click.delete('installed_at')
+    end
+    click.last_clicked_at        = click.clicked_at if click.clicked_at?
     click.clicked_at             = @now
     click.viewed_at              = Time.zone.at(params[:viewed_at].to_f)
     click.udid                   = params[:udid]
@@ -304,6 +308,7 @@ class ClickController < ApplicationController
       :itunes_link_affiliate => @itunes_link_affiliate,
       :display_multiplier    => params[:display_multiplier],
       :library_version       => params[:library_version],
+      :os_version            => params[:os_version]
     })
   end
 

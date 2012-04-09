@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120321163140) do
+ActiveRecord::Schema.define(:version => 20120328111003) do
 
   create_table "action_offers", :id => false, :force => true do |t|
     t.string   "id",                    :limit => 36,                    :null => false
@@ -212,6 +212,7 @@ ActiveRecord::Schema.define(:version => 20120321163140) do
     t.string   "reseller_id",                                :limit => 36
     t.decimal  "reseller_spend_share",                                     :precision => 8, :scale => 6
     t.boolean  "whitelist_overridden",                                                                   :default => false, :null => false
+    t.text     "promoted_offers",                                                                                           :null => false
   end
 
   add_index "currencies", ["app_id"], :name => "index_currencies_on_app_id"
@@ -777,6 +778,7 @@ ActiveRecord::Schema.define(:version => 20120321163140) do
     t.string   "payout_confirmation_notes"
     t.boolean  "discount_all_offer_types",                                                 :default => false,     :null => false
     t.string   "client_id",                    :limit => 36
+    t.text     "promoted_offers",                                                                                 :null => false
   end
 
   add_index "partners", ["id"], :name => "index_partners_on_id", :unique => true

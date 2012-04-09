@@ -8,7 +8,7 @@ class Tools::ExternalPublishersController < WebsiteController
   def index
     @num_tapjoy_enabled = Currency.tapjoy_enabled.count
     @num_external_pubs = Currency.external_publishers.count
-    @currencies = Currency.find_all_by_tapjoy_enabled(true, :include => [:app, :partner])
+    @currencies = Currency.tapjoy_enabled.ordered_by_app_name.paginate(:page => params[:page], :per_page => 50)
   end
 
   def update

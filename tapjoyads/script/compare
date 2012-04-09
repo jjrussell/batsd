@@ -2,7 +2,7 @@
 
 require 'yaml'
 
-VERSION_FILENAME = '../server/version.yaml'
+VERSION_FILENAME = "#{File.dirname(__FILE__)}/../../server/version.yaml"
 current_tag = YAML::load(File.open(VERSION_FILENAME))["current"]
 if `uname` =~ /Darwin/
   command = "open"

@@ -25,7 +25,7 @@ describe FeaturedContent do
 
     context 'when platforms is blank' do
       before :each do
-        @featured_content.platforms = nil
+        @featured_content.platforms = []
       end
 
       it "returns false" do
@@ -34,7 +34,7 @@ describe FeaturedContent do
 
       it "sets an error message" do
         @featured_content.valid?
-        @featured_content.errors.on(:platforms).should == "is not valid JSON"
+        @featured_content.errors.on(:platforms).should == "can't be blank"
       end
     end
 
@@ -208,6 +208,24 @@ describe FeaturedContent do
         it "updates the tracking_offer's name with new platforms" do
           @featured_content.tracking_offer.device_types.should == @featured_content.platforms
         end
+      end
+    end
+  end
+
+  describe '.featured_contents' do
+    before :each do
+      @featured_content_for_ipad = Factory(:featured_content, :platforms => %w( ipad android ).to_json)
+    end
+
+    context 'when device is ipad' do
+      it 'returns featured contents contain ipad in their platforms' do
+        FeaturedContent.featured_contents('ipad')[0].should == @featured_content_for_ipad
+      end
+    end
+
+    context 'when device is iphone' do
+      it 'returns featured contents contain ipad in their platforms' do
+        FeaturedContent.featured_contents('iphone')[0].should == @featured_content
       end
     end
   end
