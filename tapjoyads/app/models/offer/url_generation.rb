@@ -142,11 +142,8 @@ module Offer::UrlGeneration
       :device_name        => device_name,
       :library_version    => library_version,
       :gamer_id           => gamer_id,
-<<<<<<< HEAD
       :mac_address        => mac_address,
-=======
-      :os_version         => os_version
->>>>>>> 5c0458f6dd528793b6b3de8442456869cc717f28
+      :os_version         => os_version,
     }
 
     "#{click_url}?data=#{ObjectEncryptor.encrypt(data)}"
