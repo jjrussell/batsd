@@ -1,7 +1,7 @@
 - if error_message_on(@gamer_session, :password).present? || error_message_on(@gamer_session, :email).present?
   - @login_form_class_name = "show"
   - content_for :page_javascript do
-    :javascript
+    :plain
       $(".form-error").css({opacity: '1', visibility: 'visible !important'});
 
 
