@@ -280,6 +280,7 @@ class ClickController < ApplicationController
     click.advertiser_reseller_id = @offer.reseller_id || ''
     click.spend_share            = @currency.get_spend_share(@offer)
     click.local_timestamp        = params[:local_timestamp] if params[:local_timestamp].present?
+    click.mac_address            = params[:mac_address]
 
     click.save
   end
@@ -307,6 +308,7 @@ class ClickController < ApplicationController
       :itunes_link_affiliate => @itunes_link_affiliate,
       :display_multiplier    => params[:display_multiplier],
       :library_version       => params[:library_version],
+      :os_version            => params[:os_version]
     })
   end
 

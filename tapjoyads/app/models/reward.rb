@@ -31,6 +31,7 @@ class Reward < SimpledbShardedResource
   self.sdb_attr :publisher_reseller_id
   self.sdb_attr :advertiser_reseller_id
   self.sdb_attr :click_key
+  self.sdb_attr :mac_address
 
   def after_initialize
     put('created', Time.zone.now.to_f.to_s) unless get('created')
