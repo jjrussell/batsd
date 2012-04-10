@@ -17,7 +17,7 @@ class FeaturedContent < ActiveRecord::Base
 
   NO_URL = 'NO_URL'
 
-  belongs_to :author, :polymorphic => true
+  belongs_to :author, :class_name => 'Employee'
   belongs_to :offer
   has_one :tracking_offer, :class_name => 'Offer', :as => :tracking_for, :conditions => 'id = tracking_for_id'
 
@@ -39,7 +39,7 @@ class FeaturedContent < ActiveRecord::Base
   json_set_field :platforms
 
   def self.featured_contents(platform)
-    platform = 'iphone' unless %w(android iphone windows).include?(platform)
+    platform = 'iphone' unless %w(android iphone itouch ipad windows).include?(platform)
     Mc.get_and_put("featured_contents.#{platform}", false, 1.hour) do
       now = Time.now.utc
       featured_contents =  FeaturedContent.active(now).for_platform(platform) ||

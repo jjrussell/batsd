@@ -1,12 +1,88 @@
-- @page_title = 'Ops'
+- @page_title = 'Operations Dashboard'
 
-%h1 Operations Utilities
+- count = 0
+- @as_groups.each do |group|
+  - count += 1
+  .details.left
+    %div{:id => "#{group[:auto_scaling_group_name]}_header"}
+    - content_for :page_javascript do
+      :plain
+        $("##{group[:auto_scaling_group_name]}_header").load("ops/as_header?group=#{group[:auto_scaling_group_name]}");
+        this.timer_#{group[:auto_scaling_group_name]}_header = setInterval(function () {
+          $("##{group[:auto_scaling_group_name]}_header").load("ops/as_header?group=#{group[:auto_scaling_group_name]}");
+        }, 30000);
 
-- if has_permissions_for_one_of? :admin, :ops
-  %ul
-    - if permitted_to? :elb_status, :ops
-      %li= link_to 'ELB Status', elb_status_ops_path
-    - if permitted_to? :as_groups, :ops
-      %li= link_to 'Auto-Scaling Groups', as_groups_ops_path
-    - if permitted_to? :service_stats, :ops
-      %li= link_to 'Service Stats', service_stats_ops_path
+    %div{:id => "#{group[:auto_scaling_group_name]}_instances"}
+    - content_for :page_javascript do
+      :plain
+        $("##{group[:auto_scaling_group_name]}_instances").load("ops/as_instances?group=#{group[:auto_scaling_group_name]}");
+        this.timer_#{group[:auto_scaling_group_name]}_instances = setInterval(function () {
+          $("##{group[:auto_scaling_group_name]}_instances").load("ops/as_instances?group=#{group[:auto_scaling_group_name]}");
+        }, 30000);
+
+  -# if count % 3 == 0
+    .clear
+
+.clear
+
+%hr/
+
+#alerts.center
+
+.right
+  more info »
+  = link_to 'auto-scaler', as_groups_ops_path
+  = link_to 'load-balancer', elb_status_ops_path
+  = link_to 'service-stats', service_stats_ops_path
+
+As of: #{Time.zone.now.to_s(:pub_ampm_sec)}
+
+- content_for :page_head, stylesheet_link_tag('bootstrap.min')
+- content_for :included_javascripts, javascript_include_tag('ajax-links.js')
+
+- content_for :page_styles do
+  :plain
+    table.tablesorter {
+      border-collapse: separate;
+    }
+
+    .details {
+      width: 310px;
+      margin-left: 5px;
+      margin-right: 5px;
+      font-size: 11px;
+    }
+
+    .lowbreaching {
+      color: #ff0000 !important;
+    }
+
+    .highbreaching {
+      color: #008000 !important;
+    }
+
+    #content a:visited {
+      color: blue;
+    }
+    #content a:hover {
+      color: yellow;
+    }
+    #content a {
+      color: blue;
+    }
+    .progress {
+      margin-bottom: 0px !important;
+    }
+    .center {
+      text-align: center;
+    }
+    .labels {
+      padding: 3px 3px 0px 3px;
+    }
+    h3 {
+      margin-bottom: 2px;
+    }
+
+    th.name {
+      width: 65%;
+    }

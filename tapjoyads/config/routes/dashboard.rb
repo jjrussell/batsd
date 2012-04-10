@@ -7,7 +7,7 @@ ActionController::Routing::Routes.draw do |map|
   map.connect 'tos-publisher.html', :controller => 'documents', :action => 'tos_publisher'
   map.connect 'publisher-guidelines.html', :controller => 'documents', :action => 'publisher_guidelines'
 
-  map.resource :sign_up, :controller => :sign_up, :only => :create, :collection => [:welcome]
+  map.resource :sign_up, :controller => :sign_up, :only => :create
   map.register 'register', :controller => :sign_up, :action => :new
   map.login 'login', :controller => :user_sessions, :action => :new
   map.logout 'logout', :controller => :user_sessions, :action => :destroy
@@ -49,6 +49,7 @@ ActionController::Routing::Routes.draw do |map|
   map.add_funds_billing 'billing/add-funds', :controller => :billing, :action => :add_funds
   map.transfer_funds_billing 'billing/transfer-funds', :controller => :billing, :action => :transfer_funds
   map.payout_info_billing 'billing/payment-info', :controller => :billing, :action => :payout_info
+  map.resources :inventory_management, :only => [ :index ], :collection => { :per_app => :get, :partner_promoted_offers => :post, :promoted_offers => :post }
   map.resources :statz, :only => [ :index, :show, :edit, :update, :new, :create ],
     :member => { :last_run_times => :get, :udids => :get, :download_udids => :get, :support_request_reward_ratio => :get },
     :collection => { :global => :get, :publisher => :get, :advertiser => :get }
@@ -65,6 +66,7 @@ ActionController::Routing::Routes.draw do |map|
     m.search_offers 'search/offers', :action => 'offers'
     m.search_users 'search/users', :action => 'users'
     m.search_partners 'search/partners', :action => 'partners'
+    m.search_currencies 'search/currencies', :action => 'currencies'
   end
   map.premier 'premier', :controller => :premier, :action => :edit
   map.resources :survey_results, :only => [ :new, :create ]
@@ -133,9 +135,15 @@ ActionController::Routing::Routes.draw do |map|
   map.resources :ops, :only => :index,
     :collection => {
       :as_groups => :get,
+      :as_header => :get,
+      :as_instances => :get,
+      :elb_deregister_instance => :get,
+      :ec2_reboot_instance => :get,
+      :as_terminate_instance => :get,
       :service_stats => :get,
       :elb_status => :get,
       :http_codes => :get,
+      :bytes_sent => :get,
     }
 
   map.connect 'mail_chimp_callback/callback', :controller => :mail_chimp_callback, :action => :callback

@@ -235,8 +235,26 @@ describe Partner do
         @currency.reseller.should be_nil
         @app.primary_offer.reseller.should be_nil
       end
-
     end
 
+    context "with promoted offers" do
+      before :each do
+        @partner = Factory(:partner)
+        @offer1 = Factory(:app, :partner => @partner).primary_offer.target
+        @offer2 = Factory(:app, :partner => @partner).primary_offer
+        @offer3 = Factory(:app, :partner => @partner, :platform => 'android').primary_offer
+        @offer4 = Factory(:app, :partner => @partner).primary_offer
+        Offer.any_instance.stubs(:can_be_promoted?).returns(true)
+      end
+
+      it "returns available offers with correct platform" do
+        available_offers = @partner.offers_for_promotion
+        available_offers[:windows].should == []
+        available_offers[:android].should == [ @offer3 ]
+        available_offers[:iphone].should include @offer1
+        available_offers[:iphone].should include @offer2
+        available_offers[:iphone].should include @offer4
+      end
+    end
   end
 end
