@@ -1,10 +1,10 @@
---- 
-nl: 
-  activerecord: 
-    errors: 
-      full_messages: 
+---
+nl:
+  activerecord:
+    errors:
+      full_messages:
         format: "%{attribute} %{message}"
-      messages: 
+      messages:
         accepted: "must be accepted"
         blank: "can't be blank"
         confirmation: "doesn't match confirmation"
@@ -26,76 +26,76 @@ nl:
         too_long: "is too long (maximum is %{count} characters)"
         too_short: "is too short (minimum is %{count} characters)"
         wrong_length: "is the wrong length (should be %{count} characters)"
-      models: 
-        gamer_sessions: 
-          attributes: 
+      models:
+        gamer_sessions:
+          attributes:
             email: Email
             password: Password
-      template: 
+      template:
         body: "There were problems with the following fields:"
-        header: 
+        header:
           one: "1 error prohibited this %{model} from being saved"
           other: "%{count} errors prohibited this %{model} from being saved"
-  authlogic: 
-    error_messages: 
+  authlogic:
+    error_messages:
       login_not_found: "Email is invalid"
       password_invalid: "Password is invalid"
-  date: 
+  date:
     abbr_day_names: ~
     abbr_month_names: ~
     day_names: ~
-    formats: 
+    formats:
       default: ~
       long: ~
       short: ~
     month_names: ~
     order: ~
-  datetime: 
-    distance_in_words: 
-      about_x_hours: 
+  datetime:
+    distance_in_words:
+      about_x_hours:
         one: ~
         other: ~
-      about_x_months: 
+      about_x_months:
         one: ~
         other: ~
-      about_x_years: 
+      about_x_years:
         one: ~
         other: ~
-      almost_x_years: 
+      almost_x_years:
         one: ~
         other: ~
       half_a_minute: ~
-      less_than_x_minutes: 
+      less_than_x_minutes:
         one: ~
         other: ~
-      less_than_x_seconds: 
+      less_than_x_seconds:
         one: ~
         other: ~
-      over_x_years: 
+      over_x_years:
         one: ~
         other: ~
-      x_days: 
+      x_days:
         one: ~
         other: ~
-      x_minutes: 
+      x_minutes:
         one: ~
         other: ~
-      x_months: 
+      x_months:
         one: ~
         other: ~
-      x_seconds: 
+      x_seconds:
         one: ~
         other: ~
-    prompts: 
+    prompts:
       day: ~
       hour: ~
       minute: ~
       month: ~
       second: ~
       year: ~
-  errors: 
+  errors:
     format: "%{attribute} %{message}"
-    messages: 
+    messages:
       accepted: "must be accepted"
       blank: "can't be blank"
       confirmation: "doesn't match confirmation"
@@ -115,16 +115,16 @@ nl:
       too_long: "is too long (maximum is %{count} characters)"
       too_short: "is too short (minimum is %{count} characters)"
       wrong_length: "is the wrong length (should be %{count} characters)"
-  helpers: 
-    select: 
+  helpers:
+    select:
       prompt: "Please select"
-    submit: 
+    submit:
       create: "Create %{model}"
       submit: "Save %{model}"
       update: "Update %{model}"
-  number: 
-    currency: 
-      format: 
+  number:
+    currency:
+      format:
         delimiter: ~
         format: ~
         precision: ~
@@ -132,52 +132,52 @@ nl:
         significant: ~
         strip_insignificant_zeros: ~
         unit: ~
-    format: 
+    format:
       delimiter: ~
       precision: ~
       separator: ~
       significant: ~
       strip_insignificant_zeros: ~
-    human: 
-      decimal_units: 
+    human:
+      decimal_units:
         format: ~
-        units: 
+        units:
           billion: ~
           million: ~
           quadrillion: ~
           thousand: ~
           trillion: ~
           unit: ~
-      format: 
+      format:
         delimiter: ~
         precision: ~
         significant: ~
         strip_insignificant_zeros: ~
-      storage_units: 
+      storage_units:
         format: ~
-        units: 
-          byte: 
+        units:
+          byte:
             one: ~
             other: ~
           gb: ~
           kb: ~
           mb: ~
           tb: ~
-    percentage: 
-      format: 
+    percentage:
+      format:
         delimiter: ~
-    precision: 
-      format: 
+    precision:
+      format:
         delimiter: ~
-  support: 
-    array: 
+  support:
+    array:
       last_word_connector: ", and "
       two_words_connector: " and "
       words_connector: ", "
-    select: 
+    select:
       prompt: "Please select"
-  text: 
-    featured: 
+  text:
+    featured:
       download: Download
       download_and_run: "Download en start"
       earn_currency: "Verdien %{amount_and_currency}"
@@ -186,14 +186,14 @@ nl:
       skip: Overslaan
       title: "Verdien %{currency}"
       try_out: Probeer
-    footer: 
+    footer:
       about: "About Tapjoy"
       advertisers: Advertisers
       blog: Blog
       copyright: "Copyright &copy; %{year} Tapjoy, Inc. All Rights Reserved. Tapjoy and the Tapjoy logo are trademarks or registered trademarks of Tapjoy, Inc. All third party logos and trademarks mentioned are the property of their respective owners."
       developers: Developers
       privacy: "Privacy Policy"
-    games: 
+    games:
       about_body: "A better way to love the apps you have and find the apps you'll love."
       about_title: "\"Somehow it knows exactly what apps I like.\""
       account_created_body: "Your Tapjoy account was successfully created!"
@@ -206,7 +206,7 @@ nl:
       advertisers_title: Advertisers
       allow_marketing_emails: "Allow Tapjoy to send me marketing emails"
       almost_done: "Almost done!"
-      already_registered: 
+      already_registered:
         one: "%{name} has already registered, you are now following him/her."
         other: "%{name} have already registered, you are now following them."
       amount_and_currency: "%{amount} %{currency}"
@@ -298,18 +298,18 @@ nl:
       invite_by_email: "Invite by Email"
       invite_email_body: |-
           %{name} has invited you to join Tapjoy, the BEST place to find the hottest new apps. Signing up is free and you'll be able discover the best apps on iOS and Android, while also earning currency in your favorite apps.
-          
+
           No need to wade through thousands of apps in the App Store or Google Play to find your next download. Tapjoy has you covered and recommends apps we know you'll like.
-          
+
           To get started, create your account here:
       invite_email_greet: "Hi,"
       invite_email_signature: "Team Tapjoy"
-      invite_friends: 
+      invite_friends:
         one: Invite
         other: "Invite %{count} friends"
       invite_title: "Send an Email Invite"
       invite_twitter_followers: "Invite Twitter Followers!"
-      invites_sent_to: 
+      invites_sent_to:
         one: "A Tapjoy invite has been sent to %{name}"
         other: "Tapjoy invites have been sent to %{name}"
       issue_registering: "There was an issue registering your account"
@@ -409,10 +409,10 @@ nl:
       wifi_required: "WiFi Required"
       wrong_device: "wrong device?"
       you_are_following: "You're following (%{count})"
-      your_followers: 
+      your_followers:
         one: "Your follower"
         other: "Your followers (%{count})"
-    instructions: 
+    instructions:
       amount_and_currency: "%{amount} %{currency}"
       continue_link: "Klik hier om verder te gaan."
       download_action: hier
@@ -421,7 +421,7 @@ nl:
       footer: "Na het doorlopen van deze stappen ontvang je %{amount_and_currency}."
       header: "Volg deze stappen om de %{currency} te krijgen:"
       title: Instructies
-    offerwall: 
+    offerwall:
       buy_currency: "Koop  %{amount} %{currency}"
       earn_currency: "Verdien %{amount} %{currency}"
       free: Gratis
@@ -438,7 +438,7 @@ nl:
       title: "Verdien %{currency}"
       wifi_required: "Wifi Required"
       wifi_warning: "This app requires a wifi connection to download."
-    shared: 
+    shared:
       about_link: "About Tapjoy"
       ads_by: "Advertenties van"
       android: Android
@@ -512,7 +512,7 @@ nl:
       write_review: "Write Review"
       year: Year
       zip_postal: "Zip/Postal Code"
-    support: 
+    support:
       abuse_warning: "Dit formulier is alleen voor mensen die hun beloning nog niet hebben ontvangen. Misbruik kan er toe leiden dat u in de toekomst geen gebruik meer kunt maken van aanbiedingen."
       description_label: "Beschrijving:"
       email_address_label: "Email adres:"
@@ -528,12 +528,12 @@ nl:
       support_request_submitted: "U vraag is verstuurd"
       thanks: "Dank voor uw vraag! U ontvangt de %{currency} nadat we hebben geverifieerd dat u alle stappen m.b.t. de aanbieding hebt doorlopen."
       title: "Ontbreken er %{currency}?"
-    unavailable_offer: 
+    unavailable_offer:
       message: "Sorry, maar %{offer} is niet langer beschikbaar. Je kunt nu terug naar de vorige pagina en deze verversen om de laatste aanbiedingen te zien."
       optional_message: "Of, klik hier om %{offer} toch te downloaden."
-  time: 
+  time:
     am: ~
-    formats: 
+    formats:
       classic_short: ~
       day: ~
       day_long: ~
