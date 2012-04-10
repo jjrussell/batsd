@@ -30,7 +30,7 @@ describe Job::MasterCalculateNextPayoutController do
         end
 
         it 'will have a system note' do
-          @partner.payout_confirmation_notes.should == 'SYSTEM: Payout is greater than or equal to $50,000.00'
+          @partner.payout_threshold_confirmation.system_notes.should == 'SYSTEM: Payout is greater than or equal to $50,000.00'
         end
       end
 
@@ -46,7 +46,7 @@ describe Job::MasterCalculateNextPayoutController do
         end
 
         it 'will not change the payout notes' do
-          @partner.payout_confirmation_notes.should be_nil
+          @partner.payout_threshold_confirmation.system_notes.should be_nil
         end
       end
     end
@@ -54,7 +54,6 @@ describe Job::MasterCalculateNextPayoutController do
     context 'when not confirmed for payout' do
       before :each do
         @partner.payout_threshold_confirmation.confirmed = false
-        @partner.payout_confirmation_notes = 'should stick!'
         @partner.save!
       end
 
@@ -70,7 +69,7 @@ describe Job::MasterCalculateNextPayoutController do
         end
 
         it 'will not have the system message' do
-          @partner.payout_confirmation_notes.should_not == 'SYSTEM: Payout is greater than or equal to $50,000.00'
+          @partner.payout_threshold_confirmation.system_notes.should == 'SYSTEM: Payout is greater than or equal to $50,000.00'
         end
       end
     end
@@ -89,7 +88,7 @@ describe Job::MasterCalculateNextPayoutController do
       end
 
       it 'will have a system note' do
-        @partner.payout_confirmation_notes.should == 'SYSTEM: Payout is greater than or equal to $65,000.00'
+        @partner.payout_threshold_confirmation.system_notes.should == 'SYSTEM: Payout is greater than or equal to $65,000.00'
       end
     end
 
@@ -108,7 +107,7 @@ describe Job::MasterCalculateNextPayoutController do
       end
 
       it 'will not have a system note' do
-        @partner.payout_confirmation_notes.should be_nil
+        @partner.payout_threshold_confirmation.system_notes.should be_nil
       end
     end
   end
