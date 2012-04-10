@@ -11,41 +11,39 @@
 - messaging_text = t('text.games.link_account_messaging', :android_market_url => android_market_url, :tjm_url => tjm_url).gsub(/\"/, "\'")
 
 - content_for :page_javascript do
-  :javascript
-    $(document).ready(function(){
-      if(!Tapjoy.device.idevice && !Tapjoy.device.android){
-        var msg = "#{messaging_text}";
-        $('#register-message .message-header').html(msg);
-        $('#register-message .message-content .register-btn').html('#{t('text.games.email_device_link')}');
-        $('#link-device').unbind('click');
-        function sendLinkDevice() {
-          var url = "#{games_send_device_link_path}";
-          $.ajax({
-            type: 'POST',
-            url: url,
-            cache: false,
-            timeout: 15000,
-            dataType: 'json',
-            success: function(d) {
-              if (d.success) {
-                $('#link-device').unbind('click');
-                $('#register-message .message-content .register-btn').html('#{t('text.shared.sent')}');
-              }
-              else {
-                $('#register-message .message-content .register-btn').html('#{t('text.shared.please_try_again')}');
-              }
-            },
-            error: function(d) {
+  :plain
+    if(!Tapjoy.device.idevice && !Tapjoy.device.android){
+    
+      var msg = "#{messaging_text}";
+      
+      $('#register-message .message-header').html(msg);
+      $('#register-message .message-content .register-btn').html('#{t('text.games.email_device_link')}');
+      $('#link-device').unbind('click');
+
+      $('#link-device').live('click', function() {
+        $('#register-message .message-content .register-btn').html('#{t('text.shared.sending')}');
+        var url = "#{games_send_device_link_path}";
+        $.ajax({
+          type: 'POST',
+          url: url,
+          cache: false,
+          timeout: 15000,
+          dataType: 'json',
+          success: function(d) {
+            if (d.success) {
+              $('#link-device').unbind('click');
+              $('#register-message .message-content .register-btn').html('#{t('text.shared.sent')}');
+            }
+            else {
               $('#register-message .message-content .register-btn').html('#{t('text.shared.please_try_again')}');
             }
-          });
-        }
-        $('#link-device').click(function() {
-          $('#register-message .message-content .register-btn').html('#{t('text.shared.sending')}');
-          sendLinkDevice();
+          },
+          error: function(d) {
+            $('#register-message .message-content .register-btn').html('#{t('text.shared.please_try_again')}');
+          }
         });
-      }
-    });
+      });
+    }
   
 :css
   #register-message .message-content .register-btn {
