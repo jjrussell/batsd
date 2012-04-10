@@ -13,6 +13,13 @@
     = @click.present? ? link_to(@click.offer.name, statz_url(:id => @click.offer_id, :host => URI.parse(DASHBOARD_URL).host)) : ""
     = @click.present? ? "[#{statz_url(:id => @click.offer_id, :host => URI.parse(DASHBOARD_URL).host)}]" : ""
     %br
+    Currency:
+    = @click.present? ? link_to(@click.currency.name, app_currency_url(:app_id => @click.publisher_app_id, :id => @click.currency_id, :host => URI.parse(DASHBOARD_URL).host)) : ""
+    = @click.present? ? "[#{app_currency_url(:app_id => @click.publisher_app_id, :id => @click.currency_id, :host => URI.parse(DASHBOARD_URL).host)}]" : ""
+    %br
+    Reward Amount:
+    = @click.present? ? "#{@click.currency_reward} #{@click.currency.name}" : ""
+    %br
     Publisher Partner:
     = @click.present? ? link_to(@click.publisher_partner.name, partner_url(:id => @click.publisher_partner_id, :host => URI.parse(DASHBOARD_URL).host)) : ""
     = @click.present? ? "[#{partner_url(:id => @click.publisher_partner_id, :host => URI.parse(DASHBOARD_URL).host)}]" : ""
@@ -23,10 +30,6 @@
     %br
     Publisher User:
     = @click.present? ? @click.publisher_user_id : ""
-    %br
-    Currency:
-    = @click.present? ? link_to(@click.currency.name, app_currency_url(:app_id => @click.publisher_app_id, :id => @click.currency_id, :host => URI.parse(DASHBOARD_URL).host)) : ""
-    = @click.present? ? "[#{app_currency_url(:app_id => @click.publisher_app_id, :id => @click.currency_id, :host => URI.parse(DASHBOARD_URL).host)}]" : ""
     %br
     Language Code: #{ @language_code }
     %br
