@@ -24,7 +24,7 @@ describe Tools::FeaturedContentsController do
           :start_date               => @start_date.to_s,
           :end_date                 => @end_date.to_s,
           :weight                   => 1,
-          :tracking_offer_source_id => Factory(:app).primary_offer.id,
+          :tracking_source_offer_id => Factory(:app).primary_offer.id,
           :author                   => Factory(:employee),
           :button_url               => 'https://www.tapjoy.com',
         }
@@ -47,12 +47,12 @@ describe Tools::FeaturedContentsController do
       context 'when called without offer' do
         before :each do
           @options[:featured_content][:featured_type] = FeaturedContent::TYPES_MAP[FeaturedContent::NEWS]
-          @options[:featured_content][:offer]         = nil
+          @options[:featured_content][:tracking_source_offer_id] = nil
           post 'create', @options
         end
 
         it 'creates a default offer' do
-          assigns[:featured_content].offer.item_type.should == 'GenericOffer'
+          assigns[:featured_content].tracking_offer.item_type.should == 'GenericOffer'
         end
 
         it 'sets button_url to be NO_URL' do
@@ -107,7 +107,7 @@ describe Tools::FeaturedContentsController do
       end
 
       it 'set search_result_name' do
-        assigns[:search_result_name].should == @featured_content.offer.search_result_name
+        assigns[:search_result_name].should == @featured_content.tracking_offer.search_result_name
       end
     end
   end
@@ -127,7 +127,7 @@ describe Tools::FeaturedContentsController do
           :start_date               => @featured_content.start_date.to_s,
           :end_date                 => @featured_content.end_date.to_s,
           :weight                   => @featured_content.weight,
-          :tracking_source_offer_id => @featured_content.tracking_offer_id,
+          :tracking_source_offer_id => @featured_content.tracking_offer.item_id,
           :author_id                => @featured_content.author_id
         }
       }

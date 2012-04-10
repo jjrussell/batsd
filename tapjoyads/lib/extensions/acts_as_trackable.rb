@@ -1,5 +1,4 @@
 module ActsAsTrackable
-
   def self.included(base)
     base.extend ActsAsTrackable::ClassMethods
   end
@@ -93,15 +92,27 @@ module HasTrackingOffers
 
   module InstanceMethods
     def tracking_item=(tracking_item)
-      self.tracking_offer = tracking_item.find_or_build_tracking_offer_for(self) if tracking_item.present?
+      if tracking_item.present?
+        self.tracking_offer = tracking_item.find_or_build_tracking_offer_for(self)
+      else
+        self.tracking_offer = nil
+      end
     end
 
     def tracking_source_offer=(tracking_source_offer)
-      self.tracking_item = tracking_source_offer.item if tracking_source_offer.present?
+      if tracking_source_offer.present?
+        self.tracking_item = tracking_source_offer.item
+      else
+        self.tracking_item = nil
+      end
     end
 
     def tracking_source_offer_id=(tracking_source_offer_id)
-      self.tracking_source_offer = Offer.find(tracking_source_offer_id) if tracking_source_offer_id.present?
+      if tracking_source_offer_id.present?
+        self.tracking_source_offer = Offer.find(tracking_source_offer_id) 
+      else
+        self.tracking_source_offer = nil
+      end
     end
 
     def tracking_item
@@ -116,8 +127,14 @@ module HasTrackingOffers
       if tracking_offer.present?
         tracking_offer.tapjoy_enabled = true 
         tracking_offer.save
+      else
+        tracking_offers.each do |offer|
+          offer.tapjoy_enabled = false
+          offer.save
+        end
       end
     end
+
   end
 end
 
