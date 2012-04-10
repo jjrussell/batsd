@@ -64,6 +64,8 @@ Tapjoyads::Application.configure do
 
   # Send deprecation notices to registered listeners
   config.active_support.deprecation = :notify
+
+  config.db_readonly_hostnames = ['api.staging.tapjoy.com']
 end
 SPROCKETS_CONFIG = {
   :compile => true,

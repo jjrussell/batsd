@@ -24,6 +24,8 @@ Tapjoyad::Application.configure do
   # Only use best-standards-support built into browsers
   config.action_dispatch.best_standards_support = :builtin
 
+  config.db_readonly_hostnames = ['localhost:8080']
+
   %w( api dashboard website web legacy ).each do |route|
     config.paths.config.routes << Rails.root.join("config/routes/#{route}.rb")
   end

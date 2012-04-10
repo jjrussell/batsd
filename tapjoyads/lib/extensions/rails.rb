@@ -47,9 +47,9 @@ module ActiveRecord
 
     # ensure API servers are readonly
     alias_method :orig_readonly?, :readonly?
-
+    cattr_accessor :readonly
     def readonly?
-      (connection.adapter_name == 'SQLite' && Rails.env.production?) || orig_readonly?
+      self.readonly || orig_readonly?
     end
 
     # This patch allows us to specify which attributes are safe to update.

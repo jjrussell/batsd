@@ -6,7 +6,7 @@ class ApplicationController < ActionController::Base
 
   helper_method :geoip_data
 
-  before_filter :set_time_zone
+  before_filter :set_readonly_db
   before_filter :fix_params
   before_filter :set_locale
   before_filter :reject_banned_ips
@@ -14,6 +14,10 @@ class ApplicationController < ActionController::Base
   # See ActionController::RequestForgeryProtection for details
   # Uncomment the :secret if you're not using the cookie session store
   protect_from_forgery # :secret => 'f9a08830b0e4e7191cd93d2e02b08187'
+
+  def set_readonly_db
+    ActiveRecord::Base.readonly = Rails.configuration.db_readonly_hostnames.include?(request.host_with_port)
+  end
 
   private
 
@@ -51,10 +55,6 @@ class ApplicationController < ActionController::Base
       return false
     end
     true
-  end
-
-  def set_time_zone
-    Time.zone = 'UTC'
   end
 
   def set_locale
