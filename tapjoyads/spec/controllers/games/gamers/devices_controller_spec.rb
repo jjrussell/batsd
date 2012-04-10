@@ -39,7 +39,7 @@ describe Games::Gamers::DevicesController do
     end
 
     describe "#new" do
-      context "no login" do
+      context "not logged in" do
         it "shows error and redirects" do
           get :new
 
