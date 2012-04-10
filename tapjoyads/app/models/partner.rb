@@ -72,9 +72,9 @@ class Partner < ActiveRecord::Base
     record.errors.add(attribute, 'You can not choose a date in the past for negotiated rev share expiration time.') if value.to_time < Time.zone.now
   end
 
-  before_validation :remove_whitespace_from_attributes, :update_rev_share, :add_confirmations
+  before_validation :remove_whitespace_from_attributes, :update_rev_share, :add_payout_confirmations
   before_save :check_billing_email
-  after_save :update_currencies, :update_offers, :recache_currencies
+  after_save :update_currencies, :update_offers, :recache_currencies, :update_payout_confirmations
 
   cattr_reader :per_page
   attr_protected :exclusivity_level_type, :exclusivity_expires_on, :premier_discount
@@ -392,8 +392,13 @@ private
     errors.add :client_id, "cannot be switched to another client." if client_id_changed? && client_id_was.present? && client_id.present?
   end
 
-  def add_confirmations
-    payout_threshold_confirmation ||= build_payout_threshold_confirmation
-    payout_info_confirmation ||= build_payout_info_confirmation
+  def add_payout_confirmations
+    self.payout_threshold_confirmation ||= self.build_payout_threshold_confirmation
+    self.payout_info_confirmation ||= self.build_payout_info_confirmation
+  end
+
+  def update_payout_confirmations
+    self.payout_threshold_confirmation.save!
+    self.payout_info_confirmation.save!
   end
 end

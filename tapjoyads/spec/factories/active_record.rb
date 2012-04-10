@@ -59,6 +59,12 @@ FactoryGirl.define do
   factory :partner do
     name { Factory.next(:name) }
     approved_publisher true
+    payout_threshold 50_000_00
+  end
+
+  factory :payout_threshold_confirmation do
+    association :partner
+    confirmed true
   end
 
   factory :payout_info do
