@@ -85,6 +85,9 @@ class Click < SimpledbShardedResource
     end
     save!
 
+    d = Device.new(:key => udid)
+    d.unset_last_run_time!(advertiser_app_id)
+
     Downloader.get_with_retry(url_to_resolve) if Rails.env.production?
   end
 
