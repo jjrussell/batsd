@@ -74,11 +74,13 @@ group :development do
   gem 'guard-cucumber'
   gem 'guard-spork'
   gem 'guard-rspec'
+  gem 'rspec-instafail'
   gem 'ruby_gntp'
   gem 'pry'
   gem 'pry-rails'
   gem 'pry-remote'
   gem 'pry-nav'
+  gem 'parallel_tests'
 end
 
 group :test do
