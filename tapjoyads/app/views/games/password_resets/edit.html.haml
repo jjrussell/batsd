@@ -19,7 +19,7 @@
         .account_error.error-msg
 
 - content_for :page_javascript do
-  :javascript
+  :plain
     $(window).load(function() {
       $('form').focus(function(e){
         $(".formError").hide();

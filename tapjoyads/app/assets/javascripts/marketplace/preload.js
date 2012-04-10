@@ -1,24 +1,41 @@
-(function(){
+(function(window, undefined){
+  "use strict";
 
-  window.preload = function(){
+  var toString = Object.prototype.toString;
+
+  var preload = function(array, fn){
     var images = [];
 
-    for(i = 0, k = arguments[0].length; i < k; i++){
-      images[i] = new Image()
-      images[i].src = arguments[0][i];
+    for(var i = 0, k = array.length; i < k; i++){
+      images[i] = new Image();
+      images[i].src = array[i];
+    }
+
+    if(toString.call(fn) === '[object Function]'){
+      fn.call();
     }
   }
-
-  window.load = function(fn){
+    
+  var load = function(fn){
     var onload = window.onload;
 
-    typeof(window.onload) != 'function' ? window.onload = fn : window.onload = function(){
-      if(onload){
-        onload();
-      }
+    if(toString.call(window.onload) !== '[object Function]'){
+      window.onload = fn;
+    }else{
+      window.onload = function(){
+        if(onload){
+          onload();
+        }
 
-      fn();
+        fn();
+      }
     }
   };
 
-})();
+  // extend window with load
+  window.load = load;
+  
+  // extend window with preload
+  window.preload = preload;
+
+})(window);

@@ -454,6 +454,22 @@
       return this.replace(/^\s+/, '').replace(/\s+$/, '');
     });
 
+    // create a break for forEach by throwing "stop";
+    if(typeof stop == 'undefined'){
+      stop = new Error('stop');
+    }
+    
+    arrayPrototype.forEach = function(){
+      try {
+        arrayPrototype.apply(this, slice.call(arguments, 0));
+      }
+      catch(exception){
+        if(exception !== stop) {
+          throw exception;
+        }
+      }
+    };
+
     Tap(document).ready(function(){
       if(!Tap.supportsTouch)
         $('body:eq(0)').addClass('desktop');
