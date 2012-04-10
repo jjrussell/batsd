@@ -104,8 +104,7 @@ class TjmRequest < SyslogMessage
   private
 
   def lookup_path
-    subbed_controller = controller.sub(/^games\//,'')
-    PATH_MAP.include?(subbed_controller) && PATH_MAP[subbed_controller].include?(action) ? "tjm_#{PATH_MAP[subbed_controller][action]}" : "tjm_#{controller}_#{action}"
+    PATH_MAP.include?(controller) && PATH_MAP[controller].include?(action) ? "tjm_#{PATH_MAP[controller][action]}" : "tjm_#{controller}_#{action}"
   end
 
 end
