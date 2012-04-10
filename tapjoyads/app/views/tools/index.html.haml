@@ -97,6 +97,8 @@
     %li= link_to 'Survey Offers', tools_survey_offers_path
   - if permitted_to? :index, :tools_clients
     %li= link_to 'Manage Clients', tools_clients_path
+  - if permitted_to? :index, :tools_shared_files
+    %li= link_to 'My Shared Files', tools_shared_files_path
 
 - if has_permissions_for_one_of? :account_mgr, :customer_service, :admin
   %h3 Customer Support
@@ -116,7 +118,7 @@
   - if permitted_to? :index, :tools_gamers
     %li= link_to 'Gamer Accounts', tools_gamers_path
 
-- if has_permissions_for_one_of? :hr, :file_sharer
+- if has_permissions_for_one_of? :hr
   %h3 Human Resources
 %ul
   - if permitted_to? :index, :tools_employees
@@ -127,8 +129,6 @@
     %li= link_to 'All approved devices', internal_devices_path
   - if permitted_to? :index, :tools_wfhs
     %li= link_to 'WFH', tools_wfhs_path
-  - if permitted_to? :index, :tools_shared_files
-    %li= link_to 'My Shared Files', tools_shared_files_path
 
 - content_for :page_javascript do
   - if permitted_to? :show, :statz
