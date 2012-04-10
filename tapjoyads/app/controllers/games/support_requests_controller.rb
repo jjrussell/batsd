@@ -32,8 +32,6 @@ class Games::SupportRequestsController < GamesController
       click = Click.new(:key => params[:click_id])
     end
 
-    Rails.logger.info "Click: #{click.inspect}"
-
     support_request = SupportRequest.new
     support_request.fill_from_click(click, params, current_device, @gamer, request.env["HTTP_USER_AGENT"])
     support_request.save
