@@ -2,6 +2,9 @@ class Currency < ActiveRecord::Base
   include UuidPrimaryKey
   acts_as_cacheable
   acts_as_approvable :on => :create
+
+  json_set_field :promoted_offers
+
   TAPJOY_MANAGED_CALLBACK_URL = 'TAP_POINTS_CURRENCY'
   NO_CALLBACK_URL = 'NO_CALLBACK'
   PLAYDOM_CALLBACK_URL = 'PLAYDOM_DEFINED'
@@ -59,20 +62,38 @@ class Currency < ActiveRecord::Base
   named_scope :just_app_ids, :select => :app_id, :group => :app_id
   named_scope :tapjoy_enabled, :conditions => 'tapjoy_enabled'
   named_scope :udid_for_user_id, :conditions => "udid_for_user_id"
-  named_scope :external_publishers, :conditions => { :external_publisher => true, :tapjoy_enabled => true }
+  named_scope :external_publishers, :conditions => "external_publisher and tapjoy_enabled"
+  named_scope :ordered_by_app_name, :include => [ :app, :partner ], :order => 'apps.name, partners.name'
+  named_scope :search_name, lambda { |term|
+    { :conditions => [ "tapjoy_enabled and name like ?", term ] }
+  }
+  named_scope :search_app_name, lambda { |term|
+    {
+      :joins => [ :app ],
+      :conditions => [ "tapjoy_enabled and apps.name like ?", term ]
+    }
+  }
+  named_scope :search_partner_name, lambda { |term|
+    {
+      :joins => [ :partner ],
+      :conditions => [ "tapjoy_enabled and partners.name like ?", term ]
+    }
+  }
 
   before_validation :sanitize_attributes
   before_validation_on_create :assign_default_currency_group
-  before_create :set_hide_rewarded_app_installs, :set_values_from_partner_and_reseller
+  before_create :set_hide_rewarded_app_installs, :set_values_from_partner_and_reseller, :set_promoted_offers
   after_create :create_deeplink_offer
   before_update :update_spend_share
   before_update :reset_to_pending_if_rejected
+  after_update  :approve_on_tapjoy_enabled
   after_cache :cache_by_app_id
   after_cache_clear :clear_cache_by_app_id
 
   delegate :postcache_weights, :to => :currency_group
   delegate :categories, :to => :app
-  memoize :postcache_weights, :categories
+  delegate :get_promoted_offers, :to => :partner, :prefix => true
+  memoize :postcache_weights, :categories, :partner_get_promoted_offers
 
   def self.find_all_in_cache_by_app_id(app_id, do_lookup = !Rails.env.production?)
     currencies = Mc.distributed_get("mysql.app_currencies.#{app_id}.#{acts_as_cacheable_version}")
@@ -186,6 +207,11 @@ class Currency < ActiveRecord::Base
     callback_url == TAPJOY_MANAGED_CALLBACK_URL
   end
 
+  def update_promoted_offers(offer_ids)
+    self.promoted_offers = offer_ids.sort
+    changed? ? save : true
+  end
+
   def set_values_from_partner_and_reseller
     self.disabled_partners = partner.disabled_partners
     self.reseller          = partner.reseller
@@ -200,6 +226,11 @@ class Currency < ActiveRecord::Base
       self.external_publisher = partner.accepted_publisher_tos?
     end
 
+    true
+  end
+
+  def set_promoted_offers
+    self.promoted_offers = app.currencies.present? ? app.currencies.first.get_promoted_offers : ''
     true
   end
 
@@ -221,6 +252,10 @@ class Currency < ActiveRecord::Base
 
   def rewarded?
     conversion_rate > 0
+  end
+
+  def approve!
+    self.approval.approve!(true)
   end
 
   private
@@ -272,5 +307,11 @@ class Currency < ActiveRecord::Base
     self.deeplink_offer.save!
     self.enabled_deeplink_offer_id = self.deeplink_offer.id
     self.save!
+  end
+
+  def approve_on_tapjoy_enabled
+    if self.tapjoy_enabled_changed? && self.tapjoy_enabled_change
+      self.approve!
+    end
   end
 end

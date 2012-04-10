@@ -328,6 +328,10 @@ class Offer < ActiveRecord::Base
     tapjoy_enabled? && user_enabled? && ((payment > 0 && partner_balance > 0) || (payment == 0 && reward_value.present? && reward_value > 0))
   end
 
+  def can_be_promoted?
+    primary? && rewarded? && is_enabled?
+  end
+
   def accepting_clicks?
     tapjoy_enabled? && user_enabled? && (payment > 0 || (payment == 0 && reward_value.present? && reward_value > 0))
   end
@@ -626,6 +630,11 @@ class Offer < ActiveRecord::Base
       Click.count(:where => conditions)
     end
   end
+
+  def promotion_platform
+    self.app ?  self.app.platform.to_sym : nil
+  end
+  memoize :promotion_platform
 
   def calculate_target_installs(num_installs_today)
     target_installs = 1.0 / 0

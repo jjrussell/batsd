@@ -1,0 +1,39 @@
+- group = @as_group
+- unless group[:triggers].empty? || group[:desired_capacity] == group[:min_size]
+  - if group[:triggers].first[:status].downcase == "highbreaching"
+    - progress_class = "progress-success"
+    .right
+      = image_tag('unicorn_blaster_right.jpg')
+  - elsif group[:triggers].first[:status].downcase == "lowbreaching"
+    - progress_class = "progress-danger"
+    .right
+      = image_tag('unicorn_blaster_left.jpg')
+.right.labels= Time.now.strftime("%H:%M:%S")
+%h3= "#{group[:auto_scaling_group_name]} / #{group[:load_balancer_names].join(', ')}"
+.progress{:class => progress_class}
+  - if group[:min_size] == group[:max_size]
+    .bar{ :style => "width: 100%"}
+  - elsif group[:min_size] == 1
+    .bar{ :style => "width: #{(group[:desired_capacity].to_f / group[:max_size].to_f) * 100}%"}
+  - else
+    - max = group[:max_size] - group[:min_size] + 1
+    - cap = group[:desired_capacity] - group[:min_size] + 1
+    .bar{ :style => "width: #{(cap.to_f / max.to_f) * 100}%"}
+.labels
+  .left
+    #{group[:min_size]}
+  .right
+    #{group[:max_size]}
+  -# TODO: Make this understand multiple triggers
+  .center{ :class => "#{group[:triggers].first[:status].downcase unless group[:triggers].empty? || group[:desired_capacity] == group[:min_size]}" }
+    #{group[:desired_capacity]}
+
+- unless group[:instances].empty?
+  %table.tablesorter
+    %tbody
+      - group[:instances].each do |instance|
+        %tr{ :class => cycle('', 'odd', :name => 'instances') }
+          %td= instance[:instance_id]
+          %td= instance[:lifecycle_state]
+          %td= instance[:availability_zone]
+      - reset_cycle('instances')
