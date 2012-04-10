@@ -72,89 +72,91 @@
                     - link_to @confirmation_link, :style => css[:a] do
                       = image_tag("#{image_root}/confirm_button.jpg", :title => 'Confirm', :alt => 'Confirm', :style => "border: none;", :size => '170x49')
 
-        - unless @linked
-          %tr
-            %td
-              - link_to(WEBSITE_URL, :style => "color: #{gray}; text-decoration: none;") do
-                %table#link_device{:align => "center", :cellpadding=>"0", :cellspacing=>"0", :style => css[:step]}
-                  %tr
-                    %td{:style => css[:step_icon]}
-                      = image_tag("#{image_root}/connect_icon.jpg", :class => 'icon', :size => '68x68', :title => 'Connect your device', :alt => 'Connect', :style => css[:icon_img])
-                    %td{:style => css[:step_body]}
-                      .name{:style => css[:step_name]}
-                        Connect your device
-                      .description
-                        By connecting your device we can personalize your Tapjoy
-                        experience and recommend the best apps just for you. You
-                        must be on the device you wish to add.
+        - if @detailed_email
 
-        - unless @android_device
-          %tr
-            %td
-              - link_to(WEBSITE_URL, :style => "color: #{gray}; text-decoration: none;") do
-                %table#add_to_home_screen{:align => "center", :cellpadding=>"0", :cellspacing=>"0", :style => css[:step]}
-                  %tr
-                    %td{:style => css[:step_icon]}
-                      = image_tag("#{image_root}/home_icon.jpg", :class => 'icon', :size => '68x68', :title => 'Add Tapjoy to your Home Screen', :alt => 'Home', :style => css[:icon_img])
-                    %td{:style => css[:step_body]}
-                      .name{:style => css[:step_name]}
-                        Add Tapjoy to your Home Screen
-                      .description
-                        Engaging with your favorite apps can be just a tap away.
-
-        - if @offer_data.any?
-          - @offer_data.each do |currency_id, offers|
-            - earn_url = "#{WEBSITE_URL}/earn/#{currency_id}"
-            - external_publisher = offers[:external_publisher]
+          - unless @linked
             %tr
               %td
-                - link_to(earn_url, :style => "#{css[:offers]} #{css[:a]}") do
-                  %table.publisher{:align => "center", :cellpadding=>"0", :cellspacing=>"0", :style => css[:step]}
+                - link_to(WEBSITE_URL, :style => "color: #{gray}; text-decoration: none;") do
+                  %table#link_device{:align => "center", :cellpadding=>"0", :cellspacing=>"0", :style => css[:step]}
                     %tr
-                      %td{:style => css[:step_no_icon]}
+                      %td{:style => css[:step_icon]}
+                        = image_tag("#{image_root}/connect_icon.jpg", :class => 'icon', :size => '68x68', :title => 'Connect your device', :alt => 'Connect', :style => css[:icon_img])
+                      %td{:style => css[:step_body]}
                         .name{:style => css[:step_name]}
-                          .publisher{:style => "text-align: center;"}
-                            = image_tag(external_publisher.get_icon_url, :alt => external_publisher.app_name, :style => "border: none;")
-                            %div{:style => "min-width: 270px; padding: 0 #{width.to_i/4}px 0 #{width.to_i/4}px;"}
-                              Earn more currency in your favorite apps, like
-                              = "#{h(external_publisher.app_name)}:"
+                          Connect your device
+                        .description
+                          By connecting your device we can personalize your Tapjoy
+                          experience and recommend the best apps just for you. You
+                          must be on the device you wish to add.
+
+          - unless @android_device
             %tr
               %td
-                - link_to(earn_url, :style => css[:a]) do
-                  %table.offers{:align => "center", :cellpadding=>"0", :cellspacing=>"0", :style => css[:step]}
+                - link_to(WEBSITE_URL, :style => "color: #{gray}; text-decoration: none;") do
+                  %table#add_to_home_screen{:align => "center", :cellpadding=>"0", :cellspacing=>"0", :style => css[:step]}
                     %tr
-                      - offers_array = offers['OfferArray'][0..2]
-                      - offers_array.each do |offer|
-                        %td{:style => "#{css[:offers]} #{css[:step_no_icon]}"}
-                          = image_tag(offer['IconURL'], :alt => offer['Name'], :style => "border: none;")
-                          %br/
-                          .description
-                            - if offer['Type'] == 'App'
-                              Install and run
-                            = "#{h(offer['Name'])}."
-                            %br/
-                            Earn
-                            = h("#{offer['Amount']} #{offers['CurrencyName']}.")
+                      %td{:style => css[:step_icon]}
+                        = image_tag("#{image_root}/home_icon.jpg", :class => 'icon', :size => '68x68', :title => 'Add Tapjoy to your Home Screen', :alt => 'Home', :style => css[:icon_img])
+                      %td{:style => css[:step_body]}
+                        .name{:style => css[:step_name]}
+                          Add Tapjoy to your Home Screen
+                        .description
+                          Engaging with your favorite apps can be just a tap away.
 
-        - if @recommendations.any?
-          %tr
-            %td
-              - link_to("#{WEBSITE_URL}/more_apps", :style => css[:a]) do
-                %table.recommendations{:align => "center", :cellpadding=>"0", :cellspacing=>"0", :style => css[:step]}
-                  %tr
-                    %td{:style => css[:step_icon]}
-                      = image_tag("#{image_root}/recommend_icon.jpg", :class => 'icon', :size => '68x68', :title => 'Recommended apps', :alt => 'Recommended', :style => css[:icon_img])
-                    %td{:style => css[:step_body]}
-                      .name{:style => css[:step_name]}
-                        Check out Recommended Apps personal to you.
-                      %table{:cellpadding=>"0", :cellspacing=>"0", :style => "width: 100%; padding-top: 5px; padding-right: 18px;"}
-                        %tr
-                          - @recommendations[0..2].each do |cached_app|
-                            %td{:style => "#{css[:offers]} width: 120px;"}
-                              = image_tag(cached_app.icon_url, :alt => cached_app.name, :style => "border: none;")
+          - if @offer_data.any?
+            - @offer_data.each do |currency_id, offers|
+              - earn_url = "#{WEBSITE_URL}/earn/#{currency_id}"
+              - external_publisher = offers[:external_publisher]
+              %tr
+                %td
+                  - link_to(earn_url, :style => "#{css[:offers]} #{css[:a]}") do
+                    %table.publisher{:align => "center", :cellpadding=>"0", :cellspacing=>"0", :style => css[:step]}
+                      %tr
+                        %td{:style => css[:step_no_icon]}
+                          .name{:style => css[:step_name]}
+                            .publisher{:style => "text-align: center;"}
+                              = image_tag(external_publisher.get_icon_url, :alt => external_publisher.app_name, :style => "border: none;")
+                              %div{:style => "min-width: 270px; padding: 0 #{width.to_i/4}px 0 #{width.to_i/4}px;"}
+                                Earn more currency in your favorite apps, like
+                                = "#{h(external_publisher.app_name)}:"
+              %tr
+                %td
+                  - link_to(earn_url, :style => css[:a]) do
+                    %table.offers{:align => "center", :cellpadding=>"0", :cellspacing=>"0", :style => css[:step]}
+                      %tr
+                        - offers_array = offers['OfferArray'][0..2]
+                        - offers_array.each do |offer|
+                          %td{:style => "#{css[:offers]} #{css[:step_no_icon]}"}
+                            = image_tag(offer['IconURL'], :alt => offer['Name'], :style => "border: none;")
+                            %br/
+                            .description
+                              - if offer['Type'] == 'App'
+                                Install and run
+                              = "#{h(offer['Name'])}."
                               %br/
-                              .description
-                                = h(cached_app.name)
+                              Earn
+                              = h("#{offer['Amount']} #{offers['CurrencyName']}.")
+
+          - if @recommendations.any?
+            %tr
+              %td
+                - link_to("#{WEBSITE_URL}/more_apps", :style => css[:a]) do
+                  %table.recommendations{:align => "center", :cellpadding=>"0", :cellspacing=>"0", :style => css[:step]}
+                    %tr
+                      %td{:style => css[:step_icon]}
+                        = image_tag("#{image_root}/recommend_icon.jpg", :class => 'icon', :size => '68x68', :title => 'Recommended apps', :alt => 'Recommended', :style => css[:icon_img])
+                      %td{:style => css[:step_body]}
+                        .name{:style => css[:step_name]}
+                          Check out Recommended Apps personal to you.
+                        %table{:cellpadding=>"0", :cellspacing=>"0", :style => "width: 100%; padding-top: 5px; padding-right: 18px;"}
+                          %tr
+                            - @recommendations[0..2].each do |cached_app|
+                              %td{:style => "#{css[:offers]} width: 120px;"}
+                                = image_tag(cached_app.icon_url, :alt => cached_app.name, :style => "border: none;")
+                                %br/
+                                .description
+                                  = h(cached_app.name)
 
         %tr
           %td{:style => "padding: 10px 0 10px 0;"}

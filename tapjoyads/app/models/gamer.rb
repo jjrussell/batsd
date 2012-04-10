@@ -55,6 +55,7 @@ class Gamer < ActiveRecord::Base
     if save
       click = referrer_click
       reward_click(click) if click && click.rewardable?
+      true
     end
   end
 

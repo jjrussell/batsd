@@ -54,7 +54,6 @@ class GamesMarketingMailer < ActionMailer::Base
     selected_devices = device_info[:selected_devices] || []
     @linked = gamer_device.present?
     @android_device = @linked ? (gamer_device.device_type == 'android') : !selected_devices.include?('ios')
-    @confirmation_link = "#{WEBSITE_URL}/confirm?token=#{CGI.escape(gamer.confirmation_token)}"
 
     device = Device.new(:key => @linked ? gamer_device.device_id : nil)
     # select only necessary values
@@ -63,6 +62,9 @@ class GamesMarketingMailer < ActionMailer::Base
 
     sendgrid_category "Welcome Email, #{@linked ? "Linked for Device Type #{gamer_device.device_type}" : "Not Linked"}"
     sendgrid_subscriptiontrack_text(:replace => "[unsubscribe_link]")
+    @detailed_email = rand(2) == 1 ? true : false
+    type = @detailed_email ? 'detailed' : 'confirm_only'
+    @confirmation_link = "#{WEBSITE_URL}/confirm?token=#{CGI.escape(gamer.confirmation_token)}&content=#{type}"
   end
 
   def invite(gamer_name, recipients_email, link)
