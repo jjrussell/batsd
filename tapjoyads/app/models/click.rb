@@ -1,4 +1,7 @@
 class Click < SimpledbShardedResource
+
+  MAX_HISTORY = 20
+
   belongs_to :device, :foreign_key => 'udid'
   belongs_to :publisher_app, :class_name => 'App'
   belongs_to :displayer_app, :class_name => 'App'
@@ -44,6 +47,7 @@ class Click < SimpledbShardedResource
   self.sdb_attr :publisher_reseller_id
   self.sdb_attr :advertiser_reseller_id
   self.sdb_attr :client_timestamp,  :type => :time
+  self.sdb_attr :mac_address
   self.sdb_attr :last_clicked_at, :type => :time, :force_array => true, :replace => false
   self.sdb_attr :last_installed_at, :type => :time, :force_array => true, :replace => false
 
@@ -96,6 +100,21 @@ class Click < SimpledbShardedResource
       App.find_in_cache(advertiser_app_id, true)
     rescue ActiveRecord::RecordNotFound
       nil
+    end
+  end
+
+  def maintain_history
+    if clicked_at?
+      while last_clicked_at.size >= MAX_HISTORY
+        delete('last_clicked_at', get('last_clicked_at', :force_array => true).sort.first)
+      end
+      self.last_clicked_at = clicked_at
+    end
+    if installed_at?
+      while last_installed_at.size >= MAX_HISTORY
+        delete('last_installed_at', get('last_installed_at', :force_array => true).sort.first)
+      end
+      self.last_installed_at = installed_at
     end
   end
 

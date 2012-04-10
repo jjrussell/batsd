@@ -1,0 +1,65 @@
+#!/usr/bin/env ruby
+
+require 'optparse'
+require 'yaml'
+
+class DeployNotifier
+  VERSION_FILENAME = "#{File.dirname(__FILE__)}/../../server/version.yaml"
+  GITHUB_ISSUES_URL = "https://github.com/api/v2/json/issues/comment/Tapjoy/tapjoyserver/"
+
+  def initialize(args)
+    @options = {
+      :version => YAML::load(File.open(VERSION_FILENAME))["current"]
+    }
+
+    option_parser = OptionParser.new do |opts|
+      opts.on('-e', '--environment [ENVIRONMENT]') do |environment|
+        @options[:environment] = environment
+      end
+
+      opts.on('-v', '--version [VERSION]') do |version|
+        @options[:version] = version 
+      end
+    end
+    option_parser.parse!(args)
+
+    @options[:version] = @options[:version].to_i
+    @github_user  = `git config --get github.user`.chomp
+    @github_token = `git config --get github.token`.chomp
+
+    if @github_user.empty? || @github_token.empty?
+      puts "You must specify your GitHub username and token in order to notify developers about the deploy."
+      puts "Visit http://help.github.com/set-your-user-name-email-and-github-token/ for instructions."
+      exit
+    end
+  end
+
+  def notify
+    unless @options[:environment] == 'production'
+      puts "This would notify developers on the following pull requests: #{pull_requests_to_notify.join(", ")}."
+      return
+    end
+
+    comment = "This pull request has been included in deploy tag #{@options[:version]}."
+    notified = pull_requests_to_notify.inject(true) do |success, pull_request|
+      command = "curl -sL -w '%{http_code}' -F 'login=#{@github_user}' -F 'token=#{@github_token}' -F 'comment=#{comment}' #{GITHUB_ISSUES_URL}#{pull_request} -o /dev/null"
+      `#{command}` == '201' && success
+    end
+
+    if notified
+      puts "Notified developers on the following pull requests: #{pull_requests_to_notify.join(", ")}"
+    else
+      puts "Could not notify developers of the deploy. Check your GitHub credentials."
+    end
+  end
+
+  def pull_requests_to_notify
+    current_tag_sha = `git log --oneline --grep "^Incrementing version number to #{@options[:version]}"`.split.first
+    last_tag_sha    = `git log --oneline --grep "^Incrementing version number to #{@options[:version] - 1}"`.split.first
+
+    # get all pull request numbers that were just included in the deploy version tag
+    `git log --pretty=format:"%s" #{last_tag_sha}...#{current_tag_sha} --grep "^Merge pull request #" | egrep -o "#[0-9]+" | egrep -o "[0-9]+"`.split
+  end
+end
+
+DeployNotifier.new(ARGV).notify
