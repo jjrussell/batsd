@@ -207,7 +207,6 @@ class Offer < ActiveRecord::Base
   named_scope :non_video_offers, :conditions => "item_type != 'VideoOffer'"
   named_scope :tapjoy_sponsored_offer_ids, :conditions => "tapjoy_sponsored = true", :select => "#{Offer.quoted_table_name}.id"
   named_scope :creative_approval_needed, :conditions => 'banner_creatives != approved_banner_creatives OR (banner_creatives IS NOT NULL AND approved_banner_creatives IS NULL)'
-  named_scope :tracked_for, lambda { |tracking_for| { :conditions => [ "tracking_for_type = ? and tracking_for_id = ?", tracking_for.class.name, tracking_for.id ] } }
 
   PAPAYA_OFFER_COLUMNS = "#{Offer.quoted_table_name}.id, #{AppMetadata.quoted_table_name}.papaya_user_count"
   #TODO: simplify these named scopes when support for multiple appstores is complete and offer includes app_metadata_id
