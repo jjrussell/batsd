@@ -956,7 +956,7 @@ describe Offer do
   end
 
   describe ".queue_impression_tracking_requests" do
-    it "should send the proper messages to the queue" do
+    it "should queue up the proper GET requests" do
       class Request
         def http_headers; {'User-Agent' => 'Bob'}; end
         def url; 'http://williamshat.com'; end
