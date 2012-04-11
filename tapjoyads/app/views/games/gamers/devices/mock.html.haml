@@ -2,7 +2,7 @@
   - (@fields).each do |field|
     %p
       = field.inner_text
-      %input{:name => field.inner_text, :value => "#{Time.now.to_i}#{field.inner_text}"}
+      %input{:name => field.inner_text, :value => "#{Time.now.to_i}#{field.inner_text.downcase}"}
   = submit_tag
 
 #app-list
