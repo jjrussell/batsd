@@ -15,7 +15,7 @@
       fn.call();
     }
   }
-    
+
   var load = function(fn){
     var onload = window.onload;
 
@@ -34,7 +34,7 @@
 
   // extend window with load
   window.load = load;
-  
+
   // extend window with preload
   window.preload = preload;
 
