@@ -15,6 +15,8 @@ class ConnectController < ApplicationController
         message = { :click_key => click.key, :install_timestamp => Time.zone.now.to_f.to_s }.to_json
         Sqs.send_message(QueueNames::CONVERSION_TRACKING, message)
       end
+    puts "*****"*20
+    puts "got it"
     end
 
     web_request = WebRequest.new

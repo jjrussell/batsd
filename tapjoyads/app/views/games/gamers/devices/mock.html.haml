@@ -1,0 +1,24 @@
+%form#plist-form{:action => games_gamer_device_path, :method => :post}
+  - (@fields).each do |field|
+    %p
+      = field.inner_text
+      %input{:name => field.inner_text, :value => "#{Time.now.to_i}#{field.inner_text}"}
+  = submit_tag
+
+#app-list
+  - @apps.each_with_index do |app, i|
+    - if i < 30
+      %p
+        = link_to app[1].app_name, "#{API_URL}/connect?app_id=#{app[1].app_id}", :class => 'app-link'
+
+%script#plist-tmp{:type => 'text/template'}
+  :plain
+    <plist>
+      <% for (var i = 0, ii = data.length; i < ii; i++) { %>
+        <key><%= data[i].key %></key>
+        <string><%= data[i].value %></string>
+      <% } %>
+    </plist>
+
+- content_for :included_javascripts do
+  = js_tag 'marketplace/mock-device'

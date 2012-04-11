@@ -1,6 +1,14 @@
 class Games::Gamers::DevicesController < GamesController
 
   def mock
+    redirect_to games_root_path and return if Rails.env.production?
+
+    file_url = "#{Rails.root}/data/TapjoyProfile.mobileconfig.staging.unsigned"
+
+    @contents = File.open(file_url, 'r') { |f| f.read }
+
+    @fields = Hpricot(@contents)/"array"/"string"
+    @apps = ExternalPublisher.load_all
   end
 
   def new
@@ -12,9 +20,8 @@ class Games::Gamers::DevicesController < GamesController
     file_url = "#{Rails.root}/data/TapjoyProfile.mobileconfig"
     file_url += '.staging.unsigned' if Rails.env.staging?
 
-      raise "mock!"
     if params[:mock] && !Rails.env.production?
-      redirect_to mock_games_gamer_device_path(:file => file_url)
+      redirect_to mock_games_gamer_device_path
     else
       send_file(file_url, :filename => 'TapjoyProfile.mobileconfig', :disposition => 'inline', :type => :mobileconfig)
     end
