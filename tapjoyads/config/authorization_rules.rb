@@ -32,6 +32,11 @@ authorization do
                                      :index,
                                      :elb_status,
                                      :as_groups,
+                                     :as_header,
+                                     :as_instances,
+                                     :elb_deregister_instance,
+                                     :ec2_reboot_instance,
+                                     :as_terminate_instance,
                                      :service_stats,
                                      :http_codes,
                                      :bytes_sent

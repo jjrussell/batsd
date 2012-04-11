@@ -156,7 +156,7 @@ private
         :categories       => [category],
       }
     else
-      raise "Invalid response."
+      raise RuntimeError, "Invalid response."
     end
   end
 

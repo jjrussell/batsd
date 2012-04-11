@@ -1,4 +1,4 @@
-$(document).ready(function() {
+$(document).ready(function(){
 
   var _t = window.i18n.t,
       debounce,
@@ -83,7 +83,7 @@ $(document).ready(function() {
   }
 
   // Signup Validation
-  if($('form#new_gamer')) {
+  if($('form#new_gamer')){
     var values = {}, tempVal = {}, data, preSelected = false, hasError = false, cookieError = false;
     var activeState = 'orange-action', inactiveState = 'grey-action';
     var rurl = $('form#new_gamer').attr('action');
@@ -142,14 +142,11 @@ $(document).ready(function() {
       });
     }
 
-
     // Validate form inputs
     function validate(e) {
 
-      hasError = false;
-
+      hasError = true;
       cookieError = false;
-
       // Test Cookie
       Tapjoy.Utils.Cookie.set('cookies_enabled', 'test', 1);
 
@@ -185,12 +182,11 @@ $(document).ready(function() {
       else if(values['gamer[password]'] == '' || values['gamer[password]'] == _t("shared.password")) {
         return showValidationError(_t('games.enter_password'));
       }
-      else if(values['gamer[terms_of_service]'] == false) {
+      else if(values['gamer[terms_of_service]'] == 0) {
         return showValidationError(_t('games.enter_tos'));
       }
       else if(Tapjoy.Utils.isEmpty(test_cookie)){
-        hasError = true;
-        cookieError = true;
+        return showValidationError(_t('games.cookies_required'));
       }
       else{
         Tapjoy.Utils.Cookie.remove('cookies_enabled');
@@ -201,27 +197,22 @@ $(document).ready(function() {
       return true;
     };
 
-    // Form Validation
-    $('form#new_gamer input, form#new_gamer select').bind('focus', function(e){
-      errorContainer.css({opacity: '0', visibility: 'hidden'});
-    });
+    $('form#new_gamer input, form#new_gamer select').bind('change', function(e){
+      validate();
+      errorContainer.css('opacity', 0);
 
-    $('form#new_gamer input, form#new_gamer select').bind('input, change', function(e){
-      validate(e);
       if(!hasError){
         $('#gamer_submit').addClass('orange-action').removeClass('soft-grey-action').removeClass('disabled').addClass('enabled').css({cursor:'pointer'});
-      }
-      else if($('#gamer_submit').hasClass('enabled')) {
-        errorContainer.css({opacity: '0', visibility: 'hidden'});
+      }else if($('#gamer_submit').hasClass('enabled')) {
         $('#gamer_submit').removeClass('orange-action').addClass('soft-grey-action').removeClass('enabled').addClass('disabled').css({cursor:'default'});
       }
-       errorContainer.css({opacity: '0', visibility: 'hidden'});
     });
 
 
     function showValidationError(msg){
       hasError = true;
-      errorContainer.html(msg).css({opacity: '1', visibility: 'visible'}).show();
+      errorContainer.html(msg).css('opacity', 1);
+      return false;
     }
 
     // Form Submit
@@ -240,13 +231,7 @@ $(document).ready(function() {
           values['default_platform_ios'] = tempVal['default_platform_ios'];
         }
 
-        if (hasError && cookieError) {
-          errorContainer.html(_t('games.cookies_required')).css({opacity: '1', visibility: 'visible !important'});
-        }
-        else if (hasError) {
-          errorContainer.css({opacity: '1', visibility: 'visible !important'});
-        }
-        else if(!hasError){
+        if(!hasError){
           $(".register-form").addClass('close').css({opacity: '0', visibility: 'hidden', height: '0', overflow : 'hidden'});
           errorContainer.css({opacity: '0', visibility: 'hidden'});
           $('.register-progress').show().css({opacity: '1', visibility: 'visible !important', height: 'auto'});

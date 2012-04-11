@@ -18,7 +18,71 @@ class OpsController < WebsiteController
     @as_groups = get_as_groups
   end
 
+  def as_header
+    @as_group = get_as_groups(params[:group]).first
+    @as_group[:instances].reject! { |instance| instance[:lifecycle_state] == "InService" || (rand > 0.5 ? true : false) }
+
+    render :layout => false
+  end
+
+  def as_instances
+    @kiosk = !!params[:kiosk]
+    @as_group = get_as_groups(params[:group]).first
+    @lb_name = @as_group[:load_balancer_names].first
+
+    @lb_instances = get_lb_instances(@lb_name)
+    instance_ids = @lb_instances[@lb_name].map { |i| i[:instance_id] }
+    @lb_instances[@lb_name].reject! { |i| i[:state] == 'InService' }
+
+    @ec2_instances = get_ec2_instances(instance_ids)
+
+    render :layout => false
+  end
+
+  def elb_deregister_instance
+    @instance_id = params[:instance_id]
+    @lb_name = params[:lb_name]
+
+    elb = AWS::ELB.new
+    elb.load_balancers[@lb_name].instances[@instance_id].remove_from_load_balancer
+
+    respond_to do |format|
+      format.js do
+        render :layout => false
+      end
+    end
+  end
+
+  def ec2_reboot_instance
+    @instance_id = params[:instance_id]
+
+    ec2 = AWS::EC2.new
+    ec2.instances[@instance_id].reboot
+
+    respond_to do |format|
+      format.js do
+        render :layout => false
+      end
+    end
+  end
+
+  def as_terminate_instance
+    @instance_id = params[:instance_id]
+    @decrement_capacity = !!params[:decrement_capacity]
+    @as_group = params[:as_group]
+
+    auto_scaling = AWS::AutoScaling.new
+    auto_scaling.instances[@instance_id].terminate(@decrement_capacity)
+
+    respond_to do |format|
+      format.js do
+        render :layout => false
+      end
+    end
+  end
+
   def index
+    @kiosk = !!params[:kiosk]
     @as_groups = get_as_groups
     @as_groups.each do |group|
       group[:instances].reject! { |instance| instance[:lifecycle_state] == "InService" }
@@ -34,6 +98,8 @@ class OpsController < WebsiteController
       @lb_instances[lb_name].reject! { |i| i[:state] == 'InService' }
     end
     @ec2_instances = get_ec2_instances(instance_ids)
+
+    render :layout => 'dashboard'
   end
 
   def service_stats
@@ -160,9 +226,10 @@ class OpsController < WebsiteController
     @redis ||= Redis.new(:host => "redis.tapjoy.net", :port => 6380)
   end
 
-  def get_as_groups
+  def get_as_groups(group_name = nil)
     as_interface = RightAws::AsInterface.new
-    @as_groups = as_interface.describe_auto_scaling_groups
+    @as_groups = as_interface.describe_auto_scaling_groups(group_name)
+
     @as_groups.each do |group|
       group[:triggers] = as_interface.describe_triggers(group[:auto_scaling_group_name])
     end

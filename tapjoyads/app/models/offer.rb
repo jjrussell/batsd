@@ -15,24 +15,26 @@ class Offer < ActiveRecord::Base
   ALL_OFFER_TYPES = %w( App EmailOffer GenericOffer OfferpalOffer RatingOffer ActionOffer VideoOffer SurveyOffer ReengagementOffer)
   ALL_SOURCES = %w( offerwall display_ad featured tj_games )
 
-  CLASSIC_OFFER_TYPE               = '0'
-  DEFAULT_OFFER_TYPE               = '1'
-  FEATURED_OFFER_TYPE              = '2'
-  DISPLAY_OFFER_TYPE               = '3'
-  NON_REWARDED_DISPLAY_OFFER_TYPE  = '4'
-  NON_REWARDED_FEATURED_OFFER_TYPE = '5'
-  VIDEO_OFFER_TYPE                 = '6'
-  FEATURED_BACKFILLED_OFFER_TYPE   = '7'
+  CLASSIC_OFFER_TYPE                          = '0'
+  DEFAULT_OFFER_TYPE                          = '1'
+  FEATURED_OFFER_TYPE                         = '2'
+  DISPLAY_OFFER_TYPE                          = '3'
+  NON_REWARDED_DISPLAY_OFFER_TYPE             = '4'
+  NON_REWARDED_FEATURED_OFFER_TYPE            = '5'
+  VIDEO_OFFER_TYPE                            = '6'
+  FEATURED_BACKFILLED_OFFER_TYPE              = '7'
   NON_REWARDED_FEATURED_BACKFILLED_OFFER_TYPE = '8'
+  REENGAGEMENT_OFFER_TYPE                     = '9'
   OFFER_TYPE_NAMES = {
-    DEFAULT_OFFER_TYPE               => 'Offerwall Offers',
-    FEATURED_OFFER_TYPE              => 'Rewarded Featured Offers',
-    DISPLAY_OFFER_TYPE               => 'Display Ad Offers',
-    NON_REWARDED_DISPLAY_OFFER_TYPE  => 'Non-Rewarded Display Ad Offers',
-    NON_REWARDED_FEATURED_OFFER_TYPE => 'Non-Rewarded Featured Offers',
-    VIDEO_OFFER_TYPE                 => 'Video Offers',
-    FEATURED_BACKFILLED_OFFER_TYPE   => 'Rewarded Featured Offers (Backfilled)',
-    NON_REWARDED_FEATURED_BACKFILLED_OFFER_TYPE => 'Non-Rewarded Featured Offers (Backfilled)'
+    DEFAULT_OFFER_TYPE                          => 'Offerwall Offers',
+    FEATURED_OFFER_TYPE                         => 'Rewarded Featured Offers',
+    DISPLAY_OFFER_TYPE                          => 'Display Ad Offers',
+    NON_REWARDED_DISPLAY_OFFER_TYPE             => 'Non-Rewarded Display Ad Offers',
+    NON_REWARDED_FEATURED_OFFER_TYPE            => 'Non-Rewarded Featured Offers',
+    VIDEO_OFFER_TYPE                            => 'Video Offers',
+    FEATURED_BACKFILLED_OFFER_TYPE              => 'Rewarded Featured Offers (Backfilled)',
+    NON_REWARDED_FEATURED_BACKFILLED_OFFER_TYPE => 'Non-Rewarded Featured Offers (Backfilled)',
+    REENGAGEMENT_OFFER_TYPE                     => 'Reengagement Offers'
   }
 
   OFFER_LIST_EXCLUDED_COLUMNS = %w( active
@@ -198,7 +200,7 @@ class Offer < ActiveRecord::Base
   before_cache :clear_creative_blobs
 
   named_scope :enabled_offers, :joins => :partner,
-    :readonly => false, :conditions => "tapjoy_enabled = true AND user_enabled = true AND item_type != 'RatingOffer' AND ((payment > 0 AND #{Partner.quoted_table_name}.balance > payment) OR (payment = 0 AND reward_value > 0)) AND tracking_for_id IS NULL"
+    :readonly => false, :conditions => "tapjoy_enabled = true AND user_enabled = true AND item_type != 'RatingOffer' AND item_type != 'ReengagementOffer' AND ((payment > 0 AND #{Partner.quoted_table_name}.balance > payment) OR (payment = 0 AND reward_value > 0)) AND tracking_for_id IS NULL"
   named_scope :by_name, lambda { |offer_name| { :conditions => ["offers.name LIKE ?", "%#{offer_name}%" ] } }
   named_scope :by_device, lambda { |platform| { :conditions => ["offers.device_types LIKE ?", "%#{platform}%" ] } }
   named_scope :for_offer_list, :select => OFFER_LIST_REQUIRED_COLUMNS

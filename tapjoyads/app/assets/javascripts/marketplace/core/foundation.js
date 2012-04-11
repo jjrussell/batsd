@@ -249,7 +249,7 @@
           map[type][name] = method;
 
         Tap['supports'+ String(name).charAt(0).toUpperCase() + String(name).substr(1)] = true;
-      }     
+      }
     });
 
     Tap.fn = _Tapjoy.prototype;
@@ -415,7 +415,7 @@
 
     Tap.polyfill('array', 'filter', function(fn, scope){
       var array = [];
-      
+
       for(var i = 0, k = this.length; i < k; i++){
         if(fn.call(scope || window, this[i], i, this)){
           array.push(this[i]);
@@ -441,18 +441,34 @@
 
     Tap.polyfill('array', 'map', function(fn, scope){
       var array = new Array(this.length);
-      
+
       for(var i = 0, k = this.length; i < k ; i++){
         if(i in this)
           array[i] = fn.call(scope || window, this[i], i, this);
       }
-          
+
       return array;
     });
 
     Tap.polyfill('string', 'trim', function(){
       return this.replace(/^\s+/, '').replace(/\s+$/, '');
     });
+
+    // create a break for forEach by throwing "stop";
+    if(typeof stop == 'undefined'){
+      stop = new Error('stop');
+    }
+
+    arrayPrototype.forEach = function(){
+      try {
+        arrayPrototype.apply(this, slice.call(arguments, 0));
+      }
+      catch(exception){
+        if(exception !== stop) {
+          throw exception;
+        }
+      }
+    };
 
     Tap(document).ready(function(){
       if(!Tap.supportsTouch)
