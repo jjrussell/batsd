@@ -12,7 +12,8 @@
         - @reengagement_offers.each do |r|
           - day_number = r.day_number
           - if day_number > 0
-            - reward = pluralize(r.reward_value, r.currency.name.singularize)
+            - currency = @currencies.detect { |c| c.id == r.currency_id }
+            - reward = pluralize(r.reward_value, currency.name.singularize)
             - if todays_day_number > day_number
               %li.box.past
                 .credits.past

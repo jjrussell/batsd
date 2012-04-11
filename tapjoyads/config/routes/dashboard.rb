@@ -66,6 +66,7 @@ ActionController::Routing::Routes.draw do |map|
     m.search_offers 'search/offers', :action => 'offers'
     m.search_users 'search/users', :action => 'users'
     m.search_partners 'search/partners', :action => 'partners'
+    m.search_currencies 'search/currencies', :action => 'currencies'
   end
   map.premier 'premier', :controller => :premier, :action => :edit
   map.resources :survey_results, :only => [ :new, :create ]
@@ -78,7 +79,7 @@ ActionController::Routing::Routes.draw do |map|
                      :resolve_clicks => :post, :sqs_lengths => :get, :ses_status => :get,
                      :publishers_without_payout_info => :get, :publisher_payout_info_changes => :get, :device_info => :get,
                      :award_currencies => :post, :update_award_currencies => :post,
-                     :update_user_roles => :post, :update_device => :post }
+                     :update_user_roles => :post, :update_device => :post, :fix_rewards => :get }
 
   map.namespace :tools do |tools|
     tools.resources :approvals, :as => 'acceptance', :only => [:index], :collection => [:history, :mine], :member => [:approve, :reject, :assign]
@@ -128,12 +129,18 @@ ActionController::Routing::Routes.draw do |map|
     tools.resources :currency_approvals, :only => [:index], :collection => [:mine, :history], :member => [:approve, :reject, :assign], :controller => :approvals, :requirements => { :type => :currency, :calling_controller => 'tools/currency_approvals' }
     tools.resources :wfhs, :only => [ :index, :new, :create, :edit, :update, :destroy ]
     tools.resources :clients, :only => [ :index, :show, :new, :create, :edit, :update], :member => { :add_partner => :post, :remove_partner => :post }
+    tools.resources :shared_files, :only => [ :index, :create ], :collection => { :delete => :post }
   end
 
   # Operations tools routes
   map.resources :ops, :only => :index,
     :collection => {
       :as_groups => :get,
+      :as_header => :get,
+      :as_instances => :get,
+      :elb_deregister_instance => :get,
+      :ec2_reboot_instance => :get,
+      :as_terminate_instance => :get,
       :service_stats => :get,
       :elb_status => :get,
       :http_codes => :get,

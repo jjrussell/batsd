@@ -61,13 +61,30 @@ class Currency < ActiveRecord::Base
   named_scope :just_app_ids, :select => :app_id, :group => :app_id
   named_scope :tapjoy_enabled, :conditions => 'tapjoy_enabled'
   named_scope :udid_for_user_id, :conditions => "udid_for_user_id"
-  named_scope :external_publishers, :conditions => { :external_publisher => true, :tapjoy_enabled => true }
+  named_scope :external_publishers, :conditions => "external_publisher and tapjoy_enabled"
+  named_scope :ordered_by_app_name, :include => [ :app, :partner ], :order => 'apps.name, partners.name'
+  named_scope :search_name, lambda { |term|
+    { :conditions => [ "tapjoy_enabled and name like ?", term ] }
+  }
+  named_scope :search_app_name, lambda { |term|
+    {
+      :joins => [ :app ],
+      :conditions => [ "tapjoy_enabled and apps.name like ?", term ]
+    }
+  }
+  named_scope :search_partner_name, lambda { |term|
+    {
+      :joins => [ :partner ],
+      :conditions => [ "tapjoy_enabled and partners.name like ?", term ]
+    }
+  }
 
   before_validation :sanitize_attributes
   before_validation_on_create :assign_default_currency_group
   before_create :set_hide_rewarded_app_installs, :set_values_from_partner_and_reseller, :set_promoted_offers
   before_update :update_spend_share
   before_update :reset_to_pending_if_rejected
+  after_update  :approve_on_tapjoy_enabled
   after_cache :cache_by_app_id
   after_cache_clear :clear_cache_by_app_id
 
@@ -235,6 +252,10 @@ class Currency < ActiveRecord::Base
     conversion_rate > 0
   end
 
+  def approve!
+    self.approval.approve!(true)
+  end
+
   private
   def cache_by_app_id
     currencies = Currency.find_all_by_app_id(app_id, :order => 'ordinal ASC').each { |c| c.run_callbacks(:before_cache) }
@@ -276,6 +297,12 @@ class Currency < ActiveRecord::Base
       self.approval.destroy
       new_approval = Approval.new(:item_id => id, :item_type => self.class.name, :event => 'create', :created_at => nil, :updated_at => nil)
       new_approval.save
+    end
+  end
+
+  def approve_on_tapjoy_enabled
+    if self.pending? && self.tapjoy_enabled_changed? && self.tapjoy_enabled_change
+      self.approve!
     end
   end
 end

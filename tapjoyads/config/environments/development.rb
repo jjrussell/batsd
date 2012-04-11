@@ -31,8 +31,8 @@ rescue Errno::ENOENT
 end
 
 SPROCKETS_CONFIG = {
-  :compile => false,
-  :combine => false,
+  :compile => true,
+  :combine => true,
   :host => local_config['asset_host'] || local_config['website_url'] || 'http://localhost:3000'
 }
 

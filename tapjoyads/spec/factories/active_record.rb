@@ -314,7 +314,7 @@ FactoryGirl.define do
 
   factory :featured_content do
     featured_type FeaturedContent::STAFFPICK
-    platforms     %w( iphone ipad itouch ).to_json
+    platforms     %w( iphone itouch ).to_json
     subtitle      'Subtitle'
     title         'Title'
     description   'Description'

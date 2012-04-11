@@ -105,6 +105,6 @@
   %meta{ :name => 'description', :content => t('text.games.meta_description') }
   %meta{ :name => 'keywords', :content => t('text.games.meta_keywords')}
 
-  = css_tag('marketplace/theme/tjm/logged_out')
+  - css_cache 'marketplace/theme/tjm/logged_out', true
 
 - @load_facebook = true

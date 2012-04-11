@@ -173,7 +173,6 @@ class GamesController < ApplicationController
 
   def render_login_page
     @gamer_session ||= GamerSession.new
-    @gamer ||= Gamer.new
     render 'games/gamer_sessions/new'
   end
 

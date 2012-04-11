@@ -223,11 +223,11 @@ $mobile-scaledown-multiplier: 2;
 @mixin museo {
   @font-face {
     font-family: 'Museo Slab';
-    src: url('/fonts/marketplace/museo_slab_500-webfont.eot');
-    src: url('/fonts/marketplace/museo_slab_500-webfont.eot?#iefix') format('embedded-opentype'),
-         url('/fonts/marketplace/museo_slab_500-webfont.woff') format('woff'),
-         url('/fonts/marketplace/museo_slab_500-webfont.ttf') format('truetype'),
-         url('/fonts/marketplace/museo_slab_500-webfont.svg') format('svg');
+    src: url('/public/fonts/marketplace/museo_slab_500-webfont.eot');
+    src: url('/public/fonts/marketplace/museo_slab_500-webfont.eot?#iefix') format('embedded-opentype'),
+         url('/public/fonts/marketplace/museo_slab_500-webfont.woff') format('woff'),
+         url('/public/fonts/marketplace/museo_slab_500-webfont.ttf') format('truetype'),
+         url('/public/fonts/marketplace/museo_slab_500-webfont.svg') format('svg');
     font-weight: normal;
     font-style: normal;
   }
@@ -236,11 +236,11 @@ $mobile-scaledown-multiplier: 2;
 @mixin gill {
   @font-face {
     font-family: 'Gill Sans MT';
-    src: url('/fonts/marketplace/gill_sans_mt-webfont.eot');
-    src: url('/fonts/marketplace/gill_sans_mt-webfont.eot?#iefix') format('embedded-opentype'),
-         url('/fonts/marketplace/gill_sans_mt-webfont.woff') format('woff'),
-         url('/fonts/marketplace/gill_sans_mt-webfont.ttf') format('truetype'),
-         url('/fonts/marketplace/gill_sans_mt-webfont.svg') format('svg');
+    src: url('/public/fonts/marketplace/gill_sans_mt-webfont.eot');
+    src: url('/public/fonts/marketplace/gill_sans_mt-webfont.eot?#iefix') format('embedded-opentype'),
+         url('/public/fonts/marketplace/gill_sans_mt-webfont.woff') format('woff'),
+         url('/public/fonts/marketplace/gill_sans_mt-webfont.ttf') format('truetype'),
+         url('/public/fonts/marketplace/gill_sans_mt-webfont.svg') format('svg');
     font-weight: normal;
     font-style: normal;
   }
