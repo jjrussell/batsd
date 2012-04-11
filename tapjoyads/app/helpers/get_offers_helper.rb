@@ -101,4 +101,19 @@ module GetOffersHelper
     support_params
   end
 
+  def offer_text(offer, currency)
+    return unless offer.item_type == 'App'
+    offer.rewarded? && currency.rewarded? ? t('text.featured.download_and_run') : t('text.featured.try_out')
+  end
+
+  def earn_currency_text(offer, currency, display_multiplier)
+    if offer.rewarded? && currency.rewarded?
+      return t('text.featured.earn_currency', :amount_and_currency => "#{currency.get_visual_reward_amount(offer, display_multiplier)} #{currency.name}")
+    end
+    t('text.featured.download')
+  end
+
+  def action_text(offer)
+    offer.item_type == 'App' ? t('text.featured.download') : t('text.featured.earn_now')
+  end
 end

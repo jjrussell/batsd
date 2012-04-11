@@ -273,6 +273,17 @@ describe GetOffersController do
       should render_template "get_offers/installs_json"
       response.content_type.should == "application/json"
     end
+
+    it 'renders tags for XNA' do
+      get(:featured, @params)
+      should render_template "get_offers/installs_redirect"
+      response.content_type.should == "application/xml"
+      response.should have_tag('OfferText')
+      response.should have_tag('EarnCurrencyText')
+      response.should have_tag('ActionText')
+      response.should have_tag('CustomCreative')
+      response.should have_tag('SkipText')
+    end
   end
 
   describe '#setup' do
