@@ -5,8 +5,6 @@ def read_asset(name, directory='banner_ads')
 end
 
 describe DisplayAdController do
-  include ActionView::Helpers
-
   integrate_views
   before :each do
     fake_the_web
@@ -185,14 +183,11 @@ describe DisplayAdController do
     end
 
     describe '#webview' do
-      context 'with third party tracking URLs' do
-        it 'should generate hidden image tags' do
-          url = "https://dummyurl.com"
-          @offer.impression_tracking_urls = [url]
 
-          get(:webview, @params)
-          response.body.should include(image_tag(url, :style => 'display:none;'))
-        end
+      it 'should queue up tracking url calls' do
+        @offer.expects(:queue_impression_tracking_requests).once
+
+        get(:webview, @params)
       end
 
       context 'with custom ad' do
