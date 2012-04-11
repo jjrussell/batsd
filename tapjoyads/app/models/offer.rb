@@ -701,8 +701,8 @@ class Offer < ActiveRecord::Base
   def queue_impression_tracking_requests(request)
     impression_tracking_urls(true).each do |url|
       forwarded_headers = request.http_headers.slice('User-Agent', 'X-Do-Not-Track', 'DNT')
-      message = { :url => url, :forwarded_headers => forwarded_headers, :orig_url => request.url }
-      Sqs.send_message(QueueNames::THIRD_PARTY_TRACKING, Base64::encode64(Marshal.dump(message)))
+      forwarded_headers['Referer'] = request.url
+      Downloader.get_with_retry(url, { :headers => forwarded_headers }, true)
     end
   end
 
