@@ -97,6 +97,8 @@
     %li= link_to 'Survey Offers', tools_survey_offers_path
   - if permitted_to? :index, :tools_clients
     %li= link_to 'Manage Clients', tools_clients_path
+  - if permitted_to? :index, :tools_shared_files
+    %li= link_to 'My Shared Files', tools_shared_files_path
 
 - if has_permissions_for_one_of? :account_mgr, :customer_service, :admin
   %h3 Customer Support

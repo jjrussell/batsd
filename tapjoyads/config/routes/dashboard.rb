@@ -129,6 +129,7 @@ ActionController::Routing::Routes.draw do |map|
     tools.resources :currency_approvals, :only => [:index], :collection => [:mine, :history], :member => [:approve, :reject, :assign], :controller => :approvals, :requirements => { :type => :currency, :calling_controller => 'tools/currency_approvals' }
     tools.resources :wfhs, :only => [ :index, :new, :create, :edit, :update, :destroy ]
     tools.resources :clients, :only => [ :index, :show, :new, :create, :edit, :update], :member => { :add_partner => :post, :remove_partner => :post }
+    tools.resources :shared_files, :only => [ :index, :create ], :collection => { :delete => :post }
   end
 
   # Operations tools routes
