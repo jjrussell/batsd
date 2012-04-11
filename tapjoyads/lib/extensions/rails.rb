@@ -87,7 +87,7 @@ module ActiveRecord
     # allows [attribute]_changed? to behave as expected after cloning a model instance
     if Rails.version == "2.3.14"
       def clone
-        attrs = clone_attributes(:read_attribute_before_type_cast)
+        attrs = clone_attributes
         attrs.delete(self.class.primary_key)
         record = self.class.new
         record.attributes = attrs # original version is 'record.send :instance_variable_set, '@attributes', attrs'

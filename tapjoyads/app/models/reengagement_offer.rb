@@ -63,8 +63,8 @@ class ReengagementOffer < ActiveRecord::Base
   def should_show?(device, reengagement_offers)
     return true if 0 == day_number
     previous_reengagement_offer = reengagement_offers.detect { |ro| ro.day_number + 1 == day_number }
-    last_run_time = device.last_run_time(previous_reengagement_offer.id)
-    (Time.zone.now - last_run_time) / 1.day == 1
+    time_since_last_run = Time.zone.now - device.last_run_time(previous_reengagement_offer.id)
+    time_since_last_run >= 24.hours && time_since_last_run < 48.hours
   end
 
   def update_offers
