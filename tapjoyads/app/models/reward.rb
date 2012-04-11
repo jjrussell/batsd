@@ -96,4 +96,19 @@ class Reward < SimpledbShardedResource
   def successful?
     send_currency_status == 'OK' || send_currency_status == '200'
   end
+
+  def fix_conditional_check_failed
+    if sent_currency.present? && send_currency_status.present?
+      'Already awarded'
+    elsif sent_currency.nil? && send_currency_status.nil?
+      'Everything is ok'
+    elsif sent_currency.present? && send_currency_status.nil?
+      delete('sent_currency')
+      save!
+      'Deleted sent_currency'
+    else
+      'Something weird has happened'
+    end
+  end
+
 end
