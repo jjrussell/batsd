@@ -57,7 +57,6 @@
                 = image_tag(icon_url)
               - else
                 %img{ :src => "#{CLOUDFRONT_URL}/images/blank.png", :s => icon_url }
-              = render :partial => 'shared/tracking_pixel_tags', :locals => { :offer => offer, :load_image => false }
         .offer-text
           - if @currency.conversion_rate > 0
             %span
@@ -144,19 +143,11 @@
         if (vertOffset + 480 > image.offsetTop && image.getAttribute('s') && image.src != image.getAttribute('s')) {
           loadImage(image);
         }
-        if (vertOffset > image.offsetTop && image.getAttribute('t') && image.src != image.getAttribute('t')) {
-          loadTrackingImage(image);
-        }
       }
     }
 
     function loadImage(image) {
       image.src = image.getAttribute('s');
-    }
-
-    function loadTrackingImage(image) {
-      image.className = 'hidden';
-      image.src = image.getAttribute('t');
     }
 
     function loadJQ(ref){

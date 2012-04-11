@@ -9,7 +9,6 @@ class GetOffersController < ApplicationController
 
   after_filter :save_web_request
   after_filter :save_impressions, :only => [:index, :webpage]
-  after_filter :queue_impression_tracking, :only => :index
 
   def webpage
     if @currency.get_test_device_ids.include?(params[:udid])
@@ -156,6 +155,8 @@ class GetOffersController < ApplicationController
         @web_request.offerwall_rank = i + @start_index + 1
         @web_request.offerwall_rank_score = offer.rank_score
         @web_request.save
+
+        offer.queue_impression_tracking_requests(request) # third party tracking vendors
       end
     end
   end
@@ -176,10 +177,6 @@ class GetOffersController < ApplicationController
       return true if params[:redirect] == '1' || (params[:json] == '1' && params[:callback].blank?)
     end
     params[:library_version] == 'server'
-  end
-
-  def queue_impression_tracking
-    @offer_list.each { |offer| offer.queue_impression_tracking_requests(request) }
   end
 
 end
