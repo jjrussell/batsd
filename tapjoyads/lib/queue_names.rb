@@ -8,6 +8,7 @@ class QueueNames
   CREATE_CONVERSIONS         = "#{BASE_NAME}CreateConversions"
   CREATE_DEVICE_IDENTIFIERS  = "#{BASE_NAME}CreateDeviceIdentifiers"
   CREATE_INVOICES            = "#{BASE_NAME}CreateInvoices"
+  DOWNLOADS                  = "#{BASE_NAME}Downloads"
   FAILED_DOWNLOADS           = "#{BASE_NAME}FailedDownloads"
   FAILED_EMAILS              = "#{BASE_NAME}FailedEmails"
   FAILED_SDB_SAVES           = "#{BASE_NAME}FailedSdbSaves"

@@ -56,9 +56,9 @@ class Downloader
       Downloader.get_strict(url, download_options)
     rescue Exception => e
       Rails.logger.info "Download failed. Error: #{e}"
-      message = {:url => url, :download_options => download_options, :failure_message => failure_message}.to_json
-      Sqs.send_message(QueueNames::FAILED_DOWNLOADS, message)
-      Rails.logger.info "Added to FailedDownloads queue."
+      message = {:url => url, :download_options => download_options, :failure_message => failure_message}
+      Sqs.send_message(QueueNames::DOWNLOADS, Base64::encode64(Marshal.dump(message)))
+      Rails.logger.info "Added to Downloads queue."
     end
   end
 
