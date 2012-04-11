@@ -47,12 +47,11 @@ class ReengagementOffer < ActiveRecord::Base
     save!
   end
 
-  def self.resolve(app, currencies, params, geoip_data)
-    device = Device.new(:key => params[:udid])
-    reengagement_offers = app.reengagement_campaign_from_cache
-    reengagement_offer = reengagement_offers.detect{ |r| !device.has_app?(r.id) }
+  def self.resolve(app, currencies, reengagement_offers, params, geoip_data)
+    device = Device.find(params[:udid])    # change this to '... Device.new(:key => ...)' for testing
+    reengagement_offer = reengagement_offers.detect{ |r| !device.has_app?(r.id) } if device
 
-    if reengagement_offer && reengagement_offer.should_show?(device, reengagement_offers)
+    if reengagement_offer.try(:should_show?, device, reengagement_offers)
       device.set_last_run_time!(reengagement_offer.id)
       reengagement_offer.reward(device, params, geoip_data)
       return reengagement_offer
@@ -62,8 +61,10 @@ class ReengagementOffer < ActiveRecord::Base
   end
 
   def should_show?(device, reengagement_offers)
-    return true if day_number == 0
-    (Time.zone.now - device.last_run_time(reengagement_offers[day_number - 1].id)) / 1.day == 1
+    return true if 0 == day_number
+    previous_reengagement_offer = reengagement_offers.detect { |ro| ro.day_number + 1 == day_number }
+    time_since_last_run = Time.zone.now - device.last_run_time(previous_reengagement_offer.id)
+    time_since_last_run >= 24.hours && time_since_last_run < 48.hours
   end
 
   def update_offers
@@ -124,6 +125,7 @@ class ReengagementOffer < ActiveRecord::Base
   def create_primary_offer
     offer = Offer.new({
       :item             => self,
+      :item_type        => 'ReengagementOffer',
       :partner          => partner,
       :name             => "#{@app.name} - Reengagement Day #{day_number}",
       :url              => app.store_url,

@@ -8,8 +8,7 @@
     - progress_class = "progress-danger"
     .right
       = image_tag('unicorn_blaster_left.jpg')
-.right.labels= Time.now.strftime("%H:%M:%S")
-%h3= "#{group[:auto_scaling_group_name]} / #{group[:load_balancer_names].join(', ')}"
+%h4= "#{group[:auto_scaling_group_name]} / #{group[:load_balancer_names].join(', ')}"
 .progress{:class => progress_class}
   - if group[:min_size] == group[:max_size]
     .bar{ :style => "width: 100%"}
