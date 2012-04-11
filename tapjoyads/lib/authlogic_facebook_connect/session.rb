@@ -76,7 +76,11 @@ module AuthlogicFacebookConnect
       end
 
       def authenticating_with_facebook_connect?
-        attempted_record.nil? && errors.empty? && controller.current_facebook_user
+        begin
+          attempted_record.nil? && errors.empty? && controller.current_facebook_user
+        rescue Exception => e
+          false
+        end
       end
 
       private
