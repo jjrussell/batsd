@@ -1,3 +1,5 @@
+require 'logging'
+
 class Mc
 
   def self.reset_connection
@@ -66,7 +68,7 @@ class Mc
     cache = cache.clone if clone
 
     value = nil
-    Rails.logger.info_with_time("Read from memcache") do
+    log_info_with_time("Read from memcache") do
       begin
         value = cache.get(CGI::escape(key))
         Rails.logger.info("Memcache key found: #{key}")

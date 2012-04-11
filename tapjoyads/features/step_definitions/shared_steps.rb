@@ -10,6 +10,14 @@ When /^show me the page$/ do
   save_and_open_page
 end
 
+When /^I check "([^"]*)"$/ do |text|
+  check text
+end
+
+When /^I fill in "([^"]*)" with "([^"]*)"$/ do |name, text|
+  fill_in name, :with => text
+end
+
 When /^I press "([^"]*)"$/ do |text|
   click_button text
 end

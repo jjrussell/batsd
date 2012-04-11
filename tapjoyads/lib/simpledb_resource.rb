@@ -1,3 +1,5 @@
+require 'logging'
+
 class SimpledbResource
 
   include Simpledb
@@ -164,7 +166,7 @@ class SimpledbResource
       put('updated-at', now.to_f.to_s)
     end
 
-    Rails.logger.info_with_time("Saving to sdb, domain: #{this_domain_name}") do
+    log_info_with_time("Saving to sdb, domain: #{this_domain_name}") do
       self.write_to_memcache if save_to_memcache
       self.write_to_sdb(expected_attr) if save_to_sdb
       @is_new = false
@@ -650,7 +652,7 @@ protected
       end
     rescue RightAws::AwsError => e
       if e.message.starts_with?("NoSuchDomain") && !Rails.env.production?
-        Rails.logger.info_with_time("Creating new domain: #{@this_domain_name}") do
+        log_info_with_time("Creating new domain: #{@this_domain_name}") do
           sdb_interface.create_domain(@this_domain_name)
         end
         retry

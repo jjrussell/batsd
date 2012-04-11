@@ -34,6 +34,8 @@ module Tapjoyad
 
     config.filter_parameters = :password, :password_confirmation
 
+    config.db_readonly_hostnames = []
+
     config.generators do |g|
       g.test_framework :rspec
     end
