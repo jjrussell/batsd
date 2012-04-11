@@ -224,11 +224,11 @@ describe DisplayAdController do
     describe '#webview' do
       context 'with third party tracking URLs' do
         it 'should generate hidden image tags' do
+          pending "TODO: Load #image_tag method correctly"
           url = "https://dummyurl.com"
           @offer.impression_tracking_urls = [url]
 
           get(:webview, @params)
-          pending "TODO: Load #image_tag method correctly"
           response.body.should include(image_tag(url, :style => 'display:none;'))
         end
       end
