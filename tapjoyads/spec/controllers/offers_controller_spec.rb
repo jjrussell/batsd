@@ -1,6 +1,6 @@
-require 'spec/spec_helper'
+require 'spec_helper'
 
-describe Apps::OffersController do
+describe OffersController do
   include Authlogic::TestCase
 
   before :each do
