@@ -171,11 +171,7 @@ class GamesController < ApplicationController
     end
   end
 
-  def render_login_page(prefill_facebook_email = false)
-    if prefill_facebook_email
-      current_facebook_user.fetch
-      params[:email] = current_facebook_user.email
-    end
+  def render_login_page
     @gamer_session ||= GamerSession.new
     @gamer ||= Gamer.new
     render 'games/gamer_sessions/new'

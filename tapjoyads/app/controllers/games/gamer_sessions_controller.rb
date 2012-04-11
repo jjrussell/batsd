@@ -20,15 +20,6 @@ class Games::GamerSessionsController < GamesController
         flash[:notice] = t('text.games.reactivated_account')
       end
       destroy and return if current_gamer.blocked?
-      if params[:enable_login_with_facebook]
-        begin
-          unless current_gamer.gamer_profile.update_facebook_info!(current_facebook_user)
-            flash[:error] = t('text.games.facebook_info_update_failed')
-          end
-        rescue
-          flash[:error] = t('text.games.facebook_info_update_failed')
-        end
-      end
       if params[:data].present? && cookies[:data].blank?
         redirect_to finalize_games_gamer_device_path(:data => params[:data])
       elsif params[:path]
@@ -39,9 +30,7 @@ class Games::GamerSessionsController < GamesController
     else
       if @gamer_session.errors.on(:facebook)
         error = @gamer_session.errors.on(:facebook)
-        if error == 'facebook_not_associated'
-          render_login_page(true)
-        elsif error == 'facebook_no_match'
+        if error == 'facebook_no_match'
           redirect_to new_games_gamer_path(:prefill_with_facebook => true, :no_match => true)
         end
       else

@@ -22,6 +22,13 @@ module AuthlogicFacebookConnect
       end
       alias_method :fb_access_token_field=, :fb_access_token_field
 
+      # * <tt>Default:</tt> :gamer_profile
+      # * <tt>Accepts:</tt> Symbol
+      def gamer_profile_field(value = nil)
+        rw_config(:gamer_profile_field, value, :gamer_profile)
+      end
+      alias_method :gamer_profile_field=, :gamer_profile_field
+
       # * <tt>Default:</tt> klass
       # * <tt>Accepts:</tt> Class
       def facebook_user_class(value = nil)
@@ -45,13 +52,23 @@ module AuthlogicFacebookConnect
 
       def validate_by_facebook_connect
         facebook_session = controller.current_facebook_user.fetch
-        exist_user = facebook_user_class.find(:first, :conditions => { :email => facebook_session.email, :gamer_profiles => { :facebook_id => facebook_session.id } }, :include => :gamer_profile)
+        exist_user = facebook_user_class.find(
+          :first,
+          :conditions => { :gamer_profiles => { :facebook_id => facebook_session.id } },
+          :include => :gamer_profile)
 
         if exist_user
           self.attempted_record = exist_user
         else
-          if facebook_user_class.find(:first, :conditions => { :email => facebook_session.email })
-            errors.add(:facebook, "facebook_not_associated")
+          match_user = facebook_user_class.find(:first, :conditions => { :email => facebook_session.email })
+          if match_user
+            if klass == facebook_user_class
+              match_user.send(:"#{gamer_profile_field}").send(:"#{facebook_id_field}=", facebook_session.id)
+              match_user.send(:"#{gamer_profile_field}").send(:"#{fb_access_token_field}=", facebook_session.client.access_token)
+              match_user.send(:"#{gamer_profile_field}").save
+            end
+
+            self.attempted_record = match_user
           else
             errors.add(:facebook, "facebook_no_match")
           end
@@ -70,6 +87,10 @@ module AuthlogicFacebookConnect
 
       def fb_access_token_field
         self.class.fb_access_token_field
+      end
+
+      def gamer_profile_field
+        self.class.gamer_profile_field
       end
 
       def facebook_user_class

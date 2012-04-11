@@ -15,15 +15,19 @@ class Games::GamersController < GamesController
         :fb_access_token => current_facebook_user.client.access_token
       }
       params[:birthday] = current_facebook_user.birthday
-      @gamer = Gamer.find_by_email(current_facebook_user.email)
+      @gamer = Gamer.find(
+        :first,
+        :conditions => { :gamer_profiles => { :facebook_id => current_facebook_user.id } },
+        :include => :gamer_profile
+      ) || Gamer.find_by_email(current_facebook_user.email)
+      if @gamer
+        @gamer.gamer_profile.update_facebook_info!(current_facebook_user) unless @gamer.facebook_id
+        current_gamer = GamerSession.create(@gamer)
+      end
     end
     @gamer ||= Gamer.new(params[:gamer])
-    if @gamer.new_record?
-      @birthday = Date.parse(params[:birthday]) if params[:birthday]
-      redirect_to games_root_path if current_gamer.present?
-    else
-      render_login_page(true)
-    end
+    @birthday = Date.parse(params[:birthday]) if params[:birthday]
+    redirect_to games_root_path if current_gamer.present?
   end
 
   def create
