@@ -27,7 +27,7 @@ module ActsAsTrackable
         :url_overridden   => false,
         :tapjoy_enabled   => true,
       }
-      trackable_options = acts_as_trackable_options.inject({}) { |result, (key,val)| result[key] = instance_eval(&val); result }
+      trackable_options = acts_as_trackable_options.inject({}) { |result, (key,val)| result[key] = val.is_a?(Symbol) ? send(val) : instance_eval(&val); result }
       Offer.new(offer_options.merge(trackable_options).merge(options))
     end
 

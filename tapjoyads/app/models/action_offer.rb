@@ -1,6 +1,6 @@
 class ActionOffer < ActiveRecord::Base
   include UuidPrimaryKey
-  acts_as_trackable :device_types => lambda { app.primary_offer.device_types }, :third_party_data => lambda { prerequisite_offer_id }, :icon_id_override => lambda { app_id }, :instructions => lambda { instructions }, :url => lambda { app.store_url }
+  acts_as_trackable :device_types => lambda { app.primary_offer.device_types }, :third_party_data => :prerequisite_offer_id, :icon_id_override => :app_id, :instructions => :instructions, :url => lambda { app.store_url }
 
   has_many :offers, :as => :item
   has_one :primary_offer, :class_name => 'Offer', :as => :item, :conditions => 'id = item_id'
