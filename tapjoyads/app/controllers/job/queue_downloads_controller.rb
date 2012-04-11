@@ -7,9 +7,9 @@ class Job::QueueDownloadsController < Job::SqsReaderController
   private
 
   def on_message(message)
-    message = Marshal.restore(Base64::decode64(message.body))
+    message = JSON.parse(message.body).symbolize_keys
 
-    Downloader.get_strict(message[:url], message[:download_options])
+    Downloader.get_strict(message[:url], message[:download_options].symbolize_keys)
   end
 
 end

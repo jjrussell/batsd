@@ -51,13 +51,13 @@ class Downloader
   ##
   # Makes a GET request to url. No data is returned.
   # If the download fails, it will be retried automatically via sqs.
-  def self.get_with_retry(url, download_options = {}, failure_message = nil)
+  def self.get_with_retry(url, download_options = {})
     begin
       Downloader.get_strict(url, download_options)
     rescue Exception => e
       Rails.logger.info "Download failed. Error: #{e}"
-      message = {:url => url, :download_options => download_options, :failure_message => failure_message}
-      Sqs.send_message(QueueNames::DOWNLOADS, Base64::encode64(Marshal.dump(message)))
+      message = { :url => url, :download_options => download_options }
+      Sqs.send_message(QueueNames::DOWNLOADS, message.to_json)
       Rails.logger.info "Added to Downloads queue."
     end
   end
