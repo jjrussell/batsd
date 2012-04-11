@@ -111,7 +111,7 @@ class Mc
       cache ||= @@cache
       cache = cache.clone if clone
 
-      Rails.logger.info_with_time("Wrote to memcache: #{key}") do
+      log_info_with_time("Wrote to memcache: #{key}") do
         cache.set(CGI::escape(key), value, time.to_i)
       end
     end
@@ -120,7 +120,7 @@ class Mc
   def self.distributed_put(key, value, clone = false, time = 1.week)
     if value
       begin
-        Rails.logger.info_with_time("Wrote to memcache - distributed") do
+        log_info_with_time("Wrote to memcache - distributed") do
           @@individual_caches.each do |cache|
             Mc.put(key, value, clone, time, cache)
           end

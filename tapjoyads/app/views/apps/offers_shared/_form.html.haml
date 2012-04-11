@@ -1,6 +1,6 @@
 - content_for :page_head, stylesheet_link_tag('facebox')
 
-- form_for(@offer, :url => { :action => :update }, :html => { :method => :put, :class => 'tjform', :id => 'update' }) do |f|
+= form_for(@offer, :url => { :action => :update }, :html => { :method => :put, :class => 'tjform', :id => 'update' }) do |f|
   %table
     %tbody
       %tr
@@ -67,10 +67,10 @@
         %td
           - if @offer.featured?
             - @offer.banner_creative_sizes_with_labels.each do |size_hash|
-              = link_to("Preview #{size_hash[:label]} ads", offer_creatives_preview_path(:id => @offer.id, :image_size => size_hash[:size]), :rel => 'facebox', :id => 'preview_link')
+              = link_to("Preview #{size_hash[:label]} ads", offer_creative_preview_path(:offer_creative_id => @offer.id, :image_size => size_hash[:size]), :rel => 'facebox', :id => 'preview_link')
               %br
           - else
-            = link_to("Preview ads", offer_creatives_preview_path(:id => @offer.id), :rel => 'facebox', :id => 'preview_link')
+            = link_to("Preview ads", offer_creative_preview_path(:offer_creative_id => @offer.id), :rel => 'facebox', :id => 'preview_link')
       %tr
         %th
           = f.label :daily_budget, 'Daily Budget'
@@ -147,7 +147,7 @@
   = render('offer_creatives/iframes', :offer => @offer, :app => @app)
 
 - if !@offer.tapjoy_enabled? && @enable_request.new_record?
-  - form_for(@enable_request, :html => { :class => 'tjform' }) do |f|
+  = form_for(@enable_request, :html => { :class => 'tjform' }) do |f|
     = f.hidden_field(:offer_id)
 
 .hidden

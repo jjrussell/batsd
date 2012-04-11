@@ -2,7 +2,7 @@ authorization do
 
   role :partner do
     has_permission_on :apps, :to => [ :index, :show, :new, :create, :edit, :update, :confirm, :integrate, :publisher_integrate, :integrate_check, :search, :sdk_download, :archive ]
-    has_permission_on :apps_offers, :to => [ :new, :create, :edit, :update, :toggle, :percentile, :preview ]
+    has_permission_on :offers, :to => [ :new, :create, :edit, :update, :toggle, :percentile, :preview ]
     has_permission_on :offer_creatives, :to => [ :show, :create, :new, :destroy ]
     has_permission_on :apps_currencies, :to => [ :show, :update, :new, :create, :reset_test_device ]
     has_permission_on :apps_virtual_goods, :to => [ :show, :update, :new, :create, :index, :reorder ]

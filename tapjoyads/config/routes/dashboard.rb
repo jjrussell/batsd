@@ -90,11 +90,11 @@ Tapjoyad::Application.routes.draw do
   resources :reengagement_rewards, :only => [:show]
   resources :offer_creatives do
     member do
-      match ':image_size' => 'offer_creatives#create', :name_prefix => 'offer_creatives_', :via => :post
-      match ':image_size' => 'offer_creatives#destroy', :name_prefix => 'offer_creatives_', :via => :delete
+      post ':image_size' => 'offer_creatives#create'
+      delete ':image_size' => 'offer_creatives#destroy'
     end
-    match 'offer_creatives' => 'offer_creatives/:id', :as => :preview, :name_prefix => 'offer_creatives_', :via => :get
-    match 'offer_creatives' => 'offer_creatives/:id/:image_size', :as => :form, :name_prefix => 'offer_creatives_', :via => :get
+    get 'offer_creatives' => 'offer_creatives/:id', :as => :preview
+    get 'offer_creatives' => 'offer_creatives/:id/:image_size', :as => :form
   end
   resources :enable_offer_requests, :only => [:create]
   resources :reporting, :only => [:index, :show] do

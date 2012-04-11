@@ -22,6 +22,6 @@ Feature: Apps
     Given I am logged in with a partner
     And I go to "Apps"
     And I go to "Rewarded Installs"
-    When I check "enable installs"
+    When I check "Enable Installs"
     And I press "Update"
     Then I should see "Your offer was successfully updated."
