@@ -699,6 +699,8 @@ class Offer < ActiveRecord::Base
   end
 
   def queue_impression_tracking_requests(request)
+    # simulate <img> pixel tag client-side web calls...
+    # we lose cookie functionality, unless we implement cookie storage on our end...
     impression_tracking_urls(true).each do |url|
       forwarded_headers = request.http_headers.slice('User-Agent', 'X-Do-Not-Track', 'DNT')
       forwarded_headers['Referer'] = request.url
