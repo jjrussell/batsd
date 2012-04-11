@@ -957,16 +957,20 @@ describe Offer do
 
   describe ".queue_impression_tracking_requests" do
     it "should send the proper messages to the queue" do
-      request = Object.new
-      request.stubs(:http_headers).returns({'User-Agent' => 'Bob'})
-      request.stubs(:url).returns('http://williamshat.com')
+      class Request
+        def http_headers; {'User-Agent' => 'Bob'}; end
+        def url; 'http://williamshat.com'; end
+      end
+      request = Request.new
+
+      Sqs.stubs(:send_message)
 
       urls = ['https://dummyurl.com', 'https://example.com']
       @offer.impression_tracking_urls = urls
 
       urls.each do |url|
-        message = { :url => url, :headers => request.http_headers, :orig_url => request.url }
-        Sqs.expects(:send_message).with(QueueNames::THIRD_PARTY_TRACKING, Base64::encode64(Marshal.dump(message))).once
+        message = { :url => url, :forwarded_headers => request.http_headers, :orig_url => request.url }
+        Marshal.expects(:dump).with(message).once.returns('')
       end
 
       @offer.queue_impression_tracking_requests(request)
