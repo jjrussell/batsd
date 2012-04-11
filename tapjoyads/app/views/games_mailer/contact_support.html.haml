@@ -3,49 +3,54 @@
     TJM User Support
     = @click.present? ? "- #{@click.offer.name}" : ""
   %div
-    Email: #{ @gamer.email }
+    %strong Email:
+    = @gamer.email
     %br
-    UDID:
+    %strong UDID:
     = link_to(@device.device_id, device_info_tools_url(:udid => @device.device_id, :host => URI.parse(DASHBOARD_URL).host))
     = "[#{device_info_tools_url(:udid => @device.device_id, :host => URI.parse(DASHBOARD_URL).host)}]"
     %br
-    Offer:
+    %strong Offer:
     = @click.present? ? link_to(@click.offer.name, statz_url(:id => @click.offer_id, :host => URI.parse(DASHBOARD_URL).host)) : ""
     = @click.present? ? "[#{statz_url(:id => @click.offer_id, :host => URI.parse(DASHBOARD_URL).host)}]" : ""
     %br
-    Currency:
+    %strong Currency:
     = @click.present? ? link_to(@click.currency.name, app_currency_url(:app_id => @click.publisher_app_id, :id => @click.currency_id, :host => URI.parse(DASHBOARD_URL).host)) : ""
     = @click.present? ? "[#{app_currency_url(:app_id => @click.publisher_app_id, :id => @click.currency_id, :host => URI.parse(DASHBOARD_URL).host)}]" : ""
     %br
-    Reward Amount:
+    %strong Reward Amount:
     = @click.present? ? "#{@click.currency_reward} #{@click.currency.name}" : ""
     %br
-    Publisher Partner:
+    %strong Publisher Partner:
     = @click.present? ? link_to(@click.publisher_partner.name, partner_url(:id => @click.publisher_partner_id, :host => URI.parse(DASHBOARD_URL).host)) : ""
     = @click.present? ? "[#{partner_url(:id => @click.publisher_partner_id, :host => URI.parse(DASHBOARD_URL).host)}]" : ""
     %br
-    Publisher App:
+    %strong Publisher App:
     = @click.present? ? link_to(@click.publisher_app.name, app_url(:id => @click.publisher_app_id, :host => URI.parse(DASHBOARD_URL).host)) : ""
     = @click.present? ? "[#{app_url(:id => @click.publisher_app_id, :host => URI.parse(DASHBOARD_URL).host)}]" : ""
     %br
-    Publisher User:
+    %strong Publisher User:
     = @click.present? ? @click.publisher_user_id : ""
     %br
-    Language Code: #{ @language_code }
+    %strong Language Code:
+    = @language_code
     %br
-    User Agent: #{ @user_agent }
+    %strong User Agent:
+    = @user_agent
     %br
-    Device Type: #{ @device.device_type }
+    %strong Device Type:
+    = @device.device_type
     %br
-    Support Request: #{ @support_request.id }
+    %strong Support Request:
+    = @support_request.id
     %br
-    Click:
+    %strong Click:
     = @click.present? ? link_to(@click.key, device_info_tools_url(:click_key => @click.key, :host => URI.parse(DASHBOARD_URL).host)) : ""
     = @click.present? ? "[#{device_info_tools_url(:click_key => @click.key, :host => URI.parse(DASHBOARD_URL).host)}]" : ""
     %br
     %br
-    Description
+    %strong Description
     %br
     \-----------------------------------------------------------------
-
-%p= @content
+%p
+  %em= @content
