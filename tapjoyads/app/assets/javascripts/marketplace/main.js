@@ -169,7 +169,7 @@ $(document).ready(function(){
           values[this.name] = $(this).val();
         }
       });
-  
+
       if(values['date[day]'] == '' || values['date[month]'] == '' || values['date[year]'] == ''){
         return showValidationError(_t('games.enter_birthdate'));
       }
@@ -193,7 +193,7 @@ $(document).ready(function(){
       }
 
       hasError = false;
-      
+
       return true;
     };
 

@@ -143,7 +143,7 @@
         }
       }
     },
-    
+
     log: function(message){
       // get around YUI compressor
       var c = window.console;
@@ -209,7 +209,7 @@
         setTimeout(function(){
           // where the magic happens
           stash.each(options.files, function(file){
-            
+
             // check if valid file
             if(String(file).match(valid) === null){
               // manage count
@@ -219,7 +219,7 @@
               // move to next
               return;
             }
-              
+
             var regexResult = options.versionRegex.exec(file),
                 logicalURI = regexResult[1] + '.' + regexResult[3],
                 key = options.prefix + logicalURI,
