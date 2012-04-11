@@ -93,6 +93,7 @@ class Job::QueueConversionTrackingController < Job::SqsReaderController
     reward.publisher_reseller_id  = click.publisher_reseller_id || currency.reseller_id
     reward.advertiser_reseller_id = click.advertiser_reseller_id || offer.reseller_id
     reward.spend_share            = click.spend_share || currency.get_spend_share(offer)
+    reward.mac_address            = click.mac_address
 
     begin
       reward.save!(:expected_attr => { 'type' => nil })
