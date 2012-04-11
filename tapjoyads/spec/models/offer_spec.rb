@@ -957,9 +957,13 @@ describe Offer do
 
   describe ".queue_impression_tracking_requests" do
     it "should send the proper messages to the queue" do
-      request = Object.new
-      request.stubs(:http_headers).returns({'User-Agent' => 'Bob'})
-      request.stubs(:url).returns('http://williamshat.com')
+      class Request
+        def http_headers; {'User-Agent' => 'Bob'}; end
+        def url; 'http://williamshat.com'; end
+      end
+      request = Request.new
+
+      Sqs.stubs(:send_message)
 
       urls = ['https://dummyurl.com', 'https://example.com']
       @offer.impression_tracking_urls = urls
