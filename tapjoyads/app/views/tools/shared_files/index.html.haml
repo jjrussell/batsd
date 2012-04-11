@@ -5,6 +5,9 @@
 %p
   Use this to share pitch decks or other business related files with partners.
   You can upload a file here and give the public URL to whoever you want to share with.
+  Under no circumstances should you upload personal files (pictures, home movies, etc),
+  copyrighted material (music, TV shows, movies, books, etc), or sensitive documents
+  (contracts, invoices, etc).
 
 %h3 Upload a file
 - form_tag(tools_shared_files_path, :method => :post, :multipart => true, :class => 'tjform') do
@@ -45,7 +48,10 @@
 
 .hidden
   #help_file_name_content{ :name => 'File name' }
-    The name of the file you are uploading. This should have a valid extension (i.e. '.pdf', '.pptx') so people you share with know what they are getting.
+    The name of the file you are uploading. This should have a valid extension (i.e. '.pdf', '.pptx')
+    so people you share with know what they are getting. It is recommended that you not use spaces in
+    the file name (i.e. 'TapjoyDeck_#{Time.zone.now.to_s(:yyyy_mm_dd)}.pdf' instead of 
+    'Tapjoy Deck #{Time.zone.now.to_s(:yyyy_mm_dd)}.pdf').
   #help_file_content_content{ :name => 'File content' }
     Choose the file from your computer that you wish to upload.
 
