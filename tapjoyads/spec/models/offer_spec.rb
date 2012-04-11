@@ -956,7 +956,7 @@ describe Offer do
   end
 
   describe ".queue_impression_tracking_requests" do
-    it "should send the proper messages to the queue" do
+    it "should queue up the proper GET requests" do
       class Request
         def http_headers; {'User-Agent' => 'Bob'}; end
         def url; 'http://williamshat.com'; end
@@ -968,10 +968,7 @@ describe Offer do
       urls = ['https://dummyurl.com', 'https://example.com']
       @offer.impression_tracking_urls = urls
 
-      urls.each do |url|
-        message = { :url => url, :forwarded_headers => request.http_headers, :orig_url => request.url }
-        Marshal.expects(:dump).with(message).once.returns('')
-      end
+      urls.each { |url| Downloader.expects(:get_with_retry).with(url, { :headers => request.http_headers.merge('Referer' => request.url) }, true).once }
 
       @offer.queue_impression_tracking_requests(request)
     end
