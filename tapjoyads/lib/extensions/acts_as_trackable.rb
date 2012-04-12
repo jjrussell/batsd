@@ -88,6 +88,7 @@ module HasTrackingOffers
       has_many :tracking_offers, :class_name => 'Offer', :as => :tracking_for
       has_one :tracking_offer, :class_name => 'Offer', :as => :tracking_for, :conditions => 'tapjoy_enabled = true'
       after_save :enable_tracking_offer
+      validate :tracking_offer_valid
     end
   end
 
@@ -134,6 +135,10 @@ module HasTrackingOffers
           offer.save
         end
       end
+    end
+
+    def tracking_offer_valid
+      errors.add :tracking_offer_id, 'is invalid.' unless tracking_offer.valid?
     end
 
   end
