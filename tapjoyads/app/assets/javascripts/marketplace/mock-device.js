@@ -1,12 +1,16 @@
 (function (Tap, w, $) {
   "use strict";
 
+  var udid;
+
   $(function () {
     var template = Tap.Utils.underscoreTemplate($("#plist-tmp").text()),
       $form = $("#plist-form");
 
     $form.submit(function () {
       var formData = [], rawPost = "";
+
+      udid = $("input[name='UDID']", $form).val();
 
       $("input", $form).each(function () {
         var $t = $(this);
@@ -21,8 +25,8 @@
         data: rawPost,
         success: function () {
           Tap.Utils.notification({message: "Success - now you can add apps."});
-          $form.hide();
-          $(".app-link").show();
+          $("#device-section").hide();
+          $("#app-list").show();
         },
         error: function () {
           Tap.Utils.notification({message: "Failed", type: "error"});
@@ -32,17 +36,28 @@
       return false;
     });
 
-    $(".app-link").hide().click(function () {
-      var $t = $(this);
+    $(".app-link").on('click', function () {
+      var $t = $(this),
+        $parent = $t.closest('li'),
+        $spinner = $('.screw-spinner', $parent).trigger('start-spinner');
+
       $.ajax({
         url: $t.attr("href"),
         type: 'GET',
-        data: {udid: $("#plist-form input[name='UDID']").val()},
+        data: {udid: udid},
         success: function () {
-          $t.hide();
-          Tap.Utils.notification({message: "Added app: " + $t.html()});
+          //$t.closest('li').hide();
+          $spinner.trigger('complete-spinner');
         }
       });
+
+      return false;
+    });
+
+    $(".existing-device").on('click', function () {
+      udid = $(this).data('udid');
+      $("#device-section").hide();
+      $("#app-list").show();
 
       return false;
     });

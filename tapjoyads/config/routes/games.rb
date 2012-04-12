@@ -2,6 +2,7 @@ ActionController::Routing::Routes.draw do |map|
   map.assets "assets/*filename", :controller => "sprocket", :action => :show
   map.with_options({:path_prefix => MACHINE_TYPE == 'website' ? '' : 'games', :name_prefix => 'games_'}) do |m|
 
+    m.mock_device 'mock_device', :controller => 'games/gamers/devices', :action => :mock unless Rails.env.production?
 
     m.root :controller => 'games/homepage', :action => :index
     m.tos 'tos', :controller => 'games/homepage', :action => :tos
@@ -32,10 +33,12 @@ ActionController::Routing::Routes.draw do |map|
 
     m.resource :gamer, :controller => 'games/gamers', :only => [ :create, :edit, :update, :destroy, :show, :new ],
       :member => { :password => :get, :prefs => :get, :update_password => :put, :accept_tos => :put, :confirm_delete => :get } do |gamer|
-      gamer.resource :device, :controller => 'games/gamers/devices', :only => [ :new, :create ], :member => { :finalize => :get, :mock => :get }
+      gamer.resource :device, :controller => 'games/gamers/devices', :only => [ :new, :create ], :member => { :finalize => :get }
       gamer.resource :favorite_app, :controller => 'games/gamers/favorite_app', :only => [ :create, :destroy ]
       gamer.resource :gamer_profile, :controller => 'games/gamers/gamer_profiles', :only => [ :update ], :member => { :update_birthdate => :put, :update_prefs => :put, :dissociate_account => :put }
     end
+
+
 
     m.resources :gamer_profile, :controller => 'games/gamers/gamer_profiles', :only => [ :show, :edit, :update ]
 

@@ -1,15 +1,31 @@
-%form#plist-form{:action => games_gamer_device_path, :method => :post}
-  - (@fields).each do |field|
-    %p
-      = field.inner_text
-      %input{:name => field.inner_text, :value => "#{Time.now.to_i}#{field.inner_text.downcase}"}
-  = submit_tag
+#device-section
+  .ui-joy-group
+    .ui-joy-group-title
+      Create Device
+    %form#plist-form{:action => games_gamer_device_path, :method => :post}
+      - (@fields).each do |field|
+        .m10
+          .ui-joy-label= field.inner_text
+          %input.ui-joy-input{:name => field.inner_text, :value => "#{Time.now.to_i}#{field.inner_text.downcase}"}
+      = submit_tag 'Create Device', :class => 'ui-joy-button primary'
+  .ui-joy-group
+    .ui-joy-group-title
+      Select Existing Device
+    %ul#existing-devices.list-button-container
+      - current_gamer.devices.each do |d|
+        - dev = Device.find d.device_id
+        %li.list-button
+          %a.existing-device{:href => '#', 'data-udid' => d.device_id}
+            = "#{d.name} (udid: #{d.device_id}) apps: #{dev.apps.size}"
 
-#app-list
-  - @apps.each_with_index do |app, i|
+%ul#app-list.hidden.list-button-container
+  - @apps.to_a.shuffle.each_with_index do |app, i|
     - if i < 30
-      %p
-        = link_to app[1].app_name, "#{API_URL}/connect?app_id=#{app[1].app_id}", :class => 'app-link'
+      %li.list-button
+        - link_to "#{API_URL}/connect?app_id=#{app[1].app_id}", :class => 'app-link' do
+          .left.screw-spinner
+            .screw
+          .app-name.left.ml10= app[1].app_name
 
 %script#plist-tmp{:type => 'text/template'}
   :plain
@@ -20,5 +36,8 @@
       <% } %>
     </plist>
 
+- content_for :page_head do
+  = css_tag 'marketplace/screw-spinner'
 - content_for :included_javascripts do
+  = js_tag 'marketplace/screw-spinner'
   = js_tag 'marketplace/mock-device'
