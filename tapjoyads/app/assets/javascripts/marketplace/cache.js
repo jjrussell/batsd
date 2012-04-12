@@ -117,25 +117,6 @@
       }
     },
 
-    supportsLocalStorage: function(){
-
-      if(!window.localStorage)
-        return false;
-
-      var storage = window.localStorage;
-
-      // try and catch quota exceeded errors           
-      try{
-        storage.setItem('tapjoy', 'dollas!'); 
-        storage.removeItem(key); 
-      }catch(error){
-        if(error.code === DOMException.QUOTA_EXCEEDED_ERR && storage.length === 0) 
-          return false;
-      }
-
-      return true;
-    },
-
     log: function(message){
       // get around YUI compressor
       var c = window.console;
@@ -144,7 +125,7 @@
         c.log(message);
       }
     },
-
+    
     require: function(unknown, callback){
 
       var stash = this,
@@ -244,7 +225,7 @@
                       })
                     );
                   }
-                stash.inject(text, extension, uri, options);
+                  stash.inject(text, extension, uri, options);
                 }
               });
             }
@@ -254,7 +235,26 @@
 
       // return stash object for chaining
       return stash;
-    }
+    },
+
+    supportsLocalStorage: function(){
+
+      if(!window.localStorage)
+        return false;
+
+      var storage = window.localStorage;
+
+      // try and catch quota exceeded errors           
+      try{
+        storage.setItem('tapjoy', 'dollas!'); 
+        storage.removeItem(key); 
+      }catch(error){
+        if(error.code === DOMException.QUOTA_EXCEEDED_ERR && storage.length === 0) 
+          return false;
+      }
+
+      return true;
+    }    
   };
 
   window.stash = _stash;
