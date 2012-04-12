@@ -301,7 +301,7 @@ class Currency < ActiveRecord::Base
   end
 
   def approve_on_tapjoy_enabled
-    if self.tapjoy_enabled_changed? && self.tapjoy_enabled_change
+    if self.pending? && self.tapjoy_enabled_changed? && self.tapjoy_enabled_change
       self.approve!
     end
   end

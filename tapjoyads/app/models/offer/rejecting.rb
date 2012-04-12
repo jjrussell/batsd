@@ -32,7 +32,7 @@ module Offer::Rejecting
     # Top Girl
     [ 'c7b2a54e-8faf-4959-86ab-e862473c9dd4', '9f47822c-2183-4969-98b1-ce64430e4e58' ] => [ 'c7b2a54e-8faf-4959-86ab-e862473c9dd4', '9f47822c-2183-4969-98b1-ce64430e4e58' ],
     # Saving Star
-    [ 'c2ef96ba-5c6b-4479-bffa-9b1beca08f1b', '1d63a4fa-82ed-4442-955c-ef0d75978fad' ] => [ 'c2ef96ba-5c6b-4479-bffa-9b1beca08f1b', '1d63a4fa-82ed-4442-955c-ef0d75978fad' ],
+    [ 'c2ef96ba-5c6b-4479-bffa-9b1beca08f1b', '1d63a4fa-82ed-4442-955c-ef0d75978fad', '0ba2a533-d26d-4953-aa3e-fd01187e30e1' ] => [ 'c2ef96ba-5c6b-4479-bffa-9b1beca08f1b', '1d63a4fa-82ed-4442-955c-ef0d75978fad', '0ba2a533-d26d-4953-aa3e-fd01187e30e1' ],
     # Flirtomatic iOS
     [ 'bb26407e-6713-4b67-893d-4b47242f1ce0', '23fed671-4558-4c2e-8ceb-dcb41399c5d7' ] => [ 'bb26407e-6713-4b67-893d-4b47242f1ce0', '23fed671-4558-4c2e-8ceb-dcb41399c5d7' ],
   }

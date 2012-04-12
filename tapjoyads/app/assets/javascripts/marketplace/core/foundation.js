@@ -249,7 +249,7 @@
           map[type][name] = method;
 
         Tap['supports'+ String(name).charAt(0).toUpperCase() + String(name).substr(1)] = true;
-      }     
+      }
     });
 
     Tap.fn = _Tapjoy.prototype;
@@ -415,7 +415,7 @@
 
     Tap.polyfill('array', 'filter', function(fn, scope){
       var array = [];
-      
+
       for(var i = 0, k = this.length; i < k; i++){
         if(fn.call(scope || window, this[i], i, this)){
           array.push(this[i]);
@@ -441,12 +441,12 @@
 
     Tap.polyfill('array', 'map', function(fn, scope){
       var array = new Array(this.length);
-      
+
       for(var i = 0, k = this.length; i < k ; i++){
         if(i in this)
           array[i] = fn.call(scope || window, this[i], i, this);
       }
-          
+
       return array;
     });
 

@@ -1,6 +1,7 @@
 class App < ActiveRecord::Base
   include UuidPrimaryKey
   acts_as_cacheable
+  acts_as_trackable :third_party_data => :store_id, :age_rating => :age_rating, :wifi_only => :wifi_required?, :device_types => lambda { get_offer_device_types.to_json }, :url => :store_url
 
   ALLOWED_PLATFORMS = { 'android' => 'Android', 'iphone' => 'iOS', 'windows' => 'Windows' }
   BETA_PLATFORMS    = {}
@@ -173,6 +174,7 @@ class App < ActiveRecord::Base
 
   def enable_reengagement_campaign!
     update_reengagements_with_enable_or_disable(true)
+    ReengagementOffer.cache_by_app_id(id)
   end
 
   def disable_reengagement_campaign!
@@ -394,35 +396,6 @@ class App < ActiveRecord::Base
     test_video_offer.primary_offer           = primary_offer
     test_video_offer.primary_offer.item_type = 'TestVideoOffer'
     test_video_offer
-  end
-
-  def create_tracking_offer_for(tracked_for, options = {})
-    device_types   = options.delete(:device_types)   { get_offer_device_types.to_json }
-    url_overridden = options.delete(:url_overridden) { false }
-    url            = options.delete(:url)            { store_url }
-    raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
-
-    offer = Offer.new({
-      :item             => self,
-      :tracking_for     => tracked_for,
-      :partner          => partner,
-      :name             => name,
-      :url_overridden   => url_overridden,
-      :url              => url,
-      :device_types     => device_types,
-      :price            => 0,
-      :bid              => 0,
-      :min_bid_override => 0,
-      :rewarded         => false,
-      :name_suffix      => 'tracking',
-      :third_party_data => store_id,
-      :age_rating       => age_rating,
-      :wifi_only        => wifi_required?
-    })
-    offer.id = tracked_for.id
-    offer.save!
-
-    offer
   end
 
   private
