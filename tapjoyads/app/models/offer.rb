@@ -174,15 +174,7 @@ class Offer < ActiveRecord::Base
     end
   end
   validates_each :impression_tracking_urls do |record, attribute, value| record.validate_third_party_tracking_urls(attribute, value); end
-  validates_each :click_tracking_urls do |record, attribute, value|
-    record.validate_third_party_tracking_urls(attribute, value)
-    value.each do |url|
-      unless (url.scan '[destination]').size == 1
-        record.errors.add(attribute, "must each contain \"[destination]\" text only once")
-        return
-      end
-    end
-  end
+  validates_each :click_tracking_urls do |record, attribute, value| record.validate_third_party_tracking_urls(attribute, value); end
 
   before_validation :update_payment
   before_validation_on_create :set_reseller_from_partner
