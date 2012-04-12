@@ -247,6 +247,8 @@ class ClickController < ApplicationController
 
   def create_click(type)
     click = Click.new(:key => click_key)
+    click.http_request = request
+
     click.maintain_history
     click.delete('installed_at') if click.installed_at?
     click.clicked_at             = @now

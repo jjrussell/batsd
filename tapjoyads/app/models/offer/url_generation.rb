@@ -155,14 +155,7 @@ module Offer::UrlGeneration
       :os_version         => os_version,
     }
 
-    click_url << "?data=#{ObjectEncryptor.encrypt(data)}"
-
-    now = Time.now.to_i.to_s
-    click_tracking_urls.each do |url|
-      click_url = url.sub('[destination]', click_url).gsub('[timestamp]', now)
-    end
-
-    click_url
+    "#{click_url}?data=#{ObjectEncryptor.encrypt(data)}"
   end
 
   def display_ad_image_url(publisher_app_id, width, height, currency_id = nil, display_multiplier = nil, bust_cache = false, use_cloudfront = true, preview = false)
