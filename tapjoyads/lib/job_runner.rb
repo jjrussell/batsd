@@ -9,7 +9,7 @@ class JobRunner
     return jobs_hash unless Rails.env.production?
     if MACHINE_TYPE == 'masterjobs'
       active_jobs = Job.active.by_job_type('master')
-    elsif MACHINE_TYPE == 'jobserver' || MACHINE_TYPE == 'testserver'
+    elsif MACHINE_TYPE == 'jobserver' || MACHINE_TYPE == 'testserver' || MACHINE_TYPE == 'staging'
       active_jobs = Job.active.by_job_type('queue')
     else
       active_jobs = []
