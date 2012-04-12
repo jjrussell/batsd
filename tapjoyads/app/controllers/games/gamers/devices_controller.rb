@@ -94,6 +94,8 @@ class Games::Gamers::DevicesController < GamesController
     end
   end
 
+  private
+
   def create_sub_click(primary_click, referral_count)
     now = Time.zone.now
 
