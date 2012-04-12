@@ -51,6 +51,10 @@ describe SupportRequest do
       end
 
       context 'without a click association' do
+        before :each do
+          @support_request.stubs(:get_last_click).returns(nil)
+        end
+
         it "leaves click_id blank" do
           @support_request.fill_from_params(@params, @app, @currency, @offer, @user_agent)
           @support_request.click_id.should be_blank
