@@ -43,7 +43,6 @@ class Partner < ActiveRecord::Base
   validate :sales_rep_is_employee, :if => :sales_rep_id_changed?
   validate :client_id_legal
   validates_format_of :billing_email, :cs_contact_email, :with => Authlogic::Regex.email, :message => "should look like an email address.", :allow_blank => true, :allow_nil => true
-  # validates_format_of :name, :with => /^[[:print:]]*$/, :message => "Partner name must be alphanumeric."
   validates_each :disabled_partners, :allow_blank => true do |record, attribute, value|
     record.errors.add(attribute, "must be blank when using whitelisting") if record.use_whitelist? && value.present?
     if record.disabled_partners_changed?
@@ -53,7 +52,7 @@ class Partner < ActiveRecord::Base
     end
   end
   validates_each :offer_whitelist, :allow_blank => true do |record, attribute, value|
-    record.errors.add(attribute, "must be blank when using blacklisting") if !record.use_whitelist? && value.present?
+    record.errors.add(attribute, 'must be blank when using blacklisting') if !record.use_whitelist? && value.present?
     if record.offer_whitelist_changed?
       value.split(';').each do |offer_id|
         record.errors.add(attribute, "contains an unknown offer id: #{offer_id}") if Offer.find_by_id(offer_id).nil?
@@ -330,9 +329,9 @@ class Partner < ActiveRecord::Base
   end
 
   def toggle_confirmed_for_payout
-    self.confirmed_for_payout = !self.confirmed_for_payout
-    self.payout_threshold = self.next_payout_amount * 1.1 if self.payout_confirmation_notes =~ /SYSTEM: Payout is greater.*/
-    self.payout_confirmation_notes = nil if self.confirmed_for_payout
+    PayoutConfirmation.find_all_by_partner_id(self.id).each do |payout_confirmation|
+      payout_confirmation.confirm
+    end
   end
 
 private

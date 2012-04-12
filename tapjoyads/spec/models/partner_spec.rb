@@ -360,49 +360,44 @@ describe Partner do
     end
 
     describe '#toggle_confirmed_for_payout' do
+      before :each do
+        @payout_threshold_confirmation = Factory(:payout_threshold_confirmation, :partner => @partner)
+        @payout_threshold_confirmation.stubs(:partner).returns(@partner)
+        PayoutConfirmation.stubs(:find_all_by_partner_id).with(@partner.id).returns([@payout_threshold_confirmation])
+        @partner.next_payout_amount = 50_000_01
+        @partner.save!
+      end
+
       context 'when partner is confirmed' do
         before :each do
-          @partner.confirmed_for_payout = true
+          @payout_threshold_confirmation.confirmed = true
         end
 
-        it 'unconfirms the partner' do
+        it 'remains confirmed the partner' do
           @partner.toggle_confirmed_for_payout
-          @partner.confirmed_for_payout.should be_false
+          @payout_threshold_confirmation.confirmed.should be_true
         end
       end
 
       context 'when partner is unconfirmed' do
         before :each do
-          @partner.confirmed_for_payout = false
-          @partner.payout_confirmation_notes = 'some crap'
+          @payout_threshold_confirmation.confirmed = false
         end
 
         it 'confirms the partner' do
           @partner.toggle_confirmed_for_payout
-          @partner.confirmed_for_payout.should be_true
+          @payout_threshold_confirmation.confirmed.should be_true
         end
 
         it 'clears out confirmation notes' do
           @partner.toggle_confirmed_for_payout
-          @partner.payout_confirmation_notes.should be_nil
+          @payout_threshold_confirmation.system_notes.should be_nil
         end
 
         context 'when system notes are threshold' do
-          before :each do
-            @partner.payout_confirmation_notes = 'SYSTEM: Payout is greater than or equal to $50,000.00'
-            @partner.next_payout_amount = 50_000_01
-          end
-
           it 'will increase the threshold by 10%' do
             @partner.toggle_confirmed_for_payout
             @partner.payout_threshold.should == 55_000_01
-          end
-        end
-
-        context 'when system notes are not threshold' do
-          it 'will not increase the threshold' do
-            @partner.toggle_confirmed_for_payout
-            @partner.payout_threshold.should == 50_000_00
           end
         end
       end

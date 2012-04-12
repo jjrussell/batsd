@@ -29,39 +29,19 @@ describe Tools::PayoutsController do
         @user = Factory(:payout_manager_user)
         @partner = Factory(:partner, :users => [@user])
         login_as(@user)
+        Partner.stubs(:find).with(@partner.id).returns(@partner)
       end
 
       context 'when partner is confirmed' do
-        before :each do
-          @partner.confirmed_for_payout = true
-          @partner.save
-          post(:confirm_payouts, :partner_id => @partner.id)
-          @partner.reload
-        end
-
         it 'succeeds' do
-          response.should be_success
-        end
-
-        it 'unconfirms the partner' do
-          @partner.confirmed_for_payout.should be_false
-        end
-      end
-
-      context 'when partner is confirmed' do
-        before :each do
-          @partner.confirmed_for_payout = false
-          @partner.save
+          @partner.stubs(:toggle_confirmed_for_payout).returns(true)
           post(:confirm_payouts, :partner_id => @partner.id)
-          @partner.reload
-        end
-
-        it 'succeeds' do
           response.should be_success
         end
 
         it 'confirms the partner' do
-          @partner.confirmed_for_payout.should be_true
+          @partner.expects(:toggle_confirmed_for_payout).once
+          post(:confirm_payouts, :partner_id => @partner.id)
         end
       end
     end
@@ -87,6 +67,7 @@ describe Tools::PayoutsController do
           @partner.payout_threshold.should == (49_001_00 * 1.2)
         end
       end
+
       context 'when payout not saved properly' do
         before :each do
           payout = Factory(:payout, :partner => @partner)
