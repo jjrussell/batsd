@@ -705,6 +705,16 @@ class Offer < ActiveRecord::Base
     @video_button_tracking_offers = item.video_buttons.enabled.ordered.collect(&:tracking_offer).compact
   end
 
+  def queue_click_tracking_requests(request)
+    # simulate <img> pixel tag client-side web calls...
+    # we lose cookie functionality, unless we implement cookie storage on our end...
+    click_tracking_urls(true).each do |url|
+      forwarded_headers = request.http_headers.slice('User-Agent', 'X-Do-Not-Track', 'DNT')
+      forwarded_headers['Referer'] = request.url
+      Downloader.queue_get_with_retry(url, { :headers => forwarded_headers })
+    end
+  end
+
   private
 
   def calculated_min_bid
