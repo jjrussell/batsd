@@ -1,4 +1,6 @@
 class Reward < SimpledbShardedResource
+  belongs_to :offer
+
   self.num_domains = NUM_REWARD_DOMAINS
 
   self.sdb_attr :publisher_app_id
@@ -117,10 +119,6 @@ class Reward < SimpledbShardedResource
     return nil if click_key.blank?
 
     Click.new(:key => click_key)
-  end
-
-  def offer
-    Offer.find_by_id(offer_id)
   end
 
 end
