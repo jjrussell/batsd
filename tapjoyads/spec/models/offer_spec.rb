@@ -968,7 +968,7 @@ describe Offer do
       urls = ['https://dummyurl.com', 'https://example.com']
       @offer.impression_tracking_urls = urls
 
-      urls.each { |url| Downloader.expects(:get_with_retry).with(url, { :headers => request.http_headers.merge('Referer' => request.url) }, true).once }
+      urls.each { |url| Downloader.expects(:queue_get_with_retry).with(url, { :headers => request.http_headers.merge('Referer' => request.url) }).once }
 
       @offer.queue_impression_tracking_requests(request)
     end
