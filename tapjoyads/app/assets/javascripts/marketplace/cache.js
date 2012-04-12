@@ -200,12 +200,12 @@
                 extension = regexResult[3],
                 storage = JSON.parse(localStorage.getItem(key));
 
-            // check if localStorage entry exists and if hash has changed
-            if(storage && storage.hash === hash){
+            // check if localStorage exists, if entry exists and if hash has changed
+            if(storage && storage.hash === hash && window.localStorage){
               // load from cache
               stash.inject(storage.content, extension, null, options);
             }else{
-              // fetch uncached file
+              // fetch our file
               stash.fetch(file, function(text, uri, status){
                 // check for errors
                 if(status === 404){
