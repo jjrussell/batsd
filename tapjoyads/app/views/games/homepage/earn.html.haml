@@ -69,7 +69,7 @@
 
 - content_for :page_javascript do
   :plain
-    var is_create = #{@mark_as_favorite.to_s};
+    var is_create = #{@mark_as_favorite.to_json};
 
     var raise_favoriting_error = function() {
       Tapjoy.Utils.notification({
