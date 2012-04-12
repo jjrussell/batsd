@@ -102,6 +102,8 @@ describe FeaturedContent do
       before :each do
         @featured_content.tracking_offers.each(&:destroy)
         @featured_content.reload
+
+        Factory(:partner, :id => TAPJOY_PARTNER_ID)
       end
 
       context "when the featured_type is 'STAFFPICK'" do
