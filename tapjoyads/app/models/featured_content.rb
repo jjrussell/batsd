@@ -129,5 +129,6 @@ class FeaturedContent < ActiveRecord::Base
       self.tracking_item = item
       self.button_url = NO_URL
     end
+    true
   end
 end

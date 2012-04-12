@@ -88,7 +88,7 @@ module HasTrackingOffers
       has_many :tracking_offers, :class_name => 'Offer', :as => :tracking_for
       has_one :tracking_offer, :class_name => 'Offer', :as => :tracking_for, :conditions => 'tapjoy_enabled = true'
       after_save :enable_tracking_offer
-      validate :tracking_offer_valid
+      validate :tracking_offer_valid, :if => Proc.new { |record| record.tracking_offer.present? }
     end
   end
 
@@ -111,7 +111,7 @@ module HasTrackingOffers
 
     def tracking_source_offer_id=(tracking_source_offer_id)
       if tracking_source_offer_id.present?
-        self.tracking_source_offer = Offer.find(tracking_source_offer_id) 
+        self.tracking_source_offer = Offer.find(tracking_source_offer_id)
       else
         self.tracking_source_offer = nil
       end
@@ -127,7 +127,7 @@ module HasTrackingOffers
 
     def enable_tracking_offer
       if tracking_offer.present?
-        tracking_offer.tapjoy_enabled = true 
+        tracking_offer.tapjoy_enabled = true
         tracking_offer.save
       else
         tracking_offers.each do |offer|
@@ -139,6 +139,7 @@ module HasTrackingOffers
 
     def tracking_offer_valid
       errors.add :tracking_offer_id, 'is invalid.' unless tracking_offer.valid?
+      raise tracking_offer.errors.full_messages.inspect unless tracking_offer.valid?
     end
 
   end
