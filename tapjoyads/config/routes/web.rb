@@ -1,4 +1,5 @@
 Tapjoyad::Application.routes.draw do
+  match 'connect' => 'connect#index'
   match 'healthz' => 'healthz#index'
 
   resources :apps_installed

@@ -222,6 +222,7 @@ describe Job::QueueSendCurrencyController do
       url_params = [
         "snuid=#{@reward.publisher_user_id}",
         "currency=#{@reward.currency_reward}",
+        "mac_address=",
         "id=#{@reward.key}",
         "verifier=#{verifier}",
       ]
@@ -252,6 +253,7 @@ describe Job::QueueSendCurrencyController do
       url_params = [
         "snuid=#{@reward.publisher_user_id}",
         "currency=#{@reward.currency_reward}",
+        "mac_address=",
         "storeId=#{CGI::escape(offer.store_id_for_feed)}",
         "application=#{CGI::escape(offer.name)}",
         "rev=1.5",
@@ -280,6 +282,7 @@ describe Job::QueueSendCurrencyController do
       url_params = [
         "snuid=#{@reward.publisher_user_id}",
         "currency=#{@reward.currency_reward}",
+        "mac_address=",
       ]
       callback_url = "#{@currency.callback_url}&#{url_params.join('&')}"
 
@@ -297,7 +300,7 @@ describe Job::QueueSendCurrencyController do
       @currency.update_attribute(:callback_url, Currency::PLAYDOM_CALLBACK_URL)
 
       @url_start = "http://offer-dynamic-lb.playdom.com/tapjoy/mob/"
-      @url_end = "/fp/main?snuid=bill&currency=#{@reward.currency_reward}"
+      @url_end = "/fp/main?snuid=bill&currency=#{@reward.currency_reward}&mac_address="
     end
 
     it 'should set callback for facebook' do

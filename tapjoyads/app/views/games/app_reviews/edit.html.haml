@@ -4,7 +4,7 @@
     = render 'form'
 
 - content_for :page_javascript do
-  :javascript
-    $(function($) {
+  :plain
+    (function($){
       $('.write_review').css('border-bottom', '0px');
-    });
+    })(jQuery);

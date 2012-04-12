@@ -189,6 +189,7 @@ Tapjoyad::Application.routes.draw do
   resources :tools, :only => :index do
     collection do
       post :update_user_roles
+      get :fix_rewards
       get :reset_device
       get :publishers_without_payout_info
       get :monthly_data
@@ -344,6 +345,11 @@ Tapjoyad::Application.routes.draw do
       member do
         post :add_partner
         post :remove_partner
+      end
+    end
+    resources :shared_files, :only => [:index, :create] do
+      collection do
+        post :delete
       end
     end
   end

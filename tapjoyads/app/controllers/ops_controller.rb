@@ -26,6 +26,7 @@ class OpsController < WebsiteController
   end
 
   def as_instances
+    @kiosk = !!params[:kiosk]
     @as_group = get_as_groups(params[:group]).first
     @lb_name = @as_group[:load_balancer_names].first
 
@@ -81,6 +82,7 @@ class OpsController < WebsiteController
   end
 
   def index
+    @kiosk = !!params[:kiosk]
     @as_groups = get_as_groups
     @as_groups.each do |group|
       group[:instances].reject! { |instance| instance[:lifecycle_state] == "InService" }
@@ -96,6 +98,8 @@ class OpsController < WebsiteController
       @lb_instances[lb_name].reject! { |i| i[:state] == 'InService' }
     end
     @ec2_instances = get_ec2_instances(instance_ids)
+
+    render :layout => 'dashboard'
   end
 
   def service_stats
