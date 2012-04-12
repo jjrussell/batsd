@@ -78,19 +78,25 @@ describe ClickController do
           :udid => 'stuff',
           :offer_id => @offer.id,
           :viewed_at =>  (Time.zone.now - 1.hour).to_f,
-          :currency_id => @currency.id,
-          :advertiser_app_id => 'even_more_stuff'
+          :currency_id => @currency.id
         }
-      end
-
-      it "creates the correct click_key and redirects" do
         controller.stubs(:verify_params).returns(true)
         Offer.stubs(:find_in_cache).returns(@offer)
         Currency.stubs(:find_in_cache).returns(@currency)
-        get(:generic, @params)
+      end
+
+      it "creates the correct click_key and redirects" do
+        get(:generic, @params.merge(:advertiser_app_id => 'even_more_stuff'))
         assigns(:click_key).should_not be_nil
         assigns(:click_key).should == Digest::MD5.hexdigest('stuff.even_more_stuff')
         response.should be_redirect
+      end
+
+      it "queues the offer's click_tracking_urls properly" do
+        Click.any_instance.stubs(:offer).returns(@offer)
+        @offer.expects(:queue_click_tracking_requests).once
+
+        get(:generic, @params.merge(:advertiser_app_id => 'testing click_tracking'))
       end
     end
   end
@@ -105,19 +111,25 @@ describe ClickController do
         :udid => 'app_stuff',
         :offer_id => @offer.id,
         :viewed_at =>  (Time.zone.now - 1.hour).to_f,
-        :currency_id => @currency.id,
-        :advertiser_app_id => 'even_more_app_stuff'
+        :currency_id => @currency.id
       }
-    end
-
-    it "creates the correct click_key and redirects" do
       controller.stubs(:verify_params).returns(true)
       Offer.stubs(:find_in_cache).returns(@offer)
       Currency.stubs(:find_in_cache).returns(@currency)
-      get(:app, @params)
+    end
+
+    it "creates the correct click_key and redirects" do
+      get(:app, @params.merge(:advertiser_app_id => 'even_more_app_stuff'))
       assigns(:click_key).should_not be_nil
       assigns(:click_key).should == 'app_stuff.even_more_app_stuff'
       response.should be_redirect
+    end
+
+    it "queues the offer's click_tracking_urls properly" do
+      Click.any_instance.stubs(:offer).returns(@offer)
+      @offer.expects(:queue_click_tracking_requests).once
+
+      get(:app, @params.merge(:advertiser_app_id => 'testing click_tracking'))
     end
   end
 end

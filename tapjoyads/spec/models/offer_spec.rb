@@ -956,22 +956,34 @@ describe Offer do
     end
   end
 
-  describe ".queue_impression_tracking_requests" do
-    it "should queue up the proper GET requests" do
-      class Request
-        def http_headers; {'User-Agent' => 'Bob'}; end
-        def url; 'http://williamshat.com'; end
-      end
-      request = Request.new
-
+  context "queue_third_party_tracking_request methods" do
+    before(:each) do
+      @request = Request.new
       Sqs.stubs(:send_message)
+      @urls = ['https://dummyurl.com', 'https://example.com']
+    end
 
-      urls = ['https://dummyurl.com', 'https://example.com']
-      @offer.impression_tracking_urls = urls
+    describe ".queue_impression_tracking_requests" do
+      it "should queue up the proper GET requests" do
+        @offer.impression_tracking_urls = @urls
+        @urls.each { |url| Downloader.expects(:queue_get_with_retry).with(url, { :headers => @request.http_headers.merge('Referer' => @request.url) }).once }
 
-      urls.each { |url| Downloader.expects(:queue_get_with_retry).with(url, { :headers => request.http_headers.merge('Referer' => request.url) }).once }
+        @offer.queue_impression_tracking_requests(@request)
+      end
+    end
 
-      @offer.queue_impression_tracking_requests(request)
+    describe ".queue_click_tracking_requests" do
+      it "should queue up the proper GET requests" do
+        @offer.click_tracking_urls = @urls
+        @urls.each { |url| Downloader.expects(:queue_get_with_retry).with(url, { :headers => @request.http_headers.merge('Referer' => @request.url) }).once }
+
+        @offer.queue_click_tracking_requests(@request)
+      end
     end
   end
+end
+
+class Request
+  def http_headers; {'User-Agent' => 'Bob'}; end
+  def url; 'http://williamshat.com'; end
 end
