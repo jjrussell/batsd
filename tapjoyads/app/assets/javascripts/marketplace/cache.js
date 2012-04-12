@@ -247,7 +247,7 @@
       // try and catch quota exceeded errors           
       try{
         storage.setItem('tapjoy', 'dollas!'); 
-        storage.removeItem(key); 
+        storage.removeItem('tapjoy');
       }catch(error){
         if(error.code === DOMException.QUOTA_EXCEEDED_ERR && storage.length === 0) 
           return false;
