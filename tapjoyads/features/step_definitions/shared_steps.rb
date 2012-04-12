@@ -6,6 +6,10 @@ Then /^I should see "([^"]*)"$/ do |text|
   page.should have_content(text)
 end
 
+When /^freeze$/ do
+  binding.pry
+end
+
 When /^show me the page$/ do
   save_and_open_page
 end
@@ -28,4 +32,8 @@ end
 
 When /^I wait (\d+) seconds$/ do |seconds|
   sleep(seconds.to_i)
+end
+
+Then /^I should see xml$/ do
+  pending # express the regexp above with the code you wish you had
 end
