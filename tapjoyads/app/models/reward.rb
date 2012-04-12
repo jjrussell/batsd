@@ -1,5 +1,6 @@
 class Reward < SimpledbShardedResource
   belongs_to :offer
+  belongs_to :click, :foreign_key => 'click_key'
 
   self.num_domains = NUM_REWARD_DOMAINS
 
@@ -113,12 +114,6 @@ class Reward < SimpledbShardedResource
     else
       'Something weird has happened'
     end
-  end
-
-  def click
-    return nil if click_key.blank?
-
-    Click.new(:key => click_key)
   end
 
 end

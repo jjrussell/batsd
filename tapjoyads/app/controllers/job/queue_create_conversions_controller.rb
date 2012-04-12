@@ -24,9 +24,8 @@ class Job::QueueCreateConversionsController < Job::SqsReaderController
 
         # replace certain headers with click values, since conversion requests often come from servers,
         # but clicks come from end users' devices
-        click = reward.click # do one sdb lookup
         %w(user_agent x_do_not_track dnt).each do |header|
-          request_env["HTTP_#{header.upcase}"] = click.send("#{header}_header")
+          request_env["HTTP_#{header.upcase}"] = reward.click.send("#{header}_header")
         end
         http_request = ActionController::Request.new(request_env)
       end
