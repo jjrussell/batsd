@@ -1,8 +1,6 @@
 require 'spec/spec_helper'
 
 describe Tools::UsersController do
-  include Authlogic::TestCase
-
   before :each do
     activate_authlogic
   end

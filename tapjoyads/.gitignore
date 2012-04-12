@@ -2,10 +2,9 @@
 log
 tmp
 pids
-coverage/
+coverage
 *.swp
 *.swo
-coverage.data
 vendor/bundle
 .bundle
 config/newrelic.yml

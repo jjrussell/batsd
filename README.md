@@ -141,8 +141,6 @@ Copy config files into place
 ```
     cp tapjoyserver/tapjoyads/config/newrelic-test.yml tapjoyserver/tapjoyads/config/newrelic.yml
     cp tapjoyserver/tapjoyads/config/database-default.yml tapjoyserver/tapjoyads/config/database.yml
-    mkdir tapjoyserver/tapjoyads/tmp
-    mkdir tapjoyserver/tapjoyads/log
     cp tapjoyserver/tapjoyads/config/local-default.yml tapjoyserver/tapjoyads/config/local.yml
 ```
 

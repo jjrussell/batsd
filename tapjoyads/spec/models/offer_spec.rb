@@ -947,7 +947,7 @@ describe Offer do
     end
 
     it "still doesn't like long multibyte names" do
-      @offer.update_attributes(:name => '在这儿IM 人脉既是财富 在这儿IM 人脉既是财富')
+      @offer.update_attributes(:name => '在这儿IM 人脉既是财富 在这儿IM 人脉既是财富在这儿IM 人脉既是财富 在这儿IM 人脉既是财富')
       Offer.for_display_ads.should_not include(@offer)
     end
 

@@ -1,8 +1,6 @@
 require 'spec/spec_helper'
 
 describe Games::FavoriteAppController do
-  include Authlogic::TestCase
-
   before :each do
     activate_authlogic
     @app_metadata = Factory(:app_metadata)

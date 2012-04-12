@@ -1,8 +1,6 @@
 require 'spec_helper'
 
 describe WebsiteController do
-  include Authlogic::TestCase
-
   before :each do
     activate_authlogic
     fake_the_web

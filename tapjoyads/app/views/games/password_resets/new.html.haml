@@ -27,7 +27,7 @@
           .email_error.error-msg
 
 - content_for :page_javascript do
-  :javascript
+  :plain
     $(window).load(function() {
       if (noMessage) {
         $("#flash_error").hide();

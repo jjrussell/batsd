@@ -1,8 +1,6 @@
 require 'spec/spec_helper'
 
 describe BillingController do
-  include Authlogic::TestCase
-
   before :each do
     activate_authlogic
     user = Factory(:user)

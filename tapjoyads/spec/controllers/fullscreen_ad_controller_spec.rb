@@ -39,7 +39,6 @@ describe FullscreenAdController do
         get(:index, @params)
 
         response.should be_success
-        response.should render_template("fullscreen_ad/custom_creative")
         response.body.should have_selector('div#main')
       end
 

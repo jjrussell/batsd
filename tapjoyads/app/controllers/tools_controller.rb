@@ -9,6 +9,17 @@ class ToolsController < WebsiteController
   def index
   end
 
+  def fix_rewards
+    if params[:reward_key].present?
+      reward = Reward.find(params[:reward_key], :consistent => true)
+      if reward.present?
+        flash.now[:notice] = reward.fix_conditional_check_failed
+      else
+        flash.now[:error] = 'Reward not found'
+      end
+    end
+  end
+
   def new_transfer
   end
 

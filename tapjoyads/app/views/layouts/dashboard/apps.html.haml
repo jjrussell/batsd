@@ -1,8 +1,0 @@
-- content_for :apps_layout do
-  = render('dashboard/shared/dropdown_select', :objects => current_partner_apps, :selected => @app, :options => @dropdown_options)
-  = render('dashboard/apps/actions', :app => @app)
-
-  #apps_main
-    = yield
-
-= render(:file => 'layouts/dashboard/tabbed')
