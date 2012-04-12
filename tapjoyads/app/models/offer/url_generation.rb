@@ -207,17 +207,29 @@ module Offer::UrlGeneration
     ad_url << "/test_offer" if item_type == 'TestOffer'
     ad_url << "/test_video_offer" if item_type == 'TestVideoOffer'
 
-    ad_url << "?advertiser_app_id=#{item_id}&publisher_app_id=#{publisher_app_id}&publisher_user_id=#{publisher_user_id}" <<
-      "&udid=#{udid}&source=#{source}&offer_id=#{id}&app_version=#{app_version}&viewed_at=#{viewed_at.to_f}" <<
-      "&currency_id=#{currency_id}&primary_country=#{primary_country}&display_multiplier=#{display_multiplier}" <<
-      "&library_version=#{library_version}&language_code=#{language_code}"
-    ad_url << "&displayer_app_id=#{displayer_app_id}" if displayer_app_id.present?
-    ad_url << "&exp=#{exp}" if exp.present?
-    ad_url << "&width=#{width}" if width.present?
-    ad_url << "&height=#{height}" if height.present?
-    ad_url << "&preview=#{preview}" if preview.present?
-    ad_url << "&os_version=#{os_version}" if os_version.present?
-    ad_url
+    data = {
+      :advertiser_app_id  => item_id,
+      :publisher_app_id   => publisher_app_id,
+      :publisher_user_id  => publisher_user_id,
+      :udid               => udid,
+      :source             => source,
+      :offer_id           => id,
+      :app_version        => app_version,
+      :viewed_at          => viewed_at.to_f,
+      :currency_id        => currency_id,
+      :primary_country    => primary_country,
+      :display_multiplier => display_multiplier,
+      :library_version    => library_version,
+      :language_code      => language_code,
+      :displayer_app_id   => displayer_app_id,
+      :os_version         => os_version,
+      :exp                => exp,
+      :width              => width,
+      :height             => height,
+      :preview            => preview,
+    }
+
+    "#{ad_url}?data=#{ObjectEncryptor.encrypt(data)}"
   end
 
   def get_offers_webpage_preview_url(publisher_app_id, bust_cache = false)
