@@ -7,7 +7,6 @@ module DashboardHelpers
     fill_in "Company Name", :with => "Tapjoy"
     fill_in "Password", :with => "password"
     fill_in "Confirm Password", :with => "password"
-    fill_in "Confirm Password", :with => "password"
     select "United States", :from => "Country"
     check "user_terms_of_service"
     click_button "Create Account"
