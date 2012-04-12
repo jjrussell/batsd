@@ -117,6 +117,25 @@
       }
     },
 
+    supportsLocalStorage: function(){
+
+      if(!window.localStorage)
+        return false;
+
+      var storage = window.localStorage;
+
+      // try and catch quota exceeded errors           
+      try {
+        storage.setItem('tapjoy', 'dollas!'); 
+        storage.removeItem(key); 
+      }catch (error){
+        if(error.code === DOMException.QUOTA_EXCEEDED_ERR && storage.length === 0) 
+        return false;
+      }
+
+      return true;
+    },
+
     log: function(message){
       // get around YUI compressor
       var c = window.console;
@@ -198,10 +217,11 @@
                 key = options.prefix + logicalURI,
                 hash = regexResult[2],
                 extension = regexResult[3],
-                storage = JSON.parse(localStorage.getItem(key));
+                supportsLocalStorage = stash.supportsLocalStorage(),
+                storage = supportsLocalStorage ? JSON.parse(localStorage.getItem(key)) : false;
 
             // check if localStorage exists, if entry exists and if hash has changed
-            if(storage && storage.hash === hash && window.localStorage){
+            if(storage && storage.hash === hash){
               // load from cache
               stash.inject(storage.content, extension, null, options);
             }else{
@@ -211,18 +231,20 @@
                 if(status === 404){
                   stash.log('Error: 404\nCould not load resource: ' + uri);
                 }else{
-                  // create new entry -> path/file + extension. We remove the digest from the filename and store it as our hash property.
-                  localStorage.setItem(key,
-                    // create new storage object with hash + content
-                    JSON.stringify({
-                      // versioning hash <- extracted from filename
-                      hash: hash,
-                      // file contents
-                      content: text
-                    })
-                  );
-
-                  stash.inject(text, extension, uri, options);
+                  // check if we can write to localStorage
+                  if(supportsLocalStorage){
+                    // create new entry -> path/file + extension. We remove the digest from the filename and store it as our hash property.
+                    localStorage.setItem(key,
+                      // create new storage object with hash + content
+                      JSON.stringify({
+                        // versioning hash <- extracted from filename
+                        hash: hash,
+                        // file contents
+                        content: text
+                      })
+                    );
+                  }
+                stash.inject(text, extension, uri, options);
                 }
               });
             }
