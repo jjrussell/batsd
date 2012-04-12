@@ -57,7 +57,7 @@
     $(".existing-device").on('click', function () {
       udid = $(this).data('udid');
       $("#device-section").hide();
-      $("#app-list").show();
+      $("#app-section").show();
 
       return false;
     });
