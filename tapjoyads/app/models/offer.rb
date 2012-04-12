@@ -173,8 +173,6 @@ class Offer < ActiveRecord::Base
       record.errors.add(attribute, "cannot be enabled without valid store id")
     end
   end
-  # validates_each :impression_tracking_urls do |record, attribute, value| record.validate_third_party_tracking_urls(attribute, value); end
-  # validates_each :click_tracking_urls do |record, attribute, value| record.validate_third_party_tracking_urls(attribute, value); end
 
   before_validation :update_payment
   before_validation :set_reseller_from_partner, :on => :create
@@ -256,9 +254,7 @@ class Offer < ActiveRecord::Base
   end
 
   %w(click_tracking_urls impression_tracking_urls).each do |method_name|
-    define_method method_name do |*args|
-      replace_macros = args.first || false
-
+    define_method method_name do
       self.send("#{method_name}=", []) if super().nil?
       urls = super().sort
 
@@ -267,8 +263,8 @@ class Offer < ActiveRecord::Base
       urls
     end
 
-    define_method "#{method_name}=" do |urls|
-      super(urls.select { |url| url.present? })
+    define_method "#{method_name}=" do |vals|
+      super(vals.select { |val| val.present? })
     end
 
     define_method "#{method_name}_was" do
@@ -700,16 +696,6 @@ class Offer < ActiveRecord::Base
     # simulate <img> pixel tag client-side web calls...
     # we lose cookie functionality, unless we implement cookie storage on our end...
     impression_tracking_urls(true).each do |url|
-      forwarded_headers = request.http_headers.slice('User-Agent', 'X-Do-Not-Track', 'DNT')
-      forwarded_headers['Referer'] = request.url
-      Downloader.queue_get_with_retry(url, { :headers => forwarded_headers })
-    end
-  end
-
-  def queue_click_tracking_requests(request)
-    # simulate <img> pixel tag client-side web calls...
-    # we lose cookie functionality, unless we implement cookie storage on our end...
-    click_tracking_urls(true).each do |url|
       forwarded_headers = request.http_headers.slice('User-Agent', 'X-Do-Not-Track', 'DNT')
       forwarded_headers['Referer'] = request.url
       Downloader.queue_get_with_retry(url, { :headers => forwarded_headers })
