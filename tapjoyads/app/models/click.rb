@@ -53,9 +53,9 @@ class Click < SimpledbShardedResource
 
   attr_writer :http_request
 
-  def save
+  def save(options = {})
     super.tap do
-      if @http_request
+      if @http_request.present? && offer.present?
         offer.queue_click_tracking_requests(@http_request)
         self.http_request = nil
       end
