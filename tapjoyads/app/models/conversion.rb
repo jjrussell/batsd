@@ -72,9 +72,12 @@ class Conversion < ActiveRecord::Base
   validates_inclusion_of :reward_type, :in => REWARD_TYPES.values
 
   after_create :update_partner_amounts
+  after_create :queue_third_party_conversion_tracking
 
   scope :created_since, lambda { |date| { :conditions => [ "created_at >= ?", date ] } }
   scope :created_between, lambda { |start_time, end_time| { :conditions => [ "created_at >= ? AND created_at < ?", start_time, end_time ] } }
+
+  attr_writer :http_request
 
   def self.get_stat_definitions(reward_type)
     case reward_type
@@ -226,6 +229,12 @@ class Conversion < ActiveRecord::Base
     Partner.find_all_by_id(partners, :lock => "FOR UPDATE")
     Partner.connection.execute("UPDATE #{Partner.quoted_table_name} SET pending_earnings = (pending_earnings + #{publisher_amount}) WHERE id = '#{publisher_partner_id}'") unless publisher_amount == 0
     Partner.connection.execute("UPDATE #{Partner.quoted_table_name} SET balance = (balance + #{advertiser_amount}) WHERE id = '#{advertiser_partner_id}'") unless advertiser_amount == 0
+  end
+
+  def queue_third_party_conversion_tracking
+    if @http_request
+      advertiser_offer.queue_conversion_tracking_requests(@http_request, created_at.to_i.to_s)
+    end
   end
 
 end

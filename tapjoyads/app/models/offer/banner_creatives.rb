@@ -15,20 +15,17 @@ module Offer::BannerCreatives
     end
   end
 
-  def banner_creatives
-    self.banner_creatives = [] if super.nil?
-    super.sort
-  end
+  %w(banner_creatives approved_banner_creatives).each do |method_name|
+    define_method method_name do
+      self.send("#{method_name}=", []) if super.nil?
+      super.sort
+    end
 
-  def approved_banner_creatives
-    self.approved_banner_creatives = [] if super.nil?
-    super.sort
-  end
-
-  def banner_creatives_was
-    ret_val = super
-    return [] if ret_val.nil?
-    ret_val
+    define_method "#{method_name}_was" do
+      ret_val = super
+      return [] if ret_val.nil?
+      ret_val
+    end
   end
 
   def can_change_banner_creatives?
@@ -36,7 +33,7 @@ module Offer::BannerCreatives
   end
 
   def banner_creative_sizes(return_all = false)
-    return Offer::DISPLAY_AD_SIZES + Offer::FEATURED_AD_SIZES if return_all
+    return Offer::CUSTOM_AD_SIZES if return_all
     return Offer::DISPLAY_AD_SIZES if !featured?
     return Offer::FEATURED_AD_SIZES
   end
@@ -234,9 +231,8 @@ module Offer::BannerCreatives
     format ||= banner_creative_format(size)
     begin
       creative_arr = Magick::Image.from_blob(blob)
-      if creative_arr.size != 1
-        raise "image contains multiple layers (e.g. animated .gif)"
-      end
+      raise "image contains multiple layers (e.g. animated .gif)" if creative_arr.size != 1
+
       creative = creative_arr[0]
       creative.format = format
       creative.interlace = Magick::JPEGInterlace if format == 'jpeg'

@@ -8,9 +8,16 @@ class Job::QueueCreateConversionsController < Job::SqsReaderController
 
   def on_message(message)
     reward = Reward.find(message.body, :consistent => true)
-    raise "Reward not found: #{message.body}" if reward.nil?
+    http_request = nil
+    if reward.nil? # message may be a JSON string
+      message = JSON.parse(message).symbolize_keys
+      reward = Reward.find(message[:reward_id], :consistent => true)
+      raise "Reward not found: #{message.body}" if reward.nil?
 
-    reward.build_conversions.each do |c|
+      http_request = ActionController::Request.new(message[:http_request_env]) if message[:http_request_env]
+    end
+
+    reward.build_conversions(http_request).each do |c|
       save_conversion(c)
     end
 

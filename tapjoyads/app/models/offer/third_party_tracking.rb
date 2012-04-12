@@ -2,18 +2,15 @@ module Offer::ThirdPartyTracking
 
   def self.included(base)
     base.class_eval do
-      const_set(:TRUSTED_TRACKING_VENDORS, %w( phluantmobile.net srvntrk.com))
+      const_set(:TRUSTED_TRACKING_VENDORS, %w( phluantmobile.net ))
 
-      [:impression_tracking_urls, :click_tracking_urls, :conversion_tracking_urls].each do |f|
-        serialize f, Array
-        # TODO: uncomment this once we have a UI for adding tracking urls
-        # validates_each(f) { |record, attribute, value| record.validate_third_party_tracking_urls(attribute, value) }
-      end
+      serialize :impression_tracking_urls, Array
+      serialize :click_tracking_urls, Array
+      serialize :conversion_tracking_urls, Array
 
-      def self.trusted_third_party_tracking_vendors(connector = 'and')
-        Offer::TRUSTED_TRACKING_VENDORS.to_sentence(:two_words_connector => " #{connector} ", :last_word_connector => ", #{connector} ")
-      end
-
+      validates_each :impression_tracking_urls do |record, attribute, value| record.validate_third_party_tracking_urls(attribute, value); end
+      validates_each :click_tracking_urls do |record, attribute, value| record.validate_third_party_tracking_urls(attribute, value); end
+      validates_each :conversion_tracking_urls do |record, attribute, value| record.validate_third_party_tracking_urls(attribute, value); end
     end
   end
 
@@ -21,8 +18,8 @@ module Offer::ThirdPartyTracking
     define_method method_name do |*args|
       replace_macros, timestamp = args
 
-      self.send("#{method_name}=", []) if super().nil?
-      urls = super().sort
+      self.send("#{method_name}=", []) if super.nil?
+      urls = super.sort
 
       timestamp ||= Time.zone.now.to_i.to_s
       urls = urls.collect { |url| url.gsub("[timestamp]", timestamp) } if replace_macros
@@ -30,17 +27,23 @@ module Offer::ThirdPartyTracking
     end
 
     define_method "#{method_name}=" do |urls|
-      super(urls.to_a.select { |url| url.present? })
+      super(urls.select { |url| url.present? })
     end
 
     define_method "#{method_name}_was" do
-      super() || []
+      ret_val = super
+      return [] if ret_val.nil?
+      ret_val
     end
 
-    define_method "queue_#{method_name.sub(/urls$/, 'requests')}" do |*args|
-      timestamp = args.shift
-      send(method_name, true, timestamp).each do |url|
-        Downloader.queue_get_with_retry(url)
+    define_method "queue_#{attr_name.sub(/urls$/, 'requests')}" do |*args|
+      # simulate <img> pixel tag client-side web calls...
+      # we lose cookie functionality, unless we implement cookie storage on our end...
+      http_request, timestamp = args
+      send(attr_name, true, timestamp).each do |url|
+        forwarded_headers = http_request.http_headers.slice('User-Agent', 'X-Do-Not-Track', 'Dnt')
+        forwarded_headers['Referer'] = request.url
+        Downloader.queue_get_with_retry(url, { :headers => forwarded_headers })
       end
     end
   end
@@ -48,11 +51,9 @@ module Offer::ThirdPartyTracking
   def validate_third_party_tracking_urls(attribute, urls)
     urls.each do |url|
       uri = URI.parse(url) rescue (self.errors.add(attribute, "must all be valid urls") and return)
-      unless %w(http https).include? uri.scheme
-        self.errors.add(attribute, "must begin with http:// or https://") and return
-      end
       unless uri.host =~ /(^|\.)(#{Offer::TRUSTED_TRACKING_VENDORS.join('|').gsub('.','\\.')})$/
-        self.errors.add(attribute, "must all use a trusted vendor (#{Offer.trusted_third_party_tracking_vendors('or')})")
+        vendors_list = Offer::TRUSTED_TRACKING_VENDORS.to_sentence(:two_words_connector => ' or ', :last_word_connector => ', or ')
+        self.errors.add(attribute, "must all use a trusted vendor (#{vendors_list})")
         return
       end
     end
