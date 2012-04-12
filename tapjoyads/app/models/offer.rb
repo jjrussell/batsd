@@ -4,6 +4,7 @@ class Offer < ActiveRecord::Base
   include Offer::Rejecting
   include Offer::UrlGeneration
   include Offer::BannerCreatives
+  include Offer::ThirdPartyTracking
   acts_as_cacheable
   acts_as_tracking
   memoize :precache_rank_scores
@@ -77,8 +78,6 @@ class Offer < ActiveRecord::Base
     "2 days"   => 2.days.to_i,
     "3 days"   => 3.days.to_i,
   }
-
-  TRUSTED_TRACKING_VENDORS = %w( phluantmobile.net )
 
   has_many :advertiser_conversions, :class_name => 'Conversion', :foreign_key => :advertiser_offer_id
   has_many :rank_boosts
@@ -238,9 +237,6 @@ class Offer < ActiveRecord::Base
   memoize :get_device_types, :get_screen_layout_sizes, :get_countries, :get_dma_codes,
     :get_regions, :get_approved_sources, :get_carriers, :get_cities
 
-  serialize :impression_tracking_urls, Array
-  serialize :click_tracking_urls, Array
-
   def clone
     return super if new_record?
 
@@ -250,27 +246,6 @@ class Offer < ActiveRecord::Base
         blob = banner_creative_s3_object(size).read
         clone.send("banner_creative_#{size}_blob=", blob)
       end
-    end
-  end
-
-  %w(click_tracking_urls impression_tracking_urls).each do |method_name|
-    define_method method_name do
-      self.send("#{method_name}=", []) if super().nil?
-      urls = super().sort
-
-      now = Time.zone.now.to_i.to_s
-      urls = urls.collect { |url| url.gsub("[timestamp]", now) }
-      urls
-    end
-
-    define_method "#{method_name}=" do |vals|
-      super(vals.select { |val| val.present? })
-    end
-
-    define_method "#{method_name}_was" do
-      ret_val = super
-      return [] if ret_val.nil?
-      ret_val
     end
   end
 
@@ -690,16 +665,6 @@ class Offer < ActiveRecord::Base
 
   def multi_completable?
     !%w(App ActionOffer SurveyOffer).include?(item_type) || Offer::Rejecting::TAPJOY_GAMES_RETARGETED_OFFERS.include?(item_id)
-  end
-
-  def queue_impression_tracking_requests(request)
-    # simulate <img> pixel tag client-side web calls...
-    # we lose cookie functionality, unless we implement cookie storage on our end...
-    impression_tracking_urls(true).each do |url|
-      forwarded_headers = request.http_headers.slice('User-Agent', 'X-Do-Not-Track', 'Dnt')
-      forwarded_headers['Referer'] = request.url
-      Downloader.queue_get_with_retry(url, { :headers => forwarded_headers })
-    end
   end
 
   private

@@ -952,23 +952,23 @@ describe Offer do
     end
   end
 
-  context "queue_third_party_tracking_request methods" do
-    before(:each) do
-      @request = Request.new
-      Sqs.stubs(:send_message)
-      @urls = ['https://dummyurl.com', 'https://example.com']
-    end
+  # context "queue_third_party_tracking_request methods" do
+  #   before(:each) do
+  #     @request = Request.new
+  #     Sqs.stubs(:send_message)
+  #     @urls = ['https://dummyurl.com', 'https://example.com']
+  #   end
 
-    describe ".queue_impression_tracking_requests" do
-      it "should queue up the proper GET requests" do
-        @offer.impression_tracking_urls = @urls
-        @urls.each { |url| Downloader.expects(:queue_get_with_retry).with(url, { :headers => @request.http_headers.merge('Referer' => @request.url) }).once }
+  #   describe ".queue_impression_tracking_requests" do
+  #     it "should queue up the proper GET requests" do
+  #       @offer.impression_tracking_urls = @urls
+  #       @urls.each { |url| Downloader.expects(:queue_get_with_retry).with(url, { :headers => @request.http_headers.merge('Referer' => @request.url) }).once }
 
-        @offer.queue_impression_tracking_requests(@request)
-      end
-    end
+  #       @offer.queue_impression_tracking_requests(@request)
+  #     end
+  #   end
 
-  end
+  # end
 end
 
 class Request
