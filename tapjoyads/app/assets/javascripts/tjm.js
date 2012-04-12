@@ -16,3 +16,4 @@
 //= require marketplace/social
 //= require marketplace/ajax
 //= require marketplace/main
+//= require marketplace/logged-out

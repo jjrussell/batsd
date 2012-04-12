@@ -1,43 +1,53 @@
 - @page_title = 'Operations Dashboard'
 
-- count = 0
-- @as_groups.each do |group|
-  - count += 1
-  .details.left
-    %div{:id => "#{group[:auto_scaling_group_name]}_header"}
-    - content_for :page_javascript do
-      :plain
-        $("##{group[:auto_scaling_group_name]}_header").load("ops/as_header?group=#{group[:auto_scaling_group_name]}");
-        this.timer_#{group[:auto_scaling_group_name]}_header = setInterval(function () {
-          $("##{group[:auto_scaling_group_name]}_header").load("ops/as_header?group=#{group[:auto_scaling_group_name]}");
-        }, 30000);
+- content_for :page_sidebar do
+  - unless @kiosk
+    .span2
+      .well.sidebar-nav
+        %ul.nav.nav-list
+          %li.nav-header more info »
+          %li.active= link_to 'dashboard', ops_path
+          %li= link_to 'auto-scaler', as_groups_ops_path
+          %li= link_to 'load-balancer', elb_status_ops_path
+          %li= link_to 'service-stats', service_stats_ops_path
+          %li= link_to 'kiosk-mode', ops_path(:kiosk => true)
 
-    %div{:id => "#{group[:auto_scaling_group_name]}_instances"}
-    - content_for :page_javascript do
-      :plain
-        $("##{group[:auto_scaling_group_name]}_instances").load("ops/as_instances?group=#{group[:auto_scaling_group_name]}");
-        this.timer_#{group[:auto_scaling_group_name]}_instances = setInterval(function () {
-          $("##{group[:auto_scaling_group_name]}_instances").load("ops/as_instances?group=#{group[:auto_scaling_group_name]}");
-        }, 30000);
+= javascript_tag do
+  :plain
+    var nodes = [];
 
-  -# if count % 3 == 0
-    .clear
+    this.node_cleanup_timer = setInterval(function () {
+      for (var instance_id in nodes) {
+        var current_time = new Date().getTime();
+        var timestamp = nodes[instance_id];
+        if (current_time - timestamp > 35000) {
+          $('#' + instance_id + '_details').remove();
+          delete nodes[instance_id];
+        }
+      }
+    }, 1000);
 
-.clear
+%div{:class => @kiosk ? "" : "span10"}
+  .row-fluid
+    - @as_groups.each do |group|
+      %div{:class => "#{@kiosk ? 'span2' : 'span3'}", :id => "#{group[:auto_scaling_group_name]}_section"}
+        .well.well-small
+          %div{:id => "#{group[:auto_scaling_group_name]}_header"}
+          - content_for :page_javascript do
+            :plain
+              $("##{group[:auto_scaling_group_name]}_header").load("ops/as_header?group=#{group[:auto_scaling_group_name]}");
+              this.timer_#{group[:auto_scaling_group_name]}_header = setInterval(function () {
+                $("##{group[:auto_scaling_group_name]}_header").load("ops/as_header?group=#{group[:auto_scaling_group_name]}");
+              }, 30000);
 
-%hr/
+          %div{:id => "#{group[:auto_scaling_group_name]}_instances"}
+          - content_for :page_javascript do
+            :plain
+              $("##{group[:auto_scaling_group_name]}_instances").load("ops/as_instances?group=#{group[:auto_scaling_group_name]}#{@kiosk ? "&kiosk=true" : ""}");
+              this.timer_#{group[:auto_scaling_group_name]}_instances = setInterval(function () {
+                $("##{group[:auto_scaling_group_name]}_instances").load("ops/as_instances?group=#{group[:auto_scaling_group_name]}#{@kiosk ? "&kiosk=true" : ""}");
+              }, 30000);
 
-#alerts.center
-
-.right
-  more info »
-  = link_to 'auto-scaler', as_groups_ops_path
-  = link_to 'load-balancer', elb_status_ops_path
-  = link_to 'service-stats', service_stats_ops_path
-
-As of: #{Time.zone.now.to_s(:pub_ampm_sec)}
-
-- content_for :page_head, stylesheet_link_tag('bootstrap.min')
 - content_for :included_javascripts, javascript_include_tag('ajax-links.js')
 
 - content_for :page_styles do
@@ -81,6 +91,10 @@ As of: #{Time.zone.now.to_s(:pub_ampm_sec)}
     }
     h3 {
       margin-bottom: 2px;
+    }
+    .row-fluid > [class*="span"]:nth-child(#{@kiosk ? '6' : '4'}n+1) {
+      margin-left: 0;
+      clear: both;
     }
 
     th.name {

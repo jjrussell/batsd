@@ -1,0 +1,94 @@
+- @page_title = 'My Shared Files'
+
+%h1 My Shared Files
+
+%p
+  Use this to share pitch decks or other business related files with partners.
+  You can upload a file here and give the public URL to whoever you want to share with.
+  Under no circumstances should you upload personal files (pictures, home movies, etc),
+  copyrighted material (music, TV shows, movies, books, etc), or sensitive documents
+  (contracts, invoices, etc).
+
+%h4 Recommendations about file names
+%ul
+  %li Don't use spaces, instead use underscores or hyphens because the resulting public URLs look prettier.
+  %li
+    Include an extension ('.pdf', '.pptx', '.txt', etc) so user's know what kind of file
+    they're getting and so browsers can better determine how to handle the file.
+  %li Example: TapjoyDeck_#{Time.zone.now.to_s(:yyyy_mm_dd)}.pdf
+
+%h3 Upload a file
+- form_tag(tools_shared_files_path, :method => :post, :multipart => true, :class => 'tjform') do
+  %table
+    %tbody
+      %tr
+        %th
+          = label_tag(:file_name, 'File name')
+          #help_file_name.help ?
+        %td= text_field_tag(:file_name, '', :size => 40)
+      %tr
+        %th
+          = label_tag(:file_content, 'File content')
+          #help_file_content.help ?
+        %td= file_field_tag(:file_content)
+      %tr
+        %td{ :colspan => 2 }= submit_tag('Upload')
+
+%table#files.tablesorter
+  %thead
+    %tr
+      %th File name
+      %th Public URL
+      %th Size
+      %th Last Modified
+      %th 
+  %tbody
+    - @objects.each do |object|
+      %tr
+        - filename = object.key.split('/').last
+        %td= filename
+        %td
+          - s3_url = "https://s3.amazonaws.com/#{BucketNames::TAPJOY_DOCS}/#{object.key}"
+          = link_to(s3_url, s3_url)
+        %td= number_to_human_size(object.content_length)
+        %td= object.last_modified.to_s(:pub_ampm)
+        %td= link_to('[delete]', delete_tools_shared_files_path(:file_name => filename), :method => :post, :confirm => 'Are you sure?')
+
+.hidden
+  #help_file_name_content{ :name => 'File name' }
+    The name of the file you are uploading. This should have a valid extension (i.e. '.pdf', '.pptx')
+    so people you share with know what they are getting. It is recommended that you not use spaces in
+    the file name (i.e. 'TapjoyDeck_#{Time.zone.now.to_s(:yyyy_mm_dd)}.pdf' instead of 
+    'Tapjoy Deck #{Time.zone.now.to_s(:yyyy_mm_dd)}.pdf').
+  #help_file_content_content{ :name => 'File content' }
+    Choose the file from your computer that you wish to upload.
+
+- content_for :page_javascript do
+  :plain
+    $(function() {
+      $.tablesorter.addParser({
+        id: 'name-column',
+        is: function(s) { return false; },
+        type: 'text',
+        format: function(s) {
+          return s.replace(/-/g, '_');
+        }
+      });
+      $("#files").tablesorter({
+        widgets: ['zebra'],
+        headers: {
+          0: { sorter: 'name-column' },
+          1: { sorter: false },
+          2: { sorter: false },
+          3: { sorter: false },
+          4: { sorter: false }
+        },
+        sortList: [ [0, 0] ]
+      });
+    });
+
+- content_for :page_styles do
+  :plain
+    table.tablesorter {
+      border-collapse: separate;
+    }

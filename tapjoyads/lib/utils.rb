@@ -114,22 +114,6 @@ class Utils
     reward
   end
 
-  def self.fix_conditional_check_failed(reward_id)
-    reward = Reward.find(reward_id, :consistent => true)
-    if reward.sent_currency.present? && reward.send_currency_status.present?
-      puts "already awarded"
-    elsif reward.sent_currency.nil? && reward.send_currency_status.nil?
-      puts "everything is ok"
-    elsif reward.sent_currency.present? && reward.send_currency_status.nil?
-      reward.delete('sent_currency')
-      reward.save!
-      puts "deleted sent_currency"
-    else
-      puts "something weird has happened"
-    end
-    reward
-  end
-
   def self.cleanup_orphaned_failed_sdb_saves
     time = Time.zone.now - 24.hours
     count = 0

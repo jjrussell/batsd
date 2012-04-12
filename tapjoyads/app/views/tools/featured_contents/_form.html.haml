@@ -1,5 +1,5 @@
 - form_for([:tools, @featured_content], :html => { :class => 'tjform', :multipart => true }) do |f|
-  = f.hidden_field :offer_id
+  = f.hidden_field :tracking_source_offer_id
   = f.hidden_field :main_icon_url
   = f.hidden_field :secondary_icon_url
   %table
@@ -24,7 +24,7 @@
       %td
         = text_field_tag 'app_search_box', @search_result_name, :size => '40'
         = '(Optional)'
-        = error_message_on @featured_content, :offer_id
+        = error_message_on @featured_content, :tracking_offer_id
     %tr
       %th
         = f.label :platforms
@@ -109,7 +109,7 @@
       %td
         = f.select :weight, FeaturedContent::WEIGHTS
         = error_message_on @featured_content, :weight
-    - if @featured_content.tracking_offer
+    - if @featured_content.tracking_offer.present? && !@featured_content.tracking_offer.new_record?
       %tr
         %th
           = f.label 'Tracking Offer', 'Tracking Offer'
@@ -179,7 +179,7 @@
           $("#featured_content_description").val(ui.item.description);
           $("#featured_content_button_url").val(ui.item.click_url);
           $("#button_url").text(ui.item.click_url);
-          $("#featured_content_offer_id").val(ui.item.id);
+          $("#featured_content_tracking_source_offer_id").val(ui.item.id);
           if(type == TYPES.PROMO){
             $("#featured_content_subtitle").val(ui.item.name);
             $("#featured_content_main_icon_url").val(ui.item.icon_url);
