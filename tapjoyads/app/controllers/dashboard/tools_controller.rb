@@ -8,6 +8,7 @@ class Dashboard::ToolsController < Dashboard::DashboardController
   after_filter :save_activity_logs, :only => [ :update_user, :update_device, :resolve_clicks, :award_currencies, :update_award_currencies ]
 
   def index
+    raise request.x_do_not_track
   end
 
   def fix_rewards
