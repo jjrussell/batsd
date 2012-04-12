@@ -125,12 +125,12 @@
       var storage = window.localStorage;
 
       // try and catch quota exceeded errors           
-      try {
+      try{
         storage.setItem('tapjoy', 'dollas!'); 
         storage.removeItem(key); 
-      }catch (error){
+      }catch(error){
         if(error.code === DOMException.QUOTA_EXCEEDED_ERR && storage.length === 0) 
-        return false;
+          return false;
       }
 
       return true;
