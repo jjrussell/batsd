@@ -23,7 +23,7 @@ class AppsInstalledController < ApplicationController
       if sdkless_click.present?
         click = Click.new(:key => "#{params[:udid]}.#{sdkless_click['item_id']}")
 
-        message = { :click_key => click.key, :install_timestamp => Time.zone.now.to_f.to_s }.to_json
+        message = { :click_key => click.key, :install_timestamp => Time.zone.now.to_f.to_s, message[:http_request_env] = request.spoof_env }.to_json
         Sqs.send_message(QueueNames::CONVERSION_TRACKING, message)
 
         temp_sdkless_clicks.delete package_name
