@@ -5,10 +5,10 @@
         .container
           .nav
             .logo
-              - link_to(games_root_path) do
+              = link_to(games_path) do
                 %img{ :src => BLANK_IMAGE }
 
-  - form_for([ :games, @gamer ], :url => games_gamer_path, :method => :post ) do |f|
+  = form_for([ :games, @gamer ], :url => games_gamer_path, :method => :post ) do |f|
     #signup-nav.signup-nav
       .signup-nav-menu
         %span.title= t('text.shared.sign_up')
@@ -68,7 +68,7 @@
             #loader_a.loader_letter
             #loader_p.loader_letter
 
-    - link_to(GAMES_ANDROID_MARKET_URL) do
+    = link_to(GAMES_ANDROID_MARKET_URL) do
       #register-android.hidden.clearfix
         .title
           = t('text.games.almost_done')
@@ -78,7 +78,7 @@
           .install-btn.ui-joy-button.orange-action
             = t('text.games.download_now')
 
-    - link_to(new_games_gamer_device_path) do
+    = link_to(new_games_device_path) do
       #register-ios.hidden.clearfix
         .title
           = t('text.games.almost_done')

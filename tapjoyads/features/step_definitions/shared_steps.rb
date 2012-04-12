@@ -21,3 +21,11 @@ end
 When /^I press "([^"]*)"$/ do |text|
   click_button text
 end
+
+When /^I should be at the homepage$/ do
+  current_path.should == '/'
+end
+
+When /^I wait (\d+) seconds$/ do |seconds|
+  sleep(seconds.to_i)
+end
