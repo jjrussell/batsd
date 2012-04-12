@@ -68,8 +68,8 @@ module ActsAsTracking
     end
 
     def disable_other_tracking_offers
-      if tapjoy_enabled?
-        self.class.scoped(:conditions => [ 'tracking_for_id = ? AND tracking_for_type = ? AND tapjoy_enabled = true AND id != ?', tracking_for_id, tracking_for_type, id ]).find_each do |offer|
+      if tapjoy_enabled? && tracking?
+        self.class.scoped(:conditions => [ 'tracking_for_id = ? AND tracking_for_type = ? AND tapjoy_enabled = true AND offers.id != ?', tracking_for_id, tracking_for_type, id ]).find_each do |offer|
           offer.update_attribute(:tapjoy_enabled, false)
         end
       end
