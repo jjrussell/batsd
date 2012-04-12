@@ -9,9 +9,6 @@ class VideoOffer < ActiveRecord::Base
 
   belongs_to :partner
 
-  cache_associations :video_buttons
-  cache_associations { |r| r.video_buttons.each(&:tracking_offer) }
-
   validates_presence_of :partner, :name
   validates_presence_of :video_url, :unless => :new_record?
   validate :video_exists, :unless => :new_record?

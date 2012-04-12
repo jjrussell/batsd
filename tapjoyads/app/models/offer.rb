@@ -704,7 +704,7 @@ class Offer < ActiveRecord::Base
     impression_tracking_urls(true).each do |url|
       forwarded_headers = request.http_headers.slice('User-Agent', 'X-Do-Not-Track', 'DNT')
       forwarded_headers['Referer'] = request.url
-      Downloader.get_with_retry(url, { :headers => forwarded_headers }, true)
+      Downloader.queue_get_with_retry(url, { :headers => forwarded_headers })
     end
   end
 
