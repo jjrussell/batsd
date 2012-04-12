@@ -139,7 +139,6 @@ module HasTrackingOffers
 
     def tracking_offer_valid
       errors.add :tracking_offer_id, 'is invalid.' unless tracking_offer.valid?
-      raise tracking_offer.errors.full_messages.inspect unless tracking_offer.valid?
     end
 
   end
