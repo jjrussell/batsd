@@ -1,8 +1,6 @@
 require 'spec_helper'
 
 describe PartnersController do
-  include Authlogic::TestCase
-
   before :each do
     activate_authlogic
   end
