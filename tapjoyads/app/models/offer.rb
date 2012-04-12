@@ -688,7 +688,6 @@ class Offer < ActiveRecord::Base
     !%w(App ActionOffer SurveyOffer).include?(item_type) || Offer::Rejecting::TAPJOY_GAMES_RETARGETED_OFFERS.include?(item_id)
   end
 
-<<<<<<< HEAD
   def video_button_tracking_offers
     @video_button_tracking_offers || []
   end
@@ -696,14 +695,6 @@ class Offer < ActiveRecord::Base
   def update_video_button_tracking_offers
     return unless item_type == 'VideoOffer'
     @video_button_tracking_offers = item.video_buttons.enabled.ordered.collect(&:tracking_offer).compact
-=======
-  def queue_impression_tracking_requests(request)
-    now = Time.zone.now.to_i.to_s
-    impression_tracking_urls.each do |url|
-      message = { :url => url.gsub("[timestamp]", now), :headers => request.http_headers, :orig_url => request.url }
-      Sqs.send_message(QueueNames::THIRD_PARTY_TRACKING, Base64::encode64(Marshal.dump(message)))
-    end
->>>>>>> s/third_party_tracking/impression_tracking/g
   end
 
   private

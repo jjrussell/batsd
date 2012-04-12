@@ -968,12 +968,7 @@ describe Offer do
       urls = ['https://dummyurl.com', 'https://example.com']
       @offer.impression_tracking_urls = urls
 
-    context "without a provided timestamp" do
-      before :each do
-        @urls.each do |url|
-          Downloader.expects(:queue_get_with_retry).with(url.sub('[timestamp]', Time.zone.now.to_i.to_s)).once
-        end
-      end
+      urls.each { |url| Downloader.expects(:queue_get_with_retry).with(url, { :headers => request.http_headers.merge('Referer' => request.url) }).once }
 
       @offer.queue_impression_tracking_requests(request)
     end
