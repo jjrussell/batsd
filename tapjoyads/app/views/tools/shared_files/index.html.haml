@@ -9,6 +9,14 @@
   copyrighted material (music, TV shows, movies, books, etc), or sensitive documents
   (contracts, invoices, etc).
 
+%h4 Recommendations about file names
+%ul
+  %li Don't use spaces, instead use underscores or hyphens because the resulting public URLs look prettier.
+  %li
+    Include an extension ('.pdf', '.pptx', '.txt', etc) so user's know what kind of file
+    they're getting and so browsers can better determine how to handle the file.
+  %li Example: TapjoyDeck_#{Time.zone.now.to_s(:yyyy_mm_dd)}.pdf
+
 %h3 Upload a file
 - form_tag(tools_shared_files_path, :method => :post, :multipart => true, :class => 'tjform') do
   %table
@@ -17,7 +25,7 @@
         %th
           = label_tag(:file_name, 'File name')
           #help_file_name.help ?
-        %td= text_field_tag(:file_name)
+        %td= text_field_tag(:file_name, '', :size => 40)
       %tr
         %th
           = label_tag(:file_content, 'File content')

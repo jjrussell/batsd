@@ -1,6 +1,6 @@
-require 'spec/spec_helper'
+require 'spec_helper'
 
-describe AppsController do
+describe Dashboard::AppsController do
   before :each do
     fake_the_web
     activate_authlogic

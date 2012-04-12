@@ -25,10 +25,6 @@ class Tools::FeaturedContentsController < WebsiteController
 
   def create
     @featured_content = FeaturedContent.new(params[:featured_content])
-    @featured_content.author = Employee.find_by_id(params[:featured_content][:author_id]) if params[:featured_content][:author_id].present?
-    if params[:featured_content][:offer_id].present?
-      @featured_content.offer = Offer.find_in_cache(params[:featured_content][:offer_id])
-    end
     @featured_content.main_icon_url = (@featured_content.author.get_photo_url(:source => :cloudfront)).gsub("#{RUN_MODE_PREFIX}tapjoy", "tapjoy") unless params[:featured_content][:featured_type] == FeaturedContent::TYPES_MAP[FeaturedContent::PROMO]
     @featured_content.secondary_icon_url = @featured_content.get_default_icon_url unless params[:featured_content][:featured_type] == FeaturedContent::TYPES_MAP[FeaturedContent::STAFFPICK]
 
@@ -52,25 +48,16 @@ class Tools::FeaturedContentsController < WebsiteController
   end
 
   def edit
-    @featured_content = FeaturedContent.find_by_id(params[:id])
-    unless @featured_content
-      flash[:error] = "Could not find a featured content with ID: #{params[:id]}"
-      redirect_to tools_featured_contents_path and return
-    end
+    @featured_content = FeaturedContent.find(params[:id])
     @employees = Employee.active_by_first_name
-    if @featured_content.offer
-      @search_result_name = @featured_content.offer.search_result_name
+    if @featured_content.tracking_offer
+      @search_result_name = @featured_content.tracking_offer.search_result_name
       @featured_content.button_url = @featured_content.tracking_offer.url
     end
   end
 
   def update
     @featured_content = FeaturedContent.find(params[:id])
-    @featured_content.author = Employee.find_by_id(params[:featured_content][:author_id]) if params[:featured_content][:author_id].present?
-    if params[:featured_content][:offer_id].present?
-      @featured_content.offer = Offer.find_in_cache(params[:featured_content][:offer_id])
-    end
-
     @featured_content.main_icon_url = (@featured_content.author.get_photo_url(:source => :cloudfront)).gsub("#{RUN_MODE_PREFIX}tapjoy", "tapjoy") unless params[:featured_content][:featured_type] == FeaturedContent::TYPES_MAP[FeaturedContent::PROMO]
     @featured_content.secondary_icon_url = @featured_content.get_default_icon_url unless params[:featured_content][:featured_type] == FeaturedContent::TYPES_MAP[FeaturedContent::STAFFPICK]
 
@@ -101,10 +88,10 @@ class Tools::FeaturedContentsController < WebsiteController
   private
 
   def setup_before_render(error_msg = nil)
-    flash.now[:error] = @featured_content.errors.any? ? @featured_content.errors[:offer] : error_msg
+    flash.now[:error] = @featured_content.errors.any? ? @featured_content.errors[:tracking_offer] : error_msg
     @employees = Employee.active_by_first_name
-    if params[:featured_content][:offer_id].present?
-      @search_result_name = Offer.find_in_cache(params[:featured_content][:offer_id]).search_result_name
+    if params[:featured_content][:tracking_source_offer_id].present?
+      @search_result_name = Offer.find_in_cache(params[:featured_content][:tracking_source_offer_id]).search_result_name
     end
   end
 

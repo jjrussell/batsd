@@ -1,5 +1,6 @@
 class ActionOffer < ActiveRecord::Base
   include UuidPrimaryKey
+  acts_as_trackable :device_types => lambda { app.primary_offer.device_types }, :third_party_data => :prerequisite_offer_id, :icon_id_override => :app_id, :instructions => :instructions, :url => lambda { app.store_url }
 
   has_many :offers, :as => :item
   has_one :primary_offer, :class_name => 'Offer', :as => :item, :conditions => 'id = item_id'
@@ -29,31 +30,6 @@ class ActionOffer < ActiveRecord::Base
   def toggle_user_enabled
     primary_offer.toggle_user_enabled
     primary_offer.save
-  end
-
-  def create_tracking_offer_for(tracked_for, options = {})
-    device_types = options.delete(:device_types) { app.primary_offer.device_types }
-    raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
-
-    offer = Offer.new({
-      :item             => self,
-      :tracking_for     => tracked_for,
-      :partner          => partner,
-      :name             => name,
-      :url              => app.store_url,
-      :device_types     => device_types,
-      :price            => 0,
-      :bid              => 0,
-      :min_bid_override => 0,
-      :rewarded         => false,
-      :name_suffix      => 'tracking',
-      :third_party_data => prerequisite_offer_id,
-      :icon_id_override => app_id,
-    })
-    offer.id = tracked_for.id
-    offer.save!
-
-    offer
   end
 
   private
