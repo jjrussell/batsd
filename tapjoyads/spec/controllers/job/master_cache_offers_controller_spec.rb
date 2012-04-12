@@ -6,7 +6,7 @@ describe Job::MasterCacheOffersController do
   end
 
   describe '#index' do
-    it 'saves Offers to memcache' do
+    it "runs without errors" do
       get(:index)
     end
   end
