@@ -1,4 +1,4 @@
-class AndroidfundController < WebsiteController
+class Homepage::AndroidfundController < Homepage::HomepageController
   layout 'androidfund'
 
   def index

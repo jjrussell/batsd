@@ -1,4 +1,4 @@
-class HomepageController < WebsiteController
+class Homepage::HomepageController < ApplicationController
   layout 'newcontent'
   protect_from_forgery :except => [:contact]
   before_filter :legacy_redirect, :only => [:advertisers_contact, :contact_us, :publishers_contact, :gaming_platforms]

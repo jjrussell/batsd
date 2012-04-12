@@ -202,7 +202,7 @@ class SimpledbResource
     Sqs.send_message(QueueNames::FAILED_SDB_SAVES, message)
     Rails.logger.info "Successfully added to sqs. Message: #{message}"
   ensure
-    Rails.logger.flush
+    Rails.logger.flush if Rails.logger.respond_to?(:flush)
   end
 
   ##

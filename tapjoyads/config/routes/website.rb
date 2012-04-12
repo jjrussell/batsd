@@ -1,27 +1,33 @@
 Tapjoyad::Application.routes.draw do
-  root :to => 'homepage#start'
+  root :to => 'homepage/homepage#start'
+
   match 'assets/*filename' => 'sprocket#show', :as => :assets
-  match 'site/privacy' => 'documents#privacy'
-  match 'site/privacy.html' => 'documents#privacy'
-  match 'site/privacy_mobile' => 'documents#privacy_mobile'
-  match 'site/:action' => 'homepage#index'
-  match 'index.html' => 'homepage#index_redirect'
-  match 'site/advertisers/whitepaper' => 'homepage#whitepaper'
-  match 'press' => 'homepage/press#index'
-  match 'press/:id' => 'homepage/press#show'
-  match 'careers' => 'homepage/careers#index'
-  match 'careers/:id' => 'homepage/careers#show'
-  match 'glu' => 'homepage/press#glu'
-  match 'publishing' => 'homepage#publishers'
-  match 'androidfund' => 'androidfund#index'
-  match 'AndroidFund' => 'androidfund#index'
-  match 'androidfund/apply' => 'androidfund#apply'
-  match 'privacy' => 'documents#privacy'
-  match 'privacy.html' => 'documents#privacy'
-  resources :opt_outs, :only => :create
+
+  scope :module => :homepage do
+    match 'site/privacy' => 'documents#privacy'
+    match 'site/privacy.html' => 'documents#privacy'
+    match 'site/privacy_mobile' => 'documents#privacy_mobile'
+    match 'site/:action' => 'homepage#index'
+    match 'index.html' => 'homepage#index_redirect'
+    match 'site/advertisers/whitepaper' => 'homepage#whitepaper'
+    match 'press' => 'press#index'
+    match 'press/:id' => 'press#show'
+    match 'careers' => 'careers#index'
+    match 'careers/:id' => 'careers#show'
+    match 'glu' => 'press#glu'
+    match 'publishing' => 'homepage#publishers'
+    match 'androidfund' => 'androidfund#index'
+    match 'AndroidFund' => 'androidfund#index'
+    match 'androidfund/apply' => 'androidfund#apply'
+    match 'privacy' => 'documents#privacy'
+    match 'privacy.html' => 'documents#privacy'
+    resources :opt_outs, :only => :create
+  end
+
   namespace :apps do
     resources :offers
   end
+
   namespace :games do
     match '/' => 'homepage#index'
     match 'tos' => 'homepage#tos', :as => :tos

@@ -1,4 +1,4 @@
-class OptOutsController < ApplicationController
+class Homepage::OptOutsController < ApplicationController
 
   def create
     unless params[:udid].blank?

@@ -1,4 +1,4 @@
-class DocumentsController < WebsiteController
+class Homepage::DocumentsController < Homepage::HomepageController
   layout 'newcontent'
   protect_from_forgery
 

@@ -33,7 +33,6 @@ Tapjoyad::Application.routes.draw do
     end
   end
   resources :offer_instructions, :only => [:index]
-  resources :opt_outs, :only => :create
   resources :offer_completed do
     collection do
       match :boku

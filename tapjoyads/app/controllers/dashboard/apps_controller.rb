@@ -1,4 +1,4 @@
-class AppsController < WebsiteController
+class Dashboard::AppsController < Dashboard::DashboardController
   layout 'apps'
 
   filter_access_to :all
