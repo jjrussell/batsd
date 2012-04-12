@@ -36,11 +36,11 @@ module Offer::ThirdPartyTracking
       ret_val
     end
 
-    define_method "queue_#{attr_name.sub(/urls$/, 'requests')}" do |*args|
+    define_method "queue_#{method_name.sub(/urls$/, 'requests')}" do |*args|
       # simulate <img> pixel tag client-side web calls...
       # we lose cookie functionality, unless we implement cookie storage on our end...
       http_request, timestamp = args
-      send(attr_name, true, timestamp).each do |url|
+      send(method_name, true, timestamp).each do |url|
         forwarded_headers = http_request.http_headers.slice('User-Agent', 'X-Do-Not-Track', 'Dnt')
         forwarded_headers['Referer'] = request.url
         Downloader.queue_get_with_retry(url, { :headers => forwarded_headers })
