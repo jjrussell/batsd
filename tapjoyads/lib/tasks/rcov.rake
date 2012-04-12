@@ -6,6 +6,6 @@ namespace :rcov do
     t.spec_opts = ["--color"]
 
     t.rcov = true
-    t.rcov_opts = %w{--rails --include views -Ispec}
+    t.rcov_opts = %w{--rails --exclude osx\/objc,gems\/,spec\/ --include views -Ispec}
   end
 end
