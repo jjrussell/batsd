@@ -1,7 +1,6 @@
 class GamesController < ApplicationController
   include Facebooker2::Rails::Controller
   include SslRequirement
-  include AuthlogicFacebookConnect
 
   layout :select_layout
 
