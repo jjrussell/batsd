@@ -16,19 +16,18 @@ class Job::QueueCreateConversionsController < Job::SqsReaderController
 
       # handle third-party conversion pings
       if reward.offer.conversion_tracking_urls.any?
-        request_env = message[:http_request_env]
+        # if no request_url provided,
+        # provide a fake one
+        request_env = { 'REQUEST_URL' => (message[:request_url] || 'https://api.tapjoy.com/connect') }
 
-        # if no http_request_env hash provided,
-        # spoof (fake) url: https://api.tapjoy.com/connect?from_server=true
-        request_env ||= { 'HTTPS' => 'on', 'HTTP_HOST' => 'api.tapjoy.com', 'REQUEST_URI' => '/connect?from_server=true' }
-
-        # replace certain headers with click values, since conversion requests often come from servers,
-        # but clicks come from end users' devices
-        click = reward.click # do one sdb lookup
+        # replace certain http headers with click values, since conversion requests often come from servers,
+        # whereas clicks come from end users' devices
         %w(user_agent x_do_not_track dnt).each do |header|
           request_env["HTTP_#{header.upcase}"] = click.send("#{header}_header")
         end
+
         http_request = ActionController::Request.new(request_env)
+        def http_request.url; @env['REQUEST_URL']; end
       end
     end
 
