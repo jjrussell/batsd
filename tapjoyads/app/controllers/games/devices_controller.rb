@@ -129,7 +129,7 @@ class Games::DevicesController < GamesController
 
     click.save
 
-    message = { :click_key => click.key, :install_timestamp => Time.zone.now.to_f.to_s, :http_request_env => request.spoof_env }.to_json
+    message = { :click_key => click.key, :install_timestamp => Time.zone.now.to_f.to_s, :http_request_env => request.url }.to_json
     Sqs.send_message(QueueNames::CONVERSION_TRACKING, message)
   end
 end
