@@ -14,7 +14,22 @@ module ToolsHelper
     concat_li_currency('Pub', click.publisher_amount)
     concat_li_currency('Tj', click.tapjoy_amount)
     concat_li("Pub user ID", click.publisher_user_id) if click.publisher_user_id != click.udid
+    concat_li("Source", click.source)
     concat_li("UDID's for blocking", click.publisher_user_udids.join('<BR/>')) if click.block_reason =~ /TooManyUdidsForPublisherUserId/
+    if click.last_clicked_at?
+      concat("<ul>")
+      click.last_clicked_at.each_with_index do |last_click_time, idx|
+        concat_li_timestamp("Previous click #{idx + 1}", last_click_time)
+      end
+      concat("</ul>")
+    end
+    if click.last_installed_at?
+      concat("<ul>")
+      click.last_installed_at.each_with_index do |last_install_time, idx|
+        concat_li_timestamp("Previous install #{idx + 1}", last_install_time)
+      end
+      concat("</ul>")
+    end
     concat("</ul>")
   end
 

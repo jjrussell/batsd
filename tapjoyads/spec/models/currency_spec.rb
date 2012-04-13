@@ -406,6 +406,29 @@ describe Currency do
     end
   end
 
+  describe '#set_promoted_offers' do
+    context 'before create' do
+      before :each do
+        offer1 = Factory(:app).primary_offer
+        offer2 = Factory(:app).primary_offer
+        original_currency = Factory(:currency)
+        @promoted_offer_list = [ offer1.id, offer2.id ]
+
+        app = Factory(:app)
+        original_currency.promoted_offers = @promoted_offer_list
+        app.stubs(:currencies).returns([original_currency])
+
+        @currency.app = app
+        @currency.callback_url = 'http://example.com/foo'
+      end
+
+      it 'copies the promoted offers from existing currencies' do
+        @currency.save!
+        @currency.get_promoted_offers.should == Set.new(@promoted_offer_list)
+      end
+    end
+  end
+
   describe '#set_values_from_partner_and_reseller' do
     context 'before create' do
       before :each do
@@ -445,6 +468,35 @@ describe Currency do
         @currency.stubs(:rejected?).returns(true)
         @currency.run_callbacks(:before_update)
       end
+    end
+  end
+
+  describe '#approve_on_tapjoy_enabled' do
+    context 'when tapjoy_enabled is toggled true' do
+      it 'will call approve!' do
+        @currency.stubs(:approval).returns(stub('approval', :state => 'pending'))
+        @currency.expects(:approve!).once
+        @currency.tapjoy_enabled = true
+        @currency.run_callbacks(:after_update)
+      end
+    end
+
+    context 'when approvals are not present' do
+      it 'will do nothing' do
+        @currency.stubs(:approval).returns(nil)
+        @currency.expects(:approve!).never
+        @currency.tapjoy_enabled = true
+        @currency.run_callbacks(:after_update)
+      end
+    end
+  end
+
+  describe '#approve!' do
+    it 'calls approve!(true) on approval attribute' do
+      mock_approval = mock('approval')
+      mock_approval.expects(:approve!).with(true).once
+      @currency.stubs(:approval).returns(mock_approval)
+      @currency.approve!
     end
   end
 end

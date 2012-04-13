@@ -5,6 +5,7 @@ class Offer < ActiveRecord::Base
   include Offer::UrlGeneration
   include Offer::BannerCreatives
   acts_as_cacheable
+  acts_as_tracking
   memoize :precache_rank_scores
 
   APPLE_DEVICES = %w( iphone itouch ipad )
@@ -15,24 +16,26 @@ class Offer < ActiveRecord::Base
   ALL_OFFER_TYPES = %w( App EmailOffer GenericOffer OfferpalOffer RatingOffer ActionOffer VideoOffer SurveyOffer ReengagementOffer)
   ALL_SOURCES = %w( offerwall display_ad featured tj_games )
 
-  CLASSIC_OFFER_TYPE               = '0'
-  DEFAULT_OFFER_TYPE               = '1'
-  FEATURED_OFFER_TYPE              = '2'
-  DISPLAY_OFFER_TYPE               = '3'
-  NON_REWARDED_DISPLAY_OFFER_TYPE  = '4'
-  NON_REWARDED_FEATURED_OFFER_TYPE = '5'
-  VIDEO_OFFER_TYPE                 = '6'
-  FEATURED_BACKFILLED_OFFER_TYPE   = '7'
+  CLASSIC_OFFER_TYPE                          = '0'
+  DEFAULT_OFFER_TYPE                          = '1'
+  FEATURED_OFFER_TYPE                         = '2'
+  DISPLAY_OFFER_TYPE                          = '3'
+  NON_REWARDED_DISPLAY_OFFER_TYPE             = '4'
+  NON_REWARDED_FEATURED_OFFER_TYPE            = '5'
+  VIDEO_OFFER_TYPE                            = '6'
+  FEATURED_BACKFILLED_OFFER_TYPE              = '7'
   NON_REWARDED_FEATURED_BACKFILLED_OFFER_TYPE = '8'
+  REENGAGEMENT_OFFER_TYPE                     = '9'
   OFFER_TYPE_NAMES = {
-    DEFAULT_OFFER_TYPE               => 'Offerwall Offers',
-    FEATURED_OFFER_TYPE              => 'Rewarded Featured Offers',
-    DISPLAY_OFFER_TYPE               => 'Display Ad Offers',
-    NON_REWARDED_DISPLAY_OFFER_TYPE  => 'Non-Rewarded Display Ad Offers',
-    NON_REWARDED_FEATURED_OFFER_TYPE => 'Non-Rewarded Featured Offers',
-    VIDEO_OFFER_TYPE                 => 'Video Offers',
-    FEATURED_BACKFILLED_OFFER_TYPE   => 'Rewarded Featured Offers (Backfilled)',
-    NON_REWARDED_FEATURED_BACKFILLED_OFFER_TYPE => 'Non-Rewarded Featured Offers (Backfilled)'
+    DEFAULT_OFFER_TYPE                          => 'Offerwall Offers',
+    FEATURED_OFFER_TYPE                         => 'Rewarded Featured Offers',
+    DISPLAY_OFFER_TYPE                          => 'Display Ad Offers',
+    NON_REWARDED_DISPLAY_OFFER_TYPE             => 'Non-Rewarded Display Ad Offers',
+    NON_REWARDED_FEATURED_OFFER_TYPE            => 'Non-Rewarded Featured Offers',
+    VIDEO_OFFER_TYPE                            => 'Video Offers',
+    FEATURED_BACKFILLED_OFFER_TYPE              => 'Rewarded Featured Offers (Backfilled)',
+    NON_REWARDED_FEATURED_BACKFILLED_OFFER_TYPE => 'Non-Rewarded Featured Offers (Backfilled)',
+    REENGAGEMENT_OFFER_TYPE                     => 'Reengagement Offers'
   }
 
   OFFER_LIST_EXCLUDED_COLUMNS = %w( active
@@ -75,6 +78,8 @@ class Offer < ActiveRecord::Base
     "3 days"   => 3.days.to_i,
   }
 
+  TRUSTED_TRACKING_VENDORS = %w( phluantmobile.net )
+
   has_many :advertiser_conversions, :class_name => 'Conversion', :foreign_key => :advertiser_offer_id
   has_many :rank_boosts
   has_many :enable_offer_requests
@@ -88,7 +93,6 @@ class Offer < ActiveRecord::Base
   belongs_to :reseller
   belongs_to :app, :foreign_key => "item_id"
   belongs_to :action_offer, :foreign_key => "item_id"
-  belongs_to :tracking_for, :polymorphic => true
 
   validates_presence_of :reseller, :if => Proc.new { |offer| offer.reseller_id? }
   validates_presence_of :partner, :item, :name, :url, :rank_boost
@@ -169,6 +173,16 @@ class Offer < ActiveRecord::Base
       record.errors.add(attribute, "cannot be enabled without valid store id")
     end
   end
+  validates_each :impression_tracking_urls do |record, attribute, value|
+    value.each do |url|
+      uri = URI.parse(url) rescue (record.errors.add(attribute, "must all be valid urls") and break)
+      unless uri.host =~ /(^|\.)(#{TRUSTED_TRACKING_VENDORS.join('|').gsub('.','\\.')})$/
+        vendors_list = TRUSTED_TRACKING_VENDORS.to_sentence(:two_words_connector => ' or ', :last_word_connector => ', or ')
+        record.errors.add(attribute, "must all use a trusted vendor (#{vendors_list})")
+        break
+      end
+    end
+  end
 
   before_validation :update_payment
   before_validation_on_create :set_reseller_from_partner
@@ -187,7 +201,7 @@ class Offer < ActiveRecord::Base
   before_cache :clear_creative_blobs
 
   named_scope :enabled_offers, :joins => :partner,
-    :readonly => false, :conditions => "tapjoy_enabled = true AND user_enabled = true AND item_type != 'RatingOffer' AND ((payment > 0 AND #{Partner.quoted_table_name}.balance > payment) OR (payment = 0 AND reward_value > 0)) AND tracking_for_id IS NULL"
+    :readonly => false, :conditions => "tapjoy_enabled = true AND user_enabled = true AND item_type != 'RatingOffer' AND item_type != 'ReengagementOffer' AND ((payment > 0 AND #{Partner.quoted_table_name}.balance > payment) OR (payment = 0 AND reward_value > 0)) AND tracking_for_id IS NULL"
   named_scope :by_name, lambda { |offer_name| { :conditions => ["offers.name LIKE ?", "%#{offer_name}%" ] } }
   named_scope :by_device, lambda { |platform| { :conditions => ["offers.device_types LIKE ?", "%#{platform}%" ] } }
   named_scope :for_offer_list, :select => OFFER_LIST_REQUIRED_COLUMNS
@@ -234,7 +248,11 @@ class Offer < ActiveRecord::Base
   memoize :get_device_types, :get_screen_layout_sizes, :get_countries, :get_dma_codes,
     :get_regions, :get_approved_sources, :get_carriers, :get_cities
 
+  serialize :impression_tracking_urls, Array
+
   def clone
+    return super if new_record?
+
     super.tap do |clone|
       # set up banner_creatives to be copied on save
       banner_creatives.each do |size|
@@ -242,6 +260,25 @@ class Offer < ActiveRecord::Base
         clone.send("banner_creative_#{size}_blob=", blob)
       end
     end
+  end
+
+  def impression_tracking_urls=(urls)
+    super(urls.select{ |url| url.present? })
+  end
+
+  def impression_tracking_urls(replace_macros = false)
+    self.impression_tracking_urls = [] if super.nil?
+    urls = super.sort
+
+    now = Time.zone.now.to_i.to_s
+    urls = urls.collect { |url| url.gsub("[timestamp]", now) } if replace_macros
+    urls
+  end
+
+  def impression_tracking_urls_was
+    ret_val = super
+    return [] if ret_val.nil?
+    ret_val
   end
 
   def app_offer?
@@ -325,6 +362,10 @@ class Offer < ActiveRecord::Base
 
   def is_enabled?
     tapjoy_enabled? && user_enabled? && ((payment > 0 && partner_balance > 0) || (payment == 0 && reward_value.present? && reward_value > 0))
+  end
+
+  def can_be_promoted?
+    primary? && rewarded? && is_enabled?
   end
 
   def accepting_clicks?
@@ -626,6 +667,11 @@ class Offer < ActiveRecord::Base
     end
   end
 
+  def promotion_platform
+    self.app ?  self.app.platform.to_sym : nil
+  end
+  memoize :promotion_platform
+
   def calculate_target_installs(num_installs_today)
     target_installs = 1.0 / 0
     target_installs = daily_budget - num_installs_today if daily_budget > 0
@@ -651,6 +697,16 @@ class Offer < ActiveRecord::Base
 
   def multi_completable?
     !%w(App ActionOffer SurveyOffer).include?(item_type) || Offer::Rejecting::TAPJOY_GAMES_RETARGETED_OFFERS.include?(item_id)
+  end
+
+  def queue_impression_tracking_requests(request)
+    # simulate <img> pixel tag client-side web calls...
+    # we lose cookie functionality, unless we implement cookie storage on our end...
+    impression_tracking_urls(true).each do |url|
+      forwarded_headers = request.http_headers.slice('User-Agent', 'X-Do-Not-Track', 'DNT')
+      forwarded_headers['Referer'] = request.url
+      Downloader.queue_get_with_retry(url, { :headers => forwarded_headers })
+    end
   end
 
   private

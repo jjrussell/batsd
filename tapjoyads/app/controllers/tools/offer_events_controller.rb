@@ -1,7 +1,8 @@
 class Tools::OfferEventsController < OfferEventsController
   current_tab :tools
 
-private
+  private
+
   def setup
     @offer_event = OfferEvent.find(params[:id]) if params[:id]
   end

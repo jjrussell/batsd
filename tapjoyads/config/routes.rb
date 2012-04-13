@@ -6,9 +6,9 @@ ActionController::Routing::Routes.draw do |map|
     %w( dashboard api sdks )
   when 'website'
     %w( games website api sdks )
-  when 'web'
+  when 'webserver'
     %w( web legacy default )
-  when 'jobs', 'masterjobs'
+  when 'jobserver', 'masterjobs'
     %w( default )
   else
     # test/dev
