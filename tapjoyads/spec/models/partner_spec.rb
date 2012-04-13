@@ -363,7 +363,7 @@ describe Partner do
       before :each do
         @payout_threshold_confirmation = Factory(:payout_threshold_confirmation, :partner => @partner)
         @payout_threshold_confirmation.stubs(:partner).returns(@partner)
-        PayoutConfirmation.stubs(:find_all_by_partner_id).with(@partner.id).returns([@payout_threshold_confirmation])
+        @partner.stubs(:payout_confirmations).returns([@payout_threshold_confirmation])
         @partner.next_payout_amount = 50_000_01
         @partner.save!
       end
