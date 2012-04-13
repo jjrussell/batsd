@@ -969,6 +969,16 @@ describe Offer do
   #   end
 
   # end
+  #   describe ".queue_conversion_tracking_requests" do
+  #     it "should queue up the proper GET requests" do
+  #       @offer.conversion_tracking_urls = @urls
+  #       @urls.each { |url| Downloader.expects(:queue_get_with_retry).with(url, { :headers => @request.http_headers.merge('Referer' => @request.url) }).once }
+
+  #       @offer.queue_conversion_tracking_requests(@request)
+  #     end
+  #   end
+  # end
+
 end
 
 class Request
