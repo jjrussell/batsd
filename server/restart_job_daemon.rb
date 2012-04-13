@@ -6,7 +6,7 @@ if ENV['USER'] != 'webuser'
 end
 
 server_type = `/home/webuser/tapjoyserver/server/server_type.rb`
-if server_type == 'jobs' || server_type == 'masterjobs'
+if server_type == 'jobsserver' || server_type == 'masterjobs'
   puts "Stopping jobs"
   `/home/webuser/tapjoyserver/tapjoyads/script/jobs stop`
   `ps aux | grep -v grep | grep jobs`.each { |line| `kill #{line.split(' ')[1]}` }

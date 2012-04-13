@@ -1,5 +1,4 @@
 module ActsAsTrackable
-
   def self.included(base)
     base.extend ActsAsTrackable::ClassMethods
   end
@@ -28,7 +27,7 @@ module ActsAsTrackable
         :url_overridden   => false,
         :tapjoy_enabled   => true,
       }
-      trackable_options = acts_as_trackable_options.inject({}) { |result, (key,val)| result[key] = instance_eval(&val); result }
+      trackable_options = acts_as_trackable_options.inject({}) { |result, (key,val)| result[key] = val.is_a?(Symbol) ? send(val) : instance_eval(&val); result }
       Offer.new(offer_options.merge(trackable_options).merge(options))
     end
 
@@ -59,6 +58,7 @@ module ActsAsTracking
       belongs_to :tracking_for, :polymorphic => true
       validates_presence_of :tracking_for, :if => Proc.new { |offer| offer.tracking_for_id? || offer.tracking_for_type? }
       after_save :disable_other_tracking_offers
+      named_scope :tracked_for, lambda { |tracking_for| { :conditions => [ "tracking_for_type = ? and tracking_for_id = ?", tracking_for.class.name, tracking_for.id ] } }
     end
   end
 
@@ -68,8 +68,8 @@ module ActsAsTracking
     end
 
     def disable_other_tracking_offers
-      if tapjoy_enabled?
-        self.class.scoped(:conditions => [ 'tracking_for_id = ? AND tracking_for_type = ? AND tapjoy_enabled = true AND id != ?', tracking_for_id, tracking_for_type, id ]).find_each do |offer|
+      if tapjoy_enabled? && tracking?
+        self.class.scoped(:conditions => [ 'tracking_for_id = ? AND tracking_for_type = ? AND tapjoy_enabled = true AND offers.id != ?', tracking_for_id, tracking_for_type, id ]).find_each do |offer|
           offer.update_attribute(:tapjoy_enabled, false)
         end
       end
@@ -88,20 +88,33 @@ module HasTrackingOffers
       has_many :tracking_offers, :class_name => 'Offer', :as => :tracking_for
       has_one :tracking_offer, :class_name => 'Offer', :as => :tracking_for, :conditions => 'tapjoy_enabled = true'
       after_save :enable_tracking_offer
+      validate :tracking_offer_valid, :if => Proc.new { |record| record.tracking_offer.present? }
     end
   end
 
   module InstanceMethods
     def tracking_item=(tracking_item)
-      self.tracking_offer = tracking_item.find_or_build_tracking_offer_for(self) if tracking_item.present?
+      if tracking_item.present?
+        self.tracking_offer = tracking_item.find_or_build_tracking_offer_for(self)
+      else
+        self.tracking_offer = nil
+      end
     end
 
     def tracking_source_offer=(tracking_source_offer)
-      self.tracking_item = tracking_source_offer.item if tracking_source_offer.present?
+      if tracking_source_offer.present?
+        self.tracking_item = tracking_source_offer.item
+      else
+        self.tracking_item = nil
+      end
     end
 
     def tracking_source_offer_id=(tracking_source_offer_id)
-      self.tracking_source_offer = Offer.find(tracking_source_offer_id) if tracking_source_offer_id.present?
+      if tracking_source_offer_id.present?
+        self.tracking_source_offer = Offer.find(tracking_source_offer_id)
+      else
+        self.tracking_source_offer = nil
+      end
     end
 
     def tracking_item
@@ -116,8 +129,18 @@ module HasTrackingOffers
       if tracking_offer.present?
         tracking_offer.tapjoy_enabled = true
         tracking_offer.save
+      else
+        tracking_offers.each do |offer|
+          offer.tapjoy_enabled = false
+          offer.save
+        end
       end
     end
+
+    def tracking_offer_valid
+      errors.add :tracking_offer_id, 'is invalid.' unless tracking_offer.valid?
+    end
+
   end
 end
 

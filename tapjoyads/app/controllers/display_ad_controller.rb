@@ -99,7 +99,8 @@ class DisplayAdController < ApplicationController
         :source            => 'display_ad',
         :viewed_at         => now,
         :displayer_app_id  => params[:app_id],
-        :primary_country   => geoip_data[:primary_country]
+        :primary_country   => geoip_data[:primary_country],
+        :mac_address       => params[:mac_address]
       )
       width, height = parse_size(params[:size])
 

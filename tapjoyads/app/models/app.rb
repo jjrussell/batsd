@@ -1,7 +1,7 @@
 class App < ActiveRecord::Base
   include UuidPrimaryKey
   acts_as_cacheable
-  acts_as_trackable :third_party_data => lambda { store_id }, :age_rating => lambda { age_rating }, :wifi_only => lambda { wifi_required? }, :device_types => lambda { get_offer_device_types.to_json }, :url => lambda { store_url }
+  acts_as_trackable :third_party_data => :store_id, :age_rating => :age_rating, :wifi_only => :wifi_required?, :device_types => lambda { get_offer_device_types.to_json }, :url => :store_url
 
   ALLOWED_PLATFORMS = { 'android' => 'Android', 'iphone' => 'iOS', 'windows' => 'Windows' }
   BETA_PLATFORMS    = {}
@@ -174,6 +174,7 @@ class App < ActiveRecord::Base
 
   def enable_reengagement_campaign!
     update_reengagements_with_enable_or_disable(true)
+    ReengagementOffer.cache_by_app_id(id)
   end
 
   def disable_reengagement_campaign!

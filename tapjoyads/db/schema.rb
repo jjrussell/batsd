@@ -1005,12 +1005,12 @@ ActiveRecord::Schema.define(:version => 20120328111003) do
   add_index "users", ["username"], :name => "index_users_on_username", :unique => true
 
   create_table "video_buttons", :id => false, :force => true do |t|
-    t.string   "id",                :limit => 36,                   :null => false
-    t.string   "video_offer_id",    :limit => 36,                   :null => false
-    t.string   "name",                                              :null => false
-    t.string   "url"
+    t.string   "id",             :limit => 36,                   :null => false
+    t.string   "video_offer_id", :limit => 36,                   :null => false
+    t.string   "name",                                           :null => false
+    t.string   "url",                                            :null => false
     t.integer  "ordinal"
-    t.boolean  "enabled",                         :default => true
+    t.boolean  "enabled",                      :default => true
     t.datetime "created_at"
     t.datetime "updated_at"
   end

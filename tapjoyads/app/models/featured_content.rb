@@ -8,11 +8,11 @@ class FeaturedContent < ActiveRecord::Base
   CONTEST   = 3
 
   TYPES_MAP = {
-     STAFFPICK => 'StaffPick',
-     NEWS      => 'News',
-     PROMO     => 'Promo',
-     CONTEST   => 'Contest'
-   }
+    STAFFPICK => 'StaffPick',
+    NEWS      => 'News',
+    PROMO     => 'Promo',
+    CONTEST   => 'Contest'
+  }
 
   WEIGHTS = [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 ]
 
@@ -120,15 +120,16 @@ class FeaturedContent < ActiveRecord::Base
   end
 
   def create_offer
-    unless tracking_offer.present?
+    if tracking_offer.blank? && !offer_required?
       item = GenericOffer.create(
         :name       => "For_Featured_Content_#{id}",
         :url        => NO_URL,
         :partner_id => TAPJOY_PARTNER_ID,
         :category   => 'Other'
       )
-      self.tracking_source_offer = item.primary_offer
+      self.tracking_item = item
       self.button_url = NO_URL
     end
+    true
   end
 end

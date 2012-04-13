@@ -1,6 +1,6 @@
 class GenericOffer < ActiveRecord::Base
   include UuidPrimaryKey
-  acts_as_trackable :instructions => lambda { instructions }, :url => lambda { url }, :third_party_data => lambda { third_party_data }
+  acts_as_trackable :instructions => :instructions, :url => :url, :third_party_data => :third_party_data
 
   CATEGORIES = [ 'CPA', 'Social', 'Non-Native Video', 'Other' ]
 
