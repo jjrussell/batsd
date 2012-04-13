@@ -130,6 +130,18 @@ describe DisplayAdController do
         get(:index, @params)
       end
 
+      context 'with unfilled request' do
+        before :each do
+          OfferCacher.stubs(:get_unsorted_offers_prerejected).returns([])
+        end
+
+        it 'should not queue up tracking url calls' do
+          Offer.any_instance.expects(:queue_impression_tracking_requests).never
+
+          get(:index, @params)
+        end
+      end
+
       context 'with custom ad' do
         before :each do
           @offer.banner_creatives = %w(320x50 640x100)
