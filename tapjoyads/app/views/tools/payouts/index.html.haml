@@ -20,7 +20,7 @@
 
 #filtered.hidden
   Information updated in:
-  = select_date(@start_date || Time.zone.now, :discard_day => true, :start_year => 2011, :end_year => Time.zone.now.year)
+  = select_date((@start_date || Time.zone.now), :order => [:year, :month], :discard_day => true, :start_year => 2011, :end_year => Time.zone.now.year)
   = submit_tag('Update', :id => :date_submit)
   = submit_tag('Reset', :id => :date_reset)
 #unfiltered.hidden
@@ -38,10 +38,13 @@
       %th Current Payout Created
       %th Payout Info
       %th Action
-      %th Confirmed
+      %th Confirmed Status
+      %th Confirmation Notes
   %tbody
     - @partners.each do |partner|
       - payout_info = partner.payout_info
+      - confirmation_notes = partner.confirmation_notes
+      - confirmation_notes << 'Payout Info not Present!' unless payout_info.present?
       %tr
         %td
           %strong Name:
@@ -89,26 +92,27 @@
             &nbsp;
         %td
           - if permitted_to?(:confirm_payouts, :tools_payouts)
-            - form_tag confirm_payouts_tools_payouts_path( :partner_id => partner.id), :method => :post, :class => 'enable_request' do
-              %div{ :class => 'enabled', :style =>  (!partner.confirmed_for_payout ? 'display:none;' : 'display:inline;')}
-                %span{ :class => 'enabled' } Confirmed
-                = submit_tag  'Unconfirm', :class => 'submit'
-              %div{ :class => 'disabled', :style => (partner.confirmed_for_payout ? 'display:none;' : 'display:inline;') }
-                %span{ :class => "disabled#{' notes' unless partner.payout_confirmation_notes.nil?}" }
-                  Unconfirmed#{'*' unless partner.payout_confirmation_notes.nil?}
-                  - unless partner.payout_confirmation_notes.nil?
-                    %div{ :class => 'notes', :style => 'display:none'} #{partner.payout_confirmation_notes}
-                = submit_tag 'Confirm', :class => 'submit'
+            - form_tag confirm_payouts_tools_payouts_path( :partner_id => partner.id, :type => :json), :method => :post, :class => 'enable_request' do
+              %div{ :class => 'enabled', :style =>  (!confirmation_notes.empty? ? 'display:none;' : 'display:inline;')}
+                %span{ :class => 'enabled'}
+                  %strong Confirmed
+              %div{ :class => 'disabled', :style => (confirmation_notes.empty? ? 'display:none;' : 'display:inline;') }
+                %span{ :class => 'disabled'}
+                  %strong Unconfirmed
+                  = submit_tag 'Confirm', :class => 'submit'
               %img.spinner{ :src => '/images/spinner.gif', :style => 'display:none;' }
           - else
             - if partner.confirmed_for_payout
               %span{ :class => 'enabled'} Confirmed
-            - elsif partner.payout_confirmation_notes.nil?
               %span{ :class => 'disabled'} Uncomfirmed
             - else
-              %span{ :class => 'disabled notes'}
-                Uncomfirmed*
-                %div{ :class => 'notes', :style => 'display:none'} #{partner.payout_confirmation_notes}
+              %span{ :class => 'disabled'}
+                Uncomfirmed
+        %td.notes
+          %span{ :class => 'disabled' }
+            - unless confirmation_notes.empty?
+              \- #{confirmation_notes.join('<br>-')}
+
 
 %div{ :class => 'popup', :style => 'display:none'}
 - content_for :page_javascript do
@@ -136,14 +140,6 @@
         } else {
           $('#unfiltered').show();
         }
-      });
-
-      $('span.notes').click(function(){
-        var content = $('.popup');
-        text = $(this).children('div.notes').text();
-        content.text(text);
-        var position = [$(this).position().left - 300, $(this).position().top - $(window).scrollTop()];
-        content.dialog({title: 'Payout Confirmation Notes', position: position, minHeight: 75, resizable: false});
       });
 
       $('.button-to').submit(function(){
@@ -237,6 +233,7 @@
         var spinner = $(this).find('img.spinner');
         var disabled = $(this).find('div.disabled');
         var enabled = $(this).find('div.enabled');
+        var notes = $(this).parent().parent().find('td.notes');
 
         $.ajax({
           dataType: 'json',
@@ -253,10 +250,11 @@
           },
           success: function(response) {
             if (response.success == true) {
-              if(!response.was_confirmed) {
-                disabled.show();
-              } else {
+              if(response.was_confirmed == true) {
                 enabled.show();
+                notes.empty();
+              } else {
+                disabled.show();
               }
             } else {
               $(this).parent().html('Error');

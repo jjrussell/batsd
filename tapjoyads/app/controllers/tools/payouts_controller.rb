@@ -28,7 +28,7 @@ class Tools::PayoutsController < WebsiteController
     partner = Partner.find(params[:partner_id])
     log_activity(partner)
     partner.toggle_confirmed_for_payout
-    render :json => { :success => partner.save, :was_confirmed => true}
+    render :json => { :success => partner.save, :was_confirmed => partner.payout_info.present? && partner.payout_info.valid?}
   end
 
   def export
@@ -59,9 +59,9 @@ class Tools::PayoutsController < WebsiteController
     if params[:year] && params[:month]
       @start_date = Time.zone.parse("#{params[:year]}-#{params[:month]}-01")
       @end_date = @start_date + 1.month
-      @partners = Partner.to_payout(:include => ['payout_info', 'payout_confirmations']).payout_info_changed(@start_date, @end_date)
+      @partners = Partner.to_payout.payout_info_changed(@start_date, @end_date).all(:include => [:payout_info, :payout_info_confirmation, :payout_threshold_confirmation])
     else
-      @partners = Partner.to_payout(:include => ['payout_info', 'payout_confirmations'])
+      @partners = Partner.to_payout.all( :include => [:payout_info, :payout_info_confirmation, :payout_threshold_confirmation])
     end
   end
 

@@ -87,7 +87,7 @@ describe Tools::PayoutsController do
 
   describe '#export' do
     it 'sends a csv report' do
-      Partner.stubs(:to_payout).returns([Factory(:partner, :users => [@user])])
+      Partner.stubs(:to_payout).returns(stub('payout partners', :all => [Factory(:partner, :users => [@user])]))
       get(:export)
       response.header['Content-Type'].should include 'text/csv'
     end
