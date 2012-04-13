@@ -208,6 +208,7 @@ class Conversion < ActiveRecord::Base
   def queue_third_party_conversion_tracking
     if @http_request
       advertiser_offer.queue_conversion_tracking_requests(@http_request, created_at.to_i.to_s)
+      self.http_request = nil
     end
   end
 
