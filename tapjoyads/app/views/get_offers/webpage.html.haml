@@ -1,5 +1,5 @@
 - @page_title = @currency.conversion_rate > 0 ? t('text.offerwall.title', :currency => @currency.name) : ''
-- @webpage_link = @currency.nil? ? WEBSITE_URL : "#{WEBSITE_URL}/earn?eid=#{ObjectEncryptor.encrypt(@currency.id)}"
+- @webpage_link = @currency.external_publisher? ? "#{WEBSITE_URL}/earn?eid=#{ObjectEncryptor.encrypt(@currency.id)}" : WEBSITE_URL
 
 - unless @message.blank?
   #top_box
