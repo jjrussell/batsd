@@ -12,6 +12,7 @@ class VideoButton < ActiveRecord::Base
   scope :ordered, :order => "enabled DESC, ordinal"
   scope :enabled, :conditions => { :enabled => true }
 
+  has_tracking_offers
   delegate :item, :item_id, :item_type, :to => :tracking_offer, :allow_nil => true
 
   def xml_for_offer
