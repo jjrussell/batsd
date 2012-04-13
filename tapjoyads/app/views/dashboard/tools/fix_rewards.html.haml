@@ -11,6 +11,12 @@
     %tbody
       %tr
         %th Reward Key
-        %td= text_field_tag(:reward_key, '', :size => 50)
+        %td= text_field_tag(:reward_key, '', :size => 50, :id => 'reward_key_input')
       %tr
         %td{ :colspan => 2 }= submit_tag('Submit')
+
+- content_for :page_javascript do
+  :plain
+    $(function() {
+      $('#reward_key_input').focus();
+    });
