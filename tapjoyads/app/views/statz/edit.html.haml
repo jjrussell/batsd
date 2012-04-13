@@ -214,7 +214,7 @@
           = label_tag('estimated_budget', 'Daily Budget')
           #help_estimated_budget.help ?
         %td
-          = text_field_tag('estimated_budget')
+          = text_field_tag('estimated_budget', '', :size => 30)
       %tr
         %th
           = f.label(:overall_budget, 'Overall Conversions')

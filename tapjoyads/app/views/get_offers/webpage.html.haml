@@ -136,16 +136,16 @@
         if (!window.scrollY) {
           scrollY = document.body.parentNode.scrollTop;
         }
-        if (scrollY + window.innerHeight + 480 > image.offsetTop) {
+        var vertOffset = scrollY + window.innerHeight;
+        // 480 is a buffer so we can pre-load images *before* they are displayed
+        if (vertOffset + 480 > image.offsetTop && image.getAttribute('s') && image.src != image.getAttribute('s')) {
           loadImage(image);
         }
       }
     }
 
     function loadImage(image) {
-      if (image.getAttribute('s') && image.src != image.getAttribute('s')) {
-        image.src = image.getAttribute('s');
-      }
+      image.src = image.getAttribute('s');
     }
 
     function loadJQ(ref){

@@ -16,18 +16,27 @@ $(function($){
 
   // app platform
   var toggleAppPlatform = function() {
-    if ($('select#app_platform').val() == 'iphone') {
+    var platform = $('select#app_platform').val();
+    if (platform == 'iphone') {
       $('#search_button').val('Search App Store');
-      $('span#app_store_name').text('App Store.')
-    } else if ($('select#app_platform').val() == 'android') {
+      $('span#app_store_name').text('App Store.');
+      $('tr#appstore_country_toggle').show();
+      $('select#app_country').show();
+      $('select#app_language').hide();
+    } else if (platform == 'android') {
       $('#search_button').val('Search Google Play');
-      $('span#app_store_name').text('Google Play.')
+      $('span#app_store_name').text('Google Play.');
+      $('tr#appstore_country_toggle').hide();
     } else {
+      $('tr#appstore_country_toggle').show();
       $('#search_button').val('Search Marketplace');
-      $('span#app_store_name').text('Marketplace.')
+      $('span#app_store_name').text('Marketplace.');
+      $('select#app_country').hide();
+      $('select#app_language').show();
     }
   };
   $('select#app_platform').change(toggleAppPlatform);
+  toggleAppPlatform();
 
   // hide search results on just about everything
   $(document).click(function(e){
@@ -105,11 +114,15 @@ $(function($){
     if (term == "") {
       $('#search_results').hide();
     } else {
-      var platform = $('#app_platform').val();
-      var country = $('#app_country').val() || "us";
+      var data = {
+        term:     term,
+        platform: $('#app_platform').val(),
+        country:  $('#app_country').val(),
+        language: $('#app_language').val(),
+      };
       $.ajax({
         url: '/apps/search',
-        data: { term: term, platform: platform, country: country},
+        data: data,
         dataType: 'json',
         success: success,
         error: error
