@@ -78,6 +78,8 @@ class Offer < ActiveRecord::Base
     "3 days"   => 3.days.to_i,
   }
 
+  TRUSTED_TRACKING_VENDORS = %w( phluantmobile.net )
+
   has_many :advertiser_conversions, :class_name => 'Conversion', :foreign_key => :advertiser_offer_id
   has_many :rank_boosts
   has_many :enable_offer_requests
@@ -171,6 +173,16 @@ class Offer < ActiveRecord::Base
       record.errors.add(attribute, "cannot be enabled without valid store id")
     end
   end
+  validates_each :impression_tracking_urls do |record, attribute, value|
+    value.each do |url|
+      uri = URI.parse(url) rescue (record.errors.add(attribute, "must all be valid urls") and break)
+      unless uri.host =~ /(^|\.)(#{TRUSTED_TRACKING_VENDORS.join('|').gsub('.','\\.')})$/
+        vendors_list = TRUSTED_TRACKING_VENDORS.to_sentence(:two_words_connector => ' or ', :last_word_connector => ', or ')
+        record.errors.add(attribute, "must all use a trusted vendor (#{vendors_list})")
+        break
+      end
+    end
+  end
 
   before_validation :update_payment
   before_validation_on_create :set_reseller_from_partner
@@ -236,6 +248,8 @@ class Offer < ActiveRecord::Base
   memoize :get_device_types, :get_screen_layout_sizes, :get_countries, :get_dma_codes,
     :get_regions, :get_approved_sources, :get_carriers, :get_cities
 
+  serialize :impression_tracking_urls, Array
+
   def clone
     return super if new_record?
 
@@ -246,6 +260,25 @@ class Offer < ActiveRecord::Base
         clone.send("banner_creative_#{size}_blob=", blob)
       end
     end
+  end
+
+  def impression_tracking_urls=(urls)
+    super(urls.select{ |url| url.present? })
+  end
+
+  def impression_tracking_urls(replace_macros = false)
+    self.impression_tracking_urls = [] if super.nil?
+    urls = super.sort
+
+    now = Time.zone.now.to_i.to_s
+    urls = urls.collect { |url| url.gsub("[timestamp]", now) } if replace_macros
+    urls
+  end
+
+  def impression_tracking_urls_was
+    ret_val = super
+    return [] if ret_val.nil?
+    ret_val
   end
 
   def app_offer?
@@ -664,6 +697,16 @@ class Offer < ActiveRecord::Base
 
   def multi_completable?
     !%w(App ActionOffer SurveyOffer).include?(item_type) || Offer::Rejecting::TAPJOY_GAMES_RETARGETED_OFFERS.include?(item_id)
+  end
+
+  def queue_impression_tracking_requests(request)
+    # simulate <img> pixel tag client-side web calls...
+    # we lose cookie functionality, unless we implement cookie storage on our end...
+    impression_tracking_urls(true).each do |url|
+      forwarded_headers = request.http_headers.slice('User-Agent', 'X-Do-Not-Track', 'DNT')
+      forwarded_headers['Referer'] = request.url
+      Downloader.queue_get_with_retry(url, { :headers => forwarded_headers })
+    end
   end
 
   private
