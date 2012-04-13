@@ -78,6 +78,8 @@ class Offer < ActiveRecord::Base
     "3 days"   => 3.days.to_i,
   }
 
+  TRUSTED_TRACKING_VENDORS = %w( phluantmobile.net )
+
   has_many :advertiser_conversions, :class_name => 'Conversion', :foreign_key => :advertiser_offer_id
   has_many :rank_boosts
   has_many :enable_offer_requests
@@ -172,11 +174,10 @@ class Offer < ActiveRecord::Base
     end
   end
   validates_each :impression_tracking_urls do |record, attribute, value|
-    trusted_vendors = %w(phluantmobile.net)
     value.each do |url|
       uri = URI.parse(url) rescue (record.errors.add(attribute, "must all be valid urls") and break)
-      unless uri.host =~ /(^|\.)(#{trusted_vendors.join('|').gsub('.','\\.')})$/
-        vendors_list = trusted_vendors.to_sentence(:two_words_connector => ' or ', :last_word_connector => ', or ')
+      unless uri.host =~ /(^|\.)(#{TRUSTED_TRACKING_VENDORS.join('|').gsub('.','\\.')})$/
+        vendors_list = TRUSTED_TRACKING_VENDORS.to_sentence(:two_words_connector => ' or ', :last_word_connector => ', or ')
         record.errors.add(attribute, "must all use a trusted vendor (#{vendors_list})")
         break
       end
