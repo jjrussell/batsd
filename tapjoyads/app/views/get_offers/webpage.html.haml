@@ -1,4 +1,5 @@
 - @page_title = @currency.conversion_rate > 0 ? t('text.offerwall.title', :currency => @currency.name) : ''
+- @webpage_link = @currency.nil? ? WEBSITE_URL : "#{WEBSITE_URL}/earn?eid=#{ObjectEncryptor.encrypt(@currency.id)}"
 
 - unless @message.blank?
   #top_box
@@ -86,7 +87,7 @@
     %a{ :href => "javascript:void(0);", :id => "load_more" }
       = t('text.offerwall.load_more')
 
-= link_to WEBSITE_URL, :id => 'more_offers', :class => 'offer', :style => "#{'display: none;' if @more_data_available > 0}" do
+- link_to @webpage_link, :id => 'more_offers', :class => 'offer', :style => "#{'display: none;' if @more_data_available > 0}" do
   .divider
   .content
     .icon
@@ -147,7 +148,9 @@
     }
 
     function loadImage(image) {
-      image.src = image.getAttribute('s');
+      if (image.getAttribute('s') && image.src != image.getAttribute('s')) {
+        image.src = image.getAttribute('s');
+      }
     }
 
     function loadJQ(ref){
