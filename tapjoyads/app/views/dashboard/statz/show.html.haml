@@ -157,6 +157,13 @@
 
 .load-circle= image_tag('load-circle.gif')
 
+- if @offer.item_type == 'VideoOffer'
+  #button_statz
+    %h3 Video Buttons
+    %ul
+      - @offer.item.video_buttons.each do |button|
+        %li= link_to(button.name, statz_path(button.tracking_offer))
+
 #charts{ :style => "text-align: center;" }
   - if @offer.item_type == 'App'
     #connects.graph
