@@ -42,7 +42,7 @@ module Offer::ThirdPartyTracking
       http_request, timestamp = args
       send(method_name, true, timestamp).each do |url|
         forwarded_headers = http_request.http_headers.slice('User-Agent', 'X-Do-Not-Track', 'Dnt')
-        forwarded_headers['Referer'] = request.url
+        forwarded_headers['Referer'] = http_request.url
         Downloader.queue_get_with_retry(url, { :headers => forwarded_headers })
       end
     end
