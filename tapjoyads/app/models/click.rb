@@ -56,10 +56,7 @@ class Click < SimpledbShardedResource
   def save(options = {})
     creating = new_record?
     super.tap do
-      if creating && @http_request.present? && offer.present?
-        offer.queue_click_tracking_requests(@http_request)
-        self.http_request = nil
-      end
+      queue_click_tracking_requests if creating
     end
   end
 
@@ -142,4 +139,12 @@ class Click < SimpledbShardedResource
       "#{API_URL}/connect?app_id=#{advertiser_app_id}&udid=#{udid}&consistent=true"
     end
   end
+
+  def queue_click_tracking_requests
+    if @http_request.present? && offer.present?
+      offer.queue_click_tracking_requests(@http_request)
+      self.http_request = nil
+    end
+  end
+
 end
