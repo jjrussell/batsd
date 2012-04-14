@@ -46,6 +46,11 @@ describe Job::QueueCreateConversionsController do
         @http_request = ActionController::Request.new('HTTP_X_DO_NOT_TRACK' => @click.x_do_not_track_header,
           'HTTP_USER_AGENT' => @click.user_agent_header,
           'HTTP_DNT' => @click.dnt_header)
+
+        Conversion.any_instance.stubs(:advertiser_offer).returns(@offer)
+        now = Time.zone.now
+        Conversion.any_instance.stubs(:created_at).returns(now)
+        @offer.expects(:queue_conversion_tracking_requests).with(@http_request, now.to_i.to_s).once
       end
 
       context 'with a \'request_url\' parameter' do
