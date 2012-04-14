@@ -21,7 +21,7 @@
           - if current_user
             = current_user.username
             |
-            - if permitted_to?(:index, :apps)
+            - if permitted_to?(:index, :dashboard_apps)
               = link_to('Partner Home', apps_path)
               |
             = link_to('Logout', logout_path)

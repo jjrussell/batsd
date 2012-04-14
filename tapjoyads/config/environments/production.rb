@@ -7,7 +7,7 @@ Tapjoyads::Application.configure do
              %w( dashboard api )
            when 'website'
              %w( website api )
-           when 'web'
+           when 'webserver'
              %w( web legacy )
            else
              %w( api dashboard website web legacy )

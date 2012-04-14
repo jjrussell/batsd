@@ -28,6 +28,7 @@ Tapjoyad::Application.routes.draw do
     resources :offers
   end
 
+
   namespace :games do
     match '/' => 'homepage#index'
     match 'tos' => 'homepage#tos', :as => :tos

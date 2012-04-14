@@ -1,6 +1,6 @@
-require 'spec/spec_helper'
+require 'spec_helper'
 
-describe 'apps/show.html.haml' do
+describe 'dashboard/apps/show.html.haml' do
   context 'with an admin user' do
     before :each do
       @app = assigns[:app] = Factory(:app)

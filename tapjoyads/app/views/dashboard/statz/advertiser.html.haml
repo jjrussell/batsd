@@ -1,0 +1,100 @@
+- timeframe = @timeframe == '7_days' ? '7 days' : @timeframe == '1_month' ? '30 days' : '24 hours'
+- @page_title = "Advertiser Stats for last #{timeframe}"
+
+%h1 Advertiser Stats for last #{timeframe}
+%h4
+  - if permitted_to? :publisher, :dashboard_statz
+    = link_to("Publisher Stats", publisher_statz_path)
+
+%form
+  = render :partial => 'shared/timeframe_and_platform'
+
+%br
+
+.last_updated For: #{@last_updated_start.to_s(:pub_ampm_sec)} - #{@last_updated_end.to_s(:pub_ampm_sec)}
+
+%table#advertisers_table.tablesorter
+  %thead
+    %tr
+      %th Partner
+      %th Acct Mgr
+      %th Sales Rep
+      %th Spend
+      %th Balance
+      %th Clicks
+      %th Conversions
+      %th CVR
+      %th Sessions
+      %th New Users
+  %tbody#advertisers_tbody
+    - @cached_stats.each do |partner_id, stats|
+      %tr
+        %td= link_to stats['partner'], partner_path(partner_id)
+        %td= stats['account_mgr']
+        %td= stats['sales_rep']
+        %td= stats['spend']
+        %td= stats['balance']
+        %td= stats['clicks']
+        %td= stats['paid_installs']
+        %td= stats['cvr']
+        %td= stats['sessions']
+        %td= stats['new_users']
+
+- content_for :page_javascript do
+  :plain
+    $(function() {
+      $.tablesorter.addParser({
+        id: 'formatted-number-column',
+        is: function(s) { return false; },
+        type: 'numeric',
+        format: function(s) {
+          return s.replace(/\$/g, '').replace(/,/g, '');
+        }
+      });
+      $("#advertisers_table").tablesorter({
+        widgets: ['zebra'],
+        headers: {
+          3:  {sorter: 'formatted-number-column' },
+          4:  {sorter: 'formatted-number-column' },
+          5:  {sorter: 'formatted-number-column' },
+          6:  {sorter: 'formatted-number-column' },
+          8:  {sorter: 'formatted-number-column' },
+          9:  {sorter: 'formatted-number-column' },
+        },
+        sortList: [ [3,1] ]
+      });
+    });
+
+- content_for :page_styles do
+  :plain
+    table.tablesorter {
+      border-collapse: separate;
+    }
+
+    table.tablesorter thead tr .header {
+      background-position: right bottom;
+    }
+
+    th,
+    td {
+      border: 0;
+    }
+
+    .last_updated {
+      font-weight: bold;
+      font-size: 14px;
+    }
+
+    ul.timeframes {
+      margin: -10px 0 10px;
+      padding: 0px;
+    }
+    ul.timeframes li {
+      display: inline;
+    }
+    ul.timeframes li:after {
+      content: " |";
+    }
+    ul.timeframes li:last-child:after {
+      content: "";
+    }

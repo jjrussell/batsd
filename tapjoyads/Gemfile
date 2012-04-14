@@ -90,6 +90,7 @@ group :test do
   gem 'mocha', '0.9.12'
   gem 'spork'
   gem 'timecop'
+  gem 'tapjoyserver-tests', :path => '../../tapjoyserver-tests' #:git => 'git@github.com:Tapjoy/tapjoyserver-tests.git'
 end
 
 group :development, :test do

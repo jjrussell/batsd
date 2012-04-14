@@ -79,4 +79,5 @@ Tapjoyad::Application.routes.draw do
     match 'queue_send_currency' => 'queue_send_currency#run_job'
   end
 
+  #match ':controller(/:action(/:id))'
 end

@@ -1,0 +1,194 @@
+%h1 User management
+= render('search')
+%h3= @user.email
+- if permitted_to? :index, :dashboard_activities
+  = link_to 'Activities Log', activities_path(:object_id => @user.id)
+%table.tablesorter
+  %tbody
+    %tr
+      %th Email
+      %td= @user.email
+    %tr
+      %th Username
+      %td= @user.username
+    %tr
+      %th Created
+      %td= @user.created_at.to_s(:db)
+    %tr
+      %th Updated
+      %td= @user.updated_at? ? @user.updated_at.to_s(:db) : 'never'
+    - if permitted_to? :create, :dashboard_tools_users_partner_assignments
+      %tr
+        %th Current partner
+        %td= @user.current_partner.present? ? link_to(@user.current_partner.name, @user.current_partner) : 'None'
+
+- if permitted_to? :create, :dashboard_tools_users_partner_assignments
+  %h4 Add to partner
+  #search_query
+    = label_tag(:partners_name_search_box, 'by partner name or ID:')
+    = text_field_tag(:partners_name_search_box, '', :size => 40)
+  #search_results.hidden
+    - form_tag tools_user_partner_assignments_path(:user_id => @user.id) do
+      %table
+        %tbody
+          %tr
+            %td.right= label_tag(:partner_id, 'Partner ID')
+            %td= text_field_tag(:partner_id, '', :size => 60)
+          %tr
+            %td.right= label_tag(:partner_name)
+            %td= text_field_tag(:partner_name, '', :size => 60)
+      .left= submit_tag('Add')
+    .left= button_to('Cancel', '#', :id => 'reset_partner_search')
+    .clear
+
+  %h4 All partners
+  %table.tablesorter#partners
+    %thead
+      %tr
+        %th.action &nbsp;
+        %th Name
+        %th Balance
+        %th Pending<br/> Earnings
+        %th Offers
+    %tbody
+      - @partner_assignments.each do |partner_assignment|
+        - partner = partner_assignment.partner
+        %tr
+          %td
+            - if partner.users.length > 1
+              - path = tools_user_partner_assignment_path(:user_id => @user.id, :id => partner_assignment.id)
+              = button_to('Remove', path, :method => 'delete', :confirm => 'Are you sure?')
+            - else
+              = submit_tag 'Cannot remove', :disabled => 'disabled'
+            - form_tag(make_current_partner_path(partner)) do
+              - if current_partner == partner
+                = submit_tag("Acting as", :class => 'act_as_button', :disabled => true)
+              - else
+                = submit_tag("Act as", :class => 'act_as_button')
+          %td.text= link_to(partner.name||'(no name)', partner)
+          %td.money= number_to_currency(partner.balance/100.0)
+          %td.money= number_to_currency(partner.pending_earnings/100.0)
+          %td.offers
+            - offers = partner.offers.sort_by{|p| [p.get_platform, p.name]}
+            - offers[0..4].each do |o|
+              .offer
+                = image_tag(o.get_icon_url, :size => '20x20')
+                = image_tag(platform_icon_url(o))
+                = link_to_offer(o)
+                - if o.tapjoy_enabled? || o.user_enabled?
+                  (#{o.tapjoy_enabled? ? 'T' : ''}#{o.user_enabled? ? 'U' : ''})
+            - if offers.length > 5
+              .show_more (#{link_to("Show #{partner.offers.length-5} more", '#', :class => 'show_all_apps')})
+              .hidden
+                - offers[5..-1].each do |o|
+                  .offer
+                    = image_tag(o.get_icon_url, :size => '20x20')
+                    = image_tag(platform_icon_url(o))
+                    = link_to_offer(o)
+                    - if o.tapjoy_enabled? || o.user_enabled?
+                      (#{o.tapjoy_enabled? ? 'T' : ''}#{o.user_enabled? ? 'U' : ''})
+
+%h4 Current roles:
+%table.tablesorter.roles
+  %thead
+    %tr
+      - if @can_modify_roles
+        %th.action &nbsp;
+      %th Name
+  %tbody
+    - @current_assignments.each do |assignment|
+      %tr
+        - if @can_modify_roles
+          %td
+            - if assignment.admin?
+              &nbsp;
+            - else
+              = button_to('remove', tools_user_role_assignment_path(:user_id => @user.id, :id => assignment.id), :method => 'delete', :confirm => 'Are you sure?')
+        %td{:class => assignment.admin? ? 'disabled text' : 'text'}
+          = assignment.user_role.name.titleize
+          - if assignment.admin?
+            (not modifiable)
+
+- if @can_modify_roles
+  %h4 Add new role:
+  %table.tablesorter.roles
+    %thead
+      %tr
+        %th.action &nbsp;
+        %th Name
+    %tbody
+      - @new_assignments.each do |assignment|
+        %tr
+          %td
+            - if assignment.admin?
+              &nbsp;
+            - else
+              = button_to('add', tools_user_role_assignments_path(:user_id => @user.id, :user_role_id => assignment.user_role.id))
+
+          - class_name = assignment.admin? ? 'disabled text' : 'text'
+          %td{:class => class_name}= assignment.user_role.name.titleize
+
+- content_for :page_styles do
+  :plain
+    th.action {
+      width: 100px;
+    }
+    td.text {
+      font-size: 16px;
+    }
+    td.money {
+      text-align: right;
+      font-family: Andale Mono, Courier New, courier;
+    }
+    td.offers {
+      max-width: 400px;
+    }
+    td .offer {
+      vertical-align: bottom;
+    }
+    td .show_more {
+      font-size: 14px;
+      font-weight: bold;
+      margin-top: 5px;
+    }
+    .error {
+      color: red !important;
+    }
+    .disabled {
+      color: #aaa !important;
+    }
+    table#partners {
+      width: auto;
+    }
+    table.roles {
+      width: 300px;
+    }
+
+- content_for :page_javascript do
+  - if permitted_to? :create, :dashboard_tools_users_partner_assignments
+    :plain
+      $(function($){
+        $('.show_all_apps').click(function(){
+          $(this).parent().siblings('div.hidden').slideDown();
+          $(this).parent().hide();
+          return false;
+        });
+
+        $('#partners_name_search_box').focus().autocomplete({
+          source: '#{search_partners_path}',
+          delay: 250,
+          minLength: 2,
+          select: function(event, ui) {
+            $('#search_query').hide();
+            $('#search_results').show();
+            $('#partner_name').val(ui.item.partner_name);
+            $('#partner_id').val(ui.item.partner_id);
+          }
+        });
+        $('#reset_partner_search').click(function(){
+          $('#search_query').show();
+          $('#search_results').hide();
+          $('#partners_name_search_box').val($('#partner_name').val());
+          return false;
+        });
+      });

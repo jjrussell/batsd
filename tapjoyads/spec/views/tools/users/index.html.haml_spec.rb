@@ -1,6 +1,6 @@
-require 'spec/spec_helper'
+require 'spec_helper'
 
-describe 'tools/users/index.html.haml' do
+describe 'dashboard/tools/users/index.html.haml' do
 
   context 'with a role manager user' do
     before :each do
