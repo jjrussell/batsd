@@ -1,9 +1,7 @@
 require 'spec/spec_helper'
 
 def json_message(url = nil)
-  message = { :reward_key => 'reward_key' }
-  message[:request_url] = url if url
-  message.to_json
+  { :reward_key => 'reward_key', :request_url => url }.to_json
 end
 
 describe Job::QueueCreateConversionsController do
@@ -68,7 +66,7 @@ describe Job::QueueCreateConversionsController do
       end
 
       context 'without a \'request_url\' parameter' do
-        it 'should use a default url for the http request\s url' do
+        it 'should use a default url for the http request\'s url' do
           default_url = 'https://api.tapjoy.com/connect' # should match url hard-coded in the controller
           message = json_message
           Reward.expects(:find).with(message, :consistent => true).returns(nil)
