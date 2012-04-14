@@ -15,6 +15,7 @@ describe Games::Gamers::DevicesController do
       @inviter = Factory(:gamer)
       @inviter.gamer_profile = GamerProfile.create(:gamer => @inviter, :referral_count => 0)
       click = Click.new(:key => "#{@inviter.id}.#{generic_offer_for_invite.id}")
+      click.http_request = ActionController::Request.new({})
       click.save
 
       invitation = Factory(:invitation, :gamer_id => @inviter.id)
