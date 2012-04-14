@@ -12,12 +12,11 @@ class Job::QueueCreateConversionsController < Job::SqsReaderController
     if reward.nil? # message may be a JSON string
       message = JSON.parse(message.body).symbolize_keys
       reward = Reward.find(message[:reward_key], :consistent => true)
-      raise "Reward not found: #{message.body}" if reward.nil?
+      raise "Reward not found: #{message[:reward_key]}" if reward.nil?
 
       # handle third-party conversion pings
       if reward.offer.conversion_tracking_urls.any?
-        # if no request_url provided,
-        # provide a fake one
+        # if no request_url provided, give a fake one
         request_env = { 'REQUEST_URL' => (message[:request_url] || 'https://api.tapjoy.com/connect') }
 
         # replace certain http headers with click values, since conversion requests often come from servers,
