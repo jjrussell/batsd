@@ -53,8 +53,12 @@ class Click < SimpledbShardedResource
 
   attr_writer :http_request
 
+  def validate_presence_of_http_request
+    raise "http request must be present!" unless @http_request
+  end
+
   def save(options = {})
-    creating = new_record?
+    validate_presence_of_http_request if (creating = new_record?)
     super.tap do
       queue_click_tracking_requests if creating
     end
