@@ -10,8 +10,8 @@ class Job::QueueCreateConversionsController < Job::SqsReaderController
     reward = Reward.find(message.body, :consistent => true)
     http_request = nil
     if reward.nil? # message may be a JSON string
-      message = JSON.parse(message).symbolize_keys
-      reward = Reward.find(message[:reward_id], :consistent => true)
+      message = JSON.parse(message.body).symbolize_keys
+      reward = Reward.find(message[:reward_key], :consistent => true)
       raise "Reward not found: #{message.body}" if reward.nil?
 
       # handle third-party conversion pings
