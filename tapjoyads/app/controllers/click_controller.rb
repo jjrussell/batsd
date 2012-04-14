@@ -296,7 +296,7 @@ class ClickController < ApplicationController
       end
       @device.set_last_run_time!(app_id_for_device)
 
-      message = { :click_key => click_key, :install_timestamp => @now.to_f.to_s, message[:request_url] => request.url }
+      message = { :click_key => click_key, :install_timestamp => @now.to_f.to_s, :request_url => request.url }
       Sqs.send_message(QueueNames::CONVERSION_TRACKING, message.to_json)
     end
   end
