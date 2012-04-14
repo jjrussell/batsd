@@ -1,7 +1,7 @@
 require 'spec/spec_helper'
 
-def click_message(click_key)
-  { :click_key => click_key, :install_timestamp => Time.zone.parse('2010-04-15').to_f.to_s }.to_json
+def click_message(click_key, request_url = nil)
+  { :click_key => click_key, :install_timestamp => Time.zone.parse('2010-04-15').to_f.to_s, :request_url => request_url }.to_json
 end
 
 def expect_request_completes
@@ -50,12 +50,13 @@ describe Job::QueueConversionTrackingController do
     before :each do
       @reward_uuid = UUIDTools::UUID.random_create.to_s
       @click = Factory(:click, :reward_key => @reward_uuid, :clicked_at => Time.zone.now, :publisher_user_id => 'PUID', :type => 'install')
+      @request_url = 'https://api.tapjoy.com/click'
       Click.expects(:find).returns(@click)
       Reward.any_instance.stubs(:update_realtime_stats)
     end
 
     def do_get
-      get(:run_job, :message => click_message(@click.key))
+      get(:run_job, :message => click_message(@click.key, @request_url))
     end
 
     it 'ignores already converted clicks' do
@@ -210,7 +211,8 @@ describe Job::QueueConversionTrackingController do
     end
 
     it 'enqueues a create-conversions message' do
-      Sqs.expects(:send_message)#.with(QueueNames::CREATE_CONVERSIONS, @reward_uuid)
+      # Sqs.expects(:send_message)#.with(QueueNames::CREATE_CONVERSIONS, @reward_uuid)
+      Sqs.expects(:send_message).with(QueueNames::CREATE_CONVERSIONS, { :reward_key => @reward_uuid, :request_url => @request_url }.to_json)
       do_get
     end
 
