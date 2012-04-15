@@ -709,7 +709,7 @@ class Offer < ActiveRecord::Base
     # simulate <img> pixel tag client-side web calls...
     # we lose cookie functionality, unless we implement cookie storage on our end...
     click_tracking_urls(true).each do |url|
-      forwarded_headers = request.http_headers.slice('User-Agent', 'X-Do-Not-Track', 'DNT')
+      forwarded_headers = request.http_headers.slice('User-Agent', 'X-Do-Not-Track', 'Dnt')
       forwarded_headers['Referer'] = request.url
       Downloader.queue_get_with_retry(url, { :headers => forwarded_headers })
     end
