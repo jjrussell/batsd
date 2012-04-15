@@ -13,25 +13,27 @@ class Job::QueueCreateConversionsController < Job::SqsReaderController
       message = JSON.parse(message.body).symbolize_keys
       reward = Reward.find(message[:reward_key], :consistent => true)
       raise "Reward not found: #{message[:reward_key]}" if reward.nil?
-
-      # handle third-party conversion pings
-      if reward.offer.conversion_tracking_urls.any?
-        # if no request_url provided, give a fake one
-        request_env = { 'REQUEST_URL' => (message[:request_url] || 'https://api.tapjoy.com/connect') }
-
-        # replace certain http headers with click values, since conversion requests often come from servers,
-        # whereas clicks come from end users' devices
-        %w(user_agent x_do_not_track dnt).each do |header|
-          request_env["HTTP_#{header.upcase}"] = reward.click.send("#{header}_header")
-        end
-
-        http_request = ActionController::Request.new(request_env)
-        def http_request.url; @env['REQUEST_URL']; end
-      end
     end
 
-    reward.build_conversions(http_request).each do |c|
+    reward.build_conversions.each do |c|
       save_conversion(c)
+    end
+
+    if message.is_a?(Hash) && reward.offer.conversion_tracking_urls.any?
+      http_request = ActionController::Request.new({}) # simulate 'connect' http request
+
+      # set up proper request url (will be used as 'Referer' HTTP header)
+      # if no request_url provided, use a fake one
+      http_request.env['REQUEST_URL'] = (message[:request_url] || 'https://api.tapjoy.com/connect')
+      def http_request.url; @env['REQUEST_URL']; end
+
+      # replace certain http headers with click values, since conversion requests often come from servers,
+      # whereas clicks come from end users' devices which is the info we want to pass along
+      %w(user_agent x_do_not_track dnt).each do |header|
+        http_request.env["HTTP_#{header.upcase}"] = reward.click.send("#{header}_header")
+      end
+
+      reward.offer.queue_conversion_tracking_requests(http_request, reward.created.to_i.to_s)
     end
   end
 
