@@ -43,7 +43,7 @@ class Reward < SimpledbShardedResource
     "rewards_#{domain_number}"
   end
 
-  def build_conversions(http_request = nil)
+  def build_conversions
     conversions = []
 
     conversions << Conversion.new do |c|
@@ -62,7 +62,6 @@ class Reward < SimpledbShardedResource
       c.publisher_reseller_id  = publisher_reseller_id
       c.advertiser_reseller_id = advertiser_reseller_id
       c.spend_share            = spend_share
-      c.http_request           = http_request
     end
 
     if displayer_app_id.present? && source == 'display_ad'
@@ -82,7 +81,6 @@ class Reward < SimpledbShardedResource
         c.publisher_reseller_id            = publisher_reseller_id
         c.advertiser_reseller_id           = advertiser_reseller_id
         c.spend_share                      = spend_share
-        c.http_request                     = http_request
       end
     end
 
