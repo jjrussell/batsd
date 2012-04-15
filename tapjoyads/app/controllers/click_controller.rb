@@ -247,7 +247,6 @@ class ClickController < ApplicationController
 
   def create_click(type)
     click = Click.new(:key => click_key)
-    click.http_request = request
 
     click.maintain_history
     click.delete('installed_at') if click.installed_at?
@@ -282,6 +281,8 @@ class ClickController < ApplicationController
     click.mac_address            = params[:mac_address]
 
     click.save
+
+    @offer.queue_click_tracking_requests(request) # for third party tracking vendors
   end
 
   def handle_pay_per_click
