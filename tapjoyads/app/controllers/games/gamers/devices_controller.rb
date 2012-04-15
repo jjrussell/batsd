@@ -126,6 +126,8 @@ class Games::Gamers::DevicesController < GamesController
 
     click.save
 
+    primary_click.offer.queue_click_tracking_requests(request) if primary_click.offer # for third party tracking vendors
+
     message = { :click_key => click.key, :install_timestamp => Time.zone.now.to_f.to_s }.to_json
     Sqs.send_message(QueueNames::CONVERSION_TRACKING, message)
   end
