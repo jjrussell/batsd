@@ -6,7 +6,6 @@ FactoryGirl.define do
     advertiser_app_id { Factory(:app).id }
     publisher_app_id  { Currency.find(currency_id).app.id }
     offer_id          { App.find(advertiser_app_id).offers.first.id }
-    http_request      { ActionController::Request.new({}) }
   end
 
   factory :device do

@@ -51,19 +51,6 @@ class Click < SimpledbShardedResource
   self.sdb_attr :last_clicked_at, :type => :time, :force_array => true, :replace => false
   self.sdb_attr :last_installed_at, :type => :time, :force_array => true, :replace => false
 
-  attr_writer :http_request
-
-  def validate_presence_of_http_request
-    raise "http request must be present!" unless @http_request
-  end
-
-  def save(options = {})
-    validate_presence_of_http_request if (creating = new_record?)
-    super.tap do
-      queue_click_tracking_requests if creating
-    end
-  end
-
   def dynamic_domain_name
     domain_number = @key.matz_silly_hash % NUM_CLICK_DOMAINS
 
@@ -141,13 +128,6 @@ class Click < SimpledbShardedResource
       "#{API_URL}/offer_completed?click_key=#{key}"
     else
       "#{API_URL}/connect?app_id=#{advertiser_app_id}&udid=#{udid}&consistent=true"
-    end
-  end
-
-  def queue_click_tracking_requests
-    if @http_request.present? && offer.present?
-      offer.queue_click_tracking_requests(@http_request)
-      self.http_request = nil
     end
   end
 

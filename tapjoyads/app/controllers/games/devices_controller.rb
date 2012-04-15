@@ -100,7 +100,6 @@ class Games::DevicesController < GamesController
     now = Time.zone.now
 
     click = Click.new(:key => "#{current_gamer.referred_by}.invite[#{referral_count}]")
-    click.http_request      = request
 
     click.clicked_at        = now
     click.viewed_at         = now
