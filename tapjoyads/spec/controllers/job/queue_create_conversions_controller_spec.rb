@@ -13,7 +13,7 @@ describe Job::QueueCreateConversionsController do
     advertiser_app = Factory(:app)
     @offer = advertiser_app.primary_offer
     @click = Factory(:click)
-    reward = Factory(:reward,
+    @reward = Factory(:reward,
       :type => 'offer',
       :publisher_app_id => publisher_app.id,
       :advertiser_app_id => advertiser_app.id,
@@ -23,9 +23,9 @@ describe Job::QueueCreateConversionsController do
       :publisher_amount => 1,
       :advertiser_amount => 1,
       :tapjoy_amount => 1)
-    reward.stubs(:click).returns(@click)
-    reward.stubs(:offer).returns(@offer)
-    Reward.expects(:find).with('reward_key', :consistent => true).returns(reward)
+    @reward.stubs(:click).returns(@click)
+    @reward.stubs(:offer).returns(@offer)
+    Reward.expects(:find).with('reward_key', :consistent => true).returns(@reward)
   end
 
   # remove this once we're sure all remaining queue message are json-encoded
@@ -36,19 +36,23 @@ describe Job::QueueCreateConversionsController do
   context 'with a json-encoded message' do
     context 'with an offer with conversion_tracking_urls' do
       before :each do
-        @offer.conversion_tracking_urls = %w(http://www.example.com)
-
         @click.x_do_not_track_header = '1'
         @click.dnt_header = '1'
         @click.user_agent_header = 'Firefox'
-        @http_request = ActionController::Request.new('HTTP_X_DO_NOT_TRACK' => @click.x_do_not_track_header,
-          'HTTP_USER_AGENT' => @click.user_agent_header,
-          'HTTP_DNT' => @click.dnt_header)
 
-        Conversion.any_instance.stubs(:advertiser_offer).returns(@offer)
+        @http_request = ActionController::Request.new({})
+
+        ActionController::Request.expects(:new).returns(@http_request)
+
+        @offer.conversion_tracking_urls = %w(http://www.example.com)
         now = Time.zone.now
-        Conversion.any_instance.stubs(:created_at).returns(now)
+        @reward.stubs(:created).returns(now)
         @offer.expects(:queue_conversion_tracking_requests).with(@http_request, now.to_i.to_s).once
+      end
+
+      after :each do
+        @http_request.http_headers.should == { 'X-Do-Not-Track' => @click.x_do_not_track_header,
+          'User-Agent' => @click.user_agent_header, 'Dnt' => @click.dnt_header }
       end
 
       context 'with a \'request_url\' parameter' do
@@ -57,11 +61,8 @@ describe Job::QueueCreateConversionsController do
           message = json_message(test_url)
           Reward.expects(:find).with(message, :consistent => true).returns(nil)
 
-          @http_request.env['REQUEST_URL'] = test_url
-          ActionController::Request.expects(:new).with(@http_request.env).returns(@http_request)
-
           get(:run_job, :message => message)
-          @http_request.url.should == test_url # make sure 'url' method was re-defined to look at 'REQUEST_URL'
+          @http_request.url.should == test_url # make sure 'url' method was re-defined
         end
       end
 
@@ -71,11 +72,8 @@ describe Job::QueueCreateConversionsController do
           message = json_message
           Reward.expects(:find).with(message, :consistent => true).returns(nil)
 
-          @http_request.env['REQUEST_URL'] = default_url
-          ActionController::Request.expects(:new).with(@http_request.env).returns(@http_request)
-
           get(:run_job, :message => message)
-          @http_request.url.should == default_url # make sure 'url' method was re-defined to look at 'REQUEST_URL'
+          @http_request.url.should == default_url # make sure 'url' method was re-defined
         end
       end
     end
