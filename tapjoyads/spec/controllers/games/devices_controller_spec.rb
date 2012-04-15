@@ -36,14 +36,6 @@ describe Games::DevicesController do
       get(:finalize, {:data => ObjectEncryptor.encrypt(@data)})
       Click.new(:key => "#{@inviter.id}.invite[1]", :consistent => true).should_not be_new_record
     end
-
-    it "queues the offer's click_tracking_urls properly" do
-      offer = Factory(:app).primary_offer
-      Click.any_instance.stubs(:offer).returns(offer)
-      offer.expects(:queue_click_tracking_requests).once
-
-      get(:finalize, {:data => ObjectEncryptor.encrypt(@data)})
-    end
   end
 
 end
