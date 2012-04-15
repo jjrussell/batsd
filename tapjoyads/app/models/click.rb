@@ -51,17 +51,6 @@ class Click < SimpledbShardedResource
   self.sdb_attr :last_clicked_at, :type => :time, :force_array => true, :replace => false
   self.sdb_attr :last_installed_at, :type => :time, :force_array => true, :replace => false
 
-  attr_writer :http_request
-
-  def save
-    super.tap do
-      if @http_request
-        offer.queue_click_tracking_requests(@http_request)
-        self.http_request = nil
-      end
-    end
-  end
-
   def dynamic_domain_name
     domain_number = @key.matz_silly_hash % NUM_CLICK_DOMAINS
 
