@@ -41,7 +41,7 @@ describe Job::QueueCreateConversionsController do
         @click.user_agent_header = 'Firefox'
 
         @offer.conversion_tracking_urls = %w(http://www.example.com)
-        @reward.stubs(:created).returns(Time.zone.now)
+        @reward.stubs(:created).returns(Time.zone.now.to_f.to_s)
       end
 
       context 'with a \'request_url\' parameter' do
