@@ -194,7 +194,7 @@ ja:
       developers: Developers
       privacy: プライバシーポリシー
     games:
-      about_body: 使用中のアプリをより楽しみ、自分好みの新しいアプリに出会える
+      about_body: お気に入りのアプリを見つけて、もっと便利にもっと楽しく使えます
       about_title: "\"自分が好きなアプリを正確にわかってくれる\""
       account_created_body: アカウントの登録を完了しました！
       account_created_title: 登録完了！
@@ -402,7 +402,7 @@ ja:
       twitter_invite_msg: さんからTapjoyへの招待が届きました。Tapjoyは今最も注目のアプリを見つけるのに最適の場所です。サインアップはフリー！
       twitter_invite_title: ダイレクトメッセージで招待したいTwitterの友達を選択してください。
       unable_to_process: 申し訳ございませんが、登録できません。
-      unlock_mobile_joy: "Mobile Joyを解除"
+      unlock_mobile_joy: "Mobile Joyをみつけよう"
       unmark_as_favorite: お気に入りから削除する
       welcome_tapjoy: Tapjoyへようこそ！
       wifi_required: WiFi必須
