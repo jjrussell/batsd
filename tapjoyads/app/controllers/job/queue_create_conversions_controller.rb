@@ -20,7 +20,7 @@ class Job::QueueCreateConversionsController < Job::SqsReaderController
 
     if message.is_a?(Hash)
       referer_url = (message[:request_url] || 'https://api.tapjoy.com/connect')
-      reward.offer.queue_conversion_tracking_requests(referer_url)
+      reward.offer.queue_conversion_tracking_requests(referer_url, reward.created.to_i.to_s)
     end
   end
 
