@@ -1,5 +1,0 @@
-- offer.impression_tracking_urls.each do |url|
-  - if defined?(load_image) && !load_image
-    = image_tag('', :style => 'display:none;', :s => h(url))
-  - else
-    = image_tag(h(url), :style => 'display:none;')
