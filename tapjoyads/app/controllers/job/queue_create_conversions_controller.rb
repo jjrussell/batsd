@@ -8,7 +8,6 @@ class Job::QueueCreateConversionsController < Job::SqsReaderController
 
   def on_message(message)
     reward = Reward.find(message.body, :consistent => true)
-    http_request = nil
     if reward.nil? # message may be a JSON string
       message = JSON.parse(message.body).symbolize_keys
       reward = Reward.find(message[:reward_key], :consistent => true)
