@@ -7,6 +7,8 @@
       - currency_name = testing? ? 'credits' : @currency.name
       Thank you for completing the survey. You will receive your #{currency_reward} #{currency_name} shortly.
   #footer
+    .privacy
+      = link_to t('text.footer.privacy'), 'http://info.tapjoy.com/about-tapjoy/privacy-policy/', :target => '_blank'
     = render '/shared/truste'
 
 - content_for :page_styles do
