@@ -186,7 +186,6 @@ class App < ActiveRecord::Base
 
   def enable_reengagement_campaign!
     update_reengagements_with_enable_or_disable(true)
-    ReengagementOffer.cache_by_app_id(id)
   end
 
   def disable_reengagement_campaign!
