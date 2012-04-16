@@ -123,9 +123,6 @@ class Games::DevicesController < GamesController
     click.tapjoy_amount         = primary_click.tapjoy_amount
     click.exp                   = primary_click.exp
     click.device_name           = primary_click.device_name
-    click.user_agent_header     = request.user_agent
-    click.x_do_not_track_header = request.http_headers['X-Do-Not-Track']
-    click.dnt_header            = request.http_headers['Dnt']
 
     click.save
 

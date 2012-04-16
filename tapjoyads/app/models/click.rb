@@ -50,9 +50,6 @@ class Click < SimpledbShardedResource
   self.sdb_attr :mac_address
   self.sdb_attr :last_clicked_at, :type => :time, :force_array => true, :replace => false
   self.sdb_attr :last_installed_at, :type => :time, :force_array => true, :replace => false
-  self.sdb_attr :user_agent_header,      :cgi_escape => true
-  self.sdb_attr :x_do_not_track_header,  :cgi_escape => true
-  self.sdb_attr :dnt_header,             :cgi_escape => true
 
   def dynamic_domain_name
     domain_number = @key.matz_silly_hash % NUM_CLICK_DOMAINS
