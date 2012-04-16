@@ -715,7 +715,7 @@ class Offer < ActiveRecord::Base
   end
 
   def video_button_tracking_offers
-    @video_button_tracking_offers
+    @video_button_tracking_offers || []
   end
 
   def update_video_button_tracking_offers
