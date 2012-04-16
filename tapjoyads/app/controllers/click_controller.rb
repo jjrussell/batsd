@@ -279,14 +279,11 @@ class ClickController < ApplicationController
     click.spend_share            = @currency.get_spend_share(@offer)
     click.local_timestamp        = params[:local_timestamp] if params[:local_timestamp].present?
     click.mac_address            = params[:mac_address]
-    click.user_agent_header      = request.user_agent
-    click.x_do_not_track_header  = request.http_headers['X-Do-Not-Track']
-    click.dnt_header             = request.http_headers['Dnt']
 
     click.save
 
     # for third party tracking vendors
-    @offer.queue_click_tracking_requests(request.url, *request.http_headers.values_at('User-Agent', 'X-Do-Not-Track', 'Dnt'))
+    @offer.queue_click_tracking_requests(request.url)
   end
 
   def handle_pay_per_click

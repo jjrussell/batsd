@@ -18,10 +18,9 @@ class Job::QueueCreateConversionsController < Job::SqsReaderController
       save_conversion(c)
     end
 
-    if message.is_a?(Hash) && reward.offer.conversion_tracking_urls.any?
-      click = reward.click
+    if message.is_a?(Hash)
       referer_url = (message[:request_url] || 'https://api.tapjoy.com/connect')
-      reward.offer.queue_conversion_tracking_requests(referer_url, click.user_agent_header, click.x_do_not_track_header, click.dnt_header, reward.created.to_i.to_s)
+      reward.offer.queue_conversion_tracking_requests(referer_url)
     end
   end
 

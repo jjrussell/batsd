@@ -157,7 +157,7 @@ class GetOffersController < ApplicationController
         @web_request.save
 
         # third party tracking vendors
-        offer.queue_impression_tracking_requests(request.url, *request.http_headers.values_at('User-Agent', 'X-Do-Not-Track', 'Dnt'))
+        offer.queue_impression_tracking_requests(request.url)
       end
     end
   end
