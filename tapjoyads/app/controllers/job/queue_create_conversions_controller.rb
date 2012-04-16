@@ -20,20 +20,9 @@ class Job::QueueCreateConversionsController < Job::SqsReaderController
     end
 
     if message.is_a?(Hash) && reward.offer.conversion_tracking_urls.any?
-      http_request = ActionController::Request.new({}) # simulate 'connect' http request
-
-      # set up proper request url (will be used as 'Referer' HTTP header)
-      # if no request_url provided, use a fake one
-      http_request.env['REQUEST_URL'] = (message[:request_url] || 'https://api.tapjoy.com/connect')
-      def http_request.url; @env['REQUEST_URL']; end
-
-      # replace certain http headers with click values, since conversion requests often come from servers,
-      # whereas clicks come from end users' devices which is the info we want to pass along
-      %w(user_agent x_do_not_track dnt).each do |header|
-        http_request.env["HTTP_#{header.upcase}"] = reward.click.send("#{header}_header")
-      end
-
-      reward.offer.queue_conversion_tracking_requests(http_request, reward.created.to_i.to_s)
+      click = reward.click
+      referer_url = (message[:request_url] || 'https://api.tapjoy.com/connect')
+      reward.offer.queue_conversion_tracking_requests(referer_url, click.user_agent_header, click.x_do_not_track_header, click.dnt_header, reward.created.to_i.to_s)
     end
   end
 
