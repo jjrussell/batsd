@@ -235,6 +235,8 @@ class DisplayAdController < ApplicationController
   end
 
   def queue_impression_tracking
-    @offer.queue_impression_tracking_requests(request) if @offer.present?
+    if @offer.present?
+      @offer.queue_impression_tracking_requests(request.url, *request.http_headers.values_at('User-Agent', 'X-Do-Not-Track', 'Dnt'))
+    end
   end
 end

@@ -155,17 +155,10 @@ describe GetOffersController do
       @offer = Factory(:app).primary_offer
     end
 
-    context 'with third party tracking URLs' do
-      it 'should generate hidden image tags' do
-        url = "https://dummyurl.com"
-        @offer.impression_tracking_urls = [url]
-
-        OfferCacher.stubs(:get_unsorted_offers_prerejected).returns([@offer])
-        get(:webpage, @params)
-
-        pending "TODO: Load #image_tag method correctly"
-        response.body.should include(image_tag('', :style => 'display:none;', :s => url))
-      end
+    it 'should queue up tracking url calls' do
+      OfferCacher.stubs(:get_unsorted_offers_prerejected).returns([@offer])
+      @offer.expects(:queue_impression_tracking_requests).once
+      get(:webpage, @params)
     end
 
     it 'assigns test offer for test devices' do

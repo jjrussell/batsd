@@ -285,7 +285,8 @@ class ClickController < ApplicationController
 
     click.save
 
-    @offer.queue_click_tracking_requests(request) # for third party tracking vendors
+    # for third party tracking vendors
+    @offer.queue_click_tracking_requests(request.url, *request.http_headers.values_at('User-Agent', 'X-Do-Not-Track', 'Dnt'))
   end
 
   def handle_pay_per_click
