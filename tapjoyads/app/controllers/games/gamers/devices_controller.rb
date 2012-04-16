@@ -101,28 +101,28 @@ class Games::Gamers::DevicesController < GamesController
 
     click = Click.new(:key => "#{current_gamer.referred_by}.invite[#{referral_count}]")
 
-    click.clicked_at            = now
-    click.viewed_at             = now
-    click.udid                  = primary_click.udid
-    click.publisher_app_id      = primary_click.publisher_app_id
-    click.publisher_user_id     = primary_click.publisher_user_id
-    click.advertiser_app_id     = primary_click.advertiser_app_id
-    click.displayer_app_id      = primary_click.displayer_app_id
-    click.offer_id              = primary_click.offer_id
-    click.currency_id           = primary_click.currency_id
-    click.reward_key            = UUIDTools::UUID.random_create.to_s
-    click.reward_key_2          = primary_click.reward_key_2
-    click.source                = primary_click.source
-    click.ip_address            = primary_click.ip_address
-    click.country               = primary_click.country
-    click.type                  = primary_click.type
-    click.advertiser_amount     = primary_click.advertiser_amount
-    click.publisher_amount      = primary_click.publisher_amount
-    click.currency_reward       = primary_click.currency_reward
-    click.displayer_amount      = primary_click.displayer_amount
-    click.tapjoy_amount         = primary_click.tapjoy_amount
-    click.exp                   = primary_click.exp
-    click.device_name           = primary_click.device_name
+    click.clicked_at        = now
+    click.viewed_at         = now
+    click.udid              = primary_click.udid
+    click.publisher_app_id  = primary_click.publisher_app_id
+    click.publisher_user_id = primary_click.publisher_user_id
+    click.advertiser_app_id = primary_click.advertiser_app_id
+    click.displayer_app_id  = primary_click.displayer_app_id
+    click.offer_id          = primary_click.offer_id
+    click.currency_id       = primary_click.currency_id
+    click.reward_key        = UUIDTools::UUID.random_create.to_s
+    click.reward_key_2      = primary_click.reward_key_2
+    click.source            = primary_click.source
+    click.ip_address        = primary_click.ip_address
+    click.country           = primary_click.country
+    click.type              = primary_click.type
+    click.advertiser_amount = primary_click.advertiser_amount
+    click.publisher_amount  = primary_click.publisher_amount
+    click.currency_reward   = primary_click.currency_reward
+    click.displayer_amount  = primary_click.displayer_amount
+    click.tapjoy_amount     = primary_click.tapjoy_amount
+    click.exp               = primary_click.exp
+    click.device_name       = primary_click.device_name
 
     click.save
 
