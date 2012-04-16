@@ -36,7 +36,7 @@ describe GetOffersController do
 
     it 'should queue up tracking url calls' do
       url = @request.url + "service1.asmx/GetOffersForPublisherCurrencyByType?#{@params.to_query}"
-      @offer.expects(:queue_impression_tracking_requests).with(url, @request.user_agent, nil, nil).once
+      @offer.expects(:queue_impression_tracking_requests).with(url).once
 
       get(:index, @params)
     end
@@ -159,7 +159,7 @@ describe GetOffersController do
     it 'should queue up tracking url calls' do
       OfferCacher.stubs(:get_unsorted_offers_prerejected).returns([@offer])
       url = @request.url + "get_offers/webpage?#{@params.to_query}"
-      @offer.expects(:queue_impression_tracking_requests).with(url, @request.user_agent, nil, nil).once
+      @offer.expects(:queue_impression_tracking_requests).with(url).once
 
       get(:webpage, @params)
     end

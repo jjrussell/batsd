@@ -958,15 +958,9 @@ describe Offer do
 
   context "queue_third_party_tracking_request methods" do
     before(:each) do
-      @request = Request.new
       Sqs.stubs(:send_message)
       @urls = ['https://dummyurl.com?ts=[timestamp]', 'https://example.com?ts=[timestamp]']
-      @expected_headers = {
-        'Referer' => 'http://williamshat.com',
-        'User-Agent' => 'Firefox',
-        'X-Do-Not-Track' => '1',
-        'Dnt' => '1'
-      }
+      @referer = 'http://williamshat.com'
       now = Time.zone.now
       Time.zone.stubs(:now).returns(now)
 
@@ -978,26 +972,25 @@ describe Offer do
     context "without a provided timestamp" do
       before :each do
         @urls.each do |url|
-          Downloader.expects(:queue_get_with_retry).with(url.sub('[timestamp]', Time.zone.now.to_i.to_s), { :headers => @expected_headers }).once
+          Downloader.expects(:queue_get_with_retry).with(url.sub('[timestamp]', Time.zone.now.to_i.to_s), { :headers => { 'Referer' => @referer } }).once
         end
-        @args = @expected_headers.values_at('Referer', 'User-Agent', 'X-Do-Not-Track', 'Dnt')
       end
 
       describe ".queue_impression_tracking_requests" do
         it "should queue up the proper GET requests" do
-          @offer.queue_impression_tracking_requests(*@args)
+          @offer.queue_impression_tracking_requests(@referer)
         end
       end
 
       describe ".queue_click_tracking_requests" do
         it "should queue up the proper GET requests" do
-          @offer.queue_click_tracking_requests(*@args)
+          @offer.queue_click_tracking_requests(@referer)
         end
       end
 
       describe ".queue_conversion_tracking_requests" do
         it "should queue up the proper GET requests" do
-          @offer.queue_conversion_tracking_requests(*@args)
+          @offer.queue_conversion_tracking_requests(@referer)
         end
       end
     end
@@ -1006,33 +999,27 @@ describe Offer do
       before :each do
         @ts = Time.zone.now + 3600;
         @urls.each do |url|
-          Downloader.expects(:queue_get_with_retry).with(url.sub('[timestamp]', @ts.to_i.to_s), { :headers => @expected_headers }).once
+          Downloader.expects(:queue_get_with_retry).with(url.sub('[timestamp]', @ts.to_i.to_s), { :headers => { 'Referer' => @referer } }).once
         end
-        @args = @expected_headers.values_at('Referer', 'User-Agent', 'X-Do-Not-Track', 'Dnt') + [@ts.to_i.to_s]
       end
 
       describe ".queue_impression_tracking_requests" do
         it "should queue up the proper GET requests" do
-          @offer.queue_impression_tracking_requests(*@args)
+          @offer.queue_impression_tracking_requests(@referer, @ts.to_i.to_s)
         end
       end
 
       describe ".queue_click_tracking_requests" do
         it "should queue up the proper GET requests" do
-          @offer.queue_click_tracking_requests(*@args)
+          @offer.queue_click_tracking_requests(@referer, @ts.to_i.to_s)
         end
       end
 
       describe ".queue_conversion_tracking_requests" do
         it "should queue up the proper GET requests" do
-          @offer.queue_conversion_tracking_requests(*@args)
+          @offer.queue_conversion_tracking_requests(@referer, @ts.to_i.to_s)
         end
       end
     end
   end
-end
-
-class Request
-  def http_headers; {'User-Agent' => 'Bob'}; end
-  def url; 'http://williamshat.com'; end
 end
