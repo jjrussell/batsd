@@ -281,7 +281,7 @@ class ClickController < ApplicationController
     click.mac_address            = params[:mac_address]
     click.user_agent_header      = request.user_agent
     click.x_do_not_track_header  = request.http_headers['X-Do-Not-Track']
-    click.dnt_header             = request.http_headers['DNT']
+    click.dnt_header             = request.http_headers['Dnt']
 
     click.save
 
