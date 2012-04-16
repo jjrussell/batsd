@@ -1,3 +1,5 @@
+require_dependency 'video_button' # Offer caches VideoButton objects
+
 class Offer < ActiveRecord::Base
   include UuidPrimaryKey
   include Offer::Ranking
@@ -706,12 +708,12 @@ class Offer < ActiveRecord::Base
   end
 
   def video_button_tracking_offers
-    @video_button_tracking_offers || update_video_button_tracking_offers
+    @video_button_tracking_offers
   end
 
   def update_video_button_tracking_offers
     return unless item_type == 'VideoOffer'
-    @video_button_tracking_offers = item.video_buttons.collect(&:tracking_offer)
+    @video_button_tracking_offers = item.video_buttons.collect(&:tracking_offer).compact
   end
 
   private
