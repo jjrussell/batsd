@@ -6,7 +6,7 @@
   %p.offertext
     - if @offer.item_type == 'App'
       = offer_text(@offer, @currency)
-  - link_to((params[:preview] == 'true' ? '#' : get_click_url(@offer)), :class => 'image-link') do
+  = link_to((params[:preview] == 'true' ? '#' : get_click_url(@offer)), :class => 'image-link') do
     %img{ :src => "#{CLOUDFRONT_URL}/images/blank.png", :s => @offer.get_icon_url(:source => :cloudfront, :size => '256'), :class => 'icon', :id => 'icon' }
     .offername= @offer.truncated_name
   .clear

@@ -106,8 +106,7 @@ class Job::QueueConversionTrackingController < Job::SqsReaderController
     end
 
     Sqs.send_message(QueueNames::SEND_CURRENCY, reward.key) if offer.rewarded? && currency.callback_url != Currency::NO_CALLBACK_URL
-    message = { :reward_id => reward.key, :request_url => json['request_url'] }
-    Sqs.send_message(QueueNames::CREATE_CONVERSIONS, message.to_json)
+    Sqs.send_message(QueueNames::CREATE_CONVERSIONS, reward.key)
 
     begin
       reward.update_realtime_stats

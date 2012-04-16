@@ -1,6 +1,6 @@
 require 'spec/spec_helper'
 
-describe Tools::BrandsController do
+describe BrandsController do
  before :each do
     fake_the_web
     activate_authlogic
@@ -92,7 +92,7 @@ describe Tools::BrandsController do
       end
 
       it 'will not succeed' do
-        get(:offers, :id => '123')
+        get(:show, :id => '123')
         response.should_not be_success
       end
     end

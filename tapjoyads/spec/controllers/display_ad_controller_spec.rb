@@ -127,7 +127,7 @@ describe DisplayAdController do
       it 'should queue up tracking url calls' do
         @offer.expects(:queue_impression_tracking_requests).once
 
-        get(:index, @params)
+        get(:webview, @params)
       end
 
       context 'with unfilled request' do
@@ -195,6 +195,9 @@ describe DisplayAdController do
     end
 
     describe '#webview' do
+
+      it 'should queue up tracking url calls' do
+        @offer.expects(:queue_impression_tracking_requests).once
 
         get(:webview, @params)
       end

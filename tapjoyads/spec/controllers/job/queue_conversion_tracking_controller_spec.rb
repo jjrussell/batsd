@@ -211,7 +211,7 @@ describe Job::QueueConversionTrackingController do
     end
 
     it 'enqueues a create-conversions message' do
-      Sqs.expects(:send_message).with(QueueNames::CREATE_CONVERSIONS, { :reward_key => @reward_uuid, :request_url => @request_url }.to_json)
+      Sqs.expects(:send_message).with(QueueNames::CREATE_CONVERSIONS, @reward_uuid)
       do_get
     end
 

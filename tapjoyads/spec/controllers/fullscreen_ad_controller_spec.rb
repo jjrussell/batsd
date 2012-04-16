@@ -35,7 +35,7 @@ describe FullscreenAdController do
         @offer.impression_tracking_urls = [url]
 
         get(:index, @params)
-        response.body.should include(image_tag(url, :style => 'display:none;'))
+        response.body.should have_selector "img[src='#{url}'][style='display:none;']"
       end
     end
 
@@ -76,7 +76,7 @@ describe FullscreenAdController do
           @offer.impression_tracking_urls = [url]
 
           get(:index, @params)
-          response.body.should include(image_tag(url, :style => 'display:none;'))
+          response.body.should have_selector "img[src='#{url}'][style='display:none;']"
         end
       end
     end

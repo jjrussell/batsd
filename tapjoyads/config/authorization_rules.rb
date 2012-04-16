@@ -142,6 +142,8 @@ authorization do
     has_permission_on :dashboard_tools_offers, :to => [ :creative, :approve_creative, :reject_creative ]
     has_permission_on :dashboard_tools_currency_approvals, :to => [ :index, :history, :approve, :reject]
     has_permission_on :dashboard_tools_survey_offers, :to => [ :index, :show, :new, :create, :edit, :update, :destroy, :toggle_enabled ]
+    has_permission_on :dashboard_tools_brand_offers, :to => [ :index, :create, :delete ]
+    has_permission_on :dashboard_tools_brands, :to => [ :index, :new, :create, :edit, :update, :show ]
     has_permission_on :dashboard_tools_clients, :to => [ :index, :show, :new, :create, :edit, :update, :add_partner, :remove_partner ]
   end
 
