@@ -268,8 +268,8 @@ class Offer < ActiveRecord::Base
       urls
     end
 
-    define_method "#{method_name}=" do |vals|
-      super(vals.select { |val| val.present? })
+    define_method "#{method_name}=" do |urls|
+      super(urls.to_a.select { |url| url.present? })
     end
 
     define_method "#{method_name}_was" do
