@@ -1,3 +1,5 @@
+require_dependency 'video_button' # Offer caches VideoButton objects
+
 class Offer < ActiveRecord::Base
   include UuidPrimaryKey
   include Offer::Ranking
@@ -79,6 +81,8 @@ class Offer < ActiveRecord::Base
   }
 
   TRUSTED_TRACKING_VENDORS = %w( phluantmobile.net )
+
+  attr_reader :video_button_tracking_offers
 
   has_many :advertiser_conversions, :class_name => 'Conversion', :foreign_key => :advertiser_offer_id
   has_many :rank_boosts
@@ -191,6 +195,7 @@ class Offer < ActiveRecord::Base
   after_save :update_tapjoy_sponsored_associated_offers
   after_save :sync_banner_creatives! # NOTE: this should always be the last thing run by the after_save callback chain
   before_cache :clear_creative_blobs
+  before_cache :update_video_button_tracking_offers
 
   named_scope :enabled_offers, :joins => :partner,
     :readonly => false, :conditions => "tapjoy_enabled = true AND user_enabled = true AND item_type != 'RatingOffer' AND item_type != 'ReengagementOffer' AND ((payment > 0 AND #{Partner.quoted_table_name}.balance > payment) OR (payment = 0 AND reward_value > 0)) AND tracking_for_id IS NULL"
@@ -725,6 +730,15 @@ class Offer < ActiveRecord::Base
       forwarded_headers['Referer'] = request.url
       Downloader.queue_get_with_retry(url, { :headers => forwarded_headers })
     end
+  end
+
+  def video_button_tracking_offers
+    @video_button_tracking_offers || []
+  end
+
+  def update_video_button_tracking_offers
+    return unless item_type == 'VideoOffer'
+    @video_button_tracking_offers = item.video_buttons.collect(&:tracking_offer).compact
   end
 
   private
