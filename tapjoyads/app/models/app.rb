@@ -10,7 +10,18 @@ class App < ActiveRecord::Base
       code.match(/[A-Z]{2}/) && code != 'KP'
     end.map do |name, code|
       ["#{code} -- #{name}", code]
-    end.sort.unshift(["Select a country", ""])
+    end.sort
+  WINDOWS_ACCEPT_LANGUAGES = Set.new(%w(
+      es-ar en-au nl-be fr-be pt-br en-ca fr-ca es-cl es-co cs-cz da-dk de-de
+      es-es fr-fr en-hk en-in id-id en-ie it-it hu-hu ms-my es-mx nl-nl en-nz
+      nb-no de-at es-pe en-ph pl-pl pt-pt de-ch en-sg en-za fr-ch fi-fi sv-se
+      en-gb en-us zh-cn el-gr zh-hk ja-jp ko-kr ru-ru zh-tw
+    ))
+  WINDOWS_ACCEPT_LANGUAGES_OPTIONS = WINDOWS_ACCEPT_LANGUAGES.map do |pair|
+    country_index = GeoIP::CountryCode.index(pair[3, 2].upcase)
+    country_name = GeoIP::CountryName[country_index]
+    [ "#{country_name} - #{pair[0, 2]}", pair ]
+  end.sort
   PLATFORM_DETAILS = {
     'android' => {
       :expected_device_types => Offer::ANDROID_DEVICES,
@@ -174,7 +185,6 @@ class App < ActiveRecord::Base
 
   def enable_reengagement_campaign!
     update_reengagements_with_enable_or_disable(true)
-    ReengagementOffer.cache_by_app_id(id)
   end
 
   def disable_reengagement_campaign!

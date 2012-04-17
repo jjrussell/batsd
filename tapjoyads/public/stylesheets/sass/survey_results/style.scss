@@ -27,6 +27,19 @@ body {
 #footer {
   margin-top: 10px;
   text-align: center;
+
+  .privacy {
+    margin: 12px 0;
+
+    a {
+      color: #444;
+      font-size: 0.8em;
+      text-decoration: none;
+    }
+    a:hover {
+      color: #777;
+    }
+  }
 }
 .message, .message_error {
   color: #505F6D;
