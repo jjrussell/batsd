@@ -73,7 +73,6 @@ class Games::HomepageController < GamesController
     end
   end
 
-
   def switch_device
     if params[:data].nil?
       redirect_to games_root_path
@@ -98,5 +97,15 @@ class Games::HomepageController < GamesController
     ios_link_url = "https://#{request.host}#{games_root_path}"
     GamesMailer.deliver_link_device(current_gamer, ios_link_url, GAMES_ANDROID_MARKET_URL )
     render(:json => { :success => true })
+  end
+
+  private
+
+  def params_id
+    if params[:eid].present?
+      ObjectEncryptor.decrypt(params[:eid])
+    elsif params[:id].present?
+      params[:id]
+    end
   end
 end
