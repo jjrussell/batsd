@@ -31,9 +31,6 @@ class SupportRequest < SimpledbResource
           :currency   => currency,
           :offer      => offer,
           :user_agent => user_agent )
-
-    # click                       = offer.present? ? get_last_click(params[:udid], offer) : nil
-    # self.click_id               = click ? click.id : nil
   end
 
   def fill_from_click(click, params, device, gamer, user_agent)
