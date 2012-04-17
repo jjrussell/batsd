@@ -95,7 +95,7 @@ class Dashboard::SearchController < Dashboard::DashboardController
   end
 
   def gamers
-    term = params[:term].strip
+    term = params[:term].to_s.strip
 
     if term.size >= 2
       conditions = [ "email LIKE ?", "#{term}%" ]
