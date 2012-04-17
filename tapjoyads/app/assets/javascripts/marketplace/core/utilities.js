@@ -16,6 +16,14 @@
         }
       },
 
+      googleLog : function (category, action, label, value) {
+        var args;
+        if(typeof _gaq === "object" && _gaq.push) {
+          args = Array.prototype.slice.call(arguments);
+          _gaq.push(["_trackEvent"].concat(args));
+        }
+      },
+
       mask: function(){
         var wrap = $(document.createElement('div'));
 
@@ -49,6 +57,7 @@
 
         wrap.attr('id', 'ui-notification')
         .addClass('ui-notification')
+        .addClass(config.type)
         .appendTo(config.container);
 
         wrap.html(config.message)
@@ -141,6 +150,42 @@
         };
       },
 
+      underscoreTemplate: function (str, data) {
+        var config = {
+          evaluate    : /<%([\s\S]+?)%>/g,
+          interpolate : /<%=([\s\S]+?)%>/g,
+          escape      : /<%-([\s\S]+?)%>/g
+        },
+        noMatch = /.^/,
+        tmpl,
+        func,
+        unescape = function (code) {
+          return code.replace(/\\\\/g, '\\').replace(/\\'/g, "'");
+        };
+
+        tmpl = 'var __p=[],print=function(){__p.push.apply(__p,arguments);};' +
+          'with(obj||{}){__p.push(\'' +
+          str.replace(/\\/g, '\\\\')
+             .replace(/'/g, "\\'")
+             .replace(config.escape || noMatch, function (match, code) {
+              return "',_.escape(" + unescape(code) + "),'";
+            })
+             .replace(config.interpolate || noMatch, function (match, code) {
+              return "'," + unescape(code) + ",'";
+            })
+             .replace(config.evaluate || noMatch, function (match, code) {
+              return "');" + unescape(code).replace(/[\r\n\t]/g, ' ') + ";__p.push('";
+            })
+             .replace(/\r/g, '\\r')
+             .replace(/\n/g, '\\n')
+             .replace(/\t/g, '\\t') +
+             "');}return __p.join('');";
+        func = new Function('obj', tmpl);
+        if (data) { return func(data); }
+        return function (data) {
+          return func.call(this, data);
+        };
+      },
 
 	    debounce: function(fn, delay, execASAP, scope){
 	      var timeout;

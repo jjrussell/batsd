@@ -3,10 +3,12 @@ class Invitation < ActiveRecord::Base
 
   EMAIL    = 0
   FACEBOOK = 1
+  TWITTER  = 2
 
   CHANNEL = {
     EMAIL    => 'email',
     FACEBOOK => 'facebook',
+    TWITTER  => 'twitter'
   }
 
   PENDING  = 0
@@ -29,6 +31,8 @@ class Invitation < ActiveRecord::Base
 
   named_scope :email,    :conditions => { :channel => EMAIL }
   named_scope :facebook, :conditions => { :channel => FACEBOOK }
+  named_scope :twitter,  :conditions => { :channel => TWITTER }
+  named_scope :by_channel, lambda { |channel| { :conditions => [ "channel = ?", channel ]} }
   named_scope :pending_invitations_for, lambda { |external_info| { :conditions => ["external_info = ? and status = ?", external_info, PENDING ] } }
   named_scope :for_gamer, lambda { |gamer| { :conditions => ['gamer_id = ?', gamer.id] } }
 

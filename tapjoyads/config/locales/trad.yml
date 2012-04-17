@@ -3,34 +3,43 @@ zh:
   activerecord:
     errors:
       full_messages:
-        format: ~
+        format: "%{attribute} %{message}"
       messages:
-        accepted: ~
-        blank: ~
-        confirmation: ~
-        empty: ~
-        equal_to: ~
-        even: ~
-        exclusion: ~
-        greater_than: ~
-        greater_than_or_equal_to: ~
-        inclusion: ~
-        invalid: ~
-        less_than: ~
-        less_than_or_equal_to: ~
-        not_a_number: ~
-        not_an_integer: ~
-        odd: ~
-        record_invalid: ~
-        taken: ~
-        too_long: ~
-        too_short: ~
-        wrong_length: ~
+        accepted: "must be accepted"
+        blank: "can't be blank"
+        confirmation: "doesn't match confirmation"
+        empty: "can't be empty"
+        equal_to: "must be equal to %{count}"
+        even: "must be even"
+        exclusion: "is reserved"
+        greater_than: "must be greater than %{count}"
+        greater_than_or_equal_to: "must be greater than or equal to %{count}"
+        inclusion: "is not included in the list"
+        invalid: 是無效的
+        less_than: "must be less than %{count}"
+        less_than_or_equal_to: "must be less than or equal to %{count}"
+        not_a_number: "is not a number"
+        not_an_integer: "must be an integer"
+        odd: "must be odd"
+        record_invalid: "Validation failed: %{errors}"
+        taken: "has already been taken"
+        too_long: "is too long (maximum is %{count} characters)"
+        too_short: "is too short (minimum is %{count} characters)"
+        wrong_length: "is the wrong length (should be %{count} characters)"
+      models:
+        gamer_sessions:
+          attributes:
+            email: Email
+            password: Password
       template:
-        body: ~
+        body: "There were problems with the following fields:"
         header:
-          one: ~
-          other: ~
+          one: "1 error prohibited this %{model} from being saved"
+          other: "%{count} errors prohibited this %{model} from being saved"
+  authlogic:
+    error_messages:
+      login_not_found: "Email is invalid"
+      password_invalid: "Password is invalid"
   date:
     abbr_day_names: ~
     abbr_month_names: ~
@@ -85,34 +94,34 @@ zh:
       second: ~
       year: ~
   errors:
-    format: ~
+    format: "%{attribute} %{message}"
     messages:
-      accepted: ~
-      blank: ~
-      confirmation: ~
-      empty: ~
-      equal_to: ~
-      even: ~
-      exclusion: ~
-      greater_than: ~
-      greater_than_or_equal_to: ~
-      inclusion: ~
-      invalid: ~
-      less_than: ~
-      less_than_or_equal_to: ~
-      not_a_number: ~
-      not_an_integer: ~
-      odd: ~
-      too_long: ~
-      too_short: ~
-      wrong_length: ~
+      accepted: "must be accepted"
+      blank: "can't be blank"
+      confirmation: "doesn't match confirmation"
+      empty: "can't be empty"
+      equal_to: "must be equal to %{count}"
+      even: "must be even"
+      exclusion: "is reserved"
+      greater_than: "must be greater than %{count}"
+      greater_than_or_equal_to: "must be greater than or equal to %{count}"
+      inclusion: "is not included in the list"
+      invalid: 是無效的
+      less_than: "must be less than %{count}"
+      less_than_or_equal_to: "must be less than or equal to %{count}"
+      not_a_number: "is not a number"
+      not_an_integer: "must be an integer"
+      odd: "must be odd"
+      too_long: "is too long (maximum is %{count} characters)"
+      too_short: "is too short (minimum is %{count} characters)"
+      wrong_length: "is the wrong length (should be %{count} characters)"
   helpers:
     select:
-      prompt: ~
+      prompt: "Please select"
     submit:
-      create: ~
-      submit: ~
-      update: ~
+      create: "Create %{model}"
+      submit: "Save %{model}"
+      update: "Update %{model}"
   number:
     currency:
       format:
@@ -162,11 +171,11 @@ zh:
         delimiter: ~
   support:
     array:
-      last_word_connector: ~
-      two_words_connector: ~
-      words_connector: ~
+      last_word_connector: ", and "
+      two_words_connector: " and "
+      words_connector: ", "
     select:
-      prompt: ~
+      prompt: "Please select"
   text:
     featured:
       download: 下载
@@ -178,12 +187,12 @@ zh:
       title: "赚 %{currency}"
       try_out: 试一试
     footer:
-      about: ~
-      advertisers: ~
-      blog: ~
-      copyright: ~
-      developers: ~
-      privacy: ~
+      about: "About Tapjoy"
+      advertisers: Advertisers
+      blog: Blog
+      copyright: "版權宣告; %{year} Tapjoy, Inc. All Rights Reserved. Tapjoy and the Tapjoy logo are trademarks or registered trademarks of Tapjoy, Inc. All third party logos and trademarks mentioned are the property of their respective owners."
+      developers: Developers
+      privacy: "Privacy Policy"
     games:
       about_body: 愛您擁有的，覓您喜歡的
       about_title: "\"真有意思，它就是知道我喜歡什麼應用。 \""
@@ -195,12 +204,19 @@ zh:
       add_to_homescreen: "把 %{tapjoy} 加到你的首頁"
       advertisers_body: 讓您的產品深入百萬用戶，家喻戶曉！
       advertisers_title: 廣告商
-      allow_marketing_emails: "允許Tapjoy向我發送市場營銷電子郵件"
-      almost_done: ~
+      allow_marketing_emails: 允許Tapjoy向我發送市場營銷電子郵件
+      almost_done: 就快好了!
       already_registered:
         one: "%{name} 已註冊。您現在關注他/她."
         other: "%{name} 已註冊。您現在關注他們."
       amount_and_currency: "%{amount} %{currency}"
+      app_review_concern_reported: "Concern Reported"
+      app_review_h_no: "No"
+      app_review_h_yes: "Yes"
+      app_review_more: more...
+      app_review_report_concern: "Report concern"
+      app_review_thanks_for_feedback: "Thank you for your feedback"
+      app_review_was_helpful: "Was this review helpful?"
       back_to_top: 返回頁首
       birthdate: 生日
       browse_offers: 瀏覽廣告要求
@@ -210,15 +226,15 @@ zh:
       change: 變更
       change_linked_account: 變更連接帳戶
       choose_section: 功能選擇
-      close: ~
+      close: 關閉
       collect: 收集
       collect_rewards: 收集獎勵
       connect_my_device: 連接我的終端
       connect_to_facebook: 點擊以連結到Facebook
       connect_your_android: 請連接您的Andr​​oid終端
       connect_your_device: 請連接您的終端
-      connected_to_facebook: ~
-      connected_to_twitter: ~
+      connected_to_facebook: "Connected to Facebook"
+      connected_to_twitter: "Connected to Twitter"
       contact_support: 客戶支持
       contact_us: 聯繫我們
       cookies_required: 請打開瀏覽器的cookie設定
@@ -227,51 +243,56 @@ zh:
       delete_my_account: 刪除我的帳戶
       developers_body: 用我們的增值工具為您的應用創造可觀收益
       developers_title: 開發者
-      discover_apps: ~
-      download_now: ~
+      discover_apps: "Join the millions of mobile app lovers on Tapjoy and discover the best-rated apps. Get started today!"
+      download_now: "Download now"
       earn: "賺取%{currency} "
-      earn_rewards: ~
+      earn_rewards: 賺取獎勵
       earn_title: "請完成以下任何廣告要求為您的%{app_name}賺取%{currency} "
-      earning_rewards: ~
+      earning_rewards: Tapjoy提供賺取你所有喜愛的行動應用的獎勵的一站式服務
       edit: 編輯
-      email_device_link: ~
+      email_device_link: "Email device link"
       email_notification: 電郵通知
       enable_javascript: 請在瀏覽器設置菜單中啟用JavaScript以便繼續使用Tapjoy。
       enter_birthdate: 請輸入您的生日
       enter_email: 請輸入你的電子郵件地址
       enter_message: 請輸入一道訊息
-      enter_name: ~
+      enter_name: "Please enter your name"
       enter_password: 請輸入密碼
       enter_platform: 請選擇iOS或Android
       enter_tos: 請接受上述條款與條件
       enter_valid_email: 請輸入有效的電子郵件地址
-      error_mark_as_favorite: ~
-      error_unmark_as_favorite: ~
-      failed_to_change_linked: ~
+      errno_error: "There was a connection issue. Please try again later."
+      error_mark_as_favorite: "Error marking app as Favorite"
+      error_unmark_as_favorite: "Error unmarking app as Favorite"
+      facebook_connect_failed: "Failed to connect to your Facebook profile"
+      failed_to_change_linked: "Failed to change linked account."
       favorite_app: 最喜歡的應用
       favorite_apps: 最喜歡的應用
       favorite_category: 最喜歡的類型
-      favorites: ~
+      favorites: Favorites
       feedback: 反饋
       find_and_invite_friends: 尋找並邀請朋友
-      find_friends_from_facebook: ~
-      find_friends_from_twitter: ~
+      find_friends_from_facebook: "Find friends from Facebook"
+      find_friends_from_twitter: "Find friends from Twitter"
       find_friends_on_tapjoy: 尋找在其他網路中使用Tapjoy的朋友
       find_more_friends: 尋找更多朋友
       find_new_apps: 找新應用
       follow_us: 關注我們
       forgot_pass: 忘記密碼了？
       free: 免費！
+      friend_filter_label: "Start Typing a Name"
       generic_issue: 有問題了。請再試。
       get_app: 獲取應用
       get_it: 下載！
+      grant_permissions_for_invite: "Please grant us both permissions before sending out an invite."
       grant_us_access: 在發送邀請前請給予我們相應的授權/許可。
       how_it_works_body: 您的所有遊戲如下所列。按應用旁的按鈕開始賺取虛擬貨幣。
       how_it_works_title: 它的原理？
       install_and_run: "安裝並運行 %{name}"
-      install_android_app: ~
-      install_profile: ~
-      invalid_fields: ~
+      install_android_app: "Download the Tapjoy app on your Android device to get started."
+      install_profile: 在下一頁登錄你的資料就可以開始探索你喜愛的應用！
+      invalid_emails: "The email(s) provided were invalid"
+      invalid_fields: 輸入無效
       invite: 邀請好友！
       invite_by_email: 用電郵邀請
       invite_email_body: |-
@@ -286,17 +307,18 @@ zh:
         one: 邀請
         other: "邀請 %{count} 個朋友"
       invite_title: 發送一封電子郵件邀請
+      invite_twitter_followers: "Invite Twitter Followers!"
       invites_sent_to:
         one: "一個Tapjoy 邀請已發送給了%{name}"
         other: "Tapjoy 邀請已發送給了%{name}"
       issue_registering: 註冊帳戶發生問題
-      join_the_community: ~
-      join_the_community_blurb: ~
-      last_played: "最近玩的遊戲: %{game}"
-      link_account_header: ~
-      link_account_messaging: ~
-      link_account_messaging_android_href: ~
-      link_account_messaging_tjm_href: ~
+      join_the_community: 加入社群
+      join_the_community_blurb: 透過Tapjoy社群的應用評分與評論來探索更多的應用，今天就開始並親自參與！
+      last_played: "最後進行: %{game}"
+      link_account_header: Tapjoy提供你一面賺取正在進行的應用的貨幣，一面探索最熱門應用的一站式服務。為了感受完整的Tapjoy體驗，你必須連結你的裝置
+      link_account_messaging: "Tapjoy提供你一面賺取正在進行的應用的貨幣，一面探索最熱門iOS與Android應用的一站式服務。為了感受完整的Tapjoy體驗，你必須連結你的iOS或Android裝置。只要在你的iOS裝置上回訪 %{tjm_url} 或在你的Android裝置上回訪 %{android_market_url} 就可以開始了。同時，請隨性瀏覽本網站，創造你的個人檔案，以便我們提供你個性化的推薦。"
+      link_account_messaging_android_href: "download the Android app"
+      link_account_messaging_tjm_href: www.tapjoy.com
       link_my_facebook: 請連接到我的Facebook
       load_more: 請加載更多
       loading: 加載中...
@@ -305,6 +327,7 @@ zh:
       member_since: "會員從%{date}起"
       meta_description: "Tapjoy：針對Android、iPhone 和iPad 上移動應用的一站式服務"
       meta_keywords: 遊戲、移動遊戲、移動應用、ios、Android、iPhone、iPad、iTouch
+      mogli_reach_limit_error: "You have reached the limit. Please try again later."
       more_apps: 更多應用
       more_the_merrier: 獨戲樂不如眾戲樂
       my_apps: 我的應用
@@ -314,19 +337,23 @@ zh:
       none_selected: 沒有選中
       on_my: "在我的 %{device_name} 上"
       oops: 哦！
-      or_learn_more: ~
+      or_learn_more: "or learn more"
       other_options: 其他選項
-      our_tos_changed: "我們的％{terms_of_use}已經修訂。請查閱後接受。"
-      password_changed: ~
-      password_non_match: ~
+      our_tos_changed: "我們的%{terms_of_use}已經修訂。請查閱後接受。"
+      password_changed: 你的密碼已經變更了
+      password_non_match: "Password and Confirmation do not match"
+      please_connect_facebook: "Please connect your Facebook account"
+      post_to_facebook: "Post to Facebook!"
       post_to_facebook_content: "造訪Tapjoy來發現最好的應用與遊戲，還可以在你喜愛的應用中賺取虛擬貨幣。加入完全免費，所以現在就來造訪 tapjoy.com，獲得為你量身訂做的應用推薦"
       privacy_policy_href: 隱私政策
       profile: 我
-      profile_error: ~
-      profile_update: ~
+      profile_error: "There was an error updating your profile."
+      profile_update: 你的資料已經更新了
       provide_other_email: 請提供另一個電子郵件地址
+      provide_single_email: "Please provide at least one email"
+      reactivated_account: "Your account has been reactivated!"
       recipients_label: 請使用逗號區隔各電子郵件
-      recommend_apps: ~
+      recommend_apps: "Tapjoy personalizes app recommendations for you based on the apps you love to use."
       recommendations: 智能推薦
       recommendations_smart: 智能推薦
       registering: 註冊中
@@ -340,6 +367,7 @@ zh:
       review_issue: 有點問題，請稍後重試
       review_updated: 應用評論已成功更新
       reviewed_already: 你已經評論過這個應用了
+      scheduled_for_deletion: "Your account has been deactivated and scheduled for deletion!"
       select_current_device: 請選擇您當前使用的終端
       select_device: 請選擇您的終端
       select_friend: 請選擇至少一位朋友，然後才能發送邀請
@@ -347,10 +375,15 @@ zh:
       share_on_twitter: 在Twitter上分享
       share_with_everyone: 跟所有人分享
       share_with_your_friends: 跟朋友分享
+      social_invite_friend_error: "There was an issue with inviting your friend, please try again later."
+      social_need_authorize_error: "Please authorize us before sending out an invite."
       social_networks: 社交網絡
       social_settings: 社交化設置
-      spread_mobile_joy: ~
-      start_discovering: ~
+      social_to_next: "NEXT %{page_size}"
+      social_to_prev: "PREV %{page_size}"
+      social_to_top: "TOP &#8679;"
+      spread_mobile_joy: "Spread mobile joy"
+      start_discovering: "Start discovering with Tapjoy for free"
       tap_that: "輕觸%{icon} 選擇%{button}"
       tapjoy_picks: "Tapjoy 精選"
       terms_of_use_href: 使用條款
@@ -361,16 +394,23 @@ zh:
       thats_you: 那是你
       tos_acknowledge_html: "選中此框，確定自己接受%{terms_of_use} 及%{privacy_policy}"
       tos_change_acknowledge: 選中此框，確定自己接受服務條款。
+      twitter_at_least_one_friend_error: "You must select at least one friend before sending out an invite"
+      twitter_authenticate_error: "Error while authenticating via TWITTER. The service did not return valid data."
+      twitter_forbidden_error: "Requests are being denied due to update limits."
+      twitter_general_error: "Something happened to Twitter. Please try again later."
+      twitter_internal_error: "Something happened to Twttier. Please try again later"
+      twitter_invite_msg: "has invited you to join Tapjoy, the BEST place to find the hottest apps. Signing up is free!"
+      twitter_invite_title: "Please Select Twitter Friends to Invite via DM"
       unable_to_process: 抱歉，我們無法處理您的請求
       unlock_mobile_joy: "解放Mobile Joy"
-      unmark_as_favorite: ~
-      welcome_tapjoy: ~
+      unmark_as_favorite: "Remove from Favorites"
+      welcome_tapjoy: "Welcome to Tapjoy!"
       wifi_required: "需要Wifi 連接"
       wrong_device: 裝置不對?
-      you_are_following: ~
+      you_are_following: "You're following (%{count})"
       your_followers:
-        one: ~
-        other: ~
+        one: "Your follower"
+        other: "Your followers (%{count})"
     instructions:
       amount_and_currency: "%{amount} %{currency}"
       continue_link: 点击这里继续
@@ -410,7 +450,7 @@ zh:
       comment: 意見
       confirm_password: 確認密碼
       continue: 繼續
-      copyright: "版權宣告; %{year} Tapjoy, Inc. All Rights Reserved. Tapjoy and the Tapjoy logo are trademarks or registered trademarks of Tapjoy, Inc.  All third party logos and trademarks mentioned are the property of their respective owners."
+      copyright: "版權宣告; %{year} Tapjoy, Inc. All Rights Reserved. Tapjoy and the Tapjoy logo are trademarks or registered trademarks of Tapjoy, Inc. All third party logos and trademarks mentioned are the property of their respective owners."
       country: 國家
       day: 日
       earn_verb: 賺取
@@ -438,12 +478,12 @@ zh:
       name: 名字
       new_password: 新密碼
       nickname: 暱稱
-      none: ~
+      none: 沒有
       ok: OK
       options: 選項
       other: 其它
       password: 密碼
-      please_try_again: ~
+      please_try_again: "Please try again."
       preferences: 首選
       privacy: 隱私
       privacy_policy: 隱私政策
@@ -454,8 +494,8 @@ zh:
       reviews: 評論
       save: 保存
       send: 發送
-      sending: ~
-      sent: ~
+      sending: Sending
+      sent: Sent
       share: 共享
       sign_in: 註冊
       sign_up: 註冊
@@ -467,7 +507,7 @@ zh:
       unknown: 未明
       update_review: 更新評論
       updating: 更新中
-      view_all: ~
+      view_all: "View All"
       write_review: 撰寫評論
       year: 年
       zip_postal: 郵政編碼
@@ -491,8 +531,8 @@ zh:
       title: "沒收到 %{currency}?"
       unavailable_offer: ~
     unavailable_offer:
-      message: ~
-      optional_message: ~
+      message: "We're sorry but %{offer} is no longer available. You can return to the previous page and refresh to view the latest offer list."
+      optional_message: "Or, click here to download %{offer} anyway."
   time:
     am: ~
     formats:

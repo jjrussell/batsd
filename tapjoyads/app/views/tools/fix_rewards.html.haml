@@ -1,0 +1,22 @@
+- @page_title = 'Fix Rewards'
+
+%h1 Fix Rewards stuck in Send Currency Queue
+
+%p
+  Occasionally rewards get stuck in the send currency queue if 'sent_currency' is not properly cleared.
+  This tool takes in a reward key and clears that field if possible.
+
+- form_tag(fix_rewards_tools_path, :method => :get, :class => 'tjform') do
+  %table
+    %tbody
+      %tr
+        %th Reward Key
+        %td= text_field_tag(:reward_key, '', :size => 50, :id => 'reward_key_input')
+      %tr
+        %td{ :colspan => 2 }= submit_tag('Submit')
+
+- content_for :page_javascript do
+  :plain
+    $(function() {
+      $('#reward_key_input').focus();
+    });

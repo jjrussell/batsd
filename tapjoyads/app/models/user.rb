@@ -25,6 +25,10 @@ class User < ActiveRecord::Base
   attr_accessor :terms_of_service
   validates_acceptance_of :terms_of_service, :on => :create
   validates_presence_of :reseller, :if => Proc.new { |user| user.reseller_id? }
+  validates_presence_of :country, :on => :create,
+    :message => 'Please select a country'
+
+  serialize :account_type, Array
 
   before_create :regenerate_api_key
   after_create :create_mail_chimp_entry
@@ -75,8 +79,12 @@ class User < ActiveRecord::Base
     email
   end
 
-private
+  # Make sure nil comes back as an empty array
+  def account_type
+    (super || [])
+  end
 
+private
   def update_auth_net_cim_profile
     if auth_net_cim_id.present? && (email_changed? || id_changed?)
       Billing.update_customer_profile(self)

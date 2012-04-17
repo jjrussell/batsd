@@ -3,34 +3,43 @@ ru:
   activerecord:
     errors:
       full_messages:
-        format: ~
+        format: "%{attribute} %{message}"
       messages:
-        accepted: ~
-        blank: ~
-        confirmation: ~
-        empty: ~
-        equal_to: ~
-        even: ~
-        exclusion: ~
-        greater_than: ~
-        greater_than_or_equal_to: ~
-        inclusion: ~
-        invalid: ~
-        less_than: ~
-        less_than_or_equal_to: ~
-        not_a_number: ~
-        not_an_integer: ~
-        odd: ~
-        record_invalid: ~
-        taken: ~
-        too_long: ~
-        too_short: ~
-        wrong_length: ~
+        accepted: "необходимо принять"
+        blank: "необходимо заполнить"
+        confirmation: "данные не совпадают"
+        empty: "необходимо заполнить"
+        equal_to: "должно равняться %{count}"
+        even: "должно быть четным числом"
+        exclusion: зарезервировано
+        greater_than: "должно быть больше, чем %{count}"
+        greater_than_or_equal_to: "должно быть больше или равно %{count}"
+        inclusion: "не включено в список"
+        invalid: неверно
+        less_than: "должно быть меньше, чем %{count}"
+        less_than_or_equal_to: "должно быть меньше или равно %{count}"
+        not_a_number: "не является числом"
+        not_an_integer: "должно быть целым числом"
+        odd: "должно быть нечетным числом"
+        record_invalid: "Проверка не пройдена: %{errors}"
+        taken: "уже используется"
+        too_long: "слишком много символов (максимум %{count} символов)"
+        too_short: "слишком мало символов (минимум %{count} символов)"
+        wrong_length: "неверное количество символов (должно быть %{count} символов)"
+      models:
+        gamer_sessions:
+          attributes:
+            email: Email
+            password: Password
       template:
-        body: ~
+        body: "Некоторые поля заполнены неправильно:"
         header:
-          one: ~
-          other: ~
+          one: "Не можем сохранить %{model} из-за одной ошибки"
+          other: "Не можем сохранить %{model} из-за %{count} ошибок"
+  authlogic:
+    error_messages:
+      login_not_found: "Неправильный адрес электронной почты"
+      password_invalid: "Неправильный пароль"
   date:
     abbr_day_names: ~
     abbr_month_names: ~
@@ -85,34 +94,34 @@ ru:
       second: ~
       year: ~
   errors:
-    format: ~
+    format: "%{attribute} %{message}"
     messages:
-      accepted: ~
-      blank: ~
-      confirmation: ~
-      empty: ~
-      equal_to: ~
-      even: ~
-      exclusion: ~
-      greater_than: ~
-      greater_than_or_equal_to: ~
-      inclusion: ~
-      invalid: ~
-      less_than: ~
-      less_than_or_equal_to: ~
-      not_a_number: ~
-      not_an_integer: ~
-      odd: ~
-      too_long: ~
-      too_short: ~
-      wrong_length: ~
+      accepted: "необходимо принять"
+      blank: "необходимо заполнить"
+      confirmation: "данные не совпадают"
+      empty: "необходимо заполнить"
+      equal_to: "должно равняться %{count}"
+      even: "должно быть четным числом"
+      exclusion: зарезервировано
+      greater_than: "должно быть больше, чем %{count}"
+      greater_than_or_equal_to: "должно быть больше или равно %{count}"
+      inclusion: "не включено в список"
+      invalid: неверно
+      less_than: "должно быть меньше, чем %{count}"
+      less_than_or_equal_to: "должно быть меньше или равно %{count}"
+      not_a_number: "не является числом"
+      not_an_integer: "должно быть целым числом"
+      odd: "должно быть нечетным числом"
+      too_long: "слишком много символов (максимум %{count} символов)"
+      too_short: "слишком мало символов (минимум %{count} символов)"
+      wrong_length: "неверное количество символов (должно быть %{count} символов)"
   helpers:
     select:
-      prompt: ~
+      prompt: Выберите
     submit:
-      create: ~
-      submit: ~
-      update: ~
+      create: "Создайте %{model}"
+      submit: "Сохраните %{model}"
+      update: "Обновите %{model}"
   number:
     currency:
       format:
@@ -162,11 +171,11 @@ ru:
         delimiter: ~
   support:
     array:
-      last_word_connector: ~
-      two_words_connector: ~
-      words_connector: ~
+      last_word_connector: ", и "
+      two_words_connector: " и "
+      words_connector: ", "
     select:
-      prompt: ~
+      prompt: Выберите
   text:
     featured:
       download: Установить
@@ -178,12 +187,12 @@ ru:
       title: "Заработать %{currency}"
       try_out: Попробовать
     footer:
-      about: ~
-      advertisers: ~
-      blog: ~
-      copyright: ~
-      developers: ~
-      privacy: ~
+      about: "О Tapjoy"
+      advertisers: Advertisers
+      blog: Blog
+      copyright: "Copyright &copy; %{year} Tapjoy, Inc. Все права защищены. Tapjoy и логотип Tapjoy являются торговыми марками или зарегистрированными торговыми марками. Все используемые логотипы и торговые марки третьих сторон являются собственностью их владельцев."
+      developers: Developers
+      privacy: Конфиденциальность
     games:
       about_body: "Лучший способ радоваться приложениям, которые у вас уже есть и найти приложения, которые вас порадуют."
       about_title: "\"Каким-то образом, Tapjoy знает, какие приложения мне нравятся.\""
@@ -196,11 +205,18 @@ ru:
       advertisers_body: "Представьте свой продукт миллионам пользователей"
       advertisers_title: Рекламодателям
       allow_marketing_emails: "Разрешить Tapjoy присылать мне маркетинговый материал"
-      almost_done: ~
+      almost_done: "Почти готово!"
       already_registered:
         one: "%{name} уже зарегистрирован(а), теперь вы подписаны на новости от этого пользователя."
         other: "%{name} уже зарегистрированы, теперь вы подписаны на новости от этих пользователей."
       amount_and_currency: "%{amount} %{currency}"
+      app_review_concern_reported: "Сообщение отправлено"
+      app_review_h_no: Нет
+      app_review_h_yes: Да
+      app_review_more: more...
+      app_review_report_concern: "Сообщить о проблеме"
+      app_review_thanks_for_feedback: "Спасибо за ваше сообщение"
+      app_review_was_helpful: "Помог ли вам этот обзор?"
       back_to_top: Наверх
       birthdate: "Дата рождения"
       browse_offers: "Просмотреть предложения"
@@ -210,15 +226,15 @@ ru:
       change: изменить
       change_linked_account: "Изменить ассоциированную учетную запись"
       choose_section: "Выберете раздел"
-      close: ~
+      close: закрыть
       collect: Получить
       collect_rewards: "Получайте вознаграждения"
       connect_my_device: "Установить соединение с моим мобильным устройством"
       connect_to_facebook: "Нажмите здесь, чтобы соединиться с Facebook"
       connect_your_android: "Пожалуйста, присоедините свое мобильное устройство Android"
       connect_your_device: "Пожалуйста, присоедините свое мобильное устройство"
-      connected_to_facebook: ~
-      connected_to_twitter: ~
+      connected_to_facebook: "Подключен к Facebook"
+      connected_to_twitter: "Подключен к Twitter"
       contact_support: "Написать в службу поддержки"
       contact_us: "Написать нам"
       cookies_required: "Пожалуйста, зайдите в настройки своего браузера и разрешите использование cookies"
@@ -227,55 +243,60 @@ ru:
       delete_my_account: "Удалить мою учетную запись"
       developers_body: "Увеличте доход от ваших приложений при помощи нашей монетизации"
       developers_title: Разработчикам
-      discover_apps: ~
-      download_now: ~
+      discover_apps: "Присоединяйтесь к миллионам любителей мобильных приложений в Tapjoy и получите доступ к приложениям с наилучшими рейтингами. Начните сегодня!"
+      download_now: "Загрузить сейчас"
       earn: "Заработать %{currency}"
-      earn_rewards: ~
+      earn_rewards: "Заработать вознаграждения"
       earn_title: "Выполните любые предложения ниже, чтобы заработать %{currency} в %{app_name}"
-      earning_rewards: ~
+      earning_rewards: "Tapjoy - это лучший способ заработать вознаграждения в ваши любимые мобильные приложения, собранные в одном месте."
       edit: изменить
-      email_device_link: ~
+      email_device_link: "Отправить ссылку на мобильное устройство"
       email_notification: "Уведомления по электронной почте"
       enable_javascript: "Пожалуйста, зайдите в настройки своего браузера и разрешите использование JaveScript, чтобы продолжить использовать Tapjoy."
       enter_birthdate: "Пожалуйста, введите дату вашего рождения"
       enter_email: "Пожалуйста, введите адрес своей электронный почты."
       enter_message: "Пожалуйста, введите сообщение"
-      enter_name: ~
+      enter_name: "Пожалуйста, введите свое имя"
       enter_password: "Пожалуйста, введите пароль"
       enter_platform: "Пожалуйста, выберите iOS или Android"
       enter_tos: "Пожалуйста, согласитесь с условиями использования сервиса"
       enter_valid_email: "Введите правильный адрес электронной почты"
-      error_mark_as_favorite: ~
-      error_unmark_as_favorite: ~
-      failed_to_change_linked: ~
+      errno_error: "Проблема с соединением. Пожалуйста, попробуйте чуть позже."
+      error_mark_as_favorite: "Ошибка при добавлении приложения в Избранное"
+      error_unmark_as_favorite: "Ошибка при удалении приложения из Избранного"
+      facebook_connect_failed: "Ошибка соединения с вашим профилем Facebook"
+      failed_to_change_linked: "Не получилось изменить ассоциированный профиль."
       favorite_app: "Любимое приложение"
       favorite_apps: "Любимые приложения"
       favorite_category: "Любимая категория"
-      favorites: ~
+      favorites: Favorites
       feedback: Отзывы
       find_and_invite_friends: "Найдите и пригласите друзей"
-      find_friends_from_facebook: ~
-      find_friends_from_twitter: ~
+      find_friends_from_facebook: "Найти друзей на Facebook"
+      find_friends_from_twitter: "Найти друзей в Twitter"
       find_friends_on_tapjoy: "Найдите друзей, использующих Tapjoy, через другие социальные сети"
       find_more_friends: "Найти больше друзей"
       find_new_apps: "Находите новые приложения"
       follow_us: "читайте нас в"
       forgot_pass: "Забыли пароль?"
       free: Бесплатно!
+      friend_filter_label: "Введите имя"
       generic_issue: "Возникла проблема. Пожалуйста, попробуйте еще раз."
       get_app: "Получить приложение"
       get_it: Получить!
+      grant_permissions_for_invite: "Пожалуйста, дайте нам два необходимых разрешения перед отправкой приглашения"
       grant_us_access: "Пожалуйста, авторизируйте нас полностью перед отправкой приглашения."
-      how_it_works_body: "Все ваши приложения перечислены внизу. Нажмите на кнопку напротив приложения, чтобы заработать в него виртуальную валюту."
+      how_it_works_body: "Все ваши приложения перечислены внизу. Нажмите на кнопку напротив приложения, чтобы заработать в него игровую валюту."
       how_it_works_title: "Как это работает?"
       install_and_run: "Установите и запустите %{name}"
-      install_android_app: ~
-      install_profile: ~
-      invalid_fields: ~
+      install_android_app: "Для начала, загрузите приложение Tapjoy"
+      install_profile: "Установите ваш профиль на следующей странице и получите доступ к новым приложениям!"
+      invalid_emails: "Неправильный(е) адрес(а) электронной почты"
+      invalid_fields: "Неверная запись"
       invite: "Пригласите своих друзей!"
       invite_by_email: "Пригласить по электронной почте"
       invite_email_body: |-
-          %{name} пригласил(а) вас присоединиться к Tapjoy, ЛУЧШЕЙ платформе для поиска классных новых приложений. Зарегистрируйтесь бесплатно и получите доступ к лучшим приложениям на Android и iOS, а также зарабатывайте виртуальную валюту в ваши любимые приложения.
+          %{name} пригласил(а) вас присоединиться к Tapjoy, ЛУЧШЕЙ платформе для поиска классных новых приложений. Зарегистрируйтесь бесплатно и получите доступ к лучшим приложениям на Android и iOS, а также зарабатывайте игровую валюту в ваши любимые приложения.
 
           Не нужно часами искать хорошие приложения среди многих тысяч приложений в App Store или Google Play. Tapjoy знает, какие приложения вам понравятся, основываясь на ваших предпочтениях и предпочтениях ваших друзей.
 
@@ -286,15 +307,18 @@ ru:
         one: Пригласить
         other: "Пригласить %{count} друзей"
       invite_title: "Пригласить друзей по электронной почте"
-      invites_sent_to: ~
+      invite_twitter_followers: "Пригласите ваших читателей из Twitter!"
+      invites_sent_to:
+        one: "Приглашение от Tapjoy было отправлено пользователю %{name}"
+        other: "Приглашения от Tapjoy были отправлены пользователям %{name}"
       issue_registering: "Возникла ошибка при регистрации вашей учетной записи"
-      join_the_community: ~
-      join_the_community_blurb: ~
-      last_played: "Играли в прошлый раз: %{game}"
-      link_account_header: ~
-      link_account_messaging: ~
-      link_account_messaging_android_href: ~
-      link_account_messaging_tjm_href: ~
+      join_the_community: "Присоединиться к сообществу"
+      join_the_community_blurb: "Узнайте много интересного, просмотрев рейтинги и отзывы сообщества Tapjoy. Оставьте ваш собственный отзыв!"
+      last_played: "Открыли в прошлый раз: %{game}"
+      link_account_header: "Tapjoy поможет вам найти классные новые приложения, а также заработать игровую валюту в ваши любимые приложения. Присоедините свой мобильный аппарат, чтобы пользоваться всеми приемуществами Tapjoy."
+      link_account_messaging: "Tapjoy поможет вам найти классные приложения на iOS и Android, а также заработать игровую валюту в ваши любимые приложения. Присоедините свой мобильный аппарат iOS или Android, чтобы воспользоваться всеми приемуществами Tapjoy. Чтобы начать, просто вернитесь в %{tjm_url} на вашем мобильном аппарате iOS или %{android_market_url} на вашем мобильном аппарате Android. А пока, создайте свой профиль, чтобы мы могли подготовить для вас персональные рекомендации по приложениям, которые вам понравятся."
+      link_account_messaging_android_href: "загрузить приложение для Android"
+      link_account_messaging_tjm_href: www.tapjoy.com
       link_my_facebook: "Соединиться с Facebook"
       load_more: "Загрузить еще"
       loading: Загрузка...
@@ -303,6 +327,7 @@ ru:
       member_since: "Зарегистрирован с %{date}"
       meta_description: "Tapjoy: Сообщество мобильных игр и приложений для Android, iPhone и iPad."
       meta_keywords: "игры, мобильные игры, приложения, ios, android, iphone, ipad, itouch"
+      mogli_reach_limit_error: "Вы достигли лимита. Пожалуйста попробуйте еще раз чуть позже."
       more_apps: "Больше приложений"
       more_the_merrier: "Чем больше, тем веселее"
       my_apps: "Мои приложения"
@@ -312,19 +337,23 @@ ru:
       none_selected: "Ничего не выбрано"
       on_my: "на моем %{device_name}"
       oops: Упс!
-      or_learn_more: ~
+      or_learn_more: "или узнайте больше"
       other_options: "Другие опции"
       our_tos_changed: "Наше пользовательское соглашение изменилось. Пожалуйста прочитайте его и обозначьте ваше соглашение с изменениями."
-      password_changed: ~
-      password_non_match: ~
-      post_to_facebook_content: "Присоединяйтесь к Tapjoy, где вы найдете самые лучшие и новые приложения для мобильных устройств iOS и Android, а также сможете зарабатывать виртуальную валюту в ваши любимые приложения. Зарегистрируйтесь сейчас бесплатно и получите приложения, рекомендованные специально для вас."
+      password_changed: "Ваш пароль был изменен."
+      password_non_match: "Пароль и подтверждение не совпадают"
+      please_connect_facebook: "Пожалуйста установите соединение с Facebook"
+      post_to_facebook: "Отправить на Facebook!"
+      post_to_facebook_content: "Присоединяйтесь к Tapjoy, где вы найдете самые лучшие и новые приложения для мобильных устройств iOS и Android, а также сможете зарабатывать игровую валюту в ваши любимые приложения. Зарегистрируйтесь сейчас бесплатно и получите приложения, рекомендованные специально для вас."
       privacy_policy_href: конфиденциальность
       profile: Я
-      profile_error: ~
-      profile_update: ~
+      profile_error: "При обновлении вашего профиля возникла ошибка."
+      profile_update: "Ваш профиль был изменен."
       provide_other_email: "Пожалуйста, введите адрес электронной почты, отличный от своего"
+      provide_single_email: "Пожалуйста, введите хотя бы один адрес электронной почты"
+      reactivated_account: "Ваша учетная запись была восстановлена!"
       recipients_label: "Введите адреса электронной почты через запятую"
-      recommend_apps: ~
+      recommend_apps: "Tapjoy рекомендует вам приложения, основываясь на тех, которые вы любите использовать."
       recommendations: "Умные рекомендации"
       recommendations_smart: "Умные рекомендации"
       registering: Регистрация
@@ -338,17 +367,23 @@ ru:
       review_issue: "Возникла ошибка. Пожалуйста, попробуйте еще раз."
       review_updated: "Отзыв успешно обновлен."
       reviewed_already: "Вы уже оставили отзыв на это приложение."
+      scheduled_for_deletion: "Ваша учетная запись была деактивирована и поставлена в очередь на удаление!"
       select_current_device: "Пожалуйста, укажите ваше текущее мобильное устройство"
       select_device: "Пожалуйста, выберете ваше мобильное устройство"
       select_friend: "Пожалуйста, выберите хотя бы одного адресата для отправки приглашения"
       share_on_facebook: "Поделиться в Facebook"
       share_on_twitter: "Поделиться в Twitter"
       share_with_everyone: "Рассказывайте всем"
-      share_with_your_friends: "Приглашайте друзей"
+      share_with_your_friends: "Пригласить друзей"
+      social_invite_friend_error: "Возникла ошибка с приглашением вашему другу, пожалуйста попробуйте еще раз чуть позже."
+      social_need_authorize_error: "Пожалуйста, авторизуйте нас перед отправкой приглашения."
       social_networks: "Социальные сети"
       social_settings: "Социальные настройки"
-      spread_mobile_joy: ~
-      start_discovering: ~
+      social_to_next: "ВПЕРЕД %{page_size}"
+      social_to_prev: "НАЗАД %{page_size}"
+      social_to_top: "ТОП &#8679;"
+      spread_mobile_joy: "Делитесь радостью игр"
+      start_discovering: "Найдите много новых приложений с Tapjoy"
       tap_that: "Просто нажмите %{icon} и выберите %{button}"
       tapjoy_picks: "Выбор Tapjoy"
       terms_of_use_href: "пользовательское соглашение"
@@ -359,16 +394,23 @@ ru:
       thats_you: "это вы"
       tos_acknowledge_html: "Поставив галочку, я подтверждаю, что я соглашаюсь с условиями %{terms_of_use} и с %{privacy_policy}."
       tos_change_acknowledge: "Поставив галочку, я подтверждаю, что я соглашаюсь с условиями использования сервиса."
+      twitter_at_least_one_friend_error: "Выберите хотя бы одного друга, прежде чем отправить приглашение"
+      twitter_authenticate_error: "Ошибка при авторизации в Twitter."
+      twitter_forbidden_error: "Запрос не прошел из-за установленных лимитов на обновления"
+      twitter_general_error: "Что-то случилось с Twitter. Пожалуйста, попробуйте еще раз чуть позже."
+      twitter_internal_error: "Что-то случилось с Twitter. Пожалуйста, попробуйте еще раз чуть позже."
+      twitter_invite_msg: "пригласил(а) вас присоединиться к Tapjoy, лучшей платформе для поиска классных мобильных приложений. Регистрация бесплатная!"
+      twitter_invite_title: "Пожалуйста выберите друзей в Twitter чтобы пригласить их через сообщение."
       unable_to_process: "К сожалению, ваш запрос не был выполнен"
       unlock_mobile_joy: "Unlock Mobile Joy"
-      unmark_as_favorite: ~
-      welcome_tapjoy: ~
+      unmark_as_favorite: "Убрать из Избранного"
+      welcome_tapjoy: "Добро пожаловать в Tapjoy!"
       wifi_required: "Необходим Wi-fi"
       wrong_device: "не то мобильное устройство?"
-      you_are_following: ~
+      you_are_following: "Вы читаете (%{count})"
       your_followers:
-        one: ~
-        other: ~
+        one: "Ваш читатель"
+        other: "Ваши читатели (%{count})"
     instructions:
       amount_and_currency: "%{amount} %{currency}"
       continue_link: "Нажмите сюда, чтобы продолжить."
@@ -408,7 +450,7 @@ ru:
       comment: Комментарий
       confirm_password: "Подтвердите пароль"
       continue: Продолжить
-      copyright: "© 2012 Tapjoy, Inc. Все права защищены. Tapjoy и логотип Tapjoy являются торговыми марками или зарегистрированными торговыми марками. Все используемые логотипы и торговые марки третьих сторон являются собственностью их владельцев."
+      copyright: "Copyright &copy; %{year} Tapjoy, Inc. Все права защищены. Tapjoy и логотип Tapjoy являются торговыми марками или зарегистрированными торговыми марками. Все используемые логотипы и торговые марки третьих сторон являются собственностью их владельцев."
       country: Страна
       day: День
       earn_verb: Заработать
@@ -436,12 +478,12 @@ ru:
       name: Имя
       new_password: "Новый пароль"
       nickname: Никнейм
-      none: ~
+      none: None
       ok: ОК
       options: Опции
       other: Другое
       password: Пароль
-      please_try_again: ~
+      please_try_again: "Пожалуйста, попробуйте еще раз."
       preferences: Предпочтения
       privacy: Конфиденциальность
       privacy_policy: "Политика конфиденциальности"
@@ -452,8 +494,8 @@ ru:
       reviews: Отзывы
       save: Сохранить
       send: Отправить
-      sending: ~
-      sent: ~
+      sending: Sending
+      sent: Sent
       share: Поделиться
       sign_in: Войти
       sign_up: Зарегистрироваться
@@ -465,12 +507,12 @@ ru:
       unknown: Неизвестно
       update_review: "Изменить отзыв"
       updating: Обновление
-      view_all: ~
+      view_all: "Посмотреть все"
       write_review: "Оставить отзыв"
       year: Год
       zip_postal: "Почтовый индекс"
     support:
-      abuse_warning: "Используйте эту форму исключительно в случаях недополучения виртуальной валюты за полностью выполненное рекламное предложение. Злоупотребление и нецелевое использование этой формы может привести к деактивации вашей учетной записи."
+      abuse_warning: "Используйте эту форму исключительно в случаях недополучения игровой валюты за полностью выполненное рекламное предложение. Злоупотребление и нецелевое использование этой формы может привести к деактивации вашей учетной записи."
       description_label: Описание
       email_address_label: "Адрес электронной почты"
       instructions_1: "Пожалуйста, укажите полностью выполненное рекламное предложение, за которое вы не получили %{currency} и введите адрес своей электронной почты."
@@ -489,8 +531,8 @@ ru:
       title: "Не получили %{currency}?"
       unavailable_offer: ~
     unavailable_offer:
-      message: ~
-      optional_message: ~
+      message: "К сожалению, предложение %{offer} больше не доступно. Вы можете вернуться на предыдущую страницу и обновить ее для просмотра новых предложений."
+      optional_message: "Или, нажмите сюда, чтобы все равно загрузить %{offer}."
   time:
     am: ~
     formats:

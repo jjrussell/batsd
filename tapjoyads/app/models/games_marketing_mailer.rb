@@ -1,15 +1,17 @@
 class GamesMarketingMailer < ActionMailer::Base
   include SendGrid
 
-  self.delivery_method = :smtp
-  self.smtp_settings = {
-    :address => 'smtp.sendgrid.net',
-    :port => 587,
-    :domain => 'tapjoy.com',
-    :authentication => :plain,
-    :user_name => SEND_GRID_USER,
-    :password => SEND_GRID_PASSWD
-  }
+  if Rails.env.production?
+    self.delivery_method = :smtp
+    self.smtp_settings = {
+      :address => 'smtp.sendgrid.net',
+      :port => 587,
+      :domain => 'tapjoy.com',
+      :authentication => :plain,
+      :user_name => SENDGRID_USER,
+      :password => SENDGRID_PASSWD
+    }
+  end
 
   sendgrid_category :use_subject_lines
   sendgrid_enable :clicktrack, :opentrack, :subscriptiontrack
@@ -55,9 +57,7 @@ class GamesMarketingMailer < ActionMailer::Base
     @confirmation_link = "#{WEBSITE_URL}/confirm?token=#{CGI.escape(gamer.confirmation_token)}"
 
     device = Device.new(:key => @linked ? gamer_device.device_id : nil)
-    # select only necessary values
-    rec_device_info = Hash[*device_info.select{ |k,v| [:device_type, :geoip_data, :os_version].include? k }.flatten]
-    @recommendations = device.recommendations(rec_device_info)
+    @recommendations = device.recommendations(device_info.slice(:device_type, :geoip_data, :os_version))
 
     sendgrid_category "Welcome Email, #{@linked ? "Linked for Device Type #{gamer_device.device_type}" : "Not Linked"}"
     sendgrid_subscriptiontrack_text(:replace => "[unsubscribe_link]")

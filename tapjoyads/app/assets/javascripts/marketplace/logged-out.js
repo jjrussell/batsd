@@ -1,6 +1,5 @@
-(function() {
-
-  $(function() {
+(function($){
+  $(document).ready(function(){
     var pager;
     pager = $('#paging');
     $('#favorites').Carousel({
@@ -11,7 +10,7 @@
     });
     $('#arrow').bind(Tapjoy.EventsMap.start, function() {
       return $('html, body').animate({
-        scrollTop: $('#getting-started').offset().top(+'px')
+        scrollTop: $('#getting-started').offset().top +'px'
       }, 'slow');
     });
     $(window).resize(function() {
@@ -21,5 +20,4 @@
     });
     return $(window).trigger('resize');
   });
-
-}).call(this);
+})(jQuery);

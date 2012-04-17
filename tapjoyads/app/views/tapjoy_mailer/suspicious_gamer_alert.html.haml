@@ -1,0 +1,10 @@
+%p
+  Gamer #{@gamer_email} reached
+  %b= @behavior_result
+  in
+  %b= @behavior_type
+  \.
+
+%p
+  Gamer ID:
+  = link_to(@gamer_id, "#{DASHBOARD_URL}/tools/gamers/#{@gamer_id}")

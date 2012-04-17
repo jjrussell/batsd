@@ -15,8 +15,6 @@ config.action_controller.perform_caching             = false
 # Don't care if the mailer can't send
 config.action_mailer.raise_delivery_errors = false
 
-config.gem 'mail_safe', :version => '0.3.1'
-
 amazon = YAML::load_file("#{Rails.root}/config/amazon.yaml")
 ENV['AWS_ACCESS_KEY_ID'] = amazon['dev']['access_key_id']
 ENV['AWS_SECRET_ACCESS_KEY'] = amazon['dev']['secret_access_key']
@@ -34,7 +32,7 @@ end
 
 SPROCKETS_CONFIG = {
   :compile => false,
-  :combine => false,
+  :combine => true,
   :host => local_config['asset_host'] || local_config['website_url'] || 'http://localhost:3000'
 }
 
@@ -59,10 +57,6 @@ MAIL_CHIMP_PARTNERS_LIST_ID = mail_chimp['partners_list_id']
 MAIL_CHIMP_SETTINGS_KEY = mail_chimp['settings_key']
 MAIL_CHIMP_WEBHOOK_KEY = mail_chimp['webhook_key']
 
-send_grid = YAML::load_file("#{Rails.root}/config/send_grid.yaml")['development']
-SEND_GRID_USER = send_grid['user']
-SEND_GRID_PASSWD = send_grid['passwd']
-
 SYMMETRIC_CRYPTO_SECRET = '63fVhp;QqC8N;cV2A0R.q(@6Vd;6K.\\_'
 ICON_HASH_SALT = 'Gi97taauc9VFnb1vDbxWE1ID8Jjv06Il0EehMIKQ'
 UDID_SALT = '2AdufehEmUpEdrEtamaspuxasU#=De'
@@ -74,6 +68,10 @@ PAPAYA_API_URL = 'https://papayamobile.com'
 PAPAYA_SECRET = 'RT4oNOKx0QK2nJ51'
 
 CLEAR_MEMCACHE = !(local_config['clear_memcache'] == false)
+
+twitter = YAML::load_file("#{RAILS_ROOT}/config/twitter.yaml")
+ENV['CONSUMER_KEY'] = twitter['dev']['consumer_key']
+ENV['CONSUMER_SECRET'] = twitter['dev']['consumer_secret']
 
 DEV_FACEBOOK_ID = '100000459598424'
 

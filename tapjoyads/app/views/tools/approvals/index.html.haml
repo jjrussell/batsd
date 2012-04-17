@@ -1,15 +1,27 @@
 - content_for :included_javascripts, javascript_include_tag('jquery.form.min', 'tapjoy/approvals')
 
-%h1 Approval Queue
+%h1
+  Review Queue
+  - if @conditions[:item_type]
+    for #{@conditions[:item_type].pluralize}
 
-- form_for(:approval, :url => tools_approvals_path, :html => {:method => :get}) do |f|
+- if @hide_type
+  - form_url = tools_approvals_path
+- else
+  - form_url = {:action => :index, :controller => params[:calling_controller] || params[:controller] }
+- form_for(:approval, :url => form_url, :html => {:method => :get}) do |f|
   - unless @conditions[:state].is_a?(Array) # History page shouldn't allow selecting different states
     = label_tag('state', 'State')
-    = select_tag('state', options_for_select(Approval.options_for_state, @conditions[:state]))
-  = label_tag('owner_id', 'Owner')
-  = select_tag('owner_id', options_for_select(Approval.options_for_assigned_owners(true), @conditions[:owner_id]))
-  = label_tag('item_type', 'Type')
-  = select_tag('item_type', options_for_select(Approval.options_for_type(true), @conditions[:item_type]))
+    = select_tag('state', options_for_select(options_for_approval_state, @conditions[:state]))
+  - unless @hide_owner
+    = label_tag('owner_id', 'Owner')
+    = select_tag('owner_id', options_for_select(Approval.options_for_assigned_owners(true), @conditions[:owner_id]))
+  - unless @hide_type
+    = label_tag('item_type', 'Type')
+    = select_tag('item_type', options_for_select(Approval.options_for_type(true), @conditions[:item_type]))
+  - else
+    = hidden_field_tag('type', @conditions[:item_type].downcase) if @hide_type
   %button{:type => 'Submit'} Filter
 
 = render :partial => @table_partial
+
