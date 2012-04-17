@@ -17,6 +17,7 @@ module Offer::UrlGeneration
     itunes_link_affiliate = options.delete(:itunes_link_affiliate) { nil }
     display_multiplier    = options.delete(:display_multiplier)    { 1 }
     library_version       = options.delete(:library_version)       { nil }
+    os_version            = options.delete(:os_version)            { nil }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
 
     data = {
@@ -29,6 +30,7 @@ module Offer::UrlGeneration
       :language_code         => language_code,
       :display_multiplier    => display_multiplier,
       :library_version       => library_version,
+      :os_version            => os_version,
     }
 
     "#{API_URL}/offer_instructions?data=#{ObjectEncryptor.encrypt(data)}"
@@ -38,9 +40,11 @@ module Offer::UrlGeneration
     udid                  = options.delete(:udid)                  { |k| raise "#{k} is a required argument" }
     publisher_app_id      = options.delete(:publisher_app_id)      { |k| raise "#{k} is a required argument" }
     currency              = options.delete(:currency)              { |k| raise "#{k} is a required argument" }
+    publisher_user_id     = options.delete(:publisher_user_id)     { nil }
     click_key             = options.delete(:click_key)             { nil }
     itunes_link_affiliate = options.delete(:itunes_link_affiliate) { nil }
     library_version       = options.delete(:library_version)       { nil }
+    os_version            = options.delete(:os_version)            { nil }
     options.delete(:language_code)
     options.delete(:display_multiplier)
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
@@ -49,7 +53,8 @@ module Offer::UrlGeneration
     if item_type == 'App'
       final_url = Linkshare.add_params(final_url, itunes_link_affiliate)
       if library_version.nil? || library_version.version_greater_than_or_equal_to?('8.1.1')
-        final_url.sub!('market://search?q=', 'https://play.google.com/store/apps/details?id=')
+        subbed_string = (os_version && os_version >= '2.2') ? 'https://play.google.com/store/apps/details?id=' : 'http://market.android.com/details?id='
+        final_url.sub!('market://search?q=', subbed_string)
       end
     elsif item_type == 'EmailOffer'
       final_url += "&publisher_app_id=#{publisher_app_id}"
@@ -72,6 +77,14 @@ module Offer::UrlGeneration
     elsif item_type == 'SurveyOffer'
       final_url.gsub!('TAPJOY_SURVEY', click_key.to_s)
       final_url = ObjectEncryptor.encrypt_url(final_url)
+    elsif item_type == 'VideoOffer'
+      params = {
+        :offer_id           => id,
+        :app_id             => currency,
+        :udid               => udid,
+        :publisher_user_id  => publisher_user_id
+      }
+      final_url = "#{API_URL}/videos/#{id}/complete?#{params.to_query}"
     end
 
     final_url
@@ -93,6 +106,8 @@ module Offer::UrlGeneration
     device_name        = options.delete(:device_name)        { nil }
     library_version    = options.delete(:library_version)    { nil }
     gamer_id           = options.delete(:gamer_id)           { nil }
+    os_version         = options.delete(:os_version)         { nil }
+    mac_address        = options.delete(:mac_address)        { nil }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
 
     click_url = "#{API_URL}/click/"
@@ -135,7 +150,9 @@ module Offer::UrlGeneration
       :display_multiplier => display_multiplier,
       :device_name        => device_name,
       :library_version    => library_version,
-      :gamer_id           => gamer_id
+      :gamer_id           => gamer_id,
+      :mac_address        => mac_address,
+      :os_version         => os_version,
     }
 
     "#{click_url}?data=#{ObjectEncryptor.encrypt(data)}"
@@ -187,6 +204,7 @@ module Offer::UrlGeneration
     display_multiplier = options.delete(:display_multiplier) { 1 }
     library_version    = options.delete(:library_version)    { nil }
     language_code      = options.delete(:language_code)      { nil }
+    os_version         = options.delete(:os_version)         { nil }
 
     # Allow screen size to be specified for ad previews
     width              = options.delete(:width)              { nil }
@@ -198,16 +216,29 @@ module Offer::UrlGeneration
     ad_url << "/test_offer" if item_type == 'TestOffer'
     ad_url << "/test_video_offer" if item_type == 'TestVideoOffer'
 
-    ad_url << "?advertiser_app_id=#{item_id}&publisher_app_id=#{publisher_app_id}&publisher_user_id=#{publisher_user_id}" <<
-      "&udid=#{udid}&source=#{source}&offer_id=#{id}&app_version=#{app_version}&viewed_at=#{viewed_at.to_f}" <<
-      "&currency_id=#{currency_id}&primary_country=#{primary_country}&display_multiplier=#{display_multiplier}" <<
-      "&library_version=#{library_version}&language_code=#{language_code}"
-    ad_url << "&displayer_app_id=#{displayer_app_id}" if displayer_app_id.present?
-    ad_url << "&exp=#{exp}" if exp.present?
-    ad_url << "&width=#{width}" if width.present?
-    ad_url << "&height=#{height}" if height.present?
-    ad_url << "&preview=#{preview}" if preview.present?
-    ad_url
+    data = {
+      :advertiser_app_id  => item_id,
+      :publisher_app_id   => publisher_app_id,
+      :publisher_user_id  => publisher_user_id,
+      :udid               => udid,
+      :source             => source,
+      :offer_id           => id,
+      :app_version        => app_version,
+      :viewed_at          => viewed_at.to_f,
+      :currency_id        => currency_id,
+      :primary_country    => primary_country,
+      :display_multiplier => display_multiplier,
+      :library_version    => library_version,
+      :language_code      => language_code,
+      :displayer_app_id   => displayer_app_id,
+      :os_version         => os_version,
+      :exp                => exp,
+      :width              => width,
+      :height             => height,
+      :preview            => preview,
+    }
+
+    "#{ad_url}?data=#{ObjectEncryptor.encrypt(data)}"
   end
 
   def get_offers_webpage_preview_url(publisher_app_id, bust_cache = false)

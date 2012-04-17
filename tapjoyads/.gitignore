@@ -6,6 +6,8 @@ coverage/
 *.swp
 *.swo
 coverage.data
+vendor/bundle
+.bundle
 config/newrelic.yml
 config/database.yml
 db/production.sqlite
@@ -16,4 +18,10 @@ data/GeoIPCity.dat
 public/stylesheets/*.css
 public/stylesheets/*/*.css
 .sass-cache
+public/assets/*
 **.orig
+public/translations
+
+# Bundler
+vendor/bundle
+.bundle

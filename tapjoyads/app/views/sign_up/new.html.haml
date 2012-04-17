@@ -41,6 +41,21 @@
         = f.time_zone_select :time_zone, ActiveSupport::TimeZone.all
         = error_message_on @user, :time_zone
     %tr
+      %th= f.label :country, 'Country'
+      %td
+        = f.country_select :country
+        = error_message_on @user, :country
+    %tr
+      %td &nbsp;
+      %td
+        = check_box_tag :account_type_advertiser
+        = label_tag :account_type_advertiser, 'I am an Advertiser and/or'
+    %tr
+      %td &nbsp;
+      %td
+        = check_box_tag :account_type_publisher
+        = label_tag :account_type_publisher, 'I am a Publisher'
+    %tr
       %td &nbsp;
       %td.terms
         = f.check_box :terms_of_service

@@ -1,6 +1,8 @@
 require 'spec/spec_helper'
 
 describe FullscreenAdController do
+  include ActionView::Helpers
+
   integrate_views
   ignore_html_warning
 
@@ -30,6 +32,16 @@ describe FullscreenAdController do
       response.should render_template("fullscreen_ad/index")
     end
 
+    context 'with third party tracking URLs' do
+      it 'should generate hidden image tags' do
+        url = "https://dummyurl.com"
+        @offer.impression_tracking_urls = [url]
+
+        get(:index, @params)
+        response.body.should include(image_tag(url, :style => 'display:none;'))
+      end
+    end
+
     context 'with custom ads' do
       before :each do
         @offer.banner_creatives = %w(320x480 480x320)
@@ -40,8 +52,7 @@ describe FullscreenAdController do
         get(:index, @params)
 
         response.should be_success
-        response.should render_template("fullscreen_ad/custom_creative")
-        response.should have_tag('div', 'x')
+        response.should have_tag('div#close', 'x')
       end
 
       it 'includes call-to-action button for rewarded' do
@@ -60,6 +71,16 @@ describe FullscreenAdController do
 
         response.should be_success
         response.should have_tag('a', 'Download')
+      end
+
+      context 'with third party tracking URLs' do
+        it 'should generate hidden image tags' do
+          url = "https://dummyurl.com"
+          @offer.impression_tracking_urls = [url]
+
+          get(:index, @params)
+          response.body.should include(image_tag(url, :style => 'display:none;'))
+        end
       end
     end
   end

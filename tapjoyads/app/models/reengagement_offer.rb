@@ -29,11 +29,11 @@ class ReengagementOffer < ActiveRecord::Base
     end
   end
 
-  after_cache :cache_by_app_id
-
   after_create :create_primary_offer
 
   after_update :update_offers
+
+  after_save :cache_by_app_id
 
   delegate :instructions_overridden, :to => :primary_offer
   delegate :get_offer_device_types, :store_id, :store_url, :large_download?, :supported_devices, :platform, :get_countries_blacklist, :countries_blacklist, :primary_category, :user_rating, :info_url, :get_icon_url, :to => :app
@@ -47,12 +47,11 @@ class ReengagementOffer < ActiveRecord::Base
     save!
   end
 
-  def self.resolve(app, currencies, params, geoip_data)
-    device = Device.new(:key => params[:udid])
-    reengagement_offers = app.reengagement_campaign_from_cache
+  def self.resolve(app, currencies, reengagement_offers, params, geoip_data)
+    device = Device.new( :key => params[:udid] )
     reengagement_offer = reengagement_offers.detect{ |r| !device.has_app?(r.id) }
 
-    if reengagement_offer && reengagement_offer.should_show?(device, reengagement_offers)
+    if reengagement_offer.try(:should_show?, device, reengagement_offers)
       device.set_last_run_time!(reengagement_offer.id)
       reengagement_offer.reward(device, params, geoip_data)
       return reengagement_offer
@@ -62,8 +61,10 @@ class ReengagementOffer < ActiveRecord::Base
   end
 
   def should_show?(device, reengagement_offers)
-    return true if day_number == 0
-    (Time.zone.now - device.last_run_time(reengagement_offers[day_number - 1].id)) / 1.day == 1
+    return true if 0 == day_number
+    previous_reengagement_offer = reengagement_offers.detect { |ro| ro.day_number + 1 == day_number }
+    time_since_last_run = Time.zone.now.to_i - device.last_run_time(previous_reengagement_offer.id).to_i
+    time_since_last_run >= 24.hours.to_i && time_since_last_run < 48.hours.to_i
   end
 
   def update_offers
@@ -98,25 +99,20 @@ class ReengagementOffer < ActiveRecord::Base
     "#{device.id}.#{id}"
   end
 
-  def self.find_all_in_cache_by_app_id(app_id, do_lookup = !Rails.env.production?)
-    reengagement_offers = Mc.distributed_get("mysql.reengagement_offers.#{app_id}.#{ReengagementOffer.acts_as_cacheable_version}")
-    if reengagement_offers.nil?
-      if do_lookup
-        reengagement_offers = ReengagementOffer.visible.order_by_day.for_app(app_id).each { |c| c.run_callbacks(:before_cache) }
-        Mc.distributed_put("mysql.reengagement_offers.#{app_id}.#{ReengagementOffer.acts_as_cacheable_version}", reengagement_offers, false, 1.day)
-      else
-        reengagement_offers = []
-      end
-    end
-    reengagement_offers
+  def self.find_all_in_cache_by_app_id(app_id)
+    Mc.distributed_get("mysql.reengagement_offers.#{app_id}.#{ReengagementOffer.acts_as_cacheable_version}")
+  end
+
+  def cache_by_app_id
+    ReengagementOffer.cache_by_app_id(app_id)
+  end
+
+  def self.cache_by_app_id(app_id)
+    reengagement_offers = ReengagementOffer.visible.order_by_day.for_app(app_id)
+    Mc.distributed_put("mysql.reengagement_offers.#{app_id}.#{ReengagementOffer.acts_as_cacheable_version}", reengagement_offers, false, 1.day)
   end
 
   private
-
-  def cache_by_app_id
-    reengagement_offers = ReengagementOffer.visible.order_by_day.for_app(app_id).each { |c| c.run_callbacks(:before_cache) }
-    Mc.distributed_put("mysql.reengagement_offers.#{app_id}.#{ReengagementOffer.acts_as_cacheable_version}", reengagement_offers, false, 1.day)
-  end
 
   def disable_campaign
     app.disable_reengagement_campaign!
@@ -125,6 +121,7 @@ class ReengagementOffer < ActiveRecord::Base
   def create_primary_offer
     offer = Offer.new({
       :item             => self,
+      :item_type        => 'ReengagementOffer',
       :partner          => partner,
       :name             => "#{@app.name} - Reengagement Day #{day_number}",
       :url              => app.store_url,

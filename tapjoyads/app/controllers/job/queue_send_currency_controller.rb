@@ -48,6 +48,7 @@ class Job::QueueSendCurrencyController < Job::SqsReaderController
       url_params = [
         "snuid=#{CGI::escape(publisher_user_id)}",
         "currency=#{reward.currency_reward}",
+        "mac_address=#{reward.mac_address}",
       ]
       if currency.send_offer_data?
         offer = Offer.find_in_cache(reward.offer_id, true)

@@ -1,6 +1,7 @@
 class DisplayAdController < ApplicationController
 
-  before_filter :set_device_type, :set_publisher_user_id, :setup, :except => :image
+  before_filter :set_device_type, :lookup_udid, :set_publisher_user_id, :setup, :except => :image
+  after_filter :queue_impression_tracking, :only => [:index, :webview]
 
   def index
   end
@@ -22,9 +23,9 @@ class DisplayAdController < ApplicationController
     key = "display_ad.decoded.#{params[:currency_id]}.#{params[:advertiser_app_id]}.#{size}.#{params[:display_multiplier] || 1}"
 
     # always be up to date for previews
-    Mc.delete(key) if params[:publisher_app_id] == App::PREVIEW_PUBLISHER_APP_ID
+    Mc.distributed_delete(key) if params[:publisher_app_id] == App::PREVIEW_PUBLISHER_APP_ID
 
-    image_data = Mc.get_and_put(key, false, 5.minutes) do
+    image_data = Mc.distributed_get_and_put(key, false, 5.minutes) do
       publisher = App.find_in_cache(params[:publisher_app_id])
       currency = Currency.find_in_cache(params[:currency_id])
       currency = nil if currency.present? && currency.app_id != params[:publisher_app_id]
@@ -99,7 +100,8 @@ class DisplayAdController < ApplicationController
         :source            => 'display_ad',
         :viewed_at         => now,
         :displayer_app_id  => params[:app_id],
-        :primary_country   => geoip_data[:primary_country]
+        :primary_country   => geoip_data[:primary_country],
+        :mac_address       => params[:mac_address]
       )
       width, height = parse_size(params[:size])
 
@@ -109,8 +111,8 @@ class DisplayAdController < ApplicationController
         @image = get_ad_image(publisher_app, offer, width, height, currency, params[:display_multiplier])
       end
 
+      @offer = offer
       if params[:details] == '1'
-        @offer = offer
         @amount = currency.get_visual_reward_amount(offer, params[:display_multiplier])
         if offer.item_type == 'App'
           advertiser_app = App.find_in_cache(@offer.item_id)
@@ -134,15 +136,15 @@ class DisplayAdController < ApplicationController
 
     if offer.display_custom_banner_for_size?(size)
       key = offer.banner_creative_mc_key(size)
-      Mc.delete(key) if publisher.id == App::PREVIEW_PUBLISHER_APP_ID
-      return Mc.get_and_put(key) do
+      Mc.distributed_delete(key) if publisher.id == App::PREVIEW_PUBLISHER_APP_ID
+      return Mc.distributed_get_and_put(key) do
         Base64.encode64(offer.banner_creative_s3_object(size).read).gsub("\n", '')
       end
     end
 
     key = "display_ad.#{currency.id}.#{offer.id}.#{size}.#{display_multiplier}"
-    Mc.delete(key) if publisher.id == App::PREVIEW_PUBLISHER_APP_ID
-    Mc.get_and_put(key, false, 1.hour) do
+    Mc.distributed_delete(key) if publisher.id == App::PREVIEW_PUBLISHER_APP_ID
+    Mc.distributed_get_and_put(key, false, 1.hour) do
       if width == 640 && height == 100
         border = 4
         icon_padding = 7
@@ -169,14 +171,14 @@ class DisplayAdController < ApplicationController
       img.format = 'png'
       img.composite!(background, 0, 0, Magick::AtopCompositeOp)
 
-      font = (Rails.env.production? || Rails.env.staging?) ? 'Helvetica' : ''
+      font = (Rails.env.production? || Rails.env.staging?) ? 'Arial-Unicode' : ''
 
-      if offer.item_type == 'TestOffer'
-        text = offer.name
-      elsif offer.rewarded? && currency.rewarded?
-        text = "Earn #{currency.get_visual_reward_amount(offer, display_multiplier)} #{currency.name} download \\n#{offer.name}"
+      if (offer.rewarded? && currency.rewarded?) && offer.item_type != 'TestOffer'
+        text = "Earn #{currency.get_visual_reward_amount(offer, display_multiplier)} #{currency.name}"
+        text << ' download' if text.length <= 20
+        text << "\n#{offer.name}"
       else
-        text = "Try #{offer.name} today"
+        text = offer.name
       end
 
       image_label = get_image_label(text, text_area_size, font_size, font, false)
@@ -232,4 +234,7 @@ class DisplayAdController < ApplicationController
     end
   end
 
+  def queue_impression_tracking
+    @offer.queue_impression_tracking_requests(request) if @offer.present?
+  end
 end

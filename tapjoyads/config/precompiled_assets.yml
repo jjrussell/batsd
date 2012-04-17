@@ -1,0 +1,14 @@
+# javascripts
+- 'tjm'
+- 'api'
+- 'marketplace/logged-out'
+- 'marketplace/ajax-preload'
+
+# stylesheets
+- 'marketplace/style-master'
+- 'marketplace/helpers/html5'
+- 'marketplace/helpers/mediaqueries'
+- 'marketplace/theme/tjm/ie'
+- 'marketplace/theme/tjm/logged_out'
+- 'api/style_v1'
+- 'api/style'

@@ -1,7 +1,8 @@
 class GenericOffer < ActiveRecord::Base
   include UuidPrimaryKey
+  acts_as_trackable :instructions => :instructions, :url => :url, :third_party_data => :third_party_data
 
-  CATEGORIES = [ 'CPA', 'Social', 'Non-Native Video' ]
+  CATEGORIES = [ 'CPA', 'Social', 'Non-Native Video', 'Other' ]
 
   has_many :offers, :as => :item
   has_one :primary_offer, :class_name => 'Offer', :as => :item, :conditions => 'id = item_id'
@@ -15,30 +16,6 @@ class GenericOffer < ActiveRecord::Base
   after_update :update_offers
 
   named_scope :visible, :conditions => { :hidden => false }
-
-  def create_tracking_offer_for(tracked_for, options = {})
-    device_types = options.delete(:device_types) { Offer::ALL_DEVICES.to_json }
-    raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
-
-    offer = Offer.new({
-      :item             => self,
-      :tracking_for     => tracked_for,
-      :partner          => partner,
-      :name             => name,
-      :url              => url,
-      :device_types     => device_types,
-      :price            => 0,
-      :bid              => 0,
-      :min_bid_override => 0,
-      :rewarded         => false,
-      :name_suffix      => 'tracking',
-      :third_party_data => third_party_data,
-    })
-    offer.id = tracked_for.id
-    offer.save!
-
-    offer
-  end
 
   def get_icon_url(options = {})
     Offer.get_icon_url({:icon_id => Offer.hashed_icon_id(id)}.merge(options))
