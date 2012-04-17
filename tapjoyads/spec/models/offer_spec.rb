@@ -240,16 +240,16 @@ describe Offer do
     (fetched_cols & Offer::OFFER_LIST_EXCLUDED_COLUMNS).should == []
     fetched_cols.sort.should == ["age_rating", "approved_banner_creatives",
       "approved_sources", "banner_creatives", "bid", "carriers", "cities",
-      "click_tracking_urls", "conversion_rate", "cookie_tracking", "countries",
-      "device_types", "direct_pay", "dma_codes", "featured", "icon_id_override",
-      "id", "impression_tracking_urls", "interval", "item_id", "item_type",
-      "min_os_version", "multi_complete", "name", "normal_avg_revenue",
-      "normal_bid", "normal_conversion_rate", "normal_price", "over_threshold",
-      "partner_id", "payment", "payment_range_high", "payment_range_low",
-      "price", "publisher_app_whitelist", "rank_boost", "regions", "reseller_id",
+      "click_tracking_urls", "conversion_rate", "conversion_tracking_urls",
+      "cookie_tracking", "countries", "device_types", "direct_pay", "dma_codes",
+      "featured", "icon_id_override", "id", "impression_tracking_urls",
+      "interval", "item_id", "item_type", "min_os_version", "multi_complete",
+      "name", "normal_avg_revenue", "normal_bid", "normal_conversion_rate",
+      "normal_price", "over_threshold", "partner_id", "payment",
+      "payment_range_high", "payment_range_low", "price",
+      "publisher_app_whitelist", "rank_boost", "regions", "reseller_id",
       "reward_value", "rewarded", "screen_layout_sizes", "sdkless",
-      "self_promote_only", "show_rate", "third_party_data", "url", "wifi_only"
-      ].sort
+      "self_promote_only", "show_rate", "third_party_data", "url", "wifi_only"]
   end
 
   context "with min_bid_override set" do
@@ -968,7 +968,7 @@ describe Offer do
     context "without a provided timestamp" do
       before :each do
         @urls.each do |url|
-          Downloader.expects(:queue_get_with_retry).with(url.sub('[timestamp]', Time.zone.now.to_i.to_s), { :headers => { 'Referer' => @referer } }).once
+          Downloader.expects(:queue_get_with_retry).with(url.sub('[timestamp]', Time.zone.now.to_i.to_s)).once
         end
       end
 
@@ -995,7 +995,7 @@ describe Offer do
       before :each do
         @ts = Time.zone.now + 3600;
         @urls.each do |url|
-          Downloader.expects(:queue_get_with_retry).with(url.sub('[timestamp]', @ts.to_i.to_s), { :headers => { 'Referer' => @referer } }).once
+          Downloader.expects(:queue_get_with_retry).with(url.sub('[timestamp]', @ts.to_i.to_s)).once
         end
       end
 
