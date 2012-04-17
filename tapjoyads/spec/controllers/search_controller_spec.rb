@@ -67,7 +67,7 @@ describe SearchController do
         end
 
         it 'limits result count to 100' do
-          # This will result 101 matching records (since we already had one match)
+          # This will result in 101 matching records (since we already had one match)
           100.times do
             Factory(:gamer)
           end
