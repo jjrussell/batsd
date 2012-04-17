@@ -332,9 +332,9 @@ class Partner < ActiveRecord::Base
     changed? ? save : true
   end
 
-  def toggle_confirmed_for_payout
+  def toggle_confirmed_for_payout(user)
     self.payout_confirmations.each do |payout_confirmation|
-      payout_confirmation.confirm
+      payout_confirmation.confirm if payout_confirmation.has_proper_role(user)
     end
   end
 

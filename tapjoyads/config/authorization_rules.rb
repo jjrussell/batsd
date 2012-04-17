@@ -145,7 +145,7 @@ authorization do
     has_permission_on :tools_currency_approvals, :to => [ :index, :history, :approve, :reject]
     has_permission_on :tools_survey_offers, :to => [ :index, :show, :new, :create, :edit, :update, :destroy, :toggle_enabled ]
     has_permission_on :tools_clients, :to => [ :index, :show, :new, :create, :edit, :update, :add_partner, :remove_partner ]
-    has_permission_on :tools_partner_validations, :to => [ :index ]
+    has_permission_on :tools_partner_validations, :to => [ :index, :confirm_payouts]
   end
 
   role :games_editor do

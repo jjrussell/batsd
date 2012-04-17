@@ -1,3 +1,98 @@
 - @page_title = 'Validations Report'
 
+%h1 Validations Report
 
+%table
+  %thead
+    %tr
+      %th Partner
+      %th Partner Email
+      %th Account Manager
+      %th Bank Info Present?
+      %th Notes
+      %th Confirm
+  %tbody
+    - @partners.each do |partner|
+      - payout_info = partner.payout_info
+      - confirmation_notes = partner.confirmation_notes
+      - confirmation_notes << 'Payout Info not Present!' unless payout_info.present?
+      %tr
+        %td
+          %strong Name:
+          - if payout_info.present?
+            = payout_info.company_name
+          - else
+            \-
+          %br/
+          %strong Partner Name:
+          = partner.name
+          - if payout_info.present? && payout_info.doing_business_as.present?
+            %br/
+            %strong d/b/a:
+            = payout_info.doing_business_as
+          %br/
+          %strong ID:
+          = link_to(partner.id, partner_path(partner.id))
+        %td
+          = mail_to(partner.users.first.email)
+        %td
+          = partner.account_managers.join('<br>')
+        - if payout_info.present? && payout_info.valid?
+          %td
+            %span.present
+              %strong Present
+            %br/
+        - else
+          %td
+            %span.not_present
+              %strong Not Present
+
+        %td
+          - if permitted_to?(:confirm_payouts, :tools_partner_validations)
+            - form_tag confirm_payouts_tools_partner_validations_path( :partner_id => partner.id, :type => :json), :method => :post, :class => 'enable_request' do
+              %div{ :class => 'enabled', :style =>  (!confirmation_notes.empty? ? 'display:none;' : 'display:inline;')}
+                %span{ :class => 'enabled'}
+                  %strong Confirmed
+              %div{ :class => 'disabled', :style => (confirmation_notes.empty? ? 'display:none;' : 'display:inline;') }
+                %span{ :class => 'disabled'}
+                  %strong Unconfirmed
+                  = submit_tag 'Confirm', :class => 'submit'
+              %img.spinner{ :src => '/images/spinner.gif', :style => 'display:none;' }
+          - else
+            - if partner.confirmed_for_payout
+              %span{ :class => 'enabled'} Confirmed
+            - else
+              %span{ :class => 'disabled'}
+                Uncomfirmed
+        %td.notes
+          %span{ :class => 'disabled' }
+            - unless confirmation_notes.empty?
+              \- #{confirmation_notes.join('<br>-')}
+
+
+- content_for :page_styles do
+  :plain
+    #main {
+      width: 1200px;
+    }
+    table {
+      border-collapse: collapse;
+    }
+    th, td {
+      border: 1px solid gray;
+      padding: 5px;
+      font-size: 12px;
+    }
+
+    span.enabled, span.present {
+      color: green;
+    }
+
+    span.disabled, span.not_present {
+      color: red;
+    }
+
+    h3 a {
+      text-decoration: none;
+      font-size: 14px;
+    }

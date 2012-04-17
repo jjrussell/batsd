@@ -371,10 +371,11 @@ describe Partner do
       context 'when partner is confirmed' do
         before :each do
           @payout_threshold_confirmation.confirmed = true
+          @user = Factory(:admin)
         end
 
         it 'remains confirmed the partner' do
-          @partner.toggle_confirmed_for_payout
+          @partner.toggle_confirmed_for_payout(@user)
           @payout_threshold_confirmation.confirmed.should be_true
         end
       end
@@ -382,21 +383,22 @@ describe Partner do
       context 'when partner is unconfirmed' do
         before :each do
           @payout_threshold_confirmation.confirmed = false
+          @user = Factory(:admin)
         end
 
         it 'confirms the partner' do
-          @partner.toggle_confirmed_for_payout
+          @partner.toggle_confirmed_for_payout(@user)
           @payout_threshold_confirmation.confirmed.should be_true
         end
 
         it 'clears out confirmation notes' do
-          @partner.toggle_confirmed_for_payout
+          @partner.toggle_confirmed_for_payout(@user)
           @payout_threshold_confirmation.system_notes.should be_nil
         end
 
         context 'when system notes are threshold' do
           it 'will increase the threshold by 10%' do
-            @partner.toggle_confirmed_for_payout
+            @partner.toggle_confirmed_for_payout(@user)
             @partner.payout_threshold.should == 55_000_01
           end
         end

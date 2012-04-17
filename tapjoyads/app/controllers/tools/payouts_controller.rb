@@ -27,8 +27,8 @@ class Tools::PayoutsController < WebsiteController
   def confirm_payouts
     partner = Partner.find(params[:partner_id])
     log_activity(partner)
-    partner.toggle_confirmed_for_payout
-    render :json => { :success => partner.save, :was_confirmed => partner.payout_info.present? && partner.payout_info.valid?}
+    partner.toggle_confirmed_for_payout(current_user)
+    render :json => { :success => partner.save!, :was_confirmed => partner.payout_info.present? && partner.payout_info.valid?}
   end
 
   def export

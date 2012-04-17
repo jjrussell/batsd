@@ -101,6 +101,8 @@
     %li= link_to 'Manage Clients', tools_clients_path
   - if permitted_to? :index, :tools_partner_changes
     %li= link_to 'Partner Changes', tools_partner_changes_path
+  - if permitted_to? :index, :tools_partner_validations
+    %li= link_to 'Partner Confirmations', tools_partner_validations_path
 
 - if has_permissions_for_one_of? :account_mgr, :customer_service, :admin
   %h3 Customer Support
