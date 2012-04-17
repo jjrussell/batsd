@@ -4,19 +4,13 @@ module Offer::ThirdPartyTracking
     base.class_eval do
       const_set(:TRUSTED_TRACKING_VENDORS, %w( phluantmobile.net ))
 
-      serialize :impression_tracking_urls, Array
-      serialize :click_tracking_urls, Array
-      serialize :conversion_tracking_urls, Array
+      [:impression_tracking_urls, :click_tracking_urls, :conversion_tracking_urls].each do |f|
+        serialize f, Array
+        validates_each f do |record, attribute, value|
+          record.validate_third_party_tracking_urls(attribute, value)
+        end
+      end
 
-      validates_each :impression_tracking_urls do |record, attribute, value|
-        record.validate_third_party_tracking_urls(attribute, value)
-      end
-      validates_each :click_tracking_urls do |record, attribute, value|
-        record.validate_third_party_tracking_urls(attribute, value)
-      end
-      validates_each :conversion_tracking_urls do |record, attribute, value|
-        record.validate_third_party_tracking_urls(attribute, value)
-      end
     end
   end
 
