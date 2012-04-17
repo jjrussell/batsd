@@ -131,11 +131,11 @@ class Gamer < ActiveRecord::Base
     end
   end
 
-  def get_avatar_url
+  def get_avatar_url(size = 123)
     if gamer_profile.present? && gamer_profile.facebook_id.present?
       "https://graph.facebook.com/#{gamer_profile.facebook_id}/picture?type=normal"
     else
-      "https://secure.gravatar.com/avatar/#{generate_gravatar_hash}?d=mm&s=123"
+      "https://secure.gravatar.com/avatar/#{generate_gravatar_hash}?d=mm&s=#{size}"
     end
   end
 
