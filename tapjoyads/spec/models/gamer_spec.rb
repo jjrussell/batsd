@@ -343,4 +343,15 @@ describe Gamer do
     end
   end
 
+  context ".serialized_extra_attributes_accessor" do
+    before :each do
+      @gamer = Factory(:gamer)
+    end
+
+    it 'exposes the keys of the extra_attributes hash as gamer attributes' do
+      @gamer.completed_offer_count = 10
+      @gamer.save
+      @gamer.completed_offer_count.should == @gamer.extra_attributes[:completed_offer_count]
+    end
+  end
 end
