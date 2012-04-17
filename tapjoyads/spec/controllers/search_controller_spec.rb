@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe SearchController do
+describe Dashboard::SearchController do
   before :each do
     activate_authlogic
   end
