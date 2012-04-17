@@ -131,7 +131,7 @@ class Gamer < ActiveRecord::Base
     end
   end
 
-  def get_avatar_url(size = "123")
+  def get_avatar_url(size = '123')
     if gamer_profile.present? && gamer_profile.facebook_id.present?
       "https://graph.facebook.com/#{gamer_profile.facebook_id}/picture?type=normal"
     else
