@@ -141,58 +141,6 @@
         }
       });
 
-      $('.button-to').submit(function(){
-        var form = $(this);
-        var button = form.parent();
-        var text = button.siblings('.text');
-        var spinner = button.siblings('img.spinner');
-        var url = form.attr('action');
-        $.ajax({
-          dataType: 'json',
-          type: 'GET',
-          url: url,
-          data: {},
-          beforeSend: function() {
-            $('.text').hide('');
-            $('.button').show();
-            button.hide();
-            spinner.show();
-          },
-          complete: function() {
-            spinner.hide();
-          },
-          success: function(data){
-            button.hide();
-            var fields = "";
-            if (data.payout_method == 'check') {
-              fields += "<b>Address</b>: " + data.address_1;
-              if (data.address_2) {
-                fields += "<br/><b>Address</b>: " + data.address_2;
-              }
-              fields += "<br/><b>City</b>: " + data.address_city;
-              fields += "<br/><b>State</b>: " + data.address_state;
-              fields += "<br/><b>Postal/ZIP</b>: " + data.address_postal_code;
-              if (data.address_country != "United States Of America") {
-                fields += "<br/><b>Country</b>: " + data.address_country;
-              }
-            } else if (data.payout_method == 'paypal') {
-              fields += "<br/><b>Paypal Email</b>: " + data.paypal_email;
-            } else {
-              fields += "<br/><b>Bank</b>: " + data.bank_name;
-              fields += "<br/><b>Bank Address</b>: " + data.bank_address;
-              if (data.payment_country == 'United States Of America') {
-                fields += "<br/><b>Account #</b>: " + data.bank_account_number;
-                fields += "<br/><b>Routing #</b>: " + data.bank_routing_number;
-              } else {
-                fields += "<br/><b>IBAN</b>: " + data.bank_account_number;
-                fields += "<br/><b>SWIFT</b>: " + data.bank_routing_number;
-              }
-            }
-            text.show().html(fields);
-          }
-        });
-        return false;
-      });
       $('#date').datepicker();
       $('form.json').submit(function() {
         if (!confirm('Are you sure?')) { return false; }

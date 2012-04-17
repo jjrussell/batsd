@@ -69,7 +69,56 @@
             - unless confirmation_notes.empty?
               \- #{confirmation_notes.join('<br>-')}
 
+- content_for :page_javascript do
+  :plain
+    $(function($) {
+      if (#{@start_date.blank?}) {
+        $('#unfiltered').show();
+      } else {
+        $('#filtered').show();
+      }
+      $('#unfiltered a').click(function(){
+        $('#unfiltered').hide();
+        $('#filtered').show();
+        return false;
+      });
+      $('form.enable_request').submit(function() {
+        if (!confirm('Are you sure?')) { return false; }
 
+        var spinner = $(this).find('img.spinner');
+        var disabled = $(this).find('div.disabled');
+        var enabled = $(this).find('div.enabled');
+        var notes = $(this).parent().parent().find('td.notes');
+
+        $.ajax({
+          dataType: 'json',
+          type: $(this).attr('method'),
+          url: $(this).attr('action'),
+          data: $(this).serialize(),
+          beforeSend: function() {
+            disabled.hide();
+            enabled.hide();
+            spinner.show();
+          },
+          complete: function() {
+            spinner.hide();
+          },
+          success: function(response) {
+            if (response.success == true) {
+              if(response.was_confirmed == true) {
+                enabled.show();
+                notes.empty();
+              } else {
+                disabled.show();
+              }
+            } else {
+              $(this).parent().html('Error');
+            }
+          }
+        });
+        return false;
+      });
+    });
 - content_for :page_styles do
   :plain
     #main {
