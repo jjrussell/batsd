@@ -8,9 +8,15 @@ module Offer::ThirdPartyTracking
       serialize :click_tracking_urls, Array
       serialize :conversion_tracking_urls, Array
 
-      validates_each :impression_tracking_urls do |record, attribute, value| record.validate_third_party_tracking_urls(attribute, value); end
-      validates_each :click_tracking_urls do |record, attribute, value| record.validate_third_party_tracking_urls(attribute, value); end
-      validates_each :conversion_tracking_urls do |record, attribute, value| record.validate_third_party_tracking_urls(attribute, value); end
+      validates_each :impression_tracking_urls do |record, attribute, value|
+        record.validate_third_party_tracking_urls(attribute, value)
+      end
+      validates_each :click_tracking_urls do |record, attribute, value|
+        record.validate_third_party_tracking_urls(attribute, value)
+      end
+      validates_each :conversion_tracking_urls do |record, attribute, value|
+        record.validate_third_party_tracking_urls(attribute, value)
+      end
     end
   end
 
