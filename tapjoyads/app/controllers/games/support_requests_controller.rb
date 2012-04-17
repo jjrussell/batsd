@@ -1,15 +1,7 @@
 class Games::SupportRequestsController < GamesController
 
   def new
-    respond_to do |format|
-      format.js do
-        find_unresolved_clicks
-        render(:partial => 'select_offer', :layout => false)
-      end
-      format.html do
-        current_gamer
-      end
-    end
+    current_gamer
   end
 
   def create
@@ -46,6 +38,11 @@ class Games::SupportRequestsController < GamesController
     else
       GamesMailer.deliver_contact_support(@gamer, current_device, data[:content], request.env["HTTP_USER_AGENT"], params[:language_code], click, support_request)
     end
+  end
+
+  def unresolved_clicks
+    find_unresolved_clicks
+    render(:partial => 'select_offer', :layout => false)
   end
 
   private

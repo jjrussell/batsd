@@ -88,42 +88,36 @@ describe Games::SupportRequestsController do
   end
 
   describe '#new' do
+    it 'finds the current gamer' do
+      get :new, @params
+      assigns(:current_gamer).should == @gamer
+    end
+  end
+
+  describe "#unresolved_clicks" do
     before :each do
       @params = { :udid => @device.key }
     end
 
-    context 'when format is set to JS' do
-      before :each do
-        @params[:format] = 'js'
+    context 'the @unresolved_clicks collection' do
+      it 'includes both "correct" clicks' do
+        get :unresolved_clicks, @params
+        assigns(:unresolved_clicks).should include @click1
+        assigns(:unresolved_clicks).should include @click2
       end
 
-      context 'the @unresolved_clicks collection' do
-        it 'includes both "correct" clicks' do
-          get :new, @params
-          assigns(:unresolved_clicks).should include @click1
-          assigns(:unresolved_clicks).should include @click2
-        end
-
-        it "doesn't include the older duplicate click" do
-          get :new, @params
-          assigns(:unresolved_clicks).should_not include @click1_dupe_old
-        end
-
-        it "limits the number of clicks in the list to 20" do
-          results = [ @click1, @click1_dupe_old, @click2 ]
-          20.times { |i| results << Factory(:click, :udid => @device.key, :clicked_at => 1.hour.ago) }
-          Click.stubs(:select_all).returns(results) # results.size is 23
-
-          get :new, @params
-          assigns(:unresolved_clicks).size.should == 20
-        end
+      it "doesn't include the older duplicate click" do
+        get :unresolved_clicks, @params
+        assigns(:unresolved_clicks).should_not include @click1_dupe_old
       end
-    end
 
-    context 'when format is not set to JS' do
-      it 'finds the current gamer' do
-        get :new, @params
-        assigns(:current_gamer).should == @gamer
+      it "limits the number of clicks in the list to 20" do
+        results = [ @click1, @click1_dupe_old, @click2 ]
+        20.times { |i| results << Factory(:click, :udid => @device.key, :clicked_at => 1.hour.ago) }
+        Click.stubs(:select_all).returns(results) # results.size is 23
+
+        get :unresolved_clicks, @params
+        assigns(:unresolved_clicks).size.should == 20
       end
     end
   end

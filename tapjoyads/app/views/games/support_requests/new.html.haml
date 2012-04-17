@@ -1,4 +1,4 @@
-- offer_dropdown_params = { :udid => current_device_id, :format => 'js' }
+- offer_dropdown_params = { :udid => current_device_id }
 
 #support-request.current
   .content
@@ -52,7 +52,7 @@
         });
 
         // Do AJAX request
-        $("#offer_dropdown").load('#{new_games_support_request_url(offer_dropdown_params)}', function() {
+        $("#offer_dropdown").load('#{unresolved_clicks_games_support_requests_url(offer_dropdown_params)}', function() {
           $('#tapjoy_loader').fadeOut('fast', function() {
             $("#offer_dropdown").fadeIn('slow');
           });
