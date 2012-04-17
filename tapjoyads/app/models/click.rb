@@ -85,6 +85,9 @@ class Click < SimpledbShardedResource
     end
     save!
 
+    d = Device.new(:key => udid)
+    d.unset_last_run_time!(advertiser_app_id)
+
     Downloader.get_with_retry(url_to_resolve) if Rails.env.production?
   end
 
@@ -127,4 +130,5 @@ class Click < SimpledbShardedResource
       "#{API_URL}/connect?app_id=#{advertiser_app_id}&udid=#{udid}&consistent=true"
     end
   end
+
 end

@@ -247,8 +247,8 @@
 
     touchMove: function(e){
       var $t = this;
-      
-      // prevent default behavior 
+
+      // prevent default behavior
       e.preventDefault();
 
        // update event details

@@ -1,3 +1,5 @@
+require_dependency 'video_button' # Offer caches VideoButton objects
+
 class Offer < ActiveRecord::Base
   include UuidPrimaryKey
   include Offer::Ranking
@@ -5,6 +7,7 @@ class Offer < ActiveRecord::Base
   include Offer::UrlGeneration
   include Offer::BannerCreatives
   acts_as_cacheable
+  acts_as_tracking
   memoize :precache_rank_scores
 
   APPLE_DEVICES = %w( iphone itouch ipad )
@@ -77,6 +80,10 @@ class Offer < ActiveRecord::Base
     "3 days"   => 3.days.to_i,
   }
 
+  TRUSTED_TRACKING_VENDORS = %w( phluantmobile.net )
+
+  attr_reader :video_button_tracking_offers
+
   has_many :advertiser_conversions, :class_name => 'Conversion', :foreign_key => :advertiser_offer_id
   has_many :rank_boosts
   has_many :enable_offer_requests
@@ -90,7 +97,6 @@ class Offer < ActiveRecord::Base
   belongs_to :reseller
   belongs_to :app, :foreign_key => "item_id"
   belongs_to :action_offer, :foreign_key => "item_id"
-  belongs_to :tracking_for, :polymorphic => true
 
   validates_presence_of :reseller, :if => Proc.new { |offer| offer.reseller_id? }
   validates_presence_of :partner, :item, :name, :url, :rank_boost
@@ -171,6 +177,8 @@ class Offer < ActiveRecord::Base
       record.errors.add(attribute, "cannot be enabled without valid store id")
     end
   end
+  validates_each :impression_tracking_urls do |record, attribute, value| record.validate_third_party_tracking_urls(attribute, value); end
+  validates_each :click_tracking_urls do |record, attribute, value| record.validate_third_party_tracking_urls(attribute, value); end
 
   before_validation :update_payment
   before_validation_on_create :set_reseller_from_partner
@@ -187,6 +195,7 @@ class Offer < ActiveRecord::Base
   after_save :update_tapjoy_sponsored_associated_offers
   after_save :sync_banner_creatives! # NOTE: this should always be the last thing run by the after_save callback chain
   before_cache :clear_creative_blobs
+  before_cache :update_video_button_tracking_offers
 
   named_scope :enabled_offers, :joins => :partner,
     :readonly => false, :conditions => "tapjoy_enabled = true AND user_enabled = true AND item_type != 'RatingOffer' AND item_type != 'ReengagementOffer' AND ((payment > 0 AND #{Partner.quoted_table_name}.balance > payment) OR (payment = 0 AND reward_value > 0)) AND tracking_for_id IS NULL"
@@ -236,13 +245,41 @@ class Offer < ActiveRecord::Base
   memoize :get_device_types, :get_screen_layout_sizes, :get_countries, :get_dma_codes,
     :get_regions, :get_approved_sources, :get_carriers, :get_cities
 
+  serialize :impression_tracking_urls, Array
+  serialize :click_tracking_urls, Array
+
   def clone
+    return super if new_record?
+
     super.tap do |clone|
       # set up banner_creatives to be copied on save
       banner_creatives.each do |size|
         blob = banner_creative_s3_object(size).read
         clone.send("banner_creative_#{size}_blob=", blob)
       end
+    end
+  end
+
+  %w(click_tracking_urls impression_tracking_urls).each do |method_name|
+    define_method method_name do |*args|
+      replace_macros = args.first || false
+
+      self.send("#{method_name}=", []) if super.nil?
+      urls = super.sort
+
+      now = Time.zone.now.to_i.to_s
+      urls = urls.collect { |url| url.gsub("[timestamp]", now) } if replace_macros
+      urls
+    end
+
+    define_method "#{method_name}=" do |urls|
+      super(urls.to_a.select { |url| url.present? })
+    end
+
+    define_method "#{method_name}_was" do
+      ret_val = super
+      return [] if ret_val.nil?
+      ret_val
     end
   end
 
@@ -662,6 +699,46 @@ class Offer < ActiveRecord::Base
 
   def multi_completable?
     !%w(App ActionOffer SurveyOffer).include?(item_type) || Offer::Rejecting::TAPJOY_GAMES_RETARGETED_OFFERS.include?(item_id)
+  end
+
+  def validate_third_party_tracking_urls(attribute, urls)
+    urls.each do |url|
+      uri = URI.parse(url) rescue (self.errors.add(attribute, "must all be valid urls") and return)
+      unless uri.host =~ /(^|\.)(#{TRUSTED_TRACKING_VENDORS.join('|').gsub('.','\\.')})$/
+        vendors_list = TRUSTED_TRACKING_VENDORS.to_sentence(:two_words_connector => ' or ', :last_word_connector => ', or ')
+        self.errors.add(attribute, "must all use a trusted vendor (#{vendors_list})")
+        return
+      end
+    end
+  end
+
+  def queue_impression_tracking_requests(request)
+    # simulate <img> pixel tag client-side web calls...
+    # we lose cookie functionality, unless we implement cookie storage on our end...
+    impression_tracking_urls(true).each do |url|
+      forwarded_headers = request.http_headers.slice('User-Agent', 'X-Do-Not-Track', 'Dnt')
+      forwarded_headers['Referer'] = request.url
+      Downloader.queue_get_with_retry(url, { :headers => forwarded_headers })
+    end
+  end
+
+  def queue_click_tracking_requests(request)
+    # simulate <img> pixel tag client-side web calls...
+    # we lose cookie functionality, unless we implement cookie storage on our end...
+    click_tracking_urls(true).each do |url|
+      forwarded_headers = request.http_headers.slice('User-Agent', 'X-Do-Not-Track', 'Dnt')
+      forwarded_headers['Referer'] = request.url
+      Downloader.queue_get_with_retry(url, { :headers => forwarded_headers })
+    end
+  end
+
+  def video_button_tracking_offers
+    @video_button_tracking_offers || []
+  end
+
+  def update_video_button_tracking_offers
+    return unless item_type == 'VideoOffer'
+    @video_button_tracking_offers = item.video_buttons.collect(&:tracking_offer).compact
   end
 
   private

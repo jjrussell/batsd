@@ -9,9 +9,10 @@ server_type = `#{base_dir}/server/server_type.rb`
 
 if pid == ''
   env = case server_type
-        when "test": "staging"
-        when "dev" : "development"
-        else         "production"
+        when "testserver": "staging"
+        when "staging"   : "staging"
+        when "dev"       : "development"
+        else               "production"
         end
   `unicorn_rails -E #{env} -c #{base_dir}/tapjoyads/config/unicorn.rb -D`
 else

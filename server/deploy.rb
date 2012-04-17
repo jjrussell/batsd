@@ -31,12 +31,12 @@ system "git pull --quiet"
 system "git pull --tags origin master"
 system "git checkout #{deploy_version}"
 
-if server_type == 'jobs' || server_type == 'masterjobs'
+if server_type == 'jobserver' || server_type == 'masterjobs'
   `cp tapjoyads/config/newrelic-jobs.yml tapjoyads/config/newrelic.yml`
-elsif server_type == 'test'
+elsif server_type == 'testserver' || server_type == 'staging'
   `cp tapjoyads/config/newrelic-test.yml tapjoyads/config/newrelic.yml`
   `cp tapjoyads/config/local-test.yml tapjoyads/config/local.yml`
-elsif server_type == 'web'
+elsif server_type == 'webserver'
   `cp tapjoyads/config/newrelic-web.yml tapjoyads/config/newrelic.yml`
 elsif server_type == 'website'
   `cp tapjoyads/config/newrelic-website.yml tapjoyads/config/newrelic.yml`
@@ -47,7 +47,7 @@ elsif server_type == 'util'
   `cp tapjoyads/config/local-util.yml tapjoyads/config/local.yml`
 end
 
-if server_type == 'web'
+if server_type == 'webserver'
   `cp -f tapjoyads/db/webserver.sqlite tapjoyads/db/production.sqlite`
   `chmod 444 tapjoyads/db/production.sqlite`
   `cp tapjoyads/config/database-webserver.yml tapjoyads/config/database.yml`
