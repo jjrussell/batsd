@@ -6,7 +6,7 @@ GIT
 
 GIT
   remote: git@github.com:Tapjoy/tapjoyserver-tests.git
-  revision: d4fdca5d24674c541bdb0b9c9a09b0832ea51f81
+  revision: cccd102e7b412d253e863e73850fd2ff074011ff
   specs:
     tapjoyserver-tests (1.0.0)
       watir-webdriver
