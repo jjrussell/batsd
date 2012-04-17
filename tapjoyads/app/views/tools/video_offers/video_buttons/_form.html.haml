@@ -10,11 +10,11 @@
         = f.hidden_field :video_offer_id
     %tr
       %th
-        = f.label :url
-        #help_url.help ?
+        = f.label :item_id
+        #help_item.help ?
       %td
-        = f.text_field :url, :size => 50
-        = error_message_on @video_button, :url
+        = f.select :item_id, formatted_items_for_tracking(@video_offer.partner), {:selected => "#{@video_button.item_type}:#{@video_button.item_id}"}
+        = error_message_on @video_button, :item_id
     %tr
       %th
         = f.label :ordinal
@@ -33,6 +33,6 @@
       %td{ :colspan => 2 }= f.submit @video_button.new_record? ? 'Create Video Button' : 'Update Video Button'
 .hidden
   #help_name_content{ :name => 'Name' } The text appearing on the button. Maximum 20 characters.
-  #help_url_content{ :name => 'URL' } The URL the button links to.
+  #help_item_content{ :name => 'Item' } The offer this button uses for link generation and tracking.
   #help_ordinal_content{ :name => 'Ordinal' } Priority of the button, the smaller the ordinal, the higher the priority. (Integer only)
   #help_enabled_content{ :name => 'Enabled' } Only enabled button will be shown by the end of the video. Permit at most 2 enabled buttons.

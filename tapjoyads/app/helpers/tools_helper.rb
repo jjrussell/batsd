@@ -14,6 +14,7 @@ module ToolsHelper
     concat_li_currency('Pub', click.publisher_amount)
     concat_li_currency('Tj', click.tapjoy_amount)
     concat_li("Pub user ID", click.publisher_user_id) if click.publisher_user_id != click.udid
+    concat_li("Source", click.source)
     concat_li("UDID's for blocking", click.publisher_user_udids.join('<BR/>')) if click.block_reason =~ /TooManyUdidsForPublisherUserId/
     if click.last_clicked_at?
       concat("<ul>")
@@ -66,6 +67,13 @@ module ToolsHelper
 
   def wfh_classes(wfh)
     [ 'wfh', wfh.category.downcase ].uniq.join(' ')
+  end
+
+  def formatted_items_for_tracking(partner)
+    partner.trackable_items.map do |item|
+      type = item.class.name.to_s.gsub(/Offer$/, '')
+      ["#{type} - #{item.name}", "#{item.class}:#{item.id}"]
+    end
   end
 
   private

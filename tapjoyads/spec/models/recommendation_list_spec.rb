@@ -17,7 +17,6 @@ describe RecommendationList do
       it 'returns true' do
         offer = Factory(:app).primary_offer
         offer.stubs(:store_id_for_feed).returns(nil)
-        puts offer.store_id_for_feed
         RecommendationList.new(@options).send(:recommendation_reject?, offer).should be_true
       end
     end

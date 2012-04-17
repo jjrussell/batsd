@@ -90,7 +90,7 @@ module ActiveRecord
         attrs = clone_attributes(:read_attribute_before_type_cast)
         attrs.delete(self.class.primary_key)
         record = self.class.new
-        record.attributes = attrs # original version is 'record.send :instance_variable_set, '@attributes', attrs'
+        attrs.each { |k,v| record.write_attribute(k,v) } # original version is 'record.send :instance_variable_set, '@attributes', attrs'
         record
       end
     end

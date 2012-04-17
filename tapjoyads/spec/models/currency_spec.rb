@@ -483,8 +483,18 @@ describe Currency do
   describe '#approve_on_tapjoy_enabled' do
     context 'when tapjoy_enabled is toggled true' do
       it 'will call approve!' do
+        @currency.stubs(:approval).returns(stub('approval', :state => 'pending'))
         @currency.expects(:approve!).once
-        @currency.tapjoy_enabled =true
+        @currency.tapjoy_enabled = true
+        @currency.run_callbacks(:after_update)
+      end
+    end
+
+    context 'when approvals are not present' do
+      it 'will do nothing' do
+        @currency.stubs(:approval).returns(nil)
+        @currency.expects(:approve!).never
+        @currency.tapjoy_enabled = true
         @currency.run_callbacks(:after_update)
       end
     end

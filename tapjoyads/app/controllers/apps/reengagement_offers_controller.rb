@@ -9,8 +9,8 @@ class Apps::ReengagementOffersController < WebsiteController
   DAY_0_INSTRUCTIONS = "Come back each day and get rewards!"
 
   def index
-    if @app.primary_currency.try(:tapjoy_enabled?)
-      @campaign = @app.reengagement_campaign
+    if @app.currencies.present? && @app.currencies.any?(&:tapjoy_enabled?)
+        @campaign = @app.reengagement_campaign
       redirect_to(new_app_reengagement_offer_path(@app)) if @campaign.empty?
     end
   end

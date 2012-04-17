@@ -94,10 +94,13 @@ class Games::Gamers::DevicesController < GamesController
     end
   end
 
+  private
+
   def create_sub_click(primary_click, referral_count)
     now = Time.zone.now
 
     click = Click.new(:key => "#{current_gamer.referred_by}.invite[#{referral_count}]")
+
     click.clicked_at        = now
     click.viewed_at         = now
     click.udid              = primary_click.udid

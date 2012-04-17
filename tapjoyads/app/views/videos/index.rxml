@@ -9,7 +9,12 @@ xml.TapjoyVideos do
         xml.VideoURL offer.url
         xml.IconURL offer.video_icon_url
         xml.Buttons do
-          xml << offer.third_party_data
+          offer.video_button_tracking_offers.each do |o|
+            xml.Button do
+              xml.Name o.name
+              xml.URL get_click_url(o)
+            end
+          end
         end
     end
   end
