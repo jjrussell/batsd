@@ -62,11 +62,11 @@ end
 
 # don't allow migrations to be added without a change to schema.rb, or vice-versa
 def schema_modified?
-  %x[ git diff --cached | egrep '^(\-\-\- a|\+\+\+ b)\/tapjoyads\/db\/schema\.rb$' ] != ""
+  %x[ git status --short | egrep 'db\/schema\.rb$' ] != ""
 end
 
 def migrations_modified?
-  %x[ git diff --cached | egrep '^(\-\-\- a|\+\+\+ b)\/tapjoyads\/db\/migrate\/.+$' ] != ""
+  %x[ git status --short | egrep 'db\/migrate/.+\.rb$' ] != ""
 end
 
 if schema_modified?
