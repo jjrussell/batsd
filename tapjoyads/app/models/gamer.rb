@@ -65,7 +65,8 @@ class Gamer < ActiveRecord::Base
       "
     end
   end
-  serialized_extra_attributes_accessor :completed_offer_count
+  # Example Usage: list the attribute name here, then you could access it as a normal attribute
+  # serialized_extra_attributes_accessor :completed_offer_count
 
   def confirm!
     self.confirmed_at = Time.zone.now
