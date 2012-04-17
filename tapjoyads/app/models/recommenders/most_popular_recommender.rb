@@ -21,11 +21,10 @@ class Recommenders::MostPopularRecommender < Recommender
   def cache_most_popular
     list = []
     parse_recommendations_file(MOST_POPULAR_FILE) do |rec|
-      app_id, name, weight = rec.split("\t")
-      weight = weight.nil? ? 0 : weight.to_i
-      list << [app_id, weight] unless app_id.nil?
+      rec, name, weight = rec.split("\t")
+      list << {:recommendation => rec, :weight => weight.to_f, :explanation => "Popular App"}  unless rec.nil? || weight.nil?
     end
-    Mc.distributed_put('s3.recommendations.raw_list.most_popular', list.sort_by{ |app, weight| -weight })
+    Mc.distributed_put('s3.recommendations.raw_list.most_popular', list.sort_by{ |rec| -rec[:weight] })
   end
 
 end
