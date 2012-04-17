@@ -22,12 +22,12 @@ class Games::HomepageController < GamesController
   def earn
     device_id = current_device_id
     @device = Device.new(:key => device_id) if device_id.present?
-    @active_currency = Currency.find_by_id(currency_id)
+    @app = App.find_by_id(params_id)
+    @active_currency = @app.currencies.first
     @external_publisher = ExternalPublisher.new(@active_currency)
     return unless verify_records([ @active_currency, @device ])
 
     @offerwall_url = @external_publisher.get_offerwall_url(@device, @external_publisher.currencies.first, request.accept_language, request.user_agent, current_gamer.id)
-    @app = App.find_by_id(@external_publisher.app_id)
     @app_metadata = @app.primary_app_metadata
     if @app_metadata
       @mark_as_favorite = !current_gamer.favorite_apps.map(&:app_metadata_id).include?(@app_metadata.id)
