@@ -70,6 +70,7 @@ end
 
 group :development do
   gem 'mongrel', '1.1.5'
+  gem 'tapjoyserver-tests', :git => 'git@github.com:Tapjoy/tapjoyserver-tests.git'
 end
 
 group :test do
