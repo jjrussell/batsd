@@ -95,12 +95,18 @@ class Dashboard::SearchController < Dashboard::DashboardController
   end
 
   def gamers
-    conditions = [ "email LIKE ?", "#{params[:term]}%" ]
-    @gamers = Gamer.find(:all,
-      :conditions => conditions,
-      :order => 'email ASC',
-      :limit => 100
-    )
+    term = params[:term].to_s.strip
+
+    if term.size >= 2
+      conditions = [ "email LIKE ?", "#{term}%" ]
+      @gamers = Gamer.find(:all,
+        :conditions => conditions,
+        :order => 'email ASC',
+        :limit => 100
+      )
+    else
+      @gamers = []
+    end
 
     render :partial => 'gamers'
   end
