@@ -95,7 +95,7 @@ class Dashboard::SearchController < Dashboard::DashboardController
   end
 
   def gamers
-    term = params[:term].to_s.strip
+    term = params[:term].strip
 
     if term.size >= 2
       conditions = [ "email LIKE ?", "#{term}%" ]
@@ -124,7 +124,7 @@ class Dashboard::SearchController < Dashboard::DashboardController
   end
 
   def currencies
-    term = params[:term].strip
+    term = params[:term].to_s.strip
 
     if term =~ UUID_REGEX
       conditions = [ "id = ? OR app_id = ?", term, term ]
