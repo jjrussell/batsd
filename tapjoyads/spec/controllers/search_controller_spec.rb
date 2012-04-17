@@ -30,14 +30,51 @@ describe SearchController do
     context 'with an admin user' do
       before :each do
         @user = Factory(:admin)
+        partner = Factory(:partner, :users => [@user])
         login_as(@user)
       end
 
-      context 'with a blank search query' do
-        before :each do
-          @params = { :terms => '' }
+      context 'with an invalid search query' do
+        it 'returns no results for blank search terms' do
+          @params = { :term => '' }
+          get :gamers, @params
+          assigns(:gamers).count.should be_zero
         end
 
+        it 'returns no results for queries with less than 2 characters' do
+          @params = { :term => 'x' }
+          get :gamers, @params
+          assigns(:gamers).count.should be_zero
+        end
+      end
+
+      context 'with a valid search query' do
+        before :each do
+          @good_gamer = Factory(:gamer, :email => "user@now.com")
+          @bad_gamer = Factory(:gamer, :email => "abuser@now.com")
+
+          @params = { :term => 'user' }
+        end
+
+        it 'returns proper results' do
+          get :gamers, @params
+          assigns(:gamers).should include(@good_gamer)
+        end
+
+        it 'excludes wrong results' do
+          get :gamers, @params
+          assigns(:gamers).should_not include(@bad_gamer)
+        end
+
+        it 'limits result count to 100' do
+          # This will result 101 matching records (since we already had one match)
+          100.times do
+            Factory(:gamer)
+          end
+
+          get :gamers, @params
+          assigns(:gamers).count.should == 100
+        end
       end
     end
   end
