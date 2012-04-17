@@ -1,5 +1,5 @@
 ---
-zh:
+zh-cn:
   activerecord:
     errors:
       full_messages:
@@ -29,8 +29,8 @@ zh:
       models:
         gamer_sessions:
           attributes:
-            email: Email
-            password: Password
+            email: 电子邮件
+            password: 密码
       template:
         body: 以下的字段有问题
         header:
@@ -189,9 +189,9 @@ zh:
     footer:
       about: 关于Tapjoy
       advertisers: Advertisers
-      blog: Blog
+      blog: 博客
       copyright: "版权申明： %{year} Tapjoy, Inc. All Rights Reserved. Tapjoy and the Tapjoy logo are trademarks or registered trademarks of Tapjoy, Inc. All third party logos and trademarks mentioned are the property of their respective owners."
-      developers: Developers
+      developers: 开发者
       privacy: 隐私政策
     games:
       about_body: 爱您拥有的，觅您喜欢的
@@ -269,7 +269,7 @@ zh:
       favorite_app: 最喜欢的应用
       favorite_apps: 最喜欢的应用
       favorite_category: 最喜欢的类型
-      favorites: Favorites
+      favorites: 我的最爱
       feedback: 反馈
       find_and_invite_friends: 寻找与邀请朋友
       find_friends_from_facebook: 从Facebook上找朋友
@@ -304,19 +304,19 @@ zh:
       invite_email_greet: 你好
       invite_email_signature: Tapjoy团队
       invite_friends:
-        one: Invite
-        other: "Invite %{count} friends"
+        one: 邀请
+        other: "邀请 %{count} 个朋友"
       invite_title: 发送一封电子邮件邀请
       invite_twitter_followers: 邀请Twitter关注者!
       invites_sent_to:
-        one: "A Tapjoy invite has been sent to %{name}"
-        other: "Tapjoy invites have been sent to %{name}"
+        one: "一个Tapjoy邀请已经发送给了%{name}"
+        other: "Tapjoy 邀请已经发送给了 %{name}"
       issue_registering: 注册帐户发生问题
       join_the_community: 加入社群
-      join_the_community_blurb: 透过Tapjoy社群的应用评分与评论来探索更多应用，今天就开始并亲自参与！
+      join_the_community_blurb: 透过Tapjoy社区群的应用评分与评论来探索更多应用，今天就开始并亲自参与！
       last_played: "最后进行: %{game}"
-      link_account_header: Tapjoy提供你一面赚取正在进行的应用的货币，一面探索最热门应用的一站式服务。为了感受完整的Tapjoy体验，你必须连接你的装置
-      link_account_messaging: "Tapjoy提供你一面赚取正在进行的应用的货币，一面探索最热门iOS与安卓应用的一站式服务。为了感受完整的Tapjoy体验，你必须连接你的iOS或安卓装置。只要在你的iOS装置上回访 %{tjm_url} 或在你的安卓装置上回访 %{android_market_url} 就可以开始了。同时，请随性浏览本网站，创造你的个人档案，以便我们提供你个性化的推荐。"
+      link_account_header: Tapjoy提供你一面赚取正在进行的应用的货币，一面探索最热门应用的一站式服务。为了感受完整的Tapjoy体验，你必须连接你的设备
+      link_account_messaging: "Tapjoy提供你一面赚取正在进行的应用的货币，一面探索最热门iOS与安卓应用的一站式服务。为了感受完整的Tapjoy体验，你必须连接你的iOS或安卓设备。只要在你的iOS设备上回访 %{tjm_url} 或在你的安卓设备上回访 %{android_market_url} 就可以开始了。同时，请随性浏览本网站，创造你的个人档案，以便我们提供你个性化的推荐。"
       link_account_messaging_android_href: 下载Android应用
       link_account_messaging_tjm_href: www.tapjoy.com
       link_my_facebook: 请连接到我的Facebook
@@ -329,7 +329,7 @@ zh:
       meta_keywords: 游戏、移动游戏、移动应用、ios、Android、iPhone、iPad、iTouch
       mogli_reach_limit_error: 你已经到达上限了，请稍后再试
       more_apps: 更多应用
-      more_the_merrier: 独戏乐不如众戏乐
+      more_the_merrier: 独乐乐不如众乐乐
       my_apps: 我的应用
       next: 下一个
       no_device: 没有设备
@@ -367,12 +367,12 @@ zh:
       review_issue: 出问题了，请稍后再试
       review_updated: 所有的评论都已经更新
       reviewed_already: 您已经成功的评论了这个应用
-      scheduled_for_deletion: 你的账号已被关闭并进入删除排程!
+      scheduled_for_deletion: 你的账号已被关闭并进入删除流程!
       select_current_device: 请选择您当前使用的终端
       select_device: 请选择您的终端
       select_friend: 请选择至少一位朋友，然后才能发送邀请
       share_on_facebook: 在FaceBook上分享
-      share_on_twitter: 在Teitter上分享
+      share_on_twitter: 在Twitter上分享
       share_with_everyone: 和所有人分享
       share_with_your_friends: 和您的朋友分享
       social_invite_friend_error: 在邀请你的朋友时发生问题，请稍后再试。
@@ -395,7 +395,7 @@ zh:
       tos_acknowledge_html: "选中此框，确定自己接受%{terms_of_use} 及%{privacy_policy}"
       tos_change_acknowledge: 选中此框，确定自己接受服务条款。
       twitter_at_least_one_friend_error: 在送出邀请前，请至少选择一名朋友
-      twitter_authenticate_error: 透过TWITTER取得授权时发生错误，服务并未传回有效的数据
+      twitter_authenticate_error: 透过Twitter取得授权时发生错误，服务并未传回有效的数据
       twitter_forbidden_error: 由于更新限制，要求已经被否决
       twitter_general_error: Twitter那边有点问题，请稍后再试
       twitter_internal_error: Twitter那边有点问题，请稍后再试
@@ -494,11 +494,11 @@ zh:
       reviews: 评论
       save: 保存
       send: 发送
-      sending: Sending
-      sent: Sent
+      sending: 发送中
+      sent: 已发送
       share: 共享
       sign_in: 登录
-      sign_up: 註冊
+      sign_up: 注册
       submit: 提交
       submit_review: 提交评论
       success: 成功！
@@ -515,7 +515,7 @@ zh:
       abuse_warning: "本页表格是针对完成了流程但未获得虚拟币奖励的用. 滥用者可导致将来受禁止参与此类活动."
       description_label: 请描述您下载了APP的流程：
       email_address_label: 电子邮箱：
-      instructions_1: "如果您没得到 %{currency}, 请您让我们知道你下载了哪款APP, 并且留下您的电子邮箱."
+      instructions_1: "如果您没得到 %{currency}, 请您让我们知道您下载了哪款APP, 并且留下您的电子邮箱."
       instructions_2: "我们完成了确认流程后，你将会获取应得的 %{currency}."
       invalid_email: 请输入您真实的电子邮箱.
       missing_description: 请描述您下载了APP的流程.

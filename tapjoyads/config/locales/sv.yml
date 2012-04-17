@@ -3,34 +3,43 @@ sv:
   activerecord:
     errors:
       full_messages:
-        format: ~
+        format: "%{attribute} %{message}"
       messages:
-        accepted: ~
-        blank: ~
-        confirmation: ~
-        empty: ~
-        equal_to: ~
-        even: ~
-        exclusion: ~
-        greater_than: ~
-        greater_than_or_equal_to: ~
-        inclusion: ~
+        accepted: "must be accepted"
+        blank: "can't be blank"
+        confirmation: "doesn't match confirmation"
+        empty: "can't be empty"
+        equal_to: "must be equal to %{count}"
+        even: "must be even"
+        exclusion: "is reserved"
+        greater_than: "must be greater than %{count}"
+        greater_than_or_equal_to: "must be greater than or equal to %{count}"
+        inclusion: "is not included in the list"
         invalid: "är ogiltig"
-        less_than: ~
-        less_than_or_equal_to: ~
-        not_a_number: ~
-        not_an_integer: ~
-        odd: ~
-        record_invalid: ~
-        taken: ~
-        too_long: ~
-        too_short: ~
-        wrong_length: ~
+        less_than: "must be less than %{count}"
+        less_than_or_equal_to: "must be less than or equal to %{count}"
+        not_a_number: "is not a number"
+        not_an_integer: "must be an integer"
+        odd: "must be odd"
+        record_invalid: "Validation failed: %{errors}"
+        taken: "has already been taken"
+        too_long: "is too long (maximum is %{count} characters)"
+        too_short: "is too short (minimum is %{count} characters)"
+        wrong_length: "is the wrong length (should be %{count} characters)"
+      models:
+        gamer_sessions:
+          attributes:
+            email: Email
+            password: Password
       template:
-        body: ~
+        body: "There were problems with the following fields:"
         header:
-          one: ~
-          other: ~
+          one: "1 error prohibited this %{model} from being saved"
+          other: "%{count} errors prohibited this %{model} from being saved"
+  authlogic:
+    error_messages:
+      login_not_found: "Email is invalid"
+      password_invalid: "Password is invalid"
   date:
     abbr_day_names: ~
     abbr_month_names: ~
@@ -85,34 +94,34 @@ sv:
       second: ~
       year: ~
   errors:
-    format: ~
+    format: "%{attribute} %{message}"
     messages:
-      accepted: ~
-      blank: ~
-      confirmation: ~
-      empty: ~
-      equal_to: ~
-      even: ~
-      exclusion: ~
-      greater_than: ~
-      greater_than_or_equal_to: ~
-      inclusion: ~
+      accepted: "must be accepted"
+      blank: "can't be blank"
+      confirmation: "doesn't match confirmation"
+      empty: "can't be empty"
+      equal_to: "must be equal to %{count}"
+      even: "must be even"
+      exclusion: "is reserved"
+      greater_than: "must be greater than %{count}"
+      greater_than_or_equal_to: "must be greater than or equal to %{count}"
+      inclusion: "is not included in the list"
       invalid: "är ogiltig"
-      less_than: ~
-      less_than_or_equal_to: ~
-      not_a_number: ~
-      not_an_integer: ~
-      odd: ~
-      too_long: ~
-      too_short: ~
-      wrong_length: ~
+      less_than: "must be less than %{count}"
+      less_than_or_equal_to: "must be less than or equal to %{count}"
+      not_a_number: "is not a number"
+      not_an_integer: "must be an integer"
+      odd: "must be odd"
+      too_long: "is too long (maximum is %{count} characters)"
+      too_short: "is too short (minimum is %{count} characters)"
+      wrong_length: "is the wrong length (should be %{count} characters)"
   helpers:
     select:
-      prompt: ~
+      prompt: "Please select"
     submit:
-      create: ~
-      submit: ~
-      update: ~
+      create: "Create %{model}"
+      submit: "Save %{model}"
+      update: "Update %{model}"
   number:
     currency:
       format:
@@ -162,11 +171,11 @@ sv:
         delimiter: ~
   support:
     array:
-      last_word_connector: ~
-      two_words_connector: ~
-      words_connector: ~
+      last_word_connector: ", and "
+      two_words_connector: " and "
+      words_connector: ", "
     select:
-      prompt: ~
+      prompt: "Please select"
   text:
     featured:
       download: "Ladda ner"
@@ -178,12 +187,12 @@ sv:
       title: "Tjäna %{currency}"
       try_out: Testa
     footer:
-      about: ~
-      advertisers: ~
-      blog: ~
+      about: "About Tapjoy"
+      advertisers: Advertisers
+      blog: Blog
       copyright: "Copyright &copy; %{year} Tapjoy, Inc. All Rights Reserved. Tapjoy and the Tapjoy logo are trademarks or registered trademarks of Tapjoy, Inc. All third party logos and trademarks mentioned are the property of their respective owners."
-      developers: ~
-      privacy: ~
+      developers: Developers
+      privacy: "Privacy Policy"
     games:
       about_body: "A better way to love the apps you have and find the apps you'll love."
       about_title: "\"Den vet precis vilka appar jag vill ha\""
@@ -196,11 +205,18 @@ sv:
       advertisers_body: "Nå ut till miljontals användare och visa dina produkter"
       advertisers_title: Marknadsförare
       allow_marketing_emails: "Tillåt att Tapjoy sänder mig erbjudanden"
-      almost_done: Nästan klar!
+      almost_done: "Nästan klar!"
       already_registered:
         one: "%{name} har redan registrerat sig, du följer nu han/henne."
         other: "%{name} har redan registrerat sig, di följer nu dem."
       amount_and_currency: "%{amount} %{currency}"
+      app_review_concern_reported: "Concern Reported"
+      app_review_h_no: "No"
+      app_review_h_yes: "Yes"
+      app_review_more: more...
+      app_review_report_concern: "Report concern"
+      app_review_thanks_for_feedback: "Thank you for your feedback"
+      app_review_was_helpful: "Was this review helpful?"
       back_to_top: "Tillbaks till överst på sidan"
       birthdate: Födelsedatum
       browse_offers: "Kolla erbjudanden"
@@ -209,16 +225,16 @@ sv:
       cant_fetch_offers: "Det uppstod ett fel när du försökte ladda fler erbjudanden. Var vänlig försök igen."
       change: ändra
       change_linked_account: "Ändra Länkade Konton"
-      choose_section: Välj en sektion
-      close: "stäng"
+      choose_section: "Välj en sektion"
+      close: stäng
       collect: Samla
       collect_rewards: "Samla belöningar"
       connect_my_device: "Koppla ihop min telefon"
-      connect_to_facebook: Klicka för att koppla ditt konto till Facebook
+      connect_to_facebook: "Klicka för att koppla ditt konto till Facebook"
       connect_your_android: "Var vänlig och koppla ihop din Android mobil"
       connect_your_device: "Var vänlig och koppla ihop din mobil"
-      connected_to_facebook: ~
-      connected_to_twitter: ~
+      connected_to_facebook: "Connected to Facebook"
+      connected_to_twitter: "Connected to Twitter"
       contact_support: "Kontakta Support"
       contact_us: "Kontakta Oss"
       cookies_required: "Var vänlig och tillåt cookies i din webbläsare"
@@ -227,51 +243,56 @@ sv:
       delete_my_account: "Ta bort mitt konto"
       developers_body: "Öka dina intäkter med våra lösningar"
       developers_title: Utvecklare
-      discover_apps: ~
-      download_now: ~
+      discover_apps: "Join the millions of mobile app lovers on Tapjoy and discover the best-rated apps. Get started today!"
+      download_now: "Download now"
       earn: "Tjäna %{currency}"
       earn_rewards: "Få belöningar"
       earn_title: "Genomför något av erbjudandena nedan för att tjäna %{currency} i %{app_name}"
       earning_rewards: "Tapjoy är det bästa sättet att få belöningar i dina favoritappar, allt på ett ställe"
       edit: Ändra
-      email_device_link: ~
+      email_device_link: "Email device link"
       email_notification: "Mail notificering"
       enable_javascript: "Gå in och ändra din webläsares inställningar och tillåt JavaSkript för att kunna fortsätta använda Tapjoy."
       enter_birthdate: "Var vänlig fyll i födelsedatum"
       enter_email: "Var vänlig och fyll i din email adress"
       enter_message: "Var vänlig och skriv ett meddelande"
-      enter_name: ~
+      enter_name: "Please enter your name"
       enter_password: "Skapa ett lösenord"
       enter_platform: "Skapa ett lösenord"
       enter_tos: "Välj iOS eller Android"
       enter_valid_email: "Fyll i en giltig email adress"
-      error_mark_as_favorite: ~
-      error_unmark_as_favorite: ~
-      failed_to_change_linked: ~
+      errno_error: "There was a connection issue. Please try again later."
+      error_mark_as_favorite: "Error marking app as Favorite"
+      error_unmark_as_favorite: "Error unmarking app as Favorite"
+      facebook_connect_failed: "Failed to connect to your Facebook profile"
+      failed_to_change_linked: "Failed to change linked account."
       favorite_app: Favoritapp
       favorite_apps: Fovoritapps
       favorite_category: Favoritkategori
-      favorites: ~
+      favorites: Favorites
       feedback: Feedback
       find_and_invite_friends: "Hitta och bjud in vänner"
-      find_friends_from_facebook: ~
-      find_friends_from_twitter: ~
+      find_friends_from_facebook: "Find friends from Facebook"
+      find_friends_from_twitter: "Find friends from Twitter"
       find_friends_on_tapjoy: "Hitta vänner som redan använder Tapjoy genom andra nätverk"
       find_more_friends: "Hitta fler vänner"
       find_new_apps: "Upptäck nya appar"
       follow_us: "Följ oss"
       forgot_pass: "Glömt Lösenord?"
       free: Gratis!
+      friend_filter_label: "Start Typing a Name"
       generic_issue: "Ett fel uppstod, var vanlig försök igen"
       get_app: "Ladda ner app"
       get_it: "Ladda ner!"
+      grant_permissions_for_invite: "Please grant us both permissions before sending out an invite."
       grant_us_access: "Var vänlig och delge oss båda tillstånden innan du skickar ut en inbjudan."
       how_it_works_body: "Alla dina spel är listade nedan. Klicka på knapparna bredvid apparna för att börja tjäna valuta."
       how_it_works_title: "Hur fungerar det?"
       install_and_run: "Installera och kör %{name}"
-      install_android_app: ~
-      install_profile: Installera din profil på nästa sida och upptäck nya favoritappar.
-      invalid_fields: Ogiltig text
+      install_android_app: "Download the Tapjoy app on your Android device to get started."
+      install_profile: "Installera din profil på nästa sida och upptäck nya favoritappar."
+      invalid_emails: "The email(s) provided were invalid"
+      invalid_fields: "Ogiltig text"
       invite: "Bjud in en vän!"
       invite_by_email: Mailinbjudningar
       invite_email_body: |-
@@ -282,17 +303,22 @@ sv:
           För att komma igång, skapa ditt konto här:
       invite_email_greet: "Hej,"
       invite_email_signature: "Team Tapjoy"
-      invite_friends: ~
+      invite_friends:
+        one: Invite
+        other: "Invite %{count} friends"
       invite_title: "Skicka en mailinbjudan"
-      invites_sent_to: ~
+      invite_twitter_followers: "Invite Twitter Followers!"
+      invites_sent_to:
+        one: "A Tapjoy invite has been sent to %{name}"
+        other: "Tapjoy invites have been sent to %{name}"
       issue_registering: "Det uppstod ett fel när du försökte registrera dig"
       join_the_community: "Gå med i gemenskapen"
       join_the_community_blurb: "Upptäck mer genom Tapjoys app recensioner. Kom igång redan idag med att skriva en egen!"
       last_played: "Senast använa: %{game}"
-      link_account_header: Tapjoy är det enda stället du behöver för att upptäcka de hetaste apparna
-      link_account_messaging: Tapjoy är det enda stället du behöver för att upptäcka de hetaste apparna till iOS
-      link_account_messaging_android_href: ~
-      link_account_messaging_tjm_href: ~
+      link_account_header: "Tapjoy är det enda stället du behöver för att upptäcka de hetaste apparna"
+      link_account_messaging: "Tapjoy är det enda stället du behöver för att upptäcka de hetaste apparna till iOS"
+      link_account_messaging_android_href: "download the Android app"
+      link_account_messaging_tjm_href: www.tapjoy.com
       link_my_facebook: "Länka Min Facebook"
       load_more: "Ladda fler"
       loading: Laddar...
@@ -301,6 +327,7 @@ sv:
       member_since: "Medlem sedan %{date}"
       meta_description: "Tapjoy: Där du upptäcker appar och spel för Android, iPhone och iPad."
       meta_keywords: "spel, mobilspel, appar, ios, android, iphone, ipad, itouch"
+      mogli_reach_limit_error: "You have reached the limit. Please try again later."
       more_apps: "Fler appar"
       more_the_merrier: "Ju fler desto bättre"
       my_apps: "Mina appar"
@@ -310,33 +337,37 @@ sv:
       none_selected: "Inga valda"
       on_my: "på min %{device_name}"
       oops: Oops!
-      or_learn_more: ~
+      or_learn_more: "or learn more"
       other_options: "Anda alternativ"
       our_tos_changed: "Våra %{terms_of_use} har ändrats. Var vänlig och läs igenom och godkänn här nedan. "
       password_changed: "Ditt lösenord har ändrats"
-      password_non_match: ~
+      password_non_match: "Password and Confirmation do not match"
+      please_connect_facebook: "Please connect your Facebook account"
       post_to_facebook: "Dela på Facebook"
       post_to_facebook_content: "Kolla in Tapjoy där du kan upptäcka de bästa nya apparna och spelen, medan du också tjänar virtuell valuta i dina favorit appar. Det är gratis att gå med så gå in på tapjoy.com och börja få personliga apprekommendationer."
       privacy_policy_href: Integritetspolicy
       profile: Jag
-      profile_error: ~
-      profile_update: Din profil har uppdaterats
+      profile_error: "There was an error updating your profile."
+      profile_update: "Din profil har uppdaterats"
       provide_other_email: "Var vänlig och fyll en email adress som inte är din egen"
+      provide_single_email: "Please provide at least one email"
+      reactivated_account: "Your account has been reactivated!"
       recipients_label: "Använd kommatecken mellan olika mailadresser"
-      recommend_apps: Tapjoy anpassar de apprekommendationer du får baserat på vilka appar du gillar.
+      recommend_apps: "Tapjoy anpassar de apprekommendationer du får baserat på vilka appar du gillar."
       recommendations: "Smarta rekommendationer"
-      recommendations_smart: ~
+      recommendations_smart: "Smart Recommendations"
       registering: "Godkänn användarvilkoren ovan"
       report_bug: "Rapportera en bugg"
-      reset_password_message: Skriv in den mail adress du använder för ditt konto så skickar vi en länk för att återställa ditt lösenord
-      reset_password_message_submit: Du kommer att få ett mail med instruktion för att återställa ditt lösenord inom några minuter
+      reset_password_message: "Skriv in den mail adress du använder för ditt konto så skickar vi en länk för att återställa ditt lösenord"
+      reset_password_message_submit: "Du kommer att få ett mail med instruktion för att återställa ditt lösenord inom några minuter"
       reset_password_retry: "Om du fortfarande har problem med att logga in kan du %{reset_password_url}"
-      reset_password_retry_url_text: Begär ett nytt mail för att återställa ditt lösenord
+      reset_password_retry_url_text: "Begär ett nytt mail för att återställa ditt lösenord"
       review_app_name: "Recensera %{app_name}"
       review_created: "Din recension lyckades"
       review_issue: "Det uppstod ett problem. Var vänlig försök igen senare."
       review_updated: "Apprecension är uppdaterad"
       reviewed_already: "Du har redan recenserat denna app."
+      scheduled_for_deletion: "Your account has been deactivated and scheduled for deletion!"
       select_current_device: "Var vänlig och välj din nuvarande mobil"
       select_device: "Var vänlig välj mobiltyp"
       select_friend: "Van vänlig och välj minst en vän innan du skickar ut inbjudan."
@@ -344,10 +375,15 @@ sv:
       share_on_twitter: "Dela på Twitter"
       share_with_everyone: "Dela med alla"
       share_with_your_friends: "Dela med dina vänner"
+      social_invite_friend_error: "There was an issue with inviting your friend, please try again later."
+      social_need_authorize_error: "Please authorize us before sending out an invite."
       social_networks: "Sociala nätverk"
       social_settings: "Socaila inställningar"
-      spread_mobile_joy: ~
-      start_discovering: ~
+      social_to_next: "NEXT %{page_size}"
+      social_to_prev: "PREV %{page_size}"
+      social_to_top: "TOP &#8679;"
+      spread_mobile_joy: "Spread mobile joy"
+      start_discovering: "Start discovering with Tapjoy for free"
       tap_that: "Tryck bara på %{icon} och välj %{button}"
       tapjoy_picks: "Tapjoy Tipsar"
       terms_of_use_href: Användarvillkor
@@ -358,16 +394,23 @@ sv:
       thats_you: "det är du"
       tos_acknowledge_html: "Genom att klicka i denna box godkänner jag %{terms_of_use} & %{privacy_policy}"
       tos_change_acknowledge: "Genom att klicka här godkänner jag användarvilkoren"
+      twitter_at_least_one_friend_error: "You must select at least one friend before sending out an invite"
+      twitter_authenticate_error: "Error while authenticating via TWITTER. The service did not return valid data."
+      twitter_forbidden_error: "Requests are being denied due to update limits."
+      twitter_general_error: "Something happened to Twitter. Please try again later."
+      twitter_internal_error: "Something happened to Twttier. Please try again later"
+      twitter_invite_msg: "has invited you to join Tapjoy, the BEST place to find the hottest apps. Signing up is free!"
+      twitter_invite_title: "Please Select Twitter Friends to Invite via DM"
       unable_to_process: "Tyvärr kan vi inte fullfölja din förfrågan"
       unlock_mobile_joy: "Unlock Mobile Joy"
-      unmark_as_favorite: ~
-      welcome_tapjoy: ~
+      unmark_as_favorite: "Remove from Favorites"
+      welcome_tapjoy: "Welcome to Tapjoy!"
       wifi_required: "Uppkoppling krävs"
       wrong_device: "Fel enhet?"
-      you_are_following: ~
+      you_are_following: "You're following (%{count})"
       your_followers:
-        one: ~
-        other: ~
+        one: "Your follower"
+        other: "Your followers (%{count})"
     instructions:
       amount_and_currency: "%{amount} %{currency}"
       continue_link: "Klicka här för att fortsätta."
@@ -440,7 +483,7 @@ sv:
       options: Intällningar
       other: Andra
       password: Lösenord
-      please_try_again: ~
+      please_try_again: "Please try again."
       preferences: Preferenser
       privacy: Integritet
       privacy_policy: Integritetsinställningar
@@ -451,12 +494,12 @@ sv:
       reviews: Recensioner
       save: Spara
       send: Skicka
-      sending: ~
-      sent: ~
+      sending: Sending
+      sent: Sent
       share: Dela
       sign_in: "Logga in"
       sign_up: "Skaffa konto"
-      submit: Skicka in
+      submit: "Skicka in"
       submit_review: "Posta din recension"
       success: "Det lyckades!"
       title_noun: Titel
@@ -464,7 +507,7 @@ sv:
       unknown: Okänd
       update_review: "Uppdatera recension"
       updating: Updaterar
-      view_all: ~
+      view_all: "View All"
       write_review: "Skriv en recension"
       year: År
       zip_postal: Postkod
@@ -488,8 +531,8 @@ sv:
       title: "Saknad %{currency}?"
       unavailable_offer: ~
     unavailable_offer:
-      message: ~
-      optional_message: ~
+      message: "We're sorry but %{offer} is no longer available. You can return to the previous page and refresh to view the latest offer list."
+      optional_message: "Or, click here to download %{offer} anyway."
   time:
     am: ~
     formats:
