@@ -1,3 +1,5 @@
+- offer_dropdown_params = { :udid => current_device_id }
+
 #support-request.current
   .content
     %h1.museo
@@ -6,7 +8,7 @@
       - elsif params[:type] === "report_bug"
         = t('text.games.report_bug')
       - elsif params[:type] === "contact_support"
-        = t('text.games.contact_support')
+        = t('text.games.contact_support_page_title')
       - else
         = t('text.games.contact_us')
     .support-form
@@ -17,9 +19,45 @@
           - else
             = hidden_field_tag :type, "contact_support"
           = f.text_area :content, :rows => 5, :value => params[:content], :required => 'true', :class => 'ui-joy-textarea'
+        - if params[:type] === "contact_support"
+          .container.h120
+            .field
+              = label_tag :offer_id, t('text.games.contact_support_incomplete_offers_label')
+            #tapjoy_loader.hidden
+              #loader_t.loader_letter
+              #loader_a.loader_letter
+              #loader_p.loader_letter
+            - if @clicks_list.nil?
+              = submit_tag t('text.games.contact_support_select_offer_button'), :id => 'show_offers', :type => 'button', :class => 'ui-joy-button secondary mt15 pt10 pb10'
+              #offer_dropdown.hidden
+            - else
+              = render :partial => 'select_offer'
         .field
           .container.pb10
             = f.submit t('text.shared.submit'), :class => 'ui-joy-button primary pb10 pt10'
           .container.pb2
             = button_to_function t('text.shared.cancel'), 'history.go(-1)', :class => 'ui-joy-button pb10 pt10 secondary'
         .form-error.center
+
+- content_for :page_javascript do
+  :javascript
+    $(function($){
+      $('#show_offers').removeAttr("disabled");
+      $('#show_offers').click(function() {
+
+        // Disable and hide button; show loading indicator
+        $(this).attr("disabled", "disabled");
+        $(this).fadeOut('fast', function() {
+          $('#tapjoy_loader').fadeIn('fast');
+        });
+
+        // Do AJAX request
+        $("#offer_dropdown").load('#{unresolved_clicks_games_support_requests_url(offer_dropdown_params)}', function() {
+          $('#tapjoy_loader').fadeOut('fast', function() {
+            $("#offer_dropdown").fadeIn('slow');
+          });
+        });
+
+        return false;
+      });
+    });
