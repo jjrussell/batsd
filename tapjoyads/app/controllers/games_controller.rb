@@ -8,17 +8,9 @@ class GamesController < ApplicationController
   before_filter :setup_tjm_request
   after_filter :save_tjm_request
 
-  helper_method :current_gamer, :set_gamer, :current_device_id, :current_device_id_cookie, :current_device, :current_recommendations, :has_multiple_devices, :show_login_page, :device_type, :geoip_data, :os_version, :social_feature_redirect_path, :get_friends_info, :params_id
+  helper_method :current_gamer, :set_gamer, :current_device_id, :current_device_id_cookie, :current_device, :current_recommendations, :has_multiple_devices, :show_login_page, :device_type, :geoip_data, :os_version, :social_feature_redirect_path, :get_friends_info
 
   protected
-
-  def params_id
-    if params[:eid].present?
-      ObjectEncryptor.decrypt(params[:eid])
-    elsif params[:id].present?
-      params[:id]
-    end
-  end
 
   def get_friends_info(ids)
     Gamer.find_all_by_id(ids).map do |friend|
