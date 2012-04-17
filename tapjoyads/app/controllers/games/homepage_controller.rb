@@ -11,12 +11,7 @@ class Games::HomepageController < GamesController
   end
 
   def get_app
-    if params[:eid].present?
-      app_id = ObjectEncryptor.decrypt(params[:eid])
-    elsif params[:id].present?
-      app_id = params[:id]
-    end
-    @offer = Offer.find_by_id(app_id)
+    @offer = Offer.find_by_id(params_id)
     @app = @offer.app
     @app_metadata = @app.primary_app_metadata
     if @app_metadata
@@ -27,11 +22,6 @@ class Games::HomepageController < GamesController
   def earn
     device_id = current_device_id
     @device = Device.new(:key => device_id) if device_id.present?
-    if params[:eid].present?
-      currency_id = ObjectEncryptor.decrypt(params[:eid])
-    elsif params[:id].present?
-      currency_id = params[:id]
-    end
     @active_currency = Currency.find_by_id(currency_id)
     @external_publisher = ExternalPublisher.new(@active_currency)
     return unless verify_records([ @active_currency, @device ])
