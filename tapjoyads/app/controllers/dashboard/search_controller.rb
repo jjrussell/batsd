@@ -112,7 +112,7 @@ class Dashboard::SearchController < Dashboard::DashboardController
   end
 
   def currencies
-    term = params[:term].to_s.strip
+    term = params[:term].strip
 
     if term =~ UUID_REGEX
       conditions = [ "id = ? OR app_id = ?", term, term ]
