@@ -371,7 +371,7 @@ class SimpledbResource
     domain_name = get_real_domain_name(domain_name)
 
     query = "SELECT count(*) FROM `#{domain_name}`"
-    query += " WHERE #{where}" if where
+    query += " WHERE #{sanitize_conditions(where)}" if where
 
     count = 0
     loop do
@@ -418,7 +418,7 @@ class SimpledbResource
     domain_name = get_real_domain_name(domain_name)
 
     query = "SELECT count(*) FROM `#{domain_name}`"
-    query += " WHERE #{where}" if where
+    query += " WHERE #{sanitize_conditions(where)}" if where
 
     self.send_count_async_request(query, next_token, consistent, hydra) do |count|
       yield count
@@ -535,6 +535,11 @@ class SimpledbResource
   def self.sanitize_conditions(*ary)
     return nil if ary.compact.empty?
     ary = ary.first.is_a?(Array) ? ary.first : ary
+
+    # if only a string is provided, process it as-is (otherwise sanitization won't allow unescaped chars such as '%')
+    # we can remove this if we properly rewrite all the existing simple-db query conditions at some point
+    return ary if ary.size == 1 && ary.first.is_a?(String)
+
     ary = [ary.shift, *ary.map(&:to_s)] # SimpleDB expects all values to be strings
     ActiveRecord::Base.sanitize_conditions(ary)
   end

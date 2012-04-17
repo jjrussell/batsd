@@ -212,5 +212,32 @@ describe SimpledbResource do
       end.run
       count.should == 10
     end
+
+    it 'sanitizes conditions properly for select' do
+      m = Testing.select(:where => ["selectable_value = '3'"], :consistent => true)[:items][0]
+      m.key.should == 'select-3'
+
+      m = Testing.select(:where => ["selectable_value = ?", 3], :consistent => true)[:items][0]
+      m.key.should == 'select-3'
+    end
+
+    it 'sanitizes conditions properly for count' do
+      count = Testing.count(:where => ["selectable_value = '3'"], :consistent => true)
+      count.should == 1
+
+      count = Testing.count(:where => ["selectable_value = ?", 3], :consistent => true)
+      count.should == 1
+    end
+
+    it 'sanitizes conditions properly for count_async' do
+      count = 0
+      Testing.count_async(:where => ["selectable_value = '3'"], :consistent => true) { |c| count = c }.run
+      count.should == 1
+
+      count = 0
+      Testing.count_async(:where => ["selectable_value = ?", 3], :consistent => true) { |c| count = c }.run
+      count.should == 1
+    end
+
   end
 end
