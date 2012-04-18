@@ -165,6 +165,11 @@ authorization do
     has_permission_on :dashboard_tools_employees, :to => [ :wfhs ]
   end
 
+  role :partner_changer do
+    includes :tools
+    has_permission_on :tools_partner_changes, :to => [ :index, :new, :create, :destroy, :complete ]
+  end
+
   role :admin do
     includes :tools
     includes :devices

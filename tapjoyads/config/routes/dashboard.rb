@@ -269,6 +269,7 @@ Tapjoyad::Application.routes.draw do
 
         end
         resources :offer_lists, :only => [:index]
+
         resources :rank_boosts, :except => [:show, :destroy] do
 
           member do
@@ -304,6 +305,11 @@ Tapjoyad::Application.routes.draw do
         resources :partner_program_statz, :only => [:index] do
           collection do
             get :export
+          end
+        end
+        resources :partner_changes, :only => [ :index, :new, :create, :destroy ] do
+          member do
+            post :complete
           end
         end
         resources :survey_offers, :except => [:show] do
