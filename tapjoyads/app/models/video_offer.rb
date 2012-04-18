@@ -9,7 +9,7 @@ class VideoOffer < ActiveRecord::Base
 
   belongs_to :partner
 
-  before_cache :cache_video_buttons_and_tracking_offers
+  cache_associations :cache_video_buttons_and_tracking_offers
 
   validates_presence_of :partner, :name
   validates_presence_of :video_url, :unless => :new_record?
