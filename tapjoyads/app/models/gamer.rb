@@ -24,6 +24,10 @@ class Gamer < ActiveRecord::Base
 
   after_destroy :delete_friends
 
+  serialize :extra_attributes, Hash
+
+  MAX_DEVICE_THRESHOLD = 15
+  MAX_REFERRAL_THRESHOLD = 50
   DAYS_BEFORE_DELETION = 3
   named_scope :to_delete, lambda {
     {
@@ -47,6 +51,22 @@ class Gamer < ActiveRecord::Base
   def self.columns
     super.reject { |c| c.name == "use_gravatar" }
   end
+
+  def self.serialized_extra_attributes_accessor(*args)
+    args.each do |method_name|
+      eval "
+        def #{method_name}
+          (self.extra_attributes || {})[:#{method_name}]
+        end
+        def #{method_name}=(value)
+          self.extra_attributes ||= {}
+          self.extra_attributes[:#{method_name}] = value
+        end
+      "
+    end
+  end
+  # Example Usage: list the attribute name here, then you could access it as a normal attribute
+  # serialized_extra_attributes_accessor :completed_offer_count
 
   def confirm!
     self.confirmed_at = Time.zone.now
@@ -74,18 +94,21 @@ class Gamer < ActiveRecord::Base
       email
     when Invitation::FACEBOOK
       facebook_id
+    when Invitation::TWITTER
+      twitter_id
     end
   end
 
-  def self.find_all_gamer_based_on_facebook(external)
-    gamer_profiles = GamerProfile.find_all_by_facebook_id(external)
+  def self.find_all_gamer_based_on_channel(channel, external)
     gamers = []
 
-    if gamer_profiles.any?
-      gamer_profiles.each do |profile|
-        gamers << Gamer.find_by_id(profile.gamer_id)
-      end
+    case channel
+    when Invitation::FACEBOOK
+      gamers = GamerProfile.find_all_by_facebook_id(external, :include => [:gamer]).map(&:gamer)
+    when Invitation::TWITTER
+      gamers = Gamer.find_all_by_twitter_id(external)
     end
+
     gamers
   end
 
@@ -93,10 +116,10 @@ class Gamer < ActiveRecord::Base
     Friendship.establish_friendship(id, friend.id)
   end
 
-  def facebook_invitation_for(friend_id)
+  def invitation_for(friend_id, channel)
     invitation = Invitation.find_by_external_info_and_gamer_id(friend_id, id)
     if invitation.nil?
-      invitation = invitations.build(:channel => Invitation::FACEBOOK, :external_info => friend_id)
+      invitation = invitations.build(:channel => channel, :external_info => friend_id)
       invitation.save
     end
     invitation
@@ -126,11 +149,11 @@ class Gamer < ActiveRecord::Base
     end
   end
 
-  def get_avatar_url
+  def get_avatar_url(size = '123')
     if gamer_profile.present? && gamer_profile.facebook_id.present?
       "https://graph.facebook.com/#{gamer_profile.facebook_id}/picture?type=normal"
     else
-      "https://secure.gravatar.com/avatar/#{generate_gravatar_hash}?d=mm&s=123"
+      "https://secure.gravatar.com/avatar/#{generate_gravatar_hash}?d=mm&s=#{size}"
     end
   end
 
@@ -142,12 +165,54 @@ class Gamer < ActiveRecord::Base
     Downloader.get_with_retry("#{API_URL}/offer_completed?click_key=#{click.key}")
   end
 
+  def update_twitter_info!(authhash)
+    if twitter_id != authhash[:twitter_id]
+      self.twitter_id            = authhash[:twitter_id]
+      self.twitter_access_token  = authhash[:twitter_access_token]
+      self.twitter_access_secret = authhash[:twitter_access_secret]
+      save!
+
+      Invitation.reconcile_pending_invitations(Gamer.find_by_id(id), :external_info => twitter_id)
+    end
+  end
+
+  def dissociate_account!(account_type)
+    case account_type
+    when Invitation::FACEBOOK
+      self.gamer_profile.facebook_id     = nil
+      self.gamer_profile.fb_access_token = nil
+      self.gamer_profile.save!
+    when Invitation::TWITTER
+      self.twitter_id            = nil
+      self.twitter_access_token  = nil
+      self.twitter_access_secret = nil
+      save!
+    end
+  end
+
+  def require_twitter_authenticate?
+    if twitter_id? and twitter_access_token? and twitter_access_secret?
+      Twitter.configure do |config|
+        config.consumer_key       = ENV['CONSUMER_KEY']
+        config.consumer_secret    = ENV['CONSUMER_SECRET']
+        config.oauth_token        = twitter_access_token
+        config.oauth_token_secret = twitter_access_secret
+      end
+      return false
+    end
+    true
+  end
+
   def encrypted_referral_id(advertiser_app_id = nil)
     ObjectEncryptor.encrypt("#{id},#{advertiser_app_id}")
   end
 
   def review_for(app_metadata_id)
     app_reviews.find_by_app_metadata_id(app_metadata_id)
+  end
+
+  def too_many_devices?
+    gamer_devices.count >= MAX_DEVICE_THRESHOLD
   end
 
   private

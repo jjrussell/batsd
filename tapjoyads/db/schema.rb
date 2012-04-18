@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120314201830) do
+ActiveRecord::Schema.define(:version => 20120406004520) do
 
   create_table "action_offers", :id => false, :force => true do |t|
     t.string   "id",                    :limit => 36,                    :null => false
@@ -54,12 +54,12 @@ ActiveRecord::Schema.define(:version => 20120314201830) do
   add_index "app_metadata_mappings", ["id"], :name => "index_app_metadata_mappings_on_id", :unique => true
 
   create_table "app_metadatas", :id => false, :force => true do |t|
-    t.string   "id",                :limit => 36,                :null => false
+    t.string   "id",                  :limit => 36,                :null => false
     t.string   "name"
     t.text     "description"
-    t.integer  "price",                           :default => 0
-    t.string   "store_name",                                     :null => false
-    t.string   "store_id",                                       :null => false
+    t.integer  "price",                             :default => 0
+    t.string   "store_name",                                       :null => false
+    t.string   "store_id",                                         :null => false
     t.integer  "age_rating"
     t.integer  "file_size_bytes"
     t.string   "supported_devices"
@@ -69,8 +69,9 @@ ActiveRecord::Schema.define(:version => 20120314201830) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "papaya_user_count"
-    t.integer  "thumbs_up",                       :default => 0
-    t.integer  "thumbs_down",                     :default => 0
+    t.integer  "thumbs_up",                         :default => 0
+    t.integer  "thumbs_down",                       :default => 0
+    t.text     "countries_blacklist"
   end
 
   add_index "app_metadatas", ["id"], :name => "index_app_metadatas_on_id", :unique => true
@@ -116,29 +117,18 @@ ActiveRecord::Schema.define(:version => 20120314201830) do
     t.string   "id",                            :limit => 36,                    :null => false
     t.string   "partner_id",                    :limit => 36,                    :null => false
     t.string   "name",                                                           :null => false
-    t.text     "description"
-    t.integer  "price",                                       :default => 0
     t.string   "platform"
-    t.string   "store_id"
     t.integer  "color"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "age_rating"
     t.integer  "rotation_direction",                          :default => 0,     :null => false
     t.integer  "rotation_time",                               :default => 0,     :null => false
     t.boolean  "hidden",                                      :default => false, :null => false
-    t.integer  "file_size_bytes"
-    t.string   "supported_devices"
     t.string   "enabled_rating_offer_id",       :limit => 36
     t.string   "secret_key",                                                     :null => false
-    t.datetime "released_at"
-    t.float    "user_rating"
-    t.string   "categories"
-    t.text     "countries_blacklist"
-    t.integer  "papaya_user_count"
     t.integer  "active_gamer_count",                          :default => 0
-    t.boolean  "reengagement_campaign_enabled"
     t.string   "protocol_handler"
+    t.boolean  "reengagement_campaign_enabled",               :default => false
   end
 
   add_index "apps", ["id"], :name => "index_apps_on_id", :unique => true
@@ -222,6 +212,7 @@ ActiveRecord::Schema.define(:version => 20120314201830) do
     t.string   "reseller_id",                                :limit => 36
     t.decimal  "reseller_spend_share",                                     :precision => 8, :scale => 6
     t.boolean  "whitelist_overridden",                                                                   :default => false, :null => false
+    t.text     "promoted_offers",                                                                                           :null => false
   end
 
   add_index "currencies", ["app_id"], :name => "index_currencies_on_app_id"
@@ -682,6 +673,8 @@ ActiveRecord::Schema.define(:version => 20120314201830) do
     t.string   "tracking_for_type"
     t.string   "tracking_for_id",                   :limit => 36
     t.text     "cities",                                                                                           :null => false
+    t.text     "impression_tracking_urls"
+    t.text     "click_tracking_urls"
   end
 
   add_index "offers", ["id"], :name => "index_offers_on_id", :unique => true
@@ -787,6 +780,7 @@ ActiveRecord::Schema.define(:version => 20120314201830) do
     t.string   "payout_confirmation_notes"
     t.boolean  "discount_all_offer_types",                                                 :default => false,     :null => false
     t.string   "client_id",                    :limit => 36
+    t.text     "promoted_offers",                                                                                 :null => false
   end
 
   add_index "partners", ["id"], :name => "index_partners_on_id", :unique => true
@@ -1002,6 +996,8 @@ ActiveRecord::Schema.define(:version => 20120314201830) do
     t.string   "auth_net_cim_id"
     t.string   "reseller_id",             :limit => 36
     t.string   "state"
+    t.string   "country"
+    t.string   "account_type"
   end
 
   add_index "users", ["email"], :name => "index_users_on_email"
@@ -1014,7 +1010,7 @@ ActiveRecord::Schema.define(:version => 20120314201830) do
     t.string   "id",             :limit => 36,                   :null => false
     t.string   "video_offer_id", :limit => 36,                   :null => false
     t.string   "name",                                           :null => false
-    t.string   "url",                                            :null => false
+    t.string   "url"
     t.integer  "ordinal"
     t.boolean  "enabled",                      :default => true
     t.datetime "created_at"

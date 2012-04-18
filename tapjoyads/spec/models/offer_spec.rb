@@ -34,7 +34,6 @@ describe Offer do
     @offer.payment.should == 500
   end
 
-
   describe "applies discounts correctly" do
     context "to_json an app offer item" do
       before :each do
@@ -123,7 +122,7 @@ describe Offer do
     geoip_data = { :primary_country => "US" }
     @offer.send(:geoip_reject?, geoip_data).should == false
 
-    @offer.item.countries_blacklist = ["GB"].to_json
+    @offer.item.primary_app_metadata.countries_blacklist = ["GB"].to_json
     @offer.countries_blacklist(true)
     geoip_data = { :primary_country => nil }
     @offer.send(:geoip_reject?, geoip_data).should == false
@@ -229,7 +228,6 @@ describe Offer do
     @offer.send(:sdkless_reject?, '8.2.0').should be_false
   end
 
-
   it "doesn't reject on source when approved_sources is empty" do
     @offer.send(:source_reject?, 'foo').should be_false
     @offer.send(:source_reject?, 'offerwall').should be_false
@@ -253,7 +251,8 @@ describe Offer do
                                   'cookie_tracking', 'min_os_version', 'screen_layout_sizes',
                                   'interval', 'banner_creatives', 'dma_codes', 'regions',
                                   'wifi_only', 'approved_sources', 'approved_banner_creatives',
-                                  'sdkless', 'carriers', 'cities'
+                                  'sdkless', 'carriers', 'cities', 'impression_tracking_urls',
+                                  'click_tracking_urls'
                                 ].sort
   end
 
@@ -956,4 +955,35 @@ describe Offer do
       Offer.for_display_ads.should include(@offer)
     end
   end
+
+  context "queue_third_party_tracking_request methods" do
+    before(:each) do
+      @request = Request.new
+      Sqs.stubs(:send_message)
+      @urls = ['https://dummyurl.com', 'https://example.com']
+    end
+
+    describe ".queue_impression_tracking_requests" do
+      it "should queue up the proper GET requests" do
+        @offer.impression_tracking_urls = @urls
+        @urls.each { |url| Downloader.expects(:queue_get_with_retry).with(url, { :headers => @request.http_headers.merge('Referer' => @request.url) }).once }
+
+        @offer.queue_impression_tracking_requests(@request)
+      end
+    end
+
+    describe ".queue_click_tracking_requests" do
+      it "should queue up the proper GET requests" do
+        @offer.click_tracking_urls = @urls
+        @urls.each { |url| Downloader.expects(:queue_get_with_retry).with(url, { :headers => @request.http_headers.merge('Referer' => @request.url) }).once }
+
+        @offer.queue_click_tracking_requests(@request)
+      end
+    end
+  end
+end
+
+class Request
+  def http_headers; {'User-Agent' => 'Bob'}; end
+  def url; 'http://williamshat.com'; end
 end

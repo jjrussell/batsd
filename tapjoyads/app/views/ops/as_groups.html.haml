@@ -1,0 +1,106 @@
+- @page_title = 'Auto-Scaling Groups'
+
+- content_for :page_sidebar do
+  .span2
+    .well.sidebar-nav
+      %ul.nav.nav-list
+        %li.nav-header more info »
+        %li= link_to 'dashboard', ops_path
+        %li.active= link_to 'auto-scaler', as_groups_ops_path
+        %li= link_to 'load-balancer', elb_status_ops_path
+        %li= link_to 'service-stats', service_stats_ops_path
+
+.span12
+  %h1 Auto-Scaling Groups
+
+  As of: #{Time.zone.now.to_s(:pub_ampm_sec)}
+
+  - @as_groups.each do |group|
+    %h3= group[:auto_scaling_group_name]
+
+    %table.tablesorter.details.left
+      %thead
+        %tr
+          %th{ :colspan => 2 } Details
+      %tbody
+        %tr
+          %td Min Size
+          %td= group[:min_size]
+        %tr{ :class => 'odd' }
+          %td Max Size
+          %td= group[:max_size]
+        %tr
+          %td Desired Capacity
+          %td= group[:desired_capacity]
+        %tr{ :class => 'odd' }
+          %td Launch Configuration
+          %td= group[:launch_configuration_name]
+        %tr
+          %td Availability Zone(s)
+          %td= group[:availability_zones].join(', ')
+        %tr{ :class => 'odd' }
+          %td Load Balancer(s)
+          %td= group[:load_balancer_names].join(', ')
+
+    - group[:triggers].each do |trigger|
+      %table.tablesorter.details.left
+        %thead
+          %tr
+            %th{ :colspan => 2 } Trigger
+        %tbody
+          %tr
+            %td Name
+            %td= trigger[:trigger_name]
+          %tr{ :class => 'odd' }
+            %td Status
+            %td= trigger[:status]
+          %tr
+            %td Breach Measure
+            %td= "#{trigger[:statistic]} #{trigger[:measure_name]} / #{trigger[:period]} sec."
+          %tr{ :class => 'odd' }
+            %td Breach Duration
+            %td= "#{trigger[:breach_duration]} seconds"
+          %tr
+            %td Lower Threshold / Scale
+            %td= "#{trigger[:lower_threshold]} #{trigger[:unit]} / #{trigger[:lower_breach_scale_increment]}"
+          %tr{ :class => 'odd' }
+            %td Upper Threshold / Scale
+            %td= "#{trigger[:upper_threshold]} #{trigger[:unit]} / #{trigger[:upper_breach_scale_increment]}"
+
+    .clear
+
+    - table_id = "instances_#{group[:auto_scaling_group_name]}"
+    %a.instances_toggle{ :href => '#', :table_id => table_id } [Show Instances]
+    %table.tablesorter.hidden{ :id => table_id }
+      %thead
+        %tr
+          %th Instance ID
+          %th Lifecycle State
+          %th Availability Zone
+      %tbody
+        - group[:instances].each do |instance|
+          %tr{ :class => cycle('', 'odd', :name => 'instances') }
+            %td= instance[:instance_id]
+            %td= instance[:lifecycle_state]
+            %td= instance[:availability_zone]
+        - reset_cycle('instances')
+
+- content_for :page_javascript do
+  :plain
+    $(function() {
+      $('a.instances_toggle').click(function() {
+        $('#' + $(this).attr('table_id')).toggle();
+        return false;
+      });
+    });
+
+- content_for :page_styles do
+  :plain
+    table.tablesorter {
+      border-collapse: separate;
+    }
+
+    table.details {
+      width: 35%;
+      margin-right: 10px;
+    }

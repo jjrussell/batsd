@@ -16,7 +16,7 @@ ActionController::Routing::Routes.draw do |map|
     m.more_games_editor_picks 'editor_picks', :controller => 'games/more_games', :action => :editor_picks
     m.more_games_recommended 'recommended', :controller => 'games/more_games', :action => :recommended
 
-    m.translations 'translations', :controller => 'games/homepage', :action => :translations
+    m.translations 'translations/:language_code-pack.js', :controller => 'games/homepage', :action => :translations
     m.resources :my_apps, :controller => 'games/my_apps', :only => [ :show, :index ]
 
     m.resources :gamer_sessions, :controller => 'games/gamer_sessions', :only => [ :new, :create, :destroy, :index ]
@@ -52,12 +52,20 @@ ActionController::Routing::Routes.draw do |map|
     m.resources :android, :controller => 'games/android', :action => :index
 
     m.resources :social, :only => [:index], :controller => 'games/social'
-    map.with_options :controller => 'games/social', :name_prefix => 'games_social_' do |social|
+    m.with_options :controller => 'games/social', :name_prefix => 'games_social_' do |social|
       social.invite_email_friends 'invite_email_friends', :action => :invite_email_friends
       social.connect_facebook_account 'social/connect_facebook_account', :action => :connect_facebook_account
       social.send_email_invites 'send_email_invites', :action => :send_email_invites
+      social.invite_twitter_friends 'invite_twitter_friends', :action => :invite_twitter_friends
+      social.send_twitter_invites 'send_twitter_invites', :action => :send_twitter_invites
+      social.get_twitter_friends 'get_twitter_friends', :action => :get_twitter_friends
       social.invites 'social/invites', :action => :invites
       social.friends 'social/friends', :action => :friends
+    end
+
+    map.with_options :controller => 'games/social/twitter', :name_prefix => 'games_social_twitter_' do |twitter|
+      twitter.start_oauth 'twitter/start_oauth', :action => :start_oauth
+      twitter.finish_oauth 'twitter/finish_oauth', :action => :finish_oauth
     end
 
     map.resources :survey_results, :only => [ :new, :create ]

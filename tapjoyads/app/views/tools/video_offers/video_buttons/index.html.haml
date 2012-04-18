@@ -9,7 +9,7 @@
     %tr
       %th Button ID
       %th Name
-      %th URL
+      %th Offer
       %th Ordinal
       %th Enabled
       %th Operation
@@ -18,7 +18,7 @@
       %tr
         %td.button-id= link_to(button.id, tools_video_offer_video_button_path(:video_offer_id => @video_offer.id, :id => button.id))
         %td.name= button.name
-        %td.url= button.url
+        %td.url= button.item.try(:name)
         %td.ordinal= button.ordinal
         %td.enabled= button.enabled
         %td.operation

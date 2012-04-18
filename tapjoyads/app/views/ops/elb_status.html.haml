@@ -1,0 +1,54 @@
+- @page_title = 'ELB Status'
+
+- content_for :page_sidebar do
+  .span2
+    .well.sidebar-nav
+      %ul.nav.nav-list
+        %li.nav-header more info »
+        %li= link_to 'dashboard', ops_path
+        %li= link_to 'auto-scaler', as_groups_ops_path
+        %li.active= link_to 'load-balancer', elb_status_ops_path
+        %li= link_to 'service-stats', service_stats_ops_path
+
+.span12
+  %h1 ELB Status
+
+  As of: #{Time.zone.now.to_s(:pub_ampm_sec)}
+
+  - @lb_names.each do |lb_name|
+    %h3= lb_name
+    - num_in_service = @lb_instances[lb_name].inject(0) { |sum, instance| sum += (instance[:state] == 'InService' ? 1 : 0) }
+    - num_total      = @lb_instances[lb_name].size
+    #{num_in_service} of #{num_total} in service.
+    %table.tablesorter
+      %thead
+        %tr
+          %th Instance ID
+          %th State
+          %th DNS Name
+          %th Availability Zone
+          %th AWS State
+          %th Description
+          %th Reason Code
+      %tbody
+        - @lb_instances[lb_name].each do |lb_instance|
+          - ec2_instance = @ec2_instances[lb_instance[:instance_id]] || {}
+          %tr{ :class => cycle('', 'odd', :name => 'instances') }
+            %td{ :class => lb_instance[:state] != 'InService' ? 'bad_instance' : '' }= lb_instance[:instance_id]
+            %td= lb_instance[:state]
+            %td= ec2_instance[:dns_name]
+            %td= ec2_instance[:aws_availability_zone]
+            %td= ec2_instance[:aws_state]
+            %td= lb_instance[:description]
+            %td= lb_instance[:reason_code]
+        - reset_cycle('instances')
+
+- content_for :page_styles do
+  :plain
+    table.tablesorter {
+      border-collapse: separate;
+    }
+
+    td.bad_instance {
+      border: 2px solid red;
+    }

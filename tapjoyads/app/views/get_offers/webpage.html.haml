@@ -1,4 +1,5 @@
 - @page_title = @currency.conversion_rate > 0 ? t('text.offerwall.title', :currency => @currency.name) : ''
+- @webpage_link = @currency.external_publisher? ? "#{WEBSITE_URL}/earn?eid=#{ObjectEncryptor.encrypt(@currency.id)}" : WEBSITE_URL
 
 - unless @message.blank?
   #top_box
@@ -84,7 +85,7 @@
     %a{ :href => "javascript:void(0);", :id => "load_more" }
       = t('text.offerwall.load_more')
 
-- link_to WEBSITE_URL, :id => 'more_offers', :class => 'offer', :style => "#{'display: none;' if @more_data_available > 0}" do
+- link_to @webpage_link, :id => 'more_offers', :class => 'offer', :style => "#{'display: none;' if @more_data_available > 0}" do
   .divider
   .content
     .icon
@@ -136,16 +137,16 @@
         if (!window.scrollY) {
           scrollY = document.body.parentNode.scrollTop;
         }
-        if (scrollY + window.innerHeight + 480 > image.offsetTop) {
+        var vertOffset = scrollY + window.innerHeight;
+        // 480 is a buffer so we can pre-load images *before* they are displayed
+        if (vertOffset + 480 > image.offsetTop && image.getAttribute('s') && image.src != image.getAttribute('s')) {
           loadImage(image);
         }
       }
     }
 
     function loadImage(image) {
-      if (image.getAttribute('s') && image.src != image.getAttribute('s')) {
-        image.src = image.getAttribute('s');
-      }
+      image.src = image.getAttribute('s');
     }
 
     function loadJQ(ref){

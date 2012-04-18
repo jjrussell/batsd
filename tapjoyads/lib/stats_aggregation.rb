@@ -24,17 +24,14 @@ class StatsAggregation
     inaccurate     = percentage < 0.99999 || percentage > 1.00001
     message        = ''
 
-    if inaccurate
-      message << "Cannot verify daily stats because Vertica has inaccurate data for #{start_time.to_date}.\n"
-      message << "Appstats total: #{appstats_total}\n"
-      message << "Vertica total: #{vertica_total}\n"
-      message << "Difference: #{appstats_total - vertica_total}\n\n"
-      message << "hour, appstats, vertica, diff\n"
-      24.times do |i|
-        appstats_val = appstats_counts[i]
-        vertica_val  = vertica_counts[i] || 0
-        message << "#{i}, #{appstats_val}, #{vertica_val}, #{appstats_val - vertica_val}\n"
-      end
+    message << "Appstats total: #{appstats_total}\n"
+    message << "Vertica total: #{vertica_total}\n"
+    message << "Difference: #{appstats_total - vertica_total}\n\n"
+    message << "hour, appstats, vertica, diff\n"
+    24.times do |i|
+      appstats_val = appstats_counts[i]
+      vertica_val  = vertica_counts[i] || 0
+      message << "#{i}, #{appstats_val}, #{vertica_val}, #{appstats_val - vertica_val}\n"
     end
 
     [ !inaccurate, message ]
@@ -274,7 +271,7 @@ class StatsAggregation
   end
 
   def get_web_request_count(s3_path, stat_name, key, range)
-    (@counts[s3_path][stat_name][key] || [])[range].sum
+    ((@counts[s3_path][stat_name][key] || [])[range] || []).sum
   end
 
   def self.aggregate_hourly_group_stats(date = nil, aggregate_daily = false)

@@ -8,12 +8,9 @@ class Apps::ReengagementOffersController < WebsiteController
 
   DAY_0_INSTRUCTIONS = "Come back each day and get rewards!"
 
-  def show
-  end
-
   def index
-    if @app.primary_currency && @app.primary_currency.tapjoy_enabled?
-      @campaign = @app.reengagement_campaign
+    if @app.currencies.present? && @app.currencies.any?(&:tapjoy_enabled?)
+        @campaign = @app.reengagement_campaign
       redirect_to(new_app_reengagement_offer_path(@app)) if @campaign.empty?
     end
   end
@@ -42,9 +39,6 @@ class Apps::ReengagementOffersController < WebsiteController
       flash[:error] = "Problems encountered while adding reengagement offer."
       render :action => :new
     end
-  end
-
-  def edit
   end
 
   def destroy
@@ -81,7 +75,7 @@ class Apps::ReengagementOffersController < WebsiteController
       else
         @app = current_partner.apps.find(params[:app_id])
       end
-      unless @app.primary_currency && @app.primary_currency.tapjoy_enabled?
+      unless @app.primary_currency.try(:tapjoy_enabled?)
         render :action => :index and return
       end
     end

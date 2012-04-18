@@ -40,6 +40,14 @@ class TapjoyMailer < ActionMailer::Base
     body(:offer => offer, :stats => stats)
   end
 
+  def suspicious_gamer_alert(gamer_id, gamer_email, behavior_type, behavior_result)
+    from 'Tapjoy Support <support@tapjoy.com>'
+    recipients 'dev@tapjoy.com'
+    subject "Suspicious Gamer Behavior"
+    content_type 'text/html'
+    body(:gamer_id => gamer_id, :gamer_email => gamer_email, :behavior_type => behavior_type, :behavior_result => behavior_result)
+  end
+
   def password_reset(user_email, reset_link, location, timestamp)
     from 'Tapjoy Support <support@tapjoy.com>'
     recipients user_email

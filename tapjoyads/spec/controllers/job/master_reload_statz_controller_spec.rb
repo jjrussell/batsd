@@ -101,11 +101,11 @@ describe Job::MasterReloadStatzController do
           :price => 1),
         Factory(:app_metadata,
           :store_id => 'android.free',
-          :store_name => 'Market',
+          :store_name => 'Google Play',
           :price => 0),
         Factory(:app_metadata,
           :store_id => 'android.paid',
-          :store_name => 'Market',
+          :store_name => 'Google Play',
           :price => 1),
       ]
 

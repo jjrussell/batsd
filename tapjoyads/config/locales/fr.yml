@@ -3,34 +3,43 @@ fr:
   activerecord:
     errors:
       full_messages:
-        format: ~
+        format: "%{attribute} %{message}"
       messages:
-        accepted: ~
-        blank: ~
-        confirmation: ~
-        empty: ~
-        equal_to: ~
-        even: ~
-        exclusion: ~
-        greater_than: ~
-        greater_than_or_equal_to: ~
-        inclusion: ~
-        invalid: ~
-        less_than: ~
-        less_than_or_equal_to: ~
-        not_a_number: ~
-        not_an_integer: ~
-        odd: ~
-        record_invalid: ~
-        taken: ~
-        too_long: ~
-        too_short: ~
-        wrong_length: ~
+        accepted: "must be accepted"
+        blank: "can't be blank"
+        confirmation: "doesn't match confirmation"
+        empty: "can't be empty"
+        equal_to: "must be equal to %{count}"
+        even: "must be even"
+        exclusion: "is reserved"
+        greater_than: "must be greater than %{count}"
+        greater_than_or_equal_to: "must be greater than or equal to %{count}"
+        inclusion: "is not included in the list"
+        invalid: "est invalide"
+        less_than: "must be less than %{count}"
+        less_than_or_equal_to: "must be less than or equal to %{count}"
+        not_a_number: "is not a number"
+        not_an_integer: "must be an integer"
+        odd: "must be odd"
+        record_invalid: "Validation failed: %{errors}"
+        taken: "has already been taken"
+        too_long: "is too long (maximum is %{count} characters)"
+        too_short: "is too short (minimum is %{count} characters)"
+        wrong_length: "is the wrong length (should be %{count} characters)"
+      models:
+        gamer_sessions:
+          attributes:
+            email: Email
+            password: Password
       template:
-        body: ~
+        body: "There were problems with the following fields:"
         header:
-          one: ~
-          other: ~
+          one: "1 error prohibited this %{model} from being saved"
+          other: "%{count} errors prohibited this %{model} from being saved"
+  authlogic:
+    error_messages:
+      login_not_found: "Email is invalid"
+      password_invalid: "Password is invalid"
   date:
     abbr_day_names: ~
     abbr_month_names: ~
@@ -85,34 +94,34 @@ fr:
       second: ~
       year: ~
   errors:
-    format: ~
+    format: "%{attribute} %{message}"
     messages:
-      accepted: ~
-      blank: ~
-      confirmation: ~
-      empty: ~
-      equal_to: ~
-      even: ~
-      exclusion: ~
-      greater_than: ~
-      greater_than_or_equal_to: ~
-      inclusion: ~
-      invalid: ~
-      less_than: ~
-      less_than_or_equal_to: ~
-      not_a_number: ~
-      not_an_integer: ~
-      odd: ~
-      too_long: ~
-      too_short: ~
-      wrong_length: ~
+      accepted: "must be accepted"
+      blank: "can't be blank"
+      confirmation: "doesn't match confirmation"
+      empty: "can't be empty"
+      equal_to: "must be equal to %{count}"
+      even: "must be even"
+      exclusion: "is reserved"
+      greater_than: "must be greater than %{count}"
+      greater_than_or_equal_to: "must be greater than or equal to %{count}"
+      inclusion: "is not included in the list"
+      invalid: "est invalide"
+      less_than: "must be less than %{count}"
+      less_than_or_equal_to: "must be less than or equal to %{count}"
+      not_a_number: "is not a number"
+      not_an_integer: "must be an integer"
+      odd: "must be odd"
+      too_long: "is too long (maximum is %{count} characters)"
+      too_short: "is too short (minimum is %{count} characters)"
+      wrong_length: "is the wrong length (should be %{count} characters)"
   helpers:
     select:
-      prompt: ~
+      prompt: "Please select"
     submit:
-      create: ~
-      submit: ~
-      update: ~
+      create: "Create %{model}"
+      submit: "Save %{model}"
+      update: "Update %{model}"
   number:
     currency:
       format:
@@ -162,11 +171,11 @@ fr:
         delimiter: ~
   support:
     array:
-      last_word_connector: ~
-      two_words_connector: ~
-      words_connector: ~
+      last_word_connector: ", and "
+      two_words_connector: " and "
+      words_connector: ", "
     select:
-      prompt: ~
+      prompt: "Please select"
   text:
     featured:
       download: Télécharge
@@ -178,12 +187,12 @@ fr:
       title: "Gagne des %{currency}"
       try_out: "A découvrir"
     footer:
-      about: ~
-      advertisers: ~
-      blog: ~
-      copyright: ~
-      developers: ~
-      privacy: ~
+      about: "About Tapjoy"
+      advertisers: Advertisers
+      blog: Blog
+      copyright: "Copyright &copy; %{year} Tapjoy, Inc. Tous droits réservés. Tapjoy et le logo Tapjoy sont des marques déposées de Tapjoy, Inc. Tous les logos et marques mentionnés appartiennent à leurs propriétaires respectifs."
+      developers: Developers
+      privacy: "Privacy Policy"
     games:
       about_body: "La meilleure manière de profiter de tes apps favorites et d'en découvrir de nouvelles!"
       about_title: "\"Tapjoy.com connait déjà les apps que j'aime\""
@@ -196,29 +205,36 @@ fr:
       advertisers_body: "Ciblez des millions d'utilisateurs et faites bénéficiez vos produits d'une large exposition"
       advertisers_title: Annonceurs
       allow_marketing_emails: "Permettre à Tapjoy de m'envoyer des emails promotionnels "
-      almost_done: ~
+      almost_done: "C'est presque terminé!"
       already_registered:
-        one:"%{name} s'est déjà enregistré, tu le/la suis désormais"
+        one: "%{name} s'est déjà enregistré, tu le/la suis désormais"
         other: "%{name} sont deja inscrits, tu es désormais abonné à leur fil d'actualité"
-      amount_and_currency: ~
+      amount_and_currency: "%{amount} %{currency}"
+      app_review_concern_reported: "Concern Reported"
+      app_review_h_no: "No"
+      app_review_h_yes: "Yes"
+      app_review_more: more...
+      app_review_report_concern: "Report concern"
+      app_review_thanks_for_feedback: "Thank you for your feedback"
+      app_review_was_helpful: "Was this review helpful?"
       back_to_top: Retour
       birthdate: "Date de naissance"
       browse_offers: "Parcourir les offres!"
       call_to_action_body: "Le meilleur moyen de profiter pleinement de tes apps mais aussi d'en découvrir de nouvelles"
-      call_to_action_title: ~
+      call_to_action_title: "Unlock Mobile Joy"
       cant_fetch_offers: "Il y a eu un problème pour trouver plus d'offres. Merci de réessayer."
       change: changer
       change_linked_account: "Changer de Compte"
-      choose_section: Choisis une section
-      close: ~
+      choose_section: "Choisis une section"
+      close: Ferme
       collect: Recevoir
       collect_rewards: "Recevoir des recompenses"
       connect_my_device: "Connecter mon appareil"
       connect_to_facebook: "Cliques ici pour te connecter sur Facebook"
       connect_your_android: "Merci de connecter ton appareil Android"
       connect_your_device: "Merci de connecter ton appareil"
-      connected_to_facebook: ~
-      connected_to_twitter: ~
+      connected_to_facebook: "Connected to Facebook"
+      connected_to_twitter: "Connected to Twitter"
       contact_support: "Contacter l'equipe support"
       contact_us: "Nous contacter"
       cookies_required: "Merci d'autoriser les cookies dans ton navigateur"
@@ -227,51 +243,56 @@ fr:
       delete_my_account: "Supprimer mon Compte"
       developers_body: "Générez des revenus additionnels au sein de vos apps grace à nos outils de monétisation"
       developers_title: Développeurs
-      discover_apps: ~
-      download_now: ~
+      discover_apps: "Join the millions of mobile app lovers on Tapjoy and discover the best-rated apps. Get started today!"
+      download_now: "Download now"
       earn: "Gagnez %{currency}"
-      earn_rewards: ~
+      earn_rewards: "Gagne des récompenses"
       earn_title: "Complétes une des offres ci-dessous pour gagner %{currency} à %{app_name}"
-      earning_rewards: ~
+      earning_rewards: "Tapjoy est le moyen idéal de gagner des récompenses dans tes applications favorites."
       edit: Edites
-      email_device_link: ~
-      email_notification: Notifications par email
+      email_device_link: "Email device link"
+      email_notification: "Notifications par email"
       enable_javascript: "Merci d'activer JavaScript dans les options de ton navigateur pour continuer à utiliser Tapjoy."
       enter_birthdate: "Merci d'entrer ta date de naissance"
       enter_email: "Merci d'inscrire ici ton adresse email"
       enter_message: "Merci d'entrer un message"
-      enter_name: ~
+      enter_name: "Please enter your name"
       enter_password: "Merci d'entrer un mot de passe"
       enter_platform: "Merci de choisir iOS ou Android"
       enter_tos: "Merci d'accepter les termes et conditions ci-dessous"
       enter_valid_email: "Entrer une adresse email valide"
-      error_mark_as_favorite: ~
-      error_unmark_as_favorite: ~
-      failed_to_change_linked: ~
+      errno_error: "There was a connection issue. Please try again later."
+      error_mark_as_favorite: "Error marking app as Favorite"
+      error_unmark_as_favorite: "Error unmarking app as Favorite"
+      facebook_connect_failed: "Failed to connect to your Facebook profile"
+      failed_to_change_linked: "Failed to change linked account."
       favorite_app: "App Favorite"
       favorite_apps: "App Favorites"
       favorite_category: "Catégorie Favorite"
-      favorites: ~
-      feedback: ~
+      favorites: Favorites
+      feedback: Feedback
       find_and_invite_friends: "Trouves et invites tes amis"
-      find_friends_from_facebook: ~
-      find_friends_from_twitter: ~
+      find_friends_from_facebook: "Find friends from Facebook"
+      find_friends_from_twitter: "Find friends from Twitter"
       find_friends_on_tapjoy: "Trouves tes amis utilisant déjaà Tapjoy!"
       find_more_friends: "Trouver plus d'amis"
       find_new_apps: "Trouver de nouvelles apps"
       follow_us: Suis-nous
       forgot_pass: "Mot de passe oublié?"
       free: Gratuit!
+      friend_filter_label: "Start Typing a Name"
       generic_issue: "Il y a eu une erreur. Merci de réessayer."
       get_app: "Telecharge cette application"
       get_it: Télécharge!
+      grant_permissions_for_invite: "Please grant us both permissions before sending out an invite."
       grant_us_access: "Merci de nous autoriser à envoyer des invitations!"
       how_it_works_body: "Tous tes jeux disponibles ci-dessous. Merci de cliquer sur les boutons adjacents aux applications pour commencer à gagner de la monnaie virtuelle."
       how_it_works_title: "Comment ca marche?"
       install_and_run: "Installes et lance %{name}"
-      install_android_app: ~
-      install_profile: ~
-      invalid_fields: ~
+      install_android_app: "Download the Tapjoy app on your Android device to get started."
+      install_profile: "Installe ton profil sur la page suivante et découvres de nouvelles applications"
+      invalid_emails: "The email(s) provided were invalid"
+      invalid_fields: "Entrée non valide"
       invite: "Invites tes Amis!"
       invite_by_email: "Invites par email"
       invite_email_body: |-
@@ -281,30 +302,32 @@ fr:
 
           Pour commencer, crées un compte ici
       invite_email_greet: "Salut,"
-      invite_email_signature: L'équipe Tapjoy
+      invite_email_signature: "L'équipe Tapjoy"
       invite_friends:
         one: Invites
         other: "Invites %{count} amis"
       invite_title: "Envois une invitation par mail"
+      invite_twitter_followers: "Invite Twitter Followers!"
       invites_sent_to:
         one: "Ton invitation Tapjoy a été envoyée à %{name}"
         other: "Tes invitations Tapjoy ont été envoyées à %{name}"
       issue_registering: "Il ya eu une erreur lors de l'enregistrement de ton compte"
-      join_the_community: ~
-      join_the_community_blurb: ~
-      last_played: "Dernier jeu joué: %{game}"
-      link_account_header: ~
-      link_account_messaging: ~
-      link_account_messaging_android_href: ~
-      link_account_messaging_tjm_href: ~
+      join_the_community: "Rejoins la communauté"
+      join_the_community_blurb: "Tapjoy personnalise ses recommendations en fonction des apps que tu aimes et que tu utilises le plus."
+      last_played: "Derniere app.ouverte: %{game}"
+      link_account_header: "Tapjoy est le store idéal pour découvrir les apps tendances du moment mais aussi gagner de la monnaie virtuelle au sein de tes apps. actuelles. Pour bénéficier pleinement de l’expérience Tapjoy connecte ton appareil maintenant."
+      link_account_messaging: "Tapjoy est le store idéal pour découvrir les apps tendances du moment sur iOS et Androïd mais aussi gagner de la monnaie virtuelle au sein de tes apps. actuelles. Pour bénéficier pleinement de l’expérience Tapjoy connecte ton appareil iOS ou Android maintenant. Retournes simplement sur %{tjm_url} sur ton appareil iOS ou sur %{android_market_url} sur ton appareil Androïd pour débuter. Et n’oublie pas de créer un profil complet sur le site afin que l’on puisse t’envoyer des recommandations personnalisées."
+      link_account_messaging_android_href: "download the Android app"
+      link_account_messaging_tjm_href: www.tapjoy.com
       link_my_facebook: "Lier mon Facebook"
       load_more: "Encore plus de jeux"
       loading: Chargement
       log_in_tapjoy: "Se logger sur Tapjoy.com"
       mark_as_favorite: "Ajouter aux favoris"
       member_since: "Membre depuis %{date}"
-      meta_description: "Tapjoy:  La destination idéale pour les apps et jeux sur Android, iPhone et iPad"
+      meta_description: "Tapjoy: La destination idéale pour les apps et jeux sur Android, iPhone et iPad"
       meta_keywords: "jeux, jeux mobiles, applications mobiles, android, iphone,ipad, itouch"
+      mogli_reach_limit_error: "You have reached the limit. Please try again later."
       more_apps: "Plus d'apps"
       more_the_merrier: "Plus on est de fous, plus on rit!"
       my_apps: "Mes apps"
@@ -314,21 +337,25 @@ fr:
       none_selected: "Aucune app sélectionné"
       on_my: "sur mon %{device_name}"
       oops: Oops!
-      or_learn_more: ~
+      or_learn_more: "or learn more"
       other_options: "Autres options"
       our_tos_changed: "Nos %{terms} ont changé. Merci de les revoir et de confirmer ton accord ci-dessous"
-      password_changed: ~
-      password_non_match: ~
+      password_changed: "Ton mot de passe a été changé"
+      password_non_match: "Password and Confirmation do not match"
+      please_connect_facebook: "Please connect your Facebook account"
+      post_to_facebook: "Poster sur Facebook!"
       post_to_facebook_content: "Rends toi sur Tapjoy pour découvrir les meilleurs apps & jeux du moment tout en gagnant des crédits dans tes apps favorites. C'est gratuit, donc visites Tapjoy immédiatement pour commencer à recevoir des recommendations personnalisées."
       privacy_policy_href: Confidentialité
       profile: "Mon Profil"
-      profile_error: ~
-      profile_update: ~
+      profile_error: "There was an error updating your profile."
+      profile_update: "Ton profil a été mis à jour"
       provide_other_email: "Merci de rentrer un email autre que le tiens"
+      provide_single_email: "Please provide at least one email"
+      reactivated_account: "Your account has been reactivated!"
       recipients_label: "Utilise des virgules pour separer les adresses mails"
-      recommend_apps: ~
-      recommendations: Recommandations du jeu
-      recommendations_smart: ~
+      recommend_apps: "Tapjoy personnalise ses recommendations en fonction des apps que tu aimes et que tu utilises le plus."
+      recommendations: Recommandations
+      recommendations_smart: "Smart Recommendations"
       registering: S'enregistrer
       report_bug: "Signaler un bug"
       reset_password_message: "Rentre ici l'email associé a ton compte et nous vous enverrons un lien pour changer ton mot de passe"
@@ -340,6 +367,7 @@ fr:
       review_issue: "Il y a eu un problème. Essaye encore."
       review_updated: "La revue a été modifiée avec succès."
       reviewed_already: "Tu as déjà revu cette app."
+      scheduled_for_deletion: "Your account has been deactivated and scheduled for deletion!"
       select_current_device: "Merci de sélectionner ton appareil actuel"
       select_device: "Merci de sélectionner ton appareil"
       select_friend: "Merci de sélectionner au moins un ami avant d'envoyer une invitation"
@@ -347,10 +375,15 @@ fr:
       share_on_twitter: "Partages sur Twitter"
       share_with_everyone: "Partages avec tout le monde"
       share_with_your_friends: "Partages avec vos amis"
+      social_invite_friend_error: "There was an issue with inviting your friend, please try again later."
+      social_need_authorize_error: "Please authorize us before sending out an invite."
       social_networks: "Réseaux Sociaux"
       social_settings: "Paramètres de tes réseaux sociaux"
-      spread_mobile_joy: ~
-      start_discovering: ~
+      social_to_next: "NEXT %{page_size}"
+      social_to_prev: "PREV %{page_size}"
+      social_to_top: "TOP &#8679;"
+      spread_mobile_joy: "Spread mobile joy"
+      start_discovering: "Start discovering with Tapjoy for free"
       tap_that: "Cliques simplement sur %{icon} et sélectionne %{button}"
       tapjoy_picks: "La sélection Tapjoy"
       terms_of_use_href: "conditions d'utilisation"
@@ -361,16 +394,23 @@ fr:
       thats_you: "c'est toi"
       tos_acknowledge_html: "En cochant cette case je reconnais avoir pris connaissance des %{terms_of_use} & %{privacy_policy}"
       tos_change_acknowledge: "En cochant cette case je confirme avoir accepté les termes d'utilisation."
+      twitter_at_least_one_friend_error: "You must select at least one friend before sending out an invite"
+      twitter_authenticate_error: "Error while authenticating via TWITTER. The service did not return valid data."
+      twitter_forbidden_error: "Requests are being denied due to update limits."
+      twitter_general_error: "Something happened to Twitter. Please try again later."
+      twitter_internal_error: "Something happened to Twttier. Please try again later"
+      twitter_invite_msg: "has invited you to join Tapjoy, the BEST place to find the hottest apps. Signing up is free!"
+      twitter_invite_title: "Please Select Twitter Friends to Invite via DM"
       unable_to_process: "Désolé, nous somme incapables de procéder à ta requête"
-      unlock_mobile_joy: ~
-      unmark_as_favorite: ~
-      welcome_tapjoy: ~
+      unlock_mobile_joy: "Unlock Mobile Joy"
+      unmark_as_favorite: "Remove from Favorites"
+      welcome_tapjoy: "Welcome to Tapjoy!"
       wifi_required: "Wifi requis"
       wrong_device: "Pas le bon appareil?"
-      you_are_following: ~
+      you_are_following: "You're following (%{count})"
       your_followers:
-        one: ~
-        other: ~
+        one: "Your follower"
+        other: "Your followers (%{count})"
     instructions:
       amount_and_currency: "%{amount} %{currency}"
       continue_link: "Clique ici pour continuer."
@@ -413,7 +453,7 @@ fr:
       copyright: "Copyright &copy; %{year} Tapjoy, Inc. Tous droits réservés. Tapjoy et le logo Tapjoy sont des marques déposées de Tapjoy, Inc. Tous les logos et marques mentionnés appartiennent à leurs propriétaires respectifs."
       country: Pays
       day: Jour
-      earn_verb: "Gagner"
+      earn_verb: Gagner
       email: Email
       facebook_profile: "Profil Facebook"
       favorites: Favoris
@@ -425,9 +465,9 @@ fr:
       help: Aide
       invite: Invite
       ios: iOS
-      join: "Inscris-toi"
+      join: Inscris-toi
       location: Ville
-      login_noun: Nom d'utilisateur
+      login_noun: "Nom d'utilisateur"
       login_verb: "Se connecter"
       logout: "Fermer la session"
       male: Homme
@@ -438,12 +478,12 @@ fr:
       name: Nom
       new_password: "Nouveau mot de passe"
       nickname: Pseudo
-      none: ~
+      none: Aucun
       ok: OK
       options: Options
       other: Autre
       password: "Mot de passe"
-      please_try_again: ~
+      please_try_again: "Please try again."
       preferences: Préférences
       privacy: Confidentialité
       privacy_policy: "Règles de Confidentialité"
@@ -454,8 +494,8 @@ fr:
       reviews: Avis
       save: Sauvegarder
       send: Envoyer
-      sending: ~
-      sent: ~
+      sending: Sending
+      sent: Sent
       share: Partager
       sign_in: "Se connecter"
       sign_up: S'enregistrer
@@ -465,10 +505,10 @@ fr:
       title_noun: Titre
       try_again: "Essaye encore"
       unknown: Inconnu
-      update_review: Mettre à jour un avis
+      update_review: "Mettre à jour un avis"
       updating: "Mise à  jour en cours"
-      view_all: ~
-      write_review: Ecrire un avis
+      view_all: "View All"
+      write_review: "Ecrire un avis"
       year: Année
       zip_postal: "Code Postal"
     support:
@@ -491,8 +531,8 @@ fr:
       title: "En manque de %{currency}?"
       unavailable_offer: ~
     unavailable_offer:
-      message: ~
-      optional_message: ~
+      message: "We're sorry but %{offer} is no longer available. You can return to the previous page and refresh to view the latest offer list."
+      optional_message: "Or, click here to download %{offer} anyway."
   time:
     am: ~
     formats:
