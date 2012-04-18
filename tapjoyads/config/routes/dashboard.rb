@@ -263,6 +263,7 @@ Tapjoyad::Application.routes.draw do
           end
         end
         resources :offer_lists, :only => [:index]
+
         resources :rank_boosts, :except => [:show, :destroy] do
           member do
             post :deactivate
