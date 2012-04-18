@@ -39,16 +39,16 @@ class RecommendationList
         end
       end
       offers.compact!
-      Mc.distributed_put("s3.recommendations.offers.most_popular.#{Offer.acts_as_cacheable_version}", offers)
+      Mc.distributed_put("s3.recommendations.with_offers.most_popular.#{Offer.acts_as_cacheable_version}", offers)
     end
 
 
     def most_popular
-      Mc.distributed_get("s3.recommendations.offers.most_popular.#{Offer.acts_as_cacheable_version}") || []
+      Mc.distributed_get("s3.recommendations.with_offers.most_popular.#{Offer.acts_as_cacheable_version}") || []
     end
 
     def for_app(app_id)
-      Mc.get_and_put("s3.recommendations.offers.by_app.#{app_id}.#{Offer.acts_as_cacheable_version}", false, 1.day) do
+      Mc.get_and_put("s3.recommendations.with_offers.by_app.#{app_id}.#{Offer.acts_as_cacheable_version}", false, 1.day) do
         offers = []
         Recommender.instance.for_app(app_id).each do |recommendation_hash|
           begin
@@ -65,7 +65,7 @@ class RecommendationList
     end
 
     def for_device(device_id)
-      Mc.get_and_put("s3.recommendations.offers.by_device.#{device_id}.#{Offer.acts_as_cacheable_version}", false, 1.day) do
+      Mc.get_and_put("s3.recommendations.with_offers.by_device.#{device_id}.#{Offer.acts_as_cacheable_version}", false, 1.day) do
         offers = []
         Recommender.instance.for_device(device_id).each do |recommendation_hash|
           begin

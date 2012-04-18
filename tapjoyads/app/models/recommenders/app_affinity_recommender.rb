@@ -14,12 +14,12 @@ class Recommenders::AppAffinityRecommender < Recommender
   end
 
   def for_app(app_id, opts = {})
-    out = Mc.get("s3.recommendations.raw_list.by_app.#{app_id}") || []
+    out = Mc.get("s3.recommendations.app_affinity.by_app.#{app_id}") || []
     first_n(out, opts[:n])
   end
 
   def for_device(device_id, opts = {})
-    out = Mc.get("s3.recommendations.raw_list.by_device.#{device_id}") || []
+    out = Mc.get("s3.recommendations.app_affinity.by_device.#{device_id}") || []
     first_n(out, opts[:n])
   end
 
@@ -33,7 +33,7 @@ class Recommenders::AppAffinityRecommender < Recommender
       # where recommendations has the form app,weight;app,weight;...;app,weight
       app_id, recommendations = recs.split(/[;,]/, 2)
       next if recommendations.nil?
-      Mc.put("s3.recommendations.raw_list.by_app.#{app_id}", parse_recommendations(recommendations).map{ |x| { :explanation => app_id }.merge(x) }) rescue puts "error parsing recommendations for app \n#{recs}"
+      Mc.put("s3.recommendations.app_affinity.by_app.#{app_id}", parse_recommendations(recommendations).map{ |x| { :explanation => app_id }.merge(x) }) rescue puts "error parsing recommendations for app \n#{recs}"
     end
   end
 
@@ -44,7 +44,7 @@ class Recommenders::AppAffinityRecommender < Recommender
       # where recommendations has the form app,weight;app,weight;...;app,weight
       device_id, recommendations = recs.split(/[;,]/, 2)
       next if recommendations.nil?
-      Mc.put("s3.recommendations.raw_list.by_device.#{device_id}", parse_recommendations(recommendations, with_explanation)) rescue puts "error parsing recommendations for device \n#{recs}"
+      Mc.put("s3.recommendations.app_affinity.by_device.#{device_id}", parse_recommendations(recommendations, with_explanation)) rescue puts "error parsing recommendations for device \n#{recs}"
     end
   end
 
