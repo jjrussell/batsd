@@ -1,7 +1,10 @@
 - @page_title = 'Validations Report'
 
 %h1 Validations Report
-
+- form_tag(tools_partner_validations_path, :method => :get, :class => 'tjform') do
+  = label_tag(:q, "Account Manager:")
+  = text_field_tag(:q, params[:q], :size => '40')
+  = submit_tag('Search')
 %table
   %thead
     %tr
@@ -34,7 +37,7 @@
           %strong ID:
           = link_to(partner.id, partner_path(partner.id))
         %td
-          = mail_to(partner.users.first.email) if partner.users.present?
+          = mail_to(partner.non_managers.first.email) if partner.non_managers.present?
         %td
           = partner.account_managers.join('<br>')
         - if payout_info.present? && payout_info.valid?

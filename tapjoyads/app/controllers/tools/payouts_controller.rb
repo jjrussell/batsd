@@ -5,6 +5,8 @@ class Tools::PayoutsController < WebsiteController
   before_filter :load_payouts_list, :only => [ :index, :export ]
   after_filter :save_activity_logs, :only => [ :create, :confirm_payouts ]
 
+  INCLUDED_COLUMNS = [:payout_info, :payout_info_confirmation, :payout_threshold_confirmation]
+
   def index
     @partners = @partners.paginate(:page => params[:page])
     @freeze_enabled = PayoutFreeze.enabled?
@@ -60,10 +62,14 @@ class Tools::PayoutsController < WebsiteController
     if params[:year] && params[:month]
       @start_date = Time.zone.parse("#{params[:year]}-#{params[:month]}-01")
       @end_date = @start_date + 1.month
-      @partners = Partner.to_payout.payout_info_changed(@start_date, @end_date).all(:include => [:payout_info, :payout_info_confirmation, :payout_threshold_confirmation])
+      @partners = Partner.to_payout.payout_info_changed(@start_date, @end_date)
     else
-      @partners = Partner.to_payout.all( :include => [:payout_info, :payout_info_confirmation, :payout_threshold_confirmation])
+      @partners = Partner.to_payout
+    end
+    @partners.all(:include => INCLUDED_COLUMNS)
+    if params[:acct_mgr_sort]
+      @partners.sort!{ |a,b| a.users.first.email <=> b.users.first.email }
+      @partners.reverse! if params[:acct_mgr_sort] == 'DESC'
     end
   end
-
 end
