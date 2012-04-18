@@ -44,7 +44,8 @@ authorization do
                                      :as_terminate_instance,
                                      :service_stats,
                                      :http_codes,
-                                     :bytes_sent
+                                     :bytes_sent,
+                                     :vertica_status,
                                    ]
   end
 
