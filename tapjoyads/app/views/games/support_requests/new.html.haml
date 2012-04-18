@@ -1,5 +1,3 @@
-- offer_dropdown_params = { :udid => current_device_id }
-
 #support-request.current
   .content
     %h1.museo
@@ -8,7 +6,7 @@
       - elsif params[:type] === "report_bug"
         = t('text.games.report_bug')
       - elsif params[:type] === "contact_support"
-        = t('text.games.contact_support.page_title')
+        = t('text.games.contact_support')
       - else
         = t('text.games.contact_us')
     .support-form
@@ -19,51 +17,9 @@
           - else
             = hidden_field_tag :type, "contact_support"
           = f.text_area :content, :rows => 5, :value => params[:content], :required => 'true', :class => 'ui-joy-textarea'
-        - if params[:type] === "contact_support"
-          - if @incomplete_offers.nil?
-            .field
-              = label_tag :offer_id, t('text.games.contact_support.incomplete_offers_label')
-              = submit_tag t('text.games.contact_support.select_offer_button'), :id => 'show_offers', :type => 'button', :class => 'ui-joy-button secondary mt10 pt10 pb10'
-            #tapjoy_loader.hidden
-              #loader_t.loader_letter
-              #loader_a.loader_letter
-              #loader_p.loader_letter
-            #offer_dropdown.hidden
         .field
           .container.pb10
             = f.submit t('text.shared.submit'), :class => 'ui-joy-button primary pb10 pt10'
           .container.pb2
             = button_to_function t('text.shared.cancel'), 'history.go(-1)', :class => 'ui-joy-button pb10 pt10 secondary'
         .form-error.center
-
-- content_for :page_javascript do
-  :javascript
-    $(function($){
-      $('#show_offers').removeAttr("disabled");
-      $('#show_offers').click(function() {
-        $(this).attr("disabled", "disabled");
-        $.ajax({
-          type: "GET",
-          dataType: "html",
-          url: "#{new_games_support_request_url(offer_dropdown_params)}",
-          success: function(html) {
-            $('#offer_dropdown').replaceWith(html);
-            $('#offer_dropdown').show();
-            $('#show_offers').hide();
-          },
-          error: function() {
-            $('#show_offers').removeAttr("disabled");
-            $('#offer_dropdown').hide();
-          }
-        });
-
-        // Do AJAX request
-        $("#offer_dropdown").load('#{unresolved_clicks_games_support_requests_url(offer_dropdown_params)}', function() {
-          $('#tapjoy_loader').fadeOut('fast', function() {
-            $("#offer_dropdown").fadeIn('slow');
-          });
-        });
-
-        return false;
-      });
-    });
