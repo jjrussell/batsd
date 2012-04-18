@@ -1,12 +1,13 @@
 class CachedApp
 
-  attr_accessor :id, :name, :description, :primary_category, :user_rating, :price, :url, :wifi_required, :active_gamer_count
+  attr_accessor :id, :name, :description, :explanation, :primary_category, :user_rating, :price, :url, :wifi_required, :active_gamer_count
 
-  def initialize(offer, description = nil)
+  def initialize(offer, opts)
     self.id = offer.id
     self.name = offer.name
     self.price = offer.price
-    self.description = description
+    self.description = opts[:description]
+    self.explanation = opts[:explanation]
 
     if offer.item_type == 'App'
       app = App.find_in_cache(offer.item_id)
