@@ -1,6 +1,5 @@
 class ReengagementOffer < ActiveRecord::Base
   include UuidPrimaryKey
-  acts_as_cacheable
 
   belongs_to :app
   belongs_to :partner
