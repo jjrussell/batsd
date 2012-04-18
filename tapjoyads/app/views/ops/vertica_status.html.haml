@@ -11,7 +11,7 @@
       %tr
         %td{ :colspan => 2 }= submit_tag('Submit')
 
-- if @accurate.present? && @message.present?
+- if @message.present?
   %h3
     Data is:
     %span{ :class => @accurate ? 'accurate' : 'inaccurate' }= @accurate ? 'Accurate' : 'Inaccurate'
