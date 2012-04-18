@@ -11,7 +11,7 @@ class Games::HomepageController < GamesController
   end
 
   def get_app
-    @offer = Offer.find_by_id(params_id)
+    @offer = Offer.find(params_id)
     @app = @offer.app
     @app_metadata = @app.primary_app_metadata
     if @app_metadata
@@ -22,7 +22,7 @@ class Games::HomepageController < GamesController
   def earn
     device_id = current_device_id
     @device = Device.new(:key => device_id) if device_id.present?
-    @app = App.find_by_id(params_id)
+    @app = App.find(params_id)
     @active_currency = @app.currencies.first
     @external_publisher = ExternalPublisher.new(@active_currency)
     return unless verify_records([ @active_currency, @device ])
