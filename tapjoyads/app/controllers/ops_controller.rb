@@ -220,6 +220,15 @@ class OpsController < WebsiteController
     end
   end
 
+  def vertica_status
+    if params[:day].present?
+      @day = Time.parse("#{params[:day]} 00:00:00 UTC")
+      @accurate, @message = StatsAggregation.check_vertica_accuracy(@day, @day + 1.day)
+    else
+      @day = Time.now.utc.beginning_of_day
+    end
+  end
+
   private
 
   def redis
