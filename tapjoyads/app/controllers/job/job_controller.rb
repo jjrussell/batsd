@@ -9,7 +9,7 @@ class Job::JobController < ApplicationController
   def record_errors
     yield
   rescue => exception
-    notify_airbrake(exception)
+    Airbrake.notify(exception, airbrake_request_data)
     raise exception
   end
 
