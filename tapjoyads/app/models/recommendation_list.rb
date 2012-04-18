@@ -18,7 +18,7 @@ class RecommendationList
   end
 
   def apps
-    @offers[0...MINIMUM].collect { |o_hash| CachedApp.new(o_hash[:offer]) }
+    @offers[0...MINIMUM].collect { |rec_hash| CachedApp.new(rec_hash[:offer], :explanation => explanation_string(rec_hash)) }
   end
 
   class << self
@@ -93,6 +93,14 @@ class RecommendationList
     @store_ids << offer.store_id_for_feed unless rejected
 
     rejected
+  end
+
+  def explanation_string(recommendation_hash)
+    exp = recommendation_hash[:explanation]
+    return nil unless exp.present?
+    return "Popular App" if exp == "Popular App"
+    app = App.find_in_cache(exp)
+    app.present? ? app.name : nil
   end
 
 end

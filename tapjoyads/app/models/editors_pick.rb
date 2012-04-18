@@ -37,7 +37,7 @@ class EditorsPick < ActiveRecord::Base
     Mc.distributed_get_and_put("cached_apps.active_editors_picks.#{platform}", false, 1.minute) do
       picks = EditorsPick.active.by_platform(platform)
       picks = EditorsPick.by_platform(platform) if picks.empty?
-      picks.map { |p| CachedApp.new(p.offer, p.description) }
+      picks.map { |p| CachedApp.new(p.offer, :description => p.description) }
     end
   end
 private
