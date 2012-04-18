@@ -5,7 +5,6 @@ class Tools::PayoutsController < WebsiteController
   before_filter :load_payouts_list, :only => [ :index, :export ]
   after_filter :save_activity_logs, :only => [ :create, :confirm_payouts ]
 
-  INCLUDED_COLUMNS = [:payout_info, :payout_info_confirmation, :payout_threshold_confirmation]
 
   def index
     @partners = @partners.paginate(:page => params[:page])
@@ -67,6 +66,6 @@ class Tools::PayoutsController < WebsiteController
       @partners = Partner.to_payout
     end
 
-    @partners = @partners.all(:include => INCLUDED_COLUMNS)
+    @partners = @partners.all(:include => [:payout_info, :payout_info_confirmation, :payout_threshold_confirmation])
   end
 end
