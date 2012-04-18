@@ -66,10 +66,7 @@ class Tools::PayoutsController < WebsiteController
     else
       @partners = Partner.to_payout
     end
-    @partners.all(:include => INCLUDED_COLUMNS)
-    if params[:acct_mgr_sort]
-      @partners.sort!{ |a,b| a.users.first.email <=> b.users.first.email }
-      @partners.reverse! if params[:acct_mgr_sort] == 'DESC'
-    end
+
+    @partners = @partners.all(:include => INCLUDED_COLUMNS)
   end
 end
