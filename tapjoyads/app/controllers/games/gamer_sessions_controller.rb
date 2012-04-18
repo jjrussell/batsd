@@ -31,7 +31,7 @@ class Games::GamerSessionsController < GamesController
       if @gamer_session.errors.on(:facebook)
         error = @gamer_session.errors.on(:facebook)
         if error == 'facebook_no_match'
-          redirect_to new_games_gamer_path(:prefill_with_facebook => true, :no_match => true)
+          redirect_to new_games_gamer_path(:prefill_with_facebook => true, :no_match => true, :referrer => params[:referrer])
         end
       else
         render_login_page

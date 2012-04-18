@@ -37,7 +37,7 @@
             FB.api('/me', function (response) {
               if (redirect_url != undefined) {
                 Tap.Social.checkPermission(function () {
-                  window.location = redirect_url;
+                  window.location = redirect_url.replace(/&amp;/g, "&");
                 });
               } else if (submitFormId != undefined) {
                 Tap.Social.checkPermission(function () {
