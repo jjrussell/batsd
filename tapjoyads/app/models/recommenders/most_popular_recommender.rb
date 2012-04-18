@@ -6,7 +6,7 @@ class Recommenders::MostPopularRecommender < Recommender
   end
 
   def most_popular(opts = {})
-    out = Mc.distributed_get('s3.recommendations.raw_list.most_popular') || []
+    out = Mc.distributed_get('s3.recommendations.app_affinity.most_popular') || []
     first_n(out, opts[:n])
   end
 
@@ -24,7 +24,7 @@ class Recommenders::MostPopularRecommender < Recommender
       rec, name, weight = rec.split("\t")
       list << {:recommendation => rec, :weight => weight.to_f, :explanation => "Popular App"}  unless rec.nil? || weight.nil?
     end
-    Mc.distributed_put('s3.recommendations.raw_list.most_popular', list.sort_by{ |rec| -rec[:weight] })
+    Mc.distributed_put('s3.recommendations.app_affinity.most_popular', list.sort_by{ |rec| -rec[:weight] })
   end
 
 end
