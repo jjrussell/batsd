@@ -264,11 +264,7 @@ en:
       connect_your_device: "Please connect your device"
       connected_to_facebook: "Connected to Facebook"
       connected_to_twitter: "Connected to Twitter"
-      contact_support_incomplete_offers_label: "Having trouble with a specific offer?"
-      contact_support_no_incomplete_offers_label: "We didn't find any offers tied to your device."
-      contact_support_page_title: "Contact Support"
-      contact_support_select_offer_button: "Choose an Offer"
-      contact_support_thanks: "Thank you for contacting our support.  One of our agents will get back to you as soon as possible."
+      contact_support: "Contact Support"
       contact_us: "Contact Us"
       cookies_required: "Please enable cookies in your browser"
       deactivate: Deactivate

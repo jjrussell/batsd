@@ -98,7 +98,7 @@ class Click < SimpledbShardedResource
       (installed_at - clicked_at) < threshold
   end
 
-def maintain_history
+  def maintain_history
     if clicked_at?
       while last_clicked_at.size >= MAX_HISTORY
         delete('last_clicked_at', get('last_clicked_at', :force_array => true).sort.first)
