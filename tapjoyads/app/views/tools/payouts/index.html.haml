@@ -112,7 +112,7 @@
             - unless confirmation_notes.empty?
               \- #{confirmation_notes.join('<br>-')}
 
-
+= will_paginate(@partners)
 %div{ :class => 'popup', :style => 'display:none'}
 - content_for :page_javascript do
   :plain

@@ -4,7 +4,7 @@ class Tools::PartnerValidationsController < WebsiteController
   filter_access_to :all
 
   def index
-    @partners = Partner.to_payout.all( :include => [:payout_info, :payout_info_confirmation, :payout_threshold_confirmation])
+    @partners = Partner.to_payout.all( :include => [:payout_info, :payout_info_confirmation, :payout_threshold_confirmation]).paginate(:page => params[:page])
   end
 
   def confirm_payouts

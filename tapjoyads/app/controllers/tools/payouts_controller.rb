@@ -6,6 +6,7 @@ class Tools::PayoutsController < WebsiteController
   after_filter :save_activity_logs, :only => [ :create, :confirm_payouts ]
 
   def index
+    @partners = @partners.paginate(:page => params[:page])
     @freeze_enabled = PayoutFreeze.enabled?
   end
 

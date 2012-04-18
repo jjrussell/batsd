@@ -34,7 +34,7 @@
           %strong ID:
           = link_to(partner.id, partner_path(partner.id))
         %td
-          = mail_to(partner.users.first.email)
+          = mail_to(partner.users.first.email) if partner.users.present?
         %td
           = partner.account_managers.join('<br>')
         - if payout_info.present? && payout_info.valid?
@@ -69,6 +69,7 @@
             - unless confirmation_notes.empty?
               \- #{confirmation_notes.join('<br>-')}
 
+= will_paginate(@partners)
 - content_for :page_javascript do
   :plain
     $(function($) {
