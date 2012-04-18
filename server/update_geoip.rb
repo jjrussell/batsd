@@ -6,7 +6,7 @@ if ENV['USER'] != 'webuser'
 end
 
 server_type = `/home/webuser/tapjoyserver/server/server_type.rb`
-exit if server_type == 'testserver' || server_type == 'staging'
+exit if server_type == 'testserver'
 
 require 'rubygems'
 require 'yaml'
