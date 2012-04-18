@@ -298,15 +298,14 @@ class Dashboard::OpsController < Dashboard::DashboardController
     keys = []
     time = start_time - start_time % mod
 
-    time.to_i.upto(end_time.to_i) do |t|
-      next if t % mod > 0
+    while time.to_i <= end_time.to_i
       if subkeys.is_a? Array
-        subkeys.each do |subkey|
-          keys << "#{namespace}.#{subkey}.#{t}"
-        end
+        subkeys.each { |subkey| keys << "#{namespace}.#{subkey}.#{time}" }
       else
-        keys << "#{namespace}.#{subkeys}.#{t}"
+        keys << "#{namespace}.#{subkeys}.#{time}"
       end
+
+      time += mod
     end
 
     keys
