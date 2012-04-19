@@ -79,13 +79,17 @@
     $(function($) {
       $('th.sort').click(function() {
 
+        var location = '#{tools_partner_validations_path}?#{('page='+params[:page]+'&') if params[:page].present?}';
         if($(this).hasClass('DESC')) {
           $(this).removeClass('DESC');
           $(this).addClass('ASC');
+          location += 'acct_mgr_sort=ASC';
         } else {
           $(this).removeClass('ASC');
           $(this).addClass('DESC');
+          location += 'acct_mgr_sort=DESC';
         }
+        window.location = location;
       });
 
       if (#{@start_date.blank?}) {
