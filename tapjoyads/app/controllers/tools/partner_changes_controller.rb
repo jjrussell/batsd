@@ -16,7 +16,7 @@ class Tools::PartnerChangesController < WebsiteController
 
   def create
     @partner_change = PartnerChange.new(params[:partner_change])
-    @partner_change.source_partner_id = @partner_change.item.partner_id
+    @partner_change.source_partner_id = @partner_change.item.partner_id if @partner_change.item.present?
     log_activity(@partner_change)
 
     if @partner_change.save
