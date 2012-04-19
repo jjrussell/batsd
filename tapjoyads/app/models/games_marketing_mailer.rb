@@ -87,9 +87,7 @@ class GamesMarketingMailer < ActionMailer::Base
     @android_device = @linked ? (gamer_device.device_type == 'android') : !selected_devices.include?('ios')
     device_info[:os_version] = selected_devices.first unless device_info[:os_version].present?
     device = Device.new(:key => @linked ? gamer_device.device_id : nil)
-    # select only necessary values
-    rec_device_info = device_info.reject{ |k,v| ![:device_type, :geoip_data, :os_version].include? k}
-    @recommendations = device.recommendations(rec_device_info)
+    @recommendations = device.recommendations(device_info.slice(:device_type, :geoip_data, :os_version))
   end
 
 end

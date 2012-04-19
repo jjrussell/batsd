@@ -1,4 +1,7 @@
 class Click < SimpledbShardedResource
+
+  MAX_HISTORY = 20
+
   belongs_to :device, :foreign_key => 'udid'
   belongs_to :publisher_app, :class_name => 'App'
   belongs_to :displayer_app, :class_name => 'App'
@@ -82,6 +85,9 @@ class Click < SimpledbShardedResource
     end
     save!
 
+    d = Device.new(:key => udid)
+    d.unset_last_run_time!(advertiser_app_id)
+
     Downloader.get_with_retry(url_to_resolve) if Rails.env.production?
   end
 
@@ -90,6 +96,21 @@ class Click < SimpledbShardedResource
       type != 'video' &&
       !offer.pay_per_click? &&
       (installed_at - clicked_at) < threshold
+  end
+
+  def maintain_history
+    if clicked_at?
+      while last_clicked_at.size >= MAX_HISTORY
+        delete('last_clicked_at', get('last_clicked_at', :force_array => true).sort.first)
+      end
+      self.last_clicked_at = clicked_at
+    end
+    if installed_at?
+      while last_installed_at.size >= MAX_HISTORY
+        delete('last_installed_at', get('last_installed_at', :force_array => true).sort.first)
+      end
+      self.last_installed_at = installed_at
+    end
   end
 
   private
@@ -101,4 +122,5 @@ class Click < SimpledbShardedResource
       "#{API_URL}/connect?app_id=#{advertiser_app_id}&udid=#{udid}&consistent=true"
     end
   end
+
 end

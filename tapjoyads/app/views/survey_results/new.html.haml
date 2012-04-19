@@ -24,6 +24,8 @@
               :question => survey_question
       = submit_tag("Submit", :class => 'button')
   #footer
+    .privacy
+      = link_to t('text.footer.privacy'), 'http://info.tapjoy.com/about-tapjoy/privacy-policy/', :target => '_blank'
     = render '/shared/truste'
 
 - content_for :page_styles do

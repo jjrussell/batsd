@@ -29,11 +29,11 @@ class ReengagementOffer < ActiveRecord::Base
     end
   end
 
-  after_cache :cache_by_app_id
-
   after_create :create_primary_offer
 
   after_update :update_offers
+
+  after_save :cache_by_app_id
 
   delegate :instructions_overridden, :to => :primary_offer
   delegate :get_offer_device_types, :store_id, :store_url, :large_download?, :supported_devices, :platform, :get_countries_blacklist, :countries_blacklist, :primary_category, :user_rating, :info_url, :to => :app
@@ -111,12 +111,16 @@ class ReengagementOffer < ActiveRecord::Base
     reengagement_offers
   end
 
-  private
-
   def cache_by_app_id
+    ReengagementOffer.cache_by_app_id(app_id)
+  end
+
+  def self.cache_by_app_id(app_id)
     reengagement_offers = ReengagementOffer.visible.order_by_day.for_app(app_id)
     Mc.distributed_put("mysql.reengagement_offers.#{app_id}.#{ReengagementOffer.acts_as_cacheable_version}", reengagement_offers, false, 1.day)
   end
+
+  private
 
   def disable_campaign
     app.disable_reengagement_campaign!
