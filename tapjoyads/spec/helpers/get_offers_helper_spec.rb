@@ -9,7 +9,7 @@ describe GetOffersHelper do
       @action_offer = Factory(:action_offer).primary_offer
     end
 
-    it 'returns nill if not an app offer' do
+    it 'returns nil if not an app offer' do
       helper.offer_text(@action_offer, @currency).should == nil
     end
 

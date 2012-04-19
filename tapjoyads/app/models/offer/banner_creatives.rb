@@ -123,6 +123,10 @@ module Offer::BannerCreatives
     item_type != 'VideoOffer'
   end
 
+  def featured_custom_creative?
+    banner_creatives.any? { |size| Offer::FEATURED_AD_SIZES.include?(size) }
+  end
+
   private
 
   def nullify_banner_creatives
