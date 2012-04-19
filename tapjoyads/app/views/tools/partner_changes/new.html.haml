@@ -14,12 +14,12 @@
         %th= f.label(:item_id, 'Item ID')
         %td
           = f.text_field(:item_id, :size => 50)
-          = error_message_on @partner_change, :item_id
+          = error_message_on @partner_change, :item
       %tr
         %th= f.label(:destination_partner_id, 'New partner ID')
         %td
           = f.text_field(:destination_partner_id, :size => 50)
-          = error_message_on @partner_change, :destination_partner_id
+          = error_message_on @partner_change, :destination_partner
       %tr
         %th= f.label(:scheduled_for)
         %td
