@@ -17,10 +17,10 @@ xml.TapjoyConnectReturnObject do
         if params[:source] == 'featured'
           xml.FullScreenAdURL  get_fullscreen_ad_url(offer)
           xml.MediumIconURL    offer.get_icon_url(:source => :cloudfront, :size => '256')
-          xml.OfferText        offer_text(offer, @currency)
-          xml.EarnCurrencyText earn_currency_text(offer, @currency, params[:display_multiplier])
-          xml.ActionText       action_text(offer)
-          xml.CustomCreative   offer.banner_creatives.any? { |size| Offer::FEATURED_AD_SIZES.include?(size) }
+          xml.OfferText        featured_offer_text(offer, @currency)
+          xml.EarnCurrencyText featured_offer_earn_currency_text(offer, @currency, params[:display_multiplier])
+          xml.ActionText       featured_offer_action_text(offer)
+          xml.CustomCreative   offer.featured_custom_creative?
           xml.SkipText         t('text.featured.skip')
         end
       end
