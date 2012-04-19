@@ -103,7 +103,7 @@ class OfferList
     return [ [], 0 ] if @device && (@device.opted_out? || @device.banned?)
     @offers.sort! { |a,b| b.rank_score <=> a.rank_score }
     returned_offers = []
-    found_offer_item_ids = []
+    found_offer_item_ids = Set.new
     offers_to_find  = start + max_offers
     found_offers    = 0
 
