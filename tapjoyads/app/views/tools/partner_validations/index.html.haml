@@ -2,15 +2,16 @@
 
 %h1 Validations Report
 - form_tag(tools_partner_validations_path, :method => :get, :class => 'tjform') do
-  = label_tag(:q, "Account Manager:")
+  = label_tag(:q, 'Account Manager:')
   = text_field_tag(:q, params[:q], :size => '40')
   = submit_tag('Search')
+
 %table
   %thead
     %tr
       %th Partner
       %th Partner Email
-      %th Account Manager
+      %th{:class => "sort #{params[:acct_mgr_sort] if params[:acct_mgr_sort]}"} Account Manager&nbsp;&nbsp;&nbsp;&nbsp;
       %th Bank Info Present?
       %th Notes
       %th Confirm
@@ -76,6 +77,17 @@
 - content_for :page_javascript do
   :plain
     $(function($) {
+      $('th.sort').click(function() {
+
+        if($(this).hasClass('DESC')) {
+          $(this).removeClass('DESC');
+          $(this).addClass('ASC');
+        } else {
+          $(this).removeClass('ASC');
+          $(this).addClass('DESC');
+        }
+      });
+
       if (#{@start_date.blank?}) {
         $('#unfiltered').show();
       } else {
@@ -148,4 +160,20 @@
     h3 a {
       text-decoration: none;
       font-size: 14px;
+    }
+
+    th.sort {
+      background-position: 100% 50%;
+      background-repeat: no-repeat;
+      background-image: url(/stylesheets/themes/blue/bg.gif);
+    }
+    th.ASC {
+      background-position: 100% 50%;
+      background-repeat: no-repeat;
+      background-image: url(/stylesheets/themes/blue/asc.gif);
+    }
+    th.DESC {
+      background-position: 100% 50%;
+      background-repeat: no-repeat;
+      background-image: url(/stylesheets/themes/blue/desc.gif);
     }
