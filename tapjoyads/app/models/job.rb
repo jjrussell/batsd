@@ -3,7 +3,7 @@ class Job < ActiveRecord::Base
 
   JOB_TYPES = %w( master queue )
   FREQUENCIES = %w( interval hourly daily )
-  CONCURRENCY_DIR = 'tmp/job_concurrency'
+  CONCURRENCY_DIR = "#{Rails.root}/tmp/job_concurrency"
 
   validates_presence_of :controller, :action
   validates_inclusion_of :job_type, :in => JOB_TYPES
