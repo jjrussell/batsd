@@ -29,11 +29,15 @@ Install Xcode
 -------------
 Even though we typically don't use Xcode, you'll need it for GCC and Homebrew to work properly.
 
-* Download via app store: http://itunes.apple.com/us/app/xcode/id497799835?mt=12
-* Run Xcode to finish installation
-* Go to preferences: ![xcode preferences](http://f.cl.ly/items/0g3A2S173P0Z3A1C1w09/Screen%20Shot%202012-04-18%20at%203.12.30%20PM.png)
-* Install the `Command Line Tools`: ![command line tools](http://f.cl.ly/items/2v0d2d3R09341x171206/Screen%20Shot%202012-04-18%20at%203.14.17%20PM.png)
-* Verify gcc and git are installed in a terminal window:
+Download via app store: http://itunes.apple.com/us/app/xcode/id497799835?mt=12
+
+Run Xcode to finish installation
+
+Go to preferences: ![xcode preferences](http://f.cl.ly/items/0g3A2S173P0Z3A1C1w09/Screen%20Shot%202012-04-18%20at%203.12.30%20PM.png)
+
+Install the `Command Line Tools`: ![command line tools](http://f.cl.ly/items/2v0d2d3R09341x171206/Screen%20Shot%202012-04-18%20at%203.14.17%20PM.png)
+
+Verify gcc and git are installed in a terminal window:
 
 ```
 $ gcc -v
