@@ -518,18 +518,15 @@ zh-tw:
       instructions_1: "請選擇你完成要求但未獲得%{currency}的廣告並輸入你的電子郵件地址"
       instructions_2: 如果你提交申請的資料不完整，可能延誤你問題的解決速度。我們會優先處理資料完整的要求
       invalid_email: 請輸入真實的電郵地址
-      message: "很抱歉，但 %{offer} 已經失效了，你可以回到上一頁，重新整理，以查看最新的廣告要求列表"
       missing_description: 請描述你完成的廣告要求
       missing_offer: 你必須指出你完成的廣告要求
       no_incomplete_offers_label: 我們沒找到合適的廣告要求
-      optional_message: "或不管一切，還是點擊這裡來下載 %{offer}"
       select_offer: 選擇廣告要求
       specify_offer_label: "指出要求:"
       submit_support_request: 提交客戶支持請求
       support_request_submitted: 客戶支持請求已提交
       thanks: "感謝你提交客戶支持請求! 等我們核實你已經完成廣告要求之後，你就可以收到你的 %{currency}"
       title: "沒收到 %{currency}?"
-      unavailable_offer: ~
     unavailable_offer:
       message: "很抱歉，但 %{offer} 已經失效了，你可以回到前一頁並更新，來觀看最新的廣告列表"
       optional_message: "或者，還是點擊這裡來下載 %{offer}"
@@ -544,4 +541,3 @@ zh-tw:
       long: ~
       short: ~
     pm: ~
-
