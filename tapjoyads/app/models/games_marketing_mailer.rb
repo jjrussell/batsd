@@ -57,9 +57,7 @@ class GamesMarketingMailer < ActionMailer::Base
     @confirmation_link = "#{WEBSITE_URL}/confirm?token=#{CGI.escape(gamer.confirmation_token)}"
 
     device = Device.new(:key => @linked ? gamer_device.device_id : nil)
-    # select only necessary values
-    rec_device_info = Hash[*device_info.select{ |k,v| [:device_type, :geoip_data, :os_version].include? k }.flatten]
-    @recommendations = device.recommendations(rec_device_info)
+    @recommendations = device.recommendations(device_info.slice(:device_type, :geoip_data, :os_version))
 
     sendgrid_category "Welcome Email, #{@linked ? "Linked for Device Type #{gamer_device.device_type}" : "Not Linked"}"
     sendgrid_subscriptiontrack_text(:replace => "[unsubscribe_link]")

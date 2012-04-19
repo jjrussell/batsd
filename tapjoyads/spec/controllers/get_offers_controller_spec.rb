@@ -34,6 +34,12 @@ describe GetOffersController do
 
     end
 
+    it 'should queue up tracking url calls' do
+      @offer.expects(:queue_impression_tracking_requests).once
+
+      get(:index, @params)
+    end
+
     describe "with promoted offers" do
       before :each do
         @partner = Factory(:partner)
@@ -147,6 +153,13 @@ describe GetOffersController do
         :app_id => @currency.app.id
       }
       @offer = Factory(:app).primary_offer
+    end
+
+    it 'should queue up tracking url calls' do
+      OfferCacher.stubs(:get_unsorted_offers_prerejected).returns([@offer])
+      @offer.expects(:queue_impression_tracking_requests).once
+
+      get(:webpage, @params)
     end
 
     it 'assigns test offer for test devices' do

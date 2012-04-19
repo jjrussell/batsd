@@ -122,4 +122,5 @@ class Click < SimpledbShardedResource
       "#{API_URL}/connect?app_id=#{advertiser_app_id}&udid=#{udid}&consistent=true"
     end
   end
+
 end
