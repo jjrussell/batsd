@@ -4,9 +4,17 @@ class Tools::PartnerValidationsController < WebsiteController
   filter_access_to :all
 
   def index
-    @partners = Partner.to_payout.all(:include => [:payout_info, :payout_info_confirmation, :payout_threshold_confirmation, {:users => [:user_roles]}])
+    all_conditions = {:include => [:payout_info, :payout_info_confirmation, :payout_threshold_confirmation, {:users => [:user_roles]}]}
+    @partners = Partner.to_payout
+    if params[:acct_mgr_filter].present?
+      all_conditions[:conditions] = ['users.id = ?', params[:acct_mgr_filter]]
+      all_conditions[:joins] = [:users]
+      @account_manager = User.find(params[:acct_mgr_filter]).email
+    end
 
-    if params[:acct_mgr_sort]
+    @partners = @partners.all(all_conditions)
+
+    if params[:acct_mgr_sort].present?
       @partners = @partners.to_a
       @partners.each { |p|  class << p; attr_accessor :acct_mgr_email; end; p.acct_mgr_email =  p.account_managers.present? ? p.account_managers.first.email.downcase : "\xFF"}
       @partners.sort!{ |a,b| a.acct_mgr_email <=> b.acct_mgr_email }
