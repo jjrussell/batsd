@@ -41,7 +41,7 @@ class Dashboard::Tools::JobsController < Dashboard::DashboardController
     redirect_to :action => :index
   end
 
-private
+  private
 
   def find_job
     @job = Job.find(params[:id])
