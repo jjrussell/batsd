@@ -233,7 +233,7 @@
       %tr
         %th= f.label(:third_party_data)
         %td= f.text_area(:third_party_data)
-    - if @offer.item_type == 'App' || @offer.item_type == 'GenericOffer'
+    - if @offer.app_offer? || @offer.item_type == 'GenericOffer'
       %tr
         %th
           = f.label(:url_overridden, 'Override Default Destination URL')
