@@ -22,202 +22,208 @@
                                .$$$$$$$$:
 ```
 
-Environment Setup:
-==================
+Environment Setup for OSX 10.7 Lion
+===================================
 
-Setup PATH and MANPATH
-----------------------
-* edit `/etc/paths` to look like...
-
-```
-    /usr/local/bin
-    /usr/bin
-    /bin
-    /usr/sbin
-    /sbin
-```
-
-* edit `/etc/manpaths` to look like...
-
-```
-    /usr/local/man
-    /usr/local/share/man
-    /usr/share/man
-```
-
-* restart your terminal to pull in the new paths
-
-Install osx-gcc
+Install Xcode
 -------------
-* Download and install [osx-gcc](https://github.com/kennethreitz/osx-gcc-installer/downloads).
+Even though we typically don't use Xcode, you'll need it for GCC and Homebrew to work properly.
 
-Git configurations
-------------------
-* Create github.com account if necessary
-* In github, fork main tapjoyserver repository
-  * main repo location: `https://github.com/Tapjoy/tapjoyserver` (may need to be given access)
+* Download via app store: http://itunes.apple.com/us/app/xcode/id497799835?mt=12
+* Run Xcode to finish installation
+* Go to preferences: ![xcode preferences](http://f.cl.ly/items/0g3A2S173P0Z3A1C1w09/Screen%20Shot%202012-04-18%20at%203.12.30%20PM.png)
+* Install the `Command Line Tools`: ![command line tools](http://f.cl.ly/items/2v0d2d3R09341x171206/Screen%20Shot%202012-04-18%20at%203.14.17%20PM.png)
+* Verify gcc and git are installed in a terminal window:
+
+```
+$ gcc -v
+i686-apple-darwin10-llvm-gcc-4.2 (GCC) 4.2.1
+$ git --version
+git version 1.7.7.5 (Apple Git-26)
+```
+
+Install homebrew
+----------------
+Homebrew is a package manager for OSX.
+
+Install via:
+
+```
+$ /usr/bin/ruby -e "$(/usr/bin/curl -fksSL https://raw.github.com/mxcl/homebrew/master/Library/Contributions/install_homebrew.rb)"
+```
+
+Now run the brew doctor to set up where it'll put packages:
+
+```
+$ brew doctor
+```
+
+You'll probably see a message asking you to fix your paths, follow the instructions, then re-run:
+
+```
+$ sudo xcode-select -switch /Applications/Xcode.app/Contents/Developer
+$ brew doctor
+Your system is raring to brew
+$ brew update # to get the latest brews
+```
+
+
+Configure Git and get Tapjoy repo
+-------------------------------
+
+Setup git following these instructions: http://help.github.com/mac-set-up-git/
+
+NOTE: You already have git installed from the Xcode step.
+
+```
+$ brew install git
+```
+
+In github, fork tapjoyserver repository:
+
+  * main repo location: `https://github.com/Tapjoy/tapjoyserver`
   * click "Fork"
-* Add your SSH key to github
-  * see Account Settings->SSH Public Keys->Need help with public keys? for full instructions
-* Clone your forked repo locally
+
+Clone your forked repo locally
+
 
 ```
-git clone git@github.com:[your github nickname]/tapjoyserver.git
+$ git clone git@github.com:[your github nickname]/tapjoyserver.git
 ```
 
-* Add main tapjoyserver repo as remote repo (for updating your code with the latest)
+Add main tapjoyserver repo as remote repo (for updating your code with the latest):
 
 ```
-git remote add tapjoy git@github.com:Tapjoy/tapjoyserver.git
+$ git remote add tapjoy git@github.com:Tapjoy/tapjoyserver.git
 ```
 
-* important that it's named "tapjoy" for deploy script to work
+It is important that it's named "tapjoy" for deploy script to work
 
+Install RVM
+-----------
 
-Downgrade rubygems
+RVM is important so we don't mess with the system's ruby, and can use the most recent version of Ruby 1.8.7.
+
+Install RVM:
+
+```
+bash -s stable < <(curl -s https://raw.github.com/wayneeseguin/rvm/master/binscripts/rvm-installer)
+```
+
+Load RVM into bash:
+
+```
+echo '[[ -s "$HOME/.rvm/scripts/rvm" ]] && . "$HOME/.rvm/scripts/rvm" # Load RVM function' >> ~/.bash_profile
+source ~/.bash_profile # to reload ~/.bash_profile
+rvm get head # to update rvm
+```
+
+Install Ruby 1.8.7
 ------------------
-* Uninstall existing versions if necessary
-  * use `gem list` to determine if versions exist
-  * if applicable, use `gem uninstall rubygems-update -v [version]` to remove
 
-### System Ruby
+First install the osx-gcc-installer:
 
 ```
-sudo gem install rubygems-update -v 1.3.7
-sudo update_rubygems _1.3.7_
+https://github.com/kennethreitz/osx-gcc-installer/downloads
 ```
 
-### RVM
+Install the current version of 1.8.7 as the default:
 
 ```
-rvm rubygems 1.3.7
+rvm install 1.8.7
+rvm use 1.8.7 --default
 ```
 
 Install MySQL
 -------------
-* download `http://s3.amazonaws.com/dev_tapjoy/rails_env/mysql-5.1.56-osx10.6-x86_64.dmg`
-* download `http://s3.amazonaws.com/dev_tapjoy/rails_env/my.cnf`
-* copy `my.cnf` to `/etc/my.cnf`
-* run the main installer in the mysql dmg
-* run the startup item installer in the mysql dmg
-* run the pref pane in the mysql dmg
 
-Add mysql to the `PATH` and `MANPATH`
--------------------------------------
-* create the file `/etc/paths.d/mysql` with the following line...
+Install MySQL:
 
 ```
-    /usr/local/mysql/bin
+brew install mysql
 ```
 
-* create the file `/etc/manpaths.d/mysql` with the following line...
+Start MySQL automatically:
 
 ```
-    /usr/local/mysql/man
+mkdir -p ~/Library/LaunchAgents
+cp /usr/local/Cellar/mysql/5.5.19/homebrew.mxcl.mysql.plist ~/Library/LaunchAgents/
+launchctl load -w ~/Library/LaunchAgents/homebrew.mxcl.mysql.plist
 ```
 
-
-Start MySQL
------------
-* start MySQL via the pref pane in System Preferences
-
-
-Install memcached and ImageMagick
----------------------------------
-* download `http://s3.amazonaws.com/dev_tapjoy/rails_env/magick-installer.sh`
-* run `magick-installer.sh` (this will install memcached and ImageMagick and all dependencies)
-
-Setup memcached to start on boot
---------------------------------
-* download `http://s3.amazonaws.com/dev_tapjoy/rails_env/Memcached.applescript`
-* open the applescript and save the script as an Application in your `/Applications` directory
-* open the System Preferences and navigate to the Users & Groups section
-* add the Memcached app as a Login Item for your user account
-* run the Memcached app manually to start the process
-
-Copy config files into place
-----------------------------
+Add your user account:
 
 ```
-    cp tapjoyserver/tapjoyads/config/newrelic-test.yml tapjoyserver/tapjoyads/config/newrelic.yml
-    cp tapjoyserver/tapjoyads/config/database-default.yml tapjoyserver/tapjoyads/config/database.yml
-    cp tapjoyserver/tapjoyads/config/local-default.yml tapjoyserver/tapjoyads/config/local.yml
+unset TMPDIR
+mysql_install_db --verbose --user=`whoami` --basedir="$(brew --prefix mysql)" --datadir=/usr/local/var/mysql --tmpdir=/tmp
 ```
 
-open `local.yml` and change the urls to point to the local address of the app (ex: `http://tapjoy.local` or `http://localhost:3000`)
+Install memcached
+-----------------
+
+```
+brew install memcached
+mkdir -p ~/Library/LaunchAgents
+cp /usr/local/Cellar/memcached/1.4.13/homebrew.mxcl.memcached.plist ~/Library/LaunchAgents/
+launchctl load -w ~/Library/LaunchAgents/homebrew.mxcl.memcached.plist
+```
+
+Copy local config files
+-----------------------
+
+```
+cd tapjoyserver/tapjoyads
+cp config/newrelic-test.yml config/newrelic.yml
+cp config/database-default.yml config/database.yml
+cp config/local-default.yml config/local.yml
+```
 
 Download GeoIP database
 -----------------------
-* download `http://s3.amazonaws.com/dev_tapjoy/rails_env/GeoLiteCity.dat.gz`
-* extract database file and move it into place
+
+Download GeoIP database, unzip it and move it to the 
 
 ```
-    gunzip GeoLiteCity.dat.gz
-    mv GeoLiteCity.dat tapjoyserver/tapjoyads/data/GeoIPCity.dat
+brew install wget
+wget http://s3.amazonaws.com/dev_tapjoy/rails_env/GeoLiteCity.dat.gz
+gunzip GeoLiteCity.dat.gz
+mv GeoLiteCity.dat tapjoyserver/tapjoyads/data/GeoIPCity.dat
 ```
 
 Install required gems
 ---------------------
 
-### System Ruby
-
 ```
-sudo gem install bundler -v 1.1
-sudo env ARCHFLAGS="-arch x86_64" gem install memcached -v 1.2.7
-sudo env ARCHFLAGS="-arch x86_64" gem install mysql -v 2.8.1 -- --with-mysql-config=/usr/local/mysql/bin/mysql_config
-sudo gem install rcov -v 0.9.10
-sudo gem install -v 2.3.14 rails
-sudo gem install json -v 1.5.3
-sudo gem install rdoc
-sudo gem install rdoc-data
-sudo rdoc-data --install
-```
-
-### RVM
-```
-env ARCHFLAGS="-arch x86_64" gem install memcached -v 1.2.7
-env ARCHFLAGS="-arch x86_64" gem install mysql -v 2.8.1 -- --with-mysql-config=/usr/local/mysql/bin/mysql_config
-gem install rdoc
-gem install rdoc-data
-rdoc-data --install
-```
-
-Then from within the `tapjoyserver/tapjoyads` directory:
-```
+brew install imagemagick # required for rmagick gem
 bundle install
 ```
 
 Set up accounts and database
 ----------------------------
-* Create developer account at `dashboard.tapjoy.com` and have someone give you the "admin" role
-* Sync prod db with local db (this will overwrite any pre-existing changes)
+
+Create developer account at `dashboard.tapjoy.com` and have someone give you the "admin" role
+
+Sync prod db with local db (this will overwrite any pre-existing changes)
 
 ```
+mkdir tmp
 rake admin:sync_db
 ```
 
-* Now you have an admin account in production and locally
+Running the tests
+-----------------
 
-Download desired editor (most people use TextMate) and set it to use soft tabs (2 spaces)
------------------------------------------------------------------------------------------
-*  Instructions for TextMate:
-  * TextMate -> Preferences -> Advanced -> Shell Variables
-  * Add `TM_SOFT_TABS` with value of YES (make sure it doesn't convert the TM to a ™ symbol)
-  * Add `TM_TAB_SIZE` with value of 2
-  * See `http://manual.macromates.com/en/environment_variables.html` if curious about other TextMate shell variables
-
-RECOMMENDED: Set git pre-commit hook to run
-----------------------------------------
-* The pre-commit hook runs before any git commit.
-* It automatically strips trailing whitespace and adds newlines to the end of files, which is compliant with our style guide.
+To make sure everything is set up correctly, run the test suite:
 
 ```
-cp tapjoyserver/setup/pre-commit tapjoyserver/.git/hooks/
+rake
 ```
 
-Alternatively, use `ln -s` instead of `cp` so any updates to the script in the repo get automatically changed in the git folder.
+If any tests fail, ask for help in Campfire.
 
-# Running tapjoyads
+Running locally
+---------------
+
 Using Unicorn and Foreman, you can run the application directly from the `tapjoyserver/tapjoyads` directory by running:
 
 ```
@@ -226,91 +232,17 @@ foreman start
 
 If you need to restart the application, simply `ctrl+c` and then re-run the command.
 
-To access directly, go to [http://127.0.0.1:8080]().  Otherwise, use one of the following methods.
+To access directly, go to [http://127.0.0.1:8080]().
 
-## OPTIONAL: Using Apache for alternate local domains (instead of `http://localhost:3000`)
-### Routing to Unicorn (prefered)
 
-* Open `/etc/apache2/httpd.conf`, make sure `Include /private/etc/apache2/extra/httpd-vhosts.conf` is commented.
-* In the same file, add `Include /private/etc/apache2/extra/httpd-proxy.conf` after `httpd-vhosts.conf`.
-* Open `/etc/apache2/extra/httpd-proxy.conf` and add the following contents:
+Optional steps
+==============
 
-```
-ProxyRequests Off
+Set git pre-commit hook to run
+------------------------------
 
-<Proxy *>
-  Order deny,allow
-  Allow from all
-</Proxy>
-
-ProxyPass / http://localhost:8080/
-ProxyPassReverse / http://localhost:8080/
-ProxyPreserveHost On
-ProxyStatus On
-```
-
-* Open `/etc/hosts` and add `127.0.0.1   tapjoy.local` to the end of the file
-* To start Apache in OS X, System Preferences -> Sharing -> Check checkbox for 'Web Sharing'
-
-### Using Passenger
+The pre-commit hook runs before any git commit. It automatically strips trailing whitespace and adds newlines to the end of files, which is compliant with our style guide.
 
 ```
-sudo gem install passenger
-sudo passenger-install-apache2-module (follow on-screen instructions)
+ln -s tapjoyserver/setup/pre-commit tapjoyserver/.git/hooks/
 ```
-
-* Open `/etc/apache2/httpd.conf` and remove the '#' in front of `Include /private/etc/apache2/extra/httpd-vhosts.conf`
-* Open `/etc/apache2/extra/httpd-vhosts.conf` and replace contents with the following:
-
-```
-    # My Virtual Hosts
-    NameVirtualHost *:80
-
-    <VirtualHost *:80>
-      DocumentRoot "/path/to/tapjoyserver/tapjoyads/public"
-      ServerName tapjoy.local
-      RailsEnv development
-      RailsBaseURI /
-      <Directory "/path/to/tapjoyserver/tapjoyads/public">
-        Options FollowSymLinks
-        Options -MultiViews
-        AllowOverride None
-        Order allow,deny
-        Allow from all
-      </Directory>
-    </VirtualHost>
-
-    <VirtualHost *:80>
-      DocumentRoot "/Library/WebServer/Documents"
-      ServerName localhost
-    </VirtualHost>
-```
-
-* Open `/etc/hosts` and add `127.0.0.1   tapjoy.local` to the end of the file
-* To start Apache in OSX, System Preferences -> Sharing -> Check checkbox for 'Web Sharing'
-
-OPTIONAL: To install sinatra-rubygems (for easy access to local gem Rdocs)
---------------------------------------------------------------------------
-
-```
-sudo gem install sinatra
-git clone git://github.com/jnewland/sinatra-rubygems.git
-```
-
-* Open `/etc/apache2/extra/httpd-vhosts.conf` and append the following to the end:
-
-```
-  <VirtualHost *:80>
-    DocumentRoot "/path/to/sinatra-rubygems/public"
-    ServerName gems.local
-    RackEnv production
-    RackBaseURI /
-    <Directory "/path/to/sinatra-rubygems/public">
-      Order allow,deny
-      Allow from all
-    </Directory>
-  </VirtualHost>
-```
-
-* Open `/etc/hosts` and add `127.0.0.1   gems.local` to the end of the file
-* To restart Apache: `sudo apachectl restart`
