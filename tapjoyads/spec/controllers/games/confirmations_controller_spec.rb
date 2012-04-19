@@ -11,7 +11,7 @@ describe Games::ConfirmationsController do
       @gamer = Factory(:gamer)
     end
     context 'with valid token and campaign' do
-      it 'redirects to with tracking' do
+      it 'redirects to url with tracking params' do
         get(:create, :token => @gamer.confirmation_token, :content => 'test_campaign')
         response.code.should == "302"
         response.session[:flash][:notice].should == 'Email address confirmed.'
@@ -21,8 +21,14 @@ describe Games::ConfirmationsController do
                              :utm_content  => 'test_campaign')
       end
     end
+    context 'with valid token and campaign' do
+      it 'queues post confirm message' do
+        Sqs.expects(:send_message)
+        get(:create, :token => @gamer.confirmation_token, :content => 'confirm_only')
+      end
+    end
     context 'with valid token only' do
-      it 'redirects to with tracking' do
+      it 'redirects to url without tracking params' do
         get(:create, :token => @gamer.confirmation_token)
         response.code.should == "302"
         response.session[:flash][:notice].should == 'Email address confirmed.'
