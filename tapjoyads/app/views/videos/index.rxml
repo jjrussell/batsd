@@ -4,20 +4,20 @@ xml.instruct!
 xml.TapjoyVideos do
   @offer_list.each do |offer|
     xml.TapjoyVideo do
-        xml.OfferID offer.id
-        xml.Name offer.name
-        xml.Amount @currency.get_visual_reward_amount(offer, params[:display_multiplier])
-        xml.CurrencyName @currency.name
-        xml.VideoURL offer.url
-        xml.IconURL offer.video_icon_url
-        xml.Buttons do
-          xml << offer.video_button_tracking_offers.inject([]) do |result, offer|
-            result << builder.Button do |button|
-              button.tag!("Name", offer.name)
-              button.tag!("URL", get_click_url(offer))
-            end
-          end.join.to_s
-        end
+      xml.OfferID offer.id
+      xml.Name offer.name
+      xml.Amount @currency.get_visual_reward_amount(offer, params[:display_multiplier])
+      xml.CurrencyName @currency.name
+      xml.VideoURL offer.url
+      xml.IconURL offer.video_icon_url
+      xml.Buttons do
+        xml << offer.video_button_tracking_offers.inject([]) do |result, offer|
+          result << builder.Button do |button|
+            button.tag!("Name", offer.name)
+            button.tag!("URL", get_click_url(offer))
+          end
+        end.join.to_s
       end
+    end
   end
 end
