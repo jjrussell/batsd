@@ -113,7 +113,7 @@ private
       notify_and_render_error(false)
     else
       device.set_last_run_time!(click.advertiser_app_id)
-      message = { :click_key => click.key, :install_timestamp => @now.to_f.to_s, :request_url => request.url }.to_json
+      message = { :click_key => click.key, :install_timestamp => @now.to_f.to_s }.to_json
       Sqs.send_message(QueueNames::CONVERSION_TRACKING, message)
       render_success
     end

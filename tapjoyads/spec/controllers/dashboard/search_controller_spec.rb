@@ -50,6 +50,9 @@ describe Dashboard::SearchController do
 
       context 'with a blank search query' do
         before :each do
+          @good_gamer = Factory(:gamer, :email => "user@now.com")
+          @bad_gamer = Factory(:gamer, :email => "abuser@now.com")
+
           @params = { :terms => '' }
         end
 
