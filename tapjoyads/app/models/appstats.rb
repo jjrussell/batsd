@@ -833,7 +833,7 @@ private
       :xLabels => @x_labels,
       :main => {
         :unitPrefix => '$',
-        :names => Time.now >= Date.new(2012, 5, 1) ? [ 'Total revenue', 'In app offerwall revenue', 'TJM offerwall revenue', 'Featured offer revenue', 'Display ad revenue' ] : [ 'Total revenue', 'Offerwall revenue', 'Featured offer revenue', 'Display ad revenue' ],
+        :names => Delayed.show? ? [ 'Total revenue', 'In app offerwall revenue', 'TJM offerwall revenue', 'Featured offer revenue', 'Display ad revenue' ] : [ 'Total revenue', 'Offerwall revenue', 'Featured offer revenue', 'Display ad revenue' ],
         :data => [
           @stats['total_revenue'].map { |i| i / 100.0 },
           @stats['rewards_revenue'].map { |i| i / 100.0 },
@@ -861,7 +861,7 @@ private
 
   def offerwall_data
     {
-      :name => Time.now >= Date.new(2012, 5, 1) ? 'In app offerwall' : 'Offerwall',
+      :name => Delayed.show? ? 'In app offerwall' : 'Offerwall',
       :intervals => formatted_intervals,
       :xLabels => @x_labels,
       :main => {

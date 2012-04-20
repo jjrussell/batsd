@@ -107,7 +107,7 @@ class GetOffersController < ApplicationController
     params[:exp] = nil if params[:type] == Offer::CLASSIC_OFFER_TYPE
 
     if @save_web_requests
-      if params[:source] == 'tj_games' && Time.now >= Date.new(2012, 5, 1)
+      if params[:source] == 'tj_games' && Delayed.show?
         wr_path = 'tjm_offers'
       elsif params[:source] == 'featured'
         wr_path = 'featured_offer_requested'

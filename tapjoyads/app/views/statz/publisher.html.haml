@@ -39,7 +39,7 @@
       %th Rev
       %th CVR
       %th eCPM
-      - if Time.now >= Date.new(2012, 5, 1)
+      - if Delayed.show?
         %th Views
         %th Conversions
         %th Rev
@@ -47,7 +47,7 @@
         %th eCPM
     %tr
       %th{ :colspan => 7 }
-      - if Time.now >= Date.new(2012, 5, 1)
+      - if Delayed.show?
         %th{ :colspan => 5, :align => :center } In app offerwall
         %th{ :colspan => 5, :align => :center } TJM offerwall
       - else
@@ -69,7 +69,7 @@
         %td= stats['offerwall_revenue']
         %td= stats['offerwall_cvr']
         %td= stats['offerwall_ecpm']
-        - if Time.now >= Date.new(2012, 5, 1)
+        - if Delayed.show?
           %td= stats['tjm_offerwall_views']
           %td= stats['tjm_offerwall_conversions']
           %td= stats['tjm_offerwall_revenue']
@@ -114,7 +114,7 @@
           17: { sorter: 'formatted-number-column' },
           18: { sorter: 'formatted-number-column' },
           19: { sorter: 'formatted-number-column' },
-          - if Time.now >= Date.new(2012, 5, 1)
+          - if Delayed.show?
             21: { sorter: 'formatted-number-column' },
             22: { sorter: 'formatted-number-column' },
             23: { sorter: 'formatted-number-column' },
