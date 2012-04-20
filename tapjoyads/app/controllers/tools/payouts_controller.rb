@@ -66,6 +66,6 @@ class Tools::PayoutsController < WebsiteController
       @partners = Partner.to_payout
     end
 
-    @partners = @partners.all(:include => [:payout_info, :payout_info_confirmation, :payout_threshold_confirmation])
+    @partners = @partners.all(:include => [:payout_info, :payout_info_confirmation, :payout_threshold_confirmation, {:users => [:user_roles]}])
   end
 end

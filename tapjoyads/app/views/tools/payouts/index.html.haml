@@ -25,8 +25,8 @@
   = submit_tag('Reset', :id => :date_reset)
 #unfiltered.hidden
   = link_to 'Filter by payout info modification', '#'
-- form_tag(export_tools_payouts_path, :method => :get) do
-  = submit_tag('Export to CSV', :id => :export, :action => export_tools_payouts_path)
+- form_tag(export_tools_payouts_path(:format => :csv), :method => :get) do
+  = submit_tag('Export to CSV')
 
 %table
   %thead
