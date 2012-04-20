@@ -738,7 +738,7 @@ class Offer < ActiveRecord::Base
 
   def update_video_button_tracking_offers
     return unless item_type == 'VideoOffer'
-    @video_button_tracking_offers = item.video_buttons.collect(&:tracking_offer).compact
+    @video_button_tracking_offers = item.video_buttons.enabled.ordered.collect(&:tracking_offer).compact
   end
 
   private
