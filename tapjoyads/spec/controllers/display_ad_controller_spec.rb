@@ -125,8 +125,7 @@ describe DisplayAdController do
       end
 
       it 'should queue up tracking url calls' do
-        url = @request.url + "display_ad?#{@params.to_query}"
-        @offer.expects(:queue_impression_tracking_requests).with(url).once
+        @offer.expects(:queue_impression_tracking_requests).once
 
         get(:index, @params)
       end
@@ -198,8 +197,7 @@ describe DisplayAdController do
     describe '#webview' do
 
       it 'should queue up tracking url calls' do
-        url = @request.url + "display_ad/webview?#{@params.to_query}"
-        @offer.expects(:queue_impression_tracking_requests).with(url).once
+        @offer.expects(:queue_impression_tracking_requests).once
 
         get(:webview, @params)
       end

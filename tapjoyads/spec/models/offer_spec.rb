@@ -960,7 +960,6 @@ describe Offer do
     before(:each) do
       Sqs.stubs(:send_message)
       @urls = ['https://dummyurl.com?ts=[timestamp]', 'https://example.com?ts=[timestamp]']
-      @referer = 'http://williamshat.com'
       now = Time.zone.now
       Time.zone.stubs(:now).returns(now)
 
@@ -972,25 +971,25 @@ describe Offer do
     context "without a provided timestamp" do
       before :each do
         @urls.each do |url|
-          Downloader.expects(:queue_get_with_retry).with(url.sub('[timestamp]', Time.zone.now.to_i.to_s), { :headers => { 'Referer' => @referer } }).once
+          Downloader.expects(:queue_get_with_retry).with(url.sub('[timestamp]', Time.zone.now.to_i.to_s)).once
         end
       end
 
       describe ".queue_impression_tracking_requests" do
         it "should queue up the proper GET requests" do
-          @offer.queue_impression_tracking_requests(@referer)
+          @offer.queue_impression_tracking_requests
         end
       end
 
       describe ".queue_click_tracking_requests" do
         it "should queue up the proper GET requests" do
-          @offer.queue_click_tracking_requests(@referer)
+          @offer.queue_click_tracking_requests
         end
       end
 
       describe ".queue_conversion_tracking_requests" do
         it "should queue up the proper GET requests" do
-          @offer.queue_conversion_tracking_requests(@referer)
+          @offer.queue_conversion_tracking_requests
         end
       end
     end
@@ -999,25 +998,25 @@ describe Offer do
       before :each do
         @ts = Time.zone.now + 3600;
         @urls.each do |url|
-          Downloader.expects(:queue_get_with_retry).with(url.sub('[timestamp]', @ts.to_i.to_s), { :headers => { 'Referer' => @referer } }).once
+          Downloader.expects(:queue_get_with_retry).with(url.sub('[timestamp]', @ts.to_i.to_s)).once
         end
       end
 
       describe ".queue_impression_tracking_requests" do
         it "should queue up the proper GET requests" do
-          @offer.queue_impression_tracking_requests(@referer, @ts.to_i.to_s)
+          @offer.queue_impression_tracking_requests(@ts.to_i.to_s)
         end
       end
 
       describe ".queue_click_tracking_requests" do
         it "should queue up the proper GET requests" do
-          @offer.queue_click_tracking_requests(@referer, @ts.to_i.to_s)
+          @offer.queue_click_tracking_requests(@ts.to_i.to_s)
         end
       end
 
       describe ".queue_conversion_tracking_requests" do
         it "should queue up the proper GET requests" do
-          @offer.queue_conversion_tracking_requests(@referer, @ts.to_i.to_s)
+          @offer.queue_conversion_tracking_requests(@ts.to_i.to_s)
         end
       end
     end
