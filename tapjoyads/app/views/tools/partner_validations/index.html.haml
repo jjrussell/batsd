@@ -3,7 +3,7 @@
 %h1 Validations Report
 = label_tag(:q, 'Account Manager:')
 = text_field_tag(:acct_mgrs, @account_manager, :size => '40')
-
+= submit_tag('Clear Filters', :class => 'clear_filter')
 %table
   %thead
     %tr
@@ -146,6 +146,9 @@
         }
       };
       $('#acct_mgrs').focus().autocomplete(options);
+      $('input.clear_filter').click(function(){
+          window.location ='#{tools_partner_validations_path}';
+      });
     });
 - content_for :page_styles do
   :plain
