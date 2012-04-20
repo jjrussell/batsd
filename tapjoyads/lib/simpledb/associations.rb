@@ -6,7 +6,6 @@ module Simpledb
     end
 
     module ClassMethods
-      include ActiveSupport::Memoizable
 
       def belongs_to(*args)
         options = args.extract_options!
@@ -28,6 +27,7 @@ module Simpledb
           instance_variable_set(ivar, val)
         end
       end
+
     end
 
   end
