@@ -289,7 +289,7 @@ class ClickController < ApplicationController
 
     click.save
 
-    @offer.queue_click_tracking_requests(request) # for third party tracking vendors
+    @offer.queue_click_tracking_requests # for third party tracking vendors
   end
 
   def handle_pay_per_click
