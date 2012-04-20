@@ -8,6 +8,7 @@ describe Job::QueueCreateConversionsController do
     publisher_app = Factory(:app)
     advertiser_app = Factory(:app)
     @offer = advertiser_app.primary_offer
+    Offer.stubs(:find).returns(@offer)
     @reward = Factory(:reward,
       :type => 'offer',
       :publisher_app_id => publisher_app.id,
@@ -18,7 +19,6 @@ describe Job::QueueCreateConversionsController do
       :publisher_amount => 1,
       :advertiser_amount => 1,
       :tapjoy_amount => 1)
-    @reward.stubs(:offer).returns(@offer)
     Reward.expects(:find).with('reward_key', :consistent => true).returns(@reward)
   end
 
