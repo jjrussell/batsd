@@ -67,7 +67,7 @@ class Job::QueueConversionTrackingController < Job::SqsReaderController
 
     if click.source == 'featured'
       click.type = "featured_#{click.type}"
-    elsif click.source == 'tj_games'
+    elsif click.source == 'tj_games' && Time.now >= Date.new(2012, 5, 1)
       click.type = "tjm_#{click.type}"
     end
 
