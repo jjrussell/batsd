@@ -1,6 +1,4 @@
 class Reward < SimpledbShardedResource
-  belongs_to :offer
-
   self.num_domains = NUM_REWARD_DOMAINS
 
   self.sdb_attr :publisher_app_id
