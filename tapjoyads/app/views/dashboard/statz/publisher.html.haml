@@ -86,6 +86,7 @@
         %td= stats['display_cvr']
         %td= stats['display_ecpm']
 
+- sorters = Delayed.show? ? "21: { sorter: 'formatted-number-column' }, 22: { sorter: 'formatted-number-column' }, 23: { sorter: 'formatted-number-column' }, 24: { sorter: 'formatted-number-column' }, 26: { sorter: 'formatted-number-column' }," : "22: { sorter: false }, 23: { sorter: false }, 24: { sorter: false }, 25: { sorter: false },"
 - content_for :page_javascript do
   :plain
     $(function() {
@@ -114,17 +115,7 @@
           17: { sorter: 'formatted-number-column' },
           18: { sorter: 'formatted-number-column' },
           19: { sorter: 'formatted-number-column' },
-          - if Delayed.show?
-            21: { sorter: 'formatted-number-column' },
-            22: { sorter: 'formatted-number-column' },
-            23: { sorter: 'formatted-number-column' },
-            24: { sorter: 'formatted-number-column' },
-            26: { sorter: 'formatted-number-column' },
-          - else
-            22: { sorter: false },
-            23: { sorter: false },
-            24: { sorter: false },
-            25: { sorter: false },
+          #{sorters}
         },
         sortList: [ [3,1] ]
       });

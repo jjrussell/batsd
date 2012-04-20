@@ -169,6 +169,9 @@
       %td
       %td
 
+- sorters = Delayed.show? ? "19: { sorter: 'currency-column' }, 20: { sorter: 'currency-column' }" : "19: { sorter: 'currency-column' }"
+- tjm_ecpm_filter = Delayed.show? ? "getStringLower('#tjm_offerwall_ecpm_filter')," : ''
+- updateTJMTotals = Delayed.show? ? "$('.total_gross_revenue').text(formatCurrency(sumOfColumns(18))); $('.total_publisher_revenue').text(formatCurrency(sumOfColumns(19))); $('.total_publisher_total_revenue').text(formatCurrency(sumByPublishers(20))); $('.total_publisher_pending_earnings').text(formatCurrency(sumByPublishers(21)));" : "$('.total_gross_revenue').text(formatCurrency(sumOfColumns(17))); $('.total_publisher_revenue').text(formatCurrency(sumOfColumns(18))); $('.total_publisher_total_revenue').text(formatCurrency(sumByPublishers(19))); $('.total_publisher_pending_earnings').text(formatCurrency(sumByPublishers(20)));"
 - content_for :page_javascript do
   :plain
     $(function() {
@@ -215,11 +218,7 @@
           16: { sorter: 'currency-column' },
           17: { sorter: 'currency-column' },
           18: { sorter: 'currency-column' },
-          - if Delayed.show?
-            19: { sorter: 'currency-column' },
-            20: { sorter: 'currency-column' }
-          - else
-            19: { sorter: 'currency-column' }
+          #{sorters}
         }
       });
       $('#date').datepicker();
@@ -260,8 +259,7 @@
           getStringLower('#published_offers_filter'),
           getStringLower('#arpdau_filter'),
           getStringLower('#offerwall_ecpm_filter'),
-          - if Delayed.show?
-            getStringLower('#tjm_offerwall_ecpm_filter'),
+          #{tjm_ecpm_filter}
           getStringLower('#featured_ecpm_filter'),
           getStringLower('#display_ecpm_filter'),
           getStringLower('#gross_revenue_filter'),
@@ -314,16 +312,7 @@
         $('.total_spend').text(formatCurrency(sumOfColumns(4)));
         $('.total_conversions').text(addCommas(sumOfColumns(5)));
         $('.total_published_offers').text(addCommas(sumOfColumns(12)));
-        - if Delayed.show?
-          $('.total_gross_revenue').text(formatCurrency(sumOfColumns(18)));
-          $('.total_publisher_revenue').text(formatCurrency(sumOfColumns(19)));
-          $('.total_publisher_total_revenue').text(formatCurrency(sumByPublishers(20)));
-          $('.total_publisher_pending_earnings').text(formatCurrency(sumByPublishers(21)));
-        - else
-          $('.total_gross_revenue').text(formatCurrency(sumOfColumns(17)));
-          $('.total_publisher_revenue').text(formatCurrency(sumOfColumns(18)));
-          $('.total_publisher_total_revenue').text(formatCurrency(sumByPublishers(19)));
-          $('.total_publisher_pending_earnings').text(formatCurrency(sumByPublishers(20)));
+        #{updateTJMTotals}
       }
       function sumOfColumns(coln) {
         var sum = 0;
