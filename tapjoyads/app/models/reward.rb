@@ -1,6 +1,5 @@
 class Reward < SimpledbShardedResource
   belongs_to :offer
-  belongs_to :click, :foreign_key => 'click_key'
 
   self.num_domains = NUM_REWARD_DOMAINS
 
