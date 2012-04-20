@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120406004520) do
+ActiveRecord::Schema.define(:version => 20120409142204) do
 
   create_table "action_offers", :id => false, :force => true do |t|
     t.string   "id",                    :limit => 36,                    :null => false
@@ -68,9 +68,9 @@ ActiveRecord::Schema.define(:version => 20120406004520) do
     t.string   "categories"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "papaya_user_count"
     t.integer  "thumbs_up",                         :default => 0
     t.integer  "thumbs_down",                       :default => 0
+    t.integer  "papaya_user_count"
     t.text     "countries_blacklist"
   end
 
@@ -431,6 +431,7 @@ ActiveRecord::Schema.define(:version => 20120406004520) do
     t.string   "twitter_access_token"
     t.string   "twitter_access_secret"
     t.text     "extra_attributes",       :limit => 2147483647
+    t.integer  "reward_credits",                               :default => 0
   end
 
   add_index "gamers", ["confirmation_token"], :name => "index_gamers_on_confirmation_token", :unique => true
@@ -964,6 +965,20 @@ ActiveRecord::Schema.define(:version => 20120406004520) do
 
   add_index "survey_questions", ["id"], :name => "index_survey_questions_on_id", :unique => true
   add_index "survey_questions", ["survey_offer_id"], :name => "index_survey_questions_on_survey_offer_id"
+
+  create_table "universal_rewards", :id => false, :force => true do |t|
+    t.string   "id",                  :limit => 36, :null => false
+    t.string   "gamer_id",            :limit => 36, :null => false
+    t.string   "advertiser_app_id",   :limit => 36
+    t.string   "advertiser_offer_id", :limit => 36
+    t.integer  "advertiser_amount",                 :null => false
+    t.integer  "tapjoy_amount",                     :null => false
+    t.integer  "num_rewards",                       :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "universal_rewards", ["gamer_id"], :name => "index_universal_rewards_on_gamer_id"
 
   create_table "user_roles", :id => false, :force => true do |t|
     t.string   "id",         :limit => 36, :null => false
