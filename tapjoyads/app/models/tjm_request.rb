@@ -75,6 +75,10 @@ class TjmRequest < SyslogMessage
   self.define_attr :referrer
   self.define_attr :gamer_id
   self.define_attr :device_id
+  self.define_attr :app_id
+  self.define_attr :social_referrer_gamer
+  self.define_attr :social_source
+  self.define_attr :social_action
 
   def initialize(options = {})
     session    = options.delete(:session)    { |k| raise "#{k} is a required argument" }
@@ -84,6 +88,10 @@ class TjmRequest < SyslogMessage
     params     = options.delete(:params)     { |k| raise "#{k} is a required argument" }
     gamer      = options.delete(:gamer)
     device_id  = options.delete(:device_id)
+    app_id     = options.delete(:app_id)
+    referrer   = options.delete(:referrer)
+    @is_social = options.delete(:is_social) || false
+
     super(options)
 
     self.session_id               = session[:tjms_id]
@@ -95,10 +103,24 @@ class TjmRequest < SyslogMessage
     self.geoip_country            = geoip_data[:country]
     self.controller               = params[:controller]
     self.action                   = params[:action]
-    self.referrer                 = params[:referrer]
     self.path                     = lookup_path
     self.gamer_id                 = gamer.id if gamer.present?
     self.device_id                = device_id if device_id.present?
+    self.app_id                   = app_id
+    self.referrer                 = referrer
+  end
+
+  def save
+    if @is_social && referrer
+      self.replace_path('tjm_social_referrer')
+      social_referrer = referrer.split('_')
+      if social_referrer.length > 3
+        self.social_source          = social_referrer[1]
+        self.social_action          = social_referrer[2]
+        self.social_referrer_gamer  = social_referrer[3]
+      end
+    end
+    super
   end
 
   private
@@ -106,5 +128,4 @@ class TjmRequest < SyslogMessage
   def lookup_path
     PATH_MAP.include?(controller) && PATH_MAP[controller].include?(action) ? "tjm_#{PATH_MAP[controller][action]}" : "tjm_#{controller}_#{action}"
   end
-
 end

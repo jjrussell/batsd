@@ -153,11 +153,6 @@ class WebRequest < SyslogMessage
     self.plugin               = params[:plugin]
   end
 
-  def replace_path(replacement)
-    @attributes[:path] = [ replacement ]
-    replacement
-  end
-
   def save
     super
     begin
