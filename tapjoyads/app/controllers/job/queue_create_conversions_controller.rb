@@ -8,20 +8,13 @@ class Job::QueueCreateConversionsController < Job::SqsReaderController
 
   def on_message(message)
     reward = Reward.find(message.body, :consistent => true)
-    if reward.nil? # message may be a JSON string
-      message = JSON.parse(message.body).symbolize_keys
-      reward = Reward.find(message[:reward_key], :consistent => true)
-      raise "Reward not found: #{message[:reward_key]}" if reward.nil?
-    end
+    raise "Reward not found: #{message.body}" if reward.nil?
 
     reward.build_conversions.each do |c|
       save_conversion(c)
     end
 
-    if message.is_a?(Hash)
-      referer_url = (message[:request_url] || 'https://api.tapjoy.com/connect')
-      reward.offer.queue_conversion_tracking_requests(referer_url, reward.created.to_i.to_s)
-    end
+    reward.offer.queue_conversion_tracking_requests(reward.created.to_i.to_s)
   end
 
   def save_conversion(conversion)

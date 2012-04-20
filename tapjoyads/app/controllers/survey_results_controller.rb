@@ -44,8 +44,7 @@ class SurveyResultsController < ApplicationController
 
     message = {
       :click_key => @click.key,
-      :install_timestamp => @now.to_f.to_s,
-      :request_url => request.url
+      :install_timestamp => @now.to_f.to_s
     }
     Sqs.send_message(QueueNames::CONVERSION_TRACKING, message.to_json)
 

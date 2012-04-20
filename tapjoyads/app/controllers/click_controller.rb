@@ -283,7 +283,7 @@ class ClickController < ApplicationController
     click.save
 
     # for third party tracking vendors
-    @offer.queue_click_tracking_requests(request.url)
+    @offer.queue_click_tracking_requests
   end
 
   def handle_pay_per_click
@@ -294,8 +294,8 @@ class ClickController < ApplicationController
       end
       @device.set_last_run_time!(app_id_for_device)
 
-      message = { :click_key => click_key, :install_timestamp => @now.to_f.to_s, :request_url => request.url }
-      Sqs.send_message(QueueNames::CONVERSION_TRACKING, message.to_json)
+      message = { :click_key => click_key, :install_timestamp => @now.to_f.to_s }.to_json
+      Sqs.send_message(QueueNames::CONVERSION_TRACKING, message)
     end
   end
 

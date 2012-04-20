@@ -157,7 +157,7 @@ class GetOffersController < ApplicationController
         @web_request.save
 
         # third party tracking vendors
-        offer.queue_impression_tracking_requests(request.url)
+        offer.queue_impression_tracking_requests
       end
     end
   end

@@ -126,7 +126,7 @@ class Games::Gamers::DevicesController < GamesController
 
     click.save
 
-    message = { :click_key => click.key, :install_timestamp => Time.zone.now.to_f.to_s, :request_url => request.url }.to_json
+    message = { :click_key => click.key, :install_timestamp => Time.zone.now.to_f.to_s }.to_json
     Sqs.send_message(QueueNames::CONVERSION_TRACKING, message)
   end
 end
