@@ -61,7 +61,7 @@ module Offer::Rejecting
       { :method => :min_os_version_reject?, :parameters => [os_version], :reason => 'min_os_version'.humanize },
       { :method => :cookie_tracking_reject?, :parameters => [publisher_app, library_version, source], :reason => 'cookie_tracking'.humanize },
       { :method => :screen_layout_sizes_reject?, :parameters => [screen_layout_size], :reason => 'screen_layout_sizes'.humanize },
-      { :method => :is_disabled?, :parameters => [publisher_app, currency], :reason => 'is_disabled'.humanize },
+      { :method => :disabled?, :parameters => [publisher_app, currency], :reason => 'disabled'.humanize },
       { :method => :age_rating_reject?, :parameters => [ currency && currency.max_age_rating], :reason => 'age_rating'.humanize },
       { :method => :publisher_whitelist_reject?, :parameters => [publisher_app], :reason => 'publisher_whitelist'.humanize },
       { :method => :currency_whitelist_reject?, :parameters => [currency], :reason => 'currency_whitelist'.humanize },
@@ -90,7 +90,7 @@ module Offer::Rejecting
     min_os_version_reject?(os_version) ||
     cookie_tracking_reject?(publisher_app, library_version, source) ||
     screen_layout_sizes_reject?(screen_layout_size) ||
-    is_disabled?(publisher_app, currency) ||
+    disabled?(publisher_app, currency) ||
     age_rating_reject?(currency.max_age_rating) ||
     publisher_whitelist_reject?(publisher_app) ||
     currency_whitelist_reject?(currency) ||
@@ -133,7 +133,7 @@ module Offer::Rejecting
 
   private
 
-  def is_disabled?(publisher_app, currency)
+  def disabled?(publisher_app, currency)
     return false unless currency
     item_id == currency.app_id ||
       currency.get_disabled_offer_ids.include?(item_id) ||
