@@ -39,7 +39,7 @@
       %th CVR
       %th Published offers
       %th ARPDAU
-      - if Time.now >= Date.new(2012, 5, 1)
+      - if Delayed.show?
         %th In app offerwall ecpm
         %th TJM offerwall ecpm
       - else
@@ -69,7 +69,7 @@
       %td
       %td
       %td
-      - if Time.now >= Date.new(2012, 5, 1)
+      - if Delayed.show?
         %td
       %td.total.total_gross_revenue
       %td.total.total_publisher_revenue
@@ -95,7 +95,7 @@
       %td.filter= select_tag('published_offers_filter', options_for_select(filter_options(:published_offers)))
       %td.filter= select_tag('arpdau_filter', options_for_select(filter_options(:arpdau)))
       %td.filter= select_tag('offerwall_ecpm_filter', options_for_select(filter_options(:offerwall_ecpm)))
-      - if Time.now >= Date.new(2012, 5, 1)
+      - if Delayed.show?
         %td.filter= select_tag('tjm_offerwall_ecpm_filter', options_for_select(filter_options(:tjm_offerwall_ecpm)))
       %td.filter= select_tag('featured_ecpm_filter', options_for_select(filter_options(:featured_ecpm)))
       %td.filter= select_tag('display_ecpm_filter', options_for_select(filter_options(:display_ecpm)))
@@ -130,7 +130,7 @@
         %td= stats['published_offers']
         %td= number_to_currency(@appstats_data[offer_id][:arpdau] / 100.0, :precision => 4)
         %td= number_to_currency(@appstats_data[offer_id][:offerwall_ecpm] / 100.0)
-        - if Time.now >= Date.new(2012, 5, 1)
+        - if Delayed.show?
           %td= number_to_currency(@appstats_data[offer_id][:tjm_offerwall_ecpm] / 100.0)
         %td= number_to_currency(@appstats_data[offer_id][:featured_ecpm] / 100.0)
         %td= number_to_currency(@appstats_data[offer_id][:display_ecpm] / 100.0)
@@ -158,7 +158,7 @@
       %td
       %td
       %td
-      - if Time.now >= Date.new(2012, 5, 1)
+      - if Delayed.show?
         %td
       %td.total.total_gross_revenue
       %td.total.total_publisher_revenue
@@ -215,7 +215,7 @@
           16: { sorter: 'currency-column' },
           17: { sorter: 'currency-column' },
           18: { sorter: 'currency-column' },
-          - if Time.now >= Date.new(2012, 5, 1)
+          - if Delayed.show?
             19: { sorter: 'currency-column' },
             20: { sorter: 'currency-column' }
           - else
@@ -260,7 +260,7 @@
           getStringLower('#published_offers_filter'),
           getStringLower('#arpdau_filter'),
           getStringLower('#offerwall_ecpm_filter'),
-          - if Time.now >= Date.new(2012, 5, 1)
+          - if Delayed.show?
             getStringLower('#tjm_offerwall_ecpm_filter'),
           getStringLower('#featured_ecpm_filter'),
           getStringLower('#display_ecpm_filter'),
@@ -314,7 +314,7 @@
         $('.total_spend').text(formatCurrency(sumOfColumns(4)));
         $('.total_conversions').text(addCommas(sumOfColumns(5)));
         $('.total_published_offers').text(addCommas(sumOfColumns(12)));
-        - if Time.now >= Date.new(2012, 5, 1)
+        - if Delayed.show?
           $('.total_gross_revenue').text(formatCurrency(sumOfColumns(18)));
           $('.total_publisher_revenue').text(formatCurrency(sumOfColumns(19)));
           $('.total_publisher_total_revenue').text(formatCurrency(sumByPublishers(20)));
