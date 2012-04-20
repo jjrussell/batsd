@@ -139,6 +139,7 @@ describe DisplayAdController do
 
       it 'should queue up tracking url calls' do
         @offer.expects(:queue_impression_tracking_requests).once
+
         get(:index, @params)
       end
 
