@@ -35,6 +35,12 @@ module Offer::Rejecting
     [ 'c2ef96ba-5c6b-4479-bffa-9b1beca08f1b', '1d63a4fa-82ed-4442-955c-ef0d75978fad', '0ba2a533-d26d-4953-aa3e-fd01187e30e1' ] => [ 'c2ef96ba-5c6b-4479-bffa-9b1beca08f1b', '1d63a4fa-82ed-4442-955c-ef0d75978fad', '0ba2a533-d26d-4953-aa3e-fd01187e30e1' ],
     # Flirtomatic iOS
     [ 'bb26407e-6713-4b67-893d-4b47242f1ce0', '23fed671-4558-4c2e-8ceb-dcb41399c5d7' ] => [ 'bb26407e-6713-4b67-893d-4b47242f1ce0', '23fed671-4558-4c2e-8ceb-dcb41399c5d7' ],
+    # Credit Sesame
+    [ 'e13d1e07-9770-4d71-a9ba-fa42fd8df519', 'a3abde4d-7eff-49c7-8079-85d2c5238e88' ] => [ 'e13d1e07-9770-4d71-a9ba-fa42fd8df519', 'a3abde4d-7eff-49c7-8079-85d2c5238e88' ],
+    # Play Up
+    [ 'de54dbd2-71ff-405e-86f6-f680dcffe8d7', '02c569fc-4a3b-4807-897d-70fad43ae64a' ] => [ 'de54dbd2-71ff-405e-86f6-f680dcffe8d7', '02c569fc-4a3b-4807-897d-70fad43ae64a' ],
+    # Priceline
+    [ 'b64dba85-9cf9-4e14-b991-f3b7574880c7', '70d3de82-3062-4f19-8864-e453d8b9ee35' ] => [ 'b64dba85-9cf9-4e14-b991-f3b7574880c7', '70d3de82-3062-4f19-8864-e453d8b9ee35' ],
   }
 
   TAPJOY_GAMES_RETARGETED_OFFERS = ['2107dd6a-a8b7-4e31-a52b-57a1a74ddbc1', '12b7ea33-8fde-4297-bae9-b7cb444897dc', '8183ce57-8ee4-46c0-ab50-4b10862e2a27']

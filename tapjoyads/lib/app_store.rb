@@ -186,6 +186,7 @@ private
   end
 
   def self.search_apple_app_store(term, country)
+    country = 'us' if country.blank?
     response = request(ITUNES_SEARCH_URL, {:media => 'software', :term => term, :country => country})
     response_ipad = request(ITUNES_SEARCH_URL, {:media => 'software', :entity => 'iPadSoftware', :term => term, :country => country})
     if (response.status == 200) && (response.headers['Content-Type'] =~ /javascript/)

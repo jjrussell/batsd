@@ -103,6 +103,7 @@ class OfferList
     return [ [], 0 ] if @device && (@device.opted_out? || @device.banned?)
     @offers.sort! { |a,b| b.rank_score <=> a.rank_score }
     returned_offers = []
+    found_offer_item_ids = Set.new
     offers_to_find  = start + max_offers
     found_offers    = 0
 
@@ -117,8 +118,9 @@ class OfferList
     @offers.each_with_index do |offer, i|
       return [ returned_offers, @offers.length - i ] if found_offers >= offers_to_find
 
-      unless postcache_reject?(offer)
+      unless postcache_reject?(offer) || found_offer_item_ids.include?(offer.item_id)
         returned_offers << offer if found_offers >= start
+        found_offer_item_ids << offer.item_id
         found_offers += 1
       end
     end

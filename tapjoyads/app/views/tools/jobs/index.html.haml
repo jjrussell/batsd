@@ -12,6 +12,7 @@
       %th Controller
       %th Action
       %th Frequency
+      %th Max Concurrency
       %th &nbsp;
   %tbody
     - @jobs.each do |job|
@@ -21,6 +22,7 @@
         %td= job.controller
         %td= job.action
         %td= job.frequency_in_words
+        %td= job.max_concurrency
         %td
           = link_to('[edit]', edit_tools_job_path(job))
           = link_to('[destroy]', tools_job_path(job), :method => :delete, :confirm => "Delete #{job.job_path}?")

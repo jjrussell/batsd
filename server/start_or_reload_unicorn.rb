@@ -10,7 +10,7 @@ server_type = `#{base_dir}/server/server_type.rb`
 if pid == ''
   env = case server_type
         when "testserver": "staging"
-        when "staging"   : "staging"
+        when "staging"   : "development"
         when "dev"       : "development"
         else               "production"
         end

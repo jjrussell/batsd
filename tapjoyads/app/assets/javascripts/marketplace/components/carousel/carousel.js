@@ -18,7 +18,7 @@
   var Carousel = function(container, config){
 
     var $t = this;
- 
+
     $t.config = config;
     $t.prefix = '-' + Tap.browser.prefix;
 
@@ -247,8 +247,8 @@
 
     touchMove: function(e){
       var $t = this;
-      
-      // prevent default behavior 
+
+      // prevent default behavior
       e.preventDefault();
 
        // update event details
@@ -425,7 +425,7 @@
 
         if(!$t)
           return;
-        
+
         $t.config.enableSwipe = true;
         $t.applyListeners();
       });
