@@ -235,8 +235,6 @@ class DisplayAdController < ApplicationController
   end
 
   def queue_impression_tracking
-    if @offer.present?
-      @offer.queue_impression_tracking_requests
-    end
+    @offer.queue_impression_tracking_requests if @offer.present? # for third party tracking vendors
   end
 end
