@@ -33,17 +33,19 @@ Download via app store: http://itunes.apple.com/us/app/xcode/id497799835?mt=12
 
 Run Xcode to finish installation
 
-Go to preferences: ![xcode preferences](http://f.cl.ly/items/0g3A2S173P0Z3A1C1w09/Screen%20Shot%202012-04-18%20at%203.12.30%20PM.png)
+Go to preferences:
 
-Install the `Command Line Tools`: ![command line tools](http://f.cl.ly/items/2v0d2d3R09341x171206/Screen%20Shot%202012-04-18%20at%203.14.17%20PM.png)
+![xcode preferences](http://f.cl.ly/items/0g3A2S173P0Z3A1C1w09/Screen%20Shot%202012-04-18%20at%203.12.30%20PM.png)
+
+Install the `Command Line Tools`:
+
+![command line tools](http://f.cl.ly/items/2v0d2d3R09341x171206/Screen%20Shot%202012-04-18%20at%203.14.17%20PM.png)
 
 Verify gcc and git are installed in a terminal window:
 
 ```
-$ gcc -v
-i686-apple-darwin10-llvm-gcc-4.2 (GCC) 4.2.1
-$ git --version
-git version 1.7.7.5 (Apple Git-26)
+gcc -v
+git --version
 ```
 
 Install homebrew
@@ -53,22 +55,21 @@ Homebrew is a package manager for OSX.
 Install via:
 
 ```
-$ /usr/bin/ruby -e "$(/usr/bin/curl -fksSL https://raw.github.com/mxcl/homebrew/master/Library/Contributions/install_homebrew.rb)"
+/usr/bin/ruby -e "$(/usr/bin/curl -fksSL https://raw.github.com/mxcl/homebrew/master/Library/Contributions/install_homebrew.rb)"
 ```
 
 Now run the brew doctor to set up where it'll put packages:
 
 ```
-$ brew doctor
+brew doctor
 ```
 
 You'll probably see a message asking you to fix your paths, follow the instructions, then re-run:
 
 ```
-$ sudo xcode-select -switch /Applications/Xcode.app/Contents/Developer
-$ brew doctor
-Your system is raring to brew
-$ brew update # to get the latest brews
+sudo xcode-select -switch /Applications/Xcode.app/Contents/Developer
+brew doctor
+brew update # to get the latest brews
 ```
 
 
@@ -79,10 +80,6 @@ Setup git following these instructions: http://help.github.com/mac-set-up-git/
 
 NOTE: You already have git installed from the Xcode step.
 
-```
-$ brew install git
-```
-
 In github, fork tapjoyserver repository:
 
   * main repo location: `https://github.com/Tapjoy/tapjoyserver`
@@ -92,13 +89,13 @@ Clone your forked repo locally
 
 
 ```
-$ git clone git@github.com:[your github nickname]/tapjoyserver.git
+git clone git@github.com:[your github nickname]/tapjoyserver.git
 ```
 
 Add main tapjoyserver repo as remote repo (for updating your code with the latest):
 
 ```
-$ git remote add tapjoy git@github.com:Tapjoy/tapjoyserver.git
+git remote add tapjoy git@github.com:Tapjoy/tapjoyserver.git
 ```
 
 It is important that it's named "tapjoy" for deploy script to work
@@ -147,30 +144,19 @@ Install MySQL:
 brew install mysql
 ```
 
-Start MySQL automatically:
-
-```
-mkdir -p ~/Library/LaunchAgents
-cp /usr/local/Cellar/mysql/5.5.19/homebrew.mxcl.mysql.plist ~/Library/LaunchAgents/
-launchctl load -w ~/Library/LaunchAgents/homebrew.mxcl.mysql.plist
-```
-
-Add your user account:
-
-```
-unset TMPDIR
-mysql_install_db --verbose --user=`whoami` --basedir="$(brew --prefix mysql)" --datadir=/usr/local/var/mysql --tmpdir=/tmp
-```
+Follow the post-install directions. (Type `brew info mysql` to see them again)
 
 Install memcached
 -----------------
 
+Install memcached:
+
 ```
 brew install memcached
-mkdir -p ~/Library/LaunchAgents
-cp /usr/local/Cellar/memcached/1.4.13/homebrew.mxcl.memcached.plist ~/Library/LaunchAgents/
-launchctl load -w ~/Library/LaunchAgents/homebrew.mxcl.memcached.plist
 ```
+
+Follow the post-install directions. (Type `brew info mysql` to see them again)
+
 
 Copy local config files
 -----------------------
@@ -188,10 +174,7 @@ Download GeoIP database
 Download GeoIP database, unzip it and move it to the 
 
 ```
-brew install wget
-wget http://s3.amazonaws.com/dev_tapjoy/rails_env/GeoLiteCity.dat.gz
-gunzip GeoLiteCity.dat.gz
-mv GeoLiteCity.dat tapjoyserver/tapjoyads/data/GeoIPCity.dat
+curl http://s3.amazonaws.com/dev_tapjoy/rails_env/GeoLiteCity.dat.gz | gunzip > data/GeoIPCity.dat
 ```
 
 Install required gems
@@ -211,6 +194,7 @@ Sync prod db with local db (this will overwrite any pre-existing changes)
 
 ```
 mkdir tmp
+rake db:create
 rake admin:sync_db
 ```
 
