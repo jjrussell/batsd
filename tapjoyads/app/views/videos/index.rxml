@@ -1,5 +1,3 @@
-builder = Builder::XmlMarkup.new
-
 xml.instruct!
 xml.TapjoyVideos do
   @offer_list.each do |offer|
@@ -11,12 +9,15 @@ xml.TapjoyVideos do
       xml.VideoURL offer.url
       xml.IconURL offer.video_icon_url
       xml.Buttons do
-        xml << offer.video_button_tracking_offers.inject([]) do |result, offer|
-          result << builder.Button do |button|
-            button.tag!("Name", offer.name)
-            button.tag!("URL", get_click_url(offer))
+        button_xml = ""
+        offer.video_button_tracking_offers.each do |o|
+          builder = Builder::XmlMarkup.new
+          button_xml << builder.Button do |button|
+            button.tag!("Name", o.name)
+            button.tag!("URL", get_click_url(o))
           end
-        end.join.to_s
+        end
+        xml << button_xml
       end
     end
   end
