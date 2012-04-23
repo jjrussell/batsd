@@ -87,6 +87,6 @@ module ToolsHelper
   end
 
   def concat_li_currency(name, amount)
-    concat_li(name, number_to_currency(amount/100.0))
+    concat_li(name, number_to_currency(amount.to_f / 100.0))
   end
 end
