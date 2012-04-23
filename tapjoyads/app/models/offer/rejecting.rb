@@ -41,6 +41,8 @@ module Offer::Rejecting
     [ 'de54dbd2-71ff-405e-86f6-f680dcffe8d7', '02c569fc-4a3b-4807-897d-70fad43ae64a' ] => [ 'de54dbd2-71ff-405e-86f6-f680dcffe8d7', '02c569fc-4a3b-4807-897d-70fad43ae64a' ],
     # Priceline
     [ 'b64dba85-9cf9-4e14-b991-f3b7574880c7', '70d3de82-3062-4f19-8864-e453d8b9ee35' ] => [ 'b64dba85-9cf9-4e14-b991-f3b7574880c7', '70d3de82-3062-4f19-8864-e453d8b9ee35' ],
+    # Gamefly
+    [ 'ac845f34-6631-45f4-8d7e-8d9d981c05b4', '0c785af7-57b8-4efe-9112-44c7194f5a94' ] => [ 'ac845f34-6631-45f4-8d7e-8d9d981c05b4', '0c785af7-57b8-4efe-9112-44c7194f5a94' ],
   }
 
   TAPJOY_GAMES_RETARGETED_OFFERS = ['2107dd6a-a8b7-4e31-a52b-57a1a74ddbc1', '12b7ea33-8fde-4297-bae9-b7cb444897dc', '8183ce57-8ee4-46c0-ab50-4b10862e2a27']
