@@ -36,10 +36,12 @@ class Tools::PayoutsController < WebsiteController
   def export
     data = [
       'Partner_Name,Partner_id,Pending_Earnings,Cutoff_Date,Payout_Amount,' <<
-      'Current_Payout_Created,' <<
-      'Confirmed,Notes,Account_Manager_Email'
+      'Current_Payout_Created,Payout_Method,Account_Manager_Email,' <<
+      'Confirmed,Notes'
     ]
     @partners.each do |partner|
+      confirmation_notes = partner.confirmation_notes
+      confirmation_notes << 'Payout Info not present' unless partner.payout_info.present? && partner.payout_info.valid?
       line = [
           partner.name.gsub(/[,]/,' '),
           partner.id.gsub(/[,]/,' '),
@@ -47,9 +49,10 @@ class Tools::PayoutsController < WebsiteController
           (partner.payout_cutoff_date - 1.day).to_s(:yyyy_mm_dd),
           NumberHelper.number_to_currency((partner.pending_earnings / 100.0 - partner.next_payout_amount / 100.0), :delimiter => ''),
           NumberHelper.number_to_currency((partner.next_payout_amount / 100.0), :delimiter => ''),
-          partner.confirmed_for_payout? ? 'Confirmed' : 'Unconfirmed',
-          partner.payout_confirmation_notes.present? ? partner.payout_confirmation_notes.gsub(/[,]/, '_') : '' ,
-          partner.account_managers.present? ? (partner.account_managers.first.email) : ''
+          partner.payout_info.present? && partner.payout_info.valid? ? partner.payout_info.payout_method : '',
+          partner.account_managers.present? ? (partner.account_managers.first.email) : '',
+          partner.payout_info_confirmation.confirmed && partner.payout_threshold_confirmation.confirmed ? 'Confirmed' : 'Unconfirmed',
+          confirmation_notes.present? ? confirmation_notes.join(';').gsub(/[,]/, '_') : ''
         ]
       data << line.join(',')
     end
