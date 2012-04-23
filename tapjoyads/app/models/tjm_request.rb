@@ -79,6 +79,8 @@ class TjmRequest < SyslogMessage
   self.define_attr :social_referrer_gamer
   self.define_attr :social_source
   self.define_attr :social_action
+  self.define_attr :list_rank
+  self.define_attr :display_path
 
   def initialize(options = {})
     session    = options.delete(:session)    { |k| raise "#{k} is a required argument" }
