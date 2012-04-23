@@ -261,7 +261,6 @@ class GamesController < ApplicationController
       session[:tjms_stime] = now.to_i
       session[:tjms_id]    = UUIDTools::UUID.random_create.hexdigest
     end
-    social_referrer = get_decrypted_param(:referrer)
     tjm_request_options = {
       :time       => now,
       :session    => session,
@@ -271,10 +270,8 @@ class GamesController < ApplicationController
       :params     => params,
       :gamer      => current_gamer,
       :device_id  => current_device_id,
-      :app_id     => get_decrypted_param(:eid),
-      :referrer   => social_referrer,
     }
-    @tjm_social_request = TjmRequest.new(tjm_request_options.merge(:is_social => true)) if social_referrer
+    @tjm_social_request = TjmRequest.new(tjm_request_options.merge(:is_social => true)) if params[:referrer].present?
     @tjm_request = TjmRequest.new(tjm_request_options)
 
     session[:tjms_ltime] = now
@@ -283,16 +280,6 @@ class GamesController < ApplicationController
   def save_tjm_request
     @tjm_social_request.save if @tjm_social_request.present?
     @tjm_request.save if @tjm_request.present?
-  end
-
-  def get_decrypted_param(param)
-    if params[param].present?
-      begin
-        return ObjectEncryptor.decrypt(params[param])
-      rescue
-      end
-    end
-    nil
   end
 
   def tjm_session_expired?(now = Time.zone.now)

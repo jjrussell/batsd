@@ -79,6 +79,8 @@ class TjmRequest < SyslogMessage
   self.define_attr :social_referrer_gamer
   self.define_attr :social_source
   self.define_attr :social_action
+  self.define_attr :social_invitation_id
+  self.define_attr :social_advertiser_app_id
   self.define_attr :list_rank
   self.define_attr :display_path
 
@@ -90,8 +92,6 @@ class TjmRequest < SyslogMessage
     params     = options.delete(:params)     { |k| raise "#{k} is a required argument" }
     gamer      = options.delete(:gamer)
     device_id  = options.delete(:device_id)
-    app_id     = options.delete(:app_id)
-    referrer   = options.delete(:referrer)
     @is_social = options.delete(:is_social) || false
 
     super(options)
@@ -108,24 +108,42 @@ class TjmRequest < SyslogMessage
     self.path                     = lookup_path
     self.gamer_id                 = gamer.id if gamer.present?
     self.device_id                = device_id if device_id.present?
-    self.app_id                   = app_id
-    self.referrer                 = referrer
+    self.app_id                   = safe_decrypt(params[:eid])
+    self.referrer                 = plain_text_referrer(params[:referrer])
   end
 
   def save
     if @is_social && referrer
       self.replace_path('tjm_social_referrer')
-      social_referrer = referrer.split('_')
-      if social_referrer.length > 3
-        self.social_source          = social_referrer[1]
-        self.social_action          = social_referrer[2]
-        self.social_referrer_gamer  = social_referrer[3]
+      unless referrer.starts_with?('tjreferrer:')
+        social_referrer = referrer.split('_')
+        if social_referrer.length > 3
+          self.social_source          = social_referrer[1]
+          self.social_action          = social_referrer[2]
+          self.social_referrer_gamer  = social_referrer[3]
+        else
+          invitation_id, advertiser_app_id = referrer.split(',')
+          self.social_invitation_id        = invitation_id
+          self.social_advertiser_app_id    = advertiser_app_id
+        end
       end
     end
     super
   end
 
   private
+
+  def safe_decrypt(encrypted_value)
+    begin
+      return ObjectEncryptor.decrypt(encrypted_value) unless encrypted_value.blank?
+    rescue OpenSSL::Cipher::CipherError
+    end
+    nil
+  end
+
+  def plain_text_referrer(raw_referrer)
+    safe_decrypt(raw_referrer) || raw_referrer
+  end
 
   def lookup_path
     PATH_MAP.include?(controller) && PATH_MAP[controller].include?(action) ? "tjm_#{PATH_MAP[controller][action]}" : "tjm_#{controller}_#{action}"
