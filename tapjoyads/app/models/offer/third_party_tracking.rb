@@ -6,7 +6,8 @@ module Offer::ThirdPartyTracking
 
       [:impression_tracking_urls, :click_tracking_urls, :conversion_tracking_urls].each do |f|
         serialize f, Array
-        validates_each(f) { |record, attribute, value| record.validate_third_party_tracking_urls(attribute, value) }
+        # TODO: uncomment this once we have a UI for adding tracking urls
+        # validates_each(f) { |record, attribute, value| record.validate_third_party_tracking_urls(attribute, value) }
       end
 
     end
