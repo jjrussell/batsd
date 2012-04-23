@@ -4,17 +4,25 @@ class Games::HomepageController < GamesController
   rescue_from Errno::ECONNRESET, :with => :handle_errno_exceptions
   rescue_from Errno::ETIMEDOUT, :with => :handle_errno_exceptions
   before_filter :require_gamer, :except => [ :index, :tos, :privacy, :translations ]
-  after_filter :index, :record_recommended_apps
   skip_before_filter :setup_tjm_request, :only => :translations
 
   def translations
     render "translations.js", :layout => false, :content_type => "application/javascript"
   end
 
+  def record_click
+    if params[:redirect_url].present?
+      url = ObjectEncryptor.decrypt(params[:redirect_url])
+      @tjm_request.outbound_click_url = url if @tjm_request
+      redirect_to url
+    end
+  end
+
   def get_app
     @offer = Offer.find(params_id)
     @app = @offer.app
     @app_metadata = @app.primary_app_metadata
+    @click_url = "#{games_record_click_path}?redirect_url=#{ObjectEncryptor.encrypt(@offer.url)}&eid=#{ObjectEncryptor.encrypt(@app.id)}"
     if @app_metadata
       @app_reviews = AppReview.by_gamers.paginate_all_by_app_metadata_id(@app_metadata.id, :page => params[:app_reviews_page])
     end
@@ -72,6 +80,7 @@ class Games::HomepageController < GamesController
         params[:gamer_id]    = current_gamer.id
       end
     end
+    record_recommended_apps
   end
 
   def switch_device
