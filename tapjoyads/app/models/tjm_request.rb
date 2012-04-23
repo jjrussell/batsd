@@ -9,6 +9,7 @@ class TjmRequest < SyslogMessage
       'help'              => 'help',
       'earn'              => 'view_installed_app',
       'get_app'           => 'get_app',
+      'record_click'      => 'outgoing_click',
       'privacy'           => 'privacy_policy',
       'tos'               => 'terms_of_use',
     },
@@ -83,6 +84,7 @@ class TjmRequest < SyslogMessage
   self.define_attr :social_advertiser_app_id
   self.define_attr :list_rank
   self.define_attr :display_path
+  self.define_attr :outbound_click_url
 
   def initialize(options = {})
     session    = options.delete(:session)    { |k| raise "#{k} is a required argument" }
