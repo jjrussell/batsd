@@ -5,7 +5,7 @@
   = link_to((params[:preview] == 'true' ? '#' : get_click_url(@offer)), :class => 'image-link') do
     %img{ :src => "#{CLOUDFRONT_URL}/images/blank.png", :class => 'creative', :id => 'creative' }
 .buttons#buttons
-  = link_to(earn_currency_text(@offer, @currency, params[:display_multiplier]), (params[:preview] == 'true' ? '#' : get_click_url(@offer)), :class => 'download gradient', :id => 'download')
+  = link_to(featured_offer_earn_currency_text(@offer, @currency, params[:display_multiplier]), (params[:preview] == 'true' ? '#' : get_click_url(@offer)), :class => 'download gradient', :id => 'download')
 
 - content_for :page_javascript do
   :plain
