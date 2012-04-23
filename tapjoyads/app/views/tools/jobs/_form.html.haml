@@ -25,4 +25,9 @@
         = f.text_field :seconds, :size => 50
         = error_message_on @job, :seconds
     %tr
+      %th= f.label :max_concurrency
+      %td
+        = f.text_field :max_concurrency, :size => 50
+        = error_message_on @job, :max_concurrency
+    %tr
       %td{ :colspan => 2 }= f.submit 'Save'

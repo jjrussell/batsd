@@ -156,7 +156,7 @@ class GetOffersController < ApplicationController
         @web_request.offerwall_rank_score = offer.rank_score
         @web_request.save
 
-        offer.queue_impression_tracking_requests(request) # third party tracking vendors
+        offer.queue_impression_tracking_requests # for third party tracking vendors
       end
     end
   end
