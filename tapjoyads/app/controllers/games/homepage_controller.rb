@@ -4,6 +4,7 @@ class Games::HomepageController < GamesController
   rescue_from Errno::ECONNRESET, :with => :handle_errno_exceptions
   rescue_from Errno::ETIMEDOUT, :with => :handle_errno_exceptions
   before_filter :require_gamer, :except => [ :index, :tos, :privacy, :translations ]
+  after_filter :index, :record_recommended_apps
   skip_before_filter :setup_tjm_request, :only => :translations
 
   def translations

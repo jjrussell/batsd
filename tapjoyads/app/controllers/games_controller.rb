@@ -302,4 +302,17 @@ class GamesController < ApplicationController
     Time.zone.at(session[:tjms_ltime].to_i) < now - TJM_SESSION_TIMEOUT
   end
 
+  def record_recommended_apps
+    return unless @tjm_request
+    current_recommendations.each_with_index do |app, index|
+      recommendation_tjm_request = @tjm_request.clone
+      recommendation_tjm_request.app_id         = app.id
+      recommendation_tjm_request.list_rank      = index
+      recommendation_tjm_request.display_path   = recommendation_tjm_request.path
+
+      recommendation_tjm_request.replace_path('tjm_recommendation_impression')
+      recommendation_tjm_request.save
+    end
+  end
+
 end
