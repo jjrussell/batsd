@@ -313,17 +313,17 @@ FactoryGirl.define do
   end
 
   factory :featured_content do
-    featured_type FeaturedContent::STAFFPICK
-    platforms     %w( iphone ipad itouch ).to_json
-    subtitle      'Subtitle'
-    title         'Title'
-    description   'Description'
-    start_date    { Time.zone.now }
-    end_date      { Time.zone.now + 1.day }
-    weight        1
-    offer         { Factory(:app).primary_offer }
-    author        { Factory(:employee) }
-    button_url    'https://www.tapjoy.com'
+    featured_type         FeaturedContent::STAFFPICK
+    platforms             %w( iphone itouch ).to_json
+    subtitle              'Subtitle'
+    title                 'Title'
+    description           'Description'
+    start_date            { Time.zone.now }
+    end_date              { Time.zone.now + 1.day }
+    weight                1
+    tracking_source_offer { Factory(:app).primary_offer }
+    author                { Factory(:employee) }
+    button_url            'https://www.tapjoy.com'
   end
 
   factory :client do

@@ -3,7 +3,7 @@
 
 base_dir = File.expand_path("../../../", __FILE__)
 server_type = `#{base_dir}/server/server_type.rb`
-big_server = %w(masterjobs jobs).include?(server_type)
+big_server = %w(masterjobs jobserver).include?(server_type)
 
 app_dir = "#{base_dir}/tapjoyads"
 working_directory app_dir

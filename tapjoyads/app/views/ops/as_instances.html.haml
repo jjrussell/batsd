@@ -1,0 +1,26 @@
+- lb_name = @lb_name
+- @lb_instances[lb_name].each do |lb_instance|
+  - ec2_instance = @ec2_instances[lb_instance[:instance_id]] || {}
+  - instance_output = capture_haml do
+    %div{:class => "#{@kiosk ? 'span2' : 'span3'}", :id => "#{lb_instance[:instance_id]}_details"}
+      %span.label.right= ec2_instance[:aws_state]
+      .well.well-small{:class => "#{lb_instance[:state] == 'OutOfService' ? "alert alert-error" : "alert"}"}
+        %a{ :href => "ssh://ubuntu@#{ec2_instance[:dns_name]}" }= ec2_instance[:dns_name].split('.').first
+        %small #{lb_instance[:instance_id]}
+        - unless lb_instance[:description] == "N/A"
+          %p= lb_instance[:description]
+        - unless @kiosk
+          %div
+            = link_to 'deregister', elb_deregister_instance_ops_path(:instance_id => lb_instance[:instance_id], :lb_name => lb_name), :class => 'get'
+            = link_to 'reboot', ec2_reboot_instance_ops_path(:instance_id => lb_instance[:instance_id]), :class => 'get'
+            = link_to 'replace', as_terminate_instance_ops_path(:instance_id => lb_instance[:instance_id], :as_group => @as_group[:auto_scaling_group_name]), :class => 'get'
+            = link_to 'remove', as_terminate_instance_ops_path(:instance_id => lb_instance[:instance_id], :as_group => @as_group[:auto_scaling_group_name], :decrement_capacity => true), :class => 'get'
+  = javascript_tag do
+    :plain
+      $('##{lb_instance[:instance_id]}_details').remove();
+      $('##{@as_group[:auto_scaling_group_name]}_section').after('#{escape_javascript instance_output}');
+
+      var instance_id = '#{lb_instance[:instance_id]}';
+      nodes[instance_id] = new Date().getTime();
+
+= javascript_tag "ajaxLinks()"

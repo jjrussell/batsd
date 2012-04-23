@@ -3,13 +3,14 @@ class JobRunner
 
   @@jobs = {}
   @@next_update_at = Time.now.utc
+  @@unicorn_pid = ''
 
   def self.get_active_jobs
     jobs_hash = {}
     return jobs_hash unless Rails.env.production?
     if MACHINE_TYPE == 'masterjobs'
       active_jobs = Job.active.by_job_type('master')
-    elsif MACHINE_TYPE == 'jobs' || MACHINE_TYPE == 'test'
+    elsif MACHINE_TYPE == 'jobserver' || MACHINE_TYPE == 'testserver' || MACHINE_TYPE == 'staging'
       active_jobs = Job.active.by_job_type('queue')
     else
       active_jobs = []
@@ -21,6 +22,11 @@ class JobRunner
     jobs_hash
   end
 
+  def self.get_unicorn_pid
+    base_dir = File.expand_path("../server", Rails.root)
+    `#{base_dir}/unicorn_master_pid.rb`.gsub(' ', '_')
+  end
+
   def self.load_jobs
     @@jobs = get_active_jobs
     @@jobs.values.each do |job|
@@ -28,6 +34,7 @@ class JobRunner
       Rails.logger.info "Next run time for #{job.job_path}: #{job.next_run_time}"
     end
     @@next_update_at = Time.now.utc + UPDATE_INTERVAL
+    @@unicorn_pid = get_unicorn_pid
   end
 
   def self.update_jobs
@@ -52,6 +59,7 @@ class JobRunner
       @@jobs[job_id].set_next_run_time
     end
     @@next_update_at = Time.now.utc + UPDATE_INTERVAL
+    @@unicorn_pid = get_unicorn_pid
     Rails.logger.info "JobRunner: Updated job config. Next update at #{@@next_update_at}"
   end
 
@@ -62,6 +70,8 @@ class JobRunner
 
     base_url = Rails.env.production? ? 'http://localhost:9898' : ''
 
+    Dir.mkdir(Job::CONCURRENCY_DIR) unless File.exists?(Job::CONCURRENCY_DIR)
+
     sleep(rand * 5)
     begin
       loop do
@@ -69,10 +79,17 @@ class JobRunner
         update_jobs if now > @@next_update_at
         Rails.logger.flush
         @@jobs.values.each do |job|
-          if now > job.next_run_time
+          if now > job.next_run_time && (job.max_concurrency == 0 || Dir.glob("#{Job::CONCURRENCY_DIR}/#{job.concurrency_filename(@@unicorn_pid)}*").size < job.max_concurrency)
             Rails.logger.info "#{now.to_s(:db)} - JobRunner: Running #{job.job_path}"
             Rails.logger.flush
-            Thread.new(job.job_path) do |job_path|
+            path = job.job_path
+            if job.max_concurrency > 0
+              concurrency_filename = job.concurrency_filename(@@unicorn_pid, UUIDTools::UUID.random_create.hexdigest)
+              path << (path =~ /\?/ ? '&' : '?')
+              path << "concurrency_filename=#{concurrency_filename}"
+              File.open("#{Job::CONCURRENCY_DIR}/#{concurrency_filename}", 'w') {}
+            end
+            Thread.new(path) do |job_path|
               sess = Patron::Session.new
               sess.base_url = base_url
               sess.timeout = 1

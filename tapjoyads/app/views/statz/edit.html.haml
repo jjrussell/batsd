@@ -214,7 +214,7 @@
           = label_tag('estimated_budget', 'Daily Budget')
           #help_estimated_budget.help ?
         %td
-          = text_field_tag('estimated_budget')
+          = text_field_tag('estimated_budget', '', :size => 30)
       %tr
         %th
           = f.label(:overall_budget, 'Overall Conversions')
@@ -233,7 +233,7 @@
       %tr
         %th= f.label(:third_party_data)
         %td= f.text_area(:third_party_data)
-    - if @offer.item_type == 'App' || @offer.item_type == 'GenericOffer'
+    - if @offer.app_offer? || @offer.item_type == 'GenericOffer'
       %tr
         %th
           = f.label(:url_overridden, 'Override Default Destination URL')

@@ -1,6 +1,8 @@
 require 'spec/spec_helper'
 
 describe FullscreenAdController do
+  include ActionView::Helpers
+
   integrate_views
   ignore_html_warning
 
@@ -40,8 +42,7 @@ describe FullscreenAdController do
         get(:index, @params)
 
         response.should be_success
-        response.should render_template("fullscreen_ad/custom_creative")
-        response.should have_tag('div', 'x')
+        response.should have_tag('div#close', 'x')
       end
 
       it 'includes call-to-action button for rewarded' do

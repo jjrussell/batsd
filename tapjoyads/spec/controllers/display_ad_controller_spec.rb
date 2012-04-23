@@ -56,10 +56,6 @@ describe DisplayAdController do
           get(:image, @params)
 
           response.content_type.should == 'image/png'
-
-          # To diagnose a mismatch, uncomment the following and compare the new image to #{Rails.root}/spec/assets/banner_ads/custom_320x50.png
-          # File.open("#{Rails.root}/spec/assets/banner_ads/wtf.png", 'w') { |f| f.write(response.body) }
-
           response.body.should == @custom_banner
         end
       end
@@ -96,20 +92,56 @@ describe DisplayAdController do
         it 'returns proper image' do
           get(:image, @params)
           response.content_type.should == 'image/png'
-
-          # Uncomment the following to re-generate the image if needed (e.g. background image changes, text changes, etc)
-          # File.open("#{Rails.root}/spec/assets/banner_ads/generated_320x50.png", 'w') { |f| f.write(response.body) }
-
-          # To diagnose a mismatch, uncomment the following and compare the new image to #{Rails.root}/spec/assets/banner_ads/generated_320x50.png
-          # File.open("#{Rails.root}/spec/assets/banner_ads/wtf.png", 'w') { |f| f.write(response.body) }
-
-          ### The test seems to be failing due to different versions of ImageMagick / different fonts on other developer machines ###
-          # response.body.should == @generated_banner
         end
       end
     end
 
     describe '#index' do
+
+      before :each do
+        td_icon     = read_asset('tap_defense.jpg', 'icons')
+        round_mask  = read_asset('round_mask.png',  'display')
+        icon_shadow = read_asset('icon_shadow.png', 'display')
+
+        offer_icon_id = Offer.hashed_icon_id(@offer.icon_id)
+
+        obj_td_icon = @bucket.objects["icons/src/#{offer_icon_id}.jpg"]
+        obj_round_mask = @bucket.objects["display/round_mask.png"]
+        obj_icon_shadow = @bucket.objects["display/icon_shadow.png"]
+        objects = {
+          "icons/src/#{offer_icon_id}.jpg" => obj_td_icon,
+          "display/round_mask.png" => obj_round_mask,
+          "display/icon_shadow.png" => obj_icon_shadow,
+        }
+        @bucket.stubs(:objects).returns(objects)
+        obj_td_icon.stubs(:read).returns(td_icon)
+        obj_round_mask.stubs(:read).returns(round_mask)
+        obj_icon_shadow.stubs(:read).returns(icon_shadow)
+
+        ad_bg = read_asset('self_ad_bg_640x100.png', 'display')
+        obj_ad_bg = @bucket.objects["display/self_ad_bg_640x100.png"]
+        @bucket.stubs(:objects).returns({ "display/self_ad_bg_640x100.png" => obj_ad_bg })
+        obj_ad_bg.stubs(:read).returns(ad_bg)
+      end
+
+      it 'should queue up tracking url calls' do
+        @offer.expects(:queue_impression_tracking_requests).once
+
+        get(:index, @params)
+      end
+
+      context 'with unfilled request' do
+        before :each do
+          OfferCacher.stubs(:get_unsorted_offers_prerejected).returns([])
+        end
+
+        it 'should not queue up tracking url calls' do
+          Offer.any_instance.expects(:queue_impression_tracking_requests).never
+
+          get(:index, @params)
+        end
+      end
+
       context 'with custom ad' do
         before :each do
           @offer.banner_creatives = %w(320x50 640x100)
@@ -127,10 +159,6 @@ describe DisplayAdController do
           get(:index, @params.merge(:format => 'json'))
 
           response.content_type.should == 'application/json'
-
-          # To diagnose a mismatch, uncomment the following and compare the new image to #{Rails.root}/spec/assets/banner_ads/custom_320x50.png
-          # File.open("#{Rails.root}/spec/assets/banner_ads/wtf.png", 'w') { |f| f.write(response.body) }
-
           Base64.decode64(assigns['image']).should == custom_banner
         end
 
@@ -143,36 +171,11 @@ describe DisplayAdController do
 
           get(:index, @params)
           response.content_type.should == 'application/xml'
-
-          # To diagnose a mismatch, uncomment the following and compare the new image to #{Rails.root}/spec/assets/banner_ads/custom_640x100.png
-          # File.open("#{Rails.root}/spec/assets/banner_ads/wtf.png", 'w') { |f| f.write(response.body) }
-
           Base64.decode64(assigns['image']).should == custom_banner
         end
       end
 
       context 'with generated ad' do
-        before :each do
-          td_icon     = read_asset('tap_defense.jpg', 'icons')
-          round_mask  = read_asset('round_mask.png',  'display')
-          icon_shadow = read_asset('icon_shadow.png', 'display')
-
-          offer_icon_id = Offer.hashed_icon_id(@offer.icon_id)
-
-          obj_td_icon = @bucket.objects["icons/src/#{offer_icon_id}.jpg"]
-          obj_round_mask = @bucket.objects["display/round_mask.png"]
-          obj_icon_shadow = @bucket.objects["display/icon_shadow.png"]
-          objects = {
-            "icons/src/#{offer_icon_id}.jpg" => obj_td_icon,
-            "display/round_mask.png" => obj_round_mask,
-            "display/icon_shadow.png" => obj_icon_shadow,
-          }
-          @bucket.stubs(:objects).returns(objects)
-          obj_td_icon.stubs(:read).returns(td_icon)
-          obj_round_mask.stubs(:read).returns(round_mask)
-          obj_icon_shadow.stubs(:read).returns(icon_shadow)
-        end
-
         it 'returns proper image data in json' do
           ad_bg = read_asset('self_ad_bg_320x50.png', 'display')
           obj_ad_bg = @bucket.objects["display/self_ad_bg_320x50.png"]
@@ -182,44 +185,28 @@ describe DisplayAdController do
 
           get(:index, @params.merge(:format => 'json'))
           response.content_type.should == 'application/json'
-
-          # Uncomment the following to re-generate the image if needed (e.g. background image changes, text changes, etc)
-          # File.open("#{Rails.root}/spec/assets/banner_ads/generated_320x50.png", 'w') { |f| f.write(Base64.decode64(assigns['image'])) }
-
-          # To diagnose a mismatch, uncomment the following and compare the new image to #{Rails.root}/spec/assets/banner_ads/generated_320x50.png
-          # File.open("#{Rails.root}/spec/assets/banner_ads/wtf.png", 'w') { |f| f.write(response.body) }
-
-          ### The test seems to be failing due to different versions of ImageMagick / different fonts on other developer machines ###
-          # Base64.decode64(assigns['image']).should == File.read("#{Rails.root}/spec/assets/banner_ads/generated_320x50.png")
         end
 
         it 'returns proper image data in xml' do
-          ad_bg = File.read("#{Rails.root}/spec/assets/display/self_ad_bg_640x100.png")
-          obj_ad_bg = @bucket.objects["display/self_ad_bg_640x100.png"]
-          @bucket.stubs(:objects).returns({ "display/self_ad_bg_640x100.png" => obj_ad_bg })
-          obj_ad_bg.stubs(:read).returns(ad_bg)
-
           get(:index, @params)
           response.content_type.should == 'application/xml'
-
-          # Uncomment the following to re-generate the image if needed (e.g. background image changes, text changes, etc)
-          # File.open("#{Rails.root}/spec/assets/banner_ads/generated_640x100.png", 'w') { |f| f.write(Base64.decode64(assigns['image'])) }
-
-          # To diagnose a mismatch, uncomment the following and compare the new image to #{Rails.root}/spec/assets/banner_ads/generated_640x100.png
-          # File.open("#{Rails.root}/spec/assets/banner_ads/wtf.png", 'w') { |f| f.write(response.body) }
-
-          ### The test seems to be failing due to different versions of ImageMagick / different fonts on other developer machines ###
-          # Base64.decode64(assigns['image']).should == File.read("#{Rails.root}/spec/assets/banner_ads/generated_640x100.png")
         end
       end
     end
 
     describe '#webview' do
+
+      it 'should queue up tracking url calls' do
+        @offer.expects(:queue_impression_tracking_requests).once
+
+        get(:webview, @params)
+      end
+
       context 'with custom ad' do
         before :each do
-           @offer.banner_creatives = %w(320x50)
-           @offer.approved_banner_creatives = %w(320x50)
-           @offer.rewarded = false
+          @offer.banner_creatives = %w(320x50)
+          @offer.approved_banner_creatives = %w(320x50)
+          @offer.rewarded = false
         end
 
         it 'contains proper image link' do
