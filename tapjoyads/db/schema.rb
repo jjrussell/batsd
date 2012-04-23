@@ -798,6 +798,9 @@ ActiveRecord::Schema.define(:version => 20120406173403) do
     t.datetime "updated_at"
   end
 
+  add_index "payout_confirmations", ["partner_id", "type"], :name => "index_payout_confirmation_partner_type", :unique => true
+  add_index "payout_confirmations", ["partner_id"], :name => "index_payout_confirmation_partner"
+
   create_table "payout_freezes", :id => false, :force => true do |t|
     t.string   "id",          :limit => 36,                   :null => false
     t.boolean  "enabled",                   :default => true, :null => false

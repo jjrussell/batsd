@@ -7,6 +7,9 @@ class CreatePayoutConfirmations < ActiveRecord::Migration
       t.boolean :confirmed, :null => false, :default => false
       t.timestamps
     end
+
+    add_index :payout_confirmations, [:partner_id, :type], :name => 'index_payout_confirmation_partner_type', :unique => true
+    add_index :payout_confirmations, [:partner_id], :name => 'index_payout_confirmation_partner', :unique => false
   end
 
   def self.down
