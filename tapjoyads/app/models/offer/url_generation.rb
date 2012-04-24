@@ -1,7 +1,7 @@
 module Offer::UrlGeneration
 
   def destination_url(options)
-    if instructions.present?
+    if item_type != 'VideoOffer' && instructions.present?
       instructions_url(options)
     else
       complete_action_url(options)

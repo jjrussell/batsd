@@ -98,14 +98,6 @@ class Click < SimpledbShardedResource
       (installed_at - clicked_at) < threshold
   end
 
-  def advertiser_app
-    begin
-      App.find_in_cache(advertiser_app_id, true)
-    rescue ActiveRecord::RecordNotFound
-      nil
-    end
-  end
-
   def maintain_history
     if clicked_at?
       while last_clicked_at.size >= MAX_HISTORY

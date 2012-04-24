@@ -24,6 +24,8 @@ class Gamer < ActiveRecord::Base
 
   after_destroy :delete_friends
 
+  serialize :extra_attributes, Hash
+
   MAX_DEVICE_THRESHOLD = 15
   MAX_REFERRAL_THRESHOLD = 50
   DAYS_BEFORE_DELETION = 3
@@ -49,6 +51,22 @@ class Gamer < ActiveRecord::Base
   def self.columns
     super.reject { |c| c.name == "use_gravatar" }
   end
+
+  def self.serialized_extra_attributes_accessor(*args)
+    args.each do |method_name|
+      eval "
+        def #{method_name}
+          (self.extra_attributes || {})[:#{method_name}]
+        end
+        def #{method_name}=(value)
+          self.extra_attributes ||= {}
+          self.extra_attributes[:#{method_name}] = value
+        end
+      "
+    end
+  end
+  # Example Usage: list the attribute name here, then you could access it as a normal attribute
+  # serialized_extra_attributes_accessor :completed_offer_count
 
   def confirm!
     self.confirmed_at = Time.zone.now

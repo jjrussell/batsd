@@ -94,9 +94,10 @@ describe ClickController do
 
       it "queues the offer's click_tracking_urls properly" do
         Click.any_instance.stubs(:offer).returns(@offer)
+        @params.merge!(:advertiser_app_id => 'testing click_tracking')
         @offer.expects(:queue_click_tracking_requests).once
 
-        get(:generic, @params.merge(:advertiser_app_id => 'testing click_tracking'))
+        get(:generic, @params)
       end
     end
   end
@@ -127,9 +128,10 @@ describe ClickController do
 
     it "queues the offer's click_tracking_urls properly" do
       Click.any_instance.stubs(:offer).returns(@offer)
+      @params.merge!(:advertiser_app_id => 'testing click_tracking')
       @offer.expects(:queue_click_tracking_requests).once
 
-      get(:app, @params.merge(:advertiser_app_id => 'testing click_tracking'))
+      get(:app, @params)
     end
   end
 end

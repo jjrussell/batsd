@@ -1,0 +1,43 @@
+- @page_title = 'Vertica Status'
+
+%h1 Vertica Status
+
+- form_tag(vertica_status_ops_path, :method => :get, :class => 'tjform') do
+  %table
+    %tbody
+      %tr
+        %th UTC Day
+        %td= text_field_tag(:day, @day.to_date.to_s(:mdy), :id => 'pick_day')
+      %tr
+        %td{ :colspan => 2 }= submit_tag('Submit')
+
+- if @message.present?
+  %h3
+    Data is:
+    %span{ :class => @accurate ? 'accurate' : 'inaccurate' }= @accurate ? 'Accurate' : 'Inaccurate'
+
+  %pre= @message
+
+  %p{ :class => 'small' }
+    * Note that this tool only looks at the number of featured ads requested as a generalization for all vertica data.
+    This also depends on the group hourly stats job having run so the most recent hours of appstats counts could still be incomplete.
+
+- content_for :page_javascript do
+  :plain
+    $(function() {
+      $('#pick_day').datepicker();
+    });
+
+- content_for :page_styles do
+  :plain
+    span.accurate {
+      color: green;
+    }
+
+    span.inaccurate {
+      color: red;
+    }
+
+    p.small {
+      font-size: 12px;
+    }

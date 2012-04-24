@@ -101,6 +101,7 @@
     - @cached_stats.each do |offer_id, stats|
       :ruby
         metadata = @cached_metadata[offer_id]
+        next if metadata.nil?
         tr_class = get_tr_class(stats, metadata)
         value = metadata['balance'].gsub(/[\$,]/,'')
       %tr{ :class => tr_class, :value => value }
