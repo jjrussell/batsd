@@ -14,26 +14,26 @@
       .more-btn
         = t("text.games.app_review_more")
     - unless current_gamer and app_review.author_id == current_gamer.id
-    .triang_cont
-      .triangle
-    .moderation-panel
-      - case
-      - when @viewer_flagd.any?{|vote| vote.app_review_id==app_review.id}
-        %span.concern
-          = t("text.games.app_review_concern_reported")
-      - when @viewer_faved.any?{|vote| vote.app_review_id==app_review.id}
-        %span
-          = t("text.games.app_review_thanks_for_feedback")
-      - else
-        .helpful_q
-          .q
-            = t("text.games.app_review_was_helpful")
-          .yn
-            %a.y{:href=> games_app_review_fave_path(app_review)}
-              = t("text.games.app_review_h_yes")
-            |
-            %a.n{:href=> games_app_review_fave_path(app_review)}
-              = t("text.games.app_review_h_no")
-        .concern_q
-          %a.concern{:href=> games_app_review_flag_path(app_review)}
-            = t("text.games.app_review_report_concern")
+      .triang_cont
+        .triangle
+      .moderation-panel
+        - case
+        - when @viewer_flagd.any?{|vote| vote.app_review_id==app_review.id}
+          %span.concern
+            = t("text.games.app_review_concern_reported")
+        - when @viewer_faved.any?{|vote| vote.app_review_id==app_review.id}
+          %span
+            = t("text.games.app_review_thanks_for_feedback")
+        - else
+          .helpful_q
+            .q
+              = t("text.games.app_review_was_helpful")
+            .yn
+              %a.y{:href=> games_app_review_fave_path(app_review)}
+                = t("text.games.app_review_h_yes")
+              |
+              %a.n{:href=> games_app_review_fave_path(app_review)}
+                = t("text.games.app_review_h_no")
+          .concern_q
+            %a.concern{:href=> games_app_review_flag_path(app_review)}
+              = t("text.games.app_review_report_concern")
