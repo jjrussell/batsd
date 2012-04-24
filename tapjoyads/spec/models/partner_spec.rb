@@ -352,6 +352,7 @@ describe Partner do
             @partner.stubs(:pending_earnings).returns(0)
             @partner.stubs(:balance_changed?).returns(false)
             @partner.stubs(:pending_earnings_changed?).returns(true)
+            @partner.stubs(:add_payout_confirmations)
             Notifier.stubs(:alert_new_relic).with(BalancesMismatch, "Pending Earnings mismatch for partner: #{@partner.id}, previously: 10000, now: 0").once
             p = Partner.verify_balances(@partner.id, true)
           end
@@ -361,46 +362,31 @@ describe Partner do
 
     describe '#toggle_confirmed_for_payout' do
       before :each do
-        @payout_threshold_confirmation = Factory(:payout_threshold_confirmation, :partner => @partner)
-        @payout_threshold_confirmation.stubs(:partner).returns(@partner)
+        @payout_threshold_confirmation = mock('mock confirmation')
         @partner.stubs(:payout_confirmations).returns([@payout_threshold_confirmation])
-        @partner.next_payout_amount = 50_000_01
-        @partner.save!
+        @payout_threshold_confirmation.stubs(:confirmed).returns(true)
       end
 
-      context 'when partner is confirmed' do
+      context 'when user has proper role' do
         before :each do
-          @payout_threshold_confirmation.confirmed = true
+          @payout_threshold_confirmation.stubs(:has_proper_role).returns(true)
           @user = Factory(:admin)
         end
 
         it 'remains confirmed the partner' do
+          @payout_threshold_confirmation.expects(:confirm).once
           @partner.toggle_confirmed_for_payout(@user)
-          @payout_threshold_confirmation.confirmed.should be_true
         end
       end
-
-      context 'when partner is unconfirmed' do
+      context 'when user does not have proper role' do
         before :each do
-          @payout_threshold_confirmation.confirmed = false
-          @user = Factory(:admin)
+          @payout_threshold_confirmation.stubs(:has_proper_role).returns(false)
+          @user = Factory(:gamer)
         end
 
-        it 'confirms the partner' do
+        it 'remains confirmed the partner' do
+          @payout_threshold_confirmation.expects(:confirm).never
           @partner.toggle_confirmed_for_payout(@user)
-          @payout_threshold_confirmation.confirmed.should be_true
-        end
-
-        it 'clears out confirmation notes' do
-          @partner.toggle_confirmed_for_payout(@user)
-          @payout_threshold_confirmation.system_notes.should be_nil
-        end
-
-        context 'when system notes are threshold' do
-          it 'will increase the threshold by 10%' do
-            @partner.toggle_confirmed_for_payout(@user)
-            @partner.payout_threshold.should == 55_000_01
-          end
         end
       end
     end
