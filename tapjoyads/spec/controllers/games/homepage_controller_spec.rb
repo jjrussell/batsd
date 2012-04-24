@@ -23,10 +23,21 @@ describe Games::HomepageController do
       I18n.locale.should == :de
     end
 
-    it 'sets more locale based on HTTP_ACCEPT_LANGUAGE' do
+    it 'sets more locale based on HTTP_ACCEPT_LANGUAGE, and ignores suffix casing' do
       request.env["HTTP_ACCEPT_LANGUAGE"] = "zh-TW"
       get(:index)
       I18n.locale.should == :"zh-tw"
+      request.env["HTTP_ACCEPT_LANGUAGE"] = "zh-cn"
+      get(:index)
+      I18n.locale.should == :"zh-cn"
+    end
+
+    it 'sets more locale based on language_code, and ignores suffix casing' do
+      request.env["HTTP_ACCEPT_LANGUAGE"] = "fake,notreal;7;totallyInvalidInput!"
+      get(:index, :language_code => "zh-tw")
+      I18n.locale.should == :"zh-tw"
+      get(:index, :language_code => "zh-CN")
+      I18n.locale.should == :"zh-cn"
     end
 
     it 'attempts to split locale based on HTTP_ACCEPT_LANGUAGE' do

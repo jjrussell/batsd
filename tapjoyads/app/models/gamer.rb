@@ -62,7 +62,7 @@ class Gamer < ActiveRecord::Base
   def name
     @name.blank? ? email.gsub(/@.*/, '') : @name
   end
-  
+
   def self.serialized_extra_attributes_accessor(*args)
     args.each do |method_name|
       eval "

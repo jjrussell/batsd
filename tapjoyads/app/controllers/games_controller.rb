@@ -35,7 +35,7 @@ class GamesController < ApplicationController
     return [] unless params[:language_code]
 
     code = params[:language_code]
-
+    code.downcase!
     [ code, code.split(/-/).first ].uniq
   end
 
