@@ -18,8 +18,6 @@ config.action_view.cache_template_loading            = true
 # Disable request forgery protection because this is an api
 config.action_controller.allow_forgery_protection    = false
 
-config.gem 'mail_safe', :version => '0.3.1'
-
 # Use a different cache store in production
 # config.cache_store = :mem_cache_store
 
@@ -43,7 +41,7 @@ end
 SPROCKETS_CONFIG = {
   :compile => true,
   :combine => true,
-  :host => local_config['asset_host'] || local_config['website_url'] || 'http://localhost:3000'
+  :host => local_config['asset_host'] || local_config['website_url'] || 'http://d10hyk8bs4mjhv.cloudfront.net'
 }
 
 RUN_MODE_PREFIX = 'staging_'
@@ -51,16 +49,13 @@ API_URL = local_config['api_url'] || 'http://localhost:3000'
 DASHBOARD_URL = local_config['dashboard_url'] || 'http://localhost:3000'
 WEBSITE_URL = local_config['website_url'] || 'http://localhost:3000'
 CLOUDFRONT_URL = 'https://s3.amazonaws.com/staging_tapjoy'
+XMAN = false
 
 # Amazon services:
 amazon = YAML::load_file("#{Rails.root}/config/amazon.yaml")
 ENV['AWS_ACCESS_KEY_ID'] = amazon['staging']['access_key_id']
 ENV['AWS_SECRET_ACCESS_KEY'] = amazon['staging']['secret_access_key']
 AWS_ACCOUNT_ID = '331510376354'
-
-# Add "RightAws::AwsError: sdb.amazonaws.com temporarily unavailable: (getaddrinfo: Temporary failure in name resolution)"
-# to the list of transient problems which will automatically get retried by RightAws.
-RightAws::RightAwsBase.amazon_problems = RightAws::RightAwsBase.amazon_problems | ['temporarily unavailable', 'InvalidClientTokenId', 'InternalError', 'QueryTimeout']
 
 NUM_POINT_PURCHASES_DOMAINS = 2
 NUM_CLICK_DOMAINS = 2

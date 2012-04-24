@@ -1,6 +1,7 @@
 class App < ActiveRecord::Base
   include UuidPrimaryKey
   acts_as_cacheable
+  acts_as_trackable :third_party_data => :store_id, :age_rating => :age_rating, :wifi_only => :wifi_required?, :device_types => lambda { get_offer_device_types.to_json }, :url => :store_url
 
   ALLOWED_PLATFORMS = { 'android' => 'Android', 'iphone' => 'iOS', 'windows' => 'Windows' }
   BETA_PLATFORMS    = {}
@@ -9,7 +10,18 @@ class App < ActiveRecord::Base
       code.match(/[A-Z]{2}/) && code != 'KP'
     end.map do |name, code|
       ["#{code} -- #{name}", code]
-    end.sort.unshift(["Select a country", ""])
+    end.sort
+  WINDOWS_ACCEPT_LANGUAGES = Set.new(%w(
+      es-ar en-au nl-be fr-be pt-br en-ca fr-ca es-cl es-co cs-cz da-dk de-de
+      es-es fr-fr en-hk en-in id-id en-ie it-it hu-hu ms-my es-mx nl-nl en-nz
+      nb-no de-at es-pe en-ph pl-pl pt-pt de-ch en-sg en-za fr-ch fi-fi sv-se
+      en-gb en-us zh-cn el-gr zh-hk ja-jp ko-kr ru-ru zh-tw
+    ))
+  WINDOWS_ACCEPT_LANGUAGES_OPTIONS = WINDOWS_ACCEPT_LANGUAGES.map do |pair|
+    country_index = GeoIP::CountryCode.index(pair[3, 2].upcase)
+    country_name = GeoIP::CountryName[country_index]
+    [ "#{country_name} - #{pair[0, 2]}", pair ]
+  end.sort
   PLATFORM_DETAILS = {
     'android' => {
       :expected_device_types => Offer::ANDROID_DEVICES,
@@ -196,7 +208,7 @@ class App < ActiveRecord::Base
       if (data.nil?) # might not be available in the US market
         data = AppStore.fetch_app_by_id(store_id, platform, primary_country)
       end
-    rescue Patron::HostResolutionError
+    rescue Patron::HostResolutionError, RuntimeError
       return false
     end
     return false if data.nil?
@@ -327,6 +339,12 @@ class App < ActiveRecord::Base
     !!(file_size_bytes && file_size_bytes > download_limit)
   end
 
+  def update_promoted_offers(offer_ids)
+    success = true
+    currencies.each { |currency| success &= currency.update_promoted_offers(offer_ids)}
+    success
+  end
+
   def update_offers
     offers.each do |offer|
       offer.partner_id = partner_id
@@ -390,35 +408,6 @@ class App < ActiveRecord::Base
     test_video_offer
   end
 
-  def create_tracking_offer_for(tracked_for, options = {})
-    device_types   = options.delete(:device_types)   { get_offer_device_types.to_json }
-    url_overridden = options.delete(:url_overridden) { false }
-    url            = options.delete(:url)            { store_url }
-    raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
-
-    offer = Offer.new({
-      :item             => self,
-      :tracking_for     => tracked_for,
-      :partner          => partner,
-      :name             => name,
-      :url_overridden   => url_overridden,
-      :url              => url,
-      :device_types     => device_types,
-      :price            => 0,
-      :bid              => 0,
-      :min_bid_override => 0,
-      :rewarded         => false,
-      :name_suffix      => 'tracking',
-      :third_party_data => store_id,
-      :age_rating       => age_rating,
-      :wifi_only        => wifi_required?
-    })
-    offer.id = tracked_for.id
-    offer.save!
-
-    offer
-  end
-
   private
 
   def update_reengagements_with_enable_or_disable(enable)
@@ -459,8 +448,8 @@ class App < ActiveRecord::Base
   def update_all_offers
     clear_association_cache
     update_offers if store_id_changed || partner_id_changed? || name_changed? || hidden_changed?
-    update_rating_offer if rating_offer.present? && (store_id_changed || name_changed?)
-    update_action_offers if store_id_changed || name_changed? || hidden_changed?
+    update_rating_offer if rating_offer.present? && (store_id_changed || partner_id_changed? || name_changed?)
+    update_action_offers if store_id_changed || partner_id_changed? || hidden_changed?
   end
 
   def update_currencies

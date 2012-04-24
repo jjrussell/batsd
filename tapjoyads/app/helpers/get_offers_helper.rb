@@ -29,7 +29,9 @@ module GetOffersHelper
       :display_multiplier => params[:display_multiplier],
       :device_name        => params[:device_name],
       :library_version    => params[:library_version],
-      :gamer_id           => params[:gamer_id])
+      :gamer_id           => params[:gamer_id],
+      :os_version         => params[:os_version],
+      :mac_address        => params[:mac_address])
 
     if offer.item_type == 'VideoOffer' || offer.item_type == 'TestVideoOffer'
       if @publisher_app.platform == 'windows'
@@ -37,7 +39,21 @@ module GetOffersHelper
       else
         prefix = "tjvideo://"
       end
-      "#{prefix}video_id=#{offer.id}&amount=#{@currency.get_visual_reward_amount(offer, params[:display_multiplier])}&currency_name=#{URI::escape(@currency.name)}&click_url=#{click_url}"
+
+      video_complete_url = offer.destination_url(
+        :publisher_user_id  => params[:publisher_user_id],
+        :publisher_app_id   => @publisher_app.id,
+        :currency           => @currency,
+        :udid               => params[:udid]
+      )
+
+      parameters = "video_id=#{offer.id}&"
+      parameters << "amount=#{@currency.get_visual_reward_amount(offer, params[:display_multiplier])}&"
+      parameters << "currency_name=#{URI::escape(@currency.name)}&"
+      parameters << "click_url=#{click_url}&"
+      parameters << "video_complete_url=#{video_complete_url}"
+
+      "#{prefix}#{parameters}"
     else
       click_url
     end
@@ -56,7 +72,8 @@ module GetOffersHelper
         :primary_country    => geoip_data[:primary_country],
         :display_multiplier => params[:display_multiplier],
         :library_version    => params[:library_version],
-        :language_code      => params[:language_code])
+        :language_code      => params[:language_code],
+        :os_version         => params[:os_version])
   end
 
   def visual_cost(offer)

@@ -1,10 +1,14 @@
+require_dependency 'video_button' # Offer caches VideoButton objects
+
 class Offer < ActiveRecord::Base
   include UuidPrimaryKey
   include Offer::Ranking
   include Offer::Rejecting
   include Offer::UrlGeneration
   include Offer::BannerCreatives
+  include Offer::ThirdPartyTracking
   acts_as_cacheable
+  acts_as_tracking
   memoize :precache_rank_scores
 
   APPLE_DEVICES = %w( iphone itouch ipad )
@@ -15,24 +19,26 @@ class Offer < ActiveRecord::Base
   ALL_OFFER_TYPES = %w( App EmailOffer GenericOffer OfferpalOffer RatingOffer ActionOffer VideoOffer SurveyOffer ReengagementOffer)
   ALL_SOURCES = %w( offerwall display_ad featured tj_games )
 
-  CLASSIC_OFFER_TYPE               = '0'
-  DEFAULT_OFFER_TYPE               = '1'
-  FEATURED_OFFER_TYPE              = '2'
-  DISPLAY_OFFER_TYPE               = '3'
-  NON_REWARDED_DISPLAY_OFFER_TYPE  = '4'
-  NON_REWARDED_FEATURED_OFFER_TYPE = '5'
-  VIDEO_OFFER_TYPE                 = '6'
-  FEATURED_BACKFILLED_OFFER_TYPE   = '7'
+  CLASSIC_OFFER_TYPE                          = '0'
+  DEFAULT_OFFER_TYPE                          = '1'
+  FEATURED_OFFER_TYPE                         = '2'
+  DISPLAY_OFFER_TYPE                          = '3'
+  NON_REWARDED_DISPLAY_OFFER_TYPE             = '4'
+  NON_REWARDED_FEATURED_OFFER_TYPE            = '5'
+  VIDEO_OFFER_TYPE                            = '6'
+  FEATURED_BACKFILLED_OFFER_TYPE              = '7'
   NON_REWARDED_FEATURED_BACKFILLED_OFFER_TYPE = '8'
+  REENGAGEMENT_OFFER_TYPE                     = '9'
   OFFER_TYPE_NAMES = {
-    DEFAULT_OFFER_TYPE               => 'Offerwall Offers',
-    FEATURED_OFFER_TYPE              => 'Rewarded Featured Offers',
-    DISPLAY_OFFER_TYPE               => 'Display Ad Offers',
-    NON_REWARDED_DISPLAY_OFFER_TYPE  => 'Non-Rewarded Display Ad Offers',
-    NON_REWARDED_FEATURED_OFFER_TYPE => 'Non-Rewarded Featured Offers',
-    VIDEO_OFFER_TYPE                 => 'Video Offers',
-    FEATURED_BACKFILLED_OFFER_TYPE   => 'Rewarded Featured Offers (Backfilled)',
-    NON_REWARDED_FEATURED_BACKFILLED_OFFER_TYPE => 'Non-Rewarded Featured Offers (Backfilled)'
+    DEFAULT_OFFER_TYPE                          => 'Offerwall Offers',
+    FEATURED_OFFER_TYPE                         => 'Rewarded Featured Offers',
+    DISPLAY_OFFER_TYPE                          => 'Display Ad Offers',
+    NON_REWARDED_DISPLAY_OFFER_TYPE             => 'Non-Rewarded Display Ad Offers',
+    NON_REWARDED_FEATURED_OFFER_TYPE            => 'Non-Rewarded Featured Offers',
+    VIDEO_OFFER_TYPE                            => 'Video Offers',
+    FEATURED_BACKFILLED_OFFER_TYPE              => 'Rewarded Featured Offers (Backfilled)',
+    NON_REWARDED_FEATURED_BACKFILLED_OFFER_TYPE => 'Non-Rewarded Featured Offers (Backfilled)',
+    REENGAGEMENT_OFFER_TYPE                     => 'Reengagement Offers'
   }
 
   OFFER_LIST_EXCLUDED_COLUMNS = %w( active
@@ -75,6 +81,8 @@ class Offer < ActiveRecord::Base
     "3 days"   => 3.days.to_i,
   }
 
+  attr_reader :video_button_tracking_offers
+
   has_many :advertiser_conversions, :class_name => 'Conversion', :foreign_key => :advertiser_offer_id
   has_many :rank_boosts
   has_many :enable_offer_requests
@@ -91,7 +99,6 @@ class Offer < ActiveRecord::Base
   belongs_to :reseller
   belongs_to :app, :foreign_key => "item_id"
   belongs_to :action_offer, :foreign_key => "item_id"
-  belongs_to :tracking_for, :polymorphic => true
 
   validates_presence_of :reseller, :if => Proc.new { |offer| offer.reseller_id? }
   validates_presence_of :partner, :item, :name, :url, :rank_boost
@@ -151,9 +158,8 @@ class Offer < ActiveRecord::Base
   end
   validates_each :multi_complete do |record, attribute, value|
     if value
-      record.errors.add(attribute, "is not for App offers") unless record.multi_completable?
+      record.errors.add(attribute, "is not for App offers, Action offers, or Survey offers") unless record.multi_completable?
       record.errors.add(attribute, "cannot be used for non-interval pay-per-click offers") if record.pay_per_click? && record.interval == 0
-      record.errors.add(attribute, 'cannot be used for Survey offers') if record.item_type == 'SurveyOffer'
     end
   end
   validates_each :instructions_overridden, :if => :instructions_overridden? do |record, attribute, value|
@@ -189,9 +195,10 @@ class Offer < ActiveRecord::Base
   after_save :update_tapjoy_sponsored_associated_offers
   after_save :sync_banner_creatives! # NOTE: this should always be the last thing run by the after_save callback chain
   before_cache :clear_creative_blobs
+  before_cache :update_video_button_tracking_offers
 
   named_scope :enabled_offers, :joins => :partner,
-    :readonly => false, :conditions => "tapjoy_enabled = true AND user_enabled = true AND item_type != 'RatingOffer' AND ((payment > 0 AND #{Partner.quoted_table_name}.balance > payment) OR (payment = 0 AND reward_value > 0)) AND tracking_for_id IS NULL"
+    :readonly => false, :conditions => "tapjoy_enabled = true AND user_enabled = true AND item_type != 'RatingOffer' AND item_type != 'ReengagementOffer' AND ((payment > 0 AND #{Partner.quoted_table_name}.balance > payment) OR (payment = 0 AND reward_value > 0)) AND tracking_for_id IS NULL"
   named_scope :by_name, lambda { |offer_name| { :conditions => ["offers.name LIKE ?", "%#{offer_name}%" ] } }
   named_scope :by_device, lambda { |platform| { :conditions => ["offers.device_types LIKE ?", "%#{platform}%" ] } }
   named_scope :for_offer_list, :select => OFFER_LIST_REQUIRED_COLUMNS
@@ -239,6 +246,8 @@ class Offer < ActiveRecord::Base
     :get_regions, :get_approved_sources, :get_carriers, :get_cities
 
   def clone
+    return super if new_record?
+
     super.tap do |clone|
       # set up banner_creatives to be copied on save
       banner_creatives.each do |size|
@@ -329,6 +338,10 @@ class Offer < ActiveRecord::Base
 
   def is_enabled?
     tapjoy_enabled? && user_enabled? && ((payment > 0 && partner_balance > 0) || (payment == 0 && reward_value.present? && reward_value > 0))
+  end
+
+  def can_be_promoted?
+    primary? && rewarded? && is_enabled?
   end
 
   def accepting_clicks?
@@ -630,6 +643,11 @@ class Offer < ActiveRecord::Base
     end
   end
 
+  def promotion_platform
+    self.app ?  self.app.platform.to_sym : nil
+  end
+  memoize :promotion_platform
+
   def calculate_target_installs(num_installs_today)
     target_installs = 1.0 / 0
     target_installs = daily_budget - num_installs_today if daily_budget > 0
@@ -654,7 +672,16 @@ class Offer < ActiveRecord::Base
   end
 
   def multi_completable?
-    item_type != 'App' || Offer::Rejecting::TAPJOY_GAMES_RETARGETED_OFFERS.include?(item_id)
+    !%w(App ActionOffer SurveyOffer).include?(item_type) || Offer::Rejecting::TAPJOY_GAMES_RETARGETED_OFFERS.include?(item_id)
+  end
+
+  def video_button_tracking_offers
+    @video_button_tracking_offers || []
+  end
+
+  def update_video_button_tracking_offers
+    return unless item_type == 'VideoOffer'
+    @video_button_tracking_offers = item.video_buttons.enabled.ordered.collect(&:tracking_offer).compact
   end
 
   private

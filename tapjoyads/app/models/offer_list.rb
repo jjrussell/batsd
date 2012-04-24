@@ -1,4 +1,6 @@
 class OfferList
+  PROMOTED_INVENTORY_SIZE = 3
+
   attr_reader :offers
 
   def initialize(options = {})
@@ -20,6 +22,11 @@ class OfferList
     @video_offer_ids            = options.delete(:video_offer_ids) { [] }
     @all_videos                 = options.delete(:all_videos) { false }
     @mobile_carrier_code        = options.delete(:mobile_carrier_code)
+    udid                        = options.delete(:udid)
+    currency_id                 = options.delete(:currency_id)
+
+    @currency ||= Currency.find_in_cache(currency_id) if currency_id.present?
+    @publisher_app ||= App.find_in_cache(@currency.app_id) if @currency.present?
 
     @hide_rewarded_app_installs = @currency ? @currency.hide_rewarded_app_installs_for_version?(@app_version, @source) : false
     @normalized_device_type     = Device.normalize_device_type(@device_type)
@@ -50,6 +57,7 @@ class OfferList
       end
     end
 
+    @device ||= Device.new(:key => udid) if udid.present?
     if (@device && (@device.opted_out? || @device.banned?)) || (@currency && !@currency.tapjoy_enabled?)
       @offers = []
     else
@@ -66,8 +74,16 @@ class OfferList
     end
 
     if @currency
+      promoted_offers = []
+      if @currency.get_promoted_offers.present? || @currency.partner_get_promoted_offers.present?
+        @offers.each do |o|
+          promoted_offers.push(o.id) if can_be_promoted?(o)
+        end
+        promoted_offers = promoted_offers.shuffle.slice(0, PROMOTED_INVENTORY_SIZE)
+      end
+
       @offers.each do |o|
-        o.postcache_rank_score(@currency, @source)
+        o.postcache_rank_score(@currency, @source, promoted_offers.include?(o.id))
       end
     end
   end
@@ -91,6 +107,7 @@ class OfferList
     return [ [], 0 ] if @device && (@device.opted_out? || @device.banned?)
     @offers.sort! { |a,b| b.rank_score <=> a.rank_score }
     returned_offers = []
+    found_offer_item_ids = Set.new
     offers_to_find  = start + max_offers
     found_offers    = 0
 
@@ -105,13 +122,22 @@ class OfferList
     @offers.each_with_index do |offer, i|
       return [ returned_offers, @offers.length - i ] if found_offers >= offers_to_find
 
-      unless postcache_reject?(offer)
+      unless postcache_reject?(offer) || found_offer_item_ids.include?(offer.item_id)
         returned_offers << offer if found_offers >= start
+        found_offer_item_ids << offer.item_id
         found_offers += 1
       end
     end
 
     [ returned_offers, 0 ]
+  end
+
+  def sorted_offers_with_rejections(currency_group_id)
+    @offers.each do |offer|
+      class << offer; attr_accessor :rejections; end
+      offer.rejections = rejections_for(offer)
+    end
+    @offers.sort_by { |offer| -offer.precache_rank_score_for(currency_group_id) }
   end
 
   private
@@ -121,4 +147,13 @@ class OfferList
       @video_offer_ids, @source, @all_videos, @mobile_carrier_code)
   end
 
+  def can_be_promoted?(offer)
+    (@currency.get_promoted_offers.include?(offer.id) || @currency.partner_get_promoted_offers.include?(offer.id)) & !postcache_reject?(offer)
+  end
+
+  def rejections_for(offer)
+    offer.postcache_rejections(@publisher_app, @device, @currency, @device_type, @geoip_data, @app_version,
+      @direct_pay_providers, @type, @hide_rewarded_app_installs, @library_version, @os_version, @screen_layout_size,
+      @video_offer_ids, @source, @all_videos, @mobile_carrier_code)
+  end
 end

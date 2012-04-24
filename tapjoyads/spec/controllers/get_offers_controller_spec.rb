@@ -34,6 +34,47 @@ describe GetOffersController do
 
     end
 
+    it 'should queue up tracking url calls' do
+      @offer.expects(:queue_impression_tracking_requests).once
+
+      get(:index, @params)
+    end
+
+    describe "with promoted offers" do
+      before :each do
+        @partner = Factory(:partner)
+        @app = Factory(:app, :partner => @partner)
+
+        @offer1 = Factory(:app, :partner => @partner).primary_offer
+        @offer2 = Factory(:app, :partner => @partner).primary_offer
+        @offer3 = Factory(:app, :partner => @partner).primary_offer
+        @offer4 = Factory(:app, :partner => @partner).primary_offer
+        @offer5 = Factory(:app, :partner => @partner).primary_offer
+
+        App.stubs(:find_in_cache).returns(@app)
+        Currency.stubs(:find_in_cache).returns(@currency)
+      end
+
+      it "favors the promoted inventory" do
+        @currency.stubs(:partner_get_promoted_offers).returns([@offer2.id])
+        @currency.stubs(:get_promoted_offers).returns([@offer3.id])
+        OfferCacher.stubs(:get_unsorted_offers_prerejected).returns([@offer1, @offer2, @offer3, @offer4, @offer5])
+
+        get(:index, @params)
+        offer_list = assigns(:offer_list)
+        assert( offer_list == [ @offer2, @offer3, @offer1, @offer4, @offer5 ] || offer_list == [ @offer3, @offer2, @offer1, @offer4, @offer5 ] )
+      end
+
+      it "restricts the number of slots used for promotion" do
+        @offer3.stubs(:rank_score).returns(1004)
+        @currency.stubs(:get_promoted_offers).returns([@offer1.id, @offer2.id, @offer5.id, @offer4.id])
+        OfferCacher.stubs(:get_unsorted_offers_prerejected).returns([@offer1, @offer2, @offer3, @offer4, @offer5])
+
+        get(:index, @params)
+        assigns(:offer_list)[3].rank_score.should == 1004
+      end
+    end
+
     it 'returns json' do
       get(:index, @params.merge(:json => 1))
       should respond_with_content_type :json
@@ -112,6 +153,13 @@ describe GetOffersController do
         :app_id => @currency.app.id
       }
       @offer = Factory(:app).primary_offer
+    end
+
+    it 'should queue up tracking url calls' do
+      OfferCacher.stubs(:get_unsorted_offers_prerejected).returns([@offer])
+      @offer.expects(:queue_impression_tracking_requests).once
+
+      get(:webpage, @params)
     end
 
     it 'assigns test offer for test devices' do

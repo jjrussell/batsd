@@ -14,6 +14,7 @@ authorization do
     has_permission_on :users, :to => [ :index, :new, :create, :edit, :update ]
     has_permission_on :support, :to => [ :index ]
     has_permission_on :premier, :to => [ :edit, :update ]
+    has_permission_on :inventory_management, :to => [ :index, :per_app, :partner_promoted_offers, :promoted_offers ]
     has_permission_on :apps_offers_offer_events, :to => [ :index, :new, :create, :edit, :update, :destroy ]
     has_permission_on :account_whitelist, :to => [ :index, :enable, :disable ]
   end
@@ -26,8 +27,26 @@ authorization do
     has_permission_on :tools, :to => [ :index ]
   end
 
+  role :file_sharer do
+    includes :tools
+    has_permission_on :tools_shared_files, :to => [ :index, :create, :delete ]
+  end
+
   role :ops do
-    has_permission_on :ops, :to => [ :index, :elb_status, :as_groups, :service_stats, :http_codes]
+    has_permission_on :ops, :to => [
+                                     :index,
+                                     :elb_status,
+                                     :as_groups,
+                                     :as_header,
+                                     :as_instances,
+                                     :elb_deregister_instance,
+                                     :ec2_reboot_instance,
+                                     :as_terminate_instance,
+                                     :service_stats,
+                                     :http_codes,
+                                     :bytes_sent,
+                                     :vertica_status,
+                                   ]
   end
 
   role :devices do
@@ -38,6 +57,7 @@ authorization do
   role :customer_service do
     includes :tools
     includes :devices
+    includes :file_sharer
     has_permission_on :search, :to => [ :gamers ]
     has_permission_on :tools, :to => [ :resolve_clicks, :device_info, :update_device, :send_currency_failures ]
     has_permission_on :tools_gamers, :to => [ :index, :show ]
@@ -95,8 +115,10 @@ authorization do
     includes :money
     includes :games_editor
     includes :customer_service
+    includes :file_sharer
+    has_permission_on :users, :to => [ :approve ]
     has_permission_on :statz, :to => [ :index, :show, :edit, :update, :new, :create, :last_run_times, :udids, :download_udids, :global, :publisher, :advertiser, :support_request_reward_ratio ]
-    has_permission_on :search, :to => [ :offers, :partners, :users, :brands ]
+    has_permission_on :search, :to => [ :offers, :partners, :users, :currencies, :brands ]
     has_permission_on :tools, :to => [ :disabled_popular_offers, :sanitize_users, :update_user, :resolve_clicks, :new_transfer, :device_info, :update_device, :send_currency_failures ]
     has_permission_on :tools_enable_offer_requests, :to => [ :index, :update ]
     has_permission_on :activities, :to => [ :index ]
@@ -146,6 +168,11 @@ authorization do
     has_permission_on :tools_employees, :to => [ :wfhs ]
   end
 
+  role :partner_changer do
+    includes :tools
+    has_permission_on :tools_partner_changes, :to => [ :index, :new, :create, :destroy, :complete ]
+  end
+
   role :admin do
     includes :tools
     includes :devices
@@ -157,8 +184,10 @@ authorization do
     includes :games_editor
     includes :role_mgr
     includes :products
+    includes :file_sharer
+    includes :partner_changer
     has_permission_on :pub_offer_whitelist, :to => [ :index, :enable, :disable ]
-    has_permission_on :tools, :to => [ :failed_sdb_saves, :sdb_metadata, :reset_device, :sqs_lengths, :elb_status, :ses_status, :as_groups ]
+    has_permission_on :tools, :to => [ :failed_sdb_saves, :sdb_metadata, :reset_device, :sqs_lengths, :elb_status, :ses_status, :as_groups, :fix_rewards ]
     has_permission_on :tools_offers, :to => [ :creative, :approve_creative, :reject_creative ]
     has_permission_on :tools_recommenders, :to => [ :index, :create ]
     has_permission_on :tools_jobs, :to => [ :index, :new, :create, :edit, :update, :destroy ]

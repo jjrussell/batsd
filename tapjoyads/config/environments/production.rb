@@ -44,7 +44,7 @@ end
 SPROCKETS_CONFIG = {
   :compile => true,
   :combine => true,
-  :host => local_config['asset_host'] || local_config['website_url'] || 'https://www.tapjoy.com'
+  :host => local_config['asset_host'] || local_config['website_url'] || 'https://d2mlgzrlqoz88m.cloudfront.net'
 }
 
 RUN_MODE_PREFIX = ''
@@ -52,16 +52,13 @@ API_URL = local_config['api_url'] || 'https://ws.tapjoyads.com'
 DASHBOARD_URL = local_config['dashboard_url'] || 'https://dashboard.tapjoy.com'
 WEBSITE_URL = local_config['website_url'] || 'https://www.tapjoy.com'
 CLOUDFRONT_URL = 'https://d21x2jbj16e06e.cloudfront.net'
+XMAN = false
 
 # Amazon services:
 amazon = YAML::load_file("#{ENV['HOME']}/.tapjoy_aws_credentials.yaml")
 ENV['AWS_ACCESS_KEY_ID'] = amazon['production']['access_key_id']
 ENV['AWS_SECRET_ACCESS_KEY'] = amazon['production']['secret_access_key']
 AWS_ACCOUNT_ID = '266171351246'
-
-# Add "RightAws::AwsError: sdb.amazonaws.com temporarily unavailable: (getaddrinfo: Temporary failure in name resolution)"
-# to the list of transient problems which will automatically get retried by RightAws.
-RightAws::RightAwsBase.amazon_problems = RightAws::RightAwsBase.amazon_problems | ['temporarily unavailable', 'InvalidClientTokenId', 'InternalError', 'QueryTimeout']
 
 NUM_POINT_PURCHASES_DOMAINS = 10
 NUM_CLICK_DOMAINS = 50

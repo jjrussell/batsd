@@ -34,7 +34,6 @@ describe Offer do
     @offer.payment.should == 500
   end
 
-
   describe "applies discounts correctly" do
     context "to_json an app offer item" do
       before :each do
@@ -229,7 +228,6 @@ describe Offer do
     @offer.send(:sdkless_reject?, '8.2.0').should be_false
   end
 
-
   it "doesn't reject on source when approved_sources is empty" do
     @offer.send(:source_reject?, 'foo').should be_false
     @offer.send(:source_reject?, 'offerwall').should be_false
@@ -253,7 +251,8 @@ describe Offer do
                                   'cookie_tracking', 'min_os_version', 'screen_layout_sizes',
                                   'interval', 'banner_creatives', 'dma_codes', 'regions',
                                   'wifi_only', 'approved_sources', 'approved_banner_creatives',
-                                  'sdkless', 'carriers', 'cities'
+                                  'sdkless', 'carriers', 'cities', 'impression_tracking_urls',
+                                  'click_tracking_urls', 'conversion_tracking_urls'
                                 ].sort
   end
 
@@ -954,6 +953,72 @@ describe Offer do
     it "stops complaining about name length if the creatives are approved" do
       @offer.update_attributes({:name => 'Long name xxxxxxxxxxxxxxxxxx', :approved_banner_creatives => ['320x50']})
       Offer.for_display_ads.should include(@offer)
+    end
+  end
+
+  context "queue_third_party_tracking_request methods" do
+    before(:each) do
+      Sqs.stubs(:send_message)
+      @urls = ['https://dummyurl.com?ts=[timestamp]', 'https://example.com?ts=[timestamp]']
+      now = Time.zone.now
+      Time.zone.stubs(:now).returns(now)
+
+      @offer.impression_tracking_urls = @urls
+      @offer.click_tracking_urls = @urls
+      @offer.conversion_tracking_urls = @urls
+    end
+
+    context "without a provided timestamp" do
+      before :each do
+        @urls.each do |url|
+          Downloader.expects(:queue_get_with_retry).with(url.sub('[timestamp]', Time.zone.now.to_i.to_s)).once
+        end
+      end
+
+      describe ".queue_impression_tracking_requests" do
+        it "should queue up the proper GET requests" do
+          @offer.queue_impression_tracking_requests
+        end
+      end
+
+      describe ".queue_click_tracking_requests" do
+        it "should queue up the proper GET requests" do
+          @offer.queue_click_tracking_requests
+        end
+      end
+
+      describe ".queue_conversion_tracking_requests" do
+        it "should queue up the proper GET requests" do
+          @offer.queue_conversion_tracking_requests
+        end
+      end
+    end
+
+    context "with a provided timestamp" do
+      before :each do
+        @ts = Time.zone.now + 3600;
+        @urls.each do |url|
+          Downloader.expects(:queue_get_with_retry).with(url.sub('[timestamp]', @ts.to_i.to_s)).once
+        end
+      end
+
+      describe ".queue_impression_tracking_requests" do
+        it "should queue up the proper GET requests" do
+          @offer.queue_impression_tracking_requests(@ts.to_i.to_s)
+        end
+      end
+
+      describe ".queue_click_tracking_requests" do
+        it "should queue up the proper GET requests" do
+          @offer.queue_click_tracking_requests(@ts.to_i.to_s)
+        end
+      end
+
+      describe ".queue_conversion_tracking_requests" do
+        it "should queue up the proper GET requests" do
+          @offer.queue_conversion_tracking_requests(@ts.to_i.to_s)
+        end
+      end
     end
   end
 end

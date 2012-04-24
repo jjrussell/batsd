@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120321105002) do
+ActiveRecord::Schema.define(:version => 20120406173403) do
 
   create_table "action_offers", :id => false, :force => true do |t|
     t.string   "id",                    :limit => 36,                    :null => false
@@ -234,6 +234,7 @@ ActiveRecord::Schema.define(:version => 20120321105002) do
     t.string   "reseller_id",                                :limit => 36
     t.decimal  "reseller_spend_share",                                     :precision => 8, :scale => 6
     t.boolean  "whitelist_overridden",                                                                   :default => false, :null => false
+    t.text     "promoted_offers",                                                                                           :null => false
   end
 
   add_index "currencies", ["app_id"], :name => "index_currencies_on_app_id"
@@ -512,15 +513,16 @@ ActiveRecord::Schema.define(:version => 20120321105002) do
   add_index "invitations", ["id"], :name => "index_invitations_on_id", :unique => true
 
   create_table "jobs", :id => false, :force => true do |t|
-    t.string   "id",         :limit => 36,                      :null => false
-    t.boolean  "active",                   :default => false,   :null => false
-    t.string   "job_type",                                      :null => false
-    t.string   "controller",                                    :null => false
-    t.string   "action",                   :default => "index", :null => false
-    t.string   "frequency",                                     :null => false
-    t.integer  "seconds",                                       :null => false
+    t.string   "id",              :limit => 36,                      :null => false
+    t.boolean  "active",                        :default => false,   :null => false
+    t.string   "job_type",                                           :null => false
+    t.string   "controller",                                         :null => false
+    t.string   "action",                        :default => "index", :null => false
+    t.string   "frequency",                                          :null => false
+    t.integer  "seconds",                                            :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "max_concurrency",               :default => 0,       :null => false
   end
 
   add_index "jobs", ["id"], :name => "index_jobs_on_id", :unique => true
@@ -694,6 +696,9 @@ ActiveRecord::Schema.define(:version => 20120321105002) do
     t.string   "tracking_for_type"
     t.string   "tracking_for_id",                   :limit => 36
     t.text     "cities",                                                                                           :null => false
+    t.text     "impression_tracking_urls"
+    t.text     "click_tracking_urls"
+    t.text     "conversion_tracking_urls"
   end
 
   add_index "offers", ["id"], :name => "index_offers_on_id", :unique => true
@@ -799,6 +804,7 @@ ActiveRecord::Schema.define(:version => 20120321105002) do
     t.string   "payout_confirmation_notes"
     t.boolean  "discount_all_offer_types",                                                 :default => false,     :null => false
     t.string   "client_id",                    :limit => 36
+    t.text     "promoted_offers",                                                                                 :null => false
   end
 
   add_index "partners", ["id"], :name => "index_partners_on_id", :unique => true
@@ -1014,6 +1020,8 @@ ActiveRecord::Schema.define(:version => 20120321105002) do
     t.string   "auth_net_cim_id"
     t.string   "reseller_id",             :limit => 36
     t.string   "state"
+    t.string   "country"
+    t.string   "account_type"
   end
 
   add_index "users", ["email"], :name => "index_users_on_email"
@@ -1026,7 +1034,7 @@ ActiveRecord::Schema.define(:version => 20120321105002) do
     t.string   "id",             :limit => 36,                   :null => false
     t.string   "video_offer_id", :limit => 36,                   :null => false
     t.string   "name",                                           :null => false
-    t.string   "url",                                            :null => false
+    t.string   "url"
     t.integer  "ordinal"
     t.boolean  "enabled",                      :default => true
     t.datetime "created_at"

@@ -11,12 +11,7 @@ class Games::HomepageController < GamesController
   end
 
   def get_app
-    if params[:eid].present?
-      app_id = ObjectEncryptor.decrypt(params[:eid])
-    elsif params[:id].present?
-      app_id = params[:id]
-    end
-    @offer = Offer.find_by_id(app_id)
+    @offer = Offer.find(params_id)
     @app = @offer.app
     @app_metadata = @app.primary_app_metadata
     if @app_metadata
@@ -27,17 +22,12 @@ class Games::HomepageController < GamesController
   def earn
     device_id = current_device_id
     @device = Device.new(:key => device_id) if device_id.present?
-    if params[:eid].present?
-      currency_id = ObjectEncryptor.decrypt(params[:eid])
-    elsif params[:id].present?
-      currency_id = params[:id]
-    end
-    @active_currency = Currency.find_by_id(currency_id)
+    @app = App.find(params_id)
+    @active_currency = @app.currencies.first
     @external_publisher = ExternalPublisher.new(@active_currency)
     return unless verify_records([ @active_currency, @device ])
 
     @offerwall_url = @external_publisher.get_offerwall_url(@device, @external_publisher.currencies.first, request.accept_language, request.user_agent, current_gamer.id)
-    @app = App.find_by_id(@external_publisher.app_id)
     @app_metadata = @app.primary_app_metadata
     if @app_metadata
       @mark_as_favorite = !current_gamer.favorite_apps.map(&:app_metadata_id).include?(@app_metadata.id)
@@ -83,7 +73,6 @@ class Games::HomepageController < GamesController
     end
   end
 
-
   def switch_device
     if params[:data].nil?
       redirect_to games_root_path
@@ -108,5 +97,15 @@ class Games::HomepageController < GamesController
     ios_link_url = "https://#{request.host}#{games_root_path}"
     GamesMailer.deliver_link_device(current_gamer, ios_link_url, GAMES_ANDROID_MARKET_URL )
     render(:json => { :success => true })
+  end
+
+  private
+
+  def params_id
+    if params[:eid].present?
+      ObjectEncryptor.decrypt(params[:eid])
+    elsif params[:id].present?
+      params[:id]
+    end
   end
 end
