@@ -39,7 +39,21 @@ module GetOffersHelper
       else
         prefix = "tjvideo://"
       end
-      "#{prefix}video_id=#{offer.id}&amount=#{@currency.get_visual_reward_amount(offer, params[:display_multiplier])}&currency_name=#{URI::escape(@currency.name)}&click_url=#{click_url}"
+
+      video_complete_url = offer.destination_url(
+        :publisher_user_id  => params[:publisher_user_id],
+        :publisher_app_id   => @publisher_app.id,
+        :currency           => @currency,
+        :udid               => params[:udid]
+      )
+
+      parameters = "video_id=#{offer.id}&"
+      parameters << "amount=#{@currency.get_visual_reward_amount(offer, params[:display_multiplier])}&"
+      parameters << "currency_name=#{URI::escape(@currency.name)}&"
+      parameters << "click_url=#{click_url}&"
+      parameters << "video_complete_url=#{video_complete_url}"
+
+      "#{prefix}#{parameters}"
     else
       click_url
     end

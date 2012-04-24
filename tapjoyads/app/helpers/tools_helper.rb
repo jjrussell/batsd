@@ -69,6 +69,13 @@ module ToolsHelper
     [ 'wfh', wfh.category.downcase ].uniq.join(' ')
   end
 
+  def formatted_items_for_tracking(partner)
+    partner.trackable_items.map do |item|
+      type = item.class.name.to_s.gsub(/Offer$/, '')
+      ["#{type} - #{item.name}", "#{item.class}:#{item.id}"]
+    end
+  end
+
   private
 
   def concat_li(name, value)
@@ -80,6 +87,6 @@ module ToolsHelper
   end
 
   def concat_li_currency(name, amount)
-    concat_li(name, number_to_currency(amount/100.0))
+    concat_li(name, number_to_currency(amount.to_f / 100.0))
   end
 end

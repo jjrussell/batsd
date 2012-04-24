@@ -73,4 +73,15 @@ describe ToolsHelper do
       end
     end
   end
+
+  describe '#concat_li_currency' do
+    before :each do
+      helper.output_buffer = ''
+    end
+
+    it 'defaults to 0 when amount is set to nil' do
+      helper.send(:concat_li_currency, 'Name', nil)
+      helper.output_buffer.should match(/\$0\.00/)
+    end
+  end
 end
