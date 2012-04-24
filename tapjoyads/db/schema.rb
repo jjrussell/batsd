@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120406004520) do
+ActiveRecord::Schema.define(:version => 20120406173403) do
 
   create_table "action_offers", :id => false, :force => true do |t|
     t.string   "id",                    :limit => 36,                    :null => false
@@ -496,15 +496,16 @@ ActiveRecord::Schema.define(:version => 20120406004520) do
   add_index "invitations", ["id"], :name => "index_invitations_on_id", :unique => true
 
   create_table "jobs", :id => false, :force => true do |t|
-    t.string   "id",         :limit => 36,                      :null => false
-    t.boolean  "active",                   :default => false,   :null => false
-    t.string   "job_type",                                      :null => false
-    t.string   "controller",                                    :null => false
-    t.string   "action",                   :default => "index", :null => false
-    t.string   "frequency",                                     :null => false
-    t.integer  "seconds",                                       :null => false
+    t.string   "id",              :limit => 36,                      :null => false
+    t.boolean  "active",                        :default => false,   :null => false
+    t.string   "job_type",                                           :null => false
+    t.string   "controller",                                         :null => false
+    t.string   "action",                        :default => "index", :null => false
+    t.string   "frequency",                                          :null => false
+    t.integer  "seconds",                                            :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "max_concurrency",               :default => 0,       :null => false
   end
 
   add_index "jobs", ["id"], :name => "index_jobs_on_id", :unique => true
@@ -680,6 +681,7 @@ ActiveRecord::Schema.define(:version => 20120406004520) do
     t.text     "cities",                                                                                           :null => false
     t.text     "impression_tracking_urls"
     t.text     "click_tracking_urls"
+    t.text     "conversion_tracking_urls"
   end
 
   add_index "offers", ["id"], :name => "index_offers_on_id", :unique => true

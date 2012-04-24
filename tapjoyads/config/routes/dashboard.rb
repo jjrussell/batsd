@@ -130,6 +130,7 @@ ActionController::Routing::Routes.draw do |map|
     tools.resources :wfhs, :only => [ :index, :new, :create, :edit, :update, :destroy ]
     tools.resources :clients, :only => [ :index, :show, :new, :create, :edit, :update], :member => { :add_partner => :post, :remove_partner => :post }
     tools.resources :shared_files, :only => [ :index, :create ], :collection => { :delete => :post }
+    tools.resources :partner_changes, :only => [ :index, :new, :create, :destroy ], :member => { :complete => :post }
   end
 
   # Operations tools routes
@@ -145,6 +146,7 @@ ActionController::Routing::Routes.draw do |map|
       :elb_status => :get,
       :http_codes => :get,
       :bytes_sent => :get,
+      :vertica_status => :get,
     }
 
   map.connect 'mail_chimp_callback/callback', :controller => :mail_chimp_callback, :action => :callback
