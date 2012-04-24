@@ -13,6 +13,7 @@
         = app_review.text
       .more-btn
         = t("text.games.app_review_more")
+    - unless current_gamer and app_review.author_id == current_gamer.id
     .triang_cont
       .triangle
     .moderation-panel
