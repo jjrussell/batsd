@@ -3,7 +3,7 @@ class RecommendationList
 
   attr_reader :offers
 
-  MINIMUM           = 7
+  MINIMUM = 7
 
   def initialize(options = {})
     @device      = options[:device]
@@ -31,17 +31,12 @@ class RecommendationList
     def cache_most_popular_offers
       offers = []
       Recommender.instance.most_popular.each do |recommendation_hash|
-        begin
-          recommendation_hash[:offer] = Offer.find_in_cache(recommendation_hash[:recommendation])
-          offers << recommendation_hash
-        rescue ActiveRecord::RecordNotFound => e
-          next
-        end
+        recommendation_hash[:offer] = Offer.find_in_cache(recommendation_hash[:recommendation])
+        next if recommendation_hash[:offer].nil?
+        offers << recommendation_hash
       end
-      offers.compact!
       Mc.distributed_put("s3.recommendations.with_offers.most_popular.#{Offer.acts_as_cacheable_version}", offers)
     end
-
 
     def most_popular
       Mc.distributed_get("s3.recommendations.with_offers.most_popular.#{Offer.acts_as_cacheable_version}") || []
@@ -51,15 +46,10 @@ class RecommendationList
       Mc.get_and_put("s3.recommendations.with_offers.by_app.#{app_id}.#{Offer.acts_as_cacheable_version}", false, 1.day) do
         offers = []
         Recommender.instance.for_app(app_id).each do |recommendation_hash|
-          begin
-            recommendation_hash[:offer] = Offer.find_in_cache(recommendation_hash[:recommendation])
-            offers << recommendation_hash
-          rescue ActiveRecord::RecordNotFound => e
-            next
-          end
+          recommendation_hash[:offer] = Offer.find_in_cache(recommendation_hash[:recommendation])
+          next if recommendation_hash[:offer].nil?
+          offers << recommendation_hash
         end
-        offers.compact!
-
         offers.any? ? offers : nil
       end || []
     end
@@ -68,15 +58,10 @@ class RecommendationList
       Mc.get_and_put("s3.recommendations.with_offers.by_device.#{device_id}.#{Offer.acts_as_cacheable_version}", false, 1.day) do
         offers = []
         Recommender.instance.for_device(device_id).each do |recommendation_hash|
-          begin
-            recommendation_hash[:offer] = Offer.find_in_cache(recommendation_hash[:recommendation])
-            offers << recommendation_hash
-          rescue ActiveRecord::RecordNotFound => e
-            next
-          end
+          recommendation_hash[:offer] = Offer.find_in_cache(recommendation_hash[:recommendation])
+          next if recommendation_hash[:offer].nil?
+          offers << recommendation_hash
         end
-        offers.compact!
-
         offers.any? ? offers : nil
       end || []
     end
