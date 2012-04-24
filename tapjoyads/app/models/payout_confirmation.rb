@@ -8,7 +8,7 @@ class PayoutConfirmation < ActiveRecord::Base
     self.after_confirm if self.respond_to?(:after_confirm)
   end
 
-  def unconfirm(reason=nil)
+  def unconfirm
     self.confirmed = false
   end
 

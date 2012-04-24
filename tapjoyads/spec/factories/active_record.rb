@@ -64,7 +64,7 @@ FactoryGirl.define do
 
   factory :payout_threshold_confirmation do
     confirmed true
-    association :partner
+    partner_id '8675309'
   end
 
   factory :payout_info do
