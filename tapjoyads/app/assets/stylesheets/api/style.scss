@@ -758,6 +758,10 @@ body.old .content_box {
       .slider {
         display: inline-table;
       }
+      a {
+        float: left;
+        margin-right: 4px;
+      }
     }
 
     .details {
