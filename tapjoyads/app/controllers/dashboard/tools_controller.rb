@@ -248,12 +248,12 @@ class Dashboard::ToolsController < Dashboard::DashboardController
       end
 
     elsif params[:mac_address].present?
-      mac_address = params[:mac_address]
+      mac_address = params[:mac_address].downcase.gsub(/:/,"")
       device_identifier = DeviceIdentifier.new(:key => mac_address)
       if device_identifier.udid?
-        redirect_to :action => :device_info, :udid => device_identifier.udid, :mac_address => mac_address
+        redirect_to :action => :device_info, :udid => device_identifier.udid, :mac_address => params[:mac_address]
       else
-        flash.now[:error] = "No UDIDs associated with the MAC address: #{mac_address}"
+        flash.now[:error] = "No UDIDs associated with the MAC address: #{params[:mac_address]}"
       end
     end
   end
