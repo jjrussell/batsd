@@ -38,7 +38,7 @@ module ActsAsCacheable
         def find_in_cache(id, do_lookup = !Rails.env.production?)
           object = Mc.distributed_get(cache_key_for(id))
           if object.nil? && do_lookup
-            object = find(id)
+            object = find_by_id(id)
             object.cache
           end
           object
