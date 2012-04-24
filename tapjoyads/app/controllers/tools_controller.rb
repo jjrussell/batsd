@@ -245,6 +245,15 @@ class ToolsController < WebsiteController
       elsif @all_udids.size == 1
         redirect_to :action => :device_info, :udid => @all_udids.first, :email_address => params[:email_address]
       end
+
+    elsif params[:mac_address].present?
+      mac_address = params[:mac_address]
+      device_identifier = DeviceIdentifier.new(:key => mac_address)
+      if device_identifier.udid?
+        redirect_to :action => :device_info, :udid => device_identifier.udid, :mac_address => mac_address
+      else
+        flash.now[:error] = "No UDIDs associated with the MAC address: #{mac_address}"
+      end
     end
   end
 
