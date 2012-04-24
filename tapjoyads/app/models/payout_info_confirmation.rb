@@ -1,4 +1,5 @@
 class PayoutInfoConfirmation < PayoutConfirmation
+  private
   CONFIRM_ROLES = %w(payout_manager)
 
   protected

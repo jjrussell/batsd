@@ -1,4 +1,5 @@
 class PayoutThresholdConfirmation < PayoutConfirmation
+  private
   CONFIRM_ROLES = %w( payout_manager account_mgr admin)
   protected
   def after_confirm

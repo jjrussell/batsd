@@ -67,6 +67,11 @@ FactoryGirl.define do
     partner_id '8675309'
   end
 
+  factory :payout_info_confirmation do
+    confirmed true
+    partner_id '8675309'
+  end
+
   factory :payout_info do
     signature           { Factory.next(:name) }
     billing_name        { Factory.next(:name) }
