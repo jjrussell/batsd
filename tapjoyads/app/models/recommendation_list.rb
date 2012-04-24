@@ -18,7 +18,7 @@ class RecommendationList
   end
 
   def apps
-    @offers[0...MINIMUM].collect { |o| CachedApp.new(o) }
+    @offers[0...MINIMUM].collect { |rec_hash| CachedApp.new(rec_hash[:offer], :explanation => explanation_string(rec_hash)) }
   end
 
   class << self
@@ -30,28 +30,30 @@ class RecommendationList
 
     def cache_most_popular_offers
       offers = []
-      Recommender.instance.most_popular.each do |recommendation, weight|
+      Recommender.instance.most_popular.each do |recommendation_hash|
         begin
-          offers << Offer.find_in_cache(recommendation)
+          recommendation_hash[:offer] = Offer.find_in_cache(recommendation_hash[:recommendation])
+          offers << recommendation_hash
         rescue ActiveRecord::RecordNotFound => e
           next
         end
       end
       offers.compact!
-      Mc.distributed_put("s3.recommendations.offers.most_popular.#{Offer.acts_as_cacheable_version}", offers)
+      Mc.distributed_put("s3.recommendations.with_offers.most_popular.#{Offer.acts_as_cacheable_version}", offers)
     end
 
 
     def most_popular
-      Mc.distributed_get("s3.recommendations.offers.most_popular.#{Offer.acts_as_cacheable_version}") || []
+      Mc.distributed_get("s3.recommendations.with_offers.most_popular.#{Offer.acts_as_cacheable_version}") || []
     end
 
     def for_app(app_id)
-      Mc.get_and_put("s3.recommendations.offers.by_app.#{app_id}.#{Offer.acts_as_cacheable_version}", false, 1.day) do
+      Mc.get_and_put("s3.recommendations.with_offers.by_app.#{app_id}.#{Offer.acts_as_cacheable_version}", false, 1.day) do
         offers = []
-        Recommender.instance.for_app(app_id).each do |recommendation, weight|
+        Recommender.instance.for_app(app_id).each do |recommendation_hash|
           begin
-            offers << Offer.find_in_cache(recommendation)
+            recommendation_hash[:offer] = Offer.find_in_cache(recommendation_hash[:recommendation])
+            offers << recommendation_hash
           rescue ActiveRecord::RecordNotFound => e
             next
           end
@@ -63,11 +65,12 @@ class RecommendationList
     end
 
     def for_device(device_id)
-      Mc.get_and_put("s3.recommendations.offers.by_device.#{device_id}.#{Offer.acts_as_cacheable_version}", false, 1.day) do
+      Mc.get_and_put("s3.recommendations.with_offers.by_device.#{device_id}.#{Offer.acts_as_cacheable_version}", false, 1.day) do
         offers = []
-        Recommender.instance.for_device(device_id).each do |recommendation, weight|
+        Recommender.instance.for_device(device_id).each do |recommendation_hash|
           begin
-            offers << Offer.find_in_cache(recommendation)
+            recommendation_hash[:offer] = Offer.find_in_cache(recommendation_hash[:recommendation])
+            offers << recommendation_hash
           rescue ActiveRecord::RecordNotFound => e
             next
           end
@@ -82,13 +85,22 @@ class RecommendationList
 
   private
 
-  def recommendation_reject?(offer)
+  def recommendation_reject?(recommendation_hash)
+    offer = recommendation_hash[:offer]
     rejected = offer.store_id_for_feed.blank?
     rejected ||= @store_ids.include?(offer.store_id_for_feed)
     rejected ||= offer.recommendation_reject?(@device, @device_type, @geoip_data, @os_version)
     @store_ids << offer.store_id_for_feed unless rejected
 
     rejected
+  end
+
+  def explanation_string(recommendation_hash)
+    exp = recommendation_hash[:explanation]
+    return nil unless exp.present?
+    return "Popular App" if exp == "Popular App"
+    app = App.find_in_cache(exp)
+    app.present? ? app.name : nil
   end
 
 end
