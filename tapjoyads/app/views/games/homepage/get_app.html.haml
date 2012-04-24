@@ -26,7 +26,7 @@
         %img{:src => BLANK_IMAGE}
         .text
           %span.percentage= "#{@app_metadata.positive_thumbs_percentage.floor}%"
-          %span.description= "from #{@app_metadata.app_reviews.size} voters"
+          %span.description= t("text.games.app_review_num_voters", :count => @app_metadata.app_reviews.size)
     = render "games/app_reviews/list"
 - content_for :page_javascript do
   :plain

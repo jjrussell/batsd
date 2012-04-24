@@ -4,7 +4,7 @@ module Games::AppReviews::ModerationModule
     review = AppReview.find_by_id params[:app_review_id]
     case
     when gamer_review.present?
-      render :json => {:msg => "Can't flag own review"}, :status => 401
+      render :json => {:msg => "Can't flag own review"}, :status => 403
     when review.nil?
       render :json => {:msg => "Can't find review to flag"}, :status => 404
     when current_gamer_votes.exists?(:app_review_id => params[:app_review_id])
