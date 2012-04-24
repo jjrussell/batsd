@@ -10,21 +10,24 @@ describe Games::ConfirmationsController do
     before :each do
       @gamer = Factory(:gamer)
     end
-    context 'with valid token and campaign' do
+    context 'with valid data' do
       it 'redirects to url with tracking params' do
-        get(:create, :token => @gamer.confirmation_token, :content => 'test_campaign')
+        data = ObjectEncryptor::encrypt({:token => @gamer.confirmation_token, :content => 'test_campaign'})
+        get(:create, :data => data)
         response.code.should == "302"
         response.session[:flash][:notice].should == 'Email address confirmed.'
-        response.redirected_to.should == games_root_path(:utm_campaign => 'email_confirm',
+        response.redirected_to.should == games_root_path(:utm_campaign => 'welcome_email',
                              :utm_medium   => 'email',
                              :utm_source   => 'tapjoy',
-                             :utm_content  => 'test_campaign')
+                             :utm_content  => 'test_campaign',
+                             :data         => data)
       end
     end
-    context 'with valid token and campaign' do
+    context 'with valid data for confirm only message' do
       it 'queues post confirm message' do
         Sqs.expects(:send_message)
-        get(:create, :token => @gamer.confirmation_token, :content => 'confirm_only')
+        data = ObjectEncryptor::encrypt({:token => @gamer.confirmation_token, :content => 'confirm_only'})
+        get(:create, :data => data)
       end
     end
     context 'with valid token only' do

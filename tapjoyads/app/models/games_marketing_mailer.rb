@@ -37,17 +37,18 @@ class GamesMarketingMailer < ActionMailer::Base
     subject "Welcome to Tapjoy!"
     setup_emails(gamer, device_info)
     sendgrid_category "Welcome Email, #{@linked ? "Linked for Device Type #{gamer_device.device_type}" : "Not Linked"}"
-    @detailed_email = rand(2) == 1 ? true : false
+    @detailed_email = rand(2) == 1
+    @linked = @detailed_email && @linked
     device_info[:content] = @detailed_email ? 'detailed' : 'confirm_only'
-    device_info[:token] =gamer.confirmation_token
-    sendgrid_category "Welcome Email, #{@linked ? "Linked for Device Type #{gamer_device.device_type}" : "Not Linked"} #{device_info[:content]}"
+    device_info[:token] = gamer.confirmation_token
+    sendgrid_category "Welcome Email, #{@linked ? "Linked for Device Type #{gamer_device.device_type}" : "Not Linked"}, #{device_info[:content]}"
     @confirmation_link = "#{WEBSITE_URL}/confirm?data=#{ObjectEncryptor::encrypt(device_info)}"
   end
 
   def post_confirm_email(gamer, device_info = {})
     subject "Get Started with Tapjoy!"
     setup_emails(gamer, device_info)
-    sendgrid_category "Secondary Welcome Email , #{@linked ? "Linked for Device Type #{gamer_device.device_type}" : "Not Linked"}"
+    sendgrid_category "Secondary Welcome Email , #{@linked ? "Linked for Device Type #{gamer_device.device_type}" : "Not Linked"}, #{device_info[:content]}"
     @detailed_email = true
     @display_confirm = false
     @template = 'welcome_email'
@@ -86,5 +87,4 @@ class GamesMarketingMailer < ActionMailer::Base
     device = Device.new(:key => @linked ? gamer_device.device_id : nil)
     @recommendations = device.recommendations(device_info.slice(:device_type, :geoip_data, :os_version))
   end
-
 end
