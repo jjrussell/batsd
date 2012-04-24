@@ -1,14 +1,10 @@
 - form_for([:tools, @app_review], :html => { :class => 'tjform' }) do |f|
-  -#= f.hidden_field :app_metadata_id
   = f.hidden_field :author_type, :value => @app_review.author_type ? @app_review.author_type : 'Employee'
   %table
     %tr
-      %th= f.label :app
-      -#%td= f.select :app_metadata_id, options_from_collection_for_select(@app_metadata, :id, :name, @app_review.app_metadata_id)
+      %th= f.label :app_metadata_id
       %td
         = f.text_field :app_metadata_id
-        -#= f.text_field :app_name, :value=>@app_review.app_metadata.name
-        -#%input{:id=>:search, :type=>:button, :value=>:Search}
     %tr
       %th= f.label :reviewer
       %td
