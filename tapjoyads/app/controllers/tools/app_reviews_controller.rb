@@ -17,20 +17,6 @@ class Tools::AppReviewsController < WebsiteController
     end
   end
 
-  def search
-    if params[:term].present?
-      begin
-        result = AppMetaData.first(:conditions=>{:id => params[:term]})
-        result = AppMetaData.first(:conditions=>['name LIKE "%?%" ', params[:term]]) unless result
-        render :json => result
-      rescue
-        render :json => { :error => true }
-      end
-    else
-      render :json => { :error => true }
-    end
-  end
-
   def new
     @app_review = AppReview.new(:app_metadata_id => params[:app_metadata_id])
     @employees = Employee.active_by_first_name
