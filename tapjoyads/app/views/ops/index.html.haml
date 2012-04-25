@@ -30,6 +30,32 @@
 
 %div{:class => @kiosk ? "" : "span10"}
   .row-fluid
+    #api-rpm-per-server{:class => @kiosk ? 'span2' : 'span3'}
+      %span.label.right rpm
+      .well.well-small
+        %div
+          %h1
+            %span#api-rpm-per-server-count Loading
+            - content_for :page_javascript do
+              :plain
+                $("#api-rpm-per-server-count").load("ops/requests_per_minute?average=true");
+                this.timer_api_rpm_per_server_count = setInterval(function () {
+                  $("#api-rpm-per-server-count").load("ops/requests_per_minute?average=true");
+                }, 5000);
+            %small per server
+    #api-rpm-total{:class => @kiosk ? 'span2' : 'span3'}
+      %span.label.right rpm
+      .well.well-small
+        %div
+          %h1
+            %span#api-rpm-total-count Loading
+            - content_for :page_javascript do
+              :plain
+                $("#api-rpm-total-count").load("ops/requests_per_minute");
+                this.timer_api_rpm_total = setInterval(function () {
+                  $("#api-rpm-total-count").load("ops/requests_per_minute");
+                }, 5000);
+            %small total
     - @as_groups.each do |group|
       %div{:class => "#{@kiosk ? 'span2' : 'span3'}", :id => "#{group[:auto_scaling_group_name]}_section"}
         .well.well-small

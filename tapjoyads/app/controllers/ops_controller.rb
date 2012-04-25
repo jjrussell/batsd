@@ -247,6 +247,17 @@ class OpsController < WebsiteController
     end
   end
 
+  def requests_per_minute
+    request_counters = redis.mget(*redis.keys('request_counters:*')).map { |el| el.to_i }
+
+    rpm = request_counters.inject { |sum, el| sum + el }.to_f
+    if params[:average].present?
+      rpm /= request_counters.size
+    end
+
+    render :text => ActionController::Base.helpers.number_with_delimiter(rpm.to_i)
+  end
+
   private
 
   def redis
