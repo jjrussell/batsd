@@ -28,7 +28,7 @@ class AppReview < ActiveRecord::Base
     overlimit = bury_votes_count > BURY_LIMIT
     bad_ratio = bury_votes_count.to_f / (helpful_votes_count.to_f + 1.0) > 1
     author_is_not_viewer = author_id != gamer_id
-    overlimit && bad_ratio && !author_is_not_viewer
+    overlimit && bad_ratio && author_is_not_viewer
   end
 
   def moderation_rating
