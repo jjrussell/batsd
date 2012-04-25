@@ -1,15 +1,5 @@
 - @page_title = 'Auto-Scaling Groups'
 
-- content_for :page_sidebar do
-  .span2
-    .well.sidebar-nav
-      %ul.nav.nav-list
-        %li.nav-header more info »
-        %li= link_to 'dashboard', ops_path
-        %li.active= link_to 'auto-scaler', as_groups_ops_path
-        %li= link_to 'load-balancer', elb_status_ops_path
-        %li= link_to 'service-stats', service_stats_ops_path
-
 .span12
   %h1 Auto-Scaling Groups
 

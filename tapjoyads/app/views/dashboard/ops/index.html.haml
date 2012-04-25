@@ -1,18 +1,5 @@
 - @page_title = 'Operations Dashboard'
 
-- content_for :page_sidebar do
-  - unless @kiosk
-    .span2
-      .well.sidebar-nav
-        %ul.nav.nav-list
-          %li.nav-header more info »
-          %li.active= link_to 'dashboard', ops_path
-          %li= link_to 'auto-scaler', as_groups_ops_path
-          %li= link_to 'load-balancer', elb_status_ops_path
-          %li= link_to 'service-stats', service_stats_ops_path
-          %li= link_to 'vertica-status', vertica_status_ops_path
-          %li= link_to 'kiosk-mode', ops_path(:kiosk => true)
-
 = javascript_tag do
   :plain
     var nodes = [];
@@ -28,7 +15,7 @@
       }
     }, 1000);
 
-%div{:class => @kiosk ? "" : "span10"}
+%div
   .row-fluid
     #api-rpm-per-server{:class => @kiosk ? 'span2' : 'span3'}
       %span.label.right rpm
