@@ -6,27 +6,7 @@ class Games::GamersController < GamesController
   before_filter :set_profile, :only => [ :show, :edit, :accept_tos, :password, :prefs, :update_password, :confirm_delete ]
 
   def new
-    if params[:prefill_with_facebook]
-      current_facebook_user.fetch
-      params[:gamer] = {
-        :nickname        => current_facebook_user.name,
-        :email           => current_facebook_user.email,
-        :facebook_id     => current_facebook_user.id,
-        :fb_access_token => current_facebook_user.client.access_token
-      }
-      params[:birthday] = current_facebook_user.birthday
-      @gamer = Gamer.find(
-        :first,
-        :conditions => { :gamer_profiles => { :facebook_id => current_facebook_user.id } },
-        :include => :gamer_profile
-      ) || Gamer.find_by_email(current_facebook_user.email)
-      if @gamer
-        @gamer.gamer_profile.update_facebook_info!(current_facebook_user) unless @gamer.facebook_id
-        current_gamer = GamerSession.create(@gamer)
-      end
-    end
-    @gamer ||= Gamer.new(params[:gamer])
-    @birthday = Date.parse(params[:birthday]) if params[:birthday]
+    @gamer = Gamer.new
     redirect_to games_root_path if current_gamer.present?
   end
 
@@ -49,30 +29,16 @@ class Games::GamersController < GamesController
         raise e
       end
     end
-    @gamer_profile = GamerProfile.new(
-      :birthdate       => birthdate,
-      :nickname        => params[:gamer][:nickname],
-      :facebook_id     => params[:gamer][:facebook_id],
-      :fb_access_token => params[:gamer][:fb_access_token]
-    )
+    @gamer_profile = GamerProfile.new(:birthdate => birthdate, :nickname => params[:gamer][:nickname])
     @gamer.gamer_profile = @gamer_profile
 
     if @gamer.save
-      params[:default_platforms] ||= {}
-      message = {
-        :gamer_id => @gamer.id,
-        :accept_language_str => request.accept_language,
-        :user_agent_str => request.user_agent,
-        :device_type => device_type,
-        :selected_devices => params[:default_platforms].reject { |k, v| v != '1' }.keys,
-        :geoip_data => geoip_data,
-        :os_version => os_version }
-      Sqs.send_message(QueueNames::SEND_WELCOME_EMAILS, Base64::encode64(Marshal.dump(message)))
+      @gamer.send_welcome_email(request, device_type, params[:default_platforms] || {}, geoip_data, os_version)
 
       if params[:data].present? && params[:src] == 'android_app'
-        render(:json => { :success => true, :link_device_url => finalize_games_gamer_device_path(:data => params[:data]), :android => true })
+        render(:json => { :success => true, :redirect_url => link_device_games_gamer_path(:link_device_url => finalize_games_gamer_device_path(:data => params[:data]), :android => true) })
       else
-        render(:json => { :success => true, :link_device_url => new_games_gamer_device_path })
+        render(:json => { :success => true, :redirect_url => link_device_games_gamer_path(:link_device_url => new_games_gamer_device_path) })
       end
     else
       errors = @gamer.errors.reject{|error|error[0] == 'gamer_profile'}
@@ -127,6 +93,9 @@ class Games::GamersController < GamesController
     else
       render_json_error(@gamer.errors) and return
     end
+  end
+
+  def link_device
   end
 
   private

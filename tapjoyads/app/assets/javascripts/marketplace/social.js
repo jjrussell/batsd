@@ -31,7 +31,7 @@
         }());
       },
 
-      doFbLogin: function (redirect_url, submitFormId, source) {
+      doFbLogin: function (redirect_url, submitFormId) {
         FB.login(function (response) {
           if (response.authResponse) {
             FB.api('/me', function (response) {
@@ -46,9 +46,7 @@
               }
             });
           } else {
-            if(source !== 'register') {
-              notify(_t('games.grant_us_access'));
-            }
+            notify(_t('games.grant_us_access'));
           }
         }, {scope: 'offline_access,publish_stream,email,user_birthday'});
       },
@@ -287,11 +285,10 @@
     if (!fbOpts) { return; }
 
     Tap.Social.initiateFacebook(fbOpts, function () {
-      $(".login-to-facebook, .register-with-facebook, .log-in-with-facebook").on("click", function () {
+      $(".login-to-facebook, .log-in-with-facebook").on("click", function () {
         var url = $(this).data("fb-url");
         var submitFormId = $(this).data("submit-form-id");
-        var source = $(this).data("source");
-        Tap.Social.doFbLogin(url, submitFormId, source);
+        Tap.Social.doFbLogin(url, submitFormId);
         return false;
       });
 

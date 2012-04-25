@@ -15,8 +15,7 @@
         = f.submit t('text.games.next'), :class => "ui-joy-button soft-grey-action next-btn disabled"
 
     #register-form.register-form.clearfix
-      - unless params[:prefill_with_facebook]
-        .register-with-facebook{ 'data-fb-url' => new_games_gamer_path(:prefill_with_facebook => true, :referrer => params[:referrer]), 'data-source' => 'register' }= t('text.games.sign_up_with_facebook')
+      .log-in-with-facebook{ 'data-submit-form-id' => 'log-in-with-facebook-form' }= t('text.games.sign_up_with_facebook')
 
       .form-error
         &nbsp;
@@ -28,21 +27,11 @@
         = hidden_field_tag :data, params[:data]
       - if params[:src].present?
         = hidden_field_tag :src, params[:src]
-      - if @gamer[:facebook_id]
-        = f.hidden_field :facebook_id
-      - if @gamer[:fb_access_token]
-        = f.hidden_field :fb_access_token
-      - if params[:no_match]
-        .field
-          = label_tag "prefill-message", t('text.games.facebook_login_no_match_tjm_acct_error')
-      - elsif params[:prefill_with_facebook]
-        .field
-          = label_tag "prefill-message", t('text.games.facebook_sign_up_prefilled_form_msg')
       .field
         = f.text_field :nickname, "autocorrect" => "off", "autocapitalize" => "off", :placeholder => t('text.shared.name')
       .field
         = label_tag :birthdate, t("text.games.birthdate")
-        = select_date @birthday, { :order => [:month, :day, :year], :start_year => Time.now.year, :end_year => (Time.now.year - 100), :include_blank => false, :prompt => {:day => t("text.shared.day"), :month => t("text.shared.month"), :year => t("text.shared.year")} }
+        = select_date nil, { :order => [:month, :day, :year], :start_year => Time.now.year, :end_year => (Time.now.year - 100), :include_blank => false, :prompt => {:day => t("text.shared.day"), :month => t("text.shared.month"), :year => t("text.shared.year")} }
       .field
         = f.email_field :email, "autocorrect" => "off", "autocapitalize" => "off", :placeholder => t('text.shared.email')
       .field
@@ -82,24 +71,7 @@
             #loader_a.loader_letter
             #loader_p.loader_letter
 
-    - link_to(GAMES_ANDROID_MARKET_URL) do
-      #register-android.hidden.clearfix
-        .title
-          = t('text.games.almost_done')
-        .message
-          = t('text.games.install_android_app')
-        #link-android.install
-          .install-btn.ui-joy-button.orange-action
-            = t('text.games.download_now')
-
-    - link_to(new_games_gamer_device_path) do
-      #register-ios.hidden.clearfix
-        .title
-          = t('text.games.almost_done')
-        .message
-          = t('text.games.install_profile')
-        #link-ios.install
-          %img{ :src => BLANK_IMAGE }
+= form_tag "#{games_gamer_sessions_path(:path => params[:path], :data => params[:data], :referrer => params[:referrer], :src => params[:src])}", :method => :post, :id => 'log-in-with-facebook-form', :authenticity_token => "#{form_authenticity_token}"
 
 - content_for :page_head do
   %meta{ :name => 'description', :content => t('text.games.meta_description') }

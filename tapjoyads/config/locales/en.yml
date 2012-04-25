@@ -302,8 +302,6 @@ en:
       facebook_connect_failed: Failed to connect to your Facebook profile
       please_connect_facebook: Please connect your Facebook account
       grant_permissions_for_invite: "Please grant us both permissions before sending out an invite."
-      facebook_login_no_match_tjm_acct_error: "Sorry, we were not able to find a Tapjoy account that matched your Facebook login. Please sign up below and accept our terms to create your Tapjoy account."
-      facebook_sign_up_prefilled_form_msg: "You're almost there. Please create a password and accept our terms to complete registration."
       find_friends_from_twitter: "Find friends from Twitter"
       find_friends_on_tapjoy: "Find friends already using Tapjoy via other networks"
       find_more_friends: "Find more friends"

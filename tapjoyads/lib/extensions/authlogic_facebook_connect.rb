@@ -51,7 +51,29 @@ module AuthlogicFacebookConnect
 
             self.attempted_record = matching_user
           else
-            errors.add(:facebook, "facebook_no_match")
+            begin
+              new_user = klass.new
+
+              if klass == facebook_user_class
+                new_gamer_profile = GamerProfile.new(
+                  :birthdate       => facebook_session.birthday,
+                  :nickname        => facebook_session.name,
+                  :gender          => facebook_session.gender,
+                  :facebook_id     => facebook_session.id,
+                  :fb_access_token => facebook_session.client.access_token
+                )
+                new_user.gamer_profile = new_gamer_profile
+              end
+
+              new_user.before_connect(facebook_session) if new_user.respond_to?(:before_connect)
+
+              new_user.save_with_validation(true)
+
+              self.attempted_record = new_user
+            rescue Exception => e
+              errors.add_to_base(I18n.t('error_messages.facebooker_session_expired',
+                :default => "Your Facebook Connect session has expired, please reconnect."))
+            end
           end
         end
       end
