@@ -1,6 +1,7 @@
 class DisplayAdController < ApplicationController
 
   before_filter :set_device_type, :lookup_udid, :set_publisher_user_id, :setup, :except => :image
+  after_filter :queue_impression_tracking, :only => [:index, :webview]
 
   def index
   end
@@ -110,8 +111,8 @@ class DisplayAdController < ApplicationController
         @image = get_ad_image(publisher_app, offer, width, height, currency, params[:display_multiplier])
       end
 
+      @offer = offer
       if params[:details] == '1'
-        @offer = offer
         @amount = currency.get_visual_reward_amount(offer, params[:display_multiplier])
         if offer.item_type == 'App'
           advertiser_app = App.find_in_cache(@offer.item_id)
@@ -233,4 +234,7 @@ class DisplayAdController < ApplicationController
     end
   end
 
+  def queue_impression_tracking
+    @offer.queue_impression_tracking_requests if @offer.present? # for third party tracking vendors
+  end
 end

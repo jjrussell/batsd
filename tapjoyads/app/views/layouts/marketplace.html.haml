@@ -72,7 +72,7 @@
 
     - js_cache 'tjm', true
     - js_cache! "#{games_translations_path(:language_code => I18n.locale)}", true
-    
+
     :javascript
       stash.require(#{js_requires.to_json}, function(stash){
         Tapjoy.rootPath =  "#{WEBSITE_URL}";

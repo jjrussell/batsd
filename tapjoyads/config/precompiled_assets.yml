@@ -1,5 +1,6 @@
 # javascripts
 - 'tjm'
+- 'api'
 - 'marketplace/logged-out'
 - 'marketplace/ajax-preload'
 
@@ -7,11 +8,7 @@
 - 'marketplace/style-master'
 - 'marketplace/helpers/html5'
 - 'marketplace/helpers/mediaqueries'
-- 'marketplace/theme/tjm/style'
-- 'marketplace/theme/tjm/style-768'
-- 'marketplace/theme/tjm/style-480'
-- 'marketplace/theme/tjm/style-360'
-- 'marketplace/theme/tjm/style-320'
-- 'marketplace/resources/components/carousel/carousel'
 - 'marketplace/theme/tjm/ie'
 - 'marketplace/theme/tjm/logged_out'
+- 'api/style_v1'
+- 'api/style'

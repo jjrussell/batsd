@@ -24,17 +24,14 @@ class StatsAggregation
     inaccurate     = percentage < 0.99999 || percentage > 1.00001
     message        = ''
 
-    if inaccurate
-      message << "Cannot verify daily stats because Vertica has inaccurate data for #{start_time.to_date}.\n"
-      message << "Appstats total: #{appstats_total}\n"
-      message << "Vertica total: #{vertica_total}\n"
-      message << "Difference: #{appstats_total - vertica_total}\n\n"
-      message << "hour, appstats, vertica, diff\n"
-      24.times do |i|
-        appstats_val = appstats_counts[i]
-        vertica_val  = vertica_counts[i] || 0
-        message << "#{i}, #{appstats_val}, #{vertica_val}, #{appstats_val - vertica_val}\n"
-      end
+    message << "Appstats total: #{appstats_total}\n"
+    message << "Vertica total: #{vertica_total}\n"
+    message << "Difference: #{appstats_total - vertica_total}\n\n"
+    message << "hour, appstats, vertica, diff\n"
+    24.times do |i|
+      appstats_val = appstats_counts[i]
+      vertica_val  = vertica_counts[i] || 0
+      message << "#{i}, #{appstats_val}, #{vertica_val}, #{appstats_val - vertica_val}\n"
     end
 
     [ !inaccurate, message ]

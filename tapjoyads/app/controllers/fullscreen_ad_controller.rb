@@ -2,6 +2,8 @@ class FullscreenAdController < ApplicationController
 
   layout 'iphone'
 
+  prepend_before_filter :decrypt_data_param
+
   def index
     @publisher_app = App.find_in_cache(params[:publisher_app_id])
     currency_id = params[:currency_id].blank? ? params[:publisher_app_id] : params[:currency_id]

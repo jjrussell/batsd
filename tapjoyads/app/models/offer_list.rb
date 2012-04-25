@@ -23,6 +23,10 @@ class OfferList
     @all_videos                 = options.delete(:all_videos) { false }
     @mobile_carrier_code        = options.delete(:mobile_carrier_code)
     udid                        = options.delete(:udid)
+    currency_id                 = options.delete(:currency_id)
+    
+    @currency ||= Currency.find_in_cache(currency_id) if currency_id.present?
+    @publisher_app ||= App.find_in_cache(@currency.app_id) if @currency.present?
 
     @hide_rewarded_app_installs = @currency ? @currency.hide_rewarded_app_installs_for_version?(@app_version, @source) : false
     @normalized_device_type     = Device.normalize_device_type(@device_type)
@@ -103,6 +107,7 @@ class OfferList
     return [ [], 0 ] if @device && (@device.opted_out? || @device.banned?)
     @offers.sort! { |a,b| b.rank_score <=> a.rank_score }
     returned_offers = []
+    found_offer_item_ids = Set.new
     offers_to_find  = start + max_offers
     found_offers    = 0
 
@@ -117,8 +122,9 @@ class OfferList
     @offers.each_with_index do |offer, i|
       return [ returned_offers, @offers.length - i ] if found_offers >= offers_to_find
 
-      unless postcache_reject?(offer)
+      unless postcache_reject?(offer) || found_offer_item_ids.include?(offer.item_id)
         returned_offers << offer if found_offers >= start
+        found_offer_item_ids << offer.item_id
         found_offers += 1
       end
     end

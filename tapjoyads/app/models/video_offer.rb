@@ -1,6 +1,7 @@
 class VideoOffer < ActiveRecord::Base
   include UuidPrimaryKey
   acts_as_cacheable
+  acts_as_trackable :url => lambda { video_url.present? ? video_url : nil }
 
   has_many :offers, :as => :item
   has_many :video_buttons
@@ -8,7 +9,7 @@ class VideoOffer < ActiveRecord::Base
 
   belongs_to :partner
 
-  cache_associations :video_buttons
+  cache_associations :cache_video_buttons_and_tracking_offers
 
   validates_presence_of :partner, :name
   validates_presence_of :video_url, :unless => :new_record?
@@ -29,29 +30,6 @@ class VideoOffer < ActiveRecord::Base
 
   def valid_for_update_buttons?
     video_buttons.enabled.size <= 2
-  end
-
-  def create_tracking_offer_for(tracked_for, options = {})
-    device_types = options.delete(:device_types) { Offer::ALL_DEVICES.to_json }
-    raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
-
-    offer = Offer.new({
-      :item             => self,
-      :tracking_for     => tracked_for,
-      :partner          => partner,
-      :name             => name,
-      :url              => video_url.present? ? video_url : nil,
-      :device_types     => device_types,
-      :price            => 0,
-      :bid              => 0,
-      :min_bid_override => 0,
-      :rewarded         => false,
-      :name_suffix      => 'tracking',
-    })
-    offer.id = tracked_for.id
-    offer.save!
-
-    offer
   end
 
   private
@@ -99,4 +77,9 @@ class VideoOffer < ActiveRecord::Base
     errors.add :video_url, 'Video does not exist.' unless obj.exists?
   end
 
+  private
+
+  def cache_video_buttons_and_tracking_offers
+    video_buttons.each(&:tracking_offer)
+  end
 end

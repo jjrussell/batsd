@@ -1,6 +1,8 @@
 require 'spec/spec_helper'
 
 describe FullscreenAdController do
+  include ActionView::Helpers
+
   integrate_views
   ignore_html_warning
 

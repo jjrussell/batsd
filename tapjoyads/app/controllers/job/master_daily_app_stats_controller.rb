@@ -8,12 +8,14 @@ class Job::MasterDailyAppStatsController < Job::JobController
 
     start_time        = (Time.zone.now - 1.day).beginning_of_day
     end_time          = start_time + 1.day
-    accurate, message = StatsAggregation.check_vertica_accuracy(start_time, end_time)
 
-    unless accurate
-      Notifier.alert_new_relic(VerticaDataError, message, request, params)
-      render :text => 'ok'
-      return
+    unless params[:skip_check] == start_time.to_s(:yyyy_mm_dd)
+      accurate, message = StatsAggregation.check_vertica_accuracy(start_time, end_time)
+      unless accurate
+        Notifier.alert_new_relic(VerticaDataError, message, request, params)
+        render :text => 'ok'
+        return
+      end
     end
 
     StatsAggregation.cache_vertica_stats(start_time, end_time)

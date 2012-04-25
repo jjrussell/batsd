@@ -9,6 +9,14 @@
   copyrighted material (music, TV shows, movies, books, etc), or sensitive documents
   (contracts, invoices, etc).
 
+%h4 Recommendations about file names
+%ul
+  %li Don't use spaces, instead use underscores or hyphens because the resulting public URLs look prettier.
+  %li
+    Include an extension ('.pdf', '.pptx', '.txt', etc) so user's know what kind of file
+    they're getting and so browsers can better determine how to handle the file.
+  %li Example: TapjoyDeck_#{Time.zone.now.to_s(:yyyy_mm_dd)}.pdf
+
 %h3 Upload a file
 - form_tag(tools_shared_files_path, :method => :post, :multipart => true, :class => 'tjform') do
   %table
@@ -17,7 +25,7 @@
         %th
           = label_tag(:file_name, 'File name')
           #help_file_name.help ?
-        %td= text_field_tag(:file_name)
+        %td= text_field_tag(:file_name, '', :size => 40)
       %tr
         %th
           = label_tag(:file_content, 'File content')
@@ -33,7 +41,7 @@
       %th Public URL
       %th Size
       %th Last Modified
-      %th 
+      %th
   %tbody
     - @objects.each do |object|
       %tr
@@ -50,7 +58,7 @@
   #help_file_name_content{ :name => 'File name' }
     The name of the file you are uploading. This should have a valid extension (i.e. '.pdf', '.pptx')
     so people you share with know what they are getting. It is recommended that you not use spaces in
-    the file name (i.e. 'TapjoyDeck_#{Time.zone.now.to_s(:yyyy_mm_dd)}.pdf' instead of 
+    the file name (i.e. 'TapjoyDeck_#{Time.zone.now.to_s(:yyyy_mm_dd)}.pdf' instead of
     'Tapjoy Deck #{Time.zone.now.to_s(:yyyy_mm_dd)}.pdf').
   #help_file_content_content{ :name => 'File content' }
     Choose the file from your computer that you wish to upload.
