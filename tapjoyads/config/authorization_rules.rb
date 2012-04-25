@@ -46,6 +46,7 @@ authorization do
                                      :http_codes,
                                      :bytes_sent,
                                      :vertica_status,
+                                     :requests_per_minute,
                                    ]
   end
 
