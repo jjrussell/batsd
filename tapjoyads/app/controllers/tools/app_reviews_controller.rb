@@ -6,7 +6,7 @@ class Tools::AppReviewsController < WebsiteController
   before_filter :find_app_review, :only => [ :edit, :update, :destroy ]
 
   def index
-    if params[:app_metadata_id] and params[:app_metadata_id]
+    if params[:app_metadata_id]
       @app_metadata = AppMetadata.find(params[:app_metadata_id])
       @app_reviews = @app_metadata.app_reviews.ordered_by_date.paginate({:page => params[:page], :per_page=>100})
     elsif params[:author_type] and params[:author_id] and params[:author_type].match /^(Employee|Gamer)$/
@@ -18,7 +18,7 @@ class Tools::AppReviewsController < WebsiteController
   end
 
   def search
-    if params[:term].present? and
+    if params[:term].present?
       begin
         result = AppMetaData.first(:conditions=>{:id => params[:term]})
         result = AppMetaData.first(:conditions=>['name LIKE "%?%" ', params[:term]]) unless result
