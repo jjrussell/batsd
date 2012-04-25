@@ -248,14 +248,10 @@ class Dashboard::OpsController < Dashboard::DashboardController
   end
 
   def requests_per_minute
-    request_counters = redis.mget(*redis.keys('request_counters:*')).map { |el| el.to_i }
-
-    rpm = request_counters.inject { |sum, el| sum + el }.to_f
-    if params[:average].present?
-      rpm /= request_counters.size
-    end
-
-    render :text => ActionController::Base.helpers.number_with_delimiter(rpm.to_i)
+    rpms = redis.mget(*redis.keys('request_counters:*')).map(&:to_i)
+    sum  = ActionController::Base.helpers.number_with_delimiter(rpms.sum.to_i)
+    mean = ActionController::Base.helpers.number_with_delimiter(rpms.mean.to_i)
+    render :json => { :sum => sum, :mean => mean }
   end
 
   private
