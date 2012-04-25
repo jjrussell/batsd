@@ -2,14 +2,14 @@ require 'spec_helper'
 
 describe BrandOfferMapping do
 
-  it { should belong_to :offer}
-  it { should belong_to :brand}
-  it { should validate_presence_of :offer}
-  it { should validate_presence_of :brand}
-
   subject { Factory(:brand_offer_mapping) }
 
+  it { should belong_to :offer }
+  it { should belong_to :brand }
+  it { should validate_presence_of :offer }
+  it { should validate_presence_of :brand }
   it { should validate_numericality_of :allocation }
+  it { should validate_uniqueness_of(:offer_id).scoped_to(:brand_id) }
 
   describe '#get_new_allocation' do
     context 'before validation' do
