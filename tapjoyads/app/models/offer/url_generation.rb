@@ -81,6 +81,7 @@ module Offer::UrlGeneration
       params = {
         :offer_id           => id,
         :app_id             => publisher_app_id,
+        :currency_id        => currency.id,
         :udid               => udid,
         :publisher_user_id  => publisher_user_id
       }
