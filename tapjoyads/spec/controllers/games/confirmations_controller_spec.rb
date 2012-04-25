@@ -12,7 +12,7 @@ describe Games::ConfirmationsController do
     end
     context 'with valid data' do
       it 'redirects to url with tracking params' do
-        data = ObjectEncryptor::encrypt({:token => @gamer.confirmation_token, :content => 'test_campaign'})
+        data = ObjectEncryptor.encrypt({:token => @gamer.confirmation_token, :content => 'test_campaign'})
         get(:create, :data => data)
         response.code.should == "302"
         response.session[:flash][:notice].should == 'Email address confirmed.'
@@ -26,7 +26,7 @@ describe Games::ConfirmationsController do
     context 'with valid data for confirm only message' do
       it 'queues post confirm message' do
         Sqs.expects(:send_message)
-        data = ObjectEncryptor::encrypt({:token => @gamer.confirmation_token, :content => 'confirm_only'})
+        data = ObjectEncryptor.encrypt({:token => @gamer.confirmation_token, :content => 'confirm_only'})
         get(:create, :data => data)
       end
     end

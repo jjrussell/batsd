@@ -1,10 +1,10 @@
 class Games::ConfirmationsController < GamesController
 
   def create
-    device_info = params[:data] ? ObjectEncryptor::decrypt(params[:data]) : {}
+    device_info = params[:data] ? ObjectEncryptor.decrypt(params[:data]) : {}
     device_info[:token] = params[:token] if params[:token]
     @gamer = Gamer.find_by_confirmation_token(device_info[:token])
-    path   = games_root_path
+    path = games_root_path
     if @gamer.present? and @gamer.confirmed_at?
         flash[:notice] = 'Email address already confirmed.'
     elsif @gamer.present? && @gamer.confirm!
