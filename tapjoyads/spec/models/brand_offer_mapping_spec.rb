@@ -121,7 +121,7 @@ describe BrandOfferMapping do
           BrandOfferMapping.stubs(:mappings_by_offer).with(@offer).returns(@offer_mappings)
           BrandOfferMapping.any_instance.stubs(:save!).returns(nil)
           @brand_offer_mapping.send(:redistribute_allocation)
-          @offer_mappings.inject(0) { |sum, x| sum + (x.allocation||0) }.should == 100
+          @offer_mappings.inject(0) { |sum, x| sum + x.allocation }.should == 100
         end
       end
     end
