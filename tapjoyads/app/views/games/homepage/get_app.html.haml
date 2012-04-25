@@ -38,6 +38,7 @@
         return function(data,textStatus){
           var $par = $el.closest('.moderation-panel');
           $par.html($('<span class="'+data.class+'"></span>').html(data.msg));
+          $par.delay(3000).slideUp('fast');
         };
       };
       return function(e){
