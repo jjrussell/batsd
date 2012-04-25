@@ -255,7 +255,7 @@ class OpsController < WebsiteController
       rpm /= request_counters.size
     end
 
-    render :text => ("%0d" % rpm).gsub(/(\d)(?=\d{3}+(?:\.|$))(\d{3}\..*)?/,'\1,\2')
+    render :text => ActionController::Base.helpers.number_with_delimiter(rpm.to_i)
   end
 
   private
