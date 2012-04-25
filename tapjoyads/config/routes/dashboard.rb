@@ -147,6 +147,7 @@ ActionController::Routing::Routes.draw do |map|
       :http_codes => :get,
       :bytes_sent => :get,
       :vertica_status => :get,
+      :requests_per_minute => :get,
     }
 
   map.connect 'mail_chimp_callback/callback', :controller => :mail_chimp_callback, :action => :callback

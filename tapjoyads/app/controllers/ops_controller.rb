@@ -247,6 +247,17 @@ class OpsController < WebsiteController
     end
   end
 
+  def requests_per_minute
+    request_counters = redis.mget(*redis.keys('request_counters:*')).map { |el| el.to_i }
+
+    rpm = request_counters.inject { |sum, el| sum + el }.to_f
+    if params[:average].present?
+      rpm /= request_counters.size
+    end
+
+    render :text => ("%0d" % rpm).gsub(/(\d)(?=\d{3}+(?:\.|$))(\d{3}\..*)?/,'\1,\2')
+  end
+
   private
 
   def redis
