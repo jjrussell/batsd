@@ -25,11 +25,10 @@ class AppReview < ActiveRecord::Base
   @@per_page = 10
 
   def bury_by_author?(gamer_id)
-    overlimit = bury_votes_count > self.class::BURY_LIMIT
+    overlimit = bury_votes_count > BURY_LIMIT
     bad_ratio = bury_votes_count.to_f / (helpful_votes_count.to_f + 1.0) > 1
-    author_is_viewer = author_id == gamer_id
-    return true if( (overlimit and bad_ratio) and !author_is_viewer )
-    false
+    author_is_not_viewer = author_id != gamer_id
+    overlimit && bad_ratio && !author_is_not_viewer
   end
 
   def moderation_rating
@@ -44,7 +43,7 @@ class AppReview < ActiveRecord::Base
   def author_name
     case author_type
     when 'Gamer'
-      author.nil?  ? "Unknown Author" : author.get_gamer_nickname
+      author.nil?  ? "Unknown Author" : author.get_gamer_nickname  #only nil on dev/staging when Gamers data absent
     when 'Employee'
       author.full_name
     end
