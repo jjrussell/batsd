@@ -45,7 +45,7 @@
             %span#api-rpm-total-count Loading
             %small total
     - @as_groups.each do |group|
-      %div{:class => "#{@kiosk ? 'span2' : 'span3'}", :id => "#{group[:auto_scaling_group_name]}_section"}
+      %div{:class => @kiosk ? 'span2' : 'span3', :id => "#{group[:auto_scaling_group_name]}_section"}
         .well.well-small
           %div{:id => "#{group[:auto_scaling_group_name]}_header"}
           - content_for :page_javascript do
