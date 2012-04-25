@@ -44,7 +44,7 @@ class HomepageController < WebsiteController
   end
 
   def index
-    render :layout => 'newhome'
+    redirect_to root_path
   end
 
   def index_redirect
