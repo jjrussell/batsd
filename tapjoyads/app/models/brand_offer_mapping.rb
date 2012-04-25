@@ -6,6 +6,7 @@ class BrandOfferMapping < ActiveRecord::Base
 
   validates_presence_of :offer, :brand
   validates_numericality_of :allocation, :greater_than => 0, :less_than_or_equal_to => 100
+  validates_uniqueness_of :offer_id, :scope => :brand_id
   before_validation :get_new_allocation
   after_commit_on_create  :redistribute_allocation
   after_commit_on_destroy :redistribute_allocation

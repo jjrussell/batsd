@@ -327,7 +327,7 @@ FactoryGirl.define do
   end
 
   factory :brand do
-    name 'Coca-Cola'
+    name { Factory.next(:name) }
   end
 
   factory :brand_offer_mapping do
