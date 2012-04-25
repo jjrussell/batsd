@@ -20,7 +20,7 @@ class Dashboard::OpsController < Dashboard::DashboardController
 
   def as_header
     @as_group = get_as_groups(params[:group]).first
-    @as_group[:instances].reject! { |instance| instance[:lifecycle_state] == "InService" || (rand > 0.5 ? true : false) }
+    @as_group[:instances].reject! { |instance| instance[:lifecycle_state] == "InService" }
 
     render :layout => false
   end
