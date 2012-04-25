@@ -30,12 +30,12 @@
 
 %div{:class => @kiosk ? "" : "span10"}
   .row-fluid
-    %div{:class => "#{@kiosk ? 'span2' : 'span3'}", :id => "api-rpm-per-server"}
+    #api-rpm-per-server{:class => @kiosk ? 'span2' : 'span3'}
       %span.label.right rpm
       .well.well-small
         %div
           %h1
-            %span{:id => "api-rpm-per-server-count"} Loading
+            %span#api-rpm-per-server-count Loading
             - content_for :page_javascript do
               :plain
                 $("#api-rpm-per-server-count").load("ops/requests_per_minute?average=true");
@@ -43,12 +43,12 @@
                   $("#api-rpm-per-server-count").load("ops/requests_per_minute?average=true");
                 }, 5000);
             %small per server
-    %div{:class => "#{@kiosk ? 'span2' : 'span3'}", :id => "api-rpm-total"}
+    #api-rpm-total{:class => @kiosk ? 'span2' : 'span3'}
       %span.label.right rpm
       .well.well-small
         %div
           %h1
-            %span{:id => "api-rpm-total-count"} Loading
+            %span#api-rpm-total-count Loading
             - content_for :page_javascript do
               :plain
                 $("#api-rpm-total-count").load("ops/requests_per_minute");
