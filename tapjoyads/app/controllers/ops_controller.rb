@@ -129,29 +129,41 @@ class OpsController < WebsiteController
       format.json do
         @stats = {}
         statuses = redis.smembers "api.statuses"
-        keys = keys_in_time_range "api.status", statuses, @start_time, @end_time
-        values = safe_mapped_mget(*keys)
+        keys = keys_in_time_range "hash.status", statuses, @start_time, @end_time, 3600
 
         first_time = nil
         last_time = 0
+        values = {}
         keys.each do |key|
-          next  if values[key].to_i == 0
           code = key.split(".")[2].to_i
-          next  unless code > 0
+          next  unless code > 0 && code < 1000
 
-          time = key.split(".")[3].to_i
-          if @period > 60.minutes
-            last_time = time -= (time % 900) + offset
-          elsif @period >= 30.minutes
-            last_time = time -= (time % 60) + offset
-          elsif @period >= 10.minutes
-            last_time = time -= (time % 15) + offset
+          values[code] ||= {}
+          values[code].merge! redis.hgetall(key)
+        end
+
+        statuses.each do |code|
+          code = code.to_i
+          next unless values[code]
+          unless values[code].empty?
+            values[code].each do |time,value|
+              next if time.to_i < @start_time || time.to_i > @end_time || value.to_i == 0
+              time = time.to_i
+
+              if @period > 60.minutes
+                last_time = time -= (time % 900) + offset
+              elsif @period >= 30.minutes
+                last_time = time -= (time % 60) + offset
+              elsif @period >= 10.minutes
+                last_time = time -= (time % 15) + offset
+              end
+              first_time = time  unless first_time
+
+              @stats[time] ||= {}
+              @stats[time][code] ||= 0
+              @stats[time][code] += value.to_i
+            end
           end
-          first_time = time  unless first_time
-
-          @stats[time] ||= {}
-          @stats[time][code] ||= 0
-          @stats[time][code] += values[key].to_i
         end
         @stats.delete last_time  if last_time > 0
         @stats.delete first_time if first_time
@@ -184,13 +196,19 @@ class OpsController < WebsiteController
     respond_to do |format|
       format.json do
         @stats = {}
-        keys = keys_in_time_range "api", "body_bytes_sent", @start_time, @end_time
-        values = safe_mapped_mget(*keys)
+        keys = keys_in_time_range "hash", "body_bytes_sent", @start_time, @end_time, 3600
 
         first_time = nil
         last_time = 0
+        values = {}
         keys.each do |key|
-          time = key.split(".")[2].to_i
+          values.merge! redis.hgetall(key)
+        end
+
+        values.each do |time,value|
+          next if time.to_i < @start_time || time.to_i > @end_time || value.to_i == 0
+          time = time.to_i
+
           if @period > 60.minutes
             last_time = time -= (time % 900) + offset
           elsif @period >= 30.minutes
@@ -201,7 +219,7 @@ class OpsController < WebsiteController
           first_time = time  unless first_time
 
           @stats[time] ||= 0
-          @stats[time] += values[key].to_i
+          @stats[time] += value.to_i
         end
         @stats.delete last_time  if last_time > 0
         @stats.delete first_time if first_time
@@ -227,6 +245,13 @@ class OpsController < WebsiteController
     else
       @day = Time.now.utc.beginning_of_day
     end
+  end
+
+  def requests_per_minute
+    rpms = redis.mget(*redis.keys('request_counters:*')).map(&:to_i)
+    sum  = ActionController::Base.helpers.number_with_delimiter(rpms.sum)
+    mean = ActionController::Base.helpers.number_with_delimiter(rpms.mean.to_i)
+    render :json => { :sum => sum, :mean => mean }
   end
 
   private
@@ -276,43 +301,21 @@ class OpsController < WebsiteController
   # @param [Integer] start_time the beginning of the keyset
   # @param [Integer] end_time the end of the keyset
   # @return [Array] the full key listing to look up
-  def keys_in_time_range(namespace, subkeys, start_time, end_time)
+  def keys_in_time_range(namespace, subkeys, start_time, end_time, mod = 1)
     keys = []
-    time = start_time
+    time = start_time - start_time % mod
 
-    start_time.to_i.upto(end_time.to_i) do |t|
+    while time.to_i <= end_time.to_i
       if subkeys.is_a? Array
-        subkeys.each do |subkey|
-          keys << "#{namespace}.#{subkey}.#{t}"
-        end
+        subkeys.each { |subkey| keys << "#{namespace}.#{subkey}.#{time}" }
       else
-        keys << "#{namespace}.#{subkeys}.#{t}"
+        keys << "#{namespace}.#{subkeys}.#{time}"
       end
+
+      time += mod
     end
 
     keys
-  end
-
-  # Splits redis#mapped_mget into sections of 50_000 if necessary
-  #
-  # @param [Array] *keys the list of keys needed from redis
-  # @return [Hash] mapped hash of keys => values
-  def safe_mapped_mget(*keys)
-    values = {}
-
-    if keys.length >= 50_000
-      working_keys = keys.dup
-      while working_keys.length > 0
-        puts "#{working_keys.length} keys left"
-        working_values = redis.mapped_mget(*working_keys[0..49_999])
-        values.update(working_values)
-        working_keys.slice!(0..49_999)
-      end
-    else
-      values = redis.mapped_mget(*keys)
-    end
-
-    values
   end
 
 end

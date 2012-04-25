@@ -42,6 +42,7 @@ DASHBOARD_URL = local_config['dashboard_url'] || 'http://localhost:3000'
 WEBSITE_URL = local_config['website_url'] || 'http://localhost:3000'
 CLOUDFRONT_URL = 'https://s3.amazonaws.com/dev_tapjoy'
 XMAN = local_config['xman'] || false
+MACHINE_TYPE = local_config['machine_type'] if local_config['machine_type']
 
 NUM_POINT_PURCHASES_DOMAINS = 2
 NUM_CLICK_DOMAINS = 2
