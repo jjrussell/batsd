@@ -80,7 +80,7 @@ module Offer::UrlGeneration
     elsif item_type == 'VideoOffer'
       params = {
         :offer_id           => id,
-        :app_id             => currency.id,
+        :app_id             => publisher_app_id,
         :udid               => udid,
         :publisher_user_id  => publisher_user_id
       }
