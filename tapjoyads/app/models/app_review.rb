@@ -17,7 +17,7 @@ class AppReview < ActiveRecord::Base
 
   named_scope :by_employees, :conditions => { :author_type => 'Employee' }
   named_scope :by_gamers, :conditions => { :author_type => 'Gamer' }
-  named_scope :ordered_by_date, :order => "created_at DESC"
+  named_scope :ordered_by_date, :order => "updated_at DESC"
 
   delegate :name, :to => :app_metadata, :prefix => true
 
