@@ -9,7 +9,7 @@ class Dashboard::Tools::AppReviewsController < Dashboard::DashboardController
     if params[:app_metadata_id]
       @app_metadata = AppMetadata.find(params[:app_metadata_id])
       @app_reviews = @app_metadata.app_reviews.ordered_by_date.paginate({:page => params[:page], :per_page=>100})
-    elsif params[:author_type] and params[:author_id] and params[:author_type].match /^(Employee|Gamer)$/
+    elsif params[:author_type] && params[:author_id] && params[:author_type].match /^(Employee|Gamer)$/
       @author = params[:author_type].constantize.find(params[:author_id])
       @app_reviews = @author.app_reviews.ordered_by_date.paginate({:page => params[:page], :per_page=>100})
     else
