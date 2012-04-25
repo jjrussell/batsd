@@ -3,10 +3,6 @@ class Homepage::HomepageController < ApplicationController
   protect_from_forgery :except => [:contact]
   before_filter :legacy_redirect, :only => [:advertisers_contact, :contact_us, :publishers_contact, :gaming_platforms]
 
-  def start
-    render :action => 'index', :layout => 'newhome'
-  end
-
   def contact
     if params[:info]
       case params[:info][:source]
