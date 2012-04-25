@@ -33,8 +33,13 @@ Tapjoyads::Application.configure do
   # For nginx:
   # config.action_dispatch.x_sendfile_header = 'X-Accel-Redirect'
 
-  # If you have no front-end server that supports something like X-Sendfile,
-  # just comment this out and Rails will serve the files
+MEMCACHE_SERVERS = [
+                     'tj-prod-20120424.fqfjqv.0001.use1.cache.amazonaws.com',
+                     'tj-prod-20120424.fqfjqv.0002.use1.cache.amazonaws.com',
+                     'tj-prod-20120424.fqfjqv.0003.use1.cache.amazonaws.com',
+                     'tj-prod-20120424.fqfjqv.0004.use1.cache.amazonaws.com',
+                     'tj-prod-20120424.fqfjqv.0005.use1.cache.amazonaws.com'
+                   ]
 
   # See everything in the log (default is :info)
   # config.log_level = :debug
