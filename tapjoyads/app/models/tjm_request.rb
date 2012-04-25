@@ -80,7 +80,7 @@ class TjmRequest < SyslogMessage
   self.define_attr :social_referrer_gamer
   self.define_attr :social_source
   self.define_attr :social_action
-  self.define_attr :social_invitation_id
+  self.define_attr :social_invitation_or_gamer_id
   self.define_attr :social_advertiser_app_id
   self.define_attr :list_rank
   self.define_attr :display_path
@@ -124,9 +124,9 @@ class TjmRequest < SyslogMessage
           self.social_action          = social_referrer[2]
           self.social_referrer_gamer  = social_referrer[3]
         else
-          invitation_id, advertiser_app_id = referrer.split(',')
-          self.social_invitation_id        = invitation_id
-          self.social_advertiser_app_id    = advertiser_app_id
+          invitation_or_gamer_id, advertiser_app_id = referrer.split(',')
+          self.social_invitation_or_gamer_id  = invitation_or_gamer_id
+          self.social_advertiser_app_id       = advertiser_app_id
         end
       end
     end
