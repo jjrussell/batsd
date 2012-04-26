@@ -6,7 +6,7 @@ class Homepage::PressController < Homepage::HomepageController
   layout 'press'
 
   def show
-    redirect_to 'http://info.tapjoy.com/about-tapjoy/company-news'
+    redirect_to 'http://info.tapjoy.com/about-tapjoy/company-news', :status => :moved_permanently
   end
 
   def glu
@@ -14,6 +14,6 @@ class Homepage::PressController < Homepage::HomepageController
   end
 
   def index
-    redirect_to 'http://info.tapjoy.com/about-tapjoy/company-news'
+    redirect_to 'http://info.tapjoy.com/about-tapjoy/company-news', :status => :moved_permanently
   end
 end

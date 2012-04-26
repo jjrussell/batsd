@@ -4,23 +4,23 @@ class Homepage::HomepageController < ApplicationController
   before_filter :legacy_redirect, :only => [:advertisers_contact, :contact_us, :publishers_contact, :gaming_platforms]
 
   def contact
-    redirect_to 'http://info.tapjoy.com/contact-us'
+    redirect_to 'http://info.tapjoy.com/contact-us', :status => :moved_permanently
   end
 
   def about_us
-    redirect_to 'http://info.tapjoy.com/about-tapjoy'
+    redirect_to 'http://info.tapjoy.com/about-tapjoy', :status => :moved_permanently
   end
 
   def advertisers
-    redirect_to 'http://advertisers.tapjoy.com'
+    redirect_to 'http://advertisers.tapjoy.com', :status => :moved_permanently
   end
 
   def app_developers
-    redirect_to 'http://developers.tapjoy.com'
+    redirect_to 'http://developers.tapjoy.com', :status => :moved_permanently
   end
 
   def team
-    redirect_to 'http://info.tapjoy.com/about-tapjoy/leadership/executive-team'
+    redirect_to 'http://info.tapjoy.com/about-tapjoy/leadership/executive-team', :status => :moved_permanently
   end
 
   def index
