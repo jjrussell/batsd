@@ -43,7 +43,7 @@ module Offer::Ranking
     self.rank_score += (categories & currency.categories).length.to_f / currency.categories.length * (currency.postcache_weights[:category_match] || 0) if currency.categories.any?
     self.rank_score += 1000000 if !featured? && !rewarded? && currency.conversion_rate == 0 && item_type == 'App' && price == 0
     self.rank_score += 1000000 if is_promoted
-    self.rank_score -= 100 if source == 'tj_games' && item_type == 'GenericOffer' && !pay_per_click?
+    # self.rank_score -= 100 if source == 'tj_games' && item_type == 'GenericOffer' && !pay_per_click?
     rank_score
   end
 
