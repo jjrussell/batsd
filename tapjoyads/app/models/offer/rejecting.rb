@@ -34,7 +34,11 @@ module Offer::Rejecting
     # Saving Star
     [ 'c2ef96ba-5c6b-4479-bffa-9b1beca08f1b', '1d63a4fa-82ed-4442-955c-ef0d75978fad', '0ba2a533-d26d-4953-aa3e-fd01187e30e1' ] => [ 'c2ef96ba-5c6b-4479-bffa-9b1beca08f1b', '1d63a4fa-82ed-4442-955c-ef0d75978fad', '0ba2a533-d26d-4953-aa3e-fd01187e30e1' ],
     # Flirtomatic iOS
-    [ 'bb26407e-6713-4b67-893d-4b47242f1ce0', '23fed671-4558-4c2e-8ceb-dcb41399c5d7' ] => [ 'bb26407e-6713-4b67-893d-4b47242f1ce0', '23fed671-4558-4c2e-8ceb-dcb41399c5d7' ],
+    [ 'bb26407e-6713-4b67-893d-4b47242f1ce0', '23fed671-4558-4c2e-8ceb-dcb41399c5d7',
+      '398a71ee-5157-4975-aabb-f7fa5a48ed7f', 'd5769336-acd4-4d25-9483-f84512247b7a',
+      'b8dfb746-ceba-44af-814b-d04231afcc11' ] => [ 'bb26407e-6713-4b67-893d-4b47242f1ce0',
+      '23fed671-4558-4c2e-8ceb-dcb41399c5d7', '398a71ee-5157-4975-aabb-f7fa5a48ed7f',
+      'd5769336-acd4-4d25-9483-f84512247b7a', 'b8dfb746-ceba-44af-814b-d04231afcc11' ],
     # Credit Sesame
     [ 'e13d1e07-9770-4d71-a9ba-fa42fd8df519', 'a3abde4d-7eff-49c7-8079-85d2c5238e88' ] => [ 'e13d1e07-9770-4d71-a9ba-fa42fd8df519', 'a3abde4d-7eff-49c7-8079-85d2c5238e88' ],
     # Play Up
