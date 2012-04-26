@@ -80,11 +80,12 @@ module Offer::UrlGeneration
     elsif item_type == 'VideoOffer'
       params = {
         :offer_id           => id,
-        :app_id             => currency,
+        :app_id             => publisher_app_id,
+        :currency_id        => currency.id,
         :udid               => udid,
         :publisher_user_id  => publisher_user_id
       }
-      final_url = "#{API_URL}/videos/#{id}/complete?#{params.to_query}"
+      final_url = "#{API_URL}/videos/#{id}/complete?data=#{ObjectEncryptor.encrypt(params)}"
     end
 
     final_url

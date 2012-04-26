@@ -135,6 +135,28 @@ ActiveRecord::Schema.define(:version => 20120406173403) do
   add_index "apps", ["name"], :name => "index_apps_on_name"
   add_index "apps", ["partner_id"], :name => "index_apps_on_partner_id"
 
+  create_table "brand_offer_mappings", :id => false, :force => true do |t|
+    t.string   "id",         :limit => 36, :null => false
+    t.string   "offer_id",   :limit => 36, :null => false
+    t.string   "brand_id",   :limit => 36, :null => false
+    t.integer  "allocation",               :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "brand_offer_mappings", ["id"], :name => "index_brand_offer_mappings_on_id", :unique => true
+  add_index "brand_offer_mappings", ["offer_id", "brand_id"], :name => "index_brand_offer_mappings_on_offer_id_and_brand_id", :unique => true
+
+  create_table "brands", :id => false, :force => true do |t|
+    t.string   "id",         :limit => 36, :null => false
+    t.string   "name"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "brands", ["id"], :name => "index_brands_on_id", :unique => true
+  add_index "brands", ["name"], :name => "index_brands_on_name", :unique => true
+
   create_table "clients", :id => false, :force => true do |t|
     t.string   "id",         :limit => 36, :null => false
     t.string   "name",                     :null => false
