@@ -24,7 +24,7 @@ class OfferList
     @mobile_carrier_code        = options.delete(:mobile_carrier_code)
     udid                        = options.delete(:udid)
     currency_id                 = options.delete(:currency_id)
-    
+
     @currency ||= Currency.find_in_cache(currency_id) if currency_id.present?
     @publisher_app ||= App.find_in_cache(@currency.app_id) if @currency.present?
 
