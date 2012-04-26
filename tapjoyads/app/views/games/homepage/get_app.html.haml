@@ -36,8 +36,9 @@
       var success = function( $el ){
         return function(data,textStatus){
             var $par = $el.closest('.moderation-panel');
+            var $tri = $par.prev();
             $par.html($('<span class="'+data.class+'"></span>').html(data.msg));
-            $par.delay(3000).slideUp('fast');
+            $par.delay(3000).slideUp('fast').done($tri.hide());
           };
       };
       return function(e){
