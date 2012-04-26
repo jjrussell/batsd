@@ -47,7 +47,7 @@ class OfferList
     if @hide_rewarded_app_installs
       @type = case @type
       when Offer::DEFAULT_OFFER_TYPE
-        Offer::NON_REWARDED_BACKFILLED_OFFER_TYPE
+        (@currency && !@currency.rewarded?) ? Offer::NON_REWARDED_BACKFILLED_OFFER_TYPE : @type
       when Offer::FEATURED_OFFER_TYPE
         Offer::NON_REWARDED_FEATURED_OFFER_TYPE
       when Offer::FEATURED_BACKFILLED_OFFER_TYPE
