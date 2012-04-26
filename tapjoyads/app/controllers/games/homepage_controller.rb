@@ -18,11 +18,12 @@ class Games::HomepageController < GamesController
       app_reviews = AppReview.paginate_all_by_app_metadata_id_and_is_blank(@app_metadata.id, false, :page => params[:app_reviews_page])
       app_reviews.reject! { |x| x.bury_by_author?(current_gamer && current_gamer.id) || x.text.blank? }
       review_authors_not_viewer =  app_reviews.map(&:author_id) - [current_gamer && current_gamer.id].compact
-      rude_buried_list = Gamer.all(
-          :conditions => ["id IN(?) and bury_votes_count > ?",review_authors_not_viewer, Gamer::RUDE_BAN_LIMIT],
-          :select => :id
-      ).map(&:id)
-      app_reviews.reject! { |x| rude_buried_list.include? x.author_id }
+      # TODO: create a table for banned_reviewers
+      # rude_buried_list = Gamer.all(
+      #     :conditions => ["id IN(?) and bury_votes_count > ?",review_authors_not_viewer, Gamer::RUDE_BAN_LIMIT],
+      #     :select => :id
+      # ).map(&:id)
+      # app_reviews.reject! { |x| rude_buried_list.include? x.author_id }
       @app_reviews = app_reviews.sort { |a, b| b.moderation_rating <=> a.moderation_rating }
       ar_ids = app_reviews.map &:id
       @viewer_flagged = current_gamer && current_gamer.bury_review_votes.find_all_by_app_review_id(ar_ids) || []
