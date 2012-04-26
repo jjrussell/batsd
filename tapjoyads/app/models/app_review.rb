@@ -26,7 +26,7 @@ class AppReview < ActiveRecord::Base
 
   def bury_by_author?(gamer_id)
     overlimit = bury_votes_count > BURY_LIMIT
-    bad_ratio = bury_votes_count.to_f / (helpful_votes_count.to_f + 1.0) > 1
+    bad_ratio = bury_votes_count > helpful_votes_count + 1
     author_is_not_viewer = author_id != gamer_id
     overlimit && bad_ratio && author_is_not_viewer
   end
