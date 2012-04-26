@@ -16,7 +16,8 @@ class Games::GamerSessionsController < GamesController
     @gamer_session.remember_me = true
     if @gamer_session.save
       if current_gamer.referrer == "NEW_SIGN_UP_WITH_FACEBOOK"
-        current_gamer.referrer = params[:referrer].present? ? params[:referrer] : nil
+        current_gamer.referrer     = params[:referrer].present? ? params[:referrer] : nil
+        current_gamer.confirmed_at = current_gamer.created_at
         current_gamer.save
         default_platforms = {}
         default_platforms[params[:default_platform]] = "1" if params[:default_platform]
