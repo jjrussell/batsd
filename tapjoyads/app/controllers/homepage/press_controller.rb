@@ -10,7 +10,7 @@ class Homepage::PressController < Homepage::HomepageController
   end
 
   def glu
-    redirect_to :action => 'show', :id => '201103030'
+    redirect_to 'http://blog.tapjoy.com/uncategorized/tapjoy-helps-fuel-the-growth-of-glus-gun-bros-app', :status => :moved_permanently
   end
 
   def index
