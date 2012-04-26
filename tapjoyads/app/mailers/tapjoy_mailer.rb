@@ -62,22 +62,6 @@ class TapjoyMailer < ActionMailer::Base
     mail :to => user_email, :from => 'Tapjoy Support <support@tapjoy.com', :subject => "New Account Created - Tapjoy.com"
   end
 
-  def contact_us(info)
-    from 'Tapjoy <noreply@tapjoy.com>'
-    recipients "support+contactus@tapjoy.com"
-    content_type 'text/html'
-    subject "Contact us from #{info[:name]}"
-    body(:info => info)
-  end
-
-  def publisher_application(info)
-    from 'Tapjoy <noreply@tapjoy.com>'
-    recipients "publishing@tapjoy.com"
-    content_type 'text/html'
-    subject "Publisher form inquiry from #{info[:first]} #{info[:last]} at #{info[:company]}"
-    body(:info => info)
-  end
-
   def whitepaper_request(info)
     from 'Tapjoy <noreply@tapjoy.com>'
     recipients "sunny.cha@tapjoy.com, raghu.nayani@tapjoy.com"
@@ -86,14 +70,6 @@ class TapjoyMailer < ActionMailer::Base
     subject_text = "Whitepaper request from #{info[:name]}"
     subject_text += " at #{info[:company]}" if info[:company].present?
     subject subject_text
-    body(:info => info)
-  end
-
-  def advertiser_application(info)
-    from 'Tapjoy <noreply@tapjoy.com>'
-    recipients "insidesales@tapjoy.com"
-    content_type 'text/html'
-    subject "Advertiser inquiry from #{info[:name]} at #{info[:company]}"
     body(:info => info)
   end
 
