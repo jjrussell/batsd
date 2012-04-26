@@ -34,7 +34,7 @@ class Games::HomepageController < GamesController
       app_reviews.reject! { |x| rude_buried_list.include? x.author_id }
       @app_reviews = app_reviews.sort { |a, b| b.moderation_rating <=> a.moderation_rating }
       ar_ids = app_reviews.map &:id
-      @viewer_flagd = current_gamer && current_gamer.bury_review_votes.find_all_by_app_review_id(ar_ids) || []
+      @viewer_flagged = current_gamer && current_gamer.bury_review_votes.find_all_by_app_review_id(ar_ids) || []
       @viewer_faved = current_gamer && current_gamer.helpful_review_votes.find_all_by_app_review_id(ar_ids) || []
     end
   end

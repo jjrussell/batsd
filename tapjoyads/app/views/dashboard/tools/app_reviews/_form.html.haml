@@ -10,18 +10,18 @@
       %td
         - if @app_review.author && @app_review.author_type == 'Gamer'
           = @app_review.author_name
-        - elsif @app_review.author.nil?   # Should only be hit in dev/staging when Gamers data is absent
+        - elsif @app_review.author.nil?
           = "Unknown Author"
-        -else
+        - else
           = f.select :author_id, options_from_collection_for_select(@employees, :id, :full_name, @app_review.author_id)
         = error_message_on @app_review, :author
     %tr
       %th= f.label :platform
-      %td= f.select :platform, options_for_select(App::PLATFORMS.each_pair.map(&:reverse), @app_review.platform)
+      %td= f.select :platform, options_for_select(App::PLATFORMS.invert, @app_review.platform)
     %tr
       %th= f.label :user_rating
       %td
-        = f.select :user_rating, ['thumbs down','no rating', 'thumbs up'].zip( [-1, 0, 1])
+        = f.select :user_rating, ['thumbs down', 'no rating', 'thumbs up'].zip( [-1, 0, 1])
         = error_message_on @gamer_review, :user_rating
     %tr
       %th= f.label :review_text

@@ -46,6 +46,7 @@ class Employee < ActiveRecord::Base
   def get_avatar_url
     "https://secure.gravatar.com/avatar/#{generate_gravatar_hash}?d=mm&s=123"
   end
+
   def generate_gravatar_hash
     Digest::MD5.hexdigest email.strip.downcase
   end

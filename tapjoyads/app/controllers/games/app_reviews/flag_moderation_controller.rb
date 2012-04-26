@@ -12,7 +12,7 @@ class Games::AppReviews::FlagModerationController < GamesController
   end
 
   def verb
-    t("text.games.app_review_concern_reported") #'Concern reported'
+    t("text.games.app_review_concern_reported")
   end
 
   def current_gamer_votes

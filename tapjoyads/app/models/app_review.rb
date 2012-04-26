@@ -43,11 +43,16 @@ class AppReview < ActiveRecord::Base
   def author_name
     case author_type
     when 'Gamer'
-      author.nil?  ? "Unknown Author" : author.get_gamer_nickname  #only nil on dev/staging when Gamers data absent
+      if !Rails.env.production? && author.nil?
+        "Unknown Author"
+      else
+        author.get_gamer_nickname
+      end
     when 'Employee'
       author.full_name
     end
   end
+
   def before_validation
     is_blank = text.blank?
     true
