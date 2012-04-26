@@ -6,8 +6,8 @@ class Gamer < ActiveRecord::Base
   has_many :app_reviews, :as => :author, :dependent => :destroy
 
   has_many :review_moderation_votes
-  has_many :helpful_review_votes, :class_name=>'HelpfulVote'
-  has_many :bury_review_votes, :class_name=>'BuryVote'
+  has_many :helpful_review_votes, :class_name => 'HelpfulVote'
+  has_many :bury_review_votes, :class_name => 'BuryVote'
 
   has_many :favorite_apps, :dependent => :destroy
   has_one :gamer_profile, :dependent => :destroy

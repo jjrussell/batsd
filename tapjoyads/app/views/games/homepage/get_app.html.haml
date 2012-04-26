@@ -36,10 +36,10 @@
       };
       var success = function( $el ){
         return function(data,textStatus){
-          var $par = $el.closest('.moderation-panel');
-          $par.html($('<span class="'+data.class+'"></span>').html(data.msg));
-          $par.delay(3000).slideUp('fast');
-        };
+            var $par = $el.closest('.moderation-panel');
+            $par.html($('<span class="'+data.class+'"></span>').html(data.msg));
+            $par.delay(3000).slideUp('fast');
+          };
       };
       return function(e){
           var $el = $(this);
@@ -48,7 +48,7 @@
           $.ajax({
              type: 'POST',
              url: url,
-             data: {value:value},
+             data: {value: value},
              success: success($el),
              error: error,
              dataType: 'json'
@@ -56,15 +56,14 @@
           e.preventDefault();
         };
     };
-    var reveal_review=function(){
+    var reveal_review = function(){
       var $el = $(this);
       var $root = $el.parents('div.line-item.review');
       $root.removeClass('fixed-height');
       $root.addClass('var-height');
     };
 
-
     $('#offer-detail').delegate('.more-btn','click', reveal_review);
-    $('#offer-detail').delegate('.yn a.y','click', flag_review( 1 ));
-    $('#offer-detail').delegate('.yn a.n','click', flag_review( -1 ));
-    $('#offer-detail').delegate('a.concern','click',flag_review( null ));
+    $('#offer-detail').delegate('.yn a.y','click', flag_review(1));
+    $('#offer-detail').delegate('.yn a.n','click', flag_review(-1));
+    $('#offer-detail').delegate('a.concern','click',flag_review(null));

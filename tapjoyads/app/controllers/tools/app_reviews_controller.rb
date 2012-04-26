@@ -8,12 +8,12 @@ class Tools::AppReviewsController < WebsiteController
   def index
     if params[:app_metadata_id]
       @app_metadata = AppMetadata.find(params[:app_metadata_id])
-      @app_reviews = @app_metadata.app_reviews.ordered_by_date.paginate({:page => params[:page], :per_page=>100})
-    elsif params[:author_type] && params[:author_id] && params[:author_type].match /^(Employee|Gamer)$/
+      @app_reviews = @app_metadata.app_reviews.ordered_by_date.paginate({:page => params[:page], :per_page => 100})
+    elsif params[:author_type] && params[:author_id] && params[:author_type].match(/^(Employee|Gamer)$/)
       @author = params[:author_type].constantize.find(params[:author_id])
-      @app_reviews = @author.app_reviews.ordered_by_date.paginate({:page => params[:page], :per_page=>100})
+      @app_reviews = @author.app_reviews.ordered_by_date.paginate({:page => params[:page], :per_page => 100})
     else
-      @app_reviews = AppReview.ordered_by_date.paginate({:page => params[:page], :per_page=>100})
+      @app_reviews = AppReview.ordered_by_date.paginate({:page => params[:page], :per_page => 100})
     end
   end
 
