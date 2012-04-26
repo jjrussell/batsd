@@ -833,7 +833,7 @@ private
       :xLabels => @x_labels,
       :main => {
         :unitPrefix => '$',
-        :names => Delayed.show? ? [ 'Total revenue', 'In app offerwall revenue', 'TJM offerwall revenue', 'Featured offer revenue', 'Display ad revenue' ] : [ 'Total revenue', 'Offerwall revenue', 'Featured offer revenue', 'Display ad revenue' ],
+        :names => Delayed.show? ? [ 'Total revenue', 'In app offerwall revenue', 'Tapjoy.com offerwall revenue', 'Featured offer revenue', 'Display ad revenue' ] : [ 'Total revenue', 'Offerwall revenue', 'Featured offer revenue', 'Display ad revenue' ],
         :data => [
           @stats['total_revenue'].map { |i| i / 100.0 },
           @stats['rewards_revenue'].map { |i| i / 100.0 },
@@ -912,7 +912,7 @@ private
 
   def tjm_offerwall_data
     {
-      :name => 'TJM offerwall',
+      :name => 'Tapjoy.com offerwall',
       :intervals => formatted_intervals,
       :xLabels => @x_labels,
       :main => {
