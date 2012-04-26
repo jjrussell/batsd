@@ -3,6 +3,7 @@ class DocumentsController < WebsiteController
   protect_from_forgery
 
   def privacy
+    redirect_to 'http://info.tapjoy.com/about-tapjoy/privacy-policy'
   end
 
   def privacy_mobile
