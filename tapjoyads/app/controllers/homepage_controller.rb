@@ -8,43 +8,23 @@ class HomepageController < WebsiteController
   end
 
   def contact
-    if params[:info]
-      case params[:info][:source]
-      when 'publishers_contact'
-        # TODO: this is submitted from /publishing. consolidate with regular contact page
-        TapjoyMailer.deliver_publisher_application(params[:info])
-        redirect_to :action => 'contact-thanks'
-      when 'performance', 'agencies'
-        if params[:info][:email] =~ Authlogic::Regex.email
-          TapjoyMailer.deliver_advertiser_application(params[:info])
-          render :json => nil
-        else
-          render :json => {:error => 'Invalid email address.'}
-        end
-      else
-        info = params[:info]
-        if info[:name].blank? || info[:email].blank? || info[:details].blank? || info[:reason].blank?
-          @error_msg = "All fields must be filled out."
-        else
-          TapjoyMailer.deliver_contact_us(params[:info])
-          params[:info] = nil
-          @success = true
-        end
-      end
-    end
+    redirect_to 'http://info.tapjoy.com/contact-us', :status => :moved_permanently
   end
 
   def about_us
+    redirect_to 'http://info.tapjoy.com/about-tapjoy', :status => :moved_permanently
   end
 
   def advertisers
+    redirect_to 'http://advertisers.tapjoy.com', :status => :moved_permanently
   end
 
   def app_developers
+    redirect_to 'http://developers.tapjoy.com', :status => :moved_permanently
   end
 
   def team
-    @employees = Employee.active_only
+    redirect_to 'http://info.tapjoy.com/about-tapjoy/leadership/executive-team', :status => :moved_permanently
   end
 
   def index
