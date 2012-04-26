@@ -97,6 +97,8 @@ FactoryGirl.define do
   end
 
   factory :app_metadata do
+    thumbs_up  0
+    thumbs_down 0
     store_name 'App Store'
     store_id   { Factory.next(:name) }
     name       { Factory.next(:name) }
