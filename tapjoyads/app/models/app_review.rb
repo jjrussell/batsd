@@ -25,18 +25,14 @@ class AppReview < ActiveRecord::Base
   @@per_page = 10
 
   def bury_by_author?(gamer_id)
-    # TODO: create a table for banned_reviewers
-    # overlimit = bury_votes_count > BURY_LIMIT
-    # bad_ratio = bury_votes_count > helpful_votes_count + 1
-    # author_is_not_viewer = author_id != gamer_id
-    # overlimit && bad_ratio && author_is_not_viewer
-    false
+    overlimit = bury_votes_count > BURY_LIMIT
+    bad_ratio = bury_votes_count > helpful_votes_count + 1
+    author_is_not_viewer = author_id != gamer_id
+    overlimit && bad_ratio && author_is_not_viewer
   end
 
   def moderation_rating
-    # TODO: create a table for banned_reviewers
-    # helpful_votes_count - bury_votes_count * 5
-    1
+    helpful_votes_count - bury_votes_count * 5
   end
 
   def user_rating=(new_rating)
