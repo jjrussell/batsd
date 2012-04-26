@@ -53,6 +53,15 @@ class Gamer < ActiveRecord::Base
     c.merge_validates_uniqueness_of_email_field_options(:case_sensitive => true)
   end
 
+  def bury_votes_count
+    extra_attributes[:bury_votes_count] || 0
+  end
+
+  def helpful_votes_count
+    extra_attributes[:helpful_votes_count] || 0
+  end
+
+
   def self.columns
     super.reject { |c| c.name == "use_gravatar" }
   end
