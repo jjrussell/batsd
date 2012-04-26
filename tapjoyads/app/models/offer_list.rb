@@ -46,6 +46,8 @@ class OfferList
 
     if @hide_rewarded_app_installs
       @type = case @type
+      when Offer::DEFAULT_OFFER_TYPE
+        Offer::NON_REWARDED_BACKFILLED_OFFER_TYPE
       when Offer::FEATURED_OFFER_TYPE
         Offer::NON_REWARDED_FEATURED_OFFER_TYPE
       when Offer::FEATURED_BACKFILLED_OFFER_TYPE
@@ -63,13 +65,6 @@ class OfferList
     else
       @offers = RailsCache.get_and_put("offers.#{@type}.#{@platform_name}.#{@hide_rewarded_app_installs}.#{@normalized_device_type}") do
         OfferCacher.get_unsorted_offers_prerejected(@type, @platform_name, @hide_rewarded_app_installs, @normalized_device_type)
-      end.value
-    end
-
-    #append NON_REWARDED_DISPLAY_OFFER_TYPE for non rewarded offerwall
-    if @type == Offer::DEFAULT_OFFER_TYPE && @currency && !@currency.rewarded?
-      @offers += RailsCache.get_and_put("offers.#{Offer::NON_REWARDED_DISPLAY_OFFER_TYPE}.#{@platform_name}.#{@hide_rewarded_app_installs}.#{@normalized_device_type}") do
-        OfferCacher.get_unsorted_offers_prerejected(Offer::NON_REWARDED_DISPLAY_OFFER_TYPE, @platform_name, @hide_rewarded_app_installs, @normalized_device_type)
       end.value
     end
 

@@ -3,7 +3,7 @@ ActionOffer
 class OfferCacher
 
   GROUP_SIZE            = 200
-  OFFER_TYPES           = [ Offer::DEFAULT_OFFER_TYPE, Offer::FEATURED_OFFER_TYPE, Offer::DISPLAY_OFFER_TYPE, Offer::NON_REWARDED_DISPLAY_OFFER_TYPE, Offer::NON_REWARDED_FEATURED_OFFER_TYPE, Offer::VIDEO_OFFER_TYPE, Offer::FEATURED_BACKFILLED_OFFER_TYPE, Offer::NON_REWARDED_FEATURED_BACKFILLED_OFFER_TYPE ]
+  OFFER_TYPES           = [ Offer::DEFAULT_OFFER_TYPE, Offer::FEATURED_OFFER_TYPE, Offer::DISPLAY_OFFER_TYPE, Offer::NON_REWARDED_DISPLAY_OFFER_TYPE, Offer::NON_REWARDED_FEATURED_OFFER_TYPE, Offer::VIDEO_OFFER_TYPE, Offer::FEATURED_BACKFILLED_OFFER_TYPE, Offer::NON_REWARDED_FEATURED_BACKFILLED_OFFER_TYPE, Offer::NON_REWARDED_BACKFILLED_OFFER_TYPE ]
   DEVICE_TYPES          = Offer::ALL_DEVICES | [ "" ]
   PLATFORMS             = App::PLATFORMS.values | [ "" ]
   HIDE_REWARDED_OPTIONS = [ true, false ]
@@ -27,7 +27,7 @@ class OfferCacher
         offer_list = Offer.enabled_offers.nonfeatured.rewarded.for_offer_list.non_video_offers.for_display_ads.to_a
         cache_unsorted_offers_prerejected(offer_list, Offer::DISPLAY_OFFER_TYPE, save_to_s3)
 
-        offer_list = Offer.enabled_offers.nonfeatured.non_rewarded.free.apps.non_video_offers.for_offer_list.to_a
+        displayed = offer_list = Offer.enabled_offers.nonfeatured.non_rewarded.free.apps.non_video_offers.for_offer_list.to_a
         cache_unsorted_offers_prerejected(offer_list, Offer::NON_REWARDED_DISPLAY_OFFER_TYPE, save_to_s3)
 
         offer_list = Offer.enabled_offers.featured.non_rewarded.free.non_video_offers.for_offer_list.to_a
@@ -35,6 +35,9 @@ class OfferCacher
 
         offer_list = Offer.enabled_offers.nonfeatured.non_rewarded.free.apps.non_video_offers.for_offer_list.to_a
         cache_unsorted_offers_prerejected(offer_list, Offer::NON_REWARDED_FEATURED_BACKFILLED_OFFER_TYPE, save_to_s3)
+
+        offer_list = (Offer.enabled_offers.nonfeatured.non_rewarded.for_offer_list.to_a + displayed).uniq
+        cache_unsorted_offers_prerejected(offer_list, Offer::NON_REWARDED_BACKFILLED_OFFER_TYPE, save_to_s3)
 
         offer_list = Offer.enabled_offers.video_offers.for_offer_list.to_a
         cache_unsorted_offers_prerejected(offer_list, Offer::VIDEO_OFFER_TYPE, save_to_s3)
