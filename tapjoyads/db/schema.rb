@@ -96,7 +96,7 @@ ActiveRecord::Schema.define(:version => 20120419190829) do
 
   add_index "app_reviews", ["app_id", "author_id"], :name => "index_app_reviews_on_app_id_and_author_id", :unique => true
   add_index "app_reviews", ["app_metadata_id", "author_id"], :name => "index_app_reviews_on_app_metadata_id_and_author_id", :unique => true
-  add_index "app_reviews", ["app_metadata_id", "updated_at"], :name => "app_reviews_get_app"
+  add_index "app_reviews", ["app_metadata_id", "updated_at", "is_blank"], :name => "app_reviews_get_app"
   add_index "app_reviews", ["id"], :name => "index_app_reviews_on_id", :unique => true
 
   create_table "approvals", :id => false, :force => true do |t|
@@ -458,8 +458,6 @@ ActiveRecord::Schema.define(:version => 20120419190829) do
     t.string   "twitter_access_token"
     t.string   "twitter_access_secret"
     t.text     "extra_attributes",       :limit => 2147483647
-    t.integer  "helpful_votes_count",                          :default => 0
-    t.integer  "bury_votes_count",                             :default => 0
   end
 
   add_index "gamers", ["confirmation_token"], :name => "index_gamers_on_confirmation_token", :unique => true
@@ -950,7 +948,8 @@ ActiveRecord::Schema.define(:version => 20120419190829) do
 
   add_index "resellers", ["id"], :name => "index_resellers_on_id", :unique => true
 
-  create_table "review_moderation_votes", :force => true do |t|
+  create_table "review_moderation_votes", :id => false, :force => true do |t|
+    t.string   "id",            :limit => 36, :null => false
     t.string   "app_review_id", :limit => 36, :null => false
     t.string   "gamer_id",      :limit => 36, :null => false
     t.string   "type",          :limit => 32
@@ -959,6 +958,7 @@ ActiveRecord::Schema.define(:version => 20120419190829) do
     t.datetime "updated_at"
   end
 
+  add_index "review_moderation_votes", ["id"], :name => "index_review_moderation_votes_on_id", :unique => true
   add_index "review_moderation_votes", ["type", "app_review_id"], :name => "index_review_moderation_votes_on_type_and_app_review_id"
   add_index "review_moderation_votes", ["type", "gamer_id"], :name => "index_review_moderation_votes_on_type_and_gamer_id"
 
