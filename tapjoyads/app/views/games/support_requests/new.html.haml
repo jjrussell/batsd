@@ -40,21 +40,20 @@
         .form-error.center
 
 - content_for :page_javascript do
-  :javascript
+  :plain
     $(function($){
       $('#show_offers').removeAttr("disabled");
       $('#show_offers').click(function() {
 
-        // Disable and hide button; show loading indicator
+        // Disable and hide button; show loading indicator; then do AJAX request
         $(this).attr("disabled", "disabled");
         $(this).fadeOut('fast', function() {
-          $('#tapjoy_loader').fadeIn('fast');
-        });
-
-        // Do AJAX request
-        $("#offer_dropdown").load('#{unresolved_clicks_games_support_requests_url(offer_dropdown_params)}', function() {
-          $('#tapjoy_loader').fadeOut('fast', function() {
-            $("#offer_dropdown").fadeIn('slow');
+          $('#tapjoy_loader').fadeIn('fast', function() {
+            $("#offer_dropdown").load('#{unresolved_clicks_games_support_requests_url(offer_dropdown_params)}', function() {
+              $('#tapjoy_loader').fadeOut('fast', function() {
+                $("#offer_dropdown").fadeIn('slow');
+              });
+            });
           });
         });
 
