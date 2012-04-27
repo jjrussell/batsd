@@ -101,6 +101,10 @@ EOJS
     end
   end
 
+  def active_class(path)
+    current_page?(path) ? 'active' : ''
+  end
+
   def is_mobile?
     (request.headers['User-Agent'] || '')[/mobile/i]
   end
