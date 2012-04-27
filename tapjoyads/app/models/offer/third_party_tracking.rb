@@ -30,9 +30,7 @@ module Offer::ThirdPartyTracking
     end
 
     define_method "#{method_name}_was" do
-      ret_val = super
-      return [] if ret_val.nil?
-      ret_val
+      super || []
     end
 
     define_method "queue_#{method_name.sub(/urls$/, 'requests')}" do |*args|
