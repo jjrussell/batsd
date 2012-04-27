@@ -442,6 +442,14 @@
         }
       }
 
+  :plain
+
+    setImpressionTrackingPixelURLs();
+    setClickTrackingPixelURLs();
+    setConversionTrackingPixelURLs();
+
+  - %w(impression click conversion).each do |tracking_type|
+    :plain
       $('.add_#{tracking_type}_tracking_url').click(function() {
         var template = $('##{tracking_type}_tracking_url_template');
         var templateClone = template.clone(true);
@@ -459,10 +467,6 @@
       });
 
   :plain
-
-    setImpressionTrackingPixelURLs();
-    setClickTrackingPixelURLs();
-    setConversionTrackingPixelURLs();
 
     })
 
