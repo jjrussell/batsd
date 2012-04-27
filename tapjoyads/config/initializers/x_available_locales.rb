@@ -1,4 +1,3 @@
-require 'lib/extensions/i18n_bom_fix'
 I18n.backend.class.send(:include, I18n::Backend::Fallbacks)
 
 I18n.backend.send(:init_translations)
