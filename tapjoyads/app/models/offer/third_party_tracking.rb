@@ -2,12 +2,15 @@ module Offer::ThirdPartyTracking
 
   def self.included(base)
     base.class_eval do
-      const_set(:TRUSTED_TRACKING_VENDORS, %w( phluantmobile.net ))
+      const_set(:TRUSTED_TRACKING_VENDORS, %w( phluantmobile.net srvntrk.com))
 
       [:impression_tracking_urls, :click_tracking_urls, :conversion_tracking_urls].each do |f|
         serialize f, Array
-        # TODO: uncomment this once we have a UI for adding tracking urls
-        # validates_each(f) { |record, attribute, value| record.validate_third_party_tracking_urls(attribute, value) }
+        validates_each(f) { |record, attribute, value| record.validate_third_party_tracking_urls(attribute, value) }
+      end
+
+      def self.trusted_third_party_tracking_vendors(connector = 'and')
+        Offer::TRUSTED_TRACKING_VENDORS.to_sentence(:two_words_connector => " #{connector} ", :last_word_connector => ", #{connector} ")
       end
 
     end
@@ -44,9 +47,11 @@ module Offer::ThirdPartyTracking
   def validate_third_party_tracking_urls(attribute, urls)
     urls.each do |url|
       uri = URI.parse(url) rescue (self.errors.add(attribute, "must all be valid urls") and return)
+      unless %w(http https).include? uri.scheme
+        self.errors.add(attribute, "must begin with http:// or https://") and return
+      end
       unless uri.host =~ /(^|\.)(#{Offer::TRUSTED_TRACKING_VENDORS.join('|').gsub('.','\\.')})$/
-        vendors_list = Offer::TRUSTED_TRACKING_VENDORS.to_sentence(:two_words_connector => ' or ', :last_word_connector => ', or ')
-        self.errors.add(attribute, "must all use a trusted vendor (#{vendors_list})")
+        self.errors.add(attribute, "must all use a trusted vendor (#{Offer.trusted_third_party_tracking_vendors('or')})")
         return
       end
     end
