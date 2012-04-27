@@ -243,6 +243,7 @@ en:
       app_review_h_no: "No"
       app_review_h_yes: "Yes"
       app_review_more: more...
+      app_review_num_voters: "from %{count} voters"
       app_review_report_concern: "Report concern"
       app_review_thanks_for_feedback: "Thank you for your feedback"
       app_review_was_helpful: "Was this review helpful?"

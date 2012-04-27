@@ -1,6 +1,7 @@
 class VideosController < ApplicationController
   layout 'api-games', :only => :complete
 
+  prepend_before_filter :decrypt_data_param, :only => [:complete]
   before_filter :lookup_udid, :set_publisher_user_id, :setup
 
   def index
