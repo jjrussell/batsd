@@ -57,6 +57,50 @@ class ToolsController < WebsiteController
     @margin = @net_revenue.to_f * 100.0 / @revenue.to_f
   end
 
+  def partner_monthly_balance
+    most_recent_period = Date.current.beginning_of_month.prev_month
+    @period = params[:period].present? ? Date.parse(params[:period]) : most_recent_period
+
+    @months = []
+    date = Date.parse('2009-06-01') #the first month of the platform
+    while date <= most_recent_period
+      @months << date.strftime('%b %Y')
+      date += 1.months
+    end
+
+    if !params[:partner_id].blank?
+      begin
+        @partners = [Partner.find(params[:partner_id])]
+      rescue
+        flash.now[:error] = 'Partner ID not found'
+        return
+      end
+    elsif !params[:q].blank?
+      query = params[:q].gsub("'", '')
+      @partners = Partner.search(query).scoped(:include => [ :offers, :users ]).uniq
+    else
+      return
+    end
+
+    if @partners.empty?
+      flash.now[:error] = 'Partner not found'
+      return
+    end
+
+    MonthlyAccounting.using_slave_db do
+      @beginning_balances = []
+      @ending_balances = []
+      @partners.each do |partner|
+        conditions = [ "month = ? AND year = ? AND partner_id = ?", @period.month, @period.year, partner.id ]
+        monthly_accounting = MonthlyAccounting.find(:all, :conditions => conditions).first
+        beginning_balance = (monthly_accounting.nil?) ? "N/A" : monthly_accounting.beginning_balance / 100.0
+        ending_balance = (monthly_accounting.nil?) ? "N/A" : monthly_accounting.ending_balance / 100.0
+        @beginning_balances << beginning_balance
+        @ending_balances    << ending_balance
+      end
+    end
+  end
+
   def money
     @money_stats = Mc.get('money.cached_stats') || {}
     @last_updated = Time.zone.at(Mc.get('money.last_updated') || 0)

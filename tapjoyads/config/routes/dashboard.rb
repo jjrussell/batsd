@@ -73,7 +73,7 @@ ActionController::Routing::Routes.draw do |map|
 
   # Admin tools routes
   map.resources :tools, :only => :index,
-    :collection => { :monthly_data => :get, :new_transfer => :get,
+    :collection => { :monthly_data => :get, :new_transfer => :get, :partner_monthly_balance => :get,
                      :money => :get, :failed_sdb_saves => :get, :disabled_popular_offers => :get,
                      :sdb_metadata => :get, :reset_device => :get, :send_currency_failures => :get, :sanitize_users => :get,
                      :resolve_clicks => :post, :sqs_lengths => :get, :ses_status => :get,
