@@ -31,14 +31,14 @@ namespace :admin do
         "--single-transaction",
       ].join(' ')
 
-      options1 = tables_to_ignore.map do |table|
+      ignore_options = tables_to_ignore.map do |table|
         "--ignore-table=#{source['database']}.gamers"
       end.join(' ')
 
-      options2 = [ "--no-data", tables_to_ignore.join(' ') ].join(' ')
+      nodata_options = [ "--no-data", tables_to_ignore.join(' ') ].join(' ')
 
-      system("mysqldump #{options} #{options1} #{source['database']} > #{dump_file}")
-      system("mysqldump #{options} #{options2} #{source['database']} > #{dump_file2}")
+      system("mysqldump #{options} #{ignore_options} #{source['database']} > #{dump_file}")
+      system("mysqldump #{options} #{nodata_options} #{source['database']} > #{dump_file2}")
     end
     puts("finished in #{time} seconds.")
 
