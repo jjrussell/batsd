@@ -46,6 +46,7 @@ authorization do
                                      :http_codes,
                                      :bytes_sent,
                                      :vertica_status,
+                                     :requests_per_minute,
                                    ]
   end
 
@@ -95,7 +96,7 @@ authorization do
 
   role :reporting do
     has_permission_on :statz, :to => [ :index, :show, :global, :publisher, :advertiser, :support_request_reward_ratio ]
-    has_permission_on :search, :to => [ :offers ]
+    has_permission_on :search, :to => [ :offers, :brands ]
   end
 
   role :executive do
@@ -118,7 +119,7 @@ authorization do
     includes :file_sharer
     has_permission_on :users, :to => [ :approve ]
     has_permission_on :statz, :to => [ :index, :show, :edit, :update, :new, :create, :last_run_times, :udids, :download_udids, :global, :publisher, :advertiser, :support_request_reward_ratio ]
-    has_permission_on :search, :to => [ :offers, :partners, :users, :currencies ]
+    has_permission_on :search, :to => [ :offers, :partners, :users, :currencies, :brands ]
     has_permission_on :tools, :to => [ :disabled_popular_offers, :sanitize_users, :update_user, :resolve_clicks, :new_transfer, :device_info, :update_device, :send_currency_failures ]
     has_permission_on :tools_enable_offer_requests, :to => [ :index, :update ]
     has_permission_on :activities, :to => [ :index ]
@@ -143,6 +144,8 @@ authorization do
     has_permission_on :tools_offers, :to => [ :creative, :approve_creative, :reject_creative ]
     has_permission_on :tools_currency_approvals, :to => [ :index, :history, :approve, :reject]
     has_permission_on :tools_survey_offers, :to => [ :index, :show, :new, :create, :edit, :update, :destroy, :toggle_enabled ]
+    has_permission_on :tools_brand_offers, :to => [ :index, :create, :delete ]
+    has_permission_on :tools_brands, :to => [ :index, :new, :create, :edit, :update, :show ]
     has_permission_on :tools_clients, :to => [ :index, :show, :new, :create, :edit, :update, :add_partner, :remove_partner ]
   end
 
