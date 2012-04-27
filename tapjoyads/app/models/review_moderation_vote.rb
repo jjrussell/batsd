@@ -5,7 +5,7 @@ end
 
 class HelpfulVote < ReviewModerationVote
   belongs_to :app_review, :counter_cache => :helpful_votes_count
-  belongs_to :gamer  #, :counter_cache => :helpful_votes_count
+  belongs_to :gamer
 
   after_create :incr_sum_on_app_review
   after_create :incr_count_on_gamer
@@ -41,6 +41,7 @@ end
 
 class BuryVote < ReviewModerationVote
   belongs_to :app_review, :counter_cache => :bury_votes_count
+<<<<<<< HEAD
   belongs_to :gamer #, :counter_cache => :bury_votes_count
 
   after_create :incr_count_on_gamer
@@ -59,4 +60,7 @@ class BuryVote < ReviewModerationVote
     gamer.save
   end
 
+=======
+  belongs_to :gamer
+>>>>>>> tapjoy/master
 end

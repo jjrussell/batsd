@@ -247,6 +247,13 @@ class OpsController < WebsiteController
     end
   end
 
+  def requests_per_minute
+    rpms = redis.mget(*redis.keys('request_counters:*')).map(&:to_i)
+    sum  = ActionController::Base.helpers.number_with_delimiter(rpms.sum)
+    mean = ActionController::Base.helpers.number_with_delimiter(rpms.mean.to_i)
+    render :json => { :sum => sum, :mean => mean }
+  end
+
   private
 
   def redis

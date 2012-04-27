@@ -328,8 +328,17 @@ FactoryGirl.define do
     button_url            'https://www.tapjoy.com'
   end
 
+  factory :brand do
+    name { Factory.next(:name) }
+  end
+
+  factory :brand_offer_mapping do
+    brand {Factory(:brand)}
+    offer {Factory(:app).primary_offer }
+    allocation 1
+  end
+
   factory :client do
     name  { Factory.next(:name) }
   end
-
 end
