@@ -367,9 +367,9 @@ class Appstats
 
   def to_csv
     data =  "start_time,end_time,paid_clicks,paid_installs,new_users,paid_cvr,spend,itunes_rank_overall_free_united_states,"
-    data += "offerwall_views,published_offer_clicks,published_offers_completed,published_cvr,offerwall_revenue,offerwall_ecpm," <<
-      "tjm_offerwall_views,tjm_published_offer_clicks,tjm_published_offers_completed,tjm_published_cvr,tjm_offerwall_revenue,tjm_offerwall_ecpm," <<
-      "display_ads_revenue,display_ads_ecpm,featured_revenue,featured_ecpm"
+    data += "offerwall_views,published_offer_clicks,published_offers_completed,published_cvr,offerwall_revenue,offerwall_ecpm,"
+    data += "tjm_offerwall_views,tjm_published_offer_clicks,tjm_published_offers_completed,tjm_published_cvr,tjm_offerwall_revenue,tjm_offerwall_ecpm," if Delayed.show?
+    data += "display_ads_revenue,display_ads_ecpm,featured_revenue,featured_ecpm"
     data += ",daily_active_users,arpdau" if @granularity == :daily
     data = [data]
     get_labels_and_intervals unless @intervals.present?
@@ -392,14 +392,16 @@ class Appstats
         @stats['rewards_cvr'][i],
         NumberHelper.number_to_currency(@stats['rewards_revenue'][i] / 100.0, :delimiter => ''),
         NumberHelper.number_to_currency(@stats['offerwall_ecpm'][i] / 100.0, :delimiter => ''),
-
+      ]
+      line += [
         @stats['tjm_offerwall_views'][i],
         @stats['tjm_rewards_opened'][i],
         @stats['tjm_rewards'][i],
         @stats['tjm_rewards_cvr'][i],
         NumberHelper.number_to_currency(@stats['tjm_rewards_revenue'][i] / 100.0, :delimiter => ''),
         NumberHelper.number_to_currency(@stats['tjm_offerwall_ecpm'][i] / 100.0, :delimiter => ''),
-
+      ] if Delayed.show?
+      line += [
         NumberHelper.number_to_currency(@stats['display_revenue'][i] / 100.0, :delimiter => ''),
         NumberHelper.number_to_currency(@stats['display_ecpm'][i] / 100.0, :delimiter => ''),
         NumberHelper.number_to_currency(@stats['featured_revenue'][i] /100.0, :delimiter => ''),
