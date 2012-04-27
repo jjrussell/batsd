@@ -85,6 +85,7 @@ class ClickController < ApplicationController
     test_reward.publisher_app_id  = params[:publisher_app_id]
     test_reward.advertiser_app_id = params[:publisher_app_id]
     test_reward.offer_id          = params[:publisher_app_id]
+    test_reward.mac_address       = params[:mac_address]
     test_reward.currency_reward   = @currency.get_reward_amount(@test_offer)
     test_reward.publisher_amount  = 0
     test_reward.advertiser_amount = 0
@@ -107,6 +108,7 @@ class ClickController < ApplicationController
     test_reward.publisher_app_id  = params[:publisher_app_id]
     test_reward.advertiser_app_id = params[:publisher_app_id]
     test_reward.offer_id          = params[:publisher_app_id]
+    test_reward.mac_address       = params[:mac_address]
     test_reward.currency_reward   = @currency.get_reward_amount(@offer)
     test_reward.publisher_amount  = 0
     test_reward.advertiser_amount = 0
