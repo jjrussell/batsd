@@ -47,12 +47,12 @@ namespace :admin do
 
     print("Restoring backup to the #{Rails.env} database... ")
     time = Benchmark.realtime do
+      options = [
+        "--user=#{dest['username']}",
+        "--password=#{dest['password']}",
+        "--host=#{dest['host']}",
+      ].join(' ')
       [ dump_file, dump_file2 ].each do |file|
-        options = [
-          "--user=#{dest['username']}",
-          "--password=#{dest['password']}",
-          "--host=#{dest['host']}",
-        ].join(' ')
         system("mysql #{options} #{dest['database']} < #{file}")
       end
     end
