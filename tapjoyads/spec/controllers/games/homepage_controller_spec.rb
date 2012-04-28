@@ -91,7 +91,7 @@ describe Games::HomepageController do
     before :each do
       @good_author = Factory(:gamer)
       @stellar_author = Factory(:gamer)
-      @troll_author = Factory(:gamer, :bury_votes_count => 100)
+      @troll_author = Factory(:gamer, :been_buried_count => 100)
       @gamer = Factory(:gamer)
       @offer = Factory(:app).primary_offer
       @good_review = Factory(:app_review, :bury_votes_count=>0, :helpful_votes_count=>10, :author=>@good_author)

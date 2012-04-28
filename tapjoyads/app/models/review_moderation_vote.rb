@@ -14,18 +14,20 @@ class HelpfulVote < ReviewModerationVote
   before_destroy :decr_count_on_gamer
 
   def incr_count_on_gamer
-    gamer.helpful_votes_count ||= 0
-    gamer.helpful_votes_count += 1
-    gamer.save
-
+    if app_review.author && app_review.author.class == 'Gamer'
+      app_review.author.been_helpful_count ||= 0
+      app_review.author.been_helpful_count += 1
+      app_review.author.save
+    end
   end
 
   def decr_count_on_gamer
-    gamer.helpful_votes_count ||= 0
-    gamer.helpful_votes_count -= 1
-    gamer.helpful_votes_count = 0 if gamer.helpful_votes_count < 0
-    gamer.save
-
+    if app_review.author && app_review.author.class == 'Gamer'
+      app_review.author.been_helpful_count ||= 0
+      app_review.author.been_helpful_count -= 1
+      app_review.author.been_helpful_count = 0 if gamer.been_helpful_count < 0
+      app_review.author.save
+    end
   end
 
   def incr_sum_on_app_review
@@ -47,16 +49,19 @@ class BuryVote < ReviewModerationVote
   before_destroy :decr_count_on_gamer
 
   def incr_count_on_gamer
-    gamer.bury_votes_count ||= 0
-    gamer.bury_votes_count += 1
-    gamer.save
+    if app_review.author && app_review.author.class == 'Gamer'
+      app_review.author.been_buried_count ||= 0
+      app_review.author.been_buried_count += 1
+      app_review.author.save
+    end
   end
 
   def decr_count_on_gamer
-    gamer.bury_votes_count ||= 0
-    gamer.bury_votes_count -= 1
-    gamer.bury_votes_count = 0 if gamer.bury_votes_count < 0
-    gamer.save
+    if app_review.author && app_review.author.class == 'Gamer'
+      app_review.author.been_buried_count ||= 0
+      app_review.author.been_buried_count -= 1
+      app_review.author.been_buried_count = 0 if gamer.been_buried_count < 0
+      app_review.author.save
+    end
   end
-
 end
