@@ -14,16 +14,16 @@ class HelpfulVote < ReviewModerationVote
   before_destroy :decr_count_on_gamer
 
   def incr_count_on_gamer
-    gamer.extra_attributes[:helpful_votes_count] ||= 0
-    gamer.extra_attributes[:helpful_votes_count] += 1
+    gamer.helpful_votes_count ||= 0
+    gamer.helpful_votes_count += 1
     gamer.save
 
   end
 
   def decr_count_on_gamer
-    gamer.extra_attributes[:helpful_votes_count] ||= 0
-    gamer.extra_attributes[:helpful_votes_count] -= 1
-    gamer.extra_attributes[:helpful_votes_count] = 0 if gamer.extra_attributes[:helpful_votes_count] < 0
+    gamer.helpful_votes_count ||= 0
+    gamer.helpful_votes_count -= 1
+    gamer.helpful_votes_count = 0 if gamer.helpful_votes_count < 0
     gamer.save
 
   end
@@ -47,15 +47,15 @@ class BuryVote < ReviewModerationVote
   before_destroy :decr_count_on_gamer
 
   def incr_count_on_gamer
-    gamer.extra_attributes[:bury_votes_count] ||= 0
-    gamer.extra_attributes[:bury_votes_count] += 1
+    gamer.bury_votes_count ||= 0
+    gamer.bury_votes_count += 1
     gamer.save
   end
 
   def decr_count_on_gamer
-    gamer.extra_attributes[:bury_votes_count] ||= 0
-    gamer.extra_attributes[:bury_votes_count] -= 1
-    gamer.extra_attributes[:bury_votes_count] = 0 if gamer.extra_attributes[:bury_votes_count] < 0
+    gamer.bury_votes_count ||= 0
+    gamer.bury_votes_count -= 1
+    gamer.bury_votes_count = 0 if gamer.bury_votes_count < 0
     gamer.save
   end
 
