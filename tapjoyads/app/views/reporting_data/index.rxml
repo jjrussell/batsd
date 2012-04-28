@@ -57,6 +57,17 @@ xml.MarketingData do
       xml.DisplayClicksHourly appstats.stats['display_clicks'].join(',')
       xml.DisplayConversions appstats.stats['display_conversions'].sum
       xml.DisplayConversionsHourly appstats.stats['display_conversions'].join(',')
+
+      if Delayed.show?
+        xml.TJMOfferwallRevenue appstats.stats['tjm_rewards_revenue'].sum
+        xml.TJMOfferwallRevenueHourly appstats.stats['tjm_rewards_revenue'].join(',')
+        xml.TJMOfferwallImpressions appstats.stats['tjm_offerwall_views'].sum
+        xml.TJMOfferwallImpressionsHourly appstats.stats['tjm_offerwall_views'].join(',')
+        xml.TJMOfferwallClicks appstats.stats['tjm_rewards_opened'].sum
+        xml.TJMOfferwallClicksHourly appstats.stats['tjm_rewards_opened'].join(',')
+        xml.TJMOfferwallConversions appstats.stats['tjm_rewards'].sum
+        xml.TJMOfferwallConversionsHourly appstats.stats['tjm_rewards'].join(',')
+      end
     end
   end
 end

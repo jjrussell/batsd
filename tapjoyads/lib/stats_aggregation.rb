@@ -125,6 +125,7 @@ class StatsAggregation
       is_active = false
       stat_rows.each_value do |stat_row|
         if stat_row.get_hourly_count('offerwall_views').sum > 0 ||
+            stat_row.get_hourly_count('tjm_offerwall_views').sum > 0 ||
             stat_row.get_hourly_count('paid_clicks').sum > 0 ||
             stat_row.get_hourly_count('display_ads_requested').sum > 0 ||
             stat_row.get_hourly_count('featured_offers_requested').sum > 0 ||

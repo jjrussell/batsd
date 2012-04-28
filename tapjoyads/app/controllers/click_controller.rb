@@ -164,7 +164,13 @@ class ClickController < ApplicationController
     end
     return if recently_clicked?
 
-    wr_path = params[:source] == 'featured' ? 'featured_offer_click' : 'offer_click'
+    if params[:source] == 'tj_games' && Delayed.show?
+      wr_path = 'tjm_offer_click'
+    elsif params[:source] == 'featured'
+      wr_path = 'featured_offer_click'
+    else
+      wr_path = 'offer_click'
+    end
     build_web_request(wr_path)
   end
 
