@@ -17,11 +17,11 @@ describe Games::AppReviews::FlagModerationController do
   context 'when flagging a message as inappropriate' do
     it 'flags a bad review' do
       post(:create, {:app_review_id => @troll_review.id})
-      @gamer.bury_review_votes.count.should == 1
+      @troll_review.author.been_buried_count.should == 0
       @troll_review.bury_votes.count.should == 1
       @gamer.reload
       @troll_review.reload
-      @gamer.bury_votes_count.should == 1
+      @troll_review.author.been_buried_count.should == 1
       @troll_review.bury_votes.size.should == 1
       @troll_review.helpful_votes.count.should == 0
       should respond_with_content_type :json
@@ -43,7 +43,7 @@ describe Games::AppReviews::FlagModerationController do
       post(:create, {:app_review_id => @user_owned_review.id, :vote => 'flag'})
       @troll_review.helpful_votes.count.should == 0
       @troll_review.bury_votes.count.should == 0
-      @gamer.bury_review_votes.count.should == 0
+      @troll_review.author.been_buried_count.should == 0
       should respond_with_content_type :json
       should respond_with(403)
     end
@@ -51,7 +51,7 @@ describe Games::AppReviews::FlagModerationController do
       post(:create, {:app_review_id => @troll_review.id, :vote => 'flag'})
       delete(:destroy, {:app_review_id => @troll_review.id, :vote => 'flag'})
       @troll_review.bury_votes.count.should == 0
-      @gamer.bury_review_votes.count.should == 0
+      @troll_review.author.been_buried_count.should == 0
       should respond_with_content_type :json
       should respond_with(200)
     end
@@ -87,7 +87,7 @@ describe Games::AppReviews::FaveModerationController do
   context 'when upvoting a message' do
     it 'upvotes a good review' do
       post(:create, {:app_review_id => @good_review.id, :value => 1})
-      @gamer.helpful_review_votes.count.should == 1
+      @troll_review.author.been_helpful_count.should == 1
       @good_review.bury_votes.count.should == 0
       @good_review.helpful_votes.count.should == 1
       @good_review.reload

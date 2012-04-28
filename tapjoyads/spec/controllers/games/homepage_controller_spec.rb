@@ -92,4 +92,53 @@ describe Games::HomepageController do
       I18n.locale.should == :ko
     end
   end
+  context "#get_app" do
+    before :each do
+      @good_author = Factory(:gamer)
+      @stellar_author = Factory(:gamer)
+      @troll_author = Factory(:gamer, :been_buried_count => 100)
+      @gamer = Factory(:gamer)
+      @offer = Factory(:app).primary_offer
+      @good_review = Factory(:app_review, :bury_votes_count=>0, :helpful_votes_count=>10, :author=>@good_author)
+      @stellar_review = Factory(:app_review, :bury_votes_count=>0, :helpful_votes_count=>100, :author=>@stellar_author)
+      @good_review_by_troll_author = Factory(:app_review, :bury_votes_count=>0, :helpful_votes_count=>1, :author=>@troll_author)
+      @troll_review_by_good_author = Factory(:app_review, :bury_votes_count=>100, :author=>@good_author)
+      activate_authlogic
+      login_as(@gamer)
+      AppReview.expects(:paginate_all_by_app_metadata_id_and_is_blank).returns([@good_review, @troll_review_by_good_author, @stellar_review, @good_review_by_troll_author])
+    end
+    context 'troll author sees' do
+      before :each do
+        controller.stubs(:current_gamer).returns(@troll_author)
+        get(:get_app, :id=>@offer.id)
+      end
+      it 'sees good review, stellar review, own troll-authored but not good-authored troll ' do
+        assigns[:app_reviews].count.should == 3
+        assigns[:app_reviews].should == [@stellar_review, @good_review, @good_review_by_troll_author]
+      end
+    end
+    context 'good author viewer ' do
+      before :each do
+        controller.stubs(:current_gamer).returns(@good_author)
+        get(:get_app, :id=>@offer.id)
+      end
+      it 'sees good review, stellar review, own troll review, but not good review by troll author' do
+        assigns[:app_reviews].count.should == 3
+        assigns[:app_reviews].should == [@stellar_review, @good_review, @troll_review_by_good_author]
+      end
+    end
+    context 'unassociated gamer viewer' do
+      before :each do
+        controller.stubs(:current_gamer).returns(@gamer)
+        get(:get_app, :id=>@offer.id)
+      end
+      it 'sees good review, stellar review,  but not troll review or troll-authored review' do
+        assigns[:app_reviews].count.should == 2
+      end
+      it 'sees stellar review before good review' do
+        assigns[:app_reviews].should == [@stellar_review, @good_review]
+        assigns[:app_reviews].should_not == [@good_review, @stellar_review]
+      end
+    end
+  end
 end

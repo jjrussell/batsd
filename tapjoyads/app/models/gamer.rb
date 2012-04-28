@@ -54,15 +54,6 @@ class Gamer < ActiveRecord::Base
     c.merge_validates_uniqueness_of_email_field_options(:case_sensitive => true)
   end
 
-  def bury_votes_count
-    extra_attributes[:bury_votes_count] || 0
-  end
-
-  def helpful_votes_count
-    extra_attributes[:helpful_votes_count] || 0
-  end
-
-
   def self.columns
     super.reject { |c| c.name == "use_gravatar" }
   end
@@ -84,8 +75,8 @@ class Gamer < ActiveRecord::Base
   # Example Usage: list the attribute name here, then you could access it as a normal attribute
   # serialized_extra_attributes_accessor :completed_offer_count
 
-  serialized_extra_attributes_accessor :bury_votes_count
-  serialized_extra_attributes_accessor :helpful_votes_count
+  serialized_extra_attributes_accessor :been_buried_count
+  serialized_extra_attributes_accessor :been_helpful_count
 
   def confirm!
     self.confirmed_at = Time.zone.now
