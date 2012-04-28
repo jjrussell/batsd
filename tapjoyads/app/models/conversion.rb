@@ -10,7 +10,7 @@ class Conversion < ActiveRecord::Base
     'install_jailbroken'          => 4,
     'action'                      => 5,
     'video'                       => 6,
-    'reengagement'                => 7,
+    'reengagement'                => 7, #type added
 
     # Special
     'imported'                    => 999,
@@ -23,7 +23,7 @@ class Conversion < ActiveRecord::Base
     'display_install_jailbroken'  => 1004,
     'display_action'              => 1005,
     'display_video'               => 1006,
-    'display_reengagement'        => 1007,
+    'display_reengagement'        => 1007, #type added
 
     # Featured types (all base types +2000)
     'featured_offer'              => 2000,
@@ -33,7 +33,7 @@ class Conversion < ActiveRecord::Base
     'featured_install_jailbroken' => 2004,
     'featured_action'             => 2005,
     'featured_video'              => 2006,
-    'featured_reengagement'       => 2007,
+    'featured_reengagement'       => 2007, #type added
 
     # TJM types (all base types +3000)
     'tjm_offer'                   => 3000,
@@ -46,7 +46,7 @@ class Conversion < ActiveRecord::Base
     'tjm_reengagement'            => 3007,
   }
 
-  STAT_TO_REWARD_TYPE_MAP = {
+  STAT_TO_REWARD_TYPE_MAP = { #but didn't update here
     'offers'                    => { :reward_types => [ 0, 2, 3, 5, 6 ],                            :attr_name => 'publisher_app_id' },
     'published_installs'        => { :reward_types => [ 1, 4 ],                                     :attr_name => 'publisher_app_id' },
     'display_conversions'       => { :reward_types => [ 1000, 1001, 1002, 1003, 1004, 1005, 1006 ], :attr_name => 'publisher_app_id' },
@@ -78,7 +78,7 @@ class Conversion < ActiveRecord::Base
   named_scope :created_since, lambda { |date| { :conditions => [ "created_at >= ?", date ] } }
   named_scope :created_between, lambda { |start_time, end_time| { :conditions => [ "created_at >= ? AND created_at < ?", start_time, end_time ] } }
 
-  def self.get_stat_definitions(reward_type)
+  def self.get_stat_definitions(reward_type) #or here?
     case reward_type
     when 0, 2, 3, 5, 6
       [ { :stat => 'offers',         :attr => :publisher_app_id },
