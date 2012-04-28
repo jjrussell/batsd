@@ -41,8 +41,8 @@ end
 
 class BuryVote < ReviewModerationVote
   belongs_to :app_review, :counter_cache => :bury_votes_count
-<<<<<<< HEAD
-  belongs_to :gamer #, :counter_cache => :bury_votes_count
+
+  belongs_to :gamer
 
   after_create :incr_count_on_gamer
   before_destroy :decr_count_on_gamer
@@ -60,7 +60,4 @@ class BuryVote < ReviewModerationVote
     gamer.save
   end
 
-=======
-  belongs_to :gamer
->>>>>>> tapjoy/master
 end
