@@ -33,7 +33,7 @@ class Conversion < ActiveRecord::Base
     'featured_install_jailbroken' => 2004,
     'featured_action'             => 2005,
     'featured_video'              => 2006,
-    'featured_reengagement'       => 2007, #type added
+    'featured_reengagement'       => 2007,
 
     # TJM types (all base types +3000)
     'tjm_offer'                   => 3000,
