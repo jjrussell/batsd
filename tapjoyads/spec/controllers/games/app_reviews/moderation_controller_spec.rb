@@ -45,7 +45,7 @@ describe Games::AppReviews::FlagModerationController do
       @troll_review.bury_votes.count.should == 0
       @gamer.bury_review_votes.count.should == 0
       should respond_with_content_type :json
-      should respond_with(401)
+      should respond_with(403)
     end
     it 'un-does an errant flag' do
       post(:create, {:app_review_id => @troll_review.id, :vote => 'flag'})
