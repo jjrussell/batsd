@@ -26,13 +26,7 @@ class ToolsController < WebsiteController
   def monthly_data
     most_recent_period = Date.current.beginning_of_month.prev_month
     @period = params[:period].present? ? Date.parse(params[:period]) : most_recent_period
-
-    @months = []
-    date = Date.parse('2009-06-01') #the first month of the platform
-    while date <= most_recent_period
-      @months << date.strftime('%b %Y')
-      date += 1.month
-    end
+    @months = months_list(most_recent_period)
 
     conditions = [ "month = ? AND year = ? AND partner_id != '#{TAPJOY_PARTNER_ID}'", @period.month, @period.year ]
     MonthlyAccounting.using_slave_db do
@@ -60,13 +54,7 @@ class ToolsController < WebsiteController
   def partner_monthly_balance
     most_recent_period = Date.current.beginning_of_month.prev_month
     @period = params[:period].present? ? Date.parse(params[:period]) : most_recent_period
-
-    @months = []
-    date = Date.parse('2009-06-01') #the first month of the platform
-    while date <= most_recent_period
-      @months << date.strftime('%b %Y')
-      date += 1.months
-    end
+    @months = months_list(most_recent_period)
 
     if !params[:partner_id].blank?
       begin
@@ -87,17 +75,14 @@ class ToolsController < WebsiteController
       return
     end
 
-    MonthlyAccounting.using_slave_db do
-      @beginning_balances = []
-      @ending_balances = []
-      @partners.each do |partner|
-        conditions = [ "month = ? AND year = ? AND partner_id = ?", @period.month, @period.year, partner.id ]
-        monthly_accounting = MonthlyAccounting.find(:all, :conditions => conditions).first
-        beginning_balance = (monthly_accounting.nil?) ? "N/A" : monthly_accounting.beginning_balance / 100.0
-        ending_balance = (monthly_accounting.nil?) ? "N/A" : monthly_accounting.ending_balance / 100.0
-        @beginning_balances << beginning_balance
-        @ending_balances    << ending_balance
-      end
+    @beginning_balances = []
+    @ending_balances = []
+    @partners.each do |partner|
+      monthly_accounting = partner.monthly_accounting(@period.year, @period.month)
+      beginning_balances = (monthly_accounting.nil?) ? "N/A" : monthly_accounting.beginning_balance / 100.0
+      ending_balances = (monthly_accounting.nil?) ? "N/A" : monthly_accounting.ending_balance / 100.0
+      @beginning_balances << beginning_balances
+      @ending_balances << ending_balances
     end
   end
 
@@ -448,6 +433,19 @@ class ToolsController < WebsiteController
 
   def downcase_udid
     params[:udid] = params[:udid].downcase if params[:udid].present?
+  end
+
+
+private
+
+  def months_list(most_recent_period)
+    @months = []
+    date = Date.parse('2009-06-01') #the first month of the platform
+    while date <= most_recent_period
+      @months << date.strftime('%b %Y')
+      date += 1.months
+    end
+    return @months
   end
 
 end
