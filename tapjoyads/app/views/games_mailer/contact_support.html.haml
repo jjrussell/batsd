@@ -46,7 +46,7 @@
     %br
     %strong Click:
     = @click.present? ? @click.key : ""
-    = #@click.present? ? "[#{device_info_tools_url(:click_key => @click.key, :host => URI.parse(DASHBOARD_URL).host)}]" : ""
+    = @click.present? ? "[#{@click.info_tool_url}]" : ""
     %br
     %br
     %strong Description

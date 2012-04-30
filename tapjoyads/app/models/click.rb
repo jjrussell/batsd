@@ -121,6 +121,13 @@ class Click < SimpledbShardedResource
     end
   end
 
+  # For use within TJM (since dashboard URL helpers aren't available within TJM)
+  def info_tool_url
+    url = "#{URI.parse(DASHBOARD_URL).scheme}://" +
+          "#{URI.parse(DASHBOARD_URL).host}" +
+          "/tools/device_info?click_key=#{self.key}"
+  end
+
   private
 
   def url_to_resolve
