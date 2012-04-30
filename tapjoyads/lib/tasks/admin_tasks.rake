@@ -21,9 +21,24 @@ namespace :admin do
     dump_file2   = "tmp/#{source['database']}2.sql"
 
     print("Backing up the production database... ")
+    tables_to_ignore = %w( gamers gamer_profiles gamer_devices app_reviews conversions payout_infos )
     time = Benchmark.realtime do
-      system("mysqldump -u #{source['username']} --password=#{source['password']} -h #{source['host']} --single-transaction --ignore-table=#{source['database']}.gamers --ignore-table=#{source['database']}.gamer_profiles --ignore-table=#{source['database']}.gamer_devices --ignore-table=#{source['database']}.conversions --ignore-table=#{source['database']}.payout_infos #{source['database']} > #{dump_file}")
-      system("mysqldump -u #{source['username']} --password=#{source['password']} -h #{source['host']} --single-transaction --no-data #{source['database']} gamers gamer_profiles gamer_devices conversions payout_infos > #{dump_file2}")
+
+      options = [
+        "--user=#{source['username']}",
+        "--password=#{source['password']}",
+        "--host=#{source['host']}",
+        "--single-transaction",
+      ].join(' ')
+
+      ignore_options = tables_to_ignore.map do |table|
+        "--ignore-table=#{source['database']}.gamers"
+      end.join(' ')
+
+      nodata_options = [ "--no-data", tables_to_ignore.join(' ') ].join(' ')
+
+      system("mysqldump #{options} #{ignore_options} #{source['database']} > #{dump_file}")
+      system("mysqldump #{options} #{nodata_options} #{source['database']} > #{dump_file2}")
     end
     puts("finished in #{time} seconds.")
 
@@ -32,8 +47,14 @@ namespace :admin do
 
     print("Restoring backup to the #{Rails.env} database... ")
     time = Benchmark.realtime do
-      system("mysql -u #{dest['username']} --password=#{dest['password']} -h #{dest['host']} #{dest['database']} < #{dump_file}")
-      system("mysql -u #{dest['username']} --password=#{dest['password']} -h #{dest['host']} #{dest['database']} < #{dump_file2}")
+      options = [
+        "--user=#{dest['username']}",
+        "--password=#{dest['password']}",
+        "--host=#{dest['host']}",
+      ].join(' ')
+      [ dump_file, dump_file2 ].each do |file|
+        system("mysql #{options} #{dest['database']} < #{file}")
+      end
     end
     puts("finished in #{time} seconds.")
     system("rm -f #{dump_file}")
