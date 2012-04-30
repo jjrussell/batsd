@@ -116,14 +116,16 @@ class TjmRequest < SyslogMessage
 
   def save
     if @is_social && referrer
-      self.replace_path('tjm_social_referrer')
+      self.replace_path('tjm_referrer')
       unless referrer.starts_with?('tjreferrer:')
         social_referrer = referrer.split('_')
-        if social_referrer.length > 3
+        if social_referrer.length == 4
+          self.replace_path('tjm_social_referrer')
           self.social_source          = social_referrer[1]
           self.social_action          = social_referrer[2]
           self.social_referrer_gamer  = social_referrer[3]
         else
+          self.replace_path('tjm_old_social_referrer')
           invitation_or_gamer_id, advertiser_app_id = referrer.split(',')
           self.social_invitation_or_gamer_id  = invitation_or_gamer_id
           self.social_advertiser_app_id       = advertiser_app_id
