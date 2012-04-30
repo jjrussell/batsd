@@ -367,7 +367,7 @@
   #help_tracking_for_id_content{ :name => 'Tracking For Id' } The Object that is tracked by this offer.
   #help_tracking_for_type_content{ :name => 'Tracking For Type' } The type of the object that is tracked by this offer.
 
-- if @offer.item_type == 'App' || @offer.item_type == 'GenericOffer'
+- if @offer.app_offer? || @offer.item_type == 'GenericOffer'
   - content_for :page_javascript do
     :plain
       $(function($){
