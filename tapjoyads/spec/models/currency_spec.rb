@@ -3,7 +3,7 @@ require 'spec_helper'
 describe Currency do
 
   before :each do
-    @currency = Factory :currency
+    @currency = Factory.build(:currency)
     fake_the_web
   end
 
@@ -502,6 +502,9 @@ describe Currency do
 
   describe '#dashboard_app_currency_url' do
     include ActionController::UrlWriter
+    before :each do
+      @currency = Factory :currency
+    end
 
     it 'matches URL for Rails app_currency_url helper' do
       rails_url = app_currency_url(:id      => @currency.id,
