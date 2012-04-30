@@ -50,7 +50,6 @@ class GamesMarketingMailer < ActionMailer::Base
     setup_emails(gamer, device_info)
     sendgrid_category "Secondary Welcome Email , #{@linked ? "Linked for Device Type #{gamer_device.device_type}" : "Not Linked"}, #{device_info[:content]}"
     @detailed_email = true
-    @display_confirm = false
     @template = 'welcome_email'
   end
 
