@@ -314,7 +314,7 @@
         url: url,
         type: 'POST',
         dataType: 'jsonp',
-        timeout: 60000,
+        timeout: 15000,
         success: function(d) {
           for(var i in d) {
             var user = d[i];
