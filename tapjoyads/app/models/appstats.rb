@@ -836,24 +836,39 @@ private
       :main => {
         :unitPrefix => '$',
         :names => Delayed.show? ? [ 'Total revenue', 'In app offerwall revenue', 'Tapjoy.com offerwall revenue', 'Featured offer revenue', 'Display ad revenue' ] : [ 'Total revenue', 'Offerwall revenue', 'Featured offer revenue', 'Display ad revenue' ],
-        :data => [
+        :data => Delayed.show? ? [
           @stats['total_revenue'].map { |i| i / 100.0 },
           @stats['rewards_revenue'].map { |i| i / 100.0 },
           @stats['tjm_rewards_revenue'].map { |i| i / 100.0 },
           @stats['featured_revenue'].map { |i| i / 100.0 },
           @stats['display_revenue'].map { |i| i / 100.0 },
+        ] : [
+          @stats['total_revenue'].map { |i| i / 100.0 },
+          @stats['rewards_revenue'].map { |i| i / 100.0 },
+          @stats['featured_revenue'].map { |i| i / 100.0 },
+          @stats['display_revenue'].map { |i| i / 100.0 },
         ],
-        :stringData => [
+        :stringData => Delayed.show? ? [
           @stats['total_revenue'].map { |i| NumberHelper.number_to_currency(i / 100.0) },
           @stats['rewards_revenue'].map { |i| NumberHelper.number_to_currency(i / 100.0) },
           @stats['tjm_rewards_revenue'].map { |i| NumberHelper.number_to_currency(i / 100.0) },
           @stats['featured_revenue'].map { |i| NumberHelper.number_to_currency(i / 100.0) },
           @stats['display_revenue'].map { |i| NumberHelper.number_to_currency(i / 100.0) },
+        ] : [
+          @stats['total_revenue'].map { |i| NumberHelper.number_to_currency(i / 100.0) },
+          @stats['rewards_revenue'].map { |i| NumberHelper.number_to_currency(i / 100.0) },
+          @stats['featured_revenue'].map { |i| NumberHelper.number_to_currency(i / 100.0) },
+          @stats['display_revenue'].map { |i| NumberHelper.number_to_currency(i / 100.0) },
         ],
-        :totals => [
+        :totals => Delayed.show? ? [
           NumberHelper.number_to_currency(@stats['total_revenue'].sum / 100.0),
           NumberHelper.number_to_currency(@stats['rewards_revenue'].sum / 100.0),
           NumberHelper.number_to_currency(@stats['tjm_rewards_revenue'].sum / 100.0),
+          NumberHelper.number_to_currency(@stats['featured_revenue'].sum / 100.0),
+          NumberHelper.number_to_currency(@stats['display_revenue'].sum / 100.0),
+        ] : [
+          NumberHelper.number_to_currency(@stats['total_revenue'].sum / 100.0),
+          NumberHelper.number_to_currency(@stats['rewards_revenue'].sum / 100.0),
           NumberHelper.number_to_currency(@stats['featured_revenue'].sum / 100.0),
           NumberHelper.number_to_currency(@stats['display_revenue'].sum / 100.0),
         ],
