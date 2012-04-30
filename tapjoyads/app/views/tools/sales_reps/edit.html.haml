@@ -1,0 +1,20 @@
+= breadcrumb link_to("Tools", tools_path), link_to(@offer, statz_path(@offer)), link_to("Sales reps", tools_offer_sales_reps_path(@offer)), @sales_rep
+%h1 Edit sales rep #{@sales_rep} for #{ @offer }
+.row-fluid
+  .span8
+    - form_for @sales_rep, :url => tools_offer_sales_rep_path(@offer, @sales_rep), :html => { :class => 'well' } do |f|
+      = f.error_messages :class => 'alert alert-error'
+      = f.label :start_date
+      = f.text_field :start_date, :class => 'datepicker', :value => @sales_rep.start_date.strftime("%m/%d/%Y")
+      = error_message_on @sales_rep, :start_date
+      = f.label :end_date
+      = f.text_field :end_date, :class => 'datepicker', :value => @sales_rep.end_date ? @sales_rep.end_date.strftime("%m/%d/%Y") : nil
+      = error_message_on @sales_rep, :end_date
+      %br/
+      %br/
+      = f.submit "Update sales rep"
+- content_for :page_javascript do
+  :plain
+    $(function() {
+      $('.datepicker').datepicker();
+    });

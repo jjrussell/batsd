@@ -4,6 +4,7 @@ describe Offer do
 
   it { should have_many :advertiser_conversions }
   it { should have_many :rank_boosts }
+  it { should have_many :sales_reps }
   it { should belong_to :partner }
   it { should belong_to :item }
 
