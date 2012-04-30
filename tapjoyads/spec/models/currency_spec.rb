@@ -500,14 +500,14 @@ describe Currency do
     end
   end
 
-  describe '#get_app_currency_url' do
+  describe '#dashboard_app_currency_url' do
     include ActionController::UrlWriter
 
     it 'matches URL for Rails app_currency_url helper' do
       rails_url = app_currency_url(:id      => @currency.id,
                                    :app_id  => @currency.app_id,
                                    :host    => URI.parse(DASHBOARD_URL).host)
-      @currency.get_app_currency_url.should == rails_url
+      @currency.dashboard_app_currency_url.should == rails_url
     end
   end
 end

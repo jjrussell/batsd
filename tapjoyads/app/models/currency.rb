@@ -261,7 +261,7 @@ class Currency < ActiveRecord::Base
   end
 
   # For use within TJM (since dashboard URL helpers aren't available within TJM)
-  def get_app_currency_url
+  def dashboard_app_currency_url
     url = "#{URI.parse(DASHBOARD_URL).scheme}://" +
           "#{URI.parse(DASHBOARD_URL).host}" +
           "/apps/#{self.app_id}/currencies/#{self.id}"

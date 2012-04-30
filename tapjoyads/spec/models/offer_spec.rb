@@ -1022,13 +1022,13 @@ describe Offer do
     end
   end
 
-  describe '#get_statz_url' do
+  describe '#dashboard_statz_url' do
     include ActionController::UrlWriter
 
     it 'matches URL for Rails statz_url helper' do
       rails_url = statz_url(:id => @offer.id,
                             :host => URI.parse(DASHBOARD_URL).host)
-      @offer.get_statz_url.should == rails_url
+      @offer.dashboard_statz_url.should == rails_url
     end
   end
 end

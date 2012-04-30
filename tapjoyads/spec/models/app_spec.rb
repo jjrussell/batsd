@@ -384,7 +384,7 @@ describe App do
   end
 
 
-  describe '#get_app_url' do
+  describe '#dashboard_app_url' do
     include ActionController::UrlWriter
     before :each do
       @app = Factory :app
@@ -393,7 +393,7 @@ describe App do
     it 'matches URL for Rails app_url helper' do
       rails_url = app_url(:id   => @app.id,
                           :host => URI.parse(DASHBOARD_URL).host)
-      @app.get_app_url.should == rails_url
+      @app.dashboard_app_url.should == rails_url
     end
   end
 end

@@ -249,7 +249,7 @@ module Offer::UrlGeneration
   end
 
   # For use within TJM (since dashboard URL helpers aren't available within TJM)
-  def get_statz_url
+  def dashboard_statz_url
     url = "#{URI.parse(DASHBOARD_URL).scheme}://" +
           "#{URI.parse(DASHBOARD_URL).host}" +
           "/statz/#{self.id}"

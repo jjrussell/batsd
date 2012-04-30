@@ -8,26 +8,26 @@
     %br
     %strong UDID:
     = @gamer_device.device_id
-    = "[#{@gamer_device.info_tool_url}]"
+    = "[#{@gamer_device.dashboard_device_info_tool_url}]"
     %br
     %strong Offer:
     = @click.present? ? @click.offer.name : ""
-    = @click.present? ? "[#{@click.offer.get_statz_url}]" : ""
+    = @click.present? ? "[#{@click.offer.dashboard_statz_url}]" : ""
     %br
     %strong Currency:
     = @click.present? ? @click.currency.name : ""
-    = @click.present? ? "[#{@click.currency.get_app_currency_url}]" : ""
+    = @click.present? ? "[#{@click.currency.dashboard_app_currency_url}]" : ""
     %br
     %strong Reward Amount:
     = @click.present? ? "#{@click.currency_reward} #{@click.currency.name}" : ""
     %br
     %strong Publisher Partner:
     = @click.present? ? @click.publisher_partner.name : ""
-    = @click.present? ? "[#{@click.publisher_partner.get_partner_url}]" : ""
+    = @click.present? ? "[#{@click.publisher_partner.dashboard_partner_url}]" : ""
     %br
     %strong Publisher App:
     = @click.present? ? @click.publisher_app.name : ""
-    = @click.present? ? "[#{@click.publisher_app.get_app_url}]" : ""
+    = @click.present? ? "[#{@click.publisher_app.dashboard_app_url}]" : ""
     %br
     %strong Publisher User:
     = @click.present? ? @click.publisher_user_id : ""
@@ -46,7 +46,7 @@
     %br
     %strong Click:
     = @click.present? ? @click.key : ""
-    = @click.present? ? "[#{@click.info_tool_url}]" : ""
+    = @click.present? ? "[#{@click.dashboard_device_info_tool_url}]" : ""
     %br
     %br
     %strong Description

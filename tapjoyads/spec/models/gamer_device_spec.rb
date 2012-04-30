@@ -1,11 +1,11 @@
 require 'spec_helper'
 
-describe Gamer do
+describe GamerDevice do
   before :each do
     fake_the_web
   end
 
-  describe '#info_tool_url' do
+  describe '#dashboard_device_info_tool_url' do
     include ActionController::UrlWriter
     before :each do
       device = Factory :device
@@ -15,7 +15,7 @@ describe Gamer do
     it 'matches URL for Rails device_info_tools_url helper' do
       rails_url = device_info_tools_url(:udid => @gamer_device.device_id,
                                         :host => URI.parse(DASHBOARD_URL).host)
-      @gamer_device.info_tool_url.should == rails_url
+      @gamer_device.dashboard_device_info_tool_url.should == rails_url
     end
   end
 end
