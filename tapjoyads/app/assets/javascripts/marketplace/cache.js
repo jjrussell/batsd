@@ -59,62 +59,30 @@
       return keys;
     },
 
-    inject: function(text, extension, uri, options){
+    inject: function (text, extension, uri, options) {
       var stash = this,
           // script check
           script = options.typesMap[extension] === 'script',
           // define tag
-          file = document.createElement(uri && !script ? 'link' : options.typesMap[extension] || options.defaultType),
+          file = document.createElement(options.typesMap[extension] || options.defaultType),
           // reference head
           head = document.getElementsByTagName('head')[0];
 
       // define content type
       file.type = script ? 'text/javascript' : 'text/css';
 
-      // first pass we append files and fetch their contents
-      if(uri){
-        // determine source attribute
-        file[script ? 'src' : 'href'] = uri;
+      // append block to head
+      head.appendChild(file);
 
-        if(script){
-          // defer script execution
-          file.defer = false;
-
-          // append scripts at the head of our doc
-          head.insertBefore(file, head.firstChild);
-        }else{
-          file.rel = 'stylesheet';
-          // append stylesheets to bottom of head to avoid possible css overwrites or loading sequence issues
-          head.appendChild(file);
-        }
-      }else{
+      if (script) {
         // inject block with content - we use .text for scripts (IE8 support)
-        file[script ? 'text' : 'innerHTML'] = text;
-
-        // append block to head
-        head.appendChild(file);
+        file.text = text;
+      } else {
+        // ie8 workaround uses styleSheet prop
+        file.styleSheet ? file.styleSheet.cssText = text : file.innerHTML = text; // workaround for ie8
       }
 
-      // adjust wait count
-      --options.wait;
-
-      // finished loading/injecting all files
-      if(options.wait == 0){
-        if(uri){
-          file.onload = file.onerror = file.onreadystatechange = function(){
-            if((file.readyState && !(/loaded|complete/.test(file.readyState))))
-              return;
-
-            file.onload = file.onerror = file.onreadystatechange = null;
-
-            // fire callback after appending files
-            stash.callback(options);
-          }
-        }else{
-          // fire callback after injecting files
-          stash.callback(options);
-        }
-      }
+      window.ENVIRONMENT === 'development' && file.setAttribute('data-uri', uri);
     },
 
     log: function(message){
@@ -125,9 +93,66 @@
         c.log(message);
       }
     },
-    
-    require: function(unknown, callback){
 
+    processFiles: function (options) {
+      var file = options.files.shift();
+
+      if (!file) {
+        // fire callback after injecting files
+        stash.callback(options);
+        return;
+      }
+
+      // check if valid file
+      if (String(file).match(options.valid) === null) {
+        // print error
+        stash.log('Error: File was not loaded because of structure - {filename}-{digest}.{ext}.\nResource: ' + file);
+        // move to next
+        stash.processFiles(options);
+        return;
+      }
+
+      var regexResult = options.versionRegex.exec(file),
+          logicalURI = regexResult[1] + '.' + regexResult[3],
+          key = options.prefix + logicalURI,
+          hash = regexResult[2],
+          extension = regexResult[3],
+          supportsLocalStorage = stash.supportsLocalStorage(),
+          storage = supportsLocalStorage ? JSON.parse(localStorage.getItem(key)) : false;
+
+      // check if localStorage exists, if entry exists and if hash has changed
+      if (storage && storage.hash === hash) {
+        // load from cache
+        stash.inject(storage.content, extension, file, options);
+        stash.processFiles(options);
+      } else {
+        // fetch our file
+        stash.fetch(file, function (text, uri, status) {
+          // check for errors
+          if(status === 404){
+            stash.log('Error: 404\nCould not load resource: ' + uri);
+          }else{
+            // check if we can write to localStorage
+            if(supportsLocalStorage){
+              // create new entry -> path/file + extension. We remove the digest from the filename and store it as our hash property.
+              localStorage.setItem(key,
+                // create new storage object with hash + content
+                JSON.stringify({
+                  // versioning hash <- extracted from filename
+                  hash: hash,
+                  // file contents
+                  content: text
+                })
+              );
+            }
+            stash.inject(text, extension, uri, options);
+            stash.processFiles(options);
+          }
+        });
+      }
+    },
+
+    require: function (unknown, callback) {
       var stash = this,
           // shortcut toString
           toString = Object.prototype.toString,
@@ -173,64 +198,8 @@
           complete: callback || null
         });
       }else{
-        // store file total
-        stash.files = options.wait = options.files.length;
-
-        // internal property for validating file types
-        var valid = stash.getKeys(options.typesMap).join('|');
-
-        setTimeout(function(){
-          // where the magic happens
-          stash.each(options.files, function(file){
-
-            // check if valid file
-            if(String(file).match(valid) === null){
-              // manage count
-              options.wait--
-              // print error
-              stash.log('Error: File was not loaded because of structure - {filename}-{digest}.{ext}.\nResource: ' + file);
-              // move to next
-              return;
-            }
-
-            var regexResult = options.versionRegex.exec(file),
-                logicalURI = regexResult[1] + '.' + regexResult[3],
-                key = options.prefix + logicalURI,
-                hash = regexResult[2],
-                extension = regexResult[3],
-                supportsLocalStorage = stash.supportsLocalStorage(),
-                storage = supportsLocalStorage ? JSON.parse(localStorage.getItem(key)) : false;
-
-            // check if localStorage exists, if entry exists and if hash has changed
-            if(storage && storage.hash === hash){
-              // load from cache
-              stash.inject(storage.content, extension, null, options);
-            }else{
-              // fetch our file
-              stash.fetch(file, function(text, uri, status){
-                // check for errors
-                if(status === 404){
-                  stash.log('Error: 404\nCould not load resource: ' + uri);
-                }else{
-                  // check if we can write to localStorage
-                  if(supportsLocalStorage){
-                    // create new entry -> path/file + extension. We remove the digest from the filename and store it as our hash property.
-                    localStorage.setItem(key,
-                      // create new storage object with hash + content
-                      JSON.stringify({
-                        // versioning hash <- extracted from filename
-                        hash: hash,
-                        // file contents
-                        content: text
-                      })
-                    );
-                  }
-                  stash.inject(text, extension, uri, options);
-                }
-              });
-            }
-          });
-        }, 0);
+        options.valid = stash.getKeys(options.typesMap).join('|');
+        stash.processFiles(options);
       }
 
       // return stash object for chaining
