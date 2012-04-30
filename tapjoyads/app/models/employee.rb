@@ -5,7 +5,7 @@ class Employee < ActiveRecord::Base
 
   has_many :app_reviews, :as => :author
 
-  validates_presence_of :first_name, :last_name, :title, :email, :superpower, :current_games, :weapon, :biography
+  validates_presence_of :first_name, :last_name, :title, :email
   validates_uniqueness_of :email
   validates_uniqueness_of :desk_location, :allow_blank => true
   validates_inclusion_of :department, :in => DEPARTMENTS, :allow_nil => true
