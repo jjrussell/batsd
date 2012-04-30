@@ -12,7 +12,7 @@
     %br
     %strong Offer:
     = @click.present? ? @click.offer.name : ""
-    = #@click.present? ? "[#{statz_url(:id => @click.offer_id, :host => URI.parse(DASHBOARD_URL).host)}]" : ""
+    = "[#{@click.offer.get_statz_url}]"
     %br
     %strong Currency:
     = @click.present? ? @click.currency.name : ""
