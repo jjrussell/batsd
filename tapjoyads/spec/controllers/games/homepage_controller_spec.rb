@@ -127,10 +127,17 @@ describe Games::HomepageController do
         assigns[:app_reviews].should == [@stellar_review, @good_review, @troll_review_by_good_author]
       end
     end
-    context 'unassociated gamer viewer' do
-      before :each do
-        controller.stubs(:current_gamer).returns(@gamer)
-        get(:get_app, :id=>@offer.id)
+
+    context 'with an old invitation styled referrer' do
+      it 'records the referral event' do
+        facebook_referrer = "TEST_INVITATION_ID,TEST_ADVERTISER_APP_ID"
+        get('index', { :referrer => ObjectEncryptor.encrypt(facebook_referrer) })
+
+        assigns(:tjm_request)
+        tjm_social_request = assigns(:tjm_social_request)
+        tjm_social_request.path.should include('tjm_old_social_referrer')
+        tjm_social_request.social_invitation_or_gamer_id.should == 'TEST_INVITATION_ID'
+        tjm_social_request.social_advertiser_app_id.should == 'TEST_ADVERTISER_APP_ID'
       end
       it 'sees good review, stellar review,  but not troll review or troll-authored review' do
         assigns[:app_reviews].count.should == 2
