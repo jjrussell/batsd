@@ -84,6 +84,13 @@ class GamerDevice < ActiveRecord::Base
     }
   end
 
+  # For use within TJM (since dashboard URL helpers aren't available within TJM)
+  def info_tool_url
+    url = "#{URI.parse(DASHBOARD_URL).scheme}://" +
+          "#{URI.parse(DASHBOARD_URL).host}" +
+          "/tools/device_info?udid=#{self.device_id}"
+  end
+
   private
 
   def check_suspicious_activities
