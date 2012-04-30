@@ -84,7 +84,7 @@ class Dashboard::ReportingController < Dashboard::DashboardController
 
   def show_update_notice
     if Delayed.show_in_duration?
-      flash[:notice] = 'We are updating reporting tab and adding TJM stuff!'
+      flash[:notice] = 'Reporting for Tapjoy.com and In-App offerwalls is tracked separately after 5/1/2012'
     end
   end
 
