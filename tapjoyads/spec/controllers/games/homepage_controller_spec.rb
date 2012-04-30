@@ -132,7 +132,7 @@ describe Games::HomepageController do
 
         assigns(:tjm_request)
         tjm_social_request = assigns(:tjm_social_request)
-        tjm_social_request.path.should include('tjm_old_social_referrer')
+        tjm_social_request.path.should include('tjm_invite_referrer')
         tjm_social_request.social_invitation_or_gamer_id.should == 'TEST_INVITATION_ID'
         tjm_social_request.social_advertiser_app_id.should == 'TEST_ADVERTISER_APP_ID'
       end
