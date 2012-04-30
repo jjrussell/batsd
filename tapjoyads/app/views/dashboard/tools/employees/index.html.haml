@@ -10,7 +10,7 @@
     %tr
       %th Image
       %th Active?
-      %th Department
+      %th Seat
       %th Name
       %th Title
       %th Email/Edit
@@ -19,7 +19,9 @@
       %tr
         %td= link_to(image_tag(employee.get_photo_url, :alt => employee.photo_alt_name), edit_tools_employee_path(employee))
         %td= employee.active ? "Yes" : "No"
-        %td= employee.department
+        %td
+          = employee.department.titleize
+          = location_str(employee)
         %td= employee.full_name
         %td= employee.title
         %td= link_to employee.email, edit_tools_employee_path(employee)

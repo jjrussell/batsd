@@ -1,13 +1,20 @@
 - form_for([ :tools, @employee ], :html => { :class => 'tjform', :multipart => true }) do |f|
-  - if @employee.new_record?
-    .field
-      = f.label(:email)
-      = f.text_field(:email)
-      = error_message_on @employee, :email
-  - else
+  .field
+    = f.label(:email)
+    = f.text_field(:email)
+    = error_message_on @employee, :email
+  - if !@employee.new_record?
     .field
       = f.label(:active, "Active?")
       = f.check_box(:active)
+  .field
+    = f.label(:department)
+    = f.select(:department, options_for_select(Employee::DEPARTMENTS, @employee.department))
+    = error_message_on @employee, :department
+  .field
+    = f.label(:location)
+    = f.text_field(:location, :value => location_str(@employee), :placeholder => "e.g. [1, 2]")
+    = error_message_on @employee, :department
   .field
     = f.label(:first_name)
     = f.text_field(:first_name)

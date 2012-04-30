@@ -23,7 +23,8 @@ class Employee < ActiveRecord::Base
   end
 
   def location=(array)
-    raise unless Array === array && array.length == 2
+    array = JSON.load(array) if String === array
+    raise "location must be array" unless Array === array && array.length == 2
     self.desk_location = array.map(&:to_i).join(',')
   end
 
