@@ -83,7 +83,7 @@ class ReportingController < WebsiteController
 
   def show_update_notice
     if Delayed.show_in_duration?
-      flash[:notice] = 'Reporting for Tapjoy.com and In-App offerwalls is tracked separately after 5/1/2012'
+      flash.now[:notice] = 'Reporting for Tapjoy.com and In-App offerwalls is tracked separately after 5/1/2012'
     end
   end
 
