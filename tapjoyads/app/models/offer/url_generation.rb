@@ -77,7 +77,7 @@ module Offer::UrlGeneration
     elsif item_type == 'SurveyOffer'
       final_url.gsub!('TAPJOY_SURVEY', click_key.to_s)
       final_url = ObjectEncryptor.encrypt_url(final_url)
-    elsif item_type == 'VideoOffer'
+    elsif item_type == 'VideoOffer' || item_type == 'TestVideoOffer'
       params = {
         :offer_id           => id,
         :app_id             => publisher_app_id,
