@@ -51,4 +51,11 @@ class FullscreenAdController < ApplicationController
     @now = params[:viewed_at].present? ? Time.zone.at(params[:viewed_at].to_f) : Time.zone.now
     render :action => :index
   end
+
+  def skip
+      device = Device.new(:key => params[:udid])
+      device.add_skip(params[:offer_id])
+      device.save
+      render :nothing => true
+  end
 end

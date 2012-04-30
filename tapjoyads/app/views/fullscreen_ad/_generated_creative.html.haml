@@ -10,7 +10,7 @@
     %img{ :src => "#{CLOUDFRONT_URL}/images/blank.png", :s => @offer.get_icon_url(:source => :cloudfront, :size => '256'), :class => 'icon', :id => 'icon' }
     .offername= @offer.truncated_name
   .clear
-  = link_to(t('text.featured.skip'), (params[:preview] == 'true' ? '#' : 'dismiss'), :class => 'skip')
+  = link_to(t('text.featured.skip'), (params[:preview] == 'true' ? '#' : 'dismiss'), :class => 'skip', :id => 'skip')
   = link_to(featured_offer_action_text(@offer), (params[:preview] == 'true' ? '#' : get_click_url(@offer)), :class => 'download')
   .showOffers
     = link_to(@currency.hide_rewarded_app_installs? ? '' : t('text.featured.show_more_apps'), (params[:preview] == 'true' ? '#' : 'showOffers'))
@@ -28,7 +28,12 @@
     function init() {
       icon = document.getElementById('icon');
       main = document.getElementById('main');
-
+      skip = document.getElementById('skip');
+      skip.onclick = function() {
+        xmlHttpRequst = new XMLHttpRequest();
+        xmlHttpRequst.open('GET', '/fullscreen_ad/skip?data=#{ObjectEncryptor.encrypt({ :udid => params[:udid] , :offer_id => @offer.id }) }', false)
+        xmlHttpRequst.send();
+      }
       if (icon.getAttribute('s') && icon.src != icon.getAttribute('s')) {
         icon.src = icon.getAttribute('s');
       }

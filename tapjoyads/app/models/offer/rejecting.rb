@@ -120,7 +120,8 @@ module Offer::Rejecting
     source_reject?(source) ||
     non_rewarded_offerwall_rewarded_reject?(currency) ||
     carriers_reject?(mobile_carrier_code) ||
-    sdkless_reject?(library_version)
+    sdkless_reject?(library_version) ||
+    recently_skipped?(device)
   end
 
   def precache_reject?(platform_name, hide_rewarded_app_installs, normalized_device_type)
@@ -212,6 +213,10 @@ module Offer::Rejecting
     end
 
     device.has_app?(app_id_for_device)
+  end
+
+  def recently_skipped?(device)
+    device.recently_skipped?(id)
   end
 
   def selective_opt_out_reject?(device)

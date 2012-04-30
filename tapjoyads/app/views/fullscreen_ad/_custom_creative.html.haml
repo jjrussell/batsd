@@ -35,6 +35,13 @@
         var availableCreativeSizes = [];
         var availableCreatives = [];
 
+      skip = document.getElementById('close-link');
+      skip.onclick = function() {
+        xmlHttpRequst = new XMLHttpRequest();
+        xmlHttpRequst.open('GET', '/fullscreen_ad/skip?data=#{ObjectEncryptor.encrypt({ :udid => params[:udid] , :offer_id => @offer.id }) }', false)
+        xmlHttpRequst.send();
+      }
+
   - # Provide available custom creative sizes to javascript
   - @offer.banner_creatives.each do |size|
     :plain
