@@ -12,11 +12,11 @@
     %br
     %strong Offer:
     = @click.present? ? @click.offer.name : ""
-    = "[#{@click.offer.get_statz_url}]"
+    = @click.present? ? "[#{@click.offer.get_statz_url}]" : ""
     %br
     %strong Currency:
     = @click.present? ? @click.currency.name : ""
-    = #@click.present? ? "[#{app_currency_url(:app_id => @click.publisher_app_id, :id => @click.currency_id, :host => URI.parse(DASHBOARD_URL).host)}]" : ""
+    = @click.present? ? "[#{@click.currency.get_app_currency_url}]" : ""
     %br
     %strong Reward Amount:
     = @click.present? ? "#{@click.currency_reward} #{@click.currency.name}" : ""

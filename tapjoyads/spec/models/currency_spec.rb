@@ -3,7 +3,7 @@ require 'spec_helper'
 describe Currency do
 
   before :each do
-    @currency = Factory.build(:currency)
+    @currency = Factory :currency
     fake_the_web
   end
 
@@ -497,6 +497,17 @@ describe Currency do
       mock_approval.expects(:approve!).with(true).once
       @currency.stubs(:approval).returns(mock_approval)
       @currency.approve!
+    end
+  end
+
+  describe '#get_app_currency_url' do
+    include ActionController::UrlWriter
+
+    it 'matches URL for Rails app_currency_url helper' do
+      rails_url = app_currency_url(:id      => @currency.id,
+                                   :app_id  => @currency.app_id,
+                                   :host    => URI.parse(DASHBOARD_URL).host)
+      @currency.get_app_currency_url.should == rails_url
     end
   end
 end
