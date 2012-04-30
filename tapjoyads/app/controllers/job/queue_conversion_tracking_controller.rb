@@ -65,7 +65,11 @@ class Job::QueueConversionTrackingController < Job::SqsReaderController
       Notifier.alert_new_relic(JailbrokenInstall, "Device: #{click.udid} is jailbroken and installed a paid app: #{click.advertiser_app_id}, for click: #{click.key}", request, params)
     end
 
-    click.type = "featured_#{click.type}" if click.source == 'featured'
+    if click.source == 'featured'
+      click.type = "featured_#{click.type}"
+    elsif click.source == 'tj_games' && Delayed.show?
+      click.type = "tjm_#{click.type}"
+    end
 
     reward = Reward.new(:key => click.reward_key)
     reward.put('created', installed_at_epoch)

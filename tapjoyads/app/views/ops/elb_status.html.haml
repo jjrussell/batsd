@@ -1,25 +1,16 @@
 - @page_title = 'ELB Status'
 
-- content_for :page_sidebar do
-  .span2
-    .well.sidebar-nav
-      %ul.nav.nav-list
-        %li.nav-header more info »
-        %li= link_to 'dashboard', ops_path
-        %li= link_to 'auto-scaler', as_groups_ops_path
-        %li.active= link_to 'load-balancer', elb_status_ops_path
-        %li= link_to 'service-stats', service_stats_ops_path
-
 .span12
-  %h1 ELB Status
-
-  As of: #{Time.zone.now.to_s(:pub_ampm_sec)}
+  %h1
+    ELB Status
+    %small As of: #{Time.zone.now.to_s(:pub_ampm_sec)}
 
   - @lb_names.each do |lb_name|
-    %h3= lb_name
-    - num_in_service = @lb_instances[lb_name].inject(0) { |sum, instance| sum += (instance[:state] == 'InService' ? 1 : 0) }
-    - num_total      = @lb_instances[lb_name].size
-    #{num_in_service} of #{num_total} in service.
+    %h3
+      = lb_name
+      - num_in_service = @lb_instances[lb_name].inject(0) { |sum, instance| sum += (instance[:state] == 'InService' ? 1 : 0) }
+      - num_total      = @lb_instances[lb_name].size
+      %small #{num_in_service} of #{num_total} in service.
     %table.tablesorter
       %thead
         %tr

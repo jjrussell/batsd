@@ -29,6 +29,7 @@ class Offer < ActiveRecord::Base
   FEATURED_BACKFILLED_OFFER_TYPE              = '7'
   NON_REWARDED_FEATURED_BACKFILLED_OFFER_TYPE = '8'
   REENGAGEMENT_OFFER_TYPE                     = '9'
+  NON_REWARDED_BACKFILLED_OFFER_TYPE          = '10'
   OFFER_TYPE_NAMES = {
     DEFAULT_OFFER_TYPE                          => 'Offerwall Offers',
     FEATURED_OFFER_TYPE                         => 'Rewarded Featured Offers',
@@ -38,7 +39,8 @@ class Offer < ActiveRecord::Base
     VIDEO_OFFER_TYPE                            => 'Video Offers',
     FEATURED_BACKFILLED_OFFER_TYPE              => 'Rewarded Featured Offers (Backfilled)',
     NON_REWARDED_FEATURED_BACKFILLED_OFFER_TYPE => 'Non-Rewarded Featured Offers (Backfilled)',
-    REENGAGEMENT_OFFER_TYPE                     => 'Reengagement Offers'
+    REENGAGEMENT_OFFER_TYPE                     => 'Reengagement Offers',
+    NON_REWARDED_BACKFILLED_OFFER_TYPE          => 'Non-Rewarded Offers (Backfilled)'
   }
 
   OFFER_LIST_EXCLUDED_COLUMNS = %w( active

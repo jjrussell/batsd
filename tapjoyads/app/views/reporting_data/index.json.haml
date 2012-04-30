@@ -9,7 +9,7 @@
     'Apps' => @appstats_list.map do |offer_with_stats|
       offer = offer_with_stats[0]
       appstats = offer_with_stats[1]
-      {
+      stats_hash = {
         "Name"                       => offer.name_with_suffix,
         "AppKey"                     => offer.id,
         "Platform"                   => offer.get_platform,
@@ -58,6 +58,16 @@
         "DisplayConversions"         => appstats.stats['display_conversions'].sum,
         "DisplayConversionsHourly"   => appstats.stats['display_conversions'],
       }
+      Delayed.show? ? stats_hash.merge({
+        "TJMOfferwallRevenue"           => appstats.stats['tjm_rewards_revenue'].sum,
+        "TJMOfferwallRevenueHourly"     => appstats.stats['tjm_rewards_revenue'],
+        "TJMOfferwallImpressions"       => appstats.stats['tjm_offerwall_views'].sum,
+        "TJMOfferwallImpressionsHourly" => appstats.stats['tjm_offerwall_views'],
+        "TJMOfferwallClicks"            => appstats.stats['tjm_rewards_opened'].sum,
+        "TJMOfferwallClicksHourly"      => appstats.stats['tjm_rewards_opened'],
+        "TJMOfferwallConversions"       => appstats.stats['tjm_rewards'].sum,
+        "TJMOfferwallConversionsHourly" => appstats.stats['tjm_rewards'],
+      }) : stats_hash
     end
   }
 
