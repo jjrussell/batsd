@@ -1,18 +1,5 @@
 - @page_title = 'Operations Dashboard'
 
-- content_for :page_sidebar do
-  - unless @kiosk
-    .span2
-      .well.sidebar-nav
-        %ul.nav.nav-list
-          %li.nav-header more info »
-          %li.active= link_to 'dashboard', ops_path
-          %li= link_to 'auto-scaler', as_groups_ops_path
-          %li= link_to 'load-balancer', elb_status_ops_path
-          %li= link_to 'service-stats', service_stats_ops_path
-          %li= link_to 'vertica-status', vertica_status_ops_path
-          %li= link_to 'kiosk-mode', ops_path(:kiosk => true)
-
 = javascript_tag do
   :plain
     var nodes = [];
@@ -28,10 +15,24 @@
       }
     }, 1000);
 
-%div{:class => @kiosk ? "" : "span10"}
+%div
   .row-fluid
+    #api-rpm-per-server{:class => @kiosk ? 'span2' : 'span3'}
+      %span.label.right rpm
+      .well.well-small
+        %div
+          %h1
+            %span#api-rpm-per-server-count Loading
+            %small per server
+    #api-rpm-total{:class => @kiosk ? 'span2' : 'span3'}
+      %span.label.right rpm
+      .well.well-small
+        %div
+          %h1
+            %span#api-rpm-total-count Loading
+            %small total
     - @as_groups.each do |group|
-      %div{:class => "#{@kiosk ? 'span2' : 'span3'}", :id => "#{group[:auto_scaling_group_name]}_section"}
+      %div{:class => @kiosk ? 'span2' : 'span3', :id => "#{group[:auto_scaling_group_name]}_section"}
         .well.well-small
           %div{:id => "#{group[:auto_scaling_group_name]}_header"}
           - content_for :page_javascript do
@@ -50,6 +51,16 @@
               }, 30000);
 
 - content_for :included_javascripts, javascript_include_tag('ajax-links.js')
+- content_for :page_javascript do
+  :plain
+    var loadApiRpms = function() {
+      $.get("ops/requests_per_minute", {}, function(data){
+        $("#api-rpm-per-server-count").text(data.mean);
+        $("#api-rpm-total-count").text(data.sum);
+      });
+    };
+    loadApiRpms();
+    this.timerApiRpms = setInterval(loadApiRpms, 5000);
 
 - content_for :page_styles do
   :plain

@@ -7,28 +7,23 @@ module Offer::BannerCreatives
 
       const_set(:DISPLAY_AD_SIZES, ['320x50', '640x100', '768x90']) # data stored as pngs
       const_set(:FEATURED_AD_SIZES, ['960x640', '640x960', '480x320', '320x480']) # data stored as jpegs
-      const_set(:CUSTOM_AD_SIZES, Offer::DISPLAY_AD_SIZES + Offer::FEATURED_AD_SIZES)
+      const_set(:ALL_CUSTOM_AD_SIZES, Offer::DISPLAY_AD_SIZES + Offer::FEATURED_AD_SIZES)
 
-      Offer::CUSTOM_AD_SIZES.each do |size|
+      Offer::ALL_CUSTOM_AD_SIZES.each do |size|
         attr_accessor "banner_creative_#{size}_blob".to_sym
       end
     end
   end
 
-  def banner_creatives
-    self.banner_creatives = [] if super.nil?
-    super.sort
-  end
+  %w(banner_creatives approved_banner_creatives).each do |method_name|
+    define_method method_name do
+      self.send("#{method_name}=", []) if super.nil?
+      super.sort
+    end
 
-  def approved_banner_creatives
-    self.approved_banner_creatives = [] if super.nil?
-    super.sort
-  end
-
-  def banner_creatives_was
-    ret_val = super
-    return [] if ret_val.nil?
-    ret_val
+    define_method "#{method_name}_was" do
+      super || []
+    end
   end
 
   def can_change_banner_creatives?
@@ -36,7 +31,7 @@ module Offer::BannerCreatives
   end
 
   def banner_creative_sizes(return_all = false)
-    return Offer::DISPLAY_AD_SIZES + Offer::FEATURED_AD_SIZES if return_all
+    return Offer::ALL_CUSTOM_AD_SIZES if return_all
     return Offer::DISPLAY_AD_SIZES if !featured?
     return Offer::FEATURED_AD_SIZES
   end
@@ -124,6 +119,10 @@ module Offer::BannerCreatives
     return false if (is_paid? || featured?)
     return (item_type == 'App' && name.length <= 30) if rewarded?
     item_type != 'VideoOffer'
+  end
+
+  def featured_custom_creative?
+    banner_creatives.any? { |size| Offer::FEATURED_AD_SIZES.include?(size) }
   end
 
   private
@@ -217,7 +216,7 @@ module Offer::BannerCreatives
   end
 
   def clear_creative_blobs
-    Offer::CUSTOM_AD_SIZES.each do |size|
+    Offer::ALL_CUSTOM_AD_SIZES.each do |size|
       blob = send("banner_creative_#{size}_blob")
       blob.replace("") if blob
     end
@@ -237,6 +236,7 @@ module Offer::BannerCreatives
       if creative_arr.size != 1
         raise "image contains multiple layers (e.g. animated .gif)"
       end
+
       creative = creative_arr[0]
       creative.format = format
       creative.interlace = Magick::JPEGInterlace if format == 'jpeg'

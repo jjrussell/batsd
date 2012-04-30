@@ -117,7 +117,7 @@ describe Games::AppReviewsController do
         :id => @gamer_review.id,
         :app_review => {
           :eid => ObjectEncryptor.encrypt(@currency.id),
-          :user_rating => -1,
+          :user_rating => -1
         }
       }
     end

@@ -15,11 +15,18 @@ xml.TapjoyConnectReturnObject do
         xml.RedirectURL get_click_url(offer)
         xml.StoreID offer.store_id_for_feed
         if params[:source] == 'featured'
-          xml.FullScreenAdURL get_fullscreen_ad_url(offer)
-          xml.MediumIconURL offer.get_icon_url(:source => :cloudfront, :size => '256')
+          xml.FullScreenAdURL  get_fullscreen_ad_url(offer)
+          xml.MediumIconURL    offer.get_icon_url(:source => :cloudfront, :size => '256')
+          xml.OfferText        featured_offer_text(offer, @currency)
+          xml.EarnCurrencyText featured_offer_earn_currency_text(offer, @currency, params[:display_multiplier])
+          xml.ActionText       featured_offer_action_text(offer)
+          xml.CustomCreative   offer.featured_custom_creative?
+          xml.SkipText         t('text.featured.skip')
         end
       end
     end
   end
+  xml.ShowMoreText @currency.hide_rewarded_app_installs? ? '' : t('text.featured.show_more_apps')
+  xml.AdsByText t('text.shared.ads_by') + ' Tapjoy'
   xml << render(:partial => "footer")
 end
