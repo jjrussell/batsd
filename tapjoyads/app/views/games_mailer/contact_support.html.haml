@@ -7,9 +7,8 @@
     = @gamer.email
     %br
     %strong UDID:
-    = @device.device_id
-    = "[#{@device.info_tool_url}]"
-    = #"[#{device_info_tools_url(:udid => @device.device_id, :host => URI.parse(DASHBOARD_URL).host)}]"
+    = @gamer_device.device_id
+    = "[#{@gamer_device.info_tool_url}]"
     %br
     %strong Offer:
     = @click.present? ? @click.offer.name : ""
@@ -40,7 +39,7 @@
     = @user_agent
     %br
     %strong Device Type:
-    = @device.device_type
+    = @gamer_device.device_type
     %br
     %strong Support Request:
     = @support_request.id

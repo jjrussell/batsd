@@ -17,7 +17,7 @@ class GamesMailer < ActionMailer::Base
     body(:content => content, :email => gamer.email, :udid => device_id, :user_agent => user_agent)
   end
 
-  def contact_support(gamer, device, content, user_agent, language_code, click, support_request)
+  def contact_support(gamer, gamer_device, content, user_agent, language_code, click, support_request)
     from 'Tapjoy <noreply@tapjoy.com>'
     reply_to gamer.email
     #recipients "mobilehelp@tapjoy.com"
@@ -26,7 +26,7 @@ class GamesMailer < ActionMailer::Base
     content_type 'text/html'
     body(:content         => content,
          :gamer           => gamer,
-         :device          => device,
+         :gamer_device    => gamer_device,
          :user_agent      => user_agent,
          :language_code   => language_code,
          :click           => click,
