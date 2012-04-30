@@ -23,11 +23,11 @@
     %br
     %strong Publisher Partner:
     = @click.present? ? @click.publisher_partner.name : ""
-    = #@click.present? ? "[#{partner_url(:id => @click.publisher_partner_id, :host => URI.parse(DASHBOARD_URL).host)}]" : ""
+    = @click.present? ? "[#{@click.publisher_partner.get_partner_url}]" : ""
     %br
     %strong Publisher App:
     = @click.present? ? @click.publisher_app.name : ""
-    = #@click.present? ? "[#{app_url(:id => @click.publisher_app_id, :host => URI.parse(DASHBOARD_URL).host)}]" : ""
+    = @click.present? ? "[#{@click.publisher_app.get_app_url}]" : ""
     %br
     %strong Publisher User:
     = @click.present? ? @click.publisher_user_id : ""

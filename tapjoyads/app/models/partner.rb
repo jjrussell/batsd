@@ -325,6 +325,13 @@ class Partner < ActiveRecord::Base
     changed? ? save : true
   end
 
+  # For use within TJM (since dashboard URL helpers aren't available within TJM)
+  def get_partner_url
+    url = "#{URI.parse(DASHBOARD_URL).scheme}://" +
+          "#{URI.parse(DASHBOARD_URL).host}" +
+          "/partners/#{self.id}"
+  end
+
 private
 
   def update_currencies

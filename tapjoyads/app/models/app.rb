@@ -408,6 +408,13 @@ class App < ActiveRecord::Base
     test_video_offer
   end
 
+  # For use within TJM (since dashboard URL helpers aren't available within TJM)
+  def get_app_url
+    url = "#{URI.parse(DASHBOARD_URL).scheme}://" +
+          "#{URI.parse(DASHBOARD_URL).host}" +
+          "/apps/#{self.id}"
+  end
+
   private
 
   def update_reengagements_with_enable_or_disable(enable)
