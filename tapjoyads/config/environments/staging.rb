@@ -83,7 +83,7 @@ FRESHBOOKS_AUTH_TOKEN = '59548f1150fa38c3feb2a67d6b1a0f8b'
 
 CLEAR_MEMCACHE = false
 
-twitter = YAML::load_file("#{RAILS_ROOT}/config/twitter.yaml")
+twitter = YAML::load_file("#{Rails.root}/config/twitter.yaml")
 ENV['CONSUMER_KEY'] = twitter['staging']['consumer_key']
 ENV['CONSUMER_SECRET'] = twitter['staging']['consumer_secret']
 
