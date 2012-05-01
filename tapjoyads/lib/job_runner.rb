@@ -11,7 +11,7 @@ class JobRunner
     if MACHINE_TYPE == 'masterjobs'
       active_jobs = Job.active.by_job_type('master')
     elsif MACHINE_TYPE == 'jobserver' || MACHINE_TYPE == 'testserver' || MACHINE_TYPE == 'staging'
-      active_jobs = Job.active.by_job_type('queue')
+      active_jobs = Job.active.by_job_type('queue') | Job.active_by_job_type('internal')
     else
       active_jobs = []
       Rails.logger.info "JobRunner: Not running any jobs. Not a job server."
