@@ -933,45 +933,49 @@ private
       :intervals => formatted_intervals,
       :xLabels => @x_labels,
       :main => {
-        :names => [ 'Offerwall views', 'Clicks', 'Conversions' ],
+        #:names => [ 'Offerwall views', 'Clicks', 'Conversions' ],
+        :names => [ 'Clicks', 'Conversions' ],
         :data => [
-          @stats['tjm_offerwall_views'], @stats['tjm_rewards_opened'], @stats['tjm_rewards'],
+          #@stats['tjm_offerwall_views'], 
+          @stats['tjm_rewards_opened'], @stats['tjm_rewards'],
         ],
         :stringData => [
-          @stats['tjm_offerwall_views'].map { |i| NumberHelper.number_with_delimiter(i) },
+          #@stats['tjm_offerwall_views'].map { |i| NumberHelper.number_with_delimiter(i) },
           @stats['tjm_rewards_opened'].map { |i| NumberHelper.number_with_delimiter(i) },
           @stats['tjm_rewards'].map { |i| NumberHelper.number_with_delimiter(i) },
         ],
         :totals => [
-          NumberHelper.number_with_delimiter(@stats['tjm_offerwall_views'].sum),
+          #NumberHelper.number_with_delimiter(@stats['tjm_offerwall_views'].sum),
           NumberHelper.number_with_delimiter(@stats['tjm_rewards_opened'].sum),
           NumberHelper.number_with_delimiter(@stats['tjm_rewards'].sum),
         ],
       },
       :right => {
         :unitPrefix => '$',
-        :names => [ 'Revenue', 'eCPM' ],
+        #:names => [ 'Revenue', 'eCPM' ],
+        :names => [ 'Revenue' ],
         :data => [
           @stats['tjm_rewards_revenue'].map { |i| i / 100.0 },
-          @stats['tjm_offerwall_ecpm'].map { |i| i / 100.0 },
+          #@stats['tjm_offerwall_ecpm'].map { |i| i / 100.0 },
         ],
         :stringData => [
           @stats['tjm_rewards_revenue'].map { |i| NumberHelper.number_to_currency(i / 100.0) },
-          @stats['tjm_offerwall_ecpm'].map { |i| NumberHelper.number_to_currency(i / 100.0) },
+          #@stats['tjm_offerwall_ecpm'].map { |i| NumberHelper.number_to_currency(i / 100.0) },
         ],
         :totals => [
           NumberHelper.number_to_currency(@stats['tjm_rewards_revenue'].sum / 100.0),
-          @stats['tjm_offerwall_views'].sum > 0 ? NumberHelper.number_to_currency(@stats['tjm_rewards_revenue'].sum.to_f / (@stats['tjm_offerwall_views'].sum / 1000.0) / 100.0) : '$0.00',
+          #@stats['tjm_offerwall_views'].sum > 0 ? NumberHelper.number_to_currency(@stats['tjm_rewards_revenue'].sum.to_f / (@stats['tjm_offerwall_views'].sum / 1000.0) / 100.0) : '$0.00',
         ],
       },
       :extra => {
-        :names => [ 'CTR', 'CVR' ],
+        #:names => [ 'CTR', 'CVR' ],
+        :names => [ 'CVR' ],
         :data => [
-          @stats['tjm_rewards_ctr'].map { |r| "%.0f%" % (r.to_f * 100.0) },
+          #@stats['tjm_rewards_ctr'].map { |r| "%.0f%" % (r.to_f * 100.0) },
           @stats['tjm_rewards_cvr'].map { |r| "%.0f%" % (r.to_f * 100.0) },
         ],
         :totals => [
-          @stats['tjm_offerwall_views'].sum > 0 ? ("%.1f%" % (@stats['tjm_rewards_opened'].sum.to_f / @stats['tjm_offerwall_views'].sum * 100.0)) : '-',
+          #@stats['tjm_offerwall_views'].sum > 0 ? ("%.1f%" % (@stats['tjm_rewards_opened'].sum.to_f / @stats['tjm_offerwall_views'].sum * 100.0)) : '-',
           @stats['tjm_rewards_opened'].sum > 0 ? ("%.1f%" % (@stats['tjm_rewards'].sum.to_f / @stats['tjm_rewards_opened'].sum * 100.0)) : '-',
         ],
       },
