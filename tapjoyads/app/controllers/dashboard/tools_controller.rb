@@ -130,15 +130,18 @@ class Dashboard::ToolsController < Dashboard::DashboardController
   end
 
   def sqs_lengths
-    queues = params[:queue_name].present? ? Sqs.queue("#{QueueNames::BASE_NAME}#{params[:queue_name]}").to_a : Sqs.queues
+    queues = params[:queue_name].present? ? Sqs.queue("#{QueueNames::BASE_NAME.sub(RUN_MODE_PREFIX, '')}#{params[:queue_name]}").to_a : Sqs.queues
     @queues = queues.map do |queue|
+      name = queue.url.split('/').last
       {
-        :name        => queue.url.split('/').last,
-        :size        => queue.visible_messages,
-        :hidden_size => queue.invisible_messages,
-        :visibility  => queue.visibility_timeout,
+        :name          => name,
+        :size          => queue.visible_messages,
+        :hidden_size   => queue.invisible_messages,
+        :visibility    => queue.visibility_timeout,
+        :show_run_link => !!(name =~ /^#{RUN_MODE_PREFIX}/)
       }
     end
+    @show_run_column = %w(development staging).include?(Rails.env) && @queues.any? { |queue| queue[:show_run_link] }
   end
 
   def ses_status
