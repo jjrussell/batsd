@@ -1,56 +1,53 @@
 %p
-  %h3
+  %strong
     TJM User Support
     = @click.present? ? "- #{@click.offer.name}" : ""
-  %div
+%div
+  %p
     %strong Email:
     = @gamer.email
-    %br
+  %p
     %strong UDID:
     = @gamer_device.device_id
     = "[#{@gamer_device.dashboard_device_info_tool_url}]"
-    %br
+  %p
     %strong Offer:
     = @click.present? ? @click.offer.name : ""
     = @click.present? ? "[#{@click.offer.dashboard_statz_url}]" : ""
-    %br
+  %p
     %strong Currency:
     = @click.present? ? @click.currency.name : ""
     = @click.present? ? "[#{@click.currency.dashboard_app_currency_url}]" : ""
-    %br
+  %p
     %strong Reward Amount:
     = @click.present? ? "#{@click.currency_reward} #{@click.currency.name}" : ""
-    %br
+  %p
     %strong Publisher Partner:
     = @click.present? ? @click.publisher_partner.name : ""
     = @click.present? ? "[#{@click.publisher_partner.dashboard_partner_url}]" : ""
-    %br
+  %p
     %strong Publisher App:
     = @click.present? ? @click.publisher_app.name : ""
     = @click.present? ? "[#{@click.publisher_app.dashboard_app_url}]" : ""
-    %br
+  %p
     %strong Publisher User:
     = @click.present? ? @click.publisher_user_id : ""
-    %br
+  %p
     %strong Language Code:
     = @language_code
-    %br
+  %p
     %strong User Agent:
     = @user_agent
-    %br
+  %p
     %strong Device Type:
     = @gamer_device.device_type
-    %br
+  %p
     %strong Support Request:
     = @support_request.id
-    %br
+  %p
     %strong Click:
     = @click.present? ? @click.key : ""
     = @click.present? ? "[#{@click.dashboard_device_info_tool_url}]" : ""
-    %br
-    %br
+  %p
     %strong Description
-    %br
-    \-----------------------------------------------------------------
-%p
-  %em= @content
+    = @content
