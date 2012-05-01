@@ -19,7 +19,7 @@ class Games::HomepageController < GamesController
       app_reviews.reject! { |x| x.bury_by_author?(current_gamer && current_gamer.id) || x.text.blank? }
       review_authors_not_viewer =  app_reviews.map(&:author_id) - [current_gamer && current_gamer.id].compact
 
-      rude_buried_list = Gamer.all(:conditions => ["id IN(?) ", review_authors_not_viewer], :select=>"id, extra_attributes")
+      rude_buried_list = Gamer.all(:conditions => ["id IN(?) ", review_authors_not_viewer], :select => "id, extra_attributes")
       rude_buried_ids = rude_buried_list.select { |x| (x.been_buried_count || 0) > Gamer::RUDE_BAN_LIMIT }.map(&:id)
       app_reviews.reject! { |x| rude_buried_ids.include? x.author_id }
 
