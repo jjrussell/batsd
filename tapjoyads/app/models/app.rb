@@ -410,9 +410,8 @@ class App < ActiveRecord::Base
 
   # For use within TJM (since dashboard URL helpers aren't available within TJM)
   def dashboard_app_url
-    url = "#{URI.parse(DASHBOARD_URL).scheme}://" +
-          "#{URI.parse(DASHBOARD_URL).host}" +
-          "/apps/#{self.id}"
+    "#{URI.parse(DASHBOARD_URL).scheme}://#{URI.parse(DASHBOARD_URL).host}" <<
+      "/apps/#{self.id}"
   end
 
   private
