@@ -366,10 +366,10 @@ class Appstats
   end
 
   def to_csv
-    data =  "start_time,end_time,paid_clicks,paid_installs,new_users,paid_cvr,spend,itunes_rank_overall_free_united_states,"
-    data += "offerwall_views,published_offer_clicks,published_offers_completed,published_cvr,offerwall_revenue,offerwall_ecpm,"
-    data += "tjm_offerwall_views,tjm_published_offer_clicks,tjm_published_offers_completed,tjm_published_cvr,tjm_offerwall_revenue,tjm_offerwall_ecpm," if Delayed.show?
-    data += "display_ads_revenue,display_ads_ecpm,featured_revenue,featured_ecpm"
+    data = "start_time,end_time,paid_clicks,paid_installs,new_users,paid_cvr,spend,itunes_rank_overall_free_united_states," <<
+      "offerwall_views,published_offer_clicks,published_offers_completed,published_cvr,offerwall_revenue,offerwall_ecpm," <<
+      "tjm_offerwall_views,tjm_published_offer_clicks,tjm_published_offers_completed,tjm_published_cvr,tjm_offerwall_revenue,tjm_offerwall_ecpm," <<
+      "display_ads_revenue,display_ads_ecpm,featured_revenue,featured_ecpm"
     data += ",daily_active_users,arpdau" if @granularity == :daily
     data = [data]
     get_labels_and_intervals unless @intervals.present?
@@ -392,16 +392,14 @@ class Appstats
         @stats['rewards_cvr'][i],
         NumberHelper.number_to_currency(@stats['rewards_revenue'][i] / 100.0, :delimiter => ''),
         NumberHelper.number_to_currency(@stats['offerwall_ecpm'][i] / 100.0, :delimiter => ''),
-      ]
-      line += [
+
         @stats['tjm_offerwall_views'][i],
         @stats['tjm_rewards_opened'][i],
         @stats['tjm_rewards'][i],
         @stats['tjm_rewards_cvr'][i],
         NumberHelper.number_to_currency(@stats['tjm_rewards_revenue'][i] / 100.0, :delimiter => ''),
         NumberHelper.number_to_currency(@stats['tjm_offerwall_ecpm'][i] / 100.0, :delimiter => ''),
-      ] if Delayed.show?
-      line += [
+
         NumberHelper.number_to_currency(@stats['display_revenue'][i] / 100.0, :delimiter => ''),
         NumberHelper.number_to_currency(@stats['display_ecpm'][i] / 100.0, :delimiter => ''),
         NumberHelper.number_to_currency(@stats['featured_revenue'][i] /100.0, :delimiter => ''),
@@ -835,40 +833,25 @@ private
       :xLabels => @x_labels,
       :main => {
         :unitPrefix => '$',
-        :names => Delayed.show? ? [ 'Total revenue', 'In app offerwall revenue', 'Tapjoy.com offerwall revenue', 'Featured offer revenue', 'Display ad revenue' ] : [ 'Total revenue', 'Offerwall revenue', 'Featured offer revenue', 'Display ad revenue' ],
-        :data => Delayed.show? ? [
+        :names => [ 'Total revenue', 'In app offerwall revenue', 'Tapjoy.com offerwall revenue', 'Featured offer revenue', 'Display ad revenue' ],
+        :data => [
           @stats['total_revenue'].map { |i| i / 100.0 },
           @stats['rewards_revenue'].map { |i| i / 100.0 },
           @stats['tjm_rewards_revenue'].map { |i| i / 100.0 },
           @stats['featured_revenue'].map { |i| i / 100.0 },
           @stats['display_revenue'].map { |i| i / 100.0 },
-        ] : [
-          @stats['total_revenue'].map { |i| i / 100.0 },
-          @stats['rewards_revenue'].map { |i| i / 100.0 },
-          @stats['featured_revenue'].map { |i| i / 100.0 },
-          @stats['display_revenue'].map { |i| i / 100.0 },
         ],
-        :stringData => Delayed.show? ? [
+        :stringData => [
           @stats['total_revenue'].map { |i| NumberHelper.number_to_currency(i / 100.0) },
           @stats['rewards_revenue'].map { |i| NumberHelper.number_to_currency(i / 100.0) },
           @stats['tjm_rewards_revenue'].map { |i| NumberHelper.number_to_currency(i / 100.0) },
           @stats['featured_revenue'].map { |i| NumberHelper.number_to_currency(i / 100.0) },
           @stats['display_revenue'].map { |i| NumberHelper.number_to_currency(i / 100.0) },
-        ] : [
-          @stats['total_revenue'].map { |i| NumberHelper.number_to_currency(i / 100.0) },
-          @stats['rewards_revenue'].map { |i| NumberHelper.number_to_currency(i / 100.0) },
-          @stats['featured_revenue'].map { |i| NumberHelper.number_to_currency(i / 100.0) },
-          @stats['display_revenue'].map { |i| NumberHelper.number_to_currency(i / 100.0) },
         ],
-        :totals => Delayed.show? ? [
+        :totals => [
           NumberHelper.number_to_currency(@stats['total_revenue'].sum / 100.0),
           NumberHelper.number_to_currency(@stats['rewards_revenue'].sum / 100.0),
           NumberHelper.number_to_currency(@stats['tjm_rewards_revenue'].sum / 100.0),
-          NumberHelper.number_to_currency(@stats['featured_revenue'].sum / 100.0),
-          NumberHelper.number_to_currency(@stats['display_revenue'].sum / 100.0),
-        ] : [
-          NumberHelper.number_to_currency(@stats['total_revenue'].sum / 100.0),
-          NumberHelper.number_to_currency(@stats['rewards_revenue'].sum / 100.0),
           NumberHelper.number_to_currency(@stats['featured_revenue'].sum / 100.0),
           NumberHelper.number_to_currency(@stats['display_revenue'].sum / 100.0),
         ],
@@ -878,7 +861,7 @@ private
 
   def offerwall_data
     {
-      :name => Delayed.show? ? 'In app offerwall' : 'Offerwall',
+      :name => 'In app offerwall',
       :intervals => formatted_intervals,
       :xLabels => @x_labels,
       :main => {
