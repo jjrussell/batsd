@@ -86,8 +86,8 @@ class GamerDevice < ActiveRecord::Base
 
   # For use within TJM (since dashboard URL helpers aren't available within TJM)
   def dashboard_device_info_tool_url
-    "#{URI.parse(DASHBOARD_URL).scheme}://#{URI.parse(DASHBOARD_URL).host}" <<
-      "/tools/device_info?udid=#{self.device_id}"
+    uri = URI.parse(DASHBOARD_URL)
+    "#{uri.scheme}://#{uri.host}/tools/device_info?udid=#{self.device_id}"
   end
 
   private

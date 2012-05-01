@@ -327,8 +327,8 @@ class Partner < ActiveRecord::Base
 
   # For use within TJM (since dashboard URL helpers aren't available within TJM)
   def dashboard_partner_url
-    "#{URI.parse(DASHBOARD_URL).scheme}://#{URI.parse(DASHBOARD_URL).host}" <<
-      "/partners/#{self.id}"
+    uri = URI.parse(DASHBOARD_URL)
+    "#{uri.scheme}://#{uri.host}/partners/#{self.id}"
   end
 
 private
