@@ -13,9 +13,9 @@
 - content_for :page_javascript do
   :plain
     if(!Tapjoy.device.idevice && !Tapjoy.device.android){
-    
+
       var msg = "#{messaging_text}";
-      
+
       $('#register-message .message-header').html(msg);
       $('#register-message .message-content .register-btn').html('#{t('text.games.email_device_link')}');
       $('#link-device').unbind('click');
@@ -44,7 +44,7 @@
         });
       });
     }
-  
+
 :css
   #register-message .message-content .register-btn {
     margin: 12px auto;

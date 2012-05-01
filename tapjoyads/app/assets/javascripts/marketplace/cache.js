@@ -1,37 +1,8 @@
-/*!
- *
- * Stash v1.0 - JS+CSS file caching using HTML5 LocalStorage
- *
- *      ___                       ___           ___           ___
- *     /  /\          ___        /  /\         /  /\         /__/\
- *    /  /:/_        /  /\      /  /::\       /  /:/_        \  \:\
- *   /  /:/ /\      /  /:/     /  /:/\:\     /  /:/ /\        \__\:\
- *  /  /:/ /::\    /  /:/     /  /:/~/::\   /  /:/ /::\   ___ /  /::\
- * /__/:/ /:/\:\  /  /::\    /__/:/ /:/\:\ /__/:/ /:/\:\ /__/\  /:/\:\
- * \  \:\/:/~/:/ /__/:/\:\   \  \:\/:/__\/ \  \:\/:/~/:/ \  \:\/:/__\/
- *  \  \::/ /:/  \__\/  \:\   \  \::/       \  \::/ /:/   \  \::/
- *   \__\/ /:/        \  \:\   \  \:\        \__\/ /:/     \  \:\
- *     /__/:/          \__\/    \  \:\         /__/:/       \  \:\
- *     \__\/                     \__\/         \__\/         \__\/
- *
- *
- * @copyright 2012, Tapjoy, Inc.
- * @license   http://www.github.com/Tapjoy
- * @version   1.0
- * @link      https://github.com/Tapjoy
- *
- * @author    Kieran Boyle <kieran.boyle@tapjoy.com> - http://github.com/tapkieran
- * @author    Mike Wheeler <michael.wheeler@tapjoy.com> - http://github.com/matchboxmike
- * @author    Van Pham <van.pham@tapjoy.com> - http://github.com/vanner
- *
- */
-
 (function(window, undefined){
   "use strict";
 
   // Thank you <cough>Microsoft</cough> Google... since older Andriod phones do not support JSON.parse or JSON.stringify
   var JSON; if(!JSON){JSON={}}(function(){function str(a,b){var c,d,e,f,g=gap,h,i=b[a];if(i&&typeof i==="object"&&typeof i.toJSON==="function"){i=i.toJSON(a)}if(typeof rep==="function"){i=rep.call(b,a,i)}switch(typeof i){case"string":return quote(i);case"number":return isFinite(i)?String(i):"null";case"boolean":case"null":return String(i);case"object":if(!i){return"null"}gap+=indent;h=[];if(Object.prototype.toString.apply(i)==="[object Array]"){f=i.length;for(c=0;c<f;c+=1){h[c]=str(c,i)||"null"}e=h.length===0?"[]":gap?"[\n"+gap+h.join(",\n"+gap)+"\n"+g+"]":"["+h.join(",")+"]";gap=g;return e}if(rep&&typeof rep==="object"){f=rep.length;for(c=0;c<f;c+=1){if(typeof rep[c]==="string"){d=rep[c];e=str(d,i);if(e){h.push(quote(d)+(gap?": ":":")+e)}}}}else{for(d in i){if(Object.prototype.hasOwnProperty.call(i,d)){e=str(d,i);if(e){h.push(quote(d)+(gap?": ":":")+e)}}}}e=h.length===0?"{}":gap?"{\n"+gap+h.join(",\n"+gap)+"\n"+g+"}":"{"+h.join(",")+"}";gap=g;return e}}function quote(a){escapable.lastIndex=0;return escapable.test(a)?'"'+a.replace(escapable,function(a){var b=meta[a];return typeof b==="string"?b:"\\u"+("0000"+a.charCodeAt(0).toString(16)).slice(-4)})+'"':'"'+a+'"'}function f(a){return a<10?"0"+a:a}"use strict";if(typeof Date.prototype.toJSON!=="function"){Date.prototype.toJSON=function(a){return isFinite(this.valueOf())?this.getUTCFullYear()+"-"+f(this.getUTCMonth()+1)+"-"+f(this.getUTCDate())+"T"+f(this.getUTCHours())+":"+f(this.getUTCMinutes())+":"+f(this.getUTCSeconds())+"Z":null};String.prototype.toJSON=Number.prototype.toJSON=Boolean.prototype.toJSON=function(a){return this.valueOf()}}var cx=/[\u0000\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g,escapable=/[\\\"\x00-\x1f\x7f-\x9f\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g,gap,indent,meta={"\b":"\\b","\t":"\\t","\n":"\\n","\f":"\\f","\r":"\\r",'"':'\\"',"\\":"\\\\"},rep;if(typeof JSON.stringify!=="function"){JSON.stringify=function(a,b,c){var d;gap="";indent="";if(typeof c==="number"){for(d=0;d<c;d+=1){indent+=" "}}else if(typeof c==="string"){indent=c}rep=b;if(b&&typeof b!=="function"&&(typeof b!=="object"||typeof b.length!=="number")){throw new Error("JSON.stringify")}return str("",{"":a})}}if(typeof JSON.parse!=="function"){JSON.parse=function(text,reviver){function walk(a,b){var c,d,e=a[b];if(e&&typeof e==="object"){for(c in e){if(Object.prototype.hasOwnProperty.call(e,c)){d=walk(e,c);if(d!==undefined){e[c]=d}else{delete e[c]}}}}return reviver.call(a,b,e)}var j;text=String(text);cx.lastIndex=0;if(cx.test(text)){text=text.replace(cx,function(a){return"\\u"+("0000"+a.charCodeAt(0).toString(16)).slice(-4)})}if(/^[\],:{}\s]*$/.test(text.replace(/\\(?:["\\\/bfnrt]|u[0-9a-fA-F]{4})/g,"@").replace(/"[^"\\\n\r]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g,"]").replace(/(?:^|:|,)(?:\s*\[)+/g,""))){j=eval("("+text+")");return typeof reviver==="function"?walk({"":j},""):j}throw new SyntaxError("JSON.parse")}}})()
-
 
   var _stash = {
     callback: function(options){
@@ -44,7 +15,9 @@
     },
 
     each: function(array, fn){
-      this.every(array, function(item){
+      var stash = this;
+
+      stash.every(array, function(item){
         return !fn(item)
       })
     },
@@ -143,7 +116,7 @@
         }
       }
     },
-    
+
     log: function(message){
       // get around YUI compressor
       var c = window.console;
@@ -209,7 +182,7 @@
         setTimeout(function(){
           // where the magic happens
           stash.each(options.files, function(file){
-            
+
             // check if valid file
             if(String(file).match(valid) === null){
               // manage count
@@ -219,36 +192,39 @@
               // move to next
               return;
             }
-              
+
             var regexResult = options.versionRegex.exec(file),
                 logicalURI = regexResult[1] + '.' + regexResult[3],
                 key = options.prefix + logicalURI,
                 hash = regexResult[2],
                 extension = regexResult[3],
-                storage = JSON.parse(localStorage.getItem(key));
+                supportsLocalStorage = stash.supportsLocalStorage(),
+                storage = supportsLocalStorage ? JSON.parse(localStorage.getItem(key)) : false;
 
-            // check if localStorage entry exists and if hash has changed
+            // check if localStorage exists, if entry exists and if hash has changed
             if(storage && storage.hash === hash){
               // load from cache
               stash.inject(storage.content, extension, null, options);
             }else{
-              // fetch uncached file
+              // fetch our file
               stash.fetch(file, function(text, uri, status){
                 // check for errors
                 if(status === 404){
                   stash.log('Error: 404\nCould not load resource: ' + uri);
                 }else{
-                  // create new entry -> path/file + extension. We remove the digest from the filename and store it as our hash property.
-                  localStorage.setItem(key,
-                    // create new storage object with hash + content
-                    JSON.stringify({
-                      // versioning hash <- extracted from filename
-                      hash: hash,
-                      // file contents
-                      content: text
-                    })
-                  );
-
+                  // check if we can write to localStorage
+                  if(supportsLocalStorage){
+                    // create new entry -> path/file + extension. We remove the digest from the filename and store it as our hash property.
+                    localStorage.setItem(key,
+                      // create new storage object with hash + content
+                      JSON.stringify({
+                        // versioning hash <- extracted from filename
+                        hash: hash,
+                        // file contents
+                        content: text
+                      })
+                    );
+                  }
                   stash.inject(text, extension, uri, options);
                 }
               });
@@ -259,6 +235,25 @@
 
       // return stash object for chaining
       return stash;
+    },
+
+    supportsLocalStorage: function(){
+
+      if(!window.localStorage)
+        return false;
+
+      var storage = window.localStorage;
+
+      // try and catch quota exceeded errors
+      try{
+        storage.setItem('tapjoy', 'dollas!');
+        storage.removeItem('tapjoy');
+      }catch(error){
+        if(error.code === DOMException.QUOTA_EXCEEDED_ERR && storage.length === 0)
+          return false;
+      }
+
+      return true;
     }
   };
 

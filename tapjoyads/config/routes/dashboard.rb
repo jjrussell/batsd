@@ -79,7 +79,7 @@ ActionController::Routing::Routes.draw do |map|
                      :resolve_clicks => :post, :sqs_lengths => :get, :ses_status => :get,
                      :publishers_without_payout_info => :get, :publisher_payout_info_changes => :get, :device_info => :get,
                      :award_currencies => :post, :update_award_currencies => :post,
-                     :update_user_roles => :post, :update_device => :post }
+                     :update_user_roles => :post, :update_device => :post, :fix_rewards => :get }
 
   map.namespace :tools do |tools|
     tools.resources :approvals, :as => 'acceptance', :only => [:index], :collection => [:history, :mine], :member => [:approve, :reject, :assign]
@@ -129,6 +129,7 @@ ActionController::Routing::Routes.draw do |map|
     tools.resources :currency_approvals, :only => [:index], :collection => [:mine, :history], :member => [:approve, :reject, :assign], :controller => :approvals, :requirements => { :type => :currency, :calling_controller => 'tools/currency_approvals' }
     tools.resources :wfhs, :only => [ :index, :new, :create, :edit, :update, :destroy ]
     tools.resources :clients, :only => [ :index, :show, :new, :create, :edit, :update], :member => { :add_partner => :post, :remove_partner => :post }
+    tools.resources :shared_files, :only => [ :index, :create ], :collection => { :delete => :post }
   end
 
   # Operations tools routes
@@ -144,6 +145,7 @@ ActionController::Routing::Routes.draw do |map|
       :elb_status => :get,
       :http_codes => :get,
       :bytes_sent => :get,
+      :vertica_status => :get,
     }
 
   map.connect 'mail_chimp_callback/callback', :controller => :mail_chimp_callback, :action => :callback

@@ -27,6 +27,11 @@ authorization do
     has_permission_on :tools, :to => [ :index ]
   end
 
+  role :file_sharer do
+    includes :tools
+    has_permission_on :tools_shared_files, :to => [ :index, :create, :delete ]
+  end
+
   role :ops do
     has_permission_on :ops, :to => [
                                      :index,
@@ -39,7 +44,8 @@ authorization do
                                      :as_terminate_instance,
                                      :service_stats,
                                      :http_codes,
-                                     :bytes_sent
+                                     :bytes_sent,
+                                     :vertica_status,
                                    ]
   end
 
@@ -51,6 +57,7 @@ authorization do
   role :customer_service do
     includes :tools
     includes :devices
+    includes :file_sharer
     has_permission_on :search, :to => [ :gamers ]
     has_permission_on :tools, :to => [ :resolve_clicks, :device_info, :update_device, :send_currency_failures ]
     has_permission_on :tools_gamers, :to => [ :index, :show ]
@@ -108,6 +115,7 @@ authorization do
     includes :money
     includes :games_editor
     includes :customer_service
+    includes :file_sharer
     has_permission_on :users, :to => [ :approve ]
     has_permission_on :statz, :to => [ :index, :show, :edit, :update, :new, :create, :last_run_times, :udids, :download_udids, :global, :publisher, :advertiser, :support_request_reward_ratio ]
     has_permission_on :search, :to => [ :offers, :partners, :users, :currencies ]
@@ -169,8 +177,9 @@ authorization do
     includes :games_editor
     includes :role_mgr
     includes :products
+    includes :file_sharer
     has_permission_on :pub_offer_whitelist, :to => [ :index, :enable, :disable ]
-    has_permission_on :tools, :to => [ :failed_sdb_saves, :sdb_metadata, :reset_device, :sqs_lengths, :elb_status, :ses_status, :as_groups ]
+    has_permission_on :tools, :to => [ :failed_sdb_saves, :sdb_metadata, :reset_device, :sqs_lengths, :elb_status, :ses_status, :as_groups, :fix_rewards ]
     has_permission_on :tools_offers, :to => [ :creative, :approve_creative, :reject_creative ]
     has_permission_on :tools_recommenders, :to => [ :index, :create ]
     has_permission_on :tools_jobs, :to => [ :index, :new, :create, :edit, :update, :destroy ]
