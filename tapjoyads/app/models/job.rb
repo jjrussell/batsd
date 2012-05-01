@@ -1,7 +1,7 @@
 class Job < ActiveRecord::Base
   include UuidPrimaryKey
 
-  JOB_TYPES = %w( master queue )
+  JOB_TYPES = %w( master queue internal )
   FREQUENCIES = %w( interval hourly daily )
   CONCURRENCY_DIR = "#{Rails.root}/tmp/job_concurrency"
 
