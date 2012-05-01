@@ -30,7 +30,7 @@ class SupportRequest < SimpledbResource
   end
 
   def get_last_click(udid, offer)
-    conditions = ActiveRecord::Base.sanitize_conditions("udid = ? and advertiser_app_id = ? and manually_resolved_at is null", udid, offer.item_id)
+    conditions = ["udid = ? and advertiser_app_id = ? and manually_resolved_at is null", udid, offer.item_id]
     clicks = Click.select_all(:conditions => conditions)
     clicks.sort_by { |c| c.clicked_at.to_f }.last
   end
