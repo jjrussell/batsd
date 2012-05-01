@@ -1,7 +1,7 @@
 class HomepageController < WebsiteController
   layout 'newcontent'
   protect_from_forgery :except => [:contact]
-  before_filter :legacy_redirect, :only => [:advertisers_contact, :contact_us, :publishers_contact, :gaming_platforms]
+  before_filter :legacy_redirect, :only => [:advertisers_contact, :advertiser_contact, :contact_us, :publishers_contact, :gaming_platforms]
 
   def contact
     redirect_to 'http://info.tapjoy.com/contact-us', :status => :moved_permanently
@@ -61,7 +61,7 @@ class HomepageController < WebsiteController
   private
 
   def legacy_redirect
-    redirect_to :action => 'contact'
+    redirect_to 'http://info.tapjoy.com/contact-us', :status => :moved_permanently
   end
 
 end

@@ -11,6 +11,7 @@ class Conversion < ActiveRecord::Base
     'action'                      => 5,
     'video'                       => 6,
     'reengagement'                => 7,
+    'deeplink'                    => 8,
 
     # Special
     'imported'                    => 999,

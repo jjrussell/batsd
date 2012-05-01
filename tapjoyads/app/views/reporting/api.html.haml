@@ -22,7 +22,6 @@ Your API Key:
   https://api.tapjoy.com/reporting_data.xml?email=#{CGI::escape(current_user.username)}&api_key=#{current_user.api_key}&date=YYYY-MM-DD[&page=NUM][&timezone=NUM]
 
 %p Response
-- tjmXMLresponse = Delayed.show? ? '&#13;&#10;    &lt;TJMOfferwallRevenue&gt;0&lt;/TJMOfferwallRevenue&gt;&#13;&#10;    &lt;TJMOfferwallRevenueHourly&gt;0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0&lt;/TJMOfferwallRevenueHourly&gt;&#13;&#10;    &lt;TJMOfferwallImpressions&gt;0&lt;/TJMOfferwallImpressions&gt;&#13;&#10;    &lt;TJMOfferwallImpressionsHourly&gt;0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0&lt;/TJMOfferwallImpressionsHourly&gt;&#13;&#10;    &lt;TJMOfferwallClicks&gt;0&lt;/TJMOfferwallClicks&gt;&#13;&#10;    &lt;TJMOfferwallClicksHourly&gt;0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0&lt;/TJMOfferwallClicksHourly&gt;&#13;&#10;    &lt;TJMOfferwallConversions&gt;0&lt;/TJMOfferwallConversions&gt;&#13;&#10;    &lt;TJMOfferwallConversionsHourly&gt;0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0&lt;/TJMOfferwallConversionsHourly&gt;' : ''
 %pre
   :preserve
     &lt;?xml version="1.0" encoding="UTF-8"?&gt;
@@ -75,7 +74,15 @@ Your API Key:
         &lt;DisplayClicks&gt;0&lt;/DisplayClicks&gt;
         &lt;DisplayClicksHourly&gt;0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0&lt;/DisplayClicksHourly&gt;
         &lt;DisplayConversions&gt;0&lt;/DisplayConversions&gt;
-        &lt;DisplayConversionsHourly&gt;0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0&lt;/DisplayConversionsHourly&gt;#{tjmXMLresponse}
+        &lt;DisplayConversionsHourly&gt;0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0&lt;/DisplayConversionsHourly&gt;
+        &lt;TJMOfferwallRevenue&gt;0&lt;/TJMOfferwallRevenue&gt;
+        &lt;TJMOfferwallRevenueHourly&gt;0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0&lt;/TJMOfferwallRevenueHourly&gt;
+        &lt;TJMOfferwallImpressions&gt;0&lt;/TJMOfferwallImpressions&gt;
+        &lt;TJMOfferwallImpressionsHourly&gt;0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0&lt;/TJMOfferwallImpressionsHourly&gt;
+        &lt;TJMOfferwallClicks&gt;0&lt;/TJMOfferwallClicks&gt;
+        &lt;TJMOfferwallClicksHourly&gt;0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0&lt;/TJMOfferwallClicksHourly&gt;
+        &lt;TJMOfferwallConversions&gt;0&lt;/TJMOfferwallConversions&gt;
+        &lt;TJMOfferwallConversionsHourly&gt;0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0&lt;/TJMOfferwallConversionsHourly&gt;
       &lt;/App&gt;
 
       ...
@@ -89,7 +96,6 @@ Your API Key:
   https://api.tapjoy.com/reporting_data.json?email=#{CGI::escape(current_user.username)}&api_key=#{current_user.api_key}&date=YYYY-MM-DD[&page=NUM][&timezone=NUM]
 
 %p Response
-- tjmJSONresponse = Delayed.show? ? ',&#13;&#10;      "TJMOfferwallRevenue"            : 0,&#13;&#10;      "TJMOfferwallRevenueHourly"      : [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],&#13;&#10;      "TJMOfferwallImpressions"        : 0,&#13;&#10;      "TJMOfferwallImpressionsHourly"  : [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],&#13;&#10;      "TJMOfferwallClicks"             : 0,&#13;&#10;      "TJMOfferwallClicksHourly"       : [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],&#13;&#10;      "TJMOfferwallConversions"        : 0,&#13;&#10;      "TJMOfferwallConversionsHourly"  : [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]' : ''
 %pre
   :preserve
     {
@@ -142,7 +148,15 @@ Your API Key:
           "DisplayClicks"                  : 0,
           "DisplayClicksHourly"            : [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
           "DisplayConversions"             : 0,
-          "DisplayConversionsHourly"       : [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]#{tjmJSONresponse}
+          "DisplayConversionsHourly"       : [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+          "TJMOfferwallRevenue"            : 0,
+          "TJMOfferwallRevenueHourly"      : [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+          "TJMOfferwallImpressions"        : 0,
+          "TJMOfferwallImpressionsHourly"  : [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+          "TJMOfferwallClicks"             : 0,
+          "TJMOfferwallClicksHourly"       : [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+          "TJMOfferwallConversions"        : 0,
+          "TJMOfferwallConversionsHourly"  : [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
         },
 
         ...
@@ -306,31 +320,30 @@ Your API Key:
     %tr
       %td DisplayConversionsHourly
       %td The hourly breakdown of DisplayConversions.
-    - if Delayed.show?
-      %tr
-        %td TJMOfferwallRevenue
-        %td The total revenue, in cents, earned through the Tapjoy marketplace offerwall for the specified date.
-      %tr
-        %td TJMOfferwallRevenueHourly
-        %td The hourly breakdown for TJMOfferwallRevenue.
-      %tr
-        %td TJMOfferwallImpressions
-        %td The total number of Tapjoy marketplace offerwall views served for the specified date.
-      %tr
-        %td TJMOfferwallImpressionsHourly
-        %td The hourly breakdown for TJMOfferwallImpressions.
-      %tr
-        %td TJMOfferwallClicks
-        %td The total number of clicks from the Tapjoy marketplace offerwall for the specified date.
-      %tr
-        %td TJMOfferwallClicksHourly
-        %td The hourly breakdown for TJMOfferwallClicks.
-      %tr
-        %td TJMOfferwallConversions
-        %td The number of conversions generated from the Tapjoy marketplace offerwall for the specified date.
-      %tr
-        %td TJMOfferwallConversionsHourly
-        %td The hourly breakdown for TJMOfferwallConversions.
+    %tr
+      %td TJMOfferwallRevenue
+      %td The total revenue, in cents, earned through the Tapjoy marketplace offerwall for the specified date.
+    %tr
+      %td TJMOfferwallRevenueHourly
+      %td The hourly breakdown for TJMOfferwallRevenue.
+    %tr
+      %td TJMOfferwallImpressions
+      %td The total number of Tapjoy marketplace offerwall views served for the specified date.
+    %tr
+      %td TJMOfferwallImpressionsHourly
+      %td The hourly breakdown for TJMOfferwallImpressions.
+    %tr
+      %td TJMOfferwallClicks
+      %td The total number of clicks from the Tapjoy marketplace offerwall for the specified date.
+    %tr
+      %td TJMOfferwallClicksHourly
+      %td The hourly breakdown for TJMOfferwallClicks.
+    %tr
+      %td TJMOfferwallConversions
+      %td The number of conversions generated from the Tapjoy marketplace offerwall for the specified date.
+    %tr
+      %td TJMOfferwallConversionsHourly
+      %td The hourly breakdown for TJMOfferwallConversions.
 
 %h4 Rate limiting
 
