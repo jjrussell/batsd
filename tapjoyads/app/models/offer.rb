@@ -16,7 +16,7 @@ class Offer < ActiveRecord::Base
   ANDROID_DEVICES = %w( android )
   WINDOWS_DEVICES = %w( windows )
   ALL_DEVICES = APPLE_DEVICES + ANDROID_DEVICES + WINDOWS_DEVICES
-  ALL_OFFER_TYPES = %w( App EmailOffer GenericOffer OfferpalOffer RatingOffer ActionOffer VideoOffer SurveyOffer ReengagementOffer)
+  ALL_OFFER_TYPES = %w( App EmailOffer GenericOffer OfferpalOffer RatingOffer ActionOffer VideoOffer SurveyOffer ReengagementOffer DeeplinkOffer)
   ALL_SOURCES = %w( offerwall display_ad featured tj_games )
 
   CLASSIC_OFFER_TYPE                          = '0'
@@ -29,6 +29,7 @@ class Offer < ActiveRecord::Base
   FEATURED_BACKFILLED_OFFER_TYPE              = '7'
   NON_REWARDED_FEATURED_BACKFILLED_OFFER_TYPE = '8'
   REENGAGEMENT_OFFER_TYPE                     = '9'
+  NON_REWARDED_BACKFILLED_OFFER_TYPE          = '10'
   OFFER_TYPE_NAMES = {
     DEFAULT_OFFER_TYPE                          => 'Offerwall Offers',
     FEATURED_OFFER_TYPE                         => 'Rewarded Featured Offers',
@@ -38,7 +39,8 @@ class Offer < ActiveRecord::Base
     VIDEO_OFFER_TYPE                            => 'Video Offers',
     FEATURED_BACKFILLED_OFFER_TYPE              => 'Rewarded Featured Offers (Backfilled)',
     NON_REWARDED_FEATURED_BACKFILLED_OFFER_TYPE => 'Non-Rewarded Featured Offers (Backfilled)',
-    REENGAGEMENT_OFFER_TYPE                     => 'Reengagement Offers'
+    REENGAGEMENT_OFFER_TYPE                     => 'Reengagement Offers',
+    NON_REWARDED_BACKFILLED_OFFER_TYPE          => 'Non-Rewarded Offers (Backfilled)'
   }
 
   OFFER_LIST_EXCLUDED_COLUMNS = %w( active
@@ -72,13 +74,13 @@ class Offer < ActiveRecord::Base
   DIRECT_PAY_PROVIDERS = %w( boku paypal )
 
   FREQUENCIES_CAPPING_INTERVAL = {
-    "none"     => 0,
-    "1 minute" => 1.minute.to_i,
-    "1 hour"   => 1.hour.to_i,
-    "8 hours"  => 8.hours.to_i,
-    "24 hours" => 24.hours.to_i,
-    "2 days"   => 2.days.to_i,
-    "3 days"   => 3.days.to_i,
+    'none'     => 0,
+    '1 minute' => 1.minute.to_i,
+    '1 hour'   => 1.hour.to_i,
+    '8 hours'  => 8.hours.to_i,
+    '24 hours' => 24.hours.to_i,
+    '2 days'   => 2.days.to_i,
+    '3 days'   => 3.days.to_i,
   }
 
   attr_reader :video_button_tracking_offers
@@ -90,6 +92,8 @@ class Offer < ActiveRecord::Base
   has_many :offer_events
   has_many :editors_picks
   has_many :approvals, :class_name => 'CreativeApprovalQueue'
+  has_many :brands, :through => :brand_offer_mappings
+  has_many :brand_offer_mappings
 
   belongs_to :partner
   belongs_to :item, :polymorphic => true
@@ -188,14 +192,14 @@ class Offer < ActiveRecord::Base
   before_save :nullify_banner_creatives
   after_update :lock_survey_offer
   after_save :update_enabled_rating_offer_id
+  after_save :update_enabled_deeplink_offer_id
   after_save :update_pending_enable_requests
   after_save :update_tapjoy_sponsored_associated_offers
   after_save :sync_banner_creatives! # NOTE: this should always be the last thing run by the after_save callback chain
   before_cache :clear_creative_blobs
   before_cache :update_video_button_tracking_offers
 
-  named_scope :enabled_offers, :joins => :partner,
-    :readonly => false, :conditions => "tapjoy_enabled = true AND user_enabled = true AND item_type != 'RatingOffer' AND item_type != 'ReengagementOffer' AND ((payment > 0 AND #{Partner.quoted_table_name}.balance > payment) OR (payment = 0 AND reward_value > 0)) AND tracking_for_id IS NULL"
+  named_scope :enabled_offers, :joins => :partner, :readonly => false, :conditions => "tapjoy_enabled = true AND user_enabled = true AND item_type NOT IN ('RatingOffer','DeeplinkOffer','ReengagementOffer') AND ((payment > 0 AND #{Partner.quoted_table_name}.balance > payment) OR (payment = 0 AND reward_value > 0)) AND tracking_for_id IS NULL"
   named_scope :by_name, lambda { |offer_name| { :conditions => ["offers.name LIKE ?", "%#{offer_name}%" ] } }
   named_scope :by_device, lambda { |platform| { :conditions => ["offers.device_types LIKE ?", "%#{platform}%" ] } }
   named_scope :for_offer_list, :select => OFFER_LIST_REQUIRED_COLUMNS
@@ -746,6 +750,13 @@ class Offer < ActiveRecord::Base
     if item_type == 'RatingOffer' && (tapjoy_enabled_changed? || user_enabled_changed? || reward_value_changed? || payment_changed?)
       item.app.enabled_rating_offer_id = accepting_clicks? ? id : nil
       item.app.save! if item.app.changed?
+    end
+  end
+
+  def update_enabled_deeplink_offer_id
+    if item_type == 'DeeplinkOffer' && (tapjoy_enabled_changed? || user_enabled_changed? || reward_value_changed? || payment_changed?)
+      item.currency.enabled_deeplink_offer_id = accepting_clicks? ? id : nil
+      item.currency.save! if item.currency.changed?
     end
   end
 

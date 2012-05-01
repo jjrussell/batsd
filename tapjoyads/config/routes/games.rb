@@ -69,6 +69,9 @@ ActionController::Routing::Routes.draw do |map|
     end
 
     map.resources :survey_results, :only => [ :new, :create ]
-    m.resources :app_reviews, :controller => 'games/app_reviews', :only => [ :index, :create, :edit, :update, :new, :destroy]
+    m.resources :app_reviews, :controller => 'games/app_reviews', :only => [ :index, :create, :edit, :update, :new, :destroy] do |moderation|
+      moderation.resource :flag, :controller=> 'games/app_reviews/flag_moderation', :only => [:create, :destroy]
+      moderation.resource :fave, :controller=> 'games/app_reviews/fave_moderation', :only => [:create, :destroy]
+    end
   end
 end

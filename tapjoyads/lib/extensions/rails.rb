@@ -81,6 +81,51 @@ module ActiveRecord
     end
   end
 
+  class Migration
+    BIG_TABLES = Hash[[ Gamer, GamerProfile, Conversion ].map do |model|
+      [ model.to_s.pluralize.underscore, model ]
+    end]
+    def self.check_table_size(table_name)
+      if BIG_TABLES.include?(table_name.to_s) && BIG_TABLES[table_name.to_s].count > 0
+        puts "*" * 80
+        puts "Cannot ALTER TABLE #{table_name} - please revise your code."
+        puts "add_column, add_index, remove_column, and remove_index are not"
+        puts "allowed to run on the following tables:"
+        BIG_TABLES.each do |big_table_name|
+          puts " - #{big_table_name}"
+        end
+        puts "*" * 80
+        raise "Table too large: #{table_name}"
+      else
+        yield
+      end
+    end
+
+    def self.add_column(table_name, column_name, type, options = {})
+      check_table_size(table_name) do
+        super(table_name, column_name, type, options)
+      end
+    end
+
+    def self.remove_column(table_name, column_name)
+      check_table_size(table_name) do
+        super(table_name, column_name)
+      end
+    end
+
+    def self.add_index(table_name, column_name, options = {})
+      check_table_size(table_name) do
+        super(table_name, column_name, options)
+      end
+    end
+
+    def self.remove_index(table_name, column_name)
+      check_table_size(table_name) do
+        super(table_name, column_name)
+      end
+    end
+  end
+
   class Base
 
     # See https://rails.lighthouseapp.com/projects/8994/tickets/2919

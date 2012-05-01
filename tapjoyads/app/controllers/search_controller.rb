@@ -9,6 +9,8 @@ class SearchController < WebsiteController
       conditions = [ "id = ?", term ]
     elsif params[:app_offers_only]
       conditions = [ "name LIKE ? AND item_type = ?", "%#{term}%", 'app' ]
+    elsif params[:selected_offers]
+      conditions = [ "name LIKE ? AND id NOT IN (?)", "%#{term}%", params[:selected_offers] ]
     else
       conditions = [ "name LIKE ?", "%#{term}%" ]
     end
@@ -109,6 +111,18 @@ class SearchController < WebsiteController
     end
 
     render :partial => 'gamers'
+  end
+
+  def brands
+    conditions = [ "name LIKE ?", "%#{params[:term]}%" ]
+    results = Brand.find(:all,
+        :conditions => conditions,
+        :order => 'name ASC',
+        :limit => 20).collect do |b|
+          {:id => b.id, :label => b.name, :name => b.name, :url => ''}
+        end
+    results = [{:id => '0', :label => "Add: #{params[:term]}", :url => ''}] if results.empty?
+    render(:json => results.to_json)
   end
 
   def currencies
