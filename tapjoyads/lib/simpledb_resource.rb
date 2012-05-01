@@ -370,10 +370,6 @@ class SimpledbResource
 
     domain_name = get_real_domain_name(domain_name)
 
-    # if only a string is provided, process it as-is (otherwise sanitization won't allow unescaped chars such as '%')
-    # we can remove this if we properly rewrite all the existing simple-db query conditions at some point
-    where = where.is_a?(String) ? where : sanitize_conditions(where)
-
     query = "SELECT count(*) FROM `#{domain_name}`"
     query += " WHERE #{where}" if where
 
@@ -420,10 +416,6 @@ class SimpledbResource
     hydra.disable_memoization
 
     domain_name = get_real_domain_name(domain_name)
-
-    # if only a string is provided, process it as-is (otherwise sanitization won't allow unescaped chars such as '%')
-    # we can remove this if we properly rewrite all the existing simple-db query conditions at some point
-    where = where.is_a?(String) ? where : sanitize_conditions(where)
 
     query = "SELECT count(*) FROM `#{domain_name}`"
     query += " WHERE #{where}" if where
@@ -482,10 +474,6 @@ class SimpledbResource
 
     domain_name = get_real_domain_name(domain_name)
 
-    # if only a string is provided, process it as-is (otherwise sanitization won't allow unescaped chars such as '%')
-    # we can remove this if we properly rewrite all the existing simple-db query conditions at some point
-    where = where.is_a?(String) ? where : sanitize_conditions(where)
-
     query = "SELECT #{attrs} FROM `#{domain_name}`"
     query += " WHERE #{where}" if where
     query += " ORDER BY #{order_by}" if order_by
@@ -542,13 +530,6 @@ class SimpledbResource
   rescue => e
     Rails.logger.error("Error while processing query: #{query}")
     raise e
-  end
-
-  def self.sanitize_conditions(*ary)
-    return nil if ary.compact.empty?
-    ary = ary.first.is_a?(Array) ? ary.first : ary
-    ary = [ary.shift, *ary.map(&:to_s)] # SimpleDB expects all values to be strings
-    ActiveRecord::Base.sanitize_conditions(ary)
   end
 
   def self.create_domain(domain_name)
