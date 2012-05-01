@@ -1,6 +1,6 @@
 class Delayed
 
-  START_TIME = Date.new(2012, 5, 2)
+  START_TIME = Date.new(2012, 5, 1)
   DURATION = 1.week
 
   def self.show?
