@@ -279,25 +279,19 @@
     if (loadFriendsOptions != undefined) {
       var socialFriends = [];
       var twitterFollowerIds = [];
-      var twitterNextCursor = -1;
+      var counter = 0;
       fetchTwitterFriendList();
     }
 
     function fetchTwitterFriendList() {
-      var url = 'http://api.twitter.com/1/followers/ids.json?user_id=' + loadFriendsOptions.twitterId + '&cursor=' + twitterNextCursor;
+      var url = 'http://api.twitter.com/1/followers/ids.json?user_id=' + loadFriendsOptions.twitterId + '&cursor=-1';
       $.ajax({
         url: url,
         dataType: 'jsonp',
         timeout: 15000,
         success: function(d) {
           twitterFollowerIds = twitterFollowerIds.concat(d.ids);
-          twitterNextCursor = d.next_cursor;
-          url = 'http://api.twitter.com/1/followers/ids.json?user_id=' + loadFriendsOptions.twitterId + '&cursor=' + twitterNextCursor;
-          if (d.next_cursor_str !== "0") {
-            fetchTwitterFriendList();
-          } else {
-            fetchTwitterUsersInfo();
-          }
+          fetchTwitterUsersInfo();
         },
         error: function(request, status, error) {
           $('.ajax-placeholder').hide();
@@ -325,7 +319,8 @@
             }
             socialFriends.push(userSimple);
           }
-          if (twitterFollowerIds.length > 0) {
+          if (twitterFollowerIds.length > 0 && counter < 10) {
+            counter++;
             fetchTwitterUsersInfo(twitterFollowerIds);
           } else {
             socialFriends = socialFriends.sort(function(a, b) {
