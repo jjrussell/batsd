@@ -42,6 +42,9 @@
 
     %script{ :id => "analytics-goes-here" }
   %body{ :id => 'tapjoy', :style => 'display: none;'}
+    - if @load_facebook == true
+      #fb-root{ 'data-fb-options' => {:appId => Facebooker2.app_id, :locale => 'en_US'}.to_json }
+
     %noscript
       %style{:type => "text/css", :media => "screen"}
         :plain

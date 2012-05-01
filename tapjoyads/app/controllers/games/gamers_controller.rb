@@ -33,21 +33,12 @@ class Games::GamersController < GamesController
     @gamer.gamer_profile = @gamer_profile
 
     if @gamer.save
-      params[:default_platforms] ||= {}
-      message = {
-        :gamer_id => @gamer.id,
-        :accept_language_str => request.accept_language,
-        :user_agent_str => request.user_agent,
-        :device_type => device_type,
-        :selected_devices => params[:default_platforms].reject { |k, v| v != '1' }.keys,
-        :geoip_data => geoip_data,
-        :os_version => os_version }
-      Sqs.send_message(QueueNames::SEND_WELCOME_EMAILS, Base64::encode64(Marshal.dump(message)))
+      @gamer.send_welcome_email(request, device_type, params[:default_platforms] || {}, geoip_data, os_version)
 
       if params[:data].present? && params[:src] == 'android_app'
-        render(:json => { :success => true, :link_device_url => finalize_games_gamer_device_path(:data => params[:data]), :android => true })
+        render(:json => { :success => true, :redirect_url => link_device_games_gamer_path(:link_device_url => finalize_games_gamer_device_path(:data => params[:data]), :android => true) })
       else
-        render(:json => { :success => true, :link_device_url => new_games_gamer_device_path })
+        render(:json => { :success => true, :redirect_url => link_device_games_gamer_path(:link_device_url => new_games_gamer_device_path) })
       end
     else
       errors = @gamer.errors.reject{|error|error[0] == 'gamer_profile'}
@@ -77,7 +68,6 @@ class Games::GamersController < GamesController
     }
   end
 
-
   def update_password
     @gamer.safe_update_attributes(params[:gamer], [ :password, :password_confirmation ])
     if @gamer.save
@@ -103,6 +93,9 @@ class Games::GamersController < GamesController
     else
       render_json_error(@gamer.errors) and return
     end
+  end
+
+  def link_device
   end
 
   private

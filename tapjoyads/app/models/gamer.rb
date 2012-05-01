@@ -83,6 +83,14 @@ class Gamer < ActiveRecord::Base
   serialized_extra_attributes_accessor :been_buried_count
   serialized_extra_attributes_accessor :been_helpful_count
 
+  def before_connect(facebook_session)
+    self.email                 = facebook_session.email
+    self.password              = Digest::SHA1.hexdigest("--#{Time.now.to_s}--#{facebook_session.name}--")[0,6]
+    self.password_confirmation = self.password
+    self.terms_of_service      = 1
+    self.referrer              = "NEW_SIGN_UP_WITH_FACEBOOK"
+  end
+
   def confirm!
     self.confirmed_at = Time.zone.now
     if save
@@ -230,6 +238,18 @@ class Gamer < ActiveRecord::Base
 
   def too_many_devices?
     gamer_devices.count >= MAX_DEVICE_THRESHOLD
+  end
+
+  def send_welcome_email(request, device_type, default_platforms, geoip_data, os_version)
+    message = {
+      :gamer_id => id,
+      :accept_language_str => request.accept_language,
+      :user_agent_str => request.user_agent,
+      :device_type => device_type,
+      :selected_devices => default_platforms.reject { |k, v| v != '1' }.keys,
+      :geoip_data => geoip_data,
+      :os_version => os_version }
+    Sqs.send_message(QueueNames::SEND_WELCOME_EMAILS, Base64::encode64(Marshal.dump(message)))
   end
 
   private

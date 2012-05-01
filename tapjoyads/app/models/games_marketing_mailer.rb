@@ -59,6 +59,9 @@ class GamesMarketingMailer < ActionMailer::Base
     device = Device.new(:key => @linked ? gamer_device.device_id : nil)
     @recommendations = device.recommendations(device_info.slice(:device_type, :geoip_data, :os_version))
 
+    @facebook_signup = gamer.facebook_id.present?
+    @gamer_email = gamer.email if @facebook_signup
+
     sendgrid_category "Welcome Email, #{@linked ? "Linked for Device Type #{gamer_device.device_type}" : "Not Linked"}"
     sendgrid_subscriptiontrack_text(:replace => "[unsubscribe_link]")
   end
