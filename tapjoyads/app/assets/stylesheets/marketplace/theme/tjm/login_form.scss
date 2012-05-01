@@ -132,6 +132,15 @@
     visibility: 0;
     @include animate(all, 0.35s, ease-in);
   }
+
+  .form-separator {
+    padding-top: 10px;
+    z-index: 10;
+    line-height: 16px;
+    margin: auto;
+    text-align: center;
+    width: 100px;
+  }
 }
 
 #login-form {

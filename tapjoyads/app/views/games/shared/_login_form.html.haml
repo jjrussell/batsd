@@ -9,8 +9,12 @@
         = hidden_field_tag :path, params[:path]
       .title
         = t("text.games.log_in_tapjoy")
-      
-      .log-in-with-facebook{ 'data-submit-form-id' => 'log-in-with-facebook-form' }= t('text.games.log_in_with_facebook')
+
+      .ui-joy-button.orange-action.log-in-with-facebook{ 'data-submit-form-id' => 'log-in-with-facebook-form' }
+        %a.facebook-square
+          = t('text.games.log_in_with_facebook')
+
+      .form-separator or
 
       .form-error
         &nbsp;
