@@ -31,7 +31,6 @@ class Gamer < ActiveRecord::Base
 
   serialize :extra_attributes, Hash
 
-
   MAX_DEVICE_THRESHOLD = 15
   MAX_REFERRAL_THRESHOLD = 50
   DAYS_BEFORE_DELETION = 3
