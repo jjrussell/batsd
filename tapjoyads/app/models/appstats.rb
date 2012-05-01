@@ -366,7 +366,7 @@ class Appstats
   end
 
   def to_csv
-    data =  "start_time,end_time,paid_clicks,paid_installs,new_users,paid_cvr,spend,itunes_rank_overall_free_united_states," <<
+    data = "start_time,end_time,paid_clicks,paid_installs,new_users,paid_cvr,spend,itunes_rank_overall_free_united_states," <<
       "offerwall_views,published_offer_clicks,published_offers_completed,published_cvr,offerwall_revenue,offerwall_ecpm," <<
       "tjm_offerwall_views,tjm_published_offer_clicks,tjm_published_offers_completed,tjm_published_cvr,tjm_offerwall_revenue,tjm_offerwall_ecpm," <<
       "display_ads_revenue,display_ads_ecpm,featured_revenue,featured_ecpm"
