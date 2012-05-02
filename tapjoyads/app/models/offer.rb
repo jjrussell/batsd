@@ -408,6 +408,8 @@ class Offer < ActiveRecord::Base
       src_obj.write(:data => icon_src_blob, :acl => :public_read)
 
       Mc.delete("icon.s3.#{id}")
+      paths = ["icons/200/#{icon_id}.jpg"]
+      CloudFront.invalidate(id, paths) if existing_icon_blob.present?
       return
     end
 
