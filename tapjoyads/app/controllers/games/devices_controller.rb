@@ -9,7 +9,7 @@ class Games::DevicesController < GamesController
       end
     else
       flash[:error] = "Please log in and try again. You must have cookies enabled."
-      redirect_to games_root_path
+      redirect_to games_path
     end
   end
 
@@ -40,12 +40,12 @@ class Games::DevicesController < GamesController
   rescue Exception => e
     Notifier.alert_new_relic(e.class, e.message, request, params)
     flash[:error] = "Error linking device. Please try again."
-    redirect_to games_root_path, :status => 301
+    redirect_to games_path, :status => 301
   end
 
   def finalize
     if current_gamer.present?
-      redirect_to games_root_path unless params[:data].present?
+      redirect_to games_path unless params[:data].present?
       data = ObjectEncryptor.decrypt(params[:data])
 
       device = Device.new(:key => data[:udid])

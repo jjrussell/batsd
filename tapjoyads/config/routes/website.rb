@@ -74,7 +74,7 @@ Tapjoyad::Application.routes.draw do
       end
     end
 
-    resources :gamer_profile, :only => [:show, :edit, :update]
+    resources :public_gamer_profiles, :only => [:show, :edit, :update], :path => 'gamer_profiles'
     match 'register' => 'gamers#new', :as => :register
     resources :confirmations, :only => [:create]
     match 'confirm' => 'confirmations#create', :as => :confirm
@@ -85,6 +85,7 @@ Tapjoyad::Application.routes.draw do
     resources :survey_results, :only => [:new, :create]
     resources :app_reviews, :only => [:index, :create, :edit, :update, :new, :destroy]
     namespace :social do
+      root :to => 'social#index'
       match 'invite_email_friends' => 'social#invite_email_friends', :as => :invite_email_friends
       match 'connect_facebook_account' => 'social#connect_facebook_account', :as => :connect_facebook_account
       match 'send_email_invites' => 'social#send_email_invites', :as => :send_email_invites

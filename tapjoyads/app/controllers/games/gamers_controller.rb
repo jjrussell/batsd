@@ -7,7 +7,7 @@ class Games::GamersController < GamesController
 
   def new
     @gamer = Gamer.new
-    redirect_to games_root_path if current_gamer.present?
+    redirect_to games_path if current_gamer.present?
   end
 
   def create
@@ -114,7 +114,7 @@ class Games::GamersController < GamesController
       @gamer.gamer_profile = @gamer_profile
     else
       flash[:error] = "Please log in and try again. You must have cookies enabled."
-      redirect_to games_root_path
+      redirect_to games_path
     end
   end
 

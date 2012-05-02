@@ -15,7 +15,7 @@
             = current_gamer.email
             %span.aside
               (#{t("text.games.thats_you")})
-              = link_to "(#{t("text.games.change")})", edit_games_gamer_profile_path(current_gamer)
+              = link_to "(#{t("text.games.change")})", edit_games_public_gamer_profile_path(current_gamer)
         .subtitle
           = t('text.games.last_played', :game => @last_app.app_name) if @last_app.present?
 
@@ -24,8 +24,8 @@
   .container
     %ul.list-button-container.flush.nbb.big
       %li.list-button.charcoal.soft-gray-gradient
-        - link_to games_gamer_profile_path(current_gamer) do
+        = link_to games_public_gamer_profile_path(current_gamer) do
           = t('text.shared.my_profile')
       %li.list-button.charcoal.soft-gray-gradient
-        - link_to games_social_index_path do
+        = link_to games_social_root_path do
           = t('text.games.social_settings')

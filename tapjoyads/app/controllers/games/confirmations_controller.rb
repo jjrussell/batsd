@@ -4,10 +4,10 @@ class Games::ConfirmationsController < GamesController
     @gamer = Gamer.find_by_confirmation_token(params[:token])
     if @gamer.present? && (@gamer.confirmed_at? || @gamer.confirm!)
       flash[:notice] = 'Email address confirmed.'
-      redirect_to games_root_path
+      redirect_to games_path
     else
       flash[:error] = 'Unable to confirm email address.'
-      redirect_to games_root_path
+      redirect_to games_path
     end
   end
 

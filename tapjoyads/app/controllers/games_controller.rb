@@ -161,7 +161,7 @@ class GamesController < ApplicationController
   def require_gamer
     unless current_gamer
       path = url_for(params.merge(:only_path => true))
-      options = { :path => path } unless path == games_root_path
+      options = { :path => path } unless path == games_path
       options[:referrer] = params[:referrer] if params[:referrer].present?
       redirect_to games_login_path(options)
     end
@@ -183,7 +183,7 @@ class GamesController < ApplicationController
 
   def social_feature_redirect_path
     return request.env['HTTP_REFERER'] if request.env['HTTP_REFERER']
-    "#{WEBSITE_URL}#{games_social_index_path}"
+    "#{WEBSITE_URL}#{games_social_root_path}"
   end
 
   def current_gamer

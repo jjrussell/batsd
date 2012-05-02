@@ -41,21 +41,21 @@
           .device-form.hide
           .menu-nav
             .menu-nav-wrapper
-              - link_to(games_path) do
+              = link_to(games_path) do
                 .my_apps
                   %span= t('text.games.my_apps')
-              - link_to(games_more_games_editor_picks_path) do
+              = link_to(games_more_games_editor_picks_path) do
                 .more_apps
                   %span= t('text.games.more_apps')
-              - link_to(games_gamer_path) do
+              = link_to(games_gamer_path) do
                 .profile
                   %span= t('text.games.profile')
           .menu-subnav.clearfix
             .menu-subnav-wrapper
-              - link_to(games_help_path) do
+              = link_to(games_help_path) do
                 .help
                   %span= t('text.shared.help')
-              - link_to(games_logout_path) do
+              = link_to(games_logout_path) do
                 .logout
                   %span= t('text.shared.logout')
 

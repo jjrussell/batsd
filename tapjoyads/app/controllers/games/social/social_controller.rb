@@ -36,7 +36,7 @@ class Games::Social::SocialController < GamesController
 
   def connect_facebook_account
     flash[:notice] = t 'text.games.connected_to_facebook'
-    redirect_to games_social_index_path
+    redirect_to games_social_root_path
   end
 
   def invite_email_friends
