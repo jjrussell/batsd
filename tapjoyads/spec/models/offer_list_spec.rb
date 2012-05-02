@@ -147,6 +147,12 @@ describe OfferList do
           offers, remaining = list.get_offers(0, 3)
           offers.should == @offers[0..2]
         end
+
+        it 'skips the deeplink offer on android' do
+          list = OfferList.new({:device_type => 'android'}.merge(@base_params))
+          offers, remaining = list.get_offers(0, 3)
+          offers.should == @offers[0..2]
+        end
       end
 
       context 'with a rating offer' do
