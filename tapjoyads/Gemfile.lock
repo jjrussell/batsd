@@ -288,7 +288,7 @@ GEM
       rake
     watir-webdriver (0.5.5)
       selenium-webdriver (>= 2.18.0)
-    will_paginate (2.3.16)
+    will_paginate (3.0.3)
     xpath (0.1.4)
       nokogiri (~> 1.3)
 
@@ -381,4 +381,4 @@ DEPENDENCIES
   unicorn (= 4.2.0)
   uuidtools (= 2.1.2)
   vertica (= 0.9.1)
-  will_paginate (= 2.3.16)
+  will_paginate (~> 3.0)

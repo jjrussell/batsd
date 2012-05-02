@@ -16,8 +16,6 @@ class Dashboard::PartnersController < Dashboard::DashboardController
     elsif params[:q]
       query = params[:q].gsub("'", '')
       @partners = Partner.search(query).scoped(:include => [ :offers, :users ]).paginate(:page => params[:page]).uniq
-    else
-      @partners = Partner.scoped(:order => 'created_at DESC', :include => [ :offers, :users ]).paginate(:page => params[:page])
     end
   end
 
@@ -28,7 +26,7 @@ class Dashboard::PartnersController < Dashboard::DashboardController
       end
     else
       user = User.find_by_id(params[:id], :include => [ :partners ])
-      @partners = user.partners.scoped(:order => 'created_at DESC', :include => [ :offers, :users ]).paginate(:page => params[:page])
+      @partners = user.partners.paginate(:page => params[:page])
     end
     render 'index'
   end

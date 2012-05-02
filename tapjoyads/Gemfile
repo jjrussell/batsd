@@ -60,7 +60,7 @@ gem 'typhoeus', '0.2.4'
 gem 'uglifier', '1.2.3'
 gem 'uuidtools', '2.1.2'
 gem 'vertica', '0.9.1'
-gem 'will_paginate', '2.3.16'
+gem 'will_paginate', '~> 3.0'
 
 # This needs to be down here to get sdb stuff
 gem 'newrelic_rpm', '3.3.0'
