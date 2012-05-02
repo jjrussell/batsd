@@ -5,7 +5,7 @@
       .app
         - @encrypt_app_id = ObjectEncryptor.encrypt(cached_app.id)
         - link_to(games_get_app_path(:eid => @encrypt_app_id)) do
-          .app-icon
+          .app-icon.squircle
             %img{ :src => BLANK_IMAGE, :source => cached_app.icon_url }
         .details
           %span.title.elip
