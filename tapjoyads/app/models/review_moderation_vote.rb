@@ -8,24 +8,24 @@ class HelpfulVote < ReviewModerationVote
   belongs_to :gamer
 
   after_create :incr_sum_on_app_review
-  after_create :incr_count_on_gamer
+  after_create :incr_count_on_author
 
   before_destroy :decr_sum_on_app_review
-  before_destroy :decr_count_on_gamer
+  before_destroy :decr_count_on_author
 
-  def incr_count_on_gamer
-    if app_review.author && app_review.author.class == 'Gamer'
+  def incr_count_on_author
+    if app_review.author && app_review.author.class == Gamer
       app_review.author.been_helpful_count ||= 0
       app_review.author.been_helpful_count += 1
       app_review.author.save
     end
   end
 
-  def decr_count_on_gamer
-    if app_review.author && app_review.author.class == 'Gamer'
+  def decr_count_on_author
+    if app_review.author && app_review.author.class == Gamer
       app_review.author.been_helpful_count ||= 0
       app_review.author.been_helpful_count -= 1
-      app_review.author.been_helpful_count = 0 if gamer.been_helpful_count < 0
+      app_review.author.been_helpful_count = 0 if app_review.author.been_helpful_count < 0
       app_review.author.save
     end
   end
@@ -45,22 +45,22 @@ class BuryVote < ReviewModerationVote
   belongs_to :app_review, :counter_cache => :bury_votes_count
   belongs_to :gamer
 
-  after_create :incr_count_on_gamer
-  before_destroy :decr_count_on_gamer
+  after_create :incr_count_on_author
+  before_destroy :decr_count_on_author
 
-  def incr_count_on_gamer
-    if app_review.author && app_review.author.class == 'Gamer'
+  def incr_count_on_author
+    if app_review.author && app_review.author.class == Gamer
       app_review.author.been_buried_count ||= 0
       app_review.author.been_buried_count += 1
       app_review.author.save
     end
   end
 
-  def decr_count_on_gamer
-    if app_review.author && app_review.author.class == 'Gamer'
+  def decr_count_on_author
+    if app_review.author && app_review.author.class == Gamer
       app_review.author.been_buried_count ||= 0
       app_review.author.been_buried_count -= 1
-      app_review.author.been_buried_count = 0 if gamer.been_buried_count < 0
+      app_review.author.been_buried_count = 0 if app_review.author.been_buried_count < 0
       app_review.author.save
     end
   end
