@@ -133,7 +133,7 @@ def get_offers(start, max_offers)
   def augmented_offer_list
     all_offers = []
 
-    if @currency && @currency.rewarded? && @currency.enabled_deeplink_offer_id.present? && @source == 'offerwall'
+    if @currency && @currency.rewarded? && @currency.enabled_deeplink_offer_id.present? && @source == 'offerwall' && @normalized_device_type != 'android'
       deeplink_offer = Offer.find_in_cache(@currency.enabled_deeplink_offer_id)
       if deeplink_offer.present? && deeplink_offer.accepting_clicks? && !postcache_reject?(deeplink_offer)
         all_offers << deeplink_offer
