@@ -1,0 +1,12 @@
+- @page_title = 'Edit Brand'
+
+%h1 Edit Brand
+- form_for [ :tools, @brand],  :html => { :class => 'tjform', :multipart => true } do |f|
+  %table
+    %tr
+      %th= f.label :name
+      %td
+        = f.text_field :name, :size => 50
+        = error_message_on @brand, :name
+    %tr
+      %td{ :colspan => 2 }= f.submit @brand.new_record? ? 'Create Brand' : 'Update Brand'

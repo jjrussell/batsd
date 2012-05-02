@@ -10,12 +10,32 @@ class Games::HomepageController < GamesController
     render "translations.js", :layout => false, :content_type => "application/javascript"
   end
 
+  def record_click
+    if params[:redirect_url].present?
+      url = ObjectEncryptor.decrypt(params[:redirect_url])
+      @tjm_request.outbound_click_url = url if @tjm_request
+      redirect_to url
+    end
+  end
+
   def get_app
     @offer = Offer.find(params_id)
     @app = @offer.app
     @app_metadata = @app.primary_app_metadata
+    @click_url = "#{games_record_click_path}?redirect_url=#{ObjectEncryptor.encrypt(@offer.url)}&eid=#{ObjectEncryptor.encrypt(@app.id)}"
     if @app_metadata
-      @app_reviews = AppReview.by_gamers.paginate_all_by_app_metadata_id(@app_metadata.id, :page => params[:app_reviews_page])
+      app_reviews = AppReview.paginate_all_by_app_metadata_id_and_is_blank(@app_metadata.id, false, :page => params[:app_reviews_page], :include => :author)
+      app_reviews.reject! { |x| x.bury_by_author?(current_gamer && current_gamer.id) || x.text.blank? }
+      review_authors_not_viewer =  app_reviews.map(&:author_id) - [current_gamer && current_gamer.id].compact
+
+      rude_buried_list = Gamer.all(:conditions => ["id IN(?) ", review_authors_not_viewer], :select => "id, extra_attributes")
+      rude_buried_ids = rude_buried_list.select { |x| (x.been_buried_count || 0) > Gamer::RUDE_BAN_LIMIT }.map(&:id)
+      app_reviews.reject! { |x| rude_buried_ids.include? x.author_id }
+
+      @app_reviews = app_reviews.sort { |a, b| b.moderation_rating <=> a.moderation_rating }
+      ar_ids = app_reviews.map &:id
+      @viewer_flagged = current_gamer && current_gamer.bury_review_votes.find_all_by_app_review_id(ar_ids) || []
+      @viewer_faved = current_gamer && current_gamer.helpful_review_votes.find_all_by_app_review_id(ar_ids) || []
     end
   end
 
@@ -71,6 +91,7 @@ class Games::HomepageController < GamesController
         params[:gamer_id]    = current_gamer.id
       end
     end
+    record_recommended_apps
   end
 
   def switch_device

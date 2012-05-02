@@ -471,6 +471,15 @@ describe Currency do
     end
   end
 
+  describe '#create_deeplink_offer' do
+    it 'should create a corresponding DeeplinkOffer' do
+      @currency.save!
+      @currency.enabled_deeplink_offer_id.should_not be_nil
+      dl = DeeplinkOffer.find_by_id(@currency.enabled_deeplink_offer_id)
+      dl.currency.should == @currency
+    end
+  end
+
   describe '#approve_on_tapjoy_enabled' do
     context 'when tapjoy_enabled is toggled true' do
       it 'will call approve!' do

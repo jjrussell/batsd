@@ -1,5 +1,5 @@
 class OpsController < WebsiteController
-  layout 'tabbed'
+  layout 'dashboard'
 
   filter_access_to :all
 
@@ -20,7 +20,7 @@ class OpsController < WebsiteController
 
   def as_header
     @as_group = get_as_groups(params[:group]).first
-    @as_group[:instances].reject! { |instance| instance[:lifecycle_state] == "InService" || (rand > 0.5 ? true : false) }
+    @as_group[:instances].reject! { |instance| instance[:lifecycle_state] == "InService" }
 
     render :layout => false
   end
@@ -248,14 +248,10 @@ class OpsController < WebsiteController
   end
 
   def requests_per_minute
-    request_counters = redis.mget(*redis.keys('request_counters:*')).map { |el| el.to_i }
-
-    rpm = request_counters.inject { |sum, el| sum + el }.to_f
-    if params[:average].present?
-      rpm /= request_counters.size
-    end
-
-    render :text => ActionController::Base.helpers.number_with_delimiter(rpm.to_i)
+    rpms = redis.mget(*redis.keys('request_counters:*')).map(&:to_i)
+    sum  = ActionController::Base.helpers.number_with_delimiter(rpms.sum)
+    mean = ActionController::Base.helpers.number_with_delimiter(rpms.mean.to_i)
+    render :json => { :sum => sum, :mean => mean }
   end
 
   private

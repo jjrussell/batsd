@@ -11,7 +11,7 @@ class Tools::ApprovalsController < WebsiteController
     state = params[:state] =~ /^-?\d+$/ ? params[:state].to_i : Approval.enumerate_state('pending')
     @conditions[:state] = state if state > -1
 
-    @approvals = Approval.all(:conditions => @conditions, :order => 'created_at ASC')
+    @approvals = Approval.all(:conditions => @conditions, :order => 'created_at ASC', :include => :item)
   end
 
   def history

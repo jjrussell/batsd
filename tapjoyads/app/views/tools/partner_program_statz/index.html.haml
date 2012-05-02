@@ -39,7 +39,8 @@
       %th CVR
       %th Published offers
       %th ARPDAU
-      %th Offerwall ecpm
+      %th In app offerwall ecpm
+      %th Tapjoy.com offerwall ecpm
       %th Featured ecpm
       %th Display ecpm
       %th Gross revenue
@@ -61,6 +62,7 @@
       %td
       %td
       %td.total.total_published_offers
+      %td
       %td
       %td
       %td
@@ -89,6 +91,7 @@
       %td.filter= select_tag('published_offers_filter', options_for_select(filter_options(:published_offers)))
       %td.filter= select_tag('arpdau_filter', options_for_select(filter_options(:arpdau)))
       %td.filter= select_tag('offerwall_ecpm_filter', options_for_select(filter_options(:offerwall_ecpm)))
+      %td.filter= select_tag('tjm_offerwall_ecpm_filter', options_for_select(filter_options(:tjm_offerwall_ecpm)))
       %td.filter= select_tag('featured_ecpm_filter', options_for_select(filter_options(:featured_ecpm)))
       %td.filter= select_tag('display_ecpm_filter', options_for_select(filter_options(:display_ecpm)))
       %td.filter= select_tag('gross_revenue_filter', options_for_select(filter_options(:gross_revenue)))
@@ -122,6 +125,7 @@
         %td= stats['published_offers']
         %td= number_to_currency(@appstats_data[offer_id][:arpdau] / 100.0, :precision => 4)
         %td= number_to_currency(@appstats_data[offer_id][:offerwall_ecpm] / 100.0)
+        %td= number_to_currency(@appstats_data[offer_id][:tjm_offerwall_ecpm] / 100.0)
         %td= number_to_currency(@appstats_data[offer_id][:featured_ecpm] / 100.0)
         %td= number_to_currency(@appstats_data[offer_id][:display_ecpm] / 100.0)
         %td= stats['gross_revenue']
@@ -144,6 +148,7 @@
       %td
       %td
       %td.total.total_published_offers
+      %td
       %td
       %td
       %td
@@ -203,7 +208,8 @@
           16: { sorter: 'currency-column' },
           17: { sorter: 'currency-column' },
           18: { sorter: 'currency-column' },
-          19: { sorter: 'currency-column' }
+          19: { sorter: 'currency-column' },
+          20: { sorter: 'currency-column' }
         }
       });
       $('#date').datepicker();
@@ -244,6 +250,7 @@
           getStringLower('#published_offers_filter'),
           getStringLower('#arpdau_filter'),
           getStringLower('#offerwall_ecpm_filter'),
+          getStringLower('#tjm_offerwall_ecpm_filter'),
           getStringLower('#featured_ecpm_filter'),
           getStringLower('#display_ecpm_filter'),
           getStringLower('#gross_revenue_filter'),
@@ -296,10 +303,10 @@
         $('.total_spend').text(formatCurrency(sumOfColumns(4)));
         $('.total_conversions').text(addCommas(sumOfColumns(5)));
         $('.total_published_offers').text(addCommas(sumOfColumns(12)));
-        $('.total_gross_revenue').text(formatCurrency(sumOfColumns(17)));
-        $('.total_publisher_revenue').text(formatCurrency(sumOfColumns(18)));
-        $('.total_publisher_total_revenue').text(formatCurrency(sumByPublishers(19)));
-        $('.total_publisher_pending_earnings').text(formatCurrency(sumByPublishers(20)));
+        $('.total_gross_revenue').text(formatCurrency(sumOfColumns(18)));
+        $('.total_publisher_revenue').text(formatCurrency(sumOfColumns(19)));
+        $('.total_publisher_total_revenue').text(formatCurrency(sumByPublishers(20)));
+        $('.total_publisher_pending_earnings').text(formatCurrency(sumByPublishers(21)));
       }
       function sumOfColumns(coln) {
         var sum = 0;

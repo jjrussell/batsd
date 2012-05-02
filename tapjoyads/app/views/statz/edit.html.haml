@@ -253,6 +253,20 @@
             - elsif @offer.item_type == 'GenericOffer'
               = h(@offer.item.url)
 
+      - %w(impression click conversion).each do |tracking_type|
+        %tr{ :id => "#{tracking_type}_tracking_urls_row" }
+          %th
+            = f.label(:"#{tracking_type}_tracking_urls", "#{tracking_type.capitalize} Tracking Pixel URLs")
+            .help{ :id => "help_#{tracking_type}_tracking_urls" } ?
+          %td
+            = error_message_on @offer, :"#{tracking_type}_tracking_urls"
+            = link_to('Add URL', '', :class => "add_#{tracking_type}_tracking_url", :onclick => 'return false;')
+        %tr{ :id => "#{tracking_type}_tracking_url_template", :class => 'hidden' }
+          %th
+          %td
+            = text_field_tag("offer[#{tracking_type}_tracking_urls][]", '', :size => 58)
+            = link_to('(remove)', '', :class => "remove_#{tracking_type}_tracking_url", :onclick => 'return false;')
+
     - if @offer.item_type == 'App' && @offer.item.screen_layout_sizes.any?
       %tr
         %th
@@ -329,6 +343,9 @@
   #help_interval_content{ :name => 'Interval' } The interval for frequency capping.
   #help_url_overridden_content{ :name => 'Override Destination URL' } Allows for manual override of Completion URL field
   #help_url_content{ :name => 'Destination URL' } The URL that the user will be redirected to upon clicking an ad (typically links to Market Place / App store search results page)
+  - %w(impression click conversion).each do |tracking_type|
+    %div{ :id => "help_#{tracking_type}_tracking_urls_content", :name => "Tracking Pixel URLs" }<
+      #{tracking_type.capitalize} Tracking Pixel URLs will be called server-side at request time. Trusted tracking vendors are: #{h(Offer.trusted_third_party_tracking_vendors)}
   #help_bid_content{ :name => 'Bid' } The bid affects your payment and your offerwall rank.
   #help_min_bid_override_content{ :name => 'Min Bid Override' } Manually set the minimum allowed bid for this offer.
   #help_min_os_version_content{:name => 'Minimum OS Version'} Your offer will only be shown to devices with an OS at this version or higher.
@@ -350,7 +367,7 @@
   #help_tracking_for_id_content{ :name => 'Tracking For Id' } The Object that is tracked by this offer.
   #help_tracking_for_type_content{ :name => 'Tracking For Type' } The type of the object that is tracked by this offer.
 
-- if @offer.item_type == 'App' || @offer.item_type == 'GenericOffer'
+- if @offer.app_offer? || @offer.item_type == 'GenericOffer'
   - content_for :page_javascript do
     :plain
       $(function($){
@@ -403,6 +420,53 @@
       });
 
       setEstimatedBudget();
+
+  - %w(impression click conversion).each do |tracking_type|
+    :plain
+      var set#{tracking_type.capitalize}TrackingPixelURLs = function() {
+        var urls = "#{escape_javascript(@offer.send("#{tracking_type}_tracking_urls").collect{ |url| h(url) }.join(','))}".split(",");
+
+        for(var i = 0; i < urls.length; i++) {
+          if (urls[i] == "") {
+            continue;
+          }
+
+          var template = $('##{tracking_type}_tracking_url_template');
+          var templateClone = template.clone();
+
+          templateClone.find('td input').attr('value', urls[i]);
+          templateClone.removeAttr('id');
+          templateClone.removeClass('hidden');
+
+          template.before(templateClone);
+        }
+      }
+
+  :plain
+
+    setImpressionTrackingPixelURLs();
+    setClickTrackingPixelURLs();
+    setConversionTrackingPixelURLs();
+
+  - %w(impression click conversion).each do |tracking_type|
+    :plain
+      $('.add_#{tracking_type}_tracking_url').click(function() {
+        var template = $('##{tracking_type}_tracking_url_template');
+        var templateClone = template.clone(true);
+
+        templateClone.removeAttr('id');
+        templateClone.removeClass('hidden');
+
+        template.before(templateClone);
+      });
+
+      $('.remove_#{tracking_type}_tracking_url').click(function() {
+        var url = $(this).parent().parent();
+        url.addClass('hidden');
+        url.find('td input').attr('name', '');
+      });
+
+  :plain
 
     })
 

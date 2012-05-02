@@ -1,1 +1,1 @@
-= render :partial => @custom_creative_exists ? 'custom_creative' : 'generated_creative'
+= render :partial => @offer.featured_custom_creative? ? 'custom_creative' : 'generated_creative'

@@ -16,6 +16,7 @@ class Currency < ActiveRecord::Base
   belongs_to :reseller
 
   has_many :reengagement_offers
+  has_one :deeplink_offer
 
   validates_presence_of :reseller, :if => Proc.new { |currency| currency.reseller_id? }
   validates_presence_of :app, :partner, :name, :currency_group, :callback_url
@@ -82,6 +83,7 @@ class Currency < ActiveRecord::Base
   before_validation :sanitize_attributes
   before_validation_on_create :assign_default_currency_group
   before_create :set_hide_rewarded_app_installs, :set_values_from_partner_and_reseller, :set_promoted_offers
+  after_create :create_deeplink_offer
   before_update :update_spend_share
   before_update :reset_to_pending_if_rejected
   after_update  :approve_on_tapjoy_enabled
@@ -234,7 +236,11 @@ class Currency < ActiveRecord::Base
 
   def hide_rewarded_app_installs_for_version?(app_version, source)
     return false if source == 'tj_games'
-    hide_rewarded_app_installs? && (minimum_hide_rewarded_app_installs_version.blank? || app_version.present? && app_version.version_greater_than_or_equal_to?(minimum_hide_rewarded_app_installs_version))
+    return false unless hide_rewarded_app_installs?
+    return true if minimum_hide_rewarded_app_installs_version.blank?
+    return false unless app_version.present?
+
+    app_version.version_greater_than_or_equal_to?(minimum_hide_rewarded_app_installs_version)
   end
 
   def calculate_spend_shares
@@ -298,6 +304,13 @@ class Currency < ActiveRecord::Base
       new_approval = Approval.new(:item_id => id, :item_type => self.class.name, :event => 'create', :created_at => nil, :updated_at => nil)
       new_approval.save
     end
+  end
+
+  def create_deeplink_offer
+    self.deeplink_offer = DeeplinkOffer.new(:partner => self.partner, :app => self.app, :currency => self)
+    self.deeplink_offer.save!
+    self.enabled_deeplink_offer_id = self.deeplink_offer.id
+    self.save!
   end
 
   def approve_on_tapjoy_enabled

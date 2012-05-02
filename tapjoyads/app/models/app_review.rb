@@ -1,8 +1,12 @@
 class AppReview < ActiveRecord::Base
+  BURY_LIMIT = 20
   include UuidPrimaryKey
 
   belongs_to :author, :polymorphic => true
   belongs_to :app_metadata
+
+  has_many :helpful_votes
+  has_many :bury_votes
 
   after_save :update_app_metadata_rating_counts
   before_destroy :reset_app_metadata_rating_counts
@@ -13,12 +17,23 @@ class AppReview < ActiveRecord::Base
 
   named_scope :by_employees, :conditions => { :author_type => 'Employee' }
   named_scope :by_gamers, :conditions => { :author_type => 'Gamer' }
-  named_scope :ordered_by_date, :order => "created_at DESC"
+  named_scope :ordered_by_date, :order => "updated_at DESC"
 
   delegate :name, :to => :app_metadata, :prefix => true
 
   cattr_reader :per_page
   @@per_page = 10
+
+  def bury_by_author?(gamer_id)
+    overlimit = bury_votes_count > BURY_LIMIT
+    bad_ratio = bury_votes_count > helpful_votes_count + 1
+    author_is_not_viewer = author_id != gamer_id
+    overlimit && bad_ratio && author_is_not_viewer
+  end
+
+  def moderation_rating
+    helpful_votes_count - bury_votes_count * 5
+  end
 
   def user_rating=(new_rating)
     @prev_rating = user_rating || 0
@@ -28,10 +43,19 @@ class AppReview < ActiveRecord::Base
   def author_name
     case author_type
     when 'Gamer'
-      author.get_gamer_name
+      if !Rails.env.production? && author.nil?
+        "Unknown Author"
+      else
+        author.get_gamer_nickname
+      end
     when 'Employee'
       author.full_name
     end
+  end
+
+  def before_validation
+    is_blank = text.blank?
+    true
   end
 
   private

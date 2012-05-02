@@ -4,6 +4,7 @@ var loadData = function(data) {
   Tapjoy.Graph.drawLargeGraph(data.rewarded_installs_plus_rank_data, 'installs_rank');
   Tapjoy.Graph.drawLargeGraph(data.revenue_data, 'revenue');
   Tapjoy.Graph.drawLargeGraph(data.offerwall_data, 'offerwall');
+  Tapjoy.Graph.drawLargeGraph(data.tjm_offerwall_data, 'tjm_offerwall');
   Tapjoy.Graph.drawLargeGraph(data.featured_offers_data, 'featured_offers');
   Tapjoy.Graph.drawLargeGraph(data.display_ads_data, 'display_ads');
   Tapjoy.Graph.drawLargeGraph(data.virtual_goods_data, 'virtual_goods');
