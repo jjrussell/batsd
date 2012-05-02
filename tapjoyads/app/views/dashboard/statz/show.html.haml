@@ -11,7 +11,7 @@
 .clear
 
 %form#change_date.tjform
-  = render :partial => 'reporting/date_range_fields'
+  = render 'dashboard/reporting/date_range_fields'
 
 %h4 Offer
 - if permitted_to? :edit, :dashboard_statz
@@ -81,7 +81,7 @@
   - if @offer.item_type == 'ActionOffer' && @offer.third_party_data?
     - prereq = @offer.item.prerequisite_offer
     - property_row('Prerequisite', link_to(prereq.name, statz_path(prereq)))
-  - property_row('id', @offer.id + ' - ' + clippy(@offer.id))
+  - raw property_row('id', @offer.id + ' - ' + clippy(@offer.id))
 
 %a#show_boosts{:href => '#'} [#{@active_boosts.size} active rank boosts]
 = link_to('[Create rank boost]', new_tools_rank_boost_path(:offer_id => @offer.id))
@@ -121,7 +121,7 @@
   - property_row('Rev share', number_to_percentage(@offer.partner_rev_share * 100, :precision => 1))
   - property_row('Internal notes', @offer.internal_notes, '')
   - property_row('id', link_to(@offer.partner_id, partner_path(@offer.partner_id)) + ' - ' + clippy(@offer.partner_id))
-= render 'partners/make_current_button', :partner => @offer.partner
+= render 'dashboard/partners/make_current_button', :partner => @offer.partner
 
 - if @offer.is_publisher_offer?
   - @offer.item.currencies.each do |c|
