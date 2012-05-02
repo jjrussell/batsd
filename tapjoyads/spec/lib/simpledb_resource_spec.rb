@@ -19,6 +19,24 @@ describe SimpledbResource do
     @model = Testing.new(options)
   end
 
+  describe '.sanitize_conditions' do
+    it 'should return nil when given nil' do
+      Testing.sanitize_conditions(nil).should == nil
+    end
+
+    it 'should return nil with no params' do
+      Testing.sanitize_conditions.should == nil
+    end
+
+    it 'should use the first param if it is an array' do
+      Testing.sanitize_conditions(["test_val = ?", '1'], '2', '3').should == "test_val = '1'"
+    end
+
+    it 'should convert values to Strings' do
+      Testing.sanitize_conditions("test_val = ?", 1).should == "test_val = '1'"
+    end
+  end
+
   describe 'A SimpledbResource object' do
     before :each do
       SimpledbResource.reset_connection
@@ -212,5 +230,45 @@ describe SimpledbResource do
       end.run
       count.should == 10
     end
+
+    it 'sanitizes conditions properly for select' do
+      # for now, providing a String should still work
+      m = Testing.select(:where => "selectable_value = '3'", :consistent => true)[:items][0]
+      m.key.should == 'select-3'
+
+      m = Testing.select(:where => ["selectable_value = '3'"], :consistent => true)[:items][0]
+      m.key.should == 'select-3'
+
+      m = Testing.select(:where => ["selectable_value = ?", 3], :consistent => true)[:items][0]
+      m.key.should == 'select-3'
+    end
+
+    it 'sanitizes conditions properly for count' do
+      # for now, providing a String should still work
+      count = Testing.count(:where => "selectable_value = '3'", :consistent => true)
+      count.should == 1
+
+      count = Testing.count(:where => ["selectable_value = '3'"], :consistent => true)
+      count.should == 1
+
+      count = Testing.count(:where => ["selectable_value = ?", 3], :consistent => true)
+      count.should == 1
+    end
+
+    it 'sanitizes conditions properly for count_async' do
+      # for now, providing a String should still work
+      count = 0
+      Testing.count_async(:where => "selectable_value = '3'", :consistent => true) { |c| count = c }.run
+      count.should == 1
+
+      count = 0
+      Testing.count_async(:where => ["selectable_value = '3'"], :consistent => true) { |c| count = c }.run
+      count.should == 1
+
+      count = 0
+      Testing.count_async(:where => ["selectable_value = ?", 3], :consistent => true) { |c| count = c }.run
+      count.should == 1
+    end
+
   end
 end
