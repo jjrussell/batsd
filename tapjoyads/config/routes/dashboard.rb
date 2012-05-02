@@ -348,14 +348,17 @@ Tapjoyad::Application.routes.draw do
       end
       resources :ops, :only => :index do
         collection do
-          get :elb_status
-          get :http_codes
           get :as_groups
+          get :as_header
           get :as_instances
           get :elb_deregister_instance
           get :ec2_reboot_instance
           get :as_terminate_instance
+          get :service_stats
+          get :elb_status
+          get :http_codes
           get :bytes_sent
+          get :vertica_status
         end
       end
       match 'mail_chimp_callback/callback' => 'mail_chimp_callback#callback'
