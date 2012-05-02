@@ -44,7 +44,7 @@
           .app
             - encrypt_app_id = ObjectEncryptor.encrypt(reco.id)
             - link_to(games_get_app_path(:eid => encrypt_app_id)) do
-              .app-icon
+              .app-icon.squircle
                 %img{ :src => BLANK_IMAGE, :source => reco.icon_url }
             .details
               %span.title.elip
@@ -58,7 +58,7 @@
           .app
             - app_eid = ObjectEncryptor.encrypt(external_publisher.app_id)
             - link_to(games_earn_path(:eid => app_eid)) do
-              .app-icon
+              .app-icon.squircle
                 %img{ :src => BLANK_IMAGE, :source => external_publisher.get_icon_url(:size => 114, :source => :cloudfront)}
             .details
               %span.title.elip
@@ -74,7 +74,7 @@
           .app
             - app_eid = ObjectEncryptor.encrypt(external_publisher.app_id)
             - link_to(games_earn_path(:eid => app_eid)) do
-              .app-icon
+              .app-icon.squircle
                 %img{ :src => BLANK_IMAGE, :source => external_publisher.get_icon_url(:size => 114, :source => :cloudfront)}
               .details
                 %span.title.elip
