@@ -1,5 +1,6 @@
 class Dashboard::BillingController < Dashboard::DashboardController
   layout 'tabbed'
+  current_tab :billing
 
   filter_access_to :all
   before_filter :get_selected_option

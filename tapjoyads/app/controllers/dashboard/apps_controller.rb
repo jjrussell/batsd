@@ -1,6 +1,8 @@
 class Dashboard::AppsController < Dashboard::DashboardController
   layout 'apps'
 
+  current_tab :apps
+
   filter_access_to :all
   before_filter :grab_partner_apps
   before_filter :has_apps, :only => [:show, :index, :integrate, :publisher_integrate, :integrate_check]

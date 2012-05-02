@@ -80,8 +80,8 @@ Tapjoyad::Application.routes.draw do
           post ':image_size' => 'offer_creatives#create'
           delete ':image_size' => 'offer_creatives#destroy'
         end
-        get 'offer_creatives' => 'offer_creatives/:id', :as => :preview
-        get 'offer_creatives' => 'offer_creatives/:id/:image_size', :as => :form
+        get 'offer_creatives/:id' => 'offer_creatives#show', :as => :preview
+        get 'offer_creatives/:id/:image_size' => 'offer_creatives#new', :as => :form
       end
       resources :enable_offer_requests, :only => [:create]
       resources :reporting, :only => [:index, :show] do

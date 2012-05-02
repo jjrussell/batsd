@@ -13,13 +13,13 @@
   = text_field_tag('search_box', '', :size => '40')
 
 %p
-  = link_to "Global Network Stats", global_statz_path
+  = link_to "Global Network Stats", global_statz_index_path
   - if permitted_to? :publisher, :dashboard_statz
     |
-    = link_to("Publisher Stats", publisher_statz_path)
+    = link_to("Publisher Stats", publisher_statz_index_path)
   - if permitted_to? :advertiser, :dashboard_statz
     |
-    = link_to("Advertiser Stats", advertiser_statz_path)
+    = link_to("Advertiser Stats", advertiser_statz_index_path)
 
 .last_updated Total Devices: #{number_with_delimiter(@devices_count)}
 %br

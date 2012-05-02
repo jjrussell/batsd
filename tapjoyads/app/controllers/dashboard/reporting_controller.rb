@@ -1,6 +1,7 @@
 class Dashboard::ReportingController < Dashboard::DashboardController
 
   layout 'tabbed'
+  current_tab :reporting
 
   filter_access_to :all
   before_filter :find_offer, :only => [ :show, :export, :download_udids ]

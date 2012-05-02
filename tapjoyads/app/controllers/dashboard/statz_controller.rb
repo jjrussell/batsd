@@ -1,6 +1,7 @@
 class Dashboard::StatzController < Dashboard::DashboardController
 
   layout 'tabbed'
+  current_tab :statz
 
   filter_access_to :all
 

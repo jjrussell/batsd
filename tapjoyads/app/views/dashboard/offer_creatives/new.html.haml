@@ -1,10 +1,10 @@
-- url = offer_creatives_form_path(:id => @offer.id, :image_size => @image_size, :label => @label, :app_id => @app)
+- url = offer_creative_form_path(:id => @offer.id, :image_size => @image_size, :label => @label, :app_id => @app)
 - pending = @offer.has_banner_creative?(@image_size) && !@offer.banner_creative_approved?(@image_size)
 
 - if @creative_exists
   - form_tag(url, :method => :delete, :id => "remove_form_for_#{@image_size}", :class => "hidden") {}
 
-- form_for(@offer, :url => url, :html => { :id => 'upload_form', :class => 'tjform', :method => :post, :multipart => true }) do |f|
+= form_for(@offer, :url => url, :html => { :id => 'upload_form', :class => 'tjform', :method => :post, :multipart => true }) do |f|
   %table
     %tbody
       %tr

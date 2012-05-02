@@ -5,7 +5,7 @@
 
 %h4
   - if permitted_to? :advertiser, :dashboard_statz
-    = link_to("Advertiser Stats", advertiser_statz_path)
+    = link_to("Advertiser Stats", advertiser_statz_index_path)
 
 %form
   = render :partial => 'shared/timeframe_and_platform'
