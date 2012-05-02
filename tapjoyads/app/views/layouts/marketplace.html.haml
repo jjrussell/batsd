@@ -24,6 +24,7 @@
 
     - css_cache "marketplace/locale/#{I18n.locale.to_s}.css", true if ['de', 'es', 'fr', 'ja', 'ko', 'zh'].include? I18n.locale.to_s
     - css_cache 'marketplace/style-master', true
+    - css_cache 'marketplace/theme/tjm/images'
 
     = yield :preload_images
 

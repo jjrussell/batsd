@@ -1,0 +1,161 @@
+$image_path: "/images/marketplace/themes/tjm";
+$logged_out_image_path: "/images/marketplace/themes/tjm/logged_out";
+
+body {
+  background: #e9edf1 inline-image("#{$image_path}/bg.png") repeat;
+}
+/**
+ * header
+ */
+.header, .header-signup {
+  #login-web-wrapper {
+    background: transparent inline-image("#{$logged_out_image_path}/small-right-arrow.png") no-repeat 0 0;
+    background-position: right 18px;
+  }
+
+  .logo {
+    img {
+      background: inline-image("#{$image_path}/tapjoy_large.png") no-repeat 0 0;
+    }
+  }
+
+  .menu-dropdown {
+    .device-toggle {
+      background: transparent inline-image("#{$image_path}/profile_arrows.png") no-repeat;
+      background-position: 12px 0;
+    }
+    .my_apps {
+      background: transparent inline-image("#{$image_path}/profile_my_apps.png") no-repeat center 16px;
+    }
+    .more_apps {
+      background: transparent inline-image("#{$image_path}/profile_more_apps.png") no-repeat center 16px;
+    }
+    .profile {
+      background: transparent inline-image("#{$image_path}/profile_me.png") no-repeat center 16px;
+    }
+  }
+}
+
+
+/**
+ * icon classes
+ */
+.score {
+  background: inline-image("#{$image_path}/thumbs_up.png") no-repeat 0 0;
+}
+
+.social {
+  background: inline-image("#{$image_path}/social.png") no-repeat 0 0;
+}
+
+.twitter {
+  background: inline-image("#{$image_path}/twitter-icon.png") no-repeat 0 0;
+  background-size: auto 100%;
+}
+
+.email {
+  background: inline-image("#{$image_path}/at-sign.png") no-repeat 0 0;
+  background-size: auto 100%;
+}
+
+.facebook {
+  background: inline-image("#{$image_path}/facebook-icon.png") no-repeat 0 0;
+  background-size: auto 100%;
+}
+
+.rightarrow {
+  padding-right: 20px;
+  background: inline-image("#{$image_path}/right_arrow.png") no-repeat 98% center;
+}
+
+.plussign {
+  padding-right: 20px;
+  background: inline-image("#{$image_path}/plus-sign.png") no-repeat 98% center;
+  background-size: auto 100%;
+}
+
+.checkmark {
+  padding-right: 20px;
+  background: inline-image("#{$image_path}/checkmark-grey.png") no-repeat 98% center;
+  background-size: auto 100%;
+}
+
+.downarrow {
+  background: inline-image("#{$image_path}/down_arrow.png") no-repeat 0 0;
+}
+
+.uparrow {
+  background: inline-image("#{$image_path}/up_arrow.png") no-repeat 0 0;
+}
+
+.downarrow-white {
+  background: inline-image("#{$image_path}/down_arrow_white.png") no-repeat 0 0;
+}
+
+.uparrow-white {
+  background: inline-image("#{$image_path}/up_arrow_white.png") no-repeat 0 0;
+}
+
+.rightarrow-white {
+  background: inline-image("#{$image_path}/right_arrow_white.png") no-repeat 0 0;
+}
+
+.wifi {
+  background: inline-image("#{$image_path}/wifi_required.png") no-repeat 0 0;
+}
+
+.social-med {
+  background: inline-image('/images/games/social-med.png') no-repeat 0 0;
+}
+
+.thumbs-up {
+  @extend .score;
+}
+
+.thumbs-down {
+  background: inline-image('/images/games/thumbs-down.png') no-repeat 0 0;
+}
+
+.score-med {
+  background: inline-image('/images/games/thumbs-up-med.png') no-repeat 0 0;
+}
+
+.down-arrow {
+  padding-right: 20px;
+  background: inline-image('/images/games/ui-joy-d-arrow.png') no-repeat 96% center;
+}
+
+.right-arrow {
+  padding-right: 20px;
+  background: inline-image('/images/games/ui-joy-r-arrow.png') no-repeat 98% center;
+}
+
+/**
+ * moderation
+ */
+.review.line-item.var-height {
+  .concern {
+    background: transparent inline-image("#{$image_path}/flagged.gif") top left no-repeat;
+  }
+  .concern_q {
+    background: transparent inline-image("#{$image_path}/flag_normal.gif")  top left no-repeat;
+  }
+}
+
+/**
+ * squircles
+ */
+.squircle, .app-icon {
+  background: inline-image("#{$image_path}/app_icon_overlay_large.png") no-repeat 0 0;
+  background-size: 125px 125px;
+}
+.list-button-container .list-button {
+  .list-squircle {
+    background: inline-image("#{$image_path}/app_icon_overlay_list_button_large.png") no-repeat 0 0 !important;
+  }
+}
+.list-button-container.earn-theme {
+  .squircle {
+    background: inline-image("#{$image_path}/app_icon_overlay_large_earn.png") no-repeat 0 0;
+  }
+}
