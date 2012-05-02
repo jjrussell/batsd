@@ -269,4 +269,12 @@ class ApplicationController < ActionController::Base
     ] + more_data
     Digest::SHA256.hexdigest(hash_bits.join(':'))
   end
+
+  def device_type
+    @device_type ||= HeaderParser.device_type(request.user_agent)
+  end
+
+  def os_version
+    @os_version ||= HeaderParser.os_version(request.user_agent)
+  end
 end
