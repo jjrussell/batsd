@@ -14,7 +14,7 @@
       %tr
         %th= f.label :end_date, 'ends (inclusive)'
         %td= f.text_field :end_date
-  %p= f.submit action
+  %p= f.submit @action
 
 - content_for :page_javascript do
   :plain

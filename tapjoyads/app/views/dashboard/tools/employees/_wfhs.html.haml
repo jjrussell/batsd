@@ -1,24 +1,24 @@
-- if wfhs.empty?
+- if @wfhs.empty?
   %p None!
 - else
   %table{ :cellspan => 0, :cellspacing => 0}
     %thead
       %tr
-        - if editable
+        - if @editable
           %th action
         %th type
         %th date(s)
         %th description
     %tbody
-      - wfhs.each do |wfh|
+      - @wfhs.each do |wfh|
         %tr
-          - if editable
+          - if @editable
             %td
               = link_to '[edit]', edit_tools_wfh_path(wfh)
               - path = { :controller => 'tools/wfhs', :action => "destroy", :id => wfh.id }
               = link_to '[delete]', path, :confirm => "Are you sure?", :method => 'delete'
           %td
-            = wfh_span(wfh)
+            = raw wfh_span(wfh)
           %td
             = formatted_wfh_dates(wfh)
           %td

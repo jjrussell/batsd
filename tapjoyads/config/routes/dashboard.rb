@@ -245,48 +245,38 @@ Tapjoyad::Application.routes.draw do
           collection do
             get :export
             post :confirm_payouts
-          end
+        j end
           member do
             get :info
           end
-
         end
         resources :enable_offer_requests, :only => [:update, :index]
         resources :admin_devices, :only => [:index, :new, :create, :edit, :update, :destroy]
         resources :offer_events, :only => [:index, :new, :create, :edit, :update, :destroy]
         resources :users, :only => [:index, :show] do
-
-
           resources :role_assignments, :only => [:create, :destroy]
           resources :partner_assignments, :only => [:create, :destroy]
         end
         resources :employees, :only => [:index, :new, :create, :edit, :update] do
-
           member do
-            :delete_photo
-            :wfhs
+            delete :delete_photo
+            get :wfhs
           end
-
         end
         resources :offer_lists, :only => [:index]
-
         resources :rank_boosts, :except => [:show, :destroy] do
-
           member do
             post :deactivate
           end
-
         end
         resources :external_publishers, :only => [:index, :update]
         resources :jobs, :except => [:show]
         resources :earnings_adjustments, :only => [:new, :create]
         resources :editors_picks, :except => [:destroy] do
-
           member do
             post :activate
             post :expire
           end
-
         end
         resources :app_reviews, :except => [:show]
         resources :featured_contents, :except => [:show]
