@@ -1,18 +1,27 @@
 class CreatePayoutConfirmations < ActiveRecord::Migration
   def self.up
-    create_table :payout_confirmations, :id => false do |t|
-      t.guid   :id, :null => false
-      t.guid   :partner_id, :null => false
-      t.string :type, :null => false
-      t.boolean :confirmed, :null => false, :default => false
-      t.timestamps
+    add_column :partners, :payout_threshold, :integer, :null => false, :default => 50_000_00
+    add_column :partners, :payout_info_confirmation, :boolean, :null => false, :default => false
+    add_column :partners, :payout_threshold_confirmation, :boolean, :null => false, :default => false
+
+    Partner.find_each do | partner|
+      partner.payout_threshold_confirmation = partner.confirmed_for_payout || partner.payout_confirmation_notes.nil? || !partner.payout_confirmation_notes =~ /^SYSTEM:.*threshold.*$/
+      partner.payout_info_confirmation = partner.confirmed_for_payout || !partner.payout_confirmation_notes.nil? || !partner.payout_confirmation_notes =~ /^SYSTEM:.*changed.*$/
+      partner.save!
     end
 
-    add_index :payout_confirmations, [:partner_id, :type], :name => 'index_payout_confirmation_partner_type', :unique => true
-    add_index :payout_confirmations, [:partner_id], :name => 'index_payout_confirmation_partner', :unique => false
+    remove_column :partners, :confirmed_for_payout
   end
 
   def self.down
-    drop_table :payout_confirmations
+    add_column :partners, :confirmed_for_payout, :boolean, :null => false, :default => false
+
+    Partner.find_each do | partner|
+      partner.confirmed_for_payout = partner.payout_threshold_confirmation && partner.payout_info_confirmation
+      partner.save!
+    end
+    remove_column :partners, :payout_threshold
+    remove_column :partners, :payout_info_confirmation
+    remove_column :partners, :payout_threshold_confirmation
   end
 end
