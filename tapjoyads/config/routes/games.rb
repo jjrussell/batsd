@@ -12,6 +12,7 @@ ActionController::Routing::Routes.draw do |map|
     m.earn 'earn/:id', :controller => 'games/homepage', :action => :earn
     m.more_apps 'more_apps', :controller => 'games/homepage', :action => :index
     m.get_app 'get_app', :controller => 'games/homepage', :action => :get_app
+    m.record_click 'record_click', :controller => 'games/homepage', :action => :record_click
 
     m.more_games_editor_picks 'editor_picks', :controller => 'games/more_games', :action => :editor_picks
     m.more_games_recommended 'recommended', :controller => 'games/more_games', :action => :recommended
