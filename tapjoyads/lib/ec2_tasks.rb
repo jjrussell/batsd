@@ -2,7 +2,7 @@ class Ec2Tasks
   require 'yaml'
   require 'rubygems'
   require 'right_aws'
-  require 'lib/extensions/right_elb_interface'
+  require 'right_elb_interface'
 
   def self.get_dns_names(group_id)
     get_field_values([ :dns_name ], group_id).collect { |value_hash| value_hash[:dns_name] }
