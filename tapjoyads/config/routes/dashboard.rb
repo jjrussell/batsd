@@ -359,6 +359,12 @@ Tapjoyad::Application.routes.draw do
         end
       end
       match 'mail_chimp_callback/callback' => 'mail_chimp_callback#callback'
+      resources :sdk, :only => [:index, :show] do
+        collection do
+          get :license
+          get :popup
+        end
+      end
     end
   end
 end

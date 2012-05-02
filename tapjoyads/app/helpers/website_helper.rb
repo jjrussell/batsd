@@ -154,6 +154,8 @@ EOJS
         />
       </object>
     EOF
+
+    html.html_safe
   end
 
   def link_to_offer(offer)

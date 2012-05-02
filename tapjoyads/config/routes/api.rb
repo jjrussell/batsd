@@ -17,13 +17,6 @@ Tapjoyad::Application.routes.draw do
     end
   end
 
-  resources :sdk, :only => [:index, :show] do
-    collection do
-      get :license
-      get :popup
-    end
-  end
-
   match 'adways_data' => 'adways_data#index'
   match 'brooklyn_packet_data' => 'brooklyn_packet_data#index'
   match 'ea_data' => 'ea_data#index'
