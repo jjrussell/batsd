@@ -1,5 +1,7 @@
 class Games::SupportRequestsController < GamesController
 
+  before_filter :set_tracking_param
+
   def new
     current_gamer
   end
@@ -12,6 +14,7 @@ class Games::SupportRequestsController < GamesController
       flash.now[:notice] = t("text.games.enter_message");
       render :new and return
     end
+
     case params[:type]
     when "feedback"
       GamesMailer.deliver_feedback(@gamer, data[:content], request.env["HTTP_USER_AGENT"], current_device_id)
@@ -24,4 +27,9 @@ class Games::SupportRequestsController < GamesController
     end
   end
 
+  private
+
+  def set_tracking_param
+    @tjm_request.tracking_param = params[:type] if @tjm_request.present?
+  end
 end
