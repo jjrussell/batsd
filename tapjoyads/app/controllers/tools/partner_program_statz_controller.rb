@@ -67,24 +67,27 @@ class Tools::PartnerProgramStatzController < WebsiteController
         :start_time  => start_time,
         :end_time    => end_time,
         :granularity => :daily,
-        :stat_types  => ['offerwall_views', 'featured_offers_shown', 'display_ads_shown',
-          'installs_revenue', 'offers_revenue', 'rewards_revenue', 'featured_revenue',
-          'display_revenue', 'daily_active_users', 'total_revenue', 'arpdau']})
+        :stat_types  => ['offerwall_views', 'tjm_offerwall_views', 'featured_offers_shown', 'display_ads_shown',
+          'installs_revenue', 'tjm_installs_revenue', 'offers_revenue', 'tjm_offers_revenue', 'rewards_revenue',
+          'tjm_rewards_revenue', 'featured_revenue', 'display_revenue', 'daily_active_users', 'total_revenue', 'arpdau']})
 
       arpdau_sum            = appstats.stats['arpdau'].sum.to_f
       arpdau_days           = appstats.stats['arpdau'].length.to_f
       offerwall_revenue     = appstats.stats['rewards_revenue'].sum.to_f
       offerwall_views       = appstats.stats['offerwall_views'].sum
+      tjm_offerwall_revenue = appstats.stats['tjm_rewards_revenue'].sum.to_f
+      tjm_offerwall_views   = appstats.stats['tjm_offerwall_views'].sum
       featured_revenue      = appstats.stats['featured_revenue'].sum.to_f
       featured_offers_shown = appstats.stats['featured_offers_shown'].sum
       display_revenue       = appstats.stats['display_revenue'].sum.to_f
       display_ads_shown     = appstats.stats['display_ads_shown'].sum
 
       appstats_data[offer.id] = {
-        :arpdau         => arpdau_sum        / arpdau_days,
-        :offerwall_ecpm => offerwall_revenue / (offerwall_views / 1000.0),
-        :featured_ecpm  => featured_revenue  / (featured_offers_shown / 1000.0),
-        :display_ecpm   => display_revenue   / (display_ads_shown / 1000.0),
+        :arpdau             => arpdau_sum            / arpdau_days,
+        :offerwall_ecpm     => offerwall_revenue     / (offerwall_views       / 1000.0),
+        :tjm_offerwall_ecpm => tjm_offerwall_revenue / (tjm_offerwall_views   / 1000.0),
+        :featured_ecpm      => featured_revenue      / (featured_offers_shown / 1000.0),
+        :display_ecpm       => display_revenue       / (display_ads_shown     / 1000.0),
       }
 
       partner_program_metadata[offer.id] = {
@@ -137,9 +140,9 @@ class Tools::PartnerProgramStatzController < WebsiteController
   def generate_csv
     data = [
       "Offer,Publisher_name,Spend,Conversions,Store_rank,Price,Payment,Balance," <<
-      "Platform,CVR,Published_offers,ARPDAU,Offerwall_ecpm,Featured_ecpm,Display_ecpm," <<
-      "Gross_revenue,Publisher_revenue,Publisher_total_revenue,Publisher_pending_earnings," <<
-      "Featured,Rewarded,Offer_type,Sales_rep"
+      "Platform,CVR,Published_offers,ARPDAU,In_app_offerwall_ecpm,TJM_offerwall_ecpm," <<
+      "Featured_ecpm,Display_ecpm,Gross_revenue,Publisher_revenue,Publisher_total_revenue," <<
+      "Publisher_pending_earnings,Featured,Rewarded,Offer_type,Sales_rep"
     ]
     stats_data = get_stats(@start_time, @end_time)
     @partner_program_metadata = stats_data[:partner_program_metadata]
@@ -164,6 +167,7 @@ class Tools::PartnerProgramStatzController < WebsiteController
         stats['published_offers'].to_s.gsub(/[,]/,''),
         NumberHelper.number_to_currency(@appstats_data[offer_id][:arpdau] / 100.0, :precision => 4, :delimiter => ''),
         NumberHelper.number_to_currency(@appstats_data[offer_id][:offerwall_ecpm] / 100.0, :delimiter => ''),
+        NumberHelper.number_to_currency(@appstats_data[offer_id][:tjm_offerwall_ecpm] / 100.0, :delimiter => ''),
         NumberHelper.number_to_currency(@appstats_data[offer_id][:featured_ecpm] / 100.0, :delimiter => ''),
         NumberHelper.number_to_currency(@appstats_data[offer_id][:display_ecpm] / 100.0, :delimiter => ''),
         stats['gross_revenue'].gsub(/[,]/,''),

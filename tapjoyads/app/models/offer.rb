@@ -6,6 +6,7 @@ class Offer < ActiveRecord::Base
   include Offer::Rejecting
   include Offer::UrlGeneration
   include Offer::BannerCreatives
+  include Offer::ThirdPartyTracking
   acts_as_cacheable
   acts_as_tracking
   memoize :precache_rank_scores
@@ -15,7 +16,7 @@ class Offer < ActiveRecord::Base
   ANDROID_DEVICES = %w( android )
   WINDOWS_DEVICES = %w( windows )
   ALL_DEVICES = APPLE_DEVICES + ANDROID_DEVICES + WINDOWS_DEVICES
-  ALL_OFFER_TYPES = %w( App EmailOffer GenericOffer OfferpalOffer RatingOffer ActionOffer VideoOffer SurveyOffer ReengagementOffer)
+  ALL_OFFER_TYPES = %w( App EmailOffer GenericOffer OfferpalOffer RatingOffer ActionOffer VideoOffer SurveyOffer ReengagementOffer DeeplinkOffer)
   ALL_SOURCES = %w( offerwall display_ad featured tj_games )
 
   CLASSIC_OFFER_TYPE                          = '0'
@@ -28,6 +29,7 @@ class Offer < ActiveRecord::Base
   FEATURED_BACKFILLED_OFFER_TYPE              = '7'
   NON_REWARDED_FEATURED_BACKFILLED_OFFER_TYPE = '8'
   REENGAGEMENT_OFFER_TYPE                     = '9'
+  NON_REWARDED_BACKFILLED_OFFER_TYPE          = '10'
   OFFER_TYPE_NAMES = {
     DEFAULT_OFFER_TYPE                          => 'Offerwall Offers',
     FEATURED_OFFER_TYPE                         => 'Rewarded Featured Offers',
@@ -37,7 +39,8 @@ class Offer < ActiveRecord::Base
     VIDEO_OFFER_TYPE                            => 'Video Offers',
     FEATURED_BACKFILLED_OFFER_TYPE              => 'Rewarded Featured Offers (Backfilled)',
     NON_REWARDED_FEATURED_BACKFILLED_OFFER_TYPE => 'Non-Rewarded Featured Offers (Backfilled)',
-    REENGAGEMENT_OFFER_TYPE                     => 'Reengagement Offers'
+    REENGAGEMENT_OFFER_TYPE                     => 'Reengagement Offers',
+    NON_REWARDED_BACKFILLED_OFFER_TYPE          => 'Non-Rewarded Offers (Backfilled)'
   }
 
   OFFER_LIST_EXCLUDED_COLUMNS = %w( active
@@ -71,16 +74,14 @@ class Offer < ActiveRecord::Base
   DIRECT_PAY_PROVIDERS = %w( boku paypal )
 
   FREQUENCIES_CAPPING_INTERVAL = {
-    "none"     => 0,
-    "1 minute" => 1.minute.to_i,
-    "1 hour"   => 1.hour.to_i,
-    "8 hours"  => 8.hours.to_i,
-    "24 hours" => 24.hours.to_i,
-    "2 days"   => 2.days.to_i,
-    "3 days"   => 3.days.to_i,
+    'none'     => 0,
+    '1 minute' => 1.minute.to_i,
+    '1 hour'   => 1.hour.to_i,
+    '8 hours'  => 8.hours.to_i,
+    '24 hours' => 24.hours.to_i,
+    '2 days'   => 2.days.to_i,
+    '3 days'   => 3.days.to_i,
   }
-
-  TRUSTED_TRACKING_VENDORS = %w( phluantmobile.net )
 
   attr_reader :video_button_tracking_offers
 
@@ -91,6 +92,8 @@ class Offer < ActiveRecord::Base
   has_many :offer_events
   has_many :editors_picks
   has_many :approvals, :class_name => 'CreativeApprovalQueue'
+  has_many :brands, :through => :brand_offer_mappings
+  has_many :brand_offer_mappings
 
   belongs_to :partner
   belongs_to :item, :polymorphic => true
@@ -177,8 +180,6 @@ class Offer < ActiveRecord::Base
       record.errors.add(attribute, "cannot be enabled without valid store id")
     end
   end
-  validates_each :impression_tracking_urls do |record, attribute, value| record.validate_third_party_tracking_urls(attribute, value); end
-  validates_each :click_tracking_urls do |record, attribute, value| record.validate_third_party_tracking_urls(attribute, value); end
 
   before_validation :update_payment
   before_validation_on_create :set_reseller_from_partner
@@ -191,14 +192,14 @@ class Offer < ActiveRecord::Base
   before_save :nullify_banner_creatives
   after_update :lock_survey_offer
   after_save :update_enabled_rating_offer_id
+  after_save :update_enabled_deeplink_offer_id
   after_save :update_pending_enable_requests
   after_save :update_tapjoy_sponsored_associated_offers
   after_save :sync_banner_creatives! # NOTE: this should always be the last thing run by the after_save callback chain
   before_cache :clear_creative_blobs
   before_cache :update_video_button_tracking_offers
 
-  named_scope :enabled_offers, :joins => :partner,
-    :readonly => false, :conditions => "tapjoy_enabled = true AND user_enabled = true AND item_type != 'RatingOffer' AND item_type != 'ReengagementOffer' AND ((payment > 0 AND #{Partner.quoted_table_name}.balance > payment) OR (payment = 0 AND reward_value > 0)) AND tracking_for_id IS NULL"
+  named_scope :enabled_offers, :joins => :partner, :readonly => false, :conditions => "tapjoy_enabled = true AND user_enabled = true AND item_type NOT IN ('RatingOffer','DeeplinkOffer','ReengagementOffer') AND ((payment > 0 AND #{Partner.quoted_table_name}.balance > payment) OR (payment = 0 AND reward_value > 0)) AND tracking_for_id IS NULL"
   named_scope :by_name, lambda { |offer_name| { :conditions => ["offers.name LIKE ?", "%#{offer_name}%" ] } }
   named_scope :by_device, lambda { |platform| { :conditions => ["offers.device_types LIKE ?", "%#{platform}%" ] } }
   named_scope :for_offer_list, :select => OFFER_LIST_REQUIRED_COLUMNS
@@ -235,7 +236,7 @@ class Offer < ActiveRecord::Base
 
   delegate :balance, :pending_earnings, :name, :cs_contact_email, :approved_publisher?, :rev_share, :to => :partner, :prefix => true
   delegate :name, :id, :formatted_active_gamer_count, :protocol_handler, :to => :app, :prefix => true, :allow_nil => true
-  memoize :partner_balance, :app_formatted_active_gamer_count, :app_protocol_handler, :app_name
+  memoize :partner_balance, :app_formatted_active_gamer_count, :app_protocol_handler
 
   alias_method :events, :offer_events
   alias_method :random, :rand
@@ -244,9 +245,6 @@ class Offer < ActiveRecord::Base
     :approved_sources, :carriers, :cities
   memoize :get_device_types, :get_screen_layout_sizes, :get_countries, :get_dma_codes,
     :get_regions, :get_approved_sources, :get_carriers, :get_cities
-
-  serialize :impression_tracking_urls, Array
-  serialize :click_tracking_urls, Array
 
   def clone
     return super if new_record?
@@ -257,29 +255,6 @@ class Offer < ActiveRecord::Base
         blob = banner_creative_s3_object(size).read
         clone.send("banner_creative_#{size}_blob=", blob)
       end
-    end
-  end
-
-  %w(click_tracking_urls impression_tracking_urls).each do |method_name|
-    define_method method_name do |*args|
-      replace_macros = args.first || false
-
-      self.send("#{method_name}=", []) if super.nil?
-      urls = super.sort
-
-      now = Time.zone.now.to_i.to_s
-      urls = urls.collect { |url| url.gsub("[timestamp]", now) } if replace_macros
-      urls
-    end
-
-    define_method "#{method_name}=" do |urls|
-      super(urls.to_a.select { |url| url.present? })
-    end
-
-    define_method "#{method_name}_was" do
-      ret_val = super
-      return [] if ret_val.nil?
-      ret_val
     end
   end
 
@@ -436,6 +411,8 @@ class Offer < ActiveRecord::Base
       src_obj.write(:data => icon_src_blob, :acl => :public_read)
 
       Mc.delete("icon.s3.#{id}")
+      paths = ["icons/200/#{icon_id}.jpg"]
+      CloudFront.invalidate(id, paths) if existing_icon_blob.present?
       return
     end
 
@@ -701,44 +678,13 @@ class Offer < ActiveRecord::Base
     !%w(App ActionOffer SurveyOffer).include?(item_type) || Offer::Rejecting::TAPJOY_GAMES_RETARGETED_OFFERS.include?(item_id)
   end
 
-  def validate_third_party_tracking_urls(attribute, urls)
-    urls.each do |url|
-      uri = URI.parse(url) rescue (self.errors.add(attribute, "must all be valid urls") and return)
-      unless uri.host =~ /(^|\.)(#{TRUSTED_TRACKING_VENDORS.join('|').gsub('.','\\.')})$/
-        vendors_list = TRUSTED_TRACKING_VENDORS.to_sentence(:two_words_connector => ' or ', :last_word_connector => ', or ')
-        self.errors.add(attribute, "must all use a trusted vendor (#{vendors_list})")
-        return
-      end
-    end
-  end
-
-  def queue_impression_tracking_requests(request)
-    # simulate <img> pixel tag client-side web calls...
-    # we lose cookie functionality, unless we implement cookie storage on our end...
-    impression_tracking_urls(true).each do |url|
-      forwarded_headers = request.http_headers.slice('User-Agent', 'X-Do-Not-Track', 'Dnt')
-      forwarded_headers['Referer'] = request.url
-      Downloader.queue_get_with_retry(url, { :headers => forwarded_headers })
-    end
-  end
-
-  def queue_click_tracking_requests(request)
-    # simulate <img> pixel tag client-side web calls...
-    # we lose cookie functionality, unless we implement cookie storage on our end...
-    click_tracking_urls(true).each do |url|
-      forwarded_headers = request.http_headers.slice('User-Agent', 'X-Do-Not-Track', 'Dnt')
-      forwarded_headers['Referer'] = request.url
-      Downloader.queue_get_with_retry(url, { :headers => forwarded_headers })
-    end
-  end
-
   def video_button_tracking_offers
     @video_button_tracking_offers || []
   end
 
   def update_video_button_tracking_offers
     return unless item_type == 'VideoOffer'
-    @video_button_tracking_offers = item.video_buttons.collect(&:tracking_offer).compact
+    @video_button_tracking_offers = item.video_buttons.enabled.ordered.collect(&:tracking_offer).compact
   end
 
   private
@@ -806,6 +752,13 @@ class Offer < ActiveRecord::Base
     if item_type == 'RatingOffer' && (tapjoy_enabled_changed? || user_enabled_changed? || reward_value_changed? || payment_changed?)
       item.app.enabled_rating_offer_id = accepting_clicks? ? id : nil
       item.app.save! if item.app.changed?
+    end
+  end
+
+  def update_enabled_deeplink_offer_id
+    if item_type == 'DeeplinkOffer' && (tapjoy_enabled_changed? || user_enabled_changed? || reward_value_changed? || payment_changed?)
+      item.currency.enabled_deeplink_offer_id = accepting_clicks? ? id : nil
+      item.currency.save! if item.currency.changed?
     end
   end
 

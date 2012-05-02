@@ -39,9 +39,15 @@
       %th Rev
       %th CVR
       %th eCPM
+      %th Views
+      %th Conversions
+      %th Rev
+      %th CVR
+      %th eCPM
     %tr
       %th{ :colspan => 7 }
-      %th{ :colspan => 5, :align => :center } Offerwall
+      %th{ :colspan => 5, :align => :center } In app offerwall
+      %th{ :colspan => 5, :align => :center } Tapjoy.com offerwall
       %th{ :colspan => 5, :align => :center } Featured
       %th{ :colspan => 5, :align => :center } Display
   %tbody#publishers_tbody
@@ -59,6 +65,11 @@
         %td= stats['offerwall_revenue']
         %td= stats['offerwall_cvr']
         %td= stats['offerwall_ecpm']
+        %td= stats['tjm_offerwall_views']
+        %td= stats['tjm_offerwall_conversions']
+        %td= stats['tjm_offerwall_revenue']
+        %td= stats['tjm_offerwall_cvr']
+        %td= stats['tjm_offerwall_ecpm']
         %td= stats['featured_views']
         %td= stats['featured_conversions']
         %td= stats['featured_revenue']
@@ -98,10 +109,11 @@
           17: { sorter: 'formatted-number-column' },
           18: { sorter: 'formatted-number-column' },
           19: { sorter: 'formatted-number-column' },
-          22: { sorter: false },
-          23: { sorter: false },
-          24: { sorter: false },
-          25: { sorter: false },
+          21: { sorter: 'formatted-number-column' },
+          22: { sorter: 'formatted-number-column' },
+          23: { sorter: 'formatted-number-column' },
+          24: { sorter: 'formatted-number-column' },
+          26: { sorter: 'formatted-number-column' },
         },
         sortList: [ [3,1] ]
       });

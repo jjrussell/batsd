@@ -97,6 +97,8 @@ FactoryGirl.define do
   end
 
   factory :app_metadata do
+    thumbs_up  0
+    thumbs_down 0
     store_name 'App Store'
     store_id   { Factory.next(:name) }
     name       { Factory.next(:name) }
@@ -326,8 +328,17 @@ FactoryGirl.define do
     button_url            'https://www.tapjoy.com'
   end
 
+  factory :brand do
+    name { Factory.next(:name) }
+  end
+
+  factory :brand_offer_mapping do
+    brand {Factory(:brand)}
+    offer {Factory(:app).primary_offer }
+    allocation 1
+  end
+
   factory :client do
     name  { Factory.next(:name) }
   end
-
 end

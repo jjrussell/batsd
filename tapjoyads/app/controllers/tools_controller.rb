@@ -129,15 +129,18 @@ class ToolsController < WebsiteController
   end
 
   def sqs_lengths
-    queues = params[:queue_name].present? ? Sqs.queue("#{QueueNames::BASE_NAME}#{params[:queue_name]}").to_a : Sqs.queues
+    queues = params[:queue_name].present? ? Sqs.queue("#{QueueNames::BASE_NAME.sub(RUN_MODE_PREFIX, '')}#{params[:queue_name]}").to_a : Sqs.queues
     @queues = queues.map do |queue|
+      name = queue.url.split('/').last
       {
-        :name        => queue.url.split('/').last,
-        :size        => queue.visible_messages,
-        :hidden_size => queue.invisible_messages,
-        :visibility  => queue.visibility_timeout,
+        :name          => name,
+        :size          => queue.visible_messages,
+        :hidden_size   => queue.invisible_messages,
+        :visibility    => queue.visibility_timeout,
+        :show_run_link => !!(name =~ /^#{RUN_MODE_PREFIX}/)
       }
     end
+    @show_run_column = %w(development staging).include?(Rails.env) && @queues.any? { |queue| queue[:show_run_link] }
   end
 
   def ses_status
@@ -244,6 +247,15 @@ class ToolsController < WebsiteController
         flash.now[:error] = "No UDIDs associated with the email address: #{params[:email_address]}"
       elsif @all_udids.size == 1
         redirect_to :action => :device_info, :udid => @all_udids.first, :email_address => params[:email_address]
+      end
+
+    elsif params[:mac_address].present?
+      mac_address = params[:mac_address].downcase.gsub(/:/,"")
+      device_identifier = DeviceIdentifier.new(:key => mac_address)
+      if device_identifier.udid?
+        redirect_to :action => :device_info, :udid => device_identifier.udid, :mac_address => params[:mac_address]
+      else
+        flash.now[:error] = "No UDIDs associated with the MAC address: #{params[:mac_address]}"
       end
     end
   end

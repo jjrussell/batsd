@@ -13,6 +13,7 @@ ActionController::Routing::Routes.draw do |map|
     m.earn 'earn/:id', :controller => 'games/homepage', :action => :earn
     m.more_apps 'more_apps', :controller => 'games/homepage', :action => :index
     m.get_app 'get_app', :controller => 'games/homepage', :action => :get_app
+    m.record_click 'record_click', :controller => 'games/homepage', :action => :record_click
 
     m.more_games_editor_picks 'editor_picks', :controller => 'games/more_games', :action => :editor_picks
     m.more_games_recommended 'recommended', :controller => 'games/more_games', :action => :recommended
@@ -48,7 +49,7 @@ ActionController::Routing::Routes.draw do |map|
     m.resources :password_resets, :controller => 'games/password_resets', :as => 'password-reset', :only => [ :new, :create, :edit, :update ]
     m.password_reset 'password-reset', :controller => 'games/password_resets', :action => :new
 
-    m.resources :support_requests, :controller => 'games/support_requests', :only => [ :new, :create ], :collection => { :unresolved_clicks => :get }
+    m.resources :support_requests, :controller => 'games/support_requests', :only => [ :new, :create ]
 
     m.resources :android, :controller => 'games/android', :action => :index
 
@@ -70,6 +71,9 @@ ActionController::Routing::Routes.draw do |map|
     end
 
     map.resources :survey_results, :only => [ :new, :create ]
-    m.resources :app_reviews, :controller => 'games/app_reviews', :only => [ :index, :create, :edit, :update, :new, :destroy]
+    m.resources :app_reviews, :controller => 'games/app_reviews', :only => [ :index, :create, :edit, :update, :new, :destroy] do |moderation|
+      moderation.resource :flag, :controller=> 'games/app_reviews/flag_moderation', :only => [:create, :destroy]
+      moderation.resource :fave, :controller=> 'games/app_reviews/fave_moderation', :only => [:create, :destroy]
+    end
   end
 end

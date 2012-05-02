@@ -1,14 +1,15 @@
 #review-form.current
   .panel
-    .mod.line-item.page-header
-      .hd
-        .app-icon.squircle
-          = image_tag(@app.get_icon_url(:source => :cloudfront))
-      .bd.lastUnit
-        .title.elip
-          = @app.name
-        .sub-title
-          = @app.partner_name
+    .page-header
+      .container.mt20
+        .left.ml10.pt3
+          .app-icon.squircle
+            = image_tag(@app.get_icon_url(:source => :cloudfront))
+        .left.ml10
+          .big-title.slate.elip
+            = @app.name
+          .sub-title
+            = @app.partner_name
     .mod.menu-head
       = t("text.shared.rate_and_review")
     .mod.review-form

@@ -34,8 +34,7 @@ class GamesController < ApplicationController
   def get_language_codes
     return [] unless params[:language_code]
 
-    code = params[:language_code]
-
+    code = params[:language_code].downcase
     [ code, code.split(/-/).first ].uniq
   end
 
@@ -46,7 +45,7 @@ class GamesController < ApplicationController
     language_list = request.env['HTTP_ACCEPT_LANGUAGE'].split(/\s*,\s*/).map do |pair|
       language, quality = pair.split(/;q=/)
       raise "Not correctly formatted" unless language =~ /^[a-z\-]+$/i
-      language = language.downcase.gsub(/-[a-z]+$/i) { |i| i.upcase }
+      language = language.downcase
       quality = unset_priority -= 0.1 unless quality.to_s =~ /\d+(\.\d+)?$/
       result = [ - quality.to_f, language ]
       splits << [ - (quality.to_f - 0.1), language.split(/-/).first ] if language =~ /-/
@@ -163,7 +162,11 @@ class GamesController < ApplicationController
       path = url_for(params.merge(:only_path => true))
       options = { :path => path } unless path == games_root_path
       options[:referrer] = params[:referrer] if params[:referrer].present?
-      redirect_to games_login_path(options)
+      if request.xhr?
+        render :json=> "Unauthorized", :status => 401
+      else
+        redirect_to games_login_path(options)
+      end
     end
   end
 
@@ -261,7 +264,6 @@ class GamesController < ApplicationController
       session[:tjms_stime] = now.to_i
       session[:tjms_id]    = UUIDTools::UUID.random_create.hexdigest
     end
-
     tjm_request_options = {
       :time       => now,
       :session    => session,
@@ -272,12 +274,14 @@ class GamesController < ApplicationController
       :gamer      => current_gamer,
       :device_id  => current_device_id,
     }
+    @tjm_social_request = TjmRequest.new(tjm_request_options.merge(:is_social => true)) if params[:referrer].present?
     @tjm_request = TjmRequest.new(tjm_request_options)
 
     session[:tjms_ltime] = now
   end
 
   def save_tjm_request
+    @tjm_social_request.save if @tjm_social_request.present?
     @tjm_request.save if @tjm_request.present?
   end
 
@@ -286,6 +290,19 @@ class GamesController < ApplicationController
     session[:tjms_stime].blank? ||
     session[:tjms_ltime].blank? ||
     Time.zone.at(session[:tjms_ltime].to_i) < now - TJM_SESSION_TIMEOUT
+  end
+
+  def record_recommended_apps
+    return unless @tjm_request
+    current_recommendations.each_with_index do |app, index|
+      recommendation_tjm_request = @tjm_request.clone
+      recommendation_tjm_request.app_id         = app.id
+      recommendation_tjm_request.list_rank      = index
+      recommendation_tjm_request.display_path   = recommendation_tjm_request.path
+
+      recommendation_tjm_request.replace_path('tjm_recommendation_impression')
+      recommendation_tjm_request.save
+    end
   end
 
 end

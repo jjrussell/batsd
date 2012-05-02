@@ -433,7 +433,27 @@ p {
 .ui-icon.social {
   margin-left: 12px;
 }
+.ui-icon.moderation-flag {
+  float:right;
+  cursor:pointer;
+}
+.ui-icon.moderation-flag:before {
+  content: '\2690'
+}
+.ui-icon.moderation-flag.checked:before {
+  content: '\2691'
+}
+.ui-icon.moderation-fave {
+  float:left;
+  cursor:pointer;
+}
+.ui-icon.moderation-fave:before {
+  content: '\2606'
+}
+.ui-icon.moderation-fave.checked:before {
+  content: '\2605'
 
+}
 .ui-icon-small {
   padding-left: 20px;
 }
@@ -663,8 +683,11 @@ p {
   padding-bottom: 10px;
 }
 
-.review {
-  font-size: .9em;
+.review.line-item {
+
+  clear:     left;
+  margin:    0;
+  height:     auto;
 
   .author, .date {
     color: #a1a1a1;
@@ -682,12 +705,98 @@ p {
     float: left;
   }
   .text {
+    font-size: 12px;
+    line-height: 18px;
     clear: both;
-    height: 40px;
     text-overflow: ellipsis;
     overflow: hidden;
     white-space: wrap;
   }
+  .triangle{
+    border-bottom: 8px white solid;
+    border-left: 8px transparent solid;
+    border-right: 8px transparent solid;
+    width:0;
+    height:0;
+    clear:both;
+    margin-left:50%;
+    margin-top:10px;
+    position:relative;
+    left:-8px;
+  }
+  .moderation-panel{
+    .helpful_q {
+      overflow: hidden;
+      .q {
+         float: left;
+      }
+      .yn {
+        float: right;
+        a {
+          color: #64B1FF;
+          margin-left: 10px;
+          margin-right: 10px;
+        }
+      }
+
+    }
+    a.concern {
+      color: #64B1FF;
+    }
+  }
+
+}
+.review.line-item.var-height {
+  height:     auto;
+  .text {
+    clear: both;
+    overflow: hidden;
+    white-space: wrap;
+  }
+  .more-btn {
+    margin-top: 6px;
+    display: none;
+  }
+  .triangle{
+    display:block;
+  }
+  .moderation-panel{
+    background-color: white;
+    padding: 10px;
+    clear: both;
+    line-height: 20px;
+    .concern{
+      padding-left: 24px;
+      background: transparent inline-image("#{$image_path}/flagged.gif") top left no-repeat;
+    }
+    .concern_q{
+      a.concern{
+        padding-left: 24px;
+        background: transparent inline-image("#{$image_path}/flag_normal.gif")  top left no-repeat;
+      }
+    }
+  }
+}
+
+.review.line-item.fixed-height {
+  height:80px;
+  .text {
+    height: 36px;
+  }
+  .more-btn {
+    height:23px;
+    text-align: right;
+    cursor: pointer;
+    color: #64B1FF;
+
+  }
+  .triangle{
+    display:none;
+  }
+  .moderation-panel{display:none;}
+}
+.submenu{
+  clear:both;
 }
 
 .ui-joy-input,
@@ -802,19 +911,23 @@ p {
 }
 
 .score-summary {
+  overflow: hidden;
   padding-top: 10px;
   padding-bottom: 10px;
-
-  .percentage {
-    font-size: 1.5em;
-  }
-  .description {
-    color: #a1a1a1;
+  .text{
+    float:  left;
+    margin-top: 8px;
+    .percentage {
+      font-size: 1.5em;
+    }
+    .description {
+      color: #a1a1a1;
+    }
   }
   img {
     background: url(/images/games/thumbs-up-lg.png) no-repeat 0 0;
     width: 35px;
-    vertical-align: middle;
+    float: left;
   }
 }
 
@@ -1901,7 +2014,7 @@ div.app {
   z-index: 10;
   width: 100%;
   height: auto;
-  background: url(#{$image_path}/dropdown_noise_tile.png) repeat 0 0;
+  background: url(#{$image_path}/menu_dropdown.png) repeat 0 0;
   border-bottom-left-radius: 6px;
   border-bottom-right-radius: 6px;
   box-shadow: inset 0 -1px 0 #242424, inset 1px 0 0 #242424, inset -1px 0 0 #242424,  inset 0 1px 0 #242424, inset 0 -2px 0 #555, inset -2px 0 0 #555, inset 2px 0 0 #555, inset 0 2px 0 #555, 0 1px 3px rgba(0,0,0, .4);
@@ -2104,21 +2217,6 @@ div.app {
   text-align: center;
 }
 
-#support-request select {
-  -webkit-appearance: none;
-  outline: none;
-  -webkit-outline: none;
-  -moz-outline: none;
-  -o-user-outline: none;
-  background-color: #ffffff;
-  border: 1px solid #bfbfbf;
-  font: 14px 'Gill Sans', 'Gill Sans MT', Arial , sans-serif;
-  padding: 8px;
-  width: 100%;
-  @include rounded-corners(4px);
-  @include inset-shadow("rgba(0,0,0, .8)", 3px);
-}
-
 /**
  * twitter invite
  */
@@ -2133,4 +2231,3 @@ div.app {
     float: right;
   }
 }
-
