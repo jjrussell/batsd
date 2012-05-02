@@ -265,10 +265,8 @@ class Device < SimpledbShardedResource
 
   def self.device_type_to_platform(type)
     case type
-    when 'iphone', 'ipad', 'ipod'
-      'ios'
-    else
-      type
+    when 'iphone', 'ipad', 'ipod' then 'ios'
+    else type
     end
   end
 
