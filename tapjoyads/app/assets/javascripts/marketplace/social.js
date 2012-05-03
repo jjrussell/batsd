@@ -48,7 +48,7 @@
           } else {
             notify(_t('games.grant_us_access'));
           }
-        }, {scope: 'offline_access,publish_stream,email,user_birthday,read_friendlists'});
+        }, {scope: 'offline_access,publish_stream,email,user_birthday'});
       },
 
       checkPermission: function (withPerm) {
