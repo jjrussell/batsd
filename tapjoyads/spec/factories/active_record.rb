@@ -253,6 +253,8 @@ FactoryGirl.define do
     password { 'asdf' }
     password_confirmation { 'asdf' }
     terms_of_service { '1' }
+    been_buried_count 0
+    been_helpful_count 0
   end
 
   factory :invitation do
