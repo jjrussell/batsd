@@ -33,7 +33,7 @@ describe SimpledbResource do
     end
 
     it 'should convert values to Strings' do
-      Testing.sanitize_conditions("test_val = ?", 1).should == "test_val = '1'"
+      Testing.sanitize_conditions("test_val = ? AND '2' = ?", 1, 2).should == "test_val = '1' AND '2' = '2'"
     end
   end
 
