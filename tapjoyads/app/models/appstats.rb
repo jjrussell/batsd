@@ -366,10 +366,10 @@ class Appstats
   end
 
   def to_csv
-    data =  "start_time,end_time,paid_clicks,paid_installs,new_users,paid_cvr,spend,itunes_rank_overall_free_united_states,"
-    data += "offerwall_views,published_offer_clicks,published_offers_completed,published_cvr,offerwall_revenue,offerwall_ecpm,"
-    data += "tjm_offerwall_views,tjm_published_offer_clicks,tjm_published_offers_completed,tjm_published_cvr,tjm_offerwall_revenue,tjm_offerwall_ecpm," if Delayed.show?
-    data += "display_ads_revenue,display_ads_ecpm,featured_revenue,featured_ecpm"
+    data = "start_time,end_time,paid_clicks,paid_installs,new_users,paid_cvr,spend,itunes_rank_overall_free_united_states," <<
+      "offerwall_views,published_offer_clicks,published_offers_completed,published_cvr,offerwall_revenue,offerwall_ecpm," <<
+      "tjm_offerwall_views,tjm_published_offer_clicks,tjm_published_offers_completed,tjm_published_cvr,tjm_offerwall_revenue,tjm_offerwall_ecpm," <<
+      "display_ads_revenue,display_ads_ecpm,featured_revenue,featured_ecpm"
     data += ",daily_active_users,arpdau" if @granularity == :daily
     data = [data]
     get_labels_and_intervals unless @intervals.present?
@@ -392,16 +392,14 @@ class Appstats
         @stats['rewards_cvr'][i],
         NumberHelper.number_to_currency(@stats['rewards_revenue'][i] / 100.0, :delimiter => ''),
         NumberHelper.number_to_currency(@stats['offerwall_ecpm'][i] / 100.0, :delimiter => ''),
-      ]
-      line += [
+
         @stats['tjm_offerwall_views'][i],
         @stats['tjm_rewards_opened'][i],
         @stats['tjm_rewards'][i],
         @stats['tjm_rewards_cvr'][i],
         NumberHelper.number_to_currency(@stats['tjm_rewards_revenue'][i] / 100.0, :delimiter => ''),
         NumberHelper.number_to_currency(@stats['tjm_offerwall_ecpm'][i] / 100.0, :delimiter => ''),
-      ] if Delayed.show?
-      line += [
+
         NumberHelper.number_to_currency(@stats['display_revenue'][i] / 100.0, :delimiter => ''),
         NumberHelper.number_to_currency(@stats['display_ecpm'][i] / 100.0, :delimiter => ''),
         NumberHelper.number_to_currency(@stats['featured_revenue'][i] /100.0, :delimiter => ''),
@@ -835,7 +833,7 @@ private
       :xLabels => @x_labels,
       :main => {
         :unitPrefix => '$',
-        :names => Delayed.show? ? [ 'Total revenue', 'In app offerwall revenue', 'Tapjoy.com offerwall revenue', 'Featured offer revenue', 'Display ad revenue' ] : [ 'Total revenue', 'Offerwall revenue', 'Featured offer revenue', 'Display ad revenue' ],
+        :names => [ 'Total revenue', 'In app offerwall revenue', 'Tapjoy.com offerwall revenue', 'Featured offer revenue', 'Display ad revenue' ],
         :data => [
           @stats['total_revenue'].map { |i| i / 100.0 },
           @stats['rewards_revenue'].map { |i| i / 100.0 },
@@ -863,7 +861,7 @@ private
 
   def offerwall_data
     {
-      :name => Delayed.show? ? 'In app offerwall' : 'Offerwall',
+      :name => 'In app offerwall',
       :intervals => formatted_intervals,
       :xLabels => @x_labels,
       :main => {
@@ -918,45 +916,49 @@ private
       :intervals => formatted_intervals,
       :xLabels => @x_labels,
       :main => {
-        :names => [ 'Offerwall views', 'Clicks', 'Conversions' ],
+        #:names => [ 'Offerwall views', 'Clicks', 'Conversions' ],
+        :names => [ 'Clicks', 'Conversions' ],
         :data => [
-          @stats['tjm_offerwall_views'], @stats['tjm_rewards_opened'], @stats['tjm_rewards'],
+          #@stats['tjm_offerwall_views'],
+          @stats['tjm_rewards_opened'], @stats['tjm_rewards'],
         ],
         :stringData => [
-          @stats['tjm_offerwall_views'].map { |i| NumberHelper.number_with_delimiter(i) },
+          #@stats['tjm_offerwall_views'].map { |i| NumberHelper.number_with_delimiter(i) },
           @stats['tjm_rewards_opened'].map { |i| NumberHelper.number_with_delimiter(i) },
           @stats['tjm_rewards'].map { |i| NumberHelper.number_with_delimiter(i) },
         ],
         :totals => [
-          NumberHelper.number_with_delimiter(@stats['tjm_offerwall_views'].sum),
+          #NumberHelper.number_with_delimiter(@stats['tjm_offerwall_views'].sum),
           NumberHelper.number_with_delimiter(@stats['tjm_rewards_opened'].sum),
           NumberHelper.number_with_delimiter(@stats['tjm_rewards'].sum),
         ],
       },
       :right => {
         :unitPrefix => '$',
-        :names => [ 'Revenue', 'eCPM' ],
+        #:names => [ 'Revenue', 'eCPM' ],
+        :names => [ 'Revenue' ],
         :data => [
           @stats['tjm_rewards_revenue'].map { |i| i / 100.0 },
-          @stats['tjm_offerwall_ecpm'].map { |i| i / 100.0 },
+          #@stats['tjm_offerwall_ecpm'].map { |i| i / 100.0 },
         ],
         :stringData => [
           @stats['tjm_rewards_revenue'].map { |i| NumberHelper.number_to_currency(i / 100.0) },
-          @stats['tjm_offerwall_ecpm'].map { |i| NumberHelper.number_to_currency(i / 100.0) },
+          #@stats['tjm_offerwall_ecpm'].map { |i| NumberHelper.number_to_currency(i / 100.0) },
         ],
         :totals => [
           NumberHelper.number_to_currency(@stats['tjm_rewards_revenue'].sum / 100.0),
-          @stats['tjm_offerwall_views'].sum > 0 ? NumberHelper.number_to_currency(@stats['tjm_rewards_revenue'].sum.to_f / (@stats['tjm_offerwall_views'].sum / 1000.0) / 100.0) : '$0.00',
+          #@stats['tjm_offerwall_views'].sum > 0 ? NumberHelper.number_to_currency(@stats['tjm_rewards_revenue'].sum.to_f / (@stats['tjm_offerwall_views'].sum / 1000.0) / 100.0) : '$0.00',
         ],
       },
       :extra => {
-        :names => [ 'CTR', 'CVR' ],
+        #:names => [ 'CTR', 'CVR' ],
+        :names => [ 'CVR' ],
         :data => [
-          @stats['tjm_rewards_ctr'].map { |r| "%.0f%" % (r.to_f * 100.0) },
+          #@stats['tjm_rewards_ctr'].map { |r| "%.0f%" % (r.to_f * 100.0) },
           @stats['tjm_rewards_cvr'].map { |r| "%.0f%" % (r.to_f * 100.0) },
         ],
         :totals => [
-          @stats['tjm_offerwall_views'].sum > 0 ? ("%.1f%" % (@stats['tjm_rewards_opened'].sum.to_f / @stats['tjm_offerwall_views'].sum * 100.0)) : '-',
+          #@stats['tjm_offerwall_views'].sum > 0 ? ("%.1f%" % (@stats['tjm_rewards_opened'].sum.to_f / @stats['tjm_offerwall_views'].sum * 100.0)) : '-',
           @stats['tjm_rewards_opened'].sum > 0 ? ("%.1f%" % (@stats['tjm_rewards'].sum.to_f / @stats['tjm_rewards_opened'].sum * 100.0)) : '-',
         ],
       },

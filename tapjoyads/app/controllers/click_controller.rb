@@ -60,6 +60,13 @@ class ClickController < ApplicationController
     redirect_to(destination_url)
   end
 
+  def deeplink
+    create_click('deeplink')
+    handle_pay_per_click
+
+    redirect_to(destination_url)
+  end
+
   def test_offer
     publisher_app = App.find_in_cache(params[:publisher_app_id])
     return unless verify_records([ @currency, publisher_app ])
@@ -164,7 +171,7 @@ class ClickController < ApplicationController
     end
     return if recently_clicked?
 
-    if params[:source] == 'tj_games' && Delayed.show?
+    if params[:source] == 'tj_games'
       wr_path = 'tjm_offer_click'
     elsif params[:source] == 'featured'
       wr_path = 'featured_offer_click'

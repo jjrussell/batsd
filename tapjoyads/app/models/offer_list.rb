@@ -100,22 +100,15 @@ class OfferList
 
   def get_offers(start, max_offers)
     return [ [], 0 ] if @device && (@device.opted_out? || @device.banned?)
-    @offers.sort! { |a,b| b.rank_score <=> a.rank_score }
+
+    all_offers = augmented_offer_list
     returned_offers = []
     found_offer_item_ids = Set.new
-    offers_to_find  = start + max_offers
-    found_offers    = 0
+    offers_to_find = start + max_offers
+    found_offers = 0
 
-    if start == 0 && @include_rating_offer && @publisher_app.enabled_rating_offer_id.present?
-      rate_app_offer = Offer.find_in_cache(enabled_rating_offer_id)
-      if rate_app_offer.present? && rate_app_offer.accepting_clicks? && !postcache_reject?(rate_app_offer)
-        returned_offers << rate_app_offer
-        found_offers += 1
-      end
-    end
-
-    @offers.each_with_index do |offer, i|
-      return [ returned_offers, @offers.length - i ] if found_offers >= offers_to_find
+    all_offers.each_with_index do |offer, i|
+      return [ returned_offers, all_offers.length - i ] if found_offers >= offers_to_find
 
       unless postcache_reject?(offer) || found_offer_item_ids.include?(offer.item_id)
         returned_offers << offer if found_offers >= start
@@ -136,6 +129,27 @@ class OfferList
   end
 
   private
+
+  def augmented_offer_list
+    all_offers = []
+
+    if @currency && @currency.rewarded? && @currency.enabled_deeplink_offer_id.present? && @source == 'offerwall' && @normalized_device_type != 'android'
+      deeplink_offer = Offer.find_in_cache(@currency.enabled_deeplink_offer_id)
+      if deeplink_offer.present? && deeplink_offer.accepting_clicks? && !postcache_reject?(deeplink_offer)
+        all_offers << deeplink_offer
+      end
+    end
+
+    if @include_rating_offer && @publisher_app.enabled_rating_offer_id.present?
+      rate_app_offer = Offer.find_in_cache(enabled_rating_offer_id) #BUG: should be @publisher_app.enabled_rating_offer_id
+      if rate_app_offer.present? && rate_app_offer.accepting_clicks? && !postcache_reject?(rate_app_offer)
+        all_offers << rate_app_offer
+      end
+    end
+
+    all_offers + @offers.sort { |a,b| b.rank_score <=> a.rank_score }
+  end
+
   def postcache_reject?(offer)
     offer.postcache_reject?(@publisher_app, @device, @currency, @device_type, @geoip_data, @app_version,
       @direct_pay_providers, @type, @hide_rewarded_app_installs, @library_version, @os_version, @screen_layout_size,

@@ -67,7 +67,7 @@ class Job::QueueConversionTrackingController < Job::SqsReaderController
 
     if click.source == 'featured'
       click.type = "featured_#{click.type}"
-    elsif click.source == 'tj_games' && Delayed.show?
+    elsif click.source == 'tj_games'
       click.type = "tjm_#{click.type}"
     end
 

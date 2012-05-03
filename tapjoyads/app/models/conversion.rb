@@ -11,6 +11,7 @@ class Conversion < ActiveRecord::Base
     'action'                      => 5,
     'video'                       => 6,
     'reengagement'                => 7,
+    'deeplink'                    => 8,
 
     # Special
     'imported'                    => 999,
@@ -43,6 +44,7 @@ class Conversion < ActiveRecord::Base
     'tjm_install_jailbroken'      => 3004,
     'tjm_action'                  => 3005,
     'tjm_video'                   => 3006,
+    'tjm_reengagement'            => 3007,
   }
 
   STAT_TO_REWARD_TYPE_MAP = {

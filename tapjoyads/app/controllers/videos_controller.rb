@@ -14,8 +14,13 @@ class VideosController < ApplicationController
 
   def complete
     return unless verify_params([ :id, :offer_id ])
-    @video_offer = VideoOffer.find_in_cache(params[:id])
-    @offer = Offer.find_in_cache(params[:offer_id])
+    if params[:id] == 'test_video'
+      @video_offer = @publisher_app.test_video_offer
+      @offer       = @publisher_app.test_video_offer.primary_offer
+    else
+      @video_offer = VideoOffer.find_in_cache(params[:id])
+      @offer       = Offer.find_in_cache(params[:offer_id])
+    end
     return unless verify_records([ @video_offer, @offer ])
   end
 

@@ -77,7 +77,7 @@ module Offer::UrlGeneration
     elsif item_type == 'SurveyOffer'
       final_url.gsub!('TAPJOY_SURVEY', click_key.to_s)
       final_url = ObjectEncryptor.encrypt_url(final_url)
-    elsif item_type == 'VideoOffer'
+    elsif item_type == 'VideoOffer' || item_type == 'TestVideoOffer'
       params = {
         :offer_id           => id,
         :app_id             => publisher_app_id,
@@ -130,6 +130,8 @@ module Offer::UrlGeneration
       click_url += 'reengagement'
     elsif item_type == 'SurveyOffer'
       click_url += "survey"
+    elsif item_type == 'DeeplinkOffer'
+      click_url += 'deeplink'
     else
       raise "click_url requested for an offer that should not be enabled. offer_id: #{id}"
     end

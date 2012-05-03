@@ -1,4 +1,8 @@
 module ToolsHelper
+  def location_str(employee)
+    employee.location.nil? ? '' : employee.location.inspect
+  end
+
   def click_info_ul(click, reward)
     concat("<ul class='nobr hidden'>")
     concat_li_timestamp("Viewed at", click.viewed_at)
