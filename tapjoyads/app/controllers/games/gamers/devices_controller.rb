@@ -1,13 +1,4 @@
 class Games::Gamers::DevicesController < GamesController
-  def mock
-    file_url = "#{Rails.root}/data/TapjoyProfile.mobileconfig.staging.unsigned"
-
-    @contents = File.open(file_url, 'r') { |f| f.read }
-
-    @fields = Hpricot(@contents)/"array"/"string"
-    @apps = ExternalPublisher.load_all
-  end
-
   def new
     if current_gamer.present?
       if Rails.env.staging?
