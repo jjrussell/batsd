@@ -14,7 +14,7 @@ describe Job::MasterCalculateNextPayoutController do
   describe '#index' do
     context 'when confirmed for payout' do
       before :each do
-        @partner.payout_threshold_confirmation.confirmed = true
+        @partner.payout_threshold_confirmation = true
         @partner.save!
       end
 
@@ -26,11 +26,11 @@ describe Job::MasterCalculateNextPayoutController do
         end
 
         it 'will unflag the partner' do
-          @partner.payout_threshold_confirmation.confirmed.should be_false
+          @partner.payout_threshold_confirmation.should be_false
         end
 
         it 'will have a system note' do
-          @partner.payout_threshold_confirmation.system_notes.should == 'SYSTEM: Payout is greater than or equal to $50,000.00'
+          @partner.confirmation_notes.should include 'SYSTEM: Payout is greater than or equal to $50,000.00'
         end
       end
 
@@ -42,18 +42,18 @@ describe Job::MasterCalculateNextPayoutController do
         end
 
         it 'will not unflag partner on payout' do
-          @partner.payout_threshold_confirmation.confirmed.should be_true
+          @partner.payout_threshold_confirmation.should be_true
         end
 
         it 'will not change the payout notes' do
-          @partner.payout_threshold_confirmation.system_notes.should be_nil
+          @partner.confirmation_notes.should_not include /SYSTEM: Payout is.*/
         end
       end
     end
 
     context 'when not confirmed for payout' do
       before :each do
-        @partner.payout_threshold_confirmation.confirmed = false
+        @partner.payout_threshold_confirmation = false
         @partner.save!
       end
 
@@ -65,18 +65,18 @@ describe Job::MasterCalculateNextPayoutController do
         end
 
         it 'will not be confirmed' do
-          @partner.payout_threshold_confirmation.confirmed.should be_false
+          @partner.payout_threshold_confirmation.should be_false
         end
 
         it 'will not have the system message' do
-          @partner.payout_threshold_confirmation.system_notes.should == 'SYSTEM: Payout is greater than or equal to $50,000.00'
+          @partner.confirmation_notes.should include 'SYSTEM: Payout is greater than or equal to $50,000.00'
         end
       end
     end
 
     context 'when payout greater than non-standard threshold' do
       before :each do
-        @partner.payout_threshold_confirmation.confirmed = true
+        @partner.payout_threshold_confirmation = true
         Partner.stubs(:calculate_next_payout_amount).with(@partner.id).returns(65_000_01)
         @partner.payout_threshold = 65_000_00
         get(:index)
@@ -84,11 +84,11 @@ describe Job::MasterCalculateNextPayoutController do
       end
 
       it 'will unflag the partner' do
-        @partner.payout_threshold_confirmation.confirmed.should be_false
+        @partner.payout_threshold_confirmation.should be_false
       end
 
       it 'will have a system note' do
-        @partner.payout_threshold_confirmation.system_notes.should == 'SYSTEM: Payout is greater than or equal to $65,000.00'
+        @partner.confirmation_notes.should include 'SYSTEM: Payout is greater than or equal to $65,000.00'
       end
     end
 
@@ -96,18 +96,18 @@ describe Job::MasterCalculateNextPayoutController do
       before :each do
         Partner.stubs(:calculate_next_payout_amount).with(@partner.id).returns(55_000_01)
         @partner.payout_threshold = 65_000_00
-        @partner.payout_threshold_confirmation.confirmed = true
+        @partner.payout_threshold_confirmation = true
         @partner.save!
         get(:index)
         @partner.reload
       end
 
       it 'will not unflag the partner' do
-        @partner.payout_threshold_confirmation.confirmed.should be_true
+        @partner.payout_threshold_confirmation.should be_true
       end
 
       it 'will not have a system note' do
-        @partner.payout_threshold_confirmation.system_notes.should be_nil
+        @partner.confirmation_notes.should_not include /SYSTEM: Payout is.*/
       end
     end
   end

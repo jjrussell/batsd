@@ -51,7 +51,7 @@ class Tools::PayoutsController < WebsiteController
           NumberHelper.number_to_currency((partner.next_payout_amount / 100.0), :delimiter => ''),
           partner.payout_info.present? && partner.payout_info.valid? ? partner.payout_info.payout_method : '',
           partner.account_managers.present? ? (partner.account_managers.first.email) : '',
-          partner.payout_info_confirmation.confirmed && partner.payout_threshold_confirmation.confirmed ? 'Confirmed' : 'Unconfirmed',
+          partner.payout_info_confirmation && partner.payout_threshold_confirmation ? 'Confirmed' : 'Unconfirmed',
           confirmation_notes.present? ? confirmation_notes.join(';').gsub(/[,]/, '_') : ''
         ]
       data << line.join(',')

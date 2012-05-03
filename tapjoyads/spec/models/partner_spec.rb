@@ -18,8 +18,6 @@ describe Partner do
     should have_many(:advertiser_conversions)
     should have_many(:monthly_accountings)
     should belong_to(:client)
-    should have_one(:payout_info_confirmation)
-    should have_one(:payout_threshold_confirmation)
   end
 
   it 'validates' do
@@ -356,37 +354,6 @@ describe Partner do
             Notifier.stubs(:alert_new_relic).with(BalancesMismatch, "Pending Earnings mismatch for partner: #{@partner.id}, previously: 10000, now: 0").once
             p = Partner.verify_balances(@partner.id, true)
           end
-        end
-      end
-    end
-
-    describe '#toggle_confirmed_for_payout' do
-      before :each do
-        @payout_threshold_confirmation = mock('mock confirmation')
-        @partner.stubs(:payout_confirmations).returns([@payout_threshold_confirmation])
-        @payout_threshold_confirmation.stubs(:confirmed).returns(true)
-      end
-
-      context 'when user has proper role' do
-        before :each do
-          @payout_threshold_confirmation.stubs(:has_proper_role).returns(true)
-          @user = Factory(:admin)
-        end
-
-        it 'remains confirmed the partner' do
-          @payout_threshold_confirmation.expects(:confirm).once
-          @partner.toggle_confirmed_for_payout(@user)
-        end
-      end
-      context 'when user does not have proper role' do
-        before :each do
-          @payout_threshold_confirmation.stubs(:has_proper_role).returns(false)
-          @user = Factory(:gamer)
-        end
-
-        it 'remains confirmed the partner' do
-          @payout_threshold_confirmation.expects(:confirm).never
-          @partner.toggle_confirmed_for_payout(@user)
         end
       end
     end

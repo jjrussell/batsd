@@ -25,15 +25,11 @@ class Partner < ActiveRecord::Base
   belongs_to :sales_rep, :class_name => 'User'
   belongs_to :client
   has_many :earnings_adjustments
-  has_one :payout_info_confirmation
-  has_one :payout_threshold_confirmation
 
   belongs_to :reseller
 
   validates_presence_of :reseller, :if => Proc.new { |partner| partner.reseller_id? }
   validates_presence_of :client, :if => Proc.new { |partner| partner.client_id? }
-  validates_presence_of :payout_info_confirmation
-  validates_presence_of :payout_threshold_confirmation
   validates_numericality_of :balance, :pending_earnings, :next_payout_amount, :only_integer => true, :allow_nil => false
   validates_numericality_of :premier_discount, :greater_than_or_equal_to => 0, :only_integer => true, :allow_nil => false
   validates_numericality_of :rev_share, :transfer_bonus, :direct_pay_share, :max_deduction_percentage, :greater_than_or_equal_to => 0, :less_than_or_equal_to => 1
@@ -71,9 +67,9 @@ class Partner < ActiveRecord::Base
     record.errors.add(attribute, 'You can not choose a date in the past for negotiated rev share expiration time.') if value.to_time < Time.zone.now
   end
 
-  before_validation :remove_whitespace_from_attributes, :update_rev_share, :add_payout_confirmations
+  before_validation :remove_whitespace_from_attributes, :update_rev_share
   before_save :check_billing_email
-  after_save :update_currencies, :update_offers, :recache_currencies, :update_payout_confirmations
+  after_save :update_currencies, :update_offers, :recache_currencies
 
   cattr_reader :per_page
   attr_protected :exclusivity_level_type, :exclusivity_expires_on, :premier_discount
@@ -332,18 +328,10 @@ class Partner < ActiveRecord::Base
     changed? ? save : true
   end
 
-  def toggle_confirmed_for_payout(user)
-    self.payout_confirmations.each do |payout_confirmation|
-      payout_confirmation.confirm if payout_confirmation.has_proper_role(user)
-    end
-  end
-
   def confirmation_notes
     notes = []
-    self.payout_confirmations.each do |confirmation|
-      system_note = confirmation.system_notes
-      notes <<  system_note if system_note.present?
-    end
+    notes << get_payout_threshold_notes unless payout_threshold_confirmation
+    notes << get_payout_info_notes unless payout_info_confirmation
 
     notes
   end
@@ -405,13 +393,11 @@ private
     errors.add :client_id, "cannot be switched to another client." if client_id_changed? && client_id_was.present? && client_id.present?
   end
 
-  def add_payout_confirmations
-    self.payout_threshold_confirmation ||= self.build_payout_threshold_confirmation
-    self.payout_info_confirmation ||= self.build_payout_info_confirmation
+  def get_payout_threshold_notes
+    "SYSTEM: Payout is greater than or equal to #{NumberHelper.number_to_currency((self.payout_threshold / 100).to_f)}"
   end
 
-  def update_payout_confirmations
-    self.payout_threshold_confirmation.save!
-    self.payout_info_confirmation.save!
+  def get_payout_info_notes
+    'SYSTEM: Partner Payout Information has changed.'
   end
 end

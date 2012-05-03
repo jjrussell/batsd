@@ -187,13 +187,13 @@ class BillingController < WebsiteController
     ]
     if @payout_info.safe_update_attributes(params[:payout_info], safe_attributes)
       log_activity(current_partner)
-      current_partner.payout_info_confirmation.unconfirm
+      current_partner.payout_info_confirmation = false
       current_partner.save
-      flash[:notice] = "Your information has been saved."
+      flash[:notice] = 'Your information has been saved.'
       redirect_to payout_info_billing_path
     else
       if !@payout_info.valid?
-        flash.now[:error] = "Please complete all fields to save."
+        flash.now[:error] = 'Please complete all fields to save.'
       else
         flash.now[:error] = @payout_info.errors.map do |error|
           [error[0].humanize, error[1]].join(' ')
