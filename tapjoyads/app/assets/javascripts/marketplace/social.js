@@ -279,7 +279,6 @@
     if (loadFriendsOptions != undefined) {
       var socialFriends = [];
       var twitterFollowerIds = [];
-      var counter = 0;
       fetchTwitterFriendList();
     }
 
@@ -291,6 +290,7 @@
         timeout: 15000,
         success: function(d) {
           twitterFollowerIds = twitterFollowerIds.concat(d.ids);
+          twitterFollowerIds = twitterFollowerIds.splice(0,1000);
           fetchTwitterUsersInfo();
         },
         error: function(request, status, error) {
@@ -319,8 +319,7 @@
             }
             socialFriends.push(userSimple);
           }
-          if (twitterFollowerIds.length > 0 && counter < 10) {
-            counter++;
+          if (twitterFollowerIds.length > 0) {
             fetchTwitterUsersInfo(twitterFollowerIds);
           } else {
             socialFriends = socialFriends.sort(function(a, b) {
