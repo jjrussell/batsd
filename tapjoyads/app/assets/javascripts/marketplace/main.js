@@ -19,7 +19,7 @@ $(document).ready(function(){
       if (width <= 480) {
         var imgWidth = $('.app-icon:first').outerWidth(true);
         var btnWidth = $('.myapps-earn:first').outerWidth(true);
-        var contentWidth = width - imgWidth - btnWidth - 20;
+        var contentWidth = width - imgWidth - btnWidth - 24;
         $('.details').each(function(){
           $(this).width(contentWidth);
         });
@@ -776,6 +776,7 @@ $(document).ready(function(){
     }
     $.each(Tapjoy.selectDevice, function(i,v){
       var device_type = v.device_type;
+      Tapjoy.device.name = 'iphone';
       if (!Tapjoy.Utils.isEmpty(device_type) && Tapjoy.device.name && (device_type.toLowerCase() == Tapjoy.device.name.toLowerCase().replace(/simulator/,'').replace(/ /,''))) {
         device_count++;
         device_found = true;

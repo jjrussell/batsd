@@ -48,7 +48,7 @@ div.app .title {
 .games {
   .app {
     .details {
-      max-width: 140px;
+      max-width: 220px;
     }
   }
 }
@@ -70,9 +70,6 @@ div.app .title {
     margin: 0;
     .details {
       small.description {
-        height: 40px;
-        overflow: hidden;
-        width: 60%;
       }
     }
   }
@@ -82,7 +79,7 @@ div.app .title {
 #recommendations .app {
   .details {
     span.title {
-      width: 200px !important;
+      //width: 200px !important;
     }
   }
 }
@@ -115,7 +112,7 @@ div.app .title {
 
 .app-info {
   width: percentage(240/320);
-  left: 96px;
+  //left: 96px;
   margin: 0;
 
   .big-title {
