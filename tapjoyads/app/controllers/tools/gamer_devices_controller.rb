@@ -14,6 +14,7 @@ class Tools::GamerDevicesController < WebsiteController
   end
 
   def edit
+    @apps = ExternalPublisher.load_all
     @gamer_device = GamerDevice.find(params[:id])
   end
 
