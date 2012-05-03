@@ -18,6 +18,7 @@ class TjmRequest < SyslogMessage
   self.define_attr :referrer
   self.define_attr :gamer_id
   self.define_attr :device_id
+  self.define_attr :is_ajax
 
   def initialize(options = {})
     session    = options.delete(:session)    { |k| raise "#{k} is a required argument" }
@@ -44,10 +45,8 @@ class TjmRequest < SyslogMessage
     self.device_id                = device_id if device_id.present?
   end
 
-  def update_path(request_controller, request_action)
-    self.controller = request_controller
-    self.action = request_action
-    self.path = lookup_path
+  def update_path
+    self.replace_path(lookup_path)
   end
 
   private

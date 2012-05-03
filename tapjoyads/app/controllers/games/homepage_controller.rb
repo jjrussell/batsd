@@ -111,20 +111,25 @@ class Games::HomepageController < GamesController
   end
 
   def record_local_request
-    error = 'missing params'
-    if params[:request_path]
+    decrypt_data_param
+    @tjm_request.is_ajax = true
+    @tjm_request.controller = params[:request_controller] if params[:request_controller].present?
+    @tjm_request.action = params[:request_action] if params[:request_action].present?
+
+    if params[:request_path].present?
+      @tjm_request.replace_path(params[:request_path])
+    elsif params[:request_url].present?
       begin
-        path = ActionController::Routing::Routes.recognize_path(params[:request_path])
-        params[:request_controller] = path[:controller]
-        params[:request_action] = path[:action]
+        path = ActionController::Routing::Routes.recognize_path(params[:request_url])
+        @tjm_request.controller = path[:controller]
+        @tjm_request.action = path[:action]
+        @tjm_request.update_path
       rescue ActionController::RoutingError
-        error = 'unable to find corresponding controller/action'
+        render_json_error(['unable to find corresponding controller/action'], status = 400) and return
       end
+    else
+      render_json_error(['please provide either the request_path or request_url'], status = 400) and return
     end
-    if params[:request_controller].present? && params[:request_action].present?
-      @tjm_request.update_path(params[:request_controller], params[:request_action])
-      render(:json => { :success => true }, :status => 200) and return
-    end
-    render_json_error([error], status = 400)
+    render(:json => { :success => true }, :status => 200)
   end
 end
