@@ -12,6 +12,22 @@ $(document).ready(function(){
         });
       };
 
+  // Dynamic table content width
+  if ($('.home .games').length > 0) {
+    function adjustWidth() {
+      var width = window.innerWidth;
+      if (width <= 480) {
+        var imgWidth = $('.app-icon:first').outerWidth(true);
+        var btnWidth = $('.myapps-earn:first').outerWidth(true);
+        var contentWidth = width - imgWidth - btnWidth - 20;
+        $('.details').each(function(){
+          $(this).width(contentWidth);
+        });
+      }
+    }
+    $(window).bind('resize orientationchange', adjustWidth);
+  }
+
   // Login Modal
   $('#login, #login-web').bind('click', function() {
     if ($('#login-form').hasClass('show')) {
@@ -43,7 +59,7 @@ $(document).ready(function(){
   });
 
   // Login Validation
-  if ($('form#new_gamer_session')) {
+  if ($('form#new_gamer_session').length > 0) {
     $('form#new_gamer_session input').focus(function() {
       $('form#new_gamer_session .form-error').html('&nbsp;').css({opacity: '0', visibility: 'hidden'});
     });
@@ -83,7 +99,7 @@ $(document).ready(function(){
   }
 
   // Signup Validation
-  if($('form#new_gamer')){
+  if($('form#new_gamer').length > 0) {
     var values = {}, tempVal = {}, data, preSelected = false, hasError = false, cookieError = false;
     var activeState = 'orange-action', inactiveState = 'grey-action';
     var rurl = $('form#new_gamer').attr('action');
@@ -144,7 +160,6 @@ $(document).ready(function(){
 
     // Validate form inputs
     function validate(e) {
-
       hasError = true;
       cookieError = false;
       // Test Cookie
@@ -682,7 +697,6 @@ $(document).ready(function(){
         $('#recommendationsRow').removeClass('nbb');
       }else{
         $('.row').hide().removeClass('view-all');
-
         if(li.hasClass('showRecommendations')){
           $('#recommendationsRow').show().addClass('nbb');
         }else if(li.hasClass('showGames')){
@@ -731,8 +745,6 @@ $(document).ready(function(){
   }
 
   $(window).bind('resize orientationchange', debounce(manageResize));
-  // run logic on ready
-  manageResize();
 
   setTimeout(function(){
     // Hide the ios address bar!
@@ -764,7 +776,7 @@ $(document).ready(function(){
     }
     $.each(Tapjoy.selectDevice, function(i,v){
       var device_type = v.device_type;
-      if (!Tapjoy.Utils.isEmpty(device_type) && Tapjoy.device.name && (device_type.toLowerCase() == Tapjoy.device.name.toLowerCase())) {
+      if (!Tapjoy.Utils.isEmpty(device_type) && Tapjoy.device.name && (device_type.toLowerCase() == Tapjoy.device.name.toLowerCase().replace(/simulator/,'').replace(/ /,''))) {
         device_count++;
         device_found = true;
         d.push('<a href="', path ,'?data=', v.data ,'">');
@@ -823,6 +835,35 @@ $(document).ready(function(){
     }
     $('#device-select-list').html(m);
   }
+
+  (function () {
+    var width = window.innerWidth;
+    var preLoad = 0, padSpace = 0;
+    if (Tapjoy.device.idevice) {
+      preLoad = 60;
+      padSpace = 80;
+    }
+    $('.app-icon img').each(function(n, o){
+      if (this && Tapjoy.Utils.ViewPort.inView(this, { padding: padSpace, threshold: preLoad })) {
+        var el = $(o);
+        if (el.attr('source')) {
+          el.attr("src", el.attr("source"));
+        }
+        else if (width > 480 && el.attr('source_med')) {
+          el.attr("src", el.attr("source_med"));
+        }
+        else if (el.attr('source_sm')){
+          el.attr("src", el.attr("source_sm"));
+        }
+        el.load(function(){
+          $(this).fadeIn('fast').attr("loaded", "true");
+        });
+        el.error(function(){
+          el.attr("src", "data:image/gif;base64,R0lGODlhAQABAID/AMDAwAAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==");
+        });
+      }
+    });
+  }());
 
   (function () {
     if (window._tjHtmlDone && window._tjStartTime) {

@@ -64,6 +64,7 @@
       getSome = function () {
         me.fetchData(options, function success(data) {
           $target.append(template(data));
+          me.fetchImages()
           $$.trigger(options.success_event, arguments);
         }, function fail() {
           $(".ajax-error", $$).show();
@@ -135,6 +136,35 @@
     });
   };
 
+  me.fetchImages = function() {
+    var width = window.innerWidth;
+    var preLoad = 0, padSpace = 0;
+    if (Tapjoy.device.idevice) {
+      preLoad = 60;
+      padSpace = 80;
+    }
+    $('#earn .earn-app-icon img').each(function(n, o){
+      if (this && Tapjoy.Utils.ViewPort.inView(this, { padding: padSpace, threshold: preLoad })) {
+        var el = $(o);
+        if (el.attr('loaded')) {
+          return true;
+        }
+        if (width <= 480 && el.attr("source_sm")) {
+          el.attr("src", el.attr("source_sm"));
+        }
+        else if (el.attr("source_med")) {
+          el.attr("src", el.attr("source_med"));
+        }
+        el.load(function(){
+          $(this).fadeIn('slow').attr('loaded','true');
+        });
+        el.error(function(){
+          el.attr("src", "data:image/gif;base64,R0lGODlhAQABAID/AMDAwAAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==");
+        });
+      }
+    });
+  };
+
   $(function () {
     me.fillElements();
     me.ajaxForms();
@@ -146,5 +176,10 @@
     $(document).bind("ajax-error", function (ev, form, data, status, xhr) {
       notify(_t('games.generic_issue'));
     });
+
+    $(window).scroll(function() {
+      Tapjoy.Utils.debounce(me.fetchImages());
+    });
+
   });
 }(window.Tapjoy, window.jQuery, window.jsonp_preloaded));
