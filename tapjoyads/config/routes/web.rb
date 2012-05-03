@@ -76,6 +76,7 @@ Tapjoyad::Application.routes.draw do
   match 'game_state/save' => 'game_state#save', :as => :save_game_state
   match 'log_device_app/:action/:id' => 'connect#index'
   match 'confirm_email_validation' => 'list_signup#confirm_api'
+  match 'fullscreen_ad/skip' => 'fullscreen_ad#skip'
 
   namespace :job do
     match 'master_calculate_next_payout' => 'master_calculate_next_payout#index'

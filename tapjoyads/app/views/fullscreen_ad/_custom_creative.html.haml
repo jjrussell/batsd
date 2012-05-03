@@ -38,7 +38,7 @@
       skip = document.getElementById('close-link');
       skip.onclick = function() {
         xmlHttpRequst = new XMLHttpRequest();
-        xmlHttpRequst.open('GET', '/fullscreen_ad/skip?data=#{ObjectEncryptor.encrypt({ :udid => params[:udid] , :offer_id => @offer.id }) }', false)
+        xmlHttpRequst.open('GET', '#{encrypt_url(fullscreen_ad_skip_path({ :udid => params[:udid] , :offer_id => @offer.id }))}', false)
         xmlHttpRequst.send();
       }
 

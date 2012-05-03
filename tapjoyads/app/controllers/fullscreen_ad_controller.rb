@@ -53,9 +53,9 @@ class FullscreenAdController < ApplicationController
   end
 
   def skip
-      device = Device.new(:key => params[:udid])
-      device.add_skip(params[:offer_id])
-      device.save
-      render :nothing => true
+    device = Device.new(:key => params[:udid])
+    device.add_skip(params[:offer_id])
+    device.save
+    render :nothing => true
   end
 end

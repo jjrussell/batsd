@@ -145,9 +145,18 @@ describe Device do
       @key = @device.id
     end
 
-    context 'an offer has recently been skipped' do
+    context 'an offer has just been skipped' do
       it 'returns true' do
         @device.recent_skips = [['a', Time.zone.now]]
+        @device.recently_skipped?('a').should be_true
+      end
+    end
+
+    context 'an offer has been skipped up to max time ago' do
+      it 'returns true' do
+        now = Time.zone.now
+        @device.recent_skips = [['a', now - (Device::SKIP_TIMEOUT)]]
+        Time.zone.stubs(:now).returns(now)
         @device.recently_skipped?('a').should be_true
       end
     end
@@ -167,8 +176,11 @@ describe Device do
       @key = @device.id
     end
     it 'adds offer to recent_skips' do
+      now = Time.zone.now
       @device.add_skip('a');
+      Time.zone.stubs(:now).returns(now)
       @device.recent_skips[0][0].should == 'a'
+      Time.zone.parse(@device.recent_skips[0][1]).to_i.should == now.to_i
     end
     it 'retains only 100 skips' do
       105.times { |num| @device.add_skip(num) }

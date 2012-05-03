@@ -25,6 +25,7 @@ class Device < SimpledbShardedResource
   self.sdb_attr :recent_skips, :type => :json, :default_value => []
 
   SKIP_TIMEOUT = 4.hours
+  MAX_SKIPS    = 100
 
   def mac_address=(new_value)
     new_value = new_value ? new_value.downcase.gsub(/:/,"") : ''
@@ -281,14 +282,14 @@ class Device < SimpledbShardedResource
   end
 
   def recently_skipped?(offer_id)
-    skips = Hash[*self.recent_skips.flatten]
-    skips[offer_id].present? && Time.zone.now - Time.parse(skips[offer_id]) <= Device::SKIP_TIMEOUT
+    longest_time = Time.zone.now - Device::SKIP_TIMEOUT
+    self.recent_skips.any? { |skip| (skip[0] == offer_id) && (Time.zone.parse(skip[1]).to_i  >= longest_time.to_i)}
   end
 
   def add_skip(offer_id)
     temp = recent_skips
     temp.unshift([offer_id, Time.zone.now])
-    self.recent_skips = temp.first(100)
+    self.recent_skips = temp.first(Device::MAX_SKIPS)
   end
 
   def remove_old_skips(time = Device::SKIP_TIMEOUT)
