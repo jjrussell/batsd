@@ -3,10 +3,10 @@ require 'spec/spec_helper'
 describe OfferCompletedController do
   before :each do
     @click = mock()
-    @click.stubs(:id).returns('test.another')
-    @click.stubs(:is_new).returns(false)
-    @click.stubs(:udid).returns('test')
-    @click.stubs(:advertiser_app_id).returns('another')
+    @click.stubs(:id).returns( 'test.another')
+    @click.stubs(:is_new).returns( false)
+    @click.stubs(:udid).returns(  'test')
+    @click.stubs(:advertiser_app_id).returns( 'another' )
     @click.stubs(:installed_at).returns(nil)
     @device = mock()
     @device.stubs(:set_last_run_time!)
