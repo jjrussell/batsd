@@ -11,9 +11,11 @@ class CreatePayoutConfirmations < ActiveRecord::Migration
     end
 
     remove_column :partners, :confirmed_for_payout
+    remove_column :partners, :payout_confirmation_notes
   end
 
   def self.down
+    add_column :partners, :payout_confirmation_notes, :string
     add_column :partners, :confirmed_for_payout, :boolean, :null => false, :default => false
 
     Partner.find_each do | partner|
