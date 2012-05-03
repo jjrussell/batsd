@@ -1,4 +1,5 @@
 require 'csv'
+require 'open-uri'
 
 class LinksharePoller
 
@@ -16,43 +17,35 @@ class LinksharePoller
   SALES_COLUMN              = 4
 
   def self.poll
-    data = self.download_data
-    if data.blank?
+    data_table = self.download_with_retries
+    if data_table.blank?
       Rails.logger.info(NO_RESULTS_FOUND)
     else
       Rails.logger.info(DOWNLOAD_SUCCESS)
-      data.each do |line|
-        columns = CSV.parse_line(line)
-        if columns[SALES_COLUMN].to_f > 0
-          click = Click.find(:key => columns[CLICK_KEY_COLUMN])
-          next unless click
-          Rails.logger.info("Checking whether or not to reward click #{click.key} from Linkshare...")
-          unless click.installed_at?
-            message = { :click_key => click.key, :install_timestamp => Time.zone.now.to_f.to_s}.to_json
-            Sqs.send_message(QueueNames::CONVERSION_TRACKING, message)
-            Rails.logger.info("Linkshare click #{click.key} sent to conversion queue")
-          else
-            Rails.logger.info("Linkshare click #{click.key} is not rewardable")
-          end
-        end
-      end
+      self.process_clicks(data_table)
     end
   end
 
-  def self.download_data(bdate=nil, edate=nil)
-    edate ||= Date.today
-    bdate ||= edate - 7.days
-    data = self.download_with_retries(bdate, edate)
-    data = data.split("\n")
-    data.slice!(0)
-    data
+  def self.process_clicks(raw_table)
+    now = Time.zone.now.to_f.to_s
+    CSV.parse(raw_table) do |row|
+      next if row.length != 6 || row[SALES_COLUMN].to_f <= 0
+      click = Click.find(row[CLICK_KEY_COLUMN])
+      next unless click && !click.installed_at?
+      message = { :click_key => click.key, :install_timestamp => now }.to_json
+      Rails.logger.info("Sending Linkshare click #{click.key} to conversion queue.")
+      Sqs.send_message(QueueNames::CONVERSION_TRACKING, message)
+    end
   end
 
-  def self.download_with_retries(bdate, edate)
+  def self.download_with_retries(bdate=nil, edate=nil)
+    edate ||= Date.today
+    bdate ||= edate - 7.days
     retries = 5
     url = "#{BASE_URL}bdate=#{bdate.to_s(:linkshare)}&edate=#{edate.to_s(:linkshare)}&nid=#{REGION_ID}&reportid=#{SIGNATURE_ACTIVITY_REPORT}&token=#{TAPJOY_SECRET_KEY}"
+    Rails.logger.info("Attempting Linkshare data download via #{url}.")
     begin
-      Downloader.get(url, {:timeout => 45})
+      open(url).read
     rescue Exception => e
       Rails.logger.info("Linkshare data download failed. Will retry #{retries} more times.")
       if retries > 0

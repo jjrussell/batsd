@@ -24,17 +24,14 @@ class StatsAggregation
     inaccurate     = percentage < 0.99999 || percentage > 1.00001
     message        = ''
 
-    if inaccurate
-      message << "Cannot verify daily stats because Vertica has inaccurate data for #{start_time.to_date}.\n"
-      message << "Appstats total: #{appstats_total}\n"
-      message << "Vertica total: #{vertica_total}\n"
-      message << "Difference: #{appstats_total - vertica_total}\n\n"
-      message << "hour, appstats, vertica, diff\n"
-      24.times do |i|
-        appstats_val = appstats_counts[i]
-        vertica_val  = vertica_counts[i] || 0
-        message << "#{i}, #{appstats_val}, #{vertica_val}, #{appstats_val - vertica_val}\n"
-      end
+    message << "Appstats total: #{appstats_total}\n"
+    message << "Vertica total: #{vertica_total}\n"
+    message << "Difference: #{appstats_total - vertica_total}\n\n"
+    message << "hour, appstats, vertica, diff\n"
+    24.times do |i|
+      appstats_val = appstats_counts[i]
+      vertica_val  = vertica_counts[i] || 0
+      message << "#{i}, #{appstats_val}, #{vertica_val}, #{appstats_val - vertica_val}\n"
     end
 
     [ !inaccurate, message ]
@@ -128,6 +125,7 @@ class StatsAggregation
       is_active = false
       stat_rows.each_value do |stat_row|
         if stat_row.get_hourly_count('offerwall_views').sum > 0 ||
+            stat_row.get_hourly_count('tjm_offerwall_views').sum > 0 ||
             stat_row.get_hourly_count('paid_clicks').sum > 0 ||
             stat_row.get_hourly_count('display_ads_requested').sum > 0 ||
             stat_row.get_hourly_count('featured_offers_requested').sum > 0 ||

@@ -4,34 +4,7 @@
     :plain
       $(".form-error").css({opacity: '1', visibility: 'visible !important'});
 
-
-#login-form{ :class => @login_form_class_name }
-  .bd.clearfix
-    - form_for([ :games, @gamer_session ], :url => games_login_path) do |f|
-      - if params[:data].present?
-        = hidden_field_tag :data, params[:data]
-      - if params[:path].present?
-        = hidden_field_tag :path, params[:path]
-      .title
-        = t("text.games.log_in_tapjoy")
-      .form-error
-        &nbsp;
-        = error_message_on @gamer_session, :email
-        = error_message_on @gamer_session, :password
-      .field.email
-        = f.email_field :email, "autocorrect" => "off", "autocapitalize" => "off", :placeholder => t("text.shared.email"), :required => ""
-      .field.password
-        %label{ :for => "password", :class => "hidden" }
-          Password
-        = f.password_field :password, :placeholder => t("text.shared.password"), :required => ""
-      .field.clearfix
-        .ui-joy-button.soft-grey-action.cancel-btn
-          = t("text.shared.cancel")
-        = f.submit t("text.shared.login_verb"), :class => "ui-joy-button ui-button-orange login-btn"
-      .forgot-pass
-        = link_to(t("text.games.forgot_pass"), new_games_password_reset_path)
-  .container.mt20.center
-    = render '/shared/truste'
+= render '/games/shared/login_form', :gamer_session => @gamer_session, :login_form_class_name => @login_form_class_name
 
 #content
   #wrapper
@@ -132,8 +105,24 @@
   %meta{ :name => 'description', :content => t('text.games.meta_description') }
   %meta{ :name => 'keywords', :content => t('text.games.meta_keywords')}
 
-  = css_tag('marketplace/theme/tjm/logged_out')
+  - css_cache 'marketplace/theme/tjm/logged_out', true
 
+- content_for :preload_images do
+  :javascript
 
-- content_for :included_javascripts do
-  = js_tag('marketplace/logged-out')
+    load(function(){
+      preload([
+        '/images/marketplace/themes/tjm/logged_out/tickets.png',
+        '/images/marketplace/themes/tjm/logged_out/mobile_joy_retina.png',
+        '/images/marketplace/themes/tjm/logged_out/share_friends.png',
+        '/images/marketplace/themes/tjm/logged_out/down_arrow.png',
+        '/images/marketplace/themes/tjm/edge_shadow.png',
+        '/images/marketplace/themes/tjm/logged_out/rewards.png',
+        '/images/marketplace/themes/tjm/logged_out/apps.png',
+        '/images/marketplace/themes/tjm/logged_out/shared.png',
+        '/images/marketplace/themes/tjm/partners.png',
+        '/images/marketplace/themes/tjm/logged_out/reward-tix.png',
+        '/images/marketplace/themes/tjm/logged_out/apps-retina.png',
+        '/images/marketplace/themes/tjm/logged_out/share-friends-retina.png'
+      ]);
+    });

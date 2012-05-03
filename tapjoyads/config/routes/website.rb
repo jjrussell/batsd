@@ -1,5 +1,5 @@
 ActionController::Routing::Routes.draw do |map|
-  map.root :controller => :homepage, :action => 'start'
+  map.root :controller => :tools, :action => 'index'
   map.connect 'site/privacy', :controller => 'documents', :action => 'privacy'
   map.connect 'site/privacy.html', :controller => 'documents', :action => 'privacy'
   map.connect 'site/privacy_mobile', :controller => 'documents', :action => 'privacy_mobile'

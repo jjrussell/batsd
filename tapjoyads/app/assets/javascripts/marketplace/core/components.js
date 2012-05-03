@@ -41,14 +41,15 @@
       touch: function(event, ui){},
       type: 'button'
     },
-		Carousel: {
-			forceSlideWidth: false,
-			hasPager: false,
-			pagerContainer: null,
-			animationDuration: 250,
-      enableTouchScroll: true,
-			minHeight: 200
-		}
+    Carousel: {
+      animation: 'all .3s ease-in',
+      enableSwipe: true,
+      forceSlideWidth: false,
+      hasPager: false,
+      minHeight: 200,
+      moveThreshold: null,
+      pagerContainer: null
+    }
   };
 
   // shared methods

@@ -1,4 +1,5 @@
 ActionController::Routing::Routes.draw do |map|
+  map.connect 'connect', :controller => :connect, :action => :index
   map.resources :offer_instructions, :only => [ :index ]
   map.resources :support_requests, :only => [ :new, :create ]
   map.resources :tools_surveys, :only => [ :edit, :create ]

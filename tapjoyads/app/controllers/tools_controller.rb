@@ -3,9 +3,21 @@ class ToolsController < WebsiteController
 
   filter_access_to :all
 
+  before_filter :downcase_udid, :only => [ :device_info, :update_device, :reset_device ]
   after_filter :save_activity_logs, :only => [ :update_user, :update_device, :resolve_clicks, :award_currencies, :update_award_currencies ]
 
   def index
+  end
+
+  def fix_rewards
+    if params[:reward_key].present?
+      reward = Reward.find(params[:reward_key], :consistent => true)
+      if reward.present?
+        flash.now[:notice] = reward.fix_conditional_check_failed
+      else
+        flash.now[:error] = 'Reward not found'
+      end
+    end
   end
 
   def new_transfer
@@ -38,7 +50,7 @@ class ToolsController < WebsiteController
       @payouts    = MonthlyAccounting.sum(:payment_payouts,   :conditions => conditions) /-100.0
     end
 
-    @linkshare_est = @spend.to_f * 0.026
+    @linkshare_est = 50_000
     @ads_est = 0.0
     @revenue = @spend + @linkshare_est + @ads_est - @marketing - @bonus
     @net_revenue = @revenue - @earnings
@@ -117,35 +129,18 @@ class ToolsController < WebsiteController
   end
 
   def sqs_lengths
-    queues = params[:queue_name].present? ? Sqs.queue("#{QueueNames::BASE_NAME}#{params[:queue_name]}").to_a : Sqs.queues
+    queues = params[:queue_name].present? ? Sqs.queue("#{QueueNames::BASE_NAME.sub(RUN_MODE_PREFIX, '')}#{params[:queue_name]}").to_a : Sqs.queues
     @queues = queues.map do |queue|
+      name = queue.url.split('/').last
       {
-        :name        => queue.url.split('/').last,
-        :size        => queue.visible_messages,
-        :hidden_size => queue.invisible_messages,
-        :visibility  => queue.visibility_timeout,
+        :name          => name,
+        :size          => queue.visible_messages,
+        :hidden_size   => queue.invisible_messages,
+        :visibility    => queue.visibility_timeout,
+        :show_run_link => !!(name =~ /^#{RUN_MODE_PREFIX}/)
       }
     end
-  end
-
-  def elb_status
-    elb_interface  = RightAws::ElbInterface.new
-    ec2_interface  = RightAws::Ec2.new
-    @lb_names      = Rails.env.production? ? %w( masterjob-lb job-lb website-lb dashboard-lb api-lb test-lb util-lb ) : []
-    @lb_instances  = {}
-    @ec2_instances = {}
-    @lb_names.each do |lb_name|
-      @lb_instances[lb_name] = elb_interface.describe_instance_health(lb_name)
-      instance_ids = @lb_instances[lb_name].map { |i| i[:instance_id] }
-      instance_ids.in_groups_of(70) do |instances|
-        instances.compact!
-        ec2_interface.describe_instances(instances).each do |instance|
-          @ec2_instances[instance[:aws_instance_id]] = instance
-        end
-      end
-
-      @lb_instances[lb_name].sort! { |a, b| a[:instance_id] <=> b[:instance_id] }
-    end
+    @show_run_column = %w(development staging).include?(Rails.env) && @queues.any? { |queue| queue[:show_run_link] }
   end
 
   def ses_status
@@ -156,15 +151,6 @@ class ToolsController < WebsiteController
     @queue = Sqs.queue(QueueNames::FAILED_EMAILS)
   end
 
-  def as_groups
-    as_interface = RightAws::AsInterface.new
-    @as_groups = as_interface.describe_auto_scaling_groups
-    @as_groups.each do |group|
-      group[:triggers] = as_interface.describe_triggers(group[:auto_scaling_group_name])
-    end
-    @as_groups.sort! { |a, b| a[:auto_scaling_group_name] <=> b[:auto_scaling_group_name] }
-  end
-
   def disabled_popular_offers
     @offers_count_hash = Mc.distributed_get('tools.disabled_popular_offers') { {} }
     @offers = Offer.find(@offers_count_hash.keys, :include => [:partner, :item])
@@ -172,7 +158,7 @@ class ToolsController < WebsiteController
 
   def reset_device
     if params[:udid]
-      udid = params[:udid].downcase
+      udid = params[:udid]
       clicks_deleted = 0
 
       device = Device.new(:key => udid)
@@ -194,7 +180,7 @@ class ToolsController < WebsiteController
       params[:udid] = click.udid if click.present?
     end
     if params[:udid].present?
-      udid = params[:udid].downcase
+      udid = params[:udid]
       @device = Device.new(:key => udid)
       if @device.is_new
         flash.now[:error] = "Device with ID #{udid} not found"
@@ -261,6 +247,15 @@ class ToolsController < WebsiteController
         flash.now[:error] = "No UDIDs associated with the email address: #{params[:email_address]}"
       elsif @all_udids.size == 1
         redirect_to :action => :device_info, :udid => @all_udids.first, :email_address => params[:email_address]
+      end
+
+    elsif params[:mac_address].present?
+      mac_address = params[:mac_address].downcase.gsub(/:/,"")
+      device_identifier = DeviceIdentifier.new(:key => mac_address)
+      if device_identifier.udid?
+        redirect_to :action => :device_info, :udid => device_identifier.udid, :mac_address => params[:mac_address]
+      else
+        flash.now[:error] = "No UDIDs associated with the MAC address: #{params[:mac_address]}"
       end
     end
   end
@@ -418,4 +413,9 @@ class ToolsController < WebsiteController
     flash[:notice] = " Successfully awarded #{params[:amount]} currency. "
     redirect_to :action => :device_info, :udid => params[:udid]
   end
+
+  def downcase_udid
+    params[:udid] = params[:udid].downcase if params[:udid].present?
+  end
+
 end

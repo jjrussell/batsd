@@ -3,13 +3,14 @@ class Tools::OfferListsController < WebsiteController
   current_tab :tools
   filter_access_to :all
 
+  OFFER_LIST_KEYS = %w( type device_type platform_name udid source currency_id )
+
   def index
     if params[:type]
-      offer_list_keys = [ 'type', 'device_type', 'platform_name' ]
-      offer_list_params = params.reject { |k,v| !offer_list_keys.include?(k) }
-
-      @offers = OfferList.new(offer_list_params).offers.sort_by { |offer| -offer.precache_rank_score_for(params[:currency_group_id]) }
+      geoip_params = params.slice(:primary_country, :city, :dma_code, :region)
+      offer_list_params = params.reject { |k,v| !OFFER_LIST_KEYS.include?(k) }.merge(:geoip_data => geoip_params)
+      offer_list = OfferList.new(offer_list_params)
+      @offers = offer_list.sorted_offers_with_rejections(params[:currency_group_id])
     end
   end
-
 end
