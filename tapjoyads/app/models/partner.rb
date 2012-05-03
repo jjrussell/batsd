@@ -330,10 +330,20 @@ class Partner < ActiveRecord::Base
 
   def confirmation_notes
     notes = []
-    notes << get_payout_threshold_notes unless payout_threshold_confirmation
-    notes << get_payout_info_notes unless payout_info_confirmation
+    notes << payout_threshold_notes unless self.payout_threshold_confirmation
+    notes << payout_info_notes unless self.payout_info_confirmation
 
     notes
+  end
+
+  def confirmed_for_payout?
+    self.payout_info_confirmation && self.payout_threshold_confirmation
+  end
+
+  def toggle_confirmed_for_payout(user)
+    user_roles = user.role_assignments.map { |x| x.name}
+    self.payout_info_confirmation = true if (payout_info_confirmation_roles & user_roles).present?
+    self.payout_threshold_confirmation = true if (payout_threshold_confirmation_roles & user_roles).present?
   end
 
 private
@@ -393,11 +403,19 @@ private
     errors.add :client_id, "cannot be switched to another client." if client_id_changed? && client_id_was.present? && client_id.present?
   end
 
-  def get_payout_threshold_notes
+  def payout_threshold_notes
     "SYSTEM: Payout is greater than or equal to #{NumberHelper.number_to_currency((self.payout_threshold / 100).to_f)}"
   end
 
-  def get_payout_info_notes
+  def payout_info_notes
     'SYSTEM: Partner Payout Information has changed.'
+  end
+
+  def payout_info_confirmation_roles
+    %w(payout_manager)
+  end
+
+  def payout_threshold_confirmation_roles
+    %w(payout_manager account_mgr admin)
   end
 end

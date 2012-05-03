@@ -67,7 +67,7 @@
         %td= (partner.payout_cutoff_date - 1.day).to_s(:pub)
         %td= number_to_currency(partner.pending_earnings / 100.0 - partner.next_payout_amount / 100.0)
         %td= number_to_currency(partner.next_payout_amount / 100.0)
-        - if payout_info.present? && payout_info.valid?
+        - if partner.completed_payout_info?
           %td
             %span.present
               %strong Present
@@ -102,7 +102,7 @@
                   = submit_tag 'Confirm', :class => 'submit'
               %img.spinner{ :src => '/images/spinner.gif', :style => 'display:none;' }
           - else
-            - if partner.confirmed_for_payout
+            - if partner.confirmed_for_payout? && partner.completed_payout_info?
               %span{ :class => 'enabled'} Confirmed
             - else
               %span{ :class => 'disabled'}

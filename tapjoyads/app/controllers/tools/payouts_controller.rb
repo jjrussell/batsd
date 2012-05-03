@@ -30,7 +30,7 @@ class Tools::PayoutsController < WebsiteController
     partner = Partner.find(params[:partner_id])
     log_activity(partner)
     partner.toggle_confirmed_for_payout(current_user)
-    render :json => { :success => partner.save!, :was_confirmed => partner.payout_info.present? && partner.payout_info.valid?}
+    render :json => { :success => partner.save!, :was_confirmed => partner.completed_payout_info? }
   end
 
   def export
@@ -51,7 +51,7 @@ class Tools::PayoutsController < WebsiteController
           NumberHelper.number_to_currency((partner.next_payout_amount / 100.0), :delimiter => ''),
           partner.payout_info.present? && partner.payout_info.valid? ? partner.payout_info.payout_method : '',
           partner.account_managers.present? ? (partner.account_managers.first.email) : '',
-          partner.payout_info_confirmation && partner.payout_threshold_confirmation ? 'Confirmed' : 'Unconfirmed',
+          partner.confirmed_for_payout? ? 'Confirmed' : 'Unconfirmed',
           confirmation_notes.present? ? confirmation_notes.join(';').gsub(/[,]/, '_') : ''
         ]
       data << line.join(',')
@@ -69,6 +69,6 @@ class Tools::PayoutsController < WebsiteController
       @partners = Partner.to_payout
     end
 
-    @partners = @partners.all(:include => [:payout_info, :payout_info_confirmation, :payout_threshold_confirmation, {:users => [:user_roles]}])
+    @partners = @partners.all(:include => [:payout_info, {:users => [:user_roles]}])
   end
 end
