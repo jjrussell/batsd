@@ -263,6 +263,13 @@ class Device < SimpledbShardedResource
     end
   end
 
+  def self.device_type_to_platform(type)
+    case type
+    when 'iphone', 'ipad', 'ipod' then 'ios'
+    else type
+    end
+  end
+
   private
 
   def fix_parser_error
