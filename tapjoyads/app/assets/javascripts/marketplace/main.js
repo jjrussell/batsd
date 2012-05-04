@@ -13,8 +13,8 @@ $(document).ready(function(){
       };
 
   // Dynamic table content width
-  if ($('.home .games').length > 0) {
-    function adjustWidth() {
+  function adjustWidth() {
+    if ($('.home .games').length > 0) {
       var width = window.innerWidth;
       if (width <= 480) {
         var imgWidth = $('.app-icon:first').outerWidth(true);
@@ -25,8 +25,8 @@ $(document).ready(function(){
         });
       }
     }
-    $(window).bind('resize orientationchange', adjustWidth);
   }
+  $(window).bind('resize orientationchange', adjustWidth);
 
   // Login Modal
   $('#login, #login-web').bind('click', function() {
@@ -707,7 +707,6 @@ $(document).ready(function(){
       }
 
       handleTabs($("a.ui-joy-reveal", li));
-
       $('.heading', tjmViewContainer).text(li.text())
       return false;
     });
@@ -776,7 +775,6 @@ $(document).ready(function(){
     }
     $.each(Tapjoy.selectDevice, function(i,v){
       var device_type = v.device_type;
-      Tapjoy.device.name = 'iphone';
       if (!Tapjoy.Utils.isEmpty(device_type) && Tapjoy.device.name && (device_type.toLowerCase() == Tapjoy.device.name.toLowerCase().replace(/simulator/,'').replace(/ /,''))) {
         device_count++;
         device_found = true;
