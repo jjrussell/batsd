@@ -1,13 +1,13 @@
 %p<
   %strong<
     TJM User Support
-    = @click.present? ? "- #{@click.offer.name}" : ""
+    = @click.present? ? " - #{@click.offer.name}" : ""
 %div
   = support_request_field :email,             @gamer.email
   = support_request_field :udid,              "#{@gamer_device.device_id} [#{@gamer_device.dashboard_device_info_tool_url}]"
   = support_request_field :offer,             @click.present? ? "#{@click.offer.name} [#{@click.offer.dashboard_statz_url}]" : nil
   = support_request_field :currency,          @click.present? ? "#{@click.currency.name} [#{@click.currency.dashboard_app_currency_url}]" : nil
-  = support_request_field :reward_amount,     @click.present? ? "#{@click.currency_reward} #{@click.currency.name}" : nil
+  = support_request_field :reward_amount,     @click.present? ? @click.currency_reward.to_s : nil
   = support_request_field :publisher_partner, @click.present? ? "#{@click.publisher_partner.name} [#{@click.publisher_partner.dashboard_partner_url}]" : nil
   = support_request_field :publisher_app,     @click.present? ? "#{@click.publisher_app.name} [#{@click.publisher_app.dashboard_app_url}]" : nil
   = support_request_field :publisher_user,    @click.present? ? @click.publisher_user_id : nil
