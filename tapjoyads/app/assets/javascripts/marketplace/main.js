@@ -707,7 +707,7 @@ $(document).ready(function(){
       }
 
       handleTabs($("a.ui-joy-reveal", li));
-      $('.heading', tjmViewContainer).text(li.text())
+      $('.heading', tjmViewContainer).text(li.text());
       return false;
     });
   });

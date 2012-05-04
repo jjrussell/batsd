@@ -48,7 +48,13 @@ div.app .title {
 .games {
   .app {
     .details {
-      max-width: 220px;
+      max-width: 140px !important;
+    }
+    .myapps-earn {
+      .earn-text {
+        margin: 0;
+        padding: 0;
+      }
     }
   }
 }
@@ -112,7 +118,6 @@ div.app .title {
 
 .app-info {
   width: percentage(240/320);
-  //left: 96px;
   margin: 0;
 
   .big-title {

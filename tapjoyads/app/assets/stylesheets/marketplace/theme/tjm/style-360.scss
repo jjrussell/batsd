@@ -35,3 +35,11 @@
   width: 64px;
   height: 64px;
 }
+
+.games {
+  .app {
+    .details {
+      max-width: 180px !important;
+    }
+  }
+}

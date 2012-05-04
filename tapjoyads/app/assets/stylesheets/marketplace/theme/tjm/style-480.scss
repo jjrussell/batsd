@@ -118,6 +118,7 @@ div.app {
     margin-left: 4px;
     text-align: left;
     float: left;
+    display: inline-block;
 
     span.title {
       padding-left: 2px;
@@ -157,6 +158,7 @@ div.app {
     float: right;
 
     .earn-text {
+      padding-top: 3px;
       max-width: 80px;
       text-shadow: 1px 1px 3px rgba(0,0,0, .5);
     }
