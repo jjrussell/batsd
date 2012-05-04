@@ -2,7 +2,7 @@ module Offer::ThirdPartyTracking
 
   def self.included(base)
     base.class_eval do
-      const_set(:TRUSTED_TRACKING_VENDORS, %w( phluantmobile.net srvntrk.com))
+      const_set(:TRUSTED_TRACKING_VENDORS, %w(doubleclick.net phluantmobile.net srvntrk.com))
 
       [:impression_tracking_urls, :click_tracking_urls, :conversion_tracking_urls].each do |f|
         serialize f, Array
