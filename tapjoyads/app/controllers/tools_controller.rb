@@ -3,9 +3,21 @@ class ToolsController < WebsiteController
 
   filter_access_to :all
 
+  before_filter :downcase_udid, :only => [ :device_info, :update_device, :reset_device ]
   after_filter :save_activity_logs, :only => [ :update_user, :update_device, :resolve_clicks, :award_currencies, :update_award_currencies ]
 
   def index
+  end
+
+  def fix_rewards
+    if params[:reward_key].present?
+      reward = Reward.find(params[:reward_key], :consistent => true)
+      if reward.present?
+        flash.now[:notice] = reward.fix_conditional_check_failed
+      else
+        flash.now[:error] = 'Reward not found'
+      end
+    end
   end
 
   def new_transfer
@@ -117,15 +129,18 @@ class ToolsController < WebsiteController
   end
 
   def sqs_lengths
-    queues = params[:queue_name].present? ? Sqs.queue("#{QueueNames::BASE_NAME}#{params[:queue_name]}").to_a : Sqs.queues
+    queues = params[:queue_name].present? ? Sqs.queue("#{QueueNames::BASE_NAME.sub(RUN_MODE_PREFIX, '')}#{params[:queue_name]}").to_a : Sqs.queues
     @queues = queues.map do |queue|
+      name = queue.url.split('/').last
       {
-        :name        => queue.url.split('/').last,
-        :size        => queue.visible_messages,
-        :hidden_size => queue.invisible_messages,
-        :visibility  => queue.visibility_timeout,
+        :name          => name,
+        :size          => queue.visible_messages,
+        :hidden_size   => queue.invisible_messages,
+        :visibility    => queue.visibility_timeout,
+        :show_run_link => !!(name =~ /^#{RUN_MODE_PREFIX}/)
       }
     end
+    @show_run_column = %w(development staging).include?(Rails.env) && @queues.any? { |queue| queue[:show_run_link] }
   end
 
   def ses_status
@@ -143,7 +158,7 @@ class ToolsController < WebsiteController
 
   def reset_device
     if params[:udid]
-      udid = params[:udid].downcase
+      udid = params[:udid]
       clicks_deleted = 0
 
       device = Device.new(:key => udid)
@@ -165,7 +180,7 @@ class ToolsController < WebsiteController
       params[:udid] = click.udid if click.present?
     end
     if params[:udid].present?
-      udid = params[:udid].downcase
+      udid = params[:udid]
       @device = Device.new(:key => udid)
       if @device.is_new
         flash.now[:error] = "Device with ID #{udid} not found"
@@ -232,6 +247,15 @@ class ToolsController < WebsiteController
         flash.now[:error] = "No UDIDs associated with the email address: #{params[:email_address]}"
       elsif @all_udids.size == 1
         redirect_to :action => :device_info, :udid => @all_udids.first, :email_address => params[:email_address]
+      end
+
+    elsif params[:mac_address].present?
+      mac_address = params[:mac_address].downcase.gsub(/:/,"")
+      device_identifier = DeviceIdentifier.new(:key => mac_address)
+      if device_identifier.udid?
+        redirect_to :action => :device_info, :udid => device_identifier.udid, :mac_address => params[:mac_address]
+      else
+        flash.now[:error] = "No UDIDs associated with the MAC address: #{params[:mac_address]}"
       end
     end
   end
@@ -389,4 +413,9 @@ class ToolsController < WebsiteController
     flash[:notice] = " Successfully awarded #{params[:amount]} currency. "
     redirect_to :action => :device_info, :udid => params[:udid]
   end
+
+  def downcase_udid
+    params[:udid] = params[:udid].downcase if params[:udid].present?
+  end
+
 end

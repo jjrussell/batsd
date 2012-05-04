@@ -16,6 +16,7 @@ class Device < SimpledbShardedResource
   self.sdb_attr :product
   self.sdb_attr :version
   self.sdb_attr :mac_address
+  self.sdb_attr :open_udid
   self.sdb_attr :platform
   self.sdb_attr :is_papayan, :type => :bool, :default_value => false
   self.sdb_attr :all_packages, :type => :json, :default_value => []
@@ -26,6 +27,11 @@ class Device < SimpledbShardedResource
     new_value = new_value ? new_value.downcase.gsub(/:/,"") : ''
     @create_device_identifiers ||= (self.mac_address != new_value)
     put('mac_address', new_value)
+  end
+
+  def open_udid=(new_value)
+    @create_device_identifiers ||= (self.open_udid != new_value)
+    put('open_udid', new_value)
   end
 
   def initialize(options = {})
@@ -54,6 +60,12 @@ class Device < SimpledbShardedResource
     path_list = []
 
     self.mac_address = params[:mac_address] if params[:mac_address].present?
+
+    if params[:open_udid].present?
+      open_udid_was = self.open_udid
+      self.open_udid = params[:open_udid]
+      path_list << 'open_udid_change' if open_udid_was.present? && open_udid_was != open_udid
+    end
 
     is_jailbroken_was = is_jailbroken
     country_was = country
@@ -192,15 +204,46 @@ class Device < SimpledbShardedResource
     return_value
   end
 
+  def self.formatted_mac_address(mac_address)
+    mac_address.to_s.empty? ? nil : mac_address.strip.upcase.scan(/.{2}/).join(':')
+  end
+
   def create_identifiers!
     all_identifiers = [ Digest::SHA2.hexdigest(key) ]
-    all_identifiers.push(mac_address) if self.mac_address.present?
+    all_identifiers.push(open_udid) if self.open_udid.present?
+    if self.mac_address.present?
+      all_identifiers.push(mac_address)
+      all_identifiers.push(Digest::SHA1.hexdigest(Device.formatted_mac_address(mac_address)))
+    end
     all_identifiers.each do |identifier|
       device_identifier = DeviceIdentifier.new(:key => identifier)
       next if device_identifier.udid == key
       device_identifier.udid = key
       device_identifier.save!
     end
+  end
+
+  def copy_mac_address_device!
+    return if mac_address.nil? || key == mac_address
+    mac_device = Device.new(:key => mac_address, :consistent => true)
+    return if mac_device.new_record?
+
+    Currency.find_each(:conditions => ["id IN (?)", mac_device.parsed_apps.keys]) do |c|
+      app_id = c.id
+      mac_pp = PointPurchases.new(:key => "#{mac_address}.#{app_id}", :consistent => true)
+      next if mac_pp.new_record?
+
+      udid_pp = PointPurchases.new(:key => "#{key}.#{app_id}", :consistent => true)
+      udid_pp.points = mac_pp.points
+      udid_pp.virtual_goods = mac_pp.virtual_goods
+      udid_pp.save!
+      mac_pp.delete_all
+    end
+
+    self.apps = mac_device.parsed_apps.merge(@parsed_apps)
+    self.publisher_user_ids = mac_device.publisher_user_ids.merge(publisher_user_ids)
+    save!
+    mac_device.delete_all
   end
 
   def handle_sdkless_click!(offer, now)
@@ -217,6 +260,13 @@ class Device < SimpledbShardedResource
       self.sdkless_clicks = temp_sdkless_clicks
       @retry_save_on_fail = true
       save
+    end
+  end
+
+  def self.device_type_to_platform(type)
+    case type
+    when 'iphone', 'ipad', 'ipod' then 'ios'
+    else type
     end
   end
 

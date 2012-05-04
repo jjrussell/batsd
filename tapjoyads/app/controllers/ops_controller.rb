@@ -1,83 +1,321 @@
 class OpsController < WebsiteController
-  layout 'tabbed'
+  layout 'dashboard'
 
   filter_access_to :all
 
-  def index
-  end
-
   def elb_status
-    elb_interface  = RightAws::ElbInterface.new
-    ec2_interface  = RightAws::Ec2.new
-    @lb_names      = Rails.env.production? ? %w( masterjob-lb job-lb website-lb dashboard-lb api-lb test-lb util-lb ) : []
-    @lb_instances  = {}
-    @ec2_instances = {}
-    @lb_names.each do |lb_name|
-      @lb_instances[lb_name] = elb_interface.describe_instance_health(lb_name)
-      instance_ids = @lb_instances[lb_name].map { |i| i[:instance_id] }
-      instance_ids.in_groups_of(70) do |instances|
-        instances.compact!
-        ec2_interface.describe_instances(instances).each do |instance|
-          @ec2_instances[instance[:aws_instance_id]] = instance
-        end
-      end
+    @lb_names     = Rails.env.production? ? %w( masterjob-lb job-lb website-lb dashboard-lb api-lb test-lb util-lb ) : []
+    instance_ids  = []
 
-      @lb_instances[lb_name].sort! { |a, b| a[:instance_id] <=> b[:instance_id] }
+    @lb_instances = get_lb_instances(@lb_names)
+    @lb_names.each do |lb_name|
+      instance_ids += @lb_instances[lb_name].map { |i| i[:instance_id] }
     end
+    @ec2_instances = get_ec2_instances(instance_ids)
   end
 
   def as_groups
-    as_interface = RightAws::AsInterface.new
-    @as_groups = as_interface.describe_auto_scaling_groups
-    @as_groups.each do |group|
-      group[:triggers] = as_interface.describe_triggers(group[:auto_scaling_group_name])
+    @as_groups = get_as_groups
+  end
+
+  def as_header
+    @as_group = get_as_groups(params[:group]).first
+    @as_group[:instances].reject! { |instance| instance[:lifecycle_state] == "InService" }
+
+    render :layout => false
+  end
+
+  def as_instances
+    @kiosk = !!params[:kiosk]
+    @as_group = get_as_groups(params[:group]).first
+    @lb_name = @as_group[:load_balancer_names].first
+
+    @lb_instances = get_lb_instances(@lb_name)
+    instance_ids = @lb_instances[@lb_name].map { |i| i[:instance_id] }
+    @lb_instances[@lb_name].reject! { |i| i[:state] == 'InService' }
+
+    @ec2_instances = get_ec2_instances(instance_ids)
+
+    render :layout => false
+  end
+
+  def elb_deregister_instance
+    @instance_id = params[:instance_id]
+    @lb_name = params[:lb_name]
+
+    elb = AWS::ELB.new
+    elb.load_balancers[@lb_name].instances[@instance_id].remove_from_load_balancer
+
+    respond_to do |format|
+      format.js do
+        render :layout => false
+      end
     end
-    @as_groups.sort! { |a, b| a[:auto_scaling_group_name] <=> b[:auto_scaling_group_name] }
+  end
+
+  def ec2_reboot_instance
+    @instance_id = params[:instance_id]
+
+    ec2 = AWS::EC2.new
+    ec2.instances[@instance_id].reboot
+
+    respond_to do |format|
+      format.js do
+        render :layout => false
+      end
+    end
+  end
+
+  def as_terminate_instance
+    @instance_id = params[:instance_id]
+    @decrement_capacity = !!params[:decrement_capacity]
+    @as_group = params[:as_group]
+
+    auto_scaling = AWS::AutoScaling.new
+    auto_scaling.instances[@instance_id].terminate(@decrement_capacity)
+
+    respond_to do |format|
+      format.js do
+        render :layout => false
+      end
+    end
+  end
+
+  def index
+    @kiosk = !!params[:kiosk]
+    @as_groups = get_as_groups
+    @as_groups.each do |group|
+      group[:instances].reject! { |instance| instance[:lifecycle_state] == "InService" }
+    end
+
+    @lb_names = @as_groups.map { |group| group[:load_balancer_names].first }
+    instance_ids = []
+
+    @lb_instances = get_lb_instances(@lb_names)
+    @lb_names.each do |lb_name|
+      instance_ids += @lb_instances[lb_name].map { |i| i[:instance_id] }
+
+      @lb_instances[lb_name].reject! { |i| i[:state] == 'InService' }
+    end
+    @ec2_instances = get_ec2_instances(instance_ids)
+
+    render :layout => 'dashboard'
   end
 
   def service_stats
   end
 
   def http_codes
-    redis = Redis.new(:host => "ec2-75-101-244-223.compute-1.amazonaws.com", :port => 6380)
+    now = Time.zone.now
 
     # Since the data is buffered by 10 seconds, start from 10 seconds ago
-    @period = params[:period] ? params[:period].to_i.seconds : 60.seconds
-    @end_time = Time.zone.now - 10.seconds
+    @period = params[:period] ? params[:period].to_i : 60.seconds
+    @end_time = params[:end_time] ? params[:end_time].to_i : (now - 10.seconds).to_i
     @start_time = @end_time - @period
+
+    offset = 0
+    if @period > 60.minutes
+      offset = @start_time % 900
+      @start_time -= 900 + offset
+    elsif @period >= 30.minutes
+      offset = @start_time % 60
+      @start_time -= 60 + offset
+    elsif @period >= 15.minutes
+      offset = @start_time % 15
+      @start_time -= 15 + offset
+    end
 
     respond_to do |format|
       format.json do
         @stats = {}
-        keys = []
-        time = @start_time.to_i
-        while time <= @end_time.to_i
-          if (time % 100 == 0) && (time + 100 < @end_time.to_i)
-            keys += redis.keys("api.status.*.#{time.to_s[0..-3]}*")
-            time += 100
-          elsif (time % 10 == 0) && (time + 10 < @end_time.to_i)
-            keys += redis.keys("api.status.*.#{time.to_s[0..-2]}*")
-            time += 10
-          else
-            keys += redis.keys("api.status.*.#{time}")
-            time += 1
-          end
+        statuses = redis.smembers "api.statuses"
+        keys = keys_in_time_range "hash.status", statuses, @start_time, @end_time, 3600
+
+        first_time = nil
+        last_time = 0
+        values = {}
+        keys.each do |key|
+          code = key.split(".")[2].to_i
+          next  unless code > 0 && code < 1000
+
+          values[code] ||= {}
+          values[code].merge! redis.hgetall(key)
         end
 
-        values = redis.mapped_mget(*keys)
-        keys.each do |key|
-          time = key.split(".")[3].to_i
-          if @period >= 10.minutes
-            time -= time % 60
+        statuses.each do |code|
+          code = code.to_i
+          next unless values[code]
+          unless values[code].empty?
+            values[code].each do |time,value|
+              next if time.to_i < @start_time || time.to_i > @end_time || value.to_i == 0
+              time = time.to_i
+
+              if @period > 60.minutes
+                last_time = time -= (time % 900) + offset
+              elsif @period >= 30.minutes
+                last_time = time -= (time % 60) + offset
+              elsif @period >= 10.minutes
+                last_time = time -= (time % 15) + offset
+              end
+              first_time = time  unless first_time
+
+              @stats[time] ||= {}
+              @stats[time][code] ||= 0
+              @stats[time][code] += value.to_i
+            end
           end
-          @stats[time] ||= {}
-          @stats[time][key.split(".")[2]] ||= 0
-          @stats[time][key.split(".")[2]] += values[key].to_i
         end
+        @stats.delete last_time  if last_time > 0
+        @stats.delete first_time if first_time
 
         render :json => @stats.to_json
       end
     end
+  end
+
+  def bytes_sent
+    now = Time.zone.now
+
+    # Since the data is buffered by 10 seconds, start from 10 seconds ago
+    @period = params[:period] ? params[:period].to_i : 60.seconds
+    @end_time = params[:end_time] ? params[:end_time].to_i : (now - 10.seconds).to_i
+    @start_time = @end_time - @period
+
+    offset = 0
+    if @period > 60.minutes
+      offset = @start_time % 900
+      @start_time -= 900 + offset
+    elsif @period >= 30.minutes
+      offset = @start_time % 60
+      @start_time -= 60 + offset
+    elsif @period >= 15.minutes
+      offset = @start_time % 15
+      @start_time -= 15 + offset
+    end
+
+    respond_to do |format|
+      format.json do
+        @stats = {}
+        keys = keys_in_time_range "hash", "body_bytes_sent", @start_time, @end_time, 3600
+
+        first_time = nil
+        last_time = 0
+        values = {}
+        keys.each do |key|
+          values.merge! redis.hgetall(key)
+        end
+
+        values.each do |time,value|
+          next if time.to_i < @start_time || time.to_i > @end_time || value.to_i == 0
+          time = time.to_i
+
+          if @period > 60.minutes
+            last_time = time -= (time % 900) + offset
+          elsif @period >= 30.minutes
+            last_time = time -= (time % 60) + offset
+          elsif @period >= 10.minutes
+            last_time = time -= (time % 15) + offset
+          end
+          first_time = time  unless first_time
+
+          @stats[time] ||= 0
+          @stats[time] += value.to_i
+        end
+        @stats.delete last_time  if last_time > 0
+        @stats.delete first_time if first_time
+
+        values = {}
+        values["data"] = []
+        values["name"] = "Bytes Sent"
+        values["color"] = "green"
+        @stats.each do |x,y|
+          values["data"] << { :x => x, :y => y }
+        end
+        values["data"].sort! { |a,b| a[:x] <=> b[:x] }
+
+        render :json => [values].to_json
+      end
+    end
+  end
+
+  def vertica_status
+    if params[:day].present?
+      @day = Time.parse("#{params[:day]} 00:00:00 UTC")
+      @accurate, @message = StatsAggregation.check_vertica_accuracy(@day, @day + 1.day)
+    else
+      @day = Time.now.utc.beginning_of_day
+    end
+  end
+
+  def requests_per_minute
+    rpms = redis.mget(*redis.keys('request_counters:*')).map(&:to_i)
+    sum  = ActionController::Base.helpers.number_with_delimiter(rpms.sum)
+    mean = ActionController::Base.helpers.number_with_delimiter(rpms.mean.to_i)
+    render :json => { :sum => sum, :mean => mean }
+  end
+
+  private
+
+  def redis
+    @redis ||= Redis.new(:host => "redis.tapjoy.net", :port => 6380)
+  end
+
+  def get_as_groups(group_name = nil)
+    as_interface = RightAws::AsInterface.new
+    @as_groups = as_interface.describe_auto_scaling_groups(group_name)
+
+    @as_groups.each do |group|
+      group[:triggers] = as_interface.describe_triggers(group[:auto_scaling_group_name])
+    end
+    @as_groups.sort! { |a, b| a[:auto_scaling_group_name] <=> b[:auto_scaling_group_name] }
+  end
+
+  def get_lb_instances(lb_names)
+    elb_interface  = RightAws::ElbInterface.new
+    lb_instances = {}
+
+    lb_names.each do |lb_name|
+      lb_instances[lb_name] = elb_interface.describe_instance_health(lb_name).sort { |a, b| a[:instance_id] <=> b[:instance_id] }
+    end
+
+    lb_instances
+  end
+
+  def get_ec2_instances(instance_ids)
+    ec2_interface  = RightAws::Ec2.new
+    ec2_instances = {}
+
+    instance_ids.in_groups_of(70, false) do |instances|
+      ec2_interface.describe_instances(instances).each do |instance|
+        ec2_instances[instance[:aws_instance_id]] = instance
+      end
+    end
+
+    ec2_instances
+  end
+
+  # Creates list of keys to lookup in redis based on time
+  #
+  # @param [String] namespace the namespace in redis to use
+  # @param [Array, String] subkeys a set of subkeys (1 or more) to search on
+  # @param [Integer] start_time the beginning of the keyset
+  # @param [Integer] end_time the end of the keyset
+  # @return [Array] the full key listing to look up
+  def keys_in_time_range(namespace, subkeys, start_time, end_time, mod = 1)
+    keys = []
+    time = start_time - start_time % mod
+
+    while time.to_i <= end_time.to_i
+      if subkeys.is_a? Array
+        subkeys.each { |subkey| keys << "#{namespace}.#{subkey}.#{time}" }
+      else
+        keys << "#{namespace}.#{subkeys}.#{time}"
+      end
+
+      time += mod
+    end
+
+    keys
   end
 
 end

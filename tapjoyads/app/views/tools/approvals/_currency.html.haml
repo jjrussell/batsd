@@ -2,19 +2,24 @@
   %thead
     %tr
       %th Currency Name
+      %th Company Name
+      %th Contact Email
       %th App
       %th Age
-      %th Owner
+      %th Reviewing User (optional)
       %th State
       %th Action
   %tbody
     - @approvals.each do |approval|
+      - partner = approval.item.partner
       %tr
         %td= link_to(approval.item.name, app_currency_path({:app_id => approval.item.app.id, :id => approval.item.id}) )
+        %td= partner.payout_info.present? ? partner.payout_info.company_name : partner.name_or_contact_name
+        %td= mail_to(partner.non_managers.first.email) if partner.non_managers.present?
         %td= approval.item.app.name
         %td #{time_ago_in_words(approval.item.created_at)} ago
         %td= render :partial => 'owner_select', :locals => {:approval => approval}
-        %td= approval.state
+        %td= approval.state.gsub(/^approved$/, 'accepted')
         %td.actions
           - if approval.pending?
             = link_to('Approve', approve_tools_currency_approval_path(approval.id), :class => 'approve')

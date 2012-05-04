@@ -4,6 +4,11 @@ class Gamer < ActiveRecord::Base
   has_many :gamer_devices, :dependent => :destroy
   has_many :invitations, :dependent => :destroy
   has_many :app_reviews, :as => :author, :dependent => :destroy
+
+  has_many :review_moderation_votes
+  has_many :helpful_review_votes, :class_name => 'HelpfulVote'
+  has_many :bury_review_votes, :class_name => 'BuryVote'
+
   has_many :favorite_apps, :dependent => :destroy
   has_one :gamer_profile, :dependent => :destroy
   has_one :referrer_gamer, :class_name => 'Gamer', :primary_key => :referred_by, :foreign_key => :id
@@ -24,9 +29,13 @@ class Gamer < ActiveRecord::Base
 
   after_destroy :delete_friends
 
+  serialize :extra_attributes, Hash
+
   MAX_DEVICE_THRESHOLD = 15
   MAX_REFERRAL_THRESHOLD = 50
   DAYS_BEFORE_DELETION = 3
+  RUDE_BAN_LIMIT = 20
+
   named_scope :to_delete, lambda {
     {
       :conditions => ["deactivated_at < ?", Time.zone.now.beginning_of_day - DAYS_BEFORE_DELETION.days],
@@ -49,6 +58,30 @@ class Gamer < ActiveRecord::Base
   def self.columns
     super.reject { |c| c.name == "use_gravatar" }
   end
+
+  def name
+    @name.blank? ? email.gsub(/@.*/, '') : @name
+  end
+
+  def self.serialized_extra_attributes_accessor(*args)
+    args.each do |method_name|
+      eval "
+        def #{method_name}
+          (self.extra_attributes || {})[:#{method_name}]
+        end
+        def #{method_name}=(value)
+          self.extra_attributes ||= {}
+          self.extra_attributes[:#{method_name}] = value
+        end
+      "
+    end
+  end
+
+  # Example Usage: list the attribute name here, then you could access it as a normal attribute
+  # serialized_extra_attributes_accessor :completed_offer_count
+
+  serialized_extra_attributes_accessor :been_buried_count
+  serialized_extra_attributes_accessor :been_helpful_count
 
   def confirm!
     self.confirmed_at = Time.zone.now
@@ -112,6 +145,8 @@ class Gamer < ActiveRecord::Base
       gamer_profile.nickname
     elsif gamer_profile.present? && gamer_profile.name.present?
       gamer_profile.name
+    else
+      email.sub(/@.*/,'')
     end
   end
 
@@ -131,11 +166,11 @@ class Gamer < ActiveRecord::Base
     end
   end
 
-  def get_avatar_url
+  def get_avatar_url(size = '123')
     if gamer_profile.present? && gamer_profile.facebook_id.present?
       "https://graph.facebook.com/#{gamer_profile.facebook_id}/picture?type=normal"
     else
-      "https://secure.gravatar.com/avatar/#{generate_gravatar_hash}?d=mm&s=123"
+      "https://secure.gravatar.com/avatar/#{generate_gravatar_hash}?d=mm&s=#{size}"
     end
   end
 

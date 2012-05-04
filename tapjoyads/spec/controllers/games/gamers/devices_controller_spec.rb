@@ -22,18 +22,20 @@ describe Games::Gamers::DevicesController do
       gamer = Factory(:gamer, :referrer => ObjectEncryptor.encrypt("#{invitation.id},#{generic_offer_for_invite.id}"))
       gamer.gamer_profile = GamerProfile.create(:gamer => gamer, :referred_by => @inviter.id)
       games_login_as(gamer)
-    end
 
-    it 'creates sub click key' do
-      data = {
+      @data = {
         :udid              => Factory.next(:udid),
         :product           => Factory.next(:name),
         :version           => Factory.next(:name),
         :mac_address       => Factory.next(:name),
         :platform          => 'ios'
       }
-      get(:finalize, {:data => ObjectEncryptor.encrypt(data)})
+    end
+
+    it 'creates sub click key' do
+      get(:finalize, {:data => ObjectEncryptor.encrypt(@data)})
       Click.new(:key => "#{@inviter.id}.invite[1]", :consistent => true).should_not be_new_record
     end
   end
+
 end

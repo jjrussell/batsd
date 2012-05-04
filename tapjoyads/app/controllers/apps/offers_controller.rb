@@ -6,6 +6,13 @@ class Apps::OffersController < WebsiteController
   before_filter :setup, :except => [ :toggle ]
   after_filter :save_activity_logs, :only => [ :create, :update, :toggle ]
 
+  BASE_SAFE_ATTRIBUTES     = [ :daily_budget, :user_enabled, :bid, :self_promote_only,
+                               :min_os_version, :screen_layout_sizes, :countries]
+  ELEVATED_SAFE_ATTRIBUTES = [ :tapjoy_enabled, :allow_negative_balance, :pay_per_click,
+                               :name, :name_suffix, :show_rate, :min_conversion_rate,
+                               :device_types, :publisher_app_whitelist, :overall_budget, :min_bid_override,
+                               :dma_codes, :regions, :carriers, :cities ] | BASE_SAFE_ATTRIBUTES
+
   def new
     offer_params = {}
     if params[:offer_type] == 'rewarded_featured'
@@ -56,13 +63,7 @@ class Apps::OffersController < WebsiteController
     params[:offer][:daily_budget] = 0 if params[:daily_budget] == 'off'
     offer_params = sanitize_currency_params(params[:offer], [ :bid, :min_bid_override ])
 
-    safe_attributes = [:daily_budget, :user_enabled, :bid, :self_promote_only, :min_os_version, :screen_layout_sizes, :countries]
-    if permitted_to? :edit, :statz
-      safe_attributes += [ :tapjoy_enabled, :allow_negative_balance, :pay_per_click,
-          :name, :name_suffix, :show_rate, :min_conversion_rate,
-          :device_types, :publisher_app_whitelist, :overall_budget, :min_bid_override,
-          :dma_codes, :regions, :carriers, :cities ]
-    end
+    safe_attributes = permitted_to?(:edit, :statz) ? ELEVATED_SAFE_ATTRIBUTES : BASE_SAFE_ATTRIBUTES
 
     if @offer.safe_update_attributes(offer_params, safe_attributes)
       flash[:notice] = 'Your offer was successfully updated.'

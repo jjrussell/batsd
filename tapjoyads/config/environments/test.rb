@@ -21,15 +21,8 @@ config.action_controller.allow_forgery_protection    = false
 # ActionMailer::Base.deliveries array.
 config.action_mailer.delivery_method = :test
 
-config.gem 'factory_girl', :version => '2.1.2'
-config.gem 'shoulda', :version => '2.11.1'
-config.gem 'shoulda-addons', :version => '0.2.2', :lib => 'shoulda_addons'
-config.gem 'mocha', :version => '0.9.12'
-config.gem 'rspec', :lib => false, :version => '1.3.2'
-config.gem 'rspec-rails', :lib => false, :version => '1.3.4'
-config.gem 'spork', :version => '0.8.5'
-
-MEMCACHE_SERVERS = ['127.0.0.1']
+MEMCACHE_SERVERS             = ['127.0.0.1']
+DISTRIBUTED_MEMCACHE_SERVERS = ['127.0.0.1']
 
 EXCEPTIONS_NOT_LOGGED = []
 
@@ -50,6 +43,7 @@ API_URL = local_config['api_url'] || 'http://localhost:3000'
 DASHBOARD_URL = local_config['dashboard_url'] || 'http://localhost:3000'
 WEBSITE_URL = local_config['website_url'] || 'http://localhost:3000'
 CLOUDFRONT_URL = 'https://s3.amazonaws.com/test_tapjoy'
+XMAN = false
 
 amazon = YAML::load_file("#{Rails.root}/config/amazon.yaml")
 ENV['AWS_ACCESS_KEY_ID'] = amazon['test']['access_key_id']

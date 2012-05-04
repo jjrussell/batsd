@@ -7,8 +7,12 @@ module Offer::Rejecting
     [ 'b23efaf0-b82b-4525-ad8c-4cd11b0aca91' ] => [ 'b23efaf0-b82b-4525-ad8c-4cd11b0aca91', 'a994587c-390c-4295-a6b6-dd27713030cb', '6703401f-1cb2-42ec-a6a4-4c191f8adc27' ],
     # Clubworld
     [ '3885c044-9c8e-41d4-b136-c877915dda91' ] => [ '3885c044-9c8e-41d4-b136-c877915dda91', 'a3980ac5-7d33-43bc-8ba1-e4598c7ed279' ],
-    # Groupon
-    [ '7f44c068-6fa1-482c-b2d2-770edcf8f83d', '192e6d0b-cc2f-44c2-957c-9481e3c223a0' ] => [ '7f44c068-6fa1-482c-b2d2-770edcf8f83d', '192e6d0b-cc2f-44c2-957c-9481e3c223a0' ],
+    # Groupon iOS Apps
+    [ '7f44c068-6fa1-482c-b2d2-770edcf8f83d', '192e6d0b-cc2f-44c2-957c-9481e3c223a0', '05d8d649-766a-40d2-9fc3-1009307ff966', 'a07cfeda-8f35-4490-99ea-f75ee7463fa4' ] => [ '7f44c068-6fa1-482c-b2d2-770edcf8f83d', '192e6d0b-cc2f-44c2-957c-9481e3c223a0', '05d8d649-766a-40d2-9fc3-1009307ff966', 'a07cfeda-8f35-4490-99ea-f75ee7463fa4' ],
+    # Groupon iOS ActionOffers
+    [ 'a13bd597-183a-41ce-a6e1-48797e61be9d', 'aa136cec-6241-4cb9-b790-e8ed1532f64e', '43a65418-3863-42b5-80fc-ea4b02828db2' ] => [ 'a13bd597-183a-41ce-a6e1-48797e61be9d', 'aa136cec-6241-4cb9-b790-e8ed1532f64e', '43a65418-3863-42b5-80fc-ea4b02828db2' ],
+    # Groupon Android Apps
+    [ '3368863b-0c69-4a54-8a14-2ec809140d8f', 'bbadbb72-4f96-49e3-90b8-fb45a82b195e' ] => [ '3368863b-0c69-4a54-8a14-2ec809140d8f', 'bbadbb72-4f96-49e3-90b8-fb45a82b195e' ],
     # My Town 2
     [ 'cab56716-8e27-4a4c-8477-457e1d311209', '069eafb8-a9b8-4293-8d2a-e9d9ed659ac8' ] => [ 'cab56716-8e27-4a4c-8477-457e1d311209', '069eafb8-a9b8-4293-8d2a-e9d9ed659ac8' ],
     # Snoopy's Street Fair
@@ -25,6 +29,24 @@ module Offer::Rejecting
     [ 'afde4da8-3943-44fd-a901-08be5470eaa4', '2ff9ad4e-58a2-417b-9333-d65835b71049' ] => [ 'afde4da8-3943-44fd-a901-08be5470eaa4', '2ff9ad4e-58a2-417b-9333-d65835b71049' ],
     # Social Girl
     [ '7df94075-16c9-4c6a-a170-50e1e8fc9991', '3712bd73-eda2-4ca9-934a-3465cf38ef35' ] => [ '7df94075-16c9-4c6a-a170-50e1e8fc9991', '3712bd73-eda2-4ca9-934a-3465cf38ef35' ],
+    # Top Girl
+    [ 'c7b2a54e-8faf-4959-86ab-e862473c9dd4', '9f47822c-2183-4969-98b1-ce64430e4e58' ] => [ 'c7b2a54e-8faf-4959-86ab-e862473c9dd4', '9f47822c-2183-4969-98b1-ce64430e4e58' ],
+    # Saving Star
+    [ 'c2ef96ba-5c6b-4479-bffa-9b1beca08f1b', '1d63a4fa-82ed-4442-955c-ef0d75978fad', '0ba2a533-d26d-4953-aa3e-fd01187e30e1' ] => [ 'c2ef96ba-5c6b-4479-bffa-9b1beca08f1b', '1d63a4fa-82ed-4442-955c-ef0d75978fad', '0ba2a533-d26d-4953-aa3e-fd01187e30e1' ],
+    # Flirtomatic iOS
+    [ 'bb26407e-6713-4b67-893d-4b47242f1ce0', '23fed671-4558-4c2e-8ceb-dcb41399c5d7',
+      '398a71ee-5157-4975-aabb-f7fa5a48ed7f', 'd5769336-acd4-4d25-9483-f84512247b7a',
+      'b8dfb746-ceba-44af-814b-d04231afcc11' ] => [ 'bb26407e-6713-4b67-893d-4b47242f1ce0',
+      '23fed671-4558-4c2e-8ceb-dcb41399c5d7', '398a71ee-5157-4975-aabb-f7fa5a48ed7f',
+      'd5769336-acd4-4d25-9483-f84512247b7a', 'b8dfb746-ceba-44af-814b-d04231afcc11' ],
+    # Credit Sesame
+    [ 'e13d1e07-9770-4d71-a9ba-fa42fd8df519', 'a3abde4d-7eff-49c7-8079-85d2c5238e88' ] => [ 'e13d1e07-9770-4d71-a9ba-fa42fd8df519', 'a3abde4d-7eff-49c7-8079-85d2c5238e88' ],
+    # Play Up
+    [ 'de54dbd2-71ff-405e-86f6-f680dcffe8d7', '02c569fc-4a3b-4807-897d-70fad43ae64a' ] => [ 'de54dbd2-71ff-405e-86f6-f680dcffe8d7', '02c569fc-4a3b-4807-897d-70fad43ae64a' ],
+    # Priceline
+    [ 'b64dba85-9cf9-4e14-b991-f3b7574880c7', '70d3de82-3062-4f19-8864-e453d8b9ee35' ] => [ 'b64dba85-9cf9-4e14-b991-f3b7574880c7', '70d3de82-3062-4f19-8864-e453d8b9ee35' ],
+    # Gamefly
+    [ 'ac845f34-6631-45f4-8d7e-8d9d981c05b4', '0c785af7-57b8-4efe-9112-44c7194f5a94' ] => [ 'ac845f34-6631-45f4-8d7e-8d9d981c05b4', '0c785af7-57b8-4efe-9112-44c7194f5a94' ],
   }
 
   TAPJOY_GAMES_RETARGETED_OFFERS = ['2107dd6a-a8b7-4e31-a52b-57a1a74ddbc1', '12b7ea33-8fde-4297-bae9-b7cb444897dc', '8183ce57-8ee4-46c0-ab50-4b10862e2a27']
@@ -45,7 +67,11 @@ module Offer::Rejecting
       { :method => :min_os_version_reject?, :parameters => [os_version], :reason => 'min_os_version'.humanize },
       { :method => :cookie_tracking_reject?, :parameters => [publisher_app, library_version, source], :reason => 'cookie_tracking'.humanize },
       { :method => :screen_layout_sizes_reject?, :parameters => [screen_layout_size], :reason => 'screen_layout_sizes'.humanize },
-      { :method => :is_disabled?, :parameters => [publisher_app, currency], :reason => 'is_disabled'.humanize },
+      { :method => :offer_is_the_publisher?, :parameters => [currency], :reason => 'offer_is_the_publisher'.humanize },
+      { :method => :offer_is_blacklisted_by_currency?, :parameters => [currency], :reason => 'offer_is_blacklisted_by_currency'.humanize },
+      { :method => :partner_is_blacklisted_by_currency?, :parameters => [currency], :reason => 'partner_is_blacklisted_by_currency'.humanize },
+      { :method => :currency_only_allows_free_offers?, :parameters => [currency], :reason => 'currency_only_allows_free_offers'.humanize },
+      { :method => :self_promote_reject?, :parameters => [publisher_app], :reason => 'self_promote_only'.humanize },
       { :method => :age_rating_reject?, :parameters => [ currency && currency.max_age_rating], :reason => 'age_rating'.humanize },
       { :method => :publisher_whitelist_reject?, :parameters => [publisher_app], :reason => 'publisher_whitelist'.humanize },
       { :method => :currency_whitelist_reject?, :parameters => [currency], :reason => 'currency_whitelist'.humanize },
@@ -74,7 +100,11 @@ module Offer::Rejecting
     min_os_version_reject?(os_version) ||
     cookie_tracking_reject?(publisher_app, library_version, source) ||
     screen_layout_sizes_reject?(screen_layout_size) ||
-    is_disabled?(publisher_app, currency) ||
+    offer_is_the_publisher?(currency) ||
+    offer_is_blacklisted_by_currency?(currency) ||
+    partner_is_blacklisted_by_currency?(currency) ||
+    currency_only_allows_free_offers?(currency) ||
+    self_promote_reject?(publisher_app) ||
     age_rating_reject?(currency.max_age_rating) ||
     publisher_whitelist_reject?(publisher_app) ||
     currency_whitelist_reject?(currency) ||
@@ -117,14 +147,29 @@ module Offer::Rejecting
 
   private
 
-  def is_disabled?(publisher_app, currency)
+  def offer_is_the_publisher?(currency)
     return false unless currency
-    item_id == currency.app_id ||
-      currency.get_disabled_offer_ids.include?(item_id) ||
-      currency.get_disabled_offer_ids.include?(id) ||
-      currency.get_disabled_partner_ids.include?(partner_id) ||
-      (currency.only_free_offers? && is_paid?) ||
-      (self_promote_only? && partner_id != publisher_app.partner_id)
+    item_id == currency.app_id
+  end
+
+  def offer_is_blacklisted_by_currency?(currency)
+    return false unless currency
+    currency.get_disabled_offer_ids.include?(item_id) || currency.get_disabled_offer_ids.include?(id)
+  end
+
+  def partner_is_blacklisted_by_currency?(currency)
+    return false unless currency
+    currency.get_disabled_partner_ids.include?(partner_id)
+  end
+
+  def currency_only_allows_free_offers?(currency)
+    return false unless currency
+    currency.only_free_offers? && is_paid?
+  end
+
+  def self_promote_reject?(publisher_app)
+    return false unless publisher_app
+    self_promote_only? && partner_id != publisher_app.partner_id
   end
 
   def device_platform_mismatch?(normalized_device_type)

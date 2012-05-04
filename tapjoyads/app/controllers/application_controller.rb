@@ -1,3 +1,6 @@
+# Multiple STI subclasses in one file needs this line to be findable in development mode
+require_dependency 'review_moderation_vote'
+
 # Filters added to this controller apply to all controllers in the application.
 # Likewise, all the methods added will be available for all controllers.
 
@@ -80,6 +83,7 @@ class ApplicationController < ActionController::Base
     lookup_keys = []
     lookup_keys.push(params[:sha2_udid]) if params[:sha2_udid].present?
     lookup_keys.push(params[:mac_address]) if params[:mac_address].present?
+    lookup_keys.push(params[:sha1_mac_address]) if params[:sha1_mac_address].present?
 
     lookup_keys.each do |lookup_key|
       identifier = DeviceIdentifier.new(:key => lookup_key)
@@ -88,11 +92,17 @@ class ApplicationController < ActionController::Base
         break
       end
     end
+
+    if params[:udid].blank? && params[:mac_address].present?
+      params[:udid] = params[:mac_address]
+    end
   end
 
   def fix_params
     downcase_param(:udid)
     downcase_param(:sha2_udid)
+    downcase_param(:sha1_mac_address)
+    downcase_param(:open_udid)
     downcase_param(:app_id)
     downcase_param(:campaign_id)
     downcase_param(:publisher_app_id)
@@ -253,10 +263,18 @@ class ApplicationController < ActionController::Base
   def generate_verifier(more_data = [])
     hash_bits = [
       params[:app_id],
-      params[:udid],
+      request.query_parameters[:udid] || params[:mac_address],
       params[:timestamp],
       App.find_in_cache(params[:app_id]).secret_key
     ] + more_data
     Digest::SHA256.hexdigest(hash_bits.join(':'))
+  end
+
+  def device_type
+    @device_type ||= HeaderParser.device_type(request.user_agent)
+  end
+
+  def os_version
+    @os_version ||= HeaderParser.os_version(request.user_agent)
   end
 end

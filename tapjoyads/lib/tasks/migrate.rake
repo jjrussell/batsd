@@ -9,8 +9,10 @@ namespace :db do
         end
         threads << t
       end
-      RecommendationList.cache_most_popular_offers
-      OfferCacher.cache_offers(true)
+      unless Offer.version_cached?
+        RecommendationList.cache_most_popular_offers
+        OfferCacher.cache_offers(true)
+      end
       threads.each { |t| t.join }
     end
   end
