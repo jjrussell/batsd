@@ -50,15 +50,16 @@ module Offer::UrlGeneration
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
 
     final_url = url.gsub('TAPJOY_UDID', udid.to_s)
-    if item_type == 'App'
+    case item_type
+    when 'App'
       final_url = Linkshare.add_params(final_url, itunes_link_affiliate)
       if library_version.nil? || library_version.version_greater_than_or_equal_to?('8.1.1')
         subbed_string = (os_version && os_version >= '2.2') ? 'https://play.google.com/store/apps/details?id=' : 'http://market.android.com/details?id='
         final_url.sub!('market://search?q=', subbed_string)
       end
-    elsif item_type == 'EmailOffer'
+    when 'EmailOffer'
       final_url += "&publisher_app_id=#{publisher_app_id}"
-    elsif item_type == 'GenericOffer'
+    when 'GenericOffer'
       advertiser_app_id = click_key.to_s.split('.')[1]
       final_url.gsub!('TAPJOY_GENERIC_INVITE', advertiser_app_id) if advertiser_app_id
       final_url.gsub!('TAPJOY_GENERIC', click_key.to_s)
@@ -72,12 +73,12 @@ module Offer::UrlGeneration
         mark = '&' if final_url =~ /\?/
         final_url += "#{mark}#{extra_params.to_query}"
       end
-    elsif item_type == 'ActionOffer'
+    when 'ActionOffer'
       final_url = url
-    elsif item_type == 'SurveyOffer'
+    when 'SurveyOffer'
       final_url.gsub!('TAPJOY_SURVEY', click_key.to_s)
       final_url = ObjectEncryptor.encrypt_url(final_url)
-    elsif item_type == 'VideoOffer' || item_type == 'TestVideoOffer'
+    when 'VideoOffer','TestVideoOffer'
       params = {
         :offer_id           => id,
         :app_id             => publisher_app_id,
@@ -86,6 +87,9 @@ module Offer::UrlGeneration
         :publisher_user_id  => publisher_user_id
       }
       final_url = "#{API_URL}/videos/#{id}/complete?data=#{ObjectEncryptor.encrypt(params)}"
+    when 'DeeplinkOffer'
+      #"#{WEBSITE_URL}/earn?eid=#{ObjectEncryptor.encrypt(currency_id)}&udid=TAPJOY_UDID"
+      final_url = games_earn_path(:data=>ObjectEncryptor.encrypt(params))
     end
 
     final_url
@@ -132,6 +136,7 @@ module Offer::UrlGeneration
       click_url += "survey"
     elsif item_type == 'DeeplinkOffer'
       click_url += 'deeplink'
+      #"#{WEBSITE_URL}/earn?eid=#{ObjectEncryptor.encrypt(currency_id)}&udid=TAPJOY_UDID"
     else
       raise "click_url requested for an offer that should not be enabled. offer_id: #{id}"
     end

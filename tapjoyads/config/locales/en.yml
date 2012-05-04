@@ -359,6 +359,9 @@ en:
       load_more: "Load More"
       loading: Loading...
       log_in_tapjoy: "Log in to Tapjoy"
+      log_in_title: "Log In"
+      log_in_text: "Get more out of your apps with Tapjoy.  Earn rewards and discover more today.  Please log in to Tapjoy to proceed"
+      log_in_not_a_member: "Not a member? Sign Up"
       mark_as_favorite: "Add to Favorites"
       member_since: "Member since %{date}"
       meta_description: "Tapjoy: The destination for mobile apps and games on Android, iPhone and iPad."

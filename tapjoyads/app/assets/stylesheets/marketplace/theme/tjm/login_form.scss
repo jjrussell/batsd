@@ -6,6 +6,9 @@
     width: 300px;
   }
 }
+#login-form.show{
+  display:block;
+}
 #login-form, #signup-form {
   color: #f1f1f1;
   font-family: 'Gill Sans', 'Gill Sans MT', Arial, sans-serif;

@@ -17,7 +17,7 @@
               .left.mt1.ml3.pb1
                 = hidden_field_tag(:eapp_metadata_id, ObjectEncryptor.encrypt(@app_metadata.id))
                 = hidden_field_tag(:mark_as_fav_path, games_favorite_app_path)
-                #favorite_app_button.ui-joy-button.primary.smaller
+                #favorite_app_button.ui-joy-button.primary.smaller.req-login
                   - if @mark_as_favorite
                     = t('text.games.mark_as_favorite')
                   - else
@@ -55,7 +55,8 @@
         .list-button-container.flush.nbb.big
           .list-button.ntb
             - eid = params[:eid].present? ? params[:eid] : ObjectEncryptor.encrypt(params[:id])
-            = link_to new_games_app_review_path(:eid => eid) do
+
+            = link_to new_games_app_review_path(:eid => eid), :class=>'req-login' do
               .left.charcoal
                 = t("text.games.review_app_name", {:app_name => @app.name})
               .right.rightarrow.icon16
@@ -66,12 +67,12 @@
     var is_create = #{!!@mark_as_favorite};
 
     var raise_favoriting_error = function() {
-      Tapjoy.Utils.notification({
-        message: is_create ? "#{t('text.games.error_mark_as_favorite')}" : "#{t('text.games.error_unmark_as_favorite')}"
+     Tapjoy.Utils.notification({
+       message: is_create ? "#{t('text.games.error_mark_as_favorite')}" : "#{t('text.games.error_unmark_as_favorite')}"
       });
     };
 
-  - if @app_metadata
+  - if @app_metadata && !current_gamer.nil?
     :plain
       $(document).ready(function(){
         $('#favorite_app_button').bind('click', function(){
@@ -92,9 +93,7 @@
                 raise_favoriting_error();
               }
             },
-            error: function(d) {
-              raise_favoriting_error();
-            }
+            error: raise_favoriting_error
           });
         });
       });

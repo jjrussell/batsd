@@ -285,12 +285,10 @@ class Gamer < ActiveRecord::Base
     if referrer.present? && referrer != 'tjreferrer:'
       if referrer.starts_with?('tjreferrer:')
         click = Click.new :key => referrer.gsub('tjreferrer:', '')
-        if click.rewardable?
-          device = Device.new :key => click.udid
-          device.product = click.device_name
-          device.save
-          devices.build(:device => device)
-        end
+        device = Device.new :key => click.udid
+        device.product = click.device_name
+        device.save
+        devices.build(:device => device)
       else
         begin
           invitation_id, advertiser_app_id = ObjectEncryptor.decrypt(referrer).split(',')

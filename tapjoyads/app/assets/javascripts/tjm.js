@@ -17,3 +17,4 @@
 //= require marketplace/ajax
 //= require marketplace/main
 //= require marketplace/logged-out
+//= require marketplace/login_modal

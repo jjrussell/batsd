@@ -1,6 +1,38 @@
 require 'spec_helper'
 
+<<<<<<< HEAD
 describe Games::HomepageController, :type=>:controller do
+
+  describe '#index' do
+    it 'checks that it gets param[:udid]' do
+      @gamer =  Factory(:gamer)
+      activate_authlogic
+      fake_the_web
+      games_login_as @gamer
+      num = @gamer.devices.count
+      ExternalPublisher.stubs(:load_all).returns([])
+      get(:index, :udid=>'MY_TEST_UDID')
+      @gamer.devices.count.should == num+1
+      @gamer.gamer_devices.find_by_device_id('MY_TEST_UDID').should_not == nil
+    end
+  end
+=======
+describe Games::HomepageController , :type=>:controller do
+  #describe '#index' do
+  #  it 'checks that it gets param[:udid]' do
+  #    @gamer =  Factory(:gamer)
+  #    activate_authlogic
+  #    fake_the_web
+  #    games_login_as @gamer
+  #    num = @gamer.devices.count
+  #    ExternalPublisher.stubs(:load_all).returns([])
+  #    get(:index, :udid=>'MY_TEST_UDID')
+  #    @gamer.devices.count.should == num+1
+  #    @gamer.gamer_devices.find_by_device_id('MY_TEST_UDID').should_not == nil
+  #  end
+  #end
+>>>>>>> wip
+
   describe '#get_language_code' do
 
     before :each do
@@ -186,24 +218,50 @@ describe Games::HomepageController, :type=>:controller do
 
   context "#get_app" do
     before :each do
+
       @good_author = Factory(:gamer)
+      @another_good_author = Factory(:gamer)
       @stellar_author = Factory(:gamer)
       @troll_author = Factory(:gamer, :been_buried_count => 100)
       @gamer = Factory(:gamer)
       @offer = Factory(:app).primary_offer
-      @good_review = Factory(:app_review, :bury_votes_count=>0, :helpful_votes_count=>10, :author=>@good_author)
-      @stellar_review = Factory(:app_review, :bury_votes_count=>0, :helpful_votes_count=>100, :author=>@stellar_author)
-      @good_review_by_troll_author = Factory(:app_review, :bury_votes_count=>0, :helpful_votes_count=>1, :author=>@troll_author)
-      @troll_review_by_good_author = Factory(:app_review, :bury_votes_count=>100, :author=>@good_author)
+      @app_metadata = @offer.app.primary_app_metadata #Factory(:app_metadata)
+      @good_review = Factory(:app_review,
+                             :bury_votes_count => 0,
+                             :helpful_votes_count => 10,
+                             :text => "A good review",
+                             :author => @good_author,
+                             :app_metadata => @app_metadata)
+      @stellar_review = Factory(:app_review,
+                                :bury_votes_count => 0,
+                                :helpful_votes_count => 100,
+                                :author => @stellar_author,
+                                :text => "A stellar review",
+                                :app_metadata => @app_metadata)
+      @good_review_by_troll_author = Factory(:app_review,
+                                             :bury_votes_count => 0,
+                                             :helpful_votes_count => 1,
+                                             :author => @troll_author,
+                                             :text => "A good review by a troll",
+                                             :app_metadata => @app_metadata)
+      @troll_review_by_another_good_author = Factory(:app_review,
+                                                     :bury_votes_count => 100,
+                                                     :text => "A troll review by a good author",
+                                                     :author => @another_good_author,
+                                                     :app_metadata => @app_metadata)
       activate_authlogic
       login_as(@gamer)
+
       #TODO(isingh): We need to move this to integration test or find a way to use stub_chain
-      AppReview.stubs(:where).returns(AppReview)
-      AppReview.stubs(:includes).returns(AppReview)
-      AppReview.stubs(:paginate).returns([@good_review, @troll_review_by_good_author, @stellar_review, @good_review_by_troll_author])
+
+      AppReview.stubs(
+          :where => AppReview,
+          :includes => AppReview,
+          :paginate => [@good_review, @troll_review_by_another_good_author, @stellar_review, @good_review_by_troll_author]   )
     end
     context 'troll author sees' do
       before :each do
+        login_as(@troll_author)
         controller.stubs(:current_gamer).returns(@troll_author)
         get(:get_app, :id=>@offer.id)
       end
@@ -214,16 +272,18 @@ describe Games::HomepageController, :type=>:controller do
     end
     context 'good author viewer ' do
       before :each do
-        controller.stubs(:current_gamer).returns(@good_author)
+        login_as(@another_good_author)
+        controller.stubs(:current_gamer).returns(@another_good_author)
         get(:get_app, :id=>@offer.id)
       end
       it 'sees good review, stellar review, own troll review, but not good review by troll author' do
         assigns[:app_reviews].count.should == 3
-        assigns[:app_reviews].should == [@stellar_review, @good_review, @troll_review_by_good_author]
+        assigns[:app_reviews].should == [@stellar_review, @good_review, @troll_review_by_another_good_author]
       end
     end
     context 'unassociated gamer viewer' do
       before :each do
+        login_as(@gamer)
         controller.stubs(:current_gamer).returns(@gamer)
         get(:get_app, :id=>@offer.id)
       end
@@ -233,6 +293,19 @@ describe Games::HomepageController, :type=>:controller do
       it 'sees stellar review before good review' do
         assigns[:app_reviews].should == [@stellar_review, @good_review]
         assigns[:app_reviews].should_not == [@good_review, @stellar_review]
+      end
+    end
+    context 'Guest "no login" viewer' do
+      before :each do
+        controller.stubs(:current_gamer).returns(nil)
+      end
+      it 'sees good review, stellar review,  but not troll review or troll-authored review' do
+        get(:get_app, :id=>@offer.id)
+        assigns[:app_reviews].count.should == 2
+      end
+      it 'can see a single review only if specified' do
+        get(:get_app, :id=>@offer.id, :app_review_id => @stellar_review.id)
+        assigns[:app_reviews].should == [@stellar_review]
       end
     end
   end

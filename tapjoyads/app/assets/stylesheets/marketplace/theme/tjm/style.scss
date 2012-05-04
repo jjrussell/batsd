@@ -402,6 +402,9 @@ p {
 
         .menu-subnav-wrapper {
           clear: both;
+          .fullwidth {
+            width: 100%;
+          }
           a {
             div {
               float: left;
@@ -1120,6 +1123,61 @@ div.ui-joy-button.support-button {
 div.ui-joy-button .get-app {
   font-size: 1.2em;
   padding: 10px 0;
+}
+body.modal-overlay-enabled{
+  overflow:hidden;
+}
+
+#login_modal{
+  display:none;
+  .overlay{
+    background-color: rgba(0,0,0,0.6);
+    height:100%;
+    width:100%;
+    position:absolute;
+    top:0;
+    z-index:200;
+    .floaty{
+      margin: 25% auto;
+      min-width: 280px;
+      width: 90%;
+      position: relative;
+      .ui-close-btn{
+        cursor:pointer;
+        box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.6);
+        position: relative;
+        float: right;
+        right: -12px;
+        top: -12px;
+        width:20px;
+        height:20px;
+        border: 3px white solid;
+        display: block;
+        border-radius: 20px;
+        color: white;
+        text-align: center;
+        font-weight: bold;
+        @include linear-gradient(top, #5b5b5b, #020202);
+
+      }
+      .inner{
+        border-radius: 5px;
+        padding:10px;
+        background-color:#fff;
+        .soft-grey-action{
+          border-color: #bbb;
+        }
+        .ui-joy-button{
+          margin-top:10px;
+          .button_inner{
+            padding: 10px 0;
+            font-size: 1.2em;
+          }
+
+        }
+      }
+    }
+  }
 }
 
 /**

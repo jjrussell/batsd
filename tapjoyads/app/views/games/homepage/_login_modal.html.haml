@@ -1,0 +1,19 @@
+- @tour_as_guest = true
+#login_modal
+  .overlay
+    .floaty
+      .ui-close-btn
+        X
+      .inner
+        %h2
+          = t("text.games.log_in_title")
+        .blah
+          = t("text.games.log_in_text")
+        - link_to games_login_path, :class=>'action-login' do
+          .soft-grey-action
+            .button_inner
+              = t("text.games.log_in_title")
+        - link_to new_games_gamer_path, :class=>'action-signup' do
+          .ui-joy-button.orange-action
+            .button_inner
+              = t("text.games.log_in_not_a_member")

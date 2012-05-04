@@ -113,8 +113,10 @@ class Games::GamersController < GamesController
       @gamer_profile = @gamer.gamer_profile || GamerProfile.new(:gamer => @gamer)
       @gamer.gamer_profile = @gamer_profile
     else
-      flash[:error] = "Please log in and try again. You must have cookies enabled."
-      redirect_to games_path
+      path = url_for(params.merge(:only_path => true))
+      options = { :path => path } unless path == games_root_path
+      options[:referrer] = params[:referrer] if params[:referrer].present?
+      redirect_to games_login_path(options)
     end
   end
 

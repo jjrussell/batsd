@@ -8,7 +8,7 @@
           %span= t('text.shared.login_verb')
 
   .nav
-    - if current_gamer.present?
+    - if current_gamer.present? or @tour_as_guest
       .menu
         .menu-grid.clearfix
           .box
@@ -20,13 +20,13 @@
     .logo
       = link_to(games_path) do
         %img{ :src => BLANK_IMAGE }
-    - if current_gamer.present?
+    - if current_gamer.present? or @tour_as_guest
       .menu-dropdown
         .menu-dropdown-wrapper
           .device
             .device-profile
               .device-toggle.up.hide
-              - if current_gamer.get_avatar_url.present?
+              - if current_gamer && current_gamer.get_avatar_url.present?
                 .user-icon
                   = image_tag current_gamer.get_avatar_url
               .device-info
@@ -44,21 +44,21 @@
           .device-form.hide
           .menu-nav
             .menu-nav-wrapper
-              = link_to(games_path) do
+              = link_to(games_path, :class => 'req-login') do
                 .my_apps
                   %span= t('text.games.my_apps')
               = link_to(games_more_games_editor_picks_path) do
                 .more_apps
                   %span= t('text.games.more_apps')
-              = link_to(games_gamer_path) do
+              = link_to(games_gamer_path, :class => 'req-login') do
                 .profile
                   %span= t('text.games.profile')
           .menu-subnav.clearfix
             .menu-subnav-wrapper
-              = link_to(games_help_path) do
-                .help
+              - link_to(games_help_path) do
+                .help{ :class=> current_gamer.nil? && @tour_as_guest ? 'fullwidth':'' }
                   %span= t('text.shared.help')
-              = link_to(games_logout_path) do
+              = current_gamer && link_to(games_logout_path) do
                 .logout
                   %span= t('text.shared.logout')
 
