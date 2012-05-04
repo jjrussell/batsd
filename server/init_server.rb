@@ -3,7 +3,7 @@
 server_type = `su - webuser -c '/home/webuser/tapjoyserver/server/server_type.rb'`
 
 # testserver-specific config
-if server_type == 'test'
+if %( testserver staging ).include?(server_type)
   `rm -f /home/webuser/.tapjoy_aws_credentials.yaml`
   `/etc/init.d/memcached start`
   `start mysql`
@@ -31,7 +31,7 @@ end
 `su - webuser -c 'ln -s /home/webuser/GeoIP/GeoIPCity.dat /home/webuser/tapjoyserver/tapjoyads/data/'`
 
 # deploy the latest code
-if server_type == 'test' || server_type == 'util'
+if %w( testserver staging util ).include?(server_type)
   `su - webuser -c 'cd /home/webuser/tapjoyserver && server/deploy.rb master'`
 else
   `su - webuser -c 'cd /home/webuser/tapjoyserver && server/deploy.rb'`

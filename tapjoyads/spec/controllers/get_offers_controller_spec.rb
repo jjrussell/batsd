@@ -10,6 +10,7 @@ describe GetOffersController do
   describe '#index' do
     before :each do
       @currency = Factory(:currency)
+      @deeplink = @currency.deeplink_offer.primary_offer
       @offer = Factory(:app).primary_offer
       @offer2 = Factory(:app).primary_offer
       @offer2.countries = ["GB"].to_json
@@ -34,6 +35,47 @@ describe GetOffersController do
 
     end
 
+    it 'should queue up tracking url calls' do
+      @offer.expects(:queue_impression_tracking_requests).once
+
+      get(:index, @params)
+    end
+
+    describe "with promoted offers" do
+      before :each do
+        @partner = Factory(:partner)
+        @app = Factory(:app, :partner => @partner)
+
+        @offer1 = Factory(:app, :partner => @partner).primary_offer
+        @offer2 = Factory(:app, :partner => @partner).primary_offer
+        @offer3 = Factory(:app, :partner => @partner).primary_offer
+        @offer4 = Factory(:app, :partner => @partner).primary_offer
+        @offer5 = Factory(:app, :partner => @partner).primary_offer
+
+        App.stubs(:find_in_cache).returns(@app)
+        Currency.stubs(:find_in_cache).returns(@currency)
+      end
+
+      it "favors the promoted inventory" do
+        @currency.stubs(:partner_get_promoted_offers).returns([@offer2.id])
+        @currency.stubs(:get_promoted_offers).returns([@offer3.id])
+        OfferCacher.stubs(:get_unsorted_offers_prerejected).returns([@offer1, @offer2, @offer3, @offer4, @offer5])
+
+        get(:index, @params)
+        offer_list = assigns(:offer_list)
+        assert( offer_list == [ @offer2, @offer3, @offer1, @offer4, @offer5 ] || offer_list == [ @offer3, @offer2, @offer1, @offer4, @offer5 ] )
+      end
+
+      it "restricts the number of slots used for promotion" do
+        @offer3.stubs(:rank_score).returns(1004)
+        @currency.stubs(:get_promoted_offers).returns([@offer1.id, @offer2.id, @offer5.id, @offer4.id])
+        OfferCacher.stubs(:get_unsorted_offers_prerejected).returns([@offer1, @offer2, @offer3, @offer4, @offer5])
+
+        get(:index, @params)
+        assigns(:offer_list)[3].rank_score.should == 1004
+      end
+    end
+
     it 'returns json' do
       get(:index, @params.merge(:json => 1))
       should respond_with_content_type :json
@@ -51,25 +93,25 @@ describe GetOffersController do
 
     it 'returns offers targeted to country' do
       get(:index, @params)
-      assigns(:offer_list).should == [@offer, @offer3]
+      assigns(:offer_list).should == [@deeplink, @offer, @offer3]
       controller.stubs(:geoip_data).returns({ :primary_country => 'GB' })
       get(:index, @params)
-      assigns(:offer_list).should == [@offer, @offer2]
+      assigns(:offer_list).should == [@deeplink, @offer, @offer2]
     end
 
     it 'ignores country_code if IP is in China' do
       controller.stubs(:ip_address).returns('60.0.0.1')
       get(:index, @params)
-      assigns(:offer_list).should == [@offer, @offer4]
+      assigns(:offer_list).should == [@deeplink, @offer, @offer4]
       get(:index, @params.merge(:country_code => 'GB'))
-      assigns(:offer_list).should == [@offer, @offer4]
+      assigns(:offer_list).should == [@deeplink, @offer, @offer4]
     end
 
     it 'renders json with correct fields' do
       get(:index, @params.merge(:json => 1))
       json = JSON.parse(response.body)
 
-      json_offer = json['OfferArray'][0]
+      json_offer = json['OfferArray'][1]
       json_offer['Cost'       ].should == 'Free'
       json_offer['Amount'     ].should == '5'
       json_offer['Name'       ].should == @offer.name
@@ -114,6 +156,13 @@ describe GetOffersController do
       @offer = Factory(:app).primary_offer
     end
 
+    it 'should queue up tracking url calls' do
+      OfferCacher.stubs(:get_unsorted_offers_prerejected).returns([@offer])
+      @offer.expects(:queue_impression_tracking_requests).once
+
+      get(:webpage, @params)
+    end
+
     it 'assigns test offer for test devices' do
       OfferCacher.stubs(:get_unsorted_offers_prerejected).returns([@offer])
       get(:webpage, @params.merge(:udid => @device.id))
@@ -123,6 +172,8 @@ describe GetOffersController do
     it 'does not log impressions when there are no offers' do
       OfferCacher.stubs(:get_unsorted_offers_prerejected).returns([])
       RailsCache.stubs(:get).returns(nil)
+      @currency.deeplink_offer.primary_offer.tapjoy_enabled = false
+      @currency.deeplink_offer.primary_offer.save!
       get(:webpage, @params)
       assigns(:web_request).path.should include 'offers'
     end
@@ -222,6 +273,17 @@ describe GetOffersController do
       should render_template "get_offers/installs_json"
       response.content_type.should == "application/json"
     end
+
+    it 'renders tags for XNA' do
+      get(:featured, @params)
+      should render_template "get_offers/installs_redirect"
+      response.content_type.should == "application/xml"
+      response.should have_tag('OfferText')
+      response.should have_tag('EarnCurrencyText')
+      response.should have_tag('ActionText')
+      response.should have_tag('CustomCreative')
+      response.should have_tag('SkipText')
+    end
   end
 
   describe '#setup' do
@@ -250,7 +312,7 @@ describe GetOffersController do
       web_request.user_agent.should == @request.headers["User-Agent"]
       web_request.ip_address.should == '208.90.212.38'
       web_request.source.should == 'offerwall'
-      web_request.offerwall_rank.should == 1
+      web_request.offerwall_rank.should == 2
       web_request.path.should include('offerwall_impression')
 
       get(:featured, @params)

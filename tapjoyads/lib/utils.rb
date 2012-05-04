@@ -114,22 +114,6 @@ class Utils
     reward
   end
 
-  def self.fix_conditional_check_failed(reward_id)
-    reward = Reward.find(reward_id, :consistent => true)
-    if reward.sent_currency.present? && reward.send_currency_status.present?
-      puts "already awarded"
-    elsif reward.sent_currency.nil? && reward.send_currency_status.nil?
-      puts "everything is ok"
-    elsif reward.sent_currency.present? && reward.send_currency_status.nil?
-      reward.delete('sent_currency')
-      reward.save!
-      puts "deleted sent_currency"
-    else
-      puts "something weird has happened"
-    end
-    reward
-  end
-
   def self.cleanup_orphaned_failed_sdb_saves
     time = Time.zone.now - 24.hours
     count = 0
@@ -145,6 +129,23 @@ class Utils
     puts "moved #{count} orphaned items from #{BucketNames::FAILED_SDB_SAVES}"
   end
 
+  def self.resend_failed_callbacks(currency_id, status)
+    count = 0
+    Reward.select_all(:conditions => "currency_id = '#{currency_id}' and send_currency_status = '#{status}'") do |reward|
+      reward.delete('sent_currency')
+      reward.delete('send_currency_status')
+      begin
+        reward.save!
+      rescue
+        puts "save failed... retrying"
+        sleep 0.1
+        retry
+      end
+      Sqs.send_message(QueueNames::SEND_CURRENCY, reward.key)
+      count += 1
+    end
+    count
+  end
 
   class Memcache
     # Use these functions to facilitate switching memcache servers.

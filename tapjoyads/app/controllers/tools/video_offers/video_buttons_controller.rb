@@ -5,6 +5,7 @@ class Tools::VideoOffers::VideoButtonsController < WebsiteController
 
   before_filter :find_button, :only => [ :edit, :show, :update ]
   before_filter :find_video_offer
+  before_filter :handle_params, :only => [ :create, :update ]
   after_filter :save_activity_logs
 
   def index
@@ -55,6 +56,12 @@ class Tools::VideoOffers::VideoButtonsController < WebsiteController
   end
 
 private
+  def handle_params
+    if item_id = params[:video_button].delete(:item_id)
+      type, id = item_id.split(':')
+      params[:video_button][:tracking_item] = type.constantize.find(id)
+    end
+  end
 
   def find_button
     @video_button = VideoButton.find(params[:id], :include => :video_offer)

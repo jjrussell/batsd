@@ -2,7 +2,10 @@ class FullscreenAdController < ApplicationController
 
   layout 'iphone'
 
+  prepend_before_filter :decrypt_data_param
+
   def index
+    @platform = Device.device_type_to_platform(device_type)
     @publisher_app = App.find_in_cache(params[:publisher_app_id])
     currency_id = params[:currency_id].blank? ? params[:publisher_app_id] : params[:currency_id]
     @currency = Currency.find_in_cache(currency_id)
@@ -16,8 +19,7 @@ class FullscreenAdController < ApplicationController
 
     @now = params[:viewed_at].present? ? Time.zone.at(params[:viewed_at].to_f) : Time.zone.now
 
-    creative_exists = true if @offer.banner_creatives.any? { |size| Offer::FEATURED_AD_SIZES.include?(size) }
-    render :custom_creative, :layout => "blank" if creative_exists
+    render :layout => "blank" if @offer.featured_custom_creative?
   end
 
   def test_offer

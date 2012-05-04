@@ -107,7 +107,13 @@ class GetOffersController < ApplicationController
     params[:exp] = nil if params[:type] == Offer::CLASSIC_OFFER_TYPE
 
     if @save_web_requests
-      wr_path = params[:source] == 'featured' ? 'featured_offer_requested' : 'offers'
+      if params[:source] == 'tj_games'
+        wr_path = 'tjm_offers'
+      elsif params[:source] == 'featured'
+        wr_path = 'featured_offer_requested'
+      else
+        wr_path = 'offers'
+      end
       @web_request = WebRequest.new(:time => @now)
       @web_request.put_values(wr_path, params, ip_address, geoip_data, request.headers['User-Agent'])
       @web_request.viewed_at = @now
@@ -155,6 +161,8 @@ class GetOffersController < ApplicationController
         @web_request.offerwall_rank = i + @start_index + 1
         @web_request.offerwall_rank_score = offer.rank_score
         @web_request.save
+
+        offer.queue_impression_tracking_requests # for third party tracking vendors
       end
     end
   end

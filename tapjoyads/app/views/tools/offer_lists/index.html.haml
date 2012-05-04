@@ -23,6 +23,12 @@
       %td= label_tag :source, 'Offer Source'
       %td= select_tag :source, options_for_select(Offer::ALL_SOURCES.collect { |source| [source, source] }.insert(0, ['[none]','']), params[:source])
     %tr
+      %td= label_tag :currency_id, 'Currency ID'
+      %td= text_field_tag :currency_id, params[:currency_id], :size => '55'
+    %tr
+      %td= label_tag :primary_country, 'Country'
+      %td= text_field_tag :primary_country, params[:primary_country], :size => '55'
+    %tr
       %td{ :colspan => 2 }= submit_tag('Submit')
 
 - if @offers

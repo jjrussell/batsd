@@ -60,6 +60,13 @@ class ClickController < ApplicationController
     redirect_to(destination_url)
   end
 
+  def deeplink
+    create_click('deeplink')
+    handle_pay_per_click
+
+    redirect_to(destination_url)
+  end
+
   def test_offer
     publisher_app = App.find_in_cache(params[:publisher_app_id])
     return unless verify_records([ @currency, publisher_app ])
@@ -78,6 +85,7 @@ class ClickController < ApplicationController
     test_reward.publisher_app_id  = params[:publisher_app_id]
     test_reward.advertiser_app_id = params[:publisher_app_id]
     test_reward.offer_id          = params[:publisher_app_id]
+    test_reward.mac_address       = params[:mac_address]
     test_reward.currency_reward   = @currency.get_reward_amount(@test_offer)
     test_reward.publisher_amount  = 0
     test_reward.advertiser_amount = 0
@@ -100,6 +108,7 @@ class ClickController < ApplicationController
     test_reward.publisher_app_id  = params[:publisher_app_id]
     test_reward.advertiser_app_id = params[:publisher_app_id]
     test_reward.offer_id          = params[:publisher_app_id]
+    test_reward.mac_address       = params[:mac_address]
     test_reward.currency_reward   = @currency.get_reward_amount(@offer)
     test_reward.publisher_amount  = 0
     test_reward.advertiser_amount = 0
@@ -162,7 +171,13 @@ class ClickController < ApplicationController
     end
     return if recently_clicked?
 
-    wr_path = params[:source] == 'featured' ? 'featured_offer_click' : 'offer_click'
+    if params[:source] == 'tj_games'
+      wr_path = 'tjm_offer_click'
+    elsif params[:source] == 'featured'
+      wr_path = 'featured_offer_click'
+    else
+      wr_path = 'offer_click'
+    end
     build_web_request(wr_path)
   end
 
@@ -247,6 +262,8 @@ class ClickController < ApplicationController
 
   def create_click(type)
     click = Click.new(:key => click_key)
+
+    click.maintain_history
     click.delete('installed_at') if click.installed_at?
     click.clicked_at             = @now
     click.viewed_at              = Time.zone.at(params[:viewed_at].to_f)
@@ -276,8 +293,11 @@ class ClickController < ApplicationController
     click.advertiser_reseller_id = @offer.reseller_id || ''
     click.spend_share            = @currency.get_spend_share(@offer)
     click.local_timestamp        = params[:local_timestamp] if params[:local_timestamp].present?
+    click.mac_address            = params[:mac_address]
 
     click.save
+
+    @offer.queue_click_tracking_requests # for third party tracking vendors
   end
 
   def handle_pay_per_click
@@ -303,6 +323,7 @@ class ClickController < ApplicationController
       :itunes_link_affiliate => @itunes_link_affiliate,
       :display_multiplier    => params[:display_multiplier],
       :library_version       => params[:library_version],
+      :os_version            => params[:os_version]
     })
   end
 

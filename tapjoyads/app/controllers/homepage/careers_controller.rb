@@ -4,10 +4,10 @@
 
 class Homepage::CareersController < WebsiteController
   def show
-    redirect_to('http://tapjoy.jobscore.com/list')
+    redirect_to 'http://info.tapjoy.com/about-tapjoy/careers', :status => :moved_permanently
   end
 
   def index
-    render :layout => 'newcontent'
+    redirect_to 'http://info.tapjoy.com/about-tapjoy/careers', :status => :moved_permanently
   end
 end

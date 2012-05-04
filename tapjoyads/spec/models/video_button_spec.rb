@@ -1,13 +1,12 @@
 require 'spec_helper'
 
 describe VideoButton do
-
   describe '.belongs_to' do
     it { should belong_to :video_offer }
   end
 
   describe '#valid?' do
-    it { should validate_presence_of :url }
+    it { should_not validate_presence_of :url }
     it { should validate_presence_of :name }
 
     it { should validate_numericality_of :ordinal }
@@ -31,5 +30,4 @@ describe VideoButton do
       @video_button.xml_for_offer.should == offer.third_party_data
     end
   end
-
 end

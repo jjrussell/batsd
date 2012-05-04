@@ -11,7 +11,7 @@ class Tools::ApprovalsController < WebsiteController
     state = params[:state] =~ /^-?\d+$/ ? params[:state].to_i : Approval.enumerate_state('pending')
     @conditions[:state] = state if state > -1
 
-    @approvals = Approval.all(:conditions => @conditions, :order => 'created_at ASC')
+    @approvals = Approval.all(:conditions => @conditions, :order => 'created_at ASC', :include => :item)
   end
 
   def history
@@ -45,7 +45,7 @@ class Tools::ApprovalsController < WebsiteController
   def approve
     json_wrapper do
       @approval.owner = current_user if respond_to?(:current_user)
-      @approval.approve!
+      @approval.create? ? @approval.item.approve! : @approval.approve!
     end
   end
 

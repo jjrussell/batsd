@@ -32,7 +32,7 @@ class LinksharePoller
       next if row.length != 6 || row[SALES_COLUMN].to_f <= 0
       click = Click.find(row[CLICK_KEY_COLUMN])
       next unless click && !click.installed_at?
-      message = { :click_key => click.key, :install_timestamp => now}.to_json
+      message = { :click_key => click.key, :install_timestamp => now }.to_json
       Rails.logger.info("Sending Linkshare click #{click.key} to conversion queue.")
       Sqs.send_message(QueueNames::CONVERSION_TRACKING, message)
     end

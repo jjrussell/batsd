@@ -18,10 +18,10 @@ ANDROID_UNITY_PLUGIN        = 'https://s3.amazonaws.com/tapjoy/sdks/TapjoyUnityP
 ANDROID_PHONEGAP_PLUGIN     = 'https://s3.amazonaws.com/tapjoy/sdks/TapjoyPhoneGapPlugin_Android_v8.1.7.zip'
 ANDROID_MARMALADE_EXTENSION = 'https://github.com/downloads/marmalade/Tapjoy-for-Marmalade/Tapjoy_Android.zip'
 
-IPHONE_CONNECT_SDK         = 'https://s3.amazonaws.com/tapjoy/sdks/TapjoyConnectSDK_iOS_v8.1.8.zip'
-IPHONE_OFFERS_SDK          = 'https://s3.amazonaws.com/tapjoy/sdks/TapjoyConnectPublisherSDK_iOS_v8.1.8.zip'
-IPHONE_VG_SDK              = 'https://s3.amazonaws.com/tapjoy/sdks/TapjoyConnectVirtualGoodsSDK_iOS_v8.1.8.zip'
-IPHONE_UNITY_PLUGIN        = 'https://s3.amazonaws.com/tapjoy/sdks/TapjoyConnectUnityPluginSample_v8.1.8.zip'
+IPHONE_CONNECT_SDK         = 'https://s3.amazonaws.com/tapjoy/sdks/TapjoyConnectSDK_iOS_v8.1.10.zip'
+IPHONE_OFFERS_SDK          = 'https://s3.amazonaws.com/tapjoy/sdks/TapjoyConnectPublisherSDK_iOS_v8.1.10.zip'
+IPHONE_VG_SDK              = 'https://s3.amazonaws.com/tapjoy/sdks/TapjoyConnectVirtualGoodsSDK_iOS_v8.1.10.zip'
+IPHONE_UNITY_PLUGIN        = 'https://s3.amazonaws.com/tapjoy/sdks/TapjoyConnectUnityPluginSample_v8.1.10.zip'
 IPHONE_PHONEGAP_PLUGIN     = 'https://s3.amazonaws.com/tapjoy/sdks/TapjoyConnectPhoneGapPluginSample_v8.1.6.zip'
 IPHONE_MARMALADE_EXTENSION = 'https://github.com/downloads/marmalade/Tapjoy-for-Marmalade/Tapjoy_iOS.zip'
 
@@ -51,6 +51,8 @@ AWS.config(
 GAMES_CONFIG = YAML::load_file("#{Rails.root}/config/games.yaml")[Rails.env]
 MARKETPLACE_CONFIG = YAML::load_file("#{Rails.root}/config/marketplace.yaml")[Rails.env]
 
+Sprockets::Tj.init_assets
+
 VERTICA_CONFIG = YAML::load_file("#{Rails.root}/config/vertica.yml")[Rails.env]
 
 TEXTFREE_PUB_APP_ID = '6b69461a-949a-49ba-b612-94c8e7589642'
@@ -60,3 +62,7 @@ BLANK_IMAGE = 'data:image/gif;base64,R0lGODlhAQABAID/AMDAwAAAACH5BAEAAAAALAAAAAA
 TJM_SESSION_TIMEOUT = 1.hour.to_i
 
 HOSTNAME = `hostname`.strip
+
+# Add "RightAws::AwsError: sdb.amazonaws.com temporarily unavailable: (getaddrinfo: Temporary failure in name resolution)"
+# to the list of transient problems which will automatically get retried by RightAws.
+RightAws::RightAwsBase.amazon_problems = RightAws::RightAwsBase.amazon_problems | ['temporarily unavailable', 'InvalidClientTokenId', 'InternalError', 'QueryTimeout']

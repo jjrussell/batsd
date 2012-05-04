@@ -186,7 +186,7 @@
           return func.call(this, data);
         };
       },
-      
+
 	    debounce: function(fn, delay, execASAP, scope){
 	      var timeout;
 

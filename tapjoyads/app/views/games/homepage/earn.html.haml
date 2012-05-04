@@ -18,7 +18,7 @@
               .left.mt1.ml3.pb1
                 = hidden_field_tag(:eapp_metadata_id, ObjectEncryptor.encrypt(@app_metadata.id))
                 = hidden_field_tag(:mark_as_fav_path, games_gamer_favorite_app_path)
-                #favorite_app_button.ui-joy-button.primary.smaller{ :onclick => "updateFavoriteApp();"}
+                #favorite_app_button.ui-joy-button.primary.smaller
                   - if @mark_as_favorite
                     = t('text.games.mark_as_favorite')
                   - else
@@ -60,7 +60,7 @@
     = hidden_field_tag(:eapp_metadata_id, ObjectEncryptor.encrypt(@app_metadata.id))
   = hidden_field_tag(:mark_as_fav_path, games_gamer_favorite_app_path)
   .mod.mb20.hide
-    .favorite-btn.ui-joy-button.grey-action{ :onclick => "updateFavoriteApp();"}
+    .favorite-btn.ui-joy-button.grey-action
       #favorite_app_button.text-center.get-app
         - if @mark_as_favorite
           = t('text.games.mark_as_favorite')
@@ -69,7 +69,7 @@
 
 - content_for :page_javascript do
   :plain
-    var is_create = #{@mark_as_favorite.to_s};
+    var is_create = #{!!@mark_as_favorite};
 
     var raise_favoriting_error = function() {
       Tapjoy.Utils.notification({
@@ -79,27 +79,30 @@
 
   - if @app_metadata
     :plain
-      var updateFavoriteApp = function() {
-        $.ajax({
-          type: is_create ? 'POST' : 'DELETE',
-          url: $('#mark_as_fav_path').val(),
-          cache: false,
-          timeout: 15000,
-          dataType: 'json',
-          data: {
-            'eapp_metadata_id': $('#eapp_metadata_id').val()
-          },
-          success: function(d) {
-            if (d.success) {
-              is_create = !is_create;
-              $('#favorite_app_button').html(is_create ? "#{t('text.games.mark_as_favorite')}" : "#{t('text.games.unmark_as_favorite')}");
-            } else {
+      $(document).ready(function(){
+        $('#favorite_app_button').bind('click', function(){
+          $.ajax({
+            type: is_create ? 'POST' : 'DELETE',
+            url: $('#mark_as_fav_path').val(),
+            cache: false,
+            timeout: 15000,
+            dataType: 'json',
+            data: {
+              'eapp_metadata_id': $('#eapp_metadata_id').val()
+            },
+            success: function(d) {
+              if (d.success) {
+                is_create = !is_create;
+                $('#favorite_app_button').html(is_create ? "#{t('text.games.mark_as_favorite')}" : "#{t('text.games.unmark_as_favorite')}");
+              } else {
+                raise_favoriting_error();
+              }
+            },
+            error: function(d) {
               raise_favoriting_error();
             }
-          },
-          error: function(d) {
-            raise_favoriting_error();
-          }
+          });
         });
-      };
+      });
+
 
