@@ -24,6 +24,13 @@
         }
       },
 
+      trackEvent : function(tracking_url) {
+        $.ajax({
+          url: tracking_url,
+          timeout: 15000
+        });
+      },
+
       mask: function(){
         var wrap = $(document.createElement('div'));
 
