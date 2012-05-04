@@ -424,7 +424,7 @@
   - %w(impression click conversion).each do |tracking_type|
     :plain
       var set#{tracking_type.capitalize}TrackingPixelURLs = function() {
-        var urls = "#{escape_javascript(@offer.send("#{tracking_type}_tracking_urls").collect{ |url| h(url) }.join(','))}".split(",");
+        var urls = "#{escape_javascript(@offer.send("#{tracking_type}_tracking_urls").join(','))}".split(",");
 
         for(var i = 0; i < urls.length; i++) {
           if (urls[i] == "") {
