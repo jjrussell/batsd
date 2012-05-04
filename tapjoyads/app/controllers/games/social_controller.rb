@@ -127,9 +127,9 @@ class Games::SocialController < GamesController
               :value => Twitter.configuration.short_url_length_https,
               :expires => 1.day.from_now
             }
-            rem_len = 140 - cookies[:twitter_short_url_len].to_i
+            rem_len = 139 - cookies[:twitter_short_url_len].to_i
             template = truncate(t('text.games.twitter_invite_msg', :name => name), :length => rem_len)
-            message = "#{template}#{link}"
+            message = "#{template} #{link}"
 
             posts << Twitter.direct_message_create(friend_id.to_i, message)
           end

@@ -429,7 +429,7 @@ en:
       twitter_forbidden_error: "Requests are being denied due to update limits."
       twitter_general_error: "Something happened to Twitter. Please try again later."
       twitter_internal_error: "Something happened to Twitter. Please try again later."
-      twitter_invite_msg: "@%{name} has invited you to join Tapjoy! Earn rewards in your apps and discover new apps you'll love for free! "
+      twitter_invite_msg: "@%{name} has invited you to join Tapjoy! Earn rewards in your apps and discover new apps you'll love for free!"
       twitter_invite_title: "Please select Twitter friends to invite via Direct Message"
       unable_to_process: "Sorry we are unable to process your request"
       unlock_mobile_joy: "Unlock Mobile Joy"
