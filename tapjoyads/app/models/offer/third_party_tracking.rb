@@ -3,6 +3,7 @@ module Offer::ThirdPartyTracking
   def self.included(base)
     base.class_eval do
       const_set(:TRUSTED_TRACKING_VENDORS, %w(doubleclick.net phluantmobile.net srvntrk.com))
+      const_set(:TRACKING_MACROS, [:timestamp])
 
       [:impression_tracking_urls, :click_tracking_urls, :conversion_tracking_urls].each do |f|
         serialize f, Array
@@ -22,13 +23,18 @@ module Offer::ThirdPartyTracking
   %w(impression_tracking_urls click_tracking_urls conversion_tracking_urls).each do |method_name|
     class_eval <<-EOS
     def #{method_name}(*args)
-      replace_macros, timestamp = args
+      macros = args.extract_options!
+      replace_macros = args.first
 
       self.send("#{method_name}=", []) if super().nil?
       urls = super().sort
 
-      timestamp ||= Time.zone.now.to_i.to_s
-      urls = urls.collect { |url| url.gsub("[timestamp]", timestamp) } if replace_macros
+      if replace_macros
+        macros[:timestamp] ||= Time.zone.now.to_i
+        Offer::TRACKING_MACROS.each do |macro|
+          urls = urls.collect { |url| url.gsub(/\[#{macro}\]/i, macros[macro].to_s) }
+        end
+      end
       urls
     end
 
@@ -42,7 +48,7 @@ module Offer::ThirdPartyTracking
 
     def queue_#{method_name.sub(/urls$/, 'requests')}(*args)
       timestamp = args.shift
-      send("#{method_name}", true, timestamp).each do |url|
+      send("#{method_name}", true, :timestamp => timestamp).each do |url|
         Downloader.queue_get_with_retry(url)
       end
     end
