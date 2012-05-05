@@ -96,7 +96,7 @@ ActiveRecord::Schema.define(:version => 20120419190829) do
 
   add_index "app_reviews", ["app_id", "author_id"], :name => "index_app_reviews_on_app_id_and_author_id", :unique => true
   add_index "app_reviews", ["app_metadata_id", "author_id"], :name => "index_app_reviews_on_app_metadata_id_and_author_id", :unique => true
-  add_index "app_reviews", ["app_metadata_id", "updated_at"], :name => "app_reviews_get_app"
+  add_index "app_reviews", ["app_metadata_id", "updated_at", "is_blank"], :name => "app_reviews_get_app"
   add_index "app_reviews", ["id"], :name => "index_app_reviews_on_id", :unique => true
 
   create_table "approvals", :id => false, :force => true do |t|
@@ -821,7 +821,6 @@ ActiveRecord::Schema.define(:version => 20120419190829) do
     t.date     "negotiated_rev_share_ends_on"
     t.boolean  "accepted_negotiated_tos",                                                   :default => false
     t.string   "cs_contact_email"
-    t.string   "payout_confirmation_notes"
     t.boolean  "discount_all_offer_types",                                                  :default => false,     :null => false
     t.string   "client_id",                     :limit => 36
     t.text     "promoted_offers",                                                                                  :null => false
