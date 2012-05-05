@@ -4,6 +4,7 @@ class ToolsController < WebsiteController
   filter_access_to :all
 
   before_filter :downcase_udid, :only => [ :device_info, :update_device, :reset_device ]
+  before_filter :set_months, :only => [ :monthly_data, :partner_monthly_balance ]
   after_filter :save_activity_logs, :only => [ :update_user, :update_device, :resolve_clicks, :award_currencies, :update_award_currencies ]
 
   def index
@@ -24,10 +25,6 @@ class ToolsController < WebsiteController
   end
 
   def monthly_data
-    most_recent_period = Date.current.beginning_of_month.prev_month
-    @period = params[:period].present? ? Date.parse(params[:period]) : most_recent_period
-    @months = months_list(most_recent_period)
-
     conditions = [ "month = ? AND year = ? AND partner_id != '#{TAPJOY_PARTNER_ID}'", @period.month, @period.year ]
     MonthlyAccounting.using_slave_db do
       expected    = Partner.count(:conditions => [ "created_at < ?", @period.next_month ])
@@ -52,20 +49,11 @@ class ToolsController < WebsiteController
   end
 
   def partner_monthly_balance
-    most_recent_period = Date.current.beginning_of_month.prev_month
-    @period = params[:period].present? ? Date.parse(params[:period]) : most_recent_period
-    @months = months_list(most_recent_period)
-
     if params[:partner_id].present?
-      begin
-        @partners = [Partner.find(params[:partner_id])]
-      rescue
-        flash.now[:error] = 'Partner ID not found'
-        return
-      end
+      @partners = Partner.find_all_by_id(params[:partner_id])
     elsif params[:q].present?
       query = params[:q].gsub("'", '')
-      @partners = Partner.search(query).scoped(:include => [ :offers, :users ]).uniq
+      @partners = Partner.search(query).uniq
     else
       return
     end
@@ -443,21 +431,24 @@ class ToolsController < WebsiteController
     redirect_to :action => :device_info, :udid => params[:udid]
   end
 
+  private
+
   def downcase_udid
-    params[:udid] = params[:udid].downcase if params[:udid].present?
+    downcase_param(:udid)
   end
 
+  def set_months
+    most_recent_period = Date.current.beginning_of_month.prev_month
+    @period = params[:period].present? ? Date.parse(params[:period]) : most_recent_period
+    @period = @period.strftime("%b %Y")
 
-private
-
-  def months_list(most_recent_period)
     @months = []
     date = Date.parse('2009-06-01') #the first month of the platform
     while date <= most_recent_period
       @months << date.strftime('%b %Y')
       date += 1.months
     end
-    return @months
+    true
   end
 
 end
