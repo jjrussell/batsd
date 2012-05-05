@@ -26,13 +26,7 @@ class ToolsController < WebsiteController
   def monthly_data
     most_recent_period = Date.current.beginning_of_month.prev_month
     @period = params[:period].present? ? Date.parse(params[:period]) : most_recent_period
-
-    @months = []
-    date = Date.parse('2009-06-01') #the first month of the platform
-    while date <= most_recent_period
-      @months << date.strftime('%b %Y')
-      date += 1.month
-    end
+    @months = months_list(most_recent_period)
 
     conditions = [ "month = ? AND year = ? AND partner_id != '#{TAPJOY_PARTNER_ID}'", @period.month, @period.year ]
     MonthlyAccounting.using_slave_db do
@@ -55,6 +49,41 @@ class ToolsController < WebsiteController
     @revenue = @spend + @linkshare_est + @ads_est - @marketing - @bonus
     @net_revenue = @revenue - @earnings
     @margin = @net_revenue.to_f * 100.0 / @revenue.to_f
+  end
+
+  def partner_monthly_balance
+    most_recent_period = Date.current.beginning_of_month.prev_month
+    @period = params[:period].present? ? Date.parse(params[:period]) : most_recent_period
+    @months = months_list(most_recent_period)
+
+    if params[:partner_id].present?
+      begin
+        @partners = [Partner.find(params[:partner_id])]
+      rescue
+        flash.now[:error] = 'Partner ID not found'
+        return
+      end
+    elsif params[:q].present?
+      query = params[:q].gsub("'", '')
+      @partners = Partner.search(query).scoped(:include => [ :offers, :users ]).uniq
+    else
+      return
+    end
+
+    if @partners.empty?
+      flash.now[:error] = 'Partner not found'
+      return
+    end
+
+    @beginning_balances = []
+    @ending_balances = []
+    @partners.each do |partner|
+      monthly_accounting = partner.monthly_accounting(@period.year, @period.month)
+      beginning_balances = (monthly_accounting.nil?) ? "N/A" : monthly_accounting.beginning_balance / 100.0
+      ending_balances = (monthly_accounting.nil?) ? "N/A" : monthly_accounting.ending_balance / 100.0
+      @beginning_balances << beginning_balances
+      @ending_balances << ending_balances
+    end
   end
 
   def money
@@ -416,6 +445,19 @@ class ToolsController < WebsiteController
 
   def downcase_udid
     params[:udid] = params[:udid].downcase if params[:udid].present?
+  end
+
+
+private
+
+  def months_list(most_recent_period)
+    @months = []
+    date = Date.parse('2009-06-01') #the first month of the platform
+    while date <= most_recent_period
+      @months << date.strftime('%b %Y')
+      date += 1.months
+    end
+    return @months
   end
 
 end
