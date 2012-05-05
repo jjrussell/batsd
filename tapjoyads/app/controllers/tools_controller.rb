@@ -60,7 +60,7 @@ class ToolsController < WebsiteController
       @partners = Partner.find_all_by_id(params[:partner_id])
     elsif params[:q].present?
       query = params[:q].gsub("'", '')
-      @partners = Partner.search(query).scoped(:include => [ :offers, :users ]).uniq
+      @partners = Partner.search(query).uniq
     else
       return
     end
