@@ -57,12 +57,7 @@ class ToolsController < WebsiteController
     @months = months_list(most_recent_period)
 
     if params[:partner_id].present?
-      begin
-        @partners = [Partner.find(params[:partner_id])]
-      rescue
-        flash.now[:error] = 'Partner ID not found'
-        return
-      end
+      @partners = Partner.find_all_by_id(params[:partner_id])
     elsif params[:q].present?
       query = params[:q].gsub("'", '')
       @partners = Partner.search(query).scoped(:include => [ :offers, :users ]).uniq
@@ -448,7 +443,7 @@ class ToolsController < WebsiteController
   end
 
 
-private
+  private
 
   def months_list(most_recent_period)
     @months = []
