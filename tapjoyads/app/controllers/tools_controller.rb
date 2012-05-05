@@ -434,7 +434,7 @@ class ToolsController < WebsiteController
   private
 
   def downcase_udid
-    params[:udid] = params[:udid].downcase if params[:udid].present?
+    downcase_param(:udid)
   end
 
   def set_months
