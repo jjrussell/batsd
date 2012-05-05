@@ -3,6 +3,7 @@ class ToolsController < WebsiteController
 
   filter_access_to :all
 
+  before_filter :downcase_udid, :only => [ :device_info, :update_device, :reset_device ]
   before_filter :set_months, :only => [ :monthly_data, :partner_monthly_balance ]
   after_filter :save_activity_logs, :only => [ :update_user, :update_device, :resolve_clicks, :award_currencies, :update_award_currencies ]
 
@@ -431,6 +432,10 @@ class ToolsController < WebsiteController
   end
 
   private
+
+  def downcase_udid
+    params[:udid] = params[:udid].downcase if params[:udid].present?
+  end
 
   def set_months
     most_recent_period = Date.current.beginning_of_month.prev_month
