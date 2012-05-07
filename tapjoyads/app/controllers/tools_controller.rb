@@ -1,5 +1,5 @@
 class ToolsController < WebsiteController
-  layout 'tabbed'
+  layout 'dashboard'
 
   filter_access_to :all
 
