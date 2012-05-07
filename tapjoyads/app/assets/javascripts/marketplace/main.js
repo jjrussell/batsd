@@ -26,7 +26,7 @@ $(document).ready(function(){
       }
     }
   }
-  $(window).bind('resize orientationchange', adjustWidth);
+  $(window).bind('resize orientationchange', Tapjoy.Utils.debounce(adjustWidth));
 
   // Login Modal
   $('#login, #login-web').bind('click', function() {
@@ -836,35 +836,6 @@ $(document).ready(function(){
   }
 
   (function () {
-    var width = window.innerWidth;
-    var preLoad = 0, padSpace = 0;
-    if (Tapjoy.device.idevice) {
-      preLoad = 60;
-      padSpace = 80;
-    }
-    $('.app-icon img').each(function(n, o){
-      if (this && Tapjoy.Utils.ViewPort.inView(this, { padding: padSpace, threshold: preLoad })) {
-        var el = $(o);
-        if (el.attr('source')) {
-          el.attr("src", el.attr("source"));
-        }
-        else if (width > 480 && el.attr('source_med')) {
-          el.attr("src", el.attr("source_med"));
-        }
-        else if (el.attr('source_sm')){
-          el.attr("src", el.attr("source_sm"));
-        }
-        el.load(function(){
-          $(this).fadeIn('fast').attr("loaded", "true");
-        });
-        el.error(function(){
-          el.attr("src", "data:image/gif;base64,R0lGODlhAQABAID/AMDAwAAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==");
-        });
-      }
-    });
-  }());
-
-  (function () {
     if (window._tjHtmlDone && window._tjStartTime) {
       Tapjoy.Utils.googleLog("Page Html", "load", "Time in ms", (_tjHtmlDone - _tjStartTime));
       Tapjoy.Utils.googleLog("Main.js", "load", "Time in ms", (new Date().getTime() - _tjStartTime));
@@ -876,8 +847,6 @@ $(document).ready(function(){
  //commenting out until we can talk to Van
   //  Tapjoy.Utils.mask();
   }
-
-
 
   //if (Tapjoy.device.idevice) {
   //  Tapjoy.Plugins.showAddHomeDialog();

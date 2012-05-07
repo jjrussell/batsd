@@ -143,7 +143,7 @@
       preLoad = 60;
       padSpace = 80;
     }
-    $('#earn .earn-app-icon img').each(function(n, o){
+    $('.app-icon img').each(function(n, o){
       if (this && Tapjoy.Utils.ViewPort.inView(this, { padding: padSpace, threshold: preLoad })) {
         var el = $(o);
         if (el.attr('loaded')) {
@@ -168,6 +168,7 @@
   $(function () {
     me.fillElements();
     me.ajaxForms();
+    me.fetchImages();
 
     $(document).bind("ajax-success", function (ev, form, data, status, xhr) {
       notify(_t('shared.success'));
@@ -177,9 +178,8 @@
       notify(_t('games.generic_issue'));
     });
 
-    $(window).scroll(function() {
-      Tapjoy.Utils.debounce(me.fetchImages());
-    });
+    $(window).scroll(Tapjoy.Utils.debounce(me.fetchImages));
+    $('.lazy-image-loader').on('ajax-loader-success', me.fetchImages);
 
   });
 }(window.Tapjoy, window.jQuery, window.jsonp_preloaded));
