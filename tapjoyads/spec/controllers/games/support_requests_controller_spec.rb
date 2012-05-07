@@ -27,6 +27,7 @@ describe Games::SupportRequestsController do
     @gamer.devices << GamerDevice.new(:device => @device)
 
     login_as(@gamer)
+    flash.stubs(:sweep)
   end
 
   describe '#create' do
@@ -39,6 +40,11 @@ describe Games::SupportRequestsController do
       it "re-renders #new if no message is provided" do
         post :create, @params
         response.should render_template("new")
+      end
+
+      it 'flashes a notice if no data is present' do
+        get :create, @params
+        flash.now[:notice].should be_present
       end
     end
 
@@ -85,12 +91,28 @@ describe Games::SupportRequestsController do
         post :create, @params
       end
     end
+
+    it 'tracks the event based on the tracking param' do
+      @params = { 'support_requests' => { :content => "I'm needy and need help!" } }
+      get :create, @params
+      path = assigns(:tjm_request).path
+      get :create, @params.merge(:type => 'feedback')
+      assigns(:tjm_request).path.should == [ "#{path}_feedback" ]
+    end
   end
 
   describe '#new' do
     it 'finds the current gamer' do
       get :new, @params
       assigns(:current_gamer).should == @gamer
+    end
+
+    it 'tracks the event based on the tracking param' do
+      get('new')
+      path = assigns(:tjm_request).path
+
+      get('new', { :type => 'feedback'})
+      assigns(:tjm_request).path.should == [ "#{path}_feedback" ]
     end
   end
 

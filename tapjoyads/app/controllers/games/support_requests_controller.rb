@@ -1,4 +1,5 @@
 class Games::SupportRequestsController < GamesController
+  before_filter :set_tracking_param
 
   def new
     current_gamer
@@ -61,5 +62,9 @@ class Games::SupportRequestsController < GamesController
     end
 
     @unresolved_clicks.compact
+  end
+
+  def set_tracking_param
+    @tjm_request.tracking_param = params[:type] if @tjm_request.present?
   end
 end

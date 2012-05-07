@@ -1,0 +1,49 @@
+- @page_title = 'Partner Monthly Balance'
+
+%h1 Partner monthly balance for #{@period}
+
+- form_tag(partner_monthly_balance_tools_path, :method => :get) do
+  %table
+    %tr
+      %td= label_tag(:partner_id, 'Partner ID')
+      %td= text_field_tag(:partner_id, params[:partner_id], :size => '40')
+      %td{ :width => '100px'}
+      %td= label_tag(:period, 'Period')
+      %td= select_tag(:period, options_for_select(all_months, @period))
+    %tr
+      %td{ :colspan => 5 } --- or ---
+    %tr
+      %td= label_tag(:q, 'Partner')
+      %td= text_field_tag(:q, params[:q], :size => '40', :placeholder => 'Name or Email Address')
+      %td{ :colspan => 3 }
+    %tr
+      %td{ :colspan => 5 }= submit_tag('Search')
+
+- unless @partners.nil?
+  %table.tablesorter
+    %thead
+      %tr
+        %th name
+        %th id
+        %th beginning_balance
+        %th ending_balance
+    %tbody
+      - @partners.each_with_index do |partner, index|
+        %tr{ :class => cycle('even', 'odd') }
+          %td= partner.name
+          %td= partner.id
+          %td{ :style => "text-align:right" }= number_to_currency(@beginning_balances[index])
+          %td{ :style => "text-align:right" }= number_to_currency(@ending_balances[index])
+
+- content_for :page_javascript do
+  :plain
+    $(function($){
+      $('#q').autocomplete({
+        source: '#{search_partners_path}',
+        delay: 250,
+        minLength: 2,
+        select: function(event, ui) {
+          $('#partner_id').val(ui.item.partner_id);
+        },
+      });
+    });
