@@ -74,7 +74,7 @@ authorization do
   role :money do
     includes :tools
     includes :devices
-    has_permission_on :tools, :to => [ :money, :monthly_data ]
+    has_permission_on :tools, :to => [ :money, :monthly_data, :partner_monthly_balance ]
     has_permission_on :tools_orders, :to => [ :new, :create ]
     has_permission_on :tools_earnings_adjustments, :to => [ :new, :create ]
   end
@@ -103,7 +103,7 @@ authorization do
     includes :tools
     includes :devices
     includes :reporting
-    has_permission_on :tools, :to => [ :money, :monthly_data ]
+    has_permission_on :tools, :to => [ :money, :monthly_data, :partner_monthly_balance ]
   end
 
   role :hr do

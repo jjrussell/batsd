@@ -346,6 +346,13 @@ class Partner < ActiveRecord::Base
     self.payout_threshold_confirmation = true if (payout_threshold_confirmation_roles & user_roles).present?
   end
 
+  def monthly_accounting(year, month)
+    MonthlyAccounting.using_slave_db do
+      conditions = [ "partner_id = ? AND year = ? AND month = ?", self.id, year, month ]
+      monthly_accounting = MonthlyAccounting.find(:all, :conditions => conditions).first
+    end
+  end
+
 private
 
   def update_currencies

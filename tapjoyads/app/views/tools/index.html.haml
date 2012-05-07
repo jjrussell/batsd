@@ -19,6 +19,8 @@
     %li= link_to 'Money', money_tools_path
   - if permitted_to? :monthly_data, :tools
     %li= link_to 'Monthly Data', monthly_data_tools_path
+  - if permitted_to? :partner_monthly_balance, :tools
+    %li= link_to 'Partner Monthly Balance', partner_monthly_balance_tools_path
   - if permitted_to? :new_transfer, :tools
     %li= link_to 'Transfer Funds', new_transfer_tools_path
   - if permitted_to? :index, :tools_network_costs
