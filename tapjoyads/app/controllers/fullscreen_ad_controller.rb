@@ -5,6 +5,7 @@ class FullscreenAdController < ApplicationController
   prepend_before_filter :decrypt_data_param
 
   def index
+    @platform = Device.device_type_to_platform(device_type)
     @publisher_app = App.find_in_cache(params[:publisher_app_id])
     currency_id = params[:currency_id].blank? ? params[:publisher_app_id] : params[:currency_id]
     @currency = Currency.find_in_cache(currency_id)

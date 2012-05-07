@@ -253,19 +253,19 @@
             - elsif @offer.item_type == 'GenericOffer'
               = h(@offer.item.url)
 
-      - %w(impression click conversion).each do |tracking_type|
-        %tr{ :id => "#{tracking_type}_tracking_urls_row" }
-          %th
-            = f.label(:"#{tracking_type}_tracking_urls", "#{tracking_type.capitalize} Tracking Pixel URLs")
-            .help{ :id => "help_#{tracking_type}_tracking_urls" } ?
-          %td
-            = error_message_on @offer, :"#{tracking_type}_tracking_urls"
-            = link_to('Add URL', '', :class => "add_#{tracking_type}_tracking_url", :onclick => 'return false;')
-        %tr{ :id => "#{tracking_type}_tracking_url_template", :class => 'hidden' }
-          %th
-          %td
-            = text_field_tag("offer[#{tracking_type}_tracking_urls][]", '', :size => 58)
-            = link_to('(remove)', '', :class => "remove_#{tracking_type}_tracking_url", :onclick => 'return false;')
+    - %w(impression click conversion).each do |tracking_type|
+      %tr{ :id => "#{tracking_type}_tracking_urls_row" }
+        %th
+          = f.label(:"#{tracking_type}_tracking_urls", "#{tracking_type.capitalize} Tracking Pixel URLs")
+          .help{ :id => "help_#{tracking_type}_tracking_urls" } ?
+        %td
+          = error_message_on @offer, :"#{tracking_type}_tracking_urls"
+          = link_to('Add URL', '', :class => "add_#{tracking_type}_tracking_url", :onclick => 'return false;')
+      %tr{ :id => "#{tracking_type}_tracking_url_template", :class => 'hidden' }
+        %th
+        %td
+          = text_field_tag("offer[#{tracking_type}_tracking_urls][]", '', :size => 58)
+          = link_to('(remove)', '', :class => "remove_#{tracking_type}_tracking_url", :onclick => 'return false;')
 
     - if @offer.item_type == 'App' && @offer.item.screen_layout_sizes.any?
       %tr
@@ -367,7 +367,7 @@
   #help_tracking_for_id_content{ :name => 'Tracking For Id' } The Object that is tracked by this offer.
   #help_tracking_for_type_content{ :name => 'Tracking For Type' } The type of the object that is tracked by this offer.
 
-- if @offer.item_type == 'App' || @offer.item_type == 'GenericOffer'
+- if @offer.app_offer? || @offer.item_type == 'GenericOffer'
   - content_for :page_javascript do
     :plain
       $(function($){
@@ -424,7 +424,7 @@
   - %w(impression click conversion).each do |tracking_type|
     :plain
       var set#{tracking_type.capitalize}TrackingPixelURLs = function() {
-        var urls = "#{escape_javascript(@offer.send("#{tracking_type}_tracking_urls").collect{ |url| h(url) }.join(','))}".split(",");
+        var urls = "#{escape_javascript(@offer.send("#{tracking_type}_tracking_urls").join(','))}".split(",");
 
         for(var i = 0; i < urls.length; i++) {
           if (urls[i] == "") {

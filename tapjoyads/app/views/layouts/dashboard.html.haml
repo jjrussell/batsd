@@ -28,8 +28,7 @@
       .navbar.navbar-fixed-top
         .navbar-inner
           .container-fluid
-            - premier_suffix = current_partner.is_premier? ? ' Premier' : ''
-            = link_to "Tapjoy#{premier_suffix}", "#{DASHBOARD_URL}/", :class => "brand"
+            = link_to "Tapjoy", DASHBOARD_URL, :class => "brand"
             - tabs = []
             - tabs << { :apps      => apps_path }            if permitted_to?(:index, :apps)
             - tabs << { :reporting => reporting_index_path } if permitted_to?(:index, :reporting)
@@ -44,7 +43,7 @@
             %ul.nav
               - if permitted_to? (:index, :ops)
                 %li.active.dropdown#ops-menu
-                  %a.dropdown-toggle{:href => '#ops-menu', 'data-toggle' => 'dropdown'}
+                  - link_to '#ops-menu', :class => 'dropdown-toggle', 'data-toggle' => 'dropdown' do
                     Ops
                     %b.caret
                   %ul.dropdown-menu
@@ -58,7 +57,7 @@
 
             %ul.nav.pull-right
               %li.dropdown#account-menu
-                %a.dropdown-toggle{:href => '#account-menu', 'data-toggle' => 'dropdown'}
+                - link_to '#account-menu', :class => 'dropdown-toggle', 'data-toggle' => 'dropdown' do
                   = current_user.username
                   %b.caret
                 %ul.dropdown-menu
@@ -119,15 +118,11 @@
     %script{ :type => 'text/javascript', :charset => 'utf-8' }
       = yield :page_javascript
       :plain
-        jQuery(document).ready(function($) {
-          $('a[rel*=facebox]').facebox({
-            closeImage   : '/images/closelabel.png'
-          });
-
-        });
-
         $(function ($) {
-          $('#recent_partners').change(function () {
+          $('a[rel*=facebox]').facebox({
+            closeImage: '/images/closelabel.png'
+          });
+          $('#recent_partners').change(function() {
             var form = $(this).parent('form');
             var url = $(this).val();
             form.attr('action', url);

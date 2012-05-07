@@ -1,0 +1,14 @@
+#!/usr/bin/env ruby
+
+unless ARGV[0]
+  puts "usage: staging <xman> [<user>]"
+  puts "    xman (required): staging server you want to access (gambit/rogue/etc)"
+  puts "    user (optional, defaults to 'webuser'): the user to login as"
+  exit
+end
+
+server = "#{ARGV[0]}.tapjoy.net"
+user = ARGV[1] || 'webuser'
+
+puts "Connecting to server #{server} as #{user}"
+system "ssh #{user}@#{server}"

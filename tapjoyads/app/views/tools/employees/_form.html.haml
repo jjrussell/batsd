@@ -1,13 +1,20 @@
 - form_for([ :tools, @employee ], :html => { :class => 'tjform', :multipart => true }) do |f|
-  - if @employee.new_record?
-    .field
-      = f.label(:email)
-      = f.text_field(:email)
-      = error_message_on @employee, :email
-  - else
+  .field
+    = f.label(:email)
+    = f.text_field(:email)
+    = error_message_on @employee, :email
+  - if !@employee.new_record?
     .field
       = f.label(:active, "Active?")
       = f.check_box(:active)
+  .field
+    = f.label(:department)
+    = f.select(:department, options_for_select(Employee::DEPARTMENTS, @employee.department))
+    = error_message_on @employee, :department
+  .field
+    = f.label(:location)
+    = f.text_field(:location, :value => location_str(@employee), :placeholder => "e.g. [1, 2]")
+    = error_message_on @employee, :department
   .field
     = f.label(:first_name)
     = f.text_field(:first_name)
@@ -20,25 +27,6 @@
     = f.label(:title)
     = f.text_field(:title)
     = error_message_on @employee, :title
-  .field
-    = f.label(:biography, "Short Bio")
-    = f.text_area(:biography)
-    %br No more than three (3) sentences
-    = error_message_on @employee, :biography
-  .field
-    = f.label(:superpower, "What is your secret superpower?")
-    = f.text_field(:superpower, :size => 70)
-    = error_message_on @employee, :superpower
-  .field
-    = f.label(:current_games, "What are you currently playing?")
-    = f.text_field(:current_games, :size => 70)
-    %br Doesn't have to be mobile
-    = error_message_on @employee, :current_games
-  .field
-    = f.label(:weapon, "What is your weapon of choice?")
-    = f.text_field(:weapon, :size => 70)
-    %br E.g. iPhone, ninja stars, Red Bull
-    = error_message_on @employee, :weapon
   - if !@employee.new_record?
     .field
       = label_tag("Current Photo", "Current Photo")
@@ -47,10 +35,6 @@
   .field
     = label_tag :upload_photo
     = file_field_tag :upload_photo
-  .field
-    = f.label(:display_order)
-    = f.text_field(:display_order)
-    = error_message_on @employee, :display_order
   = submit_tag @employee.new_record? ? "Create" : "Update"
 
 - content_for :page_styles do

@@ -60,6 +60,13 @@ class ClickController < ApplicationController
     redirect_to(destination_url)
   end
 
+  def deeplink
+    create_click('deeplink')
+    handle_pay_per_click
+
+    redirect_to(destination_url)
+  end
+
   def test_offer
     publisher_app = App.find_in_cache(params[:publisher_app_id])
     return unless verify_records([ @currency, publisher_app ])
@@ -78,6 +85,7 @@ class ClickController < ApplicationController
     test_reward.publisher_app_id  = params[:publisher_app_id]
     test_reward.advertiser_app_id = params[:publisher_app_id]
     test_reward.offer_id          = params[:publisher_app_id]
+    test_reward.mac_address       = params[:mac_address]
     test_reward.currency_reward   = @currency.get_reward_amount(@test_offer)
     test_reward.publisher_amount  = 0
     test_reward.advertiser_amount = 0
@@ -100,6 +108,7 @@ class ClickController < ApplicationController
     test_reward.publisher_app_id  = params[:publisher_app_id]
     test_reward.advertiser_app_id = params[:publisher_app_id]
     test_reward.offer_id          = params[:publisher_app_id]
+    test_reward.mac_address       = params[:mac_address]
     test_reward.currency_reward   = @currency.get_reward_amount(@offer)
     test_reward.publisher_amount  = 0
     test_reward.advertiser_amount = 0
@@ -162,7 +171,13 @@ class ClickController < ApplicationController
     end
     return if recently_clicked?
 
-    wr_path = params[:source] == 'featured' ? 'featured_offer_click' : 'offer_click'
+    if params[:source] == 'tj_games'
+      wr_path = 'tjm_offer_click'
+    elsif params[:source] == 'featured'
+      wr_path = 'featured_offer_click'
+    else
+      wr_path = 'offer_click'
+    end
     build_web_request(wr_path)
   end
 

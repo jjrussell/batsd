@@ -1,4 +1,4 @@
-.close#close
+%div{:class => "close #{@platform}", :id => 'close'}
   - link_to(params[:preview] == true ? '#' : 'dismiss', :class => 'close', :id => 'close-link') do
     .close_inner#close_inner x
 #main
@@ -263,6 +263,10 @@
       position: absolute;
       opacity: 0;
       z-index: 8;
+    }
+
+    .close.ios {
+      display: none;
     }
 
     .close_inner {

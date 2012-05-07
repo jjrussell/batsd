@@ -7,13 +7,12 @@ class Mc
       :auto_eject_hosts => false,
       :cache_lookups    => false
     }
-    @@cache = Memcached.new(MEMCACHE_SERVERS, options)
-    @@individual_caches = MEMCACHE_SERVERS.map do |server|
-      Memcached.new(server, options)
-    end
+
+    @@cache              = Memcached.new(MEMCACHE_SERVERS, options)
+    @@distributed_caches = DISTRIBUTED_MEMCACHE_SERVERS.map { |server| Memcached.new(server, options) }
   end
 
-  cattr_accessor :cache, :individual_caches
+  cattr_accessor :cache, :distributed_caches
   self.reset_connection
 
   # Memcache counts can't go below 0. Set the offset to 2^32/2 for all counts.
@@ -61,8 +60,13 @@ class Mc
   # Gets object from cache which matches key.
   # If no object is found, then control is yielded, and the object
   # returned from the yield block is returned.
-  def self.get(key, clone = false, cache = nil)
-    cache ||= @@cache
+  def self.get(key, clone = false, caches = nil)
+    caches ||= [ @@cache ]
+    missing_caches = []
+    dead_caches = []
+    error_caches = []
+
+    cache = caches.first
     cache = cache.clone if clone
 
     value = nil
@@ -71,9 +75,26 @@ class Mc
         value = cache.get(CGI::escape(key))
         Rails.logger.info("Memcache key found: #{key}")
       rescue Memcached::NotFound
+        missing_caches << cache
+        if (caches - missing_caches).length > 0
+          cache = (caches - missing_caches).first
+          retry
+        end
         Rails.logger.info("Memcache key not found: #{key}")
       rescue Memcached::ServerIsMarkedDead => e
+        dead_caches << cache
+        if (caches - dead_caches).length > 0
+          cache = (caches - dead_caches).first
+          retry
+        end
         Rails.logger.info("Memcached::ServerIsMarkedDead: #{key}")
+      rescue Memcached::ServerError => e
+        error_caches << cache
+        if (caches - error_caches).length > 0
+          cache = (caches - error_caches).first
+          retry
+        end
+        Rails.logger.info("Memcached::ServerError: #{e.message}")
       rescue Memcached::NoServersDefined => e
         Rails.logger.info("Memcached::NoServersDefined: #{e}")
       rescue Memcached::ATimeoutOccurred => e
@@ -85,6 +106,18 @@ class Mc
       end
     end
 
+    unless value.nil? || missing_caches.empty?
+      missing_caches.each do |cache|
+        # The default is 1.week.  The memcached library doesn't give us the expiration
+        # information for keys, so these will just have to be refreshed
+        begin
+          Mc.add(key, value, clone, 1.week, cache)
+        rescue Memcached::NotStored
+          # Refilling a cache server, someone must have done it already
+        end
+      end
+    end
+
     if value.nil? && block_given?
       value = yield
     end
@@ -93,13 +126,23 @@ class Mc
   end
 
   def self.distributed_get(key, clone = false)
-    cache_num = rand(@@individual_caches.size)
-
-    value = Mc.get(key, clone, @@individual_caches[cache_num]) do
+    value = Mc.get(key, clone, @@distributed_caches.shuffle) do
       yield if block_given?
     end
 
     return value
+  end
+
+  # Adds the value to memcached, not replacing an existing value
+  def self.add(key, value, clone = false, time = 1.week, cache = nil)
+    if value
+      cache ||= @@cache
+      cache = cache.clone if clone
+
+      Rails.logger.info_with_time("Added to memcache: #{key}") do
+        cache.add(CGI::escape(key), value, time.to_i)
+      end
+    end
   end
 
   ##
@@ -119,7 +162,7 @@ class Mc
     if value
       begin
         Rails.logger.info_with_time("Wrote to memcache - distributed") do
-          @@individual_caches.each do |cache|
+          @@distributed_caches.each do |cache|
             Mc.put(key, value, clone, time, cache)
           end
         end
@@ -197,7 +240,7 @@ class Mc
   end
 
   def self.distributed_delete(key, clone = false)
-    @@individual_caches.each do |cache|
+    @@distributed_caches.each do |cache|
       Mc.delete(key, clone, cache) rescue nil
     end
     nil
