@@ -13,7 +13,8 @@ class User < ActiveRecord::Base
   has_many :partner_assignments, :dependent => :destroy
   has_many :user_roles, :through => :role_assignments
   has_many :partners, :through => :partner_assignments
-  has_many :enable_offer_requests
+  has_many :enable_offer_requests, :foreign_key => 'requested_by_id'
+  has_many :enable_offer_assignments, :class_name => 'EnableOfferRequest', :foreign_key => 'assigned_to_id'
   has_many :admin_devices
   has_many :internal_devices
   has_many :partners_for_sales, :class_name => 'Partner', :foreign_key => 'sales_rep_id'
