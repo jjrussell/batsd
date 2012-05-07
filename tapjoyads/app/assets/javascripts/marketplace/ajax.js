@@ -137,11 +137,7 @@
 
   me.fetchImages = function() {
     var width = window.innerWidth;
-    var preLoad = 0, padSpace = 0;
-    if (Tapjoy.device.idevice) {
-      preLoad = 60;
-      padSpace = 80;
-    }
+    var preLoad = 320, padSpace = 0;
     $('#earn .earn-app-icon img').each(function(n, o){
       if (this && Tapjoy.Utils.ViewPort.inView(this, { padding: padSpace, threshold: preLoad })) {
         var el = $(o);

@@ -267,8 +267,10 @@
       ViewPort: {
         belowView: function(el, cfg) {
           var padding = (cfg && cfg.padding) ? cfg.padding : 0;
+          var threshold = (cfg && cfg.threshold) ? cfg.threshold : 0;
           var fold = $(window).height() + $(window).scrollTop() + padding;
-          return fold <= $(el).offset().top - cfg.threshold;
+          console.log(!(fold <= $(el).offset().top - cfg.threshold));
+          return fold <= $(el).offset().top - threshold;
         },
         aboveView: function(el, cfg) {
           var padding = (cfg && cfg.padding) ? cfg.padding : 0;
