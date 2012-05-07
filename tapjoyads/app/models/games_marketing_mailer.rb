@@ -36,19 +36,19 @@ class GamesMarketingMailer < ActionMailer::Base
   def welcome_email(gamer, device_info = {})
     subject "Welcome to Tapjoy!"
     setup_emails(gamer, device_info)
-    sendgrid_category "Welcome Email, #{@linked ? "Linked for Device Type #{gamer_device.device_type}" : "Not Linked"}"
+    sendgrid_category "Welcome Email, #{@linked ? "Linked for Device Type #{@gamer_device.device_type}" : "Not Linked"}"
     @detailed_email = rand(2) == 1
     @linked &&= @detailed_email
     device_info[:content] = @detailed_email ? 'detailed' : 'confirm_only'
     device_info[:token] = gamer.confirmation_token
-    sendgrid_category "Welcome Email, #{@linked ? "Linked for Device Type #{gamer_device.device_type}" : "Not Linked"}, #{device_info[:content]}"
+    sendgrid_category "Welcome Email, #{@linked ? "Linked for Device Type #{@gamer_device.device_type}" : "Not Linked"}, #{device_info[:content]}"
     @confirmation_link = "#{WEBSITE_URL}/confirm?data=#{ObjectEncryptor.encrypt(device_info)}"
   end
 
   def post_confirm_email(gamer, device_info = {})
     subject "Get Started with Tapjoy!"
     setup_emails(gamer, device_info)
-    sendgrid_category "Secondary Welcome Email , #{@linked ? "Linked for Device Type #{gamer_device.device_type}" : "Not Linked"}, #{device_info[:content]}"
+    sendgrid_category "Secondary Welcome Email , #{@linked ? "Linked for Device Type #{@gamer_device.device_type}" : "Not Linked"}, #{device_info[:content]}"
     @detailed_email = true
     @template = 'welcome_email'
   end
@@ -68,7 +68,7 @@ class GamesMarketingMailer < ActionMailer::Base
     recipients gamer.email
     sendgrid_subscriptiontrack_text(:replace => "[unsubscribe_link]")
     @offer_data = {}
-    device, gamer_device, external_publisher = ExternalPublisher.most_recently_run_for_gamer(gamer)
+    device, @gamer_device, external_publisher = ExternalPublisher.most_recently_run_for_gamer(gamer)
     if external_publisher
       currency = external_publisher.currencies.first
       offerwall_url = external_publisher.get_offerwall_url(device, currency, device_info[:accept_language_str], device_info[:user_agent_str], nil, true)
@@ -79,11 +79,11 @@ class GamesMarketingMailer < ActionMailer::Base
       @offer_data[currency[:id]] = JSON.parse(response.body).merge(:external_publisher => external_publisher)
     end
 
-    gamer_device ||= gamer.gamer_devices.first
+    @gamer_device ||= gamer.gamer_devices.first
     selected_devices = device_info[:selected_devices] || []
-    @linked = gamer_device.present?
-    @android_device = @linked ? (gamer_device.device_type == 'android') : !selected_devices.include?('ios')
-    device = Device.new(:key => @linked ? gamer_device.device_id : nil)
+    @linked = @gamer_device.present?
+    @android_device = @linked ? (@gamer_device.device_type == 'android') : !selected_devices.include?('ios')
+    device = Device.new(:key => @linked ? @gamer_device.device_id : nil)
     @recommendations = device.recommendations(device_info.slice(:device_type, :geoip_data, :os_version))
   end
 end
