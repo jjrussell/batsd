@@ -325,6 +325,14 @@ class Partner < ActiveRecord::Base
     changed? ? save : true
   end
 
+  def monthly_accounting(year, month)
+    MonthlyAccounting.using_slave_db do
+      conditions = [ "partner_id = ? AND year = ? AND month = ?", self.id, year, month ]
+      monthly_accounting = MonthlyAccounting.find(:all, :conditions => conditions).first
+    end
+  end
+
+
 private
 
   def update_currencies

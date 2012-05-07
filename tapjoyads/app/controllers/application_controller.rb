@@ -1,10 +1,13 @@
+# Multiple STI subclasses in one file needs this line to be findable in development mode
+require_dependency 'review_moderation_vote'
+
 # Filters added to this controller apply to all controllers in the application.
 # Likewise, all the methods added will be available for all controllers.
 
 class ApplicationController < ActionController::Base
   helper :all # include all helpers, all the time
 
-  helper_method :geoip_data
+  helper_method :geoip_data, :downcase_param
 
   before_filter :set_time_zone
   before_filter :fix_params
@@ -130,7 +133,7 @@ class ApplicationController < ActionController::Base
   end
 
   def downcase_param(p)
-    params[p] = params[p].downcase if params[p]
+    params[p] = params[p].downcase if params[p].is_a?(String)
   end
 
   def set_param(to, from, lower = false)
@@ -265,5 +268,13 @@ class ApplicationController < ActionController::Base
       App.find_in_cache(params[:app_id]).secret_key
     ] + more_data
     Digest::SHA256.hexdigest(hash_bits.join(':'))
+  end
+
+  def device_type
+    @device_type ||= HeaderParser.device_type(request.user_agent)
+  end
+
+  def os_version
+    @os_version ||= HeaderParser.os_version(request.user_agent)
   end
 end

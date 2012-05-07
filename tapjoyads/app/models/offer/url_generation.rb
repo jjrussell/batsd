@@ -1,7 +1,7 @@
 module Offer::UrlGeneration
 
   def destination_url(options)
-    if instructions.present?
+    if item_type != 'VideoOffer' && instructions.present?
       instructions_url(options)
     else
       complete_action_url(options)
@@ -77,14 +77,15 @@ module Offer::UrlGeneration
     elsif item_type == 'SurveyOffer'
       final_url.gsub!('TAPJOY_SURVEY', click_key.to_s)
       final_url = ObjectEncryptor.encrypt_url(final_url)
-    elsif item_type == 'VideoOffer'
+    elsif item_type == 'VideoOffer' || item_type == 'TestVideoOffer'
       params = {
         :offer_id           => id,
-        :app_id             => currency,
+        :app_id             => publisher_app_id,
+        :currency_id        => currency.id,
         :udid               => udid,
         :publisher_user_id  => publisher_user_id
       }
-      final_url = "#{API_URL}/videos/#{id}/complete?#{params.to_query}"
+      final_url = "#{API_URL}/videos/#{id}/complete?data=#{ObjectEncryptor.encrypt(params)}"
     end
 
     final_url
@@ -129,6 +130,8 @@ module Offer::UrlGeneration
       click_url += 'reengagement'
     elsif item_type == 'SurveyOffer'
       click_url += "survey"
+    elsif item_type == 'DeeplinkOffer'
+      click_url += 'deeplink'
     else
       raise "click_url requested for an offer that should not be enabled. offer_id: #{id}"
     end

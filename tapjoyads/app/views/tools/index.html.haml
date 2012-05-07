@@ -1,13 +1,16 @@
 - @page_title = 'Tools'
 
-%h1 Tools
-- if permitted_to? :show, :statz
-  .tjform
-    = label_tag 'search_box', 'Offer Name:'
-    = text_field_tag 'search_box', '', :size => '40'
+.page-header
+  %h1
+    Tools
+    - if permitted_to? :show, :statz
+      = text_field_tag 'search_offer',   '', :size => '40', :placeholder => 'Search Offer', :class => 'search-query input-medium'
+    - if permitted_to? :show, :partners
+      = text_field_tag 'search_partner', '', :size => '40', :placeholder => 'Search Partner', :class => 'search-query input-medium'
 
 - if has_permissions_for_one_of? :payops, :payout_manager, :executive, :account_mgr
-  %h3 Money
+  .page-header
+    %h3 Money
 %ul
   - if permitted_to? :failed_invoices, :tools_orders
     %li= link_to 'Failed Invoices', failed_invoices_tools_orders_path
@@ -19,6 +22,8 @@
     %li= link_to 'Money', money_tools_path
   - if permitted_to? :monthly_data, :tools
     %li= link_to 'Monthly Data', monthly_data_tools_path
+  - if permitted_to? :partner_monthly_balance, :tools
+    %li= link_to 'Partner Monthly Balance', partner_monthly_balance_tools_path
   - if permitted_to? :new_transfer, :tools
     %li= link_to 'Transfer Funds', new_transfer_tools_path
   - if permitted_to? :index, :tools_network_costs
@@ -29,7 +34,8 @@
     %li= link_to 'Payout Info Changes', publisher_payout_info_changes_tools_path
 
 - if has_permissions_for_one_of? :admin, :role_mgr
-  %h3 Admin
+  .page-header
+    %h3 Admin
 %ul
   - if permitted_to? :failed_sdb_saves, :tools
     %li= link_to 'Failed Sdb Saves', failed_sdb_saves_tools_path
@@ -53,7 +59,8 @@
     %li= link_to 'Fix stuck rewards', fix_rewards_tools_path
 
 - if has_permissions_for_one_of? :games_editor, :customer_service
-  %h3 Marketplace
+  .page-header
+    %h3 Marketplace
 %ul
   - if permitted_to? :index, :tools_editors_picks
     %li= link_to 'Editor\'s Choices', tools_editors_picks_path
@@ -63,14 +70,18 @@
     %li= link_to 'My Apps Featured Content', tools_featured_contents_path
 
 - if has_permissions_for_one_of? :account_mgr
-  %h3 Account Management
+  .page-header
+    %h3 Account Management
 %ul
   - if permitted_to? :index, :tools_offer_lists
     %li= link_to 'View Offer Lists', tools_offer_lists_path
   - if permitted_to? :index, :tools_generic_offers
     %li= link_to 'View Generic Offers', tools_generic_offers_path
   - if permitted_to? :edit, :statz
-    %li= link_to "Approve Creatives (#{CreativeApprovalQueue.count})", creative_tools_offers_path
+    %li
+      - link_to creative_tools_offers_path do
+        Approve Creatives
+      %span.badge.badge-info= CreativeApprovalQueue.count
   - if permitted_to? :index, :activities
     %li= link_to 'Activity Log', activities_path
   - if permitted_to? :disabled_popular_offers, :tools
@@ -97,11 +108,16 @@
     %li= link_to 'Virtual Currency Requests', tools_currency_approvals_path
   - if permitted_to? :index, :tools_survey_offers
     %li= link_to 'Survey Offers', tools_survey_offers_path
+  - if permitted_to? :index, :tools_brand_offers
+    %li= link_to 'Associate Brands with Offers', tools_brand_offers_path
   - if permitted_to? :index, :tools_clients
     %li= link_to 'Manage Clients', tools_clients_path
+  - if permitted_to? :index, :tools_partner_changes
+    %li= link_to 'Partner Changes', tools_partner_changes_path
 
 - if has_permissions_for_one_of? :account_mgr, :customer_service, :admin
-  %h3 Customer Support
+  .page-header
+    %h3 Customer Support
 %ul
   - if permitted_to? :device_info, :tools
     %li= link_to 'Device Info &amp; Unresolved clicks', device_info_tools_path
@@ -119,7 +135,8 @@
     %li= link_to 'Gamer Accounts', tools_gamers_path
 
 - if has_permissions_for_one_of? :hr, :file_sharer
-  %h3 Human Resources
+  .page-header
+    %h3 Human Resources
 %ul
   - if permitted_to? :index, :tools_employees
     %li= link_to 'Manage employee list', tools_employees_path
@@ -135,4 +152,23 @@
 - content_for :page_javascript do
   - if permitted_to? :show, :statz
     :plain
-      $('#search_box').autocomplete({ source: '#{search_offers_path}', delay: 250, minLength: 2, select: function(event, ui) { window.location.assign(ui.item.url); } });
+      var offerSearchOptions = {
+        source: '#{search_offers_path}',
+        delay: 250,
+        minLength: 2,
+        select: function(event, ui) {
+          window.location.assign(ui.item.url);
+        },
+      };
+      $('#search_offer').autocomplete(offerSearchOptions);
+  - if permitted_to? :show, :partners
+    :plain
+      var partnerSearchOptions = {
+        source: '#{search_partners_path}',
+        delay: 250,
+        minLength: 2,
+        select: function(event, ui) {
+          window.location.assign('#{partners_path}/' + ui.item.partner_id);
+        },
+      };
+      $('#search_partner').autocomplete(partnerSearchOptions);

@@ -1,2 +1,1 @@
-= render :partial => @custom_creative_exists ? 'custom_creative' : 'generated_creative'
-= render 'shared/tracking_pixel_tags', :offer => @offer
+= render :partial => @offer.featured_custom_creative? ? 'custom_creative' : 'generated_creative'

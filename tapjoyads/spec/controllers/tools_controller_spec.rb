@@ -40,5 +40,14 @@ describe ToolsController do
         response.should render_template 'tools/index'
       end
     end
+
+    context 'accessing tools/partner_monthly_balance' do
+      it 'get correct months_list' do
+        get(:partner_monthly_balance)
+        @months = assigns(:months)
+        @months.first.should == Date.parse('2009-06-01').strftime('%b %Y') #the first month of the platform
+        @months.last.should == Date.current.beginning_of_month.prev_month.strftime('%b %Y')
+      end
+    end
   end
 end

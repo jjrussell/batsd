@@ -27,10 +27,20 @@ config.action_controller.allow_forgery_protection    = false
 # Disable delivery errors, bad email addresses will be ignored
 # config.action_mailer.raise_delivery_errors = false
 
-MEMCACHE_SERVERS = [ 'tj-production.fqfjqv.0001.use1.cache.amazonaws.com',
-                     'tj-production.fqfjqv.0002.use1.cache.amazonaws.com',
-                     'tj-production.fqfjqv.0003.use1.cache.amazonaws.com',
-                     'tj-production.fqfjqv.0004.use1.cache.amazonaws.com' ]
+MEMCACHE_SERVERS             = [
+                                 'tj-prod-20120424.fqfjqv.0001.use1.cache.amazonaws.com',
+                                 'tj-prod-20120424.fqfjqv.0002.use1.cache.amazonaws.com',
+                                 'tj-prod-20120424.fqfjqv.0003.use1.cache.amazonaws.com',
+                                 'tj-prod-20120424.fqfjqv.0004.use1.cache.amazonaws.com',
+                                 'tj-prod-20120424.fqfjqv.0005.use1.cache.amazonaws.com'
+                               ]
+DISTRIBUTED_MEMCACHE_SERVERS = [
+                                 'tj-prod-20120424.fqfjqv.0001.use1.cache.amazonaws.com',
+                                 'tj-prod-20120424.fqfjqv.0002.use1.cache.amazonaws.com',
+                                 'tj-prod-20120424.fqfjqv.0003.use1.cache.amazonaws.com',
+                                 'tj-prod-20120424.fqfjqv.0004.use1.cache.amazonaws.com',
+                                 'localhost:21211'
+                               ]
 
 EXCEPTIONS_NOT_LOGGED = ['ActionController::UnknownAction',
                          'ActionController::RoutingError']
@@ -52,6 +62,7 @@ API_URL = local_config['api_url'] || 'https://ws.tapjoyads.com'
 DASHBOARD_URL = local_config['dashboard_url'] || 'https://dashboard.tapjoy.com'
 WEBSITE_URL = local_config['website_url'] || 'https://www.tapjoy.com'
 CLOUDFRONT_URL = 'https://d21x2jbj16e06e.cloudfront.net'
+XMAN = false
 
 # Amazon services:
 amazon = YAML::load_file("#{ENV['HOME']}/.tapjoy_aws_credentials.yaml")

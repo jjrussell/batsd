@@ -27,7 +27,9 @@ class ActivityLog < SimpledbResource
   end
 
   def diff_value(key)
-    Differ.diff_by_word(after_state[key].to_s, before_state[key].to_s)
+    after = CGI::escapeHTML(after_state[key].to_s)
+    before = CGI::escapeHTML(before_state[key].to_s)
+    Differ.diff_by_word(after, before)
   end
 
   def object_name

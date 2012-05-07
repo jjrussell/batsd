@@ -22,6 +22,8 @@
       %th Platform
       %th Review Text
       %th Rating
+      %th Bury Votes
+      %th Helpful Votes
       %th
       %th
   %tbody
@@ -32,8 +34,14 @@
         %td= app_review.platform
         %td= app_review.text
         %td= app_review.user_rating
+        %td= app_review.bury_votes_count
+        %td= app_review.helpful_votes_count
         %td= link_to('Edit', edit_tools_app_review_path(app_review))
         %td= link_to('Delete', tools_app_review_path(app_review), :method => :delete, :confirm => "Delete review?")
+= will_paginate(@app_reviews)
+
+%br
+= link_to('Add New Review', new_tools_app_review_path)
 
 - content_for :page_javascript do
   :plain
@@ -41,9 +49,10 @@
       $("#app_reviews_table").tablesorter({
         widgets: ['zebra'],
         headers: {
+          3: { sorter: false },
           4: { sorter: false },
-          5: { sorter: false },
-          6: { sorter: false }
+          7: { sorter: false },
+          8: { sorter: false }
         }
       });
     });

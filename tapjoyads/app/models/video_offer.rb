@@ -9,8 +9,7 @@ class VideoOffer < ActiveRecord::Base
 
   belongs_to :partner
 
-  cache_associations :video_buttons
-  cache_associations { |r| r.video_buttons.each(&:tracking_offer) }
+  cache_associations :cache_video_buttons_and_tracking_offers
 
   validates_presence_of :partner, :name
   validates_presence_of :video_url, :unless => :new_record?
@@ -86,4 +85,9 @@ class VideoOffer < ActiveRecord::Base
     errors.add :video_url, 'Video does not exist.' unless obj.exists?
   end
 
+  private
+
+  def cache_video_buttons_and_tracking_offers
+    video_buttons.each(&:tracking_offer)
+  end
 end

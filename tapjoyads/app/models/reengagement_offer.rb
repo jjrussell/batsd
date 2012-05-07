@@ -108,7 +108,7 @@ class ReengagementOffer < ActiveRecord::Base
   end
 
   def self.cache_by_app_id(app_id)
-    reengagement_offers = ReengagementOffer.visible.order_by_day.for_app(app_id)
+    reengagement_offers = ReengagementOffer.visible.order_by_day.for_app(app_id).to_a
     Mc.distributed_put("mysql.reengagement_offers.#{app_id}.#{ReengagementOffer.acts_as_cacheable_version}", reengagement_offers, false, 1.day)
   end
 
