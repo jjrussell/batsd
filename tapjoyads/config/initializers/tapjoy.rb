@@ -24,7 +24,7 @@ IPHONE_VG_SDK              = 'https://s3.amazonaws.com/tapjoy/sdks/TapjoyConnect
 IPHONE_UNITY_PLUGIN        = 'https://s3.amazonaws.com/tapjoy/sdks/TapjoyConnectUnityPluginSample_v8.2.0.zip'
 IPHONE_PHONEGAP_PLUGIN     = 'https://s3.amazonaws.com/tapjoy/sdks/TapjoyConnectPhoneGapPluginSample_v8.2.0.zip'
 IPHONE_MARMALADE_EXTENSION = 'https://github.com/downloads/marmalade/Tapjoy-for-Marmalade/Tapjoy_iOS.zip'
-IPHONE_ADOBE_AIR_EXTENSION = 'https://s3.amazonaws.com/tapjoy/sdks/TapjoyConnectAdobeAIRPlugin_v8.2.0.zip'
+IPHONE_ADOBE_AIR_PLUGIN    = 'https://s3.amazonaws.com/tapjoy/sdks/TapjoyConnectAdobeAIRPlugin_v8.2.0.zip'
 
 WINDOWS_CONNECT_SDK = 'https://s3.amazonaws.com/tapjoy/sdks/TapjoyAdvertiserSDK_Windows_v2.0.0.zip'
 WINDOWS_OFFERS_SDK  = 'https://s3.amazonaws.com/tapjoy/sdks/TapjoyPublisherSDK_Windows_v2.0.0.zip'
