@@ -4,13 +4,6 @@ class SupportRequestsController < ApplicationController
   layout 'iphone'
 
   def new
-    respond_to do |format|
-      format.js do
-        find_incomplete_offers
-        render(:partial => 'select_offer', :layout => false)
-      end
-      format.html
-    end
   end
 
   def create
@@ -26,9 +19,14 @@ class SupportRequestsController < ApplicationController
       support_request.save
 
       TapjoyMailer.deliver_support_request(params[:description], params[:email_address], @app, @currency, params[:udid],
-        params[:publisher_user_id], params[:device_type], params[:language_code], @offer,
+        params[:publisher_user_id], params[:device_type], params[:language_code], request.env["HTTP_USER_AGENT"], @offer,
         support_request, support_request.click_id)
     end
+  end
+
+  def incomplete_offers
+    find_incomplete_offers
+    render(:partial => 'select_offer', :layout => false)
   end
 
 private

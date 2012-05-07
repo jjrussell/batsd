@@ -1,4 +1,5 @@
 - @page_title = t('text.support.title', :currency => @currency.name)
+
 #main
   %h1= @page_title
 
@@ -43,7 +44,7 @@
         $.ajax({
           type: "GET",
           dataType: "html",
-          url: "#{new_support_request_url(missing_currency_support_params('js'))}",
+          url: "#{incomplete_offers_support_requests_url(missing_currency_support_params)}",
           success: function(html) {
             $('#support_request').prepend(html);
             $('#show_offers').hide();

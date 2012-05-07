@@ -5,13 +5,13 @@
   = support_request_field :email,             @email_address
   = #support_request_field :udid,              "#{@gamer_device.device_id} [#{@gamer_device.dashboard_device_info_tool_url}]"
   = support_request_field :offer,             "#{@offer.name} [#{@offer.dashboard_statz_url}]"
-  = #support_request_field :currency,          @click.present? ? "#{@click.currency.name} [#{@click.currency.dashboard_app_currency_url}]" : nil
+  = support_request_field :currency,          "#{@currency.name} [#{@currency.dashboard_app_currency_url}]"
   = #support_request_field :reward_amount,     @click.present? ? @click.currency_reward.to_s : nil
   = #support_request_field :publisher_partner, @click.present? ? "#{@click.publisher_partner.name} [#{@click.publisher_partner.dashboard_partner_url}]" : nil
   = #support_request_field :publisher_app,     @click.present? ? "#{@click.publisher_app.name} [#{@click.publisher_app.dashboard_app_url}]" : nil
   = support_request_field :publisher_user,    @publisher_user_id
   = support_request_field :language_code,     @language_code
-  = #support_request_field :user_agent,        @user_agent
+  = support_request_field :user_agent,        @user_agent
   = support_request_field :device_type,       @device_type
   = support_request_field :support_request,   @support_request.id
   = #support_request_field :click,             @click.present? ? "#{@click.key} [#{@click.dashboard_device_info_tool_url}]" : nil
@@ -19,8 +19,7 @@
 
 
 
-= #support_request_field :udid, "#{@udid} #{DASHBOARD_URL}/tools/device_info?udid=#{@udid}"
-= #support_request_field :currency_id, "#{@currency.name} (#{@currency.id})"
+= #support_request_field :udid, "#{@udid} #{DASHBOARD_URL}/tools/device_info?udid=#{@udid}"touc
 = #support_request_field :publisher_app, "#{@app.name} #{DASHBOARD_URL}/statz/#{@app.id}"
 = #support_request_field :publisher_partner_id, @app.partner_id
 = #support_request_field :click_id, @click_id
