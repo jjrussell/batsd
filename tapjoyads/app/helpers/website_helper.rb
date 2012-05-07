@@ -6,6 +6,105 @@ module WebsiteHelper
     content_for :included_javascripts, javascript_include_tag('tapjoy/reporting')
   end
 
+  def include_rickshaw_libs
+    @rickshaw_libs_included = true
+
+    content_for :page_head, stylesheet_link_tag('rickshaw.min', 'rickshaw.extensions')
+
+    # d3 is required by rickshaw for rendering
+    content_for :included_javascripts, javascript_include_tag('rickshaw/d3.min', 'rickshaw/d3.layout.min')
+
+    # minified version for production
+    content_for :included_javascripts, javascript_include_tag('rickshaw/rickshaw.min')
+  end
+
+  # Render the necessary javascript to make Rickshaw work
+  #
+  # @param [String] json_source the json url to load
+  # @param [String] element_suffix substring of elements to allow multiple graphs
+  # @option opts [Boolean] :transform convert the data into a compatible object
+  def include_rickshaw_js(json_source, element_suffix, opts = {})
+    options = {
+      :transform => true
+    }.merge(opts)
+    include_rickshaw_libs  unless @rickshaw_libs_included
+    content_for :page_javascript do
+<<-EOJS
+    var palette_#{element_suffix} = new Rickshaw.Color.Palette( { scheme: 'httpStatus' } );
+
+    var wrapper_#{element_suffix} = new Rickshaw.Graph.Ajax( {
+      element: document.getElementById("chart_#{element_suffix}"),
+      dataURL: '#{json_source}',
+      width: 820,
+      height: 250,
+      renderer: 'area',
+      #{"onData: function(d) { return transformData_#{element_suffix}(d) }," if options[:transform]}
+      onComplete: function(w) {
+        var legend = new Rickshaw.Graph.Legend( {
+          element: document.querySelector('#legend_#{element_suffix}'),
+          graph: w.graph
+        } );
+
+        var hoverDetail = new Rickshaw.Graph.HoverDetail( {
+          graph: w.graph
+        } );
+
+        var shelving = new Rickshaw.Graph.Behavior.Series.Toggle( {
+          graph: w.graph,
+          legend: legend
+        } );
+
+        var highlighter = new Rickshaw.Graph.Behavior.Series.Highlight( {
+          graph: w.graph,
+          legend: legend
+        } );
+
+        var axes = new Rickshaw.Graph.Axis.Time( {
+          graph: w.graph
+        } );
+        axes.render();
+
+        var yAxis = new Rickshaw.Graph.Axis.Y( {
+          graph: w.graph,
+          tickFormat: Rickshaw.Fixtures.Number.formatKMBT,
+        } );
+
+        yAxis.render();
+
+        $('#loading_#{element_suffix}').remove();
+      }
+    } );
+
+    function transformData_#{element_suffix}(d) {
+      var data = [];
+      var statusCounts = {};
+
+      Rickshaw.keys(d).sort().forEach( function(t) {
+        Rickshaw.keys(d[t]).forEach( function(status) {
+          statusCounts[status] = statusCounts[status] || [];
+          statusCounts[status].push( { x: parseFloat(t), y: d[t][status] } );
+        } );
+      } );
+
+      Rickshaw.keys(statusCounts).sort().forEach( function(status) {
+        data.push( {
+          name: status,
+          data: statusCounts[status],
+          color: palette_#{element_suffix}.color(status)
+        } );
+      } );
+
+      Rickshaw.Series.zeroFill(data);
+      return data;
+    }
+EOJS
+    end
+  end
+
+  def active_class(path)
+    current_page?(path) ? 'active' : ''
+  end
+
   def is_mobile?
     (request.headers['User-Agent'] || '')[/mobile/i]
   end

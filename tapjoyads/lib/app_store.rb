@@ -5,7 +5,7 @@ class AppStore
   ITUNES_APP_URL      = 'http://ax.itunes.apple.com/WebObjects/MZStoreServices.woa/wa/wsLookup'
   ITUNES_SEARCH_URL   = 'http://ax.itunes.apple.com/WebObjects/MZStoreServices.woa/wa/wsSearch'
   WINDOWS_APP_URL     = 'http://catalog.zune.net/v3.2/en-US/apps/_APPID_?store=Zest&clientType=WinMobile+7.0'
-  WINDOWS_SEARCH_URL  = 'http://catalog.zune.net/v3.2/en-US/?includeApplications=true&prefix='
+  WINDOWS_SEARCH_URL  = 'http://catalog.zune.net/v3.2/_ACCEPT_LANGUAGE_/?includeApplications=true&prefix='
 
   # NOTE: these numbers change every once in a while. Last update: 2011-08-11
   PRICE_TIERS = {
@@ -17,27 +17,6 @@ class AppStore
     'MXP' => [   12,   24,   36,   48,   60 ],
     'NOK' => [    7,   14,   21,   28,   35 ],
     'NZD' => [ 1.29, 2.59, 4.19, 5.29, 6.49 ],
-  }
-
-  APPSTORE_COUNTRIES = {
-    :hk => "HK - Hong Kong",
-    :il => "IL - Israel",
-    :us => "US - United States",
-    :br => "BR - Brazil",
-    :tw => "TW - Taiwan",
-    :it => "IT - Italy",
-    :cn => "CN - China",
-    :fr => "FR - France",
-    :jp => "JP - Japan",
-    :gb => "GB - United Kingdom",
-    :ae => "AE - United Arab Emirates",
-    :kr => "KR - Korea, Republic of",
-    :ca => "CA - Canada",
-    :mx => "MX - Mexico",
-    :de => "DE - Germany",
-    :es => "ES - Spain",
-    :ru => "RU - Russian Federation",
-    :au => "AU - Australia"
   }
 
   # returns hash of app info
@@ -82,7 +61,7 @@ class AppStore
     when 'iphone'
       self.search_apple_app_store(term, country)
     when 'windows'
-      self.search_windows_marketplace(term)
+      self.search_windows_marketplace(term, country)
     end
   end
 
@@ -156,7 +135,7 @@ private
         :categories       => [category],
       }
     else
-      raise "Invalid response."
+      raise RuntimeError, "Invalid response."
     end
   end
 
@@ -207,6 +186,7 @@ private
   end
 
   def self.search_apple_app_store(term, country)
+    country = 'us' if country.blank?
     response = request(ITUNES_SEARCH_URL, {:media => 'software', :term => term, :country => country})
     response_ipad = request(ITUNES_SEARCH_URL, {:media => 'software', :entity => 'iPadSoftware', :term => term, :country => country})
     if (response.status == 200) && (response.headers['Content-Type'] =~ /javascript/)
@@ -248,8 +228,12 @@ private
     end
   end
 
-  def self.search_windows_marketplace(term)
-    response = request(WINDOWS_SEARCH_URL + CGI::escape(term.strip.gsub(/\s/, '+')))
+  def self.search_windows_marketplace(term, accept_language)
+    unless App::WINDOWS_ACCEPT_LANGUAGES.include?(accept_language)
+      accept_language = 'en-us'
+    end
+    url = WINDOWS_SEARCH_URL.gsub('_ACCEPT_LANGUAGE_', accept_language)
+    response = request(url + CGI::escape(term.strip.gsub(/\s/, '+')))
     if response.status == 200
       items = (Hpricot(response.body)/'a:entry'/'a:id').first(10).map do |id|
         store_id = id.inner_text.split(':').last

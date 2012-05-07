@@ -40,6 +40,14 @@ class TapjoyMailer < ActionMailer::Base
     body(:offer => offer, :stats => stats)
   end
 
+  def suspicious_gamer_alert(gamer_id, gamer_email, behavior_type, behavior_result)
+    from 'Tapjoy Support <support@tapjoy.com>'
+    recipients 'dev@tapjoy.com'
+    subject "Suspicious Gamer Behavior"
+    content_type 'text/html'
+    body(:gamer_id => gamer_id, :gamer_email => gamer_email, :behavior_type => behavior_type, :behavior_result => behavior_result)
+  end
+
   def password_reset(user_email, reset_link, location, timestamp)
     from 'Tapjoy Support <support@tapjoy.com>'
     recipients user_email
@@ -56,22 +64,6 @@ class TapjoyMailer < ActionMailer::Base
     body(:reset_link => reset_link)
   end
 
-  def contact_us(info)
-    from 'Tapjoy <noreply@tapjoy.com>'
-    recipients "support+contactus@tapjoy.com"
-    content_type 'text/html'
-    subject "Contact us from #{info[:name]}"
-    body(:info => info)
-  end
-
-  def publisher_application(info)
-    from 'Tapjoy <noreply@tapjoy.com>'
-    recipients "publishing@tapjoy.com"
-    content_type 'text/html'
-    subject "Publisher form inquiry from #{info[:first]} #{info[:last]} at #{info[:company]}"
-    body(:info => info)
-  end
-
   def whitepaper_request(info)
     from 'Tapjoy <noreply@tapjoy.com>'
     recipients "sunny.cha@tapjoy.com, raghu.nayani@tapjoy.com"
@@ -80,14 +72,6 @@ class TapjoyMailer < ActionMailer::Base
     subject_text = "Whitepaper request from #{info[:name]}"
     subject_text += " at #{info[:company]}" if info[:company].present?
     subject subject_text
-    body(:info => info)
-  end
-
-  def advertiser_application(info)
-    from 'Tapjoy <noreply@tapjoy.com>'
-    recipients "insidesales@tapjoy.com"
-    content_type 'text/html'
-    subject "Advertiser inquiry from #{info[:name]} at #{info[:company]}"
     body(:info => info)
   end
 

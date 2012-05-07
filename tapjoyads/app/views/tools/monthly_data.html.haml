@@ -1,11 +1,11 @@
 - @page_title = 'Monthly Data'
 
-%h1 Monthly data for #{@period.strftime("%b %Y")}
+%h1 Monthly data for #{@period}
 - if @completed != 100
   = "#{number_to_percentage(@completed, :precision => 2)} Completed"
 
 - form_tag('/tools/monthly_data', :method => "get") do
-  = select_tag('period', options_for_select(@months, @period.strftime("%b %Y")), { :onchange => "this.form.submit()" })
+  = select_tag('period', options_for_select(@months, @period), { :onchange => "this.form.submit()" })
 
 %table
   %thead

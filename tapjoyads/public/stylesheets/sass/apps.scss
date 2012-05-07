@@ -33,6 +33,9 @@
 .tjform select {
   width: 80px;
 }
+.tjform select.wide {
+  width: 180px;
+}
 
 .tjform input#app_name {
   width: 400px;

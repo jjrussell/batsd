@@ -1,5 +1,7 @@
 class SetPublisherUserIdController < ApplicationController
 
+  before_filter :lookup_udid
+
   def index
     return unless verify_params([:app_id, :udid, :publisher_user_id])
 

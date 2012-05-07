@@ -7,7 +7,6 @@ describe FeaturedContent do
 
   describe '.belong_to' do
     it { should belong_to :author }
-    it { should belong_to :offer }
   end
 
   describe '.have_one' do
@@ -25,7 +24,7 @@ describe FeaturedContent do
 
     context 'when platforms is blank' do
       before :each do
-        @featured_content.platforms = nil
+        @featured_content.platforms = []
       end
 
       it "returns false" do
@@ -34,7 +33,7 @@ describe FeaturedContent do
 
       it "sets an error message" do
         @featured_content.valid?
-        @featured_content.errors.on(:platforms).should == "is not valid JSON"
+        @featured_content.errors.on(:platforms).should == "can't be blank"
       end
     end
 
@@ -99,9 +98,12 @@ describe FeaturedContent do
       end
     end
 
-    context 'when offer is nil' do
+    context 'without a tracking offer' do
       before :each do
-        @featured_content.update_attributes({ :offer => nil })
+        @featured_content.tracking_offers.each(&:destroy)
+        @featured_content.reload
+
+        Factory(:partner, :id => TAPJOY_PARTNER_ID)
       end
 
       context "when the featured_type is 'STAFFPICK'" do
@@ -115,7 +117,7 @@ describe FeaturedContent do
 
         it "sets an error message" do
           @featured_content.valid?
-          @featured_content.errors.on(:offer).should == "Please select an offer/app."
+          @featured_content.errors.on(:tracking_offer).should == "Please select an offer/app."
         end
       end
 
@@ -130,7 +132,7 @@ describe FeaturedContent do
 
         it "sets an error message" do
           @featured_content.valid?
-          @featured_content.errors.on(:offer).should == "Please select an offer/app."
+          @featured_content.errors.on(:tracking_offer).should == "Please select an offer/app."
         end
       end
 
@@ -156,58 +158,21 @@ describe FeaturedContent do
     end
   end
 
-  describe '#create_tracking_offer' do
-    context 'when offer and tracking offerdoes not exist' do
-      before :each do
-        @featured_content1 = Factory(:featured_content, :featured_type => FeaturedContent::TYPES_MAP[FeaturedContent::NEWS], :offer => nil )
-      end
 
-      it "doesn't create any tracking offer" do
-        @featured_content1.tracking_offer.should be_nil
+  describe '.featured_contents' do
+    before :each do
+      @featured_content_for_ipad = Factory(:featured_content, :platforms => %w( ipad android ).to_json)
+    end
+
+    context 'when device is ipad' do
+      it 'returns featured contents contain ipad in their platforms' do
+        FeaturedContent.featured_contents('ipad')[0].should == @featured_content_for_ipad
       end
     end
 
-    context 'when offer not exist but tracking offer already exist' do
-      before :each do
-        @featured_content.update_attributes({ :featured_type => FeaturedContent::TYPES_MAP[FeaturedContent::NEWS], :offer => nil })
-        @featured_content.reload
-      end
-
-      it "does not destroys existing tracking offer" do
-        @featured_content.tracking_offer.should_not be_nil
-      end
-    end
-
-    context 'when offer exists' do
-      it "creates a tracking offer" do
-        @featured_content.tracking_offer.should be_present
-      end
-
-      it "sets the tracking_offer's url with offer.url value" do
-        @featured_content.tracking_offer.url.should == @featured_content.button_url
-      end
-
-      it "sets the tracking_offer's device_types with platforms value" do
-        @featured_content.tracking_offer.device_types.should == @featured_content.platforms
-      end
-
-      it "sets the tracking_offer's rewarded to be false" do
-        @featured_content.tracking_offer.rewarded.should be_false
-      end
-
-      context 'when updating a tracking offer' do
-        before :each do
-          @old_platforms = @featured_content.platforms
-          @featured_content.update_attributes({ :platforms => %w( android ) })
-        end
-
-        it "doesn't keep the old platform" do
-          @featured_content.tracking_offer.device_types.should_not == @old_platforms.to_json
-        end
-
-        it "updates the tracking_offer's name with new platforms" do
-          @featured_content.tracking_offer.device_types.should == @featured_content.platforms
-        end
+    context 'when device is iphone' do
+      it 'returns featured contents contain ipad in their platforms' do
+        FeaturedContent.featured_contents('iphone')[0].should == @featured_content
       end
     end
   end
@@ -268,6 +233,16 @@ describe FeaturedContent do
       it "returns default secondary icon url" do
         @featured_content.get_icon_url("#{@featured_content.id}_secondary").should == @default_icon_url
       end
+    end
+  end
+
+  describe '#has_valid_url?' do
+    before :each do
+      @featured_content.update_attributes({ :button_url => FeaturedContent::NO_URL })
+    end
+
+    it 'returns false' do
+      @featured_content.has_valid_url?.should be_false
     end
   end
 end

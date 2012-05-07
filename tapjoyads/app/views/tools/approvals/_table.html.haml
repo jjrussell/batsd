@@ -3,7 +3,7 @@
     %tr
       %th Type
       %th Record
-      %th Owner
+      %th Reviewing User (optional)
       %th State
       %th
   %tbody
@@ -12,8 +12,8 @@
         %td= approval.item_type.classify
         %td= approval.item.try(:to_s) || approval.item.id
         %td= render :partial => 'owner_select', :locals => {:approval => approval}
-        %td= approval.state
+        %td= approval.state.gsub(/^approved$/, 'accepted')
         %td.actions
-          = link_to('Approve', approve_tools_approval_path(approval), :class => 'approve')
+          = link_to('Accept', approve_tools_approval_path(approval), :class => 'approve')
           = link_to('Reject', reject_tools_approval_path(approval), :class => 'reject')
 

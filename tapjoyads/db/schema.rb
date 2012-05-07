@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120314201830) do
+ActiveRecord::Schema.define(:version => 20120419190829) do
 
   create_table "action_offers", :id => false, :force => true do |t|
     t.string   "id",                    :limit => 36,                    :null => false
@@ -54,12 +54,12 @@ ActiveRecord::Schema.define(:version => 20120314201830) do
   add_index "app_metadata_mappings", ["id"], :name => "index_app_metadata_mappings_on_id", :unique => true
 
   create_table "app_metadatas", :id => false, :force => true do |t|
-    t.string   "id",                :limit => 36,                :null => false
+    t.string   "id",                  :limit => 36,                :null => false
     t.string   "name"
     t.text     "description"
-    t.integer  "price",                           :default => 0
-    t.string   "store_name",                                     :null => false
-    t.string   "store_id",                                       :null => false
+    t.integer  "price",                             :default => 0
+    t.string   "store_name",                                       :null => false
+    t.string   "store_id",                                         :null => false
     t.integer  "age_rating"
     t.integer  "file_size_bytes"
     t.string   "supported_devices"
@@ -69,28 +69,34 @@ ActiveRecord::Schema.define(:version => 20120314201830) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "papaya_user_count"
-    t.integer  "thumbs_up",                       :default => 0
-    t.integer  "thumbs_down",                     :default => 0
+    t.integer  "thumbs_up",                         :default => 0
+    t.integer  "thumbs_down",                       :default => 0
+    t.text     "countries_blacklist"
   end
 
   add_index "app_metadatas", ["id"], :name => "index_app_metadatas_on_id", :unique => true
   add_index "app_metadatas", ["store_name", "store_id"], :name => "index_app_metadatas_on_store_name_and_store_id", :unique => true
 
   create_table "app_reviews", :id => false, :force => true do |t|
-    t.string   "id",              :limit => 36,                :null => false
-    t.string   "app_id",          :limit => 36
-    t.string   "author_id",       :limit => 36,                :null => false
-    t.string   "author_type",                                  :null => false
-    t.text     "text",                                         :null => false
+    t.string   "id",                  :limit => 36,                    :null => false
+    t.string   "app_id",              :limit => 36
+    t.string   "author_id",           :limit => 36,                    :null => false
+    t.string   "author_type",                                          :null => false
+    t.text     "text",                                                 :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "platform"
-    t.integer  "user_rating",                   :default => 0
-    t.string   "app_metadata_id", :limit => 36,                :null => false
+    t.integer  "user_rating",                       :default => 0
+    t.string   "app_metadata_id",     :limit => 36,                    :null => false
+    t.integer  "helpful_votes_count",               :default => 0
+    t.integer  "bury_votes_count",                  :default => 0
+    t.integer  "helpful_values_sum",                :default => 0
+    t.boolean  "is_blank",                          :default => false
   end
 
   add_index "app_reviews", ["app_id", "author_id"], :name => "index_app_reviews_on_app_id_and_author_id", :unique => true
   add_index "app_reviews", ["app_metadata_id", "author_id"], :name => "index_app_reviews_on_app_metadata_id_and_author_id", :unique => true
+  add_index "app_reviews", ["app_metadata_id", "updated_at", "is_blank"], :name => "app_reviews_get_app"
   add_index "app_reviews", ["id"], :name => "index_app_reviews_on_id", :unique => true
 
   create_table "approvals", :id => false, :force => true do |t|
@@ -116,34 +122,46 @@ ActiveRecord::Schema.define(:version => 20120314201830) do
     t.string   "id",                            :limit => 36,                    :null => false
     t.string   "partner_id",                    :limit => 36,                    :null => false
     t.string   "name",                                                           :null => false
-    t.text     "description"
-    t.integer  "price",                                       :default => 0
     t.string   "platform"
-    t.string   "store_id"
     t.integer  "color"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "age_rating"
     t.integer  "rotation_direction",                          :default => 0,     :null => false
     t.integer  "rotation_time",                               :default => 0,     :null => false
     t.boolean  "hidden",                                      :default => false, :null => false
-    t.integer  "file_size_bytes"
-    t.string   "supported_devices"
     t.string   "enabled_rating_offer_id",       :limit => 36
     t.string   "secret_key",                                                     :null => false
-    t.datetime "released_at"
-    t.float    "user_rating"
-    t.string   "categories"
-    t.text     "countries_blacklist"
-    t.integer  "papaya_user_count"
     t.integer  "active_gamer_count",                          :default => 0
-    t.boolean  "reengagement_campaign_enabled"
     t.string   "protocol_handler"
+    t.boolean  "reengagement_campaign_enabled",               :default => false
+    t.string   "primary_currency_id",           :limit => 36
   end
 
   add_index "apps", ["id"], :name => "index_apps_on_id", :unique => true
   add_index "apps", ["name"], :name => "index_apps_on_name"
   add_index "apps", ["partner_id"], :name => "index_apps_on_partner_id"
+
+  create_table "brand_offer_mappings", :id => false, :force => true do |t|
+    t.string   "id",         :limit => 36, :null => false
+    t.string   "offer_id",   :limit => 36, :null => false
+    t.string   "brand_id",   :limit => 36, :null => false
+    t.integer  "allocation",               :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "brand_offer_mappings", ["id"], :name => "index_brand_offer_mappings_on_id", :unique => true
+  add_index "brand_offer_mappings", ["offer_id", "brand_id"], :name => "index_brand_offer_mappings_on_offer_id_and_brand_id", :unique => true
+
+  create_table "brands", :id => false, :force => true do |t|
+    t.string   "id",         :limit => 36, :null => false
+    t.string   "name"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "brands", ["id"], :name => "index_brands_on_id", :unique => true
+  add_index "brands", ["name"], :name => "index_brands_on_name", :unique => true
 
   create_table "clients", :id => false, :force => true do |t|
     t.string   "id",         :limit => 36, :null => false
@@ -222,6 +240,8 @@ ActiveRecord::Schema.define(:version => 20120314201830) do
     t.string   "reseller_id",                                :limit => 36
     t.decimal  "reseller_spend_share",                                     :precision => 8, :scale => 6
     t.boolean  "whitelist_overridden",                                                                   :default => false, :null => false
+    t.text     "promoted_offers",                                                                                           :null => false
+    t.string   "enabled_deeplink_offer_id",                  :limit => 36
   end
 
   add_index "currencies", ["app_id"], :name => "index_currencies_on_app_id"
@@ -245,6 +265,21 @@ ActiveRecord::Schema.define(:version => 20120314201830) do
   end
 
   add_index "currency_groups", ["id"], :name => "index_currency_groups_on_id", :unique => true
+
+  create_table "deeplink_offers", :id => false, :force => true do |t|
+    t.string   "id",          :limit => 36, :null => false
+    t.string   "app_id",      :limit => 36, :null => false
+    t.string   "currency_id", :limit => 36, :null => false
+    t.string   "partner_id",  :limit => 36, :null => false
+    t.string   "name",                      :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "deeplink_offers", ["app_id"], :name => "index_deeplink_offers_on_app_id"
+  add_index "deeplink_offers", ["currency_id"], :name => "index_deeplink_offers_on_currency_id"
+  add_index "deeplink_offers", ["id"], :name => "index_deeplink_offers_on_id", :unique => true
+  add_index "deeplink_offers", ["partner_id"], :name => "index_deeplink_offers_on_partner_id"
 
   create_table "earnings_adjustments", :id => false, :force => true do |t|
     t.string   "id",         :limit => 36, :null => false
@@ -500,15 +535,16 @@ ActiveRecord::Schema.define(:version => 20120314201830) do
   add_index "invitations", ["id"], :name => "index_invitations_on_id", :unique => true
 
   create_table "jobs", :id => false, :force => true do |t|
-    t.string   "id",         :limit => 36,                      :null => false
-    t.boolean  "active",                   :default => false,   :null => false
-    t.string   "job_type",                                      :null => false
-    t.string   "controller",                                    :null => false
-    t.string   "action",                   :default => "index", :null => false
-    t.string   "frequency",                                     :null => false
-    t.integer  "seconds",                                       :null => false
+    t.string   "id",              :limit => 36,                      :null => false
+    t.boolean  "active",                        :default => false,   :null => false
+    t.string   "job_type",                                           :null => false
+    t.string   "controller",                                         :null => false
+    t.string   "action",                        :default => "index", :null => false
+    t.string   "frequency",                                          :null => false
+    t.integer  "seconds",                                            :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "max_concurrency",               :default => 0,       :null => false
   end
 
   add_index "jobs", ["id"], :name => "index_jobs_on_id", :unique => true
@@ -682,6 +718,9 @@ ActiveRecord::Schema.define(:version => 20120314201830) do
     t.string   "tracking_for_type"
     t.string   "tracking_for_id",                   :limit => 36
     t.text     "cities",                                                                                           :null => false
+    t.text     "impression_tracking_urls"
+    t.text     "click_tracking_urls"
+    t.text     "conversion_tracking_urls"
   end
 
   add_index "offers", ["id"], :name => "index_offers_on_id", :unique => true
@@ -787,6 +826,7 @@ ActiveRecord::Schema.define(:version => 20120314201830) do
     t.string   "payout_confirmation_notes"
     t.boolean  "discount_all_offer_types",                                                 :default => false,     :null => false
     t.string   "client_id",                    :limit => 36
+    t.text     "promoted_offers",                                                                                 :null => false
   end
 
   add_index "partners", ["id"], :name => "index_partners_on_id", :unique => true
@@ -925,6 +965,20 @@ ActiveRecord::Schema.define(:version => 20120314201830) do
 
   add_index "resellers", ["id"], :name => "index_resellers_on_id", :unique => true
 
+  create_table "review_moderation_votes", :id => false, :force => true do |t|
+    t.string   "id",            :limit => 36, :null => false
+    t.string   "app_review_id", :limit => 36, :null => false
+    t.string   "gamer_id",      :limit => 36, :null => false
+    t.string   "type",          :limit => 32
+    t.integer  "value"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "review_moderation_votes", ["id"], :name => "index_review_moderation_votes_on_id", :unique => true
+  add_index "review_moderation_votes", ["type", "app_review_id"], :name => "index_review_moderation_votes_on_type_and_app_review_id"
+  add_index "review_moderation_votes", ["type", "gamer_id"], :name => "index_review_moderation_votes_on_type_and_gamer_id"
+
   create_table "role_assignments", :id => false, :force => true do |t|
     t.string "id",           :limit => 36, :null => false
     t.string "user_id",      :limit => 36, :null => false
@@ -1001,6 +1055,9 @@ ActiveRecord::Schema.define(:version => 20120314201830) do
     t.string   "api_key",                                                  :null => false
     t.string   "auth_net_cim_id"
     t.string   "reseller_id",             :limit => 36
+    t.string   "state"
+    t.string   "country"
+    t.string   "account_type"
   end
 
   add_index "users", ["email"], :name => "index_users_on_email"
@@ -1013,7 +1070,7 @@ ActiveRecord::Schema.define(:version => 20120314201830) do
     t.string   "id",             :limit => 36,                   :null => false
     t.string   "video_offer_id", :limit => 36,                   :null => false
     t.string   "name",                                           :null => false
-    t.string   "url",                                            :null => false
+    t.string   "url"
     t.integer  "ordinal"
     t.boolean  "enabled",                      :default => true
     t.datetime "created_at"

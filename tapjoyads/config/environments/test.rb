@@ -21,15 +21,8 @@ config.action_controller.allow_forgery_protection    = false
 # ActionMailer::Base.deliveries array.
 config.action_mailer.delivery_method = :test
 
-config.gem 'factory_girl', :version => '2.1.2'
-config.gem 'shoulda', :version => '2.11.1'
-config.gem 'shoulda-addons', :version => '0.2.2', :lib => 'shoulda_addons'
-config.gem 'mocha', :version => '0.9.12'
-config.gem 'rspec', :lib => false, :version => '1.3.2'
-config.gem 'rspec-rails', :lib => false, :version => '1.3.4'
-config.gem 'spork', :version => '0.8.5'
-
-MEMCACHE_SERVERS = ['127.0.0.1']
+MEMCACHE_SERVERS             = ['127.0.0.1']
+DISTRIBUTED_MEMCACHE_SERVERS = ['127.0.0.1']
 
 EXCEPTIONS_NOT_LOGGED = []
 
@@ -50,6 +43,7 @@ API_URL = local_config['api_url'] || 'http://localhost:3000'
 DASHBOARD_URL = local_config['dashboard_url'] || 'http://localhost:3000'
 WEBSITE_URL = local_config['website_url'] || 'http://localhost:3000'
 CLOUDFRONT_URL = 'https://s3.amazonaws.com/test_tapjoy'
+XMAN = false
 
 amazon = YAML::load_file("#{Rails.root}/config/amazon.yaml")
 ENV['AWS_ACCESS_KEY_ID'] = amazon['test']['access_key_id']
@@ -71,10 +65,6 @@ MAIL_CHIMP_PARTNERS_LIST_ID = mail_chimp['partners_list_id']
 MAIL_CHIMP_SETTINGS_KEY = mail_chimp['settings_key']
 MAIL_CHIMP_WEBHOOK_KEY = mail_chimp['webhook_key']
 
-send_grid = YAML::load_file("#{Rails.root}/config/send_grid.yaml")['test']
-SEND_GRID_USER = send_grid['user']
-SEND_GRID_PASSWD = send_grid['passwd']
-
 SYMMETRIC_CRYPTO_SECRET = '63fVhp;QqC8N;cV2A0R.q(@6Vd;6K.\\_'
 ICON_HASH_SALT = 'Gi97taauc9VFnb1vDbxWE1ID8Jjv06Il0EehMIKQ'
 UDID_SALT = 'yeJaf+ux5W!a_62eZacra9ep8w@Z&?'
@@ -86,6 +76,10 @@ PAPAYA_API_URL = 'https://papayamobile.com'
 PAPAYA_SECRET = 'RT4oNOKx0QK2nJ51'
 
 CLEAR_MEMCACHE = true
+
+twitter = YAML::load_file("#{RAILS_ROOT}/config/twitter.yaml")
+ENV['CONSUMER_KEY'] = twitter['test']['consumer_key']
+ENV['CONSUMER_SECRET'] = twitter['test']['consumer_secret']
 
 DEV_FACEBOOK_ID = '100000459598424'
 

@@ -123,6 +123,9 @@ class Deploy
 
     puts "Pushing new version."
     system("git push --tags tapjoy master")
+
+    puts "Notifying developers on pull requests just tagged."
+    system("script/notify_deploy -e production")
   end
 
   def execute_cloudrun

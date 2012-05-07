@@ -1,5 +1,6 @@
 class Games::HomepageController < GamesController
   rescue_from Mogli::Client::ClientException, :with => :handle_mogli_exceptions
+  rescue_from Twitter::Error, :with => :handle_twitter_exceptions
   rescue_from Errno::ECONNRESET, :with => :handle_errno_exceptions
   rescue_from Errno::ETIMEDOUT, :with => :handle_errno_exceptions
   before_filter :require_gamer, :except => [ :index, :tos, :privacy, :translations ]
@@ -9,34 +10,44 @@ class Games::HomepageController < GamesController
     render "translations.js", :layout => false, :content_type => "application/javascript"
   end
 
-  def get_app
-    if params[:eid].present?
-      app_id = ObjectEncryptor.decrypt(params[:eid])
-    elsif params[:id].present?
-      app_id = params[:id]
+  def record_click
+    if params[:redirect_url].present?
+      url = ObjectEncryptor.decrypt(params[:redirect_url])
+      @tjm_request.outbound_click_url = url if @tjm_request
+      redirect_to url
     end
-    @offer = Offer.find_by_id(app_id)
+  end
+
+  def get_app
+    @offer = Offer.find(params_id)
     @app = @offer.app
     @app_metadata = @app.primary_app_metadata
+    @click_url = "#{games_record_click_path}?redirect_url=#{ObjectEncryptor.encrypt(@offer.url)}&eid=#{ObjectEncryptor.encrypt(@app.id)}"
     if @app_metadata
-      @app_reviews = AppReview.by_gamers.paginate_all_by_app_metadata_id(@app_metadata.id, :page => params[:app_reviews_page])
+      app_reviews = AppReview.paginate_all_by_app_metadata_id_and_is_blank(@app_metadata.id, false, :page => params[:app_reviews_page], :include => :author)
+      app_reviews.reject! { |x| x.bury_by_author?(current_gamer && current_gamer.id) || x.text.blank? }
+      review_authors_not_viewer =  app_reviews.map(&:author_id) - [current_gamer && current_gamer.id].compact
+
+      rude_buried_list = Gamer.all(:conditions => ["id IN(?) ", review_authors_not_viewer], :select => "id, extra_attributes")
+      rude_buried_ids = rude_buried_list.select { |x| (x.been_buried_count || 0) > Gamer::RUDE_BAN_LIMIT }.map(&:id)
+      app_reviews.reject! { |x| rude_buried_ids.include? x.author_id }
+
+      @app_reviews = app_reviews.sort { |a, b| b.moderation_rating <=> a.moderation_rating }
+      ar_ids = app_reviews.map &:id
+      @viewer_flagged = current_gamer && current_gamer.bury_review_votes.find_all_by_app_review_id(ar_ids) || []
+      @viewer_faved = current_gamer && current_gamer.helpful_review_votes.find_all_by_app_review_id(ar_ids) || []
     end
   end
 
   def earn
     device_id = current_device_id
     @device = Device.new(:key => device_id) if device_id.present?
-    if params[:eid].present?
-      currency_id = ObjectEncryptor.decrypt(params[:eid])
-    elsif params[:id].present?
-      currency_id = params[:id]
-    end
-    @active_currency = Currency.find_by_id(currency_id)
+    @app = App.find(params_id)
+    @active_currency = @app.currencies.first
     @external_publisher = ExternalPublisher.new(@active_currency)
     return unless verify_records([ @active_currency, @device ])
 
     @offerwall_url = @external_publisher.get_offerwall_url(@device, @external_publisher.currencies.first, request.accept_language, request.user_agent, current_gamer.id)
-    @app = App.find_by_id(@external_publisher.app_id)
     @app_metadata = @app.primary_app_metadata
     if @app_metadata
       @mark_as_favorite = !current_gamer.favorite_apps.map(&:app_metadata_id).include?(@app_metadata.id)
@@ -80,8 +91,8 @@ class Games::HomepageController < GamesController
         params[:gamer_id]    = current_gamer.id
       end
     end
+    record_recommended_apps
   end
-
 
   def switch_device
     if params[:data].nil?
@@ -107,5 +118,15 @@ class Games::HomepageController < GamesController
     ios_link_url = "https://#{request.host}#{games_root_path}"
     GamesMailer.deliver_link_device(current_gamer, ios_link_url, GAMES_ANDROID_MARKET_URL )
     render(:json => { :success => true })
+  end
+
+  private
+
+  def params_id
+    if params[:eid].present?
+      ObjectEncryptor.decrypt(params[:eid])
+    elsif params[:id].present?
+      params[:id]
+    end
   end
 end

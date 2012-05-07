@@ -30,6 +30,7 @@ class UsersController < WebsiteController
     @user.password = pwd
     @user.password_confirmation = pwd
     @user.time_zone = params[:user][:time_zone]
+    @user.country = params[:user][:country]
     @user.current_partner = current_partner
     @user.partners << current_partner
     if @user.save

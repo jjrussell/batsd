@@ -21,8 +21,11 @@
     #main
       #top_nav
         .left
-          - premier_suffix = current_partner.is_premier? ? '_premier' : ''
-          = link_to image_tag("#{RUN_MODE_PREFIX}tapjoylogo#{premier_suffix}.png"), "#{DASHBOARD_URL}/"
+          - if XMAN
+            = link_to image_tag("tapjoylogo_#{XMAN}.png"), "#{DASHBOARD_URL}/"
+          - else
+            - premier_suffix = current_partner.is_premier? ? '_premier' : ''
+            = link_to image_tag("#{RUN_MODE_PREFIX}tapjoylogo#{premier_suffix}.png"), "#{DASHBOARD_URL}/"
         .right
           = current_user.username
           |
@@ -72,6 +75,7 @@
         - tabs << { :partners  => partners_path }        if permitted_to?(:index, :partners)
         - tabs << { :premier   => premier_path }         if permitted_to?(:edit,  :premier) and current_partner.is_premier?
         - tabs << { :tools     => tools_path }           if permitted_to?(:index, :tools)
+        - tabs << { :ops       => ops_path }             if permitted_to?(:index, :ops)
         - tabs << { :statz     => statz_index_path }     if permitted_to?(:index, :statz)
         = navigation(tabs)
 

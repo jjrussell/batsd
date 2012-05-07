@@ -14,7 +14,10 @@
     #main
       #top_nav
         .left
-          = link_to image_tag("#{RUN_MODE_PREFIX}tapjoylogo.png"), "#{DASHBOARD_URL}/"
+          - if XMAN
+            = link_to image_tag("tapjoylogo_#{XMAN}.png"), "#{DASHBOARD_URL}/"
+          - else
+            = link_to image_tag("#{RUN_MODE_PREFIX}tapjoylogo.png"), "#{DASHBOARD_URL}/"
         .right
           = link_to('Dev forum', DEV_FORUM_URL)
           |

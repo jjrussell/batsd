@@ -27,10 +27,20 @@ config.action_controller.allow_forgery_protection    = false
 # Disable delivery errors, bad email addresses will be ignored
 # config.action_mailer.raise_delivery_errors = false
 
-MEMCACHE_SERVERS = [ 'tj-production.fqfjqv.0001.use1.cache.amazonaws.com',
-                     'tj-production.fqfjqv.0002.use1.cache.amazonaws.com',
-                     'tj-production.fqfjqv.0003.use1.cache.amazonaws.com',
-                     'tj-production.fqfjqv.0004.use1.cache.amazonaws.com' ]
+MEMCACHE_SERVERS             = [
+                                 'tj-prod-20120424.fqfjqv.0001.use1.cache.amazonaws.com',
+                                 'tj-prod-20120424.fqfjqv.0002.use1.cache.amazonaws.com',
+                                 'tj-prod-20120424.fqfjqv.0003.use1.cache.amazonaws.com',
+                                 'tj-prod-20120424.fqfjqv.0004.use1.cache.amazonaws.com',
+                                 'tj-prod-20120424.fqfjqv.0005.use1.cache.amazonaws.com'
+                               ]
+DISTRIBUTED_MEMCACHE_SERVERS = [
+                                 'tj-prod-20120424.fqfjqv.0001.use1.cache.amazonaws.com',
+                                 'tj-prod-20120424.fqfjqv.0002.use1.cache.amazonaws.com',
+                                 'tj-prod-20120424.fqfjqv.0003.use1.cache.amazonaws.com',
+                                 'tj-prod-20120424.fqfjqv.0004.use1.cache.amazonaws.com',
+                                 'localhost:21211'
+                               ]
 
 EXCEPTIONS_NOT_LOGGED = ['ActionController::UnknownAction',
                          'ActionController::RoutingError']
@@ -44,7 +54,7 @@ end
 SPROCKETS_CONFIG = {
   :compile => true,
   :combine => true,
-  :host => local_config['asset_host'] || local_config['website_url'] || 'http://localhost:3000'
+  :host => local_config['asset_host'] || local_config['website_url'] || 'https://d2mlgzrlqoz88m.cloudfront.net'
 }
 
 RUN_MODE_PREFIX = ''
@@ -52,16 +62,13 @@ API_URL = local_config['api_url'] || 'https://ws.tapjoyads.com'
 DASHBOARD_URL = local_config['dashboard_url'] || 'https://dashboard.tapjoy.com'
 WEBSITE_URL = local_config['website_url'] || 'https://www.tapjoy.com'
 CLOUDFRONT_URL = 'https://d21x2jbj16e06e.cloudfront.net'
+XMAN = false
 
 # Amazon services:
 amazon = YAML::load_file("#{ENV['HOME']}/.tapjoy_aws_credentials.yaml")
 ENV['AWS_ACCESS_KEY_ID'] = amazon['production']['access_key_id']
 ENV['AWS_SECRET_ACCESS_KEY'] = amazon['production']['secret_access_key']
 AWS_ACCOUNT_ID = '266171351246'
-
-# Add "RightAws::AwsError: sdb.amazonaws.com temporarily unavailable: (getaddrinfo: Temporary failure in name resolution)"
-# to the list of transient problems which will automatically get retried by RightAws.
-RightAws::RightAwsBase.amazon_problems = RightAws::RightAwsBase.amazon_problems | ['temporarily unavailable', 'InvalidClientTokenId', 'InternalError', 'QueryTimeout']
 
 NUM_POINT_PURCHASES_DOMAINS = 10
 NUM_CLICK_DOMAINS = 50
@@ -78,9 +85,9 @@ MAIL_CHIMP_PARTNERS_LIST_ID = mail_chimp['partners_list_id']
 MAIL_CHIMP_SETTINGS_KEY = mail_chimp['settings_key']
 MAIL_CHIMP_WEBHOOK_KEY = mail_chimp['webhook_key']
 
-send_grid = YAML::load_file("#{Rails.root}/config/send_grid.yaml")['production']
-SEND_GRID_USER = send_grid['user']
-SEND_GRID_PASSWD = send_grid['passwd']
+sendgrid = YAML::load_file("#{Rails.root}/config/sendgrid.yaml")['production']
+SENDGRID_USER = sendgrid['user']
+SENDGRID_PASSWD = sendgrid['passwd']
 
 SYMMETRIC_CRYPTO_SECRET = 'YI,B&nZVZQtl*YRDYpEjVE&\U\#jL2!H#H&*2d'
 ICON_HASH_SALT = 'Gi97taauc9VFnb1vDbxWE1ID8Jjv06Il0EehMIKQ'
@@ -93,6 +100,10 @@ PAPAYA_API_URL = 'https://papayamobile.com'
 PAPAYA_SECRET = 'RT4oNOKx0QK2nJ51'
 
 CLEAR_MEMCACHE = false
+
+twitter = YAML::load_file("#{RAILS_ROOT}/config/twitter.yaml")
+ENV['CONSUMER_KEY'] = twitter['production']['consumer_key']
+ENV['CONSUMER_SECRET'] = twitter['production']['consumer_secret']
 
 DEVICE_LINK_TRACKING_PIXEL = 'http://tapjoy.go2cloud.org/SL2P'
 
