@@ -18,7 +18,7 @@ class SdkController < WebsiteController
       'marmalade' => IPHONE_MARMALADE_EXTENSION,
       'phonegap'  => IPHONE_PHONEGAP_PLUGIN,
       'unity'     => IPHONE_UNITY_PLUGIN,
-      'air'       => IPHONE_ADOBE_AIR_EXTENSION,
+      'air'       => IPHONE_ADOBE_AIR_PLUGIN,
     },
     'windows' => {
       'adv'       => WINDOWS_CONNECT_SDK,
