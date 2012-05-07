@@ -440,7 +440,7 @@ class ToolsController < WebsiteController
   def set_months
     most_recent_period = Date.current.beginning_of_month.prev_month
     @period = params[:period].present? ? Date.parse(params[:period]) : most_recent_period
-    @period = @period.strftime("%b %Y")
+    @period_str = @period.strftime("%b %Y")
 
     @months = []
     date = Date.parse('2009-06-01') #the first month of the platform
