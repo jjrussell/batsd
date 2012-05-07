@@ -64,7 +64,6 @@
       getSome = function () {
         me.fetchData(options, function success(data) {
           $target.append(template(data));
-          me.fetchImages()
           $$.trigger(options.success_event, arguments);
         }, function fail() {
           $(".ajax-error", $$).show();
@@ -143,7 +142,7 @@
       preLoad = 60;
       padSpace = 80;
     }
-    $('.app-icon img').each(function(n, o){
+    $('#earn .earn-app-icon img').each(function(n, o){
       if (this && Tapjoy.Utils.ViewPort.inView(this, { padding: padSpace, threshold: preLoad })) {
         var el = $(o);
         if (el.attr('loaded')) {
