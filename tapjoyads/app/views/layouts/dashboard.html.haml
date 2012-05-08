@@ -28,7 +28,8 @@
       .navbar.navbar-fixed-top
         .navbar-inner
           .container-fluid
-            = link_to "Tapjoy", DASHBOARD_URL, :class => "brand"
+            - link_to DASHBOARD_URL, :class => "brand" do
+              = image_tag('tapjoy.png', :height => 36)
             - tabs = []
             - tabs << { :apps      => apps_path }            if permitted_to?(:index, :apps)
             - tabs << { :reporting => reporting_index_path } if permitted_to?(:index, :reporting)
