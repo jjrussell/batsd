@@ -99,16 +99,23 @@
     .container-fluid
       .row-fluid
         - flash.each do |name, msg|
-          / Set name to info if it is notice since bootstrap has no 'notice' type
+          -# Set name to info if it is notice since bootstrap has no 'notice' type
           .alert{ :class => "alert-#{name == :notice ? :info : name}" }
+            %a.close{ :data => { :dismiss => 'alert' } } &times;
             %strong #{name.to_s.humanize}:
             = msg
+        - [:error, :warning, :notice].each do |name|
+          - if flash[name].blank?
+            .alert.hidden{ :id => "flash_#{name}", :class => "alert-#{name == :notice ? :info : name}" }
+              %a.close{ :data => { :dismiss => 'alert' } } &times;
+              %strong #{name.to_s.humanize}:
+              %span.message &nbsp;
       .row-fluid
         = yield :page_sidebar
         = content_for_exists?(:apps_layout) ? yield(:apps_layout) : yield
       .clear
 
-    = javascript_include_tag 'jquery-1.7.2.min', 'jquery-ui-1.8.5.min', 'jquery.tablesorter', 'jquery.colorbox.min', 'application', 'chosen.jquery', 'facebox', 'bootstrap-dropdown'
+    = javascript_include_tag 'jquery-1.7.2.min', 'jquery-ui-1.8.5.min', 'jquery.tablesorter', 'jquery.colorbox.min', 'application', 'chosen.jquery', 'facebox', 'bootstrap'
     = yield :included_javascripts
 
     %script{ :type => 'text/javascript', :charset => 'utf-8' }
