@@ -110,7 +110,7 @@ class TapjoyMailer < ActionMailer::Base
     body(:click_key => click_key)
   end
 
-  def support_request(description, email_address, app, currency, udid, publisher_user_id, device_type, language_code, user_agent, offer, support_request, click_id)
+  def support_request(description, email_address, app, currency, device, publisher_user_id, device_type, language_code, user_agent, offer, support_request, click)
     from 'Online Support Request <noreply@tapjoy.com>'
     reply_to email_address
     recipients 'mobilehelp@tapjoy.com'
@@ -119,7 +119,7 @@ class TapjoyMailer < ActionMailer::Base
     body( :description        => description,
           :app                => app,
           :currency           => currency,
-          :udid               => udid,
+          :device             => device,
           :publisher_user_id  => publisher_user_id,
           :device_type        => device_type,
           :email_address      => email_address,
@@ -127,7 +127,7 @@ class TapjoyMailer < ActionMailer::Base
           :user_agent         => user_agent,
           :offer              => offer,
           :support_request    => support_request,
-          :click_id           => click_id)
+          :click              => click)
   end
 
   def approve_device(email_address, verification_link, password_reset_link, location, timestamp)
