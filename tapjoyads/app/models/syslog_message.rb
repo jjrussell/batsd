@@ -62,6 +62,11 @@ class SyslogMessage
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
   end
 
+  def replace_path(replacement)
+    @attributes[:path] = [ replacement ]
+    replacement
+  end
+
   def save
     @attributes['updated-at'] = [ Time.zone.now.to_f.to_s ]
     begin
