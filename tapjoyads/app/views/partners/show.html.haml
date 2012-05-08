@@ -92,7 +92,7 @@
       = link_to(@partner.client.name, tools_client_path(@partner.client.id))
   .metadata
     Confirmed for Payout:
-    -if @partner.confirmed_for_payout
+    -if @partner.confirmed_for_payout?
       %span{ :class => 'confirmed' } Confirmed
     -else
       %span{ :class => 'unconfirmed' } Unconfirmed

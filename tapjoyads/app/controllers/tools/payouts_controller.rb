@@ -19,8 +19,8 @@ class Tools::PayoutsController < WebsiteController
     log_activity(payout)
     if (payout_saved = payout.save)
       log_activity(partner)
-      payout_threshold = payout.amount * 1.2
-      partner.payout_threshold = payout_threshold > 50_000_00 ? payout_threshold : 50_000_00
+      payout_threshold = payout.amount * Partner::APPROVED_INCREASE_PERCENTAGE
+      partner.payout_threshold = payout_threshold > Partner::BASE_PAYOUT_THRESHOLD ? payout_threshold : Partner::BASE_PAYOUT_THRESHOLD
       partner.save
     end
     render :json => { :success => payout_saved }

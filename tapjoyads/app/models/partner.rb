@@ -3,6 +3,9 @@ class Partner < ActiveRecord::Base
 
   json_set_field :promoted_offers
 
+  BASE_PAYOUT_THRESHOLD = 50_000_00
+  APPROVED_INCREASE_PERCENTAGE = 1.2
+
   has_many :orders
   has_many :payouts
   has_many :currencies
