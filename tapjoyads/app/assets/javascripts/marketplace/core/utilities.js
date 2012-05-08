@@ -187,30 +187,30 @@
         };
       },
 
-	    debounce: function(fn, delay, execASAP, scope){
-	      var timeout;
+      debounce: function(fn, delay, execASAP, scope){
+        var timeout;
 
-	      return function debounced() {
-	        var obj = scope || this,
-	            args = arguments;
+        return function debounced() {
+          var obj = scope || this,
+              args = arguments;
 
-	        function delayedFn(){
-	          if(!execASAP){
-	            fn.apply(obj, args);
-	          }
+          function delayedFn(){
+            if(!execASAP){
+              fn.apply(obj, args);
+            }
 
-	          timeout = null;
-	        }
+            timeout = null;
+          }
 
-	        if(timeout){
-	          clearTimeout(timeout);
-	        }else if(execASAP){
-	          fn.apply(obj, args);
-	        }
+          if(timeout){
+            clearTimeout(timeout);
+          }else if(execASAP){
+            fn.apply(obj, args);
+          }
 
-	        timeout = setTimeout(delayedFn, delay || 100);
-	      };
-	    },
+          timeout = setTimeout(delayedFn, delay || 100);
+        };
+      },
 
       Storage: {
         set: function(k) {
@@ -262,12 +262,32 @@
         remove: function(k) {
           this.set(k, "", -1);
         }
+      },
+
+      ViewPort: {
+        belowView: function(el, cfg) {
+          var padding = (cfg && cfg.padding) ? cfg.padding : 0;
+          var threshold = (cfg && cfg.threshold) ? cfg.threshold : 0;
+          var fold = $(window).height() + $(window).scrollTop() + padding;
+          return fold <= $(el).offset().top - threshold;
+        },
+        aboveView: function(el, cfg) {
+          var padding = (cfg && cfg.padding) ? cfg.padding : 0;
+          var threshold = (cfg && cfg.threshold) ? cfg.threshold : 0;
+          var top = $(window).scrollTop() + padding;
+          return top >= $(el).offset().top + $(el).height() - threshold;
+        },
+        aboveInView: function(el, cfg) {
+          return !this.belowView(el, cfg) || this.aboveView(el, cfg);
+        },
+        inView: function(el, cfg) {
+          return !this.belowView(el, cfg);
+        }
       }
     }
   });
 
   Tap.log = Tap.alias(Tap.Utils, 'log');
-  Tap.ls = Tap.alias(Tap.Utils.Storage, 'ls');
 
   $.fn.extend({
     preventHighlight: function(){
