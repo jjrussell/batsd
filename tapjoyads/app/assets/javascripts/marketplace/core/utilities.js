@@ -269,7 +269,6 @@
           var padding = (cfg && cfg.padding) ? cfg.padding : 0;
           var threshold = (cfg && cfg.threshold) ? cfg.threshold : 0;
           var fold = $(window).height() + $(window).scrollTop() + padding;
-          console.log(!(fold <= $(el).offset().top - cfg.threshold));
           return fold <= $(el).offset().top - threshold;
         },
         aboveView: function(el, cfg) {
@@ -277,6 +276,9 @@
           var threshold = (cfg && cfg.threshold) ? cfg.threshold : 0;
           var top = $(window).scrollTop() + padding;
           return top >= $(el).offset().top + $(el).height() - threshold;
+        },
+        aboveInView: function(el, cfg) {
+          return !this.belowView(el, cfg) || this.aboveView(el, cfg);
         },
         inView: function(el, cfg) {
           return !this.belowView(el, cfg);
