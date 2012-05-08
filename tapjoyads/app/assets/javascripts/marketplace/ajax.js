@@ -135,9 +135,35 @@
     });
   };
 
+  me.fetchImages = function() {
+    var width = window.innerWidth;
+    var preLoad = 320, padSpace = 320;
+    $('#earn .earn-app-icon img').each(function(n, o){
+      if (this && Tapjoy.Utils.ViewPort.aboveInView(this, { padding: padSpace, threshold: preLoad })) {
+        var el = $(o);
+        if (el.attr('loaded')) {
+          return true;
+        }
+        if (width <= 480 && el.attr("source_sm")) {
+          el.attr("src", el.attr("source_sm"));
+        }
+        else if (el.attr("source_med")) {
+          el.attr("src", el.attr("source_med"));
+        }
+        el.load(function(){
+          $(this).fadeIn('slow').attr('loaded','true');
+        });
+        el.error(function(){
+          el.attr("src", "data:image/gif;base64,R0lGODlhAQABAID/AMDAwAAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==");
+        });
+      }
+    });
+  };
+
   $(function () {
     me.fillElements();
     me.ajaxForms();
+    me.fetchImages();
 
     $(document).bind("ajax-success", function (ev, form, data, status, xhr) {
       notify(_t('shared.success'));
@@ -146,5 +172,9 @@
     $(document).bind("ajax-error", function (ev, form, data, status, xhr) {
       notify(_t('games.generic_issue'));
     });
+
+    $(window).scroll(Tapjoy.Utils.debounce(me.fetchImages));
+    $('.lazy-image-loader').on('ajax-loader-success', me.fetchImages);
+
   });
 }(window.Tapjoy, window.jQuery, window.jsonp_preloaded));
