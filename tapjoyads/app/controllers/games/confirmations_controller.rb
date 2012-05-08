@@ -17,8 +17,8 @@ class Games::ConfirmationsController < GamesController
         path = games_root_path(:utm_campaign => 'welcome_email',
                                :utm_medium   => 'email',
                                :utm_source   => 'tapjoy',
-                               :utm_content  => data[:content],
-                               :data         => params[:data])
+                               :utm_content  => data[:content]
+                               )
       end
 
       if data[:content] == 'confirm_only'
@@ -29,5 +29,11 @@ class Games::ConfirmationsController < GamesController
       flash[:error] = 'Unable to confirm email address.'
     end
     redirect_to path
+  end
+
+  def redirect
+    short_url = ShortUrl.find_by_token(params[:token])
+    redirect_to short_url.url and return if short_url.present?
+    redirect_to  games_confirm_path(:token => params[:token])
   end
 end
