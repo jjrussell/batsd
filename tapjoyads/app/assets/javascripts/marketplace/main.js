@@ -262,7 +262,7 @@ $(document).ready(function(){
               var msg, goHome = false, unbindSubmit = true;
               if (d.success) {
                 if (d.redirect_url) { // redirect to link device
-                  document.location.href = d.redirect_url
+                  document.location.href = d.redirect_url;
                 }
                 else if (Tapjoy.rootPath) {
                   document.location.href = Tapjoy.rootPath;

@@ -6,9 +6,11 @@ class OneOffs
         :all,
         :conditions => { :gamer_profiles => { :facebook_id => result.facebook_id } },
         :include => :gamer_profile,
-        :order => 'last_login_at DESC'
-      ).each_with_index do |gamer, index|
-        gamer.gamer_profile.dissociate_account!(Invitation::FACEBOOK) if index > 0
+        :order => 'last_login_at DESC',
+        :limit => result.acct_count.to_i + 10, #just to be comfortable
+        :offset => 1
+      ).each do |gamer|
+        gamer.gamer_profile.dissociate_account!(Invitation::FACEBOOK)
       end
     end
   end
