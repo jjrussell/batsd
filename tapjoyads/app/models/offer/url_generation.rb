@@ -33,12 +33,10 @@ module Offer::UrlGeneration
       :os_version            => os_version,
     }
 
-    "#{API_URL}/offer_instructions?data=#{ObjectEncryptor.encrypt(data)}"
-
-    if item_type == 'GenericOffer'
-      if item.trigger_action == 'Facebook Login'
-        "#{API_URL}/offer_triggered_actions/facebook_login?data=#{ObjectEncryptor.encrypt(data)}"
-      end
+    if item_type == 'GenericOffer' && item.trigger_action == 'Facebook Login'
+      "#{API_URL}/offer_triggered_actions/facebook_login?data=#{ObjectEncryptor.encrypt(data)}"
+    else
+      "#{API_URL}/offer_instructions?data=#{ObjectEncryptor.encrypt(data)}"
     end
   end
 
