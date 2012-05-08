@@ -11,9 +11,7 @@ class Games::SupportRequestsController < GamesController
 
     if data[:content].blank?
       # Pull unresolved offers list from hidden field to avoid repeating SimpleDB query
-      if(params[:clicks_list].present?)
-        @clicks_list = params[:clicks_list]
-      end
+      @clicks_list = params[:clicks_list]
 
       flash.now[:notice] = t("text.games.enter_message");
       render :new and return
