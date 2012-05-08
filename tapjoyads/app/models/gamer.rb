@@ -83,6 +83,16 @@ class Gamer < ActiveRecord::Base
   serialized_extra_attributes_accessor :been_buried_count
   serialized_extra_attributes_accessor :been_helpful_count
 
+  def before_connect(facebook_session, options = {})
+    referrer = options.delete(:referrer) { nil }
+
+    self.email                 = facebook_session.email
+    self.password              = Digest::SHA1.hexdigest("--#{Time.now.to_s}--#{facebook_session.name}--")[0,6]
+    self.password_confirmation = self.password
+    self.terms_of_service      = '1'
+    self.referrer              = referrer
+  end
+
   def confirm!
     self.confirmed_at = Time.zone.now
     if save

@@ -1,4 +1,5 @@
 class Games::HomepageController < GamesController
+  prepend_before_filter :decrypt_data_param, :only => :earn
   rescue_from Mogli::Client::ClientException, :with => :handle_mogli_exceptions
   rescue_from Twitter::Error, :with => :handle_twitter_exceptions
   rescue_from Errno::ECONNRESET, :with => :handle_errno_exceptions
@@ -45,6 +46,8 @@ class Games::HomepageController < GamesController
     @app = App.find(params_id)
     @active_currency = @app.currencies.first
     @external_publisher = ExternalPublisher.new(@active_currency)
+    @offer = Offer.find_by_id(params[:offer_id]) if params[:offer_id]
+    @currency = Currency.find_in_cache(params[:currency_id]) if params[:currency_id]
     return unless verify_records([ @active_currency, @device ])
 
     @offerwall_url = @external_publisher.get_offerwall_url(@device, @external_publisher.currencies.first, request.accept_language, request.user_agent, current_gamer.id)

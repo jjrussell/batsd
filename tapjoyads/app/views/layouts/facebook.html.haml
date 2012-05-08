@@ -1,0 +1,69 @@
+!!! Mobile
+
+%html
+  %head
+    %title
+      = @page_title
+    = javascript_include_tag 'jquery-1.4.2.min', 'jquery-ui-1.8.5.min', 'jquery.tablesorter', 'jquery.colorbox.min', 'application', 'chosen.jquery', 'facebox'
+    = yield :included_stylesheets
+    %style{ :type => 'text/css' }
+      :plain
+        body {
+          -webkit-text-size-adjust: none;
+          -webkit-touch-callout: none;
+          font-family: Helvetica, "Tahoma Bold", Arial, sans-serif;
+          background:url("/images/stripes.png") repeat scroll 0 0 #C7C7C7;
+        }
+        #main {
+          padding: 5px;
+          background:#fff;
+          border: 1px solid #d5d5d5;
+          -moz-border-radius: 7px;
+          -webkit-border-radius: 7px;
+          margin: 0 3%;
+        }
+
+      = yield :page_styles
+
+    %meta{ 'http-equiv' => 'Content-Type', :content => 'text/html; charset=utf-8' }
+    %meta{ 'name' => 'viewport', :content => 'width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=no;' }
+  %body
+    = yield
+
+    - if @load_facebook == true
+      #fb-root{ 'data-fb-options' => {:appId => Facebooker2.app_id, :locale => 'en_US'}.to_json }
+
+    = yield :included_javascripts
+    %script{ :type => 'text/javascript', :charset => 'utf-8' }
+      :plain
+        function initiateFacebook (options, onReady) {
+          window.fbAsyncInit = function() {
+            FB.init({
+              appId  : options.appId,
+              status : true,
+              cookie : true,
+              oauth : true,
+              xfbml : true
+            });
+
+            onReady();
+          };
+
+          (function() {
+            var e = document.createElement('script'); e.async = true;
+            e.src = document.location.protocol + '//connect.facebook.net/' + options.locale + '/all.js';
+            document.getElementById('fb-root').appendChild(e);
+          }());
+        }
+        
+        function checkPermission (withPerm) {
+          FB.api('/me/permissions', function (response) {
+            if (response['data'][0]['offline_access'] && response['data'][0]['publish_stream']) {
+              withPerm();
+            } else {
+              $('.error').text('Please grant us Facebook permission').show();
+            }
+          });
+        }
+
+      = yield :page_javascript

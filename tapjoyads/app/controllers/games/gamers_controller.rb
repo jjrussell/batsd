@@ -105,6 +105,61 @@ class Games::GamersController < GamesController
     end
   end
 
+  def create_account_from_offer
+    current_facebook_user.fetch
+    existing_gamer = Gamer.find(
+      :first,
+      :conditions => { :gamer_profiles => { :facebook_id => current_facebook_user.id } },
+      :include => :gamer_profile)
+    if existing_gamer
+      render(:json => { :success => false, :message => 'Account already exist.' }) and return
+    end
+
+    # match gamer
+    matching_gamer = Gamer.find_by_email(current_facebook_user.email)
+    if matching_gamer
+      attributes = {
+        :facebook_id => current_facebook_user.id,
+        :fb_access_token => current_facebook_user.client.access_token
+      }
+      matching_gamer.gamer_profile.update_attributes(attributes)
+      render(:json => { :success => true, :message => "Already associate your facebook account with your TJM account #{matching_gamer.email}." }) and return
+    end
+ 
+    # new gamer
+    gamer = Gamer.new
+    gamer.before_connect(current_facebook_user)
+    gamer_profile = GamerProfile.new(
+      :birthdate       => current_facebook_user.birthday,
+      :nickname        => current_facebook_user.name,
+      :gender          => current_facebook_user.gender,
+      :facebook_id     => current_facebook_user.id,
+      :fb_access_token => current_facebook_user.client.access_token
+    )
+    gamer.gamer_profile = gamer_profile
+
+    if gamer.save
+      params[:default_platforms] ||= {}
+      # update with gamer.send_welcome_email when sign up with facebook alive
+      message = {
+        :gamer_id => gamer.id,
+        :accept_language_str => request.accept_language,
+        :user_agent_str => request.user_agent,
+        :device_type => device_type,
+        :selected_devices => params[:default_platforms].reject { |k, v| v != '1' }.keys,
+        :geoip_data => geoip_data,
+        :os_version => os_version }
+      Sqs.send_message(QueueNames::SEND_WELCOME_EMAILS, Base64::encode64(Marshal.dump(message)))
+
+      GamerSession.create(gamer)
+
+      render(:json => { :success => true })
+    else
+      gamer.valid?
+      render(:json => { :success => false, :message => "Fail to create account, please try again later.#{gamer.errors.on(:terms_of_service)}" })
+    end
+  end
+
   private
 
   def set_profile

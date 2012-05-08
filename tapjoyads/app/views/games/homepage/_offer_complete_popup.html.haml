@@ -1,0 +1,25 @@
+- amount_and_currency = capture_haml do
+  %span.amount= t('text.instructions.amount_and_currency', :amount => @currency.get_visual_reward_amount(@offer, params[:display_multiplier]), :currency => @currency.name)
+
+.container
+  .offer-complete-popup
+    .header
+      .left.ml10.pt3
+        .squircle
+          = image_tag(@app.get_icon_url(:size => 114, :source => :cloudfront))
+      .left.ml10
+        .big-title.slate.elip
+          = @app.name
+    .content
+      .title= "Congratulations!"
+      .currency_earned
+      .currency_earned_detail= "You've earned #{amount_and_currency} in #{@app.name} by finishing \"#{@offer.name}\" offer! Tap the \"Earn More #{@currency.name}\" button to earn more currency at Tapjoy."
+      .earn-more.button= "Earn More #{@currency.name}"
+
+- content_for :page_javascript do
+  :plain
+    $(function($){
+      $('.earn-more').click(function () {
+        $('.offer-complete-popup').hide();
+      })
+    });

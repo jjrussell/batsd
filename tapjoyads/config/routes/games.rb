@@ -32,7 +32,7 @@ ActionController::Routing::Routes.draw do |map|
       :controller => 'games/support_requests', :action => :new, :type => 'feedback'
 
     m.resource :gamer, :controller => 'games/gamers', :only => [ :create, :edit, :update, :destroy, :show, :new ],
-      :member => { :password => :get, :prefs => :get, :update_password => :put, :accept_tos => :put, :confirm_delete => :get } do |gamer|
+      :member => { :password => :get, :prefs => :get, :update_password => :put, :accept_tos => :put, :confirm_delete => :get, :create_account_from_offer => :get } do |gamer|
       gamer.resource :device, :controller => 'games/gamers/devices', :only => [ :new, :create ], :member => { :finalize => :get }
       gamer.resource :favorite_app, :controller => 'games/gamers/favorite_app', :only => [ :create, :destroy ]
       gamer.resource :gamer_profile, :controller => 'games/gamers/gamer_profiles', :only => [ :update ], :member => { :update_birthdate => :put, :update_prefs => :put, :dissociate_account => :put }

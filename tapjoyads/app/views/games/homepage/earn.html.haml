@@ -1,5 +1,7 @@
 #earn.current
   .panel
+    - if params[:data]
+      = render 'offer_complete_popup'
     .page-header
       .container.mt20
         .left.ml10.pt3

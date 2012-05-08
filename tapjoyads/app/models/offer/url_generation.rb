@@ -34,6 +34,12 @@ module Offer::UrlGeneration
     }
 
     "#{API_URL}/offer_instructions?data=#{ObjectEncryptor.encrypt(data)}"
+
+    if item_type == 'GenericOffer'
+      if item.trigger_action == 'Facebook Login'
+        "#{API_URL}/offer_triggered_actions/facebook_login?data=#{ObjectEncryptor.encrypt(data)}"
+      end
+    end
   end
 
   def complete_action_url(options)
@@ -46,7 +52,7 @@ module Offer::UrlGeneration
     library_version       = options.delete(:library_version)       { nil }
     os_version            = options.delete(:os_version)            { nil }
     options.delete(:language_code)
-    options.delete(:display_multiplier)
+    display_multiplier    = options.delete(:display_multiplier)    { 1 }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
 
     final_url = url.gsub('TAPJOY_UDID', udid.to_s)
@@ -62,6 +68,14 @@ module Offer::UrlGeneration
       advertiser_app_id = click_key.to_s.split('.')[1]
       final_url.gsub!('TAPJOY_GENERIC_INVITE', advertiser_app_id) if advertiser_app_id
       final_url.gsub!('TAPJOY_GENERIC', click_key.to_s)
+      final_url.gsub!('TJM_EID', ObjectEncryptor.encrypt(publisher_app_id))
+      data = {
+        :offer_id           => id,
+        :currency_id        => currency.id,
+        :display_multiplier => display_multiplier
+        
+      }
+      final_url.gsub!('DATA', ObjectEncryptor.encrypt(data))
       if has_variable_payment?
         extra_params = {
           :uid      => Digest::SHA256.hexdigest(udid + UDID_SALT),
