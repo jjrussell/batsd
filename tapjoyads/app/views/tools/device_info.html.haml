@@ -171,8 +171,12 @@
               - form_tag resolve_clicks_tools_path(:click_id => click.id) do
                 = submit_tag 'Award'
           %td.small
-            = link_to('show', '#', :class => 'show-click-detail')
-            - click_info_ul(click, reward)
+            %ul.nobr
+              %li= "Click ID: #{click.key}"
+              - if reward
+                %li= "Reward ID: #{reward.key}"
+              %li= link_to('show more', '#', :class => 'show-click-detail')
+              - click_info_ul(click, reward)
           %td
             = clippy(click.key)
       %tr
@@ -195,8 +199,10 @@
         return false;
       });
       $('.show-click-detail').click(function(){
-        $(this).hide();
-        $(this).siblings('.hidden').show();
+        $(this).parent().hide();
+        details = $(this).parent().next();
+        $(this).parent().after(details.html());
+        details.remove();
         return false;
       });
     });

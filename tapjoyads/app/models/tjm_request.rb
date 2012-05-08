@@ -89,6 +89,8 @@ class TjmRequest < SyslogMessage
   self.define_attr :display_path
   self.define_attr :outbound_click_url
 
+  attr_accessor :tracking_param
+
   def initialize(options = {})
     session    = options.delete(:session)    { |k| raise "#{k} is a required argument" }
     request    = options.delete(:request)    { |k| raise "#{k} is a required argument" }
@@ -137,6 +139,11 @@ class TjmRequest < SyslogMessage
         end
       end
     end
+
+    if @tracking_param.present?
+      self.replace_path("#{self.path}_#{@tracking_param}")
+    end
+
     super
   end
 

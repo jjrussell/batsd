@@ -76,7 +76,16 @@ module ToolsHelper
   def formatted_items_for_tracking(partner)
     partner.trackable_items.map do |item|
       type = item.class.name.to_s.gsub(/Offer$/, '')
-      ["#{type} - #{item.name}", "#{item.class}:#{item.id}"]
+      platform = if item.respond_to?(:platform_name)
+                   item.platform_name
+                 elsif item.respond_to?(:get_platform)
+                   item.get_platform
+                 elsif item.respond_to?(:primary_offer)
+                   item.primary_offer.get_platform
+                 else
+                   'N/A'
+                 end
+      ["#{type} - #{item.name} - #{platform}", "#{item.class}:#{item.id}"]
     end
   end
 

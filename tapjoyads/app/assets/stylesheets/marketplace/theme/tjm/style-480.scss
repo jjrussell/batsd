@@ -3,14 +3,10 @@
 //-------------------------------------------
 .line-item {
   .hd {
-    margin-right: percentage(12/480);
   }
   .bd {
-    width: percentage(316/480);
-    margin-right: 0 percentage(12/480);
   }
   .ft {
-    width: percentage(69/480);
   }
 }
 .image-caption {
@@ -49,19 +45,15 @@
  * Earnings screen
  */
 .app-info {
-  position: absolute;
-  top: 20px;
-  left: 112px;
-  width: percentage(340/480);
 
   .big-title {
-    width: percentage(340/480);
-    font-size: 1.4em;
+    font-size: 1.2em;
   }
 
-  .ui-icon-medium {
-    width: percentage(300/480);
+  .earn-install-run {
+    font-size: 0.95em;
   }
+
 }
 
 .earn-btn {
@@ -91,8 +83,6 @@
   display: none;
 }
 
-
-
 #recommendations .app,
 div.app {
   border-top: 1px solid #fff;
@@ -100,38 +90,43 @@ div.app {
   margin: 0;
   padding: 0;
   width: auto !important;
-  height: 106px !important;
   float: none;
+  padding: 6px 0;
   position: static;
   overflow: auto;
   overflow-x: hidden;
   overflow-y: hidden;
 
   .app-icon {
-    margin: 0px;
-    margin-top: 10px;
-    margin-left: 10px;
+    margin: 0;
+    margin-left: 6px;
     float: left;
-    width: 100px !important;
-    height: 100px !important;
-    background-size: 100px 100px !important;
+    width: 70px !important;
+    height: 70px !important;
+    background-size: 70px 70px !important;
+
     img {
       left: 1px;
+      width: 68px !important;
+      height: 68px !important;
     }
 
   }
 
   .details {
-    margin-top: 25px;
-    margin-left: 10px;
+    margin-top: 12px;
+    margin-left: 4px;
     text-align: left;
     float: left;
-    position: absolute;
-    left: 100px;
+    display: inline-block;
 
     span.title {
       padding-left: 2px;
       margin-bottom: 5px;
+      float: left;
+      white-space: normal;
+      text-overflow: clip;
+      overflow: auto;
     }
   }
 
@@ -142,9 +137,8 @@ div.app {
 
   .ui-list-action {
     display: block;
-    margin-top: 44px;
-    float: right;
-    margin-right: 10px;
+    margin-top: 24px;
+    margin-right: 6px;
 
     .ui-list-action-label {
       font-size: 1.15em;
@@ -153,14 +147,26 @@ div.app {
       text-shadow: 0 1px 0 #fff;
     }
   }
+  .ui-list-action.orange-action {
+    .ui-list-action-label {
+      color: #fff;
+    }
+  }
   .myapps-earn {
-    position: absolute;
-    right: 8px;
+    display: inline-block;
+    padding: 4px 8px;
+    float: right;
+
+    .earn-text {
+      padding-top: 3px;
+      max-width: 80px;
+      text-shadow: 1px 1px 3px rgba(0,0,0, .5);
+    }
   }
 }
 
 
-div.app:last-child {
+.row .app:last-child {
   border-bottom: 0 !important;
 }
 
@@ -186,29 +192,32 @@ div.app:last-child {
   display: block;
 }
 
+#more-games, #review-form {
+  .app {
+    margin: 0;
 
-#more-games {
-  .details {
-    margin-top: 15px;
-    text-align: left;
-    float: none;
+    .details {
+      margin-top: 15px;
+      text-align: left;
+      float: none;
+      display: inline-block;
 
-    span.title {
-      padding-left: 2px;
-      margin-bottom: 5px;
-    }
+      span.title {
+        padding-left: 2px;
+        margin-bottom: 5px;
+      }
 
-    small.description {
-      height: 75px;
-      word-wrap: break-word;
-      width: 96%;
+      small.description {
+        word-wrap: break-word;
+        overflow: hidden;
+      }
     }
   }
 }
 
 #recommendations .app,
 .app {
-  height: 106px !important;
+
   .app-icon {
     width: 100px !important;
     height: 100px !important;
@@ -222,9 +231,9 @@ div.app:last-child {
   }
 }
 
-.list-button-container.earn-theme {
-  .squircle {
-    width: 100px !important;
+#earn {
+  .squircle.earn-mainapp-icon {
+    width:  100px !important;
     height: 100px !important;
     background-size: 100px 100px !important;
 
@@ -234,30 +243,28 @@ div.app:last-child {
       height: 98px !important;
     }
   }
-}
 
-.squircle {
-  width:  100px !important;
-  height: 100px !important;
-  background-size: 100px 100px !important;
+  .squircle.earn-app-icon {
+    width:  70px !important;
+    height: 70px !important;
+    background-size: 70px 70px !important;
 
-  img {
-    left: 1px;
-    width: 98px !important;
-    height: 98px !important;
-  }
-}
-
-#more-games {
-  .app {
-    margin: 0;
-    .details {
-      small.description {
-        height: 40px;
-        overflow: hidden;
-        width: 70%;
-      }
+    img {
+      left: 1px;
+      width: 68px !important;
+      height: 68px !important;
     }
+  }
+  .action-item {
+    font-size: .9em;
+  }
+  .action-item.free {
+    font-size: .85em;
+  }
+  .wifi {
+    height: 28px;
+    width: 50px;
+    background-size: 100%;
   }
 }
 
@@ -272,4 +279,3 @@ div.app:last-child {
     }
   }
 }
-

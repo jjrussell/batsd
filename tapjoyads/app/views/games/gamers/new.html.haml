@@ -60,9 +60,6 @@
               :privacy_policy => link_to(t("text.games.privacy_policy_href"), games_privacy_path, :target => '_blank'))
           = f.hidden_field :referrer, :value => params[:referrer]
 
-  .container.mt20.center
-    = render '/shared/truste'
-
     #register-progress.register-progress.hidden.clearfix
       .register-message
         &nbsp;
@@ -74,6 +71,9 @@
             #loader_t.loader_letter
             #loader_a.loader_letter
             #loader_p.loader_letter
+
+  .container.mt20.center
+    = render '/shared/truste'
 
 = form_tag "#{games_gamer_sessions_path(:path => params[:path], :data => params[:data], :referrer => params[:referrer], :src => params[:src])}", :method => :post, :id => 'log-in-with-facebook-form', :authenticity_token => "#{form_authenticity_token}"
 

@@ -245,14 +245,6 @@ class GamesController < ApplicationController
     current_gamer.devices.size > 1
   end
 
-  def device_type
-    @device_type ||= HeaderParser.device_type(request.user_agent)
-  end
-
-  def os_version
-    @os_version ||= HeaderParser.os_version(request.user_agent)
-  end
-
   def select_layout
     if params[:ajax].present?
       nil

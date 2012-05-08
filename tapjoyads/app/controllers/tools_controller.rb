@@ -1,9 +1,10 @@
 class ToolsController < WebsiteController
-  layout 'tabbed'
+  layout 'dashboard'
 
   filter_access_to :all
 
   before_filter :downcase_udid, :only => [ :device_info, :update_device, :reset_device ]
+  before_filter :set_months, :only => [ :monthly_data, :partner_monthly_balance ]
   after_filter :save_activity_logs, :only => [ :update_user, :update_device, :resolve_clicks, :award_currencies, :update_award_currencies ]
 
   def index
@@ -24,16 +25,6 @@ class ToolsController < WebsiteController
   end
 
   def monthly_data
-    most_recent_period = Date.current.beginning_of_month.prev_month
-    @period = params[:period].present? ? Date.parse(params[:period]) : most_recent_period
-
-    @months = []
-    date = Date.parse('2009-06-01') #the first month of the platform
-    while date <= most_recent_period
-      @months << date.strftime('%b %Y')
-      date += 1.month
-    end
-
     conditions = [ "month = ? AND year = ? AND partner_id != '#{TAPJOY_PARTNER_ID}'", @period.month, @period.year ]
     MonthlyAccounting.using_slave_db do
       expected    = Partner.count(:conditions => [ "created_at < ?", @period.next_month ])
@@ -55,6 +46,32 @@ class ToolsController < WebsiteController
     @revenue = @spend + @linkshare_est + @ads_est - @marketing - @bonus
     @net_revenue = @revenue - @earnings
     @margin = @net_revenue.to_f * 100.0 / @revenue.to_f
+  end
+
+  def partner_monthly_balance
+    if params[:partner_id].present?
+      @partners = Partner.find_all_by_id(params[:partner_id])
+    elsif params[:q].present?
+      query = params[:q].gsub("'", '')
+      @partners = Partner.search(query).uniq
+    else
+      return
+    end
+
+    if @partners.empty?
+      flash.now[:error] = 'Partner not found'
+      return
+    end
+
+    @beginning_balances = []
+    @ending_balances = []
+    @partners.each do |partner|
+      monthly_accounting = partner.monthly_accounting(@period.year, @period.month)
+      beginning_balances = (monthly_accounting.nil?) ? "N/A" : monthly_accounting.beginning_balance / 100.0
+      ending_balances = (monthly_accounting.nil?) ? "N/A" : monthly_accounting.ending_balance / 100.0
+      @beginning_balances << beginning_balances
+      @ending_balances << ending_balances
+    end
   end
 
   def money
@@ -414,8 +431,24 @@ class ToolsController < WebsiteController
     redirect_to :action => :device_info, :udid => params[:udid]
   end
 
+  private
+
   def downcase_udid
-    params[:udid] = params[:udid].downcase if params[:udid].present?
+    downcase_param(:udid)
+  end
+
+  def set_months
+    most_recent_period = Date.current.beginning_of_month.prev_month
+    @period = params[:period].present? ? Date.parse(params[:period]) : most_recent_period
+    @period_str = @period.strftime("%b %Y")
+
+    @months = []
+    date = Date.parse('2009-06-01') #the first month of the platform
+    while date <= most_recent_period
+      @months << date.strftime('%b %Y')
+      date += 1.months
+    end
+    true
   end
 
 end

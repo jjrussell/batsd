@@ -12,6 +12,22 @@ $(document).ready(function(){
         });
       };
 
+  // Dynamic table content width
+  function adjustWidth() {
+    if ($('.home .games').length > 0) {
+      var width = window.innerWidth;
+      if (width <= 480) {
+        var imgWidth = $('.app-icon:first').outerWidth(true);
+        var btnWidth = $('.myapps-earn:first').outerWidth(true);
+        var contentWidth = width - imgWidth - btnWidth - 24;
+        $('.details').each(function(){
+          $(this).width(contentWidth);
+        });
+      }
+    }
+  }
+  $(window).bind('resize orientationchange', Tapjoy.Utils.debounce(adjustWidth));
+
   // Login Modal
   $('#login, #login-web').bind('click', function() {
     if ($('#login-form').hasClass('show')) {
@@ -43,7 +59,7 @@ $(document).ready(function(){
   });
 
   // Login Validation
-  if ($('form#new_gamer_session')) {
+  if ($('form#new_gamer_session').length > 0) {
     $('form#new_gamer_session input').focus(function() {
       $('form#new_gamer_session .form-error').html('&nbsp;').css({opacity: '0', visibility: 'hidden'});
     });
@@ -83,7 +99,7 @@ $(document).ready(function(){
   }
 
   // Signup Validation
-  if($('form#new_gamer')){
+  if($('form#new_gamer').length > 0) {
     var values = {}, tempVal = {}, data, preSelected = false, hasError = false, cookieError = false;
     var activeState = 'orange-action', inactiveState = 'grey-action';
     var rurl = $('form#new_gamer').attr('action');
@@ -144,7 +160,6 @@ $(document).ready(function(){
 
     // Validate form inputs
     function validate(e) {
-
       hasError = true;
       cookieError = false;
       // Test Cookie
@@ -701,7 +716,6 @@ $(document).ready(function(){
         $('#recommendationsRow').removeClass('nbb');
       }else{
         $('.row').hide().removeClass('view-all');
-
         if(li.hasClass('showRecommendations')){
           $('#recommendationsRow').show().addClass('nbb');
         }else if(li.hasClass('showGames')){
@@ -712,8 +726,7 @@ $(document).ready(function(){
       }
 
       handleTabs($("a.ui-joy-reveal", li));
-
-      $('.heading', tjmViewContainer).text(li.text())
+      $('.heading', tjmViewContainer).text(li.text());
       return false;
     });
   });
@@ -750,8 +763,6 @@ $(document).ready(function(){
   }
 
   $(window).bind('resize orientationchange', debounce(manageResize));
-  // run logic on ready
-  manageResize();
 
   setTimeout(function(){
     // Hide the ios address bar!
@@ -783,7 +794,7 @@ $(document).ready(function(){
     }
     $.each(Tapjoy.selectDevice, function(i,v){
       var device_type = v.device_type;
-      if (!Tapjoy.Utils.isEmpty(device_type) && Tapjoy.device.name && (device_type.toLowerCase() == Tapjoy.device.name.toLowerCase())) {
+      if (!Tapjoy.Utils.isEmpty(device_type) && Tapjoy.device.name && (device_type.toLowerCase() == Tapjoy.device.name.toLowerCase().replace(/simulator/,'').replace(/ /,''))) {
         device_count++;
         device_found = true;
         d.push('<a href="', path ,'?data=', v.data ,'">');
@@ -855,8 +866,6 @@ $(document).ready(function(){
  //commenting out until we can talk to Van
   //  Tapjoy.Utils.mask();
   }
-
-
 
   //if (Tapjoy.device.idevice) {
   //  Tapjoy.Plugins.showAddHomeDialog();
