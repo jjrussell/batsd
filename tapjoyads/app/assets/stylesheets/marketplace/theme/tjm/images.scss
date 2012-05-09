@@ -68,6 +68,11 @@ body {
   background: inline-image("#{$image_path}/right_arrow.png") no-repeat 98% center;
 }
 
+.rightarrow.white {
+  padding-right: 20px;
+  background: inline-image("#{$image_path}/right_arrow_white.png") no-repeat 98% center;
+}
+
 .plussign {
   padding-right: 20px;
   background: inline-image("#{$image_path}/plus-sign.png") no-repeat 98% center;
