@@ -5,7 +5,6 @@
   -ms-text-size-adjust: 110%;
 }
 
-
 #tjmTopbar .banner {
   .more {
     top: 30%;
@@ -43,31 +42,40 @@
 .list-button-container.earn-theme .big-title,
 .list-button-container.earn-theme .info,
 div.app .title {
-  width: 136px !important;
+
+}
+
+.games {
+  .app {
+    .details {
+      max-width: 140px !important;
+    }
+    .myapps-earn {
+      .earn-text {
+        margin: 0;
+        padding: 0;
+      }
+    }
+  }
 }
 
 .list-button-container.earn-theme .list-button a {
   font-size: 1em;
 }
 
-.list-button-container.earn-theme .list-button a .big-title{
+.list-button-container.earn-theme .list-button a .big-title {
   font-size: 1.8em;
 }
-
 
 .content {
   width: 300px;
 }
-
 
 #more-games {
   .app {
     margin: 0;
     .details {
       small.description {
-        height: 40px;
-        overflow: hidden;
-        width: 60%;
       }
     }
   }
@@ -77,7 +85,6 @@ div.app .title {
 #recommendations .app {
   .details {
     span.title {
-      width: 200px !important;
     }
   }
 }
@@ -100,18 +107,24 @@ div.app .title {
 /**
  * Earnings screen
  */
+
+#earn {
+  .big-title {
+    font-size: 1.8em;
+    width: 100% !important;
+  }
+}
+
 .app-info {
-  width: percentage(300/320);
-  left: 96px;
+  width: percentage(240/320);
   margin: 0;
 
   .big-title {
-    width: percentage(300/320);
     font-size: 1.8em;
   }
 }
+
 .earn-btn {
-  top: 25px;
 
   .collect {
     font-size: 1.2em;
