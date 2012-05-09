@@ -19,7 +19,7 @@
           - else
             = hidden_field_tag :type, "contact_support"
           = f.text_area :content, :rows => 5, :value => params[:content], :required => 'true', :class => 'ui-joy-textarea'
-        - if params[:type] === "contact_support"
+        - if params[:type] === "contact_support" && current_device.present?
           .container.h120
             .field
               = label_tag :offer_id, t('text.games.contact_support_incomplete_offers_label')

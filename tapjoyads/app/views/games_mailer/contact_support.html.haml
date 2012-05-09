@@ -4,7 +4,7 @@
     = @click.present? ? " - #{@click.offer.name}" : ""
 %div
   = support_request_field :email,             @gamer.email
-  = support_request_field :udid,              "#{@gamer_device.device_id} [#{@gamer_device.dashboard_device_info_tool_url}]"
+  = support_request_field :udid,              @gamer_device.present? ? "#{@gamer_device.device_id} [#{@gamer_device.dashboard_device_info_tool_url}]" : nil
   = support_request_field :offer,             @click.present? ? "#{@click.offer.name} [#{@click.offer.dashboard_statz_url}]" : nil
   = support_request_field :currency,          @click.present? ? "#{@click.currency.name} [#{@click.currency.dashboard_app_currency_url}]" : nil
   = support_request_field :reward_amount,     @click.present? ? @click.currency_reward.to_s : nil
@@ -13,7 +13,7 @@
   = support_request_field :publisher_user,    @click.present? ? @click.publisher_user_id : nil
   = support_request_field :language_code,     @language_code
   = support_request_field :user_agent,        @user_agent
-  = support_request_field :device_type,       @gamer_device.device_type
+  = support_request_field :device_type,       @gamer_device.present? ? @gamer_device.device_type : nil
   = support_request_field :support_request,   @support_request.id
   = support_request_field :click,             @click.present? ? "#{@click.key} [#{@click.dashboard_device_info_tool_url}]" : nil
   = support_request_field :description,       @content

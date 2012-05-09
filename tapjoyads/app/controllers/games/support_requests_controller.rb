@@ -47,10 +47,12 @@ class Games::SupportRequestsController < GamesController
   private
 
   def find_unresolved_clicks
+    @unresolved_clicks = []
+    return if params[:udid].blank?
+
     conditions = ActiveRecord::Base.sanitize_conditions("udid = ? and clicked_at > ? and manually_resolved_at is null", params[:udid], 30.days.ago.to_f.to_s)
     clicks = Click.select_all(:conditions => conditions).sort_by { |click| -click.clicked_at.to_f }
 
-    @unresolved_clicks = []
     clicks.each do |click|
       if click.advertiser_app.present? && !@unresolved_clicks.any? { |clk| clk.advertiser_app_id == click.advertiser_app_id }
         @unresolved_clicks << click

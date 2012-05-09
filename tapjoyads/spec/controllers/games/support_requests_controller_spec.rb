@@ -117,29 +117,40 @@ describe Games::SupportRequestsController do
   end
 
   describe "#unresolved_clicks" do
-    before :each do
-      @params = { :udid => @device.key }
+    context 'with a UDID' do
+      before :each do
+        @params = { :udid => @device.key }
+      end
+
+      context 'the @unresolved_clicks collection' do
+        it 'includes both "correct" clicks' do
+          get :unresolved_clicks, @params
+          assigns(:unresolved_clicks).should include @click1
+          assigns(:unresolved_clicks).should include @click2
+        end
+
+        it "doesn't include the older duplicate click" do
+          get :unresolved_clicks, @params
+          assigns(:unresolved_clicks).should_not include @click1_dupe_old
+        end
+
+        it "limits the number of clicks in the list to 20" do
+          results = [ @click1, @click1_dupe_old, @click2 ]
+          20.times { |i| results << Factory(:click, :udid => @device.key, :clicked_at => 1.hour.ago) }
+          Click.stubs(:select_all).returns(results) # results.size is 23
+
+          get :unresolved_clicks, @params
+          assigns(:unresolved_clicks).size.should == 20
+        end
+      end
     end
+  end
 
+  context 'without a UDID' do
     context 'the @unresolved_clicks collection' do
-      it 'includes both "correct" clicks' do
-        get :unresolved_clicks, @params
-        assigns(:unresolved_clicks).should include @click1
-        assigns(:unresolved_clicks).should include @click2
-      end
-
-      it "doesn't include the older duplicate click" do
-        get :unresolved_clicks, @params
-        assigns(:unresolved_clicks).should_not include @click1_dupe_old
-      end
-
-      it "limits the number of clicks in the list to 20" do
-        results = [ @click1, @click1_dupe_old, @click2 ]
-        20.times { |i| results << Factory(:click, :udid => @device.key, :clicked_at => 1.hour.ago) }
-        Click.stubs(:select_all).returns(results) # results.size is 23
-
-        get :unresolved_clicks, @params
-        assigns(:unresolved_clicks).size.should == 20
+      it 'is blank' do
+        get :unresolved_clicks
+        assigns(:unresolved_clicks).should be_empty
       end
     end
   end
