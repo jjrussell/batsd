@@ -1,6 +1,5 @@
 class Partner < ActiveRecord::Base
   include UuidPrimaryKey
-  extend ActiveSupport::Memoizable
 
   json_set_field :promoted_offers
 
@@ -357,9 +356,9 @@ class Partner < ActiveRecord::Base
   end
 
   def account_manager_email
-    self.account_managers.present? ? self.account_managers.first.email.downcase : "\xFF"
+    @account_manager_email ||= self.account_managers.present? ? self.account_managers.first.email.downcase : "\xFF"
+    @account_manager_email
   end
-  memoize :account_manager_email
 
   def can_confirm_payout_info?(user)
     user_roles = user.role_assignments.map { |x| x.name}
