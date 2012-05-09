@@ -15,7 +15,7 @@ describe Order do
     it { should validate_presence_of :note }
     it { should validate_numericality_of :amount }
     it { should ensure_inclusion_of(:status).in_range(Order::STATUS_CODES.keys) }
-    it { should ensure_inclusion_of(:payment_method).in_range(Order::PAYMENT_METHODS.keys) }
+    it { should ensure_inclusion_of(:payment_method).in_range(Order::PAYMENT_METHODS.keys.sort) }
   end
 
   describe 'an invoice' do

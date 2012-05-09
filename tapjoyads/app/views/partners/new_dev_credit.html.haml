@@ -1,0 +1,26 @@
+- @page_title = 'Create Dev Credit'
+
+%h1 Create Dev Credit for #{@partner.name}
+%p
+  Pending earnings: #{number_to_currency(@partner.pending_earnings / 100.0)}
+
+- form_for @transfer, :url => create_dev_credit_partner_path, :html => { :class => 'tjform' } do |f|
+  %table
+    %tr
+      %th= f.label :amount
+      %td
+        = f.currency_field :amount, {}, {:class => 'allow_negative'}
+        = error_message_on @transfer, :amount
+    %tr
+      %th= f.label :internal_notes
+      %td
+        = f.text_field :internal_notes, :size => 50
+        = error_message_on @transfer, :internal_notes
+    %tr
+      %td{ :colspan => 2 }= submit_tag 'Create Dev Credit'
+
+- content_for :page_styles do
+  :plain
+    .alert {
+      color: red;
+    }

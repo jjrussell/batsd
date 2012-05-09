@@ -12,8 +12,8 @@ class BillingController < WebsiteController
     @pending_earnings = current_partner.pending_earnings
     respond_to do |format|
       format.html do
-        @payouts.reject!{ |p| p.is_transfer? }
-        @orders.reject! { |o| o.is_transfer? || o.is_bonus? || o.is_marketing_credits? }
+        @payouts.reject! { |p| p.is_transfer?  || p.is_dev_credit? || p.is_recoupable_marketing_credit? }
+        @orders.reject! { |o| o.is_transfer? || o.is_bonus? || o.is_marketing_credit? || o.is_recoupable_marketing_credit? }
         @last_payout = @payouts.blank? ? 0 : @payouts.last.amount
         @last_payment = @orders.blank? ? 0 : @orders.last.amount
       end
@@ -27,22 +27,22 @@ class BillingController < WebsiteController
   end
 
   def export_statements
-    setup_export_headers("tapjoy_statements")
+    setup_export_headers('tapjoy_statements')
     render :layout => false
   end
 
   def export_orders
-    setup_export_headers("tapjoy_payments")
+    setup_export_headers('tapjoy_payments')
     render :layout => false
   end
 
   def export_payouts
-    setup_export_headers("tapjoy_payouts")
+    setup_export_headers('tapjoy_payouts')
     render :layout => false
   end
 
   def export_adjustments
-    setup_export_headers("tapjoy_adjustments")
+    setup_export_headers('tapjoy_adjustments')
     render :layout => false
   end
 
@@ -135,12 +135,12 @@ class BillingController < WebsiteController
 
     amount = sanitize_currency_param(params[ :transfer_amount ]).to_i
     if amount <= 0
-      flash[:error] = "Transfer amount must be more than $0."
+      flash[:error] = 'Transfer amount must be more than $0.'
     elsif amount > current_partner.pending_earnings
-      flash[:error] = "Transfer amount must be less than your Pending Earnings."
+      flash[:error] = 'Transfer amount must be less than your Pending Earnings.'
     else
       Partner.transaction do
-        payout, order, marketing_order = current_partner.build_transfer(amount, "Submitted by partner.")
+        payout, order, marketing_order = current_partner.build_transfer(amount, 'Submitted by partner.')
 
         log_activity(payout)
         payout.save!
@@ -223,7 +223,7 @@ private
     end
 
     @orders.each do |order|
-      if order.is_transfer? || order.is_bonus? || order.is_marketing_credits?
+      if order.is_transfer? || order.is_bonus? || order.is_marketing_credit? || order.is_recoupable_marketing_credit?
         month = order.created_at.strftime("%Y-%m")
         @statements[month][:others] << order
       else
@@ -233,7 +233,7 @@ private
     end
 
     @payouts.each do |payout|
-      unless payout.is_transfer?
+      unless payout.is_transfer? || payout.is_recoupable_marketing_credit? || payout.is_dev_credit?
         month = payout.created_at.strftime("%Y-%m")
         @statements[month][:payouts] << payout
       end
@@ -248,7 +248,7 @@ private
   end
 
   def setup_export_headers(filename)
-    response.headers['Content-Type'] = "text/csv"
+    response.headers['Content-Type'] = 'text/csv'
     response.headers['Content-Disposition'] = "attachment; filename=#{filename}.csv"
   end
 

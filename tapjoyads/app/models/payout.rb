@@ -2,7 +2,7 @@ class Payout < ActiveRecord::Base
   include UuidPrimaryKey
 
   STATUS_CODES = { 0 => 'Invalid', 1 => 'Normal' }
-  PAYMENT_METHODS = { 1 => 'Paid', 3 => 'Transfer' }
+  PAYMENT_METHODS = { 1 => 'Paid', 3 => 'Transfer', 4 => 'Recoupable Marketing Credit', 6 => 'Dev Credit' }
 
   belongs_to :partner
 
@@ -29,7 +29,9 @@ class Payout < ActiveRecord::Base
     PAYMENT_METHODS[payment_method]
   end
 
-  def is_transfer?; payment_method==3; end
+  def is_transfer?;                     payment_method==3; end
+  def is_recoupable_marketing_credit?;  payment_method==4; end
+  def is_dev_credit?;                   payment_method==6; end
 
   private
 

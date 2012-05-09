@@ -213,10 +213,12 @@ class Partner < ActiveRecord::Base
     end
   end
 
+  def build_recoupable_marketing_credit(amount, internal_notes)
+    build_generic_transfer(amount, 4, internal_notes)
+  end
+
   def build_transfer(amount, internal_notes)
-    records = []
-    records << payouts.build(:amount => amount, :month => Time.zone.now.month, :year => Time.zone.now.year, :payment_method => 3)
-    records << orders.build(:amount => amount, :status => 1, :payment_method => 3, :note => internal_notes)
+    records = build_generic_transfer(amount, 3, internal_notes)
     marketing_amount = (amount * transfer_bonus).to_i
     records << orders.build(:amount => marketing_amount, :status => 1, :payment_method => 5, :note => internal_notes) unless marketing_amount == 0
     records
@@ -376,6 +378,11 @@ class Partner < ActiveRecord::Base
         ( !self.payout_threshold_confirmation && can_confirm_payout_threshold?(user))
   end
 
+  def build_dev_credit(amount, internal_notes)
+    payouts.build(:amount => amount, :month => Time.zone.now.month,
+        :year => Time.zone.now.year, :payment_method => 6 )
+  end
+
   private
 
   def update_currencies
@@ -427,6 +434,13 @@ class Partner < ActiveRecord::Base
     if sales_rep && !sales_rep.employee?
       errors.add(:sales_rep, 'must be an employee')
     end
+  end
+
+  def build_generic_transfer(amount, payment_method, internal_notes)
+    records = []
+    records << payouts.build(:amount => amount, :month => Time.zone.now.month, :year => Time.zone.now.year, :payment_method => payment_method)
+    records << orders.build(:amount => amount, :status => 1, :payment_method => payment_method, :note => internal_notes)
+    records
   end
 
   def client_id_legal

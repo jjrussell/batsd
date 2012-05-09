@@ -11,6 +11,7 @@ class Order < ActiveRecord::Base
     1 => 'Invoice',
     2 => 'Marketing Credits',
     3 => 'Transfer',
+    4 => 'Recoupable Marketing Credits',
     5 => 'Bonus',
   }
 
@@ -44,11 +45,12 @@ class Order < ActiveRecord::Base
     PAYMENT_METHODS[payment_method]
   end
 
-  def is_order?;             payment_method==0;  end
-  def is_invoiced?;          payment_method==1;  end
-  def is_marketing_credits?; payment_method==2;  end
-  def is_transfer?;          payment_method==3;  end
-  def is_bonus?;             payment_method==5;  end
+  def is_order?;                        payment_method==0; end
+  def is_invoiced?;                     payment_method==1; end
+  def is_marketing_credit?;             payment_method==2; end
+  def is_transfer?;                     payment_method==3; end
+  def is_recoupable_marketing_credit?;  payment_method==4; end
+  def is_bonus?;                        payment_method==5; end
 
   def create_freshbooks_invoice!
     return if invoice_id

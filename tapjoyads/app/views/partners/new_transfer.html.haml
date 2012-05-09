@@ -28,6 +28,9 @@
           = f.text_field :internal_notes, :size => 50
           = error_message_on @transfer, :internal_notes
       %tr
+        %th= f.label :transfer_type, 'Transfer type'
+        %td= f.select :transfer_type, {'Transfer' => 3, 'Recoupable Marketing Credit' => 4}
+      %tr
         %td{ :colspan => 2 }= submit_tag 'Create Transfer'
 
 - content_for :page_styles do

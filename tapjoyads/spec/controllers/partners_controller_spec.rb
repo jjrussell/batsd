@@ -17,7 +17,7 @@ describe PartnersController do
     it "logs transfer and math should work out" do
       amount = rand(100) + 100
 
-      get(:create_transfer, { :transfer => { :amount => amount.to_s, :internal_notes => 'notes' }, :id => @partner.id })
+      get(:create_transfer, { :transfer => { :amount => amount.to_s, :internal_notes => 'notes', :transfer_type => '5' }, :id => @partner.id })
       @partner.reload
 
       response.should be_redirect
@@ -33,7 +33,7 @@ describe PartnersController do
       amount = rand(100) + 100
       bonus = (amount * @partner.transfer_bonus)
 
-      get(:create_transfer, { :transfer => { :amount => amount.to_s, :internal_notes => 'notes' }, :id => @partner.id })
+      get(:create_transfer, { :transfer => { :amount => amount.to_s, :internal_notes => 'notes', :transfer_type => '5' }, :id => @partner.id })
       @partner.reload
 
       @partner.orders.length.should == 2
@@ -42,6 +42,20 @@ describe PartnersController do
       @partner.balance.should == 10000 + amount*100 + bonus*100
     end
 
+    it "ignore bonus if a recoupable marketing credit" do
+      @partner.transfer_bonus = 0.1
+      @partner.save
+      amount = rand(100) + 100
+      bonus = (amount * @partner.transfer_bonus)
+
+      get(:create_transfer, { :transfer => { :amount => amount.to_s, :internal_notes => 'notes', :transfer_type => '4' }, :id => @partner.id})
+      @partner.reload
+
+      assert_equal 1, @partner.orders.length
+      assert_equal 1, @partner.payouts.length
+      assert_equal 10000 - amount*100, @partner.pending_earnings
+      assert_equal 10000 + amount*100, @partner.balance
+    end
   end
 
   context "when agencies act as partners" do
