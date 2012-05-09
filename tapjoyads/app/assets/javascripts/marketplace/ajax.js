@@ -1,6 +1,7 @@
 (function (Tap, $, preload) {
   "use strict";
 
+  Tap.offerClicked = false;
   var me = {},
       _t = window.i18n.t,
       notify = function (message) {
@@ -8,6 +9,13 @@
           message: message
         });
       };
+
+  me.bindOfferClick = function() {
+    $('a.offer-link').unbind('click');
+    $('a.offer-link').click(function(){
+      Tap.offerClicked = true;
+    });
+  };
 
   me.isNumber = function (value) {
     return Object.prototype.toString.call(value) === "[object Number]";
@@ -59,12 +67,14 @@
         $load_more = $(".ajax-load-more", $$),
         $script_tag = $("script", $$),
         template = $script_tag.length > 0 ? me.template($script_tag.html()) : function () {},
-        getSome;
+        getSome,
+        refreshOffers;
 
       getSome = function () {
         me.fetchData(options, function success(data) {
           $target.append(template(data));
           $$.trigger(options.success_event, arguments);
+          me.bindOfferClick();
         }, function fail() {
           $(".ajax-error", $$).show();
           $$.trigger(options.error_event, arguments);
@@ -85,11 +95,35 @@
         if (me.isNumber(options.params.start) && me.isNumber(options.params.max)) {
           options.params.start += options.params.max;
         }
-
         getSome();
       });
 
       if (options.immediate) { getSome(); }
+
+      refreshOffers = function() {
+        var oldMax = options.params.max, oldStart = options.params.start;
+        $target.empty();
+        $placeholder.show();
+        $load_more.hide();
+
+        options.params.max = oldStart + oldMax;
+        options.params.start = 0;
+
+        getSome();
+
+        options.params.max = oldMax;
+        options.params.start = oldStart;
+      };
+
+      if (Tapjoy.device.idevice || Tapjoy.device.android) {
+        window.addEventListener("pageshow", function(){
+          if (Tap.offerClicked) {
+            Tap.offerClicked = false;
+            refreshOffers();
+          }
+        }, false);
+      }
+
     });
   };
 
