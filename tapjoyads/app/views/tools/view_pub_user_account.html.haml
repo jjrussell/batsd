@@ -1,0 +1,34 @@
+- @page_title = 'Publisher User Account'
+
+%h1= @page_title
+%table.with-border
+  %tbody
+    %tr
+      %th Publisher App Name
+      %td= @publisher_app.name
+    %tr
+      %th Publisher App ID
+      %td= @publisher_app.id
+    %tr
+      %th Publisher User ID
+      %td= params[:publisher_user_id]
+%h3
+  Devices
+%table.with-border
+  %thead
+    %tr
+      %td Device ID
+      %td Last Run Time
+      %td Detach from User Account
+  %tbody
+    - @devices.each do |device|
+      %tr
+        %td
+          = device.key
+        %td
+          %nobr= device.last_run_time(@publisher_app.id) ? device.last_run_time(@publisher_app.id).to_s(:pub_abbr_ampm_sec) : ''
+        %td
+          - form_tag({ :action => 'detach_pub_user_account', :publisher_app_id => @publisher_app.id, :publisher_user_id => params[:publisher_user_id], :udid => device.key }, { :class => 'tjform' }) do
+            = submit_tag 'Detach'
+
+- content_for :page_head, stylesheet_link_tag('tools')
