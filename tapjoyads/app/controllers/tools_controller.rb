@@ -442,9 +442,9 @@ class ToolsController < WebsiteController
     @devices = []
     @pub_user.udids.each { |udid| @devices << Device.new(:key => udid) }
     @devices.sort! do |a,b|
-      a_last = a.last_run_time(@publisher_app.id)
-      b_last = b.last_run_time(@publisher_app.id)
-      ( a_last && b_last ) ? a_last <=> b_last : ( a_last ? 1 : ( b_last ? -1 : 0) )
+      a_last = a.last_run_time(@publisher_app.id) || Time.zone.at(0)
+      b_last = b.last_run_time(@publisher_app.id) || Time.zone.at(0)
+      a_last <=> b_last
     end.reverse!
 
   end
