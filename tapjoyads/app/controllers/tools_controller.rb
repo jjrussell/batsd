@@ -444,8 +444,8 @@ class ToolsController < WebsiteController
     @devices.sort! do |a,b|
       a_last = a.last_run_time(@publisher_app.id) || Time.zone.at(0)
       b_last = b.last_run_time(@publisher_app.id) || Time.zone.at(0)
-      a_last <=> b_last
-    end.reverse!
+      b_last <=> a_last
+    end
 
   end
 
