@@ -34,7 +34,6 @@
       always(data);
     });
     preload.consumed = true;
-    me.bindOfferClick();
   };
 
   me.fetchData = function (options, success, error, always) {
