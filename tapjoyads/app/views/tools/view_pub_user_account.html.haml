@@ -24,9 +24,9 @@
     - @devices.each do |device|
       %tr
         %td
-          = device.key
+          = link_to(device.key, device_info_tools_path(:udid => device.key))
         %td
-          %nobr= device.last_run_time(@publisher_app.id) ? device.last_run_time(@publisher_app.id).to_s(:pub_abbr_ampm_sec) : ''
+          %nobr= device.last_run_time(@publisher_app.id) ? device.last_run_time(@publisher_app.id).to_s(:pub_ampm_sec) : ''
         %td
           - form_tag({ :action => 'detach_pub_user_account', :publisher_app_id => @publisher_app.id, :publisher_user_id => params[:publisher_user_id], :udid => device.key }, { :class => 'tjform' }) do
             = submit_tag 'Detach'
