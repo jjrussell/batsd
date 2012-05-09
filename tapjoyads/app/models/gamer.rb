@@ -241,7 +241,7 @@ class Gamer < ActiveRecord::Base
   def too_many_devices?
     gamer_devices.count >= MAX_DEVICE_THRESHOLD
   end
-  
+
   def send_welcome_email(request, device_type, default_platforms, geoip_data, os_version)
     message = {
       :gamer_id => id,
