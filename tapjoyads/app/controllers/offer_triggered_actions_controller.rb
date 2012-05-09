@@ -6,7 +6,7 @@ class OfferTriggeredActionsController < ApplicationController
   layout 'facebook', :only => :facebook_login
 
   def facebook_login
-    @redirect_url = "#{WEBSITE_URL}/games/gamer/create_account_from_offer"
+    @redirect_url = "#{WEBSITE_URL}/games/gamer/create_account_from_offer?udid=#{params[:udid]}"
   end
 
   private
