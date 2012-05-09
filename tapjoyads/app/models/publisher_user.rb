@@ -32,8 +32,6 @@ class PublisherUser < SimpledbShardedResource
     if udids.include?(udid)
       self.delete('udids', udid)
       save
-    else
-      false
     end
   end
 

@@ -442,11 +442,10 @@ class ToolsController < WebsiteController
     @devices = []
     @pub_user.udids.each { |udid| @devices << Device.new(:key => udid) }
     @devices.sort! do |a,b|
-      a_last = a.last_run_time(@publisher_app.id) || Time.zone.at(0)
-      b_last = b.last_run_time(@publisher_app.id) || Time.zone.at(0)
+      a_last = a.last_run_time(@publisher_app.id) || Time.at(0)
+      b_last = b.last_run_time(@publisher_app.id) || Time.at(0)
       b_last <=> a_last
     end
-
   end
 
   def detach_pub_user_account
@@ -482,7 +481,7 @@ class ToolsController < WebsiteController
     @pub_user = PublisherUser.new(:key => "#{params[:publisher_app_id]}.#{params[:publisher_user_id]}")
     if params[:publisher_app_id].blank? || @pub_user.is_new
       flash[:error] = "Invalid publisher user account parameters."
-      redirect_to :action => :device_info and return
+      redirect_to :action => :device_info
     end
   end
 end
