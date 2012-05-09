@@ -44,7 +44,6 @@
     - @partners.each do |partner|
       - payout_info = partner.payout_info
       - confirmation_notes = partner.confirmation_notes
-      - confirmation_notes << 'Payout Info not Present!' unless payout_info.present?
       %tr
         %td
           %strong Name:
@@ -90,27 +89,7 @@
               %span.status
           - else
             &nbsp;
-        %td
-          - if permitted_to?(:confirm_payouts, :tools_payouts)
-            - form_tag confirm_payouts_tools_payouts_path( :partner_id => partner.id, :type => :json), :method => :post, :class => 'enable_request' do
-              %div{ :class => 'enabled', :style =>  (!confirmation_notes.empty? ? 'display:none;' : 'display:inline;')}
-                %span{ :class => 'enabled'}
-                  %strong Confirmed
-              %div{ :class => 'disabled', :style => (confirmation_notes.empty? ? 'display:none;' : 'display:inline;') }
-                %span{ :class => 'disabled'}
-                  %strong Unconfirmed
-                  = submit_tag 'Confirm', :class => 'submit'
-              %img.spinner{ :src => '/images/spinner.gif', :style => 'display:none;' }
-          - else
-            - if partner.confirmed_for_payout? && partner.completed_payout_info?
-              %span{ :class => 'enabled'} Confirmed
-            - else
-              %span{ :class => 'disabled'}
-                Uncomfirmed
-        %td.notes
-          %span{ :class => 'disabled' }
-            - unless confirmation_notes.empty?
-              \- #{confirmation_notes.join('<br>-')}
+        = render 'shared/payout_confirmations', :partner => partner, :permitted =>  permitted_to?(:confirm_payouts, :tools_payouts), :path => confirm_payouts_tools_payouts_path( :partner_id => partner.id, :type => :json)
 
 = will_paginate(@partners)
 %div{ :class => 'popup', :style => 'display:none'}
@@ -202,6 +181,10 @@
                 notes.empty();
               } else {
                 disabled.show();
+                notes.find('span').html(response.notes);
+                if(response.can_confirm == false) {
+                  disabled.find('.submit').remove();
+                }
               }
             } else {
               $(this).parent().html('Error');

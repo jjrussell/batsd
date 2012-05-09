@@ -7,7 +7,7 @@ class Tools::PartnerValidationsController < WebsiteController
     all_conditions = {:include => [:payout_info, {:users => [:user_roles]}]}
     @partners = Partner.to_payout
     if params[:acct_mgr_filter].present?
-      all_conditions[:conditions] = ['users.id = ?', params[:acct_mgr_filter]]
+      all_conditions[:conditions] = ['users.id = ? and (users.email like ? or users.email like ?)', params[:acct_mgr_filter], '%@tapjoy.com', '%@offerpal.com']
       all_conditions[:joins] = [:users]
       @account_manager = User.find(params[:acct_mgr_filter]).email
     end
@@ -16,9 +16,11 @@ class Tools::PartnerValidationsController < WebsiteController
 
     if params[:acct_mgr_sort].present?
       @partners = @partners.to_a
-      @partners.each { |p|  class << p; attr_accessor :acct_mgr_email; end; p.acct_mgr_email =  p.account_managers.present? ? p.account_managers.first.email.downcase : "\xFF"}
-      @partners.sort!{ |a,b| a.acct_mgr_email <=> b.acct_mgr_email }
-      @partners.reverse! if params[:acct_mgr_sort] == 'DESC'
+      if params[:acct_mgr_sort] == 'DESC'
+        @partners.sort!{ |a,b| b.account_manager_email <=> a.account_manager_email }
+      else
+        @partners.sort!{ |a,b| a.account_manager_email <=> b.account_manager_email }
+      end
     end
     @partners = @partners.paginate(:page => params[:page])
   end
@@ -27,6 +29,6 @@ class Tools::PartnerValidationsController < WebsiteController
     partner = Partner.find(params[:partner_id])
     log_activity(partner)
     partner.toggle_confirmed_for_payout(current_user)
-    render :json => { :success => partner.save, :was_confirmed => partner.completed_payout_info? }
+    render :json => { :success => partner.save, :was_confirmed =>  partner.confirmation_notes.blank?, :notes => "- #{partner.confirmation_notes.join('<br>- ')}", :can_confirm => partner.can_be_confirmed?(current_user) }
   end
 end

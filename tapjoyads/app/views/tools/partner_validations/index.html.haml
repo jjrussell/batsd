@@ -11,13 +11,12 @@
       %th Partner Email
       %th{:class => "sort #{params[:acct_mgr_sort] if params[:acct_mgr_sort]}"} Account Manager#{'&nbsp;'*5}
       %th Bank Info Present?
-      %th Notes
       %th Confirm
+      %th Notes
   %tbody
     - @partners.each do |partner|
       - payout_info = partner.payout_info
       - confirmation_notes = partner.confirmation_notes
-      - confirmation_notes << 'Payout Info not Present!' unless payout_info.present?
       %tr
         %td
           %strong Name:
@@ -39,7 +38,7 @@
           = mail_to(partner.non_managers.first.email) if partner.non_managers.present?
         %td
           = partner.account_managers.join('<br>')
-        - if payout_info.present? && payout_info.valid?
+        - if partner.completed_payout_info?
           %td
             %span.present
               %strong Present
@@ -48,35 +47,12 @@
           %td
             %span.not_present
               %strong Not Present
-
-        %td
-          - if permitted_to?(:confirm_payouts, :tools_partner_validations)
-            - form_tag confirm_payouts_tools_partner_validations_path( :partner_id => partner.id, :type => :json), :method => :post, :class => 'enable_request' do
-              %div{ :class => 'enabled', :style =>  (!confirmation_notes.empty? ? 'display:none;' : 'display:inline;')}
-                %span{ :class => 'enabled'}
-                  %strong Confirmed
-              %div{ :class => 'disabled', :style => (confirmation_notes.empty? ? 'display:none;' : 'display:inline;') }
-                %span{ :class => 'disabled'}
-                  %strong Unconfirmed
-                  = submit_tag 'Confirm', :class => 'submit'
-              %img.spinner{ :src => '/images/spinner.gif', :style => 'display:none;' }
-          - else
-            - if partner.confirmed_for_payout
-              %span{ :class => 'enabled'} Confirmed
-            - else
-              %span{ :class => 'disabled'}
-                Uncomfirmed
-        %td.notes
-          %span{ :class => 'disabled' }
-            - unless confirmation_notes.empty?
-              \- #{confirmation_notes.join('<br>-')}
-
+        = render 'shared/payout_confirmations', :partner => partner, :permitted => permitted_to?(:confirm_payouts, :tools_partner_validations), :path => confirm_payouts_tools_partner_validations_path( :partner_id => partner.id, :type => :json)
 = will_paginate(@partners)
 - content_for :page_javascript do
   :plain
     $(function($) {
       $('th.sort').click(function() {
-
         var location = '#{tools_partner_validations_path}?'
         location += '#{ [:page, :acct_mgr_filter].map { |param| (param.to_s+'='+params[param]+'&') if params[param].present? }.join('')}';
         if($(this).hasClass('ASC')) {
@@ -129,6 +105,10 @@
                 notes.empty();
               } else {
                 disabled.show();
+                notes.find('span').html(response.notes);
+                if(response.can_confirm == false) {
+                  disabled.find('.submit').remove();
+                }
               }
             } else {
               $(this).parent().html('Error');

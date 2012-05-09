@@ -1,5 +1,6 @@
 class Partner < ActiveRecord::Base
   include UuidPrimaryKey
+  extend ActiveSupport::Memoizable
 
   json_set_field :promoted_offers
 
@@ -335,7 +336,7 @@ class Partner < ActiveRecord::Base
     notes = []
     notes << payout_threshold_notes unless self.payout_threshold_confirmation
     notes << payout_info_notes unless self.payout_info_confirmation
-
+    notes << 'Payout Info not Present!' unless self.completed_payout_info?
     notes
   end
 
@@ -344,9 +345,8 @@ class Partner < ActiveRecord::Base
   end
 
   def toggle_confirmed_for_payout(user)
-    user_roles = user.role_assignments.map { |x| x.name}
-    self.payout_info_confirmation = true if (payout_info_confirmation_roles & user_roles).present?
-    self.payout_threshold_confirmation = true if (payout_threshold_confirmation_roles & user_roles).present?
+    self.payout_info_confirmation = true  if can_confirm_payout_info?(user)
+    self.payout_threshold_confirmation = true if can_confirm_payout_threshold?(user)
   end
 
   def monthly_accounting(year, month)
@@ -354,6 +354,26 @@ class Partner < ActiveRecord::Base
       conditions = [ "partner_id = ? AND year = ? AND month = ?", self.id, year, month ]
       monthly_accounting = MonthlyAccounting.find(:all, :conditions => conditions).first
     end
+  end
+
+  def account_manager_email
+    self.account_managers.present? ? self.account_managers.first.email.downcase : "\xFF"
+  end
+  memoize :account_manager_email
+
+  def can_confirm_payout_info?(user)
+    user_roles = user.role_assignments.map { |x| x.name}
+    (payout_info_confirmation_roles & user_roles).present?
+  end
+
+  def can_confirm_payout_threshold?(user)
+    user_roles = user.role_assignments.map { |x| x.name}
+    (payout_threshold_confirmation_roles & user_roles).present?
+  end
+
+  def can_be_confirmed?(user)
+    ( !self.payout_info_confirmation && can_confirm_payout_info?(user)) ||
+        ( !self.payout_threshold_confirmation && can_confirm_payout_threshold?(user))
   end
 
 private
