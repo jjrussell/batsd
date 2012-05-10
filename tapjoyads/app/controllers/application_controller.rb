@@ -7,7 +7,7 @@ require_dependency 'review_moderation_vote'
 class ApplicationController < ActionController::Base
   helper :all # include all helpers, all the time
 
-  helper_method :geoip_data
+  helper_method :geoip_data, :downcase_param
 
   before_filter :set_time_zone
   before_filter :fix_params
@@ -133,7 +133,7 @@ class ApplicationController < ActionController::Base
   end
 
   def downcase_param(p)
-    params[p] = params[p].downcase if params[p]
+    params[p] = params[p].downcase if params[p].is_a?(String)
   end
 
   def set_param(to, from, lower = false)

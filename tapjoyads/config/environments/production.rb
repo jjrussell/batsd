@@ -39,7 +39,6 @@ DISTRIBUTED_MEMCACHE_SERVERS = [
                                  'tj-prod-20120424.fqfjqv.0002.use1.cache.amazonaws.com',
                                  'tj-prod-20120424.fqfjqv.0003.use1.cache.amazonaws.com',
                                  'tj-prod-20120424.fqfjqv.0004.use1.cache.amazonaws.com',
-                                 'tj-prod-20120424.fqfjqv.0005.use1.cache.amazonaws.com',
                                  'localhost:21211'
                                ]
 

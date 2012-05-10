@@ -61,8 +61,8 @@ describe Partner do
 
     context 'with MonthlyAccoutings' do
       before :each do
-        reference_time = Conversion.accounting_cutoff_time - 1
-        monthly_accounting = MonthlyAccounting.new(:partner => @partner, :month => reference_time.month, :year => reference_time.year)
+        @reference_time = Conversion.accounting_cutoff_time - 1
+        monthly_accounting = MonthlyAccounting.new(:partner => @partner, :month => @reference_time.month, :year => @reference_time.year)
         monthly_accounting.calculate_totals!
       end
 
@@ -80,6 +80,11 @@ describe Partner do
         @partner.reset_balances
         @partner.pending_earnings.should == 300
         @partner.balance.should == 0
+      end
+
+      it "returns available MonthlyAccounting" do
+        @monthly_accounting = @partner.monthly_accounting(@reference_time.year, @reference_time.month)
+        @monthly_accounting.should_not be_nil
       end
     end
 
