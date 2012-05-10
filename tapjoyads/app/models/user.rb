@@ -29,6 +29,16 @@ class User < ActiveRecord::Base
   validates_presence_of :country, :on => :create,
     :message => 'Please select a country'
 
+  named_scope :internal_users, {
+    :conditions => [ "( email LIKE ? OR email LIKE ? ) AND email NOT LIKE ?", "%@tapjoy.com", "%offerpal.com", "%+%" ],
+    :include => [ :role_assignments, :user_roles ]
+  }
+  named_scope :external_users_with_roles, {
+    :joins => [ :user_roles ],
+    :include => [ :role_assignments, :user_roles ],
+    :conditions => [ 'user_roles.id != ? AND email NOT LIKE ? AND email NOT LIKE ?', UserRole.find_by_name('agency').id, "%@tapjoy.com", "%offerpal.com" ],
+  }
+
   serialize :account_type, Array
 
   before_create :regenerate_api_key
