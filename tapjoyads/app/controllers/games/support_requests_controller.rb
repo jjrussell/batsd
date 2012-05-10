@@ -50,7 +50,7 @@ class Games::SupportRequestsController < GamesController
     @unresolved_clicks = []
     return if params[:udid].blank?
 
-    conditions = ActiveRecord::Base.sanitize_conditions("udid = ? and clicked_at > ? and manually_resolved_at is null", params[:udid], 30.days.ago.to_f.to_s)
+    conditions = ["udid = ? and clicked_at > ? and manually_resolved_at is null", params[:udid], 30.days.ago.to_f]
     clicks = Click.select_all(:conditions => conditions).sort_by { |click| -click.clicked_at.to_f }
 
     clicks.each do |click|
@@ -61,7 +61,7 @@ class Games::SupportRequestsController < GamesController
       break if @unresolved_clicks.length == 20
     end
 
-    @unresolved_clicks.compact
+    @unresolved_clicks.compact!
   end
 
   def set_tracking_param
