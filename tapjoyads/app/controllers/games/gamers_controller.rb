@@ -97,17 +97,14 @@ class Games::GamersController < GamesController
     end
   end
 
-  def create_account_from_offer
+  def create_account_for_offer
     current_facebook_user.fetch
-    existing_gamer = Gamer.find(
+    gamer = Gamer.find(
       :first,
       :conditions => { :gamer_profiles => { :facebook_id => current_facebook_user.id } },
-      :include => :gamer_profile)
-    if existing_gamer
-      render(:json => { :success => false, :message => 'Account already exist.' }) and return
-    end
-
-    gamer = Gamer.find_by_email(current_facebook_user.email) || Gamer.new
+      :include => :gamer_profile) ||
+      Gamer.find_by_email(current_facebook_user.email) ||
+      Gamer.new
     if gamer.new_record?
       gamer = Gamer.new
       gamer.before_connect(current_facebook_user)
@@ -124,14 +121,16 @@ class Games::GamersController < GamesController
         params[:default_platforms] ||= {}
         gamer.send_welcome_email(request, device_type, params[:default_platforms], geoip_data, os_version)
       else
-        render(:json => { :success => false, :message => "Fail to create account, please try again later." }) and return
+        render(:json => { :success => false, :message => t('text.games.generic_issue') }) and return
       end
     else
-      attributes = {
-        :facebook_id     => current_facebook_user.id,
-        :fb_access_token => current_facebook_user.client.access_token
-      }
-      gamer.gamer_profile.update_attributes(attributes)
+      unless gamer.facebook_id
+        attributes = {
+          :facebook_id     => current_facebook_user.id,
+          :fb_access_token => current_facebook_user.client.access_token
+        }
+        gamer.gamer_profile.update_attributes(attributes)
+      end
     end
 
     connect_device(gamer)
@@ -164,12 +163,12 @@ class Games::GamersController < GamesController
       gamer.reward_click(click)
 
       gamer_device = GamerDevice.find_by_gamer_id_and_device_id(gamer.id, click.udid)
-      if gamer_device
-        device = Device.new :key => click.udid
-      else
-        device = Device.new :key => click.udid
-        device.product = click.device_name
-        device.save
+      device = Device.new :key => click.udid
+      unless gamer_device
+        if device.new_record?
+          device.product = click.device_name
+          device.save
+        end
         gamer.devices.build(:device => device)
       end
       device.set_last_run_time!(LINK_FACEBOOK_WITH_TAPJOY_OFFER_ID)

@@ -136,4 +136,118 @@ describe Games::GamersController do
       (Time.zone.now - @gamer.deactivated_at).should < 60
     end
   end
+
+  describe '#create_account_for_offer' do
+    before :each do
+      current_facebook_user = mock('current_facebook_user')
+      current_facebook_client = mock('current_facebook_client')
+      click = mock("click")
+
+      @controller.stubs(:current_facebook_user).returns(current_facebook_user)
+      current_facebook_user.stubs(:fetch).returns(current_facebook_user)
+      current_facebook_user.stubs(:email).returns("email@test.com")
+      current_facebook_user.stubs(:birthday).returns("1900-01-01")
+      current_facebook_user.stubs(:name).returns("name")
+      current_facebook_user.stubs(:gender).returns("female")
+      current_facebook_user.stubs(:id).returns("id")
+      current_facebook_user.stubs(:client).returns(current_facebook_client)
+      current_facebook_client.stubs(:access_token).returns("token")
+
+      Click.stubs(:new).returns(click)
+      click.stubs(:rewardable?).returns(true)
+      click.stubs(:key).returns('click_key')
+      click.stubs(:udid).returns('udid')
+      click.stubs(:device_name).returns('device_name')
+    end
+
+    context 'when gamer already exist' do
+      before :each do
+        @gamer = Factory(:gamer)
+        @gamer.gamer_profile = GamerProfile.create(:facebook_id => 'id', :gamer => @gamer)
+        get(:create_account_for_offer, :udid => 'udid')
+      end
+
+      it 'returns true' do
+        JSON.parse(response.body)['success'].should be_true
+      end
+
+      it 'logs in this existing gamer' do
+        response.session['gamer_credentials_id'].should == @gamer.id
+      end
+
+      it 'connects device with the existing gamer' do
+        @gamer.devices.include?(GamerDevice.find_by_device_id('udid')).should be_true
+      end
+
+      it 'set last run time for LINK_FACEBOOK_WITH_TAPJOY_OFFER_ID offer' do
+        Device.find('udid').has_app?(LINK_FACEBOOK_WITH_TAPJOY_OFFER_ID).should be_true
+      end
+    end
+
+    context 'when matching gamer exist' do
+      before :each do
+        @gamer = Factory(:gamer, :email => "email@test.com")
+        @gamer.gamer_profile = GamerProfile.create(:facebook_id => nil, :gamer => @gamer)
+        get(:create_account_for_offer, :udid => 'udid')
+      end
+
+      it 'returns true' do
+        JSON.parse(response.body)['success'].should be_true
+      end
+
+      it 'logs in this matching gamer' do
+        response.session['gamer_credentials_id'].should == @gamer.id
+      end
+
+      it 'updates the matching gamer with facebook id' do
+        @gamer.reload
+        @gamer.gamer_profile.facebook_id.should == 'id'
+      end
+
+      it 'connects device with the matching gamer' do
+        @gamer.devices.include?(GamerDevice.find_by_device_id('udid')).should be_true
+      end
+
+      it 'set last run time for LINK_FACEBOOK_WITH_TAPJOY_OFFER_ID offer' do
+        Device.find('udid').has_app?(LINK_FACEBOOK_WITH_TAPJOY_OFFER_ID).should be_true
+      end
+    end
+
+    context 'when gamer not exist' do
+      before :each do
+        get(:create_account_for_offer, :udid => 'udid')
+      end
+
+      it 'returns true' do
+        JSON.parse(response.body)['success'].should be_true
+      end
+
+      it 'sets new gamer email to be facebook email' do
+        new_gamer = Gamer.find_by_id(response.session['gamer_credentials_id'])
+        new_gamer.email.should == 'email@test.com'
+      end
+
+      it 'set new gamer facebook_id to be facebook id' do
+        new_gamer = Gamer.find_by_id(response.session['gamer_credentials_id'])
+        new_gamer.facebook_id.should == 'id'
+      end
+
+      it 'logs in this new gamer' do
+        new_gamer = Gamer.find(
+          :first,
+          :conditions => { :email => 'email@test.com', :gamer_profiles => { :facebook_id => 'id' } },
+          :include => :gamer_profile)
+        response.session['gamer_credentials_id'].should == new_gamer.id
+      end
+
+      it 'connects device with the new gamer' do
+        new_gamer = Gamer.find_by_id(response.session['gamer_credentials_id'])
+        new_gamer.devices.include?(GamerDevice.find_by_device_id('udid')).should be_true
+      end
+
+      it 'set last run time for LINK_FACEBOOK_WITH_TAPJOY_OFFER_ID offer' do
+        Device.find('udid').has_app?(LINK_FACEBOOK_WITH_TAPJOY_OFFER_ID).should be_true
+      end
+    end
+  end
 end

@@ -365,6 +365,8 @@ en:
       no_device: "No device"
       no_javascript: "Please go into your browser settings and enable JavaScript to continue using Tapjoy."
       none_selected: "None Selected"
+      offer_complete_detail: "You've earned %{amount_and_currency} in %{app_name} by completing the %{offer_name} offer. Tap the button below to continue earning more rewards for %{app_name}."
+      offer_complete_earn_more:  "Earn More %{currency_name}"
       on_my: "on my %{device_name}"
       oops: Oops!
       or_learn_more: "or learn more"

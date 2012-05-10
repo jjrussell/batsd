@@ -11,10 +11,10 @@
         .big-title.slate.elip
           = @app.name
     .content
-      .title= "Congratulations!"
-      .currency_earned
-      .currency_earned_detail= "You've earned #{amount_and_currency} in #{@app.name} by completing \"#{@offer.name}\" offer! Tap the \"Earn More #{@currency.name}\" button to earn more currency at Tapjoy."
-      .earn-more.button= "Earn More #{@currency.name}"
+      .title= t('text.shared.success')
+      .currency_earned= amount_and_currency
+      .currency_earned_detail= t('text.games.offer_complete_detail', :amount_and_currency => amount_and_currency, :app_name => @app.name, :offer_name => @offer.name, :currency_name => @currency.name)
+      .earn-more.button= t('text.games.offer_complete_earn_more', :currency_name => @currency.name)
 
 - content_for :page_javascript do
   :plain
