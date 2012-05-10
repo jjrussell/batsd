@@ -36,7 +36,7 @@ class User < ActiveRecord::Base
   named_scope :external_users_with_roles, {
     :joins => [ :user_roles ],
     :include => [ :role_assignments, :user_roles ],
-    :conditions => [ 'user_roles.id != ? AND email NOT LIKE ? AND email NOT LIKE ?', UserRole.find_by_name('agency').id, "%@tapjoy.com", "%offerpal.com" ],
+    :conditions => [ 'user_roles.name != ? AND email NOT LIKE ? AND email NOT LIKE ?', 'agency', "%@tapjoy.com", "%offerpal.com" ],
   }
 
   serialize :account_type, Array
