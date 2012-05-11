@@ -157,6 +157,8 @@ class Currency < ActiveRecord::Base
   def get_publisher_amount(offer, displayer_app = nil)
     if displayer_app.present?
       0
+    elsif offer.payment == 2
+      1
     else
       (offer.payment * get_spend_share(offer)).to_i
     end

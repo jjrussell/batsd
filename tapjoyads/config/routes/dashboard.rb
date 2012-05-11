@@ -28,6 +28,7 @@ ActionController::Routing::Routes.draw do |map|
     end
     app.resources :currencies, :only => [ :show, :update, :new, :create ],
       :member => { :reset_test_device => :post }, :controller => 'apps/currencies'
+    app.resources :videos, :only => [ :index ], :controller => 'apps/videos'
     app.resources :virtual_goods, :as => 'virtual-goods', :only => [ :show, :update, :new, :create, :index ],
       :collection => { :reorder => :post }, :controller => 'apps/virtual_goods'
     app.resources :action_offers, :only => [ :new, :create, :edit, :update, :index ], :member => { :toggle => :post, :preview => :get }, :collection => { :TJCPPA => :get, :TapjoyPPA => :get }, :controller => 'apps/action_offers'
@@ -80,6 +81,7 @@ ActionController::Routing::Routes.draw do |map|
                      :resolve_clicks => :post, :sqs_lengths => :get, :ses_status => :get,
                      :publishers_without_payout_info => :get, :publisher_payout_info_changes => :get, :device_info => :get,
                      :award_currencies => :post, :update_award_currencies => :post,
+                     :view_pub_user_account => :get, :detach_pub_user_account => :post,
                      :update_user_roles => :post, :update_device => :post, :fix_rewards => :get }
 
   map.namespace :tools do |tools|
@@ -98,8 +100,9 @@ ActionController::Routing::Routes.draw do |map|
     tools.resources :video_offers, :only => [ :new, :create, :edit, :update ] do |video_offer|
       video_offer.resources :video_buttons, :controller => 'video_offers/video_buttons'
     end
-    tools.resources :offers,
-      :collection => { :creative => :get, :approve_creative => :post, :reject_creative => :post }
+    tools.resources :offers, :collection => { :creative => :get, :approve_creative => :post, :reject_creative => :post } do |offer|
+      offer.resources :sales_reps, :only => [ :index, :new, :create, :edit, :update ]
+    end
     tools.resources :payouts, :only => [ :index, :create ], :member => { :info => :get }, :collection => { :confirm_payouts => :post, :export => :get }
     tools.resources :enable_offer_requests, :only => [ :update, :index ]
     tools.resources :admin_devices, :only => [ :index, :new, :create, :edit, :update, :destroy ]

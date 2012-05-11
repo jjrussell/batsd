@@ -94,6 +94,7 @@ class Offer < ActiveRecord::Base
   has_many :approvals, :class_name => 'CreativeApprovalQueue'
   has_many :brands, :through => :brand_offer_mappings
   has_many :brand_offer_mappings
+  has_many :sales_reps
 
   belongs_to :partner
   belongs_to :item, :polymorphic => true
