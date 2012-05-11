@@ -13,7 +13,8 @@ class User < ActiveRecord::Base
   has_many :partner_assignments, :dependent => :destroy
   has_many :user_roles, :through => :role_assignments
   has_many :partners, :through => :partner_assignments
-  has_many :enable_offer_requests
+  has_many :enable_offer_requests, :foreign_key => 'requested_by_id'
+  has_many :enable_offer_assignments, :class_name => 'EnableOfferRequest', :foreign_key => 'assigned_to_id'
   has_many :admin_devices
   has_many :internal_devices
   has_many :partners_for_sales, :class_name => 'Partner', :foreign_key => 'sales_rep_id'
@@ -27,6 +28,16 @@ class User < ActiveRecord::Base
   validates_presence_of :reseller, :if => Proc.new { |user| user.reseller_id? }
   validates_presence_of :country, :on => :create,
     :message => 'Please select a country'
+
+  named_scope :internal_users, {
+    :conditions => [ "( email LIKE ? OR email LIKE ? ) AND email NOT LIKE ?", "%@tapjoy.com", "%offerpal.com", "%+%" ],
+    :include => [ :role_assignments, :user_roles ]
+  }
+  named_scope :external_users_with_roles, {
+    :joins => [ :user_roles ],
+    :include => [ :role_assignments, :user_roles ],
+    :conditions => [ 'user_roles.name != ? AND email NOT LIKE ? AND email NOT LIKE ?', 'agency', "%@tapjoy.com", "%offerpal.com" ],
+  }
 
   serialize :account_type, Array
 
