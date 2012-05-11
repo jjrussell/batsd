@@ -98,6 +98,14 @@ class Click < SimpledbShardedResource
       (installed_at - clicked_at) < threshold
   end
 
+  def advertiser_app
+    begin
+      App.find_in_cache(advertiser_app_id, true)
+    rescue ActiveRecord::RecordNotFound
+      nil
+    end
+  end
+
   def maintain_history
     if clicked_at?
       while last_clicked_at.size >= MAX_HISTORY
@@ -111,6 +119,12 @@ class Click < SimpledbShardedResource
       end
       self.last_installed_at = installed_at
     end
+  end
+
+  # For use within TJM (since dashboard URL helpers aren't available within TJM)
+  def dashboard_device_info_tool_url
+    uri = URI.parse(DASHBOARD_URL)
+    "#{uri.scheme}://#{uri.host}/tools/device_info?click_key=#{self.key}"
   end
 
   private
