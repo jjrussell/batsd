@@ -11,11 +11,16 @@ class WebsiteController < ApplicationController
   before_filter :check_employee_device
   before_filter :set_recent_partners
   before_filter :inform_of_new_sdk
+  before_filter :inform_of_video_offers
 
   NEW_SDK_NOTICE = "A new iOS SDK (v8.1.8) update is now available <a href='/sdk'>here</a> for both Publishers and Advertisers.
                     Moving forward, please update the Tapjoy SDK for all apps you're submitting to Apple. Our updated SDK now tracks w/ MAC Address.
                     If you have any questions/concerns, please contact <a href='mailto:support@tapjoy.com'>support@tapjoy.com</a>.
                     <br><br>Read more at our blog: <a href='http://blog.tapjoy.com/for-developers/tapjoy-sdk-update/'>http://blog.tapjoy.com/for-developers/tapjoy-sdk-update/</a>"
+
+  VIDEO_OFFERS_NOTICE = "Please contact your Tapjoy contact or <a href='mailto:support@tapjoy.com'>support@tapjoy.com</a> to learn more about publishing our video ads
+                         in your app and/or running video campaigns in our network. Ask us about our current video promotions!
+                         Please also note, we can now track views to install reporting."
 
   def sanitize_currency_params(object, fields)
     unless object.nil?
@@ -129,6 +134,10 @@ class WebsiteController < ApplicationController
       flash.now[:notice] = NEW_SDK_NOTICE
       cookies[:informed_sdk] = {:value => ObjectEncryptor.encrypt('8.1.8'), :expires => 1.year.from_now }
     end
+  end
+
+  def inform_of_video_offers
+    flash.now[:message] = VIDEO_OFFERS_NOTICE if current_user
   end
 
   def nag_user_about_payout_info
