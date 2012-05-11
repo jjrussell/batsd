@@ -31,4 +31,17 @@ describe Click do
       end
     end
   end
+
+  describe '#dashboard_device_info_tool_url' do
+    include ActionController::UrlWriter
+    before :each do
+      @click = Factory(:click)
+    end
+
+    it 'matches URL for Rails device_info_tools_url helper' do
+      rails_url = device_info_tools_url(:click_key  => @click.key,
+                                        :host       => URI.parse(DASHBOARD_URL).host)
+      @click.dashboard_device_info_tool_url.should == rails_url
+    end
+  end
 end

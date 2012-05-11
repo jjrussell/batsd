@@ -2311,6 +2311,21 @@ div.app {
   }
 }
 
+#support-request select {
+  -webkit-appearance: none;
+  outline: none;
+  -webkit-outline: none;
+  -moz-outline: none;
+  -o-user-outline: none;
+  background-color: #ffffff;
+  border: 1px solid #bfbfbf;
+  font: 14px 'Gill Sans', 'Gill Sans MT', Arial , sans-serif;
+  padding: 8px;
+  width: 100%;
+  @include rounded-corners(4px);
+  @include inset-shadow("rgba(0,0,0, .8)", 3px);
+}
+
 /**
  * twitter invite
  */
@@ -2325,3 +2340,4 @@ div.app {
     float: right;
   }
 }
+

@@ -264,7 +264,14 @@ class Currency < ActiveRecord::Base
     self.approval.approve!(true)
   end
 
+  # For use within TJM (since dashboard URL helpers aren't available within TJM)
+  def dashboard_app_currency_url
+    uri = URI.parse(DASHBOARD_URL)
+    "#{uri.scheme}://#{uri.host}/apps/#{self.app_id}/currencies/#{self.id}"
+  end
+
   private
+
   def cache_by_app_id
     currencies = Currency.find_all_by_app_id(app_id, :order => 'ordinal ASC').each { |c| c.run_callbacks(:before_cache) }
     Mc.distributed_put("mysql.app_currencies.#{app_id}.#{Currency.acts_as_cacheable_version}", currencies, false, 1.day)
