@@ -13,6 +13,7 @@ class BucketNames
   TAPJOY              = RUN_MODE_PREFIX + 'tapjoy'
   TAPJOY_DOCS         = RUN_MODE_PREFIX + 'tj-docs'
   TAPJOY_GAMES        = RUN_MODE_PREFIX + 'tj-games'
+  OPTIMIZATION        = RUN_MODE_PREFIX + 'tj-optimization'
   UDID_REPORTS        = RUN_MODE_PREFIX + 'udid-reports'
   VIRTUAL_GOODS       = RUN_MODE_PREFIX + 'virtual_goods'
   WEB_REQUESTS        = RUN_MODE_PREFIX + 'web-requests'
