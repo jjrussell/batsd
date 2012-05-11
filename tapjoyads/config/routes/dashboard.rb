@@ -28,6 +28,7 @@ ActionController::Routing::Routes.draw do |map|
     end
     app.resources :currencies, :only => [ :show, :update, :new, :create ],
       :member => { :reset_test_device => :post }, :controller => 'apps/currencies'
+    app.resources :videos, :only => [ :index ], :controller => 'apps/videos'
     app.resources :virtual_goods, :as => 'virtual-goods', :only => [ :show, :update, :new, :create, :index ],
       :collection => { :reorder => :post }, :controller => 'apps/virtual_goods'
     app.resources :action_offers, :only => [ :new, :create, :edit, :update, :index ], :member => { :toggle => :post, :preview => :get }, :collection => { :TJCPPA => :get, :TapjoyPPA => :get }, :controller => 'apps/action_offers'

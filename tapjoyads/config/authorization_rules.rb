@@ -5,6 +5,7 @@ authorization do
     has_permission_on :apps_offers, :to => [ :new, :create, :edit, :update, :toggle, :percentile, :preview ]
     has_permission_on :offer_creatives, :to => [ :show, :create, :new, :destroy ]
     has_permission_on :apps_currencies, :to => [ :show, :update, :new, :create, :reset_test_device ]
+    has_permission_on :apps_videos, :to => [ :index ]
     has_permission_on :apps_virtual_goods, :to => [ :show, :update, :new, :create, :index, :reorder ]
     has_permission_on :enable_offer_requests, :to => [ :create ]
     has_permission_on :reporting, :to => [ :index, :show, :export, :download_udids, :api, :regenerate_api_key, :aggregate, :export_aggregate ]
