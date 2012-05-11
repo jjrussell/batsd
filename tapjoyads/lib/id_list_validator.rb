@@ -1,5 +1,6 @@
 class IdListValidator < ActiveModel::EachValidator
   def validate_each(record, attribute, value)
+    return if record.respond_to?(:changes) && record.changes[attribute].nil?
     if value.nil?
       record.errors[attribute] << 'nil' unless options[:allow_nil]
     elsif value.blank?
