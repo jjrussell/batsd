@@ -69,7 +69,7 @@ authorization do
 
   role :customer_service_manager do
     includes :customer_service
-    has_permission_on :tools, :to => [ :award_currencies, :update_award_currencies ]
+    has_permission_on :tools, :to => [ :award_currencies, :update_award_currencies, :view_pub_user_account, :detach_pub_user_account ]
   end
 
   role :money do

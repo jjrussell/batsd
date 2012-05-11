@@ -81,6 +81,7 @@ ActionController::Routing::Routes.draw do |map|
                      :resolve_clicks => :post, :sqs_lengths => :get, :ses_status => :get,
                      :publishers_without_payout_info => :get, :publisher_payout_info_changes => :get, :device_info => :get,
                      :award_currencies => :post, :update_award_currencies => :post,
+                     :view_pub_user_account => :get, :detach_pub_user_account => :post,
                      :update_user_roles => :post, :update_device => :post, :fix_rewards => :get }
 
   map.namespace :tools do |tools|
