@@ -133,7 +133,7 @@
       %li= link_to 'All approved devices', internal_devices_path
     - if permitted_to? :index, :tools_wfhs          # products
       %li= link_to 'WFH', tools_wfhs_path
-    - `if permitted_to? :index, :tools_shared_files  # file_sharer
+    - if permitted_to? :index, :tools_shared_files  # file_sharer
       %li= link_to 'My Shared Files', tools_shared_files_path
 
 - content_for :page_javascript do

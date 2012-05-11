@@ -34,13 +34,13 @@ describe Tools::PayoutsController do
 
       context 'when partner is confirmed' do
         it 'succeeds' do
-          @partner.stubs(:toggle_confirmed_for_payout).returns(true)
+          @partner.stubs(:confirm_for_payout).returns(true)
           post(:confirm_payouts, :partner_id => @partner.id)
           response.should be_success
         end
 
         it 'confirms the partner' do
-          @partner.expects(:toggle_confirmed_for_payout).once
+          @partner.expects(:confirm_for_payout).once
           post(:confirm_payouts, :partner_id => @partner.id)
         end
       end
@@ -60,7 +60,7 @@ describe Tools::PayoutsController do
         response.body.should == {:success => true}.to_json
       end
 
-      context 'when payout is greater than 50k' do
+      context 'when calculated payout threshold is greater than 50k' do
         it 'increases the threshold' do
           post(:create, :partner_id => @partner.id, :amount => '49001.00')
           @partner.reload

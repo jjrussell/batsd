@@ -29,7 +29,7 @@ class Tools::PayoutsController < WebsiteController
   def confirm_payouts
     partner = Partner.find(params[:partner_id])
     log_activity(partner)
-    partner.toggle_confirmed_for_payout(current_user)
+    partner.confirm_for_payout(current_user)
     render :json => { :success => partner.save, :was_confirmed =>  partner.confirmation_notes.blank?, :notes => "- #{partner.confirmation_notes.join('<br>- ')}", :can_confirm => partner.can_be_confirmed?(current_user) }
   end
 
@@ -41,7 +41,6 @@ class Tools::PayoutsController < WebsiteController
     ]
     @partners.each do |partner|
       confirmation_notes = partner.confirmation_notes
-      confirmation_notes << 'Payout Info not present' unless partner.payout_info.present? && partner.payout_info.valid?
       line = [
           partner.name.gsub(/[,]/,' '),
           partner.id.gsub(/[,]/,' '),
@@ -49,7 +48,7 @@ class Tools::PayoutsController < WebsiteController
           (partner.payout_cutoff_date - 1.day).to_s(:yyyy_mm_dd),
           NumberHelper.number_to_currency((partner.pending_earnings / 100.0 - partner.next_payout_amount / 100.0), :delimiter => ''),
           NumberHelper.number_to_currency((partner.next_payout_amount / 100.0), :delimiter => ''),
-          partner.payout_info.present? && partner.payout_info.valid? ? partner.payout_info.payout_method : '',
+          partner.completed_payout_info? ? partner.payout_info.payout_method : '',
           partner.account_managers.present? ? (partner.account_managers.first.email) : '',
           partner.confirmed_for_payout? ? 'Confirmed' : 'Unconfirmed',
           confirmation_notes.present? ? confirmation_notes.join(';').gsub(/[,]/, '_') : ''

@@ -28,7 +28,7 @@ class Tools::PartnerValidationsController < WebsiteController
   def confirm_payouts
     partner = Partner.find(params[:partner_id])
     log_activity(partner)
-    partner.toggle_confirmed_for_payout(current_user)
+    partner.confirm_for_payout(current_user)
     render :json => { :success => partner.save, :was_confirmed =>  partner.confirmation_notes.blank?, :notes => "- #{partner.confirmation_notes.join('<br>- ')}", :can_confirm => partner.can_be_confirmed?(current_user) }
   end
 end

@@ -46,13 +46,13 @@ describe Tools::PartnerValidationsController do
 
       context 'when partner is confirmed' do
         it 'succeeds' do
-          @partner.stubs(:toggle_confirmed_for_payout).returns(true)
+          @partner.stubs(:confirm_for_payout).returns(true)
           get(:confirm_payouts, :partner_id => @partner.id)
           response.should be_success
         end
 
         it 'confirms the partner' do
-          @partner.expects(:toggle_confirmed_for_payout).once
+          @partner.expects(:confirm_for_payout).once
           get(:confirm_payouts, :partner_id => @partner.id)
         end
       end

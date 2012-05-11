@@ -90,10 +90,6 @@ class Partner < ActiveRecord::Base
     :conditions => [ "#{PayoutInfo.quoted_table_name}.updated_at >= ? and #{PayoutInfo.quoted_table_name}.updated_at < ? ", start_date, end_date ]
   } }
 
-  def payout_confirmations
-    [ self.payout_threshold_confirmation, self.payout_info_confirmation ]
-  end
-
   def applied_offer_discounts
     offer_discounts.select { |discount| discount.active? && discount.amount == premier_discount }
   end
@@ -343,7 +339,7 @@ class Partner < ActiveRecord::Base
     self.payout_info_confirmation && self.payout_threshold_confirmation
   end
 
-  def toggle_confirmed_for_payout(user)
+  def confirm_for_payout(user)
     self.payout_info_confirmation = true  if can_confirm_payout_info?(user)
     self.payout_threshold_confirmation = true if can_confirm_payout_threshold?(user)
   end

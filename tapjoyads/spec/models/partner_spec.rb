@@ -363,7 +363,7 @@ describe Partner do
       end
     end
 
-    describe '#toggle_confirmed_for_payout' do
+    describe '#confirm_for_payout' do
       before :each do
         @partner.payout_threshold_confirmation = false
       end
@@ -374,7 +374,7 @@ describe Partner do
         end
 
         it 'remains confirmed the partner' do
-          @partner.toggle_confirmed_for_payout(@user)
+          @partner.confirm_for_payout(@user)
           @partner.payout_threshold_confirmation.should be_true
         end
       end
@@ -384,8 +384,8 @@ describe Partner do
           @user = Factory(:agency_user)
         end
 
-        it 'remains confirmed the partner' do
-          @partner.toggle_confirmed_for_payout(@user)
+        it 'does not confirm the partner' do
+          @partner.confirm_for_payout(@user)
           @partner.payout_threshold_confirmation.should be_false
         end
       end
