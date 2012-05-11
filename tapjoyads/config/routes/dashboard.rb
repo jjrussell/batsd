@@ -99,8 +99,9 @@ ActionController::Routing::Routes.draw do |map|
     tools.resources :video_offers, :only => [ :new, :create, :edit, :update ] do |video_offer|
       video_offer.resources :video_buttons, :controller => 'video_offers/video_buttons'
     end
-    tools.resources :offers,
-      :collection => { :creative => :get, :approve_creative => :post, :reject_creative => :post }
+    tools.resources :offers, :collection => { :creative => :get, :approve_creative => :post, :reject_creative => :post } do |offer|
+      offer.resources :sales_reps, :only => [ :index, :new, :create, :edit, :update ]
+    end
     tools.resources :payouts, :only => [ :index, :create ], :member => { :info => :get }, :collection => { :confirm_payouts => :post, :export => :get }
     tools.resources :enable_offer_requests, :only => [ :update, :index ]
     tools.resources :admin_devices, :only => [ :index, :new, :create, :edit, :update, :destroy ]
