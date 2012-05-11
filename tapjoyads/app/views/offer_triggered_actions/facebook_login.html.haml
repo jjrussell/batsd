@@ -1,4 +1,4 @@
-= render 'instructions'
+= render 'instructions_for_facebook'
 
 - @load_facebook = true
 
@@ -13,8 +13,7 @@
       if (!fbOpts) { return; }
 
       initiateFacebook(fbOpts, function () {
-
-        $('.continue').click(function (event) {
+        $('.reward-button').click(function (event) {
           event.preventDefault();
 
           FB.login(function (response) {

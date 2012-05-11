@@ -1,0 +1,29 @@
+- @page_title = t('text.instructions.title')
+- amount_and_currency = capture_haml do
+  %b= t('text.instructions.amount_and_currency', :amount => @currency.get_visual_reward_amount(@offer, params[:display_multiplier]), :currency => @currency.name)
+
+.ui-joy-mask
+  .ui-joy-panel#panel
+    .earn-block
+      .reward
+        %span.earn= t('text.instructions.earn_currency', :amount_and_currency => '')
+        %span.big= @currency.get_visual_reward_amount(@offer, params[:display_multiplier])
+        %span.points= @currency.name
+        %spen.free= t('text.offerwall.free').upcase
+
+    .grey-box
+      .facebook
+        = image_tag @offer.get_icon_url(:source => :cloudfront, :size => '57')
+      .heading= @offer.name
+    .instructions
+      %span= t('text.instructions.header', :currency => amount_and_currency)
+      %ul.steps= instruction_list @offer.instructions
+    .padit
+      .error.hidden
+      .reward-button
+        - if @offer.item_type == 'ActionOffer'
+          - download_action = capture_haml do
+            = link_to(t('text.instructions.download_action'), @complete_action_url)
+          = t('text.instructions.download_link', :download_action => download_action)
+        - else
+          = link_to(t('text.instructions.earn_currency', :amount_and_currency => amount_and_currency), '#')

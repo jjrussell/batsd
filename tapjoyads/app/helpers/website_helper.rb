@@ -179,6 +179,28 @@ EOJS
     text + "</p>"
   end
 
+  def instruction_list(text)
+    text = '' if text.nil?
+
+    li_start_tag = tag('li', {}, true)
+    count_start_tag = tag('div', { :class => 'count' }, true)
+    step_start_tag = tag('div', { :class => 'step' }, true)
+    result = ''
+
+    text = sanitize(text)
+    text.gsub!(/\r\n?/, "\n")
+    lines = text.split(/\n\n+/)
+    lines.each_with_index do |line, index|
+      result.insert -1, li_start_tag
+      result.insert -1, count_start_tag
+      result.insert -1, (index + 1).to_s
+      result.insert -1, "</div>#{step_start_tag}"
+      result.insert -1, line
+      result.insert -1, '</div></li>'
+    end
+    result
+  end
+
   def link_to_generated_actions_header(app, name = nil)
     name ||= app.default_actions_file_name
     link =

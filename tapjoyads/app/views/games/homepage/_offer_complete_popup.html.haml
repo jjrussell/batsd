@@ -1,25 +1,318 @@
 - amount_and_currency = capture_haml do
-  %span.amount= t('text.instructions.amount_and_currency', :amount => @currency.get_visual_reward_amount(@offer, params[:display_multiplier]), :currency => @currency.name)
+  %b= t('text.instructions.amount_and_currency', :amount => @currency.get_visual_reward_amount(@offer, params[:display_multiplier]), :currency => @currency.name)
 
-.container
-  .offer-complete-popup
-    .header
-      .left.ml10.pt3
-        .squircle
-          = image_tag(@app.get_icon_url(:size => 114, :source => :cloudfront))
-      .left.ml10
-        .big-title.slate.elip
-          = @app.name
-    .content
-      .title= t('text.shared.success')
-      .currency_earned= amount_and_currency
-      .currency_earned_detail= t('text.games.offer_complete_detail', :amount_and_currency => amount_and_currency, :app_name => @app.name, :offer_name => @offer.name, :currency_name => @currency.name)
-      .earn-more.button= t('text.games.offer_complete_earn_more', :currency_name => @currency.name)
+.offer-complete-popup.ui-joy-mask
+  .ui-joy-panel#panel
+    .ui-joy-panel-close
+      = link_to 'x', "javascript:void(0);"
+    .grey-box
+      .squircle.app-icon= image_tag(@app.get_icon_url(:size => 114, :source => :cloudfront))
+      .heading= @app.name
+    .instructions
+      %span.congrats= t('text.shared.success')
+      .earn-block
+        .reward
+          %span.earn= t('text.games.offer_compelete_earned')
+          %spen.big= @currency.get_visual_reward_amount(@offer, params[:display_multiplier])
+          %span.points= @currency.name
+
+      %p.blurb= t('text.games.offer_complete_detail', :amount_and_currency => amount_and_currency, :app_name => "<b>#{@app.name}</b>", :offer_name => @offer.name, :currency_name => @currency.name)
+      .padit
+        .reward-button= t('text.games.offer_complete_earn_more', :currency_name => @currency.name)
 
 - content_for :page_javascript do
   :plain
     $(function($){
-      $('.earn-more').click(function () {
+      $('.reward-button, .ui-joy-panel-close').click(function () {
         $('.offer-complete-popup').hide();
       })
     });
+
+- content_for :page_styles do
+  :plain
+      html,body,div,span,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,abbr,address,cite,code,del,dfn,em,img,ins,kbd,q,samp,small,strong,sub,sup,var,b,i,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td,article,aside,canvas,details,figcaption,figure,footer,header,hgroup,menu,nav,section,summary,time,mark,audio,video{ margin:0; padding:0; border:0; outline:0; font-size:100%; vertical-align:baseline; background:transparent}body{ line-height:1}article,aside,details,figcaption,figure,footer,header,hgroup,menu,nav,section{ display:block}nav ul{ list-style:none}blockquote,q{ quotes:none}blockquote:before,blockquote:after,q:before,q:after{ content:''; content:none}a{ margin:0; padding:0; font-size:100%; vertical-align:baseline; background:transparent}ins{ background-color:#ff9; color:#000; text-decoration:none}mark{ background-color:#ff9; color:#000; font-style:italic; font-weight:bold}del{ text-decoration:line-through}abbr[title],dfn[title]{ border-bottom:1px dotted; cursor:help}table{ border-collapse:collapse; border-spacing:0}hr{ display:block; height:1px; border:0;  border-top:1px solid #ccc; margin:1em 0; padding:0}input,select{ vertical-align:middle}
+
+      body {
+        background-color: #f0f0f0;        
+        font-size: 100%/16px;
+        font-family: "Helvetica", Arial, Helvetica, sans-serif;
+        font-weight: normal;
+        height: 100%;
+      }
+
+      span.small {
+        color: #999;
+        display: block;
+        font-size: 85%;
+        margin-top: 5px;
+      }
+
+
+      .ui-joy-mask {
+        background: rgba(79,79,79, .9);
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 100%;
+        width: 100%;
+        z-index: 99;
+      }
+
+      .ui-joy-panel {
+        background: #f4f4f4;
+        border-radius: 4px;
+        box-shadow: 0 0 4px rgba(0,0,0, .5);
+        font-family: "Helvetica Neue", "Helvetica", Arial, sans-serif;
+        margin: 15px auto;
+        position: relative;
+        width: 300px;
+        z-index: 100;
+      }
+
+      .ui-joy-panel .grey-box {
+        background: rgb(240,240,240);
+        background: -moz-linear-gradient(top, rgba(240,240,240,1) 0%, rgba(233,233,233,1) 37%, rgba(227,227,227,1) 74%, rgba(222,222,222,1) 100%);
+        background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(240,240,240,1)), color-stop(37%,rgba(233,233,233,1)), color-stop(74%,rgba(227,227,227,1)), color-stop(100%,rgba(222,222,222,1)));
+        background: -webkit-linear-gradient(top, rgba(240,240,240,1) 0%,rgba(233,233,233,1) 37%,rgba(227,227,227,1) 74%,rgba(222,222,222,1) 100%);
+        background: -o-linear-gradient(top, rgba(240,240,240,1) 0%,rgba(233,233,233,1) 37%,rgba(227,227,227,1) 74%,rgba(222,222,222,1) 100%);
+        background: -ms-linear-gradient(top, rgba(240,240,240,1) 0%,rgba(233,233,233,1) 37%,rgba(227,227,227,1) 74%,rgba(222,222,222,1) 100%);
+        background: linear-gradient(top, rgba(240,240,240,1) 0%,rgba(233,233,233,1) 37%,rgba(227,227,227,1) 74%,rgba(222,222,222,1) 100%);
+        filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f0f0f0', endColorstr='#dedede',GradientType=0 );
+        border-top-left-radius: 3px;
+        border-top-right-radius: 3px;
+        box-shadow: inset 0 -1px 0 #bbb;
+      }
+
+      .ui-joy-panel .earn-block {
+        height: 80px;
+      }
+
+      .ui-joy-panel .earn-block {
+        background: -moz-linear-gradient(top, rgba(255,192,0,1) 0%, rgba(255,183,0,1) 36%, rgba(255,156,0,1) 71%, rgba(255,141,0,1) 100%);
+        background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(255,192,0,1)), color-stop(36%,rgba(255,183,0,1)), color-stop(71%,rgba(255,156,0,1)), color-stop(100%,rgba(255,141,0,1)));
+        background: -webkit-linear-gradient(top, rgba(255,192,0,1) 0%,rgba(255,183,0,1) 36%,rgba(255,156,0,1) 71%,rgba(255,141,0,1) 100%);
+        background: -o-linear-gradient(top, rgba(255,192,0,1) 0%,rgba(255,183,0,1) 36%,rgba(255,156,0,1) 71%,rgba(255,141,0,1) 100%);
+        background: -ms-linear-gradient(top, rgba(255,192,0,1) 0%,rgba(255,183,0,1) 36%,rgba(255,156,0,1) 71%,rgba(255,141,0,1) 100%);
+        background: linear-gradient(top, rgba(255,192,0,1) 0%,rgba(255,183,0,1) 36%,rgba(255,156,0,1) 71%,rgba(255,141,0,1) 100%);
+        border: 1px solid #444;
+        box-shadow: inset 0 1px 0 #fff736, 0 1px 0 rgba(0,0,0, .2);
+        box-sizing: border-box;
+        border-radius: 4px;
+        width: 80px;
+        -webkit-appearance: none;
+        -webkit-box-sizing: border-box;
+        -moz-box-sizing: border-box;
+        margin: 15px auto;
+      }
+
+      .ui-joy-panel .earn-block a {
+        text-decoration: none;
+      }
+
+      .ui-joy-panel .earn-block span {
+        color: #fff;
+        display: block;
+        text-align: center;
+        text-shadow: 0 1px 1px rgba(0,0,0, .55);
+      }
+
+      .ui-joy-panel .earn-block span.earn,
+      .ui-joy-panel .earn-block span.points {
+        font-size: 90%;
+      }
+
+      .ui-joy-panel .earn-block span.earn {
+        margin-top: 7px;
+      }
+
+      .ui-joy-panel .earn-block span.points {
+        margin-bottom: 5px;
+      }
+
+      .ui-joy-panel .earn-block span.big {
+        font-size: 160%;
+        font-weight: bold;
+        line-height: 115%;
+        margin-top: 1px;
+        text-shadow: 0 0 5px rgba(255,255,255, .4), 0 1px 1px rgba(0,0,0, .6);
+      }
+
+      .ui-joy-panel .earn-block .free {
+        background: #5c5c5c;
+        border-bottom-left-radius: 2px;
+        border-bottom-right-radius: 2px;
+        bottom: 0;
+        box-shadow: 0 -1px 0 #727272;
+        color: #d8d8d8;
+        font-size: 50%;
+        font-weight: bold;
+        left: 0;
+        padding: 1px 0 2px;
+        position: absolute;.ea
+        text-align: center;
+        text-shadow: 0 1px 1px rgba(0,0,0, .5);
+        text-transform: uppercase;
+        width: 100%;
+      }
+
+      .ui-joy-panel .instructions {
+        box-shadow: inset 0 1px 0 #fff;
+        color: #6e6e6e;
+        padding: 15px 15px 0;
+        text-shadow: 0 1px 0 #fff;
+      }
+
+      .ui-joy-panel .instructions span {
+        display: block;
+        font-size: 70%;
+      }
+
+      ul.steps {
+        list-style: none;
+        margin-left: 0;
+      }
+
+      ul.steps li div.count,
+      ul.steps li div.step {
+        display: inline-block;
+        vertical-align: middle;
+      }
+
+      ul.steps li div.count {
+        width: 25px;
+        font-size: 225%;
+        font-weight: bold;
+        text-shadow: 0 1px 0 #f9f9f9;
+      }
+
+      ul.steps li div.step {
+        font-style: italic;
+        font-size: 70%;
+        line-height: 120%;
+        margin: 15px 0;
+        width: 86%;
+      }
+
+      .reward-button {
+        background: -moz-linear-gradient(top, rgba(255,192,0,1) 0%, rgba(255,183,0,1) 36%, rgba(255,156,0,1) 71%, rgba(255,141,0,1) 100%);
+        background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(255,192,0,1)), color-stop(36%,rgba(255,183,0,1)), color-stop(71%,rgba(255,156,0,1)), color-stop(100%,rgba(255,141,0,1)));
+        background: -webkit-linear-gradient(top, rgba(255,192,0,1) 0%,rgba(255,183,0,1) 36%,rgba(255,156,0,1) 71%,rgba(255,141,0,1) 100%);
+        background: -o-linear-gradient(top, rgba(255,192,0,1) 0%,rgba(255,183,0,1) 36%,rgba(255,156,0,1) 71%,rgba(255,141,0,1) 100%);
+        background: -ms-linear-gradient(top, rgba(255,192,0,1) 0%,rgba(255,183,0,1) 36%,rgba(255,156,0,1) 71%,rgba(255,141,0,1) 100%);
+        background: linear-gradient(top, rgba(255,192,0,1) 0%,rgba(255,183,0,1) 36%,rgba(255,156,0,1) 71%,rgba(255,141,0,1) 100%);
+        -moz-box-sizing: border-box;
+        -webkit-box-sizing: border-box; 
+        box-sizing: border-box;
+        border: 1px solid #b37201;
+        border-radius: 4px;
+        box-shadow: inset 0 1px 0 #fff736, 0 1px 0 rgba(0,0,0, .1);
+        color: #fff;
+        font-size: 100%;
+        font-weight: bold;
+        padding: 7px;
+        text-shadow: 0 -1px 0 #cc7f26;
+        width: 100%;
+      }
+
+      .grey-box .facebook {
+        margin: 10px 0 10px 85px;
+      }
+
+      .grey-box .facebook img {
+        background-size: 40px 40px;
+        border-radius: 4px;
+        box-shadow: inset 0 0 4px rgba(0,0,0, .8), 0 1px 0 #fff;
+        height: 40px;
+        width: 40px;
+      }
+
+      .grey-box .facebook,
+      .app-icon,
+      .ui-joy-panel .grey-box .heading {
+        display: inline-block;
+        vertical-align: middle;
+      }
+
+      .ui-joy-panel .grey-box .heading {
+        color: #414141;
+        font-size: 80%;
+        font-weight: 700;
+        margin-left: 5px;
+        text-shadow: 0 1px 0 #f9f9f9;
+        width: 50%;
+      }
+
+      .app-icon {
+        margin: 10px 0 10px 12px;
+        position: relative;
+      }
+
+      .center {
+        text-align: center;
+      }
+      .app-icon img  {
+        background-size: 40px 40px;
+        border-radius: 4px;
+        box-shadow: inset 0 0 4px rgba(0,0,0, .8), 0 1px 0 #fff;
+        height: 40px;
+        width: 40px;
+      }
+      .padit {
+        padding: 5px 6px;
+      }
+
+      .m10 {
+        margin: 10px;
+      }
+
+      span.congrats {
+        color: #454545;
+        font-size: 90% !important;
+        font-weight: 900;
+        text-align: center;
+      }
+
+      .blurb {
+        font-size: 80%;
+        line-height: 120%;
+        margin-bottom: 10px;
+      }
+      .overlay {
+      background: url(squircle.png) no-repeat top left;
+      background-size: 54px 54px;
+      height: 54px;
+      position: relative;
+      width: 54px;
+      z-index: 1;        
+      }
+
+    .ui-joy-panel-close {
+      background: rgb(69,72,77);
+      background: -moz-linear-gradient(top, rgba(69,72,77,1) 0%, rgba(0,0,0,1) 100%);
+      background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(69,72,77,1)), color-stop(100%,rgba(0,0,0,1)));
+      background: -webkit-linear-gradient(top, rgba(69,72,77,1) 0%,rgba(0,0,0,1) 100%);
+      background: -o-linear-gradient(top, rgba(69,72,77,1) 0%,rgba(0,0,0,1) 100%);
+      background: -ms-linear-gradient(top, rgba(69,72,77,1) 0%,rgba(0,0,0,1) 100%);
+      background: linear-gradient(top, rgba(69,72,77,1) 0%,rgba(0,0,0,1) 100%);
+      filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#45484d', endColorstr='#000000',GradientType=0 );
+      border: 2px solid #fff;
+      border-radius: 50px;
+      box-shadow: 0 0 3px rgba(0,0,0, .5);
+      height: 20px;
+      position: absolute;
+      right: -6px;
+      text-align: center;
+      top: -6px;
+      width: 20px;
+      z-index: 99;  
+    }
+
+    .ui-joy-panel-close a {
+      border-radius: inherit;
+      color: #fff;
+      display: block;
+      font-family: Helvetica, Arial, sans-serif;
+      font-weight: 200;
+      line-height: 100%;
+      text-decoration: none;
+    }
