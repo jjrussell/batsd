@@ -97,6 +97,9 @@ class App < ActiveRecord::Base
 
   belongs_to :partner
 
+  delegate :name, :dashboard_partner_url, :to => :partner, :prefix => true
+  memoize :partner_name, :partner_dashboard_partner_url
+
   cache_associations :app_metadatas, :primary_app_metadata
 
   validates_presence_of :partner, :name, :secret_key
