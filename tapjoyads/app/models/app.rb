@@ -97,9 +97,6 @@ class App < ActiveRecord::Base
 
   belongs_to :partner
 
-  delegate :name, :dashboard_partner_url, :to => :partner, :prefix => true
-  memoize :partner_name, :partner_dashboard_partner_url
-
   cache_associations :app_metadatas, :primary_app_metadata
 
   validates_presence_of :partner, :name, :secret_key
@@ -123,7 +120,9 @@ class App < ActiveRecord::Base
   delegate :store_id, :store_id?, :description, :age_rating, :file_size_bytes, :supported_devices, :supported_devices?,
     :released_at, :released_at?, :user_rating, :get_countries_blacklist, :countries_blacklist,
     :to => :primary_app_metadata, :allow_nil => true
-  delegate :name, :to => :partner, :prefix => true
+  delegate :name, :dashboard_partner_url, :to => :partner, :prefix => true
+
+  memoize :partner_name, :partner_dashboard_partner_url
 
   def is_ipad_only?
     supported_devices? && JSON.load(supported_devices).all?{ |i| i.match(/^ipad/i) }
