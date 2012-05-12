@@ -16,18 +16,10 @@ class OptimizedOfferList
     end
 
     def cache_key(key)
-      s3_offer_list(key).each{ |offer_hash| offer_hash[:offer] = Offer.find(offer_hash['offer_id']) }
-      #TODO fix this, stole it directly from recommendation list
-      Mc.get_and_put("s3.optimized_offer_list.#{key}.#{Offer.acts_as_cacheable_version}", false, 1.hour) do
-        offers = []
-        Recommender.instance.for_app(app_id).each do |recommendation_hash|
-          recommendation_hash[:offer] = Offer.find_in_cache(recommendation_hash[:recommendation])
-          next if recommendation_hash[:offer].nil?
-          offers << recommendation_hash
-        end
-        offers.any? ? offers : nil
-      end || []
-      # ALSO TODO write to amazon here
+      offers = s3_offer_list(key).sort_by{ |offer| -offer['rank_score'] }
+      offers.each{ |offer_hash| offer_hash[:offer] = Offer.find(offer_hash['offer_id']) }
+      Mc.put("s3.optimized_offer_list.#{key}", offers) rescue puts "saving to Memcache failed"
+      S3.bucket(BucketNames::OPTIMIZATION_CACHE).objects[key].write(:data => offers)
     end
 
 
