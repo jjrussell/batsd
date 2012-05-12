@@ -55,7 +55,7 @@ class Deploy
       create_deploy_tag
     end
     system("script/record_deploy -e #{@options[:environment]} -v #{@options[:version]}") if execute_cloudrun
-    system("bundle exec rake airbrake:deploy TO=#{@options[:environment]} REVISION=#{@options[:version]} USER=#{ENV['USER']}")
+    system("bundle exec rake airbrake:deploy TO=#{@options[:environment]} REVISION=#{@options[:version]} USER=#{ENV['USER']} REPO=git://github.com/Tapjoy/tapjoyserver")
     puts "Done deploying: #{Time.now}"
   end
 
