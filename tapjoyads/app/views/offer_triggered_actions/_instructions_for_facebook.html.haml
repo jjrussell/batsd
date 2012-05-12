@@ -26,4 +26,4 @@
             = link_to(t('text.instructions.download_action'), @complete_action_url)
           = t('text.instructions.download_link', :download_action => download_action)
         - else
-          = link_to(t('text.instructions.earn_currency', :amount_and_currency => amount_and_currency), '#')
+          = link_to(t('text.instructions.earn_currency', :amount_and_currency => amount_and_currency), @complete_action_url)
