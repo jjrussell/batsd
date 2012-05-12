@@ -21,10 +21,10 @@ class VideosController < ApplicationController
       @video_offer = VideoOffer.find_in_cache(params[:id])
       @offer       = Offer.find_in_cache(params[:offer_id])
     end
-    
-    @video_buttons = @video_offer.video_buttons.reject { |button| !button.enabled? }.sort_by(&:ordinal)[0..1]
-    
+
     return unless verify_records([ @video_offer, @offer ])
+
+    @video_buttons = @video_offer.video_buttons.reject { |button| !button.enabled? }.sort_by(&:ordinal)[0..1]
   end
 
   private
