@@ -118,7 +118,7 @@ class TapjoyMailer < ActionMailer::Base
     subject "Missing Currency - #{offer.name}"
     body( :description        => description,
           :app                => app,
-          :partner            => Partner.find(app.partner_id),
+          :partner            => Partner.find_in_cache(app.partner_id),
           :currency           => currency,
           :device             => device,
           :publisher_user_id  => publisher_user_id,
