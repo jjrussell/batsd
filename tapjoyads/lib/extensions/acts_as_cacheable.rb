@@ -39,7 +39,7 @@ module ActsAsCacheable
           object = Mc.distributed_get(cache_key_for(id))
           if object.nil? && do_lookup
             object = find_by_id(id)
-            object.cache
+            object.cache unless object.nil?
           end
           object
         end
