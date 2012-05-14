@@ -516,9 +516,10 @@ describe Currency do
     end
 
     it 'matches URL for Rails app_currency_url helper' do
-      rails_url = app_currency_url(:id      => @currency.id,
-                                   :app_id  => @currency.app_id,
-                                   :host    => URI.parse(DASHBOARD_URL).host)
+      rails_url = app_currency_url(:id       => @currency.id,
+                                   :app_id   => @currency.app_id,
+                                   :host     => URI.parse(DASHBOARD_URL).host,
+                                   :protocol => URI.parse(DASHBOARD_URL).scheme)
       @currency.dashboard_app_currency_url.should == rails_url
     end
   end
