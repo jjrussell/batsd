@@ -2,7 +2,7 @@ class TjmRequest < SyslogMessage
 
   PATH_MAP = {
     'homepage' => {
-      'index    '                   => 'home',
+      'index'                       => 'home',
       'show'                        => 'my_profile',
       'send_device_link'            => 'email_device_link',
       'switch_device'               => 'switch_device',
@@ -162,6 +162,7 @@ class TjmRequest < SyslogMessage
   end
 
   def lookup_path
-    PATH_MAP.include?(controller) && PATH_MAP[controller].include?(action) ? "tjm_#{PATH_MAP[controller][action]}" : "tjm_#{controller}_#{action}"
+    subbed_controller = controller.sub(/^games\//, '')
+    PATH_MAP.include?(subbed_controller) && PATH_MAP[subbed_controller].include?(action) ? "tjm_#{PATH_MAP[subbed_controller][action]}" : "tjm_#{controller}_#{action}"
   end
 end

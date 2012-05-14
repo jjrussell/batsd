@@ -18,7 +18,7 @@
             .slider.slider_right
               .button.grey.arrow
                 .arrow_bg View More Offers
-          - @video_offer.video_buttons.each do |button|
+          - @video_buttons.each do |button|
             %a{ :href => get_click_url(button.tracking_offer) }
               .slider.slider_right
                 .button.grey.arrow

@@ -87,8 +87,6 @@ input[type=checkbox]:checked {
   }
 
   #login-web-wrapper {
-    background: transparent inline-image("#{$image_path}/small-right-arrow.png") no-repeat 0 0;
-    background-position: right 18px;
     border-left: 1px solid #be2327;
     box-shadow: inset 1px 0 0 #f13b3c;
     cursor: pointer;

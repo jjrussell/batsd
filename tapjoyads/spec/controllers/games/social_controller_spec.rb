@@ -86,6 +86,7 @@ describe Games::SocialController do
       Twitter.stubs(:configuration).returns(config)
       config.stubs(:short_url_length_https).returns("20")
       twitter_user.stubs(:name).returns('name')
+      twitter_user.stubs(:screen_name).returns('screen_name')
       twitter_user.stubs(:id_str).returns('a')
       twitter_msg.stubs(:recipient).returns(twitter_user)
       controller.stubs(:twitter_authenticate)

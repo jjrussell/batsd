@@ -325,6 +325,12 @@ class Partner < ActiveRecord::Base
     changed? ? save : true
   end
 
+  # For use within TJM (since dashboard URL helpers aren't available within TJM)
+  def dashboard_partner_url
+    uri = URI.parse(DASHBOARD_URL)
+    "#{uri.scheme}://#{uri.host}/partners/#{self.id}"
+  end
+
   def monthly_accounting(year, month)
     MonthlyAccounting.using_slave_db do
       conditions = [ "partner_id = ? AND year = ? AND month = ?", self.id, year, month ]
@@ -332,8 +338,7 @@ class Partner < ActiveRecord::Base
     end
   end
 
-
-private
+  private
 
   def update_currencies
     if rev_share_changed? || direct_pay_share_changed? || disabled_partners_changed? || offer_whitelist_changed? || use_whitelist_changed? || accepted_publisher_tos_changed? || max_deduction_percentage_changed? || reseller_id_changed?

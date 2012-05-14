@@ -94,6 +94,7 @@ class Offer < ActiveRecord::Base
   has_many :approvals, :class_name => 'CreativeApprovalQueue'
   has_many :brands, :through => :brand_offer_mappings
   has_many :brand_offer_mappings
+  has_many :sales_reps
 
   belongs_to :partner
   belongs_to :item, :polymorphic => true
@@ -236,7 +237,7 @@ class Offer < ActiveRecord::Base
 
   delegate :balance, :pending_earnings, :name, :cs_contact_email, :approved_publisher?, :rev_share, :to => :partner, :prefix => true
   delegate :name, :id, :formatted_active_gamer_count, :protocol_handler, :to => :app, :prefix => true, :allow_nil => true
-  memoize :partner_balance, :app_formatted_active_gamer_count, :app_protocol_handler
+  memoize :partner_balance, :app_formatted_active_gamer_count, :app_protocol_handler, :app_name
 
   alias_method :events, :offer_events
   alias_method :random, :rand

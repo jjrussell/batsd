@@ -9,7 +9,6 @@ $image_path: "/images/marketplace/themes/tjm";
 //-------------------------------------------
 
 body {
-  background: #e9edf1 inline-image("#{$image_path}/bg.png") repeat;
   font: 0.81em/150% 'Gill Sans', 'Gill Sans MT', Arial;
   font-family: 'Gill Sans', 'Gill Sans MT', Arial;
   color: #252525;
@@ -248,7 +247,6 @@ p {
 
       img {
         margin-top: 5px;
-        background: inline-image("#{$image_path}/tapjoy_large.png") no-repeat 0 0;
         border: 0;
         background-size: 75px 34px;
         float: none;
@@ -309,8 +307,6 @@ p {
 
           .device-toggle {
             display: none;
-            background: transparent inline-image("#{$image_path}/profile_arrows.png") no-repeat;
-            background-position: 12px 0;
             border-left: 1px solid #1a1b1c;
             box-shadow: inset 1px 0 0 #424242;
             display: inline-block;
@@ -398,15 +394,7 @@ p {
           div:hover {
             background-color: rgba(255, 255, 255, 0.05);
           }
-          .my_apps {
-            background: transparent inline-image("#{$image_path}/profile_my_apps.png") no-repeat center 16px;
-          }
-          .more_apps {
-            background: transparent inline-image("#{$image_path}/profile_more_apps.png") no-repeat center 16px;
-          }
-          .profile {
-            background: transparent inline-image("#{$image_path}/profile_me.png") no-repeat center 16px;
-          }
+
         }
       }
       .menu-subnav {
@@ -476,107 +464,6 @@ p {
 
 .ui-icon-large {
   padding-left: 52px;
-}
-
-/**
- * icon classes
- */
-
-.score {
-  background: inline-image("#{$image_path}/thumbs_up.png") no-repeat 0 0;
-}
-
-.social {
-  background: inline-image("#{$image_path}/social.png") no-repeat 0 0;
-}
-
-.twitter {
-  background: url(#{$image_path}/twitter-icon.png) no-repeat 0 0;
-  background-size: auto 100%;
-}
-
-.email {
-  background: inline-image("#{$image_path}/at-sign.png") no-repeat 0 0;
-  background-size: auto 100%;
-}
-
-.facebook {
-  background: url(#{$image_path}/facebook-icon.png) no-repeat 0 0;
-  background-size: auto 100%;
-}
-
-.facebook-square {
-  background: url(#{$image_path}/facebook_logo_square.png) no-repeat 5px center;
-  background-size: 24px 24px;
-}
-
-.rightarrow {
-  padding-right: 20px;
-  background: inline-image("#{$image_path}/right_arrow.png") no-repeat 98% center;
-}
-.rightarrow.white {
-  background: transparent inline-image("#{$image_path}/right_arrow_white.png") no-repeat 98% center;
-}
-.plussign {
-  padding-right: 20px;
-  background: url(#{$image_path}/plus-sign.png) no-repeat 98% center;
-  background-size: auto 100%;
-}
-
-.checkmark {
-  padding-right: 20px;
-  background: url(#{$image_path}/checkmark-grey.png) no-repeat 98% center;
-  background-size: auto 100%;
-}
-
-.downarrow {
-  background: url(#{$image_path}/down_arrow.png) no-repeat 0 0;
-}
-
-.uparrow {
-  background: url(#{$image_path}/up_arrow.png) no-repeat 0 0;
-}
-
-.downarrow-white {
-  background: inline-image("#{$image_path}/down_arrow_white.png") no-repeat 0 0;
-}
-
-.uparrow-white {
-  background: url(#{$image_path}/up_arrow_white.png) no-repeat 0 0;
-}
-
-.rightarrow-white {
-  background: url(#{$image_path}/right_arrow_white.png) no-repeat 0 0;
-}
-
-.wifi {
-  background: url(#{$image_path}/wifi.png) no-repeat 0 0;
-}
-
-.social-med {
-  background: url('/images/games/social-med.png') no-repeat 0 0;
-}
-
-.thumbs-up {
-  @extend .score;
-}
-
-.thumbs-down {
-  background: url('/images/games/thumbs-down.png') no-repeat 0 0;
-}
-
-.score-med {
-  background: url('/images/games/thumbs-up-med.png') no-repeat 0 0;
-}
-
-.down-arrow {
-  padding-right: 20px;
-  background: url('/images/games/ui-joy-d-arrow.png') no-repeat 96% center;
-}
-
-.right-arrow {
-  padding-right: 20px;
-  background: url('/images/games/ui-joy-r-arrow.png') no-repeat 98% center;
 }
 
 .mod.right-arrow,
@@ -785,12 +672,10 @@ p {
     line-height: 20px;
     .concern{
       padding-left: 24px;
-      background: transparent inline-image("#{$image_path}/flagged.gif") top left no-repeat;
     }
     .concern_q{
       a.concern{
         padding-left: 24px;
-        background: transparent inline-image("#{$image_path}/flag_normal.gif")  top left no-repeat;
       }
     }
   }
@@ -1275,7 +1160,6 @@ div.ui-joy-button .get-app {
 
   .list-squircle {
     @extend .squircle;
-    background: inline-image("#{$image_path}/app_icon_overlay_list_button_large.png") no-repeat 0 0 !important;
     height: 60px !important;
     width: 60px !important;
     background-size: 60px 60px !important;
@@ -1613,7 +1497,6 @@ div.app {
   font-family: "Myriad Pro", "Helvetica", arial;
 
   .app-icon {
-    @extend .squircle;
   }
 
   .details {
@@ -1827,7 +1710,6 @@ div.app {
   width: 100px;
   height: 100px;
   margin: 0 auto;
-  background: inline-image("#{$image_path}/app_icon_overlay_large.png") no-repeat 0 0;
   background-size: 100px 100px;
   overflow: hidden;
 
@@ -1887,7 +1769,6 @@ div.app {
 /**
  * earn
  */
-
 .earn-main-app {
   margin-right: 6px;
 }
@@ -1903,9 +1784,6 @@ div.app {
     display: inline-block;
     max-width: 70%;
     vertical-align: top;
-  }
-  .squircle {
-    background: inline-image("#{$image_path}/app_icon_overlay_large_earn.png") no-repeat 0 0;
   }
   .action-item-wrapper {
     text-align: center;
@@ -2316,6 +2194,21 @@ div.app {
   }
 }
 
+#support-request select {
+  -webkit-appearance: none;
+  outline: none;
+  -webkit-outline: none;
+  -moz-outline: none;
+  -o-user-outline: none;
+  background-color: #ffffff;
+  border: 1px solid #bfbfbf;
+  font: 14px 'Gill Sans', 'Gill Sans MT', Arial , sans-serif;
+  padding: 8px;
+  width: 100%;
+  @include rounded-corners(4px);
+  @include inset-shadow("rgba(0,0,0, .8)", 3px);
+}
+
 /**
  * twitter invite
  */
@@ -2330,3 +2223,4 @@ div.app {
     float: right;
   }
 }
+

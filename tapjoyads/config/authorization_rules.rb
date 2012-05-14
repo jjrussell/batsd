@@ -5,6 +5,7 @@ authorization do
     has_permission_on :apps_offers, :to => [ :new, :create, :edit, :update, :toggle, :percentile, :preview ]
     has_permission_on :offer_creatives, :to => [ :show, :create, :new, :destroy ]
     has_permission_on :apps_currencies, :to => [ :show, :update, :new, :create, :reset_test_device ]
+    has_permission_on :apps_videos, :to => [ :index ]
     has_permission_on :apps_virtual_goods, :to => [ :show, :update, :new, :create, :index, :reorder ]
     has_permission_on :enable_offer_requests, :to => [ :create ]
     has_permission_on :reporting, :to => [ :index, :show, :export, :download_udids, :api, :regenerate_api_key, :aggregate, :export_aggregate ]
@@ -68,7 +69,7 @@ authorization do
 
   role :customer_service_manager do
     includes :customer_service
-    has_permission_on :tools, :to => [ :award_currencies, :update_award_currencies ]
+    has_permission_on :tools, :to => [ :award_currencies, :update_award_currencies, :view_pub_user_account, :detach_pub_user_account ]
   end
 
   role :money do
@@ -174,6 +175,11 @@ authorization do
     has_permission_on :tools_partner_changes, :to => [ :index, :new, :create, :destroy, :complete ]
   end
 
+  role :sales_rep_mgr do
+    includes :tools
+    has_permission_on :tools_sales_reps, :to => [ :index, :new, :create, :edit, :update ]
+  end
+
   role :admin do
     includes :tools
     includes :devices
@@ -187,6 +193,7 @@ authorization do
     includes :products
     includes :file_sharer
     includes :partner_changer
+    includes :sales_rep_mgr
     has_permission_on :pub_offer_whitelist, :to => [ :index, :enable, :disable ]
     has_permission_on :tools, :to => [ :failed_sdb_saves, :sdb_metadata, :reset_device, :sqs_lengths, :elb_status, :ses_status, :as_groups, :fix_rewards ]
     has_permission_on :tools_offers, :to => [ :creative, :approve_creative, :reject_creative ]

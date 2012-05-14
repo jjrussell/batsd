@@ -262,4 +262,18 @@ describe Partner do
       end
     end
   end
+
+  describe '#dashboard_partner_url' do
+    include ActionController::UrlWriter
+    before :each do
+      @partner = Factory :partner
+    end
+
+    it 'matches URL for Rails partner_url helper' do
+      rails_url = partner_url(:id       => @partner.id,
+                              :host     => URI.parse(DASHBOARD_URL).host,
+                              :protocol => URI.parse(DASHBOARD_URL).scheme)
+      @partner.dashboard_partner_url.should == rails_url
+    end
+  end
 end

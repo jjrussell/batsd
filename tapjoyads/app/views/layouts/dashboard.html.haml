@@ -28,7 +28,8 @@
       .navbar.navbar-fixed-top
         .navbar-inner
           .container-fluid
-            = link_to "Tapjoy", DASHBOARD_URL, :class => "brand"
+            - link_to DASHBOARD_URL, :class => "brand" do
+              = image_tag('tapjoy.png', :height => 36)
             - tabs = []
             - tabs << { :apps      => apps_path }            if permitted_to?(:index, :apps)
             - tabs << { :reporting => reporting_index_path } if permitted_to?(:index, :reporting)
@@ -41,7 +42,7 @@
             = navigation(tabs).gsub(/current/, 'active').gsub(/navigation/, 'nav')
 
             %ul.nav
-              - if permitted_to? (:index, :ops)
+              - if permitted_to?(:index, :ops)
                 %li.active.dropdown#ops-menu
                   - link_to '#ops-menu', :class => 'dropdown-toggle', 'data-toggle' => 'dropdown' do
                     Ops
@@ -99,12 +100,15 @@
     .container-fluid
       .row-fluid
         - flash.each do |name, msg|
-          .flash{ :id => "flash_#{name}", :title => "Click to dismiss this message" }
+          -# Set name to info if it is notice since bootstrap has no 'notice' type
+          .alert{ :class => "alert-#{name == :notice ? :info : name}" }
+            %a.close{ :data => { :dismiss => 'alert' } } &times;
             %strong #{name.to_s.humanize}:
             = msg
         - [:error, :warning, :notice].each do |name|
           - if flash[name].blank?
-            .flash.hidden{ :id => "flash_#{name}", :title => "Click to dismiss this message" }
+            .alert.hidden{ :id => "flash_#{name}", :class => "alert-#{name == :notice ? :info : name}" }
+              %a.close{ :data => { :dismiss => 'alert' } } &times;
               %strong #{name.to_s.humanize}:
               %span.message &nbsp;
       .row-fluid
@@ -112,7 +116,7 @@
         = content_for_exists?(:apps_layout) ? yield(:apps_layout) : yield
       .clear
 
-    = javascript_include_tag 'jquery-1.7.2.min', 'jquery-ui-1.8.5.min', 'jquery.tablesorter', 'jquery.colorbox.min', 'application', 'chosen.jquery', 'facebox', 'bootstrap-dropdown'
+    = javascript_include_tag 'jquery-1.7.2.min', 'jquery-ui-1.8.5.min', 'jquery.tablesorter', 'jquery.colorbox.min', 'application', 'chosen.jquery', 'facebox', 'bootstrap'
     = yield :included_javascripts
 
     %script{ :type => 'text/javascript', :charset => 'utf-8' }

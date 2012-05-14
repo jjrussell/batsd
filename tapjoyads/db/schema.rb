@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120419190829) do
+ActiveRecord::Schema.define(:version => 20120430164535) do
 
   create_table "action_offers", :id => false, :force => true do |t|
     t.string   "id",                    :limit => 36,                    :null => false
@@ -239,8 +239,8 @@ ActiveRecord::Schema.define(:version => 20120419190829) do
     t.string   "reseller_id",                                :limit => 36
     t.decimal  "reseller_spend_share",                                     :precision => 8, :scale => 6
     t.boolean  "whitelist_overridden",                                                                   :default => false, :null => false
-    t.string   "enabled_deeplink_offer_id",                  :limit => 36
     t.text     "promoted_offers",                                                                                           :null => false
+    t.string   "enabled_deeplink_offer_id",                  :limit => 36
   end
 
   add_index "currencies", ["app_id"], :name => "index_currencies_on_app_id"
@@ -986,6 +986,17 @@ ActiveRecord::Schema.define(:version => 20120419190829) do
 
   add_index "role_assignments", ["id"], :name => "index_role_assignments_on_id", :unique => true
   add_index "role_assignments", ["user_id", "user_role_id"], :name => "index_role_assignments_on_user_id_and_user_role_id", :unique => true
+
+  create_table "sales_reps", :id => false, :force => true do |t|
+    t.string   "id",           :limit => 36, :null => false
+    t.string   "sales_rep_id", :limit => 36, :null => false
+    t.string   "offer_id",     :limit => 36, :null => false
+    t.datetime "start_date",                 :null => false
+    t.datetime "end_date"
+  end
+
+  add_index "sales_reps", ["offer_id"], :name => "index_sales_reps_on_offer_id"
+  add_index "sales_reps", ["sales_rep_id"], :name => "index_sales_reps_on_sales_rep_id"
 
   create_table "spend_shares", :id => false, :force => true do |t|
     t.string   "id",             :limit => 36, :null => false
