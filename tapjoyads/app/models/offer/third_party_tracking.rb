@@ -32,7 +32,7 @@ module Offer::ThirdPartyTracking
     end
 
     define_method "#{method_name}=" do |urls|
-      super(urls.to_a.map(&:strip).uniq.select { |url| url.present? })
+      super(urls.to_a.select(&:present?).map(&:to_s).map(&:strip).uniq)
     end
 
     define_method "#{method_name}_was" do
