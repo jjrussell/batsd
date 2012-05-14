@@ -359,7 +359,6 @@ class Partner < ActiveRecord::Base
 
   def account_manager_email
     @account_manager_email ||= self.account_managers.present? ? self.account_managers.first.email.downcase : "\xFF"
-    @account_manager_email
   end
 
   def can_confirm_payout_info?(user)

@@ -31,7 +31,7 @@ class Payout < ActiveRecord::Base
 
   def is_transfer?; payment_method==3; end
 
-private
+  private
 
   def update_balance
     return true if amount == 0
