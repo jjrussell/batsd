@@ -29,7 +29,20 @@ module ActsAsCacheable
         def cache_all(check_version = false)
           return false if check_version && version_cached?
 
-          find_each(&:cache)
+          cached_count = 0
+          total_count = count
+          start_time = last_time = Time.zone.now
+          find_each do |record|
+            record.cache
+            cached_count += 1
+            now_time = Time.zone.now
+            if now_time - last_time > 10.seconds
+              last_time = now_time
+              percentage = '%.2f' % (cached_count.to_f / total_count * 100)
+              elapsed = (last_time - start_time).to_i
+              puts "#{last_time.to_i}: #{cached_count}/#{total_count} records (#{percentage}%) cached in #{elapsed}s"
+            end
+          end
           cache_version
 
           true
