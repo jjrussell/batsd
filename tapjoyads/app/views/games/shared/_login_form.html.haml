@@ -1,7 +1,5 @@
 #login-form{ :class => login_form_class_name }
   .bd.clearfix
-    = form_tag "#{games_gamer_sessions_path(:path => params[:path], :data => params[:data], :referrer => params[:referrer])}", :method => :post, :id => 'log-in-with-facebook-form', :authenticity_token => "#{form_authenticity_token}"
-
     - form_for([ :games, gamer_session ], :url => games_login_path) do |f|
       - if params[:data].present?
         = hidden_field_tag :data, params[:data]
@@ -34,5 +32,7 @@
         = link_to(t("text.games.forgot_pass"), new_games_password_reset_path)
   .container.mt20.center
     = render '/shared/truste'
+
+= form_tag "#{games_gamer_sessions_path(:path => params[:path], :data => params[:data], :referrer => params[:referrer])}", :method => :post, :id => 'log-in-with-facebook-form', :authenticity_token => "#{form_authenticity_token}"
 
 - @load_facebook = true
