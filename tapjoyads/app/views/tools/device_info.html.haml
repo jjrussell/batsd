@@ -101,16 +101,21 @@
       %tr
         %td App Name
         %td Last run time
+        %td Pub User IDs
         - if permitted_to? :award_currencies, :tools
           %td Award Currency
     %tbody.show-five
       - @apps.each_with_index do |pair, i|
         - last_run_time, app = pair
+        - pub_id = @device.publisher_user_ids[app.id]
         %tr.last_run_app
           %td
             %strong
               = link_to_statz(app.name, app)
           %td= last_run_time.to_s(:pub_ampm_sec)
+          %td
+            - if pub_id != @device.key
+              = pub_id
           - if permitted_to? :award_currencies, :tools
             %td
               - if app.is_publisher_offer?
