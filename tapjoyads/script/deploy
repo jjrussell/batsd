@@ -9,8 +9,9 @@ class Deploy
 
   def initialize(args)
     @options = {
-      :environment => 'test',
-      :server_groups => 'testserver'
+      :environment   => 'test',
+      :server_groups => 'testserver',
+      :cherry_picked => false
     }
 
     option_parser = OptionParser.new do |opts|
@@ -24,6 +25,10 @@ class Deploy
         elsif environment != 'test'
           print_usage_and_exit
         end
+      end
+
+      opts.on('-c', '--cherry-pick') do
+        @options[:cherry_picked] = true
       end
 
       opts.on('-v', '--version [VERSION]') do |version|
@@ -56,6 +61,7 @@ class Deploy
     end
     system("script/record_deploy -e #{@options[:environment]} -v #{@options[:version]}") if execute_cloudrun
     system("bundle exec rake airbrake:deploy TO=#{@options[:environment]} REVISION=#{@options[:version]} USER=#{ENV['USER']} REPO=git://github.com/Tapjoy/tapjoyserver")
+    system("git checkout master")
     puts "Done deploying: #{Time.now}"
   end
 
@@ -64,6 +70,7 @@ class Deploy
   def print_usage_and_exit
     puts "USAGE: script/deploy [options]"
     puts "    -e, --environment (optional): The environment to deploy to. Can be 'test', 'util', or 'production'. Default is 'test'."
+    puts "    -c, --cherry-pick (optional): If you've already cherry-picked the changes, deploy won't auto-merge master in."
     puts "    -v, --version (optional): The version to deploy. Defaults to 'master' for test and util deploys, creates a new tag for production deploys."
     exit
   end
@@ -86,15 +93,28 @@ class Deploy
   def update_working_copy
     puts "Updating working copy"
     git_status = `git status`
-    if git_status !~ /On branch master/
-      puts "You must be on the master branch!"
-      exit 1
-    end
     if git_status !~ /working directory clean/
       puts "You must have a clean working directory!"
       exit 1
     end
+
+    system('git checkout master')
+    if git_status !~ /On branch master/
+      puts "Couldn't checkout master!"
+      exit 1
+    end
     system("git pull tapjoy master")
+
+    system('git checkout deploy')
+    if git_status !~ /On branch deploy/
+      puts "Couldn't checkout deploy!"
+      exit 1
+    end
+    system("git pull tapjoy deploy")
+
+    unless @options[:cherry_picked]
+      system('git merge master --no-edit')
+    end
   end
 
   def create_deploy_tag
@@ -123,7 +143,7 @@ class Deploy
     system("git tag -a -m 'Creating deploy tag #{@options[:version]}' #{@options[:version]}")
 
     puts "Pushing new version."
-    system("git push --tags tapjoy master")
+    system("git push --tags tapjoy deploy")
 
     puts "Notifying developers on pull requests just tagged."
     system("script/notify_deploy -e production")
