@@ -5,20 +5,32 @@ class OptimizedOfferList
 
   class << self
 
-    def cache_all
-      FOLDERS.each{ |s3_folder| cache_folder(folder) }
+    def offer_list(key)
+      offers = Mc.get("s3.optimized_offer_list.#{key}")
+      ids = relaxed_ids(key) if offers.nil?
+      while offers.nil?
+        offers = Mc.get("s3.optimized_offer_list.#{key}")
+      end
+      offers
     end
 
-    def cache_folder(s3_folder)
+
+    def cache_all
+      FOLDERS.each{ |s3_folder| cache_all_in_folder(folder) }
+    end
+
+    def cache_all_in_folder(s3_folder)
       all_s3_keys_in_folder(s3_folder).each do |key|
-        cache_key(key)
+        cache_list(key)
       end
     end
 
-    def cache_key(key)
+    def cache_list(key)
       offers = s3_offer_list(key).sort_by{ |offer| -offer['rank_score'] }
       offers.each{ |offer_hash| offer_hash[:offer] = Offer.find(offer_hash['offer_id']) }
+      #cache in memcache
       Mc.put("s3.optimized_offer_list.#{key}", offers) rescue puts "saving to Memcache failed"
+      #save in s3 as well
       S3.bucket(BucketNames::OPTIMIZATION_CACHE).objects[key].write(:data => offers)
     end
 
@@ -28,16 +40,6 @@ class OptimizedOfferList
       JSON.parse(json)['offers']
     end
 
-    def instance(list)
-      # try to get the current cached list, if not present, try to get the previous
-      # todo, make it go through a graceful decay of current => previous and also specific => general
-    end
-
-    def cache(list) #also try to do this asynchronously
-      # get the list from s3
-      # if list found, parse json, and find offers for each of the ids
-      # cache the found list by "list.id:rounded_timestamp_to_half_hour"
-    end
 
     private
 
@@ -51,6 +53,10 @@ class OptimizedOfferList
 
     def folder_for_id(id)
       hash_for_id(id)[:is_tjm].to_i == 1 ? 'tjm' : 'generic'
+    end
+
+    def relaxed_ids(id)
+      relaxed_constraints_ids_for_hash(hash_for_id(id))
     end
 
     def relaxed_constraints_ids_for_hash(id_hash)
@@ -85,16 +91,5 @@ class OptimizedOfferList
       S3.bucket(bucket_name)
     end
 
-
-    def parse_recommendations_file(file_name, zipped=false, &blk)
-      file = S3.bucket("BucketNames::OPTIMIZATION").objects[file_name].read #todo put it in bucketlists
-      file = Zlib::GzipReader.new(StringIO.new(file)) if zipped
-      file.each_line do |row|
-        yield(row.chomp)
-      end
-    end
-
   end
-
-
 end
