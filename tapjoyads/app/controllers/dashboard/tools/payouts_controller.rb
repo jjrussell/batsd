@@ -93,5 +93,9 @@ class Dashboard::Tools::PayoutsController < Dashboard::DashboardController
 
     @partners = @partners.includes([:payout_info, :users ])
     @partners = @partners.where('id = ?', params[:partners_filter]) if params[:partners_filter].present?
+
+    if params[:reseller_id]
+      @partners = @partners.where(:reseller_id => params[:reseller_id])
+    end
   end
 end
