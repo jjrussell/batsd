@@ -3,6 +3,7 @@
 - orders = number_to_currency(statement[1][:orders].map(&:amount).sum / 100.0, options)
 - others = number_to_currency(statement[1][:others].map(&:amount).sum / 100.0, options)
 - adjustments = number_to_currency(statement[1][:adjustments].map(&:amount).sum / 100.0, options)
+- dev_credits = number_to_currency(statement[1][:dev_credits].map(&:amount).sum / 100.0, options)
 - month_with_year = statement[1][:text_month]
 
 - if format == :csv
@@ -14,3 +15,4 @@
     %td.currency= payouts
     %td.currency= others
     %td.currency= adjustments
+    %td.currency= dev_credits

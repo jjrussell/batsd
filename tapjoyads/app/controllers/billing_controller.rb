@@ -218,7 +218,7 @@ private
     while date < end_date.end_of_month
       month = date.strftime("%Y-%m")
       text_month = date.strftime("%B %Y")
-      @statements[month] = {:orders => [], :payouts => [], :others => [], :adjustments => [], :text_month => text_month, :start_time => date.beginning_of_month, :end_time => date.end_of_month}
+      @statements[month] = {:orders => [], :payouts => [], :others => [], :adjustments => [], :dev_credits => [], :text_month => text_month, :start_time => date.beginning_of_month, :end_time => date.end_of_month}
       date = date.next_month
     end
 
@@ -233,9 +233,13 @@ private
     end
 
     @payouts.each do |payout|
-      unless payout.is_transfer? || payout.is_recoupable_marketing_credit? || payout.is_dev_credit?
+      unless payout.is_transfer? || payout.is_recoupable_marketing_credit?
         month = payout.created_at.strftime("%Y-%m")
-        @statements[month][:payouts] << payout
+        if payout.is_dev_credit?
+          @statements[month][:dev_credits] << payout
+        else
+          @statements[month][:payouts] << payout
+        end
       end
     end
 
