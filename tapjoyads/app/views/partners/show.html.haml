@@ -92,18 +92,13 @@
       = link_to(@partner.client.name, tools_client_path(@partner.client.id))
   .metadata
     Confirmed for Payout:
-    -if @partner.confirmed_for_payout
+    -if @partner.confirmed_for_payout?
       %span{ :class => 'confirmed' } Confirmed
-      %form#confirmed_for_payout{ :action => set_unconfirmed_for_payout_partner_path, :method => :post}
-        = label_tag('payout_notes', 'Notes for Payout:')
-        = text_field_tag('payout_notes', nil, :length => 25)
-        %br
-        = submit_tag('Unconfirm')
     -else
       %span{ :class => 'unconfirmed' } Unconfirmed
       %br
       Payout Confirmation Notes:
-      = @partner.payout_confirmation_notes
+      = @partner.confirmation_notes.join('; ')
 .clear
 
 - payout_info = @partner.payout_info

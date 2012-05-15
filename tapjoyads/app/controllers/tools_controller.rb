@@ -5,7 +5,8 @@ class ToolsController < WebsiteController
 
   before_filter :downcase_udid, :only => [ :device_info, :update_device, :reset_device ]
   before_filter :set_months, :only => [ :monthly_data, :partner_monthly_balance ]
-  after_filter :save_activity_logs, :only => [ :update_user, :update_device, :resolve_clicks, :award_currencies, :update_award_currencies ]
+  before_filter :set_publisher_user, :only => [ :view_pub_user_account, :detach_pub_user_account ]
+  after_filter :save_activity_logs, :only => [ :update_user, :update_device, :resolve_clicks, :award_currencies, :update_award_currencies, :detach_pub_user_account ]
 
   def index
   end
@@ -431,6 +432,31 @@ class ToolsController < WebsiteController
     redirect_to :action => :device_info, :udid => params[:udid]
   end
 
+  def view_pub_user_account
+    @publisher_app = App.find(params[:publisher_app_id])
+    unless verify_records([ @publisher_app ])
+      flash[:error] = "Publisher app not found"
+      redirect_to :action => :device_info and return
+    end
+
+    @devices = []
+    @pub_user.udids.each { |udid| @devices << Device.new(:key => udid) }
+    @devices.sort! do |a,b|
+      a_last = a.last_run_time(@publisher_app.id) || Time.at(0)
+      b_last = b.last_run_time(@publisher_app.id) || Time.at(0)
+      b_last <=> a_last
+    end
+  end
+
+  def detach_pub_user_account
+    if @pub_user.remove!(params[:udid])
+      flash[:notice] = "Successfully detached device from user account."
+    else
+      flash[:error] = "Failed to detach device."
+    end
+    redirect_to :action => :view_pub_user_account, :publisher_app_id => params[:publisher_app_id], :publisher_user_id => params[:publisher_user_id]
+  end
+
   private
 
   def downcase_udid
@@ -451,4 +477,11 @@ class ToolsController < WebsiteController
     true
   end
 
+  def set_publisher_user
+    @pub_user = PublisherUser.new(:key => "#{params[:publisher_app_id]}.#{params[:publisher_user_id]}")
+    if params[:publisher_app_id].blank? || @pub_user.is_new
+      flash[:error] = "Invalid publisher user account parameters."
+      redirect_to :action => :device_info
+    end
+  end
 end

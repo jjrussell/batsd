@@ -1,4 +1,19 @@
 module ToolsHelper
+  def breadcrumb(*links)
+    first = true
+    content_tag :ul, :class => 'breadcrumb' do
+      links.collect do |link|
+        if first
+          # don't show the divider
+          first = false
+          link
+        else
+          "<span class='divider'> / </span> #{link}"
+        end
+      end
+    end
+  end
+
   def location_str(employee)
     employee.location.nil? ? '' : employee.location.inspect
   end

@@ -425,13 +425,20 @@
     :plain
       var set#{tracking_type.capitalize}TrackingPixelURLs = function() {
         var urls = "#{escape_javascript(@offer.send("#{tracking_type}_tracking_urls").join(','))}".split(",");
+        var templateSelector = '##{tracking_type}_tracking_url_template';
+        var template = $(templateSelector);
+
+        // don't create dups, in case this method gets run twice for some reason
+        var existingUrls = $('##{tracking_type}_tracking_urls_row').nextUntil(templateSelector);
+        if (existingUrls.length > 0) {
+          return;
+        }
 
         for(var i = 0; i < urls.length; i++) {
           if (urls[i] == "") {
             continue;
           }
 
-          var template = $('##{tracking_type}_tracking_url_template');
           var templateClone = template.clone();
 
           templateClone.find('td input').attr('value', urls[i]);

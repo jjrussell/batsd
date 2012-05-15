@@ -47,7 +47,7 @@ module Offer::Rejecting
     [ 'b64dba85-9cf9-4e14-b991-f3b7574880c7', '70d3de82-3062-4f19-8864-e453d8b9ee35' ] => [ 'b64dba85-9cf9-4e14-b991-f3b7574880c7', '70d3de82-3062-4f19-8864-e453d8b9ee35' ],
     # Gamefly
     [ 'ac845f34-6631-45f4-8d7e-8d9d981c05b4', '0c785af7-57b8-4efe-9112-44c7194f5a94' ] => [ 'ac845f34-6631-45f4-8d7e-8d9d981c05b4', '0c785af7-57b8-4efe-9112-44c7194f5a94' ],
-    # Zillow 
+    # Zillow
     [ '11bf4c4e-0a00-4536-b029-cf455f4976c0', 'd1d5ec4c-ec7d-490b-a1e0-76af0967de53' ] => [ '11bf4c4e-0a00-4536-b029-cf455f4976c0', 'd1d5ec4c-ec7d-490b-a1e0-76af0967de53' ],
     # Mobile Xpression
     [ '49cbc1ae-8f04-4220-b0b8-d23a1559a560', '9007b2c0-6e26-46df-8950-ade2250e6167' ] => [ '49cbc1ae-8f04-4220-b0b8-d23a1559a560', '9007b2c0-6e26-46df-8950-ade2250e6167' ],

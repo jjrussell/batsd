@@ -8,7 +8,7 @@ class Apps::VideosController < WebsiteController
   def index
     #placeholder for future use
   end
-  
+
   private
 
   def setup
