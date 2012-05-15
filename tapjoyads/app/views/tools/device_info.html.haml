@@ -101,16 +101,21 @@
       %tr
         %td App Name
         %td Last run time
+        %td Pub User ID
         - if permitted_to? :award_currencies, :tools
           %td Award Currency
     %tbody.show-five
       - @apps.each_with_index do |pair, i|
         - last_run_time, app = pair
+        - pub_id = @device.publisher_user_ids[app.id]
         %tr.last_run_app
           %td
             %strong
               = link_to_statz(app.name, app)
           %td= last_run_time.to_s(:pub_ampm_sec)
+          %td
+            - if pub_id != @device.key
+              = pub_id
           - if permitted_to? :award_currencies, :tools
             %td
               - if app.is_publisher_offer?
@@ -141,6 +146,8 @@
         %td Installed
         %td Adv.
         %td Pub.
+        - if permitted_to? :view_pub_user_account, :tools
+          %td User
         %td Resolve
         %td Details
         %td Click ID
@@ -157,6 +164,8 @@
               = click_timestamp(click, :installed_at)
           %td= link_app_to_statz(@click_apps[click.advertiser_app_id])
           %td= link_app_to_statz(@click_apps[click.publisher_app_id])
+          - if permitted_to? :view_pub_user_account, :tools
+            %td= link_to(click.publisher_user_id, view_pub_user_account_tools_path(:publisher_app_id => click.publisher_app_id, :publisher_user_id => click.publisher_user_id))
           %td
             - if click.manually_resolved_at? && click.installed_at?
               Manually awarded

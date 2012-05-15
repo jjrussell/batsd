@@ -17,7 +17,7 @@ ActionController::Routing::Routes.draw do |map|
     m.more_games_editor_picks 'editor_picks', :controller => 'games/more_games', :action => :editor_picks
     m.more_games_recommended 'recommended', :controller => 'games/more_games', :action => :recommended
 
-    m.translations 'translations/:language_code-pack.js', :controller => 'games/homepage', :action => :translations
+    m.translations 'translations/:language_code-1.0.js', :controller => 'games/homepage', :action => :translations
     m.resources :my_apps, :controller => 'games/my_apps', :only => [ :show, :index ]
 
     m.resources :gamer_sessions, :controller => 'games/gamer_sessions', :only => [ :new, :create, :destroy, :index ]
@@ -48,7 +48,7 @@ ActionController::Routing::Routes.draw do |map|
     m.resources :password_resets, :controller => 'games/password_resets', :as => 'password-reset', :only => [ :new, :create, :edit, :update ]
     m.password_reset 'password-reset', :controller => 'games/password_resets', :action => :new
 
-    m.resources :support_requests, :controller => 'games/support_requests', :only => [ :new, :create ]
+    m.resources :support_requests, :controller => 'games/support_requests', :only => [ :new, :create ], :collection => { :unresolved_clicks => :get }
 
     m.resources :android, :controller => 'games/android', :action => :index
 

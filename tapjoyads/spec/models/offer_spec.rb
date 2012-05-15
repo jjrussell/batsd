@@ -4,6 +4,7 @@ describe Offer do
 
   it { should have_many :advertiser_conversions }
   it { should have_many :rank_boosts }
+  it { should have_many :sales_reps }
   it { should belong_to :partner }
   it { should belong_to :item }
 
@@ -956,6 +957,29 @@ describe Offer do
     end
   end
 
+  context "third_party_tracking_url methods" do
+    describe 'impression_tracking_urls' do
+      it "should trim and remove dups" do
+        @offer.impression_tracking_urls = ['https://dummyurl.com?ts=[timestamp]', '  https://dummyurl.com?ts=[timestamp]  ']
+        @offer.impression_tracking_urls.should == ['https://dummyurl.com?ts=[timestamp]']
+      end
+    end
+
+    describe 'click_tracking_urls' do
+      it "should trim and remove dups" do
+        @offer.click_tracking_urls = ['https://dummyurl.com?ts=[timestamp]', '  https://dummyurl.com?ts=[timestamp]  ']
+        @offer.click_tracking_urls.should == ['https://dummyurl.com?ts=[timestamp]']
+      end
+    end
+
+    describe 'conversion_tracking_urls' do
+      it "should trim and remove dups" do
+        @offer.conversion_tracking_urls = ['https://dummyurl.com?ts=[timestamp]', '  https://dummyurl.com?ts=[timestamp]  ']
+        @offer.conversion_tracking_urls.should == ['https://dummyurl.com?ts=[timestamp]']
+      end
+    end
+  end
+
   context "queue_third_party_tracking_request methods" do
     before(:each) do
       Sqs.stubs(:send_message)
@@ -1019,6 +1043,17 @@ describe Offer do
           @offer.queue_conversion_tracking_requests(@ts.to_i.to_s)
         end
       end
+    end
+  end
+
+  describe '#dashboard_statz_url' do
+    include ActionController::UrlWriter
+
+    it 'matches URL for Rails statz_url helper' do
+      rails_url = statz_url(:id       => @offer.id,
+                            :host     => URI.parse(DASHBOARD_URL).host,
+                            :protocol => URI.parse(DASHBOARD_URL).scheme)
+      @offer.dashboard_statz_url.should == rails_url
     end
   end
 end

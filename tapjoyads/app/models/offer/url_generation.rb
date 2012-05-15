@@ -249,4 +249,10 @@ module Offer::UrlGeneration
     url << "&ts=#{Time.now.to_i}" if bust_cache
     url
   end
+
+  # For use within TJM (since dashboard URL helpers aren't available within TJM)
+  def dashboard_statz_url
+    uri = URI.parse(DASHBOARD_URL)
+    "#{uri.scheme}://#{uri.host}/statz/#{self.id}"
+  end
 end

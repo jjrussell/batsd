@@ -44,32 +44,6 @@ describe PartnersController do
 
   end
 
-  describe '#set_unconfirmed_for_payout' do
-    before :each do
-      @user = Factory(:admin)
-      @partner = Factory(:partner, :users => [@user])
-      @partner.confirmed_for_payout = true
-      @partner.save
-      login_as(@user)
-      post(:set_unconfirmed_for_payout, :id => @partner.id, :payout_notes => "Test")
-      @partner.reload
-    end
-
-    context "when partner is not confirmed" do
-      it "redirects to partner page" do
-        response.should redirect_to(partner_path)
-      end
-
-      it "will unconfirm the partner" do
-        @partner.confirmed_for_payout.should be_false
-      end
-
-      it "will add the given reason" do
-        @partner.payout_confirmation_notes.should == "Test"
-      end
-    end
-  end
-
   context "when agencies act as partners" do
     before :each do
       @user = Factory(:agency_user)

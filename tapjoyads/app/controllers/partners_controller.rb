@@ -5,10 +5,10 @@ class PartnersController < WebsiteController
 
   filter_access_to :all
 
-  before_filter :find_partner, :only => [ :show, :make_current, :manage, :update, :edit, :new_transfer, :create_transfer, :reporting, :set_tapjoy_sponsored, :set_unconfirmed_for_payout ]
+  before_filter :find_partner, :only => [ :show, :make_current, :manage, :update, :edit, :new_transfer, :create_transfer, :reporting, :set_tapjoy_sponsored ]
   before_filter :get_account_managers, :only => [ :index, :managed_by ]
   before_filter :set_platform, :only => [ :reporting ]
-  after_filter :save_activity_logs, :only => [ :update, :create_transfer, :set_unconfirmed_for_payout ]
+  after_filter :save_activity_logs, :only => [ :update, :create_transfer ]
 
   def index
     if current_user.role_symbols.include?(:agency)
@@ -161,7 +161,7 @@ class PartnersController < WebsiteController
       log_activity(order)
       order.save!
 
-      email = order.partner.users.first.email rescue "(no email)"
+      email = order.partner.users.first.email rescue '(no email)'
       flash[:notice] = "The transfer of <b>$#{"%.2f" % (@transfer.amount / 100.0)}</b> to <b>#{email}</b> was successfully created."
 
       if marketing_order.present?
@@ -193,18 +193,6 @@ class PartnersController < WebsiteController
     redirect_to partner_path
   end
 
-  def set_unconfirmed_for_payout
-    log_activity(@partner)
-    @partner.confirmed_for_payout = false
-    @partner.payout_confirmation_notes = params[:payout_notes]
-    if @partner.save
-      flash[:notice] = "Partner is now Unconfirmed for Payouts"
-    else
-      flash[:warning] = "Was unable to Unconfirm for Payouts"
-    end
-    redirect_to partner_path
-  end
-
 private
 
   def find_partner
@@ -217,7 +205,7 @@ private
 
   def get_account_managers
     @account_managers = User.account_managers.map{|u|[u.email, u.id]}.sort
-    @account_managers.unshift(["All", "all"])
-    @account_managers.push(["Not assigned", "none"])
+    @account_managers.unshift(['All', 'all'])
+    @account_managers.push(['Not assigned', 'none'])
   end
 end
