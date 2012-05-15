@@ -1,5 +1,6 @@
 Tapjoyad::Application.routes.draw do
   root :to => 'dashboard/homepage#index'
+
   [ 'dashboard', '' ].each do |s|
     namespace :dashboard, :as => nil, :path => s do
       root :to => 'homepage#index'
