@@ -1,0 +1,48 @@
+#signup-form.show
+  #header-signup.header-signup
+    .headerwrap
+      .wrap
+        .container
+          .nav
+            .logo
+              - link_to(games_root_path) do
+                %img{ :src => BLANK_IMAGE }
+
+  #signup-nav.signup-nav
+    .signup-nav-menu
+      %span.title= t('text.shared.sign_up')
+
+  .container.mt20.center
+    = render '/shared/truste'
+
+  - link_to(GAMES_ANDROID_MARKET_URL) do
+    #register-android.hidden.clearfix
+      .title
+        = t('text.games.almost_done')
+      .message
+        = t('text.games.install_android_app')
+      #link-android.install
+        .install-btn.ui-joy-button.orange-action
+          = t('text.games.download_now')
+
+  - link_to(new_games_gamer_device_path) do
+    #register-ios.hidden.clearfix
+      .title
+        = t('text.games.almost_done')
+      .message
+        = t('text.games.install_profile')
+      #link-ios.install
+        %img{ :src => BLANK_IMAGE }
+
+- content_for :page_head do
+  %meta{ :name => 'description', :content => t('text.games.meta_description') }
+  %meta{ :name => 'keywords', :content => t('text.games.meta_keywords')}
+
+  - css_cache 'marketplace/theme/tjm/logged_out', true
+
+- content_for :page_javascript do
+  :plain
+    window.linkDeviceOptions = {
+      linkDeviceUrl : "#{params[:link_device_url]}",
+      android       : "#{params[:android]}"
+    };

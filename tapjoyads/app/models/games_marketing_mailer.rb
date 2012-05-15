@@ -37,7 +37,7 @@ class GamesMarketingMailer < ActionMailer::Base
     subject "Welcome to Tapjoy!"
     setup_emails(gamer, device_info)
     sendgrid_category "Welcome Email, #{@linked ? "Linked for Device Type #{@gamer_device.device_type}" : "Not Linked"}"
-    @detailed_email = rand(2) == 1
+    @detailed_email = @facebook_signup ? true : rand(2) == 1
     @linked &&= @detailed_email
     device_info[:content] = @detailed_email ? 'detailed' : 'confirm_only'
     device_info[:token] = gamer.confirmation_token
@@ -85,5 +85,8 @@ class GamesMarketingMailer < ActionMailer::Base
     @android_device = @linked ? (@gamer_device.device_type == 'android') : !selected_devices.include?('ios')
     device = Device.new(:key => @linked ? @gamer_device.device_id : nil)
     @recommendations = device.recommendations(device_info.slice(:device_type, :geoip_data, :os_version))
+
+    @facebook_signup = gamer.facebook_id.present?
+    @gamer_email = gamer.email if @facebook_signup
   end
 end

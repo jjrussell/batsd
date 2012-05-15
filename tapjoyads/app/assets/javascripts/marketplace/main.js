@@ -265,6 +265,7 @@ $(document).ready(function(){
               'gamer[password]': values['gamer[password]'],
               'gamer[referrer]': values['gamer[referrer]'],
               'gamer[terms_of_service]': values['gamer[terms_of_service]'],
+              'gamer[nickname]': values['gamer[nickname]'],
               'date[day]': values['date[day]'],
               'date[month]': values['date[month]'],
               'date[year]': values['date[year]'],
@@ -275,31 +276,8 @@ $(document).ready(function(){
               $('.register-progress').css({opacity: '0', visibility: 'hidden', height: '0', overflow : 'hidden'}).hide();
               var msg, goHome = false, unbindSubmit = true;
               if (d.success) {
-                if (d.link_device_url) { // link device url returned
-                  if (Tapjoy.device.idevice) { // is ios device
-                    $('.register-loader').show().css({opacity: '0', visibility: 'hidden', height: '0', overflow : 'hidden'});
-                    $('#register-ios').show().css({opacity: '1', visibility: 'visible !important'});
-                    $('#gamer_submit').click(function() {
-                      document.location.href = d.link_device_url;
-                    });
-                  }
-                  else if (Tapjoy.device.android && d.android) { // if coming from tjm android app
-                    document.location.href = d.link_device_url;
-                  }
-                  else if (Tapjoy.device.android && Tapjoy.androidAppPath) { // if android device
-                    $('.register-loader').css({opacity: '0', visibility: 'hidden', height: '0', overflow : 'hidden'});
-                    $('#register-android').show().css({opacity: '1', visibility: 'visible !important'});
-                    $('#gamer_submit').click(function() {
-                      document.location.href = Tapjoy.androidAppPath;
-                    });
-                  }
-                  else {
-                    goHome = true;
-                  }
-                }
-                else if (Tapjoy.device.android && Tapjoy.androidAppPath){
-                    $('.register-loader').css({opacity: '0', visibility: 'hidden', height: '0', overflow : 'hidden'});
-                    $('#register-android').show().css({opacity: '1', visibility: 'visible !important'});
+                if (d.redirect_url) { // redirect to link device
+                  document.location.href = d.redirect_url;
                 }
                 else if (Tapjoy.rootPath) {
                   document.location.href = Tapjoy.rootPath;
@@ -361,6 +339,64 @@ $(document).ready(function(){
         }
       }
     });
+  }
+
+  // Facebook sign up/login
+  if ($("#log-in-with-facebook-form").length > 0) {
+    if (Tapjoy.device.idevice) {
+      var default_platform = 'ios';
+    } else if (Tapjoy.device.android) {
+      var default_platform = 'android';
+    }
+    var action = $("#log-in-with-facebook-form").attr('action');
+    var joint = action.indexOf('?') == -1 ? '?' : '&';
+    if (default_platform !== undefined) {
+      $("#log-in-with-facebook-form").attr('action', action + joint + "default_platform=" + default_platform);
+    }
+  }
+
+  // Link device
+  if($("#register-android").length > 0 || $("#register-ios").length > 0) {
+    var link_device_url = window.linkDeviceOptions.linkDeviceUrl;
+    var android = window.linkDeviceOptions.android;
+
+    if (link_device_url) { // link device url returned
+      if (Tapjoy.device.idevice) { // is ios device
+        $('#register-ios').show().css({opacity: '1', visibility: 'visible !important'});
+        $('#gamer_submit').click(function() {
+          document.location.href = link_device_url;
+        });
+      }
+      else if (Tapjoy.device.android && android) { // if coming from tjm android app
+        document.location.href = link_device_url;
+      }
+      else if (Tapjoy.device.android && Tapjoy.androidAppPath) { // if android device
+        $('#register-android').show().css({opacity: '1', visibility: 'visible !important'});
+        $('#gamer_submit').click(function() {
+          document.location.href = Tapjoy.androidAppPath;
+        });
+      }
+      else {
+        goHome = true;
+      }
+    }
+    else if (Tapjoy.device.android && Tapjoy.androidAppPath){
+        $('#register-android').show().css({opacity: '1', visibility: 'visible !important'});
+    }
+    else if (Tapjoy.rootPath) {
+      document.location.href = Tapjoy.rootPath;
+    }
+    else {
+      goHome = true;
+    }
+    if (goHome) {
+      if (Tapjoy.rootPath) {
+        document.location.href = Tapjoy.rootPath;
+      }
+      else {
+        document.location.href = location.protocol + '//' + location.hostname + (location.port ? ':' + location.port : '')
+      }
+    }
   }
 
   // Menu Grid
@@ -545,23 +581,6 @@ $(document).ready(function(){
   $(".submit-child-form").click(function () {
     $("form", this).submit();
     return false;
-  });
-
-  $(".login-to-facebook").click(function () {
-    var scope = 'offline_access,publish_stream',
-      $$ = $(this),
-      FB = window.FB;
-    FB.login(function (response, scope) {
-      if (response.authResponse) {
-        FB.api('/me', function (response) {
-          window.location = $$.data("fb-url");
-        });
-      } else {
-        Tapjoy.Utils.notification({
-          message: _t('games.grant_us_access')
-        });
-      }
-    }, {scope: scope});
   });
 
   /*
