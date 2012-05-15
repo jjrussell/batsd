@@ -42,10 +42,6 @@ class GamesController < ApplicationController
     [ code, code.split(/-/).first ].uniq
   end
 
-  def get_language_hash
-    File.mtime()
-  end
-
   def http_accept_language
     # example env[HTTP_ACCEPT_LANGUAGE] string: en,en-US;q=0.8,es;q=0.6,zh;q=0.4
     splits = []
