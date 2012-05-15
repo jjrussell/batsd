@@ -37,7 +37,9 @@ class OptimizedOfferList
 
     def s3_offer_list(id)
       json = s3_bucket(folder_for_id(id)).objects[id].read
-      JSON.parse(json)['offers']
+      list = JSON.parse(json)
+      return nil if list['enabled'] == 'false' #TODO check if it returns 'false' string or false boolean
+      list['offers']
     end
 
 
