@@ -3,43 +3,9 @@ class Dashboard::Tools::Resellers::PayoutsController < Dashboard::DashboardContr
   current_tab :tools
   filter_access_to :all
   before_filter :load_payouts_list, :only => [ :index, :export ]
-  after_filter :save_activity_logs, :only => [ :create, :confirm_payouts ]
 
   def index
     @freeze_enabled = PayoutFreeze.enabled?
-  end
-
-  def create
-    success = false
-    amount = (params[:amount].to_f * 100).round
-
-    Partner.transaction do
-      @reseller.partners.each do |partner|
-        cutoff_date = partner.payout_cutoff_date - 1.day
-        payout = partner.payouts.create!(:amount => amount, :month => cutoff_date.month, :year => cutoff_date.year)
-        log_activity(payout)
-      end
-      success = true
-    end
-
-    render :json => { :success => success }
-  end
-
-  def confirm_payouts
-    success = false
-    confirm = !@reseller.confirmed_for_payout
-
-    Partner.transaction do
-      @reseller.partners.each do |partner|
-        log_activity(partner)
-        partner.confirmed_for_payout = confirm
-        partner.payout_confirmation_notes = nil if confirm
-        partner.save!
-      end
-      success = true
-    end
-
-    render :json => { :success => success, :was_confirmed => confirm}
   end
 
   def export
