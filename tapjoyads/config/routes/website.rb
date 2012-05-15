@@ -1,5 +1,5 @@
 Tapjoyad::Application.routes.draw do
-  root :to => 'homepage/homepage#start'
+  root :to => 'games/homepage#index'
 
   match 'assets/*filename' => 'sprocket#show', :as => :assets
 
