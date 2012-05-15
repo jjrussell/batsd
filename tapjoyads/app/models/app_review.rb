@@ -8,6 +8,7 @@ class AppReview < ActiveRecord::Base
   has_many :helpful_votes
   has_many :bury_votes
 
+  before_validation :set_is_blank
   after_save :update_app_metadata_rating_counts
   before_destroy :reset_app_metadata_rating_counts
 
@@ -53,7 +54,7 @@ class AppReview < ActiveRecord::Base
     end
   end
 
-  def before_validation
+  def set_is_blank
     is_blank = text.blank?
     true
   end

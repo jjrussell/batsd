@@ -34,6 +34,8 @@ class Gamer < ActiveRecord::Base
   MAX_DEVICE_THRESHOLD = 15
   MAX_REFERRAL_THRESHOLD = 50
   DAYS_BEFORE_DELETION = 3
+  RUDE_BAN_LIMIT = 20
+
   scope :to_delete, lambda {
     {
       :conditions => ["deactivated_at < ?", Time.zone.now.beginning_of_day - DAYS_BEFORE_DELETION.days],
