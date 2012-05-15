@@ -2,7 +2,6 @@ class Dashboard::Tools::Resellers::PayoutsController < Dashboard::DashboardContr
   layout 'tabbed'
   current_tab :tools
   filter_access_to :all
-  before_filter :load_reseller, :only => [ :create, :confirm_payouts ]
   before_filter :load_payouts_list, :only => [ :index, :export ]
   after_filter :save_activity_logs, :only => [ :create, :confirm_payouts ]
 
@@ -49,29 +48,27 @@ class Dashboard::Tools::Resellers::PayoutsController < Dashboard::DashboardContr
       "Current_Payout_Created," <<
       "Confirmed,Notes,Account_Manager_Email"
     ]
-    @partners.each do |partner|
-      line = [
-          partner.name.gsub(/[,]/,' '),
-          partner.id.gsub(/[,]/,' '),
-          NumberHelper.number_to_currency((partner.pending_earnings / 100.0), :delimiter => ''),
-          (partner.payout_cutoff_date - 1.day).to_s(:yyyy_mm_dd),
-          NumberHelper.number_to_currency((partner.pending_earnings / 100.0 - partner.next_payout_amount / 100.0), :delimiter => ''),
-          NumberHelper.number_to_currency((partner.next_payout_amount / 100.0), :delimiter => ''),
-          partner.confirmed_for_payout? ? "Confirmed" : "Unconfirmed",
-          partner.payout_confirmation_notes.present? ? partner.payout_confirmation_notes.gsub(/[,]/, '_') : '' ,
-          partner.account_managers.present? ? (partner.account_managers.first.email) : ''
-        ]
-      data << line.join(',')
+    @resellers.each do |reseller|
+      reseller.partners.each do |partner|
+        line = [
+            partner.name.gsub(/[,]/,' '),
+            partner.id.gsub(/[,]/,' '),
+            NumberHelper.number_to_currency((partner.pending_earnings / 100.0), :delimiter => ''),
+            (partner.payout_cutoff_date - 1.day).to_s(:yyyy_mm_dd),
+            NumberHelper.number_to_currency((partner.pending_earnings / 100.0 - partner.next_payout_amount / 100.0), :delimiter => ''),
+            NumberHelper.number_to_currency((partner.next_payout_amount / 100.0), :delimiter => ''),
+            partner.confirmed_for_payout? ? "Confirmed" : "Unconfirmed",
+            partner.payout_confirmation_notes.present? ? partner.payout_confirmation_notes.gsub(/[,]/, '_') : '' ,
+            partner.account_managers.present? ? (partner.account_managers.first.email) : ''
+          ]
+        data << line.join(',')
+      end
     end
     send_data(data.join("\n"), :type => 'text/csv', :filename =>
       "Payouts.csv")
   end
 
   private
-  def load_reseller
-    @reseller = Reseller.find(params[:reseller_id])
-  end
-
   def load_payouts_list
     if params[:year] && params[:month]
       @start_date = Time.zone.parse("#{params[:year]}-#{params[:month]}-01")

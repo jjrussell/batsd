@@ -25,8 +25,8 @@
   = submit_tag('Reset', :id => :date_reset)
 #unfiltered.hidden
   = link_to 'Filter by payout info modification', '#'
-= form_tag(export_tools_payouts_path, :method => :get) do
-  = submit_tag('Export to CSV', :id => :export, :action => export_tools_payouts_path)
+= form_tag(export_tools_resellers_payouts_path, :method => :get) do
+  = submit_tag('Export to CSV', :id => :export, :action => export_tools_resellers_payouts_path)
 
 %table
   %thead
@@ -36,7 +36,6 @@
       %th Payout Amount
       %th Current Payout Created
       %th Action
-      %th Confirmed
   %tbody
     - @resellers.each do |reseller|
       %tr
@@ -50,31 +49,7 @@
         %td= number_to_currency(reseller.pending_earnings / 100.0)
         %td= number_to_currency(reseller.pending_earnings / 100.0 - reseller.next_payout_amount / 100.0)
         %td= number_to_currency(reseller.next_payout_amount / 100.0)
-        %td
-          - if permitted_to?(:create, :dashboard_tools_resellers_payouts)
-            = form_tag tools_resellers_payouts_path(:reseller_id => reseller.id), :method => :post, :class => 'json', :style => 'height:45px;' do
-              = text_field_tag 'amount', (reseller.next_payout_amount / 100.0), :class => 'amount'
-              = submit_tag 'Create Payout', :class => 'submit'
-              %img.spinner{ :src => '/images/spinner.gif', :style => 'display:none;' }
-              %span.status
-          - else
-            &nbsp;
-        %td
-          - if permitted_to?(:confirm_payouts, :dashboard_tools_resellers_payouts)
-            = form_tag confirm_payouts_tools_resellers_payouts_path(:reseller_id => reseller.id), :method => :post, :class => 'enable_request' do
-              %div{ :class => 'enabled', :style =>  (!reseller.confirmed_for_payout ? 'display:none;' : 'display:inline;')}
-                %span{ :class => 'enabled' } Confirmed
-                = submit_tag  'Unconfirm', :class => 'submit'
-              %div{ :class => 'disabled', :style => (reseller.confirmed_for_payout ? 'display:none;' : 'display:inline;') }
-                %span{ :class => 'disabled' }
-                  Unconfirmed
-                = submit_tag 'Confirm', :class => 'submit'
-              %img.spinner{ :src => '/images/spinner.gif', :style => 'display:none;' }
-          - else
-            - if reseller.confirmed_for_payout
-              %span{ :class => 'enabled'} Confirmed
-            - else
-              %span{ :class => 'disabled'} Uncomfirmed
+        %td= link_to 'Manage Payouts', tools_payouts_path(:reseller_id => reseller.id)
 
 %div{ :class => 'popup', :style => 'display:none'}
 - content_for :page_javascript do
@@ -104,66 +79,6 @@
         }
       });
 
-      $('span.notes').click(function(){
-        var content = $('.popup');
-        text = $(this).children('div.notes').text();
-        content.text(text);
-        var position = [$(this).position().left - 300, $(this).position().top - $(window).scrollTop()];
-        content.dialog({title: 'Payout Confirmation Notes', position: position, minHeight: 75, resizable: false});
-      });
-
-      $('.button-to').submit(function(){
-        var form = $(this);
-        var button = form.parent();
-        var text = button.siblings('.text');
-        var spinner = button.siblings('img.spinner');
-        var url = form.attr('action');
-        $.ajax({
-          dataType: 'json',
-          type: 'GET',
-          url: url,
-          data: {},
-          beforeSend: function() {
-            $('.text').hide('');
-            $('.button').show();
-            button.hide();
-            spinner.show();
-          },
-          complete: function() {
-            spinner.hide();
-          },
-          success: function(data){
-            button.hide();
-            var fields = "";
-            if (data.payout_method == 'check') {
-              fields += "<b>Address</b>: " + data.address_1;
-              if (data.address_2) {
-                fields += "<br/><b>Address</b>: " + data.address_2;
-              }
-              fields += "<br/><b>City</b>: " + data.address_city;
-              fields += "<br/><b>State</b>: " + data.address_state;
-              fields += "<br/><b>Postal/ZIP</b>: " + data.address_postal_code;
-              if (data.address_country != "United States Of America") {
-                fields += "<br/><b>Country</b>: " + data.address_country;
-              }
-            } else if (data.payout_method == 'paypal') {
-              fields += "<br/><b>Paypal Email</b>: " + data.paypal_email;
-            } else {
-              fields += "<br/><b>Bank</b>: " + data.bank_name;
-              fields += "<br/><b>Bank Address</b>: " + data.bank_address;
-              if (data.payment_country == 'United States Of America') {
-                fields += "<br/><b>Account #</b>: " + data.bank_account_number;
-                fields += "<br/><b>Routing #</b>: " + data.bank_routing_number;
-              } else {
-                fields += "<br/><b>IBAN</b>: " + data.bank_account_number;
-                fields += "<br/><b>SWIFT</b>: " + data.bank_routing_number;
-              }
-            }
-            text.show().html(fields);
-          }
-        });
-        return false;
-      });
       $('#date').datepicker();
       $('form.json').submit(function() {
         if (!confirm('Are you sure?')) { return false; }
@@ -191,41 +106,6 @@
               status.html('Complete');
             } else {
               status.html('Error');
-            }
-          }
-        });
-        return false;
-      });
-
-      $('form.enable_request').submit(function() {
-        if (!confirm('Are you sure?')) { return false; }
-
-        var spinner = $(this).find('img.spinner');
-        var disabled = $(this).find('div.disabled');
-        var enabled = $(this).find('div.enabled');
-
-        $.ajax({
-          dataType: 'json',
-          type: $(this).attr('method'),
-          url: $(this).attr('action'),
-          data: $(this).serialize(),
-          beforeSend: function() {
-            disabled.hide();
-            enabled.hide();
-            spinner.show();
-          },
-          complete: function() {
-            spinner.hide();
-          },
-          success: function(response) {
-            if (response.success == true) {
-              if(!response.was_confirmed) {
-                disabled.show();
-              } else {
-                enabled.show();
-              }
-            } else {
-              $(this).parent().html('Error');
             }
           }
         });
