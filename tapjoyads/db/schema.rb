@@ -782,50 +782,51 @@ ActiveRecord::Schema.define(:version => 20120430164535) do
   add_index "partner_changes", ["source_partner_id"], :name => "index_partner_changes_on_source_partner_id"
 
   create_table "partners", :id => false, :force => true do |t|
-    t.string   "id",                           :limit => 36,                                                      :null => false
+    t.string   "id",                            :limit => 36,                                                      :null => false
     t.string   "contact_name"
     t.string   "contact_phone"
-    t.integer  "balance",                                                                  :default => 0,         :null => false
-    t.integer  "pending_earnings",                                                         :default => 0,         :null => false
+    t.integer  "balance",                                                                   :default => 0,         :null => false
+    t.integer  "pending_earnings",                                                          :default => 0,         :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "payout_frequency",                                                         :default => "monthly", :null => false
-    t.integer  "next_payout_amount",                                                       :default => 0,         :null => false
+    t.string   "payout_frequency",                                                          :default => "monthly", :null => false
+    t.integer  "next_payout_amount",                                                        :default => 0,         :null => false
     t.string   "name"
     t.integer  "calculated_advertiser_tier"
     t.integer  "calculated_publisher_tier"
     t.integer  "custom_advertiser_tier"
     t.integer  "custom_publisher_tier"
     t.text     "account_manager_notes"
-    t.text     "disabled_partners",                                                                               :null => false
-    t.integer  "premier_discount",                                                         :default => 0,         :null => false
+    t.text     "disabled_partners",                                                                                :null => false
+    t.integer  "premier_discount",                                                          :default => 0,         :null => false
     t.string   "exclusivity_level_type"
     t.date     "exclusivity_expires_on"
-    t.decimal  "transfer_bonus",                             :precision => 8, :scale => 6, :default => 0.0,       :null => false
-    t.decimal  "rev_share",                                  :precision => 8, :scale => 6, :default => 0.5,       :null => false
-    t.decimal  "direct_pay_share",                           :precision => 8, :scale => 6, :default => 1.0,       :null => false
+    t.decimal  "transfer_bonus",                              :precision => 8, :scale => 6, :default => 0.0,       :null => false
+    t.decimal  "rev_share",                                   :precision => 8, :scale => 6, :default => 0.5,       :null => false
+    t.decimal  "direct_pay_share",                            :precision => 8, :scale => 6, :default => 1.0,       :null => false
     t.string   "apsalar_username"
     t.string   "apsalar_api_secret"
     t.text     "apsalar_url"
-    t.text     "offer_whitelist",                                                                                 :null => false
-    t.boolean  "use_whitelist",                                                            :default => false,     :null => false
-    t.boolean  "approved_publisher",                                                       :default => false,     :null => false
-    t.boolean  "apsalar_sharing_adv",                                                      :default => false,     :null => false
-    t.boolean  "apsalar_sharing_pub",                                                      :default => false,     :null => false
-    t.string   "reseller_id",                  :limit => 36
+    t.text     "offer_whitelist",                                                                                  :null => false
+    t.boolean  "use_whitelist",                                                             :default => false,     :null => false
+    t.boolean  "approved_publisher",                                                        :default => false,     :null => false
+    t.boolean  "apsalar_sharing_adv",                                                       :default => false,     :null => false
+    t.boolean  "apsalar_sharing_pub",                                                       :default => false,     :null => false
+    t.string   "reseller_id",                   :limit => 36
     t.string   "billing_email"
     t.integer  "freshbooks_client_id"
     t.boolean  "accepted_publisher_tos"
-    t.string   "sales_rep_id",                 :limit => 36
-    t.decimal  "max_deduction_percentage",                   :precision => 8, :scale => 6, :default => 1.0,       :null => false
+    t.string   "sales_rep_id",                  :limit => 36
+    t.decimal  "max_deduction_percentage",                    :precision => 8, :scale => 6, :default => 1.0,       :null => false
     t.date     "negotiated_rev_share_ends_on"
-    t.boolean  "accepted_negotiated_tos",                                                  :default => false
+    t.boolean  "accepted_negotiated_tos",                                                   :default => false
     t.string   "cs_contact_email"
-    t.boolean  "confirmed_for_payout",                                                     :default => false,     :null => false
-    t.string   "payout_confirmation_notes"
-    t.boolean  "discount_all_offer_types",                                                 :default => false,     :null => false
-    t.string   "client_id",                    :limit => 36
-    t.text     "promoted_offers",                                                                                 :null => false
+    t.boolean  "discount_all_offer_types",                                                  :default => false,     :null => false
+    t.string   "client_id",                     :limit => 36
+    t.text     "promoted_offers",                                                                                  :null => false
+    t.integer  "payout_threshold",                                                          :default => 5000000,   :null => false
+    t.boolean  "payout_info_confirmation",                                                  :default => false,     :null => false
+    t.boolean  "payout_threshold_confirmation",                                             :default => false,     :null => false
   end
 
   add_index "partners", ["id"], :name => "index_partners_on_id", :unique => true

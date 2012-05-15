@@ -65,6 +65,7 @@ FactoryGirl.define do
   factory :partner do
     name { Factory.next(:name) }
     approved_publisher true
+    payout_threshold 50_000_00
   end
 
   factory :payout_info do
@@ -258,6 +259,8 @@ FactoryGirl.define do
     password { 'asdf' }
     password_confirmation { 'asdf' }
     terms_of_service { '1' }
+    been_buried_count 0
+    been_helpful_count 0
   end
 
   factory :invitation do

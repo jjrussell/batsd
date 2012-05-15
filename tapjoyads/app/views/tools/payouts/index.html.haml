@@ -1,3 +1,4 @@
+- content_for :included_javascripts, javascript_include_tag('jquery.form.min', 'tapjoy/payout_confirmations')
 - @page_title = 'Payouts'
 
 %h1 Payouts
@@ -20,13 +21,13 @@
 
 #filtered.hidden
   Information updated in:
-  = select_date(@start_date || Time.zone.now, :discard_day => true, :start_year => 2011, :end_year => Time.zone.now.year)
+  = select_date((@start_date || Time.zone.now), :order => [:year, :month], :discard_day => true, :start_year => 2011, :end_year => Time.zone.now.year)
   = submit_tag('Update', :id => :date_submit)
   = submit_tag('Reset', :id => :date_reset)
 #unfiltered.hidden
   = link_to 'Filter by payout info modification', '#'
-- form_tag(export_tools_payouts_path, :method => :get) do
-  = submit_tag('Export to CSV', :id => :export, :action => export_tools_payouts_path)
+- form_tag(export_tools_payouts_path(:format => :csv), :method => :get) do
+  = submit_tag('Export to CSV')
 
 %table
   %thead
@@ -37,12 +38,13 @@
       %th Payout Amount
       %th Current Payout Created
       %th Payout Info
-      %th.do-not-print W9/Bank
       %th Action
-      %th Confirmed
+      %th Confirmed Status
+      %th Confirmation Notes
   %tbody
     - @partners.each do |partner|
       - payout_info = partner.payout_info
+      - confirmation_notes = partner.confirmation_notes
       %tr
         %td
           %strong Name:
@@ -65,20 +67,20 @@
         %td= (partner.payout_cutoff_date - 1.day).to_s(:pub)
         %td= number_to_currency(partner.pending_earnings / 100.0 - partner.next_payout_amount / 100.0)
         %td= number_to_currency(partner.next_payout_amount / 100.0)
-        - if payout_info.present?
+        - if partner.completed_payout_info?
           %td
+            %span.present
+              %strong Present
+            %br/
             %strong Type:
             = payout_info.payout_method
             %br/
             %strong Updated:
             = payout_info.updated_at.to_s(:pub)
-          %td.do-not-print
-            .button= button_to('Show info', info_tools_payout_path(payout_info.id))
-            %img.spinner{ :src => '/images/spinner.gif', :style => 'display:none;' }
-            .text.hidden &nbsp;
         - else
-          %td &nbsp;
-          %td.do-not-print &nbsp;
+          %td
+            %span.not_present
+              %strong Not Present
         %td
           - if permitted_to?(:create, :tools_payouts)
             - form_tag tools_payouts_path(:partner_id => partner.id), :method => :post, :class => 'json', :style => 'height:45px;' do
@@ -88,29 +90,9 @@
               %span.status
           - else
             &nbsp;
-        %td
-          - if permitted_to?(:confirm_payouts, :tools_payouts)
-            - form_tag confirm_payouts_tools_payouts_path( :partner_id => partner.id), :method => :post, :class => 'enable_request' do
-              %div{ :class => 'enabled', :style =>  (!partner.confirmed_for_payout ? 'display:none;' : 'display:inline;')}
-                %span{ :class => 'enabled' } Confirmed
-                = submit_tag  'Unconfirm', :class => 'submit'
-              %div{ :class => 'disabled', :style => (partner.confirmed_for_payout ? 'display:none;' : 'display:inline;') }
-                %span{ :class => "disabled#{' notes' unless partner.payout_confirmation_notes.nil?}" }
-                  Unconfirmed#{'*' unless partner.payout_confirmation_notes.nil?}
-                  - unless partner.payout_confirmation_notes.nil?
-                    %div{ :class => 'notes', :style => 'display:none'} #{partner.payout_confirmation_notes}
-                = submit_tag 'Confirm', :class => 'submit'
-              %img.spinner{ :src => '/images/spinner.gif', :style => 'display:none;' }
-          - else
-            - if partner.confirmed_for_payout
-              %span{ :class => 'enabled'} Confirmed
-            - elsif partner.payout_confirmation_notes.nil?
-              %span{ :class => 'disabled'} Uncomfirmed
-            - else
-              %span{ :class => 'disabled notes'}
-                Uncomfirmed*
-                %div{ :class => 'notes', :style => 'display:none'} #{partner.payout_confirmation_notes}
+        = render 'shared/payout_confirmations', :partner => partner, :permitted =>  permitted_to?(:confirm_payouts, :tools_payouts), :path => confirm_payouts_tools_payouts_path( :partner_id => partner.id, :type => :json)
 
+= will_paginate(@partners)
 %div{ :class => 'popup', :style => 'display:none'}
 - content_for :page_javascript do
   :plain
@@ -139,66 +121,6 @@
         }
       });
 
-      $('span.notes').click(function(){
-        var content = $('.popup');
-        text = $(this).children('div.notes').text();
-        content.text(text);
-        var position = [$(this).position().left - 300, $(this).position().top - $(window).scrollTop()];
-        content.dialog({title: 'Payout Confirmation Notes', position: position, minHeight: 75, resizable: false});
-      });
-
-      $('.button-to').submit(function(){
-        var form = $(this);
-        var button = form.parent();
-        var text = button.siblings('.text');
-        var spinner = button.siblings('img.spinner');
-        var url = form.attr('action');
-        $.ajax({
-          dataType: 'json',
-          type: 'GET',
-          url: url,
-          data: {},
-          beforeSend: function() {
-            $('.text').hide('');
-            $('.button').show();
-            button.hide();
-            spinner.show();
-          },
-          complete: function() {
-            spinner.hide();
-          },
-          success: function(data){
-            button.hide();
-            var fields = "";
-            if (data.payout_method == 'check') {
-              fields += "<b>Address</b>: " + data.address_1;
-              if (data.address_2) {
-                fields += "<br/><b>Address</b>: " + data.address_2;
-              }
-              fields += "<br/><b>City</b>: " + data.address_city;
-              fields += "<br/><b>State</b>: " + data.address_state;
-              fields += "<br/><b>Postal/ZIP</b>: " + data.address_postal_code;
-              if (data.address_country != "United States Of America") {
-                fields += "<br/><b>Country</b>: " + data.address_country;
-              }
-            } else if (data.payout_method == 'paypal') {
-              fields += "<br/><b>Paypal Email</b>: " + data.paypal_email;
-            } else {
-              fields += "<br/><b>Bank</b>: " + data.bank_name;
-              fields += "<br/><b>Bank Address</b>: " + data.bank_address;
-              if (data.payment_country == 'United States Of America') {
-                fields += "<br/><b>Account #</b>: " + data.bank_account_number;
-                fields += "<br/><b>Routing #</b>: " + data.bank_routing_number;
-              } else {
-                fields += "<br/><b>IBAN</b>: " + data.bank_account_number;
-                fields += "<br/><b>SWIFT</b>: " + data.bank_routing_number;
-              }
-            }
-            text.show().html(fields);
-          }
-        });
-        return false;
-      });
       $('#date').datepicker();
       $('form.json').submit(function() {
         if (!confirm('Are you sure?')) { return false; }
@@ -231,41 +153,6 @@
         });
         return false;
       });
-
-      $('form.enable_request').submit(function() {
-        if (!confirm('Are you sure?')) { return false; }
-
-        var spinner = $(this).find('img.spinner');
-        var disabled = $(this).find('div.disabled');
-        var enabled = $(this).find('div.enabled');
-
-        $.ajax({
-          dataType: 'json',
-          type: $(this).attr('method'),
-          url: $(this).attr('action'),
-          data: $(this).serialize(),
-          beforeSend: function() {
-            disabled.hide();
-            enabled.hide();
-            spinner.show();
-          },
-          complete: function() {
-            spinner.hide();
-          },
-          success: function(response) {
-            if (response.success == true) {
-              if(!response.was_confirmed) {
-                disabled.show();
-              } else {
-                enabled.show();
-              }
-            } else {
-              $(this).parent().html('Error');
-            }
-          }
-        });
-        return false;
-      });
     });
 
 - content_for :page_styles do
@@ -282,11 +169,11 @@
       font-size: 12px;
     }
 
-    span.enabled {
+    span.enabled, span.present {
       color: green;
     }
 
-    span.disabled {
+    span.disabled, span.not_present {
       color: red;
     }
 
