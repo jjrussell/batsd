@@ -296,6 +296,14 @@ Tapjoyad::Application.routes.draw do
             get :info
           end
         end
+        namespace :resellers do
+          resources :payouts, :only => [:index, :create] do
+            collection do
+              get :export
+              post :confirm_payouts
+            end
+          end
+        end
         resources :enable_offer_requests, :only => [:update, :index]
         resources :admin_devices, :only => [:index, :new, :create, :edit, :update, :destroy]
         resources :offer_events, :only => [:index, :new, :create, :edit, :update, :destroy]
