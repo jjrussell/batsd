@@ -57,9 +57,10 @@ module SprocketHelper
     src = src.sub /\.(js|css)$/, ""
     host = use_cdn ? Sprockets::Tj.host : ''
 
-    Rails.logger.error "Asset #{src} not in config/precompiled_assets.yml" unless Sprockets::Tj.asset_precompiled?(src)
     if Sprockets::Tj.precompile?
-      "#{host}/assets/#{src}-#{Sprockets::Tj.assets[src].digest}.#{ext}"
+      path = Rails.configuration.tj_digests["#{src}.#{ext}"]
+      !path and raise "Asset not precompiled: #{src}.#{ext}"
+      "/assets/#{path}"
     else
       "#{host}/assets/#{src}-#{Time.now.to_i}.#{ext}"
     end
