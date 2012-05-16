@@ -2,7 +2,7 @@
   - if current_partner == partner
     = submit_tag('Acting as this Partner', :disabled => true)
   - else
-    - form_tag(make_current_partner_path(partner)) do
+    = form_tag(make_current_partner_path(partner)) do
       = submit_tag('Act as this Partner')
 
 - content_for :page_styles do
