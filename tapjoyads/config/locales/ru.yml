@@ -421,8 +421,8 @@ ru:
       header: "Чтобы заработать %{currency}, сделайте следующее:"
       title: Инструкции
     offerwall:
-      buy_currency: "Купить %{amount} %{currency}"
-      earn_currency: "Заработать %{amount} %{currency}"
+      buy_currency_html: "Купить %{amount} %{currency}"
+      earn_currency_html: "Заработать %{amount} %{currency}"
       free: Free
       instructions: "Выполните любое из перечисленных предложений и получите %{currency}"
       instructions_non_rewarded: "Discover what's hot on Tapjoy!"

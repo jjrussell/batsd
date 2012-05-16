@@ -421,8 +421,8 @@ sv:
       header: "Följ dessa steg för att tjäna %{currency}:"
       title: Instruktioner
     offerwall:
-      buy_currency: "Köp %{amount} %{currency}"
-      earn_currency: "Tjäna %{amount} %{currency}"
+      buy_currency_html: "Köp %{amount} %{currency}"
+      earn_currency_html: "Tjäna %{amount} %{currency}"
       free: Gratis
       instructions: "Genomför något av följande erbjudande för att få %{currency}"
       instructions_non_rewarded: "Discover what's hot on Tapjoy!"

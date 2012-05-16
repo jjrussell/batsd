@@ -421,8 +421,8 @@ fr:
       header: "Suis les étapes suivantes et gagne des %{currency}:"
       title: Instructions
     offerwall:
-      buy_currency: "Achète %{amount} %{currency}"
-      earn_currency: "Gagne %{amount} %{currency}"
+      buy_currency_html: "Achète %{amount} %{currency}"
+      earn_currency_html: "Gagne %{amount} %{currency}"
       free: Gratuit
       instructions: "Complète une des offres suivantes et reçois des %{currency}"
       instructions_non_rewarded: "Discover what's hot on Tapjoy!"
