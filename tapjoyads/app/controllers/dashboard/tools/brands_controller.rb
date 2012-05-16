@@ -1,10 +1,10 @@
-class BrandsController < WebsiteController
+class Dashboard::Tools::BrandsController < Dashboard::DashboardController
   layout 'tabbed'
   current_tab :tools
   filter_access_to :all
 
   def index
-    @brands = Brand.all(:order => 'name ASC').paginate(:page => params[:page], :per_page => 200)
+    @brands = Brand.order('name ASC').paginate(:page => params[:page], :per_page => 200)
   end
 
   def new

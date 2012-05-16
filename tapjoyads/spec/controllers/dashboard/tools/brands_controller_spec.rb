@@ -1,6 +1,6 @@
-require 'spec/spec_helper'
+require 'spec_helper'
 
-describe BrandsController do
+describe Dashboard::Tools::BrandsController do
  before :each do
     fake_the_web
     activate_authlogic
@@ -112,12 +112,12 @@ describe BrandsController do
         end
 
         it 'will list associated offers' do
-          get(:show, :id => @brand.id)
+          get(:show, :id => @brand.id, :format => :js)
           response.body.should == [{:id => @offer.id, :name => @offer.search_result_name}].to_json
         end
 
         it 'will succeed' do
-          get(:show, :id => @brand.id)
+          get(:show, :id => @brand.id, :format => :js)
           response.should be_success
         end
       end

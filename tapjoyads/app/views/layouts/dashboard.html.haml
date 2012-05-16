@@ -40,7 +40,7 @@
             - tabs << { :tools     => tools_path }           if permitted_to?(:index, :dashboard_tools)
             - tabs << { :ops       => ops_path }             if permitted_to?(:index, :dashboard_ops)
             - tabs << { :statz     => statz_index_path }     if permitted_to?(:index, :dashboard_statz)
-            = navigation(tabs).gsub(/current/, 'active').gsub(/navigation/, 'nav')
+            = navigation(tabs).gsub(/current/, 'active').gsub(/navigation/, 'nav').html_safe
 
             %ul.nav
               - if permitted_to? (:index, :ops)

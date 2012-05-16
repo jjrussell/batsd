@@ -48,35 +48,6 @@ describe Dashboard::SearchController do
         end
       end
 
-      context 'with a blank search query' do
-        before :each do
-          @good_gamer = Factory(:gamer, :email => "user@now.com")
-          @bad_gamer = Factory(:gamer, :email => "abuser@now.com")
-
-          @params = { :terms => '' }
-        end
-
-        it 'returns proper results' do
-          get :gamers, @params
-          assigns(:gamers).should include(@good_gamer)
-        end
-
-        it 'excludes wrong results' do
-          get :gamers, @params
-          assigns(:gamers).should_not include(@bad_gamer)
-        end
-
-        it 'limits result count to 100' do
-          # This will result in 101 matching records (since we already had one match)
-          100.times do
-            Factory(:gamer)
-          end
-
-          get :gamers, @params
-          assigns(:gamers).count.should == 100
-        end
-      end
-
       context 'with a valid search query' do
         before :each do
           @good_gamer = Factory(:gamer, :email => "user@now.com")

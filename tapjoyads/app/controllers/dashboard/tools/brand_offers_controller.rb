@@ -1,4 +1,4 @@
-class BrandOffersController < WebsiteController
+class Dashboard::Tools::BrandOffersController < Dashboard::DashboardController
   layout 'tabbed'
   current_tab :tools
   filter_access_to :all

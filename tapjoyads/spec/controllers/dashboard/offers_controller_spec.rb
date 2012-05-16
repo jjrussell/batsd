@@ -200,7 +200,7 @@ describe Dashboard::OffersController do
     context 'when user_enabled is saved properly' do
       it 'will render nothing' do
         @offer.stubs(:save).returns(true)
-        post(:toggle, :id => @offer.object_id, :user_enabled => true)
+        post(:toggle, :id => @offer.object_id.to_s, :user_enabled => true)
         response.body.should_not be_present
       end
     end
@@ -208,7 +208,7 @@ describe Dashboard::OffersController do
     context 'when user_enabled is not saved properly' do
       it 'will render json error' do
         @offer.stubs(:save).returns(false)
-        post(:toggle, :id => @offer.object_id, :user_enables => true)
+        post(:toggle, :id => @offer.object_id.to_s, :user_enables => true)
         response.body.should == {:error => true}.to_json
       end
     end
@@ -239,7 +239,7 @@ describe Dashboard::OffersController do
   describe '#update' do
     context 'when not permitted to edit->statz' do
       before :each do
-        @controller.stubs(:permitted_to?).with(:edit, :statz).returns(false)
+        @controller.stubs(:permitted_to?).with(:edit, :dashboard_statz).returns(false)
         @safe_attributes = [:daily_budget, :user_enabled, :bid, :self_promote_only, :min_os_version, :screen_layout_sizes, :countries]
 
         @controller.stubs(:find_app).with(@app.id).returns(@app)
@@ -250,7 +250,7 @@ describe Dashboard::OffersController do
 
       it 'will call with base attributes' do
         @offer.stubs(:safe_update_attributes).with({}, @safe_attributes).once.returns(true)
-        post(:update, :app_id => @app.id, :offer => {})
+        post(:update, :app_id => @app.id.to_s, :offer => {})
       end
 
       context 'when it updates properly' do
@@ -310,12 +310,8 @@ describe Dashboard::OffersController do
 
     context 'when permitted to edit->statz' do
       before :each do
-        @controller.stubs(:permitted_to?).with(:edit, :statz).returns(true)
-        @safe_attributes = [ :tapjoy_enabled, :allow_negative_balance, :pay_per_click,
-          :name, :name_suffix, :show_rate, :min_conversion_rate,
-          :device_types, :publisher_app_whitelist, :overall_budget, :min_bid_override,
-          :dma_codes, :regions, :carriers, :cities, :daily_budget, :user_enabled, :bid,
-          :self_promote_only, :min_os_version, :screen_layout_sizes, :countries]
+        @controller.stubs(:permitted_to?).with(:edit, :dashboard_statz).returns(true)
+        @safe_attributes = [ :daily_budget, :user_enabled, :bid, :self_promote_only, :min_os_version, :screen_layout_sizes, :countries, :tapjoy_enabled, :allow_negative_balance, :pay_per_click, :name, :name_suffix, :show_rate, :min_conversion_rate, :device_types, :publisher_app_whitelist, :overall_budget, :min_bid_override, :dma_codes, :regions, :carriers, :cities ]
         @controller.stubs(:find_app).with(@app.id).returns(@app)
         @offer = mock('offer')
         @controller.stubs(:log_activity).with(@offer)
@@ -324,7 +320,7 @@ describe Dashboard::OffersController do
 
       it 'will call with expanded attributes' do
         @offer.stubs(:safe_update_attributes).with({}, @safe_attributes).once.returns(true)
-        post(:update, :app_id => @app.id, :offer => {})
+        post(:update, :app_id => @app.id.to_s, :offer => {})
       end
     end
   end

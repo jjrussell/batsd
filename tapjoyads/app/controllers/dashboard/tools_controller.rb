@@ -1,5 +1,5 @@
 class Dashboard::ToolsController < Dashboard::DashboardController
-  layout 'tabbed'
+  layout 'dashboard'
   current_tab :tools
 
   filter_access_to :all

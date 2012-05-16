@@ -1,4 +1,4 @@
-class Dashboard::Tools::PartnerChangesController < WebsiteController
+class Dashboard::Tools::PartnerChangesController < Dashboard::DashboardController
   layout 'tabbed'
   current_tab :tools
   filter_access_to :all
@@ -16,7 +16,7 @@ class Dashboard::Tools::PartnerChangesController < WebsiteController
 
   def create
     @partner_change = PartnerChange.new(params[:partner_change])
-    @partner_change.source_partner_id = @partner_change.item.partner_id if @partner_change.item.present?
+    @partner_change.source_partner_id = @partner_change.item.partner_id
     log_activity(@partner_change)
 
     if @partner_change.save
