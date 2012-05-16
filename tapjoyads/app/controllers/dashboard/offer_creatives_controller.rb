@@ -56,7 +56,7 @@ class Dashboard::OfferCreativesController < Dashboard::DashboardController
            elsif @offer.app.present?
              @offer.app
            end
-    @preview_path = offer_creative_preview_path(:id => @offer.id, :image_size => @image_size)
+    @preview_path = offer_creative_path(:id => @offer.id, :image_size => @image_size)
 
     log_activity(@offer)
   end
