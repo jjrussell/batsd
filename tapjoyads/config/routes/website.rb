@@ -90,8 +90,8 @@ Tapjoyad::Application.routes.draw do
     resources :android
     resources :survey_results, :only => [:new, :create]
     resources :app_reviews , :only => [:index, :create, :edit, :update, :new, :destroy] do
-      resource :fave, :controller => 'app_reviews/fave', :only => [:create, :destroy]
-      resource :flag, :controller => 'app_reviews/fave', :only => [:create, :destroy]
+      resource :fave, :controller => 'app_reviews/fave_moderation', :only => [:create, :destroy]
+      resource :flag, :controller => 'app_reviews/flag_moderation', :only => [:create, :destroy]
     end
     namespace :social do
       root :to => 'social#index'
