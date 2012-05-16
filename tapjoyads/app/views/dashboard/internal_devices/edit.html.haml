@@ -3,7 +3,7 @@
 %h1 Device Description
 
 #edit_device
-  - form_for(@device, :html => { :class => 'tjform' }) do |f|
+  = form_for(@device, :html => { :class => 'tjform' }) do |f|
     %table
       %tr
         %th= f.label :description

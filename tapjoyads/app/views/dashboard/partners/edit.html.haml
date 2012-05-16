@@ -2,7 +2,7 @@
 
 %h1= @partner.name
 
-- form_for(@partner, nil, :html => { :class => 'tjform' }) do |f|
+= form_for(@partner, nil, :html => { :class => 'tjform' }) do |f|
   .field
     = f.label :name
     #help_name.help ?

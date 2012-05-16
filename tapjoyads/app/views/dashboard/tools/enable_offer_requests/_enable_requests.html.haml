@@ -72,16 +72,16 @@
           = link_to('Activity Log', activities_path(:object_id => req.id))
       %td
         - if req.assigned_to.nil?
-          - form_for([ :tools, req ]) do |f|
+          = form_for([ :tools, req ]) do |f|
             = hidden_field_tag(:do, 'assign')
             = f.submit('Assign to myself')
         - elsif req.assigned_to == current_user
-          - form_for([ :tools, req ]) do |f|
+          = form_for([ :tools, req ]) do |f|
             = hidden_field_tag(:do, 'approve')
             = f.submit('Approve', :class => 'accept-request')
-          - form_for([ :tools, req ]) do |f|
+          = form_for([ :tools, req ]) do |f|
             = hidden_field_tag(:do, 'reject')
             = f.submit('Reject', :class => 'reject-request')
-          - form_for([ :tools, req ]) do |f|
+          = form_for([ :tools, req ]) do |f|
             = hidden_field_tag(:do, 'unassign')
             = f.submit('Unassign')

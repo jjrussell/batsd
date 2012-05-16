@@ -20,7 +20,7 @@
           - if partner.users.blank?
             &nbsp;
         %td.nobr
-          - form_for(partner) do |f|
+          = form_for(partner) do |f|
             - options = options_from_collection_for_select(User.account_managers, "id", "email", partner.account_managers.map(&:id))
             = f.select :account_managers, options, {:include_blank => '(no one)'}, {:class => 'account_manager'}
             = image_tag 'load-circle.gif', :class => 'hidden'

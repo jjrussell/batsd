@@ -2,7 +2,7 @@
 
 .right= link_to 'Activity Logs', activities_path(:object_id => @editors_pick.id)
 
-- form_for([:tools, @editors_pick]) do |f|
+= form_for([:tools, @editors_pick]) do |f|
   %table
     %tbody
       %tr

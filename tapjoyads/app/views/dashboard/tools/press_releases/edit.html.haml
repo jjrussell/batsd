@@ -5,7 +5,7 @@
 
 %h1= @page_title
 
-- form_for [ :tools, @press_release ], :html => { :class => 'tjform', :multipart => true } do |f|
+= form_for [ :tools, @press_release ], :html => { :class => 'tjform', :multipart => true } do |f|
   %table
     %tr
       %th= f.label :published_at
