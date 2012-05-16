@@ -42,7 +42,7 @@ Tapjoyad::Application.routes.draw do
     match 'record_click' => 'homepage#record_click'
     match 'editor_picks' => 'more_games#editor_picks', :as => :more_games_editor_picks
     match 'recommended' => 'more_games#recommended', :as => :more_games_recommended
-    match 'translations/:language_code-pack.js' => 'homepage#translations', :as => :translations
+    match 'translations/:filename.js' => 'homepage#translations', :as => :translations
     resources :my_apps, :only => [:show, :index]
     resources :gamer_sessions, :only => [:new, :create, :destroy, :index]
     get 'login' => 'gamer_sessions#new', :as => :login
