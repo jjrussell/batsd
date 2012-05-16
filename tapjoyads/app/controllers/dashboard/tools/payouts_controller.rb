@@ -39,7 +39,7 @@ class Dashboard::Tools::PayoutsController < Dashboard::DashboardController
       'Current_Payout_Created,Payout_Method,Account_Manager_Email,' <<
       'Confirmed,Notes'
     ]
-    @partners.each do |partner|
+    @partners.all.each do |partner|
       confirmation_notes = partner.confirmation_notes
       line = [
           partner.name.gsub(/[,]/,' '),
@@ -68,6 +68,6 @@ class Dashboard::Tools::PayoutsController < Dashboard::DashboardController
       @partners = Partner.to_payout
     end
 
-    @partners = @partners.all(:include => [:payout_info, {:users => [:user_roles]}])
+    @partners = @partners.includes([:payout_info, {:users => [:user_roles] }])
   end
 end
