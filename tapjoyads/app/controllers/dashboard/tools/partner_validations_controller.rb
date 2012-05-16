@@ -4,15 +4,13 @@ class Dashboard::Tools::PartnerValidationsController < Dashboard::DashboardContr
   filter_access_to :all
 
   def index
-    all_conditions = {:include => [:payout_info, {:users => [:user_roles]}]}
-    @partners = Partner.to_payout
+    @partners = Partner.to_payout.includes([:payout_info, {:users => [:user_roles]}])
     if params[:acct_mgr_filter].present?
-      all_conditions[:conditions] = ['users.id = ? and (users.email like ? or users.email like ?)', params[:acct_mgr_filter], '%@tapjoy.com', '%@offerpal.com']
-      all_conditions[:joins] = [:users]
+      @partners = @partners.conditions(['users.id = ? and (users.email like ? or users.email like ?)', params[:acct_mgr_filter], '%@tapjoy.com', '%@offerpal.com'])
+      @partners = @partners.joins(:users)
       @account_manager = User.find(params[:acct_mgr_filter]).email
     end
 
-    @partners = @partners.all(all_conditions)
 
     if params[:acct_mgr_sort].present?
       @partners = @partners.to_a
