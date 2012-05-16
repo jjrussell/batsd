@@ -76,13 +76,12 @@ Tapjoyad::Application.routes.draw do
         end
       end
       resources :reengagement_rewards, :only => [:show]
-      resources :offer_creatives do
+      resources :offer_creatives, :only => [:show] do
         member do
-          post ':image_size' => 'offer_creatives#create'
-          delete ':image_size' => 'offer_creatives#destroy'
+          get    '/:image_size', :action => :new, :as => :form
+          post   '/:image_size', :action => :create
+          delete '/:image_size', :action => :destroy
         end
-        get 'offer_creatives/:id' => 'offer_creatives#show', :as => :preview
-        get 'offer_creatives/:id/:image_size' => 'offer_creatives#new', :as => :form
       end
       resources :enable_offer_requests, :only => [:create]
       resources :reporting, :only => [:index, :show] do
