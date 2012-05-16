@@ -9,7 +9,7 @@
     when you signup for this email list.
     Once you've confirmed your email address, you'll receive your #{@currency.name}.
 
-  - form_tag(:controller => 'list_signup', :action => 'signup') do
+  = form_tag(:controller => 'list_signup', :action => 'signup') do
     = hidden_field_tag(:udid, params[:udid])
     = hidden_field_tag(:publisher_app_id, params[:publisher_app_id])
     = hidden_field_tag(:advertiser_app_id, params[:advertiser_app_id])

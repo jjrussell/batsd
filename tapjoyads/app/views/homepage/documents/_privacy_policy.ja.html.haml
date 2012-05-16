@@ -232,7 +232,7 @@
   %i Androidデバイス:
   デバイスから、「設定」→「この携帯について」→「ステータス」を選択してください。
   デバイスIDは、携帯電話会社に応じて、IMEI又はMEIDと表示されます。
-- form_tag '/opt_outs' do
+= form_tag '/opt_outs' do
   %label{:for => "udid"} デバイスID：
   %input{:name => "udid", :size => "60", :type => "text"}/
   %input{:type => "submit", :value => "Submit"}/

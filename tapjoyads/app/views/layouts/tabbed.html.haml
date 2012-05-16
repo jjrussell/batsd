@@ -39,7 +39,7 @@
                   - current_partner_active_app_offers.each do |offer|
                     %tr
                       %td
-                        - form_tag toggle_app_offer_path(:id => offer.id, :app_id => offer.item.id) do
+                        = form_tag toggle_app_offer_path(:id => offer.id, :app_id => offer.item.id) do
                           = check_box_tag("toggle_offer_#{offer.id}", '1', {}, :class => 'toggle_offer')
                       %td
                         = link_to offer.name, url_to_offer_item(offer)

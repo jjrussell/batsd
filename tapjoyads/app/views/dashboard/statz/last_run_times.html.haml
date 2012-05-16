@@ -8,7 +8,7 @@
 
 %p As of: #{Time.zone.now.in_time_zone('Pacific Time (US & Canada)').to_s(:pub_ampm_sec)}
 
-- form_tag(last_run_times_statz_path, :method => :get, :class => 'tjform') do
+= form_tag(last_run_times_statz_path, :method => :get, :class => 'tjform') do
   = label_tag(:other_udid, 'Other UDID:')
   = text_field_tag(:other_udid, '', :size => 50)
   = submit_tag('Search')

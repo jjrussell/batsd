@@ -1,7 +1,7 @@
 - @page_title = 'Device Info'
 
 %h1 Device info &amp; Unresolved clicks
-- form_tag({}, { :method => :get, :class => 'tjform' }) do
+= form_tag({}, { :method => :get, :class => 'tjform' }) do
   %table
     %tbody
       %tr
@@ -30,7 +30,7 @@
 
 - if @device.present?
   %h3 Device
-  - form_tag({ :action => 'update_device', :udid => params[:udid] }, { :class => 'tjform' }) do
+  = form_tag({ :action => 'update_device', :udid => params[:udid] }, { :class => 'tjform' }) do
     %table
       %tbody
         %tr
@@ -120,7 +120,7 @@
             %td
               - if app.is_publisher_offer?
                 - app.item.currencies .each do |currency|
-                  - form_tag award_currencies_tools_path(:publisher_app_id => app.item, :currency_id => currency.id, :udid => params[:udid]) do
+                  = form_tag award_currencies_tools_path(:publisher_app_id => app.item, :currency_id => currency.id, :udid => params[:udid]) do
                     = submit_tag currency.name
   - if @apps.length > 5
     = link_to('(show all)', '#', { :id => 'show_more_apps' })
@@ -177,7 +177,7 @@
               - else
                 Won't reward
             - else
-              - form_tag resolve_clicks_tools_path(:click_id => click.id) do
+              = form_tag resolve_clicks_tools_path(:click_id => click.id) do
                 = submit_tag 'Award'
           %td.small
             %ul.nobr

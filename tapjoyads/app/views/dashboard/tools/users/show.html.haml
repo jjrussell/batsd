@@ -28,7 +28,7 @@
     = label_tag(:partners_name_search_box, 'by partner name or ID:')
     = text_field_tag(:partners_name_search_box, '', :size => 40)
   #search_results.hidden
-    - form_tag tools_user_partner_assignments_path(:user_id => @user.id) do
+    = form_tag tools_user_partner_assignments_path(:user_id => @user.id) do
       %table
         %tbody
           %tr
@@ -60,7 +60,7 @@
               = button_to('Remove', path, :method => 'delete', :confirm => 'Are you sure?')
             - else
               = submit_tag 'Cannot remove', :disabled => 'disabled'
-            - form_tag(make_current_partner_path(partner)) do
+            = form_tag(make_current_partner_path(partner)) do
               - if current_partner == partner
                 = submit_tag("Acting as", :class => 'act_as_button', :disabled => true)
               - else
