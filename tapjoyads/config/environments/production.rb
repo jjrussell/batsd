@@ -9,6 +9,8 @@ Tapjoyad::Application.configure do
              %w( website api )
            when 'webserver'
              %w( web legacy )
+           when 'jobserver'
+             %w( job )
            else
              %w( api dashboard website web legacy )
            end
