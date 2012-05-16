@@ -234,13 +234,12 @@ Tapjoyad::Application.routes.draw do
           resources :video_buttons
         end
         resources :offers do
+          resources :sales_reps
           collection do
             get :creative
             post :approve_creative
             post :reject_creative
           end
-
-
         end
         resources :payouts, :only => [:index, :create] do
           collection do

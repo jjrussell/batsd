@@ -66,6 +66,7 @@ ActionController::Routing::Routes.draw do |map|
     m.search_offers 'search/offers', :action => 'offers'
     m.search_users 'search/users', :action => 'users'
     m.search_partners 'search/partners', :action => 'partners'
+    m.search_brands 'search/brands', :action => 'brands'
     m.search_currencies 'search/currencies', :action => 'currencies'
   end
   map.premier 'premier', :controller => :premier, :action => :edit
@@ -73,7 +74,7 @@ ActionController::Routing::Routes.draw do |map|
 
   # Admin tools routes
   map.resources :tools, :only => :index,
-    :collection => { :monthly_data => :get, :new_transfer => :get,
+    :collection => { :monthly_data => :get, :new_transfer => :get, :partner_monthly_balance => :get,
                      :money => :get, :failed_sdb_saves => :get, :disabled_popular_offers => :get,
                      :sdb_metadata => :get, :reset_device => :get, :send_currency_failures => :get, :sanitize_users => :get,
                      :resolve_clicks => :post, :sqs_lengths => :get, :ses_status => :get,
@@ -126,10 +127,13 @@ ActionController::Routing::Routes.draw do |map|
     tools.resources :partner_program_statz, :only => [ :index ], :collection => { :export => :get }
     tools.resources :survey_offers, :except => [ :show ], :member => { :toggle_enabled => :put }
     tools.resources :payout_freezes, :only => [ :index, :create ], :member => { :disable => :post }
+    tools.resources :brand_offers, :only => [ :index, :create ], :collection => { :delete => :post }
+    tools.resources :brands, :only => [ :index, :new, :create, :edit, :update, :show ]
     tools.resources :currency_approvals, :only => [:index], :collection => [:mine, :history], :member => [:approve, :reject, :assign], :controller => :approvals, :requirements => { :type => :currency, :calling_controller => 'tools/currency_approvals' }
     tools.resources :wfhs, :only => [ :index, :new, :create, :edit, :update, :destroy ]
     tools.resources :clients, :only => [ :index, :show, :new, :create, :edit, :update], :member => { :add_partner => :post, :remove_partner => :post }
     tools.resources :shared_files, :only => [ :index, :create ], :collection => { :delete => :post }
+    tools.resources :partner_changes, :only => [ :index, :new, :create, :destroy ], :member => { :complete => :post }
   end
 
   # Operations tools routes
@@ -145,6 +149,8 @@ ActionController::Routing::Routes.draw do |map|
       :elb_status => :get,
       :http_codes => :get,
       :bytes_sent => :get,
+      :vertica_status => :get,
+      :requests_per_minute => :get,
     }
 
   map.connect 'mail_chimp_callback/callback', :controller => :mail_chimp_callback, :action => :callback
