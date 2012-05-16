@@ -4,7 +4,7 @@
     %h1.museo
       Update Password
     .mt10
-      - form_for(:gamer, @gamer, :url => { :action => :update }, :html => { :method => :put }) do |f|
+      = form_for(:gamer, @gamer, :url => { :action => :update }, :html => { :method => :put }) do |f|
         .field
           = f.label :password, t('text.shared.new_password')
           = f.password_field :password, :class => 'ui-joy-input'

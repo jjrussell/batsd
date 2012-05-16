@@ -55,7 +55,7 @@
         .list-button-container.flush.nbb.big
           .list-button.ntb
             - eid = params[:eid].present? ? params[:eid] : ObjectEncryptor.encrypt(params[:id])
-            -link_to new_games_app_review_path(:eid => eid) do
+            = link_to new_games_app_review_path(:eid => eid) do
               .left.charcoal
                 = t("text.games.review_app_name", {:app_name => @app.name})
               .right.rightarrow.icon16
