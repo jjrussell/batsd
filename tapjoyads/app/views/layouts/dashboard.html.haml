@@ -63,7 +63,7 @@
                   %b.caret
                 %ul.dropdown-menu
                   %li
-                    - link_text = "<span id='number_of_active_offers'>#{current_partner_active_app_offers.length}</span> active campaigns"
+                    - link_text = "<span id='number_of_active_offers'>#{current_partner_active_app_offers.length}</span> active campaigns".html_safe
                     - link_class = "soft-link #{current_partner_active_app_offers.blank? ? 'inactive' : ''}"
                     = link_to_function link_text, '$.noop()', :class => link_class, :id => 'active_campaigns'
                   - unless current_partner_active_app_offers.blank?
@@ -104,7 +104,7 @@
           .alert{ :class => "alert-#{name == :notice ? :info : name}" }
             %a.close{ :data => { :dismiss => 'alert' } } &times;
             %strong #{name.to_s.humanize}:
-            = msg
+            = msg.html_safe
         - [:error, :warning, :notice].each do |name|
           - if flash[name].blank?
             .alert.hidden{ :id => "flash_#{name}", :class => "alert-#{name == :notice ? :info : name}" }
