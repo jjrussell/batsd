@@ -3,7 +3,7 @@
 %h1 Offer Whitelist
 
 
-- form_tag(account_whitelist_index_path, :method => :get, :id => 'form', :class => 'tjform') do
+= form_tag(account_whitelist_index_path, :method => :get, :id => 'form', :class => 'tjform') do
   = label_tag(:name)
   = text_field_tag(:name, params[:name], :size => 20)
   = label_tag(:platform)  # currently labelled as 'platform' for device type, we can change it as required later

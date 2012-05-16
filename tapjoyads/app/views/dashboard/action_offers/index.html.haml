@@ -38,7 +38,7 @@
     - @action_offers.each do |action_offer|
       %tr{ :class => cycle('even', 'odd') }
         %td
-          - form_tag toggle_app_action_offer_url(@app, action_offer) do
+          = form_tag toggle_app_action_offer_url(@app, action_offer) do
             = check_box_tag("", "1", action_offer.user_enabled?, :class => 'toggle_action_offer')
           %img{ :src => '/images/load-circle.gif', :style => 'display: none;' }
         %td= link_to(action_offer.name, edit_app_action_offer_path(@app, action_offer))

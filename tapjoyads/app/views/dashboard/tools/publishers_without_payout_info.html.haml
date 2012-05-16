@@ -25,7 +25,7 @@ Total:
           %br/
           = partner.contact_phone
           %br/
-          - form_tag(make_current_partner_path(partner)) do
+          = form_tag(make_current_partner_path(partner)) do
             - if current_partner == partner
               = submit_tag("Acting as this partner", :class => 'act_as_button', :disabled => true)
             - else

@@ -3,7 +3,7 @@
     = embed_js "marketplace/ajax-preload"
     :javascript
       window.jsonp_preloaded = ajaxPreload("#{offerwall_url}");
-%ul.list-button-container.earn-theme.ajax-loader.lazy-image-loader{ "data-url"  => offerwall_url, "data-is-jsonp" => 1, "data-immediate-load" => immediate_load, "data-params" => { :tjm => 1, :show_wifi_only => 1, :max => 25, :start => 0 }.to_json }
+%ul.list-button-container.earn-theme.ajax-loader.lazy-image-loader{ "data-url"  => offerwall_url.to_json, "data-is-jsonp" => 1, "data-immediate-load" => immediate_load.to_json, "data-params" => { :tjm => 1, :show_wifi_only => 1, :max => 25, :start => 0 }.to_json }
   .ajax-target
   .ajax-placeholder
     %ul.list-button-container.flush.nbb

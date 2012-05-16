@@ -37,7 +37,7 @@
         %td= vg.disabled? ? "Disabled" : vg.beta? ? "Beta" : "&nbsp;"
         - if permitted_to?(:edit, :dashboard_statz)
           %td.admin= vg.ordinal
-- form_tag(reorder_app_virtual_goods_path(:app_id => @app.id), :id => "reorder-virtual-goods") do
+= form_tag(reorder_app_virtual_goods_path(:app_id => @app.id), :id => "reorder-virtual-goods") do
   = hidden_field_tag('virtual_goods')
   = submit_tag('Save new order', :id => 'virtual-goods-order-submit', :style => "display:none;")
 

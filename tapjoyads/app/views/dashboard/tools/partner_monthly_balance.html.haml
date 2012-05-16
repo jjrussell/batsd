@@ -2,7 +2,7 @@
 
 %h1 Partner monthly balance for #{@period_str}
 
-- form_tag(partner_monthly_balance_tools_path, :method => :get) do
+= form_tag(partner_monthly_balance_tools_path, :method => :get) do
   %table
     %tr
       %td= label_tag(:partner_id, 'Partner ID')

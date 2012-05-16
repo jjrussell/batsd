@@ -6,7 +6,7 @@
           = t('text.games.twitter_invite_title')
   .container
     .mod
-      - form_tag games_social_send_twitter_invites_path, :class => "ajax-submit twitter-invite-form", "data-success-event" => "twitter-invite-ajax-success" do
+      = form_tag games_social_send_twitter_invites_path, :class => "ajax-submit twitter-invite-form", "data-success-event" => "twitter-invite-ajax-success" do
         .mod.pb3
           = t('text.shared.friends')
         .mod.form-section.pb5
@@ -16,7 +16,7 @@
           = text_field_tag 'ajax', true, :hidden => true
         .mod.friend-pagination
           = link_to(t('text.games.social_to_prev', :page_size => @page_size), '#', :id => 'prev')
-        .ajax-loader#twitter-friends{ "data-url"  => games_social_get_twitter_friends_path, "data-immediate-load" => true, "data-timeout" => 55000, "data-params" => { :ajax => true, :pageSize => @page_size}.to_json }
+        .ajax-loader#twitter-friends{ "data-url"  => games_social_get_twitter_friends_path, "data-immediate-load" => "true", "data-timeout" => 55000, "data-params" => { :ajax => true, :pageSize => @page_size}.to_json }
           %ul.list-button-container.ajax-target.nbb.friend-list
           .ajax-placeholder
             %li.list-button.ntb

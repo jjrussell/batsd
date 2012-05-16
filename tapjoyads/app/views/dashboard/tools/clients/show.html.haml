@@ -7,7 +7,7 @@
   = label_tag(:partners_name_search_box, 'by partner name or ID:')
   = text_field_tag(:partners_name_search_box, '', :size => 40)
 #search_results.hidden
-  - form_tag add_partner_tools_client_path(@client) do
+  = form_tag add_partner_tools_client_path(@client) do
     %table
       %tbody
         %tr
@@ -35,7 +35,7 @@
         %td
           - path = remove_partner_tools_client_path(@client)+"?partner_id=#{partner.id}"
           = button_to('Remove', path, :method => 'post', :confirm => 'Are you sure?')
-          - form_tag(make_current_partner_path(partner)) do
+          = form_tag(make_current_partner_path(partner)) do
             - if current_partner == partner
               = submit_tag('Acting as', :class => 'act_as_button', :disabled => true)
             - else

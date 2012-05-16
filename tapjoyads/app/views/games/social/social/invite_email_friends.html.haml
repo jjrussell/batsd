@@ -6,7 +6,7 @@
           = t('text.games.invite_title')
   .container
     .mod
-      - form_tag games_social_send_email_invites_path, :class => "ajax-submit", "data-success-event" => "email-invite-ajax-success" do
+      = form_tag games_social_send_email_invites_path, :class => "ajax-submit", "data-success-event" => "email-invite-ajax-success" do
         .mod.pb3
           = t('text.shared.recipients')
         .mod.form-section

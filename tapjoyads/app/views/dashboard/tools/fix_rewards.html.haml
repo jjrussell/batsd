@@ -6,7 +6,7 @@
   Occasionally rewards get stuck in the send currency queue if 'sent_currency' is not properly cleared.
   This tool takes in a reward key and clears that field if possible.
 
-- form_tag(fix_rewards_tools_path, :method => :get, :class => 'tjform') do
+= form_tag(fix_rewards_tools_path, :method => :get, :class => 'tjform') do
   %table
     %tbody
       %tr

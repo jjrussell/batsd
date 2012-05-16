@@ -126,7 +126,7 @@
 %p
   %i Android Devices:
   From your device, go to Settings -> About Phone -> Status. Your device id will be listed either as IMEI or MEID depending on your carrier.
-- form_tag '/opt_outs' do
+= form_tag '/opt_outs' do
   %label{:for => "udid"} Device ID:
   %input{:name => "udid", :size => "60", :type => "text"}/
   %input{:type => "submit", :value => "Submit"}/

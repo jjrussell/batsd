@@ -2,7 +2,7 @@
 - pending = @offer.has_banner_creative?(@image_size) && !@offer.banner_creative_approved?(@image_size)
 
 - if @creative_exists
-  - form_tag(url, :method => :delete, :id => "remove_form_for_#{@image_size}", :class => "hidden") {}
+  = form_tag(url, :method => :delete, :id => "remove_form_for_#{@image_size}", :class => "hidden") {}
 
 = form_for(@offer, :url => url, :html => { :id => 'upload_form', :class => 'tjform', :method => (@creative_exists ? :put : :post), :multipart => true }) do |f|
   %table

@@ -94,7 +94,7 @@
   #help_amount_content{ :name => 'Amount' } The amount you would like added to your balance. Your card will be charged this amount.
 
 .hidden
-  - form_tag forget_credit_card_billing_index_path, :id => 'forget_form' do
+  = form_tag forget_credit_card_billing_index_path, :id => 'forget_form' do
     = hidden_field_tag(:payment_profile_id)
 
 - content_for :page_javascript do

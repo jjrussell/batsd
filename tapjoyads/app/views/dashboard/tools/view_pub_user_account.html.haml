@@ -28,7 +28,7 @@
         %td
           %nobr= device.last_run_time(@publisher_app.id) ? device.last_run_time(@publisher_app.id).to_s(:pub_ampm_sec) : ''
         %td
-          - form_tag({ :action => 'detach_pub_user_account', :publisher_app_id => @publisher_app.id, :publisher_user_id => params[:publisher_user_id], :udid => device.key }, { :class => 'tjform' }) do
+          = form_tag({ :action => 'detach_pub_user_account', :publisher_app_id => @publisher_app.id, :publisher_user_id => params[:publisher_user_id], :udid => device.key }, { :class => 'tjform' }) do
             = submit_tag 'Detach'
 
 - content_for :page_head, stylesheet_link_tag('tools')

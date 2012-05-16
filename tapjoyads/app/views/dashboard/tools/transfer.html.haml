@@ -2,7 +2,7 @@
 
 %h1 Transfer Credits
 
-- form_tag create_order_tools_path, :method => :post, :class => 'json' do
+= form_tag create_order_tools_path, :method => :post, :class => 'json' do
   .field
     = label_tag 'partner_id', 'Partner ID'
     = text_field_tag 'partner_id', nil, :size => 40

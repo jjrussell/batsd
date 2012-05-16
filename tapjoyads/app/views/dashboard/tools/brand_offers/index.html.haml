@@ -28,7 +28,7 @@
         %td
           =select_tag(:offers, [],  :multiple => true, :style => 'width: 200px')
 
-- form_tag tools_brands_path, :method => :post, :class => 'create_brand' do
+= form_tag tools_brands_path, :method => :post, :class => 'create_brand' do
   %input#brand_name{ :type => 'hidden', :value => ''}
 - content_for :page_javascript do
   :plain

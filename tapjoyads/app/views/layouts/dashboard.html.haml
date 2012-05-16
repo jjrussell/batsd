@@ -74,7 +74,7 @@
                             - current_partner_active_app_offers.each do |offer|
                               %tr
                                 %td
-                                  - form_tag toggle_app_offer_path(:id => offer.id, :app_id => offer.item.id) do
+                                  = form_tag toggle_app_offer_path(:id => offer.id, :app_id => offer.item.id) do
                                     = check_box_tag("toggle_offer_#{offer.id}", '1', {}, :class => 'toggle_offer')
                                 %td
                                   = link_to offer.name, url_to_offer_item(offer)
@@ -94,7 +94,7 @@
                     = link_to('Logout', logout_path)
               - if current_user.can_manage_account? && !controller.class.current_tab == 'ops'
                 %li
-                  - form_tag('') do
+                  = form_tag('') do
                     = select_tag(:recent_partners, options_for_select(@recent_partners))
                     = link_to('Partner page', partner_path(current_partner))
     .container-fluid

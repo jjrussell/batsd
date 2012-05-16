@@ -2,7 +2,7 @@
 
 %h1 Activity log
 
-- form_tag(activities_path, :method => :get, :id => 'form', :class => 'tjform') do
+= form_tag(activities_path, :method => :get, :id => 'form', :class => 'tjform') do
   = label_tag(:user)
   = text_field_tag(:user, params[:user], :size => 15)
   = label_tag(:object_id)

@@ -162,5 +162,6 @@ body {
 .list-button-container.earn-theme {
   .squircle {
     background: inline-image("#{$image_path}/app_icon_overlay_large_earn.png") no-repeat 0 0;
+    background-size: 100px 100px;
   }
 }

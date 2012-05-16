@@ -18,7 +18,7 @@
   %li Example: TapjoyDeck_#{Time.zone.now.to_s(:yyyy_mm_dd)}.pdf
 
 %h3 Upload a file
-- form_tag(tools_shared_files_path, :method => :post, :multipart => true, :class => 'tjform') do
+= form_tag(tools_shared_files_path, :method => :post, :multipart => true, :class => 'tjform') do
   %table
     %tbody
       %tr

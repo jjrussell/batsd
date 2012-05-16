@@ -17,7 +17,7 @@
       %li What types of campaigns to run on mobile
       %li How to optimize your site and creative for mobile
     #form
-      - form_tag '/site/whitepaper' do
+      = form_tag '/site/whitepaper' do
         .container
           = label_tag 'info[first_name]', 'First name'
           = text_field_tag 'info[first_name]', params[:info] ? params[:info][:first_name] : ''
