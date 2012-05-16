@@ -449,9 +449,9 @@ en:
       amount_and_currency: "%{amount} %{currency}"
       continue_link: "Click here to continue."
       download_action: here
-      download_link: "If you don't have this app, click %{download_action} to download it."
-      earn_currency: "Earn %{amount_and_currency}"
-      footer: "After completing these steps, you will earn %{amount_and_currency}."
+      download_link_html: "If you don't have this app, click %{download_action} to download it."
+      earn_currency_html: "Earn %{amount_and_currency}"
+      footer_html: "After completing these steps, you will earn %{amount_and_currency}."
       header: "Follow these steps to earn %{currency}:"
       title: Instructions
     offerwall:

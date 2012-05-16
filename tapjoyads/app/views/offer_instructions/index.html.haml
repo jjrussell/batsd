@@ -1,6 +1,5 @@
 - @page_title = t('text.instructions.title')
-- amount_and_currency = capture_haml do
-  %span.amount= t('text.instructions.amount_and_currency', :amount => @currency.get_visual_reward_amount(@offer, params[:display_multiplier]), :currency => @currency.name)
+- amount_and_currency = content_tag(:span, t('text.instructions.amount_and_currency', :amount => @currency.get_visual_reward_amount(@offer, params[:display_multiplier]), :currency => @currency.name), :class => 'amount' )
 
 #offers
   #header
@@ -8,19 +7,18 @@
     #action_name
       = @offer.name
       %br
-      = t('text.instructions.earn_currency', :amount_and_currency => amount_and_currency)
+      = t('text.instructions.earn_currency_html', :amount_and_currency => amount_and_currency)
 
   #action_instructions
     .important= t('text.instructions.header', :currency => @currency.name)
-    .instructions= simple_paragraphs @offer.instructions
-    .important= t('text.instructions.footer', :amount_and_currency => amount_and_currency)
+    .instructions! = simple_paragraphs @offer.instructions
+    .important= t('text.instructions.footer_html', :amount_and_currency => amount_and_currency)
 
   #footer
     %div
       - if @offer.item_type == 'ActionOffer'
-        - download_action = capture_haml do
-          = link_to(t('text.instructions.download_action'), @complete_action_url)
-        = t('text.instructions.download_link', :download_action => download_action)
+        - download_action = link_to(t('text.instructions.download_action'), @complete_action_url)
+        = t('text.instructions.download_link_html', :download_action => download_action)
       - else
         = link_to(t('text.instructions.continue_link'), @complete_action_url, :class => 'continue')
 
@@ -34,7 +32,6 @@
 .clear
 
 %img.hidden{ :src => '/images/load-circle.gif' }
-
 
 - content_for :page_styles do
   :plain

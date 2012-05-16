@@ -416,8 +416,8 @@ nl:
       amount_and_currency: "%{amount} %{currency}"
       continue_link: "Klik hier om verder te gaan."
       download_action: hier
-      download_link: "Als je deze app nog niet hebt, klik %{download_action} om hem te downloaden."
-      earn_currency: "Verdien %{amount_and_currency}"
+      download_link_html: "Als je deze app nog niet hebt, klik %{download_action} om hem te downloaden."
+      earn_currency_html: "Verdien %{amount_and_currency}"
       footer: "Na het doorlopen van deze stappen ontvang je %{amount_and_currency}."
       header: "Volg deze stappen om de %{currency} te krijgen:"
       title: Instructies
