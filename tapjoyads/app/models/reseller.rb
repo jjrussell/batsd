@@ -30,10 +30,6 @@ class Reseller < ActiveRecord::Base
     joins(:partners => :payout_info).where("#{PayoutInfo.quoted_table_name}.updated_at >= ? and #{PayoutInfo.quoted_table_name}.updated_at < ? ", start_date, end_date)
   }
 
-  def confirmed_for_payout
-    partners.all?(&:confirmed_for_payout)
-  end
-
   # These attributes are from the .to_payout scope and need to be read as floats, not strings.
   %w(pending_earnings next_payout_amount).each do |field|
     define_method field do
