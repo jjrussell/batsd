@@ -957,6 +957,29 @@ describe Offer do
     end
   end
 
+  context "third_party_tracking_url methods" do
+    describe 'impression_tracking_urls' do
+      it "should trim and remove dups" do
+        @offer.impression_tracking_urls = ['https://dummyurl.com?ts=[timestamp]', '  https://dummyurl.com?ts=[timestamp]  ']
+        @offer.impression_tracking_urls.should == ['https://dummyurl.com?ts=[timestamp]']
+      end
+    end
+
+    describe 'click_tracking_urls' do
+      it "should trim and remove dups" do
+        @offer.click_tracking_urls = ['https://dummyurl.com?ts=[timestamp]', '  https://dummyurl.com?ts=[timestamp]  ']
+        @offer.click_tracking_urls.should == ['https://dummyurl.com?ts=[timestamp]']
+      end
+    end
+
+    describe 'conversion_tracking_urls' do
+      it "should trim and remove dups" do
+        @offer.conversion_tracking_urls = ['https://dummyurl.com?ts=[timestamp]', '  https://dummyurl.com?ts=[timestamp]  ']
+        @offer.conversion_tracking_urls.should == ['https://dummyurl.com?ts=[timestamp]']
+      end
+    end
+  end
+
   context "queue_third_party_tracking_request methods" do
     before(:each) do
       Sqs.stubs(:send_message)

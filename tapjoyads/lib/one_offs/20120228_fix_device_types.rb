@@ -15,7 +15,7 @@ class OneOffs
       next if offer.nil?
 
       new_activity_log                  = ActivityLog.new({ :load => false })
-      new_activity_log.request_id       = UUIDTools::UUID.random_create.to_s
+      new_activity_log.request_id       = self.generate_random_UUID
       new_activity_log.user             = 'script'
       new_activity_log.controller       = 'one_off'
       new_activity_log.action           = 'fix_device_types'

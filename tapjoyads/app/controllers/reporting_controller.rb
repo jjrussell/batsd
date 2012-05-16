@@ -7,7 +7,6 @@ class ReportingController < WebsiteController
   before_filter :setup, :only => [ :show, :export, :aggregate, :export_aggregate ]
   before_filter :set_platform, :only => [ :aggregate, :export_aggregate ]
   before_filter :nag_user_about_payout_info, :only => [:show]
-  before_filter :show_update_notice
 
   def index
     unless current_partner_offers.empty?
@@ -80,10 +79,6 @@ class ReportingController < WebsiteController
   end
 
   private
-
-  def show_update_notice
-    flash.now[:notice] = 'Reporting for Tapjoy.com and In-App offerwalls is tracked separately after 5/1/2012' if Delayed.show_in_duration?
-  end
 
   def find_offer
     @offer = current_partner.offers.find_by_id(params[:id], :include => 'item')

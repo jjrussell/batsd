@@ -261,6 +261,135 @@ describe Partner do
         available_offers[:iphone].should include @offer4
       end
     end
+
+    describe '#discount_expires_on' do
+      context 'when no applied_offer_discounts' do
+        before :each do
+          @partner.stubs(:applied_offer_discounts).returns([])
+        end
+
+        it 'will be nil' do
+          @partner.discount_expires_on.should be_nil
+        end
+      end
+
+      context 'when there are applied_offer_discounts' do
+        before :each do
+          @one_day = 1.day.ago
+          applied_discounts = [stub('expiration1', :expires_on => 2.days.ago),
+                               stub('expiration2', :expires_on => @one_day),
+                               stub('expiration3', :expires_on => 3.days.ago)]
+
+          @partner.stubs(:applied_offer_discounts).returns(applied_discounts)
+        end
+
+        it 'will be the most recent expiration' do
+          @partner.discount_expires_on.should == @one_day
+        end
+      end
+    end
+
+    describe '#applied_offer_discounts' do
+      it 'will only return active discounts' do
+        first= mock('first', :active? => false)
+        second = mock('second', :active? => true, :amount => 2)
+        third = mock('third', :active? => true, :amount => 5)
+        offer_discounts = [first, second, third]
+        @partner.stubs(:premier_discount).returns(5)
+        @partner.stubs(:offer_discounts).returns(offer_discounts)
+        @partner.applied_offer_discounts.should == [third]
+      end
+    end
+
+    describe '#sales_rep_is_employee' do
+      before :each do
+        @sales_rep = mock('sales_rep')
+        @partner.stubs(:sales_rep).returns(@sales_rep)
+      end
+
+      context 'when sales rep is an employee' do
+        before :each do
+          @sales_rep.stubs(:employee?).returns(true)
+        end
+
+        it 'has no errors' do
+          @partner.stubs(:errors).never
+          @partner.send(:sales_rep_is_employee)
+        end
+      end
+
+      context 'when sales rep is not an employee' do
+        before :each do
+          @sales_rep.stubs(:employee?).returns(false)
+        end
+
+        it 'has an error' do
+          errors = mock('errors')
+          errors.stubs(:add).with(:sales_rep, 'must be an employee').once
+          @partner.stubs(:errors).returns(errors)
+          @partner.send(:sales_rep_is_employee)
+        end
+      end
+    end
+
+    describe '.verify_balances' do
+      context 'when alert on mismatch' do
+        before :each do
+          Partner.stubs(:find).with(@partner.id).returns(@partner)
+        end
+
+        context 'when partner balance changed' do
+          it 'notifies of balance change' do
+            @partner.stubs(:balance_was).returns(10000)
+            @partner.stubs(:balance).returns(0)
+            @partner.stubs(:balance_changed?).returns(true)
+            @partner.stubs(:pending_earnings_changed?).returns(false)
+            Notifier.stubs(:alert_new_relic).with(BalancesMismatch, "Balance mismatch for partner: #{@partner.id}, previously: 10000, now: 0").once
+            p = Partner.verify_balances(@partner.id, true)
+          end
+        end
+
+        context 'when partner pending earnings changed' do
+          it 'notifies of a pending earnings change' do
+            @partner.stubs(:pending_earnings_was).returns(10000)
+            @partner.stubs(:pending_earnings).returns(0)
+            @partner.stubs(:balance_changed?).returns(false)
+            @partner.stubs(:pending_earnings_changed?).returns(true)
+            @partner.stubs(:add_payout_confirmations)
+            Notifier.stubs(:alert_new_relic).with(BalancesMismatch, "Pending Earnings mismatch for partner: #{@partner.id}, previously: 10000, now: 0").once
+            p = Partner.verify_balances(@partner.id, true)
+          end
+        end
+      end
+    end
+
+    describe '#confirm_for_payout' do
+      before :each do
+        @partner.payout_threshold_confirmation = false
+      end
+
+      context 'when user has proper role' do
+        before :each do
+          @user = Factory(:admin)
+        end
+
+        it 'remains confirmed the partner' do
+          @partner.confirm_for_payout(@user)
+          @partner.payout_threshold_confirmation.should be_true
+        end
+      end
+
+      context 'when user does not have proper role' do
+        before :each do
+          @user = Factory(:agency_user)
+        end
+
+        it 'does not confirm the partner' do
+          @partner.confirm_for_payout(@user)
+          @partner.payout_threshold_confirmation.should be_false
+        end
+      end
+    end
   end
 
   describe '#dashboard_partner_url' do
