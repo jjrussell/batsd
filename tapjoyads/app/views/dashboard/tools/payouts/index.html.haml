@@ -90,7 +90,7 @@
               %span.status
           - else
             &nbsp;
-        = render 'shared/payout_confirmations', :partner => partner, :permitted =>  permitted_to?(:confirm_payouts, :tools_payouts), :path => confirm_payouts_tools_payouts_path( :partner_id => partner.id, :type => :json)
+        = render 'shared/payout_confirmations', :partner => partner, :permitted =>  permitted_to?(:confirm_payouts, :dashboard_tools_payouts), :path => confirm_payouts_tools_payouts_path( :partner_id => partner.id, :type => :json)
 
 = will_paginate(@partners)
 %div{ :class => 'popup', :style => 'display:none'}

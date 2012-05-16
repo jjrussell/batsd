@@ -162,7 +162,7 @@ class WebsiteController < ApplicationController
   end
 
   def find_app(app_id)
-    if permitted_to? :edit, :statz
+    if permitted_to? :edit, :dashboard_statz
       App.find(app_id)
     else
       current_partner.apps.find(app_id)

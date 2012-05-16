@@ -33,7 +33,7 @@ authorization do
   end
 
   role :ops do
-    has_permission_on :ops, :to => [
+    has_permission_on :dashboard_ops, :to => [
                                      :index,
                                      :elb_status,
                                      :as_groups,
@@ -95,8 +95,8 @@ authorization do
   end
 
   role :reporting do
-    has_permission_on :statz, :to => [ :index, :show, :global, :publisher, :advertiser, :support_request_reward_ratio ]
-    has_permission_on :search, :to => [ :offers, :brands ]
+    has_permission_on :dashboard_statz, :to => [ :index, :show, :global, :publisher, :advertiser, :support_request_reward_ratio ]
+    has_permission_on :dashboard_search, :to => [ :offers, :brands ]
   end
 
   role :executive do
@@ -171,22 +171,12 @@ authorization do
 
   role :partner_changer do
     includes :tools
-    has_permission_on :tools_partner_changes, :to => [ :index, :new, :create, :destroy, :complete ]
-  end
-
-  role :partner_changer do
-    includes :tools
-    has_permission_on :tools_partner_changes, :to => [ :index, :new, :create, :destroy, :complete ]
-  end
-
-  role :partner_changer do
-    includes :tools
-    has_permission_on :tools_partner_changes, :to => [ :index, :new, :create, :destroy, :complete ]
+    has_permission_on :dashboard_tools_partner_changes, :to => [ :index, :new, :create, :destroy, :complete ]
   end
 
   role :sales_rep_mgr do
     includes :tools
-    has_permission_on :tools_sales_reps, :to => [ :index, :new, :create, :edit, :update ]
+    has_permission_on :dashboard_tools_sales_reps, :to => [ :index, :new, :create, :edit, :update ]
   end
 
   role :admin do
@@ -201,6 +191,7 @@ authorization do
     includes :role_mgr
     includes :products
     includes :file_sharer
+    includes :sales_rep_mgr
     has_permission_on :dashboard_pub_offer_whitelist, :to => [ :index, :enable, :disable ]
     has_permission_on :dashboard_tools, :to => [ :failed_sdb_saves, :sdb_metadata, :reset_device, :sqs_lengths, :elb_status, :ses_status, :as_groups, :fix_rewards ]
     has_permission_on :dashboard_tools_offers, :to => [ :creative, :approve_creative, :reject_creative ]
