@@ -148,6 +148,7 @@ authorization do
     has_permission_on :dashboard_tools_brand_offers, :to => [ :index, :create, :delete ]
     has_permission_on :dashboard_tools_brands, :to => [ :index, :new, :create, :edit, :update, :show ]
     has_permission_on :dashboard_tools_clients, :to => [ :index, :show, :new, :create, :edit, :update, :add_partner, :remove_partner ]
+    has_permission_on :dashboard_tools_partner_validations, :to => [ :index, :confirm_payouts]
   end
 
   role :games_editor do

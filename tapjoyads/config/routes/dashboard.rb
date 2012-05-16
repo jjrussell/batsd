@@ -336,6 +336,11 @@ Tapjoyad::Application.routes.draw do
             post :delete
           end
         end
+        resources :partner_validations, :only => [ :index] do
+          collection do
+            post :confirm_payouts
+          end
+        end
       end
       resources :ops, :only => :index do
         collection do
