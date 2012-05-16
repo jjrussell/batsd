@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe 'routes for api' do
   it 'should be routable' do
-    get('/').should route_to 'homepage/homepage#start'
+    get('/').should route_to 'games/homepage#index'
     get('/click/app').should route_to 'click#app'
     get('/connect').should route_to 'connect#index'
     get('/display_ad').should route_to 'display_ad#index'
