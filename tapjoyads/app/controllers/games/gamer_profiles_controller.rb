@@ -1,4 +1,4 @@
-class Games::PublicGamerProfilesController < GamesController
+class Games::GamerProfilesController < GamesController
 
   before_filter :set_profile, :only => [ :show, :edit, :update, :update_birthdate, :update_prefs, :dissociate_account ]
 
@@ -6,10 +6,10 @@ class Games::PublicGamerProfilesController < GamesController
     @gamer_profile.safe_update_attributes(params[:gamer_profile], [ :name, :nickname, :gender, :city, :country, :postal_code, :favorite_game, :favorite_category ])
     if @gamer_profile.save
       flash[:notice] = t('text.games.profile_update')
-      redirect_to games_public_gamer_profile_path(@gamer_profile)
+      redirect_to games_gamer_profile_path(@gamer_profile)
     else
       flash[:error] = t('text.games.profile_error')
-      redirect_to edit_games_public_gamer_profile_path(@gamer_profile)
+      redirect_to edit_games_gamer_profile_path(@gamer_profile)
     end
   end
 
@@ -52,7 +52,7 @@ class Games::PublicGamerProfilesController < GamesController
   def show
   end
 
-private
+  private
   def set_profile
     if current_gamer.present?
       @gamer = current_gamer
@@ -63,4 +63,3 @@ private
     end
   end
 end
-

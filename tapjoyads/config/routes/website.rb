@@ -66,17 +66,16 @@ Tapjoyad::Application.routes.draw do
         end
 
         resource :favorite_app, :controller => :favorite_app, :only => [:create, :destroy]
-        resource :gamer_profile, :only => [:update] do
-          member do
-            put :update_prefs
-            put :dissociate_account
-            put :update_birthdate
-          end
-        end
       end
     end
 
-    resources :public_gamer_profiles, :only => [:show, :edit, :update], :path => 'gamer_profiles'
+    resources :gamer_profiles, :only => [:show, :edit, :update] do
+      member do
+        put :update_prefs
+        put :dissociate_account
+        put :update_birthdate
+      end
+    end
     match 'register' => 'gamers#new', :as => :register
     resources :confirmations, :only => [:create]
     match 'confirm' => 'confirmations#create', :as => :confirm
