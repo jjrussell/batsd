@@ -61,9 +61,8 @@
         .offer-text
           - if @currency.conversion_rate > 0
             %span
-              = amount = capture_haml do
-                %label= @currency.get_visual_reward_amount(offer, params[:display_multiplier])
-              = offer.direct_pay? ? t('text.offerwall.buy_currency', :amount => amount, :currency => @currency.name) : t('text.offerwall.earn_currency', :amount => amount, :currency => @currency.name)
+              - amount = content_tag(:label, @currency.get_visual_reward_amount(offer, params[:display_multiplier]))
+              = offer.direct_pay? ? t('text.offerwall.buy_currency_html', :amount => amount, :currency => @currency.name) : t('text.offerwall.earn_currency_html', :amount => amount, :currency => @currency.name)
           %p
             %b= offer.name
             - if !@for_preview && @device.is_papayan? && @show_papaya && @papaya_offers.include?(offer.id)

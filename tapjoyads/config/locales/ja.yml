@@ -421,8 +421,8 @@ ja:
       header: "次のステップを完了すると %{currency} が獲得できます"
       title: 指示
     offerwall:
-      buy_currency: "%{amount} %{currency} を買う"
-      earn_currency: "%{amount} %{currency} を獲得"
+      buy_currency_html: "%{amount} %{currency} を買う"
+      earn_currency_html: "%{amount} %{currency} を獲得"
       free: 無料
       instructions: "次のアクションで %{currency} を獲得する"
       instructions_non_rewarded: "Discover what's hot on Tapjoy!"

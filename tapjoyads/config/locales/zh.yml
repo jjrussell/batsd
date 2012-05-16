@@ -421,8 +421,8 @@ zh:
       header: "按照這些說明來獲得 %{currency}:"
       title: 說明
     offerwall:
-      buy_currency: "買%{amount} %{currency}"
-      earn_currency: "賺 %{amount} %{currency}"
+      buy_currency_html: "買%{amount} %{currency}"
+      earn_currency_html: "賺 %{amount} %{currency}"
       free: 免費
       instructions: "完成以下的要求其中之一可以得到 %{currency}"
       instructions_non_rewarded: 發現Tapjoy的熱點!

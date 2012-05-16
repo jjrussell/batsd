@@ -422,8 +422,8 @@ all_caps:
       header: "FOLLOW THESE STEPS TO EARN %{currency}:"
       title: INSTRUCTIONS
     offerwall:
-      buy_currency: "BUY %{amount} %{currency}"
-      earn_currency: "EARN %{amount} %{currency}"
+      buy_currency_html: "BUY %{amount} %{currency}"
+      earn_currency_html: "EARN %{amount} %{currency}"
       free: FREE
       instructions: "ENGAGE IN ANY OF THE FOLLOWING ACTIONS TO RECEIVE %{currency}"
       instructions_non_rewarded: "DISCOVER WHAT'S HOT ON TAPJOY!"
