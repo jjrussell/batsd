@@ -31,14 +31,14 @@
             - link_to DASHBOARD_URL, :class => "brand" do
               = image_tag("tapjoy_#{XMAN ? XMAN : ''}.png", :height => 36)
             - tabs = []
-            - tabs << { :apps      => apps_path }            if permitted_to?(:index, :apps)
-            - tabs << { :reporting => reporting_index_path } if permitted_to?(:index, :reporting)
-            - tabs << { :billing   => billing_index_path }   if permitted_to?(:index, :billing)
-            - tabs << { :account   => users_path }           if permitted_to?(:index, :users)
-            - tabs << { :partners  => partners_path }        if permitted_to?(:index, :partners)
-            - tabs << { :premier   => premier_path }         if permitted_to?(:edit,  :premier) and current_partner.is_premier?
-            - tabs << { :tools     => tools_path }           if permitted_to?(:index, :tools)
-            - tabs << { :statz     => statz_index_path }     if permitted_to?(:index, :statz)
+            - tabs << { :apps      => apps_path }            if permitted_to?(:index, :dashboard_apps)
+            - tabs << { :reporting => reporting_index_path } if permitted_to?(:index, :dashboard_reporting)
+            - tabs << { :billing   => billing_index_path }   if permitted_to?(:index, :dashboard_billing)
+            - tabs << { :account   => users_path }           if permitted_to?(:index, :dashboard_users)
+            - tabs << { :partners  => partners_path }        if permitted_to?(:index, :dashboard_partners)
+            - tabs << { :premier   => premier_path }         if permitted_to?(:edit,  :dashboard_premier) and current_partner.is_premier?
+            - tabs << { :tools     => tools_path }           if permitted_to?(:index, :dashboard_tools)
+            - tabs << { :statz     => statz_index_path }     if permitted_to?(:index, :dashboard_statz)
             = navigation(tabs).gsub(/current/, 'active').gsub(/navigation/, 'nav').html_safe
 
             %ul.nav
