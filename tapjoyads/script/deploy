@@ -105,8 +105,8 @@ class Deploy
     end
     system("git pull tapjoy master")
 
-    git_status = `git status`
     system('git checkout deploy')
+    git_status = `git status`
     if git_status !~ /On branch deploy/
       puts "Couldn't checkout deploy!"
       exit 1
