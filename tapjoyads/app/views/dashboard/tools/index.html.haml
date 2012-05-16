@@ -88,7 +88,7 @@
       %li= link_to 'External Publishers', tools_external_publishers_path
     - if permitted_to? :index, :dashboard_tools_agency_users                # account_mgr
       %li= link_to 'Agency Users', tools_agency_users_path
-    - if permitted_to? :index, :dashboard_tools_partner_program_dashboard_statz       # account_mgr
+    - if permitted_to? :index, :dashboard_tools_partner_program_statz       # account_mgr
       %li= link_to 'Tapjoy Sponsored Publishers', tools_partner_program_statz_index_path
     - if permitted_to? :index, :dashboard_tools_currency_approvals          # account_mgr
       %li= link_to 'Virtual Currency Requests', tools_currency_approvals_path
