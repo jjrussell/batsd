@@ -237,7 +237,7 @@ class Mc
     begin
       cache.delete(key)
     rescue Memcached::NotFound
-      Rails.logger.debug("Memcached::NotFound when deleting.")
+      log_info_with_time("Memcached::NotFound when deleting.")
     end
   end
 
