@@ -105,16 +105,18 @@ class Deploy
     end
     system("git pull tapjoy master")
 
-    system('git checkout deploy')
-    git_status = `git status`
-    if git_status !~ /On branch deploy/
-      puts "Couldn't checkout deploy!"
-      exit 1
-    end
-    system("git pull tapjoy deploy")
+    unless @options[:version] == 'master'
+      system('git checkout deploy')
+      git_status = `git status`
+      if git_status !~ /On branch deploy/
+        puts "Couldn't checkout deploy!"
+        exit 1
+      end
+      system("git pull tapjoy deploy")
 
-    unless @options[:cherry_picked]
-      system('git merge master')
+      unless @options[:cherry_picked]
+        system('git merge master')
+      end
     end
   end
 
