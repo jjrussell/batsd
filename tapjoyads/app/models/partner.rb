@@ -341,8 +341,6 @@ class Partner < ActiveRecord::Base
     notes
   end
 
-  private
-
   def confirmed_for_payout?
     self.payout_info_confirmation && self.payout_threshold_confirmation
   end
@@ -362,6 +360,8 @@ class Partner < ActiveRecord::Base
   def account_manager_email
     @account_manager_email ||= self.account_managers.present? ? self.account_managers.first.email.downcase : "\xFF"
   end
+
+  private
 
   def can_confirm_payout_info?(user)
     user_roles = user.role_assignments.map { |x| x.name}
