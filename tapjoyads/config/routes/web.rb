@@ -75,8 +75,6 @@ Tapjoyad::Application.routes.draw do
         match :partner_daily
       end
     end
-    match 'queue_conversion_tracking' => 'queue_conversion_tracking#run_job'
-    match 'queue_send_currency' => 'queue_send_currency#run_job'
   end
 
   #match ':controller(/:action(/:id))'
