@@ -12,6 +12,7 @@ describe Dashboard::Tools::PayoutsController do
 
   describe '#index' do
     it 'renders payouts page' do
+      #TODO stub the 'all' method on the Arel query to reduce the number of partners passed in
       get(:index)
     end
   end
@@ -87,7 +88,7 @@ describe Dashboard::Tools::PayoutsController do
 
   describe '#export' do
     it 'sends a csv report' do
-      Partner.stubs(:to_payout).returns(stub('payout partners', :all => [Factory(:partner, :users => [@user])]))
+      #TODO stub the 'all' method on the Arel query to reduce the number of partners passed in
       get(:export)
       response.header['Content-Type'].should include 'text/csv'
     end
