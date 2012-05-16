@@ -1,4 +1,6 @@
 class GamesMailer < ActionMailer::Base
+  add_template_helper(TapjoyMailerHelper)
+
   default :from => 'Tapjoy <noreply@tapjoy.com>'
 
   def feedback(gamer, content, user_agent, device_id)

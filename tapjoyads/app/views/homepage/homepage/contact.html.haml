@@ -36,7 +36,7 @@
           = mail_to('mobilehelp@tapjoy.com')
     %h2
       Support / Info Form
-      - form_for('info', :url => {:action => 'contact'}, :html => {:id => 'contact_form'}) do |f|
+      = form_for('info', :url => {:action => 'contact'}, :html => {:id => 'contact_form'}) do |f|
         %div
           = f.label :name, 'Your name'
           = f.text_field :name, :value => params[:info] && params[:info][:name]

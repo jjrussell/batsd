@@ -7,6 +7,10 @@ class Games::HomepageController < GamesController
   skip_before_filter :setup_tjm_request, :only => :translations
 
   def translations
+    tmp = params[:filename]
+    match = tmp.match(/(\w)\-(\w)/)
+    params[:language_code]= match[1]
+    params[:hash] = match[2]
     render "translations.js", :layout => false, :content_type => "application/javascript"
   end
 

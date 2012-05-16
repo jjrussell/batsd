@@ -2,7 +2,7 @@
 
 %h1 Create Order for #{@partner.name}
 
-- form_for [ :tools, @order ], :html => { :class => 'tjform' } do |f|
+= form_for [ :tools, @order ], :html => { :class => 'tjform' } do |f|
   = f.hidden_field :partner_id, :value => @partner.id
   %table
     %tr

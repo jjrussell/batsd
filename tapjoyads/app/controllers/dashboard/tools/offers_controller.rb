@@ -9,11 +9,11 @@ class Dashboard::Tools::OffersController < Dashboard::DashboardController
   def creative
     @creatives = []
 
-    offers = if params[:offer_id]
-                [Offer.find params[:offer_id]]
-              else
-                Offer.creative_approval_needed
-              end
+    offers = (if params[:offer_id]
+               Offer.where(:id => params[:offer_id])
+             else
+               Offer.creative_approval_needed
+             end).where(:item_type => 'App').includes(:approvals)
 
     offers.each do |offer|
       next unless offer.item_type == 'App' # For now we only care about app offers
@@ -22,7 +22,7 @@ class Dashboard::Tools::OffersController < Dashboard::DashboardController
         width, height = approval.size.split 'x'
 
         preview_url = if offer.featured?
-                        offer_creative_preview_path(:id => offer.id, :image_size => approval.size, :only_one => true)
+                        offer_creative_path(:id => offer.id, :image_size => approval.size, :only_one => true)
                       else
                         offer.preview_display_ad_image_url(App::PREVIEW_PUBLISHER_APP_ID, width, height)
                       end

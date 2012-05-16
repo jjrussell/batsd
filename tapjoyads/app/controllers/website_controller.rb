@@ -18,9 +18,9 @@ class WebsiteController < ApplicationController
                     If you have any questions/concerns, please contact <a href='mailto:support@tapjoy.com'>support@tapjoy.com</a>.
                     <br><br>Read more at our blog: <a href='http://blog.tapjoy.com/for-developers/tapjoy-sdk-update/'>http://blog.tapjoy.com/for-developers/tapjoy-sdk-update/</a>"
 
-  VIDEO_OFFERS_NOTICE = "A new iOS and Android SDK (v8.2.0) update is now available here for both Publishers and 
-                        Advertisers. Moving forward, please update the Tapjoy SDK for all apps you're submitting 
-                        to either Apple or Google. There are a number of important updates - please view our change 
+  VIDEO_OFFERS_NOTICE = "A new iOS and Android SDK (v8.2.0) update is now available here for both Publishers and
+                        Advertisers. Moving forward, please update the Tapjoy SDK for all apps you're submitting
+                        to either Apple or Google. There are a number of important updates - please view our change
                         log for all the details. If you have any questions/concerns, please contact <a href='mailto:support@tapjoy.com'>support@tapjoy.com</a>."
 
   def sanitize_currency_params(object, fields)

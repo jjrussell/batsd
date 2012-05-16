@@ -2,7 +2,7 @@
 
 %h1 Create Brand
 
-- form_for [ :tools, @brand],  :html => { :class => 'tjform', :multipart => true } do |f|
+= form_for [ :tools, @brand],  :html => { :class => 'tjform', :multipart => true } do |f|
   %table
     %tr
       %th= f.label :name

@@ -8,7 +8,7 @@ class GamesController < ApplicationController
   before_filter :setup_tjm_request
   after_filter :save_tjm_request
 
-  helper_method :current_gamer, :set_gamer, :current_device_id, :current_device_id_cookie, :current_device, :current_recommendations, :has_multiple_devices, :show_login_page, :device_type, :geoip_data, :os_version, :social_feature_redirect_path, :get_friends_info
+  helper_method :current_gamer, :get_locale_filename, :set_gamer, :current_device_id, :current_device_id_cookie, :current_device, :current_recommendations, :has_multiple_devices, :show_login_page, :device_type, :geoip_data, :os_version, :social_feature_redirect_path, :get_friends_info
 
   protected
 
@@ -29,6 +29,10 @@ class GamesController < ApplicationController
 
   def set_locale
     I18n.locale = (get_language_codes.concat(http_accept_language) & I18n.available_locales.map(&:to_s)).first
+  end
+
+  def get_locale_filename
+    "#{I18n.locale}-#{t('hash',:locale => I18n.default_locale)}#{t('hash')}"
   end
 
   def get_language_codes

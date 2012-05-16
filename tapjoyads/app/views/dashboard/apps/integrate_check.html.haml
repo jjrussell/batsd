@@ -29,7 +29,7 @@
   UDID/IMEI and MAC address of the device you are testing.
 
 %p
-  - form_for '', :html => { :method => :get } do
+  = form_for '', :html => { :method => :get } do
     Device ID (UDID/IMEI):
     %br/
     = text_field_tag :udid, params[:udid]

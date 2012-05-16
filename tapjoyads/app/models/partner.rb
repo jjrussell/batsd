@@ -361,7 +361,6 @@ class Partner < ActiveRecord::Base
     @account_manager_email ||= self.account_managers.present? ? self.account_managers.first.email.downcase : "\xFF"
   end
 
-  private
 
   def can_confirm_payout_info?(user)
     user_roles = user.role_assignments.map { |x| x.name}
@@ -377,6 +376,8 @@ class Partner < ActiveRecord::Base
     ( !self.payout_info_confirmation && can_confirm_payout_info?(user)) ||
         ( !self.payout_threshold_confirmation && can_confirm_payout_threshold?(user))
   end
+
+  private
 
   def update_currencies
     if rev_share_changed? || direct_pay_share_changed? || disabled_partners_changed? || offer_whitelist_changed? || use_whitelist_changed? || accepted_publisher_tos_changed? || max_deduction_percentage_changed? || reseller_id_changed?

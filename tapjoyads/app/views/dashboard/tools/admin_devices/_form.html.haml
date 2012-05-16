@@ -1,6 +1,6 @@
 - device_udid_label = @admin_device.platform == 'android' ? "IMEI" : "UDID"
 
-- form_for [ :tools, @admin_device ], :html => { :class => 'tjform', :multipart => true } do |f|
+= form_for [ :tools, @admin_device ], :html => { :class => 'tjform', :multipart => true } do |f|
   %table
     %tr
       %th= f.label :platform
