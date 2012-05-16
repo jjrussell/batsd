@@ -333,8 +333,6 @@ class Partner < ActiveRecord::Base
     "#{uri.scheme}://#{uri.host}/partners/#{self.id}"
   end
 
-
-private
   def confirmation_notes
     notes = []
     notes << payout_threshold_notes unless self.payout_threshold_confirmation
@@ -342,6 +340,8 @@ private
     notes << 'Payout Info not Present!' unless self.completed_payout_info?
     notes
   end
+
+  private
 
   def confirmed_for_payout?
     self.payout_info_confirmation && self.payout_threshold_confirmation

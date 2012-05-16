@@ -191,7 +191,7 @@ describe Dashboard::OffersController do
     before :each do
         @offer = mock('mock offer', :user_enabled= => true)
         mock_offers = mock('get_offer')
-        mock_offers.stubs(:find).with(@offer.object_id.to_s).returns(@offer)
+        mock_offers.stubs(:find).with(@offer.object_id).returns(@offer)
         @controller.stubs(:set_recent_partners)
         @controller.stubs(:current_partner).returns(mock('offers', :offers => mock_offers))
         @controller.stubs(:log_activity).with(@offer)
@@ -237,9 +237,9 @@ describe Dashboard::OffersController do
   end
 
   describe '#update' do
-    context 'when not permitted to edit->statz' do
+    context 'when not permitted to edit->dashboard_statz' do
       before :each do
-        @controller.stubs(:permitted_to?).with(:edit, :statz).returns(false)
+        @controller.stubs(:permitted_to?).with(:edit, :dashboard_statz).returns(false)
         @safe_attributes = [:daily_budget, :user_enabled, :bid, :self_promote_only, :min_os_version, :screen_layout_sizes, :countries]
 
         @controller.stubs(:find_app).with(@app.id).returns(@app)
@@ -308,14 +308,14 @@ describe Dashboard::OffersController do
       end
     end
 
-    context 'when permitted to edit->statz' do
+    context 'when permitted to edit->dashboard_statz' do
       before :each do
-        @controller.stubs(:permitted_to?).with(:edit, :statz).returns(true)
-        @safe_attributes = [ :tapjoy_enabled, :allow_negative_balance, :pay_per_click,
-          :name, :name_suffix, :show_rate, :min_conversion_rate,
-          :device_types, :publisher_app_whitelist, :overall_budget, :min_bid_override,
-          :dma_codes, :regions, :carriers, :cities, :daily_budget, :user_enabled, :bid,
-          :self_promote_only, :min_os_version, :screen_layout_sizes, :countries]
+        @controller.stubs(:permitted_to?).with(:edit, :dashboard_statz).returns(true)
+        @safe_attributes = [ :daily_budget, :user_enabled, :bid, :self_promote_only,
+          :min_os_version, :screen_layout_sizes, :countries, :tapjoy_enabled,
+          :allow_negative_balance, :pay_per_click, :name, :name_suffix, :show_rate,
+          :min_conversion_rate, :device_types, :publisher_app_whitelist, :overall_budget,
+          :min_bid_override, :dma_codes, :regions, :carriers, :cities ]
         @controller.stubs(:find_app).with(@app.id).returns(@app)
         @offer = mock('offer')
         @controller.stubs(:log_activity).with(@offer)
