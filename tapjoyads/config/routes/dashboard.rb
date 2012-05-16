@@ -74,6 +74,7 @@ Tapjoyad::Application.routes.draw do
             post :update_status
           end
         end
+        resources :videos, :only => [:index]
       end
       resources :reengagement_rewards, :only => [:show]
       resources :offer_creatives do
