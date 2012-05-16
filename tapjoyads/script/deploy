@@ -114,7 +114,7 @@ class Deploy
     system("git pull tapjoy deploy")
 
     unless @options[:cherry_picked]
-      system('git merge master --no-edit')
+      system('git merge master')
     end
   end
 
