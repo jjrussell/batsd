@@ -2,7 +2,7 @@
 
 %h2 Create Earnings Adjustment
 
-- form_for([ :tools, @earnings_adjustment ], :html => { :class => 'tjform' }) do |f|
+= form_for([ :tools, @earnings_adjustment ], :html => { :class => 'tjform' }) do |f|
   %table
     %tr
       %th= f.label :partner_id, 'Partner'

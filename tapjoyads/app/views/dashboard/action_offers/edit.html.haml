@@ -6,7 +6,7 @@
 
 = render 'instructions'
 
-- form_for [ @app, @action_offer ], :html => { :class => 'tjform' } do |f|
+= form_for [ @app, @action_offer ], :html => { :class => 'tjform' } do |f|
   %table
     %tbody
       %tr
@@ -170,7 +170,7 @@
   #help_screen_layout_sizes_content{ :name => 'Screen Layout Sizes' } Targets this offer to these screen sizes. If no specific screen sizes are selected, all screen sizes will be targeted.
 
 - if !@offer.tapjoy_enabled? && @enable_request.new_record?
-  - form_for(@enable_request, :html => { :class => 'tjform' }) do |f|
+  = form_for(@enable_request, :html => { :class => 'tjform' }) do |f|
     = f.hidden_field(:offer_id)
 
 - content_for :page_javascript do

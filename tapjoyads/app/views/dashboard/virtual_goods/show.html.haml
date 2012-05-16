@@ -3,7 +3,7 @@
 - if @virtual_good.has_icon
   .icon= image_tag(@virtual_good.icon_url('https://'), :size => '57x57')
 
-- form_for(:virtual_good, @virtual_good, :url => { :action => @form_action }, :html => { :method => @form_method, :multipart => true, :class => 'tjform' }) do |f|
+= form_for(:virtual_good, @virtual_good, :url => { :action => @form_action }, :html => { :method => @form_method, :multipart => true, :class => 'tjform' }) do |f|
   %table
     %tbody
       %tr

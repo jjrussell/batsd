@@ -1,4 +1,4 @@
-- form_for([:tools, @app_review], :html => { :class => 'tjform' }) do |f|
+= form_for([:tools, @app_review], :html => { :class => 'tjform' }) do |f|
   = f.hidden_field :author_type, :value => @app_review.author_type ? @app_review.author_type : 'Employee'
   %table
     %tr

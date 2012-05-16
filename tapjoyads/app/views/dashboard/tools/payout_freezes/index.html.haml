@@ -14,7 +14,7 @@
     = button_to 'Disable', { :action => :disable, :id => @payout_freeze.id }, :method => :post
 - else
   - if permitted_to? :create, :dashboard_tools_payout_freezes
-    - form_for [ :tools, @payout_freeze ] do |f|
+    = form_for [ :tools, @payout_freeze ] do |f|
       = f.submit 'Enable'
 
 %table.tablesorter

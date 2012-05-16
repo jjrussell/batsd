@@ -30,13 +30,13 @@
               = submit_tag("Act as this partner", :class => 'act_as_button')
         - if current_user.is_one_of?([:admin, :account_mgr])
           %td.account_manager
-            - form_for(partner) do |f|
+            = form_for(partner) do |f|
               - options = options_from_collection_for_select(User.account_managers, "id", "email", partner.account_managers.map(&:id))
               = f.select :account_managers, options, {:include_blank => '(no one)'}
             = image_tag 'load-circle.gif', :class => 'hidden'
             .message.hidden
           %td.sales_rep
-            - form_for(partner) do |f|
+            = form_for(partner) do |f|
               - sales_rep_email = partner.sales_rep ? partner.sales_rep.email : ''
               - options = options_from_collection_for_select(User.sales_reps, "email", "email", sales_rep_email)
               = f.select :sales_rep, options, {:include_blank => '(no one)'}

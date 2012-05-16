@@ -18,5 +18,5 @@
         %td= currency.tapjoy_enabled? ? 'enabled' : 'disabled'
         %td= currency.external_publisher? ? 'enabled' : 'disabled'
         %td
-          - form_for([ :tools, :currency ], :url => tools_external_publisher_path(currency)) do |f|
+          = form_for([ :tools, :currency ], :url => tools_external_publisher_path(currency)) do |f|
             = f.submit(currency.external_publisher? ? 'Disable' : 'Enable')
