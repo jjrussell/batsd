@@ -81,7 +81,11 @@ Tapjoyad::Application.routes.draw do
     match 'confirm' => 'confirmations#create', :as => :confirm
     resources :password_resets, :only => [:new, :create, :edit, :update]
     match 'password-reset' => 'password_resets#new', :as => :password_reset
-    resources :support_requests, :only => [:new, :create]
+    resources :support_requests, :only => [:new, :create] do
+      collection do
+        get :unresolved_clicks
+      end
+    end
     resources :android
     resources :survey_results, :only => [:new, :create]
     resources :app_reviews, :only => [:index, :create, :edit, :update, :new, :destroy]
