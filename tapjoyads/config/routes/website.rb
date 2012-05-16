@@ -30,6 +30,7 @@ Tapjoyad::Application.routes.draw do
 
 
   namespace :games do
+    root :to => 'homepage#index'
     match '/' => 'homepage#index'
     match 'tos' => 'homepage#tos', :as => :tos
     match 'privacy' => 'homepage#privacy', :as => :privacy
