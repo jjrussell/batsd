@@ -399,7 +399,7 @@ describe Partner do
     end
 
     it 'matches URL for Rails partner_url helper' do
-      @partner.dashboard_partner_url.should == "http://localhost/partners/#{@partner.id}"
+      @partner.dashboard_partner_url.should == "#{URI.parse(DASHBOARD_URL).scheme}://#{URI.parse(DASHBOARD_URL).host}/partners/#{@partner.id}"
     end
   end
 end

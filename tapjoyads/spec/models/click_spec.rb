@@ -39,10 +39,7 @@ describe Click do
     end
 
     it 'matches URL for Rails device_info_tools_url helper' do
-      rails_url = device_info_tools_url(:click_key => @click.key,
-                                        :host      => URI.parse(DASHBOARD_URL).host,
-                                        :protocol  => URI.parse(DASHBOARD_URL).scheme)
-      @click.dashboard_device_info_tool_url.should == rails_url
+      @click.dashboard_device_info_tool_url.should == "#{URI.parse(DASHBOARD_URL).scheme}://#{URI.parse(DASHBOARD_URL).host}/tools/device_info?click_key=#{@click.key}"
     end
   end
 end
