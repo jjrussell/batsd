@@ -2,7 +2,7 @@
 %h1 Add sales rep for #{ @offer }
 .row-fluid
   .span8
-    - form_for @sales_rep, :url => tools_offer_sales_reps_path(@offer), :html => { :class => 'well' } do |f|
+    = form_for @sales_rep, :url => tools_offer_sales_reps_path(@offer), :html => { :class => 'well' } do |f|
       = f.error_messages :class => 'alert alert-error'
       = f.label :sales_rep_id, "Sales rep"
       - options = options_from_collection_for_select(User.sales_reps, "id", "email")
