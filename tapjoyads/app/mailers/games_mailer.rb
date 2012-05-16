@@ -2,11 +2,11 @@ class GamesMailer < ActionMailer::Base
   default :from => 'Tapjoy <noreply@tapjoy.com>'
 
   def feedback(gamer, content, user_agent, device_id)
-    reply_to gamer.email
-    recipients "customerservice@tapjoy.com"
-    subject "User Feedback - Tapjoy"
-    content_type 'text/html'
-    body(:content => content, :email => gamer.email, :udid => device_id, :user_agent => user_agent)
+    @content = content
+    @email = gamer.email
+    @udid = device_id
+    @user_agent = user_agent
+    mail :to => "customerservice@tapjoy.com", :reply_to => gamer.email, :subject => "User Feedback - Tapjoy"
   end
 
   def report_bug(gamer, content, user_agent, device_id)
