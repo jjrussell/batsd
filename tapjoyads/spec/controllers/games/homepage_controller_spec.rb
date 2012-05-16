@@ -21,6 +21,18 @@ describe Games::HomepageController, :type=>:controller do
     it 'sets locale based on language code' do
       get(:index, :language_code => "de")
       I18n.locale.should == :de
+      locale_filename = controller.send( :get_locale_filename )
+      locale_filename.should =~ Regexp.new( I18n.t('hash').to_s + '$' )
+      locale_filename.should =~ Regexp.new( I18n.t('hash', I18n.default_locale).to_s )
+      locale_filename.should =~ Regexp.new( '^'+ I18n.locale.to_s + '-' )
+    end
+
+    it 'sets locale_filename to include hash of locale file and default locale file, for cache-busting' do
+      get(:index, :language_code => "de")
+      locale_filename = controller.send( :get_locale_filename )
+      locale_filename.should =~ Regexp.new( I18n.t('hash').to_s + '$' )
+      locale_filename.should =~ Regexp.new( I18n.t('hash', I18n.default_locale).to_s )
+      locale_filename.should =~ Regexp.new( '^'+ I18n.locale.to_s + '-' )
     end
 
     it 'checks prefix of provided language code' do
