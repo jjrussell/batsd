@@ -59,7 +59,8 @@ class GamesMarketingMailer < ActionMailer::Base
     sendgrid_category 'Invite'
     subject "#{gamer_name} has invited you to join Tapjoy"
     content_type 'text/html'
-    body(:gamer_name => gamer_name, :link => link)
+    @gamer_name = gamer_name
+    @link = link
   end
 
   private
@@ -90,12 +91,5 @@ class GamesMarketingMailer < ActionMailer::Base
 
     sendgrid_category "Welcome Email, #{@linked ? "Linked for Device Type #{gamer_device.device_type}" : "Not Linked"}"
     sendgrid_subscriptiontrack_text(:replace => "[unsubscribe_link]")
-  end
-
-  def invite(gamer_name, recipients_email, link)
-    sendgrid_category 'Invite'
-    @gamer_name = gamer_name
-    @link = link
-    mail(:from => from, :to => recipients_email, :subject => subject)
   end
 end
