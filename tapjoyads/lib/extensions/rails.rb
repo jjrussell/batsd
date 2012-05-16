@@ -128,6 +128,39 @@ module ActiveRecord
 
   class Base
 
+    # See https://rails.lighthouseapp.com/projects/8994/tickets/2919
+    # allows [attribute]_changed? to behave as expected after cloning a model instance
+    if Rails.version == "2.3.14"
+      def clone
+        attrs = clone_attributes(:read_attribute_before_type_cast)
+        attrs.delete(self.class.primary_key)
+        record = self.class.new
+        attrs.each { |k,v| record.write_attribute(k,v) } # original version is 'record.send :instance_variable_set, '@attributes', attrs'
+        record
+      end
+    end
+
+    def self.remove_column(table_name, column_name)
+      check_table_size(table_name) do
+        super(table_name, column_name)
+      end
+    end
+
+    def self.add_index(table_name, column_name, options = {})
+      check_table_size(table_name) do
+        super(table_name, column_name, options)
+      end
+    end
+
+    def self.remove_index(table_name, column_name)
+      check_table_size(table_name) do
+        super(table_name, column_name)
+      end
+    end
+  end
+
+  class Base
+
     # TODO: Investigate. Monkey-patched during merge of rails3 and master
     # in order to handle this before_filter in ApplicationController:
     # def set_readonly_db

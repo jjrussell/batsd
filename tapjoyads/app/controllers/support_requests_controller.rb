@@ -30,7 +30,7 @@ class SupportRequestsController < ApplicationController
 
   def incomplete_offers
     find_incomplete_offers
-    render(:partial => 'games/support_requests/select_offer', :layout => false)
+    render(:partial => 'select_offer', :layout => false)
   end
 
 private

@@ -2,10 +2,10 @@
 
 #main
   - if @offer.rewarded? && @currency.rewarded?
-    %h1= t('text.featured.earn_currency', :amount_and_currency => "#{@currency.get_visual_reward_amount(@offer, params[:display_multiplier])} #{@currency.name}")
+    %h1= featured_offer_earn_currency_text(@offer, @currency, params[:display_multiplier])
   %p.offertext
     - if @offer.item_type == 'App'
-      = @offer.rewarded? && @currency.rewarded? ? t('text.featured.download_and_run') : t('text.featured.try_out')
+      = featured_offer_text(@offer, @currency)
   = link_to((params[:preview] == 'true' ? '#' : get_click_url(@offer)), :class => 'image-link') do
     %img{ :src => "#{CLOUDFRONT_URL}/images/blank.png", :s => @offer.get_icon_url(:source => :cloudfront, :size => '256'), :class => 'icon', :id => 'icon' }
     .offername= @offer.truncated_name

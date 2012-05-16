@@ -4,7 +4,7 @@ class Dashboard::Tools::BrandsController < Dashboard::DashboardController
   filter_access_to :all
 
   def index
-    @brands = Brand.order('name ASC').paginate(:page => params[:page], :per_page => 200)
+    @brands = Brand.all(:order => 'name ASC').paginate(:page => params[:page], :per_page => 200)
   end
 
   def new

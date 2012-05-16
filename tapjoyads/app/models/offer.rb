@@ -1,3 +1,5 @@
+require_dependency 'video_button' # Offer caches VideoButton objects
+
 class Offer < ActiveRecord::Base
   include UuidPrimaryKey
   include Offer::Ranking
@@ -81,6 +83,8 @@ class Offer < ActiveRecord::Base
     '3 days'   => 3.days.to_i,
   }
 
+  attr_reader :video_button_tracking_offers
+
   has_many :advertiser_conversions, :class_name => 'Conversion', :foreign_key => :advertiser_offer_id
   has_many :rank_boosts
   has_many :enable_offer_requests
@@ -90,6 +94,7 @@ class Offer < ActiveRecord::Base
   has_many :approvals, :class_name => 'CreativeApprovalQueue'
   has_many :brands, :through => :brand_offer_mappings
   has_many :brand_offer_mappings
+  has_many :sales_reps
 
   belongs_to :partner
   belongs_to :item, :polymorphic => true
@@ -195,8 +200,7 @@ class Offer < ActiveRecord::Base
   set_callback :cache, :before, :clear_creative_blobs
   set_callback :cache, :before, :update_video_button_tracking_offers
 
-  scope :enabled_offers, :joins => :partner,
-    :readonly => false, :conditions => "tapjoy_enabled = true AND user_enabled = true AND item_type != 'RatingOffer' AND item_type != 'ReengagementOffer' AND ((payment > 0 AND #{Partner.quoted_table_name}.balance > payment) OR (payment = 0 AND reward_value > 0)) AND tracking_for_id IS NULL"
+  scope :enabled_offers, :joins => :partner, :readonly => false, :conditions => "tapjoy_enabled = true AND user_enabled = true AND item_type != 'RatingOffer' AND item_type != 'ReengagementOffer' AND ((payment > 0 AND #{Partner.quoted_table_name}.balance > payment) OR (payment = 0 AND reward_value > 0)) AND tracking_for_id IS NULL"
   scope :by_name, lambda { |offer_name| { :conditions => ["offers.name LIKE ?", "%#{offer_name}%" ] } }
   scope :by_device, lambda { |platform| { :conditions => ["offers.device_types LIKE ?", "%#{platform}%" ] } }
   scope :for_offer_list, :select => OFFER_LIST_REQUIRED_COLUMNS
@@ -233,7 +237,7 @@ class Offer < ActiveRecord::Base
 
   delegate :balance, :pending_earnings, :name, :cs_contact_email, :approved_publisher?, :rev_share, :to => :partner, :prefix => true
   delegate :name, :id, :formatted_active_gamer_count, :protocol_handler, :to => :app, :prefix => true, :allow_nil => true
-  memoize :partner_balance, :app_formatted_active_gamer_count, :app_protocol_handler
+  memoize :partner_balance, :app_formatted_active_gamer_count, :app_protocol_handler, :app_name
 
   alias_method :events, :offer_events
   alias_method :random, :rand

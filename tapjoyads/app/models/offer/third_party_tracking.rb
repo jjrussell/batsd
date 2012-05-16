@@ -2,11 +2,14 @@ module Offer::ThirdPartyTracking
 
   def self.included(base)
     base.class_eval do
-      const_set(:TRUSTED_TRACKING_VENDORS, %w( phluantmobile.net srvntrk.com))
+      const_set(:TRUSTED_TRACKING_VENDORS, %w(doubleclick.net phluantmobile.net srvntrk.com))
 
       [:impression_tracking_urls, :click_tracking_urls, :conversion_tracking_urls].each do |f|
         serialize f, Array
-        validates_each(f) { |record, attribute, value| record.validate_third_party_tracking_urls(attribute, value) }
+        # TODO: uncomment when / if we ever try to use these urls somewhere where they could negatively affect other offers' performance
+        # due to using a vendor we don't trust, a bad url, or something of that nature
+
+        # validates_each(f) { |record, attribute, value| record.validate_third_party_tracking_urls(attribute, value) }
       end
 
       def self.trusted_third_party_tracking_vendors(connector = 'and')
@@ -29,7 +32,7 @@ module Offer::ThirdPartyTracking
     end
 
     define_method "#{method_name}=" do |urls|
-      super(urls.select { |url| url.present? })
+      super(urls.to_a.select(&:present?).map(&:to_s).map(&:strip).uniq)
     end
 
     define_method "#{method_name}_was" do

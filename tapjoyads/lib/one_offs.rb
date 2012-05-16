@@ -180,7 +180,7 @@ class OneOffs
 
   def self.log_activity_and_save!(object, action)
     activity_log                  = ActivityLog.new({ :load => false })
-    activity_log.request_id       = UUIDTools::UUID.random_create.to_s
+    activity_log.request_id       = self.generate_random_UUID
     activity_log.user             = 'script'
     activity_log.controller       = 'one_off'
     activity_log.action           = action
@@ -196,5 +196,9 @@ class OneOffs
       activity_log.save
     end
   end
-end
 
+  private
+  def self.generate_random_UUID
+    UUIDTools::UUID.random_create.to_s
+  end
+end

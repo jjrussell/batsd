@@ -253,19 +253,19 @@
             - elsif @offer.item_type == 'GenericOffer'
               = h(@offer.item.url)
 
-      - %w(impression click conversion).each do |tracking_type|
-        %tr{ :id => "#{tracking_type}_tracking_urls_row" }
-          %th
-            = f.label(:"#{tracking_type}_tracking_urls", "#{tracking_type.capitalize} Tracking Pixel URLs")
-            .help{ :id => "help_#{tracking_type}_tracking_urls" } ?
-          %td
-            = error_message_on @offer, :"#{tracking_type}_tracking_urls"
-            = link_to('Add URL', '', :class => "add_#{tracking_type}_tracking_url", :onclick => 'return false;')
-        %tr{ :id => "#{tracking_type}_tracking_url_template", :class => 'hidden' }
-          %th
-          %td
-            = text_field_tag("offer[#{tracking_type}_tracking_urls][]", '', :size => 58)
-            = link_to('(remove)', '', :class => "remove_#{tracking_type}_tracking_url", :onclick => 'return false;')
+    - %w(impression click conversion).each do |tracking_type|
+      %tr{ :id => "#{tracking_type}_tracking_urls_row" }
+        %th
+          = f.label(:"#{tracking_type}_tracking_urls", "#{tracking_type.capitalize} Tracking Pixel URLs")
+          .help{ :id => "help_#{tracking_type}_tracking_urls" } ?
+        %td
+          = error_message_on @offer, :"#{tracking_type}_tracking_urls"
+          = link_to('Add URL', '', :class => "add_#{tracking_type}_tracking_url", :onclick => 'return false;')
+      %tr{ :id => "#{tracking_type}_tracking_url_template", :class => 'hidden' }
+        %th
+        %td
+          = text_field_tag("offer[#{tracking_type}_tracking_urls][]", '', :size => 58)
+          = link_to('(remove)', '', :class => "remove_#{tracking_type}_tracking_url", :onclick => 'return false;')
 
     - if @offer.item_type == 'App' && @offer.item.screen_layout_sizes.any?
       %tr
@@ -424,14 +424,21 @@
   - %w(impression click conversion).each do |tracking_type|
     :plain
       var set#{tracking_type.capitalize}TrackingPixelURLs = function() {
-        var urls = "#{escape_javascript(@offer.send("#{tracking_type}_tracking_urls").collect{ |url| h(url) }.join(','))}".split(",");
+        var urls = "#{escape_javascript(@offer.send("#{tracking_type}_tracking_urls").join(','))}".split(",");
+        var templateSelector = '##{tracking_type}_tracking_url_template';
+        var template = $(templateSelector);
+
+        // don't create dups, in case this method gets run twice for some reason
+        var existingUrls = $('##{tracking_type}_tracking_urls_row').nextUntil(templateSelector);
+        if (existingUrls.length > 0) {
+          return;
+        }
 
         for(var i = 0; i < urls.length; i++) {
           if (urls[i] == "") {
             continue;
           }
 
-          var template = $('##{tracking_type}_tracking_url_template');
           var templateClone = template.clone();
 
           templateClone.find('td input').attr('value', urls[i]);

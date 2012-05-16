@@ -9,6 +9,8 @@ class Dashboard::SearchController < Dashboard::DashboardController
       conditions = [ "id = ?", term ]
     elsif params[:app_offers_only]
       conditions = [ "name LIKE ? AND item_type = ?", "%#{term}%", 'app' ]
+    elsif params[:selected_offers]
+      conditions = [ "name LIKE ? AND id NOT IN (?)", "%#{term}%", params[:selected_offers] ]
     else
       conditions = [ "name LIKE ?", "%#{term}%" ]
     end

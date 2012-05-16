@@ -95,6 +95,7 @@
   %td
     = truncate(ObjectEncryptor.encrypt(@currency.id),30)
     = clippy(ObjectEncryptor.encrypt(@currency.id))
+
 .hidden
   #help_tapjoy_enabled_content{:name => 'Tapjoy Enabled'}
     Tapjoy approval status. If this is unchecked, the offerwall will be blank and no featured/display ads will be shown.

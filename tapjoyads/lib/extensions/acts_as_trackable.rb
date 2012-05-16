@@ -23,7 +23,7 @@ module ActsAsTrackable
         :bid              => 0,
         :min_bid_override => 0,
         :rewarded         => false,
-        :name_suffix      => 'tracking',
+        :name_suffix      => "tracking for #{tracked_for.class.to_s.titleize.downcase}",
         :url_overridden   => false,
         :tapjoy_enabled   => true,
       }

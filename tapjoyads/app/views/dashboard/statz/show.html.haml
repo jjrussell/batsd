@@ -27,6 +27,8 @@
 = link_to('[Activity Log]', activities_path(:object_id => @offer.id))
 - if permitted_to?(:index, :dashboard_tools_app_reviews) && @offer.app_offer?
   = link_to('[App Reviews]', tools_app_reviews_path(:app_id => @offer.item_id))
+- if permitted_to?(:index, :tools_sales_reps) && @offer.app_offer?
+  = link_to('[Sales Reps]', tools_offer_sales_reps_path(:offer_id => @offer.item_id))
 %table.properties
   - property_row('Enabled', @offer.is_enabled?, nil, @offer.is_enabled?.to_s)
   - property_row('Tapjoy Enabled', @offer.tapjoy_enabled?, nil, @offer.tapjoy_enabled?.to_s)

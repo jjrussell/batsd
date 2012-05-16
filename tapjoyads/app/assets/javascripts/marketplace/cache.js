@@ -213,17 +213,17 @@
 
       var storage = window.localStorage;
 
-      // try and catch quota exceeded errors           
+      // try and catch quota exceeded errors
       try{
-        storage.setItem('tapjoy', 'dollas!'); 
+        storage.setItem('tapjoy', 'dollas!');
         storage.removeItem('tapjoy');
       }catch(error){
-        if(error.code === DOMException.QUOTA_EXCEEDED_ERR && storage.length === 0) 
+        if(error.code === DOMException.QUOTA_EXCEEDED_ERR && storage.length === 0)
           return false;
       }
 
       return true;
-    }    
+    }
   };
 
   window.stash = _stash;

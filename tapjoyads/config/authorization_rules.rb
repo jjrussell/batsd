@@ -103,7 +103,7 @@ authorization do
     includes :tools
     includes :devices
     includes :reporting
-    has_permission_on :dashboard_tools, :to => [ :money, :monthly_data ]
+    has_permission_on :dashboard_tools, :to => [ :money, :monthly_data, :partner_monthly_balance ]
   end
 
   role :hr do
@@ -177,6 +177,16 @@ authorization do
   role :partner_changer do
     includes :tools
     has_permission_on :tools_partner_changes, :to => [ :index, :new, :create, :destroy, :complete ]
+  end
+
+  role :partner_changer do
+    includes :tools
+    has_permission_on :tools_partner_changes, :to => [ :index, :new, :create, :destroy, :complete ]
+  end
+
+  role :sales_rep_mgr do
+    includes :tools
+    has_permission_on :tools_sales_reps, :to => [ :index, :new, :create, :edit, :update ]
   end
 
   role :admin do

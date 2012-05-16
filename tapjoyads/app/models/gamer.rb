@@ -59,6 +59,10 @@ class Gamer < ActiveRecord::Base
     super.reject { |c| c.name == "use_gravatar" }
   end
 
+  def name
+    @name.blank? ? email.gsub(/@.*/, '') : @name
+  end
+
   def self.serialized_extra_attributes_accessor(*args)
     args.each do |method_name|
       eval "
@@ -81,9 +85,11 @@ class Gamer < ActiveRecord::Base
 
   def confirm!
     self.confirmed_at = Time.zone.now
-    if save
-      click = referrer_click
-      reward_click(click) if click && click.rewardable?
+    save.tap do |success|
+      if success
+        click = referrer_click
+        reward_click(click) if click && click.rewardable?
+      end
     end
   end
 

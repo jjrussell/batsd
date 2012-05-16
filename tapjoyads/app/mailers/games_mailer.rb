@@ -17,13 +17,19 @@ class GamesMailer < ActionMailer::Base
     body(:content => content, :email => gamer.email, :udid => device_id, :user_agent => user_agent)
   end
 
-  def contact_support(gamer, content, user_agent, device_id)
+  def contact_support(gamer, gamer_device, content, user_agent, language_code, click, support_request)
     from 'Tapjoy <noreply@tapjoy.com>'
     reply_to gamer.email
     recipients "mobilehelp@tapjoy.com"
-    subject "User Support - Tapjoy"
+    subject click.present? ? "TJM User Support - #{click.offer.name}" : "TJM User Support"
     content_type 'text/html'
-    body(:content => content, :email => gamer.email, :udid => device_id, :user_agent => user_agent)
+    body(:content         => content,
+         :gamer           => gamer,
+         :gamer_device    => gamer_device,
+         :user_agent      => user_agent,
+         :language_code   => language_code,
+         :click           => click,
+         :support_request => support_request)
   end
 
   def password_reset(gamer, reset_link)

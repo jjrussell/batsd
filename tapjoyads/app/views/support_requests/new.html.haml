@@ -1,0 +1,151 @@
+- @page_title = t('text.support.title', :currency => @currency.name)
+
+#main
+  %h1= @page_title
+
+  - if flash[:error].present?
+    %p.error= flash[:error]
+
+  .instructions
+    %p= t('text.support.instructions_1', :currency => @currency.name)
+
+  - if @incomplete_offers.nil?
+    = button_to(t('text.games.contact_support_select_offer_button'), request.url, :id => 'show_offers')
+
+  - form_tag({ :action => :create }, :id => 'support_request') do
+    - [ :udid, :publisher_user_id, :currency_id, :app_id, :device_type, :language_code ].each do |field|
+      = hidden_field_tag field, params[field]
+    - if params[:action] == 'create'
+      = render('select_offer')
+    .field
+      = label_tag :description, t('text.support.description_label')
+      = text_field_tag :description, params[:description]
+    .field
+      = label_tag :email_address, t('text.support.email_address_label')
+      = text_field_tag :email_address, params[:email_address]
+    %p= t('text.support.instructions_2', :currency => @currency.name)
+    %p= t('text.support.abuse_warning')
+    = submit_tag(t('text.support.submit_support_request'))
+
+#privacy
+  = link_to(t('text.shared.privacy'), "#{WEBSITE_URL}/site/privacy_mobile?language_code=#{I18n.locale}")
+
+#adsby
+  = t('text.shared.ads_by')
+  %img{ :src => "#{CLOUDFRONT_URL}/images/tapjoylogo-small.png", :alt => "Tapjoy"}
+
+- content_for :included_javascripts, javascript_include_tag('jquery-1.4.2.min')
+
+- content_for :page_javascript do
+  :plain
+    $(function($){
+      $('#show_offers').click(function() {
+        $(this).attr("disabled", "disabled");
+        $.ajax({
+          type: "GET",
+          dataType: "html",
+          url: "#{incomplete_offers_support_requests_url(missing_currency_support_params)}",
+          success: function(html) {
+            $('#support_request').prepend(html);
+            $('#show_offers').hide();
+          },
+          error: function() {
+            $('#show_offers').removeAttr("disabled");
+          }
+        });
+        return false;
+      });
+    });
+
+- content_for :page_styles do
+  :plain
+    * {
+      margin: 0;
+      padding: 0;
+      outline: 0;
+      font-weight: inherit;
+      font-style: inherit;
+      font-size: inherit;
+      font-family: inherit;
+      vertical-align: baseline;
+      text-decoration: none;
+    }
+
+    body {
+      margin-bottom: 10px;
+      color: #004E09;
+    }
+
+    h1 {
+      font-size: 24pt;
+      margin-bottom: 10px;
+    }
+
+    label {
+      display: block;
+      font-size: 10pt;
+    }
+
+    #offer_id {
+      width: 100%;
+    }
+
+    img {
+      border: 0;
+    }
+
+    #main {
+      margin: 10px 3%;
+      background: white;
+      border: 1px solid #d5d5d5;
+      -moz-border-radius: 10px;
+      -webkit-border-radius: 10px;
+      padding: 10px;
+    }
+
+    form div, p, .field {
+      margin-bottom: 10px;
+    }
+
+    textarea {
+      height: 60px;
+    }
+
+    input[type=text], textarea {
+      width: 100%;
+    }
+
+    input[type=submit] {
+      display: block;
+      margin: 0 auto;
+    }
+
+    #adsby,
+    #privacy a {
+      font-size: 75%;
+      color: #004E09;
+    }
+
+    #adsby {
+      margin-top: 2px;
+      float: right;
+      margin-right: 5%;
+    }
+
+    #adsby img {
+      vertical-align: bottom;
+    }
+
+    #privacy {
+      float: left;
+      margin-left: 5%;
+      text-decoration: underline;
+    }
+
+    .clear {
+      clear: both;
+    }
+
+    .error {
+      color: #dd0000;
+    }

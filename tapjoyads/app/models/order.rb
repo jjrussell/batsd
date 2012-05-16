@@ -19,8 +19,8 @@ class Order < ActiveRecord::Base
   validates_presence_of :partner
   validates_presence_of :billing_email, :on => :create, :if => :billable?, :message => "Partner needs a billing email for invoicing"
   validates_presence_of :note, :on => :create
-  validates_inclusion_of :status, :in => STATUS_CODES.keys
-  validates_inclusion_of :payment_method, :in => PAYMENT_METHODS.keys
+  validates_inclusion_of :status, :in => STATUS_CODES
+  validates_inclusion_of :payment_method, :in => PAYMENT_METHODS
   validates_uniqueness_of :invoice_id, :allow_nil => true
   validates_numericality_of :amount, :only_integer => true, :allow_nil => false
 

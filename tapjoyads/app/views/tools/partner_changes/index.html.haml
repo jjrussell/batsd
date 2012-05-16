@@ -23,8 +23,13 @@
         %td= pc.completed_at? ? pc.completed_at.to_s(:mdy_ampm_sec) : '-'
         %td
           - unless pc.completed_at?
-            = link_to('Complete Now', complete_tools_partner_change_path(pc), :method => :post, :confirm => 'Are you sure?')
-            |
-            = link_to('Destroy', tools_partner_change_path(pc), :method => :delete, :confirm => 'Are you sure?')
+            = link_to('[complete now]', complete_tools_partner_change_path(pc), :method => :post, :confirm => 'Are you sure?')
+            = link_to('[destroy]', tools_partner_change_path(pc), :method => :delete, :confirm => 'Are you sure?')
 
 = will_paginate(@partner_changes)
+
+- content_for :page_styles do
+  :plain
+    td a {
+      white-space: nowrap;
+    }

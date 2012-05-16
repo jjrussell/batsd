@@ -383,4 +383,18 @@ describe App do
     end
   end
 
+
+  describe '#dashboard_app_url' do
+    include Rails.application.routes.url_helpers
+    before :each do
+      @app = Factory :app
+    end
+
+    it 'matches URL for Rails app_url helper' do
+      rails_url = app_url(:id       => @app.id,
+                          :host     => URI.parse(DASHBOARD_URL).host,
+                          :protocol => URI.parse(DASHBOARD_URL).scheme)
+      @app.dashboard_app_url.should == rails_url
+    end
+  end
 end

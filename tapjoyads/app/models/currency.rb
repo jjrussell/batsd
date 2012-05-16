@@ -83,6 +83,7 @@ class Currency < ActiveRecord::Base
   before_validation :sanitize_attributes
   before_validation :assign_default_currency_group, :on => :create
   before_create :set_hide_rewarded_app_installs, :set_values_from_partner_and_reseller, :set_promoted_offers
+  after_create :create_deeplink_offer
   before_update :update_spend_share
   before_update :reset_to_pending_if_rejected
   after_create :create_deeplink_offer
@@ -157,6 +158,8 @@ class Currency < ActiveRecord::Base
   def get_publisher_amount(offer, displayer_app = nil)
     if displayer_app.present?
       0
+    elsif offer.payment == 2
+      1
     else
       (offer.payment * get_spend_share(offer)).to_i
     end
@@ -262,7 +265,14 @@ class Currency < ActiveRecord::Base
     self.approval.approve!(true)
   end
 
+  # For use within TJM (since dashboard URL helpers aren't available within TJM)
+  def dashboard_app_currency_url
+    uri = URI.parse(DASHBOARD_URL)
+    "#{uri.scheme}://#{uri.host}/apps/#{self.app_id}/currencies/#{self.id}"
+  end
+
   private
+
   def cache_by_app_id
     currencies = Currency.find_all_by_app_id(app_id, :order => 'ordinal ASC').each { |c| c }
     Mc.distributed_put("mysql.app_currencies.#{app_id}.#{Currency.acts_as_cacheable_version}", currencies, false, 1.day)

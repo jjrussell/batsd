@@ -1,5 +1,4 @@
 module DashboardHelpers
-
   def capybara_register
     visit "/dashboard"
     click_link "Register now."
@@ -16,6 +15,17 @@ module DashboardHelpers
     partner = Factory(:partner)
     app = Factory(:app, :partner => partner)
     user = Factory(:user, :partners => [partner])
+
+    visit '/dashboard'
+    fill_in 'Email Address', :with => user.username
+    fill_in 'Password', :with => user.password
+    click_button 'Log in'
+  end
+
+  def capybara_dashboard_admin_login
+    partner = Factory(:partner)
+    app = Factory(:app, :partner => partner)
+    user = Factory(:admin, :partners => [partner])
 
     visit '/dashboard'
     fill_in 'Email Address', :with => user.username

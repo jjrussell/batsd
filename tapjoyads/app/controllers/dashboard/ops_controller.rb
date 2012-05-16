@@ -1,5 +1,5 @@
 class Dashboard::OpsController < Dashboard::DashboardController
-  layout 'tabbed'
+  layout 'dashboard'
 
   filter_access_to :all
 

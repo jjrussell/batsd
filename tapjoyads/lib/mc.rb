@@ -65,6 +65,8 @@ class Mc
   def self.get(key, clone = false, caches = nil)
     caches ||= [ @@cache ]
     missing_caches = []
+    dead_caches = []
+    error_caches = []
 
     cache = caches.first
     cache = cache.clone if clone
@@ -82,7 +84,19 @@ class Mc
         end
         Rails.logger.info("Memcache key not found: #{key}")
       rescue Memcached::ServerIsMarkedDead => e
+        dead_caches << cache
+        if (caches - dead_caches).length > 0
+          cache = (caches - dead_caches).first
+          retry
+        end
         Rails.logger.info("Memcached::ServerIsMarkedDead: #{key}")
+      rescue Memcached::ServerError => e
+        error_caches << cache
+        if (caches - error_caches).length > 0
+          cache = (caches - error_caches).first
+          retry
+        end
+        Rails.logger.info("Memcached::ServerError: #{e.message}")
       rescue Memcached::NoServersDefined => e
         Rails.logger.info("Memcached::NoServersDefined: #{e}")
       rescue Memcached::ATimeoutOccurred => e

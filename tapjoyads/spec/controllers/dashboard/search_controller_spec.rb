@@ -9,7 +9,7 @@ describe Dashboard::SearchController do
     context 'with a non-logged in user' do
       it 'redirects to login page' do
         get :gamers
-        response.should redirect_to(login_path(:goto => '/dashboard/search/gamers'))
+        response.should redirect_to(login_path(:goto => search_gamers_path))
       end
     end
 
@@ -22,7 +22,7 @@ describe Dashboard::SearchController do
       context 'searching for gamers' do
         it 'redirects to dashboard' do
           get :gamers
-          response.should redirect_to('/')
+          response.should redirect_to(dashboard_root_path)
         end
       end
     end
