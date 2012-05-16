@@ -11,7 +11,7 @@
       .ui-joy-group-title= t('text.shared.password')
       %ul.list-button-container
         %li.list-button.soft-gray-gradient
-          - link_to password_games_gamer_path(@gamers_gamer) do
+          = link_to password_games_gamer_path(@gamers_gamer) do
             .left
               .ui-joy-label.small.charcoal= t('text.shared.password')
               .ui-joy-label= t('text.shared.change_password')
@@ -21,7 +21,7 @@
       .ui-joy-group-title= t('text.games.delete_my_account')
       %ul.list-button-container
         %li.list-button.soft-gray-gradient
-          - link_to confirm_delete_games_gamer_path(@gamers_gamer) do
+          = link_to confirm_delete_games_gamer_path(@gamers_gamer) do
             .left
               .ui-joy-label.charcoal= t('text.games.delete_my_account')
 
