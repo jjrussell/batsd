@@ -201,6 +201,7 @@ Tapjoyad::Application.routes.draw do
       end
 
       namespace :tools do
+        resources :brands, :only => [:index, :new, :create, :edit, :update]
         resources :approvals, :as => 'acceptance', :only => [:index] do
           collection do
             :history
