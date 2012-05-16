@@ -1,10 +1,11 @@
-# This file is auto-generated from the current state of the database. Instead of editing this file, 
-# please use the migrations feature of Active Record to incrementally modify your database, and
-# then regenerate this schema definition.
+# This file is auto-generated from the current state of the database. Instead
+# of editing this file, please use the migrations feature of Active Record to
+# incrementally modify your database, and then regenerate this schema definition.
 #
-# Note that this schema.rb definition is the authoritative source for your database schema. If you need
-# to create the application database on another system, you should be using db:schema:load, not running
-# all the migrations from scratch. The latter is a flawed and unsustainable approach (the more migrations
+# Note that this schema.rb definition is the authoritative source for your
+# database schema. If you need to create the application database on another
+# system, you should be using db:schema:load, not running all the migrations
+# from scratch. The latter is a flawed and unsustainable approach (the more migrations
 # you'll amass, the slower it'll run and the greater likelihood for issues).
 #
 # It's strongly recommended to check this file into your version control system.
@@ -68,9 +69,9 @@ ActiveRecord::Schema.define(:version => 20120430164535) do
     t.string   "categories"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "papaya_user_count"
     t.integer  "thumbs_up",                         :default => 0
     t.integer  "thumbs_down",                       :default => 0
+    t.integer  "papaya_user_count"
     t.text     "countries_blacklist"
   end
 
@@ -239,6 +240,7 @@ ActiveRecord::Schema.define(:version => 20120430164535) do
     t.string   "reseller_id",                                :limit => 36
     t.decimal  "reseller_spend_share",                                     :precision => 8, :scale => 6
     t.boolean  "whitelist_overridden",                                                                   :default => false, :null => false
+    t.string   "enabled_deeplink_offer_id",                  :limit => 36
     t.text     "promoted_offers",                                                                                           :null => false
     t.string   "enabled_deeplink_offer_id",                  :limit => 36
   end
@@ -1035,6 +1037,20 @@ ActiveRecord::Schema.define(:version => 20120430164535) do
 
   add_index "survey_questions", ["id"], :name => "index_survey_questions_on_id", :unique => true
   add_index "survey_questions", ["survey_offer_id"], :name => "index_survey_questions_on_survey_offer_id"
+
+  create_table "universal_rewards", :id => false, :force => true do |t|
+    t.string   "id",                  :limit => 36, :null => false
+    t.string   "gamer_id",            :limit => 36, :null => false
+    t.string   "advertiser_app_id",   :limit => 36
+    t.string   "advertiser_offer_id", :limit => 36
+    t.integer  "advertiser_amount",                 :null => false
+    t.integer  "tapjoy_amount",                     :null => false
+    t.integer  "num_rewards",                       :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "universal_rewards", ["gamer_id"], :name => "index_universal_rewards_on_gamer_id"
 
   create_table "user_roles", :id => false, :force => true do |t|
     t.string   "id",         :limit => 36, :null => false

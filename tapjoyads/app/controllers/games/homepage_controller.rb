@@ -96,12 +96,12 @@ class Games::HomepageController < GamesController
 
   def switch_device
     if params[:data].nil?
-      redirect_to games_root_path
+      redirect_to games_path
     elsif set_current_device(params[:data])
       cookies[:data] = { :value => params[:data], :expires => 1.year.from_now }
-      redirect_to games_root_path(:switch => true)
+      redirect_to games_path(:switch => true)
     else
-      redirect_to games_root_path(:switch => false)
+      redirect_to games_path(:switch => false)
     end
   end
 
@@ -115,7 +115,7 @@ class Games::HomepageController < GamesController
   end
 
   def send_device_link
-    ios_link_url = "https://#{request.host}#{games_root_path}"
+    ios_link_url = "https://#{request.host}#{games_path}"
     GamesMailer.deliver_link_device(current_gamer, ios_link_url, GAMES_ANDROID_MARKET_URL )
     render(:json => { :success => true })
   end

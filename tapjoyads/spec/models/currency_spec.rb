@@ -28,7 +28,7 @@ describe Currency do
         Resolv.stubs(:getaddress).raises(URI::InvalidURIError)
         @currency.callback_url = 'http://tapjoy' # invalid url
         @currency.save
-        @currency.errors.on(:callback_url).should == 'is not a valid url'
+        @currency.errors[:callback_url].join.should == 'is not a valid url'
       end
     end
 
@@ -39,7 +39,7 @@ describe Currency do
 
       it 'is false' do
         @currency.should_not be_valid
-        @currency.errors.on(:test_devices).should be_present
+        @currency.errors[:test_devices].should be_present
       end
     end
   end
@@ -77,7 +77,7 @@ describe Currency do
         @currency2 = Factory.build(:currency, :app_id => @currency.app_id, :partner_id=> @currency.partner_id)
         @currency.save
         @currency2.save
-        @currency2.errors.on(:callback_url).should == 'cannot be managed if the app has multiple currencies'
+        @currency2.errors[:callback_url].join.should == 'cannot be managed if the app has multiple currencies'
       end
     end
 
@@ -466,7 +466,7 @@ describe Currency do
         approval.expects(:destroy).at_least_once
         @currency.stubs(:approval).returns(approval)
         @currency.stubs(:rejected?).returns(true)
-        @currency.run_callbacks(:before_update)
+        @currency.run_callbacks :update
       end
     end
   end
@@ -486,7 +486,7 @@ describe Currency do
         @currency.stubs(:approval).returns(stub('approval', :state => 'pending'))
         @currency.expects(:approve!).once
         @currency.tapjoy_enabled = true
-        @currency.run_callbacks(:after_update)
+        @currency.run_callbacks :update
       end
     end
 
@@ -495,7 +495,7 @@ describe Currency do
         @currency.stubs(:approval).returns(nil)
         @currency.expects(:approve!).never
         @currency.tapjoy_enabled = true
-        @currency.run_callbacks(:after_update)
+        @currency.run_callbacks :update
       end
     end
   end
@@ -509,18 +509,21 @@ describe Currency do
     end
   end
 
+  describe '#create_deeplink_offer' do
+    it 'should create a corresponding DeeplinkOffer' do
+      @currency.save!
+      @currency.enabled_deeplink_offer_id.should_not be_nil
+      dl = DeeplinkOffer.find_by_id(@currency.enabled_deeplink_offer_id)
+      dl.currency.should == @currency
+    end
+  end
   describe '#dashboard_app_currency_url' do
-    include ActionController::UrlWriter
     before :each do
       @currency = Factory :currency
     end
 
     it 'matches URL for Rails app_currency_url helper' do
-      rails_url = app_currency_url(:id       => @currency.id,
-                                   :app_id   => @currency.app_id,
-                                   :host     => URI.parse(DASHBOARD_URL).host,
-                                   :protocol => URI.parse(DASHBOARD_URL).scheme)
-      @currency.dashboard_app_currency_url.should == rails_url
+      @currency.dashboard_app_currency_url.should ==  "http://localhost/apps/#{@currency.app_id}/currencies/#{@currency.id}"
     end
   end
 end

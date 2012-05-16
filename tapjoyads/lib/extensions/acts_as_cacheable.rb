@@ -13,11 +13,11 @@ module ActsAsCacheable
       include ActsAsCacheable::InstanceMethods
       include ActiveSupport::Callbacks
 
-      define_callbacks :before_cache, :after_cache, :before_cache_clear, :after_cache_clear, :cache_associations
+      define_callbacks :cache, :cache_clear, :cache_associations
 
-      after_commit_on_create :cache
-      after_commit_on_update :cache
-      after_commit_on_destroy :clear_cache
+      after_commit :cache, :on => :create
+      after_commit :cache, :on => :update
+      after_commit :clear_cache, :on => :destroy
 
       class << self
         attr_reader :acts_as_cacheable_columns, :acts_as_cacheable_memoized_methods
@@ -60,7 +60,9 @@ module ActsAsCacheable
         def memoize_with_cache(*methods)
           @acts_as_cacheable_version = nil
           @acts_as_cacheable_memoized_methods |= methods
-          before_cache(*methods)
+          methods.each do |m|
+            set_callback :cache, :before, m.to_sym
+          end
           memoize_without_cache(*methods)
         end
         alias_method_chain :memoize, :cache
@@ -83,18 +85,16 @@ module ActsAsCacheable
   module InstanceMethods
 
     def cache
-      run_callbacks(:before_cache)
-      clear_association_cache
-      run_callbacks(:cache_associations)
-      Mc.distributed_put(cache_key, self, false, 1.day).tap do
-        run_callbacks(:after_cache)
+      run_callbacks :cache do
+        clear_association_cache
+        run_callbacks :cache_associations
+        Mc.distributed_put(cache_key, self, false, 1.day)
       end
     end
 
     def clear_cache
-      run_callbacks(:before_cache_clear)
-      Mc.distributed_delete(cache_key).tap do
-        run_callbacks(:after_cache_clear)
+      run_callbacks :cache_clear do
+        Mc.distributed_delete(cache_key)
       end
     end
 

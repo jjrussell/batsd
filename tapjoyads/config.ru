@@ -1,3 +1,9 @@
+<<<<<<< HEAD
+# This file is used by Rack-based servers to start the application.
+
+require ::File.expand_path('../config/environment',  __FILE__)
+run Tapjoyad::Application
+=======
 require 'config/environment'
 
 use Rails::Rack::LogTailer
@@ -12,3 +18,4 @@ if Rails.env.development?
     run Sprockets::Tj.assets
   end
 end
+>>>>>>> master

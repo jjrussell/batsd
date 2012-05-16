@@ -9,7 +9,7 @@ class ApplicationController < ActionController::Base
 
   helper_method :geoip_data, :downcase_param
 
-  before_filter :set_time_zone
+  before_filter :set_readonly_db
   before_filter :fix_params
   before_filter :set_locale
   before_filter :reject_banned_ips
@@ -18,10 +18,9 @@ class ApplicationController < ActionController::Base
   # Uncomment the :secret if you're not using the cookie session store
   protect_from_forgery # :secret => 'f9a08830b0e4e7191cd93d2e02b08187'
 
-  # See ActionController::Base for details
-  # Uncomment this to filter the contents of submitted sensitive data parameters
-  # from your application log (in this case, all fields with names like "password").
-  filter_parameter_logging :password, :password_confirmation
+  def set_readonly_db
+    ActiveRecord::Base.readonly = Rails.configuration.db_readonly_hostnames.include?(request.host_with_port)
+  end
 
   private
 
@@ -61,18 +60,14 @@ class ApplicationController < ActionController::Base
     true
   end
 
-  def set_time_zone
-    Time.zone = 'UTC'
-  end
-
   def set_locale
     language_code = params[:language_code]
     I18n.locale = nil
-    if AVAILABLE_LOCALES.include?(language_code)
+    if I18n.available_locales.include?(language_code)
       I18n.locale = language_code
     elsif language_code.present? && language_code['-']
       language_code = language_code.split('-').first
-      if AVAILABLE_LOCALES.include?(language_code)
+      if I18n.available_locales.include?(language_code)
         I18n.locale = language_code
       end
     end

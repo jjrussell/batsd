@@ -1,0 +1,90 @@
+- @page_title = 'Send Currency Failures'
+
+%h1 Send Currency Failures
+
+As of: #{@now.to_s(:pub_ampm_sec)}
+%br
+%br
+.totals
+  Total failures this hour: #{number_with_delimiter(@this_hour_total)}
+  %br
+  Unique failures this hour: #{number_with_delimiter(@this_hour_unique)}
+  %br
+  Skips this hour: #{number_with_delimiter(@this_hour_skips)}
+.totals
+  Total failures last hour: #{number_with_delimiter(@last_hour_total)}
+  %br
+  Unique failures last hour: #{number_with_delimiter(@last_hour_unique)}
+  %br
+  Skips last hour: #{number_with_delimiter(@last_hour_skips)}
+.clear
+
+%table#fails.tablesorter
+  %thead
+    %tr
+      %th Callback URL
+      %th This Hour Total
+      %th This Hour Unique
+      %th This Hour Skips
+      %th Currency App
+      %th Last Hour Total
+      %th Last Hour Unique
+      %th Last Hour Skips
+  %tbody
+    - @failures.each do |hash|
+      %tr
+        %td= hash[:currency].callback_url
+        %td= number_with_delimiter(hash[:this_hour_total])
+        %td= number_with_delimiter(hash[:this_hour_unique])
+        %td= number_with_delimiter(hash[:this_hour_skips])
+        %td
+          = image_tag(hash[:currency].app.get_icon_url, :size => '20x20')
+          - if permitted_to? :show, :dashboard_statz
+            = link_to(hash[:currency].app.name, statz_path(hash[:currency].app.id))
+          - else
+            = hash[:currency].app.name
+        %td= number_with_delimiter(hash[:last_hour_total])
+        %td= number_with_delimiter(hash[:last_hour_unique])
+        %td= number_with_delimiter(hash[:last_hour_skips])
+
+- content_for :page_javascript do
+  :plain
+    $(function() {
+      $.tablesorter.addParser({
+        id: 'formatted-number-column',
+        is: function(s) { return false; },
+        type: 'numeric',
+        format: function(s) {
+          return s.replace(/,/g, '');
+        }
+      });
+      $("#fails").tablesorter({
+        widgets: ['zebra'],
+        headers: {
+          0: { sorter: false },
+          1: { sorter: 'formatted-number-column' },
+          2: { sorter: 'formatted-number-column' },
+          3: { sorter: 'formatted-number-column' },
+          4: { sorter: false },
+          5: { sorter: 'formatted-number-column' },
+          6: { sorter: 'formatted-number-column' },
+          7: { sorter: 'formatted-number-column' },
+        },
+        sortList: [ [1, 1], [5, 1] ]
+      });
+    });
+
+- content_for :page_styles do
+  :plain
+    table.tablesorter {
+      border-collapse: separate;
+    }
+
+    table.tablesorter thead tr .header {
+      background-position: right bottom;
+    }
+
+    .totals {
+      float: left;
+      padding-right: 20px;
+    }

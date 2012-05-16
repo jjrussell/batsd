@@ -210,7 +210,7 @@
           $(this).addClass('selected');
           $('#selected_app_text').html($(this).html());
           if ("#{options[:not_for_nav]}") {
-            location.href = "#{per_app_inventory_management_path}?current_app=" + $(this).children('span').children('input').val();
+            location.href = "#{per_app_inventory_management_index_path}?current_app=" + $(this).children('span').children('input').val();
           } else {
             location.href = $(this).children('a').attr('href');
           }

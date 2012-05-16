@@ -6,29 +6,29 @@
 #   limited_route.resources :some_resource
 # end
 #
-module ActionController
-  module Routing
+# module ActionController
+#   module Routing
 
-    class RouteSet
-      alias_method :orig_extract_request_environment, :extract_request_environment
+#     class RouteSet
+#       alias_method :orig_extract_request_environment, :extract_request_environment
 
-      def extract_request_environment(request)
-        orig_extract_request_environment(request).merge({ :host => request.host })
-      end
-    end
+#       def extract_request_environment(request)
+#         orig_extract_request_environment(request).merge({ :host => request.host })
+#       end
+#     end
 
-    class Route
-      alias_method :orig_recognition_conditions, :recognition_conditions
+#     class Route
+#       alias_method :orig_recognition_conditions, :recognition_conditions
 
-      def recognition_conditions
-        result = orig_recognition_conditions
-        result << "conditions[:hosts].include?(env[:host])" if conditions[:hosts] && Rails.env.production?
-        result
-      end
-    end
+#       def recognition_conditions
+#         result = orig_recognition_conditions
+#         result << "conditions[:hosts].include?(env[:host])" if conditions[:hosts] && Rails.env.production?
+#         result
+#       end
+#     end
 
-  end
-end
+#   end
+# end
 
 #
 # This adds a _with_time logging method for each log severity level.
@@ -138,6 +138,37 @@ module ActiveRecord
         attrs.each { |k,v| record.write_attribute(k,v) } # original version is 'record.send :instance_variable_set, '@attributes', attrs'
         record
       end
+    end
+
+    def self.remove_column(table_name, column_name)
+      check_table_size(table_name) do
+        super(table_name, column_name)
+      end
+    end
+
+    def self.add_index(table_name, column_name, options = {})
+      check_table_size(table_name) do
+        super(table_name, column_name, options)
+      end
+    end
+
+    def self.remove_index(table_name, column_name)
+      check_table_size(table_name) do
+        super(table_name, column_name)
+      end
+    end
+  end
+
+  class Base
+
+    # TODO: Investigate. Monkey-patched during merge of rails3 and master
+    # in order to handle this before_filter in ApplicationController:
+    # def set_readonly_db
+    #   ActiveRecord::Base.readonly = Rails.configuration.db_readonly_hostnames.include?(request.host_with_port)
+    # end
+    cattr_accessor :readonly
+    def self.readonly?
+      readonly
     end
 
     # ensure API servers are readonly

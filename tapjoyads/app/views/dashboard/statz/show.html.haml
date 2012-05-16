@@ -1,0 +1,235 @@
+- @page_title = "Stats for offer: #{@offer.name_with_suffix}"
+
+.tjform{:style => 'margin-top: 5px;'}
+  = label_tag('search_box', 'Offer Name:')
+  = text_field_tag('search_box', '', :size => '40')
+
+.icon= image_tag(@offer.get_icon_url, :size => '57x57')
+
+%h1= @offer.name_with_suffix
+
+.clear
+
+%form#change_date.tjform
+  = render 'dashboard/reporting/date_range_fields'
+
+%h4 Offer
+- if permitted_to? :edit, :dashboard_statz
+  = link_to('[Edit Offer]', edit_statz_path(@offer.id))
+- if permitted_to?(:edit, :dashboard_tools_generic_offers) && @offer.item_type == 'GenericOffer'
+  = link_to('[Edit Generic Offer]', edit_tools_generic_offer_path(@offer.item_id))
+- if permitted_to?(:edit, :dashboard_tools_video_offers) && @offer.item_type == 'VideoOffer'
+  = link_to('[Edit Video Offer]', edit_tools_video_offer_path(@offer.item_id))
+- if permitted_to? :last_run_times, :dashboard_statz
+  = link_to('[View Last Run Times]', last_run_times_statz_path(@offer.id))
+- if permitted_to? :udids, :dashboard_statz
+  = link_to('[View Monthly UDID Reports]', udids_statz_path(@offer.id))
+= link_to('[Activity Log]', activities_path(:object_id => @offer.id))
+- if permitted_to?(:index, :dashboard_tools_app_reviews) && @offer.app_offer?
+  = link_to('[App Reviews]', tools_app_reviews_path(:app_id => @offer.item_id))
+- if permitted_to?(:index, :tools_sales_reps) && @offer.app_offer?
+  = link_to('[Sales Reps]', tools_offer_sales_reps_path(:offer_id => @offer.item_id))
+%table.properties
+  - property_row('Enabled', @offer.is_enabled?, nil, @offer.is_enabled?.to_s)
+  - property_row('Tapjoy Enabled', @offer.tapjoy_enabled?, nil, @offer.tapjoy_enabled?.to_s)
+  - property_row('User Enabled', @offer.user_enabled?, nil, @offer.user_enabled?.to_s)
+  - property_row('SDK-less Enabled', @offer.sdkless?, nil, @offer.sdkless?.to_s)
+  - property_row('Tracking Offer', @offer.tracking_for.present?, false, @offer.tracking_for.present?.to_s)
+  - property_row('Bid', number_to_currency(@offer.bid / 100.0))
+  - property_row('Payment', number_to_currency(@offer.payment / 100.0))
+  - if @offer.reward_value.present?
+    - property_row('Reward Value', number_to_currency(@offer.reward_value / 100.0))
+  - if @offer.item_type == 'App'
+    - if @offer.url_overridden?
+      - property_row('Overridden destination url', link_to('[url]', @offer.url))
+    - else
+      - property_row('Store id', link_to(@offer.item.store_id, @offer.item.info_url), nil, @offer.item.store_id.blank? ? 'incomplete' : nil)
+    - property_row('File size', number_to_human_size(@offer.item.file_size_bytes), nil, @offer.item.wifi_required? ? 'warning' : nil)
+    - unless @offer.item.user_rating.nil?
+      - property_row('User rating', "#{@offer.item.user_rating} stars", nil, @offer.item.bad_rating? ? 'warning' : '')
+    - unless @offer.item.categories.blank?
+      - property_row('Store categories', "[ #{@offer.item.categories.map(&:humanize).join(', ')} ]", nil, '')
+    - if @offer.item.platform == 'android' && @offer.item.released_at?
+      - updated = @offer.item.recently_released? ? time_ago_in_words(@offer.item.released_at) + " ago" : @offer.item.released_at.to_s(:pub)
+      - property_row('App Update', updated, nil, @offer.item.recently_released? ? 'warning' : nil)
+  - else
+    - property_row(@offer.url_overridden? ? 'Overridden destination url' : 'Destination url', link_to(truncate(@offer.url, :length => 60), @offer.url))
+  - property_row('Price', number_to_currency(@offer.price / 100.0), nil, @offer.expensive? ? 'warning' : nil)
+  - property_row('Daily budget', @offer.daily_budget, 0)
+  - property_row('Overall budget', @offer.overall_budget, 0)
+  - property_row('Show rate', "%.1f%" % ((@offer.show_rate || 0) * 100.0), "100.0%", @offer.show_rate < 0.001 ? 'warning' : '')
+  - property_row('Min CVR', @offer.min_conversion_rate, nil)
+  - property_row('Countries', @offer.countries, '')
+  - property_row('Regions', @offer.regions, '')
+  - property_row('DMA Codes', @offer.dma_codes, '')
+  - property_row('Cities', @offer.cities, '')
+  - property_row('Carriers', @offer.carriers, '')
+  - if @srr_ratio
+    - property_row("Offer Health", "#{@srr_ratio}")
+  - else
+    - property_row('Offer Health', "#{label_tag('offer_health_text', 'Ratio of CS tickets to Successfully Rewarded Clicks', :id => 'offer_health_text')} #{link_to('Click to View', '', :id => 'view_srr_ratio')}#{label_tag('', nil, :id => 'srr_ratio')}")
+  - property_row('Pay-per-click', @offer.pay_per_click?, false)
+  - property_row('Device types', @offer.device_types, @offer.expected_device_types.to_json, @offer.wrong_platform? ? 'incomplete' : '')
+  - if @offer.item_type == 'App' && @offer.item.platform == 'iphone' && @offer.item.supported_devices.present?
+    - property_row('Devices listed on iTunes', @offer.item.supported_devices, ["all"].to_json, 'warning')
+  - property_row('Allow negative balance', @offer.allow_negative_balance?, false)
+  - property_row('Self promote only', @offer.self_promote_only?, false)
+  - property_row('Featured', @offer.featured?, false)
+  - property_row('Direct-pay', @offer.direct_pay, nil)
+  - property_row('Cookie Tracking', @offer.cookie_tracking?, false)
+  - property_row('Approved sources', "[ #{@offer.get_approved_sources.to_a.join(', ')} ]", "[  ]")
+  - unless @offer.publisher_app_whitelist.blank?
+    - property_row('Publisher app whitelist', @offer.get_publisher_app_whitelist.map { |id| link_to(App.find(id).name, statz_path(id)) }.join(', '))
+  - if @offer.item_type == 'ActionOffer' && @offer.third_party_data?
+    - prereq = @offer.item.prerequisite_offer
+    - property_row('Prerequisite', link_to(prereq.name, statz_path(prereq)))
+  - raw property_row('id', @offer.id + ' - ' + clippy(@offer.id))
+
+%a#show_boosts{:href => '#'} [#{@active_boosts.size} active rank boosts]
+= link_to('[Create rank boost]', new_tools_rank_boost_path(:offer_id => @offer.id))
+= link_to('[View all boosts]', tools_rank_boosts_path(:offer_id => @offer.id))
+#boosts_list
+  %h5 Total Active Boost: #{@total_boost}x
+  %ul
+    - @active_boosts.each do |boost|
+      %li
+        #{boost.amount}x: #{boost.start_time.to_s(:mdy_ampm)} - #{boost.end_time.to_s(:mdy_ampm)} --
+        = link_to('[Edit]', edit_tools_rank_boost_path(boost))
+        = link_to('[Deactivate]', deactivate_tools_rank_boost_path(boost), :method => :post, :confirm => 'Are you sure?')
+
+.clear
+
+%a#show_associated{:href => '#'} [#{@associated_offers.size} associated offers]
+= link_to('[Create secondary offer]', new_statz_path(:id => @offer.id))
+#associated_list
+  %h5 Associated offers:
+  %ul
+    - @associated_offers.each do |offer|
+      %li= link_to(offer.name_with_suffix, statz_path(offer.id))
+.clear
+
+%a#show_associated_brands{:href => '#'} [#{@offer.brands.size} associated brands]
+#associated_brands_list.hidden
+  %h5 Associated Brands:
+  %ul
+    - @offer.brands.each do |brand|
+      %li= brand.name
+
+
+%h4 Partner
+= link_to('[Activity Log]', activities_path(:partner_id => @offer.partner_id))
+- if permitted_to?(:reporting, :dashboard_partners)
+  = link_to('[Partner Stats]', reporting_partner_path(@offer.partner_id))
+%table.properties
+  - property_row('Name', @offer.partner_name)
+  - if @offer.has_contacts?
+    - property_row('Contact(s)', @offer.contacts.map(&:email).join(', '))
+  - property_row('Balance', number_to_currency(@offer.partner_balance / 100.0))
+  - property_row('Pending Earnings', number_to_currency(@offer.partner_pending_earnings / 100.0))
+  - property_row('Account managers', @offer.account_managers.map(&:email).join(', '))
+  - property_row('CS Contact Email', @offer.partner_cs_contact_email)
+  - property_row('Approved publisher', @offer.partner_approved_publisher?)
+  - property_row('Rev share', number_to_percentage(@offer.partner_rev_share * 100, :precision => 1))
+  - property_row('Internal notes', @offer.internal_notes, '')
+  - property_row('id', link_to(@offer.partner_id, partner_path(@offer.partner_id)) + ' - ' + clippy(@offer.partner_id))
+= render 'dashboard/partners/make_current_button', :partner => @offer.partner
+
+- if @offer.is_publisher_offer?
+  - @offer.item.currencies.each do |c|
+    %h4 Currency - #{c.name}
+    .currency
+      %a.more{ :href => '#', :c_id => c.id } [Show more details]
+      = link_to('[View Offer Wall]', "#{API_URL}/get_offers/webpage?app_id=#{@offer.id}&udid=statz_test_udid&publisher_user_id=testuser&currency_id=#{c.id}&device_type=#{@offer.item.platform}")
+      .details{ :id => "details_#{c.id}"}
+        %table.properties
+          - property_row('Tapjoy enabled', c.tapjoy_enabled?, nil, c.tapjoy_enabled? ? 'true' : 'warning')
+          - property_row('Conversion rate', c.conversion_rate)
+          - property_row('Callback url', c.callback_url)
+          - property_row('Secret key', c.secret_key)
+          - property_row('Initial balance', c.initial_balance)
+          - property_row('Ordinal', c.ordinal)
+          - property_row('Only free offers', c.only_free_offers?)
+          - property_row('Min offerwall bid', number_to_currency((c.minimum_offerwall_bid || 0) / 100.0))
+          - property_row('Min featured bid', number_to_currency((c.minimum_featured_bid || 0) / 100.0))
+          - property_row('Min display ad bid', number_to_currency((c.minimum_display_bid || 0) / 100.0))
+          - property_row('Rev share override', number_to_percentage(c.rev_share_override * 100, :precision => 1)) if c.rev_share_override?
+          - property_row('Spend share', number_to_percentage(c.spend_share * 100))
+          - property_row('Direct-pay share', c.direct_pay_share)
+          - property_row('Max age rating', c.max_age_rating)
+          - property_row('Disabled offers', c.disabled_offers)
+          - property_row('Disabled partners', c.disabled_partners)
+          %tr
+            %td Test devices
+            %td
+              %ul
+                - c.get_test_device_ids.each do |device_id|
+                  %li= link_to(device_id, device_info_tools_path(:udid => device_id))
+          - property_row('id', c.id + ' - ' + clippy(c.id))
+
+.load-circle= image_tag('load-circle.gif')
+
+- if @offer.item_type == 'VideoOffer'
+  #button_statz
+    %h3 Video Buttons
+    %ul
+      - @offer.item.video_buttons.each do |button|
+        %li= link_to(button.name, statz_path(button.tracking_offer))
+
+#charts{ :style => "text-align: center;" }
+  - if @offer.item_type == 'App'
+    #connects.graph
+    #installs_spend.graph
+    #installs_rank.graph
+  - else
+    - if @offer.item_type == 'ActionOffer'
+      #connects.graph
+    #installs_spend.graph
+  - if @offer.is_publisher_offer?
+    #revenue.graph
+    #offerwall.graph
+    #tjm_offerwall.graph
+    #featured_offers.graph
+    #display_ads.graph
+    - if @offer.has_virtual_goods?
+      #virtual_goods.graph
+    #ads.graph
+
+- include_tapjoy_graph
+- content_for :page_javascript do
+  :plain
+    $('#search_box').autocomplete({ source: '#{search_offers_path}', delay: 250, minLength: 2, select: function(event, ui) { window.location.assign(ui.item.url); } });
+
+    $('.currency .more').click(function() {
+      $('#details_' + $(this).attr('c_id')).toggle();
+      return false;
+    });
+
+    $('#show_associated').click(function() {
+      $('#associated_list').toggle();
+      return false;
+    });
+
+    $('#show_associated_brands').click(function() {
+      $('#associated_brands_list').toggle();
+      return false;
+    });
+
+
+    $('#show_boosts').click(function() {
+      $('#boosts_list').toggle();
+      return false;
+    });
+
+    $('#view_srr_ratio').click(function() {
+      $('#view_srr_ratio').hide();
+      $('#offer_health_text').hide();
+      $('#srr_ratio').text("Calculating...");
+      $.ajax({
+        type: "GET",
+        url: "#{support_request_reward_ratio_statz_url(@offer.id)}",
+        success: function(html) {
+          $('#srr_ratio').text(html);
+        }
+      });
+      return false;
+    });

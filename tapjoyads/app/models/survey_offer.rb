@@ -21,9 +21,9 @@ class SurveyOffer < ActiveRecord::Base
   before_validation :assign_partner_id
   after_create :create_primary_offer, :create_icon
   after_update :update_offer
-  cache_associations :survey_questions
+  set_callback :cache_associations, :before, :survey_questions
 
-  named_scope :visible, :conditions => { :hidden => false }
+  scope :visible, :conditions => { :hidden => false }
 
   def bid
     if @bid_price

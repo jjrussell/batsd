@@ -393,7 +393,7 @@ describe Partner do
   end
 
   describe '#dashboard_partner_url' do
-    include ActionController::UrlWriter
+    include Rails.application.routes.url_helpers
     before :each do
       @partner = Factory :partner
     end

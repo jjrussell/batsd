@@ -4,6 +4,7 @@ class SupportRequestsController < ApplicationController
   layout 'iphone'
 
   def new
+    render 'games/support_requests/new'
   end
 
   def create
@@ -55,6 +56,6 @@ private
   def render_new_with_error(message)
     find_incomplete_offers
     flash.now[:error] = message
-    render(:action => :new) and return
+    render('/games/support_requests/new') and return
   end
 end

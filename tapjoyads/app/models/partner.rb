@@ -79,14 +79,14 @@ class Partner < ActiveRecord::Base
 
   @@per_page = 20
 
-  named_scope :to_calculate_next_payout_amount, :conditions => 'pending_earnings >= 10000'
-  named_scope :to_payout, :conditions => 'pending_earnings != 0', :order => 'name ASC, contact_name ASC'
-  named_scope :to_payout_by_earnings, :conditions => 'pending_earnings != 0', :order => 'pending_earnings DESC'
-  named_scope :search, lambda { |name_or_email| { :joins => :users,
+  scope :to_calculate_next_payout_amount, :conditions => 'pending_earnings >= 10000'
+  scope :to_payout, :conditions => 'pending_earnings != 0', :order => 'name ASC, contact_name ASC'
+  scope :to_payout_by_earnings, :conditions => 'pending_earnings != 0', :order => 'pending_earnings DESC'
+  scope :search, lambda { |name_or_email| { :joins => :users,
       :conditions => [ "#{Partner.quoted_table_name}.name LIKE ? OR #{User.quoted_table_name}.email LIKE ?", "%#{name_or_email}%", "%#{name_or_email}%" ] }
     }
-  named_scope :premier, :conditions => 'premier_discount > 0'
-  named_scope :payout_info_changed, lambda { |start_date, end_date| { :joins => :payout_info,
+  scope :premier, :conditions => 'premier_discount > 0'
+  scope :payout_info_changed, lambda { |start_date, end_date| { :joins => :payout_info,
     :conditions => [ "#{PayoutInfo.quoted_table_name}.updated_at >= ? and #{PayoutInfo.quoted_table_name}.updated_at < ? ", start_date, end_date ]
   } }
 
@@ -327,6 +327,14 @@ class Partner < ActiveRecord::Base
     changed? ? save : true
   end
 
+  # For use within TJM (since dashboard URL helpers aren't available within TJM)
+  def dashboard_partner_url
+    uri = URI.parse(DASHBOARD_URL)
+    "#{uri.scheme}://#{uri.host}/partners/#{self.id}"
+  end
+
+
+private
   def confirmation_notes
     notes = []
     notes << payout_threshold_notes unless self.payout_threshold_confirmation
@@ -342,12 +350,6 @@ class Partner < ActiveRecord::Base
   def confirm_for_payout(user)
     self.payout_info_confirmation = true  if can_confirm_payout_info?(user)
     self.payout_threshold_confirmation = true if can_confirm_payout_threshold?(user)
-  end
-
-  # For use within TJM (since dashboard URL helpers aren't available within TJM)
-  def dashboard_partner_url
-    uri = URI.parse(DASHBOARD_URL)
-    "#{uri.scheme}://#{uri.host}/partners/#{self.id}"
   end
 
   def monthly_accounting(year, month)
@@ -375,8 +377,6 @@ class Partner < ActiveRecord::Base
     ( !self.payout_info_confirmation && can_confirm_payout_info?(user)) ||
         ( !self.payout_threshold_confirmation && can_confirm_payout_threshold?(user))
   end
-
-  private
 
   def update_currencies
     if rev_share_changed? || direct_pay_share_changed? || disabled_partners_changed? || offer_whitelist_changed? || use_whitelist_changed? || accepted_publisher_tos_changed? || max_deduction_percentage_changed? || reseller_id_changed?

@@ -1,3 +1,5 @@
+require 'logging'
+
 class Mc
 
   def self.reset_connection
@@ -70,7 +72,7 @@ class Mc
     cache = cache.clone if clone
 
     value = nil
-    Rails.logger.info_with_time("Read from memcache") do
+    log_info_with_time("Read from memcache") do
       begin
         value = cache.get(CGI::escape(key))
         Rails.logger.info("Memcache key found: #{key}")
@@ -244,6 +246,10 @@ class Mc
       Mc.delete(key, clone, cache) rescue nil
     end
     nil
+  end
+
+  def self.flush(totally_serious)
+    @@cache.flush if totally_serious == 'totally_serious'
   end
 
 end

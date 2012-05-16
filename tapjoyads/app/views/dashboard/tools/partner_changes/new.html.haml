@@ -1,0 +1,59 @@
+- @page_title = 'Create Partner Change'
+
+%h1 Create Partner Change
+
+- form_for([:tools, @partner_change], :html => { :class => 'tjform' }) do |f|
+  %table
+    %tbody
+      %tr
+        %th
+          = f.label(:item_type)
+          #help_item_type.help ?
+        %td
+          = f.select(:item_type, options_for_select(PartnerChange::SUPPORTED_TYPES))
+          = error_message_on @partner_change, :item_type
+      %tr
+        %th
+          = f.label(:item_id, 'Item ID')
+          #help_item_id.help ?
+        %td
+          = f.text_field(:item_id, :size => 50)
+          = error_message_on @partner_change, :item
+      %tr
+        %th
+          = f.label(:destination_partner_id, 'New partner ID')
+          #help_destination_partner_id.help ?
+        %td
+          = f.text_field(:destination_partner_id, :size => 50)
+          = error_message_on @partner_change, :destination_partner
+      %tr
+        %th
+          = f.label(:scheduled_for, 'Scheduled for (optional)')
+          #help_scheduled_for.help ?
+        %td
+          = f.text_field(:scheduled_for, :size => 30, :id => 'scheduled_for')
+          = error_message_on @partner_change, :scheduled_for
+      %tr
+        %td{ :colspan => 2 }= f.submit('Create')
+
+.hidden
+  #help_item_type_content{ :name => 'Item type' }
+    Only these item types can be moved. Any associated offers will automatically move as well.
+  #help_item_id_content{ :name => 'Item ID' }
+    The item ID. If you're moving an App, this would be an app ID.
+  #help_destination_partner_id_content{ :name => 'New partner ID' }
+    The ID of the partner the item is being moved to.
+  #help_scheduled_for_content{ :name => 'Scheduled for' }
+    You can schedule a change to happen at a specific time.
+    If you leave this blank you must manually complete the change by clicking the 'complete now' link on the main page.
+
+- content_for :included_javascripts, javascript_include_tag('jquery-ui-timepicker-addon.min')
+
+- content_for :page_javascript do
+  :plain
+    $(function() {
+      $('#scheduled_for').datetimepicker({
+      	ampm: true,
+      	timeFormat: 'h:mm TT'
+      });
+    });

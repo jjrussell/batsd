@@ -23,8 +23,8 @@ module Offer::ThirdPartyTracking
     define_method method_name do |*args|
       replace_macros, timestamp = args
 
-      self.send("#{method_name}=", []) if super.nil?
-      urls = super.sort
+      self.send("#{method_name}=", []) if super().nil?
+      urls = super().sort
 
       timestamp ||= Time.zone.now.to_i.to_s
       urls = urls.collect { |url| url.gsub("[timestamp]", timestamp) } if replace_macros

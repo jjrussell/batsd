@@ -1,7 +1,7 @@
-require 'spec/spec_helper'
+require 'spec_helper'
 
-describe Tools::PartnerValidationsController do
-  integrate_views
+describe Dashboard::Tools::PartnerValidationsController do
+  render_views
 
   before :each do
     activate_authlogic
