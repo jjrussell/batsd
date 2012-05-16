@@ -1,4 +1,4 @@
-= form_for([ :games, @gamer_profile ], :url => games_public_gamer_profile_path(@gamer_profile)) do |f|
+= form_for([ :games, @gamer_profile ], :url => games_gamer_profile_path(@gamer_profile)) do |f|
   .container
     .ui-joy-group.ptn
       .ui-joy-group-title= t('text.shared.profile')
@@ -57,6 +57,3 @@
             %div.m10.mtn= f.text_field :favorite_category, :class => "ui-joy-input"
     .m10.mb20
       = f.submit t('text.shared.save'), :class => "ui-joy-button primary pt10 pb10 enable-when-valid"
-
-
-
