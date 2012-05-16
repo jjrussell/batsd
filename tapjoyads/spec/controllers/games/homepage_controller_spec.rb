@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Games::HomepageController do
+describe Games::HomepageController, :type=>:controller do
   describe '#get_language_code' do
 
     before :each do
