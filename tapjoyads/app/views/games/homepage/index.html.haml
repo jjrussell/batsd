@@ -81,6 +81,7 @@
       %h1.museo.row-title= t('text.games.my_apps')
       .games
         - @external_publishers.each do |external_publisher|
+          - @encrypt_currency_id = ObjectEncryptor.encrypt(external_publisher.currencies.first[:id])
           .app
             = link_to(games_earn_path(:eid => @encrypt_currency_id)) do
               .app-icon.squircle
@@ -110,5 +111,3 @@
     Tapjoy.hasApps = true;
   - if current_recommendations.present?
     Tapjoy.hasRecommendations = true;
-
->>>>>>> master
