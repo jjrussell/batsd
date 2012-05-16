@@ -48,7 +48,7 @@
           %td
             %span.not_present
               %strong Not Present
-        = render 'shared/payout_confirmations', :partner => partner, :permitted => permitted_to?(:confirm_payouts, :tools_partner_validations), :path => confirm_payouts_tools_partner_validations_path( :partner_id => partner.id, :type => :json)
+        = render 'shared/payout_confirmations', :partner => partner, :permitted => permitted_to?(:confirm_payouts, :dashboard_tools_partner_validations), :path => confirm_payouts_tools_partner_validations_path( :partner_id => partner.id, :type => :json)
 = will_paginate(@partners)
 - content_for :page_javascript do
   :plain

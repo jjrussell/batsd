@@ -146,7 +146,7 @@
         %td Installed
         %td Adv.
         %td Pub.
-        - if permitted_to? :view_pub_user_account, :tools
+        - if permitted_to? :view_pub_user_account, :dashboard_tools
           %td User
         %td Resolve
         %td Details
@@ -164,7 +164,7 @@
               = click_timestamp(click, :installed_at)
           %td= link_app_to_statz(@click_apps[click.advertiser_app_id])
           %td= link_app_to_statz(@click_apps[click.publisher_app_id])
-          - if permitted_to? :view_pub_user_account, :tools
+          - if permitted_to? :view_pub_user_account, :dashboard_tools
             %td= link_to(click.publisher_user_id, view_pub_user_account_tools_path(:publisher_app_id => click.publisher_app_id, :publisher_user_id => click.publisher_user_id))
           %td
             - if click.manually_resolved_at? && click.installed_at?
