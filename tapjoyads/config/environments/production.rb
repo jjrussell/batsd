@@ -1,6 +1,6 @@
 MACHINE_TYPE = `"#{Rails.root}/../server/server_type.rb"`
 
-Tapjoyads::Application.configure do
+Tapjoyad::Application.configure do
 
   routes = case MACHINE_TYPE
            when 'dashboard'
@@ -63,10 +63,15 @@ Tapjoyads::Application.configure do
   # Send deprecation notices to registered listeners
   config.active_support.deprecation = :notify
 
-  config.db_readonly_hostnames = ['api.staging.tapjoy.com']
 end
 
-MEMCACHE_SERVERS             = [
+begin
+  local_config = YAML::load_file("#{Rails.root}/config/local.yml")
+rescue Errno::ENOENT
+  local_config = {}
+end
+
+MEMCACHE_SERVERS = [
   'tj-prod-20120424.fqfjqv.0001.use1.cache.amazonaws.com',
   'tj-prod-20120424.fqfjqv.0002.use1.cache.amazonaws.com',
   'tj-prod-20120424.fqfjqv.0003.use1.cache.amazonaws.com',
@@ -132,7 +137,7 @@ PAPAYA_SECRET = 'RT4oNOKx0QK2nJ51'
 
 CLEAR_MEMCACHE = false
 
-twitter = YAML::load_file("#{RAILS_ROOT}/config/twitter.yaml")
+twitter = YAML::load_file("#{::Rails.root.to_s}/config/twitter.yaml")
 ENV['CONSUMER_KEY'] = twitter['production']['consumer_key']
 ENV['CONSUMER_SECRET'] = twitter['production']['consumer_secret']
 
