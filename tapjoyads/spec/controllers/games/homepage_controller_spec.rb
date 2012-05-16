@@ -12,6 +12,12 @@ describe Games::HomepageController, :type=>:controller do
       request.env["HTTP_ACCEPT_LANGUAGE"] = nil
     end
 
+    it 'has hashes for each locale' do
+      I18n.available_locales.each do |locale|
+        I18n.t('hash', :locale => locale).should_not =~ /translation missing/
+      end
+    end
+
     it 'sets locale based on language code' do
       get(:index, :language_code => "de")
       I18n.locale.should == :de
