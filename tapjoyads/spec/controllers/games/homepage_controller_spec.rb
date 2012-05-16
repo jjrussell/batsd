@@ -1,10 +1,15 @@
-require 'spec/spec_helper'
+require 'spec_helper'
 
 describe Games::HomepageController do
   describe '#get_language_code' do
 
     before :each do
       I18n.locale = :en
+    end
+
+    after :each do
+      I18n.locale = :en
+      request.env["HTTP_ACCEPT_LANGUAGE"] = nil
     end
 
     it 'has hashes for each locale' do

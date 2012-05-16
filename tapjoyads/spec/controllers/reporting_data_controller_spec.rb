@@ -1,7 +1,4 @@
 require 'spec_helper'
-require 'rexml/document'
-
-include REXML   # So we can avoid REXML prefix
 
 describe ReportingDataController do
   before :each do
@@ -52,7 +49,7 @@ describe ReportingDataController do
 
     context 'with valid params, xml' do
       before :each do
-        get(:index, :date => "2011-02-15", :username => @user.username, :api_key => @user.api_key, :partner_id => @partner.id)
+        get(:index, :format => 'xml', :date => "2011-02-15", :username => @user.username, :api_key => @user.api_key, :partner_id => @partner.id)
       end
       it 'has a successful xml response' do
         should respond_with(200)
@@ -81,33 +78,33 @@ describe ReportingDataController do
 
       it 'defaults to UTC when param is invalid' do
         get(:index, :format => 'xml', :date => "2011-01-01", :username => @user.username, :api_key => @user.api_key, :timezone => 'invalid')
-        xml = Document.new response.body
-        xml.elements.each("MarketingData/Timezone") do |node|
+        xml = Hpricot(response.body)
+        xml.search("MarketingData/Timezone").each do |node|
           node.text.should == '(GMT+00:00) Casablanca'
         end
-        xml.elements.each("MarketingData/App/SessionsHourly") do |node|
+        xml.search("MarketingData/App/SessionsHourly").each do |node|
           node.text.should == '0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0'
         end
       end
 
       it 'shifts values left by 8 with timezone=-8' do
         get(:index, :format => 'xml', :date => "2011-01-01", :username => @user.username, :api_key => @user.api_key, :timezone => '-8')
-        xml = Document.new response.body
-        xml.elements.each("MarketingData/Timezone") do |node|
+        xml = Hpricot(response.body)
+        xml.search("MarketingData/Timezone") do |node|
           node.text.should == '(GMT-08:00) Pacific Time (US & Canada)'
         end
-        xml.elements.each("MarketingData/App/SessionsHourly") do |node|
+        xml.search("MarketingData/App/SessionsHourly").each do |node|
           node.text.should == '0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0'
         end
       end
 
       it 'defaults to user timezone when no timezone specified' do
         get(:index, :format => 'xml', :date => "2011-01-01", :username => @user.username, :api_key => @user.api_key)
-        xml = Document.new response.body
-        xml.elements.each("MarketingData/Timezone") do |node|
+        xml = Hpricot(response.body)
+        xml.search("MarketingData/Timezone").each do |node|
           node.text.should == '(GMT+00:00) UTC'
         end
-        xml.elements.each("MarketingData/App/SessionsHourly") do |node|
+        xml.search("MarketingData/App/SessionsHourly").each do |node|
           node.text.should == '0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0'
         end
       end

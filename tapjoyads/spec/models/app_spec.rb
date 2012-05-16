@@ -385,7 +385,7 @@ describe App do
 
 
   describe '#dashboard_app_url' do
-    include ActionController::UrlWriter
+    include Rails.application.routes.url_helpers
     before :each do
       @app = Factory :app
     end

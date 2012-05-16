@@ -22,7 +22,7 @@ module SprocketHelper
   def embed_js(src, options={})
     src_code = Sprockets::Tj.assets[src].to_s
 
-    content_tag :script, src_code, options.merge({:type => "text/javascript"})
+    content_tag :script, src_code.html_safe, options.merge({:type => "text/javascript"})
   end
 
   ['js', 'css'].each do |type|

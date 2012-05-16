@@ -1,0 +1,50 @@
+#apps_tools.vertical-menu
+  %ul
+    - unless app.nil? || app.new_record?
+      %li= link_to 'Details', app_path(app), :class => (request.path_parameters[:controller] == 'dashboard/apps' && !(request.path_parameters[:action] =~ /Integrate/) ? 'selected' : '')
+      %li= link_to 'Rewarded Installs', edit_app_offer_path(:id => app.primary_offer.id, :app_id => app.id), :class => (controller.controller_name == 'offers' && @offer.rewarded? && !@offer.featured? && !%w(rewarded_featured non_rewarded_featured non_rewarded).include?(params[:offer_type]) ? 'selected' : '')
+      - if @app.primary_offer.present? && @app.primary_offer.tapjoy_enabled?
+        %li.inception= link_to 'Scheduling', app_offer_offer_events_path(@app, @app.primary_offer), :class => (controller.controller_name == 'offer_events' && @offer == @app.primary_offer ? 'selected' : '')
+      - if @app.price == 0
+        %li= link_to 'Rewarded Featured Installs', @app.primary_rewarded_featured_offer ? edit_app_offer_path(@app, @app.primary_rewarded_featured_offer) : new_app_offer_path(@app, :offer_type => 'rewarded_featured'), :class => (controller.controller_name == 'offers' && ((@offer.featured? && @offer.rewarded?) || params['offer_type'] == 'rewarded_featured')) ? 'selected' : ''
+        - if @app.primary_rewarded_featured_offer.present? && @app.primary_rewarded_featured_offer.tapjoy_enabled?
+          %li.inception= link_to 'Scheduling', app_offer_offer_events_path(@app, @app.primary_rewarded_featured_offer), :class => (controller.controller_name == 'offer_events' && @offer == @app.primary_rewarded_featured_offer ? 'selected' : '')
+        %li= link_to 'Non-Rewarded Featured Installs', @app.primary_non_rewarded_featured_offer ? edit_app_offer_path(@app, @app.primary_non_rewarded_featured_offer) : new_app_offer_path(@app, :offer_type => 'non_rewarded_featured'), :class => (controller.controller_name == 'offers' && ((@offer.featured? && !@offer.rewarded?) || params[:offer_type] == 'non_rewarded_featured')) ? 'selected' : ''
+        - if @app.primary_non_rewarded_featured_offer.present? && @app.primary_non_rewarded_featured_offer.tapjoy_enabled?
+          %li.inception= link_to 'Scheduling', app_offer_offer_events_path(@app, @app.primary_non_rewarded_featured_offer), :class => (controller.controller_name == 'offer_events' && @offer == @app.primary_non_rewarded_featured_offer ? 'selected' : '')
+        %li= link_to 'Non-Rewarded Installs', @app.primary_non_rewarded_offer ? edit_app_offer_path(@app, @app.primary_non_rewarded_offer) : new_app_offer_path(@app, :offer_type => 'non_rewarded'), :class => (controller.controller_name == 'offers' && ((!@offer.rewarded? && !@offer.featured?) || params[:offer_type] == 'non_rewarded')) ? 'selected' : ''
+        - if @app.primary_non_rewarded_offer.present? && @app.primary_non_rewarded_offer.tapjoy_enabled?
+          %li.inception= link_to 'Scheduling', app_offer_offer_events_path(@app, @app.primary_non_rewarded_offer), :class => (controller.controller_name == 'offer_events' && @offer == @app.primary_non_rewarded_offer ? 'selected' : '')
+      %li= link_to 'Videos', app_videos_path(@app), :class => (controller.controller_name == 'video') ? 'selected' : ''
+      %li= link_to 'Pay-Per-Action', @app.action_offers.present? ? app_action_offers_path(@app) : new_app_action_offer_path(@app), :class => (controller.controller_name == 'action_offers') ? 'selected' : ''
+      - currency_selected = controller.controller_name == 'currencies'
+      - if app.currencies.empty?
+        %li= link_to 'Virtual Currency', new_app_currency_path({:app_id => app.id}), :class => (currency_selected && controller.action_name == 'new' ? 'selected' : '')
+      - else
+        %li.with_padding Virtual Currency
+        - app.currencies.each do |c|
+          %li.inception= link_to c.name, app_currency_path({:app_id => app.id, :id => c.id}), :class => (currency_selected && params[:id] == c.id ? 'selected' : '')
+        - if app.can_have_new_currency?
+          %li.inception= link_to 'Create Currency', new_app_currency_path({:app_id => app.id}), :class => (currency_selected && controller.action_name == 'new' ? 'selected' : '')
+
+      - virtual_goods_path = app.has_virtual_goods? ?  app_virtual_goods_path({:app_id => app.id}) : new_app_virtual_good_path({:app_id => app.id})
+      %li= link_to 'Virtual Goods', virtual_goods_path, :class => (controller.controller_name == 'virtual_goods' ? 'selected' : '')
+
+      %li= link_to 'Integrate', integrate_app_path(@app)
+      -if request.path_parameters['controller'] == 'apps' && request.path_parameters['action'][/integrate/]
+        %li.inception= link_to 'Advertiser', integrate_app_path(@app), :class => (request.path_parameters['controller'] == 'apps' && request.path_parameters['action']=='integrate' ? 'selected' : '')
+        %li.inception= link_to 'Publisher', publisher_integrate_app_path(@app), :class => (request.path_parameters['controller'] == 'apps' && request.path_parameters['action']=='publisher_integrate' ? 'selected' : '')
+        %li.inception= link_to 'Status', integrate_check_app_path(@app), :class => (request.path_parameters['controller'] == 'apps' && request.path_parameters['action']=='integrate_check' ? 'selected' : '')
+
+    - else
+      %li.disabled Details
+      %li.disabled Pay-Per-Install
+      %li.disabled Virtual Currency
+      %li.disabled Virtual Goods
+      %li.disabled Integrate
+
+- content_for :page_styles do
+  :plain
+    #apps_main {
+      margin-left: 160px;
+    }

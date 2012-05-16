@@ -1,0 +1,102 @@
+- @page_title = "Offer Lists"
+
+%h1= @page_title
+
+- form_tag('', :method => :get) do
+  %table
+    %tr
+      %td= label_tag :type, 'Offer Type'
+      %td= select_tag :type, options_for_select(OfferCacher::OFFER_TYPES.collect { |type| [ Offer::OFFER_TYPE_NAMES[type], type ] }, params[:type])
+    %tr
+      %td= label_tag :device_type, 'User Device Type'
+      %td= select_tag :device_type, options_for_select(OfferCacher::DEVICE_TYPES, params[:device_type])
+    %tr
+      %td= label_tag :platform_name, 'Publisher App Platform'
+      %td= select_tag :platform_name, options_for_select(OfferCacher::PLATFORMS, params[:platform_name])
+    %tr
+      %td= label_tag :currency_group_id, 'Currency Group'
+      %td= select_tag :currency_group_id, options_for_select(CurrencyGroup.all.collect { |cg| [ cg.name, cg.id ] })
+    %tr
+      %td= label_tag :udid, 'Device ID'
+      %td= text_field_tag :udid, params[:udid], :size => '55'
+    %tr
+      %td= label_tag :source, 'Offer Source'
+      %td= select_tag :source, options_for_select(Offer::ALL_SOURCES.collect { |source| [source, source] }.insert(0, ['[none]','']), params[:source])
+    %tr
+      %td= label_tag :currency_id, 'Currency ID'
+      %td= text_field_tag :currency_id, params[:currency_id], :size => '55'
+    %tr
+      %td= label_tag :primary_country, 'Country'
+      %td= text_field_tag :primary_country, params[:primary_country], :size => '55'
+    %tr
+      %td{ :colspan => 2 }= submit_tag('Submit')
+
+- if @offers
+  %table#offers.tablesorter
+    %thead
+      %tr
+        %th Rank
+        %th Score
+        %th Name
+        %th Show Rate
+        %th CVR
+        %th Price
+        %th Avg Revenue
+        %th Bid
+        %th Boost
+        %th Devices
+        %th Type
+        %th Rejection Reasons
+    %tbody#offers_tbody
+      - @offers.each_with_index do |offer, i|
+        %tr
+          %td= i + 1
+          %td= offer.precache_rank_score_for(params[:currency_group_id])
+          %td= (permitted_to? :show, :dashboard_statz) ? link_to(offer.name, statz_path(offer)) : offer.name
+          %td= offer.show_rate
+          %td= offer.conversion_rate
+          %td= number_to_currency(0.01 * offer.price)
+          %td= offer.avg_revenue
+          %td= offer.bid
+          %td= offer.rank_boost
+          %td= offer.get_device_types.to_a.join(",")
+          %td= offer.item_type
+          %td= offer.rejections.join('; ')
+- content_for :page_javascript do
+  :plain
+    $(function() {
+
+      $.tablesorter.addParser({
+        id: 'float-column',
+        is: function(s) { return false; },
+        type: 'numeric',
+        format: function(s) {
+          return s;
+        }
+      });
+
+      $('#offers').tablesorter({
+        widgets: ['zebra'],
+        headers: {
+          6: { sorter: 'float-column' }
+        },
+      });
+
+    });
+
+- content_for :page_styles do
+  :plain
+    form td {
+      vertical-align: top;
+      padding-bottom: 6px;
+      padding-right: 6px;
+    }
+    form select {
+      width: 150px;
+    }
+    label {
+      font-weight: bold;
+    }
+    td.offers_options label {
+      font-weight: normal;
+    }

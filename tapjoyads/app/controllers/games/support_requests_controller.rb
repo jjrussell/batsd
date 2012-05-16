@@ -29,13 +29,13 @@ class Games::SupportRequestsController < GamesController
 
     case params[:type]
     when "feedback"
-      GamesMailer.deliver_feedback(@gamer, data[:content], request.env["HTTP_USER_AGENT"], current_device_id)
+      GamesMailer.feedback(@gamer, data[:content], request.env["HTTP_USER_AGENT"], current_device_id).deliver
     when "report_bug"
-      GamesMailer.deliver_report_bug(@gamer, data[:content], request.env["HTTP_USER_AGENT"], current_device_id)
+      GamesMailer.report_bug(@gamer, data[:content], request.env["HTTP_USER_AGENT"], current_device_id).deliver
     when "contact_support"
-      GamesMailer.deliver_contact_support(@gamer, current_device, data[:content], request.env["HTTP_USER_AGENT"], params[:language_code], click, support_request)
+      GamesMailer.contact_support(@gamer, current_device, data[:content], request.env["HTTP_USER_AGENT"], params[:language_code], click, support_request).deliver
     else
-      GamesMailer.deliver_contact_support(@gamer, current_device, data[:content], request.env["HTTP_USER_AGENT"], params[:language_code], click, support_request)
+      GamesMailer.contact_support(@gamer, current_device, data[:content], request.env["HTTP_USER_AGENT"], params[:language_code], click, support_request).deliver
     end
   end
 

@@ -2,6 +2,7 @@ require 'spec/spec_helper'
 
 describe Job::QueueSendCurrencyController do
   before :each do
+    SimpledbResource.reset_connection
     @controller.expects(:authenticate).at_least_once.returns(true)
     @mock_response = mock()
     @mock_response.stubs(:status).returns('OK')
@@ -30,9 +31,9 @@ describe Job::QueueSendCurrencyController do
         ).
         raises(Simpledb::ExpectedAttributeError)
 
-      lambda {
+      expect {
         get(:run_job, :message => @reward.id)
-      }.should raise_error(Simpledb::ExpectedAttributeError)
+      }.to raise_error(Simpledb::ExpectedAttributeError)
     end
 
     it 'should return if reward is already updated' do
@@ -44,9 +45,7 @@ describe Job::QueueSendCurrencyController do
         expects(:save).
         raises(Simpledb::ExpectedAttributeError)
 
-      lambda {
-        get(:run_job, :message => @reward.id)
-      }.should_not raise_error
+      get(:run_job, :message => @reward.id)
     end
   end
 
@@ -61,9 +60,9 @@ describe Job::QueueSendCurrencyController do
     end
 
     it 'should record an error for Downloader' do
-      lambda {
+      expect {
         get(:run_job, :message => @reward.id)
-      }.should raise_error(TestingError)
+      }.to raise_error(TestingError)
 
       failures = Mc.get("send_currency_failures.#{@mc_time}")
       failures[@currency.id].should == Set.new(@reward.key)
@@ -75,9 +74,9 @@ describe Job::QueueSendCurrencyController do
       Mc.get_count("send_currency_skip.#{@currency.id}.#{@mc_time}").should == 0
 
       message = "not attempting to ping the callback for #{@currency.id}"
-      lambda {
+      expect {
         get(:run_job, :message => @reward.id)
-      }.should raise_error(SkippedSendCurrency, message)
+      }.to raise_error(SkippedSendCurrency, message)
 
       Mc.get_count("send_currency_skip.#{@currency.id}.#{@mc_time}").should == 1
     end
@@ -88,9 +87,9 @@ describe Job::QueueSendCurrencyController do
       currency = Factory(:currency, :callback_url => 'https://www.whatnot.com')
       reward = Factory(:reward, :currency_id => currency.id)
 
-      lambda {
+      expect {
         get(:run_job, :message => reward.id)
-      }.should raise_error(TestingError)
+      }.to raise_error(TestingError)
 
       failures = Mc.get("send_currency_failures.#{@mc_time}")
 
@@ -123,14 +122,18 @@ describe Job::QueueSendCurrencyController do
     end
 
     it 'should delete sent_currency from reward' do
-      get(:run_job, :message => @reward.id) rescue TestingError
+      expect {
+        get(:run_job, :message => @reward.id)
+      }.to raise_error(TestingError)
 
       reward = Reward.new(:key => @reward.key, :consistent => true)
       reward.sent_currency.should == nil
     end
 
     it 'should increase @num_reads on error' do
-      get(:run_job, :message => @reward.id) rescue TestingError
+      expect {
+        get(:run_job, :message => @reward.id)
+      }.to raise_error(TestingError)
 
       num_reads = @controller.instance_variable_get('@num_reads')
       num_reads.should == 100
@@ -165,16 +168,6 @@ describe Job::QueueSendCurrencyController do
       reward = Reward.new(:key => @reward.key, :consistent => true)
       reward.sent_currency.should == Time.zone.now
       reward.send_currency_status.should == 'OK'
-    end
-
-    it 'should delete the callback url' do
-      HashWithIndifferentAccess.
-        any_instance.
-        expects(:delete).
-        with(:callback_url).
-        times(2)
-
-      get(:run_job, :message => @reward.id)
     end
 
     it 'should not reward twice' do

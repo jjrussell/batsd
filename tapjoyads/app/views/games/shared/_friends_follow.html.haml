@@ -4,13 +4,13 @@
   .container
     %ul.list-button-container.mtn
       %li.list-button.soft-gray-gradient
-        -link_to games_social_friends_path(:following => 1) do
+        = link_to games_social_friends_path(:following => 1) do
           .hd
             = t("text.shared.following")
           .bold
             = @friends_lists[:following].size
       %li.list-button.soft-gray-gradient
-        -link_to games_social_friends_path do
+        = link_to games_social_friends_path do
           .hd
             =t("text.shared.followers")
           .bold

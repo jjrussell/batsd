@@ -42,7 +42,7 @@
         - click_options = { :onclick => "return wifiPopUp(this);" }
       - else
         - click_options = { :onclick => "this.className += ' clicked';" }
-    - link_to(click_url, click_options.merge(:class => link_class)) do
+    = link_to(click_url, click_options.merge(:class => link_class)) do
       .content
         .banner
           .cost
@@ -61,7 +61,7 @@
         .offer-text
           - if @currency.conversion_rate > 0
             %span
-              - amount = capture_haml do
+              = amount = capture_haml do
                 %label= @currency.get_visual_reward_amount(offer, params[:display_multiplier])
               = offer.direct_pay? ? t('text.offerwall.buy_currency', :amount => amount, :currency => @currency.name) : t('text.offerwall.earn_currency', :amount => amount, :currency => @currency.name)
           %p
@@ -85,7 +85,7 @@
     %a{ :href => "javascript:void(0);", :id => "load_more" }
       = t('text.offerwall.load_more')
 
-- link_to @webpage_link, :id => 'more_offers', :class => 'offer', :style => "#{'display: none;' if @more_data_available > 0}" do
+= link_to @webpage_link, :id => 'more_offers', :class => 'offer', :style => "#{'display: none;' if @more_data_available > 0}" do
   .divider
   .content
     .icon

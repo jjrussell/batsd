@@ -1,23 +1,35 @@
-ActionController::Routing::Routes.draw do |map|
-  map.namespace :agency_api do |agency|
-    agency.resources :apps, :only => [ :index, :show, :create, :update ]
-    agency.resources :partners, :only => [ :index, :show, :create, :update ], :collection => { :link => :post }
-    agency.resources :currencies, :only => [ :index, :show, :create, :update ]
+Tapjoyad::Application.routes.draw do
+  match 'healthz' => 'healthz#index'
+
+  namespace :agency_api do
+    resources :apps, :only => [:index, :show, :create, :update]
+    resources :partners, :only => [:index, :show, :create, :update] do
+      collection do
+        post :link
+      end
+    end
+    resources :currencies, :only => [:index, :show, :create, :update]
   end
 
-  map.resources :reporting_data, :only => :index, :collection => { :udids => :get }
+  resources :reporting_data, :only => :index do
+    collection do
+      get :udids
+    end
+  end
 
-  map.connect 'adways_data',          :controller => :adways_data,          :action => :index
-  map.connect 'brooklyn_packet_data', :controller => :brooklyn_packet_data, :action => :index
-  map.connect 'ea_data',              :controller => :ea_data,              :action => :index
-  map.connect 'fluent_data',          :controller => :fluent_data,          :action => :index
-  map.connect 'glu_data',             :controller => :glu_data,             :action => :index
-  map.connect 'gogii_data',           :controller => :gogii_data,           :action => :index
-  map.connect 'loopt_data',           :controller => :loopt_data,           :action => :index
-  map.connect 'ngmoco_data',          :controller => :ngmoco_data,          :action => :index
-  map.connect 'pinger_data',          :controller => :pinger_data,          :action => :index
-  map.connect 'pocketgems_data',      :controller => :pocketgems_data,      :action => :index
-  map.connect 'sgn_data',             :controller => :sgn_data,             :action => :index
-  map.connect 'zynga_data',           :controller => :zynga_data,           :action => :index
-  map.connect 'tapulous_marketing',   :controller => :tapulous_marketing,   :action => :index
+  match 'adways_data' => 'adways_data#index'
+  match 'brooklyn_packet_data' => 'brooklyn_packet_data#index'
+  match 'ea_data' => 'ea_data#index'
+  match 'fluent_data' => 'fluent_data#index'
+  match 'glu_data' => 'glu_data#index'
+  match 'gogii_data' => 'gogii_data#index'
+  match 'loopt_data' => 'loopt_data#index'
+  match 'ngmoco_data' => 'ngmoco_data#index'
+  match 'pinger_data' => 'pinger_data#index'
+  match 'pocketgems_data' => 'pocketgems_data#index'
+  match 'sgn_data' => 'sgn_data#index'
+  match 'zynga_data' => 'zynga_data#index'
+  match 'tapulous_marketing' => 'tapulous_marketing#index'
+
+  match ':controller(/:action(/:id))'
 end

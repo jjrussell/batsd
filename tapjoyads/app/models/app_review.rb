@@ -8,6 +8,7 @@ class AppReview < ActiveRecord::Base
   has_many :helpful_votes
   has_many :bury_votes
 
+  before_validation :set_is_blank
   after_save :update_app_metadata_rating_counts
   before_destroy :reset_app_metadata_rating_counts
 
@@ -15,9 +16,9 @@ class AppReview < ActiveRecord::Base
   validates_presence_of :author, :app_metadata
   validates_inclusion_of :user_rating, :in => [-1, 0, 1]
 
-  named_scope :by_employees, :conditions => { :author_type => 'Employee' }
-  named_scope :by_gamers, :conditions => { :author_type => 'Gamer' }
-  named_scope :ordered_by_date, :order => "updated_at DESC"
+  scope :by_employees, :conditions => { :author_type => 'Employee' }
+  scope :by_gamers, :conditions => { :author_type => 'Gamer' }
+  scope :ordered_by_date, :order => "created_at DESC"
 
   delegate :name, :to => :app_metadata, :prefix => true
 
@@ -53,7 +54,7 @@ class AppReview < ActiveRecord::Base
     end
   end
 
-  def before_validation
+  def set_is_blank
     is_blank = text.blank?
     true
   end

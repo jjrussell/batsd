@@ -6,7 +6,7 @@ class Client < ActiveRecord::Base
   validates_presence_of :name
   validates_uniqueness_of :name, :case_sensitive => false
 
-  named_scope :ordered_by_name, :order => :name
+  scope :ordered_by_name, :order => :name
 
   before_destroy :remove_from_partners
 

@@ -1,0 +1,30 @@
+#social-index.current
+  .panel
+    .page-header
+      .container
+        .left.ml10.pt3
+          %h1.museo.mt10
+            = t('text.games.social_settings')
+    = render "games/shared/friends_follow"
+
+    = render :partial => 'find_more_friends'
+
+    .ui-joy-group.p10
+      .ui-joy-group-title.pb10
+        = t('text.games.social_networks')
+        .aside= t('text.games.find_friends_on_tapjoy')
+
+      .container
+        %ul.list-button-container.mtn
+          - has_fb = @gamer_profile.facebook_id.present?
+          - has_tw = false
+          %li.list-button.soft-gray-gradient
+            - link_to "#", "data-fb-url" => games_social_connect_facebook_account_path, :class => has_fb ? "submit-child-form" : "login-to-facebook" do
+              - form_for([ :games, @current_gamer ], :url => dissociate_account_games_gamer_profile_path(:account_type => Invitation::FACEBOOK), :html => { :class => "logout-of-facebook", :method => "put" }) do |f|
+                .ui-icon-medium.facebook
+                  = has_fb ? t("text.games.connected_to_facebook") : t("text.games.connect_to_facebook")
+                  .right{:class => has_fb ? "checkmark" : "plussign"}
+                    &nbsp;
+
+- content_for :page_head do
+  = fb_connect_async_js

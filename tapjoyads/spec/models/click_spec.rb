@@ -33,7 +33,7 @@ describe Click do
   end
 
   describe '#dashboard_device_info_tool_url' do
-    include ActionController::UrlWriter
+    include Rails.application.routes.url_helpers
     before :each do
       @click = Factory(:click)
     end
