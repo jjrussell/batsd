@@ -76,7 +76,6 @@
                 = t('text.offerwall.wifi_required')
                 .wifi_icon
         .load
-    = render :partial => 'shared/tracking_pixel_tags', :locals => { :offer => offer, :load_image => false }
     - unless index == (@offer_list.size-1)
       .divider
 
@@ -147,9 +146,7 @@
     }
 
     function loadImage(image) {
-      if (image.getAttribute('s') && image.src != image.getAttribute('s')) {
-        image.src = image.getAttribute('s');
-      }
+      image.src = image.getAttribute('s');
     }
 
     function loadJQ(ref){
