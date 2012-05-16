@@ -234,3 +234,5 @@ The pre-commit hook runs before any git commit. It automatically strips trailing
 ```
 ln -s tapjoyserver/setup/pre-commit tapjoyserver/.git/hooks/
 ```
+
+STUFF
