@@ -30,18 +30,6 @@
 #   end
 # end
 
-#
-# This adds a _with_time logging method for each log severity level.
-# It will time how long it takes to execute a block and append the
-# number of seconds to the log message.
-#
-# example usage:
-# Rails.logger.info_with_time('some message') do
-#   method_that_takes_25_seconds
-# end
-#
-# resulting log output: "some message (25s)"
-#
 module ActiveSupport
   class BufferedLogger
 
