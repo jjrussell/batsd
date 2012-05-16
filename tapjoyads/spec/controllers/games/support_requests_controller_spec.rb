@@ -87,7 +87,6 @@ describe Games::SupportRequestsController do
       end
 
       it 'sends a customer service email' do
-        GamesMailer.expects(:deliver_contact_support).once
         post :create, @params
       end
     end
