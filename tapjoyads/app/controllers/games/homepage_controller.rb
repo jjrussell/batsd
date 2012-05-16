@@ -28,7 +28,7 @@ class Games::HomepageController < GamesController
     @app_metadata = @app.primary_app_metadata
     @click_url = "#{games_record_click_path}?redirect_url=#{ObjectEncryptor.encrypt(@offer.url)}&eid=#{ObjectEncryptor.encrypt(@app.id)}"
     if @app_metadata
-      app_reviews = AppReview.paginate_all_by_app_metadata_id_and_is_blank(@app_metadata.id, false, :page => params[:app_reviews_page], :include => :author)
+      app_reviews = AppReview.where(:app_metadata_id => @app_metadata.id, :is_blank => false).includes(:author).paginate(:page => params[:app_reviews_page])
       app_reviews.reject! { |x| x.bury_by_author?(current_gamer && current_gamer.id) || x.text.blank? }
       review_authors_not_viewer =  app_reviews.map(&:author_id) - [current_gamer && current_gamer.id].compact
 

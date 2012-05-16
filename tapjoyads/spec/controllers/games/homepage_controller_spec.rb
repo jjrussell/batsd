@@ -189,7 +189,10 @@ describe Games::HomepageController, :type=>:controller do
       @troll_review_by_good_author = Factory(:app_review, :bury_votes_count=>100, :author=>@good_author)
       activate_authlogic
       login_as(@gamer)
-      AppReview.expects(:paginate_all_by_app_metadata_id_and_is_blank).returns([@good_review, @troll_review_by_good_author, @stellar_review, @good_review_by_troll_author])
+      #TODO(isingh): We need to move this to integration test or find a way to use stub_chain
+      AppReview.stubs(:where).returns(AppReview)
+      AppReview.stubs(:includes).returns(AppReview)
+      AppReview.stubs(:paginate).returns([@good_review, @troll_review_by_good_author, @stellar_review, @good_review_by_troll_author])
     end
     context 'troll author sees' do
       before :each do

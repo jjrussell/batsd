@@ -89,7 +89,10 @@ Tapjoyad::Application.routes.draw do
     end
     resources :android
     resources :survey_results, :only => [:new, :create]
-    resources :app_reviews, :only => [:index, :create, :edit, :update, :new, :destroy]
+    resources :app_reviews , :only => [:index, :create, :edit, :update, :new, :destroy] do
+      resource :fave, :controller => 'app_reviews/fave', :only => [:create, :destroy]
+      resource :flag, :controller => 'app_reviews/fave', :only => [:create, :destroy]
+    end
     namespace :social do
       root :to => 'social#index'
       match 'invite_email_friends' => 'social#invite_email_friends', :as => :invite_email_friends
