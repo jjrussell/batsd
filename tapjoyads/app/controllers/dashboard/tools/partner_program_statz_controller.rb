@@ -9,11 +9,11 @@ class Dashboard::Tools::PartnerProgramStatzController < Dashboard::DashboardCont
 
   def index
     stats_data = get_stats(@start_time, @end_time)
-    @partner_program_metadata = stats_data[:partner_program_metadata]
-    @partner_program_stats    = stats_data[:partner_program_stats_adv]
-    @partner_revenue_stats    = stats_data[:partner_revenue_stats]
-    @partner_names            = stats_data[:partner_names]
-    @appstats_data            = stats_data[:appstats_data]
+    @partner_program_metadata = stats_data[:partner_program_metadata] || {}
+    @partner_program_stats    = stats_data[:partner_program_stats_adv] || {}
+    @partner_revenue_stats    = stats_data[:partner_revenue_stats] || {}
+    @partner_names            = stats_data[:partner_names] || {}
+    @appstats_data            = stats_data[:appstats_data] || {}
   end
 
   def export
@@ -29,7 +29,7 @@ class Dashboard::Tools::PartnerProgramStatzController < Dashboard::DashboardCont
   end
 
   def get_stats(start_time, end_time)
-    return {},{},{},{} if Offer.tapjoy_sponsored_offer_ids.size == 0
+    return {} if Offer.tapjoy_sponsored_offer_ids.size == 0
     time_conditions      = "time >= '#{start_time.to_s(:db)}' AND time < '#{end_time.to_s(:db)}'"
     partner_program_offer_ids = Offer.tapjoy_sponsored_offer_ids.map { |o| "'#{o.id}'" }.join(',')
 
