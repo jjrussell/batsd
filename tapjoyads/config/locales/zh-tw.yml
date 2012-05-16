@@ -415,8 +415,8 @@ zh-tw:
       amount_and_currency: "%{amount} %{currency}"
       continue_link: 點擊這裡繼續
       download_action: 這裡
-      download_link: "如果您没有這個程序,點擊 %{download_action} 下載"
-      earn_currency: "賺 %{amount_and_currency}"
+      download_link_html: "如果您没有這個程序,點擊 %{download_action} 下載"
+      earn_currency_html: "賺 %{amount_and_currency}"
       footer: "在完成這些步驟後,您將獲得 %{amount_and_currency}."
       header: "按照這些說明來獲得 %{currency}:"
       title: 說明

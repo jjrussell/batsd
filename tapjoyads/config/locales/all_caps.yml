@@ -416,8 +416,8 @@ all_caps:
       amount_and_currency: "%{amount} %{currency}"
       continue_link: "CLICK HERE TO CONTINUE."
       download_action: HERE
-      download_link: "IF YOU DON'T HAVE THIS APP, CLICK %{download_action} TO DOWNLOAD IT."
-      earn_currency: "EARN %{amount_and_currency}"
+      download_link_html: "IF YOU DON'T HAVE THIS APP, CLICK %{download_action} TO DOWNLOAD IT."
+      earn_currency_html: "EARN %{amount_and_currency}"
       footer: "AFTER COMPLETING THESE STEPS, YOU WILL EARN %{amount_and_currency}."
       header: "FOLLOW THESE STEPS TO EARN %{currency}:"
       title: INSTRUCTIONS

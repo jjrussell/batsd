@@ -415,8 +415,8 @@ de:
       amount_and_currency: "%{amount} %{currency}"
       continue_link: "Klicke hier um fortzufahren."
       download_action: hier
-      download_link: "Wenn Du diese App nicht besitzt, klicke %{download_action} um sie downzuloaden."
-      earn_currency: "Erhalte %{amount_and_currency}"
+      download_link_html: "Wenn Du diese App nicht besitzt, klicke %{download_action} um sie downzuloaden."
+      earn_currency_html: "Erhalte %{amount_and_currency}"
       footer: "Nachdem Du diese Schritte abgeschlossen hast, erhältst Du %{amount_and_currency}."
       header: "Folge diesen Schritten um %{currency} zu erhalten:"
       title: Anleitung
