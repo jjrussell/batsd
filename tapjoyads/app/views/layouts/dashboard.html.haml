@@ -28,7 +28,7 @@
       .navbar.navbar-fixed-top
         .navbar-inner
           .container-fluid
-            - link_to DASHBOARD_URL, :class => "brand" do
+            = link_to DASHBOARD_URL, :class => "brand" do
               = image_tag("tapjoy_#{XMAN ? XMAN : ''}.png", :height => 36)
             - tabs = []
             - tabs << { :apps      => apps_path }            if permitted_to?(:index, :dashboard_apps)
@@ -44,7 +44,7 @@
             %ul.nav
               - if permitted_to?(:index, :dashboard_ops)
                 %li.active.dropdown#ops-menu
-                  - link_to '#ops-menu', :class => 'dropdown-toggle', 'data-toggle' => 'dropdown' do
+                  = link_to '#ops-menu', :class => 'dropdown-toggle', 'data-toggle' => 'dropdown' do
                     Ops
                     %b.caret
                   %ul.dropdown-menu

@@ -16,7 +16,7 @@ describe SalesRep do
       subject.start_date = Date.today
       subject.end_date = Date.yesterday
       subject.should_not be_valid
-      subject.errors.on(:start_date).should == "Start date cannot be after end date"
+      subject.errors[:start_date].join.should == "Start date cannot be after end date"
     end
   end
 
