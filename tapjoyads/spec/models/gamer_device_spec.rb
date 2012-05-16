@@ -12,7 +12,7 @@ describe GamerDevice do
     end
 
     it 'matches URL for Rails device_info_tools_url helper' do
-      @gamer_device.dashboard_device_info_tool_url.should == "http://localhost/tools/device_info?udid=#{@gamer_device.device_id}"
+      @gamer_device.dashboard_device_info_tool_url.should == "#{URI.parse(DASHBOARD_URL).scheme}://#{URI.parse(DASHBOARD_URL).host}/tools/device_info?udid=#{@gamer_device.device_id}"
     end
   end
 end

@@ -391,10 +391,7 @@ describe App do
     end
 
     it 'matches URL for Rails app_url helper' do
-      rails_url = app_url(:id       => @app.id,
-                          :host     => URI.parse(DASHBOARD_URL).host,
-                          :protocol => URI.parse(DASHBOARD_URL).scheme)
-      @app.dashboard_app_url.should == rails_url
+      @app.dashboard_app_url.should == "#{URI.parse(DASHBOARD_URL).scheme}://#{URI.parse(DASHBOARD_URL).host}/apps/#{@app.id}"
     end
   end
 end

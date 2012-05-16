@@ -523,7 +523,7 @@ describe Currency do
     end
 
     it 'matches URL for Rails app_currency_url helper' do
-      @currency.dashboard_app_currency_url.should ==  "http://localhost/apps/#{@currency.app_id}/currencies/#{@currency.id}"
+      @currency.dashboard_app_currency_url.should ==  "#{URI.parse(DASHBOARD_URL).scheme}://#{URI.parse(DASHBOARD_URL).host}/apps/#{@currency.app_id}/currencies/#{@currency.id}"
     end
   end
 end

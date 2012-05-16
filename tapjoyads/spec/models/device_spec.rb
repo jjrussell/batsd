@@ -244,7 +244,7 @@ describe Device do
     end
 
     it 'matches URL for Rails device_info_tools_url helper' do
-      @device.dashboard_device_info_tool_url.should == "http://#{host}/tools/device_info?udid=#{@device.key}"
+      @device.dashboard_device_info_tool_url.should == "#{URI.parse(DASHBOARD_URL).scheme}://#{URI.parse(DASHBOARD_URL).host}/tools/device_info?udid=#{@device.key}"
     end
   end
 end
