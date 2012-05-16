@@ -245,7 +245,7 @@ Tapjoyad::Application.routes.draw do
           collection do
             get :export
             post :confirm_payouts
-        j end
+          end
           member do
             get :info
           end
