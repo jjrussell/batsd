@@ -59,6 +59,7 @@ Tapjoyad::Application.routes.draw do
         get :password
         get :confirm_delete
         get :prefs
+        get :link_device
         resource :device, :only => [:new, :create] do
           member do
             get :finalize
