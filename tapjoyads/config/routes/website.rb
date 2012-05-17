@@ -24,12 +24,8 @@ Tapjoyad::Application.routes.draw do
     resources :opt_outs, :only => :create
   end
 
-  namespace :apps do
-    resources :offers
-  end
-
-
-  namespace :games do
+  games_scope = MACHINE_TYPE == 'website' ? '' : 'games'
+  namespace :games, :path => games_scope  do
     root :to => 'homepage#index'
     match '/' => 'homepage#index'
     match 'tos' => 'homepage#tos', :as => :tos
