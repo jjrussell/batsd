@@ -24,7 +24,7 @@ Tapjoyad::Application.configure do
   # Only use best-standards-support built into browsers
   config.action_dispatch.best_standards_support = :builtin
 
-  %w( api job dashboard website web legacy ).each do |route|
+  %w( web api job dashboard website legacy ).each do |route|
     config.paths.config.routes << Rails.root.join("config/routes/#{route}.rb")
   end
 end

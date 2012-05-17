@@ -93,7 +93,7 @@
     Encrypted ID
     #help_encrypted_id.help ?
   %td
-    = truncate(ObjectEncryptor.encrypt(@currency.id),30)
+    = truncate(ObjectEncryptor.encrypt(@currency.id), :length => 30)
     = clippy(ObjectEncryptor.encrypt(@currency.id))
 
 .hidden
