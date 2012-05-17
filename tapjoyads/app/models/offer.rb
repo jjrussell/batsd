@@ -197,31 +197,6 @@ class Offer < ActiveRecord::Base
   after_save :update_pending_enable_requests
   after_save :update_tapjoy_sponsored_associated_offers
   after_save :sync_banner_creatives! # NOTE: this should always be the last thing run by the after_save callback chain
-<<<<<<< HEAD
-  before_cache :clear_creative_blobs
-  before_cache :update_video_button_tracking_offers
-
-  named_scope :enabled_offers, :joins => :partner, :readonly => false, :conditions => "tapjoy_enabled = true AND user_enabled = true AND item_type NOT IN ('RatingOffer','DeeplinkOffer','ReengagementOffer') AND ((payment > 0 AND #{Partner.quoted_table_name}.balance > payment) OR (payment = 0 AND reward_value > 0)) AND tracking_for_id IS NULL"
-  named_scope :by_name, lambda { |offer_name| { :conditions => ["offers.name LIKE ?", "%#{offer_name}%" ] } }
-  named_scope :by_device, lambda { |platform| { :conditions => ["offers.device_types LIKE ?", "%#{platform}%" ] } }
-  named_scope :for_offer_list, :select => OFFER_LIST_REQUIRED_COLUMNS
-  named_scope :for_display_ads, :conditions => "price = 0 AND conversion_rate >= 0.3 AND ((item_type = 'App' AND CHAR_LENGTH(offers.name) <= 30) OR approved_banner_creatives IS NOT NULL)"
-  named_scope :non_rewarded, :conditions => "NOT rewarded"
-  named_scope :rewarded, :conditions => "rewarded"
-  named_scope :featured, :conditions => { :featured => true }
-  named_scope :apps, :conditions => { :item_type => 'App' }
-  named_scope :free, :conditions => { :price => 0 }
-  named_scope :nonfeatured, :conditions => { :featured => false }
-  named_scope :visible, :conditions => { :hidden => false }
-  named_scope :to_aggregate_hourly_stats, lambda { { :conditions => [ "next_stats_aggregation_time < ?", Time.zone.now ], :select => :id } }
-  named_scope :to_aggregate_daily_stats, lambda { { :conditions => [ "next_daily_stats_aggregation_time < ?", Time.zone.now ], :select => :id } }
-  named_scope :updated_before, lambda { |time| { :conditions => [ "#{quoted_table_name}.updated_at < ?", time ] } }
-  named_scope :client_facing_app_offers, :conditions => "item_type = 'App' or item_type = 'ActionOffer'"
-  named_scope :video_offers, :conditions => "item_type = 'VideoOffer'"
-  named_scope :non_video_offers, :conditions => "item_type != 'VideoOffer'"
-  named_scope :tapjoy_sponsored_offer_ids, :conditions => "tapjoy_sponsored = true", :select => "#{Offer.quoted_table_name}.id"
-  named_scope :creative_approval_needed, :conditions => 'banner_creatives != approved_banner_creatives OR (banner_creatives IS NOT NULL AND approved_banner_creatives IS NULL)'
-=======
   set_callback :cache, :before, :clear_creative_blobs
   set_callback :cache, :before, :update_video_button_tracking_offers
 
@@ -245,7 +220,6 @@ class Offer < ActiveRecord::Base
   scope :non_video_offers, :conditions => "item_type != 'VideoOffer'"
   scope :tapjoy_sponsored_offer_ids, :conditions => "tapjoy_sponsored = true", :select => "#{Offer.quoted_table_name}.id"
   scope :creative_approval_needed, :conditions => 'banner_creatives != approved_banner_creatives OR (banner_creatives IS NOT NULL AND approved_banner_creatives IS NULL)'
->>>>>>> 1dfd323308767f93ff4f079e3eb190cd568ccab7
 
   PAPAYA_OFFER_COLUMNS = "#{Offer.quoted_table_name}.id, #{AppMetadata.quoted_table_name}.papaya_user_count"
   #TODO: simplify these named scopes when support for multiple appstores is complete and offer includes app_metadata_id
