@@ -20,7 +20,12 @@ module SprocketHelper
   end
 
   def embed_js(src, options={})
-    src_code = Sprockets::Tj.assets[src].to_s
+    if Sprockets::Tj.precompile?
+      full_path = "#{Rails.public_path}#{path_for(src, 'js', false)}"
+      src_code = File.open(full_path) { |f| f.read }
+    else
+      src_code = Sprockets::Tj.assets[src].to_s
+    end
 
     content_tag :script, src_code.html_safe, options.merge({:type => "text/javascript"})
   end
