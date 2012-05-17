@@ -95,8 +95,7 @@
     - if permitted_to? :index, :dashboard_tools_survey_offers               # account_mgr
       %li= link_to 'Survey Offers', tools_survey_offers_path
     - if permitted_to? :index, :dashboard_tools_brand_offers                # account_mgr
-      - # TODO: FIX ROUTE
-      - # %li= link_to 'Associate Brands with Offers', tools_brand_offers_path
+      %li= link_to 'Associate Brands with Offers', tools_brand_offers_path
     - if permitted_to? :index, :dashboard_tools_clients                     # account_mgr
       %li= link_to 'Manage Clients', tools_clients_path
     - if permitted_to? :index, :dashboard_tools_partner_changes             # partner_changer

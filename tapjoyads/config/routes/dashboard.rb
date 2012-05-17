@@ -171,6 +171,8 @@ Tapjoyad::Application.routes.draw do
       match 'search/users' => 'search#users', :as => :search_users
       match 'search/partners' => 'search#partners', :as => :search_partners
       match 'search/currencies' => 'search#currencies', :as => :search_currencies
+      match 'search/brands' => 'search#brands', :as => :search_brands
+
       match 'premier' => 'premier#edit', :as => :premier
       resources :survey_results, :only => [:new, :create]
       resources :tools, :only => :index do
@@ -202,6 +204,11 @@ Tapjoyad::Application.routes.draw do
 
       namespace :tools do
         resources :brands, :only => [:index, :new, :create, :edit, :update]
+        resources :brand_offers, :only => [ :index, :create ] do
+          collection do
+            post :delete
+          end
+        end
         resources :approvals, :as => 'acceptance', :only => [:index] do
           collection do
             :history
