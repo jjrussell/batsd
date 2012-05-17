@@ -4,6 +4,7 @@ Tapjoyad::Application.routes.draw do
   match 'log_device_app' => 'connect#index'
   match 'Connect' => 'connect#index'
   match 'set_publisher_user_id' => 'set_publisher_user_id#index'
+  match 'get_ad_order' => 'get_ad_order#index'
 
   resources :apps_installed
   resource :click, :controller => :click do
