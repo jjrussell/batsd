@@ -51,7 +51,7 @@ module Tapjoyad
       when 'jobserver'
        %w( job )
       else
-       %w( api dashboard website web legacy )
+       %w( api dashboard job website web legacy )
       end
     end
   end
