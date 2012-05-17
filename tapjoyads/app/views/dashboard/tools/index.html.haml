@@ -29,8 +29,7 @@
     - if permitted_to? :monthly_data, :dashboard_tools                    # money, executive
       %li= link_to 'Monthly Data', monthly_data_tools_path
     - if permitted_to? :partner_monthly_balance, :dashboard_tools         # money, executive
-      - # TODO: FIX ROUTE
-      - # %li= link_to 'Partner Monthly Balance', partner_monthly_balance_tools_path
+      %li= link_to 'Partner Monthly Balance', partner_monthly_balance_tools_path
     - if permitted_to? :new_transfer, :dashboard_tools                    # account_mgr
       %li= link_to 'Transfer Funds', new_transfer_tools_path
 
