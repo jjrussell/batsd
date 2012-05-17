@@ -51,7 +51,11 @@ Tapjoyad::Application.routes.draw do
   end
   resources :reengagement_rewards, :only => [:index]
   resources :survey_results, :only => [:new, :create]
-  resources :support_requests, :only => [:new, :create]
+  resources :support_requests, :only => [:new, :create] do
+    collection do
+      get :incomplete_offers
+    end
+  end
   resources :tools_surveys, :only => [:edit, :create]
 
   resources :videos, :only => [:index] do

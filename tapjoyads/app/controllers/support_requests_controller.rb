@@ -4,7 +4,6 @@ class SupportRequestsController < ApplicationController
   layout 'iphone'
 
   def new
-    render 'games/support_requests/new'
   end
 
   def create
