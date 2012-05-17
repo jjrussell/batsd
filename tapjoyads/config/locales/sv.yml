@@ -360,7 +360,7 @@ sv:
       report_bug: "Rapportera en bugg"
       reset_password_message: "Skriv in den mail adress du använder för ditt konto så skickar vi en länk för att återställa ditt lösenord"
       reset_password_message_submit: "Du kommer att få ett mail med instruktion för att återställa ditt lösenord inom några minuter"
-      reset_password_retry: "Om du fortfarande har problem med att logga in kan du %{reset_password_url}"
+      reset_password_retry_html: "Om du fortfarande har problem med att logga in kan du %{reset_password_url}"
       reset_password_retry_url_text: "Begär ett nytt mail för att återställa ditt lösenord"
       review_app_name: "Recensera %{app_name}"
       review_created: "Din recension lyckades"
