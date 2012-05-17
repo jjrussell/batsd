@@ -43,15 +43,15 @@ module Tapjoyad
     def self.route_filenames
       case MACHINE_TYPE
       when 'dashboard'
-       %w( dashboard api catch_all )
+       %w( dashboard api )
       when 'website'
-       %w( website api catch_all )
+       %w( website api )
       when 'webserver'
-       %w( web legacy catch_all )
+       %w( web legacy )
       when 'jobserver'
        %w( job )
       else
-       %w( api dashboard job website web legacy catch_all )
+       %w( api dashboard job website web legacy )
       end
     end
   end
