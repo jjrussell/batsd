@@ -10,7 +10,7 @@ class CachedApp
     self.explanation = opts[:explanation]
 
     if offer.item_type == 'App'
-      app = App.find_in_cache(offer.item_id)
+      app = App.find(offer.item_id)
       self.url = Linkshare.add_params(app.info_url)
       self.primary_category = app.primary_category
       self.user_rating = app.user_rating
