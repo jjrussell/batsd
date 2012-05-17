@@ -360,7 +360,7 @@ es:
       report_bug: "Reportar Problema"
       reset_password_message: "Introduce el email vinculado a tu cuenta, y te mandaremos un enlace para cambiar tu contraseña"
       reset_password_message_submit: "Recibirás instrucciones sobre cómo cambiar tu contraseña en los próximos minutos."
-      reset_password_retry: "Si todavía no puedes conectarte, puedes %{reset_password_url} o mandarnos un email"
+      reset_password_retry_html: "Si todavía no puedes conectarte, puedes %{reset_password_url} o mandarnos un email"
       reset_password_retry_url_text: "Mandar otra vez el email para cambiar de contraseña"
       review_app_name: "Evaluar %{app_name}"
       review_created: "Evaluación de app guardada."
