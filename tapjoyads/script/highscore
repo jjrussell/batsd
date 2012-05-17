@@ -1,0 +1,68 @@
+#!/usr/bin/env ruby
+
+USER_MAPPINGS = {
+  'sasasasumna'       => 'adam',
+  'bertrand.kuo'      => 'bert',
+  'bkuo'              => 'bert',
+  'eric bieller'      => 'bieller',
+  'ericbieller'       => 'bieller',
+  'jeremy chotiner'   => 'chot',
+  'jchotiner'         => 'chot',
+  'brian sanders'     => 'colonel',
+  'brian j. sanders'  => 'colonel',
+  'jeff dickey'       => 'dickey',
+  'farm.cp@gmail.com' => 'farm',
+  'christopher farm'  => 'farm',
+  'john gronberg'     => 'gronberg',
+  'hwan-joon choi'    => 'hwanjoon',
+  'hc5duke'           => 'hwanjoon',
+  'iansmith7'         => 'ian',
+  'inderpreet singh'  => 'inder',
+  'james logsdon'     => 'jlo',
+  'james huang'       => 'james',
+  'hnirvana'          => 'james',
+  'deng-kai chen'     => 'kai',
+  'dengkai'           => 'kai',
+  'andrew kasper'     => 'kasper',
+  'tapkieran'         => 'kieran',
+  'cupkatez'          => 'kate',
+  'katherine zhang'   => 'kate',
+  'normchan-tj'       => 'norman',
+  'peter holiday'     => 'pete',
+  'brian stebar ii'   => 'stebar',
+  'brianstebar'       => 'stebar',
+  'jamoes'            => 'stephen',
+  'pandastic'         => 'steve',
+  'eric tipton'       => 'tipton',
+  'erictip'           => 'tipton',
+  'michael wheeler'   => 'wheeler',
+}
+
+users = {}
+shortlog = {}
+
+if ARGV[0] && /\d\d\d\d-\d\d-\d\d/ === ARGV[0]
+  after_date = "--after=#{ARGV[0]}"
+end
+
+if ARGV[1] && /\d\d\d\d-\d\d-\d\d/ === ARGV[1]
+  before_date = "--before=#{ARGV[1]}"
+end
+
+`git shortlog --no-merges -sn #{before_date} #{after_date}`.split("\n").each do |entry|
+  count, user = entry.strip.split(" ", 2)
+  count = count.to_i
+  user = user.downcase
+  user_key = USER_MAPPINGS[user] || user.split(' ').first
+  users[user_key] ||= []
+  users[user_key] << user
+  shortlog[user_key] ||= 0
+  shortlog[user_key] += count
+end
+
+longest_keylength = shortlog.keys.map(&:length).max
+longest_countlength = shortlog.values.map(&:to_s).map(&:length).max
+
+shortlog.to_a.sort_by(&:last).reverse.each do |user, count|
+  puts "#{"%#{longest_keylength + 2}s" %user.capitalize}: #{"%#{longest_countlength}d" % count}\t#{users[user].inspect}"
+end
