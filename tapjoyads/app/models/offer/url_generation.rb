@@ -30,7 +30,7 @@ module Offer::UrlGeneration
       :language_code         => language_code,
       :display_multiplier    => display_multiplier,
       :library_version       => library_version,
-      :os_version            => os_version,
+      :os_version            => os_version
     }
 
     "#{API_URL}/offer_instructions?data=#{ObjectEncryptor.encrypt(data)}"
@@ -248,5 +248,11 @@ module Offer::UrlGeneration
     url = "#{API_URL}/get_offers/webpage?app_id=#{publisher_app_id}&offer_id=#{id}"
     url << "&ts=#{Time.now.to_i}" if bust_cache
     url
+  end
+
+  # For use within TJM (since dashboard URL helpers aren't available within TJM)
+  def dashboard_statz_url
+    uri = URI.parse(DASHBOARD_URL)
+    "#{uri.scheme}://#{uri.host}/statz/#{self.id}"
   end
 end

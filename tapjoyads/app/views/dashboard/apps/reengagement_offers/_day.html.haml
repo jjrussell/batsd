@@ -1,0 +1,29 @@
+
+
+= form_for [ @app, @reengagement_offer ] do |f|
+  %table
+    %tbody
+      %tr
+        %th
+          %h3 Day #{@reengagement_offer.day_number}
+      %tr
+        %th
+          = f.label :currency_id, 'Currency'
+        %td
+          = f.select :currency_id, options_from_collection_for_select(@app.currencies, :id, :name)
+          = error_message_on @reengagement_offer, :currency_id
+      %tr
+        %th
+          = f.label :reward_value, 'Reward Amount'
+        %td
+          = f.text_field :reward_value, :required => ""
+          = error_message_on @reengagement_offer, :reward_value
+      %tr
+        %th
+          = f.label :instructions, 'Reward Message'
+        %td
+          = f.text_area :instructions, :required => ""
+          = error_message_on @reengagement_offer, :instructions
+      %tr
+        %td{:colspan => "2"}
+          = f.submit

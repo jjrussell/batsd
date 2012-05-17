@@ -415,14 +415,14 @@ ja:
       amount_and_currency: "%{amount} %{currency}"
       continue_link: 続くにはクリックしてください
       download_action: こちら
-      download_link: "このアプリをインストールするには %{download_action} をクリックしてください"
-      earn_currency: "%{amount_and_currency} を獲得"
+      download_link_html: "このアプリをインストールするには %{download_action} をクリックしてください"
+      earn_currency_html: "%{amount_and_currency} を獲得"
       footer: "このステップを完了すると %{amount_and_currency} が獲得できます"
       header: "次のステップを完了すると %{currency} が獲得できます"
       title: 指示
     offerwall:
-      buy_currency: "%{amount} %{currency} を買う"
-      earn_currency: "%{amount} %{currency} を獲得"
+      buy_currency_html: "%{amount} %{currency} を買う"
+      earn_currency_html: "%{amount} %{currency} を獲得"
       free: 無料
       instructions: "次のアクションで %{currency} を獲得する"
       instructions_non_rewarded: "Discover what's hot on Tapjoy!"

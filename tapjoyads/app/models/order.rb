@@ -19,8 +19,8 @@ class Order < ActiveRecord::Base
   validates_presence_of :partner
   validates_presence_of :billing_email, :on => :create, :if => :billable?, :message => "Partner needs a billing email for invoicing"
   validates_presence_of :note, :on => :create
-  validates_inclusion_of :status, :in => STATUS_CODES.keys
-  validates_inclusion_of :payment_method, :in => PAYMENT_METHODS.keys
+  validates_inclusion_of :status, :in => STATUS_CODES
+  validates_inclusion_of :payment_method, :in => PAYMENT_METHODS
   validates_uniqueness_of :invoice_id, :allow_nil => true
   validates_numericality_of :amount, :only_integer => true, :allow_nil => false
 
@@ -28,9 +28,9 @@ class Order < ActiveRecord::Base
 
   delegate :billing_email, :freshbooks_client_id, :to => :partner
 
-  named_scope :not_invoiced, :conditions => 'status = 0'
-  named_scope :created_since, lambda { |date| { :conditions => [ "created_at > ?", date ] } }
-  named_scope :created_between, lambda { |start_time, end_time| { :conditions => [ "created_at >= ? AND created_at < ?", start_time, end_time ] } }
+  scope :not_invoiced, :conditions => 'status = 0'
+  scope :created_since, lambda { |date| { :conditions => [ "created_at > ?", date ] } }
+  scope :created_between, lambda { |start_time, end_time| { :conditions => [ "created_at >= ? AND created_at < ?", start_time, end_time ] } }
 
   def <=> other
     created_at <=> other.created_at

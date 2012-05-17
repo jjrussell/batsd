@@ -1,0 +1,94 @@
+- @page_title = 'Partners'
+
+%h1 Partners
+- if permitted_to? :new, :dashboard_partners
+  = link_to 'Create a New Partner Account', new_partner_path
+
+- unless current_user.role_symbols.include?(:agency)
+  .right
+    Managed by:
+    - options = options_for_select(@account_managers, params[:id])
+    = select_tag('managed_by', options)
+  = form_tag(partners_path, :method => :get, :class => 'tjform') do
+    = label_tag(:q, "Name or Email Address:")
+    = text_field_tag(:q, params[:q], :size => '40')
+    = submit_tag('Search')
+
+- if @partners
+  = render :partial => "shared/partner_table", :locals => { :partners => @partners }
+  = will_paginate(@partners)
+
+- content_for :page_styles do
+  :plain
+    table.tablesorter {
+      border-collapse: separate;
+    }
+    table.tablesorter th.up_arrow {
+      background-position: 100% 50%;
+      background-repeat: no-repeat;
+      background-image: url(/stylesheets/themes/blue/asc.gif);
+      background-color: #8DBDD8;
+    }
+    .offer {
+      display: inline-block;
+      padding-right: 10px;
+      padding-top: 5px;
+    }
+    .nowrap {
+      white-space: nowrap;
+    }
+    .tjform input[type=submit] {
+      margin: 0;
+      float: none;
+    }
+    .act_as_button {
+      font-size: 10px!important;
+      padding:2px!important;
+    }
+    .agency {
+      color: red;
+    }
+- content_for :page_javascript do
+  :plain
+    $(function($){
+      $('#managed_by').change(function(){
+        if ($(this).val() == 'all') {
+          location.href = '/partners/';
+        } else if ($(this).val() == 'none') {
+          location.href = '/partners/managed_by/none';
+        } else {
+          location.href = '/partners/managed_by/' + $(this).val();
+        }
+      });
+
+      $('td.account_manager select,td.sales_rep select').change(function(){
+        var form = $(this).parent('form');
+        var url = form.attr('action');
+        var key = $(this).attr('name');
+        var data = {};
+        data[key] = [$(this).val()];
+        form.siblings('img').show();
+        $.ajax({
+          data: data,
+          error: function() {
+            form.siblings('.message').show().text('fail!!!');
+            form.siblings('img').hide();
+          },
+          success: function() {
+            form.siblings('.message').show().text('success!');
+            form.siblings('img').hide();
+          },
+          type: 'put',
+          url: url
+        });
+      });
+
+      $('#q').autocomplete({
+        source: '#{search_partners_path}',
+        delay: 250,
+        minLength: 2,
+        select: function(event, ui) {
+          location.href = '#{partners_path}/' + ui.item.partner_id;
+        },
+      });
+    });

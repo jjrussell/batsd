@@ -415,14 +415,14 @@ es:
       amount_and_currency: "%{amount} %{currency}"
       continue_link: "Haz clic aquí para seguir."
       download_action: aquí
-      download_link: "Si no tienes esta aplicación, haz clic %{download_action} para descargarla."
-      earn_currency: "Gana %{amount_and_currency}"
+      download_link_html: "Si no tienes esta aplicación, haz clic %{download_action} para descargarla."
+      earn_currency_html: "Gana %{amount_and_currency}"
       footer: "Tras completar estas etapas, ganarás %{amount_and_currency}."
       header: "Sigue estas etapas para ganar %{currency}:"
       title: Instrucciones
     offerwall:
-      buy_currency: "Compra %{amount} %{currency}"
-      earn_currency: "Gana %{amount} %{currency}"
+      buy_currency_html: "Compra %{amount} %{currency}"
+      earn_currency_html: "Gana %{amount} %{currency}"
       free: Gratis
       instructions: "Completa una de las acciones siguientes para recibir %{currency}"
       instructions_non_rewarded: "Discover what's hot on Tapjoy!"

@@ -1,0 +1,64 @@
+= form_for([ :tools, @employee ], :html => { :class => 'tjform', :multipart => true }) do |f|
+  .field
+    = f.label(:email)
+    = f.text_field(:email)
+    = error_message_on @employee, :email
+  - if !@employee.new_record?
+    .field
+      = f.label(:active, "Active?")
+      = f.check_box(:active)
+  .field
+    = f.label(:department)
+    = f.select(:department, options_for_select(Employee::DEPARTMENTS, @employee.department))
+    = error_message_on @employee, :department
+  .field
+    = f.label(:location)
+    = f.text_field(:location, :value => location_str(@employee), :placeholder => "e.g. [1, 2]")
+    = error_message_on @employee, :department
+  .field
+    = f.label(:first_name)
+    = f.text_field(:first_name)
+    = error_message_on @employee, :first_name
+  .field
+    = f.label(:last_name)
+    = f.text_field(:last_name)
+    = error_message_on @employee, :last_name
+  .field
+    = f.label(:title)
+    = f.text_field(:title)
+    = error_message_on @employee, :title
+  - if !@employee.new_record?
+    .field
+      = label_tag("Current Photo", "Current Photo")
+      = image_tag @employee.get_photo_url, :alt => @employee.photo_alt_name
+      %br= link_to "Remove Photo", delete_photo_tools_employee_path(@employee)
+  .field
+    = label_tag :upload_photo
+    = file_field_tag :upload_photo
+  = submit_tag @employee.new_record? ? "Create" : "Update"
+
+- content_for :page_styles do
+  :plain
+
+    label {
+      vertical-align: top;
+      font-weight: bold;
+      text-align: right;
+      display: inline-block;
+      width: 200px;
+      margin-left: -200px;
+    }
+
+    textarea {
+      width: 500px;
+      height: 75px;
+    }
+
+    input[type=submit] {
+      float: right;
+    }
+
+    .field {
+      margin-bottom: 5px;
+      margin-left: 200px;
+    }

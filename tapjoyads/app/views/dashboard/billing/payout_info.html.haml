@@ -1,0 +1,334 @@
+- @page_title = 'Payment Information'
+= render :partial => 'actions'
+
+.left-indented
+  - if permitted_to?(:index, :dashboard_activities)
+    .right= link_to('Activity Log', activities_path(:object_id => @payout_info.id))
+  %h2 Payment Information
+  %p Please enter in your payment and tax information. We require this information for payouts as well as compliance with tax authorities. We use industry standard technology to store your tax and payment information.
+
+  = form_for [current_partner, @payout_info], :url => update_payout_info_billing_index_path, :html => { :method => :put } do |f|
+    %table.payout_info
+      %tbody
+        %tr
+          %td{:colspan => 2}
+            %h3 Tax Information:
+        %tr
+          %th
+            = f.label :tax_country, 'Country'
+            .help.no-help ?
+          %td
+            = f.select(:tax_country, options_for_select(list_of_countries, @payout_info.tax_country))
+            = f.error_message_on(:tax_country)
+        %tr
+          %th
+            = f.label :account_type, 'Account Type'
+            .help.no-help ?
+          %td
+            = f.select(:account_type, options_for_select(PayoutInfo::ACCOUNT_TYPES, @payout_info.account_type))
+            = f.error_message_on(:account_type)
+        %tr
+          %th
+            = f.label :billing_name, 'Legal Name'
+            .help.no-help ?
+          %td
+            = f.text_field(:billing_name)
+            = f.error_message_on(:billing_name)
+        %tr
+          %th
+            = f.label :doing_business_as, 'd/b/a'
+            #help_doing_business_as.help ?
+          %td
+            = f.text_field(:doing_business_as)
+            = f.error_message_on(:doing_business_as)
+        %tr.do-not-print
+          %th
+            = f.label :tax_id, 'Tax ID'
+            #help_tin.help ?
+          %td
+            = encrypted_field(f, @payout_info, :tax_id)
+            = f.error_message_on(:tax_id)
+        %tr
+          %td{:colspan => 2}
+            %h3 Payment Details*
+        %tr
+          %th
+            = f.label :beneficiary_name, 'Beneficiary Name'
+            .help.no-help ?
+          %td
+            = f.text_field(:beneficiary_name)
+            = f.error_message_on(:beneficiary_name)
+        %tr
+          %th
+            = f.label :company_name, 'Company Name'
+            .help.no-help ?
+          %td
+            = f.text_field(:company_name)
+            = f.error_message_on(:company_name)
+        %tr
+          %th
+            = f.label :country, 'Country'
+            .help.no-help ?
+          %td
+            = f.select(:payment_country, options_for_select(list_of_countries, @payout_info.payment_country))
+            = f.error_message_on(:payment_country)
+        %tr
+          %th
+            = f.label :payout_method, 'Payment Method'
+            #help_payment_method.help ?
+          %td
+            = f.select(:payout_method, options_for_select(PayoutInfo::PAYOUT_METHODS, @payout_info.payout_method))
+            = f.error_message_on(:payout_method)
+        %tr.paypal
+          %th
+            = f.label :paypal_email, 'PayPal Email address'
+            .help.no-help ?
+          %td
+            = f.text_field(:paypal_email)
+            = f.error_message_on(:paypal_email)
+        %tr
+          %td{:colspan => 2}
+            %h3 Beneficiary Address
+        %tr
+          %th
+            = f.label :address, 'Address'
+            .help.no-help ?
+          %td
+            = f.text_field(:address_1)
+            = f.error_message_on(:address_1)
+        %tr
+          %th &nbsp;
+          %td
+            = f.text_field(:address_2)
+            = f.error_message_on(:address_2)
+        %tr
+          %th
+            = f.label :city, 'City'
+            .help.no-help ?
+          %td
+            = f.text_field(:address_city)
+            = f.error_message_on(:address_city)
+        %tr.country_us
+          %th
+            = f.label :state, 'State'
+            .help.no-help ?
+          %td
+            = f.select(:address_state, options_for_select(list_of_states, @payout_info.address_state || 'CA'))
+            = f.error_message_on(:address_state)
+        %tr
+          %th
+            %span.country_us= f.label :postal_codes, 'ZIP code'
+            %span.country_other= f.label :postal_codes, 'Postal code'
+            .help.no-help ?
+          %td
+            = f.text_field(:address_postal_code)
+            = f.error_message_on(:address_postal_code)
+        %tr
+          %th
+            = f.label :country, 'Country'
+            .help.no-help ?
+          %td
+            = f.select(:address_country, options_for_select(list_of_countries, @payout_info.address_country))
+            = f.error_message_on(:address_country)
+        %tr.country_other
+          %td{:colspan => 2}
+            %h3 Bank Information
+        %tr.country_other.do-not-print
+          %th
+            = f.label :bank_name, 'Bank Name'
+            .help.no-help ?
+          %td
+            = encrypted_field(f, @payout_info, :bank_name)
+            = f.error_message_on(:bank_name)
+        %tr.country_other.do-not-print
+          %th
+            = f.label :bank_address, 'Bank Address'
+            .help.no-help ?
+          %td
+            = encrypted_field(f, @payout_info, :bank_address)
+            = f.error_message_on(:bank_address)
+        %tr.country_other.do-not-print
+          %th
+            %span.country_us= f.label :bank_account_number, 'Bank Account Number'
+            %span.country_other= f.label :bank_account_number, 'Bank IBAN Code'
+            #help_bank_account_number.help ?
+          %td
+            = encrypted_field(f, @payout_info, :bank_account_number)
+            = f.error_message_on(:bank_account_number)
+        %tr.country_other.do-not-print
+          %th
+            %span.country_us= f.label :bank_routing_number, 'Bank Routing Number'
+            %span.country_other= f.label :bank_routing_number, 'Bank SWIFT Code'
+            #help_bank_swift_code.help ?
+          %td
+            = encrypted_field(f, @payout_info, :bank_routing_number)
+            = f.error_message_on(:bank_routing_number)
+    %br/
+    = f.check_box(:terms, :checked => @terms_checked)
+    By checking this box, I agree under penalties of perjury, I certify that:
+    %br/
+    = f.error_message_on(:terms)
+    .country_other#terms-other
+      %ol
+        %li I am the beneficial owner (or am authorized to sign fot the beneficial owner) of all the income to which this form relates,
+        %li The beneficial owner is not a US person,
+        %li The income to which this form relates is not effectively connected with the conduct of a trade or business in the United States or is effectively connected but is not subject to tax under an income tax treaty, and
+        %li For broker transactions or barter exchanges, the beneficial owner is an exempt foreign person as defined in the instructions.
+        %li Furthermore, I authorize this form to be provided to any withholding agent that has control, receipt, or custody of the income of which I am the beneficial owner or any withholding agent that can disburse or make payments of the income of which I am the beneficial owner.
+    .country_us#terms-us
+      %ol
+        %li The number shown on this form is my correct taxpayer identification number (or I am waiting for a number to be issued to me), and
+        %li I am not subject to backup withholding because: (a) I am exempt from backup withholding, or (b) I have not been notified by the Internal Revenue Service (IRS) that I am subject to backup withholding as a result of a failure to report all interest or dividends, or (c) the IRS has notified me that I am no longer subject to backup withholding, and
+        %li I am a U.S. citizen or other U.S. person
+    Please write your name here as digital signature of this agreement:
+    %br/
+    = f.text_field(:signature)
+    = f.error_message_on(:signature)
+    = submit_tag
+
+  %p *There is a minimum payment threshold of US$250.
+
+.hidden
+  #help_billing_name_content{:name => 'Legal Name'}
+    Must match name on tax return.
+  #help_doing_business_as_content{:name => 'Doing Business As'}
+    (Optional) Trade name under which your business is being conducted,
+    if applicable.
+  #help_payment_method_content{:name=> 'Payment Method'}
+    %strong U.S.:
+    %br/
+    ACH - $0 / 2-4 business days
+    %br/
+    Wires - $12 USD / 1 business day
+    %br/
+    Check - $0 / 4-6 business days
+    %br/
+    Paypal - 5% of payout amount / 1 business day
+    %br/
+    %br/
+    %strong International:
+    %br/
+    Wires - $25 USD / 1 business day
+    %br/
+    Paypal - 5% of payout amount / 1 business day
+  #help_tin_content{:name => 'Tax ID'}
+    %strong U.S.:
+    Your Taxpayer Information Number (TIN) is either your Social Security Number (SSN) if you are an individual or your Employer ID Number (EIN) if you are a corporation or partnership.
+    %br/
+    %br/
+    %strong International:
+    Please enter in whatever ID number is used by your country's tax authority
+  #help_bank_account_number_content{:name => 'Account # / IBAN'}
+    %strong U.S. (Account number):
+    Account number to your bank account.
+    %br/
+    %br/
+    %strong International (IBAN):
+    International Bank Account Number.
+  #help_bank_swift_code_content{:name => 'Routing # / SWIFT'}
+    %strong U.S. (Routing number):
+    Routing number to your bank account.
+    %br/
+    %br/
+    %strong International (SWIFT):
+    The 8 to 11 character alphanumeric code associated with your financial institution.
+
+- content_for :page_styles do
+  :plain
+    table.payout_info th {
+      text-align: right;
+      width: 200px;
+    }
+    table.payout_info input, table.payout_info select {
+      width: 200px;
+    }
+    .country_us, .country_other {
+      display: none;
+    }
+    .country_other select {
+      visibility: hidden;
+    }
+    #terms-us, #terms-other {
+      font-size: 12px;
+    }
+    .fieldWithErrors {
+      display: inline;
+    }
+    .formError {
+      color: red;
+      font-size: 10px;
+    }
+
+- content_for :page_javascript do
+  :plain
+    var toggleByCountry = function() {
+      var method = $('#payout_info_payout_method').val();
+      if (method == 'paypal') {
+        $('.country_us').hide();
+        $('.country_other').hide();
+        $('.address').hide();
+        $('.paypal').show();
+      } else {
+        $('.country_us').show();
+        $('.country_other').show();
+        $('.address').show();
+        $('.paypal').hide();
+        if (isUS()) {
+          $('.country_us').show();
+          toggleByPayoutMethod();
+          $('#terms-other').hide();
+        } else {
+          $('.country_us').hide();
+          $('.country_other').show();
+          if (method == 'check' || method == 'ach') {
+            $('#payout_info_payout_method').val('wire');
+          }
+        }
+      }
+
+      if (isUS()) {
+        $('#payout_info_payout_method option').attr('disabled', '');
+      } else {
+        $('#payout_info_payout_method option:nth(0)').attr('disabled', 'disabled')
+        $('#payout_info_payout_method option:nth(1)').attr('disabled', 'disabled')
+      }
+    };
+    var toggleByPayoutMethod = function() {
+      if (isUS()) {
+        var method = $('#payout_info_payout_method').val();
+        if (method == 'ach' || method == 'wire') {
+          $('.country_other').show();
+        } else {
+          $('.country_other').hide();
+        }
+        $('span.country_other').hide();
+      } else {
+        $('.country_other').show();
+      }
+    };
+    var isUS = function() {
+      return $('#payout_info_payment_country').val().match(/united states of america/i);
+    };
+
+    $('#payout_info_payment_country').change(toggleByCountry);
+    $('#payout_info_payout_method').change(toggleByPayoutMethod);
+    $('#payout_info_payout_method').change(toggleByCountry);
+    toggleByCountry();
+    $('#payout_info_account_type').change(function(){
+      $('#payout_info_tax_id').val('');
+      $('#payout_info_bank_name').val('');
+      $('#payout_info_bank_address').val('');
+      $('#payout_info_bank_account_number').val('');
+      $('#payout_info_bank_routing_number').val('');
+    });
+    $('form').submit(function(){
+      var billingName = $('#payout_info_billing_name').val().replace(/^ +/,'').replace(/ +$/,'').toLowerCase();
+      var beneficiaryName = $('#payout_info_beneficiary_name').val().replace(/^ +/,'').replace(/ +$/,'').toLowerCase();
+      if (beneficiaryName != billingName) {
+        $('#flash_error').text('Your beneficiary name does not match your billing name. We need you to correct this in order to pay you.').show();
+        return false;
+      } else {
+        $('#flash_error').hide();
+        return true
+      }
+    });

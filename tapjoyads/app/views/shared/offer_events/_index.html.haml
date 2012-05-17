@@ -7,7 +7,7 @@
 = link_to('Schedule an Offer Change', :action => :new)
 
 .filters
-  - form_tag('', :class => 'tjform', :method => :get, :id => 'filter-form') do
+  = form_tag('', :class => 'tjform', :method => :get, :id => 'filter-form') do
     %table
       %tr
         %th= label_tag 'filter', 'View:'

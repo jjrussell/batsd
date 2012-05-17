@@ -9,8 +9,11 @@ class VideoButton < ActiveRecord::Base
 
   after_save :update_offer
 
-  named_scope :ordered, :order => "enabled DESC, ordinal"
-  named_scope :enabled, :conditions => { :enabled => true }
+  scope :ordered, :order => "enabled DESC, ordinal"
+  scope :enabled, :conditions => { :enabled => true }
+
+  has_tracking_offers
+  delegate :item, :item_id, :item_type, :to => :tracking_offer, :allow_nil => true
 
   has_tracking_offers
   delegate :item, :item_id, :item_type, :to => :tracking_offer, :allow_nil => true

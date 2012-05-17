@@ -9,7 +9,7 @@ class OfferDiscount < ActiveRecord::Base
   validates_numericality_of :amount, :greater_than_or_equal_to => 0, :only_integer => true, :allow_nil => false
   validates_inclusion_of :source, :in => OfferDiscount::SOURCES, :allow_nil => false, :allow_blank => false
 
-  named_scope :active, lambda { { :conditions => [ "expires_on > ?", Time.zone.today ] } }
+  scope :active, lambda { { :conditions => [ "expires_on > ?", Time.zone.today ] } }
 
   after_save :recalculate_premier_discount_for_partner
 

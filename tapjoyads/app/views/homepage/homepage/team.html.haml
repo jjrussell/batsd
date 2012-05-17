@@ -1,0 +1,37 @@
+- @page_title = "Meet the Team"
+
+- content_for :page_head, stylesheet_link_tag('about_us')
+- content_for :page_head, stylesheet_link_tag('team')
+
+#about_us
+  #left
+    = render :partial => 'homepage/sub_nav'
+  #right
+    = image_tag("meet_the_team.png", :class => 'header')
+    - @employees.each do |employee|
+      .user{:id => employee.dom_id}
+        .teampic= image_tag(employee.get_photo_url, :alt => h(employee.full_name))
+        %span.name= h(employee.full_name)
+        %span.title= h(employee.title)
+        .about
+          - if (employee.biography.length > 140)
+            %p.biosmall
+              = truncate(h(employee.biography), :length => 140)
+              = link_to('[Full Bio]', '#', :class => 'showbio')
+            %p.biolarge
+              = h(employee.biography)
+              = link_to('[Short Bio]', '#', :class => 'showbio')
+          - else
+            %p.biosmall= h(employee.biography)
+          .questions
+            .question
+              %span.header Secret superpower
+              %span.answer= h(employee.superpower)
+            .question
+              %span.header Currently playing
+              %span.answer= h(employee.current_games)
+            .question
+              %span.header Weapon of choice
+              %span.answer= h(employee.weapon)
+      .divider
+.clear

@@ -919,7 +919,7 @@ private
         #:names => [ 'Offerwall views', 'Clicks', 'Conversions' ],
         :names => [ 'Clicks', 'Conversions' ],
         :data => [
-          #@stats['tjm_offerwall_views'], 
+          #@stats['tjm_offerwall_views'],
           @stats['tjm_rewards_opened'], @stats['tjm_rewards'],
         ],
         :stringData => [

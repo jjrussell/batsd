@@ -1,0 +1,119 @@
+%table{ :cellspacing => 0, :cellspan => 0}
+  %thead
+    %tr
+      %th Partner
+      %th Can Email? / Email Address
+      %th Account Manager
+      %th Apps
+  %tbody
+    - @partners.each do |partner|
+      %tr{:class => cycle("even", "odd")}
+        %td
+          = link_to(partner.name.blank? ? "No name" : partner.name, partner)
+        %td.nobr
+          - partner.users.each do |user|
+            - if user.partners.length == 1
+              = form_tag('/tools/update_user/' + user.id) do |f|
+                = check_box_tag 'user[can_email]', user.can_email, user.can_email, :id => "user_#{user.id}_can_email", :class => "can_email"
+                = text_field_tag 'user[email]', user.email, :id => "user_#{user.id}_email", :class => "email", :initial => user.email
+                = image_tag 'load-circle.gif', :class => 'hidden'
+          - if partner.users.blank?
+            &nbsp;
+        %td.nobr
+          = form_for(partner) do |f|
+            - options = options_from_collection_for_select(User.account_managers, "id", "email", partner.account_managers.map(&:id))
+            = f.select :account_managers, options, {:include_blank => '(no one)'}, {:class => 'account_manager'}
+            = image_tag 'load-circle.gif', :class => 'hidden'
+        %td
+          - partner.offers.first(10).each do |offer|
+            %span.offer{:title => offer.name}
+              - link = statz_path(offer.id)
+              = link_to image_tag(offer.get_icon_url, :size => '20x20'), link
+              = link_to truncate(offer.name, :length => 10), link
+          - if partner.offers.blank?
+            &nbsp;
+
+= will_paginate(@partners)
+
+- content_for :page_styles do
+  :plain
+    table tbody tr td {
+      border-bottom: 1px solid black;
+    }
+    input[type=text].email {
+      width: 300px;
+      background-color: #eee;
+    }
+    input[type=text].email.modified {
+      background-color: #dfd;
+    }
+    input[type=text].email:hover, input[type=text].email.active {
+      background-color: #ffd;
+    }
+    .nobr {
+      white-space: nowrap;
+    }
+    tr.odd {
+      background-color: #eee;
+    }
+
+- content_for :page_javascript do
+  :plain
+    $(function($){
+
+      $('input.email').
+        focus(function(){
+          $(this).addClass('active');
+        }).
+        blur(function(){
+          $(this).removeClass('active');
+          if ($(this).attr('initial') != $(this).val()) {
+            $(this).addClass('modified');
+          }
+        });
+      $('input.email, input[type=checkbox]').
+        change(function(){
+          $(this).siblings('img').show();
+          var form = $(this).parents('form');
+          var url = form.attr('action');
+          var can_email = form.children('input.can_email').attr('checked');
+          var email = form.children('input.email').val();
+          var data = { "user[can_email]": can_email, "user[email]": email };
+          $.ajax({
+            data: data,
+            error: function() {
+              alert('something went wrong for ' + email);
+              form.children('img').hide();
+            },
+            success: function(result) {
+              if (!result.success) {
+                alert('something went wrong for ' + email);
+              }
+              form.children('img').hide();
+            },
+            type: 'post',
+            url: url
+          });
+        });
+      $('select.account_manager').change(function(){
+        var form = $(this).parent('form');
+        var url = form.attr('action');
+        var data = {"partner[account_managers]": [$(this).val()]};
+        form.children('img').show();
+        $.ajax({
+          data: data,
+          error: function() {
+            alert('something went wrong for an account manager assignment');
+            form.parents('td').css('background-color','red');
+            form.children('img').hide();
+          },
+          success: function() {
+            form.parents('td').css('background-color','inherit');
+            form.siblings('.message').show().text('success!');
+            form.children('img').hide();
+          },
+          type: 'put',
+          url: url
+        });
+      });
+    });

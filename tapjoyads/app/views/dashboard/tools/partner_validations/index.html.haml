@@ -1,0 +1,124 @@
+- content_for :included_javascripts, javascript_include_tag('jquery.form.min', 'tapjoy/payout_confirmations')
+- @page_title = 'Publisher Payout Confirmations'
+
+%h1 Publisher Payout Confirmations
+= label_tag(:q, 'Account Manager:')
+= text_field_tag(:acct_mgrs, @account_manager, :size => '40')
+= submit_tag('Clear Filters', :class => 'clear_filter')
+%table
+  %thead
+    %tr
+      %th Partner
+      %th Partner Email
+      %th{:class => "sort #{params[:acct_mgr_sort] if params[:acct_mgr_sort]}"} Account Manager#{'&nbsp;'*5}
+      %th Bank Info Present?
+      %th Confirm
+      %th Notes
+  %tbody
+    - @partners.each do |partner|
+      - payout_info = partner.payout_info
+      - confirmation_notes = partner.confirmation_notes
+      %tr
+        %td
+          %strong Name:
+          - if payout_info.present?
+            = payout_info.company_name
+          - else
+            \-
+          %br/
+          %strong Partner Name:
+          = partner.name
+          - if payout_info.present? && payout_info.doing_business_as.present?
+            %br/
+            %strong d/b/a:
+            = payout_info.doing_business_as
+          %br/
+          %strong ID:
+          = link_to(partner.id, partner_path(partner.id))
+        %td
+          = mail_to(partner.non_managers.first.email) if partner.non_managers.present?
+        %td
+          = partner.account_managers.join('<br>')
+        - if partner.completed_payout_info?
+          %td
+            %span.present
+              %strong Present
+            %br/
+        - else
+          %td
+            %span.not_present
+              %strong Not Present
+        = render 'shared/payout_confirmations', :partner => partner, :permitted => permitted_to?(:confirm_payouts, :dashboard_tools_partner_validations), :path => confirm_payouts_tools_partner_validations_path( :partner_id => partner.id, :type => :json)
+= will_paginate(@partners)
+- content_for :page_javascript do
+  :plain
+    $(function($) {
+      $('th.sort').click(function() {
+        var location = '#{tools_partner_validations_path}?'
+        location += '#{ [:page, :acct_mgr_filter].map { |param| (param.to_s+'='+params[param]+'&') if params[param].present? }.join('')}';
+        if($(this).hasClass('ASC')) {
+          $(this).removeClass('ASC');
+          $(this).addClass('DESC');
+          location += 'acct_mgr_sort=DESC';
+        } else {
+          $(this).removeClass('DESC');
+          $(this).addClass('ASC');
+          location += 'acct_mgr_sort=ASC';
+        }
+        window.location = location;
+      });
+      var options = {
+        source: '#{search_users_path}?tapjoy_only=true',
+        delay: 250,
+        minLength: 2,
+        select: function(event, ui) {
+          location.href = '#{tools_partner_validations_path}?#{ ('acct_mgr_sort='+params[:acct_mgr_sort]+'&') if params[:acct_mgr_sort].present?}acct_mgr_filter='+ ui.item.user_id;
+        }
+      };
+      $('#acct_mgrs').focus().autocomplete(options);
+      $('input.clear_filter').click(function(){
+          window.location ='#{tools_partner_validations_path}';
+      });
+    });
+- content_for :page_styles do
+  :plain
+    #main {
+      width: 1200px;
+    }
+    table {
+      border-collapse: collapse;
+    }
+    th, td {
+      border: 1px solid gray;
+      padding: 5px;
+      font-size: 12px;
+    }
+
+    span.enabled, span.present {
+      color: green;
+    }
+
+    span.disabled, span.not_present {
+      color: red;
+    }
+
+    h3 a {
+      text-decoration: none;
+      font-size: 14px;
+    }
+
+    th.sort {
+      background-position: 100% 50%;
+      background-repeat: no-repeat;
+      background-image: url(/stylesheets/themes/blue/bg.gif);
+    }
+    th.ASC {
+      background-position: 100% 50%;
+      background-repeat: no-repeat;
+      background-image: url(/stylesheets/themes/blue/asc.gif);
+    }
+    th.DESC {
+      background-position: 100% 50%;
+      background-repeat: no-repeat;
+      background-image: url(/stylesheets/themes/blue/desc.gif);
+    }

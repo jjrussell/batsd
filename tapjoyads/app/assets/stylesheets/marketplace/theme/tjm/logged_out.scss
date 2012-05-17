@@ -32,6 +32,8 @@ ul.flush li {
 
 input, textarea, select, option {
   -webkit-appearance: none;
+  -moz-appearance: none;
+  -o-appearance: none;
   outline: none;
   -webkit-outline: none;
   -moz-outline: none;
@@ -85,8 +87,6 @@ input[type=checkbox]:checked {
   }
 
   #login-web-wrapper {
-    background: transparent inline-image("#{$image_path}/small-right-arrow.png") no-repeat 0 0;
-    background-position: right 18px;
     border-left: 1px solid #be2327;
     box-shadow: inset 1px 0 0 #f13b3c;
     cursor: pointer;
@@ -212,18 +212,6 @@ span.gill {
         position: relative;
         top: 0;
       }
-      #gamer_submit.enabled {
-        -webkit-animation-name: bounce-up;
-        -webkit-animation-duration: .5s;
-        -webkit-transition-delay: 2s;
-        -webkit-animation-iteration-count: 3;
-        -webkit-animation-timing-function: ease-in-out;
-        -moz-animation-name: bounce-scale;
-        -moz-animation-duration: .5s;
-        -moz-transition-delay: 2s;
-        -moz-animation-iteration-count: 3;
-        -moz-animation-timing-function: ease-in-out;
-      }
 
       .title {
         font: 500 22px "Museo Slab";
@@ -310,9 +298,14 @@ span.gill {
   }
 }
 
-#login-form.show, #signup-form.show {
+#login-form.show {
   display: block;
   @include fade-in(0.35s);
+}
+
+#signup-form.show {
+  display: block;
+  @include fade-in(0.2s);
 }
 
 .register-form {
