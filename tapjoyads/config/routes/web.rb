@@ -81,6 +81,4 @@ Tapjoyad::Application.routes.draw do
       end
     end
   end
-
-  match ':controller(/:action(/:id))'
 end
