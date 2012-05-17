@@ -200,7 +200,19 @@ class Offer < ActiveRecord::Base
   set_callback :cache, :before, :clear_creative_blobs
   set_callback :cache, :before, :update_video_button_tracking_offers
 
-  scope :enabled_offers, :joins => :partner, :readonly => false, :conditions => "tapjoy_enabled = true AND user_enabled = true AND item_type != 'RatingOffer' AND item_type != 'ReengagementOffer' AND ((payment > 0 AND #{Partner.quoted_table_name}.balance > payment) OR (payment = 0 AND reward_value > 0)) AND tracking_for_id IS NULL"
+  ENABLED_OFFER_TYPES = %w(RatingOffer DeeplinkOffer ReengagementOffer)
+  scope :enabled_by_tapjoy, :conditions => { :tapjoy_enabled => true }
+  scope :enabled_by_user, :conditions => { :user_enabled => true }
+  scope :with_allowed_types, :conditions => [ 'item_type not in (?)', ENABLED_OFFER_TYPES ]
+  scope :with_fund, {
+    :joins => :partner,
+    :conditions => '(payment > 0 AND partners.balance > payment) OR (payment = 0 AND reward_value > 0)'
+  }
+  scope :not_tracking, :conditions => { :tracking_for_id => nil }
+  def self.enabled_offers
+    not_tracking.with_fund.with_allowed_types.enabled_by_user.enabled_by_tapjoy.scoped(:readonly => false)
+  end
+
   scope :by_name, lambda { |offer_name| { :conditions => ["offers.name LIKE ?", "%#{offer_name}%" ] } }
   scope :by_device, lambda { |platform| { :conditions => ["offers.device_types LIKE ?", "%#{platform}%" ] } }
   scope :for_offer_list, :select => OFFER_LIST_REQUIRED_COLUMNS
