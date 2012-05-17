@@ -17,12 +17,12 @@
     %tr
       %th Updated
       %td= @user.updated_at? ? @user.updated_at.to_s(:db) : 'never'
-    - if permitted_to? :create, :dashboard_tools_users_partner_assignments
+    - if permitted_to? :create, :dashboard_tools_partner_assignments
       %tr
         %th Current partner
         %td= @user.current_partner.present? ? link_to(@user.current_partner.name, @user.current_partner) : 'None'
 
-- if permitted_to? :create, :dashboard_tools_users_partner_assignments
+- if permitted_to? :create, :dashboard_tools_partner_assignments
   %h4 Add to partner
   #search_query
     = label_tag(:partners_name_search_box, 'by partner name or ID:')
@@ -165,7 +165,7 @@
     }
 
 - content_for :page_javascript do
-  - if permitted_to? :create, :dashboard_tools_users_partner_assignments
+  - if permitted_to? :create, :dashboard_tools_partner_assignments
     :plain
       $(function($){
         $('.show_all_apps').click(function(){
