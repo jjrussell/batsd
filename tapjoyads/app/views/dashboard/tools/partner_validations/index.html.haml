@@ -10,7 +10,7 @@
     %tr
       %th Partner
       %th Partner Email
-      %th{:class => "sort #{params[:acct_mgr_sort] if params[:acct_mgr_sort]}"} Account Manager#{('&nbsp;'*5).html_safe}
+      %th{:class => "sort #{params[:acct_mgr_sort]}"} Account Manager
       %th Bank Info Present?
       %th Confirm
       %th Notes
@@ -111,6 +111,7 @@
       background-position: 100% 50%;
       background-repeat: no-repeat;
       background-image: url(/stylesheets/themes/blue/bg.gif);
+      padding-right: 16px;
     }
     th.ASC {
       background-position: 100% 50%;
