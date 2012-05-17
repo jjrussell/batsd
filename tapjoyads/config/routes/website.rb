@@ -88,16 +88,17 @@ Tapjoyad::Application.routes.draw do
       resource :fave, :controller => 'app_reviews/fave_moderation', :only => [:create, :destroy]
       resource :flag, :controller => 'app_reviews/flag_moderation', :only => [:create, :destroy]
     end
-    namespace :social do
+    # TODO: Fix this legacy namespacing weirdness
+    namespace :social, :path => '' do
       root :to => 'social#index'
       match 'invite_email_friends' => 'social#invite_email_friends', :as => :invite_email_friends
-      match 'connect_facebook_account' => 'social#connect_facebook_account', :as => :connect_facebook_account
+      match 'social/connect_facebook_account' => 'social#connect_facebook_account', :as => :connect_facebook_account
       match 'send_email_invites' => 'social#send_email_invites', :as => :send_email_invites
       match 'invite_twitter_friends' => 'social#invite_twitter_friends', :as => :invite_twitter_friends
       match 'send_twitter_invites' => 'social#send_twitter_invites', :as => :send_twitter_invites
       match 'get_twitter_friends' => 'social#get_twitter_friends', :as => :get_twitter_friends
-      match 'invites' => 'social#invites', :as => :invites
-      match 'friends' => 'social#friends', :as => :friends
+      match 'social/invites' => 'social#invites', :as => :invites
+      match 'social/friends' => 'social#friends', :as => :friends
       scope :twitter do
         match 'start_oauth' => 'twitter#start_oauth', :as => :twitter_start_oauth
         match 'finish_oauth' => 'twitter#finish_oauth', :as => :twitter_finish_oauth
