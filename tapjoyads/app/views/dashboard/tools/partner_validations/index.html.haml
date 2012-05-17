@@ -10,7 +10,7 @@
     %tr
       %th Partner
       %th Partner Email
-      %th{:class => "sort #{params[:acct_mgr_sort] if params[:acct_mgr_sort]}"} Account Manager#{'&nbsp;'*5}
+      %th{:class => "sort #{params[:acct_mgr_sort] if params[:acct_mgr_sort]}"} Account Manager#{('&nbsp;'*5).html_safe}
       %th Bank Info Present?
       %th Confirm
       %th Notes
