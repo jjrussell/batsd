@@ -96,19 +96,18 @@
         %th.action &nbsp;
       %th Name
   %tbody
-    - if @current_assignments
-      - @current_assignments.each do |assignment|
-        %tr
-          - if @can_modify_roles
-            %td
-              - if assignment.admin?
-                &nbsp;
-              - else
-                = button_to('remove', tools_user_role_assignment_path(:user_id => @user.id, :id => assignment.id), :method => 'delete', :confirm => 'Are you sure?')
-          %td{:class => assignment.admin? ? 'disabled text' : 'text'}
-            = assignment.user_role.name.titleize
+    - @current_assignments.each do |assignment|
+      %tr
+        - if @can_modify_roles
+          %td
             - if assignment.admin?
-              (not modifiable)
+              &nbsp;
+            - else
+              = button_to('remove', tools_user_role_assignment_path(:user_id => @user.id, :id => assignment.id), :method => 'delete', :confirm => 'Are you sure?')
+        %td{:class => assignment.admin? ? 'disabled text' : 'text'}
+          = assignment.user_role.name.titleize
+          - if assignment.admin?
+            (not modifiable)
 
 - if @can_modify_roles
   %h4 Add new role:
