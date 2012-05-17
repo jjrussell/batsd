@@ -41,7 +41,15 @@ USER_MAPPINGS = {
 users = {}
 shortlog = {}
 
-`git shortlog --no-merges -sn`.split("\n").each do |entry|
+if ARGV[0] && /\d\d\d\d-\d\d-\d\d/ === ARGV[0]
+  after_date = "--after=#{ARGV[0]}"
+end
+
+if ARGV[1] && /\d\d\d\d-\d\d-\d\d/ === ARGV[1]
+  before_date = "--before=#{ARGV[1]}"
+end
+
+`git shortlog --no-merges -sn #{before_date} #{after_date}`.split("\n").each do |entry|
   count, user = entry.strip.split(" ", 2)
   count = count.to_i
   user = user.downcase
