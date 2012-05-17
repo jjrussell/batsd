@@ -24,5 +24,5 @@
       %tr
         %td{ :colspan => 2 }
           = check_box_tag :terms_of_service
-          = label_tag :terms_of_service, "I agree to the new Tapjoy #{link_to 'Publisher Terms of Service', '/tos-publisher.html', :target => '_blank'}"
+          = label_tag :terms_of_service, raw("I agree to the new Tapjoy #{link_to 'Publisher Terms of Service', '/tos-publisher.html', :target => '_blank'}")
   = f.submit "Create"
