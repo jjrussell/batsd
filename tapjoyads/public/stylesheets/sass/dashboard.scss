@@ -192,11 +192,11 @@ div.flash {
   color: #F31;
   font-size: 18px;
 }
-#flash_notice, .flash.notice {
+#flash_notice.flash, .flash.notice {
   border: 2px solid #328F0D;
   color: #328F0D;
 }
-#flash_error {
+#flash_error.flash {
   border: 2px solid #F31;
   color: #F31;
 }
@@ -377,4 +377,10 @@ select.chosen {
 }
 .sidebar-nav {
   padding: 9px 0;
+}
+.navbar .brand {
+  padding: {
+    top: 6px;
+    bottom: 6px;
+  }
 }

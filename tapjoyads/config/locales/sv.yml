@@ -415,14 +415,14 @@ sv:
       amount_and_currency: "%{amount} %{currency}"
       continue_link: "Klicka här för att fortsätta."
       download_action: här
-      download_link: "Om du inte har denna app, klicka %{download_action} för att ladda ner den."
-      earn_currency: "Tjäna %{amount_and_currency}"
+      download_link_html: "Om du inte har denna app, klicka %{download_action} för att ladda ner den."
+      earn_currency_html: "Tjäna %{amount_and_currency}"
       footer: "Efter att ha genomfört dessa steg kommer du tjäna %{amount_and_currency}."
       header: "Följ dessa steg för att tjäna %{currency}:"
       title: Instruktioner
     offerwall:
-      buy_currency: "Köp %{amount} %{currency}"
-      earn_currency: "Tjäna %{amount} %{currency}"
+      buy_currency_html: "Köp %{amount} %{currency}"
+      earn_currency_html: "Tjäna %{amount} %{currency}"
       free: Gratis
       instructions: "Genomför något av följande erbjudande för att få %{currency}"
       instructions_non_rewarded: "Discover what's hot on Tapjoy!"

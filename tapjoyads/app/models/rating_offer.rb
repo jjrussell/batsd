@@ -15,7 +15,7 @@ class RatingOffer < ActiveRecord::Base
 
   delegate :get_offer_device_types, :platform, :store_url, :get_icon_url, :to => :app
 
-  named_scope :visible, :conditions => { :hidden => false }
+  scope :visible, :conditions => { :hidden => false }
 
   def get_id_with_app_version(app_version)
     RatingOffer.get_id_with_app_version(id, app_version)

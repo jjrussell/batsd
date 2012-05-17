@@ -3,6 +3,9 @@ class Partner < ActiveRecord::Base
 
   json_set_field :promoted_offers
 
+  BASE_PAYOUT_THRESHOLD = 50_000_00
+  APPROVED_INCREASE_PERCENTAGE = 1.2
+
   has_many :orders
   has_many :payouts
   has_many :currencies
@@ -39,7 +42,6 @@ class Partner < ActiveRecord::Base
   validate :sales_rep_is_employee, :if => :sales_rep_id_changed?
   validate :client_id_legal
   validates_format_of :billing_email, :cs_contact_email, :with => Authlogic::Regex.email, :message => "should look like an email address.", :allow_blank => true, :allow_nil => true
-  # validates_format_of :name, :with => /^[[:print:]]*$/, :message => "Partner name must be alphanumeric."
   validates_each :disabled_partners, :allow_blank => true do |record, attribute, value|
     record.errors.add(attribute, "must be blank when using whitelisting") if record.use_whitelist? && value.present?
     if record.disabled_partners_changed?
@@ -49,7 +51,7 @@ class Partner < ActiveRecord::Base
     end
   end
   validates_each :offer_whitelist, :allow_blank => true do |record, attribute, value|
-    record.errors.add(attribute, "must be blank when using blacklisting") if !record.use_whitelist? && value.present?
+    record.errors.add(attribute, 'must be blank when using blacklisting') if !record.use_whitelist? && value.present?
     if record.offer_whitelist_changed?
       value.split(';').each do |offer_id|
         record.errors.add(attribute, "contains an unknown offer id: #{offer_id}") if Offer.find_by_id(offer_id).nil?
@@ -77,14 +79,14 @@ class Partner < ActiveRecord::Base
 
   @@per_page = 20
 
-  named_scope :to_calculate_next_payout_amount, :conditions => 'pending_earnings >= 10000'
-  named_scope :to_payout, :conditions => 'pending_earnings != 0', :order => 'name ASC, contact_name ASC'
-  named_scope :to_payout_by_earnings, :conditions => 'pending_earnings != 0', :order => 'pending_earnings DESC'
-  named_scope :search, lambda { |name_or_email| { :joins => :users,
+  scope :to_calculate_next_payout_amount, :conditions => 'pending_earnings >= 10000'
+  scope :to_payout, :conditions => 'pending_earnings != 0', :order => 'name ASC, contact_name ASC'
+  scope :to_payout_by_earnings, :conditions => 'pending_earnings != 0', :order => 'pending_earnings DESC'
+  scope :search, lambda { |name_or_email| { :joins => :users,
       :conditions => [ "#{Partner.quoted_table_name}.name LIKE ? OR #{User.quoted_table_name}.email LIKE ?", "%#{name_or_email}%", "%#{name_or_email}%" ] }
     }
-  named_scope :premier, :conditions => 'premier_discount > 0'
-  named_scope :payout_info_changed, lambda { |start_date, end_date| { :joins => :payout_info,
+  scope :premier, :conditions => 'premier_discount > 0'
+  scope :payout_info_changed, lambda { |start_date, end_date| { :joins => :payout_info,
     :conditions => [ "#{PayoutInfo.quoted_table_name}.updated_at >= ? and #{PayoutInfo.quoted_table_name}.updated_at < ? ", start_date, end_date ]
   } }
 
@@ -325,6 +327,29 @@ class Partner < ActiveRecord::Base
     changed? ? save : true
   end
 
+  # For use within TJM (since dashboard URL helpers aren't available within TJM)
+  def dashboard_partner_url
+    uri = URI.parse(DASHBOARD_URL)
+    "#{uri.scheme}://#{uri.host}/partners/#{self.id}"
+  end
+
+  def confirmation_notes
+    notes = []
+    notes << payout_threshold_notes unless self.payout_threshold_confirmation
+    notes << payout_info_notes unless self.payout_info_confirmation
+    notes << 'Payout Info not Present!' unless self.completed_payout_info?
+    notes
+  end
+
+  def confirmed_for_payout?
+    self.payout_info_confirmation && self.payout_threshold_confirmation
+  end
+
+  def confirm_for_payout(user)
+    self.payout_info_confirmation = true  if can_confirm_payout_info?(user)
+    self.payout_threshold_confirmation = true if can_confirm_payout_threshold?(user)
+  end
+
   def monthly_accounting(year, month)
     MonthlyAccounting.using_slave_db do
       conditions = [ "partner_id = ? AND year = ? AND month = ?", self.id, year, month ]
@@ -332,8 +357,27 @@ class Partner < ActiveRecord::Base
     end
   end
 
+  def account_manager_email
+    @account_manager_email ||= self.account_managers.present? ? self.account_managers.first.email.downcase : "\xFF"
+  end
 
-private
+
+  def can_confirm_payout_info?(user)
+    user_roles = user.role_assignments.map { |x| x.name}
+    (payout_info_confirmation_roles & user_roles).present?
+  end
+
+  def can_confirm_payout_threshold?(user)
+    user_roles = user.role_assignments.map { |x| x.name}
+    (payout_threshold_confirmation_roles & user_roles).present?
+  end
+
+  def can_be_confirmed?(user)
+    ( !self.payout_info_confirmation && can_confirm_payout_info?(user)) ||
+        ( !self.payout_threshold_confirmation && can_confirm_payout_threshold?(user))
+  end
+
+  private
 
   def update_currencies
     if rev_share_changed? || direct_pay_share_changed? || disabled_partners_changed? || offer_whitelist_changed? || use_whitelist_changed? || accepted_publisher_tos_changed? || max_deduction_percentage_changed? || reseller_id_changed?
@@ -390,4 +434,19 @@ private
     errors.add :client_id, "cannot be switched to another client." if client_id_changed? && client_id_was.present? && client_id.present?
   end
 
+  def payout_threshold_notes
+    "SYSTEM: Payout is greater than or equal to #{NumberHelper.number_to_currency((self.payout_threshold / 100).to_f)}"
+  end
+
+  def payout_info_notes
+    'SYSTEM: Partner Payout Information has changed.'
+  end
+
+  def payout_info_confirmation_roles
+    %w(payout_manager)
+  end
+
+  def payout_threshold_confirmation_roles
+    %w(payout_manager account_mgr admin)
+  end
 end

@@ -1,0 +1,36 @@
+- device_udid_label = @admin_device.platform == 'android' ? "IMEI" : "UDID"
+
+= form_for [ :tools, @admin_device ], :html => { :class => 'tjform', :multipart => true } do |f|
+  %table
+    %tr
+      %th= f.label :platform
+      %td= f.select 'platform', options_for_select(App::PLATFORMS.invert, @admin_device.platform)
+    %tr
+      %th= f.label :udid, device_udid_label
+      %td= f.text_field :udid, :class => 'udid', :size => 42
+      %td= error_message_on(@admin_device, :udid) if @admin_device.errors.on :udid
+    %tr
+      %th= f.label :belongs_to
+      %td
+        = text_field_tag :admin_device_belongs_to, @admin_device.user.present? ? @admin_device.user.email : '', :size => 42
+        = f.hidden_field :user_id
+      %td &nbsp;
+    %tr
+      %th= f.label :description
+      %td= f.text_field :description, :size => 42
+      %td= error_message_on(@admin_device, :description) if @admin_device.errors.on :description
+    %tr
+      %td{ :colspan => 2 }= f.submit 'Done'
+
+- content_for :page_javascript do
+  :plain
+    $(function($) {
+      $('#admin_device_belongs_to').autocomplete({
+        source: '#{search_users_path(:tapjoy_only => true)}',
+        delay: 250,
+        minLength: 2,
+        select: function(event, ui) {
+          $('#admin_device_user_id').val(ui.item.user_id);
+        }
+      });
+    });

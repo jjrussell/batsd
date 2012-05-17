@@ -31,15 +31,15 @@
               - header_height = '90'
               %tr{:style => "color: #{blue}; height: #{header_height}px;", :height => "#{header_height}"}
                 %td{:style => "width: 440px; padding-left: #{offset};"}
-                  - link_to WEBSITE_URL, :style => "#{css[:a]} display:block;" do
+                  = link_to WEBSITE_URL, :style => "#{css[:a]} display:block;" do
                     = image_tag("#{image_root}/logo.jpg", :title => 'Tapjoy', :alt => 'Tapjoy', :size => '114x52', :style => "border: none; display: inline;")
                 %td{:style => "font-size: 12px; font-style: italic; color: #{blue}; vertical-align: middle; text-align: right; width: 80px;"}
                   follow us:
                 %td{:style => "vertical-align:middle; text-align: right; width: 40px;"}
-                  - link_to 'https://www.facebook.com/Tapjoy', :style => "#{css[:a]} display:block;" do
+                  = link_to 'https://www.facebook.com/Tapjoy', :style => "#{css[:a]} display:block;" do
                     = image_tag("#{image_root}/facebook_icon.jpg", :title => 'Facebook', :alt => 'Facebook', :style => "border: none; display: inline;", :size => '30x30')
                 %td{:style => "vertical-align:middle; text-align: right; width: 40px; padding-right: #{offset};"}
-                  - link_to 'https://twitter.com/#!/tapjoygames', :style => "#{css[:a]} display:block;" do
+                  = link_to 'https://twitter.com/#!/tapjoygames', :style => "#{css[:a]} display:block;" do
                     = image_tag("#{image_root}/twitter_icon.jpg", :title => 'Twitter', :alt => 'Twitter', :style => "border: none; display: inline;", :size => '30x30')
               %tr
                 %td{:colspan => "4"}
@@ -70,7 +70,7 @@
                     .description
                       Confirm your email address:
                       %br/
-                      - link_to @confirmation_link, :style => css[:a] do
+                      = link_to @confirmation_link, :style => css[:a] do
                         = image_tag("#{image_root}/confirm_button.jpg", :title => 'Confirm', :alt => 'Confirm', :style => "border: none;", :size => '170x49')
 
         - if @detailed_email
@@ -78,7 +78,7 @@
           - unless @linked
             %tr
               %td
-                - link_to(WEBSITE_URL, :style => "color: #{gray}; text-decoration: none;") do
+                = link_to(WEBSITE_URL, :style => "color: #{gray}; text-decoration: none;") do
                   %table#link_device{:align => "center", :cellpadding=>"0", :cellspacing=>"0", :style => css[:step]}
                     %tr
                       %td{:style => css[:step_icon]}
@@ -94,7 +94,7 @@
           - unless @android_device
             %tr
               %td
-                - link_to(WEBSITE_URL, :style => "color: #{gray}; text-decoration: none;") do
+                = link_to(WEBSITE_URL, :style => "color: #{gray}; text-decoration: none;") do
                   %table#add_to_home_screen{:align => "center", :cellpadding=>"0", :cellspacing=>"0", :style => css[:step]}
                     %tr
                       %td{:style => css[:step_icon]}
@@ -111,7 +111,7 @@
               - external_publisher = offers[:external_publisher]
               %tr
                 %td
-                  - link_to(earn_url, :style => "#{css[:offers]} #{css[:a]}") do
+                  = link_to(earn_url, :style => "#{css[:offers]} #{css[:a]}") do
                     %table.publisher{:align => "center", :cellpadding=>"0", :cellspacing=>"0", :style => css[:step]}
                       %tr
                         %td{:style => css[:step_no_icon]}
@@ -123,7 +123,7 @@
                                 = "#{h(external_publisher.app_name)}:"
               %tr
                 %td
-                  - link_to(earn_url, :style => css[:a]) do
+                  = link_to(earn_url, :style => css[:a]) do
                     %table.offers{:align => "center", :cellpadding=>"0", :cellspacing=>"0", :style => css[:step]}
                       %tr
                         - offers_array = offers['OfferArray'][0..2]
@@ -142,7 +142,7 @@
           - if @recommendations.any?
             %tr
               %td
-                - link_to("#{WEBSITE_URL}/more_apps", :style => css[:a]) do
+                = link_to("#{WEBSITE_URL}/more_apps", :style => css[:a]) do
                   %table.recommendations{:align => "center", :cellpadding=>"0", :cellspacing=>"0", :style => css[:step]}
                     %tr
                       %td{:style => css[:step_icon]}

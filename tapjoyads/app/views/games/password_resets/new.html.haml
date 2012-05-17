@@ -17,7 +17,7 @@
       .mt10
         = t('text.games.reset_password_message')
       .mt10
-        - form_tag(games_password_resets_path) do
+        = form_tag(games_password_resets_path) do
           .field
             = label_tag(:email)
             = email_field_tag(:email, nil, "autocorrect" => "off", "autocapitalize" => "off", :class => 'ui-joy-input')

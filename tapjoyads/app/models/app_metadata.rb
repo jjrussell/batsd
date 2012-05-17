@@ -1,4 +1,7 @@
 class AppMetadata < ActiveRecord::Base
+  def self.table_name
+    "app_metadatas"
+  end
   include UuidPrimaryKey
   json_set_field :countries_blacklist
 

@@ -29,12 +29,12 @@ class Invitation < ActiveRecord::Base
   validates_inclusion_of :channel, :in => CHANNEL.keys
   validates_inclusion_of :status, :in => STATUS.keys
 
-  named_scope :email,    :conditions => { :channel => EMAIL }
-  named_scope :facebook, :conditions => { :channel => FACEBOOK }
-  named_scope :twitter,  :conditions => { :channel => TWITTER }
-  named_scope :by_channel, lambda { |channel| { :conditions => [ "channel = ?", channel ]} }
-  named_scope :pending_invitations_for, lambda { |external_info| { :conditions => ["external_info = ? and status = ?", external_info, PENDING ] } }
-  named_scope :for_gamer, lambda { |gamer| { :conditions => ['gamer_id = ?', gamer.id] } }
+  scope :email,    :conditions => { :channel => EMAIL }
+  scope :facebook, :conditions => { :channel => FACEBOOK }
+  scope :twitter,  :conditions => { :channel => TWITTER }
+  scope :by_channel, lambda { |channel| { :conditions => [ "channel = ?", channel ]} }
+  scope :pending_invitations_for, lambda { |external_info| { :conditions => ["external_info = ? and status = ?", external_info, PENDING ] } }
+  scope :for_gamer, lambda { |gamer| { :conditions => ['gamer_id = ?', gamer.id] } }
 
   def pending?; status == PENDING; end
 

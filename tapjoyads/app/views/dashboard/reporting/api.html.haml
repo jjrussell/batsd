@@ -1,0 +1,409 @@
+- @page_title = 'Reporting API'
+
+%h2 Reporting API
+
+Your API Key:
+
+%span.code
+  #{current_user.api_key}
+
+= form_tag(regenerate_api_key_reporting_path) do
+  = submit_tag('Regenerate', :id => 'regenerate')
+
+%hr
+
+%p
+  Tapjoy offers a realtime XML/JSON feed for reporting data. To access the feed, make an HTTP GET request to one of the following URLs with a valid date parameter:
+
+%h4 XML
+
+%p URL
+%pre
+  https://api.tapjoy.com/reporting_data.xml?email=#{CGI::escape(current_user.username)}&api_key=#{current_user.api_key}&date=YYYY-MM-DD[&page=NUM][&timezone=NUM]
+
+%p Response
+%pre
+  :preserve
+    &lt;?xml version="1.0" encoding="UTF-8"?&gt;
+    &lt;MarketingData&gt;
+      &lt;Date&gt;YYYY-MM-DD&lt;/Date&gt;
+      &lt;Timezone&gt;NUM&lt;/Timezone&gt;
+      &lt;TotalOffers&gt;NUM&lt;/TotalOffers&gt;
+      &lt;PageSize&gt;NUM&lt;/PageSize&gt;
+      &lt;TotalPages&gt;NUM&lt;/TotalPages&gt;
+      &lt;CurrentPage&gt;NUM&lt;/CurrentPage&gt;
+      &lt;App&gt;
+        &lt;Name&gt;App Name&lt;/Name&gt;
+        &lt;AppKey&gt;00000000-0000-0000-0000-000000000000&lt;/AppKey&gt;
+        &lt;Platform&gt;App Platform&lt;/Platform&gt;
+        &lt;PaidInstalls&gt;0&lt;/PaidInstalls&gt;
+        &lt;PaidInstallsHourly&gt;0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0&lt;/PaidInstallsHourly&gt;
+        &lt;PaidClicks&gt;0&lt;/PaidClicks&gt;
+        &lt;PaidClicksHourly&gt;0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0&lt;/PaidClicksHourly&gt;
+        &lt;Spend&gt;0&lt;/Spend&gt;
+        &lt;SpendHourly&gt;0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0&lt;/SpendHourly&gt;
+        &lt;Sessions&gt;0&lt;/Sessions&gt;
+        &lt;SessionsHourly&gt;0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0&lt;/SessionsHourly&gt;
+        &lt;NewUsers&gt;0&lt;/NewUsers&gt;
+        &lt;NewUsersHourly&gt;0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0&lt;/NewUsersHourly&gt;
+        &lt;DailyActiveUsers&gt;0&lt;/DailyActiveUsers&gt;
+        &lt;OfferwallRevenue&gt;0&lt;/OfferwallRevenue&gt;
+        &lt;OfferwallRevenueHourly&gt;0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0&lt;/OfferwallRevenueHourly&gt;
+        &lt;OfferwallImpressions&gt;0&lt;/OfferwallImpressions&gt;
+        &lt;OfferwallImpressionsHourly&gt;0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0&lt;/OfferwallImpressionsHourly&gt;
+        &lt;OfferwallClicks&gt;0&lt;/OfferwallClicks&gt;
+        &lt;OfferwallClicksHourly&gt;0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0&lt;/OfferwallClicksHourly&gt;
+        &lt;OfferwallConversions&gt;0&lt;/OfferwallConversions&gt;
+        &lt;OfferwallConversionsHourly&gt;0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0&lt;/OfferwallConversionsHourly&gt;
+        &lt;FeaturedOfferRevenue&gt;0&lt;/FeaturedOfferRevenue&gt;
+        &lt;FeaturedOfferRevenueHourly&gt;0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0&lt;/FeaturedOfferRevenueHourly&gt;
+        &lt;FeaturedOfferRequests&gt;0&lt;/FeaturedOfferRequests&gt;
+        &lt;FeaturedOfferRequestsHourly&gt;0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0&lt;/FeaturedOfferRequestsHourly&gt;
+        &lt;FeaturedOfferImpressions&gt;0&lt;/FeaturedOfferImpressions&gt;
+        &lt;FeaturedOfferImpressionsHourly&gt;0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0&lt;/FeaturedOfferImpressionsHourly&gt;
+        &lt;FeaturedOfferClicks&gt;0&lt;/FeaturedOfferClicks&gt;
+        &lt;FeaturedOfferClicksHourly&gt;0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0&lt;/FeaturedOfferClicksHourly&gt;
+        &lt;FeaturedOfferConversions&gt;0&lt;/FeaturedOfferConversions&gt;
+        &lt;FeaturedOfferConversionsHourly&gt;0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0&lt;/FeaturedOfferConversionsHourly&gt;
+        &lt;DisplayRevenue&gt;0&lt;/DisplayRevenue&gt;
+        &lt;DisplayRevenueHourly&gt;0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0&lt;/DisplayRevenueHourly&gt;
+        &lt;DisplayRequests&gt;0&lt;/DisplayRequests&gt;
+        &lt;DisplayRequestsHourly&gt;0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0&lt;/DisplayRequestsHourly&gt;
+        &lt;DisplayImpressions&gt;0&lt;/DisplayImpressions&gt;
+        &lt;DisplayImpressionsHourly&gt;0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0&lt;/DisplayImpressionsHourly&gt;
+        &lt;DisplayClicks&gt;0&lt;/DisplayClicks&gt;
+        &lt;DisplayClicksHourly&gt;0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0&lt;/DisplayClicksHourly&gt;
+        &lt;DisplayConversions&gt;0&lt;/DisplayConversions&gt;
+        &lt;DisplayConversionsHourly&gt;0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0&lt;/DisplayConversionsHourly&gt;
+        &lt;TJMOfferwallRevenue&gt;0&lt;/TJMOfferwallRevenue&gt;
+        &lt;TJMOfferwallRevenueHourly&gt;0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0&lt;/TJMOfferwallRevenueHourly&gt;
+        &lt;TJMOfferwallImpressions&gt;0&lt;/TJMOfferwallImpressions&gt;
+        &lt;TJMOfferwallImpressionsHourly&gt;0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0&lt;/TJMOfferwallImpressionsHourly&gt;
+        &lt;TJMOfferwallClicks&gt;0&lt;/TJMOfferwallClicks&gt;
+        &lt;TJMOfferwallClicksHourly&gt;0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0&lt;/TJMOfferwallClicksHourly&gt;
+        &lt;TJMOfferwallConversions&gt;0&lt;/TJMOfferwallConversions&gt;
+        &lt;TJMOfferwallConversionsHourly&gt;0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0&lt;/TJMOfferwallConversionsHourly&gt;
+      &lt;/App&gt;
+
+      ...
+
+    &lt;/MarketingData&gt;
+
+%h4 JSON
+
+%p URL
+%pre
+  https://api.tapjoy.com/reporting_data.json?email=#{CGI::escape(current_user.username)}&api_key=#{current_user.api_key}&date=YYYY-MM-DD[&page=NUM][&timezone=NUM]
+
+%p Response
+%pre
+  :preserve
+    {
+      "Date" : "YYYY-MM-DD",
+      "Timezone" : NUM,
+      "TotalOffers" : NUM,
+      "PageSize" : NUM,
+      "TotalPages" : NUM,
+      "CurrentPage" : NUM,
+      "Apps" : [
+        {
+          "Name"                           : "App Name",
+          "AppKey"                         : "00000000-0000-0000-0000-000000000000",
+          "Platform"                       : "App Platform",
+          "PaidInstalls"                   : 0,
+          "PaidInstallsHourly"             : [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+          "PaidClicks"                     : 0,
+          "PaidClicksHourly"               : [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+          "Spend"                          : 0,
+          "SpendHourly"                    : [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+          "Sessions"                       : 0,
+          "SessionsHourly"                 : [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+          "NewUsers"                       : 0,
+          "NewUsersHourly"                 : [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+          "DailyActiveUsers"               : 0,
+          "OfferwallRevenue"               : 0,
+          "OfferwallRevenueHourly"         : [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+          "OfferwallImpressions"           : 0,
+          "OfferwallImpressionsHourly"     : [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+          "OfferwallClicks"                : 0,
+          "OfferwallClicksHourly"          : [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+          "OfferwallConversions"           : 0,
+          "OfferwallConversionsHourly"     : [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+          "FeaturedOfferRevenue"           : 0,
+          "FeaturedOfferRevenueHourly"     : [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+          "FeaturedOfferRequests"          : 0,
+          "FeaturedOfferRequestsHourly"    : [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+          "FeaturedOfferImpressions"       : 0,
+          "FeaturedOfferImpressionsHourly" : [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+          "FeaturedOfferClicks"            : 0,
+          "FeaturedOfferClicksHourly"      : [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+          "FeaturedOfferConversions"       : 0,
+          "FeaturedOfferConversionsHourly" : [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+          "DisplayRevenue"                 : 0,
+          "DisplayRevenueHourly"           : [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+          "DisplayRequests"                : 0,
+          "DisplayRequestsHourly"          : [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+          "DisplayImpressions"             : 0,
+          "DisplayImpressionsHourly"       : [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+          "DisplayClicks"                  : 0,
+          "DisplayClicksHourly"            : [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+          "DisplayConversions"             : 0,
+          "DisplayConversionsHourly"       : [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+          "TJMOfferwallRevenue"            : 0,
+          "TJMOfferwallRevenueHourly"      : [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+          "TJMOfferwallImpressions"        : 0,
+          "TJMOfferwallImpressionsHourly"  : [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+          "TJMOfferwallClicks"             : 0,
+          "TJMOfferwallClicksHourly"       : [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+          "TJMOfferwallConversions"        : 0,
+          "TJMOfferwallConversionsHourly"  : [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+        },
+
+        ...
+
+      ]
+    }
+
+%h4 General Field Descriptions
+%table.tablesorter
+  %thead
+    %tr
+      %th Field
+      %th Description
+  %tbody
+    %tr
+      %td Timezone
+      %td The timezone in which statistics are being returned.
+    %tr
+      %td TotalOffers
+      %td The total number of offers.
+    %tr
+      %td PageSize
+      %td The maximum number of offers show on each page.
+    %tr
+      %td TotalPages
+      %td The total number of pages for this report.
+    %tr
+      %td CurrentPage
+      %td Current page number.
+
+%h4 App Field Descriptions
+%table.tablesorter
+  %thead
+    %tr
+      %th Field
+      %th Description
+  %tbody
+    %tr
+      %td Name
+      %td The app's name.  If you have more than one offer for your app then this will be the name of the associated offer.
+    %tr
+      %td AppKey
+      %td The app's Tapjoy key.  Each offer for an app will be returned with different AppKeys.
+    %tr
+      %td Platform
+      %td The app's platform, either 'iOS' or 'Android'.
+    %tr
+      %td PaidInstalls
+      %td The total number of paid installs for the specified date.
+    %tr
+      %td PaidInstallsHourly
+      %td The hourly breakdown of PaidInstalls. A comma-separated list of paid installs, each number representing one hour.
+    %tr
+      %td PaidClicks
+      %td The total number of paid clicks for the specified date.
+    %tr
+      %td PaidClicksHourly
+      %td The hourly breakdown of PaidClicks.
+    %tr
+      %td Spend
+      %td The total spent on installs for the specified date. This number is in cents, so a value of 100 represents $1.00.
+    %tr
+      %td SpendHourly
+      %td The hourly breakdown of Spend.
+    %tr
+      %td Sessions
+      %td The total number of sessions for the specified date.
+    %tr
+      %td SessionsHourly
+      %td The hourly breakdown of Sessions.
+    %tr
+      %td NewUsers
+      %td The number of new users for the specified date.
+    %tr
+      %td NewUsersHourly
+      %td The hourly breakdown of NewUsers.
+    %tr
+      %td DailyActiveUsers
+      %td The number of unique users for the specified date.
+    %tr
+      %td OfferwallRevenue
+      %td The total revenue, in cents, earned through the in app offerwall for the specified date.
+    %tr
+      %td OfferwallRevenueHourly
+      %td The hourly breakdown for OfferwallRevenue.
+    %tr
+      %td OfferwallImpressions
+      %td The total number of in app offerwall views served for the specified date.
+    %tr
+      %td OfferwallImpressionsHourly
+      %td The hourly breakdown for OfferwallImpressions.
+    %tr
+      %td OfferwallClicks
+      %td The total number of clicks from the in app offerwall for the specified date.
+    %tr
+      %td OfferwallClicksHourly
+      %td The hourly breakdown for OfferwallClicks.
+    %tr
+      %td OfferwallConversions
+      %td The number of conversions generated from the in app offerwall for the specified date.
+    %tr
+      %td OfferwallConversionsHourly
+      %td The hourly breakdown for OfferwallConversions.
+    %tr
+      %td FeaturedOfferRevenue
+      %td The total revenue, in cents, earned through featured offers.
+    %tr
+      %td FeaturedOfferRevenueHourly
+      %td The hourly breakdown for FeaturedOfferRevenue.
+    %tr
+      %td FeaturedOfferRequests
+      %td The total number of requests the app made for featured offers for the specified date.
+    %tr
+      %td FeaturedOfferRequestsHourly
+      %td The hourly breakdown for FeaturedOfferRequests.
+    %tr
+      %td FeaturedOfferImpressions
+      %td The total number of featured offers served for the specified date.
+    %tr
+      %td FeaturedOfferImpressionsHourly
+      %td The hourly breakdown of FeaturedOfferImpressions.
+    %tr
+      %td FeaturedOfferClicks
+      %td The total number of clicks from featured offers for the specified date.
+    %tr
+      %td FeaturedOfferClicksHourly
+      %td The hourly breakdown of FeaturedOfferClicks.
+    %tr
+      %td FeaturedOfferConversions
+      %td The total number of conversions generated from featured offers for the specified date.
+    %tr
+      %td FeaturedOfferConversionsHourly
+      %td The hourly breakdown of FeaturedOfferConversions.
+    %tr
+      %td DisplayRevenue
+      %td The total revenue, in cents, earned through display ads for the specified date.
+    %tr
+      %td DisplayRevenueHourly
+      %td The hourly breakdown for DisplayRevenue.
+    %tr
+      %td DisplayRequests
+      %td The total number of requests the app made for display ads for the specified date.
+    %tr
+      %td DisplayRequestsHourly
+      %td The hourly breakdown of DisplayRequests.
+    %tr
+      %td DisplayImpressions
+      %td The total number of display ads served for the specified date.
+    %tr
+      %td DisplayImpressionsHourly
+      %td The hourly breakdown of DisplayImpressions.
+    %tr
+      %td DisplayClicks
+      %td The total number of clicks from display ads for the specified date.
+    %tr
+      %td DisplayClicksHourly
+      %td The hourly breakdown of DisplayClicks.
+    %tr
+      %td DisplayConversions
+      %td The total number of conversions generated from display ads for the specified date.
+    %tr
+      %td DisplayConversionsHourly
+      %td The hourly breakdown of DisplayConversions.
+    %tr
+      %td TJMOfferwallRevenue
+      %td The total revenue, in cents, earned through the Tapjoy marketplace offerwall for the specified date.
+    %tr
+      %td TJMOfferwallRevenueHourly
+      %td The hourly breakdown for TJMOfferwallRevenue.
+    %tr
+      %td TJMOfferwallImpressions
+      %td The total number of Tapjoy marketplace offerwall views served for the specified date.
+    %tr
+      %td TJMOfferwallImpressionsHourly
+      %td The hourly breakdown for TJMOfferwallImpressions.
+    %tr
+      %td TJMOfferwallClicks
+      %td The total number of clicks from the Tapjoy marketplace offerwall for the specified date.
+    %tr
+      %td TJMOfferwallClicksHourly
+      %td The hourly breakdown for TJMOfferwallClicks.
+    %tr
+      %td TJMOfferwallConversions
+      %td The number of conversions generated from the Tapjoy marketplace offerwall for the specified date.
+    %tr
+      %td TJMOfferwallConversionsHourly
+      %td The hourly breakdown for TJMOfferwallConversions.
+
+%h4 Rate limiting
+
+%p
+  You must limit your requests to this API to at most one request per minute.
+
+%h4 Time zone
+
+%p
+  Unless
+  %span.code timezone
+  is specified in your request URL, the data returned will be in the time zone specified for your account.
+  (Your account timezone can be configured on the
+  =link_to("change account details page", edit_user_path(current_user)) + '.)  The'
+  %span.code timezone
+  parameter expects an integer specifying the UTC offset of the desired time zone in hours
+  %i (i.e.
+  %span.code 'timezone=-8'
+  %i for Pacific Time)
+  or seconds
+  %i (i.e.
+  %span.code 'timezone=-28800'
+  %i for Pacific Time).
+
+%h4 Pages
+
+%p
+  This feed will return data on a maximum of 100 offers at once. In order to see data about additional offers, provide the
+  %span.code page
+  parameter to the request.
+
+- content_for :page_javascript do
+  :plain
+    $('#regenerate').click(function(){
+      return confirm('Regenerate your API key? This will invalidate the current key.');
+    });
+
+- content_for :page_styles do
+  :plain
+    pre {
+      padding: 5px;
+      border: 1px solid black;
+      background-color: #eee;
+      overflow: auto;
+    }
+
+    form {
+      display: inline-block;
+      margin-left: 10px;
+    }
+
+    .tablesorter td {
+      font-size: 120%;
+    }
+
+    .tablesorter tr td:first-child,
+    .code {
+      font-family: courier;
+    }
+
+    .tablesorter tr:nth-child(2n) td {
+      background-color: #f0f0f6;
+    }

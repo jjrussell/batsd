@@ -88,7 +88,7 @@ class App < ActiveRecord::Base
   has_many :non_rewarded_offers, :class_name => 'Offer', :as => :item, :conditions => "NOT rewarded AND NOT featured"
   has_one :primary_non_rewarded_offer, :class_name => 'Offer', :as => :item, :conditions => "NOT rewarded AND NOT featured", :order => "created_at"
   has_many :app_metadata_mappings
-  has_many :app_metadatas, :through => :app_metadata_mappings
+  has_many :app_metadatas, :through => :app_metadata_mappings, :readonly => false
   has_one :primary_app_metadata,
     :through => :app_metadata_mappings,
     :source => :app_metadata,
@@ -97,30 +97,33 @@ class App < ActiveRecord::Base
 
   belongs_to :partner
 
-  cache_associations :app_metadatas, :primary_app_metadata
+  set_callback :cache_associations, :before, :primary_app_metadata
+  set_callback :cache_associations, :before, :app_metadatas
 
   validates_presence_of :partner, :name, :secret_key
   validates_inclusion_of :platform, :in => PLATFORMS.keys
   validates_numericality_of :active_gamer_count, :only_integer => true, :greater_than_or_equal_to => 0, :allow_nil => false
 
-  before_validation_on_create :generate_secret_key
+  before_validation :generate_secret_key, :on => :create
 
   after_create :create_primary_offer
   after_update :update_all_offers
   after_update :update_currencies
   after_save :clear_dirty_flags
 
-  named_scope :visible, :conditions => { :hidden => false }
-  named_scope :by_platform, lambda { |platform| { :conditions => ["platform = ?", platform] } }
-  named_scope :by_partner_id, lambda { |partner_id| { :conditions => ["partner_id = ?", partner_id] } }
-  named_scope :live, :joins => [ :app_metadatas ], :conditions =>
+  scope :visible, :conditions => { :hidden => false }
+  scope :by_platform, lambda { |platform| { :conditions => ["platform = ?", platform] } }
+  scope :by_partner_id, lambda { |partner_id| { :conditions => ["partner_id = ?", partner_id] } }
+  scope :live, :joins => [ :app_metadatas ], :conditions =>
     "#{AppMetadata.quoted_table_name}.store_id IS NOT NULL"
 
   delegate :conversion_rate, :to => :primary_currency, :prefix => true
   delegate :store_id, :store_id?, :description, :age_rating, :file_size_bytes, :supported_devices, :supported_devices?,
     :released_at, :released_at?, :user_rating, :get_countries_blacklist, :countries_blacklist,
     :to => :primary_app_metadata, :allow_nil => true
-  delegate :name, :to => :partner, :prefix => true
+  delegate :name, :dashboard_partner_url, :to => :partner, :prefix => true
+
+  memoize :partner_name, :partner_dashboard_partner_url
 
   def is_ipad_only?
     supported_devices? && JSON.load(supported_devices).all?{ |i| i.match(/^ipad/i) }
@@ -406,6 +409,12 @@ class App < ActiveRecord::Base
     test_video_offer.primary_offer           = primary_offer
     test_video_offer.primary_offer.item_type = 'TestVideoOffer'
     test_video_offer
+  end
+
+  # For use within TJM (since dashboard URL helpers aren't available within TJM)
+  def dashboard_app_url
+    uri = URI.parse(DASHBOARD_URL)
+    "#{uri.scheme}://#{uri.host}/apps/#{self.id}"
   end
 
   private

@@ -1,71 +1,65 @@
 #earn.current
   .panel
     .page-header
-      .container.mt20
-        .left.ml10.pt3
+      .container
+        .earn-main-app.left.ml5.pt3
           .squircle
             = image_tag(@app.get_icon_url(:size => 114, :source => :cloudfront))
-        .left.ml10
-          .big-title.slate.elip
+        .ml5.mt5
+          .big-title.slate
             = @app.name
           - if @app_metadata
-            .container
+            .app-meta.clearfix
               .left.ui-icon-medium.score.icon24.p5
                 #{@app_metadata.positive_thumbs_percentage.floor}%
               .left.ui-icon-medium.social.icon24.p5.ml5
                 = @app_metadata.app_reviews.by_gamers.size
-            .container
               .left.mt1.ml3.pb1
                 = hidden_field_tag(:eapp_metadata_id, ObjectEncryptor.encrypt(@app_metadata.id))
-                = hidden_field_tag(:mark_as_fav_path, games_gamer_favorite_app_path)
+                = hidden_field_tag(:mark_as_fav_path, games_favorite_app_path)
                 #favorite_app_button.ui-joy-button.primary.smaller
                   - if @mark_as_favorite
                     = t('text.games.mark_as_favorite')
                   - else
                     = t('text.games.unmark_as_favorite')
 
-    .section.dark
-      #viewSelect.select-container.left.ml5
-        .dropdown.left
-          %img.downarrow-white.icon24{ :src => BLANK_IMAGE }
-        .heading.pl5.pr15
-          = "#{t('text.games.browse_offers')} - #{@active_currency.name}"
-        .fix
-    #viewSelectMenu.hide
-      %ul
-        - @app.currencies.each_with_index do |c, i|
-          %li{ :class => "#{"active" if c == @active_currency}" }
-            = link_to "#{t('text.games.browse_offers')} - #{c[:name]}", "#target#{i}", :class => "ui-joy-reveal"
+    - if @app.currencies.size > 1
+      .section.dark.clearfix
+        #viewSelect.select-container.left.ml5
+          .dropdown.left
+            %img.downarrow-white.icon24{ :src => BLANK_IMAGE }
+          .heading.pl5.pr15
+            = "#{t('text.games.browse_offers')} - #{@active_currency.name}"
+          .fix
+      #viewSelectMenu.hide
+        %ul
+          - @app.currencies.each_with_index do |c, i|
+            %li{ :class => "#{"active" if c == @active_currency}" }
+              = link_to "#{t('text.games.browse_offers')} - #{c[:name]}", "#target#{i}", :class => "ui-joy-reveal"
+    - else
+      .section.dark.clearfix
+        #viewSelect.select-container.left.ml5
+          .heading.pl5.pr15
+            = "#{t('text.games.browse_offers')} - #{@active_currency.name}"
+
     .container
       .review-area
         - @app.currencies.each_with_index do |c, i|
           .buffer{ :id => "target#{i}", :class => "#{"hidden" if c != @active_currency}" }
             - url = @external_publisher.get_offerwall_url(@device, c, request.accept_language, request.user_agent, current_gamer.id)
             = render :partial => "offers", :locals => { :offerwall_url => url, :immediate_load => c == @active_currency }
-      .section.dark
+      .section.dark.clearfix
         .heading
           = t('text.games.other_options')
       - if @app_metadata
-        %ul.list-button-container.flush.nbb.big
-          %li.list-button.ntb
+        .list-button-container.flush.nbb.big
+          .list-button.ntb
             - eid = params[:eid].present? ? params[:eid] : ObjectEncryptor.encrypt(params[:id])
-            -link_to new_games_app_review_path(:eid => eid) do
+            = link_to new_games_app_review_path(:eid => eid) do
               .left.charcoal
                 = t("text.games.review_app_name", {:app_name => @app.name})
               .right.rightarrow.icon16
                 &nbsp;
-
-- content_for :above_footer do
-  - if @app_metadata
-    = hidden_field_tag(:eapp_metadata_id, ObjectEncryptor.encrypt(@app_metadata.id))
-  = hidden_field_tag(:mark_as_fav_path, games_gamer_favorite_app_path)
-  .mod.mb20.hide
-    .favorite-btn.ui-joy-button.grey-action
-      #favorite_app_button.text-center.get-app
-        - if @mark_as_favorite
-          = t('text.games.mark_as_favorite')
-        - else
-          = t('text.games.unmark_as_favorite')
 
 - content_for :page_javascript do
   :plain

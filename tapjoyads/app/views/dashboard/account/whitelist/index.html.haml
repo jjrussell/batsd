@@ -1,0 +1,114 @@
+- @page_title = "Offer Whitelist"
+
+%h1 Offer Whitelist
+
+
+= form_tag(account_whitelist_index_path, :method => :get, :id => 'form', :class => 'tjform') do
+  = label_tag(:name)
+  = text_field_tag(:name, params[:name], :size => 20)
+  = label_tag(:platform)  # currently labelled as 'platform' for device type, we can change it as required later
+  = select_tag 'device', options_for_select(["all"] + Offer::ALL_DEVICES, params[:device])
+  = label_tag(:status)
+  = select_tag(:status, options_for_select([["All", "*"], ["Approved","a"], ["Blocked","b"]], :selected => params[:status]) )
+  = submit_tag("Filter")
+
+
+%table#whitelist_table.tablesorter
+  %thead
+    %tr
+      %th Offer Icon
+      %th Offer Name
+      %th Platform
+      %th Offer status
+      %th Action
+  %tbody
+    - @offers.each do |offer|
+      %tr
+        %td
+          %img.app_icon{ :src => offer.get_icon_url(:source => :cloudfront, :size => '57') }
+        %td
+          .offer-text #{offer.name}
+        %td
+          - offer.get_device_types.each do |d|
+            .offer-text  #{d} #{image_tag(d == "android" ? 'icon_android.png' : 'icon_apple.png')}
+        %td
+          - if @whitelisted_offers.include?(offer.id)
+            .approved-text Approved
+          - else
+            .blocked-text Blocked
+        %td
+          - if @whitelisted_offers.include?(offer.id)
+            = link_to '[Block]', disable_account_whitelist_path(:id => offer.id), :method => :disable, :class => "action-text"
+          - else
+            = link_to '[Approve]', enable_account_whitelist_path(:id => offer.id), :method => :enable, :class => "action-text"
+
+- content_for :page_javascript do
+  :plain
+    $(function() {
+      $("#whitelist_table").tablesorter({
+        widgets: ['zebra'],
+        headers: {
+          0: { sorter: false },
+          2: { sorter: false },
+          4: { sorter: false },
+        },
+      });
+
+      var formY = $('#form').position()['top'];
+      $(window).scroll(function(event) {
+        if ($(window).scrollTop() > formY) {
+          $('#form').css({position: 'fixed', top: 0});
+        } else {
+          $('#form').css({position: 'absolute', top: 'auto'});
+        }
+      });
+
+      $('a.show_more').click(function() {
+        var b_tag = $(this).parent();
+        b_tag.html(b_tag.attr('full_value'));
+        return false;
+      });
+    });
+
+    function setValue(id, value) {
+      $('#' + id).val(value);
+    }
+
+- content_for :page_styles do
+  :plain
+    table.tablesorter {
+      margin-top: 40px;
+    }
+
+    h1 {
+      margin-bottom: 0;
+    }
+
+    form {
+      background: white;
+      border: 1px solid black;
+      padding: 3px;
+      position: absolute;
+    }
+
+    .next {
+      float: right;
+    }
+
+    .tjform input[type=submit] {
+      margin: 0;
+      float: none;
+    }
+
+    .bold {
+      font-weight: bold;
+    }
+
+    .offer-text { color: #686868; display: table-cell; font-size: 14px; height: 57px; margin: 0; padding-right: 7px; position: relative; top: 10px; vertical-align: middle; }
+
+    .blocked-text { color: red; display: table-cell; font-size: 14px; height: 57px; margin: 0; padding-right: 7px; position: relative; top: 10px; vertical-align: middle; }
+
+    .approved-text { color: green; display: table-cell; font-size: 14px; height: 57px; margin: 0; padding-right: 7px; position: relative; top: 10px; vertical-align: middle; }
+
+    .action-text { display: table-cell; font-size: 14px; height: 57px; margin: 0; padding-right: 7px; position: relative; top: 10px; vertical-align: middle; }
+

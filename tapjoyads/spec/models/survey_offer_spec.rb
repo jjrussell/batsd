@@ -23,7 +23,7 @@ describe SurveyOffer do
   it 'validates presence of bid_price on create' do
     survey_offer = SurveyOffer.new(:name => 'bob')
     survey_offer.save.should be_false
-    survey_offer.errors.on(:bid_price).should == "can't be blank"
+    survey_offer.errors[:bid_price].join.should == "can't be blank"
   end
 
   describe 'callbacks' do

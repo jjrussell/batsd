@@ -3,7 +3,7 @@ require 'spec_helper'
 describe Recommender do
   describe ".instance" do
     context "with an argument" do
-      before :all do
+      before :each do
         @recommender = Recommender.instance(:most_popular_recommender)
       end
 

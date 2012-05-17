@@ -33,17 +33,17 @@ class EnableOfferRequest < ActiveRecord::Base
   STATUS_APPROVED = 2
   STATUS_REJECTED = 3
 
-  named_scope :unassigned, :conditions => { :status => STATUS_UNASSIGNED },
+  scope :unassigned, :conditions => { :status => STATUS_UNASSIGNED },
     :order => 'created_at'
-  named_scope :for, lambda { |user| {
+  scope :for, lambda { |user| {
     :conditions => { :status => STATUS_ASSIGNED, :assigned_to_id => user.id },
     :order => 'created_at'
   } }
-  named_scope :not_for, lambda { |user| {
+  scope :not_for, lambda { |user| {
     :conditions => "status = '#{STATUS_ASSIGNED}' and assigned_to_id != '#{user.id}'",
     :order => 'created_at'
   } }
-  named_scope :pending, :conditions => [ "status = ? OR status = ?", STATUS_UNASSIGNED, STATUS_ASSIGNED ],
+  scope :pending, :conditions => [ "status = ? OR status = ?", STATUS_UNASSIGNED, STATUS_ASSIGNED ],
     :order => 'created_at'
 
   def assign_to(user)
