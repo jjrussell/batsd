@@ -360,7 +360,7 @@ zh-tw:
       report_bug: 回報臭蟲
       reset_password_message: 輸入跟你帳號關聯的郵箱地址，我們便會將重置密碼的聯結發送給你
       reset_password_message_submit: 你將在幾分鐘之後收到指引你重置密碼的電子郵件
-      reset_password_retry: "如果你還是無法登入，可以 %{reset_password_url} 或發送電子郵件"
+      reset_password_retry_html: "如果你還是無法登入，可以 %{reset_password_url} 或發送電子郵件"
       reset_password_retry_url_text: 請求另一封密碼重置郵件
       review_app_name: "評論 %{app_name}"
       review_created: 成功評論此應用
